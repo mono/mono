@@ -27,7 +27,7 @@
 
 /*
  * Register a memory location as a root pointing to memory allocated using
- * mono_gc_alloc_fixed (). This includes MonoGHashTable.
+ * mono_gc_alloc_fixed_checked (). This includes MonoGHashTable.
  */
 /* The result of alloc_fixed () is not GC tracked memory */
 #define MONO_GC_REGISTER_ROOT_FIXED(x,src,msg) do { \
@@ -37,7 +37,7 @@
 
 /*
  * Return a GC descriptor for an array containing N pointers to memory allocated
- * by mono_gc_alloc_fixed ().
+ * by mono_gc_alloc_fixed_checked ().
  */
 /* For SGEN, the result of alloc_fixed () is not GC tracked memory */
 #define MONO_GC_ROOT_DESCR_FOR_FIXED(n) (mono_gc_is_moving () ? mono_gc_make_root_descr_all_refs (0) : MONO_GC_DESCRIPTOR_NULL)
@@ -135,7 +135,7 @@ gboolean mono_gc_user_markers_supported (void);
  * NOTE: Under Boehm, this returns memory allocated using GC_malloc, so the result should
  * be stored into a location registered using MONO_GC_REGISTER_ROOT_FIXED ().
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
+void* mono_gc_alloc_fixed_checked    (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg, MonoError *error);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -148,12 +148,21 @@ typedef void (*FinalizerThreadCallback) (gpointer user_data);
 gboolean mono_gc_pending_finalizers (void);
 void     mono_gc_finalize_notify    (void);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+void* mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *error);
+void* mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error);
+void* mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error);
+void* mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error);
+void* mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
+
+void*
+ves_icall_gc_alloc_obj (MonoVTable *vtable, size_t size);
+
+void*
+ves_icall_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+
+void*
+ves_icall_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
@@ -162,7 +171,7 @@ void  mono_gc_deregister_root (char* addr);
 int   mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size);
 void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
-void* mono_gc_alloc_mature (MonoVTable *vtable);
+void* mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error);
 
 /* 
  * Register a root which can only be written using a write barrier.

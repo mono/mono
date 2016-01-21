@@ -916,12 +916,41 @@ mono_gc_get_mach_exception_thread (void)
 
 #ifndef HAVE_SGEN_GC
 void*
-mono_gc_alloc_mature (MonoVTable *vtable)
+mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error)
 {
-	return mono_object_new_specific (vtable);
+	return mono_object_new_specific_checked (vtable, error);
 }
 #endif
 
+void*
+ves_icall_gc_alloc_obj (MonoVTable *vtable, size_t size)
+{
+	MonoError error;
+	MonoObject *ret = (MonoObject*) mono_gc_alloc_obj_checked (vtable, size, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+void*
+ves_icall_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+{
+	MonoError error;
+	MonoArray *ret = (MonoArray*) mono_gc_alloc_vector_checked (vtable, size, max_length, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+void*
+ves_icall_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+{
+	MonoError error;
+	MonoString *ret = (MonoString*) mono_gc_alloc_string_checked (vtable, size, len, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
 
 static MonoReferenceQueue *ref_queues;
 

@@ -1925,6 +1925,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, gboolean
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoVTable *vt;
 	MonoClassRuntimeInfo *runtime_info, *old_info;
 	MonoClassField *field;
@@ -2060,7 +2061,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, gboolean
 			bitmap = compute_class_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, TRUE);
 			/*g_print ("bitmap 0x%x for %s.%s (size: %d)\n", bitmap [0], klass->name_space, klass->name, class_size);*/
 			statics_gc_descr = mono_gc_make_descr_from_bitmap (bitmap, max_set + 1);
-			vt->vtable [klass->vtable_size] = mono_gc_alloc_fixed (class_size, statics_gc_descr, MONO_ROOT_SOURCE_STATIC, "managed static variables");
+			vt->vtable [klass->vtable_size] = mono_gc_alloc_fixed_checked (class_size, statics_gc_descr, MONO_ROOT_SOURCE_STATIC, "managed static variables", &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 			mono_domain_add_class_static_data (domain, klass, vt->vtable [klass->vtable_size], NULL);
 			if (bitmap != default_bitmap)
 				g_free (bitmap);
@@ -4495,12 +4497,18 @@ mono_object_new (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoVTable *vtable;
+	MonoObject *ret;
 
 	vtable = mono_class_vtable (domain, klass);
 	if (!vtable)
 		return NULL;
-	return mono_object_new_specific (vtable);
+
+	ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 /**
@@ -4514,6 +4522,8 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
+	MonoObject *ret;
 	MonoVTable *vtable;
 
 	vtable = mono_class_vtable (domain, klass);
@@ -4521,10 +4531,13 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 		return NULL;
 
 #ifdef HAVE_SGEN_GC
-	return (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
+	ret = (MonoObject*) mono_gc_alloc_pinned_obj_checked (vtable, mono_class_instance_size (klass), &error);
 #else
-	return mono_object_new_specific (vtable);
+	ret = mono_object_new_specific_checked (vtable, &error);
 #endif
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 /**
@@ -4537,9 +4550,21 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 MonoObject *
 mono_object_new_specific (MonoVTable *vtable)
 {
+	MonoError error;
+	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject *
+mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *o;
+
+	mono_error_init (error);
 
 	/* check for is_com_object for COM Interop */
 	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
@@ -4554,8 +4579,10 @@ mono_object_new_specific (MonoVTable *vtable)
 				mono_class_init (klass);
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
-			if (!im)
-				mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
+			if (!im) {
+				mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+				return NULL;
+			}
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 	
@@ -4569,11 +4596,23 @@ mono_object_new_specific (MonoVTable *vtable)
 }
 
 MonoObject *
+ves_icall_object_new_specific (MonoVTable *vtable)
+{
+	MonoError error;
+	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject *
 mono_object_new_alloc_specific (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o = (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *o = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
 
 	if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
@@ -4586,7 +4625,11 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *ret = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 /**
@@ -4606,7 +4649,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 	*pass_size_in_words = FALSE;
 
 	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
-		return mono_object_new_specific;
+		return ves_icall_object_new_specific;
 
 	if (vtable->gc_descr != MONO_GC_DESCRIPTOR_NULL) {
 
@@ -4626,7 +4669,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 		*/
 	}
 
-	return mono_object_new_specific;
+	return ves_icall_object_new_specific;
 }
 
 /**
@@ -4663,13 +4706,15 @@ mono_object_clone (MonoObject *obj)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *o;
 	int size = obj->vtable->klass->instance_size;
 
 	if (obj->vtable->klass->rank)
 		return (MonoObject*)mono_array_clone ((MonoArray*)obj);
 
-	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
+	o = (MonoObject *)mono_gc_alloc_obj_checked (obj->vtable, size, &error);
+	mono_error_raise_exception (&error);
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	mono_gc_wbarrier_object_copy (o, obj);
@@ -4843,6 +4888,7 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	uintptr_t byte_len = 0, len, bounds_size;
 	MonoObject *o;
 	MonoArray *array;
@@ -4891,9 +4937,12 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 	 */
 	vtable = mono_class_vtable_full (domain, array_class, TRUE);
 	if (bounds_size)
-		o = (MonoObject *)mono_gc_alloc_array (vtable, byte_len, len, bounds_size);
+		o = (MonoObject*) mono_gc_alloc_array_checked (vtable, byte_len, len, bounds_size, &error);
 	else
-		o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, len);
+		o = (MonoObject*) mono_gc_alloc_vector_checked (vtable, byte_len, len, &error);
+
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	array = (MonoArray*)o;
 
 	bounds = array->bounds;
@@ -4943,6 +4992,7 @@ mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *o;
 	MonoArray *ao;
 	uintptr_t byte_len;
@@ -4956,7 +5006,8 @@ mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 		return NULL;
 	}
-	o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, n);
+	o = (MonoObject*) mono_gc_alloc_vector_checked (vtable, byte_len, n, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	ao = (MonoArray*)o;
 
 	return ao;
@@ -5031,6 +5082,7 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoString *s;
 	MonoVTable *vtable;
 	size_t size;
@@ -5045,7 +5097,8 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 	vtable = mono_class_vtable (domain, mono_defaults.string_class);
 	g_assert (vtable);
 
-	s = (MonoString *)mono_gc_alloc_string (vtable, size, len);
+	s = (MonoString*) mono_gc_alloc_string_checked (vtable, size, len, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return s;
 }
@@ -5447,10 +5500,12 @@ mono_string_get_pinned (MonoString *str)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	int size;
 	MonoString *news;
 	size = sizeof (MonoString) + 2 * (mono_string_length (str) + 1);
-	news = (MonoString *)mono_gc_alloc_pinned_obj (((MonoObject*)str)->vtable, size);
+	news = (MonoString*) mono_gc_alloc_pinned_obj_checked (((MonoObject*)str)->vtable, size, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	if (news) {
 		memcpy (mono_string_chars (news), mono_string_chars (str), mono_string_length (str) * 2);
 		news->length = mono_string_length (str);

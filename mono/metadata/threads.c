@@ -570,8 +570,12 @@ set_current_thread_for_domain (MonoDomain *domain, MonoInternalThread *thread, M
 static MonoThread*
 create_thread_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoVTable *vt = mono_class_vtable (domain, mono_defaults.thread_class);
-	return (MonoThread*)mono_gc_alloc_mature (vt);
+	MonoThread *ret = (MonoThread*) mono_gc_alloc_mature_checked (vt, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 static MonoThread*
@@ -585,11 +589,13 @@ new_thread_with_internal (MonoDomain *domain, MonoInternalThread *internal)
 static MonoInternalThread*
 create_internal_thread (void)
 {
+	MonoError error;
 	MonoInternalThread *thread;
 	MonoVTable *vt;
 
 	vt = mono_class_vtable (mono_get_root_domain (), mono_defaults.internal_thread_class);
-	thread = (MonoInternalThread*)mono_gc_alloc_mature (vt);
+	thread = (MonoInternalThread*) mono_gc_alloc_mature_checked (vt, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
 	mono_coop_mutex_init_recursive (thread->synch_cs);
@@ -3815,6 +3821,7 @@ mark_ctx_slots (void *addr, MonoGCMarkFunc mark_func, void *gc_data)
 static void 
 mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean threadlocal)
 {
+	MonoError error;
 	guint idx = ACCESS_SPECIAL_STATIC_OFFSET (offset, index);
 	int i;
 
@@ -3831,9 +3838,11 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 				ctx_desc = mono_gc_make_root_descr_user (mark_ctx_slots);
 		}
 
-		static_data = (void **)mono_gc_alloc_fixed (static_data_size [0], threadlocal ? tls_desc : ctx_desc,
+		static_data = (void**) mono_gc_alloc_fixed_checked (static_data_size [0], threadlocal ? tls_desc : ctx_desc,
 			threadlocal ? MONO_ROOT_SOURCE_THREAD_STATIC : MONO_ROOT_SOURCE_CONTEXT_STATIC,
-			threadlocal ? "managed thread-static variables" : "managed context-static variables");
+			threadlocal ? "managed thread-static variables" : "managed context-static variables",
+			&error);
+		mono_error_raise_exception (&error);
 		*static_data_ptr = static_data;
 		static_data [0] = static_data;
 	}
@@ -3844,10 +3853,13 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 
 		if (mono_gc_user_markers_supported ())
 			static_data [i] = g_malloc0 (static_data_size [i]);
-		else
-			static_data [i] = mono_gc_alloc_fixed (static_data_size [i], MONO_GC_DESCRIPTOR_NULL,
+		else {
+			static_data [i] = mono_gc_alloc_fixed_checked (static_data_size [i], MONO_GC_DESCRIPTOR_NULL,
 				threadlocal ? MONO_ROOT_SOURCE_THREAD_STATIC : MONO_ROOT_SOURCE_CONTEXT_STATIC,
-				threadlocal ? "managed thread-static variables" : "managed context-static variables");
+				threadlocal ? "managed thread-static variables" : "managed context-static variables",
+				&error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+		}
 	}
 }
 

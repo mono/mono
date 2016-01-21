@@ -176,8 +176,9 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, void *descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
+	mono_error_init (error);
 	return g_malloc0 (size);
 }
 
@@ -188,20 +189,26 @@ mono_gc_free_fixed (void* addr)
 }
 
 void *
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = calloc (1, size);
+	MonoObject *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->vtable = vtable;
 
 	return obj;
 }
 
 void *
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
-	MonoArray *obj = calloc (1, size);
+	MonoArray *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
 
@@ -209,10 +216,13 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 }
 
 void *
-mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
 {
-	MonoArray *obj = calloc (1, size);
+	MonoArray *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
 
@@ -223,10 +233,13 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 }
 
 void *
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
-	MonoString *obj = calloc (1, size);
+	MonoString *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->object.vtable = vtable;
 	obj->length = len;
 	obj->chars [len] = 0;

@@ -31,6 +31,8 @@
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-internals.h>
 
 #if HAVE_BOEHM_GC
 
@@ -60,6 +62,12 @@ register_test_toggleref_callback (void);
 
 #define BOEHM_GC_BIT_FINALIZER_AWARE 1
 static MonoGCFinalizerCallbacks fin_callbacks;
+
+#ifdef HAVE_KW_THREAD
+static __thread MonoError *oom_error;
+#else
+static MonoNativeTlsKey oom_error;
+#endif
 
 /* GC Handles */
 
@@ -95,6 +103,27 @@ mono_gc_warning (char *msg, GC_word arg)
 	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, msg, (unsigned long)arg);
 }
 
+static gpointer
+oom_cb (gsize size)
+{
+	MonoError *error;
+
+#ifdef HAVE_KW_THREAD
+	error = oom_error;
+#else
+	error = mono_native_tls_get_value (oom_error);
+#endif
+
+	if (error) {
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
+	}
+
+	mono_gc_out_of_memory (size);
+
+	return NULL;
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -106,6 +135,10 @@ mono_gc_base_init (void)
 		return;
 
 	mono_counters_init ();
+
+#ifndef HAVE_KW_THREAD
+	mono_native_tls_alloc (&oom_error, NULL);
+#endif
 
 	/*
 	 * Handle the case when we are called from a thread different from the main thread,
@@ -190,7 +223,7 @@ mono_gc_base_init (void)
 
 	GC_init ();
 
-	GC_oom_fn = mono_gc_out_of_memory;
+	GC_oom_fn = oom_cb;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
 	GC_finalizer_notifier = mono_gc_finalize_notify;
@@ -382,6 +415,12 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 {
 	struct GC_stack_base sb;
 	int res;
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
 
 	/* TODO: use GC_get_stack_base instead of baseptr. */
 	sb.mem_base = baseptr;
@@ -600,8 +639,18 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, void *descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
+	MonoObject *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
 	/* To help track down typed allocation bugs */
 	/*
 	static int count;
@@ -613,9 +662,17 @@ mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const ch
 	*/
 
 	if (descr)
-		return GC_MALLOC_EXPLICITLY_TYPED (size, (GC_descr)descr);
+		obj = GC_MALLOC_EXPLICITLY_TYPED (size, (GC_descr)descr);
 	else
-		return GC_MALLOC (size);
+		obj = GC_MALLOC (size);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return obj;
 }
 
 void
@@ -624,9 +681,17 @@ mono_gc_free_fixed (void* addr)
 }
 
 void *
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
 	MonoObject *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
 
 	if (!vtable->klass->has_references) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
@@ -643,16 +708,30 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 		obj->vtable = vtable;
 	}
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
 }
 
 void *
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
 	MonoArray *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
 
 	if (!vtable->klass->has_references) {
 		obj = (MonoArray *)GC_MALLOC_ATOMIC (size);
@@ -671,16 +750,30 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	obj->max_length = max_length;
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&obj->obj);
 
 	return obj;
 }
 
 void *
-mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
 {
 	MonoArray *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
 
 	if (!vtable->klass->has_references) {
 		obj = (MonoArray *)GC_MALLOC_ATOMIC (size);
@@ -702,23 +795,44 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	if (bounds_size)
 		obj->bounds = (MonoArrayBounds *) ((char *) obj + size - bounds_size);
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&obj->obj);
 
 	return obj;
 }
 
 void *
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
-	MonoString *obj = (MonoString *)GC_MALLOC_ATOMIC (size);
+	MonoString *obj;
 
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	obj = (MonoString *)GC_MALLOC_ATOMIC (size);
 	obj->object.vtable = vtable;
 	obj->object.synchronisation = NULL;
 	obj->length = len;
 	obj->chars [len] = 0;
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&obj->object);
 
 	return obj;
@@ -1040,7 +1154,7 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 		mono_mb_emit_icall (mb, mono_string_alloc);
 	} else {
 		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_icall (mb, mono_object_new_specific);
+		mono_mb_emit_icall (mb, ves_icall_object_new_specific);
 	}
 
 	mono_mb_emit_byte (mb, MONO_CEE_RET);
@@ -1522,12 +1636,15 @@ find_first_unset (guint32 bitmap)
 static void
 handle_data_alloc_entries (HandleData *handles)
 {
+	MonoError error;
+
 	handles->size = 32;
 	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
 		handles->entries = (void **)g_malloc0 (sizeof (*handles->entries) * handles->size);
 		handles->domain_ids = (guint16 *)g_malloc0 (sizeof (*handles->domain_ids) * handles->size);
 	} else {
-		handles->entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		handles->entries = (void**) mono_gc_alloc_fixed_checked (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	}
 	handles->bitmap = (guint32 *)g_malloc0 (handles->size / CHAR_BIT);
 }
@@ -1562,6 +1679,7 @@ handle_data_first_unset (HandleData *handles)
 static void
 handle_data_grow (HandleData *handles, gboolean track)
 {
+	MonoError error;
 	guint32 *new_bitmap;
 	guint32 new_size = handles->size * 2; /* always double: we memset to 0 based on this below */
 
@@ -1594,7 +1712,8 @@ handle_data_grow (HandleData *handles, gboolean track)
 		handles->domain_ids = domain_ids;
 	} else {
 		gpointer *entries;
-		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		entries = (void**) mono_gc_alloc_fixed_checked (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
 		mono_gc_free_fixed (handles->entries);
 		handles->entries = entries;

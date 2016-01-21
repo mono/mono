@@ -37,6 +37,8 @@
 #include "metadata/handle.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
+#include "utils/mono-error.h"
+#include "utils/mono-error-internals.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -932,46 +934,52 @@ mono_gc_enable_alloc_events (void)
 }
 
 void*
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj (vtable, size);
+	MonoObject *obj = sgen_alloc_obj (vtable, size, error);
 
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
 }
 
 void*
-mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
+	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size, error);
 
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
 }
 
 void*
-mono_gc_alloc_mature (MonoVTable *vtable)
+mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size);
+	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size, error);
 
-	if (obj && G_UNLIKELY (obj->vtable->klass->has_finalize))
-		mono_object_register_finalizer (obj);
+	if (mono_error_ok (error)) {
+		if (obj && G_UNLIKELY (obj->vtable->klass->has_finalize))
+			mono_object_register_finalizer (obj);
 
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (obj);
+		if (G_UNLIKELY (alloc_events))
+			mono_profiler_allocation (obj);
+	}
 
 	return obj;
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
 	/* FIXME: do a single allocation */
-	void *res = calloc (1, size);
+	void *res;
+
+	mono_error_init (error);
+
+	res = calloc (1, size);
 	if (!res)
 		return NULL;
 	if (!mono_gc_register_root ((char *)res, size, descr, source, msg)) {
@@ -1063,9 +1071,9 @@ create_allocator (int atype, gboolean slowpath)
 	int num_params, i;
 
 	if (!registered) {
-		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_obj, "ves_icall_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_vector, "ves_icall_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_string, "ves_icall_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
 		registered = TRUE;
 	}
 
@@ -1105,7 +1113,7 @@ create_allocator (int atype, gboolean slowpath)
 		case ATYPE_NORMAL:
 		case ATYPE_SMALL:
 			mono_mb_emit_ldarg (mb, 0);
-			mono_mb_emit_icall (mb, mono_object_new_specific);
+			mono_mb_emit_icall (mb, ves_icall_object_new_specific);
 			break;
 		case ATYPE_VECTOR:
 			mono_mb_emit_ldarg (mb, 0);
@@ -1305,17 +1313,17 @@ create_allocator (int atype, gboolean slowpath)
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 
-	/* FIXME: mono_gc_alloc_obj takes a 'size_t' as an argument, not an int32 */
+	/* FIXME: ves_icall_gc_alloc_obj takes a 'size_t' as an argument, not an int32 */
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldloc (mb, size_var);
 	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
-		mono_mb_emit_icall (mb, mono_gc_alloc_obj);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_obj);
 	} else if (atype == ATYPE_VECTOR) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_vector);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_vector);
 	} else if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_string);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_string);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -1408,7 +1416,7 @@ mono_gc_get_aligned_size_for_allocator (int size)
 }
 
 /*
- * Generate an allocator method implementing the fast path of mono_gc_alloc_obj ().
+ * Generate an allocator method implementing the fast path of mono_gc_alloc_obj_checked ().
  * The signature of the called method is:
  * 	object allocate (MonoVTable *vtable)
  */
@@ -1711,10 +1719,12 @@ LOOP_HEAD:
  */
 
 void*
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
 	MonoArray *arr;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1736,7 +1746,8 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	arr->max_length = (mono_array_size_t)max_length;
@@ -1744,7 +1755,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	UNLOCK_GC;
 
  done:
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&arr->obj);
 
 	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*)arr)), "Vector has incorrect size.");
@@ -1752,11 +1763,13 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 }
 
 void*
-mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
 {
 	MonoArray *arr;
 	MonoArrayBounds *bounds;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1781,7 +1794,8 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	arr->max_length = (mono_array_size_t)max_length;
@@ -1800,10 +1814,12 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 }
 
 void*
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
 	MonoString *str;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1825,7 +1841,8 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	str = (MonoString*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!str)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	str->length = len;
@@ -2707,12 +2724,6 @@ void
 mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
 {
 	// FIXME:
-}
-
-void
-sgen_client_out_of_memory (size_t size)
-{
-	mono_gc_out_of_memory (size);
 }
 
 guint8*
