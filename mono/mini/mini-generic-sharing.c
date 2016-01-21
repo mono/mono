@@ -841,11 +841,12 @@ class_get_rgctx_template_oti (MonoClass *klass, int type_argc, guint32 slot, gbo
 static gpointer
 class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_type)
 {
+	MonoError error;
+
 	switch (info_type) {
 	case MONO_RGCTX_INFO_STATIC_DATA: {
-		MonoVTable *vtable = mono_class_vtable (domain, klass);
-		if (!vtable)
-			mono_raise_exception (mono_class_get_exception_for_failure (klass));
+		MonoVTable *vtable = mono_class_vtable_checked (domain, klass, &error);
+		mono_error_raise_exception (&error); /* FIXME: don't raise here */
 		return mono_vtable_get_static_field_data (vtable);
 	}
 	case MONO_RGCTX_INFO_KLASS:
@@ -853,9 +854,8 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 	case MONO_RGCTX_INFO_ELEMENT_KLASS:
 		return klass->element_class;
 	case MONO_RGCTX_INFO_VTABLE: {
-		MonoVTable *vtable = mono_class_vtable (domain, klass);
-		if (!vtable)
-			mono_raise_exception (mono_class_get_exception_for_failure (klass));
+		MonoVTable *vtable = mono_class_vtable_checked (domain, klass, &error);
+		mono_error_raise_exception (&error); /* FIXME: don't raise here */
 		return vtable;
 	}
 	case MONO_RGCTX_INFO_CAST_CACHE: {
@@ -1635,15 +1635,15 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 			return GUINT_TO_POINTER (field->offset + 1);
 	}
 	case MONO_RGCTX_INFO_METHOD_RGCTX: {
+		MonoError error;
 		MonoMethodInflated *method = (MonoMethodInflated *)data;
 		MonoVTable *vtable;
 
 		g_assert (method->method.method.is_inflated);
 		g_assert (method->context.method_inst);
 
-		vtable = mono_class_vtable (domain, method->method.method.klass);
-		if (!vtable)
-			mono_raise_exception (mono_class_get_exception_for_failure (method->method.method.klass));
+		vtable = mono_class_vtable_checked (domain, method->method.method.klass, &error);
+		mono_error_raise_exception (&error);
 
 		return mono_method_lookup_rgctx (vtable, method->context.method_inst);
 	}
@@ -3107,10 +3107,14 @@ mini_type_is_reference (MonoType *type)
 gpointer
 mini_method_get_rgctx (MonoMethod *m)
 {
+	MonoError error;
+	MonoVTable *vtable = mono_class_vtable_checked (mono_domain_get (), m->klass, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
+
 	if (mini_method_get_context (m)->method_inst)
-		return mono_method_lookup_rgctx (mono_class_vtable (mono_domain_get (), m->klass), mini_method_get_context (m)->method_inst);
+		return mono_method_lookup_rgctx (vtable, mini_method_get_context (m)->method_inst);
 	else
-		return mono_class_vtable (mono_domain_get (), m->klass);
+		return vtable;
 }
 
 /*

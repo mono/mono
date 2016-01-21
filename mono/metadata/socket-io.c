@@ -593,6 +593,7 @@ get_family_hint (void)
 	MonoDomain *domain = mono_domain_get ();
 
 	if (!domain->inet_family_hint) {
+		MonoError error;
 		MonoImage *socket_assembly;
 		MonoClass *socket_class;
 		MonoClassField *ipv6_field, *ipv4_field;
@@ -611,10 +612,11 @@ get_family_hint (void)
 		ipv6_field = mono_class_get_field_from_name (socket_class, "ipv6_supported");
 		g_assert (ipv6_field);
 
-		vtable = mono_class_vtable (mono_domain_get (), socket_class);
-		g_assert (vtable);
+		vtable = mono_class_vtable_checked (mono_domain_get (), socket_class, &error);
+		g_assert (mono_error_ok (&error));
 
-		mono_runtime_class_init (vtable);
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 		mono_field_static_get_value (vtable, ipv4_field, &ipv4_enabled);
 		mono_field_static_get_value (vtable, ipv6_field, &ipv6_enabled);

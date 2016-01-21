@@ -4172,6 +4172,7 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 gpointer
 mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, int opt, MonoException **jit_ex)
 {
+	MonoError error;
 	MonoCompile *cfg;
 	gpointer code = NULL;
 	MonoJitInfo *jinfo, *info;
@@ -4463,9 +4464,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 #endif
 	mono_domain_unlock (target_domain);
 
-	vtable = mono_class_vtable (target_domain, method->klass);
-	if (!vtable) {
-		ex = mono_class_get_exception_for_failure (method->klass);
+	vtable = mono_class_vtable_checked (target_domain, method->klass, &error);
+	if (!mono_error_ok (&error)) {
+		ex = mono_error_convert_to_exception (&error);
 		g_assert (ex);
 		*jit_ex = ex;
 		return NULL;
@@ -4485,9 +4486,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		}
 	}
 
-	ex = mono_runtime_class_init_full (vtable, FALSE);
-	if (ex) {
-		*jit_ex = ex;
+	mono_runtime_class_init_checked (vtable, &error);
+	if (!mono_error_ok (&error)) {
+		*jit_ex = mono_error_convert_to_exception (&error);
 		return NULL;
 	}
 	return code;
