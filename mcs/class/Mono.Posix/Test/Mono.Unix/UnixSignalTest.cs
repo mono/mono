@@ -424,6 +424,10 @@ namespace MonoTests.Mono.Unix {
 			foreach (Thread t in threads)
 				t.Join ();
 			AssertCountSet (usignals);
+			// signal delivery might take some time, wait a bit before closing
+			// the UnixSignal so we can ignore it and not terminate the process
+			// when a SIGHUP/SIGTERM arrives afterwards
+			Thread.Sleep (1000);
 			CloseSignals (usignals);
 		}
 
