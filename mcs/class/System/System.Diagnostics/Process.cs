@@ -1490,11 +1490,8 @@ namespace System.Diagnostics {
 			// dispose all managed resources.
 			if (disposing) {
 #if MONO_FEATURE_PROCESS_START
-				/* These have open FileStreams on the pipes we are about to close */
-				if (async_output != null)
-					async_output.Close ();
-				if (async_error != null)
-					async_error.Close ();
+				async_output = null;
+				async_error = null;
 
 				if (input_stream != null) {
 					if (!input_stream_exposed)
