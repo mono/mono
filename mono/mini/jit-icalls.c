@@ -1222,7 +1222,9 @@ mono_get_native_calli_wrapper (MonoImage *image, MonoMethodSignature *sig, gpoin
 static MonoMethod*
 constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gpointer *this_arg)
 {
+	MonoError error;
 	MonoMethod *m;
+	MonoObject *box;
 	int vt_slot, iface_offset;
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
@@ -1253,12 +1255,15 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 			m = mono_class_inflate_generic_method (m, mono_method_get_context (cmethod));
 	}
 
-	if (klass->valuetype && (m->klass == mono_defaults.object_class || m->klass == mono_defaults.enum_class->parent || m->klass == mono_defaults.enum_class))
+	if (klass->valuetype && (m->klass == mono_defaults.object_class || m->klass == mono_defaults.enum_class->parent || m->klass == mono_defaults.enum_class)) {
 		/*
 		 * Calling a non-vtype method with a vtype receiver, has to box.
 		 */
-		*this_arg = mono_value_box (mono_domain_get (), klass, mp);
-	else if (klass->valuetype)
+		box = mono_value_box_checked (mono_domain_get (), klass, mp, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+		*this_arg = box;
+	} else if (klass->valuetype)
 		/*
 		 * Calling a vtype method with a vtype receiver
 		 */

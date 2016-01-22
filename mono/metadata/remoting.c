@@ -1970,6 +1970,7 @@ mono_get_xdomain_marshal_type (MonoType *t)
 MonoObject *
 mono_marshal_xdomain_copy_value (MonoObject *val)
 {
+	MonoError error;
 	MonoDomain *domain;
 	if (val == NULL) return NULL;
 
@@ -1991,7 +1992,10 @@ mono_marshal_xdomain_copy_value (MonoObject *val)
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8: {
-		return mono_value_box (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject));
+		MonoObject *box = mono_value_box_checked (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject), &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+		return box;
 	}
 	case MONO_TYPE_STRING: {
 		MonoString *str = (MonoString *) val;

@@ -8779,8 +8779,16 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 			return;
 		}
 
-		obj = (MonoObject *)(type_is_reference (mono_method_signature (method)->params [i]) ?
-			val : mono_value_box (domain, mono_class_from_mono_type (mono_method_signature (method)->params [i]), val));
+		if (type_is_reference (mono_method_signature (method)->params [i])) {
+			obj = (MonoObject*) val;
+		} else {
+			obj = mono_value_box_checked (domain, mono_class_from_mono_type (mono_method_signature (method)->params [i]), val, error);
+			if (!mono_error_ok (error)) {
+				g_free (val);
+				return;
+			}
+		}
+
 		mono_array_setref (typedargs, i, obj);
 
 		if (!type_is_reference (mono_method_signature (method)->params [i]))
@@ -8845,8 +8853,19 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 				return;
 			}
 
-			obj = (MonoObject *)(type_is_reference (field->type) ? val : mono_value_box (domain, mono_class_from_mono_type (field->type), val));
+			if (type_is_reference (field->type)) {
+				obj = (MonoObject*) val;
+			} else {
+				obj = mono_value_box_checked (domain, mono_class_from_mono_type (field->type), val, error);
+				if (!mono_error_ok (error)) {
+					g_free (val);
+					g_free (name);
+					return;
+				}
+			}
+
 			mono_array_setref (namedargs, j, obj);
+
 			if (!type_is_reference (field->type))
 				g_free (val);
 		} else if (named_type == 0x54) {
@@ -8874,8 +8893,19 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 				return;
 			}
 
-			obj = (MonoObject *)(type_is_reference (prop_type) ? val : mono_value_box (domain, mono_class_from_mono_type (prop_type), val));
+			if (type_is_reference (prop_type)) {
+				obj = (MonoObject*) val;
+			} else {
+				obj = mono_value_box_checked (domain, mono_class_from_mono_type (prop_type), val, error);
+				if (!mono_error_ok (error)) {
+					g_free (val);
+					g_free (name);
+					return;
+				}
+			}
+
 			mono_array_setref (namedargs, j, obj);
+
 			if (!type_is_reference (prop_type))
 				g_free (val);
 		}
