@@ -2846,7 +2846,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 }
 
 static MonoObject*
-dummy_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
+dummy_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
 {
 	g_error ("runtime invoke called on uninitialized runtime");
 	return NULL;
@@ -2893,6 +2893,7 @@ mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *result;
 
 	if (mono_runtime_get_no_exec ())
@@ -2901,7 +2902,8 @@ mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **
 	if (mono_profiler_get_events () & MONO_PROFILE_METHOD_EVENTS)
 		mono_profiler_method_start_invoke (method);
 
-	result = default_mono_runtime_invoke (method, obj, params, exc);
+	result = default_mono_runtime_invoke (method, obj, params, exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	if (mono_profiler_get_events () & MONO_PROFILE_METHOD_EVENTS)
 		mono_profiler_method_end_invoke (method);
@@ -3473,7 +3475,9 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	default_mono_runtime_invoke (prop->set, obj, params, exc);
+	MonoError error;
+	default_mono_runtime_invoke (prop->set, obj, params, exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 }
 
 /**
@@ -3498,7 +3502,11 @@ mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return default_mono_runtime_invoke (prop->get, obj, params, exc);
+	MonoError error;
+	MonoObject *val = default_mono_runtime_invoke (prop->get, obj, params, exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return val;
 }
 
 /*
