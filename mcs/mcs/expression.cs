@@ -12503,11 +12503,6 @@ namespace Mono.CSharp
 				str = start.Value;
 				arguments = new Arguments (1);
 			} else {
-				for (int i = 0; i < interpolations.Count; i += 2) {
-					var ipi = (InterpolatedStringInsert)interpolations [i];
-					ipi.Resolve (rc);
-				}
-	
 				arguments = new Arguments (interpolations.Count);
 
 				var sb = new StringBuilder (start.Value);
@@ -12528,7 +12523,7 @@ namespace Mono.CSharp
 						}
 
 						sb.Append ('}');
-						arguments.Add (new Argument (interpolations [i]));
+						arguments.Add (new Argument (isi.Resolve (rc)));
 					} else {
 						sb.Append (((StringLiteral)interpolations [i]).Value);
 					}
