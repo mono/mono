@@ -148,7 +148,7 @@ namespace Mono.Http
 				return null;
 
 			lock (cache) {
-				var ds = cache.GetOrCreateValue (request);
+				var ds = cache.GetValue (request, x => new NtlmSession ());
 				return ds.Authenticate (header, webRequest, credentials);
 			}
 		}
