@@ -22,7 +22,7 @@ if [ -n "$MONO_PATH" ]; then
 	export PATH
 fi
 
-(autoconf --version) < /dev/null > /dev/null 2>&1 || {
+(autoconf --version) < /dev/null > /dev/null || {
   echo
   echo "**Error**: You must have \`autoconf' installed to compile Mono."
   echo "Download the appropriate package for your distribution,"
@@ -30,10 +30,20 @@ fi
   DIE=1
 }
 
-if [ -z "$LIBTOOL" ]; then
-  LIBTOOL=`which glibtool 2>/dev/null` 
-  if [ ! -x "$LIBTOOL" ]; then
-    LIBTOOL=`which libtool`
+if [ "`uname`" == "OpenBSD" ]; then
+  # in openbsd libtool is in base (/usr/bin) 
+  #  but libtoolize is from the package (/usr/local/bin)
+  if pkg_info | grep "^libtool" > /dev/null; then
+    LIBTOOL=/usr/local/bin/libtool
+  else
+    echo "please install libtool port or package"
+  fi   
+else 
+  if [ -z "$LIBTOOL" ]; then
+    LIBTOOL=`which glibtool 2>/dev/null` 
+    if [ ! -x "$LIBTOOL" ]; then
+      LIBTOOL=`which libtool`
+    fi
   fi
 fi
 
@@ -58,7 +68,7 @@ grep "^AM_GNU_GETTEXT" $srcdir/configure.ac >/dev/null && {
   }
 }
 
-(automake --version) < /dev/null > /dev/null 2>&1 || {
+(automake --version) < /dev/null > /dev/null || {
   echo
   echo "**Error**: You must have \`automake' installed to compile Mono."
   echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.3.tar.gz"
@@ -150,13 +160,15 @@ autoconf || { echo "**Error**: autoconf failed."; exit 1; }
 
 if test -d $srcdir/libgc; then
   echo Running libgc/autogen.sh ...
-  (cd $srcdir/libgc ; NOCONFIGURE=1 ./autogen.sh "$@")
+  (cd $srcdir/libgc ; LIBTOOL=${LIBTOOL} NOCONFIGURE=1 ./autogen.sh "$@")
+  [ $? -eq 0 ] || exit $?
   echo Done running libgc/autogen.sh ...
 fi
 
 if test -d $srcdir/eglib; then
   echo Running eglib/autogen.sh ...
-  (cd $srcdir/eglib ; NOCONFIGURE=1 ./autogen.sh "$@")
+  (cd $srcdir/eglib ; LIBTOOL=${LIBTOOL} NOCONFIGURE=1 ./autogen.sh "$@")
+  [ $? -eq 0 ] || exit $?
   echo Done running eglib/autogen.sh ...
 fi
 
