@@ -2065,6 +2065,7 @@ mono_marshal_emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 static MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	MonoError error;
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
 	MonoMethod *method;
@@ -2099,7 +2100,9 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
+			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 			if (exc)
 				mono_raise_exception ((MonoException *) exc);
 			return ares;
@@ -2780,6 +2783,7 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 static MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoAsyncResult *ares;
 	MonoMethod *method = NULL;
@@ -2827,7 +2831,9 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		mono_message_init (domain, msg, delegate->method_info, NULL);
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
+
+		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	} else
 #endif
 	{
