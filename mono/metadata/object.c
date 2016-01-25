@@ -5637,23 +5637,33 @@ mono_object_isinst_mbyref_checked (MonoObject *obj, MonoClass *klass, MonoError 
 MonoObject *
 mono_object_castclass_mbyref (MonoObject *obj, MonoClass *klass)
 {
+	MonoError error;
+	MonoObject *ret = mono_object_castclass_mbyref_checked (obj, klass, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject *
+mono_object_castclass_mbyref_checked (MonoObject *obj, MonoClass *klass. MonoError *error);
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
 	gboolean isinst;
+
+	mono_error_init (error);
 
 	if (!obj)
 		return NULL;
 
-	isinst = mono_object_isinst_mbyref_checked (obj, klass, &error) != NULL;
-	mono_error_raise_exception (&error);
+	isinst = mono_object_isinst_mbyref_checked (obj, klass, error) != NULL;
+	if (!mono_error_ok (error))
+		return NULL;
 
 	if (isinst)
 		return obj;
-		
-	mono_raise_exception (mono_exception_from_name (mono_defaults.corlib,
-							"System",
-							"InvalidCastException"));
+
+	mono_error_set_generic_error (error, "System", "InvalidCastException", "");
 	return NULL;
 }
 
