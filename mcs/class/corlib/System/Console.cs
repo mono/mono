@@ -141,45 +141,29 @@ namespace System
 		{
 #if !NET_2_1
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
-				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding, true);
-				w.AutoFlush = true;
-				stdout = TextWriter.Synchronized (w);
-
-				w = new CStreamWriter (OpenStandardError (0), outputEncoding, true);
-				w.AutoFlush = true;
-				stderr = TextWriter.Synchronized (w);
-				
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
-			} else {
+				stdout = TextWriter.Synchronized (new CStreamWriter (OpenStandardOutput (0), outputEncoding, true) { AutoFlush = true });
+				stderr = TextWriter.Synchronized (new CStreamWriter (OpenStandardError (0), outputEncoding, true) { AutoFlush = true });
+			} else
 #endif
+			{
+				stdin = TextReader.Synchronized (new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding));
+
 #if MONOTOUCH
 				stdout = new NSLogWriter ();
-#else
-				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
-				((StreamWriter)stdout).AutoFlush = true;
-#endif
-				stdout = TextWriter.Synchronized (stdout);
-
-#if MONOTOUCH
 				stderr = new NSLogWriter ();
 #else
-				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
-				((StreamWriter)stderr).AutoFlush = true;
-#endif
-				stderr = TextWriter.Synchronized (stderr);
-
-				stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
-				stdin = TextReader.Synchronized (stdin);
-#if !NET_2_1
-			}
-#endif
+				stdout = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding) { AutoFlush = true });
+				stderr = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding) { AutoFlush = true });
 
 #if MONODROID
-			if (LogcatTextWriter.IsRunningOnAndroid ()) {
-				stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
-				stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
+				if (LogcatTextWriter.IsRunningOnAndroid ()) {
+					stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
+					stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
+				}
+#endif // MONODROID
+#endif // MONOTOUCH
 			}
-#endif  // MONODROID
 
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
