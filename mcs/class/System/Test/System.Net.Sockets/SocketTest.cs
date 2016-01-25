@@ -3495,6 +3495,14 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 		}
 
+#if MONOTOUCH
+		// when the linker is enabled then reflection won't work and would throw an NRE
+		// this is also always true for iOS - so we do not need to poke internals
+		static bool SupportsPortReuse ()
+		{
+			return true;
+		}
+#else
 		static bool? supportsPortReuse;
 		static bool SupportsPortReuse ()
 		{
@@ -3506,6 +3514,7 @@ namespace MonoTests.System.Net.Sockets
 					.Invoke (null, new object [] {});
 			return supportsPortReuse.Value;
 		}
+#endif
 
 		// Test case for bug #31557
 		[Test]
