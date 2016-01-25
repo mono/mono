@@ -1886,7 +1886,11 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArray **sockets, gint32
 
 static MonoObject* int_to_object (MonoDomain *domain, int val)
 {
-	return mono_value_box (domain, mono_get_int32_class (), &val);
+	MonoError error;
+	MonoObject *box = mono_value_box_checked (domain, mono_get_int32_class (), &val, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return box;
 }
 
 

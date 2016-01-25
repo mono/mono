@@ -5904,6 +5904,7 @@ decode_vtype (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 static ErrorCode
 decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
+	MonoError error;
 	ErrorCode err;
 
 	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t) &&
@@ -6026,6 +6027,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				gboolean is_enum;
 				MonoClass *klass;
 				MonoDomain *d;
+				MonoObject *box;
 				guint8 *vtype_buf;
 				int vtype_buf_size;
 
@@ -6053,7 +6055,14 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 					g_free (vtype_buf);
 					return err;
 				}
-				*(MonoObject**)addr = mono_value_box (d, klass, vtype_buf);
+
+				box = mono_value_box_checked (d, klass, vtype_buf, &error);
+				if (!mono_error_ok (&error)) {
+					g_free (vtype_buf);
+					mono_error_raise_exception (&error); /* FIXME don't raise here */
+				}
+
+				*(MonoObject**)addr = box;
 				g_free (vtype_buf);
 			} else {
 				char *name = mono_type_full_name (t);
@@ -6075,6 +6084,8 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 static ErrorCode
 decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
+	MonoError error;
+	MonoObject *box;
 	ErrorCode err;
 	int type = decode_byte (buf, &buf, limit);
 
@@ -6099,7 +6110,14 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 				g_free (nullable_buf);
 				return err;
 			}
-			mono_nullable_init (addr, mono_value_box (domain, mono_class_from_mono_type (targ), nullable_buf), mono_class_from_mono_type (t));
+
+			box = mono_value_box_checked (domain, mono_class_from_mono_type (targ), nullable_buf, &error);
+			if (!mono_error_ok (&error)) {
+				g_free (nullable_buf);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
+			}
+
+			mono_nullable_init (addr, box, mono_class_from_mono_type (t));
 			g_free (nullable_buf);
 			*endbuf = buf;
 			return ERR_NONE;

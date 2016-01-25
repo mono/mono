@@ -2321,8 +2321,10 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 static MonoObject*
 mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void *obj, void **params, MonoObject **exc)
 {
+	MonoError error;
 	MonoMethodSignature *sig = info->sig;
 	MonoDomain *domain = mono_domain_get ();
+	MonoObject *box;
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
 	gpointer *args;
 	gpointer retval_ptr;
@@ -2383,10 +2385,13 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 
 	runtime_invoke (NULL, args, exc, info->compiled_method);
 
-	if (sig->ret->type != MONO_TYPE_VOID && info->ret_box_class)
-		return mono_value_box (domain, info->ret_box_class, retval);
-	else
+	if (sig->ret->type == MONO_TYPE_VOID || !info->ret_box_class)
 		return *(MonoObject**)retval;
+
+	box = mono_value_box_checked (domain, info->ret_box_class, retval, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return box;
 }
 
 /**
@@ -2399,12 +2404,14 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 static MonoObject*
 mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
+	MonoError error;
 	MonoMethod *invoke, *callee;
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *domain_info;
 	RuntimeInvokeInfo *info, *info2;
 	MonoJitInfo *ji = NULL;
+	MonoObject *box;
 	gboolean callee_gsharedvt = FALSE;
 
 	if (obj == NULL && !(method->flags & METHOD_ATTRIBUTE_STATIC) && !method->string_ctor && (method->wrapper_type == 0)) {
@@ -2549,10 +2556,13 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 
 		mono_arch_finish_dyn_call (info->dyn_call_info, buf);
 
-		if (info->ret_box_class)
-			return mono_value_box (domain, info->ret_box_class, retval);
-		else
+		if (!info->ret_box_class)
 			return *(MonoObject**)retval;
+
+		box = mono_value_box_checked (domain, info->ret_box_class, retval, &error);
+		mono_error_raise_exception (&error);
+
+		return box;
 	}
 #endif
 
