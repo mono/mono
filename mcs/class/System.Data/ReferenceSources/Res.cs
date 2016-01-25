@@ -1198,7 +1198,36 @@ public const string Xml_TooManyIsDataSetAtributeInSchema = "Xml_TooManyIsDataSet
 public const string Xml_UndefinedDatatype = "Xml_UndefinedDatatype";
 public const string Xml_ValueOutOfRange = "Xml_ValueOutOfRange";
 public const string collectionChangedEventDescr = "collectionChangedEventDescr";
-
+public const string DbConnectionString_TransparentNetworkIPResolution = "DbConnectionString_TransparentNetworkIPResolution";
+public const string TCE_NullCspPathSysErr = "TCE_NullCspPathSysErr";
+public const string TCE_NullCspPath = "TCE_NullCspPath";
+public const string TCE_NullCngPathSysErr = "TCE_NullCngPathSysErr";
+public const string TCE_NullCngPath = "TCE_NullCngPath";
+public const string TCE_InvalidCspPathSysErr = "TCE_InvalidCspPathSysErr";
+public const string TCE_InvalidCspPath = "TCE_InvalidCspPath";
+public const string TCE_InvalidCngPathSysErr = "TCE_InvalidCngPathSysErr";
+public const string TCE_InvalidCngPath = "TCE_InvalidCngPath";
+public const string TCE_EmptyCspNameSysErr = "TCE_EmptyCspNameSysErr";
+public const string TCE_EmptyCspName = "TCE_EmptyCspName";
+public const string TCE_EmptyCngNameSysErr = "TCE_EmptyCngNameSysErr";
+public const string TCE_EmptyCngName = "TCE_EmptyCngName";
+public const string TCE_EmptyCspKeyIdSysErr = "TCE_EmptyCspKeyIdSysErr";
+public const string TCE_EmptyCspKeyId = "TCE_EmptyCspKeyId";
+public const string TCE_EmptyCngKeyIdSysErr = "TCE_EmptyCngKeyIdSysErr";
+public const string TCE_EmptyCngKeyId = "TCE_EmptyCngKeyId";
+public const string TCE_InvalidCspNameSysErr = "TCE_InvalidCspNameSysErr";
+public const string TCE_InvalidCspName = "TCE_InvalidCspName";
+public const string TCE_InvalidCspKeyIdSysErr = "TCE_InvalidCspKeyIdSysErr";
+public const string TCE_InvalidCspKeyId = "TCE_InvalidCspKeyId";
+public const string TCE_InvalidCngKeySysErr = "TCE_InvalidCngKeySysErr";
+public const string TCE_InvalidCngKey = "TCE_InvalidCngKey";
+public const string TCE_InvalidCiphertextLengthInEncryptedCEKCsp = "TCE_InvalidCiphertextLengthInEncryptedCEKCsp";
+public const string TCE_InvalidCiphertextLengthInEncryptedCEKCng = "TCE_InvalidCiphertextLengthInEncryptedCEKCng";
+public const string TCE_InvalidSignatureInEncryptedCEKCsp = "TCE_InvalidSignatureInEncryptedCEKCsp";
+public const string TCE_InvalidSignatureInEncryptedCEKCng = "TCE_InvalidSignatureInEncryptedCEKCng";
+public const string TCE_InvalidSignature = "TCE_InvalidSignature";
+public const string GT_Disabled = "GT_Disabled";
+public const string GT_UnsupportedSysTxVersion = "GT_UnsupportedSysTxVersion";
 
        public static string GetString (string name)
        {

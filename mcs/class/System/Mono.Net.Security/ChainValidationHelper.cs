@@ -85,37 +85,6 @@ namespace Mono.Net.Security
 		readonly MonoTlsStream tlsStream;
 		readonly HttpWebRequest request;
 
-		static bool is_macosx;
-		static bool is_mobile;
-#if !MOBILE
-		static X509RevocationMode revocation_mode;
-#endif
-
-		static ChainValidationHelper ()
-		{
-#if MONOTOUCH
-			is_macosx = true;
-			is_mobile = true;
-#elif MONODROID
-			is_macosx = false;
-			is_mobile = true;
-#else
-			is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
-			is_mobile = false;
-#endif
-
-#if !MOBILE
-			revocation_mode = X509RevocationMode.NoCheck;
-			try {
-				string str = Environment.GetEnvironmentVariable ("MONO_X509_REVOCATION_MODE");
-				if (String.IsNullOrEmpty (str))
-					return;
-				revocation_mode = (X509RevocationMode)Enum.Parse (typeof(X509RevocationMode), str, true);
-			} catch {
-			}
-#endif
-		}
-
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
 			if (settings == null)

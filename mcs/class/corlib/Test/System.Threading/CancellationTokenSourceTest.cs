@@ -65,9 +65,11 @@ namespace MonoTests.System.Threading
 		{
 			int called = 0;
 			var cts = new CancellationTokenSource ();
-			cts.Token.Register (() => called++);
+			var mre = new ManualResetEvent(false);
+			cts.Token.Register (() => { called++; mre.Set (); });
 			cts.CancelAfter (20);
-			Thread.Sleep (50);
+
+			Assert.IsTrue(mre.WaitOne (1000), "Should be cancelled in ~20ms");
 			Assert.AreEqual (1, called, "#1");
 		}
 

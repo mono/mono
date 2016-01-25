@@ -19,6 +19,7 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/method-builder.h>
 #include <mono/metadata/remoting.h>
+#include <mono/utils/mono-error.h>
 
 #define mono_marshal_find_bitfield_offset(type, elem, byte_offset, bitmask) \
 	do { \
@@ -115,7 +116,10 @@ typedef enum {
 	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER,
 	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
 	WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL,
-	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND
+	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND,
+	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG,
+	WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG,
 } WrapperSubtype;
 
 typedef struct {
@@ -139,7 +143,6 @@ typedef struct {
 	MonoMethod *method;
 	/* For WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL */
 	MonoMethodSignature *sig;
-	gboolean pass_rgctx;
 } RuntimeInvokeWrapperInfo;
 
 typedef struct {
@@ -183,6 +186,10 @@ typedef struct {
 	MonoMethod *method;
 } RemotingWrapperInfo;
 
+typedef struct {
+	MonoMethodSignature *sig;
+} GsharedvtWrapperInfo;
+
 /*
  * This structure contains additional information to uniquely identify a given wrapper
  * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
@@ -221,6 +228,8 @@ typedef struct {
 		UnboxWrapperInfo unbox;
 		/* MONO_WRAPPER_REMOTING_INVOKE/MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK/MONO_WRAPPER_XDOMAIN_INVOKE */
 		RemotingWrapperInfo remoting;
+		/* GSHAREDVT_IN_SIG/GSHAREDVT_OUT_SIG */
+		GsharedvtWrapperInfo gsharedvt;
 	} d;
 } WrapperInfo;
 
@@ -338,10 +347,13 @@ MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method);
 
 MonoMethod *
-mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual, gboolean pass_rgctx);
+mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual);
 
 MonoMethod*
 mono_marshal_get_runtime_invoke_dynamic (void);
+
+MonoMethod *
+mono_marshal_get_runtime_invoke_for_sig (MonoMethodSignature *sig);
 
 MonoMethodSignature*
 mono_marshal_get_string_ctor_signature (MonoMethod *method);
@@ -431,7 +443,7 @@ mono_marshal_unlock_internal (void);
 /* marshaling internal calls */
 
 void * 
-mono_marshal_alloc (gulong size);
+mono_marshal_alloc (gulong size, MonoError *error);
 
 void 
 mono_marshal_free (gpointer ptr);

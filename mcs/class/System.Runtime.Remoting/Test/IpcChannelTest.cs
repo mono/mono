@@ -28,6 +28,7 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=36634")]
 		public void Bug609381 ()
 		{
 			string portName = "ipc" + Guid.NewGuid ().ToString ("N");

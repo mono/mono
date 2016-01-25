@@ -103,7 +103,7 @@ is_ip_in_managed_allocator (MonoDomain *domain, gpointer ip)
 	 * missing methods (#13951). To work around this, we disable the AOT fallback. For this to work, the JIT needs
 	 * to register the jit info for all GC critical methods after they are JITted/loaded.
 	 */
-	ji = mono_jit_info_table_find_internal (domain, ip, FALSE, FALSE);
+	ji = mono_jit_info_table_find_internal (domain, (char *)ip, FALSE, FALSE);
 	if (!ji)
 		return FALSE;
 
@@ -224,7 +224,7 @@ sgen_client_stop_world (int generation)
 	update_current_thread_stack (&generation);
 
 	sgen_global_stop_count++;
-	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer)mono_native_thread_id_get ());
+	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer) (gsize) mono_native_thread_id_get ());
 	TV_GETTIME (stop_world_time);
 
 	if (mono_thread_info_unified_management_enabled ()) {
@@ -367,7 +367,7 @@ update_sgen_info (SgenThreadInfo *info)
 	char *stack_start;
 
 	/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-	info->client_info.stopped_domain = mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
+	info->client_info.stopped_domain = (MonoDomain *)mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
 	info->client_info.stopped_ip = (gpointer) MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx);
 	stack_start = (char*)MONO_CONTEXT_GET_SP (&mono_thread_info_get_suspend_state (info)->ctx) - REDZONE_SIZE;
 

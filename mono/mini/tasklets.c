@@ -8,8 +8,8 @@
 #if defined(MONO_SUPPORT_TASKLETS)
 
 static mono_mutex_t tasklets_mutex;
-#define tasklets_lock() mono_mutex_lock(&tasklets_mutex)
-#define tasklets_unlock() mono_mutex_unlock(&tasklets_mutex)
+#define tasklets_lock() mono_os_mutex_lock(&tasklets_mutex)
+#define tasklets_unlock() mono_os_mutex_unlock(&tasklets_mutex)
 
 /* LOCKING: tasklets_mutex is assumed to e taken */
 static void
@@ -47,7 +47,7 @@ continuation_mark_frame (MonoContinuation *cont)
 	if (cont->domain)
 		return mono_get_exception_argument ("cont", "Already marked");
 
-	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
 	lmf = mono_get_lmf();
 	cont->domain = mono_domain_get ();
 	cont->thread_id = mono_native_thread_id_get ();
@@ -136,7 +136,7 @@ continuation_restore (MonoContinuation *cont, int state)
 void
 mono_tasklets_init (void)
 {
-	mono_mutex_init_recursive (&tasklets_mutex);
+	mono_os_mutex_init_recursive (&tasklets_mutex);
 
 	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", continuation_alloc);
 	mono_add_internal_call ("Mono.Tasklets.Continuation::free", continuation_free);

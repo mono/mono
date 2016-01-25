@@ -130,19 +130,19 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 
 static GHashTable *mono_saved_signal_handlers = NULL;
 
-static gpointer
+static struct sigaction *
 get_saved_signal_handler (int signo)
 {
 	if (mono_saved_signal_handlers)
 		/* The hash is only modified during startup, so no need for locking */
-		return g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		return (struct sigaction *)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 	return NULL;
 }
 
 static void
 save_old_signal_handler (int signo, struct sigaction *old_action)
 {
-	struct sigaction *handler_to_save = g_malloc (sizeof (struct sigaction));
+	struct sigaction *handler_to_save = (struct sigaction *)g_malloc (sizeof (struct sigaction));
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG,
 				"Saving old signal handler for signal %d.", signo);
@@ -189,7 +189,7 @@ gboolean
 MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
 	int signal = MONO_SIG_HANDLER_GET_SIGNO ();
-	struct sigaction *saved_handler = get_saved_signal_handler (signal);
+	struct sigaction *saved_handler = (struct sigaction *)get_saved_signal_handler (signal);
 
 	if (saved_handler && saved_handler->sa_handler) {
 		if (!(saved_handler->sa_flags & SA_SIGINFO)) {
@@ -211,7 +211,7 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	if (mono_thread_internal_current ())
-		ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
+		ji = mono_jit_info_table_find_internal (mono_domain_get (), (char *)mono_arch_ip_from_context (ctx), TRUE, TRUE);
 	if (!ji) {
         if (mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
@@ -257,15 +257,15 @@ per_thread_profiler_hit (void *ctx)
 	MonoProfilerCallChainStrategy call_chain_strategy = mono_profiler_stat_get_call_chain_strategy ();
 
 	if (call_chain_depth == 0) {
-		mono_profiler_stat_hit (mono_arch_ip_from_context (ctx), ctx);
+		mono_profiler_stat_hit ((guchar *)mono_arch_ip_from_context (ctx), ctx);
 	} else {
-		MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
 		int current_frame_index = 1;
 		MonoContext mono_context;
 		guchar *ips [call_chain_depth + 1];
 
 		mono_sigctx_to_monoctx (ctx, &mono_context);
-		ips [0] = MONO_CONTEXT_GET_IP (&mono_context);
+		ips [0] = (guchar *)MONO_CONTEXT_GET_IP (&mono_context);
 		
 		if (jit_tls != NULL) {
 			if (call_chain_strategy == MONO_PROFILER_CALL_CHAIN_NATIVE) {
@@ -274,17 +274,17 @@ per_thread_profiler_hit (void *ctx)
 			guchar *stack_bottom;
 			guchar *stack_top;
 			
-			stack_bottom = jit_tls->end_of_stack;
-			stack_top = MONO_CONTEXT_GET_SP (&mono_context);
-			current_frame = MONO_CONTEXT_GET_BP (&mono_context);
+			stack_bottom = (guchar *)jit_tls->end_of_stack;
+			stack_top = (guchar *)MONO_CONTEXT_GET_SP (&mono_context);
+			current_frame = (guchar *)MONO_CONTEXT_GET_BP (&mono_context);
 			
 			while ((current_frame_index <= call_chain_depth) &&
 					(stack_bottom IS_BEFORE_ON_STACK (guchar*) current_frame) &&
 					((guchar*) current_frame IS_BEFORE_ON_STACK stack_top)) {
-				ips [current_frame_index] = CURRENT_FRAME_GET_RETURN_ADDRESS (current_frame);
+				ips [current_frame_index] = (guchar *)CURRENT_FRAME_GET_RETURN_ADDRESS (current_frame);
 				current_frame_index ++;
 				stack_top = current_frame;
-				current_frame = CURRENT_FRAME_GET_BASE_POINTER (current_frame);
+				current_frame = (guchar *)CURRENT_FRAME_GET_BASE_POINTER (current_frame);
 			}
 #else
 				call_chain_strategy = MONO_PROFILER_CALL_CHAIN_GLIBC;
@@ -310,7 +310,7 @@ per_thread_profiler_hit (void *ctx)
 					ji = mono_find_jit_info (domain, jit_tls, &res, NULL, &mono_context,
 							&new_mono_context, NULL, &lmf, &native_offset, NULL);
 					while ((ji != NULL) && (current_frame_index <= call_chain_depth)) {
-						ips [current_frame_index] = MONO_CONTEXT_GET_IP (&new_mono_context);
+						ips [current_frame_index] = (guchar *)MONO_CONTEXT_GET_IP (&new_mono_context);
 						current_frame_index ++;
 						mono_context = new_mono_context;
 						ji = mono_find_jit_info (domain, jit_tls, &res, NULL, &mono_context,
@@ -387,15 +387,15 @@ MONO_SIG_HANDLER_FUNC (static, sigusr2_signal_handler)
 }
 
 static void
-add_signal_handler (int signo, gpointer handler)
+add_signal_handler (int signo, gpointer handler, int flags)
 {
 	struct sigaction sa;
 	struct sigaction previous_sa;
 
 #ifdef MONO_ARCH_USE_SIGACTION
-	sa.sa_sigaction = handler;
+	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
 	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | flags;
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 
 /*Apple likes to deliver SIGBUS for *0 */
@@ -426,7 +426,7 @@ add_signal_handler (int signo, gpointer handler)
 #else
 	sa.sa_handler = handler;
 	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = 0;
+	sa.sa_flags = flags;
 #endif
 	g_assert (sigaction (signo, &sa, &previous_sa) != -1);
 
@@ -464,14 +464,14 @@ mono_runtime_posix_install_handlers (void)
 	sigset_t signal_set;
 
 	if (mini_get_debug_options ()->handle_sigint)
-		add_signal_handler (SIGINT, mono_sigint_signal_handler);
+		add_signal_handler (SIGINT, mono_sigint_signal_handler, SA_RESTART);
 
-	add_signal_handler (SIGFPE, mono_sigfpe_signal_handler);
-	add_signal_handler (SIGQUIT, sigquit_signal_handler);
-	add_signal_handler (SIGILL, mono_sigill_signal_handler);
-	add_signal_handler (SIGBUS, mono_sigsegv_signal_handler);
+	add_signal_handler (SIGFPE, mono_sigfpe_signal_handler, 0);
+	add_signal_handler (SIGQUIT, sigquit_signal_handler, SA_RESTART);
+	add_signal_handler (SIGILL, mono_sigill_signal_handler, 0);
+	add_signal_handler (SIGBUS, mono_sigsegv_signal_handler, 0);
 	if (mono_jit_trace_calls != NULL)
-		add_signal_handler (SIGUSR2, sigusr2_signal_handler);
+		add_signal_handler (SIGUSR2, sigusr2_signal_handler, SA_RESTART);
 
 	/* it seems to have become a common bug for some programs that run as parents
 	 * of many processes to block signal delivery for real time signals.
@@ -487,10 +487,10 @@ mono_runtime_posix_install_handlers (void)
 
 	signal (SIGPIPE, SIG_IGN);
 
-	add_signal_handler (SIGABRT, sigabrt_signal_handler);
+	add_signal_handler (SIGABRT, sigabrt_signal_handler, 0);
 
 	/* catch SIGSEGV */
-	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler);
+	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler, 0);
 }
 
 #ifndef PLATFORM_MACOSX
@@ -602,7 +602,7 @@ mono_runtime_setup_stat_profiler (void)
 			return;
 		}
 		profiling_signal_in_use = SIGPROF;
-		add_signal_handler (profiling_signal_in_use, sigprof_signal_handler);
+		add_signal_handler (profiling_signal_in_use, sigprof_signal_handler, SA_RESTART);
 		if (ioctl (rtc_fd, RTC_IRQP_SET, freq) == -1) {
 			perror ("set rtc freq");
 			return;
@@ -633,7 +633,7 @@ mono_runtime_setup_stat_profiler (void)
 		return;
 	inited = 1;
 	profiling_signal_in_use = get_itimer_signal ();
-	add_signal_handler (profiling_signal_in_use, sigprof_signal_handler);
+	add_signal_handler (profiling_signal_in_use, sigprof_signal_handler, SA_RESTART);
 	setitimer (get_itimer_mode (), &itval, NULL);
 #endif
 }
@@ -658,7 +658,7 @@ void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 	const char *argv [9];
-	char template [] = "/tmp/mono-lldb-commands.XXXXXX";
+	char template_ [] = "/tmp/mono-lldb-commands.XXXXXX";
 	char buf1 [128];
 	FILE *commands;
 	gboolean using_lldb = FALSE;
@@ -673,10 +673,10 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 		return;
 
 	if (using_lldb) {
-		if (mkstemp (template) == -1)
+		if (mkstemp (template_) == -1)
 			return;
 
-		commands = fopen (template, "w");
+		commands = fopen (template_, "w");
 
 		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
 		fprintf (commands, "thread list\n");
@@ -688,7 +688,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 		fclose (commands);
 
 		argv [1] = "--source";
-		argv [2] = template;
+		argv [2] = template_;
 		argv [3] = 0;
 	} else {
 		argv [1] = "-ex";
@@ -705,7 +705,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	execv (argv [0], (char**)argv);
 
 	if (using_lldb)
-		unlink (template);
+		unlink (template_);
 }
 #endif
 #endif /* __native_client__ */

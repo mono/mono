@@ -15,7 +15,6 @@
 
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/wapi-private.h>
-#include <mono/io-layer/misc-private.h>
 #include <mono/io-layer/messages.h>
 #include <mono/utils/bsearch.h>
 
@@ -1831,7 +1830,7 @@ find_msg (guint32 id, ErrorDesc *base, int n)
 	ErrorDesc d, *result;
 	d.id = id;
 	
-	result = mono_binary_search (&d, base, n, sizeof (ErrorDesc), msg_compare);
+	result = (ErrorDesc *)mono_binary_search (&d, base, n, sizeof (ErrorDesc), msg_compare);
 	if (result == NULL)
 		return NULL;
 	return result->txt;

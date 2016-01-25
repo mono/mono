@@ -277,6 +277,10 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void NegateDecimal ()
 		{
+			// Make sure the negate method is not linked away
+			decimal d1 = 1;
+			decimal d2 = -d1;
+
 			var d = Expression.Parameter (typeof (decimal), "l");
 
 			var meth = typeof (decimal).GetMethod ("op_UnaryNegation", new [] { typeof (decimal) });

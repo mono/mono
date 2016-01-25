@@ -23,7 +23,7 @@
 #include "mono/sgen/sgen-gc.h"
 #include "mono/sgen/sgen-thread-pool.h"
 #include "mono/sgen/sgen-pointer-queue.h"
-#include "mono/utils/mono-mutex.h"
+#include "mono/utils/mono-os-mutex.h"
 #ifndef SGEN_WITHOUT_MONO
 #include "mono/utils/mono-threads.h"
 #endif
@@ -55,7 +55,7 @@ static SgenThreadPoolJob*
 get_job_and_set_in_progress (void)
 {
 	for (size_t i = 0; i < job_queue.next_slot; ++i) {
-		SgenThreadPoolJob *job = job_queue.data [i];
+		SgenThreadPoolJob *job = (SgenThreadPoolJob *)job_queue.data [i];
 		if (job->state == STATE_WAITING) {
 			job->state = STATE_IN_PROGRESS;
 			return job;
@@ -101,7 +101,7 @@ thread_func (void *thread_data)
 {
 	thread_init_func (thread_data);
 
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 	for (;;) {
 		/*
 		 * It's important that we check the continue idle flag with the lock held.
@@ -118,16 +118,16 @@ thread_func (void *thread_data)
 			 * not being signalled, so we have to run this in a loop until we
 			 * really have work to do.
 			 */
-			mono_cond_wait (&work_cond, &lock);
+			mono_os_cond_wait (&work_cond, &lock);
 			continue;
 		}
 
-		mono_mutex_unlock (&lock);
+		mono_os_mutex_unlock (&lock);
 
 		if (job) {
 			job->func (thread_data, job);
 
-			mono_mutex_lock (&lock);
+			mono_os_mutex_lock (&lock);
 
 			SGEN_ASSERT (0, job->state == STATE_IN_PROGRESS, "The job should still be in progress.");
 			job->state = STATE_DONE;
@@ -136,7 +136,7 @@ thread_func (void *thread_data)
 			 * Only the main GC thread will ever wait on the done condition, so we don't
 			 * have to broadcast.
 			 */
-			mono_cond_signal (&done_cond);
+			mono_os_cond_signal (&done_cond);
 		} else if (do_idle) {
 			SGEN_ASSERT (0, idle_job_func, "Why do we have idle work when there's no idle job function?");
 			do {
@@ -144,16 +144,16 @@ thread_func (void *thread_data)
 				do_idle = continue_idle_job ();
 			} while (do_idle && !job_queue.next_slot);
 
-			mono_mutex_lock (&lock);
+			mono_os_mutex_lock (&lock);
 
 			if (!do_idle)
-				mono_cond_signal (&done_cond);
+				mono_os_cond_signal (&done_cond);
 		} else {
 			SGEN_ASSERT (0, threadpool_shutdown, "Why did we unlock if no jobs and not shutting down?");
-			mono_mutex_lock (&lock);
+			mono_os_mutex_lock (&lock);
 			thread_finished = TRUE;
-			mono_cond_signal (&done_cond);
-			mono_mutex_unlock (&lock);
+			mono_os_cond_signal (&done_cond);
+			mono_os_mutex_unlock (&lock);
 			return 0;
 		}
 	}
@@ -166,9 +166,9 @@ sgen_thread_pool_init (int num_threads, SgenThreadPoolThreadInitFunc init_func, 
 {
 	SGEN_ASSERT (0, num_threads == 1, "We only support 1 thread pool thread for now.");
 
-	mono_mutex_init (&lock);
-	mono_cond_init (&work_cond, 0);
-	mono_cond_init (&done_cond, 0);
+	mono_os_mutex_init (&lock);
+	mono_os_cond_init (&work_cond);
+	mono_os_cond_init (&done_cond);
 
 	thread_init_func = init_func;
 	idle_job_func = idle_func;
@@ -183,22 +183,22 @@ sgen_thread_pool_shutdown (void)
 	if (!thread)
 		return;
 
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 	threadpool_shutdown = TRUE;
-	mono_cond_signal (&work_cond);
+	mono_os_cond_signal (&work_cond);
 	while (!thread_finished)
-		mono_cond_wait (&done_cond, &lock);
-	mono_mutex_unlock (&lock);
+		mono_os_cond_wait (&done_cond, &lock);
+	mono_os_mutex_unlock (&lock);
 
-	mono_mutex_destroy (&lock);
-	mono_cond_destroy (&work_cond);
-	mono_cond_destroy (&done_cond);
+	mono_os_mutex_destroy (&lock);
+	mono_os_cond_destroy (&work_cond);
+	mono_os_cond_destroy (&done_cond);
 }
 
 SgenThreadPoolJob*
 sgen_thread_pool_job_alloc (const char *name, SgenThreadPoolJobFunc func, size_t size)
 {
-	SgenThreadPoolJob *job = sgen_alloc_internal_dynamic (size, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
+	SgenThreadPoolJob *job = (SgenThreadPoolJob *)sgen_alloc_internal_dynamic (size, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
 	job->name = name;
 	job->size = size;
 	job->state = STATE_WAITING;
@@ -215,16 +215,16 @@ sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 void
 sgen_thread_pool_job_enqueue (SgenThreadPoolJob *job)
 {
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 
 	sgen_pointer_queue_add (&job_queue, job);
 	/*
 	 * FIXME: We could check whether there is a job in progress.  If there is, there's
 	 * no need to signal the condition, at least as long as we have only one thread.
 	 */
-	mono_cond_signal (&work_cond);
+	mono_os_cond_signal (&work_cond);
 
-	mono_mutex_unlock (&lock);
+	mono_os_mutex_unlock (&lock);
 }
 
 void
@@ -232,12 +232,12 @@ sgen_thread_pool_job_wait (SgenThreadPoolJob *job)
 {
 	SGEN_ASSERT (0, job, "Where's the job?");
 
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 
 	while (find_job_in_queue (job) >= 0)
-		mono_cond_wait (&done_cond, &lock);
+		mono_os_cond_wait (&done_cond, &lock);
 
-	mono_mutex_unlock (&lock);
+	mono_os_mutex_unlock (&lock);
 }
 
 void
@@ -245,12 +245,12 @@ sgen_thread_pool_idle_signal (void)
 {
 	SGEN_ASSERT (0, idle_job_func, "Why are we signaling idle without an idle function?");
 
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 
 	if (continue_idle_job_func ())
-		mono_cond_signal (&work_cond);
+		mono_os_cond_signal (&work_cond);
 
-	mono_mutex_unlock (&lock);
+	mono_os_mutex_unlock (&lock);
 }
 
 void
@@ -258,23 +258,23 @@ sgen_thread_pool_idle_wait (void)
 {
 	SGEN_ASSERT (0, idle_job_func, "Why are we waiting for idle without an idle function?");
 
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 
 	while (continue_idle_job_func ())
-		mono_cond_wait (&done_cond, &lock);
+		mono_os_cond_wait (&done_cond, &lock);
 
-	mono_mutex_unlock (&lock);
+	mono_os_mutex_unlock (&lock);
 }
 
 void
 sgen_thread_pool_wait_for_all_jobs (void)
 {
-	mono_mutex_lock (&lock);
+	mono_os_mutex_lock (&lock);
 
 	while (!sgen_pointer_queue_is_empty (&job_queue))
-		mono_cond_wait (&done_cond, &lock);
+		mono_os_cond_wait (&done_cond, &lock);
 
-	mono_mutex_unlock (&lock);
+	mono_os_mutex_unlock (&lock);
 }
 
 gboolean

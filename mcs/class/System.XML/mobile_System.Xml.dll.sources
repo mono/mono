@@ -108,7 +108,6 @@ ReferenceSources/CodeDom.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/XsltOld/XsltCompileContext.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/XsltOld/XsltDebugger.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/XsltOld/XsltOutput.cs
-../../../external/referencesource/System.Xml/InternalApis/NDP_Common/inc/Win8Helpers.cs
 ../../../external/referencesource/System.Xml/misc/HResults.cs
 ../../../external/referencesource/System.Xml/misc/InvariantComparer.cs
 ../../../external/referencesource/System.Xml/misc/PrivilegedConfigurationManager.cs

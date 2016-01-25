@@ -12,12 +12,12 @@ libwapiincludedir = $(includedir)/mono-$(API_VER)/mono/io-layer
 
 OTHER_H = \
 	access.h	\
-	collection.h	\
 	context.h	\
 	error.h		\
 	events.h	\
 	handles.h	\
 	io.h		\
+	io-trace.h	\
 	io-layer.h	\
 	io-portability.h	\
 	macros.h	\
@@ -39,8 +39,6 @@ OTHER_H = \
 
 OTHER_SRC = \
 	access.h		\
-	collection.c		\
-	collection.h		\
 	context.c		\
 	context.h		\
 	error.c			\
@@ -61,8 +59,6 @@ OTHER_SRC = \
 	macros.h		\
 	messages.c		\
 	messages.h		\
-	misc.c			\
-	misc-private.h		\
 	mutexes.c		\
 	mutexes.h		\
 	mutex-private.h		\

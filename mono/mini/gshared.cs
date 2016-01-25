@@ -464,6 +464,21 @@ public class Tests
 		return 0;
 	}
 
+	class DelClass {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static T return_t<T> (T t) {
+			return t;
+		}
+	}
+
+	public static int test_0_gsharedvt_in_delegates_reflection () {
+		var m = typeof(DelClass).GetMethod ("return_t").MakeGenericMethod (new Type [] { typeof (int) });
+		Func<int, int> f = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int,int>), null, m, false);
+		if (f (42) != 42)
+			return 1;
+		return 0;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static T return2_t<T> (T t) {
 		return return_t (t);
@@ -1717,6 +1732,33 @@ public class Tests
 		if (res2.a != 1 || res2.b != 2)
 			return 2;
 		return 0;
+	}
+
+	public interface IFaceTest {
+		int iface_method ();
+	}
+
+	public interface IFaceConstrainedIFace {
+		int foo<T, T2> (ref T val) where T: IFaceTest;
+	}
+
+	class ConstrainedIFace : IFaceConstrainedIFace {
+		public int foo<T, T2> (ref T val) where T: IFaceTest {
+			return val.iface_method ();
+		}
+	}
+
+	class ClassTest : IFaceTest {
+		public int iface_method () {
+			return 42;
+		}
+	}
+
+	// Test constrained calls on an interface made from gsharedvt methods
+	public static int test_42_gsharedvt_constrained_iface () {
+		IFaceConstrainedIFace obj = new ConstrainedIFace ();
+		IFaceTest t = new ClassTest ();
+		return obj.foo<IFaceTest, int> (ref t);
 	}
 }
 

@@ -30,7 +30,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Interface;
-using Mono.Net.Security;
+using MNS = Mono.Net.Security;
 
 namespace Mono.Security.Providers.OldTls
 {
@@ -54,7 +54,11 @@ namespace Mono.Security.Providers.OldTls
 			get { return false; }
 		}
 
-		public override bool SupportsTlsContext {
+		public override bool SupportsConnectionInfo {
+			get { return false; }
+		}
+
+		internal override bool SupportsTlsContext {
 			get { return false; }
 		}
 
@@ -62,15 +66,15 @@ namespace Mono.Security.Providers.OldTls
 			get { return SslProtocols.Tls; }
 		}
 
-		public override MonoSslStream CreateSslStream (
+		public override IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			var impl = new LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
-			return new MonoSslStreamImpl (impl);
+			var impl = new MNS.Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
+			return new MNS.Private.MonoSslStreamImpl (impl);
 		}
 
-		public override IMonoTlsContext CreateTlsContext (
+		internal override IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,

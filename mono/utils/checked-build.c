@@ -7,6 +7,7 @@
  * (C) 2015 Xamarin
  */
 #include <config.h>
+
 #ifdef CHECKED_BUILD
 
 #include <mono/utils/checked-build.h>
@@ -16,15 +17,46 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/image-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/reflection-internals.h>
 #include <glib.h>
+
+#ifdef HAVE_BACKTRACE_SYMBOLS
+#include <execinfo.h>
+#endif
+
+typedef struct {
+	GPtrArray *transitions;
+	guint32 in_gc_critical_region;
+} CheckState;
+
+static MonoNativeTlsKey thread_status;
+
+void
+checked_build_init (void)
+{
+	mono_native_tls_alloc (&thread_status, NULL);
+}
+
+static CheckState*
+get_state (void)
+{
+	CheckState *state = mono_native_tls_get_value (thread_status);
+	if (!state) {
+		state = g_new0 (CheckState, 1);
+		state->transitions = g_ptr_array_new ();
+		mono_native_tls_set_value (thread_status, state);
+	}
+
+	return state;
+}
+
+#if !defined(DISABLE_CHECKED_BUILD_THREAD)
 
 #define MAX_NATIVE_BT 6
 #define MAX_NATIVE_BT_PROBE (MAX_NATIVE_BT + 5)
 #define MAX_TRANSITIONS 3
 
-
 #ifdef HAVE_BACKTRACE_SYMBOLS
-#include <execinfo.h>
 
 //XXX We should collect just the IPs and lazily symbolificate them.
 static int
@@ -77,37 +109,11 @@ translate_backtrace (gpointer native_trace[], int size)
 
 #endif
 
-
-typedef struct {
-	GPtrArray *transitions;
-} CheckState;
-
 typedef struct {
 	const char *name;
 	int from_state, next_state, suspend_count, suspend_count_delta, size;
 	gpointer backtrace [MAX_NATIVE_BT_PROBE];
 } ThreadTransition;
-
-static MonoNativeTlsKey thread_status;
-
-void
-checked_build_init (void)
-{
-	mono_native_tls_alloc (&thread_status, NULL);
-}
-
-static CheckState*
-get_state (void)
-{
-	CheckState *state = mono_native_tls_get_value (thread_status);
-	if (!state) {
-		state = g_new0 (CheckState, 1);
-		state->transitions = g_ptr_array_new ();
-		mono_native_tls_set_value (thread_status, state);
-	}
-
-	return state;
-}
 
 static void
 free_transition (ThreadTransition *t)
@@ -136,6 +142,10 @@ checked_build_thread_transition (const char *transition, void *info, int from_st
 	t->size = collect_backtrace (t->backtrace);
 	g_ptr_array_add (state->transitions, t);
 }
+
+#endif /* !defined(DISABLE_CHECKED_BUILD_THREAD) */
+
+#if !defined(DISABLE_CHECKED_BUILD_GC)
 
 static void
 assertion_fail (const char *msg, ...)
@@ -229,6 +239,44 @@ assert_gc_neutral_mode (void)
 	}
 }
 
+void *
+critical_gc_region_begin(void)
+{
+	CheckState *state = get_state ();
+	state->in_gc_critical_region++;
+	return state;
+}
+
+
+void
+critical_gc_region_end(void* token)
+{
+	CheckState *state = get_state();
+	g_assert (state == token);
+	state->in_gc_critical_region--;
+}
+
+void
+assert_not_in_gc_critical_region(void)
+{
+	CheckState *state = get_state();
+	if (state->in_gc_critical_region > 0) {
+		assertion_fail("Expected GC Unsafe mode, but was in %s state", mono_thread_state_name (mono_thread_info_current_state (mono_thread_info_current ())));
+	}
+}
+
+void
+assert_in_gc_critical_region (void)
+{
+	CheckState *state = get_state();
+	if (state->in_gc_critical_region == 0)
+		assertion_fail("Expected GC critical region");
+}
+
+#endif /* !defined(DISABLE_CHECKED_BUILD_GC) */
+
+#if !defined(DISABLE_CHECKED_BUILD_METADATA)
+
 // check_metadata_store et al: The goal of these functions is to verify that if there is a pointer from one mempool into
 // another, that the pointed-to memory is protected by the reference count mechanism for MonoImages.
 //
@@ -237,8 +285,23 @@ assert_gc_neutral_mode (void)
 // * Code below assumes reference counts never underflow (ie: if we have a pointer to something, it won't be deallocated while we're looking at it)
 // Locking strategy is a little slapdash overall.
 
+// Reference audit support
 #define check_mempool_assert_message(...) \
 	g_assertion_message("Mempool reference violation: " __VA_ARGS__)
+
+typedef struct
+{
+	MonoImage *image;
+	MonoImageSet *image_set;
+} MonoMemPoolOwner;
+
+static MonoMemPoolOwner mono_mempool_no_owner = {NULL,NULL};
+
+static gboolean
+check_mempool_owner_eq (MonoMemPoolOwner a, MonoMemPoolOwner b)
+{
+	return a.image == b.image && a.image_set == b.image_set;
+}
 
 // Say image X "references" image Y if X either contains Y in its modules field, or X’s "references" field contains an
 // assembly whose image is Y.
@@ -281,6 +344,18 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 	// Corlib is never unloaded, and all images implicitly reference it.
 	// Some images avoid explicitly referencing it as an optimization, so special-case it here.
 	if (to == mono_defaults.corlib)
+		return TRUE;
+
+	// Non-dynamic images may NEVER reference dynamic images
+	if (to->dynamic && !from->dynamic)
+		return FALSE;
+
+	// FIXME: We currently give a dynamic images a pass on the reference rules.
+	// Dynamic images may ALWAYS reference non-dynamic images.
+	// We allow this because the dynamic image code is known "messy", and in theory it is already
+	// protected because dynamic images can only reference classes their assembly has retained.
+	// However, long term, we should make this rigorous.
+	if (from->dynamic && !to->dynamic)
 		return TRUE;
 
 	gboolean success = FALSE;
@@ -351,7 +426,7 @@ check_image_set_may_reference_image (MonoImageSet *from, MonoImage *to)
 	mono_image_set_lock (from);
 	for (idx = 0; !success && idx < from->nimages; idx++)
 	{
-		if (!check_image_may_reference_image (from->images[idx], to))
+		if (check_image_may_reference_image (from->images[idx], to))
 			success = TRUE;
 	}
 	mono_image_set_unlock (from);
@@ -374,6 +449,12 @@ check_image_set_may_reference_image_set (MonoImageSet *from, MonoImageSet *to)
 	for (to_idx = 0; valid && to_idx < to->nimages; to_idx++)
 	{
 		gboolean seen = FALSE;
+
+		// If TO set includes corlib, the FROM set may
+		// implicitly reference corlib, even if it's not
+		// present in the set explicitly.
+		if (to->images[to_idx] == mono_defaults.corlib)
+			seen = TRUE;
 
 		// For each item in to->images, scan over from->images looking for it.
 		for (from_idx = 0; !seen && from_idx < from->nimages; from_idx++)
@@ -414,16 +495,51 @@ check_image_may_reference_image_set (MonoImage *from, MonoImageSet *to)
 }
 
 // Small helper-- get a descriptive string for a MonoMemPoolOwner
+// Callers are obligated to free buffer with g_free after use
 static const char *
 check_mempool_owner_name (MonoMemPoolOwner owner)
 {
+	GString *result = g_string_new (NULL);
 	if (owner.image)
-		return owner.image->name;
-	if (owner.image_set) // TODO: Construct a string containing all included images
-		return "(Imageset)";
-	return "(Non-image memory)";
+	{
+		if (owner.image->dynamic)
+			g_string_append (result, "(Dynamic)");
+		g_string_append (result, owner.image->name);
+	}
+	else if (owner.image_set)
+	{
+		char *temp = mono_image_set_description (owner.image_set);
+		g_string_append (result, "(Image set)");
+		g_string_append (result, temp);
+		g_free (temp);
+	}
+	else
+	{
+		g_string_append (result, "(Non-image memory)");
+	}
+	return g_string_free (result, FALSE);
 }
 
+// Helper -- surf various image-locating functions looking for the owner of this pointer
+static MonoMemPoolOwner
+mono_find_mempool_owner (void *ptr)
+{
+	MonoMemPoolOwner owner = mono_mempool_no_owner;
+
+	owner.image = mono_find_image_owner (ptr);
+	if (!check_mempool_owner_eq (owner, mono_mempool_no_owner))
+		return owner;
+
+	owner.image_set = mono_find_image_set_owner (ptr);
+	if (!check_mempool_owner_eq (owner, mono_mempool_no_owner))
+		return owner;
+
+	owner.image = mono_find_dynamic_image_owner (ptr);
+
+	return owner;
+}
+
+// Actually perform reference audit
 static void
 check_mempool_may_reference_mempool (void *from_ptr, void *to_ptr, gboolean require_local)
 {
@@ -436,44 +552,44 @@ check_mempool_may_reference_mempool (void *from_ptr, void *to_ptr, gboolean requ
 	if (require_local)
 	{
 		if (!check_mempool_owner_eq (from,to))
-			check_mempool_assert_message ("Pointer in image %s should have been internal, but instead pointed to image %s", check_mempool_owner_name(from), check_mempool_owner_name(to));
+			check_mempool_assert_message ("Pointer in image %s should have been internal, but instead pointed to image %s", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	// Writing into unknown mempool
 	else if (check_mempool_owner_eq (from, mono_mempool_no_owner))
 	{
-		check_mempool_assert_message ("Non-image memory attempting to write pointer to image %s", check_mempool_owner_name(to));
+		check_mempool_assert_message ("Non-image memory attempting to write pointer to image %s", check_mempool_owner_name (to));
 	}
 
 	// Reading from unknown mempool
 	else if (check_mempool_owner_eq (to, mono_mempool_no_owner))
 	{
-		check_mempool_assert_message ("Attempting to write pointer from image %s to non-image memory", check_mempool_owner_name(from));
+		check_mempool_assert_message ("Attempting to write pointer from image %s to non-image memory", check_mempool_owner_name (from));
 	}
 
 	// Split out the four cases described above:
 	else if (from.image && to.image)
 	{
 		if (!check_image_may_reference_image (from.image, to.image))
-			check_mempool_assert_message ("Image %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name(from), check_mempool_owner_name(to));
+			check_mempool_assert_message ("Image %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image && to.image_set)
 	{
 		if (!check_image_may_reference_image_set (from.image, to.image_set))
-			check_mempool_assert_message ("Image %s tried to point to image set, but does not retain a reference", check_mempool_owner_name(from));
+			check_mempool_assert_message ("Image %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image_set && to.image_set)
 	{
 		if (!check_image_set_may_reference_image_set (from.image_set, to.image_set))
-			check_mempool_assert_message ("Image set tried to point to image set, but does not retain a reference");
+			check_mempool_assert_message ("Image set %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image_set && to.image)
 	{
 		if (!check_image_set_may_reference_image (from.image_set, to.image))
-			check_mempool_assert_message ("Image set tried to point to image %s, but does not retain a reference", check_mempool_owner_name(to));
+			check_mempool_assert_message ("Image set %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else
@@ -493,5 +609,7 @@ check_metadata_store_local (void *from, void *to)
 {
     check_mempool_may_reference_mempool (from, to, TRUE);
 }
+
+#endif /* !defined(DISABLE_CHECKED_BUILD_METADATA) */
 
 #endif /* CHECKED_BUILD */

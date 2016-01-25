@@ -3,9 +3,11 @@
 //
 // Authors:
 //  Zoltan Varga (vargaz@gmail.com)
+//  Aleksey Kliger (aleksey@xamarin.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Xamarin, Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,7 +54,12 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
+#if MONOTOUCH
+		// use an existing symbol - so we can build without dlsym. It does not matter that the signature does not match for the test
+		[DllImport ("libc", EntryPoint="readlink", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
+#else
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
+#endif
 		public static extern void dllImportMethod ();
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
 		public void preserveSigMethod ()
@@ -108,8 +115,13 @@ namespace MonoTests.System.Reflection
 			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
 			Assert.AreEqual (CallingConvention.Winapi, attr.CallingConvention, "#1");
+#if MONOTOUCH
+			Assert.AreEqual ("readlink", attr.EntryPoint, "#2");
+			Assert.AreEqual ("libc", attr.Value, "#3");
+#else
 			Assert.AreEqual ("foo", attr.EntryPoint, "#2");
 			Assert.AreEqual ("libfoo", attr.Value, "#3");
+#endif
 			Assert.AreEqual (CharSet.Unicode, attr.CharSet, "#4");
 			Assert.AreEqual (false, attr.ExactSpelling, "#5");
 			Assert.AreEqual (true, attr.PreserveSig, "#6");
@@ -281,6 +293,38 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+		}
+
+		class GenericBase<T,H> {
+			public virtual void f2 () { }
+		}
+
+		class GenericMid<T, U> : GenericBase<T, Action<U>> {
+			public virtual T f1 () { return default (T); }
+		}
+
+		class GenericChild<T> : GenericMid<T, int> {
+			public override T f1 () { return default (T); }
+			public override void f2 () { }
+		}
+
+		class DerivedFromGenericBase : GenericBase<int, int> {
+		}
+
+		[Test]
+		public void GetBaseDefinition_OpenConstructedBaseType () // 36305
+		{
+			var t = typeof (GenericChild<string>);
+
+			var mi1 = t.GetMethod ("f1");
+			var mi1_base = mi1.GetBaseDefinition ();
+
+			Assert.AreEqual (typeof (GenericMid<string, int>), mi1_base.DeclaringType, "#1");
+
+			var mi2 = t.GetMethod ("f2");
+			var mi2_base = mi2.GetBaseDefinition ();
+
+			Assert.AreEqual (typeof (GenericBase<string, Action<int>>), mi2_base.DeclaringType, "#2");
 		}
 
 		class TestInheritedMethodA {
@@ -781,6 +825,33 @@ namespace MonoTests.System.Reflection
 		{
 			var m = GetType ().GetMethod ("Bug12856");
 			Assert.AreEqual ("System.Nullable`1[System.Int32] Bug12856()", m.ToString (), "#1");
+		}
+
+		[Test]
+		public void GetReflectedType () // #12205
+		{
+			// public method declared in base type, queried from a derived type
+			MethodInfo mi = typeof (TestInheritedMethodB).GetMethod ("TestMethod2");
+			Assert.AreEqual (mi.ReflectedType, typeof (TestInheritedMethodB), "#1");
+
+			// public method declared in a generic class,
+			// queried from a non-generic class derived
+			// from an instantiation of the generic class.
+			mi = typeof (DerivedFromGenericBase).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (DerivedFromGenericBase), "#2");
+
+			// public method declared in a generic class,
+			// queried from the generic type defintion of
+			// a generic derived class.
+			mi = typeof (GenericMid<,>).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (GenericMid<,>), "#3");
+
+			// public method declared in a generic class,
+			// queried from an instantiation of a generic
+			// derived class.
+			mi = typeof (GenericMid<int,int>).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (GenericMid<int,int>), "#4");
+
 		}
 
 #if !MONOTOUCH

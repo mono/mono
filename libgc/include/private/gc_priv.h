@@ -1214,6 +1214,8 @@ extern long GC_large_alloc_warn_suppressed;
   extern GC_bool GC_world_stopped;
 #endif
 
+extern void (*GC_notify_event) GC_PROTO((GC_EventType));
+
 /* Operations */
 # ifndef abs
 #   define abs(x)  ((x) < 0? (-(x)) : (x))

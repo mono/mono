@@ -213,6 +213,13 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (Foo.JoinCalled, "#2");
 		}
 
+		[Test]
+		public void ReaderQuotasDefault_Bug15153 ()
+		{
+			NetTcpBinding binding = new NetTcpBinding(SecurityMode.None);
+			binding.ReaderQuotas.MaxStringContentLength = 8192;
+		}
+
 		[ServiceContract]
 		public interface IFoo
 		{

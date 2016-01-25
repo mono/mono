@@ -44,15 +44,10 @@ endif
 RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
 #
-# MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
+# MOBILE_PROFILE needs SECURITY_DEP
 #
 ifdef MOBILE_PROFILE
-ifeq ($(PROFILE),xammac)
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
-LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
-else
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
-endif
 else
 EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
@@ -104,7 +99,7 @@ artifacts = $(system_library_deps) 			\
 
 .NOTPARALLEL: $(system_library_deps)
 
-$(the_libdir_base)System.dll: $(system_library_deps) 
+$(the_libdir_base)System.dll: $(system_library_deps) ../Mono.Security/Makefile
 
 ifeq (bare/,$(intermediate))
 build-bare:
@@ -126,7 +121,7 @@ $(the_libdir_base)System.Xml.dll:
 $(bare_libdir)/System.Xml.dll:
 	(cd ../System.XML; $(MAKE) $@)
 
-$(the_libdir_base)Mono.Security.dll:
+$(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
 	(cd ../Mono.Security; $(MAKE))
 
 $(the_libdir_base)System.Configuration.dll:

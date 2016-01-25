@@ -78,11 +78,15 @@ namespace Mono.Net.Security.Private
 			get { return true; }
 		}
 
+		public override bool SupportsConnectionInfo {
+			get { return false; }
+		}
+
 		public override bool SupportsMonoExtensions {
 			get { return false; }
 		}
 
-		public override bool SupportsTlsContext {
+		internal override bool SupportsTlsContext {
 			get { return false; }
 		}
 

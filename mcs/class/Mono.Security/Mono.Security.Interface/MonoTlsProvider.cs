@@ -72,6 +72,10 @@ namespace Mono.Security.Interface
 
 	public abstract class MonoTlsProvider
 	{
+		internal MonoTlsProvider ()
+		{
+		}
+
 		public abstract Guid ID {
 			get;
 		}
@@ -92,6 +96,13 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * Does this provider support IMonoSslStream.GetConnectionInfo() ?
+		 */
+		public abstract bool SupportsConnectionInfo {
+			get;
+		}
+
+		/*
 		 * Whether or not this TLS Provider supports Mono-specific extensions
 		 * (via @MonoTlsSettings).
 		 */
@@ -104,10 +115,10 @@ namespace Mono.Security.Interface
 		}
 
 		/*
-		 * Obtain a @MonoSslStream instance.
+		 * Obtain a @IMonoSslStream instance.
 		 *
 		 */
-		public abstract MonoSslStream CreateSslStream (
+		public abstract IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null);
 
@@ -148,11 +159,11 @@ namespace Mono.Security.Interface
 		 * The managed SSPI implementation from the new TLS code.
 		 */
 
-		public abstract bool SupportsTlsContext {
+		internal abstract bool SupportsTlsContext {
 			get;
 		}
 
-		public abstract IMonoTlsContext CreateTlsContext (
+		internal abstract IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,

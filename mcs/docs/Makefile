@@ -85,12 +85,17 @@ NETDOCS_DIRS = \
 	$(classdir)/System.Design/$(doc_en)                                 \
 	$(classdir)/System.DirectoryServices/$(doc_en)                      \
 	$(classdir)/System.Drawing/$(doc_en)                                \
+	$(classdir)/System.Json/$(doc_en)                                   \
+	$(classdir)/System.Net.Http/$(doc_en)                               \
 	$(classdir)/System.Runtime.Remoting/$(doc_en)                       \
+	$(classdir)/System.Runtime.Serialization/$(doc_en)                  \
 	$(classdir)/System.Runtime.Serialization.Formatters.Soap/$(doc_en)  \
 	$(classdir)/System.Security/$(doc_en)                               \
+	$(classdir)/System.ServiceModel/$(doc_en)                           \
 	$(classdir)/System.Web.Services/$(doc_en)                           \
 	$(classdir)/System.Web/$(doc_en)                                    \
 	$(classdir)/System.XML/$(doc_en)                                    \
+	$(classdir)/System.Xml.Linq/$(doc_en)                               \
 	$(classdir)/System/$(doc_en) 
 
 MONO_DIRS = \

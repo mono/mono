@@ -916,5 +916,15 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
 			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
 		}
+		
+		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=13909
+		public void MapPageRoute_Bug13909 ()
+		{
+			var c = new RouteCollection ();
+
+			c.MapPageRoute("test", "test", "~/test.aspx");
+			c.Clear();
+			c.MapPageRoute("test", "test", "~/test.aspx");
+		}
 	}
 }

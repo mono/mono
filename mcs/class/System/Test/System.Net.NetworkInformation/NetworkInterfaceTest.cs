@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Net.NetworkInformation;
 
 namespace MonoTests.System.Net.NetworkInformation
@@ -72,6 +73,25 @@ namespace MonoTests.System.Net.NetworkInformation
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			Assert.IsTrue (adapters[0].Speed > 0);
 		}
-	
+
+		[Test]
+		public void IPv4Mask ()
+		{
+			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
+			foreach (NetworkInterface adapter in adapters)
+			{
+				if (adapter.Supports (NetworkInterfaceComponent.IPv4))
+				{
+					IPInterfaceProperties adapterProperties = adapter.GetIPProperties ();
+					foreach (UnicastIPAddressInformation uni in adapterProperties.UnicastAddresses)
+					{
+						if (uni.Address.AddressFamily == AddressFamily.InterNetwork)
+						{
+							Assert.IsNotNull (uni.IPv4Mask);
+						}
+					}
+				}
+			}
+		}
 	}
 }

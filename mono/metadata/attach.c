@@ -99,10 +99,6 @@ static gboolean stop_receiver_thread;
 
 static gboolean needs_to_start, started;
 
-#define agent_lock() mono_mutex_lock (&agent_mutex)
-#define agent_unlock() mono_mutex_unlock (&agent_mutex)
-static mono_mutex_t agent_mutex;
-
 static void transport_connect (void);
 
 static guint32 WINAPI receiver_thread (void *arg);
@@ -156,7 +152,7 @@ decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
 
 	g_assert (length < (1 << 16));
 
-	s = g_malloc (length + 1);
+	s = (char *)g_malloc (length + 1);
 
 	g_assert (p + length <= limit);
 	memcpy (s, p, length);
@@ -184,8 +180,6 @@ mono_attach_parse_options (char *options)
 void
 mono_attach_init (void)
 {
-	mono_mutex_init_recursive (&agent_mutex);
-
 	config.enabled = TRUE;
 }
 
@@ -530,7 +524,7 @@ receiver_thread (void *arg)
 			content_len = decode_int (p, &p, p_end);
 
 			/* Read message body */
-			body = g_malloc (content_len);
+			body = (guint8 *)g_malloc (content_len);
 			res = read (conn_fd, body, content_len);
 			
 			p = body;

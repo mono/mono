@@ -88,7 +88,7 @@ get_pe_debug_guid (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *
 static void
 doc_free (gpointer key)
 {
-	MonoDebugSourceInfo *info = key;
+	MonoDebugSourceInfo *info = (MonoDebugSourceInfo *)key;
 
 	g_free (info->source_file);
 	g_free (info);
@@ -97,7 +97,7 @@ doc_free (gpointer key)
 MonoPPDBFile*
 mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 {
-	MonoImage *ppdb_image;
+	MonoImage *ppdb_image = NULL;
 	const char *filename;
 	char *s, *ppdb_filename;
 	MonoImageOpenStatus status;
@@ -107,11 +107,12 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 	MonoPPDBFile *ppdb;
 
 	if (raw_contents) {
-		ppdb_image = mono_image_open_from_data_internal ((char*)raw_contents, size, TRUE, &status, FALSE, TRUE, NULL);
+		if (size > 4 && strncmp ((char*)raw_contents, "BSJB", 4) == 0)
+			ppdb_image = mono_image_open_from_data_internal ((char*)raw_contents, size, TRUE, &status, FALSE, TRUE, NULL);
 	} else {
 		/* ppdb files drop the .exe/.dll extension */
 		filename = mono_image_get_filename (image);
-		if (strlen (filename) > 4 && (!strcmp (filename + strlen (filename) - 4, ".exe"))) {
+		if (strlen (filename) > 4 && (!strcmp (filename + strlen (filename) - 4, ".exe") || !strcmp (filename + strlen (filename) - 4, ".dll"))) {
 			s = g_strdup (filename);
 			s [strlen (filename) - 4] = '\0';
 			ppdb_filename = g_strdup_printf ("%s.pdb", s);
@@ -176,7 +177,7 @@ mono_ppdb_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 
 	mono_debugger_lock ();
 
-	minfo = g_hash_table_lookup (ppdb->method_hash, method);
+	minfo = (MonoDebugMethodInfo *)g_hash_table_lookup (ppdb->method_hash, method);
 	if (minfo) {
 		mono_debugger_unlock ();
 		return minfo;
@@ -208,7 +209,7 @@ get_docinfo (MonoPPDBFile *ppdb, MonoImage *image, int docidx)
 	MonoDebugSourceInfo *res, *cached;
 
 	mono_debugger_lock ();
-	cached = g_hash_table_lookup (ppdb->doc_hash, GUINT_TO_POINTER (docidx));
+	cached = (MonoDebugSourceInfo *)g_hash_table_lookup (ppdb->doc_hash, GUINT_TO_POINTER (docidx));
 	mono_debugger_unlock ();
 	if (cached)
 		return cached;
@@ -246,7 +247,7 @@ get_docinfo (MonoPPDBFile *ppdb, MonoImage *image, int docidx)
 	res->hash = (guint8*)mono_metadata_blob_heap (image, cols [MONO_DOCUMENT_HASH]);
 
 	mono_debugger_lock ();
-	cached = g_hash_table_lookup (ppdb->doc_hash, GUINT_TO_POINTER (docidx));
+	cached = (MonoDebugSourceInfo *)g_hash_table_lookup (ppdb->doc_hash, GUINT_TO_POINTER (docidx));
 	if (!cached) {
 		g_hash_table_insert (ppdb->doc_hash, GUINT_TO_POINTER (docidx), res);
 	} else {
@@ -291,7 +292,8 @@ mono_ppdb_lookup_location (MonoDebugMethodInfo *minfo, uint32_t offset)
 	gboolean first = TRUE, first_non_hidden = TRUE;
 	MonoDebugSourceLocation *location;
 
-	g_assert (method->token);
+	if (!method->token)
+		return NULL;
 
 	idx = mono_metadata_token_index (method->token);
 
@@ -518,18 +520,39 @@ mono_ppdb_lookup_locals (MonoDebugMethodInfo *minfo)
 	scope_idx = start_scope_idx;
 	mono_metadata_decode_row (&tables [MONO_TABLE_LOCALSCOPE], scope_idx-1, cols, MONO_LOCALSCOPE_SIZE);
 	locals_idx = cols [MONO_LOCALSCOPE_VARIABLELIST];
-	while (TRUE) {
+
+	// https://github.com/dotnet/roslyn/blob/2ae8d5fed96ab3f1164031f9b4ac827f53289159/docs/specs/PortablePdb-Metadata.md#LocalScopeTable
+	//
+	// The variableList attribute in the pdb metadata table is a contiguous array that starts at a
+	// given offset (locals_idx) above and
+	//
+	// """
+	// continues to the smaller of:
+	//
+	// the last row of the LocalVariable table
+	// the next run of LocalVariables, found by inspecting the VariableList of the next row in this LocalScope table.
+	// """
+	// this endpoint becomes locals_end_idx below
+
+	// March to the last scope that is in this method
+	while (scope_idx <= tables [MONO_TABLE_LOCALSCOPE].rows) {
 		mono_metadata_decode_row (&tables [MONO_TABLE_LOCALSCOPE], scope_idx-1, cols, MONO_LOCALSCOPE_SIZE);
 		if (cols [MONO_LOCALSCOPE_METHOD] != method_idx)
 			break;
 		scope_idx ++;
 	}
+	// The number of scopes is the difference in the indices
+	// for the first and last scopes
 	nscopes = scope_idx - start_scope_idx;
-	if (scope_idx == tables [MONO_TABLE_LOCALSCOPE].rows) {
-		// FIXME:
-		g_assert_not_reached ();
-		locals_end_idx = -1;
+
+	// Ends with "the last row of the LocalVariable table"
+	// this happens if the above loop marched one past the end
+	// of the rows
+	if (scope_idx > tables [MONO_TABLE_LOCALSCOPE].rows) {
+		locals_end_idx = tables [MONO_TABLE_LOCALVARIABLE].rows + 1;
 	} else {
+		// Ends with "the next run of LocalVariables,
+		// found by inspecting the VariableList of the next row in this LocalScope table."
 		locals_end_idx = cols [MONO_LOCALSCOPE_VARIABLELIST];
 	}
 
@@ -546,8 +569,7 @@ mono_ppdb_lookup_locals (MonoDebugMethodInfo *minfo)
 
 		locals_idx = cols [MONO_LOCALSCOPE_VARIABLELIST];
 		if (scope_idx == tables [MONO_TABLE_LOCALSCOPE].rows) {
-			// FIXME:
-			g_assert_not_reached ();
+			locals_end_idx = tables [MONO_TABLE_LOCALVARIABLE].rows + 1;
 		} else {
 			locals_end_idx = mono_metadata_decode_row_col (&tables [MONO_TABLE_LOCALSCOPE], scope_idx-1 + 1, MONO_LOCALSCOPE_VARIABLELIST);
 		}

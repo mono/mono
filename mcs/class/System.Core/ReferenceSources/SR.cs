@@ -100,8 +100,10 @@ partial class SR
 	public const string Cryptography_UnknownEllipticCurve = "Cryptography_UnknownEllipticCurve";
 	public const string Cryptography_UnknownEllipticCurveAlgorithm = "Cryptography_UnknownEllipticCurveAlgorithm";
 	public const string Cryptography_UnknownPaddingMode = "Cryptography_UnknownPaddingMode";
+	public const string Cryptography_HashAlgorithmNameNullOrEmpty = "Cryptography_HashAlgorithmNameNullOrEmpty";
 
 	public const string InvalidOperation_ViewIsNull = "InvalidOperation_ViewIsNull";
 	public const string ObjectDisposed_ViewAccessorClosed = "ObjectDisposed_ViewAccessorClosed";
 	public const string NotSupported_MMViewStreamsFixedLength = "NotSupported_MMViewStreamsFixedLength";
+	public const string NotSupported_SubclassOverride = "NotSupported_SubclassOverride";
 }

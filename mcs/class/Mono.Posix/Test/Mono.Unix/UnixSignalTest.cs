@@ -424,6 +424,10 @@ namespace MonoTests.Mono.Unix {
 			foreach (Thread t in threads)
 				t.Join ();
 			AssertCountSet (usignals);
+			// signal delivery might take some time, wait a bit before closing
+			// the UnixSignal so we can ignore it and not terminate the process
+			// when a SIGHUP/SIGTERM arrives afterwards
+			Thread.Sleep (1000);
 			CloseSignals (usignals);
 		}
 
@@ -456,6 +460,7 @@ namespace MonoTests.Mono.Unix {
 				s.Close ();
 		}
 
+		// Create thread that issues many signals from a set of harmless signals
 		static Thread CreateRaiseStormThread (int max)
 		{
 			return new Thread (delegate () {
@@ -486,6 +491,7 @@ namespace MonoTests.Mono.Unix {
 			CloseSignals (usignals);
 		}
 
+		// Create thread that repeatedly registers then unregisters signal handlers
 		static Thread CreateSignalCreatorThread ()
 		{
 			return new Thread (delegate () {
@@ -523,6 +529,7 @@ namespace MonoTests.Mono.Unix {
 			CloseSignals (usignals);
 		}
 
+		// Create thread that blocks until at least one of the given signals is received
 		static Thread CreateWaitAnyThread (params UnixSignal[] usignals)
 		{
 			return new Thread (delegate () {

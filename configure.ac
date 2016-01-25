@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [4.3.0],
+AC_INIT(mono, [4.3.3],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -419,7 +419,7 @@ AC_PROG_LD_GNU
 AM_ICONV()
 
 AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h)
-AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
+AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
 AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
                   [], [], [#include <stddef.h>
 		  #include <sys/socket.h>
@@ -733,7 +733,7 @@ DISABLED_FEATURES=none
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, assembly_remapping, shared_perfcounters, remoting,
-	 security, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying, shared_handles.],
+	 security, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -906,11 +906,6 @@ fi
 if test "x$mono_feature_disable_sgen_copying" = "xyes"; then
 	AC_DEFINE(DISABLE_SGEN_MAJOR_COPYING, 1, [Disable major=copying support in SGEN.])
 	AC_MSG_NOTICE([Disabled major=copying support in SGEN.])
-fi
-
-if test "x$mono_feature_disable_shared_handles" = "xyes"; then
-	AC_DEFINE(DISABLE_SHARED_HANDLES, 1, [Disable inter-process shared handles])
-	AC_SUBST(DISABLE_SHARED_HANDLES)
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -2085,6 +2080,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(setpgid)
 	AC_CHECK_FUNCS(system)
 	AC_CHECK_FUNCS(fork execv execve)
+	AC_CHECK_FUNCS(accept4)
 	AC_CHECK_SIZEOF(size_t)
 	AC_CHECK_TYPES([blksize_t], [AC_DEFINE(HAVE_BLKSIZE_T)], , 
 		[#include <sys/types.h>
@@ -2096,6 +2092,8 @@ if test x$host_win32 = xno; then
 		 #include <unistd.h>])
 	AC_CHECK_TYPES([suseconds_t], [AC_DEFINE(HAVE_SUSECONDS_T)], ,
 		[#include <sys/time.h>])
+	AC_CHECK_TYPES([struct cmsghdr], [AC_DEFINE(HAVE_STRUCT_CMSGHDR)], ,
+		[#include <sys/socket.h>])
 	AC_CHECK_TYPES([struct flock], [AC_DEFINE(HAVE_STRUCT_FLOCK)], ,
 		[#include <unistd.h>
 		 #include <fcntl.h>])
@@ -2105,6 +2103,16 @@ if test x$host_win32 = xno; then
 		[#include <sys/socket.h>])
 	AC_CHECK_TYPES([struct pollfd], [AC_DEFINE(HAVE_STRUCT_POLLFD)], ,
 		[#include <sys/poll.h>])
+	AC_CHECK_TYPES([struct sockaddr], [AC_DEFINE(HAVE_STRUCT_SOCKADDR)], ,
+		[#include <sys/socket.h>])
+	AC_CHECK_TYPES([struct sockaddr_storage], [AC_DEFINE(HAVE_STRUCT_SOCKADDR_STORAGE)], ,
+		[#include <sys/socket.h>])
+	AC_CHECK_TYPES([struct sockaddr_in], [AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN)], ,
+		[#include <netinet/in.h>])
+	AC_CHECK_TYPES([struct sockaddr_in6], [AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6)], ,
+		[#include <netinet/in.h>])
+	AC_CHECK_TYPES([struct sockaddr_un], [AC_DEFINE(HAVE_STRUCT_SOCKADDR_UN)], ,
+		[#include <sys/un.h>])
 	AC_CHECK_TYPES([struct stat], [AC_DEFINE(HAVE_STRUCT_STAT)], ,
 		[#include <sys/types.h>
 		 #include <sys/stat.h>
@@ -2445,15 +2453,6 @@ if test "x$ac_cv_have_dev_random" = "xno" \
 *** variable MONO_EGD_SOCKET to point to the daemon's socket to use that.
 ***]])
 fi
- 
-AC_MSG_CHECKING([if inter-process shared handles are requested])
-# Same as --enable-minimal=shared_handles
-AC_ARG_ENABLE(shared-handles, [  --disable-shared-handles disable inter-process shared handles], try_shared_handles=$enableval, try_shared_handles=no)
-AC_MSG_RESULT($try_shared_handles)
-if test "x$try_shared_handles" != "xyes"; then
-	AC_DEFINE(DISABLE_SHARED_HANDLES, 1, [Disable inter-process shared handles])
-	AC_SUBST(DISABLE_SHARED_HANDLES)
-fi
 
 AC_ARG_ENABLE(bcl-opt, [  --disable-bcl-opt	BCL is compiled with no optimizations (allows accurate BCL debugging)], test_bcl_opt=$enableval, test_bcl_opt=yes)
 
@@ -2727,6 +2726,7 @@ case "$host" in
 	mips*)
 		TARGET=MIPS;
 		arch_target=mips;
+		with_tls=pthread;
 		ACCESS_UNALIGNED="no"
 
 		AC_MSG_CHECKING(for mips n32)
@@ -3193,7 +3193,8 @@ dnl
 SGEN_DEFINES=
 AC_ARG_WITH(sgen, [  --with-sgen=yes,no             Extra Generational GC, default=yes],[buildsgen=$with_sgen],[buildsgen=yes])
 if test x$buildsgen = xyes; then
-   SGEN_DEFINES="-DHAVE_SGEN_GC -DHAVE_MOVING_COLLECTOR"
+   AC_DEFINE(HAVE_MOVING_COLLECTOR, 1, [Moving collector])
+   SGEN_DEFINES="-DHAVE_SGEN_GC"
    gc_msg="sgen and $gc_msg"
 fi
 AC_SUBST(SGEN_DEFINES)
@@ -3479,6 +3480,7 @@ AC_ARG_WITH(monodroid,       [  --with-monodroid=yes,no         If you want to b
 AC_ARG_WITH(monotouch,       [  --with-monotouch=yes,no         If you want to build the Xamarin.iOS assemblies (defaults to no)],    [], [with_monotouch=no])
 AC_ARG_WITH(monotouch_watch, [  --with-monotouch_watch=yes,no   If you want to build the Xamarin.WatchOS assemblies (defaults to no)],[], [with_monotouch_watch=no])
 AC_ARG_WITH(monotouch_tv,    [  --with-monotouch_tv=yes,no      If you want to build the Xamarin.TVOS assemblies (defaults to no)],   [], [with_monotouch_tv=no])
+AC_ARG_WITH(bitcode,         [  --with-bitcode=yes,no           If bitcode is enabled (defaults to no)],                              [], [with_bitcode=no])
 AC_ARG_WITH(xammac,          [  --with-xammac=yes,no            If you want to build the Xamarin.Mac assemblies (defaults to no)],    [], [with_xammac=no])
 
 OPROFILE=no
@@ -3532,6 +3534,29 @@ AC_ARG_WITH(checked_build, [  --with-checked-build=yes|no      Enable checked bu
 	fi
 ], [with_checked_build=no])
 
+if test x$with_checked_build != xno ; then
+	DISABLED_CHECKED_BUILD_TEST=none
+
+	AC_ARG_ENABLE(checked_build_test, [  --enable-checked-build-test=LIST      drop support for LIST checked build tests. LIST is a comma-separated list from: gc, metadata, thread.],
+	[
+		for feature in `echo "$enable_checked_build_test" | sed -e "s/,/ /g"`; do
+			eval "mono_checked_build_test_disable_$feature='yes'"
+		done
+		DISABLED_CHECKED_BUILD_TEST=$enable_checked_build_test
+	],[])
+
+	if test "x$mono_checked_build_test_disable_gc" = "xyes"; then
+		AC_DEFINE(DISABLE_CHECKED_BUILD_GC, 1, [Disable GC checked build])
+	fi
+
+	if test "x$mono_checked_build_test_disable_metadata" = "xyes"; then
+		AC_DEFINE(DISABLE_CHECKED_BUILD_METADATA, 1, [Disable metadata checked build])
+	fi
+
+	if test "x$mono_checked_build_test_disable_thread" = "xyes"; then
+		AC_DEFINE(DISABLE_CHECKED_BUILD_THREAD, 1, [Disable thread checked build])
+	fi
+fi
 
 AC_CHECK_HEADER([malloc.h], 
 		[AC_DEFINE([HAVE_USR_INCLUDE_MALLOC_H], [1], 
@@ -3592,6 +3617,7 @@ AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH, [test "x$with_monotouch" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH_WATCH, [test "x$with_monotouch_watch" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH_TV, [test "x$with_monotouch_tv" != "xno"])
+AM_CONDITIONAL(BITCODE, test "x$with_bitcode" = "xyes")
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
 
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
@@ -3621,7 +3647,7 @@ AC_SUBST(X11)
 AC_SUBST(GDKX11)
 AC_SUBST(GTKX11)
 AC_SUBST(XINERAMA)
-AC_DEFINE_UNQUOTED(ARCHITECTURE,"$arch_target",[The architecture this is running on])
+AC_DEFINE_UNQUOTED(MONO_ARCHITECTURE,"$arch_target",[The architecture this is running on])
 AC_SUBST(arch_target)
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)

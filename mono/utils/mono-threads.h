@@ -10,13 +10,15 @@
 #ifndef __MONO_THREADS_H__
 #define __MONO_THREADS_H__
 
-#include <mono/utils/mono-semaphore.h>
+#include <mono/utils/mono-os-semaphore.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-linked-list-set.h>
-#include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-api.h>
+#include <mono/utils/mono-coop-semaphore.h>
+
+#include <mono/io-layer/io-layer.h>
 
 #include <glib.h>
 #include <config.h>
@@ -226,7 +228,7 @@ typedef struct {
 	gboolean create_suspended;
 
 	/* Semaphore used to implement CREATE_SUSPENDED */
-	MonoSemType create_suspended_sem;
+	MonoCoopSem create_suspended_sem;
 
 	/*
 	 * Values of TLS variables for this thread.
@@ -248,6 +250,9 @@ typedef struct {
 	void *jit_data;
 
 	MonoThreadInfoInterruptToken *interrupt_token;
+
+	/* MonoHandleArena for coop handles */
+	gpointer handle_arena;
 } MonoThreadInfo;
 
 typedef struct {
@@ -356,9 +361,6 @@ mono_thread_info_list_head (void);
 THREAD_INFO_TYPE*
 mono_thread_info_lookup (MonoNativeThreadId id);
 
-THREAD_INFO_TYPE*
-mono_thread_info_safe_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel);
-
 gboolean
 mono_thread_info_resume (MonoNativeThreadId tid);
 
@@ -406,6 +408,9 @@ mono_thread_info_yield (void);
 
 gint
 mono_thread_info_sleep (guint32 ms, gboolean *alerted);
+
+gint
+mono_thread_info_usleep (guint64 us);
 
 gpointer
 mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key);

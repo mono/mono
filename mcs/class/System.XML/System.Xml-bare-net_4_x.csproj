@@ -709,6 +709,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
     <Compile Include="ReferenceSources\Res.cs" />
     <Compile Include="ReferenceSources\ThisAssembly.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -23,7 +23,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/loader.h>
-#include <mono/utils/mono-mutex.h>
+#include <mono/utils/mono-os-mutex.h>
 
 #define LOCATION_INDENT "        "
 #define BACKTRACE_SIZE 64
@@ -112,7 +112,7 @@ static void mismatched_stats_foreach_func (gpointer key, gpointer value, gpointe
 		return;
 	}
 
-	location = g_hash_table_lookup (prof->string_locations_hash, &hash);
+	location = (StringLocation *)g_hash_table_lookup (prof->string_locations_hash, &hash);
 	while (location) {
 		if (location->hint && strlen (location->hint) > 0) {
 			if (!bannerShown) {
@@ -243,7 +243,7 @@ static gboolean saved_strings_find_func (gpointer key, gpointer value, gpointer 
 
 static inline void store_string_location (MonoProfiler *prof, const gchar *string, guint32 hash, size_t len)
 {
-	StringLocation *location = g_hash_table_lookup (prof->string_locations_hash, &hash);
+	StringLocation *location = (StringLocation *)g_hash_table_lookup (prof->string_locations_hash, &hash);
 	SavedString *saved;
 	SavedStringFindInfo info;
 	guint32 *hashptr;
@@ -461,7 +461,7 @@ static void mono_portability_remember_string (MonoProfiler *prof, MonoDomain *do
 		return;
 	}
 
-	mono_mutex_lock (&mismatched_files_section);
+	mono_os_mutex_lock (&mismatched_files_section);
 	head = (SavedString*)g_hash_table_lookup (prof->saved_strings_hash, (gpointer)str);
 	if (head) {
 		while (head->next)
@@ -469,7 +469,7 @@ static void mono_portability_remember_string (MonoProfiler *prof, MonoDomain *do
 		head->next = entry;
 	} else
 		g_hash_table_insert (prof->saved_strings_hash, (gpointer)str, (gpointer)entry);
-	mono_mutex_unlock (&mismatched_files_section);
+	mono_os_mutex_unlock (&mismatched_files_section);
 }
 
 static MonoClass *string_class = NULL;
@@ -489,7 +489,7 @@ static void mono_portability_iomap_event (MonoProfiler *prof, const char *report
 	if (!runtime_initialized)
 		return;
 
-	mono_mutex_lock (&mismatched_files_section);
+	mono_os_mutex_lock (&mismatched_files_section);
 	hash = calc_strings_hash (pathname, new_pathname, &pathnameHash);
 	stats = (MismatchedFilesStats*)g_hash_table_lookup (prof->mismatched_files_hash, &hash);
 	if (stats == NULL) {
@@ -507,11 +507,11 @@ static void mono_portability_iomap_event (MonoProfiler *prof, const char *report
 			g_error ("Out of memory allocating integer pointer for mismatched files hash table.");
 
 		store_string_location (prof, (const gchar*)stats->requestedName, pathnameHash, strlen (stats->requestedName));
-		mono_mutex_unlock (&mismatched_files_section);
+		mono_os_mutex_unlock (&mismatched_files_section);
 
 		print_report ("%s -     Found file path: '%s'\n", report, new_pathname);
 	} else {
-		mono_mutex_unlock (&mismatched_files_section);
+		mono_os_mutex_unlock (&mismatched_files_section);
 		stats->count++;
 	}
 }
@@ -525,14 +525,14 @@ static void runtime_initialized_cb (MonoProfiler *prof)
 static void profiler_shutdown (MonoProfiler *prof)
 {
 	print_mismatched_stats (prof);
-	mono_mutex_destroy (&mismatched_files_section);
+	mono_os_mutex_destroy (&mismatched_files_section);
 }
 
 void mono_profiler_startup (const char *desc)
 {
 	MonoProfiler *prof = g_new0 (MonoProfiler, 1);
 
-	mono_mutex_init (&mismatched_files_section);
+	mono_os_mutex_init (&mismatched_files_section);
 	prof->mismatched_files_hash = g_hash_table_new (mismatched_files_guint32_hash, mismatched_files_guint32_equal);
 	prof->saved_strings_hash = g_hash_table_new (NULL, NULL);
 	prof->string_locations_hash = g_hash_table_new (mismatched_files_guint32_hash, mismatched_files_guint32_equal);
@@ -542,5 +542,5 @@ void mono_profiler_startup (const char *desc)
 	mono_profiler_install_iomap (mono_portability_iomap_event);
 	mono_profiler_install_allocation (mono_portability_remember_alloc);
 
-	mono_profiler_set_events (MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_IOMAP_EVENTS);
+	mono_profiler_set_events ((MonoProfileFlags)(MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_IOMAP_EVENTS));
 }

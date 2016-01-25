@@ -36,6 +36,7 @@ using System.Threading;
 
 namespace System {
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 	[ComVisible (true)]
 	[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 	[SecurityPermission (SecurityAction.InheritanceDemand, Infrastructure = true)]
@@ -111,4 +112,55 @@ namespace System {
 			return AppDomain.CreateDomain (friendlyName, securityInfo, appDomainInfo);
 		}
 	}
+#else
+	[Obsolete ("AppDomainManager is not supported on the current platform.", true)]
+	public class AppDomainManager : MarshalByRefObject {
+		public AppDomainManager ()
+		{
+			throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform.");
+		}
+
+		public virtual ApplicationActivator ApplicationActivator {
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual Assembly EntryAssembly {
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual HostExecutionContextManager HostExecutionContextManager {
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual HostSecurityManager HostSecurityManager {
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public AppDomainManagerInitializationOptions InitializationFlags {
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+			set { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup appDomainInfo)
+		{
+			throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform.");
+		}
+
+		public virtual void InitializeNewDomain (AppDomainSetup appDomainInfo)
+		{
+			throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform.");
+		}
+
+		public virtual bool CheckSecuritySettings (SecurityState state)
+		{
+			throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform.");
+		}
+
+		protected static AppDomain CreateDomainHelper (string friendlyName, Evidence securityInfo, AppDomainSetup appDomainInfo)
+		{
+			throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform.");
+		}
+	}
+
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 }

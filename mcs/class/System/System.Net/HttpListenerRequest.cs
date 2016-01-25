@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -175,7 +176,7 @@ namespace System.Net {
 								host, LocalEndPoint.Port);
 
 			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
-				context.ErrorMessage = "Invalid url: " + base_uri + path;
+				context.ErrorMessage = WebUtility.HtmlEncode ("Invalid url: " + base_uri + path);
 				return;
 			}
 

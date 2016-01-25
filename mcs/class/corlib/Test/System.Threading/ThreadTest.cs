@@ -387,6 +387,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("NotWorking")] // setting the priority of a Thread before it is started isn't implemented in Mono yet
 		public void TestPriority1()
 		{
 			if (is_win32 && is_mono)
@@ -396,10 +397,11 @@ namespace MonoTests.System.Threading
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			try {
 				TestThread.Priority=ThreadPriority.BelowNormal;
-				ThreadPriority after = TestThread.Priority;
+				ThreadPriority before = TestThread.Priority;
+				Assert.AreEqual (ThreadPriority.BelowNormal, before, "#40 Unexpected priority before thread start: ");
 				TestThread.Start();
 				TestUtil.WaitForAlive (TestThread, "wait7");
-				ThreadPriority before = TestThread.Priority;
+				ThreadPriority after = TestThread.Priority;
 				Assert.AreEqual (before, after, "#41 Unexpected Priority Change: ");
 			} finally {
 #if MONO_FEATURE_THREAD_ABORT
@@ -964,6 +966,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 		public void CurrentThread_Domains ()
 		{
@@ -973,6 +976,7 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (o.Run ());
 			AppDomain.Unload (ad);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		void CheckIsRunning (string s, Thread t)
 		{

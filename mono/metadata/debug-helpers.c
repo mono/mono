@@ -251,6 +251,31 @@ mono_signature_get_desc (MonoMethodSignature *sig, gboolean include_namespace)
 	return result;
 }
 
+char*
+mono_signature_full_name (MonoMethodSignature *sig)
+{
+	int i;
+	char *result;
+	GString *res;
+
+	if (!sig)
+		return g_strdup ("<invalid signature>");
+
+	res = g_string_new ("");
+
+	mono_type_get_desc (res, sig->ret, TRUE);
+	g_string_append_c (res, '(');
+	for (i = 0; i < sig->param_count; ++i) {
+		if (i > 0)
+			g_string_append_c (res, ',');
+		mono_type_get_desc (res, sig->params [i], TRUE);
+	}
+	g_string_append_c (res, ')');
+	result = res->str;
+	g_string_free (res, FALSE);
+	return result;
+}
+
 static void
 ginst_get_desc (GString *str, MonoGenericInst *ginst)
 {
@@ -750,7 +775,7 @@ mono_field_full_name (MonoClassField *field)
 }
 
 char *
-mono_method_get_name_full (MonoMethod *method, gboolean signature, MonoTypeNameFormat format)
+mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret, MonoTypeNameFormat format)
 {
 	char *res;
 	char wrapper [64];
@@ -806,8 +831,15 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, MonoTypeNameF
 			sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
 		else
 			strcpy (wrapper, "");
-		res = g_strdup_printf ("%s%s:%s%s (%s)", wrapper, klass_desc, 
-							   method->name, inst_desc ? inst_desc : "", tmpsig);
+		if (ret) {
+			char *ret_str = mono_type_full_name (mono_method_signature (method)->ret);
+			res = g_strdup_printf ("%s%s %s:%s%s (%s)", wrapper, ret_str, klass_desc,
+								   method->name, inst_desc ? inst_desc : "", tmpsig);
+			g_free (ret_str);
+		} else {
+			res = g_strdup_printf ("%s%s:%s%s (%s)", wrapper, klass_desc,
+								   method->name, inst_desc ? inst_desc : "", tmpsig);
+		}
 		g_free (tmpsig);
 	} else {
 		res = g_strdup_printf ("%s%s:%s%s", wrapper, klass_desc,
@@ -823,7 +855,13 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, MonoTypeNameF
 char *
 mono_method_full_name (MonoMethod *method, gboolean signature)
 {
-	return mono_method_get_name_full (method, signature, MONO_TYPE_NAME_FORMAT_IL);
+	return mono_method_get_name_full (method, signature, FALSE, MONO_TYPE_NAME_FORMAT_IL);
+}
+
+char *
+mono_method_get_full_name (MonoMethod *method)
+{
+	return mono_method_get_name_full (method, TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL);
 }
 
 static const char*
@@ -1031,7 +1069,7 @@ mono_class_describe_statics (MonoClass* klass)
 
 	if (!vtable)
 		return;
-	if (!(addr = mono_vtable_get_static_field_data (vtable)))
+	if (!(addr = (const char *)mono_vtable_get_static_field_data (vtable)))
 		return;
 
 	for (p = klass; p != NULL; p = p->parent) {

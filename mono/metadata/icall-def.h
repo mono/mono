@@ -46,7 +46,6 @@ ICALL(COMPROX_2, "FindProxy", ves_icall_Mono_Interop_ComInteropProxy_FindProxy)
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 ICALL(RUNTIME_1, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName)
 ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace)
-ICALL(RUNTIME_13, "SetGCAllowSynchronousMajor", ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor)
 
 #ifndef PLATFORM_RO_FS
 ICALL_TYPE(KPAIR, "Mono.Security.Cryptography.KeyPairPersistence", KPAIR_1)
@@ -110,6 +109,9 @@ ICALL(BUFFER_1, "InternalBlockCopy", ves_icall_System_Buffer_BlockCopyInternal)
 ICALL(BUFFER_2, "_ByteLength", ves_icall_System_Buffer_ByteLengthInternal)
 ICALL(BUFFER_3, "_GetByte", ves_icall_System_Buffer_GetByteInternal)
 ICALL(BUFFER_4, "_SetByte", ves_icall_System_Buffer_SetByteInternal)
+
+ICALL_TYPE(CLRCONFIG, "System.CLRConfig", CLRCONFIG_1)
+ICALL(CLRCONFIG_1, "CheckThrowUnobservedTaskExceptions", ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions)
 
 ICALL_TYPE (COMPO_W, "System.ComponentModel.Win32Exception", COMPO_W_1)
 ICALL (COMPO_W_1, "W32ErrorMessage", ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage)
@@ -229,6 +231,7 @@ ICALL_TYPE(ENV, "System.Environment", ENV_1)
 ICALL(ENV_1, "Exit", ves_icall_System_Environment_Exit)
 ICALL(ENV_2, "GetCommandLineArgs", mono_runtime_get_main_args)
 ICALL(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames)
+ICALL(ENV_31, "GetIs64BitOperatingSystem", ves_icall_System_Environment_GetIs64BitOperatingSystem)
 ICALL(ENV_4, "GetLogicalDrivesInternal", ves_icall_System_Environment_GetLogicalDrives )
 ICALL(ENV_5, "GetMachineConfigPath", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path)
 ICALL(ENV_51, "GetNewLine", ves_icall_System_Environment_get_NewLine)
@@ -591,16 +594,9 @@ ICALL(MFIELD_6, "ResolveType", ves_icall_MonoField_ResolveType)
 ICALL(MFIELD_4, "SetValueInternal", ves_icall_MonoField_SetValueInternal)
 ICALL(MFIELD_7, "get_core_clr_security_level", ves_icall_MonoField_get_core_clr_security_level)
 
-ICALL_TYPE(MGENCM, "System.Reflection.MonoGenericCMethod", MGENCM_1)
-ICALL(MGENCM_1, "get_ReflectedType", ves_icall_MonoGenericMethod_get_ReflectedType)
-
 ICALL_TYPE(MGENCL, "System.Reflection.MonoGenericClass", MGENCL_5)
 ICALL(MGENCL_5, "initialize", mono_reflection_generic_class_initialize)
 ICALL(MGENCL_6, "register_with_runtime", mono_reflection_register_with_runtime)
-
-/* note this is the same as above: unify */
-ICALL_TYPE(MGENM, "System.Reflection.MonoGenericMethod", MGENM_1)
-ICALL(MGENM_1, "get_ReflectedType", ves_icall_MonoGenericMethod_get_ReflectedType)
 
 ICALL_TYPE(MMETH, "System.Reflection.MonoMethod", MMETH_2)
 ICALL(MMETH_2, "GetGenericArguments", ves_icall_MonoMethod_GetGenericArguments)

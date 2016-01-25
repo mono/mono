@@ -39,7 +39,8 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <stdint.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/atomic.h"
-#include "mono/utils/mono-mutex.h"
+#include "mono/utils/mono-os-mutex.h"
+#include "mono/utils/mono-coop-mutex.h"
 #include "mono/sgen/sgen-conf.h"
 #include "mono/sgen/sgen-hash-table.h"
 #include "mono/sgen/sgen-protocol.h"
@@ -89,23 +90,14 @@ struct _GCMemSection {
 #define LOCK_DECLARE(name) mono_mutex_t name
 /* if changing LOCK_INIT to something that isn't idempotent, look at
    its use in mono_gc_base_init in sgen-gc.c */
-#define LOCK_INIT(name)	mono_mutex_init (&(name))
-#define LOCK_GC do {						\
-		MONO_TRY_BLOCKING	\
-		mono_mutex_lock (&gc_mutex);			\
-		MONO_FINISH_TRY_BLOCKING	\
-	} while (0)
+#define LOCK_INIT(name)	mono_os_mutex_init (&(name))
+#define LOCK_GC do { sgen_gc_lock (); } while (0)
 #define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
-extern LOCK_DECLARE (sgen_interruption_mutex);
+extern MonoCoopMutex sgen_interruption_mutex;
 
-#define LOCK_INTERRUPTION do {	\
-	MONO_TRY_BLOCKING	\
-	mono_mutex_lock (&sgen_interruption_mutex);	\
-	MONO_FINISH_TRY_BLOCKING	\
-} while (0)
-
-#define UNLOCK_INTERRUPTION mono_mutex_unlock (&sgen_interruption_mutex)
+#define LOCK_INTERRUPTION mono_coop_mutex_lock (&sgen_interruption_mutex)
+#define UNLOCK_INTERRUPTION mono_coop_mutex_unlock (&sgen_interruption_mutex)
 
 /* FIXME: Use InterlockedAdd & InterlockedAdd64 to reduce the CAS cost. */
 #define SGEN_CAS	InterlockedCompareExchange
@@ -154,12 +146,16 @@ extern int current_collection_generation;
 
 extern unsigned int sgen_global_stop_count;
 
+#define SGEN_ALIGN_UP_TO(val,align)	(((val) + (align - 1)) & ~(align - 1))
+#define SGEN_ALIGN_DOWN_TO(val,align)	((val) & ~(align - 1))
+
 #define SGEN_ALLOC_ALIGN		8
 #define SGEN_ALLOC_ALIGN_BITS	3
 
 /* s must be non-negative */
 #define SGEN_CAN_ALIGN_UP(s)		((s) <= SIZE_MAX - (SGEN_ALLOC_ALIGN - 1))
-#define SGEN_ALIGN_UP(s)		(((s)+(SGEN_ALLOC_ALIGN-1)) & ~(SGEN_ALLOC_ALIGN-1))
+#define SGEN_ALIGN_UP(s)		SGEN_ALIGN_UP_TO(s, SGEN_ALLOC_ALIGN)
+#define SGEN_ALIGN_DOWN(s)		SGEN_ALIGN_DOWN_TO(s, SGEN_ALLOC_ALIGN)
 
 #if SIZEOF_VOID_P == 4
 #define ONE_P 1
@@ -245,8 +241,8 @@ sgen_get_nursery_end (void)
 #define SGEN_POINTER_UNTAG_VTABLE(p)		SGEN_POINTER_UNTAG_ALL((p))
 
 /* returns NULL if not forwarded, or the forwarded address */
-#define SGEN_VTABLE_IS_FORWARDED(vtable) (SGEN_POINTER_IS_TAGGED_FORWARDED ((vtable)) ? SGEN_POINTER_UNTAG_VTABLE ((vtable)) : NULL)
-#define SGEN_OBJECT_IS_FORWARDED(obj) (SGEN_VTABLE_IS_FORWARDED (((mword*)(obj))[0]))
+#define SGEN_VTABLE_IS_FORWARDED(vtable) ((GCVTable *)(SGEN_POINTER_IS_TAGGED_FORWARDED ((vtable)) ? SGEN_POINTER_UNTAG_VTABLE ((vtable)) : NULL))
+#define SGEN_OBJECT_IS_FORWARDED(obj) ((GCObject *)SGEN_VTABLE_IS_FORWARDED (((mword*)(obj))[0]))
 
 #define SGEN_VTABLE_IS_PINNED(vtable) SGEN_POINTER_IS_TAGGED_PINNED ((vtable))
 #define SGEN_OBJECT_IS_PINNED(obj) (SGEN_VTABLE_IS_PINNED (((mword*)(obj))[0]))
@@ -272,7 +268,7 @@ sgen_get_nursery_end (void)
  * Since we set bits in the vtable, use the macro to load it from the pointer to
  * an object that is potentially pinned.
  */
-#define SGEN_LOAD_VTABLE(obj)		((GCVTable)(SGEN_POINTER_UNTAG_ALL (SGEN_LOAD_VTABLE_UNCHECKED ((obj)))))
+#define SGEN_LOAD_VTABLE(obj)		((GCVTable)(SGEN_POINTER_UNTAG_ALL (SGEN_LOAD_VTABLE_UNCHECKED ((GCObject *)(obj)))))
 
 /*
 List of what each bit on of the vtable gc bits means. 
@@ -449,7 +445,7 @@ void sgen_pin_stats_register_global_remset (GCObject *obj);
 void sgen_pin_stats_print_class_stats (void);
 
 void sgen_sort_addresses (void **array, size_t size);
-void sgen_add_to_global_remset (gpointer ptr, gpointer obj);
+void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
 
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
@@ -606,13 +602,6 @@ struct _SgenMajorCollector {
 	gboolean needs_thread_pool;
 	gboolean supports_cardtable;
 	gboolean sweeps_lazily;
-
-	/*
-	 * This is set to TRUE by the sweep if the next major
-	 * collection should be synchronous (for evacuation).  For
-	 * non-concurrent collectors, this should be NULL.
-	 */
-	gboolean *want_synchronous_collection;
 
 	void* (*alloc_heap) (mword nursery_size, mword nursery_align, int nursery_bits);
 	gboolean (*is_object_live) (GCObject *obj);
@@ -966,7 +955,7 @@ extern guint32 tlab_size;
 extern NurseryClearPolicy nursery_clear_policy;
 extern gboolean sgen_try_free_some_memory;
 
-extern LOCK_DECLARE (gc_mutex);
+extern MonoCoopMutex gc_mutex;
 
 /* Nursery helpers. */
 

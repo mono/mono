@@ -33,10 +33,66 @@ namespace System.Diagnostics.Tracing
 	{
 		protected EventSource ()
 		{
+			this.Name = this.GetType().Name;
 		}
 
 		protected EventSource (bool throwOnEventWriteErrors)
+			: this ()
 		{
+		}
+
+		protected EventSource (EventSourceSettings settings)
+			: this ()
+		{
+			this.Settings = settings;
+		}
+
+		protected EventSource (EventSourceSettings settings, params string[] traits)
+			: this (settings)
+		{
+		}
+
+		public EventSource (string eventSourceName)
+		{
+			this.Name = eventSourceName;
+		}
+
+		public EventSource (string eventSourceName, EventSourceSettings config)
+			: this (eventSourceName)
+		{
+			this.Settings = config;
+		}
+
+		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
+			: this (eventSourceName, config)
+		{
+		}
+
+		public Exception ConstructionException
+		{
+			get { return null; }
+		}
+
+		public static Guid CurrentThreadActivityId
+		{
+			get { return Guid.Empty; }
+		}
+
+		public Guid Guid
+		{
+			get { return Guid.Empty; }
+		}
+
+		public string Name
+		{
+			get;
+			private set;
+		}
+
+		public EventSourceSettings Settings
+		{
+			get;
+			private set;
 		}
 
 		public bool IsEnabled ()
@@ -49,16 +105,58 @@ namespace System.Diagnostics.Tracing
 			return false;
 		}
 
+		public bool IsEnabled (EventLevel level, EventKeywords keywords, EventChannel channel)
+		{
+			return false;
+		}
+
 		public void Dispose ()
 		{
 			Dispose (true);
 		}
 
+		public string GetTrait (string key)
+		{
+			return null;
+		}
+
+		public void Write (string eventName)
+		{
+		}
+
+		public void Write<T> (string eventName, T data)
+		{
+		}
+
+		public void Write<T> (string eventName, EventSourceOptions options, T data)
+		{
+		}
+
+		public void Write<T> (string eventName, ref EventSourceOptions options, ref T data)
+		{
+		}
+
+		public void Write<T> (string eventName, ref EventSourceOptions options, ref Guid activityId, ref Guid relatedActivityId, ref T data)
+		{
+		}
+
 		protected virtual void Dispose (bool disposing)
-		{			
+		{
 		}
 
 		protected virtual void OnEventCommand (EventCommandEventArgs command)
+		{
+		}
+
+		protected void WriteEvent (int eventId)
+		{
+		}
+
+		protected void WriteEvent (int eventId, byte[] arg1)
+		{
+		}
+
+		protected void WriteEvent (int eventId, int arg1)
 		{
 		}
 
@@ -66,7 +164,7 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-		protected void WriteEvent (int eventId, string arg1, int arg2)
+		protected void WriteEvent (int eventId, int arg1, int arg2)
 		{
 		}
 
@@ -74,11 +172,15 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-		protected void WriteEvent (int eventId, string arg1, int arg2, int arg3)
+		protected void WriteEvent (int eventId, int arg1, string arg2)
 		{
 		}
 
 		protected void WriteEvent (int eventId, long arg1)
+		{
+		}
+
+		protected void WriteEvent (int eventId, long arg1, byte[] arg2)
 		{
 		}
 
@@ -90,7 +192,31 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		protected void WriteEvent (int eventId, long arg1, string arg2)
+		{
+		}
+
 		protected void WriteEvent (int eventId, params object[] args)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, int arg2)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, int arg2, int arg3)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, long arg2)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, string arg2)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, string arg2, string arg3)
 		{
 		}
 	}

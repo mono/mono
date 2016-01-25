@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;MONO_X509_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;MONO_X509_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -482,6 +482,7 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LoggingObject.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Cache\RequestCachePolicy.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookie.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookiecollection.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookiecontainer.cs" />
@@ -491,7 +492,9 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\IPInterfaceStatistics.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\ScopeLevel.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\UnicastIPAddressInformation.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\ServicePointManager.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\IPProtectionLevel.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\NetworkStream.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\SocketOptionName.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\UnicodeDecodingConformance.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\UnicodeEncodingConformance.cs" />
@@ -499,6 +502,10 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WebPermission.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WebUtility.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WriteStreamClosedEventArgs.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\UriEnumTypes.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\URIFormatException.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\UriHostNameType.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\URIPartial.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\compiledregexrunner.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\compiledregexrunnerfactory.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\Regex.cs" />
@@ -530,6 +537,8 @@
     <Compile Include="..\..\..\external\referencesource\System\services\timers\system\timers\TimersDescriptionAttribute.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\interopservices\DefaultParameterValueAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\interopservices\handlecollector.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\versioning\FrameworkName.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\threading\Barrier.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
@@ -584,16 +593,39 @@
     <Compile Include="Mono.Net.Dns\ResolverError.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+    <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+    <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+    <Compile Include="Mono.Net.Security\IMonoSslStream.cs" />
+    <Compile Include="Mono.Net.Security\IMonoTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+    <Compile Include="Mono.Net.Security\MonoDefaultTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslStreamImpl.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslStreamWrapper.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderImpl.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderWrapper.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+    <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+    <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="ReferenceSources\_SecureChannel.cs" />
+    <Compile Include="ReferenceSources\_SslState.cs" />
+    <Compile Include="ReferenceSources\_SslStream.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
+    <Compile Include="ReferenceSources\Internal.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />
     <Compile Include="ReferenceSources\Socket.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
+    <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SRCategoryAttribute.cs" />
+    <Compile Include="ReferenceSources\SslStream.cs" />
+    <Compile Include="ReferenceSources\SSPIConfiguration.cs" />
+    <Compile Include="ReferenceSources\SSPISafeHandles.cs" />
+    <Compile Include="ReferenceSources\SSPIWrapper.cs" />
     <Compile Include="ReferenceSources\SystemNetworkCredential.cs" />
     <Compile Include="ReferenceSources\WebHeaderCollectionType.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
@@ -777,11 +809,6 @@
     <Compile Include="System.Media\SystemSound.cs" />
     <Compile Include="System.Media\SystemSounds.cs" />
     <Compile Include="System.Media\Win32SoundPlayer.cs" />
-    <Compile Include="System.Net.Cache\HttpCacheAgeControl.cs" />
-    <Compile Include="System.Net.Cache\HttpRequestCacheLevel.cs" />
-    <Compile Include="System.Net.Cache\HttpRequestCachePolicy.cs" />
-    <Compile Include="System.Net.Cache\RequestCacheLevel.cs" />
-    <Compile Include="System.Net.Cache\RequestCachePolicy.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModuleElement.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModuleElementCollection.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModulesSection.cs" />
@@ -907,7 +934,6 @@
     <Compile Include="System.Net.Sockets\IPv6MulticastOption.cs" />
     <Compile Include="System.Net.Sockets\LingerOption.cs" />
     <Compile Include="System.Net.Sockets\MulticastOption.cs" />
-    <Compile Include="System.Net.Sockets\NetworkStream.cs" />
     <Compile Include="System.Net.Sockets\ProtocolFamily.cs" />
     <Compile Include="System.Net.Sockets\ProtocolType.cs" />
     <Compile Include="System.Net.Sockets\SafeSocketHandle.cs" />
@@ -1049,8 +1075,6 @@
     <Compile Include="System.Runtime.InteropServices.ComTypes\STATDATA.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\STGMEDIUM.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\TYMED.cs" />
-    <Compile Include="System.Runtime.InteropServices\DefaultParameterValueAttribute.cs" />
-    <Compile Include="System.Runtime.InteropServices\HandleCollector.cs" />
     <Compile Include="System.Runtime.InteropServices\StandardOleMarshalObject.cs" />
     <Compile Include="System.Security.AccessControl\SemaphoreAccessRule.cs" />
     <Compile Include="System.Security.AccessControl\SemaphoreAuditRule.cs" />
@@ -1135,6 +1159,7 @@
     <Compile Include="System\GenericUriParserOptions.cs" />
     <Compile Include="System\GopherStyleUriParser.cs" />
     <Compile Include="System\HttpStyleUriParser.cs" />
+    <Compile Include="System\IOSelector.cs" />
     <Compile Include="System\IUriData.cs" />
     <Compile Include="System\LdapStyleUriParser.cs" />
     <Compile Include="System\NetPipeStyleUriParser.cs" />
@@ -1144,18 +1169,11 @@
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\Uri.cs" />
     <Compile Include="System\UriBuilder.cs" />
-    <Compile Include="System\UriComponents.cs" />
     <Compile Include="System\UriData.cs" />
     <Compile Include="System\UriElements.cs" />
-    <Compile Include="System\UriFormat.cs" />
-    <Compile Include="System\UriFormatException.cs" />
     <Compile Include="System\UriHelper.cs" />
-    <Compile Include="System\UriHostNameType.cs" />
-    <Compile Include="System\UriIdnScope.cs" />
-    <Compile Include="System\UriKind.cs" />
     <Compile Include="System\UriParseComponents.cs" />
     <Compile Include="System\UriParser.cs" />
-    <Compile Include="System\UriPartial.cs" />
     <Compile Include="System\UriTypeConverter.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

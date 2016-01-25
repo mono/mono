@@ -328,6 +328,8 @@
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionFactory.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionInternal.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPool.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolAuthenticationContext.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolAuthenticationContextKey.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolCounters.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolGroup.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolGroupProviderInfo.cs" />
@@ -369,6 +371,7 @@
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Sql\TriggerAction.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\ApplicationIntent.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\LocalDBAPI.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\SqlClientEncryptionType.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\SqlClientPermission.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\SqlConnectionString.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\SqlConnectionStringBuilder.cs" />

@@ -11,6 +11,7 @@
         <include name="AssemblyInfo.cs"/>
         <include name="AssemblyReader.cs"/>
         <include name="AssemblyResolver.cs"/>
+        <include name="BabysitterSupport.cs"/>
         <include name="CoreExtensions.cs"/>
         <include name="CultureDetector.cs"/>
         <include name="DirectorySwapper.cs"/>

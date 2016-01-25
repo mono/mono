@@ -24,19 +24,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
 	public class MonoTlsConnectionInfo
 	{
-		public short CipherSuiteCode {
+		public CipherSuiteCode CipherSuiteCode {
 			get; set;
 		}
 
 		public TlsProtocols ProtocolVersion {
 			get; set;
+		}
+
+		public CipherAlgorithmType CipherAlgorithmType {
+			get; set;
+		}
+
+		public HashAlgorithmType HashAlgorithmType {
+			get; set;
+		}
+
+		public ExchangeAlgorithmType ExchangeAlgorithmType {
+			get; set;
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[MonoTlsConnectionInfo: {0}:{1}]", ProtocolVersion, CipherSuiteCode);
 		}
 	}
 }

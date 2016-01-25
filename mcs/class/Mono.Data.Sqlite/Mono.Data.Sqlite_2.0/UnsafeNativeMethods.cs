@@ -200,6 +200,8 @@ namespace Mono.Data.Sqlite
 #endif
     internal static extern IntPtr sqlite3_bind_parameter_name(IntPtr stmt, int index);
 
+// Apple does not include those symbols in it's libsqlite3
+#if !MONOTOUCH
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
 #else
@@ -213,6 +215,7 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern IntPtr sqlite3_column_database_name16(IntPtr stmt, int index);
+#endif
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
@@ -242,6 +245,7 @@ namespace Mono.Data.Sqlite
 #endif
     internal static extern IntPtr sqlite3_column_name16(IntPtr stmt, int index);
 
+#if !MONOTOUCH
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
 #else
@@ -269,6 +273,7 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern IntPtr sqlite3_column_table_name16(IntPtr stmt, int index);
+#endif // !MONOTOUCH
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
@@ -646,6 +651,7 @@ namespace Mono.Data.Sqlite
 #endif
     internal static extern void sqlite3_result_text16(IntPtr context, string strName, int nLen, IntPtr pvReserved);
 
+#if !MONOTOUCH
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
 #else
@@ -659,6 +665,7 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern int sqlite3_rekey(IntPtr db, byte[] key, int keylen);
+#endif
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]

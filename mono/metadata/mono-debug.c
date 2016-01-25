@@ -100,7 +100,7 @@ lookup_data_table (MonoDomain *domain)
 {
 	MonoDebugDataTable *table;
 
-	table = g_hash_table_lookup (data_table_hash, domain);
+	table = (MonoDebugDataTable *)g_hash_table_lookup (data_table_hash, domain);
 	if (!table) {
 		g_error ("lookup_data_table () failed for %p\n", domain);
 		g_assert (table);
@@ -137,7 +137,7 @@ mono_debug_init (MonoDebugFormat format)
 	mono_debug_initialized = TRUE;
 	mono_debug_format = format;
 
-	mono_mutex_init_recursive (&debugger_lock_mutex);
+	mono_os_mutex_init_recursive (&debugger_lock_mutex);
 
 	mono_debugger_lock ();
 
@@ -197,7 +197,7 @@ mono_debug_domain_unload (MonoDomain *domain)
 
 	mono_debugger_lock ();
 
-	table = g_hash_table_lookup (data_table_hash, domain);
+	table = (MonoDebugDataTable *)g_hash_table_lookup (data_table_hash, domain);
 	if (!table) {
 		g_warning (G_STRLOC ": unloading unknown domain %p / %d",
 			   domain, mono_domain_get_id (domain));
@@ -216,7 +216,7 @@ mono_debug_domain_unload (MonoDomain *domain)
 static MonoDebugHandle *
 mono_debug_get_image (MonoImage *image)
 {
-	return g_hash_table_lookup (mono_debug_handles, image);
+	return (MonoDebugHandle *)g_hash_table_lookup (mono_debug_handles, image);
 }
 
 void
@@ -444,7 +444,7 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 		(25 + sizeof (gpointer)) * (1 + jit->num_params + jit->num_locals);
 
 	if (max_size > BUFSIZ)
-		ptr = oldptr = g_malloc (max_size);
+		ptr = oldptr = (guint8 *)g_malloc (max_size);
 	else
 		ptr = oldptr = buffer;
 
@@ -482,9 +482,9 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 	total_size = size + sizeof (MonoDebugMethodAddress);
 
 	if (method_is_dynamic (method)) {
-		address = g_malloc0 (total_size);
+		address = (MonoDebugMethodAddress *)g_malloc0 (total_size);
 	} else {
-		address = mono_mempool_alloc (table->mp, total_size);
+		address = (MonoDebugMethodAddress *)mono_mempool_alloc (table->mp, total_size);
 	}
 
 	address->code_start = jit->code_start;
@@ -515,7 +515,7 @@ mono_debug_remove_method (MonoMethod *method, MonoDomain *domain)
 
 	table = lookup_data_table (domain);
 
-	address = g_hash_table_lookup (table->method_address_hash, method);
+	address = (MonoDebugMethodAddress *)g_hash_table_lookup (table->method_address_hash, method);
 	if (address)
 		g_free (address);
 
@@ -579,7 +579,7 @@ read_variable (MonoDebugVarInfo *var, guint8 *ptr, guint8 **rptr)
 	var->size = read_leb128 (ptr, &ptr);
 	var->begin_scope = read_leb128 (ptr, &ptr);
 	var->end_scope = read_leb128 (ptr, &ptr);
-	READ_UNALIGNED (gpointer, ptr, var->type);
+	READ_UNALIGNED (MonoType *, ptr, var->type);
 	ptr += sizeof (gpointer);
 	*rptr = ptr;
 }
@@ -655,7 +655,7 @@ find_method (MonoMethod *method, MonoDomain *domain)
 	MonoDebugMethodAddress *address;
 
 	table = lookup_data_table (domain);
-	address = g_hash_table_lookup (table->method_address_hash, method);
+	address = (MonoDebugMethodAddress *)g_hash_table_lookup (table->method_address_hash, method);
 
 	if (!address)
 		return NULL;
@@ -771,6 +771,20 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 		location = mono_ppdb_lookup_location (minfo, offset);
 	else
 		location = mono_debug_symfile_lookup_location (minfo, offset);
+	mono_debugger_unlock ();
+	return location;
+}
+
+MonoDebugSourceLocation *
+mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset)
+{
+	MonoDebugSourceLocation *location;
+
+	mono_debugger_lock ();
+	if (minfo->handle->ppdb)
+		location = mono_ppdb_lookup_location (minfo, il_offset);
+	else
+		location = mono_debug_symfile_lookup_location (minfo, il_offset);
 	mono_debugger_unlock ();
 	return location;
 }
@@ -947,14 +961,14 @@ void
 mono_debugger_lock (void)
 {
 	g_assert (mono_debug_initialized);
-	mono_mutex_lock (&debugger_lock_mutex);
+	mono_os_mutex_lock (&debugger_lock_mutex);
 }
 
 void
 mono_debugger_unlock (void)
 {
 	g_assert (mono_debug_initialized);
-	mono_mutex_unlock (&debugger_lock_mutex);
+	mono_os_mutex_unlock (&debugger_lock_mutex);
 }
 
 /**

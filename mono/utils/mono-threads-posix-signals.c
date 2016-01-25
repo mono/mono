@@ -17,7 +17,6 @@
 #include <errno.h>
 #include <signal.h>
 
-#include "mono-semaphore.h"
 #include "mono-threads-posix-signals.h"
 
 #if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
@@ -65,7 +64,7 @@ signal_add_handler (int signo, gpointer handler, int flags)
 	struct sigaction previous_sa;
 	int ret;
 
-	sa.sa_sigaction = handler;
+	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
 	sigfillset (&sa.sa_mask);
 
 	sa.sa_flags = SA_SIGINFO | flags;
@@ -217,7 +216,8 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 #if MONO_ARCH_HAS_MONO_CONTEXT
 		MonoContext tmp = current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx;
 		mono_threads_get_runtime_callbacks ()->setup_async_callback (&tmp, current->async_target, current->user_data);
-		current->async_target = current->user_data = NULL;
+		current->user_data = NULL;
+		current->async_target = NULL;
 		mono_monoctx_to_sigctx (&tmp, context);
 #else
 		g_error ("The new interruption machinery requires a working mono-context");

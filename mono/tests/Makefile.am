@@ -1,6 +1,6 @@
 SUBDIRS = assemblyresolve gc-descriptors
 
-check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-messages test-unhandled-exception-2 test-appdomain-unload rm-empty-logs
+check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-console-output test-messages test-env-options test-unhandled-exception-2 test-appdomain-unload rm-empty-logs
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
 
@@ -188,6 +188,7 @@ BASE_TEST_CS_SRC=		\
 	delegate10.cs		\
 	delegate11.cs		\
 	delegate12.cs		\
+	delegate13.cs		\
 	remoting1.cs		\
 	remoting2.cs		\
 	remoting3.cs		\
@@ -362,6 +363,7 @@ BASE_TEST_CS_SRC=		\
 	bug-324535.cs	\
 	modules.cs	\
 	bug-81673.cs	\
+	bug-36848.cs    \
 	bug-81691.cs	\
 	bug-80307.cs	\
 	bug-415577.cs	\
@@ -754,6 +756,9 @@ test-messages: w32message.exe
 endif
 endif
 
+test-env-options:
+	MONO_ENV_OPTIONS="--version" $(RUNTIME) array-init.exe | grep -q Architecture:
+
 if AMD64
 test-sgen : sgen-tests
 else
@@ -864,11 +869,11 @@ runtest: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQS
 
 runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	$(RUNTIME) --debug ./test-runner.exe -j a --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 runtest-managed-serial: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) ./test-runner.exe -j 1 --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	$(RUNTIME) --debug ./test-runner.exe -j 1 --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
@@ -1194,6 +1199,12 @@ bug-81673.exe bug-81673-interface.dll: $(srcdir)/bug-81673.cs $(srcdir)/bug-8167
 	$(MCS) -out:bug-81673.exe -r:bug-81673-interface.dll $(srcdir)/bug-81673.cs
 	$(MCS) -define:WITH_STOP -target:library -out:bug-81673-interface.dll $(srcdir)/bug-81673-interface.cs
 
+EXTRA_DIST += bug-36848-a.cs
+bug-36848.exe bug-36848-a.dll: $(srcdir)/bug-36848.cs $(srcdir)/bug-36848-a.cs
+	$(MCS) -target:library -out:bug-36848-a.dll $(srcdir)/bug-36848-a.cs
+	$(MCS) -r:bug-36848-a.dll -out:bug-36848.exe $(srcdir)/bug-36848.cs
+	$(MCS) -target:library -out:bug-36848-a.dll $(srcdir)/bug-36848-a.cs /define:WITH_STOP
+
 EXTRA_DIST += bug-81691-a.cs bug-81691-b.cs
 bug-81691.exe bug-81691-b.dll: $(srcdir)/bug-81691.cs $(srcdir)/bug-81691-a.cs $(srcdir)/bug-81691-b.cs
 	$(MCS) -target:library -out:bug-81691-a.dll $(srcdir)/bug-81691-a.cs
@@ -1395,6 +1406,13 @@ test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
 	$(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.2.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) -O=gshared appdomain-loader.exe > appdomain-loader.exe.3.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.4.stdout || exit 1;
+
+EXTRA_DIST += console-output.cs console-output.exe.stderr.expected console-output.exe.stdout.expected
+test-console-output: console-output.exe
+	@$(RUNTIME) console-output.exe 1>console-output.exe.stdout
+	@$(RUNTIME) console-output.exe 2>console-output.exe.stderr
+	@diff -w console-output.exe.stdout $(srcdir)/console-output.exe.stdout.expected \
+		&& diff -w console-output.exe.stderr $(srcdir)/console-output.exe.stderr.expected
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress

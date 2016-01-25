@@ -983,6 +983,7 @@ namespace System {
 			return _process_guid;
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public static AppDomain CreateDomain (string friendlyName)
 		{
 			return CreateDomain (friendlyName, null, null);
@@ -1061,6 +1062,25 @@ namespace System {
 
 			return ad;
 		}
+#else
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+		
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 #if !NET_2_1
 		[Serializable]
@@ -1098,13 +1118,23 @@ namespace System {
 		}
 #endif
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
 		                                      string appRelativeSearchPath, bool shadowCopyFiles)
 		{
 			return CreateDomain (friendlyName, securityInfo, CreateDomainSetup (appBasePath, appRelativeSearchPath, shadowCopyFiles));
 		}
+#else
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
+		                                      string appRelativeSearchPath, bool shadowCopyFiles)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 		
 #if !NET_2_1
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
 		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
 		{
@@ -1114,8 +1144,17 @@ namespace System {
 			info.ApplicationTrust = new ApplicationTrust (grantSet, fullTrustAssemblies ?? EmptyArray<StrongName>.Value);
 			return CreateDomain (friendlyName, securityInfo, info);		
 		}
+#else
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
+		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 #endif
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		static AppDomainSetup CreateDomainSetup (string appBasePath, string appRelativeSearchPath, bool shadowCopyFiles)
 		{
 			AppDomainSetup info = new AppDomainSetup ();
@@ -1130,6 +1169,7 @@ namespace System {
 
 			return info;
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern bool InternalIsFinalizingForUnload (int domain_id);
@@ -1149,6 +1189,7 @@ namespace System {
 			return Thread.GetDomainID ();
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		[ReliabilityContractAttribute (Consistency.MayCorruptAppDomain, Cer.MayFail)]
 		public static void Unload (AppDomain domain)
@@ -1158,6 +1199,13 @@ namespace System {
 
 			InternalUnload (domain.getDomainID());
 		}
+#else
+		[Obsolete ("AppDomain.Unload is not supported on the current platform.", true)]
+		public static void Unload (AppDomain domain)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.Unload is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
@@ -1339,11 +1387,13 @@ namespace System {
 			return null;
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		private void DoDomainUnload ()
 		{
 			if (DomainUnload != null)
 				DomainUnload(this, null);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void DoUnhandledException (Exception e);
@@ -1389,7 +1439,11 @@ namespace System {
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event ResolveEventHandler AssemblyResolve;
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+#else
+		[Obsolete ("AppDomain.DomainUnload is not supported on the current platform.", true)]
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public event EventHandler DomainUnload;
 
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
@@ -1424,10 +1478,17 @@ namespace System {
 #endif
         #pragma warning restore 649
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		// default is null
 		public AppDomainManager DomainManager {
 			get { return (AppDomainManager)_domain_manager; }
 		}
+#else
+		[Obsolete ("AppDomain.DomainManager is not supported on this platform.", true)]
+		public AppDomainManager DomainManager {
+			get { throw new PlatformNotSupportedException ("AppDomain.DomainManager is not supported on this platform."); }
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 #if !MOBILE
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
@@ -1473,6 +1534,7 @@ namespace System {
 
 		// static methods
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
 			string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs)
 		{
@@ -1483,6 +1545,14 @@ namespace System {
 
 			return CreateDomain (friendlyName, securityInfo, info);
 		}
+#else
+		[Obsolete ("AppDomain.CreateDomain is not supported on the current platform.", true)]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
+			string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs)
+		{
+			throw new PlatformNotSupportedException ("AppDomain.CreateDomain is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		public int ExecuteAssemblyByName (string assemblyName)
 		{

@@ -203,6 +203,9 @@ namespace System.Security.AccessControl
 		internal virtual int InternalGet (SafeHandle handle,
 						  AccessControlSections includeSections)
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 
@@ -214,11 +217,15 @@ namespace System.Security.AccessControl
 								out owner, out group,
 								out dacl, out sacl, out descriptor);
 				}, includeSections);
+#endif
 		}
 		
 		internal virtual int InternalGet (string name,
 						  AccessControlSections includeSections)
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 
@@ -230,8 +237,20 @@ namespace System.Security.AccessControl
 								     out owner, out group,
 								     out dacl, out sacl, out descriptor);
 				}, includeSections);
+#endif
 		}
 		
+#if MOBILE
+		internal virtual int InternalSet (SafeHandle handle, AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		internal virtual int InternalSet (string name, AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+#else
 		internal virtual int InternalSet (SafeHandle handle,
 						  AccessControlSections includeSections)
 		{
@@ -399,6 +418,7 @@ namespace System.Security.AccessControl
 			public IntPtr Owner, Group, Sacl, Dacl;
 		}
 		#endregion
+#endif
 	}
 }
 

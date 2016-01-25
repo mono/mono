@@ -50,6 +50,7 @@
 #include <mono/metadata/attach.h>
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-hwcap.h"
+#include "mono/utils/mono-logger-internals.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -60,6 +61,9 @@
 #include <locale.h>
 #include "version.h"
 #include "debugger-agent.h"
+#if TARGET_OSX
+#   include <sys/resource.h>
+#endif
 
 static FILE *mini_stats_fd;
 
@@ -147,7 +151,7 @@ extern char *nacl_mono_path;
 #define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT | MONO_OPT_FLOAT32)
 
 static guint32
-parse_optimizations (guint32 opt, const char* p)
+parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 {
 	guint32 exclude = 0;
 	const char *n;
@@ -157,8 +161,10 @@ parse_optimizations (guint32 opt, const char* p)
 	mono_hwcap_init ();
 
 	/* call out to cpu detection code here that sets the defaults ... */
-	opt |= mono_arch_cpu_optimizations (&exclude);
-	opt &= ~exclude;
+	if (cpu_opts) {
+		opt |= mono_arch_cpu_optimizations (&exclude);
+		opt &= ~exclude;
+	}
 	if (!p)
 		return opt;
 
@@ -284,12 +290,12 @@ mono_parse_default_optimizations (const char* p)
 {
 	guint32 opt;
 
-	opt = parse_optimizations (DEFAULT_OPTIMIZATIONS, p);
+	opt = parse_optimizations (DEFAULT_OPTIMIZATIONS, p, TRUE);
 	return opt;
 }
 
-static char*
-opt_descr (guint32 flags) {
+char*
+mono_opt_descr (guint32 flags) {
 	GString *str = g_string_new ("");
 	int i, need_comma;
 
@@ -358,7 +364,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 	int i;
 
 	mono_set_defaults (verbose, opt_flags);
-	n = opt_descr (opt_flags);
+	n = mono_opt_descr (opt_flags);
 	g_print ("Test run: image=%s, opts=%s\n", mono_image_get_filename (image), n);
 	g_free (n);
 	cfailed = failed = run = code_size = 0;
@@ -392,7 +398,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 				if (verbose >= 2)
 					g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
-				if ((func = mono_aot_get_method (mono_get_root_domain (), method)))
+				if ((func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method)))
 					;
 				else
 #endif
@@ -452,7 +458,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 		fprintf (mini_stats_fd, "$graph->set_legend(qw(");
 		for (opt = 0; opt < G_N_ELEMENTS (opt_sets); opt++) {
 			guint32 opt_flags = opt_sets [opt];
-			n = opt_descr (opt_flags);
+			n = mono_opt_descr (opt_flags);
 			if (!n [0])
 				n = (char *)"none";
 			if (opt)
@@ -497,7 +503,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 		for (iter = mono_single_method_list; iter; iter = g_slist_next (iter)) {
 			char *method_name;
 
-			mono_current_single_method = iter->data;
+			mono_current_single_method = (MonoMethod *)iter->data;
 
 			method_name = mono_method_full_name (mono_current_single_method, TRUE);
 			g_print ("Current single method: %s\n", method_name);
@@ -934,7 +940,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 			g_print ("Compiling %d %s\n", count, desc);
 			g_free (desc);
 		}
-		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), 0, 0, -1);
+		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)0, 0, -1);
 		if (cfg->exception_type != MONO_EXCEPTION_NONE) {
 			printf ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), cfg->exception_message);
 			fail_count ++;
@@ -1017,7 +1023,7 @@ typedef struct
 
 static void main_thread_handler (gpointer user_data)
 {
-	MainThreadArgs *main_args = user_data;
+	MainThreadArgs *main_args = (MainThreadArgs *)user_data;
 	MonoAssembly *assembly;
 
 	if (mono_compile_aot) {
@@ -1079,7 +1085,7 @@ load_agent (MonoDomain *domain, char *desc)
 	MonoImageOpenStatus open_status;
 
 	if (col) {
-		agent = g_memdup (desc, col - desc + 1);
+		agent = (char *)g_memdup (desc, col - desc + 1);
 		agent [col - desc] = '\0';
 		args = col + 1;
 	} else {
@@ -1257,9 +1263,9 @@ mini_debug_usage (void)
 }
 
 #if defined(MONO_ARCH_ARCHITECTURE)
-/* Redefine ARCHITECTURE to include more information */
-#undef ARCHITECTURE
-#define ARCHITECTURE MONO_ARCH_ARCHITECTURE
+/* Redefine MONO_ARCHITECTURE to include more information */
+#undef MONO_ARCHITECTURE
+#define MONO_ARCHITECTURE MONO_ARCH_ARCHITECTURE
 #endif
 
 static const char info[] =
@@ -1280,7 +1286,7 @@ static const char info[] =
 #else
     "\tNotification:  Thread + polling\n"
 #endif
-        "\tArchitecture:  " ARCHITECTURE "\n"
+        "\tArchitecture:  " MONO_ARCHITECTURE "\n"
 	"\tDisabled:      " DISABLED_FEATURES "\n"
 	"\tMisc:          "
 #ifdef MONO_SMALL_CONFIG
@@ -1371,10 +1377,10 @@ mono_jit_parse_options (int argc, char * argv[])
 			opt->soft_breakpoints = TRUE;
 			opt->explicit_null_checks = TRUE;
 		} else if (strncmp (argv [i], "--optimize=", 11) == 0) {
-			opt = parse_optimizations (opt, argv [i] + 11);
+			opt = parse_optimizations (opt, argv [i] + 11, TRUE);
 			mono_set_optimizations (opt);
 		} else if (strncmp (argv [i], "-O=", 3) == 0) {
-			opt = parse_optimizations (opt, argv [i] + 3);
+			opt = parse_optimizations (opt, argv [i] + 3, TRUE);
 			mono_set_optimizations (opt);
 		} else if (strcmp (argv [i], "--trace") == 0) {
 			trace_options = (char*)"";
@@ -1435,7 +1441,7 @@ mono_set_use_smp (int use_smp)
 #ifdef GLIBC_BEFORE_2_3_4_SCHED_SETAFFINITY
 		sched_setaffinity (getpid(), (gpointer)&proc_mask);
 #else
-		sched_setaffinity (getpid(), sizeof (unsigned long), (gpointer)&proc_mask);
+		sched_setaffinity (getpid(), sizeof (unsigned long), (const cpu_set_t *)&proc_mask);
 #endif
 	}
 #endif
@@ -1470,14 +1476,30 @@ switch_gc (char* argv[], const char* target_gc)
 
 #ifdef TARGET_OSX
 
+/*
+ * tries to increase the minimum number of files, if the number is below 1024
+ */
+static void
+darwin_change_default_file_handles ()
+{
+	struct rlimit limit;
+	
+	if (getrlimit (RLIMIT_NOFILE, &limit) == 0){
+		if (limit.rlim_cur < 1024){
+			limit.rlim_cur = MAX(1024,limit.rlim_cur);
+			setrlimit (RLIMIT_NOFILE, &limit);
+		}
+	}
+}
+
 static void
 switch_arch (char* argv[], const char* target_arch)
 {
 	GString *path;
 	gsize arch_offset;
 
-	if ((strcmp (target_arch, "32") == 0 && strcmp (ARCHITECTURE, "x86") == 0) ||
-		(strcmp (target_arch, "64") == 0 && strcmp (ARCHITECTURE, "amd64") == 0)) {
+	if ((strcmp (target_arch, "32") == 0 && strcmp (MONO_ARCHITECTURE, "x86") == 0) ||
+		(strcmp (target_arch, "64") == 0 && strcmp (MONO_ARCHITECTURE, "amd64") == 0)) {
 		return; /* matching arch loaded */
 	}
 
@@ -1520,7 +1542,7 @@ mono_main (int argc, char* argv[])
 	char *config_file = NULL;
 	int i, count = 1;
 	guint32 opt, action = DO_EXEC, recompilation_times = 1;
-	MonoGraphOptions mono_graph_options = 0;
+	MonoGraphOptions mono_graph_options = (MonoGraphOptions)0;
 	int mini_verbose = 0;
 	gboolean enable_profile = FALSE;
 	char *trace_options = NULL;
@@ -1550,6 +1572,10 @@ mono_main (int argc, char* argv[])
 
 	setlocale (LC_ALL, "");
 
+#if TARGET_OSX
+	darwin_change_default_file_handles ();
+#endif
+
 	if (g_getenv ("MONO_NO_SMP"))
 		mono_set_use_smp (FALSE);
 	
@@ -1566,7 +1592,7 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--single-method=", 16) == 0) {
 			char *full_opts = g_strdup_printf ("-all,%s", argv [i] + 16);
 			action = DO_SINGLE_METHOD_REGRESSION;
-			mono_single_method_regression_opt = parse_optimizations (opt, full_opts);
+			mono_single_method_regression_opt = parse_optimizations (opt, full_opts, TRUE);
 			g_free (full_opts);
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
 			mini_verbose++;
@@ -1616,9 +1642,20 @@ mono_main (int argc, char* argv[])
 			}
 			mini_stats_fd = fopen (argv [++i], "w+");
 		} else if (strncmp (argv [i], "--optimize=", 11) == 0) {
-			opt = parse_optimizations (opt, argv [i] + 11);
+			opt = parse_optimizations (opt, argv [i] + 11, TRUE);
 		} else if (strncmp (argv [i], "-O=", 3) == 0) {
-			opt = parse_optimizations (opt, argv [i] + 3);
+			opt = parse_optimizations (opt, argv [i] + 3, TRUE);
+		} else if (strncmp (argv [i], "--bisect=", 9) == 0) {
+			char *param = argv [i] + 9;
+			char *sep = strchr (param, ':');
+			if (!sep) {
+				fprintf (stderr, "Error: --bisect requires OPT:FILENAME\n");
+				return 1;
+			}
+			char *opt_string = g_strndup (param, sep - param);
+			guint32 opt = parse_optimizations (0, opt_string, FALSE);
+			g_free (opt_string);
+			mono_set_bisect_methods (opt, sep + 1);
 		} else if (strcmp (argv [i], "--gc=sgen") == 0) {
 			switch_gc (argv, "sgen");
 		} else if (strcmp (argv [i], "--gc=boehm") == 0) {
@@ -2113,10 +2150,10 @@ mono_main (int argc, char* argv[])
 			(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 			MonoMethod *nm;
 			nm = mono_marshal_get_native_wrapper (method, TRUE, FALSE);
-			cfg = mini_method_compile (nm, opt, mono_get_root_domain (), 0, part, -1);
+			cfg = mini_method_compile (nm, opt, mono_get_root_domain (), (JitFlags)0, part, -1);
 		}
 		else
-			cfg = mini_method_compile (method, opt, mono_get_root_domain (), 0, part, -1);
+			cfg = mini_method_compile (method, opt, mono_get_root_domain (), (JitFlags)0, part, -1);
 		if ((mono_graph_options & MONO_GRAPH_CFG_SSA) && !(cfg->comp_done & MONO_COMP_SSA)) {
 			g_warning ("no SSA info available (use -O=deadce)");
 			return 1;
@@ -2135,7 +2172,7 @@ mono_main (int argc, char* argv[])
 			fprintf (mini_stats_fd, "[");
 			for (i = 0; i < G_N_ELEMENTS (opt_sets); i++) {
 				opt = opt_sets [i];
-				n = opt_descr (opt);
+				n = mono_opt_descr (opt);
 				if (!n [0])
 					n = "none";
 				fprintf (mini_stats_fd, "\"%s\",", n);
@@ -2148,7 +2185,7 @@ mono_main (int argc, char* argv[])
 				opt = opt_sets [i];
 				g_timer_start (timer);
 				for (j = 0; j < count; ++j) {
-					cfg = mini_method_compile (method, opt, mono_get_root_domain (), 0, 0, -1);
+					cfg = mini_method_compile (method, opt, mono_get_root_domain (), (JitFlags)0, 0, -1);
 					mono_destroy_compile (cfg);
 				}
 				g_timer_stop (timer);
@@ -2171,12 +2208,12 @@ mono_main (int argc, char* argv[])
 					(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 					method = mono_marshal_get_native_wrapper (method, TRUE, FALSE);
 
-				cfg = mini_method_compile (method, opt, mono_get_root_domain (), 0, 0, -1);
+				cfg = mini_method_compile (method, opt, mono_get_root_domain (), (JitFlags)0, 0, -1);
 				mono_destroy_compile (cfg);
 			}
 		}
 	} else {
-		cfg = mini_method_compile (method, opt, mono_get_root_domain (), 0, 0, -1);
+		cfg = mini_method_compile (method, opt, mono_get_root_domain (), (JitFlags)0, 0, -1);
 		mono_destroy_compile (cfg);
 	}
 #endif
@@ -2204,8 +2241,9 @@ mono_jit_init (const char *file)
  * (since Mono does not support having more than one mscorlib runtime
  * loaded at once).
  *
- * The @runtime_version can be one of these strings: "v1.1.4322" for
- * the 1.1 runtime or "v2.0.50727"  for the 2.0 runtime. 
+ * The @runtime_version can be one of these strings: "v4.0.30319" for
+ * desktop, "mobile" for mobile or "moonlight" for Silverlight compat.
+ * If an unrecognized string is input, the vm will default to desktop.
  *
  * Returns: the MonoDomain representing the domain where the assembly
  * was loaded.
@@ -2234,8 +2272,10 @@ void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
 	mono_aot_mode = mode;
-	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY)
+	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY) {
+		mono_aot_only = TRUE;
 		mono_llvm_only = TRUE;
+	}
 }
 
 /**
@@ -2290,8 +2330,11 @@ mono_set_crash_chaining (gboolean chain_crashes)
 }
 
 void
-mono_parse_env_options (int argc, char *argv [])
+mono_parse_env_options (int *ref_argc, char **ref_argv [])
 {
+	int argc = *ref_argc;
+	char **argv = *ref_argv;
+
 	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
 	if (env_options != NULL){
 		GPtrArray *array = g_ptr_array_new ();
@@ -2354,14 +2397,14 @@ mono_parse_env_options (int argc, char *argv [])
 			
 			/* First the environment variable settings, to allow the command line options to override */
 			for (i = 0; i < array->len; i++)
-				new_argv [i+1] = g_ptr_array_index (array, i);
+				new_argv [i+1] = (char *)g_ptr_array_index (array, i);
 			i++;
 			for (j = 1; j < argc; j++)
 				new_argv [i++] = argv [j];
 			new_argv [i] = NULL;
 
-			argc = new_argc;
-			argv = new_argv;
+			*ref_argc = new_argc;
+			*ref_argv = new_argv;
 		}
 		g_ptr_array_free (array, TRUE);
 	}

@@ -124,6 +124,16 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP
+.I data-outfile=FILE.dll.aotdata
+.Sp
+This instructs the AOT code generator to output certain data
+constructs into a separate file.   This can reduce the executable
+images some five to twenty percent.   Developers need to then ship the
+resulting aotdata as a resource and register a hook to load the data
+on demand by using the 
+.I mono_install_load_aot_data_hook
+method.
+.TP
 .I direct-pinvoke
 .Sp
 When this option is specified, P/Invoke methods are invoked directly
@@ -602,6 +612,16 @@ Currently this option is only supported on Linux.
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
 .TP
+\fB--bisect=optimization:filename\fR
+This flag is used by the automatic optimization bug bisector.  It
+takes an optimization flag and a filename of a file containing a list
+of full method names, one per line.  When it compiles one of the
+methods in the file it will use the optimization given, in addition to
+the optimizations that are otherwise enabled.  Note that if the
+optimization is enabled by default, you should disable it with `-O`,
+otherwise it will just apply to every method, whether it's in the file
+or not.
+.TP
 \fB--break method\fR
 Inserts a breakpoint before the method whose name is `method'
 (namespace.class:methodname).  Use `Main' as method name to insert a
@@ -868,7 +888,9 @@ environment variable to limit the extent of the messages you get:
 If set, the log mask is changed to the set value. Possible values are
 "asm" (assembly loader), "type", "dll" (native library loader), "gc"
 (garbage collector), "cfg" (config file loader), "aot" (precompiler),
-"security" (e.g. Moonlight CoreCLR support) and "all". 
+"security" (e.g. Moonlight CoreCLR support), "threadpool" (thread pool generic), 
+"io-threadpool" (thread pool I/O), "io-layer" (I/O layer - sockets, handles, shared memory etc) 
+and "all". 
 The default value is "all". Changing the mask value allows you to display only 
 messages for a certain component. You can use multiple masks by comma 
 separating them. For example to see config file messages and assembly loader
@@ -931,7 +953,12 @@ by setting the option
 Turns off the garbage collection in Mono.  This should be only used
 for debugging purposes
 .TP
-\fBLVM_COUNT\fR
+\fBHTTP_PROXY\fR
+(Also \fBhttp_proxy\fR) If set, web requests using the Mono
+Class Library will be automatically proxied through the given URL.
+Not supported on Windows, Mac OS, iOS or Android. See also \fBNO_PROXY\fR.
+.TP
+\fBLLVM_COUNT\fR
 When Mono is compiled with LLVM support, this instructs the runtime to
 stop using LLVM after the specified number of methods are JITed.
 This is a tool used in diagnostics to help isolate problems in the
@@ -999,7 +1026,12 @@ where V is the architecture number 4, 5, 6, 7 and the options can be currently b
 .TP
 \fBMONO_ARM_FORCE_SOFT_FLOAT\fR
 When Mono is built with a soft float fallback on ARM and this variable is set to
-"1", Mono will always emit soft float code, even if a VFP unit is detected.
+"1", Mono will always emit soft float code, even if a VFP unit is
+detected.
+.TP
+\fBMONO_DARWIN_WATCHER_MAXFDS\fR
+This is a debugging aid used to force limits on the FileSystemWatcher
+implementation in Darwin.   There is no limit by default.
 .TP
 \fBMONO_DISABLE_AIO\fR
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
@@ -1042,6 +1074,20 @@ Note that /etc/nsswitch.conf will be ignored.
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
+.TP
+\fBMONO_ENABLE_COOP\fR
+This makes the Mono runtime and the SGen garbage collector run in cooperative
+mode as opposed to run on preemptive mode.   Preemptive mode is the mode
+that Mono has used historically, going back to the Boehm days, where the
+garbage collector would run at any point and suspend execution of all 
+threads as required to perform a garbage collection.  The cooperative mode
+on the other hand requires the cooperation of all threads to stop at a 
+safe point.   This makes for an easier to debug garbage collector.   As
+of Mono 4.3.0 it is a work in progress, and while it works, it has not
+been used extensively.   This option enabled the feature and allows us to
+find spots that need to be tuned for this mode of operation.   Alternatively,
+this mode can be enabled at compile time by using the --with-cooperative-gc
+flag when calling configure.
 .TP
 \fBMONO_ENABLE_SHM\fR
 Unix only: Enable support for cross-process handles.  Cross-process
@@ -1533,6 +1579,13 @@ ftps, smtps...).  The default is 'nocheck', which performs no revocation check
 at all. The other possible values are 'offline', which performs CRL check (not
 implemented yet) and 'online' which uses OCSP and CRL to verify the revocation
 status (not implemented yet).
+.TP
+\fBNO_PROXY\fR
+(Also \fBno_proxy\fR) If both \fBHTTP_PROXY\fR and \fBNO_PROXY\fR are
+set, \fBNO_PROXY\fR will be treated as a comma-separated list of "bypass" domains
+which will not be sent through the proxy. Domains in \fBNO_PROXY\fR may contain
+wildcards, as in "*.mono-project.com" or "build????.local". Not supported on
+Windows, Mac OS, iOS or Android.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR
@@ -1673,7 +1726,7 @@ since a live process contains more information than a core file.
 This option will suspend the program when an exception occurs.
 .TP
 \fBsuspend-on-unhandled\fR
-This option will suspend the program when an unhadled exception occurs.
+This option will suspend the program when an unhandled exception occurs.
 .ne
 .RE
 .TP

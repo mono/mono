@@ -499,6 +499,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_origin_name_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_origin_name(stmt._sqlite_stmt, index), -1);
 #endif
@@ -509,6 +511,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_database_name_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_database_name(stmt._sqlite_stmt, index), -1);
 #endif
@@ -519,6 +523,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_table_name_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF8ToString(UnsafeNativeMethods.sqlite3_column_table_name(stmt._sqlite_stmt, index), -1);
 #endif
@@ -923,6 +929,17 @@ namespace Mono.Data.Sqlite
       return UnsafeNativeMethods.sqlite3_aggregate_context(context, 1);
     }
 
+#if MONOTOUCH
+	internal override void SetPassword(byte[] passwordBytes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	internal override void ChangePassword(byte[] newPasswordBytes)
+	{
+		throw new NotImplementedException ();
+	}
+#else
     internal override void SetPassword(byte[] passwordBytes)
     {
       int n = UnsafeNativeMethods.sqlite3_key(_sql, passwordBytes, passwordBytes.Length);
@@ -934,6 +951,7 @@ namespace Mono.Data.Sqlite
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
+#endif
 		
 #if MONOTOUCH
     SQLiteUpdateCallback update_callback;

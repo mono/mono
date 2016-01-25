@@ -74,7 +74,7 @@ namespace Mono.Net.Security.Private
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings);
 
-		public override MSI.MonoSslStream CreateSslStream (
+		public override MSI.IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings = null)
 		{
@@ -100,7 +100,7 @@ namespace Mono.Net.Security.Private
 			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
 			MSI.MonoTlsSettings settings);
 
-		public override MSI.IMonoTlsContext CreateTlsContext (
+		internal override MSI.IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,

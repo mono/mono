@@ -143,9 +143,12 @@ namespace System.Globalization
 
 			var locale_name = get_current_locale_name ();
 			CultureInfo ci = null;
-			try {
-				ci = CreateSpecificCulture (locale_name);
-			} catch {
+
+			if (locale_name != null) {
+				try {
+					ci = CreateSpecificCulture (locale_name);
+				} catch {
+				}
 			}
 
 			if (ci == null) {
@@ -626,7 +629,7 @@ namespace System.Globalization
 				numInfo = (NumberFormatInfo) numInfo.Clone ();
 			}
 
-			textInfo = CreateTextInfo (read_only);
+			textInfo = TextInfo.Invariant;
 
 			m_name=String.Empty;
 			englishname=
@@ -729,6 +732,9 @@ namespace System.Globalization
 		
 		public static CultureInfo GetCultureInfo (int culture)
 		{
+			if (culture < 1)
+				throw new ArgumentOutOfRangeException ("culture", "Positive number required.");
+
 			CultureInfo c;
 			
 			lock (shared_table_lock){

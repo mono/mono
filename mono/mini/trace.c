@@ -158,7 +158,7 @@ static void get_string (void)
 	}
 	if (value != NULL)
 		g_free (value);
-	value = g_malloc (input - start + 1);
+	value = (char *)g_malloc (input - start + 1);
 	strncpy (value, start, input-start);
 	value [input-start] = 0;
 }
@@ -431,11 +431,11 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 
 	sig = mono_method_signature (method);
 
-	arg_info = alloca (sizeof (MonoJitArgumentInfo) * (sig->param_count + 1));
+	arg_info = (MonoJitArgumentInfo *)alloca (sizeof (MonoJitArgumentInfo) * (sig->param_count + 1));
 
 	if (method->is_inflated) {
 		/* FIXME: Might be better to pass the ji itself */
-		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
+		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (char *)RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
 			if (gsctx && gsctx->is_gsharedvt) {
@@ -455,11 +455,11 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	}
 
 	if (mono_method_signature (method)->hasthis) {
-		gpointer *this = (gpointer *)(ebp + arg_info [0].offset);
+		gpointer *this_obj = (gpointer *)(ebp + arg_info [0].offset);
 		if (method->klass->valuetype) {
-			printf ("value:%p, ", *arg_in_stack_slot(this, gpointer *));
+			printf ("value:%p, ", *arg_in_stack_slot(this_obj, gpointer *));
 		} else {
-			o = *arg_in_stack_slot(this, MonoObject *);
+			o = *arg_in_stack_slot(this_obj, MonoObject *);
 
 			if (o) {
 				klass = o->vtable->klass;
@@ -486,7 +486,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 		
 		if (type->byref) {
 			printf ("[BYREF:%p], ", *arg_in_stack_slot(cpos, gpointer *));
-		} else switch (mono_type_get_underlying_type (type)->type) {
+		} else switch (mini_get_underlying_type (type)->type) {
 			
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
@@ -599,7 +599,7 @@ mono_trace_leave_method (MonoMethod *method, ...)
 
 	if (method->is_inflated) {
 		/* FIXME: Might be better to pass the ji itself */
-		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
+		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (char *)RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
 			if (gsctx && gsctx->is_gsharedvt) {
@@ -610,9 +610,8 @@ mono_trace_leave_method (MonoMethod *method, ...)
 		}
 	}
 
-	type = mono_method_signature (method)->ret;
+	type = mini_get_underlying_type (mono_method_signature (method)->ret);
 
-handle_enum:
 	switch (type->type) {
 	case MONO_TYPE_VOID:
 		break;
@@ -694,20 +693,16 @@ handle_enum:
 		printf ("FP=%f", f);
 		break;
 	}
-	case MONO_TYPE_VALUETYPE: 
-		if (type->data.klass->enumtype) {
-			type = mono_class_enum_basetype (type->data.klass);
-			goto handle_enum;
-		} else {
-			guint8 *p = va_arg (ap, gpointer);
-			int j, size, align;
-			size = mono_type_size (type, &align);
-			printf ("[");
-			for (j = 0; p && j < size; j++)
-				printf ("%02x,", p [j]);
-			printf ("]");
-		}
+	case MONO_TYPE_VALUETYPE:  {
+		guint8 *p = (guint8 *)va_arg (ap, gpointer);
+		int j, size, align;
+		size = mono_type_size (type, &align);
+		printf ("[");
+		for (j = 0; p && j < size; j++)
+			printf ("%02x,", p [j]);
+		printf ("]");
 		break;
+	}
 	default:
 		printf ("(unknown return type %x)", mono_method_signature (method)->ret->type);
 	}

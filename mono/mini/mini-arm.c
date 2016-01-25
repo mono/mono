@@ -29,7 +29,7 @@
 #include "mini-gc.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
 
-#if defined(HAVE_KW_THREAD) && defined(__linux__) \
+#if (defined(HAVE_KW_THREAD) && defined(__linux__) && defined(__ARM_EABI__)) \
 	|| defined(TARGET_ANDROID) \
 	|| (defined(TARGET_IOS) && !defined(TARGET_WATCHOS))
 #define HAVE_FAST_TLS
@@ -95,8 +95,8 @@ void sys_icache_invalidate (void *start, size_t len);
 #endif
 
 /* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
-#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
+#define mono_mini_arch_lock() mono_os_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
 static mono_mutex_t mini_arch_mutex;
 
 static gboolean v5_supported = FALSE;
@@ -645,30 +645,6 @@ emit_restore_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 
 #endif /* #ifndef DISABLE_JIT */
 
-#ifndef MONO_CROSS_COMPILE
-static gboolean
-mono_arm_have_fast_tls (void)
-{
-	if (mini_get_debug_options ()->arm_use_fallback_tls)
-		return FALSE;
-#if (defined(HAVE_KW_THREAD) && defined(__linux__)) \
-	|| defined(TARGET_ANDROID)
-	guint32* kuser_get_tls = (void*)0xffff0fe0;
-	guint32 expected [] = {0xee1d0f70, 0xe12fff1e};
-
-	/* Expecting mrc + bx lr in the kuser_get_tls kernel helper */
-	return memcmp (kuser_get_tls, expected, 8) == 0;
-#elif defined(TARGET_IOS)
-	guint32 expected [] = {0x1f70ee1d, 0x0103f021, 0x0020f851, 0xbf004770};
-	/* Discard thumb bit */
-	guint32* pthread_getspecific_addr = (guint32*) ((guint32)pthread_getspecific & 0xfffffffe);
-	return memcmp ((void*)pthread_getspecific_addr, expected, 16) == 0;
-#else
-	return FALSE;
-#endif
-}
-#endif
-
 /*
  * mono_arm_have_tls_get:
  *
@@ -678,7 +654,6 @@ mono_arm_have_fast_tls (void)
 gboolean
 mono_arm_have_tls_get (void)
 {
-	return FALSE;
 #ifdef HAVE_FAST_TLS
 	return TRUE;
 #else
@@ -916,7 +891,7 @@ mono_arch_init (void)
 {
 	const char *cpu_arch;
 
-	mono_mutex_init_recursive (&mini_arch_mutex);
+	mono_os_mutex_init_recursive (&mini_arch_mutex);
 	if (mini_get_debug_options ()->soft_breakpoints) {
 		breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
@@ -2378,13 +2353,13 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
-				ins->sreg1 = in->dreg + 1;
+				ins->sreg1 = MONO_LVREG_LS (in->dreg);
 				MONO_ADD_INS (cfg->cbb, ins);
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
 
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
-				ins->sreg1 = in->dreg + 2;
+				ins->sreg1 = MONO_LVREG_MS (in->dreg);
 				MONO_ADD_INS (cfg->cbb, ins);
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg + 1, FALSE);
 			} else if (!t->byref && ((t->type == MONO_TYPE_R8) || (t->type == MONO_TYPE_R4))) {
@@ -2481,10 +2456,10 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			break;
 		case RegTypeBaseGen:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, (G_BYTE_ORDER == G_BIG_ENDIAN) ? in->dreg + 1 : in->dreg + 2);
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, (G_BYTE_ORDER == G_BIG_ENDIAN) ? MONO_LVREG_LS (in->dreg) : MONO_LVREG_MS (in->dreg));
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
-				ins->sreg1 = G_BYTE_ORDER == G_BIG_ENDIAN ? in->dreg + 2 : in->dreg + 1;
+				ins->sreg1 = G_BYTE_ORDER == G_BIG_ENDIAN ? MONO_LVREG_MS (in->dreg) : MONO_LVREG_LS (in->dreg);
 				MONO_ADD_INS (cfg->cbb, ins);
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ARMREG_R3, FALSE);
 			} else if (!t->byref && (t->type == MONO_TYPE_R8)) {
@@ -2682,8 +2657,8 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 			} else {
 				MONO_INST_NEW (cfg, ins, OP_SETLRET);
-				ins->sreg1 = val->dreg + 1;
-				ins->sreg2 = val->dreg + 2;
+				ins->sreg1 = MONO_LVREG_LS (val->dreg);
+				ins->sreg2 = MONO_LVREG_MS (val->dreg);
 				MONO_ADD_INS (cfg->cbb, ins);
 			}
 			return;
@@ -3488,11 +3463,14 @@ loop_start:
 		case OP_IOR_IMM:
 		case OP_IXOR_IMM:
 			if ((imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount)) < 0) {
+				int opcode2 = mono_op_imm_to_op (ins->opcode);
 				ADD_NEW_INS (cfg, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_alloc_ireg (cfg);
 				ins->sreg2 = temp->dreg;
-				ins->opcode = mono_op_imm_to_op (ins->opcode);
+				if (opcode2 == -1)
+					g_error ("mono_op_imm_to_op failed for %s\n", mono_inst_name (ins->opcode));
+				ins->opcode = opcode2;
 			}
 			if (ins->opcode == OP_SBB || ins->opcode == OP_ISBB || ins->opcode == OP_SUBCC)
 				goto loop_start;
@@ -3532,13 +3510,17 @@ loop_start:
 		case OP_IDIV_IMM:
 		case OP_IDIV_UN_IMM:
 		case OP_IREM_IMM:
-		case OP_IREM_UN_IMM:
+		case OP_IREM_UN_IMM: {
+			int opcode2 = mono_op_imm_to_op (ins->opcode);
 			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
-			ins->opcode = mono_op_imm_to_op (ins->opcode);
+			if (opcode2 == -1)
+				g_error ("mono_op_imm_to_op failed for %s\n", mono_inst_name (ins->opcode));
+			ins->opcode = opcode2;
 			break;
+		}
 		case OP_LOCALLOC_IMM:
 			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
@@ -3715,8 +3697,8 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *long_ins)
 
 	if (long_ins->opcode == OP_LNEG) {
 		ins = long_ins;
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSBS_IMM, ins->dreg + 1, ins->sreg1 + 1, 0);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSC_IMM, ins->dreg + 2, ins->sreg1 + 2, 0);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSBS_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1), 0);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSC_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), 0);
 		NULLIFY_INS (ins);
 	}
 }
@@ -4084,6 +4066,12 @@ mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val)
 	code += 4;
 	return code;
 #endif
+	if (mini_get_debug_options()->single_imm_size && v7_supported) {
+		ARM_MOVW_REG_IMM (code, dreg, val & 0xffff);
+		ARM_MOVT_REG_IMM (code, dreg, (val >> 16) & 0xffff);
+		return code;
+	}
+
 	if ((imm8 = mono_arm_is_rotated_imm8 (val, &rot_amount)) >= 0) {
 		ARM_MOV_REG_IMM (code, dreg, imm8, rot_amount);
 	} else if ((imm8 = mono_arm_is_rotated_imm8 (~val, &rot_amount)) >= 0) {
@@ -5986,15 +5974,17 @@ mono_arch_register_lowlevel_calls (void)
 
 #ifndef MONO_CROSS_COMPILE
 	if (mono_arm_have_tls_get ()) {
-		if (mono_arm_have_fast_tls ()) {
-			mono_register_jit_icall (mono_fast_get_tls_key, "mono_get_tls_key", mono_create_icall_signature ("ptr ptr"), TRUE);
-			mono_register_jit_icall (mono_fast_set_tls_key, "mono_set_tls_key", mono_create_icall_signature ("void ptr ptr"), TRUE);
+		MonoTlsImplementation tls_imp = mono_arm_get_tls_implementation ();
 
+		mono_register_jit_icall (tls_imp.get_tls_thunk, "mono_get_tls_key", mono_create_icall_signature ("ptr ptr"), TRUE);
+		mono_register_jit_icall (tls_imp.set_tls_thunk, "mono_set_tls_key", mono_create_icall_signature ("void ptr ptr"), TRUE);
+
+		if (tls_imp.get_tls_thunk_end) {
 			mono_tramp_info_register (
 				mono_tramp_info_create (
 					"mono_get_tls_key",
-					(guint8*)mono_fast_get_tls_key,
-					(guint8*)mono_fast_get_tls_key_end - (guint8*)mono_fast_get_tls_key,
+					(guint8*)tls_imp.get_tls_thunk,
+					(guint8*)tls_imp.get_tls_thunk_end - (guint8*)tls_imp.get_tls_thunk,
 					NULL,
 					mono_arch_get_cie_program ()
 					),
@@ -6003,17 +5993,13 @@ mono_arch_register_lowlevel_calls (void)
 			mono_tramp_info_register (
 				mono_tramp_info_create (
 					"mono_set_tls_key",
-					(guint8*)mono_fast_set_tls_key,
-					(guint8*)mono_fast_set_tls_key_end - (guint8*)mono_fast_set_tls_key,
+					(guint8*)tls_imp.set_tls_thunk,
+					(guint8*)tls_imp.set_tls_thunk_end - (guint8*)tls_imp.set_tls_thunk,
 					NULL,
 					mono_arch_get_cie_program ()
 					),
 				NULL
 				);
-		} else {
-			g_warning ("No fast tls on device. Using fallbacks.");
-			mono_register_jit_icall (mono_fallback_get_tls_key, "mono_get_tls_key", mono_create_icall_signature ("ptr ptr"), TRUE);
-			mono_register_jit_icall (mono_fallback_set_tls_key, "mono_set_tls_key", mono_create_icall_signature ("void ptr ptr"), TRUE);
 		}
 	}
 #endif

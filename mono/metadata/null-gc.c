@@ -234,6 +234,18 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	return obj;
 }
 
+void*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
+{
+	return mono_gc_alloc_obj (vtable, size);
+}
+
+void*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
+{
+	return mono_gc_alloc_obj (vtable, size);
+}
+
 void
 mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* value)
 {
@@ -526,12 +538,6 @@ mono_gc_get_vtable_bits (MonoClass *klass)
 void
 mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
 {
-}
-
-gboolean
-mono_gc_set_allow_synchronous_major (gboolean flag)
-{
-	return TRUE;
 }
 
 gboolean

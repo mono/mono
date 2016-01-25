@@ -14,7 +14,8 @@ EXTRA_DIST =  	\
 	net_1_1/machine.config \
 	gdb/mono-gdb.py \
 	gdb/gdb-python.diff	\
-	lldb/mono.py
+	lldb/mono.py \
+	lldb/monobt.py
 
 pkgconfigdir = $(libdir)/pkgconfig
 

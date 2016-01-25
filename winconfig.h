@@ -7,11 +7,11 @@
 
 /* The architecture this is running on */
 #if defined(_M_IA64)
-#define ARCHITECTURE "ia64"
+#define MONO_ARCHITECTURE "ia64"
 #elif defined(_M_AMD64)
-#define ARCHITECTURE "amd64"
+#define MONO_ARCHITECTURE "amd64"
 #elif defined(_M_IX86)
-#define ARCHITECTURE "x86"
+#define MONO_ARCHITECTURE "x86"
 #else
 #error Unknown architecture
 #endif
@@ -66,9 +66,6 @@
 
 /* Disable reflection emit support */
 /* #undef DISABLE_REFLECTION_EMIT */
-
-/* Disable inter-process shared handles */
-/* #undef DISABLE_SHARED_HANDLES */
 
 /* Disable advanced SSA JIT optimizations */
 /* #undef DISABLE_SSA */
@@ -645,5 +642,5 @@
 /* #undef USE_MONO_MUTEX */
 
 /* Version number of package */
-#define VERSION "4.1.0"
+#define VERSION "#MONO_VERSION#"
 #endif

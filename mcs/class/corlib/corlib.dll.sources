@@ -164,10 +164,13 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
-System.Diagnostics.Tracing/EventKeywords.cs
-System.Diagnostics.Tracing/EventLevel.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
 System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
+System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventCommandEventArgs.cs
 System.Diagnostics.Tracing/NonEventAttribute.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
@@ -732,6 +735,9 @@ System.Security.Cryptography/SHA1CryptoServiceProvider.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509Certificate20.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImpl.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImplMono.cs
+System.Security.Cryptography.X509Certificates/X509Helper.cs
 System.Security.Cryptography.X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs

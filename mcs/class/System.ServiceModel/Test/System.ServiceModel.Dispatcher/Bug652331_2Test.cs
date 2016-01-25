@@ -76,58 +76,85 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			var nestedClient      = new Service1Client (binding, remoteAddress);
 			var dbClient          = new Service1Client (binding, remoteAddress);
 
-			var waits = new ManualResetEvent [4];
-			for (int i = 0; i < waits.Length; i++)
-				waits [i] = new ManualResetEvent (false);
+			{
+				ManualResetEvent wait = new ManualResetEvent (false);
+				Exception error = null;
+				object result = null;
 
-			int passed = 0;
+				normalClient.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
+				};
+				normalClient.GetDataAsync ();
 
-			normalClient.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
-				if (e.Error != null) {
-					Assert.Fail ("Normal failed; error: {0}", e.Error);
-					throw e.Error;
-				}
-				Assert.AreEqual ("A", ((DataType1) e.Result).Id, "Normal");
-				Interlocked.Increment (ref passed);
-				waits [0].Set ();
-			};
-			normalClient.GetDataAsync ();
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "#1 timeout");
+				Assert.IsNull (error, "#1.1, inner exception: {0}", error);
+				Assert.AreEqual ("A", ((DataType1) result).Id, "#1.2");
+			}
 
-			collectionClient.GetCollectionDataCompleted += delegate (object sender, GetCollectionDataCompletedEventArgs e) {
-				if (e.Error != null) {
-					Assert.Fail ("Collection failed; error: {0}", e.Error);
-					throw e.Error;
-				}
-				Assert.AreEqual ("B,C", ItemsToString (e.Result.Cast<DataType1> ()), "Collection");
-				Interlocked.Increment (ref passed);
-				waits [1].Set ();
-			};
-			collectionClient.GetCollectionDataAsync ();
+			{
+				ManualResetEvent wait = new ManualResetEvent (false);
+				Exception error = null;
+				ObservableCollection<object> result = null;
 
-			nestedClient.GetNestedDataCompleted += delegate (object sender, GetNestedDataCompletedEventArgs e) {
-				if (e.Error != null) {
-					Assert.Fail ("Nested failed; error: {0}", e.Error);
-					throw e.Error;
-				}
-				Assert.AreEqual ("D,E", ItemsToString (e.Result.Items.Cast<DataType1> ()), "Nested");
-				Interlocked.Increment (ref passed);
-				waits [2].Set ();
-			};
-			nestedClient.GetNestedDataAsync ();
+				collectionClient.GetCollectionDataCompleted += delegate (object sender, GetCollectionDataCompletedEventArgs e) {
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
+				};
+				collectionClient.GetCollectionDataAsync ();
 
-			dbClient.JSMGetDatabasesCompleted += delegate (object sender, JSMGetDatabasesCompletedEventArgs e) {
-				waits [3].Set ();
-				if (e.Error != null) {
-					throw e.Error;
-				}
-				Assert.AreEqual ("databases", e.Result, "Databases");
-				Interlocked.Increment (ref passed);
-			};
-			dbClient.JSMGetDatabasesAsync();
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "#2 timeout");
+				Assert.IsNull (error, "#2.1, inner exception: {0}", error);
+				Assert.AreEqual ("B,C", ItemsToString (result.Cast<DataType1> ()), "#2.2");
+			}
 
-			WaitHandle.WaitAll (waits, TimeSpan.FromMinutes (1));
-			if (passed != waits.Length)
-				Assert.Fail ("Not all tests passed!");
+			{
+				ManualResetEvent wait = new ManualResetEvent (false);
+				Exception error = null;
+				WebServiceMoonlightTest.ServiceReference2.DataType2 result = null;
+
+				nestedClient.GetNestedDataCompleted += delegate (object sender, GetNestedDataCompletedEventArgs e) {
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
+				};
+				nestedClient.GetNestedDataAsync ();
+
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "#3 timeout");
+				Assert.IsNull (error, "#3.1, inner exception: {0}", error);
+				Assert.AreEqual ("D,E", ItemsToString (result.Items.Cast<DataType1> ()), "#3.2");
+			}
+
+			{
+				ManualResetEvent wait = new ManualResetEvent (false);
+				Exception error = null;
+				string result = null;
+
+				dbClient.JSMGetDatabasesCompleted += delegate (object sender, JSMGetDatabasesCompletedEventArgs e) {
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
+				};
+				dbClient.JSMGetDatabasesAsync();
+
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "#4 timeout");
+				Assert.IsNull (error, "#4.1, inner exception: {0}", error);
+				Assert.AreEqual ("databases", result, "#4.2");
+			}
 		}
 
 		string ItemsToString (IEnumerable<DataType1> items)

@@ -95,7 +95,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 	}
 	if (complex_descriptors_next + nwords > complex_descriptors_size) {
 		int new_size = complex_descriptors_size * 2 + nwords;
-		complex_descriptors = g_realloc (complex_descriptors, new_size * sizeof (gsize));
+		complex_descriptors = (gsize *)g_realloc (complex_descriptors, new_size * sizeof (gsize));
 		complex_descriptors_size = new_size;
 	}
 	SGEN_LOG (6, "Complex descriptor %d, size: %d (total desc memory: %d)", res, nwords, complex_descriptors_size);
@@ -123,10 +123,7 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 {
 	int first_set = -1, num_set = 0, last_set = -1, i;
 	SgenDescriptor desc = 0;
-	size_t stored_size = obj_size;
-
-	stored_size += SGEN_ALLOC_ALIGN - 1;
-	stored_size &= ~(SGEN_ALLOC_ALIGN - 1);
+	size_t stored_size = SGEN_ALIGN_UP (obj_size);
 
 	for (i = 0; i < numbits; ++i) {
 		if (bitmap [i / GC_BITS_PER_WORD] & ((gsize)1 << (i % GC_BITS_PER_WORD))) {
@@ -293,7 +290,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	if (numbits < 32 && all_ref_root_descrs [numbits])
 		return all_ref_root_descrs [numbits];
 
-	gc_bitmap = g_malloc0 (ALIGN_TO (ALIGN_TO (numbits, 8) + 1, sizeof (gsize)));
+	gc_bitmap = (gsize *)g_malloc0 (ALIGN_TO (ALIGN_TO (numbits, 8) + 1, sizeof (gsize)));
 	memset (gc_bitmap, 0xff, num_bytes);
 	if (numbits < ((sizeof (*gc_bitmap) * 8) - ROOT_DESC_TYPE_SHIFT)) 
 		gc_bitmap[0] = GUINT64_TO_LE(gc_bitmap[0]);

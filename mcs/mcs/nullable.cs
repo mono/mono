@@ -795,7 +795,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Both operands are bool? types
 			//
-			if (UnwrapLeft != null && UnwrapRight != null) {
+			if ((UnwrapLeft != null && !Left.IsNull) && (UnwrapRight != null && !Right.IsNull)) {
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && Binary.Right.ContainsEmitWithAwait ()) {
 					Left = Left.EmitToField (ec);
 					Right = Right.EmitToField (ec);
@@ -861,6 +861,8 @@ namespace Mono.CSharp.Nullable
 					LiftedNull.Create (type, loc).Emit (ec);
 				} else {
 					Left.Emit (ec);
+					UnwrapRight.Store (ec);
+
 					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_right);
 
 					ec.EmitInt (or ? 1 : 0);
@@ -869,7 +871,7 @@ namespace Mono.CSharp.Nullable
 					ec.Emit (OpCodes.Br_S, end_label);
 
 					ec.MarkLabel (load_right);
-					UnwrapRight.Original.Emit (ec);
+					UnwrapRight.Load (ec);
 				}
 			} else {
 				//
@@ -897,14 +899,14 @@ namespace Mono.CSharp.Nullable
 					LiftedNull.Create (type, loc).Emit (ec);
 				} else {
 					Right.Emit (ec);
-					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_right);
+					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_left);
 
 					ec.EmitInt (or ? 1 : 0);
 					ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
 
 					ec.Emit (OpCodes.Br_S, end_label);
 
-					ec.MarkLabel (load_right);
+					ec.MarkLabel (load_left);
 
 					UnwrapLeft.Load (ec);
 				}
@@ -1073,6 +1075,7 @@ namespace Mono.CSharp.Nullable
 	{
 		Expression left, right;
 		Unwrap unwrap;
+		bool user_conversion_left;
 
 		public NullCoalescingOperator (Expression left, Expression right)
 		{
@@ -1220,6 +1223,7 @@ namespace Mono.CSharp.Nullable
 				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
+			user_conversion_left = left is UserCast;
 			type = rtype;
 			return this;
 		}
@@ -1283,10 +1287,14 @@ namespace Mono.CSharp.Nullable
 			// Null check is done on original expression not after expression is converted to
 			// result type. This is in most cases same but when user conversion is involved
 			// we can end up in situation when user operator does the null handling which is
-			// not what the operator is supposed to do
+			// not what the operator is supposed to do.
+			// There is tricky case where cast of left expression is meant to be cast of
+			// whole source expression (null check is done on it) and cast from right-to-left
+			// conversion needs to do null check on unconverted source expression.
 			//
-			var op_expr = left as UserCast;
-			if (op_expr != null) {
+			if (user_conversion_left) {
+				var op_expr = (UserCast) left;
+
 				op_expr.Source.Emit (ec);
 				LocalTemporary temp;
 

@@ -111,6 +111,7 @@ typedef struct {
 	GHashTable *delegate_end_invoke_cache;
 	GHashTable *runtime_invoke_cache;
 	GHashTable *runtime_invoke_vtype_cache;
+	GHashTable *runtime_invoke_sig_cache;
 
 	/*
 	 * indexed by SignaturePointerPair
@@ -388,6 +389,11 @@ struct _MonoImage {
 
 	/* The loader used to load this image */
 	MonoImageLoader *loader;
+
+	// Containers for MonoGenericParams associated with this image but not with any specific class or method. Created on demand.
+	// This could happen, for example, for MonoTypes associated with TypeSpec table entries.
+	MonoGenericContainer *anonymous_generic_class_container;
+	MonoGenericContainer *anonymous_generic_method_container;
 
 	/*
 	 * No other runtime locks must be taken while holding this lock.
@@ -898,6 +904,15 @@ mono_method_get_wrapper_cache (MonoMethod *method);
 
 MonoType*
 mono_metadata_parse_type_checked (MonoImage *m, MonoGenericContainer *container, short opt_attrs, gboolean transient, const char *ptr, const char **rptr, MonoError *error);
+
+MonoGenericContainer *
+get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar);
+
+char *
+mono_image_set_description (MonoImageSet *);
+
+MonoImageSet *
+mono_find_image_set_owner (void *ptr);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

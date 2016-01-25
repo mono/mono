@@ -75,6 +75,7 @@ partial class SR
 	public const string Argument_AddingDuplicate = "Argument_AddingDuplicate";
 	public const string Argument_ImplementIComparable = "Argument_ImplementIComparable";
 	public const string Argument_InvalidOffLen = "Argument_InvalidOffLen";
+	public const string Argument_InvalidThreshold = "Argument_InvalidThreshold";
 	public const string ExternalLinkedListNode = "ExternalLinkedListNode";
 	public const string InvalidOperation_CannotRemoveFromStackOrQueue = "InvalidOperation_CannotRemoveFromStackOrQueue";
 	public const string InvalidOperation_EmptyCollection = "InvalidOperation_EmptyCollection";
@@ -84,6 +85,7 @@ partial class SR
 	public const string InvalidOperation_EnumFailedVersion = "InvalidOperation_EnumFailedVersion";
 	public const string InvalidOperation_EnumNotStarted = "InvalidOperation_EnumNotStarted";
 	public const string InvalidOperation_EnumOpCantHappen = "InvalidOperation_EnumOpCantHappen";
+	public const string InvalidOperation_HCCountOverflow = "InvalidOperation_HCCountOverflow";
 	public const string Invalid_Array_Type = "Invalid_Array_Type";
 	public const string LinkedListEmpty = "LinkedListEmpty";
 	public const string LinkedListNodeIsAttached = "LinkedListNodeIsAttached";

@@ -92,6 +92,21 @@ public class StringTest
 		}
 	}
 
+	[Test] // ctor (Char, Int32)
+	public void Constructor4_LargeString ()
+	{
+		try {
+			var x = new String ('A', int.MaxValue);
+			if (Environment.Is64BitProcess) {
+				Assert.AreEqual ('A', x[0]);
+				Assert.AreEqual ('A', x[int.MaxValue - 1]);
+			}
+			else
+				Assert.Fail ("Expected OutOfMemoryException.");
+		} catch (OutOfMemoryException) {
+		}
+	}
+
 	[Test] // ctor (Char [], Int32, Int32)
 	public void Constructor6 ()
 	{
@@ -2993,10 +3008,16 @@ public class StringTest
 	}
 
 	[Test]
-	public void PadLeft_Overflow ()
+	public void PadLeft_LargeString ()
 	{
 		try {
-			"x".PadLeft (int.MaxValue, '-');
+			var x = "x".PadLeft (int.MaxValue, '-');
+			if (Environment.Is64BitProcess) {
+				Assert.AreEqual ('-', x[0]);
+				Assert.AreEqual ('x', x[int.MaxValue - 1]);
+			}
+			else
+				Assert.Fail ("Expected OutOfMemoryException.");
 		} catch (OutOfMemoryException) {
 		}
 	}
@@ -3043,10 +3064,16 @@ public class StringTest
 	}
 
 	[Test]
-	public void PadRight_Overflow ()
+	public void PadRight_LargeString ()
 	{
 		try {
-			"x".PadRight (int.MaxValue, '-');
+			var x = "x".PadRight (int.MaxValue, '-');
+			if (Environment.Is64BitProcess) {
+				Assert.AreEqual ('x', x[0]);
+				Assert.AreEqual ('-', x[int.MaxValue - 1]);
+			}
+			else
+				Assert.Fail ("Expected OutOfMemoryException.");
 		} catch (OutOfMemoryException) {
 		}
 	}

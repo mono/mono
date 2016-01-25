@@ -1064,6 +1064,26 @@ namespace MonoTests.System.Net.Sockets {
 
 			client.Close ();
 		}
+
+		[Test] // #6057
+		public void ReceiveIPv6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not enabled.");
+
+			int PORT = 9997;
+			using(var udpClient = new UdpClient (PORT, AddressFamily.InterNetworkV6))
+			using(var udpClient2 = new UdpClient (PORT+1, AddressFamily.InterNetworkV6))
+			{
+				var dataSent = new byte [] {1,2,3};
+				udpClient2.SendAsync (dataSent, dataSent.Length, "::1", PORT);
+
+				IPEndPoint endPoint = new IPEndPoint (IPAddress.IPv6Any, 0);
+				var data = udpClient.Receive (ref endPoint);
+
+				Assert.AreEqual (dataSent.Length, data.Length);
+			}
+		}
 		
 		/* No test for Ttl default as it is platform dependent */
 

@@ -33,6 +33,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
@@ -125,6 +126,14 @@ namespace System
 			return base.GetHashCode ();
 		}
 
+		protected override MethodInfo GetMethodImpl ()
+		{
+			if (delegates != null)
+				return delegates [delegates.Length - 1].Method;
+
+			return base.GetMethodImpl ();
+		}
+
 		// <summary>
 		//   Return, in order of invocation, the invocation list
 		//   of a MulticastDelegate
@@ -174,6 +183,32 @@ namespace System
 			return ret;
 		}
 
+		/* Based on the Boyer–Moore string search algorithm */
+		int LastIndexOf (Delegate[] haystack, Delegate[] needle)
+		{
+			if (haystack.Length < needle.Length)
+				return -1;
+
+			if (haystack.Length == needle.Length) {
+				for (int i = 0; i < haystack.Length; ++i)
+					if (!haystack [i].Equals (needle [i]))
+						return -1;
+
+				return 0;
+			}
+
+			for (int i = haystack.Length - needle.Length, j; i >= 0;) {
+				for (j = 0; needle [j].Equals (haystack [i]); ++i, ++j) {
+					if (j == needle.Length - 1)
+						return i - j;
+				}
+
+				i -= j + 1;
+			}
+
+			return -1;
+		}
+
 		protected sealed override Delegate RemoveImpl (Delegate value)
 		{
 			if (value == null)
@@ -214,42 +249,23 @@ namespace System
 				return ret;
 			} else {
 				/* wild case : remove MulticastDelegate from MulticastDelegate
-				 * complexity is O(m * n), with n the number of elements in
+				 * complexity is O(m + n), with n the number of elements in
 				 * this.delegates and m the number of elements in other.delegates */
-				MulticastDelegate ret = AllocDelegateLike_internal (this);
-				ret.delegates = new Delegate [delegates.Length];
 
-				/* we should use a set with O(1) lookup complexity
-				 * but HashSet is implemented in System.Core.dll */
-				List<Delegate> other_delegates = new List<Delegate> ();
-				for (int i = 0; i < other.delegates.Length; ++i)
-					other_delegates.Add (other.delegates [i]);
-
-				int idx = delegates.Length;
+				if (delegates.Equals (other.delegates))
+					return null;
 
 				/* we need to remove elements from the end to the beginning, as
 				 * the addition and removal of delegates behaves like a stack */
-				for (int i = delegates.Length - 1; i >= 0; --i) {
-					/* if delegates[i] is not in other_delegates,
-					 * then we can safely add it to ret.delegates
-					 * otherwise we remove it from other_delegates */
-					if (!other_delegates.Remove (delegates [i]))
-						ret.delegates [--idx] = delegates [i];
-				}
+				int idx = LastIndexOf (delegates, other.delegates);
+				if (idx == -1)
+					return this;
 
-				/* the elements are at the end of the array, we
-				 * need to move them back to the beginning of it */
-				int count = delegates.Length - idx;
-				Array.Copy (ret.delegates, idx, ret.delegates, 0, count);
+				MulticastDelegate ret = AllocDelegateLike_internal (this);
+				ret.delegates = new Delegate [delegates.Length - other.delegates.Length];
 
-				if (count == 0)
-					return null;
-
-				if (count == 1)
-					return ret.delegates [0];
-
-				if (count != delegates.Length)
-					Array.Resize (ref ret.delegates, count);
+				Array.Copy (delegates, ret.delegates, idx);
+				Array.Copy (delegates, idx + other.delegates.Length, ret.delegates, idx, delegates.Length - idx - other.delegates.Length);
 
 				return ret;
 			}

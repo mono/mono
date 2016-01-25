@@ -29,7 +29,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
-	public interface IMonoTlsContext : IDisposable
+	interface IMonoTlsContext : IDisposable
 	{
 		bool IsServer {
 			get;

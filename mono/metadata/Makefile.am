@@ -214,7 +214,9 @@ common_sources = \
 	abi-details.h	\
 	metadata-cross-helpers.c	\
 	seq-points-data.h	\
-	seq-points-data.c
+	seq-points-data.c	\
+	handle.c	\
+	handle.h
 
 
 # These source files have compile time dependencies on GC code

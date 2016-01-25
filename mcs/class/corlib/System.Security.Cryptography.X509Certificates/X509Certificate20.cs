@@ -42,7 +42,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
 	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
-	public partial class X509Certificate : IDeserializationCallback, ISerializable {
+	public partial class X509Certificate : IDeserializationCallback, ISerializable, IDisposable {
 		private string issuer_name;
 		private string subject_name;
 
@@ -110,29 +110,31 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public string Issuer {
 			get {
-				if (x509 == null)
-					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (issuer_name == null)
-					issuer_name = X501.ToString (x509.GetIssuerName (), true, ", ", true);
+					issuer_name = impl.GetIssuerName (false);
 				return issuer_name;
 			}
 		}
 
 		public string Subject {
 			get {
-				if (x509 == null)
-					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (subject_name == null)
-					subject_name = X501.ToString (x509.GetSubjectName (), true, ", ", true);
+					subject_name = impl.GetSubjectName (false);
 				return subject_name;
 			}
 		}
 
 		[ComVisible (false)]
 		public IntPtr Handle {
-			get { return IntPtr.Zero; }
+			get {
+				if (X509Helper.IsValid (impl))
+					return impl.Handle;
+				return IntPtr.Zero;
+			}
 		}
 
 
@@ -169,25 +171,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal byte[] Export (X509ContentType contentType, byte[] password)
 		{
-			if (x509 == null)
-				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-
 			try {
-				switch (contentType) {
-				case X509ContentType.Cert:
-					return x509.RawData;
-				case X509ContentType.Pfx: // this includes Pkcs12
-					// TODO
-					throw new NotSupportedException ();
-				case X509ContentType.SerializedCert:
-					// TODO
-					throw new NotSupportedException ();
-				default:
-					string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-					throw new CryptographicException (msg);
-				}
-			}
-			finally {
+				X509Helper.ThrowIfContextInvalid (impl);
+				return impl.Export (contentType, password);
+			} finally {
 				// protect password
 				if (password != null)
 					Array.Clear (password, 0, password.Length);
@@ -200,59 +187,12 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		private Mono.Security.X509.X509Certificate ImportPkcs12 (byte[] rawData, string password)
-		{
-			var pfx = (password == null) ? new Mono.Security.X509.PKCS12 (rawData) : new Mono.Security.X509.PKCS12 (rawData, password);
-			if (pfx.Certificates.Count == 0) {
-				// no certificate was found
-				return null;
-			} else if (pfx.Keys.Count == 0) {
-				// no key were found - pick the first certificate
-				return pfx.Certificates [0];
-			} else {
-				// find the certificate that match the first key
-				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
-				string pubkey = keypair.ToXmlString (false);
-				foreach (var c in pfx.Certificates) {
-					if ((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false)))
-						return c;
-					if ((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))
-						return c;
-				}
-				return pfx.Certificates [0]; // no match, pick first certificate without keys
-			}
-		}
-
 		[MonoTODO ("missing KeyStorageFlags support")]
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Reset ();
-			if (password == null) {
-				try {
-					x509 = new Mono.Security.X509.X509Certificate (rawData);
-				}
-				catch (Exception e) {
-					try {
-						x509 = ImportPkcs12 (rawData, null);
-					}
-					catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					x509 = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					x509 = new Mono.Security.X509.X509Certificate (rawData);
-				}
-			}
+			impl = X509Helper.Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString support is incomplete")]
@@ -289,18 +229,34 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (!X509Helper.IsValid (impl))
+				throw new NullReferenceException ();
 			// will throw a NRE if info is null (just like MS implementation)
-			info.AddValue ("RawData", x509.RawData);
+			info.AddValue ("RawData", impl.GetRawCertData ());
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Reset ();
 		}
 
 		[ComVisible (false)]
 		public virtual void Reset ()
 		{
-			x509 = null;
+			if (impl != null) {
+				impl.Dispose ();
+				impl = null;
+			}
+
 			issuer_name = null;
 			subject_name = null;
 			hideDates = false;
-			cachedCertificateHash = null;
 		}
 	}
 }

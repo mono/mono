@@ -85,6 +85,22 @@ int GC_thread_is_registered (void)
 #endif
 }
 
+void GC_allow_register_threads (void)
+{
+    /* No-op for GC pre-v7. */
+}
+
+int GC_register_my_thread (struct GC_stack_base *sb)
+{
+#   if defined(GC_DLL) || defined(GC_INSIDE_DLL)
+	/* Registered by DllMain. */
+	return GC_DUPLICATE;
+#   else
+	/* TODO: Implement. */
+	return GC_UNIMPLEMENTED;
+#   endif
+}
+
 void GC_register_altstack (void *stack, int stack_size, void *altstack, int altstack_size)
 {
 }

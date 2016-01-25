@@ -7,11 +7,13 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/handle.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
+#include "mono/utils/mono-coop-mutex.h"
 
 #if 1
 #ifdef __GNUC__
@@ -162,6 +164,8 @@ struct _MonoArray {
 	/* we use double to ensure proper alignment on platforms that need it */
 	double vector [MONO_ZERO_LEN_ARRAY];
 };
+
+#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))
 
 struct _MonoString {
 	MonoObject object;
@@ -406,7 +410,7 @@ struct _MonoInternalThread {
 	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
 	gint32 interruption_requested;
-	mono_mutex_t *synch_cs;
+	MonoCoopMutex *synch_cs;
 	MonoBoolean threadpool_thread;
 	MonoBoolean thread_interrupt_requested;
 	int stack_size;
@@ -600,12 +604,14 @@ typedef struct {
 	gpointer (*create_ftnptr) (MonoDomain *domain, gpointer addr);
 	gpointer (*get_addr_from_ftnptr) (gpointer descr);
 	char*    (*get_runtime_build_info) (void);
-	gpointer (*get_vtable_trampoline) (int slot_index);
-	gpointer (*get_imt_trampoline) (int imt_slot_index);
+	gpointer (*get_vtable_trampoline) (MonoVTable *vtable, int slot_index);
+	gpointer (*get_imt_trampoline) (MonoVTable *vtable, int imt_slot_index);
+	gboolean (*imt_entry_inited) (MonoVTable *vtable, int imt_slot_index);
 	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
 	void     (*debug_log) (int level, MonoString *category, MonoString *message);
 	gboolean (*debug_log_is_enabled) (void);
 	gboolean (*tls_key_supported) (MonoTlsKey key);
+	void     (*init_delegate) (MonoDelegate *del);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -780,7 +786,8 @@ struct _MonoDelegate {
 	MonoObject *target;
 	MonoMethod *method;
 	gpointer delegate_trampoline;
-	gpointer rgctx;
+	/* Extra argument passed to the target method in llvmonly mode */
+	gpointer extra_arg;
 	/* 
 	 * If non-NULL, this points to a memory location which stores the address of 
 	 * the compiled code of the method, or NULL if it is not yet compiled.
@@ -1544,6 +1551,9 @@ void
 mono_install_imt_thunk_builder (MonoImtThunkBuilder func);
 
 void
+mono_set_always_build_imt_thunks (gboolean value);
+
+void
 mono_vtable_build_imt_slot (MonoVTable* vtable, int imt_slot);
 
 guint32
@@ -1603,6 +1613,15 @@ mono_class_free_ref_info (MonoClass *klass);
 MonoObject *
 mono_object_new_pinned (MonoDomain *domain, MonoClass *klass);
 
+MonoObject *
+mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error);
+
+MonoObject *
+ves_icall_object_new_specific (MonoVTable *vtable);
+
+MonoObject *
+mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error);
+
 void
 mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *vt, MonoClassField *field, void *value);
 
@@ -1642,6 +1661,18 @@ mono_error_set_pending_exception (MonoError *error);
 
 MonoArray *
 mono_glist_to_array (GList *list, MonoClass *eclass);
+
+MonoObject*
+mono_object_new_mature (MonoVTable *vtable, MonoError *error);
+
+MonoObject*
+mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
+
+MonoObject *
+ves_icall_object_new_fast (MonoVTable *vtable);
+
+MonoObject *
+mono_object_clone_checked (MonoObject *obj, MonoError *error);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

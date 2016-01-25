@@ -836,10 +836,36 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
-			exited.Wait (10000);
+			Assert.IsTrue (exited.Wait (10000));
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestDisableEventsBeforeExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			p.EnableRaisingEvents = false;
+
+			var exitedCalledCounter = 0;
+			p.Exited += (object sender, EventArgs e) => {
+				exitedCalledCounter++;
+			};
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual (0, exitedCalledCounter);
 		}
 
 		ProcessStartInfo GetCrossPlatformStartInfo ()

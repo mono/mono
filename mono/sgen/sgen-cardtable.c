@@ -86,8 +86,8 @@ sgen_card_table_wbarrier_set_field (GCObject *obj, gpointer field_ptr, GCObject*
 static void
 sgen_card_table_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 {
-	gpointer *dest = dest_ptr;
-	gpointer *src = src_ptr;
+	gpointer *dest = (gpointer *)dest_ptr;
+	gpointer *src = (gpointer *)src_ptr;
 
 	/*overlapping that required backward copying*/
 	if (src < dest && (src + count) > dest) {
@@ -119,19 +119,13 @@ sgen_card_table_wbarrier_value_copy (gpointer dest, gpointer src, int count, siz
 {
 	size_t size = count * element_size;
 
-#ifdef DISABLE_CRITICAL_REGION
-	LOCK_GC;
-#else
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
-#endif
+
 	mono_gc_memmove_atomic (dest, src, size);
 	sgen_card_table_mark_range ((mword)dest, size);
-#ifdef DISABLE_CRITICAL_REGION
-	UNLOCK_GC;
-#else
+
 	EXIT_CRITICAL_REGION;
-#endif
 }
 
 static void
@@ -139,20 +133,14 @@ sgen_card_table_wbarrier_object_copy (GCObject* obj, GCObject *src)
 {
 	size_t size = sgen_client_par_object_get_size (SGEN_LOAD_VTABLE_UNCHECKED (obj), obj);
 
-#ifdef DISABLE_CRITICAL_REGION
-	LOCK_GC;
-#else
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
-#endif
+
 	mono_gc_memmove_aligned ((char*)obj + SGEN_CLIENT_OBJECT_HEADER_SIZE, (char*)src + SGEN_CLIENT_OBJECT_HEADER_SIZE,
 			size - SGEN_CLIENT_OBJECT_HEADER_SIZE);
 	sgen_card_table_mark_range ((mword)obj, size);
-#ifdef DISABLE_CRITICAL_REGION
-	UNLOCK_GC;
-#else
+
 	EXIT_CRITICAL_REGION;
-#endif	
 }
 
 static void
@@ -284,7 +272,7 @@ sgen_card_table_find_address (char *addr)
 static gboolean
 sgen_card_table_find_address_with_cards (char *cards_start, guint8 *cards, char *addr)
 {
-	cards_start = sgen_card_table_align_pointer (cards_start);
+	cards_start = (char *)sgen_card_table_align_pointer (cards_start);
 	return cards [(addr - cards_start) >> CARD_BITS];
 }
 
@@ -292,15 +280,18 @@ static void
 update_mod_union (guint8 *dest, guint8 *start_card, size_t num_cards)
 {
 	int i;
-	for (i = 0; i < num_cards; ++i)
-		dest [i] |= start_card [i];
+	/* Marking from another thread can happen while we mark here */
+	for (i = 0; i < num_cards; ++i) {
+		if (start_card [i])
+			dest [i] = 1;
+	}
 }
 
 guint8*
 sgen_card_table_alloc_mod_union (char *obj, mword obj_size)
 {
 	size_t num_cards = sgen_card_table_number_of_cards_in_range ((mword) obj, obj_size);
-	guint8 *mod_union = sgen_alloc_internal_dynamic (num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
+	guint8 *mod_union = (guint8 *)sgen_alloc_internal_dynamic (num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
 	memset (mod_union, 0, num_cards);
 	return mod_union;
 }
@@ -570,10 +561,10 @@ sgen_card_tables_collect_stats (gboolean begin)
 void
 sgen_card_table_init (SgenRememberedSet *remset)
 {
-	sgen_cardtable = sgen_alloc_os_memory (CARD_COUNT_IN_BYTES, SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, "card table");
+	sgen_cardtable = (guint8 *)sgen_alloc_os_memory (CARD_COUNT_IN_BYTES, (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "card table");
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-	sgen_shadow_cardtable = sgen_alloc_os_memory (CARD_COUNT_IN_BYTES, SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, "shadow card table");
+	sgen_shadow_cardtable = (guint8 *)sgen_alloc_os_memory (CARD_COUNT_IN_BYTES, (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "shadow card table");
 #endif
 
 #ifdef HEAVY_STATISTICS

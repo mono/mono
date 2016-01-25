@@ -112,6 +112,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_origin_name16_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_origin_name16(stmt._sqlite_stmt, index), -1);
 #endif
@@ -122,6 +124,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_database_name16_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_database_name16(stmt._sqlite_stmt, index), -1);
 #endif
@@ -132,6 +136,8 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
       int len;
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_table_name16_interop(stmt._sqlite_stmt, index, out len), len);
+#elif MONOTOUCH
+      throw new NotImplementedException ();
 #else
       return UTF16ToString(UnsafeNativeMethods.sqlite3_column_table_name16(stmt._sqlite_stmt, index), -1);
 #endif

@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using System;
 using System.Net;
+using System.Net.Security;
 
 namespace Mono.Net.Security
 {
@@ -83,10 +84,10 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static void InstallProvider (object provider)
+		internal static void SetDefaultProvider (string name)
 		{
 			#if SECURITY_DEP
-			MonoTlsProviderFactory.InstallProvider ((MSI.MonoTlsProvider)provider);
+			MonoTlsProviderFactory.SetDefaultProvider (name);
 			#else
 			throw new NotSupportedException ();
 			#endif
@@ -109,5 +110,15 @@ namespace Mono.Net.Security
 			throw new NotSupportedException ();
 			#endif
 		}
+
+		internal static object GetMonoSslStream (SslStream stream)
+		{
+			#if SECURITY_DEP
+			return stream.Impl;
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
 	}
 }

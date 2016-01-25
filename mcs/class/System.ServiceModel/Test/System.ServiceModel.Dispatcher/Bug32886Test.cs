@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -62,16 +63,24 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				var client = new TempConvertSoapClient (binding, remoteAddress);
 
 				var wait = new ManualResetEvent (false);
+
+				Exception error = null;
+				string result = null;
+
 				client.CelsiusToFahrenheitCompleted += delegate (object o, CelsiusToFahrenheitCompletedEventArgs e) {
-					if (e.Error != null)
-						throw e.Error;
-					Assert.AreEqual ("76.1", e.Result, "#1");
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 
 				client.CelsiusToFahrenheitAsync ("24.5");
-				if (!wait.WaitOne (TimeSpan.FromSeconds (20)))
-					Assert.Fail ("timeout");
+
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
+				Assert.IsNull (error, "#1, inner exception: {0}", error);
+				Assert.AreEqual ("76.1", result, "#2");
 			} finally {
 				serviceHost.Close ();
 			}
@@ -81,16 +90,16 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			public FahrenheitToCelsiusResponse FarenheitToCelsius (FahrenheitToCelsiusRequest request)
 			{
-				var farenheit = double.Parse (request.Body.Fahrenheit);
+				var farenheit = double.Parse (request.Body.Fahrenheit, CultureInfo.InvariantCulture);
 				var celsius = ((farenheit - 32) / 9) * 5;
-				return new FahrenheitToCelsiusResponse (new FahrenheitToCelsiusResponseBody (celsius.ToString ()));
+				return new FahrenheitToCelsiusResponse (new FahrenheitToCelsiusResponseBody (celsius.ToString (CultureInfo.InvariantCulture)));
 			}
 
 			public CelsiusToFahrenheitResponse CelsiusToFarenheit (CelsiusToFahrenheitRequest request)
 			{
-				var celsius = double.Parse (request.Body.Celsius);
+				var celsius = double.Parse (request.Body.Celsius, CultureInfo.InvariantCulture);
 				var farenheit = ((celsius * 9) / 5) + 32;
-				return new CelsiusToFahrenheitResponse (new CelsiusToFahrenheitResponseBody (farenheit.ToString ()));
+				return new CelsiusToFahrenheitResponse (new CelsiusToFahrenheitResponseBody (farenheit.ToString (CultureInfo.InvariantCulture)));
 			}
 
 			Func<FahrenheitToCelsiusRequest,FahrenheitToCelsiusResponse> farenheitToCelsius;
