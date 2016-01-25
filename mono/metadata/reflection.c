@@ -8553,7 +8553,9 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val)
 	params [1] = val;
 	retval = mono_object_new (mono_domain_get (), klass);
 	unboxed = mono_object_unbox (retval);
-	mono_runtime_invoke (ctor, unboxed, params, NULL);
+
+	mono_runtime_invoke_checked (ctor, unboxed, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return retval;
 }
@@ -8563,6 +8565,7 @@ create_cattr_named_arg (void *minfo, MonoObject *typedarg)
 {
 	static MonoClass *klass;
 	static MonoMethod *ctor;
+	MonoError error;
 	MonoObject *retval;
 	void *unboxed, *params [2];
 
@@ -8575,7 +8578,9 @@ create_cattr_named_arg (void *minfo, MonoObject *typedarg)
 	params [1] = typedarg;
 	retval = mono_object_new (mono_domain_get (), klass);
 	unboxed = mono_object_unbox (retval);
-	mono_runtime_invoke (ctor, unboxed, params, NULL);
+
+	mono_runtime_invoke_checked (ctor, unboxed, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return retval;
 }
@@ -8679,7 +8684,11 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 
 	if (len == 0) {
 		attr = mono_object_new (mono_domain_get (), method->klass);
-		mono_runtime_invoke (method, attr, NULL, NULL);
+
+		mono_runtime_invoke_checked (method, attr, NULL, NULL, error);
+		if (!mono_error_ok (error))
+			return NULL;
+
 		return attr;
 	}
 
@@ -8708,9 +8717,12 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 	named = p;
 	attr = mono_object_new (mono_domain_get (), method->klass);
 
-	mono_runtime_invoke (method, attr, params, &exc);
+	mono_runtime_invoke_checked (method, attr, params, &exc, error);
+	if (!mono_error_ok (error))
+		goto fail;
 	if (exc)
 		goto fail;
+
 	num_named = read16 (named);
 	named += 2;
 	for (j = 0; j < num_named; j++) {
@@ -9043,6 +9055,7 @@ static MonoObject*
 create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr)
 {
 	static MonoMethod *ctor;
+	MonoError error;
 	MonoDomain *domain;
 	MonoObject *attr;
 	void *params [4];
@@ -9058,7 +9071,10 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr)
 	params [1] = mono_assembly_get_object (domain, image->assembly);
 	params [2] = (gpointer)&cattr->data;
 	params [3] = &cattr->data_size;
-	mono_runtime_invoke (ctor, attr, params, NULL);
+
+	mono_runtime_invoke_checked (ctor, attr, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	return attr;
 }
 
@@ -9625,12 +9641,19 @@ static MonoReflectionType*
 mono_reflection_type_get_underlying_system_type (MonoReflectionType* t)
 {
 	static MonoMethod *method_get_underlying_system_type = NULL;
+	MonoError error;
+	MonoReflectionType *rt;
 	MonoMethod *usertype_method;
 
 	if (!method_get_underlying_system_type)
 		method_get_underlying_system_type = mono_class_get_method_from_name (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0);
+
 	usertype_method = mono_object_get_virtual_method ((MonoObject *) t, method_get_underlying_system_type);
-        return (MonoReflectionType *) mono_runtime_invoke (usertype_method, t, NULL, NULL);
+
+	rt = (MonoReflectionType *) mono_runtime_invoke_checked (usertype_method, t, NULL, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return rt;
 }
 
 
@@ -13310,7 +13333,9 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass)
 	params [0] = mono_type_get_object_checked (mono_domain_get (), &oklass->byval_arg, &error);
 	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
-	res = mono_runtime_invoke (method, (MonoObject*)(mono_class_get_ref_info (klass)), params, &exc);
+	res = mono_runtime_invoke_checked (method, (MonoObject*)(mono_class_get_ref_info (klass)), params, &exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	if (exc)
 		return FALSE;
 	else

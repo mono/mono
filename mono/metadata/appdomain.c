@@ -555,6 +555,8 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 MonoReflectionAssembly *
 mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
 {
+	MonoError error;
+	MonoReflectionAssembly *ret;
 	MonoClass *klass;
 	void *params [1];
 	static MonoMethod *method = NULL;
@@ -576,7 +578,11 @@ mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
 		*params = (MonoObject*)mono_string_new (mono_domain_get (), name);
 	else
 		*params = tb;
-	return (MonoReflectionAssembly *) mono_runtime_invoke (method, domain->domain, params, NULL);
+
+	ret = (MonoReflectionAssembly *) mono_runtime_invoke_checked (method, domain->domain, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 /**
@@ -932,6 +938,8 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 MonoReflectionAssembly *
 mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *requesting, gboolean refonly)
 {
+	MonoError error;
+	MonoReflectionAssembly *ret;
 	MonoClass *klass;
 	MonoMethod *method;
 	MonoBoolean isrefonly;
@@ -955,7 +963,11 @@ mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *
 	params [0] = fname;
 	params [1] = (requesting) ? mono_assembly_get_object (domain, requesting) : NULL;
 	params [2] = &isrefonly;
-	return (MonoReflectionAssembly *) mono_runtime_invoke (method, domain->domain, params, NULL);
+
+	ret = (MonoReflectionAssembly *) mono_runtime_invoke_checked (method, domain->domain, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 MonoAssembly *
@@ -1030,6 +1042,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 {
 	static MonoClassField *assembly_load_field;
 	static MonoMethod *assembly_load_method;
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoReflectionAssembly *ref_assembly;
 	MonoClass *klass;
@@ -1068,7 +1081,9 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	}
 
 	*params = ref_assembly;
-	mono_runtime_invoke (assembly_load_method, domain->domain, params, NULL);
+
+	mono_runtime_invoke_checked (assembly_load_method, domain->domain, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 }
 
 /*
@@ -2432,6 +2447,7 @@ guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
 void
 mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 {
+	MonoError error;
 	HANDLE thread_handle;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
@@ -2466,7 +2482,9 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	method = mono_class_get_method_from_name (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1);	
 	g_assert (method);
 
-	mono_runtime_invoke (method, domain->domain, NULL, exc);
+	mono_runtime_invoke_checked (method, domain->domain, NULL, exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	if (*exc) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
