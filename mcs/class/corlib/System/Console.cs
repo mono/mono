@@ -145,7 +145,7 @@ namespace System
 				w.AutoFlush = true;
 				stdout = TextWriter.Synchronized (w);
 
-				w = new CStreamWriter (OpenStandardOutput (0), outputEncoding, true);
+				w = new CStreamWriter (OpenStandardError (0), outputEncoding, true);
 				w.AutoFlush = true;
 				stderr = TextWriter.Synchronized (w);
 				
