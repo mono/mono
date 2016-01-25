@@ -367,6 +367,48 @@ int Mono_Posix_ToAtFlags (int x, int *r)
 	return 0;
 }
 
+#ifdef HAVE_STRUCT_CMSGHDR
+int
+Mono_Posix_FromCmsghdr (struct Mono_Posix_Cmsghdr *from, struct cmsghdr *to)
+{
+	_cnm_return_val_if_overflow (gint64, from->cmsg_len, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->cmsg_len   = from->cmsg_len;
+	if (Mono_Posix_FromUnixSocketProtocol (from->cmsg_level, &to->cmsg_level) != 0) {
+		return -1;
+	}
+	if (Mono_Posix_FromUnixSocketControlMessage (from->cmsg_type, &to->cmsg_type) != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_CMSGHDR */
+
+
+#ifdef HAVE_STRUCT_CMSGHDR
+int
+Mono_Posix_ToCmsghdr (struct cmsghdr *from, struct Mono_Posix_Cmsghdr *to)
+{
+	_cnm_return_val_if_overflow (gint64, from->cmsg_len, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->cmsg_len   = from->cmsg_len;
+	if (Mono_Posix_ToUnixSocketProtocol (from->cmsg_level, &to->cmsg_level) != 0) {
+		return -1;
+	}
+	if (Mono_Posix_ToUnixSocketControlMessage (from->cmsg_type, &to->cmsg_type) != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_CMSGHDR */
+
+
 int Mono_Posix_FromConfstrName (int x, int *r)
 {
 	*r = 0;
@@ -8244,6 +8286,42 @@ int Mono_Posix_ToUnixAddressFamily (int x, int *r)
 	if (x == Unknown)
 		{*r = Mono_Posix_UnixAddressFamily_Unknown; return 0;}
 #endif /* ndef Unknown */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromUnixSocketControlMessage (int x, int *r)
+{
+	*r = 0;
+	if (x == Mono_Posix_UnixSocketControlMessage_SCM_CREDENTIALS)
+#ifdef SCM_CREDENTIALS
+		{*r = SCM_CREDENTIALS; return 0;}
+#else /* def SCM_CREDENTIALS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef SCM_CREDENTIALS */
+	if (x == Mono_Posix_UnixSocketControlMessage_SCM_RIGHTS)
+#ifdef SCM_RIGHTS
+		{*r = SCM_RIGHTS; return 0;}
+#else /* def SCM_RIGHTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef SCM_RIGHTS */
+	if (x == 0)
+		return 0;
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToUnixSocketControlMessage (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef SCM_CREDENTIALS
+	if (x == SCM_CREDENTIALS)
+		{*r = Mono_Posix_UnixSocketControlMessage_SCM_CREDENTIALS; return 0;}
+#endif /* ndef SCM_CREDENTIALS */
+#ifdef SCM_RIGHTS
+	if (x == SCM_RIGHTS)
+		{*r = Mono_Posix_UnixSocketControlMessage_SCM_RIGHTS; return 0;}
+#endif /* ndef SCM_RIGHTS */
 	errno = EINVAL; return -1;
 }
 

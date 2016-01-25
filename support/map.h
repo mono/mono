@@ -1612,6 +1612,15 @@ enum Mono_Posix_UnixAddressFamily {
 int Mono_Posix_FromUnixAddressFamily (int x, int *r);
 int Mono_Posix_ToUnixAddressFamily (int x, int *r);
 
+enum Mono_Posix_UnixSocketControlMessage {
+	Mono_Posix_UnixSocketControlMessage_SCM_CREDENTIALS       = 0x00000002,
+	#define Mono_Posix_UnixSocketControlMessage_SCM_CREDENTIALS Mono_Posix_UnixSocketControlMessage_SCM_CREDENTIALS
+	Mono_Posix_UnixSocketControlMessage_SCM_RIGHTS            = 0x00000001,
+	#define Mono_Posix_UnixSocketControlMessage_SCM_RIGHTS      Mono_Posix_UnixSocketControlMessage_SCM_RIGHTS
+};
+int Mono_Posix_FromUnixSocketControlMessage (int x, int *r);
+int Mono_Posix_ToUnixSocketControlMessage (int x, int *r);
+
 enum Mono_Posix_UnixSocketFlags {
 	Mono_Posix_UnixSocketFlags_SOCK_CLOEXEC        = 0x00080000,
 	#define Mono_Posix_UnixSocketFlags_SOCK_CLOEXEC  Mono_Posix_UnixSocketFlags_SOCK_CLOEXEC
@@ -1819,6 +1828,7 @@ int Mono_Posix_ToXattrFlags (int x, int *r);
  * Managed Structure Declarations
  */
 
+struct Mono_Posix_Cmsghdr;
 struct Mono_Posix_Flock;
 struct Mono_Posix_In6Addr;
 struct Mono_Posix_InAddr;
@@ -1832,6 +1842,7 @@ struct Mono_Posix_Statvfs;
 struct Mono_Posix_Syscall__Dirent;
 struct Mono_Posix_Syscall__Fstab;
 struct Mono_Posix_Syscall__Group;
+struct Mono_Posix_Syscall__Msghdr;
 struct Mono_Posix_Syscall__Passwd;
 struct Mono_Posix_Syscall__Utsname;
 struct Mono_Posix_Timespec;
@@ -1846,6 +1857,7 @@ struct Mono_Unix_UnixSignal_SignalInfo;
  * Inferred Structure Declarations
  */
 
+struct cmsghdr;
 struct flock;
 struct iovec;
 struct linger;
@@ -1866,6 +1878,18 @@ typedef int (*Mono_Posix_RuntimeIsShuttingDown) (void);
 /*
  * Structures
  */
+
+struct Mono_Posix_Cmsghdr {
+	gint64 cmsg_len;
+	int    cmsg_level;
+	int    cmsg_type;
+};
+
+int
+Mono_Posix_FromCmsghdr (struct Mono_Posix_Cmsghdr* from, struct cmsghdr *to);
+int
+Mono_Posix_ToCmsghdr (struct cmsghdr *from, struct Mono_Posix_Cmsghdr* to);
+
 
 struct Mono_Posix_Flock {
 	short  l_type;
@@ -2014,6 +2038,14 @@ struct Mono_Posix_Syscall__Group {
 	void*        _gr_buf_;
 };
 
+struct Mono_Posix_Syscall__Msghdr {
+	struct Mono_Posix_Iovec* msg_iov;
+	int                      msg_iovlen;
+	unsigned char*           msg_control;
+	gint64                   msg_controllen;
+	int                      msg_flags;
+};
+
 struct Mono_Posix_Syscall__Passwd {
 	void*        pw_name;
 	void*        pw_passwd;
@@ -2114,6 +2146,7 @@ int map_Mono_Posix_AccessMode (int mode);
 int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
 int map_Mono_Posix_WaitOptions (int wait_options);
+int Mono_Posix_Cmsghdr_getsize (void);
 int Mono_Posix_FromIn6Addr (struct Mono_Posix_In6Addr* source, void* destination);
 int Mono_Posix_FromInAddr (struct Mono_Posix_InAddr* source, void* destination);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
@@ -2131,7 +2164,6 @@ int Mono_Posix_Stdlib_clearerr (void* stream);
 void* Mono_Posix_Stdlib_CreateFilePosition (void);
 int Mono_Posix_Stdlib_DumpFilePosition (char* buf, void* handle, int len);
 int Mono_Posix_Stdlib_EOF (void);
-const char* Mono_Unix_VersionString (void);
 int Mono_Posix_Stdlib_EXIT_FAILURE (void);
 int Mono_Posix_Stdlib_EXIT_SUCCESS (void);
 int Mono_Posix_Stdlib_fgetpos (void* stream, void* pos);
@@ -2168,6 +2200,12 @@ int Mono_Posix_Syscall_accept (int socket, struct Mono_Posix__SockaddrHeader* ad
 int Mono_Posix_Syscall_accept4 (int socket, struct Mono_Posix__SockaddrHeader* address, int flags);
 int Mono_Posix_Syscall_bind (int socket, struct Mono_Posix__SockaddrHeader* address);
 int Mono_Posix_Syscall_closelog (void);
+guint64 Mono_Posix_Syscall_CMSG_ALIGN (guint64 length);
+gint64 Mono_Posix_Syscall_CMSG_DATA (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg);
+gint64 Mono_Posix_Syscall_CMSG_FIRSTHDR (unsigned char* msg_control, gint64 msg_controllen);
+guint64 Mono_Posix_Syscall_CMSG_LEN (guint64 length);
+gint64 Mono_Posix_Syscall_CMSG_NXTHDR (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg);
+guint64 Mono_Posix_Syscall_CMSG_SPACE (guint64 length);
 guint64 Mono_Posix_Syscall_confstr (int name, char* buf, guint64 len);
 int Mono_Posix_Syscall_connect (int socket, struct Mono_Posix__SockaddrHeader* address);
 int Mono_Posix_Syscall_creat (const char* pathname, unsigned int mode);
@@ -2264,12 +2302,14 @@ gint64 Mono_Posix_Syscall_readlinkat (int dirfd, const char* pathname, unsigned 
 gint64 Mono_Posix_Syscall_readv (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 gint64 Mono_Posix_Syscall_recv (int socket, void* buffer, guint64 length, int flags);
 gint64 Mono_Posix_Syscall_recvfrom (int socket, void* buffer, guint64 length, int flags, struct Mono_Posix__SockaddrHeader* address);
+gint64 Mono_Posix_Syscall_recvmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, struct Mono_Posix__SockaddrHeader* msg_name, int flags);
 int Mono_Posix_Syscall_remap_file_pages (void* start, guint64 size, int prot, gint64 pgoff, int flags);
 int Mono_Posix_Syscall_removexattr (const char* path, const char* name);
 int Mono_Posix_Syscall_rewinddir (void* dir);
 int Mono_Posix_Syscall_seekdir (void* dir, gint64 offset);
 gint64 Mono_Posix_Syscall_send (int socket, void* message, guint64 length, int flags);
 gint64 Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, gint64* offset, guint64 count);
+gint64 Mono_Posix_Syscall_sendmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, struct Mono_Posix__SockaddrHeader* msg_name, int flags);
 gint64 Mono_Posix_Syscall_sendto (int socket, void* message, guint64 length, int flags, struct Mono_Posix__SockaddrHeader* address);
 int Mono_Posix_Syscall_setdomainname (const char* name, guint64 len);
 int Mono_Posix_Syscall_setfsent (void);
@@ -2317,6 +2357,7 @@ int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
 void* Mono_Unix_UnixSignal_install (int signum);
 int Mono_Unix_UnixSignal_uninstall (void* info);
 int Mono_Unix_UnixSignal_WaitAny (void** infos, int count, int timeout, Mono_Posix_RuntimeIsShuttingDown shutting_down);
+void* Mono_Unix_VersionString (void);
 int wexitstatus (int status);
 int wifexited (int status);
 int wifsignaled (int status);
