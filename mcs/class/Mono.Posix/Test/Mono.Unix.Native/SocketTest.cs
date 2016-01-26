@@ -731,35 +731,57 @@ namespace MonoTests.Mono.Unix.Native
 			});
 		}
 
-		[Test]
-		[Category ("NotOnMac")]
-		public unsafe void ControlMsg ()
+		public unsafe void ControlMsg (bool useMultipleControlMessages)
 		{
 			// Create two socket pairs and send inner_so1 and inner_so2 over the other socket pair using SCM_RIGHTS
 			WithSocketPair ((inner_so1, inner_so2) => {
 				WithSocketPair ((so1, so2) => {
-					// Create two SCM_RIGHTS control messages
-					var cmsg = new byte[2 * Syscall.CMSG_SPACE (sizeof (int))];
-					var hdr = new Cmsghdr {
-						cmsg_len = (long) Syscall.CMSG_LEN (sizeof (int)),
-						cmsg_level = UnixSocketProtocol.SOL_SOCKET,
-						cmsg_type = UnixSocketControlMessage.SCM_RIGHTS,
-					};
-					var msghdr1 = new Msghdr {
-						msg_control = cmsg,
-						msg_controllen = cmsg.Length,
-					};
-					long offset = 0;
-					hdr.WriteToBuffer (msghdr1, offset);
-					var dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
-					fixed (byte* ptr = msghdr1.msg_control) {
-						((int*) (ptr + dataOffset))[0] = inner_so1;
-					}
-					offset = (long) Syscall.CMSG_SPACE (sizeof (int));
-					hdr.WriteToBuffer (msghdr1, offset);
-					dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
-					fixed (byte* ptr = msghdr1.msg_control) {
-						((int*) (ptr + dataOffset))[0] = inner_so2;
+					byte[] cmsg;
+					Msghdr msghdr1;
+					long offset;
+					if (useMultipleControlMessages) {
+						// Create two SCM_RIGHTS control messages
+						cmsg = new byte[2 * Syscall.CMSG_SPACE (sizeof (int))];
+						var hdr = new Cmsghdr {
+							cmsg_len = (long) Syscall.CMSG_LEN (sizeof (int)),
+							cmsg_level = UnixSocketProtocol.SOL_SOCKET,
+							cmsg_type = UnixSocketControlMessage.SCM_RIGHTS,
+						};
+						msghdr1 = new Msghdr {
+							msg_control = cmsg,
+							msg_controllen = cmsg.Length,
+						};
+						offset = 0;
+						hdr.WriteToBuffer (msghdr1, offset);
+						var dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
+						fixed (byte* ptr = msghdr1.msg_control) {
+							((int*) (ptr + dataOffset))[0] = inner_so1;
+						}
+						offset = (long) Syscall.CMSG_SPACE (sizeof (int));
+						hdr.WriteToBuffer (msghdr1, offset);
+						dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
+						fixed (byte* ptr = msghdr1.msg_control) {
+							((int*) (ptr + dataOffset))[0] = inner_so2;
+						}
+					} else {
+						// Create one SCM_RIGHTS control message
+						cmsg = new byte[Syscall.CMSG_SPACE (2 * sizeof (int))];
+						var hdr = new Cmsghdr {
+							cmsg_len = (long) Syscall.CMSG_LEN (2 * sizeof (int)),
+							cmsg_level = UnixSocketProtocol.SOL_SOCKET,
+							cmsg_type = UnixSocketControlMessage.SCM_RIGHTS,
+						};
+						msghdr1 = new Msghdr {
+							msg_control = cmsg,
+							msg_controllen = cmsg.Length,
+						};
+						offset = 0;
+						hdr.WriteToBuffer (msghdr1, offset);
+						var dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
+						fixed (byte* ptr = msghdr1.msg_control) {
+							((int*) (ptr + dataOffset))[0] = inner_so1;
+							((int*) (ptr + dataOffset))[1] = inner_so2;
+						}
 					}
 
 					long ret;
@@ -799,7 +821,8 @@ namespace MonoTests.Mono.Unix.Native
 					if (ret < 0)
 						UnixMarshal.ThrowExceptionForLastError ();
 
-					Assert.IsTrue ((msghdr2.msg_flags & MessageFlags.MSG_CTRUNC) != 0); // Control message has been truncated
+					if (useMultipleControlMessages) // This assertion fails on OSX for some reason
+						Assert.IsTrue ((msghdr2.msg_flags & MessageFlags.MSG_CTRUNC) != 0); // Control message has been truncated
 
 					Assert.AreEqual (buffer1.Length, ret);
 					for (int i = 0; i < buffer1.Length; i++)
@@ -882,6 +905,19 @@ namespace MonoTests.Mono.Unix.Native
 					}
 				});
 			});
+		}
+
+		[Test]
+		public unsafe void ControlMsgOneCmsg ()
+		{
+			ControlMsg (useMultipleControlMessages: false);
+		}
+
+		[Test]
+		[Category ("NotOnMac")]
+		public unsafe void ControlMsgMultipleCMsgs ()
+		{
+			ControlMsg (useMultipleControlMessages: true);
 		}
 	}
 }
