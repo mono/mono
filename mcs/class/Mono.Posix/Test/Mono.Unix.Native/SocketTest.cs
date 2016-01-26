@@ -732,6 +732,7 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public unsafe void ControlMsg ()
 		{
 			// Create two socket pairs and send inner_so1 and inner_so2 over the other socket pair using SCM_RIGHTS
