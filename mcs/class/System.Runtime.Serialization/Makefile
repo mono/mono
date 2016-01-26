@@ -19,6 +19,10 @@ else
 LIB_MCS_FLAGS += /d:NO_CONFIGURATION /d:NO_SECURITY_ATTRIBUTES /d:NO_CODEDOM /d:NO_DESKTOP_SECURITY
 endif
 
+ifdef XAMMAC_4_5
+LIB_MCS_FLAGS += /d:NO_CONFIGURATION
+endif
+
 TEST_RESOURCE_FILES = \
 	Test/Resources/WSDL/collections.wsdl	\
 	Test/Resources/WSDL/custom-collections.wsdl
