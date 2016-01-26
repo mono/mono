@@ -97,6 +97,8 @@ static int read_perf_mmap (MonoProfiler* prof, int cpu);
 /* Size in bytes of the event ID prefix. */
 #define EVENT_SIZE 1
 
+#define WRITER_THREAD_SLEEP 1 /* ms */
+
 static int nocalls = 0;
 static int notraces = 0;
 static int use_zip = 0;
@@ -471,6 +473,8 @@ struct _MonoProfiler {
 #endif
 	volatile gint32 run_writer_thread;
 	MonoLockFreeQueue writer_queue;
+	mono_mutex_t writer_thread_mutex;
+	mono_cond_t writer_thread_cond;
 	MonoConcurrentHashTable *method_table;
 	mono_mutex_t method_table_mutex;
 	BinaryObject *binary_objects;
@@ -850,6 +854,10 @@ send_buffer (MonoProfiler *prof, GPtrArray *methods, LogBuffer *buffer)
 	entry->methods = methods;
 	entry->buffer = buffer;
 	mono_lock_free_queue_enqueue (&prof->writer_queue, &entry->node);
+
+	mono_os_mutex_lock (&prof->writer_thread_mutex);
+	mono_os_cond_signal (&prof->writer_thread_cond);
+	mono_os_mutex_unlock (&prof->writer_thread_mutex);
 }
 
 static void
@@ -3884,6 +3892,8 @@ log_shutdown (MonoProfiler *prof)
 
 	mono_conc_hashtable_destroy (prof->method_table);
 	mono_os_mutex_destroy (&prof->method_table_mutex);
+	mono_os_cond_destroy (&prof->writer_thread_cond);
+	mono_os_mutex_destroy (&prof->writer_thread_mutex);
 
 	if (coverage_initialized) {
 		mono_conc_hashtable_destroy (coverage_methods);
@@ -4150,6 +4160,85 @@ start_helper_thread (MonoProfiler* prof)
 }
 #endif
 
+static void
+drain_writer_queue (MonoProfiler *prof)
+{
+	WriterQueueEntry *entry;
+
+	while ((entry = (WriterQueueEntry *) mono_lock_free_queue_dequeue (&prof->writer_queue))) {
+		LogBuffer *method_buffer = NULL;
+		gboolean new_methods = FALSE;
+
+		if (entry->methods->len)
+			method_buffer = create_buffer ();
+
+		/*
+		 * Encode the method events in a temporary log buffer that we
+		 * flush to disk before the main buffer, ensuring that all
+		 * methods have metadata emitted before they're referenced.
+		 */
+		for (guint i = 0; i < entry->methods->len; i++) {
+			MethodInfo *info = (MethodInfo *)g_ptr_array_index (entry->methods, i);
+
+			if (mono_conc_hashtable_lookup (prof->method_table, info->method))
+				continue;
+
+			new_methods = TRUE;
+
+			/*
+			 * Other threads use this hash table to get a general
+			 * idea of whether a method has already been emitted to
+			 * the stream. Due to the way we add to this table, it
+			 * can easily happen that multiple threads queue up the
+			 * same methods, but that's OK since eventually all
+			 * methods will be in this table and the thread-local
+			 * method lists will just be empty for the rest of the
+			 * app's lifetime.
+			 */
+			mono_os_mutex_lock (&prof->method_table_mutex);
+			mono_conc_hashtable_insert (prof->method_table, info->method, info->method);
+			mono_os_mutex_unlock (&prof->method_table_mutex);
+
+			char *name = mono_method_full_name (info->method, 1);
+			int nlen = strlen (name) + 1;
+			void *cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
+			int csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
+
+			method_buffer = ensure_logbuf_inner (method_buffer,
+				EVENT_SIZE /* event */ +
+				LEB128_SIZE /* time */ +
+				LEB128_SIZE /* method */ +
+				LEB128_SIZE /* start */ +
+				LEB128_SIZE /* size */ +
+				nlen /* name */
+			);
+
+			emit_byte (method_buffer, TYPE_JIT | TYPE_METHOD);
+			emit_time (method_buffer, info->time);
+			emit_method_inner (method_buffer, info->method);
+			emit_ptr (method_buffer, cstart);
+			emit_value (method_buffer, csize);
+
+			memcpy (method_buffer->data, name, nlen);
+			method_buffer->data += nlen;
+
+			mono_free (name);
+			free (info);
+		}
+
+		g_ptr_array_free (entry->methods, TRUE);
+
+		if (new_methods)
+			dump_buffer (prof, method_buffer);
+		else if (method_buffer)
+			free_buffer (method_buffer, method_buffer->size);
+
+		dump_buffer (prof, entry->buffer);
+
+		free (entry);
+	}
+}
+
 static void *
 writer_thread (void *arg)
 {
@@ -4160,81 +4249,15 @@ writer_thread (void *arg)
 	dump_header (prof);
 
 	while (InterlockedRead (&prof->run_writer_thread)) {
-		WriterQueueEntry *entry;
+		mono_os_mutex_lock (&prof->writer_thread_mutex);
+		mono_os_cond_timedwait (&prof->writer_thread_cond, &prof->writer_thread_mutex, WRITER_THREAD_SLEEP);
+		mono_os_mutex_unlock (&prof->writer_thread_mutex);
 
-		while ((entry = (WriterQueueEntry *) mono_lock_free_queue_dequeue (&prof->writer_queue))) {
-			LogBuffer *method_buffer = NULL;
-			gboolean new_methods = FALSE;
-
-			if (entry->methods->len)
-				method_buffer = create_buffer ();
-
-			/*
-			 * Encode the method events in a temporary log buffer that we
-			 * flush to disk before the main buffer, ensuring that all
-			 * methods have metadata emitted before they're referenced.
-			 */
-			for (guint i = 0; i < entry->methods->len; i++) {
-				MethodInfo *info = (MethodInfo *)g_ptr_array_index (entry->methods, i);
-
-				if (mono_conc_hashtable_lookup (prof->method_table, info->method))
-					continue;
-
-				new_methods = TRUE;
-
-				/*
-				 * Other threads use this hash table to get a general
-				 * idea of whether a method has already been emitted to
-				 * the stream. Due to the way we add to this table, it
-				 * can easily happen that multiple threads queue up the
-				 * same methods, but that's OK since eventually all
-				 * methods will be in this table and the thread-local
-				 * method lists will just be empty for the rest of the
-				 * app's lifetime.
-				 */
-				mono_os_mutex_lock (&prof->method_table_mutex);
-				mono_conc_hashtable_insert (prof->method_table, info->method, info->method);
-				mono_os_mutex_unlock (&prof->method_table_mutex);
-
-				char *name = mono_method_full_name (info->method, 1);
-				int nlen = strlen (name) + 1;
-				void *cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
-				int csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
-
-				method_buffer = ensure_logbuf_inner (method_buffer,
-					EVENT_SIZE /* event */ +
-					LEB128_SIZE /* time */ +
-					LEB128_SIZE /* method */ +
-					LEB128_SIZE /* start */ +
-					LEB128_SIZE /* size */ +
-					nlen /* name */
-				);
-
-				emit_byte (method_buffer, TYPE_JIT | TYPE_METHOD);
-				emit_time (method_buffer, info->time);
-				emit_method_inner (method_buffer, info->method);
-				emit_ptr (method_buffer, cstart);
-				emit_value (method_buffer, csize);
-
-				memcpy (method_buffer->data, name, nlen);
-				method_buffer->data += nlen;
-
-				mono_free (name);
-				free (info);
-			}
-
-			g_ptr_array_free (entry->methods, TRUE);
-
-			if (new_methods)
-				dump_buffer (prof, method_buffer);
-			else if (method_buffer)
-				free_buffer (method_buffer, method_buffer->size);
-
-			dump_buffer (prof, entry->buffer);
-
-			free (entry);
-		}
+		drain_writer_queue (prof);
 	}
+
+	/* Ensure we write any remaining events before shutting down. */
+	drain_writer_queue (prof);
 
 	return NULL;
 }
@@ -4344,6 +4367,8 @@ create_profiler (const char *filename, GPtrArray *filters)
 #endif
 
 	mono_lock_free_queue_init (&prof->writer_queue);
+	mono_os_mutex_init (&prof->writer_thread_mutex);
+	mono_os_cond_init (&prof->writer_thread_cond);
 	mono_os_mutex_init (&prof->method_table_mutex);
 	prof->method_table = mono_conc_hashtable_new (NULL, NULL);
 
