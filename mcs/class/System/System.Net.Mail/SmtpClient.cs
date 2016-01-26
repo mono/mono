@@ -592,8 +592,16 @@ namespace System.Net.Mail {
 			// FIXME: parse the list of extensions so we don't bother wasting
 			// our time trying commands if they aren't supported.
 			
-			// Get the FQDN of the local machine
-			string fqdn = Dns.GetHostEntry (Dns.GetHostName ()).HostName;
+			// get the host name (not fully qualified)
+			string fqdn = Dns.GetHostName ();
+			try {
+				// we'll try for the fully qualified name - ref: bug #33551
+				fqdn = Dns.GetHostEntry (fqdn).HostName;
+			}
+			catch (SocketException) {
+				// we could not resolve our name but will continue with the partial name
+				// IOW we won't fail to send email because of this - ref: bug #37246
+			}
 			status = SendCommand ("EHLO " + fqdn);
 			
 			if (IsError (status)) {
