@@ -111,7 +111,9 @@ namespace Mono.CSharp
 		{
 			Expression res = null;
 
-			res = expr.Resolve (rc);
+			using (rc.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false)) {
+				res = expr.Resolve (rc);
+			}
 
 			var constant = res as Constant;
 			if (constant != null && constant.IsLiteral) {
