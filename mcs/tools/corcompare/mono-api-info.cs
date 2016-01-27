@@ -119,6 +119,7 @@ namespace CorCompare
 	}
 
 	public class Utils {
+		static char[] CharsToCleanup = new char[] { '<', '>', '/' };
 
 		public static string CleanupTypeName (TypeReference type)
 		{
@@ -127,7 +128,27 @@ namespace CorCompare
 
 		public static string CleanupTypeName (string t)
 		{
-			return t.Replace ('<', '[').Replace ('>', ']').Replace ('/', '+');
+			if (t.IndexOfAny (CharsToCleanup) == -1)
+				return t;
+			var sb = new StringBuilder (t.Length);
+			for (int i = 0; i < t.Length; i++) {
+				var ch = t [i];
+				switch (ch) {
+				case '<':
+					sb.Append ('[');
+					break;
+				case '>':
+					sb.Append (']');
+					break;
+				case '/':
+					sb.Append ('+');
+					break;
+				default:
+					sb.Append (ch);
+					break;
+				}
+			}
+			return sb.ToString ();
 		}
 	}
 
