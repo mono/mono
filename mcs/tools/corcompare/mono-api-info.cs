@@ -1106,17 +1106,9 @@ namespace CorCompare
 		}
 	}
 
-	class AttributeData : BaseData
+	class AttributeData
 	{
-		IList<ICustomAttributeProvider> providers;
-
-		AttributeData (XmlWriter writer, IList<ICustomAttributeProvider> providers)
-			: base (writer)
-		{
-			this.providers = providers;
-		}
-
-		public override void DoOutput ()
+		public static void DoOutput (XmlWriter writer, IList<ICustomAttributeProvider> providers)
 		{
 			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
@@ -1149,7 +1141,7 @@ namespace CorCompare
 					string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
 
 					writer.WriteStartElement ("attribute");
-					AddAttribute ("name", attName);
+					writer.WriteAttributeString ("name", attName);
 
 					var attribute_mapping = CreateAttributeMapping (att).Where ((kvp) => kvp.Key != "TypeId");
 
@@ -1160,15 +1152,15 @@ namespace CorCompare
 							object o = kvp.Value;
 
 							writer.WriteStartElement ("property");
-							AddAttribute ("name", name);
+							writer.WriteAttributeString ("name", name);
 
 							if (o == null) {
-								AddAttribute ("value", "null");
+								writer.WriteAttributeString ("value", "null");
 							} else {
 								string value = o.ToString ();
 								if (attName.EndsWith ("GuidAttribute", StringComparison.Ordinal))
 									value = value.ToUpper ();
-								AddAttribute ("value", value);
+								writer.WriteAttributeString ("value", value);
 							}
 
 							writer.WriteEndElement (); // property
@@ -1436,8 +1428,7 @@ namespace CorCompare
 
 		public static void OutputAttributes (XmlWriter writer, params ICustomAttributeProvider[] providers)
 		{
-			AttributeData ad = new AttributeData (writer, providers);
-			ad.DoOutput ();
+			AttributeData.DoOutput (writer, providers);
 		}
 	}
 
