@@ -31,7 +31,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.IO;
@@ -355,7 +355,7 @@ namespace MonoTests.System.Reflection
 				get { return 99; }
 			}
 		}
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void ConstantValue () {
 			/*This test looks scary because we can't generate a default value with C# */

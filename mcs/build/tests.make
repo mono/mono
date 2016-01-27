@@ -29,8 +29,15 @@ test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
-test_lib = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test_$(PROFILE).dll)
+test_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+
+ifeq ($(wildcard $(test_sourcefile)),)
 test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+endif
+
+test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
+test_sourcefile_excludes = $(test_lib).excludes
+
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
@@ -41,7 +48,9 @@ ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif
 
-endif
+HAVE_SOURCE_EXCLUDES := $(wildcard $(test_sourcefile_excludes))
+
+endif # !NO_TEST
 
 ifndef NO_TEST
 $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
@@ -72,8 +81,18 @@ test-local: $(test_assemblies)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
-TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
+TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
+
+ifdef NUNIT_LITE
+NOSHADOW_FLAG =
+NUNIT_XML_FLAG = -format:nunit2 -result:
+OUTPUT_FILE_FLAG=-out
+else
+OUTPUT_FILE_FLAG=-output
+NOSHADOW_FLAG = -noshadow
+NUNIT_XML_FLAG = -xml=
+endif
 
 ifdef NUNIT_LITE
 NOSHADOW_FLAG =
@@ -133,9 +152,21 @@ ifdef HAVE_CS_TESTS
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
-$(test_response): $(test_sourcefile)
+test_response_preprocessed = $(test_response)_preprocessed
+
+ifdef HAVE_SOURCE_EXCLUDES
+$(test_response_preprocessed): $(test_sourcefile)
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
+
+else
+$(test_response_preprocessed): $(test_sourcefile)
+	cp $(test_sourcefile) $(test_response_preprocessed)
+
+endif # HAVE_SOURCE_EXCLUDES
+
+$(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
-	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_response_preprocessed) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(test_makefrag): $(test_response)
 #	@echo Creating $@ ...
