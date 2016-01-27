@@ -1120,10 +1120,12 @@ namespace CorCompare
 				if (ass != null && !Driver.FollowForwarders)
 					TypeForwardedToData.OutputForwarders (writer, ass);
 
-				foreach (var att in provider.CustomAttributes.OrderBy ((a) => a.Constructor.DeclaringType.FullName)) {
+				var attributes = provider.CustomAttributes.
+					Where ((att) => !SkipAttribute (att)).
+					OrderBy ((a) => a.Constructor.DeclaringType.FullName, StringComparer.Ordinal);
+				
+				foreach (var att in attributes) {
 					string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
-					if (SkipAttribute (att))
-						continue;
 
 					writer.WriteStartElement ("attribute");
 					AddAttribute ("name", attName);
