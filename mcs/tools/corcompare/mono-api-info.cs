@@ -486,7 +486,7 @@ namespace CorCompare
 
 			var ifaces =  TypeHelper.GetInterfaces (type).
 				Where ((iface) => TypeHelper.IsPublic (iface)). // we're only interested in public interfaces
-				OrderBy (s => s.FullName);
+				OrderBy (s => s.FullName, StringComparer.Ordinal);
 
 			if (ifaces.Any ()) {
 				writer.WriteStartElement ("interfaces");
@@ -699,7 +699,7 @@ namespace CorCompare
 
 			var methods = type.Methods;//type.GetMethods (flags);
 			foreach (MethodDefinition method in methods) {
-				if (method.IsSpecialName && !method.Name.StartsWith ("op_"))
+				if (method.IsSpecialName && !method.Name.StartsWith ("op_", StringComparison.Ordinal))
 					continue;
 
 				// we're only interested in public or protected members
@@ -1143,7 +1143,7 @@ namespace CorCompare
 								AddAttribute ("value", "null");
 							} else {
 								string value = o.ToString ();
-								if (attName.EndsWith ("GuidAttribute"))
+								if (attName.EndsWith ("GuidAttribute", StringComparison.Ordinal))
 									value = value.ToUpper ();
 								AddAttribute ("value", value);
 							}
@@ -1486,7 +1486,7 @@ namespace CorCompare
 
 		public int Compare (PropertyDefinition ma, PropertyDefinition mb)
 		{
-			int res = String.Compare (ma.Name, mb.Name);
+			int res = String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 			if (res != 0)
 				return res;
 
@@ -1511,7 +1511,7 @@ namespace CorCompare
 		{
 			MethodDefinition ma = (MethodDefinition) a;
 			MethodDefinition mb = (MethodDefinition) b;
-			int res = String.Compare (ma.Name, mb.Name);
+			int res = String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 			if (res != 0)
 				return res;
 
@@ -1540,7 +1540,7 @@ namespace CorCompare
 
 			string siga = Parameters.GetSignature (pia);
 			string sigb = Parameters.GetSignature (pib);
-			return String.Compare (siga, sigb);
+			return String.Compare (siga, sigb, StringComparison.Ordinal);
 		}
 	}
 }
