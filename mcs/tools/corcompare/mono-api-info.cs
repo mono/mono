@@ -1143,29 +1143,32 @@ namespace CorCompare
 					writer.WriteStartElement ("attribute");
 					writer.WriteAttributeString ("name", attName);
 
-					var attribute_mapping = CreateAttributeMapping (att).Where ((kvp) => kvp.Key != "TypeId");
+					var attribute_mapping = CreateAttributeMapping (att);
 
-					if (attribute_mapping.Any ()) {
-						writer.WriteStartElement ("properties");
-						foreach (var kvp in attribute_mapping) {
-							string name = kvp.Key;
-							object o = kvp.Value;
+					if (attribute_mapping != null) {
+						var mapping = attribute_mapping.Where ((attr) => attr.Key != "TypeId");
+						if (mapping.Any ()) {
+							writer.WriteStartElement ("properties");
+							foreach (var kvp in mapping) {
+								string name = kvp.Key;
+								object o = kvp.Value;
 
-							writer.WriteStartElement ("property");
-							writer.WriteAttributeString ("name", name);
+								writer.WriteStartElement ("property");
+								writer.WriteAttributeString ("name", name);
 
-							if (o == null) {
-								writer.WriteAttributeString ("value", "null");
-							} else {
-								string value = o.ToString ();
-								if (attName.EndsWith ("GuidAttribute", StringComparison.Ordinal))
-									value = value.ToUpper ();
-								writer.WriteAttributeString ("value", value);
+								if (o == null) {
+									writer.WriteAttributeString ("value", "null");
+								} else {
+									string value = o.ToString ();
+									if (attName.EndsWith ("GuidAttribute", StringComparison.Ordinal))
+										value = value.ToUpper ();
+									writer.WriteAttributeString ("value", value);
+								}
+
+								writer.WriteEndElement (); // property
 							}
-
-							writer.WriteEndElement (); // property
+							writer.WriteEndElement (); // properties
 						}
-						writer.WriteEndElement (); // properties
 					}
 					writer.WriteEndElement (); // attribute
 				}
@@ -1176,20 +1179,20 @@ namespace CorCompare
 
 		static Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
 		{
-			var mapping = new Dictionary<string, object> ();
+			Dictionary<string, object> mapping = null;
 
-			PopulateMapping (mapping, attribute);
+			PopulateMapping (ref mapping, attribute);
 
 			var constructor = attribute.Constructor.Resolve ();
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
-			PopulateMapping (mapping, constructor, attribute);
+			PopulateMapping (ref mapping, constructor, attribute);
 
 			return mapping;
 		}
 
-		static void PopulateMapping (Dictionary<string, object> mapping, CustomAttribute attribute)
+		static void PopulateMapping (ref Dictionary<string, object> mapping, CustomAttribute attribute)
 		{
 			if (!attribute.HasProperties)
 				return;
@@ -1201,13 +1204,15 @@ namespace CorCompare
 				if (arg.Value is CustomAttributeArgument)
 					arg = (CustomAttributeArgument) arg.Value;
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 				mapping.Add (name, GetArgumentValue (arg.Type, arg.Value));
 			}
 		}
 
 		static Dictionary<FieldReference, int> CreateArgumentFieldMapping (MethodDefinition constructor)
 		{
-			Dictionary<FieldReference, int> field_mapping = new Dictionary<FieldReference, int> ();
+			Dictionary<FieldReference, int> field_mapping = null;
 
 			int? argument = null;
 
@@ -1235,6 +1240,9 @@ namespace CorCompare
 					if (!argument.HasValue)
 						break;
 
+					if (field_mapping == null)
+						field_mapping = new Dictionary<FieldReference, int> ();
+					
 					if (!field_mapping.ContainsKey (field))
 						field_mapping.Add (field, (int) argument - 1);
 
@@ -1248,7 +1256,7 @@ namespace CorCompare
 
 		static Dictionary<PropertyDefinition, FieldReference> CreatePropertyFieldMapping (TypeDefinition type)
 		{
-			Dictionary<PropertyDefinition, FieldReference> property_mapping = new Dictionary<PropertyDefinition, FieldReference> ();
+			Dictionary<PropertyDefinition, FieldReference> property_mapping = null;
 
 			foreach (PropertyDefinition property in type.Properties) {
 				if (property.GetMethod == null)
@@ -1264,6 +1272,8 @@ namespace CorCompare
 					if (field.DeclaringType.FullName != type.FullName)
 						continue;
 
+					if (property_mapping == null)
+						property_mapping = new Dictionary<PropertyDefinition, FieldReference> ();
 					property_mapping.Add (property, field);
 					break;
 				}
@@ -1272,7 +1282,7 @@ namespace CorCompare
 			return property_mapping;
 		}
 
-		static void PopulateMapping (Dictionary<string, object> mapping, MethodDefinition constructor, CustomAttribute attribute)
+		static void PopulateMapping (ref Dictionary<string, object> mapping, MethodDefinition constructor, CustomAttribute attribute)
 		{
 			if (!constructor.HasBody)
 				return;
@@ -1285,6 +1295,8 @@ namespace CorCompare
 					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (int) ca[2].Value, (int) ca[3].Value, (int) ca[4].Value) :
 					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (uint) ca[2].Value, (uint) ca[3].Value, (uint) ca[4].Value);
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 				mapping.Add ("Value", dca.Value);
 				return;
 			case "System.ComponentModel.BindableAttribute":
@@ -1292,6 +1304,8 @@ namespace CorCompare
 					break;
 
 				if (constructor.Parameters[0].ParameterType == constructor.Module.TypeSystem.Boolean) {
+					if (mapping == null)
+						mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 					mapping.Add ("Bindable", ca[0].Value);
 				} else {
 					throw new NotImplementedException ();
@@ -1301,18 +1315,24 @@ namespace CorCompare
 			}
 
 			var field_mapping = CreateArgumentFieldMapping (constructor);
-			var property_mapping = CreatePropertyFieldMapping ((TypeDefinition) constructor.DeclaringType);
+			if (field_mapping != null) { 
+				var property_mapping = CreatePropertyFieldMapping ((TypeDefinition) constructor.DeclaringType);
 
-			foreach (var pair in property_mapping) {
-				int argument;
-				if (!field_mapping.TryGetValue (pair.Value, out argument))
-					continue;
+				if (property_mapping != null) {
+					foreach (var pair in property_mapping) {
+						int argument;
+						if (!field_mapping.TryGetValue (pair.Value, out argument))
+							continue;
 
-				var ca_arg = ca [argument];
-				if (ca_arg.Value is CustomAttributeArgument)
-					ca_arg = (CustomAttributeArgument) ca_arg.Value;
+						var ca_arg = ca [argument];
+						if (ca_arg.Value is CustomAttributeArgument)
+							ca_arg = (CustomAttributeArgument)ca_arg.Value;
 
-				mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
+						if (mapping == null)
+							mapping = new Dictionary<string, object> (StringComparer.Ordinal);
+						mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
+					}
+				}
 			}
 		}
 
