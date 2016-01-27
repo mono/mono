@@ -4361,16 +4361,19 @@ namespace MonoTests.System.Net.Sockets
 				
 				var ep = server.LocalEndPoint as IPEndPoint;
 				
+				BCCalledBack.Reset ();
 				var ar1 = client.BeginConnect (ep, BCCallback, client);
-				client.EndConnect (ar1);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#1");
 				client.Disconnect (true);
 				
+				BCCalledBack.Reset ();
 				var ar2 = client.BeginConnect (IPAddress.Loopback, ep.Port, BCCallback, client);
-				client.EndConnect (ar2);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
 				client.Disconnect (true);
 				
+				BCCalledBack.Reset ();
 				var ar3 = client.BeginConnect (new [] {IPAddress.Loopback}, ep.Port, BCCallback, client);
-				client.EndConnect (ar3);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
 				client.Disconnect (true);
 			}
 		}
