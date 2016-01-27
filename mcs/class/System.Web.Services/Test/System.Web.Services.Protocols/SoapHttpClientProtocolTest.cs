@@ -51,7 +51,7 @@ namespace MonoTests.System.Web.Services.Protocols
 		public void OutParametersTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (OutParametersResponse))) {
+			using (SocketResponder sr = new SocketResponder (localEP, s => OutParametersResponse (s))) {
 				sr.Start ();
 
 				FooService service = new FooService ();
@@ -74,7 +74,7 @@ namespace MonoTests.System.Web.Services.Protocols
 		public void FaultTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Qualified))) {
+			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Qualified (s))) {
 				sr.Start ();
 
 				FooService service = new FooService ();
@@ -103,7 +103,7 @@ namespace MonoTests.System.Web.Services.Protocols
 				sr.Stop ();
 			}
 
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Unqualified))) {
+			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Unqualified (s))) {
 				sr.Start ();
 
 				FooService service = new FooService ();
