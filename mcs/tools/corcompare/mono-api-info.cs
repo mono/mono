@@ -1405,10 +1405,10 @@ namespace CorCompare
 
 		static bool SkipAttribute (CustomAttribute attribute)
 		{
-			var type_name = Utils.CleanupTypeName (attribute.Constructor.DeclaringType);
-
-			return !TypeHelper.IsPublic (attribute)
-				|| type_name.EndsWith ("TODOAttribute");
+			if (!TypeHelper.IsPublic (attribute))
+				return true;
+			
+			return attribute.Constructor.DeclaringType.Name.EndsWith ("TODOAttribute", StringComparison.Ordinal);
 		}
 
 		public static void OutputAttributes (XmlWriter writer, params ICustomAttributeProvider[] providers)
