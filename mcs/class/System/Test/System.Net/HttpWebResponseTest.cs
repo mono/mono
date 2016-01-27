@@ -29,7 +29,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -59,7 +59,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -80,7 +80,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -110,7 +110,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -132,7 +132,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -162,7 +162,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -202,7 +202,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -232,7 +232,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -262,7 +262,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -291,7 +291,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -321,7 +321,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -351,7 +351,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -381,7 +381,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -411,7 +411,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -441,7 +441,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -463,7 +463,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -516,7 +516,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -567,7 +567,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -602,7 +602,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -631,7 +631,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -660,7 +660,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -689,7 +689,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -718,7 +718,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -757,7 +757,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -808,7 +808,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -860,7 +860,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -912,7 +912,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -964,7 +964,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -1017,7 +1017,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req;
@@ -1082,7 +1082,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -1111,7 +1111,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -1145,7 +1145,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.FullResponseHandler (s))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);

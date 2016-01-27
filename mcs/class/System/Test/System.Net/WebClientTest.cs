@@ -1423,7 +1423,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, s => EchoRequestHandler (s))) {
 				responder.Start ();
 
 				WebClient wc = new WebClient ();
@@ -1880,7 +1880,7 @@ namespace MonoTests.System.Net
 			var ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep.ToString() + "/test/";
 
-			using (var responder = new SocketResponder (ep, EchoRequestHandler))
+			using (var responder = new SocketResponder (ep, s => EchoRequestHandler (s)))
 			{
 				responder.Start ();
 
