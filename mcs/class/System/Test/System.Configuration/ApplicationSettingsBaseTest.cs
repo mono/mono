@@ -284,7 +284,7 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void TestSettings2_Properties ()
 		{
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_x, Version=0.0.0.0";
+			string expected = "MonoTests.System.Configuration.ProviderPoker, net_4_x_System_test, Version=0.0.0.0";
 			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();
 

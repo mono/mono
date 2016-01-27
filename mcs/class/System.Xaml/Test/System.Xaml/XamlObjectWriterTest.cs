@@ -719,7 +719,7 @@ namespace MonoTests.System.Xaml
 			XamlServices.Transform (new XamlObjectReader (obj), xxw);
 			Console.Error.WriteLine (sw);
 			*/
-			var xml = "<TestClass3 xmlns='clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'><TestClass3.Nested><TestClass3 Nested='{x:Null}' /></TestClass3.Nested></TestClass3>".Replace ("net_4_0", ver);
+			var xml = "<TestClass3 xmlns='clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'><TestClass3.Nested><TestClass3 Nested='{x:Null}' /></TestClass3.Nested></TestClass3>".Replace ("System.Xaml_test_net_4_0", ver + "_System.Xaml_test");
 			var settings = new XamlObjectWriterSettings ();
 			bool invoked = false;
 			settings.XamlSetValueHandler = (sender, e) => {
@@ -835,7 +835,7 @@ namespace MonoTests.System.Xaml
 		XamlReader GetReader (string filename)
 		{
 			const string ver = "net_4_x";
-			string xml = File.ReadAllText (Path.Combine ("Test/XmlFiles", filename)).Replace ("net_4_0", ver);
+			string xml = File.ReadAllText (Path.Combine ("Test/XmlFiles", filename)).Replace ("System.Xaml_test_net_4_0", ver + "_System.Xaml_test");
 			return new XamlXmlReader (XmlReader.Create (new StringReader (xml)));
 		}
 

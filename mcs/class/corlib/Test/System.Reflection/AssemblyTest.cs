@@ -465,9 +465,9 @@ namespace MonoTests.System.Reflection
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
 #if MOBILE_STATIC
-			string [] names = { "corlib_test_mobile_static" };
+			string [] names = { "mobile_static_corlib_test" };
 #else
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_test_net_4_x", "corlib_plattest", "mscorlibtests", "BclTests" };
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
 #endif
 
 			foreach (string s in names)
