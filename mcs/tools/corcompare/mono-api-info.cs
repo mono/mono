@@ -31,6 +31,7 @@ namespace CorCompare
 			bool showHelp = false;
 			AbiMode = false;
 			FollowForwarders = false;
+			string output = null;
 
 			var acoll = new AssemblyCollection ();
 
@@ -52,6 +53,9 @@ namespace CorCompare
 				{ "r=",
 					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
 					v => TypeHelper.Resolver.ResolveFile (v) },
+				{ "o=",
+					"The output file. If not specified the output will be written to stdout.",
+					v => output = v },
 				{ "h|?|help",
 					"Show this message and exit.",
 					v => showHelp = v != null },
@@ -93,10 +97,18 @@ namespace CorCompare
 			acoll.Document = doc;
 			acoll.DoOutput ();
 
-			var writer = new WellFormedXmlWriter (new XmlTextWriter (Console.Out) { Formatting = Formatting.Indented });
-			XmlNode decl = doc.CreateXmlDeclaration ("1.0", "utf-8", null);
-			doc.InsertBefore (decl, doc.DocumentElement);
-			doc.WriteTo (writer);
+			TextWriter outputStream = null;
+			if (!string.IsNullOrEmpty (output))
+				outputStream = new StreamWriter (output);
+			try {
+				var writer = new WellFormedXmlWriter (new XmlTextWriter (outputStream ?? Console.Out) { Formatting = Formatting.Indented });
+				XmlNode decl = doc.CreateXmlDeclaration ("1.0", "utf-8", null);
+				doc.InsertBefore (decl, doc.DocumentElement);
+				doc.WriteTo (writer);
+			} finally {
+				if (outputStream != null)
+					outputStream.Dispose ();
+			}
 			return 0;
 		}
 
