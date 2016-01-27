@@ -549,14 +549,15 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 					compilerArgs.Add(String.Format ("/I {0}", quote (include)));
 
 				if (!nomain || custom_main != null) {
-					compilerArgs.Add(temp_c);
-					compilerArgs.Add(temp_o);
+					compilerArgs.Add(quote(temp_c));
+					compilerArgs.Add(quote(temp_o));
 					if (custom_main != null)
 						compilerArgs.Add(quote(custom_main));
-					compilerArgs.Add(monoLib);
+					compilerArgs.Add(quote(monoLib));
 					compilerArgs.Add("/link");
 					compilerArgs.Add("/NODEFAULTLIB");
-					compilerArgs.Add("/SUBSYSTEM:CONSOLE");
+					compilerArgs.Add("/SUBSYSTEM:windows");
+					compilerArgs.Add("/ENTRY:mainCRTStartup");
 					compilerArgs.AddRange(linkLibraries);
 					compilerArgs.Add("/out:"+ output);
 
