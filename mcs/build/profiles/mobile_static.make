@@ -49,7 +49,7 @@ GSHAREDVT_FLAG = -O=gsharedvt
 endif
 
 ifeq ($(MONO_LLVMONLY),TRUE)
-AOT_BUILD_FLAGS_PREFIX = $(GSHAREDVT_FLAG) --aot=llvmonly,
+AOT_BUILD_FLAGS_PREFIX = --aot=llvmonly,
 AOT_RUN_FLAGS =  --llvmonly
 else
 AOT_BUILD_FLAGS_PREFIX = $(GSHAREDVT_FLAG) --aot=full,
