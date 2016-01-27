@@ -32,16 +32,24 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace MonoTests.Helpers
 {
 	public delegate byte [] SocketRequestHandler (Socket socket);
 
+	public class SocketResponderException : Exception
+	{
+		public SocketResponderException (string message)
+			: base (message)
+		{
+		}
+	}
+
 	public class SocketResponder : IDisposable
 	{
 		private TcpListener tcpListener;
-		private Thread listenThread;
+		private Task listenTask;
 		private Socket listenSocket;
 		private SocketRequestHandler requestHandler;
 		private bool disposed;
@@ -56,8 +64,7 @@ namespace MonoTests.Helpers
 			tcpListener = new TcpListener (ep);
 			tcpListener.Start ();
 
-			listenThread = new Thread (new ThreadStart (Listen));
-			listenThread.Start ();
+			listenTask = Task.Run (Listen);
 		}
 
 		public void Dispose ()
@@ -72,7 +79,8 @@ namespace MonoTests.Helpers
 			if (listenSocket != null)
 				listenSocket.Close ();
 
-			Thread.Sleep (50);
+			if (!listenTask.Wait (5000))
+				throw new SocketResponderException ("Failed to stop in less than 5 seconds");
 		}
 
 		private void Listen ()
@@ -103,7 +111,6 @@ namespace MonoTests.Helpers
 					Console.WriteLine (ex);
 #endif
 				} finally {
-					Thread.Sleep (500);
 					if (listenSocket != null)
 						listenSocket.Close ();
 				}
