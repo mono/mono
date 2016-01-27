@@ -6537,6 +6537,8 @@ namespace Mono.CSharp {
 
 				ec.Emit (OpCodes.Ldsfld, spec);
 			} else {
+				var ca = ec.ConditionalAccess;
+
 				if (!prepared) {
 					if (conditional_access_receiver)
 						ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
@@ -6562,6 +6564,7 @@ namespace Mono.CSharp {
 
 				if (conditional_access_receiver) {
 					ec.CloseConditionalAccess (type.IsNullableType && type != spec.MemberType ? type : null);
+					ec.ConditionalAccess = ca;
 				}
 			}
 
