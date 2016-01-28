@@ -61,11 +61,13 @@ namespace Xamarin.ApiDiff {
 			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
 				return;
 
+			Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
 			Output.WriteLine ("<h2>New Namespace {0}</h2>", name);
 			Output.WriteLine ();
 			// list all new types
 			foreach (var addedType in target.Element ("classes").Elements ("class"))
 				comparer.Added (addedType);
+			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
 			Output.WriteLine ();
 		}
 
@@ -78,18 +80,24 @@ namespace Xamarin.ApiDiff {
 			var s = Output.ToString ();
 			State.Output = output;
 			if (s.Length > 0) {
-				Output.WriteLine ("<h2>Namespace {0}</h2>", target.Attribute ("name").Value);
+				var name = target.Attribute ("name").Value;
+				Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
+				Output.WriteLine ("<h2>Namespace {0}</h2>", name);
 				Output.WriteLine (s);
+				Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
 			}
 		}
 
 		public override void Removed (XElement source)
 		{
-			Output.WriteLine ("<h2>Removed Namespace {0}</h2>", source.Attribute ("name").Value);
+			var name = source.Attribute ("name").Value;
+			Output.WriteLine ("<!-- start namespace {0} --> <div>", name);
+			Output.WriteLine ("<h2>Removed Namespace {0}</h2>", name);
 			Output.WriteLine ();
 			// list all removed types
 			foreach (var removedType in source.Element ("classes").Elements ("class"))
 				comparer.Removed (removedType);
+			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
 			Output.WriteLine ();
 		}
 	}
