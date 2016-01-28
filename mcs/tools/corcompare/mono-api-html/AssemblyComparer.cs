@@ -57,7 +57,7 @@ namespace Xamarin.ApiDiff {
 			State.Assembly = current.GetAttribute ("name");
 		}
 
-		public override void Added (XElement target)
+		public override void Added (XElement target, bool wasParentAdded)
 		{
 			// one assembly per xml file
 		}

@@ -48,7 +48,7 @@ namespace Xamarin.ApiDiff {
 			return State.Output;
 		}
 
-		public abstract void Added (XElement target);
+		public abstract void Added (XElement target, bool wasParentAdded);
 		public abstract void Modified (XElement source, XElement target, ApiChanges changes);
 		public abstract void Removed (XElement source);
 
@@ -90,7 +90,7 @@ namespace Xamarin.ApiDiff {
 			if (target != null) {
 				foreach (var item in target) {
 					SetContext (item);
-					Added (item);
+					Added (item, false);
 				}
 			}
 		}
