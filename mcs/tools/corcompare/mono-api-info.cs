@@ -1010,6 +1010,15 @@ namespace CorCompare
 				AddAttribute ("sealed", "true");
 			if (mbase.IsStatic)
 				AddAttribute ("static", "true");
+			var baseMethod = TypeHelper.GetBaseMethodInTypeHierarchy (mbase);
+			if (baseMethod != null && baseMethod != mbase) {
+				// This indicates whether this method is an override of another method.
+				// This information is not necessarily available in the api info for any
+				// particular assembly, because a method is only overriding another if
+				// there is a base virtual function with the same signature, and that
+				// base method can come from another assembly.
+				AddAttribute ("is-override", "true");
+			}
 			string rettype = Utils.CleanupTypeName (mbase.MethodReturnType.ReturnType);
 			if (rettype != "System.Void" || !mbase.IsConstructor)
 				AddAttribute ("returntype", (rettype));
