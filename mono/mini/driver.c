@@ -1145,7 +1145,8 @@ load_agent (MonoDomain *domain, char *desc)
 
 	pa [0] = main_args;
 	/* Pass NULL as 'exc' so unhandled exceptions abort the runtime */
-	mono_runtime_invoke (method, NULL, pa, NULL);
+	mono_runtime_invoke_checked (method, NULL, pa, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return 0;
 }

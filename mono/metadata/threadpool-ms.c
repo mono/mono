@@ -349,6 +349,7 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 {
 	static MonoClass *threadpool_class = NULL;
 	static MonoMethod *unsafe_queue_custom_work_item_method = NULL;
+	MonoError error;
 	MonoDomain *current_domain;
 	MonoBoolean f;
 	gpointer args [2];
@@ -370,11 +371,13 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 
 	current_domain = mono_domain_get ();
 	if (current_domain == domain) {
-		mono_runtime_invoke (unsafe_queue_custom_work_item_method, NULL, args, NULL);
+		mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, NULL, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	} else {
 		mono_thread_push_appdomain_ref (domain);
 		if (mono_domain_set (domain, FALSE)) {
-			mono_runtime_invoke (unsafe_queue_custom_work_item_method, NULL, args, NULL);
+			mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, NULL, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 			mono_domain_set (current_domain, TRUE);
 		}
 		mono_thread_pop_appdomain_ref ();
@@ -572,6 +575,7 @@ worker_kill (ThreadPoolWorkingThread *thread)
 static void
 worker_thread (gpointer data)
 {
+	MonoError error;
 	MonoInternalThread *thread;
 	ThreadPoolDomain *tpdomain, *previous_tpdomain;
 	ThreadPoolCounter counter;
@@ -643,8 +647,11 @@ worker_thread (gpointer data)
 
 		mono_thread_push_appdomain_ref (tpdomain->domain);
 		if (mono_domain_set (tpdomain->domain, FALSE)) {
-			MonoObject *exc = NULL;
-			MonoObject *res = mono_runtime_invoke (mono_defaults.threadpool_perform_wait_callback_method, NULL, NULL, &exc);
+			MonoObject *exc = NULL, *res;
+
+			res = mono_runtime_invoke_checked (mono_defaults.threadpool_perform_wait_callback_method, NULL, NULL, &exc, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 			if (exc)
 				mono_thread_internal_unhandled_exception (exc);
 			else if (res && *(MonoBoolean*) mono_object_unbox (res) == FALSE)
