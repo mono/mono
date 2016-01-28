@@ -199,7 +199,6 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
-			bool isInterface = list.Count () > 0 && IsInInterface (list.First ());
 			Output.WriteLine ("<div>");
 			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
 			Output.WriteLine ("<pre>");
