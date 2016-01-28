@@ -3468,6 +3468,35 @@
       </method>
     </type>
   </test>
+  <test name="dtest-null-operator-01.cs">
+    <type name="X">
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Void NullCheckTest()" attrs="145">
+        <size>890</size>
+      </method>
+      <method name="Void Test_1()" attrs="145">
+        <size>672</size>
+      </method>
+      <method name="System.Object Test_2(System.Collections.Generic.IEnumerable`1[System.Object])" attrs="145">
+        <size>103</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-optional-01.cs">
     <type name="G`1[T]">
       <method name="System.Object M1(T)" attrs="134">
