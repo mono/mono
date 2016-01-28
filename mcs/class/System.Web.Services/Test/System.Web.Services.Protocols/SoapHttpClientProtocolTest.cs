@@ -52,8 +52,6 @@ namespace MonoTests.System.Web.Services.Protocols
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
 			using (SocketResponder sr = new SocketResponder (localEP, s => OutParametersResponse (s))) {
-				sr.Start ();
-
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 
@@ -64,8 +62,6 @@ namespace MonoTests.System.Web.Services.Protocols
 				Assert.AreEqual (0, a, "#A2");
 				Assert.IsFalse (b, "#A3");
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 		}
 
@@ -75,8 +71,6 @@ namespace MonoTests.System.Web.Services.Protocols
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
 			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Qualified (s))) {
-				sr.Start ();
-
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 				try {
@@ -99,13 +93,9 @@ namespace MonoTests.System.Web.Services.Protocols
 					Assert.AreEqual ("Failure processing request.", ex.Message, "#A9");
 				}
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 
 			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Unqualified (s))) {
-				sr.Start ();
-
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 				try {
@@ -128,8 +118,6 @@ namespace MonoTests.System.Web.Services.Protocols
 					Assert.AreEqual ("Failure processing request.", ex.Message, "#B9");
 				}
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 		}
 
