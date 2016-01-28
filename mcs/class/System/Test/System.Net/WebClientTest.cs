@@ -1424,8 +1424,6 @@ namespace MonoTests.System.Net
 			string url = "http://" + ep.ToString () + "/test/";
 
 			using (SocketResponder responder = new SocketResponder (ep, s => EchoRequestHandler (s))) {
-				responder.Start ();
-
 				WebClient wc = new WebClient ();
 				wc.Encoding = Encoding.ASCII;
 
@@ -1882,8 +1880,6 @@ namespace MonoTests.System.Net
 
 			using (var responder = new SocketResponder (ep, s => EchoRequestHandler (s)))
 			{
-				responder.Start ();
-
 				var webClient = new WebClient ();
 
 				var cancellationTokenSource = new CancellationTokenSource ();

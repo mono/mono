@@ -41,82 +41,47 @@ namespace MonoTests.Helpers
 	public class SocketResponder : IDisposable
 	{
 		private TcpListener tcpListener;
-		private readonly IPEndPoint _localEndPoint;
 		private Thread listenThread;
 		private Socket listenSocket;
-		private SocketRequestHandler _requestHandler;
-		private int _state = 0;
-		private readonly object _syncRoot = new object ();
+		private SocketRequestHandler requestHandler;
+		private bool disposed;
 
 		private const int SOCKET_CLOSED = 10004;
 		private const int SOCKET_INVALID_ARGS = 10022;
 
-		private const int STATE_UNINITIALIZED = 0;
-		private const int STATE_RUNNING = 1;
-		private const int STATE_STOPPED = 2;
-
-		public SocketResponder (IPEndPoint localEP, SocketRequestHandler requestHandler)
+		public SocketResponder (IPEndPoint ep, SocketRequestHandler rh)
 		{
-			_localEndPoint = localEP;
-			_requestHandler = requestHandler;
-		}
+			requestHandler = rh;
 
-		public IPEndPoint LocalEndPoint
-		{
-			get { return _localEndPoint; }
+			tcpListener = new TcpListener (ep);
+			tcpListener.Start ();
+
+			listenThread = new Thread (new ThreadStart (Listen));
+			listenThread.Start ();
 		}
 
 		public void Dispose ()
 		{
-			Stop ();
-		}
+			if (disposed)
+				return;
 
-		public bool IsStopped
-		{
-			get
-			{
-				lock (_syncRoot) {
-					return _state != STATE_RUNNING;
-				}
-			}
-		}
+			disposed = true;
 
-		public void Start ()
-		{
-			lock (_syncRoot) {
-				if (_state != STATE_UNINITIALIZED)
-					throw new InvalidOperationException ("cannot restart SocketResponder");
-				_state = STATE_RUNNING;
-				tcpListener = new TcpListener (LocalEndPoint);
-				tcpListener.Start ();
-				listenThread = new Thread (new ThreadStart (Listen));
-				listenThread.Start ();
-			}
-		}
+			tcpListener.Stop ();
 
-		public void Stop ()
-		{
-			lock (_syncRoot) {
-				if (_state != STATE_RUNNING)
-					return;
-				_state = STATE_STOPPED;
-				if (tcpListener != null) {
-					tcpListener.Stop ();
-					tcpListener = null;
-					if (listenSocket != null)
-						listenSocket.Close ();
-					Thread.Sleep (50);
-				}
-			}
+			if (listenSocket != null)
+				listenSocket.Close ();
+
+			Thread.Sleep (50);
 		}
 
 		private void Listen ()
 		{
-			while (_state == STATE_RUNNING) {
+			while (!disposed) {
 				listenSocket = null;
 				try {
 					listenSocket = tcpListener.AcceptSocket ();
-					listenSocket.Send (_requestHandler (listenSocket));
+					listenSocket.Send (requestHandler (listenSocket));
 					try {
 						listenSocket.Shutdown (SocketShutdown.Receive);
 						listenSocket.Shutdown (SocketShutdown.Send);
@@ -124,11 +89,10 @@ namespace MonoTests.Helpers
 					}
 				} catch (SocketException ex) {
 					// ignore interruption of blocking call
-					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS && _state != STATE_STOPPED)
+					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS && !disposed)
 						throw;
 				} catch (ObjectDisposedException ex) {
-					Console.WriteLine (ex);
-					if (_state != STATE_STOPPED)
+					if (!disposed)
 						throw;
 #if MOBILE
 				} catch (InvalidOperationException ex) {
