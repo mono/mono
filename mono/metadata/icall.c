@@ -4432,6 +4432,7 @@ create_version (MonoDomain *domain, guint32 major, guint32 minor, guint32 build,
 {
 	static MonoClass *System_Version = NULL;
 	static MonoMethod *create_version = NULL;
+	MonoError error;
 	MonoObject *result;
 	gpointer args [4];
 	
@@ -4452,7 +4453,9 @@ create_version (MonoDomain *domain, guint32 major, guint32 minor, guint32 build,
 	args [2] = &build;
 	args [3] = &revision;
 	result = mono_object_new (domain, System_Version);
-	mono_runtime_invoke (create_version, result, args, NULL);
+
+	mono_runtime_invoke_checked (create_version, result, args, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return result;
 }
@@ -4461,12 +4464,14 @@ ICALL_EXPORT MonoArray*
 ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAssembly *assembly) 
 {
 	static MonoClass *System_Reflection_AssemblyName;
+	MonoError error;
 	MonoArray *result;
 	MonoDomain *domain = mono_object_domain (assembly);
 	int i, count = 0;
 	static MonoMethod *create_culture = NULL;
 	MonoImage *image = assembly->assembly->image;
 	MonoTableInfo *t;
+	MonoObject *o;
 
 	if (!System_Reflection_AssemblyName)
 		System_Reflection_AssemblyName = mono_class_from_name (
@@ -4510,7 +4515,11 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 			MonoBoolean assembly_ref = 1;
 			args [0] = mono_string_new (domain, mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_CULTURE]));
 			args [1] = &assembly_ref;
-			MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
+
+			o = mono_runtime_invoke_checked (create_culture, NULL, args, NULL, &error);
+			mono_error_raise_exception (&error);
+
+			MONO_OBJECT_SETREF (aname, cultureInfo, o);
 		}
 		
 		if (cols [MONO_ASSEMBLYREF_PUBLIC_KEY]) {
@@ -4941,6 +4950,8 @@ static void
 fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *aname, MonoAssemblyName *name, const char *absolute, gboolean by_default_version, gboolean default_publickey, gboolean default_token)
 {
 	static MonoMethod *create_culture = NULL;
+	MonoError error;
+	MonoObject *obj;
 	gpointer args [2];
 	guint32 pkey_len;
 	const char *pkey_ptr;
@@ -5001,7 +5012,11 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 	if (name->culture) {
 		args [0] = mono_string_new (domain, name->culture);
 		args [1] = &assembly_ref;
-		MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
+
+		obj = mono_runtime_invoke_checked (create_culture, NULL, args, NULL, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+		MONO_OBJECT_SETREF (aname, cultureInfo, obj);
 	}
 
 	if (name->public_key) {

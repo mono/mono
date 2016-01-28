@@ -108,6 +108,7 @@ mono_exception_from_token (MonoImage *image, guint32 token)
 static MonoException *
 create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoMethod *method = NULL;
 	MonoObject *o;
@@ -141,7 +142,10 @@ create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2)
 
 	args [0] = a1;
 	args [1] = a2;
-	mono_runtime_invoke (method, o, args, NULL);
+
+	mono_runtime_invoke_checked (method, o, args, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	return (MonoException *) o;
 }
 
@@ -570,6 +574,7 @@ mono_get_exception_file_not_found2 (const char *msg, MonoString *fname)
 MonoException *
 mono_get_exception_type_initialization (const gchar *type_name, MonoException *inner)
 {
+	MonoError error;
 	MonoClass *klass;
 	gpointer args [2];
 	MonoObject *exc;
@@ -597,7 +602,9 @@ mono_get_exception_type_initialization (const gchar *type_name, MonoException *i
 	args [1] = inner;
 
 	exc = mono_object_new (mono_domain_get (), klass);
-	mono_runtime_invoke (method, exc, args, NULL);
+
+	mono_runtime_invoke_checked (method, exc, args, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return (MonoException *) exc;
 }
@@ -743,6 +750,7 @@ mono_get_exception_method_access_msg (const char *msg)
 MonoException *
 mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions)
 {
+	MonoError error;
 	MonoClass *klass;
 	gpointer args [2];
 	MonoObject *exc;
@@ -770,7 +778,9 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 	args [1] = exceptions;
 
 	exc = mono_object_new (mono_domain_get (), klass);
-	mono_runtime_invoke (method, exc, args, NULL);
+
+	mono_runtime_invoke_checked (method, exc, args, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return (MonoException *) exc;
 }
@@ -778,6 +788,7 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 MonoException *
 mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoObject *o;
 	MonoMethod *method;
@@ -794,7 +805,9 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
 	g_assert (method);
 
 	params [0] = wrapped_exception;
-	mono_runtime_invoke (method, o, params, NULL);
+
+	mono_runtime_invoke_checked (method, o, params, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return (MonoException *)o;
 }	

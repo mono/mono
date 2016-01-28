@@ -707,6 +707,7 @@ mono_string_builder_new (int starting_string_length)
 	static MonoClass *string_builder_class;
 	static MonoMethod *sb_ctor;
 	static void *args [1];
+	MonoError error;
 	int initial_len = starting_string_length;
 
 	if (initial_len < 0)
@@ -734,7 +735,8 @@ mono_string_builder_new (int starting_string_length)
 	MonoObject *exc;
 	g_assert (sb);
 
-	mono_runtime_invoke (sb_ctor, sb, args, &exc);
+	mono_runtime_invoke_checked (sb_ctor, sb, args, &exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	g_assert (!exc);
 
 	g_assert (sb->chunkChars->max_length >= initial_len);
@@ -2063,6 +2065,7 @@ mono_marshal_emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 static MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	MonoError error;
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
 	MonoMethod *method;
@@ -2097,7 +2100,9 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
+			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 			if (exc)
 				mono_raise_exception ((MonoException *) exc);
 			return ares;
@@ -2778,6 +2783,7 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 static MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoAsyncResult *ares;
 	MonoMethod *method = NULL;
@@ -2825,7 +2831,9 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		mono_message_init (domain, msg, delegate->method_info, NULL);
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
+
+		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	} else
 #endif
 	{
@@ -10320,6 +10328,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionType *rty
 void
 ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObject *obj, gpointer dst, MonoBoolean delete_old)
 {
+	MonoError error;
 	MonoMethod *method;
 	gpointer pa [3];
 
@@ -10332,12 +10341,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObject *obj
 	pa [1] = &dst;
 	pa [2] = &delete_old;
 
-	mono_runtime_invoke (method, NULL, pa, NULL);
+	mono_runtime_invoke_checked (method, NULL, pa, NULL, &error);
+	mono_error_raise_exception (&error);
 }
 
 static void
 ptr_to_structure (gpointer src, MonoObject *dst)
 {
+	MonoError error;
 	MonoMethod *method;
 	gpointer pa [2];
 
@@ -10346,7 +10357,8 @@ ptr_to_structure (gpointer src, MonoObject *dst)
 	pa [0] = &src;
 	pa [1] = dst;
 
-	mono_runtime_invoke (method, NULL, pa, NULL);
+	mono_runtime_invoke_checked (method, NULL, pa, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 }
 
 void
@@ -11118,7 +11130,8 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_
 			pa [1] = &res;
 			pa [2] = &delete_old;
 
-			mono_runtime_invoke (method, NULL, pa, NULL);
+			mono_runtime_invoke_checked (method, NULL, pa, NULL, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 		}
 
 		return res;
@@ -11133,6 +11146,7 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_
 void
 mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_encoding, int param_attrs)
 {
+	MonoError error;
 	MonoType *t;
 	MonoClass *klass;
 
@@ -11167,7 +11181,8 @@ mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_e
 			pa [0] = &ptr;
 			pa [1] = o;
 
-			mono_runtime_invoke (method, NULL, pa, NULL);
+			mono_runtime_invoke_checked (method, NULL, pa, NULL, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 		}
 
 		if (!((param_attrs & PARAM_ATTRIBUTE_OUT) && !(param_attrs & PARAM_ATTRIBUTE_IN))) {
