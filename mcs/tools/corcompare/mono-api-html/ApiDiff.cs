@@ -168,12 +168,98 @@ namespace Xamarin.ApiDiff {
 					}
 					if (diffHtml.Length > 0) {
 						using (var file = new StreamWriter (diff)) {
+							file.WriteLine ("<div>");
+							if (State.Colorize) {
+								file.WriteLine ("<style scoped>");
+								file.WriteLine ("\t.obsolete { color: gray; }");
+								file.WriteLine ("\t.added { color: green; }");
+								file.WriteLine ("\t.removed-inline { text-decoration: line-through; }");
+								file.WriteLine ("\t.removed-breaking-inline { color: red;}");
+								file.WriteLine ("\t.added-breaking-inline { text-decoration: underline; }");
+								file.WriteLine ("\t.nonbreaking { color: black; }");
+								file.WriteLine ("\t.breaking { color: red; }");
+								file.WriteLine ("</style>");
+							}
+							file.WriteLine (
+@"<script type=""text/javascript"">
+	// Only some elements have 'data-is-[non-]breaking' attributes. Here we
+	// iterate over all descendents elements, and set 'data-is-[non-]breaking'
+	// depending on whether there are any descendents with that attribute.
+	function propagateDataAttribute (element)
+	{
+		if (element.hasAttribute ('data-is-propagated'))
+			return;
+
+		var i;
+		var any_breaking = element.hasAttribute ('data-is-breaking');
+		var any_non_breaking = element.hasAttribute ('data-is-non-breaking');
+		for (i = 0; i < element.children.length; i++) {
+			var el = element.children [i];
+			propagateDataAttribute (el);
+			any_breaking |= el.hasAttribute ('data-is-breaking');
+			any_non_breaking |= el.hasAttribute ('data-is-non-breaking');
+		}
+		
+		if (any_breaking)
+			element.setAttribute ('data-is-breaking', null);
+		else if (any_non_breaking)
+			element.setAttribute ('data-is-non-breaking', null);
+		element.setAttribute ('data-is-propagated', null);
+	}
+
+	function hideNonBreakingChanges ()
+	{
+		var topNodes = document.querySelectorAll ('[data-is-topmost]');
+		var n;
+		var i;
+		for (n = 0; n < topNodes.length; n++) {
+			propagateDataAttribute (topNodes [n]);
+			var elements = topNodes [n].querySelectorAll ('[data-is-non-breaking]');
+			for (i = 0; i < elements.length; i++) {
+				var el = elements [i];
+				if (!el.hasAttribute ('data-original-display'))
+					el.setAttribute ('data-original-display', el.style.display);
+				el.style.display = 'none';
+			}
+		}
+		
+		var links = document.getElementsByClassName ('hide-nonbreaking');
+		for (i = 0; i < links.length; i++)
+			links [i].style.display = 'none';
+		links = document.getElementsByClassName ('restore-nonbreaking');
+		for (i = 0; i < links.length; i++)
+			links [i].style.display = '';
+	}
+
+	function showNonBreakingChanges ()
+	{
+		var elements = document.querySelectorAll ('[data-original-display]');
+		var i;
+		for (i = 0; i < elements.length; i++) {
+			var el = elements [i];
+			el.style.display = el.getAttribute ('data-original-display');
+		}
+
+		var links = document.getElementsByClassName ('hide-nonbreaking');
+		for (i = 0; i < links.length; i++)
+			links [i].style.display = '';
+		links = document.getElementsByClassName ('restore-nonbreaking');
+		for (i = 0; i < links.length; i++)
+			links [i].style.display = 'none';
+	}
+</script>");
 							if (ac.SourceAssembly == ac.TargetAssembly) {
 								file.WriteLine ("<h1>{0}.dll</h1>", ac.SourceAssembly);
 							} else {
 								file.WriteLine ("<h1>{0}.dll vs {1}.dll</h1>", ac.SourceAssembly, ac.TargetAssembly);
 							}
+							file.WriteLine ("<a href='javascript: hideNonBreakingChanges (); ' class='hide-nonbreaking'>Hide non-breaking changes</a>");
+							file.WriteLine ("<a href='javascript: showNonBreakingChanges (); ' class='restore-nonbreaking' style='display: none;'>Show non-breaking changes</a>");
+							file.WriteLine ("<br/>");
+							file.WriteLine ("<div data-is-topmost>");
 							file.Write (diffHtml);
+							file.WriteLine ("</div> <!-- end topmost div -->");
+							file.WriteLine ("</div>");
 						}
 					}
 				} else {

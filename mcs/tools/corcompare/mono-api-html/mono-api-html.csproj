@@ -19,7 +19,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>/Developer/MonoTouch/Source/monotouch/tools/apidiff/references/compat/monotouch.xml /Developer/MonoTouch/Source/monotouch/tools/apidiff/temp/compat/monotouch.xml -i INSObjectProtocol /tmp/diff.html</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
