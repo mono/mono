@@ -55,7 +55,7 @@ namespace Xamarin.ApiDiff {
 			State.Namespace = current.Attribute ("name").Value;
 		}
 
-		public override void Added (XElement target)
+		public override void Added (XElement target, bool wasParentAdded)
 		{
 			string name = target.Attribute ("name").Value;
 			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
@@ -66,7 +66,7 @@ namespace Xamarin.ApiDiff {
 			Output.WriteLine ();
 			// list all new types
 			foreach (var addedType in target.Element ("classes").Elements ("class"))
-				comparer.Added (addedType);
+				comparer.Added (addedType, true);
 			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
 			Output.WriteLine ();
 		}

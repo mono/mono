@@ -129,7 +129,7 @@ namespace Xamarin.ApiDiff {
 					BeforeAdding (elements);
 					a = true;
 				}
-				Added (item);
+				Added (item, false);
 			}
 			if (a)
 				AfterAdding ();
@@ -204,14 +204,14 @@ namespace Xamarin.ApiDiff {
 			Output.WriteLine ("<pre>");
 		}
 
-		public override void Added (XElement target)
+		public override void Added (XElement target, bool wasParentAdded)
 		{
 			var o = GetObsoleteMessage (target);
 			if (!first && (o.Length > 0))
 				Output.WriteLine ();
 			Indent ();
-			bool isInterface = IsInInterface (target);
-			Output.Write ("\t<span class='added added-{0} {1}' {2}>", ElementName, isInterface ? "breaking" : string.Empty, isInterface ? "data-is-breaking" : "data-is-non-breaking");
+			bool isInterfaceBreakingChange = !wasParentAdded && IsInInterface (target);
+			Output.Write ("\t<span class='added added-{0} {1}' {2}>", ElementName, isInterfaceBreakingChange ? "breaking" : string.Empty, isInterfaceBreakingChange ? "data-is-breaking" : "data-is-non-breaking");
 			Output.Write ("{0}{1}", o, GetDescription (target));
 			Output.WriteLine ("</span>");
 			first = false;

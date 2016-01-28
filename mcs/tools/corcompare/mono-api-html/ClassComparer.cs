@@ -67,7 +67,7 @@ namespace Xamarin.ApiDiff {
 			Compare (s.Elements ("class"), t.Elements ("class"));
 		}
 
-		public override void Added (XElement target)
+		public override void Added (XElement target, bool wasParentAdded)
 		{
 			string name = target.Attribute ("name").Value;
 			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
@@ -151,7 +151,7 @@ namespace Xamarin.ApiDiff {
 			if (t != null) {
 				Indent ().WriteLine ("\t// constructors");
 				foreach (var ctor in t.Elements ("constructor"))
-					ccomparer.Added (ctor);
+					ccomparer.Added (ctor, true);
 			}
 
 			t = target.Element ("fields");
@@ -161,28 +161,28 @@ namespace Xamarin.ApiDiff {
 				else
 					SetContext (target);
 				foreach (var field in t.Elements ("field"))
-					fcomparer.Added (field);
+					fcomparer.Added (field, true);
 			}
 
 			t = target.Element ("properties");
 			if (t != null) {
 				Indent ().WriteLine ("\t// properties");
 				foreach (var property in t.Elements ("property"))
-					pcomparer.Added (property);
+					pcomparer.Added (property, true);
 			}
 
 			t = target.Element ("events");
 			if (t != null) {
 				Indent ().WriteLine ("\t// events");
 				foreach (var evnt in t.Elements ("event"))
-					ecomparer.Added (evnt);
+					ecomparer.Added (evnt, true);
 			}
 
 			t = target.Element ("methods");
 			if (t != null) {
 				Indent ().WriteLine ("\t// methods");
 				foreach (var method in t.Elements ("method"))
-					mcomparer.Added (method);
+					mcomparer.Added (method, true);
 			}
 
 			t = target.Element ("classes");
