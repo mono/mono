@@ -1,9 +1,0 @@
-2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* FileCertificateStore.cs: Use File.Create instead of OpenWrite
-	to make sure nothing else if left at the end of the file.
-
-2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* ICertificateStore.cs: Interface for certificate stores.
-	* FileCertificateStore.cs: File-based certificate stores using SPC (PKCS7) files.

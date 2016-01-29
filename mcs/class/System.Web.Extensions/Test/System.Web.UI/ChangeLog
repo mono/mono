@@ -1,6 +1,0 @@
-2010-02-02  Marek Habersack  <mhabersack@novell.com>
-
-	* ScriptBehaviorDescriptorTest.cs,
-	ScriptComponentDescriptorTest.cs: added tests for rendering of the
-	Name and ID properties.
-

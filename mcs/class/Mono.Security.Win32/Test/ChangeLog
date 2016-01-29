@@ -1,4 +1,0 @@
-2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* Mono.Security.Win32_test.build: New. NAnt build file
-	for unit tests.

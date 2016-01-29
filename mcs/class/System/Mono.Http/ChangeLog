@@ -1,4 +1,0 @@
-2009-08-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* NtlmClient.cs: copied from Mono.Http.
-

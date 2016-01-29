@@ -1,6 +1,0 @@
-2008-03-23  Dean Brettle  <dean@brettle.com>
-
-	* Compat.browser: added.  Provides browser definitions with
-	compatible IDs.
-
-

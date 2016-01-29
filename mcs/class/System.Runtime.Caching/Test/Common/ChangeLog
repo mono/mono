@@ -1,6 +1,0 @@
-2010-04-24  Marek Habersack  <mhabersack@novell.com>
-
-	* AppDomainTools.cs, AssertExtensions.cs, PokerChangeMonitor.cs,
-	PokerMemoryCache.cs, PokerObjectCache.cs,
-	TestNotificationSystem.cs: added
-
