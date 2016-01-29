@@ -1977,6 +1977,7 @@ mono_get_xdomain_marshal_type (MonoType *t)
 MonoObject *
 mono_marshal_xdomain_copy_value (MonoObject *val)
 {
+	MonoError error;
 	MonoDomain *domain;
 	if (val == NULL) return NULL;
 
@@ -2009,7 +2010,10 @@ mono_marshal_xdomain_copy_value (MonoObject *val)
 		MonoArray *acopy;
 		MonoXDomainMarshalType mt = mono_get_xdomain_marshal_type (&(mono_object_class (val)->element_class->byval_arg));
 		if (mt == MONO_MARSHAL_SERIALIZE) return NULL;
-		acopy = mono_array_clone_in_domain (domain, (MonoArray *) val);
+
+		acopy = mono_array_clone_in_domain (domain, (MonoArray *) val, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 		if (mt == MONO_MARSHAL_COPY) {
 			int i, len = mono_array_length (acopy);
 			for (i = 0; i < len; i++) {
