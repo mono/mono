@@ -143,7 +143,7 @@ endif
 # Set the options for building and running AOT
 # The trampoline numbers are provisional, they are what is required
 # to run the corlib test suite. They should be considered a lower bound.
-INVARIANT_AOT_OPTIONS=bind-to-runtime-version,nimt-trampolines=900,ntrampolines=8000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=900,ntrampolines=8000
 
 ifndef MONO_DISABLE_GSHAREDVT
 INVARIANT_AOT_OPTIONS:=$(INVARIANT_AOT_OPTIONS),ngsharedvt-trampolines=900
