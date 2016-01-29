@@ -78,9 +78,7 @@ namespace MonoTests.System.Net.Sockets
 		public void CloseTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (CloseRequestHandler))) {
-				sr.Start ();
-
+			using (SocketResponder sr = new SocketResponder (localEP, s => CloseRequestHandler (s))) {
 				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
 				NetworkStream ns = tcpClient.GetStream ();
 				Assert.IsNotNull (ns, "#A1");
@@ -105,9 +103,7 @@ namespace MonoTests.System.Net.Sockets
 				*/
 			}
 
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (CloseRequestHandler))) {
-				sr.Start ();
-
+			using (SocketResponder sr = new SocketResponder (localEP, s => CloseRequestHandler (s))) {
 				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
 				Assert.AreEqual (0, tcpClient.Available, "#B1");
 				Assert.IsTrue (tcpClient.Connected, "#B2");
