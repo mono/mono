@@ -48,7 +48,7 @@ ifndef MONO_DISABLE_GSHAREDVT
 GSHAREDVT_FLAG = -O=gsharedvt
 endif
 
-ifeq ($(MONO_LLVMONLY),TRUE)
+ifneq ($(MONO_LLVMONLY),)
 AOT_BUILD_FLAGS_PREFIX = --aot=llvmonly,
 AOT_RUN_FLAGS =  --llvmonly
 else
