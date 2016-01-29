@@ -9,7 +9,6 @@ configure.ac crlf=input
 *.il	crlf
 
 .gitattributes	crlf
-ChangeLog	crlf
 *akefile*	crlf
 *.sources	crlf
 

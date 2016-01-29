@@ -10,9 +10,6 @@ CLEAN_FILES = parser/y.output
 
 EXTRA_DISTFILES = \
 	parser/ILParser.jay	\
-	parser/ChangeLog	\
-	scanner/ChangeLog	\
-	tests/ChangeLog		\
 	$(wildcard tests/*.il)
 
 ILParser.cs: parser/ILParser.jay $(topdir)/jay/skeleton.cs

@@ -4,7 +4,6 @@
 /BaseFacesPageHandlerFactory.cs -crlf
 /BaseFacesStateManager.cs -crlf
 /BaseFacesViewHandler.cs -crlf
-/ChangeLog -crlf
 /IExtendedViewHandler.cs -crlf
 /OutputStreamWrapper.cs -crlf
 /RequestParameterMap.cs -crlf

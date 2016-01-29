@@ -13,8 +13,6 @@ LIB_MCS_FLAGS = /r:$(corlib) \
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 EXTRA_DISTFILES = \
 	Commons.Xml.Relaxng.Rnc/RncParser.jay	\
-	Test/ChangeLog		\
-	Test/XmlFiles/ChangeLog	\
 	$(wildcard Test/XmlFiles/*.rng) \
 	$(wildcard Test/XmlFiles/*.rnc) \
 	$(wildcard Test/XmlFiles/*.nvdl) \
