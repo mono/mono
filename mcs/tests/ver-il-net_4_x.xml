@@ -62526,7 +62526,7 @@
     </type>
     <type name="Tester+&lt;Foreach_1&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>331</size>
+        <size>323</size>
       </method>
     </type>
     <type name="Tester+&lt;SwitchTest_1&gt;c__async0">
@@ -62578,6 +62578,22 @@
       </method>
     </type>
     <type name="Tester+&lt;Foreach_1&gt;c__async2">
+      <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__0()" attrs="145">
+        <size>36</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foreach_2()" attrs="129">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Foreach_2&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>439</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
       <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__0()" attrs="145">
         <size>36</size>
       </method>
@@ -67049,6 +67065,27 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-29.cs">
+    <type name="EncodingVariableScopeInfoLiftedFieldName">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Test(Int32)" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="EncodingVariableScopeInfoLiftedFieldName+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>290</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
       </method>
     </type>
   </test>

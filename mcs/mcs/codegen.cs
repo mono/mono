@@ -317,20 +317,20 @@ namespace Mono.CSharp
 			ig.BeginFinallyBlock ();
 		}
 
-		public void BeginScope ()
+		public void BeginScope (int scopeIndex)
 		{
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return;
 
-			methodSymbols.StartBlock (CodeBlockEntry.Type.Lexical, ig.ILOffset);
+			methodSymbols.StartBlock (CodeBlockEntry.Type.Lexical, ig.ILOffset, scopeIndex);
 		}
 
-		public void BeginCompilerScope ()
+		public void BeginCompilerScope (int scopeIndex)
 		{
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return;
 
-			methodSymbols.StartBlock (CodeBlockEntry.Type.CompilerGenerated, ig.ILOffset);
+			methodSymbols.StartBlock (CodeBlockEntry.Type.CompilerGenerated, ig.ILOffset, scopeIndex);
 		}
 
 		public void EndExceptionBlock ()

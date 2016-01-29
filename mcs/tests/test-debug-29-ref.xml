@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<symbols>
+  <files>
+    <file id="1" name="test-debug-29.cs" checksum="0a85f22fe8d8cd18e544dae76f86832f" />
+  </files>
+  <methods>
+    <method token="0x6000001">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
+      <sequencepoints>
+        <entry il="0x0" row="7" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="8" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000003">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000004">
+      <sequencepoints>
+        <entry il="0x25" row="11" col="2" file_ref="1" hidden="false" />
+        <entry il="0x26" row="12" col="3" file_ref="1" hidden="false" />
+        <entry il="0x32" row="12" col="17" file_ref="1" hidden="false" />
+        <entry il="0x33" row="13" col="4" file_ref="1" hidden="false" />
+        <entry il="0x34" row="14" col="4" file_ref="1" hidden="false" />
+        <entry il="0x35" row="15" col="3" file_ref="1" hidden="false" />
+        <entry il="0x36" row="17" col="3" file_ref="1" hidden="false" />
+        <entry il="0x42" row="18" col="3" file_ref="1" hidden="false" />
+        <entry il="0x43" row="19" col="4" file_ref="1" hidden="false" />
+        <entry il="0x4a" row="20" col="4" file_ref="1" hidden="false" />
+        <entry il="0x96" row="21" col="3" file_ref="1" hidden="false" />
+        <entry il="0x9c" row="23" col="3" file_ref="1" hidden="false" />
+        <entry il="0x9d" row="24" col="4" file_ref="1" hidden="false" />
+        <entry il="0xa4" row="25" col="4" file_ref="1" hidden="false" />
+        <entry il="0xf0" row="26" col="3" file_ref="1" hidden="false" />
+        <entry il="0x10f" row="27" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes>
+        <entry index="0" start="0x42" end="0x96" />
+        <entry index="1" start="0x9c" end="0xf0" />
+        <entry index="2" start="0x32" end="0x35" />
+        <entry index="3" start="0x33" end="0x34" />
+      </scopes>
+    </method>
+    <method token="0x6000005">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+  </methods>
+</symbols>

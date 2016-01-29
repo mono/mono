@@ -3119,6 +3119,7 @@ namespace Mono.CSharp {
 	public class ExplicitBlock : Block
 	{
 		protected AnonymousMethodStorey am_storey;
+		int debug_scope_index;
 
 		public ExplicitBlock (Block parent, Location start, Location end)
 			: this (parent, (Flags) 0, start, end)
@@ -3226,8 +3227,10 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (Parent != null)
-				ec.BeginScope ();
+			if (Parent != null) {
+				// TODO: It's needed only when scope has variable (normal or lifted)
+				ec.BeginScope (GetDebugSymbolScopeIndex ());
+			}
 
 			EmitScopeInitialization (ec);
 
@@ -3427,6 +3430,14 @@ namespace Mono.CSharp {
 			storey.Define ();
 			storey.PrepareEmit ();
 			storey.Parent.PartialContainer.AddCompilerGeneratedClass (storey);
+		}
+
+		public int GetDebugSymbolScopeIndex ()
+		{
+			if (debug_scope_index == 0)
+				debug_scope_index = ++ParametersBlock.debug_scope_index;
+
+			return debug_scope_index;
 		}
 
 		public void RegisterAsyncAwait ()
@@ -7786,7 +7797,11 @@ namespace Mono.CSharp {
 
 				for_each.variable.Type = var_type;
 
+				var prev_block = ec.CurrentBlock;
+				ec.CurrentBlock = variables_block;
 				var variable_ref = new LocalVariableReference (for_each.variable, loc).Resolve (ec);
+				ec.CurrentBlock = prev_block;
+
 				if (variable_ref == null)
 					return false;
 
@@ -8075,7 +8090,10 @@ namespace Mono.CSharp {
 						return false;
 				}
 
+				var prev_block = ec.CurrentBlock;
+				ec.CurrentBlock = for_each.variable.Block;
 				var variable_ref = new LocalVariableReference (variable, loc).Resolve (ec);
+				ec.CurrentBlock = prev_block;
 				if (variable_ref == null)
 					return false;
 
@@ -8233,7 +8251,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ec.DefineLabel ();
 
 			if (!(Statement is Block))
-				ec.BeginCompilerScope ();
+				ec.BeginCompilerScope (variable.Block.Explicit.GetDebugSymbolScopeIndex ());
 
 			variable.CreateBuilder (ec);
 
