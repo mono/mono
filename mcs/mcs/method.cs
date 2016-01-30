@@ -1767,8 +1767,12 @@ namespace Mono.CSharp {
 				// If we use a "this (...)" constructor initializer, then
 				// do not emit field initializers, they are initialized in the other constructor
 				//
-				if (!(Initializer is ConstructorThisInitializer))
+				if (!(Initializer is ConstructorThisInitializer)) {
+					var errors = Compiler.Report.Errors;
 					Parent.PartialContainer.ResolveFieldInitializers (bc);
+					if (errors != Compiler.Report.Errors)
+						return;
+				}
 
 				if (!IsStatic) {
 					if (Initializer == null && Parent.PartialContainer.Kind == MemberKind.Class) {
