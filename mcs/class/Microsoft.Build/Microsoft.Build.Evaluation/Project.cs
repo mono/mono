@@ -154,7 +154,7 @@ namespace Microsoft.Build.Evaluation
 		public Project (string projectFile, IDictionary<string, string> globalProperties,
 				string toolsVersion, ProjectCollection projectCollection,
 				ProjectLoadSettings loadSettings)
-			: this (ProjectRootElement.Create (projectFile), globalProperties, toolsVersion, projectCollection, loadSettings)
+			: this (XmlReader.Create (projectFile), globalProperties, toolsVersion, projectCollection, loadSettings)
 		{
 		}
 
