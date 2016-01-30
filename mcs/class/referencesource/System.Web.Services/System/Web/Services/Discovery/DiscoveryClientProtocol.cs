@@ -453,15 +453,15 @@ namespace System.Web.Services.Discovery {
             while (currentDir.Length > 0) {
                 if (currentDir.Length <= fullPath.Length && string.Compare(currentDir, fullPath.Substring(0, currentDir.Length), StringComparison.OrdinalIgnoreCase) == 0) {
                     answer += fullPath.Substring(currentDir.Length);
-                    if (answer.StartsWith("\\", StringComparison.Ordinal))
+                    if (answer.StartsWith(""+Path.DirectorySeparatorChar, StringComparison.Ordinal))
                         answer = answer.Substring(1);
                     return answer;
                 }
-                answer += "..\\";
+                answer += ".." + Path.DirectorySeparatorChar;
                 if (currentDir.Length < 2)
                     break;
                 else {
-                    int lastSlash = currentDir.LastIndexOf('\\', currentDir.Length - 2);
+                    int lastSlash = currentDir.LastIndexOf(Path.DirectorySeparatorChar, currentDir.Length - 2);
                     currentDir = currentDir.Substring(0, lastSlash + 1);
                 }
             }
