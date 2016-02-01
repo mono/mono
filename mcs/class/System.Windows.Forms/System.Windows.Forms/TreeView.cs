@@ -1853,7 +1853,8 @@ namespace System.Windows.Forms {
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
-			EndEdit (edit_node);
+			if (edit_node != null)
+				EndEdit (edit_node);
 
 			SetVScrollPos (vbar.Value, null);
 		}
@@ -1886,7 +1887,8 @@ namespace System.Windows.Forms {
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
 		{
-			EndEdit (edit_node);
+			if (edit_node != null)
+				EndEdit (edit_node);
 
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
