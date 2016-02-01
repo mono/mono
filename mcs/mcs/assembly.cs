@@ -312,7 +312,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				builder_extra.AddTypeForwarder (t.GetDefinition (), a.Location);
+				AddTypeForwarders (t, a.Location);
 				return;
 			}
 
@@ -387,6 +387,22 @@ namespace Mono.CSharp
 			//
 
 			SetCustomAttribute (ctor, cdata);
+		}
+
+		void AddTypeForwarders (TypeSpec type, Location loc)
+		{
+			builder_extra.AddTypeForwarder (type.GetDefinition (), loc);
+
+			var ntypes = MemberCache.GetDeclaredNestedTypes (type);
+			if (ntypes == null)
+				return;
+			
+			foreach (var nested in ntypes) {
+				if (nested.IsPrivate)
+					continue;
+
+				AddTypeForwarders (nested, loc);
+			}
 		}
 
 		//

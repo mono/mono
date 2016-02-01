@@ -612,7 +612,7 @@ namespace Mono.CSharp
 
 		public override void AddTypeForwarder (TypeSpec type, Location loc)
 		{
-			builder.__AddTypeForwarder (type.GetMetaInfo ());
+			builder.__AddTypeForwarder (type.GetMetaInfo (), false);
 		}
 
 		public override void DefineWin32IconResource (string fileName)
