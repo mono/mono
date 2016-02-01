@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,1030</NoWarn>
+    <NoWarn>1699,1030,3009</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
@@ -23,7 +23,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,1030</NoWarn>
+    <NoWarn>1699,1030,3009</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -31,7 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,1030</NoWarn>
+    <NoWarn>1699,1030,3009</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -81,6 +81,7 @@
     <Compile Include=".\Mono.Security.Cryptography\SymmetricTransform.cs" />
     <Compile Include=".\Mono.Security.Cryptography\TlsHMAC.cs" />
     <Compile Include=".\Mono.Security.Interface\Alert.cs" />
+    <Compile Include=".\Mono.Security.Interface\BufferOffsetSize.cs" />
     <Compile Include=".\Mono.Security.Interface\CertificateValidationHelper.cs" />
     <Compile Include=".\Mono.Security.Interface\CipherAlgorithmType.cs" />
     <Compile Include=".\Mono.Security.Interface\CipherSuiteCode.cs" />
@@ -94,7 +95,11 @@
     <Compile Include=".\Mono.Security.Interface\MonoTlsProvider.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsProviderFactory.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsSettings.cs" />
+    <Compile Include=".\Mono.Security.Interface\SecretParameters.cs" />
+    <Compile Include=".\Mono.Security.Interface\SecureBuffer.cs" />
+    <Compile Include=".\Mono.Security.Interface\TlsBuffer.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsException.cs" />
+    <Compile Include=".\Mono.Security.Interface\TlsMultiBuffer.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsProtocolCode.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsProtocols.cs" />
     <Compile Include=".\Mono.Security.Protocol.Ntlm\ChallengeResponse.cs" />
