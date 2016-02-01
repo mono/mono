@@ -44,6 +44,7 @@ using MX = Mono.Security.X509;
 
 using System.IO;
 using System.Text;
+using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -557,12 +558,17 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			var pfx = new MX.PKCS12 ();
 			try {
+				var attrs = new Hashtable ();
+				var localKeyId = new ArrayList ();
+				localKeyId.Add (new byte[] { 1, 0, 0, 0 });
+				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
+
 				if (password != null)
 					pfx.Password = password;
-				pfx.AddCertificate (_cert);
+				pfx.AddCertificate (_cert, attrs);
 				var privateKey = PrivateKey;
 				if (privateKey != null)
-					pfx.AddPkcs8ShroudedKeyBag (privateKey);
+					pfx.AddPkcs8ShroudedKeyBag (privateKey, attrs);
 				return pfx.GetBytes ();
 			} finally {
 				pfx.Password = null;
