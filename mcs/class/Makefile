@@ -53,7 +53,6 @@ mobile_common_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	Mono.Security.Providers.DotNet	\
-	Mono.Security.Providers.OldTls \
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls
 
