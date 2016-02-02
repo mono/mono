@@ -44,17 +44,21 @@ static class Consts
 	public const string FxVersion = "2.0.5.0";
 	public const string VsVersion = "9.0.0.0"; // unused, but needed for compilation
 	public const string FxFileVersion = "4.0.50524.0";
+	public const string EnvironmentVersion = FxFileVersion;
+	
 	public const string VsFileVersion = "9.0.50727.42"; // unused, but needed for compilation
 #elif NET_4_6
 	public const string FxVersion = "4.0.0.0";
 	public const string FxFileVersion = "4.6.57.0";
-	
+	public const string EnvironmentVersion = "4.0.30319.42000";
+
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "11.0.0.0"; // TODO:
 #elif NET_4_5
 	public const string FxVersion = "4.0.0.0";
 	public const string FxFileVersion = "4.0.30319.17020";
-	
+	public const string EnvironmentVersion = FxFileVersion;
+
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "11.0.0.0"; // TODO:
 #elif NET_4_0
