@@ -194,6 +194,13 @@ Disables the inclusion of a garbage collector.
 
   * This defaults to `included`.
 
+* `--with-cooperative-gc`
+
+  * If you pass this flag the Mono runtime is configured to only use
+  the cooperative mode of the garbage collector.  If you do not pass
+  this flag, then you can control at runtime the use of the
+  cooperative GC mode by setting the `MONO_ENABLE_COOP` flag.
+  
 * `--with-tls=__thread,pthread`
 
   * Controls how Mono should access thread local storage,
