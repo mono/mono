@@ -375,7 +375,7 @@ namespace System {
 		/// </summary>
 		public static Version Version {
 			get {
-				return new Version (Consts.FxFileVersion);
+				return new Version (Consts.EnvironmentVersion);
 			}
 		}
 
