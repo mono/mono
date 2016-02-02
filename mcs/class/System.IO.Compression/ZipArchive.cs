@@ -70,7 +70,18 @@ namespace System.IO.Compression
 			this.stream = stream;
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
-			CreateZip(stream, mode);
+
+			try
+			{
+				CreateZip(stream, mode);
+			}
+			catch
+			{
+				if (!leaveOpen)
+					stream.Dispose();
+
+				throw;
+			}
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode, bool leaveOpen, Encoding entryNameEncoding)
@@ -82,7 +93,18 @@ namespace System.IO.Compression
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
 			this.entryNameEncoding = entryNameEncoding;
-			CreateZip(stream, mode);
+
+			try
+			{
+				CreateZip(stream, mode);
+			}
+			catch
+			{
+				if (!leaveOpen)
+					stream.Dispose();
+
+				throw;
+			}
 		}
 
 		private void CreateZip(Stream stream, ZipArchiveMode mode)
