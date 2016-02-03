@@ -1,15 +1,33 @@
-
 <h2>Class Operations</h2>
+
+	<p>The operations on <code>MonoClass*</code> allow you to
+	query a number of properties of a .NET class from the C API.
 
 <h3>Getting a MonoClass</h3>
 
-<h4><a name="api:mono_class_from_generic_parameter">mono_class_from_generic_parameter</a></h4>
+	<p>You typically would obtain a <code>MonoClass*</code>
+	pointer by using a combination of the <code>MonoImage*</code>
+	where the type is located, the namespace and name using the
+	<code><a href="api:mono_class_from_name">mono_class_from_name</a></code>
+	or
+	the <code><a href="api:mono_class_from_name_case">mono_class_from_name_case</a></code>
+	APIs or by using
+	the <code><a href="api:mono_class_from_typeref">mono_class_from_typeref</a></code>
+	or <code><a href="api:mono_class_from_typeref">mono_class_from_typeref_checked</a></code>
+	methods.
+
+	<p>For low-level access, you can get the <code>MonoClass
+	*</code> from an image and an ECMA type token relative to
+	the <code>MonoImage*</code> by using <a href="api:mono_class_get">mono_class_get</a></h4>.
+
+	
+<h4><a name="api:mono_class_get">mono_class_get</a></h4>
 <h4><a name="api:mono_class_from_mono_type">mono_class_from_mono_type</a></h4>
 <h4><a name="api:mono_class_from_name">mono_class_from_name</a></h4>
 <h4><a name="api:mono_class_from_name_case">mono_class_from_name_case</a></h4>
 <h4><a name="api:mono_class_from_typeref">mono_class_from_typeref</a></h4>
 <h4><a name="api:mono_class_from_typeref_checked">mono_class_from_typeref_checked</a>
-<h4><a name="api:mono_class_get">mono_class_get</a></h4>
+<h4><a name="api:mono_class_from_generic_parameter">mono_class_from_generic_parameter</a></h4>
 
 <h3>Working with a MonoClass</h3>
 

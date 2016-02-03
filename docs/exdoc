@@ -58,26 +58,28 @@ if ($html){
    }
        
    .api {
-     border: 1px solid;
      padding: 10pt;
      margin: 10pt;
    } 
 
    .api-entry { 
        border-bottom: none;
-       font-size: 18px;
+       font-size: 120%;
    }
 
    .prototype {
-     border: 1px solid;
-     background-color: #f2f2f2;
-     padding: 5pt;
+     border: 3px solid #ecf0f1;
+     border-radius: 6px;
+     padding: 1em 1.2em;
      margin-top: 5pt;
-     margin-bottom: 5pt;  
+     margin-bottom: 5pt;
+     font-family: "Consolas", "Courier", monospace;
+     display: block;
+     overflow: auto;
    } 
 
    .header {
-     border: 1px solid;
+     
      padding: 0 0 5pt 5pt;
      margin: 10pt;
      white-space: pre;
@@ -104,6 +106,9 @@ EOF
 	    if ($api ne ""){
 		if ($api_shown == 1){
 		    print OUT "</div>";
+		if ($deprecated{$api}){
+		    print OUT "<p><b>DEPRECATED ${deprecated{$api}}</b>";
+		}
 		}
 		$api_shown = 1;
 		$proto = $prototype{$api};
@@ -121,7 +126,7 @@ print OUT<<EOF;
 EOF
 		    &opt_print ("Parameters", $arguments{$api}, 1);
 		    &opt_print ("Returns", $returns{$api}, 1);
-		    &opt_print ("Remarks", $bodies{$api}, 0);
+		    &opt_print ("Description", $bodies{$api}, 0);
 		    print OUT "\n";
 	    } else {
 		if ($line =~ /@API_IDX@/){
@@ -168,7 +173,8 @@ sub process_doc {
 	$returns = "";
 	$body = "";
 	$functions[$fn++] = $func;
-
+	$deprecated = 0;
+	
 	# Process arguments
 	while (<>){
 		if (/^ \*\*?\//){
@@ -179,6 +185,7 @@ sub process_doc {
 		    $body =~ s/\n/ /;
 		    $bodies{$func} = $body;
 		    $arguments{$func} = $args;
+		    $deprecated{$func} = $deprecated;
 		    $returns{$func} = $returns;
 		    $proto = "";
 		    while (<>){
@@ -199,7 +206,11 @@ sub process_doc {
 				
 		if ($inbody == 0){
 		    if (/\s*(\w+):(.*)/){
-			$args .= "<dt><i>$1:</i></dt><dd>$2</dd>";
+			if ($1 eq "deprecated"){
+			    $deprecated = $2;
+			} else {
+			    $args .= "<dt><i>$1:</i></dt><dd>$2</dd>";
+			}
 		    } else {
 			
 			$body = "\t$_\n";
