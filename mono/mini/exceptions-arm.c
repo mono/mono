@@ -137,8 +137,10 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
 {
+	MonoError error;
 	MonoContext ctx;
 	gboolean rethrow = sp & 1;
+	gboolean isinst;
 
 	sp &= ~1; /* clear the optional rethrow bit */
 	pc &= ~1; /* clear the thumb bit */
@@ -152,7 +154,10 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * 16);
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (exc, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;

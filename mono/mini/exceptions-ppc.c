@@ -318,7 +318,9 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow)
 {
+	MonoError error;
 	MonoContext ctx;
+	gboolean isinst;
 
 	/* adjust eip so that it point into the call instruction */
 	eip -= 4;
@@ -331,7 +333,10 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 	memcpy (&ctx.regs, int_regs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * MONO_SAVED_FREGS);
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (exc, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;

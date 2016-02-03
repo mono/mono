@@ -1323,6 +1323,7 @@ setup_stack_trace (MonoException *mono_ex, GSList *dynamic_methods, MonoArray *i
 static gboolean
 mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo *ji = NULL;
 	static int (*call_filter) (MonoContext *, gpointer) = NULL;
@@ -1339,6 +1340,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 	gint32 filter_idx;
 	int i;
 	MonoObject *ex_obj;
+	gboolean isinst;
 
 	g_assert (ctx != NULL);
 
@@ -1348,7 +1350,10 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 	mono_ex = (MonoException*)obj;
 	initial_trace_ips = mono_ex->trace_ips;
 
-	if (mono_object_isinst (obj, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (obj, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		mono_ex = (MonoException*)obj;
 		initial_trace_ips = mono_ex->trace_ips;
 	} else {
@@ -1514,16 +1519,21 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 					}
 				}
 
-				if (ei->flags == MONO_EXCEPTION_CLAUSE_NONE && mono_object_isinst (ex_obj, catch_class)) {
-					setup_stack_trace (mono_ex, dynamic_methods, initial_trace_ips, &trace_ips);
-					g_slist_free (dynamic_methods);
+				if (ei->flags == MONO_EXCEPTION_CLAUSE_NONE) {
+					isinst = mono_object_isinst_checked (ex_obj, catch_class, &error) != NULL;
+					mono_error_assert_ok (&error);
 
-					if (out_ji)
-						*out_ji = ji;
+					if (isinst) {
+						setup_stack_trace (mono_ex, dynamic_methods, initial_trace_ips, &trace_ips);
+						g_slist_free (dynamic_methods);
 
-					/* mono_debugger_agent_handle_exception () needs this */
-					MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
-					return TRUE;
+						if (out_ji)
+							*out_ji = ji;
+
+						/* mono_debugger_agent_handle_exception () needs this */
+						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
+						return TRUE;
+					}
 				}
 			}
 		}
@@ -1543,6 +1553,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 static gboolean
 mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resume, MonoJitInfo **out_ji)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo *ji, *prev_ji;
 	static int (*call_filter) (MonoContext *, gpointer) = NULL;
@@ -1557,6 +1568,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	int i;
 	MonoObject *ex_obj;
 	MonoObject *non_exception = NULL;
+	gboolean isinst;
 
 	g_assert (ctx != NULL);
 	if (!obj) {
@@ -1579,7 +1591,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		obj = (MonoObject *)mono_get_exception_null_reference ();
 	}
 
-	if (!mono_object_isinst (obj, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (obj, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (!isinst) {
 		non_exception = obj;
 		obj = (MonoObject *)mono_get_exception_runtime_wrapped (obj);
 	}
@@ -1592,7 +1607,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			;
 	}
 
-	if (mono_object_isinst (obj, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (obj, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		mono_ex = (MonoException*)obj;
 	} else {
 		mono_ex = NULL;
@@ -1804,8 +1822,14 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					filter_idx ++;
 				}
 
-				if ((ei->flags == MONO_EXCEPTION_CLAUSE_NONE && 
-					 mono_object_isinst (ex_obj, catch_class)) || filtered) {
+				if (ei->flags != MONO_EXCEPTION_CLAUSE_NONE) {
+					isinst = FALSE;
+				} else {
+					isinst = mono_object_isinst_checked (ex_obj, catch_class, &error) != NULL;
+					mono_error_assert_ok (&error);
+				}
+
+				if (isinst || filtered) {
 					/*
 					 * This guards against the situation that we abort a thread that is executing a finally clause
 					 * that was called by the EH machinery. It won't have a guard trampoline installed, so we must
@@ -2850,10 +2874,15 @@ mono_jinfo_get_epilog_size (MonoJitInfo *ji)
 static void
 throw_exception (MonoObject *ex, gboolean rethrow)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
 	MonoException *mono_ex;
+	gboolean isinst;
 
-	if (!mono_object_isinst (ex, mono_defaults.exception_class))
+	isinst = mono_object_isinst_checked (ex, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (!isinst)
 		mono_ex = mono_get_exception_runtime_wrapped (ex);
 	else
 		mono_ex = (MonoException*)ex;
@@ -2991,9 +3020,11 @@ mono_llvm_clear_exception (void)
 gint32
 mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 region_end, gpointer rgctx, MonoObject *this_obj)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
 	MonoObject *exc;
 	gint32 index = -1;
+	gboolean isinst;
 
 	g_assert (jit_tls->thrown_exc);
 	exc = mono_gchandle_get_target (jit_tls->thrown_exc);
@@ -3016,8 +3047,15 @@ mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 reg
 			mono_metadata_free_type (inflated_type);
 		}
 
+		if (ei->flags != MONO_EXCEPTION_CLAUSE_NONE) {
+			isinst = FALSE;
+		} else {
+			isinst = mono_object_isinst_checked (exc, catch_class, &error) != NULL;
+			mono_error_assert_ok (&error);
+		}
+
 		// FIXME: Handle edge cases handled in get_exception_catch_class
-		if (ei->flags == MONO_EXCEPTION_CLAUSE_NONE && mono_object_isinst (exc, catch_class)) {
+		if (isinst) {
 			index = ei->clause_index;
 			break;
 		} else if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
