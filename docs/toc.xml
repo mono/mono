@@ -50,18 +50,6 @@
 	  </li>
 	  <li>
 		<object type="text/sitemap">
-	      <param name="Name" value="Code Generation"/>
-	      <param name="Local" value="deploy/mono-api-codegen.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="Decimal Representation"/>
-	      <param name="Local" value="deploy/mono-api-decimal.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
 	      <param name="Name" value="Application Domains"/>
 	      <param name="Local" value="deploy/mono-api-domains.html"/>
 		</object>
@@ -100,12 +88,6 @@
 		<object type="text/sitemap">
 	      <param name="Name" value="Just in Time Compiler"/>
 	      <param name="Local" value="deploy/mono-api-jit.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="Marshalling"/>
-	      <param name="Local" value="deploy/mono-api-marshal.html"/>
 		</object>
 	  </li>
 	  <li>
