@@ -41,7 +41,6 @@ EXTRA_DIST = \
 	object-layout		\
 	precise-gc		\
 	produce-lists		\
-	public-api		\
 	README			\
 	remoting		\
 	ssapre.txt		\
