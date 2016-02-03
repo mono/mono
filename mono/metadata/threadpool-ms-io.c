@@ -28,6 +28,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-lazy-init.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/mono-error-internals.h>
 
 typedef struct {
 	gboolean (*init) (gint wakeup_pipe_fd);
@@ -502,6 +503,9 @@ wakeup_pipes_init (void)
 static void
 initialize (void)
 {
+	MonoError error;
+	MonoInternalThread *thread;
+
 	g_assert (!threadpool_io);
 	threadpool_io = g_new0 (ThreadPoolIO, 1);
 	g_assert (threadpool_io);
@@ -526,7 +530,10 @@ initialize (void)
 	if (!threadpool_io->backend.init (threadpool_io->wakeup_pipes [0]))
 		g_error ("initialize: backend->init () failed");
 
-	if (!mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, TRUE, SMALL_STACK))
+	thread = mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, TRUE, SMALL_STACK, &error);
+	mono_error_assert_ok (&error);
+
+	if (!thread)
 		g_error ("initialize: mono_thread_create_internal () failed");
 }
 

@@ -908,19 +908,20 @@ guint32 mono_threads_get_default_stacksize (void)
  *   ARG should not be a GC reference.
  */
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size)
+mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size, MonoError *error)
 {
-	MonoError error;
 	MonoThread *thread;
 	MonoInternalThread *internal;
 	StartInfo *start_info;
 	gboolean res;
 
-	thread = create_thread_object (domain, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	thread = create_thread_object (domain, error);
+	if (!mono_error_ok (error))
+		return NULL;
 
-	internal = create_internal_thread (&error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	internal = create_internal_thread (error);
+	if (!mono_error_ok (error))
+		return NULL;
 
 	MONO_OBJECT_SETREF (thread, internal_thread, internal);
 
@@ -945,7 +946,9 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 void
 mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 {
-	mono_thread_create_internal (domain, func, arg, FALSE, 0);
+	MonoError error;
+	mono_thread_create_internal (domain, func, arg, FALSE, 0, &error);
+	mono_error_raise_exception (&error);
 }
 
 MonoThread *

@@ -19,6 +19,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-membar.h"
 #include "mono/utils/mono-threads.h"
+#include "mono/utils/mono-error.h"
 
 /* This is a copy of System.Threading.ThreadState */
 typedef enum {
@@ -64,7 +65,8 @@ typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
-MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size);
+MonoInternalThread*
+mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size, MonoError *error);
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 

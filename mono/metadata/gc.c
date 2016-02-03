@@ -39,6 +39,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-coop-semaphore.h>
+#include <mono/utils/mono-error-internals.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -765,7 +766,9 @@ static
 void
 mono_gc_init_finalizer_thread (void)
 {
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0);
+	MonoError error;
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0, &error);
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	ves_icall_System_Threading_Thread_SetName_internal (gc_thread, mono_string_new (mono_domain_get (), "Finalizer"));
 }
 
