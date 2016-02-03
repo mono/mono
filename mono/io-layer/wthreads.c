@@ -640,7 +640,9 @@ _wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy
 		case SCHED_FIFO:
 		case SCHED_RR:
 			return 50;
+#ifdef SCHED_BATCH
 		case SCHED_BATCH:
+#endif
 		case SCHED_OTHER:
 			return 0;
 		default:
