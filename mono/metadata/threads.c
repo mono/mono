@@ -1250,6 +1250,39 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
 	mono_thread_set_name_internal (this_obj, name, TRUE);
 }
 
+/*
+ * ves_icall_System_Threading_Thread_GetPriority_internal:
+ * @param this_obj: The MonoInternalThread on which to operate.
+ *
+ * Gets the priority of the given thread.
+ * @return: The priority of the given thread.
+ */
+int
+ves_icall_System_Threading_Thread_GetPriority (MonoInternalThread *this_obj)
+{
+	gint32 priority;
+
+	LOCK_THREAD(this_obj);
+	priority = GetThreadPriority (this_obj->handle) + 2;
+	UNLOCK_THREAD(this_obj);
+	return priority;
+}
+ 
+/* 
+ * ves_icall_System_Threading_Thread_SetPriority_internal:
+ * @param this_obj: The MonoInternalThread on which to operate.
+ * @param priority: The priority to set.
+ *
+ * Sets the priority of the given thread.
+ */
+void
+ves_icall_System_Threading_Thread_SetPriority (MonoInternalThread *this_obj, int priority)
+{
+	LOCK_THREAD(this_obj);
+	SetThreadPriority (this_obj->handle, priority - 2);
+	UNLOCK_THREAD(this_obj);
+}
+ 
 /* If the array is already in the requested domain, we just return it,
    otherwise we return a copy in that domain. */
 static MonoArray*
