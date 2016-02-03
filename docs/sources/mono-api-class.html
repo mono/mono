@@ -3,6 +3,16 @@
 	<p>The operations on <code>MonoClass*</code> allow you to
 	query a number of properties of a .NET class from the C API.
 
+	<p>This page contains information
+	for <a href="#class-getting">how to obtain a MonoClass</a>,
+	how to <a href="#class-work">probe for different
+	features of a UonoClass</a> and APIs
+	to <a href="#class-members">access class members</a> and 
+	<a href="#class-fields">access fields</a>.   To access
+	methods, see the <a href="mono-api-methods.html">method
+	documentation API</a>.
+
+<a name="class-getting">
 <h3>Getting a MonoClass</h3>
 
 	<p>You typically would obtain a <code>MonoClass*</code>
@@ -26,7 +36,7 @@
 <h4><a name="api:mono_class_from_name">mono_class_from_name</a></h4>
 <h4><a name="api:mono_class_from_name_case">mono_class_from_name_case</a></h4>
 <h4><a name="api:mono_class_from_typeref">mono_class_from_typeref</a></h4>
-<h4><a name="api:mono_class_from_typeref_checked">mono_class_from_typeref_checked</a>
+<h4><a name="api:mono_class_from_typeref_checked">mono_class_from_typeref_checked</a></h4>
 <h4><a name="api:mono_class_from_generic_parameter">mono_class_from_generic_parameter</a></h4>
 
 <h3>Working with a MonoClass</h3>
@@ -50,14 +60,14 @@
 <h4><a name="api:mono_class_get_property_token">mono_class_get_property_token</a></h4>
 <h4><a name="api:mono_class_get_rank">mono_class_get_rank</a></h4>
 <h4><a name="api:mono_class_get_type">mono_class_get_type</a></h4>
-<h4><a name="api:mono_class_get_type_token">mono_class_get_type_token</a>
-<h4><a name="api:mono_class_implements_interface">mono_class_implements_interface</a>
+<h4><a name="api:mono_class_get_type_token">mono_class_get_type_token</a></h4>
+<h4><a name="api:mono_class_implements_interface">mono_class_implements_interface</a></h4>
 <h4><a name="api:mono_class_inflate_generic_method">mono_class_inflate_generic_method</a></h4>
 <h4><a name="api:mono_class_inflate_generic_type">mono_class_inflate_generic_type</a></h4>
 <h4><a name="api:mono_class_init">mono_class_init</a></h4>
 <h4><a name="api:mono_class_instance_size">mono_class_instance_size</a></h4>
 <h4><a name="api:mono_class_is_assignable_from">mono_class_is_assignable_from</a></h4>
-<h4><a name="api:mono_class_is_delegate">mono_class_is_delegate</a>
+<h4><a name="api:mono_class_is_delegate">mono_class_is_delegate</a></h4>
 <h4><a name="api:mono_class_is_enum">mono_class_is_enum</a></h4>
 <h4><a name="api:mono_class_is_subclass_of">mono_class_is_subclass_of</a></h4>
 <h4><a name="api:mono_class_is_valuetype">mono_class_is_valuetype</a></h4>
@@ -70,6 +80,7 @@
 <h4><a name="api:mono_class_value_size">mono_class_value_size</a></h4>
 <h4><a name="api:mono_class_vtable">mono_class_vtable</a></h4>
 
+<a name="class-members">
 <h3>Getting Class Members</h3>
 
 <h4><a name="api:mono_class_get_fields">mono_class_get_fields</a></h4>
@@ -82,14 +93,16 @@
 <h4><a name="api:mono_class_get_property_from_name">mono_class_get_property_from_name</a></h4>
 <h4><a name="api:mono_class_get_events">mono_class_get_events</a></h4>
 
+<a name="class-fields">
 <h3>Fields</h3>
 
 <h4><a name="api:mono_field_get_data">mono_field_get_data</a></h4>
 <h4><a name="api:mono_field_get_offset">mono_field_get_offset</a></h4>
 <h4><a name="api:mono_field_full_name">mono_field_full_name</a></h4>
 
-<h3>Methods</h3>
+<h3>Method Accessibility</h3>
 
-<h4><a name="api:mono_get_inflated_method">mono_get_inflated_method</a></h4>
 <h4><a name="api:mono_method_can_access_field">mono_method_can_access_field</a></h4>
 <h4><a name="api:mono_method_can_access_method">mono_method_can_access_method</a></h4>
+
+<p>

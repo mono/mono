@@ -60,22 +60,26 @@ if ($html){
    .api {
      padding: 10pt;
      margin: 10pt;
+     border: 3px solid #ddd;
    } 
 
    .api-entry { 
        border-bottom: none;
-       font-size: 120%;
+       font-size: 150%;
+       font-family: "Consolas", "Courier", monospace;
+       padding-bottom: .5em;
    }
 
    .prototype {
      border: 3px solid #ecf0f1;
      border-radius: 6px;
-     padding: 1em 1.2em;
+     padding: .5em;
      margin-top: 5pt;
      margin-bottom: 5pt;
      font-family: "Consolas", "Courier", monospace;
      display: block;
      overflow: auto;
+     background-color: #f9f9f9;
    } 
 
    .header {
@@ -93,12 +97,19 @@ if ($html){
      white-space: pre;
        font-family: monospace;
    }
+
+   .strike {
+      text-decoration: line-through;
+   }
+	.deprecated {
+	    color: red;
+	}
    </style>
 </head>
 <body>
 EOF
 	@a = split (/\n/, $files_content[$f]);
-
+	$strikeextra = "";
 	for ($ai = 0; $ai < $#a; $ai++){
 	    $line = $a[$ai];
 	    
@@ -106,9 +117,13 @@ EOF
 	    if ($api ne ""){
 		if ($api_shown == 1){
 		    print OUT "</div>";
-		if ($deprecated{$api}){
-		    print OUT "<p><b>DEPRECATED ${deprecated{$api}}</b>";
-		}
+		    if ($deprecated{$api}){
+			$strike = "strike";
+			$strikeextra = "</div><br><div class='deprecated'><b>Deprecated:</b> " . $deprecated{$api};
+		    } else {
+			$strike = "";
+			$strikeextra = "";
+		    }
 		}
 		$api_shown = 1;
 		$proto = $prototype{$api};
@@ -119,8 +134,8 @@ EOF
 print OUT<<EOF;
  <a name="api:$api"></a>
  <div class="api">
-    <div class="api-entry">$api</div>
-
+    <div class="api-entry $strike">$api$strikeextra</div>
+    <div><b>Syntax</b></div>
     <div class="prototype">$proto</div>
 <p>
 EOF
