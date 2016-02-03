@@ -1344,8 +1344,8 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 		MONO_OBJECT_SETREF (async_call, cb_target, async_callback);
 	}
 
-	async_result = mono_async_result_new (domain, NULL, async_call->state, NULL, (MonoObject*) async_call);
-	MONO_OBJECT_SETREF (async_result, async_delegate, target);
+	async_result = mono_async_result_new (domain, target, async_call->state, NULL);
+	MONO_OBJECT_SETREF (async_result, object_data, (MonoObject*) async_call);
 
 	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result);
 

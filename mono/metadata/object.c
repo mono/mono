@@ -6643,19 +6643,18 @@ mono_runtime_capture_context (MonoDomain *domain)
 
 	return runtime_invoke (NULL, NULL, NULL, domain->capture_context_method);
 }
+
 /**
  * mono_async_result_new:
  * @domain:domain where the object will be created.
- * @handle: wait handle.
+ * @delegate: delegate to pass to AsyncResult
  * @state: state to pass to AsyncResult
- * @data: C closure data.
+ * @callback: callback to call after the delegate has been called
  *
  * Creates a new MonoAsyncResult (AsyncResult C# class) in the given domain.
- * If the handle is not null, the handle is initialized to a MonOWaitHandle.
- *
  */
 MonoAsyncResult *
-mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpointer data, MonoObject *object_data)
+mono_async_result_new (MonoDomain *domain, MonoObject *delegate, MonoObject *state, MonoObject *callback)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6669,11 +6668,9 @@ mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpo
 		/* note: result may be null if the flow is suppressed */
 	}
 
-	res->data = (void **)data;
-	MONO_OBJECT_SETREF (res, object_data, object_data);
+	MONO_OBJECT_SETREF (res, async_delegate, delegate);
 	MONO_OBJECT_SETREF (res, async_state, state);
-	if (handle != NULL)
-		MONO_OBJECT_SETREF (res, handle, (MonoObject *) mono_wait_handle_new (domain, handle));
+	MONO_OBJECT_SETREF (res, async_callback, callback);
 
 	res->sync_completed = FALSE;
 	res->completed = FALSE;
@@ -6681,23 +6678,24 @@ mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpo
 	return res;
 }
 
-MonoObject *
+void
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoError error;
 	MonoAsyncCall *ac;
-	MonoObject *res;
 
 	g_assert (ares);
 	g_assert (ares->async_delegate);
 
 	ac = (MonoAsyncCall*) ares->object_data;
 	if (!ac) {
-		res = mono_runtime_delegate_invoke (ares->async_delegate, (void**) &ares->async_state, NULL);
+		/* remoting case */
+		mono_runtime_delegate_invoke (ares->async_delegate, (void**) &ares->async_state, NULL);
 	} else {
-		gpointer wait_event = NULL;
+		/* threadpool case */
+		MonoObject *res;
 
 		ac->msg->exc = NULL;
 		res = mono_message_invoke (ares->async_delegate, ac->msg, &ac->msg->exc, &ac->out_args);
@@ -6705,20 +6703,21 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 
 		mono_monitor_enter ((MonoObject*) ares);
 		ares->completed = 1;
-		if (ares->handle)
-			wait_event = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle);
-		mono_monitor_exit ((MonoObject*) ares);
+		if (ares->handle) {
+			gpointer wait_handle;
 
-		if (wait_event != NULL)
-			SetEvent (wait_event);
+			wait_handle = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle);
+			g_assert (wait_handle);
+
+			SetEvent (wait_handle);
+		}
+		mono_monitor_exit ((MonoObject*) ares);
 
 		if (ac->cb_method) {
 			mono_runtime_invoke_checked (ac->cb_method, ac->cb_target, (gpointer*) &ares, &error);
 			mono_error_raise_exception (&error);
 		}
 	}
-
-	return res;
 }
 
 void

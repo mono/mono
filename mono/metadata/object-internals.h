@@ -642,10 +642,9 @@ MONO_COLD void mono_set_pending_exception (MonoException *exc);
 /* remoting and async support */
 
 MonoAsyncResult *
-mono_async_result_new	    (MonoDomain *domain, HANDLE handle, 
-			     MonoObject *state, gpointer data, MonoObject *object_data);
+mono_async_result_new (MonoDomain *domain, MonoObject* delegate, MonoObject *state, MonoObject *callback);
 
-MonoObject *
+void
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
 
 MonoWaitHandle *

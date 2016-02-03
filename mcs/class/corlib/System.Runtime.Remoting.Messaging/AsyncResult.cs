@@ -215,6 +215,6 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	}
 
 	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	internal extern object Invoke ();
+	internal extern void Invoke ();
 }
 }
