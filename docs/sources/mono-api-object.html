@@ -6,8 +6,10 @@
 
 	<p>The object API has methods for accessing <a
 	href="#fields">fields</a>, <a
-	href="#properties">properties</a>, <a
+	href="#properties">properties</a>, <a href="mono-api-methods.html">methods</a>, <a
 	href="#events">events</a>, <a href="#delegates">delegates</a>.
+	
+
 
 	<p>There are some advanced uses that are useful to document
 	here dealing with <a href="#remote">remote fields</a>.
@@ -94,6 +96,8 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_object_unbox">mono_object_unbox</a></h4>
 <h4><a name="api:mono_object_castclass_mbyref">mono_object_castclass_mbyref</a></h4>
 <h4><a name="api:mono_object_get_size">mono_object_get_size</a></h4>
+<h4><a name="api:mono_object_hash">mono_object_hash</a></h4>
+<h4><a name="api:mono_object_to_string">mono_object_to_string</a></h4>
 
 <a name="valuetypes"></a>
 <h2>Value Types</h2>
@@ -190,3 +194,7 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_store_remote_field">mono_store_remote_field</a></h4>
 <h4><a name="api:mono_store_remote_field_new">mono_store_remote_field_new</a></h4>
 
+<a name="delegates"></a>
+<h2>Delegates</h2>
+<h4><a name="api:mono_get_delegate_begin_invoke">mono_get_delegate_begin_invoke</a></h4>
+<h4><a name="api:mono_get_delegate_end_invoke">mono_get_delegate_end_invoke</a></h4>

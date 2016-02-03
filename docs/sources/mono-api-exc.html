@@ -6,6 +6,15 @@
 
 <h3>Raising and Catching exceptions</h3>
 
+	<p>With the introduction of the Cooperative mode/Bitcode for
+	the Mono garbage collector, it is no longer recommended for
+	embedded developers to raise exceptions from any method except
+	the topmost registered internal call.
+
+	<p>It is recommended that you raise an error condition from
+	nested parts of code, surface this error and in the topmost
+	frame raise the exception.
+	
 <h4><a name="api:mono_raise_exception">mono_raise_exception</a></h4>
 <h4><a name="api:mono_unhandled_exception">mono_unhandled_exception</a></h4>
 <h4><a name="api:mono_print_unhandled_exception">mono_print_unhandled_exception</a></h4>
@@ -56,3 +65,10 @@
 <h4><a name="api:mono_get_exception_missing_field">mono_get_exception_missing_field</a></h4>
 <h4><a name="api:mono_get_exception_not_supported">mono_get_exception_not_supported</a></h4>
 <h4><a name="api:mono_get_exception_reflection_type_load">mono_get_exception_reflection_type_load</a></h4>
+<h4><a name="api:mono_exception_from_token_two_strings">mono_exception_from_token_two_strings</a></h4>
+<h4><a name="api:mono_get_exception_bad_image_format2">mono_get_exception_bad_image_format2</a></h4>
+<h4><a name="api:mono_get_exception_field_access">mono_get_exception_field_access</a></h4>
+<h4><a name="api:mono_get_exception_method_access">mono_get_exception_method_access</a></h4>
+<h4><a name="api:mono_get_exception_out_of_memory">mono_get_exception_out_of_memory</a></h4>
+<h4><a name="api:mono_get_exception_runtime_wrapped">mono_get_exception_runtime_wrapped</a></h4>
+<h4><a name="api:mono_get_exception_thread_interrupted">mono_get_exception_thread_interrupted</a></h4>
