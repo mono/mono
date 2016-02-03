@@ -1,8 +1,0 @@
-2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* ReaderWriterLockSlimTest.cs : test for bug #512485, by
-	  Kazuki Oikawa.
-
-2009-01-18  Marek Safar  <marek.safar@gmail.com>
-
-	* Initial entry.

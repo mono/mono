@@ -37,7 +37,6 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/*.xsd)		\
 	$(wildcard Test/System.Xml/*.xml)		\
 	$(wildcard Test/System.Xml/*.xsd)		\
-	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	app_test_net_4_x.config			\
 	Test/System.Data/binserialize/*.bin	\

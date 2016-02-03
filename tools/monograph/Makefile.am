@@ -56,5 +56,4 @@ graphs: $(OUT)
 	./monograph -n -o $*.png corlib.dll $*
 	convert -geometry '480x360>' $*.png $*.jpeg
 
-EXTRA_DIST = ChangeLog
 

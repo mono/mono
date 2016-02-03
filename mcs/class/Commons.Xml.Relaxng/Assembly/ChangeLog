@@ -1,9 +1,0 @@
-2005-02-06  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* AssemblyInfo.cs : minimum information.
-
-2004-04-30  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: Added
-	* ChangeLog: Added
-	* Locale.cs: Added

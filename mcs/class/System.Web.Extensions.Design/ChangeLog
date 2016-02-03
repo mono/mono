@@ -1,8 +1,0 @@
-2007-09-11  Marek Habersack  <mhabersack@novell.com>
-
-	* Assembly/AssemblyInfo.cs: added
-
-	* System.Web.Extensions.Design.dll.sources: added
-
-	* Makefile: added
-

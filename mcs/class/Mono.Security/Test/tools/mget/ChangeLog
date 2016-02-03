@@ -1,6 +1,0 @@
-2006-09-08  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* ChangeLog: New. Track changes for mget.
-	* Makefile: New. Build and clean mget.
-	* mget.cs: Source code for mget test tool.
-	* README: Information about mget.

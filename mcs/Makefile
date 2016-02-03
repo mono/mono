@@ -85,7 +85,6 @@ package := mcs-$(VERSION)
 
 DISTFILES = \
 	AUTHORS			\
-	ChangeLog		\
 	COPYING			\
 	COPYING.LIB		\
 	INSTALL.txt		\
