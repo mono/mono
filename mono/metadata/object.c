@@ -4891,11 +4891,10 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
  * specified MonoDomain.
  */
 MonoArray*
-mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
+mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
 	MonoArray *o;
 	uintptr_t size, i;
 	uintptr_t *sizes;
@@ -4903,8 +4902,10 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 
 	if (array->bounds == NULL) {
 		size = mono_array_length (array);
-		o = mono_array_new_full_checked (domain, klass, &size, NULL, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+		o = mono_array_new_full_checked (domain, klass, &size, NULL, error);
+		if (!mono_error_ok (error))
+			return NULL;
 
 		size *= mono_array_element_size (klass);
 #ifdef HAVE_SGEN_GC
@@ -4929,8 +4930,11 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 		size *= array->bounds [i].length;
 		sizes [i + klass->rank] = array->bounds [i].lower_bound;
 	}
-	o = mono_array_new_full_checked (domain, klass, sizes, (intptr_t*)sizes + klass->rank, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	o = mono_array_new_full_checked (domain, klass, sizes, (intptr_t*)sizes + klass->rank, error);
+	if (!mono_error_ok (error))
+		return NULL;
+
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
 		if (klass->element_class->has_references)
@@ -4958,7 +4962,11 @@ mono_array_clone (MonoArray *array)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return mono_array_clone_in_domain (((MonoObject *)array)->vtable->domain, array);
+	MonoError error;
+	MonoArray *arr = mono_array_clone_in_domain (mono_object_domain (array), array, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return arr;
 }
 
 /* helper macros to check for overflow when calculating the size of arrays */
