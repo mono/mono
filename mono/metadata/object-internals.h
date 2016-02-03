@@ -1690,6 +1690,9 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error);
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
+MonoObject*
+mono_runtime_invoke_array_checked (MonoMethod *method, void *obj, MonoArray *params, MonoObject **exc, MonoError *error);
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 

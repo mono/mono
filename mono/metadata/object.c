@@ -4305,17 +4305,29 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
  * reference.
  */
 MonoObject*
-mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
-			   MonoObject **exc)
+mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params, MonoObject **exc)
+{
+	MonoError error;
+	MonoObject *ret = mono_runtime_invoke_array_checked (method, obj, params, exc, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject*
+mono_runtime_invoke_array_checked (MonoMethod *method, void *obj, MonoArray *params, MonoObject **exc, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig;
 	gpointer *pa = NULL;
 	MonoObject *res;
 	int i;
 	gboolean has_byref_nullables = FALSE;
+
+	mono_error_init (error);
+
+	sig = mono_method_signature (method);
 
 	if (NULL != params) {
 		pa = (void **)alloca (sizeof (gpointer) * mono_array_length (params));
@@ -4399,7 +4411,7 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 				break;
 			}
 			default:
-				g_error ("type 0x%x not handled in mono_runtime_invoke_array", sig->params [i]->type);
+				g_error ("type 0x%x not handled in mono_runtime_invoke_array_checked", sig->params [i]->type);
 			}
 		}
 	}
@@ -4466,8 +4478,9 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 			g_assert (res->vtable->klass == mono_defaults.int_class);
 			box_args [0] = ((MonoIntPtr*)res)->m_value;
-			box_args [1] = mono_type_get_object_checked (mono_domain_get (), sig->ret, &error);
-			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			box_args [1] = mono_type_get_object_checked (mono_domain_get (), sig->ret, error);
+			if (!mono_error_ok (error))
+				return NULL;
 
 			res = mono_runtime_invoke (box_method, NULL, box_args, &box_exc);
 			g_assert (!box_exc);
@@ -6567,7 +6580,8 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 	mono_gc_wbarrier_generic_store (out_args, (MonoObject*) arr);
 	*exc = NULL;
 
-	ret = mono_runtime_invoke_array (method, method->klass->valuetype? mono_object_unbox (target): target, msg->args, exc);
+	ret = mono_runtime_invoke_array_checked (method, method->klass->valuetype? mono_object_unbox (target): target, msg->args, exc, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	for (i = 0, j = 0; i < sig->param_count; i++) {
 		if (sig->params [i]->byref) {
