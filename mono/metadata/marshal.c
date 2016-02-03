@@ -138,6 +138,9 @@ mono_marshal_set_last_error_windows (int error);
 static MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache);
 
+static MonoObject*
+ves_icall_object_isinst (MonoObject *obj, MonoClass *klass);
+
 static void init_safe_handle (void);
 
 static void*
@@ -231,7 +234,7 @@ mono_marshal_init (void)
 		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", "void ptr ptr int32", FALSE);
 		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", "void ptr ptr int32", FALSE);
 		register_icall (g_free, "g_free", "void ptr", FALSE);
-		register_icall (mono_object_isinst, "mono_object_isinst", "object object ptr", FALSE);
+		register_icall (ves_icall_object_isinst, "ves_icall_object_isinst", "object object ptr", FALSE);
 		register_icall (mono_struct_delete_old, "mono_struct_delete_old", "void ptr ptr", FALSE);
 		register_icall (mono_delegate_begin_invoke, "mono_delegate_begin_invoke", "object object ptr", FALSE);
 		register_icall (mono_delegate_end_invoke, "mono_delegate_end_invoke", "object object ptr", FALSE);
@@ -8373,7 +8376,9 @@ mono_marshal_get_castclass_with_cache (void)
 static MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache)
 {
-	MonoObject *isinst = mono_object_isinst (obj, klass);
+	MonoError error;
+	MonoObject *isinst = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 #ifndef DISABLE_REMOTING
 	if (obj->vtable->klass == mono_defaults.transparent_proxy_class)
@@ -8387,6 +8392,16 @@ mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *ca
 	*cache = cache_update;
 
 	return isinst;
+}
+
+static MonoObject*
+ves_icall_object_isinst (MonoObject *obj, MonoClass *klass)
+{
+	MonoError error;
+	MonoObject *ret = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 /*
@@ -9233,7 +9248,7 @@ get_virtual_stelemref_wrapper (int kind)
 		<ldelema (bound check)>
 		if (!value)
 			goto store;
-		if (!mono_object_isinst (value, aklass))
+		if (!ves_icall_object_isinst (value, aklass))
 			goto do_exception;
 
 		 do_store:
@@ -9273,10 +9288,10 @@ get_virtual_stelemref_wrapper (int kind)
 		/* aklass = array->vtable->klass->element_class */
 		load_array_class (mb, aklass);
 
-		/*if (mono_object_isinst (value, aklass)) */
+		/*if (ves_icall_object_isinst (value, aklass)) */
 		mono_mb_emit_ldarg (mb, 2);
 		mono_mb_emit_ldloc (mb, aklass);
-		mono_mb_emit_icall (mb, mono_object_isinst);
+		mono_mb_emit_icall (mb, ves_icall_object_isinst);
 		b2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 		/* do_store: */
@@ -9387,10 +9402,10 @@ get_virtual_stelemref_wrapper (int kind)
 		/* vklass = value->vtable->klass */
 		load_value_class (mb, vklass);
 
-		/*if (mono_object_isinst (value, aklass)) */
+		/*if (ves_icall_object_isinst (value, aklass)) */
 		mono_mb_emit_ldarg (mb, 2);
 		mono_mb_emit_ldloc (mb, aklass);
-		mono_mb_emit_icall (mb, mono_object_isinst);
+		mono_mb_emit_icall (mb, ves_icall_object_isinst);
 		b2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 		/* if (vklass->idepth < aklass->idepth) goto failue */
@@ -9637,7 +9652,7 @@ mono_marshal_get_stelemref (void)
 		return;
 	
 	long:
-		if (mono_object_isinst (value, aklass))
+		if (ves_icall_object_isinst (value, aklass))
 			goto store;
 		
 		throw new ArrayTypeMismatchException ();
@@ -9716,7 +9731,7 @@ mono_marshal_get_stelemref (void)
 	
 	mono_mb_emit_ldarg (mb, 2);
 	mono_mb_emit_ldloc (mb, aklass);
-	mono_mb_emit_icall (mb, mono_object_isinst);
+	mono_mb_emit_icall (mb, ves_icall_object_isinst);
 	
 	b4 = mono_mb_emit_branch (mb, CEE_BRTRUE);
 	mono_mb_patch_addr (mb, b4, copy_pos - (b4 + 4));
