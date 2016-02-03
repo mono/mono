@@ -1894,6 +1894,7 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 	}
 
 	if (!ccw) {
+		MonoError error;
 		ccw = g_new0 (MonoCCW, 1);
 #ifdef HOST_WIN32
 		ccw->free_marshaler = 0;
@@ -1913,7 +1914,8 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 		g_hash_table_insert (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)), ccw_list);
 		mono_cominterop_unlock ();
 		/* register for finalization to clean up ccw */
-		mono_object_register_finalizer (object);
+		mono_object_register_finalizer (object, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 	}
 
 	cinfo = mono_custom_attrs_from_class (itf);

@@ -39,6 +39,8 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-coop-semaphore.h>
+#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-internals.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -71,7 +73,7 @@ static MonoCoopCond exited_cond;
 
 static MonoInternalThread *gc_thread;
 
-static void object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*));
+static gboolean object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*), MonoError *error);
 
 static void reference_queue_proccess_all (void);
 static void mono_reference_queue_cleanup (void);
@@ -108,6 +110,7 @@ static gboolean suspend_finalizers = FALSE;
 void
 mono_gc_run_finalize (void *obj, void *data)
 {
+	MonoError error;
 	MonoObject *exc = NULL;
 	MonoObject *o;
 #ifndef HAVE_SGEN_GC
@@ -161,7 +164,8 @@ mono_gc_run_finalize (void *obj, void *data)
 #endif
 
 	/* make sure the finalizer is not called again if the object is resurrected */
-	object_register_finalizer ((MonoObject *)obj, NULL);
+	object_register_finalizer ((MonoObject *)obj, NULL, &error);
+	mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Registered finalizer as processed.", o->vtable->klass->name, o);
@@ -267,12 +271,15 @@ mono_gc_run_finalize (void *obj, void *data)
 void
 mono_gc_finalize_threadpool_threads (void)
 {
+	MonoError error;
+
 	while (threads_to_finalize) {
 		MonoInternalThread *thread = (MonoInternalThread*) mono_mlist_get_data (threads_to_finalize);
 
 		/* Force finalization of the thread. */
 		thread->threadpool_thread = FALSE;
-		mono_object_register_finalizer ((MonoObject*)thread);
+		mono_object_register_finalizer ((MonoObject*)thread, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 
 		mono_gc_run_finalize (thread, NULL);
 
@@ -301,13 +308,17 @@ mono_gc_out_of_memory (size_t size)
  * We also need to be consistent in the use of the GC_debug* variants of malloc and register_finalizer, 
  * since that, too, can cause the underlying pointer to be offset.
  */
-static void
-object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
+static gboolean
+object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*), MonoError *error)
 {
 	MonoDomain *domain;
 
-	if (obj == NULL)
-		mono_raise_exception (mono_get_exception_argument_null ("obj"));
+	mono_error_init (error);
+
+	if (obj == NULL) {
+		mono_error_set_argument_null (error, "obj", "");
+		return FALSE;
+	}
 
 	domain = obj->vtable->domain;
 
@@ -317,7 +328,7 @@ object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 		 * Can't register finalizers in a dying appdomain, since they
 		 * could be invoked after the appdomain has been unloaded.
 		 */
-		return;
+		return FALSE;
 
 	mono_domain_finalizers_lock (domain);
 
@@ -335,24 +346,29 @@ object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 	 * end up running them while or after the domain is being cleared, so
 	 * the objects will not be valid anymore.
 	 */
-	if (!mono_domain_is_unloading (domain))
-		mono_gc_register_for_finalization (obj, callback);
+	if (mono_domain_is_unloading (domain))
+		return FALSE;
+
+	mono_gc_register_for_finalization (obj, callback);
 #endif
+
+	return TRUE;
 }
 
 /**
  * mono_object_register_finalizer:
  * @obj: object to register
+ * @error: a MonoError
  *
  * Records that object @obj has a finalizer, this will call the
  * Finalize method when the garbage collector disposes the object.
  * 
  */
-void
-mono_object_register_finalizer (MonoObject *obj)
+gboolean
+mono_object_register_finalizer (MonoObject *obj, MonoError *error)
 {
 	/* g_print ("Registered finalizer on %p %s.%s\n", obj, mono_object_class (obj)->name_space, mono_object_class (obj)->name); */
-	object_register_finalizer (obj, mono_gc_run_finalize);
+	return object_register_finalizer (obj, mono_gc_run_finalize, error);
 }
 
 /**
@@ -470,14 +486,18 @@ ves_icall_System_GC_KeepAlive (MonoObject *obj)
 void
 ves_icall_System_GC_ReRegisterForFinalize (MonoObject *obj)
 {
+	MonoError error;
 	MONO_CHECK_ARG_NULL (obj,);
 
-	object_register_finalizer (obj, mono_gc_run_finalize);
+	object_register_finalizer (obj, mono_gc_run_finalize, &error);
+	mono_error_raise_exception (&error);
 }
 
 void
 ves_icall_System_GC_SuppressFinalize (MonoObject *obj)
 {
+	MonoError error;
+
 	MONO_CHECK_ARG_NULL (obj,);
 
 	/* delegates have no finalizers, but we register them to deal with the
@@ -491,7 +511,8 @@ ves_icall_System_GC_SuppressFinalize (MonoObject *obj)
 	 * generated for it that needs cleaned up, but user wants to suppress
 	 * their derived object finalizer. */
 
-	object_register_finalizer (obj, NULL);
+	object_register_finalizer (obj, NULL, &error);
+	mono_error_raise_exception (&error);
 }
 
 void
@@ -1055,6 +1076,7 @@ mono_gc_reference_queue_new (mono_reference_queue_callback callback)
 gboolean
 mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data)
 {
+	MonoError error;
 	RefQueueEntry *entry;
 	if (queue->should_be_deleted)
 		return FALSE;
@@ -1064,7 +1086,8 @@ mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *u
 	entry->domain = mono_object_domain (obj);
 
 	entry->gchandle = mono_gchandle_new_weakref (obj, TRUE);
-	mono_object_register_finalizer (obj);
+	mono_object_register_finalizer (obj, &error);
+	mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 
 	ref_list_push (&queue->queue, entry);
 	return TRUE;
