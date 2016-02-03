@@ -29,7 +29,7 @@ namespace MonoTests.System.Threading {
 			// this makes fair for the "DueTime" test since it 
 			// doesn't have to wait for the scheduler thread to be 
 			// created. 
-			new Timer (new TimerCallback (DoNothing), null, Timeout.Infinite, 0);
+			new Timer (o => DoNothing (o), null, Timeout.Infinite, 0);
 		}
 
 		void DoNothing (object foo)
@@ -40,7 +40,7 @@ namespace MonoTests.System.Threading {
 		public void TestDueTime ()
 		{
 			Bucket bucket = new Bucket();
-			Timer t = new Timer (new TimerCallback (Callback), bucket, 200, Timeout.Infinite);
+			Timer t = new Timer (o => Callback (o), bucket, 200, Timeout.Infinite);
 			Thread.Sleep (50);
 			Assert.AreEqual (0, bucket.count, "#1");
 			Thread.Sleep (200);
@@ -57,7 +57,7 @@ namespace MonoTests.System.Threading {
 		public void TestChange ()
 		{
 			Bucket bucket = new Bucket();
-			Timer t = new Timer (new TimerCallback (Callback), bucket, 10, 10);
+			Timer t = new Timer (o => Callback (o), bucket, 10, 10);
 			Thread.Sleep (500);
 			int c = bucket.count;
 			Assert.IsTrue (c > 20, "#1 " + c.ToString ());
@@ -73,7 +73,7 @@ namespace MonoTests.System.Threading {
 		{
 			Bucket bucket = new Bucket();
 
-			Timer t = new Timer (new TimerCallback (Callback), bucket, 0, Timeout.Infinite);
+			Timer t = new Timer (o => Callback (o), bucket, 0, Timeout.Infinite);
 			Thread.Sleep (100);
 			Assert.AreEqual (1, bucket.count, "#1");
 			t.Change (0, Timeout.Infinite);
@@ -86,7 +86,7 @@ namespace MonoTests.System.Threading {
 		public void TestDispose ()
 		{	
 			Bucket bucket = new Bucket();
-			Timer t = new Timer (new TimerCallback (Callback), bucket, 10, 10);
+			Timer t = new Timer (o => Callback (o), bucket, 10, 10);
 			Thread.Sleep (200);
 			t.Dispose ();
 			Thread.Sleep (20);
@@ -99,7 +99,7 @@ namespace MonoTests.System.Threading {
 		[Test] // bug #320950
 		public void TestDispose2 ()
 		{
-			Timer t = new Timer (new TimerCallback (Callback), null, 10, 10);
+			Timer t = new Timer (o => Callback (o), null, 10, 10);
 			t.Dispose ();
 			t.Dispose ();
 		}
@@ -109,7 +109,7 @@ namespace MonoTests.System.Threading {
 		{
 			Bucket b = new Bucket ();
 			for (int i = 0; i < 500; ++i)
-				new Timer (new TimerCallback (Callback), b, 10,
+				new Timer (o => Callback (o), b, 10,
 					Timeout.Infinite);
 			// 1000 * 10 msec = 10,000 msec or 10 sec - if everything goes well
 			// we add some slack to cope with timing issues caused by system load etc.
@@ -129,7 +129,7 @@ namespace MonoTests.System.Threading {
 			Bucket b = new Bucket ();
 			ArrayList timers = new ArrayList();
 			while (i < 500) {
-				Timer t = new Timer (new TimerCallback (Callback),
+				Timer t = new Timer (o => Callback (o),
 					b, 10, Timeout.Infinite);
 				timers.Add (t);
 				i++;
@@ -142,7 +142,7 @@ namespace MonoTests.System.Threading {
 		public void TestInt32MaxDelay ()
 		{
 			Bucket b = new Bucket ();
-			new Timer (new TimerCallback (Callback), b, Int32.MaxValue,
+			new Timer (o => Callback (o), b, Int32.MaxValue,
 				Timeout.Infinite);
 			Thread.Sleep (50);
 			Assert.AreEqual (0, b.count);
@@ -152,7 +152,7 @@ namespace MonoTests.System.Threading {
 		public void TestInt32MaxPeriod ()
 		{
 			Bucket b = new Bucket ();
-			new Timer (new TimerCallback (Callback), b, 0,
+			new Timer (o => Callback (o), b, 0,
 				Int32.MaxValue);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, b.count);
@@ -164,7 +164,7 @@ namespace MonoTests.System.Threading {
 		{
 			Bucket b = new Bucket ();
 			try {
-				new Timer (new TimerCallback (Callback), b, -10,
+				new Timer (o => Callback (o), b, -10,
 					Timeout.Infinite);
 				Assert.Fail ();
 			} catch (ArgumentOutOfRangeException) {
@@ -177,7 +177,7 @@ namespace MonoTests.System.Threading {
 		{
 			Bucket b = new Bucket ();
 			try {
-				new Timer (new TimerCallback (Callback), b, 0,
+				new Timer (o => Callback (o), b, 0,
 					-10);
 				Assert.Fail ();
 			} catch (ArgumentOutOfRangeException) {
@@ -189,7 +189,7 @@ namespace MonoTests.System.Threading {
 		public void TestDelayZeroPeriodZero()
 		{
 			Bucket b = new Bucket();
-			Timer t = new Timer(new TimerCallback(Callback),b,0,0);
+			Timer t = new Timer(o => Callback (o),b,0,0);
 			Thread.Sleep(100);
 			t.Change (int.MaxValue, Timeout.Infinite);
 			// since period is 0 the callback should happen once (bug #340212)
@@ -204,7 +204,7 @@ namespace MonoTests.System.Threading {
 			// that was ignored before 238785a3e3d510528228fc551625975bc508c2f3 and most unit test runner won't
 			// report it since the NRE will not happen on the main thread (but Touch.Unit will)
 			Timer t1 = null;
-			t1 = new Timer (new TimerCallback (CallbackTestDisposeOnCallback), t1, 0, 10);
+			t1 = new Timer (o => CallbackTestDisposeOnCallback (o), t1, 0, 10);
 			Thread.Sleep (200);
 			Assert.IsNotNull (t1);
 			
@@ -225,7 +225,7 @@ namespace MonoTests.System.Threading {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void DisposeNullWaitHandle ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Dispose (null);
 			}
 		}
@@ -233,7 +233,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_IntInt_Infinite ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change ((int)Timeout.Infinite, (int)Timeout.Infinite);
 			}
 		}
@@ -241,7 +241,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_IntInt_MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (Int32.MaxValue, Int32.MaxValue);
 			}
 		}
@@ -249,7 +249,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_UIntUInt_Infinite ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (unchecked ((uint) Timeout.Infinite), unchecked ((uint) Timeout.Infinite));
 			}
 		}
@@ -257,7 +257,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_UIntUInt_MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				// UInt32.MaxValue == Timeout.Infinite == 0xffffffff
 				t.Change (UInt32.MaxValue, UInt32.MaxValue);
 			}
@@ -266,7 +266,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_LongLong_Infinite ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change ((long) Timeout.Infinite, (long) Timeout.Infinite);
 			}
 		}
@@ -275,7 +275,7 @@ namespace MonoTests.System.Threading {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Change_LongLong_MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (Int64.MaxValue, Int64.MaxValue);
 			}
 		}
@@ -284,7 +284,7 @@ namespace MonoTests.System.Threading {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Change_LongLong_UInt32MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				// not identical to (long)-1
 				t.Change ((long)UInt32.MaxValue, (long)UInt32.MaxValue);
 			}
@@ -293,7 +293,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_LongLong_UInt32MaxValueMinusOne ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				// not identical to (long)-1
 				t.Change ((long) UInt32.MaxValue - 1, (long) UInt32.MaxValue -1);
 			}
@@ -302,7 +302,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_TimeSpanTimeSpan_Infinite ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (new TimeSpan (-1), new TimeSpan (-1));
 			}
 		}
@@ -311,7 +311,7 @@ namespace MonoTests.System.Threading {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Change_TimeSpanTimeSpan_MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (TimeSpan.MaxValue, TimeSpan.MaxValue);
 			}
 		}
@@ -319,7 +319,7 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void Change_TimeSpanTimeSpan_UInt32MaxValue ()
 		{
-			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (new TimeSpan (UInt32.MaxValue), new TimeSpan (UInt32.MaxValue));
 			}
 		}
