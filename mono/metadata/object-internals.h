@@ -285,15 +285,12 @@ typedef struct {
 	MonoObject  *async_state;
 	MonoObject  *handle;
 	MonoDelegate *async_delegate;
-	gpointer    *data;
 	MonoAsyncCall *async_call;
 	MonoBoolean  sync_completed;
 	MonoBoolean  completed;
 	MonoBoolean  endinvoke_called;
 	MonoDelegate *async_callback;
 	MonoObject  *execution_context;
-	MonoObject  *original_context;
-	gint64	     add_time;
 } MonoAsyncResult;
 
 typedef struct {

@@ -45,15 +45,12 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	object async_state;
 	WaitHandle handle;
 	Delegate async_delegate;
-	IntPtr data;
 	MonoAsyncCall async_call;
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;
 	AsyncCallback async_callback;
-	ExecutionContext current;
-	ExecutionContext original;
-	long add_time;
+	ExecutionContext context;
 #pragma warning restore 169, 414, 649
 
 	// not part of MonoAsyncResult...
@@ -62,36 +59,9 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	IMessageCtrl message_ctrl;
 #pragma warning restore
 	IMessage reply_message;
-	WaitCallback orig_cb;
-	
-	internal AsyncResult ()
+
+	private AsyncResult ()
 	{
-	}
-
-	internal AsyncResult (WaitCallback cb, object state, bool capture_context)
-	{
-		orig_cb = cb;
-		if (capture_context) {
-			var stackMark = default (StackCrawlMark);
-			current = ExecutionContext.Capture (
-				ref stackMark,
-				ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
-			cb = delegate {
-				ExecutionContext.Run(current, ccb, this, true);
-			};
-		}
-
-		async_state = state;
-		async_delegate = cb;
-	}
-
-	static internal ContextCallback ccb = new ContextCallback(WaitCallback_Context);
-
-	static private void WaitCallback_Context(Object state)
-	{
-		AsyncResult obj = (AsyncResult)state;
-		WaitCallback wc = obj.orig_cb as WaitCallback;
-		wc(obj.async_state);
 	}
 
 	public virtual object AsyncState
@@ -205,7 +175,7 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 
 	void IThreadPoolWorkItem.ExecuteWorkItem()
 	{
-		ExecutionContext.Run (current, o => ((AsyncResult) o).Invoke (), this);
+		ExecutionContext.Run (context, o => ((AsyncResult) o).Invoke (), this);
 	}
 
 	void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
