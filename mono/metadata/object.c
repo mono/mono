@@ -6654,7 +6654,7 @@ mono_runtime_capture_context (MonoDomain *domain)
  * Creates a new MonoAsyncResult (AsyncResult C# class) in the given domain.
  */
 MonoAsyncResult *
-mono_async_result_new (MonoDomain *domain, MonoObject *delegate, MonoObject *state, MonoObject *callback)
+mono_async_result_new (MonoDomain *domain, MonoDelegate *delegate, MonoObject *state, MonoDelegate *callback)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6679,45 +6679,15 @@ mono_async_result_new (MonoDomain *domain, MonoObject *delegate, MonoObject *sta
 }
 
 void
-ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares)
+ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_InvokeRemoting (MonoAsyncResult *async_result)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	mono_runtime_delegate_invoke ((MonoObject*) async_result->async_delegate, (void**) &async_result->async_state, NULL);
+}
 
-	MonoError error;
-	MonoAsyncCall *ac;
-
-	g_assert (ares);
-	g_assert (ares->async_delegate);
-
-	ac = (MonoAsyncCall*) ares->object_data;
-	if (!ac) {
-		/* remoting case */
-		mono_runtime_delegate_invoke (ares->async_delegate, (void**) &ares->async_state, NULL);
-	} else {
-		/* threadpool case */
-		MonoObject *res;
-
-		ac->msg->exc = NULL;
-		res = mono_message_invoke (ares->async_delegate, ac->msg, &ac->msg->exc, &ac->out_args);
-		MONO_OBJECT_SETREF (ac, res, res);
-
-		mono_monitor_enter ((MonoObject*) ares);
-		ares->completed = 1;
-		if (ares->handle) {
-			gpointer wait_handle;
-
-			wait_handle = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle);
-			g_assert (wait_handle);
-
-			SetEvent (wait_handle);
-		}
-		mono_monitor_exit ((MonoObject*) ares);
-
-		if (ac->cb_method) {
-			mono_runtime_invoke_checked (ac->cb_method, ac->cb_target, (gpointer*) &ares, &error);
-			mono_error_raise_exception (&error);
-		}
-	}
+MonoObject*
+ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_Invoke (MonoMethodMessage *msg, MonoDelegate *target, MonoObject **exc, MonoArray **out_args)
+{
+	return mono_message_invoke ((MonoObject*) target, msg, exc, out_args);
 }
 
 void

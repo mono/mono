@@ -1315,7 +1315,7 @@ mono_threadpool_ms_cleanup (void)
 }
 
 MonoAsyncResult *
-mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params)
+mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoDelegate *target, MonoMethod *method, gpointer *params)
 {
 	static MonoClass *async_call_klass = NULL;
 	MonoError error;
@@ -1339,13 +1339,8 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 	MONO_OBJECT_SETREF (async_call, msg, message);
 	MONO_OBJECT_SETREF (async_call, state, state);
 
-	if (async_callback) {
-		MONO_OBJECT_SETREF (async_call, cb_method, mono_get_delegate_invoke (((MonoObject*) async_callback)->vtable->klass));
-		MONO_OBJECT_SETREF (async_call, cb_target, async_callback);
-	}
-
-	async_result = mono_async_result_new (domain, target, async_call->state, NULL);
-	MONO_OBJECT_SETREF (async_result, object_data, (MonoObject*) async_call);
+	async_result = mono_async_result_new (domain, target, async_call->state, async_callback);
+	MONO_OBJECT_SETREF (async_result, async_call, async_call);
 
 	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result);
 
@@ -1392,7 +1387,7 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 		MONO_FINISH_BLOCKING;
 	}
 
-	ac = (MonoAsyncCall*) ares->object_data;
+	ac = ares->async_call;
 	g_assert (ac);
 
 	*exc = ac->msg->exc; /* FIXME: GC add write barrier */

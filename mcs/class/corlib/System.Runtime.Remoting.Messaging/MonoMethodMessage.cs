@@ -371,7 +371,9 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 			return outCount > 0 || res;
 		}
-		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object Invoke (Delegate target, ref Exception exc, ref object[] out_args);
 	}
 
 	internal enum CallType: int

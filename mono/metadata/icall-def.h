@@ -711,10 +711,11 @@ ICALL(CONTEXT_1, "RegisterContext", ves_icall_System_Runtime_Remoting_Contexts_C
 ICALL(CONTEXT_2, "ReleaseContext", ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext)
 
 ICALL_TYPE(ARES, "System.Runtime.Remoting.Messaging.AsyncResult", ARES_1)
-ICALL(ARES_1, "Invoke", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke)
+ICALL(ARES_1, "InvokeRemoting", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_InvokeRemoting)
 
 ICALL_TYPE(MONOMM, "System.Runtime.Remoting.Messaging.MonoMethodMessage", MONOMM_1)
 ICALL(MONOMM_1, "InitMessage", ves_icall_MonoMethodMessage_InitMessage)
+ICALL(MONOMM_2, "Invoke", ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_Invoke)
 
 #ifndef DISABLE_REMOTING
 ICALL_TYPE(REALP, "System.Runtime.Remoting.Proxies.RealProxy", REALP_1)
