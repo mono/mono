@@ -1350,6 +1350,9 @@ namespace System.Diagnostics {
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
+			if ((async_mode & AsyncModes.AsyncOutput) != 0)
+				throw new InvalidOperationException ("An async read operation has already been started on the stream.");
+
 			async_mode |= AsyncModes.AsyncOutput;
 
 			if (async_output == null)
@@ -1395,6 +1398,9 @@ namespace System.Diagnostics {
 
 			if ((async_mode & AsyncModes.SyncError) != 0)
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
+
+			if ((async_mode & AsyncModes.AsyncError) != 0)
+				throw new InvalidOperationException ("An async read operation has already been started on the stream.");
 
 			async_mode |= AsyncModes.AsyncError;
 
