@@ -645,7 +645,7 @@ void
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_InvokeRemoting (MonoAsyncResult *async_result);
 
 MonoObject*
-ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_Invoke (MonoMethodMessage *msg, MonoDelegate *target, MonoObject **exc, MonoArray **out_args);
+ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_InvokeRemoting (MonoMethodMessage *msg, MonoTransparentProxy *target, MonoObject **exc, MonoArray **out_args);
 
 MonoWaitHandle *
 mono_wait_handle_new	    (MonoDomain *domain, HANDLE handle);

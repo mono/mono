@@ -6325,6 +6325,18 @@ ves_icall_Remoting_RealProxy_InternalGetProxyType (MonoTransparentProxy *tp)
 
 	return ret;
 }
+
+ICALL_EXPORT MonoBoolean
+ves_icall_System_Runtime_Remoting_Proxies_TransparentProxy_get_IsContextBound (MonoTransparentProxy *tp)
+{
+	return mono_class_is_contextbound (tp->remote_class->proxy_class);
+}
+
+ICALL_EXPORT MonoBoolean
+ves_icall_System_Runtime_Remoting_Proxies_TransparentProxy_get_IsCurrentContext (MonoTransparentProxy *tp)
+{
+	return tp->rp->context == (MonoObject *) mono_context_get ();
+}
 #endif
 
 /* System.Environment */

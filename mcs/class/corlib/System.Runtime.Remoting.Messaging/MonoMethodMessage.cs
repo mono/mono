@@ -34,8 +34,10 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Proxies;
 
 namespace System.Runtime.Remoting.Messaging {
 	
@@ -372,8 +374,64 @@ namespace System.Runtime.Remoting.Messaging {
 			return outCount > 0 || res;
 		}
 
+		internal object Invoke (Delegate target, ref Exception exc, ref object[] out_args)
+		{
+			object target_obj;
+
+			if (!target.IsTransparentProxy ()) {
+				target_obj = target;
+			} else {
+				TransparentProxy target_tp = JitHelpers.UnsafeCast<TransparentProxy> (target);
+				if (!target_tp.IsContextBound || !target_tp.IsCurrentContext)
+					return InvokeRemoting (target_tp, ref exc, ref out_args);
+
+				target_obj = target_tp.RealProxy.Server;
+			}
+
+			/* this exception come from the invocation
+			 * itself, not from the invoked delegate */
+			Exception invocation_exc = null;
+
+			object res = null;
+
+			try {
+				res = method.InternalInvoke (target_obj, args, out invocation_exc);
+			} catch (Exception e) {
+				/* this exception come from the invoked
+				 * delegate */
+
+				if (e is ThreadAbortException)
+					throw e;
+
+				exc = e;
+			}
+
+			if (invocation_exc != null)
+				throw invocation_exc;
+
+			ParameterInfo[] parameters = method.GetParameters ();
+
+			int out_args_len = 0;
+			for (int i = 0; i < parameters.Length; ++i) {
+				if (parameters [i].ParameterType.IsByRef)
+					out_args_len += 1;
+			}
+
+			out_args = new object [out_args_len];
+
+			for (int i = 0, j = 0; i < parameters.Length; ++i) {
+				if (parameters [i].ParameterType.IsByRef)
+					out_args [j++] = args [i];
+			}
+
+			return res;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern object Invoke (Delegate target, ref Exception exc, ref object[] out_args);
+		extern bool IsInvokeRemoting (TransparentProxy target);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern object InvokeRemoting (TransparentProxy target, ref Exception exc, ref object[] out_args);
 	}
 
 	internal enum CallType: int

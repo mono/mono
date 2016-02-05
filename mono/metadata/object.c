@@ -6676,9 +6676,9 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_InvokeRemoting (MonoAsyn
 }
 
 MonoObject*
-ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_Invoke (MonoMethodMessage *msg, MonoDelegate *target, MonoObject **exc, MonoArray **out_args)
+ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_InvokeRemoting (MonoMethodMessage *msg, MonoTransparentProxy *target, MonoObject **exc, MonoArray **out_args)
 {
-	return mono_message_invoke ((MonoObject*) target, msg, exc, out_args);
+	return mono_remoting_invoke ((MonoObject*) target->rp, msg, exc, out_args);
 }
 
 void
@@ -6815,71 +6815,6 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg,
 	return o;
 }
 #endif
-
-MonoObject *
-mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
-		     MonoObject **exc, MonoArray **out_args) 
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	static MonoClass *object_array_klass;
-	MonoError error;
-	MonoDomain *domain; 
-	MonoMethod *method;
-	MonoMethodSignature *sig;
-	MonoObject *ret;
-	MonoArray *arr;
-	int i, j, outarg_count = 0;
-
-#ifndef DISABLE_REMOTING
-	if (target && mono_object_is_transparent_proxy (target)) {
-		MonoTransparentProxy* tp = (MonoTransparentProxy *)target;
-		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
-			target = tp->rp->unwrapped_server;
-		} else {
-			return mono_remoting_invoke ((MonoObject *)tp->rp, msg, exc, out_args);
-		}
-	}
-#endif
-
-	domain = mono_domain_get (); 
-	method = msg->method->method;
-	sig = mono_method_signature (method);
-
-	for (i = 0; i < sig->param_count; i++) {
-		if (sig->params [i]->byref) 
-			outarg_count++;
-	}
-
-	if (!object_array_klass) {
-		MonoClass *klass;
-
-		klass = mono_array_class_get (mono_defaults.object_class, 1);
-		g_assert (klass);
-
-		mono_memory_barrier ();
-		object_array_klass = klass;
-	}
-
-	arr = mono_array_new_specific_checked (mono_class_vtable (domain, object_array_klass), outarg_count, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
-
-	mono_gc_wbarrier_generic_store (out_args, (MonoObject*) arr);
-	*exc = NULL;
-
-	ret = mono_runtime_invoke_array (method, method->klass->valuetype? mono_object_unbox (target): target, msg->args, exc);
-
-	for (i = 0, j = 0; i < sig->param_count; i++) {
-		if (sig->params [i]->byref) {
-			MonoObject* arg;
-			arg = (MonoObject *)mono_array_get (msg->args, gpointer, i);
-			mono_array_setref (*out_args, j, arg);
-			j++;
-		}
-	}
-
-	return ret;
-}
 
 /**
  * mono_object_to_string:

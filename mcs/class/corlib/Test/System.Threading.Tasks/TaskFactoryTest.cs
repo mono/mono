@@ -383,6 +383,8 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				task.Wait (2000);
 			} catch { }
+
+			Assert.IsTrue (task.IsCompleted, "#0");
 			Assert.IsTrue (cont.Wait (2000), "#1");
 
 			Assert.IsTrue (result);

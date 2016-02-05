@@ -51,6 +51,23 @@ namespace System.Runtime.Remoting.Proxies
 		public RealProxy _rp;
 		IntPtr _class;
 		bool _custom_type_info;
+
+		internal RealProxy RealProxy
+		{
+			get { return _rp; }
+		}
+
+		internal extern bool IsContextBound
+		{
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		internal extern bool IsCurrentContext
+		{
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
 	}
 #pragma warning restore 169, 649
 	
@@ -97,6 +114,11 @@ namespace System.Runtime.Remoting.Proxies
 
 			if (stub != IntPtr.Zero)
 				throw new NotSupportedException ("stub is not used in Mono");
+		}
+
+		internal MarshalByRefObject Server
+		{
+			get { return _server; }
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
