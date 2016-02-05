@@ -4759,6 +4759,12 @@ get_pinvoke_import (MonoAotCompile *acfg, MonoMethod *method)
 	
 	return import;
 }
+#else
+static const char *
+get_pinvoke_import (MonoAotCompile *acfg, MonoMethod *method)
+{
+	return NULL;
+}
 #endif
 
 static gint
