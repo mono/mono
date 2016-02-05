@@ -2067,7 +2067,7 @@ class MDocUpdater : MDocCommand
 			if (val == null) value = "null";
 			else if (val is Enum) value = val.ToString();
 			else if (val is IFormattable) {
-				value = ((IFormattable)val).ToString();
+				value = ((IFormattable)val).ToString(null, CultureInfo.InvariantCulture);
 				if (val is string)
 					value = "\"" + value + "\"";
 			}
@@ -4966,7 +4966,7 @@ class ILFullMemberFormatter : MemberFormatter {
 					.Append (val.ToString ())
 					.Append (')');
 			else if (val is IFormattable) {
-				string value = ((IFormattable)val).ToString();
+				string value = ((IFormattable)val).ToString(null, CultureInfo.InvariantCulture);
 				buf.Append (" = ");
 				if (val is string)
 					buf.Append ("\"" + value + "\"");
@@ -5525,7 +5525,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			else if (val is Enum)
 				buf.Append (" = ").Append (val.ToString ());
 			else if (val is IFormattable) {
-				string value = ((IFormattable)val).ToString();
+				string value = ((IFormattable)val).ToString(null, CultureInfo.InvariantCulture);
 				if (val is string)
 					value = "\"" + value + "\"";
 				buf.Append (" = ").Append (value);
