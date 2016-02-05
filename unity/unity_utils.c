@@ -198,3 +198,12 @@ unity_mono_method_is_generic (MonoMethod* method)
 {
 	return method->is_generic;
 }
+
+MonoMethod*
+unity_mono_reflection_method_get_method(MonoReflectionMethod* mrf)
+{
+	if(!mrf)
+		return NULL;
+
+	return mrf->method;
+}
