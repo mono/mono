@@ -1,4 +1,4 @@
-﻿//
+//
 // MemoryCacheTest.cs
 //
 // Authors:
@@ -1293,7 +1293,7 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (10, mc.GetCount (), "#EGV2");
 
-				global::System.Threading.Thread.Sleep (1000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				// we have waited but the items won't be expired by the timer since it wont have fired yet
 				Assert.AreEqual (10, mc.GetCount (), "#EGV3");
