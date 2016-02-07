@@ -758,6 +758,7 @@ typedef enum {
 	LLVMArgInIReg,
 	/* Only in ainfo->pair_storage */
 	LLVMArgInFPReg,
+	/* Valuetype passed in 1-2 consecutive register */
 	LLVMArgVtypeInReg,
 	LLVMArgVtypeByVal,
 	LLVMArgVtypeRetAddr, /* On on cinfo->ret */
