@@ -49,64 +49,179 @@ if ($html){
 <?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-   <title>$name</title>
-   <style type="text/css">
-   h3 { 
-       font-size: 18px;
-       padding-bottom: 4pt;
-       border-bottom: 2px solid #dddddd;
-   }
-       
-   .api {
-     padding: 10pt;
-     margin: 10pt;
-     border: 3px solid #ddd;
-   } 
+    <title>$name</title>
+    <style type="text/css">
+    body {
+	line-height: 1.5;
+	padding-left: 2em;
+	padding-right: 2em;
+    }
+    body code {
+        font-family: "Consolas", "Courier", monospace;
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding-left: 3px;
+	padding-right: 3px;
+    }
 
-   .api-entry { 
-       border-bottom: none;
-       font-size: 150%;
-       font-family: "Consolas", "Courier", monospace;
-       padding-bottom: .5em;
-   }
-
-   .prototype {
-     border: 3px solid #ecf0f1;
-     border-radius: 6px;
-     padding: .5em;
-     margin-top: 5pt;
-     margin-bottom: 5pt;
-     font-family: "Consolas", "Courier", monospace;
-     display: block;
-     overflow: auto;
-     background-color: #f9f9f9;
-   } 
-
-   .header {
-     
-     padding: 0 0 5pt 5pt;
-     margin: 10pt;
-     white-space: pre;
-       font-family: monospace;
-   }
+    .api-entry code {
+        border: none;
+        background-color: transparent;
+    }
+    h3 { 
+    }
     
-   .code {
-     border: 1px solid;
-     padding: 0 0 5pt 5pt;
-     margin: 10pt;
-     white-space: pre;
-       font-family: monospace;
-   }
+    .api-parameters {
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: hide;
+        border: 0;
+        margin: 5px 0 26px;	    
+    }
 
-   .strike {
-      text-decoration: line-through;
-   }
-	.deprecated {
-	    color: red;
-	}
+    .api-parameters td {
+        border: 1px solid rgba(214,214,214,1);
+	  border-left-style: none;
+	padding: 5px 25px 5px 10px;
+    }
+
+    .api-parameters tr>td:last-child  {
+        border-right: 0;
+    }
+	
+    .api-parameters td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+    .api-parameters tr:last-child>td {
+        border-bottom: 0;
+    }
+
+    .api-parameters tr:first-child>td {
+        border-top: 0;
+    }
+
+    .api-parameters tr td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+   .api {
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;
+    } 
+
+    .api-description {
+        background: rgba(249,249,249,1);
+        border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;	 
+    }
+
+     .api-entry {
+         background: transparent;
+     }
+
+     .api-docs {
+     }
+	
+     .prototype {
+         border-left: 5px solid rgba(205,233,244,1);
+         padding: .5em;
+         margin-top: 5pt;
+         margin-bottom: 5pt;
+         font-family: "Consolas", "Courier", monospace;
+         display: block;
+         overflow: auto;
+         background-color: #f9f9f9;
+    } 
+
+    .header {
+        padding: 0 0 5pt 5pt;
+        margin: 10pt;
+	white-space: pre;
+        font-family: monospace;
+	border: 1px solid rgba(233,233,233,1);
+    }
+    
+    .code {
+        border: 1px solid;
+	padding: 0 0 5pt 5pt;
+	margin: 10pt;
+	white-space: pre;
+	font-family: monospace;
+    }
+
+    .declaration {
+	margin-top: 21px;
+    }
+
+    .api-section {
+        font-size: smaller;
+	font-weight: bold;
+	margin-top: 21px;
+	line-height: 1.5;
+    }
+	
+    .strike {
+        text-decoration: line-through;
+    }
+
+    .deprecated {
+        color: red;
+    }
+
+    .api-ptr-container {
+        background: white;
+	border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-bottom: 13px;
+        position: relative;
+        width: 100%;
+    }
+
+    .api-ptr {
+        background: rgba(249,249,249,1);
+	border-left: 1px solid rgba(233,233,233,1);
+	border-top: 1px solid rgba(233,233,233,1);
+        height: 12px;
+        left: 37px;
+        top: -7px;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        width: 12px;
+    }
+
+    .api-height-container {
+        height: 0;
+        left: -25px;
+        padding: 0 25px;
+        position: relative;
+        width: 100%;
+    }
+	
    </style>
 </head>
 <body>
+<div class="api-docs">
 EOF
 	@a = split (/\n/, $files_content[$f]);
 	$strikeextra = "";
@@ -131,32 +246,45 @@ EOF
 		    $proto = "Prototype: $api";
 		}
 
-print OUT<<EOF;
+                print OUT<<EOF;
  <a name="api:$api"></a>
  <div class="api">
-    <div class="api-entry $strike">$api$strikeextra</div>
-    <div><b>Syntax</b></div>
-    <div class="prototype">$proto</div>
+ <div class="api-entry $strike"><code>$api$strikeextra</code></div>
+ <div class="api-height-container">
+    <div class="api-ptr-container"></div>
+    <div class="api-description">
+    <div class="api-ptr"></div>
+
+      <div class="declaration api-section">Syntax</div>
+      <div class="prototype">$proto</div>
 <p>
 EOF
-		    &opt_print ("Parameters", $arguments{$api}, 1);
-		    &opt_print ("Returns", $returns{$api}, 1);
-		    &opt_print ("Description", $bodies{$api}, 0);
-		    print OUT "\n";
+
+#		if ($arguments{$api} ne "" && (!($arguments{$api}) =~ /^[ \t]+$/)){
+		    print OUT "<div class=\"api-section\">Parameters</div>\n";
+		    print OUT "<table class=\"api-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
+#	        }
+#		&opt_print ("Parameters", $arguments{$api}, 1);
+	    
+		&opt_print ("Returns", $returns{$api}, 1);
+		&opt_print ("Description", $bodies{$api}, 0);
+		print OUT "\n";
 	    } else {
 		if ($line =~ /@API_IDX@/){
 		    $apis_toc = &create_toc ($apis[$f]);
 		    $line =~ s/\@API_IDX\@/$apis_toc/;
 		}
-		if ($line =~ /^<h/){
-		    print OUT "</div>";
+		if ($line =~ /^<h4/){
+		    print OUT "</div></div></div>";
 		    $api_shown = 0;
 		}
-
+		if ($line =~ /`/){
+		}
 		print OUT "$line\n";
 	    }
 	}
 	print OUT<<EOF;
+   </div>
 </body>
 </html>
 EOF
@@ -192,11 +320,22 @@ sub process_doc {
 	
 	# Process arguments
 	while (<>){
-		if (/^ \*\*?\//){
-		    $body =~ s/[@#](\w+)/<i>\1<\/i>/g;
-		    $returns =~ s/[@#](\w+)/<i>\1<\/i>/g;
-
+	    s/NULL/<code>NULL<\/code>/g;
+	    s/TRUE/<code>TRUE<\/code>/g;
+	    s/FALSE/<code>FALSE<\/code>/g;
+	    if (/^ \*\*?\//){
+		    $body =~ s/@(\w+)/<i>\1<\/i>/g;
+		    $returns =~ s/@(\w+)/<i>\1<\/i>/g;
 		    $args =~ s/@(\w+)/<i>\1<\/i>/g;
+
+		    $body =~ s/#(\w+)/<code>\1<\/code>/g;
+		    $returns =~ s/#(\w+)/<code>\1<\/code>/g;
+		    $args =~ s/#(\w+)/<code>\1<\/code>/g;
+
+		    $returns =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
+		    $args =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
+		    $body =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
+		    
 		    $body =~ s/\n/ /;
 		    $bodies{$func} = $body;
 		    $arguments{$func} = $args;
@@ -224,7 +363,8 @@ sub process_doc {
 			if ($1 eq "deprecated"){
 			    $deprecated = $2;
 			} else {
-			    $args .= "<dt><i>$1:</i></dt><dd>$2</dd>";
+			    #$args .= "<dt><i>$1:</i></dt><dd>$2</dd>";
+			    $args .= "<tr><td><i>$1</i><td>$2</td></td></tr>";
 			}
 		    } else {
 			
@@ -315,7 +455,7 @@ sub opt_print {
     my ($caption, $opttext, $quote) = @_;
 
     if ($opttext ne "" && (!($opttext =~ /^[ \t]+$/))){
-	print OUT "<b>$caption</b>\n";
+	print OUT "<div class=\"api-section\">$caption</div>\n";
 	if ($quote == 1){
 	    print OUT "<blockquote>$opttext</blockquote>\n";
 	} else {
