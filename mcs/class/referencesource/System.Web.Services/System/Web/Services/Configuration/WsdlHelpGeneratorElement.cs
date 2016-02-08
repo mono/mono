@@ -75,6 +75,7 @@ namespace System.Web.Services.Configuration
 			try {
 				var hack = this.EvaluationContext;
 			} catch (ConfigurationErrorsException) {
+				this.actualPath = GetConfigurationDirectory();
 				return;
 			}
 #endif
@@ -127,6 +128,7 @@ namespace System.Web.Services.Configuration
 				var hack = this.EvaluationContext;
 			} catch (ConfigurationErrorsException) {
 				base.Reset(parentElement);
+				this.actualPath = GetConfigurationDirectory();
 				return;
 			}
 #endif
