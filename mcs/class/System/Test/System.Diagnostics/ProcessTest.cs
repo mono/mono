@@ -1019,6 +1019,7 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
@@ -1058,5 +1059,6 @@ namespace MonoTests.System.Diagnostics
 				Assert.Fail ();
 			}
 		}
+#endif // MONO_FEATURE_PROCESS_START
 	}
 }
