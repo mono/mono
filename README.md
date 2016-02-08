@@ -426,8 +426,10 @@ cycle.
 multiple CPUs to do its work.  This helps performance
 on multi-CPU machines as the work is divided across CPUS.
 
-  * This option is not currently the default as we have
-not done much testing with Mono.
+  * This option is not currently the default on OSX
+as it runs into issues there.
+
+  * This option only applies to the Boehm GC.
 
 * `--enable-dtrace`
 
