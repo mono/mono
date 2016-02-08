@@ -42,10 +42,11 @@ namespace Microsoft.Win32.SafeHandles {
             SetHandle(existingHandle);
         }
 
+#if !MONO
         [DllImport(ExternDll.Kernel32, CharSet=System.Runtime.InteropServices.CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.Machine)]
         internal static extern SafeProcessHandle OpenProcess(int access, bool inherit, int processId);
-
+#endif
         
         internal void InitialSetHandle(IntPtr h){
             Debug.Assert(base.IsInvalid, "Safe handle should only be set once");
@@ -54,7 +55,11 @@ namespace Microsoft.Win32.SafeHandles {
         
         override protected bool ReleaseHandle()
         {
+#if !MONO
             return SafeNativeMethods.CloseHandle(handle);
+#else
+            return NativeMethods.CloseProcess (handle);
+#endif
         }
 
     }

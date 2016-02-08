@@ -4,6 +4,10 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+#if MONO
+#undef FEATURE_PAL
+#endif
+
 namespace System.Diagnostics {
     using System.Text;
     using System.Threading;
@@ -41,7 +45,7 @@ namespace System.Diagnostics {
     PermissionSet(SecurityAction.InheritanceDemand, Name="FullTrust"),
     HostProtection(SharedState=true, Synchronization=true, ExternalProcessMgmt=true, SelfAffectingProcessMgmt=true)
     ]
-    public class Process : Component {
+    public partial class Process : Component {
         //
         // FIELDS
         //
@@ -52,7 +56,9 @@ namespace System.Diagnostics {
         SafeProcessHandle m_processHandle;
         bool isRemoteMachine;
         string machineName;
+#if !MONO
         ProcessInfo processInfo;
+#endif
         Int32 m_processAccess;
 
 #if !FEATURE_PAL        
@@ -157,7 +163,9 @@ namespace System.Diagnostics {
         [ResourceExposure(ResourceScope.Machine)]
         Process(string machineName, bool isRemoteMachine, int processId, ProcessInfo processInfo) : base() {
             Debug.Assert(SyntaxCheck.CheckMachineName(machineName), "The machine name should be valid!");
+#if !MONO
             this.processInfo = processInfo;
+#endif
             this.machineName = machineName;
             this.isRemoteMachine = isRemoteMachine;
             this.processId = processId;
@@ -182,7 +190,7 @@ namespace System.Diagnostics {
             }
         }
 
- #if !FEATURE_PAL
+ #if !FEATURE_PAL && !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets the base priority of
@@ -196,7 +204,7 @@ namespace System.Diagnostics {
                 return processInfo.basePriority;
             }
         }
-#endif // FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
 
         /// <devdoc>
         ///    <para>
@@ -364,7 +372,7 @@ namespace System.Diagnostics {
             }
         }
 
-#if !FEATURE_PAL
+#if !FEATURE_PAL && !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets the number of handles that are associated
@@ -378,7 +386,7 @@ namespace System.Diagnostics {
                 return processInfo.handleCount;
             }
         }
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
 
         /// <devdoc>
         ///    <para>
@@ -410,6 +418,7 @@ namespace System.Diagnostics {
 
  #if !FEATURE_PAL
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Returns the window handle of the main window of the associated process.
@@ -502,6 +511,7 @@ namespace System.Diagnostics {
                 }
             }
         }
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -541,6 +551,7 @@ namespace System.Diagnostics {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets
@@ -703,6 +714,7 @@ namespace System.Diagnostics {
                 return processInfo.virtualBytesPeak;
             }
         }
+#endif
 
         private OperatingSystem OperatingSystem {
             get {
@@ -713,6 +725,7 @@ namespace System.Diagnostics {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets or sets a value indicating whether the associated process priority
@@ -756,6 +769,7 @@ namespace System.Diagnostics {
                 }
             }
         }
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -790,11 +804,13 @@ namespace System.Diagnostics {
                     throw new InvalidEnumArgumentException("value", (int)value, typeof(ProcessPriorityClass));
                 }
 
+#if !MONO
                 // BelowNormal and AboveNormal are only available on Win2k and greater.
                 if (((value & (ProcessPriorityClass.BelowNormal | ProcessPriorityClass.AboveNormal)) != 0)   && 
                     (OperatingSystem.Platform != PlatformID.Win32NT || OperatingSystem.Version.Major < 5)) {
                     throw new PlatformNotSupportedException(SR.GetString(SR.PriorityClassNotSupported), null);
                 }                
+#endif // !MONO
                                     
                 SafeProcessHandle handle = null;
 
@@ -812,6 +828,7 @@ namespace System.Diagnostics {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///     Returns the number of bytes that the associated process has allocated that cannot
         ///     be shared with other processes.
@@ -833,6 +850,7 @@ namespace System.Diagnostics {
                 return processInfo.privateBytes;
             }
         }
+#endif
 
         /// <devdoc>
         ///     Returns the amount of time the process has spent running code inside the operating
@@ -846,6 +864,7 @@ namespace System.Diagnostics {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets
@@ -964,9 +983,11 @@ namespace System.Diagnostics {
                 return processInfo.sessionId;                
             }
         }
+#endif // !MONO
 
 #endif // !FEATURE_PAL
 
+#if MONO_FEATURE_PROCESS_START
         /// <devdoc>
         ///    <para>
         ///       Gets or sets the properties to pass into the <see cref='System.Diagnostics.Process.Start'/> method for the <see cref='System.Diagnostics.Process'/>
@@ -989,6 +1010,7 @@ namespace System.Diagnostics {
                 startInfo = value;
             }
         }
+#endif
 
 #if !FEATURE_PAL        
         /// <devdoc>
@@ -1036,6 +1058,7 @@ namespace System.Diagnostics {
 
 #if !FEATURE_PAL        
         
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets the set of threads that are running in the associated
@@ -1060,6 +1083,7 @@ namespace System.Diagnostics {
                 return threads;
             }
         }
+#endif
 
         /// <devdoc>
         ///     Returns the amount of time the associated process has spent utilizing the CPU.
@@ -1086,6 +1110,7 @@ namespace System.Diagnostics {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///     Returns the amount of virtual memory that the associated process has requested.
         /// </devdoc>
@@ -1097,8 +1122,11 @@ namespace System.Diagnostics {
                 return unchecked((int)processInfo.virtualBytes);
             }
         }
+#endif // !MONO
+
 #endif // !FEATURE_PAL
 
+#if !MONO
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), MonitoringDescription(SR.ProcessVirtualMemorySize)]
         [System.Runtime.InteropServices.ComVisible(false)]        
         public long VirtualMemorySize64 {
@@ -1107,6 +1135,7 @@ namespace System.Diagnostics {
                 return processInfo.virtualBytes;
             }
         }
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -1136,7 +1165,7 @@ namespace System.Diagnostics {
             }
         }
 
-
+#if MONO_FEATURE_PROCESS_START
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -1192,8 +1221,9 @@ namespace System.Diagnostics {
                 return standardError;
             }
         }
+#endif
 
-#if !FEATURE_PAL  
+#if !FEATURE_PAL && !MONO
         /// <devdoc>
         ///     Returns the total amount of physical memory the associated process.
         /// </devdoc>
@@ -1205,8 +1235,9 @@ namespace System.Diagnostics {
                 return unchecked((int)processInfo.workingSet);
             }
         }
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
 
+#if !MONO
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), MonitoringDescription(SR.ProcessWorkingSet)]
         [System.Runtime.InteropServices.ComVisible(false)]        
         public long WorkingSet64 {
@@ -1215,6 +1246,7 @@ namespace System.Diagnostics {
                 return processInfo.workingSet;
             }
         }
+#endif
 
         [Category("Behavior"), MonitoringDescription(SR.ProcessExited)]
         public event EventHandler Exited {
@@ -1226,8 +1258,7 @@ namespace System.Diagnostics {
             }
         }
 
-#if !FEATURE_PAL
-    
+#if !FEATURE_PAL && !MONO
         /// <devdoc>
         ///    <para>
         ///       Closes a process that has a user interface by sending a close message
@@ -1244,8 +1275,7 @@ namespace System.Diagnostics {
             NativeMethods.PostMessage(new HandleRef(this, mainWindowHandle), NativeMethods.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             return true;
         }
-
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
 
         /// <devdoc>
         ///     Release the temporary handle we used to get process information.
@@ -1332,6 +1362,7 @@ namespace System.Diagnostics {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         void EnsureState(State state) {
 
+#if !MONO
             if ((state & State.IsWin2k) != (State)0) {
 #if !FEATURE_PAL
                 if (OperatingSystem.Platform != PlatformID.Win32NT || OperatingSystem.Version.Major < 5)
@@ -1345,6 +1376,7 @@ namespace System.Diagnostics {
 #endif // !FEATURE_PAL                    
                     throw new PlatformNotSupportedException(SR.GetString(SR.WinNTRequired));
             }
+#endif // !MONO
 
             if ((state & State.Associated) != (State)0)
                 if (!Associated)
@@ -1352,7 +1384,7 @@ namespace System.Diagnostics {
 
             if ((state & State.HaveId) != (State)0) {
                 if (!haveProcessId) {
-#if !FEATURE_PAL                    
+#if !FEATURE_PAL && !MONO
                     if (haveProcessHandle) {
                         SetProcessId(ProcessManager.GetProcessIdFromHandle(m_processHandle));
                      }
@@ -1363,7 +1395,7 @@ namespace System.Diagnostics {
 #else
                     EnsureState(State.Associated);
                     throw new InvalidOperationException(SR.GetString(SR.ProcessIdRequired));
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
                 }
             }
 
@@ -1372,7 +1404,7 @@ namespace System.Diagnostics {
             }
             
             if ((state & State.HaveProcessInfo) != (State)0) {
-#if !FEATURE_PAL                
+#if !FEATURE_PAL && !MONO
                 if (processInfo == null) {
                     if ((state & State.HaveId) == (State)0) EnsureState(State.HaveId);
                     ProcessInfo[] processInfos = ProcessManager.GetProcessInfos(machineName);
@@ -1388,7 +1420,7 @@ namespace System.Diagnostics {
                 }
 #else
                 throw new InvalidOperationException(SR.GetString(SR.NoProcessInfo));
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
             }
 
             if ((state & State.Exited) != (State)0) {
@@ -1455,11 +1487,14 @@ namespace System.Diagnostics {
         }
 
         public static void EnterDebugMode() {
+#if !MONO
             if (ProcessManager.IsNt) {
                 SetPrivilege("SeDebugPrivilege", NativeMethods.SE_PRIVILEGE_ENABLED);
             }
+#endif
         }
 
+#if !MONO
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
         private static void SetPrivilege(string privilegeName, int attrib) {
@@ -1497,16 +1532,20 @@ namespace System.Diagnostics {
                 SafeNativeMethods.CloseHandle(hToken);
             }
         }
+#endif
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public static void LeaveDebugMode() {
+#if !MONO
             if (ProcessManager.IsNt) {
                 SetPrivilege("SeDebugPrivilege", 0);
             }
+#endif
         }     
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Returns a new <see cref='System.Diagnostics.Process'/> component given a process identifier and
@@ -1613,9 +1652,10 @@ namespace System.Diagnostics {
                 }
                 Debug.Unindent();
             }
-#endif
+#endif // DEBUG
             return processes;
         }
+#endif // !MONO
 
 #endif // !FEATURE_PAL        
 
@@ -1688,7 +1728,7 @@ namespace System.Diagnostics {
             else {
                 EnsureState(State.HaveId | State.IsLocal);
                 SafeProcessHandle handle = SafeProcessHandle.InvalidHandle;
-#if !FEATURE_PAL                
+#if !FEATURE_PAL && !MONO
                 handle = ProcessManager.OpenProcess(processId, access, throwIfExited);
 #else
                 IntPtr pseudohandle = NativeMethods.GetCurrentProcess();
@@ -1703,7 +1743,7 @@ namespace System.Diagnostics {
                                                     NativeMethods.DUPLICATE_CLOSE_SOURCE)) {
                     throw new Win32Exception();
                 }
-#endif // !FEATURE_PAL
+#endif // !FEATURE_PAL && !MONO
                 if (throwIfExited && (access & NativeMethods.PROCESS_QUERY_INFORMATION) != 0) {         
                     if (NativeMethods.GetExitCodeProcess(handle, out exitCode) && exitCode != NativeMethods.STILL_ACTIVE) {
                         throw new InvalidOperationException(SR.GetString(SR.ProcessHasExited, processId.ToString(CultureInfo.CurrentCulture)));
@@ -1744,6 +1784,7 @@ namespace System.Diagnostics {
             return m_processHandle;
         }
 
+#if !MONO
         /// <devdoc>
         ///     Raise the Exited event, but make sure we don't do it more than once.
         /// </devdoc>
@@ -1758,6 +1799,7 @@ namespace System.Diagnostics {
                 }
             }
         }
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -1768,7 +1810,9 @@ namespace System.Diagnostics {
         ///    </para>
         /// </devdoc>
         public void Refresh() {
+#if !MONO
             processInfo = null;
+#endif
 #if !FEATURE_PAL            
             threads = null;
             modules = null;
@@ -1863,6 +1907,8 @@ namespace System.Diagnostics {
 
 #endif // !FEATURE_PAL
 
+#if MONO_FEATURE_PROCESS_START
+
         /// <devdoc>
         ///    <para>
         ///       Starts a process specified by the <see cref='System.Diagnostics.Process.StartInfo'/> property of this <see cref='System.Diagnostics.Process'/>
@@ -1891,7 +1937,7 @@ namespace System.Diagnostics {
             }
         }
 
-
+#if !MONO
         [ResourceExposure(ResourceScope.Process)]
         [ResourceConsumption(ResourceScope.Process)]
         private static void CreatePipeWithSecurityAttributes(out SafeFileHandle hReadPipe, out SafeFileHandle hWritePipe, NativeMethods.SECURITY_ATTRIBUTES lpPipeAttributes, int nSize) {
@@ -2180,9 +2226,11 @@ namespace System.Diagnostics {
             return ret;
 
         }
+#endif // !MONO
 
 #if !FEATURE_PAL
 
+#if !MONO
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private bool StartWithShellExecuteEx(ProcessStartInfo startInfo) {                        
@@ -2288,6 +2336,7 @@ namespace System.Diagnostics {
             
             return false;            
         }
+#endif
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
@@ -2360,6 +2409,8 @@ namespace System.Diagnostics {
             }
             return null;
         }
+
+#endif // MONO_FEATURE_PROCESS_START
 
         /// <devdoc>
         ///    <para>
@@ -2533,6 +2584,7 @@ namespace System.Diagnostics {
 
 #endif // !FEATURE_PAL        
 
+#if MONO_FEATURE_PROCESS_START
         // Support for working asynchronously with streams
         /// <devdoc>
         /// <para>
@@ -2667,6 +2719,7 @@ namespace System.Diagnostics {
                 }
             }
         }
+#endif // MONO_FEATURE_PROCESS_START
 
         /// <summary>
         ///     A desired internal state.
@@ -2692,6 +2745,7 @@ namespace System.Diagnostics {
     /// </devdoc>
     /// <internalonly/>
     internal class ProcessInfo {
+#if !MONO
         public ArrayList threadInfoList = new ArrayList();
         public int basePriority;
         public string processName;
@@ -2708,8 +2762,10 @@ namespace System.Diagnostics {
         public long privateBytes;
         public int mainModuleId; // used only for win9x - id is only for use with CreateToolHelp32
         public int sessionId; 
+#endif
     }
 
+#if !MONO
     /// <devdoc>
     ///     This data structure contains information about a thread in a process that
     ///     is collected in bulk by querying the operating system.  The reason to
@@ -2744,6 +2800,7 @@ namespace System.Diagnostics {
         public int sizeOfImage;
         public int Id; // used only on win9x - for matching up with ProcessInfo.mainModuleId
     }
+#endif
 
     internal static class EnvironmentBlock {
         public static byte[] ToByteArray(StringDictionary sd, bool unicode) {
@@ -2836,6 +2893,7 @@ namespace System.Diagnostics {
         }
     }
 
+#if !MONO
     internal class ShellExecuteHelper {
         private NativeMethods.ShellExecuteInfo _executeInfo;
         private int _errorCode;
@@ -2877,4 +2935,5 @@ namespace System.Diagnostics {
             }
         }
     }
+#endif
 }

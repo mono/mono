@@ -4,6 +4,10 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+#if MONO
+#undef FEATURE_PAL
+#endif
+
 namespace System.Diagnostics {
     using System.Threading;
     using System.Runtime.InteropServices;
@@ -34,7 +38,7 @@ namespace System.Diagnostics {
     PermissionSet(SecurityAction.LinkDemand, Name="FullTrust"),
     HostProtection(SharedState=true, SelfAffectingProcessMgmt=true)
     ]
-    public sealed class ProcessStartInfo {
+    public sealed partial class ProcessStartInfo {
         string fileName;
         string arguments;
         string directory;
@@ -42,16 +46,16 @@ namespace System.Diagnostics {
         ProcessWindowStyle windowStyle;
         bool errorDialog;
         IntPtr errorDialogParentHandle;
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
         bool useShellExecute = false;
-#else //FEATURE_PAL
+#else // FEATURE_PAL && !MONO
         bool useShellExecute = true;
         string userName;
         string domain;
         SecureString password;
         string passwordInClearText;
         bool loadUserProfile;
-#endif //FEATURE_PAL
+#endif // FEATURE_PAL && !MONO
         bool redirectStandardInput = false;
         bool redirectStandardOutput = false;       
         bool redirectStandardError = false;
@@ -279,8 +283,7 @@ namespace System.Diagnostics {
             set { useShellExecute = value; }
         }
 
-#if !FEATURE_PAL
-
+#if !FEATURE_PAL && !MONO
         /// <devdoc>
         ///     Returns the set of verbs associated with the file specified by the
         ///     <see cref='System.Diagnostics.ProcessStartInfo.FileName'/> property.
@@ -319,7 +322,9 @@ namespace System.Diagnostics {
                 return temp;
             }
         }
+#endif // !FEATURE_PAL && !MONO
 
+#if !FEATURE_PAL
         [NotifyParentProperty(true)]
         public string UserName {
             get { 
@@ -362,7 +367,6 @@ namespace System.Diagnostics {
             get { return loadUserProfile;} 
             set { loadUserProfile = value; }
         }
-
 #endif // !FEATURE_PAL
 
         /// <devdoc>
