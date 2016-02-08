@@ -211,7 +211,6 @@ if ($html){
     }
 
     .api-height-container {
-        height: 0;
         left: -25px;
         padding: 0 25px;
         position: relative;
@@ -231,7 +230,7 @@ EOF
 	    ($api,$caption) = $line =~  /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/;
 	    if ($api ne ""){
 		if ($api_shown == 1){
-		    print OUT "</div>";
+		    print OUT "</div> <!-- class=api -->\n\n";
 		    if ($deprecated{$api}){
 			$strike = "strike";
 			$strikeextra = "</div><br><div class='deprecated'><b>Deprecated:</b> " . $deprecated{$api};
@@ -247,35 +246,35 @@ EOF
 		}
 
                 print OUT<<EOF;
- <a name="api:$api"></a>
- <div class="api">
- <div class="api-entry $strike"><code>$api$strikeextra</code></div>
- <div class="api-height-container">
-    <div class="api-ptr-container"></div>
-    <div class="api-description">
-    <div class="api-ptr"></div>
+<a name="api:$api"></a>
+<div class="api">
+    <div class="api-entry $strike"><code>$api$strikeextra</code></div>
+    <div class="api-height-container">
+        <div class="api-ptr-container"></div>
+        <div class="api-description">
+            <div class="api-ptr"></div>
 
-      <div class="declaration api-section">Syntax</div>
-      <div class="prototype">$proto</div>
-<p>
+            <div class="declaration api-section">Syntax</div>
+            <div class="prototype">$proto</div>
+            <p>
 EOF
 
 #		if ($arguments{$api} ne "" && (!($arguments{$api}) =~ /^[ \t]+$/)){
-		    print OUT "<div class=\"api-section\">Parameters</div>\n";
-		    print OUT "<table class=\"api-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
+		    print OUT "            <div class=\"api-section\">Parameters</div>\n";
+		    print OUT "            <table class=\"api-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
 #	        }
 #		&opt_print ("Parameters", $arguments{$api}, 1);
 	    
 		&opt_print ("Returns", $returns{$api}, 1);
 		&opt_print ("Description", $bodies{$api}, 0);
-		print OUT "\n";
+		print OUT "        </div><!--api-description-->\n    </div><!--height container-->\n";
 	    } else {
 		if ($line =~ /@API_IDX@/){
 		    $apis_toc = &create_toc ($apis[$f]);
 		    $line =~ s/\@API_IDX\@/$apis_toc/;
 		}
 		if ($line =~ /^<h4/){
-		    print OUT "</div></div></div>";
+		    print OUT "</div>\n";
 		    $api_shown = 0;
 		}
 		if ($line =~ /`/){
@@ -455,11 +454,11 @@ sub opt_print {
     my ($caption, $opttext, $quote) = @_;
 
     if ($opttext ne "" && (!($opttext =~ /^[ \t]+$/))){
-	print OUT "<div class=\"api-section\">$caption</div>\n";
+	print OUT "             <div class=\"api-section\">$caption</div>\n";
 	if ($quote == 1){
-	    print OUT "<blockquote>$opttext</blockquote>\n";
+	    print OUT "             <blockquote>$opttext</blockquote>\n";
 	} else {
-	    print OUT "<p>$opttext\n";
+	    print OUT "             <p>$opttext\n";
 	}
     }
 }
