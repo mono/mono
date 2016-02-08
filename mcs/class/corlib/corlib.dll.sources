@@ -907,6 +907,7 @@ ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MethodBase.cs
+ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
