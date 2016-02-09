@@ -42,6 +42,7 @@ namespace System.Net.Http
 		int readWriteTimeout;
 		RemoteCertificateValidationCallback serverCertificateValidationCallback;
 		bool unsafeAuthenticatedConnectionSharing;
+		X509CertificateCollection clientCertificates;
 
 		public WebRequestHandler ()
 		{
@@ -54,6 +55,7 @@ namespace System.Net.Http
 			readWriteTimeout = 300000;
 			serverCertificateValidationCallback = null;
 			unsafeAuthenticatedConnectionSharing = false;
+			clientCertificates = new X509CertificateCollection();
 		}
 
 		public bool AllowPipelining {
@@ -80,9 +82,8 @@ namespace System.Net.Http
 			}
 		}
 
-		[MonoTODO]
 		public X509CertificateCollection ClientCertificates {
-			get { throw new NotImplementedException (); }
+			get { return clientCertificates; }
 		}
 
 		[MonoTODO]
@@ -118,7 +119,6 @@ namespace System.Net.Http
 			}
 		}
 
-		[MonoTODO]
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
 			get { return serverCertificateValidationCallback; }
 			set {
@@ -146,6 +146,8 @@ namespace System.Net.Http
 			wr.MaximumResponseHeadersLength = maxResponseHeadersLength;
 			wr.ReadWriteTimeout = readWriteTimeout;
 			wr.UnsafeAuthenticatedConnectionSharing = unsafeAuthenticatedConnectionSharing;
+			wr.ServerCertificateValidationCallback = serverCertificateValidationCallback;
+			wr.ClientCertificates = clientCertificates;
 
 			return wr;
 		}
