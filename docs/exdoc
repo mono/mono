@@ -7,6 +7,10 @@ if ($ARGV[0] eq "-h"){
     shift @ARGV;
     shift @ARGV;
 }
+open (FILE, "$dir/api-style.css" || die "Did not find $dir/api-style.css");
+while (<FILE>){
+    $css = $css . $_;
+}
 
 if ($ARGV[0] eq "-t"){
     $dir = $ARGV[1];
@@ -51,176 +55,11 @@ if ($html){
 <head>
     <title>$name</title>
     <style type="text/css">
-    body {
-	line-height: 1.5;
-	padding-left: 2em;
-	padding-right: 2em;
-    }
-    body code {
-        font-family: "Consolas", "Courier", monospace;
-        border: 1px solid rgba(214,214,214,1);
-	background-color: rgba(249,249,249,1);
-	padding-left: 3px;
-	padding-right: 3px;
-    }
-
-    .api-entry code {
-        border: none;
-        background-color: transparent;
-    }
-    h3 { 
-    }
-    
-    .api-parameters {
-        border-collapse: collapse;
-        border-spacing: 0;
-        empty-cells: hide;
-        border: 0;
-        margin: 5px 0 26px;	    
-    }
-
-    .api-parameters td {
-        border: 1px solid rgba(214,214,214,1);
-	  border-left-style: none;
-	padding: 5px 25px 5px 10px;
-    }
-
-    .api-parameters tr>td:last-child  {
-        border-right: 0;
-    }
-	
-    .api-parameters td:first-of-type {
-        text-align: right;
-        padding: 7px;
-        vertical-align: top;
-        word-break: normal;
-        width: 40px;
-    }
-
-    .api-parameters tr:last-child>td {
-        border-bottom: 0;
-    }
-
-    .api-parameters tr:first-child>td {
-        border-top: 0;
-    }
-
-    .api-parameters tr td:first-of-type {
-        text-align: right;
-        padding: 7px;
-        vertical-align: top;
-        word-break: normal;
-        width: 40px;
-    }
-
-   .api {
-        left: -25px;
-        margin: 0;
-        padding: 13px 25px 0;
-        position: relative;
-        width: 100%;
-    } 
-
-    .api-description {
-        background: rgba(249,249,249,1);
-        border-bottom: 1px solid rgba(233,233,233,1);
-        left: -25px;
-        margin: 0;
-        padding: 13px 25px 0;
-        position: relative;
-        width: 100%;	 
-    }
-
-     .api-entry {
-         background: transparent;
-     }
-
-     .api-docs {
-     }
-	
-     .prototype {
-         border-left: 5px solid rgba(205,233,244,1);
-         padding: .5em;
-         margin-top: 5pt;
-         margin-bottom: 5pt;
-         font-family: "Consolas", "Courier", monospace;
-         display: block;
-         overflow: auto;
-         background-color: #f9f9f9;
-    } 
-
-    .header {
-        padding: 0 0 5pt 5pt;
-        margin: 10pt;
-	white-space: pre;
-        font-family: monospace;
-	border: 1px solid rgba(233,233,233,1);
-    }
-    
-    .code {
-        border: 1px solid;
-	padding: 0 0 5pt 5pt;
-	margin: 10pt;
-	white-space: pre;
-	font-family: monospace;
-    }
-
-    .declaration {
-	margin-top: 21px;
-    }
-
-    .api-section {
-        font-size: smaller;
-	font-weight: bold;
-	margin-top: 21px;
-	line-height: 1.5;
-    }
-	
-    .strike {
-        text-decoration: line-through;
-    }
-
-    .deprecated {
-        color: red;
-    }
-
-    .api-ptr-container {
-        background: white;
-	border-bottom: 1px solid rgba(233,233,233,1);
-        left: -25px;
-        padding-left: 25px;
-        padding-right: 25px;
-        padding-bottom: 13px;
-        position: relative;
-        width: 100%;
-    }
-
-    .api-ptr {
-        background: rgba(249,249,249,1);
-	border-left: 1px solid rgba(233,233,233,1);
-	border-top: 1px solid rgba(233,233,233,1);
-        height: 12px;
-        left: 37px;
-        top: -7px;
-        -webkit-transform: rotate(45deg);
-        -moz-transform: rotate(45deg);
-        -o-transform: rotate(45deg);
-        transform: rotate(45deg);
-        position: absolute;
-        width: 12px;
-    }
-
-    .api-height-container {
-        left: -25px;
-        padding: 0 25px;
-        position: relative;
-        width: 100%;
-    }
-	
+$css
    </style>
 </head>
 <body>
-<div class="api-docs">
+<div class="mapi-docs">
 EOF
 	@a = split (/\n/, $files_content[$f]);
 	$strikeextra = "";
@@ -230,10 +69,10 @@ EOF
 	    ($api,$caption) = $line =~  /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/;
 	    if ($api ne ""){
 		if ($api_shown == 1){
-		    print OUT "</div> <!-- class=api -->\n\n";
+		    print OUT "</div> <!-- class=mapi -->\n\n";
 		    if ($deprecated{$api}){
-			$strike = "strike";
-			$strikeextra = "</div><br><div class='deprecated'><b>Deprecated:</b> " . $deprecated{$api};
+			$strike = "mapi-strike";
+			$strikeextra = "</div><br><div class='mapi-deprecated'><b>Deprecated:</b> " . $deprecated{$api};
 		    } else {
 			$strike = "";
 			$strikeextra = "";
@@ -242,32 +81,31 @@ EOF
 		$api_shown = 1;
 		$proto = $prototype{$api};
 		if ($proto eq ""){
-		    $proto = "Prototype: $api";
+		    $proto = "$api";
 		}
 
                 print OUT<<EOF;
 <a name="api:$api"></a>
-<div class="api">
-    <div class="api-entry $strike"><code>$api$strikeextra</code></div>
-    <div class="api-height-container">
-        <div class="api-ptr-container"></div>
-        <div class="api-description">
-            <div class="api-ptr"></div>
+<div class="mapi">
+    <div class="mapi-entry $strike"><code>$api$strikeextra</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
 
-            <div class="declaration api-section">Syntax</div>
-            <div class="prototype">$proto</div>
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">$proto</div>
             <p>
 EOF
-
-#		if ($arguments{$api} ne "" && (!($arguments{$api}) =~ /^[ \t]+$/)){
-		    print OUT "            <div class=\"api-section\">Parameters</div>\n";
-		    print OUT "            <table class=\"api-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
-#	        }
-#		&opt_print ("Parameters", $arguments{$api}, 1);
+                $ppars = $arguments{$api};
+		if ($ppars ne "" && (!($ppars =~ /^[ \t]+$/))){
+		    print OUT "            <div class=\"mapi-section\">Parameters</div>\n";
+		    print OUT "            <table class=\"mapi-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
+	        }
 	    
-		&opt_print ("Returns", $returns{$api}, 1);
+		&opt_print ("Return value", $returns{$api}, 0);
 		&opt_print ("Description", $bodies{$api}, 0);
-		print OUT "        </div><!--api-description-->\n    </div><!--height container-->\n";
+		print OUT "        </div><!--mapi-description-->\n    </div><!--height container-->\n";
 	    } else {
 		if ($line =~ /@API_IDX@/){
 		    $apis_toc = &create_toc ($apis[$f]);
@@ -290,13 +128,30 @@ EOF
 	close OUT;
 	system ("$ENV{runtimedir}/mono-wrapper convert.exe $dir/html/$name $dir/html/x-$name");
 
+
 	# clean up the mess that AgilityPack does, it CDATAs our CSS
 	open HACK, "$dir/html/x-$name" || die "Could not open $dir/html/x-$name";
 	open HACKOUT, ">$dir/deploy/$name" || die "Could not open output";
 
+	$line = 0;
 	while (<HACK>){
+	    $line++;
 	    s/^\/\/<!\[CDATA\[//;
 	    s/^\/\/\]\]>\/\///;
+
+	    # Remove the junk <span> wrapper generated by AgilityPack
+	    if ($line==1){
+		s/<?span>//;
+	    }
+	    if (/<style type/){
+		# Replace the CSS in the XHTML output with the original CSS
+		print HACKOUT $_;
+		print HACKOUT $css;
+		while (<HACK>){
+		    last if (/<\/style>/);
+		}
+	    }
+
 	    print HACKOUT $_;
 	}
 	#system ("cp.exe $dir/html/$name $dir/deploy/$name");
@@ -411,6 +266,9 @@ sub create_toc {
 	chop;
 	$p = $prototype{$line};
 	($ret, $xname, $args) = $p =~ /(.*)\n(\w+)[ \t](.*)/;
+	if ($xname eq ""){
+	    $xname = $line;
+	}
 	
 	$rspace = " " x ($type_size - length ($ret));
 	$nspace = " " x ($name_size - length ($xname));
@@ -454,11 +312,7 @@ sub opt_print {
     my ($caption, $opttext, $quote) = @_;
 
     if ($opttext ne "" && (!($opttext =~ /^[ \t]+$/))){
-	print OUT "             <div class=\"api-section\">$caption</div>\n";
-	if ($quote == 1){
-	    print OUT "             <blockquote>$opttext</blockquote>\n";
-	} else {
-	    print OUT "             <p>$opttext\n";
-	}
+	print OUT "             <div class=\"mapi-section\">$caption</div>\n";
+        print OUT "             <div>$opttext</div>\n";
     }
 }

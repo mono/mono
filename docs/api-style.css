@@ -1,9 +1,9 @@
-    body {
+    .mapi-docs {
 	line-height: 1.5;
 	padding-left: 2em;
 	padding-right: 2em;
     }
-    body code {
+    .mapi-description code {
         font-family: "Consolas", "Courier", monospace;
         border: 1px solid rgba(214,214,214,1);
 	background-color: rgba(249,249,249,1);
@@ -11,14 +11,20 @@
 	padding-right: 3px;
     }
 
-    .api-entry code {
+    .mapi-header {
+        padding: 0 0 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+    }
+
+    .mapi-entry code {
         border: none;
         background-color: transparent;
     }
-    h3 { 
-    }
     
-    .api-parameters {
+    .mapi-parameters {
         border-collapse: collapse;
         border-spacing: 0;
         empty-cells: hide;
@@ -26,17 +32,17 @@
         margin: 5px 0 26px;	    
     }
 
-    .api-parameters td {
+    .mapi-parameters td {
         border: 1px solid rgba(214,214,214,1);
 	  border-left-style: none;
 	padding: 5px 25px 5px 10px;
     }
 
-    .api-parameters tr>td:last-child  {
+    .mapi-parameters tr>td:last-child  {
         border-right: 0;
     }
 	
-    .api-parameters td:first-of-type {
+    .mapi-parameters td:first-of-type {
         text-align: right;
         padding: 7px;
         vertical-align: top;
@@ -44,15 +50,15 @@
         width: 40px;
     }
 
-    .api-parameters tr:last-child>td {
+    .mapi-parameters tr:last-child>td {
         border-bottom: 0;
     }
 
-    .api-parameters tr:first-child>td {
+    .mapi-parameters tr:first-child>td {
         border-top: 0;
     }
 
-    .api-parameters tr td:first-of-type {
+    .mapi-parameters tr td:first-of-type {
         text-align: right;
         padding: 7px;
         vertical-align: top;
@@ -60,7 +66,7 @@
         width: 40px;
     }
 
-   .api {
+   .mapi {
         left: -25px;
         margin: 0;
         padding: 13px 25px 0;
@@ -68,7 +74,7 @@
         width: 100%;
     } 
 
-    .api-description {
+    .mapi-description {
         background: rgba(249,249,249,1);
         border-bottom: 1px solid rgba(233,233,233,1);
         left: -25px;
@@ -78,14 +84,14 @@
         width: 100%;	 
     }
 
-     .api-entry {
+     .mapi-entry {
          background: transparent;
      }
 
-     .api-docs {
+     .mapi-docs {
      }
 	
-     .prototype {
+     .mapi-prototype {
          border-left: 5px solid rgba(205,233,244,1);
          padding: .5em;
          margin-top: 5pt;
@@ -96,42 +102,26 @@
          background-color: #f9f9f9;
     } 
 
-    .header {
-        padding: 0 0 5pt 5pt;
-        margin: 10pt;
-	white-space: pre;
-        font-family: monospace;
-	border: 1px solid rgba(233,233,233,1);
-    }
-    
-    .code {
-        border: 1px solid;
-	padding: 0 0 5pt 5pt;
-	margin: 10pt;
-	white-space: pre;
-	font-family: monospace;
-    }
-
-    .declaration {
+    .mapi-declaration {
 	margin-top: 21px;
     }
 
-    .api-section {
+    .mapi-section {
         font-size: smaller;
 	font-weight: bold;
 	margin-top: 21px;
 	line-height: 1.5;
     }
 	
-    .strike {
+    .mapi-strike {
         text-decoration: line-through;
     }
 
-    .deprecated {
+    .mapi-deprecated {
         color: red;
     }
 
-    .api-ptr-container {
+    .mapi-ptr-container {
         background: white;
 	border-bottom: 1px solid rgba(233,233,233,1);
         left: -25px;
@@ -142,7 +132,7 @@
         width: 100%;
     }
 
-    .api-ptr {
+    .mapi-ptr {
         background: rgba(249,249,249,1);
 	border-left: 1px solid rgba(233,233,233,1);
 	border-top: 1px solid rgba(233,233,233,1);
@@ -157,9 +147,10 @@
         width: 12px;
     }
 
-    .api-height-container {
+    .mapi-height-container {
         left: -25px;
         padding: 0 25px;
         position: relative;
         width: 100%;
     }
+	
