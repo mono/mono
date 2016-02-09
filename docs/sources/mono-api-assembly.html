@@ -1,5 +1,28 @@
 <h2>Assemblies</h2>
 
+	<p>Code in .NET and Mono is distributed in assemblies, there
+	are shipped typically in files with the extension .exe or
+	.dll, and they are files that extend
+	the <a href="https://en.wikipedia.org/wiki/Portable_Executable">Portable
+	Executable</a> file format to include the Common Intermediate
+	Language metadata and portable code.
+
+	<p>Assemblies are typically loaded either from a given file
+	path, or using an <a href="#assembly-name">Assembly Name</a>
+	to load them from the Global Assembly Cache.
+
+	<p>The Mono Assembly API contains method for dealing with
+	<a href="#assembly-name">assembly
+	names</a>, <a href="cil_assembly_load">loading assemblies</a>,
+	<a href="#working">accessing assembly
+	components</a>, <a href="#modules">modules</a> and
+	some <a href="#advanced">advanced</a> features.
+
+	<p>Assemblies contain one or
+	more images, the actual vessels for your code.
+	The <a href="mono-api-image.html">Image API</a> documents the
+	functions that operate on <code>MonoImage *</code>.
+	
 <h3>Synopsis</h3>
 
 	<div class="mapi-header">
@@ -7,12 +30,9 @@
 
 typedef struct _MonoImage MonoImage;
 typedef struct _MonoAssembly MonoAssembly;
-
-@API_IDX@
-	
 	</div>
 
-<a name="cil_assembly_load"/>
+<a name="cil_assembly_load"/></a>
 <h3>Assembly Loading</h3>
 
 <h4><a name="api:mono_assembly_close">mono_assembly_close</a></h4>
@@ -28,6 +48,7 @@ typedef struct _MonoAssembly MonoAssembly;
 <h4><a name="api:mono_set_assemblies_path">mono_set_assemblies_path</a></h4>
 <h4><a name="api:mono_set_rootdir">mono_set_rootdir</a></h4>
 
+<a name="working"/>
 <h3>Working with Assemblies</h3>
 
 <h4><a name="api:mono_assembly_fill_assembly_name">mono_assembly_fill_assembly_name</a></h4>
@@ -48,6 +69,7 @@ typedef struct _MonoAssembly MonoAssembly;
 <h4><a name="api:mono_register_config_for_assembly">mono_register_config_for_assembly</a></h4>
 <h4><a name="api:mono_register_symfile_for_assembly">mono_register_symfile_for_assembly</a></h4>
 
+<a name="assembly-name"></a>
 <h3>Assembly Names</h3>
 
 	<p>The MonoAssemblyName contains the full identity of an
@@ -67,6 +89,7 @@ typedef struct _MonoAssembly MonoAssembly;
 <h4><a name="api:mono_stringify_assembly_name">mono_stringify_assembly_name</a></h4>
 <h4><a name="api:mono_assembly_names_equal">mono_assembly_names_equal</a></h4>
 
+<a href="modules"/>
 <h3>Modules</h3>
 
 	<p>An assembly is made up of one or more modules.
@@ -75,6 +98,7 @@ typedef struct _MonoAssembly MonoAssembly;
 <h4><a name="api:mono_module_get_object">mono_module_get_object</a></h4>
 	
 
+<a href="advanced"/>
 <h3>Advanced</h3>
 
 <h4><a name="api:mono_install_assembly_load_hook">mono_install_assembly_load_hook</a></h4>

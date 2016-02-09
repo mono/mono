@@ -4,15 +4,15 @@
 	query a number of properties of a .NET class from the C API.
 
 	<p>This page contains information
-	for <a href="#class-getting">how to obtain a MonoClass</a>,
+	for <a href="#class-getting">how to obtain a MonoClass*</a>,
 	how to <a href="#class-work">probe for different
-	features of a UonoClass</a> and APIs
+	features of a MonoClass*</a> and APIs
 	to <a href="#class-members">access class members</a> and 
 	<a href="#class-fields">access fields</a>.   To access
 	methods, see the <a href="mono-api-methods.html">method
 	documentation API</a>.
 
-<a name="class-getting">
+<a name="class-getting"></a>
 <h3>Getting a MonoClass</h3>
 
 	<p>You typically would obtain a <code>MonoClass*</code>
@@ -80,7 +80,7 @@
 <h4><a name="api:mono_class_value_size">mono_class_value_size</a></h4>
 <h4><a name="api:mono_class_vtable">mono_class_vtable</a></h4>
 
-<a name="class-members">
+<a name="class-members"></a>
 <h3>Getting Class Members</h3>
 
 <h4><a name="api:mono_class_get_fields">mono_class_get_fields</a></h4>
@@ -93,7 +93,7 @@
 <h4><a name="api:mono_class_get_property_from_name">mono_class_get_property_from_name</a></h4>
 <h4><a name="api:mono_class_get_events">mono_class_get_events</a></h4>
 
-<a name="class-fields">
+<a name="class-fields"></a>
 <h3>Fields</h3>
 
 <h4><a name="api:mono_field_get_data">mono_field_get_data</a></h4>
