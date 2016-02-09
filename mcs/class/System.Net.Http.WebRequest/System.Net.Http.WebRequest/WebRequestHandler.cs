@@ -83,7 +83,13 @@ namespace System.Net.Http
 		}
 
 		public X509CertificateCollection ClientCertificates {
-			get { return clientCertificates; }
+			get {
+				if (this.ClientCertificateOptions != ClientCertificateOption.Manual) {
+					throw new InvalidOperationException("The ClientCertificateOptions property must be set to 'Manual' to use this property.");
+				}
+				
+				return clientCertificates;
+			}
 		}
 
 		[MonoTODO]
@@ -147,7 +153,10 @@ namespace System.Net.Http
 			wr.ReadWriteTimeout = readWriteTimeout;
 			wr.UnsafeAuthenticatedConnectionSharing = unsafeAuthenticatedConnectionSharing;
 			wr.ServerCertificateValidationCallback = serverCertificateValidationCallback;
-			wr.ClientCertificates = clientCertificates;
+			
+			if (this.ClientCertificateOptions == ClientCertificateOption.Manual) {
+				wr.ClientCertificates = clientCertificates;
+			}
 
 			return wr;
 		}
