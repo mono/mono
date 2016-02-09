@@ -192,9 +192,9 @@ sub process_doc {
 		    $returns =~ s/#(\w+)/<code>\1<\/code>/g;
 		    $args =~ s/#(\w+)/<code>\1<\/code>/g;
 
-		    $returns =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
-		    $args =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
-		    $body =~ s/\`([:\w\*]+)\`/<code>\1<\/code>/g;
+		    $returns =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
+		    $args =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
+		    $body =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
 		    
 		    $body =~ s/\n/ /;
 		    $bodies{$func} = $body;
