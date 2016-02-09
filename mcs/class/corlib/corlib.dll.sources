@@ -77,7 +77,6 @@ Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
 System/AndroidPlatform.cs
-System/AppContext.cs
 System/AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
@@ -1065,6 +1064,8 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/unityserializationholder.cs
 ../../../external/referencesource/mscorlib/system/unsafecharbuffer.cs
 ../../../external/referencesource/mscorlib/system/version.cs
+
+../../../external/referencesource/mscorlib/system/AppContext/AppContext.cs
 
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
 ../../../external/referencesource/mscorlib/system/collections/bitarray.cs
