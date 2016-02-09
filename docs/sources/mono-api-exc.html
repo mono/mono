@@ -1,25 +1,32 @@
 <h2>Exception Handling</h2>
 
-<div class="mapi-header">
-@API_IDX@
-</div>
+	<p>Mono's exception handling contains methods
+	to <a href="#creating">create `MonoException*` objects</a>
+	that can be <a href="api:mono_raise_exception">raised</a>.
 
+	<p>Alternatively, you can obtain an exception that you can
+	raise from some of the most <a href="#common">common</a>
+	exceptions in the .NET Runtime.
+	
 <h3>Raising and Catching exceptions</h3>
 
-	<p>With the introduction of the Cooperative mode/Bitcode for
-	the Mono garbage collector, it is no longer recommended for
-	embedded developers to raise exceptions from any method except
-	the topmost registered internal call.
+	<p>If you plan on running your code in Mono's Cooperative mode
+	for the Garbage Collector (for example, if you are using pure
+	Bitcode code generation), it you should avoid raising an
+	exception from any method that is not the entry point to the
+	internal call. 
 
-	<p>It is recommended that you raise an error condition from
-	nested parts of code, surface this error and in the topmost
-	frame raise the exception.
+	<p>It is recommended that if you need to raise an error
+	condition from nested parts of your code, surface this error
+	to the topmost method that is surfaced as an internal call and
+	raise the exception there.
+
 	
 <h4><a name="api:mono_raise_exception">mono_raise_exception</a></h4>
 <h4><a name="api:mono_unhandled_exception">mono_unhandled_exception</a></h4>
 <h4><a name="api:mono_print_unhandled_exception">mono_print_unhandled_exception</a></h4>
 
-
+<a name="creating"/>
 <h3>Exception Types: General API</h3>
 
 <h4><a name="api:mono_exception_from_name_domain">mono_exception_from_name_domain</a></h4>
@@ -27,6 +34,7 @@
 <h4><a name="api:mono_exception_from_name_msg">mono_exception_from_name_msg</a></h4>
 <h4><a name="api:mono_exception_from_name_two_strings">mono_exception_from_name_two_strings</a></h4>
 
+<a name="common"/>
 <h3>Obtaining Common Exceptions</h3>
 
 	<p>There are a number of common exceptions that are used by

@@ -17,10 +17,10 @@ typedef struct {
 	</div>
 
 	<p>All of the operations on strings are done on pointers to
-	MonoString objects, like this:
+	`MonoString` objects, like this:
 
-	<div class="code">
-	MonoString *hello = mono_string_new (mono_domain_get (), "hello, world");
+	<div class="mapi-code">
+MonoString *hello = mono_string_new (mono_domain_get (), "hello, world");
 	</div>
 
 	<p>Strings are bound to a particular application domain, which

@@ -178,7 +178,6 @@ sub process_doc {
 	$body = "";
 	$functions[$fn++] = $func;
 	$deprecated = 0;
-	
 	# Process arguments
 	while (<>){
 	    s/NULL/<code>NULL<\/code>/g;
@@ -217,7 +216,7 @@ sub process_doc {
 		}
 		chop;
 		s/^\ \*//;
-		$_ = "\n<p>" if (/^\s+$/);
+		$_ = "<p>" if (/^\s*$/);
 				
 		if ($inbody == 0){
 		    if (/\s*(\w+):(.*)/){
@@ -230,6 +229,7 @@ sub process_doc {
 		    } else {
 			
 			$body = "\t$_\n";
+
 			$inbody = 1;
 		    }
 		} elsif ($inbody == 1) {

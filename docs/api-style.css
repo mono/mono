@@ -3,12 +3,22 @@
 	padding-left: 2em;
 	padding-right: 2em;
     }
+    .mapi-docs p {
+	max-width: 60em;
+    }
+    .mapi-docs .mapi-body {
+	max-width: 60em;
+    }
+    .mapi-docs code {
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.5em;
+    }
     .mapi-description code {
         font-family: "Consolas", "Courier", monospace;
         border: 1px solid rgba(214,214,214,1);
 	background-color: rgba(249,249,249,1);
-	padding-left: 3px;
-	padding-right: 3px;
+	padding: 0.1em 0.2em;
     }
 
     .mapi-header {
@@ -17,6 +27,20 @@
         white-space: pre;
         font-family: monospace;
         border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code {
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code:first-line {
+        line-height: 0px;
     }
 
     .mapi-entry code {
