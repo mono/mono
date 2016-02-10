@@ -327,8 +327,13 @@ namespace System
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
 			var resultTicks = date.Ticks + ticks;
-			if (resultTicks < DateTime.MinValue.Ticks || resultTicks > DateTime.MaxValue.Ticks) {
-				result =  default (DateTime);
+			if (resultTicks < DateTime.MinValue.Ticks) {
+				result = DateTime.SpecifyKind (DateTime.MinValue, kind);
+				return false;
+			}
+
+			if (resultTicks > DateTime.MaxValue.Ticks) {
+				result = DateTime.SpecifyKind (DateTime.MaxValue, kind);
 				return false;
 			}
 
@@ -475,9 +480,7 @@ namespace System
 			var utcOffset = sourceTimeZone.GetUtcOffset (dateTime, out isDst);
 
 			DateTime utcDateTime;
-			if (!TryAddTicks (dateTime, -utcOffset.Ticks, out utcDateTime, DateTimeKind.Utc))
-				return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
-
+			TryAddTicks (dateTime, -utcOffset.Ticks, out utcDateTime, DateTimeKind.Utc);
 			return utcDateTime;
 		}
 
