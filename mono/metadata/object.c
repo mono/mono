@@ -6115,11 +6115,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 			SetEvent (wait_event);
 
 		if (ac->cb_method) {
-			/* we swallow the excepton as it is the behavior on .NET */
-			MonoObject *exc = NULL;
-			mono_runtime_invoke (ac->cb_method, ac->cb_target, (gpointer*) &ares, &exc);
-			if (exc)
-				mono_unhandled_exception (exc);
+			mono_runtime_invoke (ac->cb_method, ac->cb_target, (gpointer*) &ares, NULL);
 		}
 	}
 
