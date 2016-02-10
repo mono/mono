@@ -860,11 +860,11 @@ gpointer ves_icall_System_Net_Sockets_Socket_Accept_internal(SOCKET sock,
 
 	*error = 0;
 #ifdef PLATFORM_WIN32
+	if (blocking)
 	{
 		/* perform alertable wait on event rather than blocking socket call to avoid deadlock on domain unload */
 		WSAEVENT  hEvent;
 		DWORD result = 0;
-		u_long nonblocking = !blocking;
 
 		hEvent = WSACreateEvent ();
 		if (hEvent == WSA_INVALID_EVENT) {
@@ -896,8 +896,8 @@ gpointer ves_icall_System_Net_Sockets_Socket_Accept_internal(SOCKET sock,
 
 		/* from MSDN: WSAEventSelect function automatically sets socket s to nonblocking mode 
 		 * call ioctlsocket or WSAIoctl to set the socket back to blocking mode.*/
-
-		if (!nonblocking) {
+		{
+			u_long nonblocking = 0;
 			int socket_result = 0;
 			socket_result = ioctlsocket (sock, FIONBIO, &nonblocking);
 			if(socket_result == SOCKET_ERROR) {
