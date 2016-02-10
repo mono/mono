@@ -120,5 +120,13 @@ namespace Mono.Net.Security
 			#endif
 		}
 
+		internal static object GetProvider (string name)
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.GetProvider (name);
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
 	}
 }

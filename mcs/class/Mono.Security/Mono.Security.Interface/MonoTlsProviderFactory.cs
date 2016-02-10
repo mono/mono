@@ -82,6 +82,11 @@ namespace Mono.Security.Interface
 			NoReflectionHelper.SetDefaultProvider (name);
 		}
 
+		public static MonoTlsProvider GetProvider (string name)
+		{
+			return (MonoTlsProvider)NoReflectionHelper.GetProvider (name);
+		}
+
 		/*
 		 * Create @HttpWebRequest with the specified @provider (may be null to use the default one).
 		 * 
