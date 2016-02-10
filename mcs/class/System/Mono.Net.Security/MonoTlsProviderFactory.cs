@@ -232,7 +232,7 @@ namespace Mono.Net.Security
 
 		internal static MSI.MonoTlsProvider GetProvider (string name)
 		{
-			return LookupProvider (name, true);
+			return LookupProvider (name, false);
 		}
 
 		internal static bool HasProvider {
