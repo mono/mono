@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private static XplatUIWin32	instance;
 		private static int		ref_count;
-		private static IntPtr		FosterParent;
+		private static IntPtr		FosterParentLast;
 
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
@@ -847,11 +847,7 @@ namespace System.Windows.Forms {
 
 			wnd_proc = new WndProc(InternalWndProc);
 
-			FosterParent=Win32CreateWindow(WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-
-			if (FosterParent==IntPtr.Zero) {
-				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
-			}
+			FosterParentLast = IntPtr.Zero;
 
 			scroll_height = Win32GetSystemMetrics(SystemMetrics.SM_CYHSCROLL);
 			scroll_width = Win32GetSystemMetrics(SystemMetrics.SM_CXVSCROLL);
@@ -862,6 +858,19 @@ namespace System.Windows.Forms {
 		#endregion	// Constructor & Destructor
 
 		#region Private Support Methods
+
+		private IntPtr GetFosterParent()
+		{
+			if (!IsWindow(FosterParentLast))
+			{
+				FosterParentLast=Win32CreateWindow(WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+
+				if (FosterParentLast==IntPtr.Zero) {
+					Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
+				}
+			}
+			return FosterParentLast;
+		}
 
 		private string RegisterWindowClass (int classStyle)
 		{
@@ -1616,13 +1625,13 @@ namespace System.Windows.Forms {
 
 			if ((ParentHandle==IntPtr.Zero) && (cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
-				ParentHandle = FosterParent;
+				ParentHandle = GetFosterParent();
 			}
 
 			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD | WindowStyles.WS_POPUP))==0) && ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0)) {
 				// If we want to be hidden from the taskbar we need to be 'owned' by 
 				// something not on the taskbar. FosterParent is just that
-				ParentHandle = FosterParent;
+				ParentHandle = GetFosterParent();
 			}
 
 			Point location;
@@ -2265,7 +2274,7 @@ namespace System.Windows.Forms {
 			
 			if (parent == IntPtr.Zero) {
 				new_style = style & ~WindowStyles.WS_CHILD;
-				result = Win32SetParent (handle, FosterParent);
+				result = Win32SetParent (handle, GetFosterParent());
 			} else {
 				new_style = style | WindowStyles.WS_CHILD;
 				result = Win32SetParent (handle, parent);
@@ -2562,11 +2571,12 @@ namespace System.Windows.Forms {
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
-			Win32PostMessage(FosterParent, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
+			Win32PostMessage(GetFosterParent(), Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
 		}
 
 		internal override void SetTimer (Timer timer)
 		{
+			IntPtr	FosterParent=GetFosterParent();
 			int	index;
 
 			index = timer.GetHashCode();
@@ -2824,7 +2834,7 @@ namespace System.Windows.Forms {
 
 		internal override IntPtr ClipboardOpen(bool primary_selection) {
 			// Win32 does not have primary selection
-			Win32OpenClipboard(FosterParent);
+			Win32OpenClipboard(GetFosterParent());
 			return clip_magic;
 		}
 
@@ -3220,7 +3230,7 @@ namespace System.Windows.Forms {
 			string		magic_string = "The quick brown fox jumped over the lazy dog.";
 			double		magic_number = 44.549996948242189;
 
-			g = Graphics.FromHwnd(FosterParent);
+			g = Graphics.FromHwnd(GetFosterParent());
 
 			width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
 			return new SizeF(width, font.Height);
@@ -3594,6 +3604,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="IsWindowVisible", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool IsWindowVisible(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="IsWindow", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool IsWindow(IntPtr hwnd);
 
 		//[DllImport ("user32.dll", EntryPoint="SetClassLong", CallingConvention=CallingConvention.StdCall)]
 		//private extern static bool Win32SetClassLong(IntPtr hwnd, ClassLong nIndex, IntPtr dwNewLong);
