@@ -49,12 +49,7 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	static class ChallengeResponse2 {
+	public static class ChallengeResponse2 {
 
 		static private byte[] magic = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 
