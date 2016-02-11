@@ -11,8 +11,6 @@
 //
 // Missing features:
 // * Implement --cross, --local-targets, --list-targets, --no-auto-fetch
-// * Add directory at the end of package
-// * Add fingerprint at end of package
 // * concatenate target with package to form native binary
 //
 using System;
@@ -313,8 +311,26 @@ class MakeBundle {
 			}
 		}
 
+		public void WriteIndex ()
+		{
+			var indexStart = package.Position;
+			var binary = new BinaryWriter (package);
+
+			binary.Write (locations.Count);
+			foreach (var entry in locations){
+				var bytes = Encoding.UTF8.GetBytes (entry.Key);
+				binary.Write (bytes.Length);
+				binary.Write (bytes);
+				binary.Write (entry.Value);
+			}
+			binary.Write (indexStart);
+			binary.Write (Encoding.UTF8.GetBytes ("xmonkeysloveplay"));
+			binary.Flush ();
+		}
+		
 		public void Close ()
 		{
+			WriteIndex ();
 			package.Close ();
 			package = null;
 		}
@@ -355,7 +371,7 @@ class MakeBundle {
 
 		if (config_dir != null)
 			maker.Add ("config_dir:", config_dir);
-		
+
 		maker.Dump ();
 		maker.Close ();
 		return true;
