@@ -7,6 +7,13 @@
 //   Miguel de Icaza
 //
 // (C) Novell, Inc 2004
+// (C) 2016 Xamarin Inc
+//
+// Missing features:
+// * Implement --cross, --local-targets, --list-targets, --no-auto-fetch
+// * Add directory at the end of package
+// * Add fingerprint at end of package
+// * concatenate target with package to form native binary
 //
 using System;
 using System.Diagnostics;
@@ -17,7 +24,7 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
 using IKVM.Reflection;
-
+using System.Linq;
 
 using System.Threading.Tasks;
 
@@ -41,6 +48,7 @@ class MakeBundle {
 	static bool skip_scan;
 	static string ctor_func;
 	static bool quiet;
+	static bool custom_mode = true;
 	
 	static int Main (string [] args)
 	{
@@ -56,6 +64,14 @@ class MakeBundle {
 				Help ();
 				return 1;
 
+			case "--simple":
+				custom_mode = false;
+				break;
+				
+			case "--custom":
+				custom_mode = true;
+				break;
+				
 			case "-c":
 				compile_only = true;
 				break;
@@ -95,6 +111,7 @@ class MakeBundle {
 			case "--keeptemp":
 				keeptemp = true;
 				break;
+				
 			case "--static":
 				static_link = true;
 				if (!quiet) {
@@ -202,7 +219,7 @@ class MakeBundle {
 			if (!QueueAssembly (files, file))
 				return 1;
 			
-		GenerateBundles (files);
+		GeneratePackage (files);
 		//GenerateJitWrapper ();
 		
 		return 0;
@@ -267,6 +284,81 @@ class MakeBundle {
 		}
 
 		ts.WriteLine ();
+	}
+
+	class PackageMaker {
+		Dictionary<string, long> locations = new Dictionary<string, long> ();
+		const int align = 32;
+		Stream package;
+		
+		public PackageMaker (string output)
+		{
+			package = File.Create (output, 128*1024);
+		}
+
+		public void Add (string entry, string fname)
+		{
+			locations [entry] = package.Position;
+			using (Stream fileStream = File.OpenRead (fname)){
+				Console.WriteLine ("At {0} with input {1}", package.Position, fileStream.Length);
+				fileStream.CopyTo (package);
+				package.Position = package.Position + (align - (package.Position % align));
+			}
+		}
+
+		public void Dump ()
+		{
+			foreach (var floc in locations.Keys){
+				Console.WriteLine ($"{floc} at {locations[floc]:x}");
+			}
+		}
+
+		public void Close ()
+		{
+			package.Close ();
+			package = null;
+		}
+	}
+
+	static bool MaybeAddFile (PackageMaker maker, string code, string file)
+	{
+		if (file == null)
+			return true;
+		
+		if (!File.Exists (file)){
+			Console.Error.WriteLine ("The file {0} does not exist", file);
+			return false;
+		}
+		maker.Add (code, file);
+		return true;
+	}
+	
+	static bool GeneratePackage (List<string> files)
+	{
+		if (ctor_func != null){
+			Console.Error.WriteLine ("--static-ctor not supported with package bundling, you must use native compilation for this");
+			return false;
+		}
+		
+		var maker = new PackageMaker (output);
+		
+		foreach (var url in files){
+			string fname = LocateFile (new Uri (url).LocalPath);
+			string aname = Path.GetFileName (fname);
+
+			maker.Add ("assembly: " + aname, fname);
+			if (File.Exists (fname + ".config"))
+				maker.Add ("config: " + aname, fname + ".config");
+		}
+		if (!MaybeAddFile (maker, "systemconfig:", config_file) || !MaybeAddFile (maker, "machineconfig:", machine_config_file))
+			return false;
+
+		if (config_dir != null)
+			maker.Add ("config_dir:", config_dir);
+		
+		maker.Dump ();
+		maker.Close ();
+		return true;
 	}
 	
 	static void GenerateBundles (List<string> files)
@@ -757,25 +849,33 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	{
 		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
 				   "Options:\n" +
-				   "    -c                  Produce stub only, do not compile\n" +
-				   "    -o out              Specifies output filename\n" +
-				   "    -oo obj             Specifies output filename for helper object file\n" +
-				   "    -L path             Adds `path' to the search path for assemblies\n" +
-				   "    --nodeps            Turns off automatic dependency embedding (default)\n" +
+				   "    --config F          Bundle system config file `F'\n" +
+				   "    --config-dir D      Set MONO_CFG_DIR to `D'\n" +
 				   "    --deps              Turns on automatic dependency embedding\n" +
+				   "    -L path             Adds `path' to the search path for assemblies\n" +
+				   "    --machine-config F  Use the given file as the machine.config for the application.\n" +
+				   "    -o out              Specifies output filename\n" +
+				   "    --nodeps            Turns off automatic dependency embedding (default)\n" +
+				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
+				   "\n" + 
+				   "--simple   Simple mode does not require a C toolchain and can cross compile\n" + 
+				   "    --cross TARGET      Generates a binary for the given TARGET\n"+
+				   "    --local-targets     Lists locally available targets\n" +
+				   "    --list-targets [SERVER] Lists available targets on the remote server\n" +
+				   "    --no-auto-fetch     Prevents the tool from auto-fetching a TARGET\n" + 
+				   "\n" +
+				   "--custom   Builds a custom launcher, options for --custom\n" +
+				   "    -c                  Produce stub only, do not compile\n" +
+				   "    -oo obj             Specifies output filename for helper object file\n" +
 				   "    --dos2unix[=true|false]\n" +
 				   "                        When no value provided, or when `true` specified\n" +
 				   "                        `dos2unix` will be invoked to convert paths on Windows.\n" +
 				   "                        When `--dos2unix=false` used, dos2unix is NEVER used.\n" +
 				   "    --keeptemp          Keeps the temporary files\n" +
-				   "    --config F          Bundle system config file `F'\n" +
-				   "    --config-dir D      Set MONO_CFG_DIR to `D'\n" +
-				   "    --machine-config F  Use the given file as the machine.config for the application.\n" +
 				   "    --static            Statically link to mono libs\n" +
 				   "    --nomain            Don't include a main() function, for libraries\n" +
-				   "	--custom-main C		Link the specified compilation unit (.c or .obj) with entry point/init code\n" +
+				   "	--custom-main C     Link the specified compilation unit (.c or .obj) with entry point/init code\n" +
 				   "    -z                  Compress the assemblies before embedding.\n" +
-				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
 				   "    --static-ctor ctor  Add a constructor call to the supplied function.\n" +
 				   "                        You need zlib development headers and libraries.\n");
 	}
