@@ -36,12 +36,7 @@ namespace Mono.Security.Protocol.Ntlm {
 	 * is LM_and_NTLM_and_try_NTLMv2_Session.
 	 */
 	
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	enum NtlmAuthLevel {
+	public enum NtlmAuthLevel {
 		/* Use LM and NTLM, never use NTLMv2 session security. */
 		LM_and_NTLM,
 		
