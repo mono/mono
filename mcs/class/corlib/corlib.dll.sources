@@ -637,6 +637,7 @@ System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
+System.Security/SafeAccessTokenHandle.cs
 System.Security/SecureString.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
@@ -1137,6 +1138,7 @@ ReferenceSources/SecurityContext.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
 
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs

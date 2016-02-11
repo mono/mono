@@ -33,6 +33,10 @@ using System;
 using System.IO;
 using System.Net;
 using System.Security.Principal;
+using System.Security.Permissions;
+using System.Security.Authentication.ExtendedProtection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.Net.Security 
 {
@@ -268,6 +272,60 @@ namespace System.Net.Security
 
 		[MonoTODO]
 		public override void Write (byte[] buffer, int offset, int count)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual Task AuthenticateAsClientAsync()
+		{
+			return Task.Factory.FromAsync(BeginAuthenticateAsClient, EndAuthenticateAsClient, null);
+		}
+
+		public virtual Task AuthenticateAsClientAsync(NetworkCredential credential, string targetName)
+		{
+			return Task.Factory.FromAsync(BeginAuthenticateAsClient, EndAuthenticateAsClient, credential, targetName, null);
+		}
+
+		public virtual Task AuthenticateAsClientAsync(
+			NetworkCredential credential, string targetName,
+			ProtectionLevel requiredProtectionLevel,
+			TokenImpersonationLevel allowedImpersonationLevel)
+		{
+			return Task.Factory.FromAsync((callback, state) => BeginAuthenticateAsClient(credential, targetName, requiredProtectionLevel, allowedImpersonationLevel, callback, state), EndAuthenticateAsClient, null);
+		}
+
+		public virtual Task AuthenticateAsClientAsync(NetworkCredential credential, ChannelBinding binding, string targetName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual Task AuthenticateAsClientAsync(
+			NetworkCredential credential, ChannelBinding binding,
+			string targetName, ProtectionLevel requiredProtectionLevel,
+			TokenImpersonationLevel allowedImpersonationLevel)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual Task AuthenticateAsServerAsync()
+		{
+			return Task.Factory.FromAsync(BeginAuthenticateAsServer, EndAuthenticateAsServer, null);
+		}
+
+		public virtual Task AuthenticateAsServerAsync(ExtendedProtectionPolicy policy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual Task AuthenticateAsServerAsync(NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual Task AuthenticateAsServerAsync(
+			NetworkCredential credential, ExtendedProtectionPolicy policy,
+			ProtectionLevel requiredProtectionLevel,
+			TokenImpersonationLevel requiredImpersonationLevel)
 		{
 			throw new NotImplementedException ();
 		}
