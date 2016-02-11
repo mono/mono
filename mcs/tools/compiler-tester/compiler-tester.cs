@@ -1442,6 +1442,7 @@ namespace TestRunner {
 
 		static bool TryToMatchErrorMessage (string actual, string expected)
 		{
+			actual = actual.Replace ("\\", "/");
 			var path_mask_start = expected.IndexOf ("*PATH*");
 			if (path_mask_start > 0 && actual.Length > path_mask_start) {
 				var path_mask_continue = expected.Substring (path_mask_start + 6);
