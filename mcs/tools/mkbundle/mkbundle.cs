@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using IKVM.Reflection;
 using System.Linq;
-
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 class MakeBundle {
@@ -47,6 +47,8 @@ class MakeBundle {
 	static string ctor_func;
 	static bool quiet;
 	static bool custom_mode = true;
+	static string embedded_options = null;
+	static string runtime = null;
 	
 	static int Main (string [] args)
 	{
@@ -64,6 +66,7 @@ class MakeBundle {
 
 			case "--simple":
 				custom_mode = false;
+				autodeps = true;
 				break;
 				
 			case "--custom":
@@ -82,6 +85,20 @@ class MakeBundle {
 				output = args [++i];
 				break;
 
+			case "--options":
+				if (i+1 == top){
+					Help (); 
+					return 1;
+				}
+				embedded_options = args [++i];
+				break;
+			case "--runtime":
+				if (i+1 == top){
+					Help (); 
+					return 1;
+				}
+				runtime = args [++i];
+				break;
 			case "-oo":
 				if (i+1 == top){
 					Help (); 
@@ -216,9 +233,11 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
-			
-		GeneratePackage (files);
-		//GenerateJitWrapper ();
+
+		if (custom_mode)
+			GenerateBundles (files);
+		else
+			GeneratePackage (files);
 		
 		return 0;
 	}
@@ -285,23 +304,45 @@ class MakeBundle {
 	}
 
 	class PackageMaker {
-		Dictionary<string, long> locations = new Dictionary<string, long> ();
+		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
 		const int align = 32;
 		Stream package;
 		
 		public PackageMaker (string output)
 		{
 			package = File.Create (output, 128*1024);
+			if (IsUnix){
+				File.SetAttributes (output, unchecked ((FileAttributes) 0x80000000));
+			}
 		}
 
-		public void Add (string entry, string fname)
+		public int AddFile (string fname)
 		{
-			locations [entry] = package.Position;
 			using (Stream fileStream = File.OpenRead (fname)){
-				Console.WriteLine ("At {0} with input {1}", package.Position, fileStream.Length);
+				var ret = fileStream.Length;
+				
+				Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
+
+				return (int) ret;
 			}
+		}
+		
+		public void Add (string entry, string fname)
+		{
+			var p = package.Position;
+			var size = AddFile (fname);
+			
+			locations [entry] = Tuple.Create(p, size);
+		}
+
+		public void AddString (string entry, string text)
+		{
+			var bytes = Encoding.UTF8.GetBytes (text);
+			locations [entry] = Tuple.Create (package.Position, bytes.Length);
+			package.Write (bytes, 0, bytes.Length);
+			package.Position = package.Position + (align - (package.Position % align));
 		}
 
 		public void Dump ()
@@ -317,11 +358,13 @@ class MakeBundle {
 			var binary = new BinaryWriter (package);
 
 			binary.Write (locations.Count);
-			foreach (var entry in locations){
+			foreach (var entry in from entry in locations orderby entry.Value.Item1 ascending select entry){
 				var bytes = Encoding.UTF8.GetBytes (entry.Key);
-				binary.Write (bytes.Length);
+				binary.Write (bytes.Length+1);
 				binary.Write (bytes);
-				binary.Write (entry.Value);
+				binary.Write ((byte) 0);
+				binary.Write (entry.Value.Item1);
+				binary.Write (entry.Value.Item2);
 			}
 			binary.Write (indexStart);
 			binary.Write (Encoding.UTF8.GetBytes ("xmonkeysloveplay"));
@@ -351,12 +394,26 @@ class MakeBundle {
 	
 	static bool GeneratePackage (List<string> files)
 	{
+		if (runtime == null){
+			if (IsUnix)
+				runtime = Process.GetCurrentProcess().MainModule.FileName;
+			else {
+				Console.Error.WriteLine ("You must specify at least one runtime with --runtime or --cross");
+				Environment.Exit (1);
+			}
+		}
+		if (!File.Exists (runtime)){
+			Console.Error.WriteLine ($"The specified runtime at {runtime} does not exist");
+			Environment.Exit (1);
+		}
+		
 		if (ctor_func != null){
 			Console.Error.WriteLine ("--static-ctor not supported with package bundling, you must use native compilation for this");
 			return false;
 		}
 		
 		var maker = new PackageMaker (output);
+		maker.AddFile (runtime);
 		
 		foreach (var url in files){
 			string fname = LocateFile (new Uri (url).LocalPath);
@@ -371,7 +428,8 @@ class MakeBundle {
 
 		if (config_dir != null)
 			maker.Add ("config_dir:", config_dir);
-
+		if (embedded_options != null)
+			maker.AddString ("options:", embedded_options);
 		maker.Dump ();
 		maker.Close ();
 		return true;
@@ -867,18 +925,20 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "Options:\n" +
 				   "    --config F          Bundle system config file `F'\n" +
 				   "    --config-dir D      Set MONO_CFG_DIR to `D'\n" +
-				   "    --deps              Turns on automatic dependency embedding\n" +
+				   "    --deps              Turns on automatic dependency embedding (default on simple)\n" +
 				   "    -L path             Adds `path' to the search path for assemblies\n" +
 				   "    --machine-config F  Use the given file as the machine.config for the application.\n" +
 				   "    -o out              Specifies output filename\n" +
-				   "    --nodeps            Turns off automatic dependency embedding (default)\n" +
+				   "    --nodeps            Turns off automatic dependency embedding (default on custom)\n" +
 				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
 				   "\n" + 
 				   "--simple   Simple mode does not require a C toolchain and can cross compile\n" + 
 				   "    --cross TARGET      Generates a binary for the given TARGET\n"+
 				   "    --local-targets     Lists locally available targets\n" +
 				   "    --list-targets [SERVER] Lists available targets on the remote server\n" +
-				   "    --no-auto-fetch     Prevents the tool from auto-fetching a TARGET\n" + 
+				   "    --no-auto-fetch     Prevents the tool from auto-fetching a TARGET\n" +
+				   "    --options OPTIONS   Embed the specified Mono command line options on target\n" +
+				   "    --runtime RUNTIME   Manually specifies the Mono runtime to use\n" + 
 				   "\n" +
 				   "--custom   Builds a custom launcher, options for --custom\n" +
 				   "    -c                  Produce stub only, do not compile\n" +
