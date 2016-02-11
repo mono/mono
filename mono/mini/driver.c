@@ -1513,10 +1513,29 @@ darwin_change_default_file_handles ()
 	
 	if (getrlimit (RLIMIT_NOFILE, &limit) == 0){
 		if (limit.rlim_cur < 1024){
-			limit.rlim_cur = MAX(1024,limit.rlim_cur);
-			setrlimit (RLIMIT_NOFILE, &limit);
+			limit.rlim_cur = 10240; /* Maximum allowable under OS X 10.11 */
+			if (setrlimit (RLIMIT_NOFILE, &limit) != 0) {
+				limit.rlim_cur = 1024;
+				setrlimit (RLIMIT_NOFILE, &limit);
+			}
 		}
 	}
+
+	if (getrlimit (RLIMIT_NOFILE, &limit) == 0) {
+		char* end;
+		const char* env_setting = g_getenv ("MONO_DARWIN_WATCHER_MAXFDS"); /* Used by KeventWatcher.cs */
+		if (!env_setting)
+			return;
+
+		long parsed = g_ascii_strtoull (env_setting, &end, 10);
+		if (parsed > limit.rlim_cur)
+		{
+			char buf[16];
+			g_snprintf (buf, sizeof(buf), "%ll", limit.rlim_cur);
+			g_setenv ("MONO_DARWIN_WATCHER_MAXFDS", buf, TRUE);
+		}
+	}
+
 }
 
 static void
