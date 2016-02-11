@@ -1124,27 +1124,27 @@ sleep_interrupt (gpointer data)
 static inline guint32
 sleep_interruptable (guint32 ms, gboolean *alerted)
 {
-	guint32 start, now, end;
+	gint64 start, now, end;
 
 	g_assert (INFINITE == G_MAXUINT32);
 
 	g_assert (alerted);
 	*alerted = FALSE;
 
-	start = mono_msec_ticks ();
+	start = mono_100ns_ticks ();
 
-	if (start < G_MAXUINT32 - ms) {
+	if (start < G_MAXINT64 - ms) {
 		end = start + ms;
 	} else {
-		/* start + ms would overflow guint32 */
-		end = G_MAXUINT32;
+		/* start + ms would overflow gint64 */
+		end = G_MAXINT64;
 	}
 
 	mono_lazy_initialize (&sleep_init, sleep_initialize);
 
 	mono_coop_mutex_lock (&sleep_mutex);
 
-	for (now = mono_msec_ticks (); ms == INFINITE || now - start < ms; now = mono_msec_ticks ()) {
+	for (now = mono_100ns_ticks (); ms == INFINITE || now - start < ms; now = mono_100ns_ticks ()) {
 		mono_thread_info_install_interrupt (sleep_interrupt, NULL, alerted);
 		if (*alerted) {
 			mono_coop_mutex_unlock (&sleep_mutex);
