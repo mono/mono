@@ -305,7 +305,7 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		const int align = 32;
+		const int align = 4096;
 		Stream package;
 		
 		public PackageMaker (string output)
@@ -419,9 +419,9 @@ class MakeBundle {
 			string fname = LocateFile (new Uri (url).LocalPath);
 			string aname = Path.GetFileName (fname);
 
-			maker.Add ("assembly: " + aname, fname);
+			maker.Add ("assembly:" + aname, fname);
 			if (File.Exists (fname + ".config"))
-				maker.Add ("config: " + aname, fname + ".config");
+				maker.Add ("config:" + aname, fname + ".config");
 		}
 		if (!MaybeAddFile (maker, "systemconfig:", config_file) || !MaybeAddFile (maker, "machineconfig:", machine_config_file))
 			return false;
