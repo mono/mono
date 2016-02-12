@@ -640,7 +640,6 @@ Mono.Net.Security/SystemCertificateValidator.cs
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
-ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/Internal.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
@@ -1179,8 +1178,3 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/compmod/system/codedom/compiler/LanguageOptions.cs
 
 ../../../external/referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
-../../../external/referencesource/System/services/monitoring/system/diagnosticts/Process.cs
-../../../external/referencesource/System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs
-../../../external/referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
-
-../../../external/referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
