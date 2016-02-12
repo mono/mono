@@ -67,7 +67,7 @@ CORLIB_MONO_POSIX_REF = -r:Mono.Posix.dll
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll -r:System.dll \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
