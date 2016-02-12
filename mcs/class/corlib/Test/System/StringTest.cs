@@ -16,6 +16,10 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 
+#if !MOBILE
+using System.Diagnostics;
+#endif
+
 using NUnit.Framework;
 
 namespace MonoTests.System
@@ -92,19 +96,36 @@ public class StringTest
 		}
 	}
 
+	// Several tests in this file, to run properly, allocate 4GB objects.
+	// Obviously this creates problems on several kinds of systems, so we
+	// conservatively skip these tests unless we find a high-RAM environment.
+	// Checking RAM requires PerformanceCounter which is absent on mobile,
+	// so any test that calls this must be category MobileNotWorking.
+	static bool LowMemoryTestEnvironment ()
+	{
+#if MOBILE
+		return true;
+#else
+		if (!Environment.Is64BitProcess)
+			return true;
+
+		// Require 6 GB physical RAM, for the 4GB string plus 2GB headroom 
+		var pc = new PerformanceCounter ("Mono Memory", "Total Physical Memory");
+
+		return pc.RawValue < 6L*1024L*1024L*1024L;
+#endif
+	}
+
 	[Test] // ctor (Char, Int32)
+	[Category ("MobileNotWorking")]
 	public void Constructor4_LargeString ()
 	{
-		try {
-			var x = new String ('A', int.MaxValue);
-			if (Environment.Is64BitProcess) {
-				Assert.AreEqual ('A', x[0]);
-				Assert.AreEqual ('A', x[int.MaxValue - 1]);
-			}
-			else
-				Assert.Fail ("Expected OutOfMemoryException.");
-		} catch (OutOfMemoryException) {
-		}
+		if (LowMemoryTestEnvironment())
+			return;
+
+		var x = new String ('A', int.MaxValue);
+		Assert.AreEqual ('A', x[0]);
+		Assert.AreEqual ('A', x[int.MaxValue - 1]);
 	}
 
 	[Test] // ctor (Char [], Int32, Int32)
@@ -3008,18 +3029,15 @@ public class StringTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")]
 	public void PadLeft_LargeString ()
 	{
-		try {
-			var x = "x".PadLeft (int.MaxValue, '-');
-			if (Environment.Is64BitProcess) {
-				Assert.AreEqual ('-', x[0]);
-				Assert.AreEqual ('x', x[int.MaxValue - 1]);
-			}
-			else
-				Assert.Fail ("Expected OutOfMemoryException.");
-		} catch (OutOfMemoryException) {
-		}
+		if (LowMemoryTestEnvironment())
+			return;
+
+		var x = "x".PadLeft (int.MaxValue, '-');
+		Assert.AreEqual ('-', x[0]);
+		Assert.AreEqual ('x', x[int.MaxValue - 1]);
 	}
 
 	[Test] // PadRight (Int32)
@@ -3064,18 +3082,15 @@ public class StringTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")]
 	public void PadRight_LargeString ()
 	{
-		try {
-			var x = "x".PadRight (int.MaxValue, '-');
-			if (Environment.Is64BitProcess) {
-				Assert.AreEqual ('x', x[0]);
-				Assert.AreEqual ('-', x[int.MaxValue - 1]);
-			}
-			else
-				Assert.Fail ("Expected OutOfMemoryException.");
-		} catch (OutOfMemoryException) {
-		}
+		if (LowMemoryTestEnvironment())
+			return;
+
+		var x = "x".PadRight (int.MaxValue, '-');
+		Assert.AreEqual ('x', x[0]);
+		Assert.AreEqual ('-', x[int.MaxValue - 1]);
 	}
 
 	[Test] // Remove (Int32, Int32)
