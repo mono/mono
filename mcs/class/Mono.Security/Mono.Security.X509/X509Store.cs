@@ -128,12 +128,25 @@ namespace Mono.Security.X509 {
 
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (!File.Exists (filename)) {
-				using (FileStream fs = File.Create (filename)) {
-					byte[] data = certificate.RawData;
-					fs.Write (data, 0, data.Length);
-					fs.Close ();
+				filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
+				if (!File.Exists (filename)) {
+					using (FileStream fs = File.Create (filename)) {
+						byte[] data = certificate.RawData;
+						fs.Write (data, 0, data.Length);
+						fs.Close ();
+					}
+					ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
 				}
-				ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
+			} else {
+				string newfilename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
+				if (GetUniqueNameWithSerial (LoadCertificate (filename)) != GetUniqueNameWithSerial (certificate)) {
+					using (FileStream fs = File.Create (newfilename)) {
+						byte[] data = certificate.RawData;
+						fs.Write (data, 0, data.Length);
+						fs.Close ();
+					}
+					ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
+				}
 			}
 #if !NET_2_1
 			// Try to save privateKey if available..
@@ -164,10 +177,16 @@ namespace Mono.Security.X509 {
 
 		public void Remove (X509Certificate certificate) 
 		{
-			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
+			string filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 				ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
+			} else {
+				filename = Path.Combine (_storePath, GetUniqueName (certificate));
+				if (File.Exists (filename)) {
+					File.Delete (filename);
+					ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
+				}
 			}
 		}
 
@@ -182,10 +201,15 @@ namespace Mono.Security.X509 {
 
 		// private stuff
 
-		private string GetUniqueName (X509Certificate certificate) 
+		private string GetUniqueNameWithSerial (X509Certificate certificate)
+		{
+			return GetUniqueName (certificate, certificate.SerialNumber);
+		}
+
+		private string GetUniqueName (X509Certificate certificate, byte[] serial = null) 
 		{
 			string method;
-			byte[] name = GetUniqueName (certificate.Extensions);
+			byte[] name = GetUniqueName (certificate.Extensions, serial);
 			if (name == null) {
 				method = "tbp"; // thumbprint
 				name = certificate.Hash;
@@ -208,7 +232,7 @@ namespace Mono.Security.X509 {
 			return GetUniqueName (method, name, ".crl");
 		}
 
-		private byte[] GetUniqueName (X509ExtensionCollection extensions) 
+		private byte[] GetUniqueName (X509ExtensionCollection extensions, byte[] serial = null) 
 		{
 			// We prefer Subject Key Identifier as the unique name
 			// as it will provide faster lookups
@@ -217,7 +241,14 @@ namespace Mono.Security.X509 {
 				return null;
 
 			SubjectKeyIdentifierExtension ski = new SubjectKeyIdentifierExtension (ext);
-			return ski.Identifier;
+			if (serial == null) {
+				return ski.Identifier;
+			} else {
+				byte[] uniqueWithSerial = new byte[ski.Identifier.Length + serial.Length];
+				System.Buffer.BlockCopy (ski.Identifier, 0, uniqueWithSerial, 0, ski.Identifier.Length );
+				System.Buffer.BlockCopy (serial, 0, uniqueWithSerial, ski.Identifier.Length, serial.Length );
+				return uniqueWithSerial;
+			}
 		}
 
 		private string GetUniqueName (string method, byte[] name, string fileExtension) 
