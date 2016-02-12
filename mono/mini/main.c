@@ -30,6 +30,7 @@ mono_main_with_options (int argc, char *argv [])
 static gboolean
 probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 {
+	MonoBundledAssembly last = { NULL, 0, 0 };
 	char sigbuffer [16+sizeof (uint64_t)];
 	gboolean status = FALSE;
 	uint64_t directory_location;
@@ -43,14 +44,12 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	char *entry_point = NULL;
 	char **new_argv;
 	int j;
-	
-	printf ("Probing\n");
+
 	int fd = open (program, O_RDONLY);
 	if (fd == -1)
 		return FALSE;
 	if ((sigstart = lseek (fd, -(16+sizeof(uint64_t)), SEEK_END)) == -1)
 		goto doclose;
-	fprintf (stderr, "Reading sig from 0x%llx\n", sigstart);
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 		goto doclose;
 	if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) != 0)
@@ -67,14 +66,12 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 
 	items = STREAM_INT (directory);
 	p = directory+4;
-	printf ("Got %d items\n", items);
 
-	assemblies = g_array_new (0, 0, sizeof (MonoBundledAssembly));
+	assemblies = g_array_new (0, 0, sizeof (MonoBundledAssembly*));
 	for (i = 0; i < items; i++){
 		char *kind;
 		int strsize = STREAM_INT (p);
 		uint64_t offset, item_size;
-		printf ("Item %d is size: %d\n", i, strsize);
 		kind = p+4;
 		p += 4 + strsize;
 		offset = STREAM_LONG(p);
@@ -83,13 +80,19 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		p += 4;
 		
 		if (mapaddress == NULL){
-			mapaddress = mono_file_map (directory_location-offset, MONO_MMAP_READ, fd, offset, &maphandle);
+			mapaddress = mono_file_map (directory_location-offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, offset, &maphandle);
+			if (mapaddress == NULL){
+				perror ("Error mapping file");
+				exit (1);
+			}
 			baseline = offset;
 		}
 		if (strncmp (kind, "assembly:", strlen ("assembly:")) == 0){
 			char *aname = kind + strlen ("assembly:");
-			MonoBundledAssembly mba = { aname, mapaddress + offset - baseline, item_size };
-			g_array_append_val  (assemblies, mba);
+			MonoBundledAssembly mba = { aname, mapaddress + offset - baseline, item_size }, *ptr;
+			ptr = g_new (MonoBundledAssembly, 1);
+			*ptr = mba;
+			g_array_append_val  (assemblies, ptr);
 			if (entry_point == NULL)
 				entry_point = aname;
 		} else if (strncmp (kind, "config:", strlen ("config:")) == 0){
@@ -109,23 +112,23 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			exit (1);
 		}
 	}
-	mono_register_bundled_assemblies ((const MonoBundledAssembly **) &assemblies->data);
-	printf ("After registering the assemblies, entry %s\n", entry_point);
+	g_array_append_val (assemblies, last);
+	
+	mono_register_bundled_assemblies ((const MonoBundledAssembly **) assemblies->data);
 	new_argv = g_new (char *, (*ref_argc)+1);
 	for (j = 0; j < *ref_argc; j++)
-		new_argv [j] = (*ref_argv)[i];
+		new_argv [j] = (*ref_argv)[j];
 	new_argv [j] = entry_point;
 	*ref_argv = new_argv;
 	(*ref_argc)++;
-	for (j = 0; j < *ref_argc; j++)
-		printf ("%d %s\n", j, (*ref_argv) [j]);
 	
-	status = TRUE;
-	goto dofree;
+	return TRUE;
+	
 dofree:
 	g_free (directory);
 doclose:
-	close (fd);
+	if (!status)
+		close (fd);
 	return status;
 }
 
@@ -165,7 +168,7 @@ int
 main (int argc, char* argv[])
 {
 	mono_build_date = build_date;
-	
+
 	probe_embedded (argv [0], &argc, &argv);
 	return mono_main_with_options (argc, argv);
 }
