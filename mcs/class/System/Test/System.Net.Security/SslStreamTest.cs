@@ -39,6 +39,8 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Security
 {
 
@@ -64,7 +66,7 @@ public class SslStreamTest {
 
 	void AuthenticateClientAndServer (bool server, bool client)
 	{
-		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), 10000);
+		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), NetworkHelpers.FindFreePort ());
 		ClientServerState state = new ClientServerState ();
 		state.Client = new TcpClient ();
 		state.Listener = new TcpListener (endPoint);
