@@ -101,18 +101,19 @@ public class StringTest
 	// conservatively skip these tests unless we find a high-RAM environment.
 	// Checking RAM requires PerformanceCounter which is absent on mobile,
 	// so any test that calls this must be category MobileNotWorking.
-	static bool LowMemoryTestEnvironment ()
+	static void RequireHighMemoryTestEnvironment ()
 	{
 #if MOBILE
-		return true;
+		Assert.Ignore("PerformanceCounter not available.")
 #else
 		if (!Environment.Is64BitProcess)
-			return true;
+			Assert.Ignore("This test cannot run on a 32-bit system.");
 
-		// Require 6 GB physical RAM, for the 4GB string plus 2GB headroom 
+		// Require 6 GB physical RAM, for the 4GB string plus 2GB headroom
 		var pc = new PerformanceCounter ("Mono Memory", "Total Physical Memory");
 
-		return pc.RawValue < 6L*1024L*1024L*1024L;
+		if (pc.RawValue < 6L*1024L*1024L*1024L)
+			Assert.Ignore("This machine may not have enough RAM to run this test.");
 #endif
 	}
 
@@ -120,8 +121,7 @@ public class StringTest
 	[Category ("MobileNotWorking")]
 	public void Constructor4_LargeString ()
 	{
-		if (LowMemoryTestEnvironment())
-			return;
+		RequireHighMemoryTestEnvironment();
 
 		var x = new String ('A', int.MaxValue);
 		Assert.AreEqual ('A', x[0]);
@@ -3032,8 +3032,7 @@ public class StringTest
 	[Category ("MobileNotWorking")]
 	public void PadLeft_LargeString ()
 	{
-		if (LowMemoryTestEnvironment())
-			return;
+		RequireHighMemoryTestEnvironment();
 
 		var x = "x".PadLeft (int.MaxValue, '-');
 		Assert.AreEqual ('-', x[0]);
@@ -3085,8 +3084,7 @@ public class StringTest
 	[Category ("MobileNotWorking")]
 	public void PadRight_LargeString ()
 	{
-		if (LowMemoryTestEnvironment())
-			return;
+		RequireHighMemoryTestEnvironment();
 
 		var x = "x".PadRight (int.MaxValue, '-');
 		Assert.AreEqual ('x', x[0]);
