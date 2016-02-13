@@ -61,7 +61,7 @@ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WAR
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll -r:System.dll \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
