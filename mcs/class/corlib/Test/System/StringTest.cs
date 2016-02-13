@@ -104,7 +104,7 @@ public class StringTest
 	static void RequireHighMemoryTestEnvironment ()
 	{
 #if MOBILE
-		Assert.Ignore("PerformanceCounter not available.")
+		Assert.Ignore("PerformanceCounter not available.");
 #else
 		if (!Environment.Is64BitProcess)
 			Assert.Ignore("This test cannot run on a 32-bit system.");
