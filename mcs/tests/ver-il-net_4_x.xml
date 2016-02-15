@@ -21361,7 +21361,7 @@
         <size>102</size>
       </method>
       <method name="Void ConvertTest_12()" attrs="129">
-        <size>142</size>
+        <size>141</size>
       </method>
       <method name="Void ConvertTest_13()" attrs="129">
         <size>87</size>
@@ -21460,7 +21460,7 @@
         <size>313</size>
       </method>
       <method name="Void EqualTestDelegate_3()" attrs="129">
-        <size>230</size>
+        <size>229</size>
       </method>
       <method name="Void ExclusiveOrTest()" attrs="129">
         <size>116</size>
@@ -22310,10 +22310,10 @@
         <size>2</size>
       </method>
       <method name="Int32 TestInstance()" attrs="129">
-        <size>339</size>
+        <size>337</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>583</size>
+        <size>580</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22740,7 +22740,7 @@
         <size>9</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>222</size>
+        <size>221</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22866,6 +22866,24 @@
       </method>
       <method name="Void .ctor(Action`2)" attrs="6278">
         <size>76</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-31.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>241</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+HasAction">
+      <method name="Void Start()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
