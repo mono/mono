@@ -15,6 +15,10 @@
 **
 =============================================================================*/
 
+#if MONO
+#undef FEATURE_PAL
+#endif
+
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 
@@ -50,12 +54,14 @@ namespace System.Threading
 
         internal bool hasThreadAffinity;
 
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         private static IntPtr GetInvalidHandle()
         {
             return Win32Native.INVALID_HANDLE_VALUE;
         }
         protected static readonly IntPtr InvalidHandle = GetInvalidHandle();
+#endif // !MONO
         private const int WAIT_OBJECT_0 = 0;
         private const int WAIT_ABANDONED = 0x80;
         private const int WAIT_FAILED = 0x7FFFFFFF;
@@ -243,8 +249,10 @@ namespace System.Threading
             Contract.EndContractBlock();
             int ret = WaitOneNative(waitableSafeHandle, (uint)millisecondsTimeout, hasThreadAffinity, exitContext);
 
+#if !MONO
             if(AppDomainPauseManager.IsPaused)
                 AppDomainPauseManager.ResumeEvent.WaitOneWithoutFAS();
+#endif // !MONO
             
             if (ret == WAIT_ABANDONED)
             {
@@ -273,10 +281,12 @@ namespace System.Threading
             return (ret != WaitTimeout);
          }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern int WaitOneNative(SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext);
+#endif // !MONO
     
         /*========================================================================
         ** Waits for signal from all the objects. 
@@ -287,11 +297,13 @@ namespace System.Threading
         ** (if in a synchronized context) is exited before the wait and reacquired 
         ========================================================================*/
         
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)] 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         private static extern int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll);
+#endif // !MONO
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
@@ -355,8 +367,10 @@ namespace System.Threading
 
             int ret = WaitMultiple(internalWaitHandles, millisecondsTimeout, exitContext, true /* waitall*/ );
 
+#if !MONO
             if(AppDomainPauseManager.IsPaused)
                 AppDomainPauseManager.ResumeEvent.WaitOneWithoutFAS();
+#endif // !MONO
 
             if ((WAIT_ABANDONED <= ret) && (WAIT_ABANDONED+internalWaitHandles.Length > ret))
             {
@@ -454,8 +468,10 @@ namespace System.Threading
 #endif
             int ret = WaitMultiple(internalWaitHandles, millisecondsTimeout, exitContext, false /* waitany*/ );
 
+#if !MONO
             if(AppDomainPauseManager.IsPaused)
                 AppDomainPauseManager.ResumeEvent.WaitOneWithoutFAS();
+#endif // !MONO
 
             if ((WAIT_ABANDONED <= ret) && (WAIT_ABANDONED+internalWaitHandles.Length > ret))
             {
@@ -515,11 +531,13 @@ namespace System.Threading
         ==
         ==================================================*/
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)] 
         private static extern int SignalAndWaitOne(SafeWaitHandle waitHandleToSignal,SafeWaitHandle waitHandleToWaitOn, int millisecondsTimeout,
                                             bool hasThreadAffinity,  bool exitContext);
+#endif // !MONO
 
         public static bool SignalAndWait(
                                         WaitHandle toSignal,
