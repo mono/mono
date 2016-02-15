@@ -207,6 +207,20 @@ namespace System.Threading
 				return (NativeEventCalls.SetEvent_internal (Handle));
 			}
 		}
+
+		internal void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
+		}
+
+		bool disposed;
+		protected override void Dispose(bool explicitDisposing)
+		{
+			base.Dispose (explicitDisposing);
+			disposed = true;
+		}
+
 #if !NET_2_1
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{
