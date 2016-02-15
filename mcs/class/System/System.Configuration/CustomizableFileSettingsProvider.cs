@@ -578,14 +578,40 @@ namespace System.Configuration
 		private ExeConfigurationFileMap exeMapPrev = null;
 		private SettingsPropertyValueCollection values = null;
 
+		/// <remarks>
+		/// Hack to remove the XmlDeclaration that the XmlSerializer adds.
+		/// <br />
+		/// see <a href="https://github.com/mono/mono/pull/2273">Issue 2273</a> for details
+		/// </remarks>
+		private string StripXmlHeader (string serializedValue)
+		{
+			if (serializedValue == null)
+			{
+				return string.Empty;
+			}
+
+			XmlDocument doc = new XmlDocument ();
+			XmlElement valueXml = doc.CreateElement ("value");
+			valueXml.InnerXml = serializedValue;
+
+			foreach (XmlNode child in valueXml.ChildNodes) {
+				if (child.NodeType == XmlNodeType.XmlDeclaration) {
+					valueXml.RemoveChild (child);
+					break;
+				}
+			}
+
+			// InnerXml will give you well-formed XML that you could save as a separate document, and 
+			// InnerText will immediately give you a pure-text representation of this inner XML.
+			return valueXml.InnerXml;
+		}
+
 		private void SaveProperties (ExeConfigurationFileMap exeMap, SettingsPropertyValueCollection collection, ConfigurationUserLevel level, SettingsContext context, bool checkUserLevel)
 		{
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap, level);
 			
 			UserSettingsGroup userGroup = config.GetSectionGroup ("userSettings") as UserSettingsGroup;
 			bool isRoaming = (level == ConfigurationUserLevel.PerUserRoaming);
-
-#if true // my reimplementation
 
 			if (userGroup == null) {
 				userGroup = new UserSettingsGroup ();
@@ -623,7 +649,7 @@ namespace System.Configuration
 					element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
 				switch (value.Property.SerializeAs) {
 				case SettingsSerializeAs.Xml:
-					element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
+					element.Value.ValueXml.InnerXml = StripXmlHeader (value.SerializedValue as string);
 					break;
 				case SettingsSerializeAs.String:
 					element.Value.ValueXml.InnerText = value.SerializedValue as string;
@@ -637,43 +663,6 @@ namespace System.Configuration
 			}
 			if (hasChanges)
 				config.Save (ConfigurationSaveMode.Minimal, true);
-
-#else // original impl. - likely buggy to miss some properties to save
-
-			foreach (ConfigurationSection configSection in userGroup.Sections)
-			{
-				ClientSettingsSection userSection = configSection as ClientSettingsSection;
-				if (userSection != null)
-				{
-/*
-					userSection.Settings.Clear();
-
-					foreach (SettingsPropertyValue propertyValue in collection)
-					{
-						if (propertyValue.IsDirty)
-						{
-							SettingElement element = new SettingElement(propertyValue.Name, SettingsSerializeAs.String);
-							element.Value.ValueXml = new XmlDocument();
-							element.Value.ValueXml.InnerXml = (string)propertyValue.SerializedValue;
-							userSection.Settings.Add(element);
-						}
-					}
-*/
-					foreach (SettingElement element in userSection.Settings)
-					{
-						if (collection [element.Name] != null) {
-							if (collection [element.Name].Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
-								continue;
-
-							element.SerializeAs = SettingsSerializeAs.String;
-							element.Value.ValueXml.InnerXml = (string) collection [element.Name].SerializedValue;	///Value = XmlElement
-						}
-					}
- 
-				}
-			}
-			config.Save (ConfigurationSaveMode.Minimal, true);
-#endif
 		}
 
 		// NOTE: We should add here all the chars that are valid in a name of a class (Ecma-wise),
