@@ -25,7 +25,9 @@ namespace System.Reflection
     using System.Text;
     using System.Threading;
     using MemberListType = System.RuntimeType.MemberListType;
+#if !MONO
     using RuntimeTypeCache = System.RuntimeType.RuntimeTypeCache;
+#endif
     using System.Runtime.CompilerServices;
 
     [Serializable]
@@ -35,7 +37,10 @@ namespace System.Reflection
     [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
 #pragma warning restore 618
     [System.Runtime.InteropServices.ComVisible(true)]
-    public abstract class MethodInfo : MethodBase, _MethodInfo
+    public abstract class MethodInfo : MethodBase
+#if !MOBILE
+    , _MethodInfo
+#endif
     {
         #region Constructor
         protected MethodInfo() { }
@@ -96,7 +101,7 @@ namespace System.Reflection
         public virtual Delegate CreateDelegate(Type delegateType, Object target) { throw new NotSupportedException(Environment.GetResourceString("NotSupported_SubclassOverride")); }
         #endregion
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MOBILE
         Type _MethodInfo.GetType()
         {
             return base.GetType();
@@ -124,8 +129,17 @@ namespace System.Reflection
             throw new NotImplementedException();
         }
 #endif
+
+#if MONO
+        // TODO: Remove, needed only for MonoCustomAttribute
+        internal virtual MethodInfo GetBaseMethod ()
+        {
+            return this;
+        }
+#endif
     }
 
+#if !MONO
     [Serializable]
     internal sealed class RuntimeMethodInfo : MethodInfo, ISerializable, IRuntimeMethodInfo
     {
@@ -1063,4 +1077,5 @@ namespace System.Reflection
         }
         #endregion
     }
+#endif
 }
