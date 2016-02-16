@@ -108,11 +108,6 @@ namespace System.Runtime.Versioning
             return MakeVersionSafeName(name, from, to, null);
         }
 
-#if MONO
-         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-         extern static uint GetCurrentProcessId ();
-#endif
-
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
@@ -137,7 +132,7 @@ namespace System.Runtime.Versioning
                 safeName.Append(separator);
                 safeName.Append('p');
 #if MONO
-                safeName.Append(GetCurrentProcessId ());
+                safeName.Append (NativeMethods.GetCurrentProcessId ());
 #else
                 safeName.Append(Win32Native.GetCurrentProcessId());
 #endif
