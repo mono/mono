@@ -1372,3 +1372,4 @@ System.Web/DynamicModuleManager.cs
 ReferenceSources/SR.cs
 ../../../external/referencesource/System.Web/IRequestCompletedNotifier.cs
 ../../../external/referencesource/System.Web/ValidateStringCallback.cs
+../../../external/referencesource/System.Web/IPrincipalContainer.cs
