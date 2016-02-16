@@ -1222,7 +1222,7 @@ System.Web/WebSysDescriptionAttribute.cs
 System.Web/XmlSiteMapProvider.cs
 
 ../../../external/referencesource/System.Web/IHtmlString.cs
-System.Web/HtmlString.cs
+../../../external/referencesource/System.Web/HtmlString.cs
 ../../../external/referencesource/System.Web/PreApplicationStartMethodAttribute.cs
 
 System.Web.Caching/FileResponseElement.cs
