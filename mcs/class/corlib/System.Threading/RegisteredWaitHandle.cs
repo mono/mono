@@ -40,6 +40,7 @@ namespace System.Threading
 		: MarshalByRefObject
 	{
 		WaitHandle _waitObject;
+		bool _releaseWaitObject;
 		WaitOrTimerCallback _callback;
 		object _state;
 		WaitHandle _finalEvent;
@@ -52,6 +53,7 @@ namespace System.Threading
 		internal RegisteredWaitHandle (WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce)
 		{
 			_waitObject = waitObject;
+			_waitObject.SafeWaitHandle.DangerousAddRef (ref _releaseWaitObject);
 			_callback = callback;
 			_state = state;
 			_timeout = timeout;
@@ -64,26 +66,35 @@ namespace System.Threading
 
 		internal void Wait (object state)
 		{
-			try
-			{
-				WaitHandle[] waits = new WaitHandle[] {_waitObject, _cancelEvent};
-				do 
-				{
-					int signal = WaitHandle.WaitAny (waits, _timeout, false);
-					if (!_unregistered)
-					{
-						lock (this) { _callsInProcess++; }
-						ThreadPool.QueueUserWorkItem (new WaitCallback (DoCallBack), (signal == WaitHandle.WaitTimeout));
-					}
-				} 
-				while (!_unregistered && !_executeOnlyOnce);
-			}
-			catch {}
+			bool release = false;
+			try {
+				_waitObject.SafeWaitHandle.DangerousAddRef (ref release);
+				try {
+					WaitHandle[] waits = new WaitHandle[] {_waitObject, _cancelEvent};
+					do {
+						int signal = WaitHandle.WaitAny (waits, _timeout, false);
+						if (!_unregistered) {
+							lock (this) {
+								_callsInProcess++;
+							}
+							ThreadPool.QueueUserWorkItem (new WaitCallback (DoCallBack), (signal == WaitHandle.WaitTimeout));
+						}
+					} while (!_unregistered && !_executeOnlyOnce);
+				} catch {
+				}
 
-			lock (this) {
-				_unregistered = true;
-				if (_callsInProcess == 0 && _finalEvent != null)
-					NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+				lock (this) {
+					_unregistered = true;
+					if (_callsInProcess == 0 && _finalEvent != null)
+						NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+				}
+			} catch (ObjectDisposedException) {
+				// Can happen if we called Unregister before we had time to execute Wait
+				if (release)
+					throw;
+			} finally {
+				if (release)
+					_waitObject.SafeWaitHandle.DangerousRelease ();
 			}
 		}
 
@@ -108,13 +119,18 @@ namespace System.Threading
 		{
 			lock (this) 
 			{
-				if (_unregistered) return false;
+				if (_unregistered)
+					return false;
+
+				if (_releaseWaitObject)
+					_waitObject.SafeWaitHandle.DangerousRelease ();
+
 				_finalEvent = waitObject;
 				_unregistered = true;
 				_cancelEvent.Set();
+
 				return true;
 			}
 		}
-
 	}
 }
