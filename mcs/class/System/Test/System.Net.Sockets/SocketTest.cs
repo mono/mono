@@ -3492,6 +3492,8 @@ namespace MonoTests.System.Net.Sockets
 					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 				} catch (SocketException e) {
 					// Exception is thrown when ReuseAddress is not supported
+					Assert.AreEqual ((int) SocketError.OperationNotSupported, e.NativeErrorCode,
+							"Expected SocketError.OperationNotSupported");
 					supportsReuseAddress = false;
 				}
 
@@ -3523,6 +3525,8 @@ namespace MonoTests.System.Net.Sockets
 					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 				} catch (SocketException e) {
 					// Exception is thrown when ReuseAddress is not supported
+					Assert.AreEqual ((int) SocketError.OperationNotSupported, e.NativeErrorCode,
+							"Expected SocketError.OperationNotSupported");
 					supportsReuseAddress = false;
 				}
 
