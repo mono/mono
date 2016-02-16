@@ -230,13 +230,17 @@ namespace System.IO {
 		{
 			if (destFileName == null)
 				throw new ArgumentNullException ("destFileName");
-			if (destFileName == Name || destFileName == FullName)
+			if (destFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
+
+			var destFullPath = Path.GetFullPath (destFileName);
+			if (destFullPath == FullPath)
 				return;
 			if (!File.Exists (FullPath))
 				throw new FileNotFoundException ();
 
-			File.Move (FullPath, destFileName);
-			this.FullPath = Path.GetFullPath (destFileName);
+			File.Move (FullPath, destFullPath);
+			this.FullPath = destFullPath;
 		}
 
 		public FileInfo CopyTo (string destFileName)
