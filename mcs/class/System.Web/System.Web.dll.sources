@@ -1370,3 +1370,5 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
 ../../build/common/SR.cs
 ReferenceSources/SR.cs
+../../../external/referencesource/System.Web/IRequestCompletedNotifier.cs
+../../../external/referencesource/System.Web/ValidateStringCallback.cs
