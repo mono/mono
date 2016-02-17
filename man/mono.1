@@ -142,6 +142,11 @@ instead of going through the operating system symbol lookup operation.
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
 .TP
+.I gen-seq-points-file=FILE.msym
+Instructs the AOT compiler to generate offline sequence points .msym files.
+The path is optional, if none is passed then a .msym file will be generated
+next to the input assembly.
+.TP
 .I mtriple=<TRIPLE>
 Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
 --mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
