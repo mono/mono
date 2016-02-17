@@ -120,8 +120,12 @@ namespace System
 		{
 			name = null;
 			var linkPath = readlink (path);
-			if (linkPath != null)
-				path = linkPath;
+			if (linkPath != null) {
+				if (Path.IsPathRooted(linkPath))
+					path = linkPath;
+				else
+					path = Path.Combine(Path.GetDirectoryName(path), linkPath);
+			}
 
 			path = Path.GetFullPath (path);
 
