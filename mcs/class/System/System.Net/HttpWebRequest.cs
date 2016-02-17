@@ -593,6 +593,7 @@ namespace System.Net
 				CheckRequestStarted ();
 				proxy = value;
 				servicePoint = null; // we may need a new one
+				GetServicePoint ();
 			}
 		}
 		
