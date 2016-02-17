@@ -1394,3 +1394,11 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Web/Hosting/IProcessHostSupportFunctions.cs
 ../../../external/referencesource/System.Web/Hosting/HTTP_COOKED_URL.cs
 ../../../external/referencesource/System.Web/Hosting/HostingEnvironmentException.cs
+../../../external/referencesource/System.Web/Routing/PathSegment.cs
+../../../external/referencesource/System.Web/Routing/PathSubsegment.cs
+../../../external/referencesource/System.Web/Routing/BoundUrl.cs
+../../../external/referencesource/System.Web/Routing/SeparatorPathSegment.cs
+../../../external/referencesource/System.Web/Routing/UrlAuthFailureHandler.cs
+../../../external/referencesource/System.Web/Routing/LiteralSubsegment.cs
+../../../external/referencesource/System.Web/Routing/ParameterSubsegment.cs
+../../../external/referencesource/System.Web/Routing/ContentPathSegment.cs
