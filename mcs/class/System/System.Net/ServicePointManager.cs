@@ -328,7 +328,7 @@ namespace System.Net
 				usesProxy = true;
 				bool isSecure = address.Scheme == "https";
 				address = proxy.GetProxy (address);
-				if (address.Scheme != "http" && !isSecure)
+				if (address.Scheme != "http")
 					throw new NotSupportedException ("Proxy scheme not supported.");
 
 				if (isSecure && address.Scheme == "http")
