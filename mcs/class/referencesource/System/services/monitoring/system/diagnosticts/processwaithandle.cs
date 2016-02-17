@@ -22,7 +22,14 @@ namespace System.Diagnostics {
                 NativeMethods.DUPLICATE_SAME_ACCESS);
                     
             if (!succeeded) {                    
+#if MONO
+                // In Mono, Marshal.GetHRForLastWin32Error is not implemented;
+                // and also DuplicateHandle throws its own exception rather
+                // than returning false on error, so this code is unreachable.
+                throw new SystemException("Unknown error in DuplicateHandle");
+#else
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+#endif
             }
 
             this.SafeWaitHandle = waitHandle;         
