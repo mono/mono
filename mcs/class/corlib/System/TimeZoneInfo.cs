@@ -90,14 +90,14 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
-		private static bool libcNotFound;
+		private static bool readlinkNotFound;
 
 		[DllImport ("libc")]
 		private static extern int readlink (string path, byte[] buffer, int buflen);
 
 		private static string readlink (string path)
 		{
-			if (libcNotFound)
+			if (readlinkNotFound)
 				return null;
 
 			byte[] buf = new byte [512];
@@ -106,7 +106,10 @@ namespace System
 			try {
 				ret = readlink (path, buf, buf.Length);
 			} catch (DllNotFoundException e) {
-				libcNotFound = true;
+				readlinkNotFound = true;
+				return null;
+			} catch (EntryPointNotFoundException e) {
+				readlinkNotFound = true;
 				return null;
 			}
 
