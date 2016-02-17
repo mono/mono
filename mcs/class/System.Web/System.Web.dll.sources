@@ -1218,11 +1218,10 @@ System.Web/VirtualPathUtility.cs
 System.Web/WebCategoryAttribute.cs
 System.Web/WebPageTraceListener.cs
 System.Web/WebROCollection.cs
-System.Web/WebSysDescriptionAttribute.cs
+../../../external/referencesource/System.Web/WebSysDescriptionAttribute.cs
 System.Web/XmlSiteMapProvider.cs
 
 ../../../external/referencesource/System.Web/IHtmlString.cs
-System.Web/HtmlString.cs
 ../../../external/referencesource/System.Web/PreApplicationStartMethodAttribute.cs
 
 System.Web.Caching/FileResponseElement.cs
@@ -1230,7 +1229,7 @@ System.Web.Caching/HeaderElement.cs
 ../../../external/referencesource/System.Web/Cache/IOutputCacheEntry.cs
 System.Web.Caching/MemoryResponseElement.cs
 System.Web.Caching/OutputCache.cs
-System.Web.Caching/OutputCacheProviderCollection.cs
+../../../external/referencesource/System.Web/Cache/OutputCacheProviderCollection.cs
 ../../../external/referencesource/System.Web/Cache/ResponseElement.cs
 System.Web.Caching/SubstitutionResponseElement.cs
 System.Web.Configuration_2.0/VersionConverter.cs
@@ -1370,3 +1369,14 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
 ../../build/common/SR.cs
 ReferenceSources/SR.cs
+../../../external/referencesource/System.Web/IRequestCompletedNotifier.cs
+../../../external/referencesource/System.Web/ValidateStringCallback.cs
+../../../external/referencesource/System.Web/IPrincipalContainer.cs
+../../../external/referencesource/System.Web/HtmlString.cs
+../../../external/referencesource/System.Web/HttpChannelBindingToken.cs
+../../../external/referencesource/System.Web/ModuleConfigurationInfo.cs
+../../../external/referencesource/System.Web/TaskWrapperAsyncResult.cs
+../../../external/referencesource/System.Web/HttpRawResponse.cs
+../../../external/referencesource/System.Web/WebSysDisplayNameAttribute.cs
+../../../external/referencesource/System.Web/WebSocketTransitionState.cs
+../../../external/referencesource/System.Web/WebSysDefaultValueAttribute.cs
