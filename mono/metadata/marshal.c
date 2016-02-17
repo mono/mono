@@ -4853,8 +4853,8 @@ emit_marshal_vtype (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		/* load pointer to returned value type */
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_VTADDR);
+		mono_mb_emit_byte (mb, CEE_POP);
+		mono_mb_emit_ldloc_addr (mb, 3);
 		/* store the address of the source into local variable 0 */
 		mono_mb_emit_stloc (mb, 0);
 		/* set dst_ptr */
@@ -7233,6 +7233,9 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		}
 	}
 
+	if (!MONO_TYPE_IS_VOID (sig->ret))
+		mono_mb_emit_stloc (mb, 3);
+
 	/* Set LastError if needed */
 	if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
 		if (!get_last_error_sig) {
@@ -7258,6 +7261,9 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_finish_blocking);
 	}
+
+	if (!MONO_TYPE_IS_VOID (sig->ret))
+		mono_mb_emit_ldloc (mb, 3);
 
 	/* convert the result */
 	if (!sig->ret->byref) {
