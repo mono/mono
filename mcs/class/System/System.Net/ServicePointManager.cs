@@ -114,7 +114,7 @@ namespace System.Net
 		
 		// Static properties
 		
-		private static ICertificatePolicy policy = new DefaultCertificatePolicy ();
+		private static ICertificatePolicy policy;
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 100000; // 100 seconds
 		private static int maxServicePoints = 0;
@@ -174,7 +174,11 @@ namespace System.Net
 		
 		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
 		public static ICertificatePolicy CertificatePolicy {
-			get { return policy; }
+			get {
+				if (policy == null)
+					Interlocked.CompareExchange (ref policy, new DefaultCertificatePolicy (), null);
+				return policy;
+			}
 			set { policy = value; }
 		}
 
