@@ -40,7 +40,6 @@ namespace System.Threading
 		: MarshalByRefObject
 	{
 		WaitHandle _waitObject;
-		bool _releaseWaitObject;
 		WaitOrTimerCallback _callback;
 		object _state;
 		WaitHandle _finalEvent;
@@ -53,7 +52,6 @@ namespace System.Threading
 		internal RegisteredWaitHandle (WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce)
 		{
 			_waitObject = waitObject;
-			_waitObject.SafeWaitHandle.DangerousAddRef (ref _releaseWaitObject);
 			_callback = callback;
 			_state = state;
 			_timeout = timeout;
@@ -121,9 +119,6 @@ namespace System.Threading
 			{
 				if (_unregistered)
 					return false;
-
-				if (_releaseWaitObject)
-					_waitObject.SafeWaitHandle.DangerousRelease ();
 
 				_finalEvent = waitObject;
 				_unregistered = true;
