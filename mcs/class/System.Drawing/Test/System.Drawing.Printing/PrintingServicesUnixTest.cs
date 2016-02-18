@@ -99,7 +99,6 @@ namespace MonoTests.System.Drawing.Printing {
 				optionPtr = (IntPtr)((long)optionPtr + cupsOptionSize);
 			}
 			cupsFreeDests (1, destPtr);
-
 			return options;
 		}
 
@@ -115,8 +114,9 @@ namespace MonoTests.System.Drawing.Printing {
 			var settings = new PrinterSettings () { PrinterName = PrinterSettings.InstalledPrinters [0] };
 			Assert.AreEqual (options ["PageSize"], settings.DefaultPageSettings.PaperSize.PaperName,
 				"Bug #602934 (https://bugzilla.novell.com/show_bug.cgi?id=602934) not fixed (PaperSize)");
-			Assert.AreEqual (options ["Resolution"], string.Format ("{0}dpi", settings.DefaultPageSettings.PrinterResolution.X),
-				"Bug #602934 (https://bugzilla.novell.com/show_bug.cgi?id=602934) not fixed (Resolution)");
+			if (options.ContainsKey("Resolution"))
+				Assert.AreEqual (options ["Resolution"], string.Format ("{0}dpi", settings.DefaultPageSettings.PrinterResolution.X),
+					"Bug #602934 (https://bugzilla.novell.com/show_bug.cgi?id=602934) not fixed (Resolution)");
 		}
 
 		#endregion
