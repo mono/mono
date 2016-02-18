@@ -160,7 +160,7 @@ namespace Mono.Net.Security
 					certValidationCallback = new ServerCertValidationCallback (callback);
 				}
 				certSelectionCallback = Private.CallbackHelpers.MonoToInternal (settings.ClientCertificateSelectionCallback);
-				fallbackToSPM = settings.UseServicePointManagerCallback;
+				fallbackToSPM = settings.UseServicePointManagerCallback ?? stream != null;
 			}
 
 			if (stream != null) {
