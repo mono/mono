@@ -33,6 +33,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Microsoft.Win32.SafeHandles;
 
 #if !MOBILE
 using System.Security.AccessControl;
@@ -46,11 +47,35 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern IntPtr CreateEvent_internal(bool manual,bool initial,string name, out bool created);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern bool SetEvent_internal(IntPtr handle);
+		public static bool SetEvent (SafeWaitHandle handle)
+		{
+			bool release = false;
+			try {
+				handle.DangerousAddRef (ref release);
+				return SetEvent_internal (handle.DangerousGetHandle ());
+			} finally {
+				if (release)
+					handle.DangerousRelease ();
+			}
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern bool ResetEvent_internal(IntPtr handle);
+		static extern bool SetEvent_internal(IntPtr handle);
+
+		public static bool ResetEvent (SafeWaitHandle handle)
+		{
+			bool release = false;
+			try {
+				handle.DangerousAddRef (ref release);
+				return ResetEvent_internal (handle.DangerousGetHandle ());
+			} finally {
+				if (release)
+					handle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool ResetEvent_internal(IntPtr handle);
 	
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void CloseEvent_internal (IntPtr handle);

@@ -195,7 +195,7 @@ namespace System.Threading
 			lock (this) {
 				CheckDisposed ();
 			
-				return (NativeEventCalls.ResetEvent_internal (Handle));
+				return NativeEventCalls.ResetEvent (SafeWaitHandle);
 			}
 		}
 		
@@ -204,7 +204,7 @@ namespace System.Threading
 			lock (this) {
 				CheckDisposed ();
 			
-				return (NativeEventCalls.SetEvent_internal (Handle));
+				return NativeEventCalls.SetEvent (SafeWaitHandle);
 			}
 		}
 

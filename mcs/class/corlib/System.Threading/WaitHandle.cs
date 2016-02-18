@@ -52,15 +52,32 @@ namespace System.Threading
 				throw new NotSupportedException ("exitContext == true is not supported");
 #endif
 
+			int release_last = -1;
+
 			try {
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
+
+				for (int i = 0; i < waitHandles.Length; ++i) {
+					try {
+					} finally {
+						/* we have to put it in a finally block, to avoid having a ThreadAbortException
+						 * between the return from DangerousAddRef and the assignement to release_last */
+						bool release = false;
+						waitHandles [i].SafeWaitHandle.DangerousAddRef (ref release);
+						release_last = i;
+					}
+				}
 
 				if (WaitAll)
 					return WaitAll_internal (waitHandles, millisecondsTimeout, exitContext);
 				else
 					return WaitAny_internal (waitHandles, millisecondsTimeout, exitContext);
 			} finally {
+				for (int i = release_last; i >= 0; --i) {
+					waitHandles [i].SafeWaitHandle.DangerousRelease ();
+				}
+
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
 			}
