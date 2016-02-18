@@ -1786,12 +1786,13 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 		break;
 	case SAVE_FP:
 		x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
-		x86_fst_membase (code, X86_ESP, 0, TRUE, TRUE);
 		if (enable_arguments) {
-			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
+			x86_fld_reg (code, 0);
 			x86_fst_membase (code, X86_ESP, 0, TRUE, TRUE);
+			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
 			arg_size = 8;
 		}
+		x86_fst_membase (code, X86_ESP, 0, TRUE, TRUE);
 		break;
 	case SAVE_STRUCT:
 		if (enable_arguments) {
