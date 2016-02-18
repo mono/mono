@@ -160,6 +160,7 @@ System.Deployment.Internal/InternalApplicationIdentityHelper.cs
 System.Diagnostics/Debugger.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
+System.Diagnostics/StackTraceHelper.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
 System.Diagnostics.Tracing/EventSource.cs

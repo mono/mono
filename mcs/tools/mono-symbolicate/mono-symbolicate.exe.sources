@@ -1,2 +1,3 @@
 symbolicate.cs
 LocationProvider.cs
+../../class/corlib/System.Diagnostics/StackTraceHelper.cs

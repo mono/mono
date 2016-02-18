@@ -72,18 +72,11 @@ namespace Symbolicate
 				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, methodIndex, nativeOffset});
 			}
 
-			static MethodInfo methodGetMethodFullName;
 			private string GetMethodFullName (MethodBase m)
 			{
-
-				if (methodGetMethodFullName == null)
-					methodGetMethodFullName = typeof (StackTrace).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetMethodFullName == null)
-					throw new Exception ("System.Exception.GetFullNameForStackTrace could not be found, make sure you have an updated mono installed.");
-
 				StringBuilder sb = new StringBuilder ();
-				methodGetMethodFullName.Invoke (null, new object[] {sb, m});
+
+				StackTraceHelper.GetFullNameForStackTrace (sb, m);
 
 				return sb.ToString ();
 			}
