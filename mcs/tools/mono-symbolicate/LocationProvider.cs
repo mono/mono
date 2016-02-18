@@ -106,7 +106,7 @@ namespace Symbolicate
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = Assembly.LoadFrom (assemblyPath);
+			var assembly = Assembly.ReflectionOnlyLoadFrom (assemblyPath);
 			MonoSymbolFile symbolFile = null;
 
 			var symbolPath = assemblyPath + ".mdb";
