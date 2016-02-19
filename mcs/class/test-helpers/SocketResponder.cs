@@ -64,7 +64,7 @@ namespace MonoTests.Helpers
 			tcpListener = new TcpListener (ep);
 			tcpListener.Start ();
 
-			listenTask = Task.Run (Listen);
+			listenTask = Task.Run ((Action) Listen);
 		}
 
 		public void Dispose ()
