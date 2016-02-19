@@ -47,7 +47,7 @@ namespace Microsoft.Build.Utilities
 				} else {
 					ProcessEventHandler handler = OutputStreamChanged;
 					if (handler != null)
-						handler (this, args.Data);
+						handler (this, args.Data + Environment.NewLine);
 				}
 			};
 
@@ -61,7 +61,7 @@ namespace Microsoft.Build.Utilities
 				} else {
 					ProcessEventHandler handler = ErrorStreamChanged;
 					if (handler != null)
-						handler (this, args.Data);
+						handler (this, args.Data + Environment.NewLine);
 				}
 			};
 
