@@ -345,10 +345,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			// The non-parallel part
 			byte [] buffer = new byte [8192];
+			// everything other than a-zA-Z0-9_ needs to be escaped in asm symbols.
+			var symbolEscapeRE = new System.Text.RegularExpressions.Regex ("[^\\w_]");
 			foreach (var url in files) {
 				string fname = LocateFile (new Uri (url).LocalPath);
 				string aname = Path.GetFileName (fname);
-				string encoded = aname.Replace ("-", "_").Replace (".", "_");
+				string encoded = symbolEscapeRE.Replace (aname, "_");
 
 				if (prog == null)
 					prog = aname;
@@ -550,7 +552,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 						smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
 					else
 						smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
-					cmd = String.Format("{4} -o {2} -Wall `pkg-config --cflags mono-2` {0} {3} " +
+					cmd = String.Format("{4} -o '{2}' -Wall `pkg-config --cflags mono-2` {0} {3} " +
 						"`pkg-config --libs-only-L mono-2` " + smonolib +
 						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
 						temp_c, temp_o, output, zlib, cc);
@@ -558,7 +560,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				else
 				{
 
-					cmd = String.Format("{4} " + debugging + " -o {2} -Wall {0} `pkg-config --cflags --libs mono-2` {3} {1}",
+					cmd = String.Format("{4} " + debugging + " -o '{2}' -Wall {0} `pkg-config --cflags --libs mono-2` {3} {1}",
 						temp_c, temp_o, output, zlib, cc);
 				}
 				Execute (cmd);
