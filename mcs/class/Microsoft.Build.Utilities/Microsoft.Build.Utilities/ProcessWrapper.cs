@@ -13,6 +13,7 @@ namespace Microsoft.Build.Utilities
 		ManualResetEvent endEventErr = new ManualResetEvent (false);
 		ManualResetEvent endEventExit = new ManualResetEvent (false);
 		bool done;
+		bool disposed;
 		object lockObj = new object ();
 
 		public ProcessWrapper ()
@@ -26,15 +27,23 @@ namespace Microsoft.Build.Utilities
 			base.EnableRaisingEvents = true;
 
 			base.Exited += (s, args) => {
-				endEventExit.Set ();
+				try {
+					endEventExit.Set ();
+					WaitHandle.WaitAll (new WaitHandle[] { endEventOut, endEventErr });
+				} catch (ObjectDisposedException) {
+					return; // we already called Dispose
+				}
 
-				WaitHandle.WaitAll (new WaitHandle[] { endEventOut, endEventErr });
 				OnExited (this, EventArgs.Empty);
 			};
 
 			base.OutputDataReceived += (s, args) => {
 				if (args.Data == null) {
-					endEventOut.Set ();
+					try {
+						endEventOut.Set ();
+					} catch (ObjectDisposedException) {
+						return; // we already called Dispose
+					}
 				} else {
 					ProcessEventHandler handler = OutputStreamChanged;
 					if (handler != null)
@@ -44,7 +53,11 @@ namespace Microsoft.Build.Utilities
 
 			base.ErrorDataReceived += (s, args) => {
 				if (args.Data == null) {
-					endEventErr.Set ();
+					try {
+						endEventErr.Set ();
+					} catch (ObjectDisposedException) {
+						return; // we already called Dispose
+					}
 				} else {
 					ProcessEventHandler handler = ErrorStreamChanged;
 					if (handler != null)
@@ -71,24 +84,28 @@ namespace Microsoft.Build.Utilities
 
 		protected override void Dispose (bool disposing)
 		{
-			lock (lockObj) {
-				if (endEventOut == null)
-					return;
-			}
+			if (disposed)
+				return;
 
 			if (!done)
 				((IAsyncOperation)this).Cancel ();
 
+			// if we race with base.Exited, we don't want to hang on WaitAll (endEventOut, endEventErr)
+			endEventOut.Set ();
+			endEventErr.Set ();
+
 			endEventOut.Close ();
 			endEventErr.Close ();
 			endEventExit.Close ();
+
+			disposed = true;
 
 			base.Dispose (disposing);
 		}
 
 		void CheckDisposed ()
 		{
-			if (endEventOut == null)
+			if (disposed)
 				throw new ObjectDisposedException ("ProcessWrapper");
 		}
 
