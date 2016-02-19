@@ -115,6 +115,51 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipOpenAndReopenEntry()
+		{
+			try {
+				File.Copy("archive.zip", "test.zip", overwrite: true);
+				using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+					ZipArchiveMode.Update))
+				{
+					var entry = archive.GetEntry("foo.txt");
+					Assert.IsNotNull(entry);
+
+					var stream = entry.Open();
+
+					try {
+						stream = entry.Open();
+					} catch (global::System.IO.IOException ex) {
+						return;
+					}
+
+					Assert.Fail();
+				}
+			} finally {
+				File.Delete ("test.zip");
+			}
+		}
+
+
+		[Test]
+		public void ZipOpenCloseAndReopenEntry()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.IsNotNull(entry);
+
+				var stream = entry.Open();
+				stream.Dispose();
+				stream = entry.Open();
+			}
+
+			File.Delete ("test.zip");
+		}
+
+		[Test]
 		public void ZipGetEntryDeleteReadMode()
 		{
 			File.Copy("archive.zip", "delete.zip", overwrite: true);
