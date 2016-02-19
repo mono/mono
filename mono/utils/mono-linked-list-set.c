@@ -69,11 +69,6 @@ mono_lls_init (MonoLinkedListSet *list, void (*free_node_func)(void *))
 Search @list for element with key @key.
 The nodes next, cur and prev are returned in @hp.
 Returns true if a node with key @key was found.
-This function cannot be called from a signal nor within interrupt context*.
-XXX A variant that works within interrupted is possible if needed.
-
-* interrupt context is when the current thread is reposible for another thread
-been suspended at an arbritary point. This is a limitation of our SMR implementation.
 */
 gboolean
 mono_lls_find (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, uintptr_t key)
@@ -139,7 +134,6 @@ Insert @value into @list.
 The nodes value, cur and prev are returned in @hp.
 Return true if @value was inserted by this call. If it returns FALSE, it's the caller
 resposibility to release memory.
-This function cannot be called from a signal nor with the world stopped.
 */
 gboolean
 mono_lls_insert (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLinkedListSetNode *value)
@@ -168,7 +162,6 @@ mono_lls_insert (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLink
 Search @list for element with key @key.
 The nodes next, cur and prev are returned in @hp
 Returns true if @value was removed by this call.
-This function cannot be called from a signal nor with the world stopped.
 */
 gboolean
 mono_lls_remove (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLinkedListSetNode *value)
