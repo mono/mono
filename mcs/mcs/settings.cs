@@ -1216,6 +1216,8 @@ namespace Mono.CSharp {
 			case "/highentropyva":
 			case "/highentropyva+":
 			case "/highentropyva-":
+			case "/win32manifest":
+			case "/nowin32manifest":
 				return ParseResult.Success;
 
 			default:
