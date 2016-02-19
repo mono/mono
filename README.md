@@ -181,7 +181,7 @@ while `mono-sgen` uses the Simple Generational GC.
 * `--with-gc=[included, boehm, none]` - Selects the default Boehm
 garbage collector engine to use.
 
-  * *included*: (*slighty modified Boehm GC*) This is the default
+  * *included*: (*slightly modified Boehm GC*) This is the default
 value for the Boehm GC, and it's the most feature complete, it will
 allow Mono to use typed allocations and support the debugger.
 
