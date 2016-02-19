@@ -410,16 +410,15 @@ System.Web/ProcessModelInfo.cs
 System.Web/ProcessShutdownReason.cs
 System.Web/ProcessStatus.cs
 System.Web.Profile/CustomProviderDataAttribute.cs
-System.Web.Profile/DefaultProfile.cs
-System.Web.Profile/ProfileAuthenticationOption.cs
+../../../external/referencesource/System.Web/Profile/DefaultHttpProfile.cs
+../../../external/referencesource/System.Web/Profile/ProfileAuthenticationOptions.cs
 System.Web.Profile/ProfileAutoSaveEventArgs.cs
 System.Web.Profile/ProfileAutoSaveEventHandler.cs
 System.Web.Profile/ProfileBase.cs
 ../../../external/referencesource/System.Web/Profile/ProfileEventArgs.cs
 ../../../external/referencesource/System.Web/Profile/ProfileEventHandler.cs
 ../../../external/referencesource/System.Web/Profile/HttpProfileGroupBase.cs
-System.Web.Profile/ProfileInfoCollection.cs
-System.Web.Profile/ProfileInfo.cs
+../../../external/referencesource/System.Web/Profile/ProfileInfo.cs
 System.Web.Profile/ProfileManager.cs
 System.Web.Profile/ProfileMigrateEventArgs.cs
 System.Web.Profile/ProfileMigrateEventHandler.cs
@@ -620,7 +619,7 @@ System.Web.UI/HtmlTextWriter.cs
 ../../../external/referencesource/System.Web/UI/IBindableControl.cs
 ../../../external/referencesource/System.Web/UI/IBindableTemplate.cs
 ../../../external/referencesource/System.Web/UI/ICallbackEventHandler.cs
-System.Web.UI/ICheckBoxControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/ICheckBoxControl.cs
 ../../../external/referencesource/System.Web/UI/IControlBuilderAccessor.cs
 ../../../external/referencesource/System.Web/UI/IControlDesignerAccessor.cs
 ../../../external/referencesource/System.Web/UI/IDataBindingsAccessor.cs
@@ -628,7 +627,7 @@ System.Web.UI/ICheckBoxControl.cs
 ../../../external/referencesource/System.Web/UI/IDataSource.cs
 ../../../external/referencesource/System.Web/UI/IDataSourceViewSchemaAccessor.cs
 ../../../external/referencesource/System.Web/UI/IDReferencePropertyAttribute.cs
-System.Web.UI/IEditableTextControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/IEditableTextControl.cs
 ../../../external/referencesource/System.Web/UI/IExpressionsAccessor.cs
 ../../../external/referencesource/System.Web/UI/IFilterResolutionService.cs
 System.Web.UI/IgnoreUnknownContentAttribute.cs
@@ -653,7 +652,7 @@ System.Web.UI/IScriptManager.cs
 ../../../external/referencesource/System.Web/UI/IScriptResourceMapping.cs
 System.Web.UI/ITagNameToTypeMapper.cs
 ../../../external/referencesource/System.Web/UI/ITemplate.cs
-System.Web.UI/ITextControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/ITextControl.cs
 ../../../external/referencesource/System.Web/UI/IThemeResolutionService.cs
 ../../../external/referencesource/System.Web/UI/IUrlResolutionService.cs
 ../../../external/referencesource/System.Web/UI/IUserControlDesignerAccessor.cs
@@ -953,7 +952,7 @@ System.Web.UI.WebControls/ImageMap.cs
 ../../../external/referencesource/System.Web/UI/WebControls/ImageMapEventHandler.cs
 System.Web.UI.WebControls/IMenuRenderer.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IPersistedSelector.cs
-System.Web.UI.WebControls/IPostBackContainer.cs
+../../../external/referencesource/System.Web/UI/WebControls/IPostBackContainer.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IRepeatInfoUser.cs
 System.Web.UI.WebControls/LabelControlBuilder.cs
 System.Web.UI.WebControls/Label.cs
@@ -1264,6 +1263,7 @@ System.Web.UI/FileLevelMasterPageControlBuilder.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IDataBoundItemControl.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IDataBoundListControl.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IFieldControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/IRenderOuterTableControl.cs
 System.Web.UI.WebControls/IRenderOuterTable.cs
 System.Web.UI.WebControls/MenuListRenderer.cs
 ../../../external/referencesource/System.Web/UI/WebControls/MenuRenderingMode.cs
@@ -1420,7 +1420,6 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Web/Util/GCUtil.cs
 ../../../external/referencesource/System.Web/Util/SimpleRecyclingCache.cs
 ../../../external/referencesource/System.Web/Util/VersionUtil.cs
-
 ../../../external/referencesource/System.Web/Util/AppVerifierErrorCode.cs
 ../../../external/referencesource/System.Web/Util/DateTimeUtil.cs
 ../../../external/referencesource/System.Web/Util/hresults.cs
@@ -1430,4 +1429,23 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Web/Util/RegexUtil.cs
 ../../../external/referencesource/System.Web/Util/ObjectSet.cs
 ../../../external/referencesource/System.Web/Util/ParseHttpDate.cs
+../../../external/referencesource/System.Web/IntraPartitionAPIs/xsp/PerfCounterEnum.cs
+../../../external/referencesource/System.Web/misc/InvariantComparer.cs
 
+../../../external/referencesource/System.Web/ModelBinding/DictionaryHelpers.cs
+../../../external/referencesource/System.Web/ModelBinding/ValueProviderResult.cs
+../../../external/referencesource/System.Web/ModelBinding/ModelState.cs
+../../../external/referencesource/System.Web/ModelBinding/ModelStateDictionary.cs
+../../../external/referencesource/System.Web/ModelBinding/ModelBindingExecutionContext.cs
+
+../../../external/referencesource/System.Web/ModelBinding/IValueProvider.cs
+../../../external/referencesource/System.Web/ModelBinding/IValueProviderSource.cs
+../../../external/referencesource/System.Web/ModelBinding/IUnvalidatedValueProviderSource.cs
+../../../external/referencesource/System.Web/UI/IUpdatePanel.cs
+../../../external/referencesource/System.Web/Configuration/IServerConfig2.cs
+../../../external/referencesource/System.Web/UI/WebControls/IBorderPaddingControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/IEditableTextControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/IWizardSideBarListControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/WizardSideBarListControlItemEventArgs.cs
+../../../external/referencesource/System.Web/UI/WebControls/WizardSideBarListControlItem.cs
+../../../external/referencesource/System.Web/Security/Cryptography/ICryptoService.cs
