@@ -233,7 +233,7 @@ void *(*GC_amiga_allocwrapper_do)(size_t size,void *(*AllocFunction)(size_t size
    Amiga-spesific routines to obtain memory, and force GC to give
    back fast-mem whenever possible.
 	These hacks makes gc-programs go many times faster when
-   the amiga is low on memory, and are therefore strictly necesarry.
+   the amiga is low on memory, and are therefore strictly necessary.
 
    -Kjetil S. Matheussen, 2000.
 ******************************************************************/
@@ -331,7 +331,7 @@ char *chipmax;
 
 
 /*
- * Allways set to the last size of memory tried to be allocated.
+ * Always set to the last size of memory tried to be allocated.
  * Needed to ensure allocation when the size is bigger than 100000.
  *
  */
@@ -437,7 +437,7 @@ void *GC_amiga_rec_alloc(size_t size,void *(*AllocFunction)(size_t size2),const 
 void *GC_amiga_allocwrapper_any(size_t size,void *(*AllocFunction)(size_t size2)){
 	void *ret,*ret2;
 
-	GC_amiga_dontalloc=TRUE;	// Pretty tough thing to do, but its indeed necesarry.
+	GC_amiga_dontalloc=TRUE;	// Pretty tough thing to do, but its indeed necessary.
 	latestsize=size;
 
 	ret=(*AllocFunction)(size);
@@ -471,7 +471,7 @@ void *GC_amiga_allocwrapper_any(size_t size,void *(*AllocFunction)(size_t size2)
 #ifdef GC_AMIGA_RETRY
 		else{
 			/* We got chip-mem. Better try again and again and again etc., we might get fast-mem sooner or later... */
-			/* Using gctest to check the effectiviness of doing this, does seldom give a very good result. */
+			/* Using gctest to check the effectiveness of doing this, does seldom give a very good result. */
 			/* However, real programs doesn't normally rapidly allocate and deallocate. */
 //			printf("trying to force... %d bytes... ",size);
 			if(
