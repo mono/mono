@@ -395,6 +395,94 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+		[Test]
+		public void WaitOneWithTimeoutAndSpuriousWake ()
+		{
+			/* This is to test that WaitEvent.WaitOne is not going to wait largely
+			 * more than its timeout. In this test, it shouldn't wait more than
+			 * 1500 milliseconds, with its timeout being 1000ms */
+
+			using (ManualResetEvent mre = new ManualResetEvent (false))
+			using (ManualResetEvent ready = new ManualResetEvent (false)) {
+				var thread = new Thread (() => {
+					ready.Set ();
+					mre.WaitOne (1000);
+				});
+
+				thread.Start ();
+				ready.WaitOne ();
+
+				Thread.Sleep (10); // wait a bit so we enter mre.WaitOne
+
+				DateTime end = DateTime.Now.AddMilliseconds (500);
+				while (DateTime.Now < end) {
+					thread.Suspend ();
+					thread.Resume ();
+				}
+
+				Assert.IsTrue (thread.Join (1000), "#1");
+			}
+		}
+
+		[Test]
+		public void WaitAnyWithTimeoutAndSpuriousWake ()
+		{
+			/* This is to test that WaitEvent.WaitAny is not going to wait largely
+			 * more than its timeout. In this test, it shouldn't wait more than
+			 * 1500 milliseconds, with its timeout being 1000ms */
+
+			using (ManualResetEvent mre1 = new ManualResetEvent (false))
+			using (ManualResetEvent mre2 = new ManualResetEvent (false))
+			using (ManualResetEvent ready = new ManualResetEvent (false)) {
+				var thread = new Thread (() => {
+					ready.Set ();
+					WaitHandle.WaitAny (new [] { mre1, mre2 }, 1000);
+				});
+
+				thread.Start ();
+				ready.WaitOne ();
+
+				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAny ({mre1, mre2})
+
+				DateTime end = DateTime.Now.AddMilliseconds (500);
+				while (DateTime.Now < end) {
+					thread.Suspend ();
+					thread.Resume ();
+				}
+
+				Assert.IsTrue (thread.Join (1000), "#1");
+			}
+		}
+
+		[Test]
+		public void WaitAllWithTimeoutAndSpuriousWake ()
+		{
+			/* This is to test that WaitEvent.WaitAll is not going to wait largely
+			 * more than its timeout. In this test, it shouldn't wait more than
+			 * 1500 milliseconds, with its timeout being 1000ms */
+
+			using (ManualResetEvent mre1 = new ManualResetEvent (false))
+			using (ManualResetEvent mre2 = new ManualResetEvent (false))
+			using (ManualResetEvent ready = new ManualResetEvent (false)) {
+				var thread = new Thread (() => {
+					ready.Set ();
+					WaitHandle.WaitAll (new [] { mre1, mre2 }, 1000);
+				});
+
+				thread.Start ();
+				ready.WaitOne ();
+
+				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAll ({mre1, mre2})
+
+				DateTime end = DateTime.Now.AddMilliseconds (500);
+				while (DateTime.Now < end) {
+					thread.Suspend ();
+					thread.Resume ();
+				}
+
+				Assert.IsTrue (thread.Join (1000), "#1");
+			}
+		}
 	}
 }
 
