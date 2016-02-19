@@ -2,7 +2,7 @@
 
 /******************************************************************
 
-  AmigaOS-spesific routines for GC.
+  AmigaOS-specific routines for GC.
   This file is normally included from os_dep.c
 
 ******************************************************************/
