@@ -251,7 +251,7 @@ do_console_cancel_event (void)
 	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
 	g_assert (method != NULL);
 
-	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL);
+	mono_threadpool_ms_begin_invoke (domain, load_value, method, NULL);
 }
 
 static int need_cancel = FALSE;

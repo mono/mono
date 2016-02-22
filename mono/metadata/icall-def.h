@@ -709,15 +709,20 @@ ICALL(CONTEXT_1, "RegisterContext", ves_icall_System_Runtime_Remoting_Contexts_C
 ICALL(CONTEXT_2, "ReleaseContext", ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext)
 
 ICALL_TYPE(ARES, "System.Runtime.Remoting.Messaging.AsyncResult", ARES_1)
-ICALL(ARES_1, "Invoke", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke)
+ICALL(ARES_1, "InvokeRemoting", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_InvokeRemoting)
 
 ICALL_TYPE(MONOMM, "System.Runtime.Remoting.Messaging.MonoMethodMessage", MONOMM_1)
 ICALL(MONOMM_1, "InitMessage", ves_icall_MonoMethodMessage_InitMessage)
+ICALL(MONOMM_2, "InvokeRemoting", ves_icall_System_Runtime_Remoting_Messaging_MonoMethodMessage_InvokeRemoting)
 
 #ifndef DISABLE_REMOTING
 ICALL_TYPE(REALP, "System.Runtime.Remoting.Proxies.RealProxy", REALP_1)
 ICALL(REALP_1, "InternalGetProxyType", ves_icall_Remoting_RealProxy_InternalGetProxyType)
 ICALL(REALP_2, "InternalGetTransparentProxy", ves_icall_Remoting_RealProxy_GetTransparentProxy)
+
+ICALL_TYPE(TRANSP, "System.Runtime.Remoting.Proxies.TransparentProxy", TRANSP_1)
+ICALL(TRANSP_1, "get_IsContextBound", ves_icall_System_Runtime_Remoting_Proxies_TransparentProxy_get_IsContextBound)
+ICALL(TRANSP_2, "get_IsCurrentContext", ves_icall_System_Runtime_Remoting_Proxies_TransparentProxy_get_IsCurrentContext)
 
 ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
 ICALL(REMSER_0, "GetVirtualMethod", ves_icall_Remoting_RemotingServices_GetVirtualMethod)

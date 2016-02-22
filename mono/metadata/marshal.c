@@ -2096,18 +2096,16 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			MonoDelegate *async_callback;
 			MonoObject *state;
 			MonoAsyncResult *ares;
-			MonoObject *exc;
+			MonoObject *exc = NULL;
 			MonoArray *out_args;
-			method = delegate->method;
 
-			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (method), params, NULL, &async_callback, &state);
-			ares = mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL);
-			MONO_OBJECT_SETREF (ares, async_delegate, (MonoObject *)delegate);
-			MONO_OBJECT_SETREF (ares, async_callback, (MonoObject *)async_callback);
+			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (delegate->method), params, NULL, &async_callback, &state);
+
+			ares = mono_async_result_new (mono_domain_get (), delegate, state, async_callback);
+
 			MONO_OBJECT_SETREF (msg, async_result, ares);
 			msg->call_type = CallType_BeginInvoke;
 
-			exc = NULL;
 			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
 			if (exc)
 				mono_raise_exception ((MonoException *) exc);
@@ -2123,7 +2121,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 		method = mono_get_delegate_invoke (klass);
 	g_assert (method);
 
-	return mono_threadpool_ms_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params);
+	return mono_threadpool_ms_begin_invoke (mono_domain_get (), delegate, method, params);
 }
 
 #ifndef DISABLE_JIT
@@ -2826,7 +2824,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		return NULL;
 	}
 
-	if (ares->async_delegate != (MonoObject*)delegate) {
+	if (ares->async_delegate != delegate) {
 		mono_raise_exception (mono_get_exception_invalid_operation (
 			"The IAsyncResult object provided does not match this delegate."));
 		return NULL;

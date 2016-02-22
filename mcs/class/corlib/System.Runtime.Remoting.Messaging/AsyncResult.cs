@@ -44,16 +44,13 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 #pragma warning disable 169, 414, 649
 	object async_state;
 	WaitHandle handle;
-	object async_delegate;
-	IntPtr data;
-	object object_data;
+	Delegate async_delegate;
+	MonoAsyncCall async_call;
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;
-	object async_callback;
-	ExecutionContext current;
-	ExecutionContext original;
-	long add_time;
+	AsyncCallback async_callback;
+	ExecutionContext context;
 #pragma warning restore 169, 414, 649
 
 	// not part of MonoAsyncResult...
@@ -62,36 +59,9 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	IMessageCtrl message_ctrl;
 #pragma warning restore
 	IMessage reply_message;
-	WaitCallback orig_cb;
-	
-	internal AsyncResult ()
+
+	private AsyncResult ()
 	{
-	}
-
-	internal AsyncResult (WaitCallback cb, object state, bool capture_context)
-	{
-		orig_cb = cb;
-		if (capture_context) {
-			var stackMark = default (StackCrawlMark);
-			current = ExecutionContext.Capture (
-				ref stackMark,
-				ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
-			cb = delegate {
-				ExecutionContext.Run(current, ccb, this, true);
-			};
-		}
-
-		async_state = state;
-		async_delegate = cb;
-	}
-
-	static internal ContextCallback ccb = new ContextCallback(WaitCallback_Context);
-
-	static private void WaitCallback_Context(Object state)
-	{
-		AsyncResult obj = (AsyncResult)state;
-		WaitCallback wc = obj.orig_cb as WaitCallback;
-		wc(obj.async_state);
 	}
 
 	public virtual object AsyncState
@@ -188,13 +158,11 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 		lock (this) {
 			completed = true;
 			if (handle != null)
-				((ManualResetEvent) AsyncWaitHandle).Set ();
+				((ManualResetEvent) handle).Set ();
 		}
 		
-		if (async_callback != null) {
-			AsyncCallback ac = (AsyncCallback) async_callback;
-			ac (this);
-		}
+		if (async_callback != null)
+			async_callback (this);
 
 		return null;
 	}
@@ -207,14 +175,35 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 
 	void IThreadPoolWorkItem.ExecuteWorkItem()
 	{
-		Invoke ();
+		ExecutionContext.Run (context, o => ((AsyncResult) o).Invoke (), this);
 	}
 
 	void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
 	{
 	}
 
+	void Invoke ()
+	{
+		if (async_call == null) {
+			/* Remoting case */
+			InvokeRemoting ();
+		} else {
+			/* Threadpool case */
+			async_call.msg.exc = null;
+			async_call.res = async_call.msg.Invoke (async_delegate, ref async_call.msg.exc, ref async_call.out_args);
+
+			lock (this) {
+				completed = true;
+				if (handle != null)
+					((ManualResetEvent) handle).Set ();
+			}
+
+			if (async_callback != null)
+				async_callback (this);
+		}
+	}
+
 	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	internal extern object Invoke ();
+	internal extern void InvokeRemoting ();
 }
 }
