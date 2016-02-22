@@ -403,7 +403,7 @@ namespace System.Net {
 		}
 
 		public bool IsLocal {
-			get { return IPAddress.IsLoopback (RemoteEndPoint.Address); }
+			get { return LocalEndPoint.Address.Equals (RemoteEndPoint.Address); }
 		}
 
 		public bool IsSecureConnection {
