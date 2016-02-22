@@ -32,6 +32,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -183,6 +184,26 @@ namespace MonoTests.System.Net
 			HttpListenerRequest request = ctx.Request;
 			Assert.AreEqual ("/RequestUriDecodeTest/?a=b&c=d%26e", request.Url.PathAndQuery);
 			listener.Close ();
+		}
+
+		[Test]
+		public void HttpRequestIsLocal ()
+		{
+			var ips = new List<IPAddress> (Dns.GetHostAddresses (Dns.GetHostName ()));
+			ips.Add (IPAddress.Loopback);
+			foreach (var ip in ips) {
+				if (ip.AddressFamily != AddressFamily.InterNetwork)
+					continue;
+
+				HttpListener listener = HttpListener2Test.CreateAndStartListener (
+					"http://" + ip + ":9000/HttpRequestIsLocal/");
+				NetworkStream ns = HttpListener2Test.CreateNS (ip, 9000);
+				HttpListener2Test.Send (ns, "GET /HttpRequestIsLocal/ HTTP/1.0\r\n\r\n");
+				HttpListenerContext ctx = listener.GetContext ();
+				HttpListenerRequest request = ctx.Request;
+				Assert.AreEqual (true, request.IsLocal, "IP " + ip + " is not local");
+				listener.Close ();
+			}
 		}
 
 		[Test] // #29927
