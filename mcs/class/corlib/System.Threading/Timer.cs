@@ -166,7 +166,7 @@ namespace System.Threading
 			if (notifyObject == null)
 				throw new ArgumentNullException ("notifyObject");
 			Dispose ();
-			NativeEventCalls.SetEvent_internal (notifyObject.Handle);
+			NativeEventCalls.SetEvent (notifyObject.SafeWaitHandle);
 			return true;
 		}
 

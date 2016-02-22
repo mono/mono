@@ -1571,6 +1571,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpool.cs
+../../../external/referencesource/mscorlib/system/threading/waithandle.cs
 
 ../../../external/referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs

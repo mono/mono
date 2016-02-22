@@ -84,7 +84,7 @@ namespace System.Threading
 				lock (this) {
 					_unregistered = true;
 					if (_callsInProcess == 0 && _finalEvent != null)
-						NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+						NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
 				}
 			} catch (ObjectDisposedException) {
 				// Can happen if we called Unregister before we had time to execute Wait
@@ -108,7 +108,7 @@ namespace System.Threading
 			{
 				_callsInProcess--;
 				if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
-					NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+					NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
 			}
 		}
 
