@@ -41,7 +41,10 @@ namespace Microsoft.Build.Internal
 		public BuildNodeManager (BuildManager buildManager)
 		{
 			BuildManager = buildManager;
-			new Thread (RunLoop).Start ();
+			new Thread (RunLoop) {
+				IsBackground = true,
+				Name = "xbuild request handler"
+			}.Start ();
 		}
 
 		~BuildNodeManager ()
