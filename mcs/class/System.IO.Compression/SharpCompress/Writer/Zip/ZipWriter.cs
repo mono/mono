@@ -142,7 +142,7 @@ namespace SharpCompress.Writer.Zip
             byte[] encodedFilename = encoding.GetBytes(filename);
 
             OutputStream.Write(BitConverter.GetBytes(ZipHeaderFactory.ENTRY_HEADER_BYTES), 0, 4);
-            OutputStream.Write(new byte[] {63, 0}, 0, 2); //version
+            OutputStream.Write(new byte[] {20, 0}, 0, 2); //version
             HeaderFlags flags = encoding == Encoding.UTF8 ? HeaderFlags.UTF8 : (HeaderFlags)0;
             if (!OutputStream.CanSeek)
             {
