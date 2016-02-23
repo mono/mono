@@ -4328,6 +4328,56 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 		
+		[Test]
+		public void ConnectToIPV4EndPointUsingDualModelSocket () {
+			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
+			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+				var host = new IPEndPoint (IPAddress.Loopback, 0);
+					
+				server.Bind (host);
+				server.Listen (0);
+				
+				var ep = server.LocalEndPoint as IPEndPoint;
+				
+				client.Connect (ep);
+				client.Disconnect (true);
+				
+				client.Connect (IPAddress.Loopback, ep.Port);
+				client.Disconnect (true);
+				
+				client.Connect (new [] {IPAddress.Loopback}, ep.Port);
+				client.Disconnect (true);
+			}
+		}
+		
+		[Test]
+		public void BeginConnectToIPV4EndPointUsingDualModelSocket () {
+			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
+			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+				var host = new IPEndPoint (IPAddress.Loopback, 0);
+					
+				server.Bind (host);
+				server.Listen (0);
+				
+				var ep = server.LocalEndPoint as IPEndPoint;
+				
+				BCCalledBack.Reset ();
+				var ar1 = client.BeginConnect (ep, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#1");
+				client.Disconnect (true);
+				
+				BCCalledBack.Reset ();
+				var ar2 = client.BeginConnect (IPAddress.Loopback, ep.Port, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				client.Disconnect (true);
+				
+				BCCalledBack.Reset ();
+				var ar3 = client.BeginConnect (new [] {IPAddress.Loopback}, ep.Port, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				client.Disconnect (true);
+			}
+		}
+
 		Socket StartSocketServer ()
 		{
 
