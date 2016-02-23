@@ -6,7 +6,6 @@
 /FileWebResponse.cs -crlf
 /FtpStatus.cs -crlf
 /HttpContinueDelegate.cs -crlf
-/HttpVersion.cs -crlf
 /IPv6Address.cs -crlf
 /MonoHttpDate.cs -crlf
 /ProtocolViolationException.cs -crlf

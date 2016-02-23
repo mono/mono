@@ -294,9 +294,7 @@ System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpRequestHeader.cs
 System.Net/HttpResponseHeader.cs
-System.Net/HttpStatusCode.cs
 System.Net/HttpStreamAsyncResult.cs
-System.Net/HttpVersion.cs
 System.Net/HttpWebRequest.cs
 System.Net/HttpWebResponse.cs
 System.Net/IAuthenticationModule.cs
@@ -1049,6 +1047,9 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WebUtility.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
+
+../../../external/referencesource/System/net/System/Net/HttpStatusCode.cs
+../../../external/referencesource/System/net/System/Net/HttpVersion.cs
 
 ../../../external/referencesource/System/net/System/Net/Cache/RequestCachePolicy.cs
 
