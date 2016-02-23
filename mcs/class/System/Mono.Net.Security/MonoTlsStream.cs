@@ -109,6 +109,10 @@ namespace Mono.Net.Security
 					ServicePointManager.CheckCertificateRevocationList);
 
 				status = WebExceptionStatus.Success;
+			} catch {
+				status = WebExceptionStatus.SendFailure;
+				sslStream = null;
+				throw;
 			} finally {
 				if (CertificateValidationFailed)
 					status = WebExceptionStatus.TrustFailure;
