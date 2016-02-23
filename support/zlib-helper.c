@@ -34,6 +34,7 @@ struct _ZStream {
 	void *gchandle;
 	guchar compress;
 	guchar eof;
+	guint32 total_in;
 };
 typedef struct _ZStream ZStream;
 
@@ -92,6 +93,7 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	result->buffer = g_new (guchar, BUFFER_SIZE);
 	result->stream->next_out = result->buffer;
 	result->stream->avail_out = BUFFER_SIZE;
+	result->stream->total_in = 0;
 	return result;
 }
 
@@ -183,6 +185,7 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 	while (zs->avail_out > 0) {
 		if (zs->avail_in == 0) {
 			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
+			stream->total_in += n;
 			if (n <= 0) {
 				stream->eof = TRUE;
 			}
@@ -190,7 +193,7 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			zs->avail_in = n < 0 ? 0 : n;
 		}
 
-		if (zs->avail_in == 0 && zs->total_in == 0)
+		if (zs->avail_in == 0 && (zs->total_in == 0 || stream->total_in == zs->total_in))
 			return Z_STREAM_END;
 
 		status = inflate (stream->stream, Z_SYNC_FLUSH);
