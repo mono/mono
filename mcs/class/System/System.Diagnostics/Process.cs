@@ -74,7 +74,7 @@ namespace System.Diagnostics {
 			public bool LoadUserProfile;
 		};
 
-		IntPtr process_handle;
+		SafeProcessHandle process_handle;
 		int pid;
 		int enable_raising_events;
 		Thread background_wait_for_exit_thread;
@@ -82,13 +82,14 @@ namespace System.Diagnostics {
 		EventHandler exited_event;
 
 		/* Private constructor called from other methods */
-		private Process(IntPtr handle, int id) {
+		private Process (SafeProcessHandle handle, int id) {
 			process_handle = handle;
 			pid=id;
 		}
 
 		public Process ()
 		{
+			process_handle = new SafeProcessHandle ();
 		}
 
 		[MonoTODO]
@@ -117,14 +118,21 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The exit code of the process.")]
 		public int ExitCode {
 			get {
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("Process has not been started.");
 
-				int code = ExitCode_internal (process_handle);
-				if (code == 259)
-					throw new InvalidOperationException ("The process must exit before getting the requested information.");
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+					int code = ExitCode_internal (process_handle.DangerousGetHandle ());
+					if (code == 259)
+						throw new InvalidOperationException ("The process must exit before getting the requested information.");
 
-				return code;
+					return code;
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -138,14 +146,21 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The exit time of the process.")]
 		public DateTime ExitTime {
 			get {
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("Process has not been started.");
 
 				if (!HasExited)
 					throw new InvalidOperationException ("The process must exit before " +
 									"getting the requested information.");
 
-				return(DateTime.FromFileTime(ExitTime_internal(process_handle)));
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+					return(DateTime.FromFileTime(ExitTime_internal(process_handle.DangerousGetHandle ())));
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -153,9 +168,9 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Handle for this process.")]
 		public IntPtr Handle {
 			get {
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("No process is associated with this object.");
-				return(process_handle);
+				return process_handle.DangerousGetHandle ();
 			}
 		}
 
@@ -172,16 +187,18 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Determines if the process is still running.")]
 		public bool HasExited {
 			get {
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("Process has not been started.");
-					
-				int exitcode = ExitCode_internal (process_handle);
 
-				if(exitcode==259) {
-					/* STILL_ACTIVE */
-					return(false);
-				} else {
-					return(true);
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					/* STILL_ACTIVE = 259 */
+					return ExitCode_internal (process_handle.DangerousGetHandle ()) != 259;
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
 				}
 			}
 		}
@@ -247,23 +264,33 @@ namespace System.Diagnostics {
 						"The process " + ProcessName +
 						" (ID " + Id + ") has exited");
 				
-				int min;
-				int max;
-				bool ok=GetWorkingSet_internal(process_handle, out min, out max);
-				if(ok==false) {
-					throw new Win32Exception();
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					int min, max;
+					if (!GetWorkingSet_internal(process_handle.DangerousGetHandle (), out min, out max))
+						throw new Win32Exception();
+
+					return((IntPtr)max);
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
 				}
-				
-				return((IntPtr)max);
 			}
 			set {
 				if(HasExited) {
 					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
 				}
 				
-				bool ok=SetWorkingSet_internal(process_handle, 0, value.ToInt32(), false);
-				if(ok==false) {
-					throw new Win32Exception();
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+					if(!SetWorkingSet_internal (process_handle.DangerousGetHandle (), 0, value.ToInt32(), false))
+						throw new Win32Exception();
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
 				}
 			}
 		}
@@ -277,12 +304,19 @@ namespace System.Diagnostics {
 						"The process " + ProcessName +
 						" (ID " + Id + ") has exited");
 				
-				int min;
-				int max;
-				bool ok= GetWorkingSet_internal (process_handle, out min, out max);
-				if(!ok)
-					throw new Win32Exception();
-				return ((IntPtr) min);
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					int min, max;
+					if(!GetWorkingSet_internal (process_handle.DangerousGetHandle (), out min, out max))
+						throw new Win32Exception();
+
+					return ((IntPtr) min);
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 			set {
 				if(HasExited)
@@ -290,9 +324,16 @@ namespace System.Diagnostics {
 						"The process " + ProcessName +
 						" (ID " + Id + ") has exited");
 				
-				bool ok = SetWorkingSet_internal (process_handle, value.ToInt32(), 0, true);
-				if (!ok)
-					throw new Win32Exception();
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					if (!SetWorkingSet_internal (process_handle.DangerousGetHandle (), value.ToInt32(), 0, true))
+						throw new Win32Exception();
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -310,7 +351,7 @@ namespace System.Diagnostics {
 			get {
 				if (module_collection == null)
 					module_collection = new ProcessModuleCollection(
-						GetModules_internal (process_handle));
+						GetModules_internal (process_handle.DangerousGetHandle ()));
 				return(module_collection);
 			}
 		}
@@ -452,14 +493,24 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The relative process priority.")]
 		public ProcessPriorityClass PriorityClass {
 			get {
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("Process has not been started.");
-				
-				int error;
-				int prio = GetPriorityClass (process_handle, out error);
-				if (prio == 0)
-					throw new Win32Exception (error);
-				return (ProcessPriorityClass) prio;
+
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					int error;
+					int prio = GetPriorityClass (process_handle.DangerousGetHandle (), out error);
+
+					if (prio == 0)
+						throw new Win32Exception (error);
+
+					return (ProcessPriorityClass) prio;
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 			set {
 				if (!Enum.IsDefined (typeof (ProcessPriorityClass), value))
@@ -467,20 +518,25 @@ namespace System.Diagnostics {
 						"value", (int) value,
 						typeof (ProcessPriorityClass));
 
-				if (process_handle == IntPtr.Zero)
+				if (process_handle.IsInvalid)
 					throw new InvalidOperationException ("Process has not been started.");
-				
-				int error;
-				if (!SetPriorityClass (process_handle, (int) value, out error)) {
-					CheckExited ();
-					throw new Win32Exception (error);
+
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					int error;
+					if (!SetPriorityClass (process_handle.DangerousGetHandle (), (int) value, out error)) {
+						if (HasExited)
+							throw new InvalidOperationException (String.Format ("Cannot process request because the process ({0}) has exited.", Id));
+
+						throw new Win32Exception (error);
+					}
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
 				}
 			}
-		}
-
-		void CheckExited () {
-			if (HasExited)
-				throw new InvalidOperationException (String.Format ("Cannot process request because the process ({0}) has exited.", Id));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -514,7 +570,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The amount of processing time spent in the OS core for this process.")]
 		public TimeSpan PrivilegedProcessorTime {
 			get {
-				return new TimeSpan (Times (process_handle, 1));
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					return new TimeSpan (Times (process_handle.DangerousGetHandle (), 1));
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -529,10 +593,20 @@ namespace System.Diagnostics {
 			get {
 				if(process_name==null) {
 					
-					if (process_handle == IntPtr.Zero)
+					if (process_handle.IsInvalid)
 						throw new InvalidOperationException ("No process is associated with this object.");
+
+					bool release = false;
+					try {
+						process_handle.DangerousAddRef (ref release);
+
+						process_name=ProcessName_internal(process_handle.DangerousGetHandle ());
+					} finally {
+						if (release)
+							process_handle.DangerousRelease ();
+					}
+
 					
-					process_name=ProcessName_internal(process_handle);
 					/* If process_name is _still_
 					 * null, assume the process
 					 * has exited
@@ -682,7 +756,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The time this process started.")]
 		public DateTime StartTime {
 			get {
-				return(DateTime.FromFileTime(StartTime_internal(process_handle)));
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					return(DateTime.FromFileTime(StartTime_internal(process_handle.DangerousGetHandle ())));
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -708,7 +790,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The total CPU time spent for this process.")]
 		public TimeSpan TotalProcessorTime {
 			get {
-				return new TimeSpan (Times (process_handle, 2));
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					return new TimeSpan (Times (process_handle.DangerousGetHandle (), 2));
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -716,7 +806,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The CPU time spent for this process in user mode.")]
 		public TimeSpan UserProcessorTime {
 			get {
-				return new TimeSpan (Times (process_handle, 0));
+				bool release = false;
+				try {
+					process_handle.DangerousAddRef (ref release);
+
+					return new TimeSpan (Times (process_handle.DangerousGetHandle (), 0));
+				} finally {
+					if (release)
+						process_handle.DangerousRelease ();
+				}
 			}
 		}
 
@@ -781,14 +879,21 @@ namespace System.Diagnostics {
 		/* int kill -> 1 KILL, 2 CloseMainWindow */
 		bool Close (int signo)
 		{
-			if (process_handle == IntPtr.Zero)
+			if (process_handle.IsInvalid)
 				throw new SystemException ("No process to kill.");
 
-			int exitcode = ExitCode_internal (process_handle);
-			if (exitcode != 259)
-				throw new InvalidOperationException ("The process already finished.");
+			bool release = false;
+			try {
+				process_handle.DangerousAddRef (ref release);
 
-			return Kill_internal (process_handle, signo);
+				if (ExitCode_internal (process_handle.DangerousGetHandle ()) != 259)
+					throw new InvalidOperationException ("The process already finished.");
+
+				return Kill_internal (process_handle.DangerousGetHandle (), signo);
+			} finally {
+				if (release)
+					process_handle.DangerousRelease ();
+			}
 		}
 
 		public bool CloseMainWindow ()
@@ -814,7 +919,7 @@ namespace System.Diagnostics {
 			if (proc == IntPtr.Zero)
 				throw new SystemException("Can't find current process");
 
-			return (new Process (proc, pid));
+			return (new Process (new SafeProcessHandle (proc), pid));
 		}
 
 		public static Process GetProcessById(int processId)
@@ -824,7 +929,7 @@ namespace System.Diagnostics {
 			if (proc == IntPtr.Zero)
 				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
 
-			return (new Process (proc, processId));
+			return (new Process (new SafeProcessHandle (proc), processId));
 		}
 
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
@@ -957,7 +1062,7 @@ namespace System.Diagnostics {
 				throw new Win32Exception (-proc_info.pid);
 			}
 
-			process.process_handle = proc_info.process_handle;
+			process.process_handle = new SafeProcessHandle (proc_info.process_handle);
 			process.pid = proc_info.pid;
 			process.StartBackgroundWaitForExit ();
 			return(ret);
@@ -1097,7 +1202,7 @@ namespace System.Diagnostics {
 				}
 			}
 
-			process.process_handle = proc_info.process_handle;
+			process.process_handle = new SafeProcessHandle (proc_info.process_handle);
 			process.pid = proc_info.pid;
 			
 			if (startInfo.RedirectStandardInput) {
@@ -1174,9 +1279,8 @@ namespace System.Diagnostics {
 		
 		public bool Start ()
 		{
-			if (process_handle != IntPtr.Zero) {
-				Process_free_internal (process_handle);
-				process_handle = IntPtr.Zero;
+			if (!process_handle.IsInvalid) {
+				process_handle.Dispose ();
 			}
 			return Start_common(start_info, this);
 		}
@@ -1188,7 +1292,7 @@ namespace System.Diagnostics {
 
 			Process process = new Process();
 			process.StartInfo = startInfo;
-			if (Start_common(startInfo, process) && process.process_handle != IntPtr.Zero)
+			if (Start_common(startInfo, process) && !process.process_handle.IsInvalid)
 				return process;
 			return null;
 		}
@@ -1274,11 +1378,19 @@ namespace System.Diagnostics {
 			if (ms == int.MaxValue)
 				ms = -1;
 
-			if (process_handle == IntPtr.Zero)
+			if (process_handle.IsInvalid)
 				throw new InvalidOperationException ("No process is associated with this object.");
 
-			if (!WaitForExit_internal (process_handle, ms))
-				return false;
+			bool release = false;
+			try {
+				process_handle.DangerousAddRef (ref release);
+
+				if (!WaitForExit_internal (process_handle.DangerousGetHandle (), ms))
+					return false;
+			} finally {
+				if (release)
+					process_handle.DangerousRelease ();
+			}
 
 #if MONO_FEATURE_PROCESS_START
 			if (async_output != null)
@@ -1309,7 +1421,15 @@ namespace System.Diagnostics {
 		// The internal call is only implemented properly on Windows.
 		[MonoTODO]
 		public bool WaitForInputIdle(int milliseconds) {
-			return WaitForInputIdle_internal (process_handle, milliseconds);
+			bool release = false;
+			try {
+				process_handle.DangerousAddRef (ref release);
+
+				return WaitForInputIdle_internal (process_handle.DangerousGetHandle (), milliseconds);
+			} finally {
+				if (release)
+					process_handle.DangerousRelease ();
+			}
 		}
 
 		private static bool IsLocalMachine (string machineName)
@@ -1344,7 +1464,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void BeginOutputReadLine ()
 		{
-			if (process_handle == IntPtr.Zero || output_stream == null || StartInfo.RedirectStandardOutput == false)
+			if (process_handle.IsInvalid || output_stream == null || StartInfo.RedirectStandardOutput == false)
 				throw new InvalidOperationException ("Standard output has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
@@ -1376,7 +1496,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void CancelOutputRead ()
 		{
-			if (process_handle == IntPtr.Zero || output_stream == null || StartInfo.RedirectStandardOutput == false)
+			if (process_handle.IsInvalid || output_stream == null || StartInfo.RedirectStandardOutput == false)
 				throw new InvalidOperationException ("Standard output has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
@@ -1393,7 +1513,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void BeginErrorReadLine ()
 		{
-			if (process_handle == IntPtr.Zero || error_stream == null || StartInfo.RedirectStandardError == false)
+			if (process_handle.IsInvalid || error_stream == null || StartInfo.RedirectStandardError == false)
 				throw new InvalidOperationException ("Standard error has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncError) != 0)
@@ -1425,7 +1545,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void CancelErrorRead ()
 		{
-			if (process_handle == IntPtr.Zero || error_stream == null || StartInfo.RedirectStandardError == false)
+			if (process_handle.IsInvalid || error_stream == null || StartInfo.RedirectStandardError == false)
 				throw new InvalidOperationException ("Standard error has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
@@ -1468,7 +1588,7 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Raised when this process exits.")]
 		public event EventHandler Exited {
 			add {
-				if (process_handle != IntPtr.Zero && HasExited) {
+				if (!process_handle.IsInvalid && HasExited) {
 					value.BeginInvoke (null, null, null, null);
 				} else {
 					exited_event += value;
@@ -1483,7 +1603,7 @@ namespace System.Diagnostics {
 
 		// Closes the system process handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void Process_free_internal(IntPtr handle);
+		private static extern void Process_free_internal(IntPtr handle);
 
 		int disposed;
 
@@ -1519,9 +1639,8 @@ namespace System.Diagnostics {
 
 			// Release unmanaged resources
 
-			if (process_handle!=IntPtr.Zero) {
-				Process_free_internal (process_handle);
-				process_handle = IntPtr.Zero;
+			if (!process_handle.IsInvalid) {
+				process_handle.Dispose ();
 			}
 
 			base.Dispose (disposing);
@@ -1572,20 +1691,31 @@ namespace System.Diagnostics {
 
 		void StartBackgroundWaitForExit ()
 		{
-			IntPtr handle = process_handle;
+			SafeProcessHandle handle = process_handle;
 
 			if (enable_raising_events == 0)
 				return;
 			if (exited_event == null)
 				return;
-			if (handle == IntPtr.Zero)
+			if (handle.IsInvalid)
 				return;
 			if (background_wait_for_exit_thread != null)
 				return;
 
 			Thread t = new Thread (_ => {
-				if (!WaitForExit_internal (handle, -1))
-					return;
+				bool release = false;
+				try {
+					handle.DangerousAddRef (ref release);
+
+					if (!WaitForExit_internal (handle.DangerousGetHandle (), -1))
+						return;
+				} catch (ObjectDisposedException) {
+					if (release)
+						throw;
+				} finally {
+					if (release)
+						handle.DangerousRelease ();
+				}
 
 				if (EnableRaisingEvents)
 					OnExited ();
@@ -1610,6 +1740,26 @@ namespace System.Diagnostics {
 
 				// When the wait handle is disposed, the duplicated handle will be
 				// closed, so no need to override dispose (bug #464628).
+			}
+		}
+
+		class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
+		{
+			internal SafeProcessHandle ()
+				: base (false)
+			{
+			}
+
+			internal SafeProcessHandle (IntPtr handle)
+				: base (true)
+			{
+				SetHandle (handle);
+			}
+
+			override protected bool ReleaseHandle ()
+			{
+				Process_free_internal (handle);
+				return true;
 			}
 		}
 	}

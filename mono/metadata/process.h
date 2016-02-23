@@ -60,7 +60,7 @@ G_BEGIN_DECLS
 HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
 MonoArray *ves_icall_System_Diagnostics_Process_GetProcesses_internal (void);
 guint32 ves_icall_System_Diagnostics_Process_GetPid_internal (void);
-void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this_obj, HANDLE process);
+void ves_icall_System_Diagnostics_Process_Process_free_internal (HANDLE process);
 MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process);
 void ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
 MonoBoolean ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_handle);
