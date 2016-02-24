@@ -1423,9 +1423,7 @@ namespace MonoTests.System.Net
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
-				responder.Start ();
-
+			using (SocketResponder responder = new SocketResponder (ep, s => EchoRequestHandler (s))) {
 				WebClient wc = new WebClient ();
 				wc.Encoding = Encoding.ASCII;
 
@@ -1880,10 +1878,8 @@ namespace MonoTests.System.Net
 			var ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep.ToString() + "/test/";
 
-			using (var responder = new SocketResponder (ep, EchoRequestHandler))
+			using (var responder = new SocketResponder (ep, s => EchoRequestHandler (s)))
 			{
-				responder.Start ();
-
 				var webClient = new WebClient ();
 
 				var cancellationTokenSource = new CancellationTokenSource ();

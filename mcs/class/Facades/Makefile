@@ -38,3 +38,6 @@ doc-update-recursive:
 	@echo "do not recurse the Facades folder"
 
 System System.Core System.ComponentModel.DataAnnotations System.Numerics System.Runtime.Serialization System.XML System.ComponentModel.Composition System.ServiceModel System.Xml.Linq:
+
+all-local-aot:
+

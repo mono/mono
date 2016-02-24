@@ -141,7 +141,7 @@ csproj-local: csproj-library csproj-test
 intermediate_clean=$(subst /,-,$(intermediate))
 csproj-library: 
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
-	[[ $(thisdir) == *"Facades"* ]] && config_file=Facades_$$config_file; \
+	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
@@ -295,17 +295,13 @@ library_CLEAN_FILES += $(PROFILE)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] $(notdir $(@))";)
+
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(the_lib)
+	$(Q_AOT) MONO_PATH='$(the_libdir_base)' > $(PROFILE)_$(LIBRARY_NAME)_aot.log 2>&1 $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
+
+all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 
-ifdef ENABLE_AOT
-ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
-
-all-local: $(the_lib)$(PLATFORM_AOT_SUFFIX)
-
-endif
-endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 library_CLEAN_FILES += $(makefrag)

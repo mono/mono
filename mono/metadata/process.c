@@ -51,32 +51,40 @@ HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 	return(handle);
 }
 
-guint32
-ves_icall_System_Diagnostics_Process_GetPid_internal (void)
-{
-	return mono_process_current_pid ();
-}
-
-void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this_obj,
-								 HANDLE process)
-{
-#ifdef THREAD_DEBUG
-	g_message ("%s: Closing process %p, handle %p", __func__, this_obj, process);
-#endif
-
-#if defined(TARGET_WIN32) || defined(HOST_WIN32)
-	CloseHandle (process);
-#else
-	CloseProcess (process);
-#endif
-}
-
 #define STASH_SYS_ASS(this_obj) \
 	if(system_assembly == NULL) { \
 		system_assembly=this_obj->vtable->klass->image; \
 	}
 
 static MonoImage *system_assembly=NULL;
+
+//Hand coded version that loads from system
+static MonoClass*
+mono_class_get_file_version_info_class (void)
+{
+	static MonoClass *tmp_class;
+	MonoClass *klass = tmp_class;
+	if (!klass) {
+		klass = mono_class_load_from_name (system_assembly, "System.Diagnostics", "FileVersionInfo");
+		mono_memory_barrier ();
+		tmp_class = klass;
+	}
+	return klass;
+}
+
+static MonoClass*
+mono_class_get_process_module_class (void)
+{
+	static MonoClass *tmp_class;
+	MonoClass *klass = tmp_class;
+	if (!klass) {
+		klass = mono_class_load_from_name (system_assembly, "System.Diagnostics", "ProcessModule");
+		mono_memory_barrier ();
+		tmp_class = klass;
+	}
+	return klass;
+}
+
 
 static guint32 unicode_chars (const gunichar2 *str)
 {
@@ -105,12 +113,14 @@ static void process_set_field_object (MonoObject *obj, const gchar *fieldname,
 static void process_set_field_string (MonoObject *obj, const gchar *fieldname,
 				      const gunichar2 *val, guint32 len)
 {
+	MonoError error;
 	MonoClassField *field;
 	MonoString *string;
 
 	LOGDEBUG (g_message ("%s: Setting field %s to [%s]", __func__, fieldname, g_utf16_to_utf8 (val, len, NULL, NULL, NULL)));
 
-	string=mono_string_new_utf16 (mono_object_domain (obj), val, len);
+	string = mono_string_new_utf16_checked (mono_object_domain (obj), val, len, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	
 	field=mono_class_get_field_from_name (mono_object_class (obj),
 					      fieldname);
@@ -377,7 +387,7 @@ static void process_get_assembly_fileversion (MonoObject *filever, MonoAssembly 
 
 static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_class)
 {
-	static MonoClass *filever_class = NULL;
+	MonoError error;
 	MonoObject *item, *filever;
 	MonoDomain *domain = mono_domain_get ();
 	char *filename;
@@ -387,14 +397,10 @@ static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_c
 
 	/* Build a System.Diagnostics.ProcessModule with the data.
 	 */
-	item = mono_object_new (domain, proc_class);
-
-	if (!filever_class)
-		filever_class = mono_class_from_name (system_assembly,
-					    "System.Diagnostics",
-					    "FileVersionInfo");
-
-	filever = mono_object_new (domain, filever_class);
+	item = mono_object_new_checked (domain, proc_class, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	filever = mono_object_new_checked (domain, mono_class_get_file_version_info_class (), &error);
+	if (!mono_error_ok (&error)) goto leave;
 
 	process_get_assembly_fileversion (filever, assembly);
 	process_set_field_string_char (filever, "filename", filename);
@@ -405,14 +411,16 @@ static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_c
 	process_set_field_string_char (item, "filename", filename);
 	process_set_field_string_char (item, "modulename", modulename);
 
+leave:
 	g_free (filename);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return item;
 }
 
 static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class)
 {
-	static MonoClass *filever_class = NULL;
+	MonoError error;
 	MonoObject *item, *filever;
 	MonoDomain *domain=mono_domain_get ();
 	MODULEINFO modinfo;
@@ -420,14 +428,10 @@ static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *f
 	
 	/* Build a System.Diagnostics.ProcessModule with the data.
 	 */
-	item=mono_object_new (domain, proc_class);
-
-	if (!filever_class)
-		filever_class=mono_class_from_name (system_assembly,
-					    "System.Diagnostics",
-					    "FileVersionInfo");
-
-	filever=mono_object_new (domain, filever_class);
+	item=mono_object_new_checked (domain, proc_class, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	filever = mono_object_new_checked (domain, mono_class_get_file_version_info_class (), &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	process_get_fileversion (filever, filename);
 
@@ -485,7 +489,6 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 	DWORD needed;
 	guint32 count = 0, module_count = 0, assembly_count = 0;
 	guint32 i, num_added = 0;
-	static MonoClass *proc_class = NULL;
 	GPtrArray *assemblies = NULL;
 	static HANDLE current_process = 0;
 	
@@ -506,16 +509,13 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 	}
 
 	count = module_count + assembly_count; 
-	if (!proc_class)
-		proc_class = mono_class_from_name (system_assembly, "System.Diagnostics", "ProcessModule");
-
-	temp_arr = mono_array_new (mono_domain_get (), proc_class, count);
+	temp_arr = mono_array_new (mono_domain_get (), mono_class_get_process_module_class (), count);
 
 	for (i = 0; i < module_count; i++) {
 		if (GetModuleBaseName (process, mods[i], modname, MAX_PATH) &&
 				GetModuleFileNameEx (process, mods[i], filename, MAX_PATH)) {
 			MonoObject *module = process_add_module (process, mods[i],
-					filename, modname, proc_class);
+					filename, modname, mono_class_get_process_module_class ());
 			mono_array_setref (temp_arr, num_added++, module);
 		}
 	}
@@ -523,7 +523,7 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 	if (assemblies) {
 		for (i = 0; i < assembly_count; i++) {
 			MonoAssembly *ass = (MonoAssembly *)g_ptr_array_index (assemblies, i);
-			MonoObject *module = get_process_module (ass, proc_class);
+			MonoObject *module = get_process_module (ass, mono_class_get_process_module_class ());
 			mono_array_setref (temp_arr, num_added++, module);
 		}
 		g_ptr_array_free (assemblies, TRUE);
@@ -533,7 +533,7 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 		arr = temp_arr;
 	} else {
 		/* shorter version of the array */
-		arr = mono_array_new (mono_domain_get (), proc_class, num_added);
+		arr = mono_array_new (mono_domain_get (), mono_class_get_process_module_class (), num_added);
 
 		for (i = 0; i < num_added; i++)
 			mono_array_setref (arr, i, mono_array_get (temp_arr, MonoObject*, i));
@@ -800,85 +800,9 @@ MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoPro
 	return(ret);
 }
 
-MonoBoolean ves_icall_System_Diagnostics_Process_WaitForExit_internal (MonoObject *this_obj, HANDLE process, gint32 ms)
-{
-	guint32 ret;
-	
-	MONO_PREPARE_BLOCKING;
-	if(ms<0) {
-		/* Wait forever */
-		ret=WaitForSingleObjectEx (process, INFINITE, TRUE);
-	} else {
-		ret=WaitForSingleObjectEx (process, ms, TRUE);
-	}
-	MONO_FINISH_BLOCKING;
-
-	if(ret==WAIT_OBJECT_0) {
-		return(TRUE);
-	} else {
-		return(FALSE);
-	}
-}
-
-MonoBoolean ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal (MonoObject *this_obj, HANDLE process, gint32 ms)
-{
-	guint32 ret;
-	
-	if(ms<0) {
-		/* Wait forever */
-		ret=WaitForInputIdle (process, INFINITE);
-	} else {
-		ret=WaitForInputIdle (process, ms);
-	}
-
-	return (ret) ? FALSE : TRUE;
-}
-
-static guint64
-file_time_to_guint64 (FILETIME *time)
-{
-	return ((guint64)time->dwHighDateTime << 32) | ((guint64)time->dwLowDateTime);
-}
-
-gint64 ves_icall_System_Diagnostics_Process_ExitTime_internal (HANDLE process)
-{
-	gboolean ret;
-	FILETIME create_time, exit_time, kernel_time, user_time;
-	
-	ret = GetProcessTimes (process, &create_time, &exit_time, &kernel_time,
-						   &user_time);
-	if (ret)
-		return file_time_to_guint64 (&exit_time);
-	else
-		return 0;
-}
-
-gint64 ves_icall_System_Diagnostics_Process_StartTime_internal (HANDLE process)
-{
-	gboolean ret;
-	FILETIME create_time, exit_time, kernel_time, user_time;
-	
-	ret = GetProcessTimes (process, &create_time, &exit_time, &kernel_time,
-						   &user_time);
-	if (ret)
-		return file_time_to_guint64 (&create_time);
-	else
-		return 0;
-}
-
-gint32 ves_icall_System_Diagnostics_Process_ExitCode_internal (HANDLE process)
-{
-	DWORD code;
-	
-	GetExitCodeProcess (process, &code);
-	
-	LOGDEBUG (g_message ("%s: process exit code is %d", __func__, code));
-	
-	return(code);
-}
-
 MonoString *ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 {
+	MonoError error;
 	MonoString *string;
 	gboolean ok;
 	HMODULE mod;
@@ -898,7 +822,9 @@ MonoString *ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE pr
 	
 	LOGDEBUG (g_message ("%s: process name is [%s]", __func__, g_utf16_to_utf8 (name, -1, NULL, NULL, NULL)));
 	
-	string=mono_string_new_utf16 (mono_domain_get (), name, len);
+	string = mono_string_new_utf16_checked (mono_domain_get (), name, len, &error);
+
+	mono_error_raise_exception (&error);
 	
 	return(string);
 }
@@ -962,104 +888,6 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	
 	return procs;
 #endif
-}
-
-MonoBoolean ves_icall_System_Diagnostics_Process_GetWorkingSet_internal (HANDLE process, guint32 *min, guint32 *max)
-{
-	gboolean ret;
-	SIZE_T ws_min, ws_max;
-	
-	ret=GetProcessWorkingSetSize (process, &ws_min, &ws_max);
-	*min=(guint32)ws_min;
-	*max=(guint32)ws_max;
-	
-	return(ret);
-}
-
-MonoBoolean ves_icall_System_Diagnostics_Process_SetWorkingSet_internal (HANDLE process, guint32 min, guint32 max, MonoBoolean use_min)
-{
-	gboolean ret;
-	SIZE_T ws_min;
-	SIZE_T ws_max;
-	
-	ret=GetProcessWorkingSetSize (process, &ws_min, &ws_max);
-	if(ret==FALSE) {
-		return(FALSE);
-	}
-	
-	if(use_min==TRUE) {
-		ws_min=(SIZE_T)min;
-	} else {
-		ws_max=(SIZE_T)max;
-	}
-	
-	ret=SetProcessWorkingSetSize (process, ws_min, ws_max);
-
-	return(ret);
-}
-
-MonoBoolean
-ves_icall_System_Diagnostics_Process_Kill_internal (HANDLE process, gint32 sig)
-{
-	/* sig == 1 -> Kill, sig == 2 -> CloseMainWindow */
-
-	return TerminateProcess (process, -sig);
-}
-
-gint64
-ves_icall_System_Diagnostics_Process_Times (HANDLE process, gint32 type)
-{
-	FILETIME create_time, exit_time, kernel_time, user_time;
-	
-	if (GetProcessTimes (process, &create_time, &exit_time, &kernel_time, &user_time)) {
-		guint64 ktime = file_time_to_guint64 (&kernel_time);
-		guint64 utime = file_time_to_guint64 (&user_time);
-
-		if (type == 0)
-			return utime;
-		else if (type == 1)
-			return ktime;
-		else
-			return ktime + utime;
-	}
-	return 0;
-}
-
-gint32
-ves_icall_System_Diagnostics_Process_GetPriorityClass (HANDLE process, gint32 *error)
-{
-	gint32 ret = GetPriorityClass (process);
-	*error = ret == 0 ? GetLastError () : 0;
-	return ret;
-}
-
-MonoBoolean
-ves_icall_System_Diagnostics_Process_SetPriorityClass (HANDLE process, gint32 priority_class, gint32 *error)
-{
-	gboolean ret = SetPriorityClass (process, priority_class);
-	*error = ret == 0 ? GetLastError () : 0;
-	return ret;
-}
-
-HANDLE
-ves_icall_System_Diagnostics_Process_ProcessHandle_duplicate (HANDLE process)
-{
-	HANDLE ret;
-
-	LOGDEBUG (g_message ("%s: Duplicating process handle %p", __func__, process));
-	
-	DuplicateHandle (GetCurrentProcess (), process, GetCurrentProcess (),
-			 &ret, THREAD_ALL_ACCESS, TRUE, 0);
-	
-	return ret;
-}
-
-void
-ves_icall_System_Diagnostics_Process_ProcessHandle_close (HANDLE process)
-{
-	LOGDEBUG (g_message ("%s: Closing process handle %p", __func__, process));
-
-	CloseHandle (process);
 }
 
 gint64

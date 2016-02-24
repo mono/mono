@@ -46,7 +46,7 @@
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
 
-#define MONITOR_INTERVAL 100 // ms
+#define MONITOR_INTERVAL 500 // ms
 #define MONITOR_MINIMAL_LIFETIME 60 * 1000 // ms
 
 #define WORKER_CREATION_MAX_PER_SEC 10
@@ -227,11 +227,11 @@ rand_create (void)
 static guint32
 rand_next (gpointer *handle, guint32 min, guint32 max)
 {
+	MonoError error;
 	guint32 val;
-	if (!mono_rand_try_get_uint32 (handle, &val, min, max)) {
-		// FIXME handle error
-		g_assert_not_reached ();
-	}
+	mono_rand_try_get_uint32 (handle, &val, min, max, &error);
+	// FIXME handle error
+	mono_error_assert_ok (&error);
 	return val;
 }
 
@@ -349,6 +349,7 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 {
 	static MonoClass *threadpool_class = NULL;
 	static MonoMethod *unsafe_queue_custom_work_item_method = NULL;
+	MonoError error;
 	MonoDomain *current_domain;
 	MonoBoolean f;
 	gpointer args [2];
@@ -356,8 +357,7 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 	g_assert (work_item);
 
 	if (!threadpool_class)
-		threadpool_class = mono_class_from_name (mono_defaults.corlib, "System.Threading", "ThreadPool");
-	g_assert (threadpool_class);
+		threadpool_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "ThreadPool");
 
 	if (!unsafe_queue_custom_work_item_method)
 		unsafe_queue_custom_work_item_method = mono_class_get_method_from_name (threadpool_class, "UnsafeQueueCustomWorkItem", 2);
@@ -370,11 +370,13 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 
 	current_domain = mono_domain_get ();
 	if (current_domain == domain) {
-		mono_runtime_invoke (unsafe_queue_custom_work_item_method, NULL, args, NULL);
+		mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	} else {
 		mono_thread_push_appdomain_ref (domain);
 		if (mono_domain_set (domain, FALSE)) {
-			mono_runtime_invoke (unsafe_queue_custom_work_item_method, NULL, args, NULL);
+			mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 			mono_domain_set (current_domain, TRUE);
 		}
 		mono_thread_pop_appdomain_ref ();
@@ -572,6 +574,7 @@ worker_kill (ThreadPoolWorkingThread *thread)
 static void
 worker_thread (gpointer data)
 {
+	MonoError error;
 	MonoInternalThread *thread;
 	ThreadPoolDomain *tpdomain, *previous_tpdomain;
 	ThreadPoolCounter counter;
@@ -643,11 +646,16 @@ worker_thread (gpointer data)
 
 		mono_thread_push_appdomain_ref (tpdomain->domain);
 		if (mono_domain_set (tpdomain->domain, FALSE)) {
-			MonoObject *exc = NULL;
-			MonoObject *res = mono_runtime_invoke (mono_defaults.threadpool_perform_wait_callback_method, NULL, NULL, &exc);
-			if (exc)
+			MonoObject *exc = NULL, *res;
+
+			res = mono_runtime_try_invoke (mono_defaults.threadpool_perform_wait_callback_method, NULL, NULL, &exc, &error);
+			if (exc || !mono_error_ok(&error)) {
+				if (exc == NULL)
+					exc = (MonoObject *) mono_error_convert_to_exception (&error);
+				else
+					mono_error_cleanup (&error);
 				mono_thread_internal_unhandled_exception (exc);
-			else if (res && *(MonoBoolean*) mono_object_unbox (res) == FALSE)
+			} else if (res && *(MonoBoolean*) mono_object_unbox (res) == FALSE)
 				retire = TRUE;
 
 			mono_thread_clr_state (thread, (MonoThreadState)~ThreadState_Background);
@@ -867,8 +875,8 @@ monitor_thread (void)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, started", mono_native_thread_id_get ());
 
 	do {
-		MonoInternalThread *thread;
-		gboolean all_waitsleepjoin = TRUE;
+		ThreadPoolCounter counter;
+		gboolean limit_worker_max_reached;
 		gint32 interval_left = MONITOR_INTERVAL;
 		gint32 awake = 0; /* number of spurious awakes we tolerate before doing a round of rebalancing */
 
@@ -909,49 +917,38 @@ monitor_thread (void)
 		}
 		mono_coop_mutex_unlock (&threadpool->domains_lock);
 
-
-		mono_coop_mutex_lock (&threadpool->active_threads_lock);
-		for (i = 0; i < threadpool->working_threads->len; ++i) {
-			thread = (MonoInternalThread *)g_ptr_array_index (threadpool->working_threads, i);
-			if ((thread->state & ThreadState_WaitSleepJoin) == 0) {
-				all_waitsleepjoin = FALSE;
-				break;
-			}
-		}
-		mono_coop_mutex_unlock (&threadpool->active_threads_lock);
-
-		if (all_waitsleepjoin) {
-			ThreadPoolCounter counter;
-			gboolean limit_worker_max_reached = FALSE;
-
-			COUNTER_ATOMIC (counter, {
-				if (counter._.max_working >= threadpool->limit_worker_max) {
-					limit_worker_max_reached = TRUE;
-					break;
-				}
-				counter._.max_working ++;
-			});
-
-			if (!limit_worker_max_reached)
-				hill_climbing_force_change (counter._.max_working, TRANSITION_STARVATION);
-		}
-
 		threadpool->cpu_usage = mono_cpu_usage (threadpool->cpu_usage_state);
 
-		if (monitor_sufficient_delay_since_last_dequeue ()) {
-			for (i = 0; i < 5; ++i) {
-				if (mono_runtime_is_shutting_down ())
-					break;
+		if (!monitor_sufficient_delay_since_last_dequeue ())
+			continue;
 
-				if (worker_try_unpark ()) {
-					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, unparked", mono_native_thread_id_get ());
-					break;
-				}
+		limit_worker_max_reached = FALSE;
 
-				if (worker_try_create ()) {
-					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, created", mono_native_thread_id_get ());
-					break;
-				}
+		COUNTER_ATOMIC (counter, {
+			if (counter._.max_working >= threadpool->limit_worker_max) {
+				limit_worker_max_reached = TRUE;
+				break;
+			}
+			counter._.max_working ++;
+		});
+
+		if (limit_worker_max_reached)
+			continue;
+
+		hill_climbing_force_change (counter._.max_working, TRANSITION_STARVATION);
+
+		for (i = 0; i < 5; ++i) {
+			if (mono_runtime_is_shutting_down ())
+				break;
+
+			if (worker_try_unpark ()) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, unparked", mono_native_thread_id_get ());
+				break;
+			}
+
+			if (worker_try_create ()) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, created", mono_native_thread_id_get ());
+				break;
 			}
 		}
 	} while (monitor_should_keep_running ());
@@ -1320,6 +1317,7 @@ MonoAsyncResult *
 mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params)
 {
 	static MonoClass *async_call_klass = NULL;
+	MonoError error;
 	MonoMethodMessage *message;
 	MonoAsyncResult *async_result;
 	MonoAsyncCall *async_call;
@@ -1327,14 +1325,15 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 	MonoObject *state = NULL;
 
 	if (!async_call_klass)
-		async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
-	g_assert (async_call_klass);
+		async_call_klass = mono_class_load_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
 
 	mono_lazy_initialize (&status, initialize);
 
 	message = mono_method_call_message_new (method, params, mono_get_delegate_invoke (method->klass), (params != NULL) ? (&async_callback) : NULL, (params != NULL) ? (&state) : NULL);
 
-	async_call = (MonoAsyncCall*) mono_object_new (domain, async_call_klass);
+	async_call = (MonoAsyncCall*) mono_object_new_checked (domain, async_call_klass, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	MONO_OBJECT_SETREF (async_call, msg, message);
 	MONO_OBJECT_SETREF (async_call, state, state);
 

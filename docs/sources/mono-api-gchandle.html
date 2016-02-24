@@ -2,7 +2,7 @@
 
 <h3>Synopsys</h3>
 
-	<div class="header">
+	<div class="mapi-header">
 @API_IDX@
 	</div>
 	
@@ -31,7 +31,8 @@
 	<tt>mono_gchandle_get_target</tt>.
 
 	<p>For example, consider the following C code:
-<div class="code">
+
+<div class="mapi-code">
 static MonoObject* o = NULL;
 </div>
 
@@ -41,22 +42,22 @@ static MonoObject* o = NULL;
 	it from being collected, you need to acquire a GC handle for
 	it.
 
-<div class="code">
-        guint32 handle = mono_gchandle_new (my_object, TRUE);
+<div class="mapi-code">
+guint32 handle = mono_gchandle_new (my_object, TRUE);
 </div>
 
 	<p>TRUE means the object will be pinned, so it won't move in
 	memory when we'll use a moving GC. You can access the
 	MonoObject* referenced by a handle with:
 
-<div class="code">
-        MonoObject* obj = mono_gchandle_get_target (handle);
+<div class="mapi-code">
+MonoObject* obj = mono_gchandle_get_target (handle);
 </div>
 
 	<p>When you don't need the handle anymore you need to call:
 
-<div class="code">
-        mono_gchandle_free (handle);
+<div class="mapi-code">
+mono_gchandle_free (handle);
 </div>
 
 	<p>Note that if you assign a new object to the C var, you need
@@ -65,27 +66,27 @@ static MonoObject* o = NULL;
 
 	<p>So code that looked like this:
 
-<div class="code">
-        static MonoObject* o = NULL;
-        ...
-        o = mono_object_new (...);
-        /* use o */
-        ...
-        /* when done to allow the GC to collect o */
-        o = NULL;
+<div class="mapi-code">
+static MonoObject* obj = NULL;
+...
+obj = mono_object_new (...);
+// use obj
+...
+// when done to allow the GC to collect obj
+obj = NULL;
 </div>
 
 	<p>should now be changed to:
 
-<div class="code">
-        static guint32 o_handle;
-        ...
-        MonoObject *o = mono_object_new (...);
-        o_handle = mono_gchandle_new (o, TRUE);
-        /* use o or mono_gchandle_get_target (o_handle) */
-        ...
-        /* when done to allow the GC to collect o */
-        mono_gchandle_free (o_handle);
+<div class="mapi-code">
+static guint32 o_handle;
+...
+MonoObject *obj = mono_object_new (...);
+o_handle = mono_gchandle_new (obj, TRUE);
+// use o or mono_gchandle_get_target (o_handle) 
+...
+// when done to allow the GC to collect obj
+mono_gchandle_free (o_handle);
 </div>
 		
 <h4><a name="api:mono_gchandle_new">mono_gchandle_new</a></h4>

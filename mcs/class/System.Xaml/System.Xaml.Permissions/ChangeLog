@@ -1,7 +1,0 @@
-2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XamlAccessLevel.cs : add missing methods.
-
-2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XamlAccessLevel.cs  XamlLoadPermission.cs : initial checkin.

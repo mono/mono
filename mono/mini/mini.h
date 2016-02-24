@@ -114,7 +114,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 131
+#define MONO_AOT_FILE_VERSION 132
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -761,6 +761,7 @@ typedef enum {
 	LLVMArgInIReg,
 	/* Only in ainfo->pair_storage */
 	LLVMArgInFPReg,
+	/* Valuetype passed in 1-2 consecutive register */
 	LLVMArgVtypeInReg,
 	LLVMArgVtypeByVal,
 	LLVMArgVtypeRetAddr, /* On on cinfo->ret */
@@ -1604,8 +1605,9 @@ typedef struct {
 	/* Points to a MonoGSharedVtMethodRuntimeInfo at runtime */
 	MonoInst *gsharedvt_info_var;
 
-	/* For native-to-managed wrappers, the saved old domain */
-	MonoInst *orig_domain_var;
+	/* For native-to-managed wrappers, CEE_MONO_JIT_(AT|DE)TACH opcodes */
+	MonoInst *attach_cookie;
+	MonoInst *attach_dummy;
 
 	MonoInst *lmf_var;
 	MonoInst *lmf_addr_var;
@@ -1892,6 +1894,43 @@ typedef struct {
 	int methods_without_llvm;
 	char *max_ratio_method;
 	char *biggest_method;
+	double jit_method_to_ir;
+	double jit_liveness_handle_exception_clauses;
+	double jit_handle_out_of_line_bblock;
+	double jit_decompose_long_opts;
+	double jit_local_cprop;
+	double jit_local_emulate_ops;
+	double jit_optimize_branches;
+	double jit_handle_global_vregs;
+	double jit_local_deadce;
+	double jit_local_alias_analysis;
+	double jit_if_conversion;
+	double jit_bb_ordering;
+	double jit_compile_dominator_info;
+	double jit_compute_natural_loops;
+	double jit_insert_safepoints;
+	double jit_ssa_compute;
+	double jit_ssa_cprop;
+	double jit_ssa_deadce;
+	double jit_perform_abc_removal;
+	double jit_ssa_remove;
+	double jit_local_cprop2;
+	double jit_handle_global_vregs2;
+	double jit_local_deadce2;
+	double jit_optimize_branches2;
+	double jit_decompose_vtype_opts;
+	double jit_decompose_array_access_opts;
+	double jit_liveness_handle_exception_clauses2;
+	double jit_analyze_liveness;
+	double jit_linear_scan;
+	double jit_arch_allocate_vars;
+	double jit_spill_global_vars;
+	double jit_local_cprop3;
+	double jit_local_deadce3;
+	double jit_codegen;
+	double jit_create_jit_info;
+	double jit_gc_create_gc_map;
+	double jit_save_seq_point_info;
 	double jit_time;
 	gboolean enabled;
 } MonoJitStats;
@@ -2322,17 +2361,17 @@ MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patc
 guint     mono_patch_info_hash (gconstpointer data);
 gint      mono_patch_info_equal (gconstpointer ka, gconstpointer kb);
 MonoJumpInfo *mono_patch_info_list_prepend  (MonoJumpInfo *list, int ip, MonoJumpInfoType type, gconstpointer target);
-gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors) MONO_LLVM_INTERNAL;
+gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors, MonoError *error) MONO_LLVM_INTERNAL;
 gpointer  mono_jit_find_compiled_method_with_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method     (MonoDomain *domain, MonoMethod *method);
-gpointer  mono_jit_compile_method           (MonoMethod *method);
-gpointer  mono_jit_compile_method_inner     (MonoMethod *method, MonoDomain *target_domain, int opt, MonoException **jit_ex);
+gpointer  mono_jit_compile_method           (MonoMethod *method, MonoError *error);
+gpointer  mono_jit_compile_method_inner     (MonoMethod *method, MonoDomain *target_domain, int opt, MonoError *error);
 MonoLMF * mono_get_lmf                      (void);
 MonoLMF** mono_get_lmf_addr                 (void);
 void      mono_set_lmf                      (MonoLMF *lmf);
 MonoJitTlsData* mono_get_jit_tls            (void);
-MONO_API MonoDomain *mono_jit_thread_attach          (MonoDomain *domain);
-MONO_API void      mono_jit_set_domain               (MonoDomain *domain);
+MONO_API gpointer  mono_jit_thread_attach            (MonoDomain *domain, gpointer *dummy);
+MONO_API void      mono_jit_thread_detach            (gpointer cookie, gpointer *dummy);
 gint32    mono_get_jit_tls_offset           (void);
 gint32    mono_get_lmf_tls_offset           (void);
 gint32    mono_get_lmf_addr_tls_offset      (void);
@@ -2437,7 +2476,7 @@ guint32   mono_aot_get_plt_info_offset      (mgreg_t *regs, guint8 *code);
 gboolean  mono_aot_get_cached_class_info    (MonoClass *klass, MonoCachedClassInfo *res);
 gboolean  mono_aot_get_class_from_name      (MonoImage *image, const char *name_space, const char *name, MonoClass **klass);
 MonoJitInfo* mono_aot_find_jit_info         (MonoDomain *domain, MonoImage *image, gpointer addr);
-gpointer mono_aot_plt_resolve               (gpointer aot_module, guint32 plt_info_offset, guint8 *code);
+gpointer mono_aot_plt_resolve               (gpointer aot_module, guint32 plt_info_offset, guint8 *code, MonoError *error);
 void     mono_aot_patch_plt_entry           (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr);
 gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vtable, int slot);
 gpointer mono_aot_create_specific_trampoline   (MonoImage *image, gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len);
@@ -2827,7 +2866,7 @@ gpointer mono_get_call_filter                   (void);
 gpointer mono_get_restore_context               (void);
 gpointer mono_get_throw_exception_by_name       (void);
 gpointer mono_get_throw_corlib_exception        (void);
-
+gpointer mono_get_throw_exception_addr          (void);
 MonoArray *ves_icall_get_trace                  (MonoException *exc, gint32 skip, MonoBoolean need_file_info);
 MonoBoolean ves_icall_get_frame_info            (gint32 skip, MonoBoolean need_file_info, 
 						 MonoReflectionMethod **method, 
@@ -2913,10 +2952,10 @@ gboolean
 mono_class_generic_sharing_enabled (MonoClass *klass);
 
 gpointer
-mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot);
+mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot, MonoError *error);
 
 gpointer
-mono_method_fill_runtime_generic_context (MonoMethodRuntimeGenericContext *mrgctx, guint32 slot);
+mono_method_fill_runtime_generic_context (MonoMethodRuntimeGenericContext *mrgctx, guint32 slot, MonoError *error);
 
 MonoMethodRuntimeGenericContext*
 mono_method_lookup_rgctx (MonoVTable *class_vtable, MonoGenericInst *method_inst);
@@ -3005,6 +3044,19 @@ guint mono_type_to_regmove (MonoCompile *cfg, MonoType *type) MONO_LLVM_INTERNAL
 void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *start, MonoBasicBlock *bb);
 
 void mono_cfg_set_exception (MonoCompile *cfg, int type);
+void mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg);
+
+#define MONO_TIME_TRACK(a, phase) \
+	{ \
+		GTimer *timer = mono_time_track_start (); \
+		(phase) ; \
+		mono_time_track_end (&(a), timer); \
+	}
+
+GTimer *mono_time_track_start (void);
+void mono_time_track_end (double *time, GTimer *timer);
+
+void mono_update_jit_stats (MonoCompile *cfg);
 
 gboolean mini_type_is_reference (MonoType *type);
 gboolean mini_type_is_vtype (MonoType *t) MONO_LLVM_INTERNAL;
@@ -3112,6 +3164,11 @@ void mono_cross_helpers_run (void);
 /*
  * Signal handling
  */
+
+#ifdef DISABLE_HW_TRAPS
+ // Signal handlers not available
+#define MONO_ARCH_NEED_DIV_CHECK 1
+#endif
 
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigfpe_signal_handler) ;
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler) ;

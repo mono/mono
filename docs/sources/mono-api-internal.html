@@ -4,6 +4,29 @@
 	inside Mono that developers extending or altering Mono might
 	want to use.
 
+<h2>Strings</h2>
+
+<h3>Other Encodings</h3>
+
+	<p>These routines are used when coping with strings that come
+	from Mono's environment, and might be encoded in one or more
+	of the external encodings.
+
+	<p>For example, some file systems might historically contain a
+	mix of file names with both old and new encodings, typically
+	UTF8 for new files, and the old files would be encoded in an 8
+	bit character set (ISO-8859-1 for example).
+	
+	<p>These routines try a number of encodings, those specified
+	in the <tt>MONO_ENCODINGS</tt> environment variable and return
+	unicode strings that can be used internally.
+
+	<p>See the mono(1) man page for more details.
+	
+<h4><a name="api:mono_unicode_from_external">mono_unicode_from_external</a></h4>
+<h4><a name="api:mono_unicode_to_external">mono_unicode_to_external</a></h4>
+<h4><a name="api:mono_utf8_from_external">mono_utf8_from_external</a></h4>
+
 <h2>Marshalling functions</h2>
 
 <h4><a name="api:mono_marshal_alloc">mono_marshal_alloc</a></h4>

@@ -1,6 +1,0 @@
-2007-12-08  Marek Habersack  <mhabersack@novell.com>
-
-	* TranslationProperties.Designer.cs: added - contains strongly
-	typed properties referring to string resources used by the Sqlite
-	providers.
-

@@ -1,9 +1,0 @@
-2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
-	* AssemblyInfo.cs: Added missing attributes
-
-2004-04-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
-	* AssemblyInfo.cs: Added
-	* ChangeLog: Added
-	* Locale.cs: Added

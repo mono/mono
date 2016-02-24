@@ -169,7 +169,7 @@ EXTRA_DIST += add_gc_prefix.c gcname.c if_mach.c if_not_there.c hpux_test_and_cl
 
 # cord package
 #
-EXTRA_DIST += cord/cordbscs.c cord/cordtest.c cord/de.c cord/de_win.c cord/de_win.ICO cord/cordprnt.c cord/cordxtra.c cord/de_cmds.h cord/de_win.h cord/de_win.RC
+EXTRA_DIST += cord cord/cordbscs.c cord/cordtest.c cord/de.c cord/de_win.c cord/de_win.ICO cord/cordprnt.c cord/cordxtra.c cord/de_cmds.h cord/de_win.h cord/de_win.RC
 
 # this is an auxiliary shell file used by Makefile and Makefile.direct
 #
@@ -184,3 +184,4 @@ EXTRA_DIST += configure.host
 # it will not remove dest if building fails
 .S.s:
 	if $(CPP) $< >$@ ; then :; else rm -f $@; fi
+

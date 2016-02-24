@@ -1,3 +1,0 @@
-2008-08-05  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* SoapHexBinaryTest.cs: New. Simple ctor and properties tests.

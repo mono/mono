@@ -855,7 +855,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	inst->backend.is_pinvoke = 0;
 	inst->dreg = vreg;
 
-	if (inst->klass->exception_type)
+	if (mono_class_has_failure (inst->klass))
 		mono_cfg_set_exception (cfg, MONO_EXCEPTION_TYPE_LOAD);
 
 	if (cfg->compute_gc_maps) {
@@ -1208,7 +1208,7 @@ mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method)
 /*
  * mini_method_verify:
  * 
- * Verify the method using the new verfier.
+ * Verify the method using the verfier.
  * 
  * Returns true if the method is invalid. 
  */
@@ -1217,7 +1217,6 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 {
 	GSList *tmp, *res;
 	gboolean is_fulltrust;
-	MonoLoaderError *error;
 
 	if (method->verification_success)
 		return FALSE;
@@ -1230,11 +1229,13 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 
 	res = mono_method_verify_with_current_settings (method, cfg->skip_visibility, is_fulltrust);
 
-	if ((error = mono_loader_get_last_error ())) {
-		if (fail_compile)
-			cfg->exception_type = error->exception_type;
-		else
+	if (mono_loader_get_last_error ()) {
+		if (fail_compile) {
+			mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+			mono_error_set_from_loader_error (&cfg->error);
+		} else {
 			mono_loader_clear_error ();
+		}
 		if (res)
 			mono_free_verify_list (res);
 		return TRUE;
@@ -1256,8 +1257,21 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 			if (info->info.status == MONO_VERIFY_NOT_VERIFIABLE && (!is_fulltrust || info->exception_type == MONO_EXCEPTION_METHOD_ACCESS || info->exception_type == MONO_EXCEPTION_FIELD_ACCESS)) {
 				if (fail_compile) {
 					char *method_name = mono_method_full_name (method, TRUE);
-					cfg->exception_type = info->exception_type;
-					cfg->exception_message = g_strdup_printf ("Error verifying %s: %s", method_name, info->info.message);
+					char *msg = g_strdup_printf ("Error verifying %s: %s", method_name, info->info.message);
+
+					if (info->exception_type == MONO_EXCEPTION_METHOD_ACCESS)
+						mono_error_set_generic_error (&cfg->error, "System", "MethodAccessException", "%s", msg);
+					else if (info->exception_type == info->exception_type == MONO_EXCEPTION_FIELD_ACCESS)
+						mono_error_set_generic_error (&cfg->error, "System", "FieldAccessException", "%s", msg);
+					else if (info->exception_type == MONO_EXCEPTION_UNVERIFIABLE_IL)
+						mono_error_set_generic_error (&cfg->error, "System.Security", "VerificationException", msg);
+					if (!mono_error_ok (&cfg->error)) {
+						mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+						g_free (msg);
+					} else {
+						cfg->exception_type = info->exception_type;
+						cfg->exception_message = msg;
+					}
 					g_free (method_name);
 				}
 				mono_free_verify_list (res);
@@ -1701,7 +1715,7 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 			size = mini_type_stack_size (t, &ialign);
 			align = ialign;
 
-			if (mono_class_from_mono_type (t)->exception_type)
+			if (mono_class_has_failure (mono_class_from_mono_type (t)))
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_TYPE_LOAD);
 
 			if (MONO_CLASS_IS_SIMD (cfg, mono_class_from_mono_type (t)))
@@ -2595,7 +2609,7 @@ mono_codegen (MonoCompile *cfg)
 #endif
  
 	if (cfg->verbose_level > 0) {
-		char* nm = mono_method_full_name (cfg->method, TRUE);
+		char* nm = mono_method_get_full_name (cfg->method);
 		char *opt_descr = mono_opt_descr (cfg->opt);
 		g_print ("Method %s emitted at %p to %p (code length %d) [%s] with opts %s\n", 
 				 nm, 
@@ -2638,6 +2652,7 @@ mono_codegen (MonoCompile *cfg)
 #ifdef MONO_ARCH_HAVE_PATCH_CODE_NEW
 	{
 		MonoJumpInfo *ji;
+		MonoError error;
 		gpointer target;
 
 		for (ji = cfg->patch_info; ji; ji = ji->next) {
@@ -2655,7 +2670,8 @@ mono_codegen (MonoCompile *cfg)
 			if (ji->type == MONO_PATCH_INFO_NONE)
 				continue;
 
-			target = mono_resolve_patch_target (cfg->method, cfg->domain, cfg->native_code, ji, cfg->run_cctors);
+			target = mono_resolve_patch_target (cfg->method, cfg->domain, cfg->native_code, ji, cfg->run_cctors, &error);
+			mono_error_raise_exception (&error); /* FIXME: don't raise here */
 			mono_arch_patch_code_new (cfg, cfg->domain, cfg->native_code, ji, target);
 		}
 	}
@@ -2694,6 +2710,42 @@ compute_reachable (MonoBasicBlock *bb)
 		bb->flags |= BB_VISITED;
 		for (i = 0; i < bb->out_count; ++i)
 			compute_reachable (bb->out_bb [i]);
+	}
+}
+
+static void mono_bb_ordering (MonoCompile *cfg)
+{
+	int dfn = 0;
+	/* Depth-first ordering on basic blocks */
+	cfg->bblocks = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (cfg->num_bblocks + 1));
+
+	cfg->max_block_num = cfg->num_bblocks;
+
+	df_visit (cfg->bb_entry, &dfn, cfg->bblocks);
+	if (cfg->num_bblocks != dfn + 1) {
+		MonoBasicBlock *bb;
+
+		cfg->num_bblocks = dfn + 1;
+
+		/* remove unreachable code, because the code in them may be 
+		 * inconsistent  (access to dead variables for example) */
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+			bb->flags &= ~BB_VISITED;
+		compute_reachable (cfg->bb_entry);
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+			if (bb->flags & BB_EXCEPTION_HANDLER)
+				compute_reachable (bb);
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+			if (!(bb->flags & BB_VISITED)) {
+				if (cfg->verbose_level > 1)
+					g_print ("found unreachable code in BB%d\n", bb->block_num);
+				bb->code = bb->last_ins = NULL;
+				while (bb->out_count)
+					mono_unlink_bblock (cfg, bb, bb->out_bb [0]);
+			}
+		}
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+			bb->flags &= ~BB_VISITED;
 	}
 }
 
@@ -3204,6 +3256,52 @@ mono_insert_safepoints (MonoCompile *cfg)
 
 }
 
+
+static void
+mono_insert_branches_between_bblocks (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+
+	/* Add branches between non-consecutive bblocks */
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
+			bb->last_ins->inst_false_bb && bb->next_bb != bb->last_ins->inst_false_bb) {
+			/* we are careful when inverting, since bugs like #59580
+			 * could show up when dealing with NaNs.
+			 */
+			if (MONO_IS_COND_BRANCH_NOFP(bb->last_ins) && bb->next_bb == bb->last_ins->inst_true_bb) {
+				MonoBasicBlock *tmp =  bb->last_ins->inst_true_bb;
+				bb->last_ins->inst_true_bb = bb->last_ins->inst_false_bb;
+				bb->last_ins->inst_false_bb = tmp;
+
+				bb->last_ins->opcode = mono_reverse_branch_op (bb->last_ins->opcode);
+			} else {
+				MonoInst *inst = (MonoInst *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
+				inst->opcode = OP_BR;
+				inst->inst_target_bb = bb->last_ins->inst_false_bb;
+				mono_bblock_add_inst (bb, inst);
+			}
+		}
+	}
+
+	if (cfg->verbose_level >= 4) {
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+			MonoInst *tree = bb->code;
+			g_print ("DUMP BLOCK %d:\n", bb->block_num);
+			if (!tree)
+				continue;
+			for (; tree; tree = tree->next) {
+				mono_print_ins_index (-1, tree);
+			}
+		}
+	}
+
+	/* FIXME: */
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		bb->max_vreg = cfg->next_vreg;
+	}
+}
+
 static void
 init_backend (MonoBackend *backend)
 {
@@ -3287,7 +3385,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	MonoMethodSignature *sig;
 	MonoError err;
 	MonoCompile *cfg;
-	int dfn, i, code_size_ratio;
+	int i, code_size_ratio;
 	gboolean try_generic_shared, try_llvm = FALSE;
 	MonoMethod *method_to_compile, *method_to_register;
 	gboolean method_is_gshared = FALSE;
@@ -3472,13 +3570,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	header = cfg->header;
 	if (!header) {
-		MonoLoaderError *error;
-
-		if ((error = mono_loader_get_last_error ())) {
-			cfg->exception_type = error->exception_type;
+		if (mono_loader_get_last_error ()) {
+			mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+			mono_error_set_from_loader_error (&cfg->error);
 		} else {
-			cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-			cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
+			mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name));
 		}
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
@@ -3588,7 +3684,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->verbose_level > 0) {
 		char *method_name;
 
-		method_name = mono_method_full_name (method, TRUE);
+		method_name = mono_method_get_full_name (method);
 		g_print ("converting %s%s%smethod %s\n", COMPILE_LLVM (cfg) ? "llvm " : "", cfg->gsharedvt ? "gsharedvt " : "", (cfg->gshared && !cfg->gsharedvt) ? "gshared " : "", method_name);
 		/*
 		if (COMPILE_LLVM (cfg))
@@ -3635,7 +3731,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	 */
 	mono_compile_create_vars (cfg);
 
-	i = mono_method_to_ir (cfg, method_to_compile, NULL, NULL, NULL, NULL, 0, FALSE);
+	MONO_TIME_TRACK (mono_jit_stats.jit_method_to_ir, i = mono_method_to_ir (cfg, method_to_compile, NULL, NULL, NULL, NULL, 0, FALSE));
 
 	if (i < 0) {
 		if (try_generic_shared && cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
@@ -3696,71 +3792,43 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	 * This also allows SSA to be run on methods containing exception clauses, since
 	 * SSA will ignore variables marked VOLATILE.
 	 */
-	mono_liveness_handle_exception_clauses (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_liveness_handle_exception_clauses, mono_liveness_handle_exception_clauses (cfg));
 
-	mono_handle_out_of_line_bblock (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_handle_out_of_line_bblock, mono_handle_out_of_line_bblock (cfg));
 
 	/*g_print ("numblocks = %d\n", cfg->num_bblocks);*/
 
-	if (!COMPILE_LLVM (cfg))
-		mono_decompose_long_opts (cfg);
+	if (!COMPILE_LLVM (cfg)) {
+		MONO_TIME_TRACK (mono_jit_stats.jit_decompose_long_opts, mono_decompose_long_opts (cfg));
+	}
 
 	/* Should be done before branch opts */
 	if (cfg->opt & (MONO_OPT_CONSPROP | MONO_OPT_COPYPROP))
-		mono_local_cprop (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_local_cprop, mono_local_cprop (cfg));
+
 	/*
 	 * Should be done after cprop which can do strength reduction on
 	 * some of these ops, after propagating immediates.
 	 */
 	if (cfg->has_emulated_ops)
-		mono_local_emulate_ops (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_local_emulate_ops, mono_local_emulate_ops (cfg));
+
 	if (cfg->opt & MONO_OPT_BRANCH)
-		mono_optimize_branches (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_optimize_branches, mono_optimize_branches (cfg));
 
 	/* This must be done _before_ global reg alloc and _after_ decompose */
-	mono_handle_global_vregs (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_handle_global_vregs, mono_handle_global_vregs (cfg));
 	if (cfg->opt & MONO_OPT_DEADCE)
-		mono_local_deadce (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_local_deadce, mono_local_deadce (cfg));
 	if (cfg->opt & MONO_OPT_ALIAS_ANALYSIS)
-		mono_local_alias_analysis (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_local_alias_analysis, mono_local_alias_analysis (cfg));
 	/* Disable this for LLVM to make the IR easier to handle */
 	if (!COMPILE_LLVM (cfg))
-		mono_if_conversion (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_if_conversion, mono_if_conversion (cfg));
 
 	mono_threads_safepoint ();
 
-	/* Depth-first ordering on basic blocks */
-	cfg->bblocks = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (cfg->num_bblocks + 1));
-
-	cfg->max_block_num = cfg->num_bblocks;
-
-	dfn = 0;
-	df_visit (cfg->bb_entry, &dfn, cfg->bblocks);
-	if (cfg->num_bblocks != dfn + 1) {
-		MonoBasicBlock *bb;
-
-		cfg->num_bblocks = dfn + 1;
-
-		/* remove unreachable code, because the code in them may be 
-		 * inconsistent  (access to dead variables for example) */
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
-			bb->flags &= ~BB_VISITED;
-		compute_reachable (cfg->bb_entry);
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
-			if (bb->flags & BB_EXCEPTION_HANDLER)
-				compute_reachable (bb);
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			if (!(bb->flags & BB_VISITED)) {
-				if (cfg->verbose_level > 1)
-					g_print ("found unreachable code in BB%d\n", bb->block_num);
-				bb->code = bb->last_ins = NULL;
-				while (bb->out_count)
-					mono_unlink_bblock (cfg, bb, bb->out_bb [0]);
-			}
-		}
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
-			bb->flags &= ~BB_VISITED;
-	}
+	MONO_TIME_TRACK (mono_jit_stats.jit_bb_ordering, mono_bb_ordering (cfg));
 
 	if (((cfg->num_varinfo > 2000) || (cfg->num_bblocks > 1000)) && !cfg->compile_aot) {
 		/* 
@@ -3773,11 +3841,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 
 	if (cfg->opt & MONO_OPT_LOOP) {
-		mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM);
-		mono_compute_natural_loops (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_compile_dominator_info, mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM));
+		MONO_TIME_TRACK (mono_jit_stats.jit_compute_natural_loops, mono_compute_natural_loops (cfg));
 	}
 
-	mono_insert_safepoints (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_insert_safepoints, mono_insert_safepoints (cfg));
 
 	/* after method_to_ir */
 	if (parts == 1) {
@@ -3806,7 +3874,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->opt & MONO_OPT_SSA) {
 		if (!(cfg->comp_done & MONO_COMP_SSA) && !cfg->disable_ssa) {
 #ifndef DISABLE_SSA
-			mono_ssa_compute (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_ssa_compute, mono_ssa_compute (cfg));
 #endif
 
 			if (cfg->verbose_level >= 2) {
@@ -3826,7 +3894,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if ((cfg->opt & MONO_OPT_CONSPROP) || (cfg->opt & MONO_OPT_COPYPROP)) {
 		if (cfg->comp_done & MONO_COMP_SSA && !COMPILE_LLVM (cfg)) {
 #ifndef DISABLE_SSA
-			mono_ssa_cprop (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_ssa_cprop, mono_ssa_cprop (cfg));
 #endif
 		}
 	}
@@ -3836,19 +3904,19 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		//mono_ssa_strength_reduction (cfg);
 
 		if (cfg->opt & MONO_OPT_DEADCE)
-			mono_ssa_deadce (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_ssa_deadce, mono_ssa_deadce (cfg));
 
 		if ((cfg->flags & (MONO_CFG_HAS_LDELEMA|MONO_CFG_HAS_CHECK_THIS)) && (cfg->opt & MONO_OPT_ABCREM))
-			mono_perform_abc_removal (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_perform_abc_removal, mono_perform_abc_removal (cfg));
 
-		mono_ssa_remove (cfg);
-		mono_local_cprop (cfg);
-		mono_handle_global_vregs (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_ssa_remove, mono_ssa_remove (cfg));
+		MONO_TIME_TRACK (mono_jit_stats.jit_local_cprop2, mono_local_cprop (cfg));
+		MONO_TIME_TRACK (mono_jit_stats.jit_handle_global_vregs2, mono_handle_global_vregs (cfg));
 		if (cfg->opt & MONO_OPT_DEADCE)
-			mono_local_deadce (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_local_deadce2, mono_local_deadce (cfg));
 
 		if (cfg->opt & MONO_OPT_BRANCH)
-			mono_optimize_branches (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_optimize_branches2, mono_optimize_branches (cfg));
 	}
 #endif
 
@@ -3873,9 +3941,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (COMPILE_SOFT_FLOAT (cfg))
 		mono_decompose_soft_float (cfg);
 #endif
-	mono_decompose_vtype_opts (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_decompose_vtype_opts, mono_decompose_vtype_opts (cfg));
 	if (cfg->flags & MONO_CFG_HAS_ARRAY_ACCESS)
-		mono_decompose_array_access_opts (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_decompose_array_access_opts, mono_decompose_array_access_opts (cfg));
 
 	if (cfg->got_var) {
 #ifndef MONO_ARCH_GOT_REG
@@ -3908,7 +3976,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/*
 	 * Have to call this again to process variables added since the first call.
 	 */
-	mono_liveness_handle_exception_clauses (cfg);
+	MONO_TIME_TRACK(mono_jit_stats.jit_liveness_handle_exception_clauses2, mono_liveness_handle_exception_clauses (cfg));
 
 	if (cfg->opt & MONO_OPT_LINEARS) {
 		GList *vars, *regs, *l;
@@ -3916,7 +3984,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		/* fixme: maybe we can avoid to compute livenesss here if already computed ? */
 		cfg->comp_done &= ~MONO_COMP_LIVENESS;
 		if (!(cfg->comp_done & MONO_COMP_LIVENESS))
-			mono_analyze_liveness (cfg);
+			MONO_TIME_TRACK (mono_jit_stats.jit_analyze_liveness, mono_analyze_liveness (cfg));
 
 		if ((vars = mono_arch_get_allocatable_int_vars (cfg))) {
 			regs = mono_arch_get_global_int_regs (cfg);
@@ -3929,7 +3997,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 					}
 				}
 			}
-			mono_linear_scan (cfg, vars, regs, &cfg->used_int_regs);
+			MONO_TIME_TRACK (mono_jit_stats.jit_linear_scan, mono_linear_scan (cfg, vars, regs, &cfg->used_int_regs));
 		}
 	}
 
@@ -3939,68 +4007,27 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	
 	/* variables are allocated after decompose, since decompose could create temps */
 	if (!COMPILE_LLVM (cfg)) {
-		mono_arch_allocate_vars (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_arch_allocate_vars, mono_arch_allocate_vars (cfg));
 		if (cfg->exception_type)
 			return cfg;
 	}
 
-	{
-		MonoBasicBlock *bb;
+	if (cfg->gsharedvt)
+		mono_allocate_gsharedvt_vars (cfg);
+
+	if (!COMPILE_LLVM (cfg)) {
 		gboolean need_local_opts;
+		MONO_TIME_TRACK (mono_jit_stats.jit_spill_global_vars, mono_spill_global_vars (cfg, &need_local_opts));
 
-		if (cfg->gsharedvt)
-			mono_allocate_gsharedvt_vars (cfg);
-
-		if (!COMPILE_LLVM (cfg)) {
-			mono_spill_global_vars (cfg, &need_local_opts);
-
-			if (need_local_opts || cfg->compile_aot) {
-				/* To optimize code created by spill_global_vars */
-				mono_local_cprop (cfg);
-				if (cfg->opt & MONO_OPT_DEADCE)
-					mono_local_deadce (cfg);
-			}
-		}
-
-		/* Add branches between non-consecutive bblocks */
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
-				bb->last_ins->inst_false_bb && bb->next_bb != bb->last_ins->inst_false_bb) {
-				/* we are careful when inverting, since bugs like #59580
-				 * could show up when dealing with NaNs.
-				 */
-				if (MONO_IS_COND_BRANCH_NOFP(bb->last_ins) && bb->next_bb == bb->last_ins->inst_true_bb) {
-					MonoBasicBlock *tmp =  bb->last_ins->inst_true_bb;
-					bb->last_ins->inst_true_bb = bb->last_ins->inst_false_bb;
-					bb->last_ins->inst_false_bb = tmp;
-
-					bb->last_ins->opcode = mono_reverse_branch_op (bb->last_ins->opcode);
-				} else {			
-					MonoInst *inst = (MonoInst *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
-					inst->opcode = OP_BR;
-					inst->inst_target_bb = bb->last_ins->inst_false_bb;
-					mono_bblock_add_inst (bb, inst);
-				}
-			}
-		}
-
-		if (cfg->verbose_level >= 4) {
-			for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-				MonoInst *tree = bb->code;	
-				g_print ("DUMP BLOCK %d:\n", bb->block_num);
-				if (!tree)
-					continue;
-				for (; tree; tree = tree->next) {
-					mono_print_ins_index (-1, tree);
-				}
-			}
-		}
-
-		/* FIXME: */
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			bb->max_vreg = cfg->next_vreg;
+		if (need_local_opts || cfg->compile_aot) {
+			/* To optimize code created by spill_global_vars */
+			MONO_TIME_TRACK (mono_jit_stats.jit_local_cprop3, mono_local_cprop (cfg));
+			if (cfg->opt & MONO_OPT_DEADCE)
+				MONO_TIME_TRACK (mono_jit_stats.jit_local_deadce3, mono_local_deadce (cfg));
 		}
 	}
+
+	mono_insert_branches_between_bblocks (cfg);
 
 	if (COMPILE_LLVM (cfg)) {
 #ifdef ENABLE_LLVM
@@ -4041,7 +4068,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		}
 #endif
 	} else {
-		mono_codegen (cfg);
+		MONO_TIME_TRACK (mono_jit_stats.jit_codegen, mono_codegen (cfg));
 	}
 
 	if (COMPILE_LLVM (cfg))
@@ -4049,7 +4076,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	else
 		InterlockedIncrement (&mono_jit_stats.methods_without_llvm);
 
-	cfg->jit_info = create_jit_info (cfg, method_to_compile);
+	MONO_TIME_TRACK (mono_jit_stats.jit_create_jit_info, cfg->jit_info = create_jit_info (cfg, method_to_compile));
 
 #ifdef MONO_ARCH_HAVE_LIVERANGE_OPS
 	if (cfg->extend_live_ranges) {
@@ -4062,9 +4089,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (!cfg->compile_aot)
 		mono_save_xdebug_info (cfg);
 
-	mini_gc_create_gc_map (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_gc_create_gc_map, mini_gc_create_gc_map (cfg));
  
-	mono_save_seq_point_info (cfg);
+	MONO_TIME_TRACK (mono_jit_stats.jit_save_seq_point_info, mono_save_seq_point_info (cfg));
 
 	if (cfg->verbose_level >= 2) {
 		char *id =  mono_method_full_name (cfg->method, FALSE);
@@ -4135,6 +4162,14 @@ mono_cfg_set_exception (MonoCompile *cfg, int type)
 	cfg->exception_type = type;
 }
 
+/* Assumes ownership of the MSG argument */
+void
+mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg)
+{
+	mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
+	mono_error_set_generic_error (&cfg->error, "System", "InvalidProgramException", msg);
+}
+
 #endif /* DISABLE_JIT */
 
 static MonoJitInfo*
@@ -4164,13 +4199,38 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 	return jinfo;
 }
 
+GTimer *mono_time_track_start ()
+{
+	return g_timer_new ();
+}
+
+void mono_time_track_end (double *time, GTimer *timer)
+{
+	g_timer_stop (timer);
+	*time += g_timer_elapsed (timer, NULL);
+	g_timer_destroy (timer);
+}
+
+void mono_update_jit_stats (MonoCompile *cfg)
+{
+	mono_jit_stats.allocate_var += cfg->stat_allocate_var;
+	mono_jit_stats.locals_stack_size += cfg->stat_locals_stack_size;
+	mono_jit_stats.basic_blocks += cfg->stat_basic_blocks;
+	mono_jit_stats.max_basic_blocks = MAX (cfg->stat_basic_blocks, mono_jit_stats.max_basic_blocks);
+	mono_jit_stats.cil_code_size += cfg->stat_cil_code_size;
+	mono_jit_stats.regvars += cfg->stat_n_regvars;
+	mono_jit_stats.inlineable_methods += cfg->stat_inlineable_methods;
+	mono_jit_stats.inlined_methods += cfg->stat_inlined_methods;
+	mono_jit_stats.code_reallocs += cfg->stat_code_reallocs;
+}
+
 /*
  * mono_jit_compile_method_inner:
  *
  *   Main entry point for the JIT.
  */
 gpointer
-mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, int opt, MonoException **jit_ex)
+mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, int opt, MonoError *error)
 {
 	MonoCompile *cfg;
 	gpointer code = NULL;
@@ -4180,6 +4240,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	guint32 prof_options;
 	GTimer *jit_timer;
 	MonoMethod *prof_method, *shared;
+
+	mono_error_init (error);
 
 	if ((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 	    (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
@@ -4243,7 +4305,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 		full_name = mono_method_full_name (method, TRUE);
 		msg = g_strdup_printf ("Unrecognizable runtime implemented method '%s'", full_name);
-		*jit_ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", msg);
+		ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", msg);
+		mono_error_set_exception_instance (error, ex);
 		g_free (full_name);
 		g_free (msg);
 		return NULL;
@@ -4286,21 +4349,19 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		char *fullname = mono_method_full_name (method, TRUE);
 		char *msg = g_strdup_printf ("Attempting to JIT compile method '%s' while running with --aot-only. See http://docs.xamarin.com/ios/about/limitations for more information.\n", fullname);
 
-		*jit_ex = mono_get_exception_execution_engine (msg);
+		ex = mono_get_exception_execution_engine (msg);
+		mono_error_set_exception_instance (error, ex);
 		g_free (fullname);
 		g_free (msg);
 		
 		return NULL;
 	}
 
-	jit_timer = g_timer_new ();
-
+	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0, -1);
-	prof_method = cfg->method;
+	mono_time_track_end (&mono_jit_stats.jit_time, jit_timer);
 
-	g_timer_stop (jit_timer);
-	mono_jit_stats.jit_time += g_timer_elapsed (jit_timer, NULL);
-	g_timer_destroy (jit_timer);
+	prof_method = cfg->method;
 
 	switch (cfg->exception_type) {
 	case MONO_EXCEPTION_NONE:
@@ -4311,53 +4372,26 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	case MONO_EXCEPTION_FILE_NOT_FOUND:
 	case MONO_EXCEPTION_BAD_IMAGE: {
 		/* Throw a type load exception if needed */
-		MonoLoaderError *error = mono_loader_get_last_error ();
-
-		if (error) {
-			ex = mono_loader_error_prepare_exception (error);
+		if (cfg->exception_ptr) {
+			ex = mono_class_get_exception_for_failure ((MonoClass *)cfg->exception_ptr);
 		} else {
-			if (cfg->exception_ptr) {
-				ex = mono_class_get_exception_for_failure ((MonoClass *)cfg->exception_ptr);
-			} else {
-				if (cfg->exception_type == MONO_EXCEPTION_MISSING_FIELD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingFieldException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_MISSING_METHOD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_TYPE_LOAD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_FILE_NOT_FOUND)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System.IO", "FileNotFoundException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_BAD_IMAGE)
-					ex = mono_get_exception_bad_image_format (cfg->exception_message);
-				else
-					g_assert_not_reached ();
-			}
+			if (cfg->exception_type == MONO_EXCEPTION_MISSING_FIELD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingFieldException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_MISSING_METHOD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_TYPE_LOAD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_FILE_NOT_FOUND)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System.IO", "FileNotFoundException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_BAD_IMAGE)
+				ex = mono_get_exception_bad_image_format (cfg->exception_message);
+			else
+				g_assert_not_reached ();
 		}
 		break;
 	}
-	case MONO_EXCEPTION_INVALID_PROGRAM:
-		ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", cfg->exception_message);
-		break;
-	case MONO_EXCEPTION_UNVERIFIABLE_IL:
-		ex = mono_exception_from_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", cfg->exception_message);
-		break;
-	case MONO_EXCEPTION_METHOD_ACCESS:
-		ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MethodAccessException", cfg->exception_message);
-		break;
-	case MONO_EXCEPTION_FIELD_ACCESS:
-		ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "FieldAccessException", cfg->exception_message);
-		break;
-	case MONO_EXCEPTION_OBJECT_SUPPLIED: {
-		MonoException *exp = (MonoException *)cfg->exception_ptr;
-		MONO_GC_UNREGISTER_ROOT (cfg->exception_ptr);
-
-		ex = exp;
-		break;
-	}
-	case MONO_EXCEPTION_OUT_OF_MEMORY:
-		ex = mono_domain_get ()->out_of_memory_ex;
-		break;
 	case MONO_EXCEPTION_MONO_ERROR:
+		// FIXME: MonoError has no copy ctor
 		g_assert (!mono_error_ok (&cfg->error));
 		ex = mono_error_convert_to_exception (&cfg->error);
 		break;
@@ -4370,7 +4404,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
 
 		mono_destroy_compile (cfg);
-		*jit_ex = ex;
+		mono_error_set_exception_instance (error, ex);
 
 		return NULL;
 	}
@@ -4415,15 +4449,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	 * Update global stats while holding a lock, instead of doing many
 	 * InterlockedIncrement operations during JITting.
 	 */
-	mono_jit_stats.allocate_var += cfg->stat_allocate_var;
-	mono_jit_stats.locals_stack_size += cfg->stat_locals_stack_size;
-	mono_jit_stats.basic_blocks += cfg->stat_basic_blocks;
-	mono_jit_stats.max_basic_blocks = MAX (cfg->stat_basic_blocks, mono_jit_stats.max_basic_blocks);
-	mono_jit_stats.cil_code_size += cfg->stat_cil_code_size;
-	mono_jit_stats.regvars += cfg->stat_n_regvars;
-	mono_jit_stats.inlineable_methods += cfg->stat_inlineable_methods;
-	mono_jit_stats.inlined_methods += cfg->stat_inlined_methods;
-	mono_jit_stats.code_reallocs += cfg->stat_code_reallocs;
+	mono_update_jit_stats (cfg);
 
 	mono_destroy_compile (cfg);
 
@@ -4446,7 +4472,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 #endif
 #ifdef MONO_ARCH_HAVE_PATCH_CODE_NEW
 			for (tmp = jlist->list; tmp; tmp = tmp->next) {
-				gpointer target = mono_resolve_patch_target (NULL, target_domain, (guint8 *)tmp->data, &patch_info, TRUE);
+				MonoError error;
+				gpointer target = mono_resolve_patch_target (NULL, target_domain, (guint8 *)tmp->data, &patch_info, TRUE, &error);
+				mono_error_raise_exception (&error); /* FIXME: don't raise here */
 				mono_arch_patch_code_new (NULL, target_domain, (guint8 *)tmp->data, &patch_info, target);
 			}
 #else
@@ -4467,7 +4495,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	if (!vtable) {
 		ex = mono_class_get_exception_for_failure (method->klass);
 		g_assert (ex);
-		*jit_ex = ex;
+		mono_error_set_exception_instance (error, ex);
 		return NULL;
 	}
 
@@ -4487,7 +4515,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	ex = mono_runtime_class_init_full (vtable, FALSE);
 	if (ex) {
-		*jit_ex = ex;
+		mono_error_set_exception_instance (error, ex);
 		return NULL;
 	}
 	return code;

@@ -186,6 +186,8 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 void
 mono_generic_class_init (MonoVTable *vtable);
 
+void mono_interruption_checkpoint_from_trampoline (void);
+
 MonoObject*
 mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gboolean deref_arg, gpointer *args);
 
@@ -214,9 +216,5 @@ MonoObject* mono_get_assembly_object (MonoImage *image);
 MonoObject* mono_get_method_object (MonoMethod *method);
 
 double mono_ckfinite (double d);
-
-void mono_llvmonly_set_calling_assembly (MonoImage *image);
-
-MonoObject* mono_llvmonly_get_calling_assembly (void);
 
 #endif /* __MONO_JIT_ICALLS_H__ */

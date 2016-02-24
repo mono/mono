@@ -343,7 +343,7 @@ namespace Mono.CSharp {
 			}
 
 			if (hoisted == null) {
-				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (localVariable));
+				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (ec, localVariable));
 				localVariable.HoistedVariant = hoisted;
 
 				if (hoisted_locals == null)
@@ -667,7 +667,7 @@ namespace Mono.CSharp {
 			return f_ind;
 		}
 
-		protected virtual string GetVariableMangledName (LocalVariable local_info)
+		protected virtual string GetVariableMangledName (ResolveContext rc, LocalVariable local_info)
 		{
 			//
 			// No need to mangle anonymous method hoisted variables cause they

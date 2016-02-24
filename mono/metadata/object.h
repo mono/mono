@@ -31,7 +31,7 @@ typedef struct _MonoObject {
 	MonoThreadsSync *synchronisation;
 } MonoObject;
 
-typedef MonoObject* (*MonoInvokeFunc)	     (MonoMethod *method, void *obj, void **params, MonoObject **exc);
+typedef MonoObject* (*MonoInvokeFunc)	     (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 typedef void*    (*MonoCompileFunc)	     (MonoMethod *method);
 typedef void	    (*MonoMainThreadFunc)    (void* user_data);
 
@@ -69,7 +69,7 @@ typedef void	    (*MonoMainThreadFunc)    (void* user_data);
 MONO_API mono_unichar2 *mono_string_chars  (MonoString *s);
 MONO_API int            mono_string_length (MonoString *s);
 
-MONO_API MonoObject *
+MONO_RT_EXTERNAL_ONLY MONO_API MonoObject *
 mono_object_new		    (MonoDomain *domain, MonoClass *klass);
 
 MONO_API MonoObject *
@@ -218,6 +218,7 @@ mono_runtime_class_init	    (MonoVTable *vtable);
 MONO_API MonoMethod*
 mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject*
 mono_runtime_invoke	    (MonoMethod *method, void *obj, void **params,
 			     MonoObject **exc);

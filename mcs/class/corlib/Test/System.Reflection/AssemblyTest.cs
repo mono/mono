@@ -37,7 +37,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -197,7 +197,7 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-#if !MONOTOUCH // Reflection.Emit is not supported.
+#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
 		[Test]
 		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
@@ -249,7 +249,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID
+#if MONODROID || MOBILE_STATIC
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE
@@ -457,7 +457,18 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_test_net_4_x", "corlib_plattest", "mscorlibtests", "BclTests" };
+// FIXME?
+// So the problem here is that if we load an assembly
+// in a fully aot mode and then cannot load the
+// dylib, we will assert. This test is incompatible
+// with the semantics of aot'ed assembly loading, as
+// aot may assert when loading. This assumes that it's
+// safe to greedly load everything.
+#if MOBILE_STATIC
+			string [] names = { "mobile_static_corlib_test" };
+#else
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
+#endif
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -502,7 +513,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !MONOTOUCH // Reflection.Emit is not supported.
+#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -1175,7 +1186,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
 #endif
 			Assert.IsFalse (module.IsResource (), "#4");

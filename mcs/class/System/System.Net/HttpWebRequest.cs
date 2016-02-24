@@ -593,6 +593,7 @@ namespace System.Net
 				CheckRequestStarted ();
 				proxy = value;
 				servicePoint = null; // we may need a new one
+				GetServicePoint ();
 			}
 		}
 		
@@ -969,11 +970,17 @@ namespace System.Net
 					}
 				}
 
-				if (!requestSent) {
+				if (requestSent)
+					return;
+
+				try {
 					requestSent = true;
 					redirects = 0;
 					servicePoint = GetServicePoint ();
 					abortHandler = servicePoint.SendRequest (this, connectionGroup);
+				} catch (Exception ex) {
+					aread.SetCompleted (synch, ex);
+					aread.DoCallback ();
 				}
 			});
 

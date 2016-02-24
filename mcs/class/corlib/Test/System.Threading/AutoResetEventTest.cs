@@ -90,7 +90,7 @@ namespace MonoTests.System.Threading
 			SafeWaitHandle swh1 = are1.SafeWaitHandle;
 			are1.Handle = (IntPtr) (-1);
 			Assert.IsTrue (swh1 != are1.SafeWaitHandle, "#1");
-			Assert.IsFalse (swh1.IsClosed, "#2");
+			Assert.IsTrue (swh1.IsClosed, "#2"); // After testing on Windows/.NET, IsClosed returns true
 			Assert.IsFalse (swh1.IsInvalid, "#3");
 			Assert.IsFalse (are1.SafeWaitHandle.IsClosed, "#4");
 			Assert.IsTrue (are1.SafeWaitHandle.IsInvalid, "#5");

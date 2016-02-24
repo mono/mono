@@ -31,6 +31,7 @@ namespace CorCompare
 			bool showHelp = false;
 			AbiMode = false;
 			FollowForwarders = false;
+			string output = null;
 
 			var acoll = new AssemblyCollection ();
 
@@ -52,6 +53,9 @@ namespace CorCompare
 				{ "r=",
 					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
 					v => TypeHelper.Resolver.ResolveFile (v) },
+				{ "o=",
+					"The output file. If not specified the output will be written to stdout.",
+					v => output = v },
 				{ "h|?|help",
 					"Show this message and exit.",
 					v => showHelp = v != null },
@@ -89,14 +93,24 @@ namespace CorCompare
 				}
 			}
 
-			XmlDocument doc = new XmlDocument ();
-			acoll.Document = doc;
-			acoll.DoOutput ();
-
-			var writer = new WellFormedXmlWriter (new XmlTextWriter (Console.Out) { Formatting = Formatting.Indented });
-			XmlNode decl = doc.CreateXmlDeclaration ("1.0", "utf-8", null);
-			doc.InsertBefore (decl, doc.DocumentElement);
-			doc.WriteTo (writer);
+			StreamWriter outputStream = null;
+			if (!string.IsNullOrEmpty (output))
+				outputStream = new StreamWriter (output);
+			try {
+				TextWriter outStream = outputStream ?? Console.Out;
+				var settings = new XmlWriterSettings ();
+				settings.Indent = true;
+				var textWriter = XmlWriter.Create (outStream, settings);
+				var writer = new WellFormedXmlWriter (textWriter);
+				writer.WriteStartDocument ();
+				acoll.Writer = writer;
+				acoll.DoOutput ();
+				writer.WriteEndDocument ();
+				writer.Flush ();
+			} finally {
+				if (outputStream != null)
+					outputStream.Dispose ();
+			}
 			return 0;
 		}
 
@@ -105,6 +119,7 @@ namespace CorCompare
 	}
 
 	public class Utils {
+		static char[] CharsToCleanup = new char[] { '<', '>', '/' };
 
 		public static string CleanupTypeName (TypeReference type)
 		{
@@ -113,13 +128,33 @@ namespace CorCompare
 
 		public static string CleanupTypeName (string t)
 		{
-			return t.Replace ('<', '[').Replace ('>', ']').Replace ('/', '+');
+			if (t.IndexOfAny (CharsToCleanup) == -1)
+				return t;
+			var sb = new StringBuilder (t.Length);
+			for (int i = 0; i < t.Length; i++) {
+				var ch = t [i];
+				switch (ch) {
+				case '<':
+					sb.Append ('[');
+					break;
+				case '>':
+					sb.Append (']');
+					break;
+				case '/':
+					sb.Append ('+');
+					break;
+				default:
+					sb.Append (ch);
+					break;
+				}
+			}
+			return sb.ToString ();
 		}
 	}
 
 	class AssemblyCollection
 	{
-		XmlDocument document;
+		XmlWriter writer;
 		List<AssemblyDefinition> assemblies = new List<AssemblyDefinition> ();
 
 		public AssemblyCollection ()
@@ -140,19 +175,19 @@ namespace CorCompare
 
 		public void DoOutput ()
 		{
-			if (document == null)
+			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
 
-			XmlNode nassemblies = document.CreateElement ("assemblies", null);
-			document.AppendChild (nassemblies);
+			writer.WriteStartElement ("assemblies");
 			foreach (AssemblyDefinition a in assemblies) {
-				AssemblyData data = new AssemblyData (document, nassemblies, a);
+				AssemblyData data = new AssemblyData (writer, a);
 				data.DoOutput ();
 			}
+			writer.WriteEndElement ();
 		}
 
-		public XmlDocument Document {
-			set { document = value; }
+		public XmlWriter Writer {
+			set { writer = value; }
 		}
 
 		AssemblyDefinition LoadAssembly (string assembly)
@@ -171,22 +206,18 @@ namespace CorCompare
 
 	abstract class BaseData
 	{
-		protected XmlDocument document;
-		protected XmlNode parent;
+		protected XmlWriter writer;
 
-		protected BaseData (XmlDocument doc, XmlNode parent)
+		protected BaseData (XmlWriter writer)
 		{
-			this.document = doc;
-			this.parent = parent;
+			this.writer = writer;
 		}
 
 		public abstract void DoOutput ();
 
-		protected void AddAttribute (XmlNode node, string name, string value)
+		protected void AddAttribute (string name, string value)
 		{
-			XmlAttribute attr = document.CreateAttribute (name);
-			attr.Value = value;
-			node.Attributes.Append (attr);
+			writer.WriteAttributeString (name, value);
 		}
 	}
 
@@ -194,38 +225,34 @@ namespace CorCompare
 	{
 		AssemblyDefinition ass;
 
-		public TypeForwardedToData (XmlDocument document, XmlNode parent, AssemblyDefinition ass)
-			: base (document, parent)
+		public TypeForwardedToData (XmlWriter writer, AssemblyDefinition ass)
+			: base (writer)
 		{
 			this.ass = ass;
 		}
 
 		public override void DoOutput ()
 		{
-			XmlNode natts = parent.SelectSingleNode("attributes");
-			if (natts == null) {
-				natts = document.CreateElement ("attributes", null);
-				parent.AppendChild (natts);
-			}
-
 			foreach (ExportedType type in ass.MainModule.ExportedTypes) {
 
 				if (((uint)type.Attributes & 0x200000u) == 0)
 					continue;
 
-				XmlNode node = document.CreateElement ("attribute");
-				AddAttribute (node, "name", typeof (TypeForwardedToAttribute).FullName);
-				XmlNode properties = node.AppendChild (document.CreateElement ("properties"));
-				XmlNode property = properties.AppendChild (document.CreateElement ("property"));
-				AddAttribute (property, "name", "Destination");
-				AddAttribute (property, "value", Utils.CleanupTypeName (type.FullName));
-				natts.AppendChild (node);
+				writer.WriteStartElement ("attribute");
+				AddAttribute ("name", typeof (TypeForwardedToAttribute).FullName);
+				writer.WriteStartElement ("properties");
+				writer.WriteStartElement ("property");
+				AddAttribute ("name", "Destination");
+				AddAttribute ("value", Utils.CleanupTypeName (type.FullName));
+				writer.WriteEndElement (); // properties
+				writer.WriteEndElement (); // properties
+				writer.WriteEndElement (); // attribute
 			}
 		}
 
-		public static void OutputForwarders (XmlDocument document, XmlNode parent, AssemblyDefinition ass)
+		public static void OutputForwarders (XmlWriter writer, AssemblyDefinition ass)
 		{
-			TypeForwardedToData tftd = new TypeForwardedToData (document, parent, ass);
+			TypeForwardedToData tftd = new TypeForwardedToData (writer, ass);
 			tftd.DoOutput ();
 		}
 	}
@@ -234,28 +261,23 @@ namespace CorCompare
 	{
 		AssemblyDefinition ass;
 
-		public AssemblyData (XmlDocument document, XmlNode parent, AssemblyDefinition ass)
-			: base (document, parent)
+		public AssemblyData (XmlWriter writer, AssemblyDefinition ass)
+			: base (writer)
 		{
 			this.ass = ass;
 		}
 
 		public override void DoOutput ()
 		{
-			if (document == null)
+			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
 
-			XmlNode nassembly = document.CreateElement ("assembly", null);
+			writer.WriteStartElement ("assembly");
 			AssemblyNameDefinition aname = ass.Name;
-			AddAttribute (nassembly, "name", aname.Name);
-			AddAttribute (nassembly, "version", aname.Version.ToString ());
-			parent.AppendChild (nassembly);
+			AddAttribute ("name", aname.Name);
+			AddAttribute ("version", aname.Version.ToString ());
 
-			if (!Driver.FollowForwarders) {
-				TypeForwardedToData.OutputForwarders (document, nassembly, ass);
-			}
-
-			AttributeData.OutputAttributes (document, nassembly, ass);
+			AttributeData.OutputAttributes (writer, ass);
 
 			var types = new List<TypeDefinition> ();
 			if (ass.MainModule.Types != null) {
@@ -273,17 +295,16 @@ namespace CorCompare
 			}
 
 			if (types.Count == 0) {
+				writer.WriteEndElement (); // assembly
 				return;
 			}
 
 			types.Sort (TypeReferenceComparer.Default);
 
-			XmlNode nss = document.CreateElement ("namespaces", null);
-			nassembly.AppendChild (nss);
+			writer.WriteStartElement ("namespaces");
 
 			string current_namespace = "$%&$&";
-			XmlNode ns = null;
-			XmlNode classes = null;
+			bool in_namespace = false;
 			foreach (TypeDefinition t in types) {
 				if (string.IsNullOrEmpty (t.Namespace))
 					continue;
@@ -296,16 +317,30 @@ namespace CorCompare
 
 				if (t.Namespace != current_namespace) {
 					current_namespace = t.Namespace;
-					ns = document.CreateElement ("namespace", null);
-					AddAttribute (ns, "name", current_namespace);
-					nss.AppendChild (ns);
-					classes = document.CreateElement ("classes", null);
-					ns.AppendChild (classes);
+					if (in_namespace) {
+						writer.WriteEndElement (); // classes
+						writer.WriteEndElement (); // namespace
+					} else {
+						in_namespace = true;
+					}
+					writer.WriteStartElement ("namespace");
+					AddAttribute ("name", current_namespace);
+					writer.WriteStartElement ("classes");
 				}
 
-				TypeData bd = new TypeData (document, classes, t);
+				TypeData bd = new TypeData (writer, t);
 				bd.DoOutput ();
+
 			}
+
+			if (in_namespace) {
+				writer.WriteEndElement (); // classes
+				writer.WriteEndElement (); // namespace
+			}
+
+			writer.WriteEndElement (); // namespaces
+
+			writer.WriteEndElement (); // assembly
 		}
 	}
 
@@ -313,31 +348,42 @@ namespace CorCompare
 	{
 		MemberReference [] members;
 
-		public MemberData (XmlDocument document, XmlNode parent, MemberReference [] members)
-			: base (document, parent)
+		public MemberData (XmlWriter writer, MemberReference [] members)
+			: base (writer)
 		{
 			this.members = members;
 		}
 
-		public override void DoOutput ()
+		protected virtual ICustomAttributeProvider GetAdditionalCustomAttributeProvider (MemberReference member)
 		{
-			XmlNode mclass = document.CreateElement (ParentTag, null);
-			parent.AppendChild (mclass);
-
-			foreach (MemberReference member in members) {
-				XmlNode mnode = document.CreateElement (Tag, null);
-				mclass.AppendChild (mnode);
-				AddAttribute (mnode, "name", GetName (member));
-				if (!NoMemberAttributes)
-					AddAttribute (mnode, "attrib", GetMemberAttributes (member));
-
-				AttributeData.OutputAttributes (document, mnode, (ICustomAttributeProvider) member);
-
-				AddExtraData (mnode, member);
-			}
+			return null;
 		}
 
-		protected virtual void AddExtraData (XmlNode p, MemberReference memberDefenition)
+		public override void DoOutput ()
+		{
+			writer.WriteStartElement (ParentTag);
+
+			foreach (MemberReference member in members) {
+				writer.WriteStartElement (Tag);
+				AddAttribute ("name", GetName (member));
+				if (!NoMemberAttributes)
+					AddAttribute ("attrib", GetMemberAttributes (member));
+				AddExtraAttributes (member);
+
+				AttributeData.OutputAttributes (writer, (ICustomAttributeProvider) member, GetAdditionalCustomAttributeProvider (member));
+
+				AddExtraData (member);
+				writer.WriteEndElement (); // Tag
+			}
+
+			writer.WriteEndElement (); // ParentTag
+		}
+
+		protected virtual void AddExtraData (MemberReference memberDefenition)
+		{
+		}
+
+		protected virtual void AddExtraAttributes (MemberReference memberDefinition)
 		{
 		}
 
@@ -364,39 +410,42 @@ namespace CorCompare
 			get { return "NoTAG"; }
 		}
 
-		public static void OutputGenericParameters (XmlDocument document, XmlNode nclass, IGenericParameterProvider provider)
+		public static void OutputGenericParameters (XmlWriter writer, IGenericParameterProvider provider)
 		{
 			if (provider.GenericParameters.Count == 0)
 				return;
 
 			var gparameters = provider.GenericParameters;
 
-			XmlElement ngeneric = document.CreateElement ("generic-parameters");
-			nclass.AppendChild (ngeneric);
+			writer.WriteStartElement ("generic-parameters");
 
 			foreach (GenericParameter gp in gparameters) {
-				XmlElement nparam = document.CreateElement ("generic-parameter");
-				nparam.SetAttribute ("name", gp.Name);
-				nparam.SetAttribute ("attributes", ((int) gp.Attributes).ToString ());
+				writer.WriteStartElement ("generic-parameter");
+				writer.WriteAttributeString ("name", gp.Name);
+				writer.WriteAttributeString ("attributes", ((int) gp.Attributes).ToString ());
 
-				AttributeData.OutputAttributes (document, nparam, gp);
-
-				ngeneric.AppendChild (nparam);
+				AttributeData.OutputAttributes (writer, gp);
 
 				var constraints = gp.Constraints;
-				if (constraints.Count == 0)
+				if (constraints.Count == 0) {
+					writer.WriteEndElement (); // generic-parameter
 					continue;
-
-				XmlElement nconstraint = document.CreateElement ("generic-parameter-constraints");
-
-				foreach (TypeReference constraint in constraints) {
-					XmlElement ncons = document.CreateElement ("generic-parameter-constraint");
-					ncons.SetAttribute ("name", Utils.CleanupTypeName (constraint));
-					nconstraint.AppendChild (ncons);
 				}
 
-				nparam.AppendChild (nconstraint);
+				writer.WriteStartElement ("generic-parameter-constraints");
+
+				foreach (TypeReference constraint in constraints) {
+					writer.WriteStartElement ("generic-parameter-constraint");
+					writer.WriteAttributeString ("name", Utils.CleanupTypeName (constraint));
+					writer.WriteEndElement (); // generic-parameter-constraint
+				}
+
+				writer.WriteEndElement (); // generic-parameter-constraints
+
+				writer.WriteEndElement (); // generic-parameter
 			}
+
+			writer.WriteEndElement (); // generic-parameters
 		}
 	}
 
@@ -404,78 +453,46 @@ namespace CorCompare
 	{
 		TypeDefinition type;
 
-		public TypeData (XmlDocument document, XmlNode parent, TypeDefinition type)
-			: base (document, parent, null)
+		public TypeData (XmlWriter writer, TypeDefinition type)
+			: base (writer, null)
 		{
 			this.type = type;
 		}
 		public override void DoOutput ()
 		{
-			if (document == null)
+			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
 
-			XmlNode nclass = document.CreateElement ("class", null);
-			AddAttribute (nclass, "name", type.Name);
+			writer.WriteStartElement ("class");
+			AddAttribute ("name", type.Name);
 			string classType = GetClassType (type);
-			AddAttribute (nclass, "type", classType);
+			AddAttribute ("type", classType);
 
 			if (type.BaseType != null)
-				AddAttribute (nclass, "base", Utils.CleanupTypeName (type.BaseType));
+				AddAttribute ("base", Utils.CleanupTypeName (type.BaseType));
 
 			if (type.IsSealed)
-				AddAttribute (nclass, "sealed", "true");
+				AddAttribute ("sealed", "true");
 
 			if (type.IsAbstract)
-				AddAttribute (nclass, "abstract", "true");
+				AddAttribute ("abstract", "true");
 
 			if ( (type.Attributes & TypeAttributes.Serializable) != 0 || type.IsEnum)
-				AddAttribute (nclass, "serializable", "true");
+				AddAttribute ("serializable", "true");
 
 			string charSet = GetCharSet (type);
-			AddAttribute (nclass, "charset", charSet);
+			AddAttribute ("charset", charSet);
 
 			string layout = GetLayout (type);
 			if (layout != null)
-				AddAttribute (nclass, "layout", layout);
+				AddAttribute ("layout", layout);
 
 			if (type.PackingSize >= 0) {
-				AddAttribute (nclass, "pack", type.PackingSize.ToString ());
+				AddAttribute ("pack", type.PackingSize.ToString ());
 			}
 
 			if (type.ClassSize >= 0) {
-				AddAttribute (nclass, "size", type.ClassSize.ToString ());
-			}
-
-			parent.AppendChild (nclass);
-
-			AttributeData.OutputAttributes (document, nclass, type);
-
-			XmlNode ifaces = null;
-
-			foreach (TypeReference iface in TypeHelper.GetInterfaces (type).OrderBy (s => s.FullName)) {
-				if (!TypeHelper.IsPublic (iface))
-					// we're only interested in public interfaces
-					continue;
-
-				if (ifaces == null) {
-					ifaces = document.CreateElement ("interfaces", null);
-					nclass.AppendChild (ifaces);
-				}
-
-				XmlNode iface_node = document.CreateElement ("interface", null);
-				AddAttribute (iface_node, "name", Utils.CleanupTypeName (iface));
-				ifaces.AppendChild (iface_node);
-			}
-
-			MemberData.OutputGenericParameters (document, nclass, type);
-
-			ArrayList members = new ArrayList ();
-
-			FieldDefinition [] fields = GetFields (type);
-			if (fields.Length > 0) {
-				Array.Sort (fields, MemberReferenceComparer.Default);
-				FieldData fd = new FieldData (document, nclass, fields);
-				members.Add (fd);
+				AddAttribute ("size", type.ClassSize.ToString ());
 			}
 
 			if (type.IsEnum) {
@@ -483,7 +500,34 @@ namespace CorCompare
 				if (value_type == null)
 					throw new NotSupportedException ();
 
-				AddAttribute (nclass, "enumtype", Utils.CleanupTypeName (value_type.FieldType));
+				AddAttribute ("enumtype", Utils.CleanupTypeName (value_type.FieldType));
+			}
+
+			AttributeData.OutputAttributes (writer, type);
+
+			var ifaces =  TypeHelper.GetInterfaces (type).
+				Where ((iface) => TypeHelper.IsPublic (iface)). // we're only interested in public interfaces
+				OrderBy (s => s.FullName, StringComparer.Ordinal);
+
+			if (ifaces.Any ()) {
+				writer.WriteStartElement ("interfaces");
+				foreach (TypeReference iface in ifaces) {
+					writer.WriteStartElement ("interface");
+					AddAttribute ("name", Utils.CleanupTypeName (iface));
+					writer.WriteEndElement (); // interface
+				}
+				writer.WriteEndElement (); // interfaces
+			}
+
+			MemberData.OutputGenericParameters (writer, type);
+
+			ArrayList members = new ArrayList ();
+
+			FieldDefinition [] fields = GetFields (type);
+			if (fields.Length > 0) {
+				Array.Sort (fields, MemberReferenceComparer.Default);
+				FieldData fd = new FieldData (writer, fields);
+				members.Add (fd);
 			}
 
 			if (!Driver.AbiMode) {
@@ -491,25 +535,25 @@ namespace CorCompare
 				MethodDefinition [] ctors = GetConstructors (type);
 				if (ctors.Length > 0) {
 					Array.Sort (ctors, MethodDefinitionComparer.Default);
-					members.Add (new ConstructorData (document, nclass, ctors));
+					members.Add (new ConstructorData (writer, ctors));
 				}
 
 				PropertyDefinition[] properties = GetProperties (type);
 				if (properties.Length > 0) {
 					Array.Sort (properties, PropertyDefinitionComparer.Default);
-					members.Add (new PropertyData (document, nclass, properties));
+					members.Add (new PropertyData (writer, properties));
 				}
 
 				EventDefinition [] events = GetEvents (type);
 				if (events.Length > 0) {
 					Array.Sort (events, MemberReferenceComparer.Default);
-					members.Add (new EventData (document, nclass, events));
+					members.Add (new EventData (writer, events));
 				}
 
 				MethodDefinition [] methods = GetMethods (type);
 				if (methods.Length > 0) {
 					Array.Sort (methods, MethodDefinitionComparer.Default);
-					members.Add (new MethodData (document, nclass, methods));
+					members.Add (new MethodData (writer, methods));
 				}
 			}
 
@@ -535,13 +579,15 @@ namespace CorCompare
 				var nestedArray = nested.ToArray ();
 				Array.Sort (nestedArray, TypeReferenceComparer.Default);
 
-				XmlNode classes = document.CreateElement ("classes", null);
-				nclass.AppendChild (classes);
+				writer.WriteStartElement ("classes");
 				foreach (TypeDefinition t in nestedArray) {
-					TypeData td = new TypeData (document, classes, t);
+					TypeData td = new TypeData (writer, t);
 					td.DoOutput ();
 				}
+				writer.WriteEndElement (); // classes
 			}
+
+			writer.WriteEndElement (); // class
 		}
 
 		static FieldReference GetEnumValueField (TypeDefinition type)
@@ -674,7 +720,7 @@ namespace CorCompare
 
 			var methods = type.Methods;//type.GetMethods (flags);
 			foreach (MethodDefinition method in methods) {
-				if (method.IsSpecialName && !method.Name.StartsWith ("op_"))
+				if (method.IsSpecialName && !method.Name.StartsWith ("op_", StringComparison.Ordinal))
 					continue;
 
 				// we're only interested in public or protected members
@@ -746,8 +792,8 @@ namespace CorCompare
 
 	class FieldData : MemberData
 	{
-		public FieldData (XmlDocument document, XmlNode parent, FieldDefinition [] members)
-			: base (document, parent, members)
+		public FieldData (XmlWriter writer, FieldDefinition [] members)
+			: base (writer, members)
 		{
 		}
 
@@ -763,11 +809,12 @@ namespace CorCompare
 			return ((int) field.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
-		protected override void AddExtraData (XmlNode p, MemberReference memberDefenition)
+		protected override void AddExtraAttributes (MemberReference memberDefinition)
 		{
-			base.AddExtraData (p, memberDefenition);
-			FieldDefinition field = (FieldDefinition) memberDefenition;
-			AddAttribute (p, "fieldtype", Utils.CleanupTypeName (field.FieldType));
+			base.AddExtraAttributes (memberDefinition);
+
+			FieldDefinition field = (FieldDefinition) memberDefinition;
+			AddAttribute ("fieldtype", Utils.CleanupTypeName (field.FieldType));
 
 			if (field.IsLiteral) {
 				object value = field.Constant;//object value = field.GetValue (null);
@@ -779,11 +826,11 @@ namespace CorCompare
 				//    stringValue = ((Enum) value).ToString ("D", CultureInfo.InvariantCulture);
 				//}
 				//else {
-					stringValue = Convert.ToString (value, CultureInfo.InvariantCulture);
+				stringValue = Convert.ToString (value, CultureInfo.InvariantCulture);
 				//}
 
 				if (stringValue != null)
-					AddAttribute (p, "value", stringValue);
+					AddAttribute ("value", stringValue);
 			}
 		}
 
@@ -798,8 +845,8 @@ namespace CorCompare
 
 	class PropertyData : MemberData
 	{
-		public PropertyData (XmlDocument document, XmlNode parent, PropertyDefinition [] members)
-			: base (document, parent, members)
+		public PropertyData (XmlWriter writer, PropertyDefinition [] members)
+			: base (writer, members)
 		{
 		}
 
@@ -809,15 +856,13 @@ namespace CorCompare
 			return prop.Name;
 		}
 
-		protected override void AddExtraData (XmlNode p, MemberReference memberDefenition)
+		MethodDefinition [] GetMethods (PropertyDefinition prop, out bool haveParameters)
 		{
-			base.AddExtraData (p, memberDefenition);
-			PropertyDefinition prop = (PropertyDefinition) memberDefenition;
-			AddAttribute (p, "ptype", Utils.CleanupTypeName (prop.PropertyType));
 			MethodDefinition _get = prop.GetMethod;
 			MethodDefinition _set = prop.SetMethod;
 			bool haveGet = (_get != null && TypeData.MustDocumentMethod(_get));
 			bool haveSet = (_set != null && TypeData.MustDocumentMethod(_set));
+			haveParameters = haveGet || (haveSet && _set.Parameters.Count > 1);
 			MethodDefinition [] methods;
 
 			if (haveGet && haveSet) {
@@ -828,16 +873,41 @@ namespace CorCompare
 				methods = new MethodDefinition [] { _set };
 			} else {
 				//odd
-				return;
+				return null;
 			}
 
-			if (haveGet || _set.Parameters.Count > 1) {
+			return methods;
+		}
+
+		protected override void AddExtraAttributes (MemberReference memberDefinition)
+		{
+			base.AddExtraAttributes (memberDefinition);
+
+			PropertyDefinition prop = (PropertyDefinition) memberDefinition;
+			AddAttribute ("ptype", Utils.CleanupTypeName (prop.PropertyType));
+
+			bool haveParameters;
+			MethodDefinition [] methods = GetMethods ((PropertyDefinition) memberDefinition, out haveParameters);
+
+			if (methods != null && haveParameters) {
 				string parms = Parameters.GetSignature (methods [0].Parameters);
 				if (!string.IsNullOrEmpty (parms))
-					AddAttribute (p, "params", parms);
+					AddAttribute ("params", parms);
 			}
 
-			MethodData data = new MethodData (document, p, methods);
+		}
+
+		protected override void AddExtraData (MemberReference memberDefenition)
+		{
+			base.AddExtraData (memberDefenition);
+
+			bool haveParameters;
+			MethodDefinition [] methods = GetMethods ((PropertyDefinition) memberDefenition, out haveParameters);
+
+			if (methods == null)
+				return;
+			
+			MethodData data = new MethodData (writer, methods);
 			//data.NoMemberAttributes = true;
 			data.DoOutput ();
 		}
@@ -859,8 +929,8 @@ namespace CorCompare
 
 	class EventData : MemberData
 	{
-		public EventData (XmlDocument document, XmlNode parent, EventDefinition [] members)
-			: base (document, parent, members)
+		public EventData (XmlWriter writer, EventDefinition [] members)
+			: base (writer, members)
 		{
 		}
 
@@ -876,11 +946,12 @@ namespace CorCompare
 			return ((int) evt.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
-		protected override void AddExtraData (XmlNode p, MemberReference memberDefenition)
+		protected override void AddExtraAttributes (MemberReference memberDefinition)
 		{
-			base.AddExtraData (p, memberDefenition);
-			EventDefinition evt = (EventDefinition) memberDefenition;
-			AddAttribute (p, "eventtype", Utils.CleanupTypeName (evt.EventType));
+			base.AddExtraAttributes (memberDefinition);
+
+			EventDefinition evt = (EventDefinition) memberDefinition;
+			AddAttribute ("eventtype", Utils.CleanupTypeName (evt.EventType));
 		}
 
 		public override string ParentTag {
@@ -896,8 +967,8 @@ namespace CorCompare
 	{
 		bool noAtts;
 
-		public MethodData (XmlDocument document, XmlNode parent, MethodDefinition [] members)
-			: base (document, parent, members)
+		public MethodData (XmlWriter writer, MethodDefinition [] members)
+			: base (writer, members)
 		{
 		}
 
@@ -916,34 +987,59 @@ namespace CorCompare
 			return ((int)( method.Attributes)).ToString (CultureInfo.InvariantCulture);
 		}
 
-		protected override void AddExtraData (XmlNode p, MemberReference memberDefenition)
+		protected override ICustomAttributeProvider GetAdditionalCustomAttributeProvider (MemberReference member)
 		{
-			base.AddExtraData (p, memberDefenition);
+			var mbase = (MethodDefinition) member;
+			return mbase.MethodReturnType;
+		}
+
+		protected override void AddExtraAttributes (MemberReference memberDefinition)
+		{
+			base.AddExtraAttributes (memberDefinition);
+
+			if (!(memberDefinition is MethodDefinition))
+				return;
+
+			MethodDefinition mbase = (MethodDefinition) memberDefinition;
+
+			if (mbase.IsAbstract)
+				AddAttribute ("abstract", "true");
+			if (mbase.IsVirtual)
+				AddAttribute ("virtual", "true");
+			if (mbase.IsFinal && mbase.IsVirtual && mbase.IsReuseSlot)
+				AddAttribute ("sealed", "true");
+			if (mbase.IsStatic)
+				AddAttribute ("static", "true");
+			var baseMethod = TypeHelper.GetBaseMethodInTypeHierarchy (mbase);
+			if (baseMethod != null && baseMethod != mbase) {
+				// This indicates whether this method is an override of another method.
+				// This information is not necessarily available in the api info for any
+				// particular assembly, because a method is only overriding another if
+				// there is a base virtual function with the same signature, and that
+				// base method can come from another assembly.
+				AddAttribute ("is-override", "true");
+			}
+			string rettype = Utils.CleanupTypeName (mbase.MethodReturnType.ReturnType);
+			if (rettype != "System.Void" || !mbase.IsConstructor)
+				AddAttribute ("returntype", (rettype));
+//
+//			if (mbase.MethodReturnType.HasCustomAttributes)
+//				AttributeData.OutputAttributes (writer, mbase.MethodReturnType);
+		}
+
+		protected override void AddExtraData (MemberReference memberDefenition)
+		{
+			base.AddExtraData (memberDefenition);
 
 			if (!(memberDefenition is MethodDefinition))
 				return;
 
 			MethodDefinition mbase = (MethodDefinition) memberDefenition;
 
-			ParameterData parms = new ParameterData (document, p, mbase.Parameters);
+			ParameterData parms = new ParameterData (writer, mbase.Parameters);
 			parms.DoOutput ();
 
-			if (mbase.IsAbstract)
-				AddAttribute (p, "abstract", "true");
-			if (mbase.IsVirtual)
-				AddAttribute (p, "virtual", "true");
-			if (mbase.IsFinal && mbase.IsVirtual && mbase.IsReuseSlot)
-				AddAttribute (p, "sealed", "true");
-			if (mbase.IsStatic)
-				AddAttribute (p, "static", "true");
-
-			string rettype = Utils.CleanupTypeName (mbase.MethodReturnType.ReturnType);
-			if (rettype != "System.Void" || !mbase.IsConstructor)
-				AddAttribute (p, "returntype", (rettype));
-
-			AttributeData.OutputAttributes (document, p, mbase.MethodReturnType);
-
-			MemberData.OutputGenericParameters (document, p, mbase);
+			MemberData.OutputGenericParameters (writer, mbase);
 		}
 
 		public override bool NoMemberAttributes {
@@ -962,8 +1058,8 @@ namespace CorCompare
 
 	class ConstructorData : MethodData
 	{
-		public ConstructorData (XmlDocument document, XmlNode parent, MethodDefinition [] members)
-			: base (document, parent, members)
+		public ConstructorData (XmlWriter writer, MethodDefinition [] members)
+			: base (writer, members)
 		{
 		}
 
@@ -980,23 +1076,20 @@ namespace CorCompare
 	{
 		private IList<ParameterDefinition> parameters;
 
-		public ParameterData (XmlDocument document, XmlNode parent, IList<ParameterDefinition> parameters)
-			: base (document, parent)
+		public ParameterData (XmlWriter writer, IList<ParameterDefinition> parameters)
+			: base (writer)
 		{
 			this.parameters = parameters;
 		}
 
 		public override void DoOutput ()
 		{
-			XmlNode parametersNode = document.CreateElement ("parameters");
-			parent.AppendChild (parametersNode);
-
+			writer.WriteStartElement ("parameters");
 			foreach (ParameterDefinition parameter in parameters) {
-				XmlNode paramNode = document.CreateElement ("parameter");
-				parametersNode.AppendChild (paramNode);
-				AddAttribute (paramNode, "name", parameter.Name);
-				AddAttribute (paramNode, "position", parameter.Method.Parameters.IndexOf(parameter).ToString(CultureInfo.InvariantCulture));
-				AddAttribute (paramNode, "attrib", ((int) parameter.Attributes).ToString());
+				writer.WriteStartElement ("parameter");
+				AddAttribute ("name", parameter.Name);
+				AddAttribute ("position", parameter.Method.Parameters.IndexOf(parameter).ToString(CultureInfo.InvariantCulture));
+				AddAttribute ("attrib", ((int) parameter.Attributes).ToString());
 
 				string direction = "in";
 
@@ -1004,102 +1097,111 @@ namespace CorCompare
 					direction = parameter.IsOut ? "out" : "ref";
 
 				TypeReference t = parameter.ParameterType;
-				AddAttribute (paramNode, "type", Utils.CleanupTypeName (t));
+				AddAttribute ("type", Utils.CleanupTypeName (t));
 
 				if (parameter.IsOptional) {
-					AddAttribute (paramNode, "optional", "true");
+					AddAttribute ("optional", "true");
 					if (parameter.HasConstant)
-						AddAttribute (paramNode, "defaultValue", parameter.Constant == null ? "NULL" : parameter.Constant.ToString ());
+						AddAttribute ("defaultValue", parameter.Constant == null ? "NULL" : parameter.Constant.ToString ());
 				}
 
 				if (direction != "in")
-					AddAttribute (paramNode, "direction", direction);
+					AddAttribute ("direction", direction);
 
-				AttributeData.OutputAttributes (document, paramNode, parameter);
+				AttributeData.OutputAttributes (writer, parameter);
+				writer.WriteEndElement (); // parameter
 			}
+			writer.WriteEndElement (); // parameters
 		}
 	}
 
-	class AttributeData : BaseData
+	class AttributeData
 	{
-		IList<CustomAttribute> atts;
-
-		AttributeData (XmlDocument doc, XmlNode parent, IList<CustomAttribute> attributes)
-			: base (doc, parent)
+		public static void DoOutput (XmlWriter writer, IList<ICustomAttributeProvider> providers)
 		{
-			atts = attributes;
-		}
-
-		public override void DoOutput ()
-		{
-			if (document == null)
+			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
 
-			if (atts == null || atts.Count == 0)
+			if (providers == null || providers.Count == 0)
+				return;
+		
+			if (!providers.Any ((provider) => provider != null && provider.HasCustomAttributes))
 				return;
 
-			XmlNode natts = parent.SelectSingleNode("attributes");
-			if (natts == null) {
-				natts = document.CreateElement ("attributes", null);
-				parent.AppendChild (natts);
-			}
+			writer.WriteStartElement ("attributes");
 
-			foreach (var att in atts.OrderBy ((a) => a.Constructor.DeclaringType.FullName)) {
-				string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
-				if (SkipAttribute (att))
+			foreach (var provider in providers) {
+				if (provider == null)
+					continue;
+				
+				if (!provider.HasCustomAttributes)
 					continue;
 
-				XmlNode node = document.CreateElement ("attribute");
-				AddAttribute (node, "name", attName);
 
-				XmlNode properties = null;
+				var ass = provider as AssemblyDefinition;
+				if (ass != null && !Driver.FollowForwarders)
+					TypeForwardedToData.OutputForwarders (writer, ass);
 
-				Dictionary<string, object> attribute_mapping = CreateAttributeMapping (att);
+				var attributes = provider.CustomAttributes.
+					Where ((att) => !SkipAttribute (att)).
+					OrderBy ((a) => a.Constructor.DeclaringType.FullName, StringComparer.Ordinal);
+				
+				foreach (var att in attributes) {
+					string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
 
-				foreach (string name in attribute_mapping.Keys) {
-					if (name == "TypeId")
-						continue;
+					writer.WriteStartElement ("attribute");
+					writer.WriteAttributeString ("name", attName);
 
-					if (properties == null) {
-						properties = node.AppendChild (document.CreateElement ("properties"));
+					var attribute_mapping = CreateAttributeMapping (att);
+
+					if (attribute_mapping != null) {
+						var mapping = attribute_mapping.Where ((attr) => attr.Key != "TypeId");
+						if (mapping.Any ()) {
+							writer.WriteStartElement ("properties");
+							foreach (var kvp in mapping) {
+								string name = kvp.Key;
+								object o = kvp.Value;
+
+								writer.WriteStartElement ("property");
+								writer.WriteAttributeString ("name", name);
+
+								if (o == null) {
+									writer.WriteAttributeString ("value", "null");
+								} else {
+									string value = o.ToString ();
+									if (attName.EndsWith ("GuidAttribute", StringComparison.Ordinal))
+										value = value.ToUpper ();
+									writer.WriteAttributeString ("value", value);
+								}
+
+								writer.WriteEndElement (); // property
+							}
+							writer.WriteEndElement (); // properties
+						}
 					}
-
-					object o = attribute_mapping [name];
-
-					XmlNode n = properties.AppendChild (document.CreateElement ("property"));
-					AddAttribute (n, "name", name);
-
-					if (o == null) {
-						AddAttribute (n, "value", "null");
-						continue;
-					}
-					
-					string value = o.ToString ();
-					if (attName.EndsWith ("GuidAttribute"))
-						value = value.ToUpper ();
-					AddAttribute (n, "value", value);
+					writer.WriteEndElement (); // attribute
 				}
-
-				natts.AppendChild (node);
 			}
+
+			writer.WriteEndElement (); // attributes
 		}
 
 		static Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
 		{
-			var mapping = new Dictionary<string, object> ();
+			Dictionary<string, object> mapping = null;
 
-			PopulateMapping (mapping, attribute);
+			PopulateMapping (ref mapping, attribute);
 
 			var constructor = attribute.Constructor.Resolve ();
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
-			PopulateMapping (mapping, constructor, attribute);
+			PopulateMapping (ref mapping, constructor, attribute);
 
 			return mapping;
 		}
 
-		static void PopulateMapping (Dictionary<string, object> mapping, CustomAttribute attribute)
+		static void PopulateMapping (ref Dictionary<string, object> mapping, CustomAttribute attribute)
 		{
 			if (!attribute.HasProperties)
 				return;
@@ -1111,13 +1213,15 @@ namespace CorCompare
 				if (arg.Value is CustomAttributeArgument)
 					arg = (CustomAttributeArgument) arg.Value;
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 				mapping.Add (name, GetArgumentValue (arg.Type, arg.Value));
 			}
 		}
 
 		static Dictionary<FieldReference, int> CreateArgumentFieldMapping (MethodDefinition constructor)
 		{
-			Dictionary<FieldReference, int> field_mapping = new Dictionary<FieldReference, int> ();
+			Dictionary<FieldReference, int> field_mapping = null;
 
 			int? argument = null;
 
@@ -1145,6 +1249,9 @@ namespace CorCompare
 					if (!argument.HasValue)
 						break;
 
+					if (field_mapping == null)
+						field_mapping = new Dictionary<FieldReference, int> ();
+					
 					if (!field_mapping.ContainsKey (field))
 						field_mapping.Add (field, (int) argument - 1);
 
@@ -1158,7 +1265,7 @@ namespace CorCompare
 
 		static Dictionary<PropertyDefinition, FieldReference> CreatePropertyFieldMapping (TypeDefinition type)
 		{
-			Dictionary<PropertyDefinition, FieldReference> property_mapping = new Dictionary<PropertyDefinition, FieldReference> ();
+			Dictionary<PropertyDefinition, FieldReference> property_mapping = null;
 
 			foreach (PropertyDefinition property in type.Properties) {
 				if (property.GetMethod == null)
@@ -1174,6 +1281,8 @@ namespace CorCompare
 					if (field.DeclaringType.FullName != type.FullName)
 						continue;
 
+					if (property_mapping == null)
+						property_mapping = new Dictionary<PropertyDefinition, FieldReference> ();
 					property_mapping.Add (property, field);
 					break;
 				}
@@ -1182,7 +1291,7 @@ namespace CorCompare
 			return property_mapping;
 		}
 
-		static void PopulateMapping (Dictionary<string, object> mapping, MethodDefinition constructor, CustomAttribute attribute)
+		static void PopulateMapping (ref Dictionary<string, object> mapping, MethodDefinition constructor, CustomAttribute attribute)
 		{
 			if (!constructor.HasBody)
 				return;
@@ -1195,6 +1304,8 @@ namespace CorCompare
 					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (int) ca[2].Value, (int) ca[3].Value, (int) ca[4].Value) :
 					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (uint) ca[2].Value, (uint) ca[3].Value, (uint) ca[4].Value);
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 				mapping.Add ("Value", dca.Value);
 				return;
 			case "System.ComponentModel.BindableAttribute":
@@ -1202,6 +1313,8 @@ namespace CorCompare
 					break;
 
 				if (constructor.Parameters[0].ParameterType == constructor.Module.TypeSystem.Boolean) {
+					if (mapping == null)
+						mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 					mapping.Add ("Bindable", ca[0].Value);
 				} else {
 					throw new NotImplementedException ();
@@ -1211,18 +1324,24 @@ namespace CorCompare
 			}
 
 			var field_mapping = CreateArgumentFieldMapping (constructor);
-			var property_mapping = CreatePropertyFieldMapping ((TypeDefinition) constructor.DeclaringType);
+			if (field_mapping != null) { 
+				var property_mapping = CreatePropertyFieldMapping ((TypeDefinition) constructor.DeclaringType);
 
-			foreach (var pair in property_mapping) {
-				int argument;
-				if (!field_mapping.TryGetValue (pair.Value, out argument))
-					continue;
+				if (property_mapping != null) {
+					foreach (var pair in property_mapping) {
+						int argument;
+						if (!field_mapping.TryGetValue (pair.Value, out argument))
+							continue;
 
-				var ca_arg = ca [argument];
-				if (ca_arg.Value is CustomAttributeArgument)
-					ca_arg = (CustomAttributeArgument) ca_arg.Value;
+						var ca_arg = ca [argument];
+						if (ca_arg.Value is CustomAttributeArgument)
+							ca_arg = (CustomAttributeArgument)ca_arg.Value;
 
-				mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
+						if (mapping == null)
+							mapping = new Dictionary<string, object> (StringComparer.Ordinal);
+						mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
+					}
+				}
 			}
 		}
 
@@ -1330,19 +1449,15 @@ namespace CorCompare
 
 		static bool SkipAttribute (CustomAttribute attribute)
 		{
-			var type_name = Utils.CleanupTypeName (attribute.Constructor.DeclaringType);
-
-			return !TypeHelper.IsPublic (attribute)
-				|| type_name.EndsWith ("TODOAttribute");
+			if (!TypeHelper.IsPublic (attribute))
+				return true;
+			
+			return attribute.Constructor.DeclaringType.Name.EndsWith ("TODOAttribute", StringComparison.Ordinal);
 		}
 
-		public static void OutputAttributes (XmlDocument doc, XmlNode parent, ICustomAttributeProvider provider)
+		public static void OutputAttributes (XmlWriter writer, params ICustomAttributeProvider[] providers)
 		{
-			if (!provider.HasCustomAttributes)
-				return;
-			
-			AttributeData ad = new AttributeData (doc, parent, provider.CustomAttributes);
-			ad.DoOutput ();
+			AttributeData.DoOutput (writer, providers);
 		}
 	}
 
@@ -1414,7 +1529,7 @@ namespace CorCompare
 
 		public int Compare (PropertyDefinition ma, PropertyDefinition mb)
 		{
-			int res = String.Compare (ma.Name, mb.Name);
+			int res = String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 			if (res != 0)
 				return res;
 
@@ -1439,7 +1554,7 @@ namespace CorCompare
 		{
 			MethodDefinition ma = (MethodDefinition) a;
 			MethodDefinition mb = (MethodDefinition) b;
-			int res = String.Compare (ma.Name, mb.Name);
+			int res = String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 			if (res != 0)
 				return res;
 
@@ -1468,7 +1583,7 @@ namespace CorCompare
 
 			string siga = Parameters.GetSignature (pia);
 			string sigb = Parameters.GetSignature (pib);
-			return String.Compare (siga, sigb);
+			return String.Compare (siga, sigb, StringComparison.Ordinal);
 		}
 	}
 }

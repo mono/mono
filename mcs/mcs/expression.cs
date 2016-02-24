@@ -110,8 +110,9 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression res = null;
-
-			res = expr.Resolve (rc);
+			using (rc.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false)) {
+				res = expr.Resolve (rc);
+			}
 
 			var constant = res as Constant;
 			if (constant != null && constant.IsLiteral) {
@@ -7180,7 +7181,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			return new DynamicInvocation (expr as ATypeNameExpression, args, loc).Resolve (ec);
+			return new DynamicInvocation (expr as ATypeNameExpression, args, conditional_access_receiver, loc).Resolve (ec);
 		}
 
 		protected virtual MethodGroupExpr DoResolveOverload (ResolveContext ec)
@@ -9718,6 +9719,8 @@ namespace Mono.CSharp
 				return retval;
 			}
 
+			var cma = this as ConditionalMemberAccess;
+
 			MemberExpr me;
 			TypeSpec expr_type = expr.Type;
 			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
@@ -9727,10 +9730,13 @@ namespace Mono.CSharp
 
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
+
+				if (cma != null)
+					return new DynamicConditionalMemberBinder (Name, args, loc);
+
 				return new DynamicMemberBinder (Name, args, loc);
 			}
 
-			var cma = this as ConditionalMemberAccess;
 			if (cma != null) {
 				if (!IsNullPropagatingValid (expr.Type)) {
 					expr.Error_OperatorCannotBeApplied (rc, loc, "?", expr.Type);
@@ -10861,7 +10867,7 @@ namespace Mono.CSharp
 				args.AddRange (arguments);
 
 				best_candidate = null;
-				return new DynamicIndexBinder (args, loc);
+				return new DynamicIndexBinder (args, conditional_access_receiver, ConditionalAccess, loc);
 			}
 
 			//
@@ -11669,7 +11675,6 @@ namespace Mono.CSharp
 				args.Add (new Argument (rc.CurrentInitializerVariable));
 				target = new DynamicMemberBinder (Name, args, loc);
 			} else {
-
 				var member = MemberLookup (rc, false, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);
 				if (member == null) {
 					member = Expression.MemberLookup (rc, true, t, Name, 0, MemberLookupRestrictions.ExactArity, loc);

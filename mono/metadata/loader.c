@@ -534,17 +534,14 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 /*
  * mono_field_from_token:
  * @deprecated use the _checked variant
+ * Notes: runtime code MUST not use this function
 */
 MonoClassField*
 mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass, MonoGenericContext *context)
 {
 	MonoError error;
 	MonoClassField *res = mono_field_from_token_checked (image, token, retklass, context, &error);
-	mono_loader_assert_no_error ();
-	if (!mono_error_ok (&error)) {
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error);
-	}
+	g_assert (mono_error_ok (&error));
 	return res;
 }
 
@@ -682,7 +679,7 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 	See mono/tests/generic-type-load-exception.2.il
 	FIXME we should better report this error to the caller
 	 */
-	if (!klass->methods || klass->exception_type) {
+	if (!klass->methods || mono_class_has_failure (klass)) {
 		mono_error_set_type_load_class (error, klass, "Could not find method due to a type load error"); //FIXME get the error from the class 
 
 		return NULL;
@@ -899,20 +896,15 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context)
 
 /*
  * token is the method_ref/def/spec token used in a call IL instruction.
+ * @deprecated use the _checked variant
+ * Notes: runtime code MUST not use this function
  */
 MonoMethodSignature*
 mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context)
 {
 	MonoError error;
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, context, &error);
-
-	mono_loader_assert_no_error ();
-
-	if (!res) {
-		g_assert (!mono_error_ok (&error));
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error); /* FIXME Don't swallow the error */
-	}
+	g_assert (mono_error_ok (&error));
 	return res;
 }
 
@@ -1001,19 +993,17 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 	return sig;
 }
 
+/*
+ * token is the method_ref/def/spec token used in a call IL instruction.
+ * @deprecated use the _checked variant
+ * Notes: runtime code MUST not use this function
+ */
 MonoMethodSignature*
 mono_method_get_signature (MonoMethod *method, MonoImage *image, guint32 token)
 {
 	MonoError error;
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, NULL, &error);
-
-	mono_loader_assert_no_error ();
-
-	if (!res) {
-		g_assert (!mono_error_ok (&error));
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error); /* FIXME Don't swallow the error */
-	}
+	g_assert (mono_error_ok (&error));
 	return res;
 }
 
@@ -1024,7 +1014,7 @@ mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMetho
 	int i;
 
 	mono_class_setup_methods (klass);
-	g_assert (!klass->exception_type); /*FIXME this should not fail, right?*/
+	g_assert (!mono_class_has_failure (klass)); /*FIXME this should not fail, right?*/
 	for (i = 0; i < klass->method.count; ++i) {
 		MonoMethod *method = klass->methods [i];
 		if (strcmp (method->name, name) == 0 && sig->param_count == method->signature->param_count)
@@ -1980,7 +1970,10 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 MonoMethod *
 mono_get_method (MonoImage *image, guint32 token, MonoClass *klass)
 {
-	return mono_get_method_full (image, token, klass, NULL);
+	MonoError error;
+	MonoMethod *result = mono_get_method_checked (image, token, klass, NULL, &error);
+	mono_error_cleanup (&error);
+	return result;
 }
 
 MonoMethod *
@@ -1989,11 +1982,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 {
 	MonoError error;
 	MonoMethod *result = mono_get_method_checked (image, token, klass, context, &error);
-	mono_loader_assert_no_error ();
-	if (!mono_error_ok (&error)) {
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error);
-	}
+	mono_error_cleanup (&error);
 	return result;
 }
 
@@ -2136,12 +2125,7 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 {
 	MonoError error;
 	MonoMethod *result = mono_get_method_constrained_checked (image, token, constrained_class, context, cil_method, &error);
-
-	mono_loader_assert_no_error ();
-	if (!mono_error_ok (&error)) {
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error);
-	}
+	mono_error_cleanup (&error);
 	return result;
 }
 
@@ -2895,7 +2879,7 @@ mono_method_get_index (MonoMethod *method)
 		return mono_metadata_token_index (method->token);
 
 	mono_class_setup_methods (klass);
-	if (klass->exception_type)
+	if (mono_class_has_failure (klass))
 		return 0;
 	for (i = 0; i < klass->method.count; ++i) {
 		if (method == klass->methods [i]) {

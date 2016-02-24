@@ -49,7 +49,7 @@ namespace Mono.Security.Interface
 			set { checkCertRevocationStatus = value; }
 		}
 
-		public bool UseServicePointManagerCallback {
+		public bool? UseServicePointManagerCallback {
 			get { return useServicePointManagerCallback; }
 			set { useServicePointManagerCallback = value; }
 		}
@@ -89,7 +89,7 @@ namespace Mono.Security.Interface
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
-		bool useServicePointManagerCallback = true;
+		bool? useServicePointManagerCallback = null;
 		bool skipSystemValidators = false;
 		bool callbackNeedsChain = true;
 		ICertificateValidator certificateValidator;

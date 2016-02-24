@@ -38,48 +38,13 @@ namespace Mono.Security.Protocol.Ntlm {
 	 * is LM_and_NTLM_and_try_NTLMv2_Session.
 	 */
 
-	#if INSIDE_SYSTEM
-	internal
-	#else
-	public
-	#endif
-	static class NtlmSettings {
+	public static class NtlmSettings {
 
 		static NtlmAuthLevel defaultAuthLevel = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session;
 
-		static FieldInfo GetDefaultAuthLevelField ()
-		{
-			#if INSIDE_SYSTEM
-			return null;
-			#else
-			var type = typeof (HttpWebRequest).Assembly.GetType ("Mono.Security.Protocol.Ntlm.NtlmSettings", false);
-			if (type == null)
-				return null;
-			return type.GetField ("defaultAuthLevel", BindingFlags.Static | BindingFlags.NonPublic);
-			#endif
-		}
-
-		#if INSIDE_SYSTEM
-		internal
-		#else
-		public
-		#endif
-		static NtlmAuthLevel DefaultAuthLevel {
-			get {
-				var field = GetDefaultAuthLevelField ();
-				if (field != null)
-					return (NtlmAuthLevel)field.GetValue (null);
-				else
-					return defaultAuthLevel;
-			}
-
-			set {
-				var field = GetDefaultAuthLevelField ();
-				if (field != null)
-					field.SetValue (null, value);
-				else
-					defaultAuthLevel = value;
-			}
+		public static NtlmAuthLevel DefaultAuthLevel {
+			get { return defaultAuthLevel; }
+			set { defaultAuthLevel = value; }
 		}
 	}
 }

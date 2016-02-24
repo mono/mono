@@ -651,6 +651,33 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test] //Covers #18361
+		public void MoveTo_SameName ()
+		{
+			string name = "FIT.MoveTo.SameName.Test";
+			string path1 = TempFolder + DSC + name;
+			string path2 = name;
+			DeleteFile (path1);
+			DeleteFile (path2);
+			
+			try {
+				File.Create (path1).Close ();
+				FileInfo info1 = new FileInfo (path1);
+				FileInfo info2 = new FileInfo (path2);
+				Assert.IsTrue (info1.Exists, "#A1");
+				Assert.IsFalse (info2.Exists, "#A2");
+
+				info1.MoveTo (path2);
+				info1 = new FileInfo (path1);
+				info2 = new FileInfo (path2);
+				Assert.IsFalse (info1.Exists, "#B1");
+				Assert.IsTrue (info2.Exists, "#B2");
+			} finally {
+				DeleteFile (path1);
+				DeleteFile (path2);
+			}
+		}
+
 		[Test]
 		public void MoveTo_DestFileName_AlreadyExists ()
 		{

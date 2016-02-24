@@ -15,7 +15,16 @@ typedef struct {
 	const char *member_name;
 	const char *exception_name_space;
 	const char *exception_name;
-	MonoClass *klass;
+	union {
+		/* Valid if error_code != MONO_ERROR_EXCEPTION_INSTANCE.
+		 * Used by type or field load errors and generic error specified by class.
+		 */
+		MonoClass *klass;
+		/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
+		 * Generic error specified by a managed instance.
+		 */
+		uint32_t instance_handle;
+	} exn;
 	const char *full_message;
 	const char *full_message_with_fields;
 	const char *first_argument;
@@ -30,8 +39,13 @@ typedef struct {
 
 #define is_ok(error) ((error)->error_code == MONO_ERROR_NONE)
 
+#define return_if_nok(error) do { if (!is_ok ((error))) return; } while (0)
+#define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
+
 void
-mono_error_assert_ok (MonoError *error);
+mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno) MONO_LLVM_INTERNAL;
+
+#define mono_error_assert_ok(e) mono_error_assert_ok_pos (e, __FILE__, __LINE__);
 
 void
 mono_error_dup_strings (MonoError *error, gboolean dup_strings);
@@ -71,10 +85,16 @@ void
 mono_error_set_argument (MonoError *error, const char *argument, const char *msg_format, ...);
 
 void
+mono_error_set_argument_null (MonoError *oerror, const char *argument, const char *msg_format, ...);
+
+void
 mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char *msg_format, ...);
 
 void
 mono_error_set_generic_error (MonoError *error, const char * name_space, const char *name, const char *msg_format, ...);
+
+void
+mono_error_set_exception_instance (MonoError *error, MonoException *exc);
 
 void
 mono_error_set_from_loader_error (MonoError *error);

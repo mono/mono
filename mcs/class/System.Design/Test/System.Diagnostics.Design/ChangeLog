@@ -1,4 +1,0 @@
-2008-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* StringValueConverterTest.cs: Added test for StringValueConverter.
-

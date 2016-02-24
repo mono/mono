@@ -1,9 +1,0 @@
-2010-04-23  Jérémie Laval  <jeremie.laval@gmail.com>
-
-	* BlockingCollectionTests.cs: Add IsCompletedEmptyTestCase,
-	fix namespace name
-
-2009-08-19 Jérémie Laval  <jeremie.laval@gmail.com>
-
-	* BlockingCollectionTests.cs: track API changes
-

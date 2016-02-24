@@ -230,6 +230,11 @@ namespace Mono.Net.Security
 			return provider.Provider;
 		}
 
+		internal static MSI.MonoTlsProvider GetProvider (string name)
+		{
+			return LookupProvider (name, false);
+		}
+
 		internal static bool HasProvider {
 			get {
 				lock (locker) {

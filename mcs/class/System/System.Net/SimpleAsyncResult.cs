@@ -36,14 +36,12 @@ namespace System.Net
 {
 	delegate void SimpleAsyncCallback (SimpleAsyncResult result);
 
-	delegate bool SimpleAsyncFunc (SimpleAsyncResult result);
-
 	class SimpleAsyncResult : IAsyncResult
 	{
 		ManualResetEvent handle;
 		bool synch;
 		bool isCompleted;
-		SimpleAsyncCallback cb;
+		readonly SimpleAsyncCallback cb;
 		object state;
 		bool callbackDone;
 		Exception exc;
@@ -63,7 +61,7 @@ namespace System.Net
 			};
 		}
 
-		public static void Run (SimpleAsyncFunc func, SimpleAsyncCallback callback)
+		public static void Run (Func<SimpleAsyncResult, bool> func, SimpleAsyncCallback callback)
 		{
 			var result = new SimpleAsyncResult (callback);
 			try {
@@ -74,7 +72,7 @@ namespace System.Net
 			}
 		}
 
-		public static void RunWithLock (object locker, SimpleAsyncFunc func, SimpleAsyncCallback callback)
+		public static void RunWithLock (object locker, Func<SimpleAsyncResult, bool> func, SimpleAsyncCallback callback)
 		{
 			Run (inner => {
 				bool running = func (inner);
@@ -123,7 +121,7 @@ namespace System.Net
 			DoCallback_private ();
 		}
 
-		protected void SetCompleted_internal (bool synch, Exception e)
+		void SetCompleted_internal (bool synch, Exception e)
 		{
 			this.synch = synch;
 			exc = e;
@@ -136,13 +134,7 @@ namespace System.Net
 
 		protected void SetCompleted_internal (bool synch)
 		{
-			this.synch = synch;
-			exc = null;
-			lock (locker) {
-				isCompleted = true;
-				if (handle != null)
-					handle.Set ();
-			}
+			SetCompleted_internal (synch, null);
 		}
 
 		void DoCallback_private ()

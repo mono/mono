@@ -18,6 +18,8 @@
 
 #include "jit-icalls.h"
 #include <mono/utils/mono-error-internals.h>
+#include <mono/metadata/threads-types.h>
+#include <mono/metadata/reflection-internals.h>
 
 #ifdef ENABLE_LLVM
 #include "mini-llvm-cpp.h"
@@ -658,6 +660,8 @@ mono_fload_r4_arg (double val)
 MonoArray *
 mono_array_new_va (MonoMethod *cm, ...)
 {
+	MonoError error;
+	MonoArray *arr;
 	MonoDomain *domain = mono_domain_get ();
 	va_list ap;
 	uintptr_t *lengths;
@@ -691,13 +695,22 @@ mono_array_new_va (MonoMethod *cm, ...)
 	}
 	va_end(ap);
 
-	return mono_array_new_full (domain, cm->klass, lengths, lower_bounds);
+	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return arr;
 }
 
 /* Specialized version of mono_array_new_va () which avoids varargs */
 MonoArray *
 mono_array_new_1 (MonoMethod *cm, guint32 length)
 {
+	MonoError error;
+	MonoArray *arr;
 	MonoDomain *domain = mono_domain_get ();
 	uintptr_t lengths [1];
 	intptr_t *lower_bounds;
@@ -718,12 +731,21 @@ mono_array_new_1 (MonoMethod *cm, guint32 length)
 		lower_bounds = NULL;
 	}
 
-	return mono_array_new_full (domain, cm->klass, lengths, lower_bounds);
+	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return arr;
 }
 
 MonoArray *
 mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 {
+	MonoError error;
+	MonoArray *arr;
 	MonoDomain *domain = mono_domain_get ();
 	uintptr_t lengths [2];
 	intptr_t *lower_bounds;
@@ -745,12 +767,21 @@ mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 		lower_bounds = NULL;
 	}
 
-	return mono_array_new_full (domain, cm->klass, lengths, lower_bounds);
+	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return arr;
 }
 
 MonoArray *
 mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3)
 {
+	MonoError error;
+	MonoArray *arr;
 	MonoDomain *domain = mono_domain_get ();
 	uintptr_t lengths [3];
 	intptr_t *lower_bounds;
@@ -773,12 +804,21 @@ mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 		lower_bounds = NULL;
 	}
 
-	return mono_array_new_full (domain, cm->klass, lengths, lower_bounds);
+	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return arr;
 }
 
 MonoArray *
 mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3, guint32 length4)
 {
+	MonoError error;
+	MonoArray *arr;
 	MonoDomain *domain = mono_domain_get ();
 	uintptr_t lengths [4];
 	intptr_t *lower_bounds;
@@ -802,7 +842,14 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 		lower_bounds = NULL;
 	}
 
-	return mono_array_new_full (domain, cm->klass, lengths, lower_bounds);
+	arr = mono_array_new_full_checked (domain, cm->klass, lengths, lower_bounds, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return arr;
 }
 
 gpointer
@@ -1081,7 +1128,10 @@ mono_helper_newobj_mscorlib (guint32 idx)
 		return NULL;
 	}
 
-	return mono_object_new (mono_domain_get (), klass);
+	MonoObject *obj = mono_object_new_checked (mono_domain_get (), klass, &error);
+	if (!mono_error_ok (&error))
+		mono_error_set_pending_exception (&error);
+	return obj;
 }
 
 /*
@@ -1220,10 +1270,12 @@ mono_get_native_calli_wrapper (MonoImage *image, MonoMethodSignature *sig, gpoin
 }
 
 static MonoMethod*
-constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gpointer *this_arg)
+constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gpointer *this_arg, MonoError *error)
 {
 	MonoMethod *m;
 	int vt_slot, iface_offset;
+
+	mono_error_init (error);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MonoObject *this_obj;
@@ -1275,16 +1327,23 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
  * mono_gsharedvt_constrained_call:
  *
  *   Make a call to CMETHOD using the receiver MP, which is assumed to be of type KLASS. ARGS contains
- * the arguments to the method in the format used by mono_runtime_invoke ().
+ * the arguments to the method in the format used by mono_runtime_invoke_checked ().
  */
 MonoObject*
 mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gboolean deref_arg, gpointer *args)
 {
+	MonoError error;
+	MonoObject *o;
 	MonoMethod *m;
 	gpointer this_arg;
 	gpointer new_args [16];
 
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
+	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
 	if (!m)
 		return NULL;
 	if (args && deref_arg) {
@@ -1297,7 +1356,14 @@ mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *kl
 		args [0] = this_arg;
 		this_arg = NULL;
 	}
-	return mono_runtime_invoke (m, this_arg, args, NULL);
+
+	o = mono_runtime_invoke_checked (m, this_arg, args, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+
+	return o;
 }
 
 void
@@ -1318,13 +1384,29 @@ mono_generic_class_init (MonoVTable *vtable)
 gpointer
 mono_fill_class_rgctx (MonoVTable *vtable, int index)
 {
-	return mono_class_fill_runtime_generic_context (vtable, index);
+	MonoError error;
+	gpointer res;
+
+	res = mono_class_fill_runtime_generic_context (vtable, index, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+	return res;
 }
 
 gpointer
 mono_fill_method_rgctx (MonoMethodRuntimeGenericContext *mrgctx, int index)
 {
-	return mono_method_fill_runtime_generic_context (mrgctx, index);
+	MonoError error;
+	gpointer res;
+
+	res = mono_method_fill_runtime_generic_context (mrgctx, index, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+	return res;
 }
 
 /*
@@ -1629,6 +1711,10 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 	 */
 	if (G_UNLIKELY (!ftndesc)) {
 		gpointer addr = mono_compile_method (del->method);
+
+		if (del->method->klass->valuetype && mono_method_signature (del->method)->hasthis)
+		    addr = mono_aot_get_unbox_trampoline (del->method);
+
 		gpointer arg = mini_get_delegate_arg (del->method, addr);
 
 		ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
@@ -1648,19 +1734,30 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 
 	del->method = method;
 	del->method_ptr = mono_compile_method (method);
+	if (method->klass->valuetype)
+		del->method_ptr = mono_aot_get_unbox_trampoline (method);
 	del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 }
 
 MonoObject*
 mono_get_assembly_object (MonoImage *image)
 {
-	return (MonoObject*)mono_assembly_get_object (mono_domain_get (), image->assembly);
+	MonoError error;
+	MonoObject *result;
+	result = (MonoObject*)mono_assembly_get_object_checked (mono_domain_get (), image->assembly, &error);
+	if (!result)
+		mono_error_set_pending_exception (&error);
+	return result;
 }
 
 MonoObject*
 mono_get_method_object (MonoMethod *method)
 {
-	return (MonoObject*)mono_method_get_object (mono_domain_get (), method, method->klass);
+	MonoError error;
+	MonoObject * result;
+	result = (MonoObject*)mono_method_get_object_checked (mono_domain_get (), method, method->klass, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 }
 
 double
@@ -1671,24 +1768,21 @@ mono_ckfinite (double d)
 	return d;
 }
 
+/*
+ * mono_interruption_checkpoint_from_trampoline:
+ *
+ *   Check whenever the thread has a pending exception, and throw it
+ * if needed.
+ * Architectures should move away from calling this function and
+ * instead call mono_thread_force_interruption_checkpoint_noraise (),
+ * rewrind to the parent frame, and throw the exception normally.
+ */
 void
-mono_llvmonly_set_calling_assembly (MonoImage *image)
+mono_interruption_checkpoint_from_trampoline (void)
 {
-	MonoJitTlsData *jit_tls = NULL;
+	MonoException *ex;
 
-	jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
-	g_assert (jit_tls);
-	jit_tls->calling_image = image;
-}
-
-MonoObject*
-mono_llvmonly_get_calling_assembly (void)
-{
-	MonoJitTlsData *jit_tls = NULL;
-
-	jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
-	g_assert (jit_tls);
-	if (!jit_tls->calling_image)
-		mono_raise_exception (mono_get_exception_not_supported ("Stack walks are not supported on this platform."));
-	return (MonoObject*)mono_assembly_get_object (mono_domain_get (), jit_tls->calling_image->assembly);
+	ex = mono_thread_force_interruption_checkpoint_noraise ();
+	if (ex)
+		mono_raise_exception (ex);
 }

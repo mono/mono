@@ -1,23 +1,38 @@
-<h4><a name="api:mono_debug_il_offset_from_address">mono_debug_il_offset_from_address</a></h4>
-<h4><a name="api:mono_debug_add_method">mono_debug_add_method</a></h4>
-<h4><a name="api:mono_debug_close_mono_symbol_file">mono_debug_close_mono_symbol_file</a></h4>
-<h4><a name="api:mono_debug_find_method">mono_debug_find_method</a></h4>
-<h4><a name="api:mono_debug_using_mono_debugger">mono_debug_using_mono_debugger</a></h4>
 
 <h3>Mono Debugger Interface</h3>
 
 	<p>These are methods that are invoked by the debugger at
 	runtime.
 	
-<h4><a name="api:mono_debugger_breakpoint_callback">mono_debugger_breakpoint_callback</a></h4>
-<h4><a name="api:mono_debugger_check_runtime_version">mono_debugger_check_runtime_version</a></h4>
-<h4><a name="api:mono_debugger_event">mono_debugger_event</a></h4>
-<h4><a name="api:mono_debugger_handle_exception">mono_debugger_handle_exception</a></h4>
-<h4><a name="api:mono_debugger_insert_breakpoint_full">mono_debugger_insert_breakpoint_full</a></h4>
 <h4><a name="api:mono_debugger_insert_breakpoint">mono_debugger_insert_breakpoint</a></h4>
-<h4><a name="api:mono_debugger_lock">mono_debugger_lock</a></h4>
 <h4><a name="api:mono_debugger_method_has_breakpoint">mono_debugger_method_has_breakpoint</a></h4>
-<h4><a name="api:mono_debugger_remove_breakpoint">mono_debugger_remove_breakpoint</a></h4>
-<h4><a name="api:mono_debugger_runtime_invoke">mono_debugger_runtime_invoke</a></h4>
-<h4><a name="api:mono_debugger_unlock">mono_debugger_unlock</a></h4>
-<h4><a name="api:mono_debugger_run_finally">mono_debugger_run_finally</a></h4>
+
+<h3>Debugging Symbols</h3>
+<h4><a name="api:mono_debug_open_mono_symbols">mono_debug_open_mono_symbols</a></h4>
+<h4><a name="api:mono_debug_symfile_free_location">mono_debug_symfile_free_location</a></h4>
+<h4><a name="api:mono_debug_symfile_is_loaded">mono_debug_symfile_is_loaded</a></h4>
+<h4><a name="api:mono_debug_symfile_lookup_locals">mono_debug_symfile_lookup_locals</a></h4>
+<h4><a name="api:mono_debug_symfile_lookup_location">mono_debug_symfile_lookup_location</a></h4>
+<h4><a name="api:mono_debug_symfile_lookup_method">mono_debug_symfile_lookup_method</a></h4>
+
+<h3>Internal Debugging </h3>
+
+<h4><a name="api:mono_debug_add_delegate_trampoline">mono_debug_add_delegate_trampoline</a></h4>
+<h4><a name="api:mono_debug_close_image">mono_debug_close_image</a></h4>
+<h4><a name="api:mono_debug_domain_create">mono_debug_domain_create</a></h4>
+<h4><a name="api:mono_debug_domain_unload">mono_debug_domain_unload</a></h4>
+<h4><a name="api:mono_debug_enabled">mono_debug_enabled</a></h4>
+<h4><a name="api:mono_debug_free_method_jit_info">mono_debug_free_method_jit_info</a></h4>
+<h4><a name="api:mono_debug_free_source_location">mono_debug_free_source_location</a></h4>
+<h4><a name="api:mono_debug_lookup_locals">mono_debug_lookup_locals</a></h4>
+<h4><a name="api:mono_debug_lookup_method">mono_debug_lookup_method</a></h4>
+<h4><a name="api:mono_debug_lookup_method_addresses">mono_debug_lookup_method_addresses</a></h4>
+<h4><a name="api:mono_debug_lookup_source_location">mono_debug_lookup_source_location</a></h4>
+<h4><a name="api:mono_debug_open_image_from_memory">mono_debug_open_image_from_memory</a></h4>
+<h4><a name="api:mono_debug_print_stack_frame">mono_debug_print_stack_frame</a></h4>
+<h4><a name="api:mono_debug_remove_method">mono_debug_remove_method</a></h4>
+<h4><a name="api:mono_debug_il_offset_from_address">mono_debug_il_offset_from_address</a></h4>
+<h4><a name="api:mono_debug_add_method">mono_debug_add_method</a></h4>
+<h4><a name="api:mono_debug_close_mono_symbol_file">mono_debug_close_mono_symbol_file</a></h4>
+<h4><a name="api:mono_debug_find_method">mono_debug_find_method</a></h4>
+

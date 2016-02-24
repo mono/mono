@@ -39,12 +39,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	class Type2Message : MessageBase {
+	public class Type2Message : MessageBase {
 
 		private byte[] _nonce;
 		private string _targetName;

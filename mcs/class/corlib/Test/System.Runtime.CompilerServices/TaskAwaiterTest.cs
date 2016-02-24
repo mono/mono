@@ -248,6 +248,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 			return res.Result;
 		}
 
+#if !MOBILE_STATIC
 		[Test]
 		public void FinishedTaskOnCompleted ()
 		{
@@ -271,6 +272,8 @@ namespace MonoTests.System.Runtime.CompilerServices
 			// e.g. Touch.Unit defaults to run tests on the main thread and this will return false
 			Assert.AreEqual (Thread.CurrentThread.IsBackground, mres2.WaitOne (2000), "#2");;
 		}
+
+#endif
 
 		[Test]
 		public void CompletionOnSameCustomSynchronizationContext ()

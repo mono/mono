@@ -602,8 +602,7 @@ get_family_hint (void)
 		socket_assembly = get_socket_assembly ();
 		g_assert (socket_assembly);
 
-		socket_class = mono_class_from_name (socket_assembly, "System.Net.Sockets", "Socket");
-		g_assert (socket_class);
+		socket_class = mono_class_load_from_name (socket_assembly, "System.Net.Sockets", "Socket");
 
 		ipv4_field = mono_class_get_field_from_name (socket_class, "ipv4_supported");
 		g_assert (ipv4_field);
@@ -824,6 +823,7 @@ is_ipv4_mapped_any (const struct in6_addr *addr)
 static MonoObject*
 create_object_from_sockaddr(struct sockaddr *saddr, int sa_size, gint32 *error)
 {
+	MonoError merror;
 	MonoDomain *domain = mono_domain_get ();
 	MonoObject *sockaddr_obj;
 	MonoArray *data;
@@ -831,10 +831,10 @@ create_object_from_sockaddr(struct sockaddr *saddr, int sa_size, gint32 *error)
 
 	/* Build a System.Net.SocketAddress object instance */
 	if (!domain->sockaddr_class) {
-		domain->sockaddr_class=mono_class_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
-		g_assert (domain->sockaddr_class);
+		domain->sockaddr_class = mono_class_load_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
 	}
-	sockaddr_obj=mono_object_new(domain, domain->sockaddr_class);
+	sockaddr_obj=mono_object_new_checked(domain, domain->sockaddr_class, &merror);
+	mono_error_raise_exception (&merror); /* FIXME don't raise here */
 	
 	/* Locate the SocketAddress data buffer in the object */
 	if (!domain->sockaddr_data_field) {
@@ -1747,6 +1747,7 @@ static SOCKET Socket_to_SOCKET(MonoObject *sockobj)
 void
 ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArray **sockets, gint32 timeout, gint32 *error)
 {
+	MonoError monoerror;
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	MonoObject *obj;
 	mono_pollfd *pfds;
@@ -1851,7 +1852,8 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArray **sockets, gint32
 
 	sock_arr_class= ((MonoObject *)*sockets)->vtable->klass;
 	socks_size = ((uintptr_t)ret) + 3; /* space for the NULL delimiters */
-	socks = mono_array_new_full (mono_domain_get (), sock_arr_class, &socks_size, NULL);
+	socks = mono_array_new_full_checked (mono_domain_get (), sock_arr_class, &socks_size, NULL, &monoerror);
+	mono_error_raise_exception (&monoerror);
 
 	mode = idx = 0;
 	for (i = 0; i < count && ret > 0; i++) {
@@ -1908,6 +1910,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (SOCKET sock, g
 #  endif
 	socklen_t credsize = sizeof(cred);
 #endif
+	MonoError merror;
 	MonoDomain *domain=mono_domain_get();
 	MonoObject *obj;
 	MonoClass *obj_class;
@@ -1973,11 +1976,12 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (SOCKET sock, g
 	switch(name) {
 	case SocketOptionName_Linger:
 		/* build a System.Net.Sockets.LingerOption */
-		obj_class=mono_class_from_name(get_socket_assembly (),
+		obj_class = mono_class_load_from_name (get_socket_assembly (),
 					       "System.Net.Sockets",
 					       "LingerOption");
-		obj=mono_object_new(domain, obj_class);
-		
+		obj=mono_object_new_checked(domain, obj_class, &merror);
+		mono_error_raise_exception (&merror); /* FIXME don't raise here */
+
 		/* Locate and set the fields "bool enabled" and "int
 		 * lingerTime"
 		 */
@@ -2021,10 +2025,11 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (SOCKET sock, g
 			}
 		}
 		
-		obj_class = mono_class_from_name(mono_posix_image,
+		obj_class = mono_class_load_from_name (mono_posix_image,
 						 "Mono.Posix",
 						 "PeerCredData");
-		obj = mono_object_new(domain, obj_class);
+		obj = mono_object_new_checked(domain, obj_class, &merror);
+		mono_error_raise_exception (&merror); /* FIXME don't raise here */
 		cred_data = (MonoPeerCredData *)obj;
 		cred_data->pid = cred.pid;
 		cred_data->uid = cred.uid;

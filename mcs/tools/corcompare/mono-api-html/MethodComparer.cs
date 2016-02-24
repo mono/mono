@@ -26,6 +26,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
@@ -61,6 +62,16 @@ namespace Xamarin.ApiDiff {
 				var sGPs = sGP.Elements ("generic-parameter");
 				return eGPs.Count () == sGPs.Count ();
 			}
+		}
+
+		protected override bool IsBreakingRemoval (XElement e)
+		{
+			// Removing virtual methods that override another method is not a breaking change.
+			var is_override = e.Attribute ("is-override");
+			if (is_override != null)
+				return is_override.Value != "true";
+			
+			return true; // all other removals are breaking changes
 		}
 	}
 }

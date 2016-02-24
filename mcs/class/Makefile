@@ -53,7 +53,6 @@ mobile_common_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	Mono.Security.Providers.DotNet	\
-	Mono.Security.Providers.OldTls \
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls
 
@@ -333,6 +332,8 @@ DISTFILES = \
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 	@:
+
+all-local-aot:
 
 # Files needed to bootstrap C# compiler
 basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll

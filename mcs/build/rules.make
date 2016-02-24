@@ -75,6 +75,7 @@ default: all
 
 include $(topdir)/build/config-default.make
 -include $(topdir)/build/pre-config.make
+-include $(topdir)/build/config.make
 
 # Default PLATFORM and PROFILE if they're not already defined.
 
@@ -112,7 +113,6 @@ PROFILE = $(DEFAULT_PROFILE)
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
--include $(topdir)/build/config.make
 
 # If the profile is using nunit-lite, use it
 ifdef NUNIT_LITE
@@ -122,14 +122,70 @@ endif
 # Make sure propagates
 export TEST_HARNESS
 
+# If the profile is using nunit-lite, use it
+ifdef NUNIT_LITE
+TEST_HARNESS=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe
+endif
+
+# Make sure propagates
+export TEST_HARNESS
+
+# start aot config
+
+# We set the prefix of the aot build flags
+# in the profile. This determines the aot type,
+# whether it be llvmonly or full. To this we append the
+# options which do not change between them, the INVARIANT_AOT_OPTIONS
+ifndef AOT_BUILD_FLAGS_PREFIX
+AOT_BUILD_FLAGS_PREFIX = --aot=
+endif
+
+# Set the options for building and running AOT
+# The trampoline numbers are provisional, they are what is required
+# to run the corlib test suite. They should be considered a lower bound.
+INVARIANT_AOT_OPTIONS=nimt-trampolines=900,ntrampolines=8000
+
+ifndef MONO_DISABLE_GSHAREDVT
+INVARIANT_AOT_OPTIONS:=$(INVARIANT_AOT_OPTIONS),ngsharedvt-trampolines=900
+endif
+
+AOT_BUILD_FLAGS = $(AOT_BUILD_FLAGS_PREFIX)$(INVARIANT_AOT_OPTIONS)
+
+# end AOT config
+
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif
 
+# Design:
+# Problem: We want to be able to build aot
+# assemblies as part of the build system. 
+#
+# For this to be done safely, we really need two passes. This
+# ensures that all of the .dlls are compiled before trying to
+# aot them. Because we want this to be the
+# default target for some profiles(mobile_static) we have a
+# two-level build system. The do-all-aot target is what
+# gets invoked at the top-level when someone tries to build with aot.
+# It will invoke the do-all target, and will set TOP_LEVEL_DO for this
+# recursive make call in order to prevent this recursive call from trying
+# to build aot in each of the subdirs. After this is done, we will aot
+# everything that our building produced by aoting everything in
+# mcs/class/lib/$(PROFILE)/
+ifndef TOP_LEVEL_DO
+
+ifdef ALWAYS_AOT
+TOP_LEVEL_DO = do-all-aot
+else
+TOP_LEVEL_DO = do-all
+endif # ALWAYS_AOT
+
+endif # !TOP_LEVEL_DO
+
 ifdef OVERRIDE_TARGET_ALL
 all: all.override
 else
-all: do-all
+all: $(TOP_LEVEL_DO)
 endif
 
 ifdef NO_INSTALL
@@ -142,6 +198,19 @@ endif
 STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
 
 $(STD_TARGETS): %: do-%
+
+ifdef PLATFORM_AOT_SUFFIX
+Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] AOT All Assemblies";)
+LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml'
+COMPILE_ALL_PROFILE_ASSEMBLIES = $(LIST_ALL_PROFILE_ASSEMBLIES) | MONO_PATH="./" xargs -I '{}' $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) '{}'
+
+do-all-aot:
+	$(MAKE) do-all TOP_LEVEL_DO=do-all
+	$(MAKE) aot-all-profile
+
+aot-all-profile:
+	$(Q_AOT) cd $(topdir)/class/lib/$(PROFILE)/ && $(COMPILE_ALL_PROFILE_ASSEMBLIES) &> $(PROFILE)-aot.log
+endif
 
 do-run-test:
 	ok=:; $(MAKE) run-test-recursive || ok=false; $(MAKE) run-test-local || ok=false; $$ok

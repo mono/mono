@@ -181,7 +181,7 @@ while `mono-sgen` uses the Simple Generational GC.
 * `--with-gc=[included, boehm, none]` - Selects the default Boehm
 garbage collector engine to use.
 
-  * *included*: (*slighty modified Boehm GC*) This is the default
+  * *included*: (*slightly modified Boehm GC*) This is the default
 value for the Boehm GC, and it's the most feature complete, it will
 allow Mono to use typed allocations and support the debugger.
 
@@ -194,6 +194,13 @@ Disables the inclusion of a garbage collector.
 
   * This defaults to `included`.
 
+* `--with-cooperative-gc`
+
+  * If you pass this flag the Mono runtime is configured to only use
+  the cooperative mode of the garbage collector.  If you do not pass
+  this flag, then you can control at runtime the use of the
+  cooperative GC mode by setting the `MONO_ENABLE_COOP` flag.
+  
 * `--with-tls=__thread,pthread`
 
   * Controls how Mono should access thread local storage,
@@ -419,8 +426,10 @@ cycle.
 multiple CPUs to do its work.  This helps performance
 on multi-CPU machines as the work is divided across CPUS.
 
-  * This option is not currently the default as we have
-not done much testing with Mono.
+  * This option is not currently the default on OSX
+as it runs into issues there.
+
+  * This option only applies to the Boehm GC.
 
 * `--enable-dtrace`
 

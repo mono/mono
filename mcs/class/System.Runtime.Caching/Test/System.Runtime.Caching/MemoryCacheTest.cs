@@ -1,4 +1,4 @@
-﻿//
+//
 // MemoryCacheTest.cs
 //
 // Authors:
@@ -844,7 +844,7 @@ namespace MonoTests.System.Runtime.Caching
 			};
 			cip.AbsoluteExpiration = DateTimeOffset.Now.AddMilliseconds (50);
 			mc.Set ("key", "value", cip);
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 
 			Assert.IsFalse (expired, "#A1");
 			object value = mc.Get ("key");
@@ -892,7 +892,7 @@ namespace MonoTests.System.Runtime.Caching
 
 			cip = new CacheItemPolicy ();
 			cip.RemovedCallback = removedCb;
-			cip.AbsoluteExpiration = DateTimeOffset.Now.AddMilliseconds (sleepPeriod + 100);
+			cip.AbsoluteExpiration = DateTimeOffset.Now.AddMilliseconds (sleepPeriod + 500);
 			mc.Set ("key4", "value4", cip);
 			
 			Thread.Sleep (sleepPeriod);
@@ -930,7 +930,7 @@ namespace MonoTests.System.Runtime.Caching
 			};
 
 			mc.Set ("key4", "value4", cip);
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 
 			enumerator = ((IEnumerable) mc).GetEnumerator ();
 			int count = 0;
@@ -949,7 +949,7 @@ namespace MonoTests.System.Runtime.Caching
 			};
 
 			mc.Set ("key5", "value5", cip);
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 
 			enumerator2 = mc.DoGetEnumerator ();
 			count = 0;
@@ -1293,7 +1293,7 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (10, mc.GetCount (), "#EGV2");
 
-				global::System.Threading.Thread.Sleep (1000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				// we have waited but the items won't be expired by the timer since it wont have fired yet
 				Assert.AreEqual (10, mc.GetCount (), "#EGV3");

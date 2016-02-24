@@ -228,7 +228,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	}
 
 	/* 
-	 * To avoid the locking plus the other overhead of mono_runtime_invoke (),
+	 * To avoid the locking plus the other overhead of mono_runtime_invoke_checked (),
 	 * create and precompile a wrapper which calls the finalize method using
 	 * a CALLVIRT.
 	 */
@@ -890,7 +890,7 @@ mono_gc_is_finalizer_internal_thread (MonoInternalThread *thread)
  * This routine tests whether the @thread argument represents the
  * finalization thread.
  * 
- * Returns true if @thread is the finalization thread.
+ * Returns: TRUE if @thread is the finalization thread.
  */
 gboolean
 mono_gc_is_finalizer_thread (MonoThread *thread)

@@ -193,6 +193,10 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Finalizers aren't guaranteed
+#if MONOTOUCH
+		[Category ("NotWorking")] // https://bugzilla.xamarin.com/show_bug.cgi?id=34617
+#endif
 		public void DisposeOnThreadExit ()
 		{
 			var threadLocal = new ThreadLocal<SetMreOnFinalize>();
@@ -210,7 +214,7 @@ namespace MonoTests.System.Threading
 			}, 500);
 
 			if (!mres.IsSet)
-				Assert.Fail ();
+				Assert.Fail ("Finalizer didn't run after thread termination");
 		}
 	}
 }

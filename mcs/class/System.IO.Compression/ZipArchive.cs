@@ -87,35 +87,42 @@ namespace System.IO.Compression
 
 		private void CreateZip(Stream stream, ZipArchiveMode mode)
 		{
-			if (mode != ZipArchiveMode.Read && mode != ZipArchiveMode.Create && mode != ZipArchiveMode.Update)
-				throw new ArgumentOutOfRangeException("mode");
-
-			// If the mode parameter is set to Read, the stream must support reading.
-			if (mode == ZipArchiveMode.Read && !stream.CanRead)
-				throw new ArgumentException("Stream must support reading for Read archive mode");
-
-			// If the mode parameter is set to Create, the stream must support writing.
-			if (mode == ZipArchiveMode.Create && !stream.CanWrite)
-				throw new ArgumentException("Stream must support writing for Create archive mode");
-
-			// If the mode parameter is set to Update, the stream must support reading, writing, and seeking.
-			if (mode == ZipArchiveMode.Update && (!stream.CanRead || !stream.CanWrite || !stream.CanSeek))
-				throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
-
 			try {
-				zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
-					? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
-					: SharpCompress.Archive.Zip.ZipArchive.Create();
-			} catch (Exception e) {
-				throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
-			}
+				if (mode != ZipArchiveMode.Read && mode != ZipArchiveMode.Create && mode != ZipArchiveMode.Update)
+					throw new ArgumentOutOfRangeException("mode");
 
-			entries = new Dictionary<string, ZipArchiveEntry>();
-			if (Mode != ZipArchiveMode.Create) {
-				foreach (var entry in zipFile.Entries) {
-					var zipEntry = new ZipArchiveEntry(this, entry);
-					entries[entry.Key] = zipEntry;
+				// If the mode parameter is set to Read, the stream must support reading.
+				if (mode == ZipArchiveMode.Read && !stream.CanRead)
+					throw new ArgumentException("Stream must support reading for Read archive mode");
+
+				// If the mode parameter is set to Create, the stream must support writing.
+				if (mode == ZipArchiveMode.Create && !stream.CanWrite)
+					throw new ArgumentException("Stream must support writing for Create archive mode");
+
+				// If the mode parameter is set to Update, the stream must support reading, writing, and seeking.
+				if (mode == ZipArchiveMode.Update && (!stream.CanRead || !stream.CanWrite || !stream.CanSeek))
+					throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
+
+				try {
+					zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
+						? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
+						: SharpCompress.Archive.Zip.ZipArchive.Create();
+				} catch (Exception e) {
+					throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
 				}
+
+				entries = new Dictionary<string, ZipArchiveEntry>();
+				if (Mode != ZipArchiveMode.Create) {
+					foreach (var entry in zipFile.Entries) {
+						var zipEntry = new ZipArchiveEntry(this, entry);
+						entries[entry.Key] = zipEntry;
+					}
+				}
+			}
+			catch {
+				if (!leaveStreamOpen)
+					stream.Dispose();
+				throw;
 			}
 		}
 

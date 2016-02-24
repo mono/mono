@@ -419,8 +419,15 @@ mono_method_desc_free (MonoMethodDesc *desc)
 	g_free (desc);
 }
 
-/*
+/**
+ * mono_method_descr_match:
+ * @desc: MonoMethoDescription
+ * @method: MonoMethod to test
+ *
+ * Determines whether the specified @method matches the provided @desc description.
+ *
  * namespace and class are supposed to match already if this function is used.
+ * Returns: True if the method matches the description, false otherwise.
  */
 gboolean
 mono_method_desc_match (MonoMethodDesc *desc, MonoMethod *method)
@@ -531,7 +538,7 @@ mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 	}
 
 	if (desc->name_space && desc->klass) {
-		klass = mono_class_from_name (image, desc->name_space, desc->klass);
+		klass = mono_class_try_load_from_name (image, desc->name_space, desc->klass);
 		if (!klass)
 			return NULL;
 		return mono_method_desc_search_in_class (desc, klass);
@@ -541,12 +548,17 @@ mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 	mono_image_get_table_info (image, MONO_TABLE_TYPEDEF);
 	methods = mono_image_get_table_info (image, MONO_TABLE_METHOD);
 	for (i = 0; i < mono_table_info_get_rows (methods); ++i) {
+		MonoError error;
 		guint32 token = mono_metadata_decode_row_col (methods, i, MONO_METHOD_NAME);
 		const char *n = mono_metadata_string_heap (image, token);
 
 		if (strcmp (n, desc->name))
 			continue;
-		method = mono_get_method (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL);
+		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
+		if (!method) {
+			mono_error_cleanup (&error);
+			continue;
+		}
 		if (mono_method_desc_full_match (desc, method))
 			return method;
 	}
@@ -762,6 +774,12 @@ mono_disasm_code (MonoDisHelper *dh, MonoMethod *method, const guchar *ip, const
 	return result;
 }
 
+/**
+ * mono_field_full_name:
+ * @field: field to retrieve information for
+ *
+ * Returns: the full name for the field, made up of the namespace, type name and the field name.
+ */
 char *
 mono_field_full_name (MonoClassField *field)
 {

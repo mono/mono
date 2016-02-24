@@ -439,8 +439,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	case OP_FCONV_TO_OVF_U8_UN:
 	case OP_FCONV_TO_OVF_I_UN:
 	case OP_FCONV_TO_OVF_U_UN:
-		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-		cfg->exception_message = g_strdup_printf ("float conv.ovf.un opcodes not supported.");
+		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("float conv.ovf.un opcodes not supported."));
 		break;
 
 	case OP_IDIV:
@@ -472,46 +471,67 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		}
 		break;
 
-#if SIZEOF_REGISTER == 8
-	case OP_LREM_IMM:
-#endif
-	case OP_IREM_IMM: {
-		int power = mono_is_power_of_two (ins->inst_imm);
-		if (ins->inst_imm == 1) {
-			ins->opcode = OP_ICONST;
-			MONO_INST_NULLIFY_SREGS (ins);
-			ins->inst_c0 = 0;
-#if __s390__
-		}
-#else
-		} else if ((ins->inst_imm > 0) && (ins->inst_imm < (1LL << 32)) && (power != -1)) {
-			gboolean is_long = ins->opcode == OP_LREM_IMM;
-			int compensator_reg = alloc_ireg (cfg);
-			int intermediate_reg;
-
-			/* Based on gcc code */
-
-			/* Add compensation for negative numerators */
-
-			if (power > 1) {
-				intermediate_reg = compensator_reg;
-				MONO_EMIT_NEW_BIALU_IMM (cfg, is_long ? OP_LSHR_IMM : OP_ISHR_IMM, intermediate_reg, ins->sreg1, is_long ? 63 : 31);
-			} else {
-				intermediate_reg = ins->sreg1;
+#if SIZEOF_VOID_P == 8
+	case OP_LDIV:
+	case OP_LREM:
+	case OP_LDIV_UN:
+	case OP_LREM_UN:
+		if (cfg->backend->emulate_div && mono_arch_opcode_needs_emulation (cfg, ins->opcode))
+			emulate = TRUE;
+		if (!emulate) {
+			if (cfg->backend->need_div_check) {
+				int reg1 = alloc_ireg (cfg);
+				int reg2 = alloc_ireg (cfg);
+				int reg3 = alloc_ireg (cfg);
+				/* b == 0 */
+				MONO_EMIT_NEW_LCOMPARE_IMM (cfg, ins->sreg2, 0);
+				MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "DivideByZeroException");
+				if (ins->opcode == OP_LDIV || ins->opcode == OP_LREM) {
+					/* b == -1 && a == 0x80000000 */
+					MONO_EMIT_NEW_I8CONST (cfg, reg3, -1);
+					MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg2, reg3);
+					MONO_EMIT_NEW_UNALU (cfg, OP_LCEQ, reg1, -1);
+					MONO_EMIT_NEW_I8CONST (cfg, reg3, 0x8000000000000000L);
+					MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, reg3);
+					MONO_EMIT_NEW_UNALU (cfg, OP_LCEQ, reg2, -1);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IAND, reg1, reg1, reg2);
+					MONO_EMIT_NEW_ICOMPARE_IMM (cfg, reg1, 1);
+					MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "OverflowException");
+				}
 			}
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, is_long ? OP_LSHR_UN_IMM : OP_ISHR_UN_IMM, compensator_reg, intermediate_reg, (is_long ? 64 : 32) - power);
-			MONO_EMIT_NEW_BIALU (cfg, is_long ? OP_LADD : OP_IADD, ins->dreg, ins->sreg1, compensator_reg);
-			/* Compute remainder */
-			MONO_EMIT_NEW_BIALU_IMM (cfg, is_long ? OP_LAND_IMM : OP_AND_IMM, ins->dreg, ins->dreg, (1 << power) - 1);
-			/* Remove compensation */
-			MONO_EMIT_NEW_BIALU (cfg, is_long ? OP_LSUB : OP_ISUB, ins->dreg, ins->dreg, compensator_reg);
-
+			MONO_EMIT_NEW_BIALU (cfg, ins->opcode, ins->dreg, ins->sreg1, ins->sreg2);
 			NULLIFY_INS (ins);
 		}
-#endif
 		break;
-	}
+#endif
+
+	case OP_DIV_IMM:
+	case OP_REM_IMM:
+	case OP_IDIV_IMM:
+	case OP_IREM_IMM:
+	case OP_IDIV_UN_IMM:
+	case OP_IREM_UN_IMM:
+		if (cfg->backend->need_div_check) {
+			int reg1 = alloc_ireg (cfg);
+			/* b == 0 */
+			if (ins->inst_imm == 0) {
+				// FIXME: Optimize this
+				MONO_EMIT_NEW_ICONST (cfg, reg1, 0);
+				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, reg1, 0);
+				MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "DivideByZeroException");
+			}
+			if ((ins->opcode == OP_DIV_IMM || ins->opcode == OP_IDIV_IMM || ins->opcode == OP_REM_IMM || ins->opcode == OP_IREM_IMM) &&
+				(ins->inst_imm == -1)) {
+					/* b == -1 && a == 0x80000000 */
+					MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0x80000000);
+					MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "OverflowException");
+			}
+			MONO_EMIT_NEW_BIALU_IMM (cfg, ins->opcode, ins->dreg, ins->sreg1, ins->inst_imm);
+			NULLIFY_INS (ins);
+		} else {
+			emulate = TRUE;
+		}
+		break;
 
 	default:
 		emulate = TRUE;
@@ -1521,7 +1541,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						if (managed_alloc)
 							dest = mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 						else
-							dest = mono_emit_jit_icall (cfg, mono_array_new_specific, iargs);
+							dest = mono_emit_jit_icall (cfg, ves_icall_array_new_specific, iargs);
 						dest->dreg = ins->dreg;
 					}
 					break;

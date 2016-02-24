@@ -62,6 +62,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/reflection-internals.h>
 #include <mono/utils/mono-coop-mutex.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
@@ -229,7 +230,7 @@ typedef struct {
 	gboolean abort_requested;
 
 	/*
-	 * The current mono_runtime_invoke invocation.
+	 * The current mono_runtime_invoke_checked invocation.
 	 */
 	InvokeData *invoke;
 
@@ -1078,9 +1079,7 @@ finish_agent_init (gboolean on_startup)
 		}
 	}
 
-	MONO_PREPARE_BLOCKING;
 	transport_connect (agent_config.address);
-	MONO_FINISH_BLOCKING;
 
 	if (!on_startup) {
 		/* Do some which is usually done after sending the VMStart () event */
@@ -1123,6 +1122,8 @@ socket_transport_recv (void *buf, int len)
 	static gint32 last_keepalive;
 	gint32 msecs;
 
+	MONO_PREPARE_BLOCKING;
+
 	do {
 	again:
 		res = recv (fd, (char *) buf + total, len - total, flags);
@@ -1146,6 +1147,9 @@ socket_transport_recv (void *buf, int len)
 			}
 		}
 	} while ((res > 0 && total < len) || (res == -1 && get_last_sock_error () == MONO_EINTR));
+
+	MONO_FINISH_BLOCKING;
+
 	return total;
 }
  
@@ -1168,7 +1172,10 @@ set_keepalive (void)
 static int
 socket_transport_accept (int socket_fd)
 {
+	MONO_PREPARE_BLOCKING;
 	conn_fd = accept (socket_fd, NULL, NULL);
+	MONO_FINISH_BLOCKING;
+
 	if (conn_fd == -1) {
 		fprintf (stderr, "debugger-agent: Unable to listen on %d\n", socket_fd);
 	} else {
@@ -1183,9 +1190,14 @@ socket_transport_send (void *data, int len)
 {
 	int res;
 
+	MONO_PREPARE_BLOCKING;
+
 	do {
 		res = send (conn_fd, data, len, 0);
 	} while (res == -1 && get_last_sock_error () == MONO_EINTR);
+
+	MONO_FINISH_BLOCKING;
+
 	if (res != len)
 		return FALSE;
 	else
@@ -1302,16 +1314,18 @@ socket_transport_connect (const char *address)
 			tv.tv_usec = agent_config.timeout * 1000;
 			FD_ZERO (&readfds);
 			FD_SET (sfd, &readfds);
+
+			MONO_PREPARE_BLOCKING;
 			res = select (sfd + 1, &readfds, NULL, NULL, &tv);
+			MONO_FINISH_BLOCKING;
+
 			if (res == 0) {
 				fprintf (stderr, "debugger-agent: Timed out waiting to connect.\n");
 				exit (1);
 			}
 		}
 
-		MONO_PREPARE_BLOCKING;
 		conn_fd = socket_transport_accept (sfd);
-		MONO_FINISH_BLOCKING;
 		if (conn_fd == -1)
 			exit (1);
 
@@ -1330,10 +1344,16 @@ socket_transport_connect (const char *address)
 			if (sfd == -1)
 				continue;
 
-			if (connect (sfd, &sockaddr.addr, sock_len) != -1)
+			MONO_PREPARE_BLOCKING;
+			res = connect (sfd, &sockaddr.addr, sock_len);
+			MONO_FINISH_BLOCKING;
+
+			if (res != -1)
 				break;       /* Success */
 			
+			MONO_PREPARE_BLOCKING;
 			close (sfd);
+			MONO_FINISH_BLOCKING;
 		}
 
 		if (rp == 0) {
@@ -1364,7 +1384,9 @@ socket_transport_close1 (void)
 #else
 	shutdown (conn_fd, SHUT_RD);
 	shutdown (listen_fd, SHUT_RDWR);
+	MONO_PREPARE_BLOCKING;
 	close (listen_fd);
+	MONO_FINISH_BLOCKING;
 #endif
 }
 
@@ -1530,19 +1552,15 @@ transport_handshake (void)
 	
 	/* Write handshake message */
 	sprintf (handshake_msg, "DWP-Handshake");
-	/* Must use try blocking as this can nest into code that runs blocking */
-	MONO_PREPARE_BLOCKING;
+
 	do {
 		res = transport_send (handshake_msg, strlen (handshake_msg));
 	} while (res == -1 && get_last_sock_error () == MONO_EINTR);
-	MONO_FINISH_BLOCKING;
 
 	g_assert (res != -1);
 
 	/* Read answer */
-	MONO_PREPARE_BLOCKING;
 	res = transport_recv (buf, strlen (handshake_msg));
-	MONO_FINISH_BLOCKING;
 	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg)) != 0)) {
 		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
 		return FALSE;
@@ -1585,9 +1603,7 @@ stop_debugger_thread (void)
 	if (!inited)
 		return;
 
-	MONO_PREPARE_BLOCKING;
 	transport_close1 ();
-	MONO_FINISH_BLOCKING;
 
 	/* 
 	 * Wait for the thread to exit.
@@ -1604,9 +1620,7 @@ stop_debugger_thread (void)
 		} while (!debugger_thread_exited);
 	}
 
-	MONO_PREPARE_BLOCKING;
 	transport_close2 ();
-	MONO_FINISH_BLOCKING;
 }
 
 static void
@@ -1800,9 +1814,7 @@ send_packet (int command_set, int command, Buffer *data)
 	buffer_add_byte (&buf, command);
 	memcpy (buf.buf + 11, data->buf, data->p - data->buf);
 
-	MONO_PREPARE_BLOCKING;
 	res = transport_send (buf.buf, len);
-	MONO_FINISH_BLOCKING;
 
 	buffer_free (&buf);
 
@@ -1829,9 +1841,7 @@ send_reply_packets (int npackets, ReplyPacket *packets)
 		buffer_add_buffer (&buf, packets [i].data);
 	}
 
-	MONO_PREPARE_BLOCKING;
 	res = transport_send (buf.buf, len);
-	MONO_FINISH_BLOCKING;
 
 	buffer_free (&buf);
 
@@ -3318,18 +3328,14 @@ init_jit_info_dbg_attrs (MonoJitInfo *ji)
 	if (ji->dbg_attrs_inited)
 		return;
 
-	if (!hidden_klass) {
-		hidden_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
-		g_assert (hidden_klass);
-	}
-	if (!step_through_klass) {
-		step_through_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
-		g_assert (step_through_klass);
-	}
-	if (!non_user_klass) {
-		non_user_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
-		g_assert (non_user_klass);
-	}
+	if (!hidden_klass)
+		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
+
+	if (!step_through_klass)
+		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
+
+	if (!non_user_klass)
+		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
 
 	ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
 	if (ainfo) {
@@ -6451,6 +6457,7 @@ add_thread (gpointer key, gpointer value, gpointer user_data)
 static ErrorCode
 do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 *p, guint8 **endp)
 {
+	MonoError error;
 	guint8 *end = invoke->endp;
 	MonoMethod *m;
 	int i, nargs;
@@ -6472,7 +6479,10 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		 */
 		this_arg = NULL;
 		DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (invoke->method, TRUE), this_arg ? this_arg->vtable->klass->name : "<null>");
-		mono_runtime_invoke (invoke->method, NULL, invoke->args, &exc);
+
+		mono_runtime_try_invoke (invoke->method, NULL, invoke->args, &exc, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 		g_assert_not_reached ();
 	}
 
@@ -6549,8 +6559,11 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		if (!strcmp (m->name, ".ctor")) {
 			if (m->klass->flags & TYPE_ATTRIBUTE_ABSTRACT)
 				return ERR_INVALID_ARGUMENT;
-			else
-				this_arg = mono_object_new (domain, m->klass);
+			else {
+				MonoError error;
+				this_arg = mono_object_new_checked (domain, m->klass, &error);
+				mono_error_assert_ok (&error);
+			}
 		} else {
 			return ERR_INVALID_ARGUMENT;
 		}
@@ -6617,10 +6630,12 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 #endif
 
 	mono_stopwatch_start (&watch);
-	if (m->klass->valuetype)
-		res = mono_runtime_invoke (m, this_buf, args, &exc);
-	else
-		res = mono_runtime_invoke (m, this_arg, args, &exc);
+	res = mono_runtime_try_invoke (m, m->klass->valuetype ? (gpointer) this_buf : (gpointer) this_arg, args, &exc, &error);
+	if (exc == NULL && !mono_error_ok (&error)) {
+		exc = (MonoObject*) mono_error_convert_to_exception (&error);
+	} else {
+		mono_error_cleanup (&error); /* FIXME report error */
+	}
 	mono_stopwatch_stop (&watch);
 	DEBUG_PRINTF (1, "[%p] Invoke result: %p, exc: %s, time: %ld ms.\n", (gpointer) (gsize) mono_native_thread_id_get (), res, exc ? exc->vtable->klass->name : NULL, (long)mono_stopwatch_elapsed_ms (&watch));
 	if (exc) {
@@ -6776,7 +6791,7 @@ invoke_method (void)
 	 * Take the loader lock to avoid race conditions with CMD_VM_ABORT_INVOKE:
 	 *
 	 * It is possible that ves_icall_System_Threading_Thread_Abort () was called
-	 * after the mono_runtime_invoke() already returned, but it doesn't matter
+	 * after the mono_runtime_invoke_checked() already returned, but it doesn't matter
 	 * because we reset the abort here.
 	 */
 
@@ -6938,7 +6953,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		wait_for_suspend ();
 
 #ifdef TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
-		env_class = mono_class_from_name (mono_defaults.corlib, "System", "Environment");
+		env_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Environment");
 		if (env_class)
 			exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
 #endif
@@ -7071,7 +7086,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		}
 
 		/*
-		 * Check whether we're still inside the mono_runtime_invoke() and that it's
+		 * Check whether we're still inside the mono_runtime_invoke_checked() and that it's
 		 * actually the correct invocation.
 		 *
 		 * Careful, we do not stop the thread that's doing the invocation, so we can't
@@ -7562,6 +7577,7 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_APPDOMAIN_CREATE_BOXED_VALUE: {
+		MonoError error;
 		MonoClass *klass;
 		MonoDomain *domain2;
 		MonoObject *o;
@@ -7576,7 +7592,8 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// FIXME:
 		g_assert (domain == domain2);
 
-		o = mono_object_new (domain, klass);
+		o = mono_object_new_checked (domain, klass, &error);
+		mono_error_assert_ok (&error);
 
 		err = decode_value (&klass->byval_arg, domain, (guint8 *)mono_object_unbox (o), p, &p, end);
 		if (err != ERR_NONE)
@@ -7619,7 +7636,10 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (token == 0) {
 				buffer_add_id (buf, 0);
 			} else {
-				m = mono_get_method (ass->image, token, NULL);
+				MonoError error;
+				m = mono_get_method_checked (ass->image, token, NULL, NULL, &error);
+				if (!m)
+					mono_error_cleanup (&error); /* FIXME don't swallow the error */
 				buffer_add_methodid (buf, domain, m);
 			}
 		}
@@ -7630,7 +7650,12 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_ASSEMBLY_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_assembly_get_object (domain, ass);
+		MonoError error;
+		MonoObject *o = (MonoObject*)mono_assembly_get_object_checked (domain, ass, &error);
+		if (!o) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+			return ERR_INVALID_OBJECT;
+		}
 		buffer_add_objid (buf, o);
 		break;
 	}
@@ -7849,6 +7874,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 static ErrorCode
 type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint8 *p, guint8 *end, Buffer *buf)
 {
+	MonoError error;
 	MonoClass *nested;
 	MonoType *type;
 	gpointer iter;
@@ -8153,7 +8179,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_type_get_object (domain, &klass->byval_arg);
+		MonoObject *o = (MonoObject*)mono_type_get_object_checked (domain, &klass->byval_arg, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		buffer_add_objid (buf, o);
 		break;
 	}
@@ -8212,7 +8239,6 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	case CMD_TYPE_GET_INTERFACES: {
 		MonoClass *parent;
 		GHashTable *iface_hash = g_hash_table_new (NULL, NULL);
-		MonoError error;
 		MonoClass *tclass, *iface;
 		GHashTableIter iter;
 
@@ -8277,9 +8303,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_CREATE_INSTANCE: {
+		MonoError error;
 		MonoObject *obj;
 
-		obj = mono_object_new (domain, klass);
+		obj = mono_object_new_checked (domain, klass, &error);
+		mono_error_assert_ok (&error);
 		buffer_add_objid (buf, obj);
 		break;
 	}
@@ -9564,9 +9592,7 @@ wait_for_attach (void)
 	}
 
 	/* Block and wait for client connection */
-	MONO_PREPARE_BLOCKING;
 	conn_fd = socket_transport_accept (listen_fd);
-	MONO_FINISH_BLOCKING;
 
 	DEBUG_PRINTF (1, "Accepted connection on %d\n", conn_fd);
 	if (conn_fd == -1) {
@@ -9604,12 +9630,13 @@ debugger_thread (void *arg)
 	ErrorCode err;
 	gboolean no_reply;
 	gboolean attach_failed = FALSE;
+	gpointer attach_cookie, attach_dummy;
 
 	DEBUG_PRINTF (1, "[dbg] Agent thread started, pid=%p\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
 	debugger_thread_id = mono_native_thread_id_get ();
 
-	mono_jit_thread_attach (mono_get_root_domain ());
+	attach_cookie = mono_jit_thread_attach (mono_get_root_domain (), &attach_dummy);
 
 	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
@@ -9626,9 +9653,7 @@ debugger_thread (void *arg)
 	}
 	
 	while (!attach_failed) {
-		MONO_PREPARE_BLOCKING;
 		res = transport_recv (header, HEADER_LENGTH);
-		MONO_FINISH_BLOCKING;
 
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH) {
@@ -9663,9 +9688,7 @@ debugger_thread (void *arg)
 		data = (guint8 *)g_malloc (len - HEADER_LENGTH);
 		if (len - HEADER_LENGTH > 0)
 		{
-			MONO_PREPARE_BLOCKING;
 			res = transport_recv (data, len - HEADER_LENGTH);
-			MONO_FINISH_BLOCKING;
 			if (res != len - HEADER_LENGTH) {
 				DEBUG_PRINTF (1, "[dbg] transport_recv () returned %d, expected %d.\n", res, len - HEADER_LENGTH);
 				break;
@@ -9766,7 +9789,9 @@ debugger_thread (void *arg)
 		DEBUG_PRINTF (2, "[dbg] Detached - restarting clean debugger thread.\n");
 		start_debugger_thread ();
 	}
-	
+
+	mono_jit_thread_detach (attach_cookie, &attach_dummy);
+
 	return 0;
 }
 

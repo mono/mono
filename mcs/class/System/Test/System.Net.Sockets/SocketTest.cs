@@ -22,6 +22,8 @@ using System.IO;
 
 using System.Collections.Generic;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
@@ -34,7 +36,7 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void ConnectIPAddressAny ()
 		{
-			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 
 			/* UDP sockets use Any to disconnect
 			try {
@@ -64,7 +66,7 @@ namespace MonoTests.System.Net.Sockets
 		public void IncompatibleAddress ()
 		{
 			IPEndPoint epIPv6 = new IPEndPoint (IPAddress.IPv6Any,
-								0);
+								NetworkHelpers.FindFreePort ());
 
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP)) {
@@ -111,9 +113,9 @@ namespace MonoTests.System.Net.Sockets
 			Socket.Select (list, list, list, 1000);
 		}
 		
-		private bool BlockingConnect (bool block)
+		private bool BlockingConnect (bool block, int port)
 		{
-			IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 1234);
+			IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, port);
 			Socket server = new Socket(AddressFamily.InterNetwork,
 						   SocketType.Stream,
 						   ProtocolType.Tcp);
@@ -155,11 +157,12 @@ namespace MonoTests.System.Net.Sockets
 		public void AcceptBlockingStatus()
 		{
 			bool block;
-
-			block = BlockingConnect(true);
+			var port = NetworkHelpers.FindFreePort ();
+	
+			block = BlockingConnect(true, port);
 			Assert.AreEqual (block, true, "BlockingStatus01");
 
-			block = BlockingConnect(false);
+			block = BlockingConnect(false, port);
 			Assert.AreEqual (block, false, "BlockingStatus02");
 		}
 
@@ -208,7 +211,7 @@ namespace MonoTests.System.Net.Sockets
 			 * anything...
 			 */
 			sock.BeginConnect (new IPEndPoint (IPAddress.Loopback,
-							   114),
+							   NetworkHelpers.FindFreePort ()),
 					   new AsyncCallback (CFACallback),
 					   sock);
 			CFACalledBack.WaitOne ();
@@ -219,7 +222,7 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void SetSocketOptionBoolean ()
 		{
-			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			Socket sock = new Socket (ep.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			try {
 				sock.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
@@ -230,7 +233,7 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void TestSelect1 ()
 		{
-			Socket srv = CreateServer ();
+			Socket srv = CreateServer (NetworkHelpers.FindFreePort ());
 			ClientSocket clnt = new ClientSocket (srv.LocalEndPoint);
 			Thread th = new Thread (new ThreadStart (clnt.ConnectSleepClose));
 			Socket acc = null;
@@ -260,10 +263,10 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 
-		static Socket CreateServer ()
+		static Socket CreateServer (int port)
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			sock.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			sock.Bind (new IPEndPoint (IPAddress.Loopback, port));
 			sock.Listen (1);
 			return sock;
 		}
@@ -369,7 +372,7 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed19 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 			s.Close();
 
 			s.SendTo (buf, 0, ep);
@@ -380,7 +383,7 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed20 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 			s.Close();
 
 			s.SendTo (buf, 10, 0, ep);
@@ -391,7 +394,7 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed21 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 			s.Close();
 
 			s.SendTo (buf, 0, 10, 0, ep);
@@ -402,7 +405,7 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed22 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 			s.Close();
 
 			s.SendTo (buf, ep);
@@ -424,7 +427,7 @@ namespace MonoTests.System.Net.Sockets
 			Socket server = new Socket (AddressFamily.InterNetwork,
 				SocketType.Stream, ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							9010);
+							NetworkHelpers.FindFreePort ());
 			server.Bind (ep);
 			server.Listen (1);
 
@@ -682,7 +685,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			sock.Bind (new IPEndPoint (IPAddress.Any, 1235));
+			sock.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 			sock.ExclusiveAddressUse = true;
 			sock.Close ();
 		}
@@ -1329,7 +1332,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 
-			sock.Bind (new IPEndPoint (IPAddress.Any, 1236));
+			sock.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 			
 			sock.BeginAccept (BACallback, sock);
 			
@@ -1343,7 +1346,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1237);
+							NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
@@ -1410,7 +1413,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1238);
+							NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
@@ -1478,7 +1481,7 @@ namespace MonoTests.System.Net.Sockets
 						 ProtocolType.Udp);
 			
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1239);
+							NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
@@ -1507,10 +1510,10 @@ namespace MonoTests.System.Net.Sockets
 						 ProtocolType.Tcp);
 			
 			IPEndPoint ep1 = new IPEndPoint (IPAddress.Loopback,
-							 1240);
+							 NetworkHelpers.FindFreePort ());
 			
 			IPEndPoint ep2 = new IPEndPoint (IPAddress.Loopback,
-							 1241);
+							 NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep1);
 			sock.Listen (1);
@@ -1540,7 +1543,7 @@ namespace MonoTests.System.Net.Sockets
 						 ProtocolType.Tcp);
 			
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1242);
+							NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
@@ -1622,7 +1625,7 @@ namespace MonoTests.System.Net.Sockets
 						 SocketType.Stream,
 						 ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1243);
+							NetworkHelpers.FindFreePort ());
 
 			sock.Bind (ep);
 			sock.Listen (1);
@@ -1673,7 +1676,7 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1244);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 
 			listen.Bind (ep);
 			listen.Listen (1);
@@ -1682,7 +1685,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			BCConnected = false;
 			
-			sock.BeginConnect (ip, 1244, BCCallback, sock);
+			sock.BeginConnect (ip, ep.Port, BCCallback, sock);
 
 			if (BCCalledBack.WaitOne (2000, false) == false) {
 				Assert.Fail ("BeginConnectAddressPort wait timed out");
@@ -1721,13 +1724,13 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1245);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 
 			sock.Bind (ep);
 			sock.Listen (1);
 			
 			try {
-				sock.BeginConnect (ip, 1245, BCCallback, sock);
+				sock.BeginConnect (ip, ep.Port, BCCallback, sock);
 				Assert.Fail ("BeginConnectAddressPortListen #1");
 			} catch (InvalidOperationException) {
 			} catch {
@@ -1772,7 +1775,7 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1246);
+							NetworkHelpers.FindFreePort ());
 			IPAddress[] ips = new IPAddress[4];
 			
 			ips[0] = IPAddress.Parse ("127.0.0.4");
@@ -1787,7 +1790,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			BCConnected = false;
 			
-			sock.BeginConnect (ips, 1246, BCCallback, sock);
+			sock.BeginConnect (ips, ep.Port, BCCallback, sock);
 			
 			/* Longer wait here, because the ms runtime
 			 * takes a lot longer to not connect
@@ -1835,7 +1838,7 @@ namespace MonoTests.System.Net.Sockets
 			 * succeed it it can connect to at least one of the requested
 			 * addresses.
 			 */
-			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1246);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			listen.Bind (ep);
 			listen.Listen (1);
@@ -1844,7 +1847,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			BCConnected = false;
 			
-			sock.BeginConnect (allIps, 1246, BCCallback, sock);
+			sock.BeginConnect (allIps, ep.Port, BCCallback, sock);
 			
 			/* Longer wait here, because the ms runtime
 			 * takes a lot longer to not connect
@@ -1892,7 +1895,7 @@ namespace MonoTests.System.Net.Sockets
 						  ProtocolType.Tcp);
 			IPAddress[] ips = new IPAddress[4];
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1247);
+							NetworkHelpers.FindFreePort ());
 			
 			ips[0] = IPAddress.Parse ("127.0.0.4");
 			ips[1] = IPAddress.Parse ("127.0.0.3");
@@ -1903,7 +1906,7 @@ namespace MonoTests.System.Net.Sockets
 			sock.Listen (1);
 			
 			try {
-				sock.BeginConnect (ips, 1247, BCCallback,
+				sock.BeginConnect (ips, ep.Port, BCCallback,
 						   sock);
 				Assert.Fail ("BeginConnectMultipleListen #1");
 			} catch (InvalidOperationException) {
@@ -1959,13 +1962,13 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1248);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
 			
 			try {
-				sock.BeginConnect ("localhost", 1248,
+				sock.BeginConnect ("localhost", ep.Port,
 						   BCCallback, sock);
 				Assert.Fail ("BeginConnectHostPortListen #1");
 			} catch (InvalidOperationException) {
@@ -2033,12 +2036,12 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1254);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 			
 			listen.Bind (ep);
 			listen.Listen (1);
 			
-			sock.Connect (ip, 1254);
+			sock.Connect (ip, ep.Port);
 			
 			Assert.AreEqual (true, sock.Connected, "BeginDisconnect #1");
 			
@@ -2128,9 +2131,9 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPEndPoint ep1 = new IPEndPoint (IPAddress.Loopback,
-							1256);
+							NetworkHelpers.FindFreePort ());
 			IPEndPoint ep2 = new IPEndPoint (IPAddress.Loopback,
-							 1257);
+							 NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep1);
 			
@@ -2156,7 +2159,7 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1258);
+							NetworkHelpers.FindFreePort ());
 			
 			listen.Bind (ep);
 			listen.Listen (1);
@@ -2184,12 +2187,12 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1249);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 
 			listen.Bind (ep);
 			listen.Listen (1);
 			
-			sock.Connect (ip, 1249);
+			sock.Connect (ip, ep.Port);
 			
 			Assert.AreEqual (true, sock.Connected, "ConnectAddressPort #1");
 			
@@ -2223,13 +2226,13 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1250);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 
 			sock.Bind (ep);
 			sock.Listen (1);
 			
 			try {
-				sock.Connect (ip, 1250);
+				sock.Connect (ip, ep.Port);
 				Assert.Fail ("ConnectAddressPortListen #1");
 			} catch (InvalidOperationException) {
 			} catch {
@@ -2281,7 +2284,7 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1251);
+							NetworkHelpers.FindFreePort ());
 			IPAddress[] ips = new IPAddress[4];
 			
 			ips[0] = IPAddress.Parse ("127.0.0.4");
@@ -2292,7 +2295,7 @@ namespace MonoTests.System.Net.Sockets
 			listen.Bind (ep);
 			listen.Listen (1);
 			
-			sock.Connect (ips, 1251);
+			sock.Connect (ips, ep.Port);
 			
 			Assert.AreEqual (true, sock.Connected, "ConnectMultiple #1");
 			Assert.AreEqual (AddressFamily.InterNetwork, sock.RemoteEndPoint.AddressFamily, "ConnectMultiple #2");
@@ -2327,12 +2330,12 @@ namespace MonoTests.System.Net.Sockets
 			 * Bind to IPAddress.Any; Connect() will fail unless it can
 			 * connect to all the addresses in allIps.
 			 */
-			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 1251);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 
 			listen.Bind (ep);
 			listen.Listen (1);
 			
-			sock.Connect (allIps, 1251);
+			sock.Connect (allIps, ep.Port);
 			
 			Assert.AreEqual (true, sock.Connected, "ConnectMultiple2 #1");
 			Assert.AreEqual (AddressFamily.InterNetwork, sock.RemoteEndPoint.AddressFamily, "ConnectMultiple2 #2");
@@ -2371,7 +2374,7 @@ namespace MonoTests.System.Net.Sockets
 						  ProtocolType.Tcp);
 			IPAddress[] ips = new IPAddress[4];
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
-							1252);
+							NetworkHelpers.FindFreePort ());
 			
 			ips[0] = IPAddress.Parse ("127.0.0.4");
 			ips[1] = IPAddress.Parse ("127.0.0.3");
@@ -2382,7 +2385,7 @@ namespace MonoTests.System.Net.Sockets
 			sock.Listen (1);
 			
 			try {
-				sock.Connect (ips, 1252);
+				sock.Connect (ips, ep.Port);
 				Assert.Fail ("ConnectMultipleListen #1");
 			} catch (InvalidOperationException) {
 			} catch {
@@ -2436,13 +2439,13 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1253);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 			
 			sock.Bind (ep);
 			sock.Listen (1);
 			
 			try {
-				sock.Connect ("localhost", 1253);
+				sock.Connect ("localhost", ep.Port);
 				Assert.Fail ("ConnectHostPortListen #1");
 			} catch (InvalidOperationException) {
 			} catch {
@@ -2495,12 +2498,12 @@ namespace MonoTests.System.Net.Sockets
 						    SocketType.Stream,
 						    ProtocolType.Tcp);
 			IPAddress ip = IPAddress.Loopback;
-			IPEndPoint ep = new IPEndPoint (ip, 1255);
+			IPEndPoint ep = new IPEndPoint (ip, NetworkHelpers.FindFreePort ());
 			
 			listen.Bind (ep);
 			listen.Listen (1);
 			
-			sock.Connect (ip, 1255);
+			sock.Connect (ip, ep.Port);
 			
 			Assert.AreEqual (true, sock.Connected, "Disconnect #1");
 			
@@ -2547,7 +2550,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			int i;
 
-			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 1258);
+			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			Socket listensock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			listensock.Bind (endpoint);
@@ -2604,7 +2607,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			int i;
 
-			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 1259);
+			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			Socket listensock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			listensock.Bind (endpoint);
@@ -2700,7 +2703,7 @@ namespace MonoTests.System.Net.Sockets
 						SocketType.Dgram,
 						ProtocolType.Udp);
 			CWRSocket.Bind (new IPEndPoint (IPAddress.Loopback,
-							1256));
+							NetworkHelpers.FindFreePort ()));
 			
 			Thread recv_thread = new Thread (new ThreadStart (CWRReceiveThread));
 			CWRReady.Reset ();
@@ -2718,7 +2721,7 @@ namespace MonoTests.System.Net.Sockets
 		static bool RRCLastRead = false;
 		static ManualResetEvent RRCReady = new ManualResetEvent (false);
 		
-		private static void RRCClientThread ()
+		private static void RRCClientThread (int port)
 		{
 			byte[] bytes = new byte[8];
 			int readbyte;
@@ -2727,7 +2730,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			sock.Connect (new IPEndPoint (IPAddress.Loopback,
-						      1257));
+						      port));
 			
 			NetworkStream stream = new NetworkStream (sock);
 
@@ -3068,7 +3071,7 @@ namespace MonoTests.System.Net.Sockets
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
 				ProtocolType.Tcp);
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, ref remoteEP);
 				Assert.Fail ("#1");
@@ -3110,7 +3113,7 @@ namespace MonoTests.System.Net.Sockets
 				ProtocolType.Tcp);
 			s.Close ();
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, ref remoteEP);
 				Assert.Fail ("#1");
@@ -3129,7 +3132,7 @@ namespace MonoTests.System.Net.Sockets
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
 				ProtocolType.Tcp);
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
@@ -3171,7 +3174,7 @@ namespace MonoTests.System.Net.Sockets
 				ProtocolType.Tcp);
 			s.Close ();
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
@@ -3190,7 +3193,7 @@ namespace MonoTests.System.Net.Sockets
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
 				ProtocolType.Tcp);
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, 0, (SocketFlags) 666,
 					ref remoteEP);
@@ -3231,7 +3234,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket s;
 			byte [] buffer = new byte [5];
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			// size negative
 			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3274,7 +3277,7 @@ namespace MonoTests.System.Net.Sockets
 				ProtocolType.Tcp);
 			s.Close ();
 
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom ((Byte []) null, -1, (SocketFlags) 666,
 					ref remoteEP);
@@ -3293,7 +3296,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
 				ProtocolType.Tcp);
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			try {
 				s.ReceiveFrom ((Byte []) null, -1, -1, (SocketFlags) 666,
@@ -3312,7 +3315,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket s;
 			byte [] buffer = new byte [5];
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			// offset negative
 			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3375,7 +3378,7 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket s;
 			byte [] buffer = new byte [5];
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 
 			// size negative
 			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3436,7 +3439,7 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 
 			byte [] buffer = new byte [5];
-			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			try {
 				s.ReceiveFrom (buffer, -1, -1, (SocketFlags) 666,
 					ref remoteEP);
@@ -3453,14 +3456,15 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void ReceiveRemoteClosed ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
-			sock.Bind (new IPEndPoint (IPAddress.Loopback, 1257));
+			sock.Bind (new IPEndPoint (IPAddress.Loopback, port));
 			sock.Listen (1);
 			
 			RRCReady.Reset ();
-			Thread client_thread = new Thread (new ThreadStart (RRCClientThread));
+			Thread client_thread = new Thread (() => RRCClientThread (port));
 			client_thread.Start ();
 			
 			Socket client = sock.Accept ();
@@ -3482,12 +3486,13 @@ namespace MonoTests.System.Net.Sockets
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
 			
-			s.Bind (new IPEndPoint (IPAddress.Any, 12345));
+			var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
+			s.Bind (ep);
 			
 			Socket ss = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
 			
-			ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
+			ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
 
 			// If we make it this far, we succeeded.
 			
@@ -3525,15 +3530,15 @@ namespace MonoTests.System.Net.Sockets
 			using (Socket ss = new Socket (AddressFamily.InterNetwork,
 						SocketType.Stream, ProtocolType.Tcp)) {
 				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-				s.Bind (new IPEndPoint (IPAddress.Any, 12345));
+				var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
+				s.Bind (ep);
 				s.Listen(1);
 
 				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
 				Exception ex = null;
 				try {
-					ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
+					ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
 					ss.Listen(1);
 				} catch (SocketException e) {
 					ex = e;
@@ -3547,11 +3552,11 @@ namespace MonoTests.System.Net.Sockets
 		[Category ("NotOnMac")]
                 public void ConnectedProperty ()
                 {
-			TcpListener listener = new TcpListener (IPAddress.Loopback, 23456);
+			TcpListener listener = new TcpListener (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			listener.Start();
 
 			Socket client = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			client.Connect (IPAddress.Loopback, 23456);
+			client.Connect (IPAddress.Loopback, ((IPEndPoint)listener.LocalEndpoint).Port);
 			Socket server = listener.AcceptSocket ();
 
 			try {
@@ -3753,7 +3758,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
 
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 				try {
 					s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
 						new IPv6MulticastOption (mcast_addr));
@@ -3775,7 +3780,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
 
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
 					new MulticastOption (mcast_addr));
 			}
@@ -3814,7 +3819,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
 			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, NetworkHelpers.FindFreePort ()));
 				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
 					new IPv6MulticastOption (mcast_addr));
 			}
@@ -3829,7 +3834,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
 			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, NetworkHelpers.FindFreePort ()));
 				try {
 					s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
 						new MulticastOption (mcast_addr));
@@ -3980,7 +3985,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
 
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
 					new MulticastOption (mcast_addr));
 				try {
@@ -4006,7 +4011,7 @@ namespace MonoTests.System.Net.Sockets
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
 				MulticastOption option = new MulticastOption (mcast_addr);
 
-				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.Bind (new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ()));
 				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
 					option);
 				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
@@ -4065,7 +4070,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
 			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
-				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, NetworkHelpers.FindFreePort ()));
 				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
 					new IPv6MulticastOption (mcast_addr));
 				try {
@@ -4194,7 +4199,7 @@ namespace MonoTests.System.Net.Sockets
 		public void Shutdown_NoConnect ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			s.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			s.Bind (new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ()));
 			s.Listen (1);
 			try {
 				s.Shutdown (SocketShutdown.Both);
@@ -4328,12 +4333,62 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 		
+		[Test]
+		public void ConnectToIPV4EndPointUsingDualModelSocket () {
+			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
+			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+				var host = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
+					
+				server.Bind (host);
+				server.Listen (0);
+				
+				var ep = server.LocalEndPoint as IPEndPoint;
+				
+				client.Connect (ep);
+				client.Disconnect (true);
+				
+				client.Connect (IPAddress.Loopback, ep.Port);
+				client.Disconnect (true);
+				
+				client.Connect (new [] {IPAddress.Loopback}, ep.Port);
+				client.Disconnect (true);
+			}
+		}
+		
+		[Test]
+		public void BeginConnectToIPV4EndPointUsingDualModelSocket () {
+			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
+			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+				var host = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
+					
+				server.Bind (host);
+				server.Listen (0);
+				
+				var ep = server.LocalEndPoint as IPEndPoint;
+				
+				BCCalledBack.Reset ();
+				var ar1 = client.BeginConnect (ep, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#1");
+				client.Disconnect (true);
+				
+				BCCalledBack.Reset ();
+				var ar2 = client.BeginConnect (IPAddress.Loopback, ep.Port, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				client.Disconnect (true);
+				
+				BCCalledBack.Reset ();
+				var ar3 = client.BeginConnect (new [] {IPAddress.Loopback}, ep.Port, BCCallback, client);
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				client.Disconnect (true);
+			}
+		}
+
 		Socket StartSocketServer ()
 		{
 
 			Socket listenSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			
-			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ()));
 			listenSocket.Listen (1);
 
 			listenSocket.BeginAccept (new AsyncCallback (ReceiveCallback), listenSocket);
@@ -4358,7 +4413,7 @@ namespace MonoTests.System.Net.Sockets
 			/* see https://bugzilla.xamarin.com/show_bug.cgi?id=36941 */
 
 			using (Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
-				IPEndPoint end_point = new IPEndPoint (IPAddress.Any, 11000);
+				IPEndPoint end_point = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 				socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
 				socket.Bind (end_point);
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 19);

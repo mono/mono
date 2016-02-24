@@ -1,7 +1,0 @@
-2006-09-17	Boris Kirzner <borisk@mainsoft.com>
-
-	* OleDbConnection_ConnectionString.cs: fixed connection string.
-
-2006-05-09  Konstantin Triger <kostat@mainsoft.com>
-
-	* OleDbConnection_GetOleDbSchemaTable.cs: in Oracle Database maps to Schema.

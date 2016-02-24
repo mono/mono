@@ -43,9 +43,6 @@ static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
 					gint32 len1, MonoString *str2,
 					gint32 off2, gint32 len2,
 					gint32 options);
-static MonoString *string_invariant_replace (MonoString *me,
-					     MonoString *oldValue,
-					     MonoString *newValue);
 static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,
 					gint32 count, MonoString *value,
 					MonoBoolean first);
@@ -56,6 +53,9 @@ static gint32 string_invariant_indexof_char (MonoString *source, gint32 sindex,
 static const CultureInfoEntry* culture_info_entry_from_lcid (int lcid);
 
 static const RegionInfoEntry* region_info_entry_from_lcid (int lcid);
+
+/* Lazy class loading functions */
+static GENERATE_GET_CLASS_WITH_CACHE (culture_info, System.Globalization, CultureInfo)
 
 static int
 culture_lcid_locator (const void *a, const void *b)
@@ -574,6 +574,7 @@ MonoArray*
 ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral,
 		MonoBoolean specific, MonoBoolean installed)
 {
+	MonoError error;
 	MonoArray *ret;
 	MonoClass *klass;
 	MonoCultureInfo *culture;
@@ -592,8 +593,7 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 			len++;
 	}
 
-	klass = mono_class_from_name (mono_get_corlib (),
-			"System.Globalization", "CultureInfo");
+	klass = mono_class_get_culture_info_class ();
 
 	/* The InvariantCulture is not in culture_entries */
 	/* We reserve the first slot in the array for it */
@@ -613,7 +613,8 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 		ci = &culture_entries [i];
 		is_neutral = ci->territory == 0;
 		if ((neutral && is_neutral) || (specific && !is_neutral)) {
-			culture = (MonoCultureInfo *) mono_object_new (domain, klass);
+			culture = (MonoCultureInfo *) mono_object_new_checked (domain, klass, &error);
+			mono_error_raise_exception (&error);
 			mono_runtime_object_init ((MonoObject *) culture);
 			construct_culture (culture, ci);
 			culture->use_user_override = TRUE;
@@ -664,14 +665,6 @@ int ves_icall_System_Threading_Thread_current_lcid (void)
 {
 	/* Invariant */
 	return(0x007F);
-}
-
-MonoString *ves_icall_System_String_InternalReplace_Str_Comp (MonoString *this_obj, MonoString *old, MonoString *new_, MonoCompareInfo *comp)
-{
-	/* Do a normal ascii string compare and replace, as we only
-	 * know the invariant locale if we dont have ICU
-	 */
-	return(string_invariant_replace (this_obj, old, new_));
 }
 
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
@@ -764,81 +757,6 @@ static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
 
 	/* if not, check our last char only.. (can this happen?) */
 	return(string_invariant_compare_char(ustr1[pos], ustr2[pos], options));
-}
-
-static MonoString *string_invariant_replace (MonoString *me,
-					     MonoString *oldValue,
-					     MonoString *newValue)
-{
-	MonoString *ret;
-	gunichar2 *src;
-	gunichar2 *dest=NULL; /* shut gcc up */
-	gunichar2 *oldstr;
-	gunichar2 *newstr=NULL; /* shut gcc up here too */
-	gint32 i, destpos;
-	gint32 occurr;
-	gint32 newsize;
-	gint32 oldstrlen;
-	gint32 newstrlen;
-	gint32 srclen;
-
-	occurr = 0;
-	destpos = 0;
-
-	oldstr = mono_string_chars(oldValue);
-	oldstrlen = mono_string_length(oldValue);
-
-	if (NULL != newValue) {
-		newstr = mono_string_chars(newValue);
-		newstrlen = mono_string_length(newValue);
-	} else
-		newstrlen = 0;
-
-	src = mono_string_chars(me);
-	srclen = mono_string_length(me);
-
-	if (oldstrlen != newstrlen) {
-		i = 0;
-		while (i <= srclen - oldstrlen) {
-			if (0 == memcmp(src + i, oldstr, oldstrlen * sizeof(gunichar2))) {
-				occurr++;
-				i += oldstrlen;
-			}
-			else
-				i ++;
-		}
-		if (occurr == 0)
-			return me;
-		newsize = srclen + ((newstrlen - oldstrlen) * occurr);
-	} else
-		newsize = srclen;
-
-	ret = NULL;
-	i = 0;
-	while (i < srclen) {
-		if (0 == memcmp(src + i, oldstr, oldstrlen * sizeof(gunichar2))) {
-			if (ret == NULL) {
-				ret = mono_string_new_size( mono_domain_get (), newsize);
-				dest = mono_string_chars(ret);
-				memcpy (dest, src, i * sizeof(gunichar2));
-			}
-			if (newstrlen > 0) {
-				memcpy(dest + destpos, newstr, newstrlen * sizeof(gunichar2));
-				destpos += newstrlen;
-			}
-			i += oldstrlen;
-			continue;
-		} else if (ret != NULL) {
-			dest[destpos] = src[i];
-		}
-		destpos++;
-		i++;
-	}
-	
-	if (ret == NULL)
-		return me;
-
-	return ret;
 }
 
 static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,

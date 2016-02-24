@@ -1660,6 +1660,25 @@ namespace MonoTests.System.IO
 			
 		}
 
+		[Test]
+		public void OpenCharDeviceRepeatedly ()
+		{
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=38408
+			try {
+				using (var f = new FileStream ("/dev/zero", FileMode.Open))
+				{
+				}
+			} catch (FileNotFoundException) {
+				// Only run this test on platforms where /dev/zero exists
+				Assert.Ignore();
+			}
+
+			// this shouldn't throw
+			using (var g = new FileStream ("/dev/zero", FileMode.Open))
+			{
+			}
+		}
+
 #if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()

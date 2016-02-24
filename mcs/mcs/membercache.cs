@@ -643,6 +643,24 @@ namespace Mono.CSharp {
 			return ambig_candidate;
 		}
 
+		public static List<TypeSpec> GetDeclaredNestedTypes (TypeSpec container)
+		{
+			List<TypeSpec> found = null;
+			foreach (var entry in container.MemberCache.member_hash) {
+				foreach (var member in entry.Value) {
+					if ((member.Kind & MemberKind.NestedMask) == 0)
+						continue;
+
+					if (found == null)
+						found = new List<TypeSpec> ();
+
+					found.Add ((TypeSpec)member);
+				}
+			}
+
+			return found;
+		}
+
 		//
 		// Returns inflated version of MemberSpec, it works similarly to
 		// SRE TypeBuilder.GetMethod

@@ -240,7 +240,7 @@ static void io_ops_init (void)
  * This is is a best effort kind of thing. It assumes a reasonable sane set
  * of permissions by the underlying OS.
  *
- * We assume that basic unix permission bits are authoritative. Which might not
+ * We generally assume that basic unix permission bits are authoritative. Which might not
  * be the case under systems with extended permissions systems (posix ACLs, SELinux, OSX/iOS sandboxing, etc)
  *
  * The choice of access as the fallback is due to the expected lower overhead compared to trying to open the file.
@@ -252,6 +252,13 @@ static void io_ops_init (void)
 static gboolean
 is_file_writable (struct stat *st, const char *path)
 {
+#if __APPLE__
+	// OS X Finder "locked" or `ls -lO` "uchg".
+	// This only covers one of several cases where an OS X file could be unwritable through special flags.
+	if (st->st_flags & (UF_IMMUTABLE|SF_IMMUTABLE))
+		return 0;
+#endif
+
 	/* Is it globally writable? */
 	if (st->st_mode & S_IWOTH)
 		return 1;
@@ -1030,8 +1037,11 @@ static void console_close (gpointer handle, gpointer data)
 
 	g_free (console_handle->filename);
 
-	if (fd > 2)
+	if (fd > 2) {
+		if (console_handle->share_info)
+			_wapi_handle_share_release (console_handle->share_info);
 		close (fd);
+	}
 }
 
 static WapiFileType console_getfiletype(void)
@@ -1152,6 +1162,9 @@ static void pipe_close (gpointer handle, gpointer data)
 
 	/* No filename with pipe handles */
 
+	if (pipe_handle->share_info)
+		_wapi_handle_share_release (pipe_handle->share_info);
+
 	close (fd);
 }
 
@@ -1211,7 +1224,7 @@ static gboolean pipe_read (gpointer handle, gpointer buffer,
 		}
 	}
 	
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read %d bytes from pipe", __func__, ret);
+	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read %d bytes from pipe %p", __func__, ret, handle);
 
 	if(bytesread!=NULL) {
 		*bytesread=ret;
@@ -1623,6 +1636,10 @@ gpointer CreateFile(const gunichar2 *name, guint32 fileaccess,
 #endif
 	if (S_ISFIFO (statbuf.st_mode)) {
 		handle_type = WAPI_HANDLE_PIPE;
+		/* maintain invariant that pipes have no filename */
+		file_handle.filename = NULL;
+		g_free (filename);
+		filename = NULL;
 	} else if (S_ISCHR (statbuf.st_mode)) {
 		handle_type = WAPI_HANDLE_CONSOLE;
 	} else {

@@ -24,12 +24,15 @@ enum {
 	MONO_ERROR_BAD_IMAGE = 5,
 	MONO_ERROR_OUT_OF_MEMORY = 6,
 	MONO_ERROR_ARGUMENT = 7,
+	MONO_ERROR_ARGUMENT_NULL = 11,
 	MONO_ERROR_NOT_VERIFIABLE = 8,
 	/*
 	 * This is a generic error mechanism is you need to raise an arbitrary corlib exception.
 	 * You must pass the exception name otherwise prepare_exception will fail with internal execution. 
 	 */
-	MONO_ERROR_GENERIC = 9
+	MONO_ERROR_GENERIC = 9,
+	/* This one encapsulates a managed exception instance */
+	MONO_ERROR_EXCEPTION_INSTANCE = 10
 };
 
 /*Keep in sync with MonoErrorInternal*/

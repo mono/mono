@@ -202,7 +202,6 @@ namespace Mono.CSharp
 
 		Field pc_field;
 		StateMachineMethod method;
-		int local_name_idx;
 
 		protected StateMachine (ParametersBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
@@ -244,12 +243,19 @@ namespace Mono.CSharp
 			return base.DoDefineMembers ();
 		}
 
-		protected override string GetVariableMangledName (LocalVariable local_info)
+		protected override string GetVariableMangledName (ResolveContext rc, LocalVariable local_info)
 		{
 			if (local_info.IsCompilerGenerated)
-				return base.GetVariableMangledName (local_info);
+				return base.GetVariableMangledName (rc, local_info);
 
-			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ("X");
+			//
+			// Special format which encodes original variable name and
+			// it's scope to support lifted variables debugging. This
+			// is same what csc does and allows to correctly set fields
+			// scope information (like ambiguity, our of scope, etc).
+			//
+			var id = rc.CurrentBlock.Explicit.GetDebugSymbolScopeIndex ();
+			return "<" + local_info.Name + ">__" + id;
 		}
 	}
 

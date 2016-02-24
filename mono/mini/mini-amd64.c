@@ -501,11 +501,11 @@ typedef struct {
 	/* Only if storage == ArgValuetypeInReg */
 	ArgStorage pair_storage [2];
 	gint8 pair_regs [2];
-	/* The size of each pair */
+	/* The size of each pair (bytes) */
 	int pair_size [2];
 	int nregs;
 	/* Only if storage == ArgOnStack */
-	int arg_size;
+	int arg_size; // Bytes, will always be rounded up/aligned to 8 byte boundary
 } ArgInfo;
 
 typedef struct {
@@ -522,16 +522,6 @@ typedef struct {
 } CallInfo;
 
 #define DEBUG(a) if (cfg->verbose_level > 1) a
-
-#ifdef TARGET_WIN32
-static AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
-
-static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
-#else
-static AMD64_Reg_No param_regs [] = { AMD64_RDI, AMD64_RSI, AMD64_RDX, AMD64_RCX, AMD64_R8, AMD64_R9 };
-
- static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
-#endif
 
 static void inline
 add_general (guint32 *gr, guint32 *stack_size, ArgInfo *ainfo)
@@ -551,12 +541,6 @@ add_general (guint32 *gr, guint32 *stack_size, ArgInfo *ainfo)
 		(*gr) ++;
     }
 }
-
-#ifdef TARGET_WIN32
-#define FLOAT_PARAM_REGS 4
-#else
-#define FLOAT_PARAM_REGS 8
-#endif
 
 static void inline
 add_float (guint32 *gr, guint32 *stack_size, ArgInfo *ainfo, gboolean is_double)
@@ -1958,8 +1942,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	offsets = mono_allocate_stack_slots (cfg, cfg->arch.omit_fp ? FALSE: TRUE, &locals_stack_size, &locals_stack_align);
 	if (locals_stack_size > MONO_ARCH_MAX_FRAME_SIZE) {
 		char *mname = mono_method_full_name (cfg->method, TRUE);
-		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-		cfg->exception_message = g_strdup_printf ("Method %s stack is too big.", mname);
+		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Method %s stack is too big.", mname));
 		g_free (mname);
 		return;
 	}
@@ -2475,8 +2458,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 			if (size >= 10000) {
 				/* Avoid asserts in emit_memcpy () */
-				cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-				cfg->exception_message = g_strdup_printf ("Passing an argument of size '%d'.", size);
+				mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Passing an argument of size '%d'.", size));
 				/* Continue normally */
 			}
 
@@ -2701,6 +2683,8 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 	switch (cinfo->ret.storage) {
 	case ArgNone:
 	case ArgInIReg:
+	case ArgInFloatSSEReg:
+	case ArgInDoubleSSEReg:
 		break;
 	case ArgValuetypeInReg: {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -2719,6 +2703,8 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		ArgInfo *ainfo = &cinfo->args [i];
 		switch (ainfo->storage) {
 		case ArgInIReg:
+		case ArgInFloatSSEReg:
+		case ArgInDoubleSSEReg:
 			break;
 		case ArgValuetypeInReg:
 			if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
@@ -2805,7 +2791,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
-	int arg_index, greg, i, pindex;
+	int arg_index, greg, freg, i, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
 	int buffer_offset = 0;
 
@@ -2816,6 +2802,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 
 	arg_index = 0;
 	greg = 0;
+	freg = 0;
 	pindex = 0;
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
@@ -2877,6 +2864,18 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_U4:
 			p->regs [greg ++] = *(guint32*)(arg);
 			break;
+		case MONO_TYPE_R4: {
+			double d;
+
+			*(float*)&d = *(float*)(arg);
+			p->has_fp = 1;
+			p->fregs [freg ++] = d;
+			break;
+		}
+		case MONO_TYPE_R8:
+			p->has_fp = 1;
+			p->fregs [freg ++] = *(double*)(arg);
+			break;
 		case MONO_TYPE_GENERICINST:
 		    if (MONO_TYPE_IS_REFERENCE (t)) {
 				p->regs [greg ++] = PTR_TO_GREG(*(arg));
@@ -2936,8 +2935,9 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	MonoMethodSignature *sig = dinfo->sig;
-	guint8 *ret = ((DynCallArgs*)buf)->ret;
-	mgreg_t res = ((DynCallArgs*)buf)->res;
+	DynCallArgs *dargs = (DynCallArgs*)buf;
+	guint8 *ret = dargs->ret;
+	mgreg_t res = dargs->res;
 	MonoType *sig_ret = mini_get_underlying_type (sig->ret);
 
 	switch (sig_ret->type) {
@@ -2977,6 +2977,12 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 		break;
 	case MONO_TYPE_U8:
 		*(guint64*)ret = res;
+		break;
+	case MONO_TYPE_R4:
+		*(float*)ret = *(float*)&(dargs->fregs [0]);
+		break;
+	case MONO_TYPE_R8:
+		*(double*)ret = dargs->fregs [0];
 		break;
 	case MONO_TYPE_GENERICINST:
 		if (MONO_TYPE_IS_REFERENCE (sig_ret)) {
@@ -5016,6 +5022,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DYN_CALL: {
 			int i;
 			MonoInst *var = cfg->dyn_call_var;
+			guint8 *label;
 
 			g_assert (var->opcode == OP_REGOFFSET);
 
@@ -5026,6 +5033,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			/* Save args buffer */
 			amd64_mov_membase_reg (code, var->inst_basereg, var->inst_offset, AMD64_R11, 8);
+
+			/* Set fp arg regs */
+			amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, has_fp), sizeof (mgreg_t));
+			amd64_test_reg_reg (code, AMD64_RAX, AMD64_RAX);
+			label = code;
+			amd64_branch8 (code, X86_CC_Z, -1, 1);
+			for (i = 0; i < FLOAT_PARAM_REGS; ++i)
+				amd64_sse_movsd_reg_membase (code, i, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + (i * sizeof (double)));
+			amd64_patch (label, code);
 
 			/* Set argument registers */
 			for (i = 0; i < PARAM_REGS; ++i)
@@ -5040,6 +5056,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Save result */
 			amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
 			amd64_mov_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, res), AMD64_RAX, 8);
+			amd64_sse_movsd_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs), AMD64_XMM0);
 			break;
 		}
 		case OP_AMD64_SAVE_SP_TO_LMF: {
@@ -7062,11 +7079,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	/* Stack alignment check */
 #if 0
 	{
+		guint8 *buf;
+
 		amd64_mov_reg_reg (code, AMD64_RAX, AMD64_RSP, 8);
 		amd64_alu_reg_imm (code, X86_AND, AMD64_RAX, 0xf);
 		amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, 0);
-		x86_branch8 (code, X86_CC_EQ, 2, FALSE);
+		buf = code;
+		x86_branch8 (code, X86_CC_EQ, 1, FALSE);
 		amd64_breakpoint (code);
+		amd64_patch (buf, code);
 	}
 #endif
 
@@ -7576,8 +7597,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 			amd64_patch (patch_info->ip.i + cfg->native_code, code);
 
-			exc_class = mono_class_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			g_assert (exc_class);
+			exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", patch_info->data.name);
 			throw_ip = patch_info->ip.i;
 
 			//x86_breakpoint (code);

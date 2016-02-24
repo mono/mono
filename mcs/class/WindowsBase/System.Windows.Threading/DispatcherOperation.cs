@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.Windows.Threading {
 
@@ -88,6 +89,12 @@ namespace System.Windows.Threading {
 		{
 			status = DispatcherOperationStatus.Aborted;
 			throw new NotImplementedException ();
+		}
+
+		public Task Task {
+			get {
+				throw new NotImplementedException();
+			}
 		}
 
 		public DispatcherOperationStatus Status {
