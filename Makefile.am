@@ -162,4 +162,5 @@ update-llvm-version:
 	if test "x$$LLVM_DIR" = "x"; then echo "Set the make variable LLVM_DIR to the directory containing the LLVM installation."; exit 1; fi
 	REV=`$(LLVM_DIR)/bin/llvm-config --version` && sed -e "s,expected_llvm_version=.*,expected_llvm_version=\"$$REV\"," < configure.ac > tmp && mv tmp configure.ac && echo "Version set to $$REV."
 
-
+dsymutil:
+	for f in $(bindir)/* ; do file -b "$$f" | grep -q Mach-O || continue ; $(DSYMUTIL) "$$f" ; done
