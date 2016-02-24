@@ -4527,6 +4527,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_sse_alu_ss_reg_reg (code, X86_SSE_MOVSLDUP, ins->dreg, ins->sreg1);
 			break;
 
+		case OP_ADDSS:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_ADD, ins->sreg1, ins->sreg2);
+			break;
+        case OP_DIVPS:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_DIV, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MULPS:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_MUL, ins->sreg1, ins->sreg2);
+			break;
+		case OP_SUBPS:
+			x86_sse_alu_ss_reg_reg (code, X86_SSE_SUB, ins->sreg1, ins->sreg2);
+			break;
+
 		case OP_PSHUFLEW_HIGH:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			x86_pshufw_reg_reg (code, ins->dreg, ins->sreg1, ins->inst_c0, 1);

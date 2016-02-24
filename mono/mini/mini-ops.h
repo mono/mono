@@ -864,6 +864,11 @@ MINI_OP(OP_PMULQ, "pmulq", XREG, XREG, XREG)
 MINI_OP(OP_PMULW_HIGH_UN, "pmul_high_un", XREG, XREG, XREG)
 MINI_OP(OP_PMULW_HIGH, "pmul_high", XREG, XREG, XREG)
 
+MINI_OP(OP_ADDSS, "addss", XREG, XREG, XREG)
+MINI_OP(OP_SUBSS, "subss", XREG, XREG, XREG)
+MINI_OP(OP_DIVSS, "divss", XREG, XREG, XREG)
+MINI_OP(OP_COMPSS, "cmpss", XREG, XREG, XREG)
+
 /*SSE2 Shift ops must have the _reg version right after as code depends on this ordering.*/ 
 MINI_OP(OP_PSHRW, "pshrw", XREG, XREG, NONE)
 MINI_OP(OP_PSHRW_REG, "pshrw_reg", XREG, XREG, XREG)
