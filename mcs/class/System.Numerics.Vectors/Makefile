@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Numerics.Vectors.dll
 LIB_REFS = System
-LIB_MCS_FLAGS =
+LIB_MCS_FLAGS = /unsafe -d:MONO
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 
