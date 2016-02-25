@@ -1051,6 +1051,7 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/net/System/Net/_HeaderInfo.cs
 ../../../external/referencesource/System/net/System/Net/_HeaderInfoTable.cs
 ../../../external/referencesource/System/net/System/Net/_HTTPDateParse.cs
+../../../external/referencesource/System/net/System/Net/_ProxyChain.cs
 ../../../external/referencesource/System/net/System/Net/HttpStatusCode.cs
 ../../../external/referencesource/System/net/System/Net/HttpVersion.cs
 ../../../external/referencesource/System/net/System/Net/WebHeaderCollection.cs
