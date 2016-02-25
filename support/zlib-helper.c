@@ -26,6 +26,11 @@
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
 
+#define z_malloc(size)          ((gpointer) malloc(size))
+#define z_malloc0(size)         ((gpointer) calloc(1,size))
+#define z_new(type,size)        ((type *) z_malloc (sizeof (type) * (size)))
+#define z_new0(type,size)       ((type *) z_malloc0 (sizeof (type)* (size)))
+
 typedef gint (*read_write_func) (guchar *buffer, gint length, void *gchandle);
 struct _ZStream {
 	z_stream *stream;
@@ -48,13 +53,13 @@ static gint flush_internal (ZStream *stream, gboolean is_final);
 static void *
 z_alloc (void *opaque, unsigned int nitems, unsigned int item_size)
 {
-	return g_malloc0 (nitems * item_size);
+	return z_malloc0 (nitems * item_size);
 }
 
 static void
 z_free (void *opaque, void *ptr)
 {
-	g_free (ptr);
+	free (ptr);
 }
 
 ZStream *
@@ -72,7 +77,7 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	return NULL;
 #endif
 
-	z = g_new0 (z_stream, 1);
+	z = z_new0 (z_stream, 1);
 	if (compress) {
 		retval = deflateInit2 (z, Z_DEFAULT_COMPRESSION, Z_DEFLATED, gzip ? 31 : -15, 8, Z_DEFAULT_STRATEGY);
 	} else {
@@ -80,17 +85,17 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	}
 
 	if (retval != Z_OK) {
-		g_free (z);
+		free (z);
 		return NULL;
 	}
 	z->zalloc = z_alloc;
 	z->zfree = z_free;
-	result = g_new0 (ZStream, 1);
+	result = z_new0 (ZStream, 1);
 	result->stream = z;
 	result->func = func;
 	result->gchandle = gchandle;
 	result->compress = compress;
-	result->buffer = g_new (guchar, BUFFER_SIZE);
+	result->buffer = z_new (guchar, BUFFER_SIZE);
 	result->stream->next_out = result->buffer;
 	result->stream->avail_out = BUFFER_SIZE;
 	result->stream->total_in = 0;
@@ -120,10 +125,10 @@ CloseZStream (ZStream *zstream)
 	} else {
 		inflateEnd (zstream->stream);
 	}
-	g_free (zstream->buffer);
-	g_free (zstream->stream);
+	free (zstream->buffer);
+	free (zstream->stream);
 	memset (zstream, 0, sizeof (ZStream));
-	g_free (zstream);
+	free (zstream);
 	return status;
 }
 
