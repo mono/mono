@@ -60,7 +60,7 @@ namespace System.Net
 
 		public override WebHeaderCollection Headers {
 			get {
-				return new WebHeaderCollection ();
+				return new WebHeaderCollection (WebHeaderCollectionType.FtpWebResponse);
 			}
 		}
 

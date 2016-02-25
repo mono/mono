@@ -50,7 +50,7 @@ namespace System.Net
 				this.responseUri = responseUri;
 				this.fileStream = fileStream;
 				this.contentLength = fileStream.Length;
-				this.webHeaders = new WebHeaderCollection ();
+				this.webHeaders = new WebHeaderCollection (WebHeaderCollectionType.FileWebResponse);
 				this.webHeaders.Add ("Content-Length", Convert.ToString (contentLength));
 				this.webHeaders.Add ("Content-Type", "application/octet-stream");
 			} catch (Exception e) {

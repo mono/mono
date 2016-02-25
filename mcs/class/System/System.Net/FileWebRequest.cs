@@ -61,7 +61,7 @@ namespace System.Net
 		internal FileWebRequest (Uri uri) 
 		{ 
 			this.uri = uri;
- 			this.webHeaders = new WebHeaderCollection ();
+ 			this.webHeaders = new WebHeaderCollection (WebHeaderCollectionType.FileWebRequest);
 		}
 		
 		[Obsolete ("Serialization is obsoleted for this type", false)]

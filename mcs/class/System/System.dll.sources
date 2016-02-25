@@ -648,7 +648,7 @@ ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
-ReferenceSources/WebHeaderCollectionType.cs
+ReferenceSources/UnsafeNclNativeMethods.cs
 ReferenceSources/Win32Exception.cs
 
 ReferenceSources/SSPIConfiguration.cs
@@ -1047,8 +1047,13 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/net/System/Net/WebUtility.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
+../../../external/referencesource/System/net/System/Net/_Connection.cs
+../../../external/referencesource/System/net/System/Net/_HeaderInfo.cs
+../../../external/referencesource/System/net/System/Net/_HeaderInfoTable.cs
+../../../external/referencesource/System/net/System/Net/_HTTPDateParse.cs
 ../../../external/referencesource/System/net/System/Net/HttpStatusCode.cs
 ../../../external/referencesource/System/net/System/Net/HttpVersion.cs
+../../../external/referencesource/System/net/System/Net/WebHeaderCollection.cs
 ../../../external/referencesource/System/net/System/Net/WebRequest.cs
 
 ../../../external/referencesource/System/net/System/Net/Cache/RequestCachePolicy.cs

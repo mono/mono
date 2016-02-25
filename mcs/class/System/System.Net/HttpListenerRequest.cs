@@ -77,7 +77,7 @@ namespace System.Net {
 		internal HttpListenerRequest (HttpListenerContext context)
 		{
 			this.context = context;
-			headers = new WebHeaderCollection ();
+			headers = new WebHeaderCollection (WebHeaderCollectionType.HttpListenerRequest);
 			version = HttpVersion.Version10;
 		}
 
