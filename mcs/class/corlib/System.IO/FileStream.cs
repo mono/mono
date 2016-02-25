@@ -639,6 +639,13 @@ namespace System.IO
 				MonoIOError error;
 
 				FlushBuffer ();
+
+				if (CanSeek && !isExposed) {
+					MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
+					if (error != MonoIOError.ERROR_SUCCESS)
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+				}
+
 				int wcount = count;
 
 				while (wcount > 0){
