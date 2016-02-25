@@ -43,11 +43,11 @@ struct _ZStream {
 };
 typedef struct _ZStream ZStream;
 
-ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
-gint CloseZStream (ZStream *zstream);
-gint Flush (ZStream *stream);
-gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
-gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
+MONO_API ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
+MONO_API gint CloseZStream (ZStream *zstream);
+MONO_API gint Flush (ZStream *stream);
+MONO_API gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
+MONO_API gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
 static gint flush_internal (ZStream *stream, gboolean is_final);
 
 static void *
