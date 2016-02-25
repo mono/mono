@@ -17,6 +17,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef MONO_API
+#define MONO_API
+#endif
+
 #ifndef TRUE
 #define FALSE 0
 #define TRUE 1
