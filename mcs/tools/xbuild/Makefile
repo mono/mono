@@ -83,6 +83,11 @@ install-web-targets:
 	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v10.0/WebApplications
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
 	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
+	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
+	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
+	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
+	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
+
 
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
