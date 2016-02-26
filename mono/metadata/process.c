@@ -57,11 +57,10 @@ ves_icall_System_Diagnostics_Process_GetPid_internal (void)
 	return mono_process_current_pid ();
 }
 
-void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this_obj,
-								 HANDLE process)
+void ves_icall_System_Diagnostics_Process_Process_free_internal (HANDLE process)
 {
 #ifdef THREAD_DEBUG
-	g_message ("%s: Closing process %p, handle %p", __func__, this_obj, process);
+	g_message ("%s: Closing process handle %p", __func__, process);
 #endif
 
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
