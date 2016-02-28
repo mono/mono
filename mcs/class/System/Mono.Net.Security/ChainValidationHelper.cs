@@ -264,7 +264,7 @@ namespace Mono.Net.Security
 				leaf = certs [0];
 
 			if (tlsStream != null)
-				request.ServicePoint.SetServerCertificate (leaf);
+				request.ServicePoint.UpdateServerCertificate (leaf);
 
 			if (leaf == null) {
 				errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
