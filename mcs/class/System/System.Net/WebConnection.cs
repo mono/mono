@@ -419,6 +419,7 @@ namespace System.Net
 					status = tlsStream.ExceptionStatus;
 				else if (!request.Aborted)
 					status = WebExceptionStatus.ConnectFailure;
+				connect_exception = ex;
 				return false;
 			}
 
