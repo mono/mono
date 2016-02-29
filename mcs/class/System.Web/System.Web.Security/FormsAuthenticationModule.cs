@@ -42,11 +42,21 @@ namespace System.Web.Security
 	public sealed class FormsAuthenticationModule : IHttpModule
 	{
 		static readonly object authenticateEvent = new object ();
-		
+
+		// Config values
+		private static bool      _fAuthChecked;
+		private static bool      _fAuthRequired;
+
 		AuthenticationSection _config = null;
 		bool isConfigInitialized = false;
 		EventHandlerList events = new EventHandlerList ();
-		
+	
+		internal static bool FormsAuthRequired {
+			get {
+				return _fAuthRequired;
+			}
+		}
+
 		public event FormsAuthenticationEventHandler Authenticate {
 			add { events.AddHandler (authenticateEvent, value); }
 			remove { events.RemoveHandler (authenticateEvent, value); }
@@ -57,6 +67,14 @@ namespace System.Web.Security
 			if(isConfigInitialized)
 				return;
 			_config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
+
+			// authentication is an app level setting only
+			// so we can read app config early on in an attempt to try and
+			// skip wiring up event delegates
+			if (!_fAuthChecked) {
+				_fAuthRequired = (_config.Mode == AuthenticationMode.Forms);
+				_fAuthChecked = true;
+			}
 			isConfigInitialized = true;
 		}
 
@@ -71,6 +89,7 @@ namespace System.Web.Security
 
 		public void Init (HttpApplication app)
 		{
+
 			app.AuthenticateRequest += new EventHandler (OnAuthenticateRequest);
 			app.EndRequest += new EventHandler (OnEndRequest);
 		}
