@@ -104,7 +104,6 @@ System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
-System/Guid.MonoTouch.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
