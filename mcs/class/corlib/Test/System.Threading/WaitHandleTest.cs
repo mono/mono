@@ -395,6 +395,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
 		public void WaitOneWithTimeoutAndSpuriousWake ()
 		{
@@ -483,6 +484,7 @@ namespace MonoTests.System.Threading {
 				Assert.IsTrue (thread.Join (1000), "#1");
 			}
 		}
+#endif // MONO_FEATURE_THREAD_SUSPEND_RESUME
 	}
 }
 
