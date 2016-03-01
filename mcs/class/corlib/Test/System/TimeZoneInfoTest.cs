@@ -782,6 +782,15 @@ namespace MonoTests.System
 				var timeZones = (global::System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo>) method.Invoke (null, null);
 				Assert.IsTrue (timeZones.Count > 0, "GetSystemTimeZones should not return an empty collection.");
 			}
+
+			[Test]
+			public void WindowsRegistryTimezoneWithParentheses ()
+			{
+				var method = (MethodInfo) typeof (TimeZoneInfo).GetMember ("TrimSpecial", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)[0];
+
+				var name = method.Invoke (null, new object [] { " <--->  Central Standard Time (Mexico)   ||<<>>" });
+				Assert.AreEqual (name, "Central Standard Time (Mexico)", "#1");
+			}
 		}
 		
 		[TestFixture]
