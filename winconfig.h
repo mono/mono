@@ -636,5 +636,5 @@
 /* #undef USE_MONO_MUTEX */
 
 /* Version number of package */
-#define VERSION "4.2.2"
+#define VERSION "4.2.3"
 #endif
