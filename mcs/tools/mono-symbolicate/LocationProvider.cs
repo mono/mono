@@ -58,16 +58,13 @@ namespace Symbolicate
 				return true;
 			}
 
-			[DllImport("mono-symbolicate-native.dll")]
-			private static extern bool mono_seq_point_data_get_il_offset (string path, uint method_token, uint method_index, uint native_offset, out uint il_offset);
-
-			static MethodInfo methodGetIL;
+			SeqPointInfo seqPointInfo;
 			private int GetILOffsetFromFile (int methodToken, uint methodIndex, int nativeOffset)
 			{
-				uint ilOffset;
-				mono_seq_point_data_get_il_offset (seqPointDataPath, (uint) methodToken, methodIndex, (uint) nativeOffset, out ilOffset);
+				if (seqPointInfo == null)
+					seqPointInfo = SeqPointInfo.Read (seqPointDataPath);
 
-				return (int) ilOffset;
+				return seqPointInfo.GetILOffset (methodToken, methodIndex, nativeOffset);
 			}
 
 			private string GetMethodFullName (MethodBase m)
