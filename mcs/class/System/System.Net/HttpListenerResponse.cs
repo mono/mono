@@ -40,7 +40,7 @@ namespace System.Net {
 		bool cl_set;
 		string content_type;
 		CookieCollection cookies;
-		WebHeaderCollection headers = new WebHeaderCollection ();
+		WebHeaderCollection headers = new WebHeaderCollection (WebHeaderCollectionType.HttpListenerResponse);
 		bool keep_alive = true;
 		ResponseStream output_stream;
 		Version version = HttpVersion.Version11;

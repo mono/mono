@@ -155,7 +155,7 @@ namespace System.Net
 			this.requestUri = uri;
 			this.actualUri = uri;
 			this.proxy = GlobalProxySelection.Select;
-			this.webHeaders = new WebHeaderCollection (WebHeaderCollection.HeaderInfo.Request);
+			this.webHeaders = new WebHeaderCollection (WebHeaderCollectionType.HttpWebRequest);
 			ThrowOnError = true;
 			ResetAuthorization ();
 		}
@@ -427,7 +427,7 @@ namespace System.Net
 			get { return webHeaders; }
 			set {
 				CheckRequestStarted ();
-				WebHeaderCollection newHeaders = new WebHeaderCollection (WebHeaderCollection.HeaderInfo.Request);
+				WebHeaderCollection newHeaders = new WebHeaderCollection (WebHeaderCollectionType.HttpWebRequest);
 				int count = value.Count;
 				for (int i = 0; i < count; i++) 
 					newHeaders.Add (value.GetKey (i), value.Get (i));
@@ -1616,7 +1616,7 @@ namespace System.Net
 				if (isProxy && (request.proxy == null || request.proxy.Credentials == null))
 					return false;
 
-				string [] authHeaders = response.Headers.GetValues_internal (isProxy ? "Proxy-Authenticate" : "WWW-Authenticate", false);
+				string [] authHeaders = response.Headers.GetValues_internal (isProxy ? "Proxy-Authenticate" : "WWW-Authenticate");
 				if (authHeaders == null || authHeaders.Length == 0)
 					return false;
 

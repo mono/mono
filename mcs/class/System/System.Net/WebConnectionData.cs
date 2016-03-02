@@ -42,11 +42,11 @@ namespace System.Net
 		public Version ProxyVersion;
 		public Stream stream;
 		public string[] Challenge;
-		ReadState _readState;
+		WebConnection.ReadState _readState;
 
 		public WebConnectionData ()
 		{
-			_readState = ReadState.None;
+			_readState = WebConnection.ReadState.None;
 		}
 
 		public WebConnectionData (HttpWebRequest request)
@@ -63,13 +63,13 @@ namespace System.Net
 			}
 		}
 
-		public ReadState ReadState {
+		public WebConnection.ReadState ReadState {
 			get {
 				return _readState;
 			}
 			set {
 				lock (this) {
-					if ((_readState == ReadState.Aborted) && (value != ReadState.Aborted))
+					if ((_readState == WebConnection.ReadState.Aborted) && (value != WebConnection.ReadState.Aborted))
 						throw new WebException ("Aborted", WebExceptionStatus.RequestCanceled);
 					_readState = value;
 				}

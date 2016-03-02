@@ -39,15 +39,6 @@ using Mono.Net.Security;
 
 namespace System.Net
 {
-	enum ReadState
-	{
-		None,
-		Status,
-		Headers,
-		Content,
-		Aborted
-	}
-
 	class WebConnection
 	{
 		ServicePoint sPoint;
@@ -292,7 +283,7 @@ namespace System.Net
 				}
 
 				Data.StatusCode = status;
-				Data.Challenge = result.GetValues_internal ("Proxy-Authenticate", false);
+				Data.Challenge = result.GetValues_internal ("Proxy-Authenticate");
 				return false;
 			} else if (status != 200) {
 				string msg = String.Format ("The remote server returned a {0} status code.", status);
@@ -1194,6 +1185,15 @@ namespace System.Net
 			set { unsafe_sharing = value; }
 		}
 		// -
+
+		internal enum ReadState
+		{
+			None,
+			Status,
+			Headers,
+			Content,
+			Aborted
+		}
 	}
 }
 

@@ -53,9 +53,7 @@ namespace System.Net.Configuration {
 
 namespace System.Net 
 {
-	[Serializable]
-	public abstract class WebRequest : MarshalByRefObject, ISerializable {
-		static HybridDictionary prefixes = new HybridDictionary ();
+	public abstract partial class WebRequest : MarshalByRefObject, ISerializable {
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
@@ -73,62 +71,16 @@ namespace System.Net
 			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
 			WebRequestModulesSection s = cfg as WebRequestModulesSection;
 			if (s != null) {
-				foreach (WebRequestModuleElement el in
-					 s.WebRequestModules)
-					AddPrefix (el.Prefix, el.Type);
+				foreach (WebRequestModuleElement el in s.WebRequestModules)
+					RegisterPrefix (el.Prefix, (IWebRequestCreate) Activator.CreateInstance (el.Type, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, null));
 				return;
 			}
 	#endif
 			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
 #endif
 		}
-		
-		protected WebRequest () 
-		{
-		}
-		
-		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
-		{
-		}
 
-		static Exception GetMustImplement ()
-		{
-			return new NotImplementedException ("This method must be implemented in derived classes");
-		}
-		
 		// Properties
-
-		private AuthenticationLevel authentication_level = AuthenticationLevel.MutualAuthRequested;
-		
-		public AuthenticationLevel AuthenticationLevel
-		{
-			get {
-				return(authentication_level);
-			}
-			set {
-				authentication_level = value;
-			}
-		}
-		
-		public virtual string ConnectionGroupName {
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual long ContentLength { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual string ContentType { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual ICredentials Credentials { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
 
 		[MonoTODO ("Implement the caching system. Currently always returns a policy with the NoCacheNoStore level")]
 		public virtual RequestCachePolicy CachePolicy
@@ -143,51 +95,9 @@ namespace System.Net
 				return defaultCachePolicy ?? (defaultCachePolicy = new HttpRequestCachePolicy (HttpRequestCacheLevel.NoCacheNoStore));
 			}
 			set {
-				throw GetMustImplement ();
+				throw new NotImplementedException ("This method must be implemented in derived classes");
 			}
 		}
-		
-		public virtual WebHeaderCollection Headers { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-
-		public virtual string Method { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual bool PreAuthenticate { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual IWebProxy Proxy { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual Uri RequestUri { 
-			get { throw GetMustImplement (); }
-		}
-		
-		public virtual int Timeout { 
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
-		
-		public virtual bool UseDefaultCredentials
-		{
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
-		}
-
-		public TokenImpersonationLevel ImpersonationLevel { get; set; }
 
 //		volatile static IWebProxy proxy;
 		static readonly object lockobj = new object ();
@@ -257,83 +167,7 @@ namespace System.Net
 		}
 
 		// Methods
-		
-		public virtual void Abort()
-		{
-			throw GetMustImplement ();
-		}
-		
-		public virtual IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
-		{
-			throw GetMustImplement ();
-		}
-		
-		public virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
-		{
-			throw GetMustImplement ();
-		}
 
-		public static WebRequest Create (string requestUriString) 
-		{
-			if (requestUriString == null)
-				throw new ArgumentNullException ("requestUriString");
-			return Create (new Uri (requestUriString));
-		}
-				
-		public static WebRequest Create (Uri requestUri) 
-		{
-			if (requestUri == null)
-				throw new ArgumentNullException ("requestUri");
-			return GetCreator (requestUri.AbsoluteUri).Create (requestUri);
-		}
-		
-		public static WebRequest CreateDefault (Uri requestUri)
-		{
-			if (requestUri == null)
-				throw new ArgumentNullException ("requestUri");
-			return GetCreator (requestUri.Scheme).Create (requestUri);
-		}
-		static HttpWebRequest SharedCreateHttp (Uri uri)
-		{
-			if (uri.Scheme != "http" && uri.Scheme != "https")
-				throw new NotSupportedException	("The uri should start with http or https");
-
-			return new HttpWebRequest (uri);
-		}
-
-		public static HttpWebRequest CreateHttp (string requestUriString)
-		{
-			if (requestUriString == null)
-				throw new ArgumentNullException ("requestUriString");
-			return SharedCreateHttp (new Uri (requestUriString));
-		}
-			
-		public static HttpWebRequest CreateHttp (Uri requestUri)
-		{
-			if (requestUri == null)
-				throw new ArgumentNullException ("requestUri");
-			return SharedCreateHttp (requestUri);
-		}
-		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
-		{
-			throw GetMustImplement ();
-		}
-		
-		public virtual WebResponse EndGetResponse (IAsyncResult asyncResult)
-		{
-			throw GetMustImplement ();
-		}
-		
-		public virtual Stream GetRequestStream()
-		{
-			throw GetMustImplement ();
-		}
-		
-		public virtual WebResponse GetResponse()
-		{
-			throw GetMustImplement ();
-		}
-		
 		// Takes an ArrayList of fileglob-formatted strings and returns an array of Regex-formatted strings
 		private static string[] CreateBypassList (ArrayList al)
 		{
@@ -360,7 +194,7 @@ namespace System.Net
 				return androidProxy;
 #endif
 #if !NET_2_1
-			if (IsWindows ()) {
+			if ((int) Environment.OSVersion.Platform < 4 /* IsWindows */) {
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
 
 				if (iProxyEnable > 0) {
@@ -392,8 +226,9 @@ namespace System.Net
 					
 					return new WebProxy (strHttpProxy, bBypassOnLocal, CreateBypassList (al));
 				}
-			} else {
+			} else
 #endif
+			{
 				if (Platform.IsMacOS)
 					return CFNetwork.GetDefaultProxy ();
 				
@@ -444,104 +279,27 @@ namespace System.Net
 					} catch (UriFormatException) {
 					}
 				}
-#if !NET_2_1
 			}
-#endif
 			
 			return new WebProxy ();
 #endif // MONOTOUCH
 		}
 
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		internal static ArrayList PrefixList
 		{
-			throw new NotSupportedException ();
-		}
+			get {
+				if (s_PrefixList == null) {
+					lock (InternalSyncObject) {
+						if (s_PrefixList == null)
+							s_PrefixList = new ArrayList ();
+					}
+				}
 
-		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
-		{
-			throw GetMustImplement ();
-		}
-
-		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
-		{
-			if (prefix == null)
-				throw new ArgumentNullException ("prefix");
-			if (creator == null)
-				throw new ArgumentNullException ("creator");
-			
-			lock (prefixes.SyncRoot) {
-				string lowerCasePrefix = prefix.ToLower (CultureInfo.InvariantCulture);
-				if (prefixes.Contains (lowerCasePrefix))
-					return false;
-				prefixes.Add (lowerCasePrefix, creator);
+				return s_PrefixList;
 			}
-			return true;
-		}
-		
-		private static IWebRequestCreate GetCreator (string prefix)
-		{
-			int longestPrefix = -1;
-			IWebRequestCreate creator = null;
-
-			prefix = prefix.ToLower (CultureInfo.InvariantCulture);
-
-			IDictionaryEnumerator e = prefixes.GetEnumerator ();
-			while (e.MoveNext ()) {
-				string key = e.Key as string;
-
-				if (key.Length <= longestPrefix) 
-					continue;
-				
-				if (!prefix.StartsWith (key))
-					continue;
-					
-				longestPrefix = key.Length;
-				creator = (IWebRequestCreate) e.Value;
+			set {
+				s_PrefixList = value;
 			}
-			
-			if (creator == null) 
-				throw new NotSupportedException (prefix);
-				
-			return creator;
-		}
-		
-		internal static bool IsWindows ()
-		{
-			return (int) Environment.OSVersion.Platform < 4;
-		}
-
-		internal static void ClearPrefixes ()
-		{
-			prefixes.Clear ();
-		}
-
-		internal static void RemovePrefix (string prefix)
-		{
-			prefixes.Remove (prefix);
-		}
-
-		internal static void AddPrefix (string prefix, string typeName)
-		{
-			Type type = Type.GetType (typeName);
-			if (type == null)
-				throw new ConfigurationException (String.Format ("Type {0} not found", typeName));
-			AddPrefix (prefix, type);
-		}
-
-		internal static void AddPrefix (string prefix, Type type)
-		{
-			object o = Activator.CreateInstance (type, true);
-			prefixes [prefix] = o;
-		}
-
-		public virtual Task<Stream> GetRequestStreamAsync ()
-		{
-			return Task<Stream>.Factory.FromAsync (BeginGetRequestStream, EndGetRequestStream, null);
-		}
-
-		public virtual Task<WebResponse> GetResponseAsync ()
-		{
-			return Task<WebResponse>.Factory.FromAsync (BeginGetResponse, EndGetResponse, null);
 		}
 
 	}
