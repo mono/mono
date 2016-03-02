@@ -29,6 +29,13 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH || MONODROID
+using Mono.Security.Authenticode;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Authenticode;
+#endif
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
@@ -36,7 +43,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Mono.Security.Authenticode;
 
 namespace System.Net {
 	sealed class EndPointListener
@@ -65,7 +71,7 @@ namespace System.Net {
 			SocketAsyncEventArgs args = new SocketAsyncEventArgs ();
 			args.UserToken = this;
 			args.Completed += OnAccept;
-			sock.AcceptAsync (args);
+			Accept (sock, args);
 			prefixes = new Hashtable ();
 			unregistered = new Dictionary<HttpConnection, HttpConnection> ();
 		}
@@ -90,40 +96,49 @@ namespace System.Net {
 			}
 		}
 
-		static void OnAccept (object sender, EventArgs e)
-		{
-			SocketAsyncEventArgs args = (SocketAsyncEventArgs) e;
-			EndPointListener epl = (EndPointListener) args.UserToken;
-			Socket accepted = null;
-			if (args.SocketError == SocketError.Success) {
+
+                static void Accept (Socket socket, SocketAsyncEventArgs e) 
+                {
+                        try {
+                        e.AcceptSocket = null;
+                        var asyn = socket.AcceptAsync(e);
+                        if (!asyn) {
+                                Console.WriteLine("synchronous!");
+                                ProcessAccept(e);
+                        }
+                        }
+                        catch (Exception ex) { 
+                                Console.WriteLine("ASYNCACCEPT FAILED " + ex.ToString());
+                        }
+                }
+                    
+               
+                static void ProcessAccept (SocketAsyncEventArgs args) 
+                {
+                        Socket accepted = null;
+			if (args.SocketError == SocketError.Success) 
 				accepted = args.AcceptSocket;
-				args.AcceptSocket = null;
-			}
 
-			try {
-				if (epl.sock != null)
-					epl.sock.AcceptAsync (args);
-			} catch {
-				if (accepted != null) {
-					try {
-						accepted.Close ();
-					} catch {}
-					accepted = null;
-				}
-			} 
+			EndPointListener epl = (EndPointListener) args.UserToken;
 
-			if (accepted == null)
-				return;
+
+                        Accept (epl.sock, args); 
+			if (accepted == null) return; 
 
 			if (epl.secure && (epl.cert == null || epl.key == null)) {
-				accepted.Close ();
+				accepted.Close();
 				return;
 			}
 			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
-			lock (epl.unregistered) {
-				epl.unregistered [conn] = conn;
-			}
-			conn.BeginReadRequest ();
+		 	lock (epl.unregistered) {
+		       		epl.unregistered [conn] = conn;
+		       	}
+		       	conn.BeginReadRequest ();
+                }
+
+		static void OnAccept (object sender, SocketAsyncEventArgs e)
+		{
+                        ProcessAccept(e);
 		}
 
 		internal void RemoveConnection (HttpConnection conn)
