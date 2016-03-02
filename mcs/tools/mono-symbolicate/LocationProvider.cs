@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.CompilerServices.SymbolWriter;
+using System.Runtime.InteropServices;
 
 namespace Symbolicate
 {
@@ -57,19 +58,16 @@ namespace Symbolicate
 				return true;
 			}
 
+			[DllImport("mono-symbolicate-native.dll")]
+			private static extern bool mono_seq_point_data_get_il_offset (string path, uint method_token, uint method_index, uint native_offset, out uint il_offset);
+
 			static MethodInfo methodGetIL;
 			private int GetILOffsetFromFile (int methodToken, uint methodIndex, int nativeOffset)
 			{
-				if (string.IsNullOrEmpty (seqPointDataPath))
-					return -1;
+				uint ilOffset;
+				mono_seq_point_data_get_il_offset (seqPointDataPath, (uint) methodToken, methodIndex, (uint) nativeOffset, out ilOffset);
 
-				if (methodGetIL == null)
-					methodGetIL = typeof (StackFrame).GetMethod ("GetILOffsetFromFile", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetIL == null)
-					throw new Exception ("System.Diagnostics.StackFrame.GetILOffsetFromFile could not be found, make sure you have an updated mono installed.");
-
-				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, methodIndex, nativeOffset});
+				return (int) ilOffset;
 			}
 
 			private string GetMethodFullName (MethodBase m)

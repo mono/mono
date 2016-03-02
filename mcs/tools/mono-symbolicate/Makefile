@@ -11,6 +11,8 @@ LOCAL_MCS_FLAGS = \
 	/r:System.Core.dll \
 	/r:System.dll
 
+EXTRA_DISTFILES="mono-symbolicate-native.dll"
+
 include ../../build/executable.make
 
 LIB_PATH = $(topdir)/class/lib/$(PROFILE)
@@ -58,3 +60,12 @@ ifeq ($(AOT_SUPPORTED), 1)
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot=gen-seq-points-file $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
+
+all: mono-symbolicate-native.dll
+
+mono-symbolicate-native.dll:
+	cp ../../../mono/mini/mono-sgen mono-symbolicate-native.dll
+
+clean:
+	rm -rf mono-symbolicate-native.dll
+

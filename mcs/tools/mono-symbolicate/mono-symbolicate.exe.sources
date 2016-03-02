@@ -1,3 +1,4 @@
 symbolicate.cs
 LocationProvider.cs
+SeqPointInfo.cs
 ../../class/corlib/System.Diagnostics/StackTraceHelper.cs
