@@ -31,6 +31,8 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Authenticode;
+#else
+using Mono.Security.Authenticode;
 #endif
 using System;
 using System.IO;
