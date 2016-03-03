@@ -133,6 +133,41 @@
 
 #endif
 
+#define DECL_ERROR MonoError local_error; MonoError *error = &local_error;
+
+/*
+ * Macros to simplify error handling.
+ * Usage:
+ * func (..., CHECK...);
+ * AVOID USING:
+ * - inside a single-statement block
+ * - in functions which need cleanup
+ * - in returns
+ */
+
+/*
+ * If there is an error, return.
+ */
+#define CHECK error); if (!is_ok (error)) { return; }; (void)(0
+
+/*
+ * If there is an error, set the pending exception and return.
+ * USE THIS ONLY IN ICALL FUNCTIONS.
+ */
+#define CHECK_SET_PENDING error); if (!is_ok (error)) { mono_error_set_pending_exception (error); return; }; (void)(0
+
+/*
+ * If there is an error, set the pending exception and return a value.
+ * USE THIS ONLY IN ICALL FUNCTIONS.
+ */
+#define CHECK_SET_PENDING_(val) error); if (!is_ok (error)) { mono_error_set_pending_exception (error); return (val); }; (void)(0
+
+/*
+ * If there is an error, set the pending exception and return NULL.
+ * USE THIS ONLY IN ICALL FUNCTIONS.
+ */
+#define CHECK_SET_PENDING_NULL error); if (!is_ok (error)) { mono_error_set_pending_exception (error); return NULL; }; (void)(0
+
 #ifdef MONO_BIG_ARRAYS
 typedef uint64_t mono_array_size_t;
 typedef int64_t mono_array_lower_bound_t;
