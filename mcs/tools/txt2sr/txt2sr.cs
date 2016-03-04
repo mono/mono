@@ -129,34 +129,6 @@ public class Program
 			}
 			str.WriteLine ("}");
 		}
-
-		/*
-		var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation);
-		foreach (var module in assembly.Modules) {
-			foreach (var type in module.GetTypes ()) {
-				foreach (var method in type.Methods) {
-					if (!method.HasBody)
-						continue;
-					
-					foreach (var instr in method.Body.Instructions) {
-						if (instr.OpCode != OpCodes.Ldstr)
-							continue;
-
-						string value;
-						if (resourcesStrings.TryGetValue ((string)instr.Operand, out value)) {
-							if (options.Verbose) {
-								Console.WriteLine ($"Replacing '{instr.Operand}' with '{value}'");
-							}
-
-							instr.Operand = value;
-						}
-					}
-				}
-			}
-		}
-
-		assembly.Write (assemblyLocation);
-		*/
 	}
 
 	static bool LoadStrings (List<Tuple<string, string>> resourcesStrings, CmdOptions options)
