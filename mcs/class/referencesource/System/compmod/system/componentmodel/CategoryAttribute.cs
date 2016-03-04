@@ -276,44 +276,44 @@ namespace System.ComponentModel {
 #if MONO
             switch (value) {
             case "Action":
-                return "PropertyCategoryAction";
+                return SR.PropertyCategoryAction;
             case "Appearance":
-                return "PropertyCategoryAppearance";
+                return SR.PropertyCategoryAppearance;
             case "Behavior":
-                return "PropertyCategoryBehavior";
+                return SR.PropertyCategoryBehavior;
             case "Data":
-                return "PropertyCategoryData";
+                return SR.PropertyCategoryData;
             case "DDE":
-                return "PropertyCategoryDDE";
+                return SR.PropertyCategoryDDE;
             case "Design":
-                return "PropertyCategoryDesign";
+                return SR.PropertyCategoryDesign;
             case "Focus":
-                return "PropertyCategoryFocus";
+                return SR.PropertyCategoryFocus;
             case "Font":
-                return "PropertyCategoryFont";
+                return SR.PropertyCategoryFont;
             case "Key":
-                return "PropertyCategoryKey";
+                return SR.PropertyCategoryKey;
             case "List":
-                return "PropertyCategoryList";
+                return SR.PropertyCategoryList;
             case "Layout":
-                return "PropertyCategoryLayout";
+                return SR.PropertyCategoryLayout;
             case "Mouse":
-                return "PropertyCategoryMouse";
+                return SR.PropertyCategoryMouse;
             case "Position":
-                return "PropertyCategoryPosition";
+                return SR.PropertyCategoryPosition;
             case "Text":
-                return "PropertyCategoryText";
+                return SR.PropertyCategoryText;
             case "Scale":
-                return "PropertyCategoryScale";
+                return SR.PropertyCategoryScale;
             case "Config":
-                return "PropertyCategoryConfig";
+                return SR.PropertyCategoryConfig;
 #if !MOBILE
             case "Default":
-                return "PropertyCategoryDefault";
+                return SR.PropertyCategoryDefault;
             case "DragDrop":
-                return "PropertyCategoryDragDrop";
+                return SR.PropertyCategoryDragDrop;
             case "WindowStyle":
-                return "PropertyCategoryWindowStyle";
+                return SR.PropertyCategoryWindowStyle;
 #endif
             }
             return value;
