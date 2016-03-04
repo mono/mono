@@ -230,7 +230,7 @@ namespace System
 			out IntPtr pUnk);
 	}
 }
-#elif MOBILE_STATIC
+#else
 namespace System
 {
 	// this is a shim class so we can AOT during mobile_static build without --enable-minimal=com
