@@ -80,7 +80,9 @@ endif
 
 ifdef RESOURCE_STRINGS
 ifdef BOOTSTRAP_PROFILE
-MCS_FLAGS_RESOURCE_STRINGS += $(RESOURCE_STRINGS:%=--getresourcestrings:%)
+ifneq (basic, $(BUILD_TOOLS_PROFILE))
+RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
+endif
 endif
 endif
 
@@ -280,8 +282,11 @@ endif
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(MCS_FLAGS_RESOURCE_STRINGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
+ifdef RESOURCE_STRINGS_FILES
+	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
+endif
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)

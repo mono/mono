@@ -49,4 +49,5 @@ Assembly/AssemblyInfo.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/ValidationException.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/ValidationResult.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/Validator.cs
-DataAnnotationsResources.cs
+ReferenceSources/SR.cs
+ReferenceSources/SR.missing.cs

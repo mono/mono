@@ -6,6 +6,7 @@ Assembly/AssemblyInfo.cs
 
 ReferenceSources/NativeOledbWrapper.cs
 ReferenceSources/Res.cs
+ReferenceSources/Res.Missing.cs
 ReferenceSources/ResCategoryAttribute.cs
 ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs

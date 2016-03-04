@@ -1,12 +1,10 @@
 namespace System.ComponentModel.DataAnnotations.Resources
 {
-static class DataAnnotationsResources
+static partial class DataAnnotationsResources
 {
-	public const string ArgumentIsNullOrWhitespace = "The argument '{0}' cannot be null, empty or contain only white space.";
 	public const string AssociatedMetadataTypeTypeDescriptor_MetadataTypeContainsUnknownProperties = "The associated metadata type for type '{0}' contains the following unknown properties or fields: {1}. Please make sure that the names of these members match the names of the properties on the main type.";
 	public const string AttributeStore_Unknown_Property = "The type '{0}' does not contain a public property named '{1}'.";
 	public const string Common_PropertyNotFound = "The property {0}.{1} could not be found.";
-	public const string CompareAttribute_MustMatch = "'{0}' and '{1}' do not match.";
 	public const string CompareAttribute_UnknownProperty = "Could not find a property named {0}.";
 	public const string CreditCardAttribute_Invalid = "The {0} field is not a valid credit card number.";
 	public const string CustomValidationAttribute_Method_Must_Return_ValidationResult = "The CustomValidationAttribute method '{0}' in type '{1}' must return System.ComponentModel.DataAnnotations.ValidationResult.  Use System.ComponentModel.DataAnnotations.ValidationResult.Success to represent success.";
@@ -24,20 +22,14 @@ static class DataAnnotationsResources
 	public const string EnumDataTypeAttribute_TypeNeedsToBeAnEnum = "The type '{0}' needs to represent an enumeration type.";
 	public const string FileExtensionsAttribute_Invalid = "The {0} field only accepts files with the following extensions: {1}";
 	public const string LocalizableString_LocalizationFailed = "Cannot retrieve property '{0}' because localization failed.  Type '{1}' is not public or does not contain a public static string property with the name '{2}'.";
-	public const string MaxLengthAttribute_InvalidMaxLength = "MaxLengthAttribute must have a Length value that is greater than zero. Use MaxLength() without parameters to indicate that the string or array can have the maximum allowable length.";
-	public const string MaxLengthAttribute_ValidationError = "The field {0} must be a string or array type with a maximum length of '{1}'.";
 	public const string MetadataTypeAttribute_TypeCannotBeNull = "MetadataClassType cannot be null.";
-	public const string MinLengthAttribute_InvalidMinLength = "MinLengthAttribute must have a Length value that is zero or greater.";
-	public const string MinLengthAttribute_ValidationError = "The field {0} must be a string or array type with a minimum length of '{1}'.";
 	public const string PhoneAttribute_Invalid = "The {0} field is not a valid phone number.";
 	public const string RangeAttribute_ArbitraryTypeNotIComparable = "The type {0} must implement {1}.";
 	public const string RangeAttribute_MinGreaterThanMax = "The maximum value '{0}' must be greater than or equal to the minimum value '{1}'.";
 	public const string RangeAttribute_Must_Set_Min_And_Max = "The minimum and maximum values must be set.";
 	public const string RangeAttribute_Must_Set_Operand_Type = "The OperandType must be set when strings are used for minimum and maximum values.";
 	public const string RangeAttribute_ValidationError = "The field {0} must be between {1} and {2}.";
-	public const string RegexAttribute_ValidationError = "The field {0} must match the regular expression '{1}'.";
 	public const string RegularExpressionAttribute_Empty_Pattern = "The pattern must be set to a valid regular expression.";
-	public const string RequiredAttribute_ValidationError = "The {0} field is required.";
 	public const string StringLengthAttribute_InvalidMaxLength = "The maximum length must be a nonnegative integer.";
 	public const string StringLengthAttribute_ValidationError = "The field {0} must be a string with a maximum length of {1}.";
 	public const string StringLengthAttribute_ValidationErrorIncludingMinimum = "The field {0} must be a string with a minimum length of {2} and a maximum length of {1}.";

@@ -13,7 +13,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-RESOURCE_STRINGS = \
+TXT_RESOURCE_STRINGS = \
 	../../../external/referencesource/System.Xml/System.Xml.txt \
 	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
