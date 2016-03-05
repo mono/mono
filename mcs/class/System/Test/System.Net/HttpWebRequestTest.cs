@@ -958,7 +958,7 @@ namespace MonoTests.System.Net
 		[Ignore ("This does not timeout any more. That's how MS works when reading small responses")]
 		public void ReadTimeout ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -988,7 +988,7 @@ namespace MonoTests.System.Net
 		[Test] // bug #324300
 		public void AllowAutoRedirect ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// allow autoredirect
@@ -1034,7 +1034,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void PostAndRedirect_NoCL ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8769);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1062,7 +1062,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void PostAndRedirect_CL ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8770);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1090,7 +1090,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void PostAnd401 ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8771);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1119,7 +1119,7 @@ namespace MonoTests.System.Net
 		[Category ("NotWorking")]
 		public void InternalServerError ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8766);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// POST
@@ -1176,7 +1176,7 @@ namespace MonoTests.System.Net
 		[Category ("NotWorking")] // #B3 fails; we get a SocketException: An existing connection was forcibly closed by the remote host
 		public void NoContentLength ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8767);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// POST
@@ -1417,7 +1417,7 @@ namespace MonoTests.System.Net
 		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
 		public void TestTimeoutPropertyWithServerThatExistsAndRespondsButTooLate ()
 		{
-			var ep = new IPEndPoint (IPAddress.Loopback, 8123);
+			var ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep + "/foobar/";
 
 			using (var responder = new SocketResponder (ep, TimeOutHandler))

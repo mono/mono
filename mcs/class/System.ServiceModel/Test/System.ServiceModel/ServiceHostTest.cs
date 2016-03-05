@@ -270,7 +270,8 @@ namespace MonoTests.System.ServiceModel
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpointMexWithNoImpl ()
 		{
-			using (ServiceHost h = new ServiceHost (typeof (Foo), new Uri ("http://localhost:8080"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost h = new ServiceHost (typeof (Foo), new Uri ("http://localhost:" + port))) {
 				// it expects ServiceMetadataBehavior
 				h.AddServiceEndpoint (ServiceMetadataBehavior.MexContractName, MetadataExchangeBindings.CreateMexHttpBinding (), "mex");
 			}
@@ -279,21 +280,23 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void AddServiceEndpointMetadataExchange ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			// MyMetadataExchange implements IMetadataExchange
 			ServiceHost host = new ServiceHost (typeof (MyMetadataExchange));
 			host.AddServiceEndpoint ("IMetadataExchange",
 						 new BasicHttpBinding (),
-						 "http://localhost:8080/");
+						 "http://localhost:" + port + "/");
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpointMetadataExchangeFullNameFails ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			ServiceHost host = new ServiceHost (typeof (MyMetadataExchange));
 			host.AddServiceEndpoint ("System.ServiceModel.Description.IMetadataExchange",
 						 new BasicHttpBinding (),
-						 "http://localhost:8080");
+						 "http://localhost:" + port);
 		}
 
 		[Test]
