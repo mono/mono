@@ -1853,7 +1853,8 @@ namespace MonoTests.System.Net
 		[Category ("AndroidNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
 		public void UploadFileAsyncContentType ()
 		{
-			var serverUri = "http://localhost:13370/";
+			var port = NetworkHelpers.FindFreePort ();
+			var serverUri = "http://localhost:" + port + "/";
 			var filename = Path.GetTempFileName ();
 
 			HttpListener listener = new HttpListener ();

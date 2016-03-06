@@ -202,7 +202,7 @@ $(STD_TARGETS): %: do-%
 
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] AOT All Assemblies";)
-LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml'
+LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades'
 COMPILE_ALL_PROFILE_ASSEMBLIES = $(LIST_ALL_PROFILE_ASSEMBLIES) | MONO_PATH="./" xargs -I '{}' $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) '{}'
 
 do-all-aot:
