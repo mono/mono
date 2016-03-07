@@ -10,6 +10,7 @@ System.Web.Services.Configuration/WsdlHelpGeneratorElementTest.cs
 System.Web.Services.Configuration/WsiProfilesElementTest.cs
 System.Web.Services.Configuration/XmlFormatExtensionAttributeTest.cs
 System.Web.Services.Discovery/ContractReferenceTest.cs
+System.Web.Services.Discovery/DiscoveryClientProtocolTest.cs
 System.Web.Services.Description/BindingCollectionTest.cs
 System.Web.Services.Description/DocumentableItemTest.cs
 System.Web.Services.Description/TypesTest.cs
