@@ -349,7 +349,11 @@ namespace Mono.CSharp
 
 			var errors_printer = new SessionReportPrinter ();
 			var old = bc.Report.SetPrinter (errors_printer);
-			ama = new Invocation (ama, args).Resolve (bc);
+
+			//
+			// The expression await t is classified the same way as the expression (t).GetAwaiter().GetResult(). 
+			//
+			ama = new Invocation (new ParenthesizedExpression (ama, Location.Null), args).Resolve (bc);
 			bc.Report.SetPrinter (old);
 
 			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (ama.Type)) {
