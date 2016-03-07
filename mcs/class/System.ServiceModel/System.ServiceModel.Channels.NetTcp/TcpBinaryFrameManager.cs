@@ -64,16 +64,28 @@ namespace System.ServiceModel.Channels.NetTcp
 			{
 			}
 
+            /// <summary>
+            /// Writes the length of a variable sized record using the 7bit encoding.
+            /// (See MC-NMF Section 2.2.2)
+            /// </summary>
+            /// <param name="value">Value.</param>
 			public void WriteVariableInt (int value)
 			{
 				Write7BitEncodedInt (value);
 			}
 
-			public int GetSizeOfLength (int value)
+            /// <summary>
+            /// Lengths of sections are written in a 7-bit encoded form (See MC-NMF Section 2.2.2)
+            /// Each 7 bits of the length that has any bit set takes up one byte in the encoded form
+            /// This function works out how many bytes will be required to represent a given int.
+            /// </summary>
+            /// <returns>The size of length.</returns>
+            /// <param name="value">Value.</param>
+            public int GetSizeOfLength (int value)
 			{
 				int x = 0;
 				do {
-					value /= 0x100;
+					value = value >> 7;
 					x++;
 				} while (value != 0);
 				return x;
