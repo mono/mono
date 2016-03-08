@@ -41,18 +41,13 @@ REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
+TXT_RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
 #
-# MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
+# MOBILE_PROFILE needs SECURITY_DEP
 #
 ifdef MOBILE_PROFILE
-ifeq ($(PROFILE),xammac)
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
-LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
-else
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
-endif
 else
 EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
@@ -78,7 +73,6 @@ endif
 EXTRA_DISTFILES = \
 	Test/test-config-file				\
 	Test/test-config-file-net-2.0			\
-	Test/System.Security.Cryptography.X509Certificates/pkits/ChangeLog	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\

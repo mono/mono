@@ -39,12 +39,7 @@ using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	class Type3Message : MessageBase {
+	public class Type3Message : MessageBase {
 
 		private NtlmAuthLevel _level;
 		private byte[] _challenge;
@@ -89,7 +84,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		public Type3Message (Type2Message type2) : base (3)
 		{
 			_type2 = type2;
-			_level = DefaultAuthLevel;
+			_level = NtlmSettings.DefaultAuthLevel;
 			_challenge = (byte[]) type2.Nonce.Clone ();
 
 			_domain = type2.TargetName;
@@ -269,11 +264,13 @@ namespace Mono.Security.Protocol.Ntlm {
 					throw new InvalidOperationException (
 						"Refusing to use legacy-mode LM/NTLM authentication " +
 							"unless explicitly enabled using DefaultAuthLevel.");
-				
+
+				#pragma warning disable 618
 				using (var legacy = new ChallengeResponse (_password, _challenge)) {
 					lm = legacy.LM;
 					ntlm = legacy.NT;
 				}
+				#pragma warning restore 618
 			} else {
 				ChallengeResponse2.Compute (_type2, _level, _username, _password, _domain, out lm, out ntlm);
 			}

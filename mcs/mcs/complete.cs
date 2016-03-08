@@ -115,7 +115,16 @@ namespace Mono.CSharp {
 			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
 
 			if (sn != null) {
-				expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+				var errors_printer = new SessionReportPrinter ();
+				var old = rc.Report.SetPrinter (errors_printer);
+				try {
+					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+				} finally {
+					rc.Report.SetPrinter (old);
+				}
+
+				if (errors_printer.ErrorsCount != 0)
+					return null;
 
 				//
 				// Resolve expression which does have type set as we need expression type

@@ -1210,6 +1210,16 @@ namespace Mono.CSharp {
 				settings.RuntimeMetadataVersion = value;
 				return ParseResult.Success;
 
+			// csc options that we don't support
+			case "/utf8output":
+			case "/subsystemversion":
+			case "/highentropyva":
+			case "/highentropyva+":
+			case "/highentropyva-":
+			case "/win32manifest":
+			case "/nowin32manifest":
+				return ParseResult.Success;
+
 			default:
 				return ParseResult.UnknownOption;
 			}

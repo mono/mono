@@ -49,7 +49,7 @@ namespace Mono.Security.Interface
 			set { checkCertRevocationStatus = value; }
 		}
 
-		public bool UseServicePointManagerCallback {
+		public bool? UseServicePointManagerCallback {
 			get { return useServicePointManagerCallback; }
 			set { useServicePointManagerCallback = value; }
 		}
@@ -82,10 +82,14 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		public CipherSuiteCode[] EnabledCiphers {
+			get; set;
+		}
+
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
-		bool useServicePointManagerCallback = true;
+		bool? useServicePointManagerCallback = null;
 		bool skipSystemValidators = false;
 		bool callbackNeedsChain = true;
 		ICertificateValidator certificateValidator;
@@ -94,7 +98,7 @@ namespace Mono.Security.Interface
 		{
 		}
 
-		volatile static MonoTlsSettings defaultSettings;
+		static MonoTlsSettings defaultSettings;
 
 		public static MonoTlsSettings DefaultSettings {
 			get {
@@ -155,6 +159,7 @@ namespace Mono.Security.Interface
 			callbackNeedsChain = other.callbackNeedsChain;
 			UserSettings = other.UserSettings;
 			EnabledProtocols = other.EnabledProtocols;
+			EnabledCiphers = other.EnabledCiphers;
 			TrustAnchors = other.TrustAnchors;
 			cloned = true;
 		}

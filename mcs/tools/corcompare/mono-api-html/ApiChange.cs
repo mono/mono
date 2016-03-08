@@ -21,15 +21,9 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendAdded (string text, bool breaking = false)
 		{
-			if (breaking)
-				Member.Append ("<span style='text-decoration: underline'>");
-			if (State.Colorize)
-				Member.Append ("<span style='color:green'>");
+			Member.Append ("<span class='added ").Append (breaking ? "added-breaking-inline" : string.Empty).Append ("'>");
 			Member.Append (text);
-			if (State.Colorize)
-				Member.Append ("</span>");
-			if (breaking)
-				Member.Append ("</span>");
+			Member.Append ("</span>");
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
@@ -37,12 +31,8 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendRemoved (string text, bool breaking = true)
 		{
-			Member.Append ("<span style='text-decoration: line-through'>");
-			if (State.Colorize && breaking)
-				Member.Append ("<span style='color:red'>");
+			Member.Append ("<span class='removed removed-inline ").Append (breaking ? "removed-breaking-inline" : string.Empty).Append ("'>");
 			Member.Append (text);
-			if (State.Colorize && breaking)
-				Member.Append ("</span>");
 			Member.Append ("</span>");
 			Breaking |= breaking;
 			AnyChange = true;

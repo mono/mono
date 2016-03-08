@@ -37,7 +37,6 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class ExtensionsTest
 	{
-/* It does not compile probably due to bug #359733.
 		[Test]
 		public void Remove ()
 		{
@@ -45,7 +44,6 @@ namespace MonoTests.System.Xml.Linq
 			doc.Root.Nodes ().Remove<XNode> ();
 			Assert.IsNull (doc.Root.FirstNode, "#1");
 		}
-*/
 
 		[Test]
 		public void InDocumentOrder ()

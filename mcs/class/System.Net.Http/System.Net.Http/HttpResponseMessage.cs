@@ -66,7 +66,7 @@ namespace System.Net.Http
 
 		public string ReasonPhrase {
 			get {
-				return reasonPhrase ?? HttpListenerResponse.GetStatusDescription ((int) statusCode);
+				return reasonPhrase ?? HttpListenerResponseHelper.GetStatusDescription ((int) statusCode);
 			}
 			set {
 				reasonPhrase = value;

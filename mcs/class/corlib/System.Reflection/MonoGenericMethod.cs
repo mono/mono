@@ -45,10 +45,6 @@ namespace System.Reflection
 			throw new InvalidOperationException ();
 		}
 
-		public override extern Type ReflectedType {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
-		}
 	}
 
 	[Serializable]
@@ -59,11 +55,6 @@ namespace System.Reflection
 		{
 			// this should not be used
 			throw new InvalidOperationException ();
-		}
-
-		public override extern Type ReflectedType {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
 		}
 	}
 }

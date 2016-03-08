@@ -131,6 +131,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private X509Certificate FindParentCertificate (X509Certificate cert)
 		{
+			#pragma warning disable 618
 			// This certificate is the root certificate
 			if (cert.GetName () == cert.GetIssuerName ())
 				return null;
@@ -140,6 +141,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					return certificate;
 			}
 			return null;
+			#pragma warning restore 618
 		}
 
 		#endregion

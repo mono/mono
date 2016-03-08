@@ -97,6 +97,8 @@ namespace NUnit.ConsoleRunner
 						testFilter = new AndFilter( testFilter, excludeFilter );
 				}
 
+				testFilter = BabysitterSupport.AddBabysitterFilter(testFilter);
+
 				TestResult result = null;
 				string savedDirectory = Environment.CurrentDirectory;
 				TextWriter savedOut = Console.Out;

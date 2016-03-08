@@ -63,16 +63,24 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				var client = new TempConvertSoapClient (binding, remoteAddress);
 
 				var wait = new ManualResetEvent (false);
+
+				Exception error = null;
+				string result = null;
+
 				client.CelsiusToFahrenheitCompleted += delegate (object o, CelsiusToFahrenheitCompletedEventArgs e) {
-					if (e.Error != null)
-						throw e.Error;
-					Assert.AreEqual ("76.1", e.Result, "#1");
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 
 				client.CelsiusToFahrenheitAsync ("24.5");
-				if (!wait.WaitOne (TimeSpan.FromSeconds (20)))
-					Assert.Fail ("timeout");
+
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
+				Assert.IsNull (error, "#1, inner exception: {0}", error);
+				Assert.AreEqual ("76.1", result, "#2");
 			} finally {
 				serviceHost.Close ();
 			}

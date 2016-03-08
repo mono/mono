@@ -181,8 +181,8 @@ namespace System.Runtime.Serialization
 		void ReadISerializable (ClassDataContract classContract)
 		{
 			ConstructorInfo ctor = classContract.GetISerializableConstructor ();
-			context.ReadSerializationInfo (xmlReader, classContract.UnderlyingType);
-			ctor.Invoke (objectLocal, new object [] {context.GetStreamingContext ()});
+			var info = context.ReadSerializationInfo (xmlReader, classContract.UnderlyingType);
+			ctor.Invoke (objectLocal, new object [] {info, context.GetStreamingContext ()});
 		}
 
 		void ReadClass (ClassDataContract classContract)

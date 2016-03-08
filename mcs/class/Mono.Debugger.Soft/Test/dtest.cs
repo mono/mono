@@ -2938,6 +2938,22 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void MemberInOtherDomain () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "domain-test" });
+
+		vm.EnableEvents (EventType.AppDomainCreate, EventType.AppDomainUnload, EventType.AssemblyUnload);
+
+		Event e = run_until ("domains_print_across");
+
+		var frame = e.Thread.GetFrames ()[0];
+		var inOtherDomain = frame.GetArgument (0) as ObjectMirror;
+		var crossDomainField = (ObjectMirror) inOtherDomain.GetValue (inOtherDomain.Type.GetField("printMe"));
+		Assert.AreEqual ("SentinelClass", crossDomainField.Type.Name);
+	}
+
+	[Test]
 	public void Domains () {
 		vm.Detach ();
 
@@ -3604,12 +3620,15 @@ public class DebuggerTests
 		Assert.AreEqual (ThreadState.WaitSleepJoin, thread.ThreadState, "#6");
 
 		frames = thread.GetFrames ();
-		Assert.AreEqual (4, frames.Length, "#7");
-		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8");
-		Assert.AreEqual ("WaitOne", frames [1].Method.Name, "#8.1");
-		Assert.AreEqual ("wait_one", frames [2].Method.Name, "#9");
-		Assert.AreEqual ("Main", frames [3].Method.Name, "#10");
-
+		Assert.AreEqual (8, frames.Length, "#7");
+		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8.0");
+		Assert.AreEqual ("WaitOneNative", frames [1].Method.Name, "#8.1");
+		Assert.AreEqual ("InternalWaitOne", frames [2].Method.Name, "#8.2");
+		Assert.AreEqual ("WaitOne", frames [3].Method.Name, "#8.3");
+		Assert.AreEqual ("WaitOne", frames [4].Method.Name, "#8.4");
+		Assert.AreEqual ("WaitOne", frames [5].Method.Name, "#8.5");
+		Assert.AreEqual ("wait_one", frames [6].Method.Name, "#8.6");
+		Assert.AreEqual ("Main", frames [7].Method.Name, "#8.7");
 
 		var frame = frames [0];
 		Assert.IsTrue (frame.IsNativeTransition, "#11.1");
@@ -3618,12 +3637,12 @@ public class DebuggerTests
 			Assert.Fail ("Known limitation - can't get info from m2n frames");
 		} catch (AbsentInformationException) {}
 
-		frame = frames [1];
+		frame = frames [3];
 		Assert.IsFalse (frame.IsNativeTransition, "#12.1");
 		var wait_one_this = frame.GetThis ();
 		Assert.IsNotNull (wait_one_this, "#12.2");
 
-		frame = frames [2];
+		frame = frames [6];
 		var locals = frame.GetVisibleVariables ();
 		Assert.AreEqual (1, locals.Count, "#13.1");
 

@@ -54,11 +54,15 @@ namespace Mono.Security.Providers.DotNet
 			get { return true; }
 		}
 
+		public override bool SupportsConnectionInfo {
+			get { return false; }
+		}
+
 		public override bool SupportsMonoExtensions {
 			get { return false; }
 		}
 
-		public override bool SupportsTlsContext {
+		internal override bool SupportsTlsContext {
 			get { return false; }
 		}
 
@@ -81,10 +85,10 @@ namespace Mono.Security.Providers.DotNet
 				selection_callback = ConvertCallback (settings.ClientCertificateSelectionCallback);
 			}
 
-			return new DotNetSslStreamImpl (innerStream, leaveInnerStreamOpen, validation_callback, selection_callback);
+			return new DotNetSslStreamImpl (innerStream, leaveInnerStreamOpen, this, validation_callback, selection_callback);
 		}
 
-		public override IMonoTlsContext CreateTlsContext (
+		internal override IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,

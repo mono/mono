@@ -691,9 +691,7 @@ static void printCharToByte(void)
 	printf("\t\tint ch;\n");
 	printf("\t\tint charIndex = 0;\n");
 	printf("\t\tint byteIndex = 0;\n");
-	printf("#if NET_2_0\n");
 	printf("\t\tEncoderFallbackBuffer buffer = null;\n");
-	printf("#endif\n");
 	printf("\t\twhile (charCount > 0)\n");
 	printf("\t\t{\n");
 	printf("\t\t\tch = (int)(chars[charIndex]);\n");

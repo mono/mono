@@ -77,6 +77,7 @@ namespace Mono.CSharp
 
 		// Win32 version info values
 		string vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark;
+		string pa_file_version, pa_assembly_version;
 
 		protected AssemblyDefinition (ModuleContainer module, string name)
 		{
@@ -240,6 +241,7 @@ namespace Mono.CSharp
 					SetCustomAttribute (ctor, cdata);
 				} else {
 					builder_extra.SetVersion (vinfo, a.Location);
+					pa_assembly_version = vinfo.ToString ();
 				}
 
 				return;
@@ -312,7 +314,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				builder_extra.AddTypeForwarder (t.GetDefinition (), a.Location);
+				AddTypeForwarders (t, a.Location);
 				return;
 			}
 
@@ -357,15 +359,15 @@ namespace Mono.CSharp
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
 			} else if (a.Type == pa.AssemblyFileVersion) {
-				vi_product_version = a.GetString ();
-				if (string.IsNullOrEmpty (vi_product_version) || IsValidAssemblyVersion (vi_product_version, false) == null) {
+				pa_file_version = a.GetString ();
+				if (string.IsNullOrEmpty (pa_file_version) || IsValidAssemblyVersion (pa_file_version, false) == null) {
 					Report.Warning (7035, 1, a.Location, "The specified version string `{0}' does not conform to the recommended format major.minor.build.revision",
-						vi_product_version, a.Name);
+					                pa_file_version, a.Name);
 					return;
 				}
 
 				// File version info decoding from blob is not supported
-				var cab = new CustomAttributeBuilder ((ConstructorInfo) ctor.GetMetaInfo (), new object[] { vi_product_version });
+				var cab = new CustomAttributeBuilder ((ConstructorInfo)ctor.GetMetaInfo (), new object [] { pa_file_version });
 				Builder.SetCustomAttribute (cab);
 				return;
 			} else if (a.Type == pa.AssemblyProduct) {
@@ -378,6 +380,8 @@ namespace Mono.CSharp
 				vi_trademark = a.GetString ();
 			} else if (a.Type == pa.Debuggable) {
 				has_user_debuggable = true;
+			} else if (a.Type == pa.AssemblyInformationalVersion) {
+				vi_product_version = a.GetString ();
 			}
 
 			//
@@ -387,6 +391,22 @@ namespace Mono.CSharp
 			//
 
 			SetCustomAttribute (ctor, cdata);
+		}
+
+		void AddTypeForwarders (TypeSpec type, Location loc)
+		{
+			builder_extra.AddTypeForwarder (type.GetDefinition (), loc);
+
+			var ntypes = MemberCache.GetDeclaredNestedTypes (type);
+			if (ntypes == null)
+				return;
+			
+			foreach (var nested in ntypes) {
+				if (nested.IsPrivate)
+					continue;
+
+				AddTypeForwarders (nested, loc);
+			}
 		}
 
 		//
@@ -801,7 +821,11 @@ namespace Mono.CSharp
 			if (Compiler.Settings.Win32ResourceFile != null) {
 				Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
 			} else {
-				Builder.DefineVersionInfoResource (vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark);
+				Builder.DefineVersionInfoResource (vi_product, 
+				                                   vi_product_version ?? pa_file_version ?? pa_assembly_version,
+				                                   vi_company,
+				                                   vi_copyright,
+				                                   vi_trademark);
 			}
 
 			if (Compiler.Settings.Win32IconFile != null) {

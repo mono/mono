@@ -24,7 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if SECURITY_DEP && !MONO_FEATURE_NEW_TLS
+#if !MONO_FEATURE_NEW_TLS
+#if SECURITY_DEP
 
 #if MONO_X509_ALIAS
 extern alias PrebuiltSystem;
@@ -394,7 +395,24 @@ namespace System.Net.Security
 		AuthenticatedStream MNS.IMonoSslStream.AuthenticatedStream {
 			get { return this; }
 		}
+
+		MonoTlsProvider MNS.IMonoSslStream.Provider {
+			get { return provider; }
+		}
+
+		MonoTlsConnectionInfo MNS.IMonoSslStream.GetConnectionInfo ()
+		{
+			return Impl.GetConnectionInfo ();
+		}
 	}
 }
+#else // !SECURITY_DEP
+namespace System.Net.Security
+{
+	public class SslStream
+	{
+	}
+}
+#endif
 
 #endif

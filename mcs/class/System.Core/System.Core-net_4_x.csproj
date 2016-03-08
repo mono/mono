@@ -208,6 +208,7 @@
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Runtime\CompilerServices\ExecutionScope.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\Aes.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\CngKeyBlobFormat.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellmanPublicKey.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\ECDsa.cs" />

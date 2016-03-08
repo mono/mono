@@ -48,6 +48,10 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
+if INSTALL_MOBILE_STATIC
+build_profiles += mobile_static
+endif
+
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
 endif

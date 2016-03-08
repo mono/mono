@@ -375,36 +375,6 @@
 
 	And examining the output.
 
-* ChangeLogs
-
-	ChangeLogs are the files that we use to track the project
-	history.  ChangeLogs are found one per directory, or in small
-	projects, one per project.
-
-	The format looks like this:
-
-	2004-11-19  Raja R Harinath  <rharinath@novell.com>
-
-		* Makefile (%-profiles): Go through an intermediate
-		set of rules.  Move body to ...
-		(profiles-do--%): ... this.
-		(profiles-do--run-test): Customized rule that usefully
-		runs with 'make -j' and 'make -k'.
-		(profiles-do--all, profile-do--%--all): Orchestrate
-		the bootstrap process.
-
-		* file.cs (MainForm): Updated version.
-
-	The date, author, email address in the first line.
-
-	From that point on a list of changes in a file-by-file basis,
-	describing what changes were done.
-
-	This information must be cut and pasted into your commit
-	message, so the information ends up in two places: in the
-	subversion repository metadata and also on the source code
-	distirbution (which does not have the Subversion metadata).
-		
 * Warnings
 
 	Avoid commiting code with warnings to the repository, the use

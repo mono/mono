@@ -897,6 +897,18 @@ namespace Mono.CSharp.Nullable
 
 					ec.MarkLabel (is_null_label);
 					LiftedNull.Create (type, loc).Emit (ec);
+				} else if (Left.IsNull && UnwrapRight != null) {
+					UnwrapRight.Emit (ec);
+
+					ec.Emit (or ? OpCodes.Brtrue_S : OpCodes.Brfalse_S, load_right);
+
+					LiftedNull.Create (type, loc).Emit (ec);
+
+					ec.Emit (OpCodes.Br_S, end_label);
+
+					ec.MarkLabel (load_right);
+
+					UnwrapRight.Load (ec);
 				} else {
 					Right.Emit (ec);
 					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_left);

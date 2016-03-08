@@ -57,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 138;
+		private const int mono_corlib_version = 143;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -375,7 +375,7 @@ namespace System {
 		/// </summary>
 		public static Version Version {
 			get {
-				return new Version (Consts.FxFileVersion);
+				return new Version (Consts.EnvironmentVersion);
 			}
 		}
 
@@ -896,8 +896,11 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool GetIs64BitOperatingSystem ();
+
 		public static bool Is64BitOperatingSystem {
-			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
+			get { return GetIs64BitOperatingSystem (); }
 		}
 
 		public static int SystemPageSize {

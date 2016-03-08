@@ -480,15 +480,16 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void OneWayOperationWithRequestReplyChannel ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var host = new ServiceHost (typeof (OneWayService));
 			host.AddServiceEndpoint (typeof (IOneWayService),
 				new BasicHttpBinding (),
-				new Uri ("http://localhost:30158"));
+				new Uri ("http://localhost:" + port));
 			host.Open ();
 			try {
 				var cf = new ChannelFactory<IOneWayService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:30158"));
+					new EndpointAddress ("http://localhost:" + port));
 				var ch = cf.CreateChannel ();
 				ch.GiveMessage ("test");
 				

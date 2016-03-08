@@ -17,10 +17,8 @@ EXTRA_DIST = \
 	check-exports		\
 	check-coverage		\
 	convert.cs		\
-	current-api		\
 	deploy			\
 	docs.make		\
-	documented		\
 	embedded-api		\
 	exdoc			\
 	file-share-modes	\
@@ -43,8 +41,6 @@ EXTRA_DIST = \
 	object-layout		\
 	precise-gc		\
 	produce-lists		\
-	public			\
-	public-api		\
 	README			\
 	remoting		\
 	ssapre.txt		\

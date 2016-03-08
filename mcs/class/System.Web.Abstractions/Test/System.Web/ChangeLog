@@ -1,8 +1,0 @@
-2010-02-18  Marek Habersack  <mhabersack@novell.com>
-
-	* HttpFileCollectionWrapperTest.cs: added
-
-2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HttpApplicationStateBaseTest.cs : test. Actually I find those
-	  base types just to throw NIE, so I stopped writing tests.

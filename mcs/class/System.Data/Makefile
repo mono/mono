@@ -26,7 +26,7 @@ BUILT_SOURCES = \
 	gen_OleDbParameterCollection.cs
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/System.Data/system.data.txt
+TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Data/system.data.txt
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -nowarn:618,169,612,219,168
 
@@ -37,7 +37,6 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/*.xsd)		\
 	$(wildcard Test/System.Xml/*.xml)		\
 	$(wildcard Test/System.Xml/*.xsd)		\
-	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	app_test_net_4_x.config			\
 	Test/System.Data/binserialize/*.bin	\

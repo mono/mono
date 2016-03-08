@@ -1,5 +1,18 @@
 <h2>Embedding Mono</h2>
 
+	<p>The Mono runtime can be embedded into C and C++
+	applications.   Your C/C++ code can invoke managed code
+	running in the Mono/.NET world and you can also surface your
+	internal application APIs to Mono and .NET.
+
+	<p>For an overview of how to embed Mono into your application
+	and the strategies that you can use to embed Mono, check the
+	Mono
+	website's <a href="http://www.mono-project.com/docs/advanced/embedding/">Embedding
+	Mono</a> page.
+
+	<p>This page is the companion API reference for the above guide.
+	
 	<p>The simplest way of embedding Mono is illustrated here:
 <pre>
 int main (int argc, char *argv)
@@ -48,13 +61,14 @@ getMessage ()
 </pre>
 
 <h4><a name="api:mono_jit_init">mono_jit_init</a></h4>
+<h4><a name="api:mono_jit_parse_options">mono_jit_parse_options</a></h4>
 <h4><a name="api:mono_jit_exec">mono_jit_exec</a></h4>
 <h4><a name="api:mono_set_dirs">mono_set_dirs</a></h4>
-<h4><a name="api:mono_main">mono_main</a></h4>
 <h4><a name="api:mono_parse_default_optimizations">mono_parse_default_optimizations</a></h4>
-
+<h4><a name="api:mono_runtime_set_main_args">mono_runtime_set_main_args</a></h4>
 <h4><a name="api:mono_jit_cleanup">mono_jit_cleanup</a></h4>
-<h4><a name="api:mono_set_defaults">mono_set_defaults</a></h4>
+<h4><a name="api:mono_jit_set_trace_options">mono_jit_set_trace_options</a></h4>
+
 
 <h3>Internal Calls</h3>
 
@@ -141,19 +155,16 @@ getMessage ()
 
 	<p>The following APIs expose this functionality:
 	
+<h4><a name="api:mono_config_cleanup">mono_config_cleanup</a></h4>
+<h4><a name="api:mono_config_is_server_mode">mono_config_is_server_mode</a></h4>
 <h4><a name="api:mono_config_parse">mono_config_parse</a></h4>
 <h4><a name="api:mono_config_parse_memory">mono_config_parse_memory</a></h4>
+<h4><a name="api:mono_config_set_server_mode">mono_config_set_server_mode</a></h4>
+<h4><a name="api:mono_config_string_for_assembly_file">mono_config_string_for_assembly_file</a></h4>
 <h4><a name="api:mono_get_config_dir">mono_get_config_dir</a></h4>
-
-<h3>Function Pointers</h3>
-
-	<p>To wrap a function pointer into something that the Mono
-	runtime can consume, you should use the mono_create_ftnptr.
-	This is only important if you plan on running on the IA64
-	architecture.   Otherwise you can just use the function
-	pointer address.
-	
-<h4><a name="api:mono_create_ftnptr">mono_create_ftnptr</a></h4>
+<h4><a name="api:mono_get_machine_config">mono_get_machine_config</a></h4>
+<h4><a name="api:mono_register_machine_config">mono_register_machine_config</a></h4>
+<h4><a name="api:mono_set_config_dir">mono_set_config_dir</a></h4>
 
 <h3>Advanced Execution Setups</h3>
 
@@ -163,6 +174,15 @@ getMessage ()
 	
 <h4><a name="api:mono_runtime_exec_managed_code">mono_runtime_exec_managed_code</a></h4>
 <h4><a name="api:mono_runtime_exec_main">mono_runtime_exec_main</a></h4>
-<h4><a name="api:mono_init_from_assembly">mono_init_from_assembly</a></h4>
 <h4><a name="api:mono_init">mono_init</a></h4>
+<h4><a name="api:mono_init_from_assembly">mono_init_from_assembly</a></h4>
 <h4><a name="api:mono_init_version">mono_init_version</a></h4>
+<h4><a name="api:mono_jit_exec">mono_jit_exec</a></h4>
+<h4><a name="api:mono_jit_set_aot_mode">mono_jit_set_aot_mode</a></h4>
+<h4><a name="api:mono_set_break_policy">mono_set_break_policy</a></h4>
+<h4><a name="api:mono_get_runtime_build_info">mono_get_runtime_build_info</a></h4>
+
+<h3>Signal Chaining</h3>
+
+<h4><a name="api:mono_set_signal_chaining">mono_set_signal_chaining</a></h4>
+<h4><a name="api:mono_set_crash_chaining">mono_set_crash_chaining</a></h4>

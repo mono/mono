@@ -505,7 +505,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		static bool IsIgnorable (int i, COpt opt)
 		{
-			return Uni.IsIgnorable (i, (byte) (1 +
+			return Uni.IsIgnorable (i, (byte)
+				(((opt & (COpt.Ordinal | COpt.OrdinalIgnoreCase)) == 0 ? 1 : 0) +
 				((opt & COpt.IgnoreSymbols) != 0 ? 2 : 0) +
 				((opt & COpt.IgnoreNonSpace) != 0 ? 4 : 0)));
 			

@@ -1,8 +1,0 @@
-2009-12-08  Marek Safar <marek.safar@gmail.com>
-
-	* AssemblyInfo.cs: InternalsVisibleTo Microsoft.CSharp.
-
-2009-11-26  Marek Safar <marek.safar@gmail.com>
-
-	* ChangeLog: Added
-

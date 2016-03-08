@@ -1,4 +1,0 @@
-2005-07-06  Zoltan Varga  <vargaz@freemail.hu>
-
-	* MiscellaneousBitsAttribute.cs: Add missing ctor.
-

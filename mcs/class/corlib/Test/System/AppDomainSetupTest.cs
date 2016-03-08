@@ -169,6 +169,7 @@ namespace MonoTests.System
 			}
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 #if MOBILE
 		[Category ("NotWorking")]
@@ -184,6 +185,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (data);
 			Assert.IsTrue ((bool) data);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		static void AppDomainInitialized1 (string [] args)
 		{
@@ -199,6 +201,7 @@ namespace MonoTests.System
 		{
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 #if MOBILE
 		[Category ("NotWorking")]
@@ -211,5 +214,6 @@ namespace MonoTests.System
 			s.AppDomainInitializer = InstanceInitializer;
 			AppDomain.CreateDomain ("MyDomain", null, s);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 	}
 }

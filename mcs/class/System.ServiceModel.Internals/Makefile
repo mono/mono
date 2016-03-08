@@ -2,12 +2,16 @@ thisdir = class/System.ServiceModel.Internals
 SUBDIRS = 
 include ../../build/rules.make
 
+ifndef NO_MULTIPLE_APPDOMAINS
+REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
+endif
+
 LIBRARY = System.ServiceModel.Internals.dll
 LIB_REFS = System System.Core System.Xml
 ifneq (2.1, $(FRAMEWORK_VERSION))
 	LIB_REFS += System.Configuration
 endif
-LIB_MCS_FLAGS = /unsafe
+LIB_MCS_FLAGS = /unsafe $(REFERENCE_SOURCES_FLAGS)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

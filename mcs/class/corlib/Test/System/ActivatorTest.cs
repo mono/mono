@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -311,7 +311,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -513,7 +513,7 @@ namespace MonoTests.System {
 						  null, null);
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void CreateInstanceCustomDomain ()
 		{

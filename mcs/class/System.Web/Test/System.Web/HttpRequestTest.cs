@@ -254,6 +254,30 @@ namespace MonoTests.System.Web {
 		{
 			HttpContext.Current.Request.MapPath ("Web.config", "something", false);
 		}
+	
+		[Test]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+		public void ReadOnlyHeadersAdd ()
+		{
+			var r = new HttpRequest ("file", "http://www.gnome.org", "key=value&key2=value%32second");
+			r.Headers.Add ("a","a");
+		}
+
+		[Test]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+		public void ReadOnlyHeadersSet ()
+		{
+			var r = new HttpRequest ("file", "http://www.gnome.org", "key=value&key2=value%32second");
+			r.Headers.Set ("a","a");
+		}
+
+		[Test]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+		public void ReadOnlyHeadersRemove ()
+		{
+			var r = new HttpRequest ("file", "http://www.gnome.org", "key=value&key2=value%32second");
+			r.Headers.Remove ("a");
+		}
 	}
 	
 	[TestFixture]

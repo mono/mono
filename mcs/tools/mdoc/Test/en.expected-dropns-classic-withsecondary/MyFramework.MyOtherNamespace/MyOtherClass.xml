@@ -1,7 +1,7 @@
 <Type Name="MyOtherClass" FullName="MyFramework.MyOtherNamespace.MyOtherClass">
   <TypeSignature Language="C#" Value="public class MyOtherClass" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyOtherClass extends System.Object" />
-  <AssemblyInfo>
+  <AssemblyInfo apistyle="classic">
     <AssemblyName>DocTest-DropNS-classic-secondary</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>

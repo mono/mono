@@ -37,6 +37,7 @@ namespace System.Security {
 
 		public abstract void EnsureState ();
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public bool IsStateAvailable ()
 		{
 			AppDomainManager adm = AppDomain.CurrentDomain.DomainManager;
@@ -44,6 +45,13 @@ namespace System.Security {
 				return false;
 			return adm.CheckSecuritySettings (this);
 		}
+#else
+		[Obsolete ("SecurityState.IsStateAvailable is not supported on this platform.", true)]
+		public bool IsStateAvailable ()
+		{
+			throw new PlatformNotSupportedException ("SecurityState.IsStateAvailable is not supported on this platform.");
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 	}
 }
 

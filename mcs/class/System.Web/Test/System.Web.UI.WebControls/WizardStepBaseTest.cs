@@ -308,7 +308,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void WizardStepBase_Theme ()
 		{
-			WebTest.CopyResource (GetType (), "WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
+			WebTest.CopyResource (GetType (), "WizardTest.skin", "App_Themes/WizardStepBase/WizardTest.skin");
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreInit = set_properties;
@@ -328,7 +328,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static void set_properties (Page p)
 		{
-			p.Theme = "Theme1";
+			p.Theme = "WizardStepBase";
 		}
 
 		public static void theme (Page p)

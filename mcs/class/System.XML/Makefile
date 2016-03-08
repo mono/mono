@@ -13,7 +13,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-RESOURCE_STRINGS = \
+TXT_RESOURCE_STRINGS = \
 	../../../external/referencesource/System.Xml/System.Xml.txt \
 	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
@@ -36,20 +36,18 @@ endif
 LOCAL_MCS_FLAGS += -lib:$(bare_libdir)
 
 nist_dom_files = \
-	ChangeLog ITest.cs readme.txt util.cs \
-	fundamental/ChangeLog \
-	files/ChangeLog files/noDTDXMLfile.xml files/otherDoc.xml files/staff.dtd files/staff.html files/staff.xml
+	ITest.cs readme.txt util.cs \
+	files/noDTDXMLfile.xml files/otherDoc.xml files/staff.dtd files/staff.html files/staff.xml
 
 xmlfiles_files = \
-	ChangeLog nested-included.dtd literal-data.xml nested-dtd-test.dtd nested-dtd-test.xml simple.xml \
-	xsl/ChangeLog xsl/empty.xsl \
-	XsdValidation/ChangeLog XsdValidation/1.xsd XsdValidation/2.xsd	XsdValidation/3.xsd XsdValidation/4.xsd \
-	xsd/ChangeLog xsd/1.xsd xsd/2.xsd xsd/3.xsd xsd/4.xsd xsd/5.xsd xsd/6.xsd xsd/xml.xsd xsd/81360.xsd xsd/81360inc1.xsd xsd/81360inc2.xsd
+	nested-included.dtd literal-data.xml nested-dtd-test.dtd nested-dtd-test.xml simple.xml \
+	xsl/empty.xsl \
+	XsdValidation/1.xsd XsdValidation/2.xsd	XsdValidation/3.xsd XsdValidation/4.xsd \
+	xsd/1.xsd xsd/2.xsd xsd/3.xsd xsd/4.xsd xsd/5.xsd xsd/6.xsd xsd/xml.xsd xsd/81360.xsd xsd/81360inc1.xsd xsd/81360inc2.xsd
 
 EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
-	Test/ChangeLog			\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
@@ -62,7 +60,6 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/XmlFiles/xsl/*.xml) \
 	$(wildcard Test/XmlFiles/xsl/*.xsl) \
 	Test/XmlFiles/xsl/current-in-select.ref \
-	Test/XmlFiles/xsl/ChangeLog \
 	$(xmlfiles_files:%=Test/XmlFiles/%) \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 

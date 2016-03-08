@@ -128,7 +128,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				gch.Free ();
 			}
 		}
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		[Category("MobileNotWorking")] // SIGSEGV, probably on AppDomain.Unload
 		public void WeakHandleWorksOnNonRootDomain ()

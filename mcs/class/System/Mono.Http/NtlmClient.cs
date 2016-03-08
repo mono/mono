@@ -30,11 +30,11 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security.Protocol.Ntlm;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Protocol.Ntlm;
+#else
+using Mono.Security.Protocol.Ntlm;
 #endif
 
 using System;
@@ -148,7 +148,7 @@ namespace Mono.Http
 				return null;
 
 			lock (cache) {
-				var ds = cache.GetOrCreateValue (request);
+				var ds = cache.GetValue (request, x => new NtlmSession ());
 				return ds.Authenticate (header, webRequest, credentials);
 			}
 		}

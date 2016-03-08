@@ -44,7 +44,6 @@ namespace Mono.Net.Security
 	internal static class SystemCertificateValidator
 	{
 		static bool is_macosx;
-		static bool is_mobile;
 #if !MOBILE
 		static X509RevocationMode revocation_mode;
 #endif
@@ -53,13 +52,10 @@ namespace Mono.Net.Security
 		{
 #if MONOTOUCH
 			is_macosx = true;
-			is_mobile = true;
 #elif MONODROID
 			is_macosx = false;
-			is_mobile = true;
 #else
 			is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
-			is_mobile = false;
 #endif
 
 #if !MOBILE

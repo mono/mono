@@ -135,9 +135,18 @@ namespace System.ServiceModel.Channels.NetTcp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		bool close_started;
+		object close_lock = new object ();
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			lock (close_lock) {
+				if (close_started)
+					return;
+				close_started = true;
+			}
+
 			client.Close ();
 			client = null;
 			base.OnClose (timeout);

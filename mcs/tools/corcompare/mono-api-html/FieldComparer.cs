@@ -189,8 +189,9 @@ namespace Xamarin.ApiDiff {
 		{
 			first = true;
 			if (State.BaseType == "System.Enum") {
+				Output.WriteLine ("<div>");
 				Output.WriteLine ("<p>Added value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
-				Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
+				Output.WriteLine ("<pre class='added' data-is-non-breaking>");
 			} else {
 				base.BeforeAdding (list);
 			}
@@ -201,7 +202,7 @@ namespace Xamarin.ApiDiff {
 			first = true;
 			if (State.BaseType == "System.Enum") {
 				Output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
-				Output.WriteLine (State.Colorize ? "<pre style='color: red'>" : "<pre>");
+				Output.WriteLine ("<pre class='removed' data-is-breaking>");
 			} else {
 				base.BeforeRemoving (list);
 			}

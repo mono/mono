@@ -836,10 +836,36 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
-			exited.Wait (10000);
+			Assert.IsTrue (exited.Wait (10000));
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestDisableEventsBeforeExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			p.EnableRaisingEvents = false;
+
+			ManualResetEvent mre = new ManualResetEvent (false);
+			p.Exited += (object sender, EventArgs e) => {
+				mre.Set ();
+			};
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.IsFalse (mre.WaitOne (1000));
 		}
 
 		ProcessStartInfo GetCrossPlatformStartInfo ()
@@ -992,5 +1018,47 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (found, sb.ToString ());
 			}
 		}
+
+#if MONO_FEATURE_PROCESS_START
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestDoubleBeginOutputReadLine ()
+		{
+			using (Process p = new Process ()) {
+				p.StartInfo = GetCrossPlatformStartInfo ();
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.RedirectStandardOutput = true;
+				p.StartInfo.RedirectStandardError = true;
+
+				p.Start ();
+
+				p.BeginOutputReadLine ();
+				p.BeginOutputReadLine ();
+
+				Assert.Fail ();
+			}
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestDoubleBeginErrorReadLine ()
+		{
+			using (Process p = new Process ()) {
+				p.StartInfo = GetCrossPlatformStartInfo ();
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.RedirectStandardOutput = true;
+				p.StartInfo.RedirectStandardError = true;
+
+				p.Start ();
+
+				p.BeginErrorReadLine ();
+				p.BeginErrorReadLine ();
+
+				Assert.Fail ();
+			}
+		}
+#endif // MONO_FEATURE_PROCESS_START
 	}
 }

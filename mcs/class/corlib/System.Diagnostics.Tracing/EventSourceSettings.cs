@@ -33,9 +33,9 @@ namespace System.Diagnostics.Tracing
 	public enum EventSourceSettings
 	{
 		Default = 0,
-		EtwManifestEventFormat = 1,
-		EtwSelfDescribingEventFormat = 4,
-		ThrowOnEventWriteErrors = 8
+		ThrowOnEventWriteErrors = 1,
+		EtwManifestEventFormat = 4,
+		EtwSelfDescribingEventFormat = 8
 	}
 }
 

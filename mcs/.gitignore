@@ -3,8 +3,8 @@
 *.dll
 *.pidb
 *.userprefs
-*_test_*.dll.config
-*_test_*.xml
+*_test.dll.config
+*_test.xml
 *.o
 *.resources
 TestResult-*.log

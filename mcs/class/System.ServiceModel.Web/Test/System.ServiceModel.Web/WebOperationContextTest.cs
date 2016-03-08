@@ -40,6 +40,8 @@ using NUnit.Framework;
 
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Web
 {
 	[TestFixture]
@@ -55,7 +57,7 @@ namespace MonoTests.System.ServiceModel.Web
 			Assert.IsNull (WebOperationContext.Current, "#1");
 #endif
 			var binding = new WebHttpBinding ();
-			var address = new EndpointAddress ("http://localhost:37564");
+			var address = new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ());
 			var ch = (IContextChannel) WebChannelFactory<IHogeService>.CreateChannel (binding, address);
 			using (var ocs = new OperationContextScope (ch)) {
 #if !MOBILE
@@ -101,11 +103,12 @@ namespace MonoTests.System.ServiceModel.Web
 		void CreateResponseTest (Action<IHogeService> a)
 		{
 			var host = new WebServiceHost (typeof (HogeService));
-			host.AddServiceEndpoint (typeof (IHogeService), new WebHttpBinding (), new Uri ("http://localhost:37564"));
+			var port = NetworkHelpers.FindFreePort ();
+			host.AddServiceEndpoint (typeof (IHogeService), new WebHttpBinding (), new Uri ("http://localhost:" + port));
 			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = true;
 			host.Open ();
 			try {
-				using (var cf = new ChannelFactory<IHogeService> (new WebHttpBinding (), new EndpointAddress ("http://localhost:37564"))) {
+				using (var cf = new ChannelFactory<IHogeService> (new WebHttpBinding (), new EndpointAddress ("http://localhost:" + port))) {
 					cf.Endpoint.Behaviors.Add (new WebHttpBehavior ());
 					cf.Open ();
 					var ch = cf.CreateChannel ();

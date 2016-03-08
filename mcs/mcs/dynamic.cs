@@ -13,6 +13,11 @@ using System;
 using System.Linq;
 using SLE = System.Linq.Expressions;
 using System.Dynamic;
+#if STATIC
+using IKVM.Reflection.Emit;
+#else
+using System.Reflection.Emit;
+#endif
 
 namespace Mono.CSharp
 {
@@ -314,6 +319,50 @@ namespace Mono.CSharp
 			EmitCall (ec, binder_expr, arguments, true);
 		}
 
+		protected void EmitConditionalAccess (EmitContext ec)
+		{
+			var a_expr = arguments [0].Expr;
+
+			var des = a_expr as DynamicExpressionStatement;
+			if (des != null) {
+				des.EmitConditionalAccess (ec);
+			}
+
+			if (HasConditionalAccess ()) {
+				var NullOperatorLabel = ec.DefineLabel ();
+
+				if (ExpressionAnalyzer.IsInexpensiveLoad (a_expr)) {
+					a_expr.Emit (ec);
+				} else {
+					var lt = new LocalTemporary (a_expr.Type);
+					lt.EmitAssign (ec, a_expr, true, false);
+
+					Arguments [0].Expr = lt;
+				}
+
+				ec.Emit (OpCodes.Brtrue_S, NullOperatorLabel);
+
+				if (!ec.ConditionalAccess.Statement) {
+					if (ec.ConditionalAccess.Type.IsNullableType)
+						Nullable.LiftedNull.Create (ec.ConditionalAccess.Type, Location.Null).Emit (ec);
+					else
+						ec.EmitNull ();
+				}
+
+				ec.Emit (OpCodes.Br, ec.ConditionalAccess.EndLabel);
+				ec.MarkLabel (NullOperatorLabel);
+
+				return;
+			}
+
+			if (a_expr.HasConditionalAccess ()) {
+				var lt = new LocalTemporary (a_expr.Type);
+				lt.EmitAssign (ec, a_expr, false, false);
+
+				Arguments [0].Expr = lt;
+			}
+		}
+
 		protected void EmitCall (EmitContext ec, Expression binder, Arguments arguments, bool isStatement)
 		{
 			//
@@ -502,6 +551,24 @@ namespace Mono.CSharp
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (instanceAccessExprType, "Create"), args)));
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+
+				var conditionalAccessReceiver = IsConditionalAccessReceiver;
+				var ca = ec.ConditionalAccess;
+
+				if (conditionalAccessReceiver) {
+					ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ()) {
+						Statement = isStatement
+					};
+
+					//
+					// Emit conditional access expressions before dynamic call
+					// is initialized. It pushes site_field_expr on stack before
+					// the actual instance argument is emited which would cause
+					// jump from non-empty stack.
+					//
+					EmitConditionalAccess (ec);
+				}
+
 				if (s.Resolve (bc)) {
 					Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 					init.Emit (ec);
@@ -526,9 +593,15 @@ namespace Mono.CSharp
 					}
 				}
 
-				Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (bc), args, false, loc).Resolve (bc);
-				if (target != null)
+				var target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (bc), args, false, loc).Resolve (bc);
+				if (target != null) {
 					target.Emit (ec);
+				}
+
+				if (conditionalAccessReceiver) {
+					ec.CloseConditionalAccess (!isStatement && type.IsNullableType ? type : null);
+					ec.ConditionalAccess = ca;
+				}
 			}
 		}
 
@@ -546,6 +619,12 @@ namespace Mono.CSharp
 		protected MemberAccess GetBinder (string name, Location loc)
 		{
 			return new MemberAccess (new TypeExpression (binder_type, loc), name, loc);
+		}
+
+		protected virtual bool IsConditionalAccessReceiver {
+			get {
+				return false;
+			}
 		}
 	}
 
@@ -671,14 +750,18 @@ namespace Mono.CSharp
 	class DynamicIndexBinder : DynamicMemberAssignable
 	{
 		bool can_be_mutator;
+		readonly bool conditional_access_receiver;
+		readonly bool conditional_access;
 
-		public DynamicIndexBinder (Arguments args, Location loc)
+		public DynamicIndexBinder (Arguments args, bool conditionalAccessReceiver, bool conditionalAccess, Location loc)
 			: base (args, loc)
 		{
+			this.conditional_access_receiver = conditionalAccessReceiver;
+			this.conditional_access = conditionalAccess;
 		}
 
 		public DynamicIndexBinder (CSharpBinderFlags flags, Arguments args, Location loc)
-			: this (args, loc)
+			: this (args, false, false, loc)
 		{
 			base.flags = flags;
 		}
@@ -732,22 +815,35 @@ namespace Mono.CSharp
 			setter_args.Add (new Argument (rhs));
 			return setter_args;
 		}
+
+		protected override bool IsConditionalAccessReceiver {
+			get {
+				return conditional_access_receiver;
+			}
+		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return conditional_access;
+		}
 	}
 
 	class DynamicInvocation : DynamicExpressionStatement, IDynamicBinder
 	{
 		readonly ATypeNameExpression member;
+		readonly bool conditional_access_receiver;
 
-		public DynamicInvocation (ATypeNameExpression member, Arguments args, Location loc)
+		public DynamicInvocation (ATypeNameExpression member, Arguments args, bool conditionalAccessReceiver, Location loc)
 			: base (null, args, loc)
 		{
 			base.binder = this;
 			this.member = member;
+			this.conditional_access_receiver = conditionalAccessReceiver;
 		}
 
 		public static DynamicInvocation CreateSpecialNameInvoke (ATypeNameExpression member, Arguments args, Location loc)
 		{
-			return new DynamicInvocation (member, args, loc) {
+			return new DynamicInvocation (member, args, false, loc) {
 				flags = CSharpBinderFlags.InvokeSpecialName
 			};
 		}
@@ -805,11 +901,36 @@ namespace Mono.CSharp
 			flags |= CSharpBinderFlags.ResultDiscarded;
 			base.EmitStatement (ec);
 		}
+
+		protected override bool IsConditionalAccessReceiver {
+			get {
+				return conditional_access_receiver;
+			}
+		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return member is ConditionalMemberAccess;
+		}
+	}
+
+	class DynamicConditionalMemberBinder : DynamicMemberBinder
+	{
+		public DynamicConditionalMemberBinder (string name, Arguments args, Location loc)
+			: base (name, args, loc)
+		{
+		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return true;
+		}
 	}
 
 	class DynamicMemberBinder : DynamicMemberAssignable
 	{
 		readonly string name;
+		bool conditionalAccessReceiver;
 
 		public DynamicMemberBinder (string name, Arguments args, Location loc)
 			: base (args, loc)
@@ -834,6 +955,20 @@ namespace Mono.CSharp
 
 			isSet |= (flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0;
 			return new Invocation (GetBinder (isSet ? "SetMember" : "GetMember", loc), binder_args);
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver))
+				conditionalAccessReceiver = HasConditionalAccess () || Arguments [0].Expr.HasConditionalAccess ();
+
+			return base.DoResolve (rc);
+		}
+
+		protected override bool IsConditionalAccessReceiver {
+			get {
+				return conditionalAccessReceiver;
+			}
 		}
 	}
 

@@ -2,6 +2,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 System.Drawing/Bitmap.cs
+System.Drawing/BitmapSuffixInSameAssemblyAttribute.cs
+System.Drawing/BitmapSuffixInSatelliteAssemblyAttribute.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs
 System.Drawing/BufferedGraphics.cs

@@ -428,10 +428,10 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		public void GetCultureInfo_Identifier_Negative ()
+		public void GetCultureInfo_Identifier_Nonpositive ()
 		{
 			try {
-				CultureInfo.GetCultureInfo (-1);
+				CultureInfo.GetCultureInfo (0);
 				Assert.Fail ("#1");
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");

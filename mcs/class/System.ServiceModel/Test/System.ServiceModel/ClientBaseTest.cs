@@ -28,12 +28,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 using MonoTests.Helpers;
@@ -502,6 +506,83 @@ namespace MonoTests.System.ServiceModel
 				: base (binding, address)
 			{
 			}
+		}
+
+		[SerializableAttribute ()]
+		[XmlTypeAttribute (Namespace = "http://mono.com/")]
+		public class ValueWithXmlAttributes
+		{
+			[XmlElementAttribute (ElementName = "Name")]
+			public string FakeName;
+		}
+
+		[ServiceContractAttribute (Namespace = "http://mono.com/")]
+		public interface IXmlSerializerFormatService
+		{
+			[OperationContractAttribute (Action = "http://mono.com/Send", ReplyAction = "*")]
+			[XmlSerializerFormatAttribute ()]
+			void SendValueWithXmlAttributes (ValueWithXmlAttributes v);
+		}
+
+		class XmlSerializerFormatClient : ClientBase<IXmlSerializerFormatService>
+		{
+			public XmlSerializerFormatClient (Binding binding, EndpointAddress address)
+				: base (binding, address)
+			{
+			}
+
+			public void SendValue ()
+			{
+				var v = new ValueWithXmlAttributes () { FakeName = "name" };
+				base.Channel.SendValueWithXmlAttributes (v);
+			}
+		}
+
+		[Test]
+		public void TestXmlAttributes ()
+		{
+			int port = NetworkHelpers.FindFreePort();
+			var endpoint = new EndpointAddress ("http://localhost:" + port);
+			var binding = new BasicHttpBinding ();
+			var client = new XmlSerializerFormatClient (binding, endpoint);
+
+			var server = new TcpListener (IPAddress.Any, port);
+			server.Start ();
+
+			var acceptTask = server.AcceptTcpClientAsync ();
+
+			var t1 = new Task( () => client.SendValue ());
+			t1.Start();
+
+			if (!acceptTask.Wait (2000))
+				Assert.Fail ("No request from client.");
+
+			var netStream = acceptTask.Result.GetStream ();
+
+			byte[] buffer = new byte [1024];
+			int numBytesRead = 0;
+			var message = new StringBuilder ();
+			
+			do {
+				numBytesRead = netStream.Read (buffer, 0, buffer.Length);
+				var str =  Encoding.UTF8.GetString (buffer, 0, numBytesRead);
+				message.AppendFormat ("{0}", str);
+				if (str.EndsWith ("</s:Envelope>", StringComparison.InvariantCulture))
+					break;
+			} while (numBytesRead > 0);
+
+			var messageStr = message.ToString ();
+			var envelopeIndex = messageStr.IndexOf ("<s:Envelope");
+			if (envelopeIndex < 0)
+				Assert.Fail ("Soap envelope was not received.");
+			
+			var envelope = messageStr.Substring (envelopeIndex);
+
+			var expected = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SendValueWithXmlAttributes xmlns=\"http://mono.com/\"><v><Name>name</Name></v></SendValueWithXmlAttributes></s:Body></s:Envelope>";
+
+			Assert.AreEqual (expected, envelope);
+
+			server.Stop ();
 		}
 	}
 }

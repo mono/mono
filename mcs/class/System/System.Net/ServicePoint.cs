@@ -415,12 +415,18 @@ namespace System.Net
 
 		internal void SetServerCertificate (X509Certificate server)
 		{
-			this.certificate = server;
+			var cloned = server != null ? new X509Certificate (server) : null;
+			var old = Interlocked.Exchange (ref certificate, cloned);
+			if (old != null)
+				old.Dispose ();
 		}
 
 		internal void SetClientCertificate (X509Certificate clientCertificate)
 		{
-			this.clientCertificate = clientCertificate;
+			var cloned = clientCertificate != null ? new X509Certificate (clientCertificate) : null;
+			var old = Interlocked.Exchange (ref clientCertificate, cloned);
+			if (old != null)
+				old.Dispose ();
 		}
 
 		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)

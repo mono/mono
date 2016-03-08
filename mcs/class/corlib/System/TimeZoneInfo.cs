@@ -90,14 +90,14 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
-		private static bool libcNotFound;
+		private static bool readlinkNotFound;
 
 		[DllImport ("libc")]
 		private static extern int readlink (string path, byte[] buffer, int buflen);
 
 		private static string readlink (string path)
 		{
-			if (libcNotFound)
+			if (readlinkNotFound)
 				return null;
 
 			byte[] buf = new byte [512];
@@ -106,7 +106,10 @@ namespace System
 			try {
 				ret = readlink (path, buf, buf.Length);
 			} catch (DllNotFoundException e) {
-				libcNotFound = true;
+				readlinkNotFound = true;
+				return null;
+			} catch (EntryPointNotFoundException e) {
+				readlinkNotFound = true;
 				return null;
 			}
 
@@ -120,8 +123,12 @@ namespace System
 		{
 			name = null;
 			var linkPath = readlink (path);
-			if (linkPath != null)
-				path = linkPath;
+			if (linkPath != null) {
+				if (Path.IsPathRooted(linkPath))
+					path = linkPath;
+				else
+					path = Path.Combine(Path.GetDirectoryName(path), linkPath);
+			}
 
 			path = Path.GetFullPath (path);
 
@@ -288,7 +295,8 @@ namespace System
 			var Istart = 0;
 			while (Istart < str.Length && !char.IsLetterOrDigit(str[Istart])) Istart++;
 			var Iend = str.Length - 1;
-			while (Iend > Istart && !char.IsLetterOrDigit(str[Iend])) Iend--;
+			while (Iend > Istart && !char.IsLetterOrDigit(str[Iend]) && str[Iend] != ')') // zone name can include parentheses like "Central Standard Time (Mexico)"
+				Iend--;
 			
 			return str.Substring (Istart, Iend-Istart+1);
 		}
@@ -327,8 +335,13 @@ namespace System
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
 			var resultTicks = date.Ticks + ticks;
-			if (resultTicks < DateTime.MinValue.Ticks || resultTicks > DateTime.MaxValue.Ticks) {
-				result =  default (DateTime);
+			if (resultTicks < DateTime.MinValue.Ticks) {
+				result = DateTime.SpecifyKind (DateTime.MinValue, kind);
+				return false;
+			}
+
+			if (resultTicks > DateTime.MaxValue.Ticks) {
+				result = DateTime.SpecifyKind (DateTime.MaxValue, kind);
 				return false;
 			}
 
@@ -475,9 +488,7 @@ namespace System
 			var utcOffset = sourceTimeZone.GetUtcOffset (dateTime, out isDst);
 
 			DateTime utcDateTime;
-			if (!TryAddTicks (dateTime, -utcOffset.Ticks, out utcDateTime, DateTimeKind.Utc))
-				return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
-
+			TryAddTicks (dateTime, -utcOffset.Ticks, out utcDateTime, DateTimeKind.Utc);
 			return utcDateTime;
 		}
 
@@ -726,7 +737,8 @@ namespace System
 
 		public TimeSpan GetUtcOffset (DateTimeOffset dateTimeOffset)
 		{
-			throw new NotImplementedException ();
+			bool isDST;
+			return GetUtcOffset (dateTimeOffset.UtcDateTime, out isDST);
 		}
 
 		private TimeSpan GetUtcOffset (DateTime dateTime, out bool isDST)

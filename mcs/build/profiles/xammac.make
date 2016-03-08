@@ -23,6 +23,8 @@ PROFILE_MCS_FLAGS = \
 	-d:MOBILE \
 	-d:MOBILE_DYNAMIC \
 	-d:XAMMAC \
+	-d:FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK \
+	-d:XAMARIN_MODERN \
 	-nowarn:1699 \
 	-nostdlib \
 	-lib:$(topdir)/class/lib/$(PROFILE) \

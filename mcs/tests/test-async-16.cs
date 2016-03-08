@@ -59,6 +59,17 @@ class Tester : Base
 		return total - 6;
 	}
 
+	async Task<int> Foreach_2 ()
+	{
+		int total = 0;
+		foreach (var e in await Task.Factory.StartNew (() => new List<int> () { 1, 2, 3 }).ConfigureAwait (false)) {
+			await Task.Yield ();
+			total += e;
+		}
+
+		return total - 6;
+	}
+
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);

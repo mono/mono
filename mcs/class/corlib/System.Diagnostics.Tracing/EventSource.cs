@@ -39,18 +39,18 @@ namespace System.Diagnostics.Tracing
 		}
 
 		protected EventSource (bool throwOnEventWriteErrors)
-			: this()
+			: this ()
 		{
 		}
 
 		protected EventSource (EventSourceSettings settings)
-			: this()
+			: this ()
 		{
 			this.Settings = settings;
 		}
 
 		protected EventSource (EventSourceSettings settings, params string[] traits)
-			: this(settings)
+			: this (settings)
 		{
 		}
 
@@ -60,13 +60,13 @@ namespace System.Diagnostics.Tracing
 		}
 
 		public EventSource (string eventSourceName, EventSourceSettings config)
-			: this(eventSourceName)
+			: this (eventSourceName)
 		{
 			this.Settings = config;
 		}
 
 		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
-			: this(eventSourceName, config)
+			: this (eventSourceName, config)
 		{
 		}
 

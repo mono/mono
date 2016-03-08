@@ -285,7 +285,7 @@ namespace System.Net.Mail {
 		private static string EncodeAddress(MailAddress address)
 		{
 			if (!String.IsNullOrEmpty (address.DisplayName)) {
-				string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
+				string encodedDisplayName = MailMessage.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
 				return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
 			}
 			return address.ToString ();
@@ -307,7 +307,7 @@ namespace System.Net.Mail {
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
-			return ContentType.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
+			return MailMessage.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
 		}
 
 		private string EncodeBody (MailMessage message)
@@ -592,8 +592,16 @@ namespace System.Net.Mail {
 			// FIXME: parse the list of extensions so we don't bother wasting
 			// our time trying commands if they aren't supported.
 			
-			// Get the FQDN of the local machine
-			string fqdn = Dns.GetHostEntry (Dns.GetHostName ()).HostName;
+			// get the host name (not fully qualified)
+			string fqdn = Dns.GetHostName ();
+			try {
+				// we'll try for the fully qualified name - ref: bug #33551
+				fqdn = Dns.GetHostEntry (fqdn).HostName;
+			}
+			catch (SocketException) {
+				// we could not resolve our name but will continue with the partial name
+				// IOW we won't fail to send email because of this - ref: bug #37246
+			}
 			status = SendCommand ("EHLO " + fqdn);
 			
 			if (IsError (status)) {
@@ -710,7 +718,7 @@ namespace System.Net.Mail {
 				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 
 			foreach (string s in message.Headers.AllKeys)
-				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
+				SendHeader (s, MailMessage.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
 	
 			AddPriorityHeader (message);
 
@@ -794,13 +802,8 @@ namespace System.Net.Mail {
 				CheckCancellation ();
 
 				if (escapeDots) {
-					int i;
-					for (i = 0; i < line.Length; i++) {
-						if (line[i] != '.')
-							break;
-					}
-					if (i > 0 && i == line.Length) {
-						line += ".";
+					if (line.Length > 0 && line[0] == '.') {
+						line = "." + line;
 					}
 				}
 				writer.Write (line);

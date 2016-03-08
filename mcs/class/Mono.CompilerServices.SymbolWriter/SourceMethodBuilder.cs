@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 
 namespace Mono.CompilerServices.SymbolWriter
@@ -90,6 +91,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
+			StartBlock (type, start_offset, _blocks == null ? 1 : _blocks.Count + 1);
+		}
+
+		public void StartBlock (CodeBlockEntry.Type type, int start_offset, int scopeIndex)
+		{
 			if (_block_stack == null) {
 				_block_stack = new Stack<CodeBlockEntry> ();
 			}
@@ -100,7 +106,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int parent = CurrentBlock != null ? CurrentBlock.Index : -1;
 
 			CodeBlockEntry block = new CodeBlockEntry (
-				_blocks.Count + 1, parent, type, start_offset);
+				scopeIndex, parent, type, start_offset);
 
 			_block_stack.Push (block);
 			_blocks.Add (block);
@@ -180,9 +186,18 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void DefineMethod (MonoSymbolFile file, int token)
 		{
-			MethodEntry entry = new MethodEntry (
+			var blocks = Blocks;
+
+			//
+			// When index is provided by user it can be inserted in
+			// any order but mdb format does not store its value. It
+			// uses store order instead as the index.
+			//
+			Array.Sort (blocks, (x, y) => x.Index.CompareTo (y.Index));
+
+			var entry = new MethodEntry (
 				file, _comp_unit.Entry, token, ScopeVariables,
-				Locals, method_lines.ToArray (), Blocks, null, MethodEntry.Flags.ColumnsInfoIncluded, ns_id);
+				Locals, method_lines.ToArray (), blocks, null, MethodEntry.Flags.ColumnsInfoIncluded, ns_id);
 
 			file.AddMethod (entry);
 		}

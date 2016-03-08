@@ -499,9 +499,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
-
-			Arguments args = new Arguments (3);
+			Arguments args = new Arguments (2);
 			args.Add (new Argument (new TypeOf (type, loc)));
 
 			if (method_group.InstanceExpression == null)
@@ -509,7 +507,21 @@ namespace Mono.CSharp {
 			else
 				args.Add (new Argument (method_group.InstanceExpression));
 
-			args.Add (new Argument (method_group.CreateExpressionTree (ec)));
+			Expression ma;
+			var create_v45 = ec.Module.PredefinedMembers.MethodInfoCreateDelegate.Get ();
+			if (create_v45 != null) {
+				//
+				// .NET 4.5 has better API but it produces different instance than Delegate::CreateDelegate
+				// and because csc uses this enhancement we have to as well to be fully compatible
+				//
+				var mg = MethodGroupExpr.CreatePredefined (create_v45, create_v45.DeclaringType, loc);
+				mg.InstanceExpression = method_group.CreateExpressionTree (ec);
+				ma = mg;
+			} else {
+				ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
+				args.Add (new Argument (method_group.CreateExpressionTree (ec)));
+			}
+
 			Expression e = new Invocation (ma, args).Resolve (ec);
 			if (e == null)
 				return null;

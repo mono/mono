@@ -468,11 +468,10 @@ namespace System.Windows.Forms {
 #endregion	// XplatUI Driver Methods
 	}
 
-	internal class XplatUIDriverSupport {
+	static class XplatUIDriverSupport {
 		#region XplatUI Driver Support Methods
-		internal static void ExecutionCallback (object state)
+		internal static void ExecutionCallback (AsyncMethodData data)
 		{
-			AsyncMethodData data = (AsyncMethodData) state;
 			AsyncMethodResult result = data.Result;
 			
 			object ret;
@@ -492,6 +491,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static void ExecutionCallbackInContext (object state)
+		{
+			AsyncMethodData data = (AsyncMethodData) state;
+
+			if (data.SyncContext == null) {
+				ExecutionCallback (data);
+				return;
+			}
+
+			var oldContext = SynchronizationContext.Current;
+			SynchronizationContext.SetSynchronizationContext (data.SyncContext);
+
+			try {
+				ExecutionCallback (data);
+			} finally {
+				SynchronizationContext.SetSynchronizationContext (oldContext);
+			}
+		}
+
 		internal static void ExecuteClientMessage (GCHandle gchandle)
 		{
 			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
@@ -499,7 +517,8 @@ namespace System.Windows.Forms {
 				if (data.Context == null) {
 					ExecutionCallback (data);
 				} else {
-					ExecutionContext.Run (data.Context, new ContextCallback (ExecutionCallback), data);
+					data.SyncContext = SynchronizationContext.Current;
+					ExecutionContext.Run (data.Context, new ContextCallback (ExecutionCallbackInContext), data);
 				}
 			}
 			finally {

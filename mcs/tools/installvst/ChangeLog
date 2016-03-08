@@ -1,8 +1,0 @@
-2007-03-09  Marek Habersack  <mhabersack@novell.com>
-
-	* installvst.cs, Makefile, installvst.exe.sources: initial
-	implementation of the utility to install VisualStudio source
-	packages (e.g. starter kits) that use the .vstemplate files to
-	define installation layout.
-
-

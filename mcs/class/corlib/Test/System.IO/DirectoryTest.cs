@@ -17,7 +17,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using Mono.Unix;
 #endif
 using NUnit.Framework;
@@ -47,7 +47,7 @@ public class DirectoryTest
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 	[Test] //BXC #12461
 	public void EnumerateFilesListSymlinks ()
 	{

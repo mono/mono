@@ -77,7 +77,6 @@ Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
 System/AndroidPlatform.cs
-System/AppContext.cs
 System/AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
@@ -105,7 +104,6 @@ System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
-System/Guid.MonoTouch.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
@@ -164,13 +162,9 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
-System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
+System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventCommandEventArgs.cs
 System.Diagnostics.Tracing/EventListener.cs
 System.Diagnostics.Tracing/EventWrittenEventArgs.cs
@@ -242,7 +236,6 @@ System.Reflection/FieldInfo.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
-System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 System.Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
@@ -640,6 +633,7 @@ System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
+System.Security/SafeAccessTokenHandle.cs
 System.Security/SecureString.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
@@ -910,6 +904,7 @@ ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MethodBase.cs
+ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
@@ -1068,6 +1063,8 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/unsafecharbuffer.cs
 ../../../external/referencesource/mscorlib/system/version.cs
 
+../../../external/referencesource/mscorlib/system/AppContext/AppContext.cs
+
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
 ../../../external/referencesource/mscorlib/system/collections/bitarray.cs
 ../../../external/referencesource/mscorlib/system/collections/caseinsensitivecomparer.cs
@@ -1138,6 +1135,12 @@ ReferenceSources/SecurityContext.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
+
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
+
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
 
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
@@ -1237,6 +1240,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodbase.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodbody.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodimplattributes.cs
+../../../external/referencesource/mscorlib/system/reflection/methodinfo.cs
 ../../../external/referencesource/mscorlib/system/reflection/missing.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscateassemblyattribute.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscationattribute.cs
@@ -1569,6 +1573,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpool.cs
+../../../external/referencesource/mscorlib/system/threading/waithandle.cs
 
 ../../../external/referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
