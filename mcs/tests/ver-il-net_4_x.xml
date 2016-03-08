@@ -17473,7 +17473,7 @@
   <test name="gtest-540.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>1025</size>
+        <size>1425</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
