@@ -184,6 +184,9 @@ namespace System.Net {
 
 		public static IPAddress Parse (string ipString)
 		{
+            if (ipString == null)
+                throw new ArgumentNullException("ipString");
+
 			IPAddress ret;
 			if (TryParse (ipString, out ret))
 				return ret;
