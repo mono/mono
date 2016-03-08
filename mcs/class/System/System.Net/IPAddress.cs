@@ -193,7 +193,10 @@ namespace System.Net {
 		public static bool TryParse (string ipString, out IPAddress address)
 		{
 			if (ipString == null)
-				throw new ArgumentNullException ("ipString");
+			{
+				address = null;
+				return false;
+			}
 
 			if ((address = ParseIPV4 (ipString)) == null)
 				if ((address = ParseIPV6 (ipString)) == null)
