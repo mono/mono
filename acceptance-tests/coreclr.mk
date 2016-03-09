@@ -13,14 +13,12 @@ coreclr-compile-tests: coreclr-validate
 	$(MAKE) -j4 $(CORECLR_COREMANGLIB_TESTSI_CS)
 	$(MAKE) -j4 $(CORECLR_TESTSI_IL)
 
-# the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
-# all the other tests rely on the coreclr-testlibrary.dll
+# the CoreCLR tests rely on the coreclr-testlibrary.dll, we need to copy it to the test directory
 coreclr-runtest-basic: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 	@rm -f coreclr-testlist.txt
 	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_CS))
 	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_IL))
 	@for var in $(sort $(dir $(CORECLR_TESTSI_CS))); do ln -sf $(abspath coreclr-testlibrary.dll) "$$var"; done
-	@for var in $(sort $(dir $(CORECLR_TESTSI_IL))); do ln -sf "$(abspath $(CLASS)/Facades/System.Console.dll)" "$$var"; done
 	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 --input-file coreclr-testlist.txt
 	@rm -f coreclr-testlist.txt
 
