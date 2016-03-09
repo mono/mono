@@ -126,7 +126,6 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-#if NET_4_6
 		public void Write<T> (string eventName, T data)
 		{
 		}
@@ -142,7 +141,6 @@ namespace System.Diagnostics.Tracing
 		public void Write<T> (string eventName, ref EventSourceOptions options, ref Guid activityId, ref Guid relatedActivityId, ref T data)
 		{
 		}
-#endif
 
 		protected virtual void Dispose (bool disposing)
 		{
