@@ -1,7 +1,7 @@
-TOP=..
-ROSLYN_PATH=$(TOP)/../roslyn
-CORECLR_PATH=$(TOP)/../coreclr
-MSTESTSUITE_PATH=$(TOP)/../ms-test-suite
+ACCEPTANCE_TESTS_PATH=external
+ROSLYN_PATH=$(ACCEPTANCE_TESTS_PATH)/roslyn
+CORECLR_PATH=$(ACCEPTANCE_TESTS_PATH)/coreclr
+MSTESTSUITE_PATH=$(ACCEPTANCE_TESTS_PATH)/ms-test-suite
 
 include versions.mk
 
