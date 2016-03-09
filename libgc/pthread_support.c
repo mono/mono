@@ -1388,12 +1388,21 @@ int GC_thread_unregister_foreign ()
     GC_thread me;
 
     LOCK();
+    /* Wait for any GC that may be marking from our stack to    */
+    /* complete before we remove this thread.                   */
+    GC_wait_for_gc_completion(FALSE);
+
     me = GC_lookup_thread(pthread_self());
 
     if (me && (me -> flags & FOREIGN_THREAD))
     {
 #if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
         GC_destroy_thread_local (me);
+#endif
+#if defined(THREAD_LOCAL_ALLOC)
+        /* NULL out the tls key to prevent the dtor function from being called */
+        if (0 != GC_setspecific(GC_thread_key, NULL))
+            ABORT("Failed to set thread specific allocation pointers");
 #endif
         GC_delete_gc_thread(me->id, me);
         UNLOCK();
