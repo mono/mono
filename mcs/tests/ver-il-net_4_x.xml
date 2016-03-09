@@ -69267,6 +69267,55 @@
       </method>
     </type>
   </test>
+  <test name="test-nameof-05.cs">
+    <type name="Person">
+      <method name="Car get_MyCar()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_MyCar(Car)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Car">
+      <method name="Int32 get_Year()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Year(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Person get_MyPerson1()" attrs="2198">
+        <size>13</size>
+      </method>
+      <method name="Void add_Act(System.Action)" attrs="2198">
+        <size>40</size>
+      </method>
+      <method name="Void remove_Act(System.Action)" attrs="2198">
+        <size>40</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>213</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="MainClass+Nested">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-null-operator-01.cs">
     <type name="S">
       <method name="Int32 get_Prop()" attrs="2182">
