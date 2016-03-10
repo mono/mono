@@ -1507,21 +1507,17 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this,
 	return(FALSE);
 }
 
-guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handles, gint32 handle_count, gboolean wait_all)
+guint32 mono_unity_wait_for_multiple_objects_processing_apc (gint32 handle_count, HANDLE* handles, gboolean wait_all, gint32 ms)
 {
 	guint32 ret = WAIT_IO_COMPLETION;
 	guint32 start_ms;
-	MonoException* exc = NULL;
 	guint32 time_left_to_wait_ms = ms;
-
-	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
 	start_ms = mono_msec_ticks ();
 
-	while (!exc && ret == WAIT_IO_COMPLETION)
+	while (ret == WAIT_IO_COMPLETION && !mono_thread_interruption_requested ())
 	{
 		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, time_left_to_wait_ms, TRUE);
-		exc = mono_thread_get_and_clear_pending_exception ();
 
 		if (ret == WAIT_IO_COMPLETION)
 		{
@@ -1537,11 +1533,6 @@ guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handle
 				ret = WAIT_TIMEOUT;
 		}
 	}
-
-	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
-
-	if (exc)
-		mono_raise_exception (exc);
 
 	return ret;
 }
@@ -1573,7 +1564,11 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_
 		ms=INFINITE;
 	}
 
-	ret = wait_and_ignore_interrupt (thread, ms, handles, numhandles, TRUE);
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (numhandles, handles, TRUE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 	g_free(handles);
 
@@ -1619,8 +1614,12 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	if(ms== -1) {
 		ms=INFINITE;
 	}
-	
-	ret = wait_and_ignore_interrupt (thread, ms, handles, numhandles, FALSE);
+
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (numhandles, handles, FALSE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	g_free(handles);
 
@@ -1656,7 +1655,11 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitOne_internal(MonoObject *this
 	
 	mono_thread_current_check_pending_interrupt ();
 
-	ret = wait_and_ignore_interrupt (thread, ms, &handle, 1, TRUE);
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (1, &handle, TRUE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	if(ret==WAIT_FAILED) {
 		THREAD_WAIT_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Wait failed", __func__, GetCurrentThreadId ()));
