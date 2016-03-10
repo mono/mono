@@ -25,10 +25,7 @@ if (-e $remove)
 #have a duplicate for now...
 copy("$root/builds/embedruntimes/win32/mono.dll","$root/builds/monodistribution/bin/mono.dll");
 copy("$root/builds/embedruntimes/win32/mono.pdb","$root/builds/monodistribution/bin/mono.pdb");
-
-mkdir("$root/builds/monodistribution/lib");
-mkdir("$root/builds/monodistribution/lib/win32");
-copy("$root/msvc/Win32_Release_eglib/bin/MonoPosixHelper.dll","$root/builds/monodistribution/lib/win32/MonoPosixHelper.dll");
+copy("$root/msvc/Win32_Release_eglib/bin/MonoPosixHelper.dll","$root/builds/embedruntimes/win32/MonoPosixHelper.dll");
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
