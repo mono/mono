@@ -26,6 +26,10 @@ if (-e $remove)
 copy("$root/builds/embedruntimes/win64/mono.dll","$root/builds/monodistribution/bin-x64/mono.dll");
 copy("$root/builds/embedruntimes/win64/mono.pdb","$root/builds/monodistribution/bin-x64/mono.pdb");
 
+mkdir("$root/builds/monodistribution/lib");
+mkdir("$root/builds/monodistribution/lib/win64");
+copy("$root/msvc/x64_Release_eglib/bin/MonoPosixHelper.dll","$root/builds/monodistribution/lib/win64/MonoPosixHelper.dll");
+
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
 	system("git log --pretty=format:\"mono-runtime-win64 = %H %d %ad\" --no-abbrev-commit --date=short -1 > $root\\builds\\versions.txt");
