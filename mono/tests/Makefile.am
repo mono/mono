@@ -60,6 +60,7 @@ BASE_TEST_CS_SRC=		\
 	bug-2907.cs		\
 	array-init.cs		\
 	arraylist.cs		\
+	assembly-load-remap.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
