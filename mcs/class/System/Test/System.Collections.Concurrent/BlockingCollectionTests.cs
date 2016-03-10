@@ -253,7 +253,7 @@ namespace MonoTests.System.Collections.Concurrent
 			const int elNumber = 5;
 
 			var c = new BlockingCollection <int> (elNumber);
-			var token = new CancellationTokenSource (100);
+			var token = new CancellationTokenSource (1000);
 
 			for (var i = 0; i < elNumber + 1; i++) {
 				c.Add (1, token.Token);
@@ -271,7 +271,7 @@ namespace MonoTests.System.Collections.Concurrent
 				cols[i] = new BlockingCollection <int> (elNumber);
 			}
 
-			var token = new CancellationTokenSource (100);
+			var token = new CancellationTokenSource (1000);
 			for (var i = 0; i < colNumber * elNumber; i++) {
 				BlockingCollection <int>.AddToAny (cols, 1, token.Token);
 			}
