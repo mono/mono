@@ -416,11 +416,7 @@ namespace System.IO.Compression {
 			set { throw new NotSupportedException(); }
 		}
 
-#if MONOTOUCH
-		const string LIBNAME = "__Internal";
-#else
 		const string LIBNAME = "MonoPosixHelper";
-#endif
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
