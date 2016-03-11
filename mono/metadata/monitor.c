@@ -1348,7 +1348,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	ret = WaitForSingleObjectEx (event, ms, TRUE);
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (1, &event, TRUE, ms);
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking
