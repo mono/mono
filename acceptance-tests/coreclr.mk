@@ -1186,7 +1186,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0576/test0576.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0582/csgen.1.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0583/test583.cs	\
-	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0584/test584.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0792/test0792.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0828/test0828.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/coreclr/0829/test0829.cs	\
@@ -4000,6 +3999,9 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/hosting/samples/hosting/usercode/usercode.cs	\
 	$(CORECLR_PATH)/tests/src/hosting/samples/resolveevent/usercodedependency/usercodedependency.cs
+
+# this test makes no sense, the expected pattern is the English one for all cultures
+CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Regressions/coreclr/0584/test584.cs
 
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\
