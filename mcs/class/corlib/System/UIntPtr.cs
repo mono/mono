@@ -104,7 +104,7 @@ namespace System
 
 		public override string ToString ()
 		{
-			return ((uint) _pointer).ToString();
+			return UIntPtr.Size < 8 ? ((uint) _pointer).ToString() : ((ulong) _pointer).ToString();
 		}
 
 		// Interface ISerializable
