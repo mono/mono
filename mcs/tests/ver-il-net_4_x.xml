@@ -67466,6 +67466,21 @@
       </method>
     </type>
   </test>
+  <test name="test-expression-bodied-02.cs">
+    <type name="Cs0842ExpressionBodyGetterBug">
+      <method name="Int32 get_MyGetter()" attrs="2182">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
