@@ -74,6 +74,12 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("\"mm\"", res.Tag, "#11");
 			Assert.IsTrue (res.IsWeak, "#12");
 			Assert.AreEqual ("W/\"mm\"", res.ToString (), "#13");
+
+
+			res = EntityTagHeaderValue.Parse ("\"\\\"123\\\"\"");
+			Assert.AreEqual ("\"\\\"123\\\"\"", res.Tag, "#21");
+			Assert.IsFalse (res.IsWeak, "#22");
+			Assert.AreEqual ("\"\\\"123\\\"\"", res.ToString (), "#23");
 		}
 
 		[Test]
