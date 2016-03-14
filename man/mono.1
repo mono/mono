@@ -1638,6 +1638,10 @@ option.
 When this option is set, the runtime will invalidate the domain memory
 pool instead of destroying it.
 .TP
+\fBdisable_omit_fp\fR
+Disables a compiler optimization where the frame pointer is omitted
+from the stack. This optimization can interact badly with debuggers.
+.TP
 \fBdont-free-domains\fR
 This is an Optimization for multi-AppDomain applications (most
 commonly ASP.NET applications).  Due to internal limitations Mono,
