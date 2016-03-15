@@ -1465,17 +1465,35 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetNameInfo_Invalid_True ()
 		{
-			new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, true);
+			try {
+				// MS throws ArgumentException, Mono's new implementation throws
+				// CryptographicException, which is consistent with other "certificate
+				// instance is empty" situations.
+				new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, true);
+				Assert.Fail ("Expected exception.");
+			} catch (ArgumentException) {
+			} catch (CryptographicException) {
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'ArgumentException' or 'CryptographicException', got '{0}'", ex.GetType ());
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetNameInfo_Invalid_False ()
 		{
-			new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, false);
+			try {
+				// MS throws ArgumentException, Mono's new implementation throws
+				// CryptographicException, which is consistent with other "certificate
+				// instance is empty" situations.
+				new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, false);
+				Assert.Fail ("Expected exception.");
+			} catch (ArgumentException) {
+			} catch (CryptographicException) {
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'ArgumentException' or 'CryptographicException', got '{0}'", ex.GetType ());
+			}
 		}
 
 		[Test]
@@ -1486,10 +1504,19 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Empty_GetNameInfo_DnsName ()
 		{
-			new X509Certificate2 ().GetNameInfo (X509NameType.DnsName, true);
+			try {
+				// MS throws NullReferenceException, Mono's new implementation throws
+				// CryptographicException, which is consistent with other "certificate
+				// instance is empty" situations.
+				new X509Certificate2 ().GetNameInfo (X509NameType.DnsName, true);
+				Assert.Fail ("Expected exception.");
+			} catch (NullReferenceException) {
+			} catch (CryptographicException) {
+			} catch (Exception ex) {
+				Assert.Fail ("Expected 'NullReferenceException' or 'CryptographicException', got '{0}'", ex.GetType ());
+			}
 		}
 
 		[Test]
