@@ -86,13 +86,13 @@ namespace Mono.Net.Security
 			return chain;
 		}
 
-		public static bool BuildX509Chain (XX509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool BuildX509Chain (XX509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 #if MOBILE
-			return true;
+			return false;
 #else
 			if (is_macosx)
-				return true;
+				return false;
 
 			var leaf = (X509Certificate2)certs [0];
 
@@ -130,7 +130,7 @@ namespace Mono.Net.Security
 					return false;
 				}
 
-				if (host != null && !CheckServerIdentity (leaf, host)) {
+				if (!string.IsNullOrEmpty (host) && !CheckServerIdentity (leaf, host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
 					return false;
@@ -143,7 +143,7 @@ namespace Mono.Net.Security
 		static bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			var leaf = certs [0];
-			var result = false;
+			bool result;
 
 #if MONODROID
 			result = AndroidPlatform.TrustEvaluateSsl (certs);
@@ -166,6 +166,8 @@ namespace Mono.Net.Security
 					result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
 						trustResult == OSX509Certificates.SecTrustResult.Unspecified);
 				} catch {
+					result = false;
+					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					// Ignore
 				}
 
@@ -178,6 +180,8 @@ namespace Mono.Net.Security
 					status11 = (int)trustResult;
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				}
+			} else {
+				result = BuildX509Chain (certs, chain, ref errors, ref status11);
 			}
 #endif
 
@@ -203,6 +207,8 @@ namespace Mono.Net.Security
 #if MOBILE
 			return false;
 #else
+			if (!is_macosx)
+				return true;
 			if (!CertificateValidationHelper.SupportsX509Chain)
 				return false;
 			if (settings != null)

@@ -292,9 +292,6 @@ namespace Mono.Net.Security
 			if (wantsChain)
 				chain = SystemCertificateValidator.CreateX509Chain (certs);
 
-			if (wantsChain || SystemCertificateValidator.NeedsChain (settings))
-				SystemCertificateValidator.BuildX509Chain (certs, chain, ref errors, ref status11);
-
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				var xerrors = (MonoSslPolicyErrors)errors;
