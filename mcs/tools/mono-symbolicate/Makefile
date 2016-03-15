@@ -7,7 +7,9 @@ PROGRAM = mono-symbolicate.exe
 LOCAL_MCS_FLAGS = \
 	/r:Mono.Cecil.dll	\
 	/r:Mono.CompilerServices.SymbolWriter.dll \
-	/r:System.Xml
+	/r:System.Xml.dll \
+	/r:System.Core.dll \
+	/r:System.dll
 
 include ../../build/executable.make
 

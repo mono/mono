@@ -18,7 +18,7 @@
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
-LIB_MCS_FLAGS += $(patsubst %,-r:%,$(LIB_REFS))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll,$(LIB_REFS))
 
 sourcefile = $(LIBRARY).sources
 
