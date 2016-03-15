@@ -66,12 +66,6 @@ namespace System.Security.Cryptography.X509Certificates
 				return MX.X501.ToString (x509.GetIssuerName (), true, ", ", true);
 		}
 
-		public override string GetSubjectSummary ()
-		{
-			ThrowIfContextInvalid ();
-			return x509.SubjectName;
-		}
-
 		public override string GetSubjectName (bool legacyV1Mode)
 		{
 			ThrowIfContextInvalid ();
@@ -94,16 +88,16 @@ namespace System.Security.Cryptography.X509Certificates
 			return sha.ComputeHash (x509.RawData);
 		}
 
-		public override DateTime GetEffectiveDateString ()
+		public override DateTime GetValidFrom ()
 		{
 			ThrowIfContextInvalid ();
-			return x509.ValidFrom.ToLocalTime ();
+			return x509.ValidFrom;
 		}
 
-		public override DateTime GetExpirationDateString ()
+		public override DateTime GetValidUntil ()
 		{
 			ThrowIfContextInvalid ();
-			return x509.ValidUntil.ToLocalTime ();
+			return x509.ValidUntil;
 		}
 
 		public override bool Equals (X509CertificateImpl other, out bool result)
@@ -164,8 +158,8 @@ namespace System.Security.Cryptography.X509Certificates
 			StringBuilder sb = new StringBuilder ();
 			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
 			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
+			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
+			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
 			sb.Append (nl);
 			return sb.ToString ();
