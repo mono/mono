@@ -404,7 +404,7 @@ namespace Mono {
 		static void EscapeString (TextWriter output, string s)
 		{
 			foreach (var c in s){
-				if (c > 32){
+				if (c >= 32){
 					output.Write (c);
 					continue;
 				}
