@@ -17,3 +17,6 @@ CommonCrypto/RijndaelManaged.cs
 CommonCrypto/RC4CommonCrypto.cs
 CommonCrypto/MD2Managed.g.cs
 CommonCrypto/MD4Managed.g.cs
+CoreFoundation/CFHelpers.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
+System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
