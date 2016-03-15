@@ -19,3 +19,4 @@ CommonCrypto/RC4CommonCrypto.cs
 CommonCrypto/MD2Managed.g.cs
 CommonCrypto/MD4Managed.g.cs
 System/Environment.iOS.cs
+System/Guid.MonoTouch.cs
