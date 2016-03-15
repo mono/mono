@@ -26,7 +26,9 @@ namespace System.Xml.Linq
     /// </summary>
 #if !SILVERLIGHT // Serialization
     [Serializable()]
+#if FEATURE_SERIALIZATION
     [KnownType(typeof(NameSerializer))]
+#endif
 #endif // !SILVERLIGHT
     [SuppressMessage("Microsoft.Usage", "CA2229:ImplementSerializationConstructors", Justification = "Deserialization handled by NameSerializer.")]
     public sealed class XName : IEquatable<XName>
