@@ -7,15 +7,15 @@ ns          = DbMetal.Language
 
 LOCAL_MCS_FLAGS = \
 	-d:MONO_STRICT                                                      \
-	-keyfile:$(dbmetal_src)/../DbLinq.snk                               \
 	-resource:$(dbmetal_src)/Language/EnglishWords.txt,$(ns).EnglishWords.txt \
 	-resource:$(dbmetal_src)/Language/FrenchWords.txt,$(ns).FrenchWords.txt   \
 	-resource:$(dbmetal_src)/Language/GermanWords.txt,$(ns).GermanWords.txt   \
-	-r:System.Configuration                                             \
-	-r:System.Core                                                      \
-	-r:System.Data                                                      \
-	-r:System.Data.Linq                                                 \
-	-r:System.Xml
+	-r:System.Configuration.dll                                             \
+	-r:System.Core.dll                                                      \
+	-r:System.Data.dll                                                      \
+	-r:System.Data.Linq.dll                                                 \
+	-r:System.Xml.dll \
+	-r:System.dll
 
 SQLMETAL_RESOURCES = \
 	$(dbmetal_src)/Language/EnglishWords.txt \
