@@ -24,3 +24,4 @@ System/NotSupportedException.iOS.cs
 CoreFoundation/CFHelpers.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
 System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
+System.Text/EncodingHelper.MonoTouch.cs
