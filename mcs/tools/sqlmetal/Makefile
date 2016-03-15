@@ -7,6 +7,7 @@ ns          = DbMetal.Language
 
 LOCAL_MCS_FLAGS = \
 	-d:MONO_STRICT                                                      \
+	-keyfile:$(dbmetal_src)/../DbLinq.snk                               \
 	-resource:$(dbmetal_src)/Language/EnglishWords.txt,$(ns).EnglishWords.txt \
 	-resource:$(dbmetal_src)/Language/FrenchWords.txt,$(ns).FrenchWords.txt   \
 	-resource:$(dbmetal_src)/Language/GermanWords.txt,$(ns).GermanWords.txt   \
