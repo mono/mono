@@ -536,11 +536,15 @@ System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtension.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Collection.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs
 System.Security.Cryptography.X509Certificates/X509ChainElementCollection.cs
 System.Security.Cryptography.X509Certificates/X509ChainElement.cs
 System.Security.Cryptography.X509Certificates/X509ChainElementEnumerator.cs
+System.Security.Cryptography.X509Certificates/X509ChainImpl.cs
+System.Security.Cryptography.X509Certificates/X509ChainImplMono.cs
 System.Security.Cryptography.X509Certificates/X509ChainPolicy.cs
 System.Security.Cryptography.X509Certificates/X509ChainStatus.cs
 System.Security.Cryptography.X509Certificates/X509ChainStatusFlags.cs
@@ -550,6 +554,7 @@ System.Security.Cryptography.X509Certificates/X509Extension.cs
 System.Security.Cryptography.X509Certificates/X509ExtensionEnumerator.cs
 System.Security.Cryptography.X509Certificates/X509FindType.cs
 System.Security.Cryptography.X509Certificates/X509IncludeOption.cs
+System.Security.Cryptography.X509Certificates/X509Helper2.cs
 System.Security.Cryptography.X509Certificates/X509KeyUsageExtension.cs
 System.Security.Cryptography.X509Certificates/X509KeyUsageFlags.cs
 System.Security.Cryptography.X509Certificates/X509NameType.cs
