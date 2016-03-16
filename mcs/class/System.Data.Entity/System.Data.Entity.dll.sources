@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
+../../build/common/AssemblyRef.cs
 EntityRes.cs
 EntityResCategoryAttribute.cs
 EntityResDescriptionAttribute.cs
