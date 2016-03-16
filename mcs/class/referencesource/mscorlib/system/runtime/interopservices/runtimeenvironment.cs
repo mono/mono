@@ -43,7 +43,7 @@ namespace System.Runtime.InteropServices {
             // Should not have been instantiable - here for binary compatibility in V4.
         }
 #endif
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Machine)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -58,8 +58,8 @@ namespace System.Runtime.InteropServices {
         [ResourceExposure(ResourceScope.Machine)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern String GetHostBindingFile();
-
-#if !FEATURE_CORECLR
+#endif
+#if !FEATURE_CORECLR && !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -78,7 +78,7 @@ namespace System.Runtime.InteropServices {
         [MethodImpl (MethodImplOptions.NoInlining)]
         public static String GetSystemVersion()
         {
-#if FEATURE_CORECLR
+#if FEATURE_CORECLR || MONO
 
             return Assembly.GetExecutingAssembly().ImageRuntimeVersion;
 
@@ -102,10 +102,17 @@ namespace System.Runtime.InteropServices {
             return dir;
         }
 
+#if MONO
+        static String GetRuntimeDirectoryImpl()
+        {
+            return Path.GetDirectoryName (typeof (object).Assembly.Location);
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Machine)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern String GetRuntimeDirectoryImpl();
+#endif
         
         // Returns the system ConfigurationFile
         public static String SystemConfigurationFile {
@@ -113,10 +120,14 @@ namespace System.Runtime.InteropServices {
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get {
+#if MONO
+                String path = Environment.GetMachineConfigPath ();
+#else
                 StringBuilder sb = new StringBuilder(Path.MAX_PATH);
                 sb.Append(GetRuntimeDirectory());
                 sb.Append(AppDomainSetup.RuntimeConfigurationFile);
                 String path = sb.ToString();
+#endif
                 
                 // Do security check
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, path).Demand();
@@ -125,7 +136,7 @@ namespace System.Runtime.InteropServices {
             }
         }
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP && !MONO
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.Process)]
         [ResourceConsumption(ResourceScope.Process)]
