@@ -48,6 +48,7 @@ namespace System.IO {
 	public sealed class FileInfo : FileSystemInfo
 	{
 		private bool exists;
+		private string displayPath;
 
 		public FileInfo (string fileName)
 		{
@@ -59,11 +60,14 @@ namespace System.IO {
 
 			OriginalPath = fileName;
 			FullPath = Path.GetFullPath (fileName);
+			
+			displayPath = OriginalPath;
 		}
 
 		private FileInfo (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			displayPath = OriginalPath;
 		}
 
 		internal override void InternalRefresh ()
@@ -241,6 +245,8 @@ namespace System.IO {
 
 			File.Move (FullPath, destFullPath);
 			this.FullPath = destFullPath;
+
+			displayPath = destFileName;
 		}
 
 		public FileInfo CopyTo (string destFileName)
@@ -267,7 +273,7 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			return OriginalPath;
+			return displayPath;
 		}
 
 #if !MOBILE
