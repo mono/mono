@@ -121,7 +121,9 @@ namespace Mono.Net.Security
 		static bool CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MONOTOUCH
-			var leaf = (X509Certificate2)certs[0];
+			var leaf = certs[0] as X509Certificate2;
+			if (leaf == null)
+				leaf = new X509Certificate2 (certs[0]);
 			// for OSX and iOS we're using the native API to check for the SSL server policy and host names
 			if (!is_macosx) {
 				if (!CheckCertificateUsage (leaf)) {
