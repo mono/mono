@@ -403,7 +403,6 @@ System.Runtime.InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/SEHException.cs
 System.Runtime.InteropServices/STATSTG.cs
 System.Runtime.InteropServices/RegistrationServices.cs
-System.Runtime.InteropServices/RuntimeEnvironment.cs
 System.Runtime.InteropServices/SafeArrayRankMismatchException.cs
 System.Runtime.InteropServices/SafeArrayTypeMismatchException.cs
 System.Runtime.InteropServices/SafeBuffer.cs
@@ -1280,6 +1279,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/attributes.cs
+../../../external/referencesource/mscorlib/system/runtime/interopservices/runtimeenvironment.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 
