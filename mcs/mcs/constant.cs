@@ -2245,7 +2245,7 @@ namespace Mono.CSharp {
 				return IsLeftResolvedExpressionValid (dmb.Arguments [0].Expr);
 			}
 
-			if (expr is ConstantExpr || expr is TypeExpr || expr is NamespaceExpression || expr is This)
+			if (expr is ConstantExpr || expr is TypeExpr || expr is NamespaceExpression || expr is VariableReference)
 				return true;
 
 			return false;
