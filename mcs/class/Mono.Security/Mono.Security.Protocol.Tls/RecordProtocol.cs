@@ -343,8 +343,7 @@ namespace Mono.Security.Protocol.Tls
 				//We're at the end of the stream. Time to bail.
 				if (bytesRead == 0)
 				{
-					internalResult.SetComplete((byte[])null);
-					return;
+					throw new TlsException(AlertDescription.CloseNotify, "Received 0 bytes from stream. It must be closed.");
 				}
 
 				// Try to read the Record Content Type
@@ -451,7 +450,7 @@ namespace Mono.Security.Protocol.Tls
 			//We're at the end of the stream. Time to bail.
 			if (bytesRead == 0)
 			{
-				return null;
+				throw new TlsException(AlertDescription.CloseNotify, "Received 0 bytes from stream. It must be closed.");
 			}
 
 			// Try to read the Record Content Type
