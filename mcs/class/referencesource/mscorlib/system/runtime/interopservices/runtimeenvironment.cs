@@ -97,6 +97,18 @@ namespace System.Runtime.InteropServices {
         [ResourceConsumption(ResourceScope.Machine)]
         public static String GetRuntimeDirectory()
         {
+#if !MOBILE
+            //
+            // Workaround for csc hardcoded behaviour where executing mscorlib
+            // location is always the first path to search for references unless
+            // they have full path. Mono build is using simple assembly names for
+            // references and -lib for path which is by default csc dehaviour never
+            // used
+            //
+            var sdk = Environment.GetEnvironmentVariable ("CSC_SDK_PATH_DISABLED");
+            if (sdk != null)
+                return null;
+#endif
             String dir = GetRuntimeDirectoryImpl();
             new FileIOPermission(FileIOPermissionAccess.PathDiscovery, dir).Demand();
             return dir;
