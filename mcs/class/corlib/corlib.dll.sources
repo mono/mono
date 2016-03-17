@@ -1286,7 +1286,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/attributes.cs
-../../../external/referencesource/mscorlib/system/runtime/interopservices/runtimeenvironment.cs
+ReferenceSources/RuntimeEnvironment.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 
