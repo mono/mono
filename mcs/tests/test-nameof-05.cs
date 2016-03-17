@@ -29,6 +29,11 @@ public class MainClass
 	public static event Action Act = null;
 	public static dynamic BBB = null;
 
+	void ParameterTest (Person ParPerson)
+	{
+		Console.WriteLine (nameof (ParPerson.MyCar.Year));
+	}
+
 	public static int Main ()
 	{
 		string name;
@@ -60,6 +65,11 @@ public class MainClass
 		name = nameof (int.ToString);
 		if (name != "ToString")
 			return 7;
+
+		Person LocPerson = null;
+		name = nameof (LocPerson.MyCar.Year);
+		if (name != "Year")
+			return 8;
 
 		return 0;
 	}
