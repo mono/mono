@@ -1158,6 +1158,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(getrlimit)
 	AC_CHECK_FUNCS(prctl)
 
+	AC_CHECK_FUNCS(sched_getaffinity)
 	AC_CHECK_FUNCS(sched_setaffinity)
 	AC_CHECK_FUNCS(sched_getcpu)
 
@@ -2644,19 +2645,16 @@ if test "x$enable_llvm" = "xyes"; then
    # This might include empty lines
    LLVM_SYSTEM_LIBS=`$LLVM_CONFIG --system-libs 2>/dev/null | grep -- -`
    llvm_jit_supported=yes
+   llvm_jit_libs="jit mcjit $llvm_codegen"
    if test $llvm_api_version -gt 100; then
    	  # Based on llvm 3.9, only aot is currently supported
-	  llvm_jit_supported=no
+      llvm_jit_libs="orcjit $llvm_codegen"
    elif test "x$host" != "x$target"; then
       # No need for jit libs
 	  llvm_jit_supported=no
+      llvm_jit_libs=""
    fi
-   if test $llvm_jit_supported = no; then
-      # No need for jit libs
-      LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter`
-   else
-      LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter jit mcjit $llvm_codegen`
-   fi
+   LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter $llvm_jit_libs`
    if test "x$LLVM_LIBS" == "x"; then
    	  echo "$LLVM_CONFIG --libs failed."
 	  exit 1
@@ -3104,6 +3102,45 @@ SPARC64)
 	;;
 esac
 
+case "$HOST" in
+X86)
+	AC_DEFINE(HOST_X86, 1, [...])
+	;;
+AMD64)
+	AC_DEFINE(HOST_AMD64, 1, [...])
+	;;
+ARM)
+	AC_DEFINE(HOST_ARM, 1, [...])
+	;;
+ARM64)
+	AC_DEFINE(HOST_ARM64, 1, [...])
+	;;
+POWERPC)
+	AC_DEFINE(HOST_POWERPC, 1, [...])
+	;;
+POWERPC64)
+	AC_DEFINE(HOST_POWERPC, 1, [...])
+	AC_DEFINE(HOST_POWERPC64, 1, [...])
+	;;
+S390X)
+	AC_DEFINE(HOST_S390X, 1, [...])
+	;;
+MIPS)
+	AC_DEFINE(HOST_MIPS, 1, [...])
+	;;
+IA64)
+	AC_DEFINE(HOST_IA64, 1, [...])
+	;;
+SPARC)
+	AC_DEFINE(HOST_SPARC, 1, [...])
+	;;
+SPARC64)
+	AC_DEFINE(HOST_SPARC64, 1, [...])
+	;;
+esac
+
+
+
 dnl *************
 dnl *** VTUNE ***
 dnl *************
@@ -3501,6 +3538,7 @@ AC_ARG_WITH(monotouch_watch, [  --with-monotouch_watch=yes,no   If you want to b
 AC_ARG_WITH(monotouch_tv,    [  --with-monotouch_tv=yes,no      If you want to build the Xamarin.TVOS assemblies (defaults to no)],   [], [with_monotouch_tv=no])
 AC_ARG_WITH(bitcode,         [  --with-bitcode=yes,no           If bitcode is enabled (defaults to no)],                              [], [with_bitcode=no])
 AC_ARG_WITH(xammac,          [  --with-xammac=yes,no            If you want to build the Xamarin.Mac assemblies (defaults to no)],    [], [with_xammac=no])
+AC_ARG_WITH(mobile_static,   [  --with-mobile_static=yes,no     If you want to build the mobile_static assemblies (defaults to no)],  [], [with_mobile_static=no])
 
 OPROFILE=no
 AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
@@ -3613,6 +3651,7 @@ if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    with_monotouch_watch=no
    with_monotouch_tv=no
    with_xammac=no
+   with_mobile_static=no
 fi
 
 if test x$DISABLE_MCS_DOCS = xyes; then
@@ -3638,6 +3677,7 @@ AM_CONDITIONAL(INSTALL_MONOTOUCH_WATCH, [test "x$with_monotouch_watch" != "xno"]
 AM_CONDITIONAL(INSTALL_MONOTOUCH_TV, [test "x$with_monotouch_tv" != "xno"])
 AM_CONDITIONAL(BITCODE, test "x$with_bitcode" = "xyes")
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
+AM_CONDITIONAL(INSTALL_MOBILE_STATIC, [test "x$with_mobile_static" != "xno"])
 
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
 AM_CONDITIONAL(MIPS_SGI, test ${TARGET}${ac_cv_prog_gcc} = MIPSno)
@@ -4026,6 +4066,10 @@ fi
     if test x$has_extension_module != xno; then
         echo "EXTENSION_MODULE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
+
+    if test x$enable_gsharedvt = xno; then
+        echo "MONO_DISABLE_GSHAREDVT = 1" >> $srcdir/$mcsdir/build/config.make
+    fi
     
     echo "DEFAULT_PROFILE = $default_profile" >> $srcdir/$mcsdir/build/config.make
     
@@ -4061,6 +4105,7 @@ echo "
 	Xamarin.WatchOS: $with_monotouch_watch
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
+	mobile_static:   $with_mobile_static
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg
 	zlib:            $zlib_msg

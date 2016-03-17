@@ -48,11 +48,11 @@ net_4_5_dirs := \
 	mono-symbolicate	\
 	linker-analyzer
 
-build_SUBDIRS = gacutil security culevel
+build_SUBDIRS = gacutil security culevel cil-stringreplacer
 net_4_5_SUBDIRS = gacutil
 net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 
-SUBDIRS = $(basic_SUBDIRS) $(net_4_5_dirs)
+SUBDIRS = $(build_SUBDIRS) $(net_4_5_dirs)
 
 include ../build/rules.make
 

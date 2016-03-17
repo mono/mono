@@ -203,7 +203,7 @@ namespace MonoTests.System.ServiceModel
 		public void TestSessionInstancesNetTcp ()
 		{
 			Binding binding = new NetTcpBinding (SecurityMode.None, false);
-			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			Uri address = new Uri (binding.Scheme + "://localhost:" + NetworkHelpers.FindFreePort () + "/test");
 			TestSessionbehaviour (binding, address);
 		}
 
@@ -212,7 +212,7 @@ namespace MonoTests.System.ServiceModel
 		public void TestSessionInstancesWsHttp ()
 		{
 			Binding binding = new WSHttpBinding (SecurityMode.None, true);
-			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			Uri address = new Uri (binding.Scheme + "://localhost:" + NetworkHelpers.FindFreePort () + "/test");
 			TestSessionbehaviour(binding, address);
 		}
 	}

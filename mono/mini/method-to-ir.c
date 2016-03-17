@@ -60,6 +60,7 @@
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/reflection-internals.h>
 
@@ -2186,6 +2187,9 @@ handle_enum:
 	return -1;
 }
 
+//XXX this ignores if t is byref
+#define MONO_TYPE_IS_PRIMITIVE_SCALAR(t) ((((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_U8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
+
 /*
  * target_type_is_incompatible:
  * @cfg: MonoCompile context
@@ -2206,10 +2210,20 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 	if (target->byref) {
 		/* FIXME: check that the pointed to types match */
 		if (arg->type == STACK_MP) {
-			MonoClass *base_class = mono_class_from_mono_type (target);
-			/* This is needed to handle gshared types + ldaddr */
-			simple_type = mini_get_underlying_type (&base_class->byval_arg);
-			return target->type != MONO_TYPE_I && arg->klass != base_class && arg->klass != mono_class_from_mono_type (simple_type);
+			if (cfg->verbose_level) printf ("ok\n");
+			/* This is needed to handle gshared types + ldaddr. We lower the types so we can handle enums and other typedef-like types. */
+			MonoClass *target_class_lowered = mono_class_from_mono_type (mini_get_underlying_type (&mono_class_from_mono_type (target)->byval_arg));
+			MonoClass *source_class_lowered = mono_class_from_mono_type (mini_get_underlying_type (&arg->klass->byval_arg));
+
+			/* if the target is native int& or same type */
+			if (target->type == MONO_TYPE_I || target_class_lowered == source_class_lowered)
+				return 0;
+
+			/* Both are primitive type byrefs and the source points to a larger type that the destination */
+			if (MONO_TYPE_IS_PRIMITIVE_SCALAR (&target_class_lowered->byval_arg) && MONO_TYPE_IS_PRIMITIVE_SCALAR (&source_class_lowered->byval_arg) &&
+				mono_class_instance_size (target_class_lowered) <= mono_class_instance_size (source_class_lowered))
+				return 0;
+			return 1;
 		}
 		if (arg->type == STACK_PTR)
 			return 0;
@@ -5326,8 +5340,11 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 			vtable = mono_class_vtable (cfg->domain, method->klass);
 			if (!vtable)
 				return FALSE;
-			if (!cfg->compile_aot)
-				mono_runtime_class_init (vtable);
+			if (!cfg->compile_aot) {
+				MonoError error;
+				if (!mono_runtime_class_init_full (vtable, &error))
+					mono_error_raise_exception (&error); /* FIXME don't raise here */
+			}
 		} else if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {
 			if (cfg->run_cctors && method->klass->has_cctor) {
 				/*FIXME it would easier and lazier to just use mono_class_try_get_vtable */
@@ -5342,7 +5359,9 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 				/* running with a specific order... */
 				if (! vtable->initialized)
 					return FALSE;
-				mono_runtime_class_init (vtable);
+				MonoError error;
+				if (!mono_runtime_class_init_full (vtable, &error))
+					mono_error_raise_exception (&error); /* FIXME don't raise here */
 			}
 		} else if (mono_class_needs_cctor_run (method->klass, NULL)) {
 			if (!method->klass->runtime_info)
@@ -7050,6 +7069,7 @@ static int
 inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp,
 			   guchar *ip, guint real_offset, gboolean inline_always)
 {
+	MonoError error;
 	MonoInst *ins, *rvar = NULL;
 	MonoMethodHeader *cheader;
 	MonoBasicBlock *ebblock, *sbblock;
@@ -7090,17 +7110,14 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	}
 
 	/* allocate local variables */
-	cheader = mono_method_get_header (cmethod);
-
-	if (cheader == NULL || mono_loader_get_last_error ()) {
-		if (cheader)
-			mono_metadata_free_mh (cheader);
-		if (inline_always && mono_loader_get_last_error ()) {
+	cheader = mono_method_get_header_checked (cmethod, &error);
+	if (!cheader) {
+		if (inline_always) {
 			mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-			mono_error_set_from_loader_error (&cfg->error);
+			mono_error_move (&cfg->error, &error);
+		} else {
+			mono_error_cleanup (&error);
 		}
-
-		mono_loader_clear_error ();
 		return 0;
 	}
 
@@ -7433,8 +7450,10 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
 		klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
-		if (context)
-			klass = mono_class_inflate_generic_class (klass, context);
+		if (context) {
+			klass = mono_class_inflate_generic_class_checked (klass, context, &error);
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+		}
 	} else {
 		klass = mono_class_get_and_inflate_typespec_checked (method->klass->image, token, context, &error);
 		mono_error_cleanup (&error); /* FIXME don't swallow the error */
@@ -7609,11 +7628,15 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 static void
 set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsigned char *ip)
 {
+	MonoError error;
 	char *method_fname = mono_method_full_name (method, TRUE);
 	char *method_code;
-	MonoMethodHeader *header = mono_method_get_header (method);
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
 
-	if (header->code_size == 0)
+	if (!header) {
+		method_code = g_strdup_printf ("could not parse method body due to %s", mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+	} else if (header->code_size == 0)
 		method_code = g_strdup ("method body is empty.");
 	else
 		method_code = mono_disasm_code_one (NULL, method, ip, NULL);
@@ -7894,6 +7917,7 @@ is_exception_class (MonoClass *klass)
 static gboolean
 is_jit_optimizer_disabled (MonoMethod *m)
 {
+	MonoError error;
 	MonoAssembly *ass = m->klass->image->assembly;
 	MonoCustomAttrInfo* attrs;
 	MonoClass *klass;
@@ -7914,7 +7938,8 @@ is_jit_optimizer_disabled (MonoMethod *m)
 		return FALSE;
 	}
 
-	attrs = mono_custom_attrs_from_assembly (ass);
+	attrs = mono_custom_attrs_from_assembly_checked (ass, &error);
+	mono_error_cleanup (&error); /* FIXME don't swallow the error */
 	if (attrs) {
 		for (i = 0; i < attrs->num_attrs; ++i) {
 			MonoCustomAttrEntry *attr = &attrs->attrs [i];
@@ -8165,14 +8190,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_STELEMREF;
 
 	image = method->klass->image;
-	header = mono_method_get_header (method);
+	header = mono_method_get_header_checked (method, &cfg->error);
 	if (!header) {
-		if (mono_loader_get_last_error ()) {
-			mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-			mono_error_set_from_loader_error (&cfg->error);
-		} else {
-			mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name));
-		}
+		mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 		goto exception_exit;
 	}
 	generic_container = mono_method_get_generic_container (method);
@@ -9136,7 +9156,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					info_data = addr->inst_right->inst_left;
 				}
 
-				if (info_type == MONO_PATCH_INFO_ICALL_ADDR || info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
+				if (info_type == MONO_PATCH_INFO_ICALL_ADDR) {
+					ins = (MonoInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_ICALL_ADDR_CALL, info_data, fsig, sp);
+					NULLIFY_INS (addr);
+					goto calli_end;
+				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
 					ins = (MonoInst*)mono_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
@@ -9233,15 +9257,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 					
-			if (!cmethod || mono_loader_get_last_error ()) {
-				if (mono_loader_get_last_error ()) {
-					mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-					mono_error_set_from_loader_error (&cfg->error);
-					CHECK_CFG_ERROR;
-				} else {
-					LOAD_ERROR;
-				}
-			}
 			if (!dont_verify && !cfg->skip_visibility) {
 				MonoMethod *target_method = cil_method;
 				if (method->is_inflated) {
@@ -11496,8 +11511,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* STATIC CASE */
 			context_used = mini_class_check_context_used (cfg, klass);
 
-			if (ftype->attrs & FIELD_ATTRIBUTE_LITERAL)
-				UNVERIFIED;
+			if (ftype->attrs & FIELD_ATTRIBUTE_LITERAL) {
+				mono_error_set_field_load (&cfg->error, field->parent, field->name, "Using static instructions with literal field");
+				CHECK_CFG_ERROR;
+			}
 
 			/* The special_static_fields field is init'd in mono_class_vtable, so it needs
 			 * to be called here.
@@ -11642,17 +11659,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						}
 					} else {
 						if (cfg->run_cctors) {
-							MonoException *ex;
 							/* This makes so that inline cannot trigger */
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
 							g_assert (vtable);
 							if (! vtable->initialized)
 								INLINE_FAILURE ("class init");
-							ex = mono_runtime_class_init_full (vtable, FALSE);
-							if (ex) {
+							if (!mono_runtime_class_init_full (vtable, &cfg->error)) {
 								mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-								mono_error_set_exception_instance (&cfg->error, ex);
 								g_assert_not_reached ();
 								goto exception_exit;
 							}
@@ -12267,10 +12281,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, image, n, generic_context);
 						}
 					} else {
-						MonoError error;
-						MonoReflectionType *rt = mono_type_get_object_checked (cfg->domain, (MonoType *)handle, &error);
-						mono_error_raise_exception (&error); /* FIXME don't raise here */
-
+						MonoReflectionType *rt = mono_type_get_object_checked (cfg->domain, (MonoType *)handle, &cfg->error);
+						CHECK_CFG_ERROR;
 						EMIT_NEW_PCONST (cfg, ins, rt);
 					}
 					ins->type = STACK_OBJ;

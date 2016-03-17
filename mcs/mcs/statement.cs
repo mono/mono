@@ -1291,10 +1291,6 @@ namespace Mono.CSharp {
 						// Special case hoisted return value (happens in try/finally scenario)
 						//
 						if (ec.TryFinallyUnwind != null) {
-							if (storey.HoistedReturnValue is VariableReference) {
-								storey.HoistedReturnValue = ec.GetTemporaryField (storey.HoistedReturnValue.Type);
-							}
-
 							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body);
 						}
 

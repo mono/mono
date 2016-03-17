@@ -905,11 +905,7 @@ mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 	MonoError error;
 	MonoType *result;
 	result = mono_class_inflate_generic_type_checked (type, context, &error);
-
-	if (!mono_error_ok (&error)) {
-		mono_error_cleanup (&error);
-		return NULL;
-	}
+	mono_error_cleanup (&error);
 	return result;
 }
 
@@ -955,6 +951,11 @@ mono_class_inflate_generic_type_no_copy (MonoImage *image, MonoType *type, MonoG
 	return inflated;
 }
 
+/*
+ * mono_class_inflate_generic_class:
+ *
+ *   Inflate the class @gklass with @context. Set @error on failure.
+ */
 MonoClass*
 mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext *context, MonoError *error)
 {
@@ -969,24 +970,6 @@ mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext 
 
 	return res;
 }
-/*
- * mono_class_inflate_generic_class:
- *
- *   Inflate the class GKLASS with CONTEXT.
- */
-MonoClass*
-mono_class_inflate_generic_class (MonoClass *gklass, MonoGenericContext *context)
-{
-	MonoError error;
-	MonoClass *res;
-
-	res = mono_class_inflate_generic_class_checked (gklass, context, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
-
-	return res;
-}
-
-
 
 static MonoGenericContext
 inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflate_with, MonoError *error)
@@ -5740,22 +5723,6 @@ mono_class_set_failure_and_error (MonoClass *klass, MonoError *error, const char
 	mono_error_set_type_load_class (error, klass, msg);
 }
 
-static void
-mono_class_set_failure_from_loader_error (MonoClass *klass, MonoError *error, char *msg)
-{
-	MonoLoaderError *lerror = mono_loader_get_last_error ();
-
-	if (lerror) {
-		set_failure_from_loader_error (klass, lerror);
-		mono_error_set_from_loader_error (error);
-		if (msg)
-			g_free (msg);
-	} else {
-		mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, msg);
-		mono_error_set_type_load_class (error, klass, msg);
-	}
-}
-
 /**
  * mono_class_create_from_typedef:
  * @image: image where the token is valid
@@ -6786,7 +6753,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 
 	if (eclass->byval_arg.type == MONO_TYPE_TYPEDBYREF || eclass->byval_arg.type == MONO_TYPE_VOID) {
 		/*Arrays of those two types are invalid.*/
-		mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		mono_class_set_failure (klass, MONO_EXCEPTION_INVALID_PROGRAM, NULL);
 	} else if (eclass->enumtype && !mono_class_enum_basetype (eclass)) {
 		if (!eclass->ref_info_handle || eclass->wastypebuilder) {
 			g_warning ("Only incomplete TypeBuilder objects are allowed to be an enum without base_type");
@@ -7739,7 +7706,8 @@ mono_class_from_name_case (MonoImage *image, const char* name_space, const char 
 {
 	MonoError error;
 	MonoClass *res = mono_class_from_name_case_checked (image, name_space, name, &error);
-	g_assert (!mono_error_ok (&error));
+	mono_error_cleanup (&error);
+
 	return res;
 }
 
@@ -8041,10 +8009,8 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 	MonoClass *klass;
 
 	klass = mono_class_from_name_checked (image, name_space, name, &error);
-	if (!mono_error_ok (&error)) {
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error); /* FIXME Don't swallow the error */
-	}
+	mono_error_cleanup (&error); /* FIXME Don't swallow the error */
+
 	return klass;
 }
 
@@ -10097,6 +10063,9 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	}
 	case MONO_EXCEPTION_BAD_IMAGE: {
 		return mono_get_exception_bad_image_format ((const char *)exception_data);
+	}
+	case MONO_EXCEPTION_INVALID_PROGRAM: {
+		return mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", "");
 	}
 	default: {
 		MonoLoaderError *error;

@@ -113,6 +113,30 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void CheckIntegers ()
+		{
+			Assert.AreEqual (sbyte.MinValue, (sbyte) JsonValue.Parse (new JsonPrimitive (sbyte.MinValue).ToString ()));
+			Assert.AreEqual (sbyte.MaxValue, (sbyte) JsonValue.Parse (new JsonPrimitive (sbyte.MaxValue).ToString ()));
+			Assert.AreEqual (byte.MinValue, (byte) JsonValue.Parse (new JsonPrimitive (byte.MinValue).ToString ()));
+			Assert.AreEqual (byte.MaxValue, (byte) JsonValue.Parse (new JsonPrimitive (byte.MaxValue).ToString ()));
+
+			Assert.AreEqual (short.MinValue, (short) JsonValue.Parse (new JsonPrimitive (short.MinValue).ToString ()));
+			Assert.AreEqual (short.MaxValue, (short) JsonValue.Parse (new JsonPrimitive (short.MaxValue).ToString ()));
+			Assert.AreEqual (ushort.MinValue, (ushort) JsonValue.Parse (new JsonPrimitive (ushort.MinValue).ToString ()));
+			Assert.AreEqual (ushort.MaxValue, (ushort) JsonValue.Parse (new JsonPrimitive (ushort.MaxValue).ToString ()));
+
+			Assert.AreEqual (int.MinValue, (int) JsonValue.Parse (new JsonPrimitive (int.MinValue).ToString ()));
+			Assert.AreEqual (int.MaxValue, (int) JsonValue.Parse (new JsonPrimitive (int.MaxValue).ToString ()));
+			Assert.AreEqual (uint.MinValue, (uint) JsonValue.Parse (new JsonPrimitive (uint.MinValue).ToString ()));
+			Assert.AreEqual (uint.MaxValue, (uint) JsonValue.Parse (new JsonPrimitive (uint.MaxValue).ToString ()));
+
+			Assert.AreEqual (long.MinValue, (long) JsonValue.Parse (new JsonPrimitive (long.MinValue).ToString ()));
+			Assert.AreEqual (long.MaxValue, (long) JsonValue.Parse (new JsonPrimitive (long.MaxValue).ToString ()));
+			Assert.AreEqual (ulong.MinValue, (ulong) JsonValue.Parse (new JsonPrimitive (ulong.MinValue).ToString ()));
+			Assert.AreEqual (ulong.MaxValue, (ulong) JsonValue.Parse (new JsonPrimitive (ulong.MaxValue).ToString ()));
+		}
+
+		[Test]
 		public void CheckNumbers () 
 		{
 			CheckDouble (0, "0");
@@ -262,3 +286,10 @@ namespace MonoTests.System
 		}
 	}
 }
+
+// vim: noexpandtab
+// Local Variables:
+// tab-width: 4
+// c-basic-offset: 4
+// indent-tabs-mode: t
+// End:

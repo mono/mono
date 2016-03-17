@@ -49,5 +49,17 @@ namespace MonoTests.System  {
 				Assert.AreEqual (UInt64.MinValue, (ulong) pmin, "Min");
 			}
 		}
+
+		[Test]
+		public void ToString () 
+		{
+			// for 64 bits machines
+			if (UIntPtr.Size > 4) {
+				Assert.AreEqual (UInt64.MaxValue.ToString (), new UIntPtr (UInt64.MaxValue).ToString (), "#1");
+			}
+			else {
+				Assert.AreEqual (UInt32.MaxValue.ToString (), new UIntPtr (UInt32.MaxValue).ToString (), "#2");
+			}
+		}
 	}
 }

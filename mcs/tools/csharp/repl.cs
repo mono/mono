@@ -404,7 +404,7 @@ namespace Mono {
 		static void EscapeString (TextWriter output, string s)
 		{
 			foreach (var c in s){
-				if (c > 32){
+				if (c >= 32){
 					output.Write (c);
 					continue;
 				}
@@ -416,7 +416,7 @@ namespace Mono {
 				case '\b':
 					output.Write ("\\b"); break;
 				case '\n':
-					output.Write ("\\n");
+					output.Write ("\n");
 					break;
 				
 				case '\v':
@@ -448,7 +448,7 @@ namespace Mono {
 				output.Write ("'\\''");
 				return;
 			}
-			if (c > 32){
+			if (c >= 32){
 				output.Write ("'{0}'", c);
 				return;
 			}
@@ -482,7 +482,7 @@ namespace Mono {
 				break;
 
 			default:
-				output.Write ("'\\x{0:x}", (int) c);
+				output.Write ("'\\x{0:x}'", (int) c);
 				break;
 			}
 		}

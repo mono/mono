@@ -8,11 +8,42 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 
+MonoType*
+mono_reflection_get_type_checked (MonoImage* image, MonoTypeNameParse *info, mono_bool ignorecase, mono_bool *type_resolve, MonoError *error);
+
+MonoType*
+mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError *error);
+
+guint32
+mono_reflection_get_token_checked (MonoObject *obj, MonoError *error);
+
+
 MonoObject*
 mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass, MonoError *error);
 
+MonoCustomAttrInfo*
+mono_reflection_get_custom_attrs_info_checked (MonoObject *obj, MonoError *error);
+
 MonoArray*
 mono_reflection_get_custom_attrs_data_checked (MonoObject *obj, MonoError *error);
+
+MonoCustomAttrInfo*
+mono_custom_attrs_from_index_checked    (MonoImage *image, uint32_t idx, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_method_checked   (MonoMethod *method, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_class_checked   	(MonoClass *klass, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_assembly_checked	(MonoAssembly *assembly, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_property_checked	(MonoClass *klass, MonoProperty *property, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_event_checked	(MonoClass *klass, MonoEvent *event, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_field_checked	(MonoClass *klass, MonoClassField *field, MonoError *error);
+MonoCustomAttrInfo*
+mono_custom_attrs_from_param_checked	(MonoMethod *method, uint32_t param, MonoError *error);
+
 
 char*
 mono_identifier_unescape_type_name_chars (char* identifier);
@@ -43,5 +74,9 @@ mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError 
 
 MonoReflectionModule*
 mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
+
+MonoReflectionMethodBody*
+mono_method_body_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoError *error);
+
 
 #endif /* __MONO_METADATA_REFLECTION_INTERNALS_H__ */

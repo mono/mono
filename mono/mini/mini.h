@@ -114,7 +114,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 132
+#define MONO_AOT_FILE_VERSION 133
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -354,6 +354,8 @@ typedef struct
 	gpointer *memcpy_addr [17];
 	gpointer *bzero_addr [17];
 	gpointer llvm_module;
+	/* Maps MonoMethod -> GSlist of addresses */
+	GHashTable *llvm_jit_callees;
 } MonoJitDomainInfo;
 
 typedef struct {
@@ -783,11 +785,7 @@ typedef enum {
 	LLVMArgFpStruct,
 	LLVMArgVtypeByRef,
 	/* Vtype returned as an int */
-	LLVMArgVtypeAsScalar,
-	/* Scalar returned by ref using an additional argument */
-	LLVMArgScalarRetAddr,
-	/* Scalar passed by ref */
-	LLVMArgScalarByRef
+	LLVMArgVtypeAsScalar
 } LLVMArgStorage;
 
 typedef struct {
@@ -2135,6 +2133,11 @@ typedef struct {
 	 * Translate Debugger.Break () into a native breakpoint signal
 	 */
 	gboolean native_debugger_break;
+	/*
+	 * Disabling the frame pointer emit optimization can allow debuggers to more easily
+	 * identify the stack on some platforms
+	 */
+	gboolean disable_omit_fp;
 } MonoDebugOptions;
 
 enum {
@@ -2541,11 +2544,11 @@ guint8 *          mono_get_trampoline_code (MonoTrampolineType tramp_type);
 gpointer          mono_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len);
 gpointer          mono_create_jump_trampoline (MonoDomain *domain, 
 											   MonoMethod *method, 
-											   gboolean add_sync_wrapper);
+											   gboolean add_sync_wrapper,
+											   MonoError *error);
 gpointer          mono_create_class_init_trampoline (MonoVTable *vtable);
-gpointer          mono_create_jit_trampoline (MonoMethod *method);
+gpointer          mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *error) MONO_LLVM_INTERNAL;
 gpointer          mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token);
-gpointer          mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method) MONO_LLVM_INTERNAL;
 gpointer          mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass);
 MonoDelegateTrampInfo* mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method);
 gpointer          mono_create_delegate_virtual_trampoline (MonoDomain *domain, MonoClass *klass, MonoMethod *method);

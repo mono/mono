@@ -110,6 +110,9 @@ public class Driver
 						Console.WriteLine (" - Warning: ignoring '" + t + "'");
 						Console.WriteLine ("   " + ex.Message);
 					}
+				} catch (NotSupportedException ex) {
+					if (verbose)
+						Console.WriteLine (" - Warning: " + ex.Message);
 				}
 			}
 		} else {
@@ -128,6 +131,9 @@ public class Driver
 						Console.WriteLine (" - Warning: ignoring '" + type + "'");
 						Console.WriteLine ("   " + ex.Message);
 					}
+				} catch (NotSupportedException ex) {
+					if (verbose)
+						Console.WriteLine (" - Warning: " + ex.Message);
 				}
 			}
 		}

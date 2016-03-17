@@ -42,9 +42,12 @@ typedef enum {
 } MonoResolveTokenError;
 
 MONO_API int           mono_reflection_parse_type (char *name, MonoTypeNameParse *info);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType*     mono_reflection_get_type   (MonoImage* image, MonoTypeNameParse *info, mono_bool ignorecase, mono_bool *type_resolve);
 MONO_API void          mono_reflection_free_type_info (MonoTypeNameParse *info);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType*     mono_reflection_type_from_name (char *name, MonoImage *image);
+MONO_RT_EXTERNAL_ONLY
 MONO_API uint32_t      mono_reflection_get_token (MonoObject *obj);
 
 MONO_RT_EXTERNAL_ONLY
@@ -63,7 +66,9 @@ MONO_API MonoReflectionProperty* mono_property_get_object (MonoDomain *domain, M
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoReflectionEvent*    mono_event_get_object    (MonoDomain *domain, MonoClass *klass, MonoEvent *event);
 /* note: this one is slightly different: we keep the whole array of params in the cache */
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoArray* mono_param_get_objects  (MonoDomain *domain, MonoMethod *method);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoReflectionMethodBody* mono_method_body_get_object (MonoDomain *domain, MonoMethod *method);
 
 MONO_API MonoObject *mono_get_dbnull_object (MonoDomain *domain);
@@ -74,16 +79,25 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoArray*  mono_reflection_get_custom_attrs_data (MonoObject *obj);
 MONO_API MonoArray*  mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *porpValues, MonoArray *fields, MonoArray* fieldValues);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_reflection_get_custom_attrs_info (MonoObject *obj);
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoArray*  mono_custom_attrs_construct (MonoCustomAttrInfo *cinfo);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_index    (MonoImage *image, uint32_t idx);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_method   (MonoMethod *method);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_class    (MonoClass *klass);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_assembly (MonoAssembly *assembly);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_property (MonoClass *klass, MonoProperty *property);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_event    (MonoClass *klass, MonoEvent *event);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_field    (MonoClass *klass, MonoClassField *field);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_param    (MonoMethod *method, uint32_t param);
 MONO_API mono_bool           mono_custom_attrs_has_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);
 MONO_API MonoObject*         mono_custom_attrs_get_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);

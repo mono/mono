@@ -614,14 +614,19 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 		is_neutral = ci->territory == 0;
 		if ((neutral && is_neutral) || (specific && !is_neutral)) {
 			culture = (MonoCultureInfo *) mono_object_new_checked (domain, klass, &error);
-			mono_error_raise_exception (&error);
-			mono_runtime_object_init ((MonoObject *) culture);
+			if (!is_ok (&error)) goto fail;
+			mono_runtime_object_init_checked ((MonoObject *) culture, &error);
+			if (!is_ok (&error)) goto fail;
 			construct_culture (culture, ci);
 			culture->use_user_override = TRUE;
 			mono_array_setref (ret, len++, culture);
 		}
 	}
 
+	return ret;
+
+fail:
+	mono_error_set_pending_exception (&error);
 	return ret;
 }
 
@@ -822,12 +827,12 @@ static gint32 string_invariant_indexof_char (MonoString *source, gint32 sindex,
 	}
 }
 
-void load_normalization_resource (guint8 **argProps,
-				  guint8 **argMappedChars,
-				  guint8 **argCharMapIndex,
-				  guint8 **argHelperIndex,
-				  guint8 **argMapIdxToComposite,
-				  guint8 **argCombiningClass)
+void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **argProps,
+																	  guint8 **argMappedChars,
+																	  guint8 **argCharMapIndex,
+																	  guint8 **argHelperIndex,
+																	  guint8 **argMapIdxToComposite,
+																	  guint8 **argCombiningClass)
 {
 #ifdef DISABLE_NORMALIZATION
 	mono_set_pending_exception (mono_get_exception_not_supported ("This runtime has been compiled without string normalization support."));

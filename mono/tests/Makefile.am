@@ -32,10 +32,14 @@ MKBUNDLE = \
 	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
 	$(RUNTIME) $(CLASS)/mkbundle.exe
 
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -debug \
+MCS_NO_LIB = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -debug \
+	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
 	-nowarn:0197
+
+MCS = $(MCS_NO_LIB) -lib:$(CLASS)
+
 ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 
 BENCHSRC=fib.cs random.cs nested-loops.cs ackermann.cs tight-loop.cs sieve.cs
@@ -61,6 +65,7 @@ BASE_TEST_CS_SRC=		\
 	bug-2907.cs		\
 	array-init.cs		\
 	arraylist.cs		\
+	assembly-load-remap.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -399,6 +404,8 @@ BASE_TEST_CS_SRC=		\
 	bug-389886-3.cs \
 	monitor.cs	\
 	monitor-resurrection.cs	\
+	monitor-wait-abort.cs	\
+	monitor-abort.cs	\
 	dynamic-method-resurrection.cs	\
 	bug-666008.cs	\
 	bug-685908.cs	\
@@ -702,7 +709,7 @@ EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 	$(ILASM) -out:$@ $<
 
 %.exe: %.cs TestDriver.dll
-	$(MCS) -r:TestDriver.dll -out:$@ $<
+	$(MCS) -r:System.dll -r:System.Xml.dll -r:System.Core.dll -r:TestDriver.dll -out:$@ $<
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
 if POWERPC
@@ -1185,7 +1192,7 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe unhandled-except
 
 # We use 'test-support-files' to handle an ordering issue between the 'mono/' and 'runtime/' directories
 bug-80307.exe: $(srcdir)/bug-80307.cs
-	$(MCS) -r:System.Web -out:$@ $(srcdir)/bug-80307.cs
+	$(MCS) -r:System.Web.dll -out:$@ $(srcdir)/bug-80307.cs
 	cd $(top_builddir)/runtime && $(MAKE) test-support-files
 
 EXTRA_DIST += bug-81673-interface.cs
@@ -1238,7 +1245,7 @@ bug-17537-helper.exe: bug-17537-helper.cs
 	chmod -x $@
 
 bug-17537.exe: bug-17537.cs bug-17537-helper.exe
-	$(MCS) -out:$@ $(srcdir)/bug-17537.cs
+	$(MCS) -r:System.dll -out:$@ $(srcdir)/bug-17537.cs
 
 EXTRA_DIST += coreclr-security.cs
 
@@ -1272,7 +1279,7 @@ generic-delegate2.2.exe : generic-delegate2.2.cs generic-delegate2-lib.2.dll
 	$(MCS) -r:generic-delegate2-lib.2.dll -out:$@ $(srcdir)/generic-delegate2.2.cs
 
 bug-3903.exe: bug-3903.cs
-	$(MCS) -sdk:2 $(srcdir)/bug-3903.cs -out:$@
+	$(MCS_NO_LIB) -lib:$(srcdir)/../../external/binary-reference-assemblies/v2.0/ $(srcdir)/bug-3903.cs -r:System.Core.dll -out:$@
 
 gshared: test-generic-sharing
 
@@ -1374,25 +1381,35 @@ test-oom: $(OOM_TESTS)
 if HOST_WIN32
 test-unhandled-exception-2:
 else
-test-unhandled-exception-2: test-unhandled-exception-2-1 test-unhandled-exception-2-2 test-unhandled-exception-2-3 test-unhandled-exception-2-4	\
-		 test-unhandled-exception-2-5 test-unhandled-exception-2-6 test-unhandled-exception-2-7 test-unhandled-exception-2-8
 
-test-unhandled-exception-2-1: unhandled-exception-1.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 1 $<
-test-unhandled-exception-2-2: unhandled-exception-2.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
-test-unhandled-exception-2-3: unhandled-exception-3.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
-test-unhandled-exception-2-4: unhandled-exception-4.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
-test-unhandled-exception-2-5: unhandled-exception-5.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
-test-unhandled-exception-2-6: unhandled-exception-6.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
-test-unhandled-exception-2-7: unhandled-exception-7.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
-test-unhandled-exception-2-8: unhandled-exception-8.exe test-runner.exe
-	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 3 $<
+# tests that expect a 1 exit code
+UNHANDLED_EXCEPTION_1_TESTS =	\
+	unhandled-exception-1.exe
+
+# tests that expect a 255 exit code
+UNHANDLED_EXCEPTION_255_TESTS =	\
+	unhandled-exception-2.exe	\
+	unhandled-exception-3.exe	\
+	unhandled-exception-4.exe	\
+	unhandled-exception-5.exe	\
+	unhandled-exception-6.exe	\
+	unhandled-exception-7.exe
+
+test-unhandled-exception-2: $(UNHANDLED_EXCEPTION_1_TESTS) $(UNHANDLED_EXCEPTION_255_TESTS)
+	$(MAKE) test-unhandled-exception-2-1-with-managed-handler
+	$(MAKE) test-unhandled-exception-2-1-without-managed-handler
+	$(MAKE) test-unhandled-exception-2-255-with-managed-handler
+	$(MAKE) test-unhandled-exception-2-255-without-managed-handler
+
+test-unhandled-exception-2-1-with-managed-handler: $(UNHANDLED_EXCEPTION_1_TESTS) test-runner.exe
+	$(RUNTIME) ./test-runner.exe -j a --testsuite-name $@ --expected-exit-code 1 $(UNHANDLED_EXCEPTION_1_TESTS)
+test-unhandled-exception-2-1-without-managed-handler: $(UNHANDLED_EXCEPTION_1_TESTS) test-runner.exe
+	TEST_UNHANDLED_EXCEPTION_HANDLER=1 $(RUNTIME) ./test-runner.exe -j a --testsuite-name $@ --expected-exit-code 1 $(UNHANDLED_EXCEPTION_1_TESTS)
+test-unhandled-exception-2-255-with-managed-handler: $(UNHANDLED_EXCEPTION_255_TESTS) test-runner.exe
+	$(RUNTIME) ./test-runner.exe -j a --testsuite-name $@ --expected-exit-code 255 $(UNHANDLED_EXCEPTION_255_TESTS)
+test-unhandled-exception-2-255-without-managed-handler: $(UNHANDLED_EXCEPTION_255_TESTS) test-runner.exe
+	TEST_UNHANDLED_EXCEPTION_HANDLER=1 $(RUNTIME) ./test-runner.exe -j a --testsuite-name $@ --expected-exit-code 255 $(UNHANDLED_EXCEPTION_255_TESTS)
+
 endif
 
 EXTRA_DIST += appdomain-loader.cs appdomain-tester.cs

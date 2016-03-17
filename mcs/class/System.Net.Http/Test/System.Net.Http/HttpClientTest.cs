@@ -996,10 +996,30 @@ namespace MonoTests.System.Net.Http
 		[Category ("MobileNotWorking")] // Missing encoding
 		public void GetString_Many ()
 		{
-			var client = new HttpClient ();
-			var t1 = client.GetStringAsync ("http://example.org");
-			var t2 = client.GetStringAsync ("http://example.org");
-			Assert.IsTrue (Task.WaitAll (new [] { t1, t2 }, WaitTimeout));		
+			Action<HttpListenerContext> context = (HttpListenerContext l) => {
+				var response = l.Response;
+				response.StatusCode = 200;
+				response.OutputStream.WriteByte (0x68);
+				response.OutputStream.WriteByte (0x65);
+				response.OutputStream.WriteByte (0x6c);
+				response.OutputStream.WriteByte (0x6c);
+				response.OutputStream.WriteByte (0x6f);
+			};
+
+			var listener = CreateListener (context); // creates a default request handler
+			AddListenerContext (listener, context);  // add another request handler for the second request
+
+			try {
+				var client = new HttpClient ();
+				var t1 = client.GetStringAsync (LocalServer);
+				var t2 = client.GetStringAsync (LocalServer);
+				Assert.IsTrue (Task.WaitAll (new [] { t1, t2 }, WaitTimeout));
+				Assert.AreEqual ("hello", t1.Result, "#1");
+				Assert.AreEqual ("hello", t2.Result, "#2");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
 		}
 
 		[Test]
@@ -1135,6 +1155,13 @@ namespace MonoTests.System.Net.Http
 			var l = new HttpListener ();
 			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
 			l.Start ();
+			AddListenerContext(l, contextAssert);
+
+			return l;
+		}
+
+		HttpListener AddListenerContext (HttpListener l, Action<HttpListenerContext> contextAssert)
+		{
 			l.BeginGetContext (ar => {
 				var ctx = l.EndGetContext (ar);
 

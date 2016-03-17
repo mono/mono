@@ -1389,11 +1389,12 @@ create_allocator (int atype, gboolean slowpath)
 	info->d.alloc.gc_name = "sgen";
 	info->d.alloc.alloc_type = atype;
 
+#ifndef DISABLE_JIT
+	mb->init_locals = FALSE;
+#endif
+
 	res = mono_mb_create (mb, csig, 8, info);
 	mono_mb_free (mb);
-#ifndef DISABLE_JIT
-	mono_method_get_header (res)->init_locals = FALSE;
-#endif
 
 
 	return res;
@@ -2342,8 +2343,6 @@ mono_gc_scan_object (void *obj, void *gc_data)
 void
 sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean precise, ScanCopyContext ctx)
 {
-	SgenThreadInfo *info;
-
 	scan_area_arg_start = start_nursery;
 	scan_area_arg_end = end_nursery;
 
@@ -2397,7 +2396,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				}
 			}
 		}
-	} END_FOREACH_THREAD
+	} FOREACH_THREAD_END
 }
 
 /*

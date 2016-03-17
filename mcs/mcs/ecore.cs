@@ -3682,7 +3682,7 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			if (left != null && !ConditionalAccess && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
+			if (left != null && !ConditionalAccess && !ec.HasSet (ResolveContext.Options.NameOfScope) && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
 				ec.Report.Warning (1720, 1, left.Location,
 					"Expression will always cause a `{0}'", "System.NullReferenceException");
 			}
@@ -6058,6 +6058,12 @@ namespace Mono.CSharp {
 		{
 			ResolveInstanceExpression (rc, null);
 			DoBestMemberChecks (rc, constant);
+
+			if (rc.HasSet (ResolveContext.Options.NameOfScope)) {
+				eclass = ExprClass.Value;
+				type = constant.MemberType;
+				return this;
+			}
 
 			var c = constant.GetConstant (rc);
 

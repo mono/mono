@@ -324,6 +324,11 @@ namespace Mono.Tools {
 
 			Copy (name, asmb_path, true);
 
+			var name_pdb = Path.ChangeExtension (name, ".pdb");
+			if (File.Exists (name_pdb)) {
+				Copy (name_pdb, Path.ChangeExtension (asmb_path, ".pdb"), true);
+			}
+
 			foreach (string ext in siblings) {
 				string sibling = String.Concat (name, ext);
 				if (File.Exists (sibling))
@@ -356,9 +361,23 @@ namespace Mono.Tools {
 					string pkg_path = AbsoluteToRelativePath (ref_dir, pkg_path_abs);
  					symlink (pkg_path, ref_path);
 
+ 					var pdb_pkg_path = Path.ChangeExtension (pkg_path, ".pdb");
+ 					var pdb_ref_path = Path.ChangeExtension (ref_path, ".pdb");
+
+ 					if (File.Exists (pdb_pkg_path)) {
+ 						symlink (pdb_pkg_path, pdb_ref_path);
+ 					} else {
+						try {
+							File.Delete (pdb_ref_path);
+						} catch {
+							// Ignore error, just delete files that should not be there.
+						}
+ 					}
+
 					foreach (string ext in siblings) {
 						string sibling = String.Concat (pkg_path, ext);
 						string sref = String.Concat (ref_path, ext);
+
 						if (File.Exists (sibling))
 							symlink (sibling, sref);
 						else {

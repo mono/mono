@@ -180,7 +180,9 @@ create_domain_objects (MonoDomain *domain)
 	string_vt = mono_class_vtable (domain, mono_defaults.string_class);
 	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
 	g_assert (string_empty_fld);
-	mono_field_static_set_value (string_vt, string_empty_fld, mono_string_intern (mono_string_new (domain, "")));
+	MonoString *empty_str = mono_string_intern_checked (mono_string_new (domain, ""), &error);
+	mono_error_assert_ok (&error);
+	mono_field_static_set_value (string_vt, string_empty_fld, empty_str);
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -305,6 +307,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 static int
 mono_get_corlib_version (void)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoClassField *field;
 	MonoObject *value;
@@ -316,7 +319,8 @@ mono_get_corlib_version (void)
 		return -1;
 	if (! (field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 		return -1;
-	value = mono_field_get_value_object (mono_domain_get (), field, NULL);
+	value = mono_field_get_value_object_checked (mono_domain_get (), field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	return *(gint32*)((gchar*)value + sizeof (MonoObject));
 }
 

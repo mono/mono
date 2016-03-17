@@ -264,7 +264,7 @@ namespace Mono.Net.Security
 				leaf = certs [0];
 
 			if (tlsStream != null)
-				request.ServicePoint.SetServerCertificate (leaf);
+				request.ServicePoint.UpdateServerCertificate (leaf);
 
 			if (leaf == null) {
 				errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
@@ -291,9 +291,6 @@ namespace Mono.Net.Security
 
 			if (wantsChain)
 				chain = SystemCertificateValidator.CreateX509Chain (certs);
-
-			if (wantsChain || SystemCertificateValidator.NeedsChain (settings))
-				SystemCertificateValidator.BuildX509Chain (certs, chain, ref errors, ref status11);
 
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {

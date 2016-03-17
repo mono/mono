@@ -639,6 +639,13 @@ namespace System.IO
 				MonoIOError error;
 
 				FlushBuffer ();
+
+				if (CanSeek && !isExposed) {
+					MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
+					if (error != MonoIOError.ERROR_SUCCESS)
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+				}
+
 				int wcount = count;
 
 				while (wcount > 0){
@@ -1037,7 +1044,7 @@ namespace System.IO
 					int wcount = buf_length;
 					int offset = 0;
 					while (wcount > 0){
-						int n = MonoIO.Write (safeHandle, buf, 0, buf_length, out error);
+						int n = MonoIO.Write (safeHandle, buf, offset, buf_length, out error);
 						if (error != MonoIOError.ERROR_SUCCESS) {
 							// don't leak the path information for isolated storage
 							throw MonoIO.GetException (GetSecureFileName (name), error);

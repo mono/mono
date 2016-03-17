@@ -534,6 +534,12 @@ namespace System
 			if (a == null)
 				return b;
 
+			if (b == null)
+				return a;
+
+			if (a.GetType () != b.GetType ())
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
+
 			return a.CombineImpl (b);
 		}
 

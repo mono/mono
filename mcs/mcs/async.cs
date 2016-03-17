@@ -90,6 +90,11 @@ namespace Mono.CSharp
 			if (!stmt.Resolve (bc))
 				return null;
 
+			if (rc.HasSet (ResolveContext.Options.FinallyScope) && rc.CurrentAnonymousMethod != null) {
+				var ats = (AsyncTaskStorey)rc.CurrentAnonymousMethod.Storey;
+				ats.HasAwaitInsideFinally = true;
+			}
+
 			type = stmt.ResultType;
 			eclass = ExprClass.Variable;
 			return this;
@@ -344,7 +349,11 @@ namespace Mono.CSharp
 
 			var errors_printer = new SessionReportPrinter ();
 			var old = bc.Report.SetPrinter (errors_printer);
-			ama = new Invocation (ama, args).Resolve (bc);
+
+			//
+			// The expression await t is classified the same way as the expression (t).GetAwaiter().GetResult(). 
+			//
+			ama = new Invocation (new ParenthesizedExpression (ama, Location.Null), args).Resolve (bc);
 			bc.Report.SetPrinter (old);
 
 			if (errors_printer.ErrorsCount > 0 || !MemberAccess.IsValidDotExpression (ama.Type)) {
@@ -536,6 +545,8 @@ namespace Mono.CSharp
 
 		#region Properties
 
+		public bool HasAwaitInsideFinally { get; set; }
+
 		public Expression HoistedReturnValue { get; set; }
 
 		public TypeSpec ReturnType {
@@ -689,6 +700,18 @@ namespace Mono.CSharp
 
 			builder = AddCompilerGeneratedField ("$builder", new TypeExpression (bt, Location));
 
+			Field rfield;
+			if (has_task_return_type && HasAwaitInsideFinally) {
+				//
+				// Special case async block with return value from finally clause. In such case
+				// we rewrite all return expresison stores to stfld to $return. Instead of treating
+				// returns outside of finally and inside of finally differently.
+				//
+				rfield = AddCompilerGeneratedField ("$return", new TypeExpression (bt.TypeArguments [0], Location));
+			} else {
+				rfield = null;
+			}
+
 			var set_state_machine = new Method (this, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
 				Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN | Modifiers.PUBLIC,
 				new MemberName ("SetStateMachine"),
@@ -726,7 +749,13 @@ namespace Mono.CSharp
 			set_state_machine.Block.AddStatement (new StatementExpression (new Invocation (mg, args)));
 
 			if (has_task_return_type) {
-				HoistedReturnValue = TemporaryVariableReference.Create (bt.TypeArguments [0], StateMachineMethod.Block, Location);
+				if (rfield != null) {
+					HoistedReturnValue = new FieldExpr (rfield, Location) {
+						InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null)
+					};
+				} else {
+					HoistedReturnValue = TemporaryVariableReference.Create (bt.TypeArguments [0], StateMachineMethod.Block, Location);
+				}
 			}
 
 			return true;

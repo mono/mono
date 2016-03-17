@@ -90,7 +90,6 @@ EXTRA_DISTFILES = \
 LIB_REFS = ICSharpCode.SharpZipLib System System.Core System.Xml System.Xml.Linq System.Configuration
 LIB_MCS_FLAGS = \
 	/unsafe                                                           \
-	/codepage:utf8                                                    \
 	/nowarn:169,164,162,168,219,618,612                               \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \

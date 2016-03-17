@@ -17473,7 +17473,7 @@
   <test name="gtest-540.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>1025</size>
+        <size>1425</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -62865,43 +62865,6 @@
       </method>
     </type>
   </test>
-  <test name="test-async-19.cs">
-    <type name="C">
-      <method name="Void Test(System.Threading.ManualResetEvent)" attrs="145">
-        <size>35</size>
-      </method>
-      <method name="Int32 Main()" attrs="150">
-        <size>96</size>
-      </method>
-      <method name="Void CurrentDomain_UnhandledException(System.Object, System.UnhandledExceptionEventArgs)" attrs="145">
-        <size>29</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Void .cctor()" attrs="6289">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="C+&lt;Test&gt;c__async0">
-      <method name="Void MoveNext()" attrs="486">
-        <size>227</size>
-      </method>
-    </type>
-    <type name="C+&lt;Test&gt;c__async0+&lt;Test&gt;c__AnonStorey1">
-      <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>29</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Test&gt;c__async0">
-      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-  </test>
   <test name="test-async-20.cs">
     <type name="Base">
       <method name="Void .ctor()" attrs="6278">
@@ -65630,6 +65593,96 @@
       </method>
     </type>
   </test>
+  <test name="test-async-82.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>66</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Test(Boolean)" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>269</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-83.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>57</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] GetSomeStrings(AsyncStringFactory)" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AsyncStringFactory">
+      <method name="System.Threading.Tasks.Task`1[System.String] GetSomeStringAsync()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+&lt;GetSomeStrings&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>191</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="AsyncStringFactory+&lt;GetSomeStringAsync&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>171</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-84.cs">
+    <type name="Program">
+      <method name="System.Threading.Tasks.Task`1[S] Foo()" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] DoAsync()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>204</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;DoAsync&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>171</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
@@ -67410,6 +67463,21 @@
     <type name="C">
       <method name="System.String &lt;get_Prop2&gt;m__0()" attrs="145">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-expression-bodied-02.cs">
+    <type name="Cs0842ExpressionBodyGetterBug">
+      <method name="Int32 get_MyGetter()" attrs="2182">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -69298,6 +69366,60 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-nameof-05.cs">
+    <type name="Person">
+      <method name="Car get_MyCar()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_MyCar(Car)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Car">
+      <method name="Int32 get_Year()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Year(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Person get_MyPerson1()" attrs="2198">
+        <size>13</size>
+      </method>
+      <method name="Void add_Act(System.Action)" attrs="2198">
+        <size>40</size>
+      </method>
+      <method name="Void remove_Act(System.Action)" attrs="2198">
+        <size>40</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>244</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="MainClass+Nested">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Void ParameterTest(Person)" attrs="129">
+        <size>12</size>
       </method>
     </type>
   </test>

@@ -599,7 +599,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 
 	case MONO_ERROR_TYPE_LOAD:
-		if (error->type_name && error->assembly_name) {
+		if ((error->type_name && error->assembly_name) || error->exn.klass) {
 			type_name = get_type_name_as_mono_string (error, domain, error_out);
 			if (!mono_error_ok (error_out))
 				break;
@@ -728,4 +728,11 @@ mono_error_convert_to_exception (MonoError *target_error)
 	}
 	mono_error_cleanup (target_error);
 	return ex;
+}
+
+void
+mono_error_move (MonoError *dest, MonoError *src)
+{
+	memcpy (dest, src, sizeof (MonoErrorInternal));
+	mono_error_init (src);
 }

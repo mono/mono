@@ -300,12 +300,13 @@ cominterop_object_is_rcw (MonoObject *obj)
 static int
 cominterop_get_com_slot_begin (MonoClass* klass)
 {
+	MonoError error;
 	MonoCustomAttrInfo *cinfo = NULL;
 	MonoInterfaceTypeAttribute* itf_attr = NULL; 
 
-	cinfo = mono_custom_attrs_from_class (klass);
+	cinfo = mono_custom_attrs_from_class_checked (klass, &error);
+	mono_error_assert_ok (&error);
 	if (cinfo) {
-		MonoError error;
 		itf_attr = (MonoInterfaceTypeAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_interface_type_attribute_class (), &error);
 		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 		if (!cinfo->cached)
@@ -405,11 +406,12 @@ cominterop_mono_string_to_guid (MonoString* string, guint8 *guid);
 static gboolean
 cominterop_class_guid (MonoClass* klass, guint8* guid)
 {
+	MonoError error;
 	MonoCustomAttrInfo *cinfo;
 
-	cinfo = mono_custom_attrs_from_class (klass);	
+	cinfo = mono_custom_attrs_from_class_checked (klass, &error);
+	mono_error_assert_ok (&error);
 	if (cinfo) {
-		MonoError error;
 		MonoReflectionGuidAttribute *attr = (MonoReflectionGuidAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_guid_attribute_class (), &error);
 		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 
@@ -432,9 +434,9 @@ cominterop_com_visible (MonoClass* klass)
 	GPtrArray *ifaces;
 	MonoBoolean visible = 1;
 
-	cinfo = mono_custom_attrs_from_class (klass);
+	cinfo = mono_custom_attrs_from_class_checked (klass, &error);
+	mono_error_assert_ok (&error);
 	if (cinfo) {
-		MonoError error;
 		MonoReflectionComVisibleAttribute *attr = (MonoReflectionComVisibleAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_guid_attribute_class (), &error);
 		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 
@@ -1628,7 +1630,9 @@ ves_icall_System_ComObject_CreateRCW (MonoReflectionType *type)
 	 * is called by the corresponding real proxy to create the real RCW.
 	 * Constructor does not need to be called. Will be called later.
 	*/
-	obj = mono_object_new_alloc_specific_checked (mono_class_vtable_full (domain, klass, TRUE), &error);
+	MonoVTable *vtable = mono_class_vtable_full (domain, klass, &error);
+	mono_error_raise_exception (&error);
+	obj = mono_object_new_alloc_specific_checked (vtable, &error);
 	mono_error_raise_exception (&error);
 
 	return obj;
@@ -1832,6 +1836,7 @@ cominterop_setup_marshal_context (EmitMarshalContext *m, MonoMethod *method)
 static gpointer
 cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 {
+	MonoError error;
 	int i;
 	MonoCCW *ccw = NULL;
 	MonoCCWInterface* ccw_entry = NULL;
@@ -1903,10 +1908,12 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 		g_hash_table_insert (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)), ccw_list);
 		mono_cominterop_unlock ();
 		/* register for finalization to clean up ccw */
-		mono_object_register_finalizer (object);
+		mono_object_register_finalizer (object, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	}
 
-	cinfo = mono_custom_attrs_from_class (itf);
+	cinfo = mono_custom_attrs_from_class_checked (itf, &error);
+	mono_error_assert_ok (&error);
 	if (cinfo) {
 		static MonoClass* coclass_attribute = NULL;
 		if (!coclass_attribute)
@@ -2444,6 +2451,7 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 											 guint32 lcid, gint32 *rgDispId)
 {
 	static MonoClass *ComDispIdAttribute = NULL;
+	MonoError error;
 	MonoCustomAttrInfo *cinfo = NULL;
 	int i,ret = MONO_S_OK;
 	MonoMethod* method;
@@ -2467,9 +2475,9 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 
 		method = mono_class_get_method_from_name(klass, methodname, -1);
 		if (method) {
-			cinfo = mono_custom_attrs_from_method (method);
+			cinfo = mono_custom_attrs_from_method_checked (method, &error);
+			mono_error_assert_ok (&error); /* FIXME what's reasonable to do here */
 			if (cinfo) {
-				MonoError error;
 				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, &error);
 				g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/;
 

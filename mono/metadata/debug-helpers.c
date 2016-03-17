@@ -333,6 +333,7 @@ mono_method_desc_new (const char *name, gboolean include_namespace)
 	MonoMethodDesc *result;
 	char *class_name, *class_nspace, *method_name, *use_args, *end;
 	int use_namespace;
+	int generic_delim_stack;
 	
 	class_nspace = g_strdup (name);
 	use_args = strchr (class_nspace, '(');
@@ -379,8 +380,14 @@ mono_method_desc_new (const char *name, gboolean include_namespace)
 		end = use_args;
 		if (*end)
 			result->num_args = 1;
+		generic_delim_stack = 0;
 		while (*end) {
-			if (*end == ',')
+			if (*end == '<')
+				generic_delim_stack++;
+			else if (*end == '>')
+				generic_delim_stack--;
+
+			if (*end == ',' && generic_delim_stack == 0)
 				result->num_args++;
 			++end;
 		}
@@ -568,13 +575,21 @@ mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 static const unsigned char*
 dis_one (GString *str, MonoDisHelper *dh, MonoMethod *method, const unsigned char *ip, const unsigned char *end)
 {
-	MonoMethodHeader *header = mono_method_get_header (method);
+	MonoError error;
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
 	const MonoOpcode *opcode;
 	guint32 label, token;
 	gint32 sval;
 	int i;
 	char *tmp;
-	const unsigned char* il_code = mono_method_header_get_code (header, NULL, NULL);
+	const unsigned char* il_code;
+
+	if (!header) {
+		g_string_append_printf (str, "could not disassemble, bad header due to %s", mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+		return end;
+	}
+	il_code = mono_method_header_get_code (header, NULL, NULL);
 
 	label = ip - il_code;
 	if (dh->indenter) {
@@ -1079,14 +1094,18 @@ mono_value_describe_fields (MonoClass* klass, const char* addr)
 void
 mono_class_describe_statics (MonoClass* klass)
 {
+	MonoError error;
 	MonoClassField *field;
 	MonoClass *p;
 	const char *field_ptr;
-	MonoVTable *vtable = mono_class_vtable_full (mono_domain_get (), klass, FALSE);
+	MonoVTable *vtable = mono_class_vtable_full (mono_domain_get (), klass, &error);
 	const char *addr;
 
-	if (!vtable)
+	if (!vtable || !is_ok (&error)) {
+		mono_error_cleanup (&error);
 		return;
+	}
+
 	if (!(addr = (const char *)mono_vtable_get_static_field_data (vtable)))
 		return;
 
@@ -1116,10 +1135,12 @@ mono_class_describe_statics (MonoClass* klass)
 void
 mono_method_print_code (MonoMethod *method)
 {
+	MonoError error;
 	char *code;
-	MonoMethodHeader *header = mono_method_get_header (method);
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
 	if (!header) {
-		printf ("METHOD HEADER NOT FOUND\n");
+		printf ("METHOD HEADER NOT FOUND DUE TO: %s\n", mono_error_get_message (&error));
+		mono_error_cleanup (&error);
 		return;
 	}
 	code = mono_disasm_code (0, method, header->code, header->code + header->code_size);

@@ -82,12 +82,18 @@ namespace Mono.Unix
 				uep.filename = "";
 				return uep;
 			}
-			byte [] bytes = new byte [socketAddress.Size - 2 - 1];
+			int size = socketAddress.Size - 2;
+			byte [] bytes = new byte [size];
 			for (int i = 0; i < bytes.Length; i++) {
 				bytes [i] = socketAddress [i + 2];
+				// There may be junk after the null terminator, so ignore it all.
+				if (bytes [i] == 0) {
+					size = i;
+					break;
+				}
 			}
 
-			string name = Encoding.Default.GetString (bytes);
+			string name = Encoding.Default.GetString (bytes, 0, size);
 			return new UnixEndPoint (name);
 		}
 

@@ -24,7 +24,7 @@ the_libdir = $(topdir)/class/lib/build/
 LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
 endif
 
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE -r:System.Core.dll -r:System.Xml.dll
 
 ifndef NO_THREAD_ABORT
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT

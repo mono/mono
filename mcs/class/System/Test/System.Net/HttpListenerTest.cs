@@ -352,7 +352,7 @@ namespace MonoTests.System.Net {
 		public void CloseWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/closewhilebegin/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhilebegin/");
 			listener.Start ();
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
@@ -368,7 +368,7 @@ namespace MonoTests.System.Net {
 		public void AbortWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/abortwhilebegin/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhilebegin/");
 			listener.Start ();
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
@@ -390,7 +390,7 @@ namespace MonoTests.System.Net {
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/closewhileget/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhileget/");
 			listener.Start ();
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Close), new object [0]);
 			rm.Start ();
@@ -407,7 +407,7 @@ namespace MonoTests.System.Net {
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/abortwhileget/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhileget/");
 			listener.Start ();
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Abort), new object [0]);
 			rm.Start ();

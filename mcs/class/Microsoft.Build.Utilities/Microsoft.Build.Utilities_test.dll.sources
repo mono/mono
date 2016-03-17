@@ -4,3 +4,5 @@ Microsoft.Build.Utilities/TaskItemTest.cs
 Microsoft.Build.Utilities/TaskLoggingHelperTest.cs
 Microsoft.Build.Utilities/ToolLocationHelperTest.cs
 Microsoft.Build.Utilities/ToolTaskTest.cs
+../../Microsoft.Build.Tasks/Test/Microsoft.Build.Tasks/TestMessageLogger.cs
+../../Microsoft.Build.Engine/Test/Microsoft.Build.BuildEngine/Consts.cs

@@ -1424,6 +1424,27 @@ namespace MonoTests.System
 		}
 #endif
 
+		public delegate void DoExecuteDelegate1 (C c);
+		public delegate void DoExecuteDelegate2 (C c);
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DelegateCombineDifferentTypes () {
+			var b = new B ();
+			var del1 = new DoExecuteDelegate1 (b.DoExecute);
+			var del2 = new DoExecuteDelegate2 (b.DoExecute);
+			var del = Delegate.Combine (del1, del2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DelegateRemoveDifferentTypes () {
+			var b = new B ();
+			var del1 = new DoExecuteDelegate1 (b.DoExecute);
+			var del2 = new DoExecuteDelegate2 (b.DoExecute);
+			var del = Delegate.Remove (del1, del2);
+		}
+
 		static bool Int32D2 (int x, int y)
 		{
 			return (x & y) == y; 

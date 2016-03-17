@@ -109,13 +109,19 @@ namespace Mono.Net.Security
 					ServicePointManager.CheckCertificateRevocationList);
 
 				status = WebExceptionStatus.Success;
+			} catch (Exception ex) {
+				status = WebExceptionStatus.SecureChannelFailure;
+				throw;
 			} finally {
 				if (CertificateValidationFailed)
 					status = WebExceptionStatus.TrustFailure;
 
-				request.ServicePoint.SetClientCertificate (sslStream.InternalLocalCertificate);
-				if (status != WebExceptionStatus.Success)
+				if (status == WebExceptionStatus.Success)
+					request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
+				else {
+					request.ServicePoint.UpdateClientCertificate (null);
 					sslStream = null;
+				}
 			}
 
 			try {

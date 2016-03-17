@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
+../../build/common/AssemblyRef.cs
 EventLogEntryType.cs
 InternalSR.cs
 MobileStubs.cs

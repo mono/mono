@@ -8,6 +8,7 @@ Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 
 ReferenceSources/SR.cs
+ReferenceSources/SR.missing.cs
 ReferenceSources/Error.cs
 ReferenceSources/Strings.cs
 

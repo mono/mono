@@ -40,6 +40,8 @@ using System.Collections.ObjectModel;
 using SMMessage = System.ServiceModel.Channels.Message;
 using System.Threading;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Dispatcher
 {
 	[TestFixture]
@@ -153,7 +155,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 		void TestInstanceBehavior (MessageInspectBehavior b, string expected, Result actual, int invocations)
 		{
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:30158"));
+			var port = NetworkHelpers.FindFreePort ();
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:" + port));
 			try {
 				h.AddServiceEndpoint (typeof (IAllActions).FullName, new BasicHttpBinding (), "AllActions");
 				h.Description.Behaviors.Add (b);
@@ -167,7 +170,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 						Assert.AreEqual (typeof (AllActions), ed.DispatchRuntime.Type, "Type property: " + ed.ContractName);
 					}
 				}
-				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:30158/AllActions"));
+				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:" + port + "/AllActions"));
 
 				for (int i = 0; i < invocations; ++i)
 					p.Get (10);

@@ -29,6 +29,7 @@ void*
 mono_ldftn (MonoMethod *method)
 {
 	gpointer addr;
+	MonoError error;
 
 	if (mono_llvm_only) {
 		// FIXME: No error handling
@@ -44,8 +45,11 @@ mono_ldftn (MonoMethod *method)
 		return addr;
 	}
 
-	addr = mono_create_jump_trampoline (mono_domain_get (), method, FALSE);
-
+	addr = mono_create_jump_trampoline (mono_domain_get (), method, FALSE, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
 	return mono_create_ftnptr (mono_domain_get (), addr);
 }
 
@@ -855,6 +859,7 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 gpointer
 mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 {
+	MonoError error;
 	MonoVTable *vtable;
 	gpointer addr;
 	
@@ -862,9 +867,17 @@ mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 
 	mono_class_init (field->parent);
 
-	vtable = mono_class_vtable_full (domain, field->parent, TRUE);
-	if (!vtable->initialized)
-		mono_runtime_class_init (vtable);
+	vtable = mono_class_vtable_full (domain, field->parent, &error);
+	if (!is_ok (&error)) {
+		mono_error_set_pending_exception (&error);
+		return NULL;
+	}
+	if (!vtable->initialized) {
+		if (!mono_runtime_class_init_full (vtable, &error)) {
+			mono_error_set_pending_exception (&error);
+			return NULL;
+		}
+	}
 
 	//printf ("SFLDA1 %p\n", (char*)vtable->data + field->offset);
 
@@ -1376,9 +1389,22 @@ mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClass *klass)
 }
 
 void
+ves_icall_runtime_class_init (MonoVTable *vtable)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+
+	mono_runtime_class_init_full (vtable, &error);
+	mono_error_set_pending_exception (&error);
+}
+
+
+void
 mono_generic_class_init (MonoVTable *vtable)
 {
-	mono_runtime_class_init (vtable);
+	MonoError error;
+	mono_runtime_class_init_full (vtable, &error);
+	mono_error_set_pending_exception (&error);
 }
 
 gpointer

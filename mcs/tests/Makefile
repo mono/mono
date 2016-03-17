@@ -50,7 +50,7 @@ TEST_PATTERN = 'v2'
 
 ifeq (net_4_x, $(PROFILE))
 TEST_PATTERN = 'v4'
-DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5"
+DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5 -debug"
 endif
 
 LOCAL_RUNTIME_FLAGS = --verify-all

@@ -1725,5 +1725,30 @@ namespace MonoTests.System.IO
 			}
 		}
 #endif
+
+		[Test] // Covers #11699
+		public void ReadWriteFileLength ()
+		{
+			int bufferSize = 128;
+			int readLength = 1;
+			int writeLength = bufferSize + 1;
+
+			string path = TempFolder + DSC + "readwritefilelength.tmp";
+
+			try {
+				File.WriteAllBytes (path, new byte [readLength + 1]);
+
+				using (var file = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read,
+												 bufferSize, FileOptions.SequentialScan))
+				{
+					file.Read (new byte [readLength], 0, readLength);
+					file.Write (new byte [writeLength], 0, writeLength);
+
+					Assert.AreEqual (readLength + writeLength, file.Length);
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
 	}
 }

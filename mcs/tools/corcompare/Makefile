@@ -43,4 +43,4 @@ clean-local:
 dist-local: dist-default
 
 mono-api-info.exe: $(APIINFO_SOURCES) ../../class/Mono.Options/Mono.Options/Options.cs
-	$(CSCOMPILE) -r:Mono.Cecil.dll -out:$@ $^
+	$(CSCOMPILE) -r:Mono.Cecil.dll -r:System.Xml.dll -r:System.Core.dll -r:System.dll -out:$@ $^

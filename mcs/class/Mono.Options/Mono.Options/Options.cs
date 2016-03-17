@@ -135,7 +135,11 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+#if PCL
+using System.Reflection;
+#else
 using System.Security.Permissions;
+#endif
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -145,6 +149,12 @@ using System.Linq;
 
 #if TEST
 using NDesk.Options;
+#endif
+
+#if PCL
+using MessageLocalizerConverter = System.Func<string, string>;
+#else
+using MessageLocalizerConverter = System.Converter<string, string>;
 #endif
 
 #if NDESK_OPTIONS
@@ -448,15 +458,31 @@ namespace Mono.Options
 		protected static T Parse<T> (string value, OptionContext c)
 		{
 			Type tt = typeof (T);
-			bool nullable = tt.IsValueType && tt.IsGenericType && 
-				!tt.IsGenericTypeDefinition && 
-				tt.GetGenericTypeDefinition () == typeof (Nullable<>);
-			Type targetType = nullable ? tt.GetGenericArguments () [0] : typeof (T);
-			TypeConverter conv = TypeDescriptor.GetConverter (targetType);
+#if PCL
+			TypeInfo ti = tt.GetTypeInfo ();
+#else
+			Type ti = tt;
+#endif
+			bool nullable = 
+				ti.IsValueType && 
+				ti.IsGenericType && 
+				!ti.IsGenericTypeDefinition && 
+				ti.GetGenericTypeDefinition () == typeof (Nullable<>);
+#if PCL
+			Type targetType = nullable ? tt.GenericTypeArguments [0] : tt;
+#else
+			Type targetType = nullable ? tt.GetGenericArguments () [0] : tt;
+#endif
 			T t = default (T);
 			try {
-				if (value != null)
+				if (value != null) {
+#if PCL
+					t = (T) Convert.ChangeType (value, targetType);
+#else
+					TypeConverter conv = TypeDescriptor.GetConverter (targetType);
 					t = (T) conv.ConvertFromString (value);
+#endif
+				}
 			}
 			catch (Exception e) {
 				throw new OptionException (
@@ -572,10 +598,12 @@ namespace Mono.Options
 		public abstract string Description { get; }
 		public abstract bool GetArguments (string value, out IEnumerable<string> replacement);
 
+#if !PCL
 		public static IEnumerable<string> GetArgumentsFromFile (string file)
 		{
 			return GetArguments (File.OpenText (file), true);
 		}
+#endif
 
 		public static IEnumerable<string> GetArguments (TextReader reader)
 		{
@@ -621,11 +649,12 @@ namespace Mono.Options
 			}
 			finally {
 				if (close)
-					reader.Close ();
+					reader.Dispose ();
 			}
 		}
 	}
 
+#if !PCL
 	public class ResponseFileSource : ArgumentSource {
 
 		public override string[] GetNames ()
@@ -647,8 +676,11 @@ namespace Mono.Options
 			return true;
 		}
 	}
+#endif
 
+#if !PCL
 	[Serializable]
+#endif
 	public class OptionException : Exception {
 		private string option;
 
@@ -668,16 +700,19 @@ namespace Mono.Options
 			this.option = optionName;
 		}
 
+#if !PCL
 		protected OptionException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			this.option = info.GetString ("OptionName");
 		}
+#endif
 
 		public string OptionName {
 			get {return this.option;}
 		}
 
+#if !PCL
 #pragma warning disable 618 // SecurityPermissionAttribute is obsolete
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 #pragma warning restore 618
@@ -686,6 +721,7 @@ namespace Mono.Options
 			base.GetObjectData (info, context);
 			info.AddValue ("OptionName", option);
 		}
+#endif
 	}
 
 	public delegate void OptionAction<TKey, TValue> (TKey key, TValue value);
@@ -697,15 +733,15 @@ namespace Mono.Options
 		{
 		}
 
-		public OptionSet (Converter<string, string> localizer)
+		public OptionSet (MessageLocalizerConverter localizer)
 		{
 			this.localizer = localizer;
 			this.roSources = new ReadOnlyCollection<ArgumentSource>(sources);
 		}
 
-		Converter<string, string> localizer;
+		MessageLocalizerConverter localizer;
 
-		public Converter<string, string> MessageLocalizer {
+		public MessageLocalizerConverter MessageLocalizer {
 			get {return localizer;}
 		}
 
