@@ -6,25 +6,15 @@ thisdir := mcs
 SUBDIRS := 
 include ../build/rules.make
 
+PROGRAM = mcs.exe
+
 EXTRA_DISTFILES = \
 	mcs.csproj		\
 	mcs.sln		\
 	cs-parser.jay		\
 	mcs.exe.sources
 
-LIB_REFS = System System.Core System.Xml
-
-ifeq (basic, $(PROFILE))
-PROGRAM = basic.exe
-sourcefile = mcs.exe.sources
-else
-PROGRAM_USE_INTERMEDIATE_FILE = true
-PROGRAM = mcs.exe
-the_libdir = $(topdir)/class/lib/build/
-LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
-endif
-
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE -r:System.Core.dll -r:System.Xml.dll
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE -r:System.Core.dll -r:System.Xml.dll -r:System.dll
 
 ifndef NO_THREAD_ABORT
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
@@ -35,10 +25,6 @@ REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_PROCESS_START
 endif
 
 LOCAL_MCS_FLAGS += $(REFERENCE_SOURCES_FLAGS)
-
-PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
-
-PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 BUILT_SOURCES = cs-parser.cs
 

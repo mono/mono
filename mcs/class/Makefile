@@ -1,8 +1,19 @@
 thisdir = class
 
-# Note that Mono.Security and System.Security aren't listed.
-# We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security System.Core 
+pcl_facade_dirs := Facades
+
+# The minimal set of csc dependencies
+basic_SUBDIRS := \
+	corlib \
+	System \
+	System.XML \
+	System Mono.Security \
+	System.Core \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	$(pcl_facade_dirs) \
+	../tools/cil-stringreplacer
 
 # resgen is corlib specific so we need to wait until corlib is build
 # and build it just a step before first dll needs it
@@ -14,9 +25,11 @@ build_SUBDIRS :=  \
 	System.XML \
 	System Mono.Security \
 	Mono.Posix \
-	System.Core
-
-pcl_facade_dirs := Facades
+	System.Core \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	$(pcl_facade_dirs)
 
 mobile_common_dirs := \
 	corlib	\
@@ -336,14 +349,26 @@ all-local $(STD_TARGETS:=-local):
 all-local-aot:
 
 # Files needed to bootstrap C# compiler
-basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll
+basic_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+	System.Numerics.dll System.Xml.Linq.dll \
+	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
+	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
+	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \
+	Facades/System.Threading.Tasks.Parallel.dll Facades/System.Dynamic.Runtime.dll Facades/System.Resources.ResourceManager.dll \
+	Facades/System.Threading.Tasks.dll Facades/System.Globalization.dll Facades/System.Runtime.Extensions.dll Facades/System.Threading.dll \
+	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
+	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll
+
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:
 	$(MKINSTALLDIRS) $@
 
-$(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/basic/%
+lib/monolite/Facades:
+	$(MKINSTALLDIRS) $@
+
+$(monolite_files): | lib/monolite lib/monolite/Facades
+$(monolite_files): lib/monolite/%: lib/basic/% 
 	cp -p $< $@
 
 $(basic_files:%=lib/basic/%):

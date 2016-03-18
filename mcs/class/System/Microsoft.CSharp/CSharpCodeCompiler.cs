@@ -82,7 +82,7 @@ namespace Mono.CSharp
 
 				windowsMcsPath = Path.Combine (p, "4.5\\mcs.exe");
 				if (!File.Exists (windowsMcsPath))
-					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\build\\mcs.exe");
+					windowsMcsPath = Path.Combine(Path.GetDirectoryName (p), "lib\\net_4_x\\mcs.exe");
 				
 				if (!File.Exists (windowsMcsPath))
 					throw new FileNotFoundException ("Windows mcs path not found: " + windowsMcsPath);

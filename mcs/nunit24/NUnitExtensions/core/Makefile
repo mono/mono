@@ -8,7 +8,7 @@ LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 LIB_MCS_FLAGS = \
 	-debug \
 	/r:nunit.core.dll /r:nunit.core.interfaces.dll \
-	/r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly
+	/r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly /publicsign
 NO_TEST = yo
 
 EXTRA_DISTFILES = \

@@ -5,7 +5,7 @@ include ../../../build/rules.make
 LIBRARY = nunit.framework.extensions.dll
 LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LIB_MCS_FLAGS = -debug /r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly
+LIB_MCS_FLAGS = -debug /r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly /publicsign
 NO_TEST = yo
 
 EXTRA_DISTFILES = \

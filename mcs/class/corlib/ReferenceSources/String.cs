@@ -345,15 +345,13 @@ namespace System
 
 		unsafe String ReplaceInternal (char oldChar, char newChar)
 		{
-#if !BOOTSTRAP_BASIC			
 			if (this.m_stringLength == 0 || oldChar == newChar)
 				return this;
-#endif
+
 			int start_pos = IndexOfUnchecked (oldChar, 0, this.m_stringLength);
-#if !BOOTSTRAP_BASIC
 			if (start_pos == -1)
 				return this;
-#endif
+
 			if (start_pos < 4)
 				start_pos = 0;
 
@@ -391,11 +389,8 @@ namespace System
 				throw new ArgumentException ("oldValue is the empty string.");
 
 			if (this.Length == 0)
-#if BOOTSTRAP_BASIC
-				throw new NotImplementedException ("BOOTSTRAP_BASIC");
-#else
 				return this;
-#endif
+
 			if (newValue == null)
 				newValue = Empty;
 
@@ -405,11 +400,7 @@ namespace System
 		private unsafe String ReplaceUnchecked (String oldValue, String newValue)
 		{
 			if (oldValue.m_stringLength > m_stringLength)
-#if BOOTSTRAP_BASIC
-				throw new NotImplementedException ("BOOTSTRAP_BASIC");
-#else
 				return this;
-#endif
 
 			if (oldValue.m_stringLength == 1 && newValue.m_stringLength == 1) {
 				return Replace (oldValue[0], newValue[0]);
@@ -434,11 +425,8 @@ namespace System
 					i = found + oldValue.m_stringLength;
 				}
 				if (count == 0)
-#if BOOTSTRAP_BASIC
-				throw new NotImplementedException ("BOOTSTRAP_BASIC");
-#else
-				return this;
-#endif
+					return this;
+
 				int nlen = 0;
 				checked {
 					try {
@@ -488,11 +476,8 @@ namespace System
 			if (totalWidth < 0)
 				throw new ArgumentOutOfRangeException ("totalWidth", "Non-negative number required");
 			if (totalWidth <= m_stringLength)
-#if BOOTSTRAP_BASIC
-				throw new NotImplementedException ("BOOTSTRAP_BASIC");
-#else			
 				return this;
-#endif
+
 			string result = FastAllocateString (totalWidth);
 
 			fixed (char *dest = result, src = &m_firstChar) {
@@ -518,11 +503,7 @@ namespace System
 
 		internal bool StartsWithOrdinalUnchecked (String value)
 		{
-#if BOOTSTRAP_BASIC
-			throw new NotImplementedException ("BOOTSTRAP_BASIC");
-#else
 			return m_stringLength >= value.m_stringLength && CompareOrdinalUnchecked (this, 0, value.m_stringLength, value, 0, value.m_stringLength) == 0;
-#endif
 		}
 
 		internal unsafe bool IsAscii ()
