@@ -31,6 +31,14 @@ reflection_PARALLEL_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflect
 
 mobile_static_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
+basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
+System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
+System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Tasks.Parallel System.Xml.ReaderWriter \
+System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
+System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions
+
+build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS)
+
 net_4_x_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS) System.Diagnostics.PerformanceCounter \
 System.IO.FileSystem.Watcher System.IO.Pipes System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.Net.Http.WebRequestHandler
 

@@ -3747,6 +3747,9 @@ fi
 DEFAULT_PROFILE=$default_profile
 AC_SUBST(DEFAULT_PROFILE)
 
+CSC=$mcs_topdir/packages/Microsoft.Net.Compilers.1.2.0-rc/tools/csc.exe
+AC_SUBST(CSC)
+
 AC_CONFIG_FILES([po/mcs/Makefile.in])
 
 AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
@@ -4074,6 +4077,8 @@ fi
     if test "x$test_bcl_opt" = "xyes"; then    
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
+
+    echo "CSC_LOCATION = $CSC" >> $srcdir/$mcsdir/build/config.make
 
   fi
 

@@ -3,8 +3,7 @@
 # Win32 platform-specific makefile rules.
 #
 
-PLATFORM_DEBUG_FLAGS = /debug+ /debug:full
-PLATFORM_MCS_FLAGS = /nologo
+PLATFORM_MCS_FLAGS =
 PLATFORM_RUNTIME = 
 PLATFORM_CORLIB = mscorlib.dll
 PLATFORM_TEST_HARNESS_EXCLUDES =

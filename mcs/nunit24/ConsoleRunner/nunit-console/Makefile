@@ -8,7 +8,7 @@ LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 LOCAL_MCS_FLAGS= \
 	-r:nunit.core.dll -r:nunit.core.interfaces.dll -r:nunit.util.dll \
 	-r:System.dll -r:System.Xml.dll \
-	/d:MONO /d:StronglyNamedAssembly
+	/d:MONO /d:StronglyNamedAssembly /publicsign
 NO_TEST = yo
 
 EXTRA_DISTFILES = nunit-console.csproj nunit-console_VS2005.csproj

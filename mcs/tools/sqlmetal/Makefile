@@ -16,7 +16,8 @@ LOCAL_MCS_FLAGS = \
 	-r:System.Data.dll                                                      \
 	-r:System.Data.Linq.dll                                                 \
 	-r:System.Xml.dll \
-	-r:System.dll
+	-r:System.dll \
+	-publicsign
 
 SQLMETAL_RESOURCES = \
 	$(dbmetal_src)/Language/EnglishWords.txt \

@@ -111,7 +111,8 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
 	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
 	$(IMAGE_RESOURCE_COMMAND)					                      \
-	/r:$(corlib)
+	/r:$(corlib) \
+	/publicsign
 
 CLEAN_FILES += $(the_lib).config
 

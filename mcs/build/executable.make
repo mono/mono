@@ -31,6 +31,9 @@ ifdef base_prog_config
 PROGRAM_config := $(build_libdir)$(PROGRAM).config
 endif
 
+sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
+SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
+
 the_lib = $(the_libdir)$(base_prog)
 build_lib = $(build_libdir)$(base_prog)
 
@@ -58,6 +61,7 @@ install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_BIN) $(the_lib) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	test ! -f $(the_lib).mdb || $(INSTALL_BIN) $(the_lib).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	test ! -f $(the_lib:.exe=.pdb) || $(INSTALL_BIN) $(the_lib:.exe=.pdb) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 ifdef PROGRAM_config
 	$(INSTALL_DATA) $(PROGRAM_config) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
@@ -66,7 +70,8 @@ ifdef PLATFORM_AOT_SUFFIX
 endif
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).config
+	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb \
+	$(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog:.exe=.pdb) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).config
 endif
 
 clean-local:
@@ -111,6 +116,9 @@ $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
 	$(PROGRAM_COMPILE) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+ifdef PROGRAM_SNK
+	$(Q) $(SN) -R $@ $(PROGRAM_SNK)
+endif
 
 ifdef PROGRAM_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)

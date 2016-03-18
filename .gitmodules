@@ -33,3 +33,6 @@
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
 	url = git://github.com/mono/NUnitLite.git
+[submodule "external/nuget-binary"]
+	path = external/nuget-binary
+	url = git://github.com/mono/nuget-binary.git
