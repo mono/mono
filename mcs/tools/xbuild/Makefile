@@ -22,15 +22,22 @@ endif
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
+NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
 
-
+ifeq (14.0, $(XBUILD_VERSION))
+install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets install-nuget-buildtasks-targets
+else
 install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets
+endif
 
 install-bin-data:
 	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
 	$(INSTALL_DATA) data/xbuild.rsp $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.targets $(DESTDIR)$(XBUILD_BIN_DIR)
+ifeq (14.0, $(XBUILD_VERSION))
+	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.props $(DESTDIR)$(XBUILD_BIN_DIR)/../
+endif
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.CSharp.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.Build.xsd $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.VisualBasic.targets $(DESTDIR)$(XBUILD_BIN_DIR)
@@ -88,6 +95,18 @@ install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
 	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
 
+NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
+
+ifeq (14.0, $(XBUILD_VERSION))
+install-nuget-buildtasks-targets:
+	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+endif
 
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
@@ -103,6 +122,7 @@ EXTRA_DISTFILES = \
 	data/4.0/Microsoft.Common.targets \
 	data/12.0/Microsoft.Common.targets \
 	data/14.0/Microsoft.Common.targets \
+	data/14.0/Microsoft.Common.props \
 	data/2.0/Microsoft.CSharp.targets \
 	data/3.5/Microsoft.CSharp.targets \
 	data/4.0/Microsoft.CSharp.targets \
@@ -129,5 +149,9 @@ EXTRA_DISTFILES = \
 	targets/Microsoft.Portable.Core.targets \
 	targets/Microsoft.Portable.Core.props \
 	targets/Microsoft.WebApplication.targets \
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets \
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props \
 	xbuild.make \
 	xbuild_test.make

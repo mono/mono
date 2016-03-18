@@ -33,3 +33,6 @@
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
 	url = git://github.com/mono/NUnitLite.git
+[submodule "external/nuget-buildtasks"]
+	path = external/nuget-buildtasks
+	url = git://github.com/mono/NuGet.BuildTasks

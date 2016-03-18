@@ -298,7 +298,7 @@ binary_reference_assemblies_SUBDIRS := reference-assemblies
 net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
 net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
-xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
+xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
 include ../build/rules.make
 
