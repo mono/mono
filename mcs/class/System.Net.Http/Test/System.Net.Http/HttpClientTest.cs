@@ -152,15 +152,16 @@ namespace MonoTests.System.Net.Http
 
 		const int WaitTimeout = 5000;
 
-		string port, TestHost, LocalServer;
+		string TestHost, LocalServer;
+		int port;
 
 		[SetUp]
 		public void SetupFixture ()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-				port = "810";
+				port = 810;
 			} else {
-				port = "8810";
+				port = 8810;
 			}
 
 			TestHost = "localhost:" + port;
@@ -1060,8 +1061,19 @@ namespace MonoTests.System.Net.Http
 				var response = l.Response;
 
 				response.StatusCode = (int)HttpStatusCode.Moved;
-				response.RedirectLocation = "http://xamarin.com/";
+				response.RedirectLocation = "http://localhost:8811/";
 			});
+
+			var listener2 = CreateListener (l => {
+				var response = l.Response;
+
+				response.StatusCode = (int)HttpStatusCode.OK;
+				response.OutputStream.WriteByte (0x68);
+				response.OutputStream.WriteByte (0x65);
+				response.OutputStream.WriteByte (0x6c);
+				response.OutputStream.WriteByte (0x6c);
+				response.OutputStream.WriteByte (0x6f);
+			}, 8811);
 
 			try {
 				var chandler = new HttpClientHandler ();
@@ -1071,10 +1083,13 @@ namespace MonoTests.System.Net.Http
 				var r = client.GetAsync (LocalServer);
 				Assert.IsTrue (r.Wait (WaitTimeout), "#1");
 				var resp = r.Result;
-				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
+				Assert.AreEqual ("http://localhost:8811/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
+				Assert.AreEqual ("hello", resp.Content.ReadAsStringAsync ().Result, "#3");
 			} finally {
 				listener.Abort ();
 				listener.Close ();
+				listener2.Abort ();
+				listener2.Close ();
 			}
 		}
 
@@ -1131,6 +1146,11 @@ namespace MonoTests.System.Net.Http
 		}
 
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
+		{
+			return CreateListener (contextAssert, port);
+		}
+
+		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{
 			var l = new HttpListener ();
 			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
