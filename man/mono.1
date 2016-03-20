@@ -1519,26 +1519,7 @@ http://www.mono-project.com/docs/getting-started/application-deployment/
 Provides a search path to the runtime where to look for custom profilers. See the
 section "CUSTOM PROFILERS" above for more information. Custom profilers will be
 searched for in the MONO_PROFILER_LIB_DIR path before the standard library paths.
-
 .TP
-\fBMONO_RTC\fR
-Experimental RTC support in the statistical profiler: if the user has
-the permission, more accurate statistics are gathered.  The MONO_RTC
-value must be restricted to what the Linux rtc allows: power of two
-from 64 to 8192 Hz. To enable higher frequencies like 4096 Hz, run as root:
-.nf
-
-	echo 4096 > /proc/sys/dev/rtc/max-user-freq
-
-.fi
-.Sp
-For example:
-.nf
-
-	MONO_RTC=4096 mono --profiler=default:stat program.exe
-
-.fi
-.TP 
 \fBMONO_SHARED_DIR\fR
 If set its the directory where the ".wapi" handle state is stored.
 This is the directory where the Windows I/O Emulation layer stores its
