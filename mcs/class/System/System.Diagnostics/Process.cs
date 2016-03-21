@@ -302,7 +302,7 @@ namespace System.Diagnostics
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The session ID for this process.")]
 		public int SessionId {
-			get { throw new NotImplementedException (); }
+			get { return 0; }
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
