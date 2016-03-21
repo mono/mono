@@ -553,7 +553,11 @@ namespace System {
 #endif
 			// personal == ~
 			case SpecialFolder.Personal:
+#if MONOTOUCH && !UNITY
+				return Path.Combine (home, "Documents");
+#else
 				return home;
+#endif
 			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
 				return config;
