@@ -427,6 +427,7 @@ namespace Microsoft.Build.Execution
 			};
 			var requestData = new BuildRequestData (this, targets ?? DefaultTargets.ToArray ());
 			var result = manager.Build (parameters, requestData);
+			manager.Dispose ();
 			targetOutputs = result.ResultsByTarget;
 			return result.OverallResult == BuildResultCode.Success;
 		}
