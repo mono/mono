@@ -2,21 +2,36 @@ thisdir = tools/corcompare
 SUBDIRS =
 include ../../build/rules.make
 
-ALL_PROGRAMS = mono-api-info.exe
-
-COMMON_SOURCES = \
-	AssemblyResolver.cs	\
-	Util.cs	\
-	WellFormedXmlWriter.cs
+ALL_PROGRAMS = mono-api-info.exe mono-api-html.exe
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 APIINFO_SOURCES = \
 	mono-api-info.cs \
-	../../class/Mono.Options/Mono.Options/Options.cs \
-	$(COMMON_SOURCES)
+	AssemblyResolver.cs	\
+	Util.cs	\
+	WellFormedXmlWriter.cs \
+	../../class/Mono.Options/Mono.Options/Options.cs
 
-DISTFILES= $(COMMON_SOURCES) $(APIINFO_SOURCES)
+APIHTML_SOURCES = \
+	mono-api-html/ApiChange.cs \
+	mono-api-html/ApiDiff.cs \
+	mono-api-html/AssemblyComparer.cs \
+	mono-api-html/ClassComparer.cs \
+	mono-api-html/Comparer.cs \
+	mono-api-html/ConstructorComparer.cs \
+	mono-api-html/EventComparer.cs \
+	mono-api-html/FieldComparer.cs \
+	mono-api-html/Helpers.cs \
+	mono-api-html/InterfaceComparer.cs \
+	mono-api-html/MemberComparer.cs \
+	mono-api-html/MethodComparer.cs \
+	mono-api-html/NamespaceComparer.cs \
+	mono-api-html/PropertyComparer.cs \
+	../../class/Mono.Options/Mono.Options/Options.cs
+
+
+DISTFILES= $(APIINFO_SOURCES) $(APIHTML_SOURCES)
 
 all-local: $(ALL_PROGRAMS)
 
@@ -42,5 +57,8 @@ clean-local:
 
 dist-local: dist-default
 
-mono-api-info.exe: $(APIINFO_SOURCES) ../../class/Mono.Options/Mono.Options/Options.cs
+mono-api-info.exe: $(APIINFO_SOURCES)
 	$(CSCOMPILE) -r:Mono.Cecil.dll -r:System.Xml.dll -r:System.Core.dll -r:System.dll -out:$@ $^
+
+mono-api-html.exe: $(APIHTML_SOURCES)
+	$(CSCOMPILE) -r:Mono.Cecil.dll -r:System.Xml.dll -r:System.Core.dll -r:System.dll -r:System.Xml.Linq.dll -out:$@ $^

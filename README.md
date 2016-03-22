@@ -104,6 +104,8 @@ See the man pages for mono(1), mcs(1) and monodis(1) for further details.
 Directory Roadmap
 =================
 
+* `acceptance-tests/` - Optional third party test suites used to validate Mono against a wider range of test cases.
+
 * `data/` - Configuration files installed as part of the Mono runtime.
 
 * `docs/` - Technical documents about the Mono runtime.
