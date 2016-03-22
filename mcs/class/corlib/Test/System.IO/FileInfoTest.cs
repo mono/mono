@@ -880,6 +880,29 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test] //Covers #38796
+		public void ToStringAfterMoveTo ()
+		{
+			string name1 = "FIT.ToStringAfterMoveTo.Test";
+			string name2 = "FIT.ToStringAfterMoveTo.Test.Alt";
+			string path1 = TempFolder + DSC + name1;
+			string path2 = TempFolder + DSC + name2;
+			DeleteFile (path1);
+			DeleteFile (path2);
+			
+			try {
+				File.Create (path1).Close ();
+				FileInfo info = new FileInfo (path1);
+				Assert.AreEqual (path1, info.ToString (), "#A");
+
+				info.MoveTo (path2);
+				Assert.AreEqual (path2, info.ToString (), "#B");
+			} finally {
+				DeleteFile (path1);
+				DeleteFile (path2);
+			}
+		}
+
 #if !MOBILE
 		[Test]
 		public void Replace1 ()
