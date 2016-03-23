@@ -296,7 +296,8 @@ namespace Mono.Net.Security
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				var xerrors = (MonoSslPolicyErrors)errors;
 				var xchain = (XX509Chain)(object)chain;
-				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, xchain, out result, ref xerrors, ref status11);
+				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, ref xchain, out result, ref xerrors, ref status11);
+				chain = (X509Chain)(object)xchain;
 				errors = (SslPolicyErrors)xerrors;
 			}
 
