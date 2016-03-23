@@ -1,9 +1,8 @@
 
 In general, the runtime and its class libraries are licensed under the
 terms of the MIT license, and some third party code is licensed under
-the 3-clause BSD license.
-
-
+the 3-clause BSD license.  See the file "PATENTS.TXT" for Microsoft's
+patent grant on the Mono codebase.
 
 The Mono distribution does include a handful of pieces of code that
 are used during the build system and are covered under different
