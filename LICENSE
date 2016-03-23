@@ -43,7 +43,7 @@ embeddable runtime:
 
 * mono/utils/memcheck.h: BSD license, used on debug builds that use Valgrind.
 
-* mono/utils/freebsd-dwarf.h, freebsd-elf_common.h, freebsd-elf64.h freebsd-elf32.h: BSD license, used on BSD systems.
+* mono/utils/freebsd-dwarf.h, freebsd-elf_common.h, freebsd-elf64.h freebsd-elf32.h: BSD license.
 
 * mono/utils/bsearch.c: BSD license.
 
