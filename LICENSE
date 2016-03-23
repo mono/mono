@@ -1,138 +1,77 @@
 
-Mono is made up of many pieces of code, all of them open source, but
-different pieces of Mono use different licensing terms.
+In general, the runtime and its class libraries are licensed under the
+terms of the MIT license, and some third party code is licensed under
+the 3-clause BSD license.
 
-For comments, corrections and updates, please contact mono@xamarin.com
 
-* Dual Licensing
 
-	Parts of Mono are dual licensed, they are available to the
-	public in GPL or LGPL forms, but we also offer those pieces
-	under commercial terms from Xamarin for the cases where the
-	GPL and the LGPL are not suitable.
+The Mono distribution does include a handful of pieces of code that
+are used during the build system and are covered under different
+licenses, those include:
 
-	We have tried to pick the licenses that will maximize adoption
-	of Mono, so we tend to use the MIT X11 or LGPL liceses.
+Build Time Code
+===============
 
-	Contributions to dual-licensed module require that the author
-	contributes the code under the terms of the MIT X11 code, or
-	to sign an agreement that allows Novell to redistribute the
-	code under other licenses.
+This is code that is used at build time, or during the maintenance of
+Mono itself, and does not end up in the redistributable part of Mono:
 
-	Contributions for other modules should be under the same license
-	terms as the rest of the module, or under MIT X11 terms. 
+* gettext
 
-	For the actual license links in the Mono distribution see the
-	bottom of this file.
+  m4 source files used to probe features at build time: GPL
 
-	If you need further information, please contact mono@xamarin.com
+* Benchmark Source Files
 
-* The Modules
+  Logic.cs and zipmark.cs are GPL source files.
 
-** mono/mono: the Mono VM
+* mono/docs/HtmlAgilityPack
 
-	This code is dual licensed under the LGPL or commercial licenses. 
+  MS-PL licensed
 
-	The LGPL ensures that Mono can be used in most scenarios, but
-	gives Xamarin the flexibility to relicense the code for
-	embedded systems, static linking or commercial settings where
-	the LGPL can not be used.
+* mcs/jay: 4-clause BSD licensed
 
-	We consider non-LGPL use instances where you use this on an
-	embedded system where the end user is not able to upgrade the
-	Mono VM or Moonlight installation or distribution that is part
-	of your product (Section 6 and 7), you would have to obtain a
-	commercial license from Xamarin (consider software burned into
-	a ROM, systems where end users would not be able to upgrade,
-	an embedded console, a game console that imposes limitations
-	on the distribution and access to the code, a phone platform
-	that prevents end users from upgrading Moonlight).
-	
-	Contact mono@xamarin.com for details on obtaining the Mono
-	runtime under other terms.
+* mcs/nunit24: MS-PL
 
-** mono/support: MonoPosixHelper and support code
+* mcs/class/I18N/mklist.sh, tools/cvt.sh: GNU GPLv2
 
-	This code is dual licensed under the LGPL or commercial licenses, with
-	the same guidelines as mono/mono code.
+Runtime Code
+============
 
-	The ZLib files are included under a "new BSD"-style license.
+The following code is linked with the final Mono runtime, the libmono
+embeddable runtime:
 
-** mono/eglib: Mono's X11 glib implementation
+* support/minizip: BSD license.
 
-	This is a minimal subset of glib that is to be licensed under
-	the terms of the MIT X11, this means that this code can be
-	used for any purposes by anyone.
+* mono/utils/memcheck.h: BSD license, used on debug builds that use Valgrind.
 
-** mono/arch/*/XXX-codegen.h
+* mono/utils/freebsd-dwarf.h, freebsd-elf_common.h, freebsd-elf64.h freebsd-elf32.h: BSD license, used on BSD systems.
 
-	This are C macros that are useful when generating native
-	code on various platforms.   This code is MIT X11 licensed.
+* mono/utils/bsearch.c: BSD license.
 
-** mcs/mcs, mcs/gmcs
+* mono/io-layer/wapi_glob.h, wapi_glob.c: BSD license
 
-  	The C# Compilers (1.0 and 2.0)
+Class Library code
+==================
 
-	These compilers are dual licensed under the GPL and MIT X11
-	license terms.
+These are class libraries that can be loaded by your process:
 
-** tests
+* mcs/class/RabbitMQ.Client: dual licensed in Apache v2, and Mozilla Public License 1.1
 
-	Unless explicitly stated, the tests are under the MIT X11 license.
+* mcs/class/Compat.ICSharpCode.SharpZipLib and
+  mcs/class/ICSharpCode.SharpZipLib are GPL with class-path exception.
+  Originates with the SharpDevelop project.
 
-** mcs/class
+* mcs/class/System.Core/System/TimeZoneInfo.Android.cs
 
-	The class libraries developed by the Mono team are licensed
-	under the MIT X11 terms.
-
-	In addition to the class libraries developed by the Mono team,
-	there are a number of class libraries that we bundle as part
-	of the distribution that were integrated from third-parties or
-	that contain code that was originally licensed under different
-	terms, these are:
-
-	    ByteFX.Data: LGPL
-
-	    Npgsql: LGPL
-
-	    FirebirdSql.Data.Firebird: Firebird public license.
-		See: mcs/class/FirebirdSql.Data.Firebird/license.txt
-
-            ICSharpCode.SharpZipLib, GPL with exceptions.
-		See: mcs/class/ICSharpCode.SharpZipLib/README
-
-** mcs/class/System.Core/System/TimeZoneInfo.Android.cs
-
-	This is a port of Apache 2.0-licensed Android code, and thus is
-	licensed under the Apache 2.0 license:
+  This is a port of Apache 2.0-licensed Android code, and thus is
+  licensed under the Apache 2.0 license
 
 	    http://www.apache.org/licenses/LICENSE-2.0
 
-	     
-** mcs/tools
-
-	These are licensed under the MIT X11 license, except where the
-	GPL is explicitly used. 
-
-** mcs/jay
-
-	This is a port of Berkeley yacc, so it is available under the BSD
-	license.   See the license in the individual C files for details.
-
-** mono/man
-
-	Manual pages and Mono documentation are covered by the MIT X11 license. 
-
-* samples
-
-	The code in the "samples" directory is released under the MIT X11 license.
-
-* The Licenses
+The Licenses
+============
 
 	These are the licenses used in Mono, the files are located:
 
-        GNU GPL: details avaliable in the file mcs/LICENSE.GPL
-        GNU LGPL: details available in the file mcs/LICENSE.LGPL
         MIT X11: text available in the file mcs/MIT.X11
         MPL: text available in the file mcs/LICENSE.MPL
-
+	InfoZip: text available in the file mcs/LICENSE.INFOZIP.BSD
