@@ -52,7 +52,7 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
-		public override string GetSubjectSummary ()
+		public string GetSubjectSummary ()
 		{
 			ThrowIfContextInvalid ();
 			IntPtr cfstr = SecCertificateCopySubjectSummary (handle);
@@ -107,14 +107,14 @@ namespace System.Security.Cryptography.X509Certificates
 			return FallbackImpl.GetIssuerName (legacyV1Mode);
 		}
 
-		public override DateTime GetEffectiveDateString ()
+		public override DateTime GetValidFrom ()
 		{
-			return FallbackImpl.GetEffectiveDateString ();
+			return FallbackImpl.GetValidFrom ();
 		}
 
-		public override DateTime GetExpirationDateString ()
+		public override DateTime GetValidUntil ()
 		{
-			return FallbackImpl.GetExpirationDateString ();
+			return FallbackImpl.GetValidUntil ();
 		}
 
 		public override string GetKeyAlgorithm ()
@@ -170,8 +170,8 @@ namespace System.Security.Cryptography.X509Certificates
 			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
 
 			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
+			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
+			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
 
 			sb.Append (nl);
