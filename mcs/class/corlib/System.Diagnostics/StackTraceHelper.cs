@@ -26,11 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Text;
-using System.Reflection;
-
 namespace System.Diagnostics {
 
+	using System.Text;
+#if INSIDE_CORLIB
+	using System.Reflection;
+#else
+	using IKVM.Reflection;
+	using IKVM.Reflection.Reader;
+	using Type = IKVM.Reflection.Type;
+#endif
 	// This class exists so tools such as mono-symbolicate can use it directly.
 	class StackTraceHelper {
 		
@@ -76,11 +81,8 @@ namespace System.Diagnostics {
 				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
 					pt = pt.GetGenericTypeDefinition ();
 
-				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
-					sb.Append (pt.Namespace);
-					sb.Append (".");
-				}
-				sb.Append (pt.Name);
+				sb.Append (pt.ToString());
+
 				if (p [i].Name != null) {
 					sb.Append (" ");
 					sb.Append (p [i].Name);

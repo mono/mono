@@ -11,22 +11,22 @@ Stacktrace:
   at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
 
 System.Exception: Stacktrace with 3 frames
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
   at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
   at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
   at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
   at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
 
 System.Exception: Stacktrace with 4 frames
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:76 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:76 
   at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
   at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:76 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:76 
   at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
   at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
 
