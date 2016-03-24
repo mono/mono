@@ -1211,13 +1211,29 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			// csc options that we don't support
-			case "/utf8output":
-			case "/subsystemversion":
+			case "/analyzer":
+			case "/appconfig":
+			case "/baseaddress":
+			case "/deterministic":
+			case "/errorendlocation":
+			case "/errorlog":
+			case "/features":
 			case "/highentropyva":
 			case "/highentropyva+":
 			case "/highentropyva-":
-			case "/win32manifest":
+			case "/link":
+			case "/moduleassemblyname":
 			case "/nowin32manifest":
+			case "/pathmap":
+			case "/pdb":
+			case "/preferreduilang":
+			case "/publicsign":
+			case "/reportanalyzer":
+			case "/ruleset":
+			case "/sqmsessionguid":
+			case "/subsystemversion":
+			case "/utf8output":
+			case "/win32manifest":
 				return ParseResult.Success;
 
 			default:
