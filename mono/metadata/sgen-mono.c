@@ -261,6 +261,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 
 	// FIXME: Maybe create a separate version for ctors (the branch would be
 	// correctly predicted more times)
+	//SGEN_ASSERT (0, !is_concurrent, "We're concurrent, but in a different way.");
 	if (is_concurrent)
 		write_barrier_method_addr = &write_barrier_conc_method;
 	else
@@ -270,9 +271,10 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 		return *write_barrier_method_addr;
 
 	/* Create the IL version of mono_gc_barrier_generic_store () */
-	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
+	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 	sig->ret = &mono_defaults.void_class->byval_arg;
 	sig->params [0] = &mono_defaults.int_class->byval_arg;
+	sig->params [1] = &mono_defaults.object_class->byval_arg;
 
 	if (is_concurrent)
 		mb = mono_mb_new (mono_defaults.object_class, "wbarrier_conc", MONO_WRAPPER_WRITE_BARRIER);
@@ -281,6 +283,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 
 #ifndef DISABLE_JIT
 #ifdef MANAGED_WBARRIER
+	g_assert_not_reached ();
 	emit_nursery_check (mb, nursery_check_labels, is_concurrent);
 	/*
 	addr = sgen_cardtable + ((address >> CARD_BITS) & CARD_MASK)
@@ -328,6 +331,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, 1);
 	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif

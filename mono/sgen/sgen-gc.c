@@ -2658,7 +2658,7 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 }
 
 void
-mono_gc_wbarrier_generic_nostore (gpointer ptr)
+mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
 	gpointer obj;
 
@@ -2690,7 +2690,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value)
 	SGEN_LOG (8, "Wbarrier store at %p to %p (%s)", ptr, value, value ? sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (value)) : "null");
 	SGEN_UPDATE_REFERENCE_ALLOW_NULL (ptr, value);
 	if (ptr_in_nursery (value) || concurrent_collection_in_progress)
-		mono_gc_wbarrier_generic_nostore (ptr);
+		mono_gc_wbarrier_generic_nostore (ptr, value);
 	sgen_dummy_use (value);
 }
 
@@ -2707,7 +2707,7 @@ mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value)
 	InterlockedWritePointer ((volatile gpointer *)ptr, value);
 
 	if (ptr_in_nursery (value) || concurrent_collection_in_progress)
-		mono_gc_wbarrier_generic_nostore (ptr);
+		mono_gc_wbarrier_generic_nostore (ptr, value);
 
 	sgen_dummy_use (value);
 }

@@ -1893,7 +1893,7 @@ MonoObject * ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject 
 {
 	MonoObject *res;
 	res = (MonoObject *) InterlockedExchangePointer((gpointer *) location, value);
-	mono_gc_wbarrier_generic_nostore (location);
+	mono_gc_wbarrier_generic_nostore (location, value);
 	return res;
 }
 
@@ -1955,7 +1955,7 @@ MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (Mono
 {
 	MonoObject *res;
 	res = (MonoObject *) InterlockedCompareExchangePointer((gpointer *) location, value, comparand);
-	mono_gc_wbarrier_generic_nostore (location);
+	mono_gc_wbarrier_generic_nostore (location, value);
 	return res;
 }
 
@@ -2021,7 +2021,7 @@ ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject **location,
 {
 	MonoObject *res;
 	res = (MonoObject *)InterlockedCompareExchangePointer ((volatile gpointer *)location, value, comparand);
-	mono_gc_wbarrier_generic_nostore (location);
+	mono_gc_wbarrier_generic_nostore (location, value);
 	return res;
 }
 
@@ -2031,7 +2031,7 @@ ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoOb
 	MonoObject *res;
 	MONO_CHECK_NULL (location, NULL);
 	res = (MonoObject *)InterlockedExchangePointer ((volatile gpointer *)location, value);
-	mono_gc_wbarrier_generic_nostore (location);
+	mono_gc_wbarrier_generic_nostore (location, value);
 	return res;
 }
 

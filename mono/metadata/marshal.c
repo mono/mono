@@ -300,7 +300,7 @@ mono_marshal_init (void)
 		register_icall (mono_compile_method, "mono_compile_method", "ptr ptr", FALSE);
 		register_icall (mono_context_get, "mono_context_get", "object", FALSE);
 		register_icall (mono_context_set, "mono_context_set", "void object", FALSE);
-		register_icall (mono_gc_wbarrier_generic_nostore, "wb_generic", "void ptr", FALSE);
+		register_icall (mono_gc_wbarrier_generic_nostore, "wb_generic", "void ptr object", FALSE);
 		register_icall (mono_gchandle_get_target, "mono_gchandle_get_target", "object int32", TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", "object object ptr ptr", FALSE);
 

@@ -697,7 +697,7 @@ SgenRememberedSet *sgen_get_remset (void);
  * Mono.
  */
 void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count);
-void mono_gc_wbarrier_generic_nostore (gpointer ptr);
+void mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
 

@@ -3207,6 +3207,7 @@ emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 
 	mono_gc_get_nursery (&nursery_shift_bits, &nursery_size);
 
+/*
 	if (cfg->backend->have_card_table_wb && !cfg->compile_aot && card_table && nursery_shift_bits > 0 && !COMPILE_LLVM (cfg)) {
 		MonoInst *wbarrier;
 
@@ -3223,17 +3224,20 @@ emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 		if (card_table_mask)
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_PAND_IMM, offset_reg, offset_reg, card_table_mask);
 
-		/*We can't use PADD_IMM since the cardtable might end up in high addresses and amd64 doesn't support
+		/ *We can't use PADD_IMM since the cardtable might end up in high addresses and amd64 doesn't support
 		 * IMM's larger than 32bits.
-		 */
+		 * /
 		ins = emit_runtime_constant (cfg, MONO_PATCH_INFO_GC_CARD_TABLE_ADDR, NULL);
 		card_reg = ins->dreg;
 
 		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, offset_reg, offset_reg, card_reg);
 		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, offset_reg, 0, 1);
-	} else {
+	} else
+*/
+	{
 		MonoMethod *write_barrier = mono_gc_get_write_barrier ();
-		mono_emit_method_call (cfg, write_barrier, &ptr, NULL);
+		MonoInst *args [2] = { ptr, value };
+		mono_emit_method_call (cfg, write_barrier, args, NULL);
 	}
 
 	EMIT_NEW_DUMMY_USE (cfg, dummy_use, value);
