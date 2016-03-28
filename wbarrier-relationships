@@ -1,0 +1,52 @@
+sgen/sgen-gc.c:
+
+  ✔ mono_gc_wbarrier_generic_nostore
+    sgen_client_wbarrier_generic_nostore_check [just for xdomain checks]
+    remset.wbarrier_generic_nostore = sgen_card_table_wbarrier_generic_nostore
+      sgen_card_table_mark_address
+
+  ✘ mono_gc_wbarrier_arrayref_copy
+    remset.wbarrier_arrayref_copy = sgen_card_table_wbarrier_arrayref_copy
+      sgen_card_table_mark_address
+
+  ✔ mono_gc_wbarrier_generic_store
+    mono_gc_wbarrier_generic_nostore
+
+  ✔ mono_gc_wbarrier_generic_store_atomic
+    mono_gc_wbarrier_generic_nostore
+
+  ✔ sgen_wbarrier_value_copy_bitmap
+    mono_gc_wbarrier_generic_store [wherever bitmap is set]
+      mono_gc_wbarrier_generic_nostore
+
+metadata/sgen-mono.c:
+
+  ✘ mono_gc_wbarrier_value_copy
+    sgen_get_remset ()->wbarrier_value_copy = sgen_card_table_wbarrier_value_copy
+      sgen_card_table_mark_range
+
+  ✘ mono_gc_wbarrier_object_copy
+    sgen_get_remset ()->wbarrier_object_copy = sgen_card_table_wbarrier_object_copy
+      sgen_card_table_mark_range
+
+  ✘ mono_gc_wbarrier_set_arrayref
+    sgen_get_remset ()->wbarrier_set_field = sgen_card_table_wbarrier_set_field
+      sgen_card_table_mark_address
+
+  ✘ mono_gc_wbarrier_set_field
+    mono_gc_wbarrier_set_arrayref
+      sgen_get_remset ()->wbarrier_set_field = sgen_card_table_wbarrier_set_field
+        sgen_card_table_mark_address
+
+  ✔ mono_gc_wbarrier_value_copy_bitmap
+    sgen_wbarrier_value_copy_bitmap
+      mono_gc_wbarrier_generic_store
+        mono_gc_wbarrier_generic_nostore
+
+The SgenRememberedSet fields are only ever set to these implementations:
+
+  remset.wbarrier_set_field = sgen_card_table_wbarrier_set_field
+  remset.wbarrier_arrayref_copy = sgen_card_table_wbarrier_arrayref_copy
+  remset.wbarrier_value_copy = sgen_card_table_wbarrier_value_copy
+  remset.wbarrier_object_copy = sgen_card_table_wbarrier_object_copy
+  remset.wbarrier_generic_nostore = sgen_card_table_wbarrier_generic_nostore
