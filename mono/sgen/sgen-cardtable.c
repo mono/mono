@@ -82,73 +82,6 @@ sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 	sgen_dummy_use (value);
 }
 
-static void
-sgen_card_table_wbarrier_set_field (GCObject *obj, gpointer field_ptr, GCObject* value)
-{
-	*(void**)field_ptr = value;
-	sgen_card_table_wbarrier_generic_nostore (field_ptr, value);
-}
-
-static void
-sgen_card_table_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
-{
-	gpointer *dest = (gpointer *)dest_ptr;
-	gpointer *src = (gpointer *)src_ptr;
-
-	/*overlapping that required backward copying*/
-	if (src < dest && (src + count) > dest) {
-		gpointer *start = dest;
-		dest += count - 1;
-		src += count - 1;
-
-		for (; dest >= start; --src, --dest) {
-			gpointer value = *src;
-			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
-			if (need_mod_union || sgen_ptr_in_nursery (value))
-				sgen_card_table_mark_address ((mword)dest);
-			sgen_dummy_use (value);
-		}
-	} else {
-		gpointer *end = dest + count;
-		for (; dest < end; ++src, ++dest) {
-			gpointer value = *src;
-			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
-			if (need_mod_union || sgen_ptr_in_nursery (value))
-				sgen_card_table_mark_address ((mword)dest);
-			sgen_dummy_use (value);
-		}
-	}	
-}
-
-static void
-sgen_card_table_wbarrier_value_copy (gpointer dest, gpointer src, int count, size_t element_size)
-{
-	size_t size = count * element_size;
-
-	TLAB_ACCESS_INIT;
-	ENTER_CRITICAL_REGION;
-
-	mono_gc_memmove_atomic (dest, src, size);
-	sgen_card_table_mark_range ((mword)dest, size);
-
-	EXIT_CRITICAL_REGION;
-}
-
-static void
-sgen_card_table_wbarrier_object_copy (GCObject* obj, GCObject *src)
-{
-	size_t size = sgen_client_par_object_get_size (SGEN_LOAD_VTABLE_UNCHECKED (obj), obj);
-
-	TLAB_ACCESS_INIT;
-	ENTER_CRITICAL_REGION;
-
-	mono_gc_memmove_aligned ((char*)obj + SGEN_CLIENT_OBJECT_HEADER_SIZE, (char*)src + SGEN_CLIENT_OBJECT_HEADER_SIZE,
-			size - SGEN_CLIENT_OBJECT_HEADER_SIZE);
-	sgen_card_table_mark_range ((mword)obj, size);
-
-	EXIT_CRITICAL_REGION;
-}
-
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 
 guint8 *sgen_shadow_cardtable;
@@ -603,10 +536,6 @@ sgen_card_table_init (SgenRememberedSet *remset)
 	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &los_card_scan_time);
 
 
-	remset->wbarrier_set_field = sgen_card_table_wbarrier_set_field;
-	remset->wbarrier_arrayref_copy = sgen_card_table_wbarrier_arrayref_copy;
-	remset->wbarrier_value_copy = sgen_card_table_wbarrier_value_copy;
-	remset->wbarrier_object_copy = sgen_card_table_wbarrier_object_copy;
 	remset->wbarrier_generic_nostore = sgen_card_table_wbarrier_generic_nostore;
 	remset->record_pointer = sgen_card_table_record_pointer;
 
