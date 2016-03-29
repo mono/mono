@@ -402,9 +402,6 @@ static mword objects_pinned;
  * ######################################################################
  */
 
-/* FIXME: get rid of this */
-typedef SgenGrayQueue GrayQueue;
-
 /* forward declarations */
 static void scan_from_registered_roots (char *addr_start, char *addr_end, int root_type, ScanCopyContext ctx);
 
@@ -519,7 +516,7 @@ gboolean
 sgen_drain_gray_stack (ScanCopyContext ctx)
 {
 	ScanObjectFunc scan_func = ctx.ops->scan_object;
-	GrayQueue *queue = ctx.queue;
+	SgenGrayQueue *queue = ctx.queue;
 
 	if (ctx.ops->drain_gray_stack)
 		return ctx.ops->drain_gray_stack (queue);
@@ -714,7 +711,7 @@ pin_objects_in_nursery (gboolean do_scan_objects, ScanCopyContext ctx)
  * when we can't promote an object because we're out of memory.
  */
 void
-sgen_pin_object (GCObject *object, GrayQueue *queue)
+sgen_pin_object (GCObject *object, SgenGrayQueue *queue)
 {
 	/*
 	 * All pinned objects are assumed to have been staged, so we need to stage as well.
