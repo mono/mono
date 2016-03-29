@@ -344,6 +344,14 @@ namespace System.ServiceModel.Description
 				var dfa = serviceMethod.GetCustomAttribute<DataContractFormatAttribute> (false);
 				if (dfa != null)
 					od.Behaviors.Add (new DataContractSerializerOperationBehavior (od, dfa));
+				
+				// check if method has OperationContractAttribute then add DataContractSerializerOperationBehavior 	
+				else
+				{
+					var occa = serviceMethod.GetCustomAttribute<OperationContractAttribute>(false);
+                    if (occa != null)
+                        od.Behaviors.Add(new DataContractSerializerOperationBehavior(od));
+				}
 
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
 				if (!od.IsOneWay) {
