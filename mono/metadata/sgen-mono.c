@@ -210,7 +210,7 @@ mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* va
 	if (value)
 		binary_protocol_wbarrier (slot_ptr, value, value->vtable);
 
-	sgen_get_remset ()->wbarrier_set_field ((GCObject*)arr, slot_ptr, value);
+	mono_gc_wbarrier_generic_store (slot_ptr, value);
 }
 
 void

@@ -144,9 +144,11 @@ sgen_card_table_wbarrier_object_copy (GCObject* obj, GCObject *src)
 }
 
 static void
-sgen_card_table_wbarrier_generic_nostore (gpointer ptr)
+sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
-	sgen_card_table_mark_address ((mword)ptr);	
+	if (need_mod_union || sgen_ptr_in_nursery (value))
+		sgen_card_table_mark_address ((mword)ptr);
+	sgen_dummy_use (value);
 }
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS

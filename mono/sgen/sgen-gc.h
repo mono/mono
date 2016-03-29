@@ -678,7 +678,7 @@ typedef struct _SgenRememberedSet {
 	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
 	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
 	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
-	void (*wbarrier_generic_nostore) (gpointer ptr);
+	void (*wbarrier_generic_nostore) (gpointer ptr, GCObject *value);
 	void (*record_pointer) (gpointer ptr);
 
 	void (*scan_remsets) (ScanCopyContext ctx);
