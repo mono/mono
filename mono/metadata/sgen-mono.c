@@ -128,10 +128,11 @@ scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword
 	} while (0)
 
 static void
-copy_object_with_wbarrier (char *const dest_obj, char *const start, mword desc, size_t instance_size)
+copy_object_with_wbarrier (MonoObject *dest_obj, MonoObject *src_obj, mword desc, size_t instance_size)
 {
+	char *const start = (char*)src_obj;
 	const size_t element_size = instance_size - sizeof (MonoObject);
-	char *const dest = dest_obj + sizeof (MonoObject);
+	char *const dest = (char*)dest_obj + sizeof (MonoObject);
 	char *const real_start = start + sizeof (MonoObject);
 	char *previous_non_references = start + sizeof (MonoObject);
 #define SCAN_OBJECT_NOVTABLE
@@ -176,7 +177,7 @@ mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass
 	for (int i = 0; i < count; ++i) {
 		char *const dest = (char *)dests + i * element_size;
 		char *const real_start = (char *)srcs + i * element_size;
-		copy_object_with_wbarrier (dest - sizeof (MonoObject), real_start - sizeof (MonoObject), desc, instance_size);
+		copy_object_with_wbarrier ((MonoObject*)(dest - sizeof (MonoObject)), (MonoObject*)(real_start - sizeof (MonoObject)), desc, instance_size);
 	}
 }
 
@@ -205,7 +206,7 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 		scan_object_for_binary_protocol_copy_wbarrier (obj, (char*)src, (mword) src->vtable->gc_descr);
 #endif
 
-	sgen_get_remset ()->wbarrier_object_copy (obj, src);
+	copy_object_with_wbarrier (obj, src, sgen_obj_get_descriptor (src), sgen_safe_object_get_size (src));
 }
 
 void
