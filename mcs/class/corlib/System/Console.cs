@@ -540,7 +540,6 @@ namespace System
 
 #endif
 
-#if !NET_2_1
 		// FIXME: Console should use these encodings when changed
 		static Encoding inputEncoding;
 		static Encoding outputEncoding;
@@ -561,6 +560,7 @@ namespace System
 			}
 		}
 
+#if !NET_2_1
 		public static ConsoleColor BackgroundColor {
 			get { return ConsoleDriver.BackgroundColor; }
 			set { ConsoleDriver.BackgroundColor = value; }
