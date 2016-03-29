@@ -75,12 +75,18 @@ sgen_card_table_number_of_cards_in_range (mword address, mword size)
 }
 
 static void
+sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
+{
+	if (need_mod_union || sgen_ptr_in_nursery (value))
+		sgen_card_table_mark_address ((mword)ptr);
+	sgen_dummy_use (value);
+}
+
+static void
 sgen_card_table_wbarrier_set_field (GCObject *obj, gpointer field_ptr, GCObject* value)
 {
 	*(void**)field_ptr = value;
-	if (need_mod_union || sgen_ptr_in_nursery (value))
-		sgen_card_table_mark_address ((mword)field_ptr);
-	sgen_dummy_use (value);
+	sgen_card_table_wbarrier_generic_nostore (field_ptr, value);
 }
 
 static void
@@ -141,14 +147,6 @@ sgen_card_table_wbarrier_object_copy (GCObject* obj, GCObject *src)
 	sgen_card_table_mark_range ((mword)obj, size);
 
 	EXIT_CRITICAL_REGION;
-}
-
-static void
-sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
-{
-	if (need_mod_union || sgen_ptr_in_nursery (value))
-		sgen_card_table_mark_address ((mword)ptr);
-	sgen_dummy_use (value);
 }
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
