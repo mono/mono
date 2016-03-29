@@ -222,23 +222,23 @@ sgen_client_update_copied_object (char *destination, GCVTable gc_vtable, void *o
 #ifdef XDOMAIN_CHECKS_IN_WBARRIER
 extern gboolean sgen_mono_xdomain_checks;
 
-#define sgen_client_wbarrier_generic_nostore_check(ptr) do {		\
+#define sgen_client_wbarrier_generic_nostore_check(ptr, value) do {	\
+		MonoObject *__value = (MonoObject*)(value);		\
 		/* FIXME: ptr_in_heap must be called with the GC lock held */ \
-		if (sgen_mono_xdomain_checks && *(MonoObject**)ptr && ptr_in_heap (ptr)) { \
-			char *start = find_object_for_ptr (ptr);	\
-			MonoObject *value = *(MonoObject**)ptr;		\
+		if (sgen_mono_xdomain_checks && __value && ptr_in_heap ((ptr))) { \
+			char *start = find_object_for_ptr ((ptr));	\
 			LOCK_GC;					\
 			SGEN_ASSERT (0, start, "Write barrier outside an object?"); \
 			if (start) {					\
 				MonoObject *obj = (MonoObject*)start;	\
-				if (obj->vtable->domain != value->vtable->domain) \
-					SGEN_ASSERT (0, is_xdomain_ref_allowed (ptr, start, obj->vtable->domain), "Cross-domain ref not allowed"); \
+				if (obj->vtable->domain != __value->vtable->domain) \
+					SGEN_ASSERT (0, is_xdomain_ref_allowed ((ptr), start, obj->vtable->domain), "Cross-domain ref not allowed"); \
 			}						\
 			UNLOCK_GC;					\
 		}							\
 	} while (0)
 #else
-#define sgen_client_wbarrier_generic_nostore_check(ptr)
+#define sgen_client_wbarrier_generic_nostore_check(ptr, value)
 #endif
 
 static gboolean G_GNUC_UNUSED

@@ -2635,40 +2635,38 @@ sgen_thread_unregister (SgenThreadInfo *p)
 void
 mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 {
+	int i;
+
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
+	/* FIXME: For low-pause wbarrier, remove nursery check */
 	if (ptr_in_nursery (dest_ptr) || count <= 0) {
 		mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
 		return;
 	}
 
+	for (i = 0; i < count; ++i) {
+		gpointer dest = (gpointer*)dest_ptr + i;
+		gpointer obj = *((gpointer*)src_ptr + i);
+		mono_gc_wbarrier_generic_store (dest, obj);
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ()) {
-		int i;
-		for (i = 0; i < count; ++i) {
-			gpointer dest = (gpointer*)dest_ptr + i;
-			gpointer obj = *((gpointer*)src_ptr + i);
-			if (obj)
-				binary_protocol_wbarrier (dest, obj, (gpointer)LOAD_VTABLE (obj));
-		}
-	}
+		if (binary_protocol_is_heavy_enabled () && obj)
+			binary_protocol_wbarrier (dest, obj, (gpointer)LOAD_VTABLE (obj));
 #endif
-
-	remset.wbarrier_arrayref_copy (dest_ptr, src_ptr, count);
+	}
 }
 
 void
 mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
-	gpointer obj;
-
 	HEAVY_STAT (++stat_wbarrier_generic_store);
 
-	sgen_client_wbarrier_generic_nostore_check (ptr);
+	sgen_client_wbarrier_generic_nostore_check (ptr, value);
 
-	obj = *(gpointer*)ptr;
-	if (obj)
-		binary_protocol_wbarrier (ptr, obj, (gpointer)LOAD_VTABLE (obj));
+	if (!value)
+		return;
+
+	binary_protocol_wbarrier (ptr, value, (gpointer)LOAD_VTABLE (value));
 
 	SGEN_LOG (8, "Adding remset at %p", ptr);
 	remset.wbarrier_generic_nostore (ptr, value);
@@ -2680,7 +2678,6 @@ mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value)
 	SGEN_LOG (8, "Wbarrier store at %p to %p (%s)", ptr, value, value ? sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (value)) : "null");
 	SGEN_UPDATE_REFERENCE_ALLOW_NULL (ptr, value);
 	mono_gc_wbarrier_generic_nostore (ptr, value);
-	sgen_dummy_use (value);
 }
 
 /* Same as mono_gc_wbarrier_generic_store () but performs the store
