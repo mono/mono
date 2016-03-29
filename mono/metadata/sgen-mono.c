@@ -108,37 +108,9 @@ scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword
 }
 #endif
 
-void
-mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass *klass)
-{
-	HEAVY_STAT (++stat_wbarrier_value_copy);
-	g_assert (klass->valuetype);
-
-	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dests, count, (gpointer)klass->gc_descr, klass->name, klass);
-
-	if (sgen_ptr_in_nursery (dests) || ptr_on_stack (dests) || !sgen_gc_descr_has_references ((mword)klass->gc_descr)) {
-		size_t element_size = mono_class_value_size (klass, NULL);
-		size_t size = count * element_size;
-		mono_gc_memmove_atomic (dests, srcs, size);
-		return;
-	}
-
-	const size_t element_size = mono_class_value_size (klass, NULL);
-
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ()) {
-		int i;
-		for (i = 0; i < count; ++i) {
-			scan_object_for_binary_protocol_copy_wbarrier ((char*)dests + i * element_size,
-					(char*)src + i * element_size - sizeof (MonoObject),
-					(mword) klass->gc_descr);
-		}
-	}
-#endif
-
-	/* We issue store write barriers for individual reference fields, and
-	 * memmove chunks of non-reference fields.
-	 */
+/* We issue store write barriers for individual reference fields, and
+ * memmove chunks of non-reference fields.
+ */
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr, obj) do { \
 		mono_gc_memmove_atomic \
@@ -155,19 +127,56 @@ mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass
 		previous_non_references = (char *)(ptr) + SIZEOF_VOID_P; \
 	} while (0)
 
+static void
+copy_object_with_wbarrier (char *const dest_obj, char *const start, mword desc, size_t instance_size)
+{
+	const size_t element_size = instance_size - sizeof (MonoObject);
+	char *const dest = dest_obj + sizeof (MonoObject);
+	char *const real_start = start + sizeof (MonoObject);
+	char *previous_non_references = start + sizeof (MonoObject);
+#define SCAN_OBJECT_NOVTABLE
+#include "sgen/sgen-scan-object.h"
+	/* Copy any remaining non-reference fields. */
+	mono_gc_memmove_atomic
+		(previous_non_references - real_start + dest,
+				previous_non_references,
+				real_start + element_size - previous_non_references);
+}
+
+void
+mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass *klass)
+{
+	HEAVY_STAT (++stat_wbarrier_value_copy);
+	g_assert (klass->valuetype);
+
+	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dests, count, (gpointer)klass->gc_descr, klass->name, klass);
+
+	if (sgen_ptr_in_nursery (dests) || ptr_on_stack (dests) || !sgen_gc_descr_has_references ((mword)klass->gc_descr)) {
+		size_t element_size = mono_class_value_size (klass, NULL);
+		size_t size = count * element_size;
+		mono_gc_memmove_atomic (dests, srcs, size);
+		return;
+	}
+
+	const size_t instance_size = mono_class_instance_size (klass);
+	const size_t element_size = instance_size - sizeof (MonoObject);
+
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+	if (binary_protocol_is_heavy_enabled ()) {
+		int i;
+		for (i = 0; i < count; ++i) {
+			scan_object_for_binary_protocol_copy_wbarrier ((char*)dests + i * element_size,
+					(char*)src + i * element_size - sizeof (MonoObject),
+					(mword) klass->gc_descr);
+		}
+	}
+#endif
+
 	const mword desc = klass->gc_descr;
 	for (int i = 0; i < count; ++i) {
 		char *const dest = (char *)dests + i * element_size;
 		char *const real_start = (char *)srcs + i * element_size;
-		char *const start = real_start - sizeof (MonoObject);
-		char *previous_non_references = start + sizeof (MonoObject);
-#define SCAN_OBJECT_NOVTABLE
-#include "sgen/sgen-scan-object.h"
-		/* Copy any remaining non-reference fields. */
-		mono_gc_memmove_atomic
-			(previous_non_references - real_start + dest,
-				previous_non_references,
-				real_start + element_size - previous_non_references);
+		copy_object_with_wbarrier (dest - sizeof (MonoObject), real_start - sizeof (MonoObject), desc, instance_size);
 	}
 }
 
