@@ -19,9 +19,6 @@
 #include <unistd.h>
 #endif
 #include <math.h>
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 #ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
 #endif
@@ -236,8 +233,6 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 
 #ifdef SIGPROF
 
-static int profiling_signal_in_use;
-
 #if defined(__ia64__) || defined(__sparc__) || defined(sparc)
 
 MONO_SIG_HANDLER_FUNC (static, sigprof_signal_handler)
@@ -337,18 +332,6 @@ MONO_SIG_HANDLER_FUNC (static, sigprof_signal_handler)
 		return; //thread in the process of dettaching
 
 	hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
-
-	/* If we can't consume a profiling request it means we're the initiator. */
-	if (!(mono_threads_consume_async_jobs () & MONO_SERVICE_REQUEST_SAMPLE)) {
-		FOREACH_THREAD_SAFE (info) {
-			if (mono_thread_info_get_tid (info) == mono_native_thread_id_get () ||
-			    !mono_thread_info_is_live (info))
-				continue;
-
-			mono_threads_add_async_job (info, MONO_SERVICE_REQUEST_SAMPLE);
-			mono_threads_pthread_kill (info, profiling_signal_in_use);
-		} FOREACH_THREAD_SAFE_END
-	}
 
 	mono_thread_info_set_is_async_context (TRUE);
 	per_thread_profiler_hit (ctx);
@@ -521,120 +504,58 @@ mono_runtime_cleanup_handlers (void)
 	free_saved_signal_handlers ();
 }
 
-#ifdef HAVE_LINUX_RTC_H
-#include <linux/rtc.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-static int rtc_fd = -1;
+static MonoNativeThreadId sampling_thread;
+static volatile gint32 sampling_thread_running;
 
-static int
-enable_rtc_timer (gboolean enable)
+static mono_native_thread_return_t
+sampling_thread_func (void *data)
 {
-	int flags;
-	flags = fcntl (rtc_fd, F_GETFL);
-	if (flags < 0) {
-		perror ("getflags");
-		return 0;
+	/*
+	 * This gives us access to lock-free data structures that use hazard
+	 * pointers, e.g. the LLS (used for the thread list).
+	 */
+	mono_thread_info_register_small_id ();
+
+	MonoNativeThreadId me = mono_native_thread_id_get ();
+	guint64 us = 1000000 / mono_profiler_get_sampling_rate () - 1;
+
+	while (InterlockedRead (&sampling_thread_running)) {
+		FOREACH_THREAD_SAFE (info) {
+			if (mono_thread_info_get_tid (info) == me)
+				continue;
+
+			mono_threads_pthread_kill (info, SIGPROF);
+		} FOREACH_THREAD_SAFE_END
+
+		mono_thread_info_usleep (us);
 	}
-	if (enable)
-		flags |= FASYNC;
-	else
-		flags &= ~FASYNC;
-	if (fcntl (rtc_fd, F_SETFL, flags) == -1) {
-		perror ("setflags");
-		return 0;
-	}
-	return 1;
+
+	return NULL;
 }
-#endif
 
 void
 mono_runtime_shutdown_stat_profiler (void)
 {
-#ifdef HAVE_LINUX_RTC_H
-	if (rtc_fd >= 0)
-		enable_rtc_timer (FALSE);
+#ifdef SIGPROF
+	InterlockedWrite (&sampling_thread_running, 0);
+	pthread_join (sampling_thread, NULL);
+
+	/*
+	 * FIXME: We can't safely remove the signal handler because we have no
+	 * guarantee that all pending signals have been delivered at this point.
+	 */
+	//remove_signal_handler (SIGPROF);
 #endif
 }
-
-#ifdef ITIMER_PROF
-static int
-get_itimer_mode (void)
-{
-	switch (mono_profiler_get_sampling_mode ()) {
-	case MONO_PROFILER_STAT_MODE_PROCESS: return ITIMER_PROF;
-	case MONO_PROFILER_STAT_MODE_REAL: return ITIMER_REAL;
-	}
-	g_assert_not_reached ();
-	return 0;
-}
-
-static int
-get_itimer_signal (void)
-{
-	switch (mono_profiler_get_sampling_mode ()) {
-	case MONO_PROFILER_STAT_MODE_PROCESS: return SIGPROF;
-	case MONO_PROFILER_STAT_MODE_REAL: return SIGALRM;
-	}
-	g_assert_not_reached ();
-	return 0;
-}
-#endif
 
 void
 mono_runtime_setup_stat_profiler (void)
 {
-#ifdef ITIMER_PROF
-	struct itimerval itval;
-	static int inited = 0;
-#ifdef HAVE_LINUX_RTC_H
-	const char *rtc_freq;
-	if (!inited && (rtc_freq = g_getenv ("MONO_RTC"))) {
-		int freq = 0;
-		inited = 1;
-		if (*rtc_freq)
-			freq = atoi (rtc_freq);
-		if (!freq)
-			freq = 1024;
-		rtc_fd = open ("/dev/rtc", O_RDONLY);
-		if (rtc_fd == -1) {
-			perror ("open /dev/rtc");
-			return;
-		}
-		profiling_signal_in_use = SIGPROF;
-		add_signal_handler (profiling_signal_in_use, sigprof_signal_handler, SA_RESTART);
-		if (ioctl (rtc_fd, RTC_IRQP_SET, freq) == -1) {
-			perror ("set rtc freq");
-			return;
-		}
-		if (ioctl (rtc_fd, RTC_PIE_ON, 0) == -1) {
-			perror ("start rtc");
-			return;
-		}
-		if (fcntl (rtc_fd, F_SETSIG, SIGPROF) == -1) {
-			perror ("setsig");
-			return;
-		}
-		if (fcntl (rtc_fd, F_SETOWN, getpid ()) == -1) {
-			perror ("setown");
-			return;
-		}
-		enable_rtc_timer (TRUE);
-		return;
-	}
-	if (rtc_fd >= 0)
-		return;
-#endif
+#ifdef SIGPROF
+	add_signal_handler (SIGPROF, sigprof_signal_handler, SA_RESTART);
 
-	itval.it_interval.tv_usec = (1000000 / mono_profiler_get_sampling_rate ()) - 1;
-	itval.it_interval.tv_sec = 0;
-	itval.it_value = itval.it_interval;
-	if (inited)
-		return;
-	inited = 1;
-	profiling_signal_in_use = get_itimer_signal ();
-	add_signal_handler (profiling_signal_in_use, sigprof_signal_handler, SA_RESTART);
-	setitimer (get_itimer_mode (), &itval, NULL);
+	InterlockedWrite (&sampling_thread_running, 1);
+	mono_native_thread_create (&sampling_thread, sampling_thread_func, NULL);
 #endif
 }
 
