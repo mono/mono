@@ -6074,6 +6074,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			guint64 nursery_start = (guint64)mono_gc_get_nursery (&nursery_shift, &nursery_size);
 			guint64 shifted_nursery_start = nursery_start >> nursery_shift;
 
+			g_assert_not_reached ();
+
 			/*If either point to the stack we can simply avoid the WB. This happens due to
 			 * optimizations revealing a stack store that was not visible when op_cardtable was emited.
 			 */
