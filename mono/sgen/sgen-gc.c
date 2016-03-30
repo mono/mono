@@ -299,9 +299,6 @@ static guint64 time_max = 0;
 static SGEN_TV_DECLARE (time_major_conc_collection_start);
 static SGEN_TV_DECLARE (time_major_conc_collection_end);
 
-static SGEN_TV_DECLARE (last_minor_collection_start_tv);
-static SGEN_TV_DECLARE (last_minor_collection_end_tv);
-
 int gc_debug_level = 0;
 FILE* gc_debug_file;
 
@@ -1468,6 +1465,8 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	ScanCopyContext ctx;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
+	SGEN_TV_DECLARE (last_minor_collection_start_tv);
+	SGEN_TV_DECLARE (last_minor_collection_end_tv);
 
 	if (disable_minor_collections)
 		return TRUE;
@@ -2156,7 +2155,7 @@ major_finish_concurrent_collection (gboolean forced)
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	TV_GETTIME (total_end);
-	gc_stats.major_gc_time += TV_ELAPSED (total_start, total_end) - TV_ELAPSED (last_minor_collection_start_tv, last_minor_collection_end_tv);
+	gc_stats.major_gc_time += TV_ELAPSED (total_start, total_end);
 
 	current_collection_generation = -1;
 }
