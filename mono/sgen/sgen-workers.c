@@ -34,7 +34,8 @@ static int workers_num;
 static volatile gboolean forced_stop;
 static WorkerData *workers_data;
 
-static SgenSectionGrayQueue workers_distribute_gray_queue;
+static mono_mutex_t workers_distribute_gray_queue_lock;
+static SgenGrayQueue workers_distribute_gray_queue;
 static gboolean workers_distribute_gray_queue_inited;
 
 /*
@@ -155,25 +156,41 @@ sgen_workers_wait_for_jobs_finished (void)
 }
 
 static gboolean
+drain_queue_into_queue (SgenGrayQueue *dest, SgenGrayQueue *src)
+{
+	gboolean did_dequeue = FALSE;
+	for (;;) {
+		GCObject *obj;
+		SgenDescriptor desc;
+		GRAY_OBJECT_DEQUEUE (src, &obj, &desc);
+		if (!obj)
+			break;
+		GRAY_OBJECT_ENQUEUE (dest, obj, desc);
+		did_dequeue = TRUE;
+	}
+	return did_dequeue;
+}
+
+static gboolean
 workers_get_work (WorkerData *data)
 {
-	SgenMajorCollector *major;
+	SgenMajorCollector *major = sgen_get_major_collector ();
+	gboolean did_dequeue;
 
+	SGEN_ASSERT (0, major->is_concurrent, "Worker code shouldn't run if the collector is not concurrent.");
 	g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
 
-	/* If we're concurrent, steal from the workers distribute gray queue. */
-	major = sgen_get_major_collector ();
-	if (major->is_concurrent) {
-		GrayQueueSection *section = sgen_section_gray_queue_dequeue (&workers_distribute_gray_queue);
-		if (section) {
-			sgen_gray_object_enqueue_section (&data->private_gray_queue, section);
-			return TRUE;
-		}
-	}
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+
+	/* Steal from the workers distribute gray queue. */
+	did_dequeue = drain_queue_into_queue (&data->private_gray_queue, &workers_distribute_gray_queue);
+
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
 
 	/* Nobody to steal from */
-	g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
-	return FALSE;
+	if (!did_dequeue)
+		g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
+	return did_dequeue;
 }
 
 static void
@@ -246,13 +263,13 @@ static void
 init_distribute_gray_queue (void)
 {
 	if (workers_distribute_gray_queue_inited) {
-		g_assert (sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue));
-		g_assert (workers_distribute_gray_queue.locked);
+		g_assert (sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue));
 		return;
 	}
 
-	sgen_section_gray_queue_init (&workers_distribute_gray_queue, TRUE,
-			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL);
+	mono_os_mutex_init (&workers_distribute_gray_queue_lock);
+	sgen_gray_object_queue_init (&workers_distribute_gray_queue,
+			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL, FALSE);
 	workers_distribute_gray_queue_inited = TRUE;
 }
 
@@ -326,7 +343,7 @@ sgen_workers_join (void)
 
 	/* At this point all the workers have stopped. */
 
-	SGEN_ASSERT (0, sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue), "Why is there still work left to do?");
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue), "Why is there still work left to do?");
 	for (i = 0; i < workers_num; ++i)
 		SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_data [i].private_gray_queue), "Why is there still work left to do?");
 }
@@ -342,7 +359,7 @@ sgen_workers_have_idle_work (void)
 
 	SGEN_ASSERT (0, forced_stop && sgen_workers_all_done (), "Checking for idle work should only happen if the workers are stopped.");
 
-	if (!sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue))
+	if (!sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue))
 		return TRUE;
 
 	for (i = 0; i < workers_num; ++i) {
@@ -369,21 +386,17 @@ sgen_workers_are_working (void)
 void
 sgen_workers_assert_gray_queue_is_empty (void)
 {
-	SGEN_ASSERT (0, sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue), "Why is the workers gray queue not empty?");
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue), "Why is the workers gray queue not empty?");
 }
 
 void
 sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
 {
-	gboolean wake = FALSE;
+	gboolean wake;
 
-	for (;;) {
-		GrayQueueSection *section = sgen_gray_object_dequeue_section (queue);
-		if (!section)
-			break;
-		sgen_section_gray_queue_enqueue (&workers_distribute_gray_queue, section);
-		wake = TRUE;
-	}
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+	wake = drain_queue_into_queue (&workers_distribute_gray_queue, queue);
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
 
 	if (wake) {
 		SGEN_ASSERT (0, sgen_concurrent_collection_in_progress (), "Why is there work to take when there's no concurrent collection in progress?");
