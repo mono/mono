@@ -148,7 +148,20 @@ typedef struct {
 	} while (0)
 
 #define MS_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] & (ONE_P << (b)))
-#define MS_SET_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] |= (ONE_P << (b)))
+
+static gboolean
+MS_SET_MARK_BIT (MSBlockInfo *block, int word, int bit)
+{
+	volatile mword *mark_word_ptr = &block->mark_words [word];
+	mword mark_bit = ONE_P << bit;
+	for (;;) {
+		mword mark_word = *mark_word_ptr;
+		if (mark_word & mark_bit)
+			return FALSE;
+		if (InterlockedCompareExchangePointer ((volatile gpointer*)mark_word_ptr, (gpointer)(mark_word | mark_bit), (gpointer)mark_word) == (gpointer)mark_word)
+			return TRUE;
+	}
+}
 
 #define MS_OBJ_ALLOCED(o,b)	(*(void**)(o) && (*(char**)(o) < MS_BLOCK_FOR_BLOCK_INFO (b) || *(char**)(o) >= MS_BLOCK_FOR_BLOCK_INFO (b) + MS_BLOCK_SIZE))
 
@@ -1093,9 +1106,8 @@ major_block_is_evacuating (MSBlockInfo *block)
 #define MS_MARK_OBJECT_AND_ENQUEUE_CHECKED(obj,desc,block,queue) do {	\
 		int __word, __bit;					\
 		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
-		if (!MS_MARK_BIT ((block), __word, __bit) && MS_OBJ_ALLOCED ((obj), (block))) {	\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
-			if (sgen_gc_descr_has_references (desc))			\
+		if (MS_OBJ_ALLOCED ((obj), (block)) && MS_SET_MARK_BIT ((block), __word, __bit)) { \
+			if (sgen_gc_descr_has_references (desc))	\
 				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((obj))); \
 			INC_NUM_MAJOR_OBJECTS_MARKED ();		\
@@ -1105,8 +1117,7 @@ major_block_is_evacuating (MSBlockInfo *block)
 		int __word, __bit;					\
 		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
 		SGEN_ASSERT (9, MS_OBJ_ALLOCED ((obj), (block)), "object %p not allocated", obj); \
-		if (!MS_MARK_BIT ((block), __word, __bit)) {		\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
+		if (MS_SET_MARK_BIT ((block), __word, __bit)) {		\
 			if (sgen_gc_descr_has_references (desc))			\
 				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((obj))); \
