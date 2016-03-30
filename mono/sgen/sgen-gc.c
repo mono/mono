@@ -2116,15 +2116,7 @@ major_should_finish_concurrent_collection (void)
 static void
 major_update_concurrent_collection (void)
 {
-	TV_DECLARE (total_start);
-	TV_DECLARE (total_end);
-
-	TV_GETTIME (total_start);
-
 	binary_protocol_concurrent_update ();
-
-	TV_GETTIME (total_end);
-	gc_stats.major_gc_time += TV_ELAPSED (total_start, total_end);
 }
 
 static void
