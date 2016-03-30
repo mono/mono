@@ -363,7 +363,7 @@ sgen_card_table_finish_minor_collection (void)
 }
 
 static void
-sgen_card_table_scan_remsets (ScanCopyContext ctx)
+sgen_card_table_scan_remsets (ScanCopyContext ctx, CardTableScanType scan_type)
 {
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
@@ -380,11 +380,11 @@ sgen_card_table_scan_remsets (ScanCopyContext ctx)
 	sgen_card_table_clear_cards ();
 #endif
 	SGEN_TV_GETTIME (atv);
-	sgen_get_major_collector ()->scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx);
+	sgen_get_major_collector ()->scan_card_table (scan_type, ctx);
 	SGEN_TV_GETTIME (btv);
-	last_major_scan_time = SGEN_TV_ELAPSED (atv, btv); 
+	last_major_scan_time = SGEN_TV_ELAPSED (atv, btv);
 	major_card_scan_time += last_major_scan_time;
-	sgen_los_scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx);
+	sgen_los_scan_card_table (scan_type, ctx);
 	SGEN_TV_GETTIME (atv);
 	last_los_scan_time = SGEN_TV_ELAPSED (btv, atv);
 	los_card_scan_time += last_los_scan_time;

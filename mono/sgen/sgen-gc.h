@@ -601,9 +601,8 @@ typedef struct
 } ScannedObjectCounts;
 
 typedef enum {
-	CARDTABLE_SCAN_GLOBAL = 0,
-	CARDTABLE_SCAN_MOD_UNION = 1,
-	CARDTABLE_SCAN_MOD_UNION_PRECLEAN = CARDTABLE_SCAN_MOD_UNION | 2,
+	CARDTABLE_SCAN_ALL,
+	CARDTABLE_SCAN_MARKED
 } CardTableScanType;
 
 typedef struct _SgenMajorCollector SgenMajorCollector;
@@ -681,7 +680,7 @@ typedef struct _SgenRememberedSet {
 	void (*wbarrier_generic_nostore) (gpointer ptr, GCObject *value);
 	void (*record_pointer) (gpointer ptr);
 
-	void (*scan_remsets) (ScanCopyContext ctx);
+	void (*scan_remsets) (ScanCopyContext ctx, CardTableScanType scan_type);
 
 	void (*clear_cards) (void);
 

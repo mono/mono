@@ -1345,7 +1345,7 @@ scan_copy_context_for_scan_job (void *worker_data_untyped, ScanJob *job)
 static void
 job_remembered_set_scan (void *worker_data_untyped, SgenThreadPoolJob *job)
 {
-	remset.scan_remsets (scan_copy_context_for_scan_job (worker_data_untyped, (ScanJob*)job));
+	remset.scan_remsets (scan_copy_context_for_scan_job (worker_data_untyped, (ScanJob*)job), CARDTABLE_SCAN_ALL);
 }
 
 typedef struct {
@@ -1391,38 +1391,6 @@ job_scan_finalizer_entries (void *worker_data_untyped, SgenThreadPoolJob *job)
 	ScanCopyContext ctx = scan_copy_context_for_scan_job (worker_data_untyped, &job_data->scan_job);
 
 	scan_finalizer_entries (job_data->queue, ctx);
-}
-
-static void
-job_scan_major_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
-{
-	ScanJob *job_data = (ScanJob*)job;
-	ScanCopyContext ctx = scan_copy_context_for_scan_job (worker_data_untyped, job_data);
-
-	g_assert (concurrent_collection_in_progress);
-	major_collector.scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx);
-}
-
-static void
-job_scan_los_mod_union_card_table (void *worker_data_untyped, SgenThreadPoolJob *job)
-{
-	ScanJob *job_data = (ScanJob*)job;
-	ScanCopyContext ctx = scan_copy_context_for_scan_job (worker_data_untyped, job_data);
-
-	g_assert (concurrent_collection_in_progress);
-	sgen_los_scan_card_table (CARDTABLE_SCAN_MOD_UNION, ctx);
-}
-
-static void
-job_mod_union_preclean (void *worker_data_untyped, SgenThreadPoolJob *job)
-{
-	ScanJob *job_data = (ScanJob*)job;
-	ScanCopyContext ctx = scan_copy_context_for_scan_job (worker_data_untyped, job_data);
-
-	g_assert (concurrent_collection_in_progress);
-
-	major_collector.scan_card_table (CARDTABLE_SCAN_MOD_UNION_PRECLEAN, ctx);
-	sgen_los_scan_card_table (CARDTABLE_SCAN_MOD_UNION_PRECLEAN, ctx);
 }
 
 static void
@@ -1863,40 +1831,15 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	 * the roots.
 	 */
 	if (mode == COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT) {
-		if (precleaning_enabled) {
-			ScanJob *sj;
-			/* Mod union preclean job */
-			sj = (ScanJob*)sgen_thread_pool_job_alloc ("preclean mod union cardtable", job_mod_union_preclean, sizeof (ScanJob));
-			sj->ops = object_ops;
-			sj->gc_thread_gray_queue = NULL;
-			sgen_workers_start_all_workers (object_ops, &sj->job);
-		} else {
-			sgen_workers_start_all_workers (object_ops, NULL);
-		}
+		sgen_workers_start_all_workers (object_ops, NULL);
 		gray_queue_enable_redirect (gc_thread_gray_queue);
 	}
 
 	if (mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT) {
-		ScanJob *sj;
+		// FIXME: do via job
+		remset.scan_remsets (ctx, CARDTABLE_SCAN_MARKED);
 
-		/* FIXME: right now we're doing this because we don't scan the regular card table,
-		   but we clear it. */
-		major_collector.update_cardtable_mod_union ();
-		sgen_los_update_cardtable_mod_union ();
-
-		if (mod_union_consistency_check)
-			sgen_check_mod_union_consistency ();
-
-		/* Mod union card table */
-		sj = (ScanJob*)sgen_thread_pool_job_alloc ("scan mod union cardtable", job_scan_major_mod_union_card_table, sizeof (ScanJob));
-		sj->ops = object_ops;
-		sj->gc_thread_gray_queue = gc_thread_gray_queue;
-		sgen_workers_enqueue_job (&sj->job, FALSE);
-
-		sj = (ScanJob*)sgen_thread_pool_job_alloc ("scan LOS mod union cardtable", job_scan_los_mod_union_card_table, sizeof (ScanJob));
-		sj->ops = object_ops;
-		sj->gc_thread_gray_queue = gc_thread_gray_queue;
-		sgen_workers_enqueue_job (&sj->job, FALSE);
+		// FIXME: check the mod union bits and see which ones should be marked in regular card table
 
 		TV_GETTIME (atv);
 		time_major_scan_mod_union += TV_ELAPSED (btv, atv);
@@ -1961,6 +1904,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 {
 	ScannedObjectCounts counts;
 	SgenObjectOperations *object_ops;
+	ScanCopyContext ctx;
 	mword fragment_total;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
@@ -1981,7 +1925,9 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 
 	sgen_workers_assert_gray_queue_is_empty ();
 
-	finish_gray_stack (GENERATION_OLD, CONTEXT_FROM_OBJECT_OPERATIONS (object_ops, gc_thread_gray_queue));
+	ctx = CONTEXT_FROM_OBJECT_OPERATIONS (object_ops, gc_thread_gray_queue);
+
+	finish_gray_stack (GENERATION_OLD, ctx);
 	TV_GETTIME (atv);
 	time_major_finish_gray_stack += TV_ELAPSED (btv, atv);
 

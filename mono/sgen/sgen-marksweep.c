@@ -1274,8 +1274,6 @@ major_scan_object_dijkstra (GCObject *full_object, SgenDescriptor desc, SgenGray
 		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
 		if (__old && !sgen_ptr_in_nursery (__old))		\
 			major_copy_or_mark_object_dijkstra_internal ((ptr), __old, queue); \
-		else if (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr))) \
-			mark_mod_union_card (full_object, (void**)(ptr), __old); \
 	} while (0)
 
 #define SCAN_OBJECT_PROTOCOL
@@ -2267,7 +2265,6 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 #ifndef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 cards_copy [CARDS_PER_BLOCK];
 #endif
-	guint8 cards_preclean [CARDS_PER_BLOCK];
 	gboolean small_objects;
 	int block_obj_size;
 	char *block_start;
@@ -2276,43 +2273,21 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 	char *scan_front = NULL;
 
 	/* The concurrent mark doesn't enter evacuating blocks */
-	if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN && major_block_is_evacuating (block))
-		return;
+	if (scan_type == CARDTABLE_SCAN_MARKED)
+		SGEN_ASSERT (0, !major_block_is_evacuating (block), "How did we end up evacuating blocks in the concurrent collector?");
 
 	block_obj_size = block->obj_size;
 	small_objects = block_obj_size < CARD_SIZE_IN_BYTES;
 
 	block_start = MS_BLOCK_FOR_BLOCK_INFO (block);
 
-	/*
-	 * This is safe in face of card aliasing for the following reason:
-	 *
-	 * Major blocks are 16k aligned, or 32 cards aligned.
-	 * Cards aliasing happens in powers of two, so as long as major blocks are aligned to their
-	 * sizes, they won't overflow the cardtable overlap modulus.
-	 */
-	if (scan_type & CARDTABLE_SCAN_MOD_UNION) {
-		card_data = card_base = block->cardtable_mod_union;
-		/*
-		 * This happens when the nursery collection that precedes finishing
-		 * the concurrent collection allocates new major blocks.
-		 */
-		if (!card_data)
-			return;
-
-		if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN) {
-			sgen_card_table_preclean_mod_union (card_data, cards_preclean, CARDS_PER_BLOCK);
-			card_data = card_base = cards_preclean;
-		}
-	} else {
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-		card_data = card_base = sgen_card_table_get_card_scan_address ((mword)block_start);
+	card_data = card_base = sgen_card_table_get_card_scan_address ((mword)block_start);
 #else
-		if (!sgen_card_table_get_card_data (cards_copy, (mword)block_start, CARDS_PER_BLOCK))
-			return;
-		card_data = card_base = cards_copy;
+	if (!sgen_card_table_get_card_data (cards_copy, (mword)block_start, CARDS_PER_BLOCK))
+		return;
+	card_data = card_base = cards_copy;
 #endif
-	}
 	card_data_end = card_data + CARDS_PER_BLOCK;
 
 	card_data += MS_BLOCK_SKIP >> CARD_BITS;
@@ -2362,7 +2337,7 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 			if (obj < scan_front || !MS_OBJ_ALLOCED_FAST (obj, block_start))
 				goto next_object;
 
-			if (scan_type & CARDTABLE_SCAN_MOD_UNION) {
+			if (scan_type == CARDTABLE_SCAN_MARKED) {
 				/* FIXME: do this more efficiently */
 				int w, b;
 				MS_CALC_MARK_BIT (w, b, obj);
@@ -2401,21 +2376,19 @@ major_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx)
 	gboolean has_references;
 
 	if (!concurrent_mark)
-		g_assert (scan_type == CARDTABLE_SCAN_GLOBAL);
+		SGEN_ASSERT (0, scan_type == CARDTABLE_SCAN_ALL, "Why aren't we scanning all objects when we're not concurrent?");
 
 	major_finish_sweep_checking ();
-	binary_protocol_major_card_table_scan_start (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
+	binary_protocol_major_card_table_scan_start (sgen_timestamp (), scan_type == CARDTABLE_SCAN_MARKED);
 	FOREACH_BLOCK_HAS_REFERENCES_NO_LOCK (block, has_references) {
 #ifdef PREFETCH_CARDS
 		int prefetch_index = __index + 6;
 		if (prefetch_index < allocated_blocks.next_slot) {
 			MSBlockInfo *prefetch_block = BLOCK_UNTAG (*sgen_array_list_get_slot (&allocated_blocks, prefetch_index));
+			guint8 *prefetch_cards = sgen_card_table_get_card_scan_address ((mword)MS_BLOCK_FOR_BLOCK_INFO (prefetch_block));
 			PREFETCH_READ (prefetch_block);
-			if (scan_type == CARDTABLE_SCAN_GLOBAL) {
-				guint8 *prefetch_cards = sgen_card_table_get_card_scan_address ((mword)MS_BLOCK_FOR_BLOCK_INFO (prefetch_block));
-				PREFETCH_WRITE (prefetch_cards);
-				PREFETCH_WRITE (prefetch_cards + 32);
-			}
+			PREFETCH_WRITE (prefetch_cards);
+			PREFETCH_WRITE (prefetch_cards + 32);
                 }
 #endif
 
@@ -2424,7 +2397,7 @@ major_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx)
 
 		scan_card_table_for_block (block, scan_type, ctx);
 	} END_FOREACH_BLOCK_NO_LOCK;
-	binary_protocol_major_card_table_scan_end (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
+	binary_protocol_major_card_table_scan_end (sgen_timestamp (), scan_type == CARDTABLE_SCAN_MARKED);
 }
 
 static void
