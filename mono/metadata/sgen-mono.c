@@ -90,24 +90,6 @@ ptr_on_stack (void *ptr)
 	return FALSE;
 }
 
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-#undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj) do {					\
-		gpointer o = *(gpointer*)(ptr);				\
-		if ((o)) {						\
-			gpointer d = ((char*)dest) + ((char*)(ptr) - (char*)(obj)); \
-			binary_protocol_wbarrier (d, o, (gpointer) SGEN_LOAD_VTABLE (o)); \
-		}							\
-	} while (0)
-
-static void
-scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword desc)
-{
-#define SCAN_OBJECT_NOVTABLE
-#include "sgen/sgen-scan-object.h"
-}
-#endif
-
 /* We issue store write barriers for individual reference fields, and
  * memmove chunks of non-reference fields.
  */
@@ -119,11 +101,7 @@ scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword
 				(char *)(ptr) - previous_non_references); \
 		gpointer o = *(gpointer*)(ptr); \
 		gpointer d = dest + ((char*)(ptr) - (char*)real_start); \
-		if (o) { \
-			mono_gc_wbarrier_generic_store (d, o); \
-		} else { \
-			*(gpointer*)d = (gpointer)o; \
-		} \
+		mono_gc_wbarrier_generic_store (d, o);			\
 		previous_non_references = (char *)(ptr) + SIZEOF_VOID_P; \
 	} while (0)
 
@@ -162,17 +140,6 @@ mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass
 	const size_t instance_size = mono_class_instance_size (klass);
 	const size_t element_size = instance_size - sizeof (MonoObject);
 
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ()) {
-		int i;
-		for (i = 0; i < count; ++i) {
-			scan_object_for_binary_protocol_copy_wbarrier ((char*)dests + i * element_size,
-					(char*)src + i * element_size - sizeof (MonoObject),
-					(mword) klass->gc_descr);
-		}
-	}
-#endif
-
 	const mword desc = klass->gc_descr;
 	for (int i = 0; i < count; ++i) {
 		char *const dest = (char *)dests + i * element_size;
@@ -200,11 +167,6 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 				size - sizeof (MonoObject));
 		return;	
 	}
-
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ())
-		scan_object_for_binary_protocol_copy_wbarrier (obj, (char*)src, (mword) src->vtable->gc_descr);
-#endif
 
 	copy_object_with_wbarrier (obj, src, sgen_obj_get_descriptor (src), sgen_safe_object_get_size (src));
 }

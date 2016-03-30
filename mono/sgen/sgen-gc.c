@@ -2649,10 +2649,6 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 		gpointer dest = (gpointer*)dest_ptr + i;
 		gpointer obj = *((gpointer*)src_ptr + i);
 		mono_gc_wbarrier_generic_store (dest, obj);
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		if (binary_protocol_is_heavy_enabled () && obj)
-			binary_protocol_wbarrier (dest, obj, (gpointer)LOAD_VTABLE (obj));
-#endif
 	}
 }
 
