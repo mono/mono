@@ -1138,6 +1138,21 @@ pin_major_object (GCObject *obj, SgenGrayQueue *queue)
 	MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
 }
 
+static gboolean
+major_mark_object_for_concurrent_collector (GCObject *obj)
+{
+	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+	int word, bit;
+	SGEN_ASSERT (0, !major_block_is_evacuating (block), "We can't be evacuating with the new write barrier.");
+	SGEN_ASSERT (9, MS_OBJ_ALLOCED (obj, block), "object %p not allocated", obj);
+	MS_CALC_MARK_BIT (word, bit, obj);
+	if (MS_SET_MARK_BIT (block, word, bit)) {
+		binary_protocol_mark (obj, (gpointer)LOAD_VTABLE (obj), sgen_safe_object_get_size (obj));
+		return TRUE;
+	}
+	return FALSE;
+}
+
 #include "sgen-major-copy-object.h"
 
 static long long
@@ -2484,6 +2499,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	if (is_concurrent) {
 		collector->update_cardtable_mod_union = update_cardtable_mod_union;
 		collector->get_cardtable_mod_union_for_reference = major_get_cardtable_mod_union_for_reference;
+		collector->mark_object_for_concurrent_collector = major_mark_object_for_concurrent_collector;
 	}
 	collector->init_to_space = major_init_to_space;
 	collector->sweep = major_sweep;

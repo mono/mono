@@ -454,6 +454,8 @@ int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_concurrent_collection_in_progress (void);
 
+void sgen_major_to_major_reference_updated (gpointer ptr, GCObject *value);
+
 typedef struct _SgenFragment SgenFragment;
 
 struct _SgenFragment {
@@ -623,6 +625,8 @@ struct _SgenMajorCollector {
 
 	GCObject* (*alloc_object) (GCVTable vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (GCObject *obj, size_t size);
+
+	gboolean (*mark_object_for_concurrent_collector) (GCObject *obj);
 
 	/*
 	 * This is used for domain unloading, heap walking from the logging profiler, and

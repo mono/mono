@@ -49,8 +49,6 @@
 
 guint8 *sgen_cardtable;
 
-static gboolean need_mod_union;
-
 #ifdef HEAVY_STATISTICS
 guint64 marked_cards;
 guint64 scanned_cards;
@@ -77,7 +75,7 @@ sgen_card_table_number_of_cards_in_range (mword address, mword size)
 static void
 sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
-	if (need_mod_union || sgen_ptr_in_nursery (value))
+	if (sgen_ptr_in_nursery (value))
 		sgen_card_table_mark_address ((mword)ptr);
 	sgen_dummy_use (value);
 }
@@ -546,8 +544,6 @@ sgen_card_table_init (SgenRememberedSet *remset)
 
 	remset->find_address = sgen_card_table_find_address;
 	remset->find_address_with_cards = sgen_card_table_find_address_with_cards;
-
-	need_mod_union = sgen_get_major_collector ()->is_concurrent;
 }
 
 #endif /*HAVE_SGEN_GC*/

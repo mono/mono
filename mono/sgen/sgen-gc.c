@@ -2162,9 +2162,6 @@ major_update_concurrent_collection (void)
 
 	binary_protocol_concurrent_update ();
 
-	major_collector.update_cardtable_mod_union ();
-	sgen_los_update_cardtable_mod_union ();
-
 	TV_GETTIME (total_end);
 	gc_stats.major_gc_time += TV_ELAPSED (total_start, total_end);
 }
@@ -2190,6 +2187,8 @@ major_finish_concurrent_collection (gboolean forced)
 	SGEN_TV_GETTIME (time_major_conc_collection_end);
 	gc_stats.major_gc_time_concurrent += SGEN_TV_ELAPSED (time_major_conc_collection_start, time_major_conc_collection_end);
 
+	/* FIXME: right now we're doing this because we don't scan the regular card table,
+	   but we clear it. */
 	major_collector.update_cardtable_mod_union ();
 	sgen_los_update_cardtable_mod_union ();
 
@@ -2653,8 +2652,32 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 }
 
 void
+sgen_major_to_major_reference_updated (gpointer ptr, GCObject *value)
+{
+	SGEN_ASSERT (0, !sgen_ptr_in_nursery (ptr) && !sgen_ptr_in_nursery (value), "Why are we called for something that's not major->major?");
+	if (concurrent_collection_in_progress) {
+		SgenDescriptor desc = sgen_obj_get_descriptor (value);
+		int type = desc & DESC_TYPE_MASK;
+		gboolean did_mark;
+		if (sgen_safe_object_is_small (value, type)) {
+			did_mark = major_collector.mark_object_for_concurrent_collector (value);
+		} else {
+			did_mark = !sgen_los_object_is_pinned (value);
+			if (did_mark)
+				sgen_los_pin_object (value);
+		}
+
+		if (did_mark)
+			sgen_workers_enqueue_object_and_awake (value, desc);
+
+	}
+}
+
+void
 mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
+	TLAB_ACCESS_INIT;
+
 	HEAVY_STAT (++stat_wbarrier_generic_store);
 
 	sgen_client_wbarrier_generic_nostore_check (ptr, value);
@@ -2666,6 +2689,12 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 
 	SGEN_LOG (8, "Adding remset at %p", ptr);
 	remset.wbarrier_generic_nostore (ptr, value);
+
+	if (!sgen_ptr_in_nursery (ptr) && !sgen_ptr_in_nursery (value)) {
+		ENTER_CRITICAL_REGION;
+		sgen_major_to_major_reference_updated (ptr, value);
+		EXIT_CRITICAL_REGION;
+	}
 }
 
 void

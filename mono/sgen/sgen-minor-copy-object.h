@@ -133,6 +133,20 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 		SGEN_LOG (9, " (already forwarded to %p)", forwarded);
 		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
 		SGEN_UPDATE_REFERENCE (obj_slot, forwarded);
+		/*
+		 * When an object gets evacuated to major due to a reference from a pinned
+		 * nursery object, it will not (yet) be marked and enqueued for the major
+		 * collector, so this might be the first pointer from the major heap to the
+		 * newly copied object we encouter, so we have to check and make sure it's
+		 * marked and enqueued.
+		 */
+		/*
+		 * FIXME: once we modify the wbarrier to also mark and enqueue
+		 * nursery->major references, this can go away.  Obviously we'll have to
+		 * process those references in the nursery scanning code, too.
+		 */
+		if (!sgen_ptr_in_nursery (obj_slot) && !sgen_ptr_in_nursery (forwarded))
+			sgen_major_to_major_reference_updated (obj_slot, forwarded);
 #ifndef SGEN_SIMPLE_NURSERY
 		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (forwarded)))
 			sgen_add_to_global_remset (obj_slot, forwarded);
@@ -149,6 +163,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	}
 
 #ifndef SGEN_SIMPLE_NURSERY
+	SGEN_ASSERT (0, FALSE, "New write barrier only supports simple nursery so far.");
 	if (sgen_nursery_is_to_space (obj)) {
 		/* FIXME: all of these could just use `sgen_obj_get_descriptor_safe()` */
 		SGEN_ASSERT (9, sgen_vtable_get_descriptor (SGEN_LOAD_VTABLE(obj)), "to space object %p has no gc descriptor", obj);
@@ -198,7 +213,11 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
 	copy = copy_object_no_checks (obj, queue);
+	/* FIXME: Check that all of these macro invocations are cromulent with regards to
+	   the concurrent collector. */
 	SGEN_UPDATE_REFERENCE (obj_slot, copy);
+	if (!sgen_ptr_in_nursery (obj_slot) && !sgen_ptr_in_nursery (copy))
+		sgen_major_to_major_reference_updated (obj_slot, copy);
 #ifndef SGEN_SIMPLE_NURSERY
 	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
 		sgen_add_to_global_remset (obj_slot, copy);

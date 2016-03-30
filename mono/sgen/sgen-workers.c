@@ -404,4 +404,15 @@ sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
 	}
 }
 
+void
+sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc)
+{
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+	GRAY_OBJECT_ENQUEUE (&workers_distribute_gray_queue, obj, desc);
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
+
+	SGEN_ASSERT (0, sgen_concurrent_collection_in_progress (), "Why is there work to take when there's no concurrent collection in progress?");
+	sgen_workers_ensure_awake ();
+}
+
 #endif
