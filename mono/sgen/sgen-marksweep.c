@@ -116,7 +116,6 @@ struct _MSBlockInfo {
 	unsigned int is_to_space : 1;
 	void ** volatile free_list;
 	MSBlockInfo * volatile next_free;
-	guint8 * volatile cardtable_mod_union;
 	mword mark_words [MS_NUM_MARK_WORDS];
 };
 
@@ -549,7 +548,6 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	info->is_to_space = (sgen_get_current_collection_generation () == GENERATION_OLD) || sgen_concurrent_collection_in_progress ();
 	info->state = info->is_to_space ? BLOCK_STATE_MARKING : BLOCK_STATE_SWEPT;
 	SGEN_ASSERT (6, !sweep_in_progress () || info->state == BLOCK_STATE_SWEPT, "How do we add a new block to be swept while sweeping?");
-	info->cardtable_mod_union = NULL;
 
 	update_heap_boundaries_for_block (info);
 
@@ -1045,52 +1043,6 @@ major_dump_heap (FILE *heap_dump_file)
 	} END_FOREACH_BLOCK_NO_LOCK;
 }
 
-static guint8*
-get_cardtable_mod_union_for_block (MSBlockInfo *block, gboolean allocate)
-{
-	guint8 *mod_union = block->cardtable_mod_union;
-	guint8 *other;
-	if (mod_union)
-		return mod_union;
-	else if (!allocate)
-		return NULL;
-	mod_union = sgen_card_table_alloc_mod_union (MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-	other = (guint8 *)SGEN_CAS_PTR ((gpointer*)&block->cardtable_mod_union, mod_union, NULL);
-	if (!other) {
-		SGEN_ASSERT (0, block->cardtable_mod_union == mod_union, "Why did CAS not replace?");
-		return mod_union;
-	}
-	sgen_card_table_free_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-	return other;
-}
-
-static inline guint8*
-major_get_cardtable_mod_union_for_reference (char *ptr)
-{
-	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (ptr);
-	size_t offset = sgen_card_table_get_card_offset (ptr, (char*)sgen_card_table_align_pointer (MS_BLOCK_FOR_BLOCK_INFO (block)));
-	guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-	SGEN_ASSERT (0, mod_union, "FIXME: optionally allocate the mod union if it's not here and CAS it in.");
-	return &mod_union [offset];
-}
-
-/*
- * Mark the mod-union card for `ptr`, which must be a reference within the object `obj`.
- */
-static void
-mark_mod_union_card (GCObject *obj, void **ptr, GCObject *value_obj)
-{
-	int type = sgen_obj_get_descriptor (obj) & DESC_TYPE_MASK;
-	if (sgen_safe_object_is_small (obj, type)) {
-		guint8 *card_byte = major_get_cardtable_mod_union_for_reference ((char*)ptr);
-		SGEN_ASSERT (0, MS_BLOCK_FOR_OBJ (obj) == MS_BLOCK_FOR_OBJ (ptr), "How can an object and a reference inside it not be in the same block?");
-		*card_byte = 1;
-	} else {
-		sgen_los_mark_mod_union_card (obj, ptr);
-	}
-	binary_protocol_mod_union_remset (obj, ptr, value_obj, SGEN_LOAD_VTABLE (value_obj));
-}
-
 static inline gboolean
 major_block_is_evacuating (MSBlockInfo *block)
 {
@@ -1274,6 +1226,8 @@ major_scan_object_dijkstra (GCObject *full_object, SgenDescriptor desc, SgenGray
 		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
 		if (__old && !sgen_ptr_in_nursery (__old))		\
 			major_copy_or_mark_object_dijkstra_internal ((ptr), __old, queue); \
+		else if (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr))) \
+			mark_mod_union_card (full_object, (void**)(ptr), __old); \
 	} while (0)
 
 #define SCAN_OBJECT_PROTOCOL
@@ -1590,11 +1544,6 @@ ensure_block_is_checked_for_sweeping (guint32 block_index, gboolean wait, gboole
 	block->is_to_space = FALSE;
 
 	count = MS_BLOCK_FREE / block->obj_size;
-
-	if (block->cardtable_mod_union) {
-		sgen_card_table_free_mod_union (block->cardtable_mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-		block->cardtable_mod_union = NULL;
-	}
 
 	/* Count marked objects in the block */
 	for (i = 0; i < MS_NUM_MARK_WORDS; ++i)
@@ -2432,19 +2381,6 @@ major_count_cards (long long *num_total_cards, long long *num_marked_cards)
 	*num_marked_cards = marked_cards;
 }
 
-static void
-update_cardtable_mod_union (void)
-{
-	MSBlockInfo *block;
-
-	FOREACH_BLOCK_NO_LOCK (block) {
-		size_t num_cards;
-		guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-		sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE, &num_cards);
-		SGEN_ASSERT (6, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
-	} END_FOREACH_BLOCK_NO_LOCK;
-}
-
 #undef pthread_create
 
 static void
@@ -2521,11 +2457,8 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->pin_major_object = pin_major_object;
 	collector->scan_card_table = major_scan_card_table;
 	collector->iterate_live_block_ranges = major_iterate_live_block_ranges;
-	if (is_concurrent) {
-		collector->update_cardtable_mod_union = update_cardtable_mod_union;
-		collector->get_cardtable_mod_union_for_reference = major_get_cardtable_mod_union_for_reference;
+	if (is_concurrent)
 		collector->mark_object_for_concurrent_collector = major_mark_object_for_concurrent_collector;
-	}
 	collector->init_to_space = major_init_to_space;
 	collector->sweep = major_sweep;
 	collector->have_swept = major_have_swept;

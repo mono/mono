@@ -638,7 +638,6 @@ struct _SgenMajorCollector {
 	void (*pin_major_object) (GCObject *obj, SgenGrayQueue *queue);
 	void (*scan_card_table) (CardTableScanType scan_type, ScanCopyContext ctx);
 	void (*iterate_live_block_ranges) (sgen_cardtable_block_callback callback);
-	void (*update_cardtable_mod_union) (void);
 	void (*init_to_space) (void);
 	void (*sweep) (void);
 	gboolean (*have_swept) (void);
@@ -661,7 +660,6 @@ struct _SgenMajorCollector {
 	void (*post_param_init) (SgenMajorCollector *collector);
 	gboolean (*is_valid_object) (char *ptr);
 	GCVTable (*describe_pointer) (char *pointer);
-	guint8* (*get_cardtable_mod_union_for_reference) (char *object);
 	long long (*get_and_reset_num_major_objects_marked) (void);
 	void (*count_cards) (long long *num_total_cards, long long *num_marked_cards);
 };
@@ -842,7 +840,6 @@ typedef struct _LOSObject LOSObject;
 struct _LOSObject {
 	LOSObject *next;
 	mword size; /* this is the object size, lowest bit used for pin/mark */
-	guint8 * volatile cardtable_mod_union; /* only used by the concurrent collector */
 #if SIZEOF_VOID_P < 8
 	mword dummy;		/* to align object to sizeof (double) */
 #endif
@@ -859,7 +856,6 @@ gboolean sgen_ptr_is_in_los (char *ptr, char **start);
 void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data);
 void sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback);
 void sgen_los_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx);
-void sgen_los_update_cardtable_mod_union (void);
 void sgen_los_count_cards (long long *num_total_cards, long long *num_marked_cards);
 gboolean sgen_los_is_valid_object (char *object);
 gboolean mono_sgen_los_describe_pointer (char *ptr);
@@ -867,7 +863,6 @@ LOSObject* sgen_los_header_for_object (GCObject *data);
 mword sgen_los_object_size (LOSObject *obj);
 void sgen_los_pin_object (GCObject *obj);
 gboolean sgen_los_object_is_pinned (GCObject *obj);
-void sgen_los_mark_mod_union_card (GCObject *mono_obj, void **ptr);
 
 
 /* nursery allocator */
@@ -997,7 +992,6 @@ GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size);
 /* Debug support */
 
 void sgen_check_remset_consistency (void);
-void sgen_check_mod_union_consistency (void);
 void sgen_check_major_heap_marked (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);

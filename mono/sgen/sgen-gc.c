@@ -227,8 +227,6 @@ guint32 collect_before_allocs = 0;
 static gboolean whole_heap_check_before_collection = FALSE;
 /* If set, do a remset consistency check at various opportunities */
 static gboolean remset_consistency_checks = FALSE;
-/* If set, do a mod union consistency check before each finishing collection pause */
-static gboolean mod_union_consistency_check = FALSE;
 /* If set, check whether mark bits are consistent after major collections */
 static gboolean check_mark_bits_after_major_collection = FALSE;
 /* If set, check that all nursery objects are pinned/not pinned, depending on context */
@@ -287,7 +285,7 @@ static guint64 time_major_pre_collection_fragment_clear = 0;
 static guint64 time_major_pinning = 0;
 static guint64 time_major_scan_pinned = 0;
 static guint64 time_major_scan_roots = 0;
-static guint64 time_major_scan_mod_union = 0;
+static guint64 time_major_scan_remsets = 0;
 static guint64 time_major_finish_gray_stack = 0;
 static guint64 time_major_free_bigobjs = 0;
 static guint64 time_major_los_sweep = 0;
@@ -1252,7 +1250,7 @@ init_stats (void)
 	mono_counters_register ("Major pinning", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_pinning);
 	mono_counters_register ("Major scan pinned", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_pinned);
 	mono_counters_register ("Major scan roots", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_roots);
-	mono_counters_register ("Major scan mod union", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_mod_union);
+	mono_counters_register ("Major scan remsets", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_remsets);
 	mono_counters_register ("Major finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_finish_gray_stack);
 	mono_counters_register ("Major free big objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_free_bigobjs);
 	mono_counters_register ("Major LOS sweep", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_los_sweep);
@@ -1841,7 +1839,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 		// FIXME: check the mod union bits and see which ones should be marked in regular card table
 
 		TV_GETTIME (atv);
-		time_major_scan_mod_union += TV_ELAPSED (btv, atv);
+		time_major_scan_remsets += TV_ELAPSED (btv, atv);
 	}
 
 	sgen_pin_stats_print_class_stats ();
@@ -3043,12 +3041,6 @@ sgen_gc_init (void)
 			} else if (!strcmp (opt, "check-remset-consistency")) {
 				remset_consistency_checks = TRUE;
 				nursery_clear_policy = CLEAR_AT_GC;
-			} else if (!strcmp (opt, "mod-union-consistency-check")) {
-				if (!major_collector.is_concurrent) {
-					sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "`mod-union-consistency-check` only works with concurrent major collector.");
-					continue;
-				}
-				mod_union_consistency_check = TRUE;
 			} else if (!strcmp (opt, "check-mark-bits")) {
 				check_mark_bits_after_major_collection = TRUE;
 			} else if (!strcmp (opt, "check-nursery-pinned")) {
