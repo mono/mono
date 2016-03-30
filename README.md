@@ -515,3 +515,9 @@ License
 
 See the LICENSE file for licensing information, and the PATENTS.TXT
 file for information about Microsoft's patent grant.
+
+Mono Trademark Use Policy
+=======
+
+The use of trademarks and logos for Mono can be found [here] (http://www.dotnetfoundation.org/legal/mono-tm). 
+
