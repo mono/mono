@@ -183,7 +183,7 @@ static int fast_block_obj_size_indexes [MS_NUM_FAST_BLOCK_OBJ_SIZE_INDEXES];
 #define MS_BLOCK_TYPE_MAX	4
 
 static gboolean *evacuate_block_obj_sizes;
-static float evacuation_threshold = 0.666f;
+static float evacuation_threshold = 0; //0.666f;
 
 static gboolean lazy_sweep = FALSE;
 
@@ -2115,6 +2115,7 @@ major_handle_gc_param (const char *opt)
 			exit (1);
 		}
 		evacuation_threshold = (float)percentage / 100.0f;
+		SGEN_ASSERT (0, evacuation_threshold == 0, "The new write barrier doesn't support evacuation.");
 		return TRUE;
 	} else if (!strcmp (opt, "lazy-sweep")) {
 		lazy_sweep = TRUE;

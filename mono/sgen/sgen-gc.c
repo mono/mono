@@ -245,7 +245,7 @@ static gboolean do_verify_nursery = FALSE;
 static gboolean do_dump_nursery_content = FALSE;
 static gboolean enable_nursery_canaries = FALSE;
 
-static gboolean precleaning_enabled = TRUE;
+static gboolean precleaning_enabled = FALSE;
 
 #ifdef HEAVY_STATISTICS
 guint64 stat_objects_alloced_degraded = 0;
@@ -2819,7 +2819,7 @@ sgen_gc_init (void)
 	int result;
 	gboolean debug_print_allowance = FALSE;
 	double allowance_ratio = 0, save_target = 0;
-	gboolean cement_enabled = TRUE;
+	gboolean cement_enabled = FALSE;
 
 	do {
 		result = InterlockedCompareExchange (&gc_initialized, -1, 0);
@@ -2992,6 +2992,7 @@ sgen_gc_init (void)
 			}
 
 			if (!strcmp (opt, "cementing")) {
+				SGEN_ASSERT (0, FALSE, "Cementing is not supported with the new write barrier.");
 				cement_enabled = TRUE;
 				continue;
 			}
@@ -3001,6 +3002,7 @@ sgen_gc_init (void)
 			}
 
 			if (!strcmp (opt, "precleaning")) {
+				SGEN_ASSERT (0, FALSE, "Pre-cleaning is nonsensical with the new write barrier.");
 				precleaning_enabled = TRUE;
 				continue;
 			}
