@@ -81,11 +81,6 @@
 static char* inet_ntop(int af, const void* src, char* dst, size_t size);
 #endif
 
-#ifdef PLATFORM_ANDROID
-// not yet actually implemented...
-#undef AF_INET6
-#endif
-
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 

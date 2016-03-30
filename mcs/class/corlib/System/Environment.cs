@@ -553,7 +553,7 @@ namespace System {
 #endif
 			// personal == ~
 			case SpecialFolder.Personal:
-#if MONOTOUCH
+#if MONOTOUCH && !UNITY
 				return Path.Combine (home, "Documents");
 #else
 				return home;
