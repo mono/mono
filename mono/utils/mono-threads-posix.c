@@ -15,7 +15,6 @@
 #endif
 
 #include <mono/utils/mono-threads.h>
-#include <mono/utils/mono-threads-posix-signals.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
 
@@ -370,7 +369,7 @@ mono_threads_platform_free (MonoThreadInfo *info)
 void
 mono_threads_init_platform (void)
 {
-	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART);
+	mono_threads_posix_init_signals ();
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */
