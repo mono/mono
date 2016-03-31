@@ -128,6 +128,35 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 {
 }
 
+void
+mono_threads_suspend_init_signals (void)
+{
+}
+
+gint
+mono_threads_suspend_search_alternative_signal (void)
+{
+	g_assert_not_reached ();
+}
+
+gint
+mono_threads_suspend_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_abort_signal (void)
+{
+	return -1;
+}
+
 #endif
 
 #if defined (HOST_WIN32)

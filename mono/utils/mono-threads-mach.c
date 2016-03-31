@@ -166,6 +166,35 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 	mach_port_deallocate (current_task (), info->native_handle);
 }
 
+void
+mono_threads_suspend_init_signals (void)
+{
+}
+
+gint
+mono_threads_suspend_search_alternative_signal (void)
+{
+	g_assert_not_reached ();
+}
+
+gint
+mono_threads_suspend_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_abort_signal (void)
+{
+	return -1;
+}
+
 #endif /* USE_MACH_BACKEND */
 
 #ifdef __MACH__

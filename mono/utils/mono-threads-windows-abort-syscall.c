@@ -16,11 +16,6 @@
 
 #include <limits.h>
 
-void
-mono_threads_abort_syscall_init (void)
-{
-}
-
 static void CALLBACK
 abort_apc (ULONG_PTR param)
 {

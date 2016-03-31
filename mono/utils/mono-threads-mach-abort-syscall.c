@@ -21,11 +21,6 @@
 #if defined(HOST_WATCHOS) || defined(HOST_TVOS)
 
 void
-mono_threads_abort_syscall_init (void)
-{
-}
-
-void
 mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
 
@@ -38,11 +33,6 @@ mono_threads_suspend_needs_abort_syscall (void)
 }
 
 #else
-
-void
-mono_threads_abort_syscall_init (void)
-{
-}
 
 void
 mono_threads_suspend_abort_syscall (MonoThreadInfo *info)

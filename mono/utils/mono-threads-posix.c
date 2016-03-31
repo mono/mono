@@ -15,7 +15,6 @@
 #endif
 
 #include <mono/utils/mono-threads.h>
-#include <mono/utils/mono-threads-posix-signals.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/w32handle.h>
@@ -368,7 +367,7 @@ mono_threads_platform_init (void)
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
-	int sig = interrupt_kernel ? mono_threads_posix_get_abort_signal () :  mono_threads_posix_get_suspend_signal ();
+	int sig = interrupt_kernel ? mono_threads_suspend_get_abort_signal () :  mono_threads_suspend_get_suspend_signal ();
 
 	if (!mono_threads_pthread_kill (info, sig)) {
 		mono_threads_add_to_pending_operation_set (info);
@@ -393,7 +392,7 @@ gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
 	mono_threads_add_to_pending_operation_set (info);
-	return mono_threads_pthread_kill (info, mono_threads_posix_get_restart_signal ()) == 0;
+	return mono_threads_pthread_kill (info, mono_threads_suspend_get_restart_signal ()) == 0;
 }
 
 void
@@ -412,7 +411,6 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 void
 mono_threads_suspend_init (void)
 {
-	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART);
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */

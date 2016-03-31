@@ -370,9 +370,6 @@ mono_thread_info_end_self_suspend (void);
 
 //END of new API
 
-gboolean
-mono_thread_info_unified_management_enabled (void);
-
 void
 mono_thread_info_setup_async_call (THREAD_INFO_TYPE *info, void (*target_func)(void*), void *user_data);
 
@@ -475,11 +472,11 @@ This is called very early in the runtime, it cannot access any runtime facilitie
 */
 void mono_threads_suspend_init (void); //ok
 
+void mono_threads_suspend_init_signals (void);
+
 void mono_threads_platform_init (void);
 
 void mono_threads_coop_init (void);
-
-void mono_threads_abort_syscall_init (void);
 
 /*
 This begins async suspend. This function must do the following:
@@ -513,6 +510,10 @@ void mono_threads_suspend_register (THREAD_INFO_TYPE *info); //ok
 void mono_threads_suspend_free (THREAD_INFO_TYPE *info);
 void mono_threads_suspend_abort_syscall (THREAD_INFO_TYPE *info);
 gboolean mono_threads_suspend_needs_abort_syscall (void);
+gint mono_threads_suspend_search_alternative_signal (void);
+gint mono_threads_suspend_get_suspend_signal (void);
+gint mono_threads_suspend_get_restart_signal (void);
+gint mono_threads_suspend_get_abort_signal (void);
 
 void mono_threads_platform_register (THREAD_INFO_TYPE *info);
 void mono_threads_platform_unregister (THREAD_INFO_TYPE *info);
