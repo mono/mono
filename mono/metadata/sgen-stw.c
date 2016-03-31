@@ -78,106 +78,6 @@ update_current_thread_stack (void *start)
 		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->client_info.runtime_data, NULL, &info->client_info.ctx);
 }
 
-static gboolean
-is_ip_in_managed_allocator (MonoDomain *domain, gpointer ip)
-{
-	MonoJitInfo *ji;
-
-	if (!mono_thread_internal_current ())
-		/* Happens during thread attach */
-		return FALSE;
-
-	if (!ip || !domain)
-		return FALSE;
-	if (!sgen_has_critical_method ())
-		return FALSE;
-
-	/*
-	 * mono_jit_info_table_find is not async safe since it calls into the AOT runtime to load information for
-	 * missing methods (#13951). To work around this, we disable the AOT fallback. For this to work, the JIT needs
-	 * to register the jit info for all GC critical methods after they are JITted/loaded.
-	 */
-	ji = mono_jit_info_table_find_internal (domain, (char *)ip, FALSE, FALSE);
-	if (!ji)
-		return FALSE;
-
-	return sgen_is_critical_method (mono_jit_info_get_method (ji));
-}
-
-static int
-restart_threads_until_none_in_managed_allocator (void)
-{
-	int num_threads_died = 0;
-	int sleep_duration = -1;
-
-	for (;;) {
-		int restart_count = 0, restarted_count = 0;
-		/* restart all threads that stopped in the
-		   allocator */
-		FOREACH_THREAD (info) {
-			gboolean result;
-			if (info->client_info.skip || info->client_info.gc_disabled || info->client_info.suspend_done)
-				continue;
-			if (mono_thread_info_is_live (info) &&
-					(!info->client_info.stack_start || info->client_info.in_critical_region || info->client_info.info.inside_critical_region ||
-					is_ip_in_managed_allocator (info->client_info.stopped_domain, info->client_info.stopped_ip))) {
-				binary_protocol_thread_restart ((gpointer)mono_thread_info_get_tid (info));
-				SGEN_LOG (3, "thread %p resumed.", (void*) (size_t) info->client_info.info.native_handle);
-				result = sgen_resume_thread (info);
-				if (result) {
-					++restart_count;
-				} else {
-					info->client_info.skip = 1;
-				}
-			} else {
-				/* we set the stopped_ip to
-				   NULL for threads which
-				   we're not restarting so
-				   that we can easily identify
-				   the others */
-				info->client_info.stopped_ip = NULL;
-				info->client_info.stopped_domain = NULL;
-				info->client_info.suspend_done = TRUE;
-			}
-		} FOREACH_THREAD_END
-		/* if no threads were restarted, we're done */
-		if (restart_count == 0)
-			break;
-
-		/* wait for the threads to signal their restart */
-		sgen_wait_for_suspend_ack (restart_count);
-
-		if (sleep_duration < 0) {
-			mono_thread_info_yield ();
-			sleep_duration = 0;
-		} else {
-			g_usleep (sleep_duration);
-			sleep_duration += 10;
-		}
-
-		/* stop them again */
-		FOREACH_THREAD (info) {
-			gboolean result;
-			if (info->client_info.skip || info->client_info.stopped_ip == NULL)
-				continue;
-			result = sgen_suspend_thread (info);
-
-			if (result) {
-				++restarted_count;
-			} else {
-				info->client_info.skip = 1;
-			}
-		} FOREACH_THREAD_END
-		/* some threads might have died */
-		num_threads_died += restart_count - restarted_count;
-		/* wait for the threads to signal their suspension
-		   again */
-		sgen_wait_for_suspend_ack (restarted_count);
-	}
-
-	return num_threads_died;
-}
-
 static void
 acquire_gc_locks (void)
 {
@@ -220,15 +120,7 @@ sgen_client_stop_world (int generation)
 	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer) (gsize) mono_native_thread_id_get ());
 	TV_GETTIME (stop_world_time);
 
-	if (mono_thread_info_unified_management_enabled ()) {
-		sgen_unified_suspend_stop_world ();
-	} else {
-		int count, dead;
-		count = sgen_thread_handshake (TRUE);
-		dead = restart_threads_until_none_in_managed_allocator ();
-		if (count < dead)
-			g_error ("More threads have died (%d) that been initialy suspended %d", dead, count);
-	}
+	sgen_unified_suspend_stop_world ();
 
 	SGEN_LOG (3, "world stopped");
 
@@ -260,10 +152,7 @@ sgen_client_restart_world (int generation, GGTimingInfo *timing)
 
 	TV_GETTIME (start_handshake);
 
-	if (mono_thread_info_unified_management_enabled ())
-		sgen_unified_suspend_restart_world ();
-	else
-		sgen_thread_handshake (FALSE);
+	sgen_unified_suspend_restart_world ();
 
 	TV_GETTIME (end_sw);
 	time_restart_world += TV_ELAPSED (start_handshake, end_sw);

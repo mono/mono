@@ -111,9 +111,6 @@
     <ClCompile Include="..\mono\metadata\sgen-new-bridge.c" />
     <ClCompile Include="..\mono\sgen\sgen-nursery-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-old-bridge.c" />
-    <ClCompile Include="..\mono\metadata\sgen-os-mach.c" />
-    <ClCompile Include="..\mono\metadata\sgen-os-posix.c" />
-    <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
     <ClCompile Include="..\mono\sgen\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\sgen\sgen-pinning.c" />
     <ClCompile Include="..\mono\sgen\sgen-pointer-queue.c" />

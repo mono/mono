@@ -137,7 +137,6 @@
     <ClInclude Include="..\mono\utils\mono-threads.h" />
     <ClInclude Include="..\mono\utils\mono-threads-api.h" />
     <ClInclude Include="..\mono\utils\mono-threads-coop.h" />
-    <ClInclude Include="..\mono\utils\mono-threads-posix-signals.h" />
     <ClInclude Include="..\mono\utils\mono-time.h" />
     <ClInclude Include="..\mono\utils\mono-tls.h" />
     <ClInclude Include="..\mono\utils\mono-uri.h" />
