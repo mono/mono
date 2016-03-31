@@ -867,7 +867,7 @@ gint64 ves_icall_System_Diagnostics_Process_StartTime_internal (HANDLE process)
 
 gint32 ves_icall_System_Diagnostics_Process_ExitCode_internal (HANDLE process)
 {
-	DWORD code;
+	DWORD code = 0;
 	
 	GetExitCodeProcess (process, &code);
 	
