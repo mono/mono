@@ -184,16 +184,6 @@ done:
 #endif
 }
 
-static void
-abort_signal_handler (int _dummy, siginfo_t *info, void *context)
-{
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
-	suspend_signal_handler (_dummy, info, context);
-#endif
-}
-
 void
 mono_threads_posix_init_signals (void)
 {
@@ -215,7 +205,10 @@ mono_threads_posix_init_signals (void)
 
 	abort_signal_num = abort_signal_get ();
 
-	signal_add_handler (abort_signal_num, abort_signal_handler, 0);
+	/* the difference between abort and suspend here is made by not
+	 * passing SA_RESTART, meaning we won't restart the syscall when
+	 * receiving a signal */
+	signal_add_handler (abort_signal_num, suspend_signal_handler, 0);
 
 	sigaddset (&signal_set, abort_signal_num);
 
