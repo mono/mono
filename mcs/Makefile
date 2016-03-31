@@ -88,10 +88,6 @@ DISTFILES = \
 	COPYING			\
 	COPYING.LIB		\
 	INSTALL.txt		\
-	LICENSE			\
-	LICENSE.GPL		\
-	LICENSE.LGPL		\
-	LICENSE.MPL		\
 	Makefile		\
 	mkinstalldirs		\
 	MIT.X11			\

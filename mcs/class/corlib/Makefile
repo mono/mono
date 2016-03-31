@@ -1,6 +1,7 @@
 thisdir = class/corlib
 SUBDIRS =
 include ../../build/rules.make
+include CommonCrypto/Makefile.include
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 LIBRARY = corlib.dll
