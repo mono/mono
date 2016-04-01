@@ -488,9 +488,9 @@ sgen_verify_global_remset_record (void)
 		/*
 		if (!marked)
 			binary_protocol_flush_buffers (TRUE);
-		*/
 		if (current_collection_generation == GENERATION_NURSERY)
 			return;
+		*/
 		SGEN_ASSERT (0, marked, "How did we lose the global remset?");
 	}
 }
