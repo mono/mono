@@ -270,6 +270,26 @@ namespace MonoTests.Mono.Options
 		}
 
 		[Test]
+		public void EnumValues ()
+		{
+			DayOfWeek a = 0;
+			OptionSet p = new OptionSet () {
+				{ "a=", (DayOfWeek v) => a = v },
+			};
+			p.Parse (_ ("-a=Monday"));
+			Assert.AreEqual (a, DayOfWeek.Monday);
+			p.Parse (_ ("-a=tuesday"));
+			Assert.AreEqual (a, DayOfWeek.Tuesday);
+			p.Parse (_ ("-a=3"));
+			Assert.AreEqual (a, DayOfWeek.Wednesday);
+			p.Parse (_ ("-a=Monday,Tuesday"));
+			Assert.AreEqual (a, DayOfWeek.Monday | DayOfWeek.Tuesday);
+			Utils.AssertException (typeof (OptionException),
+					"Could not convert string `Noday' to type DayOfWeek for option `-a'.",
+					p, v => { v.Parse (_ ("-a=Noday")); });
+		}
+
+		[Test]
 		public void BooleanValues ()
 		{
 			bool a = false;
