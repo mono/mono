@@ -448,6 +448,7 @@ void sgen_pin_stats_print_class_stats (void);
 
 void sgen_sort_addresses (void **array, size_t size);
 void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
+void sgen_verify_global_remset_record (void);
 
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
