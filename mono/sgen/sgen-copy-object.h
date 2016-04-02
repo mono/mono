@@ -88,6 +88,7 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	void *destination = COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
 
 	if (G_UNLIKELY (!destination)) {
+		SGEN_ASSERT (0, FALSE, "Allocation failed");
 		/* FIXME: Is this path ever tested? */
 		collector_pin_object (obj, queue);
 		sgen_set_pinned_from_failed_allocation (objsize);
