@@ -19,6 +19,27 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+ * Defines
+ *
+ *     GCObject* copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
+ *
+ * which allocates new space for `obj`, copies it there, forwards `obj` to its new location,
+ * and enqueues the copy into `queue`.
+ *
+ * To be defined by the includer:
+ *
+ *     COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION(vt, obj, objsize, has_refs)
+ *
+ * Allocates space for promoting object `obj`, with size `objsize`, and initizializes the
+ * vtable with `vt`.  `has_refs` indicates whether the object contains references.
+ *
+ *     collector_pin_object(obj, queue)
+ *
+ * Called when no space for `obj` could be allocated.  It must pin `obj` and enqueue it into
+ * `queue` for scanning.
+ */
+
 extern guint64 stat_copy_object_called_nursery;
 extern guint64 stat_objects_copied_nursery;
 
@@ -84,3 +105,6 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 
 	return (GCObject *)destination;
 }
+
+#undef COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION
+#undef collector_pin_object
