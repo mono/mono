@@ -245,6 +245,7 @@ binary_protocol_flush_buffers (gboolean force)
 {
 #ifdef HAVE_UNISTD_H
 	int num_buffers = 0, i;
+	BinaryProtocolBuffer *header;
 	BinaryProtocolBuffer *buf;
 	BinaryProtocolBuffer **bufs;
 
@@ -254,18 +255,13 @@ binary_protocol_flush_buffers (gboolean force)
 	if (!force && !try_lock_exclusive ())
 		return FALSE;
 
-	for (buf = binary_protocol_buffers; buf != NULL; buf = buf->next)
+	header = binary_protocol_buffers;
+	for (buf = header; buf != NULL; buf = buf->next)
 		++num_buffers;
 	bufs = (BinaryProtocolBuffer **)sgen_alloc_internal_dynamic (num_buffers * sizeof (BinaryProtocolBuffer*), INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
-	for (buf = binary_protocol_buffers, i = 0; buf != NULL; buf = buf->next, i++)
+	for (buf = header, i = 0; buf != NULL; buf = buf->next, i++)
 		bufs [i] = buf;
-
-	/*
-	 * We're not locking when forcing, so buffers might have been added while we were
-	 * counting.
-	 */
-	SGEN_ASSERT (0, force || i == num_buffers, "Binary protocol buffer count error");
-	num_buffers = i;
+	SGEN_ASSERT (0, i == num_buffers, "Binary protocol buffer count error");
 
 	/*
 	 * This might be incorrect when forcing, but all bets are off in that case, anyway,
