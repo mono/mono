@@ -5200,3 +5200,23 @@ mono_arch_get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, Mono
 {
 	return get_call_info (gsctx, mp, sig);
 }
+
+gpointer
+mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
+{
+	gpointer *lr_loc;
+	char *old_value;
+	char *bp;
+
+	/*Load the spvar*/
+	bp = MONO_CONTEXT_GET_BP (ctx);
+	lr_loc = (gpointer*)(bp + clause->exvar_offset);
+
+	old_value = *lr_loc;
+	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
+		return old_value;
+
+	*lr_loc = new_value;
+
+	return old_value;
+}
