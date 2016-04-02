@@ -257,6 +257,7 @@ SCAN_OBJECT_FUNCTION_NAME (GCObject *full_object, SgenDescriptor desc, SgenGrayQ
 		if (__old) {						\
 			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue); \
 			if (G_UNLIKELY (__still_in_nursery && !sgen_ptr_in_nursery ((ptr)) && !SGEN_OBJECT_IS_CEMENTED (*(ptr)))) { \
+				/* FIXME: Why do we fetch again here? */ \
 				GCObject *__copy = *(ptr);			\
 				sgen_add_to_global_remset ((ptr), __copy); \
 			}						\

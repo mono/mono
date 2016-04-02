@@ -514,6 +514,7 @@ sgen_add_to_global_remset (gpointer ptr, GCObject *obj)
 	if (!major_collector.is_concurrent) {
 		SGEN_ASSERT (5, current_collection_generation != -1, "Global remsets can only be added during collections");
 	} else {
+		/* FIXME: this case will be removed */
 		if (current_collection_generation == -1)
 			SGEN_ASSERT (5, sgen_concurrent_collection_in_progress (), "Global remsets outside of collection pauses can only be added by the concurrent collector");
 	}
@@ -1741,6 +1742,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	if (!concurrent) {
 		/* Remsets are not useful for a major collection */
+		/* FIXME: Why don't we clear them on a finishing concurrent collection? */
 		remset.clear_cards ();
 	}
 
