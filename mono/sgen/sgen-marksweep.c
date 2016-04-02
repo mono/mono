@@ -1214,19 +1214,91 @@ static guint64 stat_drain_loops;
 #define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_with_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
 
-#define COPY_OR_MARK_CONCURRENT
-#define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_no_evacuation
-#define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_no_evacuation
-#define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_no_evacuation
-#include "sgen-marksweep-drain-gray-stack.h"
+static void
+major_copy_or_mark_object_dijkstra_internal (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
+{
+	GCVTable vtable;
+	SgenDescriptor desc;
+	int type;
 
-#define COPY_OR_MARK_CONCURRENT_WITH_EVACUATION
-#define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_with_evacuation
-#define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_with_evacuation
-#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_concurrent_with_evacuation
-#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_concurrent_with_evacuation
-#define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_with_evacuation
-#include "sgen-marksweep-drain-gray-stack.h"
+	/* Ignore nursery objects. */
+	if (sgen_ptr_in_nursery (obj))
+		return;
+
+	vtable = SGEN_LOAD_VTABLE_UNCHECKED (obj);
+	desc = sgen_vtable_get_descriptor (vtable);
+	type = desc & DESC_TYPE_MASK;
+
+	SGEN_ASSERT (9, !SGEN_VTABLE_IS_PINNED (vtable) && !SGEN_VTABLE_IS_FORWARDED (vtable), "Why are major objects pinned or forwarded during a concurrent collection?");
+
+	if (sgen_safe_object_is_small (obj, type)) {
+		/* It's a small object, get its block, mark and enqueue if necessary. */
+		MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+		MS_MARK_OBJECT_AND_ENQUEUE (obj, desc, block, queue);
+		return;
+	}
+
+	/* It's a large object, if it's not pinned then pin and enqueue. */
+	if (sgen_los_object_is_pinned (obj))
+		return;
+
+	binary_protocol_pin (obj, (gpointer)vtable, sgen_safe_object_get_size (obj));
+
+	sgen_los_pin_object (obj);
+	if (sgen_gc_descr_has_references (desc))
+		GRAY_OBJECT_ENQUEUE (queue, obj, desc);
+}
+
+/*
+ * This function must only be called with the world stopped, on
+ * pointers not in the heap.  It's used for updating the finalization
+ * queue, GC handles, and similar stuff.
+ */
+static void
+major_copy_or_mark_object_dijkstra (GCObject **ptr, SgenGrayQueue *queue)
+{
+	//SGEN_ASSERT (0, !sgen_ptr_in_nursery ((gpointer)ptr) && !sgen_ptr_is_in_los ((gpointer)ptr, NULL) && !ptr_is_in_major_block ((gpointer)ptr, NULL, NULL), "Why is this called on a pointer inside an object?");
+	SGEN_ASSERT (0, sgen_is_world_stopped (), "Who calls this without the world stopped?");
+
+	major_copy_or_mark_object_dijkstra_internal (ptr, *ptr, queue);
+}
+
+static void
+major_scan_object_dijkstra (GCObject *full_object, SgenDescriptor desc, SgenGrayQueue *queue)
+{
+	char *start = (char*)full_object;
+
+#undef HANDLE_PTR
+#define HANDLE_PTR(ptr, obj) do {					\
+		GCObject *__old = *(ptr);				\
+		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
+		if (__old && !sgen_ptr_in_nursery (__old))		\
+			major_copy_or_mark_object_dijkstra_internal ((ptr), __old, queue); \
+		else if (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr))) \
+			mark_mod_union_card (full_object, (void**)(ptr), __old); \
+	} while (0)
+
+#define SCAN_OBJECT_PROTOCOL
+#include "sgen-scan-object.h"
+}
+
+static void
+major_scan_vtype_dijkstra (GCObject *full_object, char *start, SgenDescriptor desc, SgenGrayQueue *queue BINARY_PROTOCOL_ARG (size_t size))
+{
+	/* The descriptors assume there's an object header. */
+	start -= SGEN_CLIENT_OBJECT_HEADER_SIZE;
+
+	/* We use the same HANDLE_PTR from the object scan function */
+#define SCAN_OBJECT_NOVTABLE
+#define SCAN_OBJECT_PROTOCOL
+#include "sgen-scan-object.h"
+}
+
+static void
+major_scan_ptr_field_dijkstra (GCObject *full_object, GCObject **ptr, SgenGrayQueue *queue)
+{
+	HANDLE_PTR (ptr, NULL);
+}
 
 static inline gboolean
 major_is_evacuating (void)
@@ -1250,29 +1322,8 @@ drain_gray_stack (SgenGrayQueue *queue)
 		return drain_gray_stack_no_evacuation (queue);
 }
 
-static gboolean
-drain_gray_stack_concurrent (SgenGrayQueue *queue)
-{
-	if (major_is_evacuating ())
-		return drain_gray_stack_concurrent_with_evacuation (queue);
-	else
-		return drain_gray_stack_concurrent_no_evacuation (queue);
-}
-
 static void
 major_copy_or_mark_object_canonical (GCObject **ptr, SgenGrayQueue *queue)
-{
-	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
-}
-
-static void
-major_copy_or_mark_object_concurrent_canonical (GCObject **ptr, SgenGrayQueue *queue)
-{
-	major_copy_or_mark_object_concurrent_with_evacuation (ptr, *ptr, queue);
-}
-
-static void
-major_copy_or_mark_object_concurrent_finish_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
 }
@@ -2530,13 +2581,14 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->major_ops_serial.scan_object = major_scan_object_with_evacuation;
 	collector->major_ops_serial.drain_gray_stack = drain_gray_stack;
 	if (is_concurrent) {
-		collector->major_ops_concurrent_start.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
-		collector->major_ops_concurrent_start.scan_object = major_scan_object_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_vtype = major_scan_vtype_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_ptr_field = major_scan_ptr_field_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.drain_gray_stack = drain_gray_stack_concurrent;
+		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_dijkstra;
+		collector->major_ops_concurrent.scan_object = major_scan_object_dijkstra;
+		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_dijkstra;
+		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_dijkstra;
+		//collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_dijkstra;
 
-		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_concurrent_finish_canonical;
+		// These just call the serial collector functions, which is fine.
+		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_canonical;
 		collector->major_ops_concurrent_finish.scan_object = major_scan_object_with_evacuation;
 		collector->major_ops_concurrent_finish.scan_vtype = major_scan_vtype_with_evacuation;
 		collector->major_ops_concurrent_finish.scan_ptr_field = major_scan_ptr_field_with_evacuation;

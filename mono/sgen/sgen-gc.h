@@ -620,7 +620,7 @@ struct _SgenMajorCollector {
 	GCObject* (*alloc_degraded) (GCVTable vtable, size_t size);
 
 	SgenObjectOperations major_ops_serial;
-	SgenObjectOperations major_ops_concurrent_start;
+	SgenObjectOperations major_ops_concurrent;
 	SgenObjectOperations major_ops_concurrent_finish;
 
 	GCObject* (*alloc_object) (GCVTable vtable, size_t size, gboolean has_references);

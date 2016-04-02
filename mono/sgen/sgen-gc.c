@@ -1932,7 +1932,7 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, gboolean concurrent
 		g_assert (major_collector.is_concurrent);
 		concurrent_collection_in_progress = TRUE;
 
-		object_ops = &major_collector.major_ops_concurrent_start;
+		object_ops = &major_collector.major_ops_concurrent;
 	} else {
 		object_ops = &major_collector.major_ops_serial;
 	}
