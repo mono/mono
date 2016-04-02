@@ -1877,6 +1877,14 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	if (mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT) {
 		ScanJob *sj;
 
+		/* FIXME: right now we're doing this because we don't scan the regular card table,
+		   but we clear it. */
+		major_collector.update_cardtable_mod_union ();
+		sgen_los_update_cardtable_mod_union ();
+
+		if (mod_union_consistency_check)
+			sgen_check_mod_union_consistency ();
+
 		/* Mod union card table */
 		sj = (ScanJob*)sgen_thread_pool_job_alloc ("scan mod union cardtable", job_scan_major_mod_union_card_table, sizeof (ScanJob));
 		sj->ops = object_ops;
@@ -2189,14 +2197,6 @@ major_finish_concurrent_collection (gboolean forced)
 
 	SGEN_TV_GETTIME (time_major_conc_collection_end);
 	gc_stats.major_gc_time_concurrent += SGEN_TV_ELAPSED (time_major_conc_collection_start, time_major_conc_collection_end);
-
-	/* FIXME: right now we're doing this because we don't scan the regular card table,
-	   but we clear it. */
-	major_collector.update_cardtable_mod_union ();
-	sgen_los_update_cardtable_mod_union ();
-
-	if (mod_union_consistency_check)
-		sgen_check_mod_union_consistency ();
 
 	current_collection_generation = GENERATION_OLD;
 	sgen_cement_reset ();
