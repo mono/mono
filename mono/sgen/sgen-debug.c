@@ -272,6 +272,52 @@ sgen_check_mod_union_consistency (void)
 		g_assert (!missing_remsets);
 }
 
+static gboolean missing_marks;
+
+#undef HANDLE_PTR
+#define HANDLE_PTR(ptr, obj)	do {					\
+		GCObject *__ref = *(ptr);				\
+		if (__ref) {						\
+			if (sgen_ptr_in_nursery (__ref)) {		\
+				if (!SGEN_OBJECT_IS_PINNED (__ref)) {	\
+					SGEN_LOG (0, "Major (%p in obj %p) -> minor (%p) not pinned.", (ptr), full_obj, __ref); \
+					missing_marks = TRUE;		\
+				}					\
+			} else {					\
+				if (!is_major_or_los_object_marked (__ref)) { \
+					SGEN_LOG (0, "Major (%p in obj %p) -> major (%p) not marked.", (ptr), full_obj, __ref); \
+					missing_marks = TRUE;		\
+				}					\
+			}						\
+		}							\
+	} while (0)
+
+static void
+check_refs_marked (GCObject *full_obj, size_t size, void *dummy)
+{
+	char *start = (char*)full_obj;
+	SgenDescriptor desc = sgen_obj_get_descriptor (full_obj);
+
+	if (!is_major_or_los_object_marked (full_obj))
+		return;
+
+#include "sgen-scan-object.h"
+}
+
+void
+sgen_check_major_heap_marked (void)
+{
+	missing_marks = FALSE;
+
+	major_collector.iterate_objects (ITERATE_OBJECTS_ALL, (IterateObjectCallbackFunc)check_refs_marked, NULL);
+	sgen_los_iterate_objects ((IterateObjectCallbackFunc)check_refs_marked, NULL);
+
+	if (missing_marks) {
+		binary_protocol_flush_buffers (TRUE);
+		SGEN_ASSERT (0, FALSE, "Why are we missing mark bits?");
+	}
+}
+
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {					\
 		if (*(ptr) && !LOAD_VTABLE (*(ptr)))						\

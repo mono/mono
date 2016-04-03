@@ -999,6 +999,7 @@ GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size);
 
 void sgen_check_remset_consistency (void);
 void sgen_check_mod_union_consistency (void);
+void sgen_check_major_heap_marked (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
 void sgen_check_whole_heap_stw (void);
