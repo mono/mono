@@ -12,12 +12,14 @@ EXTRA_DISTFILES = \
 	cs-parser.jay		\
 	mcs.exe.sources
 
-LIB_REFS = System System.Core System.Xml
-
 ifeq (basic, $(PROFILE))
+LOCAL_MCS_FLAGS += -r:System.dll -r:System.Core.dll -r:System.Xml.dll -debug
+
 PROGRAM = basic.exe
 sourcefile = mcs.exe.sources
 else
+LIB_REFS = System System.Core System.Xml
+
 PROGRAM_USE_INTERMEDIATE_FILE = true
 PROGRAM = mcs.exe
 the_libdir = $(topdir)/class/lib/build/
