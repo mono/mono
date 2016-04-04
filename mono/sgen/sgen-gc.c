@@ -1451,7 +1451,7 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
  * Return whether any objects were late-pinned due to being out of memory.
  */
 static gboolean
-collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
+collect_nursery (void)
 {
 	gboolean needs_major;
 	size_t max_garbage_amount;
@@ -1517,10 +1517,8 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 
 	gc_stats.minor_gc_count ++;
 
-	if (whole_heap_check_before_collection) {
+	if (whole_heap_check_before_collection)
 		sgen_clear_nursery_fragments ();
-		sgen_check_whole_heap (finish_up_concurrent_mark);
-	}
 
 	sgen_process_fin_stage_entries ();
 
@@ -1591,7 +1589,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	 * next allocations.
 	 */
 	sgen_client_binary_protocol_reclaim_start (GENERATION_NURSERY);
-	fragment_total = sgen_build_nursery_fragments (nursery_section, unpin_queue);
+	fragment_total = sgen_build_nursery_fragments (nursery_section, NULL);
 	if (!fragment_total)
 		degraded_mode = 1;
 
@@ -1643,7 +1641,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	binary_protocol_collection_end (gc_stats.minor_gc_count - 1, GENERATION_NURSERY, 0, 0);
 
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
-		sgen_check_nursery_objects_pinned (unpin_queue != NULL);
+		sgen_check_nursery_objects_pinned (FALSE);
 
 	return needs_major;
 }
@@ -2231,7 +2229,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		} else {
 			SGEN_ASSERT (0, generation_to_collect == GENERATION_NURSERY, "Why aren't we finishing the concurrent collection?");
 			major_update_concurrent_collection ();
-			collect_nursery (NULL, FALSE);
+			collect_nursery ();
 		}
 
 		goto done;
@@ -2246,13 +2244,13 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	 */
 	// FIXME: extract overflow reason
 	if (generation_to_collect == GENERATION_NURSERY) {
-		if (collect_nursery (NULL, FALSE)) {
+		if (collect_nursery ()) {
 			overflow_generation_to_collect = GENERATION_OLD;
 			overflow_reason = "Minor overflow";
 		}
 	} else {
 		if (major_collector.is_concurrent && !wait_to_finish) {
-			collect_nursery (NULL, FALSE);
+			collect_nursery ();
 			major_start_concurrent_collection (reason);
 			// FIXME: set infos[0] properly
 			goto done;
@@ -2287,7 +2285,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		gc_start = gc_end;
 
 		if (overflow_generation_to_collect == GENERATION_NURSERY)
-			collect_nursery (NULL, FALSE);
+			collect_nursery ();
 		else
 			major_do_collection (overflow_reason, wait_to_finish);
 
