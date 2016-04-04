@@ -2574,7 +2574,8 @@ sgen_thread_unregister (SgenThreadInfo *p)
 void
 mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 {
-	int i;
+	gpointer *dest = (gpointer *)dest_ptr;
+	gpointer *src = (gpointer *)src_ptr;
 
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
@@ -2584,10 +2585,22 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 		return;
 	}
 
-	for (i = 0; i < count; ++i) {
-		gpointer dest = (gpointer*)dest_ptr + i;
-		gpointer obj = *((gpointer*)src_ptr + i);
-		mono_gc_wbarrier_generic_store (dest, obj);
+	/*overlapping that required backward copying*/
+	if (src < dest && (src + count) > dest) {
+		gpointer *start = dest;
+		dest += count - 1;
+		src += count - 1;
+
+		for (; dest >= start; --src, --dest) {
+			gpointer value = *src;
+			mono_gc_wbarrier_generic_store (dest, value);
+		}
+	} else {
+		gpointer *end = dest + count;
+		for (; dest < end; ++src, ++dest) {
+			gpointer value = *src;
+			mono_gc_wbarrier_generic_store (dest, value);
+		}
 	}
 }
 
