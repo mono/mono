@@ -83,6 +83,36 @@ dist-local: dist-default
 
 csproj-local install-local uninstall-local:
 
+CS0029-26-lib.dll : CS0029-26-lib.cs
+	$(CSCOMPILE) /target:library /publicsign /out:$@ $<
+
+CS0266-25-lib.dll: CS0266-25-lib.cs
+	$(CSCOMPILE) /target:library /r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll /out:$@ $<
+
+dlls/first/CS1701-lib.dll: dlls/first/CS1701-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/first/CS1702-lib.dll: dlls/first/CS1702-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/first/CS1703-lib.dll: dlls/first/CS1703-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/first/CS1705-lib.dll: dlls/first/CS1705-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/second/CS1701-lib.dll: dlls/second/CS1701-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/second/CS1702-lib.dll: dlls/second/CS1702-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/second/CS1703-lib.dll: dlls/second/CS1703-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
+dlls/second/CS1705-lib.dll: dlls/second/CS1705-lib.cs
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+
 CS1701-lib.dll : CS1701-lib.cs
 	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
 
