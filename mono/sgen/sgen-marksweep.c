@@ -43,6 +43,8 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/utils/mono-memory-model.h"
 
+//#define CUSTOM_DIJKSTRA
+
 #if defined(ARCH_MIN_MS_BLOCK_SIZE) && defined(ARCH_MIN_MS_BLOCK_SIZE_SHIFT)
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
 #define MS_BLOCK_SIZE_SHIFT	ARCH_MIN_MS_BLOCK_SIZE_SHIFT
@@ -1176,6 +1178,15 @@ static guint64 stat_drain_loops;
 #define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_with_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
 
+#if !defined(CUSTOM_DIJKSTRA)
+#define COPY_OR_MARK_CONCURRENT
+#define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_no_evacuation
+#define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_no_evacuation
+#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_concurrent_no_evacuation
+#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_concurrent_no_evacuation
+#define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_no_evacuation
+#include "sgen-marksweep-drain-gray-stack.h"
+#else
 static void
 major_copy_or_mark_object_dijkstra_internal (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
 {
@@ -1261,6 +1272,7 @@ major_scan_ptr_field_dijkstra (GCObject *full_object, GCObject **ptr, SgenGrayQu
 {
 	HANDLE_PTR (ptr, NULL);
 }
+#endif
 
 static inline gboolean
 major_is_evacuating (void)
@@ -1288,6 +1300,12 @@ static void
 major_copy_or_mark_object_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
+}
+
+static void
+major_copy_or_mark_object_concurrent_canonical (GCObject **ptr, SgenGrayQueue *queue)
+{
+	major_copy_or_mark_object_concurrent_no_evacuation (ptr, *ptr, queue);
 }
 
 static void
@@ -2497,11 +2515,19 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->major_ops_serial.scan_object = major_scan_object_with_evacuation;
 	collector->major_ops_serial.drain_gray_stack = drain_gray_stack;
 	if (is_concurrent) {
+#ifdef CUSTOM_DIJKSTRA
 		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_dijkstra;
 		collector->major_ops_concurrent.scan_object = major_scan_object_dijkstra;
 		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_dijkstra;
 		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_dijkstra;
 		//collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_dijkstra;
+#else
+		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
+		collector->major_ops_concurrent.scan_object = major_scan_object_concurrent_no_evacuation;
+		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_concurrent_no_evacuation;
+		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_concurrent_no_evacuation;
+		collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_concurrent_no_evacuation;
+#endif
 
 		// These just call the serial collector functions, which is fine.
 		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_canonical;
