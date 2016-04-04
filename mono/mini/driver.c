@@ -1176,6 +1176,8 @@ mini_usage_jitdeveloper (void)
 		 "    --agent=ASSEMBLY[:ARG] Loads the specific agent assembly and executes its Main method with the given argument before loading the main assembly.\n"
 		 "    --no-x86-stack-align   Don't align stack on x86\n"
 		 "\n"
+		 "The options supported by MONO_DEBUG can also be passed on the command line.\n"
+		 "\n"
 		 "Other options:\n" 
 		 "    --graph[=TYPE] METHOD  Draws a graph of the specified method:\n");
 	
@@ -1425,6 +1427,7 @@ mono_jit_parse_options (int argc, char * argv[])
 #else
 			mono_use_llvm = TRUE;
 #endif
+		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unsupported command line option: '%s'\n", argv [i]);
 			exit (1);
@@ -1897,6 +1900,7 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--nacl-null-checks-off") == 0){
 			nacl_null_checks_off = TRUE;
 #endif
+		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
 			return 1;
