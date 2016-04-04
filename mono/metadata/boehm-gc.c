@@ -805,7 +805,7 @@ mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
 }
 
 void
-mono_gc_wbarrier_generic_nostore (gpointer ptr)
+mono_gc_wbarrier_generic_nostore (gpointer ptr, MonoObject *value)
 {
 }
 
