@@ -786,8 +786,7 @@ to Mono, like this:
 .PP
 In the above sample Mono will load the user defined profiler from the
 shared library `mono-profiler-custom.so'.  This profiler module must
-be on your dynamic linker library path, or in the MONO_PROFILER_LIB_DIR
-path (see "RUNTIME OPTIONS" below).
+be on your dynamic linker library path.
 .PP 
 A list of other third party profilers is available from Mono's web
 site (www.mono-project.com/docs/advanced/performance-tips/)
@@ -1508,11 +1507,6 @@ libraries side-by-side with the main executable.
 For a complete description of recommended practices for application
 deployment, see
 http://www.mono-project.com/docs/getting-started/application-deployment/
-.TP
-\fBMONO_PROFILER_LIB_DIR\fR
-Provides a search path to the runtime where to look for custom profilers. See the
-section "CUSTOM PROFILERS" above for more information. Custom profilers will be
-searched for in the MONO_PROFILER_LIB_DIR path before the standard library paths.
 .TP
 \fBMONO_SHARED_DIR\fR
 If set its the directory where the ".wapi" handle state is stored.
