@@ -22,12 +22,14 @@ Test/resources/TestTasks-$(PROFILE).dll: Test/resources/TestTasks.cs
 	$(CSCOMPILE) /out:$@ Test/resources/TestTasks.cs /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_FRAMEWORK).dll /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_UTILITIES).dll /target:library
 
 clean-test-resources:
+	rm -f Test/resources/TestTasks*.dll Test/resources/TestTasks*.dll.mdb
 	rm -f Test/resources/TestTasks*.dll Test/resources/TestTasks*.pdb
 
 test-local: compile-resources
 
 compile-resources: Test/resources/TestTasks-$(PROFILE).dll
 	cp Test/resources/TestTasks-$(PROFILE).dll Test/resources/TestTasks.dll
+	cp Test/resources/TestTasks-$(PROFILE).dll.mdb Test/resources/TestTasks.dll.mdb
 	cp Test/resources/TestTasks-$(PROFILE).pdb Test/resources/TestTasks.pdb
 
 clean-local: clean-test-resources
