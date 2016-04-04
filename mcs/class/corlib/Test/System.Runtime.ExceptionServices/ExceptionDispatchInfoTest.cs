@@ -35,6 +35,7 @@ using System.Diagnostics;
 namespace MonoTests.System.Runtime.ExceptionServices
 {
 	[TestFixture]
+	[Category ("BitcodeNotWorking")]
 	public class ExceptionDispatchInfoTest
 	{
 		[Test]
