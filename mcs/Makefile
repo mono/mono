@@ -86,11 +86,9 @@ package := mcs-$(VERSION)
 DISTFILES = \
 	AUTHORS			\
 	COPYING			\
-	COPYING.LIB		\
 	INSTALL.txt		\
 	Makefile		\
 	mkinstalldirs		\
-	MIT.X11			\
 	MonoIcon.png		\
 	README			\
 	ScalableMonoIcon.svg	\
