@@ -25,7 +25,9 @@ else
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll nunit.mocks.dll
 endif
 
-test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
+TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(TEST_LIB_REFS))
+
+test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
@@ -41,7 +43,7 @@ test_sourcefile_excludes = $(test_lib).excludes
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_flags = -r:$(the_assembly) $(test_nunit_ref) $(TEST_MCS_FLAGS)
+test_flags = -r:$(the_assembly) $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
 tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.pdb) $(test_response) $(test_makefrag)
 
 ifndef HAVE_CS_TESTS
@@ -58,11 +60,15 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 ifdef NUNIT_LITE
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
+ifndef PARENT_PROFILE
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
+endif
 	echo "stamp" >$@
 else
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
+ifndef PARENT_PROFILE
 	cd ${topdir}/nunit24 && $(MAKE)
+endif
 	echo "stamp" >$@
 endif
 

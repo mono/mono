@@ -5,8 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Reactive.Observable.Aliases.dll
 LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.Providers
 LIB_MCS_FLAGS = \
-		@more_build_args \
-		-r:System.Reactive.Providers.dll
+		@more_build_args
 
 ifeq (true, $(GENERATE_RESOURCES))
 LIB_MCS_FLAGS += /define:GENERATING_RESOURCES

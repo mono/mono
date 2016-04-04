@@ -6,7 +6,8 @@ include ../../build/rules.make
 
 // 3021: CLS attribute not needed since assembly is not CLS compliant
 NOWARNS = -nowarn:3021
-LOCAL_MCS_FLAGS = -r:$(topdir)/class/lib/$(PROFILE)/Mono.CSharp.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -r:Mono.Management.dll -r:System.dll -unsafe $(NOWARNS)
+LOCAL_MCS_FLAGS = -unsafe $(NOWARNS)
+LIB_REFS = Mono.CSharp Mono.Posix Mono.Management System 
 
 PROGRAM = csharp.exe
 

@@ -4,14 +4,13 @@ include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Activation.dll
 
-LIB_REFS = System.Core System System.ServiceModel
+LIB_REFS = System.Core System plainservice/System.ServiceModel
 LIB_MCS_FLAGS =
 
-TEST_MCS_FLAGS = -r:System.dll -r:System.Core.dll
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Core
 
-plainservicemodel_dir = $(the_libdir_base)plainservice
-servicemodel = $(plainservicemodel_dir)/System.ServiceModel.dll
-LOCAL_MCS_FLAGS = -lib:$(plainservicemodel_dir)
+servicemodel = $(the_libdir_base)plainservice/System.ServiceModel.dll
 
 include ../../build/library.make
 

@@ -3,8 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 NO_TESTS = yes
 
-BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
-BUILD_NEW_ENGINE = Microsoft.Build.dll
+BUILD_FRAMEWORK = Microsoft.Build.Framework
+BUILD_NEW_ENGINE = Microsoft.Build
 INSTALL_FRAMEWORK_VERSION = $(FRAMEWORK_VERSION)
 
 include ../xbuild/xbuild.make
@@ -16,13 +16,12 @@ else
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
 ASSEMBLY_VERSION = 4.0.0.0
-BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
-BUILD_NEW_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_NEW_ENGINE)
 INSTALL_FRAMEWORK_VERSION = 4.0
 endif
 endif
 
-LOCAL_MCS_FLAGS = -r:$(BUILD_FRAMEWORK) -r:$(BUILD_NEW_ENGINE)
+LOCAL_MCS_FLAGS =
+LIB_REFS = $(BUILD_FRAMEWORK) $(BUILD_NEW_ENGINE)
 PROGRAM = msbuild.exe
 
 include ../../build/executable.make

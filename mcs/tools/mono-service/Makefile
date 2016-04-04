@@ -4,9 +4,12 @@ include ../../build/rules.make
 
 PROGRAM = mono-service.exe
 
+PROGRAM_SNK = ../../class/mono.snk
+
 include ../../build/executable.make
 
-LOCAL_MCS_FLAGS = -r:System.ServiceProcess.dll -r:Mono.Posix.dll -r:System.dll -unsafe
+LOCAL_MCS_FLAGS = -unsafe -publicsign
+LIB_REFS = System.ServiceProcess Mono.Posix System
 
 # Copied from library.make
 

@@ -17,23 +17,24 @@ TXT_RESOURCE_STRINGS = \
 	../../../external/referencesource/System.Xml/System.Xml.txt \
 	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
-LIB_REFS = System
-LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,649,1717 -unsafe -d:ASYNC
+LIB_MCS_FLAGS = -nowarn:219,414,649,1717 -unsafe -d:ASYNC
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML -d:DISABLE_CAS_USE
 endif
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
-ifndef MOBILE_PROFILE
-FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
-endif
+TEST_LIB_REFS = System.Data System.Core
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
 ifneq (bare/,$(intermediate))
-LIB_MCS_FLAGS += $(FINAL_MCS_FLAGS)
+LIB_REFS += secxml/System 
+ifndef MOBILE_PROFILE
+LIB_REFS += System.Configuration
+LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
-
-LOCAL_MCS_FLAGS += -lib:$(bare_libdir)
+else
+LIB_REFS += $(intermediate)System
+endif
 
 nist_dom_files = \
 	ITest.cs readme.txt util.cs \

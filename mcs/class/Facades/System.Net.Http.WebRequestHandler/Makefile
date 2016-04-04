@@ -11,8 +11,8 @@ LIBRARY = System.Net.Http.WebRequestHandler.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
-LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib.dll /r:System.Net.Http.WebRequest.dll /r:System.Net.Http.dll
+LIB_REFS = System System.Net.Http.WebRequest System.Net.Http
+LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
 PLATFORM_DEBUG_FLAGS =
 

@@ -5,8 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Reactive.Runtime.Remoting.dll
 LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
 LIB_MCS_FLAGS = \
-		@more_build_args \
-		-r:System.Reactive.Linq.dll
+		@more_build_args
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY

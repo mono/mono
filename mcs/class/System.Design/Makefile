@@ -4,13 +4,11 @@ include ../../build/rules.make
 
 LIBRARY = System.Design.dll
 
-LIB_REFS = System System.Xml System.Web System.Windows.Forms System.Drawing Accessibility System.Data System.Configuration
-LIB_MCS_FLAGS = -r:$(corlib)
+LIB_REFS = System System.Xml plainweb/System.Web System.Windows.Forms System.Drawing Accessibility System.Data System.Configuration
+LIB_MCS_FLAGS =
 
-plainweb_dir = $(the_libdir_base)plainweb
-LOCAL_MCS_FLAGS = -lib:$(plainweb_dir)
-
-TEST_MCS_FLAGS = /r:System.dll -r:System.Drawing.dll -r:System.Windows.Forms
+TEST_LIB_REFS = System System.Drawing System.Windows.Forms
+TEST_MCS_FLAGS =
 
 include ../../build/library.make
 

@@ -16,6 +16,7 @@ net_4_5_dirs := \
 	xbuild		\
 	csharp		\
 	corcompare	\
+	mono-api-html \
 	compiler-tester	\
 	mono-xmltool	\
 	mono-shlib-cop	\

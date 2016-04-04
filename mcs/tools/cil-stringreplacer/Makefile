@@ -5,6 +5,6 @@ include ../../build/rules.make
 PROGRAM = cil-stringreplacer.exe
 NO_INSTALL = yes
 
-LOCAL_MCS_FLAGS = -r:System.dll -r:Mono.Cecil.dll
+LIB_REFS = System Mono.Cecil
 
 include ../../build/executable.make

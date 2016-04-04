@@ -2,7 +2,8 @@ thisdir = tools/gacutil
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:Mono.Security.dll -unsafe
+LIB_REFS = Mono.Security
+LOCAL_MCS_FLAGS = -unsafe
 
 PROGRAM = gacutil.exe
 

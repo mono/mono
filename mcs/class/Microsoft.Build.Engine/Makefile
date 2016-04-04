@@ -7,19 +7,11 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Microsoft.Build.Engine.dll
 
-LIB_REFS = System System.Core System.Xml
-LIB_MCS_FLAGS = \
-	/r:$(corlib)		\
-	/r:System.dll		\
-	/r:System.Core.dll	\
-	/r:System.Xml.dll	\
-	/r:$(XBUILD_FRAMEWORK)	\
-	/r:$(XBUILD_UTILITIES)
+LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml $(XBUILD_FRAMEWORK) $(XBUILD_UTILITIES)
+LIB_MCS_FLAGS =
 
-TEST_MCS_FLAGS = \
-	/r:$(XBUILD_FRAMEWORK)	\
-	/r:$(XBUILD_UTILITIES) \
-	/r:System.Xml.dll
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = $(XBUILD_FRAMEWORK) $(XBUILD_UTILITIES) $(PARENT_PROFILE)System.Xml
 
 EXTRA_DISTFILES = \
 	Test/resources/TestTasks.cs		\
@@ -27,16 +19,16 @@ EXTRA_DISTFILES = \
 	Test/resources/*.csproj
 
 Test/resources/TestTasks-$(PROFILE).dll: Test/resources/TestTasks.cs
-	$(CSCOMPILE) /out:$@ Test/resources/TestTasks.cs /r:$(XBUILD_FRAMEWORK) /r:$(XBUILD_UTILITIES) /target:library
+	$(CSCOMPILE) /out:$@ Test/resources/TestTasks.cs /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_FRAMEWORK).dll /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_UTILITIES).dll /target:library
 
 clean-test-resources:
-	rm -f Test/resources/TestTasks*.dll Test/resources/TestTasks*.dll.mdb
+	rm -f Test/resources/TestTasks*.dll Test/resources/TestTasks*.pdb
 
 test-local: compile-resources
 
 compile-resources: Test/resources/TestTasks-$(PROFILE).dll
 	cp Test/resources/TestTasks-$(PROFILE).dll Test/resources/TestTasks.dll
-	cp Test/resources/TestTasks-$(PROFILE).dll.mdb Test/resources/TestTasks.dll.mdb
+	cp Test/resources/TestTasks-$(PROFILE).pdb Test/resources/TestTasks.pdb
 
 clean-local: clean-test-resources
 

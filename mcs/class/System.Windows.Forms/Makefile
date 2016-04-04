@@ -5,7 +5,6 @@ LIBRARY = System.Windows.Forms.dll
 
 LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
 LIB_MCS_FLAGS = /unsafe \
-	/r:$(corlib) \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
 
@@ -100,13 +99,15 @@ EXTRA_DISTFILES = \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
-TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.Formatters.Soap\
+TEST_LIB_REFS = System.Data System.Drawing Accessibility System System.Xml System.Runtime.Serialization.Formatters.Soap
+TEST_MCS_FLAGS = \
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612
 
 DummyAssembly.dll:
-	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs
+	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs \
+	-r:$(topdir)/class/lib/$(PROFILE)/System.dll
 
 test-local: DummyAssembly.dll
 

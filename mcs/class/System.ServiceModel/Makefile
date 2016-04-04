@@ -34,7 +34,8 @@ activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
 ifneq (plainservice/,$(intermediate))
-LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
+LIB_REFS += System.ServiceModel.Activation
+LIB_MCS_FLAGS += -define:HAS_ACTIVATION
 endif 
 endif # NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 
