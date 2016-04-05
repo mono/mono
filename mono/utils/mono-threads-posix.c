@@ -20,6 +20,7 @@
 #include <mono/metadata/gc-internals.h>
 
 #include <errno.h>
+#include <dlfcn.h>
 
 #if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
 #define USE_TKILL_ON_ANDROID 1
@@ -279,7 +280,31 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 void
 mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
 {
-#if defined (HAVE_PTHREAD_SETNAME_NP) && !defined (__MACH__)
+#ifdef __MACH__
+	static int (*pthread_setname_np_fn) (const char *);
+
+	/*
+	 * We can't set the thread name for other threads, but we can at least make
+	 * it work for threads that try to change their own name.
+	 */
+	if (tid != mono_native_thread_id_get ())
+		return;
+
+	/* The function is only available on OS X 10.6+, so find it at runtime. */
+	if (!pthread_setname_np_fn)
+		if (!(pthread_setname_np_fn = dlsym (RTLD_DEFAULT, "pthread_setname_np")))
+			return;
+
+	if (!name) {
+		pthread_setname_np_fn ("");
+	} else {
+		char n [63];
+
+		strncpy (n, name, 63);
+		n [62] = '\0';
+		pthread_setname_np_fn (n);
+	}
+#elif defined (HAVE_PTHREAD_SETNAME_NP)
 	if (!name) {
 		pthread_setname_np (tid, "");
 	} else {
