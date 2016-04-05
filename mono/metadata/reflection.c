@@ -7955,6 +7955,23 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
 	return mono_reflection_get_type_with_rootimage(image, image, info, ignorecase, type_resolve);
 }
 
+/**
+ * mono_reflection_get_type_checked:
+ * @rootimage: the image of the currently active managed caller
+ * @image: a metadata context
+ * @info: type description structure
+ * @ignorecase: flag for case-insensitive string compares
+ * @type_resolve: whenever type resolve was already tried
+ *
+ * Build a MonoType from the type description in @info. On failure returns NULL.
+ *
+ */
+MonoType*
+mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve) {
+	return mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, type_resolve);
+}
+
+
 static MonoType*
 mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase)
 {
