@@ -137,10 +137,15 @@ namespace System.Xml.Serialization {
                         throw new UnauthorizedAccessException(Res.GetString(Res.XmlPregenMissingTempDirectory));
                     }
                 }
+
+#if MONO
+                baseDir = Path.Combine (baseDir, GetTempAssemblyName(assembly.GetName(), defaultNamespace));
+#else
                 if (baseDir.EndsWith("\\", StringComparison.Ordinal))
                     baseDir += GetTempAssemblyName(assembly.GetName(), defaultNamespace);
                 else 
                     baseDir += "\\" + GetTempAssemblyName(assembly.GetName(), defaultNamespace);
+#endif
             }
             finally {
                 CodeAccessPermission.RevertAssert();
