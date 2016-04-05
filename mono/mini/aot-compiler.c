@@ -7336,9 +7336,6 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (acfg->aot_opts.llvm_only) {
 		GSList *l;
 
-		if (cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE && strstr (mono_method_full_name (cfg->method, 1), "ParallelLoopState"))
-			printf ("HIT!\n");
-
 		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 			/* These only need out wrappers */
 			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE);
