@@ -303,7 +303,11 @@ namespace System.IO {
 			// realpath() returns the *realpath* which can be different than fsw.FullPath because symlinks.
 			// If so, introduce a fixup step.
 			var sb = new StringBuilder (__DARWIN_MAXPATHLEN);
-			var resolvedFullPath = (realpath(fsw.FullPath, sb) == IntPtr.Zero) ? "" : sb.ToString();
+			if (realpath(fsw.FullPath, sb) == IntPtr.Zero) {
+				var errMsg = String.Format ("realpath({0}) failed, error code = '{1}'", fsw.FullPath, Marshal.GetLastWin32Error ());
+				throw new IOException (errMsg);
+			}
+			var resolvedFullPath = sb.ToString();
 
 			if (resolvedFullPath != fullPathNoLastSlash)
 				fixupPath = resolvedFullPath;
