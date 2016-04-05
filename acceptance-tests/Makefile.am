@@ -11,7 +11,7 @@ CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
 with_mono_path = MONO_PATH=$(CLASS)
 RUNTIME = $(with_mono_path) $(abs_top_builddir)/runtime/mono-wrapper --debug
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe
+MCS = $(RUNTIME) $(CSC) -nologo
 ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 
 include versions.mk

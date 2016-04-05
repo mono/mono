@@ -6,19 +6,24 @@ with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH
 monolite_flag := $(depsdir)/use-monolite
 use_monolite := $(wildcard $(monolite_flag))
 
-MONOLITE_MCS = $(topdir)/class/lib/monolite/basic.exe
+MONOLITE_MSCORLIB = $(topdir)/class/lib/monolite/mscorlib.dll
+
+# Bootstrap compiler does not have to be same as production compiler
+INTERNAL_GMCS = $(CSC_LOCATION)
 
 ifdef use_monolite
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(MONOLITE_MCS)
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
-BOOTSTRAP_MCS = $(EXTERNAL_MCS)
 endif
 
-MCS = $(with_mono_path) $(INTERNAL_GMCS)
+INTERNAL_CSC = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(INTERNAL_GMCS)
+BOOTSTRAP_MCS = CSC_SDK_PATH_DISABLED= $(INTERNAL_CSC)
+MCS = $(BOOTSTRAP_MCS)
 
-PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:BOOTSTRAP_BASIC -nowarn:1699 -lib:$(topdir)/class/lib/$(PROFILE)
+DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
+PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib $(DEFAULT_REFERENCES)
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
@@ -33,7 +38,7 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
 #
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS)
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS)
 
 .PHONY: profile-check do-profile-check
 profile-check:
@@ -59,15 +64,15 @@ MAKE_Q=$(if $(V),,-s)
 do-profile-check: $(depsdir)/.stamp
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
+	if [ -z '$(MAKE_Q)' ] && [ -n '$(PROFILE_RUNTIME)' ]; then $(PROFILE_RUNTIME) --version; fi; \
 	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
 	if $$ok; then rm -f $(PROFILE_EXE) $(PROFILE_OUT); else \
-	    if test -f $(MONOLITE_MCS); then \
-		$(MAKE) -s do-profile-check-monolite ; \
+	    if test -f $(MONOLITE_MSCORLIB); then \
+		$(MAKE) $(MAKE_Q) do-profile-check-monolite ; \
 	    else \
-		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
+		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
                 echo "*** You need Mono version 4.0 or better installed to build MCS" 1>&2 ; \
                 echo "*** Check mono README for information on how to bootstrap a Mono installation." 1>&2 ; \
-		echo "*** The version of '$(BOOTSTRAP_MCS)' is: `$(BOOTSTRAP_MCS) --version`." 1>&2 ; \
 	        exit 1; fi; fi
 
 
@@ -82,7 +87,7 @@ do-profile-check-monolite:
 else
 
 do-profile-check-monolite: $(depsdir)/.stamp
-	@echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2
+	@echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2
 	@echo "*** Trying the 'monolite' directory." 1>&2
 	@echo dummy > $(monolite_flag)
 	$(MAKE) do-profile-check
@@ -90,9 +95,8 @@ do-profile-check-monolite: $(depsdir)/.stamp
 endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
-	$(BOOTSTRAP_MCS) /warn:0 /out:$@ $<
-	echo -n "Bootstrap compiler: " 1>&2
-	$(BOOTSTRAP_MCS) --version 1>&2
+	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
+	$(INTERNAL_CSC) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

@@ -608,6 +608,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("NotWorking")] // https://bugzilla.xamarin.com/show_bug.cgi?id=44974
 	public void SingleStepping () {
 		Event e = run_until ("single_stepping");
 
@@ -4008,7 +4009,8 @@ public class DebuggerTests
 		req.Disable ();
 		var frames = e.Thread.GetFrames ();
 		var locs = frames [0].Method.Locations;
-		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 2));
+
+		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 3));
 
 		e.Thread.SetIP (next_loc);
 
@@ -4041,7 +4043,7 @@ public class DebuggerTests
 		req.Disable ();
 		var frames = e.Thread.GetFrames ();
 		var locs = frames [0].Method.Locations;
-		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 3));
+		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 1));
 		AssertValue (2, frames [0].GetValue (frames [0].Method.GetLocal ("i")));
 
 		// Set back the ip to the first i ++; line
