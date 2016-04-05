@@ -23,6 +23,8 @@ EXTRA_DISTFILES = $(TEST_RESX_RESOURCES:.resources=.resx)
 
 CLEAN_FILES += $(TEST_RESX_RESOURCES)
 
+.NOTPARALLEL: $(TEST_RESX_RESOURCES)
+
 $(TEST_RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
