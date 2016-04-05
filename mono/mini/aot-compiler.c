@@ -7865,7 +7865,8 @@ compile_thread_main (gpointer *user_data)
 	GPtrArray *methods = (GPtrArray *)user_data [2];
 	int i;
 
-	mono_thread_attach (domain);
+	MonoThread *thread = mono_thread_attach (domain);
+	mono_thread_info_set_name (mono_native_thread_id_get (), "AOT compiler");
 
 	for (i = 0; i < methods->len; ++i)
 		compile_method (acfg, (MonoMethod *)g_ptr_array_index (methods, i));
