@@ -774,6 +774,11 @@ typedef struct {
 
 #define PARAM_REGS 4
 
+/* __alignof__ returns the preferred alignment of values not the actual alignment used by
+   the compiler so is wrong e.g. for iOS where doubles are aligned on a 4 byte boundary
+   but __alignof__ returns 8 - using G_STRUCT_OFFSET works better */
+#define ALIGNMENT(type) G_STRUCT_OFFSET(struct { char c; type x; }, x)
+
 static void inline
 add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 {
@@ -791,7 +796,7 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 #if (defined(__APPLE__) && defined(MONO_CROSS_COMPILE)) || defined(PLATFORM_IPHONE_XCOMP)
 		int i8_align = 4;
 #else
-		int i8_align = __alignof__ (gint64);
+		int i8_align = ALIGNMENT(gint64);
 #endif
 
 #if __ARM_EABI__
