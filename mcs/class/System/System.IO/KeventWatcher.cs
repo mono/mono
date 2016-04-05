@@ -665,19 +665,19 @@ namespace System.IO {
 		string fixupPath = null;
 		string fullPathNoLastSlash = null;
 
-		[DllImport ("libc", EntryPoint="fcntl", CharSet=CharSet.Auto, SetLastError=true)]
+		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
 		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		extern static int open (string path, int flags, int mode_t);
 
 		[DllImport ("libc")]
 		extern static int close (int fd);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		extern static int kqueue ();
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		extern static int kevent (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, [In] ref timespec time);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
