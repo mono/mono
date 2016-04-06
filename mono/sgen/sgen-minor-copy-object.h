@@ -145,8 +145,8 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 		 * nursery->major references, this can go away.  Obviously we'll have to
 		 * process those references in the nursery scanning code, too.
 		 */
-		if (!sgen_ptr_in_nursery (obj_slot) && !sgen_ptr_in_nursery (forwarded))
-			sgen_major_to_major_reference_updated (obj_slot, forwarded);
+		if (!sgen_ptr_in_nursery (forwarded))
+			sgen_reference_to_major_updated (obj_slot, forwarded);
 #ifndef SGEN_SIMPLE_NURSERY
 		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (forwarded)))
 			sgen_add_to_global_remset (obj_slot, forwarded);
@@ -227,8 +227,8 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	/* FIXME: Check that all of these macro invocations are cromulent with regards to
 	   the concurrent collector. */
 	SGEN_UPDATE_REFERENCE (obj_slot, copy);
-	if (!sgen_ptr_in_nursery (obj_slot) && !sgen_ptr_in_nursery (copy))
-		sgen_major_to_major_reference_updated (obj_slot, copy);
+	if (!sgen_ptr_in_nursery (copy))
+		sgen_reference_to_major_updated (obj_slot, copy);
 #ifndef SGEN_SIMPLE_NURSERY
 	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
 		sgen_add_to_global_remset (obj_slot, copy);

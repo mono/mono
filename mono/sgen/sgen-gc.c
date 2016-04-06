@@ -2712,8 +2712,7 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
-	/* FIXME: For low-pause wbarrier, remove nursery check */
-	if (ptr_in_nursery (dest_ptr) || count <= 0) {
+	if (count <= 0) {
 		mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
 		return;
 	}
@@ -2738,9 +2737,9 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 }
 
 void
-sgen_major_to_major_reference_updated (gpointer ptr, GCObject *value)
+sgen_reference_to_major_updated (gpointer ptr, GCObject *value)
 {
-	SGEN_ASSERT (0, !sgen_ptr_in_nursery (ptr) && !sgen_ptr_in_nursery (value), "Why are we called for something that's not major->major?");
+	SGEN_ASSERT (0, !sgen_ptr_in_nursery (value), "Why are we called for something that's not major->major?");
 	if (concurrent_collection_in_progress) {
 		SgenDescriptor desc = sgen_obj_get_descriptor (value);
 		int type = desc & DESC_TYPE_MASK;
@@ -2776,9 +2775,9 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 	SGEN_LOG (8, "Adding remset at %p", ptr);
 	remset.wbarrier_generic_nostore (ptr, value);
 
-	if (!sgen_ptr_in_nursery (ptr) && !sgen_ptr_in_nursery (value)) {
+	if (!sgen_ptr_in_nursery (value)) {
 		ENTER_CRITICAL_REGION;
-		sgen_major_to_major_reference_updated (ptr, value);
+		sgen_reference_to_major_updated (ptr, value);
 		EXIT_CRITICAL_REGION;
 	}
 }

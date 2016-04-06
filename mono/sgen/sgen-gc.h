@@ -454,7 +454,7 @@ int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_concurrent_collection_in_progress (void);
 
-void sgen_major_to_major_reference_updated (gpointer ptr, GCObject *value);
+void sgen_reference_to_major_updated (gpointer ptr, GCObject *value);
 
 typedef struct _SgenFragment SgenFragment;
 
