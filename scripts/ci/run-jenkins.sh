@@ -12,8 +12,8 @@ if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="--host=i686-pc-
 ${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh --with-monodroid --with-monotouch --with-monotouch_watch --with-monotouch_tv --with-xammac --with-mobile_static $EXTRA_CONF_FLAGS
 if [[ ${label} == w* ]];
     then
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe /p:Platform=${PLATFORM} /p:Configuration=Release msvc/mono.sln
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe /p:Platform=${PLATFORM} /p:Configuration=Release_SGen msvc/mono.sln
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal "/cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe" /p:Platform=${PLATFORM} /p:Configuration=Release msvc/mono.sln
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal "/cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe" /p:Platform=${PLATFORM} /p:Configuration=Release_SGen msvc/mono.sln
 fi
 ${TESTCMD} --label=make --timeout=300m --fatal make -w V=1
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
