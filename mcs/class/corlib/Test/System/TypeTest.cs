@@ -4059,15 +4059,25 @@ namespace MonoTests.System
 			} catch (ArgumentNullException) {}
 		}
 
-		void MustAE (string tname) {
+		void MustAE_general (string tname, Func<string,Type> getType) {
 			try {
-				var res = Type.GetType (tname, name => {
-					return Assembly.Load (name);
-				},(asm,name,ignore) => {
-					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
-				}, true, false);
+				var res = getType (tname);
 				Assert.Fail (tname);
 			} catch (ArgumentException) {}
+		}
+
+		void MustAE (string typename) {
+			MustAE_general (typename, tname => {
+					return Type.GetType (tname, name => {
+							return Assembly.Load (name);
+						},(asm,name,ignore) => {
+							return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+						}, true, false);
+				});
+		}
+
+		void MustAEnn (string typename) {
+			MustAE_general (typename, tname => Type.GetType (tname, null, null));
 		}
 
 		void MustFNFE (string tname) {
@@ -4150,6 +4160,56 @@ namespace MonoTests.System
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,"), null, "#13");
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[*"), null, "#14");
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32"), null, "#15");
+		}
+
+		[Test]
+		public void GetTypeNullDelegatesParseGenericCorrectly () {
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1", null, null), typeof (Foo<>), "#1");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32]", null, null), typeof (Foo<int>), "#2");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[System.Int32]]", null, null), typeof (Foo<int>), "#3");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][]", null, null), typeof (Foo<int>[]), "#4");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][,]", null, null), typeof (Foo<int>[,]), "#5");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[]", null, null), typeof (Foo<>).MakeArrayType(), "#6");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,]", null, null), typeof (Foo<>).MakeArrayType (2), "#7");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][]", null, null), typeof (Foo<>).MakeArrayType ().MakeArrayType (), "#8");
+
+			MustAEnn ("MonoTests.System.Foo`1[][System.Int32]");
+			MustAEnn ("MonoTests.System.Foo`1[");
+			MustAEnn ("MonoTests.System.Foo`1[[");
+			MustAEnn ("MonoTests.System.Foo`1[[]");
+			MustAEnn ("MonoTests.System.Foo`1[,");
+			MustAEnn ("MonoTests.System.Foo`1[*");
+			MustAEnn ("MonoTests.System.Foo`1[System.Int32");
+		}
+
+		Dictionary<int, T> MakeDictHelper<T> (T[] arr) {
+			return new Dictionary<int, T>();
+		}
+
+		[Test]
+		public void GetTypeAnonymousParseCorrectly () {
+			var x = new { X = 1 };
+			var a = new [] { x };
+			var d = MakeDictHelper (a);
+
+			var x_type = x.GetType ();
+			var a_type = a.GetType ();
+			var d_type = d.GetType ();
+
+			Assert.AreEqual (Type.GetType (x_type.ToString ()), x_type, "#1");
+			Assert.AreEqual (Type.GetType (x_type.ToString (), null, null), x_type, "#2");
+			Assert.AreEqual (Type.GetType (a_type.ToString ()), a_type, "#3");
+			Assert.AreEqual (Type.GetType (a_type.ToString (), null, null), a_type, "#4");
+			Assert.AreEqual (Type.GetType (d_type.ToString ()), d_type, "#5");
+			Assert.AreEqual (Type.GetType (d_type.ToString (), null, null), d_type, "#6");
+
+			Assert.AreEqual (Type.GetType (x_type.FullName), x_type, "#7");
+			Assert.AreEqual (Type.GetType (x_type.FullName, null, null), x_type, "#8");
+			Assert.AreEqual (Type.GetType (a_type.FullName), a_type, "#9");
+			Assert.AreEqual (Type.GetType (a_type.FullName, null, null), a_type, "#10");
+			Assert.AreEqual (Type.GetType (d_type.FullName), d_type, "#11");
+			Assert.AreEqual (Type.GetType (d_type.FullName, null, null), d_type, "#12");
+
 		}
 
 #if !MONOTOUCH
