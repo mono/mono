@@ -33,6 +33,3 @@
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
 	url = git://github.com/mono/NUnitLite.git
-[submodule "external/android-libunwind"]
-	path = external/android-libunwind
-	url = https://android.googlesource.com/platform/external/libunwind
