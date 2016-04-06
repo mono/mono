@@ -166,6 +166,9 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs
 
+EXTRA_DISTFILES += \
+	CommonCrypto/Makefile.include
+
 #
 # Android TimeZoneInfo testing....
 #
