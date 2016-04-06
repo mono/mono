@@ -662,7 +662,7 @@ struct _SgenMajorCollector {
 	GCVTable (*describe_pointer) (char *pointer);
 	long long (*get_and_reset_num_major_objects_marked) (void);
 	void (*count_cards) (long long *num_total_cards, long long *num_marked_cards);
-	size_t (*bytes_marked) (void);
+	size_t (*bytes_marked) (size_t *bytes_allocated);
 };
 
 extern SgenMajorCollector major_collector;
@@ -864,7 +864,7 @@ LOSObject* sgen_los_header_for_object (GCObject *data);
 mword sgen_los_object_size (LOSObject *obj);
 void sgen_los_pin_object (GCObject *obj);
 gboolean sgen_los_object_is_pinned (GCObject *obj);
-size_t sgen_los_bytes_marked (void);
+size_t sgen_los_bytes_marked (size_t *bytes_allocated);
 
 
 /* nursery allocator */

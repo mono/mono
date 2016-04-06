@@ -2410,14 +2410,16 @@ major_count_cards (long long *num_total_cards, long long *num_marked_cards)
 }
 
 static size_t
-major_bytes_marked (void)
+major_bytes_marked (size_t *bytes_allocated)
 {
 	MSBlockInfo *block;
 	size_t bytes = 0;
 
+	*bytes_allocated = 0;
 	FOREACH_BLOCK_NO_LOCK (block) {
 		int count = MS_BLOCK_FREE / block->obj_size;
 		int i;
+		gboolean marked = FALSE;
 		for (i = 0; i < count; ++i) {
 			GCObject *obj = MS_BLOCK_OBJ (block, i);
 			int w, b;
@@ -2428,7 +2430,11 @@ major_bytes_marked (void)
 			MS_CALC_MARK_BIT (w, b, obj);
 			if (MS_MARK_BIT (block, w, b))
 				bytes += block->obj_size;
+
+			marked = TRUE;
 		}
+		if (marked)
+			*bytes_allocated += MS_BLOCK_SIZE;
 	} END_FOREACH_BLOCK_NO_LOCK;
 
 	return bytes;

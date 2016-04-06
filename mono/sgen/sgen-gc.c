@@ -1014,17 +1014,22 @@ sgen_update_heap_boundaries (mword low, mword high)
 }
 
 static size_t
-major_bytes_marked (CollectionStatistics *statistics)
+major_bytes_marked (CollectionStatistics *statistics, size_t *bytes_allocated)
 {
 	size_t bytes = 0;
+	size_t allocated = 0;
 #ifdef ENABLE_STATISTICS
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
 	TV_GETTIME (atv);
 
-	bytes += major_collector.bytes_marked ();
-	bytes += sgen_los_bytes_marked ();
+	*bytes_allocated = 0;
+	bytes += major_collector.bytes_marked (&allocated);
+	*bytes_allocated += allocated;
+
+	bytes += sgen_los_bytes_marked (&allocated);
+	*bytes_allocated += allocated;
 
 	TV_GETTIME (btv);
 	statistics->time_count_bytes_marked += TV_ELAPSED (atv, btv);
@@ -1895,7 +1900,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 
 	if (mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT) {
-		statistics->size_bytes_marked_after_wait_for_workers = major_bytes_marked (statistics);
+		statistics->size_bytes_marked_after_wait_for_workers = major_bytes_marked (statistics, &statistics->size_bytes_allocated_after_wait_for_workers);
 		TV_GETTIME (btv);
 	}
 
@@ -2028,7 +2033,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 
 	SGEN_ASSERT (0, sgen_workers_all_done (), "Can't have workers working after joining");
 
-	statistics->size_bytes_marked_after_finish_gray_stack = major_bytes_marked (statistics);
+	statistics->size_bytes_marked_after_finish_gray_stack = major_bytes_marked (statistics, &statistics->size_bytes_allocated_after_finish_gray_stack);
 	TV_GETTIME (atv);
 
 	/* FIXME: make an option for this */
@@ -2337,7 +2342,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	statistics.time_stop_world += TV_ELAPSED (gc_start, gc_total_start);
 
 	if (concurrent_collection_in_progress) {
-		statistics.size_bytes_marked_after_stop_world = major_bytes_marked (&statistics);
+		statistics.size_bytes_marked_after_stop_world = major_bytes_marked (&statistics, &statistics.size_bytes_allocated_after_stop_world);
 		TV_GETTIME (gc_total_start);
 
 		/*

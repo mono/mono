@@ -677,14 +677,21 @@ sgen_los_object_is_pinned (GCObject *data)
 }
 
 size_t
-sgen_los_bytes_marked (void)
+sgen_los_bytes_marked (size_t *bytes_allocated)
 {
+	int pagesize = mono_pagesize ();
 	LOSObject *obj;
 	size_t bytes = 0;
 
+	*bytes_allocated = 0;
 	for (obj = los_object_list; obj; obj = obj->next) {
 		if (sgen_los_object_is_pinned (obj->data)) {
-			bytes += sgen_los_object_size (obj);
+			size_t size = sgen_los_object_size (obj);
+			bytes += size;
+
+			size += sizeof (LOSObject);
+			size = SGEN_ALIGN_UP_TO (size, pagesize);
+			*bytes_allocated += size;
 		}
 	}
 
