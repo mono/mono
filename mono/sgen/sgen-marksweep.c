@@ -2409,6 +2409,31 @@ major_count_cards (long long *num_total_cards, long long *num_marked_cards)
 	*num_marked_cards = marked_cards;
 }
 
+static size_t
+major_bytes_marked (void)
+{
+	MSBlockInfo *block;
+	size_t bytes = 0;
+
+	FOREACH_BLOCK_NO_LOCK (block) {
+		int count = MS_BLOCK_FREE / block->obj_size;
+		int i;
+		for (i = 0; i < count; ++i) {
+			GCObject *obj = MS_BLOCK_OBJ (block, i);
+			int w, b;
+
+			if (!MS_OBJ_ALLOCED (obj, block))
+				continue;
+
+			MS_CALC_MARK_BIT (w, b, obj);
+			if (MS_MARK_BIT (block, w, b))
+				bytes += block->obj_size;
+		}
+	} END_FOREACH_BLOCK_NO_LOCK;
+
+	return bytes;
+}
+
 #undef pthread_create
 
 static void
@@ -2510,6 +2535,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->is_valid_object = major_is_valid_object;
 	collector->describe_pointer = major_describe_pointer;
 	collector->count_cards = major_count_cards;
+	collector->bytes_marked = major_bytes_marked;
 
 	collector->major_ops_serial.copy_or_mark_object = major_copy_or_mark_object_canonical;
 	collector->major_ops_serial.scan_object = major_scan_object_with_evacuation;

@@ -276,7 +276,6 @@ static guint64 stat_pinned_objects = 0;
 static guint64 time_minor_pre_collection_fragment_clear = 0;
 static guint64 time_minor_pinning = 0;
 static guint64 time_minor_scan_remsets = 0;
-static guint64 time_minor_scan_pinned = 0;
 static guint64 time_minor_scan_roots = 0;
 static guint64 time_minor_finish_gray_stack = 0;
 static guint64 time_minor_fragment_creation = 0;
@@ -287,7 +286,6 @@ static guint64 time_major_scan_pinned = 0;
 static guint64 time_major_scan_roots = 0;
 static guint64 time_major_scan_remsets = 0;
 static guint64 time_major_finish_gray_stack = 0;
-static guint64 time_major_free_bigobjs = 0;
 static guint64 time_major_los_sweep = 0;
 static guint64 time_major_sweep = 0;
 static guint64 time_major_fragment_creation = 0;
@@ -391,6 +389,52 @@ MonoNativeThreadId main_gc_thread = NULL;
 /*Object was pinned during the current collection*/
 static mword objects_pinned;
 
+//#define ENABLE_STATISTICS
+
+#define STATISTIC_TIME(f)	guint64 time_ ## f;
+#define STATISTIC_SIZE(f)	size_t size_ ## f;
+
+typedef struct {
+	TV_DECLARE(tv_begin);
+	TV_DECLARE(tv_end);
+#include "sgen-statistic-fields.h"
+} CollectionStatistics;
+
+static CollectionStatistics
+new_collection_statistics (void)
+{
+	CollectionStatistics stats;
+	memset (&stats, 0, sizeof (CollectionStatistics));
+	TV_GETTIME (stats.tv_begin);
+	return stats;
+}
+
+#define STATISTIC_TIME(f)	do {					\
+		if (stats.time_ ## f / 10000)				\
+			SGEN_LOG (0, #f ": %llu", stats.time_ ## f / 10000); \
+	} while (0);
+#define STATISTIC_SIZE(f)	do {					\
+		if (stats.size_ ## f)					\
+			SGEN_LOG (0, #f ": %zu", stats.size_ ## f);	\
+	} while (0);
+
+static void
+log_collection_statistics (CollectionStatistics stats, const char *name)
+{
+	SGEN_LOG (0, "*** %s:", name);
+	SGEN_LOG (0, "  total: %llu", TV_ELAPSED (stats.tv_begin, stats.tv_end) / 10000);
+#include "sgen-statistic-fields.h"
+}
+
+static void
+commit_collection_statistics (CollectionStatistics *stats, const char *name)
+{
+#ifdef ENABLE_STATISTICS
+	TV_GETTIME (stats->tv_end);
+	log_collection_statistics (*stats, name);
+#endif
+}
+
 /*
  * ######################################################################
  * ########  Macros and function declarations.
@@ -401,7 +445,6 @@ static mword objects_pinned;
 static void scan_from_registered_roots (char *addr_start, char *addr_end, int root_type, ScanCopyContext ctx);
 
 static void pin_from_roots (void *start_nursery, void *end_nursery, ScanCopyContext ctx);
-static void finish_gray_stack (int generation, ScanCopyContext ctx);
 
 
 SgenMajorCollector major_collector;
@@ -970,6 +1013,26 @@ sgen_update_heap_boundaries (mword low, mword high)
 	} while (SGEN_CAS_PTR ((gpointer*)&highest_heap_address, (gpointer)high, (gpointer)old) != (gpointer)old);
 }
 
+static size_t
+major_bytes_marked (CollectionStatistics *statistics)
+{
+	size_t bytes = 0;
+#ifdef ENABLE_STATISTICS
+	TV_DECLARE (atv);
+	TV_DECLARE (btv);
+
+	TV_GETTIME (atv);
+
+	bytes += major_collector.bytes_marked ();
+	bytes += sgen_los_bytes_marked ();
+
+	TV_GETTIME (btv);
+	statistics->time_count_bytes_marked += TV_ELAPSED (atv, btv);
+#endif
+
+	return bytes;
+}
+
 /*
  * Allocate and setup the data structures needed to be able to allocate objects
  * in the nursery. The nursery is stored in nursery_section.
@@ -1051,7 +1114,7 @@ sgen_generation_name (int generation)
 }
 
 static void
-finish_gray_stack (int generation, ScanCopyContext ctx)
+finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *statistics)
 {
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
@@ -1060,6 +1123,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx)
 	char *end_addr = generation == GENERATION_NURSERY ? sgen_get_nursery_end () : (char*)-1;
 	SgenGrayQueue *queue = ctx.queue;
 
+	TV_GETTIME (btv);
 	binary_protocol_finish_gray_stack_start (sgen_timestamp (), generation);
 	/*
 	 * We copied all the reachable objects. Now it's the time to copy
@@ -1077,6 +1141,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx)
 	sgen_drain_gray_stack (ctx);
 	TV_GETTIME (atv);
 	SGEN_LOG (2, "%s generation done", generation_name (generation));
+	statistics->time_finish_gray_stack_drain += TV_ELAPSED (btv, atv);
 
 	/*
 	Reset bridge data, we might have lingering data from a previous collection if this is a major
@@ -1172,6 +1237,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx)
 
 	TV_GETTIME (btv);
 	SGEN_LOG (2, "Finalize queue handling scan for %s generation: %lld usecs %d ephemeron rounds", generation_name (generation), TV_ELAPSED (atv, btv), ephemeron_rounds);
+	statistics->time_finish_gray_stack_finalize += TV_ELAPSED (atv, btv);
 
 	/*
 	 * handle disappearing links
@@ -1195,6 +1261,9 @@ finish_gray_stack (int generation, ScanCopyContext ctx)
 
 	sgen_gray_object_queue_trim_free_list (queue);
 	binary_protocol_finish_gray_stack_end (sgen_timestamp (), generation);
+
+	TV_GETTIME (atv);
+	statistics->time_finish_gray_stack_null_links += TV_ELAPSED (btv, atv);
 }
 
 void
@@ -1242,7 +1311,6 @@ init_stats (void)
 	mono_counters_register ("Minor fragment clear", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_pre_collection_fragment_clear);
 	mono_counters_register ("Minor pinning", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_pinning);
 	mono_counters_register ("Minor scan remembered set", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_scan_remsets);
-	mono_counters_register ("Minor scan pinned", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_scan_pinned);
 	mono_counters_register ("Minor scan roots", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_scan_roots);
 	mono_counters_register ("Minor fragment creation", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_minor_fragment_creation);
 
@@ -1252,7 +1320,6 @@ init_stats (void)
 	mono_counters_register ("Major scan roots", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_roots);
 	mono_counters_register ("Major scan remsets", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_scan_remsets);
 	mono_counters_register ("Major finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_finish_gray_stack);
-	mono_counters_register ("Major free big objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_free_bigobjs);
 	mono_counters_register ("Major LOS sweep", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_los_sweep);
 	mono_counters_register ("Major sweep", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_sweep);
 	mono_counters_register ("Major fragment creation", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_major_fragment_creation);
@@ -1451,7 +1518,7 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
  * Return whether any objects were late-pinned due to being out of memory.
  */
 static gboolean
-collect_nursery (void)
+collect_nursery (CollectionStatistics *statistics)
 {
 	gboolean needs_major;
 	size_t max_garbage_amount;
@@ -1503,6 +1570,7 @@ collect_nursery (void)
 	/* world must be stopped already */
 	TV_GETTIME (btv);
 	time_minor_pre_collection_fragment_clear += TV_ELAPSED (atv, btv);
+	statistics->time_init += TV_ELAPSED (atv, btv);
 
 	sgen_client_pre_collection_checks ();
 
@@ -1540,6 +1608,8 @@ collect_nursery (void)
 
 	TV_GETTIME (atv);
 	time_minor_pinning += TV_ELAPSED (btv, atv);
+	statistics->time_pinning += TV_ELAPSED (btv, atv);
+
 	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), TV_ELAPSED (btv, atv));
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 
@@ -1551,6 +1621,8 @@ collect_nursery (void)
 	/* we don't have complete write barrier yet, so we scan all the old generation sections */
 	TV_GETTIME (btv);
 	time_minor_scan_remsets += TV_ELAPSED (atv, btv);
+	statistics->time_scan_remsets += TV_ELAPSED (atv, btv);
+
 	SGEN_LOG (2, "Old generation scan: %lld usecs", TV_ELAPSED (atv, btv));
 
 	sgen_pin_stats_print_class_stats ();
@@ -1558,18 +1630,17 @@ collect_nursery (void)
 	/* FIXME: Why do we do this at this specific, seemingly random, point? */
 	sgen_client_collecting_minor (&fin_ready_queue, &critical_fin_queue);
 
-	TV_GETTIME (atv);
-	time_minor_scan_pinned += TV_ELAPSED (btv, atv);
-
 	enqueue_scan_from_roots_jobs (&gc_thread_gray_queue, sgen_get_nursery_start (), nursery_next, object_ops, FALSE);
 
-	TV_GETTIME (btv);
-	time_minor_scan_roots += TV_ELAPSED (atv, btv);
-
-	finish_gray_stack (GENERATION_NURSERY, ctx);
-
 	TV_GETTIME (atv);
-	time_minor_finish_gray_stack += TV_ELAPSED (btv, atv);
+	time_minor_scan_roots += TV_ELAPSED (btv, atv);
+	statistics->time_scan_roots += TV_ELAPSED (btv, atv);
+
+	finish_gray_stack (GENERATION_NURSERY, ctx, statistics);
+
+	TV_GETTIME (btv);
+	time_minor_finish_gray_stack += TV_ELAPSED (atv, btv);
+
 	sgen_client_binary_protocol_mark_end (GENERATION_NURSERY);
 
 	if (objects_pinned) {
@@ -1597,17 +1668,16 @@ collect_nursery (void)
 	sgen_clear_tlabs ();
 
 	sgen_client_binary_protocol_reclaim_end (GENERATION_NURSERY);
-	TV_GETTIME (btv);
-	time_minor_fragment_creation += TV_ELAPSED (atv, btv);
+	TV_GETTIME (atv);
+	time_minor_fragment_creation += TV_ELAPSED (btv, atv);
+	statistics->time_minor_fragment_creation += TV_ELAPSED (btv, atv);
+
 	SGEN_LOG (2, "Fragment creation: %lld usecs, %lu bytes available", TV_ELAPSED (atv, btv), (unsigned long)fragment_total);
 
 	if (remset_consistency_checks)
 		sgen_check_major_refs ();
 
 	major_collector.finish_nursery_collection ();
-
-	TV_GETTIME (last_minor_collection_end_tv);
-	gc_stats.minor_gc_time += TV_ELAPSED (last_minor_collection_start_tv, last_minor_collection_end_tv);
 
 	sgen_debug_dump_heap ("minor", gc_stats.minor_gc_count - 1, NULL);
 
@@ -1643,6 +1713,10 @@ collect_nursery (void)
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
 		sgen_check_nursery_objects_pinned (FALSE);
 
+	TV_GETTIME (last_minor_collection_end_tv);
+	gc_stats.minor_gc_time += TV_ELAPSED (last_minor_collection_start_tv, last_minor_collection_end_tv);
+	statistics->time_clean_up += TV_ELAPSED (atv, last_minor_collection_end_tv);
+
 	return needs_major;
 }
 
@@ -1653,7 +1727,7 @@ typedef enum {
 } CopyOrMarkFromRootsMode;
 
 static void
-major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops)
+major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops, CollectionStatistics *statistics)
 {
 	LOSObject *bigobj;
 	TV_DECLARE (atv);
@@ -1667,6 +1741,8 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	gboolean concurrent = mode != COPY_OR_MARK_FROM_ROOTS_SERIAL;
 
 	SGEN_ASSERT (0, !!concurrent == !!concurrent_collection_in_progress, "We've been called with the wrong mode.");
+
+	TV_GETTIME (btv);
 
 	sgen_verify_global_remset_record ();
 	reset_global_remset_record ();
@@ -1683,6 +1759,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	}
 
 	TV_GETTIME (atv);
+	statistics->time_init += TV_ELAPSED (btv, atv);
 
 	/* Pinning depends on this */
 	sgen_clear_nursery_fragments ();
@@ -1692,6 +1769,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	TV_GETTIME (btv);
 	time_major_pre_collection_fragment_clear += TV_ELAPSED (atv, btv);
+	statistics->time_fragment_clear += TV_ELAPSED (atv, btv);
 
 	if (!sgen_collection_is_concurrent ())
 		nursery_section->next_data = sgen_get_nursery_end ();
@@ -1711,7 +1789,6 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	sgen_process_fin_stage_entries ();
 
-	TV_GETTIME (atv);
 	sgen_init_pinning ();
 	SGEN_LOG (6, "Collecting pinned addresses");
 	pin_from_roots ((void*)lowest_heap_address, (void*)highest_heap_address, ctx);
@@ -1785,9 +1862,11 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	if (remset_consistency_checks && mode != COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT)
 		sgen_check_remset_consistency ();
 
-	TV_GETTIME (btv);
-	time_major_pinning += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), TV_ELAPSED (atv, btv));
+	TV_GETTIME (atv);
+	time_major_pinning += TV_ELAPSED (btv, atv);
+	statistics->time_pinning += TV_ELAPSED (btv, atv);
+
+	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), TV_ELAPSED (btv, atv));
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 
 	major_collector.init_to_space ();
@@ -1810,15 +1889,23 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	sgen_client_collecting_major_2 ();
 
-	TV_GETTIME (atv);
-	time_major_scan_pinned += TV_ELAPSED (btv, atv);
+	TV_GETTIME (btv);
+	time_major_scan_pinned += TV_ELAPSED (atv, btv);
+	statistics->time_wait_for_workers += TV_ELAPSED (atv, btv);
+
+
+	if (mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT) {
+		statistics->size_bytes_marked_after_wait_for_workers = major_bytes_marked (statistics);
+		TV_GETTIME (btv);
+	}
 
 	sgen_client_collecting_major_3 (&fin_ready_queue, &critical_fin_queue);
 
 	enqueue_scan_from_roots_jobs (gc_thread_gray_queue, heap_start, heap_end, object_ops, FALSE);
 
-	TV_GETTIME (btv);
-	time_major_scan_roots += TV_ELAPSED (atv, btv);
+	TV_GETTIME (atv);
+	time_major_scan_roots += TV_ELAPSED (btv, atv);
+	statistics->time_scan_roots += TV_ELAPSED (btv, atv);
 
 	/*
 	 * We start the concurrent worker after pinning and after we scanned the roots
@@ -1835,10 +1922,11 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 		remset.scan_remsets (ctx, CARDTABLE_SCAN_MARKED);
 
 		// FIXME: check the mod union bits and see which ones should be marked in regular card table
-
-		TV_GETTIME (atv);
-		time_major_scan_remsets += TV_ELAPSED (btv, atv);
 	}
+
+	TV_GETTIME (btv);
+	time_major_scan_remsets += TV_ELAPSED (atv, btv);
+	statistics->time_scan_remsets += TV_ELAPSED (atv, btv);
 
 	sgen_pin_stats_print_class_stats ();
 
@@ -1850,12 +1938,19 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 		if (do_concurrent_checks)
 			sgen_debug_check_nursery_is_clean ();
 	}
+
+	TV_GETTIME (atv);
+	statistics->time_clean_up += TV_ELAPSED (btv, atv);
 }
 
 static void
-major_start_collection (SgenGrayQueue *gc_thread_gray_queue, gboolean concurrent, size_t *old_next_pin_slot)
+major_start_collection (SgenGrayQueue *gc_thread_gray_queue, gboolean concurrent, size_t *old_next_pin_slot, CollectionStatistics *statistics)
 {
 	SgenObjectOperations *object_ops;
+	TV_DECLARE (atv);
+	TV_DECLARE (btv);
+
+	TV_GETTIME (atv);
 
 	binary_protocol_collection_begin (gc_stats.major_gc_count, GENERATION_OLD);
 
@@ -1891,11 +1986,14 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, gboolean concurrent
 	if (major_collector.start_major_collection)
 		major_collector.start_major_collection ();
 
-	major_copy_or_mark_from_roots (gc_thread_gray_queue, old_next_pin_slot, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops);
+	TV_GETTIME (btv);
+	statistics->time_init += TV_ELAPSED (atv, btv);
+
+	major_copy_or_mark_from_roots (gc_thread_gray_queue, old_next_pin_slot, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops, statistics);
 }
 
 static void
-major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, size_t old_next_pin_slot, gboolean forced)
+major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, size_t old_next_pin_slot, gboolean forced, CollectionStatistics *statistics)
 {
 	ScannedObjectCounts counts;
 	SgenObjectOperations *object_ops;
@@ -1904,12 +2002,12 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
-	TV_GETTIME (btv);
+	TV_GETTIME (atv);
 
 	if (concurrent_collection_in_progress) {
 		object_ops = &major_collector.major_ops_concurrent_finish;
 
-		major_copy_or_mark_from_roots (gc_thread_gray_queue, NULL, COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, object_ops);
+		major_copy_or_mark_from_roots (gc_thread_gray_queue, NULL, COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, object_ops, statistics);
 
 #ifdef SGEN_DEBUG_INTERNAL_ALLOC
 		main_gc_thread = NULL;
@@ -1918,15 +2016,20 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 		object_ops = &major_collector.major_ops_serial;
 	}
 
+	TV_GETTIME (btv);
+
 	sgen_workers_assert_gray_queue_is_empty ();
 
 	ctx = CONTEXT_FROM_OBJECT_OPERATIONS (object_ops, gc_thread_gray_queue);
 
-	finish_gray_stack (GENERATION_OLD, ctx);
+	finish_gray_stack (GENERATION_OLD, ctx, statistics);
 	TV_GETTIME (atv);
 	time_major_finish_gray_stack += TV_ELAPSED (btv, atv);
 
 	SGEN_ASSERT (0, sgen_workers_all_done (), "Can't have workers working after joining");
+
+	statistics->size_bytes_marked_after_finish_gray_stack = major_bytes_marked (statistics);
+	TV_GETTIME (atv);
 
 	/* FIXME: make an option for this */
 	//sgen_check_major_heap_marked ();
@@ -1986,24 +2089,24 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 
 	TV_GETTIME (btv);
 	time_major_fragment_creation += TV_ELAPSED (atv, btv);
+	statistics->time_minor_fragment_creation += TV_ELAPSED (atv, btv);
 
 	binary_protocol_sweep_begin (GENERATION_OLD, !major_collector.sweeps_lazily);
 	sgen_memgov_major_pre_sweep ();
 
-	TV_GETTIME (atv);
-	time_major_free_bigobjs += TV_ELAPSED (btv, atv);
-
 	sgen_los_sweep ();
 
-	TV_GETTIME (btv);
-	time_major_los_sweep += TV_ELAPSED (atv, btv);
+	TV_GETTIME (atv);
+	time_major_los_sweep += TV_ELAPSED (btv, atv);
+	statistics->time_los_sweep += TV_ELAPSED (btv, atv);
 
 	major_collector.sweep ();
 
 	binary_protocol_sweep_end (GENERATION_OLD, !major_collector.sweeps_lazily);
 
-	TV_GETTIME (atv);
-	time_major_sweep += TV_ELAPSED (btv, atv);
+	TV_GETTIME (btv);
+	time_major_sweep += TV_ELAPSED (atv, btv);
+	statistics->time_major_sweep += TV_ELAPSED (atv, btv);
 
 	sgen_debug_dump_heap ("major", gc_stats.major_gc_count - 1, reason);
 
@@ -2031,10 +2134,13 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	//consistency_check ();
 
 	binary_protocol_collection_end (gc_stats.major_gc_count - 1, GENERATION_OLD, counts.num_scanned_objects, counts.num_unique_scanned_objects);
+
+	TV_GETTIME (atv);
+	statistics->time_clean_up += TV_ELAPSED (btv, atv);
 }
 
 static gboolean
-major_do_collection (const char *reason, gboolean forced)
+major_do_collection (const char *reason, gboolean forced, CollectionStatistics *statistics)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
@@ -2053,8 +2159,8 @@ major_do_collection (const char *reason, gboolean forced)
 	TV_GETTIME (time_start);
 
 	init_gray_queue (&gc_thread_gray_queue, FALSE);
-	major_start_collection (&gc_thread_gray_queue, FALSE, &old_next_pin_slot);
-	major_finish_collection (&gc_thread_gray_queue, reason, old_next_pin_slot, forced);
+	major_start_collection (&gc_thread_gray_queue, FALSE, &old_next_pin_slot, statistics);
+	major_finish_collection (&gc_thread_gray_queue, reason, old_next_pin_slot, forced, statistics);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	TV_GETTIME (time_end);
@@ -2068,10 +2174,12 @@ major_do_collection (const char *reason, gboolean forced)
 }
 
 static void
-major_start_concurrent_collection (const char *reason)
+major_start_concurrent_collection (const char *reason, CollectionStatistics *statistics)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
+	TV_DECLARE (atv);
+	TV_DECLARE (btv);
 	long long num_objects_marked;
 	SgenGrayQueue gc_thread_gray_queue;
 
@@ -2088,9 +2196,15 @@ major_start_concurrent_collection (const char *reason)
 
 	init_gray_queue (&gc_thread_gray_queue, TRUE);
 	// FIXME: store reason and pass it when finishing
-	major_start_collection (&gc_thread_gray_queue, TRUE, NULL);
+	major_start_collection (&gc_thread_gray_queue, TRUE, NULL, statistics);
+
+	TV_GETTIME (atv);
+
 	sgen_workers_take_from_queue_and_awake (&gc_thread_gray_queue);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
+
+	TV_GETTIME (btv);
+	statistics->time_clean_up += TV_ELAPSED (atv, btv);
 
 	num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
 
@@ -2116,7 +2230,7 @@ major_update_concurrent_collection (void)
 }
 
 static void
-major_finish_concurrent_collection (gboolean forced)
+major_finish_concurrent_collection (gboolean forced, CollectionStatistics *statistics)
 {
 	SgenGrayQueue gc_thread_gray_queue;
 	TV_DECLARE (total_start);
@@ -2135,11 +2249,12 @@ major_finish_concurrent_collection (gboolean forced)
 
 	SGEN_TV_GETTIME (time_major_conc_collection_end);
 	gc_stats.major_gc_time_concurrent += SGEN_TV_ELAPSED (time_major_conc_collection_start, time_major_conc_collection_end);
+	statistics->time_stop_workers += TV_ELAPSED (total_start, time_major_conc_collection_end);
 
 	current_collection_generation = GENERATION_OLD;
 	sgen_cement_reset ();
 	init_gray_queue (&gc_thread_gray_queue, FALSE);
-	major_finish_collection (&gc_thread_gray_queue, "finishing", -1, forced);
+	major_finish_collection (&gc_thread_gray_queue, "finishing", -1, forced, statistics);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	TV_GETTIME (total_end);
@@ -2201,10 +2316,13 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	TV_DECLARE (gc_end);
 	TV_DECLARE (gc_total_start);
 	TV_DECLARE (gc_total_end);
+	TV_DECLARE (time_world_restarted);
 	GGTimingInfo infos [2];
 	int overflow_generation_to_collect = -1;
 	int oldest_generation_collected = generation_to_collect;
 	const char *overflow_reason = NULL;
+	CollectionStatistics statistics = new_collection_statistics ();
+	const char *name = NULL;
 
 	binary_protocol_collection_requested (generation_to_collect, requested_size, wait_to_finish ? 1 : 0);
 
@@ -2215,8 +2333,12 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	sgen_stop_world (generation_to_collect);
 
 	TV_GETTIME (gc_total_start);
+	statistics.time_stop_world += TV_ELAPSED (gc_start, gc_total_start);
 
 	if (concurrent_collection_in_progress) {
+		statistics.size_bytes_marked_after_stop_world = major_bytes_marked (&statistics);
+		TV_GETTIME (gc_total_start);
+
 		/*
 		 * If the concurrent worker is finished or we are asked to do a major collection
 		 * then we finish the concurrent collection.
@@ -2224,12 +2346,14 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		gboolean finish = major_should_finish_concurrent_collection () || generation_to_collect == GENERATION_OLD;
 
 		if (finish) {
-			major_finish_concurrent_collection (wait_to_finish);
+			major_finish_concurrent_collection (wait_to_finish, &statistics);
 			oldest_generation_collected = GENERATION_OLD;
+			name = "finish concurrent major";
 		} else {
 			SGEN_ASSERT (0, generation_to_collect == GENERATION_NURSERY, "Why aren't we finishing the concurrent collection?");
 			major_update_concurrent_collection ();
-			collect_nursery ();
+			collect_nursery (&statistics);
+			name = "nursery with concurrent major";
 		}
 
 		goto done;
@@ -2244,22 +2368,25 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	 */
 	// FIXME: extract overflow reason
 	if (generation_to_collect == GENERATION_NURSERY) {
-		if (collect_nursery ()) {
+		if (collect_nursery (&statistics)) {
 			overflow_generation_to_collect = GENERATION_OLD;
 			overflow_reason = "Minor overflow";
 		}
+		name = "nursery";
 	} else {
 		if (major_collector.is_concurrent && !wait_to_finish) {
-			collect_nursery ();
-			major_start_concurrent_collection (reason);
+			collect_nursery (&statistics);
+			major_start_concurrent_collection (reason, &statistics);
 			// FIXME: set infos[0] properly
+			name = "start concurrent major";
 			goto done;
 		}
 
-		if (major_do_collection (reason, wait_to_finish)) {
+		if (major_do_collection (reason, wait_to_finish, &statistics)) {
 			overflow_generation_to_collect = GENERATION_NURSERY;
 			overflow_reason = "Excessive pinning";
 		}
+		name = "serial major";
 	}
 
 	TV_GETTIME (gc_end);
@@ -2284,10 +2411,13 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		infos [1].is_overflow = TRUE;
 		gc_start = gc_end;
 
-		if (overflow_generation_to_collect == GENERATION_NURSERY)
-			collect_nursery ();
-		else
-			major_do_collection (overflow_reason, wait_to_finish);
+		if (overflow_generation_to_collect == GENERATION_NURSERY) {
+			collect_nursery (&statistics);
+			name = "serial major with overflow nursery";
+		} else {
+			major_do_collection (overflow_reason, wait_to_finish, &statistics);
+			name = "nursery with overflow major";
+		}
 
 		TV_GETTIME (gc_end);
 		infos [1].total_time = SGEN_TV_ELAPSED (gc_start, gc_end);
@@ -2310,6 +2440,11 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	time_max = MAX (time_max, TV_ELAPSED (gc_total_start, gc_total_end));
 
 	sgen_restart_world (oldest_generation_collected, infos);
+
+	TV_GETTIME (time_world_restarted);
+	statistics.time_restart_world += TV_ELAPSED (gc_total_end, time_world_restarted);
+
+	commit_collection_statistics (&statistics, name);
 }
 
 /*

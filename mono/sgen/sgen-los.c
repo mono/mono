@@ -676,4 +676,19 @@ sgen_los_object_is_pinned (GCObject *data)
 	return obj->size & 1;
 }
 
+size_t
+sgen_los_bytes_marked (void)
+{
+	LOSObject *obj;
+	size_t bytes = 0;
+
+	for (obj = los_object_list; obj; obj = obj->next) {
+		if (sgen_los_object_is_pinned (obj->data)) {
+			bytes += sgen_los_object_size (obj);
+		}
+	}
+
+	return bytes;
+}
+
 #endif /* HAVE_SGEN_GC */
