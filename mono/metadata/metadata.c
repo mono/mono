@@ -2799,18 +2799,6 @@ free_inflated_method (MonoMethodInflated *imethod)
 	if (method->signature)
 		mono_metadata_free_inflated_signature (method->signature);
 
-	if (!((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))) {
-		MonoMethodHeader *header = imethod->header;
-
-		if (header) {
-			/* Allocated in inflate_generic_header () */
-			for (i = 0; i < header->num_locals; ++i)
-				mono_metadata_free_type (header->locals [i]);
-			g_free (header->clauses);
-			g_free (header);
-		}
-	}
-
 	g_free (method);
 }
 
@@ -3412,6 +3400,10 @@ do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoGenericContainer 
 			return FALSE;
 
 		type->data.klass = mono_class_from_mono_type (etype);
+
+		if (transient)
+			mono_metadata_free_type (etype);
+
 		g_assert (type->data.klass); //This was previously a check for NULL, but mcfmt should never fail. It can return a borken MonoClass, but should return at least something.
 		break;
 	}
