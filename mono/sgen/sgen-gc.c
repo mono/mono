@@ -2245,6 +2245,7 @@ major_finish_concurrent_collection (gboolean forced, CollectionStatistics *stati
 	 * The workers will be resumed with a finishing pause context to avoid
 	 * additional cardtable and object scanning.
 	 */
+	/* FIXME: should this be changed for Dijkstra? */
 	sgen_workers_stop_all_workers ();
 
 	SGEN_TV_GETTIME (time_major_conc_collection_end);
