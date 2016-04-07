@@ -233,10 +233,8 @@ AM_CONDITIONAL(POWERPC_DARWIN,test x$powerpc_darwin = xtrue)
 AC_MSG_CHECKING(for __sync_bool_compare_and_swap)
 AC_TRY_COMPILE([],[
 volatile unsigned int foo = 0;
-int main(int argc, char** argv) {
-    unsigned int r1 = __sync_bool_compare_and_swap(&foo, 0, 1);
-    return 0;
-}
+unsigned int r1 = __sync_bool_compare_and_swap(&foo, 0, 1);
+return 0;
 ], [
 AC_MSG_RESULT(yes)
 AC_DEFINE(HAS___SYNC_BOOL_COMPARE_AND_SWAP)
