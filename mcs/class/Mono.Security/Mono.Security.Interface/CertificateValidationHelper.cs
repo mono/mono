@@ -95,6 +95,14 @@ namespace Mono.Security.Interface
 		 * If @serverMode is true, then we're a server and want to validate a certificate that we received from a client.
 		 */
 		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509CertificateCollection certificates);
+	}
+
+	internal interface ICertificateValidator2 : ICertificateValidator
+	{
+		/*
+		 * Internal use only.
+		 */
+		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain);
 
 		/*
 		 * On OS X and Mobile, the @chain will be initialized with the @certificates, but not actually built.
@@ -137,15 +145,15 @@ namespace Mono.Security.Interface
 			get { return supportsTrustAnchors; }
 		}
 
-		static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
+		static ICertificateValidator2 GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
-			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (provider, settings);
+			return (ICertificateValidator2)NoReflectionHelper.GetDefaultCertificateValidator (provider, settings);
 		}
 
 		/*
 		 * Internal API, intended to be used by MonoTlsProvider implementations.
 		 */
-		public static ICertificateValidator GetValidator (MonoTlsProvider provider, MonoTlsSettings settings)
+		internal static ICertificateValidator2 GetValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
 			return GetDefaultValidator (provider, settings);
 		}
