@@ -5,7 +5,6 @@ using System.Text;
 using IKVM.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Mono.Cecil;
 using Mono.CompilerServices.SymbolWriter;
 using System.Runtime.InteropServices;
 
