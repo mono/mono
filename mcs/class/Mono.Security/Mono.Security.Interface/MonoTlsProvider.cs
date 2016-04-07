@@ -124,6 +124,26 @@ namespace Mono.Security.Interface
 
 #endregion
 
+#region Native Certificate Implementation
+
+		internal virtual bool HasNativeCertificates {
+			get { return false; }
+		}
+
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			byte[] data, string password, X509KeyStorageFlags flags)
+		{
+			throw new InvalidOperationException ();
+		}
+
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			X509Certificate certificate)
+		{
+			throw new InvalidOperationException ();
+		}
+
+#endregion
+
 #region Certificate Validation
 
 		/*
