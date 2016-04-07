@@ -453,6 +453,7 @@ void sgen_verify_global_remset_record (void);
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_concurrent_collection_in_progress (void);
+volatile gboolean* sgen_concurrent_collection_in_progress_ptr (void);
 
 void sgen_reference_to_major_updated (gpointer ptr, GCObject *value);
 

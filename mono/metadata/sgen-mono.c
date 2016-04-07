@@ -216,12 +216,11 @@ sgen_has_critical_method (void)
 #ifndef DISABLE_JIT
 
 static void
-emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gboolean is_concurrent)
+emit_nursery_check (MonoMethodBuilder *mb, int arg_index, int *nursery_check_success_label)
 {
 	int shifted_nursery_start = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
-	memset (nursery_check_return_labels, 0, sizeof (int) * 2);
-	// if (ptr_in_nursery (ptr)) return;
+	// if (ptr_in_nursery (ptr)) goto nursery_check_success;
 	/*
 	 * Masking out the bits might be faster, but we would have to use 64 bit
 	 * immediates, which might be slower.
@@ -233,23 +232,12 @@ emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gbo
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
 	mono_mb_emit_stloc (mb, shifted_nursery_start);
 
-	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, arg_index);
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_LDPTR_NURSERY_BITS);
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
 	mono_mb_emit_ldloc (mb, shifted_nursery_start);
-	nursery_check_return_labels [0] = mono_mb_emit_branch (mb, CEE_BEQ);
-
-	if (!is_concurrent) {
-		// if (!ptr_in_nursery (*ptr)) return;
-		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_LDPTR_NURSERY_BITS);
-		mono_mb_emit_byte (mb, CEE_SHR_UN);
-		mono_mb_emit_ldloc (mb, shifted_nursery_start);
-		nursery_check_return_labels [1] = mono_mb_emit_branch (mb, CEE_BNE_UN);
-	}
+	*nursery_check_success_label = mono_mb_emit_branch (mb, CEE_BEQ);
 }
 #endif
 
@@ -262,7 +250,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethod **write_barrier_method_addr;
 	WrapperInfo *info;
 #ifdef MANAGED_WBARRIER
-	int i, nursery_check_labels [2];
+	int ptr_in_nursery_label, concurrent_collection_label;
 #endif
 
 	// FIXME: Maybe create a separate version for ctors (the branch would be
@@ -289,9 +277,10 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 
 #ifndef DISABLE_JIT
 #ifdef MANAGED_WBARRIER
-	g_assert_not_reached ();
-	emit_nursery_check (mb, nursery_check_labels, is_concurrent);
+	emit_nursery_check (mb, 0, &ptr_in_nursery_label);
 	/*
+	  ptr is not in the nursery - mark the card
+
 	addr = sgen_cardtable + ((address >> CARD_BITS) & CARD_MASK)
 	*addr = 1;
 
@@ -329,12 +318,28 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_emit_icon (mb, 1);
 	mono_mb_emit_byte (mb, CEE_STIND_I1);
 
-	// return;
-	for (i = 0; i < 2; ++i) {
-		if (nursery_check_labels [i])
-			mono_mb_patch_branch (mb, nursery_check_labels [i]);
+	mono_mb_patch_branch (mb, ptr_in_nursery_label);
+
+	if (is_concurrent) {
+		/*
+		 * if (concurrent_collection_in_progress) goto concurrent_collection;
+		 */
+		mono_mb_emit_ptr (mb, (gpointer)sgen_concurrent_collection_in_progress_ptr ());
+		mono_mb_emit_byte (mb, CEE_LDIND_I4);
+		mono_mb_emit_icon (mb, 0);
+		concurrent_collection_label = mono_mb_emit_branch (mb, CEE_BNE_UN);
 	}
+
+	// return;
 	mono_mb_emit_byte (mb, CEE_RET);
+
+	if (is_concurrent) {
+		mono_mb_patch_branch (mb, concurrent_collection_label);
+		mono_mb_emit_ldarg (mb, 0);
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
+		mono_mb_emit_byte (mb, CEE_RET);
+	}
 #else
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldarg (mb, 1);

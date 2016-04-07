@@ -1395,6 +1395,12 @@ sgen_concurrent_collection_in_progress (void)
 	return concurrent_collection_in_progress;
 }
 
+volatile gboolean*
+sgen_concurrent_collection_in_progress_ptr (void)
+{
+	return &concurrent_collection_in_progress;
+}
+
 typedef struct {
 	SgenThreadPoolJob job;
 	SgenObjectOperations *ops;
