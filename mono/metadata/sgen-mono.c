@@ -233,6 +233,8 @@ emit_nursery_check (MonoMethodBuilder *mb, int arg_index, int *nursery_check_suc
 	mono_mb_emit_stloc (mb, shifted_nursery_start);
 
 	mono_mb_emit_ldarg (mb, arg_index);
+	if (arg_index)
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_LDPTR_NURSERY_BITS);
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
@@ -250,7 +252,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethod **write_barrier_method_addr;
 	WrapperInfo *info;
 #ifdef MANAGED_WBARRIER
-	int ptr_in_nursery_label, concurrent_collection_label;
+	int ptr_in_nursery_label;
 #endif
 
 	// FIXME: Maybe create a separate version for ctors (the branch would be
@@ -321,6 +323,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_patch_branch (mb, ptr_in_nursery_label);
 
 	if (is_concurrent) {
+		int concurrent_collection_label, value_in_nursery_label;
 		/*
 		 * if (concurrent_collection_in_progress) goto concurrent_collection;
 		 */
@@ -328,18 +331,26 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 		mono_mb_emit_byte (mb, CEE_LDIND_I4);
 		mono_mb_emit_icon (mb, 0);
 		concurrent_collection_label = mono_mb_emit_branch (mb, CEE_BNE_UN);
-	}
 
-	// return;
-	mono_mb_emit_byte (mb, CEE_RET);
+		// return;
+		mono_mb_emit_byte (mb, CEE_RET);
 
-	if (is_concurrent) {
+		// concurrent_collection:
 		mono_mb_patch_branch (mb, concurrent_collection_label);
+
+		// if (ptr_in_nursery (value)) goto value_in_nursery;
+		emit_nursery_check (mb, 1, &value_in_nursery_label);
+
+		// call full wbarrier
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
-		mono_mb_emit_byte (mb, CEE_RET);
+
+		// value_in_nursery:
+		mono_mb_patch_branch (mb, value_in_nursery_label);
 	}
+
+	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldarg (mb, 1);
