@@ -74,7 +74,7 @@ namespace Mono.Net.Security
 {
 	internal delegate bool ServerCertValidationCallbackWrapper (ServerCertValidationCallback callback, X509Certificate certificate, X509Chain chain, MonoSslPolicyErrors sslPolicyErrors);
 
-	internal class ChainValidationHelper : ICertificateValidator
+	internal class ChainValidationHelper : ICertificateValidator2
 	{
 		readonly object sender;
 		readonly MonoTlsSettings settings;
@@ -228,7 +228,7 @@ namespace Mono.Net.Security
 			var certs = new XX509CertificateCollection ();
 			certs.Add (new X509Certificate2 (certificate.GetRawCertData ()));
 
-			var result = ValidateChain (string.Empty, true, certs, (SslPolicyErrors)errors);
+			var result = ValidateChain (string.Empty, true, certificate, null, certs, (SslPolicyErrors)errors);
 			if (result == null)
 				return false;
 
@@ -238,7 +238,12 @@ namespace Mono.Net.Security
 		public ValidationResult ValidateCertificate (string host, bool serverMode, XX509CertificateCollection certs)
 		{
 			try {
-				var result = ValidateChain (host, serverMode, certs, 0);
+				X509Certificate leaf;
+				if (certs != null && certs.Count != 0)
+					leaf = certs [0];
+				else
+					leaf = null;
+				var result = ValidateChain (host, serverMode, leaf, null, certs, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
 				return result;
@@ -249,19 +254,49 @@ namespace Mono.Net.Security
 			}
 		}
 
-		ValidationResult ValidateChain (string host, bool server, XX509CertificateCollection certs, SslPolicyErrors errors)
+		public ValidationResult ValidateCertificate (string host, bool serverMode, X509Certificate leaf, XX509Chain xchain)
+		{
+			try {
+				var chain = (X509Chain)(object)xchain;
+				var result = ValidateChain (host, serverMode, leaf, chain, null, 0);
+				if (tlsStream != null)
+					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
+				return result;
+			} catch {
+				if (tlsStream != null)
+					tlsStream.CertificateValidationFailed = true;
+				throw;
+			}
+		}
+
+		ValidationResult ValidateChain (string host, bool server, X509Certificate leaf,
+		                                X509Chain chain, XX509CertificateCollection certs,
+		                                SslPolicyErrors errors)
+		{
+			var oldChain = chain;
+			var ownsChain = chain == null;
+			try {
+				var result = ValidateChain (host, server, leaf, ref chain, certs, errors);
+				if (chain != oldChain)
+					ownsChain = true;
+
+				return result;
+			} finally {
+				// If ValidateChain() changed the chain, then we need to free it.
+				if (ownsChain && chain != null)
+					chain.Dispose ();
+			}
+		}
+
+		ValidationResult ValidateChain (string host, bool server, X509Certificate leaf,
+		                                ref X509Chain chain, XX509CertificateCollection certs,
+		                                SslPolicyErrors errors)
 		{
 			// user_denied is true if the user callback is called and returns false
 			bool user_denied = false;
 			bool result = false;
 
 			var hasCallback = certValidationCallback != null || callbackWrapper != null;
-
-			X509Certificate leaf;
-			if (certs == null || certs.Count == 0)
-				leaf = null;
-			else
-				leaf = certs [0];
 
 			if (tlsStream != null)
 				request.ServicePoint.UpdateServerCertificate (leaf);
@@ -281,7 +316,6 @@ namespace Mono.Net.Security
 			ICertificatePolicy policy = ServicePointManager.GetLegacyCertificatePolicy ();
 
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
-			X509Chain chain = null;
 
 			bool wantsChain = SystemCertificateValidator.NeedsChain (settings);
 			if (!wantsChain && hasCallback) {
@@ -289,16 +323,15 @@ namespace Mono.Net.Security
 					wantsChain = true;
 			}
 
-			if (wantsChain)
-				chain = SystemCertificateValidator.CreateX509Chain (certs);
-
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				var xerrors = (MonoSslPolicyErrors)errors;
 				var xchain = (XX509Chain)(object)chain;
-				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, ref xchain, out result, ref xerrors, ref status11);
+				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, wantsChain, ref xchain, out result, ref xerrors, ref status11);
 				chain = (X509Chain)(object)xchain;
 				errors = (SslPolicyErrors)xerrors;
+			} else if (wantsChain) {
+				chain = SystemCertificateValidator.CreateX509Chain (certs);
 			}
 
 			if (!providerValidated)
