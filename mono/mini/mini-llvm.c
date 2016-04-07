@@ -5129,13 +5129,14 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	mono_method_get_param_names (cfg->method, (const char **) names);
 
 	for (i = 0; i < sig->param_count; ++i) {
+		LLVMArgInfo *ainfo = &linfo->args [i + sig->hasthis];
 		char *name;
-		int pindex = linfo->pindexes [i] + linfo->args [i + sig->hasthis].ndummy_fpargs;
+		int pindex = ainfo->pindex + ainfo->ndummy_fpargs;
 		int j;
 
-		for (j = 0; j < linfo->args [i + sig->hasthis].ndummy_fpargs; ++j) {
+		for (j = 0; j < ainfo->ndummy_fpargs; ++j) {
 			name = g_strdup_printf ("dummy_%d_%d", i, j);
-			LLVMSetValueName (LLVMGetParam (method, linfo->pindexes [i] + j), name);
+			LLVMSetValueName (LLVMGetParam (method, ainfo->pindex + j), name);
 			g_free (name);
 		}
 
