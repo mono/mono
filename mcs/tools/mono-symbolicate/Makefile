@@ -9,7 +9,8 @@ LOCAL_MCS_FLAGS = \
 	/r:Mono.CompilerServices.SymbolWriter.dll \
 	/r:System.Xml.dll \
 	/r:System.Core.dll \
-	/r:System.dll
+	/r:System.dll \
+	/D:NO_AUTHENTICODE
 
 include ../../build/executable.make
 
