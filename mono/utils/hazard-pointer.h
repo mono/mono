@@ -50,6 +50,7 @@ gpointer get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers 
 		(hp)->hazard_pointers [(i)] = NULL; \
 	} while (0)
 
+MONO_API gboolean mono_thread_is_pointer_hazardous (gpointer p);
 
 void mono_thread_small_id_free (int id);
 int mono_thread_small_id_alloc (void);
