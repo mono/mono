@@ -511,6 +511,7 @@ sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallbackFunc 
 	}
 }
 
+#if 0
 static SgenPointerQueue global_remset_from_last_nursery_collection = SGEN_POINTER_QUEUE_INIT (INTERNAL_MEM_PIN_QUEUE);
 
 static void
@@ -537,6 +538,7 @@ sgen_verify_global_remset_record (void)
 		SGEN_ASSERT (0, marked, "How did we lose the global remset?");
 	}
 }
+#endif
 
 /*
  * sgen_add_to_global_remset:
@@ -569,8 +571,10 @@ sgen_add_to_global_remset (gpointer ptr, GCObject *obj)
 
 	remset.record_pointer (ptr);
 
+/*
 	if (current_collection_generation == GENERATION_NURSERY)
 		sgen_pointer_queue_add (&global_remset_from_last_nursery_collection, ptr);
+*/
 
 	sgen_pin_stats_register_global_remset (obj);
 
@@ -1578,8 +1582,8 @@ collect_nursery (CollectionStatistics *statistics)
 
 	current_collection_generation = GENERATION_NURSERY;
 
-	sgen_verify_global_remset_record ();
-	reset_global_remset_record ();
+	//sgen_verify_global_remset_record ();
+	//reset_global_remset_record ();
 
 	SGEN_ASSERT (0, !sgen_collection_is_concurrent (), "Why is the nursery collection concurrent?");
 
@@ -1738,7 +1742,7 @@ collect_nursery (CollectionStatistics *statistics)
 	current_collection_generation = -1;
 	objects_pinned = 0;
 
-	sgen_verify_global_remset_record ();
+	//sgen_verify_global_remset_record ();
 
 	binary_protocol_collection_end (gc_stats.minor_gc_count - 1, GENERATION_NURSERY, 0, 0);
 
@@ -1776,8 +1780,8 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	TV_GETTIME (btv);
 
-	sgen_verify_global_remset_record ();
-	reset_global_remset_record ();
+	//sgen_verify_global_remset_record ();
+	//reset_global_remset_record ();
 
 	if (mode == COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT) {
 		/*This cleans up unused fragments */
