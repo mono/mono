@@ -4,18 +4,7 @@
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_SGEN_WORKER_H__
@@ -30,7 +19,7 @@ struct _WorkerData {
 
 void sgen_workers_init (int num_workers);
 void sgen_workers_stop_all_workers (void);
-void sgen_workers_start_all_workers (SgenObjectOperations *object_ops);
+void sgen_workers_start_all_workers (SgenObjectOperations *object_ops, SgenThreadPoolJob *finish_job);
 void sgen_workers_ensure_awake (void);
 void sgen_workers_init_distribute_gray_queue (void);
 void sgen_workers_enqueue_job (SgenThreadPoolJob *job, gboolean enqueue);

@@ -162,6 +162,7 @@ mono_object_hash            (MonoObject* obj);
 MONO_API MonoString *
 mono_object_to_string (MonoObject *obj, MonoObject **exc);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject *
 mono_value_box		    (MonoDomain *domain, MonoClass *klass, void* val);
 
@@ -183,12 +184,15 @@ mono_object_unbox	    (MonoObject *obj);
 MONO_API MonoObject *
 mono_object_clone	    (MonoObject *obj);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject *
 mono_object_isinst	    (MonoObject *obj, MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject *
 mono_object_isinst_mbyref   (MonoObject *obj, MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject *
 mono_object_castclass_mbyref (MonoObject *obj, MonoClass *klass);
 

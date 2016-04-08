@@ -1094,11 +1094,6 @@ find spots that need to be tuned for this mode of operation.   Alternatively,
 this mode can be enabled at compile time by using the --with-cooperative-gc
 flag when calling configure.
 .TP
-\fBMONO_ENABLE_SHM\fR
-Unix only: Enable support for cross-process handles.  Cross-process
-handles are used to expose process handles, thread handles, named
-mutexes, named events and named semaphores across Unix processes.
-.TP
 \fBMONO_ENV_OPTIONS\fR
 This environment variable allows you to pass command line arguments to
 a Mono process through the environment.   This is useful for example
@@ -1513,24 +1508,6 @@ For a complete description of recommended practices for application
 deployment, see
 http://www.mono-project.com/docs/getting-started/application-deployment/
 .TP
-\fBMONO_RTC\fR
-Experimental RTC support in the statistical profiler: if the user has
-the permission, more accurate statistics are gathered.  The MONO_RTC
-value must be restricted to what the Linux rtc allows: power of two
-from 64 to 8192 Hz. To enable higher frequencies like 4096 Hz, run as root:
-.nf
-
-	echo 4096 > /proc/sys/dev/rtc/max-user-freq
-
-.fi
-.Sp
-For example:
-.nf
-
-	MONO_RTC=4096 mono --profiler=default:stat program.exe
-
-.fi
-.TP 
 \fBMONO_SHARED_DIR\fR
 If set its the directory where the ".wapi" handle state is stored.
 This is the directory where the Windows I/O Emulation layer stores its
@@ -1808,6 +1785,10 @@ for example, to see managed frame names on gdb backtraces.
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
 method.
+.TP
+\fBMONO_JIT_DUMP_METHOD\fR
+Enables sending of the JITs intermediate representation for a specified
+method to the IdealGraphVisualizer tool.
 .TP
 \fBMONO_VERBOSE_HWCAP\fR
 If set, makes the JIT output information about detected CPU features

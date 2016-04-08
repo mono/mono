@@ -9,6 +9,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 #include <stdio.h>
@@ -1080,13 +1081,13 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		goto done;
 	}
 
-	if (image->loader == &pe_loader && !mono_verifier_verify_cli_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_cli_data (image, &errors))
 		goto invalid_image;
 
 	if (!mono_image_load_cli_data (image))
 		goto invalid_image;
 
-	if (image->loader == &pe_loader && !mono_verifier_verify_table_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_table_data (image, &errors))
 		goto invalid_image;
 
 	mono_image_load_names (image);

@@ -12,7 +12,7 @@ LIBRARY = System.Xml.XDocument.dll
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System.Xml.Linq System.Xml
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib.dll
+LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
 PLATFORM_DEBUG_FLAGS =
 

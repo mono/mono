@@ -5,10 +5,10 @@ include ../../build/rules.make
 LIBRARY = System.Transactions.dll
 ifdef MOBILE_PROFILE
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:$(corlib) /define:MOBILE
+LIB_MCS_FLAGS = /define:MOBILE
 else
 LIB_REFS = System System.Configuration
-LIB_MCS_FLAGS = /r:$(corlib)
+LIB_MCS_FLAGS =
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

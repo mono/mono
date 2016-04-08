@@ -2,6 +2,7 @@
  * Copyright 2002-2003 Ximian Inc
  * Copyright 2003-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_MINI_H__
 #define __MONO_MINI_H__
@@ -39,6 +40,7 @@
 #include "regalloc.h"
 #include "mini-unwind.h"
 #include "jit.h"
+#include "cfgdump.h"
 
 #include "mono/metadata/class-internals.h"
 #include "mono/metadata/domain-internals.h"
@@ -1842,6 +1844,9 @@ typedef struct {
 	/* Error handling */
 	MonoError error;
 
+	/* pointer to context datastructure used for graph dumping */
+	MonoGraphDumper *gdump_ctx;
+
 	/* Stats */
 	int stat_allocate_var;
 	int stat_locals_stack_size;
@@ -2286,6 +2291,12 @@ void        mini_cleanup                   (MonoDomain *domain);
 MONO_API MonoDebugOptions *mini_get_debug_options   (void);
 MONO_API gboolean    mini_parse_debug_option (const char *option);
 
+/* graph dumping */
+void mono_cfg_dump_create_context (MonoCompile *cfg);
+void mono_cfg_dump_begin_group (MonoCompile *cfg);
+void mono_cfg_dump_close_group (MonoCompile *cfg);
+void mono_cfg_dump_ir (MonoCompile *cfg, const char *phase_name);
+
 /* helper methods */
 void      mini_jit_init                    (void);
 void      mini_jit_cleanup                 (void);
@@ -2341,6 +2352,7 @@ void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, 
 const char*mono_ji_type_to_string           (MonoJumpInfoType type);
 void      mono_print_ji                     (const MonoJumpInfo *ji);
 void      mono_print_ins_index              (int i, MonoInst *ins);
+GString  *mono_print_ins_index_strbuf       (int i, MonoInst *ins);
 void      mono_print_ins                    (MonoInst *ins);
 void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg);
 void      mono_print_code                   (MonoCompile *cfg, const char *msg);
@@ -3009,6 +3021,10 @@ mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_va
 gboolean
 mini_class_is_generic_sharable (MonoClass *klass);
 
+
+gboolean
+mini_generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars, gboolean allow_partial);
+
 gboolean
 mono_is_partially_sharable_inst (MonoGenericInst *inst);
 
@@ -3188,5 +3204,11 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #else
 #define ARCH_VARARG_ICALLS 0
 #endif
+
+/*
+ * Native unwinder integration
+ */
+void mono_exception_native_unwind (void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info);
+
 
 #endif /* __MONO_MINI_H__ */

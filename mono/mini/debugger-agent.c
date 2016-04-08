@@ -6,6 +6,7 @@
  *
  * Copyright 2009-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -6031,6 +6032,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 			} else if (type == VALUE_TYPE_ID_NULL) {
 				*(MonoObject**)addr = NULL;
 			} else if (type == MONO_TYPE_VALUETYPE) {
+				MonoError error;
 				guint8 *buf2;
 				gboolean is_enum;
 				MonoClass *klass;
@@ -6062,7 +6064,8 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 					g_free (vtype_buf);
 					return err;
 				}
-				*(MonoObject**)addr = mono_value_box (d, klass, vtype_buf);
+				*(MonoObject**)addr = mono_value_box_checked (d, klass, vtype_buf, &error);
+				mono_error_cleanup (&error);
 				g_free (vtype_buf);
 			} else {
 				char *name = mono_type_full_name (t);
@@ -6084,6 +6087,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 static ErrorCode
 decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
+	MonoError error;
 	ErrorCode err;
 	int type = decode_byte (buf, &buf, limit);
 
@@ -6108,7 +6112,12 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 				g_free (nullable_buf);
 				return err;
 			}
-			mono_nullable_init (addr, mono_value_box (domain, mono_class_from_mono_type (targ), nullable_buf), mono_class_from_mono_type (t));
+			MonoObject *boxed = mono_value_box_checked (domain, mono_class_from_mono_type (targ), nullable_buf, &error);
+			if (!is_ok (&error)) {
+				mono_error_cleanup (&error);
+				return ERR_INVALID_OBJECT;
+			}
+			mono_nullable_init (addr, boxed, mono_class_from_mono_type (t));
 			g_free (nullable_buf);
 			*endbuf = buf;
 			return ERR_NONE;
@@ -7249,7 +7258,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 					MonoError error;
 					type_resolve = TRUE;
 					/* FIXME really okay to call while holding locks? */
-					t = mono_reflection_get_type_checked (ass->image, &info, ignore_case, &type_resolve, &error);
+					t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignore_case, &type_resolve, &error);
 					mono_error_cleanup (&error); 
 					if (t) {
 						g_ptr_array_add (res_classes, mono_type_get_class (t));
@@ -7683,7 +7692,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			if (info.assembly.name)
 				NOT_IMPLEMENTED;
-			t = mono_reflection_get_type_checked (ass->image, &info, ignorecase, &type_resolve, &error);
+			t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignorecase, &type_resolve, &error);
 			if (!is_ok (&error)) {
 				mono_error_cleanup (&error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
@@ -9666,6 +9675,7 @@ wait_for_attach (void)
 static guint32 WINAPI
 debugger_thread (void *arg)
 {
+	MonoError error;
 	int res, len, id, flags, command = 0;
 	CommandSet command_set = (CommandSet)0;
 	guint8 header [HEADER_LENGTH];
@@ -9681,8 +9691,11 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	attach_cookie = mono_jit_thread_attach (mono_get_root_domain (), &attach_dummy);
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	mono_thread_set_name_internal (thread, mono_string_new (mono_get_root_domain (), "Debugger agent"), TRUE, &error);
+	mono_error_assert_ok (&error);
 
-	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
 	mono_set_is_debugger_attached (TRUE);
 	

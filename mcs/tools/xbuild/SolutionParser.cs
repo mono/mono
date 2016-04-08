@@ -510,8 +510,8 @@ namespace Mono.XBuild.CommandLine {
 				if (solutionTarget.Configuration == targetInfo.Key.Configuration &&
 						solutionTarget.Platform == targetInfo.Key.Platform) {
 					solutionConfigurationContents.AppendFormat (
-							"<ProjectConfiguration Project=\"{0}\">{1}|{2}</ProjectConfiguration>",
-					guid.ToString ("B").ToUpper (), targetInfo.Value.Configuration, targetInfo.Value.Platform);
+							"<ProjectConfiguration Project=\"{0}\" AbsolutePath=\"{1}\">{2}|{3}</ProjectConfiguration>",
+							guid.ToString ("B").ToUpper (), projectInfo.FileName, targetInfo.Value.Configuration, targetInfo.Value.Platform);
 				}
 			}
 		}

@@ -366,6 +366,8 @@ namespace Mono.CSharp
 				}
 			}
 
+			args.Append ("/noconfig ");
+
 			args.Append (" -- ");
 			foreach (string source in fileNames)
 				args.AppendFormat("\"{0}\" ",source);

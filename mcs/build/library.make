@@ -18,7 +18,13 @@
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
-LIB_MCS_FLAGS += $(patsubst %,-r:%.dll,$(LIB_REFS))
+_FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
+
+LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS))
+LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE)/,$(LIB_REFS_ALIAS)))
 
 sourcefile = $(LIBRARY).sources
 
@@ -253,6 +259,7 @@ dist-local: dist-default
 	for f in `$(topdir)/tools/removecomments.sh $(wildcard *$(LIBRARY).sources)` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
+	  *.g.cs) : ;; \
 	  *) dest=`dirname "$$f"` ; \
 	     case $$subs in *" $$dest "*) : ;; *) subs=" $$dest$$subs" ; $(MKINSTALLDIRS) $(distdir)/$$dest ;; esac ; \
 	     cp -p "$$f" $(distdir)/$$dest || exit 1 ;; \

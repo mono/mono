@@ -8,6 +8,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com).
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -23,6 +24,7 @@
 #include "mono/metadata/mono-config-dirs.h"
 #include "mono/io-layer/io-layer.h"
 #include "mono/utils/mono-dl.h"
+#include <mono/utils/mono-logger-internals.h>
 #include <string.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -1159,6 +1161,7 @@ load_embedded_profiler (const char *desc, const char *name)
 	return result;
 }
 
+// TODO: Much of the library loading code here is custom. It would be better to merge this with mono-dl
 static gboolean
 load_profiler_from_directory (const char *directory, const char *libname, const char *desc)
 {
@@ -1167,10 +1170,13 @@ load_profiler_from_directory (const char *directory, const char *libname, const 
 	char *err;
 	void *iter;
 
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "Attempting to load profiler %s from %s (desc %s)", libname, directory, desc);
+
 	iter = NULL;
 	err = NULL;
 	while ((path = mono_dl_build_path (directory, libname, &iter))) {
 		pmodule = mono_dl_open (path, MONO_DL_LAZY, &err);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "Attempting to load profiler: %s, %ssuccessful, err: %s", path, pmodule?"":"not ", err);
 		g_free (path);
 		g_free (err);
 		if (pmodule)
@@ -1181,10 +1187,11 @@ load_profiler_from_directory (const char *directory, const char *libname, const 
 }
 
 static gboolean
-load_profiler_from_mono_instalation (const char *libname, const char *desc)
+load_profiler_from_mono_installation (const char *libname, const char *desc)
 {
 	char *err = NULL;
 	MonoDl *pmodule = mono_dl_open_runtime_lib (libname, MONO_DL_LAZY, &err);
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "Attempting to load profiler from runtime libs: %s, %ssuccessful, err: %s", libname, pmodule?"":"not ", err);
 	g_free (err);
 	if (pmodule)
 		return load_profiler (pmodule, desc, INITIALIZER_NAME);
@@ -1249,12 +1256,11 @@ mono_profiler_load (const char *desc)
 		}
 		if (!load_embedded_profiler (desc, mname)) {
 			libname = g_strdup_printf ("mono-profiler-%s", mname);
-			if (mono_config_get_assemblies_dir ())
+			res = load_profiler_from_mono_installation (libname, desc);
+			if (!res && mono_config_get_assemblies_dir ())
 				res = load_profiler_from_directory (mono_assembly_getrootdir (), libname, desc);
 			if (!res)
 				res = load_profiler_from_directory (NULL, libname, desc);
-			if (!res)
-				res = load_profiler_from_mono_instalation (libname, desc);
 			if (!res)
 				g_warning ("The '%s' profiler wasn't found in the main executable nor could it be loaded from '%s'.", mname, libname);
 			g_free (libname);

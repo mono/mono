@@ -2,7 +2,8 @@ thisdir = tools/SqlSharp
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Data.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = System System.Xml System.Data
 PROGRAM = sqlsharp.exe
 
 EXTRA_DISTFILES = README

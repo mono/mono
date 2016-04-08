@@ -8,6 +8,7 @@
  * (C) 2002 Ximian, Inc.
  * Copyright 2003-2011 Novell, Inc 
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -857,7 +858,330 @@ arch_init (MonoAotCompile *acfg)
 
 #ifdef TARGET_ARM64
 
-#include "../../../mono-extensions/mono/mini/aot-compiler-arm64.c"
+
+/* Load the contents of GOT_SLOT into dreg, clobbering ip0 */
+static void
+arm64_emit_load_got_slot (MonoAotCompile *acfg, int dreg, int got_slot)
+{
+	int offset;
+
+	g_assert (acfg->fp);
+	emit_unset_mode (acfg);
+	/* r16==ip0 */
+	offset = (int)(got_slot * sizeof (gpointer));
+#ifdef TARGET_MACH
+	/* clang's integrated assembler */
+	fprintf (acfg->fp, "adrp x16, %s@PAGE+%d\n", acfg->got_symbol, offset & 0xfffff000);
+	fprintf (acfg->fp, "add x16, x16, %s@PAGEOFF\n", acfg->got_symbol);
+	fprintf (acfg->fp, "ldr x%d, [x16, #%d]\n", dreg, offset & 0xfff);
+#else
+	/* Linux GAS */
+	fprintf (acfg->fp, "adrp x16, %s+%d\n", acfg->got_symbol, offset & 0xfffff000);
+	fprintf (acfg->fp, "add x16, x16, :lo12:%s\n", acfg->got_symbol);
+	fprintf (acfg->fp, "ldr x%d, [x16, %d]\n", dreg, offset & 0xfff);
+#endif
+}
+
+static void
+arm64_emit_objc_selector_ref (MonoAotCompile *acfg, guint8 *code, int index, int *code_size)
+{
+	int reg;
+
+	g_assert (acfg->fp);
+	emit_unset_mode (acfg);
+
+	/* ldr rt, target */
+	reg = arm_get_ldr_lit_reg (code);
+
+	fprintf (acfg->fp, "adrp x%d, L_OBJC_SELECTOR_REFERENCES_%d@PAGE\n", reg, index);
+	fprintf (acfg->fp, "add x%d, x%d, L_OBJC_SELECTOR_REFERENCES_%d@PAGEOFF\n", reg, reg, index);
+	fprintf (acfg->fp, "ldr x%d, [x%d]\n", reg, reg);
+
+	*code_size = 12;
+}
+
+static void
+arm64_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean external, gboolean thumb, MonoJumpInfo *ji, int *call_size)
+{
+	g_assert (acfg->fp);
+	emit_unset_mode (acfg);
+	if (ji && ji->relocation == MONO_R_ARM64_B) {
+		fprintf (acfg->fp, "b %s\n", target);
+	} else {
+		if (ji)
+			g_assert (ji->relocation == MONO_R_ARM64_BL);
+		fprintf (acfg->fp, "bl %s\n", target);
+	}
+	*call_size = 4;
+}
+
+static void
+arm64_emit_got_access (MonoAotCompile *acfg, guint8 *code, int got_slot, int *code_size)
+{
+	int reg;
+
+	/* ldr rt, target */
+	reg = arm_get_ldr_lit_reg (code);
+	arm64_emit_load_got_slot (acfg, reg, got_slot);
+	*code_size = 12;
+}
+
+static void
+arm64_emit_plt_entry (MonoAotCompile *acfg, const char *got_symbol, int offset, int info_offset)
+{
+	arm64_emit_load_got_slot (acfg, ARMREG_R16, offset / sizeof (gpointer));
+	fprintf (acfg->fp, "br x16\n");
+	/* Used by mono_aot_get_plt_info_offset () */
+	fprintf (acfg->fp, "%s %d\n", acfg->inst_directive, info_offset);
+}
+
+static void
+arm64_emit_tramp_page_common_code (MonoAotCompile *acfg, int pagesize, int arg_reg, int *size)
+{
+	guint8 buf [256];
+	guint8 *code;
+	int imm;
+
+	/* The common code */
+	code = buf;
+	imm = pagesize;
+	/* The trampoline address is in IP0 */
+	arm_movzx (code, ARMREG_IP1, imm & 0xffff, 0);
+	arm_movkx (code, ARMREG_IP1, (imm >> 16) & 0xffff, 16);
+	/* Compute the data slot address */
+	arm_subx (code, ARMREG_IP0, ARMREG_IP0, ARMREG_IP1);
+	/* Trampoline argument */
+	arm_ldrx (code, arg_reg, ARMREG_IP0, 0);
+	/* Address */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP0, 8);
+	arm_brx (code, ARMREG_IP0);
+
+	/* Emit it */
+	emit_code_bytes (acfg, buf, code - buf);
+
+	*size = code - buf;
+}
+
+static void
+arm64_emit_tramp_page_specific_code (MonoAotCompile *acfg, int pagesize, int common_tramp_size, int specific_tramp_size)
+{
+	guint8 buf [256];
+	guint8 *code;
+	int i, count;
+
+	count = (pagesize - common_tramp_size) / specific_tramp_size;
+	for (i = 0; i < count; ++i) {
+		code = buf;
+		arm_adrx (code, ARMREG_IP0, code);
+		/* Branch to the generic code */
+		arm_b (code, code - 4 - (i * specific_tramp_size) - common_tramp_size);
+		/* This has to be 2 pointers long */
+		arm_nop (code);
+		arm_nop (code);
+		g_assert (code - buf == specific_tramp_size);
+		emit_code_bytes (acfg, buf, code - buf);
+	}
+}
+
+static void
+arm64_emit_specific_trampoline_pages (MonoAotCompile *acfg)
+{
+	guint8 buf [128];
+	guint8 *code;
+	guint8 *labels [16];
+	int common_tramp_size;
+	int specific_tramp_size = 2 * 8;
+	int imm, pagesize;
+	char symbol [128];
+
+	if (!acfg->aot_opts.use_trampolines_page)
+		return;
+
+#ifdef TARGET_MACH
+	/* Have to match the target pagesize */
+	pagesize = 16384;
+#else
+	pagesize = mono_pagesize ();
+#endif
+	acfg->tramp_page_size = pagesize;
+
+	/* The specific trampolines */
+	sprintf (symbol, "%sspecific_trampolines_page", acfg->user_symbol_prefix);
+	emit_alignment (acfg, pagesize);
+	emit_global (acfg, symbol, TRUE);
+	emit_label (acfg, symbol);
+
+	/* The common code */
+	arm64_emit_tramp_page_common_code (acfg, pagesize, ARMREG_IP1, &common_tramp_size);
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_SPECIFIC] = common_tramp_size;
+
+	arm64_emit_tramp_page_specific_code (acfg, pagesize, common_tramp_size, specific_tramp_size);
+
+	/* The rgctx trampolines */
+	/* These are the same as the specific trampolines, but they load the argument into MONO_ARCH_RGCTX_REG */
+	sprintf (symbol, "%srgctx_trampolines_page", acfg->user_symbol_prefix);
+	emit_alignment (acfg, pagesize);
+	emit_global (acfg, symbol, TRUE);
+	emit_label (acfg, symbol);
+
+	/* The common code */
+	arm64_emit_tramp_page_common_code (acfg, pagesize, MONO_ARCH_RGCTX_REG, &common_tramp_size);
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_STATIC_RGCTX] = common_tramp_size;
+
+	arm64_emit_tramp_page_specific_code (acfg, pagesize, common_tramp_size, specific_tramp_size);
+
+	/* The gsharedvt arg trampolines */
+	/* These are the same as the specific trampolines */
+	sprintf (symbol, "%sgsharedvt_arg_trampolines_page", acfg->user_symbol_prefix);
+	emit_alignment (acfg, pagesize);
+	emit_global (acfg, symbol, TRUE);
+	emit_label (acfg, symbol);
+
+	arm64_emit_tramp_page_common_code (acfg, pagesize, ARMREG_IP1, &common_tramp_size);
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_GSHAREDVT_ARG] = common_tramp_size;
+
+	arm64_emit_tramp_page_specific_code (acfg, pagesize, common_tramp_size, specific_tramp_size);
+
+	/* The IMT trampolines */
+	sprintf (symbol, "%simt_trampolines_page", acfg->user_symbol_prefix);
+	emit_alignment (acfg, pagesize);
+	emit_global (acfg, symbol, TRUE);
+	emit_label (acfg, symbol);
+
+	code = buf;
+	imm = pagesize;
+	/* The trampoline address is in IP0 */
+	arm_movzx (code, ARMREG_IP1, imm & 0xffff, 0);
+	arm_movkx (code, ARMREG_IP1, (imm >> 16) & 0xffff, 16);
+	/* Compute the data slot address */
+	arm_subx (code, ARMREG_IP0, ARMREG_IP0, ARMREG_IP1);
+	/* Trampoline argument */
+	arm_ldrx (code, ARMREG_IP1, ARMREG_IP0, 0);
+
+	/* Same as arch_emit_imt_thunk () */
+	labels [0] = code;
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 0);
+	arm_cmpx (code, ARMREG_IP0, MONO_ARCH_RGCTX_REG);
+	labels [1] = code;
+	arm_bcc (code, ARMCOND_EQ, 0);
+
+	/* End-of-loop check */
+	labels [2] = code;
+	arm_cbzx (code, ARMREG_IP0, 0);
+
+	/* Loop footer */
+	arm_addx_imm (code, ARMREG_IP1, ARMREG_IP1, 2 * 8);
+	arm_b (code, labels [0]);
+
+	/* Match */
+	mono_arm_patch (labels [1], code, MONO_R_ARM64_BCC);
+	/* Load vtable slot addr */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 8);
+	/* Load vtable slot */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP0, 0);
+	arm_brx (code, ARMREG_IP0);
+
+	/* No match */
+	mono_arm_patch (labels [2], code, MONO_R_ARM64_CBZ);
+	/* Load fail addr */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 8);
+	arm_brx (code, ARMREG_IP0);
+
+	emit_code_bytes (acfg, buf, code - buf);
+
+	common_tramp_size = code - buf;
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT_THUNK] = common_tramp_size;
+
+	arm64_emit_tramp_page_specific_code (acfg, pagesize, common_tramp_size, specific_tramp_size);
+}
+
+static void
+arm64_emit_specific_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
+{
+	/* Load argument from second GOT slot */
+	arm64_emit_load_got_slot (acfg, ARMREG_R17, offset + 1);
+	/* Load generic trampoline address from first GOT slot */
+	arm64_emit_load_got_slot (acfg, ARMREG_R16, offset);
+	fprintf (acfg->fp, "br x16\n");
+	*tramp_size = 7 * 4;
+}
+
+static void
+arm64_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *method, const char *call_target)
+{
+	emit_unset_mode (acfg);
+	fprintf (acfg->fp, "add x0, x0, %d\n", (int)(sizeof (MonoObject)));
+	fprintf (acfg->fp, "b %s\n", call_target);
+}
+
+static void
+arm64_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
+{
+	/* Similar to the specific trampolines, but use the rgctx reg instead of ip1 */
+
+	/* Load argument from first GOT slot */
+	arm64_emit_load_got_slot (acfg, MONO_ARCH_RGCTX_REG, offset);
+	/* Load generic trampoline address from second GOT slot */
+	arm64_emit_load_got_slot (acfg, ARMREG_R16, offset + 1);
+	fprintf (acfg->fp, "br x16\n");
+	*tramp_size = 7 * 4;
+}
+
+static void
+arm64_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
+{
+	guint8 buf [128];
+	guint8 *code, *labels [16];
+
+	/* Load parameter from GOT slot into ip1 */
+	arm64_emit_load_got_slot (acfg, ARMREG_R17, offset);
+
+	code = buf;
+	labels [0] = code;
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 0);
+	arm_cmpx (code, ARMREG_IP0, MONO_ARCH_RGCTX_REG);
+	labels [1] = code;
+	arm_bcc (code, ARMCOND_EQ, 0);
+
+	/* End-of-loop check */
+	labels [2] = code;
+	arm_cbzx (code, ARMREG_IP0, 0);
+
+	/* Loop footer */
+	arm_addx_imm (code, ARMREG_IP1, ARMREG_IP1, 2 * 8);
+	arm_b (code, labels [0]);
+
+	/* Match */
+	mono_arm_patch (labels [1], code, MONO_R_ARM64_BCC);
+	/* Load vtable slot addr */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 8);
+	/* Load vtable slot */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP0, 0);
+	arm_brx (code, ARMREG_IP0);
+
+	/* No match */
+	mono_arm_patch (labels [2], code, MONO_R_ARM64_CBZ);
+	/* Load fail addr */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 8);
+	arm_brx (code, ARMREG_IP0);
+
+	emit_code_bytes (acfg, buf, code - buf);
+
+	*tramp_size = code - buf + (3 * 4);
+}
+
+static void
+arm64_emit_gsharedvt_arg_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
+{
+	/* Similar to the specific trampolines, but the address is in the second slot */
+	/* Load argument from first GOT slot */
+	arm64_emit_load_got_slot (acfg, ARMREG_R17, offset);
+	/* Load generic trampoline address from second GOT slot */
+	arm64_emit_load_got_slot (acfg, ARMREG_R16, offset + 1);
+	fprintf (acfg->fp, "br x16\n");
+	*tramp_size = 7 * 4;
+}
+
 
 #endif
 
@@ -4966,7 +5290,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 	GPtrArray *patches;
 	MonoJumpInfo *patch_info;
 	MonoDebugSourceLocation **locs = NULL;
-	gboolean skip;
+	gboolean skip, prologue_end = FALSE;
 #ifdef MONO_ARCH_AOT_SUPPORTED
 	gboolean direct_call, external_call;
 	guint32 got_slot;
@@ -5001,10 +5325,16 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 		if (locs && locs [i]) {
 			MonoDebugSourceLocation *loc = locs [i];
 			int findex;
+			const char *options;
 
 			findex = get_file_index (acfg, loc->source_file);
 			emit_unset_mode (acfg);
-			fprintf (acfg->fp, ".loc %d %d 0\n", findex, loc->row);
+			if (!prologue_end)
+				options = " prologue_end";
+			else
+				options = "";
+			prologue_end = TRUE;
+			fprintf (acfg->fp, ".loc %d %d 0%s\n", findex, loc->row, options);
 			mono_debug_symfile_free_location (loc);
 		}
 
@@ -6670,6 +7000,15 @@ wrap_path (gchar * path)
 	return clean;
 }
 
+// Duplicate a char range and add it to a ptrarray, but only if it is nonempty
+static void
+ptr_array_add_range_if_nonempty(GPtrArray *args, gchar const *start, gchar const *end)
+{
+	ptrdiff_t len = end-start;
+	if (len > 0)
+		g_ptr_array_add (args, g_strndup (start, len));
+}
+
 static GPtrArray *
 mono_aot_split_options (const char *aot_options)
 {
@@ -6725,6 +7064,7 @@ mono_aot_split_options (const char *aot_options)
 
 	next:
 		aot_options++;
+	restart:
 		// If the next character is end of string, then process the last option.
 		if (*(aot_options) == '\0') {
 			end_of_string = TRUE;
@@ -6733,11 +7073,11 @@ mono_aot_split_options (const char *aot_options)
 		continue;
 
 	new_opt:
-		g_ptr_array_add (args, g_strndup (opt_start, aot_options - opt_start));
+		ptr_array_add_range_if_nonempty (args, opt_start, aot_options);
 		opt_start = ++aot_options;
 		if (end_of_string)
 			break;
-		goto next;
+		goto restart; // Check for null and continue loop
 	}
 
 	return args;
@@ -7207,8 +7547,6 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
 	mono_time_track_end (&mono_jit_stats.jit_time, jit_timer);
 
-	mono_loader_clear_error ();
-
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
 		if (acfg->aot_opts.print_skipped_methods)
 			printf ("Skip (gshared failure): %s (%s)\n", mono_method_get_full_name (method), cfg->exception_message);
@@ -7527,7 +7865,10 @@ compile_thread_main (gpointer *user_data)
 	GPtrArray *methods = (GPtrArray *)user_data [2];
 	int i;
 
-	mono_thread_attach (domain);
+	MonoError error;
+	MonoThread *thread = mono_thread_attach (domain);
+	mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "AOT compiler"), TRUE, &error);
+	mono_error_assert_ok (&error);
 
 	for (i = 0; i < methods->len; ++i)
 		compile_method (acfg, (MonoMethod *)g_ptr_array_index (methods, i));
@@ -9544,7 +9885,6 @@ compile_asm (MonoAotCompile *acfg)
 #define AS_OPTIONS "--64"
 #elif defined(TARGET_POWERPC64)
 #define AS_OPTIONS "-a64 -mppc64"
-#define LD_OPTIONS "-m elf64ppc"
 #elif defined(sparc) && SIZEOF_VOID_P == 8
 #define AS_OPTIONS "-xarch=v9"
 #elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
@@ -9565,22 +9905,30 @@ compile_asm (MonoAotCompile *acfg)
 #define AS_NAME "as"
 #endif
 
-#ifndef LD_OPTIONS
-#define LD_OPTIONS ""
+#if defined(sparc)
+#define LD_NAME "ld"
+#define LD_OPTIONS "-shared -G"
+#elif defined(__ppc__) && defined(TARGET_MACH)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "-dynamiclib"
+#elif defined(TARGET_AMD64) && defined(TARGET_MACH)
+#define LD_NAME "clang"
+#define LD_OPTIONS "--shared"
+#elif defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "-shared"
+#elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
+#define LD_NAME "clang"
+#define LD_OPTIONS "-m32 -dynamiclib"
+#elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "--shared"
+#elif defined(TARGET_POWERPC64)
+#define LD_OPTIONS "-m elf64ppc"
 #endif
 
-#if defined(sparc)
-#define LD_NAME "ld -shared -G"
-#elif defined(__ppc__) && defined(TARGET_MACH)
-#define LD_NAME "gcc -dynamiclib"
-#elif defined(TARGET_AMD64) && defined(TARGET_MACH)
-#define LD_NAME "clang --shared"
-#elif defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
-#define LD_NAME "gcc -shared --dll"
-#elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
-#define LD_NAME "clang -m32 -dynamiclib"
-#elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
-#define LD_NAME "gcc --shared"
+#ifndef LD_OPTIONS
+#define LD_OPTIONS ""
 #endif
 
 	if (acfg->aot_opts.asm_only) {
@@ -9656,10 +10004,11 @@ compile_asm (MonoAotCompile *acfg)
 		ld_flags = g_strdup_printf ("%s %s", ld_flags, "-lstdc++");
 
 #ifdef LD_NAME
-	command = g_strdup_printf ("%s -o %s %s %s %s", LD_NAME,
+	command = g_strdup_printf ("%s%s %s -o %s %s %s %s", tool_prefix, LD_NAME, LD_OPTIONS,
 		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
 		wrap_path (g_strdup_printf ("%s.o", acfg->tmpfname)), ld_flags);
 #else
+	// Default (linux)
 	command = g_strdup_printf ("\"%sld\" %s -shared -o %s %s %s %s", tool_prefix, LD_OPTIONS,
 		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
 		wrap_path (g_strdup_printf ("%s.o", acfg->tmpfname)), ld_flags);
@@ -10092,7 +10441,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	//acfg->aot_opts.print_skipped_methods = TRUE;
 
-#if !defined(ENABLE_GSHAREDVT)
+#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	if (opts & MONO_OPT_GSHAREDVT) {
 		aot_printerrf (acfg, "-O=gsharedvt not supported on this platform.\n");
 		return 1;
@@ -10107,13 +10456,13 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #endif
 
 	if (acfg->aot_opts.llvm_only) {
-#ifndef ENABLE_GSHAREDVT
-		aot_printerrf (acfg, "--aot=llvmonly requires a runtime compiled with --enable-gsharedvt.\n");
+#ifndef MONO_ARCH_GSHAREDVT_SUPPORTED
+		aot_printerrf (acfg, "--aot=llvmonly requires a runtime that supports gsharedvt.\n");
 		return 1;
 #endif
 	}
 
-#if defined(ENABLE_GSHAREDVT) && defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
+#if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	acfg->opts |= MONO_OPT_GSHAREDVT;
 	opts |= MONO_OPT_GSHAREDVT;
 #endif
@@ -10329,13 +10678,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		}
 	}
 
-	if (acfg->aot_opts.dwarf_debug && acfg->aot_opts.asm_only && acfg->aot_opts.gnu_asm) {
+	if (acfg->aot_opts.dwarf_debug && acfg->aot_opts.gnu_asm) {
 		/*
 		 * CLANG supports GAS .file/.loc directives, so emit line number information this way
-		 * FIXME: CLANG only emits line number info for .loc directives followed by assembly, not
-		 * .byte directives.
 		 */
-		//acfg->gas_line_numbers = TRUE;
+		acfg->gas_line_numbers = TRUE;
 	}
 
 	if ((!acfg->aot_opts.nodebug || acfg->aot_opts.dwarf_debug) && acfg->has_jitted_code) {
@@ -10343,7 +10690,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 			aot_printerrf (acfg, "The dwarf AOT option requires the --debug option.\n");
 			return 1;
 		}
-		acfg->dwarf = mono_dwarf_writer_create (acfg->w, NULL, 0, FALSE, !acfg->gas_line_numbers);
+		acfg->dwarf = mono_dwarf_writer_create (acfg->w, NULL, 0, !acfg->gas_line_numbers);
 	}
 
 	if (acfg->w)

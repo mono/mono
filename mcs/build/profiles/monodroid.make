@@ -11,7 +11,7 @@ RESGEN = resgen2
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:mscorlib.dll
+DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
 
 PROFILE_MCS_FLAGS = \
 	-d:NET_1_1 \
@@ -28,7 +28,6 @@ PROFILE_MCS_FLAGS = \
 	-d:ANDROID \
 	-nowarn:1699 \
 	-nostdlib \
-	-lib:$(topdir)/class/lib/$(PROFILE) \
 	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS)
 

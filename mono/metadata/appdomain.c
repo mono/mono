@@ -9,6 +9,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2012 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #undef ASSEMBLY_LOAD_DEBUG
 #include <config.h>
@@ -257,7 +258,6 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_install_assembly_postload_search_hook ((MonoAssemblySearchFunc)mono_domain_assembly_postload_search, GUINT_TO_POINTER (FALSE));
 	mono_install_assembly_postload_refonly_search_hook ((MonoAssemblySearchFunc)mono_domain_assembly_postload_search, GUINT_TO_POINTER (TRUE));
 	mono_install_assembly_load_hook (mono_domain_fire_assembly_load, NULL);
-	mono_install_lookup_dynamic_token (mono_reflection_lookup_dynamic_token);
 
 	mono_thread_init (start_cb, attach_cb);
 
@@ -1766,7 +1766,7 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	if (!mono_error_ok (&error)) {
 		mono_error_cleanup (&error);
 		g_free (dir_name);
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy (invalid characters in shadow directory name).");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy (invalid characters in shadow directory name).");
 		return NULL;
 	}
 
@@ -1781,13 +1781,13 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	shadow = get_shadow_assembly_location (filename, &error);
 	if (!mono_error_ok (&error)) {
 		mono_error_cleanup (&error);
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy (invalid characters in file name).");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy (invalid characters in file name).");
 		return NULL;
 	}
 
 	if (ensure_directory_exists (shadow) == FALSE) {
 		g_free (shadow);
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy (ensure directory exists).");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy (ensure directory exists).");
 		return NULL;
 	}	
 
@@ -1824,7 +1824,7 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 		if (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND)
 			return NULL; /* file not found, shadow copy failed */
 
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy (CopyFile).");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy (CopyFile).");
 		return NULL;
 	}
 
@@ -1843,14 +1843,14 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	
 	if (copy_result == FALSE)  {
 		g_free (shadow);
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy of sibling data (CopyFile).");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy of sibling data (CopyFile).");
 		return NULL;
 	}
 
 	/* Create a .ini file containing the original assembly location */
 	if (!shadow_copy_create_ini (shadow, filename)) {
 		g_free (shadow);
-		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Failed to create shadow copy .ini file.");
+		mono_error_set_execution_engine (oerror, "Failed to create shadow copy .ini file.");
 		return NULL;
 	}
 
@@ -2146,10 +2146,11 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 void
 ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 {
+	MonoException *exc = NULL;
 	MonoDomain * domain = mono_domain_get_by_id (domain_id);
 
 	if (NULL == domain) {
-		MonoException *exc = mono_get_exception_execution_engine ("Failed to unload domain, domain id not found");
+		mono_get_exception_execution_engine ("Failed to unload domain, domain id not found");
 		mono_set_pending_exception (exc);
 		return;
 	}
@@ -2169,7 +2170,9 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 	return;
 #endif
 
-	mono_domain_unload (domain);
+	mono_domain_try_unload (domain, (MonoObject**)&exc);
+	if (exc)
+		mono_set_pending_exception (exc);
 }
 
 gboolean
@@ -2428,6 +2431,8 @@ unload_thread_main (void *arg)
 	/* Force it to be attached to avoid racing during shutdown. */
 	thread = mono_thread_attach_full (mono_get_root_domain (), TRUE, &error);
 	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "Domain unloader"), TRUE, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	/* 
 	 * FIXME: Abort our parent thread last, so we can return a failure 
@@ -2516,8 +2521,6 @@ mono_domain_unload (MonoDomain *domain)
 {
 	MonoObject *exc = NULL;
 	mono_domain_try_unload (domain, &exc);
-	if (exc)
-		mono_raise_exception ((MonoException*)exc);
 }
 
 static guint32

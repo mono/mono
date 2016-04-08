@@ -166,6 +166,7 @@ System.ServiceModel.Security/SupportingTokenParametersTest.cs
 System.ServiceModel.Security/TransportSecurityBindingElementTest.cs
 System.ServiceModel.Security/WSSecurityTokenSerializerTest.cs
 System.ServiceModel/BasicHttpBindingTest.cs
+System.ServiceModel/Bug36080Test.cs
 System.ServiceModel/CallbackBehaviorAttributeTest.cs
 System.ServiceModel/ChannelFactoryTest.cs
 System.ServiceModel/ChannelFactory_1Test.cs

@@ -7,10 +7,8 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Microsoft.Build.Framework.dll
 
-LIB_REFS = System
-LIB_MCS_FLAGS = \
-	/r:$(corlib)				\
-	/r:System.dll
+LIB_REFS = $(PARENT_PROFILE)System
+LIB_MCS_FLAGS =
 
 EXTRA_DISTFILES = \
 	Mono.XBuild.Framework/AssemblyLoadInfo.cs

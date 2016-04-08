@@ -185,7 +185,7 @@ namespace Microsoft.Build.Tasks
 			var cscParams = new CompilerParameters ();
 			cscParams.ReferencedAssemblies.Add ("Microsoft.Build.Framework.dll");
 			cscParams.ReferencedAssemblies.Add ("Microsoft.Build.Utilities.v4.0.dll"); // since we use Task, it depends on this dll.
-			cscParams.ReferencedAssemblies.AddRange (references.ToArray ());
+			cscParams.ReferencedAssemblies.AddRange (GetReferences (references, taskFactoryLoggingHost));
 			cscParams.GenerateInMemory = true;
 			var results = CodeDomProvider.CreateProvider (language).CompileAssemblyFromDom (cscParams, ccu);
 			var errors = new CompilerError [results.Errors.Count];
@@ -197,6 +197,36 @@ namespace Microsoft.Build.Tasks
 			assembly = results.CompiledAssembly;
 			return true;
 		}
+
+		static string[] GetReferences (List<string> references, IBuildEngine log)
+		{
+			var res = new List<string> ();
+			foreach (var r in references) {
+				if (File.Exists (r)) {
+					res.Add (r);
+					continue;
+				}
+
+				Assembly assembly = null;
+
+				try {
+					if (!r.EndsWith (".dll", StringComparison.OrdinalIgnoreCase) || !r.EndsWith (".exe", StringComparison.OrdinalIgnoreCase)) {
+						assembly = Assembly.LoadWithPartialName (r);
+					}
+
+					if (assembly != null) {
+						res.Add (assembly.Location);
+						continue;
+					}
+				} catch {
+				}
+
+				log.LogErrorEvent (new BuildErrorEventArgs ("", "", "", 0, 0, 0, 0, "Assembly reference {r} could not be resolved", "", ""));
+			}
+
+			return res.ToArray ();
+		}
+
 		public string FactoryName {
 			get { return "Code Task Factory"; }
 		}

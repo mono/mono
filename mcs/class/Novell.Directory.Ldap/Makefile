@@ -7,9 +7,6 @@ LIBRARY = Novell.Directory.Ldap.dll
 LIB_REFS = System Mono.Security
 LIB_MCS_FLAGS = \
 	-warn:1 -nowarn:612 \
-	-r:$(corlib)				\
-	-r:System.dll			 	\
-	-r:Mono.Security.dll			\
 	$(RESX_RES:%=/res:%)
 
 include ../../build/library.make

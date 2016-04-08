@@ -31,6 +31,9 @@ ifdef base_prog_config
 PROGRAM_config := $(build_libdir)$(PROGRAM).config
 endif
 
+sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
+SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
+
 the_lib = $(the_libdir)$(base_prog)
 build_lib = $(build_libdir)$(base_prog)
 
@@ -110,7 +113,10 @@ endif
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
-	$(PROGRAM_COMPILE) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+	$(PROGRAM_COMPILE) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+ifdef PROGRAM_SNK
+	$(Q) $(SN) -R $@ $(PROGRAM_SNK)
+endif
 
 ifdef PROGRAM_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)
@@ -142,6 +148,9 @@ $(response): $(sourcefile)
 endif
 
 -include $(makefrag)
+
+MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS))
+MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.exe,$(EXE_REFS))
 
 all-local: $(makefrag) $(extra_targets)
 

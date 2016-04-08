@@ -8,6 +8,7 @@
  * (C) 2002 Ximian, Inc.
  * Copyright 2003-2011 Novell, Inc.
  * Copyright 2011 Xamarin, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -1986,7 +1987,10 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT module '%s' not found: %s\n", aot_name, err);
 				g_free (err);
 
-				aot_name = g_strdup_printf ("%s/mono/aot-cache/%s/%s%s", mono_assembly_getrootdir(), MONO_ARCHITECTURE, g_path_get_basename (assembly->image->name), MONO_SOLIB_EXT);
+				g_free (aot_name);
+				char *basename = g_path_get_basename (assembly->image->name);
+				aot_name = g_strdup_printf ("%s/mono/aot-cache/%s/%s%s", mono_assembly_getrootdir(), MONO_ARCHITECTURE, basename, MONO_SOLIB_EXT);
+				g_free (basename);
 				sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
 				if (!sofile) {
 					mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT module '%s' not found: %s\n", aot_name, err);
@@ -3056,7 +3060,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 		}
 
-		gi->generic_sharing_context = g_new0 (MonoGenericSharingContext, 1);
+		gi->generic_sharing_context = alloc0_jit_info_data (domain, sizeof (MonoGenericSharingContext), async);
 		if (decode_value (p, &p)) {
 			/* gsharedvt */
 			MonoGenericSharingContext *gsctx = gi->generic_sharing_context;

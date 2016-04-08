@@ -30,6 +30,7 @@
 //
 using System;
 using System.Text;
+using System.Threading;
 using System.Runtime.InteropServices;
 #if !NET_2_1
 using System.Security.Permissions;
@@ -40,6 +41,14 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	static partial class X509Helper
 	{
+		static INativeCertificateHelper nativeHelper;
+
+		internal static void InstallNativeHelper (INativeCertificateHelper helper)
+		{
+			if (nativeHelper == null)
+				Interlocked.CompareExchange (ref nativeHelper, helper, null);
+		}
+
 #if !NET_2_1
 		// typedef struct _CERT_CONTEXT {
 		//	DWORD                   dwCertEncodingType;
@@ -76,6 +85,14 @@ namespace System.Security.Cryptography.X509Certificates
 			throw new NotSupportedException ();
 		}
 #endif
+
+		public static X509CertificateImpl InitFromCertificate (X509Certificate cert)
+		{
+			if (nativeHelper != null)
+				return nativeHelper.Import (cert);
+
+			return InitFromCertificate (cert.Impl);
+		}
 
 		public static X509CertificateImpl InitFromCertificate (X509CertificateImpl impl)
 		{
@@ -134,6 +151,9 @@ namespace System.Security.Cryptography.X509Certificates
 #if !MONOTOUCH && !XAMMAC
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			if (nativeHelper != null)
+				return nativeHelper.Import (rawData, password, keyStorageFlags);
+
 			MX.X509Certificate x509;
 			if (password == null) {
 				try {

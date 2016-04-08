@@ -8,6 +8,7 @@
  * (C) 2002 Ximian, Inc.
  * Copyright 2003-2011 Novell Inc (http://www.novell.com)
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 #include <math.h>
@@ -102,11 +103,14 @@ mono_ldvirtfn_gshared (MonoObject *obj, MonoMethod *method)
 void
 mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val)
 {
+	MonoError error;
 	if (!array) {
 		mono_set_pending_exception (mono_get_exception_null_reference ());
 		return;
 	}
-	if (val && !mono_object_isinst (val, array->obj.vtable->klass->element_class)) {
+	if (val && !mono_object_isinst_checked (val, array->obj.vtable->klass->element_class, &error)) {
+		if (mono_error_set_pending_exception (&error))
+			return;
 		mono_set_pending_exception (mono_get_exception_array_type_mismatch ());
 		return;
 	}
@@ -1178,6 +1182,7 @@ mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg
 MonoObject*
 mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = NULL;
 	MonoClass *oklass;
 
@@ -1192,8 +1197,10 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	oklass = obj->vtable->klass;
 	if ((klass->enumtype && oklass == klass->element_class) || (oklass->enumtype && klass == oklass->element_class))
 		return obj;
-	if (mono_object_isinst (obj, klass))
+	if (mono_object_isinst_checked (obj, klass, &error))
 		return obj;
+	if (mono_error_set_pending_exception (&error))
+		return NULL;
 
 	if (mini_get_debug_options ()->better_cast_details) {
 		jit_tls->class_cast_from = oklass;
@@ -1209,6 +1216,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 MonoObject*
 mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = NULL;
 	gpointer cached_vtable, obj_vtable;
 
@@ -1226,10 +1234,12 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	if (cached_vtable == obj_vtable)
 		return obj;
 
-	if (mono_object_isinst (obj, klass)) {
+	if (mono_object_isinst_checked (obj, klass, &error)) {
 		*cache = obj_vtable;
 		return obj;
 	}
+	if (mono_error_set_pending_exception (&error))
+		return NULL;
 
 	if (mini_get_debug_options ()->better_cast_details) {
 		jit_tls->class_cast_from = obj->vtable->klass;
@@ -1245,6 +1255,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 MonoObject*
 mono_object_isinst_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache)
 {
+	MonoError error;
 	size_t cached_vtable, obj_vtable;
 
 	if (!obj)
@@ -1257,10 +1268,12 @@ mono_object_isinst_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cach
 		return (cached_vtable & 0x1) ? NULL : obj;
 	}
 
-	if (mono_object_isinst (obj, klass)) {
+	if (mono_object_isinst_checked (obj, klass, &error)) {
 		*cache = (gpointer)obj_vtable;
 		return obj;
 	} else {
+		if (mono_error_set_pending_exception (&error))
+			return NULL;
 		/*negative cache*/
 		*cache = (gpointer)(obj_vtable | 0x1);
 		return NULL;
@@ -1322,7 +1335,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		/*
 		 * Calling a non-vtype method with a vtype receiver, has to box.
 		 */
-		*this_arg = mono_value_box (mono_domain_get (), klass, mp);
+		*this_arg = mono_value_box_checked (mono_domain_get (), klass, mp, error);
 	else if (klass->valuetype)
 		/*
 		 * Calling a vtype method with a vtype receiver

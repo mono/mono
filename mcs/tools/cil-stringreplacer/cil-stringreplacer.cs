@@ -100,7 +100,8 @@ public class Program
 
 	static void RewriteAssembly (string assemblyLocation, Dictionary<string, string> resourcesStrings, CmdOptions options)
 	{
-		var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation);
+		var readerParameters = new ReaderParameters { ReadSymbols = true };
+		var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters);
 		foreach (var module in assembly.Modules) {
 			foreach (var type in module.GetTypes ()) {
 				foreach (var method in type.Methods) {
@@ -124,7 +125,8 @@ public class Program
 			}
 		}
 
-		assembly.Write (assemblyLocation);
+		var writerParameters = new WriterParameters { WriteSymbols = true };
+		assembly.Write (assemblyLocation, writerParameters);
 	}
 
 	static bool LoadGetResourceStrings (Dictionary<string, string> resourcesStrings, CmdOptions options)

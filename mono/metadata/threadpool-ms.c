@@ -5,6 +5,7 @@
  *	Ludovic Henry (ludovic.henry@xamarin.com)
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 //
@@ -344,16 +345,16 @@ cleanup (void)
 	mono_coop_mutex_unlock (&threadpool->active_threads_lock);
 }
 
-void
-mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
+gboolean
+mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, MonoError *error)
 {
 	static MonoClass *threadpool_class = NULL;
 	static MonoMethod *unsafe_queue_custom_work_item_method = NULL;
-	MonoError error;
 	MonoDomain *current_domain;
 	MonoBoolean f;
 	gpointer args [2];
 
+	mono_error_init (error);
 	g_assert (work_item);
 
 	if (!threadpool_class)
@@ -370,17 +371,21 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 
 	current_domain = mono_domain_get ();
 	if (current_domain == domain) {
-		mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, error);
+		return_val_if_nok (error, FALSE);
 	} else {
 		mono_thread_push_appdomain_ref (domain);
 		if (mono_domain_set (domain, FALSE)) {
-			mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, &error);
-			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, error);
+			if (!is_ok (error)) {
+				mono_thread_pop_appdomain_ref ();
+				return FALSE;
+			}
 			mono_domain_set (current_domain, TRUE);
 		}
 		mono_thread_pop_appdomain_ref ();
 	}
+	return TRUE;
 }
 
 /* LOCKING: threadpool->domains_lock must be held */
@@ -524,7 +529,7 @@ worker_park (void)
 		if (interrupted)
 			goto done;
 
-		if (mono_coop_cond_timedwait (&threadpool->parked_threads_cond, &threadpool->active_threads_lock, rand_next ((void **)rand_handle, 5 * 1000, 60 * 1000)) != 0)
+		if (mono_coop_cond_timedwait (&threadpool->parked_threads_cond, &threadpool->active_threads_lock, rand_next (&rand_handle, 5 * 1000, 60 * 1000)) != 0)
 			timeout = TRUE;
 
 		mono_thread_info_uninstall_interrupt (&interrupted);
@@ -587,7 +592,8 @@ worker_thread (gpointer data)
 	thread = mono_thread_internal_current ();
 	g_assert (thread);
 
-	mono_thread_set_name_internal (thread, mono_string_new (mono_domain_get (), "Threadpool worker"), FALSE);
+	mono_thread_set_name_internal (thread, mono_string_new (mono_get_root_domain (), "Threadpool worker"), FALSE, &error);
+	mono_error_assert_ok (&error);
 
 	mono_coop_mutex_lock (&threadpool->active_threads_lock);
 	g_ptr_array_add (threadpool->working_threads, thread);
@@ -1314,10 +1320,9 @@ mono_threadpool_ms_cleanup (void)
 }
 
 MonoAsyncResult *
-mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params)
+mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params, MonoError *error)
 {
 	static MonoClass *async_call_klass = NULL;
-	MonoError error;
 	MonoMethodMessage *message;
 	MonoAsyncResult *async_result;
 	MonoAsyncCall *async_call;
@@ -1329,10 +1334,12 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 
 	mono_lazy_initialize (&status, initialize);
 
+	mono_error_init (error);
+
 	message = mono_method_call_message_new (method, params, mono_get_delegate_invoke (method->klass), (params != NULL) ? (&async_callback) : NULL, (params != NULL) ? (&state) : NULL);
 
-	async_call = (MonoAsyncCall*) mono_object_new_checked (domain, async_call_klass, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	async_call = (MonoAsyncCall*) mono_object_new_checked (domain, async_call_klass, error);
+	return_val_if_nok (error, NULL);
 
 	MONO_OBJECT_SETREF (async_call, msg, message);
 	MONO_OBJECT_SETREF (async_call, state, state);
@@ -1345,7 +1352,8 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 	async_result = mono_async_result_new (domain, NULL, async_call->state, NULL, (MonoObject*) async_call);
 	MONO_OBJECT_SETREF (async_result, async_delegate, target);
 
-	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result);
+	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result, error);
+	return_val_if_nok (error, NULL);
 
 	return async_result;
 }
@@ -1583,7 +1591,9 @@ void
 ves_icall_System_Threading_ThreadPool_ReportThreadStatus (MonoBoolean is_working)
 {
 	// TODO
-	mono_raise_exception (mono_get_exception_not_implemented (NULL));
+	MonoError error;
+	mono_error_set_not_implemented (&error, "");
+	mono_error_set_pending_exception (&error);
 }
 
 MonoBoolean
@@ -1596,7 +1606,9 @@ MonoBoolean G_GNUC_UNUSED
 ves_icall_System_Threading_ThreadPool_PostQueuedCompletionStatus (MonoNativeOverlapped *native_overlapped)
 {
 	/* This copy the behavior of the current Mono implementation */
-	mono_raise_exception (mono_get_exception_not_implemented (NULL));
+	MonoError error;
+	mono_error_set_not_implemented (&error, "");
+	mono_error_set_pending_exception (&error);
 	return FALSE;
 }
 

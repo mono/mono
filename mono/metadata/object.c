@@ -8,6 +8,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2011 Novell, Inc (http://www.novell.com)
  * Copyright 2001 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 #ifdef HAVE_ALLOCA_H
@@ -3524,7 +3525,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 	klass = mono_class_from_mono_type (type);
 
 	if (mono_class_is_nullable (klass))
-		return mono_nullable_box (mono_field_get_addr (obj, vtable, field), klass);
+		return mono_nullable_box (mono_field_get_addr (obj, vtable, field), klass, error);
 
 	o = mono_object_new_checked (domain, klass, error);
 	return_val_if_nok (error, NULL);
@@ -3754,17 +3755,17 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass)
  * mono_nullable_box:
  * @buf: The buffer representing the data to be boxed
  * @klass: the type to box it as.
+ * @error: set on oerr
  *
  * Creates a boxed vtype or NULL from the Nullable structure pointed to by
- * @buf.
+ * @buf.  On failure returns NULL and sets @error
  */
 MonoObject*
-mono_nullable_box (guint8 *buf, MonoClass *klass)
+mono_nullable_box (guint8 *buf, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
-	
+	mono_error_init (error);
 	MonoClass *param_class = klass->cast_class;
 
 	mono_class_setup_fields_locking (klass);
@@ -3774,8 +3775,8 @@ mono_nullable_box (guint8 *buf, MonoClass *klass)
 	g_assert (mono_class_from_mono_type (klass->fields [1].type) == mono_defaults.boolean_class);
 
 	if (*(guint8*)(buf + klass->fields [1].offset - sizeof (MonoObject))) {
-		MonoObject *o = mono_object_new_checked (mono_domain_get (), param_class, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		MonoObject *o = mono_object_new_checked (mono_domain_get (), param_class, error);
+		return_val_if_nok (error, NULL);
 		if (param_class->has_references)
 			mono_gc_wbarrier_value_copy (mono_object_unbox (o), buf + klass->fields [0].offset - sizeof (MonoObject), 1, param_class);
 		else
@@ -4620,7 +4621,8 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 						 * boxed object in the arg array with the copy.
 						 */
 						MonoObject *orig = mono_array_get (params, MonoObject*, i);
-						MonoObject *copy = mono_value_box (mono_domain_get (), orig->vtable->klass, mono_object_unbox (orig));
+						MonoObject *copy = mono_value_box_checked (mono_domain_get (), orig->vtable->klass, mono_object_unbox (orig), &error);
+						mono_error_raise_exception (&error); /* FIXME don't raise here */
 						mono_array_setref (params, i, copy);
 					}
 						
@@ -4672,8 +4674,11 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 			if (!params)
 				return NULL;
-			else
-				return mono_value_box (mono_domain_get (), method->klass->cast_class, pa [0]);
+			else {
+				MonoObject *result = mono_value_box_checked (mono_domain_get (), method->klass->cast_class, pa [0], &error);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
+				return result;
+			}
 		}
 
 		if (!obj) {
@@ -4689,7 +4694,8 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			else
 				o = obj;
 		} else if (method->klass->valuetype) {
-			obj = mono_value_box (mono_domain_get (), method->klass, obj);
+			obj = mono_value_box_checked (mono_domain_get (), method->klass, obj, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 		}
 
 		if (exc) {
@@ -4712,7 +4718,9 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			nullable = mono_object_new_checked (mono_domain_get (), method->klass, &error);
 			mono_error_raise_exception (&error); /* FIXME don't raise here */
 
-			mono_nullable_init ((guint8 *)mono_object_unbox (nullable), mono_value_box (mono_domain_get (), method->klass->cast_class, obj), method->klass);
+			MonoObject *boxed = mono_value_box_checked (mono_domain_get (), method->klass->cast_class, obj, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			mono_nullable_init ((guint8 *)mono_object_unbox (nullable), boxed, method->klass);
 			obj = mono_object_unbox (nullable);
 		}
 
@@ -4901,7 +4909,7 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
 			if (!im) {
-				mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+				mono_error_set_not_supported (error, "Linked away.");
 				return NULL;
 			}
 			vtable->domain->create_proxy_for_type_method = im;
@@ -5818,23 +5826,42 @@ mono_string_new_wrapper (const char *text)
 MonoObject *
 mono_value_box (MonoDomain *domain, MonoClass *klass, gpointer value)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
 	MonoError error;
+	MonoObject *result = mono_value_box_checked (domain, klass, value, &error);
+	mono_error_cleanup (&error);
+	return result;
+}
+
+/**
+ * mono_value_box_checked:
+ * @domain: the domain of the new object
+ * @class: the class of the value
+ * @value: a pointer to the unboxed data
+ * @error: set on error
+ *
+ * Returns: A newly created object which contains @value. On failure
+ * returns NULL and sets @error.
+ */
+MonoObject *
+mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	MonoObject *res;
 	int size;
 	MonoVTable *vtable;
 
+	mono_error_init (error);
+
 	g_assert (klass->valuetype);
 	if (mono_class_is_nullable (klass))
-		return mono_nullable_box ((guint8 *)value, klass);
+		return mono_nullable_box ((guint8 *)value, klass, error);
 
 	vtable = mono_class_vtable (domain, klass);
 	if (!vtable)
 		return NULL;
 	size = mono_class_instance_size (klass);
-	res = mono_object_new_alloc_specific_checked (vtable, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	res = mono_object_new_alloc_specific_checked (vtable, error);
+	return_val_if_nok (error, NULL);
 
 	size = size - sizeof (MonoObject);
 
@@ -5864,8 +5891,8 @@ mono_value_box (MonoDomain *domain, MonoClass *klass, gpointer value)
 #endif
 #endif
 	if (klass->has_finalize) {
-		mono_object_register_finalizer (res, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		mono_object_register_finalizer (res, error);
+		return_val_if_nok (error, NULL);
 	}
 	return res;
 }
@@ -5990,18 +6017,45 @@ mono_object_unbox (MonoObject *obj)
  * @obj: an object
  * @klass: a pointer to a class 
  *
- * Returns: @obj if @obj is derived from @klass
+ * Returns: @obj if @obj is derived from @klass or NULL otherwise.
  */
 MonoObject *
 mono_object_isinst (MonoObject *obj, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
+	MonoObject *result = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_cleanup (&error);
+	return result;
+}
+	
+
+/**
+ * mono_object_isinst_checked:
+ * @obj: an object
+ * @klass: a pointer to a class 
+ * @error: set on error
+ *
+ * Returns: @obj if @obj is derived from @klass or NULL if it isn't.
+ * On failure returns NULL and sets @error.
+ */
+MonoObject *
+mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	mono_error_init (error);
+	
+	MonoObject *result = NULL;
+
 	if (!klass->inited)
 		mono_class_init (klass);
 
-	if (mono_class_is_marshalbyref (klass) || (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
-		return mono_object_isinst_mbyref (obj, klass);
+	if (mono_class_is_marshalbyref (klass) || (klass->flags & TYPE_ATTRIBUTE_INTERFACE)) {
+		result = mono_object_isinst_mbyref_checked (obj, klass, error);
+		return result;
+	}
 
 	if (!obj)
 		return NULL;
@@ -6015,7 +6069,19 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoError error;
+	MonoObject *result = mono_object_isinst_mbyref_checked (obj, klass, &error);
+	mono_error_cleanup (&error); /* FIXME better API that doesn't swallow the error */
+	return result;
+}
+
+MonoObject *
+mono_object_isinst_mbyref_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	MonoVTable *vt;
+
+	mono_error_init (error);
 
 	if (!obj)
 		return NULL;
@@ -6055,12 +6121,12 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 		im = mono_object_get_virtual_method (rp, im);
 		g_assert (im);
 	
-		pa [0] = mono_type_get_object_checked (domain, &klass->byval_arg, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		pa [0] = mono_type_get_object_checked (domain, &klass->byval_arg, error);
+		return_val_if_nok (error, NULL);
 		pa [1] = obj;
 
-		res = mono_runtime_invoke_checked (im, rp, pa, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		res = mono_runtime_invoke_checked (im, rp, pa, error);
+		return_val_if_nok (error, NULL);
 
 		if (*(MonoBoolean *) mono_object_unbox(res)) {
 			/* Update the vtable of the remote type, so it can safely cast to this new type */
@@ -6077,19 +6143,17 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
  * @obj: an object
  * @klass: a pointer to a class 
  *
- * Returns: @obj if @obj is derived from @klass, throws an exception otherwise
+ * Returns: @obj if @obj is derived from @klass, returns NULL otherwise.
  */
 MonoObject *
 mono_object_castclass_mbyref (MonoObject *obj, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
 
 	if (!obj) return NULL;
-	if (mono_object_isinst_mbyref (obj, klass)) return obj;
-		
-	mono_raise_exception (mono_exception_from_name (mono_defaults.corlib,
-							"System",
-							"InvalidCastException"));
+	if (mono_object_isinst_mbyref_checked (obj, klass, &error)) return obj;
+	mono_error_cleanup (&error);
 	return NULL;
 }
 
@@ -6252,9 +6316,11 @@ MonoString*
 mono_ldstr (MonoDomain *domain, MonoImage *image, guint32 idx)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
 
 	if (image->dynamic) {
-		MonoString *str = (MonoString *)mono_lookup_dynamic_token (image, MONO_TOKEN_STRING | idx, NULL);
+		MonoString *str = (MonoString *)mono_lookup_dynamic_token (image, MONO_TOKEN_STRING | idx, NULL, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		return str;
 	} else {
 		if (!mono_verifier_verify_string_signature (image, idx, NULL))
@@ -6938,7 +7004,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 	if (!im) {
 		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", 4);
 		if (!im) {
-			mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
 		}
 		real_proxy->vtable->domain->private_invoke_method = im;
@@ -7258,9 +7324,10 @@ mono_method_call_message_new (MonoMethod *method, gpointer *params, MonoMethod *
 
 		klass = mono_class_from_mono_type (sig->params [i]);
 
-		if (klass->valuetype)
-			arg = mono_value_box (domain, klass, vpos);
-		else 
+		if (klass->valuetype) {
+			arg = mono_value_box_checked (domain, klass, vpos, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+		} else 
 			arg = *((MonoObject **)vpos);
 		      
 		mono_array_setref (msg->args, i, arg);
@@ -7521,9 +7588,10 @@ mono_store_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField 
 			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 
-	if (field_class->valuetype)
-		arg = mono_value_box (domain, field_class, val);
-	else 
+	if (field_class->valuetype) {
+		arg = mono_value_box_checked (domain, field_class, val, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+	} else 
 		arg = *((MonoObject **)val);
 		
 

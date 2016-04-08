@@ -1,0 +1,15 @@
+ApiChange.cs
+ApiDiff.cs
+AssemblyComparer.cs
+ClassComparer.cs
+Comparer.cs
+ConstructorComparer.cs
+EventComparer.cs
+FieldComparer.cs
+Helpers.cs
+InterfaceComparer.cs
+MemberComparer.cs
+MethodComparer.cs
+NamespaceComparer.cs
+PropertyComparer.cs
+../../class/Mono.Options/Mono.Options/Options.cs

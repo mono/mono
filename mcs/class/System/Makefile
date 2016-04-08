@@ -19,7 +19,9 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
-TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data.dll -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
+TEST_LIB_REFS = System.Drawing Mono.Security System.Data System.Xml System.Core System.Configuration
+
+TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
@@ -29,7 +31,6 @@ TEST_MCS_FLAGS += -d:MONO_FEATURE_PROCESS_START
 endif
 
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%)
-TEST_MCS_FLAGS += -r:System.Configuration.dll
 
 ifndef NO_THREAD_ABORT
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
@@ -50,7 +51,6 @@ ifdef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
 else
 EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
-FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
 #
@@ -58,7 +58,7 @@ endif
 #
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
-LIB_REFS += System.Xml MonoSecurity=Mono.Security
+LIB_REFS += bare/System.Xml MonoSecurity=Mono.Security
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
 endif
 
@@ -67,7 +67,13 @@ endif
 #
 ifndef intermediate
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS) $(FINAL_MCS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+
+ifndef MOBILE_PROFILE
+LIB_REFS += System.Configuration
+LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
+endif
+
 endif
 
 EXTRA_DISTFILES = \

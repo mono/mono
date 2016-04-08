@@ -5,6 +5,7 @@
  *	Ludovic Henry (ludovic.henry@xamarin.com)
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -245,6 +246,8 @@ filter_jobs_for_domain (gpointer key, gpointer value, gpointer user_data)
 static void
 wait_callback (gint fd, gint events, gpointer user_data)
 {
+	MonoError error;
+
 	if (mono_runtime_is_shutting_down ())
 		return;
 
@@ -269,13 +272,18 @@ wait_callback (gint fd, gint events, gpointer user_data)
 
 		if (list && (events & EVENT_IN) != 0) {
 			MonoIOSelectorJob *job = get_job_for_event (&list, EVENT_IN);
-			if (job)
-				mono_threadpool_ms_enqueue_work_item (((MonoObject*) job)->vtable->domain, (MonoObject*) job);
+			if (job) {
+				mono_threadpool_ms_enqueue_work_item (((MonoObject*) job)->vtable->domain, (MonoObject*) job, &error);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
+			}
+
 		}
 		if (list && (events & EVENT_OUT) != 0) {
 			MonoIOSelectorJob *job = get_job_for_event (&list, EVENT_OUT);
-			if (job)
-				mono_threadpool_ms_enqueue_work_item (((MonoObject*) job)->vtable->domain, (MonoObject*) job);
+			if (job) {
+				mono_threadpool_ms_enqueue_work_item (((MonoObject*) job)->vtable->domain, (MonoObject*) job, &error);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
+			}
 		}
 
 		remove_fd = (events & EVENT_ERR) == EVENT_ERR;
@@ -301,6 +309,7 @@ wait_callback (gint fd, gint events, gpointer user_data)
 static void
 selector_thread (gpointer data)
 {
+	MonoError error;
 	MonoGHashTable *states;
 
 	io_selector_running = TRUE;
@@ -368,8 +377,10 @@ selector_thread (gpointer data)
 							memset (update, 0, sizeof (ThreadPoolIOUpdate));
 					}
 
-					for (; list; list = mono_mlist_remove_item (list, list))
-						mono_threadpool_ms_enqueue_work_item (mono_object_domain (mono_mlist_get_data (list)), mono_mlist_get_data (list));
+					for (; list; list = mono_mlist_remove_item (list, list)) {
+						mono_threadpool_ms_enqueue_work_item (mono_object_domain (mono_mlist_get_data (list)), mono_mlist_get_data (list), &error);
+						mono_error_raise_exception (&error); /* FIXME don't raise here */
+					}
 
 					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_THREADPOOL, "io threadpool: del fd %3d", fd);
 					threadpool_io->backend.remove_fd (fd);
@@ -573,7 +584,7 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	g_assert (handle >= 0);
 
-	g_assert (job->operation == EVENT_IN ^ job->operation == EVENT_OUT);
+	g_assert ((job->operation == EVENT_IN) ^ (job->operation == EVENT_OUT));
 	g_assert (job->callback);
 
 	if (mono_runtime_is_shutting_down ())

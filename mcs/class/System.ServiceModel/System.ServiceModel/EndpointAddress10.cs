@@ -65,7 +65,6 @@ namespace System.ServiceModel
 			return new EndpointAddress10 (address);
 		}
 
-#if !NET_2_1
 		public static XmlQualifiedName GetSchema (XmlSchemaSet xmlSchemaSet)
 		{
 			if (xmlSchemaSet == null)
@@ -73,7 +72,6 @@ namespace System.ServiceModel
 			xmlSchemaSet.Add (XmlSchema.Read (typeof (EndpointAddress10).Assembly.GetManifestResourceStream ("ws-addr.xsd"), null));
 			return new XmlQualifiedName ("EndpointReferenceType", AddressingVersion.WSAddressing10.Namespace);
 		}
-#endif
 
 		public EndpointAddress ToEndpointAddress ()
 		{

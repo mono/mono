@@ -16,6 +16,7 @@ namespace System.Net.Sockets {
 	sealed class SafeSocketHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
 		List<Thread> blocking_threads;
+		bool in_cleanup;
 
 		const int SOCKET_CLOSED = 10004;
 
@@ -43,32 +44,36 @@ namespace System.Net.Sockets {
 #endif
 
 			if (blocking_threads != null) {
-				int abort_attempts = 0;
-				while (blocking_threads.Count > 0) {
-					if (abort_attempts++ >= ABORT_RETRIES) {
-						if (THROW_ON_ABORT_RETRIES)
-							throw new Exception ("Could not abort registered blocking threads before closing socket.");
+				lock (blocking_threads) {
+					int abort_attempts = 0;
+					while (blocking_threads.Count > 0) {
+						if (abort_attempts++ >= ABORT_RETRIES) {
+							if (THROW_ON_ABORT_RETRIES)
+								throw new Exception ("Could not abort registered blocking threads before closing socket.");
 
-						// Attempts to close the socket safely failed.
-						// We give up, and close the socket with pending blocking system calls.
-						// This should not occur, nonetheless if it does this avoids an endless loop.
-						break;
-					}
+							// Attempts to close the socket safely failed.
+							// We give up, and close the socket with pending blocking system calls.
+							// This should not occur, nonetheless if it does this avoids an endless loop.
+							break;
+						}
 
-					/*
-					 * This method can be called by the DangerousRelease inside RegisterForBlockingSyscall
-					 * When this happens blocking_threads contains the current thread.
-					 * We can safely close the socket and throw SocketException in RegisterForBlockingSyscall
-					 * before the blocking system call.
-					 */
-					lock (blocking_threads) {
+						/*
+						* This method can be called by the DangerousRelease inside RegisterForBlockingSyscall
+						* When this happens blocking_threads contains the current thread.
+						* We can safely close the socket and throw SocketException in RegisterForBlockingSyscall
+						* before the blocking system call.
+						*/
 						if (blocking_threads.Count == 1 && blocking_threads[0] == Thread.CurrentThread)
 							break;
-					}
 
-					AbortRegisteredThreads ();
-					// Sleep so other threads can resume
-					Thread.Sleep (1);
+						// abort registered threads
+						foreach (var t in blocking_threads)
+							Socket.cancel_blocking_socket_operation (t);
+
+						// Sleep so other threads can resume
+						in_cleanup = true;
+						Monitor.Wait (blocking_threads, 100);
+					}
 				}
 			}
 
@@ -105,16 +110,8 @@ namespace System.Net.Sockets {
 			//If this NRE, we're in deep problems because Register Must have
 			lock (blocking_threads) {
 				blocking_threads.Remove (Thread.CurrentThread);
-			}
-		}
-
-		void AbortRegisteredThreads () {
-			if (blocking_threads == null)
-				return;
-
-			lock (blocking_threads) {
-				foreach (var t in blocking_threads)
-					Socket.cancel_blocking_socket_operation (t);
+				if (in_cleanup && blocking_threads.Count == 0)
+					Monitor.Pulse (blocking_threads);
 			}
 		}
 	}

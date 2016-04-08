@@ -477,7 +477,10 @@ namespace Mono.Options
 			try {
 				if (value != null) {
 #if PCL
-					t = (T) Convert.ChangeType (value, targetType);
+					if (targetType.GetTypeInfo ().IsEnum)
+						t = (T) Enum.Parse (targetType, value, true);
+					else
+						t = (T) Convert.ChangeType (value, targetType);
 #else
 					TypeConverter conv = TypeDescriptor.GetConverter (targetType);
 					t = (T) conv.ConvertFromString (value);

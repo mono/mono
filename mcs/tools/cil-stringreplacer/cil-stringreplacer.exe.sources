@@ -1,9 +1,2 @@
 cil-stringreplacer.cs
 ../../class/Mono.Options/Mono.Options/Options.cs
-../../../external/cecil/Mono.Cecil/*.cs
-../../../external/cecil/Mono.Cecil.Cil/*.cs
-../../../external/cecil/Mono.Cecil.Metadata/*.cs
-../../../external/cecil/Mono.Cecil.PE/*.cs
-../../../external/cecil/Mono.Collections.Generic/*.cs
-../../../external/cecil/Mono/Empty.cs
-../../../external/cecil/Mono.Security.Cryptography/*.cs

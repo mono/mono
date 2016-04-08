@@ -7,6 +7,7 @@
  * (C) 2001-2003 Ximian, Inc.
  * Copyright 2003-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -910,7 +911,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	ARM_STR_IMM (code, ARMREG_R0, ARMREG_FP, MONO_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_SP);
 
 	/* make ctx.eip hold the address of the call. */
-	ARM_SUB_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 4);
+	//ARM_SUB_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 4);
 	ARM_STR_IMM (code, ARMREG_LR, ARMREG_FP, MONO_STRUCT_OFFSET (MonoContext, pc));
 
 	/* r0 now points to the MonoContext */
@@ -1134,25 +1135,3 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 }
 
 #endif
-
-#if defined(ENABLE_GSHAREDVT)
-
-#include "../../../mono-extensions/mono/mini/tramp-arm-gsharedvt.c"
-
-#else
-
-gpointer
-mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	*info = NULL;
-	return NULL;
-}
-
-#endif /* !MONOTOUCH */

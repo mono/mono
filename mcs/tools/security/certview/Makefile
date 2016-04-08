@@ -3,7 +3,8 @@ SUBDIRS =
 include ../../../build/rules.make
 
 RESGEN = resgen
-LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib /r:Mono.Security.dll /r:System.Xml.dll /win32icon:mono.ico
+LIB_REFS = Mono.Security System.Xml
+LOCAL_MCS_FLAGS = /win32icon:mono.ico
 
 # SWF isn't quite good enough to build this yet.
 

@@ -52,6 +52,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			X500DistinguishedNameFlags.UseT61Encoding | X500DistinguishedNameFlags.ForceUTF8Encoding;
 
 		private string name;
+		private byte[] canonEncoding;
 
 
 		public X500DistinguishedName (AsnEncodedData encodedDistinguishedName)
@@ -120,6 +121,20 @@ namespace System.Security.Cryptography.X509Certificates {
 			Oid = new Oid ();
 			RawData = distinguishedName.RawData;
 			name = distinguishedName.name;
+		}
+
+		internal X500DistinguishedName (byte[] encoded, byte[] canonEncoding, string name)
+			: this (encoded)
+		{
+			this.canonEncoding = canonEncoding;
+			this.name = name;
+
+			Oid = new Oid ();
+			RawData = encoded;
+		}
+
+		internal byte[] CanonicalEncoding {
+			get { return canonEncoding; }
 		}
 
 
@@ -214,6 +229,16 @@ namespace System.Security.Cryptography.X509Certificates {
 				return (name2 == null);
 			if (name2 == null)
 				return false;
+
+			if (name1.canonEncoding != null && name2.canonEncoding != null) {
+				if (name1.canonEncoding.Length != name2.canonEncoding.Length)
+					return false;
+				for (int i = 0; i < name1.canonEncoding.Length; i++) {
+					if (name1.canonEncoding[i] != name2.canonEncoding[2])
+						return false;
+				}
+				return true;
+			}
 
 			X500DistinguishedNameFlags flags = X500DistinguishedNameFlags.UseNewLines | X500DistinguishedNameFlags.DoNotUseQuotes;
 			string[] split = new string[] { Environment.NewLine };

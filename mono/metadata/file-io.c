@@ -8,6 +8,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -569,7 +570,7 @@ ves_icall_System_IO_MonoIO_GetCurrentDirectory (gint32 *io_error)
 	}
 
 	g_free (buf);
-	mono_error_raise_exception (&error);
+	mono_error_set_pending_exception (&error);
 	return result;
 }
 

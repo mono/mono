@@ -13,6 +13,7 @@
 /* 		 Dietmar Maurer (dietmar@ximian.com)		    */
 /* 								    */
 /* Copyright   - 2001 Ximian, Inc.				    */
+/* Licensed under the MIT license. See LICENSE file in the project root for full license information. */
 /* 								    */
 /*------------------------------------------------------------------*/
 
@@ -240,6 +241,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 		 gulong *int_regs, gdouble *fp_regs, gint32 *acc_regs, 
 		 guint fpc, gboolean rethrow)
 {
+	MonoError error;
 	MonoContext ctx;
 	int iReg;
 
@@ -261,13 +263,14 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	MONO_CONTEXT_SET_BP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, ip);
 	
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
+	mono_error_assert_ok (&error);
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context(&ctx);

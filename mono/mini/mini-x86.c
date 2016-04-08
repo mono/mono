@@ -9,6 +9,7 @@
  * Copyright 2003 Ximian, Inc.
  * Copyright 2003-2011 Novell Inc.
  * Copyright 2011 Xamarin Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include "mini.h"
 #include <string.h>
@@ -178,49 +179,6 @@ mono_x86_patch (unsigned char* code, gpointer target)
 {
 	x86_patch (code, (unsigned char*)target);
 }
-
-typedef enum {
-	ArgInIReg,
-	ArgInFloatSSEReg,
-	ArgInDoubleSSEReg,
-	ArgOnStack,
-	ArgValuetypeInReg,
-	ArgOnFloatFpStack,
-	ArgOnDoubleFpStack,
-	/* gsharedvt argument passed by addr */
-	ArgGSharedVt,
-	ArgNone
-} ArgStorage;
-
-typedef struct {
-	gint16 offset;
-	gint8  reg;
-	ArgStorage storage;
-	int nslots;
-	gboolean is_pair;
-
-	/* Only if storage == ArgValuetypeInReg */
-	ArgStorage pair_storage [2];
-	gint8 pair_regs [2];
-} ArgInfo;
-
-typedef struct {
-	int nargs;
-	guint32 stack_usage;
-	guint32 reg_usage;
-	guint32 freg_usage;
-	gboolean need_stack_align;
-	guint32 stack_align_amount;
-	gboolean vtype_retaddr;
-	/* The index of the vret arg in the argument list */
-	int vret_arg_index;
-	int vret_arg_offset;
-	/* Argument space popped by the callee */
-	int callee_stack_pop;
-	ArgInfo ret;
-	ArgInfo sig_cookie;
-	ArgInfo args [1];
-} CallInfo;
 
 #define FLOAT_PARAM_REGS 0
 
@@ -761,7 +719,7 @@ mono_arch_init (void)
 
 	mono_aot_register_jit_icall ("mono_x86_throw_exception", mono_x86_throw_exception);
 	mono_aot_register_jit_icall ("mono_x86_throw_corlib_exception", mono_x86_throw_corlib_exception);
-#if defined(ENABLE_GSHAREDVT)
+#if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	mono_aot_register_jit_icall ("mono_x86_start_gsharedvt_call", mono_x86_start_gsharedvt_call);
 #endif
 }
@@ -2474,26 +2432,6 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 	return code;
 }
-
-#define REAL_PRINT_REG(text,reg) \
-mono_assert (reg >= 0); \
-x86_push_reg (code, X86_EAX); \
-x86_push_reg (code, X86_EDX); \
-x86_push_reg (code, X86_ECX); \
-x86_push_reg (code, reg); \
-x86_push_imm (code, reg); \
-x86_push_imm (code, text " %d %p\n"); \
-x86_mov_reg_imm (code, X86_EAX, printf); \
-x86_call_reg (code, X86_EAX); \
-x86_alu_reg_imm (code, X86_ADD, X86_ESP, 3*4); \
-x86_pop_reg (code, X86_ECX); \
-x86_pop_reg (code, X86_EDX); \
-x86_pop_reg (code, X86_EAX);
-
-/* REAL_PRINT_REG does not appear to be used, and was not adapted to work with Native Client. */
-#ifdef __native__client_codegen__
-#define REAL_PRINT_REG(text, reg) g_assert_not_reached()
-#endif
 
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
@@ -6826,8 +6764,8 @@ mono_arch_opcode_supported (int opcode)
 	}
 }
 
-#if defined(ENABLE_GSHAREDVT)
-
-#include "../../../mono-extensions/mono/mini/mini-x86-gsharedvt.c"
-
-#endif /* !MONOTOUCH */
+CallInfo*
+mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
+{
+	return get_call_info (mp, sig);
+}

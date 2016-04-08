@@ -5,18 +5,7 @@
  * Copyright 2003-2010 Novell, Inc.
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 extern guint64 stat_scan_object_called_nursery;
@@ -80,7 +69,14 @@ SERIAL_SCAN_VTYPE (GCObject *full_object, char *start, SgenDescriptor desc, Sgen
 #include "sgen-scan-object.h"
 }
 
+static void
+SERIAL_SCAN_PTR_FIELD (GCObject *full_object, GCObject **ptr, SgenGrayQueue *queue)
+{
+	HANDLE_PTR (ptr, NULL);
+}
+
 #define FILL_MINOR_COLLECTOR_SCAN_OBJECT(collector)	do {			\
 		(collector)->serial_ops.scan_object = SERIAL_SCAN_OBJECT;	\
 		(collector)->serial_ops.scan_vtype = SERIAL_SCAN_VTYPE; \
+		(collector)->serial_ops.scan_ptr_field = SERIAL_SCAN_PTR_FIELD;	\
 	} while (0)

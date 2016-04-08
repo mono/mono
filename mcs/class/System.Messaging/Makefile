@@ -10,8 +10,8 @@ LIB_REFS += System.Drawing
 endif
 
 LIB_MCS_FLAGS = /resource:System.Messaging/MessageQueue.resx
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
-		/r:nunit.mocks.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
+TEST_LIB_REFS = nunit.mocks
 
 EXTRA_DISTFILES = System.Messaging/MessageQueue.resx
 

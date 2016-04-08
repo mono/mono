@@ -38,6 +38,7 @@ public class Program
 		public bool ShowHelp { get; set; }
 		public bool Verbose { get; set; }
 		public List<string> ResourcesStrings { get; }
+		public bool IgnoreSemicolon { get; set; }
 
 		public CmdOptions ()
 		{
@@ -55,7 +56,9 @@ public class Program
 			{ "h|help",  "Display available options", 
 				v => options.ShowHelp = v != null },
 			{ "v|verbose",  "Use verbose output", 
-				v => options.Verbose = v != null },			
+				v => options.Verbose = v != null },
+			{ "ignore-semicolon", "Reads lines starting with semicolon",
+				v => options.IgnoreSemicolon = v != null },
 		};
 
 		List<string> extra;
@@ -142,14 +145,22 @@ public class Program
 
 			foreach (var l in File.ReadLines (fileName)) {
 				var line = l.Trim ();
-				if (line.Length == 0 || line [0] == '#' || line [0] == ';')
+				if (line.Length == 0 || line [0] == '#')
 					continue;
+
+				int start = 0;
+ 				if (line [0] == ';') {
+ 					if (!options.IgnoreSemicolon)
+ 						continue;
+
+ 					start = 1;
+ 				}
 
 				var epos = line.IndexOf ('=');
 				if (epos < 0)
 					continue;
 
-				var key = line.Substring (0, epos).Trim ();
+				var key = line.Substring (start, epos - start).Trim ();
 				if (key.Contains (" "))
 					continue;
 

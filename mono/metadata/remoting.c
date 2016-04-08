@@ -5,6 +5,7 @@
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2011-2014 Xamarin, Inc (http://www.xamarin.com)
  *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -373,9 +374,10 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 					mparams[i] = *((gpointer *)params [i]);
 				} else {
 					/* runtime_invoke expects a boxed instance */
-					if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i])))
-						mparams[i] = mono_nullable_box ((guint8 *)params [i], klass);
-					else
+					if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
+						mparams[i] = mono_nullable_box ((guint8 *)params [i], klass, &error);
+						mono_error_raise_exception (&error); /* FIXME don't raise here */
+					} else
 						mparams[i] = params [i];
 				}
 			} else {
@@ -2009,7 +2011,10 @@ mono_marshal_xdomain_copy_value (MonoObject *val)
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8: {
-		return mono_value_box (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject));
+		MonoObject *res = mono_value_box_checked (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject), &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		return res;
+
 	}
 	case MONO_TYPE_STRING: {
 		MonoString *str = (MonoString *) val;
