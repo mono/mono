@@ -122,9 +122,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
 
-			X509Helper.ThrowIfContextInvalid (cert.impl);
-
-			impl = X509Helper.InitFromCertificate (cert.impl);
+			impl = X509Helper.InitFromCertificate (cert);
 			hideDates = false;
 		}
 

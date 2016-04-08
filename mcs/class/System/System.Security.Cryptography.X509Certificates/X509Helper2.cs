@@ -44,6 +44,11 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	internal static class X509Helper2
 	{
+		internal static void Initialize ()
+		{
+			X509Helper.InstallNativeHelper (new MyNativeHelper ());
+		}
+
 		internal static void ThrowIfContextInvalid (X509CertificateImpl impl)
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
@@ -94,6 +99,20 @@ namespace System.Security.Cryptography.X509Certificates
 		internal static Exception GetInvalidChainContextException ()
 		{
 			return new CryptographicException (Locale.GetText ("Chain instance is empty."));
+		}
+
+		class MyNativeHelper : INativeCertificateHelper
+		{
+			public X509CertificateImpl Import (
+				byte[] data, string password, X509KeyStorageFlags flags)
+			{
+				return X509Helper2.Import (data, password, flags);
+			}
+
+			public X509CertificateImpl Import (X509Certificate cert)
+			{
+				return X509Helper2.Import (cert);
+			}
 		}
 	}
 }
