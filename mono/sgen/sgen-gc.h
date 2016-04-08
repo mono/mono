@@ -408,7 +408,7 @@ typedef void (*CopyOrMarkObjectFunc) (GCObject**, SgenGrayQueue*);
 typedef void (*ScanObjectFunc) (GCObject *obj, SgenDescriptor desc, SgenGrayQueue*);
 typedef void (*ScanVTypeFunc) (GCObject *full_object, char *start, SgenDescriptor desc, SgenGrayQueue* BINARY_PROTOCOL_ARG (size_t size));
 typedef void (*ScanPtrFieldFunc) (GCObject *obj, GCObject **ptr, SgenGrayQueue* queue);
-typedef gboolean (*DrainGrayStackFunc) (SgenGrayQueue *queue);
+typedef gboolean (*DrainGrayStackFunc) (SgenGrayQueue *queue, gboolean check_dijkstra);
 
 typedef struct {
 	CopyOrMarkObjectFunc copy_or_mark_object;
@@ -455,7 +455,7 @@ gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_concurrent_collection_in_progress (void);
 volatile gboolean* sgen_concurrent_collection_in_progress_ptr (void);
 
-void sgen_reference_to_major_updated (gpointer ptr, GCObject *value);
+gboolean sgen_reference_to_major_updated (gpointer ptr, GCObject *value, gboolean from_wbarrier);
 
 typedef struct _SgenFragment SgenFragment;
 
@@ -799,7 +799,7 @@ void sgen_register_disappearing_link (GCObject *obj, void **link, gboolean track
 
 GCObject* sgen_weak_link_get (void **link_addr);
 
-gboolean sgen_drain_gray_stack (ScanCopyContext ctx);
+gboolean sgen_drain_gray_stack (ScanCopyContext ctx, gboolean check_dijkstra);
 
 enum {
 	SPACE_NURSERY,

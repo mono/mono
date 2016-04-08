@@ -245,6 +245,12 @@ static gboolean enable_nursery_canaries = FALSE;
 
 static gboolean precleaning_enabled = FALSE;
 
+static guint64 stat_wbarrier_generic_store = 0;
+static guint64 stat_wbarrier_with_concurrent = 0;
+static guint64 stat_dijkstra_object_marked_from_wbarrier = 0;
+static guint64 stat_dijkstra_object_marked_from_nursery = 0;
+static guint64 stat_dijkstra_enqueued_fast = 0;
+
 #ifdef HEAVY_STATISTICS
 guint64 stat_objects_alloced_degraded = 0;
 guint64 stat_bytes_alloced_degraded = 0;
@@ -266,7 +272,6 @@ guint64 stat_nursery_copy_object_failed_to_space = 0;
 
 static guint64 stat_wbarrier_add_to_global_remset = 0;
 static guint64 stat_wbarrier_arrayref_copy = 0;
-static guint64 stat_wbarrier_generic_store = 0;
 static guint64 stat_wbarrier_generic_store_atomic = 0;
 static guint64 stat_wbarrier_set_root = 0;
 #endif
@@ -582,20 +587,31 @@ sgen_add_to_global_remset (gpointer ptr, GCObject *obj)
  *
  */
 gboolean
-sgen_drain_gray_stack (ScanCopyContext ctx)
+sgen_drain_gray_stack (ScanCopyContext ctx, gboolean check_dijkstra)
 {
 	ScanObjectFunc scan_func = ctx.ops->scan_object;
 	SgenGrayQueue *queue = ctx.queue;
 
 	if (ctx.ops->drain_gray_stack)
-		return ctx.ops->drain_gray_stack (queue);
+		return ctx.ops->drain_gray_stack (queue, check_dijkstra);
 
 	for (;;) {
 		GCObject *obj;
 		SgenDescriptor desc;
+
+		if (check_dijkstra) {
+			obj = sgen_workers_get_dijkstra_fast ();
+			if (obj) {
+				desc = sgen_obj_get_descriptor (obj);
+				goto scan;
+			}
+		}
+
 		GRAY_OBJECT_DEQUEUE (queue, &obj, &desc);
 		if (!obj)
 			return TRUE;
+
+	scan:
 		SGEN_LOG (9, "Precise gray object scan %p (%s)", obj, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (obj)));
 		scan_func (obj, desc, queue);
 	}
@@ -1143,7 +1159,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 	 *   To achieve better cache locality and cache usage, we drain the gray stack 
 	 * frequently, after each object is copied, and just finish the work here.
 	 */
-	sgen_drain_gray_stack (ctx);
+	sgen_drain_gray_stack (ctx, FALSE);
 	TV_GETTIME (atv);
 	SGEN_LOG (2, "%s generation done", generation_name (generation));
 	statistics->time_finish_gray_stack_drain += TV_ELAPSED (btv, atv);
@@ -1166,7 +1182,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 	done_with_ephemerons = 0;
 	do {
 		done_with_ephemerons = sgen_client_mark_ephemerons (ctx);
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, FALSE);
 		++ephemeron_rounds;
 	} while (!done_with_ephemerons);
 
@@ -1174,7 +1190,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 
 	if (sgen_client_bridge_need_processing ()) {
 		/*Make sure the gray stack is empty before we process bridge objects so we get liveness right*/
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, FALSE);
 		sgen_collect_bridge_objects (generation, ctx);
 		if (generation == GENERATION_OLD)
 			sgen_collect_bridge_objects (GENERATION_NURSERY, ctx);
@@ -1198,7 +1214,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 	Make sure we drain the gray stack before processing disappearing links and finalizers.
 	If we don't make sure it is empty we might wrongly see a live object as dead.
 	*/
-	sgen_drain_gray_stack (ctx);
+	sgen_drain_gray_stack (ctx, FALSE);
 
 	/*
 	We must clear weak links that don't track resurrection before processing object ready for
@@ -1219,7 +1235,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 		sgen_finalize_in_range (GENERATION_NURSERY, ctx);
 	/* drain the new stack that might have been created */
 	SGEN_LOG (6, "Precise scan of gray area post fin");
-	sgen_drain_gray_stack (ctx);
+	sgen_drain_gray_stack (ctx, FALSE);
 
 	/*
 	 * This must be done again after processing finalizable objects since CWL slots are cleared only after the key is finalized.
@@ -1227,7 +1243,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 	done_with_ephemerons = 0;
 	do {
 		done_with_ephemerons = sgen_client_mark_ephemerons (ctx);
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, FALSE);
 		++ephemeron_rounds;
 	} while (!done_with_ephemerons);
 
@@ -1259,7 +1275,7 @@ finish_gray_stack (int generation, ScanCopyContext ctx, CollectionStatistics *st
 			sgen_null_link_in_range (GENERATION_NURSERY, ctx, TRUE);
 		if (sgen_gray_object_queue_is_empty (queue))
 			break;
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, FALSE);
 	}
 
 	g_assert (sgen_gray_object_queue_is_empty (queue));
@@ -1331,10 +1347,15 @@ init_stats (void)
 
 	mono_counters_register ("Number of pinned objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_pinned_objects);
 
+	mono_counters_register ("WBarrier generic store called", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_generic_store);
+	mono_counters_register ("WBarrier with concurrent collection called", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_with_concurrent);
+	mono_counters_register ("Dijkstra object marked from wbarrier", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_dijkstra_object_marked_from_wbarrier);
+	mono_counters_register ("Dijkstra object marked from nursery", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_dijkstra_object_marked_from_nursery);
+	mono_counters_register ("Dijkstra enqueued fast", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_dijkstra_enqueued_fast);
+
 #ifdef HEAVY_STATISTICS
 	mono_counters_register ("WBarrier remember pointer", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_add_to_global_remset);
 	mono_counters_register ("WBarrier arrayref copy", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_arrayref_copy);
-	mono_counters_register ("WBarrier generic store called", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_generic_store);
 	mono_counters_register ("WBarrier generic atomic store called", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_generic_store_atomic);
 	mono_counters_register ("WBarrier set root", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wbarrier_set_root);
 
@@ -2748,8 +2769,8 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 	}
 }
 
-void
-sgen_reference_to_major_updated (gpointer ptr, GCObject *value)
+gboolean
+sgen_reference_to_major_updated (gpointer ptr, GCObject *value, gboolean from_wbarrier)
 {
 	SGEN_ASSERT (0, !sgen_ptr_in_nursery (value), "Why are we called for something that's not major->major?");
 	if (concurrent_collection_in_progress) {
@@ -2764,10 +2785,18 @@ sgen_reference_to_major_updated (gpointer ptr, GCObject *value)
 				sgen_los_pin_object (value);
 		}
 
-		if (did_mark)
-			sgen_workers_enqueue_object_and_awake (value, desc);
+		if (did_mark) {
+			if (sgen_workers_enqueue_object_and_awake (value, desc))
+				++stat_dijkstra_enqueued_fast;
 
+			if (from_wbarrier)
+				++stat_dijkstra_object_marked_from_wbarrier;
+			else
+				++stat_dijkstra_object_marked_from_nursery;
+		}
+		return TRUE;
 	}
+	return FALSE;
 }
 
 void
@@ -2775,7 +2804,7 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
 	TLAB_ACCESS_INIT;
 
-	HEAVY_STAT (++stat_wbarrier_generic_store);
+	++stat_wbarrier_generic_store;
 
 	sgen_client_wbarrier_generic_nostore_check (ptr, value);
 
@@ -2789,7 +2818,8 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 
 	if (!sgen_ptr_in_nursery (value)) {
 		ENTER_CRITICAL_REGION;
-		sgen_reference_to_major_updated (ptr, value);
+		if (sgen_reference_to_major_updated (ptr, value, TRUE))
+			++stat_wbarrier_with_concurrent;
 		EXIT_CRITICAL_REGION;
 	}
 }

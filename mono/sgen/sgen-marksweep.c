@@ -1288,12 +1288,12 @@ major_is_evacuating (void)
 }
 
 static gboolean
-drain_gray_stack (SgenGrayQueue *queue)
+drain_gray_stack (SgenGrayQueue *queue, gboolean check_dijkstra)
 {
 	if (major_is_evacuating ())
-		return drain_gray_stack_with_evacuation (queue);
+		return drain_gray_stack_with_evacuation (queue, check_dijkstra);
 	else
-		return drain_gray_stack_no_evacuation (queue);
+		return drain_gray_stack_no_evacuation (queue, check_dijkstra);
 }
 
 static void

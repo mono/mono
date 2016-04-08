@@ -38,6 +38,8 @@ static mono_mutex_t workers_distribute_gray_queue_lock;
 static SgenGrayQueue workers_distribute_gray_queue;
 static gboolean workers_distribute_gray_queue_inited;
 
+static GCObject * volatile dijkstra_enqueued;
+
 /*
  * Allowed transitions:
  *
@@ -89,7 +91,7 @@ state_is_working_or_enqueued (State state)
 	return state == STATE_WORKING || state == STATE_WORK_ENQUEUED;
 }
 
-static void
+static gboolean
 sgen_workers_ensure_awake (void)
 {
 	State old_state;
@@ -104,8 +106,11 @@ sgen_workers_ensure_awake (void)
 		did_set_state = set_state (old_state, STATE_WORK_ENQUEUED);
 	} while (!did_set_state);
 
-	if (!state_is_working_or_enqueued (old_state))
+	if (!state_is_working_or_enqueued (old_state)) {
 		sgen_thread_pool_idle_signal ();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -174,6 +179,7 @@ drain_queue_into_queue (SgenGrayQueue *dest, SgenGrayQueue *src)
 static gboolean
 workers_get_work (WorkerData *data)
 {
+	GCObject *obj;
 	SgenMajorCollector *major = sgen_get_major_collector ();
 	gboolean did_dequeue;
 
@@ -184,6 +190,13 @@ workers_get_work (WorkerData *data)
 
 	/* Steal from the workers distribute gray queue. */
 	did_dequeue = drain_queue_into_queue (&data->private_gray_queue, &workers_distribute_gray_queue);
+
+	obj = sgen_workers_get_dijkstra_fast ();
+	if (obj) {
+		SgenDescriptor desc = sgen_obj_get_descriptor_safe (obj);
+		GRAY_OBJECT_ENQUEUE (&data->private_gray_queue, obj, desc);
+		did_dequeue = TRUE;
+	}
 
 	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
 
@@ -245,9 +258,9 @@ marker_idle_func (void *data_untyped)
 	if (!forced_stop && (!sgen_gray_object_queue_is_empty (&data->private_gray_queue) || workers_get_work (data))) {
 		ScanCopyContext ctx = CONTEXT_FROM_OBJECT_OPERATIONS (idle_func_object_ops, &data->private_gray_queue);
 
-		SGEN_ASSERT (0, !sgen_gray_object_queue_is_empty (&data->private_gray_queue), "How is our gray queue empty if we just got work?");
+		SGEN_ASSERT (0, !sgen_gray_object_queue_is_empty (&data->private_gray_queue) || dijkstra_enqueued, "How is our gray queue empty if we just got work?");
 
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, TRUE);
 	} else {
 		SgenThreadPoolJob *job = preclean_job;
 		if (job) {
@@ -264,6 +277,7 @@ init_distribute_gray_queue (void)
 {
 	if (workers_distribute_gray_queue_inited) {
 		g_assert (sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue));
+		SGEN_ASSERT (0, !sgen_workers_get_dijkstra_fast (), "How did we forgot about this object?");
 		return;
 	}
 
@@ -343,7 +357,7 @@ sgen_workers_join (void)
 
 	/* At this point all the workers have stopped. */
 
-	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue), "Why is there still work left to do?");
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue) && !sgen_workers_get_dijkstra_fast (), "Why is there still work left to do?");
 	for (i = 0; i < workers_num; ++i)
 		SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_data [i].private_gray_queue), "Why is there still work left to do?");
 }
@@ -360,6 +374,9 @@ sgen_workers_have_idle_work (void)
 	SGEN_ASSERT (0, forced_stop && sgen_workers_all_done (), "Checking for idle work should only happen if the workers are stopped.");
 
 	if (!sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue))
+		return TRUE;
+
+	if (dijkstra_enqueued)
 		return TRUE;
 
 	for (i = 0; i < workers_num; ++i) {
@@ -386,7 +403,7 @@ sgen_workers_are_working (void)
 void
 sgen_workers_assert_gray_queue_is_empty (void)
 {
-	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue), "Why is the workers gray queue not empty?");
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue) && !sgen_workers_get_dijkstra_fast (), "Why is the workers gray queue not empty?");
 }
 
 void
@@ -404,15 +421,45 @@ sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
 	}
 }
 
-void
+GCObject*
+sgen_workers_get_dijkstra_fast (void)
+{
+	GCObject *obj = dijkstra_enqueued;
+	GCObject *old;
+	gboolean success;
+
+	if (!obj)
+		return NULL;
+
+	old = InterlockedCompareExchangePointer ((gpointer * volatile)&dijkstra_enqueued, NULL, obj);
+	SGEN_ASSERT (0, obj == old, "Why couldn't we NULL the Dijkstra object?");
+
+	//dijkstra_enqueued = NULL;
+
+	return obj;
+}
+
+gboolean
 sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc)
 {
+	if (InterlockedCompareExchangePointer ((gpointer * volatile)&dijkstra_enqueued, obj, NULL) == NULL) {
+		mono_memory_write_barrier ();
+		/*
+		 * We can run without doing this, it seems, though I'm not sure - it might
+		 * cause a deadlock.  In any case, disabling it doesn't run faster.
+		 */
+		sgen_workers_ensure_awake ();
+		return TRUE;
+	}
+
 	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
 	GRAY_OBJECT_ENQUEUE (&workers_distribute_gray_queue, obj, desc);
 	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
 
 	SGEN_ASSERT (0, sgen_concurrent_collection_in_progress (), "Why is there work to take when there's no concurrent collection in progress?");
 	sgen_workers_ensure_awake ();
+
+	return FALSE;
 }
 
 #endif

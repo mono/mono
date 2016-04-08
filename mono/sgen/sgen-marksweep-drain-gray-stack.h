@@ -293,7 +293,7 @@ SCAN_PTR_FIELD_FUNCTION_NAME (GCObject *full_object, GCObject **ptr, SgenGrayQue
 #endif
 
 static gboolean
-DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue)
+DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue, gboolean check_dijkstra)
 {
 #if defined(COPY_OR_MARK_CONCURRENT) || defined(COPY_OR_MARK_CONCURRENT_WITH_EVACUATION)
 	int i;
@@ -306,10 +306,19 @@ DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue)
 
 		HEAVY_STAT (++stat_drain_loops);
 
+		if (check_dijkstra) {
+			obj = sgen_workers_get_dijkstra_fast ();
+			if (obj) {
+				desc = sgen_obj_get_descriptor (obj);
+				goto scan;
+			}
+		}
+
 		GRAY_OBJECT_DEQUEUE (queue, &obj, &desc);
 		if (!obj)
 			return TRUE;
 
+	scan:
 		SCAN_OBJECT_FUNCTION_NAME (obj, desc, queue);
 	}
 	return FALSE;
