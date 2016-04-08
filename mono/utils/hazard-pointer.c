@@ -153,8 +153,8 @@ mono_thread_small_id_free (int id)
 	mono_os_mutex_unlock (&small_id_mutex);
 }
 
-static gboolean
-is_pointer_hazardous (gpointer p)
+gboolean
+mono_thread_is_pointer_hazardous (gpointer p)
 {
 	int i, j;
 	int highest = highest_small_id;
@@ -297,7 +297,7 @@ try_free_delayed_free_item (HazardFreeContext context)
 		return FALSE;
 
 	if ((context == HAZARD_FREE_ASYNC_CTX && item.locking == HAZARD_FREE_MAY_LOCK) ||
-	    (is_pointer_hazardous (item.p))) {
+	    (mono_thread_is_pointer_hazardous (item.p))) {
 		mono_lock_free_array_queue_push (&delayed_free_queue, &item);
 		return FALSE;
 	}
@@ -325,7 +325,7 @@ try_free_delayed_free_item (HazardFreeContext context)
 gboolean
 mono_thread_hazardous_try_free (gpointer p, MonoHazardousFreeFunc free_func)
 {
-	if (!is_pointer_hazardous (p)) {
+	if (!mono_thread_is_pointer_hazardous (p)) {
 		free_func (p);
 		return TRUE;
 	} else {
