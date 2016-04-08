@@ -306,13 +306,8 @@ DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue, gboolean check_dijkstra)
 
 		HEAVY_STAT (++stat_drain_loops);
 
-		if (check_dijkstra) {
-			obj = sgen_workers_get_dijkstra_fast ();
-			if (obj) {
-				desc = sgen_obj_get_descriptor (obj);
-				goto scan;
-			}
-		}
+		if (check_dijkstra)
+			sgen_workers_drain_fast_enqueue_slots (queue);
 
 		GRAY_OBJECT_DEQUEUE (queue, &obj, &desc);
 		if (!obj)

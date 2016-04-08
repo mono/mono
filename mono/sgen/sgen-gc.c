@@ -603,13 +603,8 @@ sgen_drain_gray_stack (ScanCopyContext ctx, gboolean check_dijkstra)
 		GCObject *obj;
 		SgenDescriptor desc;
 
-		if (check_dijkstra) {
-			obj = sgen_workers_get_dijkstra_fast ();
-			if (obj) {
-				desc = sgen_obj_get_descriptor (obj);
-				goto scan;
-			}
-		}
+		if (check_dijkstra)
+			sgen_workers_drain_fast_enqueue_slots (queue);
 
 		GRAY_OBJECT_DEQUEUE (queue, &obj, &desc);
 		if (!obj)
