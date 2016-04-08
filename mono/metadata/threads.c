@@ -1312,7 +1312,7 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj
 }
 
 void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed)
+mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent)
 {
 	LOCK_THREAD (this_obj);
 
@@ -1331,7 +1331,7 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 		memcpy (this_obj->name, mono_string_chars (name), mono_string_length (name) * 2);
 		this_obj->name_len = mono_string_length (name);
 
-		if (managed)
+		if (permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
 	}
 	else
