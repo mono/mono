@@ -69,7 +69,7 @@ namespace Mono.Net.Security
 					return currentProvider;
 
 				try {
-					defaultProvider = CreateDefaultProvider ();
+					defaultProvider = GetDefaultProviderInternal ();
 				} catch (Exception ex) {
 					throw new NotSupportedException ("TLS Support not available.", ex);
 				}
