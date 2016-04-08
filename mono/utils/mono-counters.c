@@ -560,7 +560,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 }
 
 static const char
-section_names [][10] = {
+section_names [][12] = {
 	"JIT",
 	"GC",
 	"Metadata",
@@ -568,6 +568,8 @@ section_names [][10] = {
 	"Security",
 	"Runtime",
 	"System",
+	"", // MONO_COUNTER_PERFCOUNTERS - not used.
+	"Profiler",
 };
 
 static void
