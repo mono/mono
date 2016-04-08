@@ -2552,6 +2552,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 		collector->major_ops_concurrent.scan_object = major_scan_object_dijkstra;
 		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_dijkstra;
 		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_dijkstra;
+		// FIXME: enable this eventually
 		//collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_dijkstra;
 #else
 		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
