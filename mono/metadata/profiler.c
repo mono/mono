@@ -282,7 +282,7 @@ mono_profiler_install_monitor  (MonoProfileMonitorFunc callback)
 }
 
 static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
-static int64_t sampling_frequency = 1000; //1ms
+static int64_t sampling_frequency = 10000; //10ms
 
 /**
  * mono_profiler_set_statistical_mode:

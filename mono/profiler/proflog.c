@@ -4564,7 +4564,7 @@ set_sample_mode (char* val, int allow_empty)
 #endif
 	if (allow_empty && !val) {
 		sample_type = SAMPLE_CYCLES;
-		sample_freq = 1000;
+		sample_freq = 100;
 		return;
 	}
 	if (strcmp (val, "mono") == 0) {
@@ -4591,7 +4591,7 @@ set_sample_mode (char* val, int allow_empty)
 	} else if (*maybe_freq != 0) {
 		usage (1);
 	} else {
-		sample_freq = 1000;
+		sample_freq = 100;
 	}
 	free (val);
 }
