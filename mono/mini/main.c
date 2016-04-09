@@ -91,7 +91,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			char *aname = kind + strlen ("assembly:");
 			MonoBundledAssembly mba = { aname, mapaddress + offset - baseline, item_size }, *ptr;
 			ptr = g_new (MonoBundledAssembly, 1);
-			*ptr = mba;
+			memcpy (ptr, &mba, sizeof (MonoBundledAssembly));
 			g_array_append_val  (assemblies, ptr);
 			if (entry_point == NULL)
 				entry_point = aname;
