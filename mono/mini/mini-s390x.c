@@ -2547,10 +2547,12 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 
 		mono_call_inst_add_outarg_reg (cfg, call, dreg, ainfo->reg, TRUE);
 	} else {
+		MonoError error;
 		MonoMethodHeader *header;
 		int srcReg;
 
-		header = mono_method_get_header (cfg->method);
+		header = mono_method_get_header_checked (cfg->method, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		if ((cfg->flags & MONO_CFG_HAS_ALLOCA) || header->num_clauses)
 			srcReg = s390_r11;
 		else
@@ -4602,7 +4604,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_tcdb (code, ins->sreg1, 0, s390_r13, 0);
 			s390_jz   (code, 0); CODEPTR(code, o);
 			mono_add_patch_info (cfg, code - cfg->native_code, 
-					     MONO_PATCH_INFO_EXC, "ArithmeticException");
+					     MONO_PATCH_INFO_EXC, "OverflowException");
 			s390_brasl (code, s390_r14,0);
 			PTRSLOT(code, o);
 		}
@@ -5387,13 +5389,15 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 		      guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
+	MonoError error;
 
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
 		unsigned char *ip = patch_info->ip.i + code;
 		gconstpointer target = NULL;
 
 		target = mono_resolve_patch_target (method, domain, code, 
-						    patch_info, run_cctors);
+											patch_info, run_cctors, &error);
+		mono_error_raise_exception (&error); /* FIXME: don't raise here */
 
 		switch (patch_info->type) {
 			case MONO_PATCH_INFO_IP:
@@ -6075,10 +6079,9 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			/*-----------------------------------------------------*/
 			s390_patch_rel (ip + 2, (guint64) S390_RELATIVE(code,ip));
 
-			exc_class = mono_class_from_name (mono_defaults.corlib, 
+			exc_class = mono_class_load_from_name (mono_defaults.corlib,
 							  "System", 
 							  patch_info->data.name);
-			g_assert (exc_class);
 			throw_ip = patch_info->ip.i;
 
 			for (iExc = 0; iExc < nThrows; ++iExc)

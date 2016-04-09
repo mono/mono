@@ -3323,25 +3323,23 @@ static void
 init_jit_info_dbg_attrs (MonoJitInfo *ji)
 {
 	static MonoClass *hidden_klass, *step_through_klass, *non_user_klass;
+	MonoError error;
 	MonoCustomAttrInfo *ainfo;
 
 	if (ji->dbg_attrs_inited)
 		return;
 
-	if (!hidden_klass) {
-		hidden_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
-		g_assert (hidden_klass);
-	}
-	if (!step_through_klass) {
-		step_through_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
-		g_assert (step_through_klass);
-	}
-	if (!non_user_klass) {
-		non_user_klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
-		g_assert (non_user_klass);
-	}
+	if (!hidden_klass)
+		hidden_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerHiddenAttribute");
 
-	ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
+	if (!step_through_klass)
+		step_through_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepThroughAttribute");
+
+	if (!non_user_klass)
+		non_user_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerNonUserCodeAttribute");
+
+	ainfo = mono_custom_attrs_from_method_checked (jinfo_get_method (ji), &error);
+	mono_error_cleanup (&error); /* FIXME don't swallow the error? */
 	if (ainfo) {
 		if (mono_custom_attrs_has_attr (ainfo, hidden_klass))
 			ji->dbg_hidden = TRUE;
@@ -3352,7 +3350,8 @@ init_jit_info_dbg_attrs (MonoJitInfo *ji)
 		mono_custom_attrs_free (ainfo);
 	}
 
-	ainfo = mono_custom_attrs_from_class (jinfo_get_method (ji)->klass);
+	ainfo = mono_custom_attrs_from_class_checked (jinfo_get_method (ji)->klass, &error);
+	mono_error_cleanup (&error); /* FIXME don't swallow the error? */
 	if (ainfo) {
 		if (mono_custom_attrs_has_attr (ainfo, step_through_klass))
 			ji->dbg_step_through = TRUE;
@@ -6032,6 +6031,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 			} else if (type == VALUE_TYPE_ID_NULL) {
 				*(MonoObject**)addr = NULL;
 			} else if (type == MONO_TYPE_VALUETYPE) {
+				MonoError error;
 				guint8 *buf2;
 				gboolean is_enum;
 				MonoClass *klass;
@@ -6063,7 +6063,8 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 					g_free (vtype_buf);
 					return err;
 				}
-				*(MonoObject**)addr = mono_value_box (d, klass, vtype_buf);
+				*(MonoObject**)addr = mono_value_box_checked (d, klass, vtype_buf, &error);
+				mono_error_cleanup (&error);
 				g_free (vtype_buf);
 			} else {
 				char *name = mono_type_full_name (t);
@@ -6085,6 +6086,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 static ErrorCode
 decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
+	MonoError error;
 	ErrorCode err;
 	int type = decode_byte (buf, &buf, limit);
 
@@ -6109,7 +6111,12 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 				g_free (nullable_buf);
 				return err;
 			}
-			mono_nullable_init (addr, mono_value_box (domain, mono_class_from_mono_type (targ), nullable_buf), mono_class_from_mono_type (t));
+			MonoObject *boxed = mono_value_box_checked (domain, mono_class_from_mono_type (targ), nullable_buf, &error);
+			if (!is_ok (&error)) {
+				mono_error_cleanup (&error);
+				return ERR_INVALID_OBJECT;
+			}
+			mono_nullable_init (addr, boxed, mono_class_from_mono_type (t));
 			g_free (nullable_buf);
 			*endbuf = buf;
 			return ERR_NONE;
@@ -6485,7 +6492,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (invoke->method, TRUE), this_arg ? this_arg->vtable->klass->name : "<null>");
 
 		mono_runtime_try_invoke (invoke->method, NULL, invoke->args, &exc, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		mono_error_assert_ok (&error);
 
 		g_assert_not_reached ();
 	}
@@ -6957,7 +6964,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		wait_for_suspend ();
 
 #ifdef TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
-		env_class = mono_class_from_name (mono_defaults.corlib, "System", "Environment");
+		env_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Environment");
 		if (env_class)
 			exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
 #endif
@@ -7247,8 +7254,11 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 				ass = (MonoAssembly *)tmp->data;
 
 				if (ass->image) {
+					MonoError error;
 					type_resolve = TRUE;
-					t = mono_reflection_get_type (ass->image, &info, ignore_case, &type_resolve);
+					/* FIXME really okay to call while holding locks? */
+					t = mono_reflection_get_type_checked (ass->image, &info, ignore_case, &type_resolve, &error);
+					mono_error_cleanup (&error); 
 					if (t) {
 						g_ptr_array_add (res_classes, mono_type_get_class (t));
 						g_ptr_array_add (res_domains, domain);
@@ -7664,6 +7674,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_ASSEMBLY_GET_TYPE: {
+		MonoError error;
 		char *s = decode_string (p, &p, end);
 		gboolean ignorecase = decode_byte (p, &p, end);
 		MonoTypeNameParse info;
@@ -7680,7 +7691,13 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			if (info.assembly.name)
 				NOT_IMPLEMENTED;
-			t = mono_reflection_get_type (ass->image, &info, ignorecase, &type_resolve);
+			t = mono_reflection_get_type_checked (ass->image, &info, ignorecase, &type_resolve, &error);
+			if (!is_ok (&error)) {
+				mono_error_cleanup (&error); /* FIXME don't swallow the error */
+				mono_reflection_free_type_info (&info);
+				g_free (s);
+				return ERR_INVALID_ARGUMENT;
+			}
 		}
 		buffer_add_typeid (buf, domain, t ? mono_class_from_mono_type (t) : NULL);
 		mono_reflection_free_type_info (&info);
@@ -8034,7 +8051,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		if (err != ERR_NONE)
 			return err;
 
-		cinfo = mono_custom_attrs_from_class (klass);
+		cinfo = mono_custom_attrs_from_class_checked (klass, &error);
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error message */
+			return ERR_LOADER_ERROR;
+		}
 
 		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
 		if (err != ERR_NONE)
@@ -8053,7 +8074,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		if (err != ERR_NONE)
 			return err;
 
-		cinfo = mono_custom_attrs_from_field (klass, field);
+		cinfo = mono_custom_attrs_from_field_checked (klass, field, &error);
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error message */
+			return ERR_LOADER_ERROR;
+		}
 
 		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
 		if (err != ERR_NONE)
@@ -8072,7 +8097,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		if (err != ERR_NONE)
 			return err;
 
-		cinfo = mono_custom_attrs_from_property (klass, prop);
+		cinfo = mono_custom_attrs_from_property_checked (klass, prop, &error);
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error message */
+			return ERR_LOADER_ERROR;
+		}
 
 		err = buffer_add_cattrs (buf, domain, klass->image, attr_klass, cinfo);
 		if (err != ERR_NONE)
@@ -8184,7 +8213,10 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	}
 	case CMD_TYPE_GET_OBJECT: {
 		MonoObject *o = (MonoObject*)mono_type_get_object_checked (domain, &klass->byval_arg, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		if (!mono_error_ok (&error)) {
+			mono_error_cleanup (&error);
+			return ERR_INVALID_OBJECT;
+		}
 		buffer_add_objid (buf, o);
 		break;
 	}
@@ -8361,6 +8393,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_DEBUG_INFO: {
+		MonoError error;
 		MonoDebugMethodInfo *minfo;
 		char *source_file;
 		int i, j, n_il_offsets;
@@ -8368,8 +8401,9 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		GPtrArray *source_file_list;
 		MonoSymSeqPoint *sym_seq_points;
 
-		header = mono_method_get_header (method);
+		header = mono_method_get_header_checked (method, &error);
 		if (!header) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			buffer_add_int (buf, 0);
 			buffer_add_string (buf, "");
 			buffer_add_int (buf, 0);
@@ -8456,13 +8490,16 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_LOCALS_INFO: {
+		MonoError error;
 		int i, num_locals;
 		MonoDebugLocalsInfo *locals;
 		int *locals_map = NULL;
 
-		header = mono_method_get_header (method);
-		if (!header)
+		header = mono_method_get_header_checked (method, &error);
+		if (!header) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			return ERR_INVALID_ARGUMENT;
+		}
 
 		locals = mono_debug_lookup_locals (method);
 		if (!locals) {
@@ -8583,10 +8620,12 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		}
 		break;
 	case CMD_METHOD_GET_BODY: {
+		MonoError error;
 		int i;
 
-		header = mono_method_get_header (method);
+		header = mono_method_get_header_checked (method, &error);
 		if (!header) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			buffer_add_int (buf, 0);
 
 			if (CHECK_PROTOCOL_VERSION (2, 18))
@@ -8685,6 +8724,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_CATTRS: {
+		MonoError error;
 		MonoClass *attr_klass;
 		MonoCustomAttrInfo *cinfo;
 
@@ -8693,7 +8733,11 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		if (err != ERR_NONE)
 			return err;
 
-		cinfo = mono_custom_attrs_from_method (method);
+		cinfo = mono_custom_attrs_from_method_checked (method, &error);
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error message */
+			return ERR_LOADER_ERROR;
+		}
 
 		err = buffer_add_cattrs (buf, domain, method->klass->image, attr_klass, cinfo);
 		if (err != ERR_NONE)
@@ -8980,8 +9024,10 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_STACK_FRAME_GET_VALUES: {
+		MonoError error;
 		len = decode_int (p, &p, end);
-		header = mono_method_get_header (frame->actual_method);
+		header = mono_method_get_header_checked (frame->actual_method, &error);
+		mono_error_assert_ok (&error); /* FIXME report error */
 
 		for (i = 0; i < len; ++i) {
 			pos = decode_int (p, &p, end);
@@ -9032,12 +9078,14 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_STACK_FRAME_SET_VALUES: {
+		MonoError error;
 		guint8 *val_buf;
 		MonoType *t;
 		MonoDebugVarInfo *var;
 
 		len = decode_int (p, &p, end);
-		header = mono_method_get_header (frame->actual_method);
+		header = mono_method_get_header_checked (frame->actual_method, &error);
+		mono_error_assert_ok (&error); /* FIXME report error */
 
 		for (i = 0; i < len; ++i) {
 			pos = decode_int (p, &p, end);
@@ -9634,12 +9682,13 @@ debugger_thread (void *arg)
 	ErrorCode err;
 	gboolean no_reply;
 	gboolean attach_failed = FALSE;
+	gpointer attach_cookie, attach_dummy;
 
 	DEBUG_PRINTF (1, "[dbg] Agent thread started, pid=%p\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
 	debugger_thread_id = mono_native_thread_id_get ();
 
-	mono_jit_thread_attach (mono_get_root_domain ());
+	attach_cookie = mono_jit_thread_attach (mono_get_root_domain (), &attach_dummy);
 
 	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
@@ -9792,7 +9841,9 @@ debugger_thread (void *arg)
 		DEBUG_PRINTF (2, "[dbg] Detached - restarting clean debugger thread.\n");
 		start_debugger_thread ();
 	}
-	
+
+	mono_jit_thread_detach (attach_cookie, &attach_dummy);
+
 	return 0;
 }
 

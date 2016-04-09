@@ -384,6 +384,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
+		public readonly PredefinedMember<MethodSpec> MethodInfoCreateDelegate;
 		public readonly PredefinedMember<MethodSpec> MonitorEnter;
 		public readonly PredefinedMember<MethodSpec> MonitorEnter_v4;
 		public readonly PredefinedMember<MethodSpec> MonitorExit;
@@ -658,6 +659,10 @@ namespace Mono.CSharp
 
 			MethodInfoGetMethodFromHandle2 = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle, new PredefinedType (btypes.RuntimeTypeHandle));
+
+			MethodInfoCreateDelegate = new PredefinedMember<MethodSpec> (module, types.MethodInfo,
+			                                                             "CreateDelegate", MemberKind.Method,
+			                                                             new PredefinedType (btypes.Type), new PredefinedType (btypes.Object));
 
 			MonitorEnter = new PredefinedMember<MethodSpec> (module, types.Monitor, "Enter", btypes.Object);
 

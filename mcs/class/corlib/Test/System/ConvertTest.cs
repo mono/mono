@@ -4712,6 +4712,95 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void ToInt32_Base10_MaxValue ()
+		{
+			Assert.AreEqual (Int32.MaxValue, Convert.ToInt32 (Int32.MaxValue.ToString(), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		[Category ("NotWorking")] // FIXME: this should throw an OverflowException but currently doesn't
+		public void ToInt32_Base10_MaxValueOverflow ()
+		{
+			var overflowValue = ((UInt32) Int32.MaxValue) + 1;
+			Convert.ToInt32 (overflowValue.ToString (), 10);
+		}
+
+		[Test]
+		public void ToInt32_Base10_MinValue ()
+		{
+			Assert.AreEqual (Int32.MinValue, Convert.ToInt32 (Int32.MinValue.ToString(), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		[Category ("NotWorking")] // FIXME: this should throw an OverflowException but currently doesn't		
+		public void ToInt32_Base10_MinValueOverflow ()
+		{
+			var overflowValue = ((UInt32) Int32.MaxValue) + 2;
+			Convert.ToInt32 ("-" + overflowValue.ToString (), 10);
+		}
+
+		[Test]
+		public void ToInt32_Base16_MaxValue ()
+		{
+			Assert.AreEqual (Int32.MaxValue, Convert.ToInt32 (Int32.MaxValue.ToString("x"), 16));
+		}
+
+		[Test]
+		public void ToInt32_Base16_MaxValueOverflow ()
+		{
+			var overflowValue = ((UInt32) Int32.MaxValue) + 1;
+			Assert.AreEqual (-2147483648, Convert.ToInt32 (overflowValue.ToString("x"), 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt32_Base16_MaxValueOverflow2 ()
+		{
+			Convert.ToInt32 (UInt32.MaxValue.ToString ("x") + "0", 16);
+		}
+
+		[Test]
+		public void ToInt32_Base16_MinValue ()
+		{
+			Assert.AreEqual (Int32.MinValue, Convert.ToInt32 (Int32.MinValue.ToString ("x"), 16));
+		}
+
+		[Test]
+		public void ToUInt32_Base10_MaxValue ()
+		{
+			Assert.AreEqual (UInt32.MaxValue, Convert.ToUInt32 (UInt32.MaxValue.ToString (), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_Base10_MaxValueOverflow ()
+		{
+			Convert.ToUInt32 (UInt32.MaxValue.ToString () + "0", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_Base10_MaxValueOverflow2 ()
+		{
+			Convert.ToUInt32 ("4933891728", 10);
+		}
+
+		[Test]
+		public void ToUInt32_Base16_MaxValue ()
+		{
+			Assert.AreEqual (UInt32.MaxValue, Convert.ToUInt32 (UInt32.MaxValue.ToString ("x"), 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_Base16_MaxValueOverflow ()
+		{
+			Convert.ToUInt32 (UInt32.MaxValue.ToString ("x") + "0", 16);
+		}
+
+		[Test]
 		public void ToInt64_Base10_MaxValue ()
 		{
 			Assert.AreEqual (Int64.MaxValue, Convert.ToInt64 (Int64.MaxValue.ToString(), 10));
@@ -4788,7 +4877,7 @@ namespace MonoTests.System {
 		[ExpectedException (typeof (OverflowException))]
 		public void ToUInt64_Base16_MaxValueOverflow ()
 		{
-			Convert.ToInt64 (UInt64.MaxValue.ToString ("x") + "0", 16);
+			Convert.ToUInt64 (UInt64.MaxValue.ToString ("x") + "0", 16);
 		}
 
 		[Test] // bug #481687

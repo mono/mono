@@ -4747,13 +4747,15 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 {
 	MonoJumpInfo *patch_info;
 	gboolean compile_aot = !run_cctors;
+	MonoError error;
 
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
 		unsigned char *ip = patch_info->ip.i + code;
 		unsigned char *target;
 		gboolean is_fd = FALSE;
 
-		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
+		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors, &error);
+		mono_error_raise_exception (&error); /* FIXME: don't raise here */
 
 		if (compile_aot) {
 			switch (patch_info->type) {
@@ -5619,8 +5621,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				exc_throw_pos [i] = code;
 			}
 
-			exc_class = mono_class_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			g_assert (exc_class);
+			exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", patch_info->data.name);
 
 			ppc_patch (ip, code);
 			/*mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC_NAME, patch_info->data.target);*/

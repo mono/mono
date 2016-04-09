@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+../../build/common/AssemblyRef.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/RegistryKeyPermissionCheck.cs
@@ -104,7 +105,6 @@ System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
-System/Guid.MonoTouch.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
@@ -163,14 +163,12 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
-../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
 System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
 System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventCommandEventArgs.cs
+System.Diagnostics.Tracing/EventListener.cs
+System.Diagnostics.Tracing/EventWrittenEventArgs.cs
 System.Diagnostics.Tracing/NonEventAttribute.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
@@ -239,7 +237,6 @@ System.Reflection/FieldInfo.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
-System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 System.Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
@@ -402,7 +399,6 @@ System.Runtime.InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/SEHException.cs
 System.Runtime.InteropServices/STATSTG.cs
 System.Runtime.InteropServices/RegistrationServices.cs
-System.Runtime.InteropServices/RuntimeEnvironment.cs
 System.Runtime.InteropServices/SafeArrayRankMismatchException.cs
 System.Runtime.InteropServices/SafeArrayTypeMismatchException.cs
 System.Runtime.InteropServices/SafeBuffer.cs
@@ -637,6 +633,7 @@ System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
+System.Security/SafeAccessTokenHandle.cs
 System.Security/SecureString.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
@@ -907,6 +904,7 @@ ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MethodBase.cs
+ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
@@ -1138,6 +1136,12 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
+
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
+
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendaralgorithmtype.cs
@@ -1236,6 +1240,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodbase.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodbody.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodimplattributes.cs
+../../../external/referencesource/mscorlib/system/reflection/methodinfo.cs
 ../../../external/referencesource/mscorlib/system/reflection/missing.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscateassemblyattribute.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscationattribute.cs
@@ -1281,6 +1286,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/attributes.cs
+../../../external/referencesource/mscorlib/system/runtime/interopservices/runtimeenvironment.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 
@@ -1568,6 +1574,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpool.cs
+../../../external/referencesource/mscorlib/system/threading/waithandle.cs
 
 ../../../external/referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs

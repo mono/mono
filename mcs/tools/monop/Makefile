@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 PROGRAM = monop.exe
-LOCAL_MCS_FLAGS += -d:NO_AUTHENTICODE,STATIC,NO_SYMBOL_WRITER
+LOCAL_MCS_FLAGS += -d:NO_AUTHENTICODE,STATIC,NO_SYMBOL_WRITER -r:System.dll
 
 CLEAN_FILES = monop.exe monop2.exe *.mdb
 

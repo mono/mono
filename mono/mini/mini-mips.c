@@ -221,8 +221,7 @@ mips_emit_exc_by_name(guint8 *code, const char *name)
 	gpointer addr;
 	MonoClass *exc_class;
 
-	exc_class = mono_class_from_name (mono_defaults.corlib, "System", name);
-	g_assert (exc_class);
+	exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", name);
 
 	mips_load_const (code, mips_a0, exc_class->type_token);
 	addr = mono_get_throw_corlib_exception ();
@@ -4633,7 +4632,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mips_bne (code, mips_at, mips_zero, 0);
 			mips_nop (code);
 
-			EMIT_SYSTEM_EXCEPTION_NAME("ArithmeticException");
+			EMIT_SYSTEM_EXCEPTION_NAME("OverflowException");
 			mips_patch (branch_patch, (guint32)code);
 			mips_fmovd (code, ins->dreg, ins->sreg1);
 			break;
@@ -4675,6 +4674,7 @@ void
 mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
+	MonoError error;
 
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
 		unsigned char *ip = patch_info->ip.i + code;
@@ -4708,7 +4708,8 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 		case MONO_PATCH_INFO_R4:
 		case MONO_PATCH_INFO_R8:
 			/* from OP_AOTCONST : lui + addiu */
-			target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
+			target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors, &error);
+			mono_error_raise_exception (&error); /* FIXME: don't raise here */
 			patch_lui_addiu ((guint32 *)(void *)ip, (guint32)target);
 			continue;
 #if 0
@@ -4721,7 +4722,8 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 			/* everything is dealt with at epilog output time */
 			continue;
 		default:
-			target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
+			target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors, &error);
+			mono_error_raise_exception (&error); /* FIXME: don't raise here */
 			mips_patch ((guint32 *)(void *)ip, (guint32)target);
 			break;
 		}

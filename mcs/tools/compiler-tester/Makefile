@@ -5,21 +5,6 @@ include ../../build/rules.make
 PROGRAM = compiler-tester.exe
 NO_INSTALL = yes
 
-ifeq (moonlight, $(PROFILE))
-
-all-local: $(PROGRAM)
-clean-local:
-	rm -f $(PROGRAM)
-
-$(PROGRAM): $(dir $(PROGRAM))/.stamp
-$(PROGRAM): $(topdir)/class/lib/moonlight_raw/compiler-tester.exe
-	cp $< $@
-
-dist-local: dist-default
-install-local uninstall-local test-local run-test-local run-test-ondotnet-local: ; @:
-
-else
+LOCAL_MCS_FLAGS = -r:System.dll -r:System.Core.dll -r:System.Xml.dll
 
 include $(topdir)/build/executable.make
-
-endif

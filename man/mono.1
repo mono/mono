@@ -142,6 +142,11 @@ instead of going through the operating system symbol lookup operation.
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
 .TP
+.I gen-seq-points-file=FILE.msym
+Instructs the AOT compiler to generate offline sequence points .msym files.
+The path is optional, if none is passed then a .msym file will be generated
+next to the input assembly.
+.TP
 .I mtriple=<TRIPLE>
 Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
 --mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
@@ -1089,11 +1094,6 @@ find spots that need to be tuned for this mode of operation.   Alternatively,
 this mode can be enabled at compile time by using the --with-cooperative-gc
 flag when calling configure.
 .TP
-\fBMONO_ENABLE_SHM\fR
-Unix only: Enable support for cross-process handles.  Cross-process
-handles are used to expose process handles, thread handles, named
-mutexes, named events and named semaphores across Unix processes.
-.TP
 \fBMONO_ENV_OPTIONS\fR
 This environment variable allows you to pass command line arguments to
 a Mono process through the environment.   This is useful for example
@@ -1632,6 +1632,10 @@ option.
 \fBdebug-domain-unload\fR
 When this option is set, the runtime will invalidate the domain memory
 pool instead of destroying it.
+.TP
+\fBdisable_omit_fp\fR
+Disables a compiler optimization where the frame pointer is omitted
+from the stack. This optimization can interact badly with debuggers.
 .TP
 \fBdont-free-domains\fR
 This is an Optimization for multi-AppDomain applications (most

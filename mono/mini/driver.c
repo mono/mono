@@ -1928,6 +1928,14 @@ mono_main (int argc, char* argv[])
 	}
 #endif
 
+#ifdef DISABLE_HW_TRAPS
+	// Signal handlers not available
+	{
+		MonoDebugOptions *opt = mini_get_debug_options ();
+		opt->explicit_null_checks = TRUE;
+	}
+#endif
+
 	if (!argv [i]) {
 		mini_usage ();
 		return 1;

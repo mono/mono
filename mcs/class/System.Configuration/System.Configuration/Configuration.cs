@@ -133,8 +133,12 @@ namespace System.Configuration {
 				rootGroup.StreamName = streamName;
 			}
 			
-			if (streamName != null)
-				Load ();
+			try {
+				if (streamName != null)
+					Load ();
+			} catch (XmlException ex) {
+				throw new ConfigurationErrorsException (ex.Message, ex, streamName, 0);
+			}
 		}
 		
 		internal Configuration Parent {

@@ -5346,12 +5346,20 @@ namespace PEAPI {
 
 				MDTable tabIx = (MDTable)i;
 				if (count > max5BitSmlIx) {
+					if (tabIx == MDTable.Method || tabIx == MDTable.Field || tabIx == MDTable.TypeRef ||
+						tabIx == MDTable.TypeDef || tabIx == MDTable.Param || tabIx == MDTable.InterfaceImpl ||
+						tabIx == MDTable.MemberRef || tabIx == MDTable.Module || tabIx == MDTable.DeclSecurity ||
+						tabIx == MDTable.Property || tabIx == MDTable.Event || tabIx == MDTable.StandAloneSig ||
+						tabIx == MDTable.ModuleRef || tabIx == MDTable.TypeSpec || tabIx == MDTable.Assembly ||
+						tabIx == MDTable.AssemblyRef || tabIx == MDTable.File || tabIx == MDTable.ExportedType ||
+						tabIx == MDTable.ManifestResource || tabIx == MDTable.GenericParam)
 					lgeCIx[(int)CIx.HasCustomAttr] = true;
 				}
 				if (count > max3BitSmlIx) {
-					if ((tabIx == MDTable.TypeRef) || (tabIx == MDTable.ModuleRef) || (tabIx == MDTable.Method) || (tabIx == MDTable.TypeSpec) || (tabIx == MDTable.Field)) 
+					if (tabIx == MDTable.Method || tabIx == MDTable.MemberRef)
 						lgeCIx[(int)CIx.CustomAttributeType] = true;
-					if ((tabIx == MDTable.Method) || (tabIx == MDTable.MemberRef)) 
+					if (tabIx == MDTable.TypeDef || tabIx == MDTable.TypeRef || tabIx == MDTable.ModuleRef ||
+						tabIx == MDTable.Method || tabIx == MDTable.TypeSpec)
 						lgeCIx[(int)CIx.MemberRefParent] = true;
 				}
 				if (count > max2BitSmlIx) {

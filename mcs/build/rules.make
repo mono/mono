@@ -47,6 +47,7 @@ corlib = mscorlib.dll
 
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/resgen.exe
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN)
+STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
 
 depsdir = $(topdir)/build/deps
 
@@ -201,7 +202,7 @@ $(STD_TARGETS): %: do-%
 
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] AOT All Assemblies";)
-LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml'
+LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades'
 COMPILE_ALL_PROFILE_ASSEMBLIES = $(LIST_ALL_PROFILE_ASSEMBLIES) | MONO_PATH="./" xargs -I '{}' $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) '{}'
 
 do-all-aot:

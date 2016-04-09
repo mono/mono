@@ -3926,21 +3926,6 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 	return code;
 }
 
-#define REAL_PRINT_REG(text,reg) \
-mono_assert (reg >= 0); \
-amd64_push_reg (code, AMD64_RAX); \
-amd64_push_reg (code, AMD64_RDX); \
-amd64_push_reg (code, AMD64_RCX); \
-amd64_push_reg (code, reg); \
-amd64_push_imm (code, reg); \
-amd64_push_imm (code, text " %d %p\n"); \
-amd64_mov_reg_imm (code, AMD64_RAX, printf); \
-amd64_call_reg (code, AMD64_RAX); \
-amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 3*4); \
-amd64_pop_reg (code, AMD64_RCX); \
-amd64_pop_reg (code, AMD64_RDX); \
-amd64_pop_reg (code, AMD64_RAX);
-
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
 #define bb_is_loop_start(bb) ((bb)->loop_body_start && (bb)->nesting)
@@ -5912,7 +5897,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, X86_FP_C0);
 			amd64_pop_reg (code, AMD64_RAX);
 			amd64_fstp (code, 0);
-			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_EQ, FALSE, "ArithmeticException");
+			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_EQ, FALSE, "OverflowException");
 			amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 16);
 			break;
 		case OP_TLS_GET: {
@@ -7597,8 +7582,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 			amd64_patch (patch_info->ip.i + cfg->native_code, code);
 
-			exc_class = mono_class_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			g_assert (exc_class);
+			exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", patch_info->data.name);
 			throw_ip = patch_info->ip.i;
 
 			//x86_breakpoint (code);

@@ -2179,8 +2179,11 @@ namespace Mono.CSharp {
 			var ma = expr as MemberAccess;
 			if (ma != null) {
 				var lexpr = ma.LeftExpression;
+				Expression res;
 
-				var res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+				using (rc.Set (ResolveContext.Options.NameOfScope)) {
+					res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+				}
 
 				if (res == null) {
 					return false;
@@ -2191,11 +2194,6 @@ namespace Mono.CSharp {
 
 				if (ma is QualifiedAliasMember) {
 					rc.Report.Error (8083, loc, "An alias-qualified name is not an expression");
-					return false;
-				}
-
-				if (!IsLeftExpressionValid (lexpr)) {
-					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
 					return false;
 				}
 
@@ -2215,6 +2213,14 @@ namespace Mono.CSharp {
 					}
 				}
 
+				//
+				// LAMESPEC: Why is conditional access not allowed?
+				//
+				if (!IsLeftResolvedExpressionValid (ma.LeftExpression) || ma.HasConditionalAccess ()) {
+					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
+					return false;
+				}
+
 				Value = ma.Name;
 				return true;
 			}
@@ -2223,25 +2229,24 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static bool IsLeftExpressionValid (Expression expr)
+		static bool IsLeftResolvedExpressionValid (Expression expr)
 		{
-			if (expr is SimpleName)
-				return true;
-
-			if (expr is This)
-				return true;
-
-			if (expr is NamespaceExpression)
-				return true;
-
-			if (expr is TypeExpr)
-				return true;
-
-			var ma = expr as MemberAccess;
-			if (ma != null) {
-				// TODO: Will conditional access be allowed?
-				return IsLeftExpressionValid (ma.LeftExpression);
+			var fe = expr as FieldExpr;
+			if (fe != null) {
+				return fe.InstanceExpression == null || IsLeftResolvedExpressionValid (fe.InstanceExpression);
 			}
+
+			var pe = expr as PropertyExpr;
+			if (pe != null)
+				return pe.InstanceExpression == null || IsLeftResolvedExpressionValid (pe.InstanceExpression);
+
+			var dmb = expr as DynamicMemberBinder;
+			if (dmb != null) {
+				return IsLeftResolvedExpressionValid (dmb.Arguments [0].Expr);
+			}
+
+			if (expr is ConstantExpr || expr is TypeExpr || expr is NamespaceExpression || expr is VariableReference)
+				return true;
 
 			return false;
 		}

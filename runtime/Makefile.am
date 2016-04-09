@@ -48,6 +48,10 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
+if INSTALL_MOBILE_STATIC
+build_profiles += mobile_static
+endif
+
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
 endif
@@ -84,7 +88,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/mcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2 $(tmpinst)/bin/al
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/mcs $(tmpinst)/bin/al
 
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
@@ -164,22 +168,10 @@ $(tmpinst)/bin/mcs: $(tmpinst)/bin/mono Makefile
 	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
-$(tmpinst)/bin/dmcs: $(tmpinst)/bin/mono Makefile
-	echo '#! /bin/sh' > $@ ; \
-	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe -sdk:4"'" "$$@"' >> $@ ; \
-	chmod +x $@
-
 $(tmpinst)/bin/ilasm: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
 	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/ilasm/ilasm.exe"'" "$$@"' >> $@ ; \
-	chmod +x $@
-
-$(tmpinst)/bin/al2: $(tmpinst)/bin/mono Makefile
-	echo '#! /bin/sh' > $@ ; \
-	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_2_0/al.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 $(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile

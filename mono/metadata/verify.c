@@ -466,7 +466,7 @@ mono_class_has_default_constructor (MonoClass *klass)
 	int i;
 
 	mono_class_setup_methods (klass);
-	if (klass->exception_type)
+	if (mono_class_has_failure (klass))
 		return FALSE;
 
 	for (i = 0; i < klass->method.count; ++i) {
@@ -884,7 +884,7 @@ mono_type_is_valid_in_context (VerifyContext *ctx, MonoType *type)
 
 	klass = mono_class_from_mono_type (type);
 	mono_class_init (klass);
-	if (mono_loader_get_last_error () || klass->exception_type != MONO_EXCEPTION_NONE) {
+	if (mono_loader_get_last_error () || mono_class_has_failure (klass)) {
 		if (klass->generic_class && !mono_class_is_valid_generic_instantiation (NULL, klass))
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);
 		else
@@ -893,7 +893,7 @@ mono_type_is_valid_in_context (VerifyContext *ctx, MonoType *type)
 		return FALSE;
 	}
 
-	if (klass->generic_class && klass->generic_class->container_class->exception_type != MONO_EXCEPTION_NONE) {
+	if (klass->generic_class && mono_class_has_failure (klass->generic_class->container_class)) {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Could not load type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);
 		return FALSE;
 	}
@@ -2078,49 +2078,35 @@ init_stack_with_value_at_exception_boundary (VerifyContext *ctx, ILCodeDesc *cod
 	if (mono_type_is_generic_argument (type))
 		code->stack->stype |= BOXED_MASK;
 }
+/* Class lazy loading functions */
+static GENERATE_GET_CLASS_WITH_CACHE (ienumerable, System.Collections.Generic, IEnumerable`1)
+static GENERATE_GET_CLASS_WITH_CACHE (icollection, System.Collections.Generic, ICollection`1)
+static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_list, System.Collections.Generic, IReadOnlyList`1)
+static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_collection, System.Collections.Generic, IReadOnlyCollection`1)
+
 
 static MonoClass*
 get_ienumerable_class (void)
 {
-	static MonoClass* generic_ienumerable_class = NULL;
-
-	if (generic_ienumerable_class == NULL)
-		generic_ienumerable_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerable`1");
-		return generic_ienumerable_class;
+	return mono_class_get_ienumerable_class ();
 }
 
 static MonoClass*
 get_icollection_class (void)
 {
-	static MonoClass* generic_icollection_class = NULL;
-
-	if (generic_icollection_class == NULL)
-		generic_icollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "ICollection`1");
-		return generic_icollection_class;
+	return mono_class_get_icollection_class ();
 }
 
 static MonoClass*
 get_ireadonlylist_class (void)
 {
-	static MonoClass* generic_ireadonlylist_class = NULL;
-
-	if (generic_ireadonlylist_class == NULL)
-		generic_ireadonlylist_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyList`1");
-	return generic_ireadonlylist_class;
+	return mono_class_get_ireadonly_list_class ();
 }
 
 static MonoClass*
 get_ireadonlycollection_class (void)
 {
-	static MonoClass* generic_ireadonlycollection_class = NULL;
-
-	if (generic_ireadonlycollection_class == NULL)
-		generic_ireadonlycollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyCollection`1");
-	return generic_ireadonlycollection_class;
+	return mono_class_get_ireadonly_collection_class ();
 }
 
 static MonoClass*
@@ -4868,9 +4854,10 @@ mono_method_verify (MonoMethod *method, int level)
 		return ctx.list;
 	}
 
-	ctx.header = mono_method_get_header (method);
+	ctx.header = mono_method_get_header_checked (method, &error);
 	if (!ctx.header) {
-		ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Could not decode method header"));
+		ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Could not decode method header due to %s", mono_error_get_message (&error)));
+		mono_error_cleanup (&error);
 		finish_collect_stats ();
 		return ctx.list;
 	}
@@ -5973,7 +5960,7 @@ mono_method_verify (MonoMethod *method, int level)
 	if (mono_method_is_constructor (ctx.method) && !ctx.super_ctor_called && !ctx.method->klass->valuetype && ctx.method->klass != mono_defaults.object_class) {
 		char *method_name = mono_method_full_name (ctx.method, TRUE);
 		char *type = mono_type_get_full_name (ctx.method->klass);
-		if (ctx.method->klass->parent && ctx.method->klass->parent->exception_type != MONO_EXCEPTION_NONE)
+		if (ctx.method->klass->parent && mono_class_has_failure (ctx.method->klass->parent))
 			CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Constructor %s for type %s not calling base type ctor due to a TypeLoadException on base type.", method_name, type));
 		else
 			CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Constructor %s for type %s not calling base type ctor.", method_name, type));

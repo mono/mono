@@ -6465,7 +6465,7 @@ namespace Mono.CSharp
 			}
 
 			New n_source = source as New;
-			if (n_source != null) {
+			if (n_source != null && n_source.CanEmitOptimizedLocalTarget (ec)) {
 				if (!n_source.Emit (ec, this)) {
 					if (leave_copy) {
 						EmitLoad (ec);
@@ -7603,6 +7603,11 @@ namespace Mono.CSharp
 
 			if (Emit (ec, v))
 				ec.Emit (OpCodes.Pop);
+		}
+
+		public virtual bool CanEmitOptimizedLocalTarget (EmitContext ec)
+		{
+			return true;
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
@@ -12137,7 +12142,7 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			if (method == null && TypeSpec.IsValueType (type) && initializers.Initializers.Count > 1 && ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
+			if (!CanEmitOptimizedLocalTarget (ec)) {
 				var fe = ec.GetTemporaryField (type);
 
 				if (!Emit (ec, fe))
@@ -12223,6 +12228,13 @@ namespace Mono.CSharp
 				sf.IsAvailableForReuse = true;
 
 			return true;
+		}
+
+		public override bool CanEmitOptimizedLocalTarget (EmitContext ec)
+		{
+			return !(method == null && TypeSpec.IsValueType (type) &&
+					initializers.Initializers.Count > 1 && ec.HasSet (BuilderContext.Options.AsyncBody) &&
+					initializers.ContainsEmitWithAwait ());
 		}
 
 		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)

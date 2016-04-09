@@ -6,7 +6,9 @@ PROGRAM = pdb2mdb.exe
 
 LOCAL_MCS_FLAGS = \
 	/r:Mono.Cecil.dll	\
-	/r:Mono.CompilerServices.SymbolWriter.dll
+	/r:Mono.CompilerServices.SymbolWriter.dll \
+	/r:System.Core.dll
+
 
 EXTRA_DISTFILES = LICENSE
 

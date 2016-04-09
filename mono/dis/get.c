@@ -1269,6 +1269,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 const char *
 get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGenericContainer *container)
 {
+	MonoError error;
 	const char *start = ptr;
 	guint32 type;
 	MonoType *t;
@@ -1282,12 +1283,14 @@ get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGen
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_CLASS: {
 		guint32 token = mono_metadata_parse_typedef_or_ref (m, ptr, &ptr);
-		MonoClass *klass = mono_class_get (m, token);
+		MonoClass *klass = mono_class_get_checked (m, token, &error);
 		char *temp;
-		if (klass)
+		if (klass) {
 			temp = dis_stringify_object_with_class (m, klass, TRUE, FALSE);
- 		else
-			temp = g_strdup_printf ("<BROKEN CLASS token_%8x>", token);
+		} else  {
+			temp = g_strdup_printf ("<BROKEN CLASS token_%8x due to %s>", token, mono_error_get_message (&error));
+			mono_error_cleanup (&error);
+		}
 
 		if (show_tokens) {
 			*result = g_strdup_printf ("%s/*%08x*/", temp, token);
@@ -1323,23 +1326,12 @@ get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGen
 	}
 
 	default:
-		t = mono_metadata_parse_type_full (m, container, 0, start, &ptr);
+		t = mono_metadata_parse_type_checked (m, container, 0, FALSE, start, &ptr, &error);
 		if (t) {
 			*result = dis_stringify_type (m, t, is_def);
 		} else {
-			GString *err = g_string_new ("@!#$<InvalidType>$#!@");
-			if (container)
-				t = mono_metadata_parse_type_full (m, NULL, 0, start, &ptr);
-			if (t) {
-				char *name = dis_stringify_type (m, t, is_def);
-				g_warning ("Encountered a generic type inappropriate for its context");
-				g_string_append (err, " // ");
-				g_string_append (err, name);
-				g_free (name);
-			} else {
-				g_warning ("Encountered an invalid type");
-			}
-			*result = g_string_free (err, FALSE);
+			*result = g_strdup_printf ("Invalid type due to %s", mono_error_get_message (&error));
+			mono_error_cleanup (&error);
 		}
 
 		break;
@@ -3190,7 +3182,7 @@ cant_print_generic_param_name (MonoGenericParam *gparam)
 	container = mono_generic_param_owner (gparam);
 	check_ambiguous_genparams (container);
 	return (!container || (mono_generic_params_with_ambiguous_names &&
-			g_hash_table_lookup (mono_generic_params_with_ambiguous_names, gparam)));
+			g_hash_table_lookup (mono_generic_params_with_ambiguous_names, gparam)) || !mono_generic_param_info (gparam));
 }
 
 

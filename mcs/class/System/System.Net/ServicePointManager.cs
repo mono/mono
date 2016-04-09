@@ -114,13 +114,13 @@ namespace System.Net
 		
 		// Static properties
 		
-		private static ICertificatePolicy policy = new DefaultCertificatePolicy ();
+		private static ICertificatePolicy policy;
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 100000; // 100 seconds
 		private static int maxServicePoints = 0;
 		private static int dnsRefreshTimeout = 2 * 60 * 1000;
 		private static bool _checkCRL = false;
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
 		static bool expectContinue = true;
 		static bool useNagle;
@@ -174,7 +174,11 @@ namespace System.Net
 		
 		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
 		public static ICertificatePolicy CertificatePolicy {
-			get { return policy; }
+			get {
+				if (policy == null)
+					Interlocked.CompareExchange (ref policy, new DefaultCertificatePolicy (), null);
+				return policy;
+			}
 			set { policy = value; }
 		}
 
@@ -328,7 +332,7 @@ namespace System.Net
 				usesProxy = true;
 				bool isSecure = address.Scheme == "https";
 				address = proxy.GetProxy (address);
-				if (address.Scheme != "http" && !isSecure)
+				if (address.Scheme != "http")
 					throw new NotSupportedException ("Proxy scheme not supported.");
 
 				if (isSecure && address.Scheme == "http")

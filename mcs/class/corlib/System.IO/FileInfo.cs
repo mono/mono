@@ -48,6 +48,7 @@ namespace System.IO {
 	public sealed class FileInfo : FileSystemInfo
 	{
 		private bool exists;
+		private string displayPath;
 
 		public FileInfo (string fileName)
 		{
@@ -59,11 +60,14 @@ namespace System.IO {
 
 			OriginalPath = fileName;
 			FullPath = Path.GetFullPath (fileName);
+			
+			displayPath = OriginalPath;
 		}
 
 		private FileInfo (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			displayPath = OriginalPath;
 		}
 
 		internal override void InternalRefresh ()
@@ -230,13 +234,19 @@ namespace System.IO {
 		{
 			if (destFileName == null)
 				throw new ArgumentNullException ("destFileName");
-			if (destFileName == Name || destFileName == FullName)
+			if (destFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
+
+			var destFullPath = Path.GetFullPath (destFileName);
+			if (destFullPath == FullPath)
 				return;
 			if (!File.Exists (FullPath))
 				throw new FileNotFoundException ();
 
-			File.Move (FullPath, destFileName);
-			this.FullPath = Path.GetFullPath (destFileName);
+			File.Move (FullPath, destFullPath);
+			this.FullPath = destFullPath;
+
+			displayPath = destFileName;
 		}
 
 		public FileInfo CopyTo (string destFileName)
@@ -263,7 +273,7 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			return OriginalPath;
+			return displayPath;
 		}
 
 #if !MOBILE

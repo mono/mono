@@ -240,7 +240,7 @@ OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 OTHER_RES += $(RESOURCE_FILES_4)
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/System.Web/System.Web.txt
+TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Web/System.Web.txt
 
 LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap System.ComponentModel.DataAnnotations
 LIB_MCS_FLAGS = \

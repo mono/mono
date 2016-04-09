@@ -14,7 +14,9 @@ build_SUBDIRS :=  \
 	System.XML \
 	System Mono.Security \
 	Mono.Posix \
-	System.Core
+	System.Core \
+	Mono.Cecil \
+	Mono.Cecil.Mdb
 
 pcl_facade_dirs := Facades
 

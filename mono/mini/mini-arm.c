@@ -2375,6 +2375,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 					} else {
 						int creg;
 
+						cfg->param_area = MAX (cfg->param_area, 8);
 						MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 						creg = mono_alloc_ireg (cfg);
 						MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
@@ -2396,6 +2397,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 					} else {
 						int creg;
 
+						cfg->param_area = MAX (cfg->param_area, 8);
 						MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 						creg = mono_alloc_ireg (cfg);
 						MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
@@ -2467,6 +2469,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 				/* This should work for soft-float as well */
 
+				cfg->param_area = MAX (cfg->param_area, 8);
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 				creg = mono_alloc_ireg (cfg);
 				mono_call_inst_add_outarg_reg (cfg, call, creg, ARMREG_R3, FALSE);
@@ -5799,10 +5802,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 				ARM_CMPD (code, vfp_scratch2, vfp_scratch1);
 				ARM_FMSTAT (code);
-				EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_GT, "ArithmeticException");
+				EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_GT, "OverflowException");
 				ARM_CMPD (code, ins->sreg1, ins->sreg1);
 				ARM_FMSTAT (code);
-				EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_VS, "ArithmeticException");
+				EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_VS, "OverflowException");
 				ARM_CPYD (code, ins->dreg, ins->sreg1);
 
 				code = mono_arm_emit_vfp_scratch_restore (cfg, code, vfp_scratch1);
@@ -6572,7 +6575,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_LR);
 #else
 		ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-		ARM_B (code, 2);
+		ARM_B (code, 1);
 		*(gpointer*)code = &single_step_tramp;
 		code += 4;
 		*(gpointer*)code = breakpoint_tramp;
@@ -6802,8 +6805,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			}
 			arm_patch (ip, code);
 
-			exc_class = mono_class_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			g_assert (exc_class);
+			exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", patch_info->data.name);
 
 			ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_LR);
 #ifdef USE_JUMP_TABLES

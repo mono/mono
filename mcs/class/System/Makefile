@@ -19,7 +19,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
-TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
+TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data.dll -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
@@ -29,7 +29,7 @@ TEST_MCS_FLAGS += -d:MONO_FEATURE_PROCESS_START
 endif
 
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%)
-TEST_MCS_FLAGS += -r:System.Configuration
+TEST_MCS_FLAGS += -r:System.Configuration.dll
 
 ifndef NO_THREAD_ABORT
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
@@ -41,7 +41,7 @@ REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
+TXT_RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
 #
 # MOBILE_PROFILE needs SECURITY_DEP

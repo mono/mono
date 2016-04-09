@@ -6,7 +6,7 @@ PROGRAM = mono-service.exe
 
 include ../../build/executable.make
 
-LOCAL_MCS_FLAGS = -r:System.ServiceProcess.dll -r:Mono.Posix.dll -unsafe
+LOCAL_MCS_FLAGS = -r:System.ServiceProcess.dll -r:Mono.Posix.dll -r:System.dll -unsafe
 
 # Copied from library.make
 

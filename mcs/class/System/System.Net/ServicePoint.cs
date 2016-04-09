@@ -49,8 +49,6 @@ namespace System.Net
 		DateTime idleSince;
 		DateTime lastDnsResolve;
 		Version protocolVersion;
-		X509Certificate certificate;
-		X509Certificate clientCertificate;
 		IPHostEntry host;
 		bool usesProxy;
 		Dictionary<string,WebConnectionGroup> groups;
@@ -92,14 +90,6 @@ namespace System.Net
 			set { endPointCallback = value; }
 		}
 		
-		public X509Certificate Certificate {
-			get { return certificate; }
-		}
-		
-		public X509Certificate ClientCertificate {
-			get { return clientCertificate; }
-		}
-
 		[MonoTODO]
 		public int ConnectionLeaseTimeout
 		{
@@ -413,14 +403,55 @@ namespace System.Net
 			return false;
 		}
 
-		internal void SetServerCertificate (X509Certificate server)
+		//
+		// Copied from the referencesource
+		//
+
+		object m_ServerCertificateOrBytes;
+		object m_ClientCertificateOrBytes;
+
+		/// <devdoc>
+		///    <para>
+		///       Gets the certificate received for this <see cref='System.Net.ServicePoint'/>.
+		///    </para>
+		/// </devdoc>
+		public  X509Certificate Certificate {
+			get {
+				object chkCert = m_ServerCertificateOrBytes;
+				if (chkCert != null && chkCert.GetType() == typeof(byte[]))
+					return (X509Certificate)(m_ServerCertificateOrBytes = new X509Certificate((byte[]) chkCert));
+				else
+					return chkCert as X509Certificate;
+			}
+		}
+		internal void UpdateServerCertificate(X509Certificate certificate)
 		{
-			this.certificate = server;
+			if (certificate != null)
+				m_ServerCertificateOrBytes = certificate.GetRawCertData();
+			else
+				m_ServerCertificateOrBytes = null;
 		}
 
-		internal void SetClientCertificate (X509Certificate clientCertificate)
+		/// <devdoc>
+		/// <para>
+		/// Gets the Client Certificate sent by us to the Server.
+		/// </para>
+		/// </devdoc>
+		public  X509Certificate ClientCertificate {
+			get {
+				object chkCert = m_ClientCertificateOrBytes;
+				if (chkCert != null && chkCert.GetType() == typeof(byte[]))
+					return (X509Certificate)(m_ClientCertificateOrBytes = new X509Certificate((byte[]) chkCert));
+				else
+					return chkCert as X509Certificate;
+			}
+		}
+		internal void UpdateClientCertificate(X509Certificate certificate)
 		{
-			this.clientCertificate = clientCertificate;
+			if (certificate != null)
+				m_ClientCertificateOrBytes = certificate.GetRawCertData();
+			else
+				m_ClientCertificateOrBytes = null;
 		}
 
 		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)

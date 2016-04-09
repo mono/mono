@@ -221,6 +221,7 @@ static void
 do_console_cancel_event (void)
 {
 	static MonoClassField *cancel_handler_field;
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoClass *klass;
 	MonoDelegate *load_value;
@@ -231,7 +232,7 @@ do_console_cancel_event (void)
 	if (!domain->domain)
 		return;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System", "Console");
+	klass = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Console");
 	if (klass == NULL)
 		return;
 
@@ -240,9 +241,11 @@ do_console_cancel_event (void)
 		g_assert (cancel_handler_field);
 	}
 
-	vtable = mono_class_vtable_full (domain, klass, FALSE);
-	if (vtable == NULL)
+	vtable = mono_class_vtable_full (domain, klass, &error);
+	if (vtable == NULL || !is_ok (&error)) {
+		mono_error_cleanup (&error);
 		return;
+	}
 	mono_field_static_get_value (vtable, cancel_handler_field, &load_value);
 	if (load_value == NULL)
 		return;
@@ -251,7 +254,11 @@ do_console_cancel_event (void)
 	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
 	g_assert (method != NULL);
 
-	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL);
+	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL, &error);
+	if (!is_ok (&error)) {
+		g_warning ("Couldn't invoke System.Console cancel handler due to %s", mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+	}
 }
 
 static int need_cancel = FALSE;

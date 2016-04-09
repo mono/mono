@@ -67,7 +67,7 @@ CORLIB_MONO_POSIX_REF = -r:Mono.Posix.dll
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll -r:System.dll \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
@@ -94,39 +94,6 @@ TEST_RESX_RESOURCES_SATELITE = \
 CLEAN_FILES += $(TEST_RESX_RESOURCES)
 
 include $(topdir)/build/library.make
-
-ifdef FIXME_CORLIB_CMP
-# corlib_cmp
-corlib_flags = -unsafe -nostdlib
-cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
-cmppdb = $(cmplib:.dll=.pdb)
-cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
-cmp_makefrag = $(depsdir)/$(PROFILE)_corlib_cmp.dll.makefrag
-cmp_flags = -r:$(PLATFORM_CORLIB) $(corlib_flags)
-
-EXTRA_DISTFILES += corlib_cmp.dll.excludes
-CLEAN_FILES += $(cmplib) $(cmp_response) $(cmp_makefrag) $(cmppdb)
-
-$(cmplib): $(cmp_makefrag) $(cmp_response)
-	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(cmp_flags) -target:library -out:$@ @$(cmp_response)
-
-$(cmp_response): $(sourcefile) corlib_cmp.dll.excludes
-	@echo Creating $@ ...
-	@sort $(sourcefile) corlib_cmp.dll.excludes | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-
-$(cmp_makefrag): $(cmp_response)
-	@echo Creating $@ ...
-	@sed 's,^,$(cmplib): ,' $< >$@
-
-# Since we make corlib_cmp on demand, there isn't a real need
-# to have full dep tracking for it. Also, the generation of this
-# file is busted on Win32 ('sort' seems to mess up line endings),
-# leading to a broken build.
-#
-# -include $(cmp_makefrag)
-
-$(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
-endif
 
 $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@

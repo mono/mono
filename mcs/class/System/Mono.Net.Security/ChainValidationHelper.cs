@@ -160,7 +160,7 @@ namespace Mono.Net.Security
 					certValidationCallback = new ServerCertValidationCallback (callback);
 				}
 				certSelectionCallback = Private.CallbackHelpers.MonoToInternal (settings.ClientCertificateSelectionCallback);
-				fallbackToSPM = settings.UseServicePointManagerCallback;
+				fallbackToSPM = settings.UseServicePointManagerCallback ?? stream != null;
 			}
 
 			if (stream != null) {
@@ -264,7 +264,7 @@ namespace Mono.Net.Security
 				leaf = certs [0];
 
 			if (tlsStream != null)
-				request.ServicePoint.SetServerCertificate (leaf);
+				request.ServicePoint.UpdateServerCertificate (leaf);
 
 			if (leaf == null) {
 				errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
@@ -292,14 +292,12 @@ namespace Mono.Net.Security
 			if (wantsChain)
 				chain = SystemCertificateValidator.CreateX509Chain (certs);
 
-			if (wantsChain || SystemCertificateValidator.NeedsChain (settings))
-				SystemCertificateValidator.BuildX509Chain (certs, chain, ref errors, ref status11);
-
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				var xerrors = (MonoSslPolicyErrors)errors;
 				var xchain = (XX509Chain)(object)chain;
-				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, xchain, out result, ref xerrors, ref status11);
+				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, ref xchain, out result, ref xerrors, ref status11);
+				chain = (X509Chain)(object)xchain;
 				errors = (SslPolicyErrors)xerrors;
 			}
 

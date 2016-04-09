@@ -175,7 +175,14 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (0x32, (int) s [5], "#B7");
 		}
 
-		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
+		//
+		// UTF8 decoding tests are based on the test file from http://www.cl.cam.ac.uk/~mgk25/
+		// The test file is: https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+		// which is licensed under CC-by-4.0: https://creativecommons.org/licenses/by/4.0/
+		//
+		// The file is not copied verbatim, instead individual
+		// tests are based on individual portions of that file
+		//
 
 		[Test]
 		public void T1_Correct_GreekWord_kosme () 

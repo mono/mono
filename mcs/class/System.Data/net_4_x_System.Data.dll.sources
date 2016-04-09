@@ -3,9 +3,11 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/SR.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/AssemblyRef.cs
 
 ReferenceSources/NativeOledbWrapper.cs
 ReferenceSources/Res.cs
+ReferenceSources/Res.missing.cs
 ReferenceSources/ResCategoryAttribute.cs
 ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs

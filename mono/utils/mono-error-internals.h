@@ -43,7 +43,7 @@ typedef struct {
 #define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
 
 void
-mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno);
+mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno) MONO_LLVM_INTERNAL;
 
 #define mono_error_assert_ok(e) mono_error_assert_ok_pos (e, __FILE__, __LINE__);
 
@@ -94,6 +94,15 @@ void
 mono_error_set_generic_error (MonoError *error, const char * name_space, const char *name, const char *msg_format, ...);
 
 void
+mono_error_set_execution_engine (MonoError *error, const char *msg_format, ...);
+
+void
+mono_error_set_not_implemented (MonoError *error, const char *msg_format, ...);
+
+void
+mono_error_set_not_supported (MonoError *error, const char *msg_format, ...);
+
+void
 mono_error_set_exception_instance (MonoError *error, MonoException *exc);
 
 void
@@ -110,5 +119,8 @@ mono_error_raise_exception (MonoError *error);
 
 void
 mono_loader_set_error_from_mono_error (MonoError *oerror);
+
+void
+mono_error_move (MonoError *dest, MonoError *src);
 
 #endif

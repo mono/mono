@@ -1,11 +1,13 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
+../../build/common/AssemblyRef.cs
 EntityRes.cs
 EntityResCategoryAttribute.cs
 EntityResDescriptionAttribute.cs
 Error.cs
-Strings.cs
+ReferenceSources/Strings.cs
+ReferenceSources/SR.cs
 
 ../../../external/referencesource/System.Data.Entity/misc/HResults.cs
 ../../../external/referencesource/System.Data.Entity/System/Data/Common/CommandTrees/AbstractExpressions.cs

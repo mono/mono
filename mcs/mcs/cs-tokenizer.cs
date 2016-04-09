@@ -4058,6 +4058,9 @@ namespace Mono.CSharp
 					--braces;
 					break;
 				case '\\':
+					if (parsing_string_interpolation_quoted != null && parsing_string_interpolation_quoted.Peek ())
+						break;
+
 					++col;
 					int surrogate;
 					ch = escape (ch, out surrogate);

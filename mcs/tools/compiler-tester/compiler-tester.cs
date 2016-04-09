@@ -589,13 +589,12 @@ namespace TestRunner {
 			string[] test_args;
 
 			if (test.CompilerOptions != null) {
-				test_args = new string[2 + test.CompilerOptions.Length];
+				test_args = new string[1 + test.CompilerOptions.Length];
 				test.CompilerOptions.CopyTo (test_args, 0);
 			} else {
-				test_args = new string[2];
+				test_args = new string[1];
 			}
-			test_args[test_args.Length - 2] = test_args[0];
-			test_args[test_args.Length - 1] = "-debug";
+			test_args[test_args.Length - 1] = test_args[0];
 			test_args[0] = test.FileName;
 
 			return tester.Invoke (test_args);
@@ -697,11 +696,9 @@ namespace TestRunner {
 				log_file.WriteLine (msg, rest);
 		}
 		
-		public void LogFileLine (string file, string msg, params object [] args)
+		public void LogFileLine (string file, string msg)
 		{
-			string s = verbose ? 
-				string.Format (msg, args) :
-				file + "...\t" + string.Format (msg, args); 
+			string s = verbose ? msg : file + "...\t" + msg;
 
 			Console.WriteLine (s);
 			if (log_file != null)
@@ -871,7 +868,7 @@ namespace TestRunner {
 					return true;
 
 				if (md.ILSize > il_size) {
-					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size);
+					checker.LogFileLine (test.FileName, string.Format ("{0} (code size reduction {1} -> {2})", decl_type + ": " + m_name, md.ILSize, il_size));
 					md.ILSize = il_size;
 					return true;
 				}
@@ -1442,6 +1439,7 @@ namespace TestRunner {
 
 		static bool TryToMatchErrorMessage (string actual, string expected)
 		{
+			actual = actual.Replace ("\\", "/");
 			var path_mask_start = expected.IndexOf ("*PATH*");
 			if (path_mask_start > 0 && actual.Length > path_mask_start) {
 				var path_mask_continue = expected.Substring (path_mask_start + 6);

@@ -38,6 +38,8 @@ using System.ServiceModel.Web;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	public class MyHostFactory : WebScriptServiceHostFactory
@@ -64,7 +66,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void ScriptGenerator ()
 		{
-			var url = "http://localhost:37564";
+			var url = "http://localhost:" + NetworkHelpers.FindFreePort ();
 			var host = new MyHostFactory ().CreateServiceHost (typeof (HogeService));
 			var binding = new WebHttpBinding ();
 			host.AddServiceEndpoint (typeof (IHogeService), binding, url);

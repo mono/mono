@@ -855,9 +855,9 @@ namespace MonoTests.System.Diagnostics
 
 			p.EnableRaisingEvents = false;
 
-			var exitedCalledCounter = 0;
+			ManualResetEvent mre = new ManualResetEvent (false);
 			p.Exited += (object sender, EventArgs e) => {
-				exitedCalledCounter++;
+				mre.Set ();
 			};
 
 			p.Start ();
@@ -865,7 +865,7 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
-			Assert.AreEqual (0, exitedCalledCounter);
+			Assert.IsFalse (mre.WaitOne (1000));
 		}
 
 		ProcessStartInfo GetCrossPlatformStartInfo ()

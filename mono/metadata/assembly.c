@@ -23,6 +23,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/domain-internals.h>
+#include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/io-layer/io-layer.h>
@@ -49,10 +50,12 @@
 #include <mach-o/dyld.h>
 #endif
 
-/* AssemblyVersionMap: an assembly name and the assembly version set on which it is based */
+/* AssemblyVersionMap: an assembly name, the assembly version set on which it is based, the assembly name it is replaced with and whether only versions lower than the current runtime version should be remapped */
 typedef struct  {
 	const char* assembly_name;
 	guint8 version_set_index;
+	const char* new_assembly_name;
+	gboolean only_lower_versions;
 } AssemblyVersionMap;
 
 /* the default search path is empty, the first slot is replaced with the computed value */
@@ -88,8 +91,12 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"I18N.Other", 0},
 	{"I18N.Rare", 0},
 	{"I18N.West", 0},
-	{"Microsoft.Build.Engine", 2},
-	{"Microsoft.Build.Framework", 2},
+	{"Microsoft.Build.Engine", 2, NULL, TRUE},
+	{"Microsoft.Build.Framework", 2, NULL, TRUE},
+	{"Microsoft.Build.Tasks", 2, "Microsoft.Build.Tasks.v4.0"},
+	{"Microsoft.Build.Tasks.v3.5", 2, "Microsoft.Build.Tasks.v4.0"},
+	{"Microsoft.Build.Utilities", 2, "Microsoft.Build.Utilities.v4.0"},
+	{"Microsoft.Build.Utilities.v3.5", 2, "Microsoft.Build.Utilities.v4.0"},
 	{"Microsoft.VisualBasic", 1},
 	{"Microsoft.VisualC", 1},
 	{"Mono.Cairo", 0},
@@ -105,7 +112,6 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"Mono.Security.Win32", 0},
 	{"Mono.Xml.Ext", 0},
 	{"Novell.Directory.Ldap", 0},
-	{"Npgsql", 0},
 	{"PEAPI", 0},
 	{"System", 0},
 	{"System.ComponentModel.Composition", 2},
@@ -193,6 +199,9 @@ static mono_mutex_t assembly_binding_mutex;
 
 /* Loaded assembly binding info */
 static GSList *loaded_assembly_bindings = NULL;
+
+/* Class lazy loading functions */
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (internals_visible, System.Runtime.CompilerServices, InternalsVisibleToAttribute)
 
 static MonoAssembly*
 mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly, gboolean postload);
@@ -1014,6 +1023,9 @@ mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_ana
 				aname->build == vset->build && aname->revision == vset->revision)
 				return aname;
 		
+			if (framework_assemblies[pos].only_lower_versions && compare_versions ((AssemblyVersionSet*)vset, aname) < 0)
+				return aname;
+
 			if ((aname->major | aname->minor | aname->build | aname->revision) != 0)
 				mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY,
 					"The request to load the assembly %s v%d.%d.%d.%d was remapped to v%d.%d.%d.%d",
@@ -1027,6 +1039,13 @@ mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_ana
 			dest_aname->minor = vset->minor;
 			dest_aname->build = vset->build;
 			dest_aname->revision = vset->revision;
+			if (framework_assemblies[pos].new_assembly_name != NULL) {
+				dest_aname->name = framework_assemblies[pos].new_assembly_name;
+				mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY,
+							"The assembly name %s was remapped to %s",
+							aname->name,
+							dest_aname->name);
+			}
 			return dest_aname;
 		} else if (res < 0) {
 			last = pos - 1;
@@ -1685,7 +1704,7 @@ free_item (gpointer val, gpointer user_data)
  * names in custom attributes.
  *
  * This is an internal method, we need this because when we load mscorlib
- * we do not have the mono_defaults.internals_visible_class loaded yet,
+ * we do not have the internals visible cattr loaded yet,
  * so we need to load these after we initialize the runtime. 
  *
  * LOCKING: Acquires the assemblies lock plus the loader lock.
@@ -1693,6 +1712,7 @@ free_item (gpointer val, gpointer user_data)
 void
 mono_assembly_load_friends (MonoAssembly* ass)
 {
+	MonoError error;
 	int i;
 	MonoCustomAttrInfo* attrs;
 	GSList *list;
@@ -1700,7 +1720,8 @@ mono_assembly_load_friends (MonoAssembly* ass)
 	if (ass->friend_assembly_names_inited)
 		return;
 
-	attrs = mono_custom_attrs_from_assembly (ass);
+	attrs = mono_custom_attrs_from_assembly_checked (ass, &error);
+	mono_error_assert_ok (&error);
 	if (!attrs) {
 		mono_assemblies_lock ();
 		ass->friend_assembly_names_inited = TRUE;
@@ -1725,7 +1746,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		MonoAssemblyName *aname;
 		const gchar *data;
 		/* Do some sanity checking */
-		if (!attr->ctor || attr->ctor->klass != mono_defaults.internals_visible_class)
+		if (!attr->ctor || attr->ctor->klass != mono_class_try_get_internals_visible_class ())
 			continue;
 		if (attr->data_size < 4)
 			continue;
@@ -2512,6 +2533,7 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 MonoAssembly*
 mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *status)
 {
+	MonoError error;
 	MonoAssembly *res;
 	MonoAssemblyName *aname, base_name;
 	MonoAssemblyName mapped_aname;
@@ -2571,7 +2593,15 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 		res->in_gac = TRUE;
 	else {
 		MonoDomain *domain = mono_domain_get ();
-		MonoReflectionAssembly *refasm = mono_try_assembly_resolve (domain, mono_string_new (domain, name), NULL, FALSE);
+		MonoReflectionAssembly *refasm;
+
+		refasm = mono_try_assembly_resolve (domain, mono_string_new (domain, name), NULL, FALSE, &error);
+		if (!mono_error_ok (&error)) {
+			g_free (fullname);
+			mono_assembly_name_free (aname);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+		}
+
 		if (refasm)
 			res = refasm->assembly;
 	}
@@ -2653,8 +2683,9 @@ mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 
 	if (strstr (aname->name, ".dll")) {
 		len = strlen (aname->name) - 4;
-		name = (gchar *)g_malloc (len);
+		name = (gchar *)g_malloc (len + 1);
 		strncpy (name, aname->name, len);
+		name[len] = 0;
 	} else
 		name = g_strdup (aname->name);
 	
@@ -2964,8 +2995,9 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 
 	if (strstr (aname->name, ".dll")) {
 		len = strlen (filename) - 4;
-		name = (gchar *)g_malloc (len);
+		name = (gchar *)g_malloc (len + 1);
 		strncpy (name, aname->name, len);
+		name[len] = 0;
 	} else {
 		name = g_strdup (aname->name);
 	}

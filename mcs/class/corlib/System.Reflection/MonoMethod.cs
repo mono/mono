@@ -149,6 +149,16 @@ namespace System.Reflection {
             return sbName.ToString();
         }
 
+		public override Delegate CreateDelegate (Type delegateType)
+		{
+			return Delegate.CreateDelegate (delegateType, this);
+		}
+
+		public override Delegate CreateDelegate (Type delegateType, object target)
+		{
+			return Delegate.CreateDelegate (delegateType, target, this);
+		}
+
         public override String ToString() 
         {
             return ReturnType.FormatTypeName() + " " + FormatNameAndSig(false);

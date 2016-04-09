@@ -40,6 +40,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mempool-internals.h>
@@ -111,6 +112,7 @@ typedef struct MonoAotOptions {
 	gboolean log_generics;
 	gboolean log_instances;
 	gboolean gen_seq_points_file;
+	char *gen_seq_points_file_path;
 	gboolean direct_pinvoke;
 	gboolean direct_icalls;
 	gboolean no_direct_calls;
@@ -151,8 +153,8 @@ typedef struct MonoAotStats {
 	int methods_without_got_slots, direct_calls, all_calls, llvm_count;
 	int got_slots, offsets_size;
 	int method_categories [METHOD_CAT_NUM];
-	int got_slot_types [MONO_PATCH_INFO_NONE];
-	int got_slot_info_sizes [MONO_PATCH_INFO_NONE];
+	int got_slot_types [MONO_PATCH_INFO_NUM];
+	int got_slot_info_sizes [MONO_PATCH_INFO_NUM];
 	int jit_time, gen_time, link_time;
 } MonoAotStats;
 
@@ -3120,7 +3122,7 @@ is_plt_patch (MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_INTERNAL_METHOD:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
-	case MONO_PATCH_INFO_ICALL_ADDR:
+	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 		return TRUE;
 	default:
@@ -3608,7 +3610,7 @@ add_wrappers (MonoAotCompile *acfg)
 		/* Assembly runtime-invoke (string, bool) [DoAssemblyResolve] */
 		csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 		csig->hasthis = 1;
-		csig->ret = &(mono_class_from_name (
+		csig->ret = &(mono_class_load_from_name (
 											mono_defaults.corlib, "System.Reflection", "Assembly"))->byval_arg;
 		csig->params [0] = &mono_defaults.string_class->byval_arg;
 		csig->params [1] = &mono_defaults.boolean_class->byval_arg;
@@ -3744,7 +3746,11 @@ add_wrappers (MonoAotCompile *acfg)
 			if (method)
 				add_method (acfg, mono_marshal_get_delegate_end_invoke (method));
 
-			cattr = mono_custom_attrs_from_class (klass);
+			cattr = mono_custom_attrs_from_class_checked (klass, &error);
+			if (!is_ok (&error)) {
+				mono_error_cleanup (&error);
+				continue;
+			}
 
 			if (cattr) {
 				int j;
@@ -3909,7 +3915,12 @@ add_wrappers (MonoAotCompile *acfg)
 		 * attribute named MonoPInvokeCallbackAttribute. We search for the attribute by
 		 * name to avoid defining a new assembly to contain it.
 		 */
-		cattr = mono_custom_attrs_from_method (method);
+		cattr = mono_custom_attrs_from_method_checked (method, &error);
+		if (!is_ok (&error)) {
+			char *name = mono_method_get_full_name (method);
+			report_loader_error (acfg, &error, "Failed to load custom attributes from method %s due to %s\n", name, mono_error_get_message (&error));
+			g_free (name);
+		}
 
 		if (cattr) {
 			for (j = 0; j < cattr->num_attrs; ++j)
@@ -3949,8 +3960,9 @@ add_wrappers (MonoAotCompile *acfg)
 				slen = mono_metadata_decode_value (p, &p);
 				n = (char *)g_memdup (p, slen + 1);
 				n [slen] = 0;
-				t = mono_reflection_type_from_name (n, acfg->image);
+				t = mono_reflection_type_from_name_checked (n, acfg->image, &error);
 				g_assert (t);
+				mono_error_assert_ok (&error);
 				g_free (n);
 
 				klass = mono_class_from_mono_type (t);
@@ -4155,7 +4167,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	if (!klass->generic_class && !klass->rank)
 		return;
 
-	if (klass->exception_type)
+	if (mono_class_has_failure (klass))
 		return;
 
 	if (!acfg->ginst_hash)
@@ -4245,6 +4257,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 
 		/* Add the T[]/InternalEnumerator class */
 		if (!strcmp (klass->name, "IEnumerable`1") || !strcmp (klass->name, "IEnumerator`1")) {
+			MonoError error;
 			MonoClass *nclass;
 
 			iter = NULL;
@@ -4253,7 +4266,8 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 					break;
 			}
 			g_assert (nclass);
-			nclass = mono_class_inflate_generic_class (nclass, mono_generic_class_get_context (klass->generic_class));
+			nclass = mono_class_inflate_generic_class_checked (nclass, mono_generic_class_get_context (klass->generic_class), &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 			add_generic_class (acfg, nclass, FALSE, "ICollection<T>");
 		}
 
@@ -4271,43 +4285,58 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 
 	/* Add an instance of GenericComparer<T> which is created dynamically by Comparer<T> */
 	if (klass->image == mono_defaults.corlib && !strcmp (klass->name_space, "System.Collections.Generic") && !strcmp (klass->name, "Comparer`1")) {
+		MonoError error;
 		MonoClass *tclass = mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [0]);
-		MonoClass *icomparable, *gcomparer;
+		MonoClass *icomparable, *gcomparer, *icomparable_inst;
 		MonoGenericContext ctx;
 		MonoType *args [16];
 
 		memset (&ctx, 0, sizeof (ctx));
 
-		icomparable = mono_class_from_name (mono_defaults.corlib, "System", "IComparable`1");
-		g_assert (icomparable);
+		icomparable = mono_class_load_from_name (mono_defaults.corlib, "System", "IComparable`1");
+
 		args [0] = &tclass->byval_arg;
 		ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 
-		if (mono_class_is_assignable_from (mono_class_inflate_generic_class (icomparable, &ctx), tclass)) {
-			gcomparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "GenericComparer`1");
-			g_assert (gcomparer);
-			add_generic_class (acfg, mono_class_inflate_generic_class (gcomparer, &ctx), FALSE, "Comparer<T>");
+		icomparable_inst = mono_class_inflate_generic_class_checked (icomparable, &ctx, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+
+		if (mono_class_is_assignable_from (icomparable_inst, tclass)) {
+			MonoClass *gcomparer_inst;
+			gcomparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "GenericComparer`1");
+			gcomparer_inst = mono_class_inflate_generic_class_checked (gcomparer, &ctx, &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+
+			add_generic_class (acfg, gcomparer_inst, FALSE, "Comparer<T>");
 		}
 	}
 
 	/* Add an instance of GenericEqualityComparer<T> which is created dynamically by EqualityComparer<T> */
 	if (klass->image == mono_defaults.corlib && !strcmp (klass->name_space, "System.Collections.Generic") && !strcmp (klass->name, "EqualityComparer`1")) {
+		MonoError error;
 		MonoClass *tclass = mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [0]);
-		MonoClass *iface, *gcomparer;
+		MonoClass *iface, *gcomparer, *iface_inst;
 		MonoGenericContext ctx;
 		MonoType *args [16];
 
 		memset (&ctx, 0, sizeof (ctx));
 
-		iface = mono_class_from_name (mono_defaults.corlib, "System", "IEquatable`1");
+		iface = mono_class_load_from_name (mono_defaults.corlib, "System", "IEquatable`1");
 		g_assert (iface);
 		args [0] = &tclass->byval_arg;
 		ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 
-		if (mono_class_is_assignable_from (mono_class_inflate_generic_class (iface, &ctx), tclass)) {
-			gcomparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "GenericEqualityComparer`1");
-			g_assert (gcomparer);
-			add_generic_class (acfg, mono_class_inflate_generic_class (gcomparer, &ctx), FALSE, "EqualityComparer<T>");
+		iface_inst = mono_class_inflate_generic_class_checked (iface, &ctx, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+
+		if (mono_class_is_assignable_from (iface_inst, tclass)) {
+			MonoClass *gcomparer_inst;
+			MonoError error;
+
+			gcomparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "GenericEqualityComparer`1");
+			gcomparer_inst = mono_class_inflate_generic_class_checked (gcomparer, &ctx, &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+			add_generic_class (acfg, gcomparer_inst, FALSE, "EqualityComparer<T>");
 		}
 	}
 
@@ -4319,13 +4348,17 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		MonoType *args [16];
 
 		if (mono_class_is_enum (tclass)) {
+			MonoClass *enum_comparer_inst;
+			MonoError error;
+
 			memset (&ctx, 0, sizeof (ctx));
 			args [0] = &tclass->byval_arg;
 			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 
-			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
-			g_assert (enum_comparer);
-			add_generic_class (acfg, mono_class_inflate_generic_class (enum_comparer, &ctx), FALSE, "EqualityComparer<T>");
+			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
+			enum_comparer_inst = mono_class_inflate_generic_class_checked (enum_comparer, &ctx, &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+			add_generic_class (acfg, enum_comparer_inst, FALSE, "EqualityComparer<T>");
 		}
 	}
 
@@ -4337,13 +4370,17 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		MonoType *args [16];
 
 		if (mono_class_is_enum (tclass)) {
+			MonoClass *comparer_inst;
+			MonoError error;
+
 			memset (&ctx, 0, sizeof (ctx));
 			args [0] = &tclass->byval_arg;
 			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 
-			comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "ObjectComparer`1");
-			g_assert (comparer);
-			add_generic_class (acfg, mono_class_inflate_generic_class (comparer, &ctx), FALSE, "Comparer<T>");
+			comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "ObjectComparer`1");
+			comparer_inst = mono_class_inflate_generic_class_checked (comparer, &ctx, &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+			add_generic_class (acfg, comparer_inst, FALSE, "Comparer<T>");
 		}
 	}
 }
@@ -4361,15 +4398,20 @@ add_instances_of (MonoAotCompile *acfg, MonoClass *klass, MonoType **insts, int 
 	memset (&ctx, 0, sizeof (ctx));
 
 	for (i = 0; i < ninsts; ++i) {
+		MonoError error;
+		MonoClass *generic_inst;
 		args [0] = insts [i];
 		ctx.class_inst = mono_metadata_get_generic_inst (1, args);
-		add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx), force, "");
+		generic_inst = mono_class_inflate_generic_class_checked (klass, &ctx, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+		add_generic_class (acfg, generic_inst, force, "");
 	}
 }
 
 static void
 add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method)
 {
+	MonoError error;
 	MonoMethodHeader *header;
 	MonoMethodSignature *sig;
 	int j, depth;
@@ -4384,14 +4426,14 @@ add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method)
 				add_generic_class_with_depth (acfg, mono_class_from_mono_type (sig->params [j]), depth + 1, "arg");
 	}
 
-	header = mono_method_get_header (method);
+	header = mono_method_get_header_checked (method, &error);
 
 	if (header) {
 		for (j = 0; j < header->num_locals; ++j)
 			if (header->locals [j]->type == MONO_TYPE_GENERICINST)
 				add_generic_class_with_depth (acfg, mono_class_from_mono_type (header->locals [j]), depth + 1, "local");
 	} else {
-		mono_loader_clear_error ();
+		mono_error_cleanup (&error); /* FIXME report the error */
 	}
 }
 
@@ -4560,10 +4602,10 @@ add_generic_instances (MonoAotCompile *acfg)
 		insts [ninsts ++] = &mono_defaults.boolean_class->byval_arg;
 
 		/* Add GenericComparer<T> instances for primitive types for Enum.ToString () */
-		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "GenericComparer`1");
+		klass = mono_class_try_load_from_name (acfg->image, "System.Collections.Generic", "GenericComparer`1");
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
-		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "GenericEqualityComparer`1");
+		klass = mono_class_try_load_from_name (acfg->image, "System.Collections.Generic", "GenericEqualityComparer`1");
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
 
@@ -4578,24 +4620,20 @@ add_generic_instances (MonoAotCompile *acfg)
 			insts [ninsts ++] = &mono_defaults.uint32_class->byval_arg;
 			insts [ninsts ++] = &mono_defaults.uint16_class->byval_arg;
 			insts [ninsts ++] = &mono_defaults.byte_class->byval_arg;
-			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
-			g_assert (enum_comparer);
+			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
 
 			ninsts = 0;
 			insts [ninsts ++] = &mono_defaults.int16_class->byval_arg;
-			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "ShortEnumEqualityComparer`1");
-			g_assert (enum_comparer);
+			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "ShortEnumEqualityComparer`1");
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
 
 			ninsts = 0;
 			insts [ninsts ++] = &mono_defaults.sbyte_class->byval_arg;
-			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "SByteEnumEqualityComparer`1");
-			g_assert (enum_comparer);
+			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "SByteEnumEqualityComparer`1");
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
 
-			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "LongEnumEqualityComparer`1");
-			g_assert (enum_comparer);
+			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "LongEnumEqualityComparer`1");
 			ninsts = 0;
 			insts [ninsts ++] = &mono_defaults.int64_class->byval_arg;
 			insts [ninsts ++] = &mono_defaults.uint64_class->byval_arg;
@@ -4604,13 +4642,15 @@ add_generic_instances (MonoAotCompile *acfg)
 
 		/* Add instances of the array generic interfaces for primitive types */
 		/* This will add instances of the InternalArray_ helper methods in Array too */
-		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "ICollection`1");
+		klass = mono_class_try_load_from_name (acfg->image, "System.Collections.Generic", "ICollection`1");
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
-		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "IList`1");
+
+		klass = mono_class_try_load_from_name (acfg->image, "System.Collections.Generic", "IList`1");
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
-		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "IEnumerable`1");
+
+		klass = mono_class_try_load_from_name (acfg->image, "System.Collections.Generic", "IEnumerable`1");
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
 
@@ -4641,7 +4681,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			MonoGenericContext ctx;
 			MonoType *args [16];
 			MonoMethod *m;
-			MonoClass *interlocked_klass = mono_class_from_name (mono_defaults.corlib, "System.Threading", "Interlocked");
+			MonoClass *interlocked_klass = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "Interlocked");
 			gpointer iter = NULL;
 
 			while ((m = mono_class_get_methods (interlocked_klass, &iter))) {
@@ -4661,7 +4701,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			MonoGenericContext ctx;
 			MonoType *args [16];
 			MonoMethod *m;
-			MonoClass *volatile_klass = mono_class_from_name (mono_defaults.corlib, "System.Threading", "Volatile");
+			MonoClass *volatile_klass = mono_class_try_load_from_name (mono_defaults.corlib, "System.Threading", "Volatile");
 			gpointer iter = NULL;
 
 			if (volatile_klass) {
@@ -4742,10 +4782,10 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 			if (direct_callable)
 				return TRUE;
 		}
-	} else if ((patch_info->type == MONO_PATCH_INFO_ICALL_ADDR && patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+	} else if ((patch_info->type == MONO_PATCH_INFO_ICALL_ADDR_CALL && patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 		if (acfg->aot_opts.direct_pinvoke)
 			return TRUE;
-	} else if (patch_info->type == MONO_PATCH_INFO_ICALL_ADDR) {
+	} else if (patch_info->type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 		if (acfg->aot_opts.direct_icalls)
 			return TRUE;
 		return FALSE;
@@ -4926,7 +4966,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 	GPtrArray *patches;
 	MonoJumpInfo *patch_info;
 	MonoDebugSourceLocation **locs = NULL;
-	gboolean skip;
+	gboolean skip, prologue_end = FALSE;
 #ifdef MONO_ARCH_AOT_SUPPORTED
 	gboolean direct_call, external_call;
 	guint32 got_slot;
@@ -4961,10 +5001,16 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 		if (locs && locs [i]) {
 			MonoDebugSourceLocation *loc = locs [i];
 			int findex;
+			const char *options;
 
 			findex = get_file_index (acfg, loc->source_file);
 			emit_unset_mode (acfg);
-			fprintf (acfg->fp, ".loc %d %d 0\n", findex, loc->row);
+			if (!prologue_end)
+				options = " prologue_end";
+			else
+				options = "";
+			prologue_end = TRUE;
+			fprintf (acfg->fp, ".loc %d %d 0%s\n", findex, loc->row, options);
 			mono_debug_symfile_free_location (loc);
 		}
 
@@ -5028,7 +5074,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 					}
 
 					acfg->stats.all_calls ++;
-				} else if (patch_info->type == MONO_PATCH_INFO_ICALL_ADDR) {
+				} else if (patch_info->type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 					if (!got_only && is_direct_callable (acfg, method, patch_info)) {
 						if (!(patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 							direct_pinvoke = mono_lookup_icall_symbol (patch_info->data.method);
@@ -5342,6 +5388,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
 	case MONO_PATCH_INFO_ICALL_ADDR:
+	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_METHOD_RGCTX:
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT:
 		encode_method_ref (acfg, patch_info->data.method, p, &p);
@@ -5382,9 +5429,8 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		MonoClass *ex_class;
 
 		ex_class =
-			mono_class_from_name (mono_defaults.exception_class->image,
+			mono_class_load_from_name (mono_defaults.exception_class->image,
 								  "System", (const char *)patch_info->data.target);
-		g_assert (ex_class);
 		encode_klass_ref (acfg, ex_class, p, &p);
 		break;
 	}
@@ -5564,11 +5610,13 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	buf_size = (patches->len < 1000) ? 40960 : 40960 + (patches->len * 64);
 	p = buf = (guint8 *)g_malloc (buf_size);
 
-	if (mono_class_get_cctor (method->klass))
+	if (mono_class_get_cctor (method->klass)) {
+		encode_value (1, p, &p);
 		encode_klass_ref (acfg, method->klass, p, &p);
-	else
+	} else {
 		/* Not needed when loading the method */
 		encode_value (0, p, &p);
+	}
 
 	g_assert (!(cfg->opt & MONO_OPT_SHARED));
 
@@ -6016,7 +6064,8 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 		debug_sym = g_strdup_printf ("%s_rgctx_fetch_%d", prefix, acfg->label_generator ++);
 		break;
-	case MONO_PATCH_INFO_ICALL_ADDR: {
+	case MONO_PATCH_INFO_ICALL_ADDR:
+	case MONO_PATCH_INFO_ICALL_ADDR_CALL: {
 		char *s = get_debug_sym (ji->data.method, "", cache);
 		
 		debug_sym = g_strdup_printf ("%s_icall_native_%s", prefix, s);
@@ -6760,7 +6809,12 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->ld_flags = g_strdup (arg + strlen ("ld-flags="));			
 		} else if (str_begins_with (arg, "soft-debug")) {
 			opts->soft_debug = TRUE;
+		} else if (str_begins_with (arg, "gen-seq-points-file=")) {
+			debug_options.gen_seq_points_compact_data = TRUE;
+			opts->gen_seq_points_file = TRUE;
+			opts->gen_seq_points_file_path = g_strdup (arg + strlen ("gen-seq-points-file="));;
 		} else if (str_begins_with (arg, "gen-seq-points-file")) {
+			debug_options.gen_seq_points_compact_data = TRUE;
 			opts->gen_seq_points_file = TRUE;
 		} else if (str_begins_with (arg, "direct-pinvoke")) {
 			opts->direct_pinvoke = TRUE;
@@ -7099,6 +7153,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	gboolean skip;
 	int index, depth;
 	MonoMethod *wrapped;
+	GTimer *jit_timer;
 	JitFlags flags;
 
 	if (acfg->aot_opts.metadata_only)
@@ -7153,7 +7208,11 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_LLVM_ONLY | JIT_FLAG_EXPLICIT_NULL_CHECKS);
 	if (acfg->aot_opts.no_direct_calls)
 		flags = (JitFlags)(flags | JIT_FLAG_NO_DIRECT_ICALLS);
+
+	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
+	mono_time_track_end (&mono_jit_stats.jit_time, jit_timer);
+
 	mono_loader_clear_error ();
 
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
@@ -7401,6 +7460,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	}
 	/* Make a copy of the argument/local info */
 	{
+		MonoError error;
 		MonoInst **args, **locals;
 		MonoMethodSignature *sig;
 		MonoMethodHeader *header;
@@ -7414,7 +7474,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		}
 		cfg->args = args;
 
-		header = mono_method_get_header (method);
+		header = mono_method_get_header_checked (method, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		locals = (MonoInst **)mono_mempool_alloc (acfg->mempool, sizeof (MonoInst*) * header->num_locals);
 		for (i = 0; i < header->num_locals; ++i) {
 			locals [i] = (MonoInst *)mono_mempool_alloc (acfg->mempool, sizeof (MonoInst));
@@ -7451,6 +7512,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	acfg->cfgs [index] = cfg;
 
 	g_hash_table_insert (acfg->method_to_cfg, cfg->orig_method, cfg);
+
+	mono_update_jit_stats (cfg);
 
 	/*
 	if (cfg->orig_method->wrapper_type)
@@ -7782,7 +7845,7 @@ mono_aot_get_direct_call_symbol (MonoJumpInfoType type, gconstpointer data)
 		if (type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
 			/* Call to a C function implementing a jit icall */
 			sym = mono_lookup_jit_icall_symbol ((const char *)data);
-		} else if (type == MONO_PATCH_INFO_ICALL_ADDR) {
+		} else if (type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 			MonoMethod *method = (MonoMethod *)data;
 			if (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 				sym = mono_lookup_icall_symbol (method);
@@ -7812,7 +7875,7 @@ mono_aot_get_plt_symbol (MonoJumpInfoType type, gconstpointer data)
 		if (type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
 			/* Call to a C function implementing a jit icall */
 			sym = mono_lookup_jit_icall_symbol ((const char *)data);
-		} else if (type == MONO_PATCH_INFO_ICALL_ADDR) {
+		} else if (type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 			MonoMethod *method = (MonoMethod *)data;
 			if (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 				sym = mono_lookup_icall_symbol (method);
@@ -7914,7 +7977,6 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * then removing tailcallelim + the global opts.
 	 * strip-dead-prototypes deletes unused intrinsics definitions.
 	 */
-	//opts = g_strdup ("-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -simplifycfg -domtree -verify");
 	/* The dse pass is disabled because of #13734 and #17616 */
 	/*
 	 * The dse bug is in DeadStoreElimination.cpp:isOverwrite ():
@@ -7930,7 +7992,11 @@ emit_llvm_file (MonoAotCompile *acfg)
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	else
+#if LLVM_API_VERSION > 100
+		opts = g_strdup ("-O2");
+#else
 		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
+#endif
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
 	aot_printf (acfg, "Executing opt: %s\n", command);
 	if (execute_system (command) != 0)
@@ -7964,6 +8030,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 	g_string_append (acfg->llc_args, " -disable-gnu-eh-frame -enable-mono-eh-frame");
 
 	g_string_append_printf (acfg->llc_args, " -mono-eh-frame-symbol=%s%s", acfg->user_symbol_prefix, acfg->llvm_eh_frame_symbol);
+
+#if LLVM_API_VERSION > 100
+	g_string_append_printf (acfg->llc_args, " -disable-tail-calls");
+#endif
 
 #if defined(TARGET_MACH) && defined(TARGET_ARM)
 	/* ios requires PIC code now */
@@ -8600,8 +8670,8 @@ emit_exception_info (MonoAotCompile *acfg)
 	}
 
 	if (seq_points_to_file) {
-		char *seq_points_aot_file;
-		mono_image_get_aot_seq_point_path (acfg->image, &seq_points_aot_file);
+		char *seq_points_aot_file = acfg->aot_opts.gen_seq_points_file_path ? acfg->aot_opts.gen_seq_points_file_path
+			: g_strdup_printf("%s%s", acfg->image->name, SEQ_POINT_AOT_EXT);
 		mono_seq_point_data_write (&sp_data, seq_points_aot_file);
 		mono_seq_point_data_free (&sp_data);
 		g_free (seq_points_aot_file);
@@ -10000,11 +10070,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	memset (&acfg->aot_opts, 0, sizeof (acfg->aot_opts));
 	acfg->aot_opts.write_symbols = TRUE;
-	acfg->aot_opts.ntrampolines = 1024;
-	acfg->aot_opts.nrgctx_trampolines = 1024;
-	acfg->aot_opts.nimt_trampolines = 128;
+	acfg->aot_opts.ntrampolines = 4096;
+	acfg->aot_opts.nrgctx_trampolines = 4096;
+	acfg->aot_opts.nimt_trampolines = 512;
 	acfg->aot_opts.nrgctx_fetch_trampolines = 128;
-	acfg->aot_opts.ngsharedvt_arg_trampolines = 128;
+	acfg->aot_opts.ngsharedvt_arg_trampolines = 512;
 	acfg->aot_opts.llvm_path = g_strdup ("");
 	acfg->aot_opts.temp_path = g_strdup ("");
 #ifdef MONOTOUCH
@@ -10265,13 +10335,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		}
 	}
 
-	if (acfg->aot_opts.dwarf_debug && acfg->aot_opts.asm_only && acfg->aot_opts.gnu_asm) {
+	if (acfg->aot_opts.dwarf_debug && acfg->aot_opts.gnu_asm) {
 		/*
 		 * CLANG supports GAS .file/.loc directives, so emit line number information this way
-		 * FIXME: CLANG only emits line number info for .loc directives followed by assembly, not
-		 * .byte directives.
 		 */
-		//acfg->gas_line_numbers = TRUE;
+		acfg->gas_line_numbers = TRUE;
 	}
 
 	if ((!acfg->aot_opts.nodebug || acfg->aot_opts.dwarf_debug) && acfg->has_jitted_code) {
@@ -10279,7 +10347,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 			aot_printerrf (acfg, "The dwarf AOT option requires the --debug option.\n");
 			return 1;
 		}
-		acfg->dwarf = mono_dwarf_writer_create (acfg->w, NULL, 0, FALSE, !acfg->gas_line_numbers);
+		acfg->dwarf = mono_dwarf_writer_create (acfg->w, NULL, 0, !acfg->gas_line_numbers);
 	}
 
 	if (acfg->w)
@@ -10412,7 +10480,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		int i;
 
 		aot_printf (acfg, "GOT slot distribution:\n");
-		for (i = 0; i < MONO_PATCH_INFO_NONE; ++i)
+		for (i = 0; i < MONO_PATCH_INFO_NUM; ++i)
 			if (acfg->stats.got_slot_types [i])
 				aot_printf (acfg, "\t%s: %d (%d)\n", get_patch_name (i), acfg->stats.got_slot_types [i], acfg->stats.got_slot_info_sizes [i]);
 		aot_printf (acfg, "\nMethod stats:\n");

@@ -33,6 +33,9 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_SCHED_GETAFFINITY
+#include <sched.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 #if defined(HOST_WIN32) || defined(DISABLE_SOCKETS)
@@ -2493,12 +2496,12 @@ dump_sample_hits (MonoProfiler *prof, StatBuffer *sbuf)
 static int
 mono_cpu_count (void)
 {
-	int count = 0;
 #ifdef PLATFORM_ANDROID
 	/* Android tries really hard to save power by powering off CPUs on SMP phones which
 	 * means the normal way to query cpu count returns a wrong value with userspace API.
 	 * Instead we use /sys entries to query the actual hardware CPU count.
 	 */
+	int count = 0;
 	char buffer[8] = {'\0'};
 	int present = open ("/sys/devices/system/cpu/present", O_RDONLY);
 	/* Format of the /sys entry is a cpulist of indexes which in the case
@@ -2513,13 +2516,42 @@ mono_cpu_count (void)
 	if (count > 0)
 		return count + 1;
 #endif
-#ifdef _SC_NPROCESSORS_ONLN
-	count = sysconf (_SC_NPROCESSORS_ONLN);
-	if (count > 0)
-		return count;
+
+#if defined(HOST_ARM) || defined (HOST_ARM64)
+
+	/* ARM platforms tries really hard to save power by powering off CPUs on SMP phones which
+	 * means the normal way to query cpu count returns a wrong value with userspace API. */
+
+#ifdef _SC_NPROCESSORS_CONF
+	{
+		int count = sysconf (_SC_NPROCESSORS_CONF);
+		if (count > 0)
+			return count;
+	}
 #endif
+
+#else
+
+#ifdef HAVE_SCHED_GETAFFINITY
+	{
+		cpu_set_t set;
+		if (sched_getaffinity (getpid (), sizeof (set), &set) == 0)
+			return CPU_COUNT (&set);
+	}
+#endif
+#ifdef _SC_NPROCESSORS_ONLN
+	{
+		int count = sysconf (_SC_NPROCESSORS_ONLN);
+		if (count > 0)
+			return count;
+	}
+#endif
+
+#endif /* defined(HOST_ARM) || defined (HOST_ARM64) */
+
 #ifdef USE_SYSCTL
 	{
+		int count;
 		int mib [2];
 		size_t len = sizeof (int);
 		mib [0] = CTL_HW;
@@ -3581,6 +3613,7 @@ create_method_node (MonoMethod *method)
 static gboolean
 coverage_filter (MonoProfiler *prof, MonoMethod *method)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoImage *image;
 	MonoAssembly *assembly;
@@ -3691,7 +3724,8 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	}
 
 	COVERAGE_DEBUG(fprintf (stderr, "   Handling coverage for %s\n", mono_method_get_name (method));)
-	header = mono_method_get_header (method);
+	header = mono_method_get_header_checked (method, &error);
+	mono_error_cleanup (&error);
 
 	mono_method_header_get_code (header, &code_size, NULL);
 

@@ -191,6 +191,8 @@ namespace Mono.CSharp
 
 			DontSetConditionalAccessReceiver = 1 << 16,
 
+			NameOfScope = 1 << 17,
+
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
 			///

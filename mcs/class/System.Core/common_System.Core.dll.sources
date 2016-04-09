@@ -8,6 +8,7 @@ Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 
 ReferenceSources/SR.cs
+ReferenceSources/SR.missing.cs
 ReferenceSources/Error.cs
 ReferenceSources/Strings.cs
 
@@ -184,6 +185,7 @@ ReferenceSources/Strings.cs
 ../../../external/referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
 
 ../../../external/referencesource/System.Core/System/Security/Cryptography/Aes.cs
+../../../external/referencesource/System.Core/System/Security/Cryptography/CngKeyBlobFormat.cs
 ../../../external/referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
 ../../../external/referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
 

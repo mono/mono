@@ -184,6 +184,9 @@ namespace System.Net {
 
 		public static IPAddress Parse (string ipString)
 		{
+            if (ipString == null)
+                throw new ArgumentNullException("ipString");
+
 			IPAddress ret;
 			if (TryParse (ipString, out ret))
 				return ret;
@@ -193,7 +196,10 @@ namespace System.Net {
 		public static bool TryParse (string ipString, out IPAddress address)
 		{
 			if (ipString == null)
-				throw new ArgumentNullException ("ipString");
+			{
+				address = null;
+				return false;
+			}
 
 			if ((address = ParseIPV4 (ipString)) == null)
 				if ((address = ParseIPV6 (ipString)) == null)

@@ -118,7 +118,7 @@ __bump-branch-%:
 	@if [ "$(COMMIT)" = "1" ]; then echo "[acceptance-tests] Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." | git commit -F - $(CONFIG); fi
 
 __bump-current-version-%:
-	REV=$(shell cd $(TOP)/../$* && git log -1 --pretty=format:%H); \
+	REV=$(shell cd $(ACCEPTANCE_TESTS_PATH)/$* && git log -1 --pretty=format:%H); \
 	python versions.py set-rev $* $$REV; \
 	if [ "$(COMMIT)" = "1" ]; then echo "[acceptance-tests] Bump $* to pick up $$REV:" | git commit -F - $(CONFIG); fi
 

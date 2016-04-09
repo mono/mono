@@ -587,7 +587,7 @@ namespace System.Data.SqlClient {
 
 		public void WriteToServer (IDataReader reader)
 		{
-			DataTable table = new DataTable ();
+			DataTable table = new DataTable ("SourceTable");
 			SqlDataAdapter adapter = new SqlDataAdapter ();
 			adapter.FillInternal (table, reader);
 			BulkCopyToServer (table, 0);

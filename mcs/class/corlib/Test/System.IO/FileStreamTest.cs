@@ -1660,6 +1660,25 @@ namespace MonoTests.System.IO
 			
 		}
 
+		[Test]
+		public void OpenCharDeviceRepeatedly ()
+		{
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=38408
+			try {
+				using (var f = new FileStream ("/dev/zero", FileMode.Open))
+				{
+				}
+			} catch (FileNotFoundException) {
+				// Only run this test on platforms where /dev/zero exists
+				Assert.Ignore();
+			}
+
+			// this shouldn't throw
+			using (var g = new FileStream ("/dev/zero", FileMode.Open))
+			{
+			}
+		}
+
 #if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()
@@ -1706,5 +1725,30 @@ namespace MonoTests.System.IO
 			}
 		}
 #endif
+
+		[Test] // Covers #11699
+		public void ReadWriteFileLength ()
+		{
+			int bufferSize = 128;
+			int readLength = 1;
+			int writeLength = bufferSize + 1;
+
+			string path = TempFolder + DSC + "readwritefilelength.tmp";
+
+			try {
+				File.WriteAllBytes (path, new byte [readLength + 1]);
+
+				using (var file = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read,
+												 bufferSize, FileOptions.SequentialScan))
+				{
+					file.Read (new byte [readLength], 0, readLength);
+					file.Write (new byte [writeLength], 0, writeLength);
+
+					Assert.AreEqual (readLength + writeLength, file.Length);
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
 	}
 }

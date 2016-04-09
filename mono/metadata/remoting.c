@@ -66,6 +66,11 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst);
 static MonoReflectionType *
 type_from_handle (MonoType *handle);
 
+/* Class lazy loading functions */
+static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, System.Runtime.Remoting, RemotingServices)
+static GENERATE_GET_CLASS_WITH_CACHE (call_context, System.Runtime.Remoting.Messaging, CallContext)
+static GENERATE_GET_CLASS_WITH_CACHE (context, System.Runtime.Remoting.Contexts, Context)
+
 static mono_mutex_t remoting_mutex;
 static gboolean remoting_mutex_inited;
 
@@ -153,7 +158,7 @@ mono_remoting_marshal_init (void)
 	byte_array_class = mono_array_class_get (mono_defaults.byte_class, 1);
 
 #ifndef DISABLE_JIT
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices");
+	klass = mono_class_get_remoting_services_class ();
 	method_rs_serialize = mono_class_get_method_from_name (klass, "SerializeCallData", -1);
 	g_assert (method_rs_serialize);
 	method_rs_deserialize = mono_class_get_method_from_name (klass, "DeserializeCallData", -1);
@@ -169,11 +174,11 @@ mono_remoting_marshal_init (void)
 	method_exc_fixexc = mono_class_get_method_from_name (klass, "FixRemotingException", -1);
 	g_assert (method_exc_fixexc);
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Messaging", "CallContext");
+	klass = mono_class_get_call_context_class ();
 	method_set_call_context = mono_class_get_method_from_name (klass, "SetCurrentCallContext", -1);
 	g_assert (method_set_call_context);
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
+	klass = mono_class_get_context_class ();
 	method_needs_context_sink = mono_class_get_method_from_name (klass, "get_NeedsContextSink", -1);
 	g_assert (method_needs_context_sink);
 #endif	
@@ -368,9 +373,10 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 					mparams[i] = *((gpointer *)params [i]);
 				} else {
 					/* runtime_invoke expects a boxed instance */
-					if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i])))
-						mparams[i] = mono_nullable_box ((guint8 *)params [i], klass);
-					else
+					if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
+						mparams[i] = mono_nullable_box ((guint8 *)params [i], klass, &error);
+						mono_error_raise_exception (&error); /* FIXME don't raise here */
+					} else
 						mparams[i] = params [i];
 				}
 			} else {
@@ -386,7 +392,8 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL);
 
-	res = mono_remoting_invoke ((MonoObject *)this_obj->rp, msg, &exc, &out_args);
+	res = mono_remoting_invoke ((MonoObject *)this_obj->rp, msg, &exc, &out_args, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	if (exc)
 		mono_raise_exception ((MonoException *)exc);
@@ -2003,7 +2010,10 @@ mono_marshal_xdomain_copy_value (MonoObject *val)
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8: {
-		return mono_value_box (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject));
+		MonoObject *res = mono_value_box_checked (domain, mono_object_class (val), ((char*)val) + sizeof(MonoObject), &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		return res;
+
 	}
 	case MONO_TYPE_STRING: {
 		MonoString *str = (MonoString *) val;

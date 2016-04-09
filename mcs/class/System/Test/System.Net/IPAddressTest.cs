@@ -532,16 +532,11 @@ public class IPAddressTest
 	public void TryParse_IpString_Null ()
 	{
 		IPAddress i;
-
-		try {
-			IPAddress.TryParse ((string) null, out i);
-			Assert.Fail ("#1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-			Assert.AreEqual ("ipString", ex.ParamName, "#5");
-		}
+		
+		bool val1 = IPAddress.TryParse ((string) null, out i);
+		
+		Assert.IsFalse (val1, "#1");
+		Assert.IsNull (i, "#2");
 	}
 
 	[Test]

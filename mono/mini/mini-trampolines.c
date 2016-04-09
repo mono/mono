@@ -1006,16 +1006,13 @@ mono_aot_plt_trampoline (mgreg_t *regs, guint8 *code, guint8 *aot_module,
 {
 	guint32 plt_info_offset = mono_aot_get_plt_info_offset (regs, code);
 	gpointer res;
+	MonoError error;
 
 	trampoline_calls ++;
 
-	res = mono_aot_plt_resolve (aot_module, plt_info_offset, code);
+	res = mono_aot_plt_resolve (aot_module, plt_info_offset, code, &error);
 	if (!res) {
-		if (mono_loader_get_last_error ()) {
-			MonoError error;
-
-			mono_error_init (&error);
-			mono_error_set_from_loader_error (&error);
+		if (!mono_error_ok (&error)) {
 			mono_error_set_pending_exception (&error);
 			return NULL;
 		}
@@ -1058,36 +1055,6 @@ mono_rgctx_lazy_fetch_trampoline (mgreg_t *regs, guint8 *code, gpointer data, gu
 		return NULL;
 	}
 	return res;
-}
-
-/*
- * Precompute data to speed up mono_delegate_trampoline ().
- * METHOD might be NULL.
- */
-static MonoDelegateTrampInfo*
-create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
-{
-	MonoDelegateTrampInfo *tramp_data;
-	MonoMethod *invoke;
-	MonoError err;
-
-	// Precompute the delegate invoke impl and pass it to the delegate trampoline
-	invoke = mono_get_delegate_invoke (klass);
-	g_assert (invoke);
-
-	tramp_data = (MonoDelegateTrampInfo *)mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
-	tramp_data->invoke = invoke;
-	tramp_data->invoke_sig = mono_method_signature (invoke);
-	tramp_data->impl_this = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), TRUE);
-	tramp_data->impl_nothis = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), FALSE);
-	tramp_data->method = method;
-	if (method) {
-		mono_error_init (&err);
-		tramp_data->sig = mono_method_signature_checked (method, &err);
-		tramp_data->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
-	}
-
-	return tramp_data;
 }
 
 /**
@@ -1452,12 +1419,13 @@ mono_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, M
 }
 
 gpointer
-mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper)
+mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error)
 {
-	MonoError error;
 	MonoJitInfo *ji;
 	gpointer code;
 	guint32 code_size = 0;
+
+	mono_error_init (error);
 
 	code = mono_jit_find_compiled_method_with_jit_info (domain, method, &ji);
 	/*
@@ -1470,9 +1438,9 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 		return code;
 
 	if (mono_llvm_only) {
-		code = mono_jit_compile_method (method, &error);
-		if (!mono_error_ok (&error))
-			mono_error_raise_exception (&error);
+		code = mono_jit_compile_method (method, error);
+		if (!mono_error_ok (error))
+			return NULL;
 		return code;
 	}
 
@@ -1511,10 +1479,11 @@ method_not_found (void)
 }
 
 gpointer
-mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method)
+mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *error)
 {
-	MonoError error;
 	gpointer tramp;
+
+	mono_error_init (error);
 
 	if (mono_aot_only) {
 		/* Avoid creating trampolines if possible */
@@ -1528,9 +1497,9 @@ mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method)
 				/* These wrappers are not generated */
 				return method_not_found;
 			/* Methods are lazily initialized on first call, so this can't lead recursion */
-			code = mono_jit_compile_method (method, &error);
-			if (!mono_error_ok (&error))
-				mono_error_raise_exception (&error);
+			code = mono_jit_compile_method (method, error);
+			if (!mono_error_ok (error))
+				return NULL;
 			return code;
 		}
 	}
@@ -1551,12 +1520,6 @@ mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method)
 
 	return tramp;
 }	
-
-gpointer
-mono_create_jit_trampoline (MonoMethod *method)
-{
-	return mono_create_jit_trampoline_in_domain (mono_domain_get (), method);
-}
 
 gpointer
 mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
@@ -1583,11 +1546,13 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 /*
  * mono_create_delegate_trampoline_info:
  *
- *   Create a delegate trampoline for the KLASS+METHOD pair.
+ *  Create a trampoline info structure for the KLASS+METHOD pair.
  */
 MonoDelegateTrampInfo*
 mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
 {
+	MonoMethod *invoke;
+	MonoError error;
 	MonoDelegateTrampInfo *tramp_info;
 	MonoClassMethodPair pair, *dpair;
 	guint32 code_size = 0;
@@ -1600,8 +1565,20 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	if (tramp_info)
 		return tramp_info;
 
-	tramp_info = create_delegate_trampoline_data (domain, klass, method);
+	invoke = mono_get_delegate_invoke (klass);
+	g_assert (invoke);
 
+	tramp_info = (MonoDelegateTrampInfo *)mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
+	tramp_info->invoke = invoke;
+	tramp_info->invoke_sig = mono_method_signature (invoke);
+	tramp_info->impl_this = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), TRUE);
+	tramp_info->impl_nothis = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), FALSE);
+	tramp_info->method = method;
+	if (method) {
+		mono_error_init (&error);
+		tramp_info->sig = mono_method_signature_checked (method, &error);
+		tramp_info->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
+	}
 	tramp_info->invoke_impl = mono_create_specific_trampoline (tramp_info, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
 	g_assert (code_size);
 

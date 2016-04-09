@@ -509,9 +509,19 @@ load_metadata_ptrs (MonoImage *image, MonoCLIImageInfo *iinfo)
 
 	i = ((MonoImageLoader*)image->loader)->load_tables (image);
 	g_assert (image->heap_guid.data);
-	g_assert (image->heap_guid.size >= 16);
 
-	image->guid = mono_guid_to_string ((guint8*)image->heap_guid.data);
+	if (!image->metadata_only) {
+		g_assert (image->heap_guid.size >= 16);
+
+		image->guid = mono_guid_to_string ((guint8*)image->heap_guid.data);
+	} else {
+		/* PPDB files have no guid */
+		guint8 empty_guid [16];
+
+		memset (empty_guid, 0, sizeof (empty_guid));
+
+		image->guid = mono_guid_to_string (empty_guid);
+	}
 
 	return i;
 }
@@ -1046,7 +1056,8 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 			}
 		}
 		if (!image->loader) {
-			*status = MONO_IMAGE_IMAGE_INVALID;
+			if (status)
+				*status = MONO_IMAGE_IMAGE_INVALID;
 			goto invalid_image;
 		}
 
@@ -1069,13 +1080,13 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		goto done;
 	}
 
-	if (image->loader == &pe_loader && !mono_verifier_verify_cli_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_cli_data (image, &errors))
 		goto invalid_image;
 
 	if (!mono_image_load_cli_data (image))
 		goto invalid_image;
 
-	if (image->loader == &pe_loader && !mono_verifier_verify_table_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_table_data (image, &errors))
 		goto invalid_image;
 
 	mono_image_load_names (image);
