@@ -455,6 +455,8 @@ static void thread_cleanup (MonoInternalThread *thread)
 	if (!mono_thread_info_lookup (thread->tid)->tools_thread)
 		mono_profiler_thread_end (thread->tid);
 
+	mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
+
 	if (thread == mono_thread_internal_current ()) {
 		/*
 		 * This will signal async signal handlers that the thread has exited.
