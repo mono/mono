@@ -2023,16 +2023,20 @@ mono_sample_hit (MonoProfiler *profiler, unsigned char *ip, void *context)
 	InterlockedIncrement (&sample_hits);
 
 	uint64_t now = current_time ();
+	SampleHit *sample;
 
-	SampleHit *sample = (SampleHit *) mono_lock_free_queue_dequeue (&profiler->sample_reuse_queue);
-	gboolean hazardous;
+again:
+	sample = (SampleHit *) mono_lock_free_queue_dequeue (&profiler->sample_reuse_queue);
 
-	if (sample && (hazardous = mono_thread_is_pointer_hazardous (sample))) {
+	if (sample && mono_thread_is_pointer_hazardous (sample)) {
 		mono_lock_free_queue_node_init (&sample->node, TRUE);
 		mono_thread_hazardous_try_free (sample, reuse_sample_hit);
+
+		// Hazards are very rare, so just try again.
+		goto again;
 	}
 
-	if (!sample || hazardous) {
+	if (!sample) {
 		/*
 		 * If we're out of reusable sample events and we're not allowed to
 		 * allocate more, we have no choice but to drop the event.
