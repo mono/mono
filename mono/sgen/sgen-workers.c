@@ -38,7 +38,14 @@ static mono_mutex_t workers_distribute_gray_queue_lock;
 static SgenGrayQueue workers_distribute_gray_queue;
 static gboolean workers_distribute_gray_queue_inited;
 
-static GCObject * volatile fast_enqueued;
+typedef struct {
+	GCObject * volatile obj;
+	char padding [64 - sizeof (void*)];
+} FastEnqueueSlot;
+
+#define NUM_FAST_ENQUEUE_SLOTS	7
+
+static FastEnqueueSlot fast_enqueue_slots [NUM_FAST_ENQUEUE_SLOTS];
 
 /*
  * Allowed transitions:
@@ -179,27 +186,40 @@ drain_queue_into_queue (SgenGrayQueue *dest, SgenGrayQueue *src)
 static gboolean
 fast_enqueue_slots_empty (void)
 {
-	return fast_enqueued == NULL;
+	int i;
+	for (i = 0; i < NUM_FAST_ENQUEUE_SLOTS; ++i) {
+		if (fast_enqueue_slots [i].obj)
+			return FALSE;
+	}
+	return TRUE;
 }
 
 gboolean
 sgen_workers_drain_fast_enqueue_slots (SgenGrayQueue *queue)
 {
-	GCObject *obj = fast_enqueued;
+	int i;
 	GCObject *old;
-	gboolean success;
+	gboolean success = FALSE;
 
-	if (!obj)
-		return FALSE;
+	for (i = 0; i < NUM_FAST_ENQUEUE_SLOTS; ++i) {
+		GCObject *obj = fast_enqueue_slots [i].obj;
 
-	old = InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueued, NULL, obj);
-	SGEN_ASSERT (0, obj == old, "Why couldn't we NULL the fast enqueue object?");
+		if (!obj)
+			continue;
 
-	//fast_enqueued = NULL;
+		/*
+		old = InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueue_slots [i].obj, NULL, obj);
+		SGEN_ASSERT (0, obj == old, "Why couldn't we NULL the fast enqueue object?");
+		*/
 
-	GRAY_OBJECT_ENQUEUE (queue, obj, sgen_obj_get_descriptor (obj));
+		fast_enqueue_slots [i].obj = NULL;
 
-	return TRUE;
+		GRAY_OBJECT_ENQUEUE (queue, obj, sgen_obj_get_descriptor (obj));
+
+		success = TRUE;
+	}
+
+	return success;
 }
 
 static gboolean
@@ -443,7 +463,13 @@ sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
 gboolean
 sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc)
 {
-	if (InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueued, obj, NULL) == NULL) {
+	int slot;
+
+	slot = mono_thread_info_get_small_id () % NUM_FAST_ENQUEUE_SLOTS;
+
+	SGEN_ASSERT (0, slot >= 0 && slot < NUM_FAST_ENQUEUE_SLOTS, "Is the slot negative?");
+
+	if (InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueue_slots [slot].obj, obj, NULL) == NULL) {
 		mono_memory_write_barrier ();
 		/*
 		 * We can run without doing this, it seems, though I'm not sure - it might
