@@ -4746,7 +4746,7 @@ namespace Mono.CSharp {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
 
-				if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
+				if (cand_param.HasDefaultValue != best_param.HasDefaultValue && (!candidate_pd.HasParams || !best_pd.HasParams))
 					return cand_param.HasDefaultValue;
 
 				defaults_ambiguity = true;
