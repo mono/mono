@@ -40,6 +40,8 @@ void sgen_workers_join (void);
 gboolean sgen_workers_have_idle_work (void);
 gboolean sgen_workers_all_done (void);
 gboolean sgen_workers_are_working (void);
+void sgen_workers_start_nursery_collection (void);
+void sgen_workers_finish_nursery_collection (void);
 void sgen_workers_assert_gray_queue_is_empty (void);
 void sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue);
 gboolean sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc);

@@ -38,6 +38,9 @@ static mono_mutex_t workers_distribute_gray_queue_lock;
 static SgenGrayQueue workers_distribute_gray_queue;
 static gboolean workers_distribute_gray_queue_inited;
 
+SgenGrayQueue nursery_to_workers_queue;
+volatile gboolean enable_nursery_to_workers = FALSE;
+
 typedef struct {
 	GCObject * volatile obj;
 	char padding [64 - sizeof (void*)];
@@ -359,6 +362,8 @@ sgen_workers_init (int num_workers)
 
 	sgen_thread_pool_init (num_workers, thread_pool_init_func, marker_idle_func, continue_idle_func, workers_data_ptrs);
 
+	sgen_gray_object_queue_init (&nursery_to_workers_queue, NULL, FALSE);
+
 	mono_counters_register ("# workers finished", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_workers_num_finished);
 }
 
@@ -460,10 +465,37 @@ sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
 	}
 }
 
+void
+sgen_workers_start_nursery_collection (void)
+{
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&nursery_to_workers_queue), "Not empty?");
+	SGEN_ASSERT (0, !enable_nursery_to_workers, "Did we forget to init or deinit?");
+	if (sgen_concurrent_collection_in_progress ())
+		enable_nursery_to_workers = TRUE;
+}
+
+void
+sgen_workers_finish_nursery_collection (void)
+{
+	if (sgen_concurrent_collection_in_progress ()) {
+		sgen_workers_take_from_queue_and_awake (&nursery_to_workers_queue);
+		/* FIXME: init queue again */
+		enable_nursery_to_workers = FALSE;
+	}
+
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&nursery_to_workers_queue), "Not empty?");
+	SGEN_ASSERT (0, !enable_nursery_to_workers, "Did we forget to init or deinit?");
+}
+
 gboolean
 sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc)
 {
 	int slot;
+
+	if (enable_nursery_to_workers) {
+		GRAY_OBJECT_ENQUEUE (&nursery_to_workers_queue, obj, desc);
+		return FALSE;
+	}
 
 	slot = mono_thread_info_get_small_id () % NUM_FAST_ENQUEUE_SLOTS;
 

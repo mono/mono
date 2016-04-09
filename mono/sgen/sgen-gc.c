@@ -1585,6 +1585,8 @@ collect_nursery (CollectionStatistics *statistics)
 
 	binary_protocol_collection_begin (gc_stats.minor_gc_count, GENERATION_NURSERY);
 
+	sgen_workers_start_nursery_collection ();
+
 	if (do_verify_nursery || do_dump_nursery_content)
 		sgen_debug_verify_nursery (do_dump_nursery_content);
 
@@ -1751,6 +1753,8 @@ collect_nursery (CollectionStatistics *statistics)
 	objects_pinned = 0;
 
 	//sgen_verify_global_remset_record ();
+
+	sgen_workers_finish_nursery_collection ();
 
 	binary_protocol_collection_end (gc_stats.minor_gc_count - 1, GENERATION_NURSERY, 0, 0);
 
