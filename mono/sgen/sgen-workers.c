@@ -69,7 +69,7 @@ static volatile State workers_state;
 static SgenObjectOperations * volatile idle_func_object_ops;
 static SgenThreadPoolJob * volatile preclean_job;
 
-static guint64 stat_workers_num_finished;
+guint64 stat_workers_num_finished;
 
 static gboolean
 set_state (State old_state, State new_state)

@@ -21,6 +21,10 @@ STATISTIC_TIME(major_sweep)
 STATISTIC_TIME(clean_up)
 STATISTIC_TIME(restart_world)
 STATISTIC_TIME(count_bytes_marked)
+STATISTIC_COUNT(objects_copied)
+STATISTIC_COUNT(reference_to_major_updated)
+STATISTIC_COUNT(workers_num_finished)
 
 #undef STATISTIC_TIME
 #undef STATISTIC_SIZE
+#undef STATISTIC_COUNT

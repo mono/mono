@@ -245,6 +245,8 @@ static gboolean enable_nursery_canaries = FALSE;
 
 static gboolean precleaning_enabled = FALSE;
 
+extern guint64 stat_workers_num_finished;
+static guint64 stat_reference_to_major_updated = 0;
 static guint64 stat_wbarrier_generic_store = 0;
 static guint64 stat_wbarrier_with_concurrent = 0;
 static guint64 stat_dijkstra_object_marked_from_wbarrier = 0;
@@ -398,6 +400,7 @@ static mword objects_pinned;
 
 #define STATISTIC_TIME(f)	guint64 time_ ## f;
 #define STATISTIC_SIZE(f)	size_t size_ ## f;
+#define STATISTIC_COUNT(f)	size_t count_ ## f;
 
 typedef struct {
 	TV_DECLARE(tv_begin);
@@ -421,6 +424,10 @@ new_collection_statistics (void)
 #define STATISTIC_SIZE(f)	do {					\
 		if (stats.size_ ## f)					\
 			SGEN_LOG (0, #f ": %zu", stats.size_ ## f);	\
+	} while (0);
+#define STATISTIC_COUNT(f)	do {					\
+		if (stats.count_ ## f)					\
+			SGEN_LOG (0, #f ": %zu", stats.count_ ## f);	\
 	} while (0);
 
 static void
@@ -1559,6 +1566,12 @@ collect_nursery (CollectionStatistics *statistics)
 	SgenGrayQueue gc_thread_gray_queue;
 	SgenObjectOperations *object_ops = &sgen_minor_collector.serial_ops;
 	ScanCopyContext ctx;
+#ifdef HEAVY_STATISTICS
+	guint64 objects_copied_at_start = stat_objects_copied_nursery;
+#endif
+	guint64 reference_to_major_updated_at_start = stat_reference_to_major_updated;
+	guint64 workers_num_finished_at_start = stat_workers_num_finished;
+
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 	SGEN_TV_DECLARE (last_minor_collection_start_tv);
@@ -1747,6 +1760,12 @@ collect_nursery (CollectionStatistics *statistics)
 	TV_GETTIME (last_minor_collection_end_tv);
 	gc_stats.minor_gc_time += TV_ELAPSED (last_minor_collection_start_tv, last_minor_collection_end_tv);
 	statistics->time_clean_up += TV_ELAPSED (atv, last_minor_collection_end_tv);
+
+#ifdef HEAVY_STATISTICS
+	statistics->count_objects_copied = stat_objects_copied_nursery - objects_copied_at_start;
+#endif
+	statistics->count_reference_to_major_updated = stat_reference_to_major_updated - reference_to_major_updated_at_start;
+	statistics->count_workers_num_finished = stat_workers_num_finished - workers_num_finished_at_start;
 
 	return needs_major;
 }
@@ -2771,6 +2790,8 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 gboolean
 sgen_reference_to_major_updated (gpointer ptr, GCObject *value, gboolean from_wbarrier)
 {
+	++stat_reference_to_major_updated;
+
 	SGEN_ASSERT (0, !sgen_ptr_in_nursery (value), "Why are we called for something that's not major->major?");
 	if (concurrent_collection_in_progress) {
 		SgenDescriptor desc = sgen_obj_get_descriptor (value);
