@@ -1,6 +1,7 @@
 thisdir = class/corlib
 SUBDIRS =
 include ../../build/rules.make
+include CommonCrypto/Makefile.include
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 LIBRARY = corlib.dll
@@ -60,14 +61,14 @@ WARNING_ABOUT_DISABLED_WARNING=1635
 LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
 DEFAULT_REFERENCES =
 
-ifdef MOBILE_STATIC
-CORLIB_MONO_POSIX_REF =
-else
-CORLIB_MONO_POSIX_REF = -r:Mono.Posix.dll
+TEST_LIB_REFS = System.Core System
+
+ifndef MOBILE_STATIC
+TEST_LIB_REFS += Mono.Posix
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll -r:System.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
@@ -107,11 +108,11 @@ $(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p es-ES
-	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
 	@mkdir -p nn-NO
-	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \
@@ -126,11 +127,13 @@ test-vts: $(vtslibs) $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersion
 
 $(vtsdir)/$(PROFILE)_TestLib/%/Address.dll: $(vtsdir)/VersionTolerantSerializationTestLib/%/Address.cs
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -r:$(corlib) -warn:0 -out:$@ $^
+	$(CSCOMPILE) -target:library -warn:0 -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -out:$@ $^
 
 $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(test_nunit_dep)
-	$(CSCOMPILE) $(test_nunit_ref) -warn:0 -r:$(corlib) \
+	$(CSCOMPILE) $(test_nunit_ref) -warn:0 \
 		-r:$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
+		-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll \
+		-r:$(topdir)/class/lib/$(PROFILE)/System.dll \
 		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
 	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
 
@@ -162,6 +165,9 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs
+
+EXTRA_DISTFILES += \
+	CommonCrypto/Makefile.include
 
 #
 # Android TimeZoneInfo testing....

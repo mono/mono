@@ -43,7 +43,7 @@ sort -u $outfile.inc > $outfile.inc_s
 rm -f $outfile.inc
 
 
-if test -n "$excfile"; then
+if test -n "$excfile" -a -f "$excfile"; then
     process_includes $excfile $outfile.exc
 fi
 

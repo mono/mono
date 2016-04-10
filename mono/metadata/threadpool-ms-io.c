@@ -5,6 +5,7 @@
  *	Ludovic Henry (ludovic.henry@xamarin.com)
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -583,7 +584,7 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	g_assert (handle >= 0);
 
-	g_assert (job->operation == EVENT_IN ^ job->operation == EVENT_OUT);
+	g_assert ((job->operation == EVENT_IN) ^ (job->operation == EVENT_OUT));
 	g_assert (job->callback);
 
 	if (mono_runtime_is_shutting_down ())

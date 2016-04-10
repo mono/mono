@@ -129,10 +129,6 @@ class MakeBundle {
 				
 			case "--static":
 				static_link = true;
-				if (!quiet) {
-					Console.WriteLine ("Note that statically linking the LGPL Mono runtime has more licensing restrictions than dynamically linking.");
-					Console.WriteLine ("See http://www.mono-project.com/Licensing for details on licensing.");
-				}
 				break;
 			case "--config":
 				if (i+1 == top) {

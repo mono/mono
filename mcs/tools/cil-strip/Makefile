@@ -2,7 +2,8 @@ thisdir = tools/cil-strip
 SUBDIRS =
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:System.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = System
 
 PROGRAM = mono-cil-strip.exe
 

@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = ccrewrite.exe
 
-LOCAL_MCS_FLAGS = -r:Mono.CodeContracts.dll -r:System.dll -r:System.Core.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = Mono.CodeContracts System System.Core
 
 include ../../build/executable.make

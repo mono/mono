@@ -3,18 +3,7 @@
  *
  * Copyright (C) 2015 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -40,6 +29,9 @@ static SgenPointerQueue job_queue;
 static SgenThreadPoolThreadInitFunc thread_init_func;
 static SgenThreadPoolIdleJobFunc idle_job_func;
 static SgenThreadPoolContinueIdleJobFunc continue_idle_job_func;
+
+static volatile gboolean threadpool_shutdown;
+static volatile gboolean thread_finished;
 
 enum {
 	STATE_WAITING,
@@ -109,7 +101,7 @@ thread_func (void *thread_data)
 		gboolean do_idle = continue_idle_job ();
 		SgenThreadPoolJob *job = get_job_and_set_in_progress ();
 
-		if (!job && !do_idle) {
+		if (!job && !do_idle && !threadpool_shutdown) {
 			/*
 			 * pthread_cond_wait() can return successfully despite the condition
 			 * not being signalled, so we have to run this in a loop until we
@@ -134,8 +126,7 @@ thread_func (void *thread_data)
 			 * have to broadcast.
 			 */
 			mono_os_cond_signal (&done_cond);
-		} else {
-			SGEN_ASSERT (0, do_idle, "Why did we unlock if we still have to wait for idle?");
+		} else if (do_idle) {
 			SGEN_ASSERT (0, idle_job_func, "Why do we have idle work when there's no idle job function?");
 			do {
 				idle_job_func (thread_data);
@@ -146,6 +137,13 @@ thread_func (void *thread_data)
 
 			if (!do_idle)
 				mono_os_cond_signal (&done_cond);
+		} else {
+			SGEN_ASSERT (0, threadpool_shutdown, "Why did we unlock if no jobs and not shutting down?");
+			mono_os_mutex_lock (&lock);
+			thread_finished = TRUE;
+			mono_os_cond_signal (&done_cond);
+			mono_os_mutex_unlock (&lock);
+			return 0;
 		}
 	}
 
@@ -166,6 +164,24 @@ sgen_thread_pool_init (int num_threads, SgenThreadPoolThreadInitFunc init_func, 
 	continue_idle_job_func = continue_idle_func;
 
 	mono_native_thread_create (&thread, thread_func, thread_datas ? thread_datas [0] : NULL);
+}
+
+void
+sgen_thread_pool_shutdown (void)
+{
+	if (!thread)
+		return;
+
+	mono_os_mutex_lock (&lock);
+	threadpool_shutdown = TRUE;
+	mono_os_cond_signal (&work_cond);
+	while (!thread_finished)
+		mono_os_cond_wait (&done_cond, &lock);
+	mono_os_mutex_unlock (&lock);
+
+	mono_os_mutex_destroy (&lock);
+	mono_os_cond_destroy (&work_cond);
+	mono_os_cond_destroy (&done_cond);
 }
 
 SgenThreadPoolJob*

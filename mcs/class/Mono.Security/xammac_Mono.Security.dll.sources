@@ -1,2 +1,7 @@
 #include monotouch_Mono.Security.dll.sources
+../corlib/CommonCrypto/CommonCrypto.cs
+../corlib/CommonCrypto/RC4CommonCrypto.cs
+../corlib/CommonCrypto/MD2Managed.g.cs
+../corlib/CommonCrypto/MD4Managed.g.cs
+../corlib/CommonCrypto/SHA224Managed.g.cs
 

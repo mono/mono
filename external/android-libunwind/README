@@ -1,0 +1,9 @@
+This is a copy of a few libunwind headers from https://android.googlesource.com/platform/external/libunwind
+
+We can't make the repo a git submodule because it contains a folder called 'aux' which
+is reserved on Windows and would break on checkout there.
+
+These files are unmodified from the originals and should preferably stay that
+way to avoid merge hell.
+
+Commit: 338c9755cfe3d009c3dfff7d108e2c3ddaa6f3bb (android-6.0.1_r24)

@@ -124,12 +124,32 @@ namespace Mono.Security.Interface
 
 #endregion
 
+#region Native Certificate Implementation
+
+		internal virtual bool HasNativeCertificates {
+			get { return false; }
+		}
+
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			byte[] data, string password, X509KeyStorageFlags flags)
+		{
+			throw new InvalidOperationException ();
+		}
+
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			X509Certificate certificate)
+		{
+			throw new InvalidOperationException ();
+		}
+
+#endregion
+
 #region Certificate Validation
 
 		/*
 		 * Allows a TLS provider to provide a custom system certificiate validator.
 		 */
-		public virtual bool HasCustomSystemCertificateValidator {
+		internal virtual bool HasCustomSystemCertificateValidator {
 			get { return false; }
 		}
 
@@ -142,13 +162,12 @@ namespace Mono.Security.Interface
 		 * Returns `true` if certificate validation has been performed and `false` to invoke the
 		 * default system validator.
 		 */
-		public virtual bool InvokeSystemCertificateValidator (
-			ICertificateValidator validator, string targetHost, bool serverMode,
-			X509CertificateCollection certificates, ref X509Chain chain, out bool success,
-			ref MonoSslPolicyErrors errors, ref int status11)
+		internal virtual bool InvokeSystemCertificateValidator (
+			ICertificateValidator2 validator, string targetHost, bool serverMode,
+			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
+			out bool success, ref MonoSslPolicyErrors errors, ref int status11)
 		{
-			success = false;
-			return false;
+			throw new InvalidOperationException ();
 		}
 
 #endregion

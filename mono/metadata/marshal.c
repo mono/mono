@@ -8,6 +8,7 @@
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -211,11 +212,11 @@ init_safe_handle ()
 }
 
 static void
-register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
+register_icall (gpointer func, const char *name, const char *sigstr, gboolean no_wrapper)
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
-	mono_register_jit_icall (func, name, sig, save);
+	mono_register_jit_icall (func, name, sig, no_wrapper);
 }
 
 MonoMethodSignature*
@@ -235,6 +236,15 @@ mono_marshal_init_tls (void)
 {
 	mono_native_tls_alloc (&last_error_tls_id, NULL);
 	mono_native_tls_alloc (&load_type_info_tls_id, NULL);
+}
+
+static MonoObject*
+mono_object_isinst_icall (MonoObject *obj, MonoClass *klass)
+{
+	MonoError error;
+	MonoObject *result = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 }
 
 void
@@ -284,7 +294,7 @@ mono_marshal_init (void)
 		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", "void ptr ptr int32", FALSE);
 		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", "void ptr ptr int32", FALSE);
 		register_icall (g_free, "g_free", "void ptr", FALSE);
-		register_icall (mono_object_isinst, "mono_object_isinst", "object object ptr", FALSE);
+		register_icall (mono_object_isinst_icall, "mono_object_isinst_icall", "object object ptr", FALSE);
 		register_icall (mono_struct_delete_old, "mono_struct_delete_old", "void ptr ptr", FALSE);
 		register_icall (mono_delegate_begin_invoke, "mono_delegate_begin_invoke", "object object ptr", FALSE);
 		register_icall (mono_delegate_end_invoke, "mono_delegate_end_invoke", "object object ptr", FALSE);
@@ -1847,11 +1857,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 	}
 		
 	default: {
-		char *msg = g_strdup_printf ("marshalling conversion %d not implemented", conv);
-		MonoException *exc = mono_get_exception_not_implemented (msg);
-		g_warning ("%s", msg);
-		g_free (msg);
-		mono_raise_exception (exc);
+		g_error ("marshalling conversion %d not implemented", conv);
 	}
 	}
 }
@@ -2340,7 +2346,7 @@ mono_marshal_get_string_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 	case MONO_NATIVE_BSTR:
 		return MONO_MARSHAL_CONV_STR_BSTR;
 	default:
-		return (MonoMarshalConv)-1;
+		return MONO_MARSHAL_CONV_INVALID;
 	}
 }
 
@@ -2360,7 +2366,7 @@ mono_marshal_get_stringbuilder_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarsh
 		return MONO_MARSHAL_CONV_SB_LPTSTR;
 		break;
 	default:
-		return (MonoMarshalConv)-1;
+		return MONO_MARSHAL_CONV_INVALID;
 	}
 }
 
@@ -2383,7 +2389,7 @@ mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 	case MONO_NATIVE_BSTR:
 		return MONO_MARSHAL_CONV_BSTR_STR;
 	default:
-		return (MonoMarshalConv)-1;
+		return MONO_MARSHAL_CONV_INVALID;
 	}
 }
 
@@ -2409,7 +2415,7 @@ mono_marshal_get_ptr_to_stringbuilder_conv (MonoMethodPInvoke *piinfo, MonoMarsh
 		return MONO_MARSHAL_CONV_LPTSTR_SB;
 		break;
 	default:
-		return (MonoMarshalConv)-1;
+		return MONO_MARSHAL_CONV_INVALID;
 	}
 }
 
@@ -5099,7 +5105,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_ldarg (mb, argnum);
 		}
 
-		if (conv == -1) {
+		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 		} else {
@@ -5111,7 +5117,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	case MARSHAL_ACTION_CONV_OUT:
 		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
-		if (conv == -1) {
+		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			break;
@@ -5171,7 +5177,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_stloc (mb, 0);
 				
 		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
-		if (conv == -1) {
+		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			break;
@@ -5200,7 +5206,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
-		if (conv == -1) {
+		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			break;
@@ -5528,7 +5534,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (t->byref && !(t->attrs & PARAM_ATTRIBUTE_IN) && (t->attrs & PARAM_ATTRIBUTE_OUT))
 				break;
 
-			if (conv == -1) {
+			if (conv == MONO_MARSHAL_CONV_INVALID) {
 				char *msg = g_strdup_printf ("stringbuilder marshalling conversion %d not implemented", encoding);
 				mono_mb_emit_exception_marshal_directive (mb, msg);
 				break;
@@ -6164,9 +6170,9 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				conv = mono_marshal_get_stringbuilder_to_ptr_conv (m->piinfo, spec);
 			}
 			else
-				conv = (MonoMarshalConv)-1;
+				conv = MONO_MARSHAL_CONV_INVALID;
 
-			if (is_string && conv == -1) {
+			if (is_string && conv == MONO_MARSHAL_CONV_INVALID) {
 				char *msg = g_strdup_printf ("string/stringbuilder marshalling conversion %d not implemented", encoding);
 				mono_mb_emit_exception_marshal_directive (mb, msg);
 				break;
@@ -6338,7 +6344,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				gboolean need_free2;
 				MonoMarshalConv conv = mono_marshal_get_ptr_to_stringbuilder_conv (m->piinfo, spec, &need_free2);
 
-				g_assert (conv != -1);
+				g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 				/* dest */
 				mono_mb_emit_ldarg (mb, argnum);
@@ -6485,7 +6491,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			conv = mono_marshal_get_ptr_to_stringbuilder_conv (m->piinfo, spec, &need_free);
 		}
 		else
-			conv = (MonoMarshalConv)-1;
+			conv = MONO_MARSHAL_CONV_INVALID;
 
 		mono_marshal_load_type_info (eklass);
 
@@ -6580,7 +6586,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Emit marshalling code */
 		if (is_string) {
-			g_assert (conv != -1);
+			g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_ldloc (mb, index_var);
@@ -6648,7 +6654,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			conv = mono_marshal_get_stringbuilder_to_ptr_conv (m->piinfo, spec);
 		}
 		else
-			conv = (MonoMarshalConv)-1;
+			conv = MONO_MARSHAL_CONV_INVALID;
 
 		mono_marshal_load_type_info (eklass);
 
@@ -6696,7 +6702,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Emit marshalling code */
 		if (is_string) {
-			g_assert (conv != -1);
+			g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 			/* dest */
 			mono_mb_emit_ldloc (mb, dest_ptr);
@@ -6730,7 +6736,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 		MonoClass *eklass;
 		guint32 label1, label2, label3;
 		int index_var, src, dest, esize;
-		MonoMarshalConv conv = (MonoMarshalConv)-1;
+		MonoMarshalConv conv = MONO_MARSHAL_CONV_INVALID;
 		gboolean is_string = FALSE;
 		
 		g_assert (!t->byref);
@@ -6793,7 +6799,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Emit marshalling code */
 		if (is_string) {
-			g_assert (conv != -1);
+			g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 			/* dest */
 			mono_mb_emit_ldloc (mb, dest);
@@ -8593,7 +8599,9 @@ mono_marshal_get_castclass_with_cache (void)
 static MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache)
 {
-	MonoObject *isinst = mono_object_isinst (obj, klass);
+	MonoError error;
+	MonoObject *isinst = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 #ifndef DISABLE_REMOTING
 	if (obj->vtable->klass == mono_defaults.transparent_proxy_class)
@@ -9496,7 +9504,7 @@ get_virtual_stelemref_wrapper (int kind)
 		/*if (mono_object_isinst (value, aklass)) */
 		mono_mb_emit_ldarg (mb, 2);
 		mono_mb_emit_ldloc (mb, aklass);
-		mono_mb_emit_icall (mb, mono_object_isinst);
+		mono_mb_emit_icall (mb, mono_object_isinst_icall);
 		b2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 		/* do_store: */
@@ -9610,7 +9618,7 @@ get_virtual_stelemref_wrapper (int kind)
 		/*if (mono_object_isinst (value, aklass)) */
 		mono_mb_emit_ldarg (mb, 2);
 		mono_mb_emit_ldloc (mb, aklass);
-		mono_mb_emit_icall (mb, mono_object_isinst);
+		mono_mb_emit_icall (mb, mono_object_isinst_icall);
 		b2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 		/* if (vklass->idepth < aklass->idepth) goto failue */
@@ -9936,7 +9944,7 @@ mono_marshal_get_stelemref (void)
 	
 	mono_mb_emit_ldarg (mb, 2);
 	mono_mb_emit_ldloc (mb, aklass);
-	mono_mb_emit_icall (mb, mono_object_isinst);
+	mono_mb_emit_icall (mb, mono_object_isinst_icall);
 	
 	b4 = mono_mb_emit_branch (mb, CEE_BRTRUE);
 	mono_mb_patch_addr (mb, b4, copy_pos - (b4 + 4));

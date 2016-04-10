@@ -3,7 +3,8 @@ SUBDIRS =
 NO_INSTALL = 1
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:System.Xml.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = System.Xml
 
 EXTRA_DISTFILES = \
 	Media/*.png		\

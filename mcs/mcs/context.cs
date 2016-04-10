@@ -116,6 +116,8 @@ namespace Mono.CSharp
 
 		public ExceptionStatement CurrentTryBlock { get; set; }
 
+		public TryCatch CurrentTryCatch { get; set; }
+
 		public LoopStatement EnclosingLoop { get; set; }
 
 		public LoopStatement EnclosingLoopOrSwitch { get; set; }

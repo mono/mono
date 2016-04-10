@@ -7,18 +7,12 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Microsoft.Build.dll
 
-LIB_REFS = System System.Core System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
+LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
 LIB_MCS_FLAGS = \
-	/r:$(corlib)				\
-	/r:System.dll				\
-	/r:System.Core.dll			\
-	/r:System.Xml.dll			\
-	/r:Microsoft.Build.Engine.dll		\
-	/r:Microsoft.Build.Framework.dll	\
 	/d:MICROSOFT_BUILD_DLL
 	
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) \
-	/r:Microsoft.Build.Utilities.v4.0.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_LIB_REFS = $(XBUILD_UTILITIES)
 
 EXTRA_DISTFILES = \
 	Microsoft.Build.Internal/ExpressionParser.jay	\

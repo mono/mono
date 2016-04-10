@@ -5,11 +5,9 @@ include ../../build/rules.make
 PROGRAM = mono-symbolicate.exe
 
 LOCAL_MCS_FLAGS = \
-	/r:Mono.Cecil.dll	\
-	/r:Mono.CompilerServices.SymbolWriter.dll \
-	/r:System.Xml.dll \
-	/r:System.Core.dll \
-	/r:System.dll
+	/D:NO_AUTHENTICODE
+
+LIB_REFS = Mono.CompilerServices.SymbolWriter System.Xml System.Core System
 
 include ../../build/executable.make
 
@@ -36,10 +34,10 @@ CHECK_DIFF = @\
 		exit 1; \
 	fi
 
-BUILD_TEST_EXE = @\
+BUILD_TEST_EXE = \
 	rm -rf $(OUT_DIR); \
 	mkdir -p $(OUT_DIR); \
-	$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
+	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE)
 
 check: test-local
 

@@ -9,6 +9,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -453,7 +454,9 @@ static void thread_cleanup (MonoInternalThread *thread)
 	}
 	mono_release_type_locks (thread);
 
-	mono_profiler_thread_end (thread->tid);
+	/* Can happen when we attach the profiler helper thread in order to heapshot. */
+	if (!mono_thread_info_lookup (thread->tid)->tools_thread)
+		mono_profiler_thread_end (thread->tid);
 
 	if (thread == mono_thread_internal_current ()) {
 		/*
@@ -615,23 +618,25 @@ create_internal_thread (MonoError *error)
 	return thread;
 }
 
-static void
-init_root_domain_thread (MonoInternalThread *thread, MonoThread *candidate)
+static gboolean
+init_root_domain_thread (MonoInternalThread *thread, MonoThread *candidate, MonoError *error)
 {
-	MonoError error;
 	MonoDomain *domain = mono_get_root_domain ();
 
+	mono_error_init (error);
 	if (!candidate || candidate->obj.vtable->domain != domain) {
-		candidate = new_thread_with_internal (domain, thread, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		candidate = new_thread_with_internal (domain, thread, error);
+		return_val_if_nok (error, FALSE);
 	}
 	set_current_thread_for_domain (domain, thread, candidate);
 	g_assert (!thread->root_domain_thread);
 	MONO_OBJECT_SETREF (thread, root_domain_thread, candidate);
+	return TRUE;
 }
 
 static guint32 WINAPI start_wrapper_internal(void *data)
 {
+	MonoError error;
 	MonoThreadInfo *info;
 	StartInfo *start_info = (StartInfo *)data;
 	guint32 (*start_func)(void *);
@@ -680,7 +685,8 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	/* We have to do this here because mono_thread_new_init()
 	   requires that root_domain_thread is set up. */
 	thread_adjust_static_data (internal);
-	init_root_domain_thread (internal, start_info->obj);
+	init_root_domain_thread (internal, start_info->obj, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	/* This MUST be called before any managed code can be
 	 * executed, as it calls the callback function that (for the
@@ -724,6 +730,7 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	if (internal->name && (internal->flags & MONO_THREAD_FLAG_NAME_SET)) {
 		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
 		mono_profiler_thread_name (internal->tid, tname);
+		mono_thread_info_set_name (internal->tid, tname);
 		g_free (tname);
 	}
 	/* start_func is set only for unmanaged start functions */
@@ -786,7 +793,7 @@ static guint32 WINAPI start_wrapper(void *data)
  */
 static gboolean
 create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *start_info, gboolean threadpool_thread, guint32 stack_size,
-			   gboolean throw_on_failure)
+			   MonoError *error)
 {
 	HANDLE thread_handle;
 	MonoNativeThreadId tid;
@@ -797,6 +804,8 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	 * thread might be blocked/backlogged.
 	 */
 	mono_threads_join_threads ();
+
+	mono_error_init (error);
 
 	mono_threads_lock ();
 	if (shutting_down) {
@@ -833,15 +842,12 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 												stack_size, create_flags, &tid);
 
 	if (thread_handle == NULL) {
-		/* The thread couldn't be created, so throw an exception */
+		/* The thread couldn't be created, so set an exception */
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
 		mono_threads_unlock ();
 		g_free (start_info);
-		if (throw_on_failure)
-			mono_raise_exception (mono_get_exception_execution_engine ("Couldn't create thread"));
-		else
-			g_warning ("%s: CreateThread error 0x%x", __func__, GetLastError ());
+		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", GetLastError());
 		return FALSE;
 	}
 	THREAD_DEBUG (g_message ("%s: Started thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread_handle));
@@ -930,9 +936,11 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 	start_info->obj = thread;
 	start_info->start_arg = arg;
 
-	res = create_thread (thread, internal, start_info, threadpool_thread, stack_size, TRUE);
-	if (!res)
+	res = create_thread (thread, internal, start_info, threadpool_thread, stack_size, &error);
+	if (!res) {
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		return NULL;
+	}
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 #ifndef MONO_CROSS_COMPILE
@@ -1018,7 +1026,9 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach, MonoError *e
 
 	thread_adjust_static_data (thread);
 
-	init_root_domain_thread (thread, current_thread);
+	init_root_domain_thread (thread, current_thread, error);
+	return_val_if_nok (error, NULL);
+
 	if (domain != mono_get_root_domain ())
 		set_current_thread_for_domain (domain, thread, current_thread);
 
@@ -1035,8 +1045,10 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach, MonoError *e
 			mono_thread_attach_cb (MONO_NATIVE_THREAD_ID_TO_UINT (tid), staddr + stsize);
 	}
 
-	// FIXME: Need a separate callback
-	mono_profiler_thread_start (MONO_NATIVE_THREAD_ID_TO_UINT (tid));
+	/* Can happen when we attach the profiler helper thread in order to heapshot. */
+	if (!info->tools_thread)
+		// FIXME: Need a separate callback
+		mono_profiler_thread_start (MONO_NATIVE_THREAD_ID_TO_UINT (tid));
 
 	return current_thread;
 }
@@ -1122,6 +1134,7 @@ HANDLE
 ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
 												   MonoObject *start)
 {
+	MonoError error;
 	StartInfo *start_info;
 	MonoInternalThread *internal;
 	gboolean res;
@@ -1152,8 +1165,9 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
 	start_info->obj = this_obj;
 	g_assert (this_obj->obj.vtable->domain == mono_domain_get ());
 
-	res = create_thread (this_obj, internal, start_info, FALSE, 0, FALSE);
+	res = create_thread (this_obj, internal, start_info, FALSE, 0, &error);
 	if (!res) {
+		mono_error_cleanup (&error);
 		UNLOCK_THREAD (internal);
 		return NULL;
 	}
@@ -1344,14 +1358,16 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj
 }
 
 void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed)
+mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed, MonoError *error)
 {
 	LOCK_THREAD (this_obj);
+
+	mono_error_init (error);
 
 	if ((this_obj->flags & MONO_THREAD_FLAG_NAME_SET) && !this_obj->threadpool_thread) {
 		UNLOCK_THREAD (this_obj);
 		
-		mono_raise_exception (mono_get_exception_invalid_operation ("Thread.Name can only be set once."));
+		mono_error_set_invalid_operation (error, "Thread.Name can only be set once.");
 		return;
 	}
 	if (this_obj->name) {
@@ -1382,7 +1398,9 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 void 
 ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
 {
-	mono_thread_set_name_internal (this_obj, name, TRUE);
+	MonoError error;
+	mono_thread_set_name_internal (this_obj, name, TRUE, &error);
+	mono_error_set_pending_exception (&error);
 }
 
 /*

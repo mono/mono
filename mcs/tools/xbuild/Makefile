@@ -5,7 +5,8 @@ NO_TESTS = yes
 
 include xbuild.make
 
-LOCAL_MCS_FLAGS = -r:$(XBUILD_FRAMEWORK) -r:$(XBUILD_UTILITIES) -r:$(XBUILD_ENGINE) -r:$(XBUILD_MSTASKS) -r:System.dll -r:System.Core.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = $(XBUILD_FRAMEWORK) $(XBUILD_UTILITIES) $(XBUILD_ENGINE) $(XBUILD_MSTASKS) $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core
 PROGRAM = xbuild.exe
 
 include ../../build/executable.make

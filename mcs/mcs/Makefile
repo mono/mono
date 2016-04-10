@@ -12,19 +12,21 @@ EXTRA_DISTFILES = \
 	cs-parser.jay		\
 	mcs.exe.sources
 
-LIB_REFS = System System.Core System.Xml
-
 ifeq (basic, $(PROFILE))
+LOCAL_MCS_FLAGS += -r:System.dll -r:System.Core.dll -r:System.Xml.dll -debug
+
 PROGRAM = basic.exe
 sourcefile = mcs.exe.sources
 else
+LIB_REFS = System System.Core System.Xml
+
 PROGRAM_USE_INTERMEDIATE_FILE = true
 PROGRAM = mcs.exe
 the_libdir = $(topdir)/class/lib/build/
-LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
+LOCAL_MCS_FLAGS += -debug
 endif
 
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE -r:System.Core.dll -r:System.Xml.dll
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
 
 ifndef NO_THREAD_ABORT
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT

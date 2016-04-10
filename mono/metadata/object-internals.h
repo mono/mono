@@ -1347,7 +1347,7 @@ void        mono_reflection_create_internal_class (MonoReflectionTypeBuilder *tb
 
 void        mono_reflection_setup_generic_class   (MonoReflectionTypeBuilder *tb);
 
-void        mono_reflection_create_generic_class  (MonoReflectionTypeBuilder *tb);
+gboolean    mono_reflection_create_generic_class  (MonoReflectionTypeBuilder *tb, MonoError *error);
 
 MonoReflectionType* mono_reflection_create_runtime_class  (MonoReflectionTypeBuilder *tb);
 
@@ -1383,7 +1383,7 @@ MonoArray  *mono_reflection_sighelper_get_signature_field (MonoReflectionSigHelp
 MonoReflectionMarshalAsAttribute* mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
 
 gpointer
-mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context);
+mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
 gboolean
 mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, MonoError *error);
@@ -1392,7 +1392,7 @@ gboolean
 mono_reflection_is_valid_dynamic_token (MonoDynamicImage *image, guint32 token);
 
 void
-mono_reflection_resolve_custom_attribute_data (MonoReflectionMethod *method, MonoReflectionAssembly *assembly, gpointer data, guint32 data_length, MonoArray **ctor_args, MonoArray ** named_args);
+ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoReflectionMethod *method, MonoReflectionAssembly *assembly, gpointer data, guint32 data_length, MonoArray **ctor_args, MonoArray ** named_args);
 
 MonoType*
 mono_reflection_type_get_handle (MonoReflectionType *ref, MonoError *error);
@@ -1615,7 +1615,7 @@ mono_copy_value (MonoType *type, void *dest, void *value, int deref_pointer);
 void
 mono_error_raise_exception (MonoError *target_error);
 
-void
+gboolean
 mono_error_set_pending_exception (MonoError *error);
 
 MonoArray *
@@ -1635,6 +1635,12 @@ ves_icall_object_new_fast (MonoVTable *vtable);
 
 MonoObject *
 mono_object_clone_checked (MonoObject *obj, MonoError *error);
+
+MonoObject *
+mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
+
+MonoObject *
+mono_object_isinst_mbyref_checked   (MonoObject *obj, MonoClass *klass, MonoError *error);
 
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);

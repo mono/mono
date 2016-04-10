@@ -210,9 +210,6 @@ ICALL(PROCESS_10, "ProcessName_internal(intptr)", ves_icall_System_Diagnostics_P
 ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal)
 #endif /* !DISABLE_PROCESS_HANDLING */
 
-ICALL_TYPE(SFRAME, "System.Diagnostics.StackFrame", SFRAME_1)
-ICALL(SFRAME_1, "GetILOffsetFromFile", ves_icall_System_StackFrame_GetILOffsetFromFile)
-
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
 ICALL(STOPWATCH_1, "GetTimestamp", mono_100ns_ticks)
 
@@ -496,7 +493,7 @@ ICALL(ASSEMN_1, "ParseName", ves_icall_System_Reflection_AssemblyName_ParseName)
 ICALL(ASSEMN_2, "get_public_token", mono_digest_get_public_token)
 
 ICALL_TYPE(CATTR_DATA, "System.Reflection.CustomAttributeData", CATTR_DATA_1)
-ICALL(CATTR_DATA_1, "ResolveArgumentsInternal", mono_reflection_resolve_custom_attribute_data)
+ICALL(CATTR_DATA_1, "ResolveArgumentsInternal", ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal)
 
 ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_1)
 ICALL(ASSEMB_1, "InternalAddModule", ves_icall_System_Reflection_Emit_AssemblyBuilder_InternalAddModule)
@@ -539,7 +536,7 @@ ICALL(SIGH_1, "get_signature_field", mono_reflection_sighelper_get_signature_fie
 ICALL(SIGH_2, "get_signature_local", mono_reflection_sighelper_get_signature_local)
 
 ICALL_TYPE(TYPEB, "System.Reflection.Emit.TypeBuilder", TYPEB_1)
-ICALL(TYPEB_1, "create_generic_class", mono_reflection_create_generic_class)
+ICALL(TYPEB_1, "create_generic_class", ves_icall_System_Reflection_Emit_TypeBuilder_create_generic_class)
 ICALL(TYPEB_2, "create_internal_class", mono_reflection_create_internal_class)
 ICALL(TYPEB_3, "create_runtime_class", mono_reflection_create_runtime_class)
 ICALL(TYPEB_4, "get_IsGenericParameter", ves_icall_TypeBuilder_get_IsGenericParameter)

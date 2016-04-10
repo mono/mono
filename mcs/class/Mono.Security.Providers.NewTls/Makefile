@@ -3,8 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Security.Providers.NewTls.dll
-LIB_MCS_FLAGS = -unsafe -nowarn:1030 -keyfile:../mono.pub -delaysign -r:System.dll \
-	-r:NewSystemSource=Mono.Security.Providers.NewSystemSource.dll -r:Mono.Security.dll
+LIB_REFS = System NewSystemSource=Mono.Security.Providers.NewSystemSource Mono.Security
+LIB_MCS_FLAGS = -unsafe -nowarn:1030 -keyfile:../mono.pub -delaysign
 
 include ../../build/library.make
 

@@ -3,6 +3,8 @@ create cross platform applications.  It is an open source
 implementation of Microsoft's .NET Framework based on the ECMA
 standards for C# and the Common Language Runtime.
 
+The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.org/)
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mono/mono?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 1. [Compilation and Installation](#compilation-and-installation)
@@ -507,3 +509,15 @@ to do at all), first edit `.gitmodules` to point to the new location, then:
 The desired output diff is a change in `.gitmodules` to reflect the
 change in the remote URL, and a change in /<submodule> where you see
 the desired change in the commit hash.
+
+License
+=======
+
+See the LICENSE file for licensing information, and the PATENTS.TXT
+file for information about Microsoft's patent grant.
+
+Mono Trademark Use Policy
+=======
+
+The use of trademarks and logos for Mono can be found [here] (http://www.dotnetfoundation.org/legal/mono-tm). 
+

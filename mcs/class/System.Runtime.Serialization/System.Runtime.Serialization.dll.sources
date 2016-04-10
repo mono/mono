@@ -5,7 +5,7 @@ Assembly/AssemblyInfo.cs
 ReferenceSources/DiagnosticUtility.cs
 ReferenceSources/FxTrace.cs
 ReferenceSources/SR.cs
-ReferenceSources/SR_missing.cs
+ReferenceSources/SR.missing.cs
 ReferenceSources/XmlExceptionHelper.cs
 
 ReferenceSources/BitFlagsGenerator.cs

@@ -6,6 +6,7 @@
  *
  * (C) 2002 Ximian, Inc.
  * Copyright 2012 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef _WAPI_ATOMIC_H_
@@ -14,9 +15,12 @@
 #include "config.h"
 #include <glib.h>
 
-#ifdef ENABLE_EXTENSION_MODULE
-#include "../../../mono-extensions/mono/utils/atomic.h"
-#endif
+/*
+The current Nexus 7 arm-v7a fails with:
+F/MonoDroid( 1568): shared runtime initialization error: Cannot load library: reloc_library[1285]:    37 cannot locate '__sync_val_compare_and_swap_8'
+
+Apple targets have historically being problematic, xcode 4.6 would miscompile the intrinsic.
+*/
 
 /* On Windows, we always use the functions provided by the Windows API. */
 #if defined(__WIN32__) || defined(_WIN32)

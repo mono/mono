@@ -160,11 +160,11 @@ TEST_RESOURCE_FILES = \
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll \
-	$(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll -r:System.Xml.dll
+TEST_LIB_REFS = System.ComponentModel.DataAnnotations System.Configuration SystemWebTestShim System.Xml
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-TEST_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+TEST_LIB_REFS += System.Web.ApplicationServices
 endif
 
 EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))

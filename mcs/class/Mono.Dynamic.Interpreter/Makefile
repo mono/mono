@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Dynamic.Interpreter.dll
 
-LIB_REFS = System System.Core
+LIB_REFS = System
 LIB_MCS_FLAGS = \
 	-d:FEATURE_CORE_DLR,FEATURE_DBNULL,FEATURE_DEFAULT_PARAMETER_VALUE,FEATURE_GET_TYPE_INFO,FEATURE_VARIANCE,FEATURE_SERIALIZATION,CLR45 \
 	-d:MONO_INTERPRETER \
@@ -12,7 +12,9 @@ LIB_MCS_FLAGS = \
 
 ifdef MOBILE_STATIC
 mono_dynamic_interpreter_deps = $(the_libdir_base)plaincore/System.Core.dll
-LIB_MCS_FLAGS += -lib:$(the_libdir_base)plaincore
+LIB_REFS += plaincore/System.Core
+else
+LIB_REFS += System.Core
 endif
 
 include ../../build/library.make

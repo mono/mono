@@ -11,6 +11,7 @@ LIB_MCS_FLAGS = \
 		-d:NO_DYNAMIC_CODEGEN \
 		/nowarn:168,169,219,414 \
 		$(RESOURCE_FILES:%=/resource:%)
+TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration
@@ -27,8 +28,8 @@ TEST_RESOURCE_FILES = \
 	Test/Resources/WSDL/collections.wsdl	\
 	Test/Resources/WSDL/custom-collections.wsdl
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.ServiceModel.dll /r:System.Web.Services.dll \
-	$(TEST_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(TEST_RESOURCE_FILES:%=/resource:%)
+TEST_LIB_REFS = System.ServiceModel System.Web.Services
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \

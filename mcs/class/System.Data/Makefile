@@ -28,7 +28,8 @@ endif
 
 TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Data/system.data.txt
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -nowarn:618,169,612,219,168
+TEST_LIB_REFS = System.Core Mono.Data.Sqlite
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
 
 TEST_MONO_PATH = .
 

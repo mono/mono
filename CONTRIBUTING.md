@@ -21,29 +21,18 @@ investigate bugs, regressions and problems.
 License
 =======
 
-The Mono project uses the MIT X11, GNU LGPL version 2 and the Apache
-License 2.0.  We also imported some Microsoft code licensed under the
-open source Microsoft Public License.
+The Mono runtime, compilers, and tools and most of the class libraries
+are licensed under the MIT license. But include some bits of code
+licensed under different licenses. The exact list is [available here] (https://github.com/mono/mono/blob/master/LICENSE).
 
 Different parts of Mono use different licenses.  The actual details of
 which licenses are used for which parts are detailed on the LICENSE
 file in this directory.
 
-When contributing code, make sure that your contribution falls under
-the appropriate license.  For example, contributions to code licensed
-under MIT/X11 code, should be MIT/X11 code.
+CLA
+=======
 
-The runtime (`mono/...`) is a special case.  The code is dual-licensed
-by Xamarin under both the GNU LGPL v2 license and is also available
-under commercial terms.  For the runtime, you should either sign an
-agreement that grants Xamarin the rights to relicense your code under
-other licenses other than the LGPL v2 or your contribution must be
-made as an MIT/X11 license which grants us the same rights, but
-involves no paperwork.  For the latter case, please specify on your
-commit(s) that you are licensing the changes under MIT/X11.
-
-For other parts of the project that are dual-licensed, please state
-on your commit(s) what license you are contributing the changes under.
+Contributions are now taken under the [.NET Foundation CLA] (https://cla2.dotnetfoundation.org/). 
 
 Testing
 =======

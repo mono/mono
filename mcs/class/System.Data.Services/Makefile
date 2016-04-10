@@ -11,6 +11,7 @@ ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.ServiceModel.Activation
 endif
 
-TEST_MCS_FLAGS = -r:System.ServiceModel.dll -r:System.Core.dll
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System.ServiceModel System.Core
 
 include ../../build/library.make

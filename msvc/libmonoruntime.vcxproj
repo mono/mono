@@ -67,6 +67,7 @@
     <ClCompile Include="..\mono\metadata\mempool.c" />
     <ClCompile Include="..\mono\metadata\metadata-verify.c" />
     <ClCompile Include="..\mono\metadata\metadata.c" />
+    <ClCompile Include="..\mono\metadata\metadata-cross-helpers.c" />
     <ClCompile Include="..\mono\metadata\method-builder.c" />
     <ClCompile Include="..\mono\metadata\monitor.c" />
     <ClCompile Include="..\mono\metadata\mono-basic-block.c" />
@@ -116,6 +117,7 @@
     <ClCompile Include="..\mono\sgen\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\sgen\sgen-pinning.c" />
     <ClCompile Include="..\mono\sgen\sgen-pointer-queue.c" />
+    <ClCompile Include="..\mono\sgen\sgen-array-list.c" />
     <ClCompile Include="..\mono\sgen\sgen-protocol.c" />
     <ClCompile Include="..\mono\sgen\sgen-qsort.c" />
     <ClCompile Include="..\mono\sgen\sgen-simple-nursery.c" />
@@ -131,7 +133,6 @@
     <ClCompile Include="..\mono\metadata\sysmath.c" />
     <ClCompile Include="..\mono\metadata\threads.c" />
     <ClCompile Include="..\mono\metadata\verify.c" />
-    <ClCompile Include="..\mono\mini\mini-cross-helpers.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\metadata\appdomain.h" />

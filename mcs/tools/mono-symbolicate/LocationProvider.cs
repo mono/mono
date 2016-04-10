@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Reflection;
+using IKVM.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Mono.Cecil;
 using Mono.CompilerServices.SymbolWriter;
+using System.Runtime.InteropServices;
 
 namespace Symbolicate
 {
@@ -57,38 +57,26 @@ namespace Symbolicate
 				return true;
 			}
 
-			static MethodInfo methodGetIL;
+			SeqPointInfo seqPointInfo;
 			private int GetILOffsetFromFile (int methodToken, uint methodIndex, int nativeOffset)
 			{
-				if (string.IsNullOrEmpty (seqPointDataPath))
-					return -1;
+				if (seqPointInfo == null)
+					seqPointInfo = SeqPointInfo.Read (seqPointDataPath);
 
-				if (methodGetIL == null)
-					methodGetIL = typeof (StackFrame).GetMethod ("GetILOffsetFromFile", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetIL == null)
-					throw new Exception ("System.Diagnostics.StackFrame.GetILOffsetFromFile could not be found, make sure you have an updated mono installed.");
-
-				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, methodIndex, nativeOffset});
+				return seqPointInfo.GetILOffset (methodToken, methodIndex, nativeOffset);
 			}
 
-			static MethodInfo methodGetMethodFullName;
 			private string GetMethodFullName (MethodBase m)
 			{
-
-				if (methodGetMethodFullName == null)
-					methodGetMethodFullName = typeof (StackTrace).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetMethodFullName == null)
-					throw new Exception ("System.Exception.GetFullNameForStackTrace could not be found, make sure you have an updated mono installed.");
-
 				StringBuilder sb = new StringBuilder ();
-				methodGetMethodFullName.Invoke (null, new object[] {sb, m});
+
+				StackTraceHelper.GetFullNameForStackTrace (sb, m);
 
 				return sb.ToString ();
 			}
 		}
 
+		static readonly Universe ikvm_reflection = new Universe ();
 		Dictionary<string, AssemblyLocationProvider> assemblies;
 		HashSet<string> directories;
 
@@ -106,14 +94,14 @@ namespace Symbolicate
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = Assembly.LoadFrom (assemblyPath);
+			var assembly = ikvm_reflection.LoadFile (assemblyPath);
 			MonoSymbolFile symbolFile = null;
 
 			var symbolPath = assemblyPath + ".mdb";
 			if (!File.Exists (symbolPath))
 				Debug.WriteLine (".mdb file was not found for " + assemblyPath);
 			else
-				symbolFile = MonoSymbolFile.ReadSymbolFile (assemblyPath + ".mdb");
+				symbolFile = MonoSymbolFile.ReadSymbolFile (symbolPath);
 
 			var seqPointDataPath = assemblyPath + ".msym";
 			if (!File.Exists (seqPointDataPath))
