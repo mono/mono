@@ -4,9 +4,10 @@ include ../../build/rules.make
 
 PROGRAM = mono-symbolicate.exe
 
-LOCAL_MCS_FLAGS =
+LOCAL_MCS_FLAGS = \
+	/D:NO_AUTHENTICODE
 
-LIB_REFS = Mono.Cecil Mono.CompilerServices.SymbolWriter System.Xml System.Core System
+LIB_REFS = Mono.CompilerServices.SymbolWriter System.Xml System.Core System
 
 include ../../build/executable.make
 

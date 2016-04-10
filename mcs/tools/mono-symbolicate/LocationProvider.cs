@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Reflection;
+using IKVM.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Mono.Cecil;
 using Mono.CompilerServices.SymbolWriter;
 using System.Runtime.InteropServices;
 
@@ -77,6 +76,7 @@ namespace Symbolicate
 			}
 		}
 
+		static readonly Universe ikvm_reflection = new Universe ();
 		Dictionary<string, AssemblyLocationProvider> assemblies;
 		HashSet<string> directories;
 
@@ -94,14 +94,14 @@ namespace Symbolicate
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = Assembly.ReflectionOnlyLoadFrom (assemblyPath);
+			var assembly = ikvm_reflection.LoadFile (assemblyPath);
 			MonoSymbolFile symbolFile = null;
 
 			var symbolPath = assemblyPath + ".mdb";
 			if (!File.Exists (symbolPath))
 				Debug.WriteLine (".mdb file was not found for " + assemblyPath);
 			else
-				symbolFile = MonoSymbolFile.ReadSymbolFile (assemblyPath + ".mdb");
+				symbolFile = MonoSymbolFile.ReadSymbolFile (symbolPath);
 
 			var seqPointDataPath = assemblyPath + ".msym";
 			if (!File.Exists (seqPointDataPath))
