@@ -1,14 +1,18 @@
 #include <config.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <mono/metadata/assembly.h>
 #include <mono/utils/mono-mmap.h>
 #include "mini.h"
 
-#ifndef HOST_WIN32
-#ifndef BUILDVER_INCLUDED
-#include "buildver-boehm.h"
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
 #endif
+#ifdef HOST_WIN32
+#  include <io.h>
+#else
+#  ifndef BUILDVER_INCLUDED
+#    include "buildver-boehm.h"
+#  endif
 #endif
 
 /*
