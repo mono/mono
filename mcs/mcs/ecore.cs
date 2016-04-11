@@ -4704,8 +4704,14 @@ namespace Mono.CSharp {
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
-				if (result == 2)
-					return false;
+				if (result == 2) {
+					better_at_least_one = false;
+
+					++j;
+					while (j < args_count && !args [j++].IsDefaultArgument) ;
+
+					break;
+				}
 
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
@@ -4717,15 +4723,26 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// Tie-breaking rules are applied only for equivalent parameter types
+			// LAMESPEC: Tie-breaking rules for not equivalent parameter types
 			//
 			if (!are_equivalent) {
 				//
-				// LAMESPEC: A candidate with less default parameters is still better when there
+				// A candidate with no default parameters is still better when there
 				// is no better expression conversion
 				//
-				if (candidate_pd.Count < best_pd.Count && !candidate_params && best_pd.FixedParameters [j].HasDefaultValue) {
-					return true;
+				if (candidate_pd.Count < best_pd.Count) {
+					if (!candidate_params && !candidate_pd.FixedParameters [j - j].HasDefaultValue) {
+						return true;
+					}
+				} else if (candidate_pd.Count == best_pd.Count) {
+					if (candidate_params)
+						return false;
+
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.FixedParameters [j - 1].HasDefaultValue)
+						return true;
+
+					if (candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.HasParams)
+						return true;
 				}
 
 				return false;

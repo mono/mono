@@ -30666,6 +30666,34 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-36.cs">
+    <type name="Program">
+      <method name="Int32 Arg(UInt32, Int64)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Arg(Int32, UInt64, Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Arg_2(UInt32, Int64, Int32[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Arg_2(Int32, UInt64, Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Arg_3(Int32, Int64, Int32[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Arg_3(UInt32, UInt64, Int32, Int32, Int32[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>238</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
@@ -51939,6 +51967,22 @@
       </method>
       <method name="Void WriteLine(System.String, System.ConsoleColor, System.ConsoleColor)" attrs="134">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-933.cs">
+    <type name="X">
+      <method name="Int32 Foo(X[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Foo(System.Object)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>29</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
