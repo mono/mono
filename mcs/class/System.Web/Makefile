@@ -252,7 +252,7 @@ LIB_MCS_FLAGS = \
 
 ifneq (plainweb/,$(intermediate))
 LIB_REFS += System.Web.Services plaindesign/System.Design
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -lib:$(the_libdir_base)plaindesign
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
 
 all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
 
