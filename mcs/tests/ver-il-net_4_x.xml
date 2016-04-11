@@ -3100,6 +3100,43 @@
       </method>
     </type>
   </test>
+  <test name="dtest-064.cs">
+    <type name="A">
+      <method name="Void .ctor(Action)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Decimal Test(System.Object)" attrs="145">
+        <size>15</size>
+      </method>
+      <method name="Void &lt;B&gt;m__0()" attrs="145">
+        <size>113</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>37</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="System.Decimal Test(System.Object)" attrs="145">
+        <size>15</size>
+      </method>
+      <method name="Void &lt;a&gt;m__0()" attrs="145">
+        <size>113</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>42</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
