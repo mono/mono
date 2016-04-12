@@ -23,13 +23,17 @@ namespace System.Reflection.Emit
     }
 
     // This is a kind of Type object that will represent the compound expression of a parameter type or field type.
+#if MONO
+    partial class SymbolType : TypeInfo
+#else
     internal sealed class SymbolType : TypeInfo
+#endif
     {
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;            
             return IsAssignableFrom(typeInfo.AsType());
         }
-
+#if !MONO
         #region Static Members
         internal static Type FormCompoundType(char[] bFormat, Type baseType, int curIndex)
         {
@@ -273,8 +277,9 @@ namespace System.Reflection.Emit
             m_bFormat = bFormatTemp;
         }
         #endregion
-        
+#endif
         #region Type Overrides
+#if !MONO
         internal override bool IsSzArray 
         { 
             get 
@@ -331,7 +336,7 @@ namespace System.Reflection.Emit
 
             return m_cRank;
         }
-        
+#endif
         public override Guid GUID 
         {
             get { throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType")); }
@@ -365,12 +370,12 @@ namespace System.Reflection.Emit
                 return baseType.Assembly;
             }
         }
-                
+
         public override RuntimeTypeHandle TypeHandle 
         {
              get { throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType")); }     
         }
-            
+#if !MONO
         public override String Name 
         {
             get 
@@ -405,7 +410,7 @@ namespace System.Reflection.Emit
         {            
                 return TypeNameBuilder.ToString(this, TypeNameBuilder.Format.ToString);
         }
-    
+#endif
         public override String Namespace 
         {
             get { return m_baseType.Namespace; }
@@ -519,7 +524,7 @@ namespace System.Reflection.Emit
             for (baseType = m_baseType; baseType is SymbolType; baseType = ((SymbolType)baseType).m_baseType);
             return baseType.Attributes;
         }
-        
+#if !MONO
         protected override bool IsArrayImpl()
         {
             return m_typeKind == TypeKind.IsArray;
@@ -534,7 +539,7 @@ namespace System.Reflection.Emit
         {
             return m_typeKind == TypeKind.IsByRef;
         }
-
+#endif
         protected override bool IsPrimitiveImpl()
         {
             return false;
@@ -567,13 +572,13 @@ namespace System.Reflection.Emit
         {
             return m_baseType != null;
         }
-    
+#if !MONO
         public override Type UnderlyingSystemType 
         {
              
             get { return this; }
         }
-            
+#endif
         public override Object[] GetCustomAttributes(bool inherit)
         {
             throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));      
