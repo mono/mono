@@ -1259,6 +1259,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/reflection/typeinfo.cs
 
 ../../../external/referencesource/mscorlib/system/reflection/emit/methodbuilder.cs
+../../../external/referencesource/mscorlib/system/reflection/emit/symboltype.cs
 
 ../../../external/referencesource/mscorlib/system/resources/__fastresourcecomparer.cs
 ../../../external/referencesource/mscorlib/system/resources/__hresults.cs
