@@ -1886,9 +1886,15 @@ major_start_collection (gboolean concurrent, size_t *old_next_pin_slot)
 		g_assert (major_collector.is_concurrent);
 		concurrent_collection_in_progress = TRUE;
 
-		object_ops = &major_collector.major_ops_concurrent_start;
+		if (major_collector.is_evacuating ())
+			object_ops = &major_collector.major_ops_concurrent_start_with_evac;
+		else
+			object_ops = &major_collector.major_ops_concurrent_start_no_evac;
 	} else {
-		object_ops = &major_collector.major_ops_serial;
+		if (major_collector.is_evacuating ())
+			object_ops = &major_collector.major_ops_serial_with_evac;
+		else
+			object_ops = &major_collector.major_ops_serial_no_evac;
 	}
 
 	reset_pinned_from_failed_allocation ();
@@ -1923,7 +1929,10 @@ major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean 
 	TV_GETTIME (btv);
 
 	if (concurrent_collection_in_progress) {
-		object_ops = &major_collector.major_ops_concurrent_finish;
+		if (major_collector.is_evacuating ())
+			object_ops = &major_collector.major_ops_concurrent_finish_with_evac;
+		else
+			object_ops = &major_collector.major_ops_concurrent_finish_no_evac;
 
 		major_copy_or_mark_from_roots (NULL, COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, object_ops);
 
@@ -1933,7 +1942,10 @@ major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean 
 		main_gc_thread = NULL;
 #endif
 	} else {
-		object_ops = &major_collector.major_ops_serial;
+		if (major_collector.is_evacuating ())
+			object_ops = &major_collector.major_ops_serial_with_evac;
+		else
+			object_ops = &major_collector.major_ops_serial_no_evac;
 	}
 
 	g_assert (sgen_section_gray_queue_is_empty (sgen_workers_get_distribute_section_gray_queue ()));
