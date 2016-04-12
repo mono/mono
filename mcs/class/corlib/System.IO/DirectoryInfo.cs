@@ -62,7 +62,7 @@ namespace System.IO {
 
 			FullPath = Path.GetFullPath (path);
 			if (simpleOriginalPath)
-				OriginalPath = Path.GetFileName (path);
+				OriginalPath = Path.GetFileName (FullPath);
 			else
 				OriginalPath = path;
 

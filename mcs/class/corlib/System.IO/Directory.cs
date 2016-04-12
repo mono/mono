@@ -96,7 +96,7 @@ namespace System.IO
 				 info.Parent.Create ();
 
 			MonoIOError error;
-			if (!MonoIO.CreateDirectory (path, out error)) {
+			if (!MonoIO.CreateDirectory (info.FullName, out error)) {
 				// LAMESPEC: 1.1 and 1.2alpha allow CreateDirectory on a file path.
 				// So CreateDirectory ("/tmp/somefile") will succeed if 'somefile' is
 				// not a directory. However, 1.0 will throw an exception.
