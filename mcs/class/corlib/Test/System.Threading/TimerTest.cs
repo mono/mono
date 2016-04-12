@@ -103,7 +103,7 @@ namespace MonoTests.System.Threading {
 		[Test] // bug #320950
 		public void TestDispose2 ()
 		{
-			Timer t = new Timer (o => Callback (o), null, 10, 10);
+			Timer t = new Timer (o => DoNothing (o), null, 10, 10);
 			t.Dispose ();
 			t.Dispose ();
 		}
