@@ -5,7 +5,7 @@
 // ==--==
 // <OWNER>[....]</OWNER>
 // 
-
+#if !FULL_AOT_RUNTIME
 namespace System.Reflection.Emit 
 {
     using System.Runtime.InteropServices;
@@ -596,7 +596,7 @@ namespace System.Reflection.Emit
         #endregion
     }
 }
-
+#endif
 
 
 
