@@ -551,7 +551,7 @@ namespace System.Text
                             default:
                                 result = (Encoding)(EncodingHelper.InvokeI18N ("GetEncoding", codepage));
 								if (result == null)
-									throw new NotSupportedException(Environment.GetResourceString("NotSupported_NoCodepageData", codepage));
+									throw new NotSupportedException(string.Format("Encoding {0} data could not be found. Make sure you have correct international codeset assembly installed and enabled.", codepage));
                                 break;
                             }
 #else
