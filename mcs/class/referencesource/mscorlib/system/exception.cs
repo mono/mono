@@ -36,14 +36,21 @@ namespace System {
     [ComDefaultInterface(typeof(_Exception))]
     [Serializable]
     [ComVisible(true)]
-    public class Exception : ISerializable, _Exception
-    {
+#if MONO
+    [StructLayout (LayoutKind.Sequential)]
+#endif
+    public class Exception : ISerializable
+#if !(MONO && MOBILE)
+        , _Exception
+#endif
+{
         private void Init()
         {
             _message = null;
             _stackTrace = null;
             _dynamicMethods = null;
             HResult = __HResults.COR_E_EXCEPTION;
+#if !MONO
             _xcode = _COMPlusExceptionCode;
             _xptrs = (IntPtr) 0;
 
@@ -52,6 +59,7 @@ namespace System {
 
             // Initialize the watson bucketing IP
             _ipForWatsonBuckets = UIntPtr.Zero;
+#endif
 
 #if FEATURE_SERIALIZATION
              _safeSerializationManager = new SafeSerializationManager();
@@ -94,10 +102,13 @@ namespace System {
             _remoteStackTraceString = info.GetString("RemoteStackTraceString");
             _remoteStackIndex = info.GetInt32("RemoteStackIndex");
 
+#if !MONO
             _exceptionMethodString = (String)(info.GetValue("ExceptionMethod",typeof(String)));
+#endif
             HResult = info.GetInt32("HResult");
             _source = info.GetString("Source");
     
+#if !MONO
             // Get the WatsonBuckets that were serialized - this is particularly
             // done to support exceptions going across AD transitions.
             // 
@@ -105,6 +116,7 @@ namespace System {
             // exception object that may not have this entry. In such a case, we would
             // get null.
             _watsonBuckets = (Object)info.GetValueNoThrow("WatsonBuckets", typeof(byte[]));
+#endif
 
 #if FEATURE_SERIALIZATION
             _safeSerializationManager = info.GetValueNoThrow("SafeSerializationManager", typeof(SafeSerializationManager)) as SafeSerializationManager;
@@ -160,10 +172,14 @@ namespace System {
             }
         }
 
+#if MONO
+        private static bool IsImmutableAgileException(Exception e) { return false; }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool IsImmutableAgileException(Exception e);
+#endif
 
 #if FEATURE_COMINTEROP
         //
@@ -271,6 +287,7 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         static extern private IRuntimeMethodInfo GetMethodFromStackTrace(Object stackTrace);
 
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         private MethodBase GetExceptionMethodFromStackTrace()
         {
@@ -282,15 +299,25 @@ namespace System {
 
             return RuntimeType.GetMethodBase(method);
         }
+#endif
     
         public MethodBase TargetSite {
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {
+#if MONO
+                StackTrace st = new StackTrace (this, true);
+                if (st.FrameCount > 0)
+                    return st.GetFrame (0).GetMethod ();
+                
+                return null;
+#else
                 return GetTargetSiteInternal();
+#endif
             }
         }
     
-
+#if !MONO
+        // This, as well as the entire "exception method" mechanism, appear to be linked to security features which Mono does not support.
         // this function is provided as a private helper to avoid the security demand
         [System.Security.SecurityCritical]  // auto-generated
         private MethodBase GetTargetSiteInternal() {
@@ -308,6 +335,7 @@ namespace System {
             }
             return _exceptionMethod;
         }
+#endif
     
         // Returns the stack trace as a string.  If no stack trace is
         // available, null is returned.
@@ -399,6 +427,11 @@ namespace System {
                         StackFrame sf = st.GetFrame(0);
                         MethodBase method = sf.GetMethod();
 
+#if MONO
+                        if (method != null) { // source can be null
+                            _source = method.DeclaringType.Assembly.UnprotectedGetName ().Name;
+                        }
+#else
                         Module module = method.Module;
 
                         RuntimeModule rtModule = module as RuntimeModule;
@@ -413,6 +446,7 @@ namespace System {
                         }
 
                         _source = rtModule.GetRuntimeAssembly().GetSimpleName();
+#endif
                     }
                 }
 
@@ -460,7 +494,8 @@ namespace System {
 
             return s;
         }
-    
+
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         private String GetExceptionMethodString() {
             MethodBase methBase = GetTargetSiteInternal();
@@ -536,6 +571,7 @@ namespace System {
             }
             return result;
         }
+#endif
 
 #if FEATURE_SERIALIZATION
         protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState
@@ -562,10 +598,12 @@ namespace System {
                 {
                     tempStackTraceString = Environment.GetStackTrace(this, true);
                 }
+#if !MONO
                 if (_exceptionMethod==null) 
                 {
                     _exceptionMethod = GetExceptionMethodFromStackTrace();
                 }
+#endif
             }
 
             if (_source == null) 
@@ -581,12 +619,18 @@ namespace System {
             info.AddValue("StackTraceString", tempStackTraceString, typeof(String));
             info.AddValue("RemoteStackTraceString", _remoteStackTraceString, typeof(String));
             info.AddValue("RemoteStackIndex", _remoteStackIndex, typeof(Int32));
+#if MONO
+            info.AddValue("ExceptionMethod", null);
+#else
             info.AddValue("ExceptionMethod", GetExceptionMethodString(), typeof(String));
+#endif
             info.AddValue("HResult", HResult);
             info.AddValue("Source", _source, typeof(String));
             
+#if !MONO
             // Serialize the Watson bucket details as well
             info.AddValue("WatsonBuckets", _watsonBuckets, typeof(byte[]));
+#endif
 
 #if FEATURE_SERIALIZATION
             if (_safeSerializationManager != null && _safeSerializationManager.IsActive)
@@ -641,6 +685,7 @@ namespace System {
         {
             _stackTrace = null;
 
+#if !MONO
             // We wont serialize or deserialize the IP for Watson bucketing since
             // we dont know where the deserialized object will be used in.
             // Using it across process or an AppDomain could be invalid and result
@@ -648,6 +693,7 @@ namespace System {
             //
             // Hence, we set it to zero when deserialization takes place. 
             _ipForWatsonBuckets = UIntPtr.Zero;
+#endif
 
 #if FEATURE_SERIALIZATION
             if (_safeSerializationManager == null)
@@ -715,6 +761,7 @@ namespace System {
         [OptionalField]
         private static object s_EDILock = new object();
 
+#if !MONO
         internal UIntPtr IPForWatsonBuckets
         {
             get {
@@ -729,6 +776,7 @@ namespace System {
                 return _watsonBuckets;
             }
         }
+#endif
 
         internal string RemoteStackTrace
         {
@@ -738,6 +786,12 @@ namespace System {
             }
         }
 
+#if MONO
+        // This is only needed for Watson support
+        private string StripFileInfo(string stackTrace, bool isRemoteStackTrace) {
+            return stackTrace;
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -801,12 +855,18 @@ namespace System {
         {
             GetStackTracesDeepCopy(this, out currentStackTrace, out dynamicMethodArray);
         }
+#endif
 
         // This is invoked by ExceptionDispatchInfo.Throw to restore the exception stack trace, corresponding to the original throw of the
         // exception, just before the exception is "rethrown".
         [SecuritySafeCritical]
         internal void RestoreExceptionDispatchInfo(System.Runtime.ExceptionServices.ExceptionDispatchInfo exceptionDispatchInfo)
         {
+#if MONO
+            captured_traces = (StackTrace[]) exceptionDispatchInfo.BinaryStackTraceArray;
+            _stackTrace = null;
+            _stackTraceString = null;
+#else
             bool fCanProcessException = !(IsImmutableAgileException(this));
             // Restore only for non-preallocated exceptions
             if (fCanProcessException)
@@ -836,8 +896,10 @@ namespace System {
                     // they can have different data to be restored. Thus, to ensure atomicity of restoration from each EDI, perform the restore under a lock.
                     lock(Exception.s_EDILock)
                     {
+#if !MONO
                         _watsonBuckets = exceptionDispatchInfo.WatsonBuckets;
                         _ipForWatsonBuckets = exceptionDispatchInfo.IPForWatsonBuckets;
+#endif
                         _remoteStackTraceString = exceptionDispatchInfo.RemoteStackTrace;
                         SaveStackTracesFromDeepCopy(this, _stackTraceCopy, _dynamicMethodsCopy);
                     }
@@ -848,19 +910,26 @@ namespace System {
                     Exception.PrepareForForeignExceptionRaise();
                 }
             }
+#endif
         }
 #endif // FEATURE_EXCEPTIONDISPATCHINFO
 
         private String _className;  //Needed for serialization.  
+#if !MONO
+        // See TargetSite comments
         private MethodBase _exceptionMethod;  //Needed for serialization.  
         private String _exceptionMethodString; //Needed for serialization. 
+#endif
         internal String _message;
         private IDictionary _data;
         private Exception _innerException;
         private String _helpURL;
         private Object _stackTrace;
+#if !MONO
+        // Watson is Microsoft's online crash reporting system
         [OptionalField] // This isnt present in pre-V4 exception objects that would be serialized.
         private Object _watsonBuckets;
+#endif
         private String _stackTraceString; //Needed for serialization.  
         private String _remoteStackTraceString;
         private int _remoteStackIndex;
@@ -888,6 +957,7 @@ namespace System {
         }
         
         private String _source;         // Mainly used by VB. 
+#if !MONO
         // WARNING: Don't delete/rename _xptrs and _xcode - used by functions
         // on Marshal class.  Native functions are in COMUtilNative.cpp & AppDomain
         private IntPtr _xptrs;             // Internal EE stuff 
@@ -896,11 +966,20 @@ namespace System {
 #pragma warning restore 414
         [OptionalField]
         private UIntPtr _ipForWatsonBuckets; // Used to persist the IP for Watson Bucketing
+#endif
 
 #if FEATURE_SERIALIZATION
         [OptionalField(VersionAdded = 4)]
         private SafeSerializationManager _safeSerializationManager;
 #endif // FEATURE_SERIALIZATION
+
+#if MONO
+        // Mono: Used when rethrowing exception
+        internal StackTrace[] captured_traces;
+
+        // Mono addition: Used on iPhone
+        IntPtr[] native_trace_ips;
+#endif
 
     // See clr\src\vm\excep.h's EXCEPTION_COMPLUS definition:
         private const int _COMPlusExceptionCode = unchecked((int)0xe0434352);   // Win32 exception code for COM+ exceptions
@@ -981,16 +1060,59 @@ namespace System {
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal static String GetMessageFromNativeResources(ExceptionMessageKind kind)
         {
+#if MONO
+            switch (kind) {
+            case ExceptionMessageKind.ThreadAbort:
+                return "";
+            case ExceptionMessageKind.ThreadInterrupted:
+                return "";
+            case ExceptionMessageKind.OutOfMemory:
+                return "Out of memory";
+            }
+            return "";
+#else
             string retMesg = null;
             GetMessageFromNativeResources(kind, JitHelpers.GetStringHandleOnStack(ref retMesg));
             return retMesg;
+#endif
         }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern void GetMessageFromNativeResources(ExceptionMessageKind kind, StringHandleOnStack retMesg);
+#endif
+
+#if MONO
+        // Exposed to support Mono BCL classes
+        internal void SetMessage (string s)
+        {
+            _message = s;
+        }
+
+        internal void SetStackTrace (string s)
+        {
+            _stackTraceString = s;
+        }
+
+        // Support for a System.Runtime.Remoting.Proxies.RealProxy edge case
+        internal Exception FixRemotingException ()
+        {
+            string message = (0 == _remoteStackIndex) ?
+                Locale.GetText ("{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}") :
+                Locale.GetText ("{1}{0}{0}Exception rethrown at [{2}]: {0}");
+            string tmp = String.Format (message, Environment.NewLine, StackTrace, _remoteStackIndex);
+
+            _remoteStackTraceString = tmp;
+            _remoteStackIndex++;
+
+            _stackTraceString = null;
+
+            return this;
+        }
+#endif
     }
 
 
