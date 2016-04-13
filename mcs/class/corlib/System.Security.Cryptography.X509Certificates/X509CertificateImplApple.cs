@@ -26,6 +26,12 @@ namespace System.Security.Cryptography.X509Certificates
 			get { return handle; }
 		}
 
+		public override IntPtr GetNativeAppleCertificate ()
+		{
+			ThrowIfContextInvalid ();
+			return handle;
+		}
+
 		public override X509CertificateImpl Clone ()
 		{
 			ThrowIfContextInvalid ();
