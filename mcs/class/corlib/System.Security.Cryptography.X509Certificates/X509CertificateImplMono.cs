@@ -34,7 +34,7 @@ using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates
 {
-	class X509CertificateImplMono : X509CertificateImpl
+	sealed class X509CertificateImplMono : X509CertificateImpl
 	{
 		MX.X509Certificate x509;
 
@@ -49,6 +49,11 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public override IntPtr Handle {
 			get { return IntPtr.Zero; }
+		}
+
+		public override IntPtr GetNativeAppleCertificate ()
+		{
+			return IntPtr.Zero;
 		}
 
 		public override X509CertificateImpl Clone ()

@@ -101,16 +101,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		static IntPtr GetCertificate (X509Certificate certificate, out IntPtr dataPtr)
+		static IntPtr GetCertificate (X509Certificate certificate)
 		{
-			var handle = certificate.Handle;
+			var handle = certificate.Impl.GetNativeAppleCertificate ();
 			if (handle != IntPtr.Zero) {
-				dataPtr = IntPtr.Zero;
 				CFRetain (handle);
 				return handle;
 			}
-			dataPtr = MakeCFData (certificate.GetRawCertData ());
-			return SecCertificateCreateWithData (IntPtr.Zero, dataPtr);
+			var dataPtr = MakeCFData (certificate.GetRawCertData ());
+			handle = SecCertificateCreateWithData (IntPtr.Zero, dataPtr);
+			CFRelease (dataPtr);
+			return handle;
 		}
 		
 		public static SecTrustResult TrustEvaluateSsl (XX509CertificateCollection certificates, XX509CertificateCollection anchors, string host)
@@ -129,9 +130,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			int certCount = certificates.Count;
 			int anchorCount = anchors != null ? anchors.Count : 0;
-			IntPtr [] cfDataPtrs = new IntPtr [certCount];
 			IntPtr [] secCerts = new IntPtr [certCount];
-			IntPtr [] cfDataAnchorPtrs = new IntPtr [anchorCount];
 			IntPtr [] secCertAnchors = new IntPtr [anchorCount];
 			IntPtr certArray = IntPtr.Zero;
 			IntPtr anchorArray = IntPtr.Zero;
@@ -142,13 +141,13 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			try {
 				for (int i = 0; i < certCount; i++) {
-					secCerts [i] = GetCertificate (certificates [i], out cfDataPtrs [i]);
+					secCerts [i] = GetCertificate (certificates [i]);
 					if (secCerts [i] == IntPtr.Zero)
 						return SecTrustResult.Deny;
 				}
 
 				for (int i = 0; i < anchorCount; i++) {
-					secCertAnchors [i] = GetCertificate (anchors [i], out cfDataAnchorPtrs [i]);
+					secCertAnchors [i] = GetCertificate (anchors [i]);
 					if (secCertAnchors [i] == IntPtr.Zero)
 						return SecTrustResult.Deny;
 				}
@@ -170,14 +169,6 @@ namespace System.Security.Cryptography.X509Certificates {
 				code = SecTrustEvaluate (sectrust, out result);
 				return result;
 			} finally {
-				for (int i = 0; i < certCount; i++)
-					if (cfDataPtrs [i] != IntPtr.Zero)
-						CFRelease (cfDataPtrs [i]);
-
-				for (int i = 0; i < anchorCount; i++)
-					if (cfDataAnchorPtrs [i] != IntPtr.Zero)
-						CFRelease (cfDataAnchorPtrs [i]);
-
 				if (certArray != IntPtr.Zero)
 					CFRelease (certArray);
 

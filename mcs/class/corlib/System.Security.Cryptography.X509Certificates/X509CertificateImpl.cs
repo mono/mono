@@ -37,6 +37,11 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		/*
+		 * This is used in System.dll's OSX509Certificates.cs
+		 */
+		public abstract IntPtr GetNativeAppleCertificate ();
+
 		protected void ThrowIfContextInvalid ()
 		{
 			if (!IsValid)
