@@ -1147,7 +1147,7 @@ load_embedded_profiler (const char *desc, const char *name)
 	MonoDl *pmodule = NULL;
 	gboolean result;
 
-	pmodule = mono_dl_open (NULL, MONO_DL_LAZY, &err);
+	pmodule = mono_dl_open (NULL, 0, &err);
 	if (!pmodule) {
 		g_warning ("Could not open main executable (%s)", err);
 		g_free (err);
@@ -1175,7 +1175,7 @@ load_profiler_from_directory (const char *directory, const char *libname, const 
 	iter = NULL;
 	err = NULL;
 	while ((path = mono_dl_build_path (directory, libname, &iter))) {
-		pmodule = mono_dl_open (path, MONO_DL_LAZY, &err);
+		pmodule = mono_dl_open (path, 0, &err);
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "Attempting to load profiler: %s, %ssuccessful, err: %s", path, pmodule?"":"not ", err);
 		g_free (path);
 		g_free (err);
@@ -1190,7 +1190,7 @@ static gboolean
 load_profiler_from_mono_installation (const char *libname, const char *desc)
 {
 	char *err = NULL;
-	MonoDl *pmodule = mono_dl_open_runtime_lib (libname, MONO_DL_LAZY, &err);
+	MonoDl *pmodule = mono_dl_open_runtime_lib (libname, 0, &err);
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "Attempting to load profiler from runtime libs: %s, %ssuccessful, err: %s", libname, pmodule?"":"not ", err);
 	g_free (err);
 	if (pmodule)
