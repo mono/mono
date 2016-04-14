@@ -205,15 +205,11 @@ sgen_memgov_major_collection_start (void)
 }
 
 void
-sgen_memgov_major_collection_end (gboolean forced)
+sgen_memgov_major_collection_end (void)
 {
 	last_collection_los_memory_usage = los_memory_usage;
 
 	total_allocated_major_end = total_allocated_major;
-	if (forced) {
-		sgen_get_major_collector ()->finish_sweeping ();
-		sgen_memgov_calculate_minor_collection_allowance ();
-	}
 }
 
 void
