@@ -19,7 +19,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-time.h>
 
-static gboolean own_if_signalled(gpointer handle)
+static gboolean own_if_signalled(gpointer handle, guint32 *statuscode)
 {
 	gboolean ret = FALSE;
 	
@@ -30,7 +30,8 @@ static gboolean own_if_signalled(gpointer handle)
 	}
 	
 	if (_wapi_handle_issignalled (handle)) {
-		_wapi_handle_ops_own (handle);
+		*statuscode = WAIT_OBJECT_0;
+		_wapi_handle_ops_own (handle, statuscode);
 		ret = TRUE;
 	}
 
@@ -41,7 +42,7 @@ static gboolean own_if_signalled(gpointer handle)
 	return(ret);
 }
 
-static gboolean own_if_owned(gpointer handle)
+static gboolean own_if_owned(gpointer handle, guint32 *statuscode)
 {
 	gboolean ret = FALSE;
 	
@@ -52,7 +53,8 @@ static gboolean own_if_owned(gpointer handle)
 	}
 	
 	if (_wapi_handle_ops_isowned (handle)) {
-		_wapi_handle_ops_own (handle);
+		*statuscode = WAIT_OBJECT_0;
+		_wapi_handle_ops_own (handle, statuscode);
 		ret = TRUE;
 	}
 
@@ -138,19 +140,17 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 
 	if (_wapi_handle_test_capabilities (handle,
 					    WAPI_HANDLE_CAP_OWN) == TRUE) {
-		if (own_if_owned (handle) == TRUE) {
+		if (own_if_owned (handle, &ret) == TRUE) {
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p already owned", __func__,
 				   handle);
-			ret = WAIT_OBJECT_0;
 			goto done;
 		}
 	}
 
-	if (own_if_signalled (handle) == TRUE) {
+	if (own_if_signalled (handle, &ret) == TRUE) {
 		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p already signalled", __func__,
 			   handle);
 
-		ret=WAIT_OBJECT_0;
 		goto done;
 	}
 
@@ -167,11 +167,10 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		 */
 		_wapi_handle_ops_prewait (handle);
 
-		if (own_if_signalled (handle)) {
+		if (own_if_signalled (handle, &ret)) {
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p signalled", __func__,
 				   handle);
 
-			ret = WAIT_OBJECT_0;
 			goto done;
 		}
 
@@ -192,11 +191,10 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 			 * handle is signalled now.  (It might not be
 			 * if someone else got in before us.)
 			 */
-			if (own_if_signalled (handle)) {
+			if (own_if_signalled (handle, &ret)) {
 				MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p signalled", __func__,
 					   handle);
 
-				ret=WAIT_OBJECT_0;
 				goto done;
 			}
 		
@@ -328,18 +326,16 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 	_wapi_handle_ops_signal (signal_handle);
 
 	if (_wapi_handle_test_capabilities (wait, WAPI_HANDLE_CAP_OWN)==TRUE) {
-		if (own_if_owned (wait)) {
+		if (own_if_owned (wait, &ret)) {
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p already owned", __func__,
 				   wait);
-			ret = WAIT_OBJECT_0;
 			goto done;
 		}
 	}
 
-	if (own_if_signalled (wait)) {
+	if (own_if_signalled (wait, &ret)) {
 		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p already signalled", __func__, wait);
 
-		ret = WAIT_OBJECT_0;
 		goto done;
 	}
 
@@ -351,10 +347,9 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		 */
 		_wapi_handle_ops_prewait (wait);
 	
-		if (own_if_signalled (wait)) {
+		if (own_if_signalled (wait, &ret)) {
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p signalled", __func__, wait);
 
-			ret = WAIT_OBJECT_0;
 			goto done;
 		}
 
@@ -375,11 +370,10 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 			 * handle is signalled now.  (It might not be
 			 * if someone else got in before us.)
 			 */
-			if (own_if_signalled (wait)) {
+			if (own_if_signalled (wait, &ret)) {
 				MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p signalled", __func__,
 					   wait);
 
-				ret = WAIT_OBJECT_0;
 				goto done;
 			}
 		
@@ -404,22 +398,29 @@ done:
 
 static gboolean test_and_own (guint32 numobjects, gpointer *handles,
 			      gboolean waitall, guint32 *count,
-			      guint32 *lowest)
+			      guint32 *lowest, guint32 *statuscode)
 {
 	gboolean done;
 	int i;
-	
+
+	*statuscode = WAIT_OBJECT_0;
+
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: locking handles", __func__);
 	
 	done = _wapi_handle_count_signalled_handles (numobjects, handles,
 						     waitall, count, lowest);
 	if (done == TRUE) {
 		if (waitall == TRUE) {
+			guint32 handle_status = WAIT_OBJECT_0;
+
 			for (i = 0; i < numobjects; i++) {
-				own_if_signalled (handles[i]);
+				own_if_signalled (handles[i], &handle_status);
+
+				if (handle_status != WAIT_OBJECT_0)
+					*statuscode = handle_status;
 			}
 		} else {
-			own_if_signalled (handles[*lowest]);
+			own_if_signalled (handles[*lowest], statuscode);
 		}
 	}
 	
@@ -475,6 +476,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	gpointer sorted_handles [MAXIMUM_WAIT_OBJECTS];
 	gboolean apc_pending = FALSE;
 	gint64 now, end;
+	guint32 status;
 	
 	if (current_thread == NULL) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -550,9 +552,9 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			/* Can't wait for a process handle + another handle without polling */
 			poll = TRUE;
 
-	done = test_and_own (numobjects, handles, waitall, &count, &lowest);
+	done = test_and_own (numobjects, handles, waitall, &count, &lowest, &status);
 	if (done == TRUE) {
-		return(WAIT_OBJECT_0+lowest);
+		return(status+lowest);
 	}
 	
 	if (timeout == 0) {
@@ -635,9 +637,9 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 		 * wait timed out
 		 */
 		done = test_and_own (numobjects, handles, waitall,
-				     &count, &lowest);
+				     &count, &lowest, &status);
 		if (done == TRUE) {
-			retval = WAIT_OBJECT_0+lowest;
+			retval = status+lowest;
 			break;
 		} else if (ret != 0) {
 			/* Didn't get all handles, and there was a

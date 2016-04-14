@@ -1671,18 +1671,7 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 
 	THREAD_WAIT_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") returning %d", __func__, mono_native_thread_id_get (), ret));
 
-	/*
-	 * These need to be here.  See MSDN dos on WaitForMultipleObjects.
-	 */
-	if (ret >= WAIT_OBJECT_0 && ret <= WAIT_OBJECT_0 + numhandles - 1) {
-		return ret - WAIT_OBJECT_0;
-	}
-	else if (ret >= WAIT_ABANDONED_0 && ret <= WAIT_ABANDONED_0 + numhandles - 1) {
-		return ret - WAIT_ABANDONED_0;
-	}
-	else {
-		return ret;
-	}
+	return ret;
 }
 
 /* FIXME: exitContext isnt documented */

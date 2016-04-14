@@ -26,10 +26,10 @@
 #include <mono/utils/mono-logger-internals.h>
 
 static void sema_signal(gpointer handle);
-static gboolean sema_own (gpointer handle);
+static gboolean sema_own (gpointer handle, guint32 *statuscode);
 
 static void namedsema_signal (gpointer handle);
-static gboolean namedsema_own (gpointer handle);
+static gboolean namedsema_own (gpointer handle, guint32 *statuscode);
 
 struct _WapiHandleOps _wapi_sem_ops = {
 	NULL,			/* close */
@@ -93,10 +93,12 @@ static void sema_signal(gpointer handle)
 	ReleaseSemaphore(handle, 1, NULL);
 }
 
-static gboolean sema_own (gpointer handle)
+static gboolean sema_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_sem *sem_handle;
 	gboolean ok;
+	
+	*statuscode = WAIT_OBJECT_0;
 	
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_SEM,
 				(gpointer *)&sem_handle);
@@ -125,11 +127,13 @@ static void namedsema_signal (gpointer handle)
 }
 
 /* NB, always called with the shared handle lock held */
-static gboolean namedsema_own (gpointer handle)
+static gboolean namedsema_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_namedsem *namedsem_handle;
 	gboolean ok;
 	
+	*statuscode = WAIT_OBJECT_0;
+
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning named sem handle %p", __func__, handle);
 
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_NAMEDSEM,
