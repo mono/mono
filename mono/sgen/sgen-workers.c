@@ -23,8 +23,21 @@ static int workers_num;
 static volatile gboolean forced_stop;
 static WorkerData *workers_data;
 
-static SgenSectionGrayQueue workers_distribute_gray_queue;
+static mono_mutex_t workers_distribute_gray_queue_lock;
+static SgenGrayQueue workers_distribute_gray_queue;
 static gboolean workers_distribute_gray_queue_inited;
+
+SgenGrayQueue nursery_to_workers_queue;
+volatile gboolean enable_nursery_to_workers = FALSE;
+
+typedef struct {
+	GCObject * volatile obj;
+	char padding [64 - sizeof (void*)];
+} FastEnqueueSlot;
+
+#define NUM_FAST_ENQUEUE_SLOTS	7
+
+static FastEnqueueSlot fast_enqueue_slots [NUM_FAST_ENQUEUE_SLOTS];
 
 /*
  * Allowed transitions:
@@ -55,7 +68,7 @@ static volatile State workers_state;
 static SgenObjectOperations * volatile idle_func_object_ops;
 static SgenThreadPoolJob * volatile preclean_job;
 
-static guint64 stat_workers_num_finished;
+guint64 stat_workers_num_finished;
 
 static gboolean
 set_state (State old_state, State new_state)
@@ -77,7 +90,7 @@ state_is_working_or_enqueued (State state)
 	return state == STATE_WORKING || state == STATE_WORK_ENQUEUED;
 }
 
-void
+static gboolean
 sgen_workers_ensure_awake (void)
 {
 	State old_state;
@@ -92,8 +105,11 @@ sgen_workers_ensure_awake (void)
 		did_set_state = set_state (old_state, STATE_WORK_ENQUEUED);
 	} while (!did_set_state);
 
-	if (!state_is_working_or_enqueued (old_state))
+	if (!state_is_working_or_enqueued (old_state)) {
 		sgen_thread_pool_idle_signal ();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -144,25 +160,81 @@ sgen_workers_wait_for_jobs_finished (void)
 }
 
 static gboolean
-workers_get_work (WorkerData *data)
+drain_queue_into_queue (SgenGrayQueue *dest, SgenGrayQueue *src)
 {
-	SgenMajorCollector *major;
+	gboolean did_dequeue = FALSE;
+	for (;;) {
+		GCObject *obj;
+		SgenDescriptor desc;
+		GRAY_OBJECT_DEQUEUE (src, &obj, &desc);
+		if (!obj)
+			break;
+		GRAY_OBJECT_ENQUEUE (dest, obj, desc);
+		did_dequeue = TRUE;
+	}
+	return did_dequeue;
+}
 
-	g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
+static gboolean
+fast_enqueue_slots_empty (void)
+{
+	int i;
+	for (i = 0; i < NUM_FAST_ENQUEUE_SLOTS; ++i) {
+		if (fast_enqueue_slots [i].obj)
+			return FALSE;
+	}
+	return TRUE;
+}
 
-	/* If we're concurrent, steal from the workers distribute gray queue. */
-	major = sgen_get_major_collector ();
-	if (major->is_concurrent) {
-		GrayQueueSection *section = sgen_section_gray_queue_dequeue (&workers_distribute_gray_queue);
-		if (section) {
-			sgen_gray_object_enqueue_section (&data->private_gray_queue, section);
-			return TRUE;
-		}
+gboolean
+sgen_workers_drain_fast_enqueue_slots (SgenGrayQueue *queue)
+{
+	int i;
+	GCObject *old;
+	gboolean success = FALSE;
+
+	for (i = 0; i < NUM_FAST_ENQUEUE_SLOTS; ++i) {
+		GCObject *obj = fast_enqueue_slots [i].obj;
+
+		if (!obj)
+			continue;
+
+		/*
+		old = InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueue_slots [i].obj, NULL, obj);
+		SGEN_ASSERT (0, obj == old, "Why couldn't we NULL the fast enqueue object?");
+		*/
+
+		fast_enqueue_slots [i].obj = NULL;
+
+		GRAY_OBJECT_ENQUEUE (queue, obj, sgen_obj_get_descriptor (obj));
+
+		success = TRUE;
 	}
 
-	/* Nobody to steal from */
+	return success;
+}
+
+static gboolean
+workers_get_work (WorkerData *data)
+{
+	SgenMajorCollector *major = sgen_get_major_collector ();
+	gboolean did_dequeue;
+
+	SGEN_ASSERT (0, major->is_concurrent, "Worker code shouldn't run if the collector is not concurrent.");
 	g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
-	return FALSE;
+
+	/* Steal from the workers distribute gray queue. */
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+	did_dequeue = drain_queue_into_queue (&data->private_gray_queue, &workers_distribute_gray_queue);
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
+
+	/* And the fast enqueue slots. */
+	did_dequeue = sgen_workers_drain_fast_enqueue_slots (&data->private_gray_queue) || did_dequeue;
+
+	/* Nobody to steal from */
+	if (!did_dequeue)
+		g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
+	return did_dequeue;
 }
 
 static void
@@ -177,7 +249,8 @@ static void
 init_private_gray_queue (WorkerData *data)
 {
 	sgen_gray_object_queue_init (&data->private_gray_queue,
-			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL);
+			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL,
+			FALSE);
 }
 
 static void
@@ -216,9 +289,9 @@ marker_idle_func (void *data_untyped)
 	if (!forced_stop && (!sgen_gray_object_queue_is_empty (&data->private_gray_queue) || workers_get_work (data))) {
 		ScanCopyContext ctx = CONTEXT_FROM_OBJECT_OPERATIONS (idle_func_object_ops, &data->private_gray_queue);
 
-		SGEN_ASSERT (0, !sgen_gray_object_queue_is_empty (&data->private_gray_queue), "How is our gray queue empty if we just got work?");
+		SGEN_ASSERT (0, !sgen_gray_object_queue_is_empty (&data->private_gray_queue) || !fast_enqueue_slots_empty (), "How is our gray queue empty if we just got work?");
 
-		sgen_drain_gray_stack (ctx);
+		sgen_drain_gray_stack (ctx, TRUE);
 	} else {
 		SgenThreadPoolJob *job = preclean_job;
 		if (job) {
@@ -234,13 +307,14 @@ static void
 init_distribute_gray_queue (void)
 {
 	if (workers_distribute_gray_queue_inited) {
-		g_assert (sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue));
-		g_assert (workers_distribute_gray_queue.locked);
+		g_assert (sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue));
+		SGEN_ASSERT (0, fast_enqueue_slots_empty (), "How did we forgot about this object?");
 		return;
 	}
 
-	sgen_section_gray_queue_init (&workers_distribute_gray_queue, TRUE,
-			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL);
+	mono_os_mutex_init (&workers_distribute_gray_queue_lock);
+	sgen_gray_object_queue_init (&workers_distribute_gray_queue,
+			sgen_get_major_collector ()->is_concurrent ? concurrent_enqueue_check : NULL, FALSE);
 	workers_distribute_gray_queue_inited = TRUE;
 }
 
@@ -276,6 +350,8 @@ sgen_workers_init (int num_workers)
 		workers_data_ptrs [i] = (void *) &workers_data [i];
 
 	sgen_thread_pool_init (num_workers, thread_pool_init_func, marker_idle_func, continue_idle_func, workers_data_ptrs);
+
+	sgen_gray_object_queue_init (&nursery_to_workers_queue, NULL, FALSE);
 
 	mono_counters_register ("# workers finished", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_workers_num_finished);
 }
@@ -314,7 +390,7 @@ sgen_workers_join (void)
 
 	/* At this point all the workers have stopped. */
 
-	SGEN_ASSERT (0, sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue), "Why is there still work left to do?");
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue) && fast_enqueue_slots_empty (), "Why is there still work left to do?");
 	for (i = 0; i < workers_num; ++i)
 		SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_data [i].private_gray_queue), "Why is there still work left to do?");
 }
@@ -330,7 +406,10 @@ sgen_workers_have_idle_work (void)
 
 	SGEN_ASSERT (0, forced_stop && sgen_workers_all_done (), "Checking for idle work should only happen if the workers are stopped.");
 
-	if (!sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue))
+	if (!sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue))
+		return TRUE;
+
+	if (!fast_enqueue_slots_empty ())
 		return TRUE;
 
 	for (i = 0; i < workers_num; ++i) {
@@ -354,10 +433,81 @@ sgen_workers_are_working (void)
 	return state_is_working_or_enqueued (workers_state);
 }
 
-SgenSectionGrayQueue*
-sgen_workers_get_distribute_section_gray_queue (void)
+void
+sgen_workers_assert_gray_queue_is_empty (void)
 {
-	return &workers_distribute_gray_queue;
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&workers_distribute_gray_queue) && fast_enqueue_slots_empty (), "Why is the workers gray queue not empty?");
+}
+
+void
+sgen_workers_take_from_queue_and_awake (SgenGrayQueue *queue)
+{
+	gboolean wake;
+
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+	wake = drain_queue_into_queue (&workers_distribute_gray_queue, queue);
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
+
+	if (wake) {
+		SGEN_ASSERT (0, sgen_concurrent_collection_in_progress (), "Why is there work to take when there's no concurrent collection in progress?");
+		sgen_workers_ensure_awake ();
+	}
+}
+
+void
+sgen_workers_start_nursery_collection (void)
+{
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&nursery_to_workers_queue), "Not empty?");
+	SGEN_ASSERT (0, !enable_nursery_to_workers, "Did we forget to init or deinit?");
+	if (sgen_concurrent_collection_in_progress ())
+		enable_nursery_to_workers = TRUE;
+}
+
+void
+sgen_workers_finish_nursery_collection (void)
+{
+	if (sgen_concurrent_collection_in_progress ()) {
+		sgen_workers_take_from_queue_and_awake (&nursery_to_workers_queue);
+		/* FIXME: init queue again */
+		enable_nursery_to_workers = FALSE;
+	}
+
+	SGEN_ASSERT (0, sgen_gray_object_queue_is_empty (&nursery_to_workers_queue), "Not empty?");
+	SGEN_ASSERT (0, !enable_nursery_to_workers, "Did we forget to init or deinit?");
+}
+
+gboolean
+sgen_workers_enqueue_object_and_awake (GCObject *obj, SgenDescriptor desc)
+{
+	int slot;
+
+	if (enable_nursery_to_workers) {
+		GRAY_OBJECT_ENQUEUE (&nursery_to_workers_queue, obj, desc);
+		return FALSE;
+	}
+
+	slot = mono_thread_info_get_small_id () % NUM_FAST_ENQUEUE_SLOTS;
+
+	SGEN_ASSERT (0, slot >= 0 && slot < NUM_FAST_ENQUEUE_SLOTS, "Is the slot negative?");
+
+	if (InterlockedCompareExchangePointer ((gpointer * volatile)&fast_enqueue_slots [slot].obj, obj, NULL) == NULL) {
+		mono_memory_write_barrier ();
+		/*
+		 * We can run without doing this, it seems, though I'm not sure - it might
+		 * cause a deadlock.  In any case, disabling it doesn't run faster.
+		 */
+		sgen_workers_ensure_awake ();
+		return TRUE;
+	}
+
+	mono_os_mutex_lock (&workers_distribute_gray_queue_lock);
+	GRAY_OBJECT_ENQUEUE (&workers_distribute_gray_queue, obj, desc);
+	mono_os_mutex_unlock (&workers_distribute_gray_queue_lock);
+
+	SGEN_ASSERT (0, sgen_concurrent_collection_in_progress (), "Why is there work to take when there's no concurrent collection in progress?");
+	sgen_workers_ensure_awake ();
+
+	return FALSE;
 }
 
 #endif

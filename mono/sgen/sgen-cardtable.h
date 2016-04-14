@@ -18,13 +18,6 @@ void sgen_cardtable_scan_object (GCObject *obj, mword obj_size, guint8 *cards,
 
 gboolean sgen_card_table_get_card_data (guint8 *dest, mword address, mword cards);
 
-guint8* sgen_card_table_alloc_mod_union (char *obj, mword obj_size);
-void sgen_card_table_free_mod_union (guint8 *mod_union, char *obj, mword obj_size);
-
-void sgen_card_table_update_mod_union_from_cards (guint8 *dest, guint8 *start_card, size_t num_cards);
-void sgen_card_table_update_mod_union (guint8 *dest, char *obj, mword obj_size, size_t *out_num_cards);
-void sgen_card_table_preclean_mod_union (guint8 *cards, guint8 *cards_preclean, size_t num_cards);
-
 guint8* sgen_get_card_table_configuration (int *shift_bits, gpointer *mask);
 
 void sgen_card_table_init (SgenRememberedSet *remset);

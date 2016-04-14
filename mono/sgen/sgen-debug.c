@@ -149,15 +149,16 @@ static gboolean missing_remsets;
  */
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {	\
-	if (*(ptr) && sgen_ptr_in_nursery ((char*)*(ptr))) { \
-		if (!sgen_get_remset ()->find_address ((char*)(ptr)) && !sgen_cement_lookup (*(ptr))) { \
-			GCVTable __vt = SGEN_LOAD_VTABLE (obj);	\
-			SGEN_LOG (0, "Oldspace->newspace reference %p at offset %zd in object %p (%s.%s) not found in remsets.", *(ptr), (char*)(ptr) - (char*)(obj), (obj), sgen_client_vtable_get_namespace (__vt), sgen_client_vtable_get_name (__vt)); \
-			binary_protocol_missing_remset ((obj), __vt, (int) ((char*)(ptr) - (char*)(obj)), *(ptr), (gpointer)LOAD_VTABLE(*(ptr)), object_is_pinned (*(ptr))); \
-			if (!object_is_pinned (*(ptr)))								\
-				missing_remsets = TRUE;									\
-		}																\
-	}																	\
+		if (*(ptr) && sgen_ptr_in_nursery ((char*)*(ptr))) {	\
+			if (!sgen_get_remset ()->find_address ((char*)(ptr)) && !sgen_cement_lookup (*(ptr))) { \
+				GCVTable __vt = SGEN_LOAD_VTABLE (obj);	\
+				gboolean is_pinned = object_is_pinned (*(ptr));	\
+				SGEN_LOG (0, "Oldspace->newspace reference %p at offset %zd in object %p (%s.%s) not found in remsets%s.", *(ptr), (char*)(ptr) - (char*)(obj), (obj), sgen_client_vtable_get_namespace (__vt), sgen_client_vtable_get_name (__vt), is_pinned ? ", but object is pinned" : ""); \
+				binary_protocol_missing_remset ((obj), __vt, (int) ((char*)(ptr) - (char*)(obj)), *(ptr), (gpointer)LOAD_VTABLE(*(ptr)), is_pinned); \
+				if (!is_pinned)				\
+					missing_remsets = TRUE;		\
+			}						\
+		}							\
 	} while (0)
 
 /*
@@ -181,7 +182,7 @@ check_consistency_callback (GCObject *obj, size_t size, void *dummy)
  * Assumes the world is stopped.
  */
 void
-sgen_check_consistency (void)
+sgen_check_remset_consistency (void)
 {
 	// Need to add more checks
 
@@ -196,6 +197,8 @@ sgen_check_consistency (void)
 
 	SGEN_LOG (1, "Heap consistency check done.");
 
+	if (missing_remsets)
+		binary_protocol_flush_buffers (TRUE);
 	if (!binary_protocol_is_enabled ())
 		g_assert (!missing_remsets);
 }
@@ -210,52 +213,50 @@ is_major_or_los_object_marked (GCObject *obj)
 	}
 }
 
+static gboolean missing_marks;
+
 #undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj)	do {	\
-	if (*(ptr) && !sgen_ptr_in_nursery ((char*)*(ptr)) && !is_major_or_los_object_marked ((GCObject*)*(ptr))) { \
-		if (!sgen_get_remset ()->find_address_with_cards (start, cards, (char*)(ptr))) { \
-			GCVTable __vt = SGEN_LOAD_VTABLE (obj);	\
-			SGEN_LOG (0, "major->major reference %p at offset %zd in object %p (%s.%s) not found in remsets.", *(ptr), (char*)(ptr) - (char*)(obj), (obj), sgen_client_vtable_get_namespace (__vt), sgen_client_vtable_get_name (__vt)); \
-			binary_protocol_missing_remset ((obj), __vt, (int) ((char*)(ptr) - (char*)(obj)), *(ptr), (gpointer)LOAD_VTABLE(*(ptr)), object_is_pinned (*(ptr))); \
-			missing_remsets = TRUE;				\
-		}																\
-	}																	\
+#define HANDLE_PTR(ptr, obj)	do {					\
+		GCObject *__ref = *(ptr);				\
+		if (__ref) {						\
+			if (sgen_ptr_in_nursery (__ref)) {		\
+				if (!SGEN_OBJECT_IS_PINNED (__ref)) {	\
+					SGEN_LOG (0, "Major (%p in obj %p) -> minor (%p) not pinned.", (ptr), full_obj, __ref); \
+					missing_marks = TRUE;		\
+				}					\
+			} else {					\
+				if (!is_major_or_los_object_marked (__ref)) { \
+					SGEN_LOG (0, "Major (%p in obj %p) -> major (%p) not marked.", (ptr), full_obj, __ref); \
+					missing_marks = TRUE;		\
+				}					\
+			}						\
+		}							\
 	} while (0)
 
 static void
-check_mod_union_callback (GCObject *obj, size_t size, void *dummy)
+check_refs_marked (GCObject *full_obj, size_t size, void *dummy)
 {
-	char *start = (char*)obj;
-	gboolean in_los = (gboolean) (size_t) dummy;
-	GCVTable vt = LOAD_VTABLE (obj);
-	SgenDescriptor desc = sgen_vtable_get_descriptor (vt);
-	guint8 *cards;
-	SGEN_LOG (8, "Scanning object %p, vtable: %p (%s)", obj, vt, sgen_client_vtable_get_name (vt));
+	char *start = (char*)full_obj;
+	SgenDescriptor desc = sgen_obj_get_descriptor (full_obj);
 
-	if (!is_major_or_los_object_marked (obj))
+	if (!is_major_or_los_object_marked (full_obj))
 		return;
-
-	if (in_los)
-		cards = sgen_los_header_for_object (obj)->cardtable_mod_union;
-	else
-		cards = sgen_get_major_collector ()->get_cardtable_mod_union_for_reference (start);
-
-	SGEN_ASSERT (0, cards, "we must have mod union for marked major objects");
 
 #include "sgen-scan-object.h"
 }
 
 void
-sgen_check_mod_union_consistency (void)
+sgen_check_major_heap_marked (void)
 {
-	missing_remsets = FALSE;
+	missing_marks = FALSE;
 
-	major_collector.iterate_objects (ITERATE_OBJECTS_ALL, (IterateObjectCallbackFunc)check_mod_union_callback, (void*)FALSE);
+	major_collector.iterate_objects (ITERATE_OBJECTS_ALL, (IterateObjectCallbackFunc)check_refs_marked, NULL);
+	sgen_los_iterate_objects ((IterateObjectCallbackFunc)check_refs_marked, NULL);
 
-	sgen_los_iterate_objects ((IterateObjectCallbackFunc)check_mod_union_callback, (void*)TRUE);
-
-	if (!binary_protocol_is_enabled ())
-		g_assert (!missing_remsets);
+	if (missing_marks) {
+		binary_protocol_flush_buffers (TRUE);
+		SGEN_ASSERT (0, FALSE, "Why are we missing mark bits?");
+	}
 }
 
 #undef HANDLE_PTR
@@ -426,15 +427,15 @@ missing_remset_spew (char *obj, char **slot)
 FIXME Flag missing remsets due to pinning as non fatal
 */
 #undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj)	do {	\
-		if (*(char**)ptr) {	\
+#define HANDLE_PTR(ptr,obj)	do {					\
+		if (*(char**)ptr) {					\
 			if (!is_valid_object_pointer (*(char**)ptr)) {	\
-				bad_pointer_spew ((char*)obj, (char**)ptr);	\
-			} else if (!sgen_ptr_in_nursery (obj) && sgen_ptr_in_nursery ((char*)*ptr)) {	\
-				if (!sgen_get_remset ()->find_address ((char*)(ptr)) && !sgen_cement_lookup (*(ptr)) && (!allow_missing_pinned || !SGEN_OBJECT_IS_PINNED (*(ptr)))) \
-			        missing_remset_spew ((char*)obj, (char**)ptr);	\
-			}	\
-        } \
+				bad_pointer_spew ((char*)obj, (char**)ptr); \
+			} else if (!sgen_ptr_in_nursery (obj) && sgen_ptr_in_nursery ((char*)*ptr)) { \
+				if (!allow_missing_pinned && !SGEN_OBJECT_IS_PINNED (*(ptr)) && !sgen_get_remset ()->find_address ((char*)(ptr)) && !sgen_cement_lookup (*(ptr))) \
+					missing_remset_spew ((char*)obj, (char**)ptr); \
+			}						\
+		}							\
 	} while (0)
 
 static void

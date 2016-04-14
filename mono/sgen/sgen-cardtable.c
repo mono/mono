@@ -38,8 +38,6 @@
 
 guint8 *sgen_cardtable;
 
-static gboolean need_mod_union;
-
 #ifdef HEAVY_STATISTICS
 guint64 marked_cards;
 guint64 scanned_cards;
@@ -64,78 +62,11 @@ sgen_card_table_number_of_cards_in_range (mword address, mword size)
 }
 
 static void
-sgen_card_table_wbarrier_set_field (GCObject *obj, gpointer field_ptr, GCObject* value)
+sgen_card_table_wbarrier_generic_nostore (gpointer ptr, GCObject *value)
 {
-	*(void**)field_ptr = value;
-	if (need_mod_union || sgen_ptr_in_nursery (value))
-		sgen_card_table_mark_address ((mword)field_ptr);
+	if (sgen_ptr_in_nursery (value))
+		sgen_card_table_mark_address ((mword)ptr);
 	sgen_dummy_use (value);
-}
-
-static void
-sgen_card_table_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
-{
-	gpointer *dest = (gpointer *)dest_ptr;
-	gpointer *src = (gpointer *)src_ptr;
-
-	/*overlapping that required backward copying*/
-	if (src < dest && (src + count) > dest) {
-		gpointer *start = dest;
-		dest += count - 1;
-		src += count - 1;
-
-		for (; dest >= start; --src, --dest) {
-			gpointer value = *src;
-			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
-			if (need_mod_union || sgen_ptr_in_nursery (value))
-				sgen_card_table_mark_address ((mword)dest);
-			sgen_dummy_use (value);
-		}
-	} else {
-		gpointer *end = dest + count;
-		for (; dest < end; ++src, ++dest) {
-			gpointer value = *src;
-			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
-			if (need_mod_union || sgen_ptr_in_nursery (value))
-				sgen_card_table_mark_address ((mword)dest);
-			sgen_dummy_use (value);
-		}
-	}	
-}
-
-static void
-sgen_card_table_wbarrier_value_copy (gpointer dest, gpointer src, int count, size_t element_size)
-{
-	size_t size = count * element_size;
-
-	TLAB_ACCESS_INIT;
-	ENTER_CRITICAL_REGION;
-
-	mono_gc_memmove_atomic (dest, src, size);
-	sgen_card_table_mark_range ((mword)dest, size);
-
-	EXIT_CRITICAL_REGION;
-}
-
-static void
-sgen_card_table_wbarrier_object_copy (GCObject* obj, GCObject *src)
-{
-	size_t size = sgen_client_par_object_get_size (SGEN_LOAD_VTABLE_UNCHECKED (obj), obj);
-
-	TLAB_ACCESS_INIT;
-	ENTER_CRITICAL_REGION;
-
-	mono_gc_memmove_aligned ((char*)obj + SGEN_CLIENT_OBJECT_HEADER_SIZE, (char*)src + SGEN_CLIENT_OBJECT_HEADER_SIZE,
-			size - SGEN_CLIENT_OBJECT_HEADER_SIZE);
-	sgen_card_table_mark_range ((mword)obj, size);
-
-	EXIT_CRITICAL_REGION;
-}
-
-static void
-sgen_card_table_wbarrier_generic_nostore (gpointer ptr)
-{
-	sgen_card_table_mark_address ((mword)ptr);	
 }
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
@@ -265,94 +196,6 @@ sgen_card_table_find_address_with_cards (char *cards_start, guint8 *cards, char 
 	return cards [(addr - cards_start) >> CARD_BITS];
 }
 
-static void
-update_mod_union (guint8 *dest, guint8 *start_card, size_t num_cards)
-{
-	int i;
-	/* Marking from another thread can happen while we mark here */
-	for (i = 0; i < num_cards; ++i) {
-		if (start_card [i])
-			dest [i] = 1;
-	}
-}
-
-guint8*
-sgen_card_table_alloc_mod_union (char *obj, mword obj_size)
-{
-	size_t num_cards = sgen_card_table_number_of_cards_in_range ((mword) obj, obj_size);
-	guint8 *mod_union = (guint8 *)sgen_alloc_internal_dynamic (num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
-	memset (mod_union, 0, num_cards);
-	return mod_union;
-}
-
-void
-sgen_card_table_free_mod_union (guint8 *mod_union, char *obj, mword obj_size)
-{
-	size_t num_cards = sgen_card_table_number_of_cards_in_range ((mword) obj, obj_size);
-	sgen_free_internal_dynamic (mod_union, num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION);
-}
-
-void
-sgen_card_table_update_mod_union_from_cards (guint8 *dest, guint8 *start_card, size_t num_cards)
-{
-	SGEN_ASSERT (0, dest, "Why don't we have a mod union?");
-	update_mod_union (dest, start_card, num_cards);
-}
-
-void
-sgen_card_table_update_mod_union (guint8 *dest, char *obj, mword obj_size, size_t *out_num_cards)
-{
-	guint8 *start_card = sgen_card_table_get_card_address ((mword)obj);
-#ifndef SGEN_HAVE_OVERLAPPING_CARDS
-	guint8 *end_card = sgen_card_table_get_card_address ((mword)obj + obj_size - 1) + 1;
-#endif
-	size_t num_cards;
-
-#ifdef SGEN_HAVE_OVERLAPPING_CARDS
-	size_t rest;
-
-	rest = num_cards = sgen_card_table_number_of_cards_in_range ((mword) obj, obj_size);
-
-	while (start_card + rest > SGEN_CARDTABLE_END) {
-		size_t count = SGEN_CARDTABLE_END - start_card;
-		sgen_card_table_update_mod_union_from_cards (dest, start_card, count);
-		dest += count;
-		rest -= count;
-		start_card = sgen_cardtable;
-	}
-	num_cards = rest;
-#else
-	num_cards = end_card - start_card;
-#endif
-
-	sgen_card_table_update_mod_union_from_cards (dest, start_card, num_cards);
-
-	if (out_num_cards)
-		*out_num_cards = num_cards;
-}
-
-/* Preclean cards and saves the cards that need to be scanned afterwards in cards_preclean */
-void
-sgen_card_table_preclean_mod_union (guint8 *cards, guint8 *cards_preclean, size_t num_cards)
-{
-	size_t i;
-
-	memcpy (cards_preclean, cards, num_cards);
-	for (i = 0; i < num_cards; i++) {
-		if (cards_preclean [i]) {
-			cards [i] = 0;
-		}
-	}
-	/*
-	 * When precleaning we need to make sure the card cleaning
-	 * takes place before the object is scanned. If we don't
-	 * do this we could finish scanning the object and, before
-	 * the cleaning of the card takes place, another thread
-	 * could dirty the object, mark the mod_union card only for
-	 * us to clean it back, without scanning the object again.
-	 */
-	mono_memory_barrier ();
-}
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 
@@ -421,7 +264,7 @@ sgen_card_table_finish_minor_collection (void)
 }
 
 static void
-sgen_card_table_scan_remsets (ScanCopyContext ctx)
+sgen_card_table_scan_remsets (ScanCopyContext ctx, CardTableScanType scan_type)
 {
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
@@ -438,11 +281,11 @@ sgen_card_table_scan_remsets (ScanCopyContext ctx)
 	sgen_card_table_clear_cards ();
 #endif
 	SGEN_TV_GETTIME (atv);
-	sgen_get_major_collector ()->scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx);
+	sgen_get_major_collector ()->scan_card_table (scan_type, ctx);
 	SGEN_TV_GETTIME (btv);
-	last_major_scan_time = SGEN_TV_ELAPSED (atv, btv); 
+	last_major_scan_time = SGEN_TV_ELAPSED (atv, btv);
 	major_card_scan_time += last_major_scan_time;
-	sgen_los_scan_card_table (CARDTABLE_SCAN_GLOBAL, ctx);
+	sgen_los_scan_card_table (scan_type, ctx);
 	SGEN_TV_GETTIME (atv);
 	last_los_scan_time = SGEN_TV_ELAPSED (btv, atv);
 	los_card_scan_time += last_los_scan_time;
@@ -592,10 +435,6 @@ sgen_card_table_init (SgenRememberedSet *remset)
 	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &los_card_scan_time);
 
 
-	remset->wbarrier_set_field = sgen_card_table_wbarrier_set_field;
-	remset->wbarrier_arrayref_copy = sgen_card_table_wbarrier_arrayref_copy;
-	remset->wbarrier_value_copy = sgen_card_table_wbarrier_value_copy;
-	remset->wbarrier_object_copy = sgen_card_table_wbarrier_object_copy;
 	remset->wbarrier_generic_nostore = sgen_card_table_wbarrier_generic_nostore;
 	remset->record_pointer = sgen_card_table_record_pointer;
 
@@ -606,8 +445,6 @@ sgen_card_table_init (SgenRememberedSet *remset)
 
 	remset->find_address = sgen_card_table_find_address;
 	remset->find_address_with_cards = sgen_card_table_find_address_with_cards;
-
-	need_mod_union = sgen_get_major_collector ()->is_concurrent;
 }
 
 #endif /*HAVE_SGEN_GC*/

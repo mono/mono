@@ -214,31 +214,23 @@ SCAN_OBJECT_FUNCTION_NAME (GCObject *full_object, SgenDescriptor desc, SgenGrayQ
 		GCObject *__old = *(ptr);				\
 		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
 		if (__old && !sgen_ptr_in_nursery (__old)) {            \
-			if (G_UNLIKELY (!sgen_ptr_in_nursery (ptr) &&	\
+			if (!G_UNLIKELY (!sgen_ptr_in_nursery (ptr) &&	\
 					sgen_safe_object_is_small (__old, sgen_obj_get_descriptor (__old) & DESC_TYPE_MASK) && \
 					major_block_is_evacuating (MS_BLOCK_FOR_OBJ (__old)))) { \
-				mark_mod_union_card ((full_object), (void**)(ptr), __old); \
-			} else {					\
 				PREFETCH_READ (__old);			\
 				COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue); \
 			}						\
-		} else {                                                \
-			if (G_UNLIKELY (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr)) && !sgen_cement_is_forced (__old))) \
-				mark_mod_union_card ((full_object), (void**)(ptr), __old); \
-			}						\
+		}							\
 		} while (0)
 #elif defined(COPY_OR_MARK_CONCURRENT)
 #define HANDLE_PTR(ptr,obj)	do {					\
 		GCObject *__old = *(ptr);				\
 		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
 		if (__old && !sgen_ptr_in_nursery (__old)) {            \
-			PREFETCH_READ (__old);			\
+			PREFETCH_READ (__old);				\
 			COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue); \
-		} else {                                                \
-			if (G_UNLIKELY (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr)) && !sgen_cement_is_forced (__old))) \
-				mark_mod_union_card ((full_object), (void**)(ptr), __old); \
-			}						\
-		} while (0)
+		}							\
+	} while (0)
 #else
 #define HANDLE_PTR(ptr,obj)	do {					\
 		GCObject *__old = *(ptr);					\
@@ -246,6 +238,7 @@ SCAN_OBJECT_FUNCTION_NAME (GCObject *full_object, SgenDescriptor desc, SgenGrayQ
 		if (__old) {						\
 			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue); \
 			if (G_UNLIKELY (__still_in_nursery && !sgen_ptr_in_nursery ((ptr)) && !SGEN_OBJECT_IS_CEMENTED (*(ptr)))) { \
+				/* FIXME: Why do we fetch again here? */ \
 				GCObject *__copy = *(ptr);			\
 				sgen_add_to_global_remset ((ptr), __copy); \
 			}						\
@@ -289,7 +282,7 @@ SCAN_PTR_FIELD_FUNCTION_NAME (GCObject *full_object, GCObject **ptr, SgenGrayQue
 #endif
 
 static gboolean
-DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue)
+DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue, gboolean check_dijkstra)
 {
 #if defined(COPY_OR_MARK_CONCURRENT) || defined(COPY_OR_MARK_CONCURRENT_WITH_EVACUATION)
 	int i;
@@ -302,10 +295,14 @@ DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue)
 
 		HEAVY_STAT (++stat_drain_loops);
 
+		if (check_dijkstra)
+			sgen_workers_drain_fast_enqueue_slots (queue);
+
 		GRAY_OBJECT_DEQUEUE (queue, &obj, &desc);
 		if (!obj)
 			return TRUE;
 
+	scan:
 		SCAN_OBJECT_FUNCTION_NAME (obj, desc, queue);
 	}
 	return FALSE;

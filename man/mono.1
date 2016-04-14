@@ -1302,12 +1302,12 @@ statistics when shutting down.
 .TP
 \fBcollect-before-allocs\fR
 .TP
-\fBcheck-at-minor-collections\fR
-This performs a consistency check on minor collections and also clears
-the nursery at collection time, instead of the default, when buffers
-are allocated (clear-at-gc).   The consistency check ensures that
-there are no major to minor references that are not on the remembered
-sets. 
+\fBcheck-remset-consistency\fR
+This performs a remset consistency check at various opportunities, and
+also clears the nursery at collection time, instead of the default,
+when buffers are allocated (clear-at-gc).  The consistency check
+ensures that there are no major to minor references that are not on
+the remembered sets.
 .TP
 \fBmod-union-consistency-check\fR
 Checks that the mod-union cardtable is consistent before each

@@ -97,7 +97,7 @@ void sgen_client_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
 			}
 		}
 	}
-	sgen_drain_gray_stack (ctx);
+	sgen_drain_gray_stack (ctx, FALSE);
 }
 
 void sgen_client_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
@@ -123,7 +123,7 @@ void sgen_client_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
 			}
 		}
 	}
-	sgen_drain_gray_stack (ctx);
+	sgen_drain_gray_stack (ctx, FALSE);
 }
 
 static void

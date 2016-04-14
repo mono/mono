@@ -64,6 +64,7 @@ monosgen_sources = \
 	sgen-scan-object.h \
 	sgen-simple-nursery.c \
 	sgen-split-nursery.c \
+	sgen-statistic-fields.h \
 	sgen-tagged-pointer.h \
 	sgen-thread-pool.c \
 	sgen-thread-pool.h \

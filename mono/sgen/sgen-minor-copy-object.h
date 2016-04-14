@@ -122,6 +122,20 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 		SGEN_LOG (9, " (already forwarded to %p)", forwarded);
 		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
 		SGEN_UPDATE_REFERENCE (obj_slot, forwarded);
+		/*
+		 * When an object gets evacuated to major due to a reference from a pinned
+		 * nursery object, it will not (yet) be marked and enqueued for the major
+		 * collector, so this might be the first pointer from the major heap to the
+		 * newly copied object we encouter, so we have to check and make sure it's
+		 * marked and enqueued.
+		 */
+		/*
+		 * FIXME: once we modify the wbarrier to also mark and enqueue
+		 * nursery->major references, this can go away.  Obviously we'll have to
+		 * process those references in the nursery scanning code, too.
+		 */
+		if (!sgen_ptr_in_nursery (forwarded))
+			sgen_reference_to_major_updated (obj_slot, forwarded, FALSE);
 #ifndef SGEN_SIMPLE_NURSERY
 		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (forwarded)))
 			sgen_add_to_global_remset (obj_slot, forwarded);
@@ -138,6 +152,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	}
 
 #ifndef SGEN_SIMPLE_NURSERY
+	SGEN_ASSERT (0, FALSE, "New write barrier only supports simple nursery so far.");
 	if (sgen_nursery_is_to_space (obj)) {
 		/* FIXME: all of these could just use `sgen_obj_get_descriptor_safe()` */
 		SGEN_ASSERT (9, sgen_vtable_get_descriptor (SGEN_LOAD_VTABLE(obj)), "to space object %p has no gc descriptor", obj);
@@ -187,7 +202,22 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
 	copy = copy_object_no_checks (obj, queue);
+	/*
+	 * If an object is evacuated to the major heap and a reference to it, from the major
+	 * heap, updated, the concurrent major collector might follow that reference and
+	 * scan the new major object.  To make sure the object contents are seen by the
+	 * major collector we need this write barrier, so that the reference is seen after
+	 * the object.
+	 *
+	 * FIXME: This is only required if there's a concurrent major collection running,
+	 * but we can't conditionally compile on that at the moment.
+	 */
+	mono_memory_write_barrier ();
+	/* FIXME: Check that all of these macro invocations are cromulent with regards to
+	   the concurrent collector. */
 	SGEN_UPDATE_REFERENCE (obj_slot, copy);
+	if (!sgen_ptr_in_nursery (copy))
+		sgen_reference_to_major_updated (obj_slot, copy, FALSE);
 #ifndef SGEN_SIMPLE_NURSERY
 	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
 		sgen_add_to_global_remset (obj_slot, copy);

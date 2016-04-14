@@ -32,6 +32,8 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/utils/mono-memory-model.h"
 
+//#define CUSTOM_DIJKSTRA
+
 #if defined(ARCH_MIN_MS_BLOCK_SIZE) && defined(ARCH_MIN_MS_BLOCK_SIZE_SHIFT)
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
 #define MS_BLOCK_SIZE_SHIFT	ARCH_MIN_MS_BLOCK_SIZE_SHIFT
@@ -106,7 +108,6 @@ struct _MSBlockInfo {
 	unsigned int is_to_space : 1;
 	void ** volatile free_list;
 	MSBlockInfo * volatile next_free;
-	guint8 * volatile cardtable_mod_union;
 	mword mark_words [MS_NUM_MARK_WORDS];
 };
 
@@ -138,7 +139,20 @@ typedef struct {
 	} while (0)
 
 #define MS_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] & (ONE_P << (b)))
-#define MS_SET_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] |= (ONE_P << (b)))
+
+static gboolean
+MS_SET_MARK_BIT (MSBlockInfo *block, int word, int bit)
+{
+	volatile mword *mark_word_ptr = &block->mark_words [word];
+	mword mark_bit = ONE_P << bit;
+	for (;;) {
+		mword mark_word = *mark_word_ptr;
+		if (mark_word & mark_bit)
+			return FALSE;
+		if (InterlockedCompareExchangePointer ((volatile gpointer*)mark_word_ptr, (gpointer)(mark_word | mark_bit), (gpointer)mark_word) == (gpointer)mark_word)
+			return TRUE;
+	}
+}
 
 #define MS_OBJ_ALLOCED(o,b)	(*(void**)(o) && (*(char**)(o) < MS_BLOCK_FOR_BLOCK_INFO (b) || *(char**)(o) >= MS_BLOCK_FOR_BLOCK_INFO (b) + MS_BLOCK_SIZE))
 
@@ -160,7 +174,7 @@ static int fast_block_obj_size_indexes [MS_NUM_FAST_BLOCK_OBJ_SIZE_INDEXES];
 #define MS_BLOCK_TYPE_MAX	4
 
 static gboolean *evacuate_block_obj_sizes;
-static float evacuation_threshold = 0.666f;
+static float evacuation_threshold = 0; //0.666f;
 
 static gboolean lazy_sweep = TRUE;
 
@@ -526,7 +540,6 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	info->is_to_space = (sgen_get_current_collection_generation () == GENERATION_OLD) || sgen_concurrent_collection_in_progress ();
 	info->state = info->is_to_space ? BLOCK_STATE_MARKING : BLOCK_STATE_SWEPT;
 	SGEN_ASSERT (6, !sweep_in_progress () || info->state == BLOCK_STATE_SWEPT, "How do we add a new block to be swept while sweeping?");
-	info->cardtable_mod_union = NULL;
 
 	update_heap_boundaries_for_block (info);
 
@@ -563,14 +576,38 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 }
 
 static gboolean
-ptr_is_from_pinned_alloc (char *ptr)
+ptr_is_in_major_block (char *ptr, char **start, gboolean *pinned)
 {
 	MSBlockInfo *block;
 
 	FOREACH_BLOCK_NO_LOCK (block) {
-		if (ptr >= MS_BLOCK_FOR_BLOCK_INFO (block) && ptr <= MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE)
-			return block->pinned;
+		if (ptr >= MS_BLOCK_FOR_BLOCK_INFO (block) && ptr <= MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE) {
+			int count = MS_BLOCK_FREE / block->obj_size;
+			int i;
+
+			if (start)
+				*start = NULL;
+			for (i = 0; i <= count; ++i) {
+				if (ptr >= (char*)MS_BLOCK_OBJ (block, i) && ptr < (char*)MS_BLOCK_OBJ (block, i + 1)) {
+					if (start)
+						*start = (char *)MS_BLOCK_OBJ (block, i);
+					break;
+				}
+			}
+			if (pinned)
+				*pinned = block->pinned;
+			return TRUE;
+		}
 	} END_FOREACH_BLOCK_NO_LOCK;
+	return FALSE;
+}
+
+static gboolean
+ptr_is_from_pinned_alloc (char *ptr)
+{
+	gboolean pinned;
+	if (ptr_is_in_major_block (ptr, NULL, &pinned))
+		return pinned;
 	return FALSE;
 }
 
@@ -770,23 +807,9 @@ major_is_object_live (GCObject *obj)
 static gboolean
 major_ptr_is_in_non_pinned_space (char *ptr, char **start)
 {
-	MSBlockInfo *block;
-
-	FOREACH_BLOCK_NO_LOCK (block) {
-		if (ptr >= MS_BLOCK_FOR_BLOCK_INFO (block) && ptr <= MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE) {
-			int count = MS_BLOCK_FREE / block->obj_size;
-			int i;
-
-			*start = NULL;
-			for (i = 0; i <= count; ++i) {
-				if (ptr >= (char*)MS_BLOCK_OBJ (block, i) && ptr < (char*)MS_BLOCK_OBJ (block, i + 1)) {
-					*start = (char *)MS_BLOCK_OBJ (block, i);
-					break;
-				}
-			}
-			return !block->pinned;
-		}
-	} END_FOREACH_BLOCK_NO_LOCK;
+	gboolean pinned;
+	if (ptr_is_in_major_block (ptr, start, &pinned))
+		return !pinned;
 	return FALSE;
 }
 
@@ -1023,52 +1046,6 @@ major_dump_heap (FILE *heap_dump_file)
 	} END_FOREACH_BLOCK_NO_LOCK;
 }
 
-static guint8*
-get_cardtable_mod_union_for_block (MSBlockInfo *block, gboolean allocate)
-{
-	guint8 *mod_union = block->cardtable_mod_union;
-	guint8 *other;
-	if (mod_union)
-		return mod_union;
-	else if (!allocate)
-		return NULL;
-	mod_union = sgen_card_table_alloc_mod_union (MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-	other = (guint8 *)SGEN_CAS_PTR ((gpointer*)&block->cardtable_mod_union, mod_union, NULL);
-	if (!other) {
-		SGEN_ASSERT (0, block->cardtable_mod_union == mod_union, "Why did CAS not replace?");
-		return mod_union;
-	}
-	sgen_card_table_free_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-	return other;
-}
-
-static inline guint8*
-major_get_cardtable_mod_union_for_reference (char *ptr)
-{
-	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (ptr);
-	size_t offset = sgen_card_table_get_card_offset (ptr, (char*)sgen_card_table_align_pointer (MS_BLOCK_FOR_BLOCK_INFO (block)));
-	guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-	SGEN_ASSERT (0, mod_union, "FIXME: optionally allocate the mod union if it's not here and CAS it in.");
-	return &mod_union [offset];
-}
-
-/*
- * Mark the mod-union card for `ptr`, which must be a reference within the object `obj`.
- */
-static void
-mark_mod_union_card (GCObject *obj, void **ptr, GCObject *value_obj)
-{
-	int type = sgen_obj_get_descriptor (obj) & DESC_TYPE_MASK;
-	if (sgen_safe_object_is_small (obj, type)) {
-		guint8 *card_byte = major_get_cardtable_mod_union_for_reference ((char*)ptr);
-		SGEN_ASSERT (0, MS_BLOCK_FOR_OBJ (obj) == MS_BLOCK_FOR_OBJ (ptr), "How can an object and a reference inside it not be in the same block?");
-		*card_byte = 1;
-	} else {
-		sgen_los_mark_mod_union_card (obj, ptr);
-	}
-	binary_protocol_mod_union_remset (obj, ptr, value_obj, SGEN_LOAD_VTABLE (value_obj));
-}
-
 static inline gboolean
 major_block_is_evacuating (MSBlockInfo *block)
 {
@@ -1084,9 +1061,8 @@ major_block_is_evacuating (MSBlockInfo *block)
 #define MS_MARK_OBJECT_AND_ENQUEUE_CHECKED(obj,desc,block,queue) do {	\
 		int __word, __bit;					\
 		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
-		if (!MS_MARK_BIT ((block), __word, __bit) && MS_OBJ_ALLOCED ((obj), (block))) {	\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
-			if (sgen_gc_descr_has_references (desc))			\
+		if (MS_OBJ_ALLOCED ((obj), (block)) && MS_SET_MARK_BIT ((block), __word, __bit)) { \
+			if (sgen_gc_descr_has_references (desc))	\
 				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((obj))); \
 			INC_NUM_MAJOR_OBJECTS_MARKED ();		\
@@ -1096,8 +1072,7 @@ major_block_is_evacuating (MSBlockInfo *block)
 		int __word, __bit;					\
 		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
 		SGEN_ASSERT (9, MS_OBJ_ALLOCED ((obj), (block)), "object %p not allocated", obj); \
-		if (!MS_MARK_BIT ((block), __word, __bit)) {		\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
+		if (MS_SET_MARK_BIT ((block), __word, __bit)) {		\
 			if (sgen_gc_descr_has_references (desc))			\
 				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((obj))); \
@@ -1116,6 +1091,21 @@ pin_major_object (GCObject *obj, SgenGrayQueue *queue)
 	block = MS_BLOCK_FOR_OBJ (obj);
 	block->has_pinned = TRUE;
 	MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
+}
+
+static gboolean
+major_mark_object_for_concurrent_collector (GCObject *obj)
+{
+	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+	int word, bit;
+	SGEN_ASSERT (0, !major_block_is_evacuating (block), "We can't be evacuating with the new write barrier.");
+	SGEN_ASSERT (9, MS_OBJ_ALLOCED (obj, block), "object %p not allocated", obj);
+	MS_CALC_MARK_BIT (word, bit, obj);
+	if (MS_SET_MARK_BIT (block, word, bit)) {
+		binary_protocol_mark (obj, (gpointer)LOAD_VTABLE (obj), sgen_safe_object_get_size (obj));
+		return TRUE;
+	}
+	return FALSE;
 }
 
 #include "sgen-major-copy-object.h"
@@ -1179,19 +1169,101 @@ static guint64 stat_drain_loops;
 #define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_with_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
 
+#if !defined(CUSTOM_DIJKSTRA)
 #define COPY_OR_MARK_CONCURRENT
 #define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_no_evacuation
 #define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_no_evacuation
+#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_concurrent_no_evacuation
+#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_concurrent_no_evacuation
 #define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_no_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
+#else
+static void
+major_copy_or_mark_object_dijkstra_internal (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
+{
+	GCVTable vtable;
+	SgenDescriptor desc;
+	int type;
 
-#define COPY_OR_MARK_CONCURRENT_WITH_EVACUATION
-#define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_with_evacuation
-#define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_with_evacuation
-#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_concurrent_with_evacuation
-#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_concurrent_with_evacuation
-#define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_with_evacuation
-#include "sgen-marksweep-drain-gray-stack.h"
+	/* Ignore nursery objects. */
+	if (sgen_ptr_in_nursery (obj))
+		return;
+
+	vtable = SGEN_LOAD_VTABLE_UNCHECKED (obj);
+	desc = sgen_vtable_get_descriptor (vtable);
+	type = desc & DESC_TYPE_MASK;
+
+	SGEN_ASSERT (9, !SGEN_VTABLE_IS_PINNED (vtable) && !SGEN_VTABLE_IS_FORWARDED (vtable), "Why are major objects pinned or forwarded during a concurrent collection?");
+
+	if (sgen_safe_object_is_small (obj, type)) {
+		/* It's a small object, get its block, mark and enqueue if necessary. */
+		MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+		MS_MARK_OBJECT_AND_ENQUEUE (obj, desc, block, queue);
+		return;
+	}
+
+	/* It's a large object, if it's not pinned then pin and enqueue. */
+	if (sgen_los_object_is_pinned (obj))
+		return;
+
+	binary_protocol_pin (obj, (gpointer)vtable, sgen_safe_object_get_size (obj));
+
+	sgen_los_pin_object (obj);
+	if (sgen_gc_descr_has_references (desc))
+		GRAY_OBJECT_ENQUEUE (queue, obj, desc);
+}
+
+/*
+ * This function must only be called with the world stopped, on
+ * pointers not in the heap.  It's used for updating the finalization
+ * queue, GC handles, and similar stuff.
+ */
+static void
+major_copy_or_mark_object_dijkstra (GCObject **ptr, SgenGrayQueue *queue)
+{
+	//SGEN_ASSERT (0, !sgen_ptr_in_nursery ((gpointer)ptr) && !sgen_ptr_is_in_los ((gpointer)ptr, NULL) && !ptr_is_in_major_block ((gpointer)ptr, NULL, NULL), "Why is this called on a pointer inside an object?");
+	SGEN_ASSERT (0, sgen_is_world_stopped (), "Who calls this without the world stopped?");
+
+	major_copy_or_mark_object_dijkstra_internal (ptr, *ptr, queue);
+}
+
+static void
+major_scan_object_dijkstra (GCObject *full_object, SgenDescriptor desc, SgenGrayQueue *queue)
+{
+	char *start = (char*)full_object;
+
+#undef HANDLE_PTR
+#define HANDLE_PTR(ptr, obj) do {					\
+		GCObject *__old = *(ptr);				\
+		binary_protocol_scan_process_reference ((full_object), (ptr), __old); \
+		if (__old && !sgen_ptr_in_nursery (__old))		\
+			major_copy_or_mark_object_dijkstra_internal ((ptr), __old, queue); \
+		else if (sgen_ptr_in_nursery (__old) && !sgen_ptr_in_nursery ((ptr))) \
+			mark_mod_union_card (full_object, (void**)(ptr), __old); \
+	} while (0)
+
+#define SCAN_OBJECT_PROTOCOL
+#include "sgen-scan-object.h"
+}
+
+static void
+major_scan_vtype_dijkstra (GCObject *full_object, char *start, SgenDescriptor desc, SgenGrayQueue *queue BINARY_PROTOCOL_ARG (size_t size))
+{
+	/* The descriptors assume there's an object header. */
+	start -= SGEN_CLIENT_OBJECT_HEADER_SIZE;
+
+	/* We use the same HANDLE_PTR from the object scan function */
+#define SCAN_OBJECT_NOVTABLE
+#define SCAN_OBJECT_PROTOCOL
+#include "sgen-scan-object.h"
+}
+
+static void
+major_scan_ptr_field_dijkstra (GCObject *full_object, GCObject **ptr, SgenGrayQueue *queue)
+{
+	HANDLE_PTR (ptr, NULL);
+}
+#endif
 
 static inline gboolean
 major_is_evacuating (void)
@@ -1207,21 +1279,12 @@ major_is_evacuating (void)
 }
 
 static gboolean
-drain_gray_stack (SgenGrayQueue *queue)
+drain_gray_stack (SgenGrayQueue *queue, gboolean check_dijkstra)
 {
 	if (major_is_evacuating ())
-		return drain_gray_stack_with_evacuation (queue);
+		return drain_gray_stack_with_evacuation (queue, check_dijkstra);
 	else
-		return drain_gray_stack_no_evacuation (queue);
-}
-
-static gboolean
-drain_gray_stack_concurrent (SgenGrayQueue *queue)
-{
-	if (major_is_evacuating ())
-		return drain_gray_stack_concurrent_with_evacuation (queue);
-	else
-		return drain_gray_stack_concurrent_no_evacuation (queue);
+		return drain_gray_stack_no_evacuation (queue, check_dijkstra);
 }
 
 static void
@@ -1233,13 +1296,7 @@ major_copy_or_mark_object_canonical (GCObject **ptr, SgenGrayQueue *queue)
 static void
 major_copy_or_mark_object_concurrent_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
-	major_copy_or_mark_object_concurrent_with_evacuation (ptr, *ptr, queue);
-}
-
-static void
-major_copy_or_mark_object_concurrent_finish_canonical (GCObject **ptr, SgenGrayQueue *queue)
-{
-	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
+	major_copy_or_mark_object_concurrent_no_evacuation (ptr, *ptr, queue);
 }
 
 static void
@@ -1506,11 +1563,6 @@ ensure_block_is_checked_for_sweeping (guint32 block_index, gboolean wait, gboole
 	block->is_to_space = FALSE;
 
 	count = MS_BLOCK_FREE / block->obj_size;
-
-	if (block->cardtable_mod_union) {
-		sgen_card_table_free_mod_union (block->cardtable_mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-		block->cardtable_mod_union = NULL;
-	}
 
 	/* Count marked objects in the block */
 	for (i = 0; i < MS_NUM_MARK_WORDS; ++i)
@@ -2186,6 +2238,7 @@ major_handle_gc_param (const char *opt)
 			exit (1);
 		}
 		evacuation_threshold = (float)percentage / 100.0f;
+		SGEN_ASSERT (0, evacuation_threshold == 0, "The new write barrier doesn't support evacuation.");
 		return TRUE;
 	} else if (!strcmp (opt, "lazy-sweep")) {
 		lazy_sweep = TRUE;
@@ -2286,7 +2339,6 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 #ifndef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 cards_copy [CARDS_PER_BLOCK];
 #endif
-	guint8 cards_preclean [CARDS_PER_BLOCK];
 	gboolean small_objects;
 	int block_obj_size;
 	char *block_start;
@@ -2295,43 +2347,21 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 	char *scan_front = NULL;
 
 	/* The concurrent mark doesn't enter evacuating blocks */
-	if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN && major_block_is_evacuating (block))
-		return;
+	if (scan_type == CARDTABLE_SCAN_MARKED)
+		SGEN_ASSERT (0, !major_block_is_evacuating (block), "How did we end up evacuating blocks in the concurrent collector?");
 
 	block_obj_size = block->obj_size;
 	small_objects = block_obj_size < CARD_SIZE_IN_BYTES;
 
 	block_start = MS_BLOCK_FOR_BLOCK_INFO (block);
 
-	/*
-	 * This is safe in face of card aliasing for the following reason:
-	 *
-	 * Major blocks are 16k aligned, or 32 cards aligned.
-	 * Cards aliasing happens in powers of two, so as long as major blocks are aligned to their
-	 * sizes, they won't overflow the cardtable overlap modulus.
-	 */
-	if (scan_type & CARDTABLE_SCAN_MOD_UNION) {
-		card_data = card_base = block->cardtable_mod_union;
-		/*
-		 * This happens when the nursery collection that precedes finishing
-		 * the concurrent collection allocates new major blocks.
-		 */
-		if (!card_data)
-			return;
-
-		if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN) {
-			sgen_card_table_preclean_mod_union (card_data, cards_preclean, CARDS_PER_BLOCK);
-			card_data = card_base = cards_preclean;
-		}
-	} else {
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-		card_data = card_base = sgen_card_table_get_card_scan_address ((mword)block_start);
+	card_data = card_base = sgen_card_table_get_card_scan_address ((mword)block_start);
 #else
-		if (!sgen_card_table_get_card_data (cards_copy, (mword)block_start, CARDS_PER_BLOCK))
-			return;
-		card_data = card_base = cards_copy;
+	if (!sgen_card_table_get_card_data (cards_copy, (mword)block_start, CARDS_PER_BLOCK))
+		return;
+	card_data = card_base = cards_copy;
 #endif
-	}
 	card_data_end = card_data + CARDS_PER_BLOCK;
 
 	card_data += MS_BLOCK_SKIP >> CARD_BITS;
@@ -2381,7 +2411,7 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 			if (obj < scan_front || !MS_OBJ_ALLOCED_FAST (obj, block_start))
 				goto next_object;
 
-			if (scan_type & CARDTABLE_SCAN_MOD_UNION) {
+			if (scan_type == CARDTABLE_SCAN_MARKED) {
 				/* FIXME: do this more efficiently */
 				int w, b;
 				MS_CALC_MARK_BIT (w, b, obj);
@@ -2420,21 +2450,19 @@ major_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx)
 	gboolean has_references;
 
 	if (!concurrent_mark)
-		g_assert (scan_type == CARDTABLE_SCAN_GLOBAL);
+		SGEN_ASSERT (0, scan_type == CARDTABLE_SCAN_ALL, "Why aren't we scanning all objects when we're not concurrent?");
 
 	major_finish_sweep_checking ();
-	binary_protocol_major_card_table_scan_start (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
+	binary_protocol_major_card_table_scan_start (sgen_timestamp (), scan_type == CARDTABLE_SCAN_MARKED);
 	FOREACH_BLOCK_HAS_REFERENCES_NO_LOCK (block, has_references) {
 #ifdef PREFETCH_CARDS
 		int prefetch_index = __index + 6;
 		if (prefetch_index < allocated_blocks.next_slot) {
 			MSBlockInfo *prefetch_block = BLOCK_UNTAG (*sgen_array_list_get_slot (&allocated_blocks, prefetch_index));
+			guint8 *prefetch_cards = sgen_card_table_get_card_scan_address ((mword)MS_BLOCK_FOR_BLOCK_INFO (prefetch_block));
 			PREFETCH_READ (prefetch_block);
-			if (scan_type == CARDTABLE_SCAN_GLOBAL) {
-				guint8 *prefetch_cards = sgen_card_table_get_card_scan_address ((mword)MS_BLOCK_FOR_BLOCK_INFO (prefetch_block));
-				PREFETCH_WRITE (prefetch_cards);
-				PREFETCH_WRITE (prefetch_cards + 32);
-			}
+			PREFETCH_WRITE (prefetch_cards);
+			PREFETCH_WRITE (prefetch_cards + 32);
                 }
 #endif
 
@@ -2443,7 +2471,7 @@ major_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx)
 
 		scan_card_table_for_block (block, scan_type, ctx);
 	} END_FOREACH_BLOCK_NO_LOCK;
-	binary_protocol_major_card_table_scan_end (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
+	binary_protocol_major_card_table_scan_end (sgen_timestamp (), scan_type == CARDTABLE_SCAN_MARKED);
 }
 
 static void
@@ -2478,17 +2506,35 @@ major_count_cards (long long *num_total_cards, long long *num_marked_cards)
 	*num_marked_cards = marked_cards;
 }
 
-static void
-update_cardtable_mod_union (void)
+static size_t
+major_bytes_marked (size_t *bytes_allocated)
 {
 	MSBlockInfo *block;
+	size_t bytes = 0;
 
+	*bytes_allocated = 0;
 	FOREACH_BLOCK_NO_LOCK (block) {
-		size_t num_cards;
-		guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-		sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE, &num_cards);
-		SGEN_ASSERT (6, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
+		int count = MS_BLOCK_FREE / block->obj_size;
+		int i;
+		gboolean marked = FALSE;
+		for (i = 0; i < count; ++i) {
+			GCObject *obj = MS_BLOCK_OBJ (block, i);
+			int w, b;
+
+			if (!MS_OBJ_ALLOCED (obj, block))
+				continue;
+
+			MS_CALC_MARK_BIT (w, b, obj);
+			if (MS_MARK_BIT (block, w, b))
+				bytes += block->obj_size;
+
+			marked = TRUE;
+		}
+		if (marked)
+			*bytes_allocated += MS_BLOCK_SIZE;
 	} END_FOREACH_BLOCK_NO_LOCK;
+
+	return bytes;
 }
 
 #undef pthread_create
@@ -2567,10 +2613,8 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->pin_major_object = pin_major_object;
 	collector->scan_card_table = major_scan_card_table;
 	collector->iterate_live_block_ranges = major_iterate_live_block_ranges;
-	if (is_concurrent) {
-		collector->update_cardtable_mod_union = update_cardtable_mod_union;
-		collector->get_cardtable_mod_union_for_reference = major_get_cardtable_mod_union_for_reference;
-	}
+	if (is_concurrent)
+		collector->mark_object_for_concurrent_collector = major_mark_object_for_concurrent_collector;
 	collector->init_to_space = major_init_to_space;
 	collector->sweep = major_sweep;
 	collector->have_swept = major_have_swept;
@@ -2594,18 +2638,29 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->is_valid_object = major_is_valid_object;
 	collector->describe_pointer = major_describe_pointer;
 	collector->count_cards = major_count_cards;
+	collector->bytes_marked = major_bytes_marked;
 
 	collector->major_ops_serial.copy_or_mark_object = major_copy_or_mark_object_canonical;
 	collector->major_ops_serial.scan_object = major_scan_object_with_evacuation;
 	collector->major_ops_serial.drain_gray_stack = drain_gray_stack;
 	if (is_concurrent) {
-		collector->major_ops_concurrent_start.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
-		collector->major_ops_concurrent_start.scan_object = major_scan_object_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_vtype = major_scan_vtype_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_ptr_field = major_scan_ptr_field_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.drain_gray_stack = drain_gray_stack_concurrent;
+#ifdef CUSTOM_DIJKSTRA
+		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_dijkstra;
+		collector->major_ops_concurrent.scan_object = major_scan_object_dijkstra;
+		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_dijkstra;
+		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_dijkstra;
+		// FIXME: enable this eventually
+		//collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_dijkstra;
+#else
+		collector->major_ops_concurrent.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
+		collector->major_ops_concurrent.scan_object = major_scan_object_concurrent_no_evacuation;
+		collector->major_ops_concurrent.scan_vtype = major_scan_vtype_concurrent_no_evacuation;
+		collector->major_ops_concurrent.scan_ptr_field = major_scan_ptr_field_concurrent_no_evacuation;
+		collector->major_ops_concurrent.drain_gray_stack = drain_gray_stack_concurrent_no_evacuation;
+#endif
 
-		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_concurrent_finish_canonical;
+		// These just call the serial collector functions, which is fine.
+		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_canonical;
 		collector->major_ops_concurrent_finish.scan_object = major_scan_object_with_evacuation;
 		collector->major_ops_concurrent_finish.scan_vtype = major_scan_vtype_with_evacuation;
 		collector->major_ops_concurrent_finish.scan_ptr_field = major_scan_ptr_field_with_evacuation;

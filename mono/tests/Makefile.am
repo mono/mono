@@ -963,38 +963,23 @@ debug-casts:
 	@$(MCS) -r:TestDriver.dll $(srcdir)/debug-casts.cs
 	@$(RUNTIME) --debug=casts debug-casts.exe
 
-EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs sgen-new-threads-dont-join-stw.cs sgen-bridge-xref.cs bug-17590.cs sgen-toggleref.cs
+EXTRA_DIST += sgen-bridge.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs sgen-new-threads-dont-join-stw.cs sgen-bridge-xref.cs bug-17590.cs sgen-toggleref.cs
 
 
 sgen-tests:
-	$(MAKE) sgen-regular-tests
-	$(MAKE) sgen-toggleref-tests
-	$(MAKE) sgen-bridge-tests
-	$(MAKE) sgen-bridge2-tests
 
 SGEN_REGULAR_TESTS =	\
 	finalizer-wait.exe	\
 	critical-finalizers.exe	\
-	sgen-descriptors.exe	\
-	sgen-gshared-vtype.exe	\
 	sgen-domain-unload.exe	\
 	sgen-domain-unload-2.exe	\
 	sgen-weakref-stress.exe	\
-	sgen-cementing-stress.exe	\
 	sgen-case-23400.exe	\
 	sgen-new-threads-dont-join-stw.exe	\
 	gc-graystack-stress.exe	\
 	bug-17590.exe
 
 sgen-regular-tests: $(SGEN_REGULAR_TESTS)
-	$(MAKE) sgen-regular-tests-plain
-	$(MAKE) sgen-regular-tests-ms-conc
-	$(MAKE) sgen-regular-tests-ms-conc-split
-	$(MAKE) sgen-regular-tests-ms-split
-	$(MAKE) sgen-regular-tests-ms-split-95
-	$(MAKE) sgen-regular-tests-plain-clear-at-gc
-	$(MAKE) sgen-regular-tests-ms-conc-clear-at-gc
-	$(MAKE) sgen-regular-tests-ms-split-clear-at-gc
 
 sgen-regular-tests-plain: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
@@ -1017,14 +1002,6 @@ SGEN_TOGGLEREF_TESTS=	\
 	sgen-toggleref.exe
 
 sgen-toggleref-tests: $(SGEN_TOGGLEREF_TESTS)
-	$(MAKE) sgen-toggleref-tests-plain
-	$(MAKE) sgen-toggleref-tests-ms-conc
-	$(MAKE) sgen-toggleref-tests-ms-conc-split
-	$(MAKE) sgen-toggleref-tests-ms-split
-	$(MAKE) sgen-toggleref-tests-ms-split-95
-	$(MAKE) sgen-toggleref-tests-plain-clear-at-gc
-	$(MAKE) sgen-toggleref-tests-ms-conc-clear-at-gc
-	$(MAKE) sgen-toggleref-tests-ms-split-clear-at-gc
 
 sgen-toggleref-tests-plain: $(SGEN_TOGGLEREF_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="toggleref-test" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_TOGGLEREF_TESTS)
@@ -1048,14 +1025,6 @@ SGEN_BRIDGE_TESTS=	\
 	sgen-bridge-major-fragmentation.exe
 
 sgen-bridge-tests: $(SGEN_BRIDGE_TESTS)
-	$(MAKE) sgen-bridge-tests-plain
-	$(MAKE) sgen-bridge-tests-ms-conc
-	$(MAKE) sgen-bridge-tests-ms-split
-	$(MAKE) sgen-bridge-tests-plain-new-bridge
-	$(MAKE) sgen-bridge-tests-ms-conc-new-bridge
-	$(MAKE) sgen-bridge-tests-ms-split-new-bridge
-	$(MAKE) sgen-bridge-tests-plain-tarjan-bridge
-	$(MAKE) sgen-bridge-tests-ms-split-tarjan-bridge
 
 sgen-bridge-tests-plain: $(SGEN_BRIDGE_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=Bridge" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE_TESTS)
@@ -1078,14 +1047,6 @@ SGEN_BRIDGE2_TESTS=	\
 	sgen-bridge-xref.exe
 
 sgen-bridge2-tests: $(SGEN_BRIDGE2_TESTS)
-	$(MAKE) sgen-bridge2-tests-plain
-	$(MAKE) sgen-bridge2-tests-ms-conc
-	$(MAKE) sgen-bridge2-tests-ms-split
-	$(MAKE) sgen-bridge2-tests-plain-new-bridge
-	$(MAKE) sgen-bridge2-tests-ms-conc-new-bridge
-	$(MAKE) sgen-bridge2-tests-ms-split-new-bridge
-	$(MAKE) sgen-bridge2-tests-plain-tarjan-bridge
-	$(MAKE) sgen-bridge2-tests-ms-split-tarjan-bridge
 
 sgen-bridge2-tests-plain: $(SGEN_BRIDGE2_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=2Bridge" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE2_TESTS)

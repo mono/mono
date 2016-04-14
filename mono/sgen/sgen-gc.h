@@ -397,7 +397,7 @@ typedef void (*CopyOrMarkObjectFunc) (GCObject**, SgenGrayQueue*);
 typedef void (*ScanObjectFunc) (GCObject *obj, SgenDescriptor desc, SgenGrayQueue*);
 typedef void (*ScanVTypeFunc) (GCObject *full_object, char *start, SgenDescriptor desc, SgenGrayQueue* BINARY_PROTOCOL_ARG (size_t size));
 typedef void (*ScanPtrFieldFunc) (GCObject *obj, GCObject **ptr, SgenGrayQueue* queue);
-typedef gboolean (*DrainGrayStackFunc) (SgenGrayQueue *queue);
+typedef gboolean (*DrainGrayStackFunc) (SgenGrayQueue *queue, gboolean check_dijkstra);
 
 typedef struct {
 	CopyOrMarkObjectFunc copy_or_mark_object;
@@ -437,10 +437,14 @@ void sgen_pin_stats_print_class_stats (void);
 
 void sgen_sort_addresses (void **array, size_t size);
 void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
+void sgen_verify_global_remset_record (void);
 
 int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_concurrent_collection_in_progress (void);
+volatile gboolean* sgen_concurrent_collection_in_progress_ptr (void);
+
+gboolean sgen_reference_to_major_updated (gpointer ptr, GCObject *value, gboolean from_wbarrier);
 
 typedef struct _SgenFragment SgenFragment;
 
@@ -587,9 +591,8 @@ typedef struct
 } ScannedObjectCounts;
 
 typedef enum {
-	CARDTABLE_SCAN_GLOBAL = 0,
-	CARDTABLE_SCAN_MOD_UNION = 1,
-	CARDTABLE_SCAN_MOD_UNION_PRECLEAN = CARDTABLE_SCAN_MOD_UNION | 2,
+	CARDTABLE_SCAN_ALL,
+	CARDTABLE_SCAN_MARKED
 } CardTableScanType;
 
 typedef struct _SgenMajorCollector SgenMajorCollector;
@@ -606,11 +609,13 @@ struct _SgenMajorCollector {
 	GCObject* (*alloc_degraded) (GCVTable vtable, size_t size);
 
 	SgenObjectOperations major_ops_serial;
-	SgenObjectOperations major_ops_concurrent_start;
+	SgenObjectOperations major_ops_concurrent;
 	SgenObjectOperations major_ops_concurrent_finish;
 
 	GCObject* (*alloc_object) (GCVTable vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (GCObject *obj, size_t size);
+
+	gboolean (*mark_object_for_concurrent_collector) (GCObject *obj);
 
 	/*
 	 * This is used for domain unloading, heap walking from the logging profiler, and
@@ -623,7 +628,6 @@ struct _SgenMajorCollector {
 	void (*pin_major_object) (GCObject *obj, SgenGrayQueue *queue);
 	void (*scan_card_table) (CardTableScanType scan_type, ScanCopyContext ctx);
 	void (*iterate_live_block_ranges) (sgen_cardtable_block_callback callback);
-	void (*update_cardtable_mod_union) (void);
 	void (*init_to_space) (void);
 	void (*sweep) (void);
 	gboolean (*have_swept) (void);
@@ -646,9 +650,9 @@ struct _SgenMajorCollector {
 	void (*post_param_init) (SgenMajorCollector *collector);
 	gboolean (*is_valid_object) (char *ptr);
 	GCVTable (*describe_pointer) (char *pointer);
-	guint8* (*get_cardtable_mod_union_for_reference) (char *object);
 	long long (*get_and_reset_num_major_objects_marked) (void);
 	void (*count_cards) (long long *num_total_cards, long long *num_marked_cards);
+	size_t (*bytes_marked) (size_t *bytes_allocated);
 };
 
 extern SgenMajorCollector major_collector;
@@ -662,14 +666,10 @@ SgenMajorCollector* sgen_get_major_collector (void);
 
 
 typedef struct _SgenRememberedSet {
-	void (*wbarrier_set_field) (GCObject *obj, gpointer field_ptr, GCObject* value);
-	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
-	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
-	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
-	void (*wbarrier_generic_nostore) (gpointer ptr);
+	void (*wbarrier_generic_nostore) (gpointer ptr, GCObject *value);
 	void (*record_pointer) (gpointer ptr);
 
-	void (*scan_remsets) (ScanCopyContext ctx);
+	void (*scan_remsets) (ScanCopyContext ctx, CardTableScanType scan_type);
 
 	void (*clear_cards) (void);
 
@@ -685,7 +685,7 @@ SgenRememberedSet *sgen_get_remset (void);
  * Mono.
  */
 void mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count);
-void mono_gc_wbarrier_generic_nostore (gpointer ptr);
+void mono_gc_wbarrier_generic_nostore (gpointer ptr, GCObject *value);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
 
@@ -788,7 +788,7 @@ void sgen_register_disappearing_link (GCObject *obj, void **link, gboolean track
 
 GCObject* sgen_weak_link_get (void **link_addr);
 
-gboolean sgen_drain_gray_stack (ScanCopyContext ctx);
+gboolean sgen_drain_gray_stack (ScanCopyContext ctx, gboolean check_dijkstra);
 
 enum {
 	SPACE_NURSERY,
@@ -831,7 +831,6 @@ typedef struct _LOSObject LOSObject;
 struct _LOSObject {
 	LOSObject *next;
 	mword size; /* this is the object size, lowest bit used for pin/mark */
-	guint8 * volatile cardtable_mod_union; /* only used by the concurrent collector */
 #if SIZEOF_VOID_P < 8
 	mword dummy;		/* to align object to sizeof (double) */
 #endif
@@ -848,7 +847,6 @@ gboolean sgen_ptr_is_in_los (char *ptr, char **start);
 void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data);
 void sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback);
 void sgen_los_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx);
-void sgen_los_update_cardtable_mod_union (void);
 void sgen_los_count_cards (long long *num_total_cards, long long *num_marked_cards);
 gboolean sgen_los_is_valid_object (char *object);
 gboolean mono_sgen_los_describe_pointer (char *ptr);
@@ -856,7 +854,7 @@ LOSObject* sgen_los_header_for_object (GCObject *data);
 mword sgen_los_object_size (LOSObject *obj);
 void sgen_los_pin_object (GCObject *obj);
 gboolean sgen_los_object_is_pinned (GCObject *obj);
-void sgen_los_mark_mod_union_card (GCObject *mono_obj, void **ptr);
+size_t sgen_los_bytes_marked (size_t *bytes_allocated);
 
 
 /* nursery allocator */
@@ -985,8 +983,8 @@ GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size);
 
 /* Debug support */
 
-void sgen_check_consistency (void);
-void sgen_check_mod_union_consistency (void);
+void sgen_check_remset_consistency (void);
+void sgen_check_major_heap_marked (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
 void sgen_check_whole_heap_stw (void);

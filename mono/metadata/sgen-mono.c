@@ -79,52 +79,62 @@ ptr_on_stack (void *ptr)
 	return FALSE;
 }
 
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+/* We issue store write barriers for individual reference fields, and
+ * memmove chunks of non-reference fields.
+ */
 #undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj) do {					\
-		gpointer o = *(gpointer*)(ptr);				\
-		if ((o)) {						\
-			gpointer d = ((char*)dest) + ((char*)(ptr) - (char*)(obj)); \
-			binary_protocol_wbarrier (d, o, (gpointer) SGEN_LOAD_VTABLE (o)); \
-		}							\
+#define HANDLE_PTR(ptr, obj) do { \
+		mono_gc_memmove_atomic \
+			(previous_non_references - real_start + dest, \
+				previous_non_references, \
+				(char *)(ptr) - previous_non_references); \
+		gpointer o = *(gpointer*)(ptr); \
+		gpointer d = dest + ((char*)(ptr) - (char*)real_start); \
+		mono_gc_wbarrier_generic_store (d, o);			\
+		previous_non_references = (char *)(ptr) + SIZEOF_VOID_P; \
 	} while (0)
 
 static void
-scan_object_for_binary_protocol_copy_wbarrier (gpointer dest, char *start, mword desc)
+copy_object_with_wbarrier (MonoObject *dest_obj, MonoObject *src_obj, mword desc, size_t instance_size)
 {
+	char *const start = (char*)src_obj;
+	const size_t element_size = instance_size - sizeof (MonoObject);
+	char *const dest = (char*)dest_obj + sizeof (MonoObject);
+	char *const real_start = start + sizeof (MonoObject);
+	char *previous_non_references = start + sizeof (MonoObject);
 #define SCAN_OBJECT_NOVTABLE
 #include "sgen/sgen-scan-object.h"
+	/* Copy any remaining non-reference fields. */
+	mono_gc_memmove_atomic
+		(previous_non_references - real_start + dest,
+				previous_non_references,
+				real_start + element_size - previous_non_references);
 }
-#endif
 
 void
-mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *klass)
+mono_gc_wbarrier_value_copy (gpointer dests, gpointer srcs, int count, MonoClass *klass)
 {
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (klass->valuetype);
 
-	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dest, count, (gpointer)klass->gc_descr, klass->name, klass);
+	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dests, count, (gpointer)klass->gc_descr, klass->name, klass);
 
-	if (sgen_ptr_in_nursery (dest) || ptr_on_stack (dest) || !sgen_gc_descr_has_references ((mword)klass->gc_descr)) {
+	if (sgen_ptr_in_nursery (dests) || ptr_on_stack (dests) || !sgen_gc_descr_has_references ((mword)klass->gc_descr)) {
 		size_t element_size = mono_class_value_size (klass, NULL);
 		size_t size = count * element_size;
-		mono_gc_memmove_atomic (dest, src, size);		
+		mono_gc_memmove_atomic (dests, srcs, size);
 		return;
 	}
 
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ()) {
-		size_t element_size = mono_class_value_size (klass, NULL);
-		int i;
-		for (i = 0; i < count; ++i) {
-			scan_object_for_binary_protocol_copy_wbarrier ((char*)dest + i * element_size,
-					(char*)src + i * element_size - sizeof (MonoObject),
-					(mword) klass->gc_descr);
-		}
-	}
-#endif
+	const size_t instance_size = mono_class_instance_size (klass);
+	const size_t element_size = instance_size - sizeof (MonoObject);
 
-	sgen_get_remset ()->wbarrier_value_copy (dest, src, count, mono_class_value_size (klass, NULL));
+	const mword desc = klass->gc_descr;
+	for (int i = 0; i < count; ++i) {
+		char *const dest = (char *)dests + i * element_size;
+		char *const real_start = (char *)srcs + i * element_size;
+		copy_object_with_wbarrier ((MonoObject*)(dest - sizeof (MonoObject)), (MonoObject*)(real_start - sizeof (MonoObject)), desc, instance_size);
+	}
 }
 
 /**
@@ -139,19 +149,15 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 
 	HEAVY_STAT (++stat_wbarrier_object_copy);
 
-	if (sgen_ptr_in_nursery (obj) || ptr_on_stack (obj) || !SGEN_OBJECT_HAS_REFERENCES (src)) {
+	SGEN_ASSERT (0, !ptr_on_stack (obj), "Why is this called for a non-reference type?");
+	if (sgen_ptr_in_nursery (obj) || !SGEN_OBJECT_HAS_REFERENCES (src)) {
 		size = mono_object_class (obj)->instance_size;
 		mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 				size - sizeof (MonoObject));
 		return;	
 	}
 
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	if (binary_protocol_is_heavy_enabled ())
-		scan_object_for_binary_protocol_copy_wbarrier (obj, (char*)src, (mword) src->vtable->gc_descr);
-#endif
-
-	sgen_get_remset ()->wbarrier_object_copy (obj, src);
+	copy_object_with_wbarrier (obj, src, sgen_obj_get_descriptor (src), sgen_safe_object_get_size (src));
 }
 
 void
@@ -166,7 +172,7 @@ mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* va
 	if (value)
 		binary_protocol_wbarrier (slot_ptr, value, value->vtable);
 
-	sgen_get_remset ()->wbarrier_set_field ((GCObject*)arr, slot_ptr, value);
+	mono_gc_wbarrier_generic_store (slot_ptr, value);
 }
 
 void
@@ -199,12 +205,11 @@ sgen_has_critical_method (void)
 #ifndef DISABLE_JIT
 
 static void
-emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gboolean is_concurrent)
+emit_nursery_check (MonoMethodBuilder *mb, int arg_index, int *nursery_check_success_label)
 {
 	int shifted_nursery_start = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
-	memset (nursery_check_return_labels, 0, sizeof (int) * 2);
-	// if (ptr_in_nursery (ptr)) return;
+	// if (ptr_in_nursery (ptr)) goto nursery_check_success;
 	/*
 	 * Masking out the bits might be faster, but we would have to use 64 bit
 	 * immediates, which might be slower.
@@ -216,23 +221,14 @@ emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gbo
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
 	mono_mb_emit_stloc (mb, shifted_nursery_start);
 
-	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, arg_index);
+	if (arg_index)
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_LDPTR_NURSERY_BITS);
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
 	mono_mb_emit_ldloc (mb, shifted_nursery_start);
-	nursery_check_return_labels [0] = mono_mb_emit_branch (mb, CEE_BEQ);
-
-	if (!is_concurrent) {
-		// if (!ptr_in_nursery (*ptr)) return;
-		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_LDPTR_NURSERY_BITS);
-		mono_mb_emit_byte (mb, CEE_SHR_UN);
-		mono_mb_emit_ldloc (mb, shifted_nursery_start);
-		nursery_check_return_labels [1] = mono_mb_emit_branch (mb, CEE_BNE_UN);
-	}
+	*nursery_check_success_label = mono_mb_emit_branch (mb, CEE_BEQ);
 }
 #endif
 
@@ -245,11 +241,12 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethod **write_barrier_method_addr;
 	WrapperInfo *info;
 #ifdef MANAGED_WBARRIER
-	int i, nursery_check_labels [2];
+	int ptr_in_nursery_label;
 #endif
 
 	// FIXME: Maybe create a separate version for ctors (the branch would be
 	// correctly predicted more times)
+	//SGEN_ASSERT (0, !is_concurrent, "We're concurrent, but in a different way.");
 	if (is_concurrent)
 		write_barrier_method_addr = &write_barrier_conc_method;
 	else
@@ -259,9 +256,10 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 		return *write_barrier_method_addr;
 
 	/* Create the IL version of mono_gc_barrier_generic_store () */
-	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
+	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 	sig->ret = &mono_defaults.void_class->byval_arg;
 	sig->params [0] = &mono_defaults.int_class->byval_arg;
+	sig->params [1] = &mono_defaults.object_class->byval_arg;
 
 	if (is_concurrent)
 		mb = mono_mb_new (mono_defaults.object_class, "wbarrier_conc", MONO_WRAPPER_WRITE_BARRIER);
@@ -270,8 +268,10 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 
 #ifndef DISABLE_JIT
 #ifdef MANAGED_WBARRIER
-	emit_nursery_check (mb, nursery_check_labels, is_concurrent);
+	emit_nursery_check (mb, 0, &ptr_in_nursery_label);
 	/*
+	  ptr is not in the nursery - mark the card
+
 	addr = sgen_cardtable + ((address >> CARD_BITS) & CARD_MASK)
 	*addr = 1;
 
@@ -309,14 +309,40 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	mono_mb_emit_icon (mb, 1);
 	mono_mb_emit_byte (mb, CEE_STIND_I1);
 
-	// return;
-	for (i = 0; i < 2; ++i) {
-		if (nursery_check_labels [i])
-			mono_mb_patch_branch (mb, nursery_check_labels [i]);
+	mono_mb_patch_branch (mb, ptr_in_nursery_label);
+
+	if (is_concurrent) {
+		int concurrent_collection_label, value_in_nursery_label;
+		/*
+		 * if (concurrent_collection_in_progress) goto concurrent_collection;
+		 */
+		mono_mb_emit_ptr (mb, (gpointer)sgen_concurrent_collection_in_progress_ptr ());
+		mono_mb_emit_byte (mb, CEE_LDIND_I4);
+		mono_mb_emit_icon (mb, 0);
+		concurrent_collection_label = mono_mb_emit_branch (mb, CEE_BNE_UN);
+
+		// return;
+		mono_mb_emit_byte (mb, CEE_RET);
+
+		// concurrent_collection:
+		mono_mb_patch_branch (mb, concurrent_collection_label);
+
+		// if (ptr_in_nursery (value)) goto value_in_nursery;
+		emit_nursery_check (mb, 1, &value_in_nursery_label);
+
+		// call full wbarrier
+		mono_mb_emit_ldarg (mb, 0);
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
+
+		// value_in_nursery:
+		mono_mb_patch_branch (mb, value_in_nursery_label);
 	}
+
 	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, 1);
 	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
