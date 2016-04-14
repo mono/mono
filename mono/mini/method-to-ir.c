@@ -3844,10 +3844,12 @@ emit_get_rgctx_method (MonoCompile *cfg, int context_used,
 			return ins;
 		case MONO_RGCTX_INFO_METHOD_RGCTX:
 			if (mini_is_new_gshared (cmethod)) {
-				g_assert (!cfg->compile_aot);
-
-				gpointer addr = mini_method_get_rgctx (cmethod);
-				EMIT_NEW_PCONST (cfg, ins, addr);
+				if (cfg->compile_aot) {
+					EMIT_NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_METHOD_RGCTX, cmethod);
+				} else {
+					gpointer addr = mini_method_get_rgctx (cmethod);
+					EMIT_NEW_PCONST (cfg, ins, addr);
+				}
 			} else {
 				EMIT_NEW_METHOD_RGCTX_CONST (cfg, ins, cmethod);
 			}
@@ -4146,9 +4148,11 @@ handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass, int co
 		MonoInst *rgctx_arg = NULL;
 
 		check_method_sharing (cfg, method, &pass_vtable, &pass_mrgctx);
-		g_assert (!pass_mrgctx);
 
-		if (pass_vtable) {
+		if (pass_mrgctx) {
+			rgctx_arg = emit_get_rgctx_method (cfg, context_used,
+											   method, MONO_RGCTX_INFO_METHOD_RGCTX);
+		} else if (pass_vtable) {
 			MonoVTable *vtable = mono_class_vtable (cfg->domain, method->klass);
 
 			g_assert (vtable);
@@ -4413,9 +4417,11 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_used)
 			MonoInst *rgctx_arg = NULL;
 
 			check_method_sharing (cfg, method, &pass_vtable, &pass_mrgctx);
-			g_assert (!pass_mrgctx);
 
-			if (pass_vtable) {
+			if (pass_mrgctx) {
+				rgctx_arg = emit_get_rgctx_method (cfg, context_used,
+												   method, MONO_RGCTX_INFO_METHOD_RGCTX);
+			} else if (pass_vtable) {
 				MonoVTable *vtable = mono_class_vtable (cfg->domain, method->klass);
 
 				g_assert (vtable);
@@ -13693,18 +13699,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		MonoGSharedMethodInfo *info;
 		MonoGSharedMethodInfo *oinfo = cfg->gshared_info;
 
-		/* Make a copy of the info */
-		/* FIXME: Rework this */
-		info = (MonoGSharedMethodInfo *)g_malloc0 (sizeof (MonoGSharedMethodInfo));
+		/*
+		 * Make a copy of the info.
+		 * We treat this similarly as CEE_LDC_R8, by allocating it from the domain mempool early.
+		 * resolve_patch_target () just returns the pointer.
+		 */
+		info = (MonoGSharedMethodInfo *)mono_domain_alloc0 (cfg->domain, sizeof (MonoGSharedMethodInfo));
 		info->method = oinfo->method;
 		info->num_entries = oinfo->num_entries;
-		info->entries = (MonoRuntimeGenericContextInfoTemplate *)g_malloc0 (sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
+		info->entries = (MonoRuntimeGenericContextInfoTemplate *)mono_domain_alloc0 (cfg->domain, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
 		memcpy (info->entries, oinfo->entries, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
 
 		cfg->cbb = init_localsbb;
-		// FIXME: Optimize this
+
 		args [0] = cfg->rgctx_var;
-		EMIT_NEW_PCONST (cfg, args [1], info);
+		args [1] = emit_runtime_constant (cfg, MONO_PATCH_INFO_GSHARED_METHOD_INFO, info);
 
 		/*
 		 * Use a separate opcode to avoid creating branches/new bblocks,

@@ -3681,6 +3681,47 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		ji->data.target = info;
 		break;
 	}
+	case MONO_PATCH_INFO_GSHARED_METHOD_INFO: {
+		/* Allocate from the domain mempool, mono_resolve_patch_target () depends on this, since it returns the pointer itself */
+		MonoGSharedMethodInfo *info = (MonoGSharedMethodInfo *)mono_domain_alloc0 (mono_domain_get (), sizeof (MonoGSharedMethodInfo));
+		int i;
+
+		info->method = decode_resolve_method_ref (aot_module, p, &p, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+
+		info->num_entries = decode_value (p, &p);
+		info->count_entries = info->num_entries;
+		info->entries = (MonoRuntimeGenericContextInfoTemplate *)mono_domain_alloc0 (mono_domain_get (), sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
+		for (i = 0; i < info->num_entries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template_ = &info->entries [i];
+
+			template_->info_type = (MonoRgctxInfoType)decode_value (p, &p);
+			switch (mini_rgctx_info_type_to_patch_info_type (template_->info_type)) {
+			case MONO_PATCH_INFO_CLASS: {
+				MonoClass *klass = decode_klass_ref (aot_module, p, &p, &error);
+				mono_error_cleanup (&error); /* FIXME don't swallow the error */
+				if (!klass)
+					goto cleanup;
+				template_->data = &klass->byval_arg;
+				break;
+			}
+			case MONO_PATCH_INFO_FIELD:
+				template_->data = decode_field_info (aot_module, p, &p);
+				if (!template_->data)
+					goto cleanup;
+				break;
+			case MONO_PATCH_INFO_METHODCONST:
+				template_->data = decode_resolve_method_ref (aot_module, p, &p, &error);
+				mono_error_assert_ok (&error);
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+		}
+		ji->data.target = info;
+		break;
+	}
 	case MONO_PATCH_INFO_LDSTR_LIT: {
 		int len = decode_value (p, &p);
 		char *s;
