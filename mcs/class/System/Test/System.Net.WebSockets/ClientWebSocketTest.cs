@@ -1,5 +1,6 @@
 #if NET_4_5
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +18,41 @@ namespace MonoTests.System.Net.WebSockets
 	[TestFixture]
 	public class ClientWebSocketTest
 	{
-		const string EchoServerUrl = "ws://echo.websocket.org";
+		string EchoServerUrl = "ws://echo.websocket.org";
 		int Port = NetworkHelpers.FindFreePort ();
 		HttpListener listener;
 		ClientWebSocket socket;
 		MethodInfo headerSetMethod;
+		Process echoServer;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup ()
+		{
+				try {
+					var echoServerPort = NetworkHelpers.FindFreePort ();
+
+					echoServer = new Process ();
+					echoServer.StartInfo = new ProcessStartInfo ("python", "-B Test/System.Net.WebSockets/SimpleWebSocketServer.py " + echoServerPort);
+
+					if (echoServer.Start () && !echoServer.WaitForExit (500)) {  // ensure the server is running continously
+						EchoServerUrl = "ws://localhost:" + echoServerPort;
+					}
+				} catch { 
+					echoServer = null;
+				}
+
+			Console.WriteLine ("ClientWebSocketTest: using " + EchoServerUrl);
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTeardown () {
+			if (echoServer == null || echoServer.HasExited)
+				return;
+
+			echoServer.CloseMainWindow ();
+			if (!echoServer.WaitForExit (5000))
+				echoServer.Kill ();
+		}
 
 		[SetUp]
 		public void Setup ()
