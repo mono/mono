@@ -396,6 +396,23 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 }
 
 void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	/* We signal a thread to break it from the current syscall.
+	 * This signal should not be interpreted as a suspend request. */
+	info->syscall_break_signal = TRUE;
+	if (mono_threads_pthread_kill (info, mono_threads_suspend_get_abort_signal ()) == 0) {
+		mono_threads_add_to_pending_operation_set (info);
+	}
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return TRUE;
+}
+
+void
 mono_threads_suspend_register (MonoThreadInfo *info)
 {
 #if defined (PLATFORM_ANDROID)

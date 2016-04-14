@@ -72,6 +72,33 @@ mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
 	return info->suspend_can_continue;
 }
 
+static void CALLBACK
+abort_apc (ULONG_PTR param)
+{
+	THREADS_INTERRUPT_DEBUG ("%06d - abort_apc () called", GetCurrentThreadId ());
+}
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	THREADS_INTERRUPT_DEBUG ("%06d - Aborting syscall in thread %06d", GetCurrentThreadId (), id);
+	QueueUserAPC ((PAPCFUNC)abort_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return TRUE;
+}
+
 gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
