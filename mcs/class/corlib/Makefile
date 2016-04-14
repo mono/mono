@@ -1,7 +1,6 @@
 thisdir = class/corlib
 SUBDIRS =
 include ../../build/rules.make
-include CommonCrypto/Makefile.include
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 LIBRARY = corlib.dll
@@ -70,6 +69,30 @@ endif
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
+
+
+CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
+ifdef CC_PROFILE
+
+BUILT_SOURCES = \
+	CommonCrypto/AesCryptoServiceProvider.g.cs \
+	CommonCrypto/MD5CryptoServiceProvider.g.cs	\
+	CommonCrypto/SHA256Managed.g.cs \
+	CommonCrypto/AesManaged.g.cs \
+	CommonCrypto/RC2CryptoServiceProvider.g.cs \
+	CommonCrypto/SHA384Managed.g.cs \
+	CommonCrypto/DESCryptoServiceProvider.g.cs \
+	CommonCrypto/SHA1CryptoServiceProvider.g.cs	\
+	CommonCrypto/SHA512Managed.g.cs \
+	CommonCrypto/MD2Managed.g.cs \
+	CommonCrypto/SHA1Managed.g.cs \
+	CommonCrypto/TripleDESCryptoServiceProvider.g.cs \
+	CommonCrypto/MD4Managed.g.cs
+
+CommonCrypto/%.g.cs:
+	$(MAKE) -C CommonCrypto
+
+endif
 
 EXTRA_DISTFILES = \
 	Test/resources/MyResources.resources	\
