@@ -142,9 +142,17 @@ namespace System.Security.Cryptography
         {
         }
 
+#if MONO
+        // The default provider value must remain '1' for Mono, otherwise we won't be able
+        // to locate keypairs that were serialized by Mono versions 4.0 and lower.
+        // (The ProviderType property in the CspParameters class affects serialization)
+        internal const int DefaultRsaProviderType = 1;
+#else
         // Provider type to use by default for RSA operations. We want to use RSA-AES CSP
         // since it enables access to SHA-2 operations. All currently supported OSes support RSA-AES.
         internal const int DefaultRsaProviderType = Constants.PROV_RSA_AES;
+#endif
+
 #if !MONO
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         // Private object for locking instead of locking on a public type for SQL reliability work.
