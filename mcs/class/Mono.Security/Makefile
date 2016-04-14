@@ -16,7 +16,7 @@ BUILT_SOURCES = \
 	../corlib/CommonCrypto/MD2Managed.g.cs \
 	../corlib/CommonCrypto/MD4Managed.g.cs
 
-CommonCrypto/%.g.cs:
+../corlib/CommonCrypto/%.g.cs:
 	$(MAKE) -C ../corlib/CommonCrypto
 
 endif
