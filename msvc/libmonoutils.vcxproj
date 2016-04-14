@@ -65,9 +65,6 @@
     <ClCompile Include="..\mono\utils\mono-threads-windows.c" />
     <ClCompile Include="..\mono\utils\mono-threads.c" />
     <ClCompile Include="..\mono\utils\mono-threads-coop.c" />
-    <ClCompile Include="..\mono\utils\mono-threads-posix-abort-syscall.c" />
-    <ClCompile Include="..\mono\utils\mono-threads-mach-abort-syscall.c" />
-    <ClCompile Include="..\mono\utils\mono-threads-windows-abort-syscall.c" />
     <ClCompile Include="..\mono\utils\mono-time.c" />
     <ClCompile Include="..\mono\utils\mono-tls.c" />
     <ClCompile Include="..\mono\utils\mono-uri.c" />

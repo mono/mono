@@ -114,9 +114,6 @@ monoutils_sources = \
 	mono-threads-api.h	\
 	mono-threads-coop.c	\
 	mono-threads-coop.h	\
-	mono-threads-mach-abort-syscall.c	\
-	mono-threads-posix-abort-syscall.c	\
-	mono-threads-windows-abort-syscall.c	\
 	mono-tls.h	\
 	mono-tls.c	\
 	linux_magic.h	\

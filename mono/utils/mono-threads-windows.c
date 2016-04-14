@@ -362,4 +362,29 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 #endif
 }
 
+static void CALLBACK
+abort_apc (ULONG_PTR param)
+{
+}
+
+void
+mono_threads_core_abort_syscall (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	QueueUserAPC ((PAPCFUNC)abort_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
+}
+
+gboolean
+mono_threads_core_needs_abort_syscall (void)
+{
+	return TRUE;
+}
+
 #endif
