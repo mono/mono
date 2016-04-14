@@ -5068,6 +5068,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_patch (jump, code);
 			break;
 		}
+		case OP_MRGCTX_INIT: {
+			guint8 *jump;
+
+			g_assert (ins->sreg1 == MONO_AMD64_ARG_REG1);
+
+			amd64_mov_reg_membase (code, AMD64_R11, ins->sreg1, 0, 8);
+			amd64_test_reg_reg (code, AMD64_R11, AMD64_R11);
+			jump = code;
+			amd64_branch8 (code, X86_CC_NZ, -1, 1);
+
+			amd64_mov_reg_reg (code, MONO_AMD64_ARG_REG2, ins->sreg2, 8);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, "mini_init_method_rgctx", FALSE);
+			ins->flags |= MONO_INST_GC_CALLSITE;
+			ins->backend.pc_offset = code - cfg->native_code;
+
+			x86_patch (jump, code);
+			break;
+		}
 
 		case OP_X86_LEA:
 			amd64_lea_memindex (code, ins->dreg, ins->sreg1, ins->inst_imm, ins->sreg2, ins->backend.shift_amount);

@@ -1825,3 +1825,30 @@ mono_interruption_checkpoint_from_trampoline (void)
 	if (ex)
 		mono_raise_exception (ex);
 }
+
+void
+mini_init_method_rgctx (MonoMethodRgctxArg *arg, MonoGSharedMethodInfo *info)
+{
+	MonoDomain *domain;
+	MonoMethod *m;
+	MonoMethodRuntimeGenericContext *mrgctx;
+	int i;
+
+	if (G_LIKELY (arg->mrgctx))
+		return;
+
+	m = arg->method;
+	//printf ("%s\n", mono_method_full_name (m, 1));
+	domain = mono_domain_get ();
+	mrgctx = mono_domain_alloc0 (domain, sizeof (MonoMethodRuntimeGenericContext) + (info->num_entries * sizeof (gpointer)));
+	mrgctx->class_vtable = mono_class_vtable (mono_domain_get (), m->klass);
+	g_assert (mrgctx->class_vtable);
+	mrgctx->method_inst = mono_method_get_context (m)->method_inst;
+	for (i = 0; i < info->num_entries; ++i) {
+		mrgctx->infos [i] = mini_instantiate_gshared_info (mono_domain_get (), &info->entries [i],
+														   mono_method_get_context (m), m->klass);
+		g_assert (mrgctx->infos [i]);
+	}
+	mono_memory_barrier ();
+	arg->mrgctx = mrgctx;
+}

@@ -561,6 +561,21 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 
 		mono_class_init (inflated_class);
 
+		if (method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+			g_assert (info);
+			if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER) {
+				method = info->d.synchronized_inner.method;
+
+				MonoError error;
+				inflated_method = mono_class_inflate_generic_method_checked (method, context, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
+				return mono_marshal_get_synchronized_inner_wrapper (inflated_method);
+			}
+		}
+
 		g_assert (!method->wrapper_type);
 
 		if (inflated_class->byval_arg.type == MONO_TYPE_ARRAY ||
@@ -1684,7 +1699,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		MonoVTable *vtable;
 
 		g_assert (method->method.method.is_inflated);
-		g_assert (method->context.method_inst);
+		//g_assert (method->context.method_inst);
 
 		vtable = mono_class_vtable (domain, method->method.method.klass);
 		if (!vtable) {
@@ -1692,7 +1707,10 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 			return NULL;
 		}
 
-		return mono_method_lookup_rgctx (vtable, method->context.method_inst);
+		if (mini_is_new_gshared ((MonoMethod*)method))
+			return mini_method_get_rgctx ((MonoMethod*)method);
+		else
+			return mono_method_lookup_rgctx (vtable, method->context.method_inst);
 	}
 	case MONO_RGCTX_INFO_METHOD_CONTEXT: {
 		MonoMethodInflated *method = (MonoMethodInflated *)data;
@@ -2800,6 +2818,9 @@ mono_method_needs_static_rgctx_invoke (MonoMethod *method, gboolean allow_type_v
 	if (!mono_method_is_generic_sharable (method, allow_type_vars))
 		return FALSE;
 
+	if (mini_is_new_gshared (method))
+		return TRUE;
+
 	if (method->is_inflated && mono_method_get_context (method)->method_inst)
 		return TRUE;
 
@@ -3149,6 +3170,31 @@ mini_type_is_reference (MonoType *type)
 gpointer
 mini_method_get_rgctx (MonoMethod *m)
 {
+	if (mini_is_new_gshared (m)) {
+		/*
+		 * The rgctx needs to be initialized lazily, so pass a MonoMethodRgctxArg pointer
+		 * which points to it.
+		 */
+		MonoDomain *domain = mono_domain_get ();
+		MonoJitDomainInfo *domain_info = domain_jit_info (domain);
+		gpointer addr;
+
+		// FIXME: Dynamic methods ?
+		mono_domain_lock (domain);
+		if (!domain_info->rgctx_arg_hash)
+			domain_info->rgctx_arg_hash = g_hash_table_new (NULL, NULL);
+		addr = g_hash_table_lookup (domain_info->rgctx_arg_hash, m);
+		if (!addr) {
+			/* This gets passed to mini_init_method_rgctx () */
+			MonoMethodRgctxArg *arg = mono_domain_alloc0 (domain, sizeof (MonoMethodRgctxArg));
+			arg->method = m;
+			g_hash_table_insert (domain_info->rgctx_arg_hash, m, arg);
+			addr = arg;
+		}
+		mono_domain_unlock (domain);
+		return addr;
+	}
+
 	if (mini_method_get_context (m)->method_inst)
 		return mono_method_lookup_rgctx (mono_class_vtable (mono_domain_get (), m->klass), mini_method_get_context (m)->method_inst);
 	else
@@ -3525,6 +3571,24 @@ mono_set_generic_sharing_vt_supported (gboolean supported)
 	gsharedvt_supported = supported;
 }
 
+
+gboolean
+mini_is_new_gshared (MonoMethod *method)
+{
+	return TRUE;
+}
+
+gpointer
+mini_instantiate_gshared_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti,
+							   MonoGenericContext *context, MonoClass *klass)
+{
+	MonoError error;
+	gpointer res = instantiate_info (domain, oti, context, klass, &error);
+
+	mono_error_assert_ok (&error);
+	return res;
+}
+
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
 /*
@@ -3753,6 +3817,7 @@ mini_is_gsharedvt_variable_signature (MonoMethodSignature *sig)
 	}
 	return FALSE;
 }
+
 #else
 
 gboolean

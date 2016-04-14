@@ -3310,6 +3310,9 @@ init_backend (MonoBackend *backend)
 #ifdef MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT
 	backend->have_op_generic_class_init = 1;
 #endif
+#ifdef MONO_ARCH_HAVE_OP_MRGCTX_INIT
+	backend->have_op_mrgctx_init = 1;
+#endif
 #ifdef MONO_ARCH_EMULATE_MUL_DIV
 	backend->emulate_mul_div = 1;
 #endif

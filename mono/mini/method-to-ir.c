@@ -2547,6 +2547,16 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 	gboolean pass_vtable = FALSE;
 	gboolean pass_mrgctx = FALSE;
 
+	if (mono_method_is_generic_sharable_full (cmethod, TRUE, TRUE, TRUE) && mini_is_new_gshared (cmethod)) {
+		pass_mrgctx = TRUE;
+
+		if (out_pass_vtable)
+			*out_pass_vtable = pass_vtable;
+		if (out_pass_mrgctx)
+			*out_pass_mrgctx = pass_mrgctx;
+		return;
+	}
+
 	if (((cmethod->flags & METHOD_ATTRIBUTE_STATIC) || cmethod->klass->valuetype) &&
 		(cmethod->klass->generic_class || cmethod->klass->generic_container)) {
 		gboolean sharable = FALSE;
@@ -3480,6 +3490,17 @@ emit_get_rgctx (MonoCompile *cfg, MonoMethod *method, int context_used)
 
 	g_assert (cfg->gshared);
 
+	if (mini_is_new_gshared (cfg->current_method)) {
+		MonoInst *rgctx_arg, *ins;
+		int dreg;
+
+		rgctx_arg = mono_get_vtable_var (cfg);
+
+		dreg = alloc_preg (cfg);
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgctx_arg->dreg, G_STRUCT_OFFSET (MonoMethodRgctxArg, mrgctx));
+		return ins;
+	}
+
 	if (!(method->flags & METHOD_ATTRIBUTE_STATIC) &&
 			!(context_used & MONO_GENERIC_CONTEXT_USED_METHOD) &&
 			!method->klass->valuetype)
@@ -3535,6 +3556,63 @@ mono_patch_info_rgctx_entry_new (MonoMemPool *mp, MonoMethod *method, gboolean i
 	res->info_type = info_type;
 
 	return res;
+}
+
+static int
+get_gshared_info_slot (MonoCompile *cfg, MonoJumpInfo *patch_info, MonoRgctxInfoType rgctx_type)
+{
+	MonoGSharedMethodInfo *info = cfg->gshared_info;
+	int i, idx;
+	gpointer data;
+
+	g_assert (info);
+
+	/* The MonoRuntimeGenericContextInfoTemplate structure contains the 'resolved' patch_info, i.e. a MonoClass pointer etc. */
+	// FIXME: Use another type instead, but mini-generic-sharing.c uses it to resolve information
+	switch (patch_info->type) {
+	case MONO_PATCH_INFO_CLASS:
+		data = &patch_info->data.klass->byval_arg;
+		break;
+	case MONO_PATCH_INFO_METHODCONST:
+		data = patch_info->data.method;
+		break;
+	case MONO_PATCH_INFO_FIELD:
+		data = patch_info->data.field;
+		break;
+	case MONO_PATCH_INFO_VIRT_METHOD:
+		// FIXME:
+		data = g_new0 (MonoJumpInfoVirtMethod, 1);
+		memcpy (data, (MonoJumpInfoVirtMethod*)patch_info->data.target, sizeof (MonoJumpInfoVirtMethod));
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+	g_assert (data);
+
+	for (i = 0; i < info->num_entries; ++i) {
+		if (info->entries [i].info_type == rgctx_type && info->entries [i].data == data && rgctx_type != MONO_RGCTX_INFO_LOCAL_OFFSET)
+			return i;
+	}
+
+	if (info->num_entries == info->count_entries) {
+		MonoRuntimeGenericContextInfoTemplate *new_entries;
+		int new_count_entries = info->count_entries ? info->count_entries * 2 : 16;
+
+		new_entries = (MonoRuntimeGenericContextInfoTemplate *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoRuntimeGenericContextInfoTemplate) * new_count_entries);
+
+		memcpy (new_entries, info->entries, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->count_entries);
+		info->entries = new_entries;
+		info->count_entries = new_count_entries;
+	}
+
+	idx = info->num_entries;
+	info->entries [idx].info_type = rgctx_type;
+	info->entries [idx].data = data;
+
+	info->num_entries ++;
+
+	return idx;
 }
 
 static inline MonoInst*
@@ -3654,6 +3732,19 @@ emit_rgctx_fetch_inline (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEnt
 static inline MonoInst*
 emit_rgctx_fetch (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *entry)
 {
+	if (mini_is_new_gshared (cfg->method)) {
+		MonoInst *ins;
+		int dreg;
+		int idx;
+
+		idx = get_gshared_info_slot (cfg, entry->data, entry->info_type);
+
+		/* Load rgctx->entries [idx] */
+		dreg = alloc_preg (cfg);
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgctx->dreg, MONO_STRUCT_OFFSET (MonoMethodRuntimeGenericContext, infos) + (idx * sizeof (gpointer)));
+		return ins;
+	}
+
 	if (cfg->llvm_only)
 		return emit_rgctx_fetch_inline (cfg, rgctx, entry);
 	else
@@ -3752,7 +3843,14 @@ emit_get_rgctx_method (MonoCompile *cfg, int context_used,
 			EMIT_NEW_METHODCONST (cfg, ins, cmethod);
 			return ins;
 		case MONO_RGCTX_INFO_METHOD_RGCTX:
-			EMIT_NEW_METHOD_RGCTX_CONST (cfg, ins, cmethod);
+			if (mini_is_new_gshared (cmethod)) {
+				g_assert (!cfg->compile_aot);
+
+				gpointer addr = mini_method_get_rgctx (cmethod);
+				EMIT_NEW_PCONST (cfg, ins, addr);
+			} else {
+				EMIT_NEW_METHOD_RGCTX_CONST (cfg, ins, cmethod);
+			}
 			return ins;
 		default:
 			g_assert_not_reached ();
@@ -8020,7 +8118,10 @@ handle_ctor_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 
 	if (cmethod->klass->valuetype && mono_class_generic_sharing_enabled (cmethod->klass) &&
 					mono_method_is_generic_sharable (cmethod, TRUE)) {
-		if (cmethod->is_inflated && mono_method_get_context (cmethod)->method_inst) {
+		if (cmethod->is_inflated && mini_is_new_gshared (cmethod)) {
+			vtable_arg = emit_get_rgctx_method (cfg, context_used,
+												cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
+		} else if (cmethod->is_inflated && mono_method_get_context (cmethod)->method_inst) {
 			mono_class_vtable (cfg->domain, cmethod->klass);
 			CHECK_TYPELOAD (cmethod->klass);
 
@@ -8037,6 +8138,9 @@ handle_ctor_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 				EMIT_NEW_VTABLECONST (cfg, vtable_arg, vtable);
 			}
 		}
+	} else if (mini_is_new_gshared (cmethod) && mono_method_is_generic_sharable (cmethod, TRUE)) {
+		vtable_arg = emit_get_rgctx_method (cfg, context_used,
+											cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
 	}
 
 	/* Avoid virtual calls to ctors if possible */
@@ -8470,6 +8574,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	link_bblock (cfg, init_localsbb, cfg->cbb);
 		
 	cfg->cbb = init_localsbb;
+
+	if (cfg->gshared && cfg->method == method) {
+		MonoGSharedMethodInfo *info;
+
+		info = (MonoGSharedMethodInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoGSharedMethodInfo));
+		info->method = cfg->method;
+		info->count_entries = 16;
+		info->entries = (MonoRuntimeGenericContextInfoTemplate *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->count_entries);
+		cfg->gshared_info = info;
+	}
 
 	if (cfg->gsharedvt && cfg->method == method) {
 		MonoGSharedVtMethodInfo *info;
@@ -9577,7 +9691,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* !marshalbyref is needed to properly handle generic methods + remoting */
 				if ((!(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) ||
 					 MONO_METHOD_IS_FINAL (cmethod)) &&
-					!mono_class_is_marshalbyref (cmethod->klass)) {
+					!mono_class_is_marshalbyref (cmethod->klass) &&
+					!(method->klass->parent == mono_defaults.multicastdelegate_class) && !strcmp (method->name, "Invoke")) {
 					if (virtual_)
 						check_this = TRUE;
 					virtual_ = 0;
@@ -9972,8 +10087,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if (cfg->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED) {
 				MonoMethod *orig = mono_marshal_method_from_wrapper (cfg->method);
-				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig))
+				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig)) {
 					cmethod = mono_marshal_get_synchronized_inner_wrapper (cmethod);
+					if (cmethod->is_inflated && mini_is_new_gshared (cmethod))
+						vtable_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
+				}
 			}
 
 			/*
@@ -13567,6 +13685,38 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		cfg->ip = NULL;
 		for (i = 0; i < header->num_locals; ++i) {
 			emit_init_local (cfg, i, header->locals [i], init_locals);
+		}
+	}
+
+	if (cfg->rgctx_var && mini_is_new_gshared (cfg->method)) {
+		MonoInst *args [16];
+		MonoGSharedMethodInfo *info;
+		MonoGSharedMethodInfo *oinfo = cfg->gshared_info;
+
+		/* Make a copy of the info */
+		/* FIXME: Rework this */
+		info = (MonoGSharedMethodInfo *)g_malloc0 (sizeof (MonoGSharedMethodInfo));
+		info->method = oinfo->method;
+		info->num_entries = oinfo->num_entries;
+		info->entries = (MonoRuntimeGenericContextInfoTemplate *)g_malloc0 (sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
+		memcpy (info->entries, oinfo->entries, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->num_entries);
+
+		cfg->cbb = init_localsbb;
+		// FIXME: Optimize this
+		args [0] = cfg->rgctx_var;
+		EMIT_NEW_PCONST (cfg, args [1], info);
+
+		/*
+		 * Use a separate opcode to avoid creating branches/new bblocks,
+		 * which is complicated at this point.
+		 */
+		if (cfg->backend->have_op_mrgctx_init) {
+			MONO_INST_NEW (cfg, ins, OP_MRGCTX_INIT);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			mono_emit_jit_icall (cfg, mini_init_method_rgctx, args);
 		}
 	}
 

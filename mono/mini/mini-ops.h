@@ -1078,6 +1078,13 @@ MINI_OP(OP_GC_SAFE_POINT, "gc_safe_point", NONE, IREG, NONE)
  */
 MINI_OP(OP_GENERIC_CLASS_INIT, "generic_class_init", NONE, IREG, NONE)
 
+/*
+ * Sreg1 points to a MonoMethodRgctxArg structure.
+ * If the 'mrgctx' field in the structure is zero, call
+ * mini_init_method_rgcx ().
+ */
+MINI_OP(OP_MRGCTX_INIT, "mrgctx_init", NONE, IREG, IREG)
+
 /* Arch specific opcodes */
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 MINI_OP(OP_X86_TEST_NULL,          "x86_test_null", NONE, IREG, NONE)

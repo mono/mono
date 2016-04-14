@@ -617,7 +617,12 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVT
 		/*
 		 * The caller is gshared code, compute the actual method to call from M and this/rgctx.
 		 */
-		if (m->is_inflated && mono_method_get_context (m)->method_inst) {
+		if (m->is_inflated && mini_is_new_gshared (m)) {
+			MonoMethodRgctxArg *rgctx_arg = (MonoMethodRgctxArg*)mono_arch_find_static_call_vtable (regs, code);
+
+			actual_method = rgctx_arg->method;
+			klass = actual_method->klass;
+		} else if (m->is_inflated && (mono_method_get_context (m)->method_inst || mini_is_new_gshared (m))) {
 			MonoMethodRuntimeGenericContext *mrgctx = (MonoMethodRuntimeGenericContext*)mono_arch_find_static_call_vtable (regs, code);
 
 			klass = mrgctx->class_vtable->klass;
@@ -640,7 +645,7 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVT
 			}
 		}
 
-		g_assert (vtable_slot || klass);
+		g_assert (actual_method || vtable_slot || klass);
 
 		if (vtable_slot) {
 			int displacement = vtable_slot - ((gpointer*)vt);
@@ -669,7 +674,7 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVT
 
 			actual_method = mono_class_inflate_generic_method_checked (declaring, &context, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
-		} else {
+		} else if (!actual_method) {
 			actual_method = mono_class_get_method_generic (klass, m);
 		}
 
@@ -692,6 +697,8 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVT
 
 	/* Calls made through delegates on platforms without delegate trampolines */
 	if (!code && mono_method_needs_static_rgctx_invoke (m, FALSE))
+		need_rgctx_tramp = TRUE;
+	if (virtual_ && mini_is_new_gshared (m) && mono_method_needs_static_rgctx_invoke (m, FALSE))
 		need_rgctx_tramp = TRUE;
 
 	addr = compiled_method = mono_jit_compile_method (m, error);
@@ -754,6 +761,8 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVT
 	if (vtable_slot) {
 		if (vtable_slot_to_patch && (mono_aot_is_got_entry (code, (guint8*)vtable_slot_to_patch) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot_to_patch))) {
 			g_assert (*vtable_slot_to_patch);
+			if (strstr (m->name, "virtual"))
+				printf ("%s\n", mono_method_full_name (m, 1));
 			*vtable_slot_to_patch = mono_get_addr_from_ftnptr (addr);
 		}
 	} else {
