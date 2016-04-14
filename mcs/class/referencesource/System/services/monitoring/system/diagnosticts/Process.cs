@@ -217,6 +217,10 @@ namespace System.Diagnostics {
         public int ExitCode {
             get {
                 EnsureState(State.Exited);
+#if MONO
+                if (exitCode == -1)
+                    throw new InvalidOperationException ("Cannot get the exit code from a non-child process on Unix");
+#endif
                 return exitCode;
             }
           }
@@ -275,6 +279,9 @@ namespace System.Diagnostics {
                                 }
                                 if (signaled) 
                                 {
+                                    /* If it's a non-child process, it's impossible to get its exit code on
+                                     * Unix. We don't throw here, but GetExitCodeProcess (in the io-layer)
+                                     * will set exitCode to -1, and we will throw if we try to call ExitCode */
                                     if (!NativeMethods.GetExitCodeProcess(handle, out exitCode))                               
                                         throw new Win32Exception();
                                 
