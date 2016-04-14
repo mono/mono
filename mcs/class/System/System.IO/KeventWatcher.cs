@@ -153,38 +153,23 @@ namespace System.IO {
 		public IntPtr tv_nsec;
 	}
 
-	class PathData
+	class KqueueMonitor
 	{
-		public string Path;
-		public bool IsDirectory;
-		public int Fd;
-	}
-
-	class KqueueMonitor : IDisposable
-	{
-		static bool initialized;
-		
-		public int Connection
-		{
-			get { return conn; }
-		}
-
 		public KqueueMonitor (FileSystemWatcher fsw)
 		{
-			this.fsw = fsw;
+			this.fsw_weakref = new WeakReference<FileSystemWatcher> (fsw);
 			this.conn = -1;
-			if (!initialized){
-				int t;
-				initialized = true;
-				var maxenv = Environment.GetEnvironmentVariable ("MONO_DARWIN_WATCHER_MAXFDS");
-				if (maxenv != null && Int32.TryParse (maxenv, out t))
-					maxFds = t;
-			}
+			Initialize ();
 		}
 
-		public void Dispose ()
+		private void Initialize ()
 		{
-			CleanUp ();
+			if (conn != -1)
+				throw new InvalidOperationException ("kqueue file descriptor was not cleared, watcher in inconsistent state.");
+			started = false;
+			requestStop = false;
+			exc = null;
+			ReleaseFSW ();
 		}
 
 		public void Start ()
@@ -206,9 +191,11 @@ namespace System.IO {
 				startedEvent.WaitOne ();
 
 				if (exc != null) {
+					var e = this.exc;
 					thread.Join ();
 					CleanUp ();
-					throw exc;
+					Initialize ();
+					throw e;
 				}
  
 				started = true;
@@ -223,8 +210,6 @@ namespace System.IO {
 					
 				requestStop = true;
 
-				if (inDispatch)
-					return;
 				// This will break the wait in Monitor ()
 				lock (connLock) {
 					if (conn != -1)
@@ -232,11 +217,12 @@ namespace System.IO {
 					conn = -1;
 				}
 
-				if (!thread.Join (2000))
+				if (!thread.Join (2000)) {
 					thread.Abort ();
+					CleanUp ();
+				}
 
-				requestStop = false;
-				started = false;
+				Initialize (); // re-initialize so we can restart;
 
 				if (exc != null)
 					throw exc;
@@ -245,17 +231,17 @@ namespace System.IO {
 
 		void CleanUp ()
 		{
+			foreach (KeventHandle fd in fdsDict.Values)
+				fd.Dispose ();
+
+			fdsDict.Clear ();
+			pathsDict.Clear ();
+
 			lock (connLock) {
 				if (conn != -1)
 					close (conn);
 				conn = -1;
 			}
-
-			foreach (int fd in fdsDict.Keys)
-				close (fd); 
-
-			fdsDict.Clear ();
-			pathsDict.Clear ();
 		}
 
 		void DoMonitor ()
@@ -269,7 +255,7 @@ namespace System.IO {
 			}
 
 			if (exc != null) {
-				fsw.DispatchErrorEvents (new ErrorEventArgs (exc));
+				PostError (exc);
 				return;
 			}
 
@@ -280,13 +266,16 @@ namespace System.IO {
 			} finally {
 				CleanUp ();
 				if (!requestStop) { // failure
-					started = false;
-					inDispatch = false;
-					fsw.EnableRaisingEvents = false;
+					lock (stateLock) { //we could race here with Stop(), in which case Stop() will abort us and do the cleanup itself.
+						PostError (new IOException ("KqueueMonitor failed and is shutting down"));
+						if (fsw != null)
+							fsw.EnableRaisingEvents = false;
+					}
 				}
 				if (exc != null)
-					fsw.DispatchErrorEvents (new ErrorEventArgs (exc));
-				requestStop = false;
+					PostError (exc);
+
+				Initialize ();
 			}
 		}
 
@@ -294,24 +283,32 @@ namespace System.IO {
 		{	
 			var initialFds = new List<int> ();
 
+			AcquireFSW ();
+
 			// fsw.FullPath may end in '/', see https://bugzilla.xamarin.com/show_bug.cgi?id=5747
 			if (fsw.FullPath != "/" && fsw.FullPath.EndsWith ("/", StringComparison.Ordinal))
 				fullPathNoLastSlash = fsw.FullPath.Substring (0, fsw.FullPath.Length - 1);
 			else
 				fullPathNoLastSlash = fsw.FullPath;
-				
+
+			fsw_filter = fsw.Pattern;
+			fsw_path = fsw.Path;
+			fsw_includeSubdirectories = fsw.IncludeSubdirectories;
+
+			ReleaseFSW ();
+
 			// GetFilenameFromFd() returns the *realpath* which can be different than fsw.FullPath because symlinks.
 			// If so, introduce a fixup step.
-			int fd = open (fullPathNoLastSlash, O_EVTONLY, 0);
-			var resolvedFullPath = GetFilenameFromFd (fd);
-			close (fd);
+			var handle = new KeventHandle (fullPathNoLastSlash);
+			var resolvedFullPath = GetFilenameFromFd (handle.Fd);
+			handle.Dispose ();
 
 			if (resolvedFullPath != fullPathNoLastSlash)
 				fixupPath = resolvedFullPath;
 			else
 				fixupPath = null;
 
-			Scan (fullPathNoLastSlash, false, ref initialFds);
+			Scan (fullPathNoLastSlash, postEvents: false, fds: ref initialFds);
 
 			var immediate_timeout = new timespec { tv_sec = (IntPtr)0, tv_nsec = (IntPtr)0 };
 			var eventBuffer = new kevent[0]; // we don't want to take any events from the queue at this point
@@ -363,17 +360,18 @@ namespace System.IO {
 		{
 			var eventBuffer = new kevent[32];
 			var newFds = new List<int> ();
-			List<PathData> removeQueue = new List<PathData> ();
+							List<KeventHandle> removeQueue = new List<KeventHandle> ();
 			List<string> rescanQueue = new List<string> ();
 
-			int retries = 0; 
+			int ksize = Marshal.SizeOf<kevent> ();
+			int retries = 0;
 
 			while (!requestStop) {
 				var changes = CreateChangeList (ref newFds);
 
 				// We are calling an icall, so have to marshal manually
 				// Marshal in
-				int ksize = Marshal.SizeOf<kevent> ();
+
 				var changesNative = Marshal.AllocHGlobal (ksize * changes.Length);
 				for (int i = 0; i < changes.Length; ++i)
 					Marshal.StructureToPtr (changes [i], changesNative + (i * ksize), false);
@@ -411,7 +409,7 @@ namespace System.IO {
 
 					if ((kevt.flags & EventFlags.Error) == EventFlags.Error) {
 						var errMsg = String.Format ("kevent() error watching path '{0}', error code = '{1}'", pathData.Path, kevt.data);
-						fsw.DispatchErrorEvents (new ErrorEventArgs (new IOException (errMsg)));
+						PostError (new IOException (errMsg));
 						continue;
 					}
 						
@@ -446,65 +444,49 @@ namespace System.IO {
 					Scan (path, true, ref newFds);
 				});
 				rescanQueue.Clear ();
+
+				ReleaseFSW ();
 			}
 		}
 
-		PathData Add (string path, bool postEvents, ref List<int> fds)
+		KeventHandle Add (string path, bool postEvents, ref List<int> fds)
 		{
-			PathData pathData;
-			pathsDict.TryGetValue (path, out pathData);
+			KeventHandle handle;
+			pathsDict.TryGetValue (path, out handle);
 
-			if (pathData != null)
-				return pathData;
-
-			if (fdsDict.Count >= maxFds)
-				throw new IOException ("kqueue() FileSystemWatcher has reached the maximum number of files to watch."); 
-
-			var fd = open (path, O_EVTONLY, 0);
-
-			if (fd == -1) {
-				fsw.DispatchErrorEvents (new ErrorEventArgs (new IOException (String.Format (
-					"open() error while attempting to process path '{0}', error code = '{1}'", path, Marshal.GetLastWin32Error ()))));
-				return null;
-			}
+			if (handle != null)
+				return handle;
 
 			try {
-				fds.Add (fd);
+				handle = new KeventHandle (path);
+				fds.Add (handle.Fd);
 
-				var attrs = File.GetAttributes (path);
-
-				pathData = new PathData {
-					Path = path,
-					Fd = fd,
-					IsDirectory = (attrs & FileAttributes.Directory) == FileAttributes.Directory
-				};
-				
-				pathsDict.Add (path, pathData);
-				fdsDict.Add (fd, pathData);
-
+				pathsDict.Add (path, handle);
+				fdsDict.Add (handle.Fd, handle);
+			} catch (IOException exc) {
 				if (postEvents)
-					PostEvent (FileAction.Added, path);
-
-				return pathData;
-			} catch (Exception e) {
-				close (fd);
-				fsw.DispatchErrorEvents (new ErrorEventArgs (e));
-				return null;
+					PostError (exc);
+				else
+					throw exc;
 			}
 
+			if (postEvents)
+				PostEvent (FileAction.Added, path);
+
+			return handle;
 		}
 
-		void Remove (PathData pathData)
+		void Remove (KeventHandle pathData)
 		{
+			pathData.Dispose ();
 			fdsDict.Remove (pathData.Fd);
 			pathsDict.Remove (pathData.Path);
-			close (pathData.Fd);
 			PostEvent (FileAction.Removed, pathData.Path);
 		}
 
-		void RemoveTree (PathData pathData)
+		void RemoveTree (KeventHandle pathData)
 		{
-			var toRemove = new List<PathData> ();
+			var toRemove = new List<KeventHandle> ();
 
 			toRemove.Add (pathData);
 
@@ -518,7 +500,7 @@ namespace System.IO {
 			toRemove.ForEach (Remove);
 		}
 
-		void UpdatePath (PathData pathData)
+		void UpdatePath (KeventHandle pathData)
 		{
 			var newRoot = GetFilenameFromFd (pathData.Fd);
 			if (!newRoot.StartsWith (fullPathNoLastSlash)) { // moved outside of our watched path (so stop observing it)
@@ -526,7 +508,7 @@ namespace System.IO {
 				return;
 			}
 				
-			var toRename = new List<PathData> ();
+			var toRename = new List<KeventHandle> ();
 			var oldRoot = pathData.Path;
 
 			toRename.Add (pathData);
@@ -592,10 +574,10 @@ namespace System.IO {
 				}
 
 				foreach (var fsi in fsInfos) {
-					if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory && !fsw.IncludeSubdirectories)
+					if ((fsi.Attributes & FileAttributes.Directory) == FileAttributes.Directory && ! fsw_includeSubdirectories)
 						continue;
 
-					if ((fsi.Attributes & FileAttributes.Directory) != FileAttributes.Directory && !fsw.Pattern.IsMatch (fsi.FullName))
+					if ((fsi.Attributes & FileAttributes.Directory) != FileAttributes.Directory && !fsw_filter.IsMatch (fsi.FullName))
 						continue;
 
 					var currentPathData = Add (fsi.FullName, postEvents, ref fds);
@@ -603,6 +585,33 @@ namespace System.IO {
 					if (currentPathData != null && currentPathData.IsDirectory)
 						dirsToProcess.Add (fsi.FullName);
 				}
+			}
+		}
+
+		internal void AcquireFSW ()
+		{
+			if (fsw != null)
+				return;
+
+			fsw_weakref.TryGetTarget (out fsw);
+			if (fsw == null)
+			{
+				requestStop = true;
+				throw new ObjectDisposedException ("fsw");
+			}
+		}
+
+		internal void ReleaseFSW ()
+		{
+			fsw = null;
+		}
+
+		void PostError (Exception e)
+		{
+			try {
+				AcquireFSW ();
+			} catch (ObjectDisposedException) {
+				// do not post
 			}
 		}
 			
@@ -614,15 +623,22 @@ namespace System.IO {
 				return;
 
 			// e.Name
-			string name = path.Substring (fullPathNoLastSlash.Length + 1); 
+			string name = path.Substring (fullPathNoLastSlash.Length + 1);
 
 			// only post events that match filter pattern. check both old and new paths for renames
-			if (!fsw.Pattern.IsMatch (path) && (newPath == null || !fsw.Pattern.IsMatch (newPath)))
+			if (!fsw_filter.IsMatch (path) && (newPath == null || !fsw_filter.IsMatch (newPath)))
 				return;
 				
 			if (action == FileAction.RenamedNewName) {
 				string newName = newPath.Substring (fullPathNoLastSlash.Length + 1);
-				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw.Path, newName, name);
+				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw_path, newName, name);
+			}
+
+			try {
+				AcquireFSW ();
+			} catch (ObjectDisposedException) {
+				// do not post
+				return;
 			}
 				
 			fsw.DispatchEvents (action, name, ref renamed);
@@ -631,7 +647,7 @@ namespace System.IO {
 				lock (fsw) {
 					fsw.Waiting = false;
 					System.Threading.Monitor.PulseAll (fsw);
-				}
+			ƒ	}
 			}
 		}
 
@@ -639,40 +655,40 @@ namespace System.IO {
 		{
 			var sb = new StringBuilder (__DARWIN_MAXPATHLEN);
 
-			if (fcntl (fd, F_GETPATH, sb) != -1) {
-				if (fixupPath != null) 
-					sb.Replace (fixupPath, fullPathNoLastSlash, 0, fixupPath.Length); // see Setup()
+			if (fcntl (fd, F_GETPATH, sb) == -1)
+				throw new IOException (String.Format (
+					"fcntl() error while attempting to get path for fd '{0}', error code = '{1}'", fd, Marshal.GetLastWin32Error ()));
 
-				return sb.ToString ();
-			} else {
-				fsw.DispatchErrorEvents (new ErrorEventArgs (new IOException (String.Format (
-					"fcntl() error while attempting to get path for fd '{0}', error code = '{1}'", fd, Marshal.GetLastWin32Error ()))));
-				return String.Empty;
-			}
+			if (fixupPath != null)
+				sb.Replace (fixupPath, fullPathNoLastSlash, 0, fixupPath.Length); // see Setup()
+
+			return sb.ToString ();
 		}
 
-		const int O_EVTONLY = 0x8000;
 		const int F_GETPATH = 50;
 		const int __DARWIN_MAXPATHLEN = 1024;
 		const int EINTR = 4;
 		static readonly kevent[] emptyEventList = new System.IO.kevent[0];
-		int maxFds = Int32.MaxValue;
 
-		FileSystemWatcher fsw;
 		int conn;
 		Thread thread;
 		volatile bool requestStop = false;
 		AutoResetEvent startedEvent = new AutoResetEvent (false);
 		bool started = false;
-		bool inDispatch = false;
 		Exception exc = null;
 		object stateLock = new object ();
 		object connLock = new object ();
 
-		readonly Dictionary<string, PathData> pathsDict = new Dictionary<string, PathData> ();
-		readonly Dictionary<int, PathData> fdsDict = new Dictionary<int, PathData> ();
-		string fixupPath = null;
-		string fullPathNoLastSlash = null;
+		FileSystemWatcher fsw;
+		SearchPattern2 fsw_filter;
+		string fsw_path;
+		WeakReference<FileSystemWatcher> fsw_weakref;
+
+		readonly Dictionary<string, KeventHandle> pathsDict = new Dictionary<string, KeventHandle> ();
+		readonly Dictionary<int, KeventHandle> fdsDict = new Dictionary<int, KeventHandle> ();
+		string fixupPath;
+		string fullPathNoLastSlash;
+		bool fsw_includeSubdirectories;
 
 		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
 		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
@@ -693,50 +709,115 @@ namespace System.IO {
 		extern static int kevent_notimeout (ref int kq, IntPtr ev, int nchanges, IntPtr evtlist, int nevents);
 	}
 
-	class KeventWatcher : IFileWatcher
+	internal sealed class KeventHandle : SafeHandle
 	{
-		static bool failed;
+		internal static KeventWatcher watcher; // initialized by KeventWatcher
+		private bool disposed = false;
+
+		public string Path { get; set; }
+		public bool IsDirectory { get; private set; }
+		public int Fd { get; private set; }
+
+		const int O_EVTONLY = 0x8000;
+		[DllImport ("libc")]
+		extern static int open (string path, int flags, int mode_t);
+
+		[DllImport ("libc")]
+		extern static int close (int fd);
+
+		public KeventHandle (string path)
+								: base (new IntPtr (-1), true)
+		{
+			int open_files = watcher.currentFds;
+			if (open_files >= watcher.maxFds)
+				throw new IOException ($"KeventWatcher: Reached file limit ({watcher.maxFds}");
+
+			var fd = open (path, O_EVTONLY, 0);
+			if (fd == -1) {
+				throw new IOException (String.Format ("open() error while attempting to process path '{0}', error code = '{1}'", path, Marshal.GetLastWin32Error ()));
+			}
+			Fd = fd;
+			Path = path;
+			IsDirectory = (File.GetAttributes (path) & FileAttributes.Directory) == FileAttributes.Directory;
+
+			var old_value = Interlocked.CompareExchange (ref watcher.currentFds, open_files + 1, open_files);
+			while (old_value != open_files) {
+				open_files = watcher.currentFds;
+				if (open_files >= watcher.maxFds) {
+					ReleaseHandle ();
+					throw new IOException ($"KeventWatcher: Reached file limit ({watcher.maxFds}");
+				}
+				old_value = Interlocked.CompareExchange (ref watcher.currentFds, open_files + 1, open_files);
+			}
+		}
+
+		protected override bool ReleaseHandle ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException ("KeventHandle was released twice");
+			close (Fd);
+			Interlocked.Decrement (ref watcher.currentFds);
+			disposed = true;
+			GC.SuppressFinalize (this);
+			return true;
+		}
+
+		public override bool IsInvalid {
+			get {
+				return disposed;
+			}
+		}
+	}
+
+	internal class KeventWatcher : IFileWatcher
+	{
 		static KeventWatcher instance;
-		static Hashtable watches;  // <FileSystemWatcher, KqueueMonitor>
+		static ConditionalWeakTable<FileSystemWatcher, KqueueMonitor> watches;  // <FileSystemWatcher, KqueueMonitor>
+		public int maxFds;
+		public int currentFds;
 
 		private KeventWatcher ()
 		{
+			int t;
+			var maxenv = Environment.GetEnvironmentVariable ("MONO_DARWIN_WATCHER_MAXFDS");
+			if (maxenv != null && Int32.TryParse (maxenv, out t))
+				maxFds = t;
+			else
+				maxFds = Int32.MaxValue;
+
+			currentFds = 0;
 		}
 
 		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
-			if (failed == true) {
-				watcher = null;
-				return false;
-			}
-
 			if (instance != null) {
 				watcher = instance;
 				return true;
 			}
 
-			watches = Hashtable.Synchronized (new Hashtable ());
-			var conn = kqueue();
-			if (conn == -1) {
-				failed = true;
-				watcher = null;
-				return false;
-			}
-			close (conn);
+			watches = new ConditionalWeakTable <FileSystemWatcher, KqueueMonitor> ();
 
 			instance = new KeventWatcher ();
 			watcher = instance;
+			KeventHandle.watcher = instance;
 			return true;
+		}
+
+		public static void NativeCallHelper (Func<int> call, int invalid_value)
+		{
+			int return_value = call ();
+			if (return_value == invalid_value) {
+				var errno = Marshal.GetLastWin32Error ();
+				throw new IOException ($"open () failed. errno = {errno}");
+			}
 		}
 
 		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			KqueueMonitor monitor;
+			KqueueMonitor monitor = null;
 
-			if (watches.ContainsKey (fsw)) {
-				monitor = (KqueueMonitor)watches [fsw];
-			} else {
+			if (!watches.TryGetValue (fsw, out monitor)) {
 				monitor = new KqueueMonitor (fsw);
 				watches.Add (fsw, monitor);
 			}
@@ -746,18 +827,11 @@ namespace System.IO {
 
 		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
-			if (monitor == null)
-				return;
+			KqueueMonitor monitor = null;
 
-			monitor.Stop ();
+			if (watches.TryGetValue (fsw, out monitor))
+				monitor.Stop ();
 		}
-			
-		[DllImport ("libc")]
-		extern static int close (int fd);
 
-		[DllImport ("libc")]
-		extern static int kqueue ();
 	}
 }
-
