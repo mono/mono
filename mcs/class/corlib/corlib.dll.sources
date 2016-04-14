@@ -100,7 +100,6 @@ System/DomainManagerInitializationFlags.cs
 System/EmptyArray.cs
 System/Environment.cs
 System/EnvironmentVariableTarget.cs
-System/Exception.cs
 System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
@@ -974,6 +973,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/entrypointnotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/eventargs.cs
 ../../../external/referencesource/mscorlib/system/eventhandler.cs
+../../../external/referencesource/mscorlib/system/exception.cs
 ../../../external/referencesource/mscorlib/system/executionengineexception.cs
 ../../../external/referencesource/mscorlib/system/fieldaccessexception.cs
 ../../../external/referencesource/mscorlib/system/flagsattribute.cs

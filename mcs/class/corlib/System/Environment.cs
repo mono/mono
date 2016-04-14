@@ -985,6 +985,19 @@ namespace System {
 		{
 
 		}
+
+		// Copied from referencesource Environment
+		internal static String GetStackTrace(Exception e, bool needFileInfo)
+		{
+			System.Diagnostics.StackTrace st;
+			if (e == null)
+				st = new System.Diagnostics.StackTrace(needFileInfo);
+			else
+				st = new System.Diagnostics.StackTrace(e, needFileInfo);
+
+			// Do not include a trailing newline for backwards compatibility
+			return st.ToString( System.Diagnostics.StackTrace.TraceFormat.Normal );
+		}
 	}
 }
 
