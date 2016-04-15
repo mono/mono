@@ -48,7 +48,7 @@
     <Compile Include="AssemblyComparer.cs" />
     <Compile Include="ClassComparer.cs" />
     <Compile Include="ApiDiff.cs" />
-    <Compile Include="..\..\..\class\Mono.Options\Mono.Options\Options.cs">
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs">
       <Link>Options.cs</Link>
     </Compile>
     <Compile Include="ApiChange.cs" />
