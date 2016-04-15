@@ -2138,6 +2138,7 @@ mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX:
 	case MONO_RGCTX_INFO_LOCAL_OFFSET:
 		return MONO_PATCH_INFO_CLASS;
+	case MONO_RGCTX_INFO_CLASS_FIELD:
 	case MONO_RGCTX_INFO_FIELD_OFFSET:
 		return MONO_PATCH_INFO_FIELD;
 	case MONO_RGCTX_INFO_METHOD:
