@@ -547,7 +547,15 @@ namespace Mono.CSharp
 
 		public string GetSignatureForErrorIncludingAssemblyName ()
 		{
-			return string.Format ("{0} [{1}]", GetSignatureForError (), MemberDefinition.DeclaringAssembly.FullName);
+			var imported = MemberDefinition.DeclaringAssembly as ImportedAssemblyDefinition;
+
+			var location = imported != null ?
+				System.IO.Path.GetFullPath (imported.Location) :
+			    ((MemberCore)MemberDefinition).Location.NameFullPath;
+
+			return string.Format ("{0} [{1} -- {2}]", GetSignatureForError (),
+								  MemberDefinition.DeclaringAssembly.FullName,
+								  location);
 		}
 
 		protected virtual string GetTypeNameSignature ()
