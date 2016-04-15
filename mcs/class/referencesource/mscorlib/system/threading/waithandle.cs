@@ -258,7 +258,11 @@ namespace System.Threading
             {
                 ThrowAbandonedMutexException();
             }
+#if !MONO
             return (ret != WaitTimeout);
+#else
+            return (ret != WaitTimeout && ret != WAIT_FAILED);
+#endif
         }
         
         [System.Security.SecurityCritical]
@@ -278,7 +282,11 @@ namespace System.Threading
             {
                 ThrowAbandonedMutexException();
             }
+#if !MONO
             return (ret != WaitTimeout);
+#else
+            return (ret != WaitTimeout && ret != WAIT_FAILED);
+#endif
          }
 
 #if !MONO
@@ -381,7 +389,11 @@ namespace System.Threading
             } 
 
             GC.KeepAlive(internalWaitHandles);
+#if !MONO
             return (ret != WaitTimeout);
+#else
+            return (ret != WaitTimeout && ret != WAIT_FAILED);
+#endif
         }
 
         public static bool WaitAll(
