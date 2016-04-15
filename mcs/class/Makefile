@@ -1,8 +1,6 @@
 thisdir = class
 
-# Note that Mono.Security and System.Security aren't listed.
-# We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security System.Core 
+basic_SUBDIRS := corlib Mono.Security System System.XML System.Core 
 
 # resgen is corlib specific so we need to wait until corlib is build
 # and build it just a step before first dll needs it
@@ -10,9 +8,9 @@ resgen_dir = ../tools/resgen
 
 build_SUBDIRS :=  \
 	corlib \
+	Mono.Security \
 	System \
 	System.XML \
-	System Mono.Security \
 	Mono.Posix \
 	System.Core
 
@@ -20,11 +18,10 @@ pcl_facade_dirs := Facades
 
 mobile_common_dirs := \
 	corlib	\
+	Mono.Security \
 	System	\
 	System.Core	\
 	System.XML	\
-	Mono.Security	\
-	System	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
@@ -80,6 +77,7 @@ monotouch_tv_dirs   := $(monotouch_dirs)
 
 monotouch_runtime_dirs := \
 	corlib \
+	Mono.Security \
 	System \
 	System.Core \
 	System.XML \
@@ -90,12 +88,11 @@ monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
 
 xammac_4_5_dirs := \
 	corlib	\
+	Mono.Security \
 	System	\
 	Mono.Posix			\
 	System.Core	\
 	System.XML	\
-	Mono.Security	\
-	System	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
@@ -138,12 +135,12 @@ xammac_4_5_dirs := \
 
 net_4_x_dirs := \
 	corlib				\
+	Mono.Security \
 	System				\
 	System.XML			\
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	System.Core			\
-	Mono.Security			\
 	System.Security			\
 	System.Configuration	\
 	$(resgen_dir)			\
