@@ -30731,6 +30731,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-37.cs">
+    <type name="Test1">
+      <method name="System.Object Foo(Int32, Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="System.Object Foo(System.Object, System.Object)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">

@@ -4647,7 +4647,7 @@ namespace Mono.CSharp {
 		///     false if candidate ain't better
 		///     true  if candidate is better than the current best match
 		/// </remarks>
-		static bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
+		bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
 			MemberSpec best, AParametersCollection bparam, bool best_params)
 		{
 			AParametersCollection candidate_pd = ((IParametersMember) candidate).Parameters;
@@ -4705,6 +4705,12 @@ namespace Mono.CSharp {
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
 				if (result == 2) {
+					//
+					// No optional parameters tie breaking rules for delegates overload resolution
+					//
+					if ((this.restrictions & Restrictions.CovariantDelegate) != 0)
+						return false;
+
 					better_at_least_one = false;
 
 					++j;
