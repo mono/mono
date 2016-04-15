@@ -688,6 +688,11 @@ namespace MonoTests.System.IO
 						i, root + test [i, 0], ex.GetType ()));
 				}
 			}
+
+			// These cases require that we don't pass a root to GetFullPath - it should return the proper drive root.
+			string root4 = Path.GetPathRoot(Directory.GetCurrentDirectory());
+			Assert.AreEqual(root4, Path.GetFullPath(@"\"));
+			Assert.AreEqual(root4, Path.GetFullPath("/"));
 		}
 
 		[Test]

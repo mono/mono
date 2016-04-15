@@ -320,7 +320,9 @@ namespace System.IO {
 
 		internal static string WindowsDriveAdjustment (string path)
 		{
-			// two special cases to consider when a drive is specified
+			// three special cases to consider when a drive is specified
+			if (path == @"\" || path == "/")
+				return Path.GetPathRoot(Directory.GetCurrentDirectory());
 			if (path.Length < 2)
 				return path;
 			if ((path [1] != ':') || !Char.IsLetter (path [0]))
