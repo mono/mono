@@ -28,20 +28,13 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 #endif
 
 using System;
@@ -104,7 +97,7 @@ namespace Mono.Net.Security
 
 			try {
 				sslStream.AuthenticateAsClient (
-					request.Address.Host, (XX509CertificateCollection)(object)request.ClientCertificates,
+					request.Address.Host, request.ClientCertificates,
 					(SslProtocols)ServicePointManager.SecurityProtocol,
 					ServicePointManager.CheckCertificateRevocationList);
 

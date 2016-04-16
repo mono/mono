@@ -21,15 +21,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if SECURITY_DEP
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 using System;
 using System.Runtime.InteropServices;

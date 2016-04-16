@@ -34,9 +34,6 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -47,13 +44,8 @@ using Mono.Security.Interface;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 #endif
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
-#else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
-#endif
 
 using System;
 using System.Net;
@@ -257,7 +249,7 @@ namespace Mono.Net.Security
 		public ValidationResult ValidateCertificate (string host, bool serverMode, X509Certificate leaf, XX509Chain xchain)
 		{
 			try {
-				var chain = (X509Chain)(object)xchain;
+				var chain = xchain;
 				var result = ValidateChain (host, serverMode, leaf, chain, null, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
@@ -326,9 +318,9 @@ namespace Mono.Net.Security
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				var xerrors = (MonoSslPolicyErrors)errors;
-				var xchain = (XX509Chain)(object)chain;
+				var xchain = chain;
 				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, wantsChain, ref xchain, out result, ref xerrors, ref status11);
-				chain = (X509Chain)(object)xchain;
+				chain = xchain;
 				errors = (SslPolicyErrors)xerrors;
 			} else if (wantsChain) {
 				chain = SystemCertificateValidator.CreateX509Chain (certs);
@@ -363,7 +355,7 @@ namespace Mono.Net.Security
 
 		public bool InvokeSystemValidator (string targetHost, bool serverMode, XX509CertificateCollection certificates, XX509Chain xchain, ref MonoSslPolicyErrors xerrors, ref int status11)
 		{
-			X509Chain chain = (X509Chain)(object)xchain;
+			X509Chain chain = xchain;
 			var errors = (SslPolicyErrors)xerrors;
 			var result = SystemCertificateValidator.Evaluate (settings, targetHost, certificates, chain, ref errors, ref status11);
 			xerrors = (MonoSslPolicyErrors)errors;

@@ -26,9 +26,6 @@
 
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -37,13 +34,6 @@ extern alias MonoSecurity;
 using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using XHttpWebRequest = PrebuiltSystem::System.Net.HttpWebRequest;
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using XHttpWebRequest = System.Net.HttpWebRequest;
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System;
@@ -84,13 +74,13 @@ namespace Mono.Net.Security.Private
 
 		MSI.IMonoTlsContext IMonoTlsProvider.CreateTlsContext (
 			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
 			MSI.MonoEncryptionPolicy encryptionPolicy, MSI.MonoTlsSettings settings)
 		{
 			return CreateTlsContextImpl (
 				hostname, serverMode, protocolFlags,
-				serverCertificate, (X509CertificateCollection)(object)clientCertificates,
+				serverCertificate, clientCertificates,
 				remoteCertRequired, encryptionPolicy, settings);
 		}
 
@@ -102,13 +92,13 @@ namespace Mono.Net.Security.Private
 
 		internal override MSI.IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
 			MSI.MonoTlsSettings settings)
 		{
 			return CreateTlsContextImpl (
 				hostname, serverMode, (MSI.TlsProtocols)protocolFlags,
-				serverCertificate, (X509CertificateCollection)(object)clientCertificates,
+				serverCertificate, clientCertificates,
 				remoteCertRequired, (MSI.MonoEncryptionPolicy)encryptionPolicy,
 				settings);
 		}

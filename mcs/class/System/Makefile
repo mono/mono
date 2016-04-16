@@ -59,7 +59,7 @@ endif
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS =
 LIB_REFS += bare/System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 endif
 
 #
@@ -67,7 +67,7 @@ endif
 #
 ifndef intermediate
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 
 ifndef MOBILE_PROFILE
 LIB_REFS += System.Configuration
