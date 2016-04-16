@@ -20,5 +20,3 @@ Extern aliases:
 
 * MONO_SECURITY_ALIAS: we're using Mono.Security from the "MonoSecurity" extern alias.
 
-* MONO_X509_ALIAS: we're using X509CertificateCollection from the "PrebuiltSystem" extern alias.
-
