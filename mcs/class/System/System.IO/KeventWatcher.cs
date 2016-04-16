@@ -617,14 +617,14 @@ namespace System.IO {
 				return;
 
 			// e.Name
-			string name = path.Substring (fullPathNoLastSlash.Length + 1); 
+			string name = (path.Length > fullPathNoLastSlash.Length) ? path.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 
 			// only post events that match filter pattern. check both old and new paths for renames
 			if (!fsw.Pattern.IsMatch (path) && (newPath == null || !fsw.Pattern.IsMatch (newPath)))
 				return;
 				
 			if (action == FileAction.RenamedNewName) {
-				string newName = newPath.Substring (fullPathNoLastSlash.Length + 1);
+				string newName = (newPath.Length > fullPathNoLastSlash.Length) ? newPath.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw.Path, newName, name);
 			}
 				
