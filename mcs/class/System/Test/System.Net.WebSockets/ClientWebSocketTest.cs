@@ -17,7 +17,7 @@ namespace MonoTests.System.Net.WebSockets
 	[TestFixture]
 	public class ClientWebSocketTest
 	{
-		const string EchoServerUrl = "ws://echo.websocket.org";
+		const string EchoServerUrl = "ws://corefx-net.cloudapp.net/WebSocket/EchoWebSocket.ashx";
 		int Port = NetworkHelpers.FindFreePort ();
 		HttpListener listener;
 		ClientWebSocket socket;
