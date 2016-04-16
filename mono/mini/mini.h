@@ -1268,7 +1268,9 @@ typedef struct {
 
 /* A pointer to this structure is passed to gshared methods in the rgctx register */
 typedef struct {
+	/* Initialized lazily by the called method by calling mini_init_method_rgctx () */
 	MonoMethodRuntimeGenericContext *mrgctx;
+	/* The actual inflated method */
 	MonoMethod *method;
 } MonoMethodRgctxArg;
 
