@@ -15,6 +15,12 @@ if [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 
     # only enable the mobile profiles and mobile_static on the main architectures
 fi
 
+if [ -x "/usr/bin/dpkg-architecture" ];
+	then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"
+	#force build arch = dpkg arch, sometimes misdetected
+fi
+
 ${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
 if [[ ${label} == w* ]];
     then
