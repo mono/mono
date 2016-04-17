@@ -109,8 +109,15 @@ Mono_Posix_Syscall_mremap (void *old_address, mph_size_t old_size,
 	if (Mono_Posix_FromMremapFlags (flags, &_flags) == -1)
 		return MAP_FAILED;
 
+#if defined(linux)
 	return mremap (old_address, (size_t) old_size, (size_t) new_size,
 			(unsigned long) _flags);
+#elif defined(__NetBSD__)
+	return mremap (old_address, (size_t) old_size, old_address,
+			(size_t) new_size, (unsigned long) _flags);
+#else
+#error Port me
+#endif
 }
 #endif /* def HAVE_MREMAP */
 
