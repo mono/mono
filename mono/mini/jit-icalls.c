@@ -13,9 +13,7 @@
 #include <config.h>
 #include <math.h>
 #include <limits.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 
 #include "jit-icalls.h"
 #include <mono/utils/mono-error-internals.h>

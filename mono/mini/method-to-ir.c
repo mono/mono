@@ -29,9 +29,7 @@
 #include <sys/time.h>
 #endif
 
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 
 #include <mono/utils/memcheck.h>
 #include "mini.h"

@@ -17,9 +17,7 @@
 #ifndef DISABLE_JIT
 
 #include "mini.h"
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 
 #define CREATE_PRUNED_SSA
 

@@ -24,13 +24,11 @@
 #include <eglib-remap.h>
 #endif
 
-#ifdef G_HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-
-#ifdef WIN32
 /* For alloca */
+#ifdef WIN32
 #include <malloc.h>
+#else
+#include <stdlib.h>
 #endif
 
 #ifndef offsetof
@@ -1081,6 +1079,3 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 G_END_DECLS
 
 #endif
-
-
-

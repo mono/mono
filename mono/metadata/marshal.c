@@ -12,9 +12,7 @@
  */
 
 #include "config.h"
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 
 #include "object.h"
 #include "loader.h"
