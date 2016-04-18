@@ -66,7 +66,7 @@ namespace Symbolicate
 		{
 			typeFullName = null;
 
-			var methodNameEnd = str.IndexOf ("(");
+			var methodNameEnd = str.IndexOf ('(');
 			if (methodNameEnd == -1)
 				return false;
 
@@ -76,7 +76,7 @@ namespace Symbolicate
 			// Remove generic parameters
 			str = Regex.Replace (str, @"\[[^\[\]]*\]", "");
 
-			var typeNameEnd = str.LastIndexOf (".");
+			var typeNameEnd = str.LastIndexOf ('.');
 			if (methodNameEnd == -1 || typeNameEnd == -1)
 				return false;
 
