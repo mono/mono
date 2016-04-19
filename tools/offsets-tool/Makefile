@@ -7,7 +7,7 @@ CPPSHARP_REFS = -r:$(CPPSHARP_DIR)/CppSharp.dll \
 
 SRC_ROOT = ../..
 
-MONO_OPTIONS_SRC = $(SRC_ROOT)/mono/mcs/class/Mono.Options/Mono.Options/Options.cs
+MONO_OPTIONS_SRC = $(SRC_ROOT)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
 .stamp-clone:
 	@if [ ! -d $(CPPSHARP_DIR) ]; then \
