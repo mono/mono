@@ -31,3 +31,6 @@ $(the_libdir_base)System.Security.dll:
 
 $(bare_libdir)/System.Xml.dll:
 	(cd ../System.XML; $(MAKE) $@)
+
+run-test:
+	$(MAKE) -C Test/standalone
