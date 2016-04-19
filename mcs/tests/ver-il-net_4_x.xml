@@ -10586,7 +10586,7 @@
     </type>
     <type name="ExtensibleTester`1[U]">
       <method name="Void Direct()" attrs="134">
-        <size>24</size>
+        <size>25</size>
       </method>
       <method name="Void .ctor(U)" attrs="6278">
         <size>15</size>
@@ -14348,7 +14348,7 @@
     </type>
     <type name="TestIssue.Program">
       <method name="Int32 Main()" attrs="150">
-        <size>31</size>
+        <size>32</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -14936,7 +14936,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>36</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -43639,7 +43639,7 @@
   <test name="test-555.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>360</size>
+        <size>361</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52036,6 +52036,16 @@
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>29</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-934.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>106</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -68791,7 +68801,7 @@
         <size>14</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>167</size>
+        <size>168</size>
       </method>
       <method name="Void Dispose()" attrs="486">
         <size>15</size>

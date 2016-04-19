@@ -7862,6 +7862,8 @@ namespace Mono.CSharp
 		{
 		}
 
+		public bool NoEmptyInterpolation { get; set; }
+
 		public ComposedTypeSpecifier Rank {
 			get {
 				return this.rank;
@@ -8398,7 +8400,7 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			if (EmitOptimizedEmpty (ec))
+			if (!NoEmptyInterpolation && EmitOptimizedEmpty (ec))
 				return;
 
 			var await_field = EmitToFieldSource (ec);

@@ -3926,7 +3926,9 @@ array_creation_expression
 	  	if ($4 == null)
 	  		report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
 
-		$$ = new ArrayCreation ((FullNamedExpression) $2, (ComposedTypeSpecifier) $3, (ArrayInitializer) $4, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $2, (ComposedTypeSpecifier) $3, (ArrayInitializer) $4, GetLocation ($1)) {
+			NoEmptyInterpolation = true
+		};
 	  }
 	| NEW rank_specifier array_initializer
 	  {
