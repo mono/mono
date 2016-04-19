@@ -2,59 +2,62 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using IKVM.Reflection;
-using System.Diagnostics;
 using System.Collections.Generic;
-using Mono.CompilerServices.SymbolWriter;
-using System.Runtime.InteropServices;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using Mono.Collections.Generic;
 
 namespace Symbolicate
 {
-	struct Location {
-		public string FileName;
-		public int Line;
-	}
-
 	class LocationProvider {
 		class AssemblyLocationProvider {
-			Assembly assembly;
-			MonoSymbolFile symbolFile;
+			AssemblyDefinition assembly;
 			string seqPointDataPath;
 
-			public AssemblyLocationProvider (Assembly assembly, MonoSymbolFile symbolFile, string seqPointDataPath)
+			public AssemblyLocationProvider (AssemblyDefinition assembly, string seqPointDataPath)
 			{
 				this.assembly = assembly;
-				this.symbolFile = symbolFile;
 				this.seqPointDataPath = seqPointDataPath;
 			}
 
-			public bool TryGetLocation (string methodStr, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
+			public SequencePoint TryGetLocation (string typeFullName, string methodSignature, int offset, bool isOffsetIL, uint methodIndex)
 			{
-				location = default (Location);
-				if (symbolFile == null)
-					return false;
+				if (!assembly.MainModule.HasSymbols)
+					return null;
 
-				var type = assembly.GetTypes().FirstOrDefault (t => t.FullName == typeFullName);
-				if (type == null)
-					return false;
+				TypeDefinition type = null;
+				var nested = typeFullName.Split ('+');
+				var types = assembly.MainModule.Types;
+				foreach (var ntype in nested) {
+					type = types.FirstOrDefault (t => t.Name == ntype);
+					if (type == null)
+						return null;
 
-				var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-				var method = type.GetMethods(bindingflags).FirstOrDefault (m => GetMethodFullName (m) == methodStr);
+					types = type.NestedTypes;
+				}
+
+				var parensStart = methodSignature.IndexOf ('(');
+				var methodName = methodSignature.Substring (0, parensStart).TrimEnd ();
+				var methodParameters = methodSignature.Substring (parensStart);
+				var method = type.Methods.FirstOrDefault (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters));
 				if (method == null)
-					return false;
+					return null;
 
-				int ilOffset = (isOffsetIL)? offset : GetILOffsetFromFile (method.MetadataToken, methodIndex, offset);
+				int ilOffset = isOffsetIL ? offset : GetILOffsetFromFile (method.MetadataToken.ToInt32 (), methodIndex, offset);
 				if (ilOffset < 0)
-					return false;
+					return null;
 
-				var methodSymbol = symbolFile.Methods [(method.MetadataToken & 0x00ffffff) - 1];
+				SequencePoint sp = null;
+				foreach (var instr in method.Body.Instructions) {
+					if (instr.SequencePoint != null)
+						sp = instr.SequencePoint;
+					
+					if (instr.Offset >= ilOffset) {
+						return sp;
+					}
+				}
 
-				var lineNumbers = methodSymbol.GetLineNumberTable ().LineNumbers;
-				var lineNumber = lineNumbers.FirstOrDefault (l => l.Offset >= ilOffset) ?? lineNumbers.Last ();
-
-				location.FileName = symbolFile.Sources [lineNumber.File-1].FileName;
-				location.Line = lineNumber.Row;
-				return true;
+				return null;
 			}
 
 			SeqPointInfo seqPointInfo;
@@ -66,17 +69,88 @@ namespace Symbolicate
 				return seqPointInfo.GetILOffset (methodToken, methodIndex, nativeOffset);
 			}
 
-			private string GetMethodFullName (MethodBase m)
+			static bool CompareName (MethodDefinition candidate, string expected)
 			{
-				StringBuilder sb = new StringBuilder ();
+				if (candidate.Name == expected)
+					return true;
 
-				StackTraceHelper.GetFullNameForStackTrace (sb, m);
+				if (!candidate.HasGenericParameters)
+					return false;
+				
+				var genStart = expected.IndexOf ('[');
+				if (genStart < 0)
+					return false;
 
-				return sb.ToString ();
+				if (candidate.Name != expected.Substring (0, genStart))
+					return false;
+
+				int arity = 1;
+				for (int pos = genStart; pos < expected.Length; ++pos) {
+					if (expected [pos] == ',')
+						++arity;
+				}
+
+				return candidate.GenericParameters.Count == arity;
+			}
+
+			static bool CompareParameters (Collection<ParameterDefinition> candidate, string expected)
+			{
+				var builder = new StringBuilder ();
+				builder.Append ("(");
+
+				for (int i = 0; i < candidate.Count; i++) {
+					var parameter = candidate [i];
+					if (i > 0)
+						builder.Append (", ");
+
+					if (parameter.ParameterType.IsSentinel)
+						builder.Append ("...,");
+
+					var pt = parameter.ParameterType;
+					if (!string.IsNullOrEmpty (pt.Namespace)) {
+						builder.Append (pt.Namespace);
+						builder.Append (".");
+					}
+
+					FormatElementType (pt, builder);
+
+					builder.Append (" ");
+					builder.Append (parameter.Name);
+				}
+
+				builder.Append (")");
+
+				return builder.ToString () == expected;
+			}
+
+			static void FormatElementType (TypeReference tr, StringBuilder builder)
+			{
+				var ts = tr as TypeSpecification;
+				if (ts != null) {
+					if (ts.IsByReference) {
+						FormatElementType (ts.ElementType, builder);
+						builder.Append ("&");
+						return;
+					}
+
+					var array = ts as ArrayType;
+					if (array != null) {
+						FormatElementType (ts.ElementType, builder);
+						builder.Append ("[");
+
+						for (int ii = 0; ii < array.Rank - 1; ++ii) {
+							builder.Append (",");
+						}
+
+						builder.Append ("]");
+						return;
+					}
+				}
+
+				builder.Append (tr.Name);
 			}
 		}
 
-		static readonly Universe ikvm_reflection = new Universe ();
 		Dictionary<string, AssemblyLocationProvider> assemblies;
 		HashSet<string> directories;
 
@@ -94,24 +168,19 @@ namespace Symbolicate
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = ikvm_reflection.LoadFile (assemblyPath);
-			MonoSymbolFile symbolFile = null;
-
-			var symbolPath = assemblyPath + ".mdb";
-			if (!File.Exists (symbolPath))
-				Debug.WriteLine (".mdb file was not found for " + assemblyPath);
-			else
-				symbolFile = MonoSymbolFile.ReadSymbolFile (symbolPath);
+			var readerParameters = new ReaderParameters { ReadSymbols = true };
+			var assembly = AssemblyDefinition.ReadAssembly (assemblyPath, readerParameters);
 
 			var seqPointDataPath = assemblyPath + ".msym";
 			if (!File.Exists (seqPointDataPath))
 				seqPointDataPath = null;
 
-			assemblies.Add (assemblyPath, new AssemblyLocationProvider (assembly, symbolFile, seqPointDataPath));
+			assemblies.Add (assemblyPath, new AssemblyLocationProvider (assembly, seqPointDataPath));
 
+			// TODO: Should use AssemblyName with .net unification rules
 			directories.Add (Path.GetDirectoryName (assemblyPath));
 
-			foreach (var assemblyRef in assembly.GetReferencedAssemblies ()) {
+			foreach (var assemblyRef in assembly.MainModule.AssemblyReferences) {
 				string refPath = null;
 				foreach (var dir in directories) {
 					refPath = Path.Combine (dir, assemblyRef.Name);
@@ -141,15 +210,15 @@ namespace Symbolicate
 			directories.Add (directory);
 		}
 
-		public bool TryGetLocation (string method, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
+		public SequencePoint TryGetLocation (string typeFullName, string methodSignature, int offset, bool isOffsetIL, uint methodIndex)
 		{
-			location = default (Location);
 			foreach (var assembly in assemblies.Values) {
-				if (assembly.TryGetLocation (method, typeFullName, offset, isOffsetIL, methodIndex, out location))
-					return true;
+				var loc = assembly.TryGetLocation (typeFullName, methodSignature, offset, isOffsetIL, methodIndex);
+				if (loc != null)
+					return loc;
 			}
 
-			return false;
+			return null;
 		}
 	}
 }

@@ -19,9 +19,10 @@
     <DefineConstants>DEBUG;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
+    <ExternalConsole>false</ExternalConsole>
     <PlatformTarget>x86</PlatformTarget>
     <Commandlineparameters></Commandlineparameters>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <Optimize>true</Optimize>
@@ -33,37 +34,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.CompilerServices.SymbolWriter" />
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\class\lib\net_4_x\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\..\class\lib\net_4_x\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocationProvider.cs" />
     <Compile Include="SeqPointInfo.cs" />
     <Compile Include="symbolicate.cs" />
-    <Compile Include="..\..\class\corlib\System.Diagnostics\StackTraceHelper.cs">
-      <Link>StackTraceHelper.cs</Link>
-    </Compile>
   </ItemGroup>
-
-  <ItemGroup Label="IKVM.Reflection">
-    <Compile Include="..\..\..\external\ikvm\reflect\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-    <Compile Include="..\..\..\external\ikvm\reflect\Emit\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-    <Compile Include="..\..\..\external\ikvm\reflect\Metadata\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-    <Compile Include="..\..\..\external\ikvm\reflect\Reader\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-    <Compile Include="..\..\..\external\ikvm\reflect\Writer\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-    <Compile Include="..\..\..\external\ikvm\reflect\Impl\*.cs">
-      <Visible>False</Visible>
-    </Compile>
-  </ItemGroup>
-
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

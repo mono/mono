@@ -201,7 +201,7 @@ namespace System.Diagnostics {
 					else
 						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 				} else {
-					StackTraceHelper.GetFullNameForStackTrace (sb, frame.GetMethod ());
+					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
 					if (frame.GetILOffset () == -1) {
 						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
@@ -218,6 +218,58 @@ namespace System.Diagnostics {
 
 			return i != 0;
 		}
+
+		public static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		{
+			var declaringType = mi.DeclaringType;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+			// Get generic definition
+			const BindingFlags bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			foreach (var m in declaringType.GetMethods (bindingflags)) {
+				if (m.MetadataToken == mi.MetadataToken) {
+					mi = m;
+					break;
+				}
+			}
+
+			sb.Append (declaringType.ToString ());
+
+			sb.Append (".");
+			sb.Append (mi.Name);
+
+			if (mi.IsGenericMethod) {
+				Type[] gen_params = mi.GetGenericArguments ();
+				sb.Append ("[");
+				for (int j = 0; j < gen_params.Length; j++) {
+					if (j > 0)
+						sb.Append (",");
+					sb.Append (gen_params [j].Name);
+				}
+				sb.Append ("]");
+			}
+
+			ParameterInfo[] p = mi.GetParameters ();
+
+			sb.Append (" (");
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type pt = p[i].ParameterType;
+				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
+					pt = pt.GetGenericTypeDefinition ();
+
+				sb.Append (pt.ToString());
+
+				if (p [i].Name != null) {
+					sb.Append (" ");
+					sb.Append (p [i].Name);
+				}
+			}
+			sb.Append (")");
+		}		
 
 		public override string ToString ()
 		{
