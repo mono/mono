@@ -14,10 +14,12 @@ local: $(TESTS)
 	done
 
 compare:
+	@ECODE=0; \
 	for i in $(TESTS); do \
 		printf "$$i: "; \
-		if diff --strip-trailing-cr $$i.expected $$i.result >/dev/null ; then echo "  OK"; else echo "  FAILED"; fi; \
-	done
+		if diff --strip-trailing-cr $$i.expected $$i.result >/dev/null ; then echo "  OK"; else echo "  FAILED"; ECODE=1; fi; \
+	done; \
+	exit $$ECODE
 
 clean:
 	rm -f *.exe *.mdb *.result
