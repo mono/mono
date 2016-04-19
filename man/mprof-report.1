@@ -137,9 +137,9 @@ to the control port
 .IP \[bu] 2
 \f[I]sample[=TYPE[/FREQ]]\f[]: collect statistical samples of the
 program behaviour.
-The default is to collect a 1000 times per second the instruction
-pointer.
-This is equivalent to the value \[lq]cycles/1000\[rq] for
+The default is to collect a 100 times per second (100 Hz) the
+instruction pointer.
+This is equivalent to the value \[lq]cycles/100\[rq] for
 \f[I]TYPE\f[].
 On some systems, like with recent Linux kernels, it is possible to
 cause the sampling to happen for other events provided by the
@@ -170,6 +170,24 @@ TIMER can have the following values:
 \f[I]maxframes=NUM\f[]: when a stack trace needs to be performed,
 collect \f[I]NUM\f[] frames at the most.
 The default is 8.
+.IP \[bu] 2
+\f[I]maxsamples=NUM\f[]: stop allocating reusable sample events
+once \f[I]NUM\f[] events have been allocated (a value of zero for
+all intents and purposes means unlimited). By default, the value
+of this setting is the number of CPU cores multiplied by 1000. This
+is usually a good enough value for typical desktop and mobile apps.
+If you're losing too many samples due to this default (which is
+possible in apps with an unusually high amount of threads), you
+may want to tinker with this value to find a good balance between
+sample hit rate and performance impact on the app. The way it works
+is that sample events are enqueued for reuse after they're flushed
+to the output file; if a thread gets a sampling signal but there are
+no sample events in the reuse queue and the profiler has reached the
+maximum number of sample allocations, the sample gets dropped. So a
+higher number for this setting will increase the chance that a
+thread is able to collect a sample, but also necessarily means that
+there will be more work done by the profiler. You can run Mono with
+the \f[I]--stats\f[] option to see statistics about sample events.
 .IP \[bu] 2
 \f[I]calldepth=NUM\f[]: ignore method enter/leave events when the
 call chain depth is bigger than NUM.
