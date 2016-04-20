@@ -269,6 +269,12 @@ net_4_x_parallel_dirs := \
 	Microsoft.VisualC		\
 	WebMatrix.Data \
 	monodoc	\
+	System.Deployment \
+	System.Web.Mobile \
+	System.Web.RegularExpressions \
+	System.Workflow.Activities \
+	System.Workflow.ComponentModel \
+	System.Workflow.Runtime \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \
