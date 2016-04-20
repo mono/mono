@@ -22,6 +22,24 @@
 G_BEGIN_DECLS
 
 /*
+Local handle creation and manipulation code.
+
+Handles are meant to be opaque and never directly accessed by user code.
+
+This is to encourage never exposing managed pointers on the stack for
+more than temporary expressions.
+
+Handles require an arena to be available so you must always use it in
+conjuction with the handle arena macros below.
+
+TODO:
+	Add checked build asserts
+
+NOTES:
+
+*/
+
+/*
  * DO NOT ACCESS DIRECTLY
  * USE mono_handle_obj BELOW TO ACCESS OBJ
  *
@@ -132,7 +150,10 @@ mono_handle_domain (MonoHandle handle)
 #define MONO_HANDLE_TYPE_DECL(type)      typedef struct { type *__private_obj; } type ## HandleStorage ; \
 	typedef type ## HandleStorage * type ## Handle
 #define MONO_HANDLE_TYPE(type)           type ## Handle
-#define MONO_HANDLE_NEW(type,obj)        ((type ## Handle) mono_handle_new ((MonoObject*) (obj)))
+#define MONO_HANDLE_NEW(type,obj)        ((MONO_HANDLE_TYPE(type)) mono_handle_new ((MonoObject*) (obj)))
+
+#define MONO_HANDLE_DCL(type,name)	MONO_HANDLE_TYPE(type) name = MONO_HANDLE_NEW(type,name ## _raw)
+
 #define MONO_HANDLE_ELEVATE(type,handle) ((type ## Handle) mono_handle_elevate ((MonoObject*) (handle)->__private_obj))
 
 #define MONO_HANDLE_ASSIGN(handle,rawptr)	\
@@ -191,6 +212,7 @@ mono_handle_domain (MonoHandle handle)
 
 /* Some common handle types */
 
+MONO_HANDLE_TYPE_DECL (MonoObject);
 MONO_HANDLE_TYPE_DECL (MonoArray);
 MONO_HANDLE_TYPE_DECL (MonoString);
 
