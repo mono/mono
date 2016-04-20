@@ -144,7 +144,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TryEnter_Int_Negative ()
 		{
 			object o = new object ();
