@@ -940,7 +940,8 @@ namespace Mono.CSharp
 
 		TypeParameterSpec[] ITypeDefinition.TypeParameters {
 			get {
-				return PartialContainer.CurrentTypeParameters.Types;
+				var ctp = PartialContainer.CurrentTypeParameters;
+				return ctp == null ? TypeParameterSpec.EmptyTypes : ctp.Types;
 			}
 		}
 
