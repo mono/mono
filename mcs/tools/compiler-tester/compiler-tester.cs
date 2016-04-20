@@ -1447,9 +1447,11 @@ namespace TestRunner {
 					if (!actual.Contains (part))
 						return false;
 				}
+
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		bool HandleFailure (string file, CompilerError status)
