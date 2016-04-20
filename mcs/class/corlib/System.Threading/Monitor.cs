@@ -159,33 +159,33 @@ namespace System.Threading
 
 		public static bool Wait(object obj, int millisecondsTimeout, bool exitContext) {
 			try {
+#if !MONOTOUCH
 				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
 					SynchronizationAttribute.ExitContext ();
-#endif
 				}
+#endif
 				return Wait (obj, millisecondsTimeout);
 			}
 			finally {
+#if !MONOTOUCH
 				if (exitContext) SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 
 		public static bool Wait(object obj, TimeSpan timeout, bool exitContext) {
 			try {
+#if !MONOTOUCH
 				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
 					SynchronizationAttribute.ExitContext ();
-#endif
 				}
+#endif
 				return Wait (obj, timeout);
 			}
 			finally {
+#if !MONOTOUCH
 				if (exitContext) SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 

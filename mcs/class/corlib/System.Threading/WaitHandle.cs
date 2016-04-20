@@ -47,16 +47,13 @@ namespace System.Threading
 
 		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
 		{
-#if MONOTOUCH
-			if (exitContext)
-				throw new NotSupportedException ("exitContext == true is not supported");
-#endif
-
 			int release_last = -1;
 
 			try {
+#if !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
+#endif
 
 				for (int i = 0; i < waitHandles.Length; ++i) {
 					try {
@@ -78,8 +75,10 @@ namespace System.Threading
 					waitHandles [i].SafeWaitHandle.DangerousRelease ();
 				}
 
+#ifdef !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 
@@ -91,15 +90,12 @@ namespace System.Threading
 
 		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
 		{
-#if MONOTOUCH
-			if (exitContext)
-				throw new NotSupportedException ("exitContext == true is not supported");
-#endif
-
 			bool release = false;
 			try {
+#ifdef !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
+#endif
 
 				waitableSafeHandle.DangerousAddRef (ref release);
 
@@ -108,8 +104,10 @@ namespace System.Threading
 				if (release)
 					waitableSafeHandle.DangerousRelease ();
 
+#ifdef !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 
