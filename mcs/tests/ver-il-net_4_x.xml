@@ -69667,6 +69667,47 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-04.cs">
+    <type name="C1">
+      <method name="Void Foo[T](IFoo`1[T])" attrs="134">
+        <size>38</size>
+      </method>
+      <method name="Void Foo2[T](IFoo`1[T])" attrs="134">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C2`1[T]">
+      <method name="Void Foo()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Test[T](System.Func`1[T])" attrs="145">
+        <size>31</size>
+      </method>
+      <method name="Void Test2[T](System.Func`1[T])" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>102</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-null-operator-05.cs">
     <type name="CI">
       <method name="Void set_Item(System.String, System.String)" attrs="2182">

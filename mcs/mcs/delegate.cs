@@ -535,7 +535,7 @@ namespace Mono.CSharp {
 
 		void ResolveConditionalAccessReceiver (ResolveContext rc)
 		{
-			// LAMESPEC: Not sure why this is explicitly disalloed with very odd error message
+			// LAMESPEC: Not sure why this is explicitly disallowed with very odd error message
 			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && method_group.HasConditionalAccess ()) {
 				Error_OperatorCannotBeApplied (rc, loc, "?", method_group.Type);
 			}
