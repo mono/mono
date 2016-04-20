@@ -47,16 +47,13 @@ namespace System.Threading
 
 		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
 		{
-#if MONOTOUCH
-			if (exitContext)
-				throw new NotSupportedException ("exitContext == true is not supported");
-#endif
-
 			int release_last = -1;
 
 			try {
+#if !DISABLE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
+#endif
 
 				for (int i = 0; i < waitHandles.Length; ++i) {
 					try {
@@ -70,51 +67,52 @@ namespace System.Threading
 				}
 
 				if (WaitAll)
-					return WaitAll_internal (waitHandles, millisecondsTimeout, exitContext);
+					return WaitAll_internal (waitHandles, millisecondsTimeout);
 				else
-					return WaitAny_internal (waitHandles, millisecondsTimeout, exitContext);
+					return WaitAny_internal (waitHandles, millisecondsTimeout);
 			} finally {
 				for (int i = release_last; i >= 0; --i) {
 					waitHandles [i].SafeWaitHandle.DangerousRelease ();
 				}
 
+#if !DISABLE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
+		private static extern int WaitAll_internal(WaitHandle[] handles, int ms);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
+		private static extern int WaitAny_internal(WaitHandle[] handles, int ms);
 
 		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
 		{
-#if MONOTOUCH
-			if (exitContext)
-				throw new NotSupportedException ("exitContext == true is not supported");
-#endif
-
 			bool release = false;
 			try {
+#if !DISABLE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.ExitContext ();
+#endif
 
 				waitableSafeHandle.DangerousAddRef (ref release);
 
-				return WaitOne_internal (waitableSafeHandle.DangerousGetHandle (), (int) millisecondsTimeout, exitContext);
+				return WaitOne_internal (waitableSafeHandle.DangerousGetHandle (), (int) millisecondsTimeout);
 			} finally {
 				if (release)
 					waitableSafeHandle.DangerousRelease ();
 
+#if !DISABLE_REMOTING
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern int WaitOne_internal(IntPtr handle, int ms, bool exitContext);
+		static extern int WaitOne_internal(IntPtr handle, int ms);
 
 		static int SignalAndWaitOne (SafeWaitHandle waitHandleToSignal,SafeWaitHandle waitHandleToWaitOn, int millisecondsTimeout, bool hasThreadAffinity,  bool exitContext)
 		{
@@ -123,7 +121,7 @@ namespace System.Threading
 				waitHandleToSignal.DangerousAddRef (ref releaseHandleToSignal);
 				waitHandleToWaitOn.DangerousAddRef (ref releaseHandleToWaitOn);
 
-				return SignalAndWait_Internal (waitHandleToSignal.DangerousGetHandle (), waitHandleToWaitOn.DangerousGetHandle (), millisecondsTimeout, exitContext);
+				return SignalAndWait_Internal (waitHandleToSignal.DangerousGetHandle (), waitHandleToWaitOn.DangerousGetHandle (), millisecondsTimeout);
 			} finally {
 				if (releaseHandleToSignal)
 					waitHandleToSignal.DangerousRelease ();
@@ -133,6 +131,6 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern int SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms, bool exitContext);
+		static extern int SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms);
 	}
 }
