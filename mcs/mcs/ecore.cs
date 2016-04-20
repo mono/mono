@@ -469,8 +469,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected static TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
+		protected TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
 		{
+			var tps = type as TypeParameterSpec;
+			if (tps != null && !(tps.IsReferenceType || tps.IsValueType)) {
+				Error_OperatorCannotBeApplied (rc, loc, "?", type);
+			}
+
 			return TypeSpec.IsValueType (type) && !type.IsNullableType ?
 				Nullable.NullableInfo.MakeType (rc.Module, type) :
 				type;
@@ -1332,7 +1337,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ExpressionStatement ResolveStatement (BlockContext ec)
+		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
 			if (e == null)

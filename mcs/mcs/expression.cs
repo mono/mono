@@ -7023,6 +7023,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool statement_resolve;
+		public override ExpressionStatement ResolveStatement (BlockContext bc)
+		{
+			statement_resolve = true;
+			var es = base.ResolveStatement (bc);
+			statement_resolve = false;
+
+			return es;
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			ResolveConditionalAccessReceiver (rc);
@@ -7111,7 +7121,7 @@ namespace Mono.CSharp
 
 			var method = mg.BestCandidate;
 			type = mg.BestCandidateReturnType;
-			if (conditional_access_receiver)
+			if (conditional_access_receiver && !statement_resolve)
 				type = LiftMemberType (ec, type);
 
 			if (arguments == null && method.DeclaringType.BuiltinType == BuiltinTypeSpec.Type.Object && method.Name == Destructor.MetadataName) {
