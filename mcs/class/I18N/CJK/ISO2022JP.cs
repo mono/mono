@@ -690,7 +690,7 @@ namespace I18N.CJK
 						// am so lazy, so reusing jis2sjis
 						int s1 = ((bytes [i] - 1) >> 1) + ((bytes [i] <= 0x5e) ? 0x71 : 0xb1);
 						int s2 = bytes [i + 1] + (((bytes [i] & 1) != 0) ? 0x20 : 0x7e);
-						int v = (s1 - 0x81) * 0xBC;
+						int v = (s1 <= 0x9F ? (s1 - 0x81) : (s1 - 0xc1)) * 0xBC;
 						v += s2 - 0x41;
 
 						int ch = ToChar (v);
