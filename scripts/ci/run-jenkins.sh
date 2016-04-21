@@ -34,7 +34,17 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
     # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
 fi
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check
+if [[ ${label} == w* ]]; then
+	# Create a temporary config which maps libtest to the MSVC built libtest.dll. Without this the P/Invoke tests in mono/tests/ won't find libtest.dll.
+	MONO_CONFIG=$(mktemp --suffix=.xml)
+	echo "<configuration><dllmap dll=\"libtest\" target=\"${WORKSPACE}\\msvc\\${PLATFORM}\\bin\\Release\\libtest.dll\"/></configuration>" > "$MONO_CONFIG"
+	export MONO_CONFIG=$(cygpath -w -a "$MONO_CONFIG")
+fi
 ${TESTCMD} --label=runtime --timeout=120m make -w -C mono/tests -k test-wrench V=1 CI=1
+if [[ ${label} == w* ]] && [[ -n "$MONO_CONFIG" ]] && [[ -f "$MONO_CONFIG" ]]; then
+	rm -f "$MONO_CONFIG"
+	unset MONO_CONFIG
+fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
