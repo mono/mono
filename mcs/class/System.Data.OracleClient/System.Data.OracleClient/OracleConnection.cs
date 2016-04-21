@@ -964,7 +964,7 @@ namespace System.Data.OracleClient
 		{
 			OracleCommand cmd = CreateCommand ();
 
-			cmd.CommandText = "SSELECT OWNER, OBJECT_NAME, SUBOBJECT_NAME, OBJECT_ID, DATA_OBJECT_ID, LAST_DDL_TIME, " +
+			cmd.CommandText = "SELECT OWNER, OBJECT_NAME, SUBOBJECT_NAME, OBJECT_ID, DATA_OBJECT_ID, LAST_DDL_TIME, " +
 				"    TIMESTAMP, STATUS, TEMPORARY, GENERATED, SECONDARY, CREATED " +
 				" FROM ALL_OBJECTS " +
 				" WHERE OBJECT_TYPE = '" + objType + "' " +
