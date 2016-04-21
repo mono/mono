@@ -6614,14 +6614,21 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 		mono_memory_barrier ();
 		System_Reflection_ParameterInfo_array = klass;
 	}
-	
-	if (!mono_method_signature (method)->param_count)
-		return mono_array_new_specific (mono_class_vtable (domain, System_Reflection_ParameterInfo_array), 0);
 
 	/* Note: the cache is based on the address of the signature into the method
 	 * since we already cache MethodInfos with the method as keys.
 	 */
 	CHECK_OBJECT (MonoArray*, &(method->signature), refclass);
+
+	if (!mono_method_signature (method)->param_count)
+	{
+		res = mono_array_new_specific (mono_class_vtable (domain, System_Reflection_ParameterInfo_array), 0);
+
+		CACHE_OBJECT (MonoArray *, &(method->signature), res, refclass);
+
+		// note the CACHE_OBJECT macro above actually has a 'return' call in it, but add an assert for sanity
+		g_assert_not_reached ();
+	}
 
 	sig = mono_method_signature (method);
 	member = mono_method_get_object (domain, method, refclass);
