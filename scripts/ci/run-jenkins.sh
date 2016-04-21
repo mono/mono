@@ -6,14 +6,8 @@ export TEST_HARNESS_VERBOSE=1
 
 if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="--with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no --build=i386-apple-darwin11.2.0"; fi
 if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="--with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no"; fi
-if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; fi
-if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; fi
-
-if [[ ${label} == w* ]]; then
-	export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\\${PLATFORM}\\\bin\\\Release_SGen\\\mono-sgen.exe`"
-	# without this dir in PATH the P/Invoke tests in mono/tests/ won't find the MSVC built libtest.dll
-	export PATH="$PATH:`cygpath -u ${WORKSPACE}\\\msvc\\\\${PLATFORM}\\\bin\\\Release`"
-fi
+if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\Win32\\\bin\\\Release_SGen\\\mono-sgen.exe`";fi
+if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\x64\\\bin\\\Release_SGen\\\mono-sgen.exe`"; fi
 
 if [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]];
     then
@@ -40,7 +34,17 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
     # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
 fi
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check
+if [[ ${label} == w* ]]; then
+	# Create a temporary config which maps libtest to the MSVC built libtest.dll. Without this the P/Invoke tests in mono/tests/ won't find libtest.dll.
+	MONO_CONFIG=$(mktemp --suffix=.xml)
+	echo "<configuration><dllmap dll=\"libtest\" target=\"${WORKSPACE}\\msvc\\${PLATFORM}\\bin\\Release\\libtest.dll\"/></configuration>" > $MONO_CONFIG
+	export MONO_CONFIG=$(cygpath -w -a "$MONO_CONFIG")
+fi
 ${TESTCMD} --label=runtime --timeout=120m make -w -C mono/tests -k test-wrench V=1 CI=1
+if [[ ${label} == w* ]] && [[ -n "$MONO_CONFIG" ]] && [[ -f "$MONO_CONFIG" ]]; then
+	rm -f "$MONO_CONFIG"
+	unset MONO_CONFIG
+fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
