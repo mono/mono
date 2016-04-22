@@ -102,12 +102,13 @@ namespace System.IO {
 
 		public override bool Exists {
 			get {
-				Refresh (false);
+				if (_dataInitialised == -1)
+					Refresh ();
 
-				if (stat.Attributes == MonoIO.InvalidFileAttributes)
+				if (_data.fileAttributes == MonoIO.InvalidFileAttributes)
 					return false;
 
-				if ((stat.Attributes & FileAttributes.Directory) == 0)
+				if ((_data.fileAttributes & FileAttributes.Directory) == 0)
 					return false;
 
 				return true;
@@ -458,6 +459,19 @@ namespace System.IO {
 			}
 		}
 		
-		
+		internal void CheckPath (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Illegal characters in path.");
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException ("path");
+			}
+		}
 	}
 }

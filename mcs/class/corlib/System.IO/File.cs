@@ -688,5 +688,21 @@ namespace System.IO
 					w.WriteLine (line);
 			}
 		}
+
+		internal static int FillAttributeInfo (String path, ref MonoIOStat data, bool tryagain, bool returnErrorOnNotFound)
+		{
+			if (tryagain)
+				throw new NotImplementedException ();
+
+			MonoIOError error;
+			MonoIO.GetFileStat (path, out data, out error);
+
+			if (!returnErrorOnNotFound && (error == MonoIOError.ERROR_FILE_NOT_FOUND || error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_NOT_READY)) {
+				data = default (MonoIOStat);
+				return 0;
+			}
+
+			return (int) error;
+		}
 	}
 }

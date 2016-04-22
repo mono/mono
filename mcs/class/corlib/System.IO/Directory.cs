@@ -645,5 +645,28 @@ namespace System.IO
 						 AccessControlSections.Group |
 						 AccessControlSections.Access);
 		}
+
+#region Copied from reference source
+        internal static String GetDemandDir(string fullPath, bool thisDirOnly)
+        {
+            String demandPath;
+
+            if (thisDirOnly) {
+                if (fullPath.EndsWith( Path.DirectorySeparatorChar ) 
+                    || fullPath.EndsWith( Path.AltDirectorySeparatorChar ) )
+                    demandPath = fullPath + ".";
+                else
+                    demandPath = fullPath + Path.DirectorySeparatorCharAsString + ".";
+            }
+            else {
+                if (!(fullPath.EndsWith( Path.DirectorySeparatorChar ) 
+                    || fullPath.EndsWith( Path.AltDirectorySeparatorChar )) )
+                    demandPath = fullPath + Path.DirectorySeparatorCharAsString;
+                else
+                    demandPath = fullPath;
+            }
+            return demandPath;
+        }
+#endregion
 	}
 }

@@ -70,21 +70,18 @@ namespace System.IO {
 			displayPath = OriginalPath;
 		}
 
-		internal override void InternalRefresh ()
-		{
-			exists = File.Exists (FullPath);
-		}
-
-		// public properties
-
 		public override bool Exists {
 			get {
-				Refresh (false);
+				if (_dataInitialised == -1) {
+					Refresh ();
+					if (_dataInitialised == 0)
+						exists = File.Exists (FullPath);
+				}
 
-				if (stat.Attributes == MonoIO.InvalidFileAttributes)
+				if (_data.fileAttributes == MonoIO.InvalidFileAttributes)
 					return false;
 
-				if ((stat.Attributes & FileAttributes.Directory) != 0)
+				if ((_data.fileAttributes & FileAttributes.Directory) != 0)
 					return false;
 
 				return exists;
@@ -102,7 +99,7 @@ namespace System.IO {
 				if (!Exists)
 					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".", OriginalPath);
 					
-				return ((stat.Attributes & FileAttributes.ReadOnly) != 0);
+				return ((_data.fileAttributes & FileAttributes.ReadOnly) != 0);
 			}
 				
 			set {
@@ -147,7 +144,7 @@ namespace System.IO {
 				if (!Exists)
 					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".", OriginalPath);
 
-				return stat.Length;
+				return _data.Length;
 			}
 		}
 
@@ -274,6 +271,21 @@ namespace System.IO {
 		public override string ToString ()
 		{
 			return displayPath;
+		}
+
+		void CheckPath (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Illegal characters in path.");
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException ("path");
+			}
 		}
 
 #if !MOBILE
