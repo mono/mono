@@ -47,6 +47,16 @@ ifdef CLR_PROFILE
 LIB_REFS += Mono.Posix
 endif
 
+CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
+ifdef CC_PROFILE
+BUILT_SOURCES = \
+	../corlib/CommonCrypto/AesManaged.g.cs \
+	../corlib/CommonCrypto/AesCryptoServiceProvider.g.cs
+
+../corlib/CommonCrypto/%.g.cs:
+	$(MAKE) -C ../corlib/CommonCrypto
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
