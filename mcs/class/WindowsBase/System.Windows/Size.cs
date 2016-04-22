@@ -40,13 +40,13 @@ namespace System.Windows {
 			if (width < 0 || height < 0)
 				throw new ArgumentException ("Width and Height must be non-negative.");
 
-			this.width = width;
-			this.height = height;
+			this._width = width;
+			this._height = height;
 		}
 
 		public bool Equals (Size value)
 		{
-			return width == value.Width && height == value.Height;
+			return _width == value.Width && _height == value.Height;
 		}
 		
 		public override bool Equals (object o)
@@ -76,7 +76,7 @@ namespace System.Windows {
 		{
 			if (IsEmpty)
 				return "Empty";
-			return String.Format ("{0},{1}", width, height);
+			return String.Format ("{0},{1}", _width, _height);
 		}
 
 		public string ToString (IFormatProvider provider)
@@ -91,13 +91,13 @@ namespace System.Windows {
 
 		public bool IsEmpty {
 			get {
-				return (width == Double.NegativeInfinity &&
-					height == Double.NegativeInfinity);
+				return (_width == Double.NegativeInfinity &&
+					_height == Double.NegativeInfinity);
 			}
 		}
 
 		public double Height {
-			get { return height; }
+			get { return _height; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Size.");
@@ -105,12 +105,12 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("height must be non-negative.");
 
-				height = value;
+				_height = value;
 			}
 		}
 
 		public double Width {
-			get { return width; }
+			get { return _width; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Size.");
@@ -118,14 +118,14 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("width must be non-negative.");
 
-				width = value;
+				_width = value;
 			}
 		}
 
 		public static Size Empty {
 			get {
 				Size s = new Size ();
-				s.width = s.height = Double.NegativeInfinity;
+				s._width = s._height = Double.NegativeInfinity;
 				return s;
 			}
 		}
@@ -151,7 +151,7 @@ namespace System.Windows {
 			return !size1.Equals (size2);
 		}
 
-		double width;
-		double height;
+		double _width;
+		double _height;
 	}
 }

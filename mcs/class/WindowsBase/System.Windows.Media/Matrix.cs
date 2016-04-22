@@ -36,12 +36,12 @@ namespace System.Windows.Media {
 	[ValueSerializer (typeof (MatrixValueSerializer))]
 	public struct Matrix : IFormattable {
 
-		double m11;
-		double m12;
-		double m21;
-		double m22;
-		double offsetX;
-		double offsetY;
+		double _m11;
+		double _m12;
+		double _m21;
+		double _m22;
+		double _offsetX;
+		double _offsetY;
 
 		public Matrix (double m11,
 			       double m12,
@@ -50,12 +50,12 @@ namespace System.Windows.Media {
 			       double offsetX,
 			       double offsetY)
 		{
-			this.m11 = m11;
-			this.m12 = m12;
-			this.m21 = m21;
-			this.m22 = m22;
-			this.offsetX = offsetX;
-			this.offsetY = offsetY;
+			this._m11 = m11;
+			this._m12 = m12;
+			this._m21 = m21;
+			this._m22 = m22;
+			this._offsetX = offsetX;
+			this._offsetY = offsetY;
 		}
 
 		public void Append (Matrix matrix)
@@ -67,30 +67,30 @@ namespace System.Windows.Media {
 			double _offsetX;
 			double _offsetY;
 
-			_m11 = m11 * matrix.M11 + m12 * matrix.M21;
-			_m12 = m11 * matrix.M12 + m12 * matrix.M22;
-			_m21 = m21 * matrix.M11 + m22 * matrix.M21;
-			_m22 = m21 * matrix.M12 + m22 * matrix.M22;
+			_m11 = this._m11 * matrix.M11 + this._m12 * matrix.M21;
+			_m12 = this._m11 * matrix.M12 + this._m12 * matrix.M22;
+			_m21 = this._m21 * matrix.M11 + this._m22 * matrix.M21;
+			_m22 = this._m21 * matrix.M12 + this._m22 * matrix.M22;
 
-			_offsetX = offsetX * matrix.M11 + offsetY * matrix.M21 + matrix.OffsetX;
-			_offsetY = offsetX * matrix.M12 + offsetY * matrix.M22 + matrix.OffsetY;
+			_offsetX = this._offsetX * matrix.M11 + this._offsetY * matrix.M21 + matrix.OffsetX;
+			_offsetY = this._offsetX * matrix.M12 + this._offsetY * matrix.M22 + matrix.OffsetY;
 
-			m11 = _m11;
-			m12 = _m12;
-			m21 = _m21;
-			m22 = _m22;
-			offsetX = _offsetX;
-			offsetY = _offsetY;
+			this._m11 = _m11;
+			this._m12 = _m12;
+			this._m21 = _m21;
+			this._m22 = _m22;
+			this._offsetX = _offsetX;
+			this._offsetY = _offsetY;
 		}
 
 		public bool Equals (Matrix value)
 		{
-			return (m11 == value.M11 &&
-				m12 == value.M12 &&
-				m21 == value.M21 &&
-				m22 == value.M22 &&
-				offsetX == value.OffsetX &&
-				offsetY == value.OffsetY);
+			return (_m11 == value.M11 &&
+				_m12 == value.M12 &&
+				_m21 == value.M21 &&
+				_m22 == value.M22 &&
+				_offsetX == value.OffsetX &&
+				_offsetY == value.OffsetY);
 		}
 
 		public override bool Equals (object o)
@@ -121,20 +121,20 @@ namespace System.Windows.Media {
 
 			/* 1/(ad-bc)[d -b; -c a] */
 
-			double _m11 = m22;
-			double _m12 = -m12;
-			double _m21 = -m21;
-			double _m22 = m11;
+			double _m11 = this._m22;
+			double _m12 = -this._m12;
+			double _m21 = -this._m21;
+			double _m22 = this._m11;
 
-			double _offsetX = m21 * offsetY - m22 * offsetX;
-			double _offsetY = m12 * offsetX - m11 * offsetY;
+			double _offsetX = this._m21 * this._offsetY - this._m22 * this._offsetX;
+			double _offsetY = this._m12 * this._offsetX - this._m11 * this._offsetY;
 
-			m11 = _m11 / d;
-			m12 = _m12 / d;
-			m21 = _m21 / d;
-			m22 = _m22 / d;
-			offsetX = _offsetX / d;
-			offsetY = _offsetY / d;
+			this._m11 = _m11 / d;
+			this._m12 = _m12 / d;
+			this._m21 = _m21 / d;
+			this._m22 = _m22 / d;
+			this._offsetX = _offsetX / d;
+			this._offsetY = _offsetY / d;
 		}
 
 		public static Matrix Multiply (Matrix trans1,
@@ -179,20 +179,20 @@ namespace System.Windows.Media {
 			double _offsetX;
 			double _offsetY;
 
-			_m11 = matrix.M11 * m11 + matrix.M12 * m21;
-			_m12 = matrix.M11 * m12 + matrix.M12 * m22;
-			_m21 = matrix.M21 * m11 + matrix.M22 * m21;
-			_m22 = matrix.M21 * m12 + matrix.M22 * m22;
+			_m11 = matrix.M11 * this._m11 + matrix.M12 * this._m21;
+			_m12 = matrix.M11 * this._m12 + matrix.M12 * this._m22;
+			_m21 = matrix.M21 * this._m11 + matrix.M22 * this._m21;
+			_m22 = matrix.M21 * this._m12 + matrix.M22 * this._m22;
 
-			_offsetX = matrix.OffsetX * m11 + matrix.OffsetY * m21 + offsetX;
-			_offsetY = matrix.OffsetX * m12 + matrix.OffsetY * m22 + offsetY;
+			_offsetX = matrix.OffsetX * this._m11 + matrix.OffsetY * this._m21 + this._offsetX;
+			_offsetY = matrix.OffsetX * this._m12 + matrix.OffsetY * this._m22 + this._offsetY;
 
-			m11 = _m11;
-			m12 = _m12;
-			m21 = _m21;
-			m22 = _m22;
-			offsetX = _offsetX;
-			offsetY = _offsetY;
+			this._m11 = _m11;
+			this._m12 = _m12;
+			this._m21 = _m21;
+			this._m22 = _m22;
+			this._offsetX = _offsetX;
+			this._offsetY = _offsetY;
 		}
 
 		public void Rotate (double angle)
@@ -272,9 +272,9 @@ namespace System.Windows.Media {
 
 		public void SetIdentity ()
 		{
-			m11 = m22 = 1.0;
-			m12 = m21 = 0.0;
-			offsetX = offsetY = 0.0;
+			_m11 = _m22 = 1.0;
+			_m12 = _m21 = 0.0;
+			_offsetX = _offsetY = 0.0;
 		}
 
 		public void Skew (double skewX,
@@ -306,7 +306,7 @@ namespace System.Windows.Media {
 				return "Identity";
 			else
 				return string.Format ("{0},{1},{2},{3},{4},{5}",
-						      m11, m12, m21, m22, offsetX, offsetY);
+						      _m11, _m12, _m21, _m22, _offsetX, _offsetY);
 		}
 
 		public string ToString (IFormatProvider provider)
@@ -339,8 +339,8 @@ namespace System.Windows.Media {
 		public void Translate (double offsetX,
 				       double offsetY)
 		{
-			this.offsetX += offsetX;
-			this.offsetY += offsetY;
+			this._offsetX += offsetX;
+			this._offsetY += offsetY;
 		}
 
 		public void TranslatePrepend (double offsetX,
@@ -352,7 +352,7 @@ namespace System.Windows.Media {
 		}
 
 		public double Determinant {
-			get { return m11 * m22 - m12 * m21; }
+			get { return _m11 * _m22 - _m12 * _m21; }
 		}
 
 		public bool HasInverse {
@@ -368,28 +368,28 @@ namespace System.Windows.Media {
 		}
 
 		public double M11 { 
-			get { return m11; }
-			set { m11 = value; }
+			get { return _m11; }
+			set { _m11 = value; }
 		}
 		public double M12 { 
-			get { return m12; }
-			set { m12 = value; }
+			get { return _m12; }
+			set { _m12 = value; }
 		}
 		public double M21 { 
-			get { return m21; }
-			set { m21 = value; }
+			get { return _m21; }
+			set { _m21 = value; }
 		}
 		public double M22 { 
-			get { return m22; }
-			set { m22 = value; }
+			get { return _m22; }
+			set { _m22 = value; }
 		}
 		public double OffsetX { 
-			get { return offsetX; }
-			set { offsetX = value; }
+			get { return _offsetX; }
+			set { _offsetX = value; }
 		}
 		public double OffsetY { 
-			get { return offsetY; }
-			set { offsetY = value; }
+			get { return _offsetY; }
+			set { _offsetY = value; }
 		}
 	}
 
