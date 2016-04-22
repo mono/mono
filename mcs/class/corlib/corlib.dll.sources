@@ -195,7 +195,6 @@ System.IO/DriveType.cs
 System.IO/File.cs
 System.IO/FileAccess.cs
 System.IO/FileAttributes.cs
-System.IO/FileInfo.cs
 System.IO/FileMode.cs
 System.IO/FileOptions.cs
 System.IO/FileShare.cs
@@ -1196,6 +1195,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/io/drivenotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/io/endofstreamexception.cs
 ../../../external/referencesource/mscorlib/system/io/ioexception.cs
+../../../external/referencesource/mscorlib/system/io/fileinfo.cs
 ../../../external/referencesource/mscorlib/system/io/fileloadexception.cs
 ../../../external/referencesource/mscorlib/system/io/filenotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/io/filesysteminfo.cs

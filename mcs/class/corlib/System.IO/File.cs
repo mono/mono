@@ -113,6 +113,21 @@ namespace System.IO
 			}
 		}
 
+		internal static String InternalCopy (String sourceFileName, String destFileName, bool overwrite, bool checkHost)
+		{
+			String fullSourceFileName = Path.GetFullPathInternal(sourceFileName);
+			String fullDestFileName = Path.GetFullPathInternal(destFileName);
+
+			MonoIOError error;
+
+			if (!MonoIO.CopyFile (fullSourceFileName, fullDestFileName, overwrite, out error)) {
+				string p = Locale.GetText ("{0}\" or \"{1}", sourceFileName, destFileName);
+				throw MonoIO.GetException (p, error);
+			}
+
+			return fullDestFileName;
+		}
+
 		public static FileStream Create (string path)
 		{
 			return Create (path, 8192);
@@ -405,6 +420,12 @@ namespace System.IO
 					throw new IOException (Locale.GetText (
 							       "Destination and backup arguments are the same file."));
 			}
+
+			var attrs = GetAttributes (fullDest);
+
+			// TODO: Should be done in wapi, win32 api handles this already
+			if ((attrs & FileAttributes.ReadOnly) != 0)
+				throw MonoIO.GetException (MonoIOError.ERROR_ACCESS_DENIED);
 
 			if (!MonoIO.ReplaceFile (fullSource, fullDest, fullBackup, 
 						 ignoreMetadataErrors, out error)) {
@@ -699,6 +720,7 @@ namespace System.IO
 
 			if (!returnErrorOnNotFound && (error == MonoIOError.ERROR_FILE_NOT_FOUND || error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_NOT_READY)) {
 				data = default (MonoIOStat);
+				data.fileAttributes = (FileAttributes) (-1);
 				return 0;
 			}
 

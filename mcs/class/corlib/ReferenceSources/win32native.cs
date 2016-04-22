@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Microsoft.Win32
 {
 	static class Win32Native
@@ -52,6 +54,8 @@ namespace Microsoft.Win32
 		internal const int ERROR_CANT_OPEN_ANONYMOUS = 0x543;
 		internal const int ERROR_NO_SECURITY_ON_OBJECT = 0x546;
 		internal const int ERROR_TRUSTED_RELATIONSHIP_FAILURE = 0x6FD;
+
+		internal const FileAttributes FILE_ATTRIBUTE_DIRECTORY = FileAttributes.Directory;
 
 		public static string GetMessage (int hr)
 		{
