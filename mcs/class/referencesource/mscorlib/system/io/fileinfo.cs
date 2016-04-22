@@ -100,6 +100,7 @@ namespace System.IO {
             OriginalPath = fileName;
             // Must fully qualify the path for the security check
             String fullPath = Path.GetFullPathInternal(fileName);
+#if !MONO
 #if FEATURE_CORECLR
             if (checkHost)
             {
@@ -108,6 +109,7 @@ namespace System.IO {
             }
 #else
             FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
+#endif
 #endif
 
             _name = Path.GetFileName(fileName);
@@ -128,8 +130,10 @@ namespace System.IO {
         [System.Security.SecurityCritical]  // auto-generated
         private FileInfo(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+#if !DISABLE_CAS_USE
 #if !FEATURE_CORECLR
             new FileIOPermission(FileIOPermissionAccess.Read, new String[] { FullPath }, false, false).Demand();
+#endif
 #endif
             _name = Path.GetFileName(OriginalPath);
             DisplayPath = GetDisplayPath(OriginalPath);
@@ -140,7 +144,9 @@ namespace System.IO {
 #endif //FEATURE_CORESYSTEM
         internal FileInfo(String fullPath, bool ignoreThis)
         {
+#if !MONO
             Contract.Assert(Path.GetRootLength(fullPath) > 0, "fullPath must be fully qualified!");
+#endif
             _name = Path.GetFileName(fullPath);
             OriginalPath = _name;
             FullPath = fullPath;
@@ -164,7 +170,11 @@ namespace System.IO {
                 if ((_data.fileAttributes & Win32Native.FILE_ATTRIBUTE_DIRECTORY) != 0)
                     __Error.WinIOError(Win32Native.ERROR_FILE_NOT_FOUND, DisplayPath);
                 
+#if MONO
+                return _data.Length;
+#else
                 return ((long)_data.fileSizeHigh) << 32 | ((long)_data.fileSizeLow & 0xFFFFFFFFL);
+#endif
             }
         }
 
@@ -177,11 +187,13 @@ namespace System.IO {
                 String directoryName = Path.GetDirectoryName(FullPath);
                 if (directoryName != null)
                 {
+#if !DISABLE_CAS_USE
 #if FEATURE_CORECLR
                     FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, DisplayPath, FullPath);
                     state.EnsureState();
 #else
                     new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { directoryName }, false, false).Demand();
+#endif
 #endif
                 }
                 return directoryName;
@@ -326,6 +338,7 @@ namespace System.IO {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public override void Delete()
         {
+#if !DISABLE_CAS_USE
 #if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, DisplayPath, FullPath);
             state.EnsureState();
@@ -333,10 +346,17 @@ namespace System.IO {
             // For security check, path should be resolved to an absolute path.
             new FileIOPermission(FileIOPermissionAccess.Write, new String[] { FullPath }, false, false).Demand();
 #endif
+#endif
 
+#if MONO
+            MonoIOError error;
+            if (!MonoIO.DeleteFile (FullPath, out error)) {
+                int hr = (int) error;
+#else
             bool r = Win32Native.DeleteFile(FullPath);
             if (!r) {
                 int hr = Marshal.GetLastWin32Error();
+#endif
                 if (hr==Win32Native.ERROR_FILE_NOT_FOUND)
                     return;
                 else
@@ -452,6 +472,7 @@ namespace System.IO {
             Contract.EndContractBlock();
 
             String fullDestFileName = Path.GetFullPathInternal(destFileName);
+#if !MONO
 #if FEATURE_CORECLR
             FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, DisplayPath, FullPath);
             FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destFileName, fullDestFileName);
@@ -461,9 +482,16 @@ namespace System.IO {
             new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { FullPath }, false, false).Demand();
             FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 #endif
-       
+#endif
+
+#if MONO
+            MonoIOError error;
+            if (!MonoIO.MoveFile (FullPath, fullDestFileName, out error))
+                __Error.WinIOError ((int) error, String.Empty);
+#else
             if (!Win32Native.MoveFile(FullPath, fullDestFileName))
                 __Error.WinIOError();
+#endif
             FullPath = fullDestFileName;
             OriginalPath = destFileName;
             _name = Path.GetFileName(fullDestFileName);

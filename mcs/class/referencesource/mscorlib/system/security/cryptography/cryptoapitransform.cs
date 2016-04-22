@@ -18,7 +18,7 @@ namespace System.Security.Cryptography {
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
 
-#if FEATURE_MACL && FEATURE_CRYPTO
+#if FEATURE_MACL && FEATURE_CRYPTO && !MONO
 
     [Serializable]
     internal enum CryptoAPITransformMode {
