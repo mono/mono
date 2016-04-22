@@ -19,9 +19,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-#if !MONO
 using Win32Native = Microsoft.Win32.Win32Native;
-#endif
 using System.Text;
 using System.Globalization;
 using System.Security;
@@ -137,7 +135,7 @@ namespace System.IO {
             int errorCode = Marshal.GetLastWin32Error();
             WinIOError(errorCode, String.Empty);
         }
-    
+#endif
         // After calling GetLastWin32Error(), it clears the last error field,
         // so you must save the HResult and pass it to this method.  This method
         // will determine the appropriate exception to throw dependent on your 
@@ -200,7 +198,7 @@ namespace System.IO {
                 throw new IOException(Win32Native.GetMessage(errorCode), Win32Native.MakeHRFromErrorCode(errorCode), maybeFullPath);
             }
         }
-
+#if !MONO
         // An alternative to WinIOError with friendlier messages for drives
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal static void WinIODriveError(String driveName) {

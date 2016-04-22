@@ -18,7 +18,9 @@
 using System;
 using System.Collections;
 using System.Security;
+#if !DISABLE_CAS_USE
 using System.Security.Permissions;
+#endif
 using Microsoft.Win32;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -28,7 +30,7 @@ using System.Diagnostics.Contracts;
 
 namespace System.IO {
     [Serializable]
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !DISABLE_CAS_USE
     [FileIOPermissionAttribute(SecurityAction.InheritanceDemand,Unrestricted=true)]
 #endif
     [ComVisible(true)]
@@ -37,9 +39,12 @@ namespace System.IO {
 #else // FEATURE_REMOTING
     public abstract class FileSystemInfo : ISerializable {   
 #endif  //FEATURE_REMOTING      
-        
+#if MONO
+        internal MonoIOStat _data;
+#else
         [System.Security.SecurityCritical] // auto-generated
         internal Win32Native.WIN32_FILE_ATTRIBUTE_DATA _data; // Cache the file information
+#endif
         internal int _dataInitialised = -1; // We use this field in conjunction with the Refresh methods, if we succeed
                                             // we store a zero, on failure we store the HResult in it so that we can
                                             // give back a generic error back.
@@ -78,7 +83,7 @@ namespace System.IO {
             // Lazily initialize the file attributes.
             _dataInitialised = -1;
         }
-
+#if !MONO
         [System.Security.SecurityCritical]
         internal void InitializeFrom(Win32Native.WIN32_FIND_DATA findData)
         {
@@ -86,7 +91,7 @@ namespace System.IO {
             _data.PopulateFrom(findData);
             _dataInitialised = 0;
         }
-
+#endif
         // Full path of the direcory/file
         public virtual String FullName {
             [System.Security.SecuritySafeCritical]
@@ -97,11 +102,13 @@ namespace System.IO {
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else
                     demandDir = FullPath;
+#if !DISABLE_CAS_USE
 #if FEATURE_CORECLR
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
                 sourceState.EnsureState();
 #else
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandDir).Demand();
+#endif
 #endif
                 return FullPath;
             }
@@ -117,8 +124,10 @@ namespace System.IO {
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else
                     demandDir = FullPath;
+#if !DISABLE_CAS_USE
 #if !FEATURE_CORECLR
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandDir).Demand();
+#endif
 #endif
                 return FullPath;
             }
@@ -178,14 +187,20 @@ namespace System.IO {
                 sourceState.EnsureState();
 #endif
                 if (_dataInitialised == -1) {
+#if !MONO
                     _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
+#endif
                     Refresh();
                 }
 
                 if (_dataInitialised != 0) // Refresh was unable to initialise the data
                     __Error.WinIOError(_dataInitialised, DisplayPath);
                 
+#if MONO
+                long fileTime = _data.CreationTime;
+#else
                 long fileTime = ((long)_data.ftCreationTimeHigh << 32) | _data.ftCreationTimeLow;
+#endif
                 return DateTime.FromFileTimeUtc(fileTime);
                 
             }
@@ -223,14 +238,20 @@ namespace System.IO {
                 sourceState.EnsureState();
 #endif
                 if (_dataInitialised == -1) {
+#if !MONO
                     _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
+#endif
                     Refresh();
                 }
 
                 if (_dataInitialised != 0) // Refresh was unable to initialise the data
                     __Error.WinIOError(_dataInitialised, DisplayPath);
                     
+#if MONO
+                long fileTime = _data.LastAccessTime;
+#else
                 long fileTime = ((long)_data.ftLastAccessTimeHigh << 32) | _data.ftLastAccessTimeLow;
+#endif
                 return DateTime.FromFileTimeUtc(fileTime);
     
             }
@@ -268,15 +289,20 @@ namespace System.IO {
                 sourceState.EnsureState();
 #endif
                 if (_dataInitialised == -1) {
+#if !MONO
                     _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
+#endif
                     Refresh();
                 }
 
                 if (_dataInitialised != 0) // Refresh was unable to initialise the data
                     __Error.WinIOError(_dataInitialised, DisplayPath);
         
-            
+#if MONO
+                long fileTime = _data.LastWriteTime;
+#else
                 long fileTime = ((long)_data.ftLastWriteTimeHigh << 32) | _data.ftLastWriteTimeLow;
+#endif
                 return DateTime.FromFileTimeUtc(fileTime);
             }
 
@@ -308,7 +334,9 @@ namespace System.IO {
                 sourceState.EnsureState();
 #endif
                 if (_dataInitialised == -1) {
+#if !MONO
                     _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
+#endif
                     Refresh(); // Call refresh to intialise the data
                 }
 
@@ -323,12 +351,20 @@ namespace System.IO {
             [System.Security.SecuritySafeCritical]
             #endif
             set {
+#if !DISABLE_CAS_USE
 #if !FEATURE_CORECLR
                 new FileIOPermission(FileIOPermissionAccess.Write, FullPath).Demand();
 #endif
+#endif
+#if MONO
+                MonoIOError error;
+                if (!MonoIO.SetFileAttributes (FullPath, value, out error)) {
+                    int hr = (int) error;
+#else
                 bool r = Win32Native.SetFileAttributes(FullPath, (int) value);
                 if (!r) {
                     int hr = Marshal.GetLastWin32Error();
+#endif
                     
                     if (hr==ERROR_INVALID_PARAMETER)
                         throw new ArgumentException(Environment.GetResourceString("Arg_InvalidFileAttrs"));
@@ -348,8 +384,10 @@ namespace System.IO {
         [ComVisible(false)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+#if !DISABLE_CAS_USE
 #if !FEATURE_CORECLR
             new FileIOPermission(FileIOPermissionAccess.PathDiscovery, FullPath).Demand();
+#endif
 #endif
 
             info.AddValue("OriginalPath", OriginalPath, typeof(String));
