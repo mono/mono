@@ -602,6 +602,12 @@ namespace System
 			get;
 		}
 
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
@@ -616,6 +622,7 @@ namespace System
 
 		public override bool IsSecuritySafeCritical {
 			get { return get_core_clr_security_level () == 1; }
-		}		
+		}
+#endif
 	}
 }
