@@ -502,9 +502,16 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
+#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
@@ -752,8 +759,15 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
+#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
