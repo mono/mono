@@ -12,9 +12,7 @@
  */
 #include <config.h>
 #include <signal.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif

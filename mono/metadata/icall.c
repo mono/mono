@@ -19,9 +19,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
+#include <stdlib.h>
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -9089,4 +9087,3 @@ mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignatu
 {
 	return mono_register_jit_icall_full (func, name, sig, is_save, FALSE, NULL);
 }
-
