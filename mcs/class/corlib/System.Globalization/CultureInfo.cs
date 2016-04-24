@@ -59,7 +59,6 @@ namespace System.Globalization
 		[NonSerialized]
 		int default_calendar_type;
 		bool m_useUserOverride;
-		[NonSerialized]
 		internal volatile NumberFormatInfo numInfo;
 		internal volatile DateTimeFormatInfo dateTimeInfo;
 		volatile TextInfo textInfo;
