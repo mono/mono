@@ -141,7 +141,6 @@ namespace MonoTests.System.IO
 
 #if !MOBILE
 		[Test]
-		[Category ("NotWorking")]
 		public void IsReadOnly ()
 		{
 			string path = TempFolder + DSC + "FIT.IsReadOnly.Test";
