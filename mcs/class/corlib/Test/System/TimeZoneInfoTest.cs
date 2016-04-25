@@ -783,6 +783,7 @@ namespace MonoTests.System
 				Assert.IsTrue (timeZones.Count > 0, "GetSystemTimeZones should not return an empty collection.");
 			}
 
+#if !MOBILE
 			[Test]
 			public void WindowsRegistryTimezoneWithParentheses ()
 			{
@@ -791,6 +792,7 @@ namespace MonoTests.System
 				var name = method.Invoke (null, new object [] { " <--->  Central Standard Time (Mexico)   ||<<>>" });
 				Assert.AreEqual (name, "Central Standard Time (Mexico)", "#1");
 			}
+#endif
 		}
 		
 		[TestFixture]
