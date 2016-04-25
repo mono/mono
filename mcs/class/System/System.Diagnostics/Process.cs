@@ -771,11 +771,7 @@ namespace System.Diagnostics
 			SetProcessId (proc_info.pid);
 			
 			if (startInfo.RedirectStandardInput) {
-				//
-				// FIXME: The descriptor needs to be closed but due to wapi io-layer
-				// not coping with duplicated descriptors any StandardInput write fails
-				//
-				// MonoIO.Close (stdin_read, out error);
+				MonoIO.Close (stdin_read, out error);
 
 #if MOBILE
 				var stdinEncoding = Encoding.Default;
