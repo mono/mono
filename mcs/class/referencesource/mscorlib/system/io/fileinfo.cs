@@ -350,6 +350,10 @@ namespace System.IO {
 
 #if MONO
             MonoIOError error;
+
+            if (MonoIO.ExistsDirectory (FullPath, out error))
+                throw new UnauthorizedAccessException ("Access to the path \"" + FullPath + "\" is denied.");
+
             if (!MonoIO.DeleteFile (FullPath, out error)) {
                 int hr = (int) error;
 #else
