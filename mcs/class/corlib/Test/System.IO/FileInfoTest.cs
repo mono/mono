@@ -595,6 +595,8 @@ namespace MonoTests.System.IO
 			try {
 				FileInfo info = new FileInfo (path);
 				Assert.IsFalse (info.Exists, "#1");
+				info.Delete ();
+				Assert.IsFalse (info.Exists, "#1a");
 				info.Create ().Close ();
 				info = new FileInfo (path);
 				Assert.IsTrue (info.Exists, "#2");
