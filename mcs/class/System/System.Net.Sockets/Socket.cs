@@ -991,16 +991,20 @@ namespace System.Net.Sockets
 
 		static IOAsyncCallback BeginAcceptCallback = new IOAsyncCallback (ares => {
 			SocketAsyncResult sockares = (SocketAsyncResult) ares;
-			Socket socket = null;
-
+			Socket acc_socket = null;
 			try {
-				socket = sockares.socket.Accept ();
+				if (sockares.AcceptSocket == null) {
+					acc_socket = sockares.socket.Accept ();
+				} else {
+					acc_socket = sockares.AcceptSocket;
+					sockares.socket.Accept (acc_socket);
+				}
+
 			} catch (Exception e) {
 				sockares.Complete (e);
 				return;
 			}
-
-			sockares.Complete (socket);
+			sockares.Complete (acc_socket);
 		});
 
 		public IAsyncResult BeginAccept (int receiveSize, AsyncCallback callback, object state)
@@ -3427,7 +3431,9 @@ namespace System.Net.Sockets
 		void InitSocketAsyncEventArgs (SocketAsyncEventArgs e, AsyncCallback callback, object state, SocketOperation operation)
 		{
 			e.socket_async_result.Init (this, callback, state, operation);
-
+			if (e.AcceptSocket != null) {
+				e.socket_async_result.AcceptSocket = e.AcceptSocket;
+			}
 			e.current_socket = this;
 			e.SetLastOperation (SocketOperationToSocketAsyncOperation (operation));
 			e.SocketError = SocketError.Success;
