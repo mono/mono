@@ -26,6 +26,8 @@
 #include <mono/metadata/culture-info.h>
 #include <mono/metadata/culture-info-tables.h>
 #include <mono/utils/bsearch.h>
+#include <mono/metadata/runtime-interface.h>
+#include <mono/utils/checked-build.h>
 
 #ifndef DISABLE_NORMALIZATION
 #include <mono/metadata/normalization-tables.h>
@@ -530,22 +532,44 @@ get_current_locale_name (void)
 	return ret;
 }
 
-MonoString*
-ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
+static MonoStringHandle
+culture_info_get_current_locale_name (MonoError *error)
 {
-	gchar *locale;
-	MonoString* ret;
+	MonoStringHandle result = MONO_HANDLE_NEW(MonoString, NULL);
+	MONO_HANDLE_ARENA_PUSH ();
+	gchar *locale = NULL;
 	MonoDomain *domain;
+
+	mono_error_init (error);
 
 	locale = get_current_locale_name ();
 	if (locale == NULL)
-		return NULL;
+		goto leave;
 
 	domain = mono_domain_get ();
-	ret = mono_string_new (domain, locale);
-	g_free (locale);
 
-	return ret;
+	mono_handle_assign (result, mono_string_new_handle (domain, locale, error));
+	if (!is_ok (error))
+		goto leave;
+
+leave:
+	g_free (locale);
+	MONO_HANDLE_ARENA_POP ();
+	return result;
+}
+
+MonoString*
+ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
+{
+	MonoError error;
+	MonoString *result_raw = NULL;
+	ICALL_ENTRY ();
+	MONO_HANDLE_ARENA_PUSH ();
+	MonoStringHandle result = culture_info_get_current_locale_name (&error);
+	mono_error_set_pending_exception (&error);
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (result, result_raw);
+	ICALL_EXIT ();
+	return result_raw;
 }
 
 MonoBoolean

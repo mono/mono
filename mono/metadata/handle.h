@@ -216,6 +216,12 @@ MONO_HANDLE_TYPE_DECL (MonoObject);
 MONO_HANDLE_TYPE_DECL (MonoArray);
 MONO_HANDLE_TYPE_DECL (MonoString);
 
+/* Versions of the object.h API using handles */
+
+MonoStringHandle
+mono_string_new_handle (MonoDomain *domain, const char *text, MonoError *error);
+
+
 G_END_DECLS
 
 #endif /* __MONO_HANDLE_H__ */
