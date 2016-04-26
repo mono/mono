@@ -23,8 +23,7 @@ namespace MonoTests.System.Net.Sockets
 			_mainEvent = new ManualResetEvent(false);
 
 			ThreadPool.QueueUserWorkItem(_ => StartListen());
-			if (!_readyEvent.WaitOne(1500))
-				throw new TimeoutException();
+			Assert.IsTrue(_readyEvent.WaitOne(1500));
 
 			_clientSocket = new Socket(
 				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -70,11 +69,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category("Test")]
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
-			if (!_mainEvent.WaitOne(1500))
-				throw new TimeoutException();
+			Assert.IsTrue(_mainEvent.WaitOne(1500));
 			Assert.AreEqual(_serverSocket, _acceptedSocket);
 			_mainEvent.Reset();
 		}
