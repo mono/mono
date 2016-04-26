@@ -45,10 +45,6 @@ namespace System.Linq
 			Throw
 		}
 
-		class PredicateOf<T> {
-			public static readonly Func<T, bool> Always = (t) => true;
-		}
-
 		class Function<T> {
 			public static readonly Func<T, T> Identity = (t) => t;
 		}
@@ -622,7 +618,10 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return source.First (PredicateOf<TSource>.Always, Fallback.Default);
+			foreach (var element in source)
+				return element;
+
+			return default(TSource);
 		}
 
 		public static TSource FirstOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -981,7 +980,19 @@ namespace System.Linq
 			if (list != null)
 				return list [list.Count - 1];
 
-			return source.Last (PredicateOf<TSource>.Always, Fallback.Throw);
+			var empty = true;
+			var item = default(TSource);
+
+			foreach (var element in source)
+			{
+				item = element;
+				empty = false;
+			}
+
+			if (!empty)
+				return item;
+
+			throw new InvalidOperationException();
 		}
 
 		public static TSource Last<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1003,7 +1014,19 @@ namespace System.Linq
 			if (list != null)
 				return list.Count > 0 ? list [list.Count - 1] : default (TSource);
 
-			return source.Last (PredicateOf<TSource>.Always, Fallback.Default);
+			var empty = true;
+			var item = default(TSource);
+
+			foreach (var element in source)
+			{
+				item = element;
+				empty = false;
+			}
+
+			if (!empty)
+				return item;
+
+			return item;
 		}
 
 		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1719,7 +1742,22 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return source.Single (PredicateOf<TSource>.Always, Fallback.Throw);
+			var found = false;
+			var item = default(TSource);
+
+			foreach (var element in source)
+			{
+				if (found)
+					throw new InvalidOperationException();
+
+				found = true;
+				item = element;
+			}
+
+			if (!found)
+				throw new InvalidOperationException();
+
+			return item;
 		}
 
 		public static TSource Single<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1737,7 +1775,19 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return source.Single (PredicateOf<TSource>.Always, Fallback.Default);
+			var found = false;
+			var item = default(TSource);
+
+			foreach (var element in source)
+			{
+				if (found)
+					throw new InvalidOperationException();
+
+				found = true;
+				item = element;
+			}
+
+			return item;
 		}
 
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)

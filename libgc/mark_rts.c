@@ -369,6 +369,9 @@ ptr_t p;
 
 ptr_t GC_approx_sp()
 {
+#ifdef __GNUC__
+    return __builtin_frame_address(0);
+#else
     VOLATILE word dummy;
 
     dummy = 42;	/* Force stack to grow if necessary.	Otherwise the	*/
@@ -381,6 +384,7 @@ ptr_t GC_approx_sp()
 #   ifdef _MSC_VER
 #     pragma warning(default:4172)
 #   endif
+#endif
 }
 
 /*

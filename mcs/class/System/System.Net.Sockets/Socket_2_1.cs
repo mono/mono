@@ -685,7 +685,7 @@ namespace System.Net.Sockets {
 		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 #if NET_2_0 && (!NET_2_1 || MONOTOUCH)
-			if (protocol_type == ProtocolType.Udp) {
+			if (protocol_type == ProtocolType.Udp && System.Environment.SocketSecurityEnabled) {
 				var ipAddress = IPAddress.Any;
 				if (address_family == AddressFamily.InterNetworkV6)
 					ipAddress = IPAddress.IPv6Any;
