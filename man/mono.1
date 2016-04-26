@@ -1756,6 +1756,10 @@ Controls where trace log messages are written. If not set then the messages go t
 If set, the string either specifies a path to a file that will have messages appended to
 it, or the string "syslog" in which case the messages will be written to the system log.
 Under Windows, this is simulated by writing to a file called "mono.log". 
+\fBMONO_LOG_HEADER\fR
+Controls whether trace log messages not directed to syslog have the id, timestamp, and
+pid as the prefix to the log message. To enable a header this environment variable need
+just be non-null. 
 .TP
 \fBMONO_TRACE\fR
 Used for runtime tracing of method calls. The format of the comma separated
