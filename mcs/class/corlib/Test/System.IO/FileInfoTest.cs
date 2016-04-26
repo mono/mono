@@ -657,7 +657,9 @@ namespace MonoTests.System.IO
 		{
 			string name = "FIT.MoveTo.SameName.Test";
 			string path1 = TempFolder + DSC + name;
-			string path2 = name;
+			string path2 = TempFolder + DSC + "same";
+			Directory.CreateDirectory (path2);
+			path2 += DSC + name;
 			DeleteFile (path1);
 			DeleteFile (path2);
 			
