@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
@@ -9,71 +8,53 @@ namespace MonoTests.System.Net.Sockets
 	[TestFixture]
 	public class SocketAcceptAsyncTest
 	{
-		private Socket _listenSocket;
-		private Socket _clientSocket;
-		private Socket _serverSocket;
-		private Socket _acceptedSocket;
-		private ManualResetEvent _readyEvent;
-		private ManualResetEvent _mainEvent;
-
-		[TestFixtureSetUp]
-		public void SetUp()
-		{
-			_readyEvent = new ManualResetEvent(false);
-			_mainEvent = new ManualResetEvent(false);
-
-			ThreadPool.QueueUserWorkItem(_ => StartListen());
-			Assert.IsTrue(_readyEvent.WaitOne(1500));
-
-			_clientSocket = new Socket(
-				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			_clientSocket.Connect(_listenSocket.LocalEndPoint);
-			_clientSocket.NoDelay = true;
-		}
-
-		[TestFixtureTearDown]
-		public void TearDown()
-		{
-			if (_acceptedSocket != null)
-				_acceptedSocket.Close();
-			if (_listenSocket != null)
-				_listenSocket.Close();
-			_readyEvent.Close();
-			_mainEvent.Close();
-		}
-
-		private void StartListen()
-		{
-			_listenSocket = new Socket(
-				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			_listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
-			_listenSocket.Listen(1);
-
-			_serverSocket = new Socket(
-				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-      var async = new SocketAsyncEventArgs();
-			async.AcceptSocket = _serverSocket;
-			async.Completed += (s, e) => OnAccepted(e);
-
-			_readyEvent.Set();
-
-			if (!_listenSocket.AcceptAsync(async))
-				OnAccepted(async);
-		}
-
-		private void OnAccepted(SocketAsyncEventArgs e)
-		{
-			_acceptedSocket = e.AcceptSocket;
-			_mainEvent.Set();
-		}
-
 		[Test]
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
-			Assert.IsTrue(_mainEvent.WaitOne(1500));
-			Assert.AreEqual(_serverSocket, _acceptedSocket);
-			_mainEvent.Reset();
+			var readyEvent = new ManualResetEvent(false);
+			var mainEvent = new ManualResetEvent(false);
+			var listenSocket = new Socket(
+				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			var serverSocket = new Socket(
+					AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			Socket acceptedSocket = null;
+
+			ThreadPool.QueueUserWorkItem(_ =>
+			{
+				listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+				listenSocket.Listen(1);
+
+				var asyncEventArgs = new SocketAsyncEventArgs {AcceptSocket = serverSocket};
+				asyncEventArgs.Completed += (s, e) =>
+				{
+					acceptedSocket = e.AcceptSocket;
+					mainEvent.Set();
+				};
+
+				readyEvent.Set();
+
+				if (listenSocket.AcceptAsync(asyncEventArgs))
+					return;
+				acceptedSocket = asyncEventArgs.AcceptSocket;
+				mainEvent.Set();
+			});
+			Assert.IsTrue(readyEvent.WaitOne(1500));
+
+			var clientSocket = new Socket(
+				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			clientSocket.Connect(listenSocket.LocalEndPoint);
+			clientSocket.NoDelay = true;
+
+			Assert.IsTrue(mainEvent.WaitOne(1500));
+			Assert.AreEqual(serverSocket, acceptedSocket);
+			mainEvent.Reset();
+
+			if (acceptedSocket != null)
+				acceptedSocket.Close();
+
+			listenSocket.Close();
+			readyEvent.Close();
+			mainEvent.Close();
 		}
 	}
 }
