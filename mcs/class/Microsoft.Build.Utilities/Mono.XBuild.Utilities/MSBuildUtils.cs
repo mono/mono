@@ -83,42 +83,6 @@ namespace Mono.XBuild.Utilities {
 			return sb.ToString ();
 		}
 
-		internal static string UnescapeFromXml (string text)
-		{
-			StringBuilder sb = new StringBuilder ();
-			for (int i = 0; i < text.Length; i++) {
-				char c1 = text[i];
-				if (c1 == '&') {
-					int end = text.IndexOf (';', i);
-					if (end == -1)
-						throw new FormatException ("Unterminated XML entity.");
-					string entity = text.Substring (i+1, end - i - 1);
-					switch (entity) {
-					case "lt":
-						sb.Append ('<');
-						break;
-					case "gt":
-						sb.Append ('>');
-						break;
-					case "amp":
-						sb.Append ('&');
-						break;
-					case "apos":
-						sb.Append ('\'');
-						break;
-					case "quot":
-						sb.Append ('"');
-						break;
-					default:
-						throw new FormatException ("Unrecognized XML entity '&" + entity + ";'.");
-					}
-					i = end;
-				} else
-					sb.Append (c1);
-			}
-			return sb.ToString ();
-		}
-
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
 
