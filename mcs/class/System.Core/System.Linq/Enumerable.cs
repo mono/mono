@@ -150,177 +150,387 @@ namespace System.Linq
 
 		public static double Average (this IEnumerable<int> source)
 		{
-			return Average<int, long, double> (source, (a, b) => a + b, (a, b) => (double) a / (double) b);
+			Check.Source(source);
+
+			long total = 0;
+			int count = 0;
+			foreach (var element in source)
+			{
+				total = checked(total + element);
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / (double)count;
 		}
 
 		public static double Average (this IEnumerable<long> source)
 		{
-			return Average<long, long, double> (source, (a, b) => a + b, (a, b) => (double) a / (double) b);
+			Check.Source(source);
+
+			long total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += element;
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / (double)count;
 		}
 
 		public static double Average (this IEnumerable<double> source)
 		{
-			return Average<double, double, double> (source, (a, b) => a + b, (a, b) => a / b);
+			Check.Source(source);
+
+			double total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += element;
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
 		public static float Average (this IEnumerable<float> source)
 		{
-			return Average<float, double, float> (source, (a, b) => a + b, (a, b) => (float) a / (float) b);
+			Check.Source(source);
+
+			float total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += element;
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
 		public static decimal Average (this IEnumerable<decimal> source)
 		{
-			return Average<decimal, decimal, decimal> (source, (a, b) => a + b, (a, b) => a / b);
-		}
+			Check.Source(source);
 
-		static TResult Average<TElement, TAggregate, TResult> (this IEnumerable<TElement> source,
-			Func<TAggregate, TElement, TAggregate> func, Func<TAggregate, long, TResult> result)
-			where TElement : struct
-			where TAggregate : struct
-			where TResult : struct
-		{
-			Check.Source (source);
-
-			var total = default (TAggregate);
-			long counter = 0;
-			foreach (var element in source) {
-				total = func (total, element);
-				++counter;
+			decimal total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += element;
+				count++;
 			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-
-			return result (total, counter);
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
-		static TResult? AverageNullable<TElement, TAggregate, TResult> (this IEnumerable<TElement?> source,
-			Func<TAggregate, TElement, TAggregate> func, Func<TAggregate, long, TResult> result)
-			where TElement : struct
-			where TAggregate : struct
-			where TResult : struct
+		public static double? Average (this IEnumerable<int?> source)
 		{
-			Check.Source (source);
+			Check.Source(source);
 
-			var total = default (TAggregate);
+			long total = 0;
 			long counter = 0;
-			foreach (var element in source) {
+
+			foreach (var element in source)
+			{
 				if (!element.HasValue)
 					continue;
 
-				total = func (total, element.Value);
+				total = total + element.Value;
 				counter++;
 			}
 
 			if (counter == 0)
 				return null;
 
-			return new TResult? (result (total, counter));
-		}
-
-		public static double? Average (this IEnumerable<int?> source)
-		{
-			Check.Source (source);
-
-			return source.AverageNullable<int, long, double> ((a, b) => a + b, (a, b) => (double) a / (double) b);
+			return new double?(total / (double)counter);
 		}
 
 		public static double? Average (this IEnumerable<long?> source)
 		{
-			Check.Source (source);
+			Check.Source(source);
 
-			return source.AverageNullable<long, long, double> ((a, b) => a + b, (a, b) => (double) a / b);
+			long total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				if (!element.HasValue)
+					continue;
+
+				total = checked(total + element.Value);
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new double?(total / (double)counter);
 		}
 
 		public static double? Average (this IEnumerable<double?> source)
 		{
-			Check.Source (source);
+			Check.Source(source);
 
-			return source.AverageNullable<double, double, double> ((a, b) => a + b, (a, b) => a / b);
+			double total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				if (!element.HasValue)
+					continue;
+
+				total = total + element.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new double?(total / counter);
 		}
 
 		public static decimal? Average (this IEnumerable<decimal?> source)
 		{
-			Check.Source (source);
+			Check.Source(source);
 
-			return source.AverageNullable<decimal, decimal, decimal> ((a, b) => a + b, (a, b) => a / b);
+			decimal total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				if (!element.HasValue)
+					continue;
+
+				total = total + element.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new decimal?(total / counter);
 		}
 
 		public static float? Average (this IEnumerable<float?> source)
 		{
-			Check.Source (source);
+			Check.Source(source);
 
-			return source.AverageNullable<float, double, float> ((a, b) => a + b, (a, b) => (float) a / (float) b);
+			float total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				if (!element.HasValue)
+					continue;
+
+				total = total + element.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new float?(total / counter);
 		}
 
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).Average<int, long, double> ((a, b) => a + b, (a, b) => (double) a / (double) b);
+			long total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += selector(element);
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / (double)count;
 		}
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).AverageNullable<int, long, double> ((a, b) => a + b, (a, b) => (double) a / (double) b);
+			long total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				var value = selector(element);
+				if (!value.HasValue)
+					continue;
+
+				total = total + value.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new double?(total / (double)counter);
 		}
 
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).Average<long, long, double> ((a, b) => a + b, (a, b) => (double) a / (double) b);
+			long total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total = checked(total + selector(element));
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / (double)count;
 		}
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).AverageNullable<long, long, double> ((a, b) => a + b, (a, b) => (double) a / (double) b);
+			long total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				var value = selector(element);
+				if (!value.HasValue)
+					continue;
+
+				total = checked(total + value.Value);
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new double?(total / (double)counter);
 		}
 
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).Average<double, double, double> ((a, b) => a + b, (a, b) => a / b);
+			double total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += selector(element);
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).AverageNullable<double, double, double> ((a, b) => a + b, (a, b) => a / b);
+			double total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				var value = selector(element);
+				if (!value.HasValue)
+					continue;
+
+				total = total + value.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new double?(total / counter);
 		}
 
 		public static float Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).Average<float, double, float> ((a, b) => a + b, (a, b) => (float) a / (float) b);
+			float total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += selector(element);
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
 		public static float? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).AverageNullable<float, double, float> ((a, b) => a + b, (a, b) => (float) a / (float) b);
+			float total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				var value = selector(element);
+				if (!value.HasValue)
+					continue;
+
+				total = total + value.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new float?(total / counter);
 		}
 
 		public static decimal Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).Average<decimal, decimal, decimal> ((a, b) => a + b, (a, b) => a / b);
+			decimal total = 0;
+			long count = 0;
+			foreach (var element in source)
+			{
+				total += selector(element);
+				count++;
+			}
+			if (count == 0)
+				throw new InvalidOperationException();
+			return total / count;
 		}
 
 		public static decimal? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
+			Check.SourceAndSelector(source, selector);
 
-			return source.Select (selector).AverageNullable<decimal, decimal, decimal> ((a, b) => a + b, (a, b) => a / b);
+			decimal total = 0;
+			long counter = 0;
+
+			foreach (var element in source)
+			{
+				var value = selector(element);
+				if (!value.HasValue)
+					continue;
+
+				total = total + value.Value;
+				counter++;
+			}
+
+			if (counter == 0)
+				return null;
+
+			return new decimal?(total / counter);
 		}
 
 		#endregion
