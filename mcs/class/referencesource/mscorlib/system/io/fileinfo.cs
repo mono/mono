@@ -352,7 +352,7 @@ namespace System.IO {
             MonoIOError error;
 
             if (MonoIO.ExistsDirectory (FullPath, out error))
-                throw new UnauthorizedAccessException ("Access to the path \"" + FullPath + "\" is denied.");
+                __Error.WinIOError (Win32Native.ERROR_ACCESS_DENIED, DisplayPath);
 
             if (!MonoIO.DeleteFile (FullPath, out error)) {
                 int hr = (int) error;
