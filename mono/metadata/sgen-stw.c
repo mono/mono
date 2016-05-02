@@ -252,23 +252,32 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info, int *reason)
 static void
 update_sgen_info (SgenThreadInfo *info)
 {
-	char *stack_start;
-
-	/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-	info->client_info.stopped_domain = (MonoDomain *)mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
-	info->client_info.stopped_ip = (gpointer) MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx);
-	stack_start = (char*)MONO_CONTEXT_GET_SP (&mono_thread_info_get_suspend_state (info)->ctx) - REDZONE_SIZE;
-
-	/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
-	if (stack_start < (char*)info->client_info.stack_start_limit || stack_start >= (char*)info->client_info.stack_end)
-		g_error ("BAD STACK");
-
-	info->client_info.stack_start = stack_start;
-	g_assert (info->client_info.stack_start);
-#ifdef USE_MONO_CTX
-	info->client_info.ctx = mono_thread_info_get_suspend_state (info)->ctx;
-#else
+#ifndef USE_MONO_CTX
 	g_assert_not_reached ();
+#else
+	MonoThreadUnwindState *state = mono_thread_info_get_suspend_state (info);
+
+	info->client_info.ctx = state->ctx;
+
+	if (!state->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !state->unwind_data [MONO_UNWIND_DATA_LMF]) {
+		/* thread is starting or detaching, nothing to scan here */
+		info->client_info.stopped_domain = NULL;
+		info->client_info.stopped_ip = NULL;
+		info->client_info.stack_start = NULL;
+	} else {
+		/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
+		info->client_info.stopped_domain = (MonoDomain*) mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
+		info->client_info.stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
+		info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
+
+		/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
+		if (!info->client_info.stack_start
+			 || info->client_info.stack_start < info->client_info.stack_start_limit
+			 || info->client_info.stack_start >= info->client_info.stack_end) {
+			g_error ("BAD STACK: stack_start = %p, stack_start_limit = %p, stack_end = %p",
+				info->client_info.stack_start, info->client_info.stack_start_limit, info->client_info.stack_end);
+		}
+	}
 #endif
 }
 
@@ -311,10 +320,7 @@ sgen_unified_suspend_stop_world (void)
 			- We haven't accepted the previous suspend as good.
 			- We haven't gave up on it for this STW (it's either bad or asked not to)
 			*/
-			if (!mono_thread_info_check_suspend_result (info)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] SKIP thread %p failed to finish to suspend\n", mono_thread_info_get_tid (info));
-				info->client_info.skip = TRUE;
-			} else if (mono_thread_info_in_critical_location (info)) {
+			if (mono_thread_info_in_critical_location (info)) {
 				gboolean res;
 				gint suspend_count = mono_thread_info_suspend_count (info);
 				if (!(suspend_count == 1))
@@ -372,6 +378,7 @@ sgen_unified_suspend_stop_world (void)
 			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is NOT suspended, reason %d\n", mono_thread_info_get_tid (info), reason);
 			g_assert (!info->client_info.suspend_done || info == mono_thread_info_current ());
 		}
+		binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), info->client_info.stopped_ip);
 	} FOREACH_THREAD_END
 }
 
@@ -387,6 +394,7 @@ sgen_unified_suspend_restart_world (void)
 		} else {
 			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p, reason %d\n", mono_thread_info_get_tid (info), reason);
 		}
+		binary_protocol_thread_restart ((gpointer) mono_thread_info_get_tid (info));
 	} FOREACH_THREAD_END
 
 	mono_threads_wait_pending_operations ();
