@@ -16,7 +16,7 @@ my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $macversion = '10.5';
-my $sdkversion = '10.6';
+my $sdkversion = '10.10';
 my $externalBuildDeps = "$root/external/mono-build-deps";
 
 my $dependencyBranchToUse = "unity3.0";
@@ -101,6 +101,8 @@ if (not $skipbuild)
 			system("make") eq 0 or die ("failed to make autoconf\n");
 			system("make install") eq 0 or die ("failed to make install autoconf\n");
 
+			print ">>> autoconf built\n";
+
 			chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 		}
 
@@ -116,6 +118,8 @@ if (not $skipbuild)
 			system("make") eq 0 or die ("failed to make automake\n");
 			system("make install") eq 0 or die ("failed to make install automake\n");
 
+			print ">>> automake built\n";
+
 			chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 
 		}
@@ -130,6 +134,8 @@ if (not $skipbuild)
 			system("make") eq 0 or die ("failed to make libtool\n");
 			system("make install") eq 0 or die ("failed to make install libtool\n");
 
+			print ">>> libtool built\n";
+
 			chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 		}
 
@@ -138,6 +144,25 @@ if (not $skipbuild)
 		$ENV{'LIBTOOLIZE'} = "$libtoolDir/tmp/bin/libtoolize";
 		$ENV{'LIBTOOL'} = "$libtoolDir/tmp/bin/libtool";
 	}
+
+	print ">>> Checking on some tools...\n";
+	system("which", "autoconf");
+	system("autoconf", "--version");
+
+	system("which", "automake");
+	system("automake", "--version");
+
+	system("which", "libtool");
+	system("glibtool", "--version");
+
+	system("which", "libtoolize");
+	system("glibtoolize", "--version");
+
+	system("which", "autoreconf");
+	print("\n");
+
+	print ">>> LIBTOOLIZE before Build = $ENV{LIBTOOLIZE}\n";
+	print ">>> LIBTOOL before Build = $ENV{LIBTOOLIZE}\n";
 
 
 	chdir("$root") eq 1 or die ("failed to chdir 2");
