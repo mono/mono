@@ -11,6 +11,7 @@ my $minimal = 0;
 my $jobs = 4;
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $unityPath = "$root/../../unity/build";
+my $externalBuildDeps = "$root/external/mono-build-deps";
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
@@ -56,6 +57,70 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	print("Libtool: using $libtoolize and $libtool\n");
 	$ENV{'LIBTOOLIZE'} = $libtoolize;
 	$ENV{'LIBTOOL'} = $libtool;
+}
+
+if ($externalBuildDeps ne "")
+{
+	print "\n";
+	print ">>> Building autoconf, automake, and libtool if needed...\n";
+	my $autoconfVersion = "2.69";
+	my $automakeVersion = "1.15";
+	my $libtoolVersion = "2.4.6";
+	my $autoconfDir = "$externalBuildDeps/autoconf-$autoconfVersion";
+	my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
+	my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
+
+	if (!(-d "$autoconfDir"))
+	{
+		chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+		system("tar xzf autoconf-$autoconfVersion.tar.gz") eq 0  or die ("failed to extract autoconf\n");
+
+		chdir("$autoconfDir") eq 1 or die ("failed to chdir to autoconf directory\n");
+		system("./configure --prefix=$autoconfDir/tmp") eq 0 or die ("failed to configure autoconf\n");
+		system("make") eq 0 or die ("failed to make autoconf\n");
+		system("make install") eq 0 or die ("failed to make install autoconf\n");
+
+		print ">>> autoconf built\n";
+
+		chdir("$root") eq 1 or die ("failed to chdir to $root\n");
+	}
+
+	$ENV{PATH} = "$autoconfDir/tmp/bin:$ENV{PATH}";
+
+	if (!(-d "$automakeDir"))
+	{
+		chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+		system("tar xzf automake-$automakeVersion.tar.gz") eq 0  or die ("failed to extract automake\n");
+
+		chdir("$automakeDir") eq 1 or die ("failed to chdir to automake directory\n");
+		system("./configure --prefix=$automakeDir/tmp") eq 0 or die ("failed to configure automake\n");
+		system("make") eq 0 or die ("failed to make automake\n");
+		system("make install") eq 0 or die ("failed to make install automake\n");
+
+		print ">>> automake built\n";
+
+		chdir("$root") eq 1 or die ("failed to chdir to $root\n");
+	}
+
+	if (!(-d "$libtoolDir"))
+	{
+		chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+		system("tar xzf libtool-$libtoolVersion.tar.gz") eq 0  or die ("failed to extract libtool\n");
+	
+		chdir("$libtoolDir") eq 1 or die ("failed to chdir to libtool directory\n");
+		system("./configure --prefix=$libtoolDir/tmp") eq 0 or die ("failed to configure libtool\n");
+		system("make") eq 0 or die ("failed to make libtool\n");
+		system("make install") eq 0 or die ("failed to make install libtool\n");
+
+		print ">>> libtool built\n";
+
+		chdir("$root") eq 1 or die ("failed to chdir to $root\n");
+	}
+
+	$ENV{PATH} = "$automakeDir/tmp/bin:$ENV{PATH}";
+	$ENV{PATH} = "$libtoolDir/tmp/bin:$ENV{PATH}";
+	$ENV{'LIBTOOLIZE'} = "$libtoolDir/tmp/bin/libtoolize";
+	$ENV{'LIBTOOL'} = "$libtoolDir/tmp/bin/libtool";
 }
 
 my @arches = ('i386','x86_64');
