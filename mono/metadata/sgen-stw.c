@@ -446,6 +446,7 @@ sgen_unified_suspend_stop_world (void)
 		int reason = 0;
 		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			MonoThreadUnwindState *state;
+			gpointer stopped_ip;
 
 			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended\n", mono_thread_info_get_tid (info));
 			g_assert (info->client_info.suspend_done);
@@ -455,12 +456,14 @@ sgen_unified_suspend_stop_world (void)
 			info->client_info.ctx = state->ctx;
 
 			if (!state->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !state->unwind_data [MONO_UNWIND_DATA_LMF]) {
+				stopped_ip = NULL;
+
 				/* thread is starting or detaching, nothing to scan here */
-				info->client_info.stopped_ip = NULL;
 				info->client_info.stack_start = NULL;
 			} else {
+				stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
+
 				/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-				info->client_info.stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
 				info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
 
 				/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
@@ -472,7 +475,7 @@ sgen_unified_suspend_stop_world (void)
 				}
 			}
 
-			binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), info->client_info.stopped_ip);
+			binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), stopped_ip);
 		} else {
 			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is NOT suspended, reason %d\n", mono_thread_info_get_tid (info), reason);
 			g_assert (!info->client_info.suspend_done || info == mono_thread_info_current ());

@@ -2147,7 +2147,6 @@ sgen_client_thread_register (SgenThreadInfo* info, void *stack_bottom_fallback)
 #endif
 
 	info->client_info.skip = 0;
-	info->client_info.stopped_ip = NULL;
 
 	info->client_info.stack_start = NULL;
 

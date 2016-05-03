@@ -39,8 +39,6 @@ struct _SgenClientThreadInfo {
 	gboolean skip, suspend_done;
 	volatile int in_critical_region;
 
-	gpointer stopped_ip;	/* only valid if the thread is stopped */
-
 	/*
 	This is set the argument of mono_gc_set_skip_thread.
 
