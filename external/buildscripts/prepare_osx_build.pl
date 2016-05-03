@@ -62,9 +62,6 @@ if ($externalBuildDeps ne "")
 
 		chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 	}
-
-	$ENV{'LIBTOOLIZE'} = "$builtToolsDir/bin/libtoolize";
-	$ENV{'LIBTOOL'} = "$builtToolsDir/bin/libtool";
 }
 
 print ">>> Checking on some tools...\n";
@@ -82,6 +79,3 @@ system("libtoolize", "--version");
 
 system("which", "autoreconf");
 print("\n");
-
-print ">>> LIBTOOLIZE before Build = $ENV{LIBTOOLIZE}\n";
-print ">>> LIBTOOL before Build = $ENV{LIBTOOL}\n";
