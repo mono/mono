@@ -207,7 +207,7 @@ namespace System.Security.Cryptography {
             m_block++;
             return ret;
         }
-
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         public byte[] CryptDeriveKey(string algname, string alghashname, int keySize, byte[] rgbIV)
         {
@@ -262,6 +262,7 @@ namespace System.Security.Cryptography {
         private static extern void DeriveKey(SafeProvHandle hProv, int algid, int algidHash,
                                       byte[] password, int cbPassword, int dwFlags, byte[] IV, int cbIV,
                                       ObjectHandleOnStack retKey);
+#endif
 
     }
 }

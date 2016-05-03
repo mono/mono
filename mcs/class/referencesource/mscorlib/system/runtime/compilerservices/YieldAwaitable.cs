@@ -87,10 +87,12 @@ namespace System.Runtime.CompilerServices
                 if (continuation == null) throw new ArgumentNullException("continuation");
                 Contract.EndContractBlock();
 
+#if !MONO
                 if (TplEtwProvider.Log.IsEnabled())
                 {
                     continuation = OutputCorrelationEtwEvent(continuation);
                 }
+#endif
                 // Get the current SynchronizationContext, and if there is one,
                 // post the continuation to it.  However, treat the base type
                 // as if there wasn't a SynchronizationContext, since that's what it
@@ -124,7 +126,7 @@ namespace System.Runtime.CompilerServices
                     }
                 }
             }
-
+#if !MONO
             private static Action OutputCorrelationEtwEvent(Action continuation)
             {
                 int continuationId = Task.NewId();
@@ -154,6 +156,7 @@ namespace System.Runtime.CompilerServices
                 });
                 
             }
+#endif            
 
             /// <summary>WaitCallback that invokes the Action supplied as object state.</summary>
             private static readonly WaitCallback s_waitCallbackRunAction = RunAction;

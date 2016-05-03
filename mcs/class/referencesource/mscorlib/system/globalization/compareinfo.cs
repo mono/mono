@@ -126,6 +126,7 @@ namespace System.Globalization {
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
+#endif
         }
 
         /*=================================GetCompareInfo==========================
@@ -286,7 +287,7 @@ namespace System.Globalization {
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
-
+#endif
         }
 
         [OnDeserialized]

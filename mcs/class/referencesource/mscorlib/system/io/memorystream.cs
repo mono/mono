@@ -178,8 +178,8 @@ namespace System.IO {
                     newCapacity = _capacity * 2;
                 // We want to expand the array up to Array.MaxArrayLengthOneDimensional
                 // And we want to give the user the value that they asked for
-                if ((uint)(_capacity * 2) > Array.MaxByteArrayLength)
-                    newCapacity = value > Array.MaxByteArrayLength ? value : Array.MaxByteArrayLength;
+                if ((uint)(_capacity * 2) > Array_ReferenceSources.MaxByteArrayLength)
+                    newCapacity = value > Array_ReferenceSources.MaxByteArrayLength ? value : Array_ReferenceSources.MaxByteArrayLength;
                 
                 Capacity = newCapacity;
                 return true;

@@ -210,13 +210,14 @@ namespace System.Runtime.CompilerServices
         {
             if (continuation == null) throw new ArgumentNullException("continuation");
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-
+#if !MONO
             // If TaskWait* ETW events are enabled, trace a beginning event for this await
             // and set up an ending event to be traced when the asynchronous await completes.
             if ( TplEtwProvider.Log.IsEnabled() || Task.s_asyncDebuggingEnabled)
             {
                 continuation = OutputWaitEtwEvents(task, continuation);
             }
+#endif
 
             // Set the continuation onto the awaited task.
             task.SetContinuationForAwait(continuation, continueOnCapturedContext, flowExecutionContext, ref stackMark);
@@ -238,6 +239,7 @@ namespace System.Runtime.CompilerServices
                 Task.AddToActiveTasks(task);
             }
 
+#if !MONO
             var etwLog = TplEtwProvider.Log;
 
             if (etwLog.IsEnabled())
@@ -253,6 +255,7 @@ namespace System.Runtime.CompilerServices
                     task.Id, TplEtwProvider.TaskWaitBehavior.Asynchronous, 
                     (continuationTask != null ? continuationTask.Id : 0), System.Threading.Thread.GetDomainID());
             }
+#endif
 
             // Create a continuation action that outputs the end event and then invokes the user
             // provided delegate.  This incurs the allocations for the closure/delegate, but only if the event
@@ -265,7 +268,7 @@ namespace System.Runtime.CompilerServices
                 {
                     Task.RemoveFromActiveTasks(task.Id);
                 }
-
+#if !MONO
                 // ETW event for Task Wait End.
                 Guid prevActivityId = new Guid();
                 bool bEtwLogEnabled = etwLog.IsEnabled();
@@ -282,15 +285,18 @@ namespace System.Runtime.CompilerServices
                     if (etwLog.TasksSetActivityIds && (task.Options & (TaskCreationOptions)InternalTaskOptions.PromiseTask) != 0)
                         EventSource.SetCurrentThreadActivityId(TplEtwProvider.CreateGuidForTaskID(task.Id), out prevActivityId);
                 }
+#endif
                 // Invoke the original continuation provided to OnCompleted.
                 continuation();
 
+#if !MONO
                 if (bEtwLogEnabled)
                 {
                     etwLog.TaskWaitContinuationComplete(task.Id);
                     if (etwLog.TasksSetActivityIds && (task.Options & (TaskCreationOptions)InternalTaskOptions.PromiseTask) != 0)
                         EventSource.SetCurrentThreadActivityId(prevActivityId);
                 }
+#endif
             });
         }
     }

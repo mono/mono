@@ -248,6 +248,7 @@ namespace System.Threading.Tasks
             // ETW event for Parallel Invoke Begin
             int forkJoinContextID = 0;
             Task callerTask = null;
+#if !MONO            
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);
@@ -256,6 +257,7 @@ namespace System.Threading.Tasks
                                                      forkJoinContextID, TplEtwProvider.ForkJoinOperationType.ParallelInvoke,
                                                      actionsCopy.Length);
             }
+#endif            
 
 #if DEBUG
             actions = null; // Ensure we don't accidentally use this below.
@@ -402,12 +404,14 @@ namespace System.Threading.Tasks
             }
             finally
             {
+#if !MONO                
                 // ETW event for Parallel Invoke End
                 if (TplEtwProvider.Log.IsEnabled())
                 {
                     TplEtwProvider.Log.ParallelInvokeEnd((callerTask != null ? callerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (callerTask != null ? callerTask.Id : 0),
                                                          forkJoinContextID);
                 }
+#endif
             }
         }
 
@@ -1094,6 +1098,7 @@ namespace System.Threading.Tasks
             // ETW event for Parallel For begin
             int forkJoinContextID = 0;
             Task callingTask = null;
+#if !MONO            
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);
@@ -1102,6 +1107,7 @@ namespace System.Threading.Tasks
                                                      forkJoinContextID, TplEtwProvider.ForkJoinOperationType.ParallelFor,
                                                      fromInclusive, toExclusive);
             }
+#endif
 
             ParallelForReplicatingTask rootTask = null; // eliminates "Use of unassigned local variable" compiler bug below.
 
@@ -1147,12 +1153,14 @@ namespace System.Threading.Tasks
                             return; // no need to run
                         }
 
+#if !MONO
                         // ETW event for ParallelFor Worker Fork
                         if (TplEtwProvider.Log.IsEnabled())
                         {
                             TplEtwProvider.Log.ParallelFork((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                              forkJoinContextID);
                         }
+#endif
 
                         TLocal localValue = default(TLocal);
                         bool bLocalValueInitialized = false; // Tracks whether localInit ran without exceptions, so that we can skip localFinally if it wasn't
@@ -1250,12 +1258,14 @@ namespace System.Threading.Tasks
                                 localFinally(localValue);
                             }
 
+#if !MONO
                             // ETW event for ParallelFor Worker Join
                             if (TplEtwProvider.Log.IsEnabled())
                             {
                                 TplEtwProvider.Log.ParallelJoin((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                                  forkJoinContextID);
                             }
+#endif
                         }
                     },
                     creationOptions, internalOptions);
@@ -1306,6 +1316,7 @@ namespace System.Threading.Tasks
 
                 if ((rootTask != null) && rootTask.IsCompleted) rootTask.Dispose();
 
+#if !MONO
                 // ETW event for Parallel For End
                 if (TplEtwProvider.Log.IsEnabled())
                 {
@@ -1322,6 +1333,7 @@ namespace System.Threading.Tasks
                     TplEtwProvider.Log.ParallelLoopEnd((callingTask != null ? callingTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (callingTask != null ? callingTask.Id : 0),
                                                          forkJoinContextID, nTotalIterations);
                 }
+#endif
             }
 
             return result;
@@ -1409,6 +1421,7 @@ namespace System.Threading.Tasks
             // ETW event for Parallel For begin
             Task callerTask = null;
             int forkJoinContextID = 0;
+#if !MONO
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);
@@ -1417,6 +1430,7 @@ namespace System.Threading.Tasks
                                                      forkJoinContextID, TplEtwProvider.ForkJoinOperationType.ParallelFor,
                                                      fromInclusive, toExclusive);
             }
+#endif
 
             ParallelForReplicatingTask rootTask = null; // eliminates "Use of unassigned local variable" compiler bug below.
 
@@ -1460,12 +1474,14 @@ namespace System.Threading.Tasks
                         return; // no need to run
                     }
 
+#if !MONO
                     // ETW event for ParallelFor Worker Fork
                     if (TplEtwProvider.Log.IsEnabled())
                     {
                         TplEtwProvider.Log.ParallelFork((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                          forkJoinContextID);
                     }
+#endif
 
                     TLocal localValue = default(TLocal);
                     bool bLocalValueInitialized = false; // Tracks whether localInit ran without exceptions, so that we can skip localFinally if it wasn't
@@ -1563,12 +1579,14 @@ namespace System.Threading.Tasks
                             localFinally(localValue);
                         }
 
+#if !MONO
                         // ETW event for ParallelFor Worker Join
                         if (TplEtwProvider.Log.IsEnabled())
                         {
                             TplEtwProvider.Log.ParallelJoin((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                              forkJoinContextID);
                         }
+#endif
                     }
                 },
                 creationOptions, internalOptions);
@@ -1619,6 +1637,7 @@ namespace System.Threading.Tasks
 
                 if ((rootTask != null) && rootTask.IsCompleted) rootTask.Dispose();
 
+#if !MONO
                 // ETW event for Parallel For End
                 if (TplEtwProvider.Log.IsEnabled())
                 {
@@ -1635,6 +1654,7 @@ namespace System.Threading.Tasks
                     TplEtwProvider.Log.ParallelLoopEnd((callerTask != null ? callerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (callerTask != null ? callerTask.Id : 0),
                                                          forkJoinContextID, nTotalIterations);
                 }
+#endif
             }
 
             return result;
@@ -3220,6 +3240,7 @@ namespace System.Threading.Tasks
                 throw new OperationCanceledException(parallelOptions.CancellationToken);
             }
 
+#if !MONO
             // ETW event for Parallel For begin
             int forkJoinContextID = 0;
             Task callerTask = null;
@@ -3231,6 +3252,7 @@ namespace System.Threading.Tasks
                                                      forkJoinContextID, TplEtwProvider.ForkJoinOperationType.ParallelForEach,
                                                      0, 0);
             }
+#endif            
 
             // For all loops we need a shared flag even though we don't have a body with state, 
             // because the shared flag contains the exceptional bool, which triggers other workers 
@@ -3285,12 +3307,14 @@ namespace System.Threading.Tasks
             {
                 Task currentWorkerTask = Task.InternalCurrent;
 
+#if !MONO
                 // ETW event for ParallelForEach Worker Fork                
                 if (TplEtwProvider.Log.IsEnabled())
                 {
                     TplEtwProvider.Log.ParallelFork((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                     forkJoinContextID);
                 }
+#endif
 
                 TLocal localValue = default(TLocal);
                 bool bLocalValueInitialized = false; // Tracks whether localInit ran without exceptions, so that we can skip localFinally if it wasn't
@@ -3448,12 +3472,14 @@ namespace System.Threading.Tasks
                         myPartitionToDispose.Dispose();
                     }
 
+#if !MONO
                     // ETW event for ParallelFor Worker Join
                     if (TplEtwProvider.Log.IsEnabled())
                     {
                         TplEtwProvider.Log.ParallelJoin((currentWorkerTask != null ? currentWorkerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (currentWorkerTask != null ? currentWorkerTask.Id : 0),
                                                          forkJoinContextID);
                     }
+#endif
                 }
             };
 
@@ -3530,12 +3556,14 @@ namespace System.Threading.Tasks
                     d.Dispose();
                 }
 
+#if !MONO
                 // ETW event for Parallel For End
                 if (TplEtwProvider.Log.IsEnabled())
                 {
                     TplEtwProvider.Log.ParallelLoopEnd((callerTask != null ? callerTask.m_taskScheduler.Id : TaskScheduler.Current.Id), (callerTask != null ? callerTask.Id : 0),
                                                          forkJoinContextID, 0);
                 }
+#endif
             }
 
             return result;

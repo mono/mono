@@ -7,6 +7,10 @@
 // <OWNER>AlfreMen</OWNER>
 //
 
+#if MONO
+#undef FEATURE_COMINTEROP
+#endif
+
 using System;
 using System.Security;
 using System.Diagnostics;
@@ -89,10 +93,12 @@ namespace System.Threading.Tasks
     {
         static internal void EnableToETW(bool enabled) 
         { 
+#if !MONO
             if (enabled)
                f_LoggingOn |= Loggers.ETW;
             else 
                f_LoggingOn &= ~Loggers.ETW;
+#endif
         }
 
         [FriendAccessAllowed]

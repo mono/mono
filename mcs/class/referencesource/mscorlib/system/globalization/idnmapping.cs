@@ -164,6 +164,9 @@ namespace System.Globalization
         [System.Security.SecuritySafeCritical]
         private String GetAsciiUsingOS(String unicode)
         {
+#if MONO
+            throw new NotSupportedException ();
+#else
             if (unicode.Length == 0)
             {
                 throw new ArgumentException(Environment.GetResourceString(
@@ -208,6 +211,7 @@ namespace System.Globalization
             }
             
             return new String(output, 0, length);
+#endif
         }
 
         // Gets Unicode version of the string.  Normalized and limited to IDNA characters.
@@ -267,6 +271,9 @@ namespace System.Globalization
         [System.Security.SecuritySafeCritical]
         private string GetUnicodeUsingOS(string ascii)
         {
+#if MONO
+            throw new NotSupportedException ();
+#else
             uint flags =  (uint)((AllowUnassigned ? IDN_ALLOW_UNASSIGNED : 0) | (UseStd3AsciiRules ? IDN_USE_STD3_ASCII_RULES : 0));
             int  length = IdnToUnicode(flags, ascii, ascii.Length, null, 0);
             int lastError; 
@@ -297,6 +304,7 @@ namespace System.Globalization
             }
             
             return new String(output, 0, length);
+#endif
         }
 
         public override bool Equals(Object obj)
@@ -1118,8 +1126,7 @@ namespace System.Globalization
            HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
            MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
         */
-
-
+#if !MONO
         private const int IDN_ALLOW_UNASSIGNED      = 0x1;
         private const int IDN_USE_STD3_ASCII_RULES  = 0x2;
         
@@ -1137,6 +1144,7 @@ namespace System.Globalization
                                         String  lpUnicodeCharStr, 
                                         int     cchUnicodeChar, 
                                         [System.Runtime.InteropServices.OutAttribute()]
+
                                         char    [] lpASCIICharStr, 
                                         int     cchASCIIChar);
 
@@ -1151,8 +1159,10 @@ namespace System.Globalization
                                         string  lpASCIICharStr, 
                                         int     cchASCIIChar, 
                                         [System.Runtime.InteropServices.OutAttribute()]
+
                                         char    []  lpUnicodeCharStr,
                                         int     cchUnicodeChar);
+#endif
     }
 }
 

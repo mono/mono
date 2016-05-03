@@ -421,12 +421,14 @@ namespace System.Threading.Tasks
             // Otherwise, Post the action back to the SynchronizationContext.
             else
             {
+#if !MONO                
                 TplEtwProvider etwLog = TplEtwProvider.Log;
                 if (etwLog.IsEnabled())
                 {
                     m_continuationId = Task.NewId();
                     etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
                 }
+#endif
                 RunCallback(GetPostActionCallback(), this, ref Task.t_currentTask);
             }
             // Any exceptions will be handled by RunCallback.
@@ -438,18 +440,19 @@ namespace System.Threading.Tasks
         private static void PostAction(object state)
         {
             var c = (SynchronizationContextAwaitTaskContinuation)state;
-
+#if !MONO
             TplEtwProvider etwLog = TplEtwProvider.Log;
             if (etwLog.TasksSetActivityIds && c.m_continuationId != 0)
             {
                 c.m_syncContext.Post(s_postCallback, GetActionLogDelegate(c.m_continuationId, c.m_action));
             }
             else
+#endif            
             {
                 c.m_syncContext.Post(s_postCallback, c.m_action); // s_postCallback is manually cached, as the compiler won't in a SecurityCritical method
             }
         }
-
+#if !MONO
         private static Action GetActionLogDelegate(int continuationId, Action action)
         {
             return () =>
@@ -461,7 +464,7 @@ namespace System.Threading.Tasks
                     finally { System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId); }
                 };
         }
-
+#endif
         /// <summary>Gets a cached delegate for the PostAction method.</summary>
         /// <returns>
         /// A delegate for PostAction, which expects a SynchronizationContextAwaitTaskContinuation 
@@ -615,13 +618,14 @@ namespace System.Threading.Tasks
             }
             else
             {
+#if !MONO                
                 TplEtwProvider etwLog = TplEtwProvider.Log;
                 if (etwLog.IsEnabled())
                 {
                     m_continuationId = Task.NewId();
                     etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
                 }
-
+#endif
                 // We couldn't inline, so now we need to schedule it
                 ThreadPool.UnsafeQueueCustomWorkItem(this, forceGlobal: false);
            }
@@ -663,6 +667,7 @@ namespace System.Threading.Tasks
         [SecurityCritical]
         void ExecuteWorkItemHelper()
         {
+#if !MONO            
             var etwLog = TplEtwProvider.Log;
             Guid savedActivityId = Guid.Empty;
             if (etwLog.TasksSetActivityIds && m_continuationId != 0)
@@ -670,6 +675,7 @@ namespace System.Threading.Tasks
                 Guid activityId = TplEtwProvider.CreateGuidForTaskID(m_continuationId);
                 System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(activityId, out savedActivityId);
             }
+#endif
             try
             {
                 // We're not inside of a task, so t_currentTask doesn't need to be specially maintained.
@@ -692,10 +698,12 @@ namespace System.Threading.Tasks
             }
             finally
             {
+#if !MONO                
                 if (etwLog.TasksSetActivityIds && m_continuationId != 0)
                 {
                     System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId);
                 }
+#endif
             }
         }
 
@@ -703,7 +711,10 @@ namespace System.Threading.Tasks
         void IThreadPoolWorkItem.ExecuteWorkItem()
         {
             // inline the fast path
-            if (m_capturedContext == null && !TplEtwProvider.Log.IsEnabled()
+            if (m_capturedContext == null
+#if !MONO                
+             && !TplEtwProvider.Log.IsEnabled()
+#endif             
             )
             {
                 m_action();
@@ -825,14 +836,14 @@ namespace System.Threading.Tasks
         internal static void UnsafeScheduleAction(Action action, Task task)
         {
             AwaitTaskContinuation atc = new AwaitTaskContinuation(action, flowExecutionContext: false);
-
+#if !MONO
             var etwLog = TplEtwProvider.Log;
             if (etwLog.IsEnabled() && task != null)
             {
                 atc.m_continuationId = Task.NewId();
                 etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, atc.m_continuationId);
             }
-
+#endif
             ThreadPool.UnsafeQueueCustomWorkItem(atc, forceGlobal: false);
         }
 

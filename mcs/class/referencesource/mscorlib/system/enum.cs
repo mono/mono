@@ -31,6 +31,9 @@ namespace System
 
             if (entry == null || (getNames && entry.Names == null))
             {
+                ulong[] values = null;
+                String[] names = null;
+
 #if MONO
                 if (!GetEnumValuesAndNames (enumType, out values, out names))
                     Array.Sort (values, names, System.Collections.Generic.Comparer<ulong>.Default);

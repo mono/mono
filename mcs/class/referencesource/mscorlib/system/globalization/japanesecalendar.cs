@@ -167,7 +167,7 @@ namespace System.Globalization {
             // Look in the registry key and see if we can find any ranges
             int iFoundEras = 0;
             EraInfo[] registryEraRanges = null;
-            
+#if !MONO            
             try
             {
                 // Need to access registry
@@ -249,7 +249,7 @@ namespace System.Globalization {
                     registryEraRanges[i].maxEraYear = registryEraRanges[i-1].yearOffset + 1 - registryEraRanges[i].yearOffset;
                 }
             }
-
+#endif
             // Return our ranges
             return registryEraRanges;
         }

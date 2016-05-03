@@ -181,9 +181,7 @@ namespace System.Threading
 #endif
 #endif
 
-
 #if FEATURE_CORECLR
-
         [ThreadStatic]
         private static SynchronizationContext s_threadStaticContext;
 
@@ -194,6 +192,12 @@ namespace System.Threading
 		// to hold whatever context was last set on any thread.
 		//
         private static SynchronizationContext s_appDomainStaticContext;
+
+        [System.Security.SecurityCritical]
+        public static void SetSynchronizationContext(SynchronizationContext syncContext)
+        {
+            s_threadStaticContext = syncContext;
+        }
 
         [System.Security.SecurityCritical]
         public static void SetThreadStaticContext(SynchronizationContext syncContext)

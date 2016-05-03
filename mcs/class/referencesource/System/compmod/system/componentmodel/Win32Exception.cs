@@ -94,6 +94,7 @@ namespace System.ComponentModel {
 #if !MONO
         private static bool TryGetErrorMessage(int error, StringBuilder sb, out string errorMsg)
         {
+            errorMsg = "";
             int result = SafeNativeMethods.FormatMessage(
                                         SafeNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS |
                                         SafeNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM |

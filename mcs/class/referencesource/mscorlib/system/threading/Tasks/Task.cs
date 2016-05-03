@@ -974,6 +974,7 @@ namespace System.Threading.Tasks
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool FireTaskScheduledIfNeeded(TaskScheduler ts)
         {
+#if !MONO            
             var etwLog = TplEtwProvider.Log;
             if (etwLog.IsEnabled() && (m_stateFlags & Task.TASK_STATE_TASKSCHEDULED_WAS_FIRED) == 0)
             {
@@ -987,6 +988,7 @@ namespace System.Threading.Tasks
                 return true;
             }
             else
+#endif            
                 return false;
         }
 
@@ -1307,7 +1309,9 @@ namespace System.Threading.Tasks
                 newId = Interlocked.Increment(ref s_taskIdCounter);
             }
             while (newId == 0);
+#if !MONO            
             TplEtwProvider.Log.NewID(newId);
+#endif
             return newId;
         }
 
@@ -2773,7 +2777,7 @@ namespace System.Threading.Tasks
         {
             // Remember the current task so we can restore it after running, and then
             Task previousTask = currentTaskSlot;
-
+#if !MONO
             // ETW event for Task Started
             var etwLog = TplEtwProvider.Log;
             Guid savedActivityID = new Guid();
@@ -2791,7 +2795,7 @@ namespace System.Threading.Tasks
 
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceSynchronousWorkStart(CausalityTraceLevel.Required, this.Id, CausalitySynchronousWork.Execution);
-
+#endif
 
             try
             {
@@ -2832,7 +2836,7 @@ namespace System.Threading.Tasks
             finally
             {
                 currentTaskSlot = previousTask;
-                
+#if !MONO                
                 // ETW event for Task Completed
                 if (etwIsEnabled)
                 {
@@ -2845,6 +2849,7 @@ namespace System.Threading.Tasks
                     if (etwLog.TasksSetActivityIds)
                         EventSource.SetCurrentThreadActivityId(savedActivityID);
                 }
+#endif
             }
         }
 
@@ -3223,6 +3228,7 @@ namespace System.Threading.Tasks
         [MethodImpl(MethodImplOptions.NoOptimization)]  // this is needed for the parallel debugger
         internal bool InternalWait(int millisecondsTimeout, CancellationToken cancellationToken)
         {
+#if !MONO            
             // ETW event for Task Wait Begin
             var etwLog = TplEtwProvider.Log;
             bool etwIsEnabled = etwLog.IsEnabled();
@@ -3233,7 +3239,7 @@ namespace System.Threading.Tasks
                     (currentTask != null ? currentTask.m_taskScheduler.Id : TaskScheduler.Default.Id), (currentTask != null ? currentTask.Id : 0),
                     this.Id, TplEtwProvider.TaskWaitBehavior.Synchronous, 0, System.Threading.Thread.GetDomainID());
             }
-
+#endif
             bool returnValue = IsCompleted;
 
             // If the event hasn't already been set, we will wait.
@@ -3261,7 +3267,7 @@ namespace System.Threading.Tasks
             }
 
             Contract.Assert(IsCompleted || millisecondsTimeout != Timeout.Infinite);
-
+#if !MONO
             // ETW event for Task Wait End
             if (etwIsEnabled)
             {
@@ -3277,7 +3283,7 @@ namespace System.Threading.Tasks
                 // logically the continuation is empty so we immediately fire
                 etwLog.TaskWaitContinuationComplete(this.Id);
             }
-
+#endif
             return returnValue;
         }
 
@@ -3595,7 +3601,9 @@ namespace System.Threading.Tasks
             // Atomically store the fact that this task is completing.  From this point on, the adding of continuations will
             // result in the continuations being run/launched directly rather than being added to the continuation list.
             object continuationObject = Interlocked.Exchange(ref m_continuationObject, s_taskCompletionSentinel);
+#if !MONO            
             TplEtwProvider.Log.RunningContinuation(Id, continuationObject);
+#endif
 
             // If continuationObject == null, then we don't have any continuations to process
             if (continuationObject != null)
@@ -3661,7 +3669,9 @@ namespace System.Threading.Tasks
                     var tc = continuations[i] as StandardTaskContinuation;
                     if (tc != null && (tc.m_options & TaskContinuationOptions.ExecuteSynchronously) == 0)
                     {
+#if !MONO                        
                         TplEtwProvider.Log.RunningContinuationList(Id, i, tc);
+#endif
                         continuations[i] = null; // so that we can skip this later
                         tc.Run(this, bCanInlineContinuations);
                     }
@@ -3675,7 +3685,9 @@ namespace System.Threading.Tasks
                     object currentContinuation = continuations[i];
                     if (currentContinuation == null) continue;
                     continuations[i] = null; // to enable free'ing up memory earlier
+#if !MONO                    
                     TplEtwProvider.Log.RunningContinuationList(Id, i, currentContinuation);
+#endif
 
                     // If the continuation is an Action delegate, it came from an await continuation,
                     // and we should use AwaitTaskContinuation to run it.
@@ -4670,6 +4682,7 @@ namespace System.Threading.Tasks
                 //    Since there may be no correlation between the current activity and the TCS's task
                 //    activity, we ensure we at least create a correlation from the current activity to
                 //    the continuation that runs when the promise completes.
+#if !MONO                
                 if ((this.Options & (TaskCreationOptions)InternalTaskOptions.PromiseTask) != 0 &&
                     !(this is ITaskCompletionAction))
                 {
@@ -4679,7 +4692,7 @@ namespace System.Threading.Tasks
                         etwLog.AwaitTaskContinuationScheduled(TaskScheduler.Current.Id, Task.CurrentId ?? 0, continuationTask.Id);
                     }
                 }
-
+#endif
                 // Attempt to enqueue the continuation
                 bool continuationQueued = AddTaskContinuation(continuation, addBeforeOthers: false);
 
@@ -5539,13 +5552,6 @@ namespace System.Threading.Tasks
             return new Task(true, TaskCreationOptions.None, cancellationToken);
         }
         
-        #if NET_4_6
-        public static Task FromCanceled(CancellationToken cancellationToken)
-        {
-        	return FromCancellation(cancellationToken);
-        }
-        #endif
-
         /// <summary>Creates a <see cref="Task"/> that's completed due to cancellation with the specified token.</summary>
         /// <param name="cancellationToken">The token with which to complete the task.</param>
         /// <returns>The canceled task.</returns>
@@ -5565,13 +5571,6 @@ namespace System.Threading.Tasks
             Contract.EndContractBlock();
             return new Task<TResult>(true, default(TResult), TaskCreationOptions.None, cancellationToken);
         }
-        
-        #if NET_4_6
-        public static Task<TResult> FromCanceled<TResult>(CancellationToken cancellationToken)
-        {
-        	return FromCancellation<TResult>(cancellationToken);
-        }
-        #endif
 
         /// <summary>Creates a <see cref="Task{TResult}"/> that's completed due to cancellation with the specified token.</summary>
         /// <typeparam name="TResult">The type of the result returned by the task.</typeparam>

@@ -776,7 +776,11 @@ namespace System.Threading {
 #endif
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#else
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [HostProtection(Synchronization = true, ExternalThreading = true),
          ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
@@ -1781,8 +1785,7 @@ namespace System.Threading {
                 return s_LocalDataStoreMgr;
             }
         }
-
-#if !FEATURE_CORECLR && !MOBILE
+#if !MOBILE
         void _Thread.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -1803,8 +1806,8 @@ namespace System.Threading {
             throw new NotImplementedException();
         }
 #endif
-
 #if !MONO
+
         // Helper function to set the AbortReason for a thread abort.
         //  Checks that they're not alredy set, and then atomically updates
         //  the reason info (object + ADID).
