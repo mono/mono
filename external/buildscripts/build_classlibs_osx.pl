@@ -65,14 +65,31 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
-	$ENV{'CC'} = "clang";
-	$ENV{'CXX'} = "clang++";
+	my $unityPath = "$root/../../unity/build";
+	my $sdkPath = "$xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+	if ($ENV{'UNITY_THISISABUILDMACHINE'})
+	{
+		# Set up clang toolchain
+		$sdkPath = "$unityPath/External/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
+		if (! -d $sdkPath)
+		{
+			print("Unzipping mac build toolchain\n");
+			system('unzip', '-qd', "$unityPath/External/MacBuildEnvironment/builds", "$unityPath/External/MacBuildEnvironment/builds.zip");
+		}
+		$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
+		$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
+	}
+	else
+	{
+		$ENV{'CC'} = "clang";
+		$ENV{'CXX'} = "clang++";
+	}
 	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
 	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
 	if ($^O eq 'darwin')
 	{
-		$ENV{'MACSDKOPTIONS'} = "$ENV{CFLAGS} -mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+		$ENV{'MACSDKOPTIONS'} = "$ENV{CFLAGS} -mmacosx-version-min=$macversion -isysroot $sdkPath";
 	}
 
 	if ($cleanbuild)
@@ -164,7 +181,6 @@ if (not $skipbuild)
 
 	print ">>> LIBTOOLIZE before Build = $ENV{LIBTOOLIZE}\n";
 	print ">>> LIBTOOL before Build = $ENV{LIBTOOL}\n";
-
 
 	chdir("$root") eq 1 or die ("failed to chdir 2");
 	if ($cleanbuild)
