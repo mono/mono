@@ -14,8 +14,8 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
 TXT_RESOURCE_STRINGS = \
-	../../../external/referencesource/System.Xml/System.Xml.txt \
-	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
+	../referencesource/System.Xml/System.Xml.txt \
+	../referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
 LIB_MCS_FLAGS = -nowarn:219,414,649,1717 -unsafe -d:ASYNC
 
