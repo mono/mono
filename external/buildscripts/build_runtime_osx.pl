@@ -70,7 +70,7 @@ if ($externalBuildDeps ne "")
 	my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
 	my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
 
-	my $builtToolsDir = "$externalBuildDeps/built-tools"
+	my $builtToolsDir = "$externalBuildDeps/built-tools";
 
 	$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
