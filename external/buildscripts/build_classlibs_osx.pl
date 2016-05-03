@@ -65,6 +65,8 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
+	$ENV{'CC'} = "clang";
+	$ENV{'CXX'} = "clang++";
 	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
 	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
