@@ -90,6 +90,9 @@ if (not $skipbuild)
 		my $autoconfDir = "$externalBuildDeps/autoconf-$autoconfVersion";
 		my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
 		my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
+		my $builtToolsDir = "$externalBuildDeps/built-tools"
+
+		$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
 		if (!(-d "$autoconfDir"))
 		{
@@ -97,7 +100,7 @@ if (not $skipbuild)
 			system("tar xzf autoconf-$autoconfVersion.tar.gz") eq 0  or die ("failed to extract autoconf\n");
 
 			chdir("$autoconfDir") eq 1 or die ("failed to chdir to autoconf directory\n");
-			system("./configure --prefix=$autoconfDir/tmp") eq 0 or die ("failed to configure autoconf\n");
+			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure autoconf\n");
 			system("make") eq 0 or die ("failed to make autoconf\n");
 			system("make install") eq 0 or die ("failed to make install autoconf\n");
 
@@ -106,15 +109,13 @@ if (not $skipbuild)
 			chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 		}
 
-		$ENV{PATH} = "$autoconfDir/tmp/bin:$ENV{PATH}";
-
 		if (!(-d "$automakeDir"))
 		{
 			chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf automake-$automakeVersion.tar.gz") eq 0  or die ("failed to extract automake\n");
 
 			chdir("$automakeDir") eq 1 or die ("failed to chdir to automake directory\n");
-			system("./configure --prefix=$automakeDir/tmp") eq 0 or die ("failed to configure automake\n");
+			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure automake\n");
 			system("make") eq 0 or die ("failed to make automake\n");
 			system("make install") eq 0 or die ("failed to make install automake\n");
 
@@ -130,7 +131,7 @@ if (not $skipbuild)
 			system("tar xzf libtool-$libtoolVersion.tar.gz") eq 0  or die ("failed to extract libtool\n");
 		
 			chdir("$libtoolDir") eq 1 or die ("failed to chdir to libtool directory\n");
-			system("./configure --prefix=$libtoolDir/tmp") eq 0 or die ("failed to configure libtool\n");
+			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure libtool\n");
 			system("make") eq 0 or die ("failed to make libtool\n");
 			system("make install") eq 0 or die ("failed to make install libtool\n");
 
@@ -139,10 +140,8 @@ if (not $skipbuild)
 			chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 		}
 
-		$ENV{PATH} = "$automakeDir/tmp/bin:$ENV{PATH}";
-		$ENV{PATH} = "$libtoolDir/tmp/bin:$ENV{PATH}";
-		$ENV{'LIBTOOLIZE'} = "$libtoolDir/tmp/bin/libtoolize";
-		$ENV{'LIBTOOL'} = "$libtoolDir/tmp/bin/libtool";
+		$ENV{'LIBTOOLIZE'} = "$builtToolsDir/bin/libtoolize";
+		$ENV{'LIBTOOL'} = "$builtToolsDir/bin/libtool";
 	}
 
 	print ">>> Checking on some tools...\n";
@@ -153,16 +152,16 @@ if (not $skipbuild)
 	system("automake", "--version");
 
 	system("which", "libtool");
-	system("glibtool", "--version");
+	system("libtool", "--version");
 
 	system("which", "libtoolize");
-	system("glibtoolize", "--version");
+	system("libtoolize", "--version");
 
 	system("which", "autoreconf");
 	print("\n");
 
 	print ">>> LIBTOOLIZE before Build = $ENV{LIBTOOLIZE}\n";
-	print ">>> LIBTOOL before Build = $ENV{LIBTOOLIZE}\n";
+	print ">>> LIBTOOL before Build = $ENV{LIBTOOL}\n";
 
 
 	chdir("$root") eq 1 or die ("failed to chdir 2");
