@@ -456,12 +456,10 @@ sgen_unified_suspend_stop_world (void)
 
 			if (!state->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !state->unwind_data [MONO_UNWIND_DATA_LMF]) {
 				/* thread is starting or detaching, nothing to scan here */
-				info->client_info.stopped_domain = NULL;
 				info->client_info.stopped_ip = NULL;
 				info->client_info.stack_start = NULL;
 			} else {
 				/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-				info->client_info.stopped_domain = (MonoDomain*) mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
 				info->client_info.stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
 				info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
 

@@ -727,18 +727,6 @@ mono_gc_ephemeron_array_add (MonoObject *obj)
  * Appdomain handling
  */
 
-void
-mono_gc_set_current_thread_appdomain (MonoDomain *domain)
-{
-	SgenThreadInfo *info = mono_thread_info_current ();
-
-	/* Could be called from sgen_thread_unregister () with a NULL info */
-	if (domain) {
-		g_assert (info);
-		info->client_info.stopped_domain = domain;
-	}
-}
-
 static gboolean
 need_remove_object_for_domain (GCObject *start, MonoDomain *domain)
 {
@@ -2160,7 +2148,6 @@ sgen_client_thread_register (SgenThreadInfo* info, void *stack_bottom_fallback)
 
 	info->client_info.skip = 0;
 	info->client_info.stopped_ip = NULL;
-	info->client_info.stopped_domain = NULL;
 
 	info->client_info.stack_start = NULL;
 
