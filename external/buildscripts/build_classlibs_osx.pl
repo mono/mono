@@ -16,7 +16,7 @@ my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $macversion = '10.5';
-my $sdkversion = '10.10';
+my $sdkversion = '10.11';
 my $externalBuildDeps = "$root/external/mono-build-deps";
 
 my $dependencyBranchToUse = "unity3.0";
