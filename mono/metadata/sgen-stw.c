@@ -24,6 +24,7 @@
 #include "sgen/sgen-client.h"
 #include "metadata/sgen-bridge-internals.h"
 #include "metadata/gc-internals.h"
+#include "utils/mono-threads.h"
 
 #define TV_DECLARE SGEN_TV_DECLARE
 #define TV_GETTIME SGEN_TV_GETTIME
@@ -59,6 +60,7 @@ update_current_thread_stack (void *start)
 	SgenThreadInfo *info = mono_thread_info_current ();
 	
 	info->client_info.stack_start = align_pointer (&stack_guard);
+	g_assert (info->client_info.stack_start);
 	g_assert (info->client_info.stack_start >= info->client_info.stack_start_limit && info->client_info.stack_start < info->client_info.stack_end);
 #ifdef USE_MONO_CTX
 	MONO_CONTEXT_GET_CURRENT (cur_thread_ctx);
@@ -71,106 +73,6 @@ update_current_thread_stack (void *start)
 	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
 		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->client_info.runtime_data, NULL, NULL);
 #endif
-}
-
-static gboolean
-is_ip_in_managed_allocator (MonoDomain *domain, gpointer ip)
-{
-	MonoJitInfo *ji;
-
-	if (!mono_thread_internal_current ())
-		/* Happens during thread attach */
-		return FALSE;
-
-	if (!ip || !domain)
-		return FALSE;
-	if (!sgen_has_critical_method ())
-		return FALSE;
-
-	/*
-	 * mono_jit_info_table_find is not async safe since it calls into the AOT runtime to load information for
-	 * missing methods (#13951). To work around this, we disable the AOT fallback. For this to work, the JIT needs
-	 * to register the jit info for all GC critical methods after they are JITted/loaded.
-	 */
-	ji = mono_jit_info_table_find_internal (domain, (char *)ip, FALSE, FALSE);
-	if (!ji)
-		return FALSE;
-
-	return sgen_is_critical_method (mono_jit_info_get_method (ji));
-}
-
-static int
-restart_threads_until_none_in_managed_allocator (void)
-{
-	int num_threads_died = 0;
-	int sleep_duration = -1;
-
-	for (;;) {
-		int restart_count = 0, restarted_count = 0;
-		/* restart all threads that stopped in the
-		   allocator */
-		FOREACH_THREAD (info) {
-			gboolean result;
-			if (info->client_info.skip || info->client_info.gc_disabled || info->client_info.suspend_done)
-				continue;
-			if (mono_thread_info_is_live (info) &&
-					(!info->client_info.stack_start || info->client_info.in_critical_region || info->client_info.info.inside_critical_region ||
-					is_ip_in_managed_allocator (info->client_info.stopped_domain, info->client_info.stopped_ip))) {
-				binary_protocol_thread_restart ((gpointer)mono_thread_info_get_tid (info));
-				SGEN_LOG (3, "thread %p resumed.", (void*) (size_t) info->client_info.info.native_handle);
-				result = sgen_resume_thread (info);
-				if (result) {
-					++restart_count;
-				} else {
-					info->client_info.skip = 1;
-				}
-			} else {
-				/* we set the stopped_ip to
-				   NULL for threads which
-				   we're not restarting so
-				   that we can easily identify
-				   the others */
-				info->client_info.stopped_ip = NULL;
-				info->client_info.stopped_domain = NULL;
-				info->client_info.suspend_done = TRUE;
-			}
-		} FOREACH_THREAD_END
-		/* if no threads were restarted, we're done */
-		if (restart_count == 0)
-			break;
-
-		/* wait for the threads to signal their restart */
-		sgen_wait_for_suspend_ack (restart_count);
-
-		if (sleep_duration < 0) {
-			mono_thread_info_yield ();
-			sleep_duration = 0;
-		} else {
-			g_usleep (sleep_duration);
-			sleep_duration += 10;
-		}
-
-		/* stop them again */
-		FOREACH_THREAD (info) {
-			gboolean result;
-			if (info->client_info.skip || info->client_info.stopped_ip == NULL)
-				continue;
-			result = sgen_suspend_thread (info);
-
-			if (result) {
-				++restarted_count;
-			} else {
-				info->client_info.skip = 1;
-			}
-		} FOREACH_THREAD_END
-		/* some threads might have died */
-		num_threads_died += restart_count - restarted_count;
-		/* wait for the threads to signal their suspension
-		   again */
-		sgen_wait_for_suspend_ack (restarted_count);
-	}
-
-	return num_threads_died;
 }
 
 static void
@@ -215,15 +117,7 @@ sgen_client_stop_world (int generation)
 	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer) (gsize) mono_native_thread_id_get ());
 	TV_GETTIME (stop_world_time);
 
-	if (mono_thread_info_unified_management_enabled ()) {
-		sgen_unified_suspend_stop_world ();
-	} else {
-		int count, dead;
-		count = sgen_thread_handshake (TRUE);
-		dead = restart_threads_until_none_in_managed_allocator ();
-		if (count < dead)
-			g_error ("More threads have died (%d) that been initialy suspended %d", dead, count);
-	}
+	sgen_unified_suspend_stop_world ();
 
 	SGEN_LOG (3, "world stopped");
 
@@ -260,10 +154,7 @@ sgen_client_restart_world (int generation, GGTimingInfo *timing)
 
 	TV_GETTIME (start_handshake);
 
-	if (mono_thread_info_unified_management_enabled ())
-		sgen_unified_suspend_restart_world ();
-	else
-		sgen_thread_handshake (FALSE);
+	sgen_unified_suspend_restart_world ();
 
 	TV_GETTIME (end_sw);
 	time_restart_world += TV_ELAPSED (start_handshake, end_sw);
@@ -303,7 +194,7 @@ mono_sgen_init_stw (void)
 /* Unified suspend code */
 
 static gboolean
-sgen_is_thread_in_current_stw (SgenThreadInfo *info)
+sgen_is_thread_in_current_stw (SgenThreadInfo *info, int *reason)
 {
 	/*
 	A thread explicitly asked to be skiped because it holds no managed state.
@@ -311,6 +202,8 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 	FIXME Use an atomic variable for this to avoid everyone taking the GC LOCK.
 	*/
 	if (info->client_info.gc_disabled) {
+		if (reason)
+			*reason = 1;
 		return FALSE;
 	}
 
@@ -319,6 +212,8 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 	FIXME: can't we merge this with thread_is_dying?
 	*/
 	if (info->client_info.skip) {
+		if (reason)
+			*reason = 2;
 		return FALSE;
 	}
 
@@ -326,6 +221,8 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 	Suspending the current thread will deadlock us, bad idea.
 	*/
 	if (info == mono_thread_info_current ()) {
+		if (reason)
+			*reason = 3;
 		return FALSE;
 	}
 
@@ -334,6 +231,8 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 	FIXME Use some state bit in SgenThreadInfo for this.
 	*/
 	if (sgen_thread_pool_is_thread_pool_thread (mono_thread_info_get_tid (info))) {
+		if (reason)
+			*reason = 4;
 		return FALSE;
 	}
 
@@ -342,6 +241,8 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 	FIXME: can't we merge this with skip
 	*/
 	if (!mono_thread_info_is_live (info)) {
+		if (reason)
+			*reason = 5;
 		return FALSE;
 	}
 
@@ -351,22 +252,32 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 static void
 update_sgen_info (SgenThreadInfo *info)
 {
-	char *stack_start;
-
-	/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-	info->client_info.stopped_domain = (MonoDomain *)mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
-	info->client_info.stopped_ip = (gpointer) MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx);
-	stack_start = (char*)MONO_CONTEXT_GET_SP (&mono_thread_info_get_suspend_state (info)->ctx) - REDZONE_SIZE;
-
-	/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
-	if (stack_start < (char*)info->client_info.stack_start_limit || stack_start >= (char*)info->client_info.stack_end)
-		g_error ("BAD STACK");
-
-	info->client_info.stack_start = stack_start;
-#ifdef USE_MONO_CTX
-	info->client_info.ctx = mono_thread_info_get_suspend_state (info)->ctx;
-#else
+#ifndef USE_MONO_CTX
 	g_assert_not_reached ();
+#else
+	MonoThreadUnwindState *state = mono_thread_info_get_suspend_state (info);
+
+	info->client_info.ctx = state->ctx;
+
+	if (!state->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !state->unwind_data [MONO_UNWIND_DATA_LMF]) {
+		/* thread is starting or detaching, nothing to scan here */
+		info->client_info.stopped_domain = NULL;
+		info->client_info.stopped_ip = NULL;
+		info->client_info.stack_start = NULL;
+	} else {
+		/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
+		info->client_info.stopped_domain = (MonoDomain*) mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
+		info->client_info.stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
+		info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
+
+		/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
+		if (!info->client_info.stack_start
+			 || info->client_info.stack_start < info->client_info.stack_start_limit
+			 || info->client_info.stack_start >= info->client_info.stack_end) {
+			g_error ("BAD STACK: stack_start = %p, stack_start_limit = %p, stack_end = %p",
+				info->client_info.stack_start, info->client_info.stack_start_limit, info->client_info.stack_end);
+		}
+	}
 #endif
 }
 
@@ -380,13 +291,14 @@ sgen_unified_suspend_stop_world (void)
 	THREADS_STW_DEBUG ("[GC-STW-BEGIN] *** BEGIN SUSPEND *** \n");
 
 	FOREACH_THREAD (info) {
+		int reason;
 		info->client_info.skip = FALSE;
 		info->client_info.suspend_done = FALSE;
-		if (sgen_is_thread_in_current_stw (info)) {
+		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			info->client_info.skip = !mono_thread_info_begin_suspend (info);
 			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND] SUSPEND thread %p skip %d\n", mono_thread_info_get_tid (info), info->client_info.skip);
 		} else {
-			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND] IGNORE thread %p skip %d\n", mono_thread_info_get_tid (info), info->client_info.skip);
+			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND] IGNORE thread %p skip %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.skip, reason);
 		}
 	} FOREACH_THREAD_END
 
@@ -396,8 +308,9 @@ sgen_unified_suspend_stop_world (void)
 	for (;;) {
 		restart_counter = 0;
 		FOREACH_THREAD (info) {
-			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE thread %p not been processed done %d current %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info));
+			int reason = 0;
+			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE RESUME thread %p not been processed done %d current %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info, NULL), reason);
 				continue;
 			}
 
@@ -407,12 +320,11 @@ sgen_unified_suspend_stop_world (void)
 			- We haven't accepted the previous suspend as good.
 			- We haven't gave up on it for this STW (it's either bad or asked not to)
 			*/
-			if (!mono_thread_info_check_suspend_result (info)) {
-				THREADS_STW_DEBUG ("[GC-STW-RESTART] SKIP thread %p failed to finish to suspend\n", mono_thread_info_get_tid (info));
-				info->client_info.skip = TRUE;
-			} else if (mono_thread_info_in_critical_location (info)) {
+			if (mono_thread_info_in_critical_location (info)) {
 				gboolean res;
-				g_assert (mono_thread_info_suspend_count (info) == 1);
+				gint suspend_count = mono_thread_info_suspend_count (info);
+				if (!(suspend_count == 1))
+					g_error ("[%p] suspend_count = %d, but should be 1", mono_thread_info_get_tid (info), suspend_count);
 				res = mono_thread_info_begin_resume (info);
 				THREADS_STW_DEBUG ("[GC-STW-RESTART] RESTART thread %p skip %d\n", mono_thread_info_get_tid (info), res);
 				if (res)
@@ -431,11 +343,7 @@ sgen_unified_suspend_stop_world (void)
 		mono_threads_wait_pending_operations ();
 
 		if (sleep_duration < 0) {
-#ifdef HOST_WIN32
-			SwitchToThread ();
-#else
-			sched_yield ();
-#endif
+			mono_thread_info_yield ();
 			sleep_duration = 0;
 		} else {
 			g_usleep (sleep_duration);
@@ -443,7 +351,13 @@ sgen_unified_suspend_stop_world (void)
 		}
 
 		FOREACH_THREAD (info) {
-			if (sgen_is_thread_in_current_stw (info) && mono_thread_info_is_running (info)) {
+			int reason = 0;
+			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
+				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not been processed done %d current %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info, NULL), reason);
+				continue;
+			}
+
+			if (mono_thread_info_is_running (info)) {
 				gboolean res = mono_thread_info_begin_suspend (info);
 				THREADS_STW_DEBUG ("[GC-STW-RESTART] SUSPEND thread %p skip %d\n", mono_thread_info_get_tid (info), res);
 				if (!res)
@@ -455,13 +369,16 @@ sgen_unified_suspend_stop_world (void)
 	}
 
 	FOREACH_THREAD (info) {
-		if (sgen_is_thread_in_current_stw (info)) {
+		int reason = 0;
+		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended\n", mono_thread_info_get_tid (info));
 			g_assert (info->client_info.suspend_done);
 			update_sgen_info (info);
 		} else {
+			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is NOT suspended, reason %d\n", mono_thread_info_get_tid (info), reason);
 			g_assert (!info->client_info.suspend_done || info == mono_thread_info_current ());
 		}
+		binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), info->client_info.stopped_ip);
 	} FOREACH_THREAD_END
 }
 
@@ -470,12 +387,14 @@ sgen_unified_suspend_restart_world (void)
 {
 	THREADS_STW_DEBUG ("[GC-STW-END] *** BEGIN RESUME ***\n");
 	FOREACH_THREAD (info) {
-		if (sgen_is_thread_in_current_stw (info)) {
+		int reason = 0;
+		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			g_assert (mono_thread_info_begin_resume (info));
 			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] RESUME thread %p\n", mono_thread_info_get_tid (info));
 		} else {
-			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p\n", mono_thread_info_get_tid (info));
+			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p, reason %d\n", mono_thread_info_get_tid (info), reason);
 		}
+		binary_protocol_thread_restart ((gpointer) mono_thread_info_get_tid (info));
 	} FOREACH_THREAD_END
 
 	mono_threads_wait_pending_operations ();

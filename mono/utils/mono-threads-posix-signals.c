@@ -17,8 +17,6 @@
 #include <errno.h>
 #include <signal.h>
 
-#include "mono-threads-posix-signals.h"
-
 #if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 #define DEFAULT_SUSPEND_SIGNAL SIGXFSZ
 #else
@@ -26,25 +24,20 @@
 #endif
 #define DEFAULT_RESTART_SIGNAL SIGXCPU
 
-static int suspend_signal_num;
-static int restart_signal_num;
 static int abort_signal_num;
 
 static sigset_t suspend_signal_mask;
 static sigset_t suspend_ack_signal_mask;
 
-//Can't avoid the circular dep on this. Will be gone pretty soon
-extern int mono_gc_get_suspend_signal (void);
-
 int
-mono_threads_posix_signal_search_alternative (int min_signal)
+mono_threads_posix_signal_search_alternative (void)
 {
 #if !defined (SIGRTMIN)
 	g_error ("signal search only works with RTMIN");
 #else
 	int i;
 	/* we try to avoid SIGRTMIN and any one that might have been set already, see bug #75387 */
-	for (i = MAX (min_signal, SIGRTMIN) + 1; i < SIGRTMAX; ++i) {
+	for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
 		struct sigaction sinfo;
 		sigaction (i, NULL, &sinfo);
 		if (sinfo.sa_handler == SIG_DFL && (void*)sinfo.sa_sigaction == (void*)SIG_DFL) {
@@ -58,7 +51,9 @@ mono_threads_posix_signal_search_alternative (int min_signal)
 static void
 signal_add_handler (int signo, gpointer handler, int flags)
 {
-#if !defined(__native_client__)
+#if defined(__native_client__)
+	g_assert_not_reached ();
+#else
 	/*FIXME, move the code from mini to utils and do the right thing!*/
 	struct sigaction sa;
 	struct sigaction previous_sa;
@@ -75,61 +70,20 @@ signal_add_handler (int signo, gpointer handler, int flags)
 }
 
 static int
-suspend_signal_get (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGUNUSED;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR1
-	return SIGUSR1;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int suspend_signum = -1;
-	if (suspend_signum == -1)
-		suspend_signum = mono_threads_posix_signal_search_alternative (-1);
-	return suspend_signum;
-#endif /* SIGRTMIN */
-}
-
-static int
-restart_signal_get (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGTTOU;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR2
-	return SIGUSR2;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int resume_signum = -1;
-	if (resume_signum == -1)
-		resume_signum = mono_threads_posix_signal_search_alternative (suspend_signal_get () + 1);
-	return resume_signum;
-#endif /* SIGRTMIN */
-}
-
-
-static int
 abort_signal_get (void)
 {
 #if defined(PLATFORM_ANDROID)
 	return SIGTTIN;
-#elif !defined (SIGRTMIN)
-#ifdef SIGTTIN
+#elif defined (SIGRTMIN)
+	static int abort_signum = -1;
+	if (abort_signum == -1)
+		abort_signum = mono_threads_posix_signal_search_alternative ();
+	return abort_signum;
+#elif defined (SIGTTIN)
 	return SIGTTIN;
 #else
 	return -1;
-#endif /* SIGRTMIN */
-#else
-	static int abort_signum = -1;
-	if (abort_signum == -1)
-		abort_signum = mono_threads_posix_signal_search_alternative (restart_signal_get () + 1);
-	return abort_signum;
-#endif /* SIGRTMIN */
+#endif
 }
 
 static void
@@ -142,7 +96,7 @@ restart_signal_handler (int _dummy, siginfo_t *_info, void *context)
 	int old_errno = errno;
 
 	info = mono_thread_info_current ();
-	info->signal = restart_signal_num;
+	info->signal = DEFAULT_RESTART_SIGNAL;
 	errno = old_errno;
 #endif
 }
@@ -160,10 +114,10 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	MonoThreadInfo *current = mono_thread_info_current ();
 	gboolean ret;
 
-	THREADS_SUSPEND_DEBUG ("SIGNAL HANDLER FOR %p [%p]\n", current, (void*)current->native_handle);
+	THREADS_SUSPEND_DEBUG ("SIGNAL HANDLER FOR %p [%p]\n", mono_thread_info_get_tid (current), (void*)current->native_handle);
 	if (current->syscall_break_signal) {
 		current->syscall_break_signal = FALSE;
-		THREADS_SUSPEND_DEBUG ("\tsyscall break for %p\n", current);
+		THREADS_SUSPEND_DEBUG ("\tsyscall break for %p\n", mono_thread_info_get_tid (current));
 		mono_threads_notify_initiator_of_abort (current);
 		goto done;
 	}
@@ -171,25 +125,29 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	/* Have we raced with self suspend? */
 	if (!mono_threads_transition_finish_async_suspend (current)) {
 		current->suspend_can_continue = TRUE;
-		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", current);
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", mono_thread_info_get_tid (current));
 		goto done;
 	}
 
-	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], context);
+	/*
+	 * If the thread is starting, then thread_state_init_from_sigctx returns FALSE,
+	 * as the thread might have been attached without the domain or lmf having been
+	 * initialized yet. Also, from a thread_state_init_from_sigctx point of view,
+	 * there is no difference between STARTING and DETACHING, as both are characterised
+	 * by an unset domain or lmf TLS value.
+	 *
+	 * One way to fix that is to keep the thread suspended (wait for the restart
+	 * signal), and make sgen aware that even if a thread might be suspended, there
+	 * would be cases where you cannot scan its stack/registers. That would in fact
+	 * consist in removing the async suspend compensation, and treat the case directly
+	 * in sgen.
+	 */
 
-	/* thread_state_init_from_sigctx return FALSE if the current thread is detaching and suspend can't continue. */
-	current->suspend_can_continue = ret;
+	/* thread_state_init_from_sigctx return FALSE if the current thread is starting or detaching and suspend can't continue. */
+	current->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], context);
 
-	/* This thread is doomed, all we can do is give up and let the suspender recover. */
-	if (!ret) {
-		THREADS_SUSPEND_DEBUG ("\tThread is dying, failed to capture state %p\n", current);
-		mono_threads_transition_async_suspend_compensation (current);
-
-		/* We're done suspending */
-		mono_threads_notify_initiator_of_suspend (current);
-
-		goto done;
-	}
+	if (!current->suspend_can_continue)
+		THREADS_SUSPEND_DEBUG ("\tThread is starting or detaching, failed to capture state %p\n", mono_thread_info_get_tid (current));
 
 	/*
 	Block the restart signal.
@@ -204,7 +162,7 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	do {
 		current->signal = 0;
 		sigsuspend (&suspend_signal_mask);
-	} while (current->signal != restart_signal_num);
+	} while (current->signal != DEFAULT_RESTART_SIGNAL);
 
 	/* Unblock the restart signal. */
 	pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
@@ -230,62 +188,33 @@ done:
 #endif
 }
 
-static void
-abort_signal_handler (int _dummy, siginfo_t *info, void *context)
-{
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
-	suspend_signal_handler (_dummy, info, context);
-#endif
-}
-
 void
-mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals)
+mono_threads_posix_init_signals (void)
 {
 	sigset_t signal_set;
 
-	g_assert ((signals == MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART) ^ (signals == MONO_THREADS_POSIX_INIT_SIGNALS_ABORT));
-
 	sigemptyset (&signal_set);
 
-	switch (signals) {
-	case MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART: {
-		if (mono_thread_info_unified_management_enabled ()) {
-			suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
-			restart_signal_num = DEFAULT_RESTART_SIGNAL;
-		} else {
-			suspend_signal_num = suspend_signal_get ();
-			restart_signal_num = restart_signal_get ();
-		}
+	sigfillset (&suspend_signal_mask);
+	sigdelset (&suspend_signal_mask, DEFAULT_RESTART_SIGNAL);
 
-		sigfillset (&suspend_signal_mask);
-		sigdelset (&suspend_signal_mask, restart_signal_num);
-		if (!mono_thread_info_unified_management_enabled ())
-			sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
+	sigemptyset (&suspend_ack_signal_mask);
+	sigaddset (&suspend_ack_signal_mask, DEFAULT_RESTART_SIGNAL);
 
-		sigemptyset (&suspend_ack_signal_mask);
-		sigaddset (&suspend_ack_signal_mask, restart_signal_num);
+	signal_add_handler (DEFAULT_SUSPEND_SIGNAL, suspend_signal_handler, SA_RESTART);
+	signal_add_handler (DEFAULT_RESTART_SIGNAL, restart_signal_handler, SA_RESTART);
 
-		signal_add_handler (suspend_signal_num, suspend_signal_handler, SA_RESTART);
-		signal_add_handler (restart_signal_num, restart_signal_handler, SA_RESTART);
+	sigaddset (&signal_set, DEFAULT_SUSPEND_SIGNAL);
+	sigaddset (&signal_set, DEFAULT_RESTART_SIGNAL);
 
-		sigaddset (&signal_set, suspend_signal_num);
-		sigaddset (&signal_set, restart_signal_num);
+	abort_signal_num = abort_signal_get ();
 
-		break;
-	}
-	case MONO_THREADS_POSIX_INIT_SIGNALS_ABORT: {
-		abort_signal_num = abort_signal_get ();
+	/* the difference between abort and suspend here is made by not
+	 * passing SA_RESTART, meaning we won't restart the syscall when
+	 * receiving a signal */
+	signal_add_handler (abort_signal_num, suspend_signal_handler, 0);
 
-		signal_add_handler (abort_signal_num, abort_signal_handler, 0);
-
-		sigaddset (&signal_set, abort_signal_num);
-
-		break;
-	}
-	default: g_assert_not_reached ();
-	}
+	sigaddset (&signal_set, abort_signal_num);
 
 	/* ensure all the new signals are unblocked */
 	sigprocmask (SIG_UNBLOCK, &signal_set, NULL);
@@ -294,19 +223,56 @@ mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals)
 gint
 mono_threads_posix_get_suspend_signal (void)
 {
-	return suspend_signal_num;
+	return DEFAULT_SUSPEND_SIGNAL;
 }
 
 gint
 mono_threads_posix_get_restart_signal (void)
 {
-	return restart_signal_num;
+	return DEFAULT_RESTART_SIGNAL;
 }
 
 gint
 mono_threads_posix_get_abort_signal (void)
 {
 	return abort_signal_num;
+}
+
+void
+mono_threads_core_abort_syscall (MonoThreadInfo *info)
+{
+	/* We signal a thread to break it from the current syscall.
+	 * This signal should not be interpreted as a suspend request. */
+	info->syscall_break_signal = TRUE;
+	if (mono_threads_pthread_kill (info, mono_threads_posix_get_abort_signal ()) == 0) {
+		mono_threads_add_to_pending_operation_set (info);
+	}
+}
+
+gboolean
+mono_threads_core_needs_abort_syscall (void)
+{
+	return TRUE;
+}
+
+#else /* !defined(USE_POSIX_BACKEND) */
+
+gint
+mono_threads_posix_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_posix_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_posix_get_abort_signal (void)
+{
+	return -1;
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */

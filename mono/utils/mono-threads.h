@@ -372,9 +372,6 @@ mono_thread_info_end_self_suspend (void);
 
 //END of new API
 
-gboolean
-mono_thread_info_unified_management_enabled (void);
-
 void
 mono_thread_info_setup_async_call (THREAD_INFO_TYPE *info, void (*target_func)(void*), void *user_data);
 
@@ -475,8 +472,6 @@ This is called very early in the runtime, it cannot access any runtime facilitie
 void mono_threads_init_platform (void); //ok
 
 void mono_threads_init_coop (void);
-
-void mono_threads_init_abort_syscall (void);
 
 /*
 This begins async suspend. This function must do the following:
@@ -621,12 +616,28 @@ gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
 
-gboolean
-mono_thread_info_check_suspend_result (THREAD_INFO_TYPE *info);
-
 void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX rename to something to reflect the fact that this is used for both suspend and resume
 gboolean mono_threads_wait_pending_operations (void);
 void mono_threads_begin_global_suspend (void);
 void mono_threads_end_global_suspend (void);
+
+#if defined(USE_POSIX_BACKEND)
+
+void
+mono_threads_posix_init_signals (void);
+
+#endif /* defined(USE_POSIX_BACKEND) */
+
+int
+mono_threads_posix_signal_search_alternative (void);
+
+gint
+mono_threads_posix_get_suspend_signal (void);
+
+gint
+mono_threads_posix_get_restart_signal (void);
+
+gint
+mono_threads_posix_get_abort_signal (void);
 
 #endif /* __MONO_THREADS_H__ */
