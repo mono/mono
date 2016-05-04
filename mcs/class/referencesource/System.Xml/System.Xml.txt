@@ -1,0 +1,1254 @@
+;==++==
+;
+;   Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;==--==
+
+; NOTE: do not use \", use ' instead
+; NOTE: Use # or ; for comments
+
+; These are the managed resources for System.Xml.dll in Silverlight.  See
+; ResourceManager documentation and the ResGen tool.
+
+;;;
+;;; Silverlight runtime strings
+;;; 
+; commenting out for Desktop
+;#if INCLUDE_RUNTIME
+;#endif // INCLUDE_RUNTIME
+
+;;;
+;;; Silverlight debug strings
+;;;
+; commenting out for Desktop
+;#if INCLUDE_DEBUG
+;
+; General errors
+;
+Xml_UserException={0}
+Xml_DefaultException=An XML error has occurred.
+Xml_InvalidOperation=Operation is not valid due to the current state of the object.
+Xml_ErrorFilePosition=An error occurred at {0}, ({1}, {2}).
+#if !SILVERLIGHT
+Xml_StackOverflow=Stack overflow.
+Xslt_NoStylesheetLoaded=No stylesheet was loaded.
+Xslt_NotCompiledStylesheet=Type '{0}' is not a compiled stylesheet class.
+Xslt_IncompatibleCompiledStylesheetVersion=Executing a stylesheet that was compiled using a later version of the framework is not supported. Stylesheet Version: {0}. Current Framework Version: {1}.
+#endif
+
+;
+; XmlReader errors
+;
+Xml_AsyncIsRunningException=An asynchronous operation is already in progress.
+Xml_ReaderAsyncNotSetException=Set XmlReaderSettings.Async to true if you want to use Async Methods.
+Xml_UnclosedQuote=There is an unclosed literal string.
+Xml_UnexpectedEOF=Unexpected end of file while parsing {0} has occurred.
+Xml_UnexpectedEOF1=Unexpected end of file has occurred.
+Xml_UnexpectedEOFInElementContent=Unexpected end of file has occurred. The following elements are not closed: {0}
+Xml_BadStartNameChar=Name cannot begin with the '{0}' character, hexadecimal value {1}.
+Xml_BadNameChar=The '{0}' character, hexadecimal value {1}, cannot be included in a name.
+Xml_BadDecimalEntity=Invalid syntax for a decimal numeric entity reference.
+Xml_BadHexEntity=Invalid syntax for a hexadecimal numeric entity reference.
+Xml_MissingByteOrderMark=There is no Unicode byte order mark. Cannot switch to Unicode.
+Xml_UnknownEncoding=System does not support '{0}' encoding.
+Xml_InternalError=An internal error has occurred.
+Xml_InvalidCharInThisEncoding=Invalid character in the given encoding.
+Xml_ErrorPosition=Line {0}, position {1}.
+Xml_MessageWithErrorPosition={0} Line {1}, position {2}.
+Xml_UnexpectedTokenEx='{0}' is an unexpected token. The expected token is '{1}'.
+Xml_UnexpectedTokens2='{0}' is an unexpected token. The expected token is '{1}' or '{2}'.
+Xml_ExpectingWhiteSpace='{0}' is an unexpected token. Expecting white space.
+Xml_TagMismatch=The '{0}' start tag on line {1} does not match the end tag of '{2}'.
+Xml_TagMismatchEx=The '{0}' start tag on line {1} position {2} does not match the end tag of '{3}'.
+Xml_UnexpectedEndTag=Unexpected end tag.
+Xml_UnknownNs='{0}' is an undeclared prefix.
+Xml_BadAttributeChar='{0}', hexadecimal value {1}, is an invalid attribute character.
+Xml_ExpectExternalOrClose=Expecting external ID, '[' or '>'.
+Xml_MissingRoot=Root element is missing.
+Xml_MultipleRoots=There are multiple root elements.
+Xml_InvalidRootData=Data at the root level is invalid.
+Xml_XmlDeclNotFirst=Unexpected XML declaration. The XML declaration must be the first node in the document, and no white space characters are allowed to appear before it.
+Xml_InvalidXmlDecl=Syntax for an XML declaration is invalid.
+Xml_InvalidNodeType='{0}' is an invalid XmlNodeType.
+Xml_InvalidPIName='{0}' is an invalid name for processing instructions.
+Xml_InvalidXmlSpace='{0}' is an invalid xml:space value.
+Xml_InvalidVersionNumber=Version number '{0}' is invalid.
+Xml_DupAttributeName='{0}' is a duplicate attribute name.
+Xml_BadDTDLocation=Unexpected DTD declaration.
+Xml_ElementNotFound=Element '{0}' was not found.
+Xml_ElementNotFoundNs=Element '{0}' with namespace name '{1}' was not found.
+Xml_PartialContentNodeTypeNotSupportedEx=XmlNodeType {0} is not supported for partial content parsing.
+Xml_MultipleDTDsProvided=Cannot have multiple DTDs.
+Xml_CanNotBindToReservedNamespace=Cannot bind to the reserved namespace.
+Xml_InvalidCharacter='{0}', hexadecimal value {1}, is an invalid character.
+Xml_InvalidBinHexValue='{0}' is not a valid BinHex text sequence.
+Xml_InvalidBinHexValueOddCount='{0}' is not a valid BinHex text sequence. The sequence must contain an even number of characters.
+Xml_InvalidTextDecl=Invalid text declaration.
+Xml_InvalidBase64Value='{0}' is not a valid Base64 text sequence.
+Xml_UndeclaredEntity=Reference to undeclared entity '{0}'.
+Xml_RecursiveParEntity=Parameter entity '{0}' references itself.
+Xml_RecursiveGenEntity=General entity '{0}' references itself.
+Xml_ExternalEntityInAttValue=External entity '{0}' reference cannot appear in the attribute value.
+Xml_UnparsedEntityRef=Reference to unparsed entity '{0}'.
+Xml_NotSameNametable=Not the same name table.
+Xml_NametableMismatch=XmlReaderSettings.XmlNameTable must be the same name table as in XmlParserContext.NameTable or XmlParserContext.NamespaceManager.NameTable, or it must be null.
+Xml_BadNamespaceDecl=Invalid namespace declaration.
+Xml_ErrorParsingEntityName=An error occurred while parsing EntityName.
+Xml_InvalidNmToken=Invalid NmToken value '{0}'.
+Xml_EntityRefNesting=Entity replacement text must nest properly within markup declarations.
+Xml_CannotResolveEntity=Cannot resolve entity reference '{0}'.
+Xml_CannotResolveEntityDtdIgnored=Cannot resolve entity reference '{0}' because the DTD has been ignored. To enable DTD processing set the DtdProcessing property on XmlReaderSettings to Parse and pass the settings into XmlReader.Create method.
+Xml_CannotResolveExternalSubset=Cannot resolve external DTD subset - public ID = '{0}', system ID = '{1}'.
+Xml_CannotResolveUrl=Cannot resolve '{0}'.
+Xml_CDATAEndInText=']]>' is not allowed in character data.
+Xml_ExternalEntityInStandAloneDocument=Standalone document declaration must have a value of 'no' because an external entity '{0}' is referenced.
+Xml_DtdAfterRootElement=DTD must be defined before the document root element.
+Xml_ReadOnlyProperty=The '{0}' property is read only and cannot be set.
+Xml_DtdIsProhibited=DTD is prohibited in this XML document.
+Xml_DtdIsProhibitedEx=For security reasons DTD is prohibited in this XML document. To enable DTD processing set the DtdProcessing property on XmlReaderSettings to Parse and pass the settings into XmlReader.Create method.
+Xml_ReadSubtreeNotOnElement=ReadSubtree() can be called only if the reader is on an element node.
+Xml_DtdNotAllowedInFragment=DTD is not allowed in XML fragments.
+Xml_CannotStartDocumentOnFragment=WriteStartDocument cannot be called on writers created with ConformanceLevel.Fragment.
+Xml_ErrorOpeningExternalDtd=An error has occurred while opening external DTD '{0}': {1}
+Xml_ErrorOpeningExternalEntity=An error has occurred while opening external entity '{0}': {1}
+Xml_ReadBinaryContentNotSupported={0} method is not supported on this XmlReader. Use CanReadBinaryContent property to find out if a reader implements it.
+Xml_ReadValueChunkNotSupported=ReadValueChunk method is not supported on this XmlReader. Use CanReadValueChunk property to find out if an XmlReader implements it.
+Xml_InvalidReadContentAs=The {0} method is not supported on node type {1}. If you want to read typed content of an element, use the ReadElementContentAs method.
+Xml_InvalidReadElementContentAs=The {0} method is not supported on node type {1}.
+Xml_MixedReadElementContentAs=ReadElementContentAs() methods cannot be called on an element that has child elements.
+Xml_MixingReadValueChunkWithBinary=ReadValueChunk calls cannot be mixed with ReadContentAsBase64 or ReadContentAsBinHex.
+Xml_MixingBinaryContentMethods=ReadContentAsBase64 and ReadContentAsBinHex method calls cannot be mixed with calls to ReadElementContentAsBase64 and ReadElementContentAsBinHex.
+Xml_MixingV1StreamingWithV2Binary=ReadContentAsBase64 and ReadContentAsBinHex method calls cannot be mixed with calls to ReadChars, ReadBase64, and ReadBinHex.
+Xml_InvalidReadValueChunk=The ReadValueAsChunk method is not supported on node type {0}.
+Xml_ReadContentAsFormatException=Content cannot be converted to the type {0}.
+Xml_DoubleBaseUri=BaseUri must be specified either as an argument of XmlReader.Create or on the XmlParserContext. If it is specified on both, it must be the same base URI.
+Xml_NotEnoughSpaceForSurrogatePair=The buffer is not large enough to fit a surrogate pair. Please provide a buffer of size at least 2 characters.
+Xml_EmptyUrl=The URL cannot be empty.
+Xml_UnexpectedNodeInSimpleContent=Unexpected node type {0}. {1} method can only be called on elements with simple or empty content.
+Xml_InvalidWhitespaceCharacter=The Whitespace or SignificantWhitespace node can contain only XML white space characters. '{0}' is not an XML white space character.
+Xml_IncompatibleConformanceLevel=Cannot change conformance checking to {0}. Make sure the ConformanceLevel in XmlReaderSettings is set to Auto for wrapping scenarios.
+Xml_LimitExceeded=The input document has exceeded a limit set by {0}.
+Xml_ClosedOrErrorReader=The XmlReader is closed or in error state.
+Xml_CharEntityOverflow=Invalid value of a character entity reference.
+
+#if !SILVERLIGHT
+Xml_BadNameCharWithPos=The '{0}' character, hexadecimal value {1}, at position {2} within the name, cannot be included in a name.
+Xml_XmlnsBelongsToReservedNs=The 'xmlns' attribute is bound to the reserved namespace 'http://www.w3.org/2000/xmlns/'.
+Xml_UndeclaredParEntity=Reference to undeclared parameter entity '{0}'.
+Xml_InvalidXmlDocument=Invalid XML document. {0}
+Xml_NoDTDPresent=No DTD found.
+Xml_MultipleValidaitonTypes=Unsupported combination of validation types.
+Xml_NoValidation=No validation occurred.
+Xml_WhitespaceHandling=Expected WhitespaceHandling.None, or WhitespaceHandling.All, or WhitespaceHandling.Significant.
+Xml_InvalidResetStateCall=Cannot call ResetState when parsing an XML fragment.
+Xml_EntityHandling=Expected EntityHandling.ExpandEntities or EntityHandling.ExpandCharEntities.
+Xml_AttlistDuplEnumValue='{0}' is a duplicate enumeration value.
+Xml_AttlistDuplNotationValue='{0}' is a duplicate notation value.
+Xml_EncodingSwitchAfterResetState='{0}' is an invalid value for the 'encoding' attribute. The encoding cannot be switched after a call to ResetState.
+Xml_UnexpectedNodeType=Unexpected XmlNodeType: '{0}'.
+#endif // !SILVERLIGHT
+
+;
+; DTD parser errors
+;
+Xml_InvalidConditionalSection=A conditional section is not allowed in an internal subset.
+Xml_UnexpectedCDataEnd=']]>' is not expected.
+Xml_UnclosedConditionalSection=There is an unclosed conditional section.
+Xml_ExpectDtdMarkup=Expected DTD markup was not found.
+Xml_IncompleteDtdContent=Incomplete DTD content.
+Xml_EnumerationRequired=Enumeration data type required.
+Xml_InvalidContentModel=Invalid content model.
+Xml_FragmentId=Fragment identifier '{0}' cannot be part of the system identifier '{1}'.
+Xml_ExpectPcData=Expecting 'PCDATA'.
+Xml_ExpectNoWhitespace=White space not allowed before '?', '*', or '+'.
+Xml_ExpectOp=Expecting '?', '*', or '+'.
+Xml_InvalidAttributeType='{0}' is an invalid attribute type.
+Xml_InvalidAttributeType1=Invalid attribute type.
+Xml_ExpectAttType=Expecting an attribute type.
+Xml_ColonInLocalName='{0}' is an unqualified name and cannot contain the character ':'.
+Xml_InvalidParEntityRef=A parameter entity reference is not allowed in internal markup.
+Xml_ExpectSubOrClose=Expecting an internal subset or the end of the DOCTYPE declaration.
+Xml_ExpectExternalOrPublicId=Expecting a system identifier or a public identifier.
+Xml_ExpectExternalIdOrEntityValue=Expecting an external identifier or an entity value.
+Xml_ExpectIgnoreOrInclude=Conditional sections must specify the keyword 'IGNORE' or 'INCLUDE'.
+
+;
+; XmlResolver errors
+;
+Xml_UnsupportedClass=Object type is not supported.
+Xml_NullResolver=Resolving of external URIs was prohibited.
+Xml_RelativeUriNotSupported=Relative URIs are not supported.
+
+#if !SILVERLIGHT
+Xml_UntrustedCodeSettingResolver=XmlResolver can be set only by fully trusted code.
+#endif // !SILVERLIGHT
+
+;
+; XmlWriter errors
+;
+Xml_WriterAsyncNotSetException=Set XmlWriterSettings.Async to true if you want to use Async Methods.
+Xml_PrefixForEmptyNs=Cannot use a prefix with an empty namespace.
+Xml_InvalidCommentChars=An XML comment cannot contain '--', and '-' cannot be the last character.
+Xml_UndefNamespace=The '{0}' namespace is not defined.
+Xml_EmptyName=The empty string '' is not a valid name.
+Xml_EmptyLocalName=The empty string '' is not a valid local name.
+Xml_InvalidNameCharsDetail=Invalid name character in '{0}'. The '{1}' character, hexadecimal value {2}, cannot be included in a name.
+Xml_NoStartTag=There was no XML start tag open.
+Xml_ClosedOrError=The Writer is closed or in error state.
+Xml_WrongToken=Token {0} in state {1} would result in an invalid XML document.
+Xml_XmlPrefix=Prefix "xml" is reserved for use by XML and can be mapped only to namespace name "http://www.w3.org/XML/1998/namespace".
+Xml_XmlnsPrefix=Prefix "xmlns" is reserved for use by XML.
+Xml_NamespaceDeclXmlXmlns=Prefix '{0}' cannot be mapped to namespace name reserved for "xml" or "xmlns".
+Xml_NonWhitespace=Only white space characters should be used.
+Xml_DupXmlDecl=Cannot write XML declaration. WriteStartDocument method has already written it.
+Xml_CannotWriteXmlDecl=Cannot write XML declaration. XML declaration can be only at the beginning of the document.
+Xml_NoRoot=Document does not have a root element.
+Xml_InvalidPosition=The current position on the Reader is neither an element nor an attribute.
+Xml_IncompleteEntity=Incomplete entity contents.
+Xml_InvalidSurrogateHighChar=Invalid high surrogate character (0x{0}). A high surrogate character must have a value from range (0xD800 - 0xDBFF).
+Xml_InvalidSurrogateMissingLowChar=The surrogate pair is invalid. Missing a low surrogate character.
+Xml_InvalidSurrogatePairWithArgs=The surrogate pair (0x{0}, 0x{1}) is invalid. A high surrogate character (0xD800 - 0xDBFF) must always be paired with a low surrogate character (0xDC00 - 0xDFFF).
+Xml_RedefinePrefix=The prefix '{0}' cannot be redefined from '{1}' to '{2}' within the same start element tag.
+Xml_DtdAlreadyWritten=The DTD has already been written out.
+Xml_InvalidCharsInIndent=XmlWriterSettings.{0} can contain only valid XML text content characters when XmlWriterSettings.CheckCharacters is true. {1}
+Xml_IndentCharsNotWhitespace=XmlWriterSettings.{0} can contain only valid XML white space characters when XmlWriterSettings.CheckCharacters and XmlWriterSettings.NewLineOnAttributes are true.
+Xml_ConformanceLevelFragment=Make sure that the ConformanceLevel setting is set to ConformanceLevel.Fragment or ConformanceLevel.Auto if you want to write an XML fragment. 
+
+#if !SILVERLIGHT
+Xml_InvalidQuote=Invalid XML attribute quote character. Valid attribute quote characters are ' and ".
+Xml_UndefPrefix=An undefined prefix is in use.
+Xml_NoNamespaces=Cannot set the namespace if Namespaces is 'false'.
+Xml_InvalidCDataChars=Cannot have ']]>' inside an XML CDATA block.
+Xml_NotTheFirst=WriteStartDocument needs to be the first call.
+Xml_InvalidPiChars=Cannot have '?>' inside an XML processing instruction.
+Xml_InvalidNameChars=Invalid name character in '{0}'.
+Xml_Closed=The Writer is closed.
+Xml_InvalidPrefix=Prefixes beginning with "xml" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.
+Xml_InvalidIndentation=Indentation value must be greater than 0.
+Xml_NotInWriteState=NotInWriteState.
+Xml_SurrogatePairSplit=The second character surrogate pair is not in the input buffer to be written.
+Xml_NoMultipleRoots=Document cannot have multiple document elements.
+XmlBadName=A node of type '{0}' cannot have the name '{1}'.
+XmlNoNameAllowed=A node of type '{0}' cannot have a name.
+#endif // !SILVERLIGHT
+
+;
+; XmlConvert Errors
+;
+XmlConvert_BadUri=The string was not recognized as a valid Uri.
+XmlConvert_BadFormat=The string '{0}' is not a valid {1} value.
+XmlConvert_Overflow=Value '{0}' was either too large or too small for {1}.
+XmlConvert_TypeBadMapping=Xml type '{0}' does not support Clr type '{1}'.
+XmlConvert_TypeBadMapping2=Xml type '{0}' does not support a conversion from Clr type '{1}' to Clr type '{2}'.
+XmlConvert_TypeListBadMapping=Xml type 'List of {0}' does not support Clr type '{1}'.
+XmlConvert_TypeListBadMapping2=Xml type 'List of {0}' does not support a conversion from Clr type '{1}' to Clr type '{2}'.
+XmlConvert_TypeToString=Xml type '{0}' cannot convert from Clr type '{1}' unless the destination type is String or XmlAtomicValue.
+XmlConvert_TypeFromString=Xml type '{0}' cannot convert to Clr type '{1}' unless the source value is a String or an XmlAtomicValue.
+XmlConvert_TypeNoPrefix=The QName '{0}' cannot be represented as a String.  A prefix for namespace '{1}' cannot be found.
+XmlConvert_TypeNoNamespace=The String '{0}' cannot be represented as an XmlQualifiedName.  A namespace for prefix '{1}' cannot be found.
+XmlConvert_NotOneCharString=String must be exactly one character long.
+
+;
+; XmlSchema and DTD validation errors
+;
+Sch_ParEntityRefNesting=The parameter entity replacement text must nest properly within markup declarations.
+Sch_NotTokenString=line-feed (#xA) or tab (#x9) characters, leading or trailing spaces and sequences of one or more spaces (#x20) are not allowed in 'xs:token'.
+Sch_XsdDateTimeCompare=Cannot compare '{0}' and '{1}'.
+Sch_InvalidNullCast=Cannot return null as a value for type '{0}'.
+Sch_InvalidDateTimeOption=The '{0}' value for the 'dateTimeOption' parameter is not an allowed value for the 'XmlDateTimeSerializationMode' enumeration.
+Sch_StandAloneNormalization=StandAlone is 'yes' and the value of the attribute '{0}' contains a definition in an external document that changes on normalization.
+Sch_UnSpecifiedDefaultAttributeInExternalStandalone=Markup for unspecified default attribute '{0}' is external and standalone='yes'.
+
+#if !SILVERLIGHT
+Sch_DefaultException=A schema error occurred.
+Sch_DupElementDecl=The '{0}' element has already been declared.
+Sch_IdAttrDeclared=The attribute of type ID is already declared on the '{0}' element.
+Sch_RootMatchDocType=Root element name must match the DocType name.
+Sch_DupId='{0}' is already used as an ID.
+Sch_UndeclaredElement=The '{0}' element is not declared.
+Sch_UndeclaredAttribute=The '{0}' attribute is not declared.
+Sch_UndeclaredNotation=The '{0}' notation is not declared.
+Sch_UndeclaredId=Reference to undeclared ID is '{0}'.
+Sch_SchemaRootExpected=Expected schema root. Make sure the root element is <schema> and the namespace is 'http://www.w3.org/2001/XMLSchema' for an XSD schema or 'urn:schemas-microsoft-com:xml-data' for an XDR schema.
+Sch_XSDSchemaRootExpected=The root element of a W3C XML Schema should be <schema> and its namespace should be 'http://www.w3.org/2001/XMLSchema'.
+Sch_UnsupportedAttribute=The '{0}' attribute is not supported in this context.
+Sch_UnsupportedElement=The '{0}' element is not supported in this context.
+Sch_MissAttribute=The '{0}' attribute is either invalid or missing.
+Sch_AnnotationLocation=The 'annotation' element cannot appear at this location.
+Sch_DataTypeTextOnly=Content must be "textOnly" when using DataType on an ElementType.
+Sch_UnknownModel=The model attribute must have a value of open or closed, not '{0}'.
+Sch_UnknownOrder=The order attribute must have a value of 'seq', 'one', or 'many', not '{0}'.
+Sch_UnknownContent=The content attribute must have a value of 'textOnly', 'eltOnly', 'mixed', or 'empty', not '{0}'.
+Sch_UnknownRequired=The required attribute must have a value of yes or no.
+Sch_UnknownDtType=Reference to an unknown data type, '{0}'.
+Sch_MixedMany=The order must be many when content is mixed.
+Sch_GroupDisabled=The group is not allowed when ElementType has empty or textOnly content.
+Sch_MissDtvalue=The DataType value cannot be empty.
+Sch_MissDtvaluesAttribute=The dt:values attribute is missing.
+Sch_DupDtType=Data type has already been declared.
+Sch_DupAttribute=The '{0}' attribute has already been declared for this ElementType.
+Sch_RequireEnumeration=Data type should be enumeration when the values attribute is present.
+Sch_DefaultIdValue=An attribute or element of type xs:ID or derived from xs:ID, should not have a value constraint.
+Sch_ElementNotAllowed=Element is not allowed when the content is empty or textOnly.
+Sch_ElementMissing=There is a missing element.
+Sch_ManyMaxOccurs=When the order is many, the maxOccurs attribute must have a value of '*'.
+Sch_MaxOccursInvalid=The maxOccurs attribute must have a value of 1 or *.
+Sch_MinOccursInvalid=The minOccurs attribute must have a value of 0 or 1.
+Sch_DtMaxLengthInvalid=The value '{0}' is invalid for dt:maxLength.
+Sch_DtMinLengthInvalid=The value '{0}' is invalid for dt:minLength.
+Sch_DupDtMaxLength=The value of maxLength has already been declared.
+Sch_DupDtMinLength=The value of minLength has already been declared.
+Sch_DtMinMaxLength=The maxLength value must be equal to or greater than the minLength value.
+Sch_DupElement=The '{0}' element already exists in the content model.
+Sch_DupGroupParticle=The content model can only have one of the following; 'all', 'choice', or 'sequence'.
+Sch_InvalidValue=The value '{0}' is invalid according to its data type.
+Sch_InvalidValueDetailed=The value '{0}' is invalid according to its schema type '{1}' - {2}
+Sch_InvalidValueDetailedAttribute=The attribute '{0}' has an invalid value '{1}' according to its schema type '{2}' - {3}
+Sch_MissRequiredAttribute=The required attribute '{0}' is missing.
+Sch_FixedAttributeValue=The value of the '{0}' attribute does not equal its fixed value.
+Sch_FixedElementValue=The value of the '{0}' element does not equal its fixed value.
+Sch_AttributeValueDataTypeDetailed=The '{0}' attribute is invalid - The value '{1}' is invalid according to its datatype '{2}' - {3}
+Sch_AttributeDefaultDataType=The default value of '{0}' attribute is invalid according to its datatype.
+Sch_IncludeLocation=The 'include' element cannot appear at this location.
+Sch_ImportLocation=The 'import' element cannot appear at this location.
+Sch_RedefineLocation=The 'redefine' element cannot appear at this location.
+Sch_InvalidBlockDefaultValue=The values 'list' and 'union' are invalid for the blockDefault attribute.
+Sch_InvalidFinalDefaultValue=The value 'substitution' is invalid for the finalDefault attribute.
+Sch_InvalidElementBlockValue=The values 'list' and 'union' are invalid for the block attribute on element.
+Sch_InvalidElementFinalValue=The values 'substitution', 'list', and 'union' are invalid for the final attribute on element.
+Sch_InvalidSimpleTypeFinalValue=The values 'substitution' and 'extension' are invalid for the final attribute on simpleType.
+Sch_InvalidComplexTypeBlockValue=The values 'substitution', 'list', and 'union' are invalid for the block attribute on complexType.
+Sch_InvalidComplexTypeFinalValue=The values 'substitution', 'list', and 'union' are invalid for the final attribute on complexType.
+Sch_DupIdentityConstraint=The identity constraint '{0}' has already been declared.
+Sch_DupGlobalElement=The global element '{0}' has already been declared.
+Sch_DupGlobalAttribute=The global attribute '{0}' has already been declared.
+Sch_DupSimpleType=The simpleType '{0}' has already been declared.
+Sch_DupComplexType=The complexType '{0}' has already been declared.
+Sch_DupGroup=The group '{0}' has already been declared.
+Sch_DupAttributeGroup=The attributeGroup '{0}' has already been declared.
+Sch_DupNotation=The notation '{0}' has already been declared.
+Sch_DefaultFixedAttributes=The fixed and default attributes cannot both be present.
+Sch_FixedInRef=The fixed value constraint on the '{0}' attribute reference must match the fixed value constraint on the declaration.
+Sch_FixedDefaultInRef=The default value constraint cannot be present on the '{0}' attribute reference if the fixed value constraint is present on the declaration.
+Sch_DupXsdElement='{0}' is a duplicate XSD element.
+Sch_ForbiddenAttribute=The '{0}' attribute cannot be present.
+Sch_AttributeIgnored=The '{0}' attribute is ignored, because the value of 'prohibited' for attribute use only prevents inheritance of an identically named attribute from the base type definition.
+Sch_ElementRef=When the ref attribute is present, the type attribute and complexType, simpleType, key, keyref, and unique elements cannot be present.
+Sch_TypeMutualExclusive=The type attribute cannot be present with either simpleType or complexType.
+Sch_ElementNameRef=For element declaration, either the name or the ref attribute must be present.
+Sch_AttributeNameRef=For attribute '{0}', either the name or the ref attribute must be present, but not both.
+Sch_TextNotAllowed=The following text is not allowed in this context: '{0}'.
+Sch_UndeclaredType=Type '{0}' is not declared.
+Sch_UndeclaredSimpleType=Type '{0}' is not declared, or is not a simple type.
+Sch_UndeclaredEquivClass=Substitution group refers to '{0}', an undeclared element.
+Sch_AttListPresence=An attribute of type ID must have a declared default of either #IMPLIED or #REQUIRED.
+Sch_NotationValue='{0}' is not in the notation list.
+Sch_EnumerationValue='{0}' is not in the enumeration list.
+Sch_EmptyAttributeValue=The attribute value cannot be empty.
+Sch_InvalidLanguageId='{0}' is an invalid language identifier.
+Sch_XmlSpace=Invalid xml:space syntax.
+Sch_InvalidXsdAttributeValue='{1}' is an invalid value for the '{0}' attribute.
+Sch_InvalidXsdAttributeDatatypeValue=The value for the '{0}' attribute is invalid - {1}
+Sch_ElementValueDataTypeDetailed=The '{0}' element is invalid - The value '{1}' is invalid according to its datatype '{2}' - {3}
+Sch_InvalidElementDefaultValue=The default value '{0}' of element '{1}' is invalid according to the type specified by xsi:type.
+Sch_NonDeterministic=Multiple definition of element '{0}' causes the content model to become ambiguous. A content model must be formed such that during validation of an element information item sequence, the particle contained directly, indirectly or implicitly therein with which to attempt to validate each item in the sequence in turn can be uniquely determined without examining the content or attributes of that item, and without any information about the items in the remainder of the sequence.
+Sch_NonDeterministicAnyEx=Wildcard '{0}' allows element '{1}', and causes the content model to become ambiguous. A content model must be formed such that during validation of an element information item sequence, the particle contained directly, indirectly or implicitly therein with which to attempt to validate each item in the sequence in turn can be uniquely determined without examining the content or attributes of that item, and without any information about the items in the remainder of the sequence.
+Sch_NonDeterministicAnyAny=Wildcards '{0}' and '{1}' have not empty intersection, and causes the content model to become ambiguous. A content model must be formed such that during validation of an element information item sequence, the particle contained directly, indirectly or implicitly therein with which to attempt to validate each item in the sequence in turn can be uniquely determined without examining the content or attributes of that item, and without any information about the items in the remainder of the sequence.
+Sch_StandAlone=The standalone document declaration must have a value of 'no'.
+Sch_XmlNsAttribute=The value 'xmlns' cannot be used as the name of an attribute declaration.
+Sch_AllElement=Element '{0}' cannot appear more than once if content model type is "all".
+Sch_MismatchTargetNamespaceInclude=The targetNamespace '{0}' of included/redefined schema should be the same as the targetNamespace '{1}' of the including schema.
+Sch_MismatchTargetNamespaceImport=The namespace attribute '{0}' of an import should be the same value as the targetNamespace '{1}' of the imported schema.
+Sch_MismatchTargetNamespaceEx=The targetNamespace parameter '{0}' should be the same value as the targetNamespace '{1}' of the schema.
+Sch_XsiTypeNotFound=This is an invalid xsi:type '{0}'.
+Sch_XsiTypeAbstract=The xsi:type '{0}' cannot be abstract.
+Sch_ListFromNonatomic=A list data type must be derived from an atomic or union data type.
+Sch_UnionFromUnion=It is an error if a union type has a member with variety union and this member cannot be substituted with its own members. This may be due to the fact that the union member is a restriction of a union with facets.
+Sch_DupLengthFacet=This is a duplicate Length constraining facet.
+Sch_DupMinLengthFacet=This is a duplicate MinLength constraining facet.
+Sch_DupMaxLengthFacet=This is a duplicate MaxLength constraining facet.
+Sch_DupWhiteSpaceFacet=This is a duplicate WhiteSpace constraining facet.
+Sch_DupMaxInclusiveFacet=This is a duplicate MaxInclusive constraining facet.
+Sch_DupMaxExclusiveFacet=This is a duplicate MaxExclusive constraining facet.
+Sch_DupMinInclusiveFacet=This is a duplicate MinInclusive constraining facet.
+Sch_DupMinExclusiveFacet=This is a duplicate MinExclusive constraining facet.
+Sch_DupTotalDigitsFacet=This is a duplicate TotalDigits constraining facet.
+Sch_DupFractionDigitsFacet=This is a duplicate FractionDigits constraining facet.
+Sch_LengthFacetProhibited=The length constraining facet is prohibited for '{0}'.
+Sch_MinLengthFacetProhibited=The MinLength constraining facet is prohibited for '{0}'.
+Sch_MaxLengthFacetProhibited=The MaxLength constraining facet is prohibited for '{0}'.
+Sch_PatternFacetProhibited=The Pattern constraining facet is prohibited for '{0}'.
+Sch_EnumerationFacetProhibited=The Enumeration constraining facet is prohibited for '{0}'.
+Sch_WhiteSpaceFacetProhibited=The WhiteSpace constraining facet is prohibited for '{0}'.
+Sch_MaxInclusiveFacetProhibited=The MaxInclusive constraining facet is prohibited for '{0}'.
+Sch_MaxExclusiveFacetProhibited=The MaxExclusive constraining facet is prohibited for '{0}'.
+Sch_MinInclusiveFacetProhibited=The MinInclusive constraining facet is prohibited for '{0}'.
+Sch_MinExclusiveFacetProhibited=The MinExclusive constraining facet is prohibited for '{0}'.
+Sch_TotalDigitsFacetProhibited=The TotalDigits constraining facet is prohibited for '{0}'.
+Sch_FractionDigitsFacetProhibited=The FractionDigits constraining facet is prohibited for '{0}'.
+Sch_LengthFacetInvalid=The Length constraining facet is invalid - {0}
+Sch_MinLengthFacetInvalid=The MinLength constraining facet is invalid - {0}
+Sch_MaxLengthFacetInvalid=The MaxLength constraining facet is invalid - {0}
+Sch_MaxInclusiveFacetInvalid=The MaxInclusive constraining facet is invalid - {0}
+Sch_MaxExclusiveFacetInvalid=The MaxExclusive constraining facet is invalid - {0}
+Sch_MinInclusiveFacetInvalid=The MinInclusive constraining facet is invalid - {0}
+Sch_MinExclusiveFacetInvalid=The MinExclusive constraining facet is invalid - {0}
+Sch_TotalDigitsFacetInvalid=The TotalDigits constraining facet is invalid - {0}
+Sch_FractionDigitsFacetInvalid=The FractionDigits constraining facet is invalid - {0}
+Sch_PatternFacetInvalid=The Pattern constraining facet is invalid - {0}
+Sch_EnumerationFacetInvalid=The Enumeration constraining facet is invalid - {0}
+Sch_InvalidWhiteSpace=The white space character, '{0}', is invalid.
+Sch_UnknownFacet=This is an unknown facet.
+Sch_LengthAndMinMax=It is an error for both length and minLength or maxLength to be present.
+Sch_MinLengthGtMaxLength=MinLength is greater than MaxLength.
+Sch_FractionDigitsGtTotalDigits=FractionDigits is greater than TotalDigits.
+Sch_LengthConstraintFailed=The actual length is not equal to the specified length.
+Sch_MinLengthConstraintFailed=The actual length is less than the MinLength value.
+Sch_MaxLengthConstraintFailed=The actual length is greater than the MaxLength value.
+Sch_PatternConstraintFailed=The Pattern constraint failed.
+Sch_EnumerationConstraintFailed=The Enumeration constraint failed.
+Sch_MaxInclusiveConstraintFailed=The MaxInclusive constraint failed.
+Sch_MaxExclusiveConstraintFailed=The MaxExclusive constraint failed.
+Sch_MinInclusiveConstraintFailed=The MinInclusive constraint failed.
+Sch_MinExclusiveConstraintFailed=The MinExclusive constraint failed.
+Sch_TotalDigitsConstraintFailed=The TotalDigits constraint failed.
+Sch_FractionDigitsConstraintFailed=The FractionDigits constraint failed.
+Sch_UnionFailedEx=The value '{0}' is not valid according to any of the memberTypes of the union.
+Sch_NotationRequired=NOTATION cannot be used directly in a schema; only data types derived from NOTATION by specifying an enumeration value can be used in a schema. All enumeration facet values must match the name of a notation declared in the current schema.
+Sch_DupNotationAttribute=No element type can have more than one NOTATION attribute specified.
+Sch_MissingPublicSystemAttribute=NOTATION must have either the Public or System attribute present.
+Sch_NotationAttributeOnEmptyElement=An attribute of type NOTATION must not be declared on an element declared EMPTY.
+Sch_RefNotInScope=The Keyref '{0}' cannot find the referred key or unique in scope.
+Sch_UndeclaredIdentityConstraint=The '{0}' identity constraint is not declared.
+Sch_RefInvalidIdentityConstraint=Reference to an invalid identity constraint, '{0}'.
+Sch_RefInvalidCardin=Keyref '{0}' has different cardinality as the referred key or unique element.
+Sch_ReftoKeyref=The '{0}' Keyref can refer to key or unique only.
+Sch_EmptyXPath=The XPath for selector or field cannot be empty.
+Sch_UnresolvedPrefix=The prefix '{0}' in XPath cannot be resolved.
+Sch_UnresolvedKeyref=The key sequence '{0}' in '{1}' Keyref fails to refer to some key.
+Sch_ICXpathError='{0}' is an invalid XPath for selector or field.
+Sch_SelectorAttr='{0}' is an invalid XPath for selector. Selector cannot have an XPath selection with an attribute node.
+Sch_FieldSimpleTypeExpected=The field '{0}' is expecting an element or attribute with simple type or simple content.
+Sch_FieldSingleValueExpected=The field '{0}' is expecting at the most one value.
+Sch_MissingKey=The identity constraint '{0}' validation has failed. Either a key is missing or the existing key has an empty node.
+Sch_DuplicateKey=There is a duplicate key sequence '{0}' for the '{1}' key or unique identity constraint.
+Sch_TargetNamespaceXsi=The target namespace of an attribute declaration, whether local or global, must not match http://www.w3.org/2001/XMLSchema-instance.
+Sch_UndeclaredEntity=Reference to an undeclared entity, '{0}'.
+Sch_UnparsedEntityRef=Reference to an unparsed entity, '{0}'.
+Sch_MaxOccursInvalidXsd=The value for the 'maxOccurs' attribute must be xsd:nonNegativeInteger or 'unbounded'.
+Sch_MinOccursInvalidXsd=The value for the 'minOccurs' attribute must be xsd:nonNegativeInteger.
+Sch_MaxInclusiveExclusive='maxInclusive' and 'maxExclusive' cannot both be specified for the same data type.
+Sch_MinInclusiveExclusive='minInclusive' and 'minExclusive' cannot both be specified for the same data type.
+Sch_MinInclusiveGtMaxInclusive=The value specified for 'minInclusive' cannot be greater than the value specified for 'maxInclusive' for the same data type.
+Sch_MinExclusiveGtMaxExclusive=The value specified for 'minExclusive' cannot be greater than the value specified for 'maxExclusive' for the same data type.
+Sch_MinInclusiveGtMaxExclusive=The value specified for 'minInclusive' cannot be greater than the value specified for 'maxExclusive' for the same data type.
+Sch_MinExclusiveGtMaxInclusive=The value specified for 'minExclusive' cannot be greater than the value specified for 'maxInclusive' for the same data type.
+Sch_SimpleTypeRestriction='simpleType' should be the first child of restriction.
+Sch_InvalidFacetPosition=Facet should go before 'attribute', 'attributeGroup', or 'anyAttribute'.
+Sch_AttributeMutuallyExclusive='{0}' and content model are mutually exclusive.
+Sch_AnyAttributeLastChild='anyAttribute' must be the last child.
+Sch_ComplexTypeContentModel=The content model of a complex type must consist of 'annotation' (if present); followed by zero or one of the following: 'simpleContent', 'complexContent', 'group', 'choice', 'sequence', or 'all'; followed by zero or more 'attribute' or 'attributeGroup'; followed by zero or one 'anyAttribute'.
+Sch_ComplexContentContentModel=Complex content restriction or extension should consist of zero or one of 'group', 'choice', 'sequence', or 'all'; followed by zero or more 'attribute' or 'attributeGroup'; followed by zero or one 'anyAttribute'.
+Sch_NotNormalizedString=Carriage return (#xD), line feed (#xA), and tab (#x9) characters are not allowed in xs:normalizedString.
+Sch_FractionDigitsNotOnDecimal=FractionDigits should be equal to 0 on types other then decimal.
+Sch_ContentInNill=Element '{0}' must have no character or element children.
+Sch_NoElementSchemaFound=Could not find schema information for the element '{0}'.
+Sch_NoAttributeSchemaFound=Could not find schema information for the attribute '{0}'.
+Sch_InvalidNamespace=The Namespace '{0}' is an invalid URI.
+Sch_InvalidTargetNamespaceAttribute=The targetNamespace attribute cannot have empty string as its value.
+Sch_InvalidNamespaceAttribute=The namespace attribute cannot have empty string as its value.
+Sch_InvalidSchemaLocation=The SchemaLocation '{0}' is an invalid URI.
+Sch_ImportTargetNamespace=Namespace attribute of an import must not match the real value of the enclosing targetNamespace of the <schema>.
+Sch_ImportTargetNamespaceNull=The enclosing <schema> must have a targetNamespace, if the Namespace attribute is absent on the import element.
+Sch_GroupDoubleRedefine=Double redefine for group.
+Sch_ComponentRedefineNotFound=Cannot find a {0} with name '{1}' to redefine.
+Sch_GroupRedefineNotFound=No group to redefine.
+Sch_AttrGroupDoubleRedefine=Double redefine for attribute group.
+Sch_AttrGroupRedefineNotFound=No attribute group to redefine.
+Sch_ComplexTypeDoubleRedefine=Double redefine for complex type.
+Sch_ComplexTypeRedefineNotFound=No complex type to redefine.
+Sch_SimpleToComplexTypeRedefine=Cannot redefine a simple type as complex type.
+Sch_SimpleTypeDoubleRedefine=Double redefine for simple type.
+Sch_ComplexToSimpleTypeRedefine=Cannot redefine a complex type as simple type.
+Sch_SimpleTypeRedefineNotFound=No simple type to redefine.
+Sch_MinMaxGroupRedefine=When group is redefined, the real value of both minOccurs and maxOccurs attribute must be 1 (or absent).
+Sch_MultipleGroupSelfRef=Multiple self-reference within a group is redefined.
+Sch_MultipleAttrGroupSelfRef=Multiple self-reference within an attribute group is redefined.
+Sch_InvalidTypeRedefine=If type is being redefined, the base type has to be self-referenced.
+Sch_InvalidElementRef=If ref is present, all of <complexType>, <simpleType>, <key>, <keyref>, <unique>, nillable, default, fixed, form, block, and type must be absent.
+Sch_MinGtMax=minOccurs value cannot be greater than maxOccurs value.
+Sch_DupSelector=Selector cannot appear twice in one identity constraint.
+Sch_IdConstraintNoSelector=Selector must be present.
+Sch_IdConstraintNoFields=At least one field must be present.
+Sch_IdConstraintNoRefer=The referring attribute must be present.
+Sch_SelectorBeforeFields=Cannot define fields before selector.
+Sch_NoSimpleTypeContent=SimpleType content is missing.
+Sch_SimpleTypeRestRefBase=SimpleType restriction should have either the base attribute or a simpleType child, but not both.
+Sch_SimpleTypeRestRefBaseNone=SimpleType restriction should have either the base attribute or a simpleType child to indicate the base type for the derivation.
+Sch_SimpleTypeListRefBase=SimpleType list should have either the itemType attribute or a simpleType child, but not both.
+Sch_SimpleTypeListRefBaseNone=SimpleType list should have either the itemType attribute or a simpleType child to indicate the itemType of the list. 
+Sch_SimpleTypeUnionNoBase=Either the memberTypes attribute must be non-empty or there must be at least one simpleType child.
+Sch_NoRestOrExtQName='restriction' or 'extension' child is required for complexType '{0}' in namespace '{1}', because it has a simpleContent or complexContent child.
+Sch_NoRestOrExt='restriction' or 'extension' child is required for complexType with simpleContent or complexContent child.
+Sch_NoGroupParticle='sequence', 'choice', or 'all' child is required.
+Sch_InvalidAllMin='all' must have 'minOccurs' value of 0 or 1.
+Sch_InvalidAllMax='all' must have {max occurs}=1.
+Sch_InvalidFacet=The 'value' attribute must be present in facet.
+Sch_AbstractElement=The element '{0}' is abstract or its type is abstract.
+Sch_XsiTypeBlockedEx=The xsi:type attribute value '{0}' is not valid for the element '{1}', either because it is not a type validly derived from the type in the schema, or because it has xsi:type derivation blocked.
+Sch_InvalidXsiNill=If the 'nillable' attribute is false in the schema, the 'xsi:nil' attribute must not be present in the instance.
+Sch_SubstitutionNotAllowed=Element '{0}' cannot substitute in place of head element '{1}' because it has block='substitution'.
+Sch_SubstitutionBlocked=Member element {0}'s type cannot be derived by restriction or extension from head element {1}'s type, because it has block='restriction' or 'extension'.
+Sch_InvalidElementInEmptyEx=The element '{0}' cannot contain child element '{1}' because the parent element's content model is empty.
+Sch_InvalidElementInTextOnlyEx=The element '{0}' cannot contain child element '{1}' because the parent element's content model is text only.
+Sch_InvalidTextInElement=The element {0} cannot contain text.
+Sch_InvalidElementContent=The element {0} has invalid child element {1}.
+Sch_InvalidElementContentComplex=The element {0} has invalid child element {1} - {2}
+Sch_IncompleteContent=The element {0} has incomplete content.
+Sch_IncompleteContentComplex=The element {0} has incomplete content - {2}
+Sch_InvalidTextInElementExpecting=The element {0} cannot contain text. List of possible elements expected: {1}.
+Sch_InvalidElementContentExpecting=The element {0} has invalid child element {1}. List of possible elements expected: {2}.
+Sch_InvalidElementContentExpectingComplex=The element {0} has invalid child element {1}. List of possible elements expected: {2}. {3}
+Sch_IncompleteContentExpecting=The element {0} has incomplete content. List of possible elements expected: {1}.
+Sch_IncompleteContentExpectingComplex=The element {0} has incomplete content. List of possible elements expected: {1}. {2}
+Sch_InvalidElementSubstitution=The element {0} cannot substitute for a local element {1} expected in that position.
+;Following Needed to build the correct localized strings for the above messages with Expected ...
+Sch_ElementNameAndNamespace='{0}' in namespace '{1}'
+Sch_ElementName='{0}'
+Sch_ContinuationString={0}as well as 
+Sch_AnyElementNS=any element in namespace '{0}'
+Sch_AnyElement=any element
+Sch_InvalidTextInEmpty=The element cannot contain text. Content model is empty.
+Sch_InvalidWhitespaceInEmpty=The element cannot contain white space. Content model is empty.
+Sch_InvalidPIComment=The element cannot contain comment or processing instruction. Content model is empty.
+Sch_InvalidAttributeRef=If ref is present, all of 'simpleType', 'form', 'type', and 'use' must be absent.
+Sch_OptionalDefaultAttribute=The 'use' attribute must be optional (or absent) if the default attribute is present.
+Sch_AttributeCircularRef=Circular attribute reference.
+Sch_IdentityConstraintCircularRef=Circular identity constraint reference.
+Sch_SubstitutionCircularRef=Circular substitution group affiliation.
+Sch_InvalidAnyAttribute=Invalid namespace in 'anyAttribute'.
+Sch_DupIdAttribute=Duplicate ID attribute.
+Sch_InvalidAllElementMax=The {max occurs} of all the particles in the {particles} of an all group must be 0 or 1.
+Sch_InvalidAny=Invalid namespace in 'any'.
+Sch_InvalidAnyDetailed=The value of the namespace attribute of the element or attribute wildcard is invalid - {0}
+Sch_InvalidExamplar=Cannot be nominated as the {substitution group affiliation} of any other declaration.
+Sch_NoExamplar=Reference to undeclared substitution group affiliation.
+Sch_InvalidSubstitutionMember='{0}' cannot be a member of substitution group with head element '{1}'.
+Sch_RedefineNoSchema='SchemaLocation' must successfully resolve if <redefine> contains any child other than <annotation>.
+Sch_ProhibitedAttribute=The '{0}' attribute is not allowed.
+Sch_TypeCircularRef=Circular type reference.
+Sch_TwoIdAttrUses=Two distinct members of the attribute uses must not have type definitions which are both xs:ID or are derived from xs:ID.
+Sch_AttrUseAndWildId=It is an error if there is a member of the attribute uses of a type definition with type xs:ID or derived from xs:ID and another attribute with type xs:ID matches an attribute wildcard.
+Sch_MoreThanOneWildId=It is an error if more than one attribute whose type is xs:ID or is derived from xs:ID, matches an attribute wildcard on an element.
+Sch_BaseFinalExtension=The base type is the final extension.
+Sch_NotSimpleContent=The content type of the base type must be a simple type definition or it must be mixed, and simpleType child must be present.
+Sch_NotComplexContent=The content type of the base type must not be a simple type definition.
+Sch_BaseFinalRestriction=The base type is final restriction.
+Sch_BaseFinalList=The base type is the final list.
+Sch_BaseFinalUnion=The base type is the final union.
+Sch_UndefBaseRestriction=Undefined complexType '{0}' is used as a base for complex type restriction.
+Sch_UndefBaseExtension=Undefined complexType '{0}' is used as a base for complex type extension.
+Sch_DifContentType=The derived type and the base type must have the same content type.
+Sch_InvalidContentRestriction=Invalid content type derivation by restriction.
+Sch_InvalidContentRestrictionDetailed=Invalid content type derivation by restriction. {0}
+Sch_InvalidBaseToEmpty=If the derived content type is Empty, then the base content type should also be Empty or Mixed with Emptiable particle according to rule 5.3 of Schema Component Constraint: Derivation Valid (Restriction, Complex).
+Sch_InvalidBaseToMixed=If the derived content type is Mixed, then the base content type should also be Mixed according to rule 5.4 of Schema Component Constraint: Derivation Valid (Restriction, Complex).
+Sch_DupAttributeUse=The attribute '{0}' already exists.
+Sch_InvalidParticleRestriction=Invalid particle derivation by restriction.
+Sch_InvalidParticleRestrictionDetailed=Invalid particle derivation by restriction - '{0}'.
+Sch_ForbiddenDerivedParticleForAll='Choice' or 'any' is forbidden as derived particle when the base particle is 'all'.
+Sch_ForbiddenDerivedParticleForElem=Only 'element' is valid as derived particle when the base particle is 'element'.
+Sch_ForbiddenDerivedParticleForChoice='All' or 'any' is forbidden as derived particle when the base particle is 'choice'.
+Sch_ForbiddenDerivedParticleForSeq='All', 'any', and 'choice' are forbidden as derived particles when the base particle is 'sequence'.
+Sch_ElementFromElement=Derived element '{0}' is not a valid restriction of base element '{1}' according to Elt:Elt -- NameAndTypeOK.
+Sch_ElementFromAnyRule1=The namespace of element '{0}'is not valid with respect to the wildcard's namespace constraint in the base, Elt:Any -- NSCompat Rule 1.
+Sch_ElementFromAnyRule2=The occurrence range of element '{0}'is not a valid restriction of the wildcard's occurrence range in the base, Elt:Any -- NSCompat Rule2.
+Sch_AnyFromAnyRule1=The derived wildcard's occurrence range is not a valid restriction of the base wildcard's occurrence range, Any:Any -- NSSubset Rule 1.
+; <PLEASE-NOTE> ===== The word 'intensional' below is spelt correctly ===== </PLEASE-NOTE>
+Sch_AnyFromAnyRule2=The derived wildcard's namespace constraint must be an intensional subset of the base wildcard's namespace constraint, Any:Any -- NSSubset Rule2.
+Sch_AnyFromAnyRule3=The derived wildcard's 'processContents' must be identical to or stronger than the base wildcard's 'processContents', where 'strict' is stronger than 'lax' and 'lax' is stronger than 'skip', Any:Any -- NSSubset Rule 3.
+Sch_GroupBaseFromAny1=Every member of the derived group particle must be a valid restriction of the base wildcard, NSRecurseCheckCardinality Rule 1.
+Sch_GroupBaseFromAny2=The derived particle's occurrence range at ({0}, {1}) is not a valid restriction of the base wildcard's occurrence range at ({2}, {3}), NSRecurseCheckCardinality Rule 2.
+Sch_ElementFromGroupBase1=The derived element {0} at ({1}, {2}) is not a valid restriction of the base sequence particle at ({3}, {4}) according to Elt:All/Choice/Sequence -- RecurseAsIfGroup.
+Sch_ElementFromGroupBase2=The derived element {0} at ({1}, {2}) is not a valid restriction of the base choice particle at ({3}, {4}) according to Elt:All/Choice/Sequence -- RecurseAsIfGroup.
+Sch_ElementFromGroupBase3=The derived element {0} at ({1}, {2}) is not a valid restriction of the base all particle at ({3}, {4}) according to Elt:All/Choice/Sequence -- RecurseAsIfGroup.
+Sch_GroupBaseRestRangeInvalid=The derived particle's range is not a valid restriction of the base particle's range according to All:All,Sequence:Sequence -- Recurse Rule 1 or Choice:Choice -- RecurseLax.
+Sch_GroupBaseRestNoMap=The derived particle cannot have more members than the base particle - All:All,Sequence:Sequence -- Recurse Rule 2 / Choice:Choice -- RecurseLax.
+Sch_GroupBaseRestNotEmptiable=All particles in the {particles} of the base particle which are not mapped to by any particle in the {particles} of the derived particle should be emptiable - All:All,Sequence:Sequence -- Recurse Rule 2 / Choice:Choice -- RecurseLax.
+Sch_SeqFromAll=The derived sequence particle at ({0}, {1}) is not a valid restriction of the base all particle at ({2}, {3}) according to Sequence:All -- RecurseUnordered.
+Sch_SeqFromChoice=The derived sequence particle at ({0}, {1}) is not a valid restriction of the base choice particle at ({2}, {3}) according to Sequence:Choice -- MapAndSum.
+Sch_UndefGroupRef=Reference to undeclared model group '{0}'.
+Sch_GroupCircularRef=Circular group reference.
+Sch_AllRefNotRoot=The group ref to 'all' is not the root particle, or it is being used as an extension.
+Sch_AllRefMinMax=The group ref to 'all' must have {min occurs}= 0 or 1 and {max occurs}=1.
+Sch_NotAllAlone='all' is not the only particle in a group, or is being used as an extension.
+Sch_AttributeGroupCircularRef=Circular attribute group reference.
+Sch_UndefAttributeGroupRef=Reference to undeclared attribute group '{0}'.
+Sch_InvalidAttributeExtension=Invalid attribute extension.
+Sch_InvalidAnyAttributeRestriction=The base any attribute must be a superset of the derived 'anyAttribute'.
+Sch_AttributeRestrictionProhibited=Invalid attribute restriction. Attribute restriction is prohibited in base type.
+Sch_AttributeRestrictionInvalid=Invalid attribute restriction. Derived attribute's type is not a valid restriction of the base attribute's type.
+Sch_AttributeFixedInvalid=Invalid attribute restriction. Derived attribute's fixed value must be the same as the base attribute's fixed value. 
+Sch_AttributeUseInvalid=Derived attribute's use has to be required if base attribute's use is required.
+Sch_AttributeRestrictionInvalidFromWildcard=The {base type definition} must have an {attribute wildcard} and the {target namespace} of the R's {attribute declaration} must be valid with respect to that wildcard.
+Sch_NoDerivedAttribute=The base attribute '{0}' whose use = 'required' does not have a corresponding derived attribute while redefining attribute group '{1}'.
+Sch_UnexpressibleAnyAttribute=The 'anyAttribute' is not expressible.
+Sch_RefInvalidAttribute=Reference to invalid attribute '{0}'.
+Sch_ElementCircularRef=Circular element reference.
+Sch_RefInvalidElement=Reference to invalid element '{0}'.
+Sch_ElementCannotHaveValue=Element's type does not allow fixed or default value constraint.
+Sch_ElementInMixedWithFixed=Although the '{0}' element's content type is mixed, it cannot have element children, because it has a fixed value constraint in the schema.
+Sch_ElementTypeCollision=Elements with the same name and in the same scope must have the same type.
+Sch_InvalidIncludeLocation=Cannot resolve the 'schemaLocation' attribute.
+Sch_CannotLoadSchema=Cannot load the schema for the namespace '{0}' - {1}
+Sch_CannotLoadSchemaLocation=Cannot load the schema from the location '{0}' - {1}
+Sch_LengthGtBaseLength=It is an error if 'length' is among the members of {facets} of {base type definition} and {value} is greater than the {value} of the parent 'length'.
+Sch_MinLengthGtBaseMinLength=It is an error if 'minLength' is among the members of {facets} of {base type definition} and {value} is less than the {value} of the parent 'minLength'.
+Sch_MaxLengthGtBaseMaxLength=It is an error if 'maxLength' is among the members of {facets} of {base type definition} and {value} is greater than the {value} of the parent 'maxLength'.
+Sch_MaxMinLengthBaseLength=It is an error for both 'length' and either 'minLength' or 'maxLength' to be members of {facets}, unless they are specified in different derivation steps. In which case the following must be true: the {value} of 'minLength' <= the {value} of 'length' <= the {value} of 'maxLength'.
+Sch_MaxInclusiveMismatch=It is an error if the derived 'maxInclusive' facet value is greater than the parent 'maxInclusive' facet value.
+Sch_MaxExclusiveMismatch=It is an error if the derived 'maxExclusive' facet value is greater than the parent 'maxExclusive' facet value.
+Sch_MinInclusiveMismatch=It is an error if the derived 'minInclusive' facet value is less than the parent 'minInclusive' facet value.
+Sch_MinExclusiveMismatch=It is an error if the derived 'minExclusive' facet value is less than the parent 'minExclusive' facet value.
+Sch_MinExlIncMismatch=It is an error if the derived 'minExclusive' facet value is less than or equal to the parent 'minInclusive' facet value.
+Sch_MinExlMaxExlMismatch=It is an error if the derived 'minExclusive' facet value is greater than or equal to the parent 'maxExclusive' facet value.
+Sch_MinIncMaxExlMismatch=It is an error if the derived 'minInclusive' facet value is greater than or equal to the parent 'maxExclusive' facet value.
+Sch_MinIncExlMismatch=It is an error if the derived 'minInclusive' facet value is less than or equal to the parent 'minExclusive' facet value.
+Sch_MaxIncExlMismatch=It is an error if the derived 'maxInclusive' facet value is greater than or equal to the parent 'maxExclusive' facet value.
+Sch_MaxExlIncMismatch=It is an error if the derived 'maxExclusive' facet value is greater than or equal to the parent 'maxInclusive' facet value.
+Sch_TotalDigitsMismatch=It is an error if the derived 'totalDigits' facet value is greater than the parent 'totalDigits' facet value.
+Sch_FacetBaseFixed=Values that are declared as {fixed} in a base type can not be changed in a derived type.
+Sch_WhiteSpaceRestriction1=It is an error if 'whiteSpace' is among the members of {facets} of {base type definition}, {value} is 'replace' or 'preserve', and the {value} of the parent 'whiteSpace' is 'collapse'.
+Sch_WhiteSpaceRestriction2=It is an error if 'whiteSpace' is among the members of {facets} of {base type definition}, {value} is 'preserve', and the {value} of the parent 'whiteSpace' is 'replace'.
+Sch_XsiNilAndFixed=There must be no fixed value when an attribute is 'xsi:nil' and has a value of 'true'.
+Sch_MixSchemaTypes=Different schema types cannot be mixed.
+Sch_XSDSchemaOnly='XmlSchemaSet' can load only W3C XML Schemas.
+Sch_InvalidPublicAttribute=Public attribute '{0}' is an invalid URI.
+Sch_InvalidSystemAttribute=System attribute '{0}' is an invalid URI.
+Sch_TypeAfterConstraints='simpleType' or 'complexType' cannot follow 'unique', 'key' or 'keyref'.
+Sch_XsiNilAndType=There can be no type value when attribute is 'xsi:nil' and has value 'true'.
+Sch_DupSimpleTypeChild='simpleType' should have only one child 'union', 'list', or 'restriction'.
+Sch_InvalidIdAttribute=Invalid 'id' attribute value: {0}
+Sch_InvalidNameAttributeEx=Invalid 'name' attribute value '{0}': '{1}'.
+Sch_InvalidAttribute=Invalid '{0}' attribute: '{1}'.
+Sch_EmptyChoice=Empty choice cannot be satisfied if 'minOccurs' is not equal to 0.
+Sch_DerivedNotFromBase=The data type of the simple content is not a valid restriction of the base complex type.
+Sch_NeedSimpleTypeChild=Simple content restriction must have a simple type child if the content type of the base type is not a simple type definition.
+Sch_InvalidCollection=The schema items collection cannot contain an object of type 'XmlSchemaInclude', 'XmlSchemaImport', or 'XmlSchemaRedefine'.
+Sch_UnrefNS=Namespace '{0}' is not available to be referenced in this schema.
+Sch_InvalidSimpleTypeRestriction=Restriction of 'anySimpleType' is not allowed.
+Sch_MultipleRedefine=Multiple redefines of the same schema will be ignored.
+Sch_NullValue=Value cannot be null.
+Sch_ComplexContentModel=Content model validation resulted in a large number of states, possibly due to large occurrence ranges. Therefore, content model may not be validated accurately.
+Sch_SchemaNotPreprocessed=All schemas in the set should be successfully preprocessed prior to compilation.
+Sch_SchemaNotRemoved=The schema could not be removed because other schemas in the set have dependencies on this schema or its imports.
+Sch_ComponentAlreadySeenForNS=An element or attribute information item has already been validated from the '{0}' namespace. It is an error if 'xsi:schemaLocation', 'xsi:noNamespaceSchemaLocation', or an inline schema occurs for that namespace.
+Sch_DefaultAttributeNotApplied=Default attribute '{0}' for element '{1}' could not be applied as the attribute namespace is not mapped to a prefix in the instance document.
+Sch_NotXsiAttribute=The attribute '{0}' does not match one of the four allowed attributes in the 'xsi' namespace.
+Sch_SchemaDoesNotExist=Schema does not exist in the set.
+#endif // !SILVERLIGHT
+
+;
+; Xml Document validation errors
+;
+#if !SILVERLIGHT
+XmlDocument_ValidateInvalidNodeType=Validate method can be called only on nodes of type Document, DocumentFragment, Element, or Attribute.
+XmlDocument_NodeNotFromDocument=Cannot validate '{0}' because its owner document is not the current document. 
+XmlDocument_NoNodeSchemaInfo=Schema information could not be found for the node passed into Validate. The node may be invalid in its current position. Navigate to the ancestor that has schema information, then call Validate again.
+XmlDocument_NoSchemaInfo=The XmlSchemaSet on the document is either null or has no schemas in it. Provide schema information before calling Validate.
+#endif // !SILVERLIGHT
+
+;
+; XmlSchemaValidator messages
+;
+#if !SILVERLIGHT
+Sch_InvalidStartTransition=It is invalid to call the '{0}' method in the current state of the validator. The '{1}' method must be called before proceeding with validation.
+Sch_InvalidStateTransition=The transition from the '{0}' method to the '{1}' method is not allowed.
+Sch_InvalidEndValidation=The 'EndValidation' method cannot not be called when all the elements have not been validated. 'ValidateEndElement' calls corresponding to 'ValidateElement' calls might be missing.
+Sch_InvalidEndElementCall=It is invalid to call the 'ValidateEndElement' overload that takes in a 'typedValue' after 'ValidateText' or 'ValidateWhitespace' methods have been called.
+Sch_InvalidEndElementCallTyped=It is invalid to call the 'ValidateEndElement' overload that takes in a 'typedValue' for elements with complex content.
+Sch_InvalidEndElementMultiple=The call to the '{0}' method does not match a corresponding call to 'ValidateElement' method.
+Sch_DuplicateAttribute=The '{0}' attribute has already been validated and is a duplicate attribute.
+Sch_InvalidPartialValidationType=The partial validation type has to be 'XmlSchemaElement', 'XmlSchemaAttribute', or 'XmlSchemaType'.
+Sch_SchemaElementNameMismatch=The element name '{0}' does not match the name '{1}' of the 'XmlSchemaElement' set as a partial validation type. 
+Sch_SchemaAttributeNameMismatch=The attribute name '{0}' does not match the name '{1}' of the 'XmlSchemaAttribute' set as a partial validation type. 
+Sch_ValidateAttributeInvalidCall=If the partial validation type is 'XmlSchemaElement' or 'XmlSchemaType', the 'ValidateAttribute' method cannot be called.
+Sch_ValidateElementInvalidCall=If the partial validation type is 'XmlSchemaAttribute', the 'ValidateElement' method cannot be called.
+#endif // !SILVERLIGHT
+
+;
+; Object table
+;
+#if !SILVERLIGHT
+Sch_EnumNotStarted=Enumeration has not started. Call MoveNext.
+Sch_EnumFinished=Enumeration has already finished.
+#endif // !SILVERLIGHT
+
+;
+; Schema Inference errors
+;
+#if !SILVERLIGHT
+SchInf_schema=The supplied xml instance is a schema or contains an inline schema. This class cannot infer a schema for a schema.
+SchInf_entity=Inference cannot handle entity references. Pass in an 'XmlReader' that expands entities.
+SchInf_simplecontent=Expected simple content. Schema was not created using this tool.
+SchInf_extension=Expected 'Extension' within 'SimpleContent'. Schema was not created using this tool.
+SchInf_particle=Particle cannot exist along with 'ContentModel'.
+SchInf_ct=Complex type expected to exist with at least one 'Element' at this point.
+SchInf_seq=sequence expected to contain elements only. Schema was not created using this tool.
+SchInf_noseq=The supplied schema contains particles other than Sequence and Choice. Only schemas generated by this tool are supported.
+SchInf_noct=Expected ComplexType. Schema was not generated using this tool.
+SchInf_UnknownParticle=Expected Element. Schema was not generated using this tool.
+SchInf_schematype=Inference can only handle simple built-in types for 'SchemaType'.
+SchInf_NoElement=There is no element to infer schema.
+#endif // !SILVERLIGHT
+
+;
+; Old XPath errors
+;
+#if !SILVERLIGHT
+Xp_UnclosedString=This is an unclosed string.
+Xp_ExprExpected='{0}' is an invalid expression.
+Xp_InvalidArgumentType=The argument to function '{0}' in '{1}' cannot be converted to a node-set.
+Xp_InvalidNumArgs=Function '{0}' in '{1}' has an invalid number of arguments.
+Xp_InvalidName='{0}' has an invalid qualified name.
+Xp_InvalidToken='{0}' has an invalid token.
+Xp_NodeSetExpected=Expression must evaluate to a node-set.
+Xp_NotSupported=The XPath query '{0}' is not supported.
+Xp_InvalidPattern='{0}' is an invalid XSLT pattern.
+Xp_InvalidKeyPattern='{0}' is an invalid key pattern. It either contains a variable reference or 'key()' function.
+Xp_BadQueryObject=This is an invalid object. Only objects returned from Compile() can be passed as input.
+Xp_UndefinedXsltContext=XsltContext is needed for this query because of an unknown function.
+Xp_NoContext=Namespace Manager or XsltContext needed. This query has a prefix, variable, or user-defined function.
+Xp_UndefVar=The variable '{0}' is undefined.
+Xp_UndefFunc=The function '{0}()' is undefined.
+Xp_FunctionFailed=Function '{0}()' has failed.
+Xp_CurrentNotAllowed=The 'current()' function cannot be used in a pattern.
+Xp_QueryTooComplex=The xpath query is too complex.
+#endif // !SILVERLIGHT
+
+;
+; Xml DOM errors
+;
+#if !SILVERLIGHT
+Xdom_DualDocumentTypeNode=This document already has a 'DocumentType' node.
+Xdom_DualDocumentElementNode=This document already has a 'DocumentElement' node.
+Xdom_DualDeclarationNode=This document already has an 'XmlDeclaration' node.
+Xdom_Import=Cannot import nodes of type '{0}'.
+Xdom_Import_NullNode=Cannot import a null node.
+Xdom_NoRootEle=The document does not have a root element.
+Xdom_Attr_Name=The attribute local name cannot be empty.
+Xdom_AttrCol_Object=An 'Attributes' collection can only contain 'Attribute' objects.
+Xdom_AttrCol_Insert=The reference node must be a child of the current node.
+Xdom_NamedNode_Context=The named node is from a different document context.
+Xdom_Version=Wrong XML version information. The XML must match production "VersionNum ::= '1.' [0-9]+".
+Xdom_standalone=Wrong value for the XML declaration standalone attribute of '{0}'.
+Xdom_Ele_Prefix=The prefix of an element name cannot start with 'xml'.
+Xdom_Ent_Innertext=The 'InnerText' of an 'Entity' node is read-only and cannot be set.
+Xdom_EntRef_SetVal='EntityReference' nodes have no support for setting value.
+Xdom_WS_Char=The string for white space contains an invalid character.
+Xdom_Node_SetVal=Cannot set a value on node type '{0}'.
+Xdom_Empty_LocalName=The local name for elements or attributes cannot be null or an empty string.
+Xdom_Set_InnerXml=Cannot set the 'InnerXml' for the current node because it is either read-only or cannot have children.
+Xdom_Attr_InUse=The 'Attribute' node cannot be inserted because it is already an attribute of another element.
+Xdom_Enum_ElementList=The element list has changed. The enumeration operation failed to continue.
+Xdom_Invalid_NT_String='{0}' does not represent any 'XmlNodeType'.
+Xdom_InvalidCharacter_EntityReference=Cannot create an 'EntityReference' node with a name starting with '#'.
+Xdom_IndexOutOfRange=The index being passed in is out of range.
+Xdom_Document_Innertext=The 'InnerText' of a 'Document' node is read-only and cannot be set.
+#endif // !SILVERLIGHT
+
+;
+; XPathNavigator errors
+;
+#if !SILVERLIGHT
+Xpn_BadPosition=Operation is not valid due to the current position of the navigator.
+Xpn_MissingParent=The current position of the navigator is missing a valid parent.
+Xpn_NoContent=No content generated as the result of the operation.
+#endif // !SILVERLIGHT
+
+;
+; XmlLoader errors
+;
+#if !SILVERLIGHT
+Xdom_Load_NoDocument=The document to be loaded could not be found.
+Xdom_Load_NoReader=There is no reader from which to load the document.
+#endif // !SILVERLIGHT
+
+;
+; XmlNode operations
+;
+#if !SILVERLIGHT
+Xdom_Node_Null_Doc=Cannot create a node without an owner document.
+Xdom_Node_Insert_Child=Cannot insert a node or any ancestor of that node as a child of itself.
+Xdom_Node_Insert_Contain=The current node cannot contain other nodes.
+Xdom_Node_Insert_Path=The reference node is not a child of this node.
+Xdom_Node_Insert_Context=The node to be inserted is from a different document context.
+Xdom_Node_Insert_Location=Cannot insert the node in the specified location.
+Xdom_Node_Insert_TypeConflict=The specified node cannot be inserted as the valid child of this node, because the specified node is the wrong type.
+Xdom_Node_Remove_Contain=The current node cannot contain other nodes, so the node to be removed is not its child.
+Xdom_Node_Remove_Child=The node to be removed is not a child of this node.
+Xdom_Node_Modify_ReadOnly=This node is read-only. It cannot be modified.
+Xdom_TextNode_SplitText=The 'Text' node is not connected in the DOM live tree. No 'SplitText' operation could be performed.
+Xdom_Attr_Reserved_XmlNS=The namespace declaration attribute has an incorrect 'namespaceURI': '{0}'.
+Xdom_Node_Cloning='Entity' and 'Notation' nodes cannot be cloned.
+#endif // !SILVERLIGHT
+
+;
+; XmlNodeReader errors
+;
+#if !SILVERLIGHT
+Xnr_ResolveEntity=The node is not an expandable 'EntityReference' node.
+#endif // !SILVERLIGHT
+
+;
+; XPathDocument errors
+;
+#if !SILVERLIGHT
+XPathDocument_MissingSchemas=An XmlSchemaSet must be provided to validate the document.
+XPathDocument_NotEnoughSchemaInfo=Element should have prior schema information to call this method.
+XPathDocument_ValidateInvalidNodeType=Validate and CheckValidity are only allowed on Root or Element nodes.
+XPathDocument_SchemaSetNotAllowed=An XmlSchemaSet is only allowed as a parameter on the Root node.
+#endif // !SILVERLIGHT
+
+;
+; DataBinding errors
+;
+#if !SILVERLIGHT
+;XmlDataBinding_NoSchemaType=Unable to derive SchemaType from source document and XPath.
+;XmlDataBinding_XPathEnd=Invalid XPath: Unexpected end of XPath.
+;XmlDataBinding_XPathRequireSlash=Invalid XPath: Expecting '/'.
+;XmlDataBinding_XPathAttrNotFirst=Invalid XPath: Attribute pattern must follow Element pattern.
+;XmlDataBinding_XPathAttrLast=Invalid XPath: Attributes must be the last match.
+#endif // !SILVERLIGHT
+
+;
+; SQL BinaryXml Reader errors
+;
+#if !SILVERLIGHT
+XmlBin_MissingEndCDATA=CDATA end token is missing.
+XmlBin_InvalidQNameID=Invalid QName ID.
+XmlBinary_UnexpectedToken=Unexpected BinaryXml token.
+XmlBinary_InvalidSqlDecimal=Unable to parse data as SQL_DECIMAL.
+XmlBinary_InvalidSignature=Invalid BinaryXml signature.
+XmlBinary_InvalidProtocolVersion=Invalid BinaryXml protocol version.
+XmlBinary_UnsupportedCodePage=Unsupported BinaryXml codepage.
+XmlBinary_InvalidStandalone=Invalid BinaryXml standalone token.
+XmlBinary_NoParserContext=BinaryXml Parser does not support initialization with XmlParserContext.
+XmlBinary_ListsOfValuesNotSupported=Lists of BinaryXml value tokens not supported.
+XmlBinary_CastNotSupported=Token '{0}' does not support a conversion to Clr type '{1}'.
+XmlBinary_NoRemapPrefix=Prefix '{0}' is already assigned to namespace '{1}' and cannot be reassigned to '{2}' on this tag.
+XmlBinary_AttrWithNsNoPrefix=Attribute '{0}' has namespace '{1}' but no prefix.
+XmlBinary_ValueTooBig=The value is too big to fit into an Int32. The arithmetic operation resulted in an overflow.
+#endif // !SILVERLIGHT
+
+;
+; SQL BinaryXml Reader errors
+; Copied SqlTypes code messages
+;
+#if !SILVERLIGHT
+SqlTypes_ArithOverflow=Arithmetic Overflow.
+SqlTypes_ArithTruncation=Numeric arithmetic causes truncation.
+SqlTypes_DivideByZero=Divide by zero error encountered.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization errors
+;
+#if !SILVERLIGHT
+XmlMissingType=Invalid serialization assembly: Required type {0} cannot be found in the generated assembly '{1}'.
+XmlUnsupportedType={0} is an unsupported type.
+XmlSerializerUnsupportedType={0} is an unsupported type. Please use [XmlIgnore] attribute to exclude members of this type from serialization graph.
+XmlSerializerUnsupportedMember=Cannot serialize member '{0}' of type '{1}', see inner exception for more details.
+XmlUnsupportedTypeKind=The type {0} may not be serialized.
+XmlUnsupportedSoapTypeKind=The type {0} may not be serialized with SOAP-encoded messages. Set the Use for your message to Literal.
+XmlUnsupportedIDictionary=The type {0} is not supported because it implements IDictionary.
+XmlUnsupportedIDictionaryDetails=Cannot serialize member {0} of type {1}, because it implements IDictionary.
+XmlDuplicateTypeName=A type with the name {0} has already been added in namespace {1}.
+XmlSerializableNameMissing1=Schema Id is missing. The schema returned from {0}.GetSchema() must have an Id.
+XmlConstructorInaccessible={0} cannot be serialized because it does not have a parameterless constructor.
+XmlTypeInaccessible={0} is inaccessible due to its protection level. Only public types can be processed.
+XmlTypeStatic={0} cannot be serialized. Static types cannot be used as parameters or return types.
+XmlNoDefaultAccessors=You must implement a default accessor on {0} because it inherits from ICollection.
+XmlNoAddMethod=To be XML serializable, types which inherit from {2} must have an implementation of Add({1}) at all levels of their inheritance hierarchy. {0} does not implement Add({1}).
+XmlReadOnlyPropertyError=Cannot deserialize type '{0}' because it contains property '{1}' which has no public setter.
+XmlAttributeSetAgain='{0}.{1}' already has attributes.
+XmlIllegalWildcard=Cannot use wildcards at the top level of a schema.
+XmlIllegalArrayElement=An element declared at the top level of a schema cannot have maxOccurs > 1. Provide a wrapper element for '{0}' by using XmlArray or XmlArrayItem instead of XmlElementAttribute, or by using the Wrapped parameter style.
+XmlIllegalForm=There was an error exporting '{0}': elements declared at the top level of a schema cannot be unqualified.
+XmlBareTextMember=There was an error exporting '{0}': bare members cannot contain text content.
+XmlBareAttributeMember=There was an error exporting '{0}': bare members cannot be attributes.
+XmlReflectionError=There was an error reflecting '{0}'.
+XmlTypeReflectionError=There was an error reflecting type '{0}'.
+XmlPropertyReflectionError=There was an error reflecting property '{0}'.
+XmlFieldReflectionError=There was an error reflecting field '{0}'.
+XmlInvalidDataTypeUsage='{0}' is an invalid value for the {1} property. The property may only be specified for primitive types.
+XmlInvalidXsdDataType=Value '{0}' cannot be used for the {1} property. The datatype '{2}' is missing.
+XmlDataTypeMismatch='{0}' is an invalid value for the {1} property. {0} cannot be converted to {2}.
+XmlIllegalTypeContext={0} cannot be used as: 'xml {1}'.
+XmlUdeclaredXsdType=The type, {0}, is undeclared.
+XmlAnyElementNamespace=The element {0} has been attributed with an XmlAnyElementAttribute and a namespace {1}, but no name. When a namespace is supplied, a name is also required. Supply a name or remove the namespace.
+XmlInvalidConstantAttribute=Only XmlEnum may be used on enumerated constants.
+XmlIllegalDefault=The default value for XmlAttribute or XmlElement may only be specified for primitive types.
+XmlIllegalAttributesArrayAttribute=XmlAttribute and XmlAnyAttribute cannot be used in conjunction with XmlElement, XmlText, XmlAnyElement, XmlArray, or XmlArrayItem.
+XmlIllegalElementsArrayAttribute=XmlElement, XmlText, and XmlAnyElement cannot be used in conjunction with XmlAttribute, XmlAnyAttribute, XmlArray, or XmlArrayItem.
+XmlIllegalArrayArrayAttribute=XmlArray and XmlArrayItem cannot be used in conjunction with XmlAttribute, XmlAnyAttribute, XmlElement, XmlText, or XmlAnyElement.
+XmlIllegalAttribute=For non-array types, you may use the following attributes: XmlAttribute, XmlText, XmlElement, or XmlAnyElement.
+XmlIllegalType=The type for {0} may not be specified for primitive types.
+XmlIllegalAttrOrText=Cannot serialize member '{0}' of type {1}. XmlAttribute/XmlText cannot be used to encode complex types.
+XmlIllegalSoapAttribute=Cannot serialize member '{0}' of type {1}. SoapAttribute cannot be used to encode complex types.
+XmlIllegalAttrOrTextInterface=Cannot serialize member '{0}' of type {1}. XmlAttribute/XmlText cannot be used to encode types implementing {2}.
+XmlIllegalAttributeFlagsArray=XmlAttribute cannot be used to encode array of {1}, because it is marked with FlagsAttribute.
+XmlIllegalAnyElement=Cannot serialize member of type {0}: XmlAnyElement can only be used with classes of type XmlNode or a type deriving from XmlNode.
+XmlInvalidIsNullable=IsNullable may not be 'true' for value type {0}.  Please consider using Nullable<{0}> instead.
+XmlInvalidNotNullable=IsNullable may not be set to 'false' for a Nullable<{0}> type. Consider using '{0}' type or removing the IsNullable property from the {1} attribute.
+XmlInvalidFormUnqualified=The Form property may not be 'Unqualified' when an explicit Namespace property is present.
+XmlDuplicateNamespace=The namespace, {0}, is a duplicate.
+XmlElementHasNoName=This element has no name. Please review schema type '{0}' from namespace '{1}'.
+XmlAttributeHasNoName=This attribute has no name.
+XmlElementImportedTwice=The element, {0}, from namespace, {1}, was imported in two different contexts: ({2}, {3}).
+XmlHiddenMember=Member {0}.{1} of type {2} hides base class member {3}.{4} of type {5}. Use XmlElementAttribute or XmlAttributeAttribute to specify a new name.
+XmlInvalidXmlOverride=Member '{0}.{1}' hides inherited member '{2}.{3}', but has different custom attributes.
+XmlMembersDeriveError=These members may not be derived.
+XmlTypeUsedTwice=The type '{0}' from namespace '{1}' was used in two different ways.
+XmlMissingGroup=Group {0} is missing.
+XmlMissingAttributeGroup=The attribute group {0} is missing.
+XmlMissingDataType=The datatype '{0}' is missing.
+XmlInvalidEncoding=Referenced type '{0}' is only valid for encoded SOAP.
+XmlMissingElement=The element '{0}' is missing.
+XmlMissingAttribute=The attribute {0} is missing.
+XmlMissingMethodEnum=The method for enum {0} is missing.
+XmlNoAttributeHere=Cannot write a node of type XmlAttribute as an element value. Use XmlAnyAttributeAttribute with an array of XmlNode or XmlAttribute to write the node as an attribute.
+XmlNeedAttributeHere=The node must be either type XmlAttribute or a derived type.
+XmlElementNameMismatch=This element was named '{0}' from namespace '{1}' but should have been named '{2}' from namespace '{3}'.
+XmlUnsupportedDefaultType=The default value type, {0}, is unsupported.
+XmlUnsupportedDefaultValue=The formatter {0} cannot be used for default values.
+XmlInvalidDefaultValue=Value '{0}' cannot be converted to {1}.
+XmlInvalidDefaultEnumValue=Enum {0} cannot be converted to {1}.
+XmlUnknownNode={0} was not expected.
+XmlUnknownConstant=Instance validation error: '{0}' is not a valid value for {1}.
+XmlSerializeError=There is an error in the XML document.
+XmlSerializeErrorDetails=There is an error in XML document ({0}, {1}).
+XmlCompilerError=Unable to generate a temporary class (result={0}).
+XmlSchemaDuplicateNamespace=There are more then one schema with targetNamespace='{0}'.
+XmlSchemaCompiled=Cannot add schema to compiled schemas collection.
+XmlInvalidSchemaExtension='{0}' is not a valid SchemaExtensionType.
+XmlInvalidArrayDimentions=SOAP-ENC:arrayType with multidimensional array found at {0}. Only single-dimensional arrays are supported. Consider using an array of arrays instead.
+XmlInvalidArrayTypeName=The SOAP-ENC:arrayType references type is named '{0}'; a type named '{1}' was expected at {2}.
+XmlInvalidArrayTypeNamespace=The SOAP-ENC:arrayType references type is from namespace '{0}'; the namespace '{1}' was expected at {2}.
+XmlMissingArrayType=SOAP-ENC:arrayType was missing at {0}.
+XmlEmptyArrayType=SOAP-ENC:arrayType was empty at {0}.
+XmlInvalidArraySyntax=SOAP-ENC:arrayType must end with a ']' character.
+XmlInvalidArrayTypeSyntax=Invalid wsd:arrayType syntax: '{0}'.
+XmlMismatchedArrayBrackets=SOAP-ENC:arrayType has mismatched brackets.
+XmlInvalidArrayLength=SOAP-ENC:arrayType could not handle '{1}' as the length of the array.
+XmlMissingHref=The referenced element with ID '{0}' is located outside the current document and cannot be retrieved.
+XmlInvalidHref=The referenced element with ID '{0}' was not found in the document.
+XmlUnknownType=The specified type was not recognized: name='{0}', namespace='{1}', at {2}.
+XmlAbstractType=The specified type is abstract: name='{0}', namespace='{1}', at {2}.
+XmlMappingsScopeMismatch=Exported mappings must come from the same importer.
+XmlMethodTypeNameConflict=The XML element '{0}' from namespace '{1}' references a method and a type. Change the method's message name using WebMethodAttribute or change the type's root element using the XmlRootAttribute.
+XmlCannotReconcileAccessor=The top XML element '{0}' from namespace '{1}' references distinct types {2} and {3}. Use XML attributes to specify another XML name or namespace for the element or types.
+XmlCannotReconcileAttributeAccessor=The global XML attribute '{0}' from namespace '{1}' references distinct types {2} and {3}. Use XML attributes to specify another XML name or namespace for the attribute or types.
+XmlCannotReconcileAccessorDefault=The global XML item '{0}' from namespace '{1}' has mismatch default value attributes: '{2}' and '{3}' and cannot be mapped to the same schema item. Use XML attributes to specify another XML name or namespace for one of the items, or make sure that the default values match.
+XmlInvalidTypeAttributes=XmlRoot and XmlType attributes may not be specified for the type {0}.
+XmlInvalidAttributeUse=XML attributes may not be specified for the type {0}.
+XmlTypesDuplicate=Types '{0}' and '{1}' both use the XML type name, '{2}', from namespace '{3}'. Use XML attributes to specify a unique XML name and/or namespace for the type.
+XmlInvalidSoapArray=An array of type {0} may not be used with XmlArrayType.Soap.
+XmlCannotIncludeInSchema=The type {0} may not be exported to a schema because the IncludeInSchema property of the XmlType attribute is 'false'.
+XmlSoapCannotIncludeInSchema=The type {0} may not be exported to a schema because the IncludeInSchema property of the SoapType attribute is 'false'.
+XmlInvalidSerializable=The type {0} may not be used in this context. To use {0} as a parameter, return type, or member of a class or struct, the parameter, return type, or member must be declared as type {0} (it cannot be object). Objects of type {0} may not be used in un-typed collections, such as ArrayLists.
+XmlInvalidUseOfType=The type {0} may not be used in this context.
+XmlUnxpectedType=The type {0} was not expected. Use the XmlInclude or SoapInclude attribute to specify types that are not known statically.
+XmlUnknownAnyElement=The XML element '{0}' from namespace '{1}' was not expected. The XML element name and namespace must match those provided via XmlAnyElementAttribute(s).
+XmlMultipleAttributeOverrides={0}. {1} already has attributes.
+XmlInvalidEnumAttribute=Only SoapEnum may be used on enum constants.
+XmlInvalidReturnPosition=The return value must be the first member.
+XmlInvalidElementAttribute=Only SoapElementAttribute or SoapAttributeAttribute may be used on members.
+XmlInvalidVoid=The type Void is not valid in this context.
+XmlInvalidContent=Invalid content {0}.
+XmlInvalidSchemaElementType=Types must be declared at the top level in the schema. Please review schema type '{0}' from namespace '{1}': element '{2}' is using anonymous type declaration, anonymous types are not supported with encoded SOAP.
+XmlInvalidSubstitutionGroupUse=Substitution group may not be used with encoded SOAP. Please review type declaration '{0}' from namespace '{1}'.
+XmlElementMissingType=Please review type declaration '{0}' from namespace '{1}': element '{2}' does not specify a type.
+XmlInvalidAnyAttributeUse=Any may not be specified. Attributes are not supported with encoded SOAP. Please review schema type '{0}' from namespace '{1}'.
+XmlSoapInvalidAttributeUse=Attributes are not supported with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}': use elements (not attributes) for fields/parameters.
+XmlSoapInvalidChoice=Choice is not supported with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}': use all or sequence (not choice) for fields/parameters.
+XmlSoapUnsupportedGroupRef=The ref syntax for groups is not supported with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}': replace the group reference with local group declaration.
+XmlSoapUnsupportedGroupRepeat=Group may not repeat.  Unbounded groups are not supported with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}'.
+XmlSoapUnsupportedGroupNested=Nested groups may not be used with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}'.
+XmlSoapUnsupportedGroupAny=Any may not be used with encoded SOAP. Please change definition of schema type '{0}' from namespace '{1}'.
+XmlInvalidEnumContent=Invalid content '{0}' for enumerated data type {1}.
+XmlInvalidAttributeType={0} may not be used on parameters or return values when they are not wrapped.
+XmlInvalidBaseType=Type {0} cannot derive from {1} because it already has base type {2}.
+XmlPrimitiveBaseType=Type '{0}' from namespace '{1}' is not a complex type and cannot be used as a {2}.
+XmlInvalidIdentifier=Identifier '{0}' is not CLS-compliant.
+XmlGenError=There was an error generating the XML document.
+XmlInvalidXmlns=Invalid namespace attribute: xmlns:{0}="".
+XmlCircularReference=A circular reference was detected while serializing an object of type {0}.
+XmlCircularReference2=A circular type reference was detected in anonymous type '{0}'.  Please change '{0}' to be a named type by setting {1}={2} in the type definition.
+XmlAnonymousBaseType=Illegal type derivation: Type '{0}' derives from anonymous type '{1}'. Please change '{1}' to be a named type by setting {2}={3} in the type definition.
+XmlMissingSchema=Missing schema targetNamespace="{0}".
+XmlNoSerializableMembers=Cannot serialize object of type '{0}'. The object does not have serializable members.
+XmlIllegalOverride=Error: Type '{0}' could not be imported because it redefines inherited member '{1}' with a different type. '{1}' is declared as type '{3}' on '{0}', but as type '{2}' on base class '{4}'.
+XmlReadOnlyCollection=Could not deserialize {0}. Parameterless constructor is required for collections and enumerators.
+XmlRpcNestedValueType=Cannot serialize {0}. Nested structs are not supported with encoded SOAP.
+XmlRpcRefsInValueType=Cannot serialize {0}. References in structs are not supported with encoded SOAP.
+XmlRpcArrayOfValueTypes=Cannot serialize {0}. Arrays of structs are not supported with encoded SOAP.
+XmlDuplicateElementName=The XML element '{0}' from namespace '{1}' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.
+XmlDuplicateAttributeName=The XML attribute '{0}' from namespace '{1}' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.
+XmlBadBaseElement=Element '{0}' from namespace '{1}' is not a complex type and cannot be used as a {2}.
+XmlBadBaseType=Type '{0}' from namespace '{1}' is not a complex type and cannot be used as a {2}.
+XmlUndefinedAlias=Namespace prefix '{0}' is not defined.
+XmlChoiceIdentifierType=Type of choice identifier '{0}' is inconsistent with type of '{1}'. Please use {2}.
+XmlChoiceIdentifierArrayType=Type of choice identifier '{0}' is inconsistent with type of '{1}'. Please use array of {2}.
+XmlChoiceIdentifierTypeEnum=Choice identifier '{0}' must be an enum.
+XmlChoiceIdentiferMemberMissing=Missing '{0}' member needed for serialization of choice '{1}'.
+XmlChoiceIdentiferAmbiguous=Ambiguous choice identifier. There are several members named '{0}'.
+XmlChoiceIdentiferMissing=You need to add {0} to the '{1}' member.
+XmlChoiceMissingValue=Type {0} is missing enumeration value '{1}' for element '{2}' from namespace '{3}'.
+XmlChoiceMissingAnyValue=Type {0} is missing enumeration value '##any:' corresponding to XmlAnyElementAttribute.
+XmlChoiceMismatchChoiceException=Value of {0} mismatches the type of {1}; you need to set it to {2}.
+XmlArrayItemAmbiguousTypes=Ambiguous types specified for member '{0}'.  Items '{1}' and '{2}' have the same type.  Please consider using {3} with {4} instead.
+XmlUnsupportedInterface=Cannot serialize interface {0}.
+XmlUnsupportedInterfaceDetails=Cannot serialize member {0} of type {1} because it is an interface.
+XmlUnsupportedRank=Cannot serialize object of type {0}. Multidimensional arrays are not supported.
+XmlUnsupportedInheritance=Using {0} as a base type for a class is not supported by XmlSerializer.
+XmlIllegalMultipleText=Cannot serialize object of type '{0}' because it has multiple XmlText attributes. Consider using an array of strings with XmlTextAttribute for serialization of a mixed complex type.
+XmlIllegalMultipleTextMembers=XmlText may not be used on multiple parameters or return values.
+XmlIllegalArrayTextAttribute=Member '{0}' cannot be encoded using the XmlText attribute. You may use the XmlText attribute to encode primitives, enumerations, arrays of strings, or arrays of XmlNode.
+XmlIllegalTypedTextAttribute=Cannot serialize object of type '{0}'. Consider changing type of XmlText member '{0}.{1}' from {2} to string or string array.
+XmlIllegalSimpleContentExtension=Cannot serialize object of type '{0}'. Base type '{1}' has simpleContent and can only be extended by adding XmlAttribute elements. Please consider changing XmlText member of the base class to string array.
+XmlInvalidCast=Cannot assign object of type {0} to an object of type {1}.
+XmlInvalidCastWithId=Cannot assign object of type {0} to an object of type {1}. The error occurred while reading node with id='{2}'.
+XmlInvalidArrayRef=Invalid reference id='{0}'. Object of type {1} cannot be stored in an array of this type. Details: array index={2}.
+XmlInvalidNullCast=Cannot assign null value to an object of type {1}.
+XmlMultipleXmlns=Cannot serialize object of type '{0}' because it has multiple XmlNamespaceDeclarations attributes.
+XmlMultipleXmlnsMembers=XmlNamespaceDeclarations may not be used on multiple parameters or return values.
+XmlXmlnsInvalidType=Cannot use XmlNamespaceDeclarations attribute on member '{0}' of type {1}.  This attribute is only valid on members of type {2}.
+XmlSoleXmlnsAttribute=XmlNamespaceDeclarations attribute cannot be used in conjunction with any other custom attributes.
+XmlConstructorHasSecurityAttributes=The type '{0}' cannot be serialized because its parameterless constructor is decorated with declarative security permission attributes. Consider using imperative asserts or demands in the constructor.
+XmlPropertyHasSecurityAttributes=The property '{0}' on type '{1}' cannot be serialized because it is decorated with declarative security permission attributes. Consider using imperative asserts or demands in the property accessors.
+XmlMethodHasSecurityAttributes=The type '{0}' cannot be serialized because the {1}({2}) method is decorated with declarative security permission attributes. Consider using imperative asserts or demands in the method.
+XmlDefaultAccessorHasSecurityAttributes=The type '{0}' cannot be serialized because its default accessor is decorated with declarative security permission attributes. Consider using imperative asserts or demands in the accessor.
+XmlInvalidChoiceIdentifierValue=Invalid or missing value of the choice identifier '{1}' of type '{0}[]'.
+XmlAnyElementDuplicate=The element '{0}' has been attributed with duplicate XmlAnyElementAttribute(Name="{1}", Namespace="{2}").
+XmlChoiceIdDuplicate=Enum values in the XmlChoiceIdentifier '{0}' have to be unique.  Value '{1}' already present.
+XmlChoiceIdentifierMismatch=Value '{0}' of the choice identifier '{1}' does not match element '{2}' from namespace '{3}'.
+XmlUnsupportedRedefine=Cannot import schema for type '{0}' from namespace '{1}'. Redefine not supported.
+XmlDuplicateElementInScope=The XML element named '{0}' from namespace '{1}' is already present in the current scope.
+XmlDuplicateElementInScope1=The XML element named '{0}' from namespace '{1}' is already present in the current scope. Elements with the same name in the same scope must have the same type.
+XmlNoPartialTrust=One or more assemblies referenced by the XmlSerializer cannot be called from partially trusted code.
+XmlInvalidEncodingNotEncoded1=The encoding style '{0}' is not valid for this call because this XmlSerializer instance does not support encoding. Use the SoapReflectionImporter to initialize an XmlSerializer that supports encoding.
+XmlInvalidEncoding3=The encoding style '{0}' is not valid for this call. Valid values are '{1}' for SOAP 1.1 encoding or '{2}' for SOAP 1.2 encoding.
+XmlInvalidSpecifiedType=Member '{0}' of type {1} cannot be serialized.  Members with names ending on 'Specified' suffix have special meaning to the XmlSerializer: they control serialization of optional ValueType members and have to be of type {2}.
+XmlUnsupportedOpenGenericType=Type {0} is not supported because it has unbound generic parameters.  Only instantiated generic types can be serialized.
+XmlMismatchSchemaObjects=Warning: Cannot share {0} named '{1}' from '{2}' namespace. Several mismatched schema declarations were found.
+XmlCircularTypeReference=Type '{0}' from targetNamespace='{1}' has invalid definition: Circular type reference.
+XmlCircularGroupReference=Group '{0}' from targetNamespace='{1}' has invalid definition: Circular group reference.
+XmlRpcLitElementNamespace={0}='{1}' is not supported with rpc\\literal SOAP. The wrapper element has to be unqualified.
+XmlRpcLitElementNullable={0}='{1}' is not supported with rpc\\literal SOAP. The wrapper element cannot be nullable.
+XmlRpcLitElements=Multiple accessors are not supported with rpc\\literal SOAP, you may use the following attributes: XmlArray, XmlArrayItem, or single XmlElement.
+XmlRpcLitArrayElement=Input or output values of an rpc\\literal method cannot have maxOccurs > 1. Provide a wrapper element for '{0}' by using XmlArray or XmlArrayItem instead of XmlElement attribute.
+XmlRpcLitAttributeAttributes=XmlAttribute and XmlAnyAttribute cannot be used with rpc\\literal SOAP, you may use the following attributes: XmlArray, XmlArrayItem, or single XmlElement.
+XmlRpcLitAttributes=XmlText, XmlAnyElement, or XmlChoiceIdentifier cannot be used with rpc\\literal SOAP, you may use the following attributes: XmlArray, XmlArrayItem, or single XmlElement.
+XmlSequenceMembers=Explicit sequencing may not be used on parameters or return values.  Please remove {0} property from custom attributes.
+XmlRpcLitXmlns=Input or output values of an rpc\\literal method cannot have an XmlNamespaceDeclarations attribute (member '{0}').
+XmlDuplicateNs=Illegal namespace declaration xmlns:{0}='{1}'. Namespace alias '{0}' already defined in the current scope.
+XmlAnonymousInclude=Cannot include anonymous type '{0}'.
+RefSyntaxNotSupportedForElements0=Element reference syntax not supported with encoded SOAP. Replace element reference '{0}' from namespace '{1}' with a local element declaration.
+#endif // !SILVERLIGHT
+
+; 
+; Xml Serialization
+; new IXmlSerializable exceptions
+;
+#if !SILVERLIGHT
+XmlSchemaIncludeLocation=Schema attribute schemaLocation='{1}' is not supported on objects of type {0}.  Please set {0}.Schema property.
+XmlSerializableSchemaError=Schema type information provided by {0} is invalid: {1}
+XmlGetSchemaMethodName='{0}' is an invalid language identifier.
+XmlGetSchemaMethodMissing=You must implement public static {0}({1}) method on {2}.
+XmlGetSchemaMethodReturnType=Method {0}.{1}() specified by {2} has invalid signature: return type must be compatible with {3}.
+XmlGetSchemaEmptyTypeName={0}.{1}() must return a valid type name.
+XmlGetSchemaTypeMissing={0}.{1}() must return a valid type name. Type '{2}' cannot be found in the targetNamespace='{3}'.
+XmlGetSchemaInclude=Multiple schemas with targetNamespace='{0}' returned by {1}.{2}().  Please use only the main (parent) schema, and add the others to the schema Includes.
+XmlSerializableAttributes=Only XmlRoot attribute may be specified for the type {0}. Please use {1} to specify schema type.
+;XmlSerializableTypesDuplicate=Types {0} and {1} both use the same type name, {2}, from namespace {3}.
+XmlSerializableMergeItem=Cannot merge schemas with targetNamespace='{0}'. Several mismatched declarations were found: {1}
+XmlSerializableBadDerivation=Type '{0}' from namespace '{1}' declared as derivation of type '{2}' from namespace '{3}, but corresponding CLR types are not compatible.  Cannot convert type '{4}' to '{5}'.
+XmlSerializableMissingClrType=Type '{0}' from namespace '{1}' does not have corresponding IXmlSerializable type. Please consider adding {2} to '{3}'.
+XmlCircularDerivation=Circular reference in derivation of IXmlSerializable type '{0}'.
+XmlSerializerAccessDenied=Access to the temp directory is denied.  The process under which XmlSerializer is running does not have sufficient permission to access the temp directory.  CodeDom will use the user account the process is using to do the compilation, so if the user doesn’t have access to system temp directory, you will not be able to compile.  Use Path.GetTempPath() API to find out the temp directory location.
+XmlIdentityAccessDenied=Access to the temp directory is denied.  Identity '{0}' under which XmlSerializer is running does not have sufficient permission to access the temp directory.  CodeDom will use the user account the process is using to do the compilation, so if the user doesn’t have access to system temp directory, you will not be able to compile.  Use Path.GetTempPath() API to find out the temp directory location.
+XmlMelformMapping=This mapping was not crated by reflection importer and cannot be used in this context.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; Simple validation
+;
+#if !SILVERLIGHT
+XmlSchemaSyntaxErrorDetails=Schema with targetNamespace='{0}' has invalid syntax. {1} Line {2}, position {3}.
+XmlSchemaElementReference=Element reference '{0}' declared in schema type '{1}' from namespace '{2}'.
+XmlSchemaAttributeReference=Attribute reference '{0}' declared in schema type '{1}' from namespace '{2}'.
+XmlSchemaItem=Schema item '{1}' from namespace '{0}'. {2}
+XmlSchemaNamedItem=Schema item '{1}' named '{2}' from namespace '{0}'. {3}
+XmlSchemaContentDef=Check content definition of schema type '{0}' from namespace '{1}'. {2}
+XmlSchema=Schema with targetNamespace='{0}' has invalid syntax. {1}
+XmlSerializerCompileFailed=Cannot load dynamically generated serialization assembly. In some hosting environments assembly load functionality is restricted, consider using pre-generated serializer. Please see inner exception for more information.
+XmlSerializableRootDupName=Cannot reconcile schema for '{0}'. Please use [XmlRoot] attribute to change default name or namespace of the top-level element to avoid duplicate element declarations: element name='{1}' namespace='{2}'.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; CodeExporter
+;
+#if !SILVERLIGHT
+XmlDropDefaultAttribute=DefaultValue attribute on members of type {0} is not supported in this version of the .Net Framework.
+XmlDropAttributeValue='{0}' attribute on items of type '{1}' is not supported in this version of the .Net Framework.  Ignoring {0}='{2}' attribute.
+XmlDropArrayAttributeValue='{0}' attribute on array-like elements is not supported in this version of the .Net Framework.  Ignoring {0}='{1}' attribute on element name='{2}'.
+XmlDropNonPrimitiveAttributeValue='{0}' attribute supported only for primitive types.  Ignoring {0}='{1}' attribute.
+XmlNotKnownDefaultValue=Schema importer extension {0} failed to parse '{1}'='{2}' attribute of type {3} from namespace='{4}'.
+XmlRemarks=<remarks/>
+XmlCodegenWarningDetails=CODEGEN Warning: {0}
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; SchemaImporterExtension
+;
+#if !SILVERLIGHT
+XmlExtensionComment=This type definition was generated by {0} schema importer extension.
+XmlExtensionDuplicateDefinition=Schema importer extension {0} generated duplicate type definitions: {1}.
+XmlImporterExtensionBadLocalTypeName=Schema importer extension {0} returned invalid type information: '{1}' is not a valid type name.
+XmlImporterExtensionBadTypeName=Schema importer extension {0} returned invalid type information for xsd type {1} from namespace='{2}': '{3}' is not a valid type name.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; Configuration errors
+;
+#if !SILVERLIGHT
+XmlConfigurationDuplicateExtension=Duplicate extension name.  schemaImporterExtension with name '{0}' already been added.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; Assembly Pregeneration
+;
+#if !SILVERLIGHT
+XmlPregenMissingDirectory=Could not find directory to save XmlSerializer generated assembly: {0}.
+XmlPregenMissingTempDirectory=Could not find TEMP directory to save XmlSerializer generated assemblies.
+XmlPregenTypeDynamic=Cannot pre-generate serialization assembly for type '{0}'. Pre-generation of serialization assemblies is not supported for dynamic types. Save the assembly and load it from disk to use it with XmlSerialization.
+XmlSerializerExpiredDetails=Pre-generated serializer '{0}' has expired. You need to re-generate serializer for '{1}'.
+XmlSerializerExpired=Pre-generated assembly '{0}' CodeBase='{1}' has expired.
+XmlPregenAssemblyDynamic=Cannot pre-generate serialization assembly. Pre-generation of serialization assemblies is not supported for dynamic assemblies. Save the assembly and load it from disk to use it with XmlSerialization.
+XmlNotSerializable=Type '{0}' is not serializable.
+XmlPregenOrphanType=Cannot pre-generate serializer for multiple assemblies. Type '{0}' does not belong to assembly {1}.
+XmlPregenCannotLoad=Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified.
+XmlPregenInvalidXmlSerializerAssemblyAttribute=Invalid XmlSerializerAssemblyAttribute usage. Please use {0} property or {1} property.
+#endif // !SILVERLIGHT
+
+;
+; Xml Serialization
+; xs:sequence support
+;
+#if !SILVERLIGHT
+XmlSequenceInconsistent=Inconsistent sequencing: if used on one of the class's members, the '{0}' property is required on all particle-like members, please explicitly set '{0}' using XmlElement, XmlAnyElement or XmlArray custom attribute on class member '{1}'.
+XmlSequenceUnique='{1}' values must be unique within the same scope. Value '{0}' is in use. Please change '{1}' property on '{2}'.
+XmlSequenceHierarchy=There was an error processing type '{0}'. Type member '{1}' declared in '{2}' is missing required '{3}' property. If one class in the class hierarchy uses explicit sequencing feature ({3}), then its base class and all derived classes have to do the same.
+XmlSequenceMatch=If multiple custom attributes specified on a single member only one of them have to have explicit '{0}' property, however if more that one attribute has the explicit '{0}', all values have to match.
+#endif // !SILVERLIGHT
+XmlDisallowNegativeValues=Negative values are prohibited.
+
+;
+; Everett resources IDs - do not remove!
+;
+#if !SILVERLIGHT
+Xml_BadComment=This is an invalid comment syntax.  Expected '-->'.
+Xml_NumEntityOverflow=The numeric entity value is too large.
+Xml_UnexpectedCharacter='{0}', hexadecimal value {1}, is an unexpected character.
+Xml_UnexpectedToken1=This is an unexpected token. The expected token is '|' or ')'.
+Xml_TagMismatchFileName=The '{0}' start tag on line '{1}' doesn't match the end tag of '{2}' in file '{3}'.
+Xml_ReservedNs=This is a reserved namespace.
+Xml_BadElementData=The element data is invalid.
+Xml_UnexpectedElement=The <{0}> tag from namespace {1} is not expected.
+Xml_TagNotInTheSameEntity=<{0}> and </{0}> are not defined in the same entity.
+Xml_InvalidPartialContentData=There is invalid partial content data.
+Xml_CanNotStartWithXmlInNamespace=Namespace qualifiers beginning with 'xml' are reserved, and cannot be used in user-specified namespaces.
+Xml_UnparsedEntity=The '{0}' entity is not an unparsed entity.
+Xml_InvalidContentForThisNode=Invalid content for {0} NodeType.
+Xml_MissingEncodingDecl=Encoding declaration is required in an XmlDeclaration in an external entity.
+Xml_InvalidSurrogatePair=The surrogate pair is invalid.
+Sch_ErrorPosition=An error occurred at {0}, ({1}, {2}).
+Sch_ReservedNsDecl=The '{0}' prefix is reserved.
+Sch_NotInSchemaCollection=The '{0}' schema does not exist in the XmlSchemaCollection.
+Sch_NotationNotAttr=This NOTATION should be used only on attributes.
+Sch_InvalidContent=The element '{0}' has invalid content.
+Sch_InvalidContentExpecting=The element '{0}' has invalid content. Expected '{1}'.
+Sch_InvalidTextWhiteSpace=The element cannot contain text or white space. Content model is empty.
+Sch_XSCHEMA=x-schema can load only XDR schemas.
+Sch_DubSchema=Schema for targetNamespace '{0}' already present in collection and being used for validation.
+Xp_TokenExpected=A token was expected.
+Xp_NodeTestExpected=A NodeTest was expected at {0}.
+Xp_NumberExpected=A number was expected.
+Xp_QueryExpected=A query was expected.
+Xp_InvalidArgument='{0}' function in '{1}' has an invalid argument. Possibly ')' is missing.
+Xp_FunctionExpected=A function was expected.
+Xp_InvalidPatternString={0} is an invalid XSLT pattern.
+Xp_BadQueryString=The XPath expression passed into Compile() is null or empty.
+XdomXpNav_NullParam=The parameter (other) being passed in is null.
+Xdom_Load_NodeType=XmlLoader.Load(): Unexpected NodeType: {0}.
+XmlMissingMethod={0} was not found in {1}.
+XmlIncludeSerializableError=Type {0} is derived from {1} and therefore cannot be used with attribute XmlInclude.
+XmlCompilerDynModule=Unable to generate a serializer for type {0} from assembly {1} because the assembly may be dynamic. Save the assembly and load it from disk to use it with XmlSerialization.
+XmlInvalidSchemaType=Types must be declared at the top level in the schema.
+XmlInvalidAnyUse=Any may not be specified.
+XmlSchemaSyntaxError=Schema with targetNamespace='{0}' has invalid syntax.
+XmlDuplicateChoiceElement=The XML element named '{0}' from namespace '{1}' is already present in the current scope. Elements with the same name in the same scope must have the same type.
+XmlConvert_BadTimeSpan=The string was not recognized as a valid TimeSpan value.
+XmlConvert_BadBoolean=The string was not recognized as a valid Boolean value.
+Xml_UnexpectedToken=This is an unexpected token. The expected token is '{0}'.
+Xml_PartialContentNodeTypeNotSupported=This NodeType is not supported for partial content parsing.
+Sch_AttributeValueDataType=The '{0}' attribute has an invalid value according to its data type.
+Sch_ElementValueDataType=The '{0}' element has an invalid value according to its data type.
+Sch_NonDeterministicAny=The content model must be deterministic. Wildcard declaration along with a local element declaration causes the content model to become ambiguous.
+Sch_MismatchTargetNamespace=The attribute targetNamespace does not match the designated namespace URI.
+Sch_UnionFailed=Union does not support this value.
+Sch_XsiTypeBlocked=The element '{0}' has xsi:type derivation blocked.
+Sch_InvalidElementInEmpty=The element cannot contain child element. Content model is empty.
+Sch_InvalidElementInTextOnly=The element cannot contain a child element. Content model is text only.
+Sch_InvalidNameAttribute=Invalid 'name' attribute value: {0}.
+#endif // !SILVERLIGHT
+
+;
+; Internal errors
+;
+#if !SILVERLIGHT
+XmlInternalError=Internal error.
+XmlInternalErrorDetails=Internal error: {0}.
+XmlInternalErrorMethod=Internal error: missing generated method for {0}.
+XmlInternalErrorReaderAdvance=Internal error: deserialization failed to advance over underlying stream.
+#endif // !SILVERLIGHT
+
+;
+; Misc messages
+;
+Enc_InvalidByteInEncoding=Invalid byte was found at index {0}.
+#if !SILVERLIGHT
+Arg_ExpectingXmlTextReader=The XmlReader passed in to construct this XmlValidatingReaderImpl must be an instance of a System.Xml.XmlTextReader.
+Arg_CannotCreateNode=Cannot create node of type {0}.
+Arg_IncompatibleParamType=Type is incompatible.
+XmlNonCLSCompliantException=Non-CLS Compliant Exception.
+#endif // !SILVERLIGHT
+
+;
+; Silverlight-only errors
+;
+#if SILVERLIGHT
+Xml_CannotFindFileInXapPackage=Cannot find file '{0}' in the application xap package.
+#endif // SILVERLIGHT
+
+;
+; XapResolver
+;
+Xml_XapResolverCannotOpenUri=Cannot open '{0}'. The Uri parameter must be a relative path pointing to content inside the Silverlight application's XAP package. If you need to load content from an arbitrary Uri, please see the documentation on Loading XML content using WebClient/HttpWebRequest.
+;#endif // INCLUDE_DEBUG

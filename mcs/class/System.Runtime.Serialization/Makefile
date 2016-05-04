@@ -11,7 +11,7 @@ LIB_MCS_FLAGS = \
 		-d:NO_DYNAMIC_CODEGEN \
 		/nowarn:168,169,219,414 \
 		$(RESOURCE_FILES:%=/resource:%)
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration

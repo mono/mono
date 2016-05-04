@@ -6,6 +6,6 @@ LIBRARY = System.Data.Entity.dll
 LIB_REFS = System System.Core System.Data System.Xml System.Xml.Linq System.Transactions System.Runtime.Serialization System.ComponentModel.DataAnnotations System.Configuration
 LIB_MCS_FLAGS = -warn:2
 
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Data.Entity/System.Data.Entity.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System.Data.Entity/System.Data.Entity.txt
 
 include ../../build/library.make

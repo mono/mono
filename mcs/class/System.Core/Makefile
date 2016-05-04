@@ -7,7 +7,7 @@ LIBRARY = System.Core.dll
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
 LIB_REFS = System
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC -unsafe
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Core/System.Core.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System.Core/System.Core.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720

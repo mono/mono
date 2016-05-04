@@ -42,7 +42,7 @@ REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 #
 # MOBILE_PROFILE needs SECURITY_DEP

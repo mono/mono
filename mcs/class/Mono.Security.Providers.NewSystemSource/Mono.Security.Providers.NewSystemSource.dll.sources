@@ -3,18 +3,18 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 
-../../../external/referencesource/System/net/System/Net/Logging.cs
-../../../external/referencesource/System/net/System/Net/_SslSessionsCache.cs
-../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
-../../../external/referencesource/System/net/System/Net/_LoggingObject.cs
-../../../external/referencesource/System/net/System/Net/_NTAuthentication.cs
-../../../external/referencesource/System/net/System/Net/_SecureChannel.cs
-../../../external/referencesource/System/net/System/Net/SecureProtocols/SslStream.cs
-../../../external/referencesource/System/net/System/Net/SecureProtocols/_SslState.cs
-../../../external/referencesource/System/net/System/Net/SecureProtocols/_SslStream.cs
-../../../external/referencesource/System/net/System/Net/SecureProtocols/_FixedSizeReader.cs
-../../../external/referencesource/System/net/System/Net/SecureProtocols/_HelperAsyncResults.cs
-../../../external/referencesource/mscorlib/InternalApis/NDP_Common/inc/PinnableBufferCache.cs
+../referencesource/System/net/System/Net/Logging.cs
+../referencesource/System/net/System/Net/_SslSessionsCache.cs
+../referencesource/System/net/System/Net/_LazyAsyncResult.cs
+../referencesource/System/net/System/Net/_LoggingObject.cs
+../referencesource/System/net/System/Net/_NTAuthentication.cs
+../referencesource/System/net/System/Net/_SecureChannel.cs
+../referencesource/System/net/System/Net/SecureProtocols/SslStream.cs
+../referencesource/System/net/System/Net/SecureProtocols/_SslState.cs
+../referencesource/System/net/System/Net/SecureProtocols/_SslStream.cs
+../referencesource/System/net/System/Net/SecureProtocols/_FixedSizeReader.cs
+../referencesource/System/net/System/Net/SecureProtocols/_HelperAsyncResults.cs
+../referencesource/mscorlib/InternalApis/NDP_Common/inc/PinnableBufferCache.cs
 
 ../System/ReferenceSources/SR.cs
 ../System/ReferenceSources/SR2.cs

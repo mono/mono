@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.DataSetExtensions.dll
 
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System.Data.DataSetExtensions/System.Data.DataSetExtensions.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System.Data.DataSetExtensions/System.Data.DataSetExtensions.txt
 
 LIB_REFS = System.Core System System.Data System.Xml
 

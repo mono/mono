@@ -20,7 +20,7 @@ $(error Unknown framework version)
 endif
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/mscorlib/mscorlib.txt
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -201,8 +201,8 @@ TMP_FILE2=tzi2.tmp
 # Remove some code that is protected so we don't have to include all the corlib files.
 tzi.exe:System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../../build/common/Locale.cs ../Mono.Options/Mono.Options/Options.cs
 	trap "rm -f $(TMP_FILE1) $(TMP_FILE2)" EXIT INT QUIT TERM && \
-	sed 's/Environment\.GetResourceString/string.Format/g' ../../../external/referencesource/mscorlib/system/timezoneinfo.cs > $(TMP_FILE1) && \
-	sed 's/StringBuilder\.DefaultCapacity/100/g' ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs > $(TMP_FILE2) && \
+	sed 's/Environment\.GetResourceString/string.Format/g' ../referencesource/mscorlib/system/timezoneinfo.cs > $(TMP_FILE1) && \
+	sed 's/StringBuilder\.DefaultCapacity/100/g' ../referencesource/mscorlib/system/text/stringbuildercache.cs > $(TMP_FILE2) && \
 	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
 
 android-pull-tzdb:
