@@ -9,8 +9,6 @@ my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
 my $jobs = 4;
-my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
-my $unityPath = "$root/../../unity/build";
 my $externalBuildDeps = "$root/external/mono-build-deps";
 
 GetOptions(
@@ -70,7 +68,7 @@ if ($externalBuildDeps ne "")
 	my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
 	my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
 
-	my $builtToolsDir = "$externalBuildDeps/built-tools"
+	my $builtToolsDir = "$externalBuildDeps/built-tools";
 
 	$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
@@ -157,19 +155,15 @@ for my $arch (@arches)
 		$macversion = '10.6';
 	}
 
-	my $sdkPath = "$xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
-	if ($ENV{'UNITY_THISISABUILDMACHINE'})
+	# Set up clang toolchain
+	$sdkPath = "$externalBuildDeps/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
+	if (! -d $sdkPath)
 	{
-		# Set up clang toolchain
-		$sdkPath = "$unityPath/External/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
-		if (! -d $sdkPath)
-		{
-			print("Unzipping mac build toolchain\n");
-			system('unzip', '-qd', "$unityPath/External/MacBuildEnvironment/builds", "$unityPath/External/MacBuildEnvironment/builds.zip");
-		}
-		$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
-		$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
+		print("Unzipping mac build toolchain\n");
+		system('unzip', '-qd', "$externalBuildDeps/MacBuildEnvironment", "$externalBuildDeps/MacBuildEnvironment/builds.zip");
 	}
+	$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
+	$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
 
 	# Make architecture-specific targets and lipo at the end
 	my $bintarget = "$root/builds/monodistribution/bin-$arch";

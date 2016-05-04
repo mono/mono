@@ -16,7 +16,7 @@ my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $macversion = '10.5';
-my $sdkversion = '10.10';
+my $sdkversion = '10.6';
 my $externalBuildDeps = "$root/external/mono-build-deps";
 
 my $dependencyBranchToUse = "unity3.0";
@@ -29,8 +29,8 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
 
-	# Force mono 2.6 for 1.1 profile bootstrapping
 	my $external_MONO_PREFIX='/Library/Frameworks/Mono.framework/Versions/2.6.7';
+	# Force mono 2.6 for 1.1 profile bootstrapping
 	my $external_GNOME_PREFIX=$external_MONO_PREFIX;
 	$ENV{'DYLD_FALLBACK_LIBRARY_PATH'}="$external_MONO_PREFIX/lib:/lib:/usr/lib";
 	$ENV{'LD_LIBRARY_PATH'}="$external_MONO_PREFIX/lib";
@@ -65,12 +65,21 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
+	my $sdkPath = "$externalBuildDeps/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
+	if (! -d $sdkPath)
+	{
+		print("Unzipping mac build toolchain\n");
+		system('unzip', '-qd', "$externalBuildDeps/MacBuildEnvironment", "$externalBuildDeps/MacBuildEnvironment/builds.zip");
+	}
+
+	$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
+	$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
 	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
 	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
 	if ($^O eq 'darwin')
 	{
-		$ENV{'MACSDKOPTIONS'} = "$ENV{CFLAGS} -mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+		$ENV{'MACSDKOPTIONS'} = "$ENV{CFLAGS} -mmacosx-version-min=$macversion -isysroot $sdkPath";
 	}
 
 	if ($cleanbuild)
@@ -90,7 +99,7 @@ if (not $skipbuild)
 		my $autoconfDir = "$externalBuildDeps/autoconf-$autoconfVersion";
 		my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
 		my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
-		my $builtToolsDir = "$externalBuildDeps/built-tools"
+		my $builtToolsDir = "$externalBuildDeps/built-tools";
 
 		$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
@@ -158,11 +167,13 @@ if (not $skipbuild)
 	system("libtoolize", "--version");
 
 	system("which", "autoreconf");
+
+	system("which", "mcs");
+
 	print("\n");
 
 	print ">>> LIBTOOLIZE before Build = $ENV{LIBTOOLIZE}\n";
 	print ">>> LIBTOOL before Build = $ENV{LIBTOOL}\n";
-
 
 	chdir("$root") eq 1 or die ("failed to chdir 2");
 	if ($cleanbuild)
