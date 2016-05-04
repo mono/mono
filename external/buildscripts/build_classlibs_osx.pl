@@ -29,15 +29,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
 
-	my $externalMonoName = "mono-osx-2.6.7";
-	my $external_MONO_PREFIX="$externalBuildDeps/$externalMonoName";
-
-	if (! -d "$externalBuildDeps/$externalMonoName")
-	{
-		print(">>>Unzipping mono 2.6.7\n");
-		system('unzip', '-qd', "$externalBuildDeps", "$externalBuildDeps/$externalMonoName.zip");
-	}
-
+	my $external_MONO_PREFIX='/Library/Frameworks/Mono.framework/Versions/2.6.7';
 	# Force mono 2.6 for 1.1 profile bootstrapping
 	my $external_GNOME_PREFIX=$external_MONO_PREFIX;
 	$ENV{'DYLD_FALLBACK_LIBRARY_PATH'}="$external_MONO_PREFIX/lib:/lib:/usr/lib";
