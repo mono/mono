@@ -16,7 +16,7 @@ my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $macversion = '10.5';
-my $sdkversion = '10.11';
+my $sdkversion = '10.6';
 my $externalBuildDeps = "$root/external/mono-build-deps";
 
 my $dependencyBranchToUse = "unity3.0";
@@ -65,25 +65,15 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
-	my $unityPath = "$root/../../unity/build";
-	my $sdkPath = "$xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
-	if ($ENV{'UNITY_THISISABUILDMACHINE'})
+	my $sdkPath = "$externalBuildDeps/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
+	if (! -d $sdkPath)
 	{
-		# Set up clang toolchain
-		$sdkPath = "$unityPath/External/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
-		if (! -d $sdkPath)
-		{
-			print("Unzipping mac build toolchain\n");
-			system('unzip', '-qd', "$unityPath/External/MacBuildEnvironment/builds", "$unityPath/External/MacBuildEnvironment/builds.zip");
-		}
-		$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
-		$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
+		print("Unzipping mac build toolchain\n");
+		system('unzip', '-qd', "$externalBuildDeps/MacBuildEnvironment", "$externalBuildDeps/MacBuildEnvironment/builds.zip");
 	}
-	else
-	{
-		$ENV{'CC'} = "clang";
-		$ENV{'CXX'} = "clang++";
-	}
+
+	$ENV{'CC'} = "$sdkPath/../usr/bin/clang";
+	$ENV{'CXX'} = "$sdkPath/../usr/bin/clang++";
 	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
 	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
