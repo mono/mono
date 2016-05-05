@@ -176,40 +176,44 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 
 #if !MONOTOUCH && !XAMMAC
-		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		static X509CertificateImpl Import (byte[] rawData)
 		{
-			rawData = ConvertData (rawData);
-			if (nativeHelper != null)
-				return nativeHelper.Import (rawData, password, keyStorageFlags);
-
 			MX.X509Certificate x509;
-			if (password == null) {
+			try {
+				x509 = new MX.X509Certificate (rawData);
+			} catch (Exception e) {
 				try {
-					x509 = new MX.X509Certificate (rawData);
-				} catch (Exception e) {
-					try {
-						x509 = ImportPkcs12 (rawData, null);
-					} catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					x509 = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					x509 = new MX.X509Certificate (rawData);
+					x509 = ImportPkcs12 (rawData, null);
+				} catch {
+					string msg = Locale.GetText ("Unable to decode certificate.");
+					// inner exception is the original (not second) exception
+					throw new CryptographicException (msg, e);
 				}
 			}
 
 			return new X509CertificateImplMono (x509);
 		}
 #endif
+
+		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			if (password == null) {
+				rawData = ConvertData (rawData);
+				return Import (rawData);
+			}
+
+			MX.X509Certificate x509;
+			// try PKCS#12
+			try {
+				x509 = ImportPkcs12 (rawData, password);
+			} catch {
+				// it's possible to supply a (unrequired/unusued) password
+				// fix bug #79028
+				x509 = new MX.X509Certificate (rawData);
+			}
+
+			return new X509CertificateImplMono (x509);
+		}
 
 		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
 		{
