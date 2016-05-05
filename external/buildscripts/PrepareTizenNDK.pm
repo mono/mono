@@ -17,7 +17,7 @@ our @EXPORT_OK=qw(GetTizenNDK);
 
 our $NDK_ROOT_ENV = "TIZEN_NDK_ROOT";
 
-our $BASE_URL_NDK = "https://rhodecode.unity3d.com/unity-extra/tizen-sdk";
+our $BASE_URL_NDK = "https://ono.unity3d.com/unity-extra/tizen-sdk";
 our $BASE_URL_NDK_MIRROR = "http://mercurial-mirror.hq.unity3d.com/unity-extra/tizen-sdk";
 
 our $FOLDER_PREFIX = "tizen-ndk";
