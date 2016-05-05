@@ -1,3 +1,11 @@
+/*
+ * sgen-grep-binprot.c: Platform specific binary protocol entries reader
+ *
+ * Copyright (C) 2016 Xamarin Inc
+ *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -8,6 +16,7 @@
 #include <inttypes.h>
 #include <config.h>
 #include "sgen-entry-stream.h"
+#include "sgen-grep-binprot.h"
 
 #if SIZEOF_VOID_P == 4
 typedef int32_t mword;
@@ -534,85 +543,21 @@ is_vtable_match (mword ptr, int type, void *data)
 #undef TYPE_SIZE
 #undef TYPE_POINTER
 
-int
-main (int argc, char *argv[])
+void
+sgen_binary_protocol_grep_entries (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],
+			gboolean dump_all, gboolean pause_times, gboolean color_output, unsigned long long first_entry_to_consider)
 {
 	int type;
 	void *data = g_malloc0 (MAX_ENTRY_SIZE);
-	int num_args = argc - 1;
-	int num_nums = 0;
-	int num_vtables = 0;
 	int i;
-	long nums [num_args];
-	long vtables [num_args];
-	gboolean dump_all = FALSE;
-	gboolean pause_times = FALSE;
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
 	gboolean pause_times_finish = FALSE;
-	gboolean color_output = FALSE;
 	long long pause_times_ts = 0;
-	const char *input_path = NULL;
-	int input_file;
-	EntryStream stream;
 	unsigned long long entry_index;
-	unsigned long long first_entry_to_consider = 0;
 
-	for (i = 0; i < num_args; ++i) {
-		char *arg = argv [i + 1];
-		char *next_arg = argv [i + 2];
-		if (!strcmp (arg, "--all")) {
-			dump_all = TRUE;
-		} else if (!strcmp (arg, "--pause-times")) {
-			pause_times = TRUE;
-		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
-			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
-			++i;
-		} else if (!strcmp (arg, "-s") || !strcmp (arg, "--start-at")) {
-			first_entry_to_consider = strtoull (next_arg, NULL, 10);
-			++i;
-		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
-			color_output = TRUE;
-		} else if (!strcmp (arg, "-i") || !strcmp (arg, "--input")) {
-			input_path = next_arg;
-			++i;
-		} else if (!strcmp (arg, "--help")) {
-			printf (
-				"\n"
-				"Usage:\n"
-				"\n"
-				"\tsgen-grep-binprot [options] [pointer...]\n"
-				"\n"
-				"Examples:\n"
-				"\n"
-				"\tsgen-grep-binprot --all </tmp/binprot\n"
-				"\tsgen-grep-binprot --input /tmp/binprot --color 0xdeadbeef\n"
-				"\n"
-				"Options:\n"
-				"\n"
-				"\t--all                    Print all entries.\n"
-				"\t--color, -c              Highlight matches in color.\n"
-				"\t--help                   You're looking at it.\n"
-				"\t--input FILE, -i FILE    Read input from FILE instead of standard input.\n"
-				"\t--pause-times            Print GC pause times.\n"
-				"\t--start-at N, -s N       Begin filtering at the Nth entry.\n"
-				"\t--vtable PTR, -v PTR     Search for vtable pointer PTR.\n"
-				"\n");
-			return 0;
-		} else {
-			nums [num_nums++] = strtoul (arg, NULL, 16);
-		}
-	}
-
-	if (dump_all)
-		assert (!pause_times);
-	if (pause_times)
-		assert (!dump_all);
-
-	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
-	init_stream (&stream, input_file);
 	entry_index = 0;
-	while ((type = read_entry (&stream, data)) != SGEN_PROTOCOL_EOF) {
+	while ((type = read_entry (stream, data)) != SGEN_PROTOCOL_EOF) {
 		if (entry_index < first_entry_to_consider)
 			goto next_entry;
 		if (pause_times) {
@@ -672,10 +617,5 @@ main (int argc, char *argv[])
 	next_entry:
 		++entry_index;
 	}
-	close_stream (&stream);
-	if (input_path)
-		close (input_file);
 	g_free (data);
-
-	return 0;
 }
