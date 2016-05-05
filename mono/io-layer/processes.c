@@ -293,6 +293,9 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 	} else if (timeout == 0) {
 		/* Just poll */
 		ret = waitpid (pid, &status, WNOHANG);
+		if (0 > ret && ECHILD == errno)
+			/* Process is already gone */
+			return WAIT_OBJECT_0;
 		if (ret != pid) {
 			return (WAIT_TIMEOUT);
 		}
@@ -1439,7 +1442,12 @@ guint32 GetCurrentProcessId (void)
 {
 	mono_once (&process_current_once, process_set_current);
 		
-	return (GetProcessId (current_process));
+	guint32 id = GetProcessId (current_process);
+
+	/* No reason to fail this just because of bad handle management */
+	if (0 == id)
+		id = _wapi_getpid ();
+	return id;
 }
 
 /* Returns the process id as a convenience to the functions that call this */
@@ -1748,7 +1756,8 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 #ifdef DEBUG
 		g_message ("%s: Can't find process %p", __func__, process);
 #endif
-		
+		/* Process is already gone, better to return a bogus code than to report that it's still alive */
+		*code = 0;
 		return(FALSE);
 	}
 	
@@ -2717,7 +2726,8 @@ TerminateProcess (gpointer process, gint32 exitCode)
 				   process);
 #endif
 			SetLastError (ERROR_INVALID_HANDLE);
-			return FALSE;
+			/* If we can't find the process, MAYBE IT HAS ALREADY BEEN TERMINATED */
+			return TRUE;
 		}
 		pid = process_handle->id;
 	}
@@ -2737,6 +2747,7 @@ TerminateProcess (gpointer process, gint32 exitCode)
 			break;
 		default:
 			SetLastError (ERROR_GEN_FAILURE);
+			break;
 		}
 	}
 	

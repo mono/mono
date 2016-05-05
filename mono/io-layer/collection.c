@@ -25,16 +25,24 @@
 // #define LOGDEBUG(...) g_message(__VA_ARGS__)
 
 static pthread_t collection_thread_id;
+static pthread_cond_t collection_thread_wait_cond;
+static pthread_mutex_t collection_thread_wait_mutex;
+static gboolean collection_thread_enabled;
 
 static gpointer collection_thread (gpointer unused G_GNUC_UNUSED)
 {
 	struct timespec sleepytime;
+	{
+		struct timeval now;
+		gettimeofday (&now, NULL);
+		sleepytime.tv_sec = now.tv_sec;
+		sleepytime.tv_nsec = 0;
+	}
 
-	sleepytime.tv_sec = _WAPI_HANDLE_COLLECTION_UPDATE_INTERVAL;
-	sleepytime.tv_nsec = 0;
-
-	while (_wapi_has_shut_down == FALSE) {
-		nanosleep (&sleepytime, NULL);
+	pthread_mutex_lock (&collection_thread_wait_mutex);
+	while (collection_thread_enabled)
+	{
+		pthread_cond_timedwait (&collection_thread_wait_cond, &collection_thread_wait_mutex, &sleepytime);
 
 		//_wapi_handle_dump ();
 		_wapi_handle_update_refs ();
@@ -44,8 +52,10 @@ static gpointer collection_thread (gpointer unused G_GNUC_UNUSED)
 		 * function.
 		 */
 		_wapi_process_reap ();
-	}
 
+		sleepytime.tv_sec += _WAPI_HANDLE_COLLECTION_UPDATE_INTERVAL;
+	}
+	pthread_mutex_unlock (&collection_thread_wait_mutex);
 	pthread_exit (NULL);
 
 	return(NULL);
@@ -56,6 +66,11 @@ void _wapi_collection_init (void)
 	pthread_attr_t attr;
 	int ret;
         int set_stacksize = 0;
+
+        pthread_mutex_init(&collection_thread_wait_mutex, NULL);
+        pthread_cond_init(&collection_thread_wait_cond, NULL);
+
+		collection_thread_enabled = TRUE;
 
  retry:
         ret = pthread_attr_init (&attr);
@@ -82,6 +97,28 @@ void _wapi_collection_init (void)
 			 __func__, g_strerror (ret));
 	}
 }
+
+extern void _wapi_collection_shutdown (void)
+{
+
+	// Only clean up if the thread has been enabled
+	if(collection_thread_enabled != FALSE)
+	{
+		// signal and wait for collection thread to fininsh
+		pthread_mutex_lock (&collection_thread_wait_mutex);
+
+		collection_thread_enabled = FALSE;
+
+		pthread_cond_signal (&collection_thread_wait_cond);
+		pthread_mutex_unlock (&collection_thread_wait_mutex);
+		pthread_join (collection_thread_id, NULL);
+
+		// cleanup
+		pthread_cond_destroy (&collection_thread_wait_cond);
+		pthread_mutex_destroy (&collection_thread_wait_mutex);
+	}
+}
+
 
 void _wapi_handle_collect (void)
 {

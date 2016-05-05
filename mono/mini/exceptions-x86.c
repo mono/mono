@@ -503,10 +503,8 @@ get_throw_exception (const char *name, gboolean rethrow, gboolean llvm, gboolean
 		} else {
 			/* One argument */
 			stack_offset = stack_size + 4 + 4;
-#ifdef __APPLE__
 			/* Pop the alignment added by OP_THROW too */
 			stack_offset += MONO_ARCH_FRAME_ALIGNMENT - 4;
-#endif
 		}
 	}
 	/* Save ESP */

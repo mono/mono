@@ -130,7 +130,7 @@ mono_mutex_t *_wapi_global_signal_mutex;
 pthread_cond_t *_wapi_global_signal_cond;
 
 int _wapi_sem_id;
-gboolean _wapi_has_shut_down = FALSE;
+static gboolean _wapi_has_shut_down = FALSE;
 
 /* Use this instead of getpid(), to cope with linuxthreads.  It's a
  * function rather than a variable lookup because we need to get at
@@ -215,6 +215,7 @@ void _wapi_cleanup ()
 	
 	_wapi_has_shut_down = TRUE;
 
+	_wapi_collection_shutdown ();
 	_wapi_critical_section_cleanup ();
 	_wapi_error_cleanup ();
 	_wapi_thread_cleanup ();

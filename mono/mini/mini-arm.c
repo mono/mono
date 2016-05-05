@@ -545,6 +545,10 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	iphone_abi = TRUE;
 #elif __QNXNTO__
 	thumb_supported = TRUE;
+#elif defined(PLATFORM_ANDROID)
+	thumb_supported = TRUE;
+	v5_supported = __ARM_ARCH >= 5;
+	v7_supported = __ARM_ARCH >= 7;
 #else
 	char buf [512];
 	char *line;
@@ -770,6 +774,11 @@ typedef struct {
 
 #define PARAM_REGS 4
 
+/* __alignof__ returns the preferred alignment of values not the actual alignment used by
+   the compiler so is wrong e.g. for iOS where doubles are aligned on a 4 byte boundary
+   but __alignof__ returns 8 - using G_STRUCT_OFFSET works better */
+#define ALIGNMENT(type) G_STRUCT_OFFSET(struct { char c; type x; }, x)
+
 static void inline
 add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 {
@@ -787,7 +796,7 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 #if (defined(__APPLE__) && defined(MONO_CROSS_COMPILE)) || defined(PLATFORM_IPHONE_XCOMP)
 		int i8_align = 4;
 #else
-		int i8_align = __alignof__ (gint64);
+		int i8_align = ALIGNMENT(gint64);
 #endif
 
 #if __ARM_EABI__
@@ -5262,7 +5271,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 			ARM_CMP_REG_REG (code, ARMREG_R0, ARMREG_R1);
 
 			item->jmp_code = (guint8*)code;
-			ARM_B_COND (code, ARMCOND_GE, 0);
+			ARM_B_COND (code, ARMCOND_HS, 0);
 			++extra_space;
 		}
 	}

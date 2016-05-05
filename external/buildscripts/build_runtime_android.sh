@@ -3,15 +3,15 @@
 # NB! Prereq : ANDROID_NDK_ROOT=/usr/local/android-ndk-xxx or similar
 # Todo: set appropriate ARM flags for hard floats
 
-export ANDROID_PLATFORM=android-5
+export ANDROID_PLATFORM=android-9
 GCC_PREFIX=arm-linux-androideabi-
-GCC_VERSION=4.4.3
+GCC_VERSION=4.8
 OUTDIR=builds/embedruntimes/android
 CWD="$(pwd)"
 PREFIX="$CWD/builds/android"
 BUILDSCRIPTSDIR=external/buildscripts
 
-perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r8e -env=envsetup.sh && source envsetup.sh
+perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r10e -env=envsetup.sh && source envsetup.sh
 
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 
@@ -23,10 +23,10 @@ fi
 HOST_ENV=`uname -s`
 case "$HOST_ENV" in
     Darwin)
-        HOST_ENV=darwin-x86
+        HOST_ENV=darwin
         ;;
     Linux)
-        HOST_ENV=linux-x86
+        HOST_ENV=linux
         ;;
     CYGWIN*|*_NT-*)
         HOST_ENV=windows
@@ -39,6 +39,13 @@ esac
 
 PLATFORM_ROOT=$NDK_ROOT/platforms/$ANDROID_PLATFORM/arch-arm
 TOOLCHAIN=$NDK_ROOT/toolchains/$GCC_PREFIX$GCC_VERSION/prebuilt/$HOST_ENV
+
+if [ ! -d $TOOLCHAIN ]; then
+	TOOLCHAIN=${TOOLCHAIN}-x86
+	if [ ! -d $TOOLCHAIN ]; then
+		TOOLCHAIN=${TOOLCHAIN}_64
+	fi
+fi
 
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
@@ -71,6 +78,7 @@ LDFLAGS="\
 -Wl,--wrap,sigaction \
 -L${KRAIT_PATCH_PATH}/obj/local/armeabi -lkrait-signal-handler \
 -Wl,--no-undefined \
+-Wl,--gc-sections \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
 

@@ -62,6 +62,7 @@ void ves_icall_System_Threading_Thread_Sleep_internal(int ms) MONO_INTERNAL;
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms, HANDLE thread) MONO_INTERNAL;
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void) MONO_INTERNAL;
 MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj) MONO_INTERNAL;
+gint32 ves_icall_System_Threading_Thread_GetNewManagedId_internal (void) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_SetName_internal (MonoThread *this_obj, MonoString *name) MONO_INTERNAL;
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoThread *this_obj) MONO_INTERNAL;
 MonoArray* ves_icall_System_Threading_Thread_GetSerializedCurrentCulture (MonoThread *this_obj) MONO_INTERNAL;
@@ -196,5 +197,7 @@ void mono_thread_set_execution_context (MonoObject *ec) MONO_INTERNAL;
 
 void mono_runtime_set_has_tls_get (gboolean val) MONO_INTERNAL;
 gboolean mono_runtime_has_tls_get (void) MONO_INTERNAL;
+
+guint32 mono_unity_wait_for_multiple_objects_processing_apc (gint32 handle_count, HANDLE* handles, gboolean wait_all, gint32 ms) MONO_INTERNAL;
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -236,7 +236,7 @@ case "$host" in
 		parallel_mark="Disabled_Currently_Hangs_On_MacOSX"
 		platform_win32=no
 		platform_darwin=yes
-		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
+		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
 		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess -DGetCurrentThread=MonoGetCurrentThread -DCreateEvent=MonoCreateEvent"
 		
 		if [[ "$host" != "arm-apple-darwin9" ]]; then 

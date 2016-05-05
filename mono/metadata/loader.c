@@ -69,6 +69,13 @@ guint32 loader_error_thread_id;
  */
 guint32 loader_lock_nest_id;
 
+/*
+ * This TLS variable holds how many times the current thread has waited the loader 
+ * lock.
+ */
+
+guint32 loader_lock_waiting_id;
+
 void
 mono_loader_init ()
 {
@@ -79,6 +86,7 @@ mono_loader_init ()
 
 		loader_error_thread_id = TlsAlloc ();
 		loader_lock_nest_id = TlsAlloc ();
+		loader_lock_waiting_id = TlsAlloc ();
 
 		mono_counters_register ("Inflated signatures size",
 								MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_signatures_size);
@@ -94,6 +102,7 @@ mono_loader_cleanup (void)
 {
 	TlsFree (loader_error_thread_id);
 	TlsFree (loader_lock_nest_id);
+	TlsFree (loader_lock_waiting_id);
 
 	/*DeleteCriticalSection (&loader_mutex);*/
 }
@@ -1285,9 +1294,18 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 
 	if (unity_find_plugin_callback)
 	{
-		new_scope = unity_find_plugin_callback (new_scope);
-		//check if unity wants pinvoke to be totally disabled
-		if (new_scope == 0) return 0;
+		const char* unity_new_scope = unity_find_plugin_callback (new_scope);
+		if (unity_new_scope == NULL)
+		{
+			if (exc_class)
+			{
+				*exc_class = "DllNotFoundException";
+				*exc_arg = new_scope;
+			}
+			return NULL;
+		}
+
+		new_scope = unity_new_scope;
 	}
 
 	/*
@@ -2064,8 +2082,14 @@ static gboolean loader_lock_track_ownership = FALSE;
 void
 mono_loader_lock (void)
 {
-	mono_locks_acquire (&loader_mutex, LoaderLock);
 	if (G_UNLIKELY (loader_lock_track_ownership)) {
+		TlsSetValue (loader_lock_waiting_id, GUINT_TO_POINTER (GPOINTER_TO_UINT (TlsGetValue (loader_lock_waiting_id)) + 1));
+	}
+
+	mono_locks_acquire (&loader_mutex, LoaderLock);
+	
+	if (G_UNLIKELY (loader_lock_track_ownership)) {
+		TlsSetValue (loader_lock_waiting_id, GUINT_TO_POINTER (GPOINTER_TO_UINT (TlsGetValue (loader_lock_waiting_id)) - 1));
 		TlsSetValue (loader_lock_nest_id, GUINT_TO_POINTER (GPOINTER_TO_UINT (TlsGetValue (loader_lock_nest_id)) + 1));
 	}
 }
@@ -2104,6 +2128,14 @@ mono_loader_lock_is_owned_by_self (void)
 	g_assert (loader_lock_track_ownership);
 
 	return GPOINTER_TO_UINT (TlsGetValue (loader_lock_nest_id)) > 0;
+}
+
+gboolean
+mono_loader_lock_self_is_waiting (void)
+{
+	g_assert (loader_lock_track_ownership);
+
+	return GPOINTER_TO_UINT (TlsGetValue (loader_lock_waiting_id)) > 0;
 }
 
 /**
@@ -2354,6 +2386,10 @@ guint32
 mono_method_get_index (MonoMethod *method) {
 	MonoClass *klass = method->klass;
 	int i;
+
+	if (klass->rank)
+		/* constructed array methods are not in the MethodDef table */
+		return 0;
 
 	if (method->token)
 		return mono_metadata_token_index (method->token);

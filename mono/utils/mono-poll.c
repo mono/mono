@@ -2,7 +2,7 @@
 #include "mono/metadata/threads.h"
 #include <errno.h>
 
-#ifdef HAVE_POLL
+#if defined(HAVE_POLL) && !defined(__APPLE__)
 int
 mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 {

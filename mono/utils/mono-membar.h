@@ -129,7 +129,11 @@ static inline void mono_memory_write_barrier (void)
 #elif defined(__arm__)
 static inline void mono_memory_barrier (void)
 {
-	__asm__ __volatile__ ("" : : : "memory");
+#ifdef __GNUC__
+	__sync_synchronize();
+#else
+	__asm__ __volatile__ ("" : : : "memory"); /* just a compiler barrier */
+#endif
 }
 
 static inline void mono_memory_read_barrier (void)
@@ -186,6 +190,50 @@ static inline void mono_memory_write_barrier (void)
 {
         mono_memory_barrier ();
 }
+#endif
+
+#if defined(__x86_64__) || defined(__i386__)
+
+static inline void mono_memory_acquire_barrier (void)
+{
+	// compiler barrier
+#ifdef _MSC_VER
+	_ReadWriteBarrier ();
+#else
+	__asm__ __volatile__ ("" : : : "memory");
+#endif
+}
+
+static inline void mono_memory_release_barrier (void)
+{
+	// compiler barrier
+	mono_memory_acquire_barrier();
+}
+
+#elif defined(__ppc__) || defined(__powerpc__) || defined(__ppc64__)
+
+static inline void mono_memory_acquire_barrier (void)
+{
+	__asm__ __volatile__ ("lwsync" : : : "memory");
+}
+
+static inline void mono_memory_release_barrier (void)
+{
+	__asm__ __volatile__ ("lwsync" : : : "memory");
+}
+
+#else
+
+static inline void mono_memory_acquire_barrier (void)
+{
+	mono_memory_barrier();
+}
+
+static inline void mono_memory_release_barrier (void)
+{
+	mono_memory_barrier();
+}
+
 #endif
 
 #endif	/* _MONO_UTILS_MONO_MEMBAR_H_ */

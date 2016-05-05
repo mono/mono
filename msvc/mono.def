@@ -55,6 +55,7 @@ mono_unity_class_is_abstract
 mono_backtrace_from_context
 mono_unity_thread_clear_domain_fields
 mono_unity_get_all_classes_with_name_case
+unity_mono_reflection_method_get_method
 
 ;Exports that should have been here, but I dont understand why they're not.
 mono_security_enable_core_clr
@@ -65,6 +66,7 @@ mono_domain_unload
 mono_verifier_set_mode
 mono_object_get_size
 mono_type_get_name_full
+mono_set_break_policy
 ;temp exports to make pedump compile
 ;mono_marshal_init
 ;g_print

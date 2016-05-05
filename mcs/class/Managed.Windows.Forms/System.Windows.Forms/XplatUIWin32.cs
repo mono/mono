@@ -895,7 +895,8 @@ namespace System.Windows.Forms {
 				bool result = Win32RegisterClass (ref wndClass);
 
 				if (result == false)
-					Win32MessageBox (IntPtr.Zero, "Could not register the window class, win32 error " + Win32GetLastError ().ToString (), "Oops", 0);
+					// This can happen legitimately when the window class has already been registered in another domain
+					Console.WriteLine ("Oops: Could not register the window class, win32 error {0}", Win32GetLastError ().ToString ());
 
 				registered_classes[classStyle] = class_name;
 			}

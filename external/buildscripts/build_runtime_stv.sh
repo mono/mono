@@ -11,11 +11,16 @@ for STV_TARGET in ${STV_TARGETS}; do
 	echo "BUILDING FOR $STV_TARGET"
 	OUTDIR=builds/embedruntimes/stv/$STV_TARGET
 
+	if [[ $STV_TARGET == *_15 ]]; then
+		LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STV_STANDARD_15}/i386Libs";export LD_LIBRARY_PATH
+		echo "LD_LIBRARY_PATH is : $LD_LIBRARY_PATH"
+	fi
+
 	STV_GCC_PREFIX="STV_GCC_PREFIX_${STV_TARGET}"
 	STV_GCC_PREFIX="${!STV_GCC_PREFIX}"
 
 	# need to swap flags when building for different platforms.
-	CXXFLAGS="-g -DARM_FPU_VFP=1 -DHAVE_ARMV6=1 -D__ARM_EABI__ -DLINUX -D__linux__ -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -march=armv7-a -mfpu=vfp -mfloat-abi=softfp -fpic -funwind-tables -ffunction-sections -fdata-sections";
+	CXXFLAGS="-g -DARM_FPU_VFP=1 -DHAVE_ARMV6=1 -D__ARM_EABI__ -DLINUX -D__linux__ -DUSE_PTHREAD_LOCKS -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -march=armv7-a -mfpu=vfp -mfloat-abi=softfp -fpic -funwind-tables -ffunction-sections -fdata-sections";
 	CC="${STV_GCC_PREFIX}gcc"
 	CXX="${STV_GCC_PREFIX}g++"
 	AR="${STV_GCC_PREFIX}ar"
@@ -51,7 +56,7 @@ mono_cv_uscore=yes"
 	autoreconf -i
 
 	# Run configure
-	./configure $CONFIG_OPTS CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX" AR="$AR" LD="$LD"
+	./configure $CONFIG_OPTS CFLAGS="$CXXFLAGS" CPPFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX" AR="$AR" LD="$LD"
 
 	# Run Make
 	make && echo "Build SUCCESS!" || exit 1

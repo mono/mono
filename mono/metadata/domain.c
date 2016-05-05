@@ -1912,13 +1912,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		domain->type_init_exception_hash = NULL;
 	}
 
-	/* must do this early as it accesses fields and types */
-	if (domain->special_static_fields) {
-		mono_alloc_special_static_data_free (domain->special_static_fields);
-		g_hash_table_destroy (domain->special_static_fields);
-		domain->special_static_fields = NULL;
-	}
-
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = tmp->data;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s %p, assembly %s %p, refcount=%d\n", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);

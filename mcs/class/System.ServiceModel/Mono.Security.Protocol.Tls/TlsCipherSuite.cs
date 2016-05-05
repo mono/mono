@@ -32,6 +32,7 @@ namespace Mono.Security.Protocol.Tls
 	{
 		private const int MacHeaderLength = 13;
 		private byte[] header;
+		private object headerLock = new object ();
 
 		#region Constructors
 		
@@ -53,40 +54,44 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeServerRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			if (header == null)
-				header = new byte [MacHeaderLength];
+			lock (headerLock) {
+				if (header == null)
+					header = new byte [MacHeaderLength];
 
-			ulong seqnum = (Context is ClientContext) ? Context.ReadSequenceNumber : Context.WriteSequenceNumber;
-			Write (header, 0, seqnum);
-			header [8] = (byte) contentType;
-			Write (header, 9, this.Context.Protocol);
-			Write (header, 11, (short)fragment.Length);
+				ulong seqnum = (Context is ClientContext) ? Context.ReadSequenceNumber : Context.WriteSequenceNumber;
+				Write (header, 0, seqnum);
+				header [8] = (byte)contentType;
+				Write (header, 9, this.Context.Protocol);
+				Write (header, 11, (short)fragment.Length);
 
-			HashAlgorithm mac = this.ServerHMAC;
-			mac.TransformBlock (header, 0, header.Length, header, 0);
-			mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
-			// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
-			mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
-			return mac.Hash;
+				HashAlgorithm mac = this.ServerHMAC;
+				mac.TransformBlock (header, 0, header.Length, header, 0);
+				mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
+				// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
+				mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
+				return mac.Hash;
+			}
 		}
 
 		public override byte[] ComputeClientRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			if (header == null)
-				header = new byte [MacHeaderLength];
+			lock (headerLock) {
+				if (header == null)
+					header = new byte [MacHeaderLength];
 
-			ulong seqnum = (Context is ClientContext) ? Context.WriteSequenceNumber : Context.ReadSequenceNumber;
-			Write (header, 0, seqnum);
-			header [8] = (byte) contentType;
-			Write (header, 9, this.Context.Protocol);
-			Write (header, 11, (short)fragment.Length);
+				ulong seqnum = (Context is ClientContext) ? Context.WriteSequenceNumber : Context.ReadSequenceNumber;
+				Write (header, 0, seqnum);
+				header [8] = (byte)contentType;
+				Write (header, 9, this.Context.Protocol);
+				Write (header, 11, (short)fragment.Length);
 
-			HashAlgorithm mac = this.ClientHMAC;
-			mac.TransformBlock (header, 0, header.Length, header, 0);
-			mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
-			// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
-			mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
-			return mac.Hash;
+				HashAlgorithm mac = this.ClientHMAC;
+				mac.TransformBlock (header, 0, header.Length, header, 0);
+				mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
+				// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
+				mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
+				return mac.Hash;
+			}
 		}
 
 		#endregion

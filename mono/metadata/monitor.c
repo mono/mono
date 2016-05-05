@@ -74,7 +74,7 @@ enum {
 
 struct _MonoThreadsSync
 {
-	gsize owner;			/* thread ID */
+	volatile gsize owner;			/* thread ID */
 	guint32 nest;
 #ifdef HAVE_MOVING_COLLECTOR
 	gint32 hash_code;
@@ -393,6 +393,7 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 	guint32 waitms;
 	guint32 ret;
 	MonoThread *thread;
+	gsize owner;
 
 	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
 
@@ -402,7 +403,7 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 	}
 
 retry:
-	mon = obj->synchronisation;
+	mon = obj->synchronisation; /* load with 'consume' memory ordering semantic */
 
 	/* If the object has never been locked... */
 	if (G_UNLIKELY (mon == NULL)) {
@@ -490,7 +491,9 @@ retry:
 	/* This case differs from Dice's case 3 because we don't
 	 * deflate locks or cache unused lock records
 	 */
-	if (G_LIKELY (mon->owner == 0)) {
+	owner = mon->owner;
+	mono_memory_acquire_barrier();
+	if (G_LIKELY (owner == 0)) {
 		/* Try to install our ID in the owner field, nest
 		 * should have been left at 1 by the previous unlock
 		 * operation
@@ -506,7 +509,7 @@ retry:
 	}
 
 	/* If the object is currently locked by this thread... */
-	if (mon->owner == id) {
+	if (owner == id) {
 		mon->nest++;
 		return 1;
 	}
@@ -532,7 +535,9 @@ retry_contended:
 	/* This case differs from Dice's case 3 because we don't
 	 * deflate locks or cache unused lock records
 	 */
-	if (G_LIKELY (mon->owner == 0)) {
+	owner = mon->owner;
+	mono_memory_acquire_barrier();
+	if (G_LIKELY (owner == 0)) {
 		/* Try to install our ID in the owner field, nest
 		* should have been left at 1 by the previous unlock
 		* operation
@@ -546,7 +551,7 @@ retry_contended:
 	}
 
 	/* If the object is currently locked by this thread... */
-	if (mon->owner == id) {
+	if (owner == id) {
 		mon->nest++;
 		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
 		return 1;
@@ -555,7 +560,10 @@ retry_contended:
 	/* We need to make sure there's a semaphore handle (creating it if
 	 * necessary), and block on it
 	 */
-	if (mon->entry_sem == NULL) {
+	sem = mon->entry_sem;
+	mono_memory_acquire_barrier();
+
+	if (sem == NULL) {
 		/* Create the semaphore */
 		sem = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
 		g_assert (sem != NULL);
@@ -712,6 +720,7 @@ mono_monitor_exit (MonoObject *obj)
 		/* object is now unlocked, leave nest==1 so we don't
 		 * need to set it when the lock is reacquired
 		 */
+		mono_memory_release_barrier(); // synchronize with the 'acquire' in InterlockedCompareExchangePointer
 		mon->owner = 0;
 
 		/* Do the wakeup stuff.  It's possible that the last
@@ -1339,7 +1348,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	ret = WaitForSingleObjectEx (event, ms, TRUE);
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (1, &event, TRUE, ms);
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking

@@ -920,14 +920,14 @@ mono_arch_init (void)
 	breakpoint_size = 13;
 	breakpoint_fault_size = 3;
 	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
-	single_step_fault_size = 5;
 #else
 	flags = MONO_MMAP_READ|MONO_MMAP_32BIT;
 	/* amd64_mov_reg_mem () */
 	breakpoint_size = 8;
 	breakpoint_fault_size = 8;
-	single_step_fault_size = 8;
 #endif
+
+	single_step_fault_size = 4;
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
@@ -2942,7 +2942,10 @@ cc_signed_table [] = {
 static unsigned char*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
 {
-	amd64_sse_cvttsd2si_reg_reg (code, dreg, sreg);
+	if(size == 8)
+		amd64_sse_cvttsd2si_reg_reg (code, dreg, sreg); // Convert to long
+	else
+		amd64_sse_cvttsd2si_reg_reg_size (code, dreg, sreg, 4); // Convert to int
 
 	if (size == 1)
 		amd64_widen_reg (code, dreg, dreg, is_signed, FALSE);
@@ -3539,14 +3542,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
-				if (((guint64)ss_trigger_page >> 32) == 0)
-					amd64_mov_reg_mem (code, AMD64_R11, (guint64)ss_trigger_page, 4);
-				else {
-					MonoInst *var = cfg->arch.ss_trigger_page_var;
+				MonoInst *var = cfg->arch.ss_trigger_page_var;
 
-					amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
-					amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
-				}
+				amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
+				amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
 			}
 
 			/* 
@@ -4443,8 +4442,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_STORER4_MEMBASE_REG:
 			/* This requires a double->single conversion */
-			amd64_sse_cvtsd2ss_reg_reg (code, AMD64_XMM15, ins->sreg1);
-			amd64_sse_movss_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, AMD64_XMM15);
+			amd64_sse_cvtsd2ss_reg_reg (code, MONO_ARCH_FP_SCRATCH_REG, ins->sreg1);
+			amd64_sse_movss_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, MONO_ARCH_FP_SCRATCH_REG);
 			break;
 		case OP_LOADR4_MEMBASE:
 			amd64_sse_movss_reg_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
@@ -5347,8 +5346,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_EXTRACT_I8:
 			if (ins->inst_c0) {
-				amd64_movhlps_reg_reg (code, AMD64_XMM15, ins->sreg1);
-				amd64_movd_reg_xreg_size (code, ins->dreg, AMD64_XMM15, 8);
+				amd64_movhlps_reg_reg (code, MONO_ARCH_FP_SCRATCH_REG, ins->sreg1);
+				amd64_movd_reg_xreg_size (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG, 8);
 			} else {
 				amd64_movd_reg_xreg_size (code, ins->dreg, ins->sreg1, 8);
 			}
@@ -5400,11 +5399,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_pinsrw_reg_reg_imm (code, ins->dreg, ins->sreg2, ins->inst_c0 * 2 + 1);
 			break;
 		case OP_INSERTX_I8_SLOW:
-			amd64_movd_xreg_reg_size(code, AMD64_XMM15, ins->sreg2, 8);
+			amd64_movd_xreg_reg_size(code, MONO_ARCH_FP_SCRATCH_REG, ins->sreg2, 8);
 			if (ins->inst_c0)
-				amd64_movlhps_reg_reg (code, ins->dreg, AMD64_XMM15);
+				amd64_movlhps_reg_reg (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG);
 			else
-				amd64_sse_movsd_reg_reg (code, ins->dreg, AMD64_XMM15);
+				amd64_sse_movsd_reg_reg (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG);
 			break;
 
 		case OP_INSERTX_R4_SLOW:
@@ -6731,8 +6730,16 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 	int reg;
 	gint64 value;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+#ifdef PLATFORM_WIN32
 
+	EXCEPTION_POINTERS* ep = (EXCEPTION_POINTERS*) info;
+	EXCEPTION_RECORD* er = ep->ExceptionRecord;
+	
+	return (er->ExceptionCode == EXCEPTION_INT_OVERFLOW) ? TRUE : FALSE;
+
+#else
+
+	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 	rip = (guint8*)ctx.rip;
 
 	if (IS_REX (rip [0])) {
@@ -6793,6 +6800,7 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 	}
 
 	return FALSE;
+#endif
 }
 
 guint32

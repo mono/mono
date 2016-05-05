@@ -5777,6 +5777,7 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	MonoObject *delegate;
 	gpointer func;
 	MonoMethod *method = info->method;
+	MonoMethodSignature *sig = mono_method_signature(method);
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -5785,6 +5786,11 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
 		if (!mono_security_core_clr_ensure_delegate_creation (method, throwOnBindFailure))
 			return NULL;
+	}
+
+	if (sig->generic_param_count && method->wrapper_type == MONO_WRAPPER_NONE) {
+		if (!method->is_inflated)
+			mono_raise_exception (mono_get_exception_argument ("method", " Cannot bind to the target method because its signature differs from that of the delegate type"));
 	}
 
 	delegate = mono_object_new (mono_object_domain (type), delegate_class);

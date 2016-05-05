@@ -61,6 +61,16 @@
 #   endif
 #endif
 
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+/*
+  We have a rarely occurring bug where thread static slots that are reused from the freelist
+  appear to get nulled out after they're [re]initialized
+  We'll work around this for now by not reusing thread static slots on windows
+  Case 670223
+*/
+#define UNITY_USE_THREADSTATIC_FREELIST 1
+#endif
+
 struct StartInfo 
 {
 	guint32 (*func)(void *);
@@ -183,6 +193,10 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread);
 #define mono_interlocked_lock() EnterCriticalSection (&interlocked_mutex)
 #define mono_interlocked_unlock() LeaveCriticalSection (&interlocked_mutex)
 static CRITICAL_SECTION interlocked_mutex;
+
+/* next managed thread ID available to allocate. This is done native-side rather than
+ managed-side so that it's not reset by a domain reload. */
+static gint32 next_managed_thread_id = 0;
 
 /* global count of thread interruptions requested */
 static gint32 thread_interruption_requested = 0;
@@ -1254,7 +1268,12 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj)
 	return str;
 }
 
-void 
+gint32 ves_icall_System_Threading_Thread_GetNewManagedId_internal()
+{
+    return InterlockedIncrement(&next_managed_thread_id);
+}
+
+void
 ves_icall_System_Threading_Thread_SetName_internal (MonoThread *this_obj, MonoString *name)
 {
 	ensure_synch_cs_set (this_obj);
@@ -1488,21 +1507,17 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this,
 	return(FALSE);
 }
 
-guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handles, gint32 handle_count, gboolean wait_all)
+guint32 mono_unity_wait_for_multiple_objects_processing_apc (gint32 handle_count, HANDLE* handles, gboolean wait_all, gint32 ms)
 {
 	guint32 ret = WAIT_IO_COMPLETION;
 	guint32 start_ms;
-	MonoException* exc = NULL;
 	guint32 time_left_to_wait_ms = ms;
-
-	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
 	start_ms = mono_msec_ticks ();
 
-	while (!exc && ret == WAIT_IO_COMPLETION)
+	while (ret == WAIT_IO_COMPLETION && !mono_thread_interruption_requested ())
 	{
 		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, time_left_to_wait_ms, TRUE);
-		exc = mono_thread_get_and_clear_pending_exception ();
 
 		if (ret == WAIT_IO_COMPLETION)
 		{
@@ -1518,11 +1533,6 @@ guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handle
 				ret = WAIT_TIMEOUT;
 		}
 	}
-
-	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
-
-	if (exc)
-		mono_raise_exception (exc);
 
 	return ret;
 }
@@ -1554,7 +1564,11 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_
 		ms=INFINITE;
 	}
 
-	ret = wait_and_ignore_interrupt (thread, ms, handles, numhandles, TRUE);
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (numhandles, handles, TRUE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 	g_free(handles);
 
@@ -1600,8 +1614,12 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	if(ms== -1) {
 		ms=INFINITE;
 	}
-	
-	ret = wait_and_ignore_interrupt (thread, ms, handles, numhandles, FALSE);
+
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (numhandles, handles, FALSE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	g_free(handles);
 
@@ -1637,7 +1655,11 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitOne_internal(MonoObject *this
 	
 	mono_thread_current_check_pending_interrupt ();
 
-	ret = wait_and_ignore_interrupt (thread, ms, &handle, 1, TRUE);
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	ret = mono_unity_wait_for_multiple_objects_processing_apc (1, &handle, TRUE, ms);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	if(ret==WAIT_FAILED) {
 		THREAD_WAIT_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Wait failed", __func__, GetCurrentThreadId ()));
@@ -3788,15 +3810,19 @@ do_free_special (gpointer key, gpointer value, gpointer data)
 	/*g_print ("free %s , size: %d, offset: %x\n", field->name, size, offset);*/
 	if (static_type == 0) {
 		TlsOffsetSize data;
-		MonoThreadDomainTls *item = g_new0 (MonoThreadDomainTls, 1);
 		data.offset = offset & 0x7fffffff;
 		data.size = size;
 		if (threads != NULL)
 			mono_g_hash_table_foreach (threads, free_thread_static_data_helper, &data);
-		item->offset = offset;
-		item->size = size;
-		item->next = thread_static_info.freelist;
-		thread_static_info.freelist = item;
+#ifdef UNITY_USE_THREADSTATIC_FREELIST
+		{
+			MonoThreadDomainTls *item = g_new0 (MonoThreadDomainTls, 1);
+			item->offset = offset;
+			item->size = size;
+			item->next = thread_static_info.freelist;
+			thread_static_info.freelist = item;
+		}
+#endif
 	} else {
 		/* FIXME: free context static data as well */
 	}

@@ -1046,6 +1046,10 @@ mono_async_invoke (MonoAsyncResult *ares)
 		SetEvent ((gpointer)(gsize)ac->wait_event);
 	}
 	mono_monitor_exit ((MonoObject *) ares);
+	if (ares->gchandle) {
+		mono_gchandle_free (ares->gchandle);
+		ares->gchandle = 0;
+	}
 }
 
 static void
@@ -1134,6 +1138,8 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 
 	ares = mono_async_result_new (domain, NULL, ac->state, NULL, (MonoObject*)ac);
 	MONO_OBJECT_SETREF (ares, async_delegate, target);
+	// It seems like garbage collect likes to nuke ares inappropriately. The handle prevents this.
+	ares->gchandle = mono_gchandle_new (ares, FALSE);
 
 	EnterCriticalSection (&ares_lock);
 	if (domain->state == MONO_APPDOMAIN_UNLOADED || domain->state == MONO_APPDOMAIN_UNLOADING) {

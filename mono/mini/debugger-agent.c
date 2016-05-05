@@ -479,6 +479,8 @@ typedef struct {
 	gpointer start_sp;
 	MonoMethod *last_method;
 	int last_line;
+	MonoMethod *stepover_frame_method;
+	int stepover_frame_count;
 	/* Whenever single stepping is performed using start/stop_single_stepping () */
 	gboolean global;
 	/* The list of breakpoints used to implement step-over */
@@ -573,7 +575,6 @@ static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
 static SingleStepReq *ss_req = NULL;
-static gpointer ss_invoke_addr = NULL;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -1910,7 +1911,9 @@ save_thread_context (MonoContext *ctx)
 	DebuggerTlsData *tls;
 
 	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
+	
+	if (!tls)
+		return;
 
 	if (ctx) {
 		memcpy (&tls->ctx, ctx, sizeof (MonoContext));
@@ -2045,7 +2048,8 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			// debugger debugging
 			if (sigctx)
 				DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
-			//save_thread_context (&ctx);
+			
+			save_thread_context (&ctx);
 
 			if (!tls->thread)
 				/* Already terminated */
@@ -2062,7 +2066,15 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			 * remain valid.
 			 */
 			data.last_frame_set = FALSE;
-			if (sigctx) {
+
+			/* mono_jit_walk_stack_from_ctx_in_thread acquires the loader lock in mono_arch_find_jit_info_ext by calling mono_method_signature.
+			 * So we can't call mono_jit_walk_stack_from_ctx_in_thread here if we have interrupted a thread that is waiting for or holding the 
+			 * loader lock as that can cause a deadlock.
+			 * The consequence of this work-around is that we do not get managed stack traces for interrupted threads that have mono_loader_lock()
+			 * in their call stack.
+			 */
+						
+			if (sigctx && !mono_loader_lock_self_is_waiting() && !mono_loader_lock_is_owned_by_self()) {
 				mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 				mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
 			}
@@ -2687,7 +2699,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info_with_context (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean has_context, MonoContext *context, MonoLMF *lmf)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -2709,8 +2721,8 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		/* Have to use the state saved by the signal handler */
 		process_frame (&tls->async_last_frame, NULL, &user_data);
 		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->async_ctx, FALSE, thread, tls->async_lmf, &user_data);
-	} else if (tls->has_context) {
-		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->ctx, FALSE, thread, tls->lmf, &user_data);
+	} else if (has_context) {
+		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, context, FALSE, thread, lmf, &user_data);
 	} else {
 		// FIXME:
 		tls->frame_count = 0;
@@ -2747,6 +2759,12 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	tls->frames = new_frames;
 	tls->frame_count = new_frame_count;
 	tls->frames_up_to_date = TRUE;
+}
+
+static void
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+{
+	compute_frame_info_with_context(thread, tls, tls->has_context, &tls->ctx, tls->lmf);
 }
 
 /*
@@ -3029,6 +3047,9 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		}
 	}
    
+	if (event == EVENT_KIND_THREAD_DEATH)
+		suspend_policy = SUSPEND_POLICY_NONE;
+	
 	if (event == EVENT_KIND_VM_DEATH) {
 		vm_death_event_sent = TRUE;
 		suspend_policy = SUSPEND_POLICY_NONE;
@@ -3315,28 +3336,6 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 		tls->invoke_addr = g_queue_pop_head(tls->invoke_addr_stack);
 	}
 
-	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ()) {
-		mono_loader_unlock ();
-		return;
-	}
-
-	/*
-	 * We need to stop single stepping when exiting a runtime invoke, since if it is
-	 * a step out, it may return to native code, and thus never end.
-	 */
-	ss_invoke_addr = NULL;
-
-
-	for (i = 0; i < event_requests->len; ++i) {
-		EventRequest *req = g_ptr_array_index (event_requests, i);
-
-		if (req->event_kind == EVENT_KIND_STEP) {
-			ss_destroy (req->info);
-			g_ptr_array_remove_index_fast (event_requests, i);
-			g_free (req);
-			break;
-		}
-	}
 	mono_loader_unlock ();
 }
 
@@ -3473,7 +3472,8 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 
 	if (i == seq_points->len) {
 		/* Have to handle this somehow */
-		g_error ("Unable to insert breakpoint at %s:%d, seq_points=%d\n", mono_method_full_name (ji->method, TRUE), bp->il_offset, seq_points->len);
+		g_warning ("Unable to insert breakpoint at %s:%d, seq_points=%d\n", mono_method_full_name (ji->method, TRUE), bp->il_offset, seq_points->len);
+		return;
 	}
 
 	inst = g_new0 (BreakpointInstance, 1);
@@ -3779,6 +3779,18 @@ breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 	return bp->method && bp->method->klass->image->assembly == assembly;
 }
 
+static int
+compute_frame_count(DebuggerTlsData *tls, MonoContext *ctx)
+{
+	int frame_count;
+
+	compute_frame_info_with_context (tls->thread, tls, TRUE, ctx, mono_get_lmf());
+	frame_count = tls->frame_count;
+	invalidate_frames (tls);
+	
+	return frame_count;
+}
+
 static void
 process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 {
@@ -3887,6 +3899,12 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 		sp = find_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
 		g_assert (sp);
+
+		if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
+		{
+			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner recursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
+			hit = FALSE;
+		}
 
 		if (ss_req->size == STEP_SIZE_LINE) {
 			/* Have to check whenever a different source line was reached */
@@ -4102,6 +4120,10 @@ process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	if (il_offset == -1)
 		return;
 
+	/* Check for step-over recursion */
+	if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
+		return;
+	
 	if (ss_req->size == STEP_SIZE_LINE) {
 		/* Step until a different source line is reached */
 		MonoDebugMethodInfo *minfo;
@@ -4215,13 +4237,12 @@ start_single_stepping (void)
 	if (val == 1)
 		mono_arch_start_single_stepping ();
 
-	if (ss_req != NULL && ss_invoke_addr == NULL) {
+	if (ss_req != NULL) {
 		DebuggerTlsData *tls;
 	
 		mono_loader_lock ();
 	
  		tls = mono_g_hash_table_lookup (thread_to_tls, ss_req->thread);
-		ss_invoke_addr = tls->invoke_addr;
 		
 		mono_loader_unlock ();
 	}
@@ -4318,6 +4339,12 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointI
 				ss_req->bps = g_slist_append (ss_req->bps, bp);
 			}
 		}
+		
+		if(tls && ss_req->stepover_frame_count == 0)
+		{
+			ss_req->stepover_frame_method = method;
+			ss_req->stepover_frame_count = compute_frame_count(tls, &tls->ctx);
+		}
 	}
 
 	if (!ss_req->bps) {
@@ -4389,7 +4416,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		/* Compute the initial line info */
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
@@ -4417,7 +4450,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (frame->il_offset != -1) {
@@ -4481,6 +4520,17 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 		if (tls && tls->abort_requested)
 			return;
 	}
+	
+	// Breaking on ThreadAbortException can cause a deadlock in domain reload:
+	
+	// 1. Domain reload aborts a managed thread and waits for it to stop.
+	// 2. Aborting the thread throws an ThreadAbortException on the thread.
+	// 3. The debugger agent handles the ThreadAbortException by suspending the vm,
+	//    including the thread that was aborted.
+	// 4. Deadlock: domain reload waits forever on suspended thread to stop running.
+	
+	if (exc && !strcmp (exc->object.vtable->klass->name, "ThreadAbortException"))
+		return;
 
 	memset (&ei, 0, sizeof (EventInfo));
 
@@ -4574,7 +4624,13 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 	MonoObject *obj;
 
 	if (t->byref) {
-		g_assert (*(void**)addr);
+		
+		if((*(void**)addr) == NULL)
+		{
+			buffer_add_byte (buf, VALUE_TYPE_ID_NULL);
+			return;
+		}
+		
 		addr = *(void**)addr;
 	}
 
@@ -5090,8 +5146,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	
 	sig = mono_method_signature (m);
 
-	// The client may request the container instead of the inflated method
-	if (sig && sig->ret && MONO_TYPE_MVAR == sig->ret->type)
+	if (m->is_generic && !m->is_inflated)
 		return ERR_NOT_IMPLEMENTED;
 
 	if (m->klass->valuetype)
@@ -5841,8 +5896,33 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (err)
 			return err;
 
-		// FIXME:
-		g_assert (domain == domain2);
+		/* 
+		   The assert below is commented to fix a crash when inspecting enums/structs in a multi-domain setup.
+		 
+		   When the debugger wants to inspect an enum/struct, it first creates a boxed value of it.
+
+		   In this version of the debugger agent there is a bug where the boxed value is created in
+		   the same domain as the current System.Threading.Thread object was originally created. 
+		   Instead of creating the boxed value in the domain that is currently active for the thread.
+		 
+		   This means that if the managed thread object was created in a root domain, then the
+		   debugger client will ALWAYS create the boxed value in the root domain. If you change
+		   the active domain later, this does not change the domain in which the thread object was created.
+		 
+		   If you have an enum/struct in a child domain that you want to inspect, then the 'domain' variable
+		   above will be set to the root domain (for the thread) and 'domain2' will be set to the child domain
+		   (for the enum/struct). Which causes the assert below to fail and crash/abort the application.
+		 
+		   The correct fix for this is to fix the debugger client, so the correct active domain is returned for the
+		   current thread. This has been fixed in newer versions of the debugger client/agent (protocol).
+
+		   Fixing this issue in this version of the debugger agent and the latest debugger client has proven
+		   to be very difficult, so instead we just comment the assert and let the debugger client create the
+	       (child domain) boxed value in the root domain for the purpose of inspecting the enum/structs when
+		   debugging.
+		 */
+		
+		/* g_assert (domain == domain2); Fixes enum/struct inspection, see comment above */
 
 		o = mono_object_new (domain, klass);
 

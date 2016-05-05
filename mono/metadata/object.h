@@ -1,6 +1,8 @@
 #ifndef _MONO_CLI_OBJECT_H_
 #define _MONO_CLI_OBJECT_H_
 
+#include <stdint.h>
+
 #include <mono/metadata/class.h>
 
 G_BEGIN_DECLS
