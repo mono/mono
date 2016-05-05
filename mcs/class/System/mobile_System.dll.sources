@@ -331,10 +331,6 @@ System.Security.Cryptography.X509Certificates/X509VerificationFlags.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs
-System.Security.Cryptography/Oid.cs
-System.Security.Cryptography/OidCollection.cs
-System.Security.Cryptography/OidEnumerator.cs
-System.Security.Cryptography/OidGroup.cs
 System.Threading/Semaphore.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
@@ -376,6 +372,7 @@ Mono.Net.Security/NoReflectionHelper.cs
 Mono.Net.Security/SystemCertificateValidator.cs
 
 ReferenceSources/AssertWrapper.cs
+ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/Internal.cs
 ReferenceSources/HttpSysSettings.cs
@@ -780,6 +777,10 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
 
 ../referencesource/System/sys/system/threading/Barrier.cs
+
+../referencesource/System/security/system/security/cryptography/oid.cs
+
+../referencesource/System/security/system/security/cryptography/x509/x509utils.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
 
