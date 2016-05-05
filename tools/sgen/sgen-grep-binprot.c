@@ -4,7 +4,21 @@
 #include <glib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <config.h>
 
+#if SIZEOF_VOID_P == 4
+typedef int32_t mword;
+#define MWORD_FORMAT_SPEC_D PRId32
+#define MWORD_FORMAT_SPEC_P PRIx32
+#else
+typedef int64_t mword;
+#define MWORD_FORMAT_SPEC_D PRId64
+#define MWORD_FORMAT_SPEC_P PRIx64
+#endif
+#define TYPE_SIZE	mword
+#define TYPE_POINTER	mword
 #include <mono/sgen/sgen-protocol.h>
 
 #define SGEN_PROTOCOL_EOF	255
@@ -221,10 +235,10 @@ print_entry_content (int entries_size, PrintEntry *entries, gboolean color_outpu
 			printf ("%lld", *(long long*) entries [i].data);
 			break;
 		case TYPE_SIZE:
-			printf ("%lu", *(size_t*) entries [i].data);
+			printf ("%"MWORD_FORMAT_SPEC_D, *(mword*) entries [i].data);
 			break;
 		case TYPE_POINTER:
-			printf ("%p", *(gpointer*) entries [i].data);
+			printf ("0x%"MWORD_FORMAT_SPEC_P, *(mword*) entries [i].data);
 			break;
 		case TYPE_BOOL:
 			printf ("%s", *(gboolean*) entries [i].data ? "true" : "false");
@@ -428,13 +442,13 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 
 #define TYPE_INT int
 #define TYPE_LONGLONG long long
-#define TYPE_SIZE size_t
-#define TYPE_POINTER gpointer
+#define TYPE_SIZE mword
+#define TYPE_POINTER mword
 
 static gboolean
-matches_interval (gpointer ptr, gpointer start, int size)
+matches_interval (mword ptr, mword start, int size)
 {
-	return ptr >= start && (char*)ptr < (char*)start + size;
+	return ptr >= start && ptr < start + size;
 }
 
 /* Returns the index of the field where a match was found,
@@ -442,7 +456,7 @@ matches_interval (gpointer ptr, gpointer start, int size)
  * BINARY_PROTOCOL_MATCH for a match with no index.
  */
 static int
-match_index (gpointer ptr, int type, void *data)
+match_index (mword ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
 
@@ -505,7 +519,7 @@ match_index (gpointer ptr, int type, void *data)
 }
 
 static gboolean
-is_vtable_match (gpointer ptr, int type, void *data)
+is_vtable_match (mword ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
 
@@ -686,15 +700,15 @@ main (int argc, char *argv[])
 		} else {
 			int match_indices [num_nums + 1];
 			gboolean match = is_always_match (type);
-			match_indices [num_nums] = num_nums == 0 ? match_index (NULL, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match_indices [num_nums] = num_nums == 0 ? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
 			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
 			for (i = 0; i < num_nums; ++i) {
-				match_indices [i] = match_index ((gpointer) nums [i], type, data);
+				match_indices [i] = match_index ((mword) nums [i], type, data);
 				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
 				for (i = 0; i < num_vtables; ++i) {
-					if (is_vtable_match ((gpointer) vtables [i], type, data)) {
+					if (is_vtable_match ((mword) vtables [i], type, data)) {
 						match = TRUE;
 						break;
 					}
