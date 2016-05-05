@@ -1778,8 +1778,16 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
 
-		mono_mb_emit_add_to_local (mb, 0, offset_of_first_child_field);
-		mono_mb_emit_add_to_local (mb, 1, usize);
+		if (to_object)
+		{
+			mono_mb_emit_add_to_local(mb, 0, usize);
+			mono_mb_emit_add_to_local(mb, 1, offset_of_first_child_field);
+		}
+		else
+		{
+			mono_mb_emit_add_to_local(mb, 0, offset_of_first_child_field);
+			mono_mb_emit_add_to_local(mb, 1, usize);
+		}
 		return;
 	}
 
