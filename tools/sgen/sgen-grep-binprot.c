@@ -5,9 +5,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define SGEN_BINARY_PROTOCOL
-#define MONO_INTERNAL
-
 #include <mono/sgen/sgen-protocol.h>
 
 #define SGEN_PROTOCOL_EOF	255
