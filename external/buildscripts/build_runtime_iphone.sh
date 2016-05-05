@@ -23,6 +23,16 @@ ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
 MAKE_JOBS=4
 
+perl "external/buildscripts/prepare_osx_build.pl"
+
+PATH=$PWD/external/mono-build-deps/built_tools:$PATH
+LIBTOOL=$PWD/external/mono-build-deps/built_tools/libtool
+LIBTOOLIZE=$PWD/external/mono-build-deps/built_tools/libtoolize
+
+echo "LIBTOOL = $LIBTOOL"
+echo "LIBTOOLIZE = $LIBTOOLIZE"
+echo "PATH = $PATH"
+echo ""
 
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 	echo "Erasing builds folder to make sure we start with a clean slate"
