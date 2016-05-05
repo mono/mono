@@ -10969,7 +10969,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						store->flags |= MONO_INST_FAULT;
 
 					if (cfg->gen_write_barriers && mini_type_to_stind (cfg, field->type) == CEE_STIND_REF && !(sp [1]->opcode == OP_PCONST && sp [1]->inst_c0 == 0)) {
-						if (mini_is_gsharedvt_klass (klass)) {
+						if (mini_is_gsharedvt_klass (cfg, klass)) {
 							g_assert (wbarrier_ptr_ins);
 							emit_write_barrier (cfg, wbarrier_ptr_ins, sp [1]);
 						} else {
