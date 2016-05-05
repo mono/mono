@@ -148,9 +148,37 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
+		static byte[] PEM (string type, byte[] data)
+		{
+			string pem = Encoding.ASCII.GetString (data);
+			string header = String.Format ("-----BEGIN {0}-----", type);
+			string footer = String.Format ("-----END {0}-----", type);
+			int start = pem.IndexOf (header) + header.Length;
+			int end = pem.IndexOf (footer, start);
+			string base64 = pem.Substring (start, (end - start));
+			return Convert.FromBase64String (base64);
+		}
+
+		static byte[] ConvertData (byte[] data)
+		{
+			if (data == null || data.Length == 0)
+				return data;
+
+			// does it looks like PEM ?
+			if (data [0] != 0x30) {
+				try {
+					return PEM ("CERTIFICATE", data);
+				} catch {
+					// let the implementation take care of it.
+				}
+			}
+			return data;
+		}
+
 #if !MONOTOUCH && !XAMMAC
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			rawData = ConvertData (rawData);
 			if (nativeHelper != null)
 				return nativeHelper.Import (rawData, password, keyStorageFlags);
 
