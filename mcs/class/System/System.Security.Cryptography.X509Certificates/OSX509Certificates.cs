@@ -154,7 +154,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 				certArray = FromIntPtrs (secCerts);
 
-				host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, (IntPtr) hostName.Length);
+				if (!string.IsNullOrEmpty (hostName))
+					host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, (IntPtr) hostName.Length);
 				sslsecpolicy = SecPolicyCreateSSL (true, host);
 
 				int code = SecTrustCreateWithCertificates (certArray, sslsecpolicy, out sectrust);
