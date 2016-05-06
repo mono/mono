@@ -18,6 +18,13 @@
 #include "sgen-entry-stream.h"
 #include "sgen-grep-binprot.h"
 
+#ifdef BINPROT_HAS_HEADER
+#define PACKED_SUFFIX	p
+#else
+#define PROTOCOL_STRUCT_ATTR
+#define PACKED_SUFFIX
+#endif
+
 #if SIZEOF_VOID_P == 4
 typedef int32_t mword;
 #define MWORD_FORMAT_SPEC_D PRId32
@@ -543,8 +550,37 @@ is_vtable_match (mword ptr, int type, void *data)
 #undef TYPE_SIZE
 #undef TYPE_POINTER
 
-void
-sgen_binary_protocol_grep_entries (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],
+static gboolean
+sgen_binary_protocol_read_header (EntryStream *stream)
+{
+#ifdef BINPROT_HAS_HEADER
+	char data [MAX_ENTRY_SIZE];
+	int type = read_entry (stream, data);
+	if (type == SGEN_PROTOCOL_EOF)
+		return FALSE;
+	if (type == PROTOCOL_ID (binary_protocol_header)) {
+		PROTOCOL_STRUCT (binary_protocol_header) * str = (PROTOCOL_STRUCT (binary_protocol_header) *) data;
+		if (str->check == PROTOCOL_HEADER_CHECK)
+			return TRUE;
+	}
+	return FALSE;
+#else
+	/*
+	 * This implementation doesn't account for the presence of a header,
+	 * reading all the entries with the default configuration of the host
+	 * machine. It has to be used only after all other implementations
+	 * fail to identify a header, for backward compatibility.
+	 */
+	return TRUE;
+#endif
+}
+
+#define CONC(A, B) CONC_(A, B)
+#define CONC_(A, B) A##B
+#define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, PACKED_SUFFIX)
+
+gboolean
+GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],
 			gboolean dump_all, gboolean pause_times, gboolean color_output, unsigned long long first_entry_to_consider)
 {
 	int type;
@@ -555,6 +591,9 @@ sgen_binary_protocol_grep_entries (EntryStream *stream, int num_nums, long nums 
 	gboolean pause_times_finish = FALSE;
 	long long pause_times_ts = 0;
 	unsigned long long entry_index;
+
+	if (!sgen_binary_protocol_read_header (stream))
+		return FALSE;
 
 	entry_index = 0;
 	while ((type = read_entry (stream, data)) != SGEN_PROTOCOL_EOF) {
@@ -618,4 +657,5 @@ sgen_binary_protocol_grep_entries (EntryStream *stream, int num_nums, long nums 
 		++entry_index;
 	}
 	g_free (data);
+	return TRUE;
 }

@@ -15,6 +15,11 @@
 #include "sgen-entry-stream.h"
 #include "sgen-grep-binprot.h"
 
+GrepEntriesFunction grepers [] = {
+	sgen_binary_protocol_grep_entriesp,
+	sgen_binary_protocol_grep_entries
+};
+
 int
 main (int argc, char *argv[])
 {
@@ -85,8 +90,14 @@ main (int argc, char *argv[])
 
 	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
 	init_stream (&stream, input_file);
-	sgen_binary_protocol_grep_entries (&stream, num_nums, nums, num_vtables, vtables,
-				dump_all, pause_times, color_output, first_entry_to_consider);
+	for (i = 0; i < sizeof (grepers) / sizeof (GrepEntriesFunction); i++) {
+		if (grepers [i] (&stream, num_nums, nums, num_vtables, vtables, dump_all,
+				pause_times, color_output, first_entry_to_consider)) {
+			/* Success */
+			break;
+		}
+		reset_stream (&stream);
+	}
 	close_stream (&stream);
 	if (input_path)
 		close (input_file);

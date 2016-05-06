@@ -23,6 +23,14 @@ init_stream (EntryStream *stream, int file)
 }
 
 void
+reset_stream (EntryStream *stream)
+{
+	stream->end = stream->buffer + BUFFER_SIZE;
+	stream->pos = stream->end;
+	lseek (stream->file, 0, SEEK_SET);
+}
+
+void
 close_stream (EntryStream *stream)
 {
 	g_free (stream->buffer);
