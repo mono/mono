@@ -383,12 +383,10 @@ struct _SgenThreadInfo {
 	char **tlab_temp_end_addr;
 	char **tlab_real_end_addr;
 
-#ifndef HAVE_KW_THREAD
 	char *tlab_start;
 	char *tlab_next;
 	char *tlab_temp_end;
 	char *tlab_real_end;
-#endif
 };
 
 gboolean sgen_is_worker_thread (MonoNativeThreadId thread);
