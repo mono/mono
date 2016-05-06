@@ -25,14 +25,25 @@
 #define PACKED_SUFFIX
 #endif
 
-#if SIZEOF_VOID_P == 4
+#ifndef BINPROT_SIZEOF_VOID_P
+#define BINPROT_SIZEOF_VOID_P SIZEOF_VOID_P
+#define ARCH_SUFFIX
+#endif
+
+#if BINPROT_SIZEOF_VOID_P == 4
 typedef int32_t mword;
 #define MWORD_FORMAT_SPEC_D PRId32
 #define MWORD_FORMAT_SPEC_P PRIx32
+#ifndef ARCH_SUFFIX
+#define ARCH_SUFFIX	32
+#endif
 #else
 typedef int64_t mword;
 #define MWORD_FORMAT_SPEC_D PRId64
 #define MWORD_FORMAT_SPEC_P PRIx64
+#ifndef ARCH_SUFFIX
+#define ARCH_SUFFIX	64
+#endif
 #endif
 #define TYPE_SIZE	mword
 #define TYPE_POINTER	mword
@@ -560,7 +571,7 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 		return FALSE;
 	if (type == PROTOCOL_ID (binary_protocol_header)) {
 		PROTOCOL_STRUCT (binary_protocol_header) * str = (PROTOCOL_STRUCT (binary_protocol_header) *) data;
-		if (str->check == PROTOCOL_HEADER_CHECK)
+		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P)
 			return TRUE;
 	}
 	return FALSE;
@@ -577,7 +588,7 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 
 #define CONC(A, B) CONC_(A, B)
 #define CONC_(A, B) A##B
-#define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, PACKED_SUFFIX)
+#define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, CONC(ARCH_SUFFIX,PACKED_SUFFIX))
 
 gboolean
 GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],

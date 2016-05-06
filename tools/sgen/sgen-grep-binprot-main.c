@@ -15,9 +15,11 @@
 #include "sgen-entry-stream.h"
 #include "sgen-grep-binprot.h"
 
+/* FIXME Add grepers for specific endianness */
 GrepEntriesFunction grepers [] = {
-	sgen_binary_protocol_grep_entriesp,
-	sgen_binary_protocol_grep_entries
+	sgen_binary_protocol_grep_entries32p, /* We have header, structures are packed, 32 bit word */
+	sgen_binary_protocol_grep_entries64p, /* We have header, structures are packed, 64 bit word */
+	sgen_binary_protocol_grep_entries /* No header, uses default word size and structure layout */
 };
 
 int
