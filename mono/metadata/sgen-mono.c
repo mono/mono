@@ -993,9 +993,8 @@ static gboolean use_managed_allocator = TRUE;
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
 	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
-	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next_addr));	\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next));	\
 	mono_mb_emit_byte ((mb), CEE_ADD);		\
-	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
 	} while (0)
 
 #define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\

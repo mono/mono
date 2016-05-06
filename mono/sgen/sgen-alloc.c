@@ -475,12 +475,6 @@ sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 void
 sgen_init_tlab_info (SgenThreadInfo* info)
 {
-	SgenThreadInfo *__thread_info__ = info;
-
-	info->tlab_start_addr = &TLAB_START;
-	info->tlab_next_addr = &TLAB_NEXT;
-	info->tlab_temp_end_addr = &TLAB_TEMP_END;
-	info->tlab_real_end_addr = &TLAB_REAL_END;
 }
 
 /*
@@ -491,10 +485,10 @@ sgen_clear_tlabs (void)
 {
 	FOREACH_THREAD (info) {
 		/* A new TLAB will be allocated when the thread does its first allocation */
-		*info->tlab_start_addr = NULL;
-		*info->tlab_next_addr = NULL;
-		*info->tlab_temp_end_addr = NULL;
-		*info->tlab_real_end_addr = NULL;
+		info->tlab_start = NULL;
+		info->tlab_next = NULL;
+		info->tlab_temp_end = NULL;
+		info->tlab_real_end = NULL;
 	} FOREACH_THREAD_END
 }
 
