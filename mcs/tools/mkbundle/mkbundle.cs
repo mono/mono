@@ -320,12 +320,6 @@ class MakeBundle {
 		}
 	}
 
-	static void FetchTarget (string target)
-	{
-		
-	}
-	
-
 	static void WriteSymbol (StreamWriter sw, string name, long size)
 	{
 		switch (style){
