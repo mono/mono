@@ -1,5 +1,0 @@
-CommonCrypto/%.g.cs: CommonCrypto/generator.exe
-	cd CommonCrypto && mono --debug generator.exe
-
-CommonCrypto/generator.exe: CommonCrypto/generator.cs CommonCrypto/CommonDigestGenerator.cs CommonCrypto/CommonCryptorGenerator.cs
-	mcs CommonCrypto/generator.cs CommonCrypto/CommonDigestGenerator.cs CommonCrypto/CommonCryptorGenerator.cs -o $@

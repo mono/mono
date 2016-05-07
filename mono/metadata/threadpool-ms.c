@@ -140,10 +140,10 @@ typedef struct {
 	MonoCoopMutex worker_creation_lock;
 
 	gint32 heuristic_completions;
-	guint32 heuristic_sample_start;
-	guint32 heuristic_last_dequeue; // ms
-	guint32 heuristic_last_adjustment; // ms
-	guint32 heuristic_adjustment_interval; // ms
+	gint64 heuristic_sample_start;
+	gint64 heuristic_last_dequeue; // ms
+	gint64 heuristic_last_adjustment; // ms
+	gint64 heuristic_adjustment_interval; // ms
 	ThreadPoolHillClimbing heuristic_hill_climbing;
 	MonoCoopMutex heuristic_lock;
 
@@ -742,7 +742,8 @@ worker_try_create (void)
 		counter._.active ++;
 	});
 
-	if ((thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, TRUE, 0)) != NULL) {
+	MonoError error;
+	if ((thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, TRUE, 0, &error)) != NULL) {
 		threadpool->worker_creation_current_count += 1;
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, created %p, now = %d count = %d", mono_native_thread_id_get (), thread->tid, now, threadpool->worker_creation_current_count);
@@ -750,7 +751,8 @@ worker_try_create (void)
 		return TRUE;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread", mono_native_thread_id_get ());
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread due to %s", mono_native_thread_id_get (), mono_error_get_message (&error));
+	mono_error_cleanup (&error);
 
 	COUNTER_ATOMIC (counter, {
 		counter._.working --;
@@ -853,7 +855,7 @@ monitor_should_keep_running (void)
 static gboolean
 monitor_sufficient_delay_since_last_dequeue (void)
 {
-	guint32 threshold;
+	gint64 threshold;
 
 	g_assert (threadpool);
 
@@ -891,7 +893,7 @@ monitor_thread (void)
 		mono_gc_set_skip_thread (TRUE);
 
 		do {
-			guint32 ts;
+			gint64 ts;
 			gboolean alerted = FALSE;
 
 			if (mono_runtime_is_shutting_down ())
@@ -965,6 +967,7 @@ monitor_thread (void)
 static void
 monitor_ensure_running (void)
 {
+	MonoError error;
 	for (;;) {
 		switch (monitor_status) {
 		case MONITOR_STATUS_REQUESTED:
@@ -976,8 +979,10 @@ monitor_ensure_running (void)
 			if (mono_runtime_is_shutting_down ())
 				return;
 			if (InterlockedCompareExchange (&monitor_status, MONITOR_STATUS_REQUESTED, MONITOR_STATUS_NOT_RUNNING) == MONITOR_STATUS_NOT_RUNNING) {
-				if (!mono_thread_create_internal (mono_get_root_domain (), monitor_thread, NULL, TRUE, SMALL_STACK))
+				if (!mono_thread_create_internal (mono_get_root_domain (), monitor_thread, NULL, TRUE, SMALL_STACK, &error)) {
 					monitor_status = MONITOR_STATUS_NOT_RUNNING;
+					mono_error_cleanup (&error);
+				}
 				return;
 			}
 			break;
@@ -1047,7 +1052,7 @@ hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble 
 }
 
 static gint16
-hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint32 completions, guint32 *adjustment_interval)
+hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint32 completions, gint64 *adjustment_interval)
 {
 	ThreadPoolHillClimbing *hc;
 	ThreadPoolHeuristicStateTransition transition;
@@ -1287,8 +1292,8 @@ heuristic_adjust (void)
 
 	if (mono_coop_mutex_trylock (&threadpool->heuristic_lock) == 0) {
 		gint32 completions = InterlockedExchange (&threadpool->heuristic_completions, 0);
-		guint32 sample_end = mono_msec_ticks ();
-		guint32 sample_duration = sample_end - threadpool->heuristic_sample_start;
+		gint64 sample_end = mono_msec_ticks ();
+		gint64 sample_duration = sample_end - threadpool->heuristic_sample_start;
 
 		if (sample_duration >= threadpool->heuristic_adjustment_interval / 2) {
 			ThreadPoolCounter counter;
@@ -1361,6 +1366,7 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 MonoObject *
 mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc)
 {
+	MonoError error;
 	MonoAsyncCall *ac;
 
 	g_assert (exc);
@@ -1390,7 +1396,9 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 		} else {
 			wait_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 			g_assert(wait_event);
-			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) mono_wait_handle_new (mono_object_domain (ares), wait_event));
+			MonoWaitHandle *wait_handle = mono_wait_handle_new (mono_object_domain (ares), wait_event, &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) wait_handle);
 		}
 		mono_monitor_exit ((MonoObject*) ares);
 		MONO_PREPARE_BLOCKING;
@@ -1410,7 +1418,7 @@ gboolean
 mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 {
 	gboolean res = TRUE;
-	guint32 start;
+	gint64 end;
 	gpointer sem;
 
 	g_assert (domain);
@@ -1419,13 +1427,12 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	g_assert (mono_domain_is_unloading (domain));
 
 	if (timeout != -1)
-		start = mono_msec_ticks ();
+		end = mono_msec_ticks () + timeout;
 
 #ifndef DISABLE_SOCKETS
 	mono_threadpool_ms_io_remove_domain_jobs (domain);
 	if (timeout != -1) {
-		timeout -= mono_msec_ticks () - start;
-		if (timeout < 0)
+		if (mono_msec_ticks () > end)
 			return FALSE;
 	}
 #endif
@@ -1444,16 +1451,19 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	mono_memory_write_barrier ();
 
 	while (domain->threadpool_jobs) {
-		MONO_PREPARE_BLOCKING;
-		WaitForSingleObject (sem, timeout);
-		MONO_FINISH_BLOCKING;
+		gint64 now;
+
 		if (timeout != -1) {
-			timeout -= mono_msec_ticks () - start;
-			if (timeout <= 0) {
+			now = mono_msec_ticks ();
+			if (now > end) {
 				res = FALSE;
 				break;
 			}
 		}
+
+		MONO_PREPARE_BLOCKING;
+		WaitForSingleObject (sem, timeout != -1 ? end - now : timeout);
+		MONO_FINISH_BLOCKING;
 	}
 
 	domain->cleanup_semaphore = NULL;

@@ -79,6 +79,8 @@ static MonoNativeTlsKey load_type_info_tls_id;
 
 static gboolean use_aot_wrappers;
 
+static MonoFtnPtrEHCallback ftnptr_eh_callback;
+
 static void
 delegate_hash_table_add (MonoDelegate *d);
 
@@ -192,6 +194,12 @@ mono_array_to_lparray (MonoArray *array);
 void
 mono_free_lparray (MonoArray *array, gpointer* nativeArray);
 
+static gint32
+mono_marshal_has_ftnptr_eh_callback (void);
+
+static void
+mono_marshal_ftnptr_eh_callback (guint32 gchandle);
+
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (string_builder, System.Text, StringBuilder)
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, System, DateTime)
@@ -303,7 +311,10 @@ mono_marshal_init (void)
 		register_icall (mono_context_set, "mono_context_set", "void object", FALSE);
 		register_icall (mono_gc_wbarrier_generic_nostore, "wb_generic", "void ptr", FALSE);
 		register_icall (mono_gchandle_get_target, "mono_gchandle_get_target", "object int32", TRUE);
+		register_icall (mono_gchandle_new, "mono_gchandle_new", "uint32 object bool", TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", "object object ptr ptr", FALSE);
+		register_icall (mono_marshal_has_ftnptr_eh_callback, "mono_marshal_has_ftnptr_eh_callback", "int32", TRUE);
+		register_icall (mono_marshal_ftnptr_eh_callback, "mono_marshal_ftnptr_eh_callback", "void uint32", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -606,9 +617,11 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 	}
 }
 
+/* This is a JIT icall, it sets the pending exception and returns NULL on error */
 static MonoString *
 mono_string_from_byvalstr (const char *data, int max_len)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	int len = 0;
 
@@ -618,7 +631,9 @@ mono_string_from_byvalstr (const char *data, int max_len)
 	while (len < max_len - 1 && data [len])
 		len++;
 
-	return mono_string_new_len (domain, data, len);
+	MonoString *result = mono_string_new_len_checked (domain, data, len, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 }
 
 /* This is a JIT icall, it sets the pending exception and return NULL on error */
@@ -1126,10 +1141,14 @@ mono_string_to_byvalwstr (gpointer dst, MonoString *src, int size)
 	*((gunichar2 *) dst + len) = 0;
 }
 
+/* this is an icall, it sets the pending exception and returns NULL on error */
 static MonoString*
 mono_string_new_len_wrapper (const char *text, guint length)
 {
-	return mono_string_new_len (mono_domain_get (), text, length);
+	MonoError error;
+	MonoString *result = mono_string_new_len_checked (mono_domain_get (), text, length, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 }
 
 #ifndef DISABLE_JIT
@@ -1216,7 +1235,8 @@ guint
 mono_type_to_stind (MonoType *type)
 {
 	if (type->byref)
-		return CEE_STIND_I;
+		return MONO_TYPE_IS_REFERENCE (type) ? CEE_STIND_REF : CEE_STIND_I;
+
 
 handle_enum:
 	switch (type->type) {
@@ -1312,7 +1332,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_icon (mb, mspec->data.array_data.num_elem);
 		mono_mb_emit_op (mb, CEE_NEWARR, eklass);	
-		mono_mb_emit_byte (mb, CEE_STIND_I);
+		mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 		if (eklass->blittable) {
 			/* copy the elements */
@@ -1550,16 +1570,23 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 }
 
 static gpointer
-conv_to_icall (MonoMarshalConv conv)
+conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 {
+	int dummy;
+	if (!ind_store_type)
+		ind_store_type = &dummy;
+	*ind_store_type = CEE_STIND_I;
 	switch (conv) {
 	case MONO_MARSHAL_CONV_STR_LPWSTR:
 		return mono_marshal_string_to_utf16;		
 	case MONO_MARSHAL_CONV_LPWSTR_STR:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_from_utf16;
 	case MONO_MARSHAL_CONV_LPTSTR_STR:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_new_wrapper;
 	case MONO_MARSHAL_CONV_LPSTR_STR:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_new_wrapper;
 	case MONO_MARSHAL_CONV_STR_LPTSTR:
 #ifdef TARGET_WIN32
@@ -1572,6 +1599,7 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_STR_BSTR:
 		return mono_string_to_bstr;
 	case MONO_MARSHAL_CONV_BSTR_STR:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_from_bstr;
 	case MONO_MARSHAL_CONV_STR_TBSTR:
 	case MONO_MARSHAL_CONV_STR_ANSIBSTR:
@@ -1595,16 +1623,20 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_DEL_FTN:
 		return mono_delegate_to_ftnptr;
 	case MONO_MARSHAL_CONV_FTN_DEL:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_ftnptr_to_delegate;
 	case MONO_MARSHAL_CONV_LPSTR_SB:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_utf8_to_builder;
 	case MONO_MARSHAL_CONV_LPTSTR_SB:
+		*ind_store_type = CEE_STIND_REF;
 #ifdef TARGET_WIN32
 		return mono_string_utf16_to_builder;
 #else
 		return mono_string_utf8_to_builder;
 #endif
 	case MONO_MARSHAL_CONV_LPWSTR_SB:
+		*ind_store_type = CEE_STIND_REF;
 		return mono_string_utf16_to_builder;
 	case MONO_MARSHAL_FREE_ARRAY:
 		return mono_marshal_free_array;
@@ -1623,6 +1655,7 @@ static void
 emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv conv, MonoMarshalSpec *mspec)
 {
 	int pos;
+	int stind_op;
 
 	switch (conv) {
 	case MONO_MARSHAL_CONV_BOOL_I4:
@@ -1657,8 +1690,8 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
-		mono_mb_emit_icall (mb, conv_to_icall (conv));
-		mono_mb_emit_byte (mb, CEE_STIND_I);	
+		mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+		mono_mb_emit_byte (mb, stind_op);
 		break;
 	}
 	case MONO_MARSHAL_CONV_ARRAY_SAVEARRAY:
@@ -1667,8 +1700,8 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
-		mono_mb_emit_icall (mb, conv_to_icall (conv));
-		mono_mb_emit_byte (mb, CEE_STIND_I);	
+		mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+		mono_mb_emit_byte (mb, stind_op);
 		break;
 	case MONO_MARSHAL_CONV_STR_BYVALSTR: 
 	case MONO_MARSHAL_CONV_STR_BYVALWSTR: {
@@ -1678,7 +1711,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_ldloc (mb, 0);	
 		mono_mb_emit_byte (mb, CEE_LDIND_REF); /* src String */
 		mono_mb_emit_icon (mb, mspec->data.array_data.num_elem);
-		mono_mb_emit_icall (mb, conv_to_icall (conv));
+		mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 		break;
 	}
 	case MONO_MARSHAL_CONV_ARRAY_BYVALARRAY: {
@@ -1940,8 +1973,9 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		case MONO_MARSHAL_CONV_NONE: {
 			int t;
 
-			if (ftype->byref || ftype->type == MONO_TYPE_I ||
-			    ftype->type == MONO_TYPE_U) {
+			//XXX a byref field!?!? that's not allowed! and worse, it might miss a WB
+			g_assert (!ftype->byref);
+			if (ftype->type == MONO_TYPE_I || ftype->type == MONO_TYPE_U) {
 				mono_mb_emit_ldloc (mb, 1);
 				mono_mb_emit_ldloc (mb, 0);
 				mono_mb_emit_byte (mb, CEE_LDIND_I);
@@ -2964,7 +2998,8 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		mono_set_pending_exception ((MonoException*)exc);
 	}
 
-	mono_method_return_message_restore (method, params, out_args);
+	mono_method_return_message_restore (method, params, out_args, &error);
+	mono_error_set_pending_exception (&error);
 	return res;
 }
 
@@ -5109,7 +5144,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 		} else {
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
+			mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 
 			mono_mb_emit_stloc (mb, conv_arg);
 		}
@@ -5150,10 +5185,11 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_icall (mb, mono_string_new_len_wrapper);
 			mono_mb_emit_byte (mb, CEE_STIND_REF);
 		} else if (t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT || !(t->attrs & PARAM_ATTRIBUTE_IN))) {
+			int stind_op;
 			mono_mb_emit_ldarg (mb, argnum);
 			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
-			mono_mb_emit_byte (mb, CEE_STIND_REF);
+			mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+			mono_mb_emit_byte (mb, stind_op);
 			need_free = TRUE;
 		}
 
@@ -5184,7 +5220,7 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_icall (mb, conv_to_icall (conv));
+		mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 		mono_mb_emit_stloc (mb, 3);
 
 		/* free the string */
@@ -5215,27 +5251,28 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icall (mb, conv_to_icall (conv));
+		mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 		mono_mb_emit_stloc (mb, conv_arg);
 		break;
 
 	case MARSHAL_ACTION_MANAGED_CONV_OUT:
 		if (t->byref) {
 			if (conv_arg) {
+				int stind_op;
 				mono_mb_emit_ldarg (mb, argnum);
 				mono_mb_emit_ldloc (mb, conv_arg);
-				mono_mb_emit_icall (mb, conv_to_icall (conv));
-				mono_mb_emit_byte (mb, CEE_STIND_I);
+				mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+				mono_mb_emit_byte (mb, stind_op);
 			}
 		}
 		break;
 
 	case MARSHAL_ACTION_MANAGED_CONV_RESULT:
-		if (conv_to_icall (conv) == mono_marshal_string_to_utf16)
+		if (conv_to_icall (conv, NULL) == mono_marshal_string_to_utf16)
 			/* We need to make a copy so the caller is able to free it */
 			mono_mb_emit_icall (mb, mono_marshal_string_to_utf16_copy);
 		else
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
+			mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 		mono_mb_emit_stloc (mb, 3);
 		break;
 
@@ -5514,7 +5551,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_stloc (mb, conv_arg);
 			} else {
 				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN));
+				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN, NULL));
 				mono_mb_emit_stloc (mb, conv_arg);
 			}
 		} else if (klass == mono_defaults.stringbuilder_class) {
@@ -5544,7 +5581,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (t->byref)
 				mono_mb_emit_byte (mb, CEE_LDIND_I);
 
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
+			mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 			mono_mb_emit_stloc (mb, conv_arg);
 		} else if (klass->blittable) {
 			mono_mb_emit_byte (mb, CEE_LDNULL);
@@ -5646,7 +5683,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_ldarg (mb, argnum);
 				mono_mb_emit_ldloc (mb, conv_arg);
 
-				mono_mb_emit_icall (mb, conv_to_icall (conv));
+				mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 			}
 
 			if (need_free) {
@@ -5662,7 +5699,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 				mono_mb_emit_op (mb, CEE_MONO_CLASSCONST, klass);
 				mono_mb_emit_ldloc (mb, conv_arg);
-				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL));
+				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL, NULL));
 				mono_mb_emit_byte (mb, CEE_STIND_REF);
 			}
 			break;
@@ -5745,7 +5782,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 			mono_mb_emit_op (mb, CEE_MONO_CLASSCONST, klass);
 			mono_mb_emit_ldloc (mb, 0);
-			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL));
+			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL, NULL));
 			mono_mb_emit_stloc (mb, 3);
 		} else {
 			/* set src */
@@ -5795,7 +5832,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_ldarg (mb, argnum);
 			if (t->byref)
 				mono_mb_emit_byte (mb, CEE_LDIND_I);
-			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL));
+			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL, NULL));
 			mono_mb_emit_stloc (mb, conv_arg);
 			break;
 		}
@@ -5869,10 +5906,11 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_MANAGED_CONV_OUT:
 		if (klass->delegate) {
 			if (t->byref) {
+				int stind_op;
 				mono_mb_emit_ldarg (mb, argnum);
 				mono_mb_emit_ldloc (mb, conv_arg);
-				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN));
-				mono_mb_emit_byte (mb, CEE_STIND_I);
+				mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN, &stind_op));
+				mono_mb_emit_byte (mb, stind_op);
 				break;
 			}
 		}
@@ -5931,7 +5969,7 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	case MARSHAL_ACTION_MANAGED_CONV_RESULT:
 		if (klass->delegate) {
-			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN));
+			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN, NULL));
 			mono_mb_emit_stloc (mb, 3);
 			break;
 		}
@@ -6148,7 +6186,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_ldarg (mb, argnum);
 			if (t->byref)
 				mono_mb_emit_byte (mb, CEE_LDIND_I);
-			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_ARRAY_LPARRAY));
+			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_ARRAY_LPARRAY, NULL));
 			mono_mb_emit_stloc (mb, conv_arg);
 		} else {
 			MonoClass *eklass;
@@ -6228,12 +6266,13 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			/* Emit marshalling code */
 
 			if (is_string) {
+				int stind_op;
 				mono_mb_emit_ldloc (mb, dest_ptr);
 				mono_mb_emit_ldloc (mb, src_var);
 				mono_mb_emit_ldloc (mb, index_var);
 				mono_mb_emit_byte (mb, CEE_LDELEM_REF);
-				mono_mb_emit_icall (mb, conv_to_icall (conv));
-				mono_mb_emit_byte (mb, CEE_STIND_I);
+				mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+				mono_mb_emit_byte (mb, stind_op);
 			} else {
 				/* set the src_ptr */
 				mono_mb_emit_ldloc (mb, src_var);
@@ -6297,7 +6336,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_byte (mb, CEE_CONV_OVF_I);
 				mono_mb_emit_op (mb, CEE_NEWARR, klass->element_class);
 				/* Store into argument */
-				mono_mb_emit_byte (mb, CEE_STIND_I);
+				mono_mb_emit_byte (mb, CEE_STIND_REF);
 			}
 		}
 
@@ -6357,7 +6396,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_ldloc (mb, src_ptr);
 				mono_mb_emit_byte (mb, CEE_LDIND_I);
 
-				mono_mb_emit_icall (mb, conv_to_icall (conv));
+				mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 
 				if (need_free) {
 					/* src */
@@ -6419,7 +6458,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (t->byref)
 				mono_mb_emit_byte (mb, CEE_LDIND_REF);
 			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_FREE_LPARRAY));
+			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_FREE_LPARRAY, NULL));
 		}
 
 		break;
@@ -6594,7 +6633,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_ldloc (mb, src_ptr);
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
 
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
+			mono_mb_emit_icall (mb, conv_to_icall (conv, NULL));
 			mono_mb_emit_byte (mb, CEE_STELEM_REF);
 		}
 		else {
@@ -6702,6 +6741,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Emit marshalling code */
 		if (is_string) {
+			int stind_op;
 			g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 			/* dest */
@@ -6713,8 +6753,8 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			mono_mb_emit_byte (mb, CEE_LDELEM_REF);
 
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
-			mono_mb_emit_byte (mb, CEE_STIND_I);
+			mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+			mono_mb_emit_byte (mb, stind_op);
 		}
 		else {
 			char *msg = g_strdup ("Marshalling of non-string and non-blittable arrays to managed code is not implemented.");
@@ -6799,6 +6839,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Emit marshalling code */
 		if (is_string) {
+			int stind_op;
 			g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
 			/* dest */
@@ -6810,8 +6851,8 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			mono_mb_emit_byte (mb, CEE_LDELEM_REF);
 
-			mono_mb_emit_icall (mb, conv_to_icall (conv));
-			mono_mb_emit_byte (mb, CEE_STIND_I);
+			mono_mb_emit_icall (mb, conv_to_icall (conv, &stind_op));
+			mono_mb_emit_byte (mb, stind_op);
 		}
 		else {
 			char *msg = g_strdup ("Marshalling of non-string arrays to managed code is not implemented.");
@@ -7163,10 +7204,12 @@ emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 		return emit_marshal_string (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_OBJECT:
-#ifndef DISABLE_COM
+#if !defined(DISABLE_COM) && !defined(DISABLE_JIT)
 		if (spec && spec->native == MONO_NATIVE_STRUCT)
 			return emit_marshal_variant (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+#endif
 
+#if !defined(DISABLE_COM)
 		if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
 			spec->native == MONO_NATIVE_IDISPATCH ||
 			spec->native == MONO_NATIVE_INTERFACE))
@@ -7925,9 +7968,9 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	}
 #else
 	MonoMethodSignature *sig, *csig;
-	MonoExceptionClause *clause;
-	int i, *tmp_locals;
-	int leave_pos;
+	MonoExceptionClause *clauses, *clause_finally, *clause_catch;
+	int i, *tmp_locals, ex_local, e_local;
+	int leave_try_pos, leave_catch_pos, ex_m1_pos, rethrow_pos;
 	gboolean closed = FALSE;
 
 	sig = m->sig;
@@ -7958,32 +8001,48 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	if (MONO_TYPE_ISSTRUCT (sig->ret))
 		m->vtaddr_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
+	ex_local = mono_mb_add_local (mb, &mono_defaults.uint32_class->byval_arg);
+	e_local = mono_mb_add_local (mb, &mono_defaults.exception_class->byval_arg);
+
 	/*
+	 * guint32 ex = -1;
 	 * try {
 	 *   mono_jit_attach ();
 	 *
 	 *   <interrupt check>
 	 *
 	 *   ret = method (...);
+	 * } catch (Exception e) {
+	 *   if (!mono_marshal_has_ftnptr_eh_callback ())
+	 *     throw e;
+	 *   ex = mono_gchandle_new (e, false);
 	 * } finally {
 	 *   mono_jit_detach ();
 	 * }
+	 * if (ex != -1)
+	 *   mono_marshal_ftnptr_eh_callback (ex);
 	 *
 	 * return ret;
 	 */
 
-	if (mono_threads_is_coop_enabled ()) {
-		clause = g_new0 (MonoExceptionClause, 1);
-		clause->flags = MONO_EXCEPTION_CLAUSE_FINALLY;
-	}
+	clauses = g_new0 (MonoExceptionClause, 2);
+
+	clause_catch = &clauses [0];
+	clause_catch->flags = MONO_EXCEPTION_CLAUSE_NONE;
+	clause_catch->data.catch_class = mono_defaults.exception_class;
+
+	clause_finally = &clauses [1];
+	clause_finally->flags = MONO_EXCEPTION_CLAUSE_FINALLY;
 
 	mono_mb_emit_icon (mb, 0);
 	mono_mb_emit_stloc (mb, 2);
 
-	if (mono_threads_is_coop_enabled ()) {
-		/* try { */
-		clause->try_offset = mono_mb_get_label (mb);
-	}
+	mono_mb_emit_icon (mb, -1);
+	mono_mb_emit_byte (mb, CEE_CONV_U4);
+	mono_mb_emit_stloc (mb, ex_local);
+
+	/* try { */
+	clause_catch->try_offset = clause_finally->try_offset = mono_mb_get_label (mb);
 
 	/*
 	 * Might need to attach the thread to the JIT or change the
@@ -8137,13 +8196,39 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		}
 	}
 
-	if (mono_threads_is_coop_enabled ()) {
-		leave_pos = mono_mb_emit_branch (mb, CEE_LEAVE);
+	leave_try_pos = mono_mb_emit_branch (mb, CEE_LEAVE);
 
-		/* } finally { */
-		clause->try_len = mono_mb_get_label (mb) - clause->try_offset;
-		clause->handler_offset = mono_mb_get_label (mb);
-	}
+	/* } catch (Exception e) { */
+	clause_catch->try_len = mono_mb_get_label (mb) - clause_catch->try_offset;
+	clause_catch->handler_offset = mono_mb_get_label (mb);
+
+	mono_mb_emit_stloc (mb, e_local);
+
+	/* if (!mono_marshal_has_ftnptr_eh_callback ()) { */
+	mono_mb_emit_icall (mb, mono_marshal_has_ftnptr_eh_callback);
+	rethrow_pos = mono_mb_emit_branch (mb, CEE_BRTRUE);
+
+	/* throw e; */
+	mono_mb_emit_ldloc (mb, e_local);
+	mono_mb_emit_byte (mb, CEE_THROW);
+
+	/* } [endif] */
+	mono_mb_patch_branch (mb, rethrow_pos);
+
+	/* ex = mono_gchandle_new (e, false); */
+	mono_mb_emit_ldloc (mb, e_local);
+	mono_mb_emit_icon (mb, 0);
+	mono_mb_emit_icall (mb, mono_gchandle_new);
+	mono_mb_emit_stloc (mb, ex_local);
+
+	leave_catch_pos = mono_mb_emit_branch (mb, CEE_LEAVE);
+
+	/* } [endcatch] */
+	clause_catch->handler_len = mono_mb_get_pos (mb) - clause_catch->handler_offset;
+
+	/* } finally { */
+	clause_finally->try_len = mono_mb_get_label (mb) - clause_finally->try_offset;
+	clause_finally->handler_offset = mono_mb_get_label (mb);
 
 	/*
 	 * Also does the RUNNING -> (BLOCKING|RUNNING) thread state transition
@@ -8153,14 +8238,26 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
 
-	if (mono_threads_is_coop_enabled ()) {
-		mono_mb_emit_byte (mb, CEE_ENDFINALLY);
+	mono_mb_emit_byte (mb, CEE_ENDFINALLY);
 
-		/* } [endfinally] */
-		clause->handler_len = mono_mb_get_pos (mb) - clause->handler_offset;
+	/* } [endfinally] */
+	clause_finally->handler_len = mono_mb_get_pos (mb) - clause_finally->handler_offset;
 
-		mono_mb_patch_branch (mb, leave_pos);
-	}
+	mono_mb_patch_branch (mb, leave_try_pos);
+	mono_mb_patch_branch (mb, leave_catch_pos);
+
+	/* if (ex != -1) */
+	mono_mb_emit_ldloc (mb, ex_local);
+	mono_mb_emit_icon (mb, -1);
+	mono_mb_emit_byte (mb, CEE_CONV_U4);
+	ex_m1_pos = mono_mb_emit_branch (mb, CEE_BEQ);
+
+	/* mono_marshal_ftnptr_eh_callback (ex) */
+	mono_mb_emit_ldloc (mb, ex_local);
+	mono_mb_emit_icall (mb, mono_marshal_ftnptr_eh_callback);
+
+	/* [ex == -1] */
+	mono_mb_patch_branch (mb, ex_m1_pos);
 
 	/* return ret; */
 	if (m->retobj_var) {
@@ -8174,9 +8271,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		mono_mb_emit_byte (mb, CEE_RET);
 	}
 
-	if (mono_threads_is_coop_enabled ()) {
-		mono_mb_set_clauses (mb, 1, clause);
-	}
+	mono_mb_set_clauses (mb, 2, clauses);
 
 	if (closed)
 		g_free (sig);
@@ -8663,7 +8758,7 @@ mono_marshal_get_isinst_with_cache (void)
 
 	// return obj
 	mono_mb_patch_branch (mb, positive_cache_hit_pos);
-	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, obj_arg_position);
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
 
@@ -10483,12 +10578,15 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr)
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr, gint32 len)
 {
-	if (ptr == NULL) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("ptr"));
-		return NULL;
-	} else {
-		return mono_string_new_len (mono_domain_get (), ptr, len);
-	}
+	MonoError error;
+	MonoString *result = NULL;
+	mono_error_init (&error);
+	if (ptr == NULL)
+		mono_error_set_argument_null (&error, "ptr", "");
+	else
+		result = mono_string_new_len_checked (mono_domain_get (), ptr, len, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 }
 
 MonoString *
@@ -11781,4 +11879,32 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 
 	if (marshal_mutex_initialized)
 		mono_marshal_unlock ();
+}
+
+static gint32
+mono_marshal_has_ftnptr_eh_callback (void)
+{
+	return ftnptr_eh_callback != NULL;
+}
+
+static void
+mono_marshal_ftnptr_eh_callback (guint32 gchandle)
+{
+	g_assert (ftnptr_eh_callback);
+	ftnptr_eh_callback (gchandle);
+}
+
+/*
+ * mono_install_ftnptr_eh_callback:
+ *
+ *   Install a callback that should be called when there is a managed exception
+ *   in a native-to-managed wrapper. This is mainly used by iOS to convert a
+ *   managed exception to a native exception, to properly unwind the native
+ *   stack; this native exception will then be converted back to a managed
+ *   exception in their managed-to-native wrapper.
+ */
+void
+mono_install_ftnptr_eh_callback (MonoFtnPtrEHCallback callback)
+{
+	ftnptr_eh_callback = callback;
 }

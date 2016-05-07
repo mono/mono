@@ -289,6 +289,11 @@ namespace System.IO {
 			return fullpath;
 		}
 
+		internal static String GetFullPathInternal(String path)
+		{
+			return InsecureGetFullPath (path);
+		}
+
 #if !MOBILE
 		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -488,7 +493,7 @@ namespace System.IO {
 					f = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
 							    8192, false, (FileOptions) 1);
 				} catch (IOException ex){
-					if (ex.hresult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
+					if (ex._HResult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;
 				} catch (UnauthorizedAccessException ex) {
 					if (count ++ > 65536)
@@ -869,6 +874,12 @@ namespace System.IO {
 				int idx = path.IndexOf (':');
 				if (idx >= 0 && idx != 1)
 					throw new ArgumentException (parameterName);
+			}
+		}
+
+		internal static string DirectorySeparatorCharAsString {
+			get {
+				return DirectorySeparatorStr;
 			}
 		}
 	}

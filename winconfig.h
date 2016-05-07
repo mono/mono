@@ -299,9 +299,6 @@
 /* No GC support. */
 /* #undef HAVE_NULL_GC */
 
-/* Have oprofile support */
-/* #undef HAVE_OPROFILE */
-
 /* Define to 1 if you have the `poll' function. */
 /* #undef HAVE_POLL */
 
@@ -370,6 +367,9 @@
 
  /* Have signal */
 #define HAVE_SIGNAL 1
+
+ /* Define to 1 if you have the <signal.h> header file. */
+#define HAVE_SIGNAL_H 1
 
 /* Have signbit */
 /* #undef HAVE_SIGNBIT */

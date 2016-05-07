@@ -42,7 +42,7 @@ REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
-TXT_RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 #
 # MOBILE_PROFILE needs SECURITY_DEP
@@ -50,16 +50,16 @@ TXT_RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 ifdef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
 else
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
+EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS
 endif
 
 #
 # Flags used to build the secxml version of System.
 #
 ifeq (secxml/, $(intermediate))
-LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
+LOCAL_MCS_FLAGS =
 LIB_REFS += bare/System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 endif
 
 #
@@ -67,7 +67,7 @@ endif
 #
 ifndef intermediate
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 
 ifndef MOBILE_PROFILE
 LIB_REFS += System.Configuration

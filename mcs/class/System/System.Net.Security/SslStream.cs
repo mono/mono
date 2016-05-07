@@ -27,9 +27,6 @@
 #if !MONO_FEATURE_NEW_TLS
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -38,13 +35,6 @@ extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using XSslProtocols = PrebuiltSystem::System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using XSslProtocols = System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
@@ -80,7 +70,7 @@ namespace System.Net.Security
 
 	internal delegate X509Certificate LocalCertSelectionCallback (
 		string targetHost,
-		XX509CertificateCollection localCertificates,
+		X509CertificateCollection localCertificates,
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
@@ -146,9 +136,9 @@ namespace System.Net.Security
 			Impl.AuthenticateAsClient (targetHost);
 		}
 
-		public virtual void AuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			Impl.AuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			Impl.AuthenticateAsClient (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		// [HostProtection (ExternalThreading=true)]
@@ -158,9 +148,9 @@ namespace System.Net.Security
 		}
 
 		// [HostProtection (ExternalThreading=true)]
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			return Impl.BeginAuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+			return Impl.BeginAuthenticateAsClient (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
@@ -175,7 +165,7 @@ namespace System.Net.Security
 
 		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		// [HostProtection (ExternalThreading=true)]
@@ -186,7 +176,7 @@ namespace System.Net.Security
 
 		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			return Impl.BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+			return Impl.BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
@@ -206,9 +196,9 @@ namespace System.Net.Security
 			return Impl.AuthenticateAsClientAsync (targetHost);
 		}
 
-		public virtual Task AuthenticateAsClientAsync (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Impl.AuthenticateAsClientAsync (targetHost, clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			return Impl.AuthenticateAsClientAsync (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
@@ -218,7 +208,7 @@ namespace System.Net.Security
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		public override bool IsAuthenticated {

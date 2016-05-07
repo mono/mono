@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MONOTOUCH && !XAMMAC
+
 using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
@@ -256,3 +258,4 @@ namespace Mono.Security.Cryptography {
 	}
 }
 
+#endif

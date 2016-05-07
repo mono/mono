@@ -4230,7 +4230,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 				if (size < sizeof (MonoObject))
 					g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
 
-				EMIT_NEW_ICONST (cfg, iargs [1], mono_gc_get_aligned_size_for_allocator (size));
+				EMIT_NEW_ICONST (cfg, iargs [1], size);
 			}
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
@@ -4267,7 +4267,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 				g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
 
 			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
-			EMIT_NEW_ICONST (cfg, iargs [1], mono_gc_get_aligned_size_for_allocator (size));
+			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
 		alloc_ftn = mono_class_get_allocation_ftn (vtable, for_box, &pass_lw);
@@ -11365,7 +11365,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				} else
 #endif
 				{
-					MonoInst *store;
+					MonoInst *store, *wbarrier_ptr_ins = NULL;
 
 					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
 
@@ -11379,6 +11379,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						EMIT_NEW_BIALU_IMM (cfg, ins, OP_PSUB_IMM, offset_ins->dreg, offset_ins->dreg, 1);
 						dreg = alloc_ireg_mp (cfg);
 						EMIT_NEW_BIALU (cfg, ins, OP_PADD, dreg, sp [0]->dreg, offset_ins->dreg);
+						wbarrier_ptr_ins = ins;
 						/* The decomposition will call mini_emit_stobj () which will emit a wbarrier if needed */
 						EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, field->type, dreg, 0, sp [1]->dreg);
 					} else {
@@ -11387,15 +11388,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (sp [0]->opcode != OP_LDADDR)
 						store->flags |= MONO_INST_FAULT;
 
-				if (cfg->gen_write_barriers && mini_type_to_stind (cfg, field->type) == CEE_STIND_REF && !(sp [1]->opcode == OP_PCONST && sp [1]->inst_c0 == 0)) {
-					/* insert call to write barrier */
-					MonoInst *ptr;
-					int dreg;
+					if (cfg->gen_write_barriers && mini_type_to_stind (cfg, field->type) == CEE_STIND_REF && !(sp [1]->opcode == OP_PCONST && sp [1]->inst_c0 == 0)) {
+						if (mini_is_gsharedvt_klass (klass)) {
+							g_assert (wbarrier_ptr_ins);
+							emit_write_barrier (cfg, wbarrier_ptr_ins, sp [1]);
+						} else {
+							/* insert call to write barrier */
+							MonoInst *ptr;
+							int dreg;
 
-					dreg = alloc_ireg_mp (cfg);
-					EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
-					emit_write_barrier (cfg, ptr, sp [1]);
-				}
+							dreg = alloc_ireg_mp (cfg);
+							EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
+							emit_write_barrier (cfg, ptr, sp [1]);
+						}
+					}
 
 					store->flags |= ins_flag;
 				}
@@ -11869,7 +11875,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 					iargs [2] = sp [0];
 
-					ins = mono_emit_jit_icall (cfg, mono_array_new, iargs);
+					ins = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
 				} else {
 					/* Decompose later since it is needed by abcrem */
 					MonoClass *array_type = mono_array_class_get (klass, 1);

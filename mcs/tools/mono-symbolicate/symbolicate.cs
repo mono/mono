@@ -42,9 +42,9 @@ namespace Symbolicate
 			if (!match.Success)
 				return line;
 
-			string typeFullName;
+			string typeFullName, methodSignature;
 			var methodStr = match.Groups ["Method"].Value.Trim ();
-			if (!TryParseMethodType (methodStr, out typeFullName))
+			if (!ExtractSignatures (methodStr, out typeFullName, out methodSignature))
 				return line;
 
 			var isOffsetIL = !string.IsNullOrEmpty (match.Groups ["IL"].Value);
@@ -55,34 +55,37 @@ namespace Symbolicate
 			if (!string.IsNullOrEmpty (match.Groups ["MethodIndex"].Value))
 				methodIndex = uint.Parse (match.Groups ["MethodIndex"].Value, CultureInfo.InvariantCulture);
 
-			Location location;
-			if (!locProvider.TryGetLocation (methodStr, typeFullName, offset, isOffsetIL, methodIndex, out location))
+			var loc = locProvider.TryGetLocation (typeFullName, methodSignature, offset, isOffsetIL, methodIndex);
+			if (loc == null)
 				return line;
 
-			return line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", location.FileName, location.Line));
+			return line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", loc.Document.Url, loc.StartLine));
 		}
 
-		static bool TryParseMethodType (string str, out string typeFullName)
+		static bool ExtractSignatures (string str, out string typeFullName, out string methodSignature)
 		{
-			typeFullName = null;
-
-			var methodNameEnd = str.IndexOf ("(");
-			if (methodNameEnd == -1)
+			var methodNameEnd = str.IndexOf ('(');
+			if (methodNameEnd == -1) {
+				typeFullName = methodSignature = null;
 				return false;
+			}
 
-			// Remove parameters
-			str = str.Substring (0, methodNameEnd);
-
-			// Remove generic parameters
-			str = Regex.Replace (str, @"\[[^\[\]]*\]", "");
-
-			var typeNameEnd = str.LastIndexOf (".");
-			if (methodNameEnd == -1 || typeNameEnd == -1)
+			var typeNameEnd = str.LastIndexOf ('.', methodNameEnd);
+			if (typeNameEnd == -1) {
+				typeFullName = methodSignature = null;
 				return false;
+			}
 
-			// Remove method name
+			// Adjustment for Type..ctor ()
+			if (typeNameEnd > 0 && str [typeNameEnd - 1] == '.') {
+				--typeNameEnd;
+			}
+
 			typeFullName = str.Substring (0, typeNameEnd);
+			// Remove generic parameters
+			typeFullName = Regex.Replace (typeFullName, @"\[[^\[\]]*\]", "");
 
+			methodSignature = str.Substring (typeNameEnd + 1);
 			return true;
 		}
 	}

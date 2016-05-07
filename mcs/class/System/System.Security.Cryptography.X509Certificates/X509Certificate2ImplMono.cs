@@ -72,6 +72,11 @@ namespace System.Security.Cryptography.X509Certificates
 			get { return IntPtr.Zero; }
 		}
 
+		public override IntPtr GetNativeAppleCertificate ()
+		{
+			return IntPtr.Zero;
+		}
+
 		internal X509Certificate2ImplMono (MX.X509Certificate cert)
 		{
 			this._cert = cert;

@@ -231,6 +231,17 @@ public class DirectoryTest
 	}
 
 	[Test]
+	public void CreateDirectoryRelativePath ()
+	{
+		var path = Path.Combine (TempFolder, "relativepath", "not_this_folder");
+		path = Path.Combine (path, "..");
+
+		var res = Directory.CreateDirectory (path);
+		Assert.AreEqual ("relativepath", res.ToString (), "#1");
+		Assert.IsTrue (Directory.Exists (Path.Combine (TempFolder, "relativepath")), "#2");
+	}
+
+	[Test]
 	public void Delete ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.Delete.1";

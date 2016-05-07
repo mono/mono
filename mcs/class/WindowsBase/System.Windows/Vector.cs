@@ -38,13 +38,13 @@ namespace System.Windows {
 	{
 		public Vector (double x, double y)
 		{
-			this.x = x;
-			this.y = y;
+			this._x = x;
+			this._y = y;
 		}
 
 		public bool Equals (Vector value)
 		{
-			return x == value.X && y == value.Y;
+			return _x == value.X && _y == value.Y;
 		}
 
 		public override bool Equals (object o)
@@ -62,7 +62,7 @@ namespace System.Windows {
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			return string.Format (provider, "{0:" + format + "},{1:" + format + "}", x, y);
+			return string.Format (provider, "{0:" + format + "},{1:" + format + "}", _x, _y);
 		}
 
 		public static bool Equals (Vector vector1, Vector vector2)
@@ -128,8 +128,8 @@ namespace System.Windows {
 
 		public void Negate ()
 		{
-			x = -x;
-			y = -y;
+			_x = -_x;
+			_y = -_y;
 		}
 
 		public void Normalize ()
@@ -139,8 +139,8 @@ namespace System.Windows {
 				return;
 
 			double l = Math.Sqrt (ls);
-			x /= l;
-			y /= l;
+			_x /= l;
+			_y /= l;
 		}
 
 		public static Vector Subtract (Vector vector1, Vector vector2)
@@ -155,7 +155,7 @@ namespace System.Windows {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0},{1}", x, y);
+			return String.Format ("{0},{1}", _x, _y);
 		}
 
 		public string ToString (IFormatProvider provider)
@@ -168,17 +168,17 @@ namespace System.Windows {
 		}
 
 		public double LengthSquared {
-			get { return x * x + y * y; }
+			get { return _x * _x + _y * _y; }
 		}
 
 		public double X {
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 
 		public double Y {
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 
 		/* operators */
@@ -249,8 +249,8 @@ namespace System.Windows {
 			return Add (vector1, vector2);
 		}
 
-		double x;
-		double y;
+		double _x;
+		double _y;
 	}
 
 }

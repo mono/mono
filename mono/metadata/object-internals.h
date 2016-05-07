@@ -80,18 +80,16 @@
 			}; \
 			tmp_klass; })
 /* eclass should be a run-time constant */
-#define mono_array_new_cached(domain, eclass, size) ({	\
-			MonoError __error;	\
+#define mono_array_new_cached(domain, eclass, size, error) ({	\
 			MonoVTable *__vtable = mono_class_vtable ((domain), mono_array_class_get_cached ((eclass), 1));	\
-			MonoArray *__arr = mono_array_new_specific_checked (__vtable, (size), &__error);	\
-			mono_error_raise_exception (&__error); /* FIXME don't raise here */	\
+			MonoArray *__arr = mono_array_new_specific_checked (__vtable, (size), (error)); \
 			__arr; })
 
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
 #define mono_array_class_get_cached(eclass,rank) mono_array_class_get ((eclass), (rank))
-#define mono_array_new_cached(domain, eclass, size) mono_array_new_specific (mono_class_vtable ((domain), mono_array_class_get_cached ((eclass), 1)), (size))
+#define mono_array_new_cached(domain, eclass, size, error) mono_array_new_specific_checked (mono_class_vtable ((domain), mono_array_class_get_cached ((eclass), 1)), (size), (error))
 
 #endif
 
@@ -201,23 +199,24 @@ typedef struct {
 
 struct _MonoException {
 	MonoObject object;
+	MonoString *class_name;
+	MonoString *message;
+	MonoObject *_data;
+	MonoObject *inner_ex;
+	MonoString *help_link;
 	/* Stores the IPs and the generic sharing infos
 	   (vtable/MRGCTX) of the frames. */
 	MonoArray  *trace_ips;
-	MonoObject *inner_ex;
-	MonoString *message;
-	MonoString *help_link;
-	MonoString *class_name;
 	MonoString *stack_trace;
 	MonoString *remote_stack_trace;
 	gint32	    remote_stack_index;
-	gint32	    hresult;
-	MonoString *source;
-	MonoObject *_data;
-	MonoObject *captured_traces;
-	MonoArray  *native_trace_ips;
 	/* Dynamic methods referenced by the stack trace */
 	MonoObject *dynamic_methods;
+	gint32	    hresult;
+	MonoString *source;
+	MonoObject *serialization_manager;
+	MonoObject *captured_traces;
+	MonoArray  *native_trace_ips;
 };
 
 typedef struct {
@@ -601,7 +600,7 @@ MonoObject *
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
 
 MonoWaitHandle *
-mono_wait_handle_new	    (MonoDomain *domain, HANDLE handle);
+mono_wait_handle_new	    (MonoDomain *domain, HANDLE handle, MonoError *error);
 
 HANDLE
 mono_wait_handle_get_handle (MonoWaitHandle *handle);
@@ -619,7 +618,7 @@ mono_method_call_message_new (MonoMethod *method, gpointer *params, MonoMethod *
 			      MonoDelegate **cb, MonoObject **state);
 
 void
-mono_method_return_message_restore (MonoMethod *method, gpointer *params, MonoArray *out_args);
+mono_method_return_message_restore (MonoMethod *method, gpointer *params, MonoArray *out_args, MonoError *error);
 
 void
 mono_delegate_ctor_with_method (MonoObject *this_obj, MonoObject *target, gpointer addr, MonoMethod *method);
@@ -1417,7 +1416,10 @@ mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error);
 
 
 MonoArray*
-mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array);
+mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array, MonoError *error);
+
+MonoArray*
+mono_array_clone_checked (MonoArray *array, MonoError *error);
 
 void
 mono_array_full_copy (MonoArray *src, MonoArray *dest);
@@ -1426,10 +1428,16 @@ gboolean
 mono_array_calc_byte_len (MonoClass *klass, uintptr_t len, uintptr_t *res);
 
 MonoArray*
+mono_array_new_checked (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error);
+
+MonoArray*
 mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
 
 MonoArray*
 mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *error);
+
+MonoArray*
+ves_icall_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 
 MonoArray*
 ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n);
@@ -1443,6 +1451,26 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 
 void
 mono_upgrade_remote_class (MonoDomain *domain, MonoObject *tproxy, MonoClass *klass);
+
+void*
+mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, void **res, MonoError *error);
+
+MonoObject *
+mono_load_remote_field_new_icall (MonoObject *this_obj, MonoClass *klass, MonoClassField *field);
+
+MonoObject *
+mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, MonoError *error);
+
+gboolean
+mono_store_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, void* val, MonoError *error);
+
+void
+mono_store_remote_field_new_icall (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, MonoObject *arg);
+
+gboolean
+mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, MonoObject *arg, MonoError *error);
+
+
 #endif
 
 gpointer
@@ -1543,7 +1571,7 @@ gsize*
 mono_class_compute_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int *max_set, gboolean static_fields);
 
 MonoObject*
-mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, MonoObject **exc);
+mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, MonoError *error);
 
 gboolean
 mono_class_is_reflection_method_or_constructor (MonoClass *klass);
@@ -1585,6 +1613,12 @@ mono_vtable_get_static_field_data (MonoVTable *vt);
 MonoObject *
 mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, MonoObject *obj, MonoError *error);
 
+gboolean
+mono_property_set_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
+
+MonoObject*
+mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
+
 char *
 mono_string_to_utf8_ignore (MonoString *s);
 
@@ -1619,7 +1653,7 @@ gboolean
 mono_error_set_pending_exception (MonoError *error);
 
 MonoArray *
-mono_glist_to_array (GList *list, MonoClass *eclass);
+mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error);
 
 MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
@@ -1646,6 +1680,9 @@ MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
 MonoString*
+mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
+
+MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
 
 MonoString *
@@ -1660,6 +1697,9 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
 
+
+MonoArray*
+mono_runtime_get_main_args_checked (MonoError *error);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

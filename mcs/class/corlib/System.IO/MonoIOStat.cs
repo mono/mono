@@ -31,11 +31,13 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.IO
 {
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct MonoIOStat {
-		public FileAttributes Attributes;
+		public FileAttributes fileAttributes;
 		public long Length;
 		public long CreationTime;
 		public long LastAccessTime;

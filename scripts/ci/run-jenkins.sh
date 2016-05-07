@@ -4,15 +4,23 @@ TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
 
-if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="--with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no --build=i386-apple-darwin11.2.0"; fi
-if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="--with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no"; fi
-if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\Win32\\\bin\\\Release_SGen\\\mono-sgen.exe`";fi
-if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="--host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\x64\\\bin\\\Release_SGen\\\mono-sgen.exe`"; fi
+if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; fi
+
+if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no --build=i386-apple-darwin11.2.0"; fi
+if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --enable-nls=no"; fi
+if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\Win32\\\bin\\\Release_SGen\\\mono-sgen.exe`";fi
+if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-pc-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\x64\\\bin\\\Release_SGen\\\mono-sgen.exe`"; fi
 
 if [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]];
     then
     EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-monodroid --with-monotouch --with-monotouch_watch --with-monotouch_tv --with-xammac --with-mobile_static"
     # only enable the mobile profiles and mobile_static on the main architectures
+fi
+
+if [ -x "/usr/bin/dpkg-architecture" ];
+	then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"
+	#force build arch = dpkg arch, sometimes misdetected
 fi
 
 ${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS

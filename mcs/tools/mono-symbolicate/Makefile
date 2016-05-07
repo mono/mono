@@ -7,7 +7,7 @@ PROGRAM = mono-symbolicate.exe
 LOCAL_MCS_FLAGS = \
 	/D:NO_AUTHENTICODE
 
-LIB_REFS = Mono.CompilerServices.SymbolWriter System.Xml System.Core System
+LIB_REFS = Mono.Cecil Mono.Cecil.Mdb System.Xml System.Core System
 
 include ../../build/executable.make
 
@@ -45,13 +45,13 @@ AOT_SUPPORTED = $(shell $(MONO) --aot 2>&1 | grep -q "AOT compilation is not sup
 
 test-local: all
 	$(BUILD_TEST_EXE)
-	@echo "Checking $(PROGRAM) without AOT"
+	@echo "Checking $(TEST_EXE) without AOT"
 	$(CHECK_DIFF)
 ifeq ($(AOT_SUPPORTED), 1)
-	@echo "Checking $(PROGRAM) with AOT"
+	@echo "Checking $(TEST_EXE) with AOT"
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
-	@echo "Checking $(PROGRAM) with AOT (using .msym)"
+	@echo "Checking $(TEST_EXE) with AOT (using .msym)"
 	$(BUILD_TEST_EXE)
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot=gen-seq-points-file $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)

@@ -469,8 +469,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected static TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
+		protected TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
 		{
+			var tps = type as TypeParameterSpec;
+			if (tps != null && !(tps.IsReferenceType || tps.IsValueType)) {
+				Error_OperatorCannotBeApplied (rc, loc, "?", type);
+			}
+
 			return TypeSpec.IsValueType (type) && !type.IsNullableType ?
 				Nullable.NullableInfo.MakeType (rc.Module, type) :
 				type;
@@ -1332,7 +1337,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ExpressionStatement ResolveStatement (BlockContext ec)
+		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
 			if (e == null)
@@ -4647,7 +4652,7 @@ namespace Mono.CSharp {
 		///     false if candidate ain't better
 		///     true  if candidate is better than the current best match
 		/// </remarks>
-		static bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
+		bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
 			MemberSpec best, AParametersCollection bparam, bool best_params)
 		{
 			AParametersCollection candidate_pd = ((IParametersMember) candidate).Parameters;
@@ -4704,8 +4709,20 @@ namespace Mono.CSharp {
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
-				if (result == 2)
-					return false;
+				if (result == 2) {
+					//
+					// No optional parameters tie breaking rules for delegates overload resolution
+					//
+					if ((this.restrictions & Restrictions.CovariantDelegate) != 0)
+						return false;
+
+					better_at_least_one = false;
+
+					++j;
+					while (j < args_count && !args [j++].IsDefaultArgument) ;
+
+					break;
+				}
 
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
@@ -4717,15 +4734,26 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// Tie-breaking rules are applied only for equivalent parameter types
+			// LAMESPEC: Tie-breaking rules for not equivalent parameter types
 			//
 			if (!are_equivalent) {
 				//
-				// LAMESPEC: A candidate with less default parameters is still better when there
+				// A candidate with no default parameters is still better when there
 				// is no better expression conversion
 				//
-				if (candidate_pd.Count < best_pd.Count && !candidate_params && best_pd.FixedParameters [j].HasDefaultValue) {
-					return true;
+				if (candidate_pd.Count < best_pd.Count) {
+					if (!candidate_params && !candidate_pd.FixedParameters [j - j].HasDefaultValue) {
+						return true;
+					}
+				} else if (candidate_pd.Count == best_pd.Count) {
+					if (candidate_params)
+						return false;
+
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.FixedParameters [j - 1].HasDefaultValue)
+						return true;
+
+					if (candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.HasParams)
+						return true;
 				}
 
 				return false;
@@ -4746,7 +4774,7 @@ namespace Mono.CSharp {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
 
-				if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
+				if (cand_param.HasDefaultValue != best_param.HasDefaultValue && (!candidate_pd.HasParams || !best_pd.HasParams))
 					return cand_param.HasDefaultValue;
 
 				defaults_ambiguity = true;

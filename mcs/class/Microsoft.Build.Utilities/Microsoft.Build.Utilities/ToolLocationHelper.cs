@@ -148,6 +148,16 @@ namespace Microsoft.Build.Utilities
 			return null;
 		}
 
+		public static string GetPathToDotNetFrameworkBinFile (string fileName)
+		{
+			string dir = Path.Combine(Directory.GetParent(Directory.GetParent(lib_mono_dir).FullName).FullName, "bin");
+			string file = Path.Combine (dir, fileName);
+			if (File.Exists (file))
+				return file;
+
+			return null;
+		}
+
 		public static string GetPathToDotNetFrameworkSdk (TargetDotNetFrameworkVersion version)
 		{
 			return GetPathToDotNetFramework (version);

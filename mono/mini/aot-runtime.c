@@ -5021,8 +5021,6 @@ load_function_full (MonoAotModule *amodule, const char *name, MonoTrampInfo **ou
 					g_assert (res == 1);
 					target = mono_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
 					target = mono_create_ftnptr_malloc ((guint8 *)target);
-				} else if (!strcmp (ji->data.name, "mono_thread_get_and_clear_pending_exception")) {
-					target = mono_thread_get_and_clear_pending_exception;
 				} else if (!strcmp (ji->data.name, "debugger_agent_single_step_from_context")) {
 					target = debugger_agent_single_step_from_context;
 				} else if (!strcmp (ji->data.name, "debugger_agent_breakpoint_from_context")) {
@@ -5222,7 +5220,9 @@ get_new_trampoline_from_page (int tramp_type)
 		/* allocate two contiguous pages of memory: the first page will contain the data (like a local constant pool)
 		 * while the second will contain the trampolines.
 		 */
-		ret = vm_allocate (mach_task_self (), &addr, psize * 2, VM_FLAGS_ANYWHERE);
+		do {
+			ret = vm_allocate (mach_task_self (), &addr, psize * 2, VM_FLAGS_ANYWHERE);
+		} while (ret == KERN_ABORTED);
 		if (ret != KERN_SUCCESS) {
 			g_error ("Cannot allocate memory for trampolines: %d", ret);
 			break;

@@ -783,7 +783,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_assembly_load_friends (ass);
 
-	mono_defaults.handleref_class = mono_class_load_from_name (
+	mono_defaults.handleref_class = mono_class_try_load_from_name (
 		mono_defaults.corlib, "System.Runtime.InteropServices", "HandleRef");
 
 	mono_defaults.attribute_class = mono_class_load_from_name (
@@ -1168,12 +1168,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	}
 	g_slist_free (domain->domain_assemblies);
 	domain->domain_assemblies = NULL;
-
-	/* 
-	 * Send this after the assemblies have been unloaded and the domain is still in a 
-	 * usable state.
-	 */
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
 
 	if (free_domain_hook)
 		free_domain_hook (domain);

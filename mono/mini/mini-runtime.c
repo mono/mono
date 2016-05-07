@@ -901,7 +901,7 @@ mono_set_lmf_addr (gpointer lmf_addr)
  *
  * In coop mode:
  *  - @dummy: contains the original domain
- *  - @return: a cookie containing current MonoThreadInfo* if it was in BLOCKING mode, NULL otherwise
+ *  - @return: a cookie containing current MonoThreadInfo*.
  */
 gpointer
 mono_jit_thread_attach (MonoDomain *domain, gpointer *dummy)
@@ -915,7 +915,18 @@ mono_jit_thread_attach (MonoDomain *domain, gpointer *dummy)
 
 	g_assert (domain);
 
-	if (!mono_threads_is_coop_enabled ()) {
+	/* On coop, when we detached, we moved the thread from  RUNNING->BLOCKING.  If we try to
+	 * reattach we do a BLOCKING->RUNNING transition.  If the thread is fresh,
+	 * mono_thread_attach() will do a STARTING->RUNNING transition so we're only responsible
+	 * for making the cookie. */
+	gboolean fresh_thread = FALSE;
+	{
+		MonoThreadInfo *info;
+
+		info = mono_thread_info_current_unchecked ();
+		fresh_thread = !info || !mono_thread_info_is_live (info);
+	}
+	{
 		gboolean attached;
 
 #ifdef MONO_HAVE_FAST_TLS
@@ -935,33 +946,17 @@ mono_jit_thread_attach (MonoDomain *domain, gpointer *dummy)
 		if (orig != domain)
 			mono_domain_set (domain, TRUE);
 
+	}
+	if (!mono_threads_is_coop_enabled ()) {
 		return orig != domain ? orig : NULL;
 	} else {
-		MonoThreadInfo *info;
-
-		info = mono_thread_info_current_unchecked ();
-		if (!info || !mono_thread_info_is_live (info)) {
-			/* thread state STARTING -> RUNNING */
-			mono_thread_attach (domain);
-
-			// #678164
-			mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
-
+		if (fresh_thread) {
 			*dummy = NULL;
-
-			/* mono_threads_reset_blocking_start returns the current MonoThreadInfo
-			 * if we were in BLOCKING mode */
-			return mono_thread_info_current ();
+			/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
+			 * return the right cookie. */
+			return mono_threads_cookie_for_reset_blocking_start (mono_thread_info_current (), 1);
 		} else {
-			orig = mono_domain_get ();
-
-			/* orig might be null if we did an attach -> detach -> attach sequence */
-
-			if (orig != domain)
-				mono_domain_set (domain, TRUE);
-
 			*dummy = orig;
-
 			/* thread state (BLOCKING|RUNNING) -> RUNNING */
 			return mono_threads_reset_blocking_start (dummy);
 		}
@@ -1112,8 +1107,6 @@ mono_thread_attach_cb (intptr_t tid, gpointer stack_start)
 	thread = mono_thread_info_current_unchecked ();
 	if (thread)
 		thread->jit_data = jit_tls;
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
-		mono_runtime_setup_stat_profiler ();
 
 	mono_arch_cpu_init ();
 }
@@ -3397,7 +3390,7 @@ register_jit_stats (void)
 	mono_counters_register ("Methods from AOT", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_aot);
 	mono_counters_register ("Methods JITted using mono JIT", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_without_llvm);
 	mono_counters_register ("Methods JITted using LLVM", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_with_llvm);
-	mono_counters_register ("JIT/method-to-IR (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_method_to_ir);
+	mono_counters_register ("JIT/method_to_ir (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_method_to_ir);
 	mono_counters_register ("JIT/liveness_handle_exception_clauses (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_liveness_handle_exception_clauses);
 	mono_counters_register ("JIT/handle_out_of_line_bblock (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_handle_out_of_line_bblock);
 	mono_counters_register ("JIT/decompose_long_opts (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_decompose_long_opts);
@@ -3840,6 +3833,9 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_thread_attach (domain);
 #endif
 
+	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+		mono_runtime_setup_stat_profiler ();
+
 	mono_profiler_runtime_initialized ();
 
 	MONO_VES_INIT_END ();
@@ -3900,8 +3896,8 @@ register_icalls (void)
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
 #ifndef DISABLE_REMOTING
-	register_icall (mono_load_remote_field_new, "mono_load_remote_field_new", "object object ptr ptr", FALSE);
-	register_icall (mono_store_remote_field_new, "mono_store_remote_field_new", "void object ptr ptr object", FALSE);
+	register_icall (mono_load_remote_field_new_icall, "mono_load_remote_field_new_icall", "object object ptr ptr", FALSE);
+	register_icall (mono_store_remote_field_new_icall, "mono_store_remote_field_new_icall", "void object ptr ptr object", FALSE);
 #endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
@@ -4050,7 +4046,7 @@ register_icalls (void)
 	register_icall (mono_helper_stelem_ref_check, "mono_helper_stelem_ref_check", "void object object", FALSE);
 	register_icall (ves_icall_object_new, "ves_icall_object_new", "object ptr ptr", FALSE);
 	register_icall (ves_icall_object_new_specific, "ves_icall_object_new_specific", "object ptr", FALSE);
-	register_icall (mono_array_new, "mono_array_new", "object ptr ptr int32", FALSE);
+	register_icall (ves_icall_array_new, "ves_icall_array_new", "object ptr ptr int32", FALSE);
 	register_icall (ves_icall_array_new_specific, "ves_icall_array_new_specific", "object ptr int32", FALSE);
 	register_icall (ves_icall_runtime_class_init, "ves_icall_runtime_class_init", "void ptr", FALSE);
 	register_icall (mono_ldftn, "mono_ldftn", "ptr ptr", FALSE);

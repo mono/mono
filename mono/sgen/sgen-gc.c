@@ -696,6 +696,8 @@ pin_objects_from_nursery_pin_queue (gboolean do_scan_objects, ScanCopyContext ct
 			definitely_pinned [count] = obj_to_pin;
 			count++;
 		}
+		if (concurrent_collection_in_progress)
+			sgen_pinning_register_pinned_in_nursery (obj_to_pin);
 
 	next_pin_queue_entry:
 		last = addr;
@@ -1411,6 +1413,8 @@ job_mod_union_preclean (void *worker_data_untyped, SgenThreadPoolJob *job)
 
 	major_collector.scan_card_table (CARDTABLE_SCAN_MOD_UNION_PRECLEAN, ctx);
 	sgen_los_scan_card_table (CARDTABLE_SCAN_MOD_UNION_PRECLEAN, ctx);
+
+	sgen_scan_pin_queue_objects (ctx);
 }
 
 static void
@@ -3008,6 +3012,7 @@ sgen_gc_init (void)
 
 	alloc_nursery ();
 
+	sgen_pinning_init ();
 	sgen_cement_init (cement_enabled);
 
 	if ((env = g_getenv (MONO_GC_DEBUG_NAME))) {
@@ -3240,9 +3245,9 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 		count_cards (&major_total, &major_marked, &los_total, &los_marked);
 	binary_protocol_world_restarting (generation, sgen_timestamp (), major_total, major_marked, los_total, los_marked);
 
-	sgen_client_restart_world (generation, timing);
-
 	world_is_stopped = FALSE;
+
+	sgen_client_restart_world (generation, timing);
 
 	binary_protocol_world_restarted (generation, sgen_timestamp ());
 

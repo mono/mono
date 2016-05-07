@@ -32,19 +32,11 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using X509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 using System.Security.Cryptography.X509Certificates;
 #endif

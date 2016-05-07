@@ -21,10 +21,6 @@
 //
 
 #if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
-#endif
-#if CONFIGURATION_DEP
 using System.IO;
 using System.Xml.Serialization;
 #endif

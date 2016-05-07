@@ -1263,10 +1263,15 @@ namespace Mono.CSharp
 
 			if (conditionalAccess) {
 				if (!ec.ConditionalAccess.Statement) {
-					if (ec.ConditionalAccess.Type.IsNullableType)
-						Nullable.LiftedNull.Create (ec.ConditionalAccess.Type, Location.Null).Emit (ec);
-					else
+					var t = ec.ConditionalAccess.Type;
+					if (t.IsNullableType)
+						Nullable.LiftedNull.Create (t, Location.Null).Emit (ec);
+					else {
 						ec.EmitNull ();
+
+						if (t.IsGenericParameter)
+							ec.Emit (OpCodes.Unbox_Any, t);
+					}
 				}
 
 				ec.Emit (OpCodes.Br, ec.ConditionalAccess.EndLabel);

@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.CompilerServices.SymbolWriter.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = -lib:$(bare_libdir)
+LIB_MCS_FLAGS =
 
 NO_TEST = yes
 

@@ -198,6 +198,8 @@ namespace Mono.CSharp
 		public readonly PredefinedType SecurityAction;
 		public readonly PredefinedType Dictionary;
 		public readonly PredefinedType Hashtable;
+		public readonly PredefinedType Array;
+
 		public readonly TypeSpec[] SwitchUserTypes;
 
 		//
@@ -266,6 +268,7 @@ namespace Mono.CSharp
 			SecurityAction = new PredefinedType (module, MemberKind.Enum, "System.Security.Permissions", "SecurityAction");
 			Dictionary = new PredefinedType (module, MemberKind.Class, "System.Collections.Generic", "Dictionary", 2);
 			Hashtable = new PredefinedType (module, MemberKind.Class, "System.Collections", "Hashtable");
+			Array = new PredefinedType (module, MemberKind.Class, "System", "Array");
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
@@ -340,6 +343,7 @@ namespace Mono.CSharp
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> ArrayEmpty;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
@@ -410,6 +414,9 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			ArrayEmpty = new PredefinedMember<MethodSpec> (module, types.Array,
+				MemberFilter.Method ("Empty", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
 
 			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));

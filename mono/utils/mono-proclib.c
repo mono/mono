@@ -27,6 +27,7 @@
 #if defined(_POSIX_VERSION)
 #include <sys/errno.h>
 #include <sys/param.h>
+#include <errno.h>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -324,7 +325,7 @@ mono_process_get_times (gpointer pid, gint64 *start_time, gint64 *user_time, gin
 		if (*start_time == 0) {
 			static guint64 boot_time = 0;
 			if (!boot_time)
-				boot_time = mono_100ns_datetime () - ((guint64)mono_msec_ticks ()) * 10000;
+				boot_time = mono_100ns_datetime () - mono_msec_boottime () * 10000;
 
 			*start_time = boot_time + mono_process_get_data (pid, MONO_PROCESS_ELAPSED);
 		}
@@ -355,22 +356,35 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT, th_count;
 	thread_array_t th_array;
 	size_t i;
+	kern_return_t ret;
 
 	if (pid == getpid ()) {
 		/* task_for_pid () doesn't work on ios, even for the current process */
 		task = mach_task_self ();
 	} else {
-		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		do {
+			ret = task_for_pid (mach_task_self (), pid, &task);
+		} while (ret == KERN_ABORTED);
+
+		if (ret != KERN_SUCCESS)
 			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
 	}
 
-	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
+	do {
+		ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count);
+	} while (ret == KERN_ABORTED);
+
+	if (ret != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
+
+	do {
+		ret = task_threads (task, &th_array, &th_count);
+	} while (ret == KERN_ABORTED);
 	
-	if (task_threads(task, &th_array, &th_count) != KERN_SUCCESS) {
+	if (ret  != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
@@ -381,7 +395,11 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 		
 		struct thread_basic_info th_info;
 		mach_msg_type_number_t th_info_count = THREAD_BASIC_INFO_COUNT;
-		if (thread_info(th_array[i], THREAD_BASIC_INFO, (thread_info_t)&th_info, &th_info_count) == KERN_SUCCESS) {
+		do {
+			ret = thread_info(th_array[i], THREAD_BASIC_INFO, (thread_info_t)&th_info, &th_info_count);
+		} while (ret == KERN_ABORTED);
+
+		if (ret == KERN_SUCCESS) {
 			thread_user_time = th_info.user_time.seconds + th_info.user_time.microseconds / 1e6;
 			thread_system_time = th_info.system_time.seconds + th_info.system_time.microseconds / 1e6;
 			//thread_percent = (double)th_info.cpu_usage / TH_USAGE_SCALE;
@@ -494,16 +512,25 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	task_t task;
 	struct task_basic_info t_info;
 	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+	kern_return_t mach_ret;
 
 	if (pid == getpid ()) {
 		/* task_for_pid () doesn't work on ios, even for the current process */
 		task = mach_task_self ();
 	} else {
-		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		do {
+			mach_ret = task_for_pid (mach_task_self (), pid, &task);
+		} while (mach_ret == KERN_ABORTED);
+
+		if (mach_ret != KERN_SUCCESS)
 			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
 	}
-	
-	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
+
+	do {
+		mach_ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count);
+	} while (mach_ret == KERN_ABORTED);
+
+	if (mach_ret != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);

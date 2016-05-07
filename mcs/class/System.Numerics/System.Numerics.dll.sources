@@ -3,8 +3,8 @@
 Assembly/AssemblyInfo.cs
 ReferenceSources/Environment.cs
 ReferenceSources/SR.cs
-../../../external/referencesource/System.Numerics/System/Numerics/BigInteger.cs
-../../../external/referencesource/System.Numerics/System/Numerics/BigIntegerBuilder.cs
-../../../external/referencesource/System.Numerics/System/Numerics/BigNumber.cs
-../../../external/referencesource/System.Numerics/System/Numerics/Complex.cs
-../../../external/referencesource/System.Numerics/System/Numerics/NumericsHelpers.cs
+../referencesource/System.Numerics/System/Numerics/BigInteger.cs
+../referencesource/System.Numerics/System/Numerics/BigIntegerBuilder.cs
+../referencesource/System.Numerics/System/Numerics/BigNumber.cs
+../referencesource/System.Numerics/System/Numerics/Complex.cs
+../referencesource/System.Numerics/System/Numerics/NumericsHelpers.cs

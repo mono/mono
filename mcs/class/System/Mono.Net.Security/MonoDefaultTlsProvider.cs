@@ -24,22 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #if SECURITY_DEP
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
 
-#if MONO_X509_ALIAS
-using XHttpWebRequest = PrebuiltSystem::System.Net.HttpWebRequest;
-using XSslProtocols = PrebuiltSystem::System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
 using XHttpWebRequest = System.Net.HttpWebRequest;
 using XSslProtocols = System.Security.Authentication.SslProtocols;
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;

@@ -30,9 +30,6 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -59,7 +56,7 @@ namespace System.Security.Cryptography.X509Certificates
 			var provider = MonoTlsProviderFactory.GetProvider ();
 			if (provider.HasNativeCertificates) {
 				var impl = provider.GetNativeCertificate (rawData, password, keyStorageFlags);
-				return (X509Certificate2Impl)(object)impl;
+				return impl;
 			} else {
 				var impl = new X509Certificate2ImplMono ();
 				impl.Import (rawData, password, keyStorageFlags);
@@ -72,7 +69,7 @@ namespace System.Security.Cryptography.X509Certificates
 			var provider = MonoTlsProviderFactory.GetProvider ();
 			if (provider.HasNativeCertificates) {
 				var impl = provider.GetNativeCertificate (cert);
-				return (X509Certificate2Impl)(object)impl;
+				return impl;
 			}
 			var impl2 = cert.Impl as X509Certificate2Impl;
 			if (impl2 != null)

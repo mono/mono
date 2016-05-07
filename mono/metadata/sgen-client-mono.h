@@ -64,12 +64,7 @@ struct _SgenClientThreadInfo {
 	void *stack_start;
 	void *stack_start_limit;
 
-	/*FIXME pretty please finish killing ARCH_NUM_REGS */
-#ifdef USE_MONO_CTX
 	MonoContext ctx;		/* ditto */
-#else
-	gpointer regs[ARCH_NUM_REGS];	    /* ditto */
-#endif
 };
 
 #else
@@ -686,6 +681,11 @@ sgen_client_binary_protocol_worker_finish (long long timestamp, gboolean forced)
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_evacuating_blocks (size_t block_size)
+{
+}
+
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_concurrent_sweep_end (long long timestamp)
 {
 }
 

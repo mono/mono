@@ -61,6 +61,7 @@ namespace System.Net.WebSockets
 		byte[] headerBuffer;
 		byte[] sendBuffer;
 		long remaining;
+		WebSocketMessageType currentMessageType;
 
 		public ClientWebSocket ()
 		{
@@ -197,13 +198,16 @@ namespace System.Net.WebSockets
 			});
 		}
 		
+		const int messageTypeContinuation = 0;
 		const int messageTypeText = 1;
 		const int messageTypeBinary = 2;
 		const int messageTypeClose = 8;
 
-		static WebSocketMessageType WireToMessageType (byte msgType)
+		WebSocketMessageType WireToMessageType (byte msgType)
 		{
 			
+			if (msgType == messageTypeContinuation)
+				return currentMessageType;
 			if (msgType == messageTypeText)
 				return WebSocketMessageType.Text;
 			if (msgType == messageTypeBinary)
@@ -228,7 +232,6 @@ namespace System.Net.WebSockets
 				EnsureWebSocketState (WebSocketState.Open, WebSocketState.CloseSent);
 
 				bool isLast;
-				WebSocketMessageType type;
 				long length;
 
 				if (remaining == 0) {
@@ -237,7 +240,7 @@ namespace System.Net.WebSockets
 					isLast = (headerBuffer[0] >> 7) > 0;
 					var isMasked = (headerBuffer[1] >> 7) > 0;
 					int mask = 0;
-					type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
+					currentMessageType = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
 					length = headerBuffer[1] & 0x7F;
 					int offset = 0;
 					if (length == 126) {
@@ -261,23 +264,23 @@ namespace System.Net.WebSockets
 					}
 				} else {
 					isLast = (headerBuffer[0] >> 7) > 0;
-					type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
+					currentMessageType = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
 					length = remaining;
 				}
 
-				if (type == WebSocketMessageType.Close) {
+				if (currentMessageType == WebSocketMessageType.Close) {
 					state = WebSocketState.Closed;
 					var tmpBuffer = new byte[length];
 					connection.Read (req, tmpBuffer, 0, tmpBuffer.Length);
 					var closeStatus = (WebSocketCloseStatus)(tmpBuffer[0] << 8 | tmpBuffer[1]);
 					var closeDesc = tmpBuffer.Length > 2 ? Encoding.UTF8.GetString (tmpBuffer, 2, tmpBuffer.Length - 2) : string.Empty;
-					return new WebSocketReceiveResult ((int)length, type, isLast, closeStatus, closeDesc);
+					return new WebSocketReceiveResult ((int)length, currentMessageType, isLast, closeStatus, closeDesc);
 				} else {
 					var readLength = (int)(buffer.Count < length ? buffer.Count : length);
 					connection.Read (req, buffer.Array, buffer.Offset, readLength);
 					remaining = length - readLength;
 
-					return new WebSocketReceiveResult ((int)readLength, type, isLast && remaining == 0);
+					return new WebSocketReceiveResult ((int)readLength, currentMessageType, isLast && remaining == 0);
 				}
 			});
 		}
