@@ -1212,14 +1212,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void RelativeUri ()
-		{
-			var u = new Uri ("/foo/bar");
-			Assert.IsFalse (u.IsAbsoluteUri, "#1");
-		}
-
-		[Test]
 		public void RelativeFragmentUri ()
 		{
 			Uri u = new Uri("http://localhost/../../../a");
@@ -1934,26 +1926,26 @@ namespace MonoTests.System
 				Uri uri;
 
 				uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsFalse (uri.IsAbsoluteUri, "#2");
 				
-				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsTrue (Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri), "#3");
+				Assert.IsFalse (uri.IsAbsoluteUri, "#3a");
 
 				if (useDotNetRelativeOrAbsoluteField != null) {
 					uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-					Assert.IsTrue (uri.IsAbsoluteUri);
+					Assert.IsTrue (uri.IsAbsoluteUri, "#4");
 
-					Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
-					Assert.IsTrue (uri.IsAbsoluteUri);
+					Assert.IsTrue (Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri), "#5");
+					Assert.IsTrue (uri.IsAbsoluteUri, "#5a");
 
 					useDotNetRelativeOrAbsoluteField.SetValue (null, true);
 				}
 
 				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsFalse (uri.IsAbsoluteUri, "#10");
 
-				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsTrue (Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri), "#11");
+				Assert.IsFalse (uri.IsAbsoluteUri, "#11a");
 			} finally {
 				if (useDotNetRelativeOrAbsoluteField != null)
 					useDotNetRelativeOrAbsoluteField.SetValue (null, useDotNetRelativeOrAbsoluteOld);
