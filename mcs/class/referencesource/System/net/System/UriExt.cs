@@ -17,6 +17,9 @@ Author:
 Revision History:
 
 --*/
+#if MONO
+#undef PLATFORM_UNIX
+#endif
 
 namespace System {
     using System.Globalization;
@@ -33,6 +36,9 @@ namespace System {
             // if (!Enum.IsDefined(typeof(UriKind), uriKind)) -- We currently believe that Enum.IsDefined() is too slow 
             // to be used here.
             if ((int)uriKind < (int)UriKind.RelativeOrAbsolute || (int)uriKind > (int)UriKind.Relative) {
+#if MONO
+                if (uriKind != DotNetRelativeOrAbsolute)
+#endif
                 throw new ArgumentException(SR.GetString(SR.net_uri_InvalidUriKind, uriKind));
             }
 
@@ -55,6 +61,12 @@ namespace System {
             {
                 if (IsImplicitFile)
                 {
+#if MONO
+                    if (uriKind == UriKind.RelativeOrAbsolute && m_String.Length > 0 && m_String[0] == '/' && !useDotNetRelativeOrAbsolute) {
+                        // For original Mono behaviour where / is considered to be absolute path
+                    }
+                    else
+#endif
                     // V1 compat VsWhidbey#252282
                     // A relative Uri wins over implicit UNC path unless the UNC path is of the form "\\something" and 
                     // uriKind != Absolute
@@ -312,7 +324,13 @@ namespace System {
         public static bool TryCreate(Uri baseUri, string relativeUri, out Uri result)
         {
             Uri relativeLink;
-            if (TryCreate(relativeUri, UriKind.RelativeOrAbsolute, out relativeLink))
+            const UriKind kind =
+#if MONO
+                DotNetRelativeOrAbsolute;
+#else
+                RelativeOrAbsolute;
+#endif
+            if (TryCreate(relativeUri, kind, out relativeLink))
             {
                 if (!relativeLink.IsAbsoluteUri)
                     return TryCreate(baseUri, relativeLink, out result);
@@ -658,6 +676,9 @@ namespace System {
             // if (!Enum.IsDefined(typeof(UriKind), uriKind)) -- We currently believe that Enum.IsDefined() is too slow 
             // to be used here.
             if ((int)uriKind < (int)UriKind.RelativeOrAbsolute || (int)uriKind > (int)UriKind.Relative){
+#if MONO
+                if (uriKind != DotNetRelativeOrAbsolute)
+#endif               
                 throw new ArgumentException(SR.GetString(SR.net_uri_InvalidUriKind, uriKind));
             }
 
@@ -715,8 +736,15 @@ namespace System {
 
             if ((object)relativeUri != null)
             {
-                if (relativeUri.IsAbsoluteUri)
+                if (relativeUri.IsAbsoluteUri) {
+#if MONO
+                // Hack for Mono specific handling of /paths which are absolute on unix but
+                // we want to allow concatination of such paths to match .net
+                if (!(!IsWindowsFileSystem && relativeUri.OriginalString [0] == '/' && relativeUri.IsImplicitFile))
+#endif
+
                     return relativeUri;
+                }
 
                 relativeStr = relativeUri.OriginalString;
                 userEscaped = relativeUri.UserEscaped;
