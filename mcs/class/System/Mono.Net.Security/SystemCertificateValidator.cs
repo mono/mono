@@ -73,15 +73,11 @@ namespace Mono.Net.Security
 		public static X509Chain CreateX509Chain (XX509CertificateCollection certs)
 		{
 			var chain = new X509Chain ();
-			chain.ChainPolicy = new X509ChainPolicy ();
+			chain.ChainPolicy = new X509ChainPolicy ((X509CertificateCollection)(object)certs);
 
 #if !MOBILE
 			chain.ChainPolicy.RevocationMode = revocation_mode;
 #endif
-
-			for (int i = 1; i < certs.Count; i++) {
-				chain.ChainPolicy.ExtraStore.Add (certs [i]);
-			}
 
 			return chain;
 		}
