@@ -1671,6 +1671,9 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException) {
 				// Only run this test on platforms where /dev/zero exists
 				Assert.Ignore();
+			} catch (DirectoryNotFoundException) {
+				// Only run this test on platforms where /dev exists
+				Assert.Ignore();
 			}
 
 			// this shouldn't throw
