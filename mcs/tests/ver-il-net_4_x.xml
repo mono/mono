@@ -30747,6 +30747,56 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-38.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Int32 SetValue(System.String, System.String, System.String, Boolean)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Int32 SetValue(System.String, C, C, Boolean, C, Boolean, System.String)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Int32 SetValue(System.String, System.Object, C)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()" attrs="145">
+        <size>50</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-39.cs">
+    <type name="A">
+      <method name="Int32 GetValues(System.String[], System.String)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Int32 GetValues(System.String, System.String[])" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Main()" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">

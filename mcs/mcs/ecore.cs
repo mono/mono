@@ -4658,7 +4658,9 @@ namespace Mono.CSharp {
 			AParametersCollection candidate_pd = ((IParametersMember) candidate).Parameters;
 			AParametersCollection best_pd = ((IParametersMember) best).Parameters;
 
-			bool better_at_least_one = false;
+			int candidate_better_count = 0;
+			int best_better_count = 0;
+
 			bool are_equivalent = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
@@ -4713,30 +4715,31 @@ namespace Mono.CSharp {
 					//
 					// No optional parameters tie breaking rules for delegates overload resolution
 					//
-					if ((this.restrictions & Restrictions.CovariantDelegate) != 0)
+					if ((restrictions & Restrictions.CovariantDelegate) != 0)
 						return false;
 
-					better_at_least_one = false;
-
-					++j;
-					while (j < args_count && !args [j++].IsDefaultArgument) ;
-
-					break;
+					++best_better_count;
+					continue;
 				}
 
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
 				if (result != 0)
-					better_at_least_one = true;
+					++candidate_better_count;
 			}
 
-			if (better_at_least_one)
+			if (candidate_better_count != 0 && best_better_count == 0)
 				return true;
+
+			if (best_better_count > 0 && candidate_better_count == 0)
+				return false;
 
 			//
 			// LAMESPEC: Tie-breaking rules for not equivalent parameter types
 			//
 			if (!are_equivalent) {
+				while (j < args_count && !args [j++].IsDefaultArgument) ;
+
 				//
 				// A candidate with no default parameters is still better when there
 				// is no better expression conversion
