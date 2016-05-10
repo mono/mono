@@ -1556,6 +1556,7 @@ ReferenceSources/SecurityContext.cs
 ../referencesource/mscorlib/system/threading/lockrecursionexception.cs
 ../referencesource/mscorlib/system/threading/manualresetevent.cs
 ../referencesource/mscorlib/system/threading/ManualResetEventSlim.cs
+../referencesource/mscorlib/system/threading/monitor.cs
 ../referencesource/mscorlib/system/threading/parameterizedthreadstart.cs
 ../referencesource/mscorlib/system/threading/semaphorefullexception.cs
 ../referencesource/mscorlib/system/threading/SemaphoreSlim.cs
