@@ -71,8 +71,8 @@ namespace System.Security.Cryptography.X509Certificates {
 			_oid = new Oid (oid, friendlyName);
 			base.Critical = critical;
 			_enhKeyUsage = new OidCollection();
-			foreach (Oid oid in enhancedKeyUsages) {
-				_enhKeyUsage.Add(oid);
+			foreach (Oid o in enhancedKeyUsages) {
+				_enhKeyUsage.Add(o);
 			}
 			RawData = Encode ();
 		}
@@ -87,8 +87,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 					OidCollection oids = new OidCollection();
 					if (_enhKeyUsage != null) {
-						foreach(Oid oid in _enhKeyUsage) {
-							oids.Add(oid);
+						foreach(Oid o in _enhKeyUsage) {
+							oids.Add(o);
 						}
 					}
 					return oids;
@@ -150,8 +150,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal byte[] Encode ()
 		{
 			ASN1 ex = new ASN1 (0x30);
-			foreach (Oid oid in _enhKeyUsage) {
-				ex.Add (ASN1Convert.FromOid (oid.Value));
+			foreach (Oid o in _enhKeyUsage) {
+				ex.Add (ASN1Convert.FromOid (o.Value));
 			}
 			return ex.GetBytes ();
 		}
