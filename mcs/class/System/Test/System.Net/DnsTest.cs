@@ -56,7 +56,8 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual (site1Dot, entry.AddressList [0].ToString ());
+			var ip = GetNonIPv6Address (entry);
+			Assert.AreEqual (site1Dot, ip.ToString ());
 		}
 
 		void ResolveCallback (IAsyncResult ar)
@@ -205,12 +206,21 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		static IPAddress GetNonIPv6Address (IPHostEntry h)
+		{
+			var al0 = h.AddressList [0];
+			if (al0.AddressFamily == AddressFamily.InterNetworkV6)
+				Assert.Ignore ("Resolve address is incompatible, e.g. running on an IPv6 only network");
+			return al0;
+		}
+
 		void SubTestGetHostByName (string siteName, string siteDot)
 		{
 			IPHostEntry h = Dns.GetHostByName (siteName);
 			SubTestValidIPHostEntry (h);
 			Assert.AreEqual (siteName, h.HostName, "siteName");
-			Assert.AreEqual (siteDot, h.AddressList [0].ToString (), "siteDot");
+			var ip = GetNonIPv6Address (h);
+			Assert.AreEqual (siteDot, ip.ToString (), "siteDot");
 		}
 
 		[Test]
@@ -287,7 +297,8 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			Assert.AreEqual (addr.ToString (), h.AddressList [0].ToString ());
+			var ip = GetNonIPv6Address (h);
+			Assert.AreEqual (addr.ToString (), ip.ToString ());
 		}
 
 		[Test]
@@ -296,7 +307,8 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site2IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			Assert.AreEqual (addr.ToString (), h.AddressList [0].ToString ());
+			var ip = GetNonIPv6Address (h);
+			Assert.AreEqual (addr.ToString (), ip.ToString ());
 		}
 
 		[Test]
