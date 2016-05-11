@@ -166,8 +166,9 @@ namespace System {
         //
         public static void Register(UriParser uriParser, string schemeName, int defaultPort)
         {
+#if !DISABLE_CAS_USE
             ExceptionHelper.InfrastructurePermission.Demand();
-
+#endif
             if (uriParser == null)
                 throw new ArgumentNullException("uriParser");
 

@@ -3,7 +3,9 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-
+#if MONO
+#undef PLATFORM_UNIX
+#endif
 namespace System {
     using System.Runtime.InteropServices;
     using System.Text;
@@ -123,6 +125,10 @@ namespace System {
             QueryIriCanonical =         0x20000000000,
             FragmentIriCanonical =      0x40000000000,
             IriCanonical =              0x78000000000,
+
+#if MONO
+            CompressedSlashes = 0x100000000000
+#endif
         }
 
         private Flags       m_Flags;
@@ -234,16 +240,18 @@ namespace System {
                    ((s_IdnScope == UriIdnScope.All) || ((s_IdnScope == UriIdnScope.AllExceptIntranet)
                                                                             && StaticNotAny(flags, Flags.IntranetUri))));
         }
-
+#if !MONO
         //
         // check if the scheme + host are in intranet or not
         // Used to determine of we apply idn or not
         //
         private static volatile IInternetSecurityManager s_ManagerRef = null;
         private static object s_IntranetLock = new object();
+#endif
 
         private bool IsIntranet(string schemeHost)
         {
+#if !MONO
             bool error = false;
             int zone = -1;
             int E_FAIL = unchecked((int)0x80004005);
@@ -309,6 +317,7 @@ namespace System {
                 }
                 return true;
             }
+#endif
             return false;
         }
 
@@ -461,8 +470,14 @@ namespace System {
 
         private void CreateUri(Uri baseUri, string relativeUri, bool dontEscape)
         {
+            const UriKind kind =
+#if MONO
+                DotNetRelativeOrAbsolute;
+#else
+                RelativeOrAbsolute;
+#endif
             // Parse relativeUri and populate Uri internal data.
-            CreateThis(relativeUri, dontEscape, UriKind.RelativeOrAbsolute);
+            CreateThis(relativeUri, dontEscape, kind);
 
             UriFormatException e;
             if (baseUri.Syntax.IsSimple)
@@ -953,12 +968,30 @@ namespace System {
 
         // Value from config Uri section
         // The use of this IDN mechanic is discouraged on Win8+ due to native platform improvements.
-        private static volatile UriIdnScope s_IdnScope = IdnElement.EnabledDefaultValue;
+        private static volatile UriIdnScope s_IdnScope = 
+#if !CONFIGURATION_DEP
+            UriIdnScope.None;
+#else
+            IdnElement.EnabledDefaultValue;
+#endif
 
         // Value from config Uri section
         // On by default in .NET 4.5+ and cannot be disabled by config.
         private static volatile bool s_IriParsing = 
+#if MONO
+            !(Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING") == "false");
+#else
             (UriParser.ShouldUseLegacyV2Quirks ? IriParsingElement.EnabledDefaultValue : true);
+#endif
+
+#if MONO
+        // HACK for paths such as "/foo" to be absolute regardless of platform
+        static bool useDotNetRelativeOrAbsolute = Environment.GetEnvironmentVariable ("MONO_URI_DOTNETRELATIVEORABSOLUTE") == "true";
+
+        const UriKind DotNetRelativeOrAbsolute = (UriKind) 300;
+
+        internal static readonly bool IsWindowsFileSystem = System.IO.Path.DirectorySeparatorChar == '\\';
+#endif
 
         private static object s_initLock;
 
@@ -983,7 +1016,7 @@ namespace System {
             if (!s_ConfigInitialized) {
                 lock(InitializeLock) {
                     if (!s_ConfigInitialized && !s_ConfigInitializing) {
-
+#if !MONO
                         // setting s_ConfigInitializing to true makes sure, that in web scenarios,
                         // where Uri instances may be created while parsing the web.config files, will not
                         // call into this code block again. We'll enter the following code only once per
@@ -1003,14 +1036,14 @@ namespace System {
                             SetEscapedDotSlashSettings(section, Uri.UriSchemeWs);
                             SetEscapedDotSlashSettings(section, Uri.UriSchemeWss);
                         }
-
+#endif
                         s_ConfigInitialized = true;
                         s_ConfigInitializing = false;
                     }
                 }
             }
         }
-
+#if !MONO
         // Legacy - This no longer has any affect in .NET 4.5 (non-quirks). See UriParser.HttpSyntaxFlags.
         private static void SetEscapedDotSlashSettings(UriSectionInternal uriSection, string scheme)
         {
@@ -1032,12 +1065,19 @@ namespace System {
                 }
             }
         }
-
+#endif
         private string GetLocalPath(){
             EnsureParseRemaining();
 
+#if MONO
+            //
+            // I think this is wrong but it keeps LocalPath fully backward compatible
+            //
+            if (IsUncOrDosPath && (IsWindowsFileSystem || !IsUncPath))
+#else
             //Other cases will get a Unix-style path
             if (IsUncOrDosPath)
+#endif
             {
                 EnsureHostString(false);
                 int start;
@@ -2116,8 +2156,19 @@ namespace System {
                         {
                             // see VsWhidbey#226745 V1.0 did not support file:///, fixing it with minimal behavior change impact
                             // Only FILE scheme may have UNC Path flag set
+#if MONO
+                            if (!IsWindowsFileSystem) {
+                                if (i - idx > 3) {
+                                    m_Flags |= Flags.CompressedSlashes;
+                                    idx = i;
+                                }
+                            } else {
+#endif
                             m_Flags |= Flags.UncPath;
                             idx = i;
+#if MONO
+                            }
+#endif
                         }
                     }
                 }
@@ -2128,8 +2179,8 @@ namespace System {
 #if !PLATFORM_UNIX
                 if ((m_Flags & (Flags.UncPath|Flags.DosPath)) != 0) {
                 }
-#else
-                if ((m_Flags & Flags.ImplicitFile) != 0) {
+// #else
+                else if (!IsWindowsFileSystem && (m_Flags & (Flags.ImplicitFile|Flags.CompressedSlashes)) != 0) {
                     // Already parsed up to the path
                 }
 #endif // !PLATFORM_UNIX
@@ -2140,9 +2191,9 @@ namespace System {
                     if (m_Syntax.InFact(UriSyntaxFlags.MustHaveAuthority)) {
                         // (V1.0 compatiblity) This will allow http:\\ http:\/ http:/\
 #if !PLATFORM_UNIX
-                        if ((first == '/' || first == '\\') && (second == '/' || second == '\\'))
-#else
-                        if (first == '/' && second == '/')
+                        if ((IsWindowsFileSystem && (first == '/' || first == '\\') && (second == '/' || second == '\\')) ||
+// #else
+                        (!IsWindowsFileSystem && (first == '/' && second == '/')))
 #endif // !PLATFORM_UNIX
                         {
                             m_Flags |= Flags.AuthorityFound;
@@ -2300,7 +2351,7 @@ namespace System {
 
                     idx+=2;
 #if !PLATFORM_UNIX
-                    if ((cF & (Flags.UncPath|Flags.DosPath)) != 0) {
+                    if ((cF & (Flags.UncPath|Flags.DosPath|Flags.CompressedSlashes)) != 0) {
                         // Skip slashes if it was allowed during ctor time
                         // NB: Today this is only allowed if a Unc or DosPath was found after the scheme
                         while( idx < (ushort)(cF & Flags.IndexMask) && (m_String[idx] == '/' || m_String[idx] == '\\')) {
@@ -3632,7 +3683,7 @@ namespace System {
                 return 0;
             }
 #if !PLATFORM_UNIX
-            else if ((c=uriString[idx]) == '/' || c == '\\') {
+            else if (((c=uriString[idx]) == '/' && IsWindowsFileSystem) || c == '\\') {
                 //UNC share ?
                 if ((c=uriString[idx+1]) == '\\' || c == '/') {
                     flags |= (Flags.UncPath|Flags.ImplicitFile|Flags.AuthorityFound);
@@ -3647,7 +3698,6 @@ namespace System {
                 err = ParsingError.BadFormat;
                 return 0;
             }
-#else
             else if (uriString[idx] == '/') {
                 // On UNIX an implicit file has the form /<path> or scheme:///<path>
                 if (idx == 0 || uriString[idx-1] != ':' ) {
@@ -3901,8 +3951,14 @@ namespace System {
             {
                 if (syntax.InFact(UriSyntaxFlags.AllowEmptyHost))
                 {
+#if !PLATFORM_UNIX
                     flags &= ~Flags.UncPath;    //UNC cannot have an empty hostname
-                    if (StaticInFact(flags, Flags.ImplicitFile))
+#endif
+                    if (StaticInFact(flags, Flags.ImplicitFile)
+#if MONO
+                     && (pString[idx] != '/' || IsWindowsFileSystem)
+#endif
+                     )
                         err = ParsingError.BadHostName;
                     else
                         flags |= Flags.BasicHostType;
@@ -5117,6 +5173,7 @@ namespace System {
            else {
                if (basePart.IsImplicitFile) {
 #if !PLATFORM_UNIX
+                if (IsWindowsFileSystem)
                    if (basePart.IsDosPath) {
                        // The FILE DOS path comes as /c:/path, we have to exclude first 3 chars from compression
                        path = Compress(path, 3, ref length, basePart.Syntax);
@@ -5125,7 +5182,8 @@ namespace System {
                    else {
                        left =  @"\\" + basePart.GetParts(UriComponents.Host, UriFormat.Unescaped);
                    }
-#else
+//#else
+                else
                    left =  basePart.GetParts(UriComponents.Host, UriFormat.Unescaped);
 #endif // !PLATFORM_UNIX
 

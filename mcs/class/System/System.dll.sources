@@ -99,7 +99,6 @@ System.Configuration/SpecialSettingAttribute.cs
 System.Configuration/UriSection.cs
 System.Configuration/UserSettingsGroup.cs
 System.Configuration/UserScopedSettingAttribute.cs
-System/DefaultUriParser.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/CounterCreationDataCollection.cs
 System.Diagnostics/CounterCreationData.cs
@@ -162,12 +161,6 @@ System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
 System.Diagnostics.CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
-System/FileStyleUriParser.cs
-System/FtpStyleUriParser.cs
-System/GenericUriParser.cs
-System/GenericUriParserOptions.cs
-System/GopherStyleUriParser.cs
-System/HttpStyleUriParser.cs
 System/Platform.cs
 System.IO.Compression/CompressionLevel.cs
 System.IO.Compression/CompressionMode.cs
@@ -209,7 +202,6 @@ System.IO/SearchPattern.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 System.IO/WindowsWatcher.cs
-System/LdapStyleUriParser.cs
 System.Media/AudioData.cs
 System.Media/AudioDevice.cs
 System.Media/SoundPlayer.cs
@@ -421,7 +413,6 @@ System.Net.NetworkInformation/UnicastIPAddressInformationCollection.cs
 System.Net.NetworkInformation/UnicastIPAddressInformation.cs
 System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
 System.Net/NtlmClient.cs
-System/NetPipeStyleUriParser.cs
 System.Net/ProtocolViolationException.cs
 System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
@@ -470,7 +461,6 @@ System.Net.Sockets/TcpListener.cs
 ../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
 System.Net.Sockets/UdpClient.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
-System/NetTcpStyleUriParser.cs
 System.Net/TransportContext.cs
 System.Net/TransportType.cs
 System.Net/WebAsyncResult.cs
@@ -496,7 +486,6 @@ System.Net.WebSockets/WebSocketException.cs
 System.Net.WebSockets/WebSocketMessageType.cs
 System.Net.WebSockets/WebSocketReceiveResult.cs
 System.Net.WebSockets/WebSocketState.cs
-System/NewsStyleUriParser.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs
 System.Security.AccessControl/SemaphoreAuditRule.cs
 System.Security.AccessControl/SemaphoreRights.cs
@@ -571,13 +560,7 @@ System.Threading/Semaphore.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
-System/UriBuilder.cs
-System/Uri.cs
-System/UriHelper.cs
-System/UriParser.cs
 System/UriTypeConverter.cs
-System/UriElements.cs
-System/UriParseComponents.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs
@@ -594,8 +577,6 @@ System.Runtime.InteropServices.ComTypes/IEnumSTATDATA.cs
 System.Runtime.InteropServices.ComTypes/STATDATA.cs
 System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
-System/IUriData.cs
-System/UriData.cs
 Mono.Net.Dns/DnsClass.cs
 Mono.Net.Dns/DnsHeader.cs
 Mono.Net.Dns/DnsOpCode.cs
@@ -1029,10 +1010,23 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/compmod/system/diagnostics/TypedElement.cs
 ../referencesource/System/compmod/system/diagnostics/XmlWriterTraceListener.cs
 
+../referencesource/System/net/System/_DomainName.cs
+../referencesource/System/net/System/_IPv4Address.cs
+../referencesource/System/net/System/_IPv6Address.cs
+../referencesource/System/net/System/_UncName.cs
+../referencesource/System/net/System/_UriSyntax.cs
+../referencesource/System/net/System/GenericUriParser.cs
+../referencesource/System/net/System/IriHelper.cs
+../referencesource/System/net/System/URI.cs
+../referencesource/System/net/System/uribuilder.cs
 ../referencesource/System/net/System/UriEnumTypes.cs
+../referencesource/System/net/System/UriExt.cs
 ../referencesource/System/net/System/URIFormatException.cs
+../referencesource/System/net/System/UriHelper.cs
 ../referencesource/System/net/System/UriHostNameType.cs
+../referencesource/System/net/System/UriParserTemplates.cs
 ../referencesource/System/net/System/URIPartial.cs
+../referencesource/System/net/System/UriScheme.cs
 
 ../referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
