@@ -9,7 +9,7 @@
 // 
 
 using System;
-using System.Collections;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -56,7 +56,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
-			var ip = GetNonIPv6Address (entry);
+			var ip = GetIPv4Address (entry);
 			Assert.AreEqual (site1Dot, ip.ToString ());
 		}
 
@@ -206,12 +206,12 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		static IPAddress GetNonIPv6Address (IPHostEntry h)
+		static IPAddress GetIPv4Address (IPHostEntry h)
 		{
-			var al0 = h.AddressList [0];
-			if (al0.AddressFamily == AddressFamily.InterNetworkV6)
-				Assert.Ignore ("Resolve address is incompatible, e.g. running on an IPv6 only network");
-			return al0;
+			var al = h.AddressList.FirstOrDefault (x => x.AddressFamily == AddressFamily.InterNetwork);
+			if (al == null)
+				Assert.Ignore ("Could not resolve an IPv4 address as required by this test case, e.g. running on an IPv6 only network");
+			return al;
 		}
 
 		void SubTestGetHostByName (string siteName, string siteDot)
@@ -219,7 +219,7 @@ namespace MonoTests.System.Net
 			IPHostEntry h = Dns.GetHostByName (siteName);
 			SubTestValidIPHostEntry (h);
 			Assert.AreEqual (siteName, h.HostName, "siteName");
-			var ip = GetNonIPv6Address (h);
+			var ip = GetIPv4Address (h);
 			Assert.AreEqual (siteDot, ip.ToString (), "siteDot");
 		}
 
@@ -297,7 +297,7 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			var ip = GetNonIPv6Address (h);
+			var ip = GetIPv4Address (h);
 			Assert.AreEqual (addr.ToString (), ip.ToString ());
 		}
 
@@ -307,7 +307,7 @@ namespace MonoTests.System.Net
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site2IP));
 			IPHostEntry h = Dns.GetHostByAddress (addr);
 			SubTestValidIPHostEntry (h);
-			var ip = GetNonIPv6Address (h);
+			var ip = GetIPv4Address (h);
 			Assert.AreEqual (addr.ToString (), ip.ToString ());
 		}
 
