@@ -160,8 +160,10 @@ namespace System.Net.NetworkInformation {
 			user_async_state = null;
 			worker = null;
 
-			cts?.Dispose();
-			cts = null;
+			if (cts != null) {
+				cts.Dispose();
+				cts = null;
+			}
 
 			if (PingCompleted != null)
 				PingCompleted (this, e);
