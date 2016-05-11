@@ -5369,12 +5369,31 @@ namespace System
                                     Environment.GetResourceString("NotSupported_CallToVarArg")));
                             }
 
+#if MONO && FEATURE_REMOTING
+                            if (activationAttributes != null && activationAttributes.Length != 0) {
+                                server = ActivationCreateInstance (invokeMethod, bindingAttr, binder, args, culture, activationAttributes);
+                            } else {
+#endif
                             // fast path??
                             server = Activator.CreateInstance(this, true);
+
+#if MONO && FEATURE_REMOTING
+                            }
+#endif
                         }
                         else
                         {
+#if MONO && FEATURE_REMOTING
+
+                            if (activationAttributes != null && activationAttributes.Length != 0) {
+                                server = ActivationCreateInstance (invokeMethod, bindingAttr, binder, args, culture, activationAttributes);
+                            } else {
+#endif
                             server = ((ConstructorInfo)invokeMethod).Invoke(bindingAttr, binder, args, culture);
+#if MONO && FEATURE_REMOTING
+                            }
+#endif
+
                             if (state != null)
                                 binder.ReorderArgumentArray(ref args, state);
                         }
@@ -5400,7 +5419,25 @@ namespace System
             //Console.WriteLine(server);
             return server;                                
         }
-#if !MONO
+
+#if MONO
+#if FEATURE_REMOTING
+        //
+        // .NET seems to do this deep in method invocation which looks odd as it
+        // needs extra push/pop as PushActivationAttributes/PopActivationAttributes.
+        // We let them do nothing and have all logic here without complicated checks
+        // inside fast path invoke.
+        //
+        object ActivationCreateInstance (MethodBase invokeMethod, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+        {
+            var server = ActivationServices.CreateProxyFromAttributes (this, activationAttributes);
+            if (server != null)
+                invokeMethod.Invoke (server, bindingAttr, binder, args, culture);
+
+            return server;
+        }
+#endif
+#else
         // the cache entry
         class ActivatorCacheEntry
         {
