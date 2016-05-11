@@ -46,11 +46,8 @@ gboolean sgen_mono_xdomain_checks = FALSE;
 /* Functions supplied by the runtime to be called by the GC */
 static MonoGCCallbacks gc_callbacks;
 
-#ifdef HAVE_KW_THREAD
-__thread SgenThreadInfo *sgen_thread_info;
-#else
 MonoNativeTlsKey thread_info_key;
-#endif
+
 
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
@@ -989,50 +986,6 @@ static MonoMethod* alloc_method_cache [ATYPE_NUM];
 static MonoMethod* slowpath_alloc_method_cache [ATYPE_NUM];
 static gboolean use_managed_allocator = TRUE;
 
-#ifdef MANAGED_ALLOCATION
-
-#ifdef HAVE_KW_THREAD
-
-#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
-	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_NEXT_ADDR);		\
-	} while (0)
-
-#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
-	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_TEMP_END);		\
-	} while (0)
-
-#else
-
-#if defined(TARGET_OSX) || defined(TARGET_WIN32) || defined(TARGET_ANDROID) || defined(TARGET_IOS)
-#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
-	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
-	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next_addr));	\
-	mono_mb_emit_byte ((mb), CEE_ADD);		\
-	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
-	} while (0)
-
-#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
-	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
-	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));	\
-	mono_mb_emit_byte ((mb), CEE_ADD);		\
-	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
-	} while (0)
-
-#else
-#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-#define EMIT_TLS_ACCESS_TEMP_END(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-#endif
-
-#endif
-
 /* FIXME: Do this in the JIT, where specialized allocation sequences can be created
  * for each class. This is currently not easy to do, as it is hard to generate basic 
  * blocks + branches, but it is easy with the linear IL codebase.
@@ -1050,7 +1003,7 @@ create_allocator (int atype, gboolean slowpath)
 	MonoMethod *res;
 	MonoMethodSignature *csig;
 	static gboolean registered = FALSE;
-	int tlab_next_addr_var, new_next_var;
+	int tlab_next_addr_var, new_next_var, thread_info_var;
 	const char *name = NULL;
 	WrapperInfo *info;
 	int num_params, i;
@@ -1263,9 +1216,19 @@ create_allocator (int atype, gboolean slowpath)
 	 * another tls var holding its address instead.
 	 */
 
+	thread_info_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_TLS);
+	mono_mb_emit_i4 (mb, TLS_KEY_SGEN_THREAD_INFO);
+	mono_mb_emit_stloc (mb, thread_info_var);
+
 	/* tlab_next_addr (local) = tlab_next_addr (TLS var) */
+	//XXX maybe we should kill this var and just use an offset on both load and store
 	tlab_next_addr_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	EMIT_TLS_ACCESS_NEXT_ADDR (mb);
+
+	mono_mb_emit_ldloc (mb, thread_info_var);
+	mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next));
+	mono_mb_emit_byte (mb, CEE_ADD);
 	mono_mb_emit_stloc (mb, tlab_next_addr_var);
 
 	/* p = (void**)tlab_next; */
@@ -1284,7 +1247,12 @@ create_allocator (int atype, gboolean slowpath)
 
 	/* if (G_LIKELY (new_next < tlab_temp_end)) */
 	mono_mb_emit_ldloc (mb, new_next_var);
-	EMIT_TLS_ACCESS_TEMP_END (mb);
+
+	mono_mb_emit_ldloc (mb, thread_info_var);
+	mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+
 	slowpath_branch = mono_mb_emit_short_branch (mb, MONO_CEE_BLT_UN_S);
 
 	/* Slowpath */
@@ -2151,12 +2119,8 @@ sgen_client_thread_register (SgenThreadInfo* info, void *stack_bottom_fallback)
 	size_t stsize = 0;
 	guint8 *staddr = NULL;
 
-#ifndef HAVE_KW_THREAD
 	g_assert (!mono_native_tls_get_value (thread_info_key));
 	mono_native_tls_set_value (thread_info_key, info);
-#else
-	sgen_thread_info = info;
-#endif
 
 	info->client_info.skip = 0;
 	info->client_info.stopped_ip = NULL;
@@ -2198,11 +2162,7 @@ sgen_client_thread_unregister (SgenThreadInfo *p)
 {
 	MonoNativeThreadId tid;
 
-#ifndef HAVE_KW_THREAD
 	mono_native_tls_set_value (thread_info_key, NULL);
-#else
-	sgen_thread_info = NULL;
-#endif
 
 	tid = mono_thread_info_get_tid (p);
 
@@ -2814,22 +2774,12 @@ sgen_client_init (void)
 
 	mono_sgen_init_stw ();
 
-#ifndef HAVE_KW_THREAD
 	mono_native_tls_alloc (&thread_info_key, NULL);
-#if defined(TARGET_OSX) || defined(TARGET_WIN32) || defined(TARGET_ANDROID) || defined(TARGET_IOS)
 	/* 
 	 * CEE_MONO_TLS requires the tls offset, not the key, so the code below only works on darwin,
 	 * where the two are the same.
 	 */
 	mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, thread_info_key);
-#endif
-#else
-	{
-		int tls_offset = -1;
-		MONO_THREAD_VAR_OFFSET (sgen_thread_info, tls_offset);
-		mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, tls_offset);
-	}
-#endif
 
 	/*
 	 * This needs to happen before any internal allocations because
@@ -2952,12 +2902,6 @@ mono_gc_base_init (void)
 	if (nursery_canaries_enabled ())
 		sgen_set_use_managed_allocator (FALSE);
 
-#if defined(HAVE_KW_THREAD)
-	/* This can happen with using libmonosgen.so */
-	if (mono_tls_key_get_offset (TLS_KEY_SGEN_TLAB_NEXT_ADDR) == -1)
-		sgen_set_use_managed_allocator (FALSE);
-#endif
-
 	gc_inited = TRUE;
 }
 
@@ -2973,4 +2917,3 @@ mono_gc_is_null (void)
 	return FALSE;
 }
 
-#endif

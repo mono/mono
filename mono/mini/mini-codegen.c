@@ -603,6 +603,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		break;
 	case OP_ADD_IMM:
 	case OP_LADD_IMM:
+	case OP_LAND_IMM:
 		g_string_append_printf (sbuf, " [%d]", (int)(gssize)ins->inst_p1);
 		break;
 	case OP_I8CONST:
