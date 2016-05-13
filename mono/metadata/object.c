@@ -4159,7 +4159,9 @@ mono_runtime_run_main (MonoMethod *method, int argc, char* argv[],
 
 	g_assert (method != NULL);
 	
-	mono_thread_set_main (mono_thread_current ());
+	MonoThread *thread_obj = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
+	mono_thread_set_main (thread_obj);
 
 	main_args = g_new0 (char*, argc);
 	num_main_args = argc;

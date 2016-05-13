@@ -998,7 +998,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach, MonoError *e
 		if (domain != mono_domain_get ())
 			mono_domain_set (domain, TRUE);
 		/* Already attached */
-		return mono_thread_current ();
+		return mono_thread_current_checked (error);
 	}
 
 	if (!mono_gc_register_thread (&domain)) {
@@ -1497,6 +1497,15 @@ MonoThread *
 mono_thread_current (void)
 {
 	MonoError error;
+	MonoThread *result = mono_thread_current_checked (&error);
+	mono_error_cleanup (&error);
+	return result;
+}
+
+MonoThread*
+mono_thread_current_checked (MonoError *error)
+{
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoInternalThread *internal = mono_thread_internal_current ();
 	MonoThread **current_thread_ptr;
@@ -1506,17 +1515,17 @@ mono_thread_current (void)
 
 	if (!*current_thread_ptr) {
 		g_assert (domain != mono_get_root_domain ());
-		*current_thread_ptr = new_thread_with_internal (domain, internal, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		*current_thread_ptr = new_thread_with_internal (domain, internal, error);
+		return_val_if_nok (error, NULL);
 	}
 	return *current_thread_ptr;
 }
 
 /* Return the thread object belonging to INTERNAL in the current domain */
 static MonoThread *
-mono_thread_current_for_thread (MonoInternalThread *internal)
+mono_thread_current_for_thread (MonoInternalThread *internal, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoThread **current_thread_ptr;
 
@@ -1525,8 +1534,8 @@ mono_thread_current_for_thread (MonoInternalThread *internal)
 
 	if (!*current_thread_ptr) {
 		g_assert (domain != mono_get_root_domain ());
-		*current_thread_ptr = new_thread_with_internal (domain, internal, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		*current_thread_ptr = new_thread_with_internal (domain, internal, error);
+		return_val_if_nok (error, NULL);
 	}
 	return *current_thread_ptr;
 }
@@ -3531,9 +3540,8 @@ mono_threads_perform_thread_dump (void)
 
 /* Obtain the thread dump of all threads */
 static void
-mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_frames)
+mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_frames, MonoError *error)
 {
-	MonoError error;
 
 	ThreadDumpUserData ud;
 	MonoInternalThread *thread_array [128];
@@ -3541,7 +3549,7 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 	MonoDebugSourceLocation *location;
 	int tindex, nthreads;
 
-	mono_error_init (&error);
+	mono_error_init (error);
 	
 	*out_threads = NULL;
 	*out_stack_frames = NULL;
@@ -3553,11 +3561,11 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 	ud.frames = g_new0 (MonoStackFrameInfo, 256);
 	ud.max_frames = 256;
 
-	*out_threads = mono_array_new_checked (domain, mono_defaults.thread_class, nthreads, &error);
-	if (!is_ok (&error))
+	*out_threads = mono_array_new_checked (domain, mono_defaults.thread_class, nthreads, error);
+	if (!is_ok (error))
 		goto leave;
-	*out_stack_frames = mono_array_new_checked (domain, mono_defaults.array_class, nthreads, &error);
-	if (!is_ok (&error))
+	*out_stack_frames = mono_array_new_checked (domain, mono_defaults.array_class, nthreads, error);
+	if (!is_ok (error))
 		goto leave;
 
 	for (tindex = 0; tindex < nthreads; ++tindex) {
@@ -3575,18 +3583,21 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 			mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), FALSE, get_thread_dump, &ud);
 		}
 
-		mono_array_setref_fast (*out_threads, tindex, mono_thread_current_for_thread (thread));
+		MonoThread *thread_obj = mono_thread_current_for_thread (thread, error);
+		if (!is_ok (error))
+			goto leave;
+		mono_array_setref_fast (*out_threads, tindex, thread_obj);
 
-		thread_frames = mono_array_new_checked (domain, mono_defaults.stack_frame_class, ud.nframes, &error);
-		if (!is_ok (&error))
+		thread_frames = mono_array_new_checked (domain, mono_defaults.stack_frame_class, ud.nframes, error);
+		if (!is_ok (error))
 			goto leave;
 		mono_array_setref_fast (*out_stack_frames, tindex, thread_frames);
 
 		for (i = 0; i < ud.nframes; ++i) {
 			MonoStackFrameInfo *frame = &ud.frames [i];
 			MonoMethod *method = NULL;
-			MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, &error);
-			if (!mono_error_ok (&error))
+			MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, error);
+			if (!mono_error_ok (error))
 				goto leave;
 
 			sf->native_offset = frame->native_offset;
@@ -3597,8 +3608,9 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 			if (method) {
 				sf->method_address = (gsize) frame->ji->code_start;
 
-				MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, &error);
-				mono_error_raise_exception (&error); /* FIXME don't raise here */
+				MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, error);
+				if (!is_ok (error))
+					goto leave;
 				MONO_OBJECT_SETREF (sf, method, rm);
 
 				location = mono_debug_lookup_source_location (method, frame->native_offset, domain);
@@ -3621,7 +3633,6 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 
 leave:
 	g_free (ud.frames);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
 }
 
 /**
@@ -4364,7 +4375,9 @@ static MonoException*
 mono_thread_execute_interruption (void)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
-	MonoThread *sys_thread = mono_thread_current ();
+	MonoError error;
+	MonoThread *sys_thread = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
 
 	LOCK_THREAD (thread);
 
@@ -4561,7 +4574,9 @@ mono_thread_force_interruption_checkpoint_noraise (void)
 void
 mono_set_pending_exception (MonoException *exc)
 {
-	MonoThread *thread = mono_thread_current ();
+	MonoError error;
+	MonoThread *thread = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
 
 	/* The thread may already be stopping */
 	if (thread == NULL)
@@ -5010,5 +5025,7 @@ mono_thread_internal_unhandled_exception (MonoObject* exc)
 void
 ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces)
 {
-	mono_threads_get_thread_dump (out_threads, out_stack_traces);
+	MonoError error;
+	mono_threads_get_thread_dump (out_threads, out_stack_traces, &error);
+	mono_error_set_pending_exception (&error);
 }

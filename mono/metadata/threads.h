@@ -25,7 +25,7 @@ extern MONO_API void mono_thread_init (MonoThreadStartCB start_cb,
 extern MONO_API void mono_thread_cleanup (void);
 extern MONO_API void mono_thread_manage(void);
 
-extern MONO_API MonoThread *mono_thread_current (void);
+extern MONO_RT_EXTERNAL_ONLY MONO_API MonoThread *mono_thread_current (void);
 
 extern MONO_API void        mono_thread_set_main (MonoThread *thread);
 extern MONO_API MonoThread *mono_thread_get_main (void);
