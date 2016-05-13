@@ -253,10 +253,8 @@ System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
-System.Net/DnsEndPoint.cs
 System.Net/DnsPermissionAttribute.cs
 System.Net/DnsPermission.cs
-System.Net/EndPoint.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
@@ -283,8 +281,6 @@ System.Net/HttpStreamAsyncResult.cs
 System.Net/HttpWebRequest.cs
 System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
-System.Net/IPAddress.cs
-System.Net/IPEndPoint.cs
 System.Net/IPv6Address.cs
 System.Net/IWebProxyScript.cs
 System.Net/IWebConnectionState.cs
@@ -410,7 +406,6 @@ System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/ServicePointManager.extra.cs
 System.Net/SimpleAsyncResult.cs
-System.Net/SocketAddress.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
@@ -1013,6 +1008,8 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs
 ../referencesource/System/net/System/Net/cookieexception.cs
+../referencesource/System/net/System/Net/DnsEndPoint.cs
+../referencesource/System/net/System/Net/EndPoint.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs
 ../referencesource/System/net/System/Net/HttpListenerException.cs
 ../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
@@ -1025,6 +1022,8 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/ICredentials.cs
 ../referencesource/System/net/System/Net/ICredentialsByHost.cs
 ../referencesource/System/net/System/Net/Internal.cs
+../referencesource/System/net/System/Net/IPAddress.cs
+../referencesource/System/net/System/Net/IPEndPoint.cs
 ../referencesource/System/net/System/Net/IPHostEntry.cs
 ../referencesource/System/net/System/Net/iwebproxy.cs
 ../referencesource/System/net/System/Net/IWebRequestCreate.cs
@@ -1035,6 +1034,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
 ../referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../referencesource/System/net/System/Net/ServicePointManager.cs
+../referencesource/System/net/System/Net/SocketAddress.cs
 ../referencesource/System/net/System/Net/webclient.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
