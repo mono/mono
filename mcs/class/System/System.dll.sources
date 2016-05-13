@@ -250,7 +250,6 @@ System.Net.Configuration/WebRequestModuleElementCollection.cs
 System.Net.Configuration/WebRequestModuleElement.cs
 System.Net.Configuration/WebRequestModuleHandler.cs
 System.Net.Configuration/WebRequestModulesSection.cs
-System.Net/ConnectionModes.cs
 System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs

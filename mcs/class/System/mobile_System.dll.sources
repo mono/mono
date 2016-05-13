@@ -172,7 +172,6 @@ System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
 System.Net/ChunkStream.cs
 System.Net/ChunkedInputStream.cs
-System.Net/ConnectionModes.cs
 System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
