@@ -22,7 +22,7 @@ namespace System.Net {
     using Microsoft.Win32;
     
     // This turned to be a legacy type name that is simply forwarded to System.Security.Authentication.SslProtocols defined values.
-#if !MONO && !FEATURE_PAL
+#if !FEATURE_PAL || MONO
     [Flags]
     public enum SecurityProtocolType
     {
@@ -31,7 +31,8 @@ namespace System.Net {
         Tls11         = System.Security.Authentication.SslProtocols.Tls11,
         Tls12         = System.Security.Authentication.SslProtocols.Tls12,
     }
-
+#endif
+#if !MONO && !FEATURE_PAL
     internal class CertPolicyValidationCallback
     {
         readonly ICertificatePolicy  m_CertificatePolicy;
