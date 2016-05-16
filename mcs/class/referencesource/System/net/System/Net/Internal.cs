@@ -981,7 +981,6 @@ namespace System.Net {
             }
         }
 
-#if MONO_FEATURE_WEB_STACK
         internal static WebException IsolatedException {
             get {
                 return new WebException(NetRes.GetWebStatusString("net_requestaborted", WebExceptionStatus.KeepAliveFailure),WebExceptionStatus.KeepAliveFailure, WebExceptionInternalStatus.Isolated, null);
@@ -1005,7 +1004,6 @@ namespace System.Net {
                 return new WebException(NetRes.GetWebStatusString("net_requestaborted", WebExceptionStatus.RequestProhibitedByCachePolicy), WebExceptionStatus.RequestProhibitedByCachePolicy);
             }
         }
-#endif
     }
 
     internal enum WindowsInstallationType
@@ -1893,7 +1891,6 @@ typedef struct _SCHANNEL_CRED
         WriteWait = 2,
     }
 
-#if MONO_FEATURE_WEB_STACK
     //
     // HttpVerb - used to define various per Verb Properties
     //
@@ -1964,7 +1961,7 @@ typedef struct _SCHANNEL_CRED
         }
     }
 
-
+#if MONO_FEATURE_WEB_STACK
     //
     // HttpProtocolUtils - A collection of utility functions for HTTP usage.
     //

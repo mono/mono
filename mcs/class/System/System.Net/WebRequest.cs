@@ -60,6 +60,8 @@ namespace System.Net
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
 
+		internal const int DefaultTimeout = 100000;
+
 		static WebRequest ()
 		{
 #if MOBILE
@@ -454,12 +456,11 @@ namespace System.Net
 
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			throw new NotSupportedException ();
+			GetObjectData(serializationInfo, streamingContext);
 		}
 
 		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			throw GetMustImplement ();
 		}
 
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
@@ -543,6 +544,5 @@ namespace System.Net
 		{
 			return Task<WebResponse>.Factory.FromAsync (BeginGetResponse, EndGetResponse, null);
 		}
-
 	}
 }

@@ -186,10 +186,10 @@ namespace System.Net
 			if (!IsHeaderValue (headerValue))
 				throw new ArgumentException ("invalid header value: " + headerValue, "headerValue");
 			
-			AddValue (headerName, headerValue);
+			AddInternal (headerName, headerValue);
 		}
 			
-		internal void AddValue (string headerName, string headerValue)
+		internal void AddInternal (string headerName, string headerValue)
 		{
 			base.Add (headerName, headerValue);			
 		}
