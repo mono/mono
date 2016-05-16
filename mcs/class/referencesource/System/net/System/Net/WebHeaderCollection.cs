@@ -14,7 +14,7 @@ namespace System.Net {
     using System.Globalization;
     using System.Security.Permissions;
     using System.Diagnostics.CodeAnalysis;
-
+#if !MONO
     internal enum WebHeaderCollectionType : ushort {
         Unknown,
         WebRequest,
@@ -1971,7 +1971,7 @@ quit:
                 m_InnerCollection.Clear();
         }
     } // class WebHeaderCollection
-
+#endif
 
     internal class CaseInsensitiveAscii : IEqualityComparer, IComparer{
         // ASCII char ToLower table

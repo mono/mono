@@ -176,9 +176,6 @@ System.Net/Dns.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
-System.Net/FileWebRequest.cs
-System.Net/FileWebRequestCreator.cs
-System.Net/FileWebResponse.cs
 System.Net/FtpAsyncResult.cs
 System.Net/FtpDataStream.cs
 System.Net/FtpRequestCreator.cs
@@ -710,6 +707,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/UriScheme.cs
 
 ../referencesource/System/net/System/Net/_BufferOffsetSize.cs
+../referencesource/System/net/System/Net/_IStreams.cs
+../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
@@ -723,6 +722,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/DnsEndPoint.cs
 ../referencesource/System/net/System/Net/EndPoint.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs
+../referencesource/System/net/System/Net/filewebrequest.cs
+../referencesource/System/net/System/Net/filewebresponse.cs
 ../referencesource/System/net/System/Net/HttpListenerException.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
 ../referencesource/System/net/System/Net/HttpResponseHeader.cs
@@ -750,6 +751,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/webclient.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
+../referencesource/System/net/System/Net/WebHeaderCollection.cs
 ../referencesource/System/net/System/Net/WebPermission.cs
 ../referencesource/System/net/System/Net/WebRequestMethods.cs
 ../referencesource/System/net/System/Net/WebResponse.cs

@@ -294,7 +294,7 @@ namespace System.Net.Http
 				if (values_formated == null)
 					continue;
 
-				headers.AddValue (header.Key, values_formated);
+				headers.AddInternal (header.Key, values_formated);
 			}
 			
 			return wr;
@@ -343,7 +343,7 @@ namespace System.Net.Http
 
 						foreach (var header in content.Headers) {
 							foreach (var value in header.Value) {
-								headers.AddValue (header.Key, value);
+								headers.AddInternal (header.Key, value);
 							}
 						}
 
