@@ -279,7 +279,7 @@ public class IPAddressTest
 	{
 		try {
 			IPAddress ip1 = new IPAddress (0x0000000100000000);
-			Assertion.Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (ArgumentOutOfRangeException) {}
 		
 		IPAddress ip = IPAddress.Parse ("127.0.0.1");
