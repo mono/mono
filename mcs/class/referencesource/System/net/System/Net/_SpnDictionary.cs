@@ -43,7 +43,9 @@ namespace System.Net {
         //
         public override int Count {
             get {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 return m_SyncTable.Count;
             }
         }
@@ -106,7 +108,9 @@ namespace System.Net {
         //
         public override ICollection Keys {
             get {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 return m_SyncTable.Keys;
             }
         }
@@ -114,14 +118,18 @@ namespace System.Net {
         public override object SyncRoot {
             [HostProtection(Synchronization=true)]
             get {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 return m_SyncTable;
             }
         }
         //
         public override ICollection Values {
             get {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 if (m_ValuesWrapper == null)
                 {
                     m_ValuesWrapper = new ValueCollection(this);
@@ -136,7 +144,9 @@ namespace System.Net {
         }
         //
         public override void Clear() {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
             m_SyncTable.Clear();
         }
         //
@@ -146,7 +156,9 @@ namespace System.Net {
         }
         //
         public override bool ContainsValue(string value) {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
             foreach (SpnToken spnToken in m_SyncTable.Values)
             {
                 if (spnToken.Spn == value)
@@ -157,7 +169,9 @@ namespace System.Net {
 
         // We have to unwrap the SpnKey and just expose the Spn
         public override void CopyTo(Array array, int index) {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
             CheckCopyToArguments(array, index, Count);
 
             int offset = 0;
@@ -169,7 +183,9 @@ namespace System.Net {
         }
         //
         public override IEnumerator GetEnumerator() {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
 
             foreach (string key in m_SyncTable.Keys)
             {
@@ -195,7 +211,9 @@ namespace System.Net {
             try {
                 Uri uri = new Uri(key);
                 key = uri.GetParts(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.SafeUnescaped);
+#if !DISABLE_CAS_USE
                 new WebPermission(NetworkAccess.Connect, new Uri(key)).Demand();
+#endif
             }
             catch(UriFormatException e) {
                 throw new ArgumentException(SR.GetString(SR.net_mustbeuri, "key"), "key", e);
