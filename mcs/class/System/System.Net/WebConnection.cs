@@ -261,7 +261,7 @@ namespace System.Net
 					var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
 					if (auth == null)
 						continue;
-					ntlm = (auth.Module.AuthenticationType == "NTLM");
+					ntlm = (auth.ModuleAuthenticationType == "NTLM");
 					sb.Append ("\r\nProxy-Authorization: ");
 					sb.Append (auth.Message);
 					break;

@@ -164,7 +164,6 @@ System.Net.Sockets/TcpListener.cs
 System.Net.Sockets/UdpClient.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
 System.Net/AuthenticationManager.cs
-System.Net/Authorization.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
 System.Net/ChunkStream.cs
@@ -716,6 +715,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
 ../referencesource/System/net/System/Net/AuthenticationSchemeSelector.cs
+../referencesource/System/net/System/Net/Authorization.cs
 ../referencesource/System/net/System/Net/cookie.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs

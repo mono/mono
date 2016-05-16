@@ -1631,7 +1631,7 @@ namespace System.Net
 					return false;
 				request.webHeaders [isProxy ? "Proxy-Authorization" : "Authorization"] = auth.Message;
 				isCompleted = auth.Complete;
-				bool is_ntlm = (auth.Module.AuthenticationType == "NTLM");
+				bool is_ntlm = (auth.ModuleAuthenticationType == "NTLM");
 				if (is_ntlm)
 					ntlm_auth_state = (NtlmAuthState)((int) ntlm_auth_state + 1);
 				return true;
