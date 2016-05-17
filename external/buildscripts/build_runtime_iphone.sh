@@ -28,9 +28,9 @@ MAKE_JOBS=4
 
 perl "external/buildscripts/prepare_osx_build.pl"
 
-PATH=$PWD/external/mono-build-deps/built_tools:$PATH
-LIBTOOL=$PWD/external/mono-build-deps/built_tools/libtool
-LIBTOOLIZE=$PWD/external/mono-build-deps/built_tools/libtoolize
+PATH=$PWD/external/mono-build-deps/built_tools/bin:$PATH
+LIBTOOL=$PWD/external/mono-build-deps/built_tools/bin/libtool
+LIBTOOLIZE=$PWD/external/mono-build-deps/built_tools/bin/libtoolize
 
 echo "LIBTOOL = $LIBTOOL"
 echo "LIBTOOLIZE = $LIBTOOLIZE"
