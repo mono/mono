@@ -117,7 +117,7 @@ mono_handle_elevate (MonoHandle handle)
 
 #define mono_handle_obj(handle) ((handle)->__private_obj)
 
-#define mono_handle_assign(handle,rawptr) do { (handle)->__private_obj = (rawptr); } while(0)
+#define mono_handle_assign_raw(handle,rawptr) do { (handle)->__private_obj = (rawptr); } while(0)
 
 #else
 
@@ -129,9 +129,11 @@ mono_handle_check_in_critical_section ()
 
 #define mono_handle_obj(handle) (mono_handle_check_in_critical_section (), (handle)->__private_obj)
 
-#define mono_handle_assign(handle,rawptr) do { mono_handle_check_in_critical_section (); (handle)->__private_obj = (rawptr); } while (0)
+#define mono_handle_assign_raw(handle,rawptr) do { mono_handle_check_in_critical_section (); (handle)->__private_obj = (rawptr); } while (0)
 
 #endif
+
+#define mono_handle_assign(lhs,rhs) mono_handle_assign_raw (lhs, (rhs)->__private_obj)
 
 static inline MonoClass*
 mono_handle_class (MonoHandle handle)
@@ -154,12 +156,10 @@ mono_handle_domain (MonoHandle handle)
 
 #define MONO_HANDLE_DCL(type,name)	MONO_HANDLE_TYPE(type) name = MONO_HANDLE_NEW(type,name ## _raw)
 
-#define MONO_HANDLE_ELEVATE(type,handle) ((type ## Handle) mono_handle_elevate ((MonoObject*) (handle)->__private_obj))
+#define MONO_HANDLE(type,name)	MONO_HANDLE_TYPE(type) name = { NULL }
 
-#define MONO_HANDLE_ASSIGN(handle,rawptr)	\
-	do {	\
-		mono_handle_assign ((handle), (rawptr));	\
-	} while (0)
+
+#define MONO_HANDLE_ELEVATE(type,handle) ((type ## Handle) mono_handle_elevate ((MonoObject*) (handle)->__private_obj))
 
 #define MONO_HANDLE_SETREF(handle,fieldname,value)			\
 	do {								\
