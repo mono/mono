@@ -1,5 +1,5 @@
 #!/bin/sh
-SDK_VERSION=7.1
+SDK_VERSION=9.3
 MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
@@ -7,6 +7,9 @@ XCOMP_ASPEN_ROOT=$PWD/external/mono-build-deps/MacBuildEnvironment/builds/MacOSX
 BUILDSCRIPTSDIR=external/buildscripts
 
 # allow to build with older SDKs temporarily
+if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
+	SDK_VERSION=7.1
+fi
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
 	SDK_VERSION=5.1
 fi
@@ -53,13 +56,13 @@ setenv () {
 	export C_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	export CPLUS_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
-	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os"
-	export CPPFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
+	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os -isysroot $ASPEN_ROOT"
+	export CPPFLAGS="$CFLAGS  -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	export CXXFLAGS="$CFLAGS  -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
 	export CC="gcc -arch $1"
 	export CXX="g++ -arch $1"
-	export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
-	export CXXPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	# export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	# export CXXPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
 	export LD=$CC
 	export LDFLAGS="-liconv -Wl,-syslibroot,$ASPEN_SDK"
 }
