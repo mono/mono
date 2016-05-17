@@ -21,9 +21,34 @@ default only the assemblies specified in the command line will be
 included in the bundle.  To automatically include all of the
 dependencies referenced, use the "--deps" command line option.
 .PP
-Use \fImkbundle\FP when you want the startup runtime to load the 1.0
-profile, and use \fImkbundle2\fP when you want the startup runtime to load
-the 2.0 profile.
+There are two modes of operation, the default one uses the
+C compiler to create a bundle and requires a complete C and Mono SDK
+to produced executables.   The simple mode (enabled when using the
+"--simple") command line option does not require this, and also allows
+for cross compilation.
+.PP
+For example, to create a bundle for hello world, use the following
+command:
+.nf
+	$ mkbundle -o hello --simple hello.exe
+.fi
+.PP
+The simple version allows for cross-compiling, this requires a Mono
+runtime to be installed in the ~/.mono/targets/TARGET/mono to be
+available.   You can use the "--local-targets" to list all available
+targets, and the "--cross" argument to specify the target, like this:
+.nf
+	$ mkbundle --local-targets	
+	Available targets:
+		default	- Current System Mono
+		4.4.0-macosx-x86
+		4.4.0-debian-8-arm64
+	$ mkbundle --cross 4.4.0-debian-8-arm64 hello.exe -o hello-debian
+.fi
+.PP
+The above will bundle your native library into hello-debian for
+a Debian 8 system running on an ARM64 machine.
+.SH OLD EMBEDDING
 .PP
 For example, to create a bundle for hello world, use the following
 command:
@@ -57,6 +82,12 @@ are available to the embedded runtime.
 .I "-c"
 Produce the stub file, do not compile the resulting stub.
 .TP
+.I "--cross target"
+Creates a bundle for the specified target platform.   The target
+must be a directory in ~/.mono/targets/ that contains a "mono"
+binary.   You can fetch various targets using the --fetch-target
+command line option.
+.TP
 .I "-o filename"
 Places the output on `out'.  If the flag -c is specified, this is the
 C host program.  If not, this contains the resulting executable.
@@ -74,19 +105,30 @@ Typically this is $prefix/etc/mono/1.0/machine.config or
 $prefix/etc/mono/2.0/machine.config depending on the profile that you
 are using (1.0 or 2.0)
 .TP
-.I  "--nodeps"
-This is the default: \fImkbundle\fP will only include the assemblies that
-were specified on the command line to reduce the size of the resulting
-image created.
-.TP
 .I "--deps"
 This option will bundle all of the referenced assemblies for the
 assemblies listed on the command line option.  This is useful to
 distribute a self-contained image.
 .TP
+.I "--fetch-target target"
+Downloads a precompiled runtime for the specified target from the Mono
+distribution site.
+.TP
+.I  "--nodeps"
+This is the default: \fImkbundle\fP will only include the assemblies that
+were specified on the command line to reduce the size of the resulting
+image created.
+.TP
 .I "--keeptemp"
 By default \fImkbundle\fP will delete the temporary files that it uses to
 produce the bundle.  This option keeps the file around.
+.TP
+.I "--lists-targets"
+Lists all of the available local cross compilation targets available
+as precompiled binaries on the Mono distribution server.
+.TP
+.I "--local-targets"
+Lists all of the available local cross compilation targets.
 .TP
 .I "--machine-config FILE"
 Uses the given FILE as the machine.config file for the generated
@@ -102,13 +144,10 @@ When passed, DIR will be set for the MONO_CFG_DIR environment variable
 By default \fImkbundle\fP dynamically links to mono and glib.  This option
 causes it to statically link instead.
 .TP
-.B Important:
-Since the Mono runtime is licensed under the LGPL, even if you use
-static you should transfer the component pieces of the mkbundle to
-your users so they are able to upgrade the Mono runtime on their own.
-.TP
-If you want to use this for commercial licenses, you must obtain a
-proprietary license for Mono from mono@novell.com
+.I "--target-server SERVER"
+By default the mkbundle tool will download from a Mono server the
+target runtimes, you can specify a different server to provide
+cross-compiled runtimes.
 .TP
 .I "-z"
 Compresses the assemblies before embedding. This results in smaller
@@ -133,6 +172,8 @@ Mono runtime, separated by spaces. See the mono(1) manual page or run mono --hel
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
+.PP
+Targets are loaded from ~/.mono/targets/TARGETNAME/mono
 .SH BUGS
 The option "--static" is not supported under Windows.
 Moreover, a full cygwin environment containing at least "gcc" and "as"
