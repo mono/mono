@@ -51,7 +51,7 @@ class MakeBundle {
 	static bool custom_mode = true;
 	static string embedded_options = null;
 	static string runtime = null;
-	static string target_server = "https://runtimes.go-mono.com/raw/";
+	static string target_server = "https://download.mono-project.com/runtimes/raw/";
 	
 	static int Main (string [] args)
 	{
