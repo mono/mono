@@ -3167,27 +3167,24 @@ namespace System.Net.Sockets
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
 		{
-			ThrowIfDisposedAndClosed ();
-
-			int error;
 			int int_val = optionValue ? 1 : 0;
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, int_val, out error);
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
+			SetSocketOption (optionLevel, optionName, int_val);
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
 		{
 			ThrowIfDisposedAndClosed ();
 
+			if (optionName == SocketOptionName.ReuseAddress && optionValue != 0 && !SupportsPortReuse ())
+				throw new SocketException ((int) SocketError.OperationNotSupported, "Operating system sockets do not support ReuseAddress.\nIf your socket is not intended to bind to the same address and port multiple times remove this option, otherwise you should ignore this exception inside a try catch and check that ReuseAddress is true before binding to the same address and port multiple times.");
+
 			int error;
 			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, optionValue, out error);
 
 			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
