@@ -43,11 +43,11 @@ targets, and the "--cross" argument to specify the target, like this:
 		default	- Current System Mono
 		4.4.0-macosx-x86
 		4.4.0-debian-8-arm64
-	$ mkbundle --cross 4.4.0-debian-8-x86 hello.exe -o hello-debian
+	$ mkbundle --cross 4.4.0-debian-8-powerpc hello.exe -o hello-debian
 .fi
 .PP
 The above will bundle your native library into hello-debian for
-PowerPC running on ARM64.
+a Debian 8 system running on a PowerPC machine.
 .SH OLD EMBEDDING
 .PP
 For example, to create a bundle for hello world, use the following
