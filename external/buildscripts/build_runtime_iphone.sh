@@ -28,9 +28,9 @@ MAKE_JOBS=4
 
 perl "external/buildscripts/prepare_osx_build.pl"
 
-PATH=$PWD/external/mono-build-deps/built_tools/bin:$PATH
-LIBTOOL=$PWD/external/mono-build-deps/built_tools/bin/libtool
-LIBTOOLIZE=$PWD/external/mono-build-deps/built_tools/bin/libtoolize
+PATH=$PWD/external/mono-build-deps/built-tools/bin:$PATH
+LIBTOOL=$PWD/external/mono-build-deps/built-tools/bin/libtool
+LIBTOOLIZE=$PWD/external/mono-build-deps/built-tools/bin/libtoolize
 
 echo "LIBTOOL = $LIBTOOL"
 echo "LIBTOOLIZE = $LIBTOOLIZE"
@@ -40,11 +40,11 @@ echo ""
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 	echo "Erasing builds folder to make sure we start with a clean slate"
 	rm -rf builds
-	if test -e /usr/local/bin/libtool; then
-		LIBTOOL=/usr/local/bin/libtool
-	elif test -e /usr/local/bin/glibtool; then
-		LIBTOOL=/usr/local/bin/glibtool
-	fi
+	#if test -e /usr/local/bin/libtool; then
+	#	LIBTOOL=/usr/local/bin/libtool
+	#elif test -e /usr/local/bin/glibtool; then
+	#	LIBTOOL=/usr/local/bin/glibtool
+	#fi
 	MAKE_JOBS=""
 else
 	MAKE_JOBS="-j$MAKE_JOBS"
@@ -57,8 +57,8 @@ setenv () {
 	export CPLUS_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
 	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os -isysroot $ASPEN_ROOT"
-	export CPPFLAGS="$CFLAGS  -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
-	export CXXFLAGS="$CFLAGS  -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	export CPPFLAGS="$CFLAGS -U__powerpc__ -U__i386__ -D__arm__"
+	export CXXFLAGS="$CFLAGS -U__powerpc__ -U__i386__ -D__arm__"
 	export CC="gcc -arch $1"
 	export CXX="g++ -arch $1"
 	# export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
