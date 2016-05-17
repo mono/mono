@@ -62,6 +62,14 @@ if ($externalBuildDeps ne "")
 
 		chdir("$root") eq 1 or die ("failed to chdir to $root\n");
 	}
+
+	my $sdkversion = "10.6";
+	my $sdkPath = "$externalBuildDeps/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
+	if (! -d $sdkPath)
+	{
+		print("Unzipping mac build toolchain\n");
+		system('unzip', '-qd', "$externalBuildDeps/MacBuildEnvironment", "$externalBuildDeps/MacBuildEnvironment/builds.zip");
+	}
 }
 
 print ">>> Checking on some tools...\n";
