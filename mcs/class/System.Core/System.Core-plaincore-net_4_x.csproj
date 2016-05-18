@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
     <OutputPath>./../../class/lib/net_4_x/plaincore</OutputPath>
+    <IntermediateOutputPath>obj-plaincore</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
