@@ -43,7 +43,6 @@ using System.Security;
 [assembly: ComVisible (false)]
 [assembly: AssemblyFileVersion ("1.0.20105.407")]
 [assembly: AssemblyVersion ("1.0.0.0")]
-[assembly: TargetFramework (".NETFramework,Version=v4.0", FrameworkDisplayName=".NET Framework 4")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: CompilationRelaxations (8)]
 [assembly: AssemblyTitle ("Microsoft.Web.Infrastructure")]
