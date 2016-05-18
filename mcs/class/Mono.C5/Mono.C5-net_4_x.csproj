@@ -10,6 +10,7 @@
     <NoWarn>1699,169,219,414,1030,3001,3005,3006</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>

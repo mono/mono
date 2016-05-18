@@ -10,6 +10,7 @@
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -419,9 +420,9 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="Microsoft.Web.Infrastructure">
+    <Reference Include="./../../class/lib/net_4_x/Microsoft.Web.Infrastructure.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Web.Infrastructure</HintPath>
+      <HintPath>./../../class/lib/net_4_x/Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../System/System-net_4_x.csproj">

@@ -10,6 +10,7 @@
     <NoWarn>1699,618,612</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
