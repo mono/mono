@@ -36,9 +36,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-#if !NET40
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-#endif
 	public class ImageAttributesTest {
 
 		static ColorMatrix global_color_matrix = new ColorMatrix (new float[][] {

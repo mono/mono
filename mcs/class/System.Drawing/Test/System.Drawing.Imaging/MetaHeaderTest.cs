@@ -35,9 +35,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-#if !NET40
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-#endif
 	public class MetaHeaderTest {
 
 		[Test]

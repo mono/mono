@@ -1,4 +1,4 @@
-//
+﻿//
 // ImageCodecInfo class testing unit
 //
 // Authors:
@@ -39,9 +39,6 @@ using System.Text.RegularExpressions;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-#if !NET40
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-#endif
 	public class ImageCodecInfoTest {
 
 		Hashtable decoders;

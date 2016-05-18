@@ -35,9 +35,6 @@ using System.Security.Permissions;
 namespace MonoTests.System.Drawing {
 
 	[TestFixture]
-#if !NET40
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-#endif
 	public class BrushesTest {
 
 		[Test]
