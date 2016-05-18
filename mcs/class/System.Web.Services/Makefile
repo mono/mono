@@ -56,7 +56,10 @@ EXTRA_DISTFILES = \
 
 include ../../build/library.make
 
-$(the_libdir_base)$(LIBRARY): $(system_web_deps) $(system_design_deps)
+$(the_libdir_base)$(LIBRARY): $(system_web_deps) $(system_design_deps) t
+
+t:
+	echo $(plaindesign)
 
 $(plainweb):
 	(cd ../System.Web; $(MAKE) $@)

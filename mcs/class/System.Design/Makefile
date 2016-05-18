@@ -13,6 +13,10 @@ TEST_MCS_FLAGS =
 include ../../build/library.make
 
 ifneq (plaindesign/,$(intermediate))
+csproj-local:
+	$(MAKE) csproj-local intermediate=plaindesign/
+
 $(the_libdir_base)plaindesign/System.Design.dll:
 	$(MAKE) intermediate=plaindesign/ $(the_libdir_base)plaindesign/System.Design.dll
 endif
+

@@ -156,11 +156,10 @@
       <Project>{9DB806CB-B828-49B7-BAE2-2E52402CB4DC}</Project>
       <Name>System.Web-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../class/lib/net_4_x/Microsoft.Web.Infrastructure.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_x/Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../Microsoft.Web.Infrastructure/Microsoft.Web.Infrastructure-net_4_x.csproj">
+      <Project>{CD409902-9DA0-48A3-B360-C09060168CB5}</Project>
+      <Name>Microsoft.Web.Infrastructure-net_4_x</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
