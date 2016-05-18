@@ -35,7 +35,9 @@ using System.Security.Permissions;
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
+#if !NET40
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+#endif
 	public class PointTest {
 		Point pt1_1;
 		Point pt1_0;

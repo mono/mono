@@ -34,7 +34,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
+#if !NET40
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+#endif
 	public class ImageFormatTest {
 
 		private static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("b96b3cab-0728-11d3-9d7b-0000f81ef32e"));

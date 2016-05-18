@@ -38,7 +38,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
+#if !NET40
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+#endif
 	public class StringFormatTest {
 
 		private void CheckDefaults (StringFormat sf)
