@@ -26,8 +26,8 @@ fi
 ${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
 if [[ ${label} == w* ]];
     then
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe /p:Platform=${PLATFORM} /p:Configuration=Release msvc/mono.sln
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe /p:Platform=${PLATFORM} /p:Configuration=Release_SGen msvc/mono.sln
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release msvc/mono.sln
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release_SGen msvc/mono.sln
 fi
 ${TESTCMD} --label=make --timeout=300m --fatal make -w V=1
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
