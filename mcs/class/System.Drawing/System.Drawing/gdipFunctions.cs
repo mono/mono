@@ -1890,7 +1890,7 @@ namespace System.Drawing
 			
 			public void StreamCloseImpl ()
 			{
-				stream.Close ();
+				stream.Dispose ();
 			}
 
 			public StreamCloseDelegate CloseDelegate {

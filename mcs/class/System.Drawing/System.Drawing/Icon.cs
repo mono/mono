@@ -861,10 +861,10 @@ Console.WriteLine ("\tbih.biClrImportant: {0}", bih.biClrImportant);
 				}
 				
 				imageData [j] = iidata;
-				bihReader.Close();
+				bihReader.Dispose();
 			}			
 
-			reader.Close();
+			reader.Dispose();
 		}
 	}
 }
