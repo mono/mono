@@ -95,6 +95,7 @@ namespace System.Drawing
 			throw new NotSupportedException (msg);
 		}
 
+#if !CORECLR
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value, Attribute[] attributes)
 		{
 			return TypeDescriptor.GetProperties (typeof (Image), attributes);
@@ -104,5 +105,6 @@ namespace System.Drawing
 		{
 			return true; 
 		}
+#endif
 	}
 }

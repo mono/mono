@@ -165,6 +165,7 @@ namespace System.Drawing
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
+#if !CORECLR
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
 			ImageFormat[] list = new ImageFormat [10];
@@ -185,5 +186,6 @@ namespace System.Drawing
 		{
 			return true;
 		}
+#endif
 	}
 }

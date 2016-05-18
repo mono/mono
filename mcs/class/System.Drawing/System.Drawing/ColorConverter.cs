@@ -220,6 +220,7 @@ namespace System.Drawing
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
+#if !CORECLR
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
 			lock (creatingCached) {
@@ -241,6 +242,7 @@ namespace System.Drawing
 		{
 			return true;
 		}
+#endif
 
 		sealed class CompareColors : IComparer {
 

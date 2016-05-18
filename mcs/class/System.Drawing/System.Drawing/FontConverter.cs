@@ -214,6 +214,7 @@ namespace System.Drawing
 			return new Font (font, f_size, f_style, f_unit);
 		}
 
+#if !CORECLR
 		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
 		{
 			Object value;
@@ -317,6 +318,7 @@ namespace System.Drawing
 		{
 			return true;
 		}
+#endif
 
 		public sealed class FontNameConverter : TypeConverter
 		, IDisposable		
@@ -345,6 +347,7 @@ namespace System.Drawing
 				return base.ConvertFrom (context, culture, value);
 			}
 
+#if !CORECLR
 			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 			{
 				string [] values = new string [fonts.Length];
@@ -367,17 +370,20 @@ namespace System.Drawing
 				// Yes, we support picking an element from the list. 
 				return true;
 			}
+#endif
 		}
 
 		public class FontUnitConverter : EnumConverter
 		{
 			public FontUnitConverter () : base (typeof (GraphicsUnit)) {}
 			
+#if !CORECLR
 			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 			{
 				return base.GetStandardValues (context);
 			}
 				
+#endif
 		}
 	}
 }
