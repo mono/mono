@@ -91,8 +91,16 @@ namespace System.Drawing
 
 		static GDIPlus ()
 		{
-			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 6) || (platform == 128)) {
+			bool isLinuxOrMac = false;
+
+#if !CORECLR
+			int platform = (int)Environment.OSVersion.Platform;
+			isLinuxOrMac = ((platform == 4) || (platform == 6) || (platform == 128));
+#else
+			isLinuxOrMac = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#endif
+
+			if (isLinuxOrMac) {
 				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
 					UseX11Drawable = true;
 				} else {
@@ -126,7 +134,10 @@ namespace System.Drawing
 			}
 
 			// under MS 1.x this event is raised only for the default application domain
+			// For CoreCLR, the process exit event doesn't exist (yet): https://github.com/dotnet/corefx/issues/5205
+#if !CORECLR
 			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
+#endif
 		}
 
 		static public bool RunningOnWindows ()
