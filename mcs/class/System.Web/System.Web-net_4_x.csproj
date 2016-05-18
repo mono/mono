@@ -1554,11 +1554,10 @@
       <Project>{E43ADBA7-5DB9-466B-90C6-FFFDA520848D}</Project>
       <Name>System.Web.Services-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../class/lib/net_4_x/plaindesign/System.Design.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_x/plaindesign/System.Design.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../System.Design/System.Design-plaindesign-net_4_x.csproj">
+      <Project>{6FC8169B-4128-46FE-8357-5D3CE8D6FA42}</Project>
+      <Name>System.Design-plaindesign-net_4_x</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
