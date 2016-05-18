@@ -24,11 +24,20 @@ namespace System.Net.NetworkInformation {
         internal bool transient = false;
         internal bool dnsEligible = true;
 
+#if MONO
+        public SystemIPAddressInformation(IPAddress address, bool isDnsEligible, bool isTransient)
+        {
+            this.address = address;
+            this.dnsEligible = isDnsEligible;
+            this.transient = isTransient;
+        }
+#else
         internal SystemIPAddressInformation(IPAddress address, AdapterAddressFlags flags) {
             this.address = address;
             transient = (flags & AdapterAddressFlags.Transient) > 0;
             dnsEligible = (flags & AdapterAddressFlags.DnsEligible) > 0;
         }
+#endif
 
         public override IPAddress Address{get {return address;}}
 

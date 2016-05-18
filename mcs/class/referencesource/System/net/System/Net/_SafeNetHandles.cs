@@ -315,6 +315,8 @@ namespace System.Net {
 #endif // !FEATURE_PAL
 
     }
+
+#if !MONO
     //
     // This class is a wrapper for Http.sys V2 request queue handle.
     //
@@ -389,7 +391,7 @@ namespace System.Net {
             return true;
         }
     }
-
+#endif
     //
     // SafeHandle to wrap handles created by IcmpCreateFile or Icmp6CreateFile
     // from either icmp.dll or iphlpapi.dll. These handles must be closed by
@@ -412,6 +414,7 @@ namespace System.Net {
         }
     }
 
+#if !MONO
     //
     // Used when working with WinHTTP APIs, like WinHttpOpen(). Holds the HINTERNET handle.
     //
@@ -447,6 +450,7 @@ namespace System.Net {
             return UnsafeNclNativeMethods.SspiHelper.SspiFreeAuthIdentity(handle) == SecurityStatus.OK;
         }
     }
+#endif
     
 #if !FEATURE_PAL
 
@@ -676,6 +680,7 @@ namespace System.Net {
         }
     }
 
+#if !MONO
     ///////////////////////////////////////////////////////////////
     //
     // A few Win32 APIs return pointers to blobs that need GlobalFree().
@@ -754,6 +759,7 @@ namespace System.Net {
             return UnsafeNclNativeMethods.SafeNetHandles.LocalFree(handle) == IntPtr.Zero;
         }
     }
+#endif
 
 #if !FEATURE_PAL
     [SuppressUnmanagedCodeSecurity]
@@ -2136,6 +2142,7 @@ namespace System.Net {
 
 #endif // !FEATURE_PAL
 
+#if !MONO
     internal class SafeNativeOverlapped : SafeHandle
     {
         internal static readonly SafeNativeOverlapped Zero = new SafeNativeOverlapped();
@@ -2740,6 +2747,7 @@ namespace System.Net {
         }
 
     }
+#endif
 
 #if !FEATURE_PAL
 

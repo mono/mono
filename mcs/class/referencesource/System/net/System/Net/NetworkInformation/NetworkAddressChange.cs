@@ -26,7 +26,7 @@ namespace System.Net.NetworkInformation {
             }
         }
     }
-
+#if !MONO
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1053:StaticHolderTypesShouldNotHaveConstructors")]
     public class NetworkChange{
     #region designer support for System.Windows.dll
@@ -332,7 +332,7 @@ namespace System.Net.NetworkInformation {
             } //ends ignoreaddresschanges
         }
     }
-
+#endif
     public delegate void NetworkAddressChangedEventHandler(object sender, EventArgs e);
     public delegate void NetworkAvailabilityChangedEventHandler(object sender, NetworkAvailabilityEventArgs e);
 }
