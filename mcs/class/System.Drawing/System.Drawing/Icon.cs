@@ -39,6 +39,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -230,7 +231,11 @@ namespace System.Drawing
 			if (resource == null)
 				throw new ArgumentException ("resource");
 
+#if NETCORE
+			using (Stream s = type.GetTypeInfo().Assembly.GetManifestResourceStream (type, resource)) {
+#else
 			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
+#endif
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 					throw new FileNotFoundException (msg);
@@ -262,8 +267,17 @@ namespace System.Drawing
 
 		internal Icon (string resourceName, bool undisposable)
 		{
-			using (Stream s = typeof (Icon).Assembly.GetManifestResourceStream (resourceName)) {
-				if (s == null) {
+			string resourcePrefix = string.Empty;
+#if RESOURCES_ASSEMBLY_PREFIX
+            resourcePrefix = "System.Drawing.";
+#endif
+
+#if CORECLR
+			using (Stream s = typeof (Icon).GetTypeInfo().Assembly.GetManifestResourceStream (resourcePrefix + resourceName)) {
+#else
+			using (Stream s = typeof (Icon).Assembly.GetManifestResourceStream (resourcePrefix + resourceName)) {
+#endif
+			if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resourceName);
 					throw new FileNotFoundException (msg);
 				}
