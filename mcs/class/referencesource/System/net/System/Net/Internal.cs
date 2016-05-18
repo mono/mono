@@ -1961,7 +1961,6 @@ typedef struct _SCHANNEL_CRED
         }
     }
 
-#if MONO_FEATURE_WEB_STACK
     //
     // HttpProtocolUtils - A collection of utility functions for HTTP usage.
     //
@@ -1995,7 +1994,6 @@ typedef struct _SCHANNEL_CRED
             return D.ToUniversalTime().ToString("R", dateFormat);
         }
     }
-#endif
 
 #if !FEATURE_PAL
     // Proxy class for linking between ICertificatePolicy <--> ICertificateDecider
