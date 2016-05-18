@@ -431,7 +431,7 @@ namespace System.Drawing
 				if (systemFontName == null)
 					return false;
 
-				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
+				return StringComparer.Ordinal.Compare (systemFontName, string.Empty) != 0;
 			}
 		}
 
