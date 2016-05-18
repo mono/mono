@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Design.dll
 
-LIB_REFS = System System.Xml System.Windows.Forms System.Drawing Accessibility System.Data System.Configuration
+LIB_REFS = System System.Xml plainweb/System.Web System.Windows.Forms System.Drawing Accessibility System.Data System.Configuration
 LIB_MCS_FLAGS =
 
 TEST_LIB_REFS = System System.Drawing System.Windows.Forms
@@ -18,7 +18,6 @@ else
 csproj-local:
 	$(MAKE) csproj-local intermediate=plaindesign/
 
-LIB_REFS += plainweb/System.Web
 $(the_libdir_base)plaindesign/System.Design.dll:
 	$(MAKE) intermediate=plaindesign/ $(the_libdir_base)plaindesign/System.Design.dll
 endif
