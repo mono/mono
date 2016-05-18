@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,612,618,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_x/plainweb</OutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
     <NoConfig>True</NoConfig>
