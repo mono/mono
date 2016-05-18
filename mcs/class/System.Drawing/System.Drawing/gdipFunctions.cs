@@ -984,11 +984,11 @@ namespace System.Drawing
 #if !TEST
 		// Stream functions for Win32 (original Win32 ones)
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr image);
+		internal static extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.Interface)] IStream stream, out IntPtr image);
   		
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
-#endif  		
+		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.Interface)] IStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
+#endif
 				
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
@@ -1665,15 +1665,15 @@ namespace System.Drawing
 			ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #if !TEST
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
+		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.Interface)] IStream stream, out IntPtr metafile);
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr header);
+		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.Interface)] IStream stream, IntPtr header);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipRecordMetafileStream ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc, 
+		internal static extern Status GdipRecordMetafileStream ([MarshalAs(UnmanagedType.Interface)] IStream stream, IntPtr hdc, 
 			EmfType type, ref RectangleF frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipRecordMetafileStreamI ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc, 
+		internal static extern Status GdipRecordMetafileStreamI ([MarshalAs(UnmanagedType.Interface)] IStream stream, IntPtr hdc, 
 			EmfType type, ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #endif
 		//ImageCodecInfo functions
