@@ -268,7 +268,7 @@
       <Name>System.Web-plainweb-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Design/System.Design-plaindesign-net_4_x.csproj">
-      <Project>{6FC8169B-4128-46FE-8357-5D3CE8D6FA42}</Project>
+      <Project>{DCE556E9-EF89-45F3-A51F-83D3C3E0FEF5}</Project>
       <Name>System.Design-plaindesign-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.DirectoryServices/System.DirectoryServices-net_4_x.csproj">
