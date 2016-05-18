@@ -14,7 +14,7 @@ namespace System.Net {
     using System.Globalization;
     using System.Security.Permissions;
     using System.Diagnostics.CodeAnalysis;
-#if !MONO
+
     internal enum WebHeaderCollectionType : ushort {
         Unknown,
         WebRequest,
@@ -246,7 +246,14 @@ namespace System.Net {
         // this is the object that created the header collection.
         private WebHeaderCollectionType m_Type;
 
-#if !FEATURE_PAL
+#if MONO
+        internal bool AllowMultiValues (string name)
+        {
+            return HInfo[name].AllowMultiValues;
+        }
+#endif
+
+#if !FEATURE_PAL || MONO
         private bool AllowHttpRequestHeader {
             get {
                 if (m_Type==WebHeaderCollectionType.Unknown) {
@@ -1971,7 +1978,7 @@ quit:
                 m_InnerCollection.Clear();
         }
     } // class WebHeaderCollection
-#endif
+
 
     internal class CaseInsensitiveAscii : IEqualityComparer, IComparer{
         // ASCII char ToLower table

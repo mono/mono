@@ -410,7 +410,6 @@ System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
 System.Net/WebConnectionGroup.cs
 System.Net/WebConnectionStream.cs
-System.Net/WebHeaderCollection.cs
 System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net.WebSockets/ClientWebSocket.cs
@@ -563,6 +562,7 @@ ReferenceSources/ConfigurationManagerInternalFactory.cs
 ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/Internal.cs
+ReferenceSources/HttpApi.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
@@ -572,7 +572,6 @@ ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
-ReferenceSources/WebHeaderCollectionType.cs
 ReferenceSources/Win32Exception.cs
 
 ReferenceSources/SSPIConfiguration.cs
@@ -967,6 +966,10 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/UriScheme.cs
 
 ../referencesource/System/net/System/Net/_BufferOffsetSize.cs
+../referencesource/System/net/System/Net/_Connection.cs
+../referencesource/System/net/System/Net/_HeaderInfo.cs
+../referencesource/System/net/System/Net/_HeaderInfoTable.cs
+../referencesource/System/net/System/Net/_HTTPDateParse.cs
 ../referencesource/System/net/System/Net/_IStreams.cs
 ../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
