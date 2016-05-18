@@ -627,8 +627,11 @@ namespace System.Drawing
 			}
 
 			Type st = logFont.GetType ();
+
+#if !CORECLR
 			if (!st.IsLayoutSequential)
 				throw new ArgumentException ("logFont", Locale.GetText ("Layout must be sequential."));
+#endif
 
 			// note: there is no exception if 'logFont' isn't big enough
 			Type lf = typeof (LOGFONT);
