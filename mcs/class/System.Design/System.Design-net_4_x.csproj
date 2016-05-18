@@ -407,6 +407,10 @@
       <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
       <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.Web/System.Web-plainweb-net_4_x.csproj">
+      <Project>{DE51B021-D51C-4F26-99EE-B0729D97631E}</Project>
+      <Name>System.Web-plainweb-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../System.Windows.Forms/System.Windows.Forms-net_4_x.csproj">
       <Project>{108227C7-8ED9-4483-949D-07BF0DA1A201}</Project>
       <Name>System.Windows.Forms-net_4_x</Name>
@@ -426,10 +430,6 @@
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
       <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
       <Name>System.Configuration-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Web/System.Web-plainweb-net_4_x.csproj">
-      <Project>{DE51B021-D51C-4F26-99EE-B0729D97631E}</Project>
-      <Name>System.Web-plainweb-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

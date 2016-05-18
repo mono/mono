@@ -12,9 +12,7 @@ TEST_MCS_FLAGS =
 
 include ../../build/library.make
 
-ifeq (plaindesign/,$(intermediate))
-LIB_REFS += System.Web
-else
+ifneq (plaindesign/,$(intermediate))
 csproj-local:
 	$(MAKE) csproj-local intermediate=plaindesign/
 
