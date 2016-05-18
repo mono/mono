@@ -491,6 +491,10 @@
     <Compile Include="..\referencesource\System\net\System\GenericUriParser.cs" />
     <Compile Include="..\referencesource\System\net\System\IriHelper.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_BufferOffsetSize.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_Connection.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_HeaderInfo.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_HeaderInfoTable.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_HTTPDateParse.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_IStreams.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_LoggingObject.cs" />
@@ -763,6 +767,7 @@
     <Compile Include="ReferenceSources\CAPI.cs" />
     <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
+    <Compile Include="ReferenceSources\HttpApi.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
     <Compile Include="ReferenceSources\Internal.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
@@ -777,7 +782,6 @@
     <Compile Include="ReferenceSources\SSPISafeHandles.cs" />
     <Compile Include="ReferenceSources\SSPIWrapper.cs" />
     <Compile Include="ReferenceSources\SystemNetworkCredential.cs" />
-    <Compile Include="ReferenceSources\WebHeaderCollectionType.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeCompiler.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
@@ -1122,7 +1126,6 @@
     <Compile Include="System.Net\WebConnectionData.cs" />
     <Compile Include="System.Net\WebConnectionGroup.cs" />
     <Compile Include="System.Net\WebConnectionStream.cs" />
-    <Compile Include="System.Net\WebHeaderCollection.cs" />
     <Compile Include="System.Net\WebProxy.cs" />
     <Compile Include="System.Net\WebRequest.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\ADVF.cs" />
