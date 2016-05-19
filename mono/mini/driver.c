@@ -1148,7 +1148,9 @@ load_agent (MonoDomain *domain, char *desc)
 		return 1;
 	}
 	
-	mono_thread_set_main (mono_thread_current ());
+	MonoThread *main_thread_obj = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
+	mono_thread_set_main (main_thread_obj);
 
 	if (args) {
 		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 1, &error);

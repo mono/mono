@@ -243,6 +243,8 @@ gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, gu
 MonoException* mono_thread_resume_interruption (void);
 void mono_threads_perform_thread_dump (void);
 
+MonoThread *mono_thread_current_checked (MonoError *error);
+
 gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
 

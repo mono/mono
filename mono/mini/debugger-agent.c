@@ -3561,6 +3561,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 {
 	Buffer buf;
 	GSList *l;
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoThread *thread = NULL;
 	MonoObject *keepalive_obj = NULL;
@@ -3607,7 +3608,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 				suspend_policy = SUSPEND_POLICY_NONE;
 				thread = mono_thread_get_main ();
 			}
-			else thread = mono_thread_current ();
+			else {
+				thread = mono_thread_current_checked (&error);
+				mono_error_assert_ok (&error);
+			}
 		} else {
 			if (is_debugger_thread () && event != EVENT_KIND_VM_DEATH)
 				// FIXME: Send these with a NULL thread, don't suspend the current thread
@@ -3626,8 +3630,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 
 		ecount ++;
 
-		if (!thread)
-			thread = mono_thread_current ();
+		if (!thread) {
+			thread = mono_thread_current_checked (&error);
+			mono_error_assert_ok (&error);
+		}
 
 		if (event == EVENT_KIND_VM_START && arg != NULL)
 			thread = (MonoThread *)arg;
@@ -3784,7 +3790,10 @@ process_profiler_event (EventKind event, gpointer arg)
 static void
 runtime_initialized (MonoProfiler *prof)
 {
-	process_profiler_event (EVENT_KIND_VM_START, mono_thread_current ());
+	MonoError error;
+	MonoThread *thread_obj = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
+	process_profiler_event (EVENT_KIND_VM_START, thread_obj);
 	if (agent_config.defer)
 		start_debugger_thread ();
 }
@@ -3792,7 +3801,10 @@ runtime_initialized (MonoProfiler *prof)
 static void
 runtime_shutdown (MonoProfiler *prof)
 {
-	process_profiler_event (EVENT_KIND_VM_DEATH, mono_thread_current ());
+	MonoError error;
+	MonoThread *thread_obj = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
+	process_profiler_event (EVENT_KIND_VM_DEATH, thread_obj);
 
 	mono_debugger_agent_cleanup ();
 }
@@ -3800,6 +3812,7 @@ runtime_shutdown (MonoProfiler *prof)
 static void
 thread_startup (MonoProfiler *prof, uintptr_t tid)
 {
+	MonoError error;
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	MonoInternalThread *old_thread;
 	DebuggerTlsData *tls;
@@ -3844,10 +3857,12 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 
 	DEBUG_PRINTF (1, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls);
 
+	MonoThread *thread_obj = mono_thread_current_checked (&error);
+	mono_error_assert_ok (&error);
 	mono_loader_lock ();
 	mono_g_hash_table_insert (thread_to_tls, thread, tls);
 	mono_g_hash_table_insert (tid_to_thread, (gpointer)tid, thread);
-	mono_g_hash_table_insert (tid_to_thread_obj, GUINT_TO_POINTER (tid), mono_thread_current ());
+	mono_g_hash_table_insert (tid_to_thread_obj, GUINT_TO_POINTER (tid), thread_obj);
 	mono_loader_unlock ();
 
 	process_profiler_event (EVENT_KIND_THREAD_START, thread);
