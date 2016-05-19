@@ -987,7 +987,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // Mac doesn't throw when overflowing the ttl
 		public void TtlChangeOverflow ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -997,8 +996,8 @@ namespace MonoTests.System.Net.Sockets
 			try {
 				sock.Ttl = 256;
 				Assert.Fail ("TtlChangeOverflow #1");
-			} catch (SocketException ex) {
-				Assert.AreEqual (10022, ex.ErrorCode,
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual ("value", ex.ParamName,
 						 "TtlChangeOverflow #2");
 			} finally {
 				sock.Close ();
