@@ -81,11 +81,10 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../../class/lib/net_4_x/nunit.core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../class/lib/net_4_x/nunit.core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../../NUnitCore/core/nunit.core-net_4_x.csproj">
+      <Project>{257D35DE-7F06-42BA-B82E-734991FFE949}</Project>
+      <Name>nunit.core-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../../NUnitCore/interfaces/nunit.core.interfaces-net_4_x.csproj">
       <Project>{A950C3AB-D62D-4B20-BFB8-5671DE20E535}</Project>
       <Name>nunit.core.interfaces-net_4_x</Name>

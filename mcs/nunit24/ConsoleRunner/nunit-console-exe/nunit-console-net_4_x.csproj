@@ -86,11 +86,10 @@
       <Project>{52B1E1ED-1F77-4AEC-9CB2-141B8795949F}</Project>
       <Name>nunit.util-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="nunit.core">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>nunit.core</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../../NUnitCore/core/nunit.core-net_4_x.csproj">
+      <Project>{257D35DE-7F06-42BA-B82E-734991FFE949}</Project>
+      <Name>nunit.core-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../nunit-console/nunit-console-runner-net_4_x.csproj">
       <Project>{B0078000-EF01-4AA3-B5DD-47145B4527EE}</Project>
       <Name>nunit-console-runner-net_4_x</Name>

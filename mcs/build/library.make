@@ -134,7 +134,7 @@ endif
 csproj-local: csproj-library csproj-test
 
 intermediate_clean=$(subst /,-,$(intermediate))
-csproj-library: 
+csproj-library:
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
 	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
