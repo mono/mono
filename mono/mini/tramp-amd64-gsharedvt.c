@@ -138,7 +138,6 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	amd64_jump_code (code, addr);
 	g_assert ((code - start) < buf_len);
 
-	nacl_domain_code_validate (domain, &start, buf_len, &code);
 	mono_arch_flush_icache (start, code - start);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 
@@ -437,6 +436,22 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	mono_arch_flush_icache (buf, code - buf);
 	return buf;
+}
+
+#else
+
+gpointer
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
 }
 
 #endif

@@ -26,9 +26,6 @@
 
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -37,13 +34,6 @@ extern alias MonoSecurity;
 using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using XHttpWebRequest = PrebuiltSystem::System.Net.HttpWebRequest;
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using XHttpWebRequest = System.Net.HttpWebRequest;
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System;
@@ -86,13 +76,13 @@ namespace Mono.Net.Security.Private
 
 		public MSI.IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
 			MSI.MonoEncryptionPolicy encryptionPolicy, MSI.MonoTlsSettings settings)
 		{
 			return provider.CreateTlsContext (
 				hostname, serverMode, protocolFlags,
-				serverCertificate, (XX509CertificateCollection)(object)clientCertificates,
+				serverCertificate, clientCertificates,
 				remoteCertRequired, (MSI.MonoEncryptionPolicy)encryptionPolicy,
 				settings);
 		}

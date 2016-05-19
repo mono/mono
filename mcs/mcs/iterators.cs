@@ -30,6 +30,7 @@ namespace Mono.CSharp
 		protected T machine_initializer;
 		int resume_pc;
 		ExceptionStatement inside_try_block;
+		TryCatch inside_catch_block;
 
 		protected YieldStatement (Expression expr, Location l)
 		{
@@ -69,6 +70,7 @@ namespace Mono.CSharp
 
 			machine_initializer = bc.CurrentAnonymousMethod as T;
 			inside_try_block = bc.CurrentTryBlock;
+			inside_catch_block = bc.CurrentTryCatch;
 			return true;
 		}
 
@@ -80,7 +82,7 @@ namespace Mono.CSharp
 			if (inside_try_block == null) {
 				resume_pc = machine_initializer.AddResumePoint (this);
 			} else {
-				resume_pc = inside_try_block.AddResumePoint (this, resume_pc, machine_initializer);
+				resume_pc = inside_try_block.AddResumePoint (this, resume_pc, machine_initializer, inside_catch_block);
 				unwind_protect = true;
 				inside_try_block = null;
 			}

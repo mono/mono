@@ -96,7 +96,7 @@ namespace System.IO
 				 info.Parent.Create ();
 
 			MonoIOError error;
-			if (!MonoIO.CreateDirectory (path, out error)) {
+			if (!MonoIO.CreateDirectory (info.FullName, out error)) {
 				// LAMESPEC: 1.1 and 1.2alpha allow CreateDirectory on a file path.
 				// So CreateDirectory ("/tmp/somefile") will succeed if 'somefile' is
 				// not a directory. However, 1.0 will throw an exception.
@@ -645,5 +645,28 @@ namespace System.IO
 						 AccessControlSections.Group |
 						 AccessControlSections.Access);
 		}
+
+#region Copied from reference source
+        internal static String GetDemandDir(string fullPath, bool thisDirOnly)
+        {
+            String demandPath;
+
+            if (thisDirOnly) {
+                if (fullPath.EndsWith( Path.DirectorySeparatorChar ) 
+                    || fullPath.EndsWith( Path.AltDirectorySeparatorChar ) )
+                    demandPath = fullPath + ".";
+                else
+                    demandPath = fullPath + Path.DirectorySeparatorCharAsString + ".";
+            }
+            else {
+                if (!(fullPath.EndsWith( Path.DirectorySeparatorChar ) 
+                    || fullPath.EndsWith( Path.AltDirectorySeparatorChar )) )
+                    demandPath = fullPath + Path.DirectorySeparatorCharAsString;
+                else
+                    demandPath = fullPath;
+            }
+            return demandPath;
+        }
+#endregion
 	}
 }

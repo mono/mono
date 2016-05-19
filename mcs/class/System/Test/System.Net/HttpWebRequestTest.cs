@@ -1718,7 +1718,9 @@ namespace MonoTests.System.Net
 				Where = "first write";
 				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
 				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
-						"WWW-Authenticate: NTLM\r\n" +
+					"WWW-Authenticate: ignore\r\n" +
+					"WWW-Authenticate: NTLM\r\n" +
+					"WWW-Authenticate: ignore,K\r\n" +
 						"Content-Length: 5\r\n\r\nWRONG");
 
 				writer.Flush ();

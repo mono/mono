@@ -7023,6 +7023,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool statement_resolve;
+		public override ExpressionStatement ResolveStatement (BlockContext bc)
+		{
+			statement_resolve = true;
+			var es = base.ResolveStatement (bc);
+			statement_resolve = false;
+
+			return es;
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			ResolveConditionalAccessReceiver (rc);
@@ -7111,7 +7121,7 @@ namespace Mono.CSharp
 
 			var method = mg.BestCandidate;
 			type = mg.BestCandidateReturnType;
-			if (conditional_access_receiver)
+			if (conditional_access_receiver && !statement_resolve)
 				type = LiftMemberType (ec, type);
 
 			if (arguments == null && method.DeclaringType.BuiltinType == BuiltinTypeSpec.Type.Object && method.Name == Destructor.MetadataName) {
@@ -7173,7 +7183,7 @@ namespace Mono.CSharp
 						args.Insert (0, new Argument (inst.Resolve (ec), mod));
 					}
 				} else {	// is SimpleName
-					if (ec.IsStatic) {
+					if (ec.IsStatic || ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer)) {
 						args.Insert (0, new Argument (new TypeOf (ec.CurrentType, loc).Resolve (ec), Argument.AType.DynamicTypeName));
 					} else {
 						args.Insert (0, new Argument (new This (loc).Resolve (ec)));
@@ -7862,6 +7872,8 @@ namespace Mono.CSharp
 		{
 		}
 
+		public bool NoEmptyInterpolation { get; set; }
+
 		public ComposedTypeSpecifier Rank {
 			get {
 				return this.rank;
@@ -8398,9 +8410,30 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
+			if (!NoEmptyInterpolation && EmitOptimizedEmpty (ec))
+				return;
+
 			var await_field = EmitToFieldSource (ec);
 			if (await_field != null)
 				await_field.Emit (ec);
+		}
+
+		bool EmitOptimizedEmpty (EmitContext ec)
+		{
+			if (arguments.Count != 1 || dimensions != 1)
+				return false;
+
+			var c = arguments [0] as Constant;
+			if (c == null || !c.IsZeroInteger)
+				return false;
+
+			var m = ec.Module.PredefinedMembers.ArrayEmpty.Get ();
+			if (m == null || ec.CurrentType.MemberDefinition.DeclaringAssembly == m.DeclaringType.MemberDefinition.DeclaringAssembly)
+				return false;
+
+			m = m.MakeGenericMethod (ec.MemberContext, array_element_type);
+			ec.Emit (OpCodes.Call, m);
+			return true;
 		}
 
 		protected sealed override FieldExpr EmitToFieldSource (EmitContext ec)

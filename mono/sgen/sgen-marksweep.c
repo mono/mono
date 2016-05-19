@@ -99,6 +99,7 @@ struct _MSBlockInfo {
 	guint16 obj_size_index;
 	/* FIXME: Reduce this - it only needs a byte. */
 	volatile gint32 state;
+	gint16 nused;
 	unsigned int pinned : 1;
 	unsigned int has_references : 1;
 	unsigned int has_pinned : 1;	/* means cannot evacuate */
@@ -161,7 +162,7 @@ static int fast_block_obj_size_indexes [MS_NUM_FAST_BLOCK_OBJ_SIZE_INDEXES];
 static gboolean *evacuate_block_obj_sizes;
 static float evacuation_threshold = 0.666f;
 
-static gboolean lazy_sweep = FALSE;
+static gboolean lazy_sweep = TRUE;
 
 enum {
 	SWEEP_STATE_SWEPT,
@@ -374,11 +375,14 @@ ms_get_empty_block (void)
  * list, where it will either be freed later on, or reused in nursery collections.
  */
 static void
-ms_free_block (void *block)
+ms_free_block (MSBlockInfo *info)
 {
 	void *empty;
+	char *block = MS_BLOCK_FOR_BLOCK_INFO (info);
 
 	sgen_memgov_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
+	if (info->cardtable_mod_union)
+		sgen_card_table_free_mod_union (info->cardtable_mod_union, block, MS_BLOCK_SIZE);
 	memset (block, 0, MS_BLOCK_SIZE);
 
 	do {
@@ -648,6 +652,8 @@ alloc_obj (GCVTable vtable, size_t size, gboolean pinned, gboolean has_reference
 	/* FIXME: assumes object layout */
 	*(GCVTable*)obj = vtable;
 
+	total_allocated_major += block_obj_sizes [size_index]; 
+
 	return (GCObject *)obj;
 }
 
@@ -806,6 +812,7 @@ set_sweep_state (int new_, int expected)
 static gboolean ensure_block_is_checked_for_sweeping (guint32 block_index, gboolean wait, gboolean *have_checked);
 
 static SgenThreadPoolJob * volatile sweep_job;
+static SgenThreadPoolJob * volatile sweep_blocks_job;
 
 static void
 major_finish_sweep_checking (void)
@@ -1505,15 +1512,14 @@ ensure_block_is_checked_for_sweeping (guint32 block_index, gboolean wait, gboole
 
 	count = MS_BLOCK_FREE / block->obj_size;
 
-	if (block->cardtable_mod_union) {
-		sgen_card_table_free_mod_union (block->cardtable_mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
-		block->cardtable_mod_union = NULL;
-	}
+	if (block->cardtable_mod_union)
+		memset (block->cardtable_mod_union, 0, CARDS_PER_BLOCK);
 
 	/* Count marked objects in the block */
 	for (i = 0; i < MS_NUM_MARK_WORDS; ++i)
 		nused += bitcount (block->mark_words [i]);
 
+	block->nused = nused;
 	if (nused)
 		have_live = TRUE;
 	if (nused < count)
@@ -1576,6 +1582,20 @@ ensure_block_is_checked_for_sweeping (guint32 block_index, gboolean wait, gboole
 }
 
 static void
+sweep_blocks_job_func (void *thread_data_untyped, SgenThreadPoolJob *job)
+{
+	volatile gpointer *slot;
+
+	SGEN_ARRAY_LIST_FOREACH_SLOT (&allocated_blocks, slot) {
+		sweep_block (BLOCK_UNTAG (*slot));
+	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
+
+	mono_memory_write_barrier ();
+
+	sweep_blocks_job = NULL;
+}
+
+static void
 sweep_job_func (void *thread_data_untyped, SgenThreadPoolJob *job)
 {
 	guint32 block_index;
@@ -1616,6 +1636,16 @@ sweep_job_func (void *thread_data_untyped, SgenThreadPoolJob *job)
 
 	sgen_array_list_remove_nulls (&allocated_blocks);
 
+	/*
+	 * Concurrently sweep all the blocks to reduce workload during minor
+	 * pauses where we need certain blocks to be swept. At the start of
+	 * the next major we need all blocks to be swept anyway.
+	 */
+	if (concurrent_sweep && lazy_sweep) {
+		sweep_blocks_job = sgen_thread_pool_job_alloc ("sweep_blocks", sweep_blocks_job_func, sizeof (SgenThreadPoolJob));
+		sgen_thread_pool_job_enqueue (sweep_blocks_job);
+	}
+
 	sweep_finish ();
 
 	sweep_job = NULL;
@@ -1624,6 +1654,7 @@ sweep_job_func (void *thread_data_untyped, SgenThreadPoolJob *job)
 static void
 sweep_finish (void)
 {
+	mword used_slots_size = 0;
 	int i;
 
 	for (i = 0; i < num_block_obj_sizes; ++i) {
@@ -1637,9 +1668,15 @@ sweep_finish (void)
 		} else {
 			evacuate_block_obj_sizes [i] = FALSE;
 		}
+
+		used_slots_size += sweep_slots_used [i] * block_obj_sizes [i];
 	}
 
+	sgen_memgov_major_post_sweep (used_slots_size);
+
 	set_sweep_state (SWEEP_STATE_SWEPT, SWEEP_STATE_COMPACTING);
+	if (concurrent_sweep)
+		binary_protocol_concurrent_sweep_end (sgen_timestamp ());
 }
 
 static void
@@ -1776,6 +1813,67 @@ major_finish_nursery_collection (void)
 #endif
 }
 
+static int
+block_usage_comparer (const void *bl1, const void *bl2)
+{
+	const gint16 nused1 = (*(MSBlockInfo**)bl1)->nused;
+	const gint16 nused2 = (*(MSBlockInfo**)bl2)->nused;
+
+	return nused2 - nused1;
+}
+
+static void
+sgen_evacuation_freelist_blocks (MSBlockInfo * volatile *block_list, int size_index)
+{
+	MSBlockInfo **evacuated_blocks;
+	size_t index = 0, count, num_blocks = 0, num_used = 0;
+	MSBlockInfo *info;
+	MSBlockInfo * volatile *prev;
+
+	for (info = *block_list; info != NULL; info = info->next_free) {
+		num_blocks++;
+		num_used += info->nused;
+	}
+
+	/*
+	 * We have a set of blocks in the freelist which will be evacuated. Instead
+	 * of evacuating all of the blocks into new ones, we traverse the freelist
+	 * sorting it by the number of occupied slots, evacuating the objects from
+	 * blocks with fewer used slots into fuller blocks.
+	 *
+	 * The number of used slots is set at the end of the previous sweep. Since
+	 * we sequentially unlink slots from blocks, except for the head of the
+	 * freelist, for blocks on the freelist, the number of used slots is the same
+	 * as at the end of the previous sweep.
+	 */
+	evacuated_blocks = (MSBlockInfo**)sgen_alloc_internal_dynamic (sizeof (MSBlockInfo*) * num_blocks, INTERNAL_MEM_TEMPORARY, TRUE);
+
+	for (info = *block_list; info != NULL; info = info->next_free) {
+		evacuated_blocks [index++] = info;
+	}
+
+	SGEN_ASSERT (0, num_blocks == index, "Why did the freelist change ?");
+
+	qsort (evacuated_blocks, num_blocks, sizeof (gpointer), block_usage_comparer);
+
+	/*
+	 * Form a new freelist with the fullest blocks. These blocks will also be
+	 * marked as to_space so we don't evacuate from them.
+	 */
+	count = MS_BLOCK_FREE / block_obj_sizes [size_index];
+	prev = block_list;
+	for (index = 0; index < (num_used + count - 1) / count; index++) {
+		SGEN_ASSERT (0, index < num_blocks, "Why do we need more blocks for compaction than we already had ?");
+		info = evacuated_blocks [index];
+		info->is_to_space = TRUE;
+		*prev = info;
+		prev = &info->next_free;
+	}
+	*prev = NULL;
+
+	sgen_free_internal_dynamic (evacuated_blocks, sizeof (MSBlockInfo*) * num_blocks, INTERNAL_MEM_TEMPORARY);
+}
+
 static void
 major_start_major_collection (void)
 {
@@ -1794,22 +1892,38 @@ major_start_major_collection (void)
 
 		binary_protocol_evacuating_blocks (block_obj_sizes [i]);
 
-		free_block_lists [0][i] = NULL;
-		free_block_lists [MS_BLOCK_FLAG_REFS][i] = NULL;
+		sgen_evacuation_freelist_blocks (&free_block_lists [0][i], i);
+		sgen_evacuation_freelist_blocks (&free_block_lists [MS_BLOCK_FLAG_REFS][i], i);
 	}
 
-	if (lazy_sweep)
-		binary_protocol_sweep_begin (GENERATION_OLD, TRUE);
+	if (lazy_sweep && concurrent_sweep) {
+		/*
+		 * sweep_blocks_job is created before sweep_finish, which we wait for above
+		 * (major_finish_sweep_checking). After the end of sweep, if we don't have
+		 * sweep_blocks_job set, it means that it has already been run.
+		 */
+		SgenThreadPoolJob *job = sweep_blocks_job;
+		if (job)
+			sgen_thread_pool_job_wait (job);
+	}
 
+	if (lazy_sweep && !concurrent_sweep)
+		binary_protocol_sweep_begin (GENERATION_OLD, TRUE);
 	/* Sweep all unswept blocks and set them to MARKING */
 	FOREACH_BLOCK_NO_LOCK (block) {
-		if (lazy_sweep)
+		if (lazy_sweep && !concurrent_sweep)
 			sweep_block (block);
 		SGEN_ASSERT (0, block->state == BLOCK_STATE_SWEPT, "All blocks must be swept when we're pinning.");
 		set_block_state (block, BLOCK_STATE_MARKING, BLOCK_STATE_SWEPT);
+		/*
+		 * Swept blocks that have a null free_list are full. Evacuation is not
+		 * effective on these blocks since we expect them to have high usage anyway,
+		 * given that the survival rate for majors is relatively high.
+		 */
+		if (evacuate_block_obj_sizes [block->obj_size_index] && !block->free_list)
+			block->is_to_space = TRUE;
 	} END_FOREACH_BLOCK_NO_LOCK;
-
-	if (lazy_sweep)
+	if (lazy_sweep && !concurrent_sweep)
 		binary_protocol_sweep_end (GENERATION_OLD, TRUE);
 
 	set_sweep_state (SWEEP_STATE_NEED_SWEEPING, SWEEP_STATE_SWEPT);
@@ -2376,10 +2490,21 @@ update_cardtable_mod_union (void)
 	MSBlockInfo *block;
 
 	FOREACH_BLOCK_NO_LOCK (block) {
-		size_t num_cards;
-		guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-		sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE, &num_cards);
-		SGEN_ASSERT (6, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
+		gpointer *card_start = (gpointer*) sgen_card_table_get_card_address ((mword)MS_BLOCK_FOR_BLOCK_INFO (block));
+		gboolean has_dirty_cards = FALSE;
+		int i;
+		for (i = 0; i < CARDS_PER_BLOCK / sizeof(gpointer); i++) {
+			if (card_start [i]) {
+				has_dirty_cards = TRUE;
+				break;
+			}
+		}
+		if (has_dirty_cards) {
+			size_t num_cards;
+			guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
+			sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE, &num_cards);
+			SGEN_ASSERT (6, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
+		}
 	} END_FOREACH_BLOCK_NO_LOCK;
 }
 

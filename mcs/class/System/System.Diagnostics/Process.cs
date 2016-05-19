@@ -74,7 +74,7 @@ namespace System.Diagnostics
 
 		/* Private constructor called from other methods */
 		private Process (SafeProcessHandle handle, int id) {
-			m_processHandle = handle;
+			SetProcessHandle (handle);
 			SetProcessId (id);
 		}
 
@@ -606,12 +606,8 @@ namespace System.Diagnostics
 				throw new Win32Exception (-proc_info.pid);
 			}
 
-			m_processHandle = new SafeProcessHandle (proc_info.process_handle, true);
-			haveProcessHandle = true;
+			SetProcessHandle (new SafeProcessHandle (proc_info.process_handle, true));
 			SetProcessId (proc_info.pid);
-
-			if (watchForExit)
-				EnsureWatchingForExit ();
 
 			return ret;
 		}
@@ -771,16 +767,11 @@ namespace System.Diagnostics
 				}
 			}
 
-			m_processHandle = new SafeProcessHandle (proc_info.process_handle, true);
-			haveProcessHandle = true;
+			SetProcessHandle (new SafeProcessHandle (proc_info.process_handle, true));
 			SetProcessId (proc_info.pid);
 			
 			if (startInfo.RedirectStandardInput) {
-				//
-				// FIXME: The descriptor needs to be closed but due to wapi io-layer
-				// not coping with duplicated descriptors any StandardInput write fails
-				//
-				// MonoIO.Close (stdin_read, out error);
+				MonoIO.Close (stdin_read, out error);
 
 #if MOBILE
 				var stdinEncoding = Encoding.Default;
@@ -807,9 +798,6 @@ namespace System.Diagnostics
 
 				standardError = new StreamReader (new FileStream (stderr_read, FileAccess.Read, true, 8192), stderrEncoding, true);
 			}
-
-			if (watchForExit)
-				EnsureWatchingForExit ();
 
 			return true;
 		}

@@ -27,14 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
-	public abstract class IPv6InterfaceProperties {
-		protected IPv6InterfaceProperties ()
-		{
-		}
-
-		public abstract int Index { get; }
-		public abstract int Mtu { get; }
-	}
 #if !MOBILE
 	class Win32IPv6InterfaceProperties : IPv6InterfaceProperties
 	{

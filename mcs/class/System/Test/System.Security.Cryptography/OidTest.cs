@@ -36,7 +36,6 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-
 	public class OidTest {
 
 		static string invalidOid = "1.0";
@@ -97,7 +96,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void ConstructorStringStringNull () 
 		{
 			Oid o = new Oid (validOid, null);
-			Assert.IsNull (o.FriendlyName, "FriendlyName");
+			Assert.AreEqual ("RSA", o.FriendlyName, "FriendlyName");
 			Assert.AreEqual (validOid, o.Value, "Value");
 		}
 
@@ -136,7 +135,7 @@ namespace MonoTests.System.Security.Cryptography {
 			Oid o = new Oid (validOid, invalidName);
 			Assert.AreEqual (invalidName, o.FriendlyName, "FriendlyName");
 			o.FriendlyName = null;
-			Assert.IsNull (o.FriendlyName, "FriendlyName-Null");
+			Assert.AreEqual ("RSA", o.FriendlyName, "FriendlyName-Null");
 		}
 
 		[Test]
@@ -212,8 +211,15 @@ namespace MonoTests.System.Security.Cryptography {
 			o.FriendlyName = "sha512";
 			Assert.AreEqual (o.Value, "2.16.840.1.101.3.4.2.3", "sha512 Value from FriendlyName");
 
+			o = new Oid ("2.16.840.1.101.3.4.2.2");
+			Assert.AreEqual ("2.16.840.1.101.3.4.2.2", o.Value, "sha384 Value");
+			Assert.AreEqual ("sha384", o.FriendlyName, "sha384 FriendlyName");
+
+			o = new Oid ("1.2.840.113549.1.1.12");
+			Assert.AreEqual ("1.2.840.113549.1.1.12", o.Value, "sha384RSA Value");
+			Assert.AreEqual ("sha384RSA", o.FriendlyName, "sha384RSA FriendlyName");
+
 			// TODO: add other well known oid as we find them
 		}
 	}
 }
-

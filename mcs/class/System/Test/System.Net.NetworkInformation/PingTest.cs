@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using System;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 namespace MonoTests.System.Net.NetworkInformation
 {
@@ -28,6 +30,90 @@ namespace MonoTests.System.Net.NetworkInformation
 			Assert.AreEqual(IPStatus.Success, p.Status);
 #endif
 		}		
+
+		[Test]
+#if MONOTOUCH
+		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
+#endif
+		public void SendAsyncIPV4Succeeds()
+		{
+			var testIp = IPAddress.Loopback;
+			var ping = new Ping ();
+			PingReply reply = null;
+
+			using (var waiter = new AutoResetEvent (false)) {
+				ping.PingCompleted += new PingCompletedEventHandler ( 
+					(s, e) => {
+						reply = e.Reply;
+						(e.UserState as AutoResetEvent) ?.Set ();
+					});
+
+				ping.SendAsync (testIp, waiter);
+
+				waiter.WaitOne (TimeSpan.FromSeconds (8));
+			}
+
+			Assert.AreEqual (IPStatus.Success, reply.Status);
+		}
+
+		[Test]
+#if MONOTOUCH
+		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
+#endif
+		public void SendAsyncIPV4Fails()
+		{
+			var testIp = IPAddress.Parse("192.0.2.0");
+			var ping = new Ping ();
+			PingReply reply = null;
+
+			using (var waiter = new AutoResetEvent (false)) {
+				ping.PingCompleted += new PingCompletedEventHandler ( 
+					(s, e) => {
+						reply = e.Reply;
+						(e.UserState as AutoResetEvent) ?.Set ();
+					});
+
+				ping.SendAsync (testIp, waiter);
+
+				waiter.WaitOne (TimeSpan.FromSeconds (8));
+			}
+
+			Assert.AreNotEqual (IPStatus.Success, reply.Status);
+		}
+
+		[Test]
+#if MONOTOUCH
+		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
+#endif
+		public void SendPingAsyncIPV4Succeeds()
+		{
+			var testIp = IPAddress.Loopback;
+			var ping = new Ping ();
+			var task = ping.SendPingAsync (testIp);
+
+			task.Wait();
+
+			var result = task.Result;
+
+			Assert.AreEqual (IPStatus.Success, result.Status);
+		}
+
+		[Test]
+#if MONOTOUCH
+		[Ignore("Ping implementation is broken on MT (requires sudo access)")]
+#endif
+		public void SendPingAsyncIPV4Fails()
+		{
+			var testIp = IPAddress.Parse("192.0.2.0");
+			var ping = new Ping ();
+			var task = ping.SendPingAsync (testIp);
+
+			task.Wait();
+
+			var result = task.Result;
+
+			Assert.AreNotEqual (IPStatus.Success, result.Status);
+		}
 	}
 }
 

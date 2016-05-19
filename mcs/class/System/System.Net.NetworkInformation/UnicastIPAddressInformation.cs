@@ -159,7 +159,7 @@ namespace System.Net.NetworkInformation {
 					return IPAddress.Any;
 
 				if (ipv4Mask == null)
-					ipv4Mask = NetworkInterface.GetNetMask (address);
+					ipv4Mask = SystemNetworkInterface.GetNetMask (address);
 
 				return ipv4Mask;
 			}

@@ -39,18 +39,18 @@ namespace System.Windows {
 	{
 		public Point (double x, double y)
 		{
-			this.x = x;
-			this.y = y;
+			this._x = x;
+			this._y = y;
 		}
 
 		public double X {
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 
 		public double Y {
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 
 		public override bool Equals (object o)
@@ -62,19 +62,19 @@ namespace System.Windows {
 
 		public bool Equals (Point value)
 		{
-			return x == value.X && y == value.Y;
+			return _x == value.X && _y == value.Y;
 		}
 
 		public override int GetHashCode ()
 		{
-		    return (x.GetHashCode() ^ y.GetHashCode());
+		    return (_x.GetHashCode() ^ _y.GetHashCode());
 		}
 
 
 		public void Offset (double offsetX, double offsetY)
 		{
-			x += offsetX;
-			y += offsetY;
+			_x += offsetX;
+			_y += offsetY;
 		}
 
 		public static Point Add (Point point, Vector vector)
@@ -179,7 +179,7 @@ namespace System.Windows {
 				seperator = ";";
 			else
 				seperator = ",";
-			object[] ob = { this.x, seperator, this.y };
+			object[] ob = { this._x, seperator, this._y };
 
 			return string.Format(formatProvider, "{0:" + format + "}{1}{2:" + format + "}", ob);
 		}
@@ -189,7 +189,7 @@ namespace System.Windows {
 			return this.ToString(format, formatProvider);
 		}
 
-		double x;
-		double y;
+		double _x;
+		double _y;
 	}
 }

@@ -28,11 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
-#endif
-
 using System.Reflection;
 using System.Collections.Specialized;
 

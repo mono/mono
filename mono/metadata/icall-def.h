@@ -104,7 +104,7 @@ ICALL(ARGI_4, "Setup",                            mono_ArgIterator_Setup)
 
 ICALL_TYPE(ARRAY, "System.Array", ARRAY_1)
 ICALL(ARRAY_1, "ClearInternal",    ves_icall_System_Array_ClearInternal)
-ICALL(ARRAY_2, "Clone",            mono_array_clone)
+ICALL(ARRAY_2, "Clone",            ves_icall_System_Array_Clone)
 ICALL(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl)
 ICALL(ARRAY_14, "CreateInstanceImpl64",   ves_icall_System_Array_CreateInstanceImpl64)
 ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
@@ -224,7 +224,7 @@ ICALL(ENUM_7, "get_value", ves_icall_System_Enum_get_value)
 
 ICALL_TYPE(ENV, "System.Environment", ENV_1)
 ICALL(ENV_1, "Exit", ves_icall_System_Environment_Exit)
-ICALL(ENV_2, "GetCommandLineArgs", mono_runtime_get_main_args)
+ICALL(ENV_2, "GetCommandLineArgs", ves_icall_System_Environment_GetCoomandLineArgs)
 ICALL(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames)
 ICALL(ENV_31, "GetIs64BitOperatingSystem", ves_icall_System_Environment_GetIs64BitOperatingSystem)
 ICALL(ENV_4, "GetLogicalDrivesInternal", ves_icall_System_Environment_GetLogicalDrives )
@@ -239,7 +239,7 @@ ICALL(ENV_10, "get_HasShutdownStarted", ves_icall_System_Environment_get_HasShut
 ICALL(ENV_11, "get_MachineName", ves_icall_System_Environment_get_MachineName)
 ICALL(ENV_13, "get_Platform", ves_icall_System_Environment_get_Platform)
 ICALL(ENV_14, "get_ProcessorCount", mono_cpu_count)
-ICALL(ENV_15, "get_TickCount", mono_msec_ticks)
+ICALL(ENV_15, "get_TickCount", ves_icall_System_Environment_get_TickCount)
 ICALL(ENV_16, "get_UserName", ves_icall_System_Environment_get_UserName)
 ICALL(ENV_16m, "internalBroadcastSettingChange", ves_icall_System_Environment_BroadcastSettingChange)
 ICALL(ENV_17, "internalGetEnvironmentVariable", ves_icall_System_Environment_GetEnvironmentVariable)
@@ -499,12 +499,9 @@ ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_1)
 ICALL(ASSEMB_1, "InternalAddModule", ves_icall_System_Reflection_Emit_AssemblyBuilder_InternalAddModule)
 ICALL(ASSEMB_2, "basic_init", mono_image_basic_init)
 
+#ifndef DISABLE_REFLECTION_EMIT
 ICALL_TYPE(CATTRB, "System.Reflection.Emit.CustomAttributeBuilder", CATTRB_1)
 ICALL(CATTRB_1, "GetBlob", ves_icall_System_Reflection_Emit_CustomAttributeBuilder_GetBlob)
-
-#ifndef DISABLE_REFLECTION_EMIT
-ICALL_TYPE(DERIVEDTYPE, "System.Reflection.Emit.DerivedType", DERIVEDTYPE_1)
-ICALL(DERIVEDTYPE_1, "create_unmanaged_type", mono_reflection_create_unmanaged_type)
 #endif
 
 ICALL_TYPE(DYNM, "System.Reflection.Emit.DynamicMethod", DYNM_1)
@@ -534,6 +531,11 @@ ICALL(MODULEB_9, "set_wrappers_type", mono_image_set_wrappers_type)
 ICALL_TYPE(SIGH, "System.Reflection.Emit.SignatureHelper", SIGH_1)
 ICALL(SIGH_1, "get_signature_field", mono_reflection_sighelper_get_signature_field)
 ICALL(SIGH_2, "get_signature_local", mono_reflection_sighelper_get_signature_local)
+
+#ifndef DISABLE_REFLECTION_EMIT
+ICALL_TYPE(SYMBOLTYPE, "System.Reflection.Emit.SymbolType", SYMBOLTYPE_1)
+ICALL(SYMBOLTYPE_1, "create_unmanaged_type", mono_reflection_create_unmanaged_type)
+#endif
 
 ICALL_TYPE(TYPEB, "System.Reflection.Emit.TypeBuilder", TYPEB_1)
 ICALL(TYPEB_1, "create_generic_class", ves_icall_System_Reflection_Emit_TypeBuilder_create_generic_class)
@@ -576,6 +578,7 @@ ICALL(MODULE_13, "get_MetadataToken", ves_icall_reflection_get_token)
 ICALL_TYPE(MCMETH, "System.Reflection.MonoCMethod", MCMETH_1)
 ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition)
 ICALL(MCMETH_2, "InternalInvoke", ves_icall_InternalInvoke)
+ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
 
 ICALL_TYPE(MEVIN, "System.Reflection.MonoEventInfo", MEVIN_1)
 ICALL(MEVIN_1, "get_event_info", ves_icall_MonoEventInfo_get_event_info)
@@ -870,9 +873,7 @@ ICALL(MONIT_2, "Monitor_pulse", ves_icall_System_Threading_Monitor_Monitor_pulse
 ICALL(MONIT_3, "Monitor_pulse_all", ves_icall_System_Threading_Monitor_Monitor_pulse_all)
 ICALL(MONIT_4, "Monitor_test_owner", ves_icall_System_Threading_Monitor_Monitor_test_owner)
 ICALL(MONIT_5, "Monitor_test_synchronised", ves_icall_System_Threading_Monitor_Monitor_test_synchronised)
-ICALL(MONIT_6, "Monitor_try_enter", ves_icall_System_Threading_Monitor_Monitor_try_enter)
 ICALL(MONIT_7, "Monitor_wait", ves_icall_System_Threading_Monitor_Monitor_wait)
-ICALL(MONIT_10, "enter_with_atomic_var", mono_monitor_enter_v4)
 ICALL(MONIT_9, "try_enter_with_atomic_var", ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var)
 
 ICALL_TYPE(MUTEX, "System.Threading.Mutex", MUTEX_1)

@@ -21,21 +21,12 @@ namespace MonoTests.System
 	[TestFixture]
 	public class UriTest
 	{
-		protected bool isWin32 = false;
-		public bool IriParsing;
+		bool isWin32;
 
 		[TestFixtureSetUp]
 		public void GetReady ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
-
-			//Make sure Uri static constructor is called
-			Uri.EscapeDataString ("");
-
-			FieldInfo iriParsingField = typeof (Uri).GetField ("s_IriParsing",
-				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-			if (iriParsingField != null)
-				IriParsing = (bool)iriParsingField.GetValue (null);
 		}
 
 		[Test]
@@ -605,10 +596,7 @@ namespace MonoTests.System
 			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
 
-			if (IriParsing)
-				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u1.ToString (), "QE1");
-			else
-				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u1.ToString (), "QE1");
 
 			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx", u2.ToString (), "QE2");
 		}
@@ -897,11 +885,10 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category("NotDotNet")]
 		public void CheckHostName1 ()
 		{
 			// reported to MSDN Product Feedback Center (FDBK28671)
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName (":11:22:33:44:55:66:77:88"), "#36 known to fail with ms.net: this is not a valid IPv6 address.");
+			Assert.AreEqual (UriHostNameType.IPv6, Uri.CheckHostName (":11:22:33:44:55:66:77:88"), "#36 known to fail with ms.net: this is not a valid IPv6 address.");
 		}
 
 		[Test]
@@ -1209,14 +1196,6 @@ namespace MonoTests.System
 			Assert.AreEqual ("/foo/bar", uri10.MakeRelative (uri13), "#13");
 
 			Assert.AreEqual ("http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9, uri1.MakeRelative (uri8), "#14");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void RelativeUri ()
-		{
-			var u = new Uri ("/foo/bar");
-			Assert.IsFalse (u.IsAbsoluteUri, "#1");
 		}
 
 		[Test]
@@ -1737,6 +1716,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		public void UnixAbsolutePath_ReplaceRelative ()
+		{
+			var u1 = new Uri ("/Users/demo/Projects/file.xml");
+			var u2 = new Uri (u1, "b.jpg");
+
+			Assert.AreEqual ("file:///Users/demo/Projects/b.jpg", u2.ToString ());
+		}
+
+		[Test]
 		public void RelativeUriWithColons ()
 		{
 			string s = @"Transform?args=[{""__type"":""Record:#Nostr"",""Code"":""%22test%22SomeGloss"",""ID"":""1"",""Table"":""Glossary""},{""__type"":""Record:#Nostr"",""Code"":""%22test%22All"",""ID"":""2"",""Table"":""GlossView""}, {""__type"":""Record:#Nostr"",""Code"":""%22test%22Q"",""ID"":""3"",""Table"":""Glossary""}]"; // with related to bug #573795
@@ -1934,26 +1923,26 @@ namespace MonoTests.System
 				Uri uri;
 
 				uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsFalse (uri.IsAbsoluteUri, "#2");
 				
-				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsTrue (Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri), "#3");
+				Assert.IsFalse (uri.IsAbsoluteUri, "#3a");
 
 				if (useDotNetRelativeOrAbsoluteField != null) {
 					uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-					Assert.IsTrue (uri.IsAbsoluteUri);
+					Assert.IsTrue (uri.IsAbsoluteUri, "#4");
 
-					Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
-					Assert.IsTrue (uri.IsAbsoluteUri);
+					Assert.IsTrue (Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri), "#5");
+					Assert.IsTrue (uri.IsAbsoluteUri, "#5a");
 
 					useDotNetRelativeOrAbsoluteField.SetValue (null, true);
 				}
 
 				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsFalse (uri.IsAbsoluteUri, "#10");
 
-				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-				Assert.IsFalse (uri.IsAbsoluteUri);
+				Assert.IsTrue (Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri), "#11");
+				Assert.IsFalse (uri.IsAbsoluteUri, "#11a");
 			} finally {
 				if (useDotNetRelativeOrAbsoluteField != null)
 					useDotNetRelativeOrAbsoluteField.SetValue (null, useDotNetRelativeOrAbsoluteOld);
@@ -2038,42 +2027,42 @@ namespace MonoTests.System
 			var baseUri = new Uri ("http://test.com", UriKind.Absolute);
 			var relUri = new Uri ("path/dot./", UriKind.Relative);
 			var uri = new Uri (baseUri, relUri);
-			if (IriParsing)
-				Assert.AreEqual ("http://test.com/path/dot./", uri.ToString ());
-			else
-				Assert.AreEqual ("http://test.com/path/dot/", uri.ToString ());
-		}
-	}
-
-	// Tests non default IriParsing
-	[TestFixture]
-	public class UriTestAux : UriTest
-	{
-		private FieldInfo iriParsingField;
-		private bool originalIriParsing;
-
-		[TestFixtureSetUp]
-		public void GetReady2 ()
-		{
-			isWin32 = (Path.DirectorySeparatorChar == '\\');
-
-			//Make sure Uri static constructor is called
-			Uri.EscapeDataString ("");
-
-			iriParsingField = typeof (Uri).GetField ("s_IriParsing",
-				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-
-			originalIriParsing = (bool) iriParsingField.GetValue (null);
-
-			IriParsing = !originalIriParsing;
-
-			iriParsingField.SetValue (null, IriParsing);
+			Assert.AreEqual ("http://test.com/path/dot./", uri.ToString ());
 		}
 
-		[TestFixtureTearDown]
-		public void TearDown ()
+		[Test]
+		public void GuardedIPv6Address ()
 		{
-			iriParsingField.SetValue (null, originalIriParsing);
+			var x = new Uri ("asfd://[::1]:123/");
+			Assert.AreEqual ("[::1]", x.Host, "#1");
+		}
+
+		[Test]
+		public void CombineWithUserSchema ()
+		{
+			var baseUri = new Uri ("zip:mem:///");
+			var relativeUrl = "zip:mem:///foo/bar.txt";
+
+			var result = new Uri (baseUri, relativeUrl);
+
+			Assert.AreEqual ("zip:mem:///foo/bar.txt", result.ToString ());
+		}
+
+		[Test]
+		public void Scheme_msapp ()
+		{
+			var uri = new Uri ("ms-app://s-1-15-2-1613647288");
+			Assert.AreEqual ("ms-app", uri.Scheme);
+		}
+
+		[Test]
+		public void CombineWithUnixAbsolutePath ()
+		{
+			var a = new Uri ("http://localhost/");
+			var b = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+			var res = new Uri (a, b);
+
+			Assert.AreEqual ("http://localhost/foo", res.ToString ());
 		}
 	}
 }

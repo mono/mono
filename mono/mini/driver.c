@@ -124,9 +124,6 @@ opt_funcs [sizeof (int) * 8] = {
 	NULL
 };
 
-#ifdef __native_client_codegen__
-extern gint8 nacl_align_byte;
-#endif
 #ifdef __native_client__
 extern char *nacl_mono_path;
 #endif
@@ -851,6 +848,7 @@ small_id_thread_func (gpointer arg)
 static void
 jit_info_table_test (MonoDomain *domain)
 {
+	MonoError error;
 	int i;
 
 	g_print ("testing jit_info_table\n");
@@ -879,8 +877,10 @@ jit_info_table_test (MonoDomain *domain)
 	sleep (2);
 	*/
 
-	for (i = 0; i < num_threads; ++i)
-		mono_thread_create (domain, test_thread_func, &thread_datas [i]);
+	for (i = 0; i < num_threads; ++i) {
+		mono_thread_create_checked (domain, test_thread_func, &thread_datas [i], &error);
+		mono_error_assert_ok (&error);
+	}
 }
 #endif
 
@@ -973,6 +973,7 @@ compile_all_methods_thread_main (CompileAllThreadArgs *args)
 static void
 compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recompilation_times)
 {
+	MonoError error;
 	CompileAllThreadArgs args;
 
 	args.ass = ass;
@@ -984,7 +985,8 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	 * Need to create a mono thread since compilation might trigger
 	 * running of managed code.
 	 */
-	mono_thread_create (mono_domain_get (), compile_all_methods_thread_main, &args);
+	mono_thread_create_checked (mono_domain_get (), compile_all_methods_thread_main, &args, &error);
+	mono_error_assert_ok (&error);
 
 	mono_thread_manage ();
 }
@@ -1140,7 +1142,7 @@ load_agent (MonoDomain *domain, char *desc)
 
 	method = mono_get_method_checked (image, entry, NULL, NULL, &error);
 	if (method == NULL){
-		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, &error);
+		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (&error));
 		mono_error_cleanup (&error);
 		g_free (agent);
 		return 1;
@@ -1149,19 +1151,31 @@ load_agent (MonoDomain *domain, char *desc)
 	mono_thread_set_main (mono_thread_current ());
 
 	if (args) {
-		main_args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, 1);
-		mono_array_set (main_args, MonoString*, 0, mono_string_new (domain, args));
+		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 1, &error);
+		if (main_args)
+			mono_array_set (main_args, MonoString*, 0, mono_string_new (domain, args));
 	} else {
-		main_args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, 0);
+		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 0, &error);
 	}
-
-	g_free (agent);
+	if (!main_args) {
+		g_print ("Could not allocate array for main args of assembly '%s' due to %s\n", agent, mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+		g_free (agent);
+		return 1;
+	}
+	
 
 	pa [0] = main_args;
 	/* Pass NULL as 'exc' so unhandled exceptions abort the runtime */
 	mono_runtime_invoke_checked (method, NULL, pa, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	if (!is_ok (&error)) {
+		g_print ("The entry point method of assembly '%s' could not execute due to %s\n", agent, mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+		g_free (agent);
+		return 1;
+	}
 
+	g_free (agent);
 	return 0;
 }
 
@@ -1224,9 +1238,6 @@ mini_usage (void)
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
 		"    --jitmap               Output a jit method map to /tmp/perf-PID.map\n"
 		"    --help-devel           Shows more options available to developers\n"
-#ifdef __native_client_codegen__
-		"    --nacl-align-mask-off  Turn off Native Client 32-byte alignment mask (for debug only)\n"
-#endif
 		"\n"
 		"Runtime:\n"
 		"    --config FILE          Loads FILE as the Mono config\n"
@@ -1637,19 +1648,6 @@ mono_main (int argc, char* argv[])
 			gc_descr = mono_gc_get_description ();
 			g_print ("\tGC:            %s\n", gc_descr);
 			g_free (gc_descr);
-			if (mini_verbose) {
-				const char *cerror;
-				const char *clibpath;
-				mono_init ("mono");
-				cerror = mono_check_corlib_version ();
-				clibpath = mono_defaults.corlib? mono_image_get_filename (mono_defaults.corlib): "unknown";
-				if (cerror) {
-					g_print ("The currently installed mscorlib doesn't match this runtime version.\n");
-					g_print ("The error is: %s\n", cerror);
-					g_print ("mscorlib.dll loaded at: %s\n", clibpath);
-					return 1;
-				}
-			}
 			return 0;
 		} else if (strcmp (argv [i], "--help") == 0 || strcmp (argv [i], "-h") == 0) {
 			mini_usage ();
@@ -1905,10 +1903,6 @@ mono_main (int argc, char* argv[])
 #endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
-#ifdef __native_client_codegen__
-		} else if (strcmp (argv [i], "--nacl-align-mask-off") == 0){
-			nacl_align_byte = -1; /* 0xff */
-#endif
 #ifdef __native_client__
 		} else if (strcmp (argv [i], "--nacl-mono-path") == 0){
 			nacl_mono_path = g_strdup(argv[++i]);
@@ -1923,17 +1917,13 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifdef __native_client_codegen__
-	if (g_getenv ("MONO_NACL_ALIGN_MASK_OFF"))
-	{
-		nacl_align_byte = -1; /* 0xff */
-	}
 	if (!nacl_null_checks_off) {
 		MonoDebugOptions *opt = mini_get_debug_options ();
 		opt->explicit_null_checks = TRUE;
 	}
 #endif
 
-#ifdef DISABLE_HW_TRAPS
+#if defined(DISABLE_HW_TRAPS) || defined(MONO_ARCH_DISABLE_HW_TRAPS)
 	// Signal handlers not available
 	{
 		MonoDebugOptions *opt = mini_get_debug_options ();
@@ -1991,11 +1981,11 @@ mono_main (int argc, char* argv[])
 	 * We only set the native name of the thread since MS.NET leaves the
 	 * managed thread name for the main thread as null.
 	 */
-	mono_thread_info_set_name (mono_native_thread_id_get (), "Main");
+	mono_native_thread_set_name (mono_native_thread_id_get (), "Main");
 
 	if (enable_profile) {
 		mono_profiler_load (profile_options);
-		mono_profiler_thread_name (mono_native_thread_id_get (), "Main");
+		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
 	}
 
 	mono_attach_parse_options (attach_options);
@@ -2377,83 +2367,154 @@ mono_set_crash_chaining (gboolean chain_crashes)
 	mono_do_crash_chaining = chain_crashes;
 }
 
-void
-mono_parse_env_options (int *ref_argc, char **ref_argv [])
+/**
+ * mono_parse_options_from:
+ * @options: string containing strings 
+ * @ref_argc: pointer to the argc variable that might be updated 
+ * @ref_argv: pointer to the argv string vector variable that might be updated
+ *
+ * This function parses the contents of the `MONO_ENV_OPTIONS`
+ * environment variable as if they were parsed by a command shell
+ * splitting the contents by spaces into different elements of the
+ * @argv vector.  This method supports quoting with both the " and '
+ * characters.  Inside quoting, spaces and tabs are significant,
+ * otherwise, they are considered argument separators.
+ *
+ * The \ character can be used to escape the next character which will
+ * be added to the current element verbatim.  Typically this is used
+ * inside quotes.   If the quotes are not balanced, this method 
+ *
+ * If the environment variable is empty, no changes are made
+ * to the values pointed by @ref_argc and @ref_argv.
+ *
+ * Otherwise the @ref_argv is modified to point to a new array that contains
+ * all the previous elements contained in the vector, plus the values parsed.
+ * The @argc is updated to match the new number of parameters.
+ *
+ * Returns: The value NULL is returned on success, otherwise a g_strdup allocated
+ * string is returned (this is an alias to malloc under normal circumstances) that
+ * contains the error message that happened during parsing.
+ */
+char *
+mono_parse_options_from (const char *options, int *ref_argc, char **ref_argv [])
 {
 	int argc = *ref_argc;
 	char **argv = *ref_argv;
+	GPtrArray *array = g_ptr_array_new ();
+	GString *buffer = g_string_new ("");
+	const char *p;
+	unsigned i;
+	gboolean in_quotes = FALSE;
+	char quote_char = '\0';
 
-	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
-	if (env_options != NULL){
-		GPtrArray *array = g_ptr_array_new ();
-		GString *buffer = g_string_new ("");
-		const char *p;
-		unsigned i;
-		gboolean in_quotes = FALSE;
-		char quote_char = '\0';
-
-		for (p = env_options; *p; p++){
-			switch (*p){
-			case ' ': case '\t':
-				if (!in_quotes) {
-					if (buffer->len != 0){
-						g_ptr_array_add (array, g_strdup (buffer->str));
-						g_string_truncate (buffer, 0);
-					}
-				} else {
-					g_string_append_c (buffer, *p);
+	if (options == NULL)
+		return NULL;
+	
+	for (p = options; *p; p++){
+		switch (*p){
+		case ' ': case '\t':
+			if (!in_quotes) {
+				if (buffer->len != 0){
+					g_ptr_array_add (array, g_strdup (buffer->str));
+					g_string_truncate (buffer, 0);
 				}
-				break;
-			case '\\':
-				if (p [1]){
-					g_string_append_c (buffer, p [1]);
-					p++;
-				}
-				break;
-			case '\'':
-			case '"':
-				if (in_quotes) {
-					if (quote_char == *p)
-						in_quotes = FALSE;
-					else
-						g_string_append_c (buffer, *p);
-				} else {
-					in_quotes = TRUE;
-					quote_char = *p;
-				}
-				break;
-			default:
+			} else {
 				g_string_append_c (buffer, *p);
-				break;
 			}
+			break;
+		case '\\':
+			if (p [1]){
+				g_string_append_c (buffer, p [1]);
+				p++;
+			}
+			break;
+		case '\'':
+		case '"':
+			if (in_quotes) {
+				if (quote_char == *p)
+					in_quotes = FALSE;
+				else
+					g_string_append_c (buffer, *p);
+			} else {
+				in_quotes = TRUE;
+				quote_char = *p;
+			}
+			break;
+		default:
+			g_string_append_c (buffer, *p);
+			break;
 		}
-		if (in_quotes) {
-			fprintf (stderr, "Unmatched quotes in value of MONO_ENV_OPTIONS: [%s]\n", env_options);
-			exit (1);
-		}
-			
-		if (buffer->len != 0)
-			g_ptr_array_add (array, g_strdup (buffer->str));
-		g_string_free (buffer, TRUE);
-
-		if (array->len > 0){
-			int new_argc = array->len + argc;
-			char **new_argv = g_new (char *, new_argc + 1);
-			int j;
-
-			new_argv [0] = argv [0];
-			
-			/* First the environment variable settings, to allow the command line options to override */
-			for (i = 0; i < array->len; i++)
-				new_argv [i+1] = (char *)g_ptr_array_index (array, i);
-			i++;
-			for (j = 1; j < argc; j++)
-				new_argv [i++] = argv [j];
-			new_argv [i] = NULL;
-
-			*ref_argc = new_argc;
-			*ref_argv = new_argv;
-		}
-		g_ptr_array_free (array, TRUE);
 	}
+	if (in_quotes) 
+		return g_strdup_printf ("Unmatched quotes in value: [%s]\n", options);
+		
+	if (buffer->len != 0)
+		g_ptr_array_add (array, g_strdup (buffer->str));
+	g_string_free (buffer, TRUE);
+
+	if (array->len > 0){
+		int new_argc = array->len + argc;
+		char **new_argv = g_new (char *, new_argc + 1);
+		int j;
+
+		new_argv [0] = argv [0];
+		
+		/* First the environment variable settings, to allow the command line options to override */
+		for (i = 0; i < array->len; i++)
+			new_argv [i+1] = (char *)g_ptr_array_index (array, i);
+		i++;
+		for (j = 1; j < argc; j++)
+			new_argv [i++] = argv [j];
+		new_argv [i] = NULL;
+
+		*ref_argc = new_argc;
+		*ref_argv = new_argv;
+	}
+	g_ptr_array_free (array, TRUE);
+	return NULL;
 }
+
+/**
+ * mono_parse_env_options:
+ * @ref_argc: pointer to the argc variable that might be updated 
+ * @ref_argv: pointer to the argv string vector variable that might be updated
+ *
+ * This function parses the contents of the `MONO_ENV_OPTIONS`
+ * environment variable as if they were parsed by a command shell
+ * splitting the contents by spaces into different elements of the
+ * @argv vector.  This method supports quoting with both the " and '
+ * characters.  Inside quoting, spaces and tabs are significant,
+ * otherwise, they are considered argument separators.
+ *
+ * The \ character can be used to escape the next character which will
+ * be added to the current element verbatim.  Typically this is used
+ * inside quotes.   If the quotes are not balanced, this method 
+ *
+ * If the environment variable is empty, no changes are made
+ * to the values pointed by @ref_argc and @ref_argv.
+ *
+ * Otherwise the @ref_argv is modified to point to a new array that contains
+ * all the previous elements contained in the vector, plus the values parsed.
+ * The @argc is updated to match the new number of parameters.
+ *
+ * If there is an error parsing, this method will terminate the process by
+ * calling exit(1).
+ *
+ * An alternative to this method that allows an arbitrary string to be parsed
+ * and does not exit on error is the `api:mono_parse_options_from`.
+ */
+void
+mono_parse_env_options (int *ref_argc, char **ref_argv [])
+{
+	char *ret;
+	
+	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
+	if (env_options == NULL)
+		return;
+	ret = mono_parse_options_from (env_options, ref_argc, ref_argv);
+	if (ret == NULL)
+		return;
+	fprintf (stderr, "%s", ret);
+	exit (1);
+}
+

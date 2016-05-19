@@ -3,9 +3,6 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -16,13 +13,8 @@ using Mono.Security.Interface;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 #endif
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
-#else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
-#endif
 
 using System;
 using System.Net;
@@ -73,15 +65,11 @@ namespace Mono.Net.Security
 		public static X509Chain CreateX509Chain (XX509CertificateCollection certs)
 		{
 			var chain = new X509Chain ();
-			chain.ChainPolicy = new X509ChainPolicy ();
+			chain.ChainPolicy = new X509ChainPolicy ((X509CertificateCollection)(object)certs);
 
 #if !MOBILE
 			chain.ChainPolicy.RevocationMode = revocation_mode;
 #endif
-
-			for (int i = 1; i < certs.Count; i++) {
-				chain.ChainPolicy.ExtraStore.Add (certs [i]);
-			}
 
 			return chain;
 		}

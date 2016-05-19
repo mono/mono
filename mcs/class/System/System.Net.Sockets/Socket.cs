@@ -702,8 +702,8 @@ namespace System.Net.Sockets
 			set {
 				ThrowIfDisposedAndClosed ();
 
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+				if (value < 0 || value > 255)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero or greater than 255.");
 
 				switch (address_family) {
 				case AddressFamily.InterNetwork:
@@ -991,16 +991,20 @@ namespace System.Net.Sockets
 
 		static IOAsyncCallback BeginAcceptCallback = new IOAsyncCallback (ares => {
 			SocketAsyncResult sockares = (SocketAsyncResult) ares;
-			Socket socket = null;
-
+			Socket acc_socket = null;
 			try {
-				socket = sockares.socket.Accept ();
+				if (sockares.AcceptSocket == null) {
+					acc_socket = sockares.socket.Accept ();
+				} else {
+					acc_socket = sockares.AcceptSocket;
+					sockares.socket.Accept (acc_socket);
+				}
+
 			} catch (Exception e) {
 				sockares.Complete (e);
 				return;
 			}
-
-			sockares.Complete (socket);
+			sockares.Complete (acc_socket);
 		});
 
 		public IAsyncResult BeginAccept (int receiveSize, AsyncCallback callback, object state)
@@ -3163,27 +3167,24 @@ namespace System.Net.Sockets
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
 		{
-			ThrowIfDisposedAndClosed ();
-
-			int error;
 			int int_val = optionValue ? 1 : 0;
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, int_val, out error);
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
+			SetSocketOption (optionLevel, optionName, int_val);
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
 		{
 			ThrowIfDisposedAndClosed ();
 
+			if (optionName == SocketOptionName.ReuseAddress && optionValue != 0 && !SupportsPortReuse ())
+				throw new SocketException ((int) SocketError.OperationNotSupported, "Operating system sockets do not support ReuseAddress.\nIf your socket is not intended to bind to the same address and port multiple times remove this option, otherwise you should ignore this exception inside a try catch and check that ReuseAddress is true before binding to the same address and port multiple times.");
+
 			int error;
 			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, optionValue, out error);
 
 			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
@@ -3427,7 +3428,9 @@ namespace System.Net.Sockets
 		void InitSocketAsyncEventArgs (SocketAsyncEventArgs e, AsyncCallback callback, object state, SocketOperation operation)
 		{
 			e.socket_async_result.Init (this, callback, state, operation);
-
+			if (e.AcceptSocket != null) {
+				e.socket_async_result.AcceptSocket = e.AcceptSocket;
+			}
 			e.current_socket = this;
 			e.SetLastOperation (SocketOperationToSocketAsyncOperation (operation));
 			e.SocketError = SocketError.Success;

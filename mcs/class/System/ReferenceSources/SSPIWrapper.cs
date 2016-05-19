@@ -28,9 +28,6 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MX = MonoSecurity::Mono.Security.X509;
@@ -38,11 +35,6 @@ using MonoSecurity::Mono.Security.Interface;
 #else
 using MX = Mono.Security.X509;
 using Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System.Runtime.InteropServices;
@@ -73,7 +65,7 @@ namespace System.Net.Security
 
 	internal static class GlobalSSPI
 	{
-		internal static SSPIInterface Create (string hostname, bool serverMode, SchProtocols protocolFlags, X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
+		internal static SSPIInterface Create (string hostname, bool serverMode, SchProtocols protocolFlags, X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 		                                           bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus, EncryptionPolicy encryptionPolicy,
 		                                           LocalCertSelectionCallback certSelectionDelegate, RemoteCertValidationCallback remoteValidationCallback, SSPIConfiguration userConfig)
 		{
@@ -226,7 +218,7 @@ namespace System.Net.Security
 
 		internal static X509Certificate2 GetRemoteCertificate (SafeDeleteContext safeContext, out X509Certificate2Collection remoteCertificateStore)
 		{
-			XX509CertificateCollection monoCollection;
+			X509CertificateCollection monoCollection;
 			if (safeContext == null || safeContext.IsInvalid) {
 				remoteCertificateStore = null;
 				return null;

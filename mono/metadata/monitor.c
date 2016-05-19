@@ -743,7 +743,7 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 	LockWord lw;
 	MonoThreadsSync *mon;
 	HANDLE sem;
-	guint32 then = 0, now, delta;
+	gint64 then = 0, now, delta;
 	guint32 waitms;
 	guint32 ret;
 	guint32 new_status, old_status, tmp_status;
@@ -881,9 +881,9 @@ retry_contended:
 	 * We pass TRUE instead of allow_interruption since we have to check for the
 	 * StopRequested case below.
 	 */
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	ret = WaitForSingleObjectEx (mon->entry_sem, waitms, TRUE);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
@@ -900,14 +900,9 @@ retry_contended:
 		if (!mono_thread_test_state (mono_thread_internal_current (), (MonoThreadState)(ThreadState_StopRequested | ThreadState_SuspendRequested | ThreadState_AbortRequested))) {
 			if (ms != INFINITE) {
 				now = mono_msec_ticks ();
-				if (now < then) {
-					LOCK_DEBUG (g_message ("%s: wrapped around! now=0x%x then=0x%x", __func__, now, then));
 
-					now += (0xffffffff - then);
-					then = 0;
-
-					LOCK_DEBUG (g_message ("%s: wrap rejig: now=0x%x then=0x%x delta=0x%x", __func__, now, then, now-then));
-				}
+				/* it should not overflow before ~30k years */
+				g_assert (now >= then);
 
 				delta = now - then;
 				if (delta >= ms) {
@@ -1076,25 +1071,6 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset)
 	*nest_offset = ENCODE_OFF_SIZE (MONO_STRUCT_OFFSET (MonoThreadsSync, nest), sizeof (ts.nest));
 }
 
-gboolean 
-ves_icall_System_Threading_Monitor_Monitor_try_enter (MonoObject *obj, guint32 ms)
-{
-	gint32 res;
-
-	do {
-		res = mono_monitor_try_enter_internal (obj, ms, TRUE);
-		if (res == -1) {
-			MonoException *exc = mono_thread_interruption_checkpoint ();
-			if (exc) {
-				mono_set_pending_exception (exc);
-				return FALSE;
-			}
-		}
-	} while (res == -1);
-	
-	return res == 1;
-}
-
 void
 ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, char *lockTaken)
 {
@@ -1136,6 +1112,8 @@ gboolean
 mono_monitor_enter_v4_fast (MonoObject *obj, char *lock_taken)
 {
 	if (*lock_taken == 1)
+		return FALSE;
+	if (G_UNLIKELY (!obj))
 		return FALSE;
 	gint32 res = mono_monitor_try_enter_internal (obj, 0, TRUE);
 	*lock_taken = res == 1;
@@ -1301,9 +1279,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	ret = WaitForSingleObjectEx (event, ms, TRUE);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking
@@ -1326,9 +1304,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		/* Poll the event again, just in case it was signalled
 		 * while we were trying to regain the monitor lock
 		 */
-		MONO_PREPARE_BLOCKING;
+		MONO_ENTER_GC_SAFE;
 		ret = WaitForSingleObjectEx (event, 0, FALSE);
-		MONO_FINISH_BLOCKING;
+		MONO_EXIT_GC_SAFE;
 	}
 
 	/* Pulse will have popped our event from the queue if it signalled

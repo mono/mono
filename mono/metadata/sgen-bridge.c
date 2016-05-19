@@ -74,7 +74,7 @@ void
 sgen_set_bridge_implementation (const char *name)
 {
 	if (!init_bridge_processor (&bridge_processor, name))
-		g_warning ("Invalid value for bridge implementation, valid values are: 'new' and 'old'.");
+		g_warning ("Invalid value for bridge implementation, valid values are: 'new', 'old' and 'tarjan'.");
 }
 
 gboolean
@@ -375,6 +375,8 @@ sgen_bridge_processing_finish (int generation)
 	if (compare_bridge_processors ())
 		compare_to_bridge_processor.processing_after_callback (generation);
 
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_BRIDGE: Complete, was running for %.2fms", mono_time_since_last_stw () / 10000.0f);
+
 	bridge_processing_in_progress = FALSE;
 }
 
@@ -526,6 +528,30 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 		sccs [i]->is_alive = TRUE;
 }
 
+/* This bridge keeps all peers with __test > 0 */
+static void
+bridge_test_positive_status (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs, MonoGCBridgeXRef *xrefs)
+{
+	int i;
+
+	if (!mono_bridge_test_field) {
+		mono_bridge_test_field = mono_class_get_field_from_name (mono_object_get_class (sccs[0]->objs [0]), "__test");
+		g_assert (mono_bridge_test_field);
+	}
+
+	/*We mark all objects in a scc with live objects as reachable by scc*/
+	for (i = 0; i < num_sccs; ++i) {
+		int j;
+		for (j = 0; j < sccs [i]->num_objs; ++j) {
+			if (test_scc (sccs [i], j)) {
+				sccs [i]->is_alive = TRUE;
+				break;
+			}
+		}
+	}
+}
+
+
 static void
 register_test_bridge_callbacks (const char *bridge_class_name)
 {
@@ -533,9 +559,21 @@ register_test_bridge_callbacks (const char *bridge_class_name)
 	callbacks.bridge_version = SGEN_BRIDGE_VERSION;
 	callbacks.bridge_class_kind = bridge_test_bridge_class_kind;
 	callbacks.is_bridge_object = bridge_test_is_bridge_object;
-	callbacks.cross_references = bridge_class_name[0] == '2' ? bridge_test_cross_reference2 : bridge_test_cross_reference;
+
+	switch (bridge_class_name [0]) {
+	case '2':
+		bridge_class = bridge_class_name + 1;
+		callbacks.cross_references = bridge_test_cross_reference2;
+		break;
+	case '3':
+		bridge_class = bridge_class_name + 1;
+		callbacks.cross_references = bridge_test_positive_status;
+		break;
+	default:
+		bridge_class = bridge_class_name;
+		callbacks.cross_references = bridge_test_cross_reference;
+	}
 	mono_gc_register_bridge_callbacks (&callbacks);
-	bridge_class = bridge_class_name + (bridge_class_name[0] == '2' ? 1 : 0);
 }
 
 gboolean

@@ -64,12 +64,7 @@ struct _SgenClientThreadInfo {
 	void *stack_start;
 	void *stack_start_limit;
 
-	/*FIXME pretty please finish killing ARCH_NUM_REGS */
-#ifdef USE_MONO_CTX
 	MonoContext ctx;		/* ditto */
-#else
-	gpointer regs[ARCH_NUM_REGS];	    /* ditto */
-#endif
 };
 
 #else
@@ -689,6 +684,16 @@ sgen_client_binary_protocol_evacuating_blocks (size_t block_size)
 {
 }
 
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_concurrent_sweep_end (long long timestamp)
+{
+}
+
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_header (long long check, int version, int ptr_size, gboolean little_endian)
+{
+}
+
 int sgen_thread_handshake (BOOL suspend);
 gboolean sgen_suspend_thread (SgenThreadInfo *info);
 gboolean sgen_resume_thread (SgenThreadInfo *info);
@@ -721,6 +726,8 @@ extern MonoNativeTlsKey thread_info_key;
 #define SGEN_TV_DECLARE(name) gint64 name
 #define SGEN_TV_GETTIME(tv) tv = mono_100ns_ticks ()
 #define SGEN_TV_ELAPSED(start,end) ((gint64)(end-start))
+
+guint64 mono_time_since_last_stw (void);
 
 typedef MonoSemType SgenSemaphore;
 

@@ -1120,10 +1120,10 @@ socket_transport_recv (void *buf, int len)
 	int total = 0;
 	int fd = conn_fd;
 	int flags = 0;
-	static gint32 last_keepalive;
-	gint32 msecs;
+	static gint64 last_keepalive;
+	gint64 msecs;
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 
 	do {
 	again:
@@ -1149,7 +1149,7 @@ socket_transport_recv (void *buf, int len)
 		}
 	} while ((res > 0 && total < len) || (res == -1 && get_last_sock_error () == MONO_EINTR));
 
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	return total;
 }
@@ -1173,9 +1173,9 @@ set_keepalive (void)
 static int
 socket_transport_accept (int socket_fd)
 {
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	conn_fd = accept (socket_fd, NULL, NULL);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	if (conn_fd == -1) {
 		fprintf (stderr, "debugger-agent: Unable to listen on %d\n", socket_fd);
@@ -1191,13 +1191,13 @@ socket_transport_send (void *data, int len)
 {
 	int res;
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 
 	do {
 		res = send (conn_fd, data, len, 0);
 	} while (res == -1 && get_last_sock_error () == MONO_EINTR);
 
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	if (res != len)
 		return FALSE;
@@ -1316,9 +1316,9 @@ socket_transport_connect (const char *address)
 			FD_ZERO (&readfds);
 			FD_SET (sfd, &readfds);
 
-			MONO_PREPARE_BLOCKING;
+			MONO_ENTER_GC_SAFE;
 			res = select (sfd + 1, &readfds, NULL, NULL, &tv);
-			MONO_FINISH_BLOCKING;
+			MONO_EXIT_GC_SAFE;
 
 			if (res == 0) {
 				fprintf (stderr, "debugger-agent: Timed out waiting to connect.\n");
@@ -1345,16 +1345,16 @@ socket_transport_connect (const char *address)
 			if (sfd == -1)
 				continue;
 
-			MONO_PREPARE_BLOCKING;
+			MONO_ENTER_GC_SAFE;
 			res = connect (sfd, &sockaddr.addr, sock_len);
-			MONO_FINISH_BLOCKING;
+			MONO_EXIT_GC_SAFE;
 
 			if (res != -1)
 				break;       /* Success */
 			
-			MONO_PREPARE_BLOCKING;
+			MONO_ENTER_GC_SAFE;
 			close (sfd);
-			MONO_FINISH_BLOCKING;
+			MONO_EXIT_GC_SAFE;
 		}
 
 		if (rp == 0) {
@@ -1385,9 +1385,9 @@ socket_transport_close1 (void)
 #else
 	shutdown (conn_fd, SHUT_RD);
 	shutdown (listen_fd, SHUT_RDWR);
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	close (listen_fd);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 #endif
 }
 
@@ -8159,7 +8159,9 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 			vtable = mono_class_vtable (domain, f->parent);
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
-			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val);
+			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val, &error);
+			if (!is_ok (&error))
+				return ERR_INVALID_FIELDID;
 			buffer_add_value (buf, f->type, val, domain);
 			g_free (val);
 		}
@@ -8664,11 +8666,12 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		// FIXME: Generics
 		switch (mono_metadata_token_code (token)) {
 		case MONO_TOKEN_STRING: {
+			MonoError error;
 			MonoString *s;
 			char *s2;
 
-			s = mono_ldstr (domain, method->klass->image, mono_metadata_token_index (token));
-			g_assert (s);
+			s = mono_ldstr_checked (domain, method->klass->image, mono_metadata_token_index (token), &error);
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 			s2 = mono_string_to_utf8 (s);
 
@@ -9255,6 +9258,7 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 static ErrorCode
 object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
+	MonoError error;
 	int objid;
 	ErrorCode err;
 	MonoObject *obj;
@@ -9323,7 +9327,11 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
 				vtable = mono_class_vtable (obj->vtable->domain, f->parent);
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
-				mono_field_static_get_value (vtable, f, val);
+				mono_field_static_get_value_checked (vtable, f, val, &error);
+				if (!is_ok (&error)) {
+					mono_error_cleanup (&error); /* FIXME report the error */
+					return ERR_INVALID_OBJECT;
+				}
 				buffer_add_value (buf, f->type, val, obj->vtable->domain);
 				g_free (val);
 			} else {
@@ -9332,7 +9340,11 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 				if (remote_obj) {
 #ifndef DISABLE_REMOTING
-					field_value = mono_load_remote_field(obj, obj_type, f, &field_storage);
+					field_value = mono_load_remote_field_checked(obj, obj_type, f, &field_storage, &error);
+					if (!is_ok (&error)) {
+						mono_error_cleanup (&error); /* FIXME report the error */
+						return ERR_INVALID_OBJECT;
+					}
 #else
 					g_assert_not_reached ();
 #endif

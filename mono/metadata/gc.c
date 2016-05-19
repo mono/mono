@@ -85,9 +85,9 @@ guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
 {
 	guint32 result;
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	result = WaitForSingleObjectEx (handle, timeout, alertable);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -95,11 +95,13 @@ guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
 static void
 add_thread_to_finalize (MonoInternalThread *thread)
 {
+	MonoError error;
 	mono_finalizer_lock ();
 	if (!threads_to_finalize)
 		MONO_GC_REGISTER_ROOT_SINGLE (threads_to_finalize, MONO_ROOT_SOURCE_FINALIZER_QUEUE, "finalizable threads list");
-	threads_to_finalize = mono_mlist_append (threads_to_finalize, (MonoObject*)thread);
+	threads_to_finalize = mono_mlist_append_checked (threads_to_finalize, (MonoObject*)thread, &error);
 	mono_finalizer_unlock ();
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 }
 
 static gboolean suspend_finalizers = FALSE;
@@ -242,7 +244,8 @@ mono_gc_run_finalize (void *obj, void *data)
 	if (!domain->finalize_runtime_invoke) {
 		MonoMethod *invoke = mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE);
 
-		domain->finalize_runtime_invoke = mono_compile_method (invoke);
+		domain->finalize_runtime_invoke = mono_compile_method_checked (invoke, &error);
+		mono_error_assert_ok (&error); /* expect this not to fail */
 	}
 
 	runtime_invoke = (RuntimeInvokeFunction)domain->finalize_runtime_invoke;
@@ -452,6 +455,8 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		mono_threadpool_ms_cleanup ();
 		mono_gc_finalize_threadpool_threads ();
 	}
+
+	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
 
 	return TRUE;
 }
@@ -826,7 +831,9 @@ static
 void
 mono_gc_init_finalizer_thread (void)
 {
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0);
+	MonoError error;
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0, &error);
+	mono_error_assert_ok (&error);
 }
 
 void
@@ -872,14 +879,14 @@ mono_gc_cleanup (void)
 		finished = TRUE;
 		if (mono_thread_internal_current () != gc_thread) {
 			gboolean timed_out = FALSE;
-			guint32 start_ticks = mono_msec_ticks ();
-			guint32 end_ticks = start_ticks + 2000;
+			gint64 start_ticks = mono_msec_ticks ();
+			gint64 end_ticks = start_ticks + 2000;
 
 			mono_gc_finalize_notify ();
 			/* Finishing the finalizer thread, so wait a little bit... */
 			/* MS seems to wait for about 2 seconds */
 			while (!finalizer_thread_exited) {
-				guint32 current_ticks = mono_msec_ticks ();
+				gint64 current_ticks = mono_msec_ticks ();
 				guint32 timeout;
 
 				if (current_ticks >= end_ticks)

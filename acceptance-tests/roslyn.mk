@@ -10,7 +10,7 @@ check-roslyn:
 		mkdir -p $$MONO_DOTNET_PORTABLE_DIR; \
 		mkdir -p $$MONO_NUGET_TARGETS_DIR; \
 		mkdir -p $$MONO_PORTABLE_TARGETS_DIR; \
-		curl -SL "http://storage.bos.internalx.com/bot-provisioning/RoslynBuildDependencies.zip" > /tmp/RoslynBuildDependencies.zip; \
+		curl -SL "http://download.mono-project.com/third-party/RoslynBuildDependencies.zip" > /tmp/RoslynBuildDependencies.zip; \
 		unzip -o /tmp/RoslynBuildDependencies.zip -d /tmp/RoslynBuildDependencies; \
 		cp -r /tmp/RoslynBuildDependencies/PortableReferenceAssemblies/* $$MONO_DOTNET_PORTABLE_DIR; \
 		cp /tmp/RoslynBuildDependencies/NuGetTargets/* $$MONO_NUGET_TARGETS_DIR; \

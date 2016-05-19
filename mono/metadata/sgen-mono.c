@@ -1242,16 +1242,14 @@ create_allocator (int atype, gboolean slowpath)
 		g_assert_not_reached ();
 	}
 
-	if (atype != ATYPE_SMALL) {
-		/* size += ALLOC_ALIGN - 1; */
-		mono_mb_emit_ldloc (mb, size_var);
-		mono_mb_emit_icon (mb, SGEN_ALLOC_ALIGN - 1);
-		mono_mb_emit_byte (mb, CEE_ADD);
-		/* size &= ~(ALLOC_ALIGN - 1); */
-		mono_mb_emit_icon (mb, ~(SGEN_ALLOC_ALIGN - 1));
-		mono_mb_emit_byte (mb, CEE_AND);
-		mono_mb_emit_stloc (mb, size_var);
-	}
+	/* size += ALLOC_ALIGN - 1; */
+	mono_mb_emit_ldloc (mb, size_var);
+	mono_mb_emit_icon (mb, SGEN_ALLOC_ALIGN - 1);
+	mono_mb_emit_byte (mb, CEE_ADD);
+	/* size &= ~(ALLOC_ALIGN - 1); */
+	mono_mb_emit_icon (mb, ~(SGEN_ALLOC_ALIGN - 1));
+	mono_mb_emit_byte (mb, CEE_AND);
+	mono_mb_emit_stloc (mb, size_var);
 
 	/* if (size > MAX_SMALL_OBJ_SIZE) goto slowpath */
 	if (atype != ATYPE_SMALL) {
@@ -1350,14 +1348,6 @@ create_allocator (int atype, gboolean slowpath)
 		mono_mb_emit_byte (mb, MONO_CEE_ADD);
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_STIND_I4);
-		/* s->chars [len] = 0; */
-		mono_mb_emit_ldloc (mb, p_var);
-		mono_mb_emit_ldloc (mb, size_var);
-		mono_mb_emit_icon (mb, 2);
-		mono_mb_emit_byte (mb, MONO_CEE_SUB);
-		mono_mb_emit_byte (mb, MONO_CEE_ADD);
-		mono_mb_emit_icon (mb, 0);
-		mono_mb_emit_byte (mb, MONO_CEE_STIND_I2);
 	}
 
 	/*
@@ -2193,11 +2183,7 @@ sgen_client_thread_register (SgenThreadInfo* info, void *stack_bottom_fallback)
 		info->client_info.stack_end = (char*)stack_bottom;
 	}
 
-#ifdef USE_MONO_CTX
 	memset (&info->client_info.ctx, 0, sizeof (MonoContext));
-#else
-	memset (&info->client_info.regs, 0, sizeof (info->client_info.regs));
-#endif
 
 	if (mono_gc_get_gc_callbacks ()->thread_attach_func)
 		info->client_info.runtime_data = mono_gc_get_gc_callbacks ()->thread_attach_func ();
@@ -2298,7 +2284,7 @@ void
 sgen_client_thread_register_worker (void)
 {
 	mono_thread_info_register_small_id ();
-	mono_thread_info_set_name (mono_native_thread_id_get (), "SGen worker");
+	mono_native_thread_set_name (mono_native_thread_id_get (), "SGen worker");
 }
 
 /* Variables holding start/end nursery so it won't have to be passed at every call */
@@ -2329,7 +2315,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 
 	FOREACH_THREAD (info) {
 		int skip_reason = 0;
-		void *aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+		void *aligned_stack_start;
 
 		if (info->client_info.skip) {
 			SGEN_LOG (3, "Skipping dead thread %p, range: %p-%p, size: %zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start);
@@ -2340,12 +2326,20 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		} else if (!mono_thread_info_is_live (info)) {
 			SGEN_LOG (3, "Skipping non-running thread %p, range: %p-%p, size: %zd (state %x)", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start, info->client_info.info.thread_state);
 			skip_reason = 3;
+		} else if (!info->client_info.stack_start) {
+			SGEN_LOG (3, "Skipping starting or detaching thread %p", info);
+			skip_reason = 4;
 		}
 
 		binary_protocol_scan_stack ((gpointer)mono_thread_info_get_tid (info), info->client_info.stack_start, info->client_info.stack_end, skip_reason);
 
 		if (skip_reason)
 			continue;
+
+		g_assert (info->client_info.stack_start);
+		g_assert (info->client_info.stack_end);
+
+		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
 
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
@@ -2360,13 +2354,9 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		}
 
 		if (!precise) {
-#ifdef USE_MONO_CTX
 			sgen_conservatively_pin_objects_from ((void**)&info->client_info.ctx, (void**)(&info->client_info.ctx + 1),
 				start_nursery, end_nursery, PIN_TYPE_STACK);
-#else
-			sgen_conservatively_pin_objects_from ((void**)&info->client_info.regs, (void**)&info->client_info.regs + ARCH_NUM_REGS,
-					start_nursery, end_nursery, PIN_TYPE_STACK);
-#endif
+
 			{
 				// This is used on Coop GC for platforms where we cannot get the data for individual registers.
 				// We force a spill of all registers into the stack and pass a chunk of data into sgen.
@@ -2728,7 +2718,7 @@ sgen_client_degraded_allocation (size_t size)
 }
 
 void
-sgen_client_log_timing (GGTimingInfo *info, mword last_major_num_sections, mword last_los_memory_usage)
+sgen_client_log_timing (GGTimingInfo *info, mword promoted_size, mword major_used_size)
 {
 	SgenMajorCollector *major_collector = sgen_get_major_collector ();
 	mword num_major_sections = major_collector->get_num_major_sections ();
@@ -2736,26 +2726,26 @@ sgen_client_log_timing (GGTimingInfo *info, mword last_major_num_sections, mword
 	full_timing_buff [0] = '\0';
 
 	if (!info->is_overflow)
-	        sprintf (full_timing_buff, "total %.2fms, bridge %.2fms", info->stw_time / 10000.0f, (int)info->bridge_time / 10000.0f);
+	        sprintf (full_timing_buff, "total %.2fms", info->stw_time / 10000.0f);
 	if (info->generation == GENERATION_OLD)
-	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) pause %.2fms, %s major %dK/%dK los %dK/%dK",
+	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) pause %.2fms, %s los size: %dK in use: %dK",
 	                info->is_overflow ? "_OVERFLOW" : "",
 	                info->reason ? info->reason : "",
 	                (int)info->total_time / 10000.0f,
 	                full_timing_buff,
-	                major_collector->section_size * num_major_sections / 1024,
-	                major_collector->section_size * last_major_num_sections / 1024,
-	                los_memory_usage / 1024,
-	                last_los_memory_usage / 1024);
+	                los_memory_usage_total / 1024,
+	                los_memory_usage / 1024);
 	else
-	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) pause %.2fms, %s promoted %dK major %dK los %dK",
+	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) pause %.2fms, %s promoted %dK major size: %dK in use: %dK los size: %dK in use: %dK",
 	        		info->is_overflow ? "_OVERFLOW" : "",
 	                info->reason ? info->reason : "",
 	                (int)info->total_time / 10000.0f,
 	                full_timing_buff,
-	                (num_major_sections - last_major_num_sections) * major_collector->section_size / 1024,
+	                (int)promoted_size / 1024,
 	                major_collector->section_size * num_major_sections / 1024,
-	                los_memory_usage / 1024);
+			major_used_size / 1024,
+	                los_memory_usage_total / 1024,
+			los_memory_usage / 1024);
 }
 
 /*

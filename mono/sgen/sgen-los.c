@@ -64,7 +64,10 @@ struct _LOSSection {
 
 /* We allow read only access on the list while sweep is not running */
 LOSObject *los_object_list = NULL;
+/* Memory used by LOS objects */
 mword los_memory_usage = 0;
+/* Total memory used by the LOS allocator */
+mword los_memory_usage_total = 0;
 
 static LOSSection *los_sections = NULL;
 static LOSFreeChunks *los_fast_free_lists [LOS_NUM_FAST_SIZES]; /* 0 is for larger sizes */
@@ -268,6 +271,7 @@ get_los_section_memory (size_t size)
 	section->next = los_sections;
 	los_sections = section;
 
+	los_memory_usage_total += LOS_SECTION_SIZE;
 	++los_num_sections;
 
 	goto retry;
@@ -307,7 +311,8 @@ free_los_section_memory (LOSObject *obj, size_t size)
 void
 sgen_los_free_object (LOSObject *obj)
 {
-	SGEN_ASSERT (0, !obj->cardtable_mod_union, "We should never free a LOS object with a mod-union table.");
+	if (obj->cardtable_mod_union)
+		sgen_card_table_free_mod_union (obj->cardtable_mod_union, (char*)obj->data, sgen_los_object_size (obj));
 
 #ifndef LOS_DUMMY
 	mword size = sgen_los_object_size (obj);
@@ -325,6 +330,7 @@ sgen_los_free_object (LOSObject *obj)
 		size += sizeof (LOSObject);
 		size = SGEN_ALIGN_UP_TO (size, pagesize);
 		sgen_free_os_memory ((gpointer)SGEN_ALIGN_DOWN_TO ((mword)obj, pagesize), size, SGEN_ALLOC_HEAP);
+		los_memory_usage_total -= size;
 		sgen_memgov_release_space (size, SPACE_LOS);
 	} else {
 		free_los_section_memory (obj, size + sizeof (LOSObject));
@@ -382,8 +388,10 @@ sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
 		size_t alloc_size = SGEN_ALIGN_UP_TO (obj_size, pagesize);
 		if (sgen_memgov_try_alloc_space (alloc_size, SPACE_LOS)) {
 			obj = (LOSObject *)sgen_alloc_os_memory (alloc_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), NULL);
-			if (obj)
+			if (obj) {
+				los_memory_usage_total += alloc_size;
 				obj = randomize_los_object_start (obj, obj_size, alloc_size, pagesize);
+			}
 		}
 	} else {
 		obj = get_los_section_memory (size + sizeof (LOSObject));
@@ -433,12 +441,13 @@ sgen_los_sweep (void)
 	for (bigobj = los_object_list; bigobj;) {
 		SGEN_ASSERT (0, !SGEN_OBJECT_IS_PINNED (bigobj->data), "Who pinned a LOS object?");
 
-		if (bigobj->cardtable_mod_union) {
-			sgen_card_table_free_mod_union (bigobj->cardtable_mod_union, (char*)bigobj->data, sgen_los_object_size (bigobj));
-			bigobj->cardtable_mod_union = NULL;
-		}
-
 		if (sgen_los_object_is_pinned (bigobj->data)) {
+			if (bigobj->cardtable_mod_union) {
+				mword obj_size = sgen_los_object_size (bigobj);
+				mword num_cards = sgen_card_table_number_of_cards_in_range ((mword) bigobj->data, obj_size);
+				memset (bigobj->cardtable_mod_union, 0, num_cards);
+			}
+
 			sgen_los_unpin_object (bigobj->data);
 			sgen_update_heap_boundaries ((mword)bigobj->data, (mword)bigobj->data + sgen_los_object_size (bigobj));
 		} else {
@@ -474,6 +483,7 @@ sgen_los_sweep (void)
 			sgen_memgov_release_space (LOS_SECTION_SIZE, SPACE_LOS);
 			section = next;
 			--los_num_sections;
+			los_memory_usage_total -= LOS_SECTION_SIZE;
 			continue;
 		}
 

@@ -191,9 +191,10 @@ typedef struct {
 #if defined(USE_POSIX_BACKEND)
 	MonoSemType finish_resume_semaphore;
 	gboolean syscall_break_signal;
-	gboolean suspend_can_continue;
 	int signal;
 #endif
+
+	gboolean suspend_can_continue;
 
 	/* This memory pool is used by coop GC to save stack data roots between GC unsafe regions */
 	GByteArray *stackdata;
@@ -357,9 +358,6 @@ mono_thread_info_lookup (MonoNativeThreadId id);
 gboolean
 mono_thread_info_resume (MonoNativeThreadId tid);
 
-MONO_API void
-mono_thread_info_set_name (MonoNativeThreadId tid, const char *name);
-
 void
 mono_thread_info_safe_suspend_and_run (MonoNativeThreadId id, gboolean interrupt_kernel, MonoSuspendThreadCallback callback, gpointer user_data);
 
@@ -518,7 +516,6 @@ void mono_threads_core_exit (int exit_code);
 void mono_threads_core_unregister (THREAD_INFO_TYPE *info);
 HANDLE mono_threads_core_open_handle (void);
 HANDLE mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid);
-void mono_threads_core_set_name (MonoNativeThreadId tid, const char *name);
 
 void mono_threads_coop_begin_global_suspend (void);
 void mono_threads_coop_end_global_suspend (void);
@@ -531,6 +528,9 @@ mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
 gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
+
+MONO_API void
+mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
 
 /*Mach specific internals */
 void mono_threads_init_dead_letter (void);
@@ -588,9 +588,9 @@ typedef enum {
 
 typedef enum {
 	AbortBlockingIgnore, //Ignore
-	AbortBlockingIgnoreAndPoll, //Ignore and pool
+	AbortBlockingIgnoreAndPoll, //Ignore and poll
 	AbortBlockingOk, //Abort worked
-	AbortBlockingOkAndPool, //Abort worked, but pool before
+	AbortBlockingWait, //Abort worked, but should wait for resume
 } MonoAbortBlockingResult;
 
 
@@ -601,12 +601,14 @@ MonoRequestAsyncSuspendResult mono_threads_transition_request_async_suspension (
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
-void mono_threads_transition_async_suspend_compensation (THREAD_INFO_TYPE* info);
 MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info);
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info);
 
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
+
+gpointer
+mono_threads_enter_gc_unsafe_region_cookie (THREAD_INFO_TYPE *info);
 
 
 void mono_thread_info_wait_for_resume (THREAD_INFO_TYPE *info);
@@ -620,9 +622,6 @@ const char* mono_thread_state_name (int state);
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
-
-gboolean
-mono_thread_info_check_suspend_result (THREAD_INFO_TYPE *info);
 
 void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX rename to something to reflect the fact that this is used for both suspend and resume
 gboolean mono_threads_wait_pending_operations (void);

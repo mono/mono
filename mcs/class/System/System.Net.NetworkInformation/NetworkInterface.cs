@@ -41,15 +41,11 @@ using System.IO;
 using System.Globalization;
 
 namespace System.Net.NetworkInformation {
-	public abstract class NetworkInterface {
+	static class SystemNetworkInterface {
 
 		static readonly NetworkInterfaceFactory nif = NetworkInterfaceFactory.Create ();
 
-		protected NetworkInterface ()
-		{
-		}
-
-		public static NetworkInterface [] GetAllNetworkInterfaces ()
+		public static NetworkInterface [] GetNetworkInterfaces ()
 		{
 			try {
 				return nif.GetAllNetworkInterfaces ();
@@ -58,15 +54,21 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		[MonoTODO("Always returns true")]
-		public static bool GetIsNetworkAvailable ()
+		public static bool InternalGetIsNetworkAvailable ()
 		{
+			// TODO:
 			return true;
 		}
-		
-		public static int LoopbackInterfaceIndex {
+
+		public static int InternalLoopbackInterfaceIndex {
 			get {
 				return nif.GetLoopbackInterfaceIndex ();
+			}
+		}
+
+		public static int InternalIPv6LoopbackInterfaceIndex {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -74,20 +76,6 @@ namespace System.Net.NetworkInformation {
 		{
 			return nif.GetNetMask (address);
 		}
-
-		public abstract IPInterfaceProperties GetIPProperties ();
-		public abstract IPv4InterfaceStatistics GetIPv4Statistics ();
-		public abstract PhysicalAddress GetPhysicalAddress ();
-		public abstract bool Supports (NetworkInterfaceComponent networkInterfaceComponent);
-
-		public abstract string Description { get; }
-		public abstract string Id { get; }
-		public abstract bool IsReceiveOnly { get; }
-		public abstract string Name { get; }
-		public abstract NetworkInterfaceType NetworkInterfaceType { get; }
-		public abstract OperationalStatus OperationalStatus { get; }
-		public abstract long Speed { get; }
-		public abstract bool SupportsMulticast { get; }
 	}
 
 	abstract class NetworkInterfaceFactory

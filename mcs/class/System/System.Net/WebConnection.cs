@@ -261,7 +261,7 @@ namespace System.Net
 					var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
 					if (auth == null)
 						continue;
-					ntlm = (auth.Module.AuthenticationType == "NTLM");
+					ntlm = (auth.ModuleAuthenticationType == "NTLM");
 					sb.Append ("\r\nProxy-Authorization: ");
 					sb.Append (auth.Message);
 					break;
@@ -292,7 +292,7 @@ namespace System.Net
 				}
 
 				Data.StatusCode = status;
-				Data.Challenge = result.GetValues_internal ("Proxy-Authenticate", false);
+				Data.Challenge = result.GetValues ("Proxy-Authentic");
 				return false;
 			} else if (status != 200) {
 				string msg = String.Format ("The remote server returned a {0} status code.", status);
@@ -659,8 +659,23 @@ namespace System.Net
 					if (!finished)
 						return 0;
 
-					foreach (string s in headers)
-						data.Headers.SetInternal (s);
+					// .NET uses ParseHeaders or ParseHeadersStrict which is much better
+					foreach (string s in headers) {
+
+						int pos_s = s.IndexOf (':');
+						if (pos_s == -1)
+							throw new ArgumentException ("no colon found", "header");
+
+						var header = s.Substring (0, pos_s);
+						var value = s.Substring (pos_s + 1).Trim ();
+
+						var h = data.Headers;
+						if (h.AllowMultiValues (header)) {
+							h.AddInternal (header, value);
+						} else  {
+							h.SetInternal (header, value);
+						}
+					}
 
 					if (data.StatusCode == (int) HttpStatusCode.Continue) {
 						sPoint.SendContinue = true;

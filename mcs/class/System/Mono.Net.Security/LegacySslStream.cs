@@ -34,9 +34,6 @@
 
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -55,9 +52,6 @@ using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmTy
 using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
 using Mono.Security.Protocol.Tls;
 using Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;

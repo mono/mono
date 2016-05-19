@@ -796,12 +796,6 @@ mono_thread_info_begin_resume (MonoThreadInfo *info)
 	return mono_thread_info_core_resume (info);
 }
 
-gboolean
-mono_thread_info_check_suspend_result (MonoThreadInfo *info)
-{
-	return check_async_suspend (info);
-}
-
 /*
 FIXME fix cardtable WB to be out of line and check with the runtime if the target is not the
 WB trampoline. Another option is to encode wb ranges in MonoJitInfo, but that is somewhat hard.
@@ -888,6 +882,8 @@ suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel)
 	mono_threads_wait_pending_operations ();
 
 	if (!check_async_suspend (info)) {
+		mono_thread_info_core_resume (info);
+		mono_threads_wait_pending_operations ();
 		mono_hazard_pointer_clear (hp, 1);
 		return NULL;
 	}
@@ -1197,7 +1193,7 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 	if (alerted)
 		return sleep_interruptable (ms, alerted);
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 
 	if (ms == INFINITE) {
 		do {
@@ -1242,7 +1238,7 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 #endif /* __linux__ */
 	}
 
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	return 0;
 }
@@ -1250,9 +1246,9 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 gint
 mono_thread_info_usleep (guint64 us)
 {
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 	g_usleep (us);
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 	return 0;
 }
 
@@ -1312,12 +1308,6 @@ HANDLE
 mono_threads_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 {
 	return mono_threads_core_open_thread_handle (handle, tid);
-}
-
-void
-mono_thread_info_set_name (MonoNativeThreadId tid, const char *name)
-{
-	mono_threads_core_set_name (tid, name);
 }
 
 #define INTERRUPT_STATE ((MonoThreadInfoInterruptToken*) (size_t) -1)

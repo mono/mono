@@ -136,7 +136,7 @@ namespace System.Net
 					if (auth == null)
 						continue;
 
-					auth.Module = mod;
+					auth.ModuleAuthenticationType = mod.AuthenticationType;
 					return auth;
 				}
 			}
@@ -159,7 +159,7 @@ namespace System.Net
 					if (auth == null)
 						continue;
 
-					auth.Module = mod;
+					auth.ModuleAuthenticationType = mod.AuthenticationType;
 					return auth;
 				}
 			}

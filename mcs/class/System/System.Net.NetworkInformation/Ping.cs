@@ -159,7 +159,11 @@ namespace System.Net.NetworkInformation {
 		{
 			user_async_state = null;
 			worker = null;
-			cts = null;
+
+			if (cts != null) {
+				cts.Dispose();
+				cts = null;
+			}
 
 			if (PingCompleted != null)
 				PingCompleted (this, e);
@@ -595,6 +599,8 @@ namespace System.Net.NetworkInformation {
 		{
 			if ((worker != null) || (cts != null))
 				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+
+			cts = new CancellationTokenSource();
 
 			var task = Task<PingReply>.Factory.StartNew (
 				() => Send (address, timeout, buffer, options), cts.Token);

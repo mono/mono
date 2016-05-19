@@ -29,9 +29,6 @@
 //
 
 #if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using TypeDescriptor = PrebuiltSystem.System.ComponentModel.TypeDescriptor;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

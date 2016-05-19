@@ -573,8 +573,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.DontFragment = true;
 				Assert.Fail ("DontFragment #1");
 			} catch (NotSupportedException) {
-			} catch {
-				Assert.Fail ("DontFragment #2");
 			} finally {
 				sock.Close ();
 			}
@@ -592,8 +590,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("EnableBroadcastDefaultTcp #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode, "EnableBroadcastDefaultTcp #2");
-			} catch {
-				Assert.Fail ("EnableBroadcastDefaultTcp #2");
 			} finally {
 				sock.Close ();
 			}
@@ -623,8 +619,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("EnableBroadcastChangeTcp #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode, "EnableBroadcastChangeTcp #2");
-			} catch {
-				Assert.Fail ("EnableBroadcastChangeTcp #2");
 			} finally {
 				sock.Close ();
 			}
@@ -793,8 +787,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("MulticastLoopbackDefaultTcp #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode, "MulticastLoopbackDefaultTcp #2");
-			} catch {
-				Assert.Fail ("MulticastLoopbackDefaultTcp #2");
 			} finally {
 				sock.Close ();
 			}
@@ -812,8 +804,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("MulticastLoopbackChangeTcp #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode, "MulticastLoopbackChangeTcp #2");
-			} catch {
-				Assert.Fail ("MulticastLoopbackChangeTcp #2");
 			} finally {
 				sock.Close ();
 			}
@@ -997,7 +987,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // Mac doesn't throw when overflowing the ttl
 		public void TtlChangeOverflow ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1007,11 +996,9 @@ namespace MonoTests.System.Net.Sockets
 			try {
 				sock.Ttl = 256;
 				Assert.Fail ("TtlChangeOverflow #1");
-			} catch (SocketException ex) {
-				Assert.AreEqual (10022, ex.ErrorCode,
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual ("value", ex.ParamName,
 						 "TtlChangeOverflow #2");
-			} catch {
-				Assert.Fail ("TtlChangeoverflow #3");
 			} finally {
 				sock.Close ();
 			}
@@ -1024,8 +1011,6 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10022, ex.ErrorCode,
 						 "TtlChangeOverflow #5");
-			} catch {
-				Assert.Fail ("TtlChangeOverflow #6");
 			} finally {
 				sock.Close ();
 			}
@@ -1139,8 +1124,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.SendTimeout = -2;
 				Assert.Fail ("SendTimeoutChange #8");
 			} catch (ArgumentOutOfRangeException) {
-			} catch {
-				Assert.Fail ("SendTimeoutChange #9");
 			} finally {
 				sock.Close ();
 			}
@@ -1198,8 +1181,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.ReceiveTimeout = -2;
 				Assert.Fail ("ReceiveTimeoutChange #8");
 			} catch (ArgumentOutOfRangeException) {
-			} catch {
-				Assert.Fail ("ReceiveTimeoutChange #9");
 			} finally {
 				sock.Close ();
 			}
@@ -1257,8 +1238,6 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode,
 						 "NoDelayDefaultUdp #2");
-			} catch {
-				Assert.Fail ("NoDelayDefaultUdp #3");
 			} finally {
 				sock.Close ();
 			}
@@ -1277,8 +1256,6 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10042, ex.ErrorCode,
 						 "NoDelayChangeUdp #2");
-			} catch {
-				Assert.Fail ("NoDelayChangeUdp #3");
 			} finally {
 				sock.Close ();
 			}
@@ -1491,8 +1468,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginAcceptSocketUdp #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10022, ex.ErrorCode, "BeginAcceptSocketUdp #2");
-			} catch {
-				Assert.Fail ("BeginAcceptSocketUdp #3");
 			} finally {
 				acc.Close ();
 				sock.Close ();
@@ -1524,8 +1499,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.BeginAccept (acc, 256, BADCallback, sock);
 				Assert.Fail ("BeginAcceptSocketBound #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("BeginAcceptSocketBound #2");
 			} finally {
 				acc.Close ();
 				sock.Close ();
@@ -1608,8 +1581,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.BeginAccept (acc, 256, BADCallback, null);
 				Assert.Fail ("BeginAcceptSocketClosed #1");
 			} catch (ObjectDisposedException) {
-			} catch {
-				Assert.Fail ("BeginAcceptSocketClosed #2");
 			} finally {
 				acc.Close ();
 			}
@@ -1638,8 +1609,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.BeginAccept (acc, 256, BADCallback, null);
 				Assert.Fail ("BeginAcceptSocketAccClosed #1");
 			} catch (ObjectDisposedException) {
-			} catch {
-				Assert.Fail ("BeginAcceptSocketAccClosed #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1710,8 +1679,6 @@ namespace MonoTests.System.Net.Sockets
 						   sock);
 				Assert.Fail ("BeginConnectAddressPortNull #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("BeginConnectAddressPortNull #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1733,8 +1700,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.BeginConnect (ip, ep.Port, BCCallback, sock);
 				Assert.Fail ("BeginConnectAddressPortListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("BeginConnectAddressPortListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1880,8 +1845,6 @@ namespace MonoTests.System.Net.Sockets
 						   sock);
 				Assert.Fail ("BeginConnectMultipleNull #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("BeginConnectMultipleNull #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1910,8 +1873,6 @@ namespace MonoTests.System.Net.Sockets
 						   sock);
 				Assert.Fail ("BeginConnectMultipleListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("BeginConnectMultipleListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1948,8 +1909,6 @@ namespace MonoTests.System.Net.Sockets
 						   BCCallback, sock);
 				Assert.Fail ("BeginConnectHostPort #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("BeginConnectHostPort #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1972,8 +1931,6 @@ namespace MonoTests.System.Net.Sockets
 						   BCCallback, sock);
 				Assert.Fail ("BeginConnectHostPortListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("BeginConnectHostPortListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -1992,8 +1949,6 @@ namespace MonoTests.System.Net.Sockets
 						   sock);
 				Assert.Fail ("BeginConnectHostPortNotIP #1");
 			} catch (NotSupportedException) {
-			} catch {
-				Assert.Fail ("BeginConnectHostPortNotIP #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2102,8 +2057,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginSendNotConnected #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10057, ex.ErrorCode, "BeginSendNotConnected #2");
-			} catch {
-				Assert.Fail ("BeginSendNotConnected #3");
 			} finally {
 				sock.Close ();
 			}
@@ -2142,8 +2095,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BindTwice #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10022, ex.ErrorCode, "BindTwice #2");
-			} catch {
-				Assert.Fail ("BindTwice #3");
 			} finally {
 				sock.Close ();
 			}
@@ -2212,8 +2163,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect (ip, 1249);
 				Assert.Fail ("ConnectAddressPortNull #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("ConnectAddressPortNull #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2235,8 +2184,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect (ip, ep.Port);
 				Assert.Fail ("ConnectAddressPortListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("ConnectAddressPortListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2359,8 +2306,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect (ips, 1251);
 				Assert.Fail ("ConnectMultipleNull #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("ConnectMultipleNull #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2388,8 +2333,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect (ips, ep.Port);
 				Assert.Fail ("ConnectMultipleListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("ConnectMultipleListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2425,8 +2368,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect ((string)null, 0);
 				Assert.Fail ("ConnectHostPort #1");
 			} catch (ArgumentNullException) {
-			} catch {
-				Assert.Fail ("ConnectHostPort #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2448,8 +2389,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect ("localhost", ep.Port);
 				Assert.Fail ("ConnectHostPortListen #1");
 			} catch (InvalidOperationException) {
-			} catch {
-				Assert.Fail ("ConnectHostPortListen #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2467,8 +2406,6 @@ namespace MonoTests.System.Net.Sockets
 				sock.Connect ("localhost", 0);
 				Assert.Fail ("ConnectHostPortNotIP #1");
 			} catch (NotSupportedException) {
-			} catch {
-				Assert.Fail ("ConnectHostPortNotIP #2");
 			} finally {
 				sock.Close ();
 			}
@@ -2672,8 +2609,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("ListenNotBound #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10022, ex.ErrorCode, "ListenNotBound #2");
-			} catch {
-				Assert.Fail ("ListenNotBound #3");
 			} finally {
 				sock.Close ();
 			}
@@ -3483,43 +3418,34 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void UdpDoubleBind ()
 		{
-			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-			
-			var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
-			s.Bind (ep);
-			
-			Socket ss = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-			
-			ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
+			using (Socket s = new Socket (AddressFamily.InterNetwork,
+						SocketType.Dgram, ProtocolType.Udp))
+			using (Socket ss = new Socket (AddressFamily.InterNetwork,
+						SocketType.Dgram, ProtocolType.Udp)) {
+				var supportsReuseAddress = true;
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				} catch (SocketException e) {
+					// Exception is thrown when ReuseAddress is not supported
+					Assert.AreEqual ((int) SocketError.OperationNotSupported, e.NativeErrorCode,
+							"Expected SocketError.OperationNotSupported");
+					supportsReuseAddress = false;
+				}
 
-			// If we make it this far, we succeeded.
-			
-			ss.Close ();
-			s.Close ();
-		}
+				var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
+				s.Bind (ep);
 
-#if MONOTOUCH
-		// when the linker is enabled then reflection won't work and would throw an NRE
-		// this is also always true for iOS - so we do not need to poke internals
-		static bool SupportsPortReuse ()
-		{
-			return true;
-		}
-#else
-		static bool? supportsPortReuse;
-		static bool SupportsPortReuse ()
-		{
-			if (supportsPortReuse.HasValue)
-				return supportsPortReuse.Value;
+				if (supportsReuseAddress)
+					ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-			supportsPortReuse = (bool) typeof (Socket).GetMethod ("SupportsPortReuse",
-					BindingFlags.Static | BindingFlags.NonPublic)
-					.Invoke (null, new object [] {});
-			return supportsPortReuse.Value;
+				try {
+					ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
+					if (!supportsReuseAddress)
+						Assert.Fail ("Reusing address is not supported, exception was expected on second bind.");
+				} catch (SocketException e) {
+				}
+			}
 		}
-#endif
 
 		// Test case for bug #31557
 		[Test]
@@ -3529,22 +3455,30 @@ namespace MonoTests.System.Net.Sockets
 						SocketType.Stream, ProtocolType.Tcp))
 			using (Socket ss = new Socket (AddressFamily.InterNetwork,
 						SocketType.Stream, ProtocolType.Tcp)) {
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				var supportsReuseAddress = true;
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				} catch (SocketException e) {
+					// Exception is thrown when ReuseAddress is not supported
+					Assert.AreEqual ((int) SocketError.OperationNotSupported, e.NativeErrorCode,
+							"Expected SocketError.OperationNotSupported");
+					supportsReuseAddress = false;
+				}
+
 				var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 				s.Bind (ep);
 				s.Listen(1);
 
-				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				if (supportsReuseAddress)
+					ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-				Exception ex = null;
 				try {
 					ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
 					ss.Listen(1);
+					if (!supportsReuseAddress)
+						Assert.Fail ("Reusing address is not supported, exception was expected on second bind.");
 				} catch (SocketException e) {
-					ex = e;
 				}
-
-				Assert.AreEqual (SupportsPortReuse (), ex == null);
 			}
 		}
 

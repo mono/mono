@@ -43,6 +43,8 @@ namespace System.Configuration
 			properties.Add (enabled_prop);
 		}
 
+		internal const UriIdnScope EnabledDefaultValue = UriIdnScope.None;
+
 		public IdnElement ()
 		{
 		}

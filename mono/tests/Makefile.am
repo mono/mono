@@ -435,7 +435,8 @@ BASE_TEST_CS_SRC=		\
 	pinvoke_ppcs.cs	\
 	pinvoke_ppci.cs	\
 	pinvoke_ppcf.cs	\
-	pinvoke_ppcd.cs
+	pinvoke_ppcd.cs	\
+	bug-29585.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
@@ -584,6 +585,12 @@ endif
 
 endif
 
+if ENABLE_COOP
+COOP_DISABLED_TESTS= thunks.exe
+else
+COOP_DISABLED_TESTS= 
+endif
+
 # The two finalizer tests only work under sgen
 # gc-altstack.exe fails under boehm because it has no support for altstack
 # bug-459094.exe creates an extremely deep directory tree
@@ -597,7 +604,8 @@ DISABLED_TESTS=			\
 	delegate-invoke.exe \
 	bug-Xamarin-5278.exe \
 	$(PLATFORM_DISABLED_TESTS) \
-	$(EXTRA_DISABLED_TESTS)
+	$(EXTRA_DISABLED_TESTS) \
+	$(COOP_DISABLED_TESTS)
 
 DISABLED_TESTS_WRENCH=	\
 	$(DISABLED_TESTS)	\
@@ -767,25 +775,7 @@ endif
 test-env-options:
 	MONO_ENV_OPTIONS="--version" $(RUNTIME) array-init.exe | grep -q Architecture:
 
-if AMD64
 test-sgen : sgen-tests
-else
-if X86
-if HOST_WIN32
-test-sgen :
-else
-test-sgen : sgen-tests
-endif
-else
-if ARM
-test-sgen : sgen-tests
-else
-if S390X
-test-sgen : sgen-regular-tests
-endif
-endif
-endif
-endif
 
 # Precompile the test assemblies in parallel
 compile-tests:
@@ -963,14 +953,16 @@ debug-casts:
 	@$(MCS) -r:TestDriver.dll $(srcdir)/debug-casts.cs
 	@$(RUNTIME) --debug=casts debug-casts.exe
 
-EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs sgen-new-threads-dont-join-stw.cs sgen-bridge-xref.cs bug-17590.cs sgen-toggleref.cs
+EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs sgen-new-threads-dont-join-stw.cs sgen-new-threads-dont-join-stw-2.cs sgen-bridge-xref.cs bug-17590.cs sgen-toggleref.cs sgen-bridge-gchandle.cs
 
 
 sgen-tests:
 	$(MAKE) sgen-regular-tests
+if !S390X
 	$(MAKE) sgen-toggleref-tests
 	$(MAKE) sgen-bridge-tests
 	$(MAKE) sgen-bridge2-tests
+endif
 
 SGEN_REGULAR_TESTS =	\
 	finalizer-wait.exe	\
@@ -983,6 +975,7 @@ SGEN_REGULAR_TESTS =	\
 	sgen-cementing-stress.exe	\
 	sgen-case-23400.exe	\
 	sgen-new-threads-dont-join-stw.exe	\
+	sgen-new-threads-dont-join-stw-2.exe	\
 	gc-graystack-stress.exe	\
 	bug-17590.exe
 
@@ -1103,6 +1096,38 @@ sgen-bridge2-tests-plain-tarjan-bridge: $(SGEN_BRIDGE2_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=2Bridge" MONO_GC_PARAMS="bridge-implementation=tarjan" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE2_TESTS)
 sgen-bridge2-tests-ms-split-tarjan-bridge: $(SGEN_BRIDGE2_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=2Bridge" MONO_GC_PARAMS="bridge-implementation=tarjan,minor=split" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE2_TESTS)
+
+
+SGEN_BRIDGE3_TESTS=	\
+	sgen-bridge-gchandle.exe
+
+sgen-bridge3-tests: $(SGEN_BRIDGE3_TESTS)
+	$(MAKE) sgen-bridge3-tests-plain
+	$(MAKE) sgen-bridge3-tests-ms-conc
+	$(MAKE) sgen-bridge3-tests-ms-split
+	$(MAKE) sgen-bridge3-tests-plain-new-bridge
+	$(MAKE) sgen-bridge3-tests-ms-conc-new-bridge
+	$(MAKE) sgen-bridge3-tests-ms-split-new-bridge
+	$(MAKE) sgen-bridge3-tests-plain-tarjan-bridge
+	$(MAKE) sgen-bridge3-tests-ms-split-tarjan-bridge
+
+sgen-bridge3-tests-plain: $(SGEN_bridge3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-ms-conc: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-ms-split: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="minor=split" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-plain-new-bridge: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="bridge-implementation=new" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-ms-conc-new-bridge: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="bridge-implementation=new,major=marksweep-conc" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-ms-split-new-bridge: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="bridge-implementation=new,minor=split" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-plain-tarjan-bridge: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="bridge-implementation=tarjan" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+sgen-bridge3-tests-ms-split-tarjan-bridge: $(SGEN_BRIDGE3_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="bridge=3Bridge" MONO_GC_PARAMS="bridge-implementation=tarjan,minor=split" $(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 900 $(SGEN_BRIDGE3_TESTS)
+
 
 AOT_CONFIGURATIONS=	\
 	"|regular"	\
@@ -1429,7 +1454,8 @@ test-console-output: console-output.exe
 PROCESS_STRESS_TESTS=	\
 		process-stress-1.exe	\
 		process-stress-2.exe	\
-		process-stress-3.exe
+		process-stress-3.exe	\
+		process-leak.exe
 
 test-process-stress: $(PROCESS_STRESS_TESTS) test-runner.exe
 	$(RUNTIME) ./test-runner.exe --testsuite-name $@ --timeout 600 $(PROCESS_STRESS_TESTS)
