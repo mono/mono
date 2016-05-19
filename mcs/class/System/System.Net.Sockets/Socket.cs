@@ -702,8 +702,8 @@ namespace System.Net.Sockets
 			set {
 				ThrowIfDisposedAndClosed ();
 
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+				if (value < 0 || value > 255)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero or greater than 255.");
 
 				switch (address_family) {
 				case AddressFamily.InterNetwork:
