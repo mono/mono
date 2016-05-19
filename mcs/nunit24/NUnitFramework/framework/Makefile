@@ -1,4 +1,4 @@
-thisdir = nunit24/NUnit.Framework/framework
+thisdir = nunit24/NUnitFramework/framework
 SUBDIRS = 
 include ../../../build/rules.make
 
