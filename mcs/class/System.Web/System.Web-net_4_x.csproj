@@ -373,7 +373,6 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\IDataBoundItemControl.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\IDataBoundListControl.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\IEditableTextControl.cs" />
-    <Compile Include="..\referencesource\System.Web\UI\WebControls\IEditableTextControl.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\IFieldControl.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ImageAlign.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ImageMapEventArgs.cs" />
@@ -547,7 +546,6 @@
     <Compile Include="Mono.Web.Util\SettingsMapping.cs" />
     <Compile Include="Mono.Web.Util\SettingsMappingManager.cs" />
     <Compile Include="Mono.Web.Util\SettingsMappingWhat.cs" />
-    <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="System.Collections.Concurrent\SplitOrderedList.cs" />
     <Compile Include="System.Web.Caching\AggregateCacheDependency.cs" />
