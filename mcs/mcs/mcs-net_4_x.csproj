@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\mcs-net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-mcs-net_4_x</IntermediateOutputPath>
+    <IntermediateOutputPath>obj-bin\Debug\mcs-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
