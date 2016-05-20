@@ -37,6 +37,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 namespace System.Diagnostics {
 
@@ -59,6 +60,15 @@ namespace System.Diagnostics {
 		private StackFrame[] frames;
 		readonly StackTrace[] captured_traces;
 		private bool debug_info;
+
+		private static Dictionary<string, Func<StackTrace, string>> metadataHandlers;
+
+		static StackTrace ()
+		{
+			metadataHandlers = new Dictionary<string, Func<StackTrace, string>> ();
+
+			InitMetadataHandlers ();
+		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace ()
@@ -295,13 +305,38 @@ namespace System.Diagnostics {
 			}
 
 			AddFrames (sb);
+
+			foreach (var handler in metadataHandlers) {
+				var lines = handler.Value (this);
+				using (var reader = new StringReader (lines)) {
+					string line;
+					while ((line = reader.ReadLine()) != null) {
+						sb.AppendLine ();
+						sb.Append (string.Format ("[{0}] {1}", handler.Key, line));
+					}
+				}
+			}
+
 			return sb.ToString ();
 		}
 
+		
 		internal String ToString (TraceFormat traceFormat)
 		{
 			// TODO:
 			return ToString ();
+		}
+
+		static void InitMetadataHandlers ()
+		{
+			string aotid = Assembly.GetAotId ();
+			if (aotid != "00000000-0000-0000-0000-000000000000")
+				AddMetadataHandler ("AOTID", st => { return aotid; });
+		}
+
+		private static void AddMetadataHandler (string id, Func<StackTrace, string> handler)
+		{
+			metadataHandlers.Add (id, handler);
 		}
 	}
 }
