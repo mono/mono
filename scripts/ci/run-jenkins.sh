@@ -37,7 +37,7 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
     # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
 fi
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check
-${TESTCMD} --label=runtime --timeout=120m make -w -C mono/tests -k test-wrench V=1 CI=1
+${TESTCMD} --label=runtime --timeout=140m make -w -C mono/tests -k test-wrench V=1 CI=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
