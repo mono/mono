@@ -326,6 +326,26 @@ namespace System.Diagnostics {
 			string aotid = Assembly.GetAotId ();
 			if (aotid != "00000000-0000-0000-0000-000000000000")
 				AddMetadataHandler ("AOTID", st => { return aotid; });
+
+			AddMetadataHandler ("MVID", st => {
+				var mvidLines = new Dictionary<Guid, List<int>> ();
+				var frames = st.GetFrames ();
+				for (var lineNumber = 0; lineNumber < frames.Length; lineNumber++) {
+					var mvid = frames[lineNumber].GetMethod ().Module.ModuleVersionId;
+					if (!mvidLines.ContainsKey (mvid))
+						mvidLines.Add (mvid, new List<int> ());
+
+					mvidLines[mvid].Add (lineNumber);
+				}
+
+				var sb = new StringBuilder ();
+				foreach (var kv in mvidLines) {
+					var mvid = kv.Key.ToString ().ToUpper ();
+					sb.AppendLine (string.Format ("{0} {1}", mvid, string.Join (",", kv.Value)));
+				}
+
+				return sb.ToString ();
+			});
 		}
 
 		private static void AddMetadataHandler (string id, Func<StackTrace, string> handler)
