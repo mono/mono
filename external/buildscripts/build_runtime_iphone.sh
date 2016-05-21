@@ -208,6 +208,7 @@ build_iphone_simulator ()
 	make clean || echo "failed make cleaning"
 
 	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
+	perl -pi -e 's/#define HAVE_FINITE 1//' config.h
 
 	make $jobs || { echo "failing running make for mono"; exit 1; }
 
