@@ -7,7 +7,7 @@ XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.pla
 BUILDSCRIPTSDIR=external/buildscripts
 
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
-	SDK_VERSION=5.1
+	SDK_VERSION=7.1
 fi
 
 echo "Using SDK $SDK_VERSION"
