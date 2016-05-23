@@ -19,6 +19,7 @@
 #include "sgen-thread-pool.h"
 #include "sgen-client.h"
 #include "mono/utils/mono-membar.h"
+#include "mono/utils/mono-proclib.h"
 
 #include <errno.h>
 #include <string.h>
@@ -83,7 +84,7 @@ binary_protocol_open_file (void)
 		filename = filename_or_prefix;
 
 	do {
-		binary_protocol_file = open (filename, O_CREAT|O_WRONLY|O_TRUNC, 0644);
+		binary_protocol_file = open (filename, O_CREAT | O_WRONLY | O_EXCL, 0644);
 		if (binary_protocol_file == -1 && errno != EINTR)
 			break; /* Failed */
 	} while (binary_protocol_file == -1);
@@ -100,8 +101,16 @@ void
 binary_protocol_init (const char *filename, long long limit)
 {
 #ifdef HAVE_UNISTD_H
-	filename_or_prefix = (char *)sgen_alloc_internal_dynamic (strlen (filename) + 1, INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
-	strcpy (filename_or_prefix, filename);
+	if (access (filename, F_OK) != -1) {
+		/* File already exists, add the pid suffix to the filename */
+		gint32 pid = mono_process_current_pid ();
+		/* Original name length + . + pid length in hex + null terminator */
+		filename_or_prefix = (char *)sgen_alloc_internal_dynamic (strlen (filename) + 1 + 8 + 1, INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
+		sprintf (filename_or_prefix, "%s.%x", filename, pid);
+	} else {
+		filename_or_prefix = (char *)sgen_alloc_internal_dynamic (strlen (filename) + 1, INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
+		strcpy (filename_or_prefix, filename);
+	}
 
 	file_size_limit = limit;
 
