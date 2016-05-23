@@ -3938,10 +3938,10 @@ register_icalls (void)
 
 	register_icall (mono_debugger_agent_user_break, "mono_debugger_agent_user_break", "void", FALSE);
 
-	register_icall (mono_aot_init_llvm_method, "mono_aot_init_llvm_method", "void ptr int", TRUE);
-	register_icall (mono_aot_init_gshared_method_this, "mono_aot_init_gshared_method_this", "void ptr int object", TRUE);
-	register_icall (mono_aot_init_gshared_method_mrgctx, "mono_aot_init_gshared_method_mrgctx", "void ptr int ptr", TRUE);
-	register_icall (mono_aot_init_gshared_method_vtable, "mono_aot_init_gshared_method_vtable", "void ptr int ptr", TRUE);
+	register_icall (mono_aot_init_llvm_method, "mono_aot_init_llvm_method", "void ptr int", FALSE);
+	register_icall (mono_aot_init_gshared_method_this, "mono_aot_init_gshared_method_this", "void ptr int object", FALSE);
+	register_icall (mono_aot_init_gshared_method_mrgctx, "mono_aot_init_gshared_method_mrgctx", "void ptr int ptr", FALSE);
+	register_icall (mono_aot_init_gshared_method_vtable, "mono_aot_init_gshared_method_vtable", "void ptr int ptr", FALSE);
 
 	register_icall_no_wrapper (mono_resolve_iface_call_gsharedvt, "mono_resolve_iface_call_gsharedvt", "ptr object int ptr ptr");
 	register_icall_no_wrapper (mono_resolve_vcall_gsharedvt, "mono_resolve_vcall_gsharedvt", "ptr object int ptr ptr");
