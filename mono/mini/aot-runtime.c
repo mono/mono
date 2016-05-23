@@ -4263,8 +4263,7 @@ mono_aot_init_llvm_method (gpointer aot_module, guint32 method_index)
 
 	res = init_method (amodule, method_index, NULL, NULL, NULL, &error);
 	// FIXME: Pass the exception up to the caller ?
-	/* Its okay to raise in llvmonly mode */
-	mono_error_raise_exception (&error);
+	mono_error_set_pending_exception (&error);
 }
 
 void
@@ -4290,8 +4289,7 @@ mono_aot_init_gshared_method_this (gpointer aot_module, guint32 method_index, Mo
 	g_assert (context);
 
 	res = init_method (amodule, method_index, NULL, klass, context, &error);
-	/* Its okay to raise in llvmonly mode */
-	mono_error_raise_exception (&error);
+	mono_error_set_pending_exception (&error);
 }
 
 void
@@ -4310,8 +4308,7 @@ mono_aot_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, 
 	context.method_inst = rgctx->method_inst;
 
 	res = init_method (amodule, method_index, NULL, rgctx->class_vtable->klass, &context, &error);
-	/* Its okay to raise in llvmonly mode */
-	mono_error_raise_exception (&error);
+	mono_error_set_pending_exception (&error);
 }
 
 void
@@ -4335,8 +4332,7 @@ mono_aot_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, 
 	g_assert (context);
 
 	res = init_method (amodule, method_index, NULL, klass, context, &error);
-	/* Its okay to raise in llvmonly mode */
-	mono_error_raise_exception (&error);
+	mono_error_set_pending_exception (&error);
 }
 
 /*
