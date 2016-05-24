@@ -1162,6 +1162,8 @@ mono_patch_info_dup_mp (MonoMemPool *mp, MonoJumpInfo *patch_info)
 		memcpy (info, oinfo, sizeof (MonoJumpInfoVirtMethod));
 		break;
 	}
+	case MONO_PATCH_INFO_GSHARED_METHOD_INFO:
+		break;
 	default:
 		break;
 	}
@@ -1202,6 +1204,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_TLS_OFFSET:
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT:
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
+	case MONO_PATCH_INFO_GSHARED_METHOD_INFO:
 		return (ji->type << 8) | (gssize)ji->data.target;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL:
 		return (ji->type << 8) | (gssize)ji->data.gsharedvt->method;
@@ -1571,7 +1574,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.method->klass);
 		g_assert (vtable);
 
-		target = mono_method_lookup_rgctx (vtable, mini_method_get_context (patch_info->data.method)->method_inst);
+		if (mini_is_new_gshared (patch_info->data.method))
+			target = mini_method_get_rgctx (patch_info->data.method);
+		else
+			target = mono_method_lookup_rgctx (vtable, mini_method_get_context (patch_info->data.method)->method_inst);
 		break;
 	}
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
@@ -1658,6 +1664,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		target = mini_get_gsharedvt_wrapper (TRUE, NULL, patch_info->data.sig, NULL, -1, FALSE);
+		break;
+	case MONO_PATCH_INFO_GSHARED_METHOD_INFO:
+		/* Already allocate in non-temporary memory */
+		target = patch_info->data.target;
 		break;
 	default:
 		g_assert_not_reached ();
@@ -3414,6 +3424,8 @@ mini_free_jit_domain_info (MonoDomain *domain)
 		g_hash_table_foreach (info->llvm_jit_callees, free_jit_callee_list, NULL);
 		g_hash_table_destroy (info->llvm_jit_callees);
 	}
+	if (info->rgctx_arg_hash)
+		g_hash_table_destroy (info->rgctx_arg_hash);
 #ifdef ENABLE_LLVM
 	mono_llvm_free_domain_info (domain);
 #endif
@@ -3958,6 +3970,8 @@ register_icalls (void)
 	register_icall_with_wrapper (mono_monitor_enter_v4, "mono_monitor_enter_v4", "void obj ptr");
 	register_icall_no_wrapper (mono_monitor_enter_fast, "mono_monitor_enter_fast", "int obj");
 	register_icall_no_wrapper (mono_monitor_enter_v4_fast, "mono_monitor_enter_v4_fast", "int obj ptr");
+
+	register_icall_no_wrapper (mini_init_method_rgctx, "mini_init_method_rgctx", "void ptr ptr");
 
 #ifdef TARGET_IOS
 	register_icall (pthread_getspecific, "pthread_getspecific", "ptr ptr", TRUE);

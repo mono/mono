@@ -224,4 +224,6 @@ MonoObject* mono_get_method_object (MonoMethod *method);
 
 double mono_ckfinite (double d);
 
+void mini_init_method_rgctx (MonoMethodRgctxArg *arg, MonoGSharedMethodInfo *info);
+
 #endif /* __MONO_JIT_ICALLS_H__ */

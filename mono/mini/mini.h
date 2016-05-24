@@ -358,6 +358,8 @@ typedef struct
 	gpointer llvm_module;
 	/* Maps MonoMethod -> GSlist of addresses */
 	GHashTable *llvm_jit_callees;
+	/* Maps MonoMethod -> rgctx arg */
+	GHashTable *rgctx_arg_hash;
 } MonoJitDomainInfo;
 
 typedef struct {
@@ -1264,6 +1266,14 @@ typedef struct {
 	gpointer infos [MONO_ZERO_LEN_ARRAY];
 } MonoMethodRuntimeGenericContext;
 
+/* A pointer to this structure is passed to gshared methods in the rgctx register */
+typedef struct {
+	/* Initialized lazily by the called method by calling mini_init_method_rgctx () */
+	MonoMethodRuntimeGenericContext *mrgctx;
+	/* The actual inflated method */
+	MonoMethod *method;
+} MonoMethodRgctxArg;
+
 #define MONO_SIZEOF_METHOD_RUNTIME_GENERIC_CONTEXT (sizeof (MonoMethodRuntimeGenericContext) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 #define MONO_RGCTX_SLOT_MAKE_RGCTX(i)	(i)
@@ -1279,11 +1289,17 @@ typedef struct {
 	int num_entries, count_entries;
 } MonoGSharedVtMethodInfo;
 
+typedef struct {
+	MonoMethod *method;
+	MonoRuntimeGenericContextInfoTemplate *entries;
+	int num_entries, count_entries;
+} MonoGSharedMethodInfo;
+
 /* This is used by gsharedvt methods to allocate locals and compute local offsets */
 typedef struct {
 	int locals_size;
 	/*
-	 * The results of resolving the entries in MOonGSharedVtMethodInfo->entries.
+	 * The results of resolving the entries in MonoGSharedVtMethodInfo->entries.
 	 * We use this instead of rgctx slots since these can be loaded using a load instead
 	 * of a call to an rgctx fetch trampoline.
 	 */
@@ -1456,6 +1472,7 @@ enum {
 typedef struct {
 	guint            have_card_table_wb : 1;
 	guint            have_op_generic_class_init : 1;
+	guint            have_op_mrgctx_init : 1;
 	guint            emulate_mul_div : 1;
 	guint            emulate_div : 1;
 	guint            emulate_long_shift_opts : 1;
@@ -1593,6 +1610,8 @@ typedef struct {
 
 	MonoGenericSharingContext gsctx;
 	MonoGenericContext *gsctx_context;
+
+	MonoGSharedMethodInfo *gshared_info;
 
 	MonoGSharedVtMethodInfo *gsharedvt_info;
 
@@ -2978,7 +2997,6 @@ mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_va
 gboolean
 mini_class_is_generic_sharable (MonoClass *klass);
 
-
 gboolean
 mini_generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars, gboolean allow_partial);
 
@@ -3000,6 +3018,9 @@ gpointer mono_helper_get_rgctx_other_ptr (MonoClass *caller_class, MonoVTable *v
 
 void mono_generic_sharing_init (void);
 void mono_generic_sharing_cleanup (void);
+gboolean mini_is_new_gshared (MonoMethod *method);
+gpointer mini_instantiate_gshared_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti,
+										MonoGenericContext *context, MonoClass *klass);
 
 MonoClass* mini_class_get_container_class (MonoClass *klass);
 MonoGenericContext* mini_class_get_context (MonoClass *klass);

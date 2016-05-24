@@ -792,3 +792,4 @@ gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 
 generic_class_init: src1:A len:32 clob:c
+mrgctx_init: src1:A src2:i len:32 clob:c

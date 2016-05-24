@@ -589,7 +589,7 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 }
 
 /*
- * generic_info is either a MonoMethodRuntimeGenericContext or a MonoVTable.
+ * generic_info is either a MonoMethodRuntimeGenericContext, a MonoMethodRgctxArg or a MonoVTable.
  */
 static MonoGenericContext
 get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
@@ -602,6 +602,12 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 
 	method = jinfo_get_method (ji);
 	g_assert (method->is_inflated);
+	if ((mono_method_get_context (method)->method_inst || method->klass->valuetype || (method->flags & METHOD_ATTRIBUTE_STATIC)) && mini_is_new_gshared (method)) {
+		MonoMethodRgctxArg *arg = (MonoMethodRgctxArg*)generic_info;
+		context = *mono_method_get_context (arg->method);
+		return context;
+	}
+
 	if (mono_method_get_context (method)->method_inst) {
 		MonoMethodRuntimeGenericContext *mrgctx = (MonoMethodRuntimeGenericContext *)generic_info;
 

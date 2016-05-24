@@ -5769,6 +5769,33 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		}
 		break;
 	}
+	case MONO_PATCH_INFO_GSHARED_METHOD_INFO: {
+		MonoGSharedMethodInfo *info = (MonoGSharedMethodInfo*)patch_info->data.target;
+		int i;
+
+		encode_method_ref (acfg, info->method, p, &p);
+		encode_value (info->num_entries, p, &p);
+		for (i = 0; i < info->num_entries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template_ = &info->entries [i];
+
+			encode_value (template_->info_type, p, &p);
+			switch (mini_rgctx_info_type_to_patch_info_type (template_->info_type)) {
+			case MONO_PATCH_INFO_CLASS:
+				encode_klass_ref (acfg, mono_class_from_mono_type ((MonoType *)template_->data), p, &p);
+				break;
+			case MONO_PATCH_INFO_FIELD:
+				encode_field_info (acfg, (MonoClassField *)template_->data, p, &p);
+				break;
+			case MONO_PATCH_INFO_METHODCONST:
+				encode_method_ref (acfg, (MonoMethod *)template_->data, p, &p);
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+		}
+		break;
+	}
 	case MONO_PATCH_INFO_LDSTR_LIT: {
 		const char *s = (const char *)patch_info->data.target;
 		int len = strlen (s);
