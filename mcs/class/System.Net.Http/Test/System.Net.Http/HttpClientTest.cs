@@ -150,6 +150,29 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		class ThrowOnlyProxy : IWebProxy
+		{
+			public ICredentials Credentials {
+				get {
+					throw new NotImplementedException ();
+				}
+
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public Uri GetProxy (Uri destination)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public bool IsBypassed (Uri host)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
 		const int WaitTimeout = 5000;
 
 		string TestHost, LocalServer;
@@ -294,6 +317,25 @@ namespace MonoTests.System.Net.Http
 				client.Timeout = TimeSpan.MinValue;
 				Assert.Fail ("#2");
 			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test]
+		public void Proxy_Disabled ()
+		{
+			var pp = WebRequest.DefaultWebProxy;
+
+			try {
+				WebRequest.DefaultWebProxy = new ThrowOnlyProxy ();
+
+				var request = new HttpClientHandler {
+					UseProxy = false
+				};
+
+				var client = new HttpClient (request);
+				Assert.IsTrue (client.GetAsync ("http://google.com").Wait (5000), "needs internet access");
+			} finally {
+				WebRequest.DefaultWebProxy = pp;
 			}
 		}
 
