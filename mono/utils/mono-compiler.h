@@ -299,8 +299,10 @@ typedef SSIZE_T ssize_t;
 
 #ifdef __GNUC__
 #define MONO_COLD __attribute__((cold))
+#define MONO_HOT __attribute__((hot))
 #else
 #define MONO_COLD
+#define MONO_HOT
 #endif
 
 #endif /* __UTILS_MONO_COMPILER_H__*/

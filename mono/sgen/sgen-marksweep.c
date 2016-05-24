@@ -635,7 +635,7 @@ unlink_slot_from_free_list_uncontested (MSBlockInfo * volatile *free_blocks, int
 	return obj;
 }
 
-static GCObject*
+static GCObject* MONO_HOT
 alloc_obj (GCVTable vtable, size_t size, gboolean pinned, gboolean has_references)
 {
 	int size_index = MS_BLOCK_OBJ_SIZE_INDEX (size);
@@ -1229,13 +1229,13 @@ drain_gray_stack_concurrent (SgenGrayQueue *queue)
 		return drain_gray_stack_concurrent_no_evacuation (queue);
 }
 
-static void
+static void MONO_HOT
 major_copy_or_mark_object_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
 }
 
-static void
+static void MONO_HOT
 major_copy_or_mark_object_concurrent_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_concurrent_with_evacuation (ptr, *ptr, queue);
@@ -1326,7 +1326,7 @@ set_block_state (MSBlockInfo *block, gint32 new_state, gint32 expected_state)
  * Sweeping means iterating through the block's slots and building the free-list from the
  * unmarked ones.  They will also be zeroed.  The mark bits will be reset.
  */
-static gboolean
+static gboolean MONO_HOT
 sweep_block (MSBlockInfo *block)
 {
 	int count;
@@ -2224,7 +2224,7 @@ major_print_gc_param_usage (void)
 /*
  * This callback is used to clear cards, move cards to the shadow table and do counting.
  */
-static void
+static void MONO_HOT
 major_iterate_live_block_ranges (sgen_cardtable_block_callback callback)
 {
 	MSBlockInfo *block;
@@ -2250,7 +2250,7 @@ extern guint64 remarked_cards;
  * Cardtables are 4K aligned, at least.
  * This means that the cardtable of a given block is 32 bytes aligned.
  */
-static guint8*
+static guint8* MONO_HOT
 initial_skip_card (guint8 *card_data)
 {
 	mword *cards = (mword*)card_data;
@@ -2284,7 +2284,7 @@ initial_skip_card (guint8 *card_data)
 #define MS_BLOCK_OBJ_FAST(b,os,i)			((b) + MS_BLOCK_SKIP + (os) * (i))
 #define MS_OBJ_ALLOCED_FAST(o,b)		(*(void**)(o) && (*(char**)(o) < (b) || *(char**)(o) >= (b) + MS_BLOCK_SIZE))
 
-static void
+static void MONO_HOT
 scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, ScanCopyContext ctx)
 {
 	SgenGrayQueue *queue = ctx.queue;

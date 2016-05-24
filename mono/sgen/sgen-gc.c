@@ -524,7 +524,7 @@ sgen_add_to_global_remset (gpointer ptr, GCObject *obj)
  * usage.
  *
  */
-gboolean
+gboolean MONO_HOT
 sgen_drain_gray_stack (ScanCopyContext ctx)
 {
 	ScanObjectFunc scan_func = ctx.ops->scan_object;
@@ -1320,7 +1320,7 @@ typedef struct {
 	SgenObjectOperations *ops;
 } ScanJob;
 
-static void
+static void MONO_HOT
 job_remembered_set_scan (void *worker_data_untyped, SgenThreadPoolJob *job)
 {
 	WorkerData *worker_data = (WorkerData *)worker_data_untyped;
@@ -1473,7 +1473,7 @@ enqueue_scan_from_roots_jobs (char *heap_start, char *heap_end, SgenObjectOperat
  *
  * Return whether any objects were late-pinned due to being out of memory.
  */
-static gboolean
+static gboolean MONO_HOT
 collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 {
 	gboolean needs_major;
@@ -2220,7 +2220,7 @@ sgen_ensure_free_space (size_t size, int generation)
 /*
  * LOCKING: Assumes the GC lock is held.
  */
-void
+void MONO_HOT
 sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish)
 {
 	TV_DECLARE (gc_start);

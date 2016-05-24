@@ -2366,7 +2366,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
  *       through @error
  * @error: error or caught exception object
  */
-static MonoObject*
+static MonoObject* MONO_HOT
 mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
 {
 	MonoMethod *invoke, *callee;

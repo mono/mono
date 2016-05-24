@@ -56,7 +56,7 @@ static guint64 last_los_scan_time;
 
 static void sgen_card_tables_collect_stats (gboolean begin);
 
-mword
+mword MONO_HOT
 sgen_card_table_number_of_cards_in_range (mword address, mword size)
 {
 	mword end = address + MAX (1, size) - 1;
@@ -376,7 +376,7 @@ move_cards_to_shadow_table (mword start, mword size)
 	}
 }
 
-static void
+static void MONO_HOT
 clear_cards (mword start, mword size)
 {
 	guint8 *addr = sgen_card_table_get_card_address (start);

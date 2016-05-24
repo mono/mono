@@ -21,7 +21,7 @@
  */
 
 /* Returns whether the object is still in the nursery. */
-static inline MONO_ALWAYS_INLINE gboolean
+static inline MONO_ALWAYS_INLINE MONO_HOT gboolean
 COPY_OR_MARK_FUNCTION_NAME (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
 {
 	MSBlockInfo *block;
