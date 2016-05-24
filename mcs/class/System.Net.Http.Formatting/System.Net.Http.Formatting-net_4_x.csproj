@@ -354,10 +354,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="System.Net.Http.Properties.CommonWebApiResources.resources">
+    <EmbeddedResource Include="System.Net.Http.Properties.CommonWebApiResources.resx">
       <LogicalName>System.Net.Http.Properties.CommonWebApiResources.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="System.Net.Http.Properties.Resources.resources">
+    <EmbeddedResource Include="System.Net.Http.Properties.Resources.resx">
       <LogicalName>System.Net.Http.Properties.Resources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

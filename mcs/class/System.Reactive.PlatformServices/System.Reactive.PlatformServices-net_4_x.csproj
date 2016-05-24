@@ -126,7 +126,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_PlatformServices.resources">
+    <EmbeddedResource Include="Strings_PlatformServices.resx">
       <LogicalName>System.Reactive.Strings_PlatformServices.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

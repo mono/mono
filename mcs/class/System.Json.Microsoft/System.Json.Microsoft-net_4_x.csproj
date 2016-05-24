@@ -126,7 +126,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="System.Json.Properties.Resources.resources">
+    <EmbeddedResource Include="System.Json.Properties.Resources.resx">
       <LogicalName>System.Json.Properties.Resources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

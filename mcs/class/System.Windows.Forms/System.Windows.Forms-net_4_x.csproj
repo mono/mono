@@ -1050,7 +1050,7 @@
     <EmbeddedResource Include="resources/DnDMove.cur">
       <LogicalName>System.Windows.Forms.DnDMove.cur</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/keyboards.resources">
+    <EmbeddedResource Include="resources/keyboards.resx">
       <LogicalName>keyboards.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/16_computer.png">

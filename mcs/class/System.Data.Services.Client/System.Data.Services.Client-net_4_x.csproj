@@ -220,7 +220,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Client/System.Data.Services.Client.resources">
+    <EmbeddedResource Include="Client/System.Data.Services.Client.resx">
       <LogicalName>System.Data.Services.Client.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

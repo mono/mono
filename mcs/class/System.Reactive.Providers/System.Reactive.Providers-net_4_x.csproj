@@ -119,7 +119,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_Providers.resources">
+    <EmbeddedResource Include="Strings_Providers.resx">
       <LogicalName>System.Reactive.Strings_Providers.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

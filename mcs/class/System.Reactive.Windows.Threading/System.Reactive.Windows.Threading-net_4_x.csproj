@@ -119,7 +119,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_WindowsThreading.resources">
+    <EmbeddedResource Include="Strings_WindowsThreading.resx">
       <LogicalName>System.Reactive.Strings_WindowsThreading.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

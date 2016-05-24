@@ -304,7 +304,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Novell.Directory.Ldap.Utilclass/ResultCodeMessages.resources">
+    <EmbeddedResource Include="Novell.Directory.Ldap.Utilclass/ResultCodeMessages.resx">
       <LogicalName>ResultCodeMessages.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

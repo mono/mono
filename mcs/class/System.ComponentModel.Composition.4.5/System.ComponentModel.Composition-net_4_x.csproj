@@ -263,7 +263,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Microsoft.Internal.Strings.resources">
+    <EmbeddedResource Include="Microsoft.Internal.Strings.resx">
       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

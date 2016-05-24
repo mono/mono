@@ -491,7 +491,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mvc/Resources/MvcResources.resources">
+    <EmbeddedResource Include="Mvc/Resources/MvcResources.resx">
       <LogicalName>System.Web.Mvc.Resources.MvcResources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

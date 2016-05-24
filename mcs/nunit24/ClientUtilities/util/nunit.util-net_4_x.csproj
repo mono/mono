@@ -159,7 +159,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Transform.resources">
+    <EmbeddedResource Include="Transform.resx">
       <LogicalName>NUnit.Util.Transform.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

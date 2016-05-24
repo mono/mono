@@ -274,7 +274,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_Linq.resources">
+    <EmbeddedResource Include="Strings_Linq.resx">
       <LogicalName>System.Reactive.Strings_Linq.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
