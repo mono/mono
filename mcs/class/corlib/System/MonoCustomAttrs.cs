@@ -49,14 +49,14 @@ namespace System
 		[ThreadStatic]
 		static Dictionary<Type, AttributeUsageAttribute> usage_cache;
 
-		/* Treat as user types all corlib types extending System.Type that are not MonoType and TypeBuilder */
+		/* Treat as user types all corlib types extending System.Type that are not RuntimeType and TypeBuilder */
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
 #if !FULL_AOT_RUNTIME
-			if ((type is MonoType) || (type is TypeBuilder))
+			if ((type is RuntimeType) || (type is TypeBuilder))
 #else
-			if (type is MonoType)
+			if (type is RuntimeType)
 #endif
 				return false;
 			if ((obj is Type))
