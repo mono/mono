@@ -811,16 +811,8 @@ size_t sgen_gc_get_total_heap_allocation (void);
 
 /* STW */
 
-typedef struct {
-	int generation;
-	const char *reason;
-	gboolean is_overflow;
-	gint64 total_time;
-	gint64 stw_time;
-} GGTimingInfo;
-
 void sgen_stop_world (int generation);
-void sgen_restart_world (int generation, GGTimingInfo *timing);
+void sgen_restart_world (int generation);
 gboolean sgen_is_world_stopped (void);
 
 gboolean sgen_set_allow_synchronous_major (gboolean flag);
