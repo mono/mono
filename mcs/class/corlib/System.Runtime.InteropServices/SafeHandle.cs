@@ -227,18 +227,5 @@ namespace System.Runtime.InteropServices
 					ReleaseHandle ();
 			}
 		}
-
-		/*
-		 * Implement this abstract method in your derived class to specify how to
-		 * free the handle. Be careful not write any code that's subject to faults
-		 * in this method (the runtime will prepare the infrastructure for you so
-		 * that no jit allocations etc. will occur, but don't allocate memory unless
-		 * you can deal with the failure and still free the handle).
-		 * The boolean returned should be true for success and false if the runtime
-		 * should fire a SafeHandleCriticalFailure MDA (CustomerDebugProbe) if that
-		 * MDA is enabled.
-		 */
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		protected abstract bool ReleaseHandle ();
 	}
 }
