@@ -4387,7 +4387,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 	 * remoting.
 	 */
 	if (mono_aot_only && method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK)
-		return mono_aot_get_method (domain, mono_marshal_method_from_wrapper (method));
+		return mono_aot_get_method_checked (domain, mono_marshal_method_from_wrapper (method), error);
 
 	g_assert (klass->inited);
 
@@ -4427,9 +4427,11 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && method->klass->rank && strstr (method->name, "System.Collections.Generic")) {
 			MonoMethod *m = mono_aot_get_array_helper_from_wrapper (method);
 
-			code = (guint8 *)mono_aot_get_method (domain, m);
+			code = (guint8 *)mono_aot_get_method_checked (domain, m, error);
 			if (code)
 				return code;
+			mono_error_cleanup (error);
+			mono_error_init (error);
 		}
 
 		/*
@@ -4438,7 +4440,6 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		 * an out parameter, so the managed-to-native wrappers can share the same code.
 		 */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValueImpl")) {
-			MonoError error;
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];
@@ -4454,17 +4455,19 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 			args [0] = &mono_defaults.object_class->byval_arg;
 			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
 
-			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, &error), TRUE, TRUE);
+			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
 			if (!m)
-				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (&error)); /* FIXME don't swallow the error */
+				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
 
 			/* 
 			 * Get the code for the <object> instantiation which should be emitted into
 			 * the mscorlib aot image by the AOT compiler.
 			 */
-			code = (guint8 *)mono_aot_get_method (domain, m);
+			code = (guint8 *)mono_aot_get_method_checked (domain, m, error);
 			if (code)
 				return code;
+			mono_error_cleanup (error);
+			mono_error_init (error);
 		}
 
 		/* Same for CompareExchange<T> and Exchange<T> */
@@ -4473,7 +4476,6 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 			((!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1]))) ||
 			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->ret)))) ||
 			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1])))))) {
-			MonoError error;
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];
@@ -4489,9 +4491,9 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 			args [0] = &mono_defaults.object_class->byval_arg;
 			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
 
-			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, &error), TRUE, TRUE);
+			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (m, &ctx, error), TRUE, TRUE);
 			if (!m)
-				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (&error)); /* FIXME don't swallow the error */
+				g_error ("AOT runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
 
 			/* Avoid recursion */
 			if (method == m)
@@ -4501,9 +4503,11 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 			 * Get the code for the <object> instantiation which should be emitted into
 			 * the mscorlib aot image by the AOT compiler.
 			 */
-			code = (guint8 *)mono_aot_get_method (domain, m);
+			code = (guint8 *)mono_aot_get_method_checked (domain, m, error);
 			if (code)
 				return code;
+			mono_error_cleanup (error);
+			mono_error_init (error);
 		}
 
 		/* For ARRAY_ACCESSOR wrappers with reference types, use the <object> instantiation saved in corlib */
@@ -4519,9 +4523,11 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 
 					m = mono_marshal_get_array_accessor_wrapper (m);
 					if (m != method) {
-						code = (guint8 *)mono_aot_get_method (domain, m);
+						code = (guint8 *)mono_aot_get_method_checked (domain, m, error);
 						if (code)
 							return code;
+						mono_error_cleanup (error);
+						mono_error_init (error);
 					}
 				}
 			}
@@ -4594,6 +4600,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 	MonoError error;
 
 	gpointer res = mono_aot_get_method_checked (domain, method, &error);
+	/* This is external only, so its ok to raise here */
 	mono_error_raise_exception (&error);
 	return res;
 }

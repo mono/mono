@@ -2455,8 +2455,6 @@ jinfo_get_method (MonoJitInfo *ji)
 /* AOT */
 void      mono_aot_init                     (void);
 void      mono_aot_cleanup                  (void);
-gpointer  mono_aot_get_method               (MonoDomain *domain,
-											 MonoMethod *method);
 gpointer  mono_aot_get_method_checked       (MonoDomain *domain,
 											 MonoMethod *method, MonoError *error);
 gpointer  mono_aot_get_method_from_token    (MonoDomain *domain, MonoImage *image, guint32 token);
