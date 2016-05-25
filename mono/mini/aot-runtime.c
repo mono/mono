@@ -619,8 +619,9 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 	guint8 *p = buf;
 	MonoType *t;
 
-	t = (MonoType *)g_malloc0 (sizeof (MonoType));
 	mono_error_init (error);
+
+	t = (MonoType *)g_malloc0 (sizeof (MonoType));
 
 	while (TRUE) {
 		if (*p == MONO_TYPE_PINNED) {
@@ -850,8 +851,9 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 	MonoImage *image = NULL;
 	guint8 *p = buf;
 
-	memset (ref, 0, sizeof (MethodRef));
 	mono_error_init (error);
+
+	memset (ref, 0, sizeof (MethodRef));
 
 	value = decode_value (p, &p);
 	image_index = value >> 24;
@@ -5834,6 +5836,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 gpointer
 mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *error)
 {
+	mono_error_init (error);
+
 	return NULL;
 }
 
@@ -5864,6 +5868,8 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 gpointer
 mono_aot_get_method_from_token (MonoDomain *domain, MonoImage *image, guint32 token, MonoError *error)
 {
+	mono_error_init (error);
+
 	return NULL;
 }
 
@@ -5876,6 +5882,8 @@ mono_aot_get_plt_entry (guint8 *code)
 gpointer
 mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code, MonoError *error)
 {
+	mono_error_init (error);
+
 	return NULL;
 }
 
@@ -5887,6 +5895,8 @@ mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_
 gpointer
 mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int slot, MonoError *error)
 {
+	mono_error_init (error);
+
 	return NULL;
 }
 
