@@ -61,7 +61,9 @@ namespace System.Net.Http
 			public void Close ()
 			{
 				CancellationTokenRegistration.Dispose ();
-				ContentStream.Close ();
+                                if (ContentStream != null) {
+                                    ContentStream.Close ();
+                                }
 			}
 		}
 
