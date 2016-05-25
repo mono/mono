@@ -187,7 +187,7 @@ namespace System.Net
         }
     }
 
-
+#if !MONO
     // This class implements failover logic for proxy scripts.
     internal class ProxyScriptChain : ProxyChain
     {
@@ -277,4 +277,5 @@ namespace System.Net
             return true;
         }
     }
+#endif
 }

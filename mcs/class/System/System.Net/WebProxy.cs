@@ -32,6 +32,7 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using Mono.Net;
 
 namespace System.Net 
 {
@@ -247,6 +248,138 @@ namespace System.Net
 				address = "http://" + address;
 
 			return new Uri (address);
+		}
+
+		internal static IWebProxy CreateDefaultProxy ()
+		{
+#if MONOTOUCH
+			return CFNetwork.GetDefaultProxy ();
+#elif MONODROID
+			// Return the system web proxy.  This only works for ICS+.
+			var androidProxy = AndroidPlatform.GetDefaultProxy ();
+			if (androidProxy != null)
+				return androidProxy;
+
+			return new WebProxy (false);
+#else
+			if (Platform.IsMacOS)
+				return CFNetwork.GetDefaultProxy ();
+
+			return new WebProxy (false);
+#endif
+		}
+
+		// Global settings initialization
+		private WebProxy (bool enableAutoproxy)
+		{
+#if !MOBILE			
+			if (IsWindows () && InitializeRegistryGlobalProxy ())
+				return;
+#endif
+			string address = Environment.GetEnvironmentVariable ("http_proxy") ?? Environment.GetEnvironmentVariable ("HTTP_PROXY");
+
+			if (address != null) {
+				try {
+					if (!address.StartsWith ("http://"))
+						address = "http://" + address;
+
+					Uri uri = new Uri (address);
+					IPAddress ip;
+					
+					if (IPAddress.TryParse (uri.Host, out ip)) {
+						if (IPAddress.Any.Equals (ip)) {
+							UriBuilder builder = new UriBuilder (uri);
+							builder.Host = "127.0.0.1";
+							uri = builder.Uri;
+						} else if (IPAddress.IPv6Any.Equals (ip)) {
+							UriBuilder builder = new UriBuilder (uri);
+							builder.Host = "[::1]";
+							uri = builder.Uri;
+						}
+					}
+
+					bool bBypassOnLocal = false;
+					ArrayList al = new ArrayList ();
+					string bypass = Environment.GetEnvironmentVariable ("no_proxy") ?? Environment.GetEnvironmentVariable ("NO_PROXY");
+					
+					if (bypass != null) {
+						string[] bypassList = bypass.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+					
+						foreach (string str in bypassList) {
+							if (str != "*.local")
+								al.Add (str);
+							else
+								bBypassOnLocal = true;
+						}
+					}
+
+					this.address = uri;
+					this.bypassOnLocal = bBypassOnLocal;
+					this.bypassList = CreateBypassList (al);
+					return;
+				} catch (UriFormatException) {
+				}
+			}
+		}
+
+#if !MOBILE
+		static bool IsWindows ()
+		{
+			return (int) Environment.OSVersion.Platform < 4;
+		}
+				
+		bool InitializeRegistryGlobalProxy ()
+		{
+			int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
+
+			if (iProxyEnable > 0) {
+				string strHttpProxy = "";
+				bool bBypassOnLocal = false;
+				ArrayList al = new ArrayList ();
+				
+				string strProxyServer = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyServer", null);
+				string strProxyOverrride = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyOverride", null);
+				
+				if (strProxyServer.Contains ("=")) {
+					foreach (string strEntry in strProxyServer.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+						if (strEntry.StartsWith ("http=")) {
+							strHttpProxy = strEntry.Substring (5);
+							break;
+						}
+				} else strHttpProxy = strProxyServer;
+				
+				if (strProxyOverrride != null) {
+					string[] bypassList = strProxyOverrride.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+				
+					foreach (string str in bypassList) {
+						if (str != "<local>")
+							al.Add (str);
+						else
+							bBypassOnLocal = true;
+					}
+				}
+
+				this.address = ToUri (strHttpProxy);
+				this.bypassOnLocal = bBypassOnLocal;
+				this.bypassList = CreateBypassList (al);
+				return true;
+			}
+
+			return false;
+		}
+#endif
+
+		// Takes an ArrayList of fileglob-formatted strings and returns an array of Regex-formatted strings
+		static ArrayList CreateBypassList (ArrayList al)
+		{
+			string[] result = al.ToArray (typeof (string)) as string[];
+			for (int c = 0; c < result.Length; c++)
+			{
+				result [c] = "^" +
+					Regex.Escape (result [c]).Replace (@"\*", ".*").Replace (@"\?", ".") +
+					"$";
+			}
+			return new ArrayList (result);
 		}
 	}
 }

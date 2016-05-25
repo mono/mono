@@ -411,7 +411,6 @@ System.Net/WebConnectionData.cs
 System.Net/WebConnectionGroup.cs
 System.Net/WebConnectionStream.cs
 System.Net/WebProxy.cs
-System.Net/WebRequest.cs
 System.Net.WebSockets/ClientWebSocket.cs
 System.Net.WebSockets/ClientWebSocketOptions.cs
 System.Net.WebSockets/HttpListenerWebSocketContext.cs
@@ -974,6 +973,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
+../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
 ../referencesource/System/net/System/Net/AuthenticationSchemeSelector.cs
@@ -1017,11 +1017,17 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/WebHeaderCollection.cs
 ../referencesource/System/net/System/Net/WebPermission.cs
 ../referencesource/System/net/System/Net/WebRequestMethods.cs
+../referencesource/System/net/System/Net/WebRequest.cs
 ../referencesource/System/net/System/Net/WebResponse.cs
 ../referencesource/System/net/System/Net/WebUtility.cs
 ../referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
+../referencesource/System/net/System/Net/Cache/RequestCache.cs
+../referencesource/System/net/System/Net/Cache/RequestCacheEntry.cs
 ../referencesource/System/net/System/Net/Cache/RequestCachePolicy.cs
+../referencesource/System/net/System/Net/Cache/RequestCacheManager.cs
+
+../referencesource/System/net/System/Net/Configuration/DefaultProxySection.cs
 
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs

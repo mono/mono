@@ -101,17 +101,33 @@ using System.Configuration;
             {
                 if (s_CacheConfigSettings == null)
                 {
+#if MONO
+                    var settings = new RequestCachingSectionInternal();
+#else
                     RequestCachingSectionInternal settings = RequestCachingSectionInternal.GetSection();
 
                     s_DefaultGlobalBinding = new RequestCacheBinding (settings.DefaultCache, settings.DefaultHttpValidator, settings.DefaultCachePolicy);
                     s_DefaultHttpBinding = new RequestCacheBinding (settings.DefaultCache, settings.DefaultHttpValidator, settings.DefaultHttpCachePolicy);
                     s_DefaultFtpBinding = new RequestCacheBinding (settings.DefaultCache, settings.DefaultFtpValidator, settings.DefaultFtpCachePolicy);
+#endif
 
                     s_CacheConfigSettings = settings;
                 }
             }
         }
     }
+
+#if MONO
+    class RequestCacheValidator
+    {
+    }
+
+    class RequestCachingSectionInternal
+    {
+        // TODO: Implement
+        public readonly bool DisableAllCaching = true;
+    }
+#endif
 
     //
     //
