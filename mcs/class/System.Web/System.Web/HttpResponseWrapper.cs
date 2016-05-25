@@ -225,6 +225,9 @@ namespace System.Web
 			w.AppendCookie (cookie);
 		}
 
+	        public override ISubscriptionToken AddOnSendingHeaders(Action<HttpContextBase> callback) => 
+        	    w.AddOnSendingHeaders(HttpContextWrapper.WrapCallback(callback));
+
 		public override void AppendHeader (string name, string value)
 		{
 			w.AppendHeader (name, value);

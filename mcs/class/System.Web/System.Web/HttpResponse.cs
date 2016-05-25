@@ -644,6 +644,12 @@ namespace System.Web
 			}
 		}
 
+	    public ISubscriptionToken AddOnSendingHeaders(Action<HttpContext> callback) {
+			// TODO 
+			// Console.Error.WriteLine("AddOnSendingHeaders");
+			return null;
+	    }
+
 		// Generate:
 		//   Content-Length
 		//   Content-Type
@@ -729,6 +735,7 @@ namespace System.Web
 					write_headers.Add ("Set-Cookie", cookies.Get (i).GetCookieHeaderValue ());
 			}
 		}
+
 
 		internal void WriteHeaders (bool final_flush)
 		{

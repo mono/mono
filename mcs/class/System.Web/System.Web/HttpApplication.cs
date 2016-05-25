@@ -146,9 +146,6 @@ namespace System.Web
 		// The current IAsyncResult for the running async request handler in the pipeline
 		AsyncRequestState begin_iar;
 
-		// Tracks the current AsyncInvocation being dispatched
-		AsyncInvoker current_ai;
-
 		EventHandlerList events;
 		EventHandlerList nonApplicationEvents = new EventHandlerList ();
 		
@@ -166,14 +163,6 @@ namespace System.Web
 		bool fullInitComplete = false;
 		
 		static DynamicModuleManager dynamicModuleManeger = new DynamicModuleManager ();
-
-		//
-		// These are used to detect the case where the EndXXX method is invoked
-		// from within the BeginXXXX delegate, so we detect whether we kick the
-		// pipeline from here, or from the the RunHook routine
-		//
-		bool must_yield;
-		bool in_begin;
 
 		public virtual event EventHandler Disposed {
 			add { nonApplicationEvents.AddHandler (disposedEvent, value); }
@@ -919,15 +908,30 @@ namespace System.Web
 		}
 		
 		//
-		// Ticks the clock: next step on the pipeline.
+		// Wait the end of Pipeline.
 		//
-		internal void Tick ()
+		internal void WaitPipeline ()
 		{
 			try {
-				if (pipeline.MoveNext ()){
-					if ((bool)pipeline.Current)
-						PipelineDone ();
+				while (pipeline.MoveNext ()){
+					if (pipeline.Current == null)
+						break;
+					AsyncInvoker ai = pipeline.Current as AsyncInvoker;
+					if (ai != null)
+					{
+						if (!ai.IsCompleted)
+							ai.WaitOne();
+						continue;
+					}
+					AsyncRequestInvoker ari = pipeline.Current as AsyncRequestInvoker;
+					if (ari != null)
+					{
+						if (!ari.IsCompleted)
+							ari.WaitOne ();
+						continue;
+					}
 				}
+				PipelineDone ();
 			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
@@ -954,45 +958,7 @@ namespace System.Web
 			}
 		}
 
-		void Resume ()
-		{
-			if (in_begin)
-				must_yield = false;
-			else
-				Tick ();
-		}
-		
-		//
-		// Invoked when our async callback called from RunHooks completes,
-		// we restart the pipeline here.
-		//
-		void async_callback_completed_cb (IAsyncResult ar)
-		{
-			if (current_ai.end != null){
-				try {
-					current_ai.end (ar);
-				} catch (Exception e) {
-					ProcessError (e);
-				}
-			}
 
-			Resume ();
-		}
-
-		void async_handler_complete_cb (IAsyncResult ar)
-		{
-			IHttpAsyncHandler async_handler = ar != null ? ar.AsyncState as IHttpAsyncHandler : null;
-
-			try {
-				if (async_handler != null)
-					async_handler.EndProcessRequest (ar);
-			} catch (Exception e){
-				ProcessError (e);
-			}
-			
-			Resume ();
-		}
-		
 		//
 		// This enumerator yields whether processing must be stopped:
 		//    true:  processing of the pipeline must be stopped
@@ -1004,15 +970,13 @@ namespace System.Web
 
 			foreach (EventHandler d in delegates){
 				if (d.Target != null && (d.Target is AsyncInvoker)){
-					current_ai = (AsyncInvoker) d.Target;
+					AsyncInvoker ai = (AsyncInvoker) d.Target;
 
 					try {
-						must_yield = true;
-						in_begin = true;
 						context.BeginTimeoutPossible ();
-						current_ai.begin (this, EventArgs.Empty, async_callback_completed_cb, current_ai.data);
+						ai.Invoke(this, EventArgs.Empty);
+						yield return ai;
 					} finally {
-						in_begin = false;
 						context.EndTimeoutPossible ();
 					}
 
@@ -1020,10 +984,8 @@ namespace System.Web
 					// If things are still moving forward, yield this
 					// thread now
 					//
-					if (must_yield)
-						yield return stop_processing;
-					else if (stop_processing)
-						yield return true;
+					if (stop_processing)
+						yield return null;
 				} else {
 					try {
 						context.BeginTimeoutPossible ();
@@ -1032,7 +994,7 @@ namespace System.Web
 						context.EndTimeoutPossible ();
 					}
 					if (stop_processing)
-						yield return true;
+						yield return null;
 				}
 			}
 		}
@@ -1116,7 +1078,6 @@ namespace System.Web
 
 				// context = null; -> moved to PostDone
 				pipeline = null;
-				current_ai = null;
 			}
 			PostDone ();
 
@@ -1177,7 +1138,7 @@ namespace System.Web
 		{
 			Delegate eventHandler;
 			if (stop_processing)
-				yield return true;
+				yield return null;
 			HttpRequest req = context.Request;
 			if (req != null)
 				req.Validate ();
@@ -1185,65 +1146,65 @@ namespace System.Web
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
 			if (eventHandler != null) {
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			}
 			StopTimer ();
 			
 			StartTimer ("AuthenticateRequest");
 			eventHandler = Events [AuthenticateRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("DefaultAuthentication");
 			if (DefaultAuthentication != null)
-				foreach (bool stop in RunHooks (DefaultAuthentication))
-					yield return stop;
+				foreach (var ar in RunHooks (DefaultAuthentication))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("PostAuthenticateRequest");
 			eventHandler = Events [PostAuthenticateRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("AuthorizeRequest");
 			eventHandler = Events [AuthorizeRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("PostAuthorizeRequest");
 			eventHandler = Events [PostAuthorizeRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("ResolveRequestCache");
 			eventHandler = Events [ResolveRequestCacheEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("PostResolveRequestCache");
 			eventHandler = Events [PostResolveRequestCacheEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("MapRequestHandler");
 			// As per http://msdn2.microsoft.com/en-us/library/bb470252(VS.90).aspx
 			eventHandler = Events [MapRequestHandlerEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 			context.MapRequestHandlerDone = true;
 			
@@ -1276,28 +1237,28 @@ namespace System.Web
 
 			StopTimer ();
 			if (stop_processing)
-				yield return true;
+				yield return null;
 
 			StartTimer ("PostMapRequestHandler");
 			eventHandler = Events [PostMapRequestHandlerEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("AcquireRequestState");
 			eventHandler = Events [AcquireRequestStateEvent];
 			if (eventHandler != null){
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (IAsyncResult ar in RunHooks (eventHandler))
+					yield return ar;
 			}
 			StopTimer ();
 			
 			StartTimer ("PostAcquireRequestState");
 			eventHandler = Events [PostAcquireRequestStateEvent];
 			if (eventHandler != null){
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			}
 			StopTimer ();
 			
@@ -1309,11 +1270,12 @@ namespace System.Web
 			StartTimer ("PreRequestHandlerExecute");
 			eventHandler = Events [PreRequestHandlerExecuteEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					if (stop)
+				foreach (var ar in RunHooks (eventHandler))
+					if (ar == null)
 						goto release;
+					else
+						yield return ar;						
 			StopTimer ();
-			
 				
 			
 			IHttpHandler ctxHandler = context.Handler;
@@ -1328,13 +1290,11 @@ namespace System.Web
 				context.BeginTimeoutPossible ();
 				if (handler != null){
 					IHttpAsyncHandler async_handler = handler as IHttpAsyncHandler;
-					
 					if (async_handler != null){
-						must_yield = true;
-						in_begin = true;
-						async_handler.BeginProcessRequest (context, async_handler_complete_cb, handler);
+						AsyncRequestInvoker ari = new AsyncRequestInvoker(async_handler, this);
+						ari.Invoke(context, handler);
+						yield return ari;
 					} else {
-						must_yield = false;
 						handler.ProcessRequest (context);
 					}
 				} else
@@ -1342,13 +1302,10 @@ namespace System.Web
 				if (context.Error != null)
 					throw new TargetInvocationException(context.Error);
 			} finally {
-				in_begin = false;
 				context.EndTimeoutPossible ();
 			}
 			StopTimer ();
-			if (must_yield)
-				yield return stop_processing;
-			else if (stop_processing)
+			if (stop_processing)
 				goto release;
 			
 			// These are executed after the application has returned
@@ -1356,9 +1313,11 @@ namespace System.Web
 			StartTimer ("PostRequestHandlerExecute");
 			eventHandler = Events [PostRequestHandlerExecuteEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					if (stop)
+				foreach (var ar in RunHooks (eventHandler))
+					if (ar == null)
 						goto release;
+					else
+						yield return ar;						
 			StopTimer ();
 			
 		release:
@@ -1366,24 +1325,24 @@ namespace System.Web
 			eventHandler = Events [ReleaseRequestStateEvent];
 			if (eventHandler != null){
 #pragma warning disable 219
-				foreach (bool stop in RunHooks (eventHandler)) {
 					//
 					// Ignore the stop signal while release the state
 					//
-					
-				}
+				foreach (var ar in RunHooks (eventHandler))
+					if (ar != null)
+						yield return ar;						
 #pragma warning restore 219
 			}
 			StopTimer ();
 			
 			if (stop_processing)
-				yield return true;
+				yield return null;
 
 			StartTimer ("PostReleaseRequestState");
 			eventHandler = Events [PostReleaseRequestStateEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("Filter");
@@ -1394,33 +1353,29 @@ namespace System.Web
 			StartTimer ("UpdateRequestCache");
 			eventHandler = Events [UpdateRequestCacheEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("PostUpdateRequestCache");
 			eventHandler = Events [PostUpdateRequestCacheEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("LogRequest");
 			eventHandler = Events [LogRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 
 			StartTimer ("PostLogRequest");
 			eventHandler = Events [PostLogRequestEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					yield return stop;
-			StopTimer ();
-
-			StartTimer ("PipelineDone");
-			PipelineDone ();
+				foreach (var ar in RunHooks (eventHandler))
+					yield return ar;
 			StopTimer ();
 		}
 
@@ -1518,7 +1473,7 @@ namespace System.Web
 			HttpContext.Current = Context;
 			PreStart ();
 			pipeline = Pipeline ();
-			Tick ();
+			WaitPipeline ();
 		}
 
 		const string HANDLER_CACHE = "@@HttpHandlerCache@@";
@@ -1927,6 +1882,73 @@ namespace System.Web
 	}
 
 #region Helper classes
+
+	//
+	// A wrapper to keep track of begin/end pairs for request
+	//
+	class AsyncRequestInvoker {
+		IHttpAsyncHandler async_handler;
+		HttpApplication app;
+		AsyncCallback callback;
+		bool completed = false;
+		ManualResetEvent manual_event = new ManualResetEvent(false);
+
+		CultureInfo _culture;
+		CultureInfo _ui_culture;
+
+		public AsyncRequestInvoker (IHttpAsyncHandler ah, HttpApplication a)
+		{
+			app = a;
+			async_handler = ah;
+			callback = new AsyncCallback (doAsyncCallback);
+		}
+
+		public void Invoke (HttpContext context, object extraData)
+		{
+			completed = false;
+			manual_event.Reset();
+
+			Thread th = Thread.CurrentThread;
+			_culture = th.CurrentCulture;
+			_ui_culture = th.CurrentUICulture;
+
+			IAsyncResult res = async_handler.BeginProcessRequest (context, callback, extraData);
+			if (res.IsCompleted)
+			{
+				completed = true;
+				manual_event.Set();
+			}
+		}
+		
+		public bool IsCompleted
+		{
+			get {return completed; }
+		}
+		
+		public void WaitOne()
+		{
+			manual_event.WaitOne ();
+		}
+
+		void doAsyncCallback (IAsyncResult res)
+		{
+			Thread th = Thread.CurrentThread;
+			th.CurrentCulture = _culture;
+			th.CurrentUICulture = _ui_culture;
+			HttpContext.Current = app.Context;
+
+			try {
+				if (res != null)
+					async_handler.EndProcessRequest(res);
+			} catch (Exception ee) {
+				app.ProcessError(ee);
+			} finally {
+				completed = true;
+				manual_event.Set();
+			}
+		}
+	}
+
 	
 	//
 	// A wrapper to keep track of begin/end pairs
@@ -1937,6 +1959,12 @@ namespace System.Web
 		public object data;
 		HttpApplication app;
 		AsyncCallback callback;
+		bool completed = false;
+		ManualResetEvent manual_event = new ManualResetEvent(false);
+
+		CultureInfo _culture;
+		CultureInfo _ui_culture;
+
 		
 		public AsyncInvoker (BeginEventHandler bh, EndEventHandler eh, HttpApplication a, object d)
 		{
@@ -1951,22 +1979,68 @@ namespace System.Web
 		
 		public void Invoke (object sender, EventArgs e)
 		{
-			IAsyncResult res;
-			res = begin (app, e, callback, data);
+			completed = false;
+			manual_event.Reset();
+
+			Thread th = Thread.CurrentThread;
+			_culture = th.CurrentCulture;
+			_ui_culture = th.CurrentUICulture;
+
+			IAsyncResult res = begin (app, e, callback, data);
+			if (res.IsCompleted)
+			{
+				completed = true;
+				manual_event.Set();
+			}
+		}
+		
+		public bool IsCompleted
+		{
+			get {return completed; }
+		}
+		
+		public void WaitOne()
+		{
+			manual_event.WaitOne ();
 		}
 
 		void doAsyncCallback (IAsyncResult res)
 		{
-			ThreadPool.QueueUserWorkItem ((object ores) => {
-				IAsyncResult tres = (IAsyncResult) ores;
-				try {
-					end (tres);
-				} catch (Exception ee) {
-					// I tried using ProcessError(), but we only come here frome an Invokation in PipelineDone().
-					// Using ProcessError, I still get a blank screen, this way, we at least log the error to console...
-					Console.Error.WriteLine (ee.ToString ());
-				}
-			}, res);
+			Thread th = Thread.CurrentThread;
+			th.CurrentCulture = _culture;
+			th.CurrentUICulture = _ui_culture;
+			HttpContext.Current = app.Context;
+
+			try {
+				end (res);
+			} catch (Exception ee) {
+				// I tried using ProcessError(), but we only come here frome an Invokation in PipelineDone().
+				// Using ProcessError, I still get a blank screen, this way, we at least log the error to console...
+				// Console.Error.WriteLine (ee.ToString ());
+
+				// Now, we may call ProcessError.
+				app.ProcessError(ee);
+			} finally {
+				completed = true;
+				manual_event.Set();
+			}
+
+//			ThreadPool.QueueUserWorkItem ((object ores) => {
+//				IAsyncResult tres = (IAsyncResult) ores;
+//				try {
+//					end (tres);
+//				} catch (Exception ee) {
+//					// I tried using ProcessError(), but we only come here frome an Invokation in PipelineDone().
+//					// Using ProcessError, I still get a blank screen, this way, we at least log the error to console...
+//					// Console.Error.WriteLine (ee.ToString ());
+//
+//					// Now, we may call ProcessError.
+//					app.ProcessError(ee);
+//				} finally {
+//					completed = true;
+//					manual_event.Set();
+//				}
+//			}, res);
 		}
 	}
 #endregion

@@ -212,5 +212,16 @@ namespace System.Web
 		{
 			w.SetSessionStateBehavior (sessionStateBehavior);
 		}
+
+	        internal static Action<HttpContext> WrapCallback(Action<HttpContextBase> callback)
+        	{
+	            if (callback != null)
+        	    {
+                	return delegate (HttpContext context) {
+	                    callback(new HttpContextWrapper(context));
+        	        };
+	            }
+        	    return null;
+	        }
 	}
 }
