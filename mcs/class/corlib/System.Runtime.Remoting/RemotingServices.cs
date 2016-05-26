@@ -477,7 +477,7 @@ namespace System.Runtime.Remoting
 		public static bool IsMethodOverloaded(IMethodMessage msg)
 		{
 			const BindingFlags bfinst = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
-			MonoType type = (MonoType) msg.MethodBase.DeclaringType;
+			RuntimeType type = (RuntimeType) msg.MethodBase.DeclaringType;
 			return type.GetMethodsByName (msg.MethodName, bfinst, false, type).Length > 1;
 		}
 
