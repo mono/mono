@@ -132,29 +132,6 @@ endif
 # Make sure propagates
 export TEST_HARNESS
 
-# start aot config
-
-# We set the prefix of the aot build flags
-# in the profile. This determines the aot type,
-# whether it be llvmonly or full. To this we append the
-# options which do not change between them, the INVARIANT_AOT_OPTIONS
-ifndef AOT_BUILD_FLAGS_PREFIX
-AOT_BUILD_FLAGS_PREFIX = --aot=
-endif
-
-# Set the options for building and running AOT
-# The trampoline numbers are provisional, they are what is required
-# to run the mcs/class test suites. They should be considered a lower bound.
-INVARIANT_AOT_OPTIONS=nimt-trampolines=900,ntrampolines=8000,nrgctx-fetch-trampolines=256
-
-ifndef MONO_DISABLE_GSHAREDVT
-INVARIANT_AOT_OPTIONS:=$(INVARIANT_AOT_OPTIONS),ngsharedvt-trampolines=2800
-endif
-
-AOT_BUILD_FLAGS = $(AOT_BUILD_FLAGS_PREFIX)$(INVARIANT_AOT_OPTIONS)
-
-# end AOT config
-
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif
