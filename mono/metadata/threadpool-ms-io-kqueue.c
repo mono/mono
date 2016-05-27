@@ -44,6 +44,13 @@ kqueue_init (gint wakeup_pipe_fd)
 }
 
 static void
+kqueue_cleanup (void)
+{
+	g_free (kqueue_events);
+	close (kqueue_fd);
+}
+
+static void
 kqueue_register_fd (gint fd, gint events, gboolean is_new)
 {
 	if (events & EVENT_IN) {
@@ -117,6 +124,7 @@ kqueue_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), 
 
 static ThreadPoolIOBackend backend_kqueue = {
 	.init = kqueue_init,
+	.cleanup = kqueue_cleanup,
 	.register_fd = kqueue_register_fd,
 	.remove_fd = kqueue_remove_fd,
 	.event_wait = kqueue_event_wait,
