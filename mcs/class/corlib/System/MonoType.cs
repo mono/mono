@@ -32,27 +32,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Security;
-using System.Diagnostics.Contracts;
-using System.Threading;
-using System.Diagnostics;
-using System.Security.Permissions;
-using System.Runtime.Remoting.Activation;
-using System.Runtime;
-
 namespace System
 {
 	// Dummy type kept because lots of external code uses
 	// this to check whenever it is running on mono.
-	[Serializable]
-	[StructLayout (LayoutKind.Sequential)]
-	class MonoType : RuntimeType, ISerializable
+	sealed class MonoType : RuntimeType
 	{
+		private MonoType ()
+		{
+		}
 	}
 }
