@@ -247,7 +247,6 @@ System.Net.Configuration/WebRequestModuleElementCollection.cs
 System.Net.Configuration/WebRequestModuleElement.cs
 System.Net.Configuration/WebRequestModuleHandler.cs
 System.Net.Configuration/WebRequestModulesSection.cs
-System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
@@ -263,7 +262,6 @@ System.Net/FtpRequestCreator.cs
 System.Net/FtpWebRequest.cs
 System.Net/FtpStatus.cs
 System.Net/FtpWebResponse.cs
-System.Net/GlobalProxySelection.cs
 System.Net/HttpConnection.cs
 System.Net/HttpListenerBasicIdentity.cs
 System.Net/HttpListenerContext.cs
@@ -410,7 +408,6 @@ System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
 System.Net/WebConnectionGroup.cs
 System.Net/WebConnectionStream.cs
-System.Net/WebProxy.cs
 System.Net.WebSockets/ClientWebSocket.cs
 System.Net.WebSockets/ClientWebSocketOptions.cs
 System.Net.WebSockets/HttpListenerWebSocketContext.cs
@@ -555,6 +552,7 @@ Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs
 Mono.Net.Security/SystemCertificateValidator.cs
 
+ReferenceSources/AutoWebProxyScriptEngine.cs
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
@@ -565,12 +563,12 @@ ReferenceSources/HttpApi.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
+ReferenceSources/RequestCacheProtocol.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
-ReferenceSources/SystemNetworkCredential.cs
 ReferenceSources/Win32Exception.cs
 
 ReferenceSources/SSPIConfiguration.cs
@@ -966,6 +964,7 @@ ReferenceSources/_SslStream.cs
 
 ../referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../referencesource/System/net/System/Net/_Connection.cs
+../referencesource/System/net/System/Net/_emptywebproxy.cs
 ../referencesource/System/net/System/Net/_HeaderInfo.cs
 ../referencesource/System/net/System/Net/_HeaderInfoTable.cs
 ../referencesource/System/net/System/Net/_HTTPDateParse.cs
@@ -975,9 +974,12 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
+../referencesource/System/net/System/Net/_TimerThread.cs
+../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
 ../referencesource/System/net/System/Net/AuthenticationSchemeSelector.cs
 ../referencesource/System/net/System/Net/Authorization.cs
+../referencesource/System/net/System/Net/CredentialCache.cs
 ../referencesource/System/net/System/Net/cookie.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs
@@ -987,6 +989,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs
 ../referencesource/System/net/System/Net/filewebrequest.cs
 ../referencesource/System/net/System/Net/filewebresponse.cs
+../referencesource/System/net/System/Net/GlobalProxySelection.cs
 ../referencesource/System/net/System/Net/HttpListenerException.cs
 ../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
@@ -1002,6 +1005,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/IPEndPoint.cs
 ../referencesource/System/net/System/Net/IPHostEntry.cs
 ../referencesource/System/net/System/Net/iwebproxy.cs
+../referencesource/System/net/System/Net/IWebProxyFinder.cs
 ../referencesource/System/net/System/Net/IWebRequestCreate.cs
 ../referencesource/System/net/System/Net/NetworkAccess.cs
 ../referencesource/System/net/System/Net/ProtocolViolationException.cs
@@ -1016,6 +1020,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
 ../referencesource/System/net/System/Net/WebHeaderCollection.cs
 ../referencesource/System/net/System/Net/WebPermission.cs
+../referencesource/System/net/System/Net/webproxy.cs
 ../referencesource/System/net/System/Net/WebRequestMethods.cs
 ../referencesource/System/net/System/Net/WebRequest.cs
 ../referencesource/System/net/System/Net/WebResponse.cs

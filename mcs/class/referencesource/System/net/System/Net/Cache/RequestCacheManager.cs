@@ -120,6 +120,10 @@ using System.Configuration;
 #if MONO
     class RequestCacheValidator
     {
+        public object CreateValidator ()
+        {
+            throw new NotImplementedException ();
+        }
     }
 
     class RequestCachingSectionInternal

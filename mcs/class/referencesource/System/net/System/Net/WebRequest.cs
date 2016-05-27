@@ -50,9 +50,7 @@ namespace System.Net {
 #endif // FEATURE_PAL
         private static volatile ArrayList s_PrefixList;
         private static Object s_InternalSyncObject;
-#if !MONO
         private static TimerThread.Queue s_DefaultTimerQueue = TimerThread.CreateQueue(DefaultTimeout);
-#endif
 
 #if !FEATURE_PAL
         private  AuthenticationLevel m_AuthenticationLevel;
@@ -60,10 +58,8 @@ namespace System.Net {
 #endif
 
         private RequestCachePolicy      m_CachePolicy;
-#if !MONO
         private RequestCacheProtocol    m_CacheProtocol;
         private RequestCacheBinding     m_CacheBinding;
-#endif
 
 #region designer support for System.Windows.dll
         internal class DesignerWebRequestCreate : IWebRequestCreate
@@ -95,13 +91,11 @@ namespace System.Net {
             }
         }
 
-#if !MONO
         internal static TimerThread.Queue DefaultTimerQueue {
             get {
                 return s_DefaultTimerQueue;
             }
         }
-#endif
 
         /*++
 
@@ -653,9 +647,6 @@ namespace System.Net {
 
 
         void InternalSetCachePolicy(RequestCachePolicy policy){
-#if MONO
-            throw new NotImplementedException ();
-#else
             // Delayed creation of CacheProtocol until caching is actually turned on.
             if (m_CacheBinding != null &&
                 m_CacheBinding.Cache != null &&
@@ -668,7 +659,6 @@ namespace System.Net {
             }
 
             m_CachePolicy = policy;
-#endif
         }
 
 
@@ -993,7 +983,6 @@ namespace System.Net {
             throw ExceptionHelper.MethodNotImplementedException;
         }
 
-#if !MONO
         //
         //
         //
@@ -1008,7 +997,6 @@ namespace System.Net {
                 m_CacheProtocol = value;
             }
         }
-#endif
 
 #if !FEATURE_PAL
         //
