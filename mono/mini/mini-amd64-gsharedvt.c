@@ -441,7 +441,10 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 				case MONO_TYPE_I8:
 					info->ret_marshal = GSHAREDVT_RET_I8;
 					break;
-
+				case MONO_TYPE_GENERICINST:
+					g_assert (!mono_type_generic_inst_is_valuetype (ret));
+					info->ret_marshal = GSHAREDVT_RET_I8;
+					break;
 				default:
 					g_error ("Gsharedvt can't handle dst type [%d]", (int)sig->ret->type);
 				}

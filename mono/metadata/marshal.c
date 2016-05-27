@@ -266,6 +266,15 @@ ves_icall_mono_string_from_utf16 (gunichar2 *data)
 	return result;
 }
 
+static char*
+ves_icall_mono_string_to_utf8 (MonoString *str)
+{
+	MonoError error;
+	char *result = mono_string_to_utf8_checked (str, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
+}
+
 void
 mono_marshal_init (void)
 {
@@ -285,7 +294,7 @@ mono_marshal_init (void)
 		register_icall (mono_string_from_byvalwstr, "mono_string_from_byvalwstr", "obj ptr int", FALSE);
 		register_icall (mono_string_new_wrapper, "mono_string_new_wrapper", "obj ptr", FALSE);
 		register_icall (mono_string_new_len_wrapper, "mono_string_new_len_wrapper", "obj ptr int", FALSE);
-		register_icall (mono_string_to_utf8, "mono_string_to_utf8", "ptr obj", FALSE);
+		register_icall (ves_icall_mono_string_to_utf8, "ves_icall_mono_string_to_utf8", "ptr obj", FALSE);
 		register_icall (mono_string_to_lpstr, "mono_string_to_lpstr", "ptr obj", FALSE);
 		register_icall (mono_string_to_ansibstr, "mono_string_to_ansibstr", "ptr object", FALSE);
 		register_icall (mono_string_builder_to_utf8, "mono_string_builder_to_utf8", "ptr object", FALSE);
@@ -326,6 +335,8 @@ mono_marshal_init (void)
 		register_icall (mono_marshal_ftnptr_eh_callback, "mono_marshal_ftnptr_eh_callback", "void uint32", TRUE);
 		register_icall (mono_threads_enter_gc_safe_region_unbalanced, "mono_threads_enter_gc_safe_region_unbalanced", "ptr ptr", TRUE);
 		register_icall (mono_threads_exit_gc_safe_region_unbalanced, "mono_threads_exit_gc_safe_region_unbalanced", "void ptr ptr", TRUE);
+		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", "ptr ptr ptr", TRUE);
+		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -405,14 +416,10 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 	delegate_hash_table_add (delegate);
 
 	/* when the object is collected, collect the dynamic method, too */
-	mono_object_register_finalizer ((MonoObject*)delegate, &error);
-	if (!is_ok (&error))
-		goto fail2;
+	mono_object_register_finalizer ((MonoObject*)delegate);
 
 	return delegate->delegate_trampoline;
 
-fail2:
-	delegate_hash_table_remove (delegate);
 fail:
 	mono_gchandle_free (target_handle);
 	mono_error_set_pending_exception (&error);
@@ -1086,7 +1093,10 @@ mono_string_to_lpstr (MonoString *s)
 		return as;
 	}
 #else
-	return mono_string_to_utf8 (s);
+	MonoError error;
+	char *result = mono_string_to_utf8_checked (s, &error);
+	mono_error_set_pending_exception (&error);
+	return result;
 #endif
 }	
 
@@ -1109,6 +1119,7 @@ mono_string_to_ansibstr (MonoString *string_obj)
 void
 mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
 {
+	MonoError error;
 	char *s;
 	int len;
 
@@ -1119,7 +1130,9 @@ mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
 	if (!src)
 		return;
 
-	s = mono_string_to_utf8 (src);
+	s = mono_string_to_utf8_checked (src, &error);
+	if (mono_error_set_pending_exception (&error))
+		return;
 	len = MIN (size, strlen (s));
 	if (len >= size)
 		len--;
@@ -3019,17 +3032,23 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	} else
 #endif
 	{
-		res = mono_threadpool_ms_end_invoke (ares, &out_args, &exc);
+		res = mono_threadpool_ms_end_invoke (ares, &out_args, &exc, &error);
+		if (mono_error_set_pending_exception (&error))
+			return NULL;
 	}
 
 	if (exc) {
 		if (((MonoException*)exc)->stack_trace) {
-			char *strace = mono_string_to_utf8 (((MonoException*)exc)->stack_trace);
-			char  *tmp;
-			tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
-			g_free (strace);	
-			MONO_OBJECT_SETREF (((MonoException*)exc), stack_trace, mono_string_new (domain, tmp));
-			g_free (tmp);
+			MonoError inner_error;
+			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace, &inner_error);
+			if (is_ok (&inner_error)) {
+				char  *tmp;
+				tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
+				g_free (strace);	
+				MONO_OBJECT_SETREF (((MonoException*)exc), stack_trace, mono_string_new (domain, tmp));
+				g_free (tmp);
+			} else
+				mono_error_cleanup (&inner_error); /* no stack trace, but at least throw the original exception */
 		}
 		mono_set_pending_exception ((MonoException*)exc);
 	}
@@ -7977,7 +7996,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 #else
 	MonoMethodSignature *sig, *csig;
 	MonoExceptionClause *clauses, *clause_finally, *clause_catch;
-	int i, *tmp_locals, ex_local, e_local;
+	int i, *tmp_locals, ex_local, e_local, attach_cookie_local, attach_dummy_local;
 	int leave_try_pos, leave_catch_pos, ex_m1_pos;
 	gboolean closed = FALSE;
 
@@ -8012,10 +8031,14 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	ex_local = mono_mb_add_local (mb, &mono_defaults.uint32_class->byval_arg);
 	e_local = mono_mb_add_local (mb, &mono_defaults.exception_class->byval_arg);
 
+	attach_cookie_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	attach_dummy_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+
 	/*
 	 * guint32 ex = -1;
 	 * try {
-	 *   mono_jit_attach ();
+	 *   // does (STARTING|RUNNING|BLOCKING) -> RUNNING + set/switch domain
+	 *   mono_threads_attach_coop ();
 	 *
 	 *   <interrupt check>
 	 *
@@ -8023,7 +8046,8 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	 * } catch (Exception e) {
 	 *   ex = mono_gchandle_new (e, false);
 	 * } finally {
-	 *   mono_jit_detach ();
+	 *   // does RUNNING -> (RUNNING|BLOCKING) + unset/switch domain
+	 *   mono_threads_detach_coop ();
 	 *
 	 *   if (ex != -1)
 	 *     mono_marshal_ftnptr_eh_callback (ex);
@@ -8051,16 +8075,17 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	/* try { */
 	clause_catch->try_offset = clause_finally->try_offset = mono_mb_get_label (mb);
 
-	/*
-	 * Might need to attach the thread to the JIT or change the
-	 * domain for the callback.
-	 *
-	 * Also does the (STARTING|BLOCKING|RUNNING) -> RUNNING thread state transtion
-	 *
-	 * mono_jit_attach ();
-	 */
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
+	if (!mono_threads_is_coop_enabled ()) {
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
+	} else {
+		/* mono_threads_attach_coop (); */
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_LDDOMAIN);
+		mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
+		mono_mb_emit_icall (mb, mono_threads_attach_coop);
+		mono_mb_emit_stloc (mb, attach_cookie_local);
+	}
 
 	/* <interrupt check> */
 	emit_thread_interrupt_checkpoint (mb);
@@ -8234,13 +8259,15 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	clause_finally->try_len = mono_mb_get_label (mb) - clause_finally->try_offset;
 	clause_finally->handler_offset = mono_mb_get_label (mb);
 
-	/*
-	 * Also does the RUNNING -> (BLOCKING|RUNNING) thread state transition
-	 *
-	 * mono_jit_detach ();
-	 */
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
+	if (!mono_threads_is_coop_enabled ()) {
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
+	} else {
+		/* mono_threads_detach_coop (); */
+		mono_mb_emit_ldloc (mb, attach_cookie_local);
+		mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
+		mono_mb_emit_icall (mb, mono_threads_detach_coop);
+	}
 
 	/* if (ex != -1) */
 	mono_mb_emit_ldloc (mb, ex_local);
@@ -8699,12 +8726,14 @@ mono_marshal_get_castclass_with_cache (void)
 	return cached;
 }
 
+/* this is an icall */
 static MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache)
 {
 	MonoError error;
 	MonoObject *isinst = mono_object_isinst_checked (obj, klass, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	if (mono_error_set_pending_exception (&error))
+		return NULL;
 
 #ifndef DISABLE_REMOTING
 	if (obj->vtable->klass == mono_defaults.transparent_proxy_class)
@@ -10782,6 +10811,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer s
 int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *type, MonoString *field_name)
 {
+	MonoError error;
 	MonoMarshalType *info;
 	MonoClass *klass;
 	char *fname;
@@ -10790,7 +10820,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *t
 	MONO_CHECK_ARG_NULL (type, 0);
 	MONO_CHECK_ARG_NULL (field_name, 0);
 
-	fname = mono_string_to_utf8 (field_name);
+	fname = mono_string_to_utf8_checked (field_name, &error);
+	if (mono_error_set_pending_exception (&error))
+		return 0;
 	klass = mono_class_from_mono_type (type->type);
 	if (!mono_class_init (klass)) {
 		mono_set_pending_exception (mono_class_get_exception_for_failure (klass));
@@ -10839,10 +10871,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *t
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string)
 {
+	MonoError error;
 #ifdef HOST_WIN32
 	char* tres, *ret;
 	size_t len;
-	tres = mono_string_to_utf8 (string);
+	tres = mono_string_to_utf8_checked (string, &error);
+	if (mono_error_set_pending_exception (&error))
+		return NULL;
 	if (!tres)
 		return tres;
 
@@ -10853,7 +10888,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString
 	return ret;
 
 #else
-	return mono_string_to_utf8 (string);
+	char *ret = mono_string_to_utf8_checked (string, &error);
+	mono_error_set_pending_exception (&error);
+	return ret;
 #endif
 }
 

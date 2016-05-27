@@ -237,7 +237,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -263,7 +262,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Microsoft.Internal.Strings.resources">
+    <EmbeddedResource Include="Microsoft.Internal.Strings.resx">
       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

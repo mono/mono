@@ -4527,6 +4527,9 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, guint8 *ip,
 	int context_used;
 	MonoInst *klass_inst = NULL, *res;
 
+	if (src->opcode == OP_PCONST && src->inst_p0 == 0)
+		return src;
+
 	context_used = mini_class_check_context_used (cfg, klass);
 
 	if (!context_used && mini_class_has_reference_variant_generic_argument (cfg, klass, context_used)) {
@@ -4558,7 +4561,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, guint8 *ip,
 	if (context_used) {
 		MonoInst *args [3];
 
-		if(mini_class_has_reference_variant_generic_argument (cfg, klass, context_used) || is_complex_isinst (klass)) {
+		if (mini_class_has_reference_variant_generic_argument (cfg, klass, context_used) || is_complex_isinst (klass)) {
 			MonoInst *cache_ins;
 
 			cache_ins = emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_CAST_CACHE);
@@ -6831,7 +6834,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_INST_NEW (cfg, ins, OP_OBJC_GET_SELECTOR);
 			ins->dreg = mono_alloc_ireg (cfg);
 			// FIXME: Leaks
-			ins->inst_p0 = mono_string_to_utf8 (s);
+			ins->inst_p0 = mono_string_to_utf8_checked (s, &cfg->error);
+			return_val_if_nok (&cfg->error, NULL);
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
@@ -7464,20 +7468,19 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 }
 
 static inline MonoMethodSignature*
-mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *context)
+mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *context, MonoError *error)
 {
 	MonoMethodSignature *fsig;
 
+	mono_error_init (error);
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
 		fsig = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
 	} else {
-		fsig = mono_metadata_parse_signature (method->klass->image, token);
+		fsig = mono_metadata_parse_signature_checked (method->klass->image, token, error);
+		return_val_if_nok (error, NULL);
 	}
 	if (context) {
-		MonoError error;
-		fsig = mono_inflate_generic_signature(fsig, context, &error);
-		// FIXME:
-		g_assert(mono_error_ok(&error));
+		fsig = mono_inflate_generic_signature(fsig, context, error);
 	}
 	return fsig;
 }
@@ -9085,7 +9088,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			--sp;
 			addr = *sp;
-			fsig = mini_get_signature (method, token, generic_context);
+			fsig = mini_get_signature (method, token, generic_context, &cfg->error);
+			CHECK_CFG_ERROR;
 
 			if (method->dynamic && fsig->pinvoke) {
 				MonoInst *args [3];
@@ -12790,53 +12794,46 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoInst *ad_ins, *jit_tls_ins;
 				MonoBasicBlock *next_bb = NULL, *call_bb = NULL;
 
-				cfg->attach_cookie = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-				cfg->attach_dummy = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+				g_assert (!mono_threads_is_coop_enabled ());
 
-				if (mono_threads_is_coop_enabled ()) {
-					/* AOT code is only used in the root domain */
-					EMIT_NEW_PCONST (cfg, args [0], cfg->compile_aot ? NULL : cfg->domain);
-					EMIT_NEW_VARLOADA (cfg, args [1], cfg->attach_dummy, cfg->attach_dummy->inst_vtype);
-					ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
-					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->attach_cookie->dreg, ins->dreg);
-				} else {
-					EMIT_NEW_PCONST (cfg, ins, NULL);
-					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->attach_cookie->dreg, ins->dreg);
+				cfg->orig_domain_var = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 
-					ad_ins = mono_get_domain_intrinsic (cfg);
-					jit_tls_ins = mono_get_jit_tls_intrinsic (cfg);
+				EMIT_NEW_PCONST (cfg, ins, NULL);
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->orig_domain_var->dreg, ins->dreg);
 
-					if (cfg->backend->have_tls_get && ad_ins && jit_tls_ins) {
-						NEW_BBLOCK (cfg, next_bb);
-						NEW_BBLOCK (cfg, call_bb);
+				ad_ins = mono_get_domain_intrinsic (cfg);
+				jit_tls_ins = mono_get_jit_tls_intrinsic (cfg);
 
-						if (cfg->compile_aot) {
-							/* AOT code is only used in the root domain */
-							EMIT_NEW_PCONST (cfg, domain_ins, NULL);
-						} else {
-							EMIT_NEW_PCONST (cfg, domain_ins, cfg->domain);
-						}
-						MONO_ADD_INS (cfg->cbb, ad_ins);
-						MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, ad_ins->dreg, domain_ins->dreg);
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, call_bb);
+				if (cfg->backend->have_tls_get && ad_ins && jit_tls_ins) {
+					NEW_BBLOCK (cfg, next_bb);
+					NEW_BBLOCK (cfg, call_bb);
 
-						MONO_ADD_INS (cfg->cbb, jit_tls_ins);
-						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, jit_tls_ins->dreg, 0);
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, call_bb);
-
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, next_bb);
-						MONO_START_BB (cfg, call_bb);
+					if (cfg->compile_aot) {
+						/* AOT code is only used in the root domain */
+						EMIT_NEW_PCONST (cfg, domain_ins, NULL);
+					} else {
+						EMIT_NEW_PCONST (cfg, domain_ins, cfg->domain);
 					}
+					MONO_ADD_INS (cfg->cbb, ad_ins);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, ad_ins->dreg, domain_ins->dreg);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, call_bb);
 
-					/* AOT code is only used in the root domain */
-					EMIT_NEW_PCONST (cfg, args [0], cfg->compile_aot ? NULL : cfg->domain);
-					EMIT_NEW_PCONST (cfg, args [1], NULL);
-					ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
-					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->attach_cookie->dreg, ins->dreg);
+					MONO_ADD_INS (cfg->cbb, jit_tls_ins);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, jit_tls_ins->dreg, 0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, call_bb);
 
-					if (next_bb)
-						MONO_START_BB (cfg, next_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, next_bb);
+					MONO_START_BB (cfg, call_bb);
 				}
+
+				/* AOT code is only used in the root domain */
+				EMIT_NEW_PCONST (cfg, args [0], cfg->compile_aot ? NULL : cfg->domain);
+				ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->orig_domain_var->dreg, ins->dreg);
+
+				if (next_bb)
+					MONO_START_BB (cfg, next_bb);
+
 
 				ip += 2;
 				break;
@@ -12846,9 +12843,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				/* Restore the original domain */
 				dreg = alloc_ireg (cfg);
-				EMIT_NEW_UNALU (cfg, args [0], OP_MOVE, dreg, cfg->attach_cookie->dreg);
-				EMIT_NEW_VARLOADA (cfg, args [1], cfg->attach_dummy, cfg->attach_dummy->inst_vtype);
-				mono_emit_jit_icall (cfg, mono_jit_thread_detach, args);
+				EMIT_NEW_UNALU (cfg, args [0], OP_MOVE, dreg, cfg->orig_domain_var->dreg);
+				mono_emit_jit_icall (cfg, mono_jit_set_domain, args);
 				ip += 2;
 				break;
 			}
@@ -12874,7 +12870,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_STACK (1);
 				--sp;
 				addr = *sp;
-				fsig = mini_get_signature (method, token, generic_context);
+				fsig = mini_get_signature (method, token, generic_context, &cfg->error);
+				CHECK_CFG_ERROR;
 
 				if (cfg->llvm_only)
 					cfg->signatures = g_slist_prepend_mempool (cfg->mempool, cfg->signatures, fsig);
@@ -12996,6 +12993,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				constrained_class = NULL;
 				break;
 			}
+			case CEE_MONO_LDDOMAIN:
+				CHECK_STACK_OVF (1);
+				EMIT_NEW_PCONST (cfg, ins, cfg->compile_aot ? NULL : cfg->domain);
+				ip += 2;
+				*sp++ = ins;
+				break;
 			default:
 				g_error ("opcode 0x%02x 0x%02x not handled", MONO_CUSTOM_PREFIX, ip [1]);
 				break;

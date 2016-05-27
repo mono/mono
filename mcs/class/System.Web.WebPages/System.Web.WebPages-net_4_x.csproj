@@ -213,7 +213,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -279,10 +278,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="System.Web.WebPages.Resources.WebPageResources.resources">
+    <EmbeddedResource Include="System.Web.WebPages.Resources.WebPageResources.resx">
       <LogicalName>System.Web.WebPages.Resources.WebPageResources.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.WebPages.Common.CommonResources.resources">
+    <EmbeddedResource Include="System.Web.WebPages.Common.CommonResources.resx">
       <LogicalName>System.Web.WebPages.Common.CommonResources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

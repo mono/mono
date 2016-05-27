@@ -62,7 +62,7 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			MonoType mt = ((MonoType) info.GetValue ("TypeObj", typeof (MonoType)));
+			RuntimeType mt = ((RuntimeType) info.GetValue ("TypeObj", typeof (RuntimeType)));
 			value = mt.TypeHandle.Value;
 			if (value == IntPtr.Zero)
 				throw new SerializationException (Locale.GetText ("Insufficient state."));
@@ -82,7 +82,7 @@ namespace System
 			if (value == IntPtr.Zero)
 				throw new SerializationException ("Object fields may not be properly initialized");
 
-			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
+			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (RuntimeType));
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]

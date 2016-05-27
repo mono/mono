@@ -1424,7 +1424,7 @@ public class DebuggerTests
 
 		TypeMirror t = o.Type;
 
-		Assert.AreEqual ("MonoType", t.GetTypeObject ().Type.Name);
+		Assert.AreEqual ("RuntimeType", t.GetTypeObject ().Type.Name);
 	}
 
 	[Test]

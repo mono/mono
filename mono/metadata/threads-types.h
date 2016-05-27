@@ -193,6 +193,7 @@ MonoInternalThread *mono_thread_internal_current (void);
 void mono_thread_internal_check_for_interruption_critical (MonoInternalThread *thread);
 
 void mono_thread_internal_stop (MonoInternalThread *thread);
+void mono_thread_internal_abort (MonoInternalThread *thread);
 
 gboolean mono_thread_internal_has_appdomain_ref (MonoInternalThread *thread, MonoDomain *domain);
 
@@ -201,7 +202,7 @@ void mono_thread_internal_reset_abort (MonoInternalThread *thread);
 void mono_thread_internal_unhandled_exception (MonoObject* exc);
 
 void mono_alloc_special_static_data_free (GHashTable *special_static_fields);
-void mono_thread_current_check_pending_interrupt (void);
+gboolean mono_thread_current_check_pending_interrupt (void);
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
@@ -247,7 +248,7 @@ gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
 
 MonoThread *
-mono_thread_attach_full (MonoDomain *domain, gboolean force_attach, MonoError *error);
+mono_thread_attach_full (MonoDomain *domain, gboolean force_attach);
 
 void mono_thread_init_tls (void);
 
@@ -259,5 +260,11 @@ void mono_thread_join (gpointer tid);
 void mono_thread_detach_internal (MonoInternalThread *thread);
 
 void ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces);
+
+MONO_API gpointer
+mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy);
+
+MONO_API void
+mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -1493,7 +1493,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -1555,7 +1554,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources/TranslationResources.resources">
+    <EmbeddedResource Include="resources/TranslationResources.resx">
       <LogicalName>TranslationResources.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/WebUIValidation.js">

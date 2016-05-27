@@ -457,6 +457,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			MonoException *exc_to_store = mono_error_convert_to_exception (error);
 			/* What we really want to do here is clone the error object and store one copy in the
 			 * domain's exception hash and use the other one to error out here. */
+			mono_error_init (error);
 			mono_error_set_exception_instance (error, exc_to_store);
 			/*
 			 * Store the exception object so it could be thrown on subsequent
@@ -541,7 +542,7 @@ mono_release_type_locks (MonoInternalThread *thread)
 #ifndef DISABLE_REMOTING
 
 static gpointer
-default_remoting_trampoline (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target)
+default_remoting_trampoline (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error)
 {
 	g_error ("remoting not installed");
 	return NULL;
@@ -2229,7 +2230,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	 * re-acquire them and check if another thread has created the vtable in the meantime.
 	 */
 	/* Special case System.MonoType to avoid infinite recursion */
-	if (klass != mono_defaults.monotype_class) {
+	if (klass != mono_defaults.runtimetype_class) {
 		vt->type = mono_type_get_object_checked (domain, &klass->byval_arg, error);
 		if (!is_ok (error)) {
 			mono_domain_unlock (domain);
@@ -2237,7 +2238,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.monotype_class)
+		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
@@ -2288,7 +2289,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		klass->runtime_info = runtime_info;
 	}
 
-	if (klass == mono_defaults.monotype_class) {
+	if (klass == mono_defaults.runtimetype_class) {
 		vt->type = mono_type_get_object_checked (domain, &klass->byval_arg, error);
 		if (!is_ok (error)) {
 			mono_domain_unlock (domain);
@@ -2296,7 +2297,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.monotype_class)
+		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
@@ -2319,31 +2320,35 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
  * mono_class_proxy_vtable:
  * @domain: the application domain
  * @remove_class: the remote class
+ * @error: set on error
  *
  * Creates a vtable for transparent proxies. It is basically
  * a copy of the real vtable of the class wrapped in @remote_class,
  * but all function pointers invoke the remoting functions, and
  * vtable->klass points to the transparent proxy class, and not to @class.
+ *
+ * On failure returns NULL and sets @error
  */
 static MonoVTable *
-mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRemotingTarget target_type)
+mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRemotingTarget target_type, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
 	MonoVTable *vt, *pvt;
 	int i, j, vtsize, max_interface_id, extra_interface_vtsize = 0;
 	MonoClass *k;
 	GSList *extra_interfaces = NULL;
 	MonoClass *klass = remote_class->proxy_class;
 	gpointer *interface_offsets;
-	uint8_t *bitmap;
+	uint8_t *bitmap = NULL;
 	int bsize;
 	size_t imt_table_bytes;
 	
 #ifdef COMPRESSED_INTERFACE_BITMAP
 	int bcsize;
 #endif
+
+	mono_error_init (error);
 
 	vt = mono_class_vtable (domain, klass);
 	g_assert (vt); /*FIXME property handle failure*/
@@ -2365,8 +2370,9 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		
 		method_count = mono_class_num_methods (iclass);
 	
-		ifaces = mono_class_get_implemented_interfaces (iclass, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME do proper error handling*/
+		ifaces = mono_class_get_implemented_interfaces (iclass, error);
+		if (!is_ok (error))
+			goto failure;
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = (MonoClass *)g_ptr_array_index (ifaces, i);
@@ -2379,6 +2385,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 				method_count += mono_class_num_methods (ic);
 			}
 			g_ptr_array_free (ifaces, TRUE);
+			ifaces = NULL;
 		}
 
 		extra_interface_vtsize += method_count * sizeof (gpointer);
@@ -2408,9 +2415,11 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	for (i = 0; i < klass->vtable_size; ++i) {
 		MonoMethod *cm;
 		    
-		if ((cm = klass->vtable [i]))
-			pvt->vtable [i] = arch_create_remoting_trampoline (domain, cm, target_type);
-		else
+		if ((cm = klass->vtable [i])) {
+			pvt->vtable [i] = arch_create_remoting_trampoline (domain, cm, target_type, error);
+			if (!is_ok (error))
+				goto failure;
+		} else
 			pvt->vtable [i] = NULL;
 	}
 
@@ -2420,8 +2429,11 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 			MonoMethod* m;
 			gpointer iter = NULL;
 			while ((m = mono_class_get_methods (k, &iter)))
-				if (!pvt->vtable [m->slot])
-					pvt->vtable [m->slot] = arch_create_remoting_trampoline (domain, m, target_type);
+				if (!pvt->vtable [m->slot]) {
+					pvt->vtable [m->slot] = arch_create_remoting_trampoline (domain, m, target_type, error);
+					if (!is_ok (error))
+						goto failure;
+				}
 		}
 	}
 
@@ -2453,8 +2465,11 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 			iter = NULL;
 			j = 0;
-			while ((cm = mono_class_get_methods (interf, &iter)))
-				pvt->vtable [slot + j++] = arch_create_remoting_trampoline (domain, cm, target_type);
+			while ((cm = mono_class_get_methods (interf, &iter))) {
+				pvt->vtable [slot + j++] = arch_create_remoting_trampoline (domain, cm, target_type, error);
+				if (!is_ok (error))
+					goto failure;
+			}
 			
 			slot += mono_class_num_methods (interf);
 		}
@@ -2475,6 +2490,13 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt->interface_bitmap = bitmap;
 #endif
 	return pvt;
+failure:
+	if (extra_interfaces)
+		g_slist_free (extra_interfaces);
+#ifdef COMPRESSED_INTERFACE_BITMAP
+	g_free (bitmap);
+#endif
+	return NULL;
 }
 
 #endif /* DISABLE_REMOTING */
@@ -2740,17 +2762,20 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 }
 
 gpointer
-mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxy *rp)
+mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxy *rp, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	mono_error_init (error);
 
 	mono_loader_lock (); /*FIXME mono_class_from_mono_type and mono_class_proxy_vtable take it*/
 	mono_domain_lock (domain);
 	if (rp->target_domain_id != -1) {
 		if (remote_class->xdomain_vtable == NULL)
-			remote_class->xdomain_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_APPDOMAIN);
+			remote_class->xdomain_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_APPDOMAIN, error);
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
+		return_val_if_nok (error, NULL);
 		return remote_class->xdomain_vtable;
 	}
 	if (remote_class->default_vtable == NULL) {
@@ -2760,10 +2785,16 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		klass = mono_class_from_mono_type (type);
 #ifndef DISABLE_COM
 		if ((mono_class_is_com_object (klass) || (mono_class_get_com_object_class () && klass == mono_class_get_com_object_class ())) && !mono_vtable_is_remote (mono_class_vtable (mono_domain_get (), klass)))
-			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
+			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP, error);
 		else
 #endif
-			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_UNKNOWN);
+			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_UNKNOWN, error);
+		/* N.B. both branches of the if modify error */
+		if (!is_ok (error)) {
+			mono_domain_unlock (domain);
+			mono_loader_unlock ();
+			return NULL;
+		}
 	}
 	
 	mono_domain_unlock (domain);
@@ -2776,13 +2807,14 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
  * @domain: the application domain
  * @tproxy: the proxy whose remote class has to be upgraded.
  * @klass: class to which the remote class can be casted.
+ * @error: set on error
  *
  * Updates the vtable of the remote class by adding the necessary method slots
  * and interface offsets so it can be safely casted to klass. klass can be a
- * class or an interface.
+ * class or an interface.  On success returns TRUE, on failure returns FALSE and sets @error.
  */
-void
-mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoClass *klass)
+gboolean
+mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -2790,6 +2822,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoCla
 	MonoRemoteClass *remote_class;
 	gboolean redo_vtable;
 
+	mono_error_init (error);
 	mono_loader_lock (); /*FIXME mono_remote_class_vtable requires it.*/
 	mono_domain_lock (domain);
 
@@ -2809,11 +2842,15 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoCla
 
 	if (redo_vtable) {
 		tproxy->remote_class = clone_remote_class (domain, remote_class, klass);
-		proxy_object->vtable = (MonoVTable *)mono_remote_class_vtable (domain, tproxy->remote_class, tproxy->rp);
+		proxy_object->vtable = (MonoVTable *)mono_remote_class_vtable (domain, tproxy->remote_class, tproxy->rp, error);
+		if (!is_ok (error))
+			goto leave;
 	}
 	
+leave:
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
+	return is_ok (error);
 }
 #endif /* DISABLE_REMOTING */
 
@@ -5176,7 +5213,7 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", mono_class_instance_size (klass));
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o, error);
+		mono_object_register_finalizer (o);
 
 	return o;
 }
@@ -5306,7 +5343,7 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o, error);
+		mono_object_register_finalizer (o);
 
 	return o;
 }
@@ -5394,7 +5431,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o, error);
+		mono_object_register_finalizer (o);
 
 	return o;
 }
@@ -5509,7 +5546,7 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 	mono_gc_wbarrier_object_copy (o, obj);
 
 	if (obj->vtable->klass->has_finalize)
-		mono_object_register_finalizer (o, error);
+		mono_object_register_finalizer (o);
 	return o;
 }
 
@@ -6284,7 +6321,7 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 #endif
 #endif
 	if (klass->has_finalize) {
-		mono_object_register_finalizer (res, error);
+		mono_object_register_finalizer (res);
 		return_val_if_nok (error, NULL);
 	}
 	return res;
@@ -6525,7 +6562,8 @@ mono_object_isinst_mbyref_checked (MonoObject *obj, MonoClass *klass, MonoError 
 
 		if (*(MonoBoolean *) mono_object_unbox(res)) {
 			/* Update the vtable of the remote type, so it can safely cast to this new type */
-			mono_upgrade_remote_class (domain, obj, klass);
+			mono_upgrade_remote_class (domain, obj, klass, error);
+			return_val_if_nok (error, NULL);
 			return obj;
 		}
 	}
@@ -6815,8 +6853,10 @@ mono_string_to_utf8 (MonoString *s)
 	MonoError error;
 	char *result = mono_string_to_utf8_checked (s, &error);
 	
-	if (!mono_error_ok (&error))
-		mono_error_raise_exception (&error);
+	if (!is_ok (&error)) {
+		mono_error_cleanup (&error);
+		return NULL;
+	}
 	return result;
 }
 

@@ -5028,10 +5028,12 @@ namespace System
             return obj == (object)this;
         }
 
+#if !MONO
         public override int GetHashCode() 
         {
             return RuntimeHelpers.GetHashCode(this);
         }
+#endif
 
 #if !FEATURE_CORECLR
         public static bool operator ==(RuntimeType left, RuntimeType right)

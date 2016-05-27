@@ -109,7 +109,7 @@ namespace MonoTests.System.Threading
 			}
 
 			// check a class in mscorlib to determine if we're running on Mono
-			if (Type.GetType ("System.MonoType", false) != null)
+			if (Type.GetType ("Mono.Runtime", false) != null)
 				is_mono = true;
 		}
 

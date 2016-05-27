@@ -245,8 +245,6 @@ namespace System.Net.Http
 				wr.KeepAlive = request.Headers.ConnectionClose != true;
 			}
 
-			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
-
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
@@ -270,7 +268,12 @@ namespace System.Net.Http
 
 			if (useProxy) {
 				wr.Proxy = proxy;
+			} else {
+				// Disables default WebRequest.DefaultWebProxy value
+				wr.Proxy = null;
 			}
+
+			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
 
 			// Add request headers
 			var headers = wr.Headers;

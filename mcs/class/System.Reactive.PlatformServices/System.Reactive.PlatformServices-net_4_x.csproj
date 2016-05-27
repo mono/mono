@@ -88,7 +88,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -126,7 +125,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_PlatformServices.resources">
+    <EmbeddedResource Include="Strings_PlatformServices.resx">
       <LogicalName>System.Reactive.Strings_PlatformServices.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
