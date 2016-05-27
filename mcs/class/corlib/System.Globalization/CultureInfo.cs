@@ -140,7 +140,15 @@ namespace System.Globalization
 			if (default_current_culture != null)
 				return default_current_culture;
 
-			var locale_name = get_current_locale_name ();
+			IntPtr locale_name_cstr = default (IntPtr);
+			string locale_name;
+			try {
+				locale_name_cstr = get_current_locale_name ();
+				locale_name = Marshal.PtrToStringAnsi (locale_name_cstr);
+			} finally {
+				Marshal.FreeHGlobal (locale_name_cstr); //FIXME this is wrong on windows.
+			}
+
 			CultureInfo ci = null;
 
 			if (locale_name != null) {
@@ -612,7 +620,7 @@ namespace System.Globalization
 		private extern bool construct_internal_locale_from_name (string name);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string get_current_locale_name ();
+		private extern static IntPtr get_current_locale_name ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static CultureInfo [] internal_get_cultures (bool neutral, bool specific, bool installed);

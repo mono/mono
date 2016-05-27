@@ -532,22 +532,10 @@ get_current_locale_name (void)
 	return ret;
 }
 
-MonoString*
+char *
 ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 {
-	gchar *locale;
-	MonoString* ret;
-	MonoDomain *domain;
-
-	locale = get_current_locale_name ();
-	if (locale == NULL)
-		return NULL;
-
-	domain = mono_domain_get ();
-	ret = mono_string_new (domain, locale);
-	g_free (locale);
-
-	return ret;
+	return get_current_locale_name ();
 }
 
 MonoBoolean
