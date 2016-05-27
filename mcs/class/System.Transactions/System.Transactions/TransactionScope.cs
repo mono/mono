@@ -31,21 +31,21 @@ namespace System.Transactions
 		bool completed;
 		bool isRoot;
 
-        bool asyncFlowEnabled;
+		bool asyncFlowEnabled;
 
-        public TransactionScope ()
+		public TransactionScope ()
 			: this (TransactionScopeOption.Required,
 				TransactionManager.DefaultTimeout)
 		{
 		}
 
-        public TransactionScope(TransactionScopeAsyncFlowOption asyncFlow)
-            : this(TransactionScopeOption.Required,
-                TransactionManager.DefaultTimeout, asyncFlow)
-        {
-        }
+		public TransactionScope(TransactionScopeAsyncFlowOption asyncFlow)
+			: this(TransactionScopeOption.Required,
+				TransactionManager.DefaultTimeout, asyncFlow)
+		{
+		}
 
-        public TransactionScope (Transaction transaction)
+		public TransactionScope (Transaction transaction)
 			: this (transaction, TransactionManager.DefaultTimeout)
 		{
 		}
@@ -69,12 +69,12 @@ namespace System.Transactions
 		{
 		}
 
-        public TransactionScope(TransactionScopeOption option, TransactionScopeAsyncFlowOption asyncFlow)
-            : this(option, TransactionManager.DefaultTimeout, asyncFlow)
-        {
-        }
+		public TransactionScope(TransactionScopeOption option, TransactionScopeAsyncFlowOption asyncFlow)
+			: this(option, TransactionManager.DefaultTimeout, asyncFlow)
+		{
+		}
 
-        public TransactionScope (TransactionScopeOption option,
+    	public TransactionScope (TransactionScopeOption option,
 			TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
 		{
 			Initialize (option, null, defaultOptions,
@@ -103,9 +103,9 @@ namespace System.Transactions
 			completed = false;
 			isRoot = false;
 			nested = 0;
-            asyncFlowEnabled = asyncFlow == TransactionScopeAsyncFlowOption.Enabled;
+			asyncFlowEnabled = asyncFlow == TransactionScopeAsyncFlowOption.Enabled;
 
-            if (timeout < TimeSpan.Zero)
+			if (timeout < TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException ("timeout");
 
 			this.timeout = timeout;
@@ -188,61 +188,61 @@ namespace System.Transactions
 				throw new InvalidOperationException ("Transaction.Current has changed inside of the TransactionScope");
 			} 
 
-            if (asyncFlowEnabled) {
-                if (oldTransaction != null)
-                    oldTransaction.Scope = parentScope;
+			if (asyncFlowEnabled) {
+				if (oldTransaction != null)
+					oldTransaction.Scope = parentScope;
 
-                var variedTransaction = Transaction.CurrentInternal;
+				var variedTransaction = Transaction.CurrentInternal;
 
-                if (transaction == null && variedTransaction == null)
-                    /* scope was not in a transaction, (Suppress) */
-                    return;
+				if (transaction == null && variedTransaction == null)
+					/* scope was not in a transaction, (Suppress) */
+					return;
 
-                variedTransaction.Scope = parentScope;
-                Transaction.CurrentInternal = oldTransaction;
+				variedTransaction.Scope = parentScope;
+				Transaction.CurrentInternal = oldTransaction;
 
-			    transaction.Scope = null;
+				transaction.Scope = null;
 
-                if (!IsComplete) {
-				    transaction.Rollback ();
-                    variedTransaction.Rollback();
-                    return;
-			    }
+				if (!IsComplete) {
+					transaction.Rollback ();
+					variedTransaction.Rollback();
+					return;
+				}
 
-			    if (!isRoot)
-				    /* Non-root scope has completed+ended */
-				    return;
+				if (!isRoot)
+					/* Non-root scope has completed+ended */
+					return;
 
-                variedTransaction.CommitInternal();
-                transaction.CommitInternal();
-            } else {
-                if (Transaction.CurrentInternal == oldTransaction && oldTransaction != null)
-                    oldTransaction.Scope = parentScope;
+				variedTransaction.CommitInternal();
+				transaction.CommitInternal();
+			} else {
+				if (Transaction.CurrentInternal == oldTransaction && oldTransaction != null)
+					oldTransaction.Scope = parentScope;
 
-                Transaction.CurrentInternal = oldTransaction;
+				Transaction.CurrentInternal = oldTransaction;
 
-                if (transaction == null)
-                    /* scope was not in a transaction, (Suppress) */
-                    return;
+				if (transaction == null)
+					/* scope was not in a transaction, (Suppress) */
+					return;
 
-                transaction.Scope = null;
+				transaction.Scope = null;
 
-                if (!IsComplete)
-                {
-                    transaction.Rollback();
-                    return;
-                }
+				if (!IsComplete)
+				{
+					transaction.Rollback();
+					return;
+				}
 
-                if (!isRoot)
-                    /* Non-root scope has completed+ended */
-                    return;
+				if (!isRoot)
+					/* Non-root scope has completed+ended */
+					return;
 
-                transaction.CommitInternal();
+				transaction.CommitInternal();
 
-            }
-        }
+			}
+		}
 
 
-    }
+	}
 }
 
