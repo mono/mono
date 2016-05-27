@@ -548,7 +548,8 @@ void sgen_split_nursery_init (SgenMinorCollector *collector);
 /* Updating references */
 
 #ifdef SGEN_CHECK_UPDATE_REFERENCE
-gboolean sgen_thread_pool_is_thread_pool_thread (MonoNativeThreadId some_thread) MONO_INTERNAL;
+gboolean sgen_thread_pool_is_thread_pool_thread (MonoNativeThreadId some_thread);
+
 static inline void
 sgen_update_reference (GCObject **p, GCObject *o, gboolean allow_null)
 {
@@ -810,16 +811,8 @@ size_t sgen_gc_get_total_heap_allocation (void);
 
 /* STW */
 
-typedef struct {
-	int generation;
-	const char *reason;
-	gboolean is_overflow;
-	gint64 total_time;
-	gint64 stw_time;
-} GGTimingInfo;
-
 void sgen_stop_world (int generation);
-void sgen_restart_world (int generation, GGTimingInfo *timing);
+void sgen_restart_world (int generation);
 gboolean sgen_is_world_stopped (void);
 
 gboolean sgen_set_allow_synchronous_major (gboolean flag);
@@ -839,6 +832,7 @@ struct _LOSObject {
 
 extern LOSObject *los_object_list;
 extern mword los_memory_usage;
+extern mword los_memory_usage_total;
 
 void sgen_los_free_object (LOSObject *obj);
 void* sgen_los_alloc_large_inner (GCVTable vtable, size_t size);
@@ -950,6 +944,8 @@ extern int default_nursery_size;
 extern guint32 tlab_size;
 extern NurseryClearPolicy nursery_clear_policy;
 extern gboolean sgen_try_free_some_memory;
+extern mword total_promoted_size;
+extern mword total_allocated_major;
 
 extern MonoCoopMutex gc_mutex;
 
