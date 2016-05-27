@@ -583,21 +583,7 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 	}
 	return TRUE;
 }
-/*
-MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specific_name (MonoCultureInfo *ci,
-		MonoString *name)
-{
-	gchar *locale;
-	gboolean ret;
 
-	locale = mono_string_to_utf8 (name);
-	ret = construct_culture_from_specific_name (ci, locale);
-	g_free (locale);
-
-	return ret;
-}
-*/
 MonoBoolean
 ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this_obj,
 		gint lcid)
