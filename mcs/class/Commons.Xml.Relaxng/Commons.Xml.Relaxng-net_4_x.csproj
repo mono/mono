@@ -104,7 +104,6 @@ $(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(Proje
 $(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.jay > $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.cs
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
