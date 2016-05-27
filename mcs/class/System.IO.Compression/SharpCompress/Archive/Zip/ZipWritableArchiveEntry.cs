@@ -10,7 +10,6 @@ namespace SharpCompress.Archive.Zip
     {
         private readonly string path;
         private readonly long size;
-        private readonly DateTime? lastModified;
         private readonly bool closeStream;
         private readonly Stream stream;
         private bool isDisposed;
@@ -22,7 +21,7 @@ namespace SharpCompress.Archive.Zip
             this.stream = stream;
             this.path = path;
             this.size = size;
-            this.lastModified = lastModified;
+            this.LastModifiedTime = lastModified;
             this.closeStream = closeStream;
         }
 
@@ -44,11 +43,6 @@ namespace SharpCompress.Archive.Zip
         public override long Size
         {
             get { return size; }
-        }
-
-        public override DateTime? LastModifiedTime
-        {
-            get { return lastModified; }
         }
 
         public override DateTime? CreatedTime

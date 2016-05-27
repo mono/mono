@@ -56,6 +56,7 @@ namespace System.IO.Compression
 				FileAccess.Read, FileShare.Read))
 			{
 				var zipArchiveEntry = destination.CreateEntry (entryName, compressionLevel);
+				zipArchiveEntry.LastWriteTime = File.GetLastWriteTimeUtc(sourceFileName);
 
 				using (Stream entryStream = zipArchiveEntry.Open ())
 					stream.CopyTo (entryStream);
