@@ -59,14 +59,8 @@ namespace System
 
 		internal Object GenericCache;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void type_from_obj (RuntimeType type, Object obj);
-
 		internal RuntimeType (Object obj)
 		{
-			// this should not be used - lupus
-			type_from_obj (this, obj);
-
 			throw new NotImplementedException ();
 		}
 
