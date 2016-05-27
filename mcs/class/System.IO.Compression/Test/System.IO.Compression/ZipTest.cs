@@ -239,6 +239,31 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipEnumerateEntriesModifiedTime()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			var date = DateTimeOffset.Now;
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				entry.LastWriteTime = date;
+			}
+
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.AreEqual(entry.LastWriteTime.Year, date.Year);
+				Assert.AreEqual(entry.LastWriteTime.Month, date.Month);
+				Assert.AreEqual(entry.LastWriteTime.Day, date.Day);
+
+			}
+
+			File.Delete ("test.zip");
+		}		
+
+		[Test]
 		public void ZipEnumerateEntriesReadMode()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);
