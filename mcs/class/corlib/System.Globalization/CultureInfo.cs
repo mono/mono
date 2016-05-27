@@ -81,8 +81,9 @@ namespace System.Globalization
 
 		volatile CompareInfo compareInfo;
 		[NonSerialized]
-		private unsafe readonly void *textinfo_data;
+		private unsafe void *textinfo_data;
 
+		/* Native struct is culture-info.h : TextInfoEntry */
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {
 			public int ansi;
@@ -91,6 +92,28 @@ namespace System.Globalization
 			public int oem;
 			public bool right_to_left;
 			public byte list_sep;
+		}
+
+		/* Native struct is culture-info.h : CultureInfoEntry */
+		const int NUM_CALENDARS = 4;
+		unsafe struct NativeCultureInfo {
+			internal short lcid;
+			internal short parent_lcid;
+			internal short calendar_type;
+			internal short region_entry_index;
+			internal ushort name;
+			internal ushort englishname;
+			internal ushort nativename;
+			internal ushort win3lang;
+			internal ushort iso3lang;
+			internal ushort iso2lang;
+			internal ushort territory;
+			internal fixed ushort native_calendar_names [NUM_CALENDARS];
+
+			internal short datetime_format_index;
+			internal short number_format_index;
+
+			internal Data text_info;
 		}
 
 		int m_dataItem;		// MS.NET serializes this.
@@ -606,15 +629,65 @@ namespace System.Globalization
 			
 			return format;
 		}
-		
+
+		static IntPtr base_culture_addr;
+
+		static string idx2string (int idx)
+		{
+			if (base_culture_addr == IntPtr.Zero)
+				base_culture_addr = get_base_culture_address ();
+			// Console.WriteLine ("\t idx {0} ptr {1:X}", idx, (long)(base_culture_addr + idx));
+			return Marshal.PtrToStringAnsi (base_culture_addr + idx);
+		}
+
+		unsafe static string[] create_names_array_idx (ushort *names, int ml)
+		{
+			var res = new string [ml];
+			for (int i = 0; i < ml; ++i)
+				res [i] = idx2string (names [i]);
+			return res;
+		}
+
+		unsafe void ConstructFromNativeInfo (NativeCultureInfo *info)
+		{
+			this.cultureID = info->lcid;
+			this.m_name = idx2string (info->name);
+			this.englishname = idx2string (info->englishname);
+			this.nativename = idx2string (info->nativename);
+			this.win3lang = idx2string (info->win3lang);
+			this.iso3lang = idx2string (info->iso3lang);
+			this.iso2lang = idx2string (info->iso2lang);
+
+			// It's null for neutral cultures
+			if (info->territory > 0)
+				this.territory = idx2string (info->territory);
+
+			this.native_calendar_names = create_names_array_idx (info->native_calendar_names, NUM_CALENDARS);
+			this.parent_lcid = info->parent_lcid;
+			this.datetime_index = info->datetime_format_index;
+			this.number_index = info->number_format_index;
+			this.default_calendar_type = info->calendar_type;
+			this.textinfo_data = &info->text_info;
+		}
+
 		void Construct ()
 		{
-			construct_internal_locale_from_lcid (cultureID);
+			unsafe {
+				var culture_info = construct_internal_locale_from_lcid (cultureID);
+				if (culture_info == null) {
+					var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", cultureID.ToString (InvariantCulture), cultureID.ToString ("X4", InvariantCulture));
+					throw new CultureNotFoundException ("culture", msg);
+				}
+				ConstructFromNativeInfo (culture_info);
+			}
 			constructed = true;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool construct_internal_locale_from_lcid (int lcid);
+		private extern static IntPtr get_base_culture_address ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private unsafe extern static NativeCultureInfo* construct_internal_locale_from_lcid (int lcid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_name (string name);
@@ -676,12 +749,13 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!construct_internal_locale_from_lcid (culture)) {
-				//
-				// Be careful not to cause recursive CultureInfo initialization
-				//
-				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", culture.ToString (InvariantCulture), culture.ToString ("X4", InvariantCulture));
-				throw new CultureNotFoundException ("culture", msg);
+			unsafe {
+				var culture_info = construct_internal_locale_from_lcid (culture);
+				if (culture_info == null) {
+					var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", culture.ToString (InvariantCulture), culture.ToString ("X4", InvariantCulture));
+					throw new CultureNotFoundException ("culture", msg);
+				}
+				ConstructFromNativeInfo (culture_info);
 			}
 
 			var ti = GetTextInfoData ();

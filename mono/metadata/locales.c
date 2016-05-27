@@ -538,22 +538,16 @@ ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 	return get_current_locale_name ();
 }
 
-MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj,
-		gint lcid)
+void *
+ves_icall_System_Globalization_CultureInfo_get_base_culture_address (void)
 {
-	MonoError error;
-	const CultureInfoEntry *ci;
-	
-	ci = culture_info_entry_from_lcid (lcid);
-	if(ci == NULL)
-		return FALSE;
+	return (void*)locale_strings;
+}
 
-	if (!construct_culture (this_obj, ci, &error)) {
-		mono_error_set_pending_exception (&error);
-		return FALSE;
-	}
-	return TRUE;
+void *
+ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (gint lcid)
+{
+	return (void*)culture_info_entry_from_lcid (lcid);
 }
 
 MonoBoolean

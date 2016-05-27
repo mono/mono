@@ -31,7 +31,7 @@ extern void ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCu
 extern void ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInfo* number, gint32 number_index);
 extern void ves_icall_System_Globalization_CultureInfo_construct_internal_locale (MonoCultureInfo *this_obj, MonoString *locale);
 extern char* ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void);
-extern MonoBoolean ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj, gint lcid);
+extern void *ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (gint lcid);
 extern MonoBoolean ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (MonoCultureInfo *this_obj, MonoString *name);
 extern MonoArray *ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral, MonoBoolean specific, MonoBoolean installed);
 extern void ves_icall_System_Globalization_CompareInfo_construct_compareinfo (MonoCompareInfo *comp, MonoString *locale);
@@ -51,5 +51,7 @@ extern MonoString *ves_icall_System_String_InternalToUpper_Comp (MonoString *thi
 extern gunichar2 ves_icall_System_Char_InternalToUpper_Comp (gunichar2 c, MonoCultureInfo *cult);
 extern gunichar2 ves_icall_System_Char_InternalToLower_Comp (gunichar2 c, MonoCultureInfo *cult);
 extern void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **argProps, guint8** argMappedChars, guint8** argCharMapIndex, guint8** argHelperIndex, guint8** argMapIdxToComposite, guint8** argCombiningClass);
+
+extern void *ves_icall_System_Globalization_CultureInfo_get_base_culture_address (void);
 
 #endif /* _MONO_METADATA_FILEIO_H_ */
