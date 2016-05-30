@@ -69,6 +69,12 @@ namespace System.Transactions
 		{
 		}
 
+		public TransactionScope (TransactionScopeOption option,
+ 			TimeSpan timeout)
+ 			: this (option, timeout, TransactionScopeAsyncFlowOption.Suppress)
+		{
+		}
+
 		public TransactionScope(TransactionScopeOption option, TransactionScopeAsyncFlowOption asyncFlow)
 			: this(option, TransactionManager.DefaultTimeout, asyncFlow)
 		{
