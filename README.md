@@ -19,28 +19,30 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 
 Officially supported architectures:
 
-| debian-amd64            | debian-i386            | debian-armel            | debian-armhf            | windows-amd64             |
-|-------------------------|------------------------|-------------------------|-------------------------|---------------------------|
-| [![debian-amd64][1]][2] | [![debian-i386][3]][4] | [![debian-armel][5]][6] | [![debian-armhf][7]][8] | [![windows-amd64][9]][10] |
+| ubuntu-1404-amd64            | ubuntu-1404-i386            | debian-8-armel            | debian-8-armhf            | debian-8-arm64              | windows-amd64              |
+|------------------------------|-----------------------------|---------------------------|---------------------------|-----------------------------|----------------------------|
+| [![ubuntu-1404-amd64][1]][2] | [![ubuntu-1404-i386][3]][4] | [![debian-8-armel][5]][6] | [![debian-8-armhf][7]][8] | [![debian-8-arm64][9]][10]  | [![windows-amd64][11]][12] |
 
 Community supported architectures:
 
 | centos-s390x              |
 |---------------------------|
-| [![centos-s390x][11]][12] |
+| [![centos-s390x][13]][14] |
 
-[1]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon
-[2]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/
-[3]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/badge/icon
-[4]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/
-[5]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armel/badge/icon
-[6]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armel/
-[7]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/badge/icon
-[8]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/
-[9]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
-[10]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
-[11]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
-[12]: https://jenkins.mono-project.com/job/z/label=centos-s390x
+[1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64/badge/icon
+[2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64
+[3]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/badge/icon
+[4]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/
+[5]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/badge/icon
+[6]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/
+[7]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/badge/icon
+[8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/
+[9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/badge/icon
+[10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/
+[11]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
+[12]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
+[13]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
+[14]: https://jenkins.mono-project.com/job/z/label=centos-s390x
 
 Compilation and Installation
 ============================
