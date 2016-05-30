@@ -1912,7 +1912,7 @@ major_start_collection (gboolean concurrent, size_t *old_next_pin_slot)
 }
 
 static void
-major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean forced)
+major_finish_collection (const char *reason, size_t old_next_pin_slot)
 {
 	ScannedObjectCounts counts;
 	SgenObjectOperations *object_ops;
@@ -2025,7 +2025,7 @@ major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean 
 
 	g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
-	sgen_memgov_major_collection_end (forced);
+	sgen_memgov_major_collection_end ();
 	current_collection_generation = -1;
 
 	memset (&counts, 0, sizeof (ScannedObjectCounts));
@@ -2047,7 +2047,7 @@ major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean 
 }
 
 static gboolean
-major_do_collection (const char *reason, gboolean forced)
+major_do_collection (const char *reason)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
@@ -2065,7 +2065,7 @@ major_do_collection (const char *reason, gboolean forced)
 	TV_GETTIME (time_start);
 
 	major_start_collection (FALSE, &old_next_pin_slot);
-	major_finish_collection (reason, old_next_pin_slot, forced);
+	major_finish_collection (reason, old_next_pin_slot);
 
 	TV_GETTIME (time_end);
 	gc_stats.major_gc_time += TV_ELAPSED (time_start, time_end);
@@ -2136,7 +2136,7 @@ major_update_concurrent_collection (void)
 }
 
 static void
-major_finish_concurrent_collection (gboolean forced)
+major_finish_concurrent_collection (void)
 {
 	TV_DECLARE (total_start);
 	TV_DECLARE (total_end);
@@ -2163,7 +2163,7 @@ major_finish_concurrent_collection (gboolean forced)
 
 	current_collection_generation = GENERATION_OLD;
 	sgen_cement_reset ();
-	major_finish_collection ("finishing", -1, forced);
+	major_finish_collection ("finishing", -1);
 
 	if (whole_heap_check_before_collection)
 		sgen_check_whole_heap (FALSE);
@@ -2254,7 +2254,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 			overflow_reason = "Minor overflow";
 		}
 	} else if (finish_concurrent) {
-		major_finish_concurrent_collection (wait_to_finish);
+		major_finish_concurrent_collection ();
 		oldest_generation_collected = GENERATION_OLD;
 	} else {
 		SGEN_ASSERT (0, generation_to_collect == GENERATION_OLD, "We should have handled nursery collections above");
@@ -2262,7 +2262,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 			collect_nursery (NULL, FALSE);
 			major_start_concurrent_collection (reason);
 			oldest_generation_collected = GENERATION_NURSERY;
-		} else if (major_do_collection (reason, wait_to_finish)) {
+		} else if (major_do_collection (reason)) {
 			overflow_generation_to_collect = GENERATION_NURSERY;
 			overflow_reason = "Excessive pinning";
 		}
@@ -2293,7 +2293,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		if (overflow_generation_to_collect == GENERATION_NURSERY)
 			collect_nursery (NULL, FALSE);
 		else
-			major_do_collection (overflow_reason, wait_to_finish);
+			major_do_collection (overflow_reason);
 
 		TV_GETTIME (gc_end);
 		infos [1].total_time = SGEN_TV_ELAPSED (gc_start, gc_end);
