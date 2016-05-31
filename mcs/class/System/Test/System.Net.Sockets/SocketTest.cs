@@ -4228,7 +4228,22 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void SendAsyncFile ()
 		{
-			Socket serverSocket = StartSocketServer ();
+			Socket serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+			serverSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			serverSocket.Listen (1);
+
+			var mReceived = new ManualResetEvent (false);
+
+			serverSocket.BeginAccept (AsyncCall => {
+				byte[] bytes = new byte [1024];
+
+				Socket listener = (Socket)AsyncCall.AsyncState;
+				Socket client = listener.EndAccept (AsyncCall);
+				client.Receive (bytes, bytes.Length, 0);
+				client.Close ();
+				mReceived.Set ();
+			}, serverSocket);
 			
 			Socket clientSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			clientSocket.Connect (serverSocket.LocalEndPoint);
@@ -4246,18 +4261,19 @@ namespace MonoTests.System.Net.Sockets
 					sw.Write (buffer);
 				}
 
-				var m = new ManualResetEvent (false);
+				var mSent = new ManualResetEvent (false);
 
 				// Async Send File to server
 				clientSocket.BeginSendFile(temp, (ar) => {
 					Socket client = (Socket) ar.AsyncState;
 					client.EndSendFile (ar);
-					m.Set ();
+					mSent.Set ();
 				}, clientSocket);
 
-				if (!m.WaitOne (1500))
+				if (!mSent.WaitOne (1500))
 					throw new TimeoutException ();
-				m.Reset ();
+				if (!mReceived.WaitOne (1500))
+					throw new TimeoutException ();
 			} finally {
 				if (File.Exists (temp))
 					File.Delete (temp);
@@ -4315,30 +4331,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
 				client.Disconnect (true);
 			}
-		}
-
-		Socket StartSocketServer ()
-		{
-
-			Socket listenSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			
-			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ()));
-			listenSocket.Listen (1);
-
-			listenSocket.BeginAccept (new AsyncCallback (ReceiveCallback), listenSocket);
-			
-			return listenSocket;
-		}
-
-		public static void ReceiveCallback (IAsyncResult AsyncCall)
-		{
-			byte[] bytes = new byte [1024];
-
-			Socket listener = (Socket)AsyncCall.AsyncState;
-			Socket client = listener.EndAccept (AsyncCall);
- 
-			client.Receive (bytes, bytes.Length, 0);
-			client.Close ();
 		}
 
 		[Test]
