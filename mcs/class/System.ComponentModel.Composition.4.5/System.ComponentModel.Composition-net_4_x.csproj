@@ -232,10 +232,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
+resgen $(ProjectDir)\src\ComponentModel\Strings.resx $(ProjectDir)\Microsoft.Internal.Strings.resx
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
+resgen $(ProjectDir)\src\ComponentModel\Strings.resx $(ProjectDir)\Microsoft.Internal.Strings.resx
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 

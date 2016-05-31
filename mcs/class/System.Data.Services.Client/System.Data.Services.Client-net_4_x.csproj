@@ -173,10 +173,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
+resgen $(ProjectDir)\Client\System.Data.Services.Client.txt $(ProjectDir)\Client\System.Data.Services.Client.resx
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
+resgen $(ProjectDir)\Client\System.Data.Services.Client.txt $(ProjectDir)\Client\System.Data.Services.Client.resx
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 

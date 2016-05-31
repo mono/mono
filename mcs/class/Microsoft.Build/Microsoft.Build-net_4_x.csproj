@@ -167,9 +167,11 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Microsoft.Build.Internal\ExpressionParser.jay > $(ProjectDir)\Microsoft.Build.Internal\ExpressionParser.cs
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+$(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Microsoft.Build.Internal\ExpressionParser.jay > $(ProjectDir)\Microsoft.Build.Internal\ExpressionParser.cs
 
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
