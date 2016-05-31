@@ -2,13 +2,13 @@ thisdir = class/System.Json.Microsoft
 SUBDIRS = 
 include ../../build/rules.make
 
-System.Json.Properties.Resources.resources: System.Json/Properties/Resources.resx
+System.Json/Properties/Resources.resources: System.Json/Properties/Resources.resx
 	$(RESGEN) "$<" "$@"
 
 LIBRARY = System.Json.Microsoft.dll
 LIB_REFS = System System.Xml System.Core System.Runtime.Serialization
 LIB_MCS_FLAGS = /d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
-		/resource:System.Json.Properties.Resources.resources
+		/resource:System.Json/Properties/Resources.resources,System.Json.Properties.Resources.resources
 
 EXTRA_DISTFILES = System.Json/Properties/Resources.resx
 
@@ -25,4 +25,4 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
 
-$(the_lib): System.Json.Properties.Resources.resources
+$(the_lib): System.Json/Properties/Resources.resources
