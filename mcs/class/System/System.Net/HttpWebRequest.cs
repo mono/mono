@@ -154,7 +154,7 @@ namespace System.Net
 		{
 			this.requestUri = uri;
 			this.actualUri = uri;
-			this.proxy = GlobalProxySelection.Select;
+			this.proxy = InternalDefaultWebProxy;
 			this.webHeaders = new WebHeaderCollection (WebHeaderCollectionType.HttpWebRequest);
 			ThrowOnError = true;
 			ResetAuthorization ();
@@ -1474,7 +1474,7 @@ namespace System.Net
 			if (wce != null) {
 				WebConnection cnc = wce.Connection;
 				cnc.PriorityRequest = this;
-				ICredentials creds = !isProxy ? credentials : proxy.Credentials;
+				ICredentials creds = (!isProxy || proxy == null) ? credentials : proxy.Credentials;
 				if (creds != null) {
 					cnc.NtlmCredential = creds.GetCredential (requestUri, "NTLM");
 					cnc.UnsafeAuthenticatedConnectionSharing = unsafe_auth_blah;
@@ -1531,7 +1531,7 @@ namespace System.Net
 					return;
 				}
 
-				bool isProxy = ProxyQuery && !proxy.IsBypassed (actualUri);
+				bool isProxy = ProxyQuery && proxy != null && !proxy.IsBypassed (actualUri);
 
 				bool redirected;
 				try {

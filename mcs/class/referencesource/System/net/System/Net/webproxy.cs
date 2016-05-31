@@ -414,7 +414,9 @@ namespace System.Net {
         /// </devdoc>
         [Obsolete("This method has been deprecated. Please use the proxy selected for you by default. http://go.microsoft.com/fwlink/?linkid=14202")]
         public static WebProxy GetDefaultProxy() {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
             return new WebProxy(true);
         }
 
@@ -435,7 +437,9 @@ namespace System.Net {
             if (useRegistry) {
                 // just make the proxy advanced, don't populate with any settings
                 // note - this will happen in the context of the user performing the deserialization (their proxy settings get read)
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 UnsafeUpdateFromRegistry();
                 return;
             }
@@ -497,6 +501,28 @@ namespace System.Net {
             }
         }
 
+#if MONO
+        public static IWebProxy CreateDefaultProxy ()
+        {
+#if MONOTOUCH
+            return Mono.Net.CFNetwork.GetDefaultProxy ();
+#elif MONODROID
+            // Return the system web proxy.  This only works for ICS+.
+            var data = AndroidPlatform.GetDefaultProxy ();
+            if (data != null)
+                return data;
+#else
+            if (Platform.IsMacOS) {
+                var data = Mono.Net.CFNetwork.GetDefaultProxy ();
+                if (data != null)
+                    return data;
+            }
+#endif
+
+            return new WebProxy (true);
+        }
+#endif
+
         // This constructor is used internally to make WebProxies that read their state from the registry.
         // 
         internal WebProxy(bool enableAutoproxy)
@@ -515,7 +541,7 @@ namespace System.Net {
         internal void UnsafeUpdateFromRegistry() {
             GlobalLog.Assert(!_UseRegistry, "WebProxy#{0}::UnsafeUpdateFromRegistry()|_UseRegistry ScriptEngine#{1}", ValidationHelper.HashString(this), ValidationHelper.HashString(m_ScriptEngine));
             _UseRegistry = true;
-#if !FEATURE_PAL
+#if !FEATURE_PAL || !MOBILE
             ScriptEngine = new AutoWebProxyScriptEngine(this, true);
             WebProxyData webProxyData = ScriptEngine.GetWebProxyData();
 
