@@ -52102,6 +52102,77 @@
       </method>
     </type>
   </test>
+  <test name="test-935.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>73</size>
+      </method>
+      <method name="Void TT(System.Threading.Tasks.Task`1[System.String])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void TT(System.Threading.Tasks.Task`1[System.Object])" attrs="145">
+        <size>12</size>
+      </method>
+      <method name="Void NN(SByte)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void NN(System.Nullable`1[System.UInt32])" attrs="145">
+        <size>12</size>
+      </method>
+      <method name="Void NN2(System.Nullable`1[System.SByte])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void NN2(System.Nullable`1[System.UInt32])" attrs="145">
+        <size>12</size>
+      </method>
+      <method name="Void Bar(Int32)" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Int32 Bar(System.String)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void Foo(DelegateVoid)" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void Foo(DelegateInt)" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Complex(System.Linq.Expressions.Expression`1[System.Func`1[System.Threading.Tasks.Task`1[System.Int16]]])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Complex(System.Linq.Expressions.Expression`1[System.Func`1[System.Threading.Tasks.Task`1[System.UInt64]]])" attrs="145">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Program+DelegateVoid">
+      <method name="Void Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Program+DelegateInt">
+      <method name="Int32 Invoke(System.String)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(System.String, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-94.cs">
     <type name="Base">
       <method name="Int32 IVehicle.Start()" attrs="481">
