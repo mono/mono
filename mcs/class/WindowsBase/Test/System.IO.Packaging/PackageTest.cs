@@ -432,7 +432,7 @@ namespace MonoTests.System.IO.Packaging {
             using (var archive = new ZipArchive(stream))
             {                
                 foreach (var entry in archive.Entries)
-                    Assert.AreEqual (entry.LastWriteTime.Year, DateTime.Now.Year);
+                    Assert.AreEqual (DateTime.Now.Year, entry.LastWriteTime.Year);
             }
         }           
     }
