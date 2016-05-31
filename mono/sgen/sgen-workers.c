@@ -433,4 +433,10 @@ sgen_workers_get_idle_func_object_ops (void)
 	return idle_func_object_ops;
 }
 
+int
+sgen_workers_get_job_split_count (void)
+{
+	return (workers_num > 1) ? workers_num * 4 : 1;
+}
+
 #endif
