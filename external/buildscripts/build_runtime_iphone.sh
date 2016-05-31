@@ -1,12 +1,15 @@
 #!/bin/sh
-SDK_VERSION=7.1
+SDK_VERSION=9.3
 MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
-XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MAC_SDK_VERSION}.sdk
+XCOMP_ASPEN_ROOT=$PWD/external/mono-build-deps/MacBuildEnvironment/builds/MacOSX${MAC_SDK_VERSION}.sdk
 BUILDSCRIPTSDIR=external/buildscripts
 
 # allow to build with older SDKs temporarily
+if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
+	SDK_VERSION=7.1
+fi
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
 	SDK_VERSION=5.1
 fi
@@ -23,15 +26,25 @@ ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
 MAKE_JOBS=4
 
+perl "external/buildscripts/prepare_osx_build.pl"
+
+PATH=$PWD/external/mono-build-deps/built-tools/bin:$PATH
+LIBTOOL=$PWD/external/mono-build-deps/built-tools/bin/libtool
+LIBTOOLIZE=$PWD/external/mono-build-deps/built-tools/bin/libtoolize
+
+echo "LIBTOOL = $LIBTOOL"
+echo "LIBTOOLIZE = $LIBTOOLIZE"
+echo "PATH = $PATH"
+echo ""
 
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 	echo "Erasing builds folder to make sure we start with a clean slate"
 	rm -rf builds
-	if test -e /usr/local/bin/libtool; then
-		LIBTOOL=/usr/local/bin/libtool
-	elif test -e /usr/local/bin/glibtool; then
-		LIBTOOL=/usr/local/bin/glibtool
-	fi
+	#if test -e /usr/local/bin/libtool; then
+	#	LIBTOOL=/usr/local/bin/libtool
+	#elif test -e /usr/local/bin/glibtool; then
+	#	LIBTOOL=/usr/local/bin/glibtool
+	#fi
 	MAKE_JOBS=""
 else
 	MAKE_JOBS="-j$MAKE_JOBS"
@@ -43,13 +56,13 @@ setenv () {
 	export C_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	export CPLUS_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
-	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os"
-	export CPPFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
+	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os -isysroot $ASPEN_ROOT"
+	export CPPFLAGS="$CFLAGS -U__powerpc__ -U__i386__ -D__arm__"
+	export CXXFLAGS="$CFLAGS -U__powerpc__ -U__i386__ -D__arm__"
 	export CC="gcc -arch $1"
 	export CXX="g++ -arch $1"
-	export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
-	export CXXPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	# export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
+	# export CXXPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
 	export LD=$CC
 	export LDFLAGS="-liconv -Wl,-syslibroot,$ASPEN_SDK"
 }
