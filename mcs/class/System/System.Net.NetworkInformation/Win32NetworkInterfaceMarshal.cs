@@ -39,8 +39,11 @@ namespace System.Net.NetworkInformation
 	[StructLayout (LayoutKind.Sequential)]
 	class Win32_FIXED_INFO
 	{
+		// Can't have unresolvable pinvokes on ios
+#if !MOBILE
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetNetworkParams (byte [] bytes, ref int size);
+#endif
 
 		static Win32_FIXED_INFO fixed_info;
 
@@ -54,6 +57,7 @@ namespace System.Net.NetworkInformation
 
 		static Win32_FIXED_INFO GetInstance ()
 		{
+#if !MOBILE
 			int len = 0;
 			byte [] bytes = null;
 			GetNetworkParams (null, ref len);
@@ -66,6 +70,9 @@ namespace System.Net.NetworkInformation
 				}
 			}
 			return info;
+#else
+		throw new NotImplementedException ();
+#endif
 		}
 
 		const int MAX_HOSTNAME_LEN = 128;
