@@ -38,7 +38,7 @@ test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
 endif
 
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
-test_sourcefile_excludes = $(test_lib).excludes
+test_sourcefile_excludes = $(test_lib).exclude.sources
 
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
