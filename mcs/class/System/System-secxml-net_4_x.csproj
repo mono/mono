@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -492,6 +492,7 @@
     <Compile Include="..\referencesource\System\net\System\IriHelper.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_BufferOffsetSize.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_Connection.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_emptywebproxy.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_HeaderInfo.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_HeaderInfoTable.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_HTTPDateParse.cs" />
@@ -499,20 +500,29 @@
     <Compile Include="..\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_LoggingObject.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_NetRes.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_ProxyChain.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_TimerThread.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_WebProxyDataBuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\AuthenticationScheme.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\AuthenticationSchemeSelector.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Authorization.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCache.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCacheEntry.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCacheManager.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCachePolicy.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Configuration\DefaultProxySection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookie.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecollection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecontainer.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookieexception.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\CredentialCache.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\DnsEndPoint.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\EndPoint.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\filewebrequest.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\filewebresponse.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\FtpStatusCode.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\GlobalProxySelection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\HttpListenerException.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\HttpListenerRequestUriBuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\HttpRequestHeader.cs" />
@@ -528,6 +538,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\IPEndPoint.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IPHostEntry.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\iwebproxy.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\IWebProxyFinder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IWebRequestCreate.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\mail\Base64Stream.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\mail\Base64WriteStateInfo.cs" />
@@ -638,6 +649,8 @@
     <Compile Include="..\referencesource\System\net\System\Net\WebExceptionStatus.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WebHeaderCollection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WebPermission.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\webproxy.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\WebRequest.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WebRequestMethods.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WebResponse.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WebUtility.cs" />
@@ -763,6 +776,7 @@
     <Compile Include="ReferenceSources\_SslState.cs" />
     <Compile Include="ReferenceSources\_SslStream.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
+    <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\CAPI.cs" />
     <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
@@ -772,6 +786,7 @@
     <Compile Include="ReferenceSources\Internal.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
+    <Compile Include="ReferenceSources\RequestCacheProtocol.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />
     <Compile Include="ReferenceSources\Socket.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
@@ -781,7 +796,6 @@
     <Compile Include="ReferenceSources\SSPIConfiguration.cs" />
     <Compile Include="ReferenceSources\SSPISafeHandles.cs" />
     <Compile Include="ReferenceSources\SSPIWrapper.cs" />
-    <Compile Include="ReferenceSources\SystemNetworkCredential.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeCompiler.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
@@ -1072,7 +1086,6 @@
     <Compile Include="System.Net\BindIPEndPoint.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
     <Compile Include="System.Net\ChunkStream.cs" />
-    <Compile Include="System.Net\CredentialCache.cs" />
     <Compile Include="System.Net\DecompressionMethods.cs" />
     <Compile Include="System.Net\DefaultCertificatePolicy.cs" />
     <Compile Include="System.Net\DigestClient.cs" />
@@ -1089,7 +1102,6 @@
     <Compile Include="System.Net\FtpStatus.cs" />
     <Compile Include="System.Net\FtpWebRequest.cs" />
     <Compile Include="System.Net\FtpWebResponse.cs" />
-    <Compile Include="System.Net\GlobalProxySelection.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
@@ -1126,8 +1138,6 @@
     <Compile Include="System.Net\WebConnectionData.cs" />
     <Compile Include="System.Net\WebConnectionGroup.cs" />
     <Compile Include="System.Net\WebConnectionStream.cs" />
-    <Compile Include="System.Net\WebProxy.cs" />
-    <Compile Include="System.Net\WebRequest.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\ADVF.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\DATADIR.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\DVASPECT.cs" />
