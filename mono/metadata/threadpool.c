@@ -1306,7 +1306,6 @@ clear_queue (CRITICAL_SECTION *cs, TPQueue *list, MonoDomain *domain)
 			unregister_job ((MonoAsyncResult*)obj);
 
 			mono_array_set (list->array, MonoObject*, i, NULL);
-			InterlockedDecrement (&domain->threadpool_jobs);
 			++count;
 		}
 	}
