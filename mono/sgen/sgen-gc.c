@@ -1490,8 +1490,8 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	char *nursery_next;
 	mword fragment_total;
 	ScanJob *sj;
-	SgenObjectOperations *object_ops = &sgen_minor_collector.serial_ops;
-	ScanCopyContext ctx = CONTEXT_FROM_OBJECT_OPERATIONS (object_ops, &gray_queue);
+	SgenObjectOperations *object_ops;
+	ScanCopyContext ctx;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
@@ -1502,6 +1502,12 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	atv = last_minor_collection_start_tv;
 
 	binary_protocol_collection_begin (gc_stats.minor_gc_count, GENERATION_NURSERY);
+
+	if (sgen_concurrent_collection_in_progress ())
+		object_ops = &sgen_minor_collector.serial_ops_with_concurrent_major;
+	else
+		object_ops = &sgen_minor_collector.serial_ops;
+	ctx = CONTEXT_FROM_OBJECT_OPERATIONS (object_ops, &gray_queue);
 
 	if (do_verify_nursery || do_dump_nursery_content)
 		sgen_debug_verify_nursery (do_dump_nursery_content);
