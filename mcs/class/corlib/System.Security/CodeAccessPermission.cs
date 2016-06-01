@@ -60,6 +60,9 @@ namespace System.Security {
 
 		public abstract IPermission Copy ();
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#endif
 		public void Demand ()
 		{
 			// note: here we're sure it's a CAS demand

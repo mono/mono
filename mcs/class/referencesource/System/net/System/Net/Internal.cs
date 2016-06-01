@@ -143,7 +143,9 @@ namespace System.Net {
 
         private static void DemandCallback(object state)
         {
+#if !DISABLE_CAS_USE
             ((CodeAccessPermission) state).Demand();
+#endif
         }
 
         // This is for checking if a hostname probably refers to this machine without going to DNS.
