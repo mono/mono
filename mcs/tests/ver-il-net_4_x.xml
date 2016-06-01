@@ -67420,6 +67420,19 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-30.cs">
+    <type name="PragmaNewLinesParsing">
+      <method name="Void Foo()" attrs="129">
+        <size>7</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-decl-expr-01.cs">
     <type name="DeclarationExpression">
       <method name="Int32 Main()" attrs="150">
