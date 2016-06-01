@@ -625,7 +625,9 @@ namespace System.Security {
 		// FIXME what's it doing here? There's probably a reason this was added here.
 		static public void RevertAssert ()
 		{
+#if !DISABLE_CAS_USE
 			CodeAccessPermission.RevertAssert ();
+#endif
 		}
 
 		// internal

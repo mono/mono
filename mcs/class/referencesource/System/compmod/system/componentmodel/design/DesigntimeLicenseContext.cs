@@ -166,15 +166,19 @@ namespace System.ComponentModel.Design {
                     else if(!resourceAssembly.IsDynamic) { // EscapedCodeBase won't be supported by emitted assemblies anyway
                         Debug.WriteLineIf(RuntimeLicenseContextSwitch.TraceVerbose,"resourceAssembly is not null");
                         string fileName;
+#if !DISABLE_CAS_USE
                         FileIOPermission perm = new FileIOPermission(PermissionState.Unrestricted);
                         perm.Assert();
+#endif
                         try
                         {
                             fileName = GetLocalPath(resourceAssembly.EscapedCodeBase);
                         }
                         finally
                         {
+#if !DISABLE_CAS_USE
                             CodeAccessPermission.RevertAssert();
+#endif
                         }
                         fileName = Path.GetFileName(fileName); // we don't want to use FileInfo here... it requests FileIOPermission that we
                         // might now have... see VSWhidbey 527758

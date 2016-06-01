@@ -52,7 +52,11 @@ namespace System.Security {
 		{
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void Assert ()
 		{
 			new PermissionSet (this).Assert ();
@@ -73,7 +77,11 @@ namespace System.Security {
 			new PermissionSet (this).CasOnlyDemand (3);
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void Deny ()
 		{
 			new PermissionSet (this).Deny ();
@@ -117,13 +125,21 @@ namespace System.Security {
 			return null;
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void PermitOnly ()
 		{
 			new PermissionSet (this).PermitOnly ();
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertAll ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -131,7 +147,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertAssert ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -139,7 +159,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertDeny ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -147,7 +171,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE && DISABLE_CAS_USE
+		[Obsolete ("CAS support is removed by linker", true)]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertPermitOnly ()
 		{
 			if (!SecurityManager.SecurityEnabled)
