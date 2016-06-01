@@ -8,7 +8,9 @@ namespace System.Net.NetworkInformation
     {
         /// Returns objects that describe the network interfaces on the local computer.
         public static NetworkInterface[] GetAllNetworkInterfaces(){
+#if !DISABLE_CAS_USE
             (new NetworkInformationPermission(NetworkInformationAccess.Read)).Demand();
+#endif
             return SystemNetworkInterface.GetNetworkInterfaces();
         }
 
