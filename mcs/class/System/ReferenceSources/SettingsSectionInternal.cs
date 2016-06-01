@@ -21,10 +21,10 @@ namespace System.Net.Configuration {
 
 		internal bool UseNagleAlgorithm { get; set; }
 		internal bool Expect100Continue { get; set; }
-		internal bool CheckCertificateName { get; }
+		internal bool CheckCertificateName { get; private set; }
 		internal int DnsRefreshTimeout { get; set; }
 		internal bool EnableDnsRoundRobin { get; set; }
 		internal bool CheckCertificateRevocationList { get; set; }
-		internal EncryptionPolicy EncryptionPolicy { get; }
+		internal EncryptionPolicy EncryptionPolicy { get; private set; }
 	}
 }
