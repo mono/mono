@@ -989,6 +989,7 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated
         internal virtual String InternalToString()
         {
+#if !DISABLE_CAS_USE
             try 
             {
 #pragma warning disable 618
@@ -1001,6 +1002,7 @@ namespace System {
                 //under normal conditions there should be no exceptions
                 //however if something wrong happens we still can call the usual ToString
             }
+#endif
 
             // Get the current stack trace string.  On CoreCLR we don't bother
             // to try and include file/line-number information because all AppDomains
