@@ -203,8 +203,8 @@ public class DebuggerTests
 	public static void ss_recursive_chaotic_trap (int n, List<RecursiveChaoticPoint> trace, ref bool didLast, ref bool didAny)
 	{
 		// Depth is calculated as:
-		// Main + single_stepping + ss_recursive_chaotic + (n is 12 at outermost frame and 0 at innermost frame) + ss_recursive_chaotic_trap
-		trace.Add (new RecursiveChaoticPoint (true, "ss_recursive_chaotic_trap", 12 - n + 5));
+		// Main + single_stepping + ss_recursive_chaotic + (n is 5 at outermost frame and 0 at innermost frame) + ss_recursive_chaotic_trap
+		trace.Add (new RecursiveChaoticPoint (true, "ss_recursive_chaotic_trap", 5 - n + 5));
 		didLast = true;
 	}
 
@@ -213,8 +213,8 @@ public class DebuggerTests
 		// This will be called after every return from a function. The other function will return whether "step out" is currently active, and it will be passed in here as didLast.
 		if (didLast) {
 			// Depth is calculated as:
-			// Main + single_stepping + ss_recursive_chaotic + (n is 12 at outermost frame and 0 at innermost frame)
-			trace.Add (new RecursiveChaoticPoint (false, "ss_recursive_chaotic_" + at, 12 - n + 4));
+			// Main + single_stepping + ss_recursive_chaotic + (n is 5 at outermost frame and 0 at innermost frame)
+			trace.Add (new RecursiveChaoticPoint (false, "ss_recursive_chaotic_" + at, 5 - n + 4));
 			didAny = true;
 			didLast = false;
 		}
@@ -266,7 +266,7 @@ public class DebuggerTests
 
 	public static void trace_ss_recursive_chaotic (List<RecursiveChaoticPoint> trace)
 	{
-		ss_recursive_chaotic_fizz (12, trace);
+		ss_recursive_chaotic_fizz (5, trace);
 	}
 
 	Event single_step (ThreadMirror t) {
@@ -793,8 +793,8 @@ public class DebuggerTests
 			breakpoint.Continue ();
 			e = breakpoint.lastEvent;
 			req = create_step (e);
-			for (int c = 1; c <= 9; c++) {
-				// The first ten times we try to step over this function, the breakpoint will stop us
+			for (int c = 1; c <= 4; c++) {
+				// The first five times we try to step over this function, the breakpoint will stop us
 				assert_location_at_breakpoint (e, "ss_recursive2_trap");
 
 				req.Disable ();
@@ -810,7 +810,7 @@ public class DebuggerTests
 			}
 			// At this point we should have escaped the breakpoints and this will be a normal step stop
 			assert_location (e, "ss_recursive2");
-			Assert.AreEqual (11, e.Thread.GetFrames ().Length);
+			Assert.AreEqual (6, e.Thread.GetFrames ().Length);
 		} finally {
 			req.Disable ();
 			breakpoint.Disable ();
@@ -823,8 +823,8 @@ public class DebuggerTests
 			breakpoint.Continue ();
 			e = breakpoint.lastEvent;
 			req = create_step (e);
-			for (int c = 1; c <= 9; c++) {
-				// The first ten times we try to step over this function, the breakpoint will stop us
+			for (int c = 1; c <= 4; c++) {
+				// The first five times we try to step over this function, the breakpoint will stop us
 				assert_location_at_breakpoint (e, "ss_recursive2_trap");
 
 				req.Disable ();
@@ -838,7 +838,7 @@ public class DebuggerTests
 				Assert.AreEqual (c+2, e.Thread.GetFrames ().Length);
 				e = step_out_or_breakpoint ();
 			}
-			for (int c = 8; c >= 1; c--) {
+			for (int c = 3; c >= 1; c--) {
 				assert_location (e, "ss_recursive2");
 				Assert.AreEqual (c + 2, e.Thread.GetFrames ().Length);
 
