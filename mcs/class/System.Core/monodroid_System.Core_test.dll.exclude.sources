@@ -1,0 +1,2 @@
+#include mobile_static_System.Core_test.dll.exclude.sources
+#include monodroid_System.Core_test.dll.new-exclude.sources
