@@ -257,7 +257,7 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers | 
 				UniverseOptions.DisableFusion | UniverseOptions.DecodeVersionInfoAttributeBlobs |
-				UniverseOptions.DeterministicOutput);
+				UniverseOptions.DeterministicOutput | UniverseOptions.DisableDefaultAssembliesLookup);
 			
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
