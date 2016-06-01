@@ -1490,11 +1490,9 @@
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
 
-
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
-
 
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
