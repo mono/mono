@@ -587,7 +587,7 @@ public class Tests : TestsBase, ITest2
 	public static void ss_recursive2 (int x)
 	{
 		ss_recursive2_at ( "ss_recursive2 in " + x);
-		if (x < 10) {
+		if (x < 5) {
 			int next = x + 1;
 			ss_recursive2_at ("ss_recursive2 descend " + x);
 			ss_recursive2_trap ();
@@ -606,7 +606,7 @@ public class Tests : TestsBase, ITest2
 	public static void ss_recursive_chaotic_at (bool exiting, string at, int n)
 	{
 //		string indent = "";
-//		for (int count = 12 - n; count > 0; count--)
+//		for (int count = 5 - n; count > 0; count--)
 //			indent += "\t";
 //		Console.WriteLine (indent + (exiting ? "<--" : "-->") + " " + at + " " + n);
 	}
@@ -654,7 +654,7 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_recursive_chaotic ()
 	{
-		ss_recursive_chaotic_fizz (12);
+		ss_recursive_chaotic_fizz (5);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
