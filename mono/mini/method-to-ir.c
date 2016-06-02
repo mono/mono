@@ -212,6 +212,10 @@ const gint8 ins_sreg_counts[] = {
 } while (0)
 
 
+// keep in sync with MiniOpFlag
+#define NONE MINI_OP_FLAG_NONE
+#define IS_CALL MINI_OP_FLAG_IS_CALL
+
 #define MINI_OP(a,b,dest,src1,src2,flags) flags,
 #define MINI_OP3(a,b,dest,src1,src2,src3,flags) flags,
 const gint8 mini_op_ins_flags[] = {
