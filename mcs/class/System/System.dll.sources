@@ -972,8 +972,10 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/_NetRes.cs
 ../referencesource/System/net/System/Net/_LazyAsyncResult.cs
 ../referencesource/System/net/System/Net/_LoggingObject.cs
+../referencesource/System/net/System/Net/_PooledStream.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
+../referencesource/System/net/System/Net/_Semaphore.cs
 ../referencesource/System/net/System/Net/_TimerThread.cs
 ../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
@@ -984,6 +986,7 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/cookiecollection.cs
 ../referencesource/System/net/System/Net/cookiecontainer.cs
 ../referencesource/System/net/System/Net/cookieexception.cs
+../referencesource/System/net/System/Net/connectionpool.cs
 ../referencesource/System/net/System/Net/DnsEndPoint.cs
 ../referencesource/System/net/System/Net/EndPoint.cs
 ../referencesource/System/net/System/Net/FtpStatusCode.cs

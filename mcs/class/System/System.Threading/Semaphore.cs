@@ -39,12 +39,12 @@ namespace System.Threading {
 	public sealed class Semaphore : WaitHandle {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern IntPtr CreateSemaphore_internal (
+		internal static extern IntPtr CreateSemaphore_internal (
 			int initialCount, int maximumCount, string name,
 			out bool createdNew);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int ReleaseSemaphore_internal (
+		internal static extern int ReleaseSemaphore_internal (
 			IntPtr handle, int releaseCount, out bool fail);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

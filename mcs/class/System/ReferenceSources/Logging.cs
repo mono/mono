@@ -26,11 +26,19 @@ namespace System.Net {
 		}
 
 		[Conditional ("TRACE")]
+		internal static void Enter(TraceSource traceSource, string msg) {
+		}
+
+		[Conditional ("TRACE")]
 		internal static void Exception(TraceSource traceSource, object obj, string method, Exception e) {
 		}
 
 		[Conditional ("TRACE")]
 		internal static void Exit(TraceSource traceSource, object obj, string method, object retObject) {
+		}
+
+		[Conditional ("TRACE")]
+		internal static void Exit(TraceSource traceSource, string msg) {
 		}
 
 		[Conditional ("TRACE")]
