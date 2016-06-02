@@ -23,7 +23,7 @@ fi
 
 if [[ ${CI_TAGS} == 'mobile_static' ]]; 
 	then 
-	EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-profile4_x=no --enable-minimal=com,remoting,reflection_emit_save,reflection_emit,appdomains --with-mobile_static --enable-nls=no";
+	EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_profile=mobile_static";
 	export PROFILE=mobile_static;
 fi
 
