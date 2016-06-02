@@ -175,7 +175,7 @@ static GENERATE_TRY_GET_CLASS_WITH_CACHE (debuggable_attribute, System.Diagnosti
 #endif
 #define MINI_OP(a,b,dest,src1,src2,flags) dest, src1, src2, ' ',
 #define MINI_OP3(a,b,dest,src1,src2,src3,flags) dest, src1, src2, src3,
-#define NONE ' '
+#define NOREG ' '
 #define IREG 'i'
 #define FREG 'f'
 #define VREG 'v'
@@ -193,8 +193,8 @@ ins_info[] = {
 #undef MINI_OP
 #undef MINI_OP3
 
-#define MINI_OP(a,b,dest,src1,src2,flags) ((src2) != NONE ? 2 : ((src1) != NONE ? 1 : 0)),
-#define MINI_OP3(a,b,dest,src1,src2,src3,flags) ((src3) != NONE ? 3 : ((src2) != NONE ? 2 : ((src1) != NONE ? 1 : 0))),
+#define MINI_OP(a,b,dest,src1,src2,flags) ((src2) != NOREG ? 2 : ((src1) != NOREG ? 1 : 0)),
+#define MINI_OP3(a,b,dest,src1,src2,src3,flags) ((src3) != NOREG ? 3 : ((src2) != NOREG ? 2 : ((src1) != NOREG ? 1 : 0))),
 /* 
  * This should contain the index of the last sreg + 1. This is not the same
  * as the number of sregs for opcodes like IA64_CMP_EQ_IMM.
