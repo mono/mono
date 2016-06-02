@@ -36,7 +36,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataRowViewTest : Assertion
+	public class DataRowViewTest 
 	{
 		private DataView CreateTestView ()
 		{
@@ -96,8 +96,8 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt1);
 			DataRowView dvr = dv [0];
 			DataView v = dvr.CreateChildView (dr);
-			AssertEquals ("RowFilter", "", v.RowFilter);
-			AssertEquals ("Sort", "", v.Sort);
+			Assert.AreEqual ("", v.RowFilter, "RowFilter");
+			Assert.AreEqual ("", v.Sort, "Sort");
 		}
 
 		[Test]
@@ -110,12 +110,12 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv [0];
 			dt.Rows [0].BeginEdit ();
-			AssertEquals ("DataView.Item", true, drv.IsEdit);
+			Assert.AreEqual (true, drv.IsEdit, "DataView.Item");
 
 			drv = dv.AddNew ();
 			drv.Row ["col"] = "test";
 			drv.Row.CancelEdit ();
-			AssertEquals ("AddNew", false, drv.IsEdit);
+			Assert.AreEqual (false, drv.IsEdit, "AddNew");
 		}
 
 		[Test]
@@ -127,7 +127,7 @@ namespace MonoTests.System.Data
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv [0];
 			dt.Rows [0].BeginEdit ();
-			AssertEquals ("DataView.Item", "val", drv ["col"]);
+			Assert.AreEqual ("val", drv ["col"], "DataView.Item");
 		}
 
 		[Test]
@@ -153,18 +153,18 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {1});
 			DataView dv = new DataView (dt);
 			DataRowView drv = dv.AddNew ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			drv ["col"] = "mod";
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			dt.AcceptChanges ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 			drv.EndEdit ();
 			dv [0].EndEdit ();
-			AssertEquals (DataRowVersion.Current, drv.RowVersion);
-			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, drv.RowVersion);
+			Assert.AreEqual (DataRowVersion.Current, dv [0].RowVersion);
 		}
 	}
 }

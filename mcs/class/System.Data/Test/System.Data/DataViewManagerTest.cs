@@ -36,7 +36,7 @@ using System.ComponentModel;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataViewManagerTest : Assertion
+	public class DataViewManagerTest 
 	{
 		[Test]
 		public void Ctor ()
@@ -46,40 +46,40 @@ namespace MonoTests.System.Data
 			string deleted = @"<DataViewSettingCollectionString><table2-1 Sort="""" RowFilter="""" RowStateFilter=""Deleted""/></DataViewSettingCollectionString>";
 
 			DataViewManager m = new DataViewManager (null);
-			AssertNull (m.DataSet);
-			AssertEquals ("", m.DataViewSettingCollectionString);
-			AssertNotNull (m.DataViewSettings);
+			Assert.IsNull (m.DataSet);
+			Assert.AreEqual ("", m.DataViewSettingCollectionString);
+			Assert.IsNotNull (m.DataViewSettings);
 			DataSet ds = new DataSet ("ds");
 			m.DataSet = ds;
-			AssertEquals ("default#1", defaultString,
-				m.DataViewSettingCollectionString);
+			Assert.AreEqual (defaultString, m.DataViewSettingCollectionString,
+				"default#1");
 
 			DataSet ds2 = new DataSet ("ds2");
-			AssertEquals ("default#2", defaultString,
-				ds.DefaultViewManager.DataViewSettingCollectionString);
+			Assert.AreEqual (defaultString, ds.DefaultViewManager.DataViewSettingCollectionString,
+				"default#2");
 			DataTable dt2_1 = new DataTable ("table2-1");
 			dt2_1.Namespace ="urn:foo"; // It is ignored though.
 			ds2.Tables.Add (dt2_1);
 			m.DataSet = ds2;
-			AssertEquals ("#3", current, m.DataViewSettingCollectionString);
+			Assert.AreEqual (current, m.DataViewSettingCollectionString, "#3");
 
 			// Note that " Deleted " is trimmed.
 			m.DataViewSettingCollectionString = @"<DataViewSettingCollectionString><table2-1 Sort='' RowFilter='' RowStateFilter=' Deleted '/></DataViewSettingCollectionString>";
-			AssertEquals ("#4", deleted, m.DataViewSettingCollectionString);
+			Assert.AreEqual (deleted, m.DataViewSettingCollectionString, "#4");
 
 			m.DataSet = ds2; //resets modified string.
-			AssertEquals ("#5", current, m.DataViewSettingCollectionString);
+			Assert.AreEqual (current, m.DataViewSettingCollectionString, "#5");
 
 			m.DataViewSettingCollectionString = @"<DataViewSettingCollectionString><table2-1 Sort='' RowFilter='' RowStateFilter='Deleted'/></DataViewSettingCollectionString>";
 			// it does not clear anything.
 			m.DataViewSettingCollectionString = "<DataViewSettingCollectionString/>";
-			AssertEquals ("#6", deleted, m.DataViewSettingCollectionString);
+			Assert.AreEqual (deleted, m.DataViewSettingCollectionString, "#6");
 
 			// text node is not rejected (ignored).
 			// RowFilter is not examined.
 			m.DataViewSettingCollectionString = "<DataViewSettingCollectionString>blah<table2-1 RowFilter='a=b' ApplyDefaultSort='true' /></DataViewSettingCollectionString>";
 			// LAMESPEC: MS.NET ignores ApplyDefaultSort.
-//			AssertEquals ("#7", @"<DataViewSettingCollectionString><table2-1 Sort="""" RowFilter=""a=b"" RowStateFilter=""Deleted""/></DataViewSettingCollectionString>", m.DataViewSettingCollectionString);
+//			Assert.AreEqual (@"<DataViewSettingCollectionString><table2-1 Sort="""" RowFilter=""a=b"" RowStateFilter=""Deleted""/></DataViewSettingCollectionString>", m.DataViewSettingCollectionString, "#7");
 		}
 
 		[Test]
