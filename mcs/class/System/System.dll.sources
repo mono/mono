@@ -489,7 +489,6 @@ System.Security.Permissions/StorePermissionAttribute.cs
 System.Security.Permissions/StorePermission.cs
 System.Security.Permissions/StorePermissionFlags.cs
 System/SRDescriptionAttribute.cs
-System.Threading/Semaphore.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
@@ -1084,12 +1083,16 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/NetworkInformation/nodetype.cs
 ../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
 
+../referencesource/System/sys/system/IO/ports/InternalResources.cs
+
 ../referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
 ../referencesource/System/sys/system/runtime/interopservices/handlecollector.cs
 
 ../referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
 
 ../referencesource/System/sys/system/threading/Barrier.cs
+../referencesource/System/sys/system/threading/semaphore.cs
+
 ../referencesource/System/sys/system/windows/markup/ValueSerializerAttribute.cs
 
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/TokenBinding.cs
