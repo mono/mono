@@ -29,6 +29,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventOpcode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventSource))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventSourceAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventSourceSettings))]
 //[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventSourceException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventTask))]
 //[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.Tracing.EventWrittenEventArgs))]
