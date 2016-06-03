@@ -969,7 +969,7 @@ namespace System.Windows.Forms
 
 				EnableFormsForModalLoop (toplevels, context);
 				
-				if (old.MainForm != null && old.IsHandleCreated) {
+				if (old != null && old.IsHandleCreated) {
 					XplatUI.SetModal (old.Handle, false);
 				}
 				#if DebugRunLoop
