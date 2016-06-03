@@ -1793,6 +1793,22 @@ namespace System.Net
 		}
 
 		internal WebConnection StoredConnection;
+
+#region referencesource
+        internal static StringBuilder GenerateConnectionGroup(string connectionGroupName, bool unsafeConnectionGroup, bool isInternalGroup)
+        {
+            StringBuilder connectionLine = new StringBuilder(connectionGroupName);
+
+            connectionLine.Append(unsafeConnectionGroup ? "U>" : "S>");
+
+            if (isInternalGroup)
+            {
+                connectionLine.Append("I>");
+            }
+
+            return connectionLine;
+        }
+#endregion
 	}
 }
 
