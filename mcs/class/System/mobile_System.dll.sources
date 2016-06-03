@@ -170,7 +170,6 @@ System.Net/HttpWebRequest.cs
 System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
 System.Net/IPv6Address.cs
-System.Net/IPv6Address.cs
 System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
 System.Net/ListenerAsyncResult.cs
