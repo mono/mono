@@ -885,5 +885,7 @@ namespace System.IO {
 				return DirectorySeparatorStr;
 			}
 		}
+
+		internal const int MAX_PATH = 260;  // From WinDef.h
 	}
 }

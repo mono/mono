@@ -849,7 +849,6 @@ System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
 System.Text/Latin1Encoding.cs
 System.Threading/CompressedStack.cs
-System.Threading/EventWaitHandle.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
@@ -1575,6 +1574,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
 ../referencesource/mscorlib/system/threading/CountdownEvent.cs
 ../referencesource/mscorlib/system/threading/eventresetmode.cs
+../referencesource/mscorlib/system/threading/eventwaithandle.cs
 ../referencesource/mscorlib/system/threading/executioncontext.cs
 ../referencesource/mscorlib/system/threading/LazyInitializer.cs
 ../referencesource/mscorlib/system/threading/lockrecursionexception.cs

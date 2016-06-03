@@ -16,6 +16,7 @@
 =============================================================================*/
 
 
+#if !MOBILE
 #if !FEATURE_MACL
 namespace System.Security.AccessControl
 {
@@ -26,6 +27,7 @@ namespace System.Security.AccessControl
     {
     }
 }
+#endif
 #endif
 
 namespace System.Threading
@@ -63,13 +65,24 @@ namespace System.Threading
             Contract.EndContractBlock();
             
             SafeWaitHandle _handle = null;
+#if MONO
+            int errorCode;
+#endif
             switch(mode)
             {
                 case EventResetMode.ManualReset:
+#if MONO
+                    _handle = new SafeWaitHandle (NativeEventCalls.CreateEvent_internal (true, initialState, name, out errorCode), true);
+#else
                     _handle = Win32Native.CreateEvent(null, true, initialState, name);
+#endif
                     break;
                 case EventResetMode.AutoReset:
+#if MONO
+                    _handle = new SafeWaitHandle (NativeEventCalls.CreateEvent_internal (false, initialState, name, out errorCode), true);
+#else
                     _handle = Win32Native.CreateEvent(null, false, initialState, name);
+#endif
                     break;
 
                 default:
@@ -78,7 +91,9 @@ namespace System.Threading
                 
             if (_handle.IsInvalid)
             {
+#if !MONO
                 int errorCode = Marshal.GetLastWin32Error();
+#endif
             
                 _handle.SetHandleAsInvalid();
                 if(null != name && 0 != name.Length && Win32Native.ERROR_INVALID_HANDLE == errorCode)
@@ -108,6 +123,7 @@ namespace System.Threading
             }
             Contract.EndContractBlock();
             Win32Native.SECURITY_ATTRIBUTES secAttrs = null;
+#if !MONO
 #if FEATURE_MACL
             // For ACL's, get the security descriptor from the EventWaitHandleSecurity.
             if (eventSecurity != null) {
@@ -119,6 +135,7 @@ namespace System.Threading
                 Buffer.Memcpy(pSecDescriptor, 0, sd, 0, sd.Length);
                 secAttrs.pSecurityDescriptor = pSecDescriptor;
             }
+#endif
 #endif
 
             SafeWaitHandle _handle = null;
@@ -136,8 +153,13 @@ namespace System.Threading
                     throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag",name));
             };
 
+#if MONO
+            int errorCode;
+            _handle = new SafeWaitHandle (NativeEventCalls.CreateEvent_internal (isManualReset, initialState, name, out errorCode), true);
+#else
             _handle = Win32Native.CreateEvent(secAttrs, isManualReset, initialState, name);
             int errorCode = Marshal.GetLastWin32Error();
+#endif
 
             if (_handle.IsInvalid)
             {
@@ -239,15 +261,26 @@ namespace System.Threading
 
             result = null;
 
+#if MOBILE
+            throw new NotSupportedException ();
+#else
+
+#if MONO
+            int errorCode;
+            var myHandle = new SafeWaitHandle (NativeEventCalls.OpenEvent_internal (name, rights, out errorCode), true);
+#else
 #if FEATURE_MACL
             SafeWaitHandle myHandle = Win32Native.OpenEvent((int) rights, false, name);
 #else
             SafeWaitHandle myHandle = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE | Win32Native.SYNCHRONIZE, false, name);
 #endif
+#endif
             
             if (myHandle.IsInvalid)
             {
+#if !MONO
                 int errorCode = Marshal.GetLastWin32Error();
+#endif
 
                 if(Win32Native.ERROR_FILE_NOT_FOUND == errorCode || Win32Native.ERROR_INVALID_NAME == errorCode)
                     return OpenExistingResult.NameNotFound;
@@ -260,33 +293,52 @@ namespace System.Threading
             }
             result = new EventWaitHandle(myHandle);
             return OpenExistingResult.Success;
+#endif
         }
         [System.Security.SecuritySafeCritical]  // auto-generated
         public bool Reset()
         {
+#if MONO
+            var res = NativeEventCalls.ResetEvent(safeWaitHandle);
+#else
             bool res = Win32Native.ResetEvent(safeWaitHandle);
+#endif
             if (!res)
+#if MONO
+                throw new IOException ();
+#else
                 __Error.WinIOError();
+#endif
             return res;
         }
         [System.Security.SecuritySafeCritical]  // auto-generated
         public bool Set()
         {
+#if MONO
+            var res = NativeEventCalls.SetEvent(safeWaitHandle);
+#else
             bool res = Win32Native.SetEvent(safeWaitHandle);
+#endif
 
             if (!res)
+#if MONO
+                throw new IOException ();
+#else
                 __Error.WinIOError();
+#endif
 
             return res;
         }
 
-#if FEATURE_MACL
+#if FEATURE_MACL || MOBILE
         [System.Security.SecuritySafeCritical]  // auto-generated
         public EventWaitHandleSecurity GetAccessControl()
         {
             return new EventWaitHandleSecurity(safeWaitHandle, AccessControlSections.Access | AccessControlSections.Owner | AccessControlSections.Group);
         }
+#endif
 
+#if FEATURE_MACL
         [System.Security.SecuritySafeCritical]  // auto-generated
         public void SetAccessControl(EventWaitHandleSecurity eventSecurity)
         {
