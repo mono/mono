@@ -326,7 +326,7 @@ nursery_canaries_enabled (void)
 
 #define safe_object_get_size	sgen_safe_object_get_size
 
-#if defined(PLATFORM_MACOSX) || defined(HOST_WIN32) || (defined(__linux__) && !defined(PLATFORM_ANDROID))
+#if 0 && (defined(PLATFORM_MACOSX) || defined(HOST_WIN32) || (defined(__linux__) && !defined(PLATFORM_ANDROID)))
 /* Use concurrent major on deskstop platforms */
 #define DEFAULT_MAJOR_INIT sgen_marksweep_conc_init
 #define DEFAULT_MAJOR_NAME "marksweep-conc"
