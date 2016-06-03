@@ -22,6 +22,24 @@
 G_BEGIN_DECLS
 
 /*
+Local handle creation and manipulation code.
+
+Handles are meant to be opaque and never directly accessed by user code.
+
+This is to encourage never exposing managed pointers on the stack for
+more than temporary expressions.
+
+Handles require an arena to be available so you must always use it in
+conjuction with the handle arena macros below.
+
+TODO:
+	Add checked build asserts
+
+NOTES:
+
+*/
+
+/*
  * DO NOT ACCESS DIRECTLY
  * USE mono_handle_obj BELOW TO ACCESS OBJ
  *
@@ -99,7 +117,7 @@ mono_handle_elevate (MonoHandle handle)
 
 #define mono_handle_obj(handle) ((handle)->__private_obj)
 
-#define mono_handle_assign(handle,rawptr) do { (handle)->__private_obj = (rawptr); } while(0)
+#define mono_handle_assign_raw(handle,rawptr) do { (handle)->__private_obj = (rawptr); } while(0)
 
 #else
 
@@ -111,9 +129,11 @@ mono_handle_check_in_critical_section ()
 
 #define mono_handle_obj(handle) (mono_handle_check_in_critical_section (), (handle)->__private_obj)
 
-#define mono_handle_assign(handle,rawptr) do { mono_handle_check_in_critical_section (); (handle)->__private_obj = (rawptr); } while (0)
+#define mono_handle_assign_raw(handle,rawptr) do { mono_handle_check_in_critical_section (); (handle)->__private_obj = (rawptr); } while (0)
 
 #endif
+
+#define mono_handle_assign(lhs,rhs) mono_handle_assign_raw (lhs, (rhs)->__private_obj)
 
 static inline MonoClass*
 mono_handle_class (MonoHandle handle)
@@ -132,13 +152,14 @@ mono_handle_domain (MonoHandle handle)
 #define MONO_HANDLE_TYPE_DECL(type)      typedef struct { type *__private_obj; } type ## HandleStorage ; \
 	typedef type ## HandleStorage * type ## Handle
 #define MONO_HANDLE_TYPE(type)           type ## Handle
-#define MONO_HANDLE_NEW(type,obj)        ((type ## Handle) mono_handle_new ((MonoObject*) (obj)))
-#define MONO_HANDLE_ELEVATE(type,handle) ((type ## Handle) mono_handle_elevate ((MonoObject*) (handle)->__private_obj))
+#define MONO_HANDLE_NEW(type,obj)        ((MONO_HANDLE_TYPE(type)) mono_handle_new ((MonoObject*) (obj)))
 
-#define MONO_HANDLE_ASSIGN(handle,rawptr)	\
-	do {	\
-		mono_handle_assign ((handle), (rawptr));	\
-	} while (0)
+#define MONO_HANDLE_DCL(type,name)	MONO_HANDLE_TYPE(type) name = MONO_HANDLE_NEW(type,name ## _raw)
+
+#define MONO_HANDLE(type,name)	MONO_HANDLE_TYPE(type) name = { NULL }
+
+
+#define MONO_HANDLE_ELEVATE(type,handle) ((type ## Handle) mono_handle_elevate ((MonoObject*) (handle)->__private_obj))
 
 #define MONO_HANDLE_SETREF(handle,fieldname,value)			\
 	do {								\
@@ -191,8 +212,15 @@ mono_handle_domain (MonoHandle handle)
 
 /* Some common handle types */
 
+MONO_HANDLE_TYPE_DECL (MonoObject);
 MONO_HANDLE_TYPE_DECL (MonoArray);
 MONO_HANDLE_TYPE_DECL (MonoString);
+
+/* Versions of the object.h API using handles */
+
+MonoStringHandle
+mono_string_new_handle (MonoDomain *domain, const char *text, MonoError *error);
+
 
 G_END_DECLS
 

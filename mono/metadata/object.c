@@ -6204,6 +6204,18 @@ leave:
 	return o;
 }
 
+MonoStringHandle
+mono_string_new_handle (MonoDomain *domain, const char *text, MonoError *error)
+{
+	MonoStringHandle result = MONO_HANDLE_NEW(MonoString, NULL);
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	mono_handle_assign_raw (result, mono_string_new_checked (domain, text, error));
+	MONO_FINISH_GC_CRITICAL_REGION;
+	return result;
+}
+
+
+
 /**
  * mono_string_new_wrapper:
  * @text: pointer to utf8 characters.
