@@ -4197,7 +4197,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void NFIFromBug55978 ()
 		{
