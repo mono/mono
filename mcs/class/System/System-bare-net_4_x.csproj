@@ -500,8 +500,10 @@
     <Compile Include="..\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_LoggingObject.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_NetRes.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_PooledStream.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ProxyChain.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_Semaphore.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_TimerThread.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_WebProxyDataBuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\AuthenticationScheme.cs" />
@@ -512,6 +514,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCacheManager.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Cache\RequestCachePolicy.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Configuration\DefaultProxySection.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\connectionpool.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookie.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecollection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\cookiecontainer.cs" />
@@ -703,10 +706,12 @@
     <Compile Include="..\referencesource\System\services\timers\system\timers\TimersDescriptionAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
     <Compile Include="..\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
+    <Compile Include="..\referencesource\System\sys\system\IO\ports\InternalResources.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\interopservices\DefaultParameterValueAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\interopservices\handlecollector.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\versioning\FrameworkName.cs" />
     <Compile Include="..\referencesource\System\sys\system\threading\Barrier.cs" />
+    <Compile Include="..\referencesource\System\sys\system\threading\semaphore.cs" />
     <Compile Include="..\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
@@ -1219,7 +1224,6 @@
     <Compile Include="System.Security.Permissions\StorePermission.cs" />
     <Compile Include="System.Security.Permissions\StorePermissionAttribute.cs" />
     <Compile Include="System.Security.Permissions\StorePermissionFlags.cs" />
-    <Compile Include="System.Threading\Semaphore.cs" />
     <Compile Include="System.Threading\ThreadExceptionEventArgs.cs" />
     <Compile Include="System.Threading\ThreadExceptionEventHandler.cs" />
     <Compile Include="System.Timers\ElapsedEventArgs.cs" />
