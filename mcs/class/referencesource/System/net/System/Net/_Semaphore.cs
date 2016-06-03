@@ -21,8 +21,8 @@ namespace System.Net
         internal Semaphore(int initialCount, int maxCount) : base() {
             lock (this) {
 #if MONO
-                bool created;
-                Handle = System.Threading.Semaphore.CreateSemaphore_internal(initialCount, maxCount, null, out created);
+                int errorCode;
+                Handle = System.Threading.Semaphore.CreateSemaphore_internal(initialCount, maxCount, null, out errorCode);
 #else
                 // 
                 Handle = UnsafeNclNativeMethods.CreateSemaphore(IntPtr.Zero, initialCount, maxCount, IntPtr.Zero);
@@ -42,9 +42,8 @@ namespace System.Net
 
         internal bool ReleaseSemaphore() {
 #if MONO
-            bool fail;
-            var ret = System.Threading.Semaphore.ReleaseSemaphore_internal (Handle, 1, out fail);
-            return !fail;
+            int previousCount;
+            return System.Threading.Semaphore.ReleaseSemaphore_internal (Handle, 1, out previousCount);
 #else
 #if DEBUG
             int previousCount;
