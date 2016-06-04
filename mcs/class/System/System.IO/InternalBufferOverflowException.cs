@@ -32,7 +32,9 @@ using System;
 using System.Runtime.Serialization;
 
 namespace System.IO {
+#if !CORECLR
 	[Serializable]
+#endif
 	public class InternalBufferOverflowException : SystemException {
 
 		#region Constructors
@@ -47,10 +49,12 @@ namespace System.IO {
 		{
 		}
 
+#if !CORECLR
 		protected InternalBufferOverflowException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 		public InternalBufferOverflowException (string message, Exception inner)
 			: base (message, inner)

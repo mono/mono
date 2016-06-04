@@ -30,7 +30,9 @@
 using System;
 namespace System.Drawing.Printing 
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum Duplex {
 		Default = -1,
 		Horizontal = 3,

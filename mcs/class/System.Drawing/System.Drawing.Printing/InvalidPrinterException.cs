@@ -35,7 +35,9 @@ using System.Security.Permissions;
 
 namespace System.Drawing.Printing {
 
+#if !CORECLR
 	[Serializable]
+#endif
 	public class InvalidPrinterException : SystemException {
 
 //		private PrinterSettings settings;

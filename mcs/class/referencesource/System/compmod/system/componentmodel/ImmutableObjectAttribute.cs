@@ -72,13 +72,14 @@ namespace System.ComponentModel {
              return base.GetHashCode();
          }
 
-         /// <internalonly/>
-         /// <devdoc>
-         /// </devdoc>
-         public override bool IsDefaultAttribute() {
+#if !CORECLR
+        /// <internalonly/>
+        /// <devdoc>
+        /// </devdoc>
+        public override bool IsDefaultAttribute() {
             return (this.Equals(Default));
          }
-
+#endif
     }
 }
 

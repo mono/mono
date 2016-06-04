@@ -30,7 +30,9 @@
 using System;
 namespace System.Drawing.Printing 
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum PrintRange {
 		AllPages = 0,
 		Selection = 1,

@@ -78,7 +78,8 @@ namespace System.ComponentModel {
                 return typeName;
             }
         }
-    
+
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>
@@ -102,6 +103,7 @@ namespace System.ComponentModel {
                 return typeId;
             }
         }
+#endif
 
         public override bool Equals(object obj) {
             if (obj == this) {

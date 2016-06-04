@@ -65,12 +65,14 @@ namespace System.ComponentModel {
         /// </devdoc>
         public static readonly LocalizableAttribute Default = No;
 
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         /// </devdoc>
         public override bool IsDefaultAttribute() {
             return (IsLocalizable == Default.IsLocalizable);
         }
+#endif
 
         public override bool Equals(object obj) {
             LocalizableAttribute other = obj as LocalizableAttribute; 

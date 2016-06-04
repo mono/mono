@@ -43,13 +43,18 @@ using System.Reflection;
 
 namespace System.Drawing
 {
-	[Serializable]	
+#if !CORECLR
+	[Serializable]
+#endif
 #if !MONOTOUCH
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
 	[TypeConverter(typeof(IconConverter))]
 
-	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
+	public sealed class Icon : MarshalByRefObject, ICloneable, IDisposable
+#if !CORECLR
+		, ISerializable
+#endif
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct IconDirEntry {		
@@ -244,6 +249,7 @@ namespace System.Drawing
 			}
 		}
 
+#if !CORECLR
 		private Icon (SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream dataStream = null;
@@ -263,7 +269,8 @@ namespace System.Drawing
 				dataStream.Seek (0, SeekOrigin.Begin);
 				InitFromStreamWithSize (dataStream, width, height);
 			}
-                }
+		}
+#endif
 
 		internal Icon (string resourceName, bool undisposable)
 		{
@@ -286,6 +293,7 @@ namespace System.Drawing
 			this.undisposable = true;
 		}
 
+#if !CORECLR
 		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -293,6 +301,7 @@ namespace System.Drawing
 			si.AddValue ("IconSize", this.Size, typeof (Size));
 			si.AddValue ("IconData", ms.ToArray ());
 		}
+#endif
 
 		public Icon (Stream stream, Size size) : 
 			this (stream, size.Width, size.Height)

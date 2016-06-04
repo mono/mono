@@ -37,7 +37,9 @@ using System.Drawing.Imaging;
 
 namespace System.Drawing.Printing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public class PrinterSettings : ICloneable
 	{
 		private string printer_name;

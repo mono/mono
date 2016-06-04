@@ -41,10 +41,13 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Reflection;
 
 namespace System.Drawing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.BitmapEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Bitmap : Image
@@ -132,8 +135,11 @@ namespace System.Drawing
 		{
 			if (resource == null)
 				throw new ArgumentException ("resource");
-
+#if !CORECLR
 			Stream s = type.Assembly.GetManifestResourceStream (type, resource);
+#else
+			Stream s = type.GetTypeInfo().Assembly.GetManifestResourceStream (type, resource);
+#endif
 			if (s == null) {
 				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 				throw new FileNotFoundException (msg);
@@ -162,12 +168,14 @@ namespace System.Drawing
 			nativeObject = bmp;						 								
 		}
 
+#if !CORECLR
 		private Bitmap (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
-		#endregion
+#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
 			

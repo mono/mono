@@ -32,8 +32,10 @@
 //
 
 using System;
+#if !CORECLR
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+#endif
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing.Imaging;
@@ -42,13 +44,18 @@ using System.Reflection;
 
 namespace System.Drawing
 {
+#if !CORECLR
 [Serializable]
+#endif
 [ComVisible (true)]
 [Editor ("System.Drawing.Design.ImageEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 [TypeConverter (typeof(ImageConverter))]
 [ImmutableObject (true)]
-public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
-{
+public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
+#if !CORECLR
+		, ISerializable
+#endif
+	{
 	public delegate bool GetThumbnailImageAbort();
 	private object tag;
 	
@@ -63,6 +70,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{	
 	}
 	
+#if !CORECLR
 	internal Image (SerializationInfo info, StreamingContext context)
 	{
 		foreach (SerializationEntry serEnum in info) {
@@ -79,7 +87,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			}
 		}
 	}
+#endif
 
+#if !CORECLR
 	// FIXME - find out how metafiles (another decoder-only codec) are handled
 	void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 	{
@@ -93,7 +103,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			si.AddValue ("Data", ms.ToArray ());
 		}
 	}
-    
+#endif
+
 	// public methods
 	// static
 	public static Image FromFile(string filename)

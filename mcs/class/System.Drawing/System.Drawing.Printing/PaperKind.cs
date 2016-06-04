@@ -31,7 +31,9 @@ using System;
 
 namespace System.Drawing.Printing 
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum PaperKind
 	{
 		A2 = 66,

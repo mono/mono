@@ -27,7 +27,7 @@ namespace System.ComponentModel {
         public ExpandableObjectConverter() {
         }
 
-
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>Gets a collection of properties for the type of object
@@ -37,7 +37,9 @@ namespace System.ComponentModel {
         public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) {
             return TypeDescriptor.GetProperties(value, attributes);
         }
-        
+#endif
+
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>Gets a value indicating
@@ -47,6 +49,7 @@ namespace System.ComponentModel {
         public override bool GetPropertiesSupported(ITypeDescriptorContext context) {
             return true;
         }
+#endif
     }
 }
 

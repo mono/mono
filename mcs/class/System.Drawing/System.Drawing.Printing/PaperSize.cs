@@ -37,7 +37,9 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSize.
 	/// </summary>
+#if !CORECLR
 	[Serializable]
+#endif
 	public class PaperSize
 	{
 		string name;
