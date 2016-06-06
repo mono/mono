@@ -161,30 +161,47 @@ def parse_major_gcs(data):
         major_gc_events.append(event_group)
 
 if show_histogram:
-    minor_pausetimes = []
-    major_pausetimes = []
+    bin_data_minor = []
+    bin_data_both = []
+    bin_data_major = []
+    bin_names = []
 
     for rec in data:
         pause = rec.stop - rec.start
-        if rec.minor_work and rec.major_work and show_minor and show_major:
-            major_pausetimes.append (pause)
-        else:
-            if rec.minor_work:
-                minor_pausetimes.append (pause)
-            if rec.major_work:
-                major_pausetimes.append (pause)
+        for i in range(100):
+            time = (1.3)**(i+6)
+            prev_time = 0 if i==0 else (1.3)**(i+5)
+            if len(bin_names) <= i:
+                bin_data_minor.append(0)
+                bin_data_both.append(0)
+                bin_data_major.append(0)
+                bin_names.append('%d-%dms' % (int(prev_time), int(time)))
+            if pause <= time:
+                if rec.major_work:
+                    if rec.minor_work:
+                        bin_data_both[i] += pause
+                    else:
+                        bin_data_major[i] += pause
+                else:
+                    bin_data_minor[i] += pause
+                break
 
-    pausetimes = []
-    colors = []
+    bin_data_minor=np.array(bin_data_minor)
+    bin_data_both=np.array(bin_data_both)
+    bin_data_major=np.array(bin_data_major)
+
     if show_minor:
-        pausetimes.append(minor_pausetimes)
-        colors.append('blue')
-    if show_major:
-        pausetimes.append(major_pausetimes)
-        colors.append('red')
-
-    plt.hist (pausetimes, 100, stacked=True, log=True, color=colors)
-    plt.xlabel ('Pause time in msec')
+        plt.bar(range(len(bin_data_minor)), bin_data_minor, color='blue', label="minor")  #, align='center')
+        plt.bar(range(len(bin_data_both)), bin_data_both, bottom=bin_data_minor, color='purple', label="minor & major")
+        if show_major:
+            plt.bar(range(len(bin_data_major)), bin_data_major, bottom=(bin_data_minor+bin_data_both), color='red', label="only major")
+    else:
+        plt.bar(range(len(bin_data_major)), bin_data_major, color='red')
+    plt.xticks(range(len(bin_names)), bin_names)
+    plt.ylabel('Cumulative time spent in GC pauses (ms)')
+    plt.xlabel('GC pause length')
+    plt.xticks(rotation=60)
+    plt.legend(loc='upper left')
 else:
     major_gc_event_groups = parse_major_gcs(data)
 
