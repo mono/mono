@@ -244,6 +244,12 @@ namespace System.Net
 			}
 		}
 
+		public override bool SupportsHeaders {
+			get {
+				return true;
+			}
+		}
+
 		// Methods
 		
 		public string GetResponseHeader (string headerName)
