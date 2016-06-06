@@ -44,6 +44,13 @@ if PLATFORM_ANDROID
 prof_ldflags = -avoid-version
 endif
 
+# FIXME fix the profiler tests to work with coop.
+if !ENABLE_COOP
+if !NACL_CODEGEN
+check_targets = testlog
+endif
+endif
+
 endif
 endif
 endif
@@ -101,11 +108,7 @@ MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -nowarn:0162 -now
 testlog: $(PLOG_TESTS)
 	$(with_mono_path) perl $(srcdir)/ptestrunner.pl $(top_builddir)
 
-if NACL_CODEGEN
-check-local:
-else
-check-local: testlog
-endif
+check-local: $(check_targets)
 
 suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
 suppression_DATA = mono-profiler-log.suppression
