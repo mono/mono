@@ -129,7 +129,7 @@ class ConcurrentMajorGCEventGroup(MajorGCEventGroup):
 def parse_next_major_gc(data, i):
     assert i >= 0
     # Find start or full event.
-    while i < len(data) and data[i].gc_type not in ['start', 'full']:
+    while i < len(data) and data[i].gc_type not in ['start', 'full', 'nursery+update']:
         i += 1
     if i == len(data):
         return None
