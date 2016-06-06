@@ -1121,6 +1121,10 @@ namespace Mono.CSharp
 	/// </summary>
 	public static bool VerifyUnmanaged (ModuleContainer rc, TypeSpec t, Location loc)
 	{
+		// If we're using unsafe extensions, anything goes.
+		if (rc.Compiler.Settings.Version >= LanguageVersion.Unsafe)
+			return true;
+
 		if (t.IsUnmanaged)
 			return true;
 
