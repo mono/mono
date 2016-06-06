@@ -44,18 +44,21 @@ namespace System.Net.Sockets {
 #endif
 
 			if (blocking_threads != null) {
-				lock (blocking_threads) {
-					int abort_attempts = 0;
-					while (blocking_threads.Count > 0) {
-						if (abort_attempts++ >= ABORT_RETRIES) {
-							if (THROW_ON_ABORT_RETRIES)
-								throw new Exception ("Could not abort registered blocking threads before closing socket.");
+				int abort_attempts = 0;
+				while (true) {
+					if (abort_attempts++ >= ABORT_RETRIES) {
+						if (THROW_ON_ABORT_RETRIES)
+							throw new Exception ("Could not abort registered blocking threads before closing socket.");
 
-							// Attempts to close the socket safely failed.
-							// We give up, and close the socket with pending blocking system calls.
-							// This should not occur, nonetheless if it does this avoids an endless loop.
+						// Attempts to close the socket safely failed.
+						// We give up, and close the socket with pending blocking system calls.
+						// This should not occur, nonetheless if it does this avoids an endless loop.
+						break;
+					}
+
+					lock (blocking_threads) {
+						if (blocking_threads.Count == 0)
 							break;
-						}
 
 						/*
 						* This method can be called by the DangerousRelease inside RegisterForBlockingSyscall
@@ -69,11 +72,11 @@ namespace System.Net.Sockets {
 						// abort registered threads
 						foreach (var t in blocking_threads)
 							Socket.cancel_blocking_socket_operation (t);
-
-						// Sleep so other threads can resume
-						in_cleanup = true;
-						Monitor.Wait (blocking_threads, 100);
 					}
+
+					// Sleep so other threads can resume
+					in_cleanup = true;
+					Monitor.Wait (blocking_threads, 100);
 				}
 			}
 
