@@ -185,8 +185,8 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 	mono_coop_sem_init (&(start_info->registered), 0);
 	start_info->arg = arg;
 	start_info->start_routine = start_routine;
-	start_info->suspend = creation_flags & CREATE_SUSPENDED;
-	creation_flags &= ~CREATE_SUSPENDED;
+	start_info->suspend = tp->creation_flags & CREATE_SUSPENDED;
+	tp->creation_flags &= ~CREATE_SUSPENDED;
 	if (start_info->suspend) {
 		start_info->suspend_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 		if (!start_info->suspend_event)
