@@ -19,12 +19,16 @@ static GQueue		*level_stack		= NULL;
 static const char	*mono_log_domain	= "Mono";
 static MonoPrintCallback print_callback, printerr_callback;
 
-static MonoLogCallback logCallback = {
+static MonoLogCallParm logCallback = {
 	.opener = NULL,
 	.writer = NULL,
 	.closer = NULL,
-	.header = FALSE
+	.callb  = NULL,
+	.header = FALSE,
+	.dest   = NULL
 };
+
+static void callback_adapter(const char *, const char *, const char *, mono_bool, void *);
 
 /**
  * mono_trace_init:
@@ -137,7 +141,7 @@ mono_trace_set_mask (MonoTraceMask mask)
 void 
 mono_trace_set_logdest_string (const char *dest)
 {
-	MonoLogCallback logger;
+	MonoLogCallParm logger;
 
 	if(level_stack == NULL)
 		mono_trace_init();
@@ -146,12 +150,14 @@ mono_trace_set_logdest_string (const char *dest)
 		logger.opener = mono_log_open_logfile;
 		logger.writer = mono_log_write_logfile;
 		logger.closer = mono_log_close_logfile;
-		mono_trace_set_log_handler(&logger, dest, NULL);
+		logger.dest   = (char *) dest;
+		mono_trace_set_log_handler_internal(&logger, NULL);
 	} else {
 		logger.opener = mono_log_open_syslog;
 		logger.writer = mono_log_write_syslog;
 		logger.closer = mono_log_close_syslog;
-		mono_trace_set_log_handler(&logger, mono_log_domain, NULL);
+		logger.dest   = (char *) dest;
+		mono_trace_set_log_handler_internal(&logger, NULL);
 	}
 }
 
@@ -165,8 +171,6 @@ mono_trace_set_logdest_string (const char *dest)
 void 
 mono_trace_set_logheader_string(const char *head)
 {
-	MonoLogCallback logger;
-
 	if (head == NULL) {
 		mono_trace_log_header = FALSE;
 	} else {
@@ -306,19 +310,60 @@ mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask)
  *  @callback The callback that will replace the default logging handler
  *  @user_data Argument passed to @callback
  *
+ * MONO_API for logging - Allow users of the previous logging mechanism to keep working but
+ * taking the parameters and adapting them for the new method. When a write operation is 
+ * performed we also adapt the parameters for it to the new mechanism by calling callback_adapter.
+ */
+void
+mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
+{
+	g_assert (callback);
+	logCallback.opener = mono_log_open_logfile;
+	logCallback.writer = (MonoLoggerWrite) callback_adapter;
+	logCallback.closer = mono_log_close_logfile;
+	logCallback.header = FALSE;
+	logCallback.callb  = callback;
+	logCallback.dest   = NULL;
+	logCallback.opener(logCallback.dest, user_data);
+}
+
+/**
+ * callback_adapter
+ * 
+ *  @log_domain Message prefix
+ *  @log_level Severity
+ *  @message Message to be written
+ *  @fatal Fatal flag - write then abort
+ *  @user_data Argument passed to @callback
+ *
+ * This adapts the old callback writer exposed by MonoCallback to the newer method of
+ * logging.
+ */
+static void
+callback_adapter(const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
+{
+	logCallback.callb(log_domain, log_level, message, fatal, user_data);
+}
+
+/**
+ * mono_trace_set_log_handler_internal:
+ *
+ *  @callback The callback that will replace the default logging handler
+ *  @user_data Argument passed to @callback
+ *
  * The log handler replaces the default runtime logger. All logging requests with be routed to it.
  * If the fatal argument in the callback is true, the callback must abort the current process. The runtime expects that
  * execution will not resume after a fatal error.
  */
 void
-mono_trace_set_log_handler (MonoLogCallback *callback, const char *dest, void *user_data)
+mono_trace_set_log_handler_internal (MonoLogCallParm *callback, void *user_data)
 {
 	g_assert (callback);
 	logCallback.opener = callback->opener;
 	logCallback.writer = callback->writer;
 	logCallback.closer = callback->closer;
 	logCallback.header = mono_trace_log_header;
-	logCallback.opener(dest, user_data);
+	logCallback.opener(logCallback.dest, user_data);
 }
 
 static void

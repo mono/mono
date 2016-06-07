@@ -13,6 +13,8 @@ mono_trace_set_mask_string (const char *value);
 MONO_API void 
 mono_trace_set_logdest_string (const char *value);
 
+typedef void (*MonoLogCallback) (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data);
+
 MONO_API void 
 mono_trace_set_logheader_string (const char *value);
 
@@ -22,15 +24,20 @@ typedef void (*MonoLoggerOpen) (const char *, void *);
 typedef void (*MonoLoggerWrite) (const char *, GLogLevelFlags, mono_bool, const char *, va_list);
 typedef void (*MonoLoggerClose) (void);
 
-typedef struct _MonoLogCallback_ {
+typedef struct _MonoLogCallParm_ {
 	MonoLoggerOpen 	opener;		/* Routine to open logging */
 	MonoLoggerWrite	writer;		/* Routine to write log data */
 	MonoLoggerClose closer; 	/* Routine to close logging */
+	MonoLogCallback	callb;		/* Legacy logging callback */
+	char		*dest;		/* Log destination */
 	mono_bool       header;		/* Whether we want pid/time/date in log message */
-} MonoLogCallback;
+} MonoLogCallParm;
+
+void
+mono_trace_set_log_handler_internal (MonoLogCallParm *callparm, void *user_data);
 
 MONO_API void
-mono_trace_set_log_handler (MonoLogCallback *callback, const char *dest, void *user_data);
+mono_trace_set_log_handler (MonoLogCallback callback, void *user_data);
 
 MONO_API void
 mono_trace_set_print_handler (MonoPrintCallback callback);
