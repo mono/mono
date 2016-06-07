@@ -429,7 +429,7 @@ namespace System {
 
 #if MONO
                         if (method != null) { // source can be null
-                            _source = method.DeclaringType.Assembly.UnprotectedGetName ().Name;
+                            _source = method.DeclaringType.Assembly.GetName ().Name;
                         }
 #else
                         Module module = method.Module;

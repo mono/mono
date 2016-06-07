@@ -1038,16 +1038,6 @@ namespace System.Reflection.Emit
 			return (str == "neutral" ? String.Empty : str);
 		}
 
-		internal override AssemblyName UnprotectedGetName ()
-		{
-			AssemblyName an = base.UnprotectedGetName ();
-			if (sn != null) {
-				an.SetPublicKey (sn.PublicKey);
-				an.SetPublicKeyToken (sn.PublicKeyToken);
-			}
-			return an;
-		}
-
 		/*Warning, @typeArguments must be a mscorlib internal array. So make a copy before passing it in*/
 		internal Type MakeGenericType (Type gtd, Type[] typeArguments)
 		{
@@ -1124,7 +1114,15 @@ namespace System.Reflection.Emit
 
 		public override AssemblyName GetName (bool copiedName)
 		{
-			return base.GetName (copiedName);
+			AssemblyName aname = new AssemblyName ();
+			FillName (this, aname);
+
+			if (sn != null) {
+				aname.SetPublicKey (sn.PublicKey);
+				aname.SetPublicKeyToken (sn.PublicKeyToken);
+			}
+			return aname;
+
 		}
 
 		[MonoTODO ("This always returns an empty array")]
