@@ -25,3 +25,5 @@ bump-current-llvm: __bump-current-version-llvm
 
 clean-local:
 	$(RM) -r $(LLVM_PATH)
+
+EXTRA_DIST=SUBMODULES.json
