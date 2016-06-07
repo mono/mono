@@ -46,14 +46,6 @@ struct _WapiHandleOps _wapi_thread_ops = {
 	NULL,				/* special_wait */
 	NULL				/* prewait */
 };
- 
-typedef enum {
-	THREAD_PRIORITY_LOWEST = -2,
-	THREAD_PRIORITY_BELOW_NORMAL = -1,
-	THREAD_PRIORITY_NORMAL = 0,
-	THREAD_PRIORITY_ABOVE_NORMAL = 1,
-	THREAD_PRIORITY_HIGHEST = 2
-} WapiThreadPriority;
 
 static mono_once_t thread_ops_once = MONO_ONCE_INIT;
 
@@ -280,14 +272,14 @@ _wapi_thread_posix_priority_to_priority (int sched_priority, int policy)
 }
 
 /**
- * _wapi_thread_priority_to_posix_priority:
+ * wapi_thread_priority_to_posix_priority:
  *
  *   Convert a WapiThreadPriority to a POSIX priority.
  * priority is a WapiThreadPriority,
  * policy is the current scheduling policy
  */
-static int 
-_wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy)
+int 
+wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy)
 {
 /* Necessary to get valid priority range */
 #ifdef _POSIX_PRIORITY_SCHEDULING
@@ -349,7 +341,7 @@ _wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy
  * thread priority, or THREAD_PRIORITY_NORMAL on error.
  */
 gint32 
-GetThreadPriority (gpointer handle)
+GetThreadPriority (gpointer handle, int defPriority)
 {
 	struct _WapiHandle_thread *thread_handle;
 	int policy;
@@ -358,7 +350,11 @@ GetThreadPriority (gpointer handle)
 				  (gpointer *)&thread_handle);
 				  
 	if (ok == FALSE) {
-		return (THREAD_PRIORITY_NORMAL);
+		pthread_getschedparam (pthread_self(), &policy, &param);
+		if ((policy == SCHED_FIFO) || (policy == SCHED_RR)) 
+			return (defPriority);
+		else
+			return (THREAD_PRIORITY_NORMAL);
 	}
 	
 	switch (pthread_getschedparam (thread_handle->id, &policy, &param)) {
@@ -401,16 +397,15 @@ SetThreadPriority (gpointer handle, gint32 priority)
 		return FALSE;
 	}
 	
-	posix_priority =  _wapi_thread_priority_to_posix_priority (priority, policy);
+	posix_priority =  wapi_thread_priority_to_posix_priority (priority, policy);
 	if (0 > posix_priority)
 		return FALSE;
 		
-	param.sched_priority = posix_priority;
-	switch (pthread_setschedparam (thread_handle->id, policy, &param)) {
+	switch (pthread_setschedprio (thread_handle->id, posix_priority)) {
 		case 0:
 			return TRUE;
 		case ESRCH:
-			g_warning ("pthread_setschedparam: error looking up thread id %x", (gsize)thread_handle->id);
+			g_warning ("pthread_setschedprio: error looking up thread id %x", (gsize)thread_handle->id);
 			break;
 		case ENOTSUP:
 			g_warning ("%s: priority %d not supported", __func__, priority);

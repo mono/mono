@@ -800,7 +800,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 {
 	HANDLE thread_handle;
 	MonoNativeThreadId tid;
-	guint32 create_flags;
+	MonoThreadParm tp;
 
 	/*
 	 * Join joinable threads to prevent running out of threads since the finalizer
@@ -839,10 +839,11 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	/* Create suspended, so we can do some housekeeping before the thread
 	 * starts
 	 */
-	create_flags = CREATE_SUSPENDED;
+	tp.priority = thread->priority;
+	tp.stack_size = stack_size;
+	tp.creation_flags = CREATE_SUSPENDED;
 
-	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)start_wrapper, start_info,
-												stack_size, create_flags, &tid);
+	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)start_wrapper, start_info, &tp, &tid);
 
 	if (thread_handle == NULL) {
 		/* The thread couldn't be created, so set an exception */
@@ -1419,7 +1420,7 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj)
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	priority = GetThreadPriority (internal->handle) + 2;
+	priority = GetThreadPriority (internal, this_obj->priority) + 2;
 	UNLOCK_THREAD (internal);
 	return priority;
 }
@@ -1437,6 +1438,7 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priorit
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
+	this_obj->priority = priority - 2;
 	SetThreadPriority (internal->handle, priority - 2);
 	UNLOCK_THREAD (internal);
 }
