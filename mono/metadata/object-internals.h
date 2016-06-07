@@ -386,21 +386,12 @@ struct _MonoInternalThread {
 	gpointer unused2;
 };
 
-/*
- * Parameters to pass for thread creation
- */
-struct _MonoThreadParm {
-	int priority;
-	guint32 creation_flags;	
-	guint32 stack_size;		
-};
-
 struct _MonoThread {
 	MonoObject obj;
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
-	int priority;		/* The POSIX priority of the thread */
+	int priority;		
 };
 
 typedef struct {

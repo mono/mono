@@ -280,6 +280,15 @@ typedef enum {
 
 typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
 
+/*
+ * Parameters to pass for thread creation
+ */
+typedef struct {
+	int priority;
+	guint32 creation_flags;	
+	guint32 stack_size;		
+} MonoThreadParm;
+
 static inline gboolean
 mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
 {

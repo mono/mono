@@ -20,7 +20,6 @@ typedef struct _MonoReflectionType MonoReflectionType;
 typedef struct _MonoDelegate MonoDelegate;
 typedef struct _MonoException MonoException;
 typedef struct _MonoThreadsSync MonoThreadsSync;
-typedef struct _MonoThreadParm MonoThreadParm;
 typedef struct _MonoThread MonoThread;
 typedef struct _MonoDynamicAssembly MonoDynamicAssembly;
 typedef struct _MonoDynamicImage MonoDynamicImage;
