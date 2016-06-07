@@ -12,19 +12,17 @@ if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --w
 if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\Win32\\\bin\\\Release_SGen\\\mono-sgen.exe`";fi
 if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\x64\\\bin\\\Release_SGen\\\mono-sgen.exe`"; fi
 
-if [[ ${CI_TAGS} != 'mobile_static' ]] && [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]];
+if [[ ${label} == w* ]] || [[ ${label} == 'debian-ppc64el' ]] || [[ ${label} == 'centos-s390x' ]];
     then
-    EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-monodroid --with-monotouch --with-monotouch_watch --with-monotouch_tv --with-xammac"
+    # Override the defaults to skip profiles
     # only enable the mobile profiles and mobile_static on the main architectures
-
-	# only enable the concurrent collector by default on main unix archs
-	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-sgen-default-concurrent=yes"
-fi
-
-if [[ ${CI_TAGS} == 'mobile_static' ]]; 
-	then 
-	EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_profile=mobile_static";
-	export PROFILE=mobile_static;
+		# only enable the concurrent collector by default on main unix archs
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-monodroid=no --with-monotouch=no --with-monotouch_watch=no --with-monotouch_tv=no --with-xammac=no"
+elif [[ ${CI_TAGS} == 'mobile_static' ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=mobile_static";
+else
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-sgen-default-concurrent=yes"
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
