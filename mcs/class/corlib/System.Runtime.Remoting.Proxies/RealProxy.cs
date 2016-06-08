@@ -49,8 +49,46 @@ namespace System.Runtime.Remoting.Proxies
 	[StructLayout (LayoutKind.Sequential)]
 	internal class TransparentProxy {
 		public RealProxy _rp;
-		IntPtr _class;
+		Mono.RuntimeRemoteClassHandle _class;
 		bool _custom_type_info;
+
+		unsafe internal RuntimeType GetProxyType () {
+			RuntimeTypeHandle h = _class.ProxyClass.GetTypeHandle ();
+			return (RuntimeType)Type.GetTypeFromHandle (h);
+		}
+
+		bool IsContextBoundObject {
+			get { return GetProxyType ().IsContextful; }
+		}
+
+		Context TargetContext {
+			get { return _rp._targetContext; }
+		}
+
+		internal object LoadRemoteFieldNew (RuntimeTypeHandle typeHandle, RuntimeFieldHandle fieldHandle) {
+
+			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
+			bool inCurrCtx =
+				IsContextBoundObject && TargetContext == Thread.CurrentContext;
+			if (inCurrCtx) {
+				object o = _rp._server;
+				return field.GetValue(o);
+			}
+
+			object[] inArgs = new object[] { Type.GetTypeFromHandle(typeHandle).FullName,
+							  field.Name };
+			object[] outArgsMsg = new object[1];
+			MethodInfo minfo = typeof(object).GetMethod("FieldGetter", BindingFlags.NonPublic | BindingFlags.Instance);
+			if (minfo == null)
+				throw new MissingMethodException ("System.Object", "FieldGetter");
+			MonoMethodMessage msg = new MonoMethodMessage (minfo, inArgs, outArgsMsg);
+			object[] outArgs;
+			Exception exc;
+			RealProxy.PrivateInvoke (_rp, msg, out exc, out outArgs);
+			if (exc != null)
+				throw exc;
+			return outArgs[0];
+		}
 	}
 #pragma warning restore 169, 649
 	
@@ -66,7 +104,7 @@ namespace System.Runtime.Remoting.Proxies
 		#region Sync with object-internals.h
 		Type class_to_proxy;
 		internal Context _targetContext;
-		MarshalByRefObject _server;
+		internal MarshalByRefObject _server;
 		int _targetDomainId = -1;
 		internal string _targetUri;
 		internal Identity _objectIdentity;
