@@ -52105,7 +52105,7 @@
   <test name="test-935.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
-        <size>73</size>
+        <size>101</size>
       </method>
       <method name="Void TT(System.Threading.Tasks.Task`1[System.String])" attrs="145">
         <size>2</size>
@@ -52170,6 +52170,14 @@
       </method>
       <method name="Void .ctor(Object, IntPtr)" attrs="6278">
         <size>0</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void MM(Double)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void MM(System.Nullable`1[System.Double])" attrs="145">
+        <size>12</size>
       </method>
     </type>
   </test>
