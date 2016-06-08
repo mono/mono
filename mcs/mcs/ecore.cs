@@ -4596,12 +4596,24 @@ namespace Mono.CSharp {
 				p = Nullable.NullableInfo.GetUnderlyingType (p);
 				if (!BuiltinTypeSpec.IsPrimitiveType (p))
 					return 0;
+
+				//
+				// Spec expects implicit conversion check between p and q, q and p
+				// to be done before nullable unwrapping but that's expensive operation
+				// Hence manual tweak is needed because BetterTypeConversion works on
+				// unwrapped types
+				//
+				if (p == q)
+					return 2;
 			}
 
 			if (q.IsNullableType) {
 				q = Nullable.NullableInfo.GetUnderlyingType (q);
 				if (!BuiltinTypeSpec.IsPrimitiveType (q))
 					return 0;
+
+				if (q == p)
+					return 1;
 			}
 
 			return BetterTypeConversion (rc, p, q);
@@ -4642,8 +4654,9 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 2;
+				// LAMESPEC: Dynamic conversions is not considered
+				p = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
 
 			switch (q.BuiltinType) {
@@ -4673,8 +4686,9 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 1;
+				// LAMESPEC: Dynamic conversions is not considered
+				q = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
 
 			// TODO: this is expensive

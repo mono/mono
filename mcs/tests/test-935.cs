@@ -15,6 +15,8 @@ public static class Program
 		NN (0);
 		NN2 (1);
 		Complex (null);
+		MM (1);
+		MM ((byte) 1);
 		return 0;
 	}
 
@@ -68,6 +70,15 @@ public static class Program
 	}
 
 	static void Complex (Expression<Func<Task<ulong>>> arg)
+	{
+		throw new ApplicationException ("wrong overload");
+	}
+
+	static void MM (double f)
+	{
+	}
+
+	static void MM (double? f)
 	{
 		throw new ApplicationException ("wrong overload");
 	}
