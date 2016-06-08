@@ -1327,6 +1327,19 @@ namespace MonoTests.System.Reflection
 			Assert.AreSame (x1, x2, "#1");
 		}
 #endif
+
+		class MyAssembly : Assembly { }
+
+		[Test]
+		public void CustomAssemblyImplThrows ()
+		{
+			var ma = new MyAssembly();
+			try {
+				ma.GetName ();
+				Assert.Fail ("must throw");
+			} catch (NotImplementedException){
+			}
+		}
 	}
 
 	public class TestDefinedTypes
