@@ -16,6 +16,9 @@ if [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 
     then
     EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-monodroid --with-monotouch --with-monotouch_watch --with-monotouch_tv --with-xammac --with-mobile_static"
     # only enable the mobile profiles and mobile_static on the main architectures
+
+	# only enable the concurrent collector by default on main unix archs
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-sgen-default-concurrent=yes"
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
