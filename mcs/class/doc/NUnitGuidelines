@@ -45,45 +45,45 @@ build and the tests will be run along with all the others.
 
 * Tips
 
--- Provide an unique error message for Assertion.Assert ()
+-- Provide an unique error message for Assert.IsTrue ()
 
-Include an unique message for each Assertion.Assert () so that when the assert
+Include an unique message for each Assert.IsTrue () so that when the assert
 fails, it is trivial to locate the failing one. Otherwise, it may be
 difficult to determine which part of the test is failing. A good way
 to ensure unique messages is to use something like #A01, #A02 etc.
 
     Bad:
 
-	Assertion.AssertEquals ("array match", compare[0], i1[0]);
-	Assertion.AssertEquals ("array match", compare[1], i1[1]);
-	Assertion.AssertEquals ("array match", compare[2], i1[2]);
-	Assertion.AssertEquals ("array match", compare[3], i1[3]);
+	Assert.AreEqual (compare[0], i1[0], "array match");
+	Assert.AreEqual (compare[1], i1[1], "array match");
+	Assert.AreEqual (compare[2], i1[2], "array match");
+	Assert.AreEqual (compare[3], i1[3], "array match");
 
     Good:
 
-	Assertion.AssertEquals ("#A01", compare[0], i1[0]);
-	Assertion.AssertEquals ("#A02", compare[1], i1[1]);
-	Assertion.AssertEquals ("#A03", compare[2], i1[2]);
-	Assertion.AssertEquals ("#A04", compare[3], i1[3]);
+	Assert.AreEqual (compare[0], i1[0], "#A01");
+	Assert.AreEqual (compare[1], i1[1], "#A02");
+	Assert.AreEqual (compare[2], i1[2], "#A03");
+	Assert.AreEqual (compare[3], i1[3], "#A04");
 
-Once you used such a number in an Assertion.Assert (), don't change it later on -
+Once you used such a number in an Assert.IsTrue (), don't change it later on -
 people might use it it identify the test in bug reports or in mailing
 lists.
 
--- Use Assertion.AssertEquals () to compare things, not Assertion.Assert ().
+-- Use Assert.AreEqual () to compare things, not Assert.IsTrue ().
 
-Never compare two values with Assertion.Assert () - if the test fails, people
-have no idea what went wrong while Assertion.AssertEquals () reports the failed
+Never compare two values with Assert.IsTrue () - if the test fails, people
+have no idea what went wrong while Assert.AreEqual () reports the failed
 value. Also, make sure the second paramter is the expected value, and the third
 parameter is the actual value.
 
     Bad:
 
-        Assertion.Assert ("A01", myTicks[0] == t1.Ticks);
+        Assert.IsTrue (myTicks[0] == t1.Ticks, "A01");
 
     Good:
 
-        Assertion.AssertEquals ("A01", myTicks[0], t1.Ticks);
+        Assert.AreEqual (myTicks[0], t1.Ticks, "A01");
 
 -- Namespace
 
