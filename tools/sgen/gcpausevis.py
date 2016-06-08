@@ -11,20 +11,24 @@ import subprocess
 
 parser = OptionParser (usage = "Usage: %prog [options] BINARY-PROTOCOL")
 parser.add_option ('--histogram', action = 'store_true', dest = 'histogram', help = "pause time histogram")
+parser.add_option ('--scatter', action = 'store_true', dest = 'scatter', help = "pause time scatterplot")
 parser.add_option ('--minor', action = 'store_true', dest = 'minor', help = "only show minor collections in histogram")
 parser.add_option ('--major', action = 'store_true', dest = 'major', help = "only show major collections in histogram")
 (options, files) = parser.parse_args ()
 
 show_histogram = False
+show_scatter = False
 show_minor = True
 show_major = True
 if options.minor:
-    show_histogram = True
     show_major = False
 if options.major:
-    show_histogram = True
     show_minor = False
 if options.histogram:
+    show_histogram = True
+if options.scatter:
+    show_scatter = True
+if (options.minor or options.major) and not options.scatter:
     show_histogram = True
 
 script_path = os.path.realpath (__file__)
@@ -160,14 +164,33 @@ def parse_major_gcs(data):
         event_group, i = maybe_event_group
         major_gc_events.append(event_group)
 
-if show_histogram:
+if show_histogram or show_scatter:
     bin_data_minor = []
     bin_data_both = []
     bin_data_major = []
     bin_names = []
 
+    timeline_x = []
+    timeline_y = []
+    timeline_c = []
+
     for rec in data:
         pause = rec.stop - rec.start
+
+        color = None
+        if rec.major_work:
+            if rec.minor_work:
+                color = 'purple'
+            else:
+                color = 'red' if show_major else None
+        else:
+            color = 'blue' if show_minor else None
+
+        if color:
+            timeline_x.append(rec.start)
+            timeline_y.append(pause)
+            timeline_c.append(color)
+
         for i in range(100):
             time = (1.3)**(i+6)
             prev_time = 0 if i==0 else (1.3)**(i+5)
@@ -190,18 +213,22 @@ if show_histogram:
     bin_data_both=np.array(bin_data_both)
     bin_data_major=np.array(bin_data_major)
 
-    if show_minor:
-        plt.bar(range(len(bin_data_minor)), bin_data_minor, color='blue', label="minor")  #, align='center')
-        plt.bar(range(len(bin_data_both)), bin_data_both, bottom=bin_data_minor, color='purple', label="minor & major")
-        if show_major:
-            plt.bar(range(len(bin_data_major)), bin_data_major, bottom=(bin_data_minor+bin_data_both), color='red', label="only major")
+    if show_scatter:
+        plt.scatter(timeline_x, timeline_y, c=timeline_c)
     else:
-        plt.bar(range(len(bin_data_major)), bin_data_major, color='red')
-    plt.xticks(range(len(bin_names)), bin_names)
-    plt.ylabel('Cumulative time spent in GC pauses (ms)')
-    plt.xlabel('GC pause length')
-    plt.xticks(rotation=60)
-    plt.legend(loc='upper left')
+        if show_minor:
+            plt.bar(range(len(bin_data_minor)), bin_data_minor, color='blue', label="minor")  #, align='center')
+            plt.bar(range(len(bin_data_both)), bin_data_both, bottom=bin_data_minor, color='purple', label="minor & major")
+            if show_major:
+                plt.bar(range(len(bin_data_major)), bin_data_major, bottom=(bin_data_minor+bin_data_both), color='red', label="only major")
+        else:
+            plt.bar(range(len(bin_data_both)), bin_data_both, color='purple', label="minor & major")
+            plt.bar(range(len(bin_data_major)), bin_data_major, bottom=bin_data_both, color='red')
+        plt.xticks(range(len(bin_names)), bin_names)
+        plt.ylabel('Cumulative time spent in GC pauses (ms)')
+        plt.xlabel('GC pause length')
+        plt.xticks(rotation=60)
+        plt.legend(loc='upper left')
 else:
     major_gc_event_groups = parse_major_gcs(data)
 
