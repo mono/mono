@@ -4194,7 +4194,7 @@ handle_unbox_gsharedvt (MonoCompile *cfg, MonoClass *klass, MonoInst *obj)
  * Returns NULL and set the cfg exception on error.
  */
 static MonoInst*
-handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_used)
+handle_alloc (MonoCompile *cfg, guchar *ip, MonoClass *klass, gboolean for_box, int context_used)
 {
 	MonoInst *iargs [2];
 	void *alloc_ftn;
@@ -4230,7 +4230,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 
 				EMIT_NEW_ICONST (cfg, iargs [1], size);
 			}
-			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
+			int costs = inline_method (cfg, managed_alloc, mono_method_signature (managed_alloc), iargs, ip, cfg->real_offset, TRUE);
+			g_assert (costs > 0);
+			cfg->real_offset += 5;
+			return iargs [0];
 		}
 
 		return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
@@ -4266,7 +4269,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 
 			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
-			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
+			int costs = inline_method (cfg, managed_alloc, mono_method_signature (managed_alloc), iargs, ip, cfg->real_offset, TRUE);
+			g_assert (costs > 0);
+			cfg->real_offset += 5;
+			return iargs [0];
 		}
 		alloc_ftn = mono_class_get_allocation_ftn (vtable, for_box, &pass_lw);
 		if (pass_lw) {
@@ -4287,7 +4293,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
  * Returns NULL and set the cfg exception on error.
  */	
 static MonoInst*
-handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_used)
+handle_box (MonoCompile *cfg, guchar *ip, MonoInst *val, MonoClass *klass, int context_used)
 {
 	MonoInst *alloc, *ins;
 
@@ -4344,7 +4350,7 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_used)
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, is_nullable_bb);
 
 		/* Non-ref case */
-		alloc = handle_alloc (cfg, klass, TRUE, context_used);
+		alloc = handle_alloc (cfg, ip, klass, TRUE, context_used);
 		if (!alloc)
 			return NULL;
 		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, alloc->dreg, sizeof (MonoObject), val->dreg);
@@ -4399,7 +4405,7 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_used)
 
 		return res;
 	} else {
-		alloc = handle_alloc (cfg, klass, TRUE, context_used);
+		alloc = handle_alloc (cfg, ip, klass, TRUE, context_used);
 		if (!alloc)
 			return NULL;
 
@@ -5021,7 +5027,7 @@ handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_this, M
  * Returns NULL and set the cfg exception on error.
  */
 static G_GNUC_UNUSED MonoInst*
-handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method, int context_used, gboolean virtual_)
+handle_delegate_ctor (MonoCompile *cfg, guchar *ip, MonoClass *klass, MonoInst *target, MonoMethod *method, int context_used, gboolean virtual_)
 {
 	MonoInst *ptr;
 	int dreg;
@@ -5038,7 +5044,7 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 			return NULL;
 	}
 
-	obj = handle_alloc (cfg, klass, FALSE, mono_class_check_context_used (klass));
+	obj = handle_alloc (cfg, ip, klass, FALSE, mono_class_check_context_used (klass));
 	if (!obj)
 		return NULL;
 
@@ -9396,7 +9402,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						/* The called method is not virtual, i.e. Object:GetType (), the receiver is a vtype, has to box */
 						EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &constrained_class->byval_arg, sp [0]->dreg, 0);
 						ins->klass = constrained_class;
-						sp [0] = handle_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+						sp [0] = handle_box (cfg, ip, ins, constrained_class, mono_class_check_context_used (constrained_class));
 						CHECK_CFG_EXCEPTION;
 					} else if (need_box) {
 						MonoInst *box_type;
@@ -9427,7 +9433,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						MONO_START_BB (cfg, is_ref_bb);
 						EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &constrained_class->byval_arg, sp [0]->dreg, 0);
 						ins->klass = constrained_class;
-						sp [0] = handle_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+						sp [0] = handle_box (cfg, ip, ins, constrained_class, mono_class_check_context_used (constrained_class));
 						ins = (MonoInst*)mono_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
 
 						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
@@ -9451,7 +9457,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 */
 					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &constrained_class->byval_arg, sp [0]->dreg, 0);
 					ins->klass = constrained_class;
-					sp [0] = handle_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+					sp [0] = handle_box (cfg, ip, ins, constrained_class, mono_class_check_context_used (constrained_class));
 					CHECK_CFG_EXCEPTION;
 				} else if (!constrained_class->valuetype) {
 					int dreg = alloc_ireg_ref (cfg);
@@ -9485,7 +9491,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							/* Enum implements some interfaces, so treat this as the first case */
 							EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &constrained_class->byval_arg, sp [0]->dreg, 0);
 							ins->klass = constrained_class;
-							sp [0] = handle_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+							sp [0] = handle_box (cfg, ip, ins, constrained_class, mono_class_check_context_used (constrained_class));
 							CHECK_CFG_EXCEPTION;
 						}
 					}
@@ -10908,7 +10914,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 * will be transformed into a normal call there.
 					 */
 				} else if (context_used) {
-					alloc = handle_alloc (cfg, cmethod->klass, FALSE, context_used);
+					alloc = handle_alloc (cfg, ip, cmethod->klass, FALSE, context_used);
 					*sp = alloc;
 				} else {
 					MonoVTable *vtable = NULL;
@@ -10929,7 +10935,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						class_inits = g_slist_prepend (class_inits, cmethod->klass);
 					}
 
-					alloc = handle_alloc (cfg, cmethod->klass, FALSE, 0);
+					alloc = handle_alloc (cfg, ip, cmethod->klass, FALSE, 0);
 					*sp = alloc;
 				}
 				CHECK_CFG_EXCEPTION; /*for handle_alloc*/
@@ -11210,7 +11216,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 
-			*sp++ = handle_box (cfg, val, klass, context_used);
+			*sp++ = handle_box (cfg, ip, val, klass, context_used);
 
 			CHECK_CFG_EXCEPTION;
 			ip += 5;
@@ -13132,7 +13138,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							if ((handle_ins = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, FALSE))) {
+							if ((handle_ins = handle_delegate_ctor (cfg, ip, ctor_method->klass, target_ins, cmethod, context_used, FALSE))) {
 								sp --;
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
@@ -13196,7 +13202,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							if ((handle_ins = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, is_virtual))) {
+							if ((handle_ins = handle_delegate_ctor (cfg, ip, ctor_method->klass, target_ins, cmethod, context_used, is_virtual))) {
 								sp -= 2;
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
