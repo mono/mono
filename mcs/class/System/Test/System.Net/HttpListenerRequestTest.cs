@@ -30,6 +30,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
@@ -194,15 +195,22 @@ namespace MonoTests.System.Net
 		[Test]
 		public void HttpRequestIsLocal ()
 		{
-			var ips = new List<IPAddress> (Dns.GetHostAddresses (Dns.GetHostName ()));
+			var port = NetworkHelpers.FindFreePort ();
+			var ips = new List<IPAddress> ();
 			ips.Add (IPAddress.Loopback);
+			foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces ()) {
+				foreach (var ip in adapter.GetIPProperties ().UnicastAddresses) {
+					ips.Add (ip.Address);
+				}
+			}
+
 			foreach (var ip in ips) {
 				if (ip.AddressFamily != AddressFamily.InterNetwork)
 					continue;
 
 				HttpListener listener = HttpListener2Test.CreateAndStartListener (
-					"http://" + ip + ":9000/HttpRequestIsLocal/");
-				NetworkStream ns = HttpListener2Test.CreateNS (ip, 9000);
+					"http://" + ip + ":" + port + "/HttpRequestIsLocal/");
+				NetworkStream ns = HttpListener2Test.CreateNS (ip, port);
 				HttpListener2Test.Send (ns, "GET /HttpRequestIsLocal/ HTTP/1.0\r\n\r\n");
 				HttpListenerContext ctx = listener.GetContext ();
 				HttpListenerRequest request = ctx.Request;
