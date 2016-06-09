@@ -137,8 +137,16 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
 #define g_alloca(size)		alloca (size)
 
+/* FIXME: This is from a later version of glib. */
+#define g_atomic_pointer_add(p, x) (gssize)__sync_fetch_and_add ((p), (x))
+
+/* FIXME: Not cross-platform. */
+#include <malloc/malloc.h>
+#define g_malloc_size(p) malloc_size((p))
+#define g_malloc_good_size(p) malloc_good_size((p))
+
 gpointer g_memdup (gconstpointer mem, guint byte_size);
-static inline gchar   *g_strdup (const gchar *str) { if (str) {return strdup (str);} return NULL; }
+gchar *g_strdup (const gchar *str);
 gchar **g_strdupv (gchar **str_array);
 
 typedef struct {

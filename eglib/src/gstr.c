@@ -38,9 +38,6 @@
 gchar *
 g_strndup (const gchar *str, gsize n)
 {
-#ifdef HAVE_STRNDUP
-	return strndup (str, n);
-#else
 	if (str) {
 		char *retval = g_malloc(n+1);
 		if (retval) {
@@ -49,7 +46,6 @@ g_strndup (const gchar *str, gsize n)
 		return retval;
 	}
 	return NULL;
-#endif
 }
 
 void
@@ -63,6 +59,23 @@ g_strfreev (gchar **str_array)
 		str_array++;
 	}
 	g_free (orig);
+}
+
+extern gint64 g_allocated_memory;
+void log_alloc (gpointer, gsize);
+
+gchar *
+g_strdup (const gchar *str) {
+	if (str) {
+		gchar *ptr = strdup (str);
+		if (ptr) {
+			gsize size = g_malloc_size (ptr);
+			g_atomic_pointer_add (&g_allocated_memory, size);
+			log_alloc (ptr, size);
+		}
+		return ptr;
+	}
+	return NULL;
 }
 
 gchar **
@@ -134,6 +147,12 @@ g_strdup_vprintf (const gchar *format, va_list args)
 	char *ret;
 	
 	n = vasprintf (&ret, format, args);
+	if (ret) {
+		gsize size = g_malloc_size (ret);
+		g_atomic_pointer_add (&g_allocated_memory, size);
+		log_alloc (ret, size);
+	}
+
 	if (n == -1)
 		return NULL;
 
@@ -149,6 +168,12 @@ g_strdup_printf (const gchar *format, ...)
 
 	va_start (args, format);
 	n = vasprintf (&ret, format, args);
+	if (ret) {
+		gsize size = g_malloc_size (ret);
+		g_atomic_pointer_add (&g_allocated_memory, size);
+		log_alloc (ret, size);
+	}
+
 	va_end (args);
 	if (n == -1)
 		return NULL;

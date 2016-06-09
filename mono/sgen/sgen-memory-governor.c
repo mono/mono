@@ -16,6 +16,7 @@
 #include "config.h"
 #ifdef HAVE_SGEN_GC
 
+#include <inttypes.h>
 #include <stdlib.h>
 
 #include "mono/sgen/sgen-gc.h"
@@ -70,6 +71,8 @@ static mword sgen_memgov_available_free_space (void);
 
 /* GC trigger heuristics. */
 
+extern guint64 g_allocated_memory;
+
 static void
 sgen_memgov_calculate_minor_collection_allowance (void)
 {
@@ -116,6 +119,8 @@ sgen_memgov_calculate_minor_collection_allowance (void)
 	major_collection_trigger_size = new_heap_size + allowance;
 
 	need_calculate_minor_collection_allowance = FALSE;
+
+	SGEN_LOG (0, "malloc memory in use: %" PRId64, g_allocated_memory);
 
 	if (debug_print_allowance) {
 		SGEN_LOG (0, "Surviving sweep: %ld bytes (%ld major, %ld LOS)", (long)new_heap_size, (long)new_major, (long)last_collection_los_memory_usage);
