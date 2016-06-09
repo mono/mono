@@ -140,9 +140,16 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 /* FIXME: This is from a later version of glib. */
 #define g_atomic_pointer_add(p, x) (gssize)__sync_fetch_and_add ((p), (x))
 
-/* FIXME: Not cross-platform. */
+#if defined WIN32
+#include <malloc.h>
+#define g_malloc_size(p) _msize((p))
+#elif defined __APPLE__
 #include <malloc/malloc.h>
 #define g_malloc_size(p) malloc_size((p))
+#elif defined __linux__
+#include <malloc.h>
+#define g_malloc_size(p) malloc_usable_size((p))
+#endif
 
 extern volatile gint64 mono_stat_malloc_memory;
 extern volatile gint64 mono_stat_malloc_traffic;
