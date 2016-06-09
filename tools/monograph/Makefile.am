@@ -26,7 +26,7 @@ else
 if DISABLE_LIBRARIES
 bin_PROGRAMS =
 else
-if SUPPORT_BOEHM
+if SUPPORT_SGEN
 bin_PROGRAMS = monograph
 endif
 endif
