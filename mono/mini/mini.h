@@ -2785,6 +2785,8 @@ gpointer mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboole
 gpointer mono_create_handler_block_trampoline (void);
 gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 
+int inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp, guchar *ip, guint real_offset, gboolean inline_always);
+
 /*New interruption machinery */
 void
 mono_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
@@ -2990,6 +2992,11 @@ mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_va
 gboolean
 mini_class_is_generic_sharable (MonoClass *klass);
 
+int
+mini_class_check_context_used (MonoCompile *cfg, MonoClass *klass);
+
+MonoInst*
+emit_get_rgctx_klass (MonoCompile *cfg, int context_used, MonoClass *klass, MonoRgctxInfoType rgctx_type);
 
 gboolean
 mini_generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars, gboolean allow_partial);

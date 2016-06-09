@@ -12,6 +12,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
+#include "typechecks.h"
 
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/abi-details.h>
@@ -1958,6 +1959,33 @@ mono_local_emulate_ops (MonoCompile *cfg)
 			mono_decompose_long_opts (cfg);
 		if (cfg->opt & (MONO_OPT_CONSPROP | MONO_OPT_COPYPROP))
 			mono_local_cprop (cfg);
+	}
+}
+
+
+void mono_decompose_typechecks (MonoCompile *cfg)
+{
+	for (MonoBasicBlock *bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *ins;
+		MONO_BB_FOR_EACH_INS (bb, ins) {
+			switch (ins->opcode) {
+				case OP_ISINST:
+				case OP_CASTCLASS: {
+					MonoInst *ret, *move;
+					MonoBasicBlock *first_bb;
+
+					NEW_BBLOCK (cfg, first_bb);
+					cfg->cbb = first_bb;
+
+					ret = typechecks_decompose_instruction (cfg, ins);
+					EMIT_NEW_UNALU (cfg, move, OP_MOVE, ins->dreg, ret->dreg);
+
+					g_assert (cfg->cbb->code || first_bb->code);
+					MonoInst *prev = ins->prev;
+					mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
+				} break;
+			}
+		}
 	}
 }
 
