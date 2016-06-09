@@ -839,7 +839,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	/* Create suspended, so we can do some housekeeping before the thread
 	 * starts
 	 */
-	tp.priority = thread->priority;
+	tp.priority = thread->internal_thread->priority;
 	tp.stack_size = stack_size;
 	tp.creation_flags = CREATE_SUSPENDED;
 
@@ -1420,7 +1420,7 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj)
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	priority = GetThreadPriority (internal, this_obj->priority) + 2;
+	priority = GetThreadPriority (internal) + 2;
 	UNLOCK_THREAD (internal);
 	return priority;
 }
@@ -1438,7 +1438,7 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priorit
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	this_obj->priority = priority - 2;
+	internal->priority = priority - 2;
 	SetThreadPriority (internal->handle, priority - 2);
 	UNLOCK_THREAD (internal);
 }

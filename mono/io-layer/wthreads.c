@@ -34,6 +34,8 @@
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
 
+#include <mono/metadata/object-internals.h>
+
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
@@ -341,7 +343,7 @@ wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy)
  * thread priority, or THREAD_PRIORITY_NORMAL on error.
  */
 gint32 
-GetThreadPriority (gpointer handle, int defPriority)
+GetThreadPriority (gpointer handle)
 {
 	struct _WapiHandle_thread *thread_handle;
 	int policy;
@@ -352,7 +354,7 @@ GetThreadPriority (gpointer handle, int defPriority)
 	if (ok == FALSE) {
 		pthread_getschedparam (pthread_self(), &policy, &param);
 		if ((policy == SCHED_FIFO) || (policy == SCHED_RR)) 
-			return (defPriority);
+			return (((MonoInternalThread *)handle)->priority);
 		else
 			return (THREAD_PRIORITY_NORMAL);
 	}

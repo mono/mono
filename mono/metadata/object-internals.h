@@ -376,13 +376,14 @@ struct _MonoInternalThread {
 	gpointer interrupt_on_stop;
 	gsize    flags;
 	gpointer thread_pinning_ref;
+	gint32 priority;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
 	 * Please synchronize any changes with InternalThread in Thread.cs, i.e. add the
 	 * same field there.
 	 */
-	gpointer unused1;
+	gint32 unused1;
 	gpointer unused2;
 };
 
@@ -391,7 +392,6 @@ struct _MonoThread {
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
-	int priority;		
 };
 
 typedef struct {
