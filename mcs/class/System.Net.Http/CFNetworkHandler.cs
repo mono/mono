@@ -100,7 +100,7 @@ namespace System.Net.Http
 
 		public CookieContainer CookieContainer {
 			get {
-				return cookies;
+				return cookieContainer ?? (cookieContainer = new CookieContainer ());
 			}
 			set {
 				EnsureModifiability ();
