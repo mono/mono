@@ -467,6 +467,14 @@ enum {
         NULLIFY_INS ((ins)); \
     } while (0)
 
+
+typedef enum {
+	MINI_OP_FLAG_NONE = 1,
+	MINI_OP_FLAG_IS_CALL = 2
+} MiniOpFlag;
+
+extern const gint8 mini_op_ins_flags [];
+
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
  * because they have weird semantics with NaNs.
@@ -485,8 +493,7 @@ enum {
 #define MONO_IS_STORE_MEMBASE(ins) (((ins)->opcode >= OP_STORE_MEMBASE_REG && (ins)->opcode <= OP_STOREV_MEMBASE) || ((ins)->opcode >= OP_ATOMIC_STORE_I1 && (ins)->opcode <= OP_ATOMIC_STORE_R8))
 #define MONO_IS_STORE_MEMINDEX(ins) (((ins)->opcode >= OP_STORE_MEMINDEX) && ((ins)->opcode <= OP_STORER8_MEMINDEX))
 
-// OP_DYN_CALL is not a MonoCallInst
-#define MONO_IS_CALL(ins) (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VCALL2_MEMBASE)) || (ins->opcode == OP_TAILCALL))
+#define MONO_IS_CALL(ins) ((mini_op_ins_flags [(ins)->opcode - OP_START - 1]) & MINI_OP_FLAG_IS_CALL)
 
 #define MONO_IS_JUMP_TABLE(ins) (((ins)->opcode == OP_JUMP_TABLE) ? TRUE : ((((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : ((ins)->opcode == OP_SWITCH) ? TRUE : ((((ins)->opcode == OP_GOT_ENTRY) && ((ins)->inst_right->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : FALSE)))
 
@@ -1949,8 +1956,8 @@ extern MonoJitStats mono_jit_stats;
 #ifdef MINI_OP3
 #undef MINI_OP3
 #endif
-#define MINI_OP(a,b,dest,src1,src2) a,
-#define MINI_OP3(a,b,dest,src1,src2,src3) a,
+#define MINI_OP(a,b,dest,src1,src2,flags) a,
+#define MINI_OP3(a,b,dest,src1,src2,src3,flags) a,
 enum {
 	OP_START = MONO_CEE_LAST - 1,
 #include "mini-ops.h"

@@ -16,8 +16,8 @@ volatile int __nacl_thread_suspension_needed = 0;
 void __nacl_suspend_thread_if_needed() {}
 #endif
 
-#define MINI_OP(a,b,dest,src1,src2) b,
-#define MINI_OP3(a,b,dest,src1,src2,src3) b,
+#define MINI_OP(a,b,dest,src1,src2,flags) b,
+#define MINI_OP3(a,b,dest,src1,src2,src3,flags) b,
 /* keep in sync with the enum in mini.h */
 static const char* const
 opnames[] = {

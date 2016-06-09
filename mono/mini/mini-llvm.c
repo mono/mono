@@ -187,9 +187,9 @@ typedef struct {
 #ifdef MINI_OP3
 #undef MINI_OP3
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2, ' ',
-#define MINI_OP3(a,b,dest,src1,src2,src3) dest, src1, src2, src3,
-#define NONE ' '
+#define MINI_OP(a,b,dest,src1,src2,flags) dest, src1, src2, ' ',
+#define MINI_OP3(a,b,dest,src1,src2,src3,flags) dest, src1, src2, src3,
+#define NOREG ' '
 #define IREG 'i'
 #define FREG 'f'
 #define VREG 'v'
