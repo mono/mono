@@ -715,6 +715,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			var interpolated_string = expr as InterpolatedString;
+			if (interpolated_string != null) {
+				if (target_type == rc.Module.PredefinedTypes.IFormattable.TypeSpec || target_type == rc.Module.PredefinedTypes.FormattableString.TypeSpec)
+					return true;
+			}
+
 			return ImplicitStandardConversionExists (expr, target_type);
 		}
 

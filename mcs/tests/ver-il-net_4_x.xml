@@ -68003,6 +68003,19 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-10.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>106</size>
+      </method>
+      <method name="Void FormatPrint(System.FormattableString)" attrs="145">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
