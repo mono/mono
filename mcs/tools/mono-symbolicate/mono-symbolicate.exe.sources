@@ -1,3 +1,6 @@
 symbolicate.cs
 LocationProvider.cs
 SeqPointInfo.cs
+StackFrameData.cs
+StackTraceMetadata.cs
+SymbolManager.cs
