@@ -1,92 +1,107 @@
 using System;
 using System.IO;
+using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
-namespace Symbolicate
+namespace Mono
 {
-	public class Program
+	public class Symbolicate
 	{
-		static Regex regex = new Regex (@"\w*at (?<Method>.+) *(\[0x(?<IL>.+)\]|<0x.+ \+ 0x(?<NativeOffset>.+)>( (?<MethodIndex>\d+)|)) in <filename unknown>:0");
-
 		public static int Main (String[] args)
 		{
 			if (args.Length < 2) {
-				Console.Error.WriteLine ("Usage: symbolicate <assembly path> <input file> [lookup directories]");
+				Console.Error.WriteLine ("Usage: symbolicate <msym dir> <input file>");
 				return 1;
 			}
 
-			var assemblyPath = args [0];
+			var msymDir = args [0];
 			var inputFile = args [1];
 
-			var locProvider = new LocationProvider ();
-
-			for (var i = 2; i < args.Length; i++)
-				locProvider.AddDirectory (args [i]);
-
-			locProvider.AddAssembly (assemblyPath);
+			var symbolManager = new SymbolManager (msymDir);
 
 			using (StreamReader r = new StreamReader (inputFile)) {
-			    for (var line = r.ReadLine (); line != null; line = r.ReadLine ()) {
-					line = SymbolicateLine (line, locProvider);
-					Console.WriteLine (line);
-			    }
+				var sb = Process (r, symbolManager);
+				Console.WriteLine (sb.ToString ());
 			}
 
 			return 0;
 		}
 
-		static string SymbolicateLine (string line, LocationProvider locProvider)
+		public static StringBuilder Process (StreamReader reader, SymbolManager symbolManager)
 		{
-			var match = regex.Match (line);
-			if (!match.Success)
-				return line;
+			List<StackFrameData> stackFrames = new List<StackFrameData>();
+			List<StackTraceMetadata> metadata = new List<StackTraceMetadata>();
+			StringBuilder sb = new StringBuilder ();
+			bool linesEnded = false;
 
-			string typeFullName, methodSignature;
-			var methodStr = match.Groups ["Method"].Value.Trim ();
-			if (!ExtractSignatures (methodStr, out typeFullName, out methodSignature))
-				return line;
+			for (var line = reader.ReadLine (); line != null; line = reader.ReadLine ()) {
+				 {
+					StackFrameData sfData;
+					if (!linesEnded && StackFrameData.TryParse (line, out sfData)) {
+						stackFrames.Add (sfData);
+						continue;
+					}
+					linesEnded = true;
+				} 
 
-			var isOffsetIL = !string.IsNullOrEmpty (match.Groups ["IL"].Value);
-			var offsetVarName = (isOffsetIL)? "IL" : "NativeOffset";
-			var offset = int.Parse (match.Groups [offsetVarName].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+				if (stackFrames.Count > 0) {
+					{
+						StackTraceMetadata stMetadata;
+						if (StackTraceMetadata.TryParse (line, out stMetadata)) {
+							metadata.Add (stMetadata);
+							continue;
+						}
+					}
 
-			uint methodIndex = 0xffffff;
-			if (!string.IsNullOrEmpty (match.Groups ["MethodIndex"].Value))
-				methodIndex = uint.Parse (match.Groups ["MethodIndex"].Value, CultureInfo.InvariantCulture);
+					string aotid = null;
+					var aotidMetadata = metadata.FirstOrDefault ( m => m.Id == "AOTID" );
+					if (aotidMetadata != null)
+						aotid = aotidMetadata.Value;
 
-			var loc = locProvider.TryGetLocation (typeFullName, methodSignature, offset, isOffsetIL, methodIndex);
-			if (loc == null)
-				return line;
+					var linesMvid = ProcessLinesMVID (metadata);
+					var lineNumber = 0;
+					foreach (var sfData in stackFrames) {
+						string mvid = null;
+						if (linesMvid.ContainsKey (lineNumber))
+							mvid = linesMvid [lineNumber++];
 
-			return line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", loc.Document.Url, loc.StartLine));
+						symbolManager.TryResolveLocation (sfData, mvid, aotid);
+
+						sb.AppendLine (sfData.ToString ());
+					}
+
+					foreach (var m in metadata)
+						sb.AppendLine (m.Line);
+					
+					// Clear lists for next stack trace
+					stackFrames.Clear ();
+					metadata.Clear ();
+				}
+
+				linesEnded = false;
+
+				// Append last line
+				sb.AppendLine (line);
+			}
+
+			return sb;
 		}
 
-		static bool ExtractSignatures (string str, out string typeFullName, out string methodSignature)
+		private static Dictionary<int, string> ProcessLinesMVID (List<StackTraceMetadata> metadata)
 		{
-			var methodNameEnd = str.IndexOf ('(');
-			if (methodNameEnd == -1) {
-				typeFullName = methodSignature = null;
-				return false;
+			var linesMvid = new Dictionary<int, string> ();
+			var mvidData = metadata.Where ( m => m.Id == "MVID" ).Select ( m => m.Value );
+			foreach (var m in mvidData) {
+				var s1 = m.Split (new char[] {' '}, 2);
+				var mvid = s1 [0];
+				var lines = s1 [1].Split (',');
+				foreach (var line in lines)
+					linesMvid.Add (int.Parse (line), mvid);
 			}
 
-			var typeNameEnd = str.LastIndexOf ('.', methodNameEnd);
-			if (typeNameEnd == -1) {
-				typeFullName = methodSignature = null;
-				return false;
-			}
-
-			// Adjustment for Type..ctor ()
-			if (typeNameEnd > 0 && str [typeNameEnd - 1] == '.') {
-				--typeNameEnd;
-			}
-
-			typeFullName = str.Substring (0, typeNameEnd);
-			// Remove generic parameters
-			typeFullName = Regex.Replace (typeFullName, @"\[[^\[\]]*\]", "");
-
-			methodSignature = str.Substring (typeNameEnd + 1);
-			return true;
+			return linesMvid;
 		}
 	}
 }

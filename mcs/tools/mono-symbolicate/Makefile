@@ -15,6 +15,7 @@ LIB_PATH = $(topdir)/class/lib/$(PROFILE)
 
 MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
 
+MSYM_DIR = msymdir
 OUT_DIR = Test/out
 TEST_CS = Test/StackTraceDumper.cs
 TEST_EXE = $(OUT_DIR)/StackTraceDumper.exe
@@ -24,7 +25,7 @@ SYMBOLICATE_EXPECTED_FILE = Test/symbolicate.expected
 
 CHECK_DIFF = @\
 	MONO_DEBUG=gen-compact-seq-points $(MONO) $(TEST_EXE) > $(RELEASE_FILE); \
-	$(MONO) $(LIB_PATH)/$(PROGRAM) $(TEST_EXE) $(RELEASE_FILE) | sed "s/).*Test\//) in /" > $(SYMBOLICATE_FILE); \
+	$(MONO) $(LIB_PATH)/$(PROGRAM) $(MSYM_DIR) $(RELEASE_FILE) | sed "s/).*Test\//) in /" > $(SYMBOLICATE_FILE); \
 	DIFF=$$(diff $(SYMBOLICATE_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \
