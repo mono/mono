@@ -61,17 +61,14 @@ g_strfreev (gchar **str_array)
 	g_free (orig);
 }
 
-extern gint64 g_allocated_memory;
-void log_alloc (gpointer, gsize);
-
 gchar *
 g_strdup (const gchar *str) {
 	if (str) {
 		gchar *ptr = strdup (str);
 		if (ptr) {
 			gsize size = g_malloc_size (ptr);
-			g_atomic_pointer_add (&g_allocated_memory, size);
-			log_alloc (ptr, size);
+			g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+			mono_allog_alloc (ptr, size);
 		}
 		return ptr;
 	}
@@ -149,8 +146,8 @@ g_strdup_vprintf (const gchar *format, va_list args)
 	n = vasprintf (&ret, format, args);
 	if (ret) {
 		gsize size = g_malloc_size (ret);
-		g_atomic_pointer_add (&g_allocated_memory, size);
-		log_alloc (ret, size);
+		g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+		mono_allog_alloc (ret, size);
 	}
 
 	if (n == -1)
@@ -170,8 +167,8 @@ g_strdup_printf (const gchar *format, ...)
 	n = vasprintf (&ret, format, args);
 	if (ret) {
 		gsize size = g_malloc_size (ret);
-		g_atomic_pointer_add (&g_allocated_memory, size);
-		log_alloc (ret, size);
+		g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+		mono_allog_alloc (ret, size);
 	}
 
 	va_end (args);

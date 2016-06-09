@@ -29,7 +29,9 @@
 #include <string.h>
 #include <glib.h>
 
-volatile gint64 g_allocated_memory = 0;
+volatile gint64 mono_stat_malloc_memory = 0;
+
+#ifdef MONO_ENABLE_ALLOG
 
 #include <inttypes.h>
 #include <pthread.h>
@@ -73,8 +75,7 @@ allog_insert (const gpointer address, const gsize size)
 			return;
 		}
 	}
-	g_printerr ("Allocation log full.\n");
-	g_assert_not_reached ();
+	g_error ("Allocation log full.\n");
 }
 
 static void
@@ -88,12 +89,11 @@ allog_remove (const gpointer address)
 			return;
 		}
 	}
-	g_printerr ("Freeing unallocated pointer %p\n", address);
-	/* g_assert_not_reached (); */
+	g_error ("Freeing unallocated pointer %p\n", address);
 }
 
 static void
-log_init (void)
+allog_init (void)
 {
 	if (allog_inited)
 		return;
@@ -102,45 +102,57 @@ log_init (void)
 }
 
 void
-log_alloc (const gpointer address, const gsize size)
+mono_allog_alloc (const gpointer address, const gsize size)
 {
 	pthread_mutex_lock (&allog_lock);
-	log_init ();
+	allog_init ();
 	const gsize existing = allog_find (address);
 	if (existing)
-		g_printerr ("Address %p already in use with size %zu when allocating %zu bytes\n", address, existing, size);
+		g_error ("Address %p already in use with size %zu when allocating %zu bytes\n", address, existing, size);
 	allog_insert (address, size);
 	pthread_mutex_unlock (&allog_lock);
 }
 
-static void
-log_free (const gpointer address, const gsize size)
+void
+mono_allog_free (const gpointer address, const gsize size)
 {
 	/* free(null) is fine. */
 	if (!address)
 		return;
 	pthread_mutex_lock (&allog_lock);
 	if (!allog_inited)
-		g_printerr ("Freeing %zu bytes at %p before allocating anything\n", size, address);
-	log_init ();
+		g_error ("Freeing %zu bytes at %p before allocating anything\n", size, address);
+	allog_init ();
 	gsize existing = allog_find (address);
 	if (!existing)
-		g_printerr ("Freeing pointer %p of size %zu that was not allocated\n", address, size);
+		g_error ("Freeing pointer %p of size %zu that was not allocated\n", address, size);
 	if (existing != size)
-		g_printerr ("Allocated size %zu did not match expected size %zu when freeing %p\n", existing, size, address);
-	/* g_assert (allog_find (address) == size); */
+		g_error ("Allocated size %zu did not match expected size %zu when freeing %p\n", existing, size, address);
 	allog_remove (address);
 	pthread_mutex_unlock (&allog_lock);
 }
+
+#else
+
+void
+mono_allog_alloc (const gpointer address, const gsize size)
+{
+}
+
+void
+mono_allog_free (const gpointer address, const gsize size)
+{
+}
+
+#endif /* MONO_ENABLE_ALLOG */
 
 void
 g_free (void *ptr)
 {
 	if (ptr != NULL) {
 		gsize size = g_malloc_size (ptr);
-		g_atomic_pointer_add (&g_allocated_memory, -(gssize)size);
-		log_free (ptr, size);
-		/* g_print ("freed %zu bytes at %p %" PRId64 "\n", size, ptr, g_allocated_memory); */
+		g_atomic_pointer_add (&mono_stat_malloc_memory, -(gssize)size);
+		mono_allog_free (ptr, size);
 		free (ptr);
 	}
 }
@@ -171,10 +183,9 @@ gpointer g_realloc (gpointer obj, gsize size)
 	ptr = realloc (obj, size);
 	if (ptr) {
 		gsize new_size = g_malloc_size (ptr);
-		g_atomic_pointer_add (&g_allocated_memory, new_size - old_size);
-		log_free (obj, old_size);
-		log_alloc (ptr, new_size);
-		/* g_print ("reallocated %zu -> %zu bytes at %p -> %p %" PRId64 "\n", old_size, new_size, obj, ptr, g_allocated_memory); */
+		g_atomic_pointer_add (&mono_stat_malloc_memory, new_size - old_size);
+		mono_allog_free (obj, old_size);
+		mono_allog_alloc (ptr, new_size);
 		return ptr;
 	}
 	g_error ("Could not allocate %i bytes", size);
@@ -189,9 +200,8 @@ g_malloc (gsize x)
 	ptr = malloc (x);
 	if (ptr) {
 		gsize size = g_malloc_size (ptr);
-		g_atomic_pointer_add (&g_allocated_memory, size);
-		log_alloc (ptr, size);
-		/* g_print ("allocated %zu bytes at %p %" PRId64 "\n", size, ptr, g_allocated_memory); */
+		g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+		mono_allog_alloc (ptr, size);
 		return ptr;
 	}
 	g_error ("Could not allocate %i bytes", x);
@@ -205,9 +215,8 @@ gpointer g_malloc0 (gsize x)
 	ptr = calloc(1,x); 
 	if (ptr) {
 		gsize size = g_malloc_size (ptr);
-		g_atomic_pointer_add (&g_allocated_memory, size);
-		log_alloc (ptr, size);
-		/* g_print ("allocated %zu bytes at %p %" PRId64 "\n", size, ptr, g_allocated_memory); */
+		g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+		mono_allog_alloc (ptr, size);
 		return ptr;
 	}
 	g_error ("Could not allocate %i bytes", x);
@@ -219,9 +228,8 @@ gpointer g_try_malloc (gsize x)
 		gpointer ptr = malloc (x);
 		if (ptr) {
 			gsize size = g_malloc_size (ptr);
-			g_atomic_pointer_add (&g_allocated_memory, size);
-			log_alloc (ptr, size);
-			/* g_print ("allocated %zu bytes at %p %" PRId64 "\n", size, ptr, g_allocated_memory); */
+			g_atomic_pointer_add (&mono_stat_malloc_memory, size);
+			mono_allog_alloc (ptr, size);
 		}
 		return ptr;
 	}
@@ -240,10 +248,9 @@ gpointer g_try_realloc (gpointer obj, gsize size)
 	ptr = realloc (obj, size);
 	if (ptr) {
 		gsize new_size = g_malloc_size (ptr);
-		g_atomic_pointer_add (&g_allocated_memory, new_size - old_size);
-		log_free (obj, old_size);
-		log_alloc (ptr, new_size);
-		/* g_print ("reallocated %zu -> %zu bytes at %p -> %p %" PRId64 "\n", old_size, new_size, obj, ptr, g_allocated_memory); */
+		g_atomic_pointer_add (&mono_stat_malloc_memory, new_size - old_size);
+		mono_allog_free (obj, old_size);
+		mono_allog_alloc (ptr, new_size);
 	}
 	return ptr;
 }
