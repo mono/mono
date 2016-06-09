@@ -676,19 +676,15 @@ namespace Mono.CSharp
 			if (!param.IsEmpty) {
 				if (is_valid_property) {
 					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
-					if (index_name == null) {
+					if (index_name == null || index_name != pi.Name) {
 						is_valid_property = false;
 					} else {
 						if (get != null) {
 							if (get.IsStatic)
 								is_valid_property = false;
-							if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-								is_valid_property = false;
 						}
 						if (set != null) {
 							if (set.IsStatic)
-								is_valid_property = false;
-							if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
 								is_valid_property = false;
 						}
 					}

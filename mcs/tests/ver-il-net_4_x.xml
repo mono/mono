@@ -52181,6 +52181,16 @@
       </method>
     </type>
   </test>
+  <test name="test-936.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-94.cs">
     <type name="Base">
       <method name="Int32 IVehicle.Start()" attrs="481">
