@@ -313,10 +313,10 @@ if SHARED_MONO
 pedump_SOURCES =		\
 	pedump.c
 
-$(top_srcdir)/mono/sgen/libmonosgen.la:
-	make -w -C $(top_srcdir)/mono/sgen libmonosgen.la
+../sgen/libmonosgen.la:
+	make -w -C ../sgen libmonosgen.la
 
-pedump_LDADD = $(sgen_libraries) $(top_srcdir)/mono/sgen/libmonosgen.la ../io-layer/libwapi.la ../utils/libmonoutils.la \
+pedump_LDADD = $(sgen_libraries) ../sgen/libmonosgen.la ../io-layer/libwapi.la ../utils/libmonoutils.la \
 	$(GLIB_LIBS) -lm $(LIBICONV) $(PEDUMP_DTRACE_OBJECT)
 
 if PLATFORM_DARWIN
