@@ -249,7 +249,9 @@ namespace System.Net {
 #if MONO
         internal bool AllowMultiValues (string name)
         {
-            return HInfo[name].AllowMultiValues;
+            var hinfo = HInfo[name];
+            // Is common header which supports multi value or it's unknown header
+            return hinfo.AllowMultiValues || hinfo.HeaderName == "";
         }
 #endif
 
