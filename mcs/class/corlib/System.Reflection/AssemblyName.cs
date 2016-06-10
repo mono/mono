@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.IO;
 
+using Mono;
 using Mono.Security;
 using Mono.Security.Cryptography;
 
@@ -443,6 +444,60 @@ namespace System.Reflection {
 			set {
 				contentType = value;
 			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern unsafe MonoAssemblyName* GetNativeName (IntPtr assembly_ptr);
+
+		internal static AssemblyName Create (Assembly assembly, bool fillCodebase)
+		{
+			AssemblyName aname = new AssemblyName ();
+			unsafe {
+				MonoAssemblyName *native = GetNativeName (assembly._mono_assembly);
+
+				aname.name = RuntimeMarshal.PtrToUtf8String (native->name);
+
+				aname.major = native->major;
+				aname.minor = native->minor;
+				aname.build = native->build;
+				aname.revision = native->revision;
+
+				aname.flags = (AssemblyNameFlags)native->flags;
+
+				aname.hashalg = (AssemblyHashAlgorithm)native->hash_alg;
+
+				aname.versioncompat = AssemblyVersionCompatibility.SameMachine;
+				aname.processor_architecture = (ProcessorArchitecture)native->arch;
+
+				aname.version = new Version (aname.major, aname.minor, aname.build, aname.revision);
+
+				if (fillCodebase)
+					aname.codebase = assembly.CodeBase;
+
+				if (native->culture != IntPtr.Zero)
+					aname.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), false);
+
+				if (native->public_key != IntPtr.Zero) {
+					aname.publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
+					aname.flags |= AssemblyNameFlags.PublicKey;
+				} else {
+					aname.publicKey = EmptyArray<byte>.Value;
+					aname.flags |= AssemblyNameFlags.PublicKey;
+				}
+
+				// MonoAssemblyName keeps the public key token as an hexadecimal string
+				if (native->public_key_token [0] != 0) {
+					byte[] keyToken = new byte [8];
+					for (int i = 0, j = 0; i < 8; ++i) {
+						keyToken [i] = (byte)(RuntimeMarshal.AsciHexDigitValue (native->public_key_token [j++]) << 4);
+						keyToken [i] |= (byte)RuntimeMarshal.AsciHexDigitValue (native->public_key_token [j++]);
+					}
+					aname.keyToken = keyToken;
+				} else {
+					aname.keyToken = EmptyArray<byte>.Value;
+				}
+			}
+			return aname;
 		}
 	}
 }

@@ -41,6 +41,8 @@ using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
 
+using Mono;
+
 namespace System.Reflection {
 
 	abstract class RuntimeAssembly : Assembly
@@ -162,12 +164,8 @@ namespace System.Reflection {
 				var _ = CodeBase; // this will ensure the Demand is made
 			}
 #endif
-
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
-			return aname;
+			return AssemblyName.Create (this, true);
 		}
-
 	}
 
 	[ComVisible (true)]
