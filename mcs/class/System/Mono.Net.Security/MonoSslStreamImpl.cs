@@ -222,7 +222,7 @@ namespace Mono.Net.Security.Private
 		}
 
 		public int KeyExchangeStrength {
-			get { return KeyExchangeStrength; }
+			get { return Impl.KeyExchangeStrength; }
 		}
 
 		public bool CanRead {
