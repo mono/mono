@@ -34,8 +34,6 @@
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
 
-#include <mono/metadata/object-internals.h>
-
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
@@ -345,19 +343,14 @@ wapi_thread_priority_to_posix_priority (WapiThreadPriority priority, int policy)
 gint32 
 GetThreadPriority (gpointer handle)
 {
-	struct _WapiHandle_thread *thread_handle;
+	struct _WapiHandle_thread *thread_handle = NULL;
 	int policy;
 	struct sched_param param;
 	gboolean ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				  (gpointer *)&thread_handle);
 				  
-	if (ok == FALSE) {
-		pthread_getschedparam (pthread_self(), &policy, &param);
-		if ((policy == SCHED_FIFO) || (policy == SCHED_RR)) 
-			return (((MonoInternalThread *)handle)->priority);
-		else
-			return (THREAD_PRIORITY_NORMAL);
-	}
+	if (ok == FALSE)
+		return (THREAD_PRIORITY_NORMAL);
 	
 	switch (pthread_getschedparam (thread_handle->id, &policy, &param)) {
 		case 0:
@@ -380,7 +373,7 @@ GetThreadPriority (gpointer handle)
 gboolean 
 SetThreadPriority (gpointer handle, gint32 priority)
 {
-	struct _WapiHandle_thread *thread_handle;
+	struct _WapiHandle_thread *thread_handle = NULL;
 	int policy,
 	    posix_priority,
 	    rv;

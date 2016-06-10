@@ -591,6 +591,7 @@ new_thread_with_internal (MonoDomain *domain, MonoInternalThread *internal)
 	MonoThread *thread;
 
 	thread = create_thread_object (domain);
+	thread->priority = THREAD_PRIORITY_NORMAL;
 
 	MONO_OBJECT_SETREF (thread, internal_thread, internal);
 
@@ -839,7 +840,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	/* Create suspended, so we can do some housekeeping before the thread
 	 * starts
 	 */
-	tp.priority = thread->internal_thread->priority;
+	tp.priority = thread->priority;
 	tp.stack_size = stack_size;
 	tp.creation_flags = CREATE_SUSPENDED;
 
@@ -1420,7 +1421,10 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj)
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	priority = GetThreadPriority (internal) + 2;
+	if (internal->handle != NULL)
+		priority = GetThreadPriority (internal->handle) + 2;
+	else
+		priority = this_obj->priority + 2;
 	UNLOCK_THREAD (internal);
 	return priority;
 }
@@ -1438,8 +1442,9 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priorit
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	internal->priority = priority - 2;
-	SetThreadPriority (internal->handle, priority - 2);
+	this_obj->priority = priority - 2;
+	if (internal->handle != NULL)
+		SetThreadPriority (internal->handle, this_obj->priority);
 	UNLOCK_THREAD (internal);
 }
 
@@ -5085,7 +5090,7 @@ gpointer
 mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 {
 	MonoDomain *orig;
-	gboolean fresh_thread;
+	gboolean fresh_thread = FALSE;
 
 	if (!domain) {
 		/* Happens when called from AOTed code which is only used in the root domain. */

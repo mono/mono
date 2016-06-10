@@ -242,8 +242,6 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
-
-	/* Starting and current priority */
 } MonoThreadInfo;
 
 typedef struct {
