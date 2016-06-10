@@ -1221,8 +1221,10 @@ namespace System
 
 			try {
 				return ParseTZBuffer (id, buffer, length);
+			} catch (InvalidTimeZoneException) {
+				throw;
 			} catch (Exception e) {
-				throw new InvalidTimeZoneException (e.Message);
+				throw new InvalidTimeZoneException ("Time zone information file contains invalid data", e);
 			}
 		}
 
@@ -1279,7 +1281,7 @@ namespace System
 			if (time_types.Count == 0)
 				throw new InvalidTimeZoneException ();
 
-			if (time_types.Count == 1 && ((TimeType)time_types[0]).IsDst)
+			if (time_types.Count == 1 && time_types[0].IsDst)
 				throw new InvalidTimeZoneException ();
 
 			TimeSpan baseUtcOffset = new TimeSpan (0);
@@ -1360,8 +1362,8 @@ namespace System
 
 			TimeZoneInfo tz;
 			if (adjustmentRules.Count == 0 && !storeTransition) {
-				TimeType t = (TimeType)time_types [0];
 				if (standardDisplayName == null) {
+					var t = time_types [0];
 					standardDisplayName = t.Name;
 					baseUtcOffset = new TimeSpan (0, 0, t.Offset);
 				}
@@ -1405,6 +1407,20 @@ namespace System
 			var types = new Dictionary<int, TimeType> (count);
 			for (int i = 0; i < count; i++) {
 				int offset = ReadBigEndianInt32 (buffer, index + 6 * i);
+
+				//
+				// The official tz database contains timezone with GMT offsets
+				// not only in whole hours/minutes but in seconds. This happens for years
+				// before 1901. For example
+				//
+				// NAME		        GMTOFF   RULES	FORMAT	UNTIL
+				// Europe/Madrid	-0:14:44 -	LMT	1901 Jan  1  0:00s
+				//
+				// .NET as of 4.6.2 cannot handle that and uses hours/minutes only, so
+				// we remove seconds to not crash later
+				//
+				offset = (offset / 60) * 60;
+
 				byte is_dst = buffer [index + 6 * i + 4];
 				byte abbrev = buffer [index + 6 * i + 5];
 				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(int)abbrev]));
@@ -1460,7 +1476,7 @@ namespace System
 #endregion
 	}
 
-	struct TimeType {
+	class TimeType {
 		public readonly int Offset;
 		public readonly bool IsDst;
 		public string Name;

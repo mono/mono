@@ -923,17 +923,17 @@ namespace MonoTests.System
 					"Canada/Newfoundland",
 					"Europe/Moscow",
 					"Europe/Riga",
-					"N/A", // testing that the test doesn't fail with inexistent TZs
 				};
 				foreach (var tz in subMinuteDSTs) {
-					try {
-						TimeZoneInfo.FindSystemTimeZoneById (tz);
-					} catch (TimeZoneNotFoundException) {
-						// ok;
-					} catch (Exception ex) {
-						Assert.Fail (string.Format ("Failed to load TZ {0}: {1}", tz, ex.ToString ()));
-					}
+					TimeZoneInfo.FindSystemTimeZoneById (tz);
 				}
+			}
+
+			[Test]
+			[ExpectedException (typeof (TimeZoneNotFoundException))]
+			public void InvalidName ()
+			{
+				TimeZoneInfo.FindSystemTimeZoneById ("N/A");
 			}
 		}
 		

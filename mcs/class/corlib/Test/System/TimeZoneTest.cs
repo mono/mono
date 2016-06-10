@@ -326,6 +326,16 @@ public class TimeZoneTest {
 			Assert.IsTrue (tzi.SupportsDaylightSavingTime, "SupportsDaylightSavingTime");
 		}
 
+		[Test]
+		public void OldEraToLocalTime ()
+		{
+			TimeSpan offset = TimeSpan.Zero;
+			var dto = new DateTimeOffset (new DateTime (1900, 1, 1).Ticks, offset);
+
+			// Should never throw
+			dto.ToLocalTime ();
+		}
+
 #if MOBILE
 		// On device we cannot read the OS file system to look for /etc/localtime
 		// and /usr/share/zoneinfo - so we must initialize the BCL TimeZoneInfo
