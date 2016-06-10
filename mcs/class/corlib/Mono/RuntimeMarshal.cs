@@ -1,13 +1,50 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Mono {
+	internal struct StringMarshalHelper : IDisposable {
+		string str;
+		IntPtr value;
+		
+		internal StringMarshalHelper (string str)
+		{
+			this.str = str;
+			this.value = IntPtr.Zero;
+		}
+
+		public void Dispose ()
+		{
+			try {}
+			finally {
+				if (value != IntPtr.Zero) {
+					var tmp = value;
+					value = IntPtr.Zero;
+					Marshal.FreeHGlobal (tmp); //FIXME don't use hglobal memory
+				}
+			}
+		}
+
+		public IntPtr Value {
+			get {
+				if (value == IntPtr.Zero)
+					value = Marshal.StringToHGlobalAnsi (str); //FIXME we want to use mono_string_to_utf8
+				return value;
+			}
+		}
+	}
+
 	internal static class RuntimeMarshal {
 		internal static string PtrToUtf8String (IntPtr ptr)
 		{
 			unsafe {
 				return new String ((sbyte*)ptr);
 			}
+		}
+
+		internal static StringMarshalHelper MarshalString (string str)
+		{
+			return new StringMarshalHelper (str);
 		}
 
 		static int DecodeBlobSize (IntPtr in_ptr, out IntPtr out_ptr)
@@ -52,5 +89,8 @@ namespace Mono {
 				return c - 'a' + 10;
 			return c - 'A' + 10;
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal static extern void FreeAssemblyName (ref MonoAssemblyName name);
 	}
 }
