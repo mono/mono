@@ -219,6 +219,24 @@ _wapi_thread_disown_mutex (gpointer mutex)
 }
 
 /**
+ * wapi_init_thread_info_priority:
+ * @param handle: The thread handle to set.
+ * @param priority: Priority to initialize with
+ *
+ *   Initialize the priority field of the thread info
+ */
+void
+wapi_init_thread_info_priority (gpointer handle, gint32 priority)
+{
+	struct _WapiHandle_thread *thread_handle = NULL;
+	gboolean ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
+				  (gpointer *)&thread_handle);
+				  
+	if (ok == TRUE)
+		thread_handle->priority = priority;
+}
+
+/**
  * _wapi_thread_posix_priority_to_priority:
  *
  *   Convert a POSIX priority to a WapiThreadPriority.
@@ -354,7 +372,10 @@ GetThreadPriority (gpointer handle)
 	
 	switch (pthread_getschedparam (thread_handle->id, &policy, &param)) {
 		case 0:
-			return (_wapi_thread_posix_priority_to_priority (param.sched_priority, policy));
+			if ((policy == SCHED_FIFO) || (policy == SCHED_RR))
+				return (_wapi_thread_posix_priority_to_priority (param.sched_priority, policy));
+			else
+				return (thread_handle->priority);
 		case ESRCH:
 			g_warning ("pthread_getschedparam: error looking up thread id %x", (gsize)thread_handle->id);
 	}
@@ -398,6 +419,7 @@ SetThreadPriority (gpointer handle, gint32 priority)
 		
 	switch (pthread_setschedprio (thread_handle->id, posix_priority)) {
 		case 0:
+			thread_handle->priority = priority;
 			return TRUE;
 		case ESRCH:
 			g_warning ("pthread_setschedprio: error looking up thread id %x", (gsize)thread_handle->id);

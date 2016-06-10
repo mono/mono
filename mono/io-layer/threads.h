@@ -45,6 +45,7 @@ extern gint32 GetThreadPriority (gpointer handle);
 extern gboolean SetThreadPriority (gpointer handle, gint32 priority);
 
 extern int wapi_thread_priority_to_posix_priority (WapiThreadPriority, int);
+extern void wapi_init_thread_info_priority (gpointer, gint32);
 
 G_END_DECLS
 #endif /* _WAPI_THREADS_H_ */

@@ -41,6 +41,7 @@ typedef struct {
 	void *(*start_routine)(void*);
 	void *arg;
 	int flags;
+	gint32 priority;
 	MonoCoopSem registered;
 	HANDLE handle;
 } StartInfo;
@@ -70,6 +71,8 @@ inner_start_thread (void *arg)
 
 	info->runtime_thread = TRUE;
 	info->handle = handle;
+
+	wapi_init_thread_info_priority(handle, start_info->priority);
 
 	if (flags & CREATE_SUSPENDED) {
 		info->create_suspended = TRUE;
@@ -139,10 +142,12 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 		sp.sched_priority = wapi_thread_priority_to_posix_priority (tp->priority, policy);
 		res = pthread_attr_setschedparam (&attr, &sp);
 	}
+
 	memset (&start_info, 0, sizeof (StartInfo));
 	start_info.start_routine = (void *(*)(void *)) start_routine;
 	start_info.arg = arg;
 	start_info.flags = tp->creation_flags;
+	start_info.priority = tp->priority;
 	mono_coop_sem_init (&(start_info.registered), 0);
 
 	/* Actually start the thread */
