@@ -1051,25 +1051,21 @@ namespace System.Runtime.InteropServices
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			int len = s.Length;
-			IntPtr ctm = AllocCoTaskMem ((len+1) * 2 + 4);
-			byte [] buffer = null;
-			WriteInt32 (ctm, 0, len*2);
-			try {
-				buffer = s.GetBuffer ();
 
-				for (int i = 0; i < len; i++)
-					WriteInt16 (ctm, 4 + (i * 2), (short) ((buffer [(i*2)] << 8) | (buffer [i*2+1])));
-				WriteInt16 (ctm, 4 + buffer.Length, 0);
-			} finally {
-				if (buffer != null)
-					for (int i = buffer.Length; i > 0; ){
-						i--;
-						buffer [i] = 0;
-					}
+			byte[] buffer = s.GetBuffer ();
+			int len = s.Length;
+			
+			// SecureString doesn't take endian-ness into account. 
+			// Therefore swap bytes here before we send it to c-side if little-endian.
+			if (BitConverter.IsLittleEndian) {
+				for (int i = 0; i < buffer.Length; i += 2) {
+					byte b = buffer[i];
+					buffer[i] = buffer[i + 1];
+					buffer[i + 1] = b;
+				}
 			}
-			return (IntPtr) ((long)ctm + 4);
-		}
+			return BufferToBSTR (buffer, len);
+        }
 
 		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
 		{
@@ -1155,6 +1151,10 @@ namespace System.Runtime.InteropServices
 			if (ex != null)
 				throw ex;
 		}
+
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr BufferToBSTR (Array ptr, int slen);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);
