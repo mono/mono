@@ -2311,7 +2311,6 @@ namespace MonoTests.System.Net
 			completed [1] = new ManualResetEvent (false);
 
 			using (ListenerScope scope = new ListenerScope (processor, port, completed [0])) {
-				ManualResetEvent clientCompleted = new ManualResetEvent (false);
 				Uri address = new Uri (string.Format ("http://localhost:{0}", port));
 				HttpWebRequest client = (HttpWebRequest) WebRequest.Create (address);
 

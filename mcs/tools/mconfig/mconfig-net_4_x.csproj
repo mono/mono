@@ -67,8 +67,7 @@
     <Compile Include="Mono.MonoConfig\IDocumentNodeHandler.cs" />
     <Compile Include="Mono.MonoConfig\IFeatureGenerator.cs" />
     <Compile Include="Mono.MonoConfig\IStorageConsumer.cs" />
-    <Compile Include="Mono.MonoConfig\Section.cs" />
-    <Compile Include="Mono.MonoConfig\consts.cs" />  </ItemGroup>
+    <Compile Include="Mono.MonoConfig\Section.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

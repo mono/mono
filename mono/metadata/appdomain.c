@@ -39,6 +39,7 @@
 #include "mono/metadata/metadata-internals.h"
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/exception-internals.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threadpool-ms.h>
 #include <mono/metadata/socket-io.h>
@@ -81,7 +82,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 148
+#define MONO_CORLIB_VERSION 150
 
 typedef struct
 {
@@ -189,16 +190,19 @@ create_domain_objects (MonoDomain *domain)
 	 * Create an instance early since we can't do it when there is no memory.
 	 */
 	arg = mono_string_new (domain, "Out of memory");
-	domain->out_of_memory_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL);
+	domain->out_of_memory_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL, &error);
+	mono_error_assert_ok (&error);
 
 	/* 
 	 * These two are needed because the signal handlers might be executing on
 	 * an alternate stack, and Boehm GC can't handle that.
 	 */
 	arg = mono_string_new (domain, "A null value was found where an object instance was required");
-	domain->null_reference_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL);
+	domain->null_reference_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL, &error);
+	mono_error_assert_ok (&error);
 	arg = mono_string_new (domain, "The requested operation caused a stack overflow.");
-	domain->stack_overflow_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL);
+	domain->stack_overflow_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL, &error);
+	mono_error_assert_ok (&error);
 
 	/*The ephemeron tombstone i*/
 	domain->ephemeron_tombstone = mono_object_new_checked (domain, mono_defaults.object_class, &error);
@@ -2231,7 +2235,9 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad,
 		mono_error_assert_ok (&error);
 	}
 
-	return mono_runtime_exec_main (method, (MonoArray *)args, NULL);
+	int res = mono_runtime_exec_main_checked (method, (MonoArray *)args, &error);
+	mono_error_set_pending_exception (&error);
+	return res;
 }
 
 gint32 

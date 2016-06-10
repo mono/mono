@@ -182,7 +182,10 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
-#if !MONODROID
+#if __WATCHOS__
+			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
+			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
+#elif !MONODROID
 			string fname = AppDomain.CurrentDomain.FriendlyName;
 			if (fname.EndsWith (".dll")) { // nunit-console
 				Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
@@ -249,7 +252,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || MOBILE_STATIC
+#if MONODROID || MOBILE_STATIC || __WATCHOS__
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE
@@ -1327,6 +1330,19 @@ namespace MonoTests.System.Reflection
 			Assert.AreSame (x1, x2, "#1");
 		}
 #endif
+
+		class MyAssembly : Assembly { }
+
+		[Test]
+		public void CustomAssemblyImplThrows ()
+		{
+			var ma = new MyAssembly();
+			try {
+				ma.GetName ();
+				Assert.Fail ("must throw");
+			} catch (NotImplementedException){
+			}
+		}
 	}
 
 	public class TestDefinedTypes

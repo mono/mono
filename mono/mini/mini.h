@@ -31,6 +31,7 @@
 #include <mono/utils/mono-machine.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-conc-hashtable.h>
@@ -777,7 +778,7 @@ typedef enum {
 	LLVMArgGsharedvtFixedVtype,
 	/* Variable sized argument passed to/returned from gsharedvt method by ref */
 	LLVMArgGsharedvtVariable,
-	/* Vtype passed as one int array argument */
+	/* Vtype passed/returned as one int array argument */
 	LLVMArgAsIArgs,
 	/* Vtype passed as a set of fp arguments */
 	LLVMArgAsFpArgs,
@@ -1868,7 +1869,8 @@ typedef enum {
 	MONO_CFG_HAS_FPOUT    = 1 << 5, /* there are fp values passed in int registers */
 	MONO_CFG_HAS_SPILLUP  = 1 << 6, /* spill var slots are allocated from bottom to top */
 	MONO_CFG_HAS_CHECK_THIS  = 1 << 7,
-	MONO_CFG_HAS_ARRAY_ACCESS = 1 << 8
+	MONO_CFG_HAS_ARRAY_ACCESS = 1 << 8,
+	MONO_CFG_HAS_TYPE_CHECK = 1 << 9
 } MonoCompileFlags;
 
 typedef struct {
@@ -1902,6 +1904,7 @@ typedef struct {
 	double jit_liveness_handle_exception_clauses;
 	double jit_handle_out_of_line_bblock;
 	double jit_decompose_long_opts;
+	double jit_decompose_typechecks;
 	double jit_local_cprop;
 	double jit_local_emulate_ops;
 	double jit_optimize_branches;
@@ -2571,7 +2574,8 @@ gpointer          mini_add_method_trampoline (MonoMethod *m, gpointer compiled_m
 gpointer          mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboolean caller_gsharedvt, gboolean add_unbox_tramp, gpointer *out_arg);
 gboolean          mini_jit_info_is_gsharedvt (MonoJitInfo *ji);
 gpointer*         mini_resolve_imt_method (MonoVTable *vt, gpointer *vtable_slot, MonoMethod *imt_method, MonoMethod **impl_method, gpointer *out_aot_addr,
-										   gboolean *out_need_rgctx_tramp, MonoMethod **variant_iface);
+					   gboolean *out_need_rgctx_tramp, MonoMethod **variant_iface,
+					   MonoError *error);
 MonoFtnDesc      *mini_create_llvmonly_ftndesc (MonoDomain *domain, gpointer addr, gpointer arg);
 
 gboolean          mono_running_on_valgrind (void);
@@ -2853,6 +2857,7 @@ typedef void  (*MonoUnhandledExceptionFunc)         (MonoObject *exc, gpointer u
 MONO_API void mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, gpointer user_data);
 void          mono_invoke_unhandled_exception_hook  (MonoObject *exc);
 
+void mono_decompose_typechecks (MonoCompile *cfg);
 /* Dominator/SSA methods */
 void        mono_compile_dominator_info         (MonoCompile *cfg, int dom_flags);
 void        mono_compute_natural_loops          (MonoCompile *cfg);

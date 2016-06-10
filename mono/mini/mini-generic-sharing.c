@@ -862,7 +862,7 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 	case MONO_RGCTX_INFO_STATIC_DATA: {
 		MonoVTable *vtable = mono_class_vtable (domain, klass);
 		if (!vtable) {
-			mono_error_set_exception_instance (error, mono_class_get_exception_for_failure (klass));
+			mono_error_set_for_class_failure (error, klass);
 			return NULL;
 		}
 		return mono_vtable_get_static_field_data (vtable);
@@ -874,7 +874,7 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 	case MONO_RGCTX_INFO_VTABLE: {
 		MonoVTable *vtable = mono_class_vtable (domain, klass);
 		if (!vtable) {
-			mono_error_set_exception_instance (error, mono_class_get_exception_for_failure (klass));
+			mono_error_set_for_class_failure (error, klass);
 			return NULL;
 		}
 		return vtable;
@@ -1102,7 +1102,7 @@ get_wrapper_shared_type (MonoType *t)
 		int i;
 
 		if (!MONO_TYPE_ISSTRUCT (t))
-			return &mono_defaults.int_class->byval_arg;
+			return get_wrapper_shared_type (&mono_defaults.object_class->byval_arg);
 
 		klass = mono_class_from_mono_type (t);
 		orig_ctx = &klass->generic_class->context;
@@ -1704,7 +1704,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 
 		vtable = mono_class_vtable (domain, method->method.method.klass);
 		if (!vtable) {
-			mono_error_set_exception_instance (error, mono_class_get_exception_for_failure (method->method.method.klass));
+			mono_error_set_for_class_failure (error, method->method.method.klass);
 			return NULL;
 		}
 

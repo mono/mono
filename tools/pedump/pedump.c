@@ -12,11 +12,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "image.h"
+#include <mono/metadata/image.h>
 #include <glib.h>
-#include "cil-coff.h"
-#include "mono-endian.h"
-#include "verify.h"
+#include <mono/metadata/cil-coff.h>
+#include <mono/metadata/mono-endian.h>
+#include <mono/metadata/verify.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tokentype.h>

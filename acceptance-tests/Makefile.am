@@ -4,7 +4,7 @@ CORECLR_PATH=$(ACCEPTANCE_TESTS_PATH)/coreclr
 MSTESTSUITE_PATH=$(ACCEPTANCE_TESTS_PATH)/ms-test-suite
 
 CLEANFILES = *.dll *.exe *.mdb
-EXTRA_DIST=README.md SUBMODULES.json versions.mk versions.py roslyn.mk coreclr.mk ms-test-suite.mk
+EXTRA_DIST=README.md SUBMODULES.json versions.mk roslyn.mk coreclr.mk ms-test-suite.mk
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 

@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Diagnostics.Contracts;
+using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
 
@@ -128,9 +129,11 @@ namespace System.Reflection {
 
                 if (!suppressSecurityChecks)
                 {
+#if !DISABLE_CAS_USE
 #pragma warning disable 618
                     new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
 #pragma warning restore 618
+#endif
                 }
             }
 
@@ -147,6 +150,22 @@ namespace System.Reflection {
 		internal static RuntimeAssembly LoadWithPartialNameInternal (AssemblyName an, Evidence securityEvidence, ref StackCrawlMark stackMark)
 		{
 			return LoadWithPartialNameInternal (an.ToString (), securityEvidence, ref stackMark);
+		}
+
+		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
+		public override AssemblyName GetName (bool copiedName)
+		{
+
+#if !MOBILE
+			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
+			if (SecurityManager.SecurityEnabled) {
+				var _ = CodeBase; // this will ensure the Demand is made
+			}
+#endif
+
+			AssemblyName aname = new AssemblyName ();
+			FillName (this, aname);
+			return aname;
 		}
 
 	}

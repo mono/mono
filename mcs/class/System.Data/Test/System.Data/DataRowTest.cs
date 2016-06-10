@@ -41,7 +41,7 @@ using System.Data;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataRowTest : Assertion {
+	public class DataRowTest {
 	        private DataTable table;                                                
                 private DataRow row;    
 
@@ -101,7 +101,7 @@ namespace MonoTests.System.Data
                 private  void GetColumnErrorTest ()
                 {
                         // Print the error of a specified column.
-                        AssertEquals ("#A01", "Some error!", row.GetColumnError (1));
+                        Assert.AreEqual ("Some error!", row.GetColumnError (1), "#A01");
                 }
 
                 private void GetAllErrorsTest ()
@@ -112,7 +112,7 @@ namespace MonoTests.System.Data
                                 colArr = row.GetColumnsInError ();
                                                                                                     
                                 for (int i = 0; i < colArr.Length; i++) {
-                                        AssertEquals ("#A02", table.Columns [1], colArr [i]);
+                                        Assert.AreEqual (table.Columns [1], colArr [i], "#A02");
                                 }
                                 row.ClearErrors ();
                         }
@@ -135,7 +135,7 @@ namespace MonoTests.System.Data
                         int cnt = 1;
                         for (int i = 1; i < table.Rows.Count; i++) {
                                 DataRow r = table.Rows [i];
-                                AssertEquals ("#A03", "Name " + cnt, r ["fName"]);
+                                Assert.AreEqual ("Name " + cnt, r ["fName"], "#A03");
                                 cnt++;
                         }
                                                                                                     
@@ -146,20 +146,20 @@ namespace MonoTests.System.Data
 		        rc [2].Delete ();
                                                                                                     
                                                                                                     
-                        AssertEquals ("#A04", "Deleted", rc [0].RowState.ToString ());
-                        AssertEquals ("#A05", "Deleted", rc [2].RowState.ToString ());
+                        Assert.AreEqual ("Deleted", rc [0].RowState.ToString (), "#A04");
+                        Assert.AreEqual ("Deleted", rc [2].RowState.ToString (), "#A05");
                                                                                                     
                                                                                                     
                         // Accept changes
                         table.AcceptChanges ();
-                        AssertEquals ("#A06", "Name 1", (table.Rows [0]) [1]);
+                        Assert.AreEqual ("Name 1", (table.Rows [0]) [1], "#A06");
                         try  {
                                 object o = rc [2];
-                                Fail ("#A07");
+                                Assert.Fail ("#A07");
                         }
                         catch (Exception e) {
 				// Never premise English.
-                                //AssertEquals ("#A08", "There is no row at position 2.", e.Message);
+                                //Assert.AreEqual ("#A08", "There is no row at position 2.", e.Message);
                         }
                 }
 
@@ -179,40 +179,40 @@ namespace MonoTests.System.Data
                                                                                                     
                                 // Stage 1
                                 //Initially: After Add (Row) But Before Accept Changes");
-                                AssertEquals ("#A09", "My FName", row [1, DataRowVersion.Default]);
-                                AssertEquals ("#A10", "LName", row [2, DataRowVersion.Default]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A09");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Default], "#A10");
                                                                                                     
-                                AssertEquals ("#A11", "My FName", row [1, DataRowVersion.Current]);
-                                AssertEquals ("#A12", "LName", row [2, DataRowVersion.Current]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A11");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Current], "#A12");
                                                                                                     
                                 try {
                                       object o = row [1, DataRowVersion.Original];
                                       o = row [1, DataRowVersion.Proposed];
-                                        Fail ("#A13");
+                                        Assert.Fail ("#A13");
                                 }
                                 catch (Exception e) {
                                         if (e.GetType () != typeof (AssertionException)) {
-                                                AssertEquals ("#A14", typeof (VersionNotFoundException), e.GetType ());
+                                                Assert.AreEqual (typeof (VersionNotFoundException), e.GetType (), "#A14");
                                         }
                                 }
                                                                                                     
                                 // Stage 2
                                 //After Accept Changes
                                 table.AcceptChanges ();
-                                AssertEquals ("#A15", "My FName", row [1, DataRowVersion.Default]);
-                                AssertEquals ("#A16", "LName", row [2, DataRowVersion.Default]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A15");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Default], "#A16");
                                                                                                     
                                                                                                     
-                                AssertEquals ("#A17", "My FName", row [1, DataRowVersion.Current]);
-                                AssertEquals ("#A18", "LName", row [2, DataRowVersion.Current]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A17");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Current], "#A18");
                                 
 				try {
                                       object o = row [1, DataRowVersion.Proposed];
-                                        Fail ("#A19");
+                                        Assert.Fail ("#A19");
                                 }
                                 catch (Exception e) {
                                         if (e.GetType () != typeof (AssertionException)) {
-                                                AssertEquals ("#A20", typeof (VersionNotFoundException), e.GetType ());
+                                                Assert.AreEqual (typeof (VersionNotFoundException), e.GetType (), "#A20");
                                         }
                                 }
                                                                                                     
@@ -221,63 +221,64 @@ namespace MonoTests.System.Data
                                 table.Rows [0].BeginEdit ();
                                 table.Rows [0] ["LName"] = "My LName";
                                                                                                     
-                                AssertEquals ("#A21", "My FName", row [1, DataRowVersion.Default]);
-                                AssertEquals ("#A22", "My LName", row [2, DataRowVersion.Default]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A21");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Default], "#A22");
                                                                                                                                                                                                          
-                                AssertEquals ("#A23", "My FName", row [1, DataRowVersion.Current]);
-                                AssertEquals ("#A24", "LName", row [2, DataRowVersion.Current]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A23");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Current], "#A24");
                                                                                                     
                                                                                                     
-                                AssertEquals ("#A25", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A26", "LName", row [2, DataRowVersion.Original]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Original], "#A25");
+                                Assert.AreEqual ("LName", row [2, DataRowVersion.Original], "#A26");
                                                                                                     
-                                AssertEquals ("#A26", "My FName", row [1, DataRowVersion.Proposed]);
-	                        AssertEquals ("#A27", "My LName", row [2, DataRowVersion.Proposed]);                                                                                                    
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Proposed], "#A26");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Proposed], "#A27");                                                                                                    
                                                                                                     
                                                                                                     
                                 // Stage 4
                                 //After Edit sessions
                                 for (int i=0; i < table.Rows.Count;i++)
                                         table.Rows [i].EndEdit ();
-                                AssertEquals ("#A28", "My FName", row [1, DataRowVersion.Default]);
-                                AssertEquals ("#A29", "My LName", row [2, DataRowVersion.Default]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A28");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Default], "#A29");
                                                                                                                                                                                                          
-                                AssertEquals ("#A30", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A31", "LName", row [2, DataRowVersion.Original]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Original], "#A30");                                Assert.AreEqual ("LName", row [2, DataRowVersion.Original], "#A31");
                                                                                                     
                                                                                                     
-                                AssertEquals ("#A32", "My FName", row [1, DataRowVersion.Current]);
-                                AssertEquals ("#A33", "My LName", row [2, DataRowVersion.Current]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A32");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Current], "#A33");
                                                                                                     
                                 try {
                                       object o = row [1, DataRowVersion.Proposed];
-                                        Fail ("#A34");
+                                        Assert.Fail ("#A34");
                                 }
                                 catch (Exception e) {
                                         if (e.GetType ()!=typeof (AssertionException)) {
-                                                AssertEquals ("#A35", typeof (VersionNotFoundException), e.GetType ());
+                                                Assert.AreEqual (typeof (VersionNotFoundException), e.GetType (), "#A35");
                                         }
                                 }
                                                                                                     
                                 //Stage 5
                                 //After Accept Changes
 				table.AcceptChanges ();
-				AssertEquals ("#A36", "My FName", row [1, DataRowVersion.Default]);
-                                AssertEquals ("#A37", "My LName", row [2, DataRowVersion.Default]);
+				Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A36");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Default], "#A37");
                                                                                                     
                                                                                                     
-                                AssertEquals ("#A38", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A39", "My LName", row [2, DataRowVersion.Original]);                                                                                                    
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Original], "#A38");                                Assert.AreEqual (row [2, DataRowVersion.Original], "#A39", "My LName");                                                                                                    
                                                                                                     
-                                AssertEquals ("#A40", "My FName", row [1, DataRowVersion.Current]);
-                                AssertEquals ("#A41", "My LName", row [2, DataRowVersion.Current]);
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A40");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Current], "#A41");
                                                                                                     
                                                                                                     
                                 try {
                                       object o = row [1, DataRowVersion.Proposed];
-                                        Fail ("#A42");
+                                        Assert.Fail ("#A42");
                                 }
                                 catch (Exception e) {
                                                 if (e.GetType () != typeof (AssertionException)) {
-                                                        AssertEquals ("#A43", typeof (VersionNotFoundException),
-                                                                e.GetType ());
+                                                        Assert.AreEqual (typeof (VersionNotFoundException), e.GetType (),
+                                                                "#A43");
                                                 }
                                         }
                                                                                                     
@@ -328,22 +329,22 @@ namespace MonoTests.System.Data
                                                                                                     
                         rowC.SetParentRow (table.Rows [0], dr);
                                                                                                     
-                        AssertEquals ("#PRT-01", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
-			AssertEquals ("#PRT-02", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+                        Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-01");
+			Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-02");
 
                         ds.Relations.Clear ();
                         dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
                         ds.Relations.Add (dr);
                         rowC.SetParentRow (table.Rows [0], dr);
-                        AssertEquals ("#PRT-03", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
-			AssertEquals ("#PRT-04", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+                        Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-03");
+			Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-04");
 
                         ds.Relations.Clear ();
                         dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
                         tableC.ParentRelations.Add (dr);
                         rowC.SetParentRow (table.Rows [0]);
-                        AssertEquals ("#PRT-05", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
-                        AssertEquals ("#PRT-06", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+                        Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-05");
+                        Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-06");
 						
                 } 
 
@@ -377,8 +378,8 @@ namespace MonoTests.System.Data
                         rowC.SetParentRow (row, dr);
                         DataRow [] rows = rowC.GetParentRows (dr);
 
-                        AssertEquals ("#A49", 1, rows.Length);
-                        AssertEquals ("#A50", tableP.Rows [0], rows [0]);
+                        Assert.AreEqual (1, rows.Length, "#A49");
+                        Assert.AreEqual (tableP.Rows [0], rows [0], "#A50");
 
                         try{
                                 rows = row.GetParentRows (dr);
@@ -386,10 +387,10 @@ namespace MonoTests.System.Data
                                 //Test done
                                 return ;
                         }catch(Exception e){
-                                Fail("#A51, InvalidConstraintException expected, got : " + e);
+                                Assert.Fail("#A51, InvalidConstraintException expected, got : " + e);
                         }
                         
-                        Fail("#A52, InvalidConstraintException expected but got none.");
+                        Assert.Fail("#A52, InvalidConstraintException expected but got none.");
                 }
 
                 [Test]
@@ -434,8 +435,8 @@ namespace MonoTests.System.Data
                                                                                                     
                         DataRow [] rows = (table.Rows [0]).GetChildRows (dr);
 
-                        AssertEquals ("#A45", 1, rows.Length);
-                        AssertEquals ("#A46", tableC.Rows [0], rows [0]);
+                        Assert.AreEqual (1, rows.Length, "#A45");
+                        Assert.AreEqual (tableC.Rows [0], rows [0], "#A46");
                         
                 } 
 
@@ -469,8 +470,8 @@ namespace MonoTests.System.Data
                         rowC.SetParentRow (row, dr);
                         DataRow [] rows = row.GetChildRows (dr);
                         
-                        AssertEquals ("#A47", 1, rows.Length);
-                        AssertEquals ("#A48", tableC.Rows [0], rows [0]);
+                        Assert.AreEqual (1, rows.Length, "#A47");
+                        Assert.AreEqual (tableC.Rows [0], rows [0], "#A48");
 
                         try{
                             rows = rowC.GetChildRows (dr);
@@ -478,10 +479,10 @@ namespace MonoTests.System.Data
                             //Test done
                             return ;
                         }catch(Exception e){
-                            Fail("#A53, InvalidConstraintException expected, got : " + e);
+                            Assert.Fail("#A53, InvalidConstraintException expected, got : " + e);
                         }
                         
-                        Fail("#A54, InvalidConstraintException expected but got none.");
+                        Assert.Fail("#A54, InvalidConstraintException expected but got none.");
                 }
 
 		 [Category ("NotWorking")] //Mismatch in Exception namespace/class reference
@@ -528,35 +529,35 @@ namespace MonoTests.System.Data
                                 //Test Done
                                 return ;
                             }catch (Exception e){
-                                Fail ("#A55, VersionNotFoundException expected, got : " + e);
+                                Assert.Fail ("#A55, VersionNotFoundException expected, got : " + e);
                             }
-                            Fail ("#A56, VersionNotFoundException expected but got none.");
+                            Assert.Fail ("#A56, VersionNotFoundException expected but got none.");
                         }catch (Exception e){
-                            Fail ("#A57, VersionNotFoundException expected, got : " + e);
+                            Assert.Fail ("#A57, VersionNotFoundException expected, got : " + e);
                         }
                         
-                        Fail("#A58, VersionNotFoundException expected but got none.");
+                        Assert.Fail("#A58, VersionNotFoundException expected but got none.");
                 }
 
 		// tests item at row, column in table to be DBNull.Value
 		private void DBNullTest (string message, DataTable dt, int row, int column) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
-			AssertEquals(message, DBNull.Value, val);
+			Assert.AreEqual(DBNull.Value, val, message);
 		}
 
 		// tests item at row, column in table to be null
 		private void NullTest (string message, DataTable dt, int row, int column) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
-			AssertEquals(message, null, val);
+			Assert.AreEqual(null, val, message);
 		}
 
 		// tests item at row, column in table to be 
 		private void ValueTest (string message, DataTable dt, int row, int column, object value) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
-			AssertEquals(message, value, val);
+			Assert.AreEqual(value, val, message);
 		}
 
 		// test set null, DBNull.Value, and ItemArray short count
@@ -588,7 +589,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Fail("DR1: Exception Caught: " + e1);
+				Assert.Fail("DR1: Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -606,7 +607,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR2: Exception Caught: " + e2);
+				Assert.Fail("DR2: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -624,7 +625,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR3: Exception Caught: " + e3);
+				Assert.Fail("DR3: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -646,7 +647,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR4: Exception Caught: " + e3);
+				Assert.Fail("DR4: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -698,7 +699,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Fail("DR17: Exception Caught: " + e1);
+				Assert.Fail("DR17: Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -715,7 +716,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR18: Exception Caught: " + e2);
+				Assert.Fail("DR18: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -733,7 +734,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR19: Exception Caught: " + e3);
+				Assert.Fail("DR19: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -753,7 +754,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR20: Exception Caught: " + e3);
+				Assert.Fail("DR20: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -802,7 +803,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e1) {
-				Fail("DR28:  Exception Caught: " + e1);
+				Assert.Fail("DR28:  Exception Caught: " + e1);
 			}
 			
 			table.Rows.Add(row);
@@ -819,7 +820,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR29:  Exception Caught: " + e2);
+				Assert.Fail("DR29:  Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -836,7 +837,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR30: Exception Caught: " + e2);
+				Assert.Fail("DR30: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -853,7 +854,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR31: Exception Caught: " + e2);
+				Assert.Fail("DR31: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -872,7 +873,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR32: Exception Caught: " + e3);
+				Assert.Fail("DR32: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -889,7 +890,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e2) {
-				Fail("DR48: Exception Caught: " + e2);
+				Assert.Fail("DR48: Exception Caught: " + e2);
 			}
 			
 			table.Rows.Add(row);
@@ -909,7 +910,7 @@ namespace MonoTests.System.Data
 				row.ItemArray = obj;
 			}
 			catch(Exception e3) {
-				Fail("DR33: Exception Caught: " + e3);
+				Assert.Fail("DR33: Exception Caught: " + e3);
 			}
 			
 			table.Rows.Add(row);
@@ -986,7 +987,7 @@ namespace MonoTests.System.Data
 		        DataRow childRow = child.Rows.Add(new object[] { id });
 		        if (parentRow == childRow.GetParentRow(relateParentChild)) {
 		            foreach(DataColumn dc in parent.Columns)
-				AssertEquals(100,parentRow[dc]);
+				Assert.AreEqual(100,parentRow[dc]);
 		            
 		        }
 		            		
@@ -1002,9 +1003,9 @@ namespace MonoTests.System.Data
 			dt.Rows.Add ((new object [] {"val"}));
 
 			DataRow dr = dt.NewRow ();
-			AssertEquals (DataRowState.Detached, dr.RowState);
+			Assert.AreEqual (DataRowState.Detached, dr.RowState);
 			dr.CancelEdit ();
-			AssertEquals (DataRowState.Detached, dr.RowState);
+			Assert.AreEqual (DataRowState.Detached, dr.RowState);
 			object o = dr ["col"];
 		}
 
@@ -1056,20 +1057,20 @@ namespace MonoTests.System.Data
 			parent2.Rows.Add(parent2Row);
 
 			childRow1.SetParentRow(parent1Row);
-			AssertEquals ("p1c1", childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual ("p1c1", childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 			childRow1.SetParentRow(parent2Row);
-			AssertEquals ("p1c1", childRow1[childColumn1]);
-			AssertEquals ("p2c2", childRow1[childColumn2]);
+			Assert.AreEqual ("p1c1", childRow1[childColumn1]);
+			Assert.AreEqual ("p2c2", childRow1[childColumn2]);
 
 			childRow1.SetParentRow(null);
-			AssertEquals (DBNull.Value, childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 			childRow1.SetParentRow(parent2Row);
-			AssertEquals (DBNull.Value, childRow1[childColumn1]);
-			AssertEquals ("p2c2", childRow1[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn1]);
+			Assert.AreEqual ("p2c2", childRow1[childColumn2]);
 		}
 
 		[Test]
@@ -1108,29 +1109,29 @@ namespace MonoTests.System.Data
 
 
 			childRow1.SetParentRow (null, relation2);
-			AssertEquals (DBNull.Value, childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 			try {
 				childRow1.SetParentRow(parent1Row, relation2);
-				Fail ("Must throw InvalidConstaintException");
+				Assert.Fail ("Must throw InvalidConstaintException");
 			} catch (InvalidConstraintException e) {
 			}
-			AssertEquals (DBNull.Value, childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 			childRow1.SetParentRow(parent1Row, relation1);
-			AssertEquals ("p1c1", childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual ("p1c1", childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 
 			childRow1.SetParentRow (null, relation2);
-			AssertEquals ("p1c1", childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual ("p1c1", childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 
 			childRow1.SetParentRow (null, relation1);
-			AssertEquals (DBNull.Value, childRow1[childColumn1]);
-			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn1]);
+			Assert.AreEqual (DBNull.Value, childRow1[childColumn2]);
 		}
 
 		[Test]
@@ -1161,8 +1162,8 @@ namespace MonoTests.System.Data
 			parent2.Rows.Add(parentRow);
 
 			childRow.SetParentRow(parentRow);
-			AssertEquals (DBNull.Value, childRow[childColumn1]);
-			AssertEquals ("value", childRow[childColumn2]);
+			Assert.AreEqual (DBNull.Value, childRow[childColumn1]);
+			Assert.AreEqual ("value", childRow[childColumn2]);
 		}
 
 	}

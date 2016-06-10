@@ -56,6 +56,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-digest.h>
+#include <mono/utils/mono-threads-coop.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -930,8 +931,11 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 #endif
 		case MONO_WRAPPER_ALLOC: {
 			int atype = decode_value (p, &p);
+			ManagedAllocatorVariant variant =
+				mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS ?
+				MANAGED_ALLOCATOR_SLOW_PATH : MANAGED_ALLOCATOR_REGULAR;
 
-			ref->method = mono_gc_get_managed_allocator_by_type (atype, !!(mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS));
+			ref->method = mono_gc_get_managed_allocator_by_type (atype, variant);
 			if (!ref->method) {
 				mono_error_set_bad_image_name (error, module->aot_name, "Error: No managed allocator, but we need one for AOT.\nAre you using non-standard GC options?\n");
 				return FALSE;
@@ -4602,7 +4606,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 
 	gpointer res = mono_aot_get_method_checked (domain, method, &error);
 	/* This is external only, so its ok to raise here */
-	mono_error_raise_exception (&error);
+	mono_error_raise_exception (&error); /* OK to throw, external only without a good alternative */
 	return res;
 }
 

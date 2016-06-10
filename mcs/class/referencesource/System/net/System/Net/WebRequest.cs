@@ -4,6 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+#if MONO
+#undef FEATURE_PAL
+#endif
 namespace System.Net {
     using System.Collections;
     using System.Collections.Generic;
@@ -53,6 +56,7 @@ namespace System.Net {
         private  AuthenticationLevel m_AuthenticationLevel;
         private  TokenImpersonationLevel m_ImpersonationLevel;
 #endif
+
         private RequestCachePolicy      m_CachePolicy;
         private RequestCacheProtocol    m_CacheProtocol;
         private RequestCacheBinding     m_CacheBinding;
@@ -361,7 +365,9 @@ namespace System.Net {
                 throw new ArgumentNullException("creator");
             }
 
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
 
             // Lock this object, then walk down PrefixList looking for a place to
             // to insert this prefix.
@@ -523,7 +529,11 @@ namespace System.Net {
                     lock (InternalSyncObject) {
                         if (s_PrefixList == null) {
                             GlobalLog.Print("WebRequest::Initialize(): calling ConfigurationManager.GetSection()");
+#if MONO
+                            s_PrefixList = PopulatePrefixList ();
+#else
                             s_PrefixList = WebRequestModulesSectionInternal.GetSection().WebRequestModules;
+#endif
                         }
                     }
                 }
@@ -534,6 +544,30 @@ namespace System.Net {
                 s_PrefixList = value;
             }
         }
+
+#if MONO
+        static ArrayList PopulatePrefixList ()
+        {
+            var res = new ArrayList();
+
+#if MOBILE || !CONFIGURATION_DEP
+            IWebRequestCreate http = new HttpRequestCreator ();
+            res.Add(new WebRequestPrefixElement("http", http));
+            res.Add(new WebRequestPrefixElement("https", http));
+            res.Add(new WebRequestPrefixElement("file", new FileWebRequestCreator ()));
+            res.Add(new WebRequestPrefixElement("ftp", new FtpRequestCreator ()));
+#else
+            object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
+            WebRequestModulesSection s = cfg as WebRequestModulesSection;
+            if (s != null) {
+                foreach (WebRequestModuleElement el in s.WebRequestModules)
+                    res.Add (new WebRequestPrefixElement(el.Prefix, el.Type));
+            }
+#endif
+            return res;
+        }
+#endif
+
 
         // constructors
 
@@ -588,8 +622,10 @@ namespace System.Net {
                 return RequestCacheManager.GetBinding(string.Empty).Policy;
             }
             set {
+#if !DISABLE_CAS_USE
                 // This is a replacement of RequestCachePermission demand since we are not including the latest in the product.
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
 
                 RequestCacheBinding binding = RequestCacheManager.GetBinding(string.Empty);
                 RequestCacheManager.SetBinding(string.Empty, new RequestCacheBinding(binding.Cache, binding.Validator, value));
@@ -975,7 +1011,7 @@ namespace System.Net {
             }
         }
 
-
+#if !MONO
         // Methods to retrieve the context of the "reading phase" and of the "writing phase" of the request.
         // Each request type can define what goes into what phase.  Typically, the writing phase corresponds to
         // GetRequestStream() and the reading phase to GetResponse(), but if there's no request body, both phases
@@ -996,7 +1032,7 @@ namespace System.Net {
         {
             throw ExceptionHelper.MethodNotImplementedException;
         }
-
+#endif
 
         //
         //
@@ -1072,13 +1108,17 @@ namespace System.Net {
         {
             get
             {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 return InternalDefaultWebProxy;
             }
 
             set
             {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 InternalDefaultWebProxy = value;
             }
         }
@@ -1088,13 +1128,20 @@ namespace System.Net {
         //
         public static IWebProxy GetSystemWebProxy()
         {
+#if !DISABLE_CAS_USE
             ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
             return InternalGetSystemWebProxy();
         }
 
         internal static IWebProxy InternalGetSystemWebProxy()
         {
+#if MONO
+            // FIXME: Need to break mobile internal API
+            return WebProxy.CreateDefaultProxy();
+#else
             return new WebProxyWrapperOpaque(new WebProxy(true));
+#endif
         }
 
         //
@@ -1162,7 +1209,7 @@ namespace System.Net {
             }
         }
 
-
+#if !MONO
         //
         internal void SetupCacheProtocol(Uri uri)
         {
@@ -1242,5 +1289,6 @@ namespace System.Net {
                 s_EtwFireEndGetRequestStream(this, success, synchronous);
             }
         }
+#endif
     } // class WebRequest
 } // namespace System.Net

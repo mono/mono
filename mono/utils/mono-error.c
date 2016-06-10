@@ -8,10 +8,12 @@
  */
 #include <glib.h>
 
+#include <config.h>
 #include "mono-error.h"
 #include "mono-error-internals.h"
 
 #include <mono/metadata/exception.h>
+#include <mono/metadata/exception-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/object-internals.h>
 
@@ -441,6 +443,17 @@ mono_error_set_invalid_operation (MonoError *oerror, const char *msg_format, ...
 }
 
 void
+mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...)
+{
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+	mono_error_prepare (error);
+	error->error_code = MONO_ERROR_INVALID_PROGRAM;
+
+	set_error_message ();
+}
+
+void
 mono_error_set_exception_instance (MonoError *oerror, MonoException *exc)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
@@ -562,7 +575,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				break;
 			}
 
-			exception = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "MissingMethodException", type_name, method_name);
+			exception = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "MissingMethodException", type_name, method_name, error_out);
 			if (exception)
 				set_message_on_exception (exception, error, error_out);
 		} else {
@@ -582,7 +595,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				break;
 			}
 			
-			exception = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "MissingFieldException", type_name, field_name);
+			exception = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "MissingFieldException", type_name, field_name, error_out);
 			if (exception)
 				set_message_on_exception (exception, error, error_out);
 		} else {
@@ -604,7 +617,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				}
 			}
 
-			exception = mono_exception_from_name_two_strings (mono_get_corlib (), "System", "TypeLoadException", type_name, assembly_name);
+			exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", "TypeLoadException", type_name, assembly_name, error_out);
 			if (exception)
 				set_message_on_exception (exception, error, error_out);
 		} else {
@@ -630,9 +643,9 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 			}
 
 			if (error->error_code == MONO_ERROR_FILE_NOT_FOUND)
-				exception = mono_exception_from_name_two_strings (mono_get_corlib (), "System.IO", "FileNotFoundException", msg, assembly_name);
+				exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", msg, assembly_name, error_out);
 			else
-				exception = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "BadImageFormatException", msg, assembly_name);
+				exception = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "BadImageFormatException", msg, assembly_name, error_out);
 		} else {
 			if (error->error_code == MONO_ERROR_FILE_NOT_FOUND)
 				exception = mono_exception_from_name_msg (mono_get_corlib (), "System.IO", "FileNotFoundException", error->full_message);
@@ -687,6 +700,14 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	case MONO_ERROR_CLEANUP_CALLED_SENTINEL:
 		mono_error_set_execution_engine (error_out, "MonoError reused after mono_error_cleanup");
 		break;
+
+	case MONO_ERROR_INVALID_PROGRAM: {
+		gboolean lacks_message = error->flags & MONO_ERROR_INCOMPLETE;
+		if (lacks_message)
+			return mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", "");
+		else
+			return mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", error->full_message);
+	}
 	default:
 		mono_error_set_execution_engine (error_out, "Invalid error-code %d", error->error_code);
 	}

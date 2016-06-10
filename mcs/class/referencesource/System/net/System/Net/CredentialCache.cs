@@ -302,7 +302,9 @@ namespace System.Net {
             get {
                 //This check will not allow to use local user credentials at will.
                 //Hence the username will not be exposed to the network
+#if !DISABLE_CAS_USE
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, "USERNAME").Demand();
+#endif
                 return SystemNetworkCredential.defaultCredential;
             }
         }
@@ -311,7 +313,9 @@ namespace System.Net {
             get {
                 //This check will not allow to use local user credentials at will.
                 //Hence the username will not be exposed to the network
+#if !DISABLE_CAS_USE
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, "USERNAME").Demand();
+#endif
                 return SystemNetworkCredential.defaultCredential;
             }
         }

@@ -133,7 +133,7 @@ mono_class_init_checked (MonoClass *klass, MonoError *error)
 	mono_error_init (error);
 
 	if (!mono_class_init (klass))
-		mono_error_set_exception_instance (error, mono_class_get_exception_for_failure (klass));
+		mono_error_set_for_class_failure (error, klass);
 }
 
 ICALL_EXPORT MonoObject *
@@ -4320,9 +4320,8 @@ handle_parent:
 
 
 loader_error:
-	if (mono_class_has_failure (klass)) {
-		mono_error_set_exception_instance (&error, mono_class_get_exception_for_failure (klass));
-	}
+	if (mono_class_has_failure (klass))
+		mono_error_set_for_class_failure (&error, klass);
 
 failure:
 	if (properties)
@@ -4469,9 +4468,8 @@ handle_parent:
 	return res;
 
 loader_error:
-	if (mono_class_has_failure (klass)) {
-		mono_error_set_exception_instance (&error, mono_class_get_exception_for_failure (klass));
-	}
+	if (mono_class_has_failure (klass))
+		mono_error_set_for_class_failure (&error, klass);
 
 failure:
 	
@@ -5634,15 +5632,20 @@ ICALL_EXPORT void
 ves_icall_System_Reflection_Assembly_FillName (MonoReflectionAssembly *assembly, MonoReflectionAssemblyName *aname)
 {
 	MonoError error;
-	gchar *absolute;
+	gchar *absolute, *dirname;
 	MonoAssembly *mass = assembly->assembly;
 
+	/* XXX this is duplicated code to compute the codebase URI, unify it */
 	if (g_path_is_absolute (mass->image->name)) {
-		fill_reflection_assembly_name (mono_object_domain (assembly), aname, &mass->aname, mass->image->name, TRUE, TRUE, TRUE, &error);
-		mono_error_set_pending_exception (&error);
-		return;
+		absolute = g_strdup (mass->image->name);
+		dirname = g_path_get_dirname (absolute);
+	} else {
+		absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
+		dirname = g_strdup (mass->basedir);
 	}
-	absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
+
+	replace_shadow_path (mono_object_domain (assembly), dirname, &absolute);
+	g_free (dirname);
 
 	fill_reflection_assembly_name (mono_object_domain (assembly), aname, &mass->aname, absolute, TRUE, TRUE, TRUE, &error);
 	mono_error_set_pending_exception (&error);
@@ -7328,16 +7331,6 @@ ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (void)
 	return 9;
 }
 
-ICALL_EXPORT void
-ves_icall_MonoMethodMessage_InitMessage (MonoMethodMessage *this_obj, 
-					 MonoReflectionMethod *method,
-					 MonoArray *out_args)
-{
-	MonoError error;
-	mono_message_init (mono_object_domain (this_obj), this_obj, method, out_args, &error);
-	mono_error_set_pending_exception (&error);
-}
-
 #ifndef DISABLE_REMOTING
 ICALL_EXPORT MonoBoolean
 ves_icall_IsTransparentProxy (MonoObject *proxy)
@@ -7549,6 +7542,7 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (void)
 	return mcpath;
 }
 
+/* this is an icall */
 static MonoString *
 get_bundled_app_config (void)
 {
@@ -7567,7 +7561,8 @@ get_bundled_app_config (void)
 
 	// Retrieve config file and remove the extension
 	config_file_name = mono_string_to_utf8_checked (file, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	if (mono_error_set_pending_exception (&error))
+		return NULL;
 	config_file_path = mono_portability_find_file (config_file_name, TRUE);
 	if (!config_file_path)
 		config_file_path = config_file_name;

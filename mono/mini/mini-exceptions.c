@@ -671,6 +671,8 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 gboolean
 mono_exception_walk_trace (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	MonoDomain *domain = mono_domain_get ();
 	MonoArray *ta = ex->trace_ips;
 	int len, i;
@@ -2835,19 +2837,18 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	if (unhandled_exception_hook) {
 		unhandled_exception_hook (exc, unhandled_exception_hook_data);
 	} else {
+		MonoError inner_error;
 		MonoObject *other = NULL;
-		MonoString *str = mono_object_to_string (exc, &other);
+		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
 		char *msg = NULL;
 		
-		if (str) {
-			MonoError inner_error;
+		if (str && is_ok (&inner_error)) {
 			msg = mono_string_to_utf8_checked (str, &inner_error);
-			if (!is_ok (&inner_error)) {
-				msg = g_strdup_printf ("Nested exception while formatting original exception");
-				mono_error_cleanup (&inner_error);
-			}
 		}
-		else if (other) {
+		if (!is_ok (&inner_error)) {
+			msg = g_strdup_printf ("Nested exception while formatting original exception");
+			mono_error_cleanup (&inner_error);
+		} else if (other) {
 			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
 			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
 
@@ -2919,6 +2920,8 @@ mono_jinfo_get_epilog_size (MonoJitInfo *ji)
 static void
 throw_exception (MonoObject *ex, gboolean rethrow)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	MonoError error;
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
 	MonoException *mono_ex;

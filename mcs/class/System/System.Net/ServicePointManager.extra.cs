@@ -7,6 +7,8 @@
 // Copyright 2013-2014 Xamarin Inc.
 //
 
+#if MOBILE
+
 using System;
 using System.Collections.Generic;
 
@@ -29,3 +31,5 @@ namespace System.Net {
 		public static CipherSuitesCallback ServerCipherSuitesCallback { get; set; }
 	}
 }
+
+#endif

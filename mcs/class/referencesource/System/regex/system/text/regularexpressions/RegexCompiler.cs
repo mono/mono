@@ -172,7 +172,9 @@ namespace System.Text.RegularExpressions {
 #endif
             }
             finally {
+#if !DISABLE_CAS_USE 
                 CodeAccessPermission.RevertAssert();
+#endif
             }
         }
 
@@ -202,7 +204,9 @@ namespace System.Text.RegularExpressions {
                 factory = c.FactoryInstanceFromCode(code, options);
             }
             finally {
+#if !DISABLE_CAS_USE
                 CodeAccessPermission.RevertAssert();
+#endif
             }
             return factory;
         }
@@ -243,7 +247,9 @@ namespace System.Text.RegularExpressions {
                     c.GenerateRegexType(pattern, options, fullname, regexes[i].IsPublic, code, tree, factory, mTimeout);
                 }
                 finally {
+#if !DISABLE_CAS_USE
                     CodeAccessPermission.RevertAssert();
+#endif
                 }
             }
         
@@ -3081,7 +3087,9 @@ namespace System.Text.RegularExpressions {
                 }
             }
             finally {
+#if !DISABLE_CAS_USE
                 CodeAccessPermission.RevertAssert();
+#endif
             }
         }
 

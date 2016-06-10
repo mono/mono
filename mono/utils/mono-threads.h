@@ -14,8 +14,6 @@
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-linked-list-set.h>
 #include <mono/utils/mono-tls.h>
-#include <mono/utils/mono-threads-coop.h>
-#include <mono/utils/mono-threads-api.h>
 #include <mono/utils/mono-coop-semaphore.h>
 
 #include <mono/io-layer/io-layer.h>
@@ -239,8 +237,11 @@ typedef struct {
 
 	MonoThreadInfoInterruptToken *interrupt_token;
 
-	/* MonoHandleArena for coop handles */
-	gpointer handle_arena;
+	/* HandleStack for coop handles */
+	gpointer handle_stack;
+
+	/* Stack mark for targets that explicitly require one */
+	gpointer stack_mark;
 } MonoThreadInfo;
 
 typedef struct {
@@ -580,7 +581,6 @@ typedef enum {
 } MonoDoBlockingResult;
 
 typedef enum {
-	DoneBlockingAborted, //blocking was aborted and not properly restored, poll the state
 	DoneBlockingOk, //exited blocking fine
 	DoneBlockingWait, //thread should end suspended
 } MonoDoneBlockingResult;
@@ -608,7 +608,7 @@ MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
 
 gpointer
-mono_threads_enter_gc_unsafe_region_cookie (THREAD_INFO_TYPE *info);
+mono_threads_enter_gc_unsafe_region_cookie (void);
 
 
 void mono_thread_info_wait_for_resume (THREAD_INFO_TYPE *info);
@@ -627,5 +627,8 @@ void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX r
 gboolean mono_threads_wait_pending_operations (void);
 void mono_threads_begin_global_suspend (void);
 void mono_threads_end_global_suspend (void);
+
+gboolean
+mono_thread_info_is_current (THREAD_INFO_TYPE *info);
 
 #endif /* __MONO_THREADS_H__ */

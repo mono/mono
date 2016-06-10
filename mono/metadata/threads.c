@@ -37,6 +37,7 @@
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/atomic.h>
@@ -1082,7 +1083,7 @@ mono_thread_detach (MonoThread *thread)
  * This should be used at the end of embedding code which calls into managed code, and which
  * can be called from pthread dtors, like dealloc: implementations in objective-c.
  */
-void
+mono_bool
 mono_thread_detach_if_exiting (void)
 {
 	if (mono_thread_info_is_exiting ()) {
@@ -1092,8 +1093,10 @@ mono_thread_detach_if_exiting (void)
 		if (thread) {
 			mono_thread_detach_internal (thread);
 			mono_thread_info_detach ();
+			return TRUE;
 		}
 	}
+	return FALSE;
 }
 
 void
@@ -1796,47 +1799,34 @@ HANDLE ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name,
 }
 
 
-HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, MonoBoolean *created)
+HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error)
 { 
 	HANDLE sem;
-	
-	*created = TRUE;
 	
 	if (name == NULL) {
 		sem = CreateSemaphore (NULL, initialCount, maximumCount, NULL);
 	} else {
 		sem = CreateSemaphore (NULL, initialCount, maximumCount,
 				       mono_string_chars (name));
-		
-		if (GetLastError () == ERROR_ALREADY_EXISTS) {
-			*created = FALSE;
-		}
 	}
 
+	*error = GetLastError ();
 	return(sem);
 }                                                                   
 
-gint32 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE handle, gint32 releaseCount, MonoBoolean *fail)
+MonoBoolean ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE handle, gint32 releaseCount, gint32 *prevcount)
 { 
-	gint32 prevcount;
-	
-	*fail = !ReleaseSemaphore (handle, releaseCount, &prevcount);
-
-	return (prevcount);
+	return ReleaseSemaphore (handle, releaseCount, prevcount);
 }
 
 HANDLE ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, gint32 rights, gint32 *error)
 {
-	HANDLE ret;
-	
-	*error = ERROR_SUCCESS;
-	
-	ret = OpenSemaphore (rights, FALSE, mono_string_chars (name));
-	if (ret == NULL) {
-		*error = GetLastError ();
-	}
-	
-	return(ret);
+	HANDLE sem;
+
+	sem = OpenSemaphore (rights, FALSE, mono_string_chars (name));
+	*error = GetLastError ();
+
+	return(sem);
 }
 
 HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, MonoBoolean *created)
@@ -2535,7 +2525,7 @@ void mono_thread_stop (MonoThread *thread)
 		This function is part of the embeding API and has no way to return the exception
 		to be thrown. So what we do is keep the old behavior and raise the exception.
 		*/
-		mono_error_raise_exception (&error);
+		mono_error_raise_exception (&error); /* OK to throw, see note */
 	} else {
 		async_abort_internal (internal, TRUE);
 	}
@@ -4992,9 +4982,12 @@ mono_threads_join_threads (void)
 		}
 		joinable_threads_unlock ();
 		if (found) {
-			if (thread != pthread_self ())
+			if (thread != pthread_self ()) {
+				MONO_ENTER_GC_SAFE;
 				/* This shouldn't block */
 				pthread_join (thread, NULL);
+				MONO_EXIT_GC_SAFE;
+			}
 		} else {
 			break;
 		}
@@ -5027,7 +5020,9 @@ mono_thread_join (gpointer tid)
 	if (!found)
 		return;
 	thread = (pthread_t)tid;
+	MONO_ENTER_GC_SAFE;
 	pthread_join (thread, NULL);
+	MONO_EXIT_GC_SAFE;
 #endif
 }
 
@@ -5124,7 +5119,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 		*dummy = NULL;
 		/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
 		 * return the right cookie. */
-		return mono_threads_enter_gc_unsafe_region_cookie (mono_thread_info_current ());
+		return mono_threads_enter_gc_unsafe_region_cookie ();
 	} else {
 		*dummy = orig;
 		/* thread state (BLOCKING|RUNNING) -> RUNNING */

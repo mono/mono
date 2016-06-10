@@ -4482,8 +4482,8 @@ namespace Mono.CSharp {
 					//
 					// Uwrap delegate from Expression<T>
 					//
-					q = TypeManager.GetTypeArguments (q)[0];
-					p = TypeManager.GetTypeArguments (p)[0];
+					q = TypeManager.GetTypeArguments (q) [0];
+					p = TypeManager.GetTypeArguments (p) [0];
 				}
 
 				var p_m = Delegate.GetInvokeMethod (p);
@@ -4510,10 +4510,10 @@ namespace Mono.CSharp {
 				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
 				//
 				if (q.Kind == MemberKind.Void) {
-					return p.Kind != MemberKind.Void ? 1: 0;
+					return p.Kind != MemberKind.Void ? 1 : 0;
 				}
 
-				var am = (AnonymousMethodExpression) a.Expr;
+				var am = (AnonymousMethodExpression)a.Expr;
 
 				//
 				// When anonymous method is an asynchronous, and P has a return type Task<Y1>, and Q has a return type Task<Y2>
@@ -4521,8 +4521,8 @@ namespace Mono.CSharp {
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
 					if (am.Block.IsAsync && p.IsGenericTask && q.IsGenericTask) {
-						q = q.TypeArguments[0];
-						p = p.TypeArguments[0];
+						q = q.TypeArguments [0];
+						p = p.TypeArguments [0];
 					}
 				}
 
@@ -4548,11 +4548,75 @@ namespace Mono.CSharp {
 			if (argument_type == q)
 				return 2;
 
-			//
-			// The parameters are identicial and return type is not void, use better type conversion
-			// on return type to determine better one
-			//
-			return BetterTypeConversion (ec, p, q);
+			return IsBetterConversionTarget (ec, p, q);
+		}
+
+		static int IsBetterConversionTarget (ResolveContext rc, TypeSpec p, TypeSpec q)
+		{
+			if ((p.Kind == MemberKind.Delegate || p.IsExpressionTreeType) && (q.Kind == MemberKind.Delegate || q.IsExpressionTreeType)) {
+
+				if (p.Kind != MemberKind.Delegate) {
+					p = TypeManager.GetTypeArguments (p) [0];
+				}
+
+				if (q.Kind != MemberKind.Delegate) {
+					q = TypeManager.GetTypeArguments (q) [0];
+				}
+
+				var p_m = Delegate.GetInvokeMethod (p);
+				var q_m = Delegate.GetInvokeMethod (q);
+
+				p = p_m.ReturnType;
+				q = q_m.ReturnType;
+
+				//
+				// if p is void returning, and q has a return type Y, then C2 is the better conversion.
+				//
+				if (p.Kind == MemberKind.Void) {
+					return q.Kind != MemberKind.Void ? 2 : 0;
+				}
+
+				//
+				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
+				//
+				if (q.Kind == MemberKind.Void) {
+					return p.Kind != MemberKind.Void ? 1 : 0;
+				}
+
+				return IsBetterConversionTarget (rc, p, q);
+			}
+
+			if (p.IsGenericTask && q.IsGenericTask) {
+				q = q.TypeArguments [0];
+				p = p.TypeArguments [0];
+				return IsBetterConversionTarget (rc, p, q);
+			}
+
+			if (p.IsNullableType) {
+				p = Nullable.NullableInfo.GetUnderlyingType (p);
+				if (!BuiltinTypeSpec.IsPrimitiveType (p))
+					return 0;
+
+				//
+				// Spec expects implicit conversion check between p and q, q and p
+				// to be done before nullable unwrapping but that's expensive operation
+				// Hence manual tweak is needed because BetterTypeConversion works on
+				// unwrapped types
+				//
+				if (p == q)
+					return 2;
+			}
+
+			if (q.IsNullableType) {
+				q = Nullable.NullableInfo.GetUnderlyingType (q);
+				if (!BuiltinTypeSpec.IsPrimitiveType (q))
+					return 0;
+
+				if (q == p)
+					return 1;
+			}
+
+			return BetterTypeConversion (rc, p, q);
 		}
 
 		//
@@ -4590,8 +4654,9 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 2;
+				// LAMESPEC: Dynamic conversions is not considered
+				p = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
 
 			switch (q.BuiltinType) {
@@ -4621,11 +4686,10 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 1;
+				// LAMESPEC: Dynamic conversions is not considered
+				q = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
-
-			// FIXME: handle lifted operators
 
 			// TODO: this is expensive
 			Expression p_tmp = new EmptyExpression (p);

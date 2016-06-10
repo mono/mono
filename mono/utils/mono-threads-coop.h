@@ -14,6 +14,7 @@
 #include <glib.h>
 
 #include "checked-build.h"
+#include "mono-threads.h"
 #include "mono-threads-api.h"
 
 G_BEGIN_DECLS
@@ -39,30 +40,34 @@ mono_threads_safepoint (void)
 }
 
 /*
- * The following are used for wrappers and trampolines as their
- * calls might be unbalanced, due to exception unwinding.
+ * The following are used when detaching a thread. We need to pass the MonoThreadInfo*
+ * as a paramater as the thread info TLS key is being destructed, meaning that
+ * mono_thread_info_current_unchecked will return NULL, which would lead to a
+ * runtime assertion error when trying to switch the state of the current thread.
  */
 
 gpointer
-mono_threads_enter_gc_safe_region_unbalanced (gpointer *stackdata);
+mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
 
-void
-mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stackdata);
+#define MONO_ENTER_GC_SAFE_WITH_INFO(info)	\
+	do {	\
+		gpointer __gc_safe_dummy;	\
+		gpointer __gc_safe_cookie = mono_threads_enter_gc_safe_region_with_info ((info), &__gc_safe_dummy)
+
+#define MONO_EXIT_GC_SAFE_WITH_INFO	MONO_EXIT_GC_SAFE
 
 gpointer
-mono_threads_enter_gc_unsafe_region_unbalanced (gpointer *stackdata);
+mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
 
-void
-mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer *stackdata);
-
-#define MONO_ENTER_GC_UNSAFE_UNBALANCED	\
+#define MONO_ENTER_GC_UNSAFE_WITH_INFO(info)	\
 	do {	\
-		gpointer __dummy;	\
-		gpointer __reset_cookie = mono_threads_enter_gc_unsafe_region_unbalanced (&__dummy)
+		gpointer __gc_unsafe_dummy;	\
+		gpointer __gc_unsafe_cookie = mono_threads_enter_gc_unsafe_region_with_info ((info), &__gc_unsafe_dummy)
 
-#define MONO_EXIT_GC_UNSAFE_UNBALANCED	\
-		mono_threads_exit_gc_unsafe_region_unbalanced (__reset_cookie, &__dummy);	\
-	} while (0)
+#define MONO_EXIT_GC_UNSAFE_WITH_INFO	MONO_EXIT_GC_UNSAFE
+
+gpointer
+mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
 
 G_END_DECLS
 

@@ -327,9 +327,13 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+cp $(ProjectDir)/../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx $(ProjectDir)/System.Web.Http.Properties.CommonWebApiResources.resx
+cp $(ProjectDir)/../../../external/aspnetwebstack/src/System.Web.Http/Properties/SRResources.resx $(ProjectDir)/System.Web.Http.Properties.SRResources.resx
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+cp $(ProjectDir)/../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx $(ProjectDir)/System.Web.Http.Properties.CommonWebApiResources.resx
+cp $(ProjectDir)/../../../external/aspnetwebstack/src/System.Web.Http/Properties/SRResources.resx $(ProjectDir)/System.Web.Http.Properties.SRResources.resx
 
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">

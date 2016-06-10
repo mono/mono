@@ -160,7 +160,9 @@ EXTRA_DIST =			\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
 	get-cygwin-deps.sh	\
-	mono-configuration-crypto.in
+	mono-configuration-crypto.in	\
+	submodules/versions.mk	\
+	submodules/versions.py
 
 mono_interp = mono
 

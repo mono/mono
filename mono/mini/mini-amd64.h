@@ -230,8 +230,10 @@ typedef struct {
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
+#define DYN_CALL_STACK_ARGS 6
+
 typedef struct {
-	mgreg_t regs [PARAM_REGS];
+	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
 	mgreg_t res;
 	guint8 *ret;
 	double fregs [8];
@@ -267,6 +269,7 @@ typedef struct {
 	int nregs;
 	/* Only if storage == ArgOnStack */
 	int arg_size; // Bytes, will always be rounded up/aligned to 8 byte boundary
+	gboolean pass_empty_struct; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
 typedef struct {
@@ -386,7 +389,7 @@ typedef struct {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
+#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
@@ -412,9 +415,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_TLS_GET_REG 1
 #endif
 
-#if !defined (TARGET_WIN32)
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
-#endif
 
 
 #if defined(TARGET_APPLETVOS)

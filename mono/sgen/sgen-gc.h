@@ -315,6 +315,8 @@ enum {
 	INTERNAL_MEM_CARDTABLE_MOD_UNION,
 	INTERNAL_MEM_BINARY_PROTOCOL,
 	INTERNAL_MEM_TEMPORARY,
+	INTERNAL_MEM_LOG_ENTRY,
+	INTERNAL_MEM_COMPLEX_DESCRIPTORS,
 	INTERNAL_MEM_FIRST_CLIENT
 };
 
@@ -431,9 +433,9 @@ void* sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_fai
 void sgen_free_internal_dynamic (void *addr, size_t size, int type);
 
 void sgen_pin_stats_enable (void);
-void sgen_pin_stats_register_object (GCObject *obj, size_t size);
+void sgen_pin_stats_register_object (GCObject *obj, int generation);
 void sgen_pin_stats_register_global_remset (GCObject *obj);
-void sgen_pin_stats_print_class_stats (void);
+void sgen_pin_stats_report (void);
 
 void sgen_sort_addresses (void **array, size_t size);
 void sgen_add_to_global_remset (gpointer ptr, GCObject *obj);
@@ -570,6 +572,7 @@ sgen_update_reference (GCObject **p, GCObject *o, gboolean allow_null)
 
 typedef void (*sgen_cardtable_block_callback) (mword start, mword size);
 void sgen_major_collector_iterate_live_block_ranges (sgen_cardtable_block_callback callback);
+void sgen_major_collector_iterate_block_ranges (sgen_cardtable_block_callback callback);
 
 typedef enum {
 	ITERATE_OBJECTS_SWEEP = 1,
@@ -624,6 +627,7 @@ struct _SgenMajorCollector {
 	void (*pin_major_object) (GCObject *obj, SgenGrayQueue *queue);
 	void (*scan_card_table) (CardTableScanType scan_type, ScanCopyContext ctx);
 	void (*iterate_live_block_ranges) (sgen_cardtable_block_callback callback);
+	void (*iterate_block_ranges) (sgen_cardtable_block_callback callback);
 	void (*update_cardtable_mod_union) (void);
 	void (*init_to_space) (void);
 	void (*sweep) (void);
@@ -802,7 +806,7 @@ void sgen_set_pinned_from_failed_allocation (mword objsize);
 
 void sgen_ensure_free_space (size_t size, int generation);
 void sgen_gc_collect (int generation);
-void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish);
+void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw);
 
 int sgen_gc_collection_count (int generation);
 /* FIXME: what exactly does this return? */
@@ -811,16 +815,8 @@ size_t sgen_gc_get_total_heap_allocation (void);
 
 /* STW */
 
-typedef struct {
-	int generation;
-	const char *reason;
-	gboolean is_overflow;
-	gint64 total_time;
-	gint64 stw_time;
-} GGTimingInfo;
-
 void sgen_stop_world (int generation);
-void sgen_restart_world (int generation, GGTimingInfo *timing);
+void sgen_restart_world (int generation);
 gboolean sgen_is_world_stopped (void);
 
 gboolean sgen_set_allow_synchronous_major (gboolean flag);

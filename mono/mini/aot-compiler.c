@@ -52,6 +52,7 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/json.h>
+#include <mono/utils/mono-threads-coop.h>
 
 #include "aot-compiler.h"
 #include "seq-points.h"
@@ -245,7 +246,7 @@ typedef struct MonoAotCompile {
 	MonoAotFileFlags flags;
 	MonoDynamicStream blob;
 	gboolean blob_closed;
-	MonoClass **typespec_classes;
+	GHashTable *typespec_classes;
 	GString *llc_args;
 	GString *as_args;
 	char *assembly_name_sym;
@@ -2719,22 +2720,16 @@ find_typespec_for_class (MonoAotCompile *acfg, MonoClass *klass)
 
 	/* FIXME: Search referenced images as well */
 	if (!acfg->typespec_classes) {
-		acfg->typespec_classes = (MonoClass **)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoClass*) * len);
-		for (i = 0; i < len; ++i) {
+		acfg->typespec_classes = g_hash_table_new (NULL, NULL);
+		for (i = 0; i < len; i++) {
 			MonoError error;
-			acfg->typespec_classes [i] = mono_class_get_and_inflate_typespec_checked (acfg->image, MONO_TOKEN_TYPE_SPEC | (i + 1), NULL, &error);
+			int typespec = MONO_TOKEN_TYPE_SPEC | (i + 1);
+			MonoClass *klass_key = mono_class_get_and_inflate_typespec_checked (acfg->image, typespec, NULL, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME error handling */
+			g_hash_table_insert (acfg->typespec_classes, klass_key, GINT_TO_POINTER (typespec));
 		}
 	}
-	for (i = 0; i < len; ++i) {
-		if (acfg->typespec_classes [i] == klass)
-			break;
-	}
-
-	if (i < len)
-		return MONO_TOKEN_TYPE_SPEC | (i + 1);
-	else
-		return 0;
+	return GPOINTER_TO_INT (g_hash_table_lookup (acfg->typespec_classes, klass));
 }
 
 static void
@@ -3881,13 +3876,9 @@ add_wrappers (MonoAotCompile *acfg)
 			/* Managed Allocators */
 			nallocators = mono_gc_get_managed_allocator_types ();
 			for (i = 0; i < nallocators; ++i) {
-				m = mono_gc_get_managed_allocator_by_type (i, TRUE);
-				if (m)
+				if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_REGULAR)))
 					add_method (acfg, m);
-			}
-			for (i = 0; i < nallocators; ++i) {
-				m = mono_gc_get_managed_allocator_by_type (i, FALSE);
-				if (m)
+				if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_SLOW_PATH)))
 					add_method (acfg, m);
 			}
 		}
@@ -7039,6 +7030,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->ntrampolines = atoi (arg + strlen ("ntrampolines="));
 		} else if (str_begins_with (arg, "nrgctx-trampolines=")) {
 			opts->nrgctx_trampolines = atoi (arg + strlen ("nrgctx-trampolines="));
+		} else if (str_begins_with (arg, "nrgctx-fetch-trampolines=")) {
+			opts->nrgctx_fetch_trampolines = atoi (arg + strlen ("nrgctx-fetch-trampolines="));
 		} else if (str_begins_with (arg, "nimt-trampolines=")) {
 			opts->nimt_trampolines = atoi (arg + strlen ("nimt-trampolines="));
 		} else if (str_begins_with (arg, "ngsharedvt-trampolines=")) {
@@ -10071,6 +10064,8 @@ acfg_free (MonoAotCompile *acfg)
 	g_hash_table_destroy (acfg->image_hash);
 	g_hash_table_destroy (acfg->unwind_info_offsets);
 	g_hash_table_destroy (acfg->method_label_hash);
+	if (acfg->typespec_classes)
+		g_hash_table_destroy (acfg->typespec_classes);
 	g_hash_table_destroy (acfg->export_names);
 	g_hash_table_destroy (acfg->plt_entry_debug_sym_cache);
 	g_hash_table_destroy (acfg->klass_blob_hash);

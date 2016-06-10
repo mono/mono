@@ -45,6 +45,7 @@
 #include "mono/utils/mono-memory-model.h"
 #include "mono/utils/atomic.h"
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
 
 #include <string.h>
@@ -961,7 +962,7 @@ mono_string_utf16_to_builder (MonoStringBuilder *sb, gunichar2 *text)
  *
  * Returns: a utf8 string with the contents of the StringBuilder.
  *
- * The return value must be released with g_free.
+ * The return value must be released with mono_marshal_free.
  *
  * This is a JIT icall, it sets the pending exception and returns NULL on error.
  */
@@ -982,14 +983,14 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 
 	if (gerror) {
 		g_error_free (gerror);
-		g_free (str_utf16);
+		mono_marshal_free (str_utf16);
 		mono_set_pending_exception (mono_get_exception_execution_engine ("Failed to convert StringBuilder from utf16 to utf8"));
 		return NULL;
 	} else {
 		guint len = mono_string_builder_capacity (sb) + 1;
 		gchar *res = (gchar *)mono_marshal_alloc (len * sizeof (gchar), &error);
 		if (!mono_error_ok (&error)) {
-			g_free (str_utf16);
+			mono_marshal_free (str_utf16);
 			g_free (tmp);
 			mono_error_set_pending_exception (&error);
 			return NULL;
@@ -999,7 +1000,7 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 		memcpy (res, tmp, str_len * sizeof (gchar));
 		res[str_len] = '\0';
 
-		g_free (str_utf16);
+		mono_marshal_free (str_utf16);
 		g_free (tmp);
 		return res;
 	}
@@ -1013,7 +1014,8 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
  *
  * Returns: a utf16 string with the contents of the StringBuilder.
  *
- * The return value must not be freed.
+ * The return value must be released with mono_marshal_free.
+ *
  * This is a JIT icall, it sets the pending exception and returns NULL on error.
  */
 gunichar2*
@@ -4468,6 +4470,10 @@ mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gcon
 	int i;
 	WrapperInfo *info;
 	
+	GHashTable *cache = get_cache (&mono_defaults.object_class->image->icall_wrapper_cache, mono_aligned_addr_hash, NULL);
+	if ((res = mono_marshal_find_in_cache (cache, (gpointer) func)))
+		return res;
+
 	g_assert (sig->pinvoke);
 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_MANAGED_TO_NATIVE);
@@ -4502,7 +4508,7 @@ mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gcon
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_ICALL_WRAPPER);
 	info->d.icall.func = (gpointer)func;
-	res = mono_mb_create (mb, csig, csig->param_count + 16, info);
+	res = mono_mb_create_and_cache_full (cache, (gpointer) func, mb, csig, csig->param_count + 16, info, NULL);
 	mono_mb_free (mb);
 
 	return res;
@@ -7335,7 +7341,6 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 	MonoClass *klass;
 	int i, argnum, *tmp_locals;
 	int type, param_shift = 0;
-	static MonoMethodSignature *get_last_error_sig = NULL;
 	int coop_gc_stack_dummy, coop_gc_var;
 
 	memset (&m, 0, sizeof (m));
@@ -7461,6 +7466,27 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		}
 	}
 
+	/* Set LastError if needed */
+	if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
+#ifdef TARGET_WIN32
+		static MonoMethodSignature *get_last_error_sig = NULL;
+		if (!get_last_error_sig) {
+			get_last_error_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
+			get_last_error_sig->ret = &mono_defaults.int_class->byval_arg;
+			get_last_error_sig->pinvoke = 1;
+		}
+
+		/*
+		 * Have to call GetLastError () early and without a wrapper, since various runtime components could
+		 * clobber its value.
+		 */
+		mono_mb_emit_native_call (mb, get_last_error_sig, GetLastError);
+		mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
+#else
+		mono_mb_emit_icall (mb, mono_marshal_set_last_error);
+#endif
+	}
+
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		MonoClass *klass = mono_class_from_mono_type (sig->ret);
 		mono_class_init (klass);
@@ -7477,26 +7503,6 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		mono_mb_emit_ldloc (mb, coop_gc_var);
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_exit_gc_safe_region_unbalanced);
-	}
-
-	/* Set LastError if needed */
-	if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
-		if (!get_last_error_sig) {
-			get_last_error_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
-			get_last_error_sig->ret = &mono_defaults.int_class->byval_arg;
-			get_last_error_sig->pinvoke = 1;
-		}
-
-#ifdef TARGET_WIN32
-		/*
-		 * Have to call GetLastError () early and without a wrapper, since various runtime components could
-		 * clobber its value.
-		 */
-		mono_mb_emit_native_call (mb, get_last_error_sig, GetLastError);
-		mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
-#else
-		mono_mb_emit_icall (mb, mono_marshal_set_last_error);
-#endif
 	}
 
 	/* convert the result */

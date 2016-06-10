@@ -84,6 +84,7 @@
     <Compile Include="System.Transactions\TransactionOptions.cs" />
     <Compile Include="System.Transactions\TransactionPromotionException.cs" />
     <Compile Include="System.Transactions\TransactionScope.cs" />
+    <Compile Include="System.Transactions\TransactionScopeAsyncFlowOption.cs" />
     <Compile Include="System.Transactions\TransactionScopeOption.cs" />
     <Compile Include="System.Transactions\TransactionStatus.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

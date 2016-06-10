@@ -251,7 +251,7 @@ namespace System.Security.Policy {
 			}
 
 			// strongnamed assemblies gets a StrongName evidence
-			AssemblyName an = a.UnprotectedGetName ();
+			AssemblyName an = a.GetName ();
 			byte[] pk = an.GetPublicKey ();
 			if ((pk != null) && (pk.Length > 0)) {
 				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (pk);

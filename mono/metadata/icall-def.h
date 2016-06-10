@@ -706,9 +706,6 @@ ICALL(CONTEXT_2, "ReleaseContext", ves_icall_System_Runtime_Remoting_Contexts_Co
 ICALL_TYPE(ARES, "System.Runtime.Remoting.Messaging.AsyncResult", ARES_1)
 ICALL(ARES_1, "Invoke", ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke)
 
-ICALL_TYPE(MONOMM, "System.Runtime.Remoting.Messaging.MonoMethodMessage", MONOMM_1)
-ICALL(MONOMM_1, "InitMessage", ves_icall_MonoMethodMessage_InitMessage)
-
 #ifndef DISABLE_REMOTING
 ICALL_TYPE(REALP, "System.Runtime.Remoting.Proxies.RealProxy", REALP_1)
 ICALL(REALP_1, "InternalGetProxyType", ves_icall_Remoting_RealProxy_InternalGetProxyType)
@@ -886,9 +883,9 @@ ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_Reset
 ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal)
 
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
-ICALL(SEMA_1, "CreateSemaphore_internal(int,int,string,bool&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal)
-ICALL(SEMA_2, "OpenSemaphore_internal(string,System.Security.AccessControl.SemaphoreRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Semaphore_OpenSemaphore_internal)
-ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,bool&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal)
+ICALL(SEMA_1, "CreateSemaphore_internal(int,int,string,int&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal)
+ICALL(SEMA_2, "OpenSemaphore_internal(string,System.Security.AccessControl.SemaphoreRights,int&)", ves_icall_System_Threading_Semaphore_OpenSemaphore_internal)
+ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal)
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
 ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort)

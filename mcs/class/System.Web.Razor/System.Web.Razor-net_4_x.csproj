@@ -213,10 +213,12 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
+resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\CommonResources.resx $(ProjectDir)\System.Web.Razor.Common.CommonResources.resx
+resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\System.Web.Razor\Resources\RazorResources.resx $(ProjectDir)\System.Web.Razor.Resources.RazorResources.resx
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
+resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\CommonResources.resx $(ProjectDir)\System.Web.Razor.Common.CommonResources.resx
+resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\System.Web.Razor\Resources\RazorResources.resx $(ProjectDir)\System.Web.Razor.Resources.RazorResources.resx
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 

@@ -190,7 +190,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 		{
 #if MOBILE
 			// ensure the property is not linked out of the application since it make the test fails
-			Assert.NotNull (Thread.CurrentPrincipal, "pre-test");
+			Assert.IsNotNull (Thread.CurrentPrincipal, "pre-test");
 #endif
 			PropertyInfo pi = typeof (Thread).GetProperty ("CurrentPrincipal");
 
@@ -213,7 +213,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 		{
 #if MOBILE
 			// ensure the property is not linked out of the application since it make the test fails
-			Assert.NotNull (Thread.CurrentPrincipal, "pre-test");
+			Assert.IsNotNull (Thread.CurrentPrincipal, "pre-test");
 #endif
 			PropertyInfo pi = typeof (Thread).GetProperty ("CurrentPrincipal");
 

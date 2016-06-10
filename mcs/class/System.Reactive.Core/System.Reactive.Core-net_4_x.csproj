@@ -176,7 +176,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings_Core.resx">
+    <EmbeddedResource Include="Strings_Core.resources.prebuilt">
       <LogicalName>System.Reactive.Strings_Core.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

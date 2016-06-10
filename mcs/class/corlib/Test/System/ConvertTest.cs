@@ -1876,7 +1876,7 @@ namespace MonoTests.System {
 				iTest++;
 				Assert.AreEqual ((float)0, Convert.ToSingle(tryByte), "#N03");
 				iTest++;
-				Assert.AreEqual ((float)1234, 234, Convert.ToSingle(tryDec), "#N04");
+				Assert.AreEqual ((float)1234, (double)234, Convert.ToSingle(tryDec), "#N04");
 				iTest++;
 				Assert.AreEqual ((float)0, Convert.ToSingle(tryDbl), "#N05");
 				iTest++;
@@ -1888,7 +1888,7 @@ namespace MonoTests.System {
 				iTest++;
 				Assert.AreEqual ((float)123, Convert.ToSingle(trySByte), "#N09");
 				iTest++;
-				Assert.AreEqual ((float)1234, 2345, Convert.ToSingle(tryFloat), "#N10");
+				Assert.AreEqual ((float)1234, (double)2345, Convert.ToSingle(tryFloat), "#N10");
 				iTest++;
 				Assert.AreEqual ((float)987, Convert.ToSingle("987"), "#N11");
 				iTest++;

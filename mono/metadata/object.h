@@ -175,6 +175,7 @@ mono_string_hash            (MonoString *s);
 MONO_API int
 mono_object_hash            (MonoObject* obj);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoString *
 mono_object_to_string (MonoObject *obj, MonoObject **exc);
 
@@ -278,10 +279,12 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				MonoMainThreadFunc main_func,
 				void* main_args);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API int
 mono_runtime_run_main	    (MonoMethod *method, int argc, char* argv[], 
 			     MonoObject **exc);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API int
 mono_runtime_exec_main	    (MonoMethod *method, MonoArray *args,
 			     MonoObject **exc);

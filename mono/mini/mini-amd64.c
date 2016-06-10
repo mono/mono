@@ -392,6 +392,17 @@ add_valuetype_win64 (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 	klass = mono_class_from_mono_type (type);
 	size = mini_type_stack_size_full (&klass->byval_arg, NULL, sig->pinvoke);
+
+	/*
+	* Standard C and C++ doesn't allow empty structs, empty structs will always have a size of 1 byte.
+	* GCC have an extension to allow empty structs, https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html.
+	* This cause a little dilemma since runtime build using none GCC compiler will not be compatible with
+	* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
+	* it must be represented in call and cannot be dropped.
+	*/
+	if (0 == size && MONO_TYPE_ISSTRUCT (type) && sig->pinvoke)
+		ainfo->pass_empty_struct = TRUE;
+	
 	if (!sig->pinvoke)
 		pass_on_stack = TRUE;
 
@@ -448,13 +459,17 @@ add_valuetype_win64 (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	} else {
 		g_assert (info);
 
-		if (!fields) {
+		/*Only drop value type if its not an empty struct as input that must be represented in call*/
+		if ((!fields && !ainfo->pass_empty_struct) || (!fields && ainfo->pass_empty_struct && is_return)) {
 			ainfo->storage = ArgValuetypeInReg;
 			ainfo->pair_storage [0] = ainfo->pair_storage [1] = ArgNone;
 			return;
 		}
 
 		switch (info->native_size) {
+		case 0:
+			g_assert (!fields && MONO_TYPE_ISSTRUCT (type) && !is_return);
+			break;
 		case 1: case 2: case 4: case 8:
 			break;
 		default:
@@ -487,7 +502,11 @@ add_valuetype_win64 (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		guint32 align;
 		ArgumentClass class1;
 
-		if (nfields == 0)
+		if (nfields == 0 && ainfo->pass_empty_struct) {
+			g_assert (!fields && !is_return);
+			class1 = ARG_CLASS_INTEGER;
+		}
+		else if (nfields == 0)
 			class1 = ARG_CLASS_MEMORY;
 		else
 			class1 = ARG_CLASS_NO_CLASS;
@@ -586,6 +605,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 	klass = mono_class_from_mono_type (type);
 	size = mini_type_stack_size_full (&klass->byval_arg, NULL, sig->pinvoke);
+
 	if (!sig->pinvoke && ((is_return && (size == 8)) || (!is_return && (size <= 16)))) {
 		/* We pass and return vtypes of size 8 in a register */
 	} else if (!sig->pinvoke || (size == 0) || (size > 16)) {
@@ -797,9 +817,11 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 /*
  * get_call_info:
  *
- *  Obtain information about a call according to the calling convention.
- * For AMD64, see the "System V ABI, x86-64 Architecture Processor Supplement 
+ * Obtain information about a call according to the calling convention.
+ * For AMD64 System V, see the "System V ABI, x86-64 Architecture Processor Supplement
  * Draft Version 0.23" document for more information.
+ * For AMD64 Windows, see "Overview of x64 Calling Conventions",
+ * https://msdn.microsoft.com/en-us/library/ms235286.aspx
  */
 static CallInfo*
 get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
@@ -2110,7 +2132,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 				/* Continue normally */
 			}
 
-			if (size > 0) {
+			if (size > 0 || ainfo->pass_empty_struct) {
 				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 				arg->sreg1 = in->dreg;
 				arg->klass = mono_class_from_mono_type (t);
@@ -2208,21 +2230,28 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			if (ainfo->pair_storage [part] == ArgNone)
 				continue;
 
-			MONO_INST_NEW (cfg, load, arg_storage_to_load_membase (ainfo->pair_storage [part]));
-			load->inst_basereg = src->dreg;
-			load->inst_offset = part * sizeof(mgreg_t);
-
-			switch (ainfo->pair_storage [part]) {
-			case ArgInIReg:
-				load->dreg = mono_alloc_ireg (cfg);
-				break;
-			case ArgInDoubleSSEReg:
-			case ArgInFloatSSEReg:
-				load->dreg = mono_alloc_freg (cfg);
-				break;
-			default:
-				g_assert_not_reached ();
+			if (ainfo->pass_empty_struct) {
+				//Pass empty struct value as 0 on platforms representing empty structs as 1 byte.
+				NEW_ICONST (cfg, load, 0);
 			}
+			else {
+				MONO_INST_NEW (cfg, load, arg_storage_to_load_membase (ainfo->pair_storage [part]));
+				load->inst_basereg = src->dreg;
+				load->inst_offset = part * sizeof(mgreg_t);
+
+				switch (ainfo->pair_storage [part]) {
+				case ArgInIReg:
+					load->dreg = mono_alloc_ireg (cfg);
+					break;
+				case ArgInDoubleSSEReg:
+				case ArgInFloatSSEReg:
+					load->dreg = mono_alloc_freg (cfg);
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+			}
+
 			MONO_ADD_INS (cfg->cbb, load);
 
 			add_outarg_reg (cfg, call, ainfo->pair_storage [part], ainfo->pair_regs [part], load);
@@ -2325,15 +2354,12 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 {
 	int i;
 
-#ifdef HOST_WIN32
-	return FALSE;
-#endif
-
 	switch (cinfo->ret.storage) {
 	case ArgNone:
 	case ArgInIReg:
 	case ArgInFloatSSEReg:
 	case ArgInDoubleSSEReg:
+	case ArgValuetypeAddrInIReg:
 		break;
 	case ArgValuetypeInReg: {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -2359,6 +2385,10 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 			if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
 				return FALSE;
 			if (ainfo->pair_storage [1] != ArgNone && ainfo->pair_storage [1] != ArgInIReg)
+				return FALSE;
+			break;
+		case ArgOnStack:
+			if (!(ainfo->offset + (ainfo->arg_size / 8) <= DYN_CALL_STACK_ARGS))
 				return FALSE;
 			break;
 		default:
@@ -2437,6 +2467,15 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	int arg_index, greg, freg, i, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
 	int buffer_offset = 0;
+	static int param_reg_to_index [16];
+	static gboolean param_reg_to_index_inited;
+
+	if (!param_reg_to_index_inited) {
+		for (i = 0; i < PARAM_REGS; ++i)
+			param_reg_to_index [param_regs [i]] = i;
+		mono_memory_barrier ();
+		param_reg_to_index_inited = 1;
+	}
 
 	g_assert (buf_len >= sizeof (DynCallArgs));
 
@@ -2457,12 +2496,21 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	if (dinfo->cinfo->ret.storage == ArgValuetypeAddrInIReg || dinfo->cinfo->ret.storage == ArgGsharedvtVariableInReg)
 		p->regs [greg ++] = PTR_TO_GREG(ret);
 
-	for (i = pindex; i < sig->param_count; i++) {
-		MonoType *t = mini_get_underlying_type (sig->params [i]);
+	for (; pindex < sig->param_count; pindex++) {
+		MonoType *t = mini_get_underlying_type (sig->params [pindex]);
 		gpointer *arg = args [arg_index ++];
+		ArgInfo *ainfo = &dinfo->cinfo->args [pindex + sig->hasthis];
+		int slot;
+
+		if (ainfo->storage == ArgOnStack) {
+			slot = PARAM_REGS + (ainfo->offset / sizeof (mgreg_t));
+		} else {
+			slot = param_reg_to_index [ainfo->reg];
+		}
 
 		if (t->byref) {
-			p->regs [greg ++] = PTR_TO_GREG(*(arg));
+			p->regs [slot] = PTR_TO_GREG(*(arg));
+			greg ++;
 			continue;
 		}
 
@@ -2479,33 +2527,31 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
 #endif
-			g_assert (dinfo->cinfo->args [i + sig->hasthis].reg == param_regs [greg]);
-			p->regs [greg ++] = PTR_TO_GREG(*(arg));
+			p->regs [slot] = PTR_TO_GREG(*(arg));
 			break;
 #if defined(__mono_ilp32__)
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
-			g_assert (dinfo->cinfo->args [i + sig->hasthis].reg == param_regs [greg]);
-			p->regs [greg ++] = *(guint64*)(arg);
+			p->regs [slot] = *(guint64*)(arg);
 			break;
 #endif
 		case MONO_TYPE_U1:
-			p->regs [greg ++] = *(guint8*)(arg);
+			p->regs [slot] = *(guint8*)(arg);
 			break;
 		case MONO_TYPE_I1:
-			p->regs [greg ++] = *(gint8*)(arg);
+			p->regs [slot] = *(gint8*)(arg);
 			break;
 		case MONO_TYPE_I2:
-			p->regs [greg ++] = *(gint16*)(arg);
+			p->regs [slot] = *(gint16*)(arg);
 			break;
 		case MONO_TYPE_U2:
-			p->regs [greg ++] = *(guint16*)(arg);
+			p->regs [slot] = *(guint16*)(arg);
 			break;
 		case MONO_TYPE_I4:
-			p->regs [greg ++] = *(gint32*)(arg);
+			p->regs [slot] = *(gint32*)(arg);
 			break;
 		case MONO_TYPE_U4:
-			p->regs [greg ++] = *(guint32*)(arg);
+			p->regs [slot] = *(guint32*)(arg);
 			break;
 		case MONO_TYPE_R4: {
 			double d;
@@ -2521,7 +2567,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 			break;
 		case MONO_TYPE_GENERICINST:
 		    if (MONO_TYPE_IS_REFERENCE (t)) {
-				p->regs [greg ++] = PTR_TO_GREG(*(arg));
+				p->regs [slot] = PTR_TO_GREG(*(arg));
 				break;
 			} else if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
 					MonoClass *klass = mono_class_from_mono_type (t);
@@ -2543,16 +2589,26 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				/* Fall through */
 			}
 		case MONO_TYPE_VALUETYPE: {
-			ArgInfo *ainfo = &dinfo->cinfo->args [i + sig->hasthis];
-
-			g_assert (ainfo->storage == ArgValuetypeInReg);
-			if (ainfo->pair_storage [0] != ArgNone) {
-				g_assert (ainfo->pair_storage [0] == ArgInIReg);
-				p->regs [greg ++] = ((mgreg_t*)(arg))[0];
-			}
-			if (ainfo->pair_storage [1] != ArgNone) {
-				g_assert (ainfo->pair_storage [1] == ArgInIReg);
-				p->regs [greg ++] = ((mgreg_t*)(arg))[1];
+			switch (ainfo->storage) {
+			case ArgValuetypeInReg:
+				if (ainfo->pair_storage [0] != ArgNone) {
+					slot = param_reg_to_index [ainfo->pair_regs [0]];
+					g_assert (ainfo->pair_storage [0] == ArgInIReg);
+					p->regs [slot] = ((mgreg_t*)(arg))[0];
+				}
+				if (ainfo->pair_storage [1] != ArgNone) {
+					slot = param_reg_to_index [ainfo->pair_regs [1]];
+					g_assert (ainfo->pair_storage [1] == ArgInIReg);
+					p->regs [slot] = ((mgreg_t*)(arg))[1];
+				}
+				break;
+			case ArgOnStack:
+				for (i = 0; i < ainfo->arg_size / 8; ++i)
+					p->regs [slot + i] = ((mgreg_t*)(arg))[i];
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
 			}
 			break;
 		}
@@ -2560,8 +2616,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 			g_assert_not_reached ();
 		}
 	}
-
-	g_assert (greg <= PARAM_REGS);
 }
 
 /*
@@ -4688,6 +4742,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			for (i = 0; i < FLOAT_PARAM_REGS; ++i)
 				amd64_sse_movsd_reg_membase (code, i, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + (i * sizeof (double)));
 			amd64_patch (label, code);
+
+			/* Set stack args */
+			for (i = 0; i < DYN_CALL_STACK_ARGS; ++i) {
+				amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + ((PARAM_REGS + i) * sizeof(mgreg_t)), sizeof(mgreg_t));
+				amd64_mov_membase_reg (code, AMD64_RSP, i * sizeof (mgreg_t), AMD64_RAX, sizeof (mgreg_t));
+			}
 
 			/* Set argument registers */
 			for (i = 0; i < PARAM_REGS; ++i)
