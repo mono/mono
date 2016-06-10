@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Mono {
 	internal static class RuntimeMarshal {
@@ -8,6 +9,11 @@ namespace Mono {
 			unsafe {
 				return new String ((sbyte*)ptr);
 			}
+		}
+
+		internal static SafeStringMarshal MarshalString (string str)
+		{
+			return new SafeStringMarshal (str);
 		}
 
 		static int DecodeBlobSize (IntPtr in_ptr, out IntPtr out_ptr)
@@ -52,5 +58,8 @@ namespace Mono {
 				return c - 'a' + 10;
 			return c - 'A' + 10;
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal static extern void FreeAssemblyName (ref MonoAssemblyName name);
 	}
 }
