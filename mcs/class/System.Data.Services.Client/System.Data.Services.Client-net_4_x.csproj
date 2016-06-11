@@ -173,10 +173,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-resgen $(ProjectDir)\Client\System.Data.Services.Client.txt $(ProjectDir)\Client\System.Data.Services.Client.resx
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-resgen $(ProjectDir)\Client\System.Data.Services.Client.txt $(ProjectDir)\Client\System.Data.Services.Client.resx
+
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
@@ -219,7 +219,7 @@ resgen $(ProjectDir)\Client\System.Data.Services.Client.txt $(ProjectDir)\Client
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Client/System.Data.Services.Client.resx">
+    <EmbeddedResource Include="Client/System.Data.Services.Client.txt">
       <LogicalName>System.Data.Services.Client.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

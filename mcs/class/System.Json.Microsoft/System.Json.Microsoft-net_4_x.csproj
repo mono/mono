@@ -83,10 +83,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-cp $(ProjectDir)\System.Json\Properties\Resources.resx System.Json.Properties.Resources.resx
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-cp $(ProjectDir)\System.Json\Properties\Resources.resx System.Json.Properties.Resources.resx
+
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 

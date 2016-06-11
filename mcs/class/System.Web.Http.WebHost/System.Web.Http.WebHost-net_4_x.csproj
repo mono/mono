@@ -165,5 +165,13 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx">
+      <LogicalName>System.Web.Http.WebHost.Properties.CommonWebApiResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/System.Web.Http.WebHost/Properties/SRResources.resx">
+      <LogicalName>System.Web.Http.WebHost.Properties.SRResources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
 
