@@ -254,7 +254,7 @@ ifneq (plainweb/,$(intermediate))
 LIB_REFS += System.Web.Services plaindesign/System.Design
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
 
-all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
+all-local: System.Web/UplevelHelper.cs 
 
 endif
 
