@@ -5443,7 +5443,7 @@ ves_icall_System_Reflection_Assembly_GetCallingAssembly (void)
 
 ICALL_EXPORT MonoStringHandle
 ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gboolean full_name,
-										  gboolean assembly_qualified)
+										  gboolean assembly_qualified, MonoError *error)
 {
 	MonoDomain *domain = mono_object_domain (MONO_HANDLE_RAW (object));
 	MonoType *type = MONO_HANDLE_RAW (object)->type;
@@ -5464,6 +5464,11 @@ ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gbool
 
 	if (full_name && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR)) {
 		g_free (name);
+		return NULL_HANDLE_STRING;
+	}
+
+	if (!strcmp (name, "System.Int32")) {
+		mono_error_set_execution_engine (error, "FOO!");
 		return NULL_HANDLE_STRING;
 	}
 
