@@ -5467,7 +5467,8 @@ ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gbool
 		return NULL_HANDLE_STRING;
 	}
 
-	if (!strcmp (name, "System.Int32")) {
+	// FIXME: Just an example
+	if (!strcmp (name, "FOOFOO")) {
 		mono_error_set_execution_engine (error, "FOO!");
 		return NULL_HANDLE_STRING;
 	}
