@@ -147,8 +147,8 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 
 static volatile gpointer* dummy_global;
 
-static void*
-MONO_NEVER_INLINE
+static MONO_NEVER_INLINE
+void*
 return_stack_ptr (gpointer *i)
 {
 	dummy_global = i;
