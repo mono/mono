@@ -1530,7 +1530,7 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle)
 }
 
 ICALL_EXPORT MonoType*
-ves_icall_mono_class_get_type (MonoClass *klass)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
 {
 	return mono_class_get_type (klass);
 }

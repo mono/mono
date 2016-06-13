@@ -62,8 +62,8 @@ ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 ICALL(RUNTIME_1, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName)
 ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace)
 
-ICALL_TYPE(RTMARSHAL, "Mono.RuntimeMarshaling", RTMARSHAL_1)
-ICALL(RTMARSHAL_1, "mono_class_get_type", ves_icall_mono_class_get_type)
+ICALL_TYPE(RTCLASS, "Mono.RuntimeClassHandle", RTCLASS_1)
+ICALL(RTCLASS_1, "GetTypeFromClass", ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass)
 
 #ifndef PLATFORM_RO_FS
 ICALL_TYPE(KPAIR, "Mono.Security.Cryptography.KeyPairPersistence", KPAIR_1)

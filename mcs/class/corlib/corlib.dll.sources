@@ -24,7 +24,7 @@ Mono.Globalization.Unicode/Normalization.cs
 Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
 Mono/RuntimeStructs.cs
-Mono/RuntimeMarshaling.cs
+Mono/RuntimeHandles.cs
 Mono/DataConverter.cs
 Mono.Interop/ComInteropProxy.cs
 Mono.Interop/IDispatch.cs
