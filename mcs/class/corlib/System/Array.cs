@@ -1373,7 +1373,7 @@ namespace System
 					combsort (keys as double[], index, length, iswapper);
 					return;
 				}
-				if (keys is int[]) {
+				if (!(keys is uint[]) && (keys is int[])) {
 					combsort (keys as int[], index, length, iswapper);
 					return;
 				}
