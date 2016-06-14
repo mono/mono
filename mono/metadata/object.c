@@ -4703,10 +4703,14 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 				mono_error_cleanup (&error);
 		} else {
 			res = mono_runtime_invoke_checked (method, NULL, pa, &error);
-			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			if (!is_ok (&error)) {
+				MonoException *ex = mono_error_convert_to_exception (&error);
+				if (ex)
+					mono_unhandled_exception ((MonoObject*)ex);
+			}
 		}
 
-		if (!exc || !*exc)
+		if ((!exc || !*exc) && res)
 			rval = *(guint32 *)((char *)res + sizeof (MonoObject));
 		else
 			rval = -1;
@@ -4721,7 +4725,11 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 				mono_error_cleanup (&error);
 		} else {
 			mono_runtime_invoke_checked (method, NULL, pa, &error);
-			mono_error_raise_exception (&error); /* FIXME don't raise here */
+			if (!is_ok (&error)) {
+				MonoException *ex = mono_error_convert_to_exception (&error);
+				if (ex)
+					mono_unhandled_exception ((MonoObject*)ex);
+			}
 		}
 
 		if (!exc || !*exc)
