@@ -246,7 +246,16 @@ build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
 	MonoDomain *domain = mono_domain_get ();
 	uintptr_t ip = _Unwind_GetIP (frame_ctx);
 
-	if (show_native_addresses || mono_jit_info_table_find (domain, (char*)ip)) {
+	gboolean add_ptr = FALSE;
+	if (show_native_addresses) {
+		add_ptr = TRUE;
+	} else {
+		MonoJitInfo *found = mono_jit_info_table_find (domain, (char*)ip);
+		if (found && found->d.method->wrapper_type == MONO_WRAPPER_NONE)
+			add_ptr = TRUE;
+	}
+
+	if (add_ptr) {
 		GList **trace_ips = (GList **)state;
 		*trace_ips = g_list_prepend (*trace_ips, (gpointer)ip);
 	}
