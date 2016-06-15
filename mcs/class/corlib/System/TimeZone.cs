@@ -54,7 +54,12 @@ namespace System
 	public abstract class TimeZone
 	{
 		// Fields
-		private static TimeZone currentTimeZone = new CurrentSystemTimeZone (DateTime.GetNow ());
+		static TimeZone currentTimeZone;
+
+		[NonSerialized]
+		static object tz_lock = new object ();
+		[NonSerialized]
+		static long timezone_check;
 
 		// Constructor
 		protected TimeZone ()
@@ -64,7 +69,19 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				return currentTimeZone;
+				long now = DateTime.GetNow ();
+				TimeZone tz;
+				
+				lock (tz_lock) {
+					if (currentTimeZone == null || (now - timezone_check) > TimeSpan.TicksPerMinute) {
+						currentTimeZone = new CurrentSystemTimeZone (now);
+						timezone_check = now;
+					}
+					
+					tz = currentTimeZone;
+				}
+				
+				return tz;
 			}
 		}
 
