@@ -292,7 +292,16 @@ class MakeBundle {
 			if (cross_target == "default")
 				runtime = null;
 			else {
-				var truntime = Path.Combine (targets_dir, cross_target, "mono");
+				string truntime;
+				if (runtime != null)
+					truntime = runtime;
+				else {
+					if (cross_target == null){
+						Console.Error.WriteLine ("you should specify either a --runtime or a --cross compilation target");
+						Environment.Exit (1);
+					}
+					truntime = Path.Combine (targets_dir, cross_target, "mono");
+				}
 				if (!File.Exists (truntime)){
 					Console.Error.WriteLine ($"The runtime for the {cross_target} does not exist, use --fetch-target {cross_target} to download first");
 					return 1;
