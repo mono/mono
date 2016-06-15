@@ -5,6 +5,7 @@ TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 export TEST_HARNESS_VERBOSE=1
 export CFLAGS=-ggdb3
 
+if [[ ${CI_TAGS} == *'sgen-stress'* ]]; then export STRESS_SGEN=yes; fi
 if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; export MONO_CHECK_MODE=gc,thread; fi
 
 if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --build=i386-apple-darwin11.2.0"; fi

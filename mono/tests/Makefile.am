@@ -2,7 +2,7 @@ SUBDIRS = assemblyresolve gc-descriptors
 
 check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform	\
 		 test-console-output test-messages test-env-options test-unhandled-exception-2 test-appdomain-unload test-process-stress rm-empty-logs
-check-full: test-sgen check-local
+check-full: check-local test-sgen
 check-parallel: compile-tests check-full
 
 check-coreclr:
@@ -970,18 +970,20 @@ if !S390X
 	$(MAKE) sgen-bridge2-tests
 endif
 
+SGEN_STRESS_TESTS =	\
+	sgen-domain-unload-2.exe	\
+	sgen-cementing-stress.exe	\
+	sgen-new-threads-dont-join-stw.exe	\
+	sgen-new-threads-dont-join-stw-2.exe
+
 SGEN_REGULAR_TESTS =	\
 	finalizer-wait.exe	\
 	critical-finalizers.exe	\
 	sgen-descriptors.exe	\
 	sgen-gshared-vtype.exe	\
 	sgen-domain-unload.exe	\
-	sgen-domain-unload-2.exe	\
 	sgen-weakref-stress.exe	\
-	sgen-cementing-stress.exe	\
 	sgen-case-23400.exe	\
-	sgen-new-threads-dont-join-stw.exe	\
-	sgen-new-threads-dont-join-stw-2.exe	\
 	gc-graystack-stress.exe	\
 	bug-17590.exe
 
@@ -1011,6 +1013,33 @@ sgen-regular-tests-ms-conc-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 sgen-regular-tests-ms-split-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="minor=split" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+
+stress-sgen: $(SGEN_STRESS_TESTS)
+	$(MAKE) sgen-stress-tests-plain
+	$(MAKE) sgen-stress-tests-ms-conc
+	$(MAKE) sgen-stress-tests-ms-conc-split
+	$(MAKE) sgen-stress-tests-ms-split
+	$(MAKE) sgen-stress-tests-ms-split-95
+	$(MAKE) sgen-stress-tests-plain-clear-at-gc
+	$(MAKE) sgen-stress-tests-ms-conc-clear-at-gc
+	$(MAKE) sgen-stress-tests-ms-split-clear-at-gc
+
+sgen-stress-tests-plain: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-conc: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-conc-split: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep-conc,minor=split" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-split: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="minor=split" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-split-95: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="minor=split,alloc-ratio=95" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-plain-clear-at-gc: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-conc-clear-at-gc: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
+sgen-stress-tests-ms-split-clear-at-gc: $(SGEN_STRESS_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="minor=split" $(RUNTIME) ./test-runner.exe $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_STRESS_TESTS)
 
 SGEN_TOGGLEREF_TESTS=	\
 	sgen-toggleref.exe
