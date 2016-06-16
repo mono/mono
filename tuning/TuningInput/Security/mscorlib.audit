@@ -1890,9 +1890,7 @@ System.Void System.Threading.Timer/Scheduler::.cctor()
 System.Void System.Threading.WaitHandle::Dispose(System.Boolean)
 	r142142		spouliot - call SafeWaitHandle (SecurityCritical type) Dispose, eventually leading to NativeEventCalls.CloseEvent_internal (icall in threads.c)
 
-!SSC-B9241DD586DB8F47163315B4210124F0
-System.Void System.TimeZone::.cctor()
-	r142142		spouliot - creates/assign CurrentTimeZone to a new (local) TimeZone (ctor is SecurityCritical)
+System.TimeZone System.TimeZone::get_CurrentTimeZone()
 
 !SSC-2071E67448CEC8F0DF68C1EE84496EF5
 System.Void System.WeakReference::AllocateHandle(System.Object)
