@@ -381,7 +381,7 @@ namespace System.Net.Security {
                 // demand the same permissions, then we should remove our
                 // demand here.
                 //
-                #if !DISABLE_CAS_USE
+                #if FEATURE_MONO_CAS
                 ExceptionHelper.KeyContainerPermissionOpen.Demand(); 
                 #endif
                 
@@ -437,7 +437,7 @@ namespace System.Net.Security {
                             // For v 1.1 compat We want to ensure the store is opened under the **process** acount.
                             //
                             try {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                                 using (WindowsIdentity.Impersonate(IntPtr.Zero))
 #endif
                                 {
@@ -583,7 +583,7 @@ namespace System.Net.Security {
         //          Note: We call a user certificate selection delegate under permission
         //          assert but the signature of the delegate is unique so it's safe
         //
-        #if !DISABLE_CAS_USE
+        #if FEATURE_MONO_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
         #endif
         private bool AcquireClientCredentials(ref byte[] thumbPrint)
@@ -826,7 +826,7 @@ namespace System.Net.Security {
         //          Note: We call a user certificate selection delegate under permission
         //          assert but the signature of the delegate is unique so it's safe
         //
-        #if !DISABLE_CAS_USE
+        #if FEATURE_MONO_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
         #endif
         private bool AcquireServerCredentials(ref byte[] thumbPrint)
@@ -906,7 +906,7 @@ namespace System.Net.Security {
                 //
                 // For v 1.1 compat We want to ensure the credential are accessed under >>process<< acount.
                 //
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 using (WindowsIdentity.Impersonate(IntPtr.Zero))
 #endif
                 {
@@ -1285,7 +1285,7 @@ namespace System.Net.Security {
         //SECURITY: The scenario is allowed in semitrust StorePermission is asserted for Chain.Build
         //          A user callback has unique signature so it is safe to call it under permisison assert.
         //
-        #if !DISABLE_CAS_USE
+        #if FEATURE_MONO_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
         #endif
         internal bool VerifyRemoteCertificate(RemoteCertValidationCallback remoteCertValidationCallback)

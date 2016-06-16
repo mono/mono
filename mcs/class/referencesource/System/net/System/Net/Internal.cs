@@ -142,7 +142,7 @@ namespace System.Net {
 
         private static void DemandCallback(object state)
         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             ((CodeAccessPermission) state).Demand();
 #endif
         }
@@ -950,7 +950,7 @@ namespace System.Net {
 
     internal static class ExceptionHelper
     {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         internal static readonly KeyContainerPermission KeyContainerPermissionOpen = new KeyContainerPermission(KeyContainerPermissionFlags.Open);
         internal static readonly WebPermission WebPermissionUnrestricted = new WebPermission(NetworkAccess.Connect);
         internal static readonly SecurityPermission UnmanagedPermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);

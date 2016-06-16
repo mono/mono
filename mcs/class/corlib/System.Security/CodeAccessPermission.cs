@@ -52,8 +52,8 @@ namespace System.Security {
 		{
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -64,8 +64,8 @@ namespace System.Security {
 
 		public abstract IPermission Copy ();
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #endif
 		public void Demand ()
 		{
@@ -77,8 +77,8 @@ namespace System.Security {
 			new PermissionSet (this).CasOnlyDemand (3);
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -125,8 +125,8 @@ namespace System.Security {
 			return null;
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -135,8 +135,8 @@ namespace System.Security {
 			new PermissionSet (this).PermitOnly ();
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -147,8 +147,8 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -159,8 +159,8 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -171,8 +171,8 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
-#if MOBILE && DISABLE_CAS_USE
-		[Obsolete ("CAS support is removed by linker", true)]
+#if MOBILE
+		[Conditional ("FEATURE_MONO_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -264,5 +264,28 @@ namespace System.Security {
 			msg = String.Format (msg, target.GetType (), expected);
 			throw new ArgumentException (msg, "target");
 		}
+
+#if MOBILE
+		// Workaround for CS0629
+		void IStackWalk.Assert ()
+		{
+		}
+
+		void IStackWalk.Deny ()
+		{
+		}
+
+		void IStackWalk.PermitOnly ()
+		{
+		}
+
+		void IStackWalk.Demand ()
+		{
+		}
+
+		void IPermission.Demand ()
+		{
+		}
+#endif
 	}
 }

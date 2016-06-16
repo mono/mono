@@ -110,7 +110,7 @@ namespace System.Runtime.InteropServices {
                 return null;
 #endif
             String dir = GetRuntimeDirectoryImpl();
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             new FileIOPermission(FileIOPermissionAccess.PathDiscovery, dir).Demand();
 #endif
             return dir;
@@ -143,7 +143,7 @@ namespace System.Runtime.InteropServices {
                 String path = sb.ToString();
 #endif
                 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 // Do security check
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, path).Demand();
 #endif
