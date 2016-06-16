@@ -2125,7 +2125,7 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal Stream GetFileStream(string filename) {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert();
             try {
                 return new FileStream(filename,FileMode.Open,FileAccess.Read,FileShare.Read);
@@ -2141,7 +2141,7 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal FileVersionInfo GetVersionInfo(string filename) {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert(); // MDAC 62038
             try {
                 return FileVersionInfo.GetVersionInfo(filename); // MDAC 60411

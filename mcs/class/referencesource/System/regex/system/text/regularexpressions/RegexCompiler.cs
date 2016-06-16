@@ -131,7 +131,7 @@ namespace System.Text.RegularExpressions {
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>      
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
@@ -172,7 +172,7 @@ namespace System.Text.RegularExpressions {
 #endif
             }
             finally {
-#if !DISABLE_CAS_USE 
+#if FEATURE_MONO_CAS 
                 CodeAccessPermission.RevertAssert();
 #endif
             }
@@ -197,14 +197,14 @@ namespace System.Text.RegularExpressions {
 
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>         
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
                 factory = c.FactoryInstanceFromCode(code, options);
             }
             finally {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 CodeAccessPermission.RevertAssert();
 #endif
             }
@@ -239,7 +239,7 @@ namespace System.Text.RegularExpressions {
         
                 Type factory;
         
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
                 try {
@@ -247,7 +247,7 @@ namespace System.Text.RegularExpressions {
                     c.GenerateRegexType(pattern, options, fullname, regexes[i].IsPublic, code, tree, factory, mTimeout);
                 }
                 finally {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     CodeAccessPermission.RevertAssert();
 #endif
                 }
@@ -3049,7 +3049,7 @@ namespace System.Text.RegularExpressions {
             // SECREVIEW : Regex only generates string manipulation, so this is
             //           : ok.
             //
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
@@ -3061,7 +3061,7 @@ namespace System.Text.RegularExpressions {
                 CustomAttributeBuilder transparencyAttribute = new CustomAttributeBuilder(transparencyCtor, new object[0]);
                 assemblyAttributes.Add(transparencyAttribute);
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 ConstructorInfo securityRulesCtor = typeof(SecurityRulesAttribute).GetConstructor(new Type[] { typeof(SecurityRuleSet) });
                 CustomAttributeBuilder securityRulesAttribute =
                     new CustomAttributeBuilder(securityRulesCtor, new object[] { SecurityRuleSet.Level2 });
@@ -3087,7 +3087,7 @@ namespace System.Text.RegularExpressions {
                 }
             }
             finally {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 CodeAccessPermission.RevertAssert();
 #endif
             }

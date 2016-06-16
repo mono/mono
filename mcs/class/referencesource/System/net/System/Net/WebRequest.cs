@@ -365,7 +365,7 @@ namespace System.Net {
                 throw new ArgumentNullException("creator");
             }
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
 
@@ -622,7 +622,7 @@ namespace System.Net {
                 return RequestCacheManager.GetBinding(string.Empty).Policy;
             }
             set {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 // This is a replacement of RequestCachePermission demand since we are not including the latest in the product.
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
@@ -1108,7 +1108,7 @@ namespace System.Net {
         {
             get
             {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return InternalDefaultWebProxy;
@@ -1116,7 +1116,7 @@ namespace System.Net {
 
             set
             {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 InternalDefaultWebProxy = value;
@@ -1128,7 +1128,7 @@ namespace System.Net {
         //
         public static IWebProxy GetSystemWebProxy()
         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             return InternalGetSystemWebProxy();

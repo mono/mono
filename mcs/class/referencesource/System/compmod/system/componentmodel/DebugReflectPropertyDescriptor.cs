@@ -380,7 +380,7 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     IntSecurity.FullReflection.Assert();
 #endif
                     try {
@@ -456,7 +456,7 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     IntSecurity.FullReflection.Assert();
 #endif
                     try {

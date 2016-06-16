@@ -77,7 +77,7 @@ namespace System.Text.RegularExpressions {
         ///       multiple threads.</para>
         /// </devdoc>
 #if !SILVERLIGHT
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         [HostProtection(Synchronization=true)]
 #endif
         static public Group Synchronized(Group inner) {

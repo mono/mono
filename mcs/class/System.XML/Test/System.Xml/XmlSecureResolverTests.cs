@@ -51,17 +51,17 @@ namespace MonoTests.System.Xml
 		public void CreateEvidenceForUrl_Basic ()
 		{
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl (null);
-#if DISABLE_CAS_USE
-			Assert.IsNull (e);
-#else
+#if FEATURE_MONO_CAS
 			Assert.AreEqual (0, e.Count, "null");
+#else
+			Assert.IsNull (e);
 #endif
 
 			e = XmlSecureResolver.CreateEvidenceForUrl (String.Empty);
-#if DISABLE_CAS_USE
-			Assert.IsNull (e);
-#else
+#if FEATURE_MONO_CAS
 			Assert.AreEqual (0, e.Count, "String.Empty");
+#else
+			Assert.IsNull (e);
 #endif
 		}
 
