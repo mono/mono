@@ -89,7 +89,7 @@ namespace System.Runtime.Serialization
         [SecuritySafeCritical]
         public void DemandSerializationFormatterPermission()
         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             if (!demandedSerializationFormatterPermission)
             {
                 Globals.SerializationFormatterPermission.Demand();
@@ -103,7 +103,7 @@ namespace System.Runtime.Serialization
         [SecuritySafeCritical]
         public void DemandMemberAccessPermission()
         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             if (!demandedMemberAccessPermission)
             {
                 Globals.MemberAccessPermission.Demand();
