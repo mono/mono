@@ -30,6 +30,7 @@
 #include <glib.h>
 
 volatile gint64 mono_stat_malloc_memory = 0;
+volatile gint64 mono_stat_malloc_traffic = 0;
 
 #ifdef MONO_ENABLE_ALLOG
 
@@ -104,6 +105,7 @@ allog_init (void)
 void
 mono_allog_alloc (const gpointer address, const gsize size)
 {
+	g_atomic_pointer_add (&mono_stat_malloc_traffic, 1);
 	pthread_mutex_lock (&allog_lock);
 	allog_init ();
 	const gsize existing = allog_find (address);
@@ -119,6 +121,7 @@ mono_allog_free (const gpointer address, const gsize size)
 	/* free(null) is fine. */
 	if (!address)
 		return;
+	g_atomic_pointer_add (&mono_stat_malloc_traffic, 1);
 	pthread_mutex_lock (&allog_lock);
 	if (!allog_inited)
 		g_error ("Freeing %zu bytes at %p before allocating anything\n", size, address);
@@ -137,11 +140,13 @@ mono_allog_free (const gpointer address, const gsize size)
 void
 mono_allog_alloc (const gpointer address, const gsize size)
 {
+	g_atomic_pointer_add (&mono_stat_malloc_traffic, 1);
 }
 
 void
 mono_allog_free (const gpointer address, const gsize size)
 {
+	g_atomic_pointer_add (&mono_stat_malloc_traffic, 1);
 }
 
 #endif /* MONO_ENABLE_ALLOG */

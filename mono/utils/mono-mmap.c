@@ -123,7 +123,8 @@ mono_mem_account_type_name (MonoMemAccountType type)
 void
 mono_mem_account_register_counters (void)
 {
-	mono_counters_register ("Malloc", MONO_COUNTER_WORD | MONO_COUNTER_RUNTIME | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE, (void*)&mono_stat_malloc_memory);
+	mono_counters_register ("Malloc memory", MONO_COUNTER_WORD | MONO_COUNTER_RUNTIME | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE, (void*)&mono_stat_malloc_memory);
+	mono_counters_register ("Malloc traffic", MONO_COUNTER_WORD | MONO_COUNTER_RUNTIME | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE, (void*)&mono_stat_malloc_traffic);
 	for (int i = 0; i < MONO_MEM_ACCOUNT_MAX; ++i) {
 		const char *prefix = "Valloc ";
 		const char *name = mono_mem_account_type_name (i);

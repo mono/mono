@@ -145,6 +145,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_malloc_size(p) malloc_size((p))
 
 extern volatile gint64 mono_stat_malloc_memory;
+extern volatile gint64 mono_stat_malloc_traffic;
 
 // Uncomment this to enable logging & verification of g_malloc/g_free usage.
 // #define MONO_ENABLE_ALLOG
