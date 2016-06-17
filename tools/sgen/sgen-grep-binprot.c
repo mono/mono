@@ -650,20 +650,10 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 #define CONC_(A, B) A##B
 #define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, CONC(ARCH_SUFFIX,PACKED_SUFFIX))
 
-/* TODO: Make a struct for these options. */
 gboolean
 GREP_ENTRIES_FUNCTION_NAME (
-	EntryStream *stream,
-	int num_nums,
-	long nums [],
-	int num_patterns,
-	const char *patterns [],
-	int num_vtables,
-	long vtables [],
-	gboolean dump_all,
-	gboolean pause_times,
-	gboolean color_output,
-	unsigned long long first_entry_to_consider)
+	EntryStream *const stream,
+	const GrepOptions *const options)
 {
 	int type;
 	void *data = g_malloc0 (MAX_ENTRY_SIZE);
@@ -680,9 +670,9 @@ GREP_ENTRIES_FUNCTION_NAME (
 	entry_index = 0;
 	const char *name = NULL;
 	while ((type = read_entry (stream, data, &name)) != SGEN_PROTOCOL_EOF) {
-		if (entry_index < first_entry_to_consider)
+		if (entry_index < options->first_entry_to_consider)
 			goto next_entry;
-		if (pause_times) {
+		if (options->pause_times) {
 			switch (type) {
 			case PROTOCOL_ID (binary_protocol_world_stopping): {
 				PROTOCOL_STRUCT (binary_protocol_world_stopping) *entry = data;
@@ -712,29 +702,31 @@ GREP_ENTRIES_FUNCTION_NAME (
 				break;
 			}
 			}
-		} else if (num_patterns == 0 || find_pattern (name, patterns, num_patterns) != -1) {
-			int match_indices [num_nums + 1];
+		} else if (options->num_patterns == 0
+			|| find_pattern (name, options->patterns, options->num_patterns) != -1) {
+			int match_indices [options->num_nums + 1];
 			gboolean match = is_always_match (type);
-			match_indices [num_nums] = num_nums == 0 ? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
-			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
-			for (i = 0; i < num_nums; ++i) {
-				match_indices [i] = match_index ((mword) nums [i], type, data);
+			match_indices [options->num_nums] = options->num_nums == 0
+				? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match = match_indices [options->num_nums] != BINARY_PROTOCOL_NO_MATCH;
+			for (i = 0; i < options->num_nums; ++i) {
+				match_indices [i] = match_index ((mword) options->nums [i], type, data);
 				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
-				for (i = 0; i < num_vtables; ++i) {
-					if (is_vtable_match ((mword) vtables [i], type, data)) {
+				for (i = 0; i < options->num_vtables; ++i) {
+					if (is_vtable_match ((mword) options->vtables [i], type, data)) {
 						match = TRUE;
 						break;
 					}
 				}
 			}
-			if (match || dump_all)
+			if (match || options->dump_all)
 				printf ("%12lld ", entry_index);
-			if (dump_all)
+			if (options->dump_all)
 				printf (match ? "* " : "  ");
-			if (match || dump_all)
-				print_entry (type, data, num_nums, match_indices, color_output);
+			if (match || options->dump_all)
+				print_entry (type, data, options->num_nums, match_indices, options->color_output);
 		}
 	next_entry:
 		++entry_index;

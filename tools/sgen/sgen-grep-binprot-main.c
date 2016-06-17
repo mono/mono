@@ -99,19 +99,22 @@ main (int argc, char *argv[])
 
 	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
 	init_stream (&stream, input_file);
+
+	GrepOptions options = {
+		.num_nums = num_nums,
+		.nums = nums,
+		.num_patterns = num_patterns,
+		.patterns = patterns,
+		.num_vtables = num_vtables,
+		.vtables = vtables,
+		.dump_all = dump_all,
+		.pause_times = pause_times,
+		.color_output = color_output,
+		.first_entry_to_consider = first_entry_to_consider
+	};
+
 	for (i = 0; i < sizeof (grepers) / sizeof (GrepEntriesFunction *); i++) {
-		if (grepers [i] (
-				&stream,
-				num_nums,
-				nums,
-				num_patterns,
-				patterns,
-				num_vtables,
-				vtables,
-				dump_all,
-				pause_times,
-				color_output,
-				first_entry_to_consider)) {
+		if (grepers [i] (&stream, &options)) {
 			/* Success */
 			break;
 		}
