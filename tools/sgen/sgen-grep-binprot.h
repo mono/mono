@@ -1,3 +1,6 @@
+#ifndef SGEN_GREP_BINPROT_H
+#define SGEN_GREP_BINPROT_H
+
 typedef gboolean GrepEntriesFunction(
 	EntryStream *stream,
 	int num_nums,
@@ -15,3 +18,5 @@ GrepEntriesFunction
 	sgen_binary_protocol_grep_entries,
 	sgen_binary_protocol_grep_entries32p,
 	sgen_binary_protocol_grep_entries64p;
+
+#endif /* SGEN_GREP_BINPROT_H */
