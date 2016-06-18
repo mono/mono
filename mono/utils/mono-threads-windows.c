@@ -177,6 +177,7 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 	ThreadStartInfo *start_info;
 	HANDLE result;
 	DWORD thread_id;
+	guint32 creation_flags = tp->creation_flags;
 	int res;
 
 	start_info = g_malloc0 (sizeof (ThreadStartInfo));
@@ -185,15 +186,15 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 	mono_coop_sem_init (&(start_info->registered), 0);
 	start_info->arg = arg;
 	start_info->start_routine = start_routine;
-	start_info->suspend = tp->creation_flags & CREATE_SUSPENDED;
-	tp->creation_flags &= ~CREATE_SUSPENDED;
+	start_info->suspend = creation_flags & CREATE_SUSPENDED;
+	creation_flags &= ~CREATE_SUSPENDED;
 	if (start_info->suspend) {
 		start_info->suspend_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 		if (!start_info->suspend_event)
 			return NULL;
 	}
 
-	result = CreateThread (NULL, tp->stack_size, inner_start_thread, start_info, tp->creation_flags, &thread_id);
+	result = CreateThread (NULL, tp->stack_size, inner_start_thread, start_info, creation_flags, &thread_id);
 	if (result) {
 		res = mono_coop_sem_wait (&(start_info->registered), MONO_SEM_FLAGS_NONE);
 		g_assert (res != -1);
