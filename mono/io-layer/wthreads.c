@@ -417,7 +417,8 @@ SetThreadPriority (gpointer handle, gint32 priority)
 	if (0 > posix_priority)
 		return FALSE;
 		
-	switch (pthread_setschedprio (thread_handle->id, posix_priority)) {
+	param.sched_priority = posix_priority;
+	switch (pthread_setschedparam (thread_handle->id, policy, &param)) {
 		case 0:
 			thread_handle->priority = priority;
 			return TRUE;
