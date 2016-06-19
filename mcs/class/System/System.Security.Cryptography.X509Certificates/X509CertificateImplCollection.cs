@@ -1,5 +1,5 @@
 //
-// X509Certificate2Impl.cs
+// X509CertificateImplCollection.cs
 //
 // Authors:
 //	Martin Baulig  <martin.baulig@xamarin.com>
@@ -25,62 +25,73 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if SECURITY_DEP
+using System.Collections.Generic;
+
 namespace System.Security.Cryptography.X509Certificates
 {
-	internal abstract class X509Certificate2Impl : X509CertificateImpl
+	internal class X509CertificateImplCollection : IDisposable
 	{
-#if SECURITY_DEP
+		List<X509CertificateImpl> list;
 
-		public abstract bool Archived {
-			get; set;
+		public X509CertificateImplCollection ()
+		{
+			list = new List<X509CertificateImpl> ();
 		}
 
-		public abstract X509ExtensionCollection Extensions {
-			get;
+		X509CertificateImplCollection (X509CertificateImplCollection other)
+		{
+			list = new List<X509CertificateImpl> ();
+			foreach (var impl in other.list)
+				list.Add (impl.Clone ());
 		}
 
-		public abstract bool HasPrivateKey {
-			get;
+		public int Count {
+			get {
+				return list.Count;
+			}
 		}
 
-		public abstract X500DistinguishedName IssuerName {
-			get;
+		public X509CertificateImpl this[int index] {
+			get {
+				return list[index];
+			}
 		}
 
-		public abstract AsymmetricAlgorithm PrivateKey {
-			get; set;
+		public void Add (X509CertificateImpl impl, bool takeOwnership)
+		{
+			if (!takeOwnership)
+				impl = impl.Clone ();
+			list.Add (impl);
 		}
 
-		public abstract PublicKey PublicKey {
-			get;
+		public X509CertificateImplCollection Clone ()
+		{
+			return new X509CertificateImplCollection (this);
 		}
 
-		public abstract Oid SignatureAlgorithm {
-			get;
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
-		public abstract X500DistinguishedName SubjectName {
-			get;
+		protected virtual void Dispose (bool disposing)
+		{
+			foreach (var impl in list) {
+				try {
+					impl.Dispose ();
+				} catch {
+					;
+				}
+			}
+			list.Clear ();
 		}
 
-		public abstract int Version {
-			get;
+		~X509CertificateImplCollection ()
+		{
+			Dispose (false);
 		}
-
-		internal abstract X509CertificateImplCollection IntermediateCertificates {
-			get;
-		}
-
-		public abstract string GetNameInfo (X509NameType nameType, bool forIssuer);
-
-		public abstract void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags);
-
-		public abstract byte[] Export (X509ContentType contentType, string password);
-
-		public abstract bool Verify (X509Certificate2 thisCertificate);
-
-		public abstract void Reset ();
-
-#endif
 	}
 }
+#endif
