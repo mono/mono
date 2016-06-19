@@ -459,6 +459,7 @@ System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImplCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs
 System.Security.Cryptography.X509Certificates/X509ChainElementCollection.cs
 System.Security.Cryptography.X509Certificates/X509ChainElement.cs
