@@ -1243,7 +1243,7 @@ mono_test_marshal_stringbuilder_ref (char **s)
 * C/C++ standard and the runtime.
 */
 typedef struct {
-#if !defined(__GNUC__) || (defined(TARGET_WIN32) && defined(TARGET_AMD64))
+#if !defined(__GNUC__) || defined(TARGET_WIN32)
     char a;
 #endif
 } EmptyStruct;
