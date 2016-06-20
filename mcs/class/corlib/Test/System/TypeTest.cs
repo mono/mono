@@ -487,6 +487,16 @@ namespace MonoTests.System
 			{
 				T TestProperty { get; set; }
 			}
+
+			public class TestClass_HiddenProperty : BaseClass_HiddenProperty
+			{
+				public new virtual string Prop { set { } }
+			}
+
+			public class BaseClass_HiddenProperty
+			{
+				public virtual string Prop { set  { } }
+			}
 		}
 
 		[Test]
@@ -497,8 +507,12 @@ namespace MonoTests.System
 			var prop = typeof (GetProperties_Overrides_Input.TestClass).GetProperty ("TestProperty");
 			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass), prop.DeclaringType);
 
+			var prop_2 = typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperty ("Prop");
+			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty), prop_2.DeclaringType);
+
 			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass).GetProperties().Length);
 			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_Indexer).GetProperties().Length);
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperties().Length);
 	    }
 
 		[Test] // GetProperties (BindingFlags)
