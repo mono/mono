@@ -212,21 +212,18 @@ namespace System.Web.Security
 				strCookiePath = cookiePath;
 
 			DateTime now = DateTime.Now;
-			DateTime then;
-	            	if (createPersistentCookie)
-	                	then = now.AddMinutes(timeout);
-	            	else
-	                	then = DateTime.MinValue;
+			DateTime ticketExpiry = now.AddMinutes(timeout);
+	            	DateTime cookieExpiry = createPersistentCookie ? ticketExpiry : DateTime.MinValue;
 
 			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket (1,
 											  userName,
 											  now,
-                                              createPersistentCookie?then:now.AddYears (50),
+											  ticketExpiry,
 											  createPersistentCookie,
 											  String.Empty,
 											  cookiePath);
 
-			HttpCookie cookie = new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
+			HttpCookie cookie = new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, cookieExpiry);
 			if (requireSSL)
 				cookie.Secure = true;
 			if (!String.IsNullOrEmpty (cookie_domain))
