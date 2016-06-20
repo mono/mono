@@ -79,4 +79,5 @@ ${TESTCMD} --label=Microsoft.Build.Engine-14 --timeout=60m make -w -C mcs/class/
 ${TESTCMD} --label=Microsoft.Build.Framework-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Tasks run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
+${TESTCMD} --label=ms-test-suite --timeout=15m make -w -C acceptance-tests check-ms-test-suite
 rm -fr /tmp/jenkins-temp-aspnet*
