@@ -213,12 +213,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\CommonResources.resx $(ProjectDir)\System.Web.Razor.Common.CommonResources.resx
-resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\System.Web.Razor\Resources\RazorResources.resx $(ProjectDir)\System.Web.Razor.Resources.RazorResources.resx
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\CommonResources.resx $(ProjectDir)\System.Web.Razor.Common.CommonResources.resx
-resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\System.Web.Razor\Resources\RazorResources.resx $(ProjectDir)\System.Web.Razor.Resources.RazorResources.resx
+
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
@@ -245,11 +243,11 @@ resgen $(ProjectDir)\..\..\..\external\aspnetwebstack\src\System.Web.Razor\Resou
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="System.Web.Razor.Resources.RazorResources.resx">
-      <LogicalName>System.Web.Razor.Resources.RazorResources.resources</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Razor.Common.CommonResources.resx">
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/CommonResources.resx">
       <LogicalName>System.Web.Razor.Common.CommonResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/System.Web.Razor/Resources/RazorResources.resx">
+      <LogicalName>System.Web.Razor.Resources.RazorResources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

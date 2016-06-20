@@ -264,6 +264,18 @@ namespace MonoTests.System.IO.Compression
 		}		
 
 		[Test]
+		public void ZipEnumerateArchiveDefaultLastWriteTime()
+		{
+			using (var archive = new ZipArchive(File.Open("test.nupkg", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				Assert.AreEqual(new DateTime(624511296000000000).Ticks, entry.LastWriteTime.Ticks);
+				Assert.IsNotNull(entry);
+			}
+		}
+
+		[Test]
 		public void ZipEnumerateEntriesReadMode()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);

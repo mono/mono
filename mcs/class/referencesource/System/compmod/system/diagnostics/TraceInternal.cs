@@ -62,7 +62,7 @@ namespace System.Diagnostics {
         internal static string AppName {
             get {
                 if (appName == null) {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     new EnvironmentPermission(EnvironmentPermissionAccess.Read, "Path").Assert();
 #endif
                     appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);

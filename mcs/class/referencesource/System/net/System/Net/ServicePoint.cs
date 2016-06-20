@@ -93,7 +93,7 @@ namespace System.Net {
                 return m_BindIPEndPointDelegate;
             }
             set {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 ExceptionHelper.InfrastructurePermission.Demand();
 #endif
                 m_BindIPEndPointDelegate = value;
@@ -460,7 +460,7 @@ namespace System.Net {
                     throw new NotSupportedException(SR.GetString(SR.net_servicePointAddressNotSupportedInHostMode));
                 }
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 // Don't let low-trust apps discover the proxy information.
                 if (m_ProxyServicePoint)
                 {

@@ -1957,6 +1957,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 			t = sig->params [i - sig->hasthis];
 		else
 			t = &mono_defaults.int_class->byval_arg;
+		t = mini_type_get_underlying_type (t);
 
 		linfo->args [i].storage = LLVMArgNone;
 
@@ -7147,7 +7148,12 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	for (i = 0; i < AMD64_NREG; ++i) {
 		if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->arch.saved_iregs & (1 << i))) {
 			/* Restore only used_int_regs, not arch.saved_iregs */
-			if (cfg->used_int_regs & (1 << i)) {
+#if defined(MONO_SUPPORT_TASKLETS)
+			int restore_reg=1;
+#else
+			int restore_reg=(cfg->used_int_regs & (1 << i));
+#endif
+			if (restore_reg) {
 				amd64_mov_reg_membase (code, i, cfg->frame_reg, save_area_offset, 8);
 				mono_emit_unwind_op_same_value (cfg, code, i);
 				async_exc_point (code);

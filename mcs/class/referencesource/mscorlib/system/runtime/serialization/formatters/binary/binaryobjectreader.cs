@@ -71,7 +71,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
         private BinaryMethodReturn binaryMethodReturn;
         private bool bIsCrossAppDomain;
 #endif        
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         private static FileIOPermission sfileIOPermission = new FileIOPermission(PermissionState.Unrestricted);
 #endif        
         private SerStack ValueFixupStack
@@ -1362,7 +1362,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                 if (bSimpleAssembly)
                 {
                     try {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                           sfileIOPermission.Assert();
 #endif
                           try {
@@ -1373,7 +1373,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 #endif // FEATURE_FUSION
                           }
                           finally {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                               CodeAccessPermission.RevertAssert();
 #endif
                           }
@@ -1390,14 +1390,14 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                 else {
                     try
                     {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                           sfileIOPermission.Assert();
 #endif
                           try {
                               assm = Assembly.Load(assemblyName);
                           }
                           finally {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                               CodeAccessPermission.RevertAssert();
 #endif
                           }
@@ -1512,7 +1512,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
             if ( !FormatterServices.UnsafeTypeForwardersIsEnabled() && sourceAssembly != destAssembly )
             {
                 // we have a type forward to attribute !
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 // we can try to see if the dest assembly has less permissionSet
                 if (!destAssembly.PermissionSet.IsSubsetOf(sourceAssembly.PermissionSet))
 #endif
@@ -1530,7 +1530,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                             typeFowardedFromAssembly = Assembly.Load(typeInfo.AssemblyString);
                         }
                         catch { }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                         if (typeFowardedFromAssembly != sourceAssembly)
                         {
                             // throw security exception
@@ -1540,7 +1540,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                     }
                     else
                     {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                         // throw security exception
                         throw new SecurityException() { Demanded = sourceAssembly.PermissionSet };
 #endif

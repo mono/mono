@@ -51,7 +51,7 @@ namespace System.Resources {
             // Don't use Assembly manifest, but grovel on disk for a file.
             try
             {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 new System.Security.Permissions.FileIOPermission(System.Security.Permissions.PermissionState.Unrestricted).Assert();
 #endif
 
@@ -79,7 +79,7 @@ namespace System.Resources {
             }
             finally
             {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 System.Security.CodeAccessPermission.RevertAssert();
 #endif
             }

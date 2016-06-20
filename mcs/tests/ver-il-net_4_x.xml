@@ -52191,6 +52191,19 @@
       </method>
     </type>
   </test>
+  <test name="test-937.cs">
+    <type name="TypeForwarderOfSystemObject">
+      <method name="Void TestAttributeReadDoesNotCrash()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-94.cs">
     <type name="Base">
       <method name="Int32 IVehicle.Start()" attrs="481">

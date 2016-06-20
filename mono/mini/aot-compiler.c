@@ -2725,7 +2725,10 @@ find_typespec_for_class (MonoAotCompile *acfg, MonoClass *klass)
 			MonoError error;
 			int typespec = MONO_TOKEN_TYPE_SPEC | (i + 1);
 			MonoClass *klass_key = mono_class_get_and_inflate_typespec_checked (acfg->image, typespec, NULL, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME error handling */
+			if (!is_ok (&error)) {
+				mono_error_cleanup (&error);
+				continue;
+			}
 			g_hash_table_insert (acfg->typespec_classes, klass_key, GINT_TO_POINTER (typespec));
 		}
 	}
@@ -4940,23 +4943,23 @@ add_generic_instances (MonoAotCompile *acfg)
 		}
 
 		/* object[] accessor wrappers. */
-		{
-			MonoClass *obj_array_class = mono_array_class_get (mono_defaults.object_class, 1);
+		for (i = 1; i < 3; ++i) {
+			MonoClass *obj_array_class = mono_array_class_get (mono_defaults.object_class, i);
 			MonoMethod *m;
 
-			m = mono_class_get_method_from_name (obj_array_class, "Get", 1);
+			m = mono_class_get_method_from_name (obj_array_class, "Get", i);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, m);
 
-			m = mono_class_get_method_from_name (obj_array_class, "Address", 1);
+			m = mono_class_get_method_from_name (obj_array_class, "Address", i);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, m);
 
-			m = mono_class_get_method_from_name (obj_array_class, "Set", 2);
+			m = mono_class_get_method_from_name (obj_array_class, "Set", i + 1);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
@@ -9715,6 +9718,7 @@ compile_methods (MonoAotCompile *acfg)
 		HANDLE handle;
 		gpointer *user_data;
 		MonoMethod **methods;
+		MonoThreadParm tp;
 
 		methods_len = acfg->methods->len;
 
@@ -9745,7 +9749,10 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [1] = acfg;
 			user_data [2] = frag;
 			
-			handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)compile_thread_main, user_data, 0, 0, NULL);
+			tp.priority = 0;
+			tp.stack_size = 0;
+			tp.creation_flags = 0;
+			handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)compile_thread_main, user_data, &tp, NULL);
 			g_ptr_array_add (threads, handle);
 		}
 		g_free (methods);

@@ -15,8 +15,6 @@ build system needs to let us do, specifically:
 
 
 
-
-
 ** Makefile structure
 
 A general makefile looks like this:
@@ -438,7 +436,15 @@ To give it flags, set $(LOCAL_CFLAGS). As with compiling C#, the
 variable $(CFLAGS) will automatically be included on the command line.
 
 
+* Compiling resources with resgen
 
+If you have a resource that should be compiled with resgen and
+included in your assembly, you can use the RESOURCES_DEFS variable.
+This variable can contain lists of pairs that are separated by comma
+to represent the resource ID as embedded in the assembly followed by
+the file name, like this:
+
+RESOURCE_DEFS = Messages,TextResources.resx Errors,ErrorList.txt
 
 
 * Documentation-related needs? Use $(MDOC)

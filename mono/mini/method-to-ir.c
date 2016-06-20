@@ -5898,7 +5898,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (opcode && fsig->param_count == 1) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
-			ins->dreg = mono_alloc_freg (cfg);
+			ins->dreg = mono_alloc_dreg (cfg, ins->type);
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
@@ -5929,7 +5929,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (opcode && fsig->param_count == 2) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = fsig->params [0]->type == MONO_TYPE_I4 ? STACK_I4 : STACK_I8;
-			ins->dreg = mono_alloc_ireg (cfg);
+			ins->dreg = mono_alloc_dreg (cfg, ins->type);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
@@ -6792,22 +6792,18 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	            !strcmp (cmethod->klass->image->assembly->aname.name, "monotouch")) &&
 				!strcmp (cmethod->klass->name_space, "XamCore.ObjCRuntime") &&
 				!strcmp (cmethod->klass->name, "Selector")) ||
-			   (!strcmp (cmethod->klass->image->assembly->aname.name, "Xamarin.iOS") &&
+			   ((!strcmp (cmethod->klass->image->assembly->aname.name, "Xamarin.iOS") ||
+				 !strcmp (cmethod->klass->image->assembly->aname.name, "Xamarin.Mac")) &&
 				!strcmp (cmethod->klass->name_space, "ObjCRuntime") &&
 				!strcmp (cmethod->klass->name, "Selector"))
 			   ) {
-		if (cfg->backend->have_objc_get_selector &&
+		if ((cfg->backend->have_objc_get_selector || cfg->compile_llvm) &&
 			!strcmp (cmethod->name, "GetHandle") && fsig->param_count == 1 &&
 		    (args [0]->opcode == OP_GOT_ENTRY || args [0]->opcode == OP_AOTCONST) &&
-		    cfg->compile_aot && !cfg->llvm_only) {
+		    cfg->compile_aot) {
 			MonoInst *pi;
 			MonoJumpInfoToken *ji;
 			char *s;
-
-			// FIXME: llvmonly
-
-			cfg->exception_message = g_strdup ("GetHandle");
-			cfg->disable_llvm = TRUE;
 
 			if (args [0]->opcode == OP_GOT_ENTRY) {
 				pi = (MonoInst *)args [0]->inst_p1;
@@ -15021,7 +15017,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	g_free (live_range_end_bb);
 }
 
-static void mono_decompose_typecheck (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
+static void
+mono_decompose_typecheck (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
 {
 	MonoInst *ret, *move, *source;
 	MonoClass *klass = ins->klass;
@@ -15071,15 +15068,16 @@ static void mono_decompose_typecheck (MonoCompile *cfg, MonoBasicBlock *bb, Mono
 	mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
 }
 
-void mono_decompose_typechecks (MonoCompile *cfg)
+void
+mono_decompose_typechecks (MonoCompile *cfg)
 {
 	for (MonoBasicBlock *bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *c;
-		MONO_BB_FOR_EACH_INS (bb, c) {
-			switch (c->opcode) {
+		MonoInst *ins;
+		MONO_BB_FOR_EACH_INS (bb, ins) {
+			switch (ins->opcode) {
 			case OP_ISINST:
 			case OP_CASTCLASS:
-				mono_decompose_typecheck (cfg, bb, c);
+				mono_decompose_typecheck (cfg, bb, ins);
 				break;
 			}
 		}

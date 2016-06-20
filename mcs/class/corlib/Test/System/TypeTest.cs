@@ -456,6 +456,65 @@ namespace MonoTests.System
 
 		}
 
+		class GetProperties_Overrides_Input
+		{
+			public class TestClass : BaseClass<object>
+			{
+				public override object TestProperty { get; set; }
+			}
+
+			public abstract class BaseClass<T>
+			{
+				public virtual T TestProperty { get; set; }
+			}
+
+			public class TestClass_Indexer : BaseClass_Indexer<object>
+			{
+				public override object this[int arg] { set { } }
+			}
+
+			public abstract class BaseClass_Indexer<T>
+			{
+				public virtual T this[int arg] { set { } }
+			}
+
+			public interface IB : IA<object>
+			{
+				new object TestProperty { get; set; }
+			}
+
+			public interface IA<T>
+			{
+				T TestProperty { get; set; }
+			}
+
+			public class TestClass_HiddenProperty : BaseClass_HiddenProperty
+			{
+				public new virtual string Prop { set { } }
+			}
+
+			public class BaseClass_HiddenProperty
+			{
+				public virtual string Prop { set  { } }
+			}
+		}
+
+		[Test]
+		public void GetProperties_Overrides ()
+		{
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.IB).GetProperties().Length);
+
+			var prop = typeof (GetProperties_Overrides_Input.TestClass).GetProperty ("TestProperty");
+			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass), prop.DeclaringType);
+
+			var prop_2 = typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperty ("Prop");
+			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty), prop_2.DeclaringType);
+
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass).GetProperties().Length);
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_Indexer).GetProperties().Length);
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperties().Length);
+	    }
+
 		[Test] // GetProperties (BindingFlags)
 		public void GetProperties_Flags ()
 		{

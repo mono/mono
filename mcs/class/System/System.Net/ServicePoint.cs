@@ -42,7 +42,7 @@ namespace System.Net
 {
 	public class ServicePoint
 	{
-		Uri uri;
+		readonly Uri uri;
 		int connectionLimit;
 		int maxIdleTime;
 		int currentConnections;
@@ -345,15 +345,31 @@ namespace System.Net
 				lock (hostE) {
 					string uriHost = uri.Host;
 
-					if (host == null || HasTimedOut) {
-						lastDnsResolve = DateTime.UtcNow;
+					if (host == null) {
+						// Cannot do DNS resolution on literal IP addresses
+						if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
 
-						try {
-							host = Dns.GetHostEntry (uriHost);
+							if (uri.HostNameType == UriHostNameType.IPv6) {
+								// Remove square brackets
+								uriHost = uriHost.Substring (1, uriHost.Length - 2);
+							}
+
+							// Creates IPHostEntry
+							host = new IPHostEntry();
+							host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
+							return host;
 						}
-						catch (Exception) {
-							return null;
-						}
+					} else {
+						if (!HasTimedOut)
+							return host;
+					}
+
+					lastDnsResolve = DateTime.UtcNow;
+
+					try {
+						host = Dns.GetHostEntry (uriHost);
+					} catch {
+						return null;
 					}
 				}
 

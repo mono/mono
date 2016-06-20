@@ -299,13 +299,9 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-cp $(ProjectDir)/../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx $(ProjectDir)/System.Net.Http.Properties.CommonWebApiResources.resx
-cp $(ProjectDir)/../../../external/aspnetwebstack/src/System.Net.Http.Formatting/Properties/Resources.resx $(ProjectDir)/System.Net.Http.Properties.Resources.resx
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-cp $(ProjectDir)/../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx $(ProjectDir)/System.Net.Http.Properties.CommonWebApiResources.resx
-cp $(ProjectDir)/../../../external/aspnetwebstack/src/System.Net.Http.Formatting/Properties/Resources.resx $(ProjectDir)/System.Net.Http.Properties.Resources.resx
 
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
@@ -357,10 +353,10 @@ cp $(ProjectDir)/../../../external/aspnetwebstack/src/System.Net.Http.Formatting
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="System.Net.Http.Properties.CommonWebApiResources.resx">
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx">
       <LogicalName>System.Net.Http.Properties.CommonWebApiResources.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="System.Net.Http.Properties.Resources.resx">
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/System.Net.Http.Formatting/Properties/Resources.resx">
       <LogicalName>System.Net.Http.Properties.Resources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

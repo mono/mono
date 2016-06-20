@@ -989,7 +989,7 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated
         internal virtual String InternalToString()
         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             try 
             {
 #pragma warning disable 618

@@ -232,10 +232,10 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-resgen $(ProjectDir)\src\ComponentModel\Strings.resx $(ProjectDir)\Microsoft.Internal.Strings.resx
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-resgen $(ProjectDir)\src\ComponentModel\Strings.resx $(ProjectDir)\Microsoft.Internal.Strings.resx
+
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
@@ -262,7 +262,7 @@ resgen $(ProjectDir)\src\ComponentModel\Strings.resx $(ProjectDir)\Microsoft.Int
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Microsoft.Internal.Strings.resx">
+    <EmbeddedResource Include="src/ComponentModel/Strings.resx">
       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

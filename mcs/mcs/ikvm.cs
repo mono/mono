@@ -239,6 +239,7 @@ namespace Mono.CSharp
 		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
 		Dictionary<AssemblyName, List<string[]>> resolved_version_mismatches;
+		static readonly TypeName objectTypeName = new TypeName ("System", "Object");
 
 		static StaticLoader ()
 		{
@@ -442,10 +443,15 @@ namespace Mono.CSharp
 			return list;
 		}
 
-		public override bool HasObjectType (Assembly assembly)
+		public override Assembly HasObjectType (Assembly assembly)
 		{
 			try {
-				return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
+				// System.Object can be forwarded and ikvm
+				// transparently finds it in target assembly therefore
+				// need to return actual obj assembly becauase in such
+				// case it's different to assembly parameter
+				var obj = assembly.FindType (objectTypeName);
+				return obj == null ? null : obj.Assembly;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, "Failed to load assembly `{0}'", assembly.FullName);
 			}

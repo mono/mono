@@ -4309,11 +4309,7 @@ mono_runtime_run_main (MonoMethod *method, int argc, char* argv[],
 	MonoArray *args = prepare_run_main (method, argc, argv);
 	int res;
 	if (exc) {
-		res = mono_runtime_try_exec_main (method, args, exc, &error);
-		if (*exc == NULL && !is_ok (&error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (&error);
-		else
-			mono_error_cleanup (&error);
+		res = mono_runtime_try_exec_main (method, args, exc);
 	} else {
 		res = mono_runtime_exec_main_checked (method, args, &error);
 		mono_error_raise_exception (&error); /* OK to throw, external only without a better alternative */
@@ -4360,12 +4356,11 @@ mono_runtime_run_main_checked (MonoMethod *method, int argc, char* argv[],
  */
 int
 mono_runtime_try_run_main (MonoMethod *method, int argc, char* argv[],
-			   MonoObject **exc, MonoError *error)
+			   MonoObject **exc)
 {
 	g_assert (exc);
-	mono_error_init (error);
 	MonoArray *args = prepare_run_main (method, argc, argv);
-	return mono_runtime_try_exec_main (method, args, exc, error);
+	return mono_runtime_try_exec_main (method, args, exc);
 }
 
 
@@ -4800,27 +4795,20 @@ do_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *error)
 		if (is_ok (error))
 			rval = 0;
 		else {
-			/* If the return type of Main is void, only
-			 * set the exitcode if an exception was thrown
-			 * (we don't want to blow away an
-			 * explicitly-set exit code)
-			 */
 			rval = -1;
-			mono_environment_exitcode_set (rval);
 		}
 	}
 	return rval;
 }
 
 static int
-do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc, MonoError *error)
+do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	gpointer pa [1];
 	int rval;
 
-	mono_error_init (error);
 	g_assert (args);
 	g_assert (exc);
 
@@ -4828,12 +4816,13 @@ do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc, MonoErr
 
 	/* FIXME: check signature of method */
 	if (mono_method_signature (method)->ret->type == MONO_TYPE_I4) {
+		MonoError inner_error;
 		MonoObject *res;
-		res = mono_runtime_try_invoke (method, NULL, pa, exc, error);
-		if (*exc == NULL && !mono_error_ok (error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (error);
+		res = mono_runtime_try_invoke (method, NULL, pa, exc, &inner_error);
+		if (*exc == NULL && !mono_error_ok (&inner_error))
+			*exc = (MonoObject*) mono_error_convert_to_exception (&inner_error);
 		else
-			mono_error_cleanup (error);
+			mono_error_cleanup (&inner_error);
 
 		if (*exc == NULL)
 			rval = *(guint32 *)((char *)res + sizeof (MonoObject));
@@ -4842,11 +4831,12 @@ do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc, MonoErr
 
 		mono_environment_exitcode_set (rval);
 	} else {
-		mono_runtime_try_invoke (method, NULL, pa, exc, error);
-		if (*exc == NULL && !mono_error_ok (error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (error);
+		MonoError inner_error;
+		mono_runtime_try_invoke (method, NULL, pa, exc, &inner_error);
+		if (*exc == NULL && !mono_error_ok (&inner_error))
+			*exc = (MonoObject*) mono_error_convert_to_exception (&inner_error);
 		else
-			mono_error_cleanup (error);
+			mono_error_cleanup (&inner_error);
 
 		if (*exc == NULL)
 			rval = 0;
@@ -4874,11 +4864,7 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 	MonoError error;
 	prepare_thread_to_exec_main (mono_object_domain (args), method);
 	if (exc) {
-		int rval = do_try_exec_main (method, args, exc, &error);
-		if (*exc == NULL && !is_ok (&error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (&error);
-		else
-			mono_error_cleanup (&error);
+		int rval = do_try_exec_main (method, args, exc);
 		return rval;
 	} else {
 		int rval = do_exec_main_checked (method, args, &error);
@@ -4908,11 +4894,10 @@ mono_runtime_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *
  * On failure sets @error if Main couldn't be executed, or @exc if it threw an exception.
  */
 int
-mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc, MonoError *error)
+mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 {
-	mono_error_init (error);
 	prepare_thread_to_exec_main (mono_object_domain (args), method);
-	return do_try_exec_main (method, args, exc, error);
+	return do_try_exec_main (method, args, exc);
 }
 
 

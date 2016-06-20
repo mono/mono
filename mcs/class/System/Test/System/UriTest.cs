@@ -2064,5 +2064,13 @@ namespace MonoTests.System
 
 			Assert.AreEqual ("http://localhost/foo", res.ToString ());
 		}
+
+		[Test]
+		public void ImplicitUnixFileWithUnicode ()
+		{
+			string value = "/Library/Frameworks/System.Runtim…ee";
+			Uri uri;
+			Assert.IsTrue (Uri.TryCreate (value, UriKind.Absolute, out uri));
+		}
 	}
 }

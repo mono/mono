@@ -7,7 +7,7 @@
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
 
 using NUnit.Framework;
 using System;

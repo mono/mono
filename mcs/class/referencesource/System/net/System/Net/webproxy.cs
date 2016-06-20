@@ -414,7 +414,7 @@ namespace System.Net {
         /// </devdoc>
         [Obsolete("This method has been deprecated. Please use the proxy selected for you by default. http://go.microsoft.com/fwlink/?linkid=14202")]
         public static WebProxy GetDefaultProxy() {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             return new WebProxy(true);
@@ -437,7 +437,7 @@ namespace System.Net {
             if (useRegistry) {
                 // just make the proxy advanced, don't populate with any settings
                 // note - this will happen in the context of the user performing the deserialization (their proxy settings get read)
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 UnsafeUpdateFromRegistry();

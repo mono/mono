@@ -4,7 +4,14 @@ AM_CFLAGS = $(WERROR_CFLAGS)
 
 MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
 
-SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples tools msvc $(docs_dir) acceptance-tests llvm
+# Some tools might not build when cross-compiling
+if CROSS_COMPILING
+tools_dir =
+else
+tools_dir = tools
+endif
+
+SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
 # Keep in sync with SUBDIRS
 DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
 
@@ -59,6 +66,10 @@ get-monolite-latest:
 	test ! -d $(monolite) || mv -f $(monolite) $(monolite).old
 	cd $(mcslib) && { (wget -O- $(monolite_url) || curl $(monolite_url)) | gzip -d | tar xf - ; }
 	cd $(mcslib) && mv -f monolite-* monolite
+
+.PHONY: check-ci
+check-ci:
+	MONO_LLVMONLY=$(MONO_LLVMONLY) $(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh
 
 .PHONY: validate do-build-mono-mcs mcs-do-clean mcs-do-tests
 validate: do-build-mono-mcs
@@ -145,6 +156,7 @@ package-inputs:
 		 read libou;  echo "      <library_output>$$libou</library_output>"; \
 		 read fx_ver; echo "      <fx_version>$$fx_ver</fx_version>"; \
 		 read profile; echo "      <profile>$$profile</profile>"; \
+		 read resxt;  echo "      <resources>$$resxt</resources>"; \
 		 read resp;   echo "      <response>$$resp</response>"; \
 		 echo "    </project>") >> msvc/scripts/order.xml; \
 	done
