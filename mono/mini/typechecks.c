@@ -195,7 +195,7 @@ mini_emit_class_check_inst (MonoCompile *cfg, int klass_reg, MonoClass *klass, M
 }
 
 void
-typechecks_mini_emit_class_check (MonoCompile *cfg, int klass_reg, MonoClass *klass)
+mini_typechecks_emit_class_check (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 {
 	mini_emit_class_check_inst (cfg, klass_reg, klass, NULL);
 }
@@ -233,12 +233,12 @@ mini_emit_castclass_inst (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClas
 			int parent_reg = alloc_preg (cfg);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, parent_reg, eclass_reg, MONO_STRUCT_OFFSET (MonoClass, parent));
 			mini_emit_class_check_branch (cfg, parent_reg, mono_defaults.enum_class->parent, OP_PBNE_UN, object_is_null);
-			typechecks_mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+			mini_typechecks_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 		} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 			mini_emit_class_check_branch (cfg, eclass_reg, mono_defaults.enum_class->parent, OP_PBEQ, object_is_null);
-			typechecks_mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+			mini_typechecks_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 		} else if (klass->cast_class == mono_defaults.enum_class) {
-			typechecks_mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
+			mini_typechecks_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 		} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 			mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, NULL, NULL);
 		} else {
@@ -391,7 +391,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 
-	typechecks_save_cast_details (cfg, klass, obj_reg, FALSE);
+	mini_typechecks_save_cast_details (cfg, klass, obj_reg, FALSE);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, MONO_STRUCT_OFFSET (MonoObject, vtable));
@@ -424,13 +424,13 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 
 	MONO_START_BB (cfg, is_null_bb);
 
-	typechecks_reset_cast_details (cfg);
+	mini_typechecks_reset_cast_details (cfg);
 
 	return src;
 }
 
 MonoInst*
-typechecks_handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
+mini_typechecks_handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	/* This opcode takes as input an object reference and a class, and returns:
 	0) if the object is an instance of the class,
@@ -457,7 +457,7 @@ typechecks_handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, ok_result_bb);
 
-	typechecks_save_cast_details (cfg, klass, obj_reg, FALSE);
+	mini_typechecks_save_cast_details (cfg, klass, obj_reg, FALSE);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 #ifndef DISABLE_REMOTING
@@ -468,7 +468,7 @@ typechecks_handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 		MONO_START_BB (cfg, interface_fail_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
 
-		typechecks_mini_emit_class_check (cfg, klass_reg, mono_defaults.transparent_proxy_class);
+		mini_typechecks_emit_class_check (cfg, klass_reg, mono_defaults.transparent_proxy_class);
 
 		tmp_reg = alloc_preg (cfg);		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, MONO_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
@@ -545,9 +545,9 @@ emit_castclass_with_cache (MonoCompile *cfg, MonoClass *klass, MonoInst **args)
 	MonoMethod *mono_castclass = mono_marshal_get_castclass_with_cache ();
 	MonoInst *res;
 
-	typechecks_save_cast_details (cfg, klass, args [0]->dreg, TRUE);
+	mini_typechecks_save_cast_details (cfg, klass, args [0]->dreg, TRUE);
 	res = mono_emit_method_call (cfg, mono_castclass, args, NULL);
-	typechecks_reset_cast_details (cfg);
+	mini_typechecks_reset_cast_details (cfg);
 
 	return res;
 }
@@ -685,7 +685,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_us
 }
 
 MonoInst*
-typechecks_handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
+mini_typechecks_handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	/* This opcode takes as input an object reference and a class, and returns:
 	0) if the object is an instance of the class,
@@ -791,7 +791,7 @@ typechecks_handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 }
 
 void
-typechecks_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, gboolean null_check)
+mini_typechecks_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, gboolean null_check)
 {
 	if (mini_get_debug_options ()->better_cast_details) {
 		int vtable_reg = alloc_preg (cfg);
@@ -837,7 +837,7 @@ typechecks_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, g
 }
 
 void
-typechecks_reset_cast_details (MonoCompile *cfg)
+mini_typechecks_reset_cast_details (MonoCompile *cfg)
 {
 	/* Reset the variables holding the cast details */
 	if (mini_get_debug_options ()->better_cast_details) {
@@ -849,7 +849,7 @@ typechecks_reset_cast_details (MonoCompile *cfg)
 	}
 }
 
-MonoInst* typechecks_decompose_instruction (MonoCompile *cfg, MonoInst *ins)
+MonoInst* mini_typechecks_decompose_instruction (MonoCompile *cfg, MonoInst *ins)
 {
 	MonoInst *ret, *source;
 	MonoClass *klass = ins->klass;
@@ -876,9 +876,9 @@ MonoInst* typechecks_decompose_instruction (MonoCompile *cfg, MonoInst *ins)
 			costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), iargs, 0, 0, TRUE);
 		} else {
 			MonoMethod *wrapper = mono_marshal_get_castclass (klass);
-			typechecks_save_cast_details (cfg, klass, source->dreg, TRUE);
+			mini_typechecks_save_cast_details (cfg, klass, source->dreg, TRUE);
 			costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), iargs, 0, 0, TRUE);
-			typechecks_reset_cast_details (cfg);
+			mini_typechecks_reset_cast_details (cfg);
 		}
 		g_assert (costs > 0);
 		ret = iargs [0];

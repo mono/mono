@@ -3631,7 +3631,7 @@ mini_emit_check_array_type (MonoCompile *cfg, MonoInst *obj, MonoClass *array_cl
 
 	context_used = mini_class_check_context_used (cfg, array_class);
 
-	typechecks_save_cast_details (cfg, array_class, obj->dreg, FALSE);
+	mini_typechecks_save_cast_details (cfg, array_class, obj->dreg, FALSE);
 
 	MONO_EMIT_NEW_LOAD_MEMBASE_FAULT (cfg, vtable_reg, obj->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 
@@ -3667,7 +3667,7 @@ mini_emit_check_array_type (MonoCompile *cfg, MonoInst *obj, MonoClass *array_cl
 	
 	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "ArrayTypeMismatchException");
 
-	typechecks_reset_cast_details (cfg);
+	mini_typechecks_reset_cast_details (cfg);
 }
 
 /**
@@ -3748,9 +3748,9 @@ handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, int context_use
 		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, element_class->dreg);
 		MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 	} else {
-		typechecks_save_cast_details (cfg, klass->element_class, obj_reg, FALSE);
-		typechecks_mini_emit_class_check (cfg, eclass_reg, klass->element_class);
-		typechecks_reset_cast_details (cfg);
+		mini_typechecks_save_cast_details (cfg, klass->element_class, obj_reg, FALSE);
+		mini_typechecks_emit_class_check (cfg, eclass_reg, klass->element_class);
+		mini_typechecks_reset_cast_details (cfg);
 	}
 
 	NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_MP), obj_reg, sizeof (MonoObject));
@@ -11200,7 +11200,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, klass_ins->dreg);
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 			} else {
-				typechecks_mini_emit_class_check (cfg, klass_reg, klass);
+				mini_typechecks_emit_class_check (cfg, klass_reg, klass);
 			}
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, src->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, value));
 			ins->type = STACK_MP;
@@ -11759,9 +11759,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				token = read32 (ip + 2);
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 				if (ip [1] == CEE_MONO_CISINST)
-					ins = typechecks_handle_cisinst (cfg, klass, sp [0]);
+					ins = mini_typechecks_handle_cisinst (cfg, klass, sp [0]);
 				else
-					ins = typechecks_handle_ccastclass (cfg, klass, sp [0]);
+					ins = mini_typechecks_handle_ccastclass (cfg, klass, sp [0]);
 				*sp++ = ins;
 				ip += 6;
 				break;

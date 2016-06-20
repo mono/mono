@@ -1977,7 +1977,7 @@ void mono_decompose_typechecks (MonoCompile *cfg)
 					NEW_BBLOCK (cfg, first_bb);
 					cfg->cbb = first_bb;
 
-					ret = typechecks_decompose_instruction (cfg, ins);
+					ret = mini_typechecks_decompose_instruction (cfg, ins);
 					EMIT_NEW_UNALU (cfg, move, OP_MOVE, ins->dreg, ret->dreg);
 
 					g_assert (cfg->cbb->code || first_bb->code);
