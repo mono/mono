@@ -22,7 +22,7 @@ namespace Mono
 			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (mvid);
 
 			SeqPointInfo seqPointInfo = null;
-			if (aotid != null)
+			if (!sfData.IsILOffset && aotid != null)
 				seqPointInfo = GetOrCreateSeqPointInfo (aotid);
 
 			return assemblyLocProvider.TryResolveLocation (sfData, seqPointInfo);
