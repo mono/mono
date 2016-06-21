@@ -128,7 +128,7 @@ mono_log_write_logfile(const char *domain, GLogLevelFlags level, mono_bool hdr, 
 			       logTime,mapLogFileLevel(level),pid);
 	}
 	nLog = sizeof(logMessage) - iLog - 2;
-	iLog = vsnprintf(logMessage+iLog, nLog, format, args);
+	vsnprintf(logMessage+iLog, nLog, format, args);
 	iLog = strlen(logMessage);
 	logMessage[iLog++] = '\n';
 	logMessage[iLog++] = '\0';
