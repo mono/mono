@@ -276,6 +276,21 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		{
+			using (var archive = new ZipArchive(File.Open("test.nupkg", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				using (var stream = entry.Open())
+				{
+					Assert.AreEqual(0, stream.Position);
+					Assert.AreEqual(425, stream.Length);
+				}
+			}
+		}
+
+		[Test]
 		public void ZipEnumerateEntriesReadMode()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);
