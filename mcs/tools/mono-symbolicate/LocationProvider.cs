@@ -47,7 +47,16 @@ namespace Mono
 			if (method == null)
 				return false;
 
-			int ilOffset = sfData.IsILOffset ? sfData.Offset : seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
+			int ilOffset;
+			if (sfData.IsILOffset) {
+				ilOffset = sfData.Offset;
+			} else {
+				if (seqPointInfo == null)
+					return false;
+
+				ilOffset = seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
+			}
+
 			if (ilOffset < 0)
 				return false;
 
