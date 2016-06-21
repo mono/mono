@@ -388,7 +388,7 @@ legacy_closer()
  * execution will not resume after a fatal error. This is for "old-style" or legacy log handers.
  */
 void
-mono_trace_set_log_handler (MonoLogCallback callback, const char *dest, void *user_data)
+mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
 {
         g_assert (callback);
 	if (logCallback.closer != NULL)
@@ -400,7 +400,7 @@ mono_trace_set_log_handler (MonoLogCallback callback, const char *dest, void *us
 	logCallback.writer = callback_adapter;
 	logCallback.closer = legacy_closer;
 	logCallback.user_data = ll;
-	logCallback.dest = dest;
+	logCallback.dest = NULL;
 }
 
 /**

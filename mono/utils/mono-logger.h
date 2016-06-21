@@ -37,7 +37,7 @@ void
 mono_trace_set_log_handler_internal (MonoLogCallParm *callback, void *user_data);
 
 MONO_API void
-mono_trace_set_log_handler (MonoLogCallback callback, const char *dest, void *user_data);
+mono_trace_set_log_handler (MonoLogCallback callback, void *user_data);
 
 MONO_API void
 mono_trace_set_print_handler (MonoPrintCallback callback);
