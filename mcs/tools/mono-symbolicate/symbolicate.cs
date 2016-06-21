@@ -48,44 +48,23 @@ namespace Mono
 			bool linesEnded = false;
 
 			for (var line = reader.ReadLine (); line != null; line = reader.ReadLine ()) {
-				 {
-					StackFrameData sfData;
-					if (!linesEnded && StackFrameData.TryParse (line, out sfData)) {
-						stackFrames.Add (sfData);
-						continue;
-					}
-					linesEnded = true;
-				} 
+				StackFrameData sfData;
+				if (!linesEnded && StackFrameData.TryParse (line, out sfData)) {
+					stackFrames.Add (sfData);
+					continue;
+				}
 
 				if (stackFrames.Count > 0) {
-					{
-						StackTraceMetadata stMetadata;
-						if (StackTraceMetadata.TryParse (line, out stMetadata)) {
-							metadata.Add (stMetadata);
-							continue;
-						}
+					linesEnded = true;
+
+					StackTraceMetadata stMetadata;
+					if (StackTraceMetadata.TryParse (line, out stMetadata)) {
+						metadata.Add (stMetadata);
+						continue;
 					}
 
-					string aotid = null;
-					var aotidMetadata = metadata.FirstOrDefault ( m => m.Id == "AOTID" );
-					if (aotidMetadata != null)
-						aotid = aotidMetadata.Value;
-
-					var linesMvid = ProcessLinesMVID (metadata);
-					var lineNumber = 0;
-					foreach (var sfData in stackFrames) {
-						string mvid = null;
-						if (linesMvid.ContainsKey (lineNumber))
-							mvid = linesMvid [lineNumber++];
-
-						symbolManager.TryResolveLocation (sfData, mvid, aotid);
-
-						sb.AppendLine (sfData.ToString ());
-					}
-
-					foreach (var m in metadata)
-						sb.AppendLine (m.Line);
-					
+					DumpStackTrace (symbolManager, sb, stackFrames, metadata);
+		
 					// Clear lists for next stack trace
 					stackFrames.Clear ();
 					metadata.Clear ();
@@ -97,7 +76,33 @@ namespace Mono
 				sb.AppendLine (line);
 			}
 
+			if (stackFrames.Count > 0)
+				DumpStackTrace (symbolManager, sb, stackFrames, metadata);
+
 			return sb;
+		}
+
+		private static void DumpStackTrace (SymbolManager symbolManager, StringBuilder sb, List<StackFrameData> stackFrames, List<StackTraceMetadata> metadata)
+		{
+			string aotid = null;
+			var aotidMetadata = metadata.FirstOrDefault ( m => m.Id == "AOTID" );
+			if (aotidMetadata != null)
+				aotid = aotidMetadata.Value;
+
+			var linesMvid = ProcessLinesMVID (metadata);
+			var lineNumber = 0;
+			foreach (var sfData in stackFrames) {
+				string mvid = null;
+				if (linesMvid.ContainsKey (lineNumber))
+					mvid = linesMvid [lineNumber++];
+
+				symbolManager.TryResolveLocation (sfData, mvid, aotid);
+
+				sb.AppendLine (sfData.ToString ());
+			}
+
+			foreach (var m in metadata)
+				sb.AppendLine (m.Line);
 		}
 
 		private static Dictionary<int, string> ProcessLinesMVID (List<StackTraceMetadata> metadata)
