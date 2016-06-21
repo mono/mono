@@ -11,19 +11,30 @@ namespace Mono
 	{
 		public static int Main (String[] args)
 		{
-			if (args.Length < 2) {
+			if (args.Length != 2 && (args[0] == "store-symbols" && args.Length < 3)) {
 				Console.Error.WriteLine ("Usage: symbolicate <msym dir> <input file>");
+				Console.Error.WriteLine ("       symbolicate store-symbols <msym dir> [<dir>]+");
 				return 1;
 			}
 
-			var msymDir = args [0];
-			var inputFile = args [1];
+			if (args[0] == "store-symbols") {
+				var msymDir = args[1];
+				var lookupDirs = args.Skip (1).ToArray ();
 
-			var symbolManager = new SymbolManager (msymDir);
+				var symbolManager = new SymbolManager (msymDir);
 
-			using (StreamReader r = new StreamReader (inputFile)) {
-				var sb = Process (r, symbolManager);
-				Console.WriteLine (sb.ToString ());
+				symbolManager.StoreSymbols (lookupDirs);
+
+			} else {
+				var msymDir = args [0];
+				var inputFile = args [1];
+
+				var symbolManager = new SymbolManager (msymDir);
+
+				using (StreamReader r = new StreamReader (inputFile)) {
+					var sb = Process (r, symbolManager);
+					Console.Write (sb.ToString ());
+				}
 			}
 
 			return 0;
