@@ -76,5 +76,36 @@ namespace Mono
 
 			return seqPointInfo;
 		}
+
+		public void StoreSymbols (params string[] lookupDirs)
+		{
+			foreach (var dir in lookupDirs) {
+				var exeFiles = Directory.GetFiles (dir, "*.exe");
+				var dllFiles = Directory.GetFiles (dir, "*.dll");
+				var assemblies = exeFiles.Concat (dllFiles);
+				foreach (var assemblyPath in assemblies) {
+					var mdbPath = assemblyPath + ".mdb";
+					if (!File.Exists (mdbPath)) {
+						// assemblies without mdb files are useless
+						continue;
+					}
+
+					var assembly = AssemblyDefinition.ReadAssembly (assemblyPath);
+
+					var mvid = assembly.MainModule.Mvid.ToString ().ToUpper ();
+					var mvidDir = Path.Combine (msymDir, mvid);
+
+					Directory.CreateDirectory (mvidDir);
+
+					var mvidAssemblyPath = Path.Combine (mvidDir, Path.GetFileName (assemblyPath));
+					File.Copy (assemblyPath, mvidAssemblyPath);
+
+					var mvidMdbPath = Path.Combine (mvidDir, Path.GetFileName (mdbPath));
+					File.Copy (mdbPath, mvidMdbPath);
+
+					// TODO create MVID dir for non main modules with links to main module MVID
+				}
+			}
+		}
 	}
 }
