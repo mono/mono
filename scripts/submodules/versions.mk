@@ -68,7 +68,7 @@ test-$(1)::
 
 reset-$(1)::
 	@if test -d $($(2)_PATH); then \
-		if ! (cd $($(2)_PATH) && git show $(NEEDED_$(2)_VERSION) >/dev/null 2>&1 && git log -1 $(NEEDED_$(2)_REMOTE) >/dev/null 2>&1) ; then \
+		if ! (cd $($(2)_PATH) && git show $(NEEDED_$(2)_VERSION) >/dev/null 2>&1 && git log -1 $(NEEDED_$(2)_REMOTE/NEEDED_$(2)_BRANCH) >/dev/null 2>&1) ; then \
 			echo "*** git fetch `basename $$($(2)_PATH)`" && (cd $($(2)_PATH) && git fetch); \
 		fi;  \
 	else \
