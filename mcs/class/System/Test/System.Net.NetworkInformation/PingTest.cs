@@ -7,9 +7,11 @@ using System.Threading;
 namespace MonoTests.System.Net.NetworkInformation
 {
 	[TestFixture]
-	public class PingTest
+	public partial class PingTest
 	{
-		[Test] 
+		partial void AndroidShouldPingWork (ref bool shouldWork);
+
+		[Test]
 		public void PingFail()
 		{
 #if MONOTOUCH
@@ -26,8 +28,13 @@ namespace MonoTests.System.Net.NetworkInformation
 #if MONOTOUCH
 			Assert.Ignore ("Ping implementation is broken on MT (requires sudo access)");
 #else
-			var p = new Ping ().Send ("127.0.0.1");
-			Assert.AreEqual(IPStatus.Success, p.Status);
+			bool shouldWork = true;
+			AndroidShouldPingWork (ref shouldWork);
+			if (shouldWork) {
+				var p = new Ping ().Send ("127.0.0.1");
+				Assert.AreEqual(IPStatus.Success, p.Status);
+			} else
+				Assert.Ignore ("Ping will not work on this Android device");
 #endif
 		}		
 
