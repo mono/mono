@@ -11,6 +11,7 @@
 #include <glib.h>
 
 #include "mono-threads.h"
+#include "mono-membar.h"
 
 #if defined(USE_POSIX_BACKEND)
 
@@ -192,6 +193,9 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	which might miss the signal and get stuck.
 	*/
 	pthread_sigmask (SIG_BLOCK, &suspend_ack_signal_mask, NULL);
+
+	/* ensure neither the compiler, neither the CPU reorders any memory operation */
+	mono_memory_barrier ();
 
 	/* We're done suspending */
 	mono_threads_notify_initiator_of_suspend (current);
