@@ -232,62 +232,41 @@ done:
 #endif
 }
 
-static void
-abort_signal_handler (int _dummy, siginfo_t *info, void *context)
-{
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
-	suspend_signal_handler (_dummy, info, context);
-#endif
-}
-
 void
-mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals)
+mono_threads_posix_init_signals (void)
 {
 	sigset_t signal_set;
 
-	g_assert ((signals == MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART) ^ (signals == MONO_THREADS_POSIX_INIT_SIGNALS_ABORT));
-
 	sigemptyset (&signal_set);
 
-	switch (signals) {
-	case MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART: {
-		if (mono_thread_info_unified_management_enabled ()) {
-			suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
-			restart_signal_num = DEFAULT_RESTART_SIGNAL;
-		} else {
-			suspend_signal_num = suspend_signal_get ();
-			restart_signal_num = restart_signal_get ();
-		}
-
-		sigfillset (&suspend_signal_mask);
-		sigdelset (&suspend_signal_mask, restart_signal_num);
-		if (!mono_thread_info_unified_management_enabled ())
-			sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
-
-		sigemptyset (&suspend_ack_signal_mask);
-		sigaddset (&suspend_ack_signal_mask, restart_signal_num);
-
-		signal_add_handler (suspend_signal_num, suspend_signal_handler, SA_RESTART);
-		signal_add_handler (restart_signal_num, restart_signal_handler, SA_RESTART);
-
-		sigaddset (&signal_set, suspend_signal_num);
-		sigaddset (&signal_set, restart_signal_num);
-
-		break;
+	if (mono_thread_info_unified_management_enabled ()) {
+		suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
+		restart_signal_num = DEFAULT_RESTART_SIGNAL;
+	} else {
+		suspend_signal_num = suspend_signal_get ();
+		restart_signal_num = restart_signal_get ();
 	}
-	case MONO_THREADS_POSIX_INIT_SIGNALS_ABORT: {
-		abort_signal_num = abort_signal_get ();
 
-		signal_add_handler (abort_signal_num, abort_signal_handler, 0);
+	sigfillset (&suspend_signal_mask);
+	sigdelset (&suspend_signal_mask, restart_signal_num);
 
-		sigaddset (&signal_set, abort_signal_num);
+	if (!mono_thread_info_unified_management_enabled ())
+		sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
 
-		break;
-	}
-	default: g_assert_not_reached ();
-	}
+	sigemptyset (&suspend_ack_signal_mask);
+	sigaddset (&suspend_ack_signal_mask, restart_signal_num);
+
+	signal_add_handler (suspend_signal_num, suspend_signal_handler, SA_RESTART);
+	signal_add_handler (restart_signal_num, restart_signal_handler, SA_RESTART);
+
+	sigaddset (&signal_set, suspend_signal_num);
+	sigaddset (&signal_set, restart_signal_num);
+
+	abort_signal_num = abort_signal_get ();
+
+	signal_add_handler (abort_signal_num, suspend_signal_handler, 0);
+
+	sigaddset (&signal_set, abort_signal_num);
 
 	/* ensure all the new signals are unblocked */
 	sigprocmask (SIG_UNBLOCK, &signal_set, NULL);

@@ -643,8 +643,7 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 void
 mono_threads_suspend_init (void)
 {
-	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART);
-	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_ABORT);
+	mono_threads_posix_init_signals ();
 }
 
 void
