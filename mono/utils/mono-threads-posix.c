@@ -644,6 +644,23 @@ void
 mono_threads_suspend_init (void)
 {
 	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART);
+	mono_threads_posix_init_signals (MONO_THREADS_POSIX_INIT_SIGNALS_ABORT);
+}
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	/* We signal a thread to break it from the current syscall.
+	 * This signal should not be interpreted as a suspend request. */
+	info->syscall_break_signal = TRUE;
+	if (!mono_threads_pthread_kill (info, mono_threads_posix_get_abort_signal ()))
+		mono_threads_add_to_pending_operation_set (info);
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return TRUE;
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */

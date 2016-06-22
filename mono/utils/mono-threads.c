@@ -679,7 +679,6 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_threads_platform_init ();
 	mono_threads_suspend_init ();
 	mono_threads_coop_init ();
-	mono_threads_abort_syscall_init ();
 
 #if defined(__MACH__)
 	mono_mach_init (thread_info_key);

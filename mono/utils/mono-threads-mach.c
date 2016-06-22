@@ -50,6 +50,17 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 	g_assert_not_reached ();
 }
 
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return FALSE;
+}
+
 #else /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
 
 gboolean
@@ -143,6 +154,46 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 	THREADS_SUSPEND_DEBUG ("RESUME %p -> %d\n", (gpointer)(gsize)info->native_handle, ret);
 
 	return ret == KERN_SUCCESS;
+}
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	kern_return_t ret;
+
+	do {
+		ret = thread_suspend (info->native_handle);
+	} while (ret == KERN_ABORTED);
+
+	if (ret != KERN_SUCCESS)
+		return;
+
+	do {
+		ret = thread_abort_safely (info->native_handle);
+	} while (ret == KERN_ABORTED);
+
+	/*
+	 * We are doing thread_abort when thread_abort_safely returns KERN_SUCCESS because
+	 * for some reason accept is not interrupted by thread_abort_safely.
+	 * The risk of aborting non-atomic operations while calling thread_abort should not
+	 * exist because by the time thread_abort_safely returns KERN_SUCCESS the target
+	 * thread should have return from the kernel and should be waiting for thread_resume
+	 * to resume the user code.
+	 */
+	if (ret == KERN_SUCCESS)
+		ret = thread_abort (info->native_handle);
+
+	do {
+		ret = thread_resume (info->native_handle);
+	} while (ret == KERN_ABORTED);
+
+	g_assert (ret == KERN_SUCCESS);
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return TRUE;
 }
 
 #endif /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */

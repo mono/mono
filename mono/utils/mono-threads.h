@@ -501,8 +501,6 @@ void mono_threads_platform_init (void);
 
 void mono_threads_coop_init (void);
 
-void mono_threads_abort_syscall_init (void);
-
 /*
 This begins async suspend. This function must do the following:
 
