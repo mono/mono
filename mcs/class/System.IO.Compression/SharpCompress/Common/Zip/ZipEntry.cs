@@ -16,6 +16,13 @@ namespace SharpCompress.Common.Zip
                 this.filePart = filePart;
                 lastModifiedTime = Utility.DosDateToDateTime(filePart.Header.LastModifiedDate,
                                                              filePart.Header.LastModifiedTime);
+                if (lastModifiedTime == default(DateTime))
+                {
+                    // On .NET on Windows, for zip entries that don't have a last write time,
+                    // the return value for ZipArchiveEntry.LastWriteTime is:
+                    //   1/1/1980 12:00:00 AM, Ticks=624511296000000000
+                    lastModifiedTime = new DateTime(624511296000000000);
+                }
             }
         }
 
