@@ -3,7 +3,12 @@
 TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
-export CFLAGS=-ggdb3
+if [[ ${label} == w* ]]; then
+    # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
+    export CFLAGS="-g -O2"
+else
+    export CFLAGS="-ggdb3 -O2"
+fi
 
 if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; export MONO_CHECK_MODE=gc,thread; fi
 
