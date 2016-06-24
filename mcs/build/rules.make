@@ -208,6 +208,15 @@ do-all-aot:
 	$(MAKE) do-all TOP_LEVEL_DO=do-all
 	$(MAKE) aot-all-profile
 
+# When we recursively call $(MAKE) aot-all-profile
+# we will have created this directory, and so will
+# be able to evaluate the .dylibs to make
+ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
+
+AOT_PROFILE_ASSEMBLIES_CMD = cd $(topdir)/class/lib/$(PROFILE)/ && find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades|ilasm' | sed 's:\./::g' | tr '\n' ' '
+AOT_PROFILE_ASSEMBLIES_CMD_SAFE = $(AOT_PROFILE_ASSEMBLIES_CMD) || true
+AOT_PROFILE_ASSEMBLIES = $(shell $(AOT_PROFILE_ASSEMBLIES_CMD_SAFE))
+
 # This can run in parallel
 .PHONY: aot-all-profile
 aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
@@ -217,7 +226,9 @@ $(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PR
 	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode $* >> $(PROFILE)-aot.log
 	@ rm -rf $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
 
-endif
+endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
+
+endif # PLATFORM_AOT_SUFFIX
 
 do-run-test:
 	ok=:; $(MAKE) run-test-recursive || ok=false; $(MAKE) run-test-local || ok=false; $$ok
@@ -347,6 +358,6 @@ dist-default:
 
 ## Documentation stuff
 
-Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";fi)
 MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 
