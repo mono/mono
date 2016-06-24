@@ -8262,10 +8262,10 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 		}
 	}
 	
-	MonoType *type = mono_class_get_type (klass);
+	/* MonoType *type = mono_class_get_type (klass); */
 
 	gpointer args[2];
-	args [0] = &type;
+	args [0] = &klass;
 	args [1] = &field;
 
 	return mono_runtime_invoke_checked (tp_load, this_obj, args, error);

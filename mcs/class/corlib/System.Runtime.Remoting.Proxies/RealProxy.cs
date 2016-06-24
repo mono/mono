@@ -65,12 +65,18 @@ namespace System.Runtime.Remoting.Proxies
 			get { return _rp._targetContext; }
 		}
 
-		internal object LoadRemoteFieldNew (RuntimeTypeHandle typeHandle, RuntimeFieldHandle fieldHandle) {
+		bool InCurrentContext () {
+			return IsContextBoundObject && Object.ReferenceEquals (TargetContext, Thread.CurrentContext);
+		}
+
+		internal object LoadRemoteFieldNew (IntPtr classPtr, IntPtr fieldPtr) {
+			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
+			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
+			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
 
 			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
-			bool inCurrCtx =
-				IsContextBoundObject && TargetContext == Thread.CurrentContext;
-			if (inCurrCtx) {
+
+			if (InCurrentContext ()) {
 				object o = _rp._server;
 				return field.GetValue(o);
 			}

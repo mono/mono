@@ -21,6 +21,10 @@ namespace Mono {
 			this.value = value;
 		}
 
+		internal unsafe RuntimeClassHandle (IntPtr ptr) {
+			this.value = (RuntimeStructs.MonoClass*) ptr;
+		}
+
 		internal unsafe RuntimeStructs.MonoClass* Value {
 			get { return value; }
 		}

@@ -1343,6 +1343,7 @@ mono_marshal_get_ldfld_remote_wrapper (MonoClass *klass)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	static MonoMethod* cached = NULL;
+	static MonoMethod* tp_load = NULL;
 
 	mono_marshal_lock_internal ();
 	if (cached) {
@@ -1351,12 +1352,17 @@ mono_marshal_get_ldfld_remote_wrapper (MonoClass *klass)
 	}
 	mono_marshal_unlock_internal ();
 
+	if (!tp_load) {
+		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1);
+		g_assert (tp_load != NULL);
+	}
+
 	mb = mono_mb_new_no_dup_name (mono_defaults.object_class, "__mono_load_remote_field_new_wrapper", MONO_WRAPPER_LDFLD_REMOTE);
 
 	mb->method->save_lmf = 1;
 
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 3);
-	sig->params [0] = &mono_defaults.object_class->byval_arg;
+	sig->params [0] = &mono_defaults.transparent_proxy_class->byval_arg;
 	sig->params [1] = &mono_defaults.int_class->byval_arg;
 	sig->params [2] = &mono_defaults.int_class->byval_arg;
 	sig->ret = &mono_defaults.object_class->byval_arg;
@@ -1366,7 +1372,7 @@ mono_marshal_get_ldfld_remote_wrapper (MonoClass *klass)
 	mono_mb_emit_ldarg (mb, 1);
 	mono_mb_emit_ldarg (mb, 2);
 
-	mono_mb_emit_icall (mb, mono_load_remote_field_new_icall);
+	mono_mb_emit_managed_call (mb, tp_load, NULL);
 
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
