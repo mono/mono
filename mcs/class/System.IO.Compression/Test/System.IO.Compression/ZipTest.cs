@@ -311,6 +311,70 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipWriteEntriesUpdateMode()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sw = new StreamWriter(stream))
+				{
+					sw.Write("TEST");
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("TEST", line);
+				}
+			}
+
+			File.Delete ("test.zip");
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateModeNonZeroPosition()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				{
+					var line = stream.ReadByte();
+					using (var sw = new StreamWriter(stream))
+					{
+						sw.Write("TEST");
+					}
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entries = archive.Entries;
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("fTEST", line);
+				}
+			}
+
+			File.Delete ("test.zip");
+		}
+
+		[Test]
 		public void ZipEnumerateEntriesUpdateMode()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);
