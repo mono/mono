@@ -161,6 +161,14 @@ namespace System.IO.Compression
 			return CreateEntry(entryName, CompressionLevel.Optimal);
 		}
 
+		internal SharpCompress.Archive.Zip.ZipArchiveEntry CreateEntryInternal(string entryName)
+		{
+			var memoryStream = new MemoryStream();
+			var entry = zipFile.AddEntry(entryName, memoryStream);
+
+			return entry;
+		}
+
 		public ZipArchiveEntry CreateEntry (string entryName, CompressionLevel compressionLevel)
 		{
 			if (disposed)
@@ -178,9 +186,8 @@ namespace System.IO.Compression
 			if (zipFile == null)
 				throw new InvalidDataException("The zip archive is corrupt, and its entries cannot be retrieved.");
 
-			var memoryStream = new MemoryStream();
-			var entry = zipFile.AddEntry(entryName, memoryStream);
-			var archiveEntry = new ZipArchiveEntry(this, entry);
+			var internalEntry = CreateEntryInternal(entryName);
+			var archiveEntry = new ZipArchiveEntry(this, internalEntry);
 			entries[entryName] = archiveEntry;
 
 			return archiveEntry;
