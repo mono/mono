@@ -13,7 +13,9 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "mono/utils/bsearch.h"
+#include "mono/metadata/blob.h"
 #include <mono/metadata/abi-details.h>
+#include <mono/utils/mono-logger-internals.h>
 
 /*
 General notes on SIMD intrinsics
@@ -130,12 +132,87 @@ enum {
 #endif
 
 typedef struct {
+	 guint16 name;
+	 const char *method_name;
+     const int number_of_parameters;
+     MonoMethodSignature *method_signature;
+	 MonoTypeEnum parameters [99];
+} SimdIntrinscKey;
+
+typedef struct {
 	guint16 name;
 	guint16 opcode;
 	guint8 simd_version_flags;
 	guint8 simd_emit_mode : 4;
 	guint8 flags : 4;
+	SimdIntrinscKey *key;
 } SimdIntrinsc;
+
+static const SimdIntrinsc vector_intrinsics[] = {
+	{ SN_op_Addition, OP_ADDPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_BitwiseAnd, OP_ANDPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_BitwiseOr, OP_ORPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Division, OP_DIVPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Equality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_EQ },
+	{ SN_op_ExclusiveOr, OP_XORPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Explicit, 0, SIMD_VERSION_SSE1, SIMD_EMIT_CAST },
+	{ SN_op_Inequality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_NEQ },
+	{ SN_op_Multiply, OP_MULPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Subtraction, OP_SUBPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+
+};
+
+static const SimdIntrinsc vector2_intrinsics[] = {
+	{ SN_Max, OP_MAXPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_Min, OP_MINPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Addition, OP_ADDPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Division, OP_DIVPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Equality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_EQ },
+	{ SN_op_Inequality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_NEQ },
+	{ SN_op_Multiply, OP_MULPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, .key = &(SimdIntrinscKey){ .name = SN_op_Multiply, .parameters = { (MonoTypeEnum)0x11, (MonoTypeEnum)0xc }, .number_of_parameters = 2 } },
+	{ SN_op_Multiply, OP_MULPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY, .key = &(SimdIntrinscKey){ .name = SN_op_Multiply, .parameters = { (MonoTypeEnum)0x11, (MonoTypeEnum)0x11 }, .number_of_parameters = 2 } },
+	{ SN_op_Subtraction, OP_SUBPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_get_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_set_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER }
+};
+
+static const SimdIntrinsc vector3_intrinsics[] = {
+	{ SN_Max, OP_MAXPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_Min, OP_MINPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Addition, OP_ADDPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Division, OP_DIVPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Equality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_EQ },
+	{ SN_op_Inequality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_NEQ },
+	{ SN_op_Multiply, OP_MULPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Subtraction, OP_SUBPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_get_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_Z, 2, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_set_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_Z, 2, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER }
+};
+
+static const SimdIntrinsc vector4_intrinsics[] = {
+	{ SN_Max, OP_MAXPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_Min, OP_MINPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Addition, OP_ADDPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Division, OP_DIVPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Equality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_EQ },
+	{ SN_op_Inequality, OP_COMPPS, SIMD_VERSION_SSE1, SIMD_EMIT_EQUALITY, SIMD_COMP_NEQ },
+	{ SN_op_Multiply, OP_MULPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_op_Subtraction, OP_SUBPS, SIMD_VERSION_SSE1, SIMD_EMIT_BINARY },
+	{ SN_get_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_Z, 2, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_get_W, 3, SIMD_VERSION_SSE1, SIMD_EMIT_GETTER },
+	{ SN_set_X, 0, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_Y, 1, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_Z, 2, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER },
+	{ SN_set_W, 3, SIMD_VERSION_SSE1, SIMD_EMIT_SETTER }
+};
 
 static const SimdIntrinsc vector4f_intrinsics[] = {
 	{ SN_ctor, OP_EXPAND_R4, SIMD_VERSION_SSE1, SIMD_EMIT_CTOR },
@@ -601,6 +678,44 @@ static int
 simd_intrinsic_compare_by_name (const void *key, const void *value)
 {
 	return strcmp (key, method_name (((SimdIntrinsc *)value)->name));
+}
+
+static int
+simd_intrinsic_compare_by_name_and_signature (const void *key, const void *value)
+{
+    int i;
+    SimdIntrinscKey *key_pointer = (SimdIntrinscKey*)key;
+
+    if(!((SimdIntrinsc*)value)->key){
+        return simd_intrinsic_compare_by_name(key_pointer->method_name, &((SimdIntrinsc*)value)->name);
+    }
+
+    SimdIntrinscKey *value_pointer = (SimdIntrinscKey*)(((SimdIntrinsc*)value)->key);
+    int compare_by_name_result = simd_intrinsic_compare_by_name(key_pointer->method_name, &value_pointer->name);
+    ;
+
+    if(!key_pointer->method_signature || compare_by_name_result != 0) {
+        return compare_by_name_result;
+    }
+
+    int number_of_parameters_in_key = key_pointer->method_signature->param_count;
+
+    int number_of_parameters_in_value = value_pointer->number_of_parameters;
+
+    if(number_of_parameters_in_key != number_of_parameters_in_value){
+        return number_of_parameters_in_key < number_of_parameters_in_value ? -1 : 1;
+    }
+
+    for(i = 0; i < number_of_parameters_in_key; i++) {
+        MonoTypeEnum key_param_type = key_pointer->method_signature->params[i]->type;
+        MonoTypeEnum value_param_type = value_pointer->parameters[i];
+
+       if(key_param_type != value_param_type) {
+            return key_param_type < value_param_type ? 1 : -1;
+       }
+    };
+
+    return 0;
 }
 
 typedef enum {
@@ -1638,9 +1753,11 @@ MonoInst*
 mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const char *class_name;
+    int i;
 
-	if (strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
-	    strcmp ("Mono.Simd", cmethod->klass->name_space))
+	if ((strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
+        strcmp ("Mono.Simd", cmethod->klass->name_space)) &&
+        strcmp ("System.Numerics.Vectors", cmethod->klass->image->assembly->aname.name))
 		return NULL;
 
 	class_name = cmethod->klass->name;
@@ -1679,6 +1796,12 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	if (!strcmp ("Vector16sb", class_name))
 		return emit_intrinsics (cfg, cmethod, fsig, args, vector16sb_intrinsics, sizeof (vector16sb_intrinsics) / sizeof (SimdIntrinsc));
 
+	if (!strcmp ("Vector2", class_name))
+		return emit_intrinsics (cfg, cmethod, fsig, args, vector2_intrinsics, sizeof (vector2_intrinsics) / sizeof (SimdIntrinsc));
+	if (!strcmp ("Vector3", class_name))
+		return emit_intrinsics (cfg, cmethod, fsig, args, vector3_intrinsics, sizeof (vector3_intrinsics) / sizeof (SimdIntrinsc));
+    if (!strcmp ("Vector4", class_name))
+		return emit_intrinsics (cfg, cmethod, fsig, args, vector4_intrinsics, sizeof (vector4_intrinsics) / sizeof (SimdIntrinsc));
 	return NULL;
 }
 
