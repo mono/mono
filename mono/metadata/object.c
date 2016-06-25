@@ -8209,28 +8209,6 @@ mono_load_remote_field_new (MonoObject *this_obj, MonoClass *klass, MonoClassFie
 }
 
 /**
- * mono_load_remote_field_new_icall:
- * @this: pointer to an object
- * @klass: klass of the object containing @field
- * @field: the field to load
- *
- * This method is called by the runtime on attempts to load fields of
- * transparent proxy objects. @this points to such TP, @klass is the class of
- * the object containing @field.
- * 
- * Returns: a freshly allocated object containing the value of the
- * field.  On failure returns NULL and throws an exception.
- */
-MonoObject *
-mono_load_remote_field_new_icall (MonoObject *this_obj, MonoClass *klass, MonoClassField *field)
-{
-	MonoError error;
-	MonoObject *result = mono_load_remote_field_new_checked (this_obj, klass, field, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
-}
-
-/**
  * mono_load_remote_field_new_checked:
  * @this: pointer to an object
  * @klass: klass of the object containing @field
