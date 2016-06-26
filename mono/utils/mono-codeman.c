@@ -78,6 +78,14 @@ struct _MonoCodeManager {
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
 
+#ifndef MONO_ARCH_HAVE_UNWIND_TABLE && (defined(__ia64__) || defined(__x86_64__)) && PLATFORM_WIN32
+#define MONO_ARCH_HAVE_UNWIND_TABLE 1
+#endif
+
+#if MONO_ARCH_HAVE_UNWIND_TABLE
+PRUNTIME_FUNCTION MONO_GET_RUNTIME_FUNCTION_CALLBACK(DWORD64 ControlPc, IN PVOID Context);
+#endif
+
 /**
  * mono_code_manager_new:
  *
@@ -137,6 +145,9 @@ free_chunklist (CodeChunk *chunk)
 	for (; chunk; ) {
 		dead = chunk;
 		mono_profiler_code_chunk_destroy ((gpointer) dead->data);
+#if MONO_ARCH_HAVE_UNWIND_TABLE
+		RtlDeleteFunctionTable((DWORD64)dead->data | 0x03);
+#endif
 		chunk = chunk->next;
 		if (dead->flags == CODE_FLAG_MMAP) {
 			mono_vfree (dead->data, dead->size);
@@ -291,6 +302,10 @@ new_codechunk (int dynamic, int size)
 		memset (ptr, 0, bsize);
 #endif
 	}
+
+#if MONO_ARCH_HAVE_UNWIND_TABLE
+	RtlInstallFunctionTableCallback(((DWORD64)ptr) | 0x3, (DWORD64)ptr, chunk_size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, ptr, NULL);
+#endif
 
 	chunk = malloc (sizeof (CodeChunk));
 	if (!chunk) {
