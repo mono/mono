@@ -78,7 +78,7 @@ struct _MonoCodeManager {
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
 
-#ifndef MONO_ARCH_HAVE_UNWIND_TABLE && (defined(__ia64__) || defined(__x86_64__)) && PLATFORM_WIN32
+#if !defined(MONO_ARCH_HAVE_UNWIND_TABLE) && (defined(__ia64__) || defined(__x86_64__)) && PLATFORM_WIN32
 #define MONO_ARCH_HAVE_UNWIND_TABLE 1
 #endif
 
