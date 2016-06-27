@@ -30,7 +30,11 @@
 
 namespace System.Drawing.Drawing2D {
 
-	public sealed class GraphicsContainer : MarshalByRefObject {
+	public sealed class GraphicsContainer
+#if !CORECLR
+		: MarshalByRefObject
+#endif
+	{
 		
 		private uint nativeState;
 

@@ -34,7 +34,11 @@ using System.Drawing;
 
 namespace System.Drawing.Drawing2D
 {
-	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
+	public sealed class GraphicsPathIterator :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		IDisposable
 	{
 		private IntPtr nativeObject = IntPtr.Zero;
 

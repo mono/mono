@@ -33,11 +33,15 @@
 //
 
 using System.Collections;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing.Design
 {
+#if !CORECLR
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+#endif
 	public sealed class CategoryNameCollection : ReadOnlyCollectionBase
 	{
 		

@@ -34,7 +34,9 @@ using System.Security;
 
 namespace System.Drawing {
 
+#if !CORECLR
 	[SuppressUnmanagedCodeSecurity]
+#endif
 	internal static class MacSupport {
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();

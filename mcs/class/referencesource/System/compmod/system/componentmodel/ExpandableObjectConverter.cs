@@ -9,14 +9,18 @@ namespace System.ComponentModel {
     using System.Collections;
     using System.ComponentModel.Design;
     using System.Diagnostics;
+#if !CORECLR
     using System.Security.Permissions;
+#endif
 
     /// <devdoc>
     ///    <para>Provides
     ///       a type converter to convert expandable objects to and from various
     ///       other representations.</para>
     /// </devdoc>
+#if !CORECLR
     [HostProtection(SharedState = true)]
+#endif
     public class ExpandableObjectConverter : TypeConverter {
     
         /// <devdoc>

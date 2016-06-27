@@ -51,10 +51,13 @@ namespace System.Drawing
 [Editor ("System.Drawing.Design.ImageEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 [TypeConverter (typeof(ImageConverter))]
 [ImmutableObject (true)]
-public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
+public abstract class Image : 
 #if !CORECLR
-		, ISerializable
+		MarshalByRefObject, 
+		ISerializable,
 #endif
+		IDisposable, 
+		ICloneable
 	{
 	public delegate bool GetThumbnailImageAbort();
 	private object tag;

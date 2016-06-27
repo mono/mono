@@ -9,15 +9,17 @@ namespace System.ComponentModel {
     using System;
     using System.Diagnostics;
     using System.Globalization;
+#if !CORECLR
     using System.Runtime.Serialization;
     using System.Security.Permissions;
-    
+#endif
+
     /// <devdoc>
     ///    <para>The exception that is thrown when using invalid arguments that are enumerators.</para>
     /// </devdoc>
-    [HostProtection(SharedState = true)]
 #if !CORECLR
-	[Serializable]
+    [HostProtection(SharedState = true)]
+    [Serializable]
 #endif
     public class InvalidEnumArgumentException : ArgumentException {
 

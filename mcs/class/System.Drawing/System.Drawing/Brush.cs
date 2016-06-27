@@ -30,7 +30,12 @@
 
 namespace System.Drawing {
 
-	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable {
+	public abstract class Brush : 
+#if !CORECLR
+		MarshalByRefObject, 
+#endif
+		ICloneable, 
+		IDisposable {
 
 		internal IntPtr nativeObject;
 

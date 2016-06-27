@@ -98,7 +98,9 @@ namespace System.Drawing.Printing
 				cupsGetDefault ();
 			}
 			catch (DllNotFoundException) {
+#if !CORECLR
 				Console.WriteLine("libcups not found. To have printing support, you need cups installed");
+#endif
 				cups_installed = false;
 				return;
 			}
@@ -119,7 +121,9 @@ namespace System.Drawing.Printing
 				return ppd_handle;
 			}
 			catch (Exception) {
+#if !CORECLR
 				Console.WriteLine ("There was an error opening the printer {0}. Please check your cups installation.");
+#endif
 			}
 			return IntPtr.Zero;
 		}

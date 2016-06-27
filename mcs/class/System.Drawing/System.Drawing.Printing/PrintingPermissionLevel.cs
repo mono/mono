@@ -29,7 +29,6 @@
 
 namespace System.Drawing.Printing {
 #if !CORECLR
-#if !CORECLR
 	[Serializable]
 #endif
 	public enum PrintingPermissionLevel {

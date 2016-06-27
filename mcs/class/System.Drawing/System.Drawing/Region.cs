@@ -30,11 +30,17 @@
 
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing
 {
-	public sealed class Region : MarshalByRefObject, IDisposable
+	public sealed class Region :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		IDisposable
 	{
                 private IntPtr nativeRegion = IntPtr.Zero;
                 
@@ -510,7 +516,9 @@ namespace System.Drawing
 			return result;			
 		}
 		
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public static Region FromHrgn (IntPtr hrgn)
 		{
 			if (hrgn == IntPtr.Zero)
@@ -639,7 +647,9 @@ namespace System.Drawing
 			}
 		}
 		// why is this a instance method ? and not static ?
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ReleaseHrgn (IntPtr regionHandle)		
 		{
 			if (regionHandle == IntPtr.Zero) 

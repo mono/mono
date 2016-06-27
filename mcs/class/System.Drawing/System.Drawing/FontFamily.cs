@@ -35,7 +35,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing {
 
-	public sealed class FontFamily : MarshalByRefObject, IDisposable 
+	public sealed class FontFamily :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		IDisposable 
 	{
 		
 		//static private FontFamily genericMonospace;

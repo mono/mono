@@ -46,7 +46,9 @@ namespace System.Drawing
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
+#if !CORECLR
 	[SuppressUnmanagedCodeSecurity]
+#endif
 	internal static class GDIPlus {
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
@@ -127,10 +129,12 @@ namespace System.Drawing
 				GdiplusStartup (ref GdiPlusToken, ref input, ref output);
 			}
 			catch (TypeInitializationException) {
+#if !CORECLR
 				Console.Error.WriteLine (
 					"* ERROR: Can not initialize GDI+ library{0}{0}" +
 					"Please check http://www.mono-project.com/Problem:GDIPlusInit for details",
 					Environment.NewLine);
+#endif
 			}
 
 			// under MS 1.x this event is raised only for the default application domain

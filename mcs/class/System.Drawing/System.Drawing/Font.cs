@@ -35,7 +35,9 @@
 using System.Runtime.Serialization;
 #endif
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.ComponentModel;
 
 namespace System.Drawing
@@ -605,7 +607,9 @@ namespace System.Drawing
 			}
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ToLogFont (object logFont)
 		{
 			if (GDIPlus.RunningOnUnix ()) {
@@ -630,7 +634,9 @@ namespace System.Drawing
 			}
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
 			if (graphics == null)

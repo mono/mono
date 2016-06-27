@@ -34,7 +34,12 @@ using System.Drawing.Text;
 
 namespace System.Drawing {
 
-	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
+	public sealed class StringFormat : 
+#if !CORECLR
+		MarshalByRefObject, 
+#endif
+		IDisposable, 
+		ICloneable
 	{
 //		private static StringFormat genericDefault;
 		private IntPtr nativeStrFmt = IntPtr.Zero;

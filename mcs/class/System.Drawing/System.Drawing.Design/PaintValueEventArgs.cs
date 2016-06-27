@@ -30,12 +30,16 @@
 //
 
 using System.ComponentModel;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing.Design
 {
+#if !CORECLR
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#endif
 	public class PaintValueEventArgs : EventArgs
 	{
 		private ITypeDescriptorContext context;

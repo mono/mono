@@ -31,8 +31,8 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 #if !CORECLR
 using System.Runtime.Serialization;
-#endif
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing
 {
@@ -108,7 +108,9 @@ namespace System.Drawing
 		}
 
 		[MonoTODO ("The targetDC parameter has no equivalent in libgdiplus.")]
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 	      	public void Render (IntPtr targetDC)
 		{
 			throw new NotImplementedException ();

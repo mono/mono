@@ -35,12 +35,18 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.Text;
 
 namespace System.Drawing
 {
-	public sealed class Graphics : MarshalByRefObject, IDisposable
+	public sealed class Graphics :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		IDisposable
 	, IDeviceContext
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
@@ -1692,7 +1698,9 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#if !CORECLR
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+#endif
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
 			GDIPlus.Display = hdc;
@@ -1744,7 +1752,9 @@ namespace System.Drawing
 		}
 		
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#if !CORECLR
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+#endif
 		public static Graphics FromHwndInternal (IntPtr hwnd)
 		{
 			return FromHwnd (hwnd);
@@ -2015,13 +2025,17 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ReleaseHdc (IntPtr hdc)
 		{
 			ReleaseHdcInternal (hdc);
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+#endif
 		public void ReleaseHdc ()
 		{
 			ReleaseHdcInternal (deviceContextHdc);
@@ -2029,7 +2043,9 @@ namespace System.Drawing
 
 		[MonoLimitation ("Can only be used when hdc was provided by Graphics.GetHdc() method")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#if !CORECLR
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+#endif
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
 			Status status = Status.InvalidParameter;

@@ -36,9 +36,13 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.Reflection;
 
 namespace System.Drawing
@@ -51,10 +55,13 @@ namespace System.Drawing
 #endif
 	[TypeConverter(typeof(IconConverter))]
 
-	public sealed class Icon : MarshalByRefObject, ICloneable, IDisposable
+	public sealed class Icon :
 #if !CORECLR
-		, ISerializable
+		MarshalByRefObject,
+		ISerializable,
 #endif
+		ICloneable, 
+		IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct IconDirEntry {		
@@ -361,7 +368,9 @@ namespace System.Drawing
 		}
 		
 #if !MONOTOUCH
+#if !CORECLR
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+#endif
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)

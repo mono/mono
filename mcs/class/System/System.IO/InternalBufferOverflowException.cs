@@ -29,7 +29,9 @@
 //
 
 using System;
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 
 namespace System.IO {
 #if !CORECLR
