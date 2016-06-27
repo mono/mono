@@ -26,7 +26,7 @@
 #     define __KERNEL__
 #     include <asm/signal.h>
 #     undef __KERNEL__
-#   else
+#   elif defined(__GLIBC__)
       /* Kernels prior to 2.1.1 defined struct sigcontext_struct instead of */
       /* struct sigcontext.  libc6 (glibc2) uses "struct sigcontext" in     */
       /* prototypes, so we have to include the top-level sigcontext.h to    */
