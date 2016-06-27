@@ -32,7 +32,7 @@
       /* prototypes, so we have to include the top-level sigcontext.h to    */
       /* make sure the former gets defined to be the latter if appropriate. */
 #     include <features.h>
-#     if 2 <= __GLIBC__
+#     if 2 <= __GLIBC__ || !defined(__GLIBC__)
 #       if 2 == __GLIBC__ && 0 == __GLIBC_MINOR__
 	  /* glibc 2.1 no longer has sigcontext.h.  But signal.h	*/
 	  /* has the right declaration for glibc 2.1.			*/

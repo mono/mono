@@ -14,7 +14,7 @@
 #include <string.h>
 
 #ifndef MONO_CROSS_COMPILE
-#ifdef HAVE_ASM_SIGCONTEXT_H
+#if defined(HAVE_ASM_SIGCONTEXT_H) && defined(__GLIBC__)
 #include <asm/sigcontext.h>
 #endif  /* def HAVE_ASM_SIGCONTEXT_H */
 #endif
