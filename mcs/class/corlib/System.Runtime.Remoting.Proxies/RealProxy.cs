@@ -98,7 +98,10 @@ namespace System.Runtime.Remoting.Proxies
 			return outArgs[0];
 		}
 
-		internal void StoreRemoteField (RuntimeTypeHandle typeHandle, RuntimeFieldHandle fieldHandle, object arg) {
+		internal void StoreRemoteField (IntPtr classPtr, IntPtr fieldPtr, object arg) {
+			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
+			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
+			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
 			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
 
 			if (InCurrentContext ()) {
