@@ -683,6 +683,7 @@ struct _SgenMajorCollector {
 extern SgenMajorCollector major_collector;
 
 void sgen_marksweep_init (SgenMajorCollector *collector);
+void sgen_marksweep_cleanup (void);
 void sgen_marksweep_fixed_init (SgenMajorCollector *collector);
 void sgen_marksweep_par_init (SgenMajorCollector *collector);
 void sgen_marksweep_fixed_par_init (SgenMajorCollector *collector);
@@ -781,7 +782,8 @@ sgen_safe_object_get_size_unaligned (GCObject *obj)
 
 gboolean sgen_object_is_live (GCObject *obj);
 
-void  sgen_init_fin_weak_hash (void);
+void sgen_init_fin_weak_hash (void);
+void sgen_fin_weak_hash_cleanup (void);
 
 /* FIXME: move the toggleref stuff out of here */
 void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx);
@@ -894,6 +896,7 @@ void* sgen_nursery_alloc (size_t size);
 void* sgen_nursery_alloc_range (size_t size, size_t min_size, size_t *out_alloc_size);
 gboolean sgen_can_alloc_size (size_t size);
 void sgen_nursery_retire_region (void *address, ptrdiff_t size);
+void sgen_nursery_alloc_cleanup (void);
 
 void sgen_nursery_alloc_prepare_for_minor (void);
 void sgen_nursery_alloc_prepare_for_major (void);
@@ -951,7 +954,7 @@ int sgen_gc_invoke_finalizers (void);
 /* GC handles */
 
 void sgen_init_gchandles (void);
-
+void sgen_gchandle_cleanup ();
 void sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int generation, gboolean track);
 
 typedef gpointer (*SgenGCHandleIterateCallback) (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user);

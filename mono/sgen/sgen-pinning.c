@@ -38,6 +38,20 @@ sgen_pinning_init (void)
 }
 
 void
+sgen_pin_cleanup (void)
+{
+	sgen_free_internal_dynamic (pin_queue.data, sizeof (void*)*pin_queue.size, pin_queue.mem_type);
+	pin_queue.data = NULL;
+}
+
+void
+sgen_pin_cleanup (void)
+{
+	sgen_free_internal_dynamic (pin_queue.data, sizeof (void*) * pin_queue.size, pin_queue.mem_type);
+	pin_queue.data = NULL;
+}
+
+void
 sgen_init_pinning (void)
 {
 	mono_os_mutex_lock (&pin_queue_mutex);

@@ -547,4 +547,5 @@ mono_gc_is_null (void)
 	return TRUE;
 }
 
+
 #endif

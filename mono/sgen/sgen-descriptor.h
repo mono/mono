@@ -125,6 +125,7 @@ typedef void (*SgenUserRootMarkFunc) (void *addr, SgenUserMarkFunc mark_func, vo
 SgenDescriptor sgen_make_user_root_descriptor (SgenUserRootMarkFunc marker);
 
 gsize* sgen_get_complex_descriptor (SgenDescriptor desc);
+void sgen_complex_descriptor_cleanup (void);
 void* sgen_get_complex_descriptor_bitmap (SgenDescriptor desc);
 SgenUserRootMarkFunc sgen_get_user_descriptor_func (SgenDescriptor desc);
 

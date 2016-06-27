@@ -894,6 +894,8 @@ mono_cleanup (void)
 #ifndef HOST_WIN32
 	wapi_cleanup ();
 #endif
+
+	mono_perfcounters_cleanup ();
 }
 
 void

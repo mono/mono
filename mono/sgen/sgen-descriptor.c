@@ -366,4 +366,11 @@ sgen_init_descriptors (void)
 #endif
 }
 
+void
+sgen_complex_descriptor_cleanup (void)
+{
+	g_free (complex_descriptors);
+	complex_descriptors = NULL;
+}
+
 #endif

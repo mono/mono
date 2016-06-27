@@ -3263,4 +3263,13 @@ sgen_timestamp (void)
 	return SGEN_TV_ELAPSED (sgen_init_timestamp, timestamp);
 }
 
+void
+mono_gc_final_cleanup (void)
+{
+	sgen_pointer_queue_free (&fin_ready_queue);
+	sgen_pointer_queue_free (&critical_fin_queue);
+
+	sgen_gchandle_cleanup ();
+}
+
 #endif /* HAVE_SGEN_GC */

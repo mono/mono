@@ -210,4 +210,21 @@ sgen_array_list_find (SgenArrayList *array, gpointer ptr)
 	return (guint32)-1;
 }
 
+/*
+* Releases all memory allocated by the array. Not thread safe
+*/
+void sgen_array_list_free (SgenArrayList* array)
+{
+	guint32 bucket;
+	const guint32 max_bucket = sgen_array_list_index_bucket ((array)->capacity); 
+	for (bucket = 0; bucket < max_bucket; ++bucket) {
+		if (array->mem_type != -1)
+			sgen_free_internal_dynamic (array->entries[bucket], sgen_array_list_bucket_size (bucket), array->mem_type);
+		else
+			g_free (array->entries[bucket]);
+		array->entries[bucket] = NULL;
+	}
+	array->capacity = 0;
+}
+
 #endif

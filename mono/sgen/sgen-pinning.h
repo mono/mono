@@ -19,6 +19,7 @@ enum {
 };
 
 void sgen_pinning_init (void);
+void sgen_pin_cleanup (void);
 void sgen_pin_stage_ptr (void *ptr);
 void sgen_optimize_pin_queue (void);
 void sgen_init_pinning (void);

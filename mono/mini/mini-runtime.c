@@ -4095,6 +4095,12 @@ mini_cleanup (MonoDomain *domain)
 	mono_os_mutex_destroy (&jit_mutex);
 
 	mono_code_manager_cleanup ();
+	mono_direct_icall_cleanup ();
+	mono_gc_final_cleanup ();
+
+	mono_direct_icall_cleanup ();
+	mono_gc_final_cleanup ();
+
 }
 
 void

@@ -1908,4 +1908,5 @@ mono_gchandle_free_domain (MonoDomain *domain)
 
 }
 
+
 #endif /* no Boehm GC */

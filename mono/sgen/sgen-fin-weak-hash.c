@@ -646,4 +646,11 @@ sgen_init_fin_weak_hash (void)
 #endif
 }
 
+void
+sgen_fin_weak_hash_cleanup (void)
+{
+	sgen_hash_table_clean (&minor_finalizable_hash);
+	sgen_hash_table_clean (&major_finalizable_hash);
+}
+
 #endif /* HAVE_SGEN_GC */

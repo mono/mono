@@ -33,6 +33,11 @@
 #include <direct.h>
 #include <io.h>
 
+
+static gchar *tmp_dir = NULL;
+static gchar *home_dir = NULL;
+static gchar *user_name = NULL;
+
 const gchar *
 g_getenv(const gchar *variable)
 {
@@ -116,10 +121,11 @@ g_path_is_absolute (const char *filename)
 const gchar *
 g_get_home_dir (void)
 {
+	if (home_dir)
+		return home_dir;
 	/* FIXME */
 	const gchar *drive = g_getenv ("HOMEDRIVE");
 	const gchar *path = g_getenv ("HOMEPATH");
-	gchar *home_dir = NULL;
 	
 	if (drive && path) {
 		home_dir = g_malloc(strlen(drive) + strlen(path) +1);
@@ -134,30 +140,40 @@ g_get_home_dir (void)
 const char *
 g_get_user_name (void)
 {
-	const char * retName = g_getenv ("USER");
-	if (!retName)
-		retName = g_getenv ("USERNAME");
-	return retName;
+	if (user_name)
+		return user_name;
+	user_name = g_getenv ("USER");
+	if (!user_name)
+		user_name = g_getenv ("USERNAME");
+	return user_name;
 }
 
-static const char *tmp_dir;
 
 const gchar *
 g_get_tmp_dir (void)
 {
-	if (tmp_dir == NULL){
-		if (tmp_dir == NULL){
-			tmp_dir = g_getenv ("TMPDIR");
-			if (tmp_dir == NULL){
-				tmp_dir = g_getenv ("TMP");
-				if (tmp_dir == NULL){
-					tmp_dir = g_getenv ("TEMP");
-					if (tmp_dir == NULL)
-						tmp_dir = "C:\\temp";
-				}
+	if (tmp_dir == NULL) {
+		tmp_dir = g_getenv ("TMPDIR");
+		if (tmp_dir == NULL) {
+			tmp_dir = g_getenv ("TMP");
+			if (tmp_dir == NULL) {
+				tmp_dir = g_getenv ("TEMP");
+				if (tmp_dir == NULL)
+					tmp_dir = "C:\\temp";
 			}
 		}
 	}
 	return tmp_dir;
+}
+
+void
+g_env_cleanup (void)
+{
+	g_free (user_name);
+	g_free (home_dir);
+	g_free (tmp_dir);
+	tmp_dir = NULL;
+	home_dir = NULL;
+	user_name = NULL;
 }
 

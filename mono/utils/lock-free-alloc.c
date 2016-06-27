@@ -110,8 +110,6 @@ struct _MonoLockFreeAllocDescriptor {
 	gboolean in_use;	/* used for debugging only */
 };
 
-#define NUM_DESC_BATCH	64
-
 static MONO_ALWAYS_INLINE gpointer
 sb_header_for_addr (gpointer addr, size_t block_size)
 {
@@ -161,6 +159,28 @@ free_sb (gpointer sb, size_t block_size)
 #ifndef DESC_AVAIL_DUMMY
 static Descriptor * volatile desc_avail;
 
+void
+desc_cleanup (void)
+{
+	Descriptor** next;
+	int page_size = mono_pagesize ();
+	size_t page_base;
+	size_t page_mask = (~(page_size - 1));
+	while (desc_avail) {
+		page_base = ((size_t)desc_avail & page_mask);
+		next = &(desc_avail->next);
+		while (*next) {
+			if (page_base == ((size_t)(*next) & page_mask))
+				*next = (*next)->next;
+			else
+				next = &((*next)->next);
+		}
+		next = desc_avail;
+		desc_avail = desc_avail->next;
+		mono_vfree (page_base, page_size);
+	}
+}
+
 static Descriptor*
 desc_alloc (void)
 {
@@ -170,21 +190,23 @@ desc_alloc (void)
 	for (;;) {
 		gboolean success;
 
-		desc = (Descriptor *) get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
+		desc = (Descriptor *)get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
 		if (desc) {
 			Descriptor *next = desc->next;
 			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, next, desc) == desc);
 		} else {
 			size_t desc_size = sizeof (Descriptor);
+			int page_size = mono_pagesize ();
+			size_t num_desc_batch = page_size / desc_size;
 			Descriptor *d;
 			int i;
 
-			desc = (Descriptor *) mono_valloc (NULL, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE));
+			desc = (Descriptor *)mono_valloc (0, page_size, prot_flags_for_activate (TRUE));
 
 			/* Organize into linked list. */
 			d = desc;
-			for (i = 0; i < NUM_DESC_BATCH; ++i) {
-				Descriptor *next = (i == (NUM_DESC_BATCH - 1)) ? NULL : (Descriptor*)((char*)desc + ((i + 1) * desc_size));
+			for (i = 0; i < num_desc_batch; ++i) {
+				Descriptor *next = (i == (num_desc_batch - 1)) ? NULL : (Descriptor*)((char*)desc + ((i + 1) * desc_size));
 				d->next = next;
 				mono_lock_free_queue_node_init (&d->node, TRUE);
 				d = next;
@@ -195,7 +217,7 @@ desc_alloc (void)
 			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc->next, NULL) == NULL);
 
 			if (!success)
-				mono_vfree (desc, desc_size * NUM_DESC_BATCH);
+				mono_vfree (desc, page_size);
 		}
 
 		mono_hazard_pointer_clear (hp, 1);
@@ -255,6 +277,11 @@ desc_retire (Descriptor *desc)
 	free_sb (desc->sb, desc->block_size);
 	mono_lock_free_queue_enqueue (&available_descs, &desc->node);
 }
+
+void
+desc_cleanup (void)
+{}
+
 #endif
 
 static Descriptor*
@@ -615,4 +642,10 @@ mono_lock_free_allocator_init_allocator (MonoLockFreeAllocator *heap, MonoLockFr
 {
 	heap->sc = sc;
 	heap->active = NULL;
+}
+
+void
+mono_lock_free_cleanup (void)
+{
+	desc_cleanup ();
 }

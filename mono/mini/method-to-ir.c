@@ -4468,6 +4468,15 @@ icall_is_direct_callable (MonoCompile *cfg, MonoMethod *cmethod)
 	return FALSE;
 }
 
+void
+mono_direct_icall_cleanup (void)
+{
+	if (direct_icall_type_hash) {
+		g_hash_table_destroy (direct_icall_type_hash);
+		direct_icall_type_hash = NULL;
+	}
+}
+
 #define is_complex_isinst(klass) ((klass->flags & TYPE_ATTRIBUTE_INTERFACE) || klass->rank || mono_class_is_nullable (klass) || mono_class_is_marshalbyref (klass) || (klass->flags & TYPE_ATTRIBUTE_SEALED) || klass->byval_arg.type == MONO_TYPE_VAR || klass->byval_arg.type == MONO_TYPE_MVAR)
 
 static MonoInst*

@@ -3978,6 +3978,50 @@ static const int static_data_size [NUM_STATIC_DATA_IDX] = {
 static MonoBitSet *thread_reference_bitmaps [NUM_STATIC_DATA_IDX];
 static MonoBitSet *context_reference_bitmaps [NUM_STATIC_DATA_IDX];
 
+void cleanup_freelist (StaticDataFreeList* freelist)
+{
+	while (freelist) {
+		thread_static_info.freelist = freelist->next;
+		g_free (freelist);
+		freelist = thread_static_info.freelist;
+	}
+}
+
+void
+mono_thread_final_cleanup (void)
+{
+	int i;
+	for (i = 0; i < NUM_STATIC_DATA_IDX; ++i) {
+		g_free (thread_reference_bitmaps [i]);
+		thread_reference_bitmaps [i] = 0;
+		g_free (context_reference_bitmaps [i]);
+		context_reference_bitmaps [i] = 0;
+	}
+	mono_thread_info_detach ();
+
+	mono_g_hash_table_destroy (contexts);
+	mono_g_hash_table_destroy (threads_starting_up);
+	mono_g_hash_table_destroy (threads);
+	threads = NULL;
+	threads_starting_up = NULL;
+	contexts = NULL;
+
+#ifdef HAVE_SGEN_GC
+	sgen_alloc_nursery_cleanup ();
+	sgen_complex_descriptor_cleanup ();
+	sgen_marksweep_cleanup ();
+	//sgen_thread_pool_cleanup ();
+#endif
+	mono_thread_smr_cleanup ();
+
+#ifndef HOST_WIN32
+	g_hash_table_destroy (joinable_threads);
+#endif
+
+	cleanup_freelist (thread_static_info.freelist);
+	cleanup_freelist (context_static_info.freelist);
+}
+
 static void
 mark_slots (void *addr, MonoBitSet **bitmaps, MonoGCMarkFunc mark_func, void *gc_data)
 {

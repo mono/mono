@@ -2619,6 +2619,8 @@ int               mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoB
 									 MonoInst *return_var, MonoInst **inline_args,
 									 guint inline_offset, gboolean is_virtual_call);
 
+void              mono_direct_icall_cleanup (void);
+
 MonoInst         *mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins);
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);

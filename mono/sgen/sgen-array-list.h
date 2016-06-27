@@ -133,5 +133,6 @@ guint32 sgen_array_list_alloc_block (SgenArrayList *array, guint32 slots_to_add)
 guint32 sgen_array_list_add (SgenArrayList *array, gpointer ptr, int data, gboolean increase_size_before_set);
 guint32 sgen_array_list_find (SgenArrayList *array, gpointer ptr);
 void sgen_array_list_remove_nulls (SgenArrayList *array);
+void sgen_array_list_free (SgenArrayList* array);
 
 #endif

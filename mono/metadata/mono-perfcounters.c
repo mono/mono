@@ -540,6 +540,14 @@ mono_determine_physical_ram_available_size (void)
 }
 
 void
+mono_perfcounters_cleanup ()
+{
+	mono_shared_area_remove ();
+	mono_perfcounters = NULL;
+	shared_area = NULL;
+}
+
+void
 mono_perfcounters_init (void)
 {
 	int d_offset = G_STRUCT_OFFSET (MonoSharedArea, data);
