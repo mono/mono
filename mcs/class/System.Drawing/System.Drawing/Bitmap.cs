@@ -37,7 +37,9 @@
 
 using System.IO;
 using System.Drawing.Imaging;
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Security.Permissions;

@@ -31,7 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.ComponentModel;
@@ -44,10 +46,13 @@ namespace System.Drawing
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.FontEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[TypeConverter (typeof (FontConverter))]
-	public sealed class Font : MarshalByRefObject, ICloneable, IDisposable
+	public sealed class Font : 
 #if !CORECLR
-		, ISerializable
+		MarshalByRefObject, 
+		ISerializable, 
 #endif
+		ICloneable, 
+		IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
 		private string  systemFontName;

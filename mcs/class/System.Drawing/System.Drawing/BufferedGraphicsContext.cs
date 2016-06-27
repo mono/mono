@@ -29,7 +29,9 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 using System.Security.Permissions;
 
 namespace System.Drawing
