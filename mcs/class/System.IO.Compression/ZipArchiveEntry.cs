@@ -98,7 +98,8 @@ namespace System.IO.Compression
 			if (entry.Archive.Mode == ZipArchiveMode.Update && !entry.wasWritten)
 			{
 				// Replace the read-only stream with a writeable memory stream.
-				SetWriteable();
+				if (!stream.CanWrite)
+				    SetWriteable();
 				entry.wasWritten = true;
 			}
 
