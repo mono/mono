@@ -137,10 +137,17 @@ namespace System.Net {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count");
+			
+			if (count == 0)
+				return;
 
 			byte [] bytes = null;
-			MemoryStream ms = GetHeaders (false);
 			bool chunked = response.SendChunked;
+			MemoryStream ms = GetHeaders (false);
 			if (ms != null) {
 				long start = ms.Position; // After the possible preamble for the encoding
 				ms.Position = ms.Length;
@@ -161,8 +168,7 @@ namespace System.Net {
 				InternalWrite (bytes, 0, bytes.Length);
 			}
 
-			if (count > 0)
-				InternalWrite (buffer, offset, count);
+			InternalWrite (buffer, offset, count);
 			if (chunked)
 				InternalWrite (crlf, 0, 2);
 		}
