@@ -40,6 +40,7 @@
 #include "mono/metadata/remoting.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/threadpool-ms.h"
+#include "mono/metadata/handle.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -203,6 +204,12 @@ mono_free_lparray (MonoArray *array, gpointer* nativeArray);
 static void
 mono_marshal_ftnptr_eh_callback (guint32 gchandle);
 
+static MonoThreadInfo*
+mono_icall_start (HandleStackMark *stackmark, MonoError *error);
+
+static void
+mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error);
+
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (string_builder, System.Text, StringBuilder)
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, System, DateTime)
@@ -338,6 +345,9 @@ mono_marshal_init (void)
 		register_icall (mono_threads_exit_gc_safe_region_unbalanced, "mono_threads_exit_gc_safe_region_unbalanced", "void ptr ptr", TRUE);
 		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", "ptr ptr ptr", TRUE);
 		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr", TRUE);
+		register_icall (mono_icall_start, "mono_icall_start", "ptr ptr ptr", TRUE);
+		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
+		register_icall (mono_handle_new, "mono_handle_new", "ptr ptr", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -7587,6 +7597,23 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 }
 #endif /* DISABLE_JIT */
 
+/*
+ * icall_uses_handles:
+ *
+ *   Return whenever the icall METHOD uses the object handles infrastructure in handle.h.
+ */
+static gboolean
+icall_uses_handles (MonoMethod *method)
+{
+	if (!strcmp (method->klass->name, "RuntimeType")) {
+		if (!strcmp (method->name, "getFullName"))
+			return TRUE;
+		return FALSE;
+	} else {
+		return FALSE;
+	}
+}
+
 /**
  * mono_marshal_get_native_wrapper:
  * @method: The MonoMethod to wrap.
@@ -7741,11 +7768,46 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 		else
 			csig = mono_metadata_signature_dup_full (method->klass->image, sig);
 
+		//printf ("%s\n", mono_method_full_name (method, 1));
+
 		/* hack - string constructors returns a value */
 		if (method->string_ctor)
 			csig->ret = &mono_defaults.string_class->byval_arg;
 
 #ifndef DISABLE_JIT
+		// FIXME:
+		MonoClass *handle_stack_mark_class;
+		MonoClass *error_class;
+		int thread_info_var = -1, stack_mark_var = -1, error_var = -1;
+		MonoMethodSignature *call_sig = csig;
+		gboolean uses_handles = icall_uses_handles (method);
+
+		if (uses_handles) {
+			MonoMethodSignature *ret;
+
+			/* Add a MonoError argument */
+			// FIXME: The stuff from mono_metadata_signature_dup_internal_with_padding ()
+			ret = mono_metadata_signature_alloc (method->klass->image, csig->param_count + 1);
+
+			ret->param_count = csig->param_count + 1;
+			ret->ret = csig->ret;
+			for (int i = 0; i < csig->param_count; ++i)
+				ret->params [i] = csig->params [i];
+			ret->params [csig->param_count] = &mono_get_intptr_class ()->byval_arg;
+			call_sig = ret;
+		}
+
+		if (uses_handles) {
+			handle_stack_mark_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/HandleStackMark");
+			error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
+
+			thread_info_var = mono_mb_add_local (mb, &mono_get_intptr_class ()->byval_arg);
+			stack_mark_var = mono_mb_add_local (mb, &handle_stack_mark_class->byval_arg);
+			error_var = mono_mb_add_local (mb, &error_class->byval_arg);
+
+			// FIXME: Change csig so it passes a handle not an objref
+		}
+
 		if (sig->hasthis) {
 			int pos;
 
@@ -7757,21 +7819,49 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			pos = mono_mb_emit_branch (mb, CEE_BRTRUE);
 			mono_mb_emit_exception (mb, "NullReferenceException", NULL);
 			mono_mb_patch_branch (mb, pos);
-
-			mono_mb_emit_byte (mb, CEE_LDARG_0);
 		}
 
-		for (i = 0; i < sig->param_count; i++)
-			mono_mb_emit_ldarg (mb, i + sig->hasthis);
+		if (uses_handles) {
+			mono_mb_emit_ldloc_addr (mb, stack_mark_var);
+			mono_mb_emit_ldloc_addr (mb, error_var);
+			mono_mb_emit_icall (mb, mono_icall_start);
+			mono_mb_emit_stloc (mb, thread_info_var);
+
+			if (sig->hasthis) {
+				mono_mb_emit_byte (mb, CEE_LDARG_0);
+				mono_mb_emit_icall (mb, mono_handle_new);
+			}
+			for (i = 0; i < sig->param_count; i++)
+				mono_mb_emit_ldarg (mb, i + sig->hasthis);
+			mono_mb_emit_ldloc_addr (mb, error_var);
+		} else {
+			if (sig->hasthis)
+				mono_mb_emit_byte (mb, CEE_LDARG_0);
+			for (i = 0; i < sig->param_count; i++)
+				mono_mb_emit_ldarg (mb, i + sig->hasthis);
+		}
 
 		if (aot) {
 			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 			mono_mb_emit_op (mb, CEE_MONO_ICALL_ADDR, &piinfo->method);
-			mono_mb_emit_calli (mb, csig);
+			mono_mb_emit_calli (mb, call_sig);
 		} else {
 			g_assert (piinfo->addr);
-			mono_mb_emit_native_call (mb, csig, piinfo->addr);
+			mono_mb_emit_native_call (mb, call_sig, piinfo->addr);
 		}
+
+		if (uses_handles) {
+			if (MONO_TYPE_IS_REFERENCE (sig->ret)) {
+				// FIXME: Do this properly
+				mono_mb_emit_byte (mb, CEE_CONV_I);
+				mono_mb_emit_byte (mb, CEE_LDIND_REF);
+			}
+			mono_mb_emit_ldloc (mb, thread_info_var);
+			mono_mb_emit_ldloc_addr (mb, stack_mark_var);
+			mono_mb_emit_ldloc_addr (mb, error_var);
+			mono_mb_emit_icall (mb, mono_icall_end);
+		}
+
 		if (check_exceptions)
 			emit_thread_interrupt_checkpoint (mb);
 		mono_mb_emit_byte (mb, CEE_RET);
@@ -11931,4 +12021,21 @@ void
 mono_install_ftnptr_eh_callback (MonoFtnPtrEHCallback callback)
 {
 	ftnptr_eh_callback = callback;
+}
+
+static MonoThreadInfo*
+mono_icall_start (HandleStackMark *stackmark, MonoError *error)
+{
+	MonoThreadInfo *info = mono_thread_info_current ();
+
+	mono_stack_mark_init (info, stackmark);
+	mono_error_init (error);
+	return info;
+}
+
+static void
+mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error)
+{
+	mono_stack_mark_pop (info, stackmark);
+	mono_error_set_pending_exception (error);
 }
