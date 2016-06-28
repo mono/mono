@@ -341,6 +341,23 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipWriteEntriesUpdateModeNewEntry()
+		{
+			var stream = new MemoryStream();
+			var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update);
+
+			var newEntry = zipArchive.CreateEntry("testEntry");
+
+			using (var newStream = newEntry.Open())
+			{
+				using (var sw = new StreamWriter(newStream))
+				{
+					sw.Write("TEST");
+				}
+			}
+		}
+
+		[Test]
 		public void ZipWriteEntriesUpdateModeNonZeroPosition()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);
