@@ -109,19 +109,30 @@ namespace System.Runtime.Remoting.Messaging {
 				args = null;
 		}
 
-		public MonoMethodMessage (Type type, string method_name, object [] in_args)
+		internal MonoMethodMessage (MethodInfo minfo, object [] in_args, object [] out_args)
 		{
-			// fixme: consider arg types
-			MethodInfo minfo = type.GetMethod (method_name);
-			
-			InitMessage ((MonoMethod)minfo, null);
+			InitMessage ((MonoMethod)minfo, out_args);
 
 			int len = in_args.Length;
 			for (int i = 0; i < len; i++) {
 				args [i] = in_args [i];
 			}
 		}
+
+		private static MethodInfo GetMethodInfo (Type type, string methodName)
+		{
+			// fixme: consider arg types
+			MethodInfo minfo = type.GetMethod(methodName);
+			if (minfo == null)
+				throw new ArgumentException (String.Format("Could not find '{0}' in {1}", methodName, type), "methodName");
+			return minfo;
+		}
 		
+		public MonoMethodMessage (Type type, string methodName, object [] in_args)
+			: this (GetMethodInfo (type, methodName), in_args, null)
+		{
+		}
+
 		public IDictionary Properties {
 			get {
 				if (properties == null) properties = new MCMDictionary (this);
