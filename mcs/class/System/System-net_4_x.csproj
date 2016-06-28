@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,7 +12,6 @@
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
-    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -22,7 +21,6 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -187,7 +185,9 @@
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\AsyncOperationManager.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\AttributeCollection.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\AttributeProviderAttribute.cs" />
-    <Compile Include="..\referencesource\System\compmod\system\componentmodel\BackgroundWorker.cs" />
+    <Compile Include="..\referencesource\System\compmod\system\componentmodel\BackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\BaseComponentEditor.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\basenumberconverter.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\BindableAttribute.cs" />
@@ -207,7 +207,9 @@
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\CollectionConverter.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\ComplexBindingPropertiesAttribute.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\CompModSwitches.cs" />
-    <Compile Include="..\referencesource\System\compmod\system\componentmodel\Component.cs" />
+    <Compile Include="..\referencesource\System\compmod\system\componentmodel\Component.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\ComponentCollection.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\ComponentConverter.cs" />
     <Compile Include="..\referencesource\System\compmod\system\componentmodel\ComponentResourceManager.cs" />
@@ -716,7 +718,9 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
-    <Compile Include="Microsoft.CSharp\CSharpCodeProvider.cs" />
+    <Compile Include="Microsoft.CSharp\CSharpCodeProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Microsoft.VisualBasic\VBCodeCompiler.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeProvider.cs" />
@@ -909,7 +913,9 @@
     <Compile Include="System.Diagnostics\MonitoringDescriptionAttribute.cs" />
     <Compile Include="System.Diagnostics\NullEventLog.cs" />
     <Compile Include="System.Diagnostics\OverflowAction.cs" />
-    <Compile Include="System.Diagnostics\PerformanceCounter.cs" />
+    <Compile Include="System.Diagnostics\PerformanceCounter.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.Diagnostics\PerformanceCounterCategory.cs" />
     <Compile Include="System.Diagnostics\PerformanceCounterCategoryType.cs" />
     <Compile Include="System.Diagnostics\PerformanceCounterInstaller.cs" />
@@ -961,7 +967,9 @@
     <Compile Include="System.IO\FileAction.cs" />
     <Compile Include="System.IO\FileSystemEventArgs.cs" />
     <Compile Include="System.IO\FileSystemEventHandler.cs" />
-    <Compile Include="System.IO\FileSystemWatcher.cs" />
+    <Compile Include="System.IO\FileSystemWatcher.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="System.IO\IFileWatcher.cs" />
     <Compile Include="System.IO\InotifyWatcher.cs" />
     <Compile Include="System.IO\InternalBufferOverflowException.cs" />
@@ -1234,7 +1242,8 @@
     <Compile Include="System\IOSelector.cs" />
     <Compile Include="System\Platform.cs" />
     <Compile Include="System\SRDescriptionAttribute.cs" />
-    <Compile Include="System\UriTypeConverter.cs" />  </ItemGroup>
+    <Compile Include="System\UriTypeConverter.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1244,16 +1253,12 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
     </PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
@@ -1272,7 +1277,8 @@
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>
-      <Aliases>MonoSecurity</Aliases>    </ProjectReference>
+      <Aliases>MonoSecurity</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -1295,4 +1301,3 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
-
