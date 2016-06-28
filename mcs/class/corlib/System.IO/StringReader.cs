@@ -4,6 +4,7 @@
 // Author: Marcin Szczepanski (marcins@zipworld.com.au)
 //
 // Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 
 //
@@ -137,29 +138,23 @@ namespace System.IO {
 
 			CheckObjectDisposedException ();
 
-			if (nextChar >= source.Length)
-				return null;
-
-			int nextCR = source.IndexOf ('\r', nextChar);
-			int nextLF = source.IndexOf ('\n', nextChar);
-			int readTo;
-			bool consecutive = false;
-
-			if (nextCR == -1) {
-				if (nextLF == -1)
-					return ReadToEnd ();
-
-				readTo = nextLF;
-			} else if (nextLF == -1) {
-				readTo = nextCR;
-			} else {
-				readTo = (nextCR > nextLF) ? nextLF : nextCR;
-				consecutive = (nextCR + 1 == nextLF);
+			int i = nextChar;
+			while (i < sourceLength) {
+				char ch = source[i];
+				if (ch == '\r' || ch == '\n') {
+					String result = source.Substring(nextChar, i - nextChar);
+					nextChar = i + 1;
+					if (ch == '\r' && nextChar < sourceLength && source[nextChar] == '\n') nextChar++;
+					return result;
+				}
+				i++;
 			}
-
-			string nextLine = source.Substring (nextChar, readTo - nextChar);
-			nextChar = readTo + ((consecutive) ? 2 : 1);
-			return nextLine;
+			if (i > nextChar) {
+				String result = source.Substring(nextChar, i - nextChar);
+				nextChar = i;
+				return result;
+			}
+			return null;
 		}
 
                 public override string ReadToEnd() {
