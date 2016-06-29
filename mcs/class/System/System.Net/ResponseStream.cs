@@ -146,8 +146,8 @@ namespace System.Net {
 				return;
 
 			byte [] bytes = null;
-			MemoryStream ms = GetHeaders (false);
 			bool chunked = response.SendChunked;
+			MemoryStream ms = GetHeaders (false);
 			if (ms != null) {
 				long start = ms.Position; // After the possible preamble for the encoding
 				ms.Position = ms.Length;
