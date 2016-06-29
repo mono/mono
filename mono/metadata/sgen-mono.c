@@ -3005,7 +3005,7 @@ mono_gc_base_init (void)
 void
 mono_gc_base_cleanup (void)
 {
-	sgen_thread_pool_shutdown ();
+	sgen_thread_pool_shutdown (); 
 }
 
 gboolean

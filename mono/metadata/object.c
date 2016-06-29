@@ -1503,7 +1503,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			entry = next;
 		}
 	}
-	free (imt_builder);
+	g_free (imt_builder);
 	/* we OR the bitmap since we may build just a single imt slot at a time */
 	vt->imt_collisions_bitmap |= imt_collisions_bitmap;
 }
@@ -3347,6 +3347,15 @@ mono_vtable_get_static_field_data (MonoVTable *vt)
 	if (!vt->has_static_fields)
 		return NULL;
 	return vt->vtable [vt->klass->vtable_size];
+}
+
+void
+mono_vtable_free_static_field_data (MonoVTable *vt)
+{
+	if (!vt->has_static_fields)
+		return;
+	mono_gc_free_fixed (vt->vtable[vt->klass->vtable_size]);
+	vt->vtable[vt->klass->vtable_size] = NULL;
 }
 
 static guint8*

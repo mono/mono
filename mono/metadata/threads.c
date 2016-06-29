@@ -1206,6 +1206,16 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		this_obj->name = NULL;
 		g_free (name);
 	}
+
+	if (this_obj->static_data) {
+		mono_free_static_data (this_obj->static_data);
+		this_obj->static_data = NULL;
+	}
+
+	if (this_obj->appdomain_refs) {
+		ref_stack_destroy (this_obj->appdomain_refs);
+		this_obj->appdomain_refs = NULL;
+	}
 }
 
 void

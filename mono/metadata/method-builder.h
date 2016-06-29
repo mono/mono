@@ -24,6 +24,7 @@ typedef struct _MonoMethodBuilder {
 	MonoMethod *method;
 	char *name;
 	gboolean no_dup_name;
+	GList* method_data_list;
 #ifndef DISABLE_JIT
 	GList *locals_list;
 	int locals;

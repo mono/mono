@@ -1981,6 +1981,7 @@ mono_assembly_name_free (MonoAssemblyName *aname)
 	if (aname == NULL)
 		return;
 
+	g_free ((void *) aname->public_key);
 	g_free ((void *) aname->name);
 	g_free ((void *) aname->culture);
 	g_free ((void *) aname->hash_value);
@@ -3439,6 +3440,17 @@ mono_assemblies_cleanup (void)
 	free_assembly_load_hooks ();
 	free_assembly_search_hooks ();
 	free_assembly_preload_hooks ();
+
+
+	if (assemblies_path) {
+		char** assembly = assemblies_path;
+		while (*assembly) {
+			g_free (*assembly);
+			assembly++;
+		}
+		g_free (assemblies_path);
+		assemblies_path = NULL;
+	}
 }
 
 /*LOCKING takes the assembly_binding lock*/

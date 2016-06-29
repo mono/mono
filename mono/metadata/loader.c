@@ -2356,6 +2356,8 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 		mono_memory_barrier ();
 		if (!m->signature)
 			m->signature = signature;
+		else
+			mono_metadata_free_inflated_signature (signature);
 
 		mono_image_unlock (img);
 
@@ -2403,6 +2405,11 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 			sig2 = (MonoMethodSignature *)g_hash_table_lookup (img->method_signatures, sig);
 			if (!sig2)
 				g_hash_table_insert (img->method_signatures, (gpointer)sig, signature);
+			else {
+				if (img == NULL)
+					mono_metadata_free_inflated_signature (signature);
+				signature = sig2;
+			}
 			mono_image_unlock (img);
 		}
 
@@ -2461,6 +2468,8 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 	mono_memory_barrier ();
 	if (!m->signature)
 		m->signature = signature;
+	else if (!can_cache_signature && img == NULL)
+		g_free (signature);
 
 	mono_image_unlock (img);
 

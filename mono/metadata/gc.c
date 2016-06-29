@@ -925,7 +925,12 @@ mono_gc_cleanup (void)
 			}
 			g_assert (finalizer_thread_exited);
 		}
+
+		mono_coop_mutex_destroy (gc_thread->synch_cs);
+		g_free (gc_thread->synch_cs);
+		g_free (gc_thread->name);
 		gc_thread = NULL;
+
 		mono_gc_base_cleanup ();
 	}
 

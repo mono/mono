@@ -3306,7 +3306,7 @@ mini_get_shared_gparam (MonoType *t, MonoType *constraint)
 
 	copy->param.param.gshared_constraint = constraint;
 	copy->parent = par;
-	res = mono_metadata_type_dup (NULL, t);
+	res = mono_metadata_type_dup (image, t);
 	res->data.generic_param = (MonoGenericParam*)copy;
 
 	if (image) {
