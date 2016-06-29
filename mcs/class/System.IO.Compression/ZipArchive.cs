@@ -39,7 +39,7 @@ namespace System.IO.Compression
 		internal readonly ZipArchiveMode mode;
 		internal Encoding entryNameEncoding;
 		internal bool disposed;
-		internal Dictionary<string, ZipArchiveEntry> entries; 
+		internal List<ZipArchiveEntry> entries; 
 		internal SharpCompress.Archive.Zip.ZipArchive zipFile;
 
 		public ZipArchive (Stream stream)
@@ -111,11 +111,11 @@ namespace System.IO.Compression
 					throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
 				}
 
-				entries = new Dictionary<string, ZipArchiveEntry>();
+				entries = new List<ZipArchiveEntry>();
 				if (Mode != ZipArchiveMode.Create) {
 					foreach (var entry in zipFile.Entries) {
 						var zipEntry = new ZipArchiveEntry(this, entry);
-						entries[entry.Key] = zipEntry;
+						entries.Add(zipEntry);
 					}
 				}
 			}
@@ -140,7 +140,7 @@ namespace System.IO.Compression
 				if (entries == null)
 					return new ReadOnlyCollection<ZipArchiveEntry>(new List<ZipArchiveEntry>());
 
-				return new ReadOnlyCollection<ZipArchiveEntry>(entries.Values.ToList());
+				return new ReadOnlyCollection<ZipArchiveEntry>(entries);
 			}
 		}
 
@@ -188,7 +188,7 @@ namespace System.IO.Compression
 
 			var internalEntry = CreateEntryInternal(entryName);
 			var archiveEntry = new ZipArchiveEntry(this, internalEntry);
-			entries[entryName] = archiveEntry;
+			entries.Add(archiveEntry);
 
 			return archiveEntry;
 		}
@@ -210,7 +210,7 @@ namespace System.IO.Compression
 			if (zipFile == null)
 				throw new InvalidDataException("The zip archive is corrupt, and its entries cannot be retrieved.");
 
-			return entries.ContainsKey(entryName) ? entries[entryName] : null;
+			return entries.FirstOrDefault(e => e.FullName == entryName);
 		}
 
 		private void Save()
