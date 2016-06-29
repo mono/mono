@@ -402,5 +402,6 @@ mono_thread_smr_cleanup (void)
 
 	mono_lock_free_array_queue_cleanup (&delayed_free_queue);
 
-	/*FIXME, can't we release the small id table here?*/
+	mono_vfree (hazard_table, sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE);
+	g_free (small_id_table);
 }
