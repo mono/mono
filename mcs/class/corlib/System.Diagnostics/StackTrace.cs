@@ -330,7 +330,7 @@ namespace System.Diagnostics {
 		static void InitMetadataHandlers ()
 		{
 			string aotid = Assembly.GetAotId ();
-			if (aotid != "00000000-0000-0000-0000-000000000000")
+			if (aotid != null)
 				AddMetadataHandler ("AOTID", st => { return aotid; });
 
 			AddMetadataHandler ("MVID", st => {
