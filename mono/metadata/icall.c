@@ -5938,7 +5938,6 @@ ves_icall_System_Reflection_AssemblyName_ParseName (MonoReflectionAssemblyName *
 	mono_error_set_pending_exception (&error);
 
 	mono_assembly_name_free (&aname);
-	g_free ((guint8*) aname.public_key);
 	g_free (val);
 
 	return TRUE;

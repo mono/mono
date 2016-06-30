@@ -285,7 +285,7 @@ mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type)
 	 * Have to make a copy early since type might be sig->ret,
 	 * which is transient, see mono_metadata_signature_dup_internal_with_padding ().
 	 */
-	t = mono_metadata_type_dup (mb->method->klass->image, type);
+	t = mono_metadata_type_dup (NULL, type);
 
 	g_assert (mb != NULL);
 	g_assert (type != NULL);
