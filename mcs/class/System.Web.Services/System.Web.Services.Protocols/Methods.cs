@@ -214,6 +214,9 @@ namespace System.Web.Services.Protocols {
 				OutputMembersMapping = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, writeAccessors);
 			}
 
+			InputMembersMapping.SetKey(RequestName);
+			OutputMembersMapping.SetKey(ResponseName);
+
 			requestSerializerId = parent.RegisterSerializer (InputMembersMapping);
 			responseSerializerId = parent.RegisterSerializer (OutputMembersMapping);
 
@@ -254,6 +257,8 @@ namespace System.Web.Services.Protocols {
 				else
 					InputHeaderMembersMapping = soapImporter.ImportMembersMapping ("", RequestNamespace, members, false, false);
 				
+				InputHeaderMembersMapping.SetKey(RequestName + ":InHeaders");
+				
 				requestHeadersSerializerId = parent.RegisterSerializer (InputHeaderMembersMapping);
 			}
 			
@@ -265,7 +270,9 @@ namespace System.Web.Services.Protocols {
 					OutputHeaderMembersMapping = xmlImporter.ImportMembersMapping ("", RequestNamespace, members, false);
 				else
 					OutputHeaderMembersMapping = soapImporter.ImportMembersMapping ("", RequestNamespace, members, false, false);
-				
+
+				OutputHeaderMembersMapping.SetKey(ResponseName + ":OutHeaders");
+
 				responseHeadersSerializerId = parent.RegisterSerializer (OutputHeaderMembersMapping);
 			}
 			
