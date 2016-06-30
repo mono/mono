@@ -275,11 +275,10 @@ namespace MonoTests.System.IO.Compression
 			}
 		}
 
-		[Test]
-		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		public void ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode mode)
 		{
-			using (var archive = new ZipArchive(File.Open("test.nupkg", FileMode.Open),
-				ZipArchiveMode.Read))
+			File.Copy("test.nupkg", "test2.nupkg", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test2.nupkg", FileMode.Open), mode))
 			{
 				var entry = archive.GetEntry("_rels/.rels");
 				using (var stream = entry.Open())
@@ -287,8 +286,32 @@ namespace MonoTests.System.IO.Compression
 					Assert.AreEqual(0, stream.Position);
 					Assert.AreEqual(425, stream.Length);
 				}
+
+				// .NET does not support these in Read mode but we do.
+				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
+				using (var stream = entry2.Open())
+				{
+					Assert.AreEqual(857, stream.Length);
+					if (mode == ZipArchiveMode.Update)
+					{
+						Assert.AreEqual(0, stream.Position);
+					}
+				}
 			}
+			File.Delete ("test2.nupkg");	
 		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Read);
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionUpdateMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Update);
+		}		
 
 		[Test]
 		public void ZipEnumerateEntriesReadMode()

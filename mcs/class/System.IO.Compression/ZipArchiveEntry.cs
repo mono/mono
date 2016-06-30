@@ -54,7 +54,7 @@ namespace System.IO.Compression
 
 		public override long Length {
 			get {
-				return stream.Length;
+				return stream.CanWrite ? stream.Length : entry.Length;
 			}
 		}
 
@@ -95,15 +95,16 @@ namespace System.IO.Compression
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			if (entry.Archive.Mode == ZipArchiveMode.Update && !entry.wasWritten)
+			stream.Write(buffer, offset, count);
+		}
+
+		internal void EnsureWriteable()
+		{
+			if (entry.Archive.Mode == ZipArchiveMode.Update && !stream.CanWrite)
 			{
 				// Replace the read-only stream with a writeable memory stream.
-				if (!stream.CanWrite)
-				    SetWriteable();
-				entry.wasWritten = true;
+				SetWriteable();
 			}
-
-			stream.Write(buffer, offset, count);
 		}
 
 		internal void SetWriteable()
@@ -115,14 +116,10 @@ namespace System.IO.Compression
 			var newStream = newEntry.OpenEntryStream();
 
 			var openStream = stream;
-			var position = openStream.Position;
-
-			entry.openStream = null;
-			entry.Open();
-
 			openStream.CopyTo(newStream);
-			newStream.Position = position;
 			openStream.Dispose();
+
+			newStream.Position = 0;
 
 			archive.zipFile.RemoveEntry(internalEntry);
 			entry.entry = newEntry;
@@ -232,6 +229,7 @@ namespace System.IO.Compression
 
 			var entryStream = entry.OpenEntryStream();
 			openStream = new ZipArchiveEntryStream(this, entryStream);
+			openStream.EnsureWriteable();
 
 			return openStream;
 		}
