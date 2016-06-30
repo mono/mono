@@ -416,7 +416,7 @@ namespace System.Net.NetworkInformation {
 			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
-				c.Add (new Win32UnicastIPAddressInformation (ifIndex, a));
+				c.InternalAdd (new Win32UnicastIPAddressInformation (ifIndex, a));
 			}
 			return c;
 		}

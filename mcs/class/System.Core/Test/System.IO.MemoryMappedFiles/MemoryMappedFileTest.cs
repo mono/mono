@@ -379,7 +379,9 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		[Test]
 		public void CreateViewStreamAlignToPageSize ()
 		{
-#if MONOTOUCH
+#if __WATCHOS__
+			int pageSize = 4096;
+#elif MONOTOUCH
 			// iOS bugs on ARM64 - bnc #27667 - apple #
 			int pageSize = (IntPtr.Size == 4) ? Environment.SystemPageSize : 4096;
 #else
