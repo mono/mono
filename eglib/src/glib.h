@@ -138,7 +138,26 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_alloca(size)		alloca (size)
 
 /* FIXME: This is from a later version of glib. */
+#if defined __GNUC__
 #define g_atomic_pointer_add(p, x) (gssize)__sync_fetch_and_add ((p), (x))
+#elif defined _MSC_VER
+
+/* HACK: Copied from mono/utils/atomic.h */
+static inline gint32 InterlockedExchangeAdd (gint32 volatile *val, gint32 add)
+{
+        gint32 old;
+#ifdef __INTEL_COMPILER
+        old = _InterlockedExchangeAdd (val, add);
+#else
+        do {
+                old = *val;
+        } while (InterlockedCompareExchange (val, old + add, old) != old);
+        return old;
+#endif
+}
+
+#define g_atomic_pointer_add(p, x) InterlockedExchangeAdd ((p), (x))
+#endif
 
 #if defined WIN32
 #include <malloc.h>
