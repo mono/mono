@@ -1449,7 +1449,6 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 	char *cache_path, *appname;
 	char *userdir;
 	char *location;
-	char *username;
 
 	mono_error_init (error);
 	

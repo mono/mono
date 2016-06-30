@@ -2468,8 +2468,6 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 	mono_memory_barrier ();
 	if (!m->signature)
 		m->signature = signature;
-	else if (!can_cache_signature && img == NULL)
-		g_free (signature);
 
 	mono_image_unlock (img);
 
