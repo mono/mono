@@ -414,6 +414,7 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test] // Covers #41477
+	[Category ("RequiresBSDSockets")]
 	public void TestReceiveCancelation ()
 	{
 		var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
