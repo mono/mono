@@ -315,7 +315,7 @@ typedef struct {
 	/* Only if storage == ArgValuetypeInReg */
 	ArgStorage pair_storage [2];
 	gint8 pair_regs [2];
-	gboolean pass_empty_struct; // Set in scenarios when empty structs needs to be represented as argument.
+	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
 typedef struct {

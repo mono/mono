@@ -239,7 +239,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
 	* it must be represented in call and cannot be dropped.
 	*/
-	if (0 == size && MONO_TYPE_ISSTRUCT (type) && sig->pinvoke) {
+	if (size == 0 && MONO_TYPE_ISSTRUCT (type) && sig->pinvoke) {
 		/* Empty structs (1 byte size) needs to be represented in a stack slot */
 		ainfo->pass_empty_struct = TRUE;
 		size = 1;
@@ -256,7 +256,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		ainfo->pair_storage [0] = ainfo->pair_storage [1] = ArgNone;
 
 		/* Ignore empty struct return value, if used. */
-		if (0 == info->num_fields && ainfo->pass_empty_struct) {
+		if (info->num_fields == 0 && ainfo->pass_empty_struct) {
 			ainfo->storage = ArgValuetypeInReg;
 			return;
 		}
