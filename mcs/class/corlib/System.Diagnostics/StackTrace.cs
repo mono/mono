@@ -60,26 +60,31 @@ namespace System.Diagnostics {
 		readonly StackTrace[] captured_traces;
 		private bool debug_info;
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace ()
 		{
 			init_frames (METHODS_TO_SKIP, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (bool fNeedFileInfo)
 		{
 			init_frames (METHODS_TO_SKIP, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames)
 		{
 			init_frames (skipFrames, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames, bool fNeedFileInfo)
 		{
 			init_frames (skipFrames, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void init_frames (int skipFrames, bool fNeedFileInfo)
 		{
 			if (skipFrames < 0)
