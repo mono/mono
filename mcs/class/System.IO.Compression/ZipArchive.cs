@@ -49,7 +49,7 @@ namespace System.IO.Compression
 
 			this.stream = stream;
 			mode = ZipArchiveMode.Read;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode)
@@ -59,7 +59,7 @@ namespace System.IO.Compression
 
 			this.stream = stream;
 			this.mode = mode;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode, bool leaveOpen)
@@ -70,7 +70,7 @@ namespace System.IO.Compression
 			this.stream = stream;
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode, bool leaveOpen, Encoding entryNameEncoding)
@@ -82,10 +82,10 @@ namespace System.IO.Compression
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
 			this.entryNameEncoding = entryNameEncoding;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
-		private void CreateZip(Stream stream, ZipArchiveMode mode)
+		private void CreateZip(ZipArchiveMode mode)
 		{
 			try {
 				if (mode != ZipArchiveMode.Read && mode != ZipArchiveMode.Create && mode != ZipArchiveMode.Update)
@@ -102,6 +102,18 @@ namespace System.IO.Compression
 				// If the mode parameter is set to Update, the stream must support reading, writing, and seeking.
 				if (mode == ZipArchiveMode.Update && (!stream.CanRead || !stream.CanWrite || !stream.CanSeek))
 					throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
+
+				// If the stream is not seekable, then buffer it into memory (same behavior as .NET). 
+				if (mode == ZipArchiveMode.Read && !stream.CanSeek)
+				{
+					var memoryStream = new MemoryStream();
+					stream.CopyTo(memoryStream);
+
+					if (!leaveStreamOpen)
+						stream.Dispose();
+
+					this.stream = memoryStream;
+				}
 
 				try {
 					zipFile = mode != ZipArchiveMode.Create && stream.Length != 0

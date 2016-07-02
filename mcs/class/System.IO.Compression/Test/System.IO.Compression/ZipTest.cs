@@ -480,5 +480,24 @@ namespace MonoTests.System.IO.Compression
 			}
 			File.Delete ("empty.zip");
 		}
+
+		class MyFakeStream : FileStream 
+		{
+			public MyFakeStream (string path, FileMode mode) : base(path, mode) {}
+
+			/// <summary>
+			/// Simulate "CanSeek" is false, which is the case when you are retreiving data from web.
+			/// </summary>
+			public override bool CanSeek => false;
+		}
+
+		[Test]
+		public void ZipReadNonSeekableStream()
+		{
+			var stream = new MyFakeStream("test.nupkg", FileMode.Open);
+			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
+			{
+			}
+		}
 	}
 }
