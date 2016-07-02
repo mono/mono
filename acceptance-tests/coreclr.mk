@@ -262,9 +262,7 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/pow/pow2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/pow/pow3.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime1.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/localloc/localloc3.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int16.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int32.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int64.cs	\
@@ -4002,6 +4000,14 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 
 # this test makes no sense, the expected pattern is the English one for all cultures
 CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Regressions/coreclr/0584/test584.cs
+
+# Requires precise stack scanning
+CORECLR_DISABLED_TEST_CS_SRC +=        \
+       $(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime2.cs
+
+# Depends on small array behavior of .net. Mono supports objects > 2Gb on 64bits and the following tests verify for that
+CORECLR_DISABLED_TEST_CS_SRC +=        \
+       $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs
 
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\
