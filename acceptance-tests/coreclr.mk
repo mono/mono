@@ -1277,7 +1277,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeybeta2/349379/349379.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeybeta2/366085/366085.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeym3.3/106011/106011.cs	\
-	$(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/simple/finally.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/unittests/returnfromcatch.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/regression/v1/threads/functional/threadpool/cs_threadpoolnullchecks/cs_threadpoolnullchecks.cs	\
@@ -4007,7 +4006,8 @@ CORECLR_DISABLED_TEST_CS_SRC +=        \
 
 # Depends on small array behavior of .net. Mono supports objects > 2Gb on 64bits and the following tests verify for that
 CORECLR_DISABLED_TEST_CS_SRC +=        \
-       $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs
+       $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
+	   $(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs
 
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\
