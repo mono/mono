@@ -4099,7 +4099,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ovflrem2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/stfldstatic1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/stfldstatic2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/subbyref.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly3.il	\
@@ -5128,7 +5127,11 @@ CORECLR_DISABLED_TEST_IL_SRC +=			\
 CORECLR_DISABLED_TEST_IL_SRC +=	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/byrefsubbyref1.il
 
-
+# Bad test that tries to implicit cast from bytef to int32
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/subbyref.il
+	
+	
 # find all CoreCLR *.il test files that aren't mentioned in this file
 CORECLR_DEFINED_IL_SRC = $(CORECLR_TEST_IL_SRC) $(CORECLR_DISABLED_TEST_IL_SRC)
 CORECLR_UPSTREAM_IL_SRC=$(shell find "$(CORECLR_PATH)/tests" -iname "*.il")
