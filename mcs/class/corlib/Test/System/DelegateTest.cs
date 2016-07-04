@@ -1251,7 +1251,7 @@ namespace MonoTests.System
 			}
 		}
 	
-		delegate int IntNoArgs ();
+		public delegate int IntNoArgs ();
 
 		[Test]
 		public void CreateDelegateWithAbstractMethods ()
