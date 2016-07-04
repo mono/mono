@@ -337,7 +337,10 @@ namespace System.Diagnostics {
 				var mvidLines = new Dictionary<Guid, List<int>> ();
 				var frames = st.GetFrames ();
 				for (var lineNumber = 0; lineNumber < frames.Length; lineNumber++) {
-					var mvid = frames[lineNumber].GetMethod ().Module.ModuleVersionId;
+					var method = frames[lineNumber].GetMethod ();
+					if (method == null)
+						continue;
+					var mvid = method.Module.ModuleVersionId;
 					if (!mvidLines.ContainsKey (mvid))
 						mvidLines.Add (mvid, new List<int> ());
 
