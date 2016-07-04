@@ -4092,7 +4092,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/volatilldind.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/volatilstind.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/arrgetlen.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ldsshrstsfld.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ldvirtftncalli.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ovfldiv2.il	\
@@ -5130,7 +5129,12 @@ CORECLR_DISABLED_TEST_IL_SRC +=	\
 # Bad test that tries to implicit cast from bytef to int32
 CORECLR_DISABLED_TEST_IL_SRC +=	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/subbyref.il
-	
+
+# Bad test that tries to assign a byref to a class to a byref of an interface that class implements
+# This is unsafe because the byref is mutable and would allow you to store the wrong type on that cell.
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il
+
 	
 # find all CoreCLR *.il test files that aren't mentioned in this file
 CORECLR_DEFINED_IL_SRC = $(CORECLR_TEST_IL_SRC) $(CORECLR_DISABLED_TEST_IL_SRC)
