@@ -4079,7 +4079,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/array-il/simple3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/badendfinally.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/badtailcall.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/byrefsubbyref1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/calli2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/ceeillegal.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/ldelemnullarr2.il	\
@@ -5123,6 +5122,12 @@ CORECLR_DISABLED_TEST_IL_SRC +=			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/IL/PInvokeTail/tailwinapi.il					\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28901/b28901.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/clr-x64-JIT/v2.1/b173569/b173569.il
+
+
+# Bad test that tries an implicit cast from int32 to byref
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/byrefsubbyref1.il
+
 
 # find all CoreCLR *.il test files that aren't mentioned in this file
 CORECLR_DEFINED_IL_SRC = $(CORECLR_TEST_IL_SRC) $(CORECLR_DISABLED_TEST_IL_SRC)
