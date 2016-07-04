@@ -240,7 +240,9 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
+			//Bug here:
 			IPEndPoint client = new IPEndPoint (GetNonLoopbackIP (), 0);
+			//
 
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
