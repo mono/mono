@@ -26,6 +26,8 @@ Microsoft.Win32/UserPreferenceChangedEventArgs.cs
 Microsoft.Win32/UserPreferenceChangedEventHandler.cs
 Microsoft.Win32/UserPreferenceChangingEventArgs.cs
 Microsoft.Win32/UserPreferenceChangingEventHandler.cs
+Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
+
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/CodeCompiler.cs
 System.CodeDom.Compiler/CodeDomConfigurationHandler.cs
