@@ -1,0 +1,6 @@
+Evaluator/BuildinCommands.cs
+Evaluator/CompletionTest.cs
+Evaluator/EvaluatorFixture.cs
+Evaluator/EvaluatorTest.cs
+Evaluator/ExpressionsTest.cs
+Evaluator/TypesTest.cs
