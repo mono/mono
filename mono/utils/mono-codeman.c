@@ -146,7 +146,8 @@ free_chunklist (CodeChunk *chunk)
 		dead = chunk;
 		mono_profiler_code_chunk_destroy ((gpointer) dead->data);
 #if MONO_ARCH_HAVE_UNWIND_TABLE
-		RtlDeleteFunctionTable((DWORD64)dead->data | 0x03);
+		if (!RtlDeleteFunctionTable((DWORD64)dead->data | 0x03))
+			g_critical ("failed to unregister function table for code chunk at %p\n", dead->data);
 #endif
 		chunk = chunk->next;
 		if (dead->flags == CODE_FLAG_MMAP) {
@@ -304,7 +305,8 @@ new_codechunk (int dynamic, int size)
 	}
 
 #if MONO_ARCH_HAVE_UNWIND_TABLE
-	RtlInstallFunctionTableCallback(((DWORD64)ptr) | 0x3, (DWORD64)ptr, chunk_size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, ptr, NULL);
+	if (!RtlInstallFunctionTableCallback(((DWORD64)ptr) | 0x3, (DWORD64)ptr, chunk_size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, ptr, NULL))
+		g_critical ("failed to register function table for code chunk at %p\n", ptr);
 #endif
 
 	chunk = malloc (sizeof (CodeChunk));
