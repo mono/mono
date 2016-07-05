@@ -294,6 +294,8 @@ namespace System.Diagnostics {
 					if (!t.AddFrames (sb))
 						continue;
 
+					t.AddMetadata (sb);
+
 					sb.Append (Environment.NewLine);
 					sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
 					sb.Append (Environment.NewLine);
@@ -301,7 +303,13 @@ namespace System.Diagnostics {
 			}
 
 			AddFrames (sb);
+			AddMetadata (sb);
 
+			return sb.ToString ();
+		}
+
+		void AddMetadata (StringBuilder sb)
+		{
 			foreach (var handler in metadataHandlers) {
 				var lines = handler.Value (this);
 				using (var reader = new StringReader (lines)) {
@@ -312,11 +320,8 @@ namespace System.Diagnostics {
 					}
 				}
 			}
-
-			return sb.ToString ();
 		}
 
-		
 		internal String ToString (TraceFormat traceFormat)
 		{
 			// TODO:
