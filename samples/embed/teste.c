@@ -1,7 +1,8 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
-#include <mono/utils/mono-publib.h>
+#include <glib.h>
 #include <stdlib.h>
+#include <mono/metadata/mono-config.h>
 
 /*
  * Very simple mono embedding example.
@@ -52,8 +53,8 @@ main(int argc, char* argv[]) {
 	}
 	file = argv [1];
 
-	MonoAllocatorVTable mem_vtable = {custom_malloc};
-	mono_set_allocator_vtable (&mem_vtable);
+	GMemVTable mem_vtable = { custom_malloc };
+	g_mem_set_vtable (&mem_vtable);
 
 	/*
 	 * Load the default Mono configuration file, this is needed

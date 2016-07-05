@@ -295,7 +295,6 @@
     <ClCompile Include="..\eglib\src\gtimer-win32.c" />
     <ClCompile Include="..\eglib\src\gunicode.c" />
     <ClCompile Include="..\eglib\src\gutf8.c" />
-    <ClCompile Include="..\eglib\src\vasprintf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\eglib\src\glib.h" />
