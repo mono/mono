@@ -440,6 +440,8 @@ common_sources = \
 	mini-exceptions.c	\
 	mini-exceptions-native-unwinder.c	\
 	mini-trampolines.c  	\
+	typechecks.h		\
+	typechecks.c		\
 	branch-opts.c		\
 	mini-generic-sharing.c	\
 	simd-methods.h		\

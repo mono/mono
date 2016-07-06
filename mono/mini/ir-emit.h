@@ -953,6 +953,28 @@ static int ccount = 0;
 		}																\
     } while (0)
 
+static inline MonoInst*
+emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpointer data)
+{
+	MonoInst *ins;
+
+	if (cfg->compile_aot) {
+		EMIT_NEW_AOTCONST (cfg, ins, patch_type, data);
+	} else {
+		MonoJumpInfo ji;
+		gpointer target;
+		MonoError error;
+
+		ji.type = patch_type;
+		ji.data.target = data;
+		target = mono_resolve_patch_target (NULL, cfg->domain, NULL, &ji, FALSE, &error);
+		mono_error_assert_ok (&error);
+
+		EMIT_NEW_PCONST (cfg, ins, target);
+	}
+	return ins;
+}
+
 G_END_DECLS
 
 #endif
