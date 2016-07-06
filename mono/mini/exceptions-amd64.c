@@ -1480,6 +1480,8 @@ MONO_GET_RUNTIME_FUNCTION_CALLBACK ( DWORD64 ControlPc, IN PVOID Context )
 	
 	targetinfo = (PMonoUnwindInfo)ALIGN_TO (pos, 8);
 
+	targetinfo->runtimeFunction.BeginAddress = ((DWORD64)ji->code_start) - ((DWORD64)Context);
+	targetinfo->runtimeFunction.EndAddress = pos - ((DWORD64)Context);
 	targetinfo->runtimeFunction.UnwindData = ((DWORD64)&targetinfo->unwindInfo) - ((DWORD64)Context);
 
 	return &targetinfo->runtimeFunction;
@@ -1511,8 +1513,6 @@ mono_arch_unwindinfo_install_unwind_info (gpointer* monoui, gpointer code, guint
 
 	g_free (unwindinfo);
 	*monoui = 0;
-
-	RtlInstallFunctionTableCallback (((DWORD64)code) | 0x3, (DWORD64)code, code_size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, code, NULL);
 }
 
 #endif
