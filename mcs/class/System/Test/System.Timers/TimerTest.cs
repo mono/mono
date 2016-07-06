@@ -303,7 +303,7 @@ namespace MonoTests.System.Timers
 			};
 			timer.Start ();
 
-			Assert.IsTrue (mre.Wait (500), "#1 re-enabling timer in Elapsed didn't work");
+			Assert.IsTrue (mre.Wait (1000), "#1 re-enabling timer in Elapsed didn't work");
 			Assert.AreEqual (2, elapsedCount, "#2 wrong elapsedCount");
 			timer.Stop ();
 		}
@@ -323,7 +323,7 @@ namespace MonoTests.System.Timers
 			};
 			timer.Start ();
 
-			Assert.IsFalse (mre.Wait (500), "#1 AutoResetEvent=false didn't stop firing Elapsed, elapsedCount=" + elapsedCount);
+			Assert.IsFalse (mre.Wait (1000), "#1 AutoReset=false didn't stop firing Elapsed, elapsedCount=" + elapsedCount);
 			Assert.AreEqual (1, elapsedCount, "#2 wrong elapsedCount");
 			timer.Stop ();
 		}
