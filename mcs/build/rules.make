@@ -358,6 +358,6 @@ dist-default:
 
 ## Documentation stuff
 
-Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";fi)
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
 MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 
