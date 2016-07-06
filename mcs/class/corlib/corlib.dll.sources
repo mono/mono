@@ -171,6 +171,13 @@ System.Diagnostics.Tracing/EventCommandEventArgs.cs
 System.Diagnostics.Tracing/EventListener.cs
 System.Diagnostics.Tracing/EventWrittenEventArgs.cs
 System.Diagnostics.Tracing/NonEventAttribute.cs
+System.Diagnostics.Tracing/EventDataAttribute.cs
+System.Diagnostics.Tracing/EventFieldAttribute.cs
+System.Diagnostics.Tracing/EventFieldFormat.cs
+System.Diagnostics.Tracing/EventFieldTags.cs
+System.Diagnostics.Tracing/EventIgnoreAttribute.cs
+System.Diagnostics.Tracing/EventManifestOptions.cs
+System.Diagnostics.Tracing/EventSourceException.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs
@@ -402,6 +409,9 @@ System.Runtime.InteropServices/UCOMITypeInfo.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
 System.Runtime.InteropServices/VARDESC.cs
 System.Runtime.InteropServices/VARFLAGS.cs
+System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
+System.Runtime.InteropServices/ComAwareEventInfo.cs
+System.Runtime.InteropServices/ComEventsHelper.cs
 
 System.Runtime.InteropServices.WindowsRuntime/DefaultInterfaceAttribute.cs
 System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.cs

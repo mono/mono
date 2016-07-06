@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,9 @@
 // THE SOFTWARE.
 // 
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.AsnEncodedData))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.Oid))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.OidCollection))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.OidEnumerator))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.OidGroup))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.AsnEncodedDataCollection))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.AsnEncodedDataEnumerator))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.CompressionLevel))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.CompressionMode))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.DeflateStream))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.GZipStream))]
+
+
