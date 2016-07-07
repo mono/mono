@@ -63,13 +63,6 @@ namespace System.Diagnostics {
 
 		private static Dictionary<string, Func<StackTrace, string>> metadataHandlers;
 
-		static StackTrace ()
-		{
-			metadataHandlers = new Dictionary<string, Func<StackTrace, string>> ();
-
-			InitMetadataHandlers ();
-		}
-
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace ()
 		{
@@ -310,13 +303,16 @@ namespace System.Diagnostics {
 
 		void AddMetadata (StringBuilder sb)
 		{
+			if (metadataHandlers == null)
+				InitMetadataHandlers ();
+
 			foreach (var handler in metadataHandlers) {
 				var lines = handler.Value (this);
 				using (var reader = new StringReader (lines)) {
 					string line;
 					while ((line = reader.ReadLine()) != null) {
 						sb.AppendLine ();
-						sb.Append (string.Format ("[{0}] {1}", handler.Key, line));
+						sb.AppendFormat ("[{0}] {1}", handler.Key, line);
 					}
 				}
 			}
@@ -330,6 +326,8 @@ namespace System.Diagnostics {
 
 		static void InitMetadataHandlers ()
 		{
+			metadataHandlers = new Dictionary<string, Func<StackTrace, string>> (StringComparer.Ordinal);
+
 			string aotid = Assembly.GetAotId ();
 			if (aotid != null)
 				AddMetadataHandler ("AOTID", st => { return aotid; });
@@ -342,24 +340,35 @@ namespace System.Diagnostics {
 					if (method == null)
 						continue;
 					var mvid = method.Module.ModuleVersionId;
-					if (!mvidLines.ContainsKey (mvid))
-						mvidLines.Add (mvid, new List<int> ());
 
-					mvidLines[mvid].Add (lineNumber);
+					List<int> lines = null;
+					if (!mvidLines.TryGetValue (mvid, out lines)) {
+						lines = new List<int> ();
+						mvidLines.Add (mvid, lines);
+					}
+
+					lines.Add (lineNumber);
 				}
 
+				var mvids = new List<Guid> (mvidLines.Keys);
+				mvids.Sort ();
+
 				var sb = new StringBuilder ();
-				foreach (var kv in mvidLines) {
-					var mvid = kv.Key.ToString ().ToUpper ();
-					sb.AppendLine (string.Format ("{0} {1}", mvid, string.Join (",", kv.Value)));
+				foreach (var mvid in mvids) {
+					var mvidStr = mvid.ToString ().ToUpper ();
+					sb.AppendLine (string.Format ("{0} {1}", mvid, string.Join (",", mvidLines[mvid])));
 				}
 
 				return sb.ToString ();
 			});
 		}
 
+		// This method signature should not change, apps can use it with reflection to add custom metadata handlers.
 		private static void AddMetadataHandler (string id, Func<StackTrace, string> handler)
 		{
+			if (metadataHandlers == null)
+				InitMetadataHandlers ();
+
 			metadataHandlers.Add (id, handler);
 		}
 	}
