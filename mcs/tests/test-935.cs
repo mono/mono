@@ -17,6 +17,7 @@ public static class Program
 		Complex (null);
 		MM (1);
 		MM ((byte) 1);
+		DecimalRule (() => (byte) 1);
 		return 0;
 	}
 
@@ -82,4 +83,13 @@ public static class Program
 	{
 		throw new ApplicationException ("wrong overload");
 	}
+
+    static void DecimalRule (Func<int> i)
+    {
+    }
+
+    static void DecimalRule (Func<decimal?> i)
+    {
+        throw new ApplicationException ("wrong overload");
+    }
 }

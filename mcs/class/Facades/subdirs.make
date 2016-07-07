@@ -25,7 +25,8 @@ System.Security.Cryptography.Hashing.Algorithms System.Security.Cryptography.RSA
 System.Security.Cryptography.X509Certificates System.Security.Principal.Windows System.Threading.Thread System.Threading.ThreadPool \
 System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win32.Registry.AccessControl System.Diagnostics.StackTrace System.Globalization.Extensions \
 System.IO.FileSystem.AccessControl System.Private.CoreLib.InteropServices System.Private.CoreLib.Threading System.Reflection.TypeExtensions \
-System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument
+System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument System.IO.Compression \
+System.Security.Cryptography.Algorithms System.Security.Cryptography.Primitives
 
 reflection_PARALLEL_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflection.Emit.Lightweight System.Reflection.Emit
 

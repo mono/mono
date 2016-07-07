@@ -262,9 +262,7 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/pow/pow2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/pow/pow3.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime1.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/localloc/localloc3.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int16.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int32.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int64.cs	\
@@ -1279,7 +1277,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeybeta2/349379/349379.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeybeta2/366085/366085.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/regressions/whidbeym3.3/106011/106011.cs	\
-	$(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/simple/finally.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/exceptions/unittests/returnfromcatch.cs	\
 	$(CORECLR_PATH)/tests/src/baseservices/regression/v1/threads/functional/threadpool/cs_threadpoolnullchecks/cs_threadpoolnullchecks.cs	\
@@ -4003,6 +4000,15 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 # this test makes no sense, the expected pattern is the English one for all cultures
 CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Regressions/coreclr/0584/test584.cs
 
+# Requires precise stack scanning
+CORECLR_DISABLED_TEST_CS_SRC +=        \
+       $(CORECLR_PATH)/tests/src/JIT/Directed/lifetime/lifetime2.cs
+
+# Depends on small array behavior of .net. Mono supports objects > 2Gb on 64bits and the following tests verify for that
+CORECLR_DISABLED_TEST_CS_SRC +=        \
+       $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
+	   $(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs
+
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/Convert/implicitConv.il	\
@@ -4073,7 +4079,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/array-il/simple3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/badendfinally.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/badtailcall.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/byrefsubbyref1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/calli2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/ceeillegal.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/ldelemnullarr2.il	\
@@ -4087,14 +4092,12 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/volatilldind.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/volatilstind.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/arrgetlen.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ldsshrstsfld.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ldvirtftncalli.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ovfldiv2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/ovflrem2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/stfldstatic1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/stfldstatic2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/subbyref.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/switchdefaultonly3.il	\
@@ -5118,6 +5121,21 @@ CORECLR_DISABLED_TEST_IL_SRC +=			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28901/b28901.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/clr-x64-JIT/v2.1/b173569/b173569.il
 
+
+# Bad test that tries an implicit cast from int32 to byref
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/importer/byrefsubbyref1.il
+
+# Bad test that tries to implicit cast from bytef to int32
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/subbyref.il
+
+# Bad test that tries to assign a byref to a class to a byref of an interface that class implements
+# This is unsafe because the byref is mutable and would allow you to store the wrong type on that cell.
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il
+
+	
 # find all CoreCLR *.il test files that aren't mentioned in this file
 CORECLR_DEFINED_IL_SRC = $(CORECLR_TEST_IL_SRC) $(CORECLR_DISABLED_TEST_IL_SRC)
 CORECLR_UPSTREAM_IL_SRC=$(shell find "$(CORECLR_PATH)/tests" -iname "*.il")

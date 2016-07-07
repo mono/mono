@@ -202,17 +202,33 @@ STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
 $(STD_TARGETS): %: do-%
 
 ifdef PLATFORM_AOT_SUFFIX
-Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] AOT All Assemblies";)
-LIST_ALL_PROFILE_ASSEMBLIES = find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades'
-COMPILE_ALL_PROFILE_ASSEMBLIES = $(LIST_ALL_PROFILE_ASSEMBLIES) | MONO_PATH="./" xargs -I '{}' $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) '{}'
+AOT_PROFILE_ASSEMBLIES = $(shell cd $(topdir)/class/lib/$(PROFILE)/ && find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades' | sed 's:\./::g' | tr '\n' ' ')
 
 do-all-aot:
 	$(MAKE) do-all TOP_LEVEL_DO=do-all
 	$(MAKE) aot-all-profile
 
-aot-all-profile:
-	$(Q_AOT) cd $(topdir)/class/lib/$(PROFILE)/ && $(COMPILE_ALL_PROFILE_ASSEMBLIES) &> $(PROFILE)-aot.log
-endif
+# When we recursively call $(MAKE) aot-all-profile
+# we will have created this directory, and so will
+# be able to evaluate the .dylibs to make
+ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
+
+AOT_PROFILE_ASSEMBLIES_CMD = cd $(topdir)/class/lib/$(PROFILE)/ && find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades|ilasm' | sed 's:\./::g' | tr '\n' ' '
+AOT_PROFILE_ASSEMBLIES_CMD_SAFE = $(AOT_PROFILE_ASSEMBLIES_CMD) || true
+AOT_PROFILE_ASSEMBLIES = $(shell $(AOT_PROFILE_ASSEMBLIES_CMD_SAFE))
+
+# This can run in parallel
+.PHONY: aot-all-profile
+aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+
+$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PROFILE)/%
+	@ mkdir -p $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
+	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode $* >> $(PROFILE)-aot.log
+	@ rm -rf $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
+
+endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
+
+endif # PLATFORM_AOT_SUFFIX
 
 do-run-test:
 	ok=:; $(MAKE) run-test-recursive || ok=false; $(MAKE) run-test-local || ok=false; $$ok

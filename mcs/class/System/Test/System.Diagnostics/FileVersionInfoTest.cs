@@ -108,7 +108,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsNull (fvi.SpecialBuild, "#27");
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void GetVersionInfo_NoNativeResources ()
 		{

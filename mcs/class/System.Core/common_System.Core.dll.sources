@@ -6,6 +6,8 @@ System.IO.MemoryMappedFiles/MemoryMappedFile.cs
 System.IO.MemoryMappedFiles/MemoryMappedView.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
+System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
+System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
 
 ReferenceSources/SR.cs
 ReferenceSources/SR.missing.cs

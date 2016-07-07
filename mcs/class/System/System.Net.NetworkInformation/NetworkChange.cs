@@ -299,7 +299,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-#if MONOTOUCH
+#if MONOTOUCH || MOBILE_STATIC
 		[MonoTouch.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
 #endif
 		static void HandleCallback (IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info)

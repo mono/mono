@@ -2158,7 +2158,10 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 
 	info = g_new0 (RuntimeInvokeInfo, 1);
 	info->compiled_method = compiled_method;
-	info->sig = mono_method_signature (method);
+	if (mono_llvm_only && method->string_ctor)
+		info->sig = mono_marshal_get_string_ctor_signature (method);
+	else
+		info->sig = mono_method_signature (method);
 
 	invoke = mono_marshal_get_runtime_invoke (method, FALSE);
 	info->vtable = mono_class_vtable_full (domain, method->klass, error);
@@ -2166,7 +2169,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 		return NULL;
 	g_assert (info->vtable);
 
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig = info->sig;
 	MonoType *ret_type;
 
 	/*
@@ -3940,8 +3943,8 @@ register_icalls (void)
 	register_icall (mono_object_castclass_with_cache, "mono_object_castclass_with_cache", "object object ptr ptr", FALSE);
 	register_icall (mono_object_isinst_with_cache, "mono_object_isinst_with_cache", "object object ptr ptr", FALSE);
 	register_icall (mono_generic_class_init, "mono_generic_class_init", "void ptr", FALSE);
-	register_icall (mono_fill_class_rgctx, "mono_class_fill_rgctx", "ptr ptr int", FALSE);
-	register_icall (mono_fill_method_rgctx, "mono_method_fill_rgctx", "ptr ptr int", FALSE);
+	register_icall (mono_fill_class_rgctx, "mono_fill_class_rgctx", "ptr ptr int", FALSE);
+	register_icall (mono_fill_method_rgctx, "mono_fill_method_rgctx", "ptr ptr int", FALSE);
 
 	register_icall (mono_debugger_agent_user_break, "mono_debugger_agent_user_break", "void", FALSE);
 

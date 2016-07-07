@@ -15,6 +15,7 @@ using System.Collections;
 using System.Threading;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
@@ -4344,6 +4345,23 @@ namespace MonoTests.System.Net.Sockets
 				socket.Bind (end_point);
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 19);
 			}
+		}
+
+		[Test] // Covers 41616
+		public void ConnectAsyncUnhandledEx ()
+		{
+			var mre = new ManualResetEvent (false);
+
+			var endPoint = new IPEndPoint(0,0);
+			var socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Unspecified);
+
+			var socketArgs = new SocketAsyncEventArgs();
+			socketArgs.RemoteEndPoint = endPoint;
+			socketArgs.Completed += (sender, e) => mre.Set ();
+
+			socket.ConnectAsync (socketArgs);
+
+			Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
 		}
  	}
 }
