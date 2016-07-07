@@ -2675,7 +2675,7 @@ ves_icall_System_Net_Dns_GetHostByName_internal (MonoString *host, MonoString **
 		}
 	}
 
-	if (*hostname && mono_get_address_info (hostname, 0, MONO_HINT_CANONICAL_NAME | hint, &info))
+	if (mono_get_address_info (hostname, 0, MONO_HINT_CANONICAL_NAME | hint, &info))
 		add_info_ok = FALSE;
 
 	g_free(hostname);
