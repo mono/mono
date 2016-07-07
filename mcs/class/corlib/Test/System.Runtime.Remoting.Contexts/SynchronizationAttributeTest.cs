@@ -72,6 +72,23 @@ namespace MonoTests.System.Runtime.Remoting.Contexts {
 		}
 
 		[Test]
+	    public void SetLocked()
+		{
+			SynchronizationAttribute sa = new SynchronizationAttribute(SynchronizationAttribute.REQUIRES_NEW);
+			sa.Locked = true;
+			Assert.IsTrue(sa.Locked, "Locked");
+			sa.Locked = false;
+			Assert.IsFalse(sa.Locked, "Locked");
+
+			sa.Locked = true;
+			Assert.IsTrue(sa.Locked, "Locked");
+			sa.Locked = true;
+			Assert.IsTrue(sa.Locked, "Locked");
+			sa.Locked = false;
+			Assert.IsFalse(sa.Locked, "Locked");
+		}
+
+		[Test]
 		public void SerializationRoundtrip ()
 		{
 			SynchronizationAttribute sa = new SynchronizationAttribute (SynchronizationAttribute.NOT_SUPPORTED, true);
