@@ -11,6 +11,8 @@ System.Security.Cryptography/DataProtectionScope.cs
 System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/ProtectedData.cs
 System.Security.Cryptography/ProtectedMemory.cs
+System.Security.Cryptography/DataProtector.cs
+System.Security.Cryptography/DpapiDataProtector.cs
 System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
 System.Security.Cryptography.Pkcs/ContentInfo.cs
 System.Security.Cryptography.Pkcs/EnvelopedCms.cs
