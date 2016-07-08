@@ -579,6 +579,9 @@ namespace System.Windows.Forms
 				} else {
 					mono_path = Path.Combine (mono_prefix, "bin\\mono.bat");
 
+					if (!String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_EXECUTABLE")))
+						mono_path = Environment.GetEnvironmentVariable ("MONO_EXECUTABLE");
+
 					if (!File.Exists (mono_path))
 						mono_path = Path.Combine (mono_prefix, "bin\\mono.exe");
 

@@ -239,6 +239,8 @@ namespace System.Web.Compilation
                                 MethodInfo get_gac = gac.GetGetMethod (true);
                                 string p = Path.GetDirectoryName ((string) get_gac.Invoke (null, null));
 				monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (p)), "bin\\mono.bat");
+				if (!String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_EXECUTABLE")))
+					monoPath = Environment.GetEnvironmentVariable ("MONO_EXECUTABLE");
                                 if (!File.Exists (monoPath)) {
                                         monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (p)), "bin\\mono.exe");
 					if (!File.Exists (monoPath)) {
