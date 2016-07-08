@@ -24,6 +24,8 @@
 #include "tabledefs.h"
 #include "utils/mono-logger-internals.h"
 
+#define OPTIMIZATION_FORWARD
+#define OPTIMIZATION_SINGLETON_DYN_ARRAY
 #include "sgen-dynarray.h"
 
 /*
@@ -122,8 +124,28 @@ typedef struct _ScanData {
 	unsigned is_bridge : 1;
 	// Similar to lock_word, we use these bits in the GCObject as scratch space then restore them when done
 	unsigned obj_state : 2;
+
+#ifdef OPTIMIZATION_FORWARD
+	struct _ScanData *forwarded_to;
+#endif
 } ScanData;
 
+// follow_forward needs to be called on anything that comes out of scan_stack or is
+// recovered from an object reference. it does not need to be called on anything in
+// state INITIAL (because objects are marked SCANNED on forward) or in the color stack.
+static ScanData*
+follow_forward (ScanData *entry)
+{
+#ifdef OPTIMIZATION_FORWARD
+	while (entry->forwarded_to) {
+		ScanData *next = entry->forwarded_to;
+		if (next->forwarded_to)
+			entry->forwarded_to = next->forwarded_to;
+		entry = next;
+	}
+#endif
+	return entry;
+}
 
 
 // Stacks of ScanData objects used for tarjan algorithm.
@@ -294,6 +316,10 @@ create_data (GCObject *obj)
 
 	o [0] |= SGEN_VTABLE_BITS_MASK;
 	o [1] = (mword)res;
+
+#ifdef OPTIMIZATION_FORWARD
+	res->forwarded_to = NULL;
+#endif
 	return res;
 }
 
@@ -491,9 +517,9 @@ is_opaque_object (GCObject *obj)
 	return FALSE;
 }
 
-// Called during DFS; visits one child. If it is a candidate to be scanned, pushes it to the stacks.
+// Called during DFS; visits one child. Decides if it is a candidate to be scanned, and if it is a candidate for forwarding.
 static void
-push_object (GCObject *obj)
+initial_scan_check (ScanData *parent, GCObject *obj, ScanData **push_obj, ScanData **forward_obj)
 {
 	ScanData *data;
 	obj = bridge_object_forward (obj);
@@ -501,6 +527,14 @@ push_object (GCObject *obj)
 #if DUMP_GRAPH
 	printf ("\t= pushing %p %s -> ", obj, safe_name_bridge (obj));
 #endif
+
+	/* Reference we can ignore */
+	if (parent->obj == obj) {
+#if DUMP_GRAPH
+		printf ("self-reference\n");
+#endif
+		return;
+	}
 
 	/* Object types we can ignore */
 	if (is_opaque_object (obj)) {
@@ -517,6 +551,10 @@ push_object (GCObject *obj)
 #if DUMP_GRAPH
 		printf ("already marked\n");
 #endif
+
+		// Notice we only follow forward for non-initial objects (since forwarding is added on first scan)
+		*forward_obj = data;
+
 		return;
 	}
 
@@ -536,28 +574,121 @@ push_object (GCObject *obj)
 		data = create_data (obj);
 	g_assert (data->state == INITIAL);
 	g_assert (data->index == -1);
+
+	*forward_obj = data;
+	*push_obj = data;
+}
+
+static void
+mark_object_scanned (ScanData *data)
+{
+	data->low_index = data->index = object_index++;
 	dyn_array_ptr_push (&scan_stack, data);
+	dyn_array_ptr_push (&loop_stack, data);
+}
+
+// The target of the scan gets pushed onto the stack first.
+// However, when using OPTIMIZATION_FORWARD, we want to avoid pushing the object
+// if it has exactly one forwardable reference. Therefore we wait to push the
+// scan target until we know this criteria has failed.
+// initial_scan_one returns as arguments a forwardable argument (if any) and
+// a pushable object (if any). pushable objects are always forwardable.
+static void
+initial_scan_one (ScanData *data, GCObject *obj, ScanData **first_push, ScanData **first_forward, gboolean *forward_check_finished)
+{
+	ScanData *to_push = NULL, *to_forward = NULL;
+	initial_scan_check(data, obj, &to_push, &to_forward);
+	if (*forward_check_finished) {
+		if (to_push) {
+			dyn_array_ptr_push (&scan_stack, to_push);
+		}
+	} else if (to_forward) {
+		if (*first_forward) {
+			mark_object_scanned(data);
+			*forward_check_finished = TRUE;
+
+			if (*first_push)
+				dyn_array_ptr_push (&scan_stack, *first_push);
+			if (to_push)
+				dyn_array_ptr_push (&scan_stack, to_push);
+		} else {
+			*first_push = to_push;
+			*first_forward = to_forward;
+		}
+	}
 }
 
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {					\
 		GCObject *dst = (GCObject*)*(ptr);			\
-		if (dst) push_object (dst); 			\
+		if (dst)                                    \
+			initial_scan_one (data, dst, &first_push, &first_forward, &forward_check_finished ); \
 	} while (0)
 
 // dfs () function's queue-children-of-object operation.
 static void
-push_all (ScanData *data)
+initial_scan (ScanData *data)
 {
 	GCObject *obj = data->obj;
 	char *start = (char*)obj;
 	mword desc = sgen_obj_get_descriptor_safe (obj);
+
+	gboolean forward_check_finished = FALSE;
+	ScanData *first_push = NULL, *first_forward = NULL;
+
+	// Not forwarding, do not defer this
+#ifdef OPTIMIZATION_FORWARD
+	if (data->is_bridge)
+#endif
+	{
+		mark_object_scanned (data);
+		forward_check_finished = TRUE;
+	}
 
 #if DUMP_GRAPH
 	printf ("+scanning %s (%p) index %d color %p\n", safe_name_bridge (data->obj), data->obj, data->index, data->color);
 #endif
 
 	#include "sgen/sgen-scan-object.h"
+
+	/*
+	 * We can remove non-bridge objects with a single outgoing
+	 * link (tested by push_all) by forwarding links going to it.
+	 *
+	 * This is the first time we've encountered this object, so
+	 * no links to it have yet been added.  We'll keep it that
+	 * way by setting the forward pointer, and instead of
+	 * continuing processing this object, we start over with the
+	 * object it points to.
+	 */
+#ifdef OPTIMIZATION_FORWARD
+	if (!forward_check_finished) {
+		if (first_forward) {
+			ScanData *true_forward = follow_forward(first_forward);
+			// Don't allow loops. If this is a self-reference, pretend it isn't even there.
+			// Worth investigating: new-bridge didn't require this for OPTIMIZATION_FORWARD. Why does tarjan-bridge?
+			if (true_forward == data)
+				first_forward = NULL;
+			else
+				first_forward = true_forward;
+		}
+
+		if (first_forward) {
+			data->forwarded_to = first_forward;
+
+			// The object forwarded to was a candidate for scanning, make sure that happens next
+			if (first_push)
+				dyn_array_ptr_push (&scan_stack, first_forward);
+
+#if DUMP_GRAPH
+			printf ("+forwarding %s (%p obj %p) to %s (%p obj %p)%s\n", safe_name_bridge (data->obj), data, data->obj, safe_name_bridge (first_forward->obj), first_forward, first_forward->obj, data->is_bridge?" (is bridge)":"");
+#endif
+		} else {
+			// This is not a forward, but a leaf
+			mark_object_scanned (data);
+		}
+	}
+#endif
 }
 
 
@@ -569,6 +700,8 @@ compute_low_index (ScanData *data, GCObject *obj)
 
 	obj = bridge_object_forward (obj);
 	other = find_data (obj);
+	if (other)
+		other = follow_forward (other);
 
 #if DUMP_GRAPH
 	printf ("\tcompute low %p ->%p (%s) %p (%d / %d)\n", data->obj, obj, safe_name_bridge (obj), other, other ? other->index : -2, other ? other->low_index : -2);
@@ -668,6 +801,10 @@ create_scc (ScanData *data)
 		printf ("\tmember %s (%p) index %d low-index %d color %p state %d\n", safe_name_bridge (other->obj), other->obj, other->index, other->low_index, other->color, other->state);
 #endif
 
+#ifdef OPTIMIZATION_FORWARD
+		g_assert(!other->forwarded_to);
+#endif
+
 		other->color = color_data;
 		switch (other->state) {
 		case FINISHED_ON_STACK:
@@ -709,6 +846,8 @@ dfs (void)
 	while (dyn_array_ptr_size (&scan_stack) > 0) {
 		ScanData *data = (ScanData *)dyn_array_ptr_pop (&scan_stack);
 
+		data = follow_forward(data);
+
 		/**
 		 * Ignore finished objects on stack, they happen due to loops. For example:
 		 * A -> C
@@ -731,15 +870,9 @@ dfs (void)
 			g_assert (data->low_index == -1);
 
 			data->state = SCANNED;
-			data->low_index = data->index = object_index++;
-			dyn_array_ptr_push (&scan_stack, data);
-			dyn_array_ptr_push (&loop_stack, data);
 
-#if DUMP_GRAPH
-			printf ("+scanning %s (%p) index %d color %p\n", safe_name_bridge (data->obj), data->obj, data->index, data->color);
-#endif
-			/*push all refs */
-			push_all (data);
+			initial_scan (data);
+
 		} else {
 			g_assert (data->state == SCANNED);
 			data->state = FINISHED_ON_STACK;
