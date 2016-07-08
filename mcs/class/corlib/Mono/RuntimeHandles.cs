@@ -92,4 +92,38 @@ namespace Mono {
 			}
 		}
 	}
+
+	internal struct RuntimeGenericParamInfoHandle {
+		unsafe RuntimeStructs.GenericParamInfo* value;
+
+		internal unsafe RuntimeGenericParamInfoHandle (RuntimeStructs.GenericParamInfo* value)
+		{
+			this.value = value;
+		}
+
+		internal Type[] Constraints { get { return GetConstraints (); } }
+
+		Type[] GetConstraints () {
+			int n = GetConstraintsCount ();
+			var a = new Type[n];
+			for (int i = 0; i < n; i++) {
+				unsafe {
+					RuntimeClassHandle c = new RuntimeClassHandle (value->constraints[i]);
+					a[i] = Type.GetTypeFromHandle (c.GetTypeHandle ());
+				}
+			}
+			return a;
+		}
+
+		int GetConstraintsCount () {
+			int i = 0;
+			unsafe {
+				RuntimeStructs.MonoClass** p = value->constraints;
+				while (p != null && *p != null)  {
+					p++; i++;
+				}
+			}
+			return i;
+		}
+	}
 }
