@@ -4,40 +4,87 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using Mono.Options;
 
 namespace Mono
 {
 	public class Symbolicate
 	{
+		class Command {
+			public readonly int MinArgCount;
+			public readonly int MaxArgCount;
+			public readonly Action<List<string>> Action;
+
+			public Command (Action<List<string>> action, int minArgCount = 0, int maxArgCount = int.MaxValue)
+			{
+				Action = action;
+				MinArgCount = minArgCount;
+				MaxArgCount = maxArgCount;
+			}
+		}
+
 		public static int Main (String[] args)
 		{
-			if (args.Length != 2 && (args[0] == "store-symbols" && args.Length < 3)) {
+			var showHelp = false;
+			List<string> extra = null;
+
+			Command cmd = null;
+
+			if (args[0] == "store-symbols")
+				cmd = new Command (StoreSymbolsAction, 2);
+
+			if (cmd != null) {
+				args = args.Skip (1).ToArray ();
+			} else {
+				cmd = new Command (SymbolicateAction, 2, 2);
+			}
+
+			var options = new OptionSet {
+				{ "h|help", "Show this help", v => showHelp = true },
+			};
+
+			try {
+				extra = options.Parse (args);
+			} catch (OptionException e) {
+				Console.WriteLine ("Option error: {0}", e.Message);
+				showHelp = true;
+			}
+
+			if (showHelp || extra == null || extra.Count < cmd.MinArgCount || extra.Count > cmd.MaxArgCount) {
 				Console.Error.WriteLine ("Usage: symbolicate <msym dir> <input file>");
 				Console.Error.WriteLine ("       symbolicate store-symbols <msym dir> [<dir>]+");
+				Console.WriteLine ();
+				Console.WriteLine ("Available options:");
+				options.WriteOptionDescriptions (Console.Out);
 				return 1;
 			}
 
-			if (args[0] == "store-symbols") {
-				var msymDir = args[1];
-				var lookupDirs = args.Skip (1).ToArray ();
-
-				var symbolManager = new SymbolManager (msymDir);
-
-				symbolManager.StoreSymbols (lookupDirs);
-
-			} else {
-				var msymDir = args [0];
-				var inputFile = args [1];
-
-				var symbolManager = new SymbolManager (msymDir);
-
-				using (StreamReader r = new StreamReader (inputFile)) {
-					var sb = Process (r, symbolManager);
-					Console.Write (sb.ToString ());
-				}
-			}
+			cmd.Action (extra);
 
 			return 0;
+		}
+
+		private static void SymbolicateAction (List<string> args)
+		{
+			var msymDir = args [0];
+			var inputFile = args [1];
+
+			var symbolManager = new SymbolManager (msymDir);
+
+			using (StreamReader r = new StreamReader (inputFile)) {
+				var sb = Process (r, symbolManager);
+				Console.Write (sb.ToString ());
+			}
+		}
+
+		private static void StoreSymbolsAction (List<string> args)
+		{
+			var msymDir = args[0];
+			var lookupDirs = args.Skip (1).ToArray ();
+
+			var symbolManager = new SymbolManager (msymDir);
+
+			symbolManager.StoreSymbols (lookupDirs);
 		}
 
 		public static StringBuilder Process (StreamReader reader, SymbolManager symbolManager)

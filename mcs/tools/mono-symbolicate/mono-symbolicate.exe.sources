@@ -4,3 +4,4 @@ SeqPointInfo.cs
 StackFrameData.cs
 StackTraceMetadata.cs
 SymbolManager.cs
+../../class/Mono.Options/Mono.Options/Options.cs
