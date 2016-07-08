@@ -2881,14 +2881,6 @@ ves_icall_RuntimeType_GetGenericParameterPosition (MonoReflectionType *type)
 	return -1;
 }
 
-ICALL_EXPORT GenericParameterAttributes
-ves_icall_RuntimeType_GetGenericParameterAttributes (MonoReflectionType *type)
-{
-	g_assert (IS_MONOTYPE (type));
-	g_assert (is_generic_parameter (type->type));
-	return (GenericParameterAttributes)mono_generic_param_info (type->type->data.generic_param)->flags;
-}
-
 ICALL_EXPORT MonoGenericParamInfo *
 ves_icall_RuntimeTypeHandle_GetGenericParameterInfo (MonoReflectionType *type)
 {

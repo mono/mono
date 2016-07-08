@@ -619,8 +619,9 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern Type[] GetGenericArgumentsInternal (bool runtimeArray);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern GenericParameterAttributes GetGenericParameterAttributes ();
+		GenericParameterAttributes GetGenericParameterAttributes () {
+			return RuntimeTypeHandle.GetGenericParameterInfo (this).Attributes;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern int GetGenericParameterPosition ();

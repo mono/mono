@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Mono {
@@ -102,6 +103,14 @@ namespace Mono {
 		}
 
 		internal Type[] Constraints { get { return GetConstraints (); } }
+
+		internal GenericParameterAttributes Attributes {
+			get {
+				unsafe {
+					return (GenericParameterAttributes) value->flags;
+				}
+			}
+		}
 
 		Type[] GetConstraints () {
 			int n = GetConstraintsCount ();
