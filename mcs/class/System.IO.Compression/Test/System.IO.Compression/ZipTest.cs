@@ -264,6 +264,56 @@ namespace MonoTests.System.IO.Compression
 		}		
 
 		[Test]
+		public void ZipEnumerateArchiveDefaultLastWriteTime()
+		{
+			using (var archive = new ZipArchive(File.Open("test.nupkg", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				Assert.AreEqual(new DateTime(624511296000000000).Ticks, entry.LastWriteTime.Ticks);
+				Assert.IsNotNull(entry);
+			}
+		}
+
+		public void ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode mode)
+		{
+			File.Copy("test.nupkg", "test2.nupkg", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test2.nupkg", FileMode.Open), mode))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				using (var stream = entry.Open())
+				{
+					Assert.AreEqual(0, stream.Position);
+					Assert.AreEqual(425, stream.Length);
+				}
+
+				// .NET does not support these in Read mode but we do.
+				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
+				using (var stream = entry2.Open())
+				{
+					Assert.AreEqual(857, stream.Length);
+					if (mode == ZipArchiveMode.Update)
+					{
+						Assert.AreEqual(0, stream.Position);
+					}
+				}
+			}
+			File.Delete ("test2.nupkg");	
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Read);
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionUpdateMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Update);
+		}		
+
+		[Test]
 		public void ZipEnumerateEntriesReadMode()
 		{
 			File.Copy("archive.zip", "test.zip", overwrite: true);
@@ -278,6 +328,104 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foobar/", entries[2].FullName);
 				Assert.AreEqual("foobar/bar.txt", entries[3].FullName);
 				Assert.AreEqual("foobar/foo.txt", entries[4].FullName);
+			}
+
+			File.Delete ("test.zip");
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateMode()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sw = new StreamWriter(stream))
+				{
+					sw.Write("TEST");
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("TEST", line);
+				}
+			}
+
+			File.Delete ("test.zip");
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateModeNewEntry()
+		{
+			var stream = new MemoryStream();
+			var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update);
+
+			var newEntry = zipArchive.CreateEntry("testEntry");
+
+			using (var newStream = newEntry.Open())
+			{
+				using (var sw = new StreamWriter(newStream))
+				{
+					sw.Write("TEST");
+				}
+			}
+		}
+
+		[Test]
+		public void ZipCreateDuplicateEntriesUpdateMode()
+		{
+			var stream = new MemoryStream();
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update, true))
+			{
+				var e2 = zipArchive.CreateEntry("BBB");
+				var e3 = zipArchive.CreateEntry("BBB");
+			}
+
+			stream.Position = 0;
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read))
+			{
+				Assert.AreEqual(2, zipArchive.Entries.Count);
+			}
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateModeNonZeroPosition()
+		{
+			File.Copy("archive.zip", "test.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				{
+					var line = stream.ReadByte();
+					using (var sw = new StreamWriter(stream))
+					{
+						sw.Write("TEST");
+					}
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entries = archive.Entries;
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("fTEST", line);
+				}
 			}
 
 			File.Delete ("test.zip");
@@ -331,6 +479,25 @@ namespace MonoTests.System.IO.Compression
 			{
 			}
 			File.Delete ("empty.zip");
+		}
+
+		class MyFakeStream : FileStream 
+		{
+			public MyFakeStream (string path, FileMode mode) : base(path, mode) {}
+
+			/// <summary>
+			/// Simulate "CanSeek" is false, which is the case when you are retreiving data from web.
+			/// </summary>
+			public override bool CanSeek => false;
+		}
+
+		[Test]
+		public void ZipReadNonSeekableStream()
+		{
+			var stream = new MyFakeStream("test.nupkg", FileMode.Open);
+			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
+			{
+			}
 		}
 	}
 }
