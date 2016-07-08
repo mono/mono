@@ -92,7 +92,7 @@ namespace Mono
 
 					var assembly = AssemblyDefinition.ReadAssembly (assemblyPath);
 
-					var mvid = assembly.MainModule.Mvid.ToString ().ToUpper ();
+					var mvid = assembly.MainModule.Mvid.ToString ("N");
 					var mvidDir = Path.Combine (msymDir, mvid);
 
 					Directory.CreateDirectory (mvidDir);
