@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_x/plainservice</OutputPath>
+    <IntermediateOutputPath>obj-plainservice</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -1071,7 +1074,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

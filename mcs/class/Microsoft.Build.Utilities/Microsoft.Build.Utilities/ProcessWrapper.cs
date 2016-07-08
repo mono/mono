@@ -74,6 +74,7 @@ namespace Microsoft.Build.Utilities
 		public void WaitForOutput (int milliseconds)
 		{
 			CheckDisposed ();
+			WaitForExit (milliseconds);
 			WaitHandle.WaitAll (new WaitHandle[] { endEventOut, endEventErr, endEventExit }, milliseconds);
 		}
 

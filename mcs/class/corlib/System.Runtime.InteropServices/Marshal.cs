@@ -1664,5 +1664,9 @@ namespace System.Runtime.InteropServices
 			
 			return GetFunctionPointerForDelegateInternal ((Delegate)(object)d);
 		}
+
+		internal static void SetLastWin32Error (int error)
+		{
+		}
 	}
 }

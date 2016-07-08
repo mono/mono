@@ -246,9 +246,11 @@ namespace System.Net {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetRequestStream", exception);
                 throw;
             } finally {
+#if !MONO
                 if (FrameworkEventSource.Log.IsEnabled()) {
                     LogBeginGetRequestStream(success, synchronous: false);
                 }
+#endif
                 GlobalLog.Leave("FileWebRequest::BeginGetRequestSteam");
             }
 
@@ -280,9 +282,11 @@ namespace System.Net {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetResponse", exception);
                 throw;
             } finally {
+#if !MONO
                 if (FrameworkEventSource.Log.IsEnabled()) {
                     LogBeginGetResponse(success, synchronous: false);
                 }
+#endif
                 GlobalLog.Leave("FileWebRequest::BeginGetResponse");
             }
 
@@ -319,9 +323,11 @@ namespace System.Net {
                 throw;
             } finally {
                 GlobalLog.Leave("FileWebRequest::EndGetRequestStream");
+#if !MONO
                 if (FrameworkEventSource.Log.IsEnabled()) {
                     LogEndGetRequestStream(success, synchronous: false);
                 }
+#endif
             }
 
             return stream;
@@ -355,10 +361,12 @@ namespace System.Net {
             } finally {
                 GlobalLog.Leave("FileWebRequest::EndGetResponse");
 
+#if !MONO
                 // there is no statusCode in FileWebRequest object, defaulting it to zero.
                 if (FrameworkEventSource.Log.IsEnabled()) {
                     LogEndGetResponse(success, synchronous: false, statusCode: 0);
                 }
+#endif
             }
 
             return response;

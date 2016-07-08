@@ -96,9 +96,7 @@ namespace System.IO {
             if (!isFullyQualified && !isInvalidPath)
                 return path;
 
-#if DISABLE_CAS_USE
-            bool safeToReturn = !isInvalidPath;
-#else
+#if FEATURE_MONO_CAS
             bool safeToReturn = false;
             try {
                 if (!isInvalidPath) {
@@ -119,7 +117,9 @@ namespace System.IO {
                 // from Security.Util.StringExpressionSet.CanonicalizePath when ':' is found in the path
                 // beyond string index position 1.  
             }
-#endif // DISABLE_CAS_USE
+#else
+            bool safeToReturn = !isInvalidPath;
+#endif // FEATURE_MONO_CAS
             if (!safeToReturn) {
                 if (Path.IsDirectorySeparator(path[path.Length - 1]))
                     path = Environment.GetResourceString("IO.IO_NoPermissionToDirectoryName");

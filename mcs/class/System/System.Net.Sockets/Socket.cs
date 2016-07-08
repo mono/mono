@@ -702,8 +702,8 @@ namespace System.Net.Sockets
 			set {
 				ThrowIfDisposedAndClosed ();
 
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+				if (value < 0 || value > 255)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero or greater than 255.");
 
 				switch (address_family) {
 				case AddressFamily.InterNetwork:
@@ -3167,27 +3167,24 @@ namespace System.Net.Sockets
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
 		{
-			ThrowIfDisposedAndClosed ();
-
-			int error;
 			int int_val = optionValue ? 1 : 0;
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, int_val, out error);
 
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
+			SetSocketOption (optionLevel, optionName, int_val);
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
 		{
 			ThrowIfDisposedAndClosed ();
 
+			if (optionLevel == SocketOptionLevel.Socket && optionName == SocketOptionName.ReuseAddress && optionValue != 0 && !SupportsPortReuse (protocol_type))
+				throw new SocketException ((int) SocketError.OperationNotSupported, "Operating system sockets do not support ReuseAddress.\nIf your socket is not intended to bind to the same address and port multiple times remove this option, otherwise you should ignore this exception inside a try catch and check that ReuseAddress is true before binding to the same address and port multiple times.");
+
 			int error;
 			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, optionValue, out error);
 
 			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
@@ -3482,7 +3479,7 @@ namespace System.Net.Sockets
 		internal static extern void cancel_blocking_socket_operation (Thread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool SupportsPortReuse ();
+		internal static extern bool SupportsPortReuse (ProtocolType proto);
 	}
 }
 

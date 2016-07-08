@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,219,414</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -234,7 +237,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -260,7 +262,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Microsoft.Internal.Strings.resources">
+    <EmbeddedResource Include="src/ComponentModel/Strings.resx">
       <LogicalName>Microsoft.Internal.Strings.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

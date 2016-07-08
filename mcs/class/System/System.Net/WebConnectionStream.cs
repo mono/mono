@@ -480,7 +480,7 @@ namespace System.Net
 							AsyncCallback cb, object state)
 		{
 			if (request.Aborted)
-				throw new WebException ("The request was canceled.", null, WebExceptionStatus.RequestCanceled);
+				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
 
 			if (isRead)
 				throw new NotSupportedException ("this stream does not allow writing");
@@ -675,7 +675,7 @@ namespace System.Net
 				} catch (WebException e) {
 					result.SetCompleted (false, e);
 				} catch (Exception e) {
-					result.SetCompleted (false, new WebException ("Error writing headers", e, WebExceptionStatus.SendFailure));
+					result.SetCompleted (false, new WebException ("Error writing headers", WebExceptionStatus.SendFailure, WebExceptionInternalStatus.RequestFatal, e));
 				}
 			}, null);
 
@@ -814,7 +814,7 @@ namespace System.Net
 				IOException io = new IOException ("Cannot close the stream until all bytes are written");
 				nextReadCalled = true;
 				cnc.Close (true);
-				throw new WebException ("Request was cancelled.", io, WebExceptionStatus.RequestCanceled);
+				throw new WebException ("Request was cancelled.", WebExceptionStatus.RequestCanceled, WebExceptionInternalStatus.RequestFatal, io);
 			}
 
 			// Commented out the next line to fix xamarin bug #1512

@@ -222,7 +222,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap
 			if (expected != null && expected.GetType().IsArray)
 				EqualsArray (message, (Array)expected, (Array)actual);
 			else
-				Assertion.AssertEquals (message, expected, actual);
+				Assert.AreEqual (expected, actual, message);
 		}
 
 		public static void EqualsArray (string message, object oar1, object oar2)

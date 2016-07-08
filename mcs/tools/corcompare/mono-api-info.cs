@@ -1571,6 +1571,15 @@ namespace CorCompare
 			if (res != 0)
 				return res;
 
+			if (ma.HasGenericParameters != mb.HasGenericParameters)
+				return ma.HasGenericParameters ? -1 : 1;
+
+			if (ma.HasGenericParameters && mb.HasGenericParameters) {
+				res = ma.GenericParameters.Count - mb.GenericParameters.Count;
+				if (res != 0)
+					return res;
+			}
+
 			// operators can differ by only return type
 			return string.CompareOrdinal (ma.ReturnType.FullName, mb.ReturnType.FullName);
 		}

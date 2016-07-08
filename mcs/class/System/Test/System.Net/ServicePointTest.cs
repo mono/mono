@@ -219,7 +219,7 @@ public class ServicePointTest
 
 		ServicePointManager.DnsRefreshTimeout = dnsRefreshTimeout;
 
-		uri = new Uri ("http://www.google.com/");
+		uri = new Uri ("http://localhost/");
 		sp = ServicePointManager.FindServicePoint (uri);
 
 		hostEntryProperty = typeof (ServicePoint).GetProperty ("HostEntry", BindingFlags.NonPublic | BindingFlags.Instance);

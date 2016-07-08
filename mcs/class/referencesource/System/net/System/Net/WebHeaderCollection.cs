@@ -246,7 +246,16 @@ namespace System.Net {
         // this is the object that created the header collection.
         private WebHeaderCollectionType m_Type;
 
-#if !FEATURE_PAL
+#if MONO
+        internal bool AllowMultiValues (string name)
+        {
+            var hinfo = HInfo[name];
+            // Is common header which supports multi value or it's unknown header
+            return hinfo.AllowMultiValues || hinfo.HeaderName == "";
+        }
+#endif
+
+#if !FEATURE_PAL || MONO
         private bool AllowHttpRequestHeader {
             get {
                 if (m_Type==WebHeaderCollectionType.Unknown) {

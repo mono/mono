@@ -52,7 +52,7 @@ namespace System.Collections.Concurrent
     [ComVisible(false)]
     [DebuggerTypeProxy(typeof(SystemThreadingCollection_IProducerConsumerCollectionDebugView<>))]
     [DebuggerDisplay("Count = {Count}")]
-#if !(FEATURE_NETCORE || DISABLE_CAS_USE)
+#if !FEATURE_NETCORE
     [HostProtection(Synchronization = true, ExternalThreading = true)]
 #endif
     public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IReadOnlyCollection<T>

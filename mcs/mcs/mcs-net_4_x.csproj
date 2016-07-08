@@ -6,10 +6,13 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{322A755A-ED38-4295-979D-E49EBAFA2852}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\mcs-net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-bin\Debug\mcs-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -25,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -109,7 +112,8 @@
     <Compile Include="support.cs" />
     <Compile Include="typemanager.cs" />
     <Compile Include="typespec.cs" />
-    <Compile Include="visit.cs" />  </ItemGroup>
+    <Compile Include="visit.cs" />
+    <Compile Include="cs-parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -121,12 +125,13 @@
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 $(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\cs-parser.jay > $(ProjectDir)\cs-parser.cs
 
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-$(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\cs-parser.jay > $(ProjectDir)\cs-parser.cs
+$(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\cs-parser.jay > $(ProjectDir)\cs-parser.cs
+
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

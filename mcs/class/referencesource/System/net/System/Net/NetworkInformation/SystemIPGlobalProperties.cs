@@ -9,6 +9,7 @@ namespace System.Net.NetworkInformation {
     using System.Threading;
     using System.Collections.Generic;
 
+#if !MONO
     internal class SystemIPGlobalProperties:IPGlobalProperties {
         private FixedInfo fixedInfo;
         private bool fixedInfoInitialized = false;
@@ -456,7 +457,7 @@ namespace System.Net.NetworkInformation {
 
     }   //ends networkinformation class
 
-   
+#endif   
 
     internal struct FixedInfo{
         internal FIXED_INFO info;

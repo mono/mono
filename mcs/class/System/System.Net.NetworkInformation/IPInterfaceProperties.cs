@@ -32,28 +32,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
-	public abstract class IPInterfaceProperties {
-		protected IPInterfaceProperties ()
-		{
-		}
-
-		public abstract IPv4InterfaceProperties GetIPv4Properties ();
-		public abstract IPv6InterfaceProperties GetIPv6Properties ();
-
-		public abstract IPAddressInformationCollection AnycastAddresses { get; }
-		public abstract IPAddressCollection DhcpServerAddresses { get; }
-		public abstract IPAddressCollection DnsAddresses { get; }
-		public abstract string DnsSuffix { get; }
-		public abstract GatewayIPAddressInformationCollection GatewayAddresses { get; }
-		public abstract bool IsDnsEnabled { get; }
-		public abstract bool IsDynamicDnsEnabled { get; }
-		public abstract MulticastIPAddressInformationCollection MulticastAddresses { get; }
-		public abstract UnicastIPAddressInformationCollection UnicastAddresses { get; }
-		public abstract IPAddressCollection WinsServersAddresses { get; }
-	}
-
 	abstract class UnixIPInterfaceProperties : IPInterfaceProperties
 	{
 		protected IPv4InterfaceProperties ipv4iface_properties;
@@ -98,7 +79,7 @@ namespace System.Net.NetworkInformation {
 							try {
 								str = match.Groups ["address"].Value;
 								str = str.Trim ();
-								dns_servers.Add (IPAddress.Parse (str));
+								dns_servers.InternalAdd (IPAddress.Parse (str));
 							} catch {
 							}
 						} else {
@@ -112,22 +93,16 @@ namespace System.Net.NetworkInformation {
 					}
 				}
 			} catch {
-			} finally {
-				dns_servers.SetReadOnly ();
 			}
 		}
 
 		public override IPAddressInformationCollection AnycastAddresses {
 			get {
-				List<IPAddress> anycastAddresses = new List<IPAddress> ();
-				/* XXX:
+				var c = new IPAddressInformationCollection ();
 				foreach (IPAddress address in addresses) {
-					if (is_anycast_address (address)) {
-						anycastAddresses.Add (address);
-					}
+					c.InternalAdd (new SystemIPAddressInformation (address, false, false));
 				}
-				*/
-				return IPAddressInformationImplCollection.LinuxFromAnycast (anycastAddresses);
+				return c;
 			}
 		}
 
@@ -138,7 +113,6 @@ namespace System.Net.NetworkInformation {
 				// that all store their configuration differently.
 				// I'm not sure what to do here.
 				IPAddressCollection coll = new IPAddressCollection ();
-				coll.SetReadOnly ();
 				return coll;
 			}
 		}
@@ -173,37 +147,37 @@ namespace System.Net.NetworkInformation {
 
 		public override MulticastIPAddressInformationCollection MulticastAddresses {
 			get {
-				List<IPAddress> multicastAddresses = new List<IPAddress> ();
+				var multicastAddresses = new MulticastIPAddressInformationCollection ();
 				foreach (IPAddress address in addresses) {
 					byte[] addressBytes = address.GetAddressBytes ();
 					if (addressBytes[0] >= 224 && addressBytes[0] <= 239) {
-						multicastAddresses.Add (address);
+						multicastAddresses.InternalAdd (new SystemMulticastIPAddressInformation (new SystemIPAddressInformation (address, true, false)));
 					}
 				}
-				return MulticastIPAddressInformationImplCollection.LinuxFromList (multicastAddresses);
+				return multicastAddresses;
 			}
 		}
 
 		public override UnicastIPAddressInformationCollection UnicastAddresses {
 			get {
-				List<IPAddress> unicastAddresses = new List<IPAddress> ();
+				var unicastAddresses = new UnicastIPAddressInformationCollection ();
 				foreach (IPAddress address in addresses) {
 					switch (address.AddressFamily) {
 						case AddressFamily.InterNetwork:
 							byte top = address.GetAddressBytes () [0];
 							if (top >= 224 && top <= 239)
 								continue;
-							unicastAddresses.Add (address);
+							unicastAddresses.InternalAdd (new LinuxUnicastIPAddressInformation (address));
 							break;
 
 						case AddressFamily.InterNetworkV6:
 							if (address.IsIPv6Multicast)
 								continue;
-							unicastAddresses.Add (address);
+							unicastAddresses.InternalAdd (new LinuxUnicastIPAddressInformation (address));
 							break;
 					}
 				}
-				return UnicastIPAddressInformationImplCollection.LinuxFromList (unicastAddresses);
+				return unicastAddresses;
 			}
 		}
 
@@ -218,8 +192,6 @@ namespace System.Net.NetworkInformation {
 
 	class LinuxIPInterfaceProperties : UnixIPInterfaceProperties
 	{
-		IPAddressCollection gateways;
-
 		public LinuxIPInterfaceProperties (LinuxNetworkInterface iface, List <IPAddress> addresses)
 			: base (iface, addresses)
 		{
@@ -233,8 +205,9 @@ namespace System.Net.NetworkInformation {
 			return ipv4iface_properties;
 		}
 
-		void ParseRouteInfo (string iface)
+		IPAddressCollection ParseRouteInfo (string iface)
 		{
+			var col = new IPAddressCollection ();
 			try {
 				using (StreamReader reader = new StreamReader ("/proc/net/route")) {
 					string line;
@@ -255,31 +228,26 @@ namespace System.Net.NetworkInformation {
 									continue;
 							}
 							IPAddress ip = new IPAddress (ipbytes);
-							if (!ip.Equals (IPAddress.Any) && !gateways.Contains (ip))
-								gateways.Add (ip);
+							if (!ip.Equals (IPAddress.Any) && !col.Contains (ip))
+								col.InternalAdd (ip);
 						}
 					}
 				}
 			} catch {
 			}
+
+			return col;
 		}
 
 		public override GatewayIPAddressInformationCollection GatewayAddresses {
 			get {
-				gateways = new IPAddressCollection ();
-				ParseRouteInfo (this.iface.Name.ToString());
-				if (gateways.Count > 0)
-					return new UnixGatewayIPAddressInformationCollection (gateways);
-				else
-					return UnixGatewayIPAddressInformationCollection.Empty;
+				return SystemGatewayIPAddressInformation.ToGatewayIpAddressInformationCollection (ParseRouteInfo (this.iface.Name.ToString()));
 			}
 		}
 	}
 
 	class MacOsIPInterfaceProperties : UnixIPInterfaceProperties
 	{
-		IPAddressCollection gateways;
-
 		public MacOsIPInterfaceProperties (MacOsNetworkInterface iface, List <IPAddress> addresses)
 			: base (iface, addresses)
 		{
@@ -298,16 +266,16 @@ namespace System.Net.NetworkInformation {
 
 		public override GatewayIPAddressInformationCollection GatewayAddresses {
 			get {
-				gateways = new IPAddressCollection ();
+				var gateways = new IPAddressCollection ();
 				string[] gw_addrlist;
 				if (!ParseRouteInfo_internal (this.iface.Name.ToString(), out gw_addrlist))
-					return UnixGatewayIPAddressInformationCollection.Empty;
+					return new GatewayIPAddressInformationCollection ();
 
 				for(int i=0; i<gw_addrlist.Length; i++) {
 					try {
 						IPAddress ip = IPAddress.Parse(gw_addrlist[i]);
 						if (!ip.Equals (IPAddress.Any) && !gateways.Contains (ip))
-							gateways.Add (ip);
+							gateways.InternalAdd (ip);
 					} catch (ArgumentNullException) {
 						/* Ignore this, as the
 						 * internal call might have
@@ -317,10 +285,7 @@ namespace System.Net.NetworkInformation {
 					}
 				}
 
-				if (gateways.Count > 0)
-					return new UnixGatewayIPAddressInformationCollection (gateways);
-				else
-					return UnixGatewayIPAddressInformationCollection.Empty;
+				return SystemGatewayIPAddressInformation.ToGatewayIpAddressInformationCollection (gateways);
 			}
 		}
 	}
@@ -351,7 +316,21 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override IPAddressInformationCollection AnycastAddresses {
-			get { return IPAddressInformationImplCollection.Win32FromAnycast (addr.FirstAnycastAddress); }
+			get { return Win32FromAnycast (addr.FirstAnycastAddress); }
+		}
+
+		static IPAddressInformationCollection Win32FromAnycast (IntPtr ptr)
+		{
+			var c = new IPAddressInformationCollection ();
+			Win32_IP_ADAPTER_ANYCAST_ADDRESS a;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADAPTER_ANYCAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_ANYCAST_ADDRESS));
+				c.InternalAdd (new SystemIPAddressInformation (
+				       a.Address.GetIPAddress (),
+				       a.LengthFlags.IsDnsEligible,
+				       a.LengthFlags.IsTransient));
+			}
+			return c;
 		}
 
 		public override IPAddressCollection DhcpServerAddresses {
@@ -374,7 +353,26 @@ namespace System.Net.NetworkInformation {
 			get {
 				Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
 				// FIXME: should ipv6 DhcpServer be considered?
-				return v4info != null ? new Win32GatewayIPAddressInformationCollection (v4info.GatewayList) : Win32GatewayIPAddressInformationCollection.Empty;
+
+				var col = new GatewayIPAddressInformationCollection ();
+				if (v4info != null) {
+					var a = v4info.GatewayList;
+					if (!String.IsNullOrEmpty (a.IpAddress)) {
+						col.InternalAdd(new SystemGatewayIPAddressInformation(IPAddress.Parse (a.IpAddress)));
+						AddSubsequently (a.Next, col);
+					}
+				}
+
+				return col;
+			}
+		}
+
+		static void AddSubsequently (IntPtr head, GatewayIPAddressInformationCollection col)
+		{
+			Win32_IP_ADDR_STRING a;
+			for (IntPtr p = head; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADDR_STRING) Marshal.PtrToStructure (p, typeof (Win32_IP_ADDR_STRING));
+				col.InternalAdd (new SystemGatewayIPAddressInformation (IPAddress.Parse (a.IpAddress)));
 			}
 		}
 
@@ -387,15 +385,40 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override MulticastIPAddressInformationCollection MulticastAddresses {
-			get { return MulticastIPAddressInformationImplCollection.Win32FromMulticast (addr.FirstMulticastAddress); }
+			get { return Win32FromMulticast (addr.FirstMulticastAddress); }
+		}
+
+		static MulticastIPAddressInformationCollection Win32FromMulticast (IntPtr ptr)
+		{
+			var c = new MulticastIPAddressInformationCollection ();
+			Win32_IP_ADAPTER_MULTICAST_ADDRESS a;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADAPTER_MULTICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_MULTICAST_ADDRESS));
+				c.InternalAdd (new SystemMulticastIPAddressInformation (new SystemIPAddressInformation (
+				       a.Address.GetIPAddress (),
+				       a.LengthFlags.IsDnsEligible,
+				       a.LengthFlags.IsTransient)));
+			}
+			return c;
 		}
 
 		public override UnicastIPAddressInformationCollection UnicastAddresses {
 			get {
 				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
 				// FIXME: should ipv6 DhcpServer be considered?
-				return ai != null ? UnicastIPAddressInformationImplCollection.Win32FromUnicast ((int) ai.Index, addr.FirstUnicastAddress) : UnicastIPAddressInformationImplCollection.Empty;
+				return ai != null ? Win32FromUnicast ((int) ai.Index, addr.FirstUnicastAddress) : new UnicastIPAddressInformationCollection ();
 			}
+		}
+
+		static UnicastIPAddressInformationCollection Win32FromUnicast (int ifIndex, IntPtr ptr)
+		{
+			UnicastIPAddressInformationCollection c = new UnicastIPAddressInformationCollection ();
+			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
+				c.InternalAdd (new Win32UnicastIPAddressInformation (ifIndex, a));
+			}
+			return c;
 		}
 
 		public override IPAddressCollection WinsServersAddresses {
@@ -408,6 +431,7 @@ namespace System.Net.NetworkInformation {
 
 	}
 #endif
+
 }
 
 

@@ -225,8 +225,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs \
 	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
-RESX_DIST =  resources/TranslationResources.resx
-RESX_RES = $(RESX_DIST:.resx=.resources)
+RESOURCE_DEFS = \
+	TranslationResources,resources/TranslationResources.resx
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
@@ -254,7 +254,7 @@ ifneq (plainweb/,$(intermediate))
 LIB_REFS += System.Web.Services plaindesign/System.Design
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
 
-all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
+all-local: System.Web/UplevelHelper.cs 
 
 endif
 
@@ -272,7 +272,6 @@ EXTRA_DISTFILES = \
 	$(TEST_APP_CODE_FILES) \
 	$(TEST_APP_GLOBALRESOURCES_FILES) \
 	UplevelHelperDefinitions.xml \
-	$(RESX_DIST) \
 	SQLiteProviders_DatabaseSchema.sql \
 	$(shell find Test/standalone-runner-support/ -name "*.cs" -type f -printf "'%p' ") \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \

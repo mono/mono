@@ -41,14 +41,78 @@ using System.Runtime.Serialization;
 
 namespace System
 {
+	// Contains information about the type which is expensive to compute
+	[StructLayout (LayoutKind.Sequential)]
+	internal class MonoTypeInfo {
+		// this is the displayed form: special characters
+		// ,+*&*[]\ in the identifier portions of the names
+		// have been escaped with a leading backslash (\)
+		public string full_name;
+		public MonoCMethod default_ctor;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
 	partial class RuntimeType
 	{
+		[NonSerialized]
+		MonoTypeInfo type_info;
+
 		internal Object GenericCache;
 
-		internal virtual MonoCMethod GetDefaultConstructor ()
+		internal RuntimeType (Object obj)
 		{
-			// TODO: Requires MonoType
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
+		}
+
+		internal MonoCMethod GetDefaultConstructor ()
+		{
+			MonoCMethod ctor = null;
+
+			if (type_info == null)
+				type_info = new MonoTypeInfo ();
+			else
+				ctor = type_info.default_ctor;
+
+			if (ctor == null) {
+				var ctors = GetConstructors (BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+
+				for (int i = 0; i < ctors.Length; ++i) {
+					if (ctors [i].GetParametersCount () == 0) {
+						type_info.default_ctor = ctor = (MonoCMethod) ctors [i];
+						break;
+					}
+				}
+			}
+
+			return ctor;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
+
+		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
+                {
+			if (fromNoninstanciated == null)
+				throw new ArgumentNullException ("fromNoninstanciated");
+                        return GetCorrespondingInflatedMethod (fromNoninstanciated);
+                }
+
+		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
+		{
+			if (fromNoninstanciated == null)
+				throw new ArgumentNullException ("fromNoninstanciated");
+                        return GetCorrespondingInflatedConstructor (fromNoninstanciated);
+		}
+
+		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
+		{
+			/* create sensible flags from given FieldInfo */
+			BindingFlags flags = fromNoninstanciated.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
+			flags |= fromNoninstanciated.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
+			return GetField (fromNoninstanciated.Name, flags);
 		}
 
 		string GetDefaultMemberName ()
@@ -586,12 +650,6 @@ namespace System
 			get;
 		}
 
-		public override string FullName {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		public extern override string Name {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
@@ -624,5 +682,32 @@ namespace System
 			get { return get_core_clr_security_level () == 1; }
 		}
 #endif
+
+		public override int GetHashCode()
+		{
+			Type t = UnderlyingSystemType;
+			if (t != null && t != this)
+				return t.GetHashCode ();
+			return (int)_impl.Value;
+		}
+
+		public override string FullName {
+			get {
+				string fullName;
+				// This doesn't need locking
+				if (type_info == null)
+					type_info = new MonoTypeInfo ();
+				if ((fullName = type_info.full_name) == null)
+					fullName = type_info.full_name = getFullName (true, false);
+
+				return fullName;
+			}
+		}
+
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }

@@ -134,7 +134,7 @@ endif
 csproj-local: csproj-library csproj-test
 
 intermediate_clean=$(subst /,-,$(intermediate))
-csproj-library: 
+csproj-library:
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
 	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
@@ -145,6 +145,7 @@ csproj-library:
 	echo $(build_lib); \
 	echo $(FRAMEWORK_VERSION); \
 	echo $(PROFILE); \
+	echo $(RESOURCE_DEFS); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 csproj-test:
@@ -216,7 +217,28 @@ clean-local:
 test-local run-test-local run-test-ondotnet-local:
 	@:
 
-DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES)
+#
+# RESOURCES_DEFS is a list of ID,FILE pairs separated by spaces
+# for each of those, generate a rule that produces ID.resource from
+# FILE using the resgen tool, adds the generated file to CLENA_FILES and
+# passes the resource to the compiler
+#
+ccomma = ,
+define RESOURCE_template
+$(1).resources: $(2)
+	$(RESGEN) "$$<" "$$@"
+
+GEN_RESOURCE_DEPS += $(1).resources
+GEN_RESOURCE_FLAGS += -resource:$(1).resources
+CLEAN_FILES += $(1).resources
+DIST_LISTED_RESOURCES += $(2)
+endef
+
+ifdef RESOURCE_DEFS
+$(foreach pair,$(RESOURCE_DEFS), $(eval $(call RESOURCE_template,$(word 1, $(subst $(ccomma), ,$(pair))), $(word 2, $(subst $(ccomma), ,$(pair))))))
+endif
+
+DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
 
 ASSEMBLY      = $(LIBRARY)
 ASSEMBLY_EXT  = .dll
@@ -236,6 +258,7 @@ csproj-test:
 	echo $(test_lib); \
 	echo $(FRAMEWORK_VERSION); \
 	echo $(PROFILE); \
+	echo ""; \
 	echo $(test_response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 endif
@@ -275,12 +298,12 @@ endif
 
 $(the_lib): $(the_libdir)/.stamp
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
-	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif
+	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)

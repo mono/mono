@@ -23,9 +23,11 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
@@ -39,9 +41,11 @@
       <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -58,6 +62,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2Classic" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -74,6 +79,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2Unified" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -90,9 +96,11 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 Hello(int32 value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -113,9 +121,11 @@
       <MemberSignature Language="ILAsm" Value=".property instance string InBoth" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -132,6 +142,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string InBothClassic" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -150,9 +161,11 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MyFramework.MyNamespace.nint InBothMagicType" apistyle="unified" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -170,6 +183,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string InBothUnified" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -186,9 +200,11 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MyProperty" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -205,6 +221,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance float64 OnlyInClassic" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -221,6 +238,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance char OnlyInUnified" />
       <MemberType>Property</MemberType>
       <AssemblyInfo apistyle="unified">
+        <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>

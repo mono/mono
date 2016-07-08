@@ -1635,12 +1635,12 @@ namespace System.ComponentModel {
                         Type converterType = GetTypeFromName(instanceAttr.ConverterTypeName);
                         if (converterType != null && typeof(TypeConverter).IsAssignableFrom(converterType)) 
                         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                             try {
                                 IntSecurity.FullReflection.Assert();
 #endif
                                 return (TypeConverter)ReflectTypeDescriptionProvider.CreateInstance(converterType, _type);
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                             } finally {
                                 CodeAccessPermission.RevertAssert();
                             }
@@ -1665,12 +1665,12 @@ namespace System.ComponentModel {
                         Type converterType = GetTypeFromName(typeAttr.ConverterTypeName);
                         if (converterType != null && typeof(TypeConverter).IsAssignableFrom(converterType)) 
                         {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                             try {
                                 IntSecurity.FullReflection.Assert();
 #endif
                                 _converter = (TypeConverter)ReflectTypeDescriptionProvider.CreateInstance(converterType, _type);
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                             } finally {
                                 CodeAccessPermission.RevertAssert();
                             }

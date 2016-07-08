@@ -166,8 +166,9 @@ namespace System {
         //
         public static void Register(UriParser uriParser, string schemeName, int defaultPort)
         {
+#if FEATURE_MONO_CAS
             ExceptionHelper.InfrastructurePermission.Demand();
-
+#endif
             if (uriParser == null)
                 throw new ArgumentNullException("uriParser");
 

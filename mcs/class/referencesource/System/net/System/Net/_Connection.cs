@@ -17,12 +17,14 @@ namespace System.Net {
     using System.Net.Configuration;
     using System.Diagnostics.CodeAnalysis;
 
+#if !MONO
     internal enum ReadState {
         Start,
         StatusLine, // about to parse status line
         Headers,    // reading headers
         Data        // now read data
     }
+#endif
 
     internal enum DataParseStatus {
         NeedMoreData = 0,   // need more data
@@ -64,7 +66,7 @@ namespace System.Net {
         public WebParseErrorCode     Code;
     }
 
-
+#if !MONO
     struct TunnelStateObject {
         internal TunnelStateObject(HttpWebRequest r, Connection c){
             Connection = c;
@@ -3846,4 +3848,5 @@ done:
         }
 #endif
     }
+#endif
 }

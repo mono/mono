@@ -1,3 +1,6 @@
+#if MONO
+#undef FEATURE_PAL
+#endif
 // ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -21,6 +24,7 @@ namespace System.Threading
 #endif
     using System.Runtime.Versioning;
     using System.Runtime.ConstrainedExecution;
+    using System.Runtime.CompilerServices;
 
 
     [HostProtection(Synchronization=true, ExternalThreading=true)]
@@ -66,11 +70,19 @@ namespace System.Threading
             {
                 throw new ArgumentException(SR.GetString(SR.Argument_WaitHandleNameTooLong));
             }
+
+#if MONO
+            int errorCode;
+            var myHandle = new SafeWaitHandle (CreateSemaphore_internal (initialCount, maximumCount, name, out errorCode), true);
+#else
             SafeWaitHandle   myHandle = SafeNativeMethods.CreateSemaphore(null, initialCount, maximumCount, name);
+#endif
             
             if (myHandle.IsInvalid)
             {
+#if !MONO
                 int errorCode = Marshal.GetLastWin32Error(); 
+#endif
 
                 if(null != name && 0 != name.Length && NativeMethods.ERROR_INVALID_HANDLE == errorCode)
                     throw new WaitHandleCannotBeOpenedException(SR.GetString(SR.WaitHandleCannotBeOpenedException_InvalidHandle,name));
@@ -119,6 +131,11 @@ namespace System.Threading
                 throw new ArgumentException(SR.GetString(SR.Argument_WaitHandleNameTooLong));
             }
             SafeWaitHandle   myHandle;
+
+#if MONO
+            int errorCode;
+            myHandle = new SafeWaitHandle (CreateSemaphore_internal (initialCount, maximumCount, name, out errorCode), true);
+#else
 #if !FEATURE_PAL && !FEATURE_NETCORE
             // For ACL's, get the security descriptor from the SemaphoreSecurity.
             if (semaphoreSecurity != null) {
@@ -137,7 +154,9 @@ namespace System.Threading
 #if !FEATURE_PAL && !FEATURE_NETCORE
             }
 #endif
+
             int errorCode = Marshal.GetLastWin32Error();
+#endif
             if (myHandle.IsInvalid)
             {
                 if(null != name && 0 != name.Length && NativeMethods.ERROR_INVALID_HANDLE == errorCode)
@@ -259,7 +278,14 @@ namespace System.Threading
             }
 
             result = null;
+#if MOBILE
+            throw new NotSupportedException ();
+#else
 
+#if MONO
+            int errorCode;
+            var myHandle = new SafeWaitHandle (OpenSemaphore_internal (name, rights, out errorCode), true);
+#else
             //Pass false to OpenSemaphore to prevent inheritedHandles
 #if FEATURE_PAL || FEATURE_NETCORE
             const int SYNCHRONIZE            = 0x00100000;
@@ -269,10 +295,13 @@ namespace System.Threading
 #else
             SafeWaitHandle myHandle = SafeNativeMethods.OpenSemaphore((int) rights, false, name);
 #endif
+#endif
             
             if (myHandle.IsInvalid)
             {
+#if !MONO
                 int errorCode = Marshal.GetLastWin32Error();
+#endif
 
                 if (NativeMethods.ERROR_FILE_NOT_FOUND == errorCode || NativeMethods.ERROR_INVALID_NAME == errorCode)
                     return OpenExistingResult.NameNotFound;
@@ -285,6 +314,7 @@ namespace System.Threading
             }
             result = new Semaphore(myHandle);
             return OpenExistingResult.Success;
+#endif
         }
 
 
@@ -318,7 +348,11 @@ namespace System.Threading
             //   the semaphore's count to exceed the maximum count set when Semaphore was created
             //Non-Zero return 
 
+#if MONO
+            if (!ReleaseSemaphore_internal(Handle, releaseCount, out previousCount))
+#else
             if (!SafeNativeMethods.ReleaseSemaphore(SafeWaitHandle, releaseCount, out previousCount))
+#endif
             {
                 throw new SemaphoreFullException();
             }
@@ -341,6 +375,19 @@ namespace System.Threading
 
             semaphoreSecurity.Persist(SafeWaitHandle);
         }
+#endif
+
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern IntPtr CreateSemaphore_internal (
+            int initialCount, int maximumCount, string name, out int errorCode);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern bool ReleaseSemaphore_internal (
+            IntPtr handle, int releaseCount, out int previousCount);
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        private static extern IntPtr OpenSemaphore_internal (string name, SemaphoreRights rights, out int errorCode);
 #endif
     }
 }

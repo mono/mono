@@ -1105,7 +1105,7 @@ namespace System.Runtime.Serialization
             }
         }
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         [Fx.Tag.SecurityNote(Critical = "Holds instance of SecurityPermission that we will Demand for SerializationFormatter."
             + " Should not be modified to something else.")]
         [SecurityCritical]

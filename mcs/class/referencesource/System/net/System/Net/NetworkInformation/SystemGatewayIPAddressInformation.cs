@@ -9,7 +9,7 @@ namespace System.Net.NetworkInformation
     {
         IPAddress address;
 
-        private SystemGatewayIPAddressInformation(IPAddress address){
+        internal SystemGatewayIPAddressInformation(IPAddress address){
             this.address = address;
         }
 

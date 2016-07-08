@@ -135,7 +135,7 @@ class MDocUpdater : MDocCommand
 	
 	string apistyle = string.Empty;
 	bool isClassicRun;
-	bool multiassembly;
+	
 	bool delete;
 	bool show_exceptions;
 	bool no_assembly_versions, ignore_missing_types;
@@ -194,7 +194,14 @@ class MDocUpdater : MDocCommand
 	{
 		return !string.IsNullOrWhiteSpace (droppedNamespace);
 	}
-
+	
+	/// <summary>Logic flag to signify that we should list assemblies at the method level, since there are multiple
+	/// assemblies for a given type/method.</summary>
+	public bool IsMultiAssembly {
+		get { 
+			return apistyle == "classic" || apistyle == "unified";
+		}
+	}
 	
 	static List<string> droppedAssemblies = new List<string>();
 
@@ -281,12 +288,9 @@ class MDocUpdater : MDocCommand
 			{ "preserve",
 				"Do not delete members that don't exist in the assembly, but rather mark them as preserved.",
 				v => PreserveTag = "true" },
-			{ "multiassembly",
-				"Allow types to be in multiple assemblies.",
-				v => multiassembly = true },
 			{ "api-style=",
 				"Denotes the apistyle. Currently, only `classic` and `unified` are supported. `classic` set of assemblies should be run first, immediately followed by 'unified' assemblies with the `dropns` parameter.",
-				v => apistyle = v.ToLowerInvariant ()},
+				v => { apistyle = v.ToLowerInvariant (); }},
 		};
 		var assemblies = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -787,7 +791,7 @@ class MDocUpdater : MDocCommand
 	private void AddIndexAssembly (AssemblyDefinition assembly, XmlElement parent)
 	{
 		XmlElement index_assembly = null;
-		if (multiassembly) 
+		if (IsMultiAssembly) 
 			index_assembly = (XmlElement)parent.SelectSingleNode ("Assembly[@Name='"+ assembly.Name.Name +"']");
 		
 		if (index_assembly == null) 
@@ -867,7 +871,7 @@ class MDocUpdater : MDocCommand
 		
 		XmlElement index_types = WriteElement(index.DocumentElement, "Types");
 		XmlElement index_assemblies = WriteElement(index.DocumentElement, "Assemblies");
-		if (!multiassembly) 
+		if (!IsMultiAssembly) 
 			index_assemblies.RemoveAll ();
 
 
@@ -1765,7 +1769,7 @@ class MDocUpdater : MDocCommand
 		WriteElementText(me, "MemberType", GetMemberType(mi));
 
 		if (!no_assembly_versions) {
-			if (!multiassembly)
+			if (!IsMultiAssembly)
 				UpdateAssemblyVersions (me, mi, true);
 			else {
 				var node = AddAssemblyNameToNode (me, mi.Module);
@@ -2013,7 +2017,10 @@ class MDocUpdater : MDocCommand
 		member.AppendChild (link);
 		AddTargets (em, info);
 
-		extensionMethods.Add (em);
+		var sig = em.SelectSingleNode ("Member/MemberSignature[@Language='C#']/@Value");
+		if (!IsMultiAssembly || (IsMultiAssembly && sig != null && !extensionMethods.Any (ex => ex.SelectSingleNode ("Member/MemberSignature[@Language='C#']/@Value").Value == sig.Value))) {
+			extensionMethods.Add (em);
+		}
 	}
 
 	private static void RemoveExcept (XmlNode node, string[] except)
@@ -2404,7 +2411,7 @@ class MDocUpdater : MDocCommand
 	
 	private bool UpdateAssemblyVersions(XmlElement root, AssemblyDefinition assembly, string[] assemblyVersions, bool add)
 	{
-		if (multiassembly)
+		if (IsMultiAssembly)
 			return false;
 			
 		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");

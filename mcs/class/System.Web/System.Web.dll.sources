@@ -24,7 +24,6 @@ Mono.Web.Util/SettingsMapping.cs
 Mono.Web.Util/SettingsMappingManager.cs
 Mono.Web.Util/SettingsMappingWhat.cs
 
-ReferenceSources/SR.cs
 System.Web/ApplicationShutdownReason.cs
 System.Web/BeginEventHandler.cs
 System.Web.Caching/AggregateCacheDependency.cs
@@ -629,7 +628,6 @@ System.Web.UI/HtmlTextWriter.cs
 ../referencesource/System.Web/UI/IDataSource.cs
 ../referencesource/System.Web/UI/IDataSourceViewSchemaAccessor.cs
 ../referencesource/System.Web/UI/IDReferencePropertyAttribute.cs
-../referencesource/System.Web/UI/WebControls/IEditableTextControl.cs
 ../referencesource/System.Web/UI/IExpressionsAccessor.cs
 ../referencesource/System.Web/UI/IFilterResolutionService.cs
 System.Web.UI/IgnoreUnknownContentAttribute.cs

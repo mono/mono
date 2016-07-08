@@ -24,6 +24,7 @@ namespace System.Net {
     using System.Net.NetworkInformation;
     using System.Runtime.Serialization;
     using Microsoft.Win32;
+    using System.Collections.Generic;
 
     internal static class IntPtrHelper {
         /*
@@ -142,7 +143,9 @@ namespace System.Net {
 
         private static void DemandCallback(object state)
         {
+#if FEATURE_MONO_CAS
             ((CodeAccessPermission) state).Demand();
+#endif
         }
 
         // This is for checking if a hostname probably refers to this machine without going to DNS.
@@ -172,7 +175,6 @@ namespace System.Net {
         private static volatile IPAddress[] _LocalAddresses;
         private static object _LocalAddressesLock;
 
-#if MONO_NOT_IMPLEMENTED
 #if !FEATURE_PAL
 
         private static volatile NetworkAddressChangePolled s_AddressChange;
@@ -285,6 +287,19 @@ namespace System.Net {
         }
 
 #else // !FEATURE_PAL
+
+        internal static bool IsAddressLocal(IPAddress ipAddress) {
+            IPAddress[] localAddresses = NclUtilities.LocalAddresses;
+            for (int i = 0; i < localAddresses.Length; i++)
+            {
+                if (ipAddress.Equals(localAddresses[i], false))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private const int HostNameBufferLength = 256;
         internal static string _LocalDomainName;
 
@@ -293,6 +308,9 @@ namespace System.Net {
         //
         private static IPHostEntry GetLocalHost()
         {
+#if MONO
+            return Dns.GetHostByName (Dns.GetHostName ());
+#else
             //
             // IPv6 Changes: If IPv6 is enabled, we can't simply use the
             //               old IPv4 gethostbyname(null). Instead we need
@@ -335,6 +353,7 @@ namespace System.Net {
 
                 return Dns.NativeToHostEntry(nativePointer);
             }
+#endif
 
         } // GetLocalHost
 
@@ -400,7 +419,6 @@ namespace System.Net {
             }
         }
 #endif // !FEATURE_PAL
-#endif
 
         private static object LocalAddressesLock
         {
@@ -948,7 +966,7 @@ namespace System.Net {
 
     internal static class ExceptionHelper
     {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         internal static readonly KeyContainerPermission KeyContainerPermissionOpen = new KeyContainerPermission(KeyContainerPermissionFlags.Open);
         internal static readonly WebPermission WebPermissionUnrestricted = new WebPermission(NetworkAccess.Connect);
         internal static readonly SecurityPermission UnmanagedPermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
@@ -981,7 +999,6 @@ namespace System.Net {
             }
         }
 
-#if MONO_FEATURE_WEB_STACK
         internal static WebException IsolatedException {
             get {
                 return new WebException(NetRes.GetWebStatusString("net_requestaborted", WebExceptionStatus.KeepAliveFailure),WebExceptionStatus.KeepAliveFailure, WebExceptionInternalStatus.Isolated, null);
@@ -1005,7 +1022,6 @@ namespace System.Net {
                 return new WebException(NetRes.GetWebStatusString("net_requestaborted", WebExceptionStatus.RequestProhibitedByCachePolicy), WebExceptionStatus.RequestProhibitedByCachePolicy);
             }
         }
-#endif
     }
 
     internal enum WindowsInstallationType
@@ -1893,7 +1909,6 @@ typedef struct _SCHANNEL_CRED
         WriteWait = 2,
     }
 
-#if MONO_FEATURE_WEB_STACK
     //
     // HttpVerb - used to define various per Verb Properties
     //
@@ -1964,7 +1979,6 @@ typedef struct _SCHANNEL_CRED
         }
     }
 
-
     //
     // HttpProtocolUtils - A collection of utility functions for HTTP usage.
     //
@@ -1998,7 +2012,6 @@ typedef struct _SCHANNEL_CRED
             return D.ToUniversalTime().ToString("R", dateFormat);
         }
     }
-#endif
 
 #if !FEATURE_PAL
     // Proxy class for linking between ICertificatePolicy <--> ICertificateDecider

@@ -109,8 +109,8 @@ public class StringTest
 		if (!Environment.Is64BitProcess)
 			Assert.Ignore("This test cannot run on a 32-bit system.");
 
-		// Require 6 GB physical RAM, for the 4GB string plus 2GB headroom
-		var pc = new PerformanceCounter ("Mono Memory", "Total Physical Memory");
+		// Require 6 GB available RAM, for the 4GB string plus 2GB headroom
+		var pc = new PerformanceCounter ("Mono Memory", "Available Physical Memory");
 
 		if (pc.RawValue < 6L*1024L*1024L*1024L)
 			Assert.Ignore("This machine may not have enough RAM to run this test.");

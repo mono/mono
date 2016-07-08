@@ -20,8 +20,13 @@ namespace System.Net
     {
         internal Semaphore(int initialCount, int maxCount) : base() {
             lock (this) {
+#if MONO
+                int errorCode;
+                Handle = System.Threading.Semaphore.CreateSemaphore_internal(initialCount, maxCount, null, out errorCode);
+#else
                 // 
                 Handle = UnsafeNclNativeMethods.CreateSemaphore(IntPtr.Zero, initialCount, maxCount, IntPtr.Zero);
+#endif
             }
         }
 
@@ -36,14 +41,19 @@ namespace System.Net
 */
 
         internal bool ReleaseSemaphore() {
-#if DEBUG        
+#if MONO
+            int previousCount;
+            return System.Threading.Semaphore.ReleaseSemaphore_internal (Handle, 1, out previousCount);
+#else
+#if DEBUG
             int previousCount;
             bool success = UnsafeNclNativeMethods.ReleaseSemaphore(Handle, 1, out previousCount);        
             GlobalLog.Print("ReleaseSemaphore#"+ValidationHelper.HashString(this)+" success:"+success+" previousCount:"+previousCount.ToString());
             return success;
 #else            
             return UnsafeNclNativeMethods.ReleaseSemaphore(Handle, 1, IntPtr.Zero);
-#endif            
+#endif
+#endif
         }
 
         /*

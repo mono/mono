@@ -37,7 +37,16 @@ namespace System.Net.NetworkInformation
                 buffer = new byte[0];
         }
 
-
+#if MONO
+        internal PingReply (IPAddress address, byte [] buffer, PingOptions options, long roundtripTime, IPStatus status)
+        {
+            this.address = address;
+            this.buffer = buffer;
+            this.options = options;
+            this.rtt = roundtripTime;
+            this.ipStatus = status;
+        }
+#else
         // the main constructor for the icmpsendecho apis
         internal PingReply (IcmpEchoReply reply) {
             address = new IPAddress (reply.address);
@@ -72,7 +81,7 @@ namespace System.Net.NetworkInformation
                 buffer = new byte[0];
 
         }
-
+#endif
 
  
         //translates the relevant icmpsendecho codes to a ipstatus code

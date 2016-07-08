@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>618,612,672,809,1699,169,164,162,168,219,618,612</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -527,12 +530,15 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.jay > $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.cs
+
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.jay > $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.cs
+
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

@@ -423,31 +423,16 @@ namespace System.Reflection {
 		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void FillName (Assembly ass, AssemblyName aname);
+		static extern internal void FillName (Assembly ass, AssemblyName aname);
 
-		[MonoTODO ("copiedName == true is not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
-#if !MOBILE
-			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
-			if (SecurityManager.SecurityEnabled) {
-				GetCodeBase (true); // this will ensure the Demand is made
-			}
-#endif
-			return UnprotectedGetName ();
+			throw new NotImplementedException ();
 		}
 
 		public virtual AssemblyName GetName ()
 		{
 			return GetName (false);
-		}
-
-		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
-		internal virtual AssemblyName UnprotectedGetName ()
-		{
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
-			return aname;
 		}
 
 		public override string ToString ()

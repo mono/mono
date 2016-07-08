@@ -38,6 +38,15 @@ namespace Microsoft.Win32
 		public const int WAIT_ABANDONED   = 0x00000080;
 		public const int WAIT_ABANDONED_0 = WAIT_ABANDONED;
 
+		public const int ERROR_FILE_NOT_FOUND = 2;
+		public const int ERROR_PATH_NOT_FOUND = 3;
+		public const int ERROR_ACCESS_DENIED = 5;
+		public const int ERROR_INVALID_HANDLE = 6;
+		public const int ERROR_SHARING_VIOLATION = 32;
+		public const int ERROR_INVALID_NAME = 0x7B;
+		public const int ERROR_ALREADY_EXISTS = 183;
+		public const int ERROR_FILENAME_EXCED_RANGE = 0xCE;
+
 		public static bool DuplicateHandle(HandleRef hSourceProcessHandle, SafeHandle hSourceHandle, HandleRef hTargetProcess,
 			out SafeWaitHandle targetHandle, int dwDesiredAccess, bool bInheritHandle, int dwOptions)
 		{

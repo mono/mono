@@ -6,7 +6,7 @@ LIBRARY = WindowsBase.dll
 LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = -unsafe
 TEST_MCS_FLAGS = -unsafe
-TEST_LIB_REFS = WindowsBase System System.Xml System.Core
+TEST_LIB_REFS = WindowsBase System System.Xml System.Core System.IO.Compression
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_0

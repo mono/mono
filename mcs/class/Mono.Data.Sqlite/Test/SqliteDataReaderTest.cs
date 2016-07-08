@@ -178,7 +178,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			}
 		}
 
-		void AddParameter (System.Data.Common.DbCommand cm, string name, object value)
+		void AddParameter (global::System.Data.Common.DbCommand cm, string name, object value)
 		{
 			var param = cm.CreateParameter ();
 			param.ParameterName = ":" + name;

@@ -36,9 +36,7 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool IsInFullTrust()
         {
-#if DISABLE_CAS_USE
-            return true;
-#else
+#if FEATURE_MONO_CAS
             if (!SecurityManager.CurrentThreadRequiresSecurityContextCapture())
             {
                 return true;
@@ -53,6 +51,8 @@ namespace System.Runtime
             {
                 return false;
             }
+#else
+            return true;
 #endif
         }
 #if FEATURE_COMPRESSEDSTACK
@@ -114,11 +114,11 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool CheckAppDomainPermissions(PermissionSet permissions)
         {
-#if DISABLE_CAS_USE
-            return true;
-#else
+#if FEATURE_MONO_CAS
             return AppDomain.CurrentDomain.IsHomogenous &&
                    permissions.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet);
+#else
+            return true;
 #endif
         }
 
@@ -126,12 +126,12 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool HasEtwPermissions()
         {
-#if DISABLE_CAS_USE
-            return true;
-#else
+#if FEATURE_MONO_CAS
             //Currently unrestricted permissions are required to create Etw provider. 
             PermissionSet permissions = new PermissionSet(PermissionState.Unrestricted);
             return CheckAppDomainPermissions(permissions);
+#else
+            return true;
 #endif
         }
 
@@ -142,9 +142,7 @@ namespace System.Runtime
             [SecuritySafeCritical]
             get
             {
-#if DISABLE_CAS_USE
-                return true;
-#else
+#if FEATURE_MONO_CAS
                 if (!checkedForFullTrust)
                 {
                     inFullTrust = AppDomain.CurrentDomain.IsFullyTrusted;
@@ -152,6 +150,8 @@ namespace System.Runtime
                 }
 
                 return inFullTrust;
+#else
+                return true;
 #endif
             }
         }

@@ -20,7 +20,14 @@ namespace System.Net.NetworkInformation {
         IPEndPoint localEndPoint;
         IPEndPoint remoteEndPoint;
         TcpState state;
-
+#if MONO
+        public SystemTcpConnectionInformation (IPEndPoint local, IPEndPoint remote, TcpState state)
+        {
+            localEndPoint = local;
+            remoteEndPoint = remote;
+            this.state = state;
+        }
+#else
         internal SystemTcpConnectionInformation(MibTcpRow row) {
             state = row.state;
 
@@ -47,7 +54,7 @@ namespace System.Net.NetworkInformation {
             localEndPoint = new IPEndPoint(new IPAddress(row.localAddr, row.localScopeId), (int)localPort);
             remoteEndPoint = new IPEndPoint(new IPAddress(row.remoteAddr, row.remoteScopeId), (int)remotePort);
         }
-
+#endif
 
         public override TcpState State{get {return state;}}
         public override IPEndPoint LocalEndPoint{get {return localEndPoint;}}

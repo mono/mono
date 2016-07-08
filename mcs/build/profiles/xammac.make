@@ -19,7 +19,6 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_0 \
 	-d:NET_4_5 \
 	-d:MONO \
-	-d:DISABLE_CAS_USE  \
 	-d:MOBILE \
 	-d:MOBILE_DYNAMIC \
 	-d:XAMMAC \

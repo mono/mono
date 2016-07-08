@@ -24,6 +24,7 @@ namespace System.Net.NetworkInformation {
         private uint preferredLifetime;
         private byte prefixLength;
 
+#if !MONO
         internal SystemUnicastIPAddressInformation(IpAdapterUnicastAddress adapterAddress) {
             IPAddress ipAddress = adapterAddress.address.MarshalIPAddress();
             this.innerInfo = new SystemIPAddressInformation(ipAddress, adapterAddress.flags);
@@ -41,6 +42,7 @@ namespace System.Net.NetworkInformation {
                 ipv4Mask = PrefixLengthToSubnetMask(prefixLength, ipAddress.AddressFamily);
             }
         }
+#endif
 
        /// <include file='doc\NetworkInterface.uex' path='docs/doc[@for="IPAddressInformation.Address"]/*' />
         public override IPAddress Address{get {return innerInfo.Address;}}
@@ -128,7 +130,7 @@ namespace System.Net.NetworkInformation {
                 return dhcpLeaseLifetime;
                 }
             }
-        
+#if !MONO
         // Helper method that marshals the addressinformation into the classes
         internal static UnicastIPAddressInformationCollection MarshalUnicastIpAddressInformationCollection(IntPtr ptr) {
             UnicastIPAddressInformationCollection addressList = new UnicastIPAddressInformationCollection();
@@ -167,5 +169,6 @@ namespace System.Net.NetworkInformation {
 
             return new IPAddress(addressBytes);
         }
+#endif
     }
 }

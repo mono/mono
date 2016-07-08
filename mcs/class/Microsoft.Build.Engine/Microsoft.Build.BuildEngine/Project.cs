@@ -1035,7 +1035,7 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 #if XBUILD_12
 			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
-			if (effective_tools_version == "12.0") {
+			if (effective_tools_version == "12.0" || effective_tools_version == "14.0") {
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));
 
 				var frameworkToolsPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version451);

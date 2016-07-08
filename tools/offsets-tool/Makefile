@@ -11,8 +11,7 @@ MONO_OPTIONS_SRC = $(SRC_ROOT)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
 .stamp-clone:
 	@if [ ! -d $(CPPSHARP_DIR) ]; then \
-		git clone git@github.com:xamarin/CppSharpBinaries.git $(CPPSHARP_DIR); \
-		touch $@; \
+		git clone git://github.com/xamarin/CppSharpBinaries.git $(CPPSHARP_DIR) && touch $@; \
 	fi
 
 MonoAotOffsetsDumper.exe: .stamp-clone MonoAotOffsetsDumper.cs $(MONO_OPTIONS_SRC)

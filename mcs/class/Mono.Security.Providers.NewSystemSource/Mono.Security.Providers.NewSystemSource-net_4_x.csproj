@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -31,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1030</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;SECURITY_DEP;MONO_SECURITY_ALIAS;MONO;FEATURE_PAL;MONO_FEATURE_NEW_TLS;MONO_FEATURE_NEW_SYSTEM_SOURCE;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;SECURITY_DEP;MONO;FEATURE_PAL;MONO_FEATURE_NEW_TLS;MONO_FEATURE_NEW_SYSTEM_SOURCE;DISABLE_CAS_USE;MONO_SECURITY_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1030</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;SECURITY_DEP;MONO_SECURITY_ALIAS;MONO;FEATURE_PAL;MONO_FEATURE_NEW_TLS;MONO_FEATURE_NEW_SYSTEM_SOURCE;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;SECURITY_DEP;MONO;FEATURE_PAL;MONO_FEATURE_NEW_TLS;MONO_FEATURE_NEW_SYSTEM_SOURCE;DISABLE_CAS_USE;MONO_SECURITY_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -51,21 +54,21 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\referencesource\mscorlib\InternalApis\NDP_Common\inc\PinnableBufferCache.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LoggingObject.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_NTAuthentication.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_SecureChannel.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_SslSessionsCache.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Logging.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\SecureProtocols\_FixedSizeReader.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\SecureProtocols\_HelperAsyncResults.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\SecureProtocols\_SslState.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\SecureProtocols\_SslStream.cs" />
-    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\SecureProtocols\SslStream.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\referencesource\mscorlib\InternalApis\NDP_Common\inc\PinnableBufferCache.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_LoggingObject.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_NTAuthentication.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_SecureChannel.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_SslSessionsCache.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Logging.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\SecureProtocols\_FixedSizeReader.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\SecureProtocols\_HelperAsyncResults.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\SecureProtocols\_SslState.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\SecureProtocols\_SslStream.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\SecureProtocols\SslStream.cs" />
     <Compile Include="..\System\Mono.Net.Security\CallbackHelpers.cs" />
     <Compile Include="..\System\Mono.Net.Security\IMonoTlsProvider.cs" />
     <Compile Include="..\System\Mono.Net.Security\MonoTlsProviderFactory.cs" />
@@ -95,7 +98,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

@@ -104,6 +104,11 @@ namespace System.Net {
             }
         }
 
+#if MONO
+        // Temporary bridge to old implementation
+        internal string ModuleAuthenticationType;
+#endif
+
     } // class Authorization
 
 

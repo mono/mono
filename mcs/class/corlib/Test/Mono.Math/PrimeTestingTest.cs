@@ -81,12 +81,12 @@ namespace MonoTests.Mono.Math {
 
 		private void ExpectComposite (BigInteger bi)
 		{
-			Assertion.AssertEquals (false, bi.isProbablePrime ());
+			Assert.AreEqual (false, bi.isProbablePrime ());
 		}
 
 		private void ExpectPrime (BigInteger bi)
 		{
-			Assertion.AssertEquals (true, bi.isProbablePrime ());
+			Assert.AreEqual (true, bi.isProbablePrime ());
 		}
 	}
 

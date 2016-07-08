@@ -65,10 +65,22 @@ namespace System.Runtime.InteropServices {
             return !(a == b);
         }
 
+#if MONO
+        int CalculateCount()
+        {
+            Array a = m_array as Array;
+            if (a == null)
+                throw new ArgumentException ();
+
+            var total = a.Rank * a.Length;
+            return total - m_offset;
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern int CalculateCount();
+#endif
     
         private Object m_array;
         private int    m_offset;

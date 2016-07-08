@@ -105,5 +105,31 @@ namespace MonoTests.System.IO.Compression.FileSystem
 
 			Directory.Delete ("extract", true);
 		}
+
+		[Test]
+		public void ZipCreateFromEntryChangeTimestamp()
+		{
+			if (File.Exists ("foo.zip"))
+				File.Delete ("foo.zip");
+
+			var file = "foo/foo.txt";
+			using (var archive = new ZipArchive(File.Open("foo.zip", FileMode.Create),
+				ZipArchiveMode.Update))
+			{
+				archive.CreateEntryFromFile(file, file);
+			}
+
+			var date = File.GetLastWriteTimeUtc(file);
+
+			using (var archive = new ZipArchive (File.Open ("foo.zip", FileMode.Open),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry (file);
+				Assert.IsNotNull (entry);
+				Assert.AreEqual(entry.LastWriteTime.Year, date.Year);
+				Assert.AreEqual(entry.LastWriteTime.Month, date.Month);
+				Assert.AreEqual(entry.LastWriteTime.Day, date.Day);
+			}
+		}
 	}
 }

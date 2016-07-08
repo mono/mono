@@ -32,5 +32,10 @@ namespace SharpCompress.Archive.Zip
         {
             get { return (Parts.Single() as SeekableZipFilePart).Comment; }
         }
+
+        public override string ToString()
+        {
+            return this.Key;
+        }
     }
 }

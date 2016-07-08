@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
 	<UsingTask TaskName="Microsoft.Build.Tasks.AL"			AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.AssignTargetPath"	AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<UsingTask TaskName="Microsoft.Build.Tasks.AssignLinkMetadata"	AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.AssignCulture"	AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.AssignProjectConfiguration"	AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.CallTarget"		AssemblyName="Microsoft.Build.Tasks.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

@@ -17,7 +17,7 @@ namespace System.Net.Configuration
     using System.Security.Principal;
     using System.ComponentModel;
 
-
+#if !MONO
     public sealed class DefaultProxySection : ConfigurationSection
     {
         public DefaultProxySection()
@@ -134,9 +134,10 @@ namespace System.Net.Configuration
             base.Reset(defaultElement);
         }
     }
-
+#endif
     internal sealed class DefaultProxySectionInternal
     {
+#if !MONO
         [SecurityPermission(SecurityAction.Assert, Flags=SecurityPermissionFlag.ControlPrincipal)]
         internal DefaultProxySectionInternal(DefaultProxySection section)
         {
@@ -274,6 +275,50 @@ namespace System.Net.Configuration
                 this.webProxy.Credentials = SystemNetworkCredential.defaultCredential;
             }
         }
+#else
+
+        static IWebProxy GetDefaultProxy_UsingOldMonoCode()
+        {
+#if CONFIGURATION_DEP
+            DefaultProxySection sec = ConfigurationManager.GetSection ("system.net/defaultProxy") as DefaultProxySection;
+            WebProxy p;
+            
+            if (sec == null)
+                return GetSystemWebProxy ();
+            
+            ProxyElement pe = sec.Proxy;
+            
+            if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null)) {
+                IWebProxy proxy = GetSystemWebProxy ();
+                
+                if (!(proxy is WebProxy))
+                    return proxy;
+                
+                p = (WebProxy) proxy;
+            } else
+                p = new WebProxy ();
+            
+            if (pe.ProxyAddress != null)
+                p.Address = pe.ProxyAddress;
+            
+            if (pe.BypassOnLocal != ProxyElement.BypassOnLocalValues.Unspecified)
+                p.BypassProxyOnLocal = (pe.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
+                
+            foreach(BypassElement elem in sec.BypassList)
+                p.BypassArrayList.Add(elem.Address);
+            
+            return p;
+#else
+            return GetSystemWebProxy ();
+#endif
+        }
+
+        static IWebProxy GetSystemWebProxy()
+        {
+            return System.Net.WebProxy.CreateDefaultProxy ();
+        }
+
+#endif
 
         internal static object ClassSyncObject
         {
@@ -292,6 +337,11 @@ namespace System.Net.Configuration
         {
             lock (DefaultProxySectionInternal.ClassSyncObject)
             {
+#if MONO
+                var res = new DefaultProxySectionInternal();
+                res.webProxy = GetDefaultProxy_UsingOldMonoCode ();
+                return res;
+#else
                 DefaultProxySection section = PrivilegedConfigurationManager.GetSection(ConfigurationStrings.DefaultProxySectionPath) as DefaultProxySection;
                 if (section == null)
                     return null;
@@ -306,6 +356,7 @@ namespace System.Net.Configuration
 
                     throw new ConfigurationErrorsException(SR.GetString(SR.net_config_proxy), exception);
                 }
+#endif
             }
         }
 

@@ -23,7 +23,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
     internal class X509Utils {
         private X509Utils () {}
-
+#if !MONO
         internal static bool IsCertRdnCharString (uint dwValueType) {
             return ((dwValueType & CAPI.CERT_RDN_TYPE_MASK) >= CAPI.CERT_RDN_NUMERIC_STRING);
         }
@@ -349,16 +349,26 @@ namespace System.Security.Cryptography.X509Certificates {
             CAPI.CRYPT_OID_INFO pOIDInfo = CAPI.CryptFindOIDInfo(CAPI.CRYPT_OID_INFO_OID_KEY, pszOid, 0);
             return pOIDInfo.Algid;
         }
-
+#endif
 #if FEATURE_CORESYSTEM
         [SecuritySafeCritical]
 #endif
-        internal static string FindOidInfo(uint keyType, string keyValue, OidGroup oidGroup) {
+        internal static string FindOidInfo(uint keyType, string keyValue, System.Security.Cryptography.OidGroup oidGroup) {
             if (keyValue == null)
                 throw new ArgumentNullException("keyValue");
             if (keyValue.Length == 0)
                 return null;
 
+#if MONO
+            switch(keyType) {
+                case CAPI.CRYPT_OID_INFO_OID_KEY:
+                    return CAPI.CryptFindOIDInfoNameFromKey(keyValue, oidGroup);
+                case CAPI.CRYPT_OID_INFO_NAME_KEY:
+                    return CAPI.CryptFindOIDInfoKeyFromName(keyValue, oidGroup);
+                default:
+                    throw new NotImplementedException(keyType.ToString());
+            }
+#else
             SafeLocalAllocHandle pvKey = SafeLocalAllocHandle.InvalidHandle;
 
             try {
@@ -389,21 +399,22 @@ namespace System.Security.Cryptography.X509Certificates {
             finally {
                 pvKey.Dispose();
             }
+#endif
         }
 
         // Try to find OID info within a specific group, and if that doesn't work fall back to all
         // groups for compatibility with previous frameworks
-        internal static string FindOidInfoWithFallback(uint key, string value, OidGroup group) {
+        internal static string FindOidInfoWithFallback(uint key, string value, System.Security.Cryptography.OidGroup group) {
             string info = FindOidInfo(key, value, group);
 
             // If we couldn't find it in the requested group, then try again in all groups
-            if (info == null && group != OidGroup.All) {
-                info = FindOidInfo(key, value, OidGroup.All);
+            if (info == null && group != System.Security.Cryptography.OidGroup.All) {
+                info = FindOidInfo(key, value, System.Security.Cryptography.OidGroup.All);
             }
 
             return info;
         }
-
+#if !MONO
         //
         // verify the passed keyValue is valid as per X.208
         //
@@ -568,5 +579,6 @@ error:
             else 
                 return SR.GetString(SR.Unknown_Error);
         }
+#endif
     }
 }

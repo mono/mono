@@ -51,7 +51,6 @@ using System.Runtime.InteropServices;
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../mono.pub")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: DefaultDependency (LoadHint.Always)]

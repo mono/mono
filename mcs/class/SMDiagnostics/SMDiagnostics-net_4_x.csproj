@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -45,27 +48,27 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Activity.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticsTraceCode.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticStrings.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticTraceSource.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EncodingFallbackAwareXmlTextWriter.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogCategory.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogEventId.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogger.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\ExceptionUtility.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\LegacyDiagnosticTrace.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\MachineSettingsSection.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\NativeMethods.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\PiiTraceSource.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\PlainXmlWriter.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\TraceSourceKind.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\TraceXPathNavigator.cs" />
-    <Compile Include="..\..\..\external\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Utility.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Activity.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticsTraceCode.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticStrings.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticTraceSource.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EncodingFallbackAwareXmlTextWriter.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogCategory.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogEventId.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogger.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\ExceptionUtility.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\LegacyDiagnosticTrace.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\MachineSettingsSection.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\NativeMethods.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\PiiTraceSource.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\PlainXmlWriter.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\SafeEventLogWriteHandle.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\TraceSourceKind.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\TraceXPathNavigator.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Utility.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\TraceSR.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -82,7 +85,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

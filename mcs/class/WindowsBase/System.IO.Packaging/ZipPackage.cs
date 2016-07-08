@@ -95,8 +95,10 @@ namespace System.IO.Packaging {
 		{
 			// Ensure that all the data has been read out of the package
 			// stream already. Otherwise we'll lose data when we recreate the zip
-			foreach (ZipPackagePart part in Parts.Values)
-				part.GetStream ().Dispose ();
+			foreach (ZipPackagePart part in Parts.Values) {
+				if (part.Package != null)
+					part.GetStream ().Dispose ();
+			}
 			
 			// Empty the package stream
 			PackageStream.Position = 0;
@@ -107,6 +109,9 @@ namespace System.IO.Packaging {
 
 				// Write all the part streams
 				foreach (ZipPackagePart part in Parts.Values) {
+					if (part.Package == null)
+						continue;
+
 					Stream partStream = part.GetStream ();
 					partStream.Seek (0, SeekOrigin.Begin);
 					

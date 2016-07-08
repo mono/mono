@@ -34,6 +34,7 @@ namespace System.IO.Ports
 #endif
         internal static String GetMessage(int errorCode) 
         {
+#if !MONO
             StringBuilder sb = new StringBuilder(512);
             int result = SafeNativeMethods.FormatMessage(NativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS |
                 NativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | NativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY,
@@ -47,6 +48,7 @@ namespace System.IO.Ports
                 return s;
             }
             else 
+#endif
             {
                 return SR.GetString(SR.IO_UnknownError, errorCode);
             }

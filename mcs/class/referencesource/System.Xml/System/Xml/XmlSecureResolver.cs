@@ -15,23 +15,23 @@ namespace System.Xml {
     [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
     public partial class XmlSecureResolver : XmlResolver {
         XmlResolver resolver;
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         PermissionSet permissionSet;
 #endif
 
-#if DISABLE_CAS_USE
-        public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, (PermissionSet) null) {}
-
-        public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, (PermissionSet) null) {}
-#else
+#if FEATURE_MONO_CAS
         public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, CreateEvidenceForUrl(securityUrl)) {}
 
         public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, SecurityManager.GetStandardSandbox(evidence)) {}
+#else
+        public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, (PermissionSet) null) {}
+
+        public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, (PermissionSet) null) {}
 #endif
 
         public XmlSecureResolver(XmlResolver resolver, PermissionSet permissionSet) {
             this.resolver = resolver;
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             this.permissionSet = permissionSet;
 #endif
         }
@@ -41,7 +41,7 @@ namespace System.Xml {
         }
 
         public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn) {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             permissionSet.PermitOnly();
 #endif
             return resolver.GetEntity(absoluteUri, role, ofObjectToReturn);
@@ -54,7 +54,7 @@ namespace System.Xml {
         }
 
         public static Evidence CreateEvidenceForUrl(string securityUrl) {
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             Evidence evidence = new Evidence();
             if (securityUrl != null && securityUrl.Length > 0) {
                 evidence.AddHostEvidence(new Url(securityUrl));
@@ -79,7 +79,7 @@ namespace System.Xml {
 #endif
         }
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
         [Serializable]
         private class UncDirectory : EvidenceBase, IIdentityPermissionFactory {
             private string uncDir;

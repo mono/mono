@@ -1,4 +1,4 @@
-thisdir = tools/mdb-rebase
+thisdir = tools/mdbrebase
 SUBDIRS =
 include ../../build/rules.make
 

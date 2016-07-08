@@ -181,6 +181,15 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		public void Constructor_CreatedWithSameName ()
+		{
+			var s1 = new Semaphore(1, 5, "name");
+			bool created;
+			var s2 = new Semaphore(1, 5, "name", out created);
+			Assert.IsFalse (created);
+		}
+
+		[Test]
 		[Category ("MobileNotWorking")]
 		public void Constructor_IntIntStringBoolSecurity ()
 		{

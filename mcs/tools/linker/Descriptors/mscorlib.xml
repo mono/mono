@@ -290,12 +290,16 @@
 		<type fullname="System.Runtime.Remoting.Messaging.CallContext">
 			<method name="SetCurrentCallContext" />
 		</type>
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields" />
+		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
+			<method name="InitMessage" />
+		</type>
 		<type fullname="System.Runtime.Remoting.Proxies.RealProxy" preserve="fields">
 			<method name="PrivateInvoke" />
 			<method name="GetAppDomainTarget" />
 		</type>
-		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" preserve="fields" />
+		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" preserve="fields">
+			<method name="LoadRemoteFieldNew" />
+		</type>
 		<type fullname="System.Runtime.Remoting.RemotingServices">
 			<method name="SerializeCallData" />
 			<method name="DeserializeCallData" />

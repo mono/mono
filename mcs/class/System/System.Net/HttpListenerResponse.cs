@@ -427,7 +427,7 @@ namespace System.Net {
 
 			StreamWriter writer = new StreamWriter (ms, encoding, 256);
 			writer.Write ("HTTP/{0} {1} {2}\r\n", version, status_code, status_description);
-			string headers_str = headers.ToStringMultiValue ();
+			string headers_str = headers.ToString ();
 			writer.Write (headers_str);
 			writer.Flush ();
 			int preamble = (encoding.CodePage == 65001) ? 3 : encoding.GetPreamble ().Length;

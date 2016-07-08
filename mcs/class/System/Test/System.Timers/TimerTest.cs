@@ -40,7 +40,6 @@ namespace MonoTests.System.Timers
 	public class TimerTest
 	{
 		Timer timer;
-		int _elapsedCount;
 
 		[SetUp]
 		public void SetUp ()
@@ -287,19 +286,46 @@ namespace MonoTests.System.Timers
 			Assert.IsFalse (timer.Enabled, "#3");
 		}
 
-		[Test] // bug #325368
+		[Test] // bug https://bugzilla.novell.com/show_bug.cgi?id=325368
 		public void EnabledInElapsed ()
 		{
-			_elapsedCount = 0;
+			var elapsedCount = 0;
+			var mre = new ST.ManualResetEventSlim ();
 			timer = new Timer (50);
 			timer.AutoReset = false;
-			timer.Elapsed += new ElapsedEventHandler (EnabledInElapsed_Elapsed);
+			timer.Elapsed += (s, e) =>
+			{
+				elapsedCount++;
+				if (elapsedCount == 1)
+					timer.Enabled = true;
+				else if (elapsedCount == 2)
+					mre.Set ();
+			};
 			timer.Start ();
 
-			ST.Thread.Sleep (200);
+			Assert.IsTrue (mre.Wait (500), "#1 re-enabling timer in Elapsed didn't work");
+			Assert.AreEqual (2, elapsedCount, "#2 wrong elapsedCount");
 			timer.Stop ();
+		}
 
-			Assert.IsTrue (_elapsedCount == 2,  "#1 loss of events");
+		[Test]
+		public void AutoResetEventFalseStopsFiringElapsed ()
+		{
+			var elapsedCount = 0;
+			var mre = new ST.ManualResetEventSlim ();
+			timer = new Timer (50);
+			timer.AutoReset = false;
+			timer.Elapsed += (s, e) =>
+			{
+				elapsedCount++;
+				if (elapsedCount > 1)
+					mre.Set ();
+			};
+			timer.Start ();
+
+			Assert.IsFalse (mre.Wait (500), "#1 AutoResetEvent=false didn't stop firing Elapsed, elapsedCount=" + elapsedCount);
+			Assert.AreEqual (1, elapsedCount, "#2 wrong elapsedCount");
+			timer.Stop ();
 		}
 
 		[Test]
@@ -307,14 +333,6 @@ namespace MonoTests.System.Timers
 		{
 			Assert.IsTrue (new RaceTest (true).Success, "#1");
 			Assert.IsTrue (new RaceTest (false).Success, "#2");
-		}
-
-		void EnabledInElapsed_Elapsed (object sender, ElapsedEventArgs e)
-		{
-			_elapsedCount++;
-			Timer t = sender as Timer;
-			if (_elapsedCount == 1)
-				t.Enabled = true;
 		}
 	}
 

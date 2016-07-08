@@ -770,7 +770,7 @@ namespace MonoTests.System.Collections
 			for (int i = 0; i < 20; i++)
 				sl1.RemoveAt (9);
 
-			Assert.AreEqual (30, sl1.Count, 30, "#C1");
+			Assert.AreEqual (30, (double) sl1.Count, 30, "#C1");
 			for (int i = 0; i < 9; i++)
 				Assert.AreEqual (i, sl1 ["kala " + string.Format ("{0:D2}", i)], "#C2:" + i);
 			for (int i = 9; i < 29; i++)

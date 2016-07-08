@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -1071,7 +1074,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -1083,10 +1085,6 @@
     <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.ServiceModel.Activation/System.ServiceModel.Activation-net_4_x.csproj">
-      <Project>{7A23227C-591B-4F80-9D62-4D0271073D82}</Project>
-      <Name>System.ServiceModel.Activation-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
@@ -1143,6 +1141,10 @@
     <ProjectReference Include="../System.Web/System.Web-net_4_x.csproj">
       <Project>{9DB806CB-B828-49B7-BAE2-2E52402CB4DC}</Project>
       <Name>System.Web-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.ServiceModel.Activation/System.ServiceModel.Activation-net_4_x.csproj">
+      <Project>{7A23227C-591B-4F80-9D62-4D0271073D82}</Project>
+      <Name>System.ServiceModel.Activation-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_x.csproj">
       <Project>{928432BE-3518-4103-97F6-48B9658588A6}</Project>

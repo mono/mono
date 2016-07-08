@@ -9,12 +9,12 @@ namespace System.Net.NetworkInformation
         const int DontFragmentFlag = 2;
         int ttl = 128;
         bool dontFragment;
-
+#if !MONO
         internal PingOptions (IPOptions options) {
             this.ttl = options.ttl;
             this.dontFragment = ((options.flags & DontFragmentFlag) > 0 ? true : false);
         }
-
+#endif
         public PingOptions (int ttl, bool dontFragment) {
             if (ttl <= 0) {
                 throw new ArgumentOutOfRangeException("ttl");

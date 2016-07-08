@@ -438,7 +438,7 @@ namespace System.Reflection {
 			foreach (Type type in methodInstantiation) {
 				if (type == null)
 					throw new ArgumentNullException ();
-				if (!(type is MonoType))
+				if (!(type is RuntimeType))
 					hasUserType = true;
 			}
 

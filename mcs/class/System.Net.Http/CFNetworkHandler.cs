@@ -61,7 +61,9 @@ namespace System.Net.Http
 			public void Close ()
 			{
 				CancellationTokenRegistration.Dispose ();
-				ContentStream.Close ();
+                                if (ContentStream != null) {
+                                    ContentStream.Close ();
+                                }
 			}
 		}
 
@@ -98,7 +100,7 @@ namespace System.Net.Http
 
 		public CookieContainer CookieContainer {
 			get {
-				return cookies;
+				return cookies ?? (cookies = new CookieContainer ());
 			}
 			set {
 				EnsureModifiability ();

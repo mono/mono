@@ -311,7 +311,7 @@ namespace System.Net
 
 		public static ServicePoint FindServicePoint (Uri address) 
 		{
-			return FindServicePoint (address, GlobalProxySelection.Select);
+			return FindServicePoint (address, null);
 		}
 		
 		public static ServicePoint FindServicePoint (string uriString, IWebProxy proxy)

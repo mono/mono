@@ -270,7 +270,7 @@ namespace Mono.MonoConfig
 	class MConfig
 	{
 		static string[] configPaths = {
-			Constants.GlobalConfigPath,
+			Path.GetFullPath (Path.Combine (Environment.CommandLine, "..", "..", "..","..", "etc", "mono", "mconfig", "config.xml")),
 			Path.Combine (ConfigPath, "config.xml"),
 			Path.Combine (".", "mconfig.xml"),
 			null

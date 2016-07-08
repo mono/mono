@@ -5,9 +5,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace zipsharp
 {
+	[StructLayoutAttribute (LayoutKind.Sequential)]
 	struct ZipFileInfo
 	{
 		ZipTime date;
@@ -38,7 +40,7 @@ namespace zipsharp
 		public ZipFileInfo (DateTime fileTime)
 		{
 			date = new ZipTime (fileTime);
-			dosDate = new IntPtr ((int)fileTime.ToFileTime ());
+			dosDate = IntPtr.Zero;
 			internalFileAttributes = IntPtr.Zero;
 			externalFileAttributes = IntPtr.Zero;
 		}

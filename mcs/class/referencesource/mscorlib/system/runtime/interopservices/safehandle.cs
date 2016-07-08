@@ -276,7 +276,7 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     public extern void SetHandleAsInvalid();
-
+#endif
     // Implement this abstract method in your derived class to specify how to
     // free the handle. Be careful not write any code that's subject to faults
     // in this method (the runtime will prepare the infrastructure for you so
@@ -287,7 +287,7 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     // MDA is enabled.
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     protected abstract bool ReleaseHandle();
-
+#if !MONO
     // Add a reason why this handle should not be relinquished (i.e. have
     // ReleaseHandle called on it). This method has dangerous in the name since
     // it must always be used carefully (e.g. called within a CER) to avoid

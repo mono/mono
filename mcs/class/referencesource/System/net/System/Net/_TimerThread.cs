@@ -182,7 +182,9 @@ namespace System.Net {
 
         static TimerThread() {
             s_ThreadEvents = new WaitHandle[] { s_ThreadShutdownEvent, s_ThreadReadyEvent };
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
             AppDomain.CurrentDomain.DomainUnload += new EventHandler(OnDomainUnload);
+#endif
         }
 
         /// <summary>

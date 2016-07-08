@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices {
    
     using System;
@@ -51,3 +51,4 @@ namespace System.Runtime.InteropServices {
         private Object m_WrappedObject;
     }
 }
+#endif

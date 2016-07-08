@@ -154,6 +154,15 @@ MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.exe,$(EXE_REF
 
 all-local: $(makefrag) $(extra_targets)
 
+ifdef BUILT_SOURCES
+library_CLEAN_FILES += $(BUILT_SOURCES)
+ifeq (cat, $(PLATFORM_CHANGE_SEPARATOR_CMD))
+BUILT_SOURCES_cmdline = $(BUILT_SOURCES)
+else
+BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+endif
+endif
+
 csproj-local:
 	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
@@ -164,6 +173,7 @@ csproj-local:
 	echo $(build_lib); \
 	echo $(FRAMEWORK_VERSION); \
 	echo $(PROFILE); \
+	echo $(RESOURCE_DEFS); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 

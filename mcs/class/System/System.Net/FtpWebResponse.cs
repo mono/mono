@@ -115,6 +115,12 @@ namespace System.Net
 			}
 		}
 
+		public override bool SupportsHeaders {
+			get {
+				return true;
+			}
+		}
+
 		public string StatusDescription {
 			get {
 				return statusDescription;

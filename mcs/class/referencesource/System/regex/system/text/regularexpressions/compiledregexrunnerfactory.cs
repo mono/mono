@@ -28,7 +28,7 @@ namespace System.Text.RegularExpressions {
         protected internal override RegexRunner CreateInstance() {
             CompiledRegexRunner runner = new CompiledRegexRunner();
 
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             runner.SetDelegates((NoParamDelegate)       goMethod.CreateDelegate(typeof(NoParamDelegate)),

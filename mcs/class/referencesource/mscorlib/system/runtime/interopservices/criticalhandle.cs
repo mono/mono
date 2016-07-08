@@ -206,10 +206,16 @@ public abstract class CriticalHandle : CriticalFinalizerObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
+#if MONO
+    static void FireCustomerDebugProbe()
+    {
+    }
+#else
     [ResourceExposure(ResourceScope.None)]
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     private extern void FireCustomerDebugProbe();
+#endif
 
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     protected void SetHandle(IntPtr handle) {

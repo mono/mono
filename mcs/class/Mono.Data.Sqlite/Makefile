@@ -42,5 +42,5 @@ $(PREBUILT): %.prebuilt: %
 	cp $* $@
 
 $(RESX_RESOURCES): %.resources: %.resx
-	$(RESGEN) $< || cp $@.prebuilt $@
+	$(RESGEN) -useSourcePath $< || cp $@.prebuilt $@
 

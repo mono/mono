@@ -245,8 +245,6 @@ namespace System.Net.Http
 				wr.KeepAlive = request.Headers.ConnectionClose != true;
 			}
 
-			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
-
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
@@ -270,7 +268,12 @@ namespace System.Net.Http
 
 			if (useProxy) {
 				wr.Proxy = proxy;
+			} else {
+				// Disables default WebRequest.DefaultWebProxy value
+				wr.Proxy = null;
 			}
+
+			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
 
 			// Add request headers
 			var headers = wr.Headers;
@@ -294,7 +297,7 @@ namespace System.Net.Http
 				if (values_formated == null)
 					continue;
 
-				headers.AddValue (header.Key, values_formated);
+				headers.AddInternal (header.Key, values_formated);
 			}
 			
 			return wr;
@@ -343,7 +346,7 @@ namespace System.Net.Http
 
 						foreach (var header in content.Headers) {
 							foreach (var value in header.Value) {
-								headers.AddValue (header.Key, value);
+								headers.AddInternal (header.Key, value);
 							}
 						}
 

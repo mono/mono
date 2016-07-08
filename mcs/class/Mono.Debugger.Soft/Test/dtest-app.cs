@@ -419,6 +419,9 @@ public class Tests : TestsBase, ITest2
 		ss_step_through ();
 		ss_non_user_code ();
 		ss_recursive (1);
+		ss_recursive2 (1);
+		ss_recursive2 (1);
+		ss_recursive_chaotic ();
 		ss_fp_clobber ();
 	}
 
@@ -566,6 +569,92 @@ public class Tests : TestsBase, ITest2
 		if (n == 10)
 			return;
 		ss_recursive (n + 1);
+	}
+
+	// Breakpoint will be placed here
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive2_trap ()
+	{
+	}
+
+	public static void ss_recursive2_at (string s)
+	{
+		// Console.WriteLine (s);
+	}
+
+	// This method is used both for a step over and step out test.
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive2 (int x)
+	{
+		ss_recursive2_at ( "ss_recursive2 in " + x);
+		if (x < 5) {
+			int next = x + 1;
+			ss_recursive2_at ("ss_recursive2 descend " + x);
+			ss_recursive2_trap ();
+			ss_recursive2 (next);
+		}
+		ss_recursive2_at ("ss_recursive2 out " + x);
+	}
+
+	// Breakpoint will be placed here
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic_trap ()
+	{
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic_at (bool exiting, string at, int n)
+	{
+//		string indent = "";
+//		for (int count = 5 - n; count > 0; count--)
+//			indent += "\t";
+//		Console.WriteLine (indent + (exiting ? "<--" : "-->") + " " + at + " " + n);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic_fizz (int n)
+	{
+		ss_recursive_chaotic_at (false, "fizz", n);
+		if (n > 0) {
+			int next = n - 1;
+			ss_recursive_chaotic_buzz (next);
+			ss_recursive_chaotic_fizzbuzz (next);
+		} else {
+			ss_recursive_chaotic_trap ();
+		}
+		ss_recursive_chaotic_at (true, "fizz", n);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic_buzz (int n)
+	{
+		ss_recursive_chaotic_at (false, "buzz", n);
+		if (n > 0) {
+			int next = n - 1;
+			ss_recursive_chaotic_fizz (next);
+			ss_recursive_chaotic_fizzbuzz (next);
+		}
+		ss_recursive_chaotic_at (true, "buzz", n);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic_fizzbuzz (int n)
+	{
+		ss_recursive_chaotic_at (false, "fizzbuzz", n);
+		if (n > 0) {
+			int next = n - 1;
+			ss_recursive_chaotic_fizz (next);
+			ss_recursive_chaotic_buzz (next);
+			ss_recursive_chaotic_fizzbuzz (next);
+		}
+		ss_recursive_chaotic_at (true, "fizzbuzz", n);
+	}
+
+	// Call a complex tree of recursive calls that has tripped up "step out" in the past.
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive_chaotic ()
+	{
+		ss_recursive_chaotic_fizz (5);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

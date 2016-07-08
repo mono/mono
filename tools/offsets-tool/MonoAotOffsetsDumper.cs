@@ -764,7 +764,8 @@ namespace CppSharp
                 "MonoException",
                 "MonoTypedRef",
                 "MonoThreadsSync",
-                "SgenThreadInfo"
+                "SgenThreadInfo",
+                "SgenClientThreadInfo"
             };
 
             DumpClasses(writer, ctx, types);

@@ -116,6 +116,7 @@ namespace System.Threading {
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
 		object pending_exception;
+		int priority;
 		#endregion
 #pragma warning restore 414
 

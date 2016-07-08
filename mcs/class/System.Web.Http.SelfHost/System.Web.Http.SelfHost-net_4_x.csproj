@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -106,7 +109,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -162,6 +164,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx">
+      <LogicalName>System.Web.Http.SelfHost.Properties.CommonWebApiResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/aspnetwebstack/src/System.Web.Http.SelfHost/Properties/SRResources.resx">
+      <LogicalName>System.Web.Http.SelfHost.Properties.SRResources.resources</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
 

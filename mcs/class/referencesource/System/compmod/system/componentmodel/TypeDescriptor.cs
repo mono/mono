@@ -365,7 +365,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -401,7 +401,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
@@ -475,12 +475,12 @@ namespace System.ComponentModel
                     // sense that they provide a public API while not necessarily being public themselves. As such,
                     // we need to allow instantiation of internal TypeDescriptionProviders. See the thread attached
                     // to VSWhidbey #500522 for a more detailed discussion.
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     IntSecurity.FullReflection.Assert();
                     try {
 #endif
                         prov = (TypeDescriptionProvider)Activator.CreateInstance(providerType);
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
                     }
                     finally {
                         CodeAccessPermission.RevertAssert();
@@ -3244,7 +3244,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -3279,7 +3279,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-#if !DISABLE_CAS_USE
+#if FEATURE_MONO_CAS
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);

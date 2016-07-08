@@ -171,7 +171,7 @@ namespace System.Net {
             //
             if (ipString.IndexOf(':') != -1 ) {
 
-#if !FEATURE_PAL
+#if !FEATURE_PAL || MONO
                 //
                 // If the address string contains the colon character
                 // then it can only be an IPv6 address. Use a separate
@@ -184,6 +184,7 @@ namespace System.Net {
                 //
                 SocketException e = null;
                 long   scope = 0;
+#if !MONO
                 if(Socket.OSSupportsIPv6)
                 {
                     byte[] bytes = new byte[IPv6AddressBytes];
@@ -221,6 +222,7 @@ namespace System.Net {
                     e = new SocketException();
                 }
                 else
+#endif
                 {
                     unsafe
                     {
@@ -251,7 +253,14 @@ namespace System.Net {
                                 scopeId = scopeId.Substring(1);
                                 if (UInt32.TryParse(scopeId, NumberStyles.None, null, out result))
                                     return new IPAddress(numbers, result);
-
+#if MONO
+                                //
+                                // HACK: .NET does not support scopes with literals at all (API is long based)
+                                // For backward Mono compatibility parsing IPv6 addresses like
+                                // fe80::bae8:56ff:fe47:af7e%en0 will loose en0 information
+                                //
+                                return new IPAddress(numbers, 0);
+#endif
                             }
                         }
                     }
@@ -271,12 +280,13 @@ namespace System.Net {
             else
             // The new IPv4 parser is better than the native one, it can parse 0xFFFFFFFF. (It's faster too).
             {
+#if !MONO
                 // App-Compat: The .NET 4.0 parser used Winsock.  When we removed this initialization in 4.5 it 
                 // uncovered bugs in IIS's management APIs where they failed to initialize Winsock themselves.
                 // DDCC says we need to keep this for an in place release, but to remove it in the next SxS release.
                 Socket.InitializeSockets();
                 ///////////////////////////
-
+#endif
                 int end = ipString.Length;
                 long result;
                 unsafe
@@ -473,8 +483,14 @@ namespace System.Net {
 
                     m_ToString = addressString.ToString();
 #else // !FEATURE_PAL
+
+#if MONO
+                    var v6 = new IPv6AddressFormatter (m_Numbers, ScopeId);
+                    m_ToString = v6.ToString ();
+#else
                     // IPv6 addresses not supported for FEATURE_PAL
                     throw new SocketException(SocketError.OperationNotSupported);
+#endif
 #endif // !FEATURE_PAL
                 }
                 else {

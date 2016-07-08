@@ -138,7 +138,7 @@ namespace MonoTests.System
 			b.UserName = "myname";
 			Assert.AreEqual ("myname", b.Uri.UserInfo, "2.UserName");
 			b.Password = "mypwd";
-			Assert.AreEqual ("myname", b.Uri.UserInfo, "2.Password");
+			Assert.AreEqual ("myname:mypwd", b.Uri.UserInfo, "2.Password");
 			Assert.AreEqual ("/", b.Uri.LocalPath, "2.Uri.LocalPath");
 
 			b = new UriBuilder ("mailto", "contoso.com");

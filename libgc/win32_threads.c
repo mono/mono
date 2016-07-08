@@ -184,7 +184,7 @@ static GC_thread GC_new_thread(void) {
 #ifdef __GNUC__
 __inline__
 #endif
-LONG GC_get_max_thread_index()
+static LONG GC_get_max_thread_index()
 {
   LONG my_max = GC_max_thread_index;
 

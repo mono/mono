@@ -16,6 +16,7 @@ namespace SharpCompress.IO
             {
                 stream.Position = origin.Value;
             }
+            length = bytesToRead;
             BytesLeftToRead = bytesToRead;
         }
 
@@ -26,6 +27,8 @@ namespace SharpCompress.IO
                 //Stream.Dispose();
             }
         }
+
+        private long length;
 
         private long BytesLeftToRead { get; set; }
 
@@ -53,12 +56,12 @@ namespace SharpCompress.IO
 
         public override long Length
         {
-            get { throw new System.NotImplementedException(); }
+            get { return length; }
         }
 
         public override long Position
         {
-            get { throw new System.NotImplementedException(); }
+            get { return Length - BytesLeftToRead; }
             set { throw new System.NotImplementedException(); }
         }
 

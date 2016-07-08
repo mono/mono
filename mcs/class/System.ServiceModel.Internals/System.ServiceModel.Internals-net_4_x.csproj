@@ -9,7 +9,10 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -45,82 +48,83 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ActionItem.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AssertHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncCompletionResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncEventArgs.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncEventArgsCallback.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncWaitHandle.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\BackoffTimeoutHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\BufferedOutputStream.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\CallbackException.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\HopperCache.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\NullableKeyDictionary.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCache.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCacheItem.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCacheSettings.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\OrderedDictionary.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ValidatingCollection.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\CompletedAsyncResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ComputerNameFormat.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\ActivityControl.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticEventProvider.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticTraceBase.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticTraceSource.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DictionaryTraceRecord.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EtwDiagnosticTrace.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EtwProvider.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventDescriptor.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogCategory.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogEventId.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogger.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventTraceActivity.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\ITraceSourceStringProvider.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\PerformanceCounterNameAttribute.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\StringTraceRecord.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\TraceRecord.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\DiagnosticStrings.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\DuplicateDetector.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ExceptionTrace.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\FastAsyncCallback.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\FatalException.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Fx.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\FxCop.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\HashHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\IAsyncEventArgs.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\InputQueue.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\InternalBufferManager.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadCancellationTokenSource.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadScheduler.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadTimer.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\MruCache.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\NameGenerator.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\PartialTrustHelpers.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ReadOnlyDictionaryInternal.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ReadOnlyKeyedCollection.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ScheduleActionItemAsyncResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\SignalGate.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\SynchronizedPool.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TaskExtensions.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\ThreadNeutralSemaphore.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\Ticks.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TimeoutHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TraceChannel.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TraceEventLevel.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TraceEventOpcode.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TraceLevelHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TracePayload.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TypedAsyncResult.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\TypeHelper.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\UrlUtility.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\System\Runtime\WaitCallbackActionItem.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.ServiceModel.Internals\TraceCore.Designer.cs" />
+    <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\AssemblyInfo.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ActionItem.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AssertHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncCompletionResult.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncEventArgs.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncEventArgsCallback.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncResult.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\AsyncWaitHandle.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\BackoffTimeoutHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\BufferedOutputStream.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\CallbackException.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\HopperCache.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\NullableKeyDictionary.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCache.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCacheItem.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ObjectCacheSettings.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\OrderedDictionary.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ValidatingCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\CompletedAsyncResult.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ComputerNameFormat.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\ActivityControl.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticEventProvider.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticTraceBase.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticTraceSource.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DictionaryTraceRecord.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EtwDiagnosticTrace.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EtwProvider.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventDescriptor.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogCategory.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogEventId.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventLogger.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\EventTraceActivity.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\ITraceSourceStringProvider.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\PerformanceCounterNameAttribute.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\StringTraceRecord.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\TraceRecord.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\DiagnosticStrings.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\DuplicateDetector.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ExceptionTrace.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\FastAsyncCallback.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\FatalException.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Fx.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\FxCop.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\HashHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IAsyncEventArgs.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InputQueue.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InternalBufferManager.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadCancellationTokenSource.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadScheduler.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadTimer.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\MruCache.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\NameGenerator.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\PartialTrustHelpers.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ReadOnlyDictionaryInternal.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ReadOnlyKeyedCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ScheduleActionItemAsyncResult.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\SignalGate.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\SynchronizedPool.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TaskExtensions.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ThreadNeutralSemaphore.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Ticks.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TimeoutHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceChannel.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceEventLevel.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceEventOpcode.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceLevelHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TracePayload.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TypedAsyncResult.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TypeHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\UrlUtility.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\WaitCallbackActionItem.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\TraceCore.Designer.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="EventLogEntryType.cs" />
     <Compile Include="InternalSR.cs" />  </ItemGroup>
@@ -138,7 +142,6 @@
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>

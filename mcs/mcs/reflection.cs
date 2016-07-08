@@ -440,9 +440,9 @@ namespace Mono.CSharp
 			return Path.GetDirectoryName (typeof (object).Assembly.Location);
 		}
 
-		public override bool HasObjectType (Assembly assembly)
+		public override Assembly HasObjectType (Assembly assembly)
 		{
-			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
+			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) == null ? null : assembly;
 		}
 
 		public override Assembly LoadAssemblyFile (string assembly, bool isImplicitReference)

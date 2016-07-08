@@ -1001,7 +1001,7 @@ namespace MonoTests.Mono.Unix {
 
 			Assert.AreEqual (end.Length, bytes.Length, prefix + ": byte length");
 
-			for (int i = 0; i < Math.Min (bytes.Length, end.Length); ++i)
+			for (int i = 0; i < global::System.Math.Min (bytes.Length, end.Length); ++i)
 				Assert.AreEqual (end [i], bytes [i], prefix + ": byte " + i);
 
 			int cc = unix.GetCharCount (end, 0, end.Length);
@@ -1012,7 +1012,7 @@ namespace MonoTests.Mono.Unix {
 
 			Assert.AreEqual (start.Length, r, prefix + ": chars length");
 
-			for (int i = 0; i < Math.Min (r, start.Length); ++i) {
+			for (int i = 0; i < global::System.Math.Min (r, start.Length); ++i) {
 				Assert.AreEqual (start [i], chars [i], prefix + ": char " + i);
 			}
 		}

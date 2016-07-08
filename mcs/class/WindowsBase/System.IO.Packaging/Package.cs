@@ -457,6 +457,8 @@ namespace System.IO.Packaging {
 
 		internal static void WriteRelationships (Dictionary <string, PackageRelationship> relationships, Stream stream)
 		{
+			stream.SetLength(0);
+
 			XmlDocument doc = new XmlDocument ();
 			XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
 			manager.AddNamespace ("rel", RelationshipNamespace);
