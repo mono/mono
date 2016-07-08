@@ -332,9 +332,9 @@ namespace System.Diagnostics {
 		{
 			metadataHandlers = new Dictionary<string, Func<StackTrace, string>> (StringComparer.Ordinal);
 
-			string aotid = Assembly.GetAotId ();
+			var aotid = Assembly.GetAotId ();
 			if (aotid != null)
-				AddMetadataHandler ("AOTID", st => { return aotid; });
+				AddMetadataHandler ("AOTID", st => { return new Guid (aotid).ToString ("N"); });
 
 			AddMetadataHandler ("MVID", st => {
 				var mvidLines = new Dictionary<Guid, List<int>> ();
@@ -358,10 +358,8 @@ namespace System.Diagnostics {
 				mvids.Sort ();
 
 				var sb = new StringBuilder ();
-				foreach (var mvid in mvids) {
-					var mvidStr = mvid.ToString ().ToUpper ();
-					sb.AppendLine (string.Format ("{0} {1}", mvid, string.Join (",", mvidLines[mvid])));
-				}
+				foreach (var mvid in mvids)
+					sb.AppendLine (string.Format ("{0} {1}", mvid.ToString ("N"), string.Join (",", mvidLines[mvid])));
 
 				return sb.ToString ();
 			});
