@@ -39,7 +39,7 @@ namespace System.IO.Compression
 		internal readonly ZipArchiveMode mode;
 		internal Encoding entryNameEncoding;
 		internal bool disposed;
-		internal Dictionary<string, ZipArchiveEntry> entries; 
+		internal List<ZipArchiveEntry> entries; 
 		internal SharpCompress.Archive.Zip.ZipArchive zipFile;
 
 		public ZipArchive (Stream stream)
@@ -49,7 +49,7 @@ namespace System.IO.Compression
 
 			this.stream = stream;
 			mode = ZipArchiveMode.Read;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode)
@@ -59,7 +59,7 @@ namespace System.IO.Compression
 
 			this.stream = stream;
 			this.mode = mode;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode, bool leaveOpen)
@@ -70,7 +70,7 @@ namespace System.IO.Compression
 			this.stream = stream;
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
 		public ZipArchive (Stream stream, ZipArchiveMode mode, bool leaveOpen, Encoding entryNameEncoding)
@@ -82,40 +82,59 @@ namespace System.IO.Compression
 			this.mode = mode;
 			leaveStreamOpen = leaveOpen;
 			this.entryNameEncoding = entryNameEncoding;
-			CreateZip(stream, mode);
+			CreateZip(mode);
 		}
 
-		private void CreateZip(Stream stream, ZipArchiveMode mode)
+		private void CreateZip(ZipArchiveMode mode)
 		{
-			if (mode != ZipArchiveMode.Read && mode != ZipArchiveMode.Create && mode != ZipArchiveMode.Update)
-				throw new ArgumentOutOfRangeException("mode");
-
-			// If the mode parameter is set to Read, the stream must support reading.
-			if (mode == ZipArchiveMode.Read && !stream.CanRead)
-				throw new ArgumentException("Stream must support reading for Read archive mode");
-
-			// If the mode parameter is set to Create, the stream must support writing.
-			if (mode == ZipArchiveMode.Create && !stream.CanWrite)
-				throw new ArgumentException("Stream must support writing for Create archive mode");
-
-			// If the mode parameter is set to Update, the stream must support reading, writing, and seeking.
-			if (mode == ZipArchiveMode.Update && (!stream.CanRead || !stream.CanWrite || !stream.CanSeek))
-				throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
-
 			try {
-				zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
-					? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
-					: SharpCompress.Archive.Zip.ZipArchive.Create();
-			} catch (Exception e) {
-				throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
-			}
+				if (mode != ZipArchiveMode.Read && mode != ZipArchiveMode.Create && mode != ZipArchiveMode.Update)
+					throw new ArgumentOutOfRangeException("mode");
 
-			entries = new Dictionary<string, ZipArchiveEntry>();
-			if (Mode != ZipArchiveMode.Create) {
-				foreach (var entry in zipFile.Entries) {
-					var zipEntry = new ZipArchiveEntry(this, entry);
-					entries[entry.Key] = zipEntry;
+				// If the mode parameter is set to Read, the stream must support reading.
+				if (mode == ZipArchiveMode.Read && !stream.CanRead)
+					throw new ArgumentException("Stream must support reading for Read archive mode");
+
+				// If the mode parameter is set to Create, the stream must support writing.
+				if (mode == ZipArchiveMode.Create && !stream.CanWrite)
+					throw new ArgumentException("Stream must support writing for Create archive mode");
+
+				// If the mode parameter is set to Update, the stream must support reading, writing, and seeking.
+				if (mode == ZipArchiveMode.Update && (!stream.CanRead || !stream.CanWrite || !stream.CanSeek))
+					throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
+
+				// If the stream is not seekable, then buffer it into memory (same behavior as .NET). 
+				if (mode == ZipArchiveMode.Read && !stream.CanSeek)
+				{
+					var memoryStream = new MemoryStream();
+					stream.CopyTo(memoryStream);
+
+					if (!leaveStreamOpen)
+						stream.Dispose();
+
+					this.stream = memoryStream;
 				}
+
+				try {
+					zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
+						? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
+						: SharpCompress.Archive.Zip.ZipArchive.Create();
+				} catch (Exception e) {
+					throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
+				}
+
+				entries = new List<ZipArchiveEntry>();
+				if (Mode != ZipArchiveMode.Create) {
+					foreach (var entry in zipFile.Entries) {
+						var zipEntry = new ZipArchiveEntry(this, entry);
+						entries.Add(zipEntry);
+					}
+				}
+			}
+			catch {
+				if (!leaveStreamOpen)
+					stream.Dispose();
+				throw;
 			}
 		}
 
@@ -133,7 +152,7 @@ namespace System.IO.Compression
 				if (entries == null)
 					return new ReadOnlyCollection<ZipArchiveEntry>(new List<ZipArchiveEntry>());
 
-				return new ReadOnlyCollection<ZipArchiveEntry>(entries.Values.ToList());
+				return new ReadOnlyCollection<ZipArchiveEntry>(entries);
 			}
 		}
 
@@ -154,6 +173,14 @@ namespace System.IO.Compression
 			return CreateEntry(entryName, CompressionLevel.Optimal);
 		}
 
+		internal SharpCompress.Archive.Zip.ZipArchiveEntry CreateEntryInternal(string entryName)
+		{
+			var memoryStream = new MemoryStream();
+			var entry = zipFile.AddEntry(entryName, memoryStream);
+
+			return entry;
+		}
+
 		public ZipArchiveEntry CreateEntry (string entryName, CompressionLevel compressionLevel)
 		{
 			if (disposed)
@@ -171,10 +198,9 @@ namespace System.IO.Compression
 			if (zipFile == null)
 				throw new InvalidDataException("The zip archive is corrupt, and its entries cannot be retrieved.");
 
-			var memoryStream = new MemoryStream();
-			var entry = zipFile.AddEntry(entryName, memoryStream);
-			var archiveEntry = new ZipArchiveEntry(this, entry);
-			entries[entryName] = archiveEntry;
+			var internalEntry = CreateEntryInternal(entryName);
+			var archiveEntry = new ZipArchiveEntry(this, internalEntry);
+			entries.Add(archiveEntry);
 
 			return archiveEntry;
 		}
@@ -196,7 +222,7 @@ namespace System.IO.Compression
 			if (zipFile == null)
 				throw new InvalidDataException("The zip archive is corrupt, and its entries cannot be retrieved.");
 
-			return entries.ContainsKey(entryName) ? entries[entryName] : null;
+			return entries.FirstOrDefault(e => e.FullName == entryName);
 		}
 
 		private void Save()
