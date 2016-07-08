@@ -142,10 +142,10 @@ instead of going through the operating system symbol lookup operation.
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
 .TP
-.I gen-seq-points-file=FILE.msym
+.I msym-dir=<PATH>
 Instructs the AOT compiler to generate offline sequence points .msym files.
-The path is optional, if none is passed then a .msym file will be generated
-next to the input assembly.
+The generated .msym files will be stored into a subfolder of <PATH> named as the
+compilation AOTID.
 .TP
 .I mtriple=<TRIPLE>
 Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.

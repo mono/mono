@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -517,7 +518,10 @@ namespace MonoTests.System.Reflection.Emit
 			invoke (456324);
 
 			Assert.IsNotNull (ExceptionHandling_Test_Support.Caught, "#1");
-			Assert.AreEqual (2, ExceptionHandling_Test_Support.CaughtStackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.None).Length, "#2");
+
+			var lines = ExceptionHandling_Test_Support.CaughtStackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.None);
+			lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
+			Assert.AreEqual (2, lines.Length, "#2");
 
 			var st = new StackTrace (ExceptionHandling_Test_Support.Caught, 0, true);
 
@@ -552,9 +556,12 @@ namespace MonoTests.System.Reflection.Emit
 
 			public static void Handler (Exception e)
 			{
-				var split = e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Assert.AreEqual (5, split.Length, "#1");
-				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				var lines = e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				// Ignore Metadata
+				lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
+
+				Assert.AreEqual (5, lines.Length, "#1");
+				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
