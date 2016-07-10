@@ -362,9 +362,10 @@ count_fields_nested (MonoClass *klass, gboolean pinvoke)
 		while ((field = mono_class_get_fields (klass, &iter))) {
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
-			count ++;
 			if (MONO_TYPE_ISSTRUCT (field->type))
 				count += count_fields_nested (mono_class_from_mono_type (field->type), pinvoke);
+			else
+				count ++;
 		}
 	}
 	return count;
@@ -412,10 +413,13 @@ collect_field_info_nested (MonoClass *klass, StructFieldInfo *fields, int index,
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (MONO_TYPE_ISSTRUCT (field->type)) {
-				index = collect_field_info_nested (mono_class_from_mono_type (field->type), fields, index, field->offset, pinvoke, unicode);
+				index = collect_field_info_nested (mono_class_from_mono_type (field->type), fields, index, field->offset - sizeof (MonoObject), pinvoke, unicode);
 			} else {
+				int align;
+
 				fields [index].type = field->type;
-				fields [index].size = field->offset + offset;
+				fields [index].size = mono_type_size (field->type, &align);
+				fields [index].offset = field->offset - sizeof (MonoObject) + offset;
 				index ++;
 			}
 		}
@@ -764,7 +768,9 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 				class1 = merge_argument_class_from_type (fields [i].type, class1);
 			}
-			g_assert (class1 != ARG_CLASS_NO_CLASS);
+			/* Empty structs have a nonzero size, causing this assert to be hit */
+			if (sig->pinvoke)
+				g_assert (class1 != ARG_CLASS_NO_CLASS);
 			args [quad] = class1;
 		}
 	}
@@ -818,6 +824,8 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 				}
 				break;
 			case ARG_CLASS_MEMORY:
+				break;
+			case ARG_CLASS_NO_CLASS:
 				break;
 			default:
 				g_assert_not_reached ();
@@ -1048,7 +1056,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 			/* fall through */
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_TYPEDBYREF:
-			add_valuetype (sig, ainfo, sig->params [i], FALSE, &gr, &fr, &stack_size);
+			add_valuetype (sig, ainfo, ptype, FALSE, &gr, &fr, &stack_size);
 			break;
 		case MONO_TYPE_U8:
 
@@ -2391,16 +2399,8 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 	case ArgInFloatSSEReg:
 	case ArgInDoubleSSEReg:
 	case ArgValuetypeAddrInIReg:
+	case ArgValuetypeInReg:
 		break;
-	case ArgValuetypeInReg: {
-		ArgInfo *ainfo = &cinfo->ret;
-
-		if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
-			return FALSE;
-		if (ainfo->pair_storage [1] != ArgNone && ainfo->pair_storage [1] != ArgInIReg)
-			return FALSE;
-		break;
-	}
 	default:
 		return FALSE;
 	}
@@ -2411,12 +2411,7 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		case ArgInIReg:
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
-			break;
 		case ArgValuetypeInReg:
-			if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
-				return FALSE;
-			if (ainfo->pair_storage [1] != ArgNone && ainfo->pair_storage [1] != ArgInIReg)
-				return FALSE;
 			break;
 		case ArgOnStack:
 			if (!(ainfo->offset + (ainfo->arg_size / 8) <= DYN_CALL_STACK_ARGS))
@@ -2622,15 +2617,22 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_VALUETYPE: {
 			switch (ainfo->storage) {
 			case ArgValuetypeInReg:
-				if (ainfo->pair_storage [0] != ArgNone) {
-					slot = param_reg_to_index [ainfo->pair_regs [0]];
-					g_assert (ainfo->pair_storage [0] == ArgInIReg);
-					p->regs [slot] = ((mgreg_t*)(arg))[0];
-				}
-				if (ainfo->pair_storage [1] != ArgNone) {
-					slot = param_reg_to_index [ainfo->pair_regs [1]];
-					g_assert (ainfo->pair_storage [1] == ArgInIReg);
-					p->regs [slot] = ((mgreg_t*)(arg))[1];
+				for (i = 0; i < 2; ++i) {
+					switch (ainfo->pair_storage [i]) {
+					case ArgNone:
+						break;
+					case ArgInIReg:
+						slot = param_reg_to_index [ainfo->pair_regs [i]];
+						p->regs [slot] = ((mgreg_t*)(arg))[i];
+						break;
+					case ArgInDoubleSSEReg:
+						p->has_fp = 1;
+						p->fregs [ainfo->pair_regs [i]] = ((double*)(arg))[i];
+						break;
+					default:
+						g_assert_not_reached ();
+						break;
+					}
 				}
 				break;
 			case ArgOnStack:
@@ -2667,6 +2669,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	guint8 *ret = dargs->ret;
 	mgreg_t res = dargs->res;
 	MonoType *sig_ret = mini_get_underlying_type (sig->ret);
+	int i;
 
 	switch (sig_ret->type) {
 	case MONO_TYPE_VOID:
@@ -2727,12 +2730,21 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 
 			g_assert (ainfo->storage == ArgValuetypeInReg);
 
-			if (ainfo->pair_storage [0] != ArgNone) {
-				g_assert (ainfo->pair_storage [0] == ArgInIReg);
-				((mgreg_t*)ret)[0] = res;
+			for (i = 0; i < 2; ++i) {
+				switch (ainfo->pair_storage [0]) {
+				case ArgInIReg:
+					((mgreg_t*)ret)[i] = res;
+					break;
+				case ArgInDoubleSSEReg:
+					((double*)ret)[i] = dargs->fregs [i];
+					break;
+				case ArgNone:
+					break;
+				default:
+					g_assert_not_reached ();
+					break;
+				}
 			}
-
-			g_assert (ainfo->pair_storage [1] == ArgNone);
 		}
 		break;
 	default:
@@ -4794,6 +4806,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
 			amd64_mov_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, res), AMD64_RAX, 8);
 			amd64_sse_movsd_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs), AMD64_XMM0);
+			amd64_sse_movsd_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + sizeof (double), AMD64_XMM1);
 			break;
 		}
 		case OP_AMD64_SAVE_SP_TO_LMF: {
