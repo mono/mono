@@ -137,8 +137,50 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
 #define g_alloca(size)		alloca (size)
 
+/* FIXME: This is from a later version of glib. */
+#if defined __GNUC__
+#define g_atomic_pointer_add(p, x) (gssize)__sync_fetch_and_add ((p), (x))
+#elif defined _MSC_VER
+
+/* HACK: Copied from mono/utils/atomic.h */
+static inline gint32 InterlockedExchangeAdd (gint32 volatile *val, gint32 add)
+{
+        gint32 old;
+#ifdef __INTEL_COMPILER
+        old = _InterlockedExchangeAdd (val, add);
+#else
+        do {
+                old = *val;
+        } while (InterlockedCompareExchange (val, old + add, old) != old);
+        return old;
+#endif
+}
+
+#define g_atomic_pointer_add(p, x) InterlockedExchangeAdd ((p), (x))
+#endif
+
+#if defined WIN32
+#include <malloc.h>
+#define g_malloc_size(p) _msize((p))
+#elif defined __APPLE__
+#include <malloc/malloc.h>
+#define g_malloc_size(p) malloc_size((p))
+#elif defined __linux__
+#include <malloc.h>
+#define g_malloc_size(p) malloc_usable_size((p))
+#endif
+
+extern volatile gint64 mono_stat_malloc_memory;
+extern volatile gint64 mono_stat_malloc_traffic;
+
+// Uncomment this to enable logging & verification of g_malloc/g_free usage.
+// #define MONO_ENABLE_ALLOG
+
+void mono_allog_alloc (gpointer, gsize);
+void mono_allog_free (gpointer, gsize);
+
 gpointer g_memdup (gconstpointer mem, guint byte_size);
-static inline gchar   *g_strdup (const gchar *str) { if (str) {return strdup (str);} return NULL; }
+gchar *g_strdup (const gchar *str);
 gchar **g_strdupv (gchar **str_array);
 
 typedef struct {
