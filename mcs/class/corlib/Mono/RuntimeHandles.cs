@@ -102,6 +102,12 @@ namespace Mono {
 			this.value = value;
 		}
 
+		internal unsafe RuntimeGenericParamInfoHandle (IntPtr ptr)
+		{
+			this.value = (RuntimeStructs.GenericParamInfo*) ptr;
+		}
+
+
 		internal Type[] Constraints { get { return GetConstraints (); } }
 
 		internal GenericParameterAttributes Attributes {

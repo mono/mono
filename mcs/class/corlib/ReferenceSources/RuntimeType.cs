@@ -452,7 +452,7 @@ namespace System
 				throw new InvalidOperationException(Environment.GetResourceString("Arg_NotGenericParameter"));
 			Contract.EndContractBlock();
 
-			Mono.RuntimeGenericParamInfoHandle paramInfo = RuntimeTypeHandle.GetGenericParameterInfo (this);
+			var paramInfo = new Mono.RuntimeGenericParamInfoHandle (RuntimeTypeHandle.GetGenericParameterInfo (this));
 			Type[] constraints = paramInfo.Constraints;
 
 			if (constraints == null)
@@ -620,7 +620,7 @@ namespace System
 		extern Type[] GetGenericArgumentsInternal (bool runtimeArray);
 
 		GenericParameterAttributes GetGenericParameterAttributes () {
-			return RuntimeTypeHandle.GetGenericParameterInfo (this).Attributes;
+			return (new Mono.RuntimeGenericParamInfoHandle (RuntimeTypeHandle.GetGenericParameterInfo (this))).Attributes;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

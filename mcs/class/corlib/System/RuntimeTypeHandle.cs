@@ -245,7 +245,7 @@ namespace System
 		internal extern static bool IsGenericTypeDefinition (RuntimeType type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static Mono.RuntimeGenericParamInfoHandle GetGenericParameterInfo (RuntimeType type);
+		internal extern static IntPtr GetGenericParameterInfo (RuntimeType type);
 
 	}
 }
