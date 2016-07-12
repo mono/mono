@@ -141,4 +141,48 @@ namespace Mono {
 			return i;
 		}
 	}
+
+	internal struct RuntimeGPtrArrayHandle {
+		unsafe RuntimeStructs.GPtrArray* value;
+
+		internal unsafe RuntimeGPtrArrayHandle (RuntimeStructs.GPtrArray* value)
+		{
+			this.value = value;
+		}
+
+		internal unsafe RuntimeGPtrArrayHandle (IntPtr ptr)
+		{
+			this.value = (RuntimeStructs.GPtrArray*) ptr;
+		}
+
+		internal int Length {
+			get {
+				unsafe {
+					return value->len;
+				}
+			}
+		}
+
+		internal IntPtr this[int i] => Lookup (i);
+
+		internal IntPtr Lookup (int i)
+		{
+			if (i >= 0 && i < Length) {
+				unsafe {
+					return value->data[i];
+				}
+			} else
+				throw new IndexOutOfRangeException ();
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		unsafe extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value, bool freeSeg);
+
+		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h, bool freeSeg) {
+			unsafe {
+				GPtrArrayFree (h.value, freeSeg);
+				h.value = null;
+			}
+		}
+	}
 }
