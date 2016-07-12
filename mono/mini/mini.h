@@ -3192,4 +3192,10 @@ void mono_exception_native_unwind (void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info);
  */
 void mono_interruption_checkpoint_from_trampoline (void);
 
+/*
+ * Get the name of a wrapper
+ */
+const char*
+mini_get_wrapper_type_name (int type);
+
 #endif /* __MONO_MINI_H__ */
