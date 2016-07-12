@@ -200,7 +200,7 @@ aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUF
 
 $(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PROFILE)/%
 	@ mkdir -p $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
-	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode $* >> $(PROFILE)-aot.log
+	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode_tmp $* >> $(PROFILE)-aot.log
 	@ rm -rf $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
