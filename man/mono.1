@@ -1652,11 +1652,11 @@ Automatically generates sequence points where the
 IL stack is empty.  These are places where the debugger can set a
 breakpoint.
 .TP
-\fBgen-compact-seq-points\fR
-This option generates sequence points data that maps native offsets to
-IL offsets. Sequence point data is used to display IL offset in
-stacktraces. Stacktraces with IL offsets can be symbolicated using
-mono-symbolicate tool.
+\fBno-compact-seq-points\fR
+Unless the option is used, the runtime generates sequence points data that
+maps native offsets to IL offsets. Sequence point data is used to
+display IL offset in stacktraces. Stacktraces with IL offsets can be
+symbolicated using mono-symbolicate tool.
 .TP
 \fBhandle-sigint\fR
 Captures the interrupt signal (Control-C) and displays a stack trace
