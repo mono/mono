@@ -615,7 +615,6 @@ System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
-System.Security/SafeAccessTokenHandle.cs
 System.Security/SecureString.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
@@ -1393,6 +1392,7 @@ ReferenceSources/SecurityContext.cs
 ../referencesource/mscorlib/system/security/attributes.cs
 ../referencesource/mscorlib/system/security/securitycontext.cs
 ../referencesource/mscorlib/system/security/securitydocument.cs
+../referencesource/mscorlib/system/security/safesecurityhandles.cs
 
 ../referencesource/mscorlib/system/security/claims/Claim.cs
 ../referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
