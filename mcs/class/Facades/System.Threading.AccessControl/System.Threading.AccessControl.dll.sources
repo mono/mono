@@ -1,3 +1,5 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+../../../build/common/MonoTODOAttribute.cs
+ThreadingAclExtensions.cs

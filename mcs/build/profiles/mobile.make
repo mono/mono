@@ -23,6 +23,7 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_0 \
 	-d:NET_4_5 \
 	-d:MONO \
+	-d:NETSTANDARD \
 	-nowarn:1699 \
 	-nostdlib \
 	$(DEFAULT_REFERENCES) \

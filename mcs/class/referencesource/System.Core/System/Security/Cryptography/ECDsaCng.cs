@@ -18,6 +18,15 @@ namespace System.Security.Cryptography {
     /// </summary>
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public sealed class ECDsaCng : ECDsa {
+#if MONO
+        public override byte[] SignHash(byte[] hash) {
+            throw new NotImplementedException();
+        }
+
+        public override bool VerifyHash(byte[] hash, byte[] signature) {
+            throw new NotImplementedException();
+        }
+#else
         private static KeySizes[] s_legalKeySizes = new KeySizes[] { new KeySizes(256, 384, 128), new KeySizes(521, 521, 0) };
 
         private CngKey m_key;
@@ -407,5 +416,6 @@ namespace System.Security.Cryptography {
                 return hasher.HashFinal();
             }
         }
+    #endif
     }
 }
