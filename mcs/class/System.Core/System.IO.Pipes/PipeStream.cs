@@ -46,15 +46,18 @@ namespace System.IO.Pipes
 		// FIXME: not precise.
 		internal const int DefaultBufferSize = 0x400;
 
+#if !MOBILE
 		internal static bool IsWindows {
 			get { return Win32Marshal.IsWindows; }
 		}
+#endif
 
 		internal Exception ThrowACLException ()
 		{
 			return new NotImplementedException ("ACL is not supported in Mono");
 		}
 
+#if !MOBILE
 		internal static PipeAccessRights ToAccessRights (PipeDirection direction)
 		{
 			switch (direction) {
@@ -85,6 +88,7 @@ namespace System.IO.Pipes
 					throw new ArgumentOutOfRangeException ();
 			}
 		}
+#endif
 
 		protected PipeStream (PipeDirection direction, int bufferSize)
 			: this (direction, PipeTransmissionMode.Byte, bufferSize)
@@ -140,7 +144,9 @@ namespace System.IO.Pipes
 			set { stream = value; }
 		}
 
+#if !MOBILE
 		protected bool IsHandleExposed { get; private set; }
+#endif
 
 		[MonoTODO]
 		public bool IsMessageComplete { get; private set; }
@@ -176,7 +182,19 @@ namespace System.IO.Pipes
 		}
 
 		// initialize/dispose/state check
+#if MOBILE
+		internal static void CheckPipePropertyOperations ()
+		{
+		}
 
+		static void CheckReadOperations ()
+		{
+		}
+
+		static void CheckWriteOperations ()
+		{
+		}
+#else
 		[MonoTODO]
 		protected internal virtual void CheckPipePropertyOperations ()
 		{
@@ -206,6 +224,7 @@ namespace System.IO.Pipes
 			this.IsHandleExposed = isExposed;
 			this.IsAsync = isAsync;
 		}
+#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -234,6 +253,7 @@ namespace System.IO.Pipes
 			throw new NotSupportedException ();
 		}
 
+#if !MOBILE
 		public PipeSecurity GetAccessControl ()
 		{
 			return new PipeSecurity (SafePipeHandle,
@@ -255,6 +275,7 @@ namespace System.IO.Pipes
 		public void WaitForPipeDrain ()
 		{
 		}
+#endif
 
 		[MonoTODO]
 		public override int Read ([In] byte [] buffer, int offset, int count)
@@ -298,6 +319,7 @@ namespace System.IO.Pipes
 
 		// async
 
+#if !MOBILE
 		Func<byte [],int,int,int> read_delegate;
 
 		[HostProtection (SecurityAction.LinkDemand, ExternalThreading = true)]
@@ -327,6 +349,7 @@ namespace System.IO.Pipes
 		{
 			write_delegate.EndInvoke (asyncResult);
 		}
+#endif
 	}
 }
 

@@ -307,6 +307,7 @@ System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
+System.Reflection.Metadata/AssemblyExtensions.cs
 System.Resources/Win32Resources.cs
 System.Runtime/GCLargeObjectHeapCompactionMode.cs
 System.Runtime/GCLatencyMode.cs
@@ -601,6 +602,7 @@ System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
+System.Runtime.Loader/AssemblyLoadContext.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs

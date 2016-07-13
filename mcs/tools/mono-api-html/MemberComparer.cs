@@ -138,9 +138,13 @@ namespace Xamarin.ApiDiff {
 		void Modify (ApiChanges modified)
 		{
 			foreach (var changes in modified) {
+				if (State.IgnoreNonbreaking && changes.Value.All (c => !c.Breaking))
+					continue;
 				Output.WriteLine ("<p>{0}:</p>", changes.Key);
 				Output.WriteLine ("<pre>");
 				foreach (var element in changes.Value) {
+					if (State.IgnoreNonbreaking && !element.Breaking)
+						continue;
 					Output.Write ("<div {0}>", element.Breaking ? "data-is-breaking" : "data-is-non-breaking");
 					foreach (var line in element.Member.ToString ().Split ('\n'))
 						Output.WriteLine ("\t{0}", line);
@@ -158,6 +162,8 @@ namespace Xamarin.ApiDiff {
 				if (State.IgnoreRemoved.Any (re => re.IsMatch (GetDescription (item))))
 					continue;
 				SetContext (item);
+				if (State.IgnoreNonbreaking && !IsBreakingRemoval (item))
+					continue;
 				if (!r) {
 					BeforeRemoving (elements);
 					r = true;
