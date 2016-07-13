@@ -38,7 +38,11 @@ namespace Microsoft.Win32.SafeHandles {
         [SecurityCritical]
         protected override bool ReleaseHandle()
         {
+#if MONO
+            return true;
+#else
             return Win32Native.CloseHandle(handle);
+#endif
         }
     }
 
