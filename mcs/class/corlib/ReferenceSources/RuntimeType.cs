@@ -472,7 +472,21 @@ namespace System
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type);
+		internal extern IntPtr GetMethodsByName_native (string name, BindingFlags bindingAttr, bool ignoreCase);
+
+		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (name, bindingAttr, ignoreCase), false)) {
+				var n = h.Length;
+				var a = new RuntimeMethodInfo [n];
+				for (int i = 0; i < n; i++) {
+					var mh = new RuntimeMethodHandle (h[i]);
+					a[i] = (RuntimeMethodInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+				}
+				return a;
+			}
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, Type reflected_type);		

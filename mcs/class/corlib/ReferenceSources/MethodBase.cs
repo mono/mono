@@ -46,7 +46,12 @@ namespace System.Reflection
 
 		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
 		{
-			return GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+			return GetMethodFromHandleInternalType_native (handle.Value, IntPtr.Zero, false);
+		}
+
+		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle, RuntimeTypeHandle reflectedType)
+		{
+			return GetMethodFromHandleInternalType_native (handle.Value, reflectedType.Value, false);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -57,7 +62,12 @@ namespace System.Reflection
 			return GetMethodBodyInternal (handle);
 		}
 
+		static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle) {
+			return GetMethodFromHandleInternalType_native (method_handle, type_handle, true);
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle);		
+		internal extern static MethodBase GetMethodFromHandleInternalType_native (IntPtr method_handle, IntPtr type_handle, bool genericCheck);
+
 	}
 }
