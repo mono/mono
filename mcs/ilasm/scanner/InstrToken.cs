@@ -1,6 +1,8 @@
 // InstrToken.cs
 // Author: Sergey Chaban (serge@wildwestsoftware.com)
 
+#if !MOBILE
+
 using System;
 using System.Reflection.Emit;
 
@@ -103,3 +105,5 @@ namespace Mono.ILASM {
 	}
 
 }
+
+#endif
