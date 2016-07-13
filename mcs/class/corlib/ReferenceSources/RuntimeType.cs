@@ -492,7 +492,22 @@ namespace System
 		extern RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, Type reflected_type);		
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeConstructorInfo[] GetConstructors_internal (BindingFlags bindingAttr, Type reflected_type);
+		extern IntPtr GetConstructors_native (BindingFlags bindingAttr);
+
+		RuntimeConstructorInfo[] GetConstructors_internal (BindingFlags bindingAttr, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetConstructors_native (bindingAttr), false)) {
+				var n = h.Length;
+				var a = new RuntimeConstructorInfo [n];
+				for (int i = 0; i < n; i++) {
+					var mh = new RuntimeMethodHandle (h[i]);
+					a[i] = (RuntimeConstructorInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+				}
+				return a;
+			}
+		}
+
 
 		public override InterfaceMapping GetInterfaceMap (Type ifaceType)
 		{
