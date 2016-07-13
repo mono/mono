@@ -29,5 +29,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.RenamedEventArgs))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.RenamedEventHandler))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.WatcherChangeTypes))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.WaitForChangedResult))]
 
 

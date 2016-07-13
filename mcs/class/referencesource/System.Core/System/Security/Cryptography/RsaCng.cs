@@ -10,6 +10,18 @@ namespace System.Security.Cryptography
 {
     public sealed class RSACng : RSA
     {
+#if MONO
+        public override RSAParameters ExportParameters(bool includePrivateParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ImportParameters(RSAParameters parameters)
+        {
+            throw new NotImplementedException();
+        }
+#else
+
         // See https://msdn.microsoft.com/en-us/library/windows/desktop/bb931354(v=vs.85).aspx
         private static KeySizes[] s_legalKeySizes = new KeySizes[] { new KeySizes(512, 16384, 64) };
 
@@ -504,5 +516,6 @@ namespace System.Security.Cryptography
                  throw new CryptographicException(SR.GetString(SR.Cryptography_UnsupportedPaddingMode));
             }
         }
+#endif
     }
 }

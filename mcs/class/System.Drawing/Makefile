@@ -5,7 +5,7 @@ SUBDIRS =
 LIBRARY = System.Drawing.dll
 
 LIB_REFS = System
-LIB_MCS_FLAGS = /unsafe \
+LIB_MCS_FLAGS = /unsafe -d:FEATURE_TYPECONVERTER \
 	-resource:Assembly/Mono.ico,Mono.ico -resource:Assembly/Information.ico,Information.ico \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
 	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico

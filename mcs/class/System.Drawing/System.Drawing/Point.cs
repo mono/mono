@@ -40,7 +40,7 @@ namespace System.Drawing
 {
 	[Serializable]	
 	[ComVisible (true)]
-#if !MONOTOUCH && !MONOMAC
+#if !MONOTOUCH && !MONOMAC && FEATURE_TYPECONVERTER
 	[TypeConverter (typeof (PointConverter))]
 #endif
 	public struct Point
