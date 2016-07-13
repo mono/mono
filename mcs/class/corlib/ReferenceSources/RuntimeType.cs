@@ -630,7 +630,21 @@ namespace System
 		extern RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, Type reflected_type);
+		extern IntPtr GetFields_native (string name, BindingFlags bindingAttr);
+
+		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (name, bindingAttr), false)) {
+				int n = h.Length;
+				var a = new RuntimeFieldInfo[n];
+				for (int i = 0; i < n; i++) {
+					var fh = new RuntimeFieldHandle (h[i]);
+					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
+				}
+				return a;
+			}
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type[] GetInterfaces();
