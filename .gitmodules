@@ -32,3 +32,6 @@
 [submodule "external/nuget-buildtasks"]
 	path = external/nuget-buildtasks
 	url = git://github.com/mono/NuGet.BuildTasks
+[submodule "external/buildtools"]
+	path = external/buildtools
+	url = git://github.com/mono/buildtools.git
