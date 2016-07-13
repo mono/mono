@@ -7156,6 +7156,7 @@ mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int t
 	MONO_OBJECT_SETREF (res, fqname, mono_string_new (domain, name));
 	MONO_OBJECT_SETREF (res, name, mono_string_new (domain, name));
 	MONO_OBJECT_SETREF (res, scopename, mono_string_new (domain, name));
+	// Shouldn't this be & instead of &&?
 	res->is_resource = cols [MONO_FILE_FLAGS] && FILE_CONTAINS_NO_METADATA;
 	res->token = mono_metadata_make_token (MONO_TABLE_FILE, table_index + 1);
 
@@ -13516,6 +13517,9 @@ reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam, Mon
 
 	mono_error_init (error);
 
+	// Further down we check whether gparam->tbuilder != NULL.
+	// Either we crash here, or the condition down there is always
+	// true.
 	image = &gparam->tbuilder->module->dynamic_image->image;
 
 	param = mono_image_new0 (image, MonoGenericParamFull, 1);

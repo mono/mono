@@ -5123,6 +5123,7 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal (MonoReflec
 			mono_metadata_decode_row (table, i - 1, file_cols, MONO_FILE_SIZE);
 			val = mono_metadata_string_heap (assembly->assembly->image, file_cols [MONO_FILE_NAME]);
 			MONO_OBJECT_SETREF (info, filename, mono_string_new (mono_object_domain (assembly), val));
+			// & instead of &&?
 			if (file_cols [MONO_FILE_FLAGS] && FILE_CONTAINS_NO_METADATA)
 				info->location = 0;
 			else
@@ -5266,6 +5267,7 @@ ves_icall_System_Reflection_Assembly_GetModulesInternal (MonoReflectionAssembly 
 
 	for (i = 0; i < file_count; ++i, ++j) {
 		mono_metadata_decode_row (table, i, cols, MONO_FILE_SIZE);
+		// & instead of &&?
 		if (cols [MONO_FILE_FLAGS] && FILE_CONTAINS_NO_METADATA) {
 			MonoReflectionModule *rm = mono_module_file_get_object_checked (domain, image, i, &error);
 			if (mono_error_set_pending_exception (&error))

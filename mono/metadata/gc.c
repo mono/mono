@@ -142,6 +142,7 @@ mono_gc_run_finalize (void *obj, void *data)
 				break;
 			if (strcmp (name + namespace_len + 1, o->vtable->klass->name))
 				break;
+			// Why does this return?
 			return;
 		}
 	}
