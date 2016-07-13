@@ -22,6 +22,7 @@ mobile_common_dirs := \
 	corlib	\
 	System	\
 	System.Core	\
+	System.Security	\
 	System.XML	\
 	Mono.Security	\
 	System	\
@@ -37,6 +38,7 @@ mobile_common_dirs := \
 	Mono.Data.Tds	\
 	System.Transactions	\
 	System.Numerics	\
+	System.Numerics.Vectors		\
 	System.Data	\
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
@@ -54,7 +56,12 @@ mobile_common_dirs := \
 	Microsoft.CSharp \
 	Mono.Security.Providers.DotNet	\
 	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls
+	Mono.Security.Providers.NewTls	\
+	System.Runtime.InteropServices.RuntimeInformation	\
+	System.Reflection.DispatchProxy	\
+	System.Xml.XPath.XmlDocument \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler
 
 mobile_static_dirs := \
 	$(mobile_common_dirs)	\
@@ -93,6 +100,7 @@ xammac_4_5_dirs := \
 	System	\
 	Mono.Posix			\
 	System.Core	\
+	System.Security			\
 	System.XML	\
 	Mono.Security	\
 	System	\
@@ -130,10 +138,14 @@ xammac_4_5_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	System.Data.Linq		\
 	System.Net.Http \
+	System.Net.Http.WebRequest \
 	Mono.Security.Providers.DotNet \
 	Mono.Security.Providers.OldTls \
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls \
+	System.Runtime.InteropServices.RuntimeInformation \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler	\
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
@@ -220,7 +232,8 @@ net_4_x_dirs := \
 	System.Web.Http.SelfHost \
 	System.Web.Http.WebHost \
 	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls
+	Mono.Security.Providers.NewTls \
+	System.Runtime.InteropServices.RuntimeInformation
 
 # These are the subdirs which depends on libs in net_4_x_dirs
 # or have proper dependencies between each other
@@ -270,6 +283,7 @@ net_4_x_parallel_dirs := \
 	Microsoft.VisualC		\
 	WebMatrix.Data \
 	monodoc	\
+	System.Reflection.Context \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \

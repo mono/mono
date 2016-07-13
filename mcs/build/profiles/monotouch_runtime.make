@@ -28,6 +28,7 @@ PROFILE_MCS_FLAGS = \
 	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
 	-d:FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK \
+	-d:NETSTANDARD \
 	-nowarn:1699 \
 	-nostdlib \
 	-lib:$(topdir)/class/lib/$(PROFILE) \

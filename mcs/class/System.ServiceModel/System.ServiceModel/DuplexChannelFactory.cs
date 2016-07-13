@@ -217,8 +217,11 @@ namespace System.ServiceModel
 			// no special magic), we have to use different approach
 			// that should work either.
 			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address, via});
-#else
+#elif !MOBILE && !XAMMAC_4_5
 			object proxy = new ClientRealProxy (typeof (TChannel), new DuplexClientRuntimeChannel (Endpoint, this, address, via), true).GetTransparentProxy ();
+#else
+			object proxy;
+			throw new NotImplementedException ();
 #endif
 
 			((IDuplexContextChannel) proxy).CallbackInstance = callbackInstance;
