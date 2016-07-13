@@ -28,7 +28,7 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
-DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
+DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS) $(net_4_x_SUBDIRS) $(mobile_only_SUBDIRS)
 DISTFILES=subdirs.make
 
 doc-update-local:
