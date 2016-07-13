@@ -20,6 +20,8 @@ else
 install-local: install-extras
 endif
 
+PORTABLE_TARGETS_SRC=../../../external/buildtools/src/Portable/Targets
+
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
@@ -69,20 +71,16 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_4.6.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.1/RedistList/FrameworkList.xml
 
 install-pcl-targets:
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.VisualBasic.targets
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.VisualBasic.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.VisualBasic.targets
+	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)
+	$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
+	$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
+
+	for VERSION in v4.0 v4.5 v4.6 v5.0; do \
+		$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.Common.targets; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.CSharp.targets; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.VisualBasic.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.VisualBasic.targets; \
+	done
 
 install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
@@ -142,14 +140,6 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.5.2.xml \
 	frameworks/net_4.6.xml \
 	frameworks/net_4.6.1.xml \
-	targets/Microsoft.Portable.CSharp_4.0.targets \
-	targets/Microsoft.Portable.CSharp_4.5.targets \
-	targets/Microsoft.Portable.VisualBasic_4.0.targets \
-	targets/Microsoft.Portable.VisualBasic_4.5.targets \
-	targets/Microsoft.Portable.Common.targets \
-	targets/Microsoft.Portable.Core.targets \
-	targets/Microsoft.Portable.Core.props \
-	targets/Microsoft.WebApplication.targets \
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets \
