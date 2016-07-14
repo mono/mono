@@ -49,7 +49,10 @@
 		<_OriginalPlatform>$(Platform)</_OriginalPlatform>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
+	</PropertyGroup>
 
+	<!-- in MSBuild, these properties are set in a separate file that is only imported for .NETFramework -->
+	<PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<AddAdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == ''">true</AddAdditionalExplicitAssemblyReferences>
 		<AdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == 'true' and '$(TargetFrameworkVersion)' != 'v2.0' and '$(TargetFrameworkVersion)' != 'v3.0'">System.Core;$(AdditionalExplicitAssemblyReferences)</AdditionalExplicitAssemblyReferences>
 	</PropertyGroup>
