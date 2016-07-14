@@ -185,6 +185,49 @@ namespace Mono {
 		}
 	}
 
+	internal struct RuntimePropertyHandle {
+		IntPtr value;
+
+		internal RuntimePropertyHandle (IntPtr v)
+		{
+			value = v;
+		}
+
+		public IntPtr Value {
+			get {
+				return value;
+			}
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType ())
+				return false;
+
+			return value == ((RuntimePropertyHandle)obj).Value;
+		}
+
+		public bool Equals (RuntimePropertyHandle handle)
+		{
+			return value == handle.Value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return value.GetHashCode ();
+		}
+
+		public static bool operator == (RuntimePropertyHandle left, RuntimePropertyHandle right)
+		{
+			return left.Equals (right);
+		}
+
+		public static bool operator != (RuntimePropertyHandle left, RuntimePropertyHandle right)
+		{
+			return !left.Equals (right);
+		}
+	}
+
 	internal struct RuntimeGPtrArrayHandle {
 		unsafe RuntimeStructs.GPtrArray* value;
 
