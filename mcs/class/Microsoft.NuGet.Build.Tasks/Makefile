@@ -14,13 +14,19 @@ LIBRARY_INSTALL_DIR = $(NUGET_BUILDTASKS_TARGETS_DIR)
 KEY_FILE = $(NUGET_BUILDTASKS_REPO_DIR)/build/PublicKey.snk
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE)
 
-LIB_REFS = System System.Core System.Data System.Xml System.Xml.Linq System.Runtime.Serialization
+LIB_REFS = $(PARENT_PROFILE)System \
+	$(PARENT_PROFILE)System.Core \
+	$(PARENT_PROFILE)System.Data \
+	$(PARENT_PROFILE)System.Xml \
+	$(PARENT_PROFILE)System.Xml.Linq \
+	$(PARENT_PROFILE)System.Runtime.Serialization \
+	$(XBUILD_UTILITIES) \
+	$(XBUILD_FRAMEWORK)
+
 LIB_MCS_FLAGS = \
 	-nowarn:3021		\
 	$(SIGN_FLAGS)		\
-	-resource:Microsoft.NuGet.Build.Tasks.Strings.resources		\
-	/r:$(XBUILD_UTILITIES)		\
-	/r:$(XBUILD_FRAMEWORK)
+	-resource:Microsoft.NuGet.Build.Tasks.Strings.resources
 
 CLEAN_FILES = Microsoft.NuGet.Build.Tasks.Strings.resources
 
