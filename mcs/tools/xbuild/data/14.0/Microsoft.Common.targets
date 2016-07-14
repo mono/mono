@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" InitialTargets="_ValidateEssentialProperties" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" InitialTargets="_CheckForInvalidConfigurationAndPlatform" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="'$(MicrosoftCommonPropsHasBeenImported)' != 'true' and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
 	<PropertyGroup>
@@ -95,7 +95,7 @@
 		<TargetingClr2Framework Condition="('$(TargetFrameworkIdentifier)' == '.NETFramework') and ('$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5')">true</TargetingClr2Framework>
 	</PropertyGroup>
 
-	<Target Name="_ValidateEssentialProperties">
+	<Target Name="_CheckForInvalidConfigurationAndPlatform">
 		<Error Condition=" '$(OutputPath)' == '' and '$(SkipInvalidConfigurations)' != 'true'"
 			Text="'OutputPath' property is not set for this project. Usually this is caused by invalid Configuration/Platform combination. Original values: Configuration: $(_OriginalConfiguration) Platform: $(_OriginalPlatform)."/>
 
