@@ -23,6 +23,7 @@ mobile_common_dirs := \
 	Mono.Security \
 	System	\
 	System.Core	\
+	System.Security	\
 	System.XML	\
 	I18N		\
 	System.ServiceModel.Internals	\
@@ -36,6 +37,7 @@ mobile_common_dirs := \
 	Mono.Data.Tds	\
 	System.Transactions	\
 	System.Numerics	\
+	System.Numerics.Vectors		\
 	System.Data	\
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
@@ -54,7 +56,11 @@ mobile_common_dirs := \
 	Mono.Security.Providers.DotNet	\
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls	\
-	System.Runtime.InteropServices.RuntimeInformation
+	System.Runtime.InteropServices.RuntimeInformation	\
+	System.Reflection.DispatchProxy	\
+	System.Xml.XPath.XmlDocument \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler
 
 mobile_static_dirs := \
 	$(mobile_common_dirs)	\
@@ -95,6 +101,7 @@ xammac_4_5_dirs := \
 	System	\
 	Mono.Posix			\
 	System.Core	\
+	System.Security			\
 	System.XML	\
 	I18N		\
 	System.ServiceModel.Internals	\
@@ -130,11 +137,14 @@ xammac_4_5_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	System.Data.Linq		\
 	System.Net.Http \
+	System.Net.Http.WebRequest \
 	Mono.Security.Providers.DotNet \
 	Mono.Security.Providers.OldTls \
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls \
 	System.Runtime.InteropServices.RuntimeInformation \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler	\
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
@@ -278,6 +288,7 @@ net_4_x_parallel_dirs := \
 	System.Workflow.Activities \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
+	System.Reflection.Context \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \

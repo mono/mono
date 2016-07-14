@@ -35,87 +35,87 @@ namespace Microsoft.SqlServer.Server
 {
 	public sealed class SqlDataRecord : IDataRecord
 	{
-		public bool GetBoolean (int i)
+		public bool GetBoolean (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public byte GetByte (int i)
+		public byte GetByte (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+		public long GetBytes (int ordinal, long fieldOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public char GetChar (int i)
+		public char GetChar (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public long GetChars (int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
+		public long GetChars (int ordinal, long fieldOffset, char[] buffer, int bufferOffset, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public IDataReader GetData (int i)
+		public IDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public string GetDataTypeName (int i)
+		public string GetDataTypeName (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public DateTime GetDateTime (int i)
+		public DateTime GetDateTime (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public decimal GetDecimal (int i)
+		public decimal GetDecimal (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public double GetDouble (int i)
+		public double GetDouble (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public System.Type GetFieldType (int i)
+		public System.Type GetFieldType (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public float GetFloat (int i)
+		public float GetFloat (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Guid GetGuid (int i)
+		public Guid GetGuid (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public short GetInt16 (int i)
+		public short GetInt16 (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public int GetInt32 (int i)
+		public int GetInt32 (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public long GetInt64 (int i)
+		public long GetInt64 (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public string GetName (int i)
+		public string GetName (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
@@ -125,12 +125,12 @@ namespace Microsoft.SqlServer.Server
 			throw new NotImplementedException ();
 		}
 
-		public string GetString (int i)
+		public string GetString (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public object GetValue (int i)
+		public object GetValue (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
@@ -140,7 +140,7 @@ namespace Microsoft.SqlServer.Server
 			throw new NotImplementedException ();
 		}
 
-		public bool IsDBNull (int i)
+		public bool IsDBNull (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
@@ -151,13 +151,13 @@ namespace Microsoft.SqlServer.Server
 			}
 		}
 
-		public object this [string index] {
+		public object this [string name] {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public object this [int index] {
+		public object this [int ordinal] {
 			get {
 				throw new NotImplementedException ();
 			}

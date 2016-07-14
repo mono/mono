@@ -1,3 +1,6 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+SR.cs
+Requires.cs
+TypeExtensions.CoreCLR.cs

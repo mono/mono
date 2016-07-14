@@ -59,7 +59,7 @@ namespace System.Security.Cryptography {
             public const string Sha512 = "SHA512";              // BCRYPT_SHA512_ALGORITHM
             internal const string Rsa = "RSA";                  // BCRYPT_RSA_ALGORITHM
         }
-
+#if !MONO
         /// <summary>
         ///     Well known key blob tyes
         /// </summary>
@@ -454,5 +454,6 @@ namespace System.Security.Cryptography {
             }
             return keyBlob;
         }
+#endif
     }
 }

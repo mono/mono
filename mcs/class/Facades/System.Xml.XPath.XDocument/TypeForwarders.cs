@@ -22,4 +22,3 @@
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XPath.Extensions))]
 
-//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XPath.XDocumentExtensions))]

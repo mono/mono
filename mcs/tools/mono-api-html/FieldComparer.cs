@@ -45,14 +45,16 @@ namespace Xamarin.ApiDiff {
 
 		void RenderFieldAttributes (FieldAttributes source, FieldAttributes target, ApiChange change)
 		{
-			var srcNotSerialized = (source & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
-			var tgtNotSerialized = (target & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
-			if (srcNotSerialized != tgtNotSerialized) {
-				// this is not a breaking change, so only render it if it changed.
-				if (srcNotSerialized) {
-					change.AppendRemoved ("[NonSerialized]\n");
-				} else {
-					change.AppendAdded ("[NonSerialized]\n");
+			if (!State.IgnoreNonbreaking) {
+				var srcNotSerialized = (source & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+				var tgtNotSerialized = (target & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+				if (srcNotSerialized != tgtNotSerialized) {
+					// this is not a breaking change, so only render it if it changed.
+					if (srcNotSerialized) {
+						change.AppendRemoved ("[NonSerialized]\n");
+					} else {
+						change.AppendAdded ("[NonSerialized]\n");
+					}
 				}
 			}
 

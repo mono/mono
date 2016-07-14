@@ -243,5 +243,9 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool IsGenericTypeDefinition (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static IntPtr GetGenericParameterInfo (RuntimeType type);
+
 	}
 }

@@ -25,6 +25,7 @@ Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
 Mono/RuntimeStructs.cs
 Mono/RuntimeHandles.cs
+Mono/SafeGPtrArrayHandle.cs
 Mono/DataConverter.cs
 Mono.Interop/ComInteropProxy.cs
 Mono.Interop/IDispatch.cs
@@ -307,6 +308,7 @@ System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
+System.Reflection.Metadata/AssemblyExtensions.cs
 System.Resources/Win32Resources.cs
 System.Runtime/GCLargeObjectHeapCompactionMode.cs
 System.Runtime/GCLatencyMode.cs
@@ -601,6 +603,7 @@ System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
+System.Runtime.Loader/AssemblyLoadContext.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
@@ -615,7 +618,6 @@ System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
-System.Security/SafeAccessTokenHandle.cs
 System.Security/SecureString.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
@@ -1393,6 +1395,7 @@ ReferenceSources/SecurityContext.cs
 ../referencesource/mscorlib/system/security/attributes.cs
 ../referencesource/mscorlib/system/security/securitycontext.cs
 ../referencesource/mscorlib/system/security/securitydocument.cs
+../referencesource/mscorlib/system/security/safesecurityhandles.cs
 
 ../referencesource/mscorlib/system/security/claims/Claim.cs
 ../referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs

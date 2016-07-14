@@ -148,7 +148,7 @@ mono_trace_set_logdest_string (const char *dest)
 	if(level_stack == NULL)
 		mono_trace_init();
 
-	if ((dest != NULL) && (strcmp("syslog", dest) != 0)) {
+	if ((dest == NULL) || (strcmp("syslog", dest) != 0)) {
 		logger.opener = mono_log_open_logfile;
 		logger.writer = mono_log_write_logfile;
 		logger.closer = mono_log_close_logfile;
@@ -263,10 +263,11 @@ mono_trace_set_mask_string (const char *value)
 	const char *tok;
 	guint32 flags = 0;
 
-	const char *valid_flags[] = {"asm", "type", "dll", "gc", "cfg", "aot", "security", "threadpool", "io-threadpool", "io-layer", "all", NULL};
+	const char *valid_flags[] = {"asm", "type", "dll", "gc", "cfg", "aot", "security", "threadpool", "io-threadpool", "io-layer", "w32handle", "all", NULL};
 	const MonoTraceMask	valid_masks[] = {MONO_TRACE_ASSEMBLY, MONO_TRACE_TYPE, MONO_TRACE_DLLIMPORT,
 						 MONO_TRACE_GC, MONO_TRACE_CONFIG, MONO_TRACE_AOT, MONO_TRACE_SECURITY,
-						 MONO_TRACE_THREADPOOL, MONO_TRACE_IO_THREADPOOL, MONO_TRACE_IO_LAYER, MONO_TRACE_ALL };
+						 MONO_TRACE_THREADPOOL, MONO_TRACE_IO_THREADPOOL, MONO_TRACE_IO_LAYER,
+						 MONO_TRACE_W32HANDLE, MONO_TRACE_ALL };
 
 	if(!value)
 		return;

@@ -896,6 +896,8 @@ namespace System.Net
 		{
 			Stream s = null;
 			lock (this) {
+				if (request.Aborted)
+					throw new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)

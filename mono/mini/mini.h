@@ -125,7 +125,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 134
+#define MONO_AOT_FILE_VERSION 135
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -315,6 +315,8 @@ typedef struct MonoAotFileInfo
 	guint32 trampoline_size [MONO_AOT_TRAMP_NUM];
 	/* The offset where the trampolines begin on a trampoline page */
 	guint32 tramp_page_code_offsets [MONO_AOT_TRAMP_NUM];
+	/* GUID of aot compilation */
+	guint8 aotid[16];
 } MonoAotFileInfo;
 
 /* Number of symbols in the MonoAotFileInfo structure */
@@ -2119,7 +2121,7 @@ typedef struct {
 	 * Next sequence points and flags are required by the debugger agent.
 	 */
 	gboolean gen_sdb_seq_points;
-	gboolean gen_seq_points_compact_data;
+	gboolean no_seq_points_compact_data;
 	/*
 	 * Setting single_imm_size should guarantee that each time managed code is compiled
 	 * the same instructions and registers are used, regardless of the size of used values.
@@ -2426,6 +2428,7 @@ void      mono_global_regalloc              (MonoCompile *cfg);
 void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks);
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFlags flags, int parts, int aot_method_index);
 void      mono_destroy_compile              (MonoCompile *cfg);
+void      mono_empty_compile              (MonoCompile *cfg);
 MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode);
 void	  mono_print_ins_index (int i, MonoInst *ins);
 void	  mono_print_ins (MonoInst *ins);

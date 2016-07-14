@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+#if !MONO
 using System.Numerics;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
@@ -100,7 +102,7 @@ namespace System.Security.Cryptography {
         ProtectKey = 0x00000001,                        // NCRYPT_UI_PROTECT_KEY_FLAG    
         ForceHighProtection = 0x00000002                // NCRYPT_UI_FORCE_HIGH_PROTECTION_FLAG
     }
-
+#if !MONO
     /// <summary>
     ///     Native interop with CNG's NCrypt layer. Native definitions are in ncrypt.h
     /// </summary>
@@ -1741,4 +1743,5 @@ namespace System.Security.Cryptography {
             return error == ErrorCode.Success;
         }
     }
+#endif
 }

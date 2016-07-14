@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Mono {
@@ -89,6 +90,98 @@ namespace Mono {
 				unsafe {
 					return new RuntimeClassHandle (value->proxy_class);
 				}
+			}
+		}
+	}
+
+	internal struct RuntimeGenericParamInfoHandle {
+		unsafe RuntimeStructs.GenericParamInfo* value;
+
+		internal unsafe RuntimeGenericParamInfoHandle (RuntimeStructs.GenericParamInfo* value)
+		{
+			this.value = value;
+		}
+
+		internal unsafe RuntimeGenericParamInfoHandle (IntPtr ptr)
+		{
+			this.value = (RuntimeStructs.GenericParamInfo*) ptr;
+		}
+
+
+		internal Type[] Constraints { get { return GetConstraints (); } }
+
+		internal GenericParameterAttributes Attributes {
+			get {
+				unsafe {
+					return (GenericParameterAttributes) value->flags;
+				}
+			}
+		}
+
+		Type[] GetConstraints () {
+			int n = GetConstraintsCount ();
+			var a = new Type[n];
+			for (int i = 0; i < n; i++) {
+				unsafe {
+					RuntimeClassHandle c = new RuntimeClassHandle (value->constraints[i]);
+					a[i] = Type.GetTypeFromHandle (c.GetTypeHandle ());
+				}
+			}
+			return a;
+		}
+
+		int GetConstraintsCount () {
+			int i = 0;
+			unsafe {
+				RuntimeStructs.MonoClass** p = value->constraints;
+				while (p != null && *p != null)  {
+					p++; i++;
+				}
+			}
+			return i;
+		}
+	}
+
+	internal struct RuntimeGPtrArrayHandle {
+		unsafe RuntimeStructs.GPtrArray* value;
+
+		internal unsafe RuntimeGPtrArrayHandle (RuntimeStructs.GPtrArray* value)
+		{
+			this.value = value;
+		}
+
+		internal unsafe RuntimeGPtrArrayHandle (IntPtr ptr)
+		{
+			this.value = (RuntimeStructs.GPtrArray*) ptr;
+		}
+
+		internal int Length {
+			get {
+				unsafe {
+					return value->len;
+				}
+			}
+		}
+
+		internal IntPtr this[int i] => Lookup (i);
+
+		internal IntPtr Lookup (int i)
+		{
+			if (i >= 0 && i < Length) {
+				unsafe {
+					return value->data[i];
+				}
+			} else
+				throw new IndexOutOfRangeException ();
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		unsafe extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value, bool freeSeg);
+
+		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h, bool freeSeg) {
+			unsafe {
+				GPtrArrayFree (h.value, freeSeg);
+				h.value = null;
 			}
 		}
 	}
