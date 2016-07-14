@@ -656,7 +656,7 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, Type reflected_type);
+		extern IntPtr GetEvents_native (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetFields_native (string name, BindingFlags bindingAttr);
@@ -670,6 +670,20 @@ namespace System
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
+				}
+				return a;
+			}
+		}
+
+		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (name, bindingAttr), false)) {
+				int n = h.Length;
+				var a = new RuntimeEventInfo[n];
+				for (int i = 0; i < n; i++) {
+					var eh = new Mono.RuntimeEventHandle (h[i]);
+					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
 				}
 				return a;
 			}
