@@ -767,10 +767,9 @@ mono_thread_info_core_resume (MonoThreadInfo *info)
 {
 	gboolean res = FALSE;
 	if (info->create_suspended) {
-		MonoNativeThreadId tid = mono_thread_info_get_tid (info);
 		/* Have to special case this, as the normal suspend/resume pair are racy, they don't work if he resume is received before the suspend */
 		info->create_suspended = FALSE;
-		mono_threads_platform_resume_created (info, tid);
+		mono_coop_sem_post (&info->create_suspended_sem);
 		return TRUE;
 	}
 
@@ -1139,6 +1138,68 @@ mono_thread_info_is_async_context (void)
 		return FALSE;
 }
 
+typedef struct {
+	MonoThreadStart start_routine;
+	gpointer start_routine_arg;
+	gboolean create_suspended;
+	gint32 priority;
+	MonoCoopSem registered;
+	MonoThreadInfo *info;
+} CreateThreadData;
+
+static gsize WINAPI
+inner_start_thread (gpointer data)
+{
+	CreateThreadData *thread_data;
+	MonoThreadInfo *info;
+	MonoThreadStart start_routine;
+	gpointer start_routine_arg;
+	guint32 start_routine_res;
+	gboolean create_suspended;
+	gint32 priority;
+	gsize dummy;
+	gint res;
+
+	thread_data = (CreateThreadData*) data;
+	g_assert (thread_data);
+
+	start_routine = thread_data->start_routine;
+	start_routine_arg = thread_data->start_routine_arg;
+
+	create_suspended = thread_data->create_suspended;
+	priority = thread_data->priority;
+
+	info = mono_thread_info_attach (&dummy);
+	info->runtime_thread = TRUE;
+	info->create_suspended = create_suspended;
+
+	mono_threads_platform_set_priority (info, priority);
+
+	thread_data->info = info;
+
+	if (create_suspended)
+		mono_coop_sem_init (&info->create_suspended_sem, 0);
+
+	mono_coop_sem_post (&thread_data->registered);
+
+	/* thread_data is not valid anymore */
+	thread_data = NULL;
+
+	if (create_suspended) {
+		res = mono_coop_sem_wait (&info->create_suspended_sem, MONO_SEM_FLAGS_NONE);
+		g_assert (res == 0);
+
+		mono_coop_sem_destroy (&info->create_suspended_sem);
+	}
+
+	/* Run the actual main function of the thread */
+	start_routine_res = start_routine (start_routine_arg);
+
+	mono_threads_platform_exit (start_routine_res);
+
+	g_assert_not_reached ();
+}
+
 /*
  * mono_threads_create_thread:
  *
@@ -1148,7 +1209,30 @@ mono_thread_info_is_async_context (void)
 HANDLE
 mono_threads_create_thread (MonoThreadStart start, gpointer arg, MonoThreadParm *tp, MonoNativeThreadId *out_tid)
 {
-	return mono_threads_platform_create_thread (start, arg, tp, out_tid);
+	CreateThreadData thread_data;
+	gint res;
+
+	memset (&thread_data, 0, sizeof (thread_data));
+	thread_data.start_routine = start;
+	thread_data.start_routine_arg = arg;
+	thread_data.create_suspended = tp->creation_flags & CREATE_SUSPENDED;
+	thread_data.priority = tp->priority;
+	mono_coop_sem_init (&thread_data.registered, 0);
+
+	res = mono_threads_platform_create_thread (inner_start_thread, (gpointer) &thread_data,
+		tp->stack_size, tp->creation_flags, out_tid);
+	if (res != 0) {
+		mono_coop_sem_destroy (&thread_data.registered);
+		return NULL;
+	}
+
+	res = mono_coop_sem_wait (&thread_data.registered, MONO_SEM_FLAGS_NONE);
+	g_assert (res == 0);
+
+	mono_coop_sem_destroy (&thread_data.registered);
+
+	return mono_thread_info_get_handle (thread_data.info);
+
 }
 
 /*
