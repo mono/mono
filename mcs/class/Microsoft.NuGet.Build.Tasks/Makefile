@@ -14,6 +14,8 @@ LIBRARY_INSTALL_DIR = $(NUGET_BUILDTASKS_TARGETS_DIR)
 KEY_FILE = $(NUGET_BUILDTASKS_REPO_DIR)/build/PublicKey.snk
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE)
 
+RESOURCE_DEFS = Microsoft.NuGet.Build.Tasks.Strings,$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Strings.resx
+
 LIB_REFS = $(PARENT_PROFILE)System \
 	$(PARENT_PROFILE)System.Core \
 	$(PARENT_PROFILE)System.Data \
@@ -25,18 +27,9 @@ LIB_REFS = $(PARENT_PROFILE)System \
 
 LIB_MCS_FLAGS = \
 	-nowarn:3021		\
-	$(SIGN_FLAGS)		\
-	-resource:Microsoft.NuGet.Build.Tasks.Strings.resources
-
-CLEAN_FILES = Microsoft.NuGet.Build.Tasks.Strings.resources
+	$(SIGN_FLAGS)
 
 EXTRA_DISTFILES = \
-	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Strings.resx \
 	$(NUGET_BUILDTASKS_REPO_DIR)/build/PublicKey.snk
 
 include ../../build/library.make
-
-$(build_lib): Microsoft.NuGet.Build.Tasks.Strings.resources
-
-Microsoft.NuGet.Build.Tasks.Strings.resources: $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Strings.resx
-	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_4_x/resgen.exe "$<" "$@"
