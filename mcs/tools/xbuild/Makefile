@@ -30,10 +30,16 @@ PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
 
 ifeq (14.0, $(XBUILD_VERSION))
-install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets install-nuget-buildtasks-targets install-pcl5-framework
+install-extras: install-versioned-files install-global-files
 else
-install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets
+install-extras: install-versioned-files
 endif
+
+#install files into xbuild's versioned locations
+install-versioned-files: install-bin-data install-nuget-imports
+
+#install files that are only installed once across all xbuild versions
+install-global-files: install-frameworks install-web-targets install-pcl-targets install-pcl5-framework install-nuget-targets
 
 install-bin-data:
 	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
@@ -98,15 +104,18 @@ install-web-targets:
 
 NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
-ifeq (14.0, $(XBUILD_VERSION))
-install-nuget-buildtasks-targets:
+install-nuget-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
-	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
-	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+
+install-nuget-imports:
+ifeq (14.0, $(XBUILD_VERSION))
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+endif
 
 # The .NETPortable,Version=v5.0 framework contains no assemblies, and essentially just fills the requirement
 # for a framework moniker. When using it, assemblies are provided by NuGet packages such as .NETStandard.Library
@@ -118,8 +127,6 @@ install-pcl5-framework:
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/.NET Framework 4.6.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/.NET Framework 4.6.xml"
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/ASP.NET Core 1.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/ASP.NET Core 1.0.xml"
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/Windows Universal 10.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/Windows Universal 10.0.xml"
-
-endif
 
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
