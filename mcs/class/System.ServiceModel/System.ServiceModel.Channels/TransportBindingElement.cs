@@ -56,7 +56,7 @@ namespace System.ServiceModel.Channels
 			max_recv_message_size = other.max_recv_message_size;
 		}
 
-		public bool ManualAddressing {
+		public virtual bool ManualAddressing {
 			get { return manual_addressing; }
 			set { manual_addressing = value; }
 		}

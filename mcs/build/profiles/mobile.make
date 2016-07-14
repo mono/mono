@@ -24,6 +24,7 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_5 \
 	-d:MONO \
 	-d:DISABLE_CAS_USE \
+	-d:NETSTANDARD \
 	-nowarn:1699 \
 	-nostdlib \
 	-lib:$(topdir)/class/lib/$(PROFILE) \
