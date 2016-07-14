@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
-
 using System;
 using System.IO;
 using System.Collections;
@@ -44,6 +42,50 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32
 {
+
+#if MOBILE
+	public sealed class RegistryKey : IDisposable
+	{
+		internal RegistryKey (RegistryHive hiveId)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void Dispose ()
+		{
+		}
+
+		public RegistryKey CreateSubKey (string subkey)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public object GetValue (string name, object defaultValue)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static object GetValue (string keyName, string valueName, object defaultValue)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey OpenSubKey (string name, bool writable)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetValue (string name, object value)
+		{
+		}
+
+		public void SetValue (string name, object value, RegistryValueKind valueKind)
+		{
+		}
+
+		// TODO: Finish full contract API
+	}
+#else
 	/// <summary>
 	///	Wrapper class for Windows Registry Entry.
 	/// </summary>
@@ -693,7 +735,6 @@ namespace Microsoft.Win32
 		}
 
 	}
+#endif
 }
-
-#endif // NET_2_1
 

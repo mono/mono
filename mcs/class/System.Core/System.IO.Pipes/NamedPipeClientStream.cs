@@ -72,21 +72,33 @@ namespace System.IO.Pipes
 		}
 
 		public NamedPipeClientStream (string serverName, string pipeName, PipeDirection direction, PipeOptions options, TokenImpersonationLevel impersonationLevel, HandleInheritability inheritability)
+#if MOBILE
+			: base (direction, DefaultBufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+#else
 			: this (serverName, pipeName, ToAccessRights (direction), options, impersonationLevel, inheritability)
 		{
 		}
+#endif
 
 		public NamedPipeClientStream (PipeDirection direction, bool isAsync, bool isConnected, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			if (IsWindows)
 				impl = new Win32NamedPipeClient (this, safePipeHandle);
 			else
 				impl = new UnixNamedPipeClient (this, safePipeHandle);
 			IsConnected = isConnected;
 			InitializeHandle (safePipeHandle, true, isAsync);
+#endif
 		}
 
+#if !MOBILE
 		public NamedPipeClientStream (string serverName, string pipeName, PipeAccessRights desiredAccessRights, PipeOptions options, TokenImpersonationLevel impersonationLevel, HandleInheritability inheritability)
 			: base (ToDirection (desiredAccessRights), DefaultBufferSize)
 		{
@@ -99,21 +111,30 @@ namespace System.IO.Pipes
 			else
 				impl = new UnixNamedPipeClient (this, serverName, pipeName, desiredAccessRights, options, inheritability);
 		}
+#endif
 
 		INamedPipeClient impl;
 
 		public void Connect ()
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			impl.Connect ();
 			InitializeHandle (impl.Handle, false, impl.IsAsync);
 			IsConnected = true;
+#endif
 		}
 
 		public void Connect (int timeout)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else			
 			impl.Connect (timeout);
 			InitializeHandle (impl.Handle, false, impl.IsAsync);
 			IsConnected = true;
+#endif
 		}
 
 		public int NumberOfServerInstances {

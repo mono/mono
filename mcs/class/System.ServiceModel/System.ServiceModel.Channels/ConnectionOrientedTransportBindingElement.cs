@@ -33,7 +33,9 @@ using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Xml;
+#if !MOBILE && !XAMMAC_4_5
 using WS = System.Web.Services.Description;
+#endif
 
 namespace System.ServiceModel.Channels
 {
@@ -119,6 +121,7 @@ namespace System.ServiceModel.Channels
 			return false;
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -132,6 +135,7 @@ namespace System.ServiceModel.Channels
 			}
 			return false;
 		}
+#endif
 
 		public override T GetProperty<T> (BindingContext context)
 		{
@@ -141,6 +145,7 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> (context);
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
 		                                          WsdlContractConversionContext context)
 		{
@@ -192,5 +197,6 @@ namespace System.ServiceModel.Channels
 				transfer_mode == TransferMode.StreamedResponse)
 				assertions.Add (doc.CreateElement ("msf", "Streamed", "http://schemas.microsoft.com/ws/2006/05/framing/policy"));
 		}
+#endif
 	}
 }

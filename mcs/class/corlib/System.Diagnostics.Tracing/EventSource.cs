@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//	Frederik Carlier <frederik.carlier@quamotion.mobi>
 //
 // Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
+// Copyrithg (C) 2015 Quamotion (http://quamotion.mobi)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +33,12 @@ namespace System.Diagnostics.Tracing
 {
 	public class EventSource : IDisposable
 	{
+		protected internal struct EventData
+		{
+			public IntPtr DataPointer { get; set; }
+			public int Size { get; set; }
+		}
+
 		protected EventSource ()
 		{
 			this.Name = this.GetType().Name;
@@ -150,50 +158,62 @@ namespace System.Diagnostics.Tracing
 
 		protected void WriteEvent (int eventId)
 		{
+			WriteEvent (eventId, new object[] { } );
 		}
 
 		protected void WriteEvent (int eventId, byte[] arg1)
 		{
+			WriteEvent (eventId, new object[] { arg1 } );
 		}
 
 		protected void WriteEvent (int eventId, int arg1)
 		{
+			WriteEvent (eventId, new object[] { arg1 } );
 		}
 
 		protected void WriteEvent (int eventId, string arg1)
 		{
+			WriteEvent (eventId, new object[] { arg1 } );
 		}
 
 		protected void WriteEvent (int eventId, int arg1, int arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, int arg1, int arg2, int arg3)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
 		}
 
 		protected void WriteEvent (int eventId, int arg1, string arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, long arg1)
 		{
+			WriteEvent (eventId, new object[] { arg1 } );
 		}
 
 		protected void WriteEvent (int eventId, long arg1, byte[] arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, long arg1, long arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, long arg1, long arg2, long arg3)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
 		}
 
 		protected void WriteEvent (int eventId, long arg1, string arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, params object[] args)
@@ -202,22 +222,27 @@ namespace System.Diagnostics.Tracing
 
 		protected void WriteEvent (int eventId, string arg1, int arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, string arg1, int arg2, int arg3)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
 		}
 
 		protected void WriteEvent (int eventId, string arg1, long arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, string arg1, string arg2)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2 } );
 		}
 
 		protected void WriteEvent (int eventId, string arg1, string arg2, string arg3)
 		{
+			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
 		}
 	}
 }
