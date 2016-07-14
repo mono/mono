@@ -22,3 +22,8 @@
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.BindingFlags))]
 
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.AssemblyExtensions))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.EventInfoExtensions))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.MethodInfoExtensions))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.PropertyInfoExtensions))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TypeExtensions))]

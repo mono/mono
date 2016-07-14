@@ -23,3 +23,4 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistryAccessRule))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistryAuditRule))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistrySecurity))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryAclExtensions))]

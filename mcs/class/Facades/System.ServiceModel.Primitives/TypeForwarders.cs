@@ -136,7 +136,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageContractMemberAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageCredentialType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageHeader<>))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageHeaderAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageHeaderException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageParameterAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.OperationContext))]
@@ -159,16 +158,3 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.UnknownMessageReceivedEventArgs))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.XmlSerializerFormatAttribute))]
 
-#if !MOBILE && !XAMMAC_4_5
-
-// TODO: These are implemented as stubs in the facade directly on mobile (contrary to Desktop where they're forwarded to System.ServiceModel.dll/System.IdentityModel.dll).
-// I'm not 100% sure this is the right approach, but Marek thinks it's fine so I'm sticking with it for now.
-// The problem on mobile is that types like X509CertificateValidator live in System.IdentityModel.dll which is not built for mobile.
-
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IdentityModel.Selectors.X509CertificateValidator))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.X509CertificateValidationMode))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.X509ServiceCertificateAuthentication))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.X509CertificateInitiatorClientCredential))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.X509CertificateRecipientClientCredential))]
-
-#endif

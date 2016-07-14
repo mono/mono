@@ -22,3 +22,5 @@
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Globalization.IdnMapping))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.NormalizationForm))]
+// Missing: [assembly:System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Globalization.GlobalizationExtensions))]
+// Missing: [assembly:System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.StringNormalizationExtensions))]

@@ -110,7 +110,7 @@ namespace System.ServiceModel
 			set { reader_quotas = value; }
 		}
 
-		public override string Scheme {
+		public override abstract string Scheme {
 			get;
 		}
 

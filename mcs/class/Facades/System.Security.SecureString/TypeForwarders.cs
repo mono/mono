@@ -21,3 +21,5 @@
 // 
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.SecureString))]
+
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.SecureStringMarshal))]

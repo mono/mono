@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Numerics.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = /unsafe -nowarn:414
+LIB_MCS_FLAGS = /unsafe -d:MONO
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 RESOURCE_STRINGS = ../../../external/referencesource/System.Numerics/System.Numerics.txt

@@ -55,7 +55,6 @@ namespace System.Security.Cryptography {
 			Check (scope);
 
 			switch (impl) {
-#if !MOBILE
 			case DataProtectionImplementation.ManagedProtection:
 				try {
 					return ManagedProtection.Protect (userData, optionalEntropy, scope);
@@ -72,7 +71,6 @@ namespace System.Security.Cryptography {
 					string msg = Locale.GetText ("Data protection failed.");
 					throw new CryptographicException (msg, e);
 				}
-#endif
 			default:
 				throw new PlatformNotSupportedException ();
 			}
@@ -88,7 +86,6 @@ namespace System.Security.Cryptography {
 			Check (scope);
 
 			switch (impl) {
-#if !MOBILE
 			case DataProtectionImplementation.ManagedProtection:
 				try {
 					return ManagedProtection.Unprotect (encryptedData, optionalEntropy, scope);
@@ -105,7 +102,6 @@ namespace System.Security.Cryptography {
 					string msg = Locale.GetText ("Data unprotection failed.");
 					throw new CryptographicException (msg, e);
 				}
-#endif
 			default:
 				throw new PlatformNotSupportedException ();
 			}

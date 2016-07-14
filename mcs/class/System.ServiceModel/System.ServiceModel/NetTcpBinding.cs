@@ -46,9 +46,7 @@ namespace System.ServiceModel
 		XmlDictionaryReaderQuotas reader_quotas
 			= new XmlDictionaryReaderQuotas ();
 		bool transaction_flow;
-#if !MOBILE && !XAMMAC_4_5
 		TransactionProtocol transaction_protocol;
-#endif
 		TcpTransportBindingElement transport;
 
 		public NetTcpBinding ()
@@ -71,13 +69,9 @@ namespace System.ServiceModel
 		public NetTcpBinding (string configurationName)
 			: this ()
 		{
-#if !MOBILE && !XAMMAC_4_5
 			var bindingsSection = ConfigUtil.BindingsSection;
 			var el = bindingsSection.NetTcpBinding.Bindings [configurationName];
 			el.ApplyConfiguration (this);
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		internal NetTcpBinding (TcpTransportBindingElement transport,
@@ -153,12 +147,10 @@ namespace System.ServiceModel
 			set { transaction_flow = value; }
 		}
 
-#if !MOBILE && !XAMMAC_4_5
 		public TransactionProtocol TransactionProtocol {
 			get { return transaction_protocol; }
 			set { transaction_protocol = value; }
 		}
-#endif
 
 		// overrides
 
@@ -168,22 +160,18 @@ namespace System.ServiceModel
 
 		public override BindingElementCollection CreateBindingElements ()
 		{
-#if !MOBILE && !XAMMAC_4_5
 			BindingElement tx = new TransactionFlowBindingElement (TransactionProtocol.WSAtomicTransactionOctober2004);
 			SecurityBindingElement sec = CreateMessageSecurity ();
-#endif
 			var msg = new BinaryMessageEncodingBindingElement ();
 			if (ReaderQuotas != null)
 				ReaderQuotas.CopyTo (msg.ReaderQuotas);
 			var trsec = CreateTransportSecurity ();
 			BindingElement tr = GetTransport ();
 			List<BindingElement> list = new List<BindingElement> ();
-#if !MOBILE && !XAMMAC_4_5
 			if (tx != null)
 				list.Add (tx);
 			if (sec != null)
 				list.Add (sec);
-#endif
 			list.Add (msg);
 			if (trsec != null)
 				list.Add (trsec);
@@ -196,7 +184,6 @@ namespace System.ServiceModel
 			return transport.Clone ();
 		}
 
-#if !MOBILE && !XAMMAC_4_5
 		// It is problematic, but there is no option to disable establishing security context in this binding unlike WSHttpBinding...
 		SecurityBindingElement CreateMessageSecurity ()
 		{
@@ -252,7 +239,6 @@ namespace System.ServiceModel
 				// FIXME: requireCancellation
 				element, true, reqs);
 		}
-#endif
 
 		BindingElement CreateTransportSecurity ()
 		{

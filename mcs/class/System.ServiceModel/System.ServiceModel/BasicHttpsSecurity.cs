@@ -64,7 +64,6 @@ namespace System.ServiceModel
 
 		public HttpTransportSecurity Transport {
 			get { return transport; }
-			set { transport = value; }
 		}
 	}
 }

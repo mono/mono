@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 // 
 
+#if !MOBILE && !XAMMAC_4_5
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.SslStreamSecurityBindingElement))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.TcpConnectionPoolSettings))]
@@ -29,4 +30,5 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.NetTcpBinding))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.NetTcpSecurity))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.TcpTransportSecurity))]
+#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.TcpClientCredentialType))]

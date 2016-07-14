@@ -25,6 +25,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Win32
@@ -41,4 +43,6 @@ namespace Microsoft.Win32
 		None = -1
 	}
 }
+
+#endif // NET_2_1
 

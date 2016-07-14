@@ -64,5 +64,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.IQueryable))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.IQueryable<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.IQueryProvider))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.IArgumentProvider))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.IDynamicExpression))]
+
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.IArgumentProvider))]
+//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.IDynamicExpression))]

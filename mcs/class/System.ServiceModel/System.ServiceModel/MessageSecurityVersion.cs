@@ -27,10 +27,8 @@
 //
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
-#endif
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
@@ -40,7 +38,6 @@ namespace System.ServiceModel
 {
 	public abstract class MessageSecurityVersion
 	{
-#if !MOBILE && !XAMMAC_4_5
 		// Types
 		class MessageSecurityTokenVersion : SecurityTokenVersion
 		{
@@ -115,7 +112,6 @@ namespace System.ServiceModel
 					SecureConversationVersion = SecureConversationVersion.WSSecureConversationFeb2005;
 					TrustVersion = TrustVersion.WSTrustFeb2005;
 				}
-				this.SecurityVersion = wss11 ? SecurityVersion.WSSecurity11 : SecurityVersion.WSSecurity10;
 			}
 
 			public override BasicSecurityProfileVersion BasicSecurityProfileVersion {
@@ -126,11 +122,14 @@ namespace System.ServiceModel
 				get { return MessageSecurityTokenVersion.GetVersion (wss11, basic_profile); }
 			}
 
+			public override SecurityVersion SecurityVersion {
+				get { return wss11 ? SecurityVersion.WSSecurity11 : SecurityVersion.WSSecurity10; }
+			}
+
 			public override SecurityPolicyVersion SecurityPolicyVersion {
 				get { return use2007 ? SecurityPolicyVersion.WSSecurityPolicy12 : SecurityPolicyVersion.WSSecurityPolicy11; }
 			}
 		}
-#endif
 
 		// Static members
 
@@ -138,16 +137,12 @@ namespace System.ServiceModel
 
 		static MessageSecurityVersion ()
 		{
-#if !MOBILE && !XAMMAC_4_5
 			wss10_basic = new MessageSecurityVersionImpl (false, true, false);
 			wss11 = new MessageSecurityVersionImpl (true, false, false);
 			wss11_basic = new MessageSecurityVersionImpl (true, true, false);
 			wss10_2007_basic = new MessageSecurityVersionImpl (false, true, true);
 			wss11_2007_basic = new MessageSecurityVersionImpl (true, true, true);
 			wss11_2007 = new MessageSecurityVersionImpl (true, false, true);
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		public static MessageSecurityVersion Default {
@@ -188,11 +183,9 @@ namespace System.ServiceModel
 
 		public abstract BasicSecurityProfileVersion BasicSecurityProfileVersion { get; }
 
-#if !MOBILE && !XAMMAC_4_5
 		public abstract SecurityTokenVersion SecurityTokenVersion { get; }
-#endif
 
-		public SecurityVersion SecurityVersion { get; internal set; }
+		public abstract SecurityVersion SecurityVersion { get; }
 
 		public SecureConversationVersion SecureConversationVersion { get; internal set; }
 
