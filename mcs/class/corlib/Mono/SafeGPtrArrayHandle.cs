@@ -23,9 +23,18 @@ namespace Mono {
 			this.freeSeg = freeSeg;
 		}
 
-		public void Dispose ()
+		~SafeGPtrArrayHandle ()
+		{
+			Dispose (false);
+		}
+
+		void Dispose (bool disposing)
 		{
 			RuntimeGPtrArrayHandle.DestroyAndFree (ref handle, freeSeg);
+		}
+
+		public void Dispose () {
+			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
 
