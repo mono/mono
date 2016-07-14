@@ -21,14 +21,16 @@ install-local: install-extras
 endif
 
 PORTABLE_TARGETS_SRC=../../../external/buildtools/src/Portable/Targets
+PCL5_FX_SRC=../../../external/buildtools/src/Portable/Frameworks/v5.0
 
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
+PCL5_FX_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETPortable/v5.0
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
 
 ifeq (14.0, $(XBUILD_VERSION))
-install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets install-nuget-buildtasks-targets
+install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets install-nuget-buildtasks-targets install-pcl5-framework
 else
 install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets
 endif
@@ -105,6 +107,18 @@ install-nuget-buildtasks-targets:
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+
+# The .NETPortable,Version=v5.0 framework contains no assemblies, and essentially just fills the requirement
+# for a framework moniker. When using it, assemblies are provided by NuGet packages such as .NETStandard.Library
+install-pcl5-framework:
+	$(MKINSTALLDIRS) $(DESTDIR)$(PCL5_FX_DIR)/RedistList
+	$(INSTALL_DATA) $(PCL5_FX_SRC)/FrameworkList.xml $(DESTDIR)$(PCL5_FX_DIR)/RedistList/FrameworkList.xml
+
+	$(MKINSTALLDIRS) $(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/.NET Framework 4.6.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/.NET Framework 4.6.xml"
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/ASP.NET Core 1.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/ASP.NET Core 1.0.xml"
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/Windows Universal 10.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/Windows Universal 10.0.xml"
+
 endif
 
 EXTRA_DISTFILES = \
