@@ -710,7 +710,20 @@ namespace System
 		public extern override Type[] GetInterfaces();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeType[] GetNestedTypes_internal (string name, BindingFlags bindingAttr);		
+		extern IntPtr GetNestedTypes_native (string name, BindingFlags bindingAttr);
+
+		RuntimeType[] GetNestedTypes_internal (string name, BindingFlags bindingAttr)
+		{
+			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (name, bindingAttr))) {
+				int n = h.Length;
+				var a = new RuntimeType [n];
+				for (int i = 0; i < n; i++) {
+					var th = new RuntimeTypeHandle (h[i]);
+					a[i] = (RuntimeType) Type.GetTypeFromHandle (th);
+				}
+				return a;
+			}
+		}
 
 		public override string AssemblyQualifiedName {
 			get {
