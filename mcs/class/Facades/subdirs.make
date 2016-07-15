@@ -30,9 +30,7 @@ System.Security.Cryptography.Algorithms System.Security.Cryptography.Primitives 
 System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
 
 # common_SUBDIRS dependencies
-common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml \
-System.Drawing.Primitives
-
+common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml
 reflection_PARALLEL_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflection.Emit.Lightweight System.Reflection.Emit
 
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS)
@@ -41,7 +39,7 @@ monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
 mobile_static_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS)
+net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Primitives
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(reflection_PARALLEL_SUBDIRS) System.Diagnostics.PerformanceCounter \
 System.Net.Http.WebRequestHandler
 
