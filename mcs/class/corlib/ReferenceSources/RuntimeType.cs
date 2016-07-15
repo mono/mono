@@ -489,7 +489,7 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, Type reflected_type);		
+		extern IntPtr GetPropertiesByName_native (string name, BindingFlags bindingAttr, bool icase);		
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetConstructors_native (BindingFlags bindingAttr);
@@ -508,6 +508,19 @@ namespace System
 			}
 		}
 
+		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (name, bindingAttr, icase), false)) {
+				var n = h.Length;
+				var a = new RuntimePropertyInfo [n];
+				for (int i = 0; i < n; i++) {
+					var ph = new Mono.RuntimePropertyHandle (h[i]);
+					a[i] = (RuntimePropertyInfo) PropertyInfo.GetPropertyFromHandle (ph, refh);
+				}
+				return a;
+			}
+		}
 
 		public override InterfaceMapping GetInterfaceMap (Type ifaceType)
 		{
@@ -656,7 +669,7 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, Type reflected_type);
+		extern IntPtr GetEvents_native (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetFields_native (string name, BindingFlags bindingAttr);
@@ -670,6 +683,20 @@ namespace System
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
+				}
+				return a;
+			}
+		}
+
+		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (name, bindingAttr), false)) {
+				int n = h.Length;
+				var a = new RuntimeEventInfo[n];
+				for (int i = 0; i < n; i++) {
+					var eh = new Mono.RuntimeEventHandle (h[i]);
+					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
 				}
 				return a;
 			}
