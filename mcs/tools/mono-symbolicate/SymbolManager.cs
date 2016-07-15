@@ -20,6 +20,8 @@ namespace Mono
 		internal bool TryResolveLocation (StackFrameData sfData, string mvid, string aotid)
 		{
 			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (mvid);
+			if (assemblyLocProvider == null)
+				return false;
 
 			SeqPointInfo seqPointInfo = null;
 			if (!sfData.IsILOffset && aotid != null)
@@ -36,8 +38,10 @@ namespace Mono
 				return assemblies[mvid];
 
 			var mvidDir = Path.Combine (msymDir, mvid);
-			if (!Directory.Exists (mvidDir))
-				throw new Exception (string.Format("MVID directory does not exist: {0}", mvidDir));
+			if (!Directory.Exists (mvidDir)) {
+				Console.Error.WriteLine ("MVID directory does not exist: {0}", mvidDir);
+				return  null;
+			}
 
 			string assemblyPath = null;
 			var exeFiles = Directory.GetFiles (mvidDir, "*.exe");
