@@ -19,6 +19,9 @@ namespace Mono
 
 		internal bool TryResolveLocation (StackFrameData sfData, string mvid, string aotid)
 		{
+			if (mvid == null)
+				return false;
+
 			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (mvid);
 			if (assemblyLocProvider == null)
 				return false;
