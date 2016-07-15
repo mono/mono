@@ -49,7 +49,6 @@ mobile_common_dirs := \
 	System.ComponentModel.Composition.4.5 \
 	System.Net \
 	System.Net.Http	\
-	System.Net.Http.WebRequest	\
 	System.Windows \
 	System.Xml.Serialization \
 	Mono.CSharp	\
