@@ -75,10 +75,10 @@ static gboolean unified_suspend_enabled;
 
 #define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & THREAD_STATE_MASK)
 
-/*warn at 50 ms*/
-#define SLEEP_DURATION_BEFORE_WARNING (10)
-/*abort at 1 sec*/
-#define SLEEP_DURATION_BEFORE_ABORT 200
+/*warn at 15 ms*/
+#define SLEEP_DURATION_BEFORE_WARNING (15)
+/*abort at 300 ms*/
+#define SLEEP_DURATION_BEFORE_ABORT 300
 
 static long sleepWarnDuration = SLEEP_DURATION_BEFORE_WARNING,
 	    sleepAbortDuration = SLEEP_DURATION_BEFORE_ABORT;
