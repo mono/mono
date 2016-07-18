@@ -145,11 +145,14 @@ namespace Mono
 				aotid = aotidMetadata.Value;
 
 			var linesMvid = ProcessLinesMVID (metadata);
-			var lineNumber = 0;
+			var lineNumber = -1;
 			foreach (var sfData in stackFrames) {
 				string mvid = null;
+				lineNumber++;
+				if (!sfData.IsValid)
+					continue;
 				if (linesMvid.ContainsKey (lineNumber))
-					mvid = linesMvid [lineNumber++];
+					mvid = linesMvid [lineNumber];
 
 				symbolManager.TryResolveLocation (sfData, mvid, aotid);
 

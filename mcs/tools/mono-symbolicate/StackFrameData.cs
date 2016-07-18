@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
 
@@ -14,6 +15,8 @@ namespace Mono
 		public readonly uint MethodIndex;
 		public readonly string Line;
 
+		public readonly bool IsValid;
+
 		public string File { get; private set; }
 		public int LineNumber { get; private set; }
 
@@ -27,6 +30,15 @@ namespace Mono
 			Offset = offset;
 			IsILOffset = isILOffset;
 			MethodIndex = methodIndex;
+
+			IsValid = true;
+		}
+
+		private StackFrameData (string line)
+		{
+			LineNumber = -1;
+
+			Line = line;
 		}
 
 		public static bool TryParse (string line, out StackFrameData stackFrame)
@@ -34,8 +46,13 @@ namespace Mono
 			stackFrame = null;
 
 			var match = regex.Match (line);
-			if (!match.Success)
+			if (!match.Success) {
+				if (line.Trim ().StartsWith ("at ", StringComparison.InvariantCulture)) {
+					stackFrame = new StackFrameData (line);
+					return true;
+				}
 				return false;
+			}
 
 			string typeFullName, methodSignature;
 			var methodStr = match.Groups ["Method"].Value.Trim ();
