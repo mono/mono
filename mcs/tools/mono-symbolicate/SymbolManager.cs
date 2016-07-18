@@ -12,9 +12,11 @@ namespace Mono
 	public class SymbolManager
 	{
 		string msymDir;
+		Logger logger;
 
-		public SymbolManager (string msymDir) {
+		public SymbolManager (string msymDir, Logger logger) {
 			this.msymDir = msymDir;
+			this.logger = logger;
 		}
 
 		internal bool TryResolveLocation (StackFrameData sfData, string mvid, string aotid)
@@ -42,7 +44,7 @@ namespace Mono
 
 			var mvidDir = Path.Combine (msymDir, mvid);
 			if (!Directory.Exists (mvidDir)) {
-				Console.Error.WriteLine ("MVID directory does not exist: {0}", mvidDir);
+				logger.LogWarning ("MVID directory does not exist: {0}", mvidDir);
 				return  null;
 			}
 
@@ -50,12 +52,14 @@ namespace Mono
 			var exeFiles = Directory.GetFiles (mvidDir, "*.exe");
 			var dllFiles = Directory.GetFiles (mvidDir, "*.dll");
 
-			if (exeFiles.Length + dllFiles.Length != 1)
-				throw new Exception (string.Format ("MVID directory should include one assembly: {0}", mvidDir));
+			if (exeFiles.Length + dllFiles.Length != 1) {
+				logger.LogError ("MVID directory should include one assembly: {0}", mvidDir);
+				return null;
+			}
 
 			assemblyPath = (exeFiles.Length > 0)? exeFiles[0] : dllFiles[0];
 
-			var locProvider = new AssemblyLocationProvider (assemblyPath);
+			var locProvider = new AssemblyLocationProvider (assemblyPath, logger);
 
 			assemblies.Add (mvid, locProvider);
 
@@ -70,8 +74,10 @@ namespace Mono
 				return seqPointInfos[aotid];
 
 			var aotidDir = Path.Combine (msymDir, aotid);
-			if (!Directory.Exists (aotidDir))
-				throw new Exception (string.Format("AOTID directory does not exist: {0}", aotidDir));
+			if (!Directory.Exists (aotidDir)) {
+				logger.LogError ("AOTID directory does not exist: {0}", aotidDir);
+				return null;
+			}
 
 			string msymFile = null;
 			var msymFiles = Directory.GetFiles(aotidDir, "*.msym");
@@ -93,6 +99,7 @@ namespace Mono
 				foreach (var assemblyPath in assemblies) {
 					var mdbPath = assemblyPath + ".mdb";
 					if (!File.Exists (mdbPath)) {
+						logger.LogWarning ("Directory {0} contains {1} but no mdb {2}.", dir, Path.GetFileName (assemblyPath), Path.GetFileName (mdbPath));
 						// assemblies without mdb files are useless
 						continue;
 					}
