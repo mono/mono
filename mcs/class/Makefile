@@ -66,6 +66,7 @@ mobile_static_dirs := \
 	Mono.Dynamic.Interpreter	\
 	PEAPI	\
 	Mono.CompilerServices.SymbolWriter	\
+	Mono.Simd			\
 	$(pcl_facade_dirs)
 
 mobile_dynamic_dirs := \
