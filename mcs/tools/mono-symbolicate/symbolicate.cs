@@ -23,6 +23,8 @@ namespace Mono
 			}
 		}
 
+		static Logger logger;
+
 		public static int Main (String[] args)
 		{
 			var showHelp = false;
@@ -39,8 +41,12 @@ namespace Mono
 				cmd = new Command (SymbolicateAction, 2, 2);
 			}
 
+			var logLevel = Logger.Level.Warning;
+
 			var options = new OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
+				{ "q", "Quiet, warnings are not displayed", v => logLevel = Logger.Level.Error },
+				{ "v", "Verbose, log debug messages", v => logLevel = Logger.Level.Debug },
 			};
 
 			try {
@@ -59,6 +65,8 @@ namespace Mono
 				return 1;
 			}
 
+			logger = new Logger (logLevel, msg => Console.Error.WriteLine (msg));
+
 			cmd.Action (extra);
 
 			return 0;
@@ -69,7 +77,7 @@ namespace Mono
 			var msymDir = args [0];
 			var inputFile = args [1];
 
-			var symbolManager = new SymbolManager (msymDir);
+			var symbolManager = new SymbolManager (msymDir, logger);
 
 			using (StreamReader r = new StreamReader (inputFile)) {
 				var sb = Process (r, symbolManager);
@@ -82,7 +90,7 @@ namespace Mono
 			var msymDir = args[0];
 			var lookupDirs = args.Skip (1).ToArray ();
 
-			var symbolManager = new SymbolManager (msymDir);
+			var symbolManager = new SymbolManager (msymDir, logger);
 
 			symbolManager.StoreSymbols (lookupDirs);
 		}
