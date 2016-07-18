@@ -36,6 +36,13 @@ namespace Mono
 			var types = assembly.MainModule.Types;
 			foreach (var ntype in nested) {
 				if (type == null) {
+					// Use namespace first time.
+					type = types.FirstOrDefault (t => t.FullName == ntype);
+				} else {
+					type = types.FirstOrDefault (t => t.Name == ntype);
+				}
+
+				if (type == null) {
 					logger.LogWarning ("Could not find type: {0}", ntype);
 					return false;
 				}
