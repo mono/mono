@@ -32,15 +32,6 @@ namespace Mono
 
 			Command cmd = null;
 
-			if (args[0] == "store-symbols")
-				cmd = new Command (StoreSymbolsAction, 2);
-
-			if (cmd != null) {
-				args = args.Skip (1).ToArray ();
-			} else {
-				cmd = new Command (SymbolicateAction, 2, 2);
-			}
-
 			var logLevel = Logger.Level.Warning;
 
 			var options = new OptionSet {
@@ -56,9 +47,18 @@ namespace Mono
 				showHelp = true;
 			}
 
+			if (extra.Count > 0 && extra[0] == "store-symbols")
+				cmd = new Command (StoreSymbolsAction, 2);
+
+			if (cmd != null) {
+				extra.RemoveAt (0);
+			} else {
+				cmd = new Command (SymbolicateAction, 2, 2);
+			}
+
 			if (showHelp || extra == null || extra.Count < cmd.MinArgCount || extra.Count > cmd.MaxArgCount) {
-				Console.Error.WriteLine ("Usage: symbolicate <msym dir> <input file>");
-				Console.Error.WriteLine ("       symbolicate store-symbols <msym dir> [<dir>]+");
+				Console.Error.WriteLine ("Usage: symbolicate [options] <msym dir> <input file>");
+				Console.Error.WriteLine ("       symbolicate [options] store-symbols <msym dir> [<dir>]+");
 				Console.WriteLine ();
 				Console.WriteLine ("Available options:");
 				options.WriteOptionDescriptions (Console.Out);
