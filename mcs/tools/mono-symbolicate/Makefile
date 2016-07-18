@@ -43,7 +43,8 @@ PREPARE_OUTDIR = @\
 
 COMPILE = \
 	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE); \
-	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR)
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
 
 check: test-local
 
