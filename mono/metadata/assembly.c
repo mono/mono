@@ -2816,6 +2816,7 @@ assembly_binding_info_parsed (MonoAssemblyBindingInfo *info, void *user_data)
 
 	for (tmp = domain->assembly_bindings; tmp; tmp = tmp->next) {
 		info_tmp = (MonoAssemblyBindingInfo *)tmp->data;
+		// We use info->name here, but further down check it against NULL.
 		if (strcmp (info->name, info_tmp->name) == 0 && info_versions_equal (info, info_tmp))
 			return;
 	}

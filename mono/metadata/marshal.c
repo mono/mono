@@ -9735,6 +9735,7 @@ get_virtual_stelemref_wrapper (int kind)
 		mono_mb_emit_ldarg (mb, 2);
 		mono_mb_emit_ldloc (mb, aklass);
 		mono_mb_emit_icall (mb, mono_object_isinst_icall);
+		// We never use this because it's overwritten.
 		b2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 		/* if (vklass->idepth < aklass->idepth) goto failue */
@@ -9746,6 +9747,7 @@ get_virtual_stelemref_wrapper (int kind)
 		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoClass, idepth));
 		mono_mb_emit_byte (mb, CEE_LDIND_U2);
 
+		// Overwritten here.
 		b2 = mono_mb_emit_branch (mb, CEE_BLT_UN);
 
 		/* if (vklass->supertypes [aklass->idepth - 1] != aklass) goto failure */

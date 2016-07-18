@@ -172,6 +172,7 @@ mono_mempool_stats (MonoMemPool *pool)
 {
 	MonoMemPool *p;
 	int count = 0;
+	// Dereferencing pool here, then NULL checking it further down.
 	guint32 still_free = pool->end - pool->pos;
 
 	p = pool;
