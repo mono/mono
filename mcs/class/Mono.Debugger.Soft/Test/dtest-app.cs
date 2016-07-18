@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -309,6 +310,10 @@ public class Tests : TestsBase, ITest2
 		}
 		if (args.Length >0 && args [0] == "wait-one") {
 			wait_one ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "threadpool-io") {
+			threadpool_io ();
 			return 0;
 		}
 		breakpoints ();
@@ -1540,6 +1545,20 @@ public class Tests : TestsBase, ITest2
 
 	public override string virtual_method () {
 		return "V2";
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void threadpool_io () {
+		Task<int> t = Task.Run (async () => {
+			var wc = new System.Net.WebClient ();
+			string filename = System.IO.Path.GetTempFileName ();
+
+			var dl = wc.DownloadFileTaskAsync ("http://www.mono-project.com/", filename);
+			await dl;
+			System.IO.File.Delete (filename);
+			return 1;
+			});
+		var n = t.Result;
 	}
 }
 
