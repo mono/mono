@@ -710,11 +710,15 @@ namespace System
 		public extern override Type[] GetInterfaces();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetNestedTypes_native (string name, BindingFlags bindingAttr);
+		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr);
 
-		RuntimeType[] GetNestedTypes_internal (string name, BindingFlags bindingAttr)
+		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr)
 		{
-			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (name, bindingAttr))) {
+			string internalName = null;
+			if (displayName != null)
+				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
+			using (var namePtr = new Mono.SafeStringMarshal (internalName))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr))) {
 				int n = h.Length;
 				var a = new RuntimeType [n];
 				for (int i = 0; i < n; i++) {
