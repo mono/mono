@@ -242,6 +242,9 @@ mono_custom_attrs_has_attr
 mono_debug_add_method
 mono_debug_cleanup
 mono_debug_close_mono_symbol_file
+mono_debug_domain_create
+mono_debug_domain_unload
+mono_debug_enabled
 mono_debug_find_method
 mono_debug_free_source_location
 mono_debug_init
