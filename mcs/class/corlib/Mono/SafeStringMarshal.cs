@@ -25,11 +25,12 @@ namespace Mono  {
 
 		public SafeStringMarshal (string str) {
 			this.str = str;
+			this.marshaled_string = IntPtr.Zero;
 		}
 
 		public IntPtr Value {
 			get {
-				if (marshaled_string == IntPtr.Zero)
+				if (marshaled_string == IntPtr.Zero && str != null)
 					marshaled_string = StringToUtf8 (str);
 				return marshaled_string;
 			}
