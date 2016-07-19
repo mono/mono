@@ -93,8 +93,6 @@ static mono_cond_t global_signal_cond;
 
 static mono_mutex_t scan_mutex;
 
-static gboolean shutting_down = FALSE;
-
 static gboolean
 type_is_fd (MonoW32HandleType type)
 {
@@ -322,9 +320,6 @@ cleanup (void)
 {
 	int i, j, k;
 
-	g_assert (!shutting_down);
-	shutting_down = TRUE;
-
 	/* Every shared handle we were using ought really to be closed
 	 * by now, but to make sure just blow them all away.  The
 	 * exiting finalizer thread in particular races us to the
@@ -362,8 +357,6 @@ mono_w32handle_cleanup (void)
 static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
 			       MonoW32HandleType type, gpointer handle_specific)
 {
-	g_assert (!shutting_down);
-	
 	handle->type = type;
 	handle->signalled = FALSE;
 	handle->ref = 1;
@@ -389,8 +382,6 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 	guint32 i, k, count;
 	static guint32 last = 0;
 	gboolean retry = FALSE;
-	
-	g_assert (!shutting_down);
 	
 	/* A linear scan should be fast enough.  Start from the last
 	 * allocation, assuming that handles are allocated more often
@@ -439,8 +430,6 @@ mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific)
 	guint32 handle_idx = 0;
 	gpointer handle;
 
-	g_assert (!shutting_down);
-
 	mono_lazy_initialize (&status, initialize);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: Creating new handle of type %s", __func__,
@@ -487,8 +476,6 @@ gpointer mono_w32handle_new_fd (MonoW32HandleType type, int fd,
 {
 	MonoW32HandleBase *handle_data;
 	int fd_index, fd_offset;
-
-	g_assert (!shutting_down);
 
 	mono_lazy_initialize (&status, initialize);
 
