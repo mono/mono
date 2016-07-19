@@ -109,8 +109,11 @@ namespace Mono
 					var mvid = assembly.MainModule.Mvid.ToString ("N");
 					var mvidDir = Path.Combine (msymDir, mvid);
 
-					if (Directory.Exists (mvidDir))
-						Directory.Delete (mvidDir, true);
+					if (Directory.Exists (mvidDir)) {
+						try {
+							Directory.Delete (mvidDir, true);
+						} catch (DirectoryNotFoundException e) {}
+					}
 
 					Directory.CreateDirectory (mvidDir);
 
