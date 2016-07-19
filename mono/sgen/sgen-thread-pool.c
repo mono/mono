@@ -182,6 +182,7 @@ sgen_thread_pool_shutdown (void)
 	mono_os_mutex_destroy (&lock);
 	mono_os_cond_destroy (&work_cond);
 	mono_os_cond_destroy (&done_cond);
+	sgen_pointer_queue_free (&job_queue);
 }
 
 SgenThreadPoolJob*

@@ -575,6 +575,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	shadow_location = get_shadow_assembly_location_base (data, error);
 	if (!mono_error_ok (error)) {
 		g_free (data->friendly_name);
+		g_free (shadow_location);
 		return NULL;
 	}
 
@@ -2273,8 +2274,8 @@ clear_cached_vtable (MonoVTable *vtable)
 	runtime_info = klass->runtime_info;
 	if (runtime_info && runtime_info->max_domain >= domain->domain_id)
 		runtime_info->domain_vtables [domain->domain_id] = NULL;
-	if (klass->has_static_refs && (data = mono_vtable_get_static_field_data (vtable)))
-		mono_gc_free_fixed (data);
+	if (klass->has_static_refs)
+		mono_vtable_free_static_field_data (data);
 }
 
 static G_GNUC_UNUSED void

@@ -1178,6 +1178,8 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		g_hash_table_insert (set->gmethod_cache, iresult, iresult);
 		iresult->owner = set;
 		cached = iresult;
+	} else {
+		g_free (iresult);
 	}
 	mono_image_set_unlock (set);
 

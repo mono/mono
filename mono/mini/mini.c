@@ -4439,6 +4439,7 @@ mini_jit_cleanup (void)
 #ifndef DISABLE_JIT
 	g_free (emul_opcode_map);
 	g_free (emul_opcode_opcodes);
+	g_free (current_backend);
 #endif
 }
 
