@@ -27,7 +27,7 @@ System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win3
 System.IO.FileSystem.AccessControl System.Private.CoreLib.InteropServices System.Reflection.TypeExtensions \
 System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument System.IO.Compression \
 System.Security.Cryptography.Algorithms System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
-System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes System.Runtime.InteropServices.PInvoke
+System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml
