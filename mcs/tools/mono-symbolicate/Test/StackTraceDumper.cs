@@ -46,6 +46,11 @@ class StackTraceDumper {
 		Catch (() => InnerGenericClass<string>.InnerInnerGenericClass<int>.ThrowException ("Stack trace with 2 inner generic class and generic overload"));
 
 		Catch (() => InnerGenericClass<int>.InnerInnerGenericClass<string>.ThrowException ("Stack trace with 2 inner generic class and generic overload"));
+
+		Catch (() => {
+			var d = new Dictionary<string, string> ();
+			d.ContainsKey (null); // ArgumentNullException
+		});
 	}
 
 	public static void Catch (Action action)

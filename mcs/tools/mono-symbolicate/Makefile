@@ -26,7 +26,7 @@ SYMBOLICATE_EXPECTED_FILE = Test/symbolicate.expected
 CHECK_DIFF = @\
 	$(MONO) $(TEST_EXE) > $(STACKTRACE_FILE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) $(MSYM_DIR) $(STACKTRACE_FILE) > $(SYMBOLICATE_RAW_FILE); \
-	sed "s/).*Test\//) in /" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
+	sed "s/) .* in .*\/mcs\//) in mcs\//" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
 	DIFF=$$(diff $(SYMBOLICATE_RESULT_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \
@@ -43,7 +43,8 @@ PREPARE_OUTDIR = @\
 
 COMPILE = \
 	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE); \
-	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR)
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
 
 check: test-local
 

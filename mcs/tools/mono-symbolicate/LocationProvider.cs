@@ -12,10 +12,12 @@ namespace Mono
 	class AssemblyLocationProvider
 	{
 		AssemblyDefinition assembly;
+		Logger logger;
 
-		public AssemblyLocationProvider (string assemblyPath)
+		public AssemblyLocationProvider (string assemblyPath, Logger logger)
 		{
 			assemblyPath = Path.GetFullPath (assemblyPath);
+			this.logger = logger;
 
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
@@ -33,9 +35,17 @@ namespace Mono
 			var nested = sfData.TypeFullName.Split ('+');
 			var types = assembly.MainModule.Types;
 			foreach (var ntype in nested) {
-				type = types.FirstOrDefault (t => t.Name == ntype);
-				if (type == null)
+				if (type == null) {
+					// Use namespace first time.
+					type = types.FirstOrDefault (t => t.FullName == ntype);
+				} else {
+					type = types.FirstOrDefault (t => t.Name == ntype);
+				}
+
+				if (type == null) {
+					logger.LogWarning ("Could not find type: {0}", ntype);
 					return false;
+				}
 
 				types = type.NestedTypes;
 			}
@@ -44,8 +54,10 @@ namespace Mono
 			var methodName = sfData.MethodSignature.Substring (0, parensStart).TrimEnd ();
 			var methodParameters = sfData.MethodSignature.Substring (parensStart);
 			var method = type.Methods.FirstOrDefault (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters));
-			if (method == null)
+			if (method == null) {
+				logger.LogWarning ("Could not find method: {0}", methodName);
 				return false;
+			}
 
 			int ilOffset;
 			if (sfData.IsILOffset) {
