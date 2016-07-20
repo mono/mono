@@ -144,13 +144,25 @@ namespace Mono.Net.Security
 			bool result;
 
 #if MONODROID
-			result = AndroidPlatform.TrustEvaluateSsl (certs);
-			if (result) {
-				// chain.Build() + GetErrorsFromChain() (above) will ALWAYS fail on
-				// Android (there are no mozroots or preinstalled root certificates),
-				// thus `errors` will ALWAYS have RemoteCertificateChainErrors.
-				// Android just verified the chain; clear RemoteCertificateChainErrors.
-				errors  &= ~SslPolicyErrors.RemoteCertificateChainErrors;
+			try {
+				result = AndroidPlatform.TrustEvaluateSsl (certs);
+				if (result) {
+					// FIXME: check whether this is still correct.
+					//
+					// chain.Build() + GetErrorsFromChain() (above) will ALWAYS fail on
+					// Android (there are no mozroots or preinstalled root certificates),
+					// thus `errors` will ALWAYS have RemoteCertificateChainErrors.
+					// Android just verified the chain; clear RemoteCertificateChainErrors.
+					errors  &= ~SslPolicyErrors.RemoteCertificateChainErrors;
+				} else {
+					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+					status11 = unchecked((int)0x800B010B);
+				}
+			} catch {
+				result = false;
+				errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+				status11 = unchecked((int)0x800B010B);
+				// Ignore
 			}
 #else
 			if (is_macosx) {
