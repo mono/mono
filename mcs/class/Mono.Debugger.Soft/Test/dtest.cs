@@ -4035,30 +4035,6 @@ public class DebuggerTests
 		// Make sure we are still in the cctor
 		Assert.AreEqual (".cctor", e.Thread.GetFrames ()[0].Location.Method.Name);
 	}
-
-	[Test]
-	public void ThreadpoolIOsinglestep () {
-		// This is a regression test for #42625.
-		// It tests the interaction (particularly in coop GC of
-		// the threadpool I/O mechanism and the soft debugger.
-		Start (new string [] { "dtest-app.exe", "threadpool-io" });
-
-		Event e = run_until ("threadpool_io");
-		var req = create_step (e);
-		req.Enable ();
-
-		// step to start the task
-		e = step_once ();
-		
-		req.Disable ();
-
-		// run until completion of the test method
-		e = step_out ();
-
-		vm.Resume ();
-
-		vm.Suspend ();
-	}
 }
 
 }
