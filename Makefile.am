@@ -172,3 +172,5 @@ update-solution-files:
 	make update-csproj
 	make package-inputs
 	(cd msvc/scripts; make genproj.exe; mono genproj.exe)
+
+include $(top_srcdir)/Makefile.am.coverage

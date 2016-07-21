@@ -71,8 +71,8 @@ monosgen_sources = \
 	sgen-workers.h
 
 libmonosgen_la_SOURCES = $(monosgen_sources)
-libmonosgen_la_CFLAGS = $(SGEN_DEFINES)
+libmonosgen_la_CFLAGS = $(SGEN_DEFINES) $(COVERAGE_CFLAGS)
 
 libmonosgen_static_la_SOURCES = $(libmonosgen_la_SOURCES)
-libmonosgen_static_la_CFLAGS = $(SGEN_DEFINES)
-libmonosgen_static_la_LDFLAGS = -static
+libmonosgen_static_la_CFLAGS = $(SGEN_DEFINES) $(COVERAGE_CFLAGS)
+libmonosgen_static_la_LDFLAGS = -static $(COVERAGE_LDFLAGS)
