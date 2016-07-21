@@ -2,7 +2,7 @@
 
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
-${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check
+${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
