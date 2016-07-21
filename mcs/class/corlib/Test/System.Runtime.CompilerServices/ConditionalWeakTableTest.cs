@@ -36,6 +36,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Threading;
+using MonoTests.Helpers;
 
 
 namespace MonoTests.System.Runtime.CompilerServices {
@@ -197,11 +198,9 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		var cwt = new ConditionalWeakTable <object,object> ();
 		List<object> keepAlive = null;
 		List<WeakReference> keys = null;
-		Thread t = new Thread (delegate () {
+		FinalizerHelpers.PerformNoPinAction (delegate () {
 				FillStuff (cwt, out keepAlive, out keys);
 			});
-		t.Start ();
-		t.Join ();
 
 		GC.Collect ();
 
@@ -254,10 +253,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		cwt.Add (b, new object ());
 
 		List<WeakReference> res = null;
-		ThreadStart dele = () => { res = FillWithNetwork (cwt); };
-		var th = new Thread(dele);
-		th.Start ();
-		th.Join ();
+		FinalizerHelpers.PerformNoPinAction (() => { res = FillWithNetwork (cwt); });
 
 		GC.Collect ();
 		GC.Collect ();
@@ -301,16 +297,12 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		List<WeakReference> res, res2;
 		res = res2 = null;
 
-		ThreadStart dele = () => {
+		FinalizerHelpers.PerformNoPinAction (() => {
 			res = FillWithNetwork2 (cwt);
 			ForcePromotion ();
 			k = FillReachable (cwt);
 			res2 = FillWithNetwork2 (cwt);
-		};
-
-		var th = new Thread(dele);
-		th.Start ();
-		th.Join ();
+		});
 
 		GC.Collect ();
 
@@ -445,10 +437,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.Ignore ("Not working on Boehm.");
 		lock (_lock1) { 
 			var cwt = new ConditionalWeakTable <object,object> ();
-			ThreadStart dele = () => { FillWithFinalizable (cwt); };
-			var th = new Thread(dele);
-			th.Start ();
-			th.Join ();
+			FinalizerHelpers.PerformNoPinAction (() => { FillWithFinalizable (cwt); });
 			GC.Collect ();
 			GC.Collect ();
 
