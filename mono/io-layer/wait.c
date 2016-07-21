@@ -89,7 +89,7 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 	int thr_ret;
 	gboolean apc_pending = FALSE;
 	gpointer current_thread = wapi_get_current_thread_handle ();
-	gint64 now, end;
+	gint64 wait_start, timeout_in_ticks;
 	
 	if (current_thread == NULL) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -159,8 +159,10 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		goto done;
 	}
 	
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 
 	do {
 		/* Check before waiting on the condition, just in case
@@ -178,13 +180,13 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		if (timeout == INFINITE) {
 			waited = _wapi_handle_timedwait_signal_handle (handle, INFINITE, alertable, FALSE, &apc_pending);
 		} else {
-			now = mono_100ns_ticks ();
-			if (end < now) {
+			gint64 elapsed = mono_100ns_ticks () - wait_start;
+			if (elapsed >= timeout_in_ticks) {
 				ret = WAIT_TIMEOUT;
 				goto done;
 			}
 
-			waited = _wapi_handle_timedwait_signal_handle (handle, (end - now) / 10 / 1000, alertable, FALSE, &apc_pending);
+			waited = _wapi_handle_timedwait_signal_handle (handle, (timeout_in_ticks - elapsed) / 10 / 1000, alertable, FALSE, &apc_pending);
 		}
 
 		if(waited==0 && !apc_pending) {
@@ -268,7 +270,7 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 	int thr_ret;
 	gboolean apc_pending = FALSE;
 	gpointer current_thread = wapi_get_current_thread_handle ();
-	gint64 now, end;
+	gint64 wait_start, timeout_in_ticks;
 	
 	if (current_thread == NULL) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -343,9 +345,10 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		goto done;
 	}
 
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
-
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 	do {
 		/* Check before waiting on the condition, just in case
 		 */
@@ -361,13 +364,13 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		if (timeout == INFINITE) {
 			waited = _wapi_handle_timedwait_signal_handle (wait, INFINITE, alertable, FALSE, &apc_pending);
 		} else {
-			now = mono_100ns_ticks ();
-			if (end < now) {
+			gint64 elapsed = mono_100ns_ticks () - wait_start;
+			if (elapsed >= timeout_in_ticks) {
 				ret = WAIT_TIMEOUT;
 				goto done;
 			}
 
-			waited = _wapi_handle_timedwait_signal_handle (wait, (end - now) / 10 / 1000, alertable, FALSE, &apc_pending);
+			waited = _wapi_handle_timedwait_signal_handle (wait, (timeout_in_ticks - elapsed) / 10 / 1000, alertable, FALSE, &apc_pending);
 		}
 
 		if (waited==0 && !apc_pending) {
@@ -474,7 +477,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	gboolean poll;
 	gpointer sorted_handles [MAXIMUM_WAIT_OBJECTS];
 	gboolean apc_pending = FALSE;
-	gint64 now, end;
+	gint64 wait_start, timeout_in_ticks;
 	
 	if (current_thread == NULL) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -559,8 +562,10 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 		return WAIT_TIMEOUT;
 	}
 
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 
 	/* Have to wait for some or all handles to become signalled
 	 */
@@ -608,11 +613,11 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			if (timeout == INFINITE) {
 				ret = _wapi_handle_timedwait_signal (INFINITE, poll, &apc_pending);
 			} else {
-				now = mono_100ns_ticks ();
-				if (end < now) {
+				gint64 elapsed = mono_100ns_ticks () - wait_start;
+				if (elapsed >= timeout_in_ticks) {
 					ret = WAIT_TIMEOUT;
 				} else {
-					ret = _wapi_handle_timedwait_signal ((end - now) / 10 / 1000, poll, &apc_pending);
+					ret = _wapi_handle_timedwait_signal ((timeout_in_ticks - elapsed) / 10 / 1000, poll, &apc_pending);
 				}
 			}
 		} else {
