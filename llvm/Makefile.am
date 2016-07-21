@@ -7,6 +7,7 @@
 
 LLVM_PATH=llvm
 
+SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
 
 $(eval $(call ValidateVersionTemplate,llvm,LLVM))
