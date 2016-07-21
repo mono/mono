@@ -1305,6 +1305,18 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 */
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
+	if (mono_thread_test_state (thread, ThreadState_StopRequested)) {
+		/*
+		 * Can't regain the lock since the thread will be terminated
+		 * when we return from the icall, and the io-layer semaphore
+		 * used by the monitor code cannot be abandoned when the
+		 * thread is terminated. So terminate the thread eagerly.
+		 */
+		CloseHandle (event);
+		mono_thread_exit ();
+		return FALSE;
+	}
+
 	/* Regain the lock with the previous nest count */
 	do {
 		regain = mono_monitor_try_enter_inflated (obj, INFINITE, TRUE, id);
