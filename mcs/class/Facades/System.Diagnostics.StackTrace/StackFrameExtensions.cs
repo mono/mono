@@ -35,6 +35,18 @@ namespace System.Diagnostics
 	public static class StackFrameExtensions
 	{
 		[MonoTODO]
+		public static IntPtr GetNativeImageBase (this StackFrame stackFrame)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr GetNativeIP (this StackFrame stackFrame)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public static bool HasNativeImage (this StackFrame stackFrame)
 		{
 			throw new NotImplementedException ();

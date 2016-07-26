@@ -182,6 +182,31 @@ namespace System.IO.MemoryMappedFiles
 			};
 		}
 
+		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access,
+							       HandleInheritability inheritability,
+							       bool leaveOpen)
+		{
+			if (fileStream == null)
+				throw new ArgumentNullException ("fileStream");
+			if (mapName != null && mapName.Length == 0)
+				throw new ArgumentException ("mapName");
+			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
+				throw new ArgumentException ("capacity");
+
+			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.Handle, mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			
+			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
+				
+			return new MemoryMappedFile () {
+				handle = handle,
+				fileAccess = access,
+				name = mapName,
+				fileCapacity = capacity,
+
+				stream = fileStream,
+				keepOpen = leaveOpen
+			};
+		}
 
 		[MonoLimitation ("memoryMappedFileSecurity is currently ignored")]
 		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access,
@@ -242,6 +267,12 @@ namespace System.IO.MemoryMappedFiles
 			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
 		}
 
+		[MonoLimitation ("Named mappings scope is process local; options is ignored")]
+		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, HandleInheritability inheritability)
+		{
+			return CreateNew (mapName, capacity, access, options, null, inheritability);
+		}
+
 		[MonoLimitation ("Named mappings scope is process local; options and memoryMappedFileSecurity are ignored")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
 							  MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity,
@@ -260,6 +291,12 @@ namespace System.IO.MemoryMappedFiles
 		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access)
 		{
 			return CreateOrOpen (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
+		}
+
+		[MonoLimitation ("Named mappings scope is process local")]
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, HandleInheritability inheritability)
+		{
+			return CreateOrOpen (mapName, capacity, access, options, null, inheritability);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local")]

@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 
 namespace System.Diagnostics.Tracing
 {
@@ -76,6 +77,11 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		~EventSource ()
+		{
+			Dispose (false);
+		}
+
 		public Exception ConstructionException
 		{
 			get { return null; }
@@ -121,6 +127,7 @@ namespace System.Diagnostics.Tracing
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public string GetTrait (string key)
@@ -129,6 +136,10 @@ namespace System.Diagnostics.Tracing
 		}
 
 		public void Write (string eventName)
+		{
+		}
+
+		public void Write (string eventName, EventSourceOptions options)
 		{
 		}
 
@@ -243,6 +254,75 @@ namespace System.Diagnostics.Tracing
 		protected void WriteEvent (int eventId, string arg1, string arg2, string arg3)
 		{
 			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
+		}
+
+		protected unsafe void WriteEventCore (int eventId, int eventDataCount, EventData* data)
+		{
+		}
+
+		protected unsafe void WriteEventWithRelatedActivityId (int eventId, Guid relatedActivityId, params object[] args)
+		{
+		}
+
+		protected unsafe void WriteEventWithRelatedActivityIdCore (int eventId, Guid* relatedActivityId, int eventDataCount, EventSource.EventData* data)
+		{
+		}
+
+#if NETSTANDARD
+		[MonoTODO]
+		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
+		{
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
+#endif
+
+		[MonoTODO]
+		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Guid GetGuid (Type eventSourceType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GetName (Type eventSourceType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IEnumerable<EventSource> GetSources ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SendCommand (EventSource eventSource, EventCommand command, IDictionary<string, string> commandArguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetCurrentThreadActivityId (Guid activityId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetCurrentThreadActivityId (Guid activityId, out Guid oldActivityThatWillContinue)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

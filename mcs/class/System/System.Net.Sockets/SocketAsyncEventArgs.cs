@@ -101,7 +101,6 @@ namespace System.Net.Sockets
 			set { remote_ep = value; }
 		}
 
-#if !NET_2_1
 		public IPPacketInformation ReceiveMessageFromPacketInfo {
 			get;
 			private set;
@@ -112,6 +111,7 @@ namespace System.Net.Sockets
 			set;
 		}
 
+#if !NET_2_1
 		public TransmitFileOptions SendPacketsFlags {
 			get;
 			set;
@@ -185,9 +185,7 @@ namespace System.Net.Sockets
 			BufferList = null;
 			RemoteEndPoint = null;
 			UserToken = null;
-#if !NET_2_1
 			SendPacketsElements = null;
-#endif
 		}
 
 		public void Dispose ()

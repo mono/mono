@@ -471,7 +471,62 @@ namespace System.Text.RegularExpressions {
                 }
             }
         }
-        
+
+#if NETSTANDARD
+        protected IDictionary Caps
+        {
+            get
+            {
+                var dict = new Dictionary<int, int>();
+
+                foreach (int key in caps.Keys)
+                {
+                    dict.Add (key, (int)caps[key]);
+                }
+
+                return dict;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+ 
+                caps = new Hashtable (value.Count);
+                foreach (DictionaryEntry entry in value)
+                {
+                    caps[(int)entry.Key] = (int)entry.Value;
+                }
+            }
+        }
+
+        protected IDictionary CapNames
+        {
+            get
+            {
+                var dict = new Dictionary<string, int>();
+
+                foreach (string key in capnames.Keys)
+                {
+                    dict.Add (key, (int)capnames[key]);
+                }
+
+                return dict;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                capnames = new Hashtable (value.Count);
+                foreach (DictionaryEntry entry in value)
+                {
+                    capnames[(string)entry.Key] = (int)entry.Value;
+                }
+            }
+        }
+#endif
+
         /// <devdoc>
         ///    <para>
         ///       Returns the options passed into the constructor

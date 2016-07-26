@@ -3,15 +3,20 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.IdentityModel.dll
-LIB_REFS = System System.Xml System.Security System.Configuration Mono.Security System.Runtime.Serialization
+LIB_REFS = System System.Xml System.Security Mono.Security System.Runtime.Serialization
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
 
-ifndef NO_SYSTEM_WEB_DEPENDENCY
-LIB_REFS += System.Web
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Configuration
 endif
 
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Web
+endif
+endif
 
 ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))

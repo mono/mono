@@ -39,6 +39,11 @@ namespace System.Diagnostics
 		protected ProcessModuleCollectionBase InnerList {
 			get { return this; }
 		}
+
+		public System.Collections.IEnumerator GetEnumerator ()
+		{
+			return ((System.Collections.IEnumerable)InnerList).GetEnumerator ();
+		}
 	}
 #endif
 

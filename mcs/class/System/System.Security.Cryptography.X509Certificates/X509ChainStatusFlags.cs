@@ -53,7 +53,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		CtlNotSignatureValid = 262144,
 		CtlNotValidForUsage = 524288,
 		OfflineRevocation = 16777216,
-		NoIssuanceChainPolicy = 33554432
+		NoIssuanceChainPolicy = 33554432,
+		ExplicitDistrust = 67108864,
+		HasNotSupportedCriticalExtension = 134217728,
+		HasWeakSignature = 1048576,
 	}
 }
 

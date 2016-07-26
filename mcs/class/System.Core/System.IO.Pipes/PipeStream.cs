@@ -269,13 +269,13 @@ namespace System.IO.Pipes
 				
 			pipeSecurity.Persist (SafePipeHandle);
 		}
+#endif
 
 		// pipe I/O
 
 		public void WaitForPipeDrain ()
 		{
 		}
-#endif
 
 		[MonoTODO]
 		public override int Read ([In] byte [] buffer, int offset, int count)

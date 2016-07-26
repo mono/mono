@@ -1,5 +1,5 @@
 //
-// ECPoint.cs
+// ECPArameters.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,12 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if (NETSTANDARD && !IN_FACADE) || (!NETSTANDARD && IN_FACADE)
+
 namespace System.Security.Cryptography
 {
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
-	public struct ECPoint
-	{
-		public byte[] X;
-		public byte[] Y;
-	}
+    [System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    public partial struct ECParameters
+    {
+        public ECCurve Curve;
+        public byte[] D;
+        public ECPoint Q;
+        public void Validate () { throw new NotImplementedException (); }
+    }
 }
+
+#endif

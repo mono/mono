@@ -137,6 +137,13 @@ namespace System.Linq.Expressions {
             return LambdaCompiler.Compile(this, debugInfoGenerator);
         }
 
+#if NETSTANDARD
+        public Delegate Compile(bool preferInterpretation) {
+            // TODO: add logic for preferInterpretation
+            return Compile();
+        }
+#endif
+
 #if FEATURE_REFEMIT
         /// <summary>
         /// Compiles the lambda into a method definition.
@@ -197,6 +204,13 @@ namespace System.Linq.Expressions {
             ContractUtils.RequiresNotNull(debugInfoGenerator, "debugInfoGenerator");
             return (TDelegate)(object)LambdaCompiler.Compile(this, debugInfoGenerator);
         }
+
+#if NETSTANDARD
+        public new TDelegate Compile(bool preferInterpretation) {
+            // TODO: add logic for preferInterpretation
+            return Compile();
+        }
+#endif
 
         /// <summary>
         /// Creates a new expression that is like this one, but using the

@@ -1356,6 +1356,21 @@ namespace System.Net.Sockets
 			return true;
 		}
 
+		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
+		{
+			var sock = new Socket (e.RemoteEndPoint.AddressFamily, socketType, protocolType);
+			return sock.ConnectAsync (e);
+		}
+
+		public static void CancelConnectAsync (SocketAsyncEventArgs e)
+		{
+			if (e == null)
+				throw new ArgumentNullException("e");
+
+			if (e.in_progress != 0 && e.LastOperation == SocketAsyncOperation.Connect)
+				e.current_socket.Close();
+		}
+
 		static AsyncCallback ConnectAsyncCallback = new AsyncCallback (ares => {
 			SocketAsyncEventArgs e = (SocketAsyncEventArgs) ((SocketAsyncResult) ares).AsyncState;
 

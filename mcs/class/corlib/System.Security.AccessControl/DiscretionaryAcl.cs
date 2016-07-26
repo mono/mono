@@ -71,7 +71,12 @@ namespace System.Security.AccessControl
 				inheritanceFlags, propagationFlags, AuditFlags.None,
 				objectFlags, objectType, inheritedObjectType);
 		}
-		
+
+		public void AddAccess (AccessControlType accessType, SecurityIdentifier sid, ObjectAccessRule rule)
+		{
+			AddAccess (accessType, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		[MonoTODO]
 		public bool RemoveAccess (AccessControlType accessType,
 					  SecurityIdentifier sid,
@@ -94,7 +99,12 @@ namespace System.Security.AccessControl
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public bool RemoveAccess (AccessControlType accessType, SecurityIdentifier sid, ObjectAccessRule rule)
+		{
+			return RemoveAccess (accessType, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		public void RemoveAccessSpecific (AccessControlType accessType,
 						  SecurityIdentifier sid,
 						  int accessMask,
@@ -118,7 +128,12 @@ namespace System.Security.AccessControl
 					   inheritanceFlags, propagationFlags, AuditFlags.None,
 					   objectFlags, objectType, inheritedObjectType);
 		}
-		
+
+		public void RemoveAccessSpecific (AccessControlType accessType, SecurityIdentifier sid, ObjectAccessRule rule)
+		{
+			RemoveAccessSpecific (accessType, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		public void SetAccess (AccessControlType accessType,
 				       SecurityIdentifier sid,
 				       int accessMask,
@@ -142,7 +157,12 @@ namespace System.Security.AccessControl
 				inheritanceFlags, propagationFlags, AuditFlags.None,
 				objectFlags, objectType, inheritedObjectType);
 		}
-		
+
+		public void SetAccess (AccessControlType accessType, SecurityIdentifier sid, ObjectAccessRule rule)
+		{
+			SetAccess (accessType, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		internal override void ApplyCanonicalSortToExplicitAces ()
 		{
 			int explicitCount = GetCanonicalExplicitAceCount ();

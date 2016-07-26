@@ -32,6 +32,8 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -151,6 +153,17 @@ namespace System.IO.Pipes
 		{
 			impl.WaitForConnection ();
 			IsConnected = true;
+		}
+
+		public Task WaitForConnectionAsync ()
+		{
+			return WaitForConnectionAsync (CancellationToken.None);
+		}
+
+		[MonoTODO]
+		public Task WaitForConnectionAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

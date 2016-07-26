@@ -30,6 +30,36 @@ namespace System.Security.Cryptography
 {
 	public sealed class RSAOpenSsl : RSA
 	{
+		public RSAOpenSsl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public RSAOpenSsl (int keySize)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public RSAOpenSsl(IntPtr handle)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public RSAOpenSsl (ECCurve curve)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public RSAOpenSsl (RSAParameters parameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public RSAOpenSsl (SafeEvpPKeyHandle pkeyHandle)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override RSAParameters ExportParameters (bool includePrivateParameters)
 		{
 			throw new NotImplementedException ();
@@ -50,6 +80,9 @@ namespace System.Security.Cryptography
 			throw new NotImplementedException ();
 		}
 
-		// TODO: Implement full contract API
+		public SafeEvpPKeyHandle DuplicateKeyHandle ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
