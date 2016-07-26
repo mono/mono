@@ -260,6 +260,7 @@ mono_images_cleanup (void)
 		g_hash_table_destroy (loaded_images_hashes [hash_idx]);
 
 	mutex_inited = FALSE;
+	g_slist_free (image_loaders);
 }
 
 /**

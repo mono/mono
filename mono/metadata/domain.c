@@ -888,6 +888,9 @@ mono_cleanup (void)
 	mono_images_cleanup ();
 	mono_metadata_cleanup ();
 
+	mono_gc_free_fixed (appdomains_list);
+	appdomains_list = NULL;
+
 	mono_native_tls_free (appdomain_thread_id);
 	mono_coop_mutex_destroy (&appdomains_mutex);
 
@@ -1177,6 +1180,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	domain->create_proxy_for_type_method = NULL;
 	domain->private_invoke_method = NULL;
 	domain->default_context = NULL;
+	g_free (domain->out_of_memory_ex);
 	domain->out_of_memory_ex = NULL;
 	domain->null_reference_ex = NULL;
 	domain->stack_overflow_ex = NULL;
@@ -1190,6 +1194,14 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	g_hash_table_destroy (domain->proxy_vtable_hash);
 	domain->proxy_vtable_hash = NULL;
 	if (domain->static_data_array) {
+		if (force) {
+			int length = GPOINTER_TO_INT (domain->static_data_array[1]);
+			for (int i = 2; i < length; i++) {
+				if (domain->static_data_array[i]) {
+					mono_gc_free_fixed (domain->static_data_array[i]);
+				}
+			}
+		}
 		mono_gc_free_fixed (domain->static_data_array);
 		domain->static_data_array = NULL;
 	}
