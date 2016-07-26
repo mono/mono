@@ -284,11 +284,14 @@ System/UriTypeConverter.cs
 System.Windows.Input/ICommand.cs
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
 
+Mono.Net.Security/AsyncProtocolRequest.cs
 Mono.Net.Security/CallbackHelpers.cs
 Mono.Net.Security/ChainValidationHelper.cs
 Mono.Net.Security/IMonoTlsProvider.cs
 Mono.Net.Security/IMonoSslStream.cs
 Mono.Net.Security/LegacySslStream.cs
+Mono.Net.Security/MobileAuthenticatedStream.cs
+Mono.Net.Security/MobileTlsContext.cs
 Mono.Net.Security/MonoLegacyTlsProvider.cs
 Mono.Net.Security/MonoSslStreamImpl.cs
 Mono.Net.Security/MonoSslStreamWrapper.cs
