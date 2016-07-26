@@ -22,15 +22,15 @@
 
 namespace System.Text
 {
-	public sealed partial class CodePagesEncodingProvider : EncodingProvider
+	public sealed class CodePagesEncodingProvider : EncodingProvider
 	{
-		static CodePagesEncodingProvider instance = new CodePagesEncodingProvider ();
+		static readonly CodePagesEncodingProvider instance = new CodePagesEncodingProvider ();
 
 		private CodePagesEncodingProvider ()
 		{
 		}
 		
-		public static System.Text.EncodingProvider Instance { 
+		public static EncodingProvider Instance {
 			get {
 				return instance;
 			}
