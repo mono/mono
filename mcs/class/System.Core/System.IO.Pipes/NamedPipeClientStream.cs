@@ -37,6 +37,8 @@ using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 
@@ -113,6 +115,10 @@ namespace System.IO.Pipes
 		}
 #endif
 
+		~NamedPipeClientStream () {
+			Dispose (false);
+		}
+		
 		INamedPipeClient impl;
 
 		public void Connect ()
@@ -135,6 +141,26 @@ namespace System.IO.Pipes
 			InitializeHandle (impl.Handle, false, impl.IsAsync);
 			IsConnected = true;
 #endif
+		}
+
+		public Task ConnectAsync ()
+		{
+			return ConnectAsync (Timeout.Infinite, CancellationToken.None);
+		}
+
+		public Task ConnectAsync (int timeout)
+		{
+			return ConnectAsync (timeout, CancellationToken.None);
+		}
+
+		public Task ConnectAsync (CancellationToken cancellationToken)
+		{
+			return ConnectAsync (Timeout.Infinite, cancellationToken);
+		}
+
+		public Task ConnectAsync (int timeout, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public int NumberOfServerInstances {

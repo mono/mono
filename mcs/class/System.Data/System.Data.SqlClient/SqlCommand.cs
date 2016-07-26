@@ -47,6 +47,8 @@ using System.Data.Common;
 using System.Data.Sql;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace System.Data.SqlClient {
@@ -506,6 +508,42 @@ namespace System.Data.SqlClient {
 					Connection.Close ();
 				throw;
 			}
+		}
+
+		[MonoTODO]
+		public new Task<SqlDataReader> ExecuteReaderAsync ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public new Task<SqlDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public new Task<SqlDataReader> ExecuteReaderAsync (CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public new Task<SqlDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task<XmlReader> ExecuteXmlReaderAsync ()
+		{
+			throw new NotImplementedException ();
+		}
+ 
+		[MonoTODO]
+		public Task<XmlReader> ExecuteXmlReaderAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public

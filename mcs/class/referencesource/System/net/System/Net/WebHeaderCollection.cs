@@ -255,6 +255,17 @@ namespace System.Net {
         }
 #endif
 
+#if NETSTANDARD
+        public string this[string name] {
+            get {
+                throw new NotImplementedException ();
+            }
+            set {
+                throw new NotImplementedException ();
+            }
+        }
+#endif
+
 #if !FEATURE_PAL || MONO
         private bool AllowHttpRequestHeader {
             get {

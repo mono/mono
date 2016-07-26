@@ -125,6 +125,12 @@ namespace System.Net.Security
 			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
 		}
 
+		[MonoLimitation ("encryptionPolicy is ignored")]
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+		: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
+		{
+		}
+
 		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, IMonoSslStream impl)
 			: base (innerStream, leaveInnerStreamOpen)
 		{

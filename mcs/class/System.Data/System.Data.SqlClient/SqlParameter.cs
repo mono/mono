@@ -473,6 +473,9 @@ namespace System.Data.SqlClient {
 		[BrowsableAttribute(false)]
 		public string UdtTypeName { get; set; }
 
+		[BrowsableAttribute(false)]
+		public string TypeName { get; set; }
+
 		#endregion // Properties
 
 		#region Methods

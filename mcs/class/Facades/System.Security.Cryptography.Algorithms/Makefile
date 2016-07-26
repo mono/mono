@@ -14,7 +14,9 @@ SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System System.Core
 LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
-PLATFORM_DEBUG_FLAGS =
+ifneq (,$(findstring NETSTANDARD,$(PROFILE_MCS_FLAGS)))
+LIB_MCS_FLAGS += /d:IN_FACADE
+endif
 
 NO_TEST = yes
 

@@ -19,6 +19,34 @@ namespace System.Security.Cryptography {
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public sealed class ECDsaCng : ECDsa {
 #if MONO
+        public ECDsaCng() : this(521) {
+        }
+
+        public ECDsaCng(int keySize) {
+            throw new NotImplementedException ();
+        }
+
+        [SecuritySafeCritical]
+        public ECDsaCng(CngKey key) {
+            throw new NotImplementedException ();
+        }
+
+#if NETSTANDARD
+        public ECDsaCng(ECCurve curve) {
+            throw new NotImplementedException ();
+        }
+#endif
+
+        public CngKey Key {
+            get {
+                throw new NotImplementedException ();
+            }
+
+            private set {
+                throw new NotImplementedException ();
+            }
+        }
+
         public override byte[] SignHash(byte[] hash) {
             throw new NotImplementedException();
         }

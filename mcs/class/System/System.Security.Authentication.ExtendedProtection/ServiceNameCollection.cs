@@ -50,6 +50,11 @@ namespace System.Security.Authentication.ExtendedProtection
 		{
 			throw new NotImplementedException ();
 		}
+
+		public bool Contains (string searchServiceName)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

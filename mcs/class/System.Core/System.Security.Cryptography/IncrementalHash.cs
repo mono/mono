@@ -1,12 +1,10 @@
 //
-// X509CertificateValidationMode_mobile.cs
+// IncrementalHash.cs
 //
-// Author:
-//   Alexander Köplinger (alexander.koeplinger@xamarin.com)
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) 2016 Xamarin, Inc.
-//
-
+// Copyright (C) 2016 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,18 +26,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if MOBILE || XAMMAC_4_5
+#if NETSTANDARD
 
-namespace System.ServiceModel.Security
+namespace System.Security.Cryptography
 {
-	public enum X509CertificateValidationMode
-	{
-		None,
-		PeerTrust,
-		ChainTrust,
-		PeerOrChainTrust,
-		Custom
-	}
+    public sealed class IncrementalHash : IDisposable
+    {
+        private IncrementalHash () { }
+        public HashAlgorithmName AlgorithmName { get { throw new NotImplementedException (); } }
+        public void AppendData (byte[] data) { }
+        public void AppendData (byte[] data, int offset, int count) { }
+        public static IncrementalHash CreateHash (HashAlgorithmName hashAlgorithm) { throw new NotImplementedException (); }
+        public static IncrementalHash CreateHMAC (HashAlgorithmName hashAlgorithm, byte[] key) { throw new NotImplementedException (); }
+        public void Dispose () { }
+        public byte[] GetHashAndReset () { throw new NotImplementedException (); }
+    }
 }
 
 #endif

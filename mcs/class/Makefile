@@ -30,6 +30,7 @@ mobile_common_dirs := \
 	SMDiagnostics	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq	\
+	System.IdentityModel		\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
 	System.Json	\

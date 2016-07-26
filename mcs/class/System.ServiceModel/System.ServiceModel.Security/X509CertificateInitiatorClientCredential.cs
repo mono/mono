@@ -31,7 +31,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
-using System.ServiceModel.Security.Tokens;
+using System.ServiceModel.Security.Tokens; 
 
 namespace System.ServiceModel.Security
 {
@@ -57,14 +57,22 @@ namespace System.ServiceModel.Security
 			StoreName storeName, X509FindType findType,
 			object findValue)
 		{
+#if !NET_2_1
 			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		public void SetCertificate (
 			string subjectName, StoreLocation storeLocation,
 			StoreName storeName)
 		{
+#if !NET_2_1
 			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, X509FindType.FindBySubjectName, subjectName);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 	}
 }

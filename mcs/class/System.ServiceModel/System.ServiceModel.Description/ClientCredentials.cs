@@ -54,12 +54,12 @@ namespace System.ServiceModel.Description
 		protected ClientCredentials (ClientCredentials source)
 		{
 			userpass = source.userpass.Clone ();
-#if !NET_2_1
-			issued_token = source.issued_token.Clone ();
 			digest = source.digest.Clone ();
 			initiator = source.initiator.Clone ();
 			recipient = source.recipient.Clone ();
 			windows = source.windows.Clone ();
+#if !NET_2_1
+			issued_token = source.issued_token.Clone ();
 			peer = source.peer.Clone ();
 			support_interactive = source.support_interactive;
 #endif
@@ -67,9 +67,7 @@ namespace System.ServiceModel.Description
 
 		UserNamePasswordClientCredential userpass =
 			new UserNamePasswordClientCredential ();
-#if !NET_2_1
-		IssuedTokenClientCredential issued_token =
-			new IssuedTokenClientCredential ();
+
 		HttpDigestClientCredential digest =
 			new HttpDigestClientCredential ();
 		X509CertificateInitiatorClientCredential initiator =
@@ -78,8 +76,6 @@ namespace System.ServiceModel.Description
 			new X509CertificateRecipientClientCredential ();
 		WindowsClientCredential windows =
 			new WindowsClientCredential ();
-		PeerCredential peer = new PeerCredential ();
-		bool support_interactive = true;
 
 		public X509CertificateInitiatorClientCredential ClientCertificate {
 			get { return initiator; }
@@ -89,6 +85,20 @@ namespace System.ServiceModel.Description
 			get { return digest; }
 		}
 
+		public X509CertificateRecipientClientCredential ServiceCertificate {
+			get { return recipient; }
+		}
+
+		public WindowsClientCredential Windows {
+			get { return windows; }
+		}
+
+#if !NET_2_1
+		IssuedTokenClientCredential issued_token =
+			new IssuedTokenClientCredential ();
+		PeerCredential peer = new PeerCredential ();
+		bool support_interactive = true;
+
 		public IssuedTokenClientCredential IssuedToken {
 			get { return issued_token; }
 		}
@@ -97,17 +107,9 @@ namespace System.ServiceModel.Description
 			get { return peer; }
 		}
 
-		public X509CertificateRecipientClientCredential ServiceCertificate {
-			get { return recipient; }
-		}
-
 		public bool SupportInteractive {
 			get { return support_interactive; }
 			set { support_interactive = value; }
-		}
-
-		public WindowsClientCredential Windows {
-			get { return windows; }
 		}
 #endif
 

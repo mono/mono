@@ -33,6 +33,7 @@
 
 using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Threading;
 using System.Data.SqlTypes;
 
@@ -203,6 +204,42 @@ namespace Microsoft.SqlServer.Server {
 			}
 			this.name = name;
 			this._sqlDbType = dbType;
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, byte precision, byte scale, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength, long locale, SqlCompareOptions compareOptions, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, string database, string owningSchema, string objectName, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength, byte precision, byte scale, long localeId, SqlCompareOptions compareOptions, System.Type userDefinedType, bool useServerDefault, bool isUniqueKey, SortOrder columnSortOrder, int sortOrdinal)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public SqlMetaData (string name, SqlDbType dbType, long maxLength)
@@ -659,6 +696,25 @@ namespace Microsoft.SqlServer.Server {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
+		public bool IsUniqueKey {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public SortOrder SortOrder {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public int SortOrdinal {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool UseServerDefault {
+			get { throw new NotImplementedException (); }
+		}
 		#endregion // Properties
 
 		#region Methods
@@ -701,6 +757,20 @@ namespace Microsoft.SqlServer.Server {
 		public DateTime Adjust (DateTime value)
 		{
 			if (type != typeof (DateTime))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
+		}
+
+		public DateTimeOffset Adjust (DateTimeOffset value)
+		{
+			if (type != typeof (DateTimeOffset))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
+		}
+
+		public TimeSpan Adjust (TimeSpan value)
+		{
+			if (type != typeof (TimeSpan))
 				throw new ArgumentException ("Value does not match the SqlMetaData type");
 			return value;
 		}
@@ -864,6 +934,12 @@ namespace Microsoft.SqlServer.Server {
 			if (type != typeof (string))
 				throw new ArgumentException ("Value does not match the SqlMetaData type");
 			return value;
+		}
+
+		[MonoTODO]
+		public SqlXml Adjust (SqlXml value)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public string Adjust (string value)

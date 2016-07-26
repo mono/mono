@@ -61,4 +61,6 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
 
+#if !NET_2_1
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
+#endif
