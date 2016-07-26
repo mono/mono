@@ -1,5 +1,5 @@
 //
-// MonoDefaultTlsProvider.cs
+// MonoLegacyTlsProvider.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -49,7 +49,7 @@ namespace Mono.Net.Security.Private
 	/*
 	 * Strictly private - do not use outside the Mono.Net.Security directory.
 	 */
-	class MonoDefaultTlsProvider : MonoTlsProviderImpl
+	class MonoLegacyTlsProvider : MonoTlsProviderImpl
 	{
 		static readonly Guid id = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
 
