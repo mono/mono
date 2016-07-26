@@ -1611,6 +1611,9 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 MONO_API void *
 mono_vtable_get_static_field_data (MonoVTable *vt);
 
+void
+mono_vtable_free_static_field_data (MonoVTable *vt);
+
 MonoObject *
 mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, MonoObject *obj, MonoError *error);
 
