@@ -20,6 +20,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class TcpListenerTest
 	{
 		[Test]

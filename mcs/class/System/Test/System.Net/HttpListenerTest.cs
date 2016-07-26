@@ -37,6 +37,7 @@ using MonoTests.Helpers;
 
 namespace MonoTests.System.Net {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpListenerTest {
 
 		int port;

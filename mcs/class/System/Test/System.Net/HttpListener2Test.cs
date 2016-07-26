@@ -47,6 +47,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net {
 	
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpListener2Test {
 		
 		private HttpListener _listener = null;
@@ -645,6 +646,7 @@ namespace MonoTests.System.Net {
 	}
 
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpListenerBugs {
 		[Test]
 		public void TestNonChunkedAsync ()

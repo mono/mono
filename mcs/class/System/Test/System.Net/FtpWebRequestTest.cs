@@ -19,6 +19,7 @@ using System.Threading;
 namespace MonoTests.System.Net 
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class FtpWebRequestTest
 	{
 		FtpWebRequest defaultRequest;
