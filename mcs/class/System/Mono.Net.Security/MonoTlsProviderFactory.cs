@@ -101,10 +101,10 @@ namespace Mono.Net.Security
 			}
 		}
 
-#if MONO_FEATURE_NEW_SYSTEM_SOURCE || (!MONOTOUCH && !XAMMAC)
 		static IMonoTlsProvider CreateDefaultProvider ()
 		{
 #if SECURITY_DEP
+			MSI.MonoTlsProvider provider = null;
 #if MONO_FEATURE_NEW_SYSTEM_SOURCE
 			/*
 			 * This is a hack, which is used in the Mono.Security.Providers.NewSystemSource
@@ -115,16 +115,15 @@ namespace Mono.Net.Security
 			 * NewSystemSource needs to compile MonoTlsProviderFactory.cs, IMonoTlsProvider.cs,
 			 * MonoTlsProviderWrapper.cs and CallbackHelpers.cs from this directory and only these.
 			 */
-			var userProvider = MSI.MonoTlsProviderFactory.GetProvider ();
-			return new Private.MonoTlsProviderWrapper (userProvider);
+			provider = MSI.MonoTlsProviderFactory.GetProvider ();
 #else
-			return CreateDefaultProviderImpl ();
+			provider = CreateDefaultProviderImpl ();
 #endif
-#else
+			if (provider != null)
+				return new Private.MonoTlsProviderWrapper (provider);
+#endif
 			return null;
-#endif
 		}
-#endif
 
 		static object locker = new object ();
 		static IMonoTlsProvider defaultProvider;
@@ -160,7 +159,7 @@ namespace Mono.Net.Security
 				return null;
 
 			try {
-				return (MSI.MonoTlsProvider)Activator.CreateInstance (type);
+				return (MSI.MonoTlsProvider)Activator.CreateInstance (type, true);
 			} catch (Exception ex) {
 				throw new NotSupportedException (string.Format ("Unable to instantiate TLS Provider `{0}'.", type), ex);
 			}
@@ -172,15 +171,19 @@ namespace Mono.Net.Security
 				if (providerRegistration != null)
 					return;
 				providerRegistration = new Dictionary<string,string> ();
+				providerRegistration.Add ("legacy", "Mono.Net.Security.Private.MonoLegacyTlsProvider");
 				providerRegistration.Add ("newtls", "Mono.Security.Providers.NewTls.NewTlsProvider, Mono.Security.Providers.NewTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
 				providerRegistration.Add ("oldtls", "Mono.Security.Providers.OldTls.OldTlsProvider, Mono.Security.Providers.OldTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
-				providerRegistration.Add ("boringtls", "Xamarin.BoringTls.BoringTlsProvider, Xamarin.BoringTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=672c06b0b8f05406");
+#if HAVE_BTLS
+				if (Mono.Btls.MonoBtlsProvider.IsSupported ())
+					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
+#endif
 				X509Helper2.Initialize ();
 			}
 		}
 
 #if !MOBILE
-		static IMonoTlsProvider TryDynamicLoad ()
+		static MSI.MonoTlsProvider TryDynamicLoad ()
 		{
 			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
 			if (variable == null)
@@ -189,22 +192,18 @@ namespace Mono.Net.Security
 			if (string.Equals (variable, "default", StringComparison.OrdinalIgnoreCase))
 				return null;
 
-			var provider = LookupProvider (variable, true);
-
-			return new Private.MonoTlsProviderWrapper (provider);
+			return LookupProvider (variable, true);
 		}
-#endif
 
-		static IMonoTlsProvider CreateDefaultProviderImpl ()
+		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
 		{
-#if !MOBILE
 			var provider = TryDynamicLoad ();
 			if (provider != null)
 				return provider;
-#endif
 
-			return new Private.MonoDefaultTlsProvider ();
+			return new Private.MonoLegacyTlsProvider ();
 		}
+#endif
 
 		#region Mono.Security visible API
 
