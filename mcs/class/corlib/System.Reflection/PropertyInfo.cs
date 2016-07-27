@@ -196,5 +196,18 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 #endif
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern PropertyInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
+
+		internal static PropertyInfo GetPropertyFromHandle (Mono.RuntimePropertyHandle handle, RuntimeTypeHandle reflectedType)
+		{
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
+			PropertyInfo pi = internal_from_handle_type (handle.Value, reflectedType.Value);
+			if (pi == null)
+				throw new ArgumentException ("The property handle and the type handle are incompatible.");
+			return pi;
+		}
 	}
 }

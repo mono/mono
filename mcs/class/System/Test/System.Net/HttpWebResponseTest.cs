@@ -21,6 +21,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpWebResponseTest
 	{
 		[Test]
@@ -476,6 +477,7 @@ namespace MonoTests.System.Net
 	}
 
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpResponseStreamTest
 	{
 		[Test]

@@ -5378,18 +5378,30 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (constant_label != null && constant_label != sl)
+					if (section_rc.IsUnreachable) {
+						//
+						// Common case. Previous label section end is unreachable as
+						// it ends with break, return, etc. For next section revert
+						// to reachable again unless we have constant switch block
+						//
+						section_rc = constant_label != null && constant_label != sl ?
+							Reachability.CreateUnreachable () :
+							new Reachability ();
+					} else if (prev_label != null) {
+						//
+						// Error case as control cannot fall through from one case label
+						//
+						sl.SectionStart = false;
+						s = new MissingBreak (prev_label);
+						s.MarkReachable (rc);
+						block.Statements.Insert (i - 1, s);
+						++i;
+					} else if (constant_label != null && constant_label != sl) {
+						//
+						// Special case for the first unreachable label in constant
+						// switch block
+						//
 						section_rc = Reachability.CreateUnreachable ();
-					else if (section_rc.IsUnreachable) {
-						section_rc = new Reachability ();
-					} else {
-						if (prev_label != null) {
-							sl.SectionStart = false;
-							s = new MissingBreak (prev_label);
-							s.MarkReachable (rc);
-							block.Statements.Insert (i - 1, s);
-							++i;
-						}
 					}
 
 					prev_label = sl;

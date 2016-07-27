@@ -476,7 +476,7 @@ domain_get_next (ThreadPoolDomain *current)
 					break;
 				}
 			}
-			g_assert (current_idx >= 0);
+			g_assert (current_idx != (guint)-1);
 		}
 		for (i = current_idx + 1; i < len + current_idx + 1; ++i) {
 			ThreadPoolDomain *tmp = (ThreadPoolDomain *)g_ptr_array_index (threadpool->domains, i % len);
@@ -634,6 +634,9 @@ worker_thread (gpointer data)
 
 			if (retire)
 				retire = FALSE;
+
+			/* The tpdomain->domain might have unloaded, while this thread was parked */
+			previous_tpdomain = NULL;
 
 			continue;
 		}

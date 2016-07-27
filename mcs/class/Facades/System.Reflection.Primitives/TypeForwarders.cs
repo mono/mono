@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 // 
 
-#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.FlowControl))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.OpCode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.OpCodes))]
@@ -28,7 +27,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.OperandType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.PackingSize))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.StackBehaviour))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.CallingConventions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.EventAttributes))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.FieldAttributes))]

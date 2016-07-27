@@ -16,6 +16,7 @@ using System.Threading;
 namespace MonoTests.System.Net.Mail
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class SmtpClientTest
 	{
 		SmtpClient smtp;

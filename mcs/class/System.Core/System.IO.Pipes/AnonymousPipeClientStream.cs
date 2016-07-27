@@ -63,7 +63,7 @@ namespace System.IO.Pipes
 		{
 		}
 
-		public AnonymousPipeClientStream (PipeDirection direction,SafePipeHandle safePipeHandle)
+		public AnonymousPipeClientStream (PipeDirection direction, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
 		{
 			/*
@@ -73,7 +73,11 @@ namespace System.IO.Pipes
 				impl = new UnixAnonymousPipeClient (this, safePipeHandle);
 			*/
 
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			InitializeHandle (safePipeHandle, false, false);
+#endif
 			IsConnected = true;
 		}
 

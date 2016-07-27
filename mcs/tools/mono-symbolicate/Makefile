@@ -24,9 +24,9 @@ SYMBOLICATE_RESULT_FILE = $(OUT_DIR)/symbolicate.result
 SYMBOLICATE_EXPECTED_FILE = Test/symbolicate.expected
 
 CHECK_DIFF = @\
-	MONO_DEBUG=gen-compact-seq-points $(MONO) $(TEST_EXE) > $(STACKTRACE_FILE); \
+	$(MONO) $(TEST_EXE) > $(STACKTRACE_FILE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) $(MSYM_DIR) $(STACKTRACE_FILE) > $(SYMBOLICATE_RAW_FILE); \
-	sed "s/).*Test\//) in /" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
+	sed "s/) .* in .*\/mcs\//) in mcs\//" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
 	DIFF=$$(diff $(SYMBOLICATE_RESULT_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \
@@ -43,7 +43,8 @@ PREPARE_OUTDIR = @\
 
 COMPILE = \
 	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE); \
-	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR)
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
+	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
 
 check: test-local
 
@@ -64,7 +65,7 @@ ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
 	$(COMPILE)
-	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot $(TEST_EXE) > /dev/null
+	@$(MONO) --aot $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
 
@@ -74,6 +75,6 @@ ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT (using .msym) in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
 	$(COMPILE)
-	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot=msym-dir=$(MSYM_DIR) $(TEST_EXE) > /dev/null
+	@$(MONO) --aot=msym-dir=$(MSYM_DIR) $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif

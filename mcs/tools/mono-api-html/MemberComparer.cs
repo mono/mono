@@ -138,9 +138,13 @@ namespace Xamarin.ApiDiff {
 		void Modify (ApiChanges modified)
 		{
 			foreach (var changes in modified) {
+				if (State.IgnoreNonbreaking && changes.Value.All (c => !c.Breaking))
+					continue;
 				Output.WriteLine ("<p>{0}:</p>", changes.Key);
 				Output.WriteLine ("<pre>");
 				foreach (var element in changes.Value) {
+					if (State.IgnoreNonbreaking && !element.Breaking)
+						continue;
 					Output.Write ("<div {0}>", element.Breaking ? "data-is-breaking" : "data-is-non-breaking");
 					foreach (var line in element.Member.ToString ().Split ('\n'))
 						Output.WriteLine ("\t{0}", line);
@@ -158,6 +162,8 @@ namespace Xamarin.ApiDiff {
 				if (State.IgnoreRemoved.Any (re => re.IsMatch (GetDescription (item))))
 					continue;
 				SetContext (item);
+				if (State.IgnoreNonbreaking && !IsBreakingRemoval (item))
+					continue;
 				if (!r) {
 					BeforeRemoving (elements);
 					r = true;
@@ -418,8 +424,13 @@ namespace Xamarin.ApiDiff {
 				if (tgtAbstract) {
 					change.AppendAdded ("abstract", true).Append (" ");
 				} else if (srcWord != tgtWord) {
-					if (!tgtFinal)
-						change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+					if (!tgtFinal) {
+						if (State.IgnoreVirtualChanges) {
+							change.HasIgnoredChanges = true;
+						} else {
+							change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+						}
+					}
 				} else if (tgtWord.Length > 0) {
 					change.Append (tgtWord).Append (" ");
 				} else if (srcWord.Length > 0) {
@@ -431,7 +442,11 @@ namespace Xamarin.ApiDiff {
 				if (tgtFinal) {
 					change.Append ("final ");
 				} else {
-					change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					if (srcVirtual && !tgtVirtual && State.IgnoreVirtualChanges) {
+						change.HasIgnoredChanges = true;
+					} else {
+						change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					}
 				}
 			} else {
 				if (tgtFinal && srcVirtual) {

@@ -37,6 +37,12 @@ namespace Mono {
 			internal uint token;
 			internal MonoClass** constraints; /* NULL terminated */
 		}
+
+		// glib.h GPtrArray
+		internal unsafe struct GPtrArray {
+			internal IntPtr* data;
+			internal int len;
+		}
 	}
 
 }

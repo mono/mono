@@ -422,7 +422,8 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 	return delegate->delegate_trampoline;
 
 fail:
-	mono_gchandle_free (target_handle);
+	if (target_handle != 0)
+		mono_gchandle_free (target_handle);
 	mono_error_set_pending_exception (&error);
 	return NULL;
 }
@@ -7455,19 +7456,25 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 	/* Set LastError if needed */
 	if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {
 #ifdef TARGET_WIN32
-		static MonoMethodSignature *get_last_error_sig = NULL;
-		if (!get_last_error_sig) {
-			get_last_error_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
-			get_last_error_sig->ret = &mono_defaults.int_class->byval_arg;
-			get_last_error_sig->pinvoke = 1;
-		}
+		if (!aot) {
+			static MonoMethodSignature *get_last_error_sig = NULL;
+			if (!get_last_error_sig) {
+				get_last_error_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
+				get_last_error_sig->ret = &mono_defaults.int_class->byval_arg;
+				get_last_error_sig->pinvoke = 1;
+			}
 
-		/*
-		 * Have to call GetLastError () early and without a wrapper, since various runtime components could
-		 * clobber its value.
-		 */
-		mono_mb_emit_native_call (mb, get_last_error_sig, GetLastError);
-		mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
+			/*
+			 * Have to call GetLastError () early and without a wrapper, since various runtime components could
+			 * clobber its value.
+			 */
+			mono_mb_emit_native_call (mb, get_last_error_sig, GetLastError);
+			mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
+		} else {
+			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+			mono_mb_emit_byte (mb, CEE_MONO_GET_LAST_ERROR);
+			mono_mb_emit_icall (mb, mono_marshal_set_last_error_windows);
+		}
 #else
 		mono_mb_emit_icall (mb, mono_marshal_set_last_error);
 #endif
@@ -9526,7 +9533,7 @@ get_virtual_stelemref_wrapper (int kind)
 	MonoMethod *res;
 	char *name;
 	const char *param_names [16];
-	guint32 b1, b2, b3;
+	guint32 b1, b2, b3, b4;
 	int aklass, vklass, vtable, uiid;
 	int array_slot_addr;
 	WrapperInfo *info;
@@ -9739,7 +9746,7 @@ get_virtual_stelemref_wrapper (int kind)
 		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoClass, idepth));
 		mono_mb_emit_byte (mb, CEE_LDIND_U2);
 
-		b2 = mono_mb_emit_branch (mb, CEE_BLT_UN);
+		b3 = mono_mb_emit_branch (mb, CEE_BLT_UN);
 
 		/* if (vklass->supertypes [aklass->idepth - 1] != aklass) goto failure */
 		mono_mb_emit_ldloc (mb, vklass);
@@ -9757,7 +9764,7 @@ get_virtual_stelemref_wrapper (int kind)
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 
 		mono_mb_emit_ldloc (mb, aklass);
-		b3 = mono_mb_emit_branch (mb, CEE_BNE_UN);
+		b4 = mono_mb_emit_branch (mb, CEE_BNE_UN);
 
 		/* do_store: */
 		mono_mb_patch_branch (mb, b1);
@@ -9769,6 +9776,7 @@ get_virtual_stelemref_wrapper (int kind)
 		/* do_exception: */
 		mono_mb_patch_branch (mb, b2);
 		mono_mb_patch_branch (mb, b3);
+		mono_mb_patch_branch (mb, b4);
 
 		mono_mb_emit_exception (mb, "ArrayTypeMismatchException", NULL);
 		break;
@@ -11888,8 +11896,6 @@ ftnptr_eh_callback_default (guint32 gchandle)
 {
 	MonoException *exc;
 	gpointer stackdata;
-
-	g_assert (gchandle >= 0);
 
 	mono_threads_enter_gc_unsafe_region_unbalanced (&stackdata);
 

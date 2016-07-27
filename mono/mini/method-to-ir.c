@@ -7080,7 +7080,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	GHashTable *prev_cbb_hash;
 	MonoBasicBlock **prev_cil_offset_to_bb;
 	MonoBasicBlock *prev_cbb;
-	unsigned char* prev_cil_start;
+	const unsigned char *prev_ip;
+	unsigned char *prev_cil_start;
 	guint32 prev_cil_offset_to_bb_len;
 	MonoMethod *prev_current_method;
 	MonoGenericContext *prev_generic_context;
@@ -7156,6 +7157,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_cil_offset_to_bb = cfg->cil_offset_to_bb;
 	prev_cil_offset_to_bb_len = cfg->cil_offset_to_bb_len;
 	prev_cil_start = cfg->cil_start;
+	prev_ip = cfg->ip;
 	prev_cbb = cfg->cbb;
 	prev_current_method = cfg->current_method;
 	prev_generic_context = cfg->generic_context;
@@ -7175,6 +7177,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	cfg->cil_offset_to_bb = prev_cil_offset_to_bb;
 	cfg->cil_offset_to_bb_len = prev_cil_offset_to_bb_len;
 	cfg->cil_start = prev_cil_start;
+	cfg->ip = prev_ip;
 	cfg->locals = prev_locals;
 	cfg->args = prev_args;
 	cfg->arg_types = prev_arg_types;
@@ -8191,7 +8194,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	if (!header) {
 		mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 		goto exception_exit;
+	} else {
+		cfg->headers_to_free = g_slist_prepend_mempool (cfg->mempool, cfg->headers_to_free, header);
 	}
+
 	generic_container = mono_method_get_generic_container (method);
 	sig = mono_method_signature (method);
 	num_args = sig->hasthis + sig->param_count;
@@ -12277,6 +12283,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 		case CEE_THROW:
 			CHECK_STACK (1);
+			if (sp [-1]->type != STACK_OBJ)
+				UNVERIFIED;
+
 			MONO_INST_NEW (cfg, ins, OP_THROW);
 			--sp;
 			ins->sreg1 = sp [0]->dreg;
@@ -12954,6 +12963,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_MONO_LDDOMAIN:
 				CHECK_STACK_OVF (1);
 				EMIT_NEW_PCONST (cfg, ins, cfg->compile_aot ? NULL : cfg->domain);
+				ip += 2;
+				*sp++ = ins;
+				break;
+			case CEE_MONO_GET_LAST_ERROR:
+				CHECK_OPSIZE (2);
+				CHECK_STACK_OVF (1);
+
+				MONO_INST_NEW (cfg, ins, OP_GET_LAST_ERROR);
+				ins->dreg = alloc_dreg (cfg, STACK_I4);
+				ins->type = STACK_I4;
+				MONO_ADD_INS (cfg->cbb, ins);
+
 				ip += 2;
 				*sp++ = ins;
 				break;
@@ -13680,7 +13701,6 @@ mono_error_exit:
 	g_slist_free (class_inits);
 	mono_basic_block_free (original_bb);
 	cfg->dont_inline = g_list_remove (cfg->dont_inline, method);
-	cfg->headers_to_free = g_slist_prepend_mempool (cfg->mempool, cfg->headers_to_free, header);
 	if (cfg->exception_type)
 		return -1;
 	else

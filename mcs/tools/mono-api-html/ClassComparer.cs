@@ -198,6 +198,20 @@ namespace Xamarin.ApiDiff {
 			Indent ().WriteLine ("}");
 		}
 
+		//HACK: we don't have hierarchy information here so just check some basic heuristics for now
+		bool IsBaseChangeCompatible (string source, string target)
+		{
+			if (source == "System.Object")
+				return true;
+			if (source == "System.Exception" && target.EndsWith ("Exception", StringComparison.Ordinal))
+				return true;
+			if (source == "System.EventArgs" && target.EndsWith ("EventArgs", StringComparison.Ordinal))
+				return true;
+			if (source == "System.Runtime.InteropServices.SafeHandle" && target.StartsWith ("Microsoft.Win32.SafeHandles.SafeHandle", StringComparison.Ordinal))
+				return true;
+			return false;
+		}
+
 		public override void Modified (XElement source, XElement target, ApiChanges diff)
 		{
 			// hack - there could be changes that we're not monitoring (e.g. attributes properties)
@@ -206,7 +220,7 @@ namespace Xamarin.ApiDiff {
 
 			var sb = source.GetAttribute ("base");
 			var tb = target.GetAttribute ("base");
-			if (sb != tb) {
+			if (sb != tb && !(State.IgnoreNonbreaking && IsBaseChangeCompatible (sb, tb))) {
 				Output.Write ("Modified base type: ");
 				Output.WriteLine (new ApiChange ().AppendModified (sb, tb, true).Member.ToString ());
 			}

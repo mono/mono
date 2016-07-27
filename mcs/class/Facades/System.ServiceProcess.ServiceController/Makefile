@@ -11,7 +11,14 @@ LIBRARY = System.ServiceProcess.ServiceController.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
-LIB_REFS = System System.ServiceProcess
+LIB_REFS = System
+
+ifneq (2.1, $(FRAMEWORK_VERSION))
+ifndef XAMMAC_4_5
+LIB_REFS += System.ServiceProcess
+endif
+endif
+
 LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
 PLATFORM_DEBUG_FLAGS =

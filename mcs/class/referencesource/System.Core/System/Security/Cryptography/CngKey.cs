@@ -31,6 +31,10 @@ namespace System.Security.Cryptography {
     /// </summary>
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public sealed class CngKey : IDisposable {
+#if MONO
+        public void Dispose() {
+        }
+#else
         private SafeNCryptKeyHandle m_keyHandle;
         private SafeNCryptProviderHandle m_kspHandle;
 
@@ -816,5 +820,6 @@ namespace System.Security.Cryptography {
             Contract.Assert(m_keyHandle != null);
             NCryptNative.SetProperty(m_keyHandle, property.Name, property.Value, property.Options);
         }
+#endif
     }
 }

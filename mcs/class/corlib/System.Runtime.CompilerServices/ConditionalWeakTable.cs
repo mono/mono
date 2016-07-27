@@ -66,6 +66,10 @@ namespace System.Runtime.CompilerServices
 			GC.register_ephemeron_array (data);
 		}
 
+		~ConditionalWeakTable ()
+		{
+		}
+
 		/*LOCKING: _lock must be held*/
 		void Rehash () {
 			uint newSize = (uint)HashHelpers.GetPrime ((data.Length << 1) | 1);

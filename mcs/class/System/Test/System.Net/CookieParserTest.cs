@@ -9,6 +9,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class CookieParserTest
 	{
 		public const string A = "Foo=Bar, expires=World; expires=Sat, 11-Oct-14 22:45:19 GMT, A=B";

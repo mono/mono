@@ -61,12 +61,14 @@ namespace System.ServiceModel.Channels
 			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
 			return context.BuildInnerChannelListener<TChannel> ();
 		}
+#endif
 
 		public override bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)
@@ -74,11 +76,13 @@ namespace System.ServiceModel.Channels
 			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
 			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{
@@ -89,8 +93,10 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (T) == typeof (ISecurityCapabilities))
 				return (T) (object) this;
+#if !MOBILE && !XAMMAC_4_5
 			if (typeof (T) == typeof (IdentityVerifier))
 				return (T) (object) IdentityVerifier.CreateDefault ();
+#endif
 			return null;
 		}
 
@@ -120,6 +126,7 @@ namespace System.ServiceModel.Channels
 			get { throw new NotImplementedException (); }
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
@@ -141,6 +148,7 @@ namespace System.ServiceModel.Channels
 			element.AppendChild (protectionLevel);
 			return element;
 		}
+#endif
 		#endregion
 	}
 }

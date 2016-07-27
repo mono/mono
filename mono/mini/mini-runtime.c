@@ -1514,7 +1514,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, error);
 		if (!mono_error_ok (error))
-			g_error ("Could not patch ldtoken due to %s", mono_error_get_message (error));
+			return NULL;
 		mono_class_init (handle_class);
 		mono_class_init (mono_class_from_mono_type ((MonoType *)handle));
 
@@ -2779,6 +2779,9 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 	MonoException *exc;
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
+	if (mono_runtime_get_no_exec ())
+		exit (1);
+
 	MONO_ENTER_GC_UNSAFE_UNBALANCED;
 
 	exc = mono_get_exception_execution_engine ("SIGILL");
@@ -3055,6 +3058,17 @@ mini_init_delegate (MonoDelegate *del)
 static guint8 **delegate_virtual_invoke_cache = NULL;
 static int delegate_virtual_invoke_cache_size = 0;
 
+char*
+mono_get_delegate_virtual_invoke_impl_name (gboolean load_imt_reg, int offset)
+{
+	int abs_offset;
+
+	abs_offset = offset;
+	if (abs_offset < 0)
+		abs_offset = - abs_offset;
+	return g_strdup_printf ("delegate_virtual_invoke%s_%s%d", load_imt_reg ? "_imt" : "", offset < 0 ? "m_" : "", abs_offset / SIZEOF_VOID_P);
+}
+
 gpointer
 mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method)
 {
@@ -3103,12 +3117,7 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 
 	/* FIXME Support more cases */
 	if (mono_aot_only) {
-		char tramp_name [256];
-		const char *imt = load_imt_reg ? "_imt" : "";
-		int ind = (load_imt_reg ? (-offset) : offset) / SIZEOF_VOID_P;
-
-		sprintf (tramp_name, "delegate_virtual_invoke%s_%d", imt, ind);
-		cache [idx] = (guint8 *)mono_aot_get_trampoline (mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset));
+		delegate_virtual_invoke_cache [idx] = (guint8 *)mono_aot_get_trampoline (mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset));
 		g_assert (delegate_virtual_invoke_cache [idx]);
 	} else {
 		delegate_virtual_invoke_cache [idx] = (guint8 *)mono_arch_get_delegate_virtual_invoke_impl (sig, method, offset, load_imt_reg);
@@ -3156,7 +3165,9 @@ mini_parse_debug_option (const char *option)
 	else if (!strcmp (option, "gen-seq-points"))
 		debug_options.gen_sdb_seq_points = TRUE;
 	else if (!strcmp (option, "gen-compact-seq-points"))
-		debug_options.gen_seq_points_compact_data = TRUE;
+		fprintf (stderr, "Mono Warning: option gen-compact-seq-points is deprecated.\n");
+	else if (!strcmp (option, "no-compact-seq-points"))
+		debug_options.no_seq_points_compact_data = TRUE;
 	else if (!strcmp (option, "single-imm-size"))
 		debug_options.single_imm_size = TRUE;
 	else if (!strcmp (option, "init-stacks"))
@@ -3201,7 +3212,7 @@ mini_parse_debug_options (void)
 
 		if (!mini_parse_debug_option (arg)) {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'gen-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'arm-use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'arm-use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
 			exit (1);
 		}
 	}
@@ -3683,9 +3694,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_simd_intrinsics_init ();
 #endif
 
-#if MONO_SUPPORT_TASKLETS
 	mono_tasklets_init ();
-#endif
 
 	register_trampolines (domain);
 
@@ -3766,9 +3775,6 @@ register_icalls (void)
 	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", "object", FALSE);
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
-#ifndef DISABLE_REMOTING
-	register_icall (mono_store_remote_field_new_icall, "mono_store_remote_field_new_icall", "void object ptr ptr object", FALSE);
-#endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
 	register_icall (mono_nacl_gc, "mono_nacl_gc", "void", FALSE);

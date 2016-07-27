@@ -1,0 +1,7 @@
+SR.cs
+System.Numerics/ConstantHelper.cs
+System.Numerics/HashCodeHelper.cs
+System.Numerics/JitIntrinsicAttribute.cs
+System.Numerics/Register.cs
+System.Numerics/Vector_Operations.cs
+System.Numerics/Vector.cs

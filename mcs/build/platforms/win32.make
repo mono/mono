@@ -26,9 +26,6 @@ PLATFORM_PATH_SEPARATOR = ;
 
 override CURDIR:=$(shell cygpath -m $(CURDIR))
 
-## not so simple :-)
-#PLATFORM_AOT_SUFFIX = .dll
-
 hidden_prefix = 
 hidden_suffix = .tmp
 

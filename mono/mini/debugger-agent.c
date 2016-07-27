@@ -2790,8 +2790,6 @@ suspend_vm (void)
 static void
 resume_vm (void)
 {
-	int err;
-
 	g_assert (is_debugger_thread ());
 
 	mono_loader_lock ();
@@ -2810,8 +2808,7 @@ resume_vm (void)
 	}
 
 	/* Signal this even when suspend_count > 0, since some threads might have resume_count > 0 */
-	err = mono_coop_cond_broadcast (&suspend_cond);
-	g_assert (err == 0);
+	mono_coop_cond_broadcast (&suspend_cond);
 
 	mono_coop_mutex_unlock (&suspend_mutex);
 	//g_assert (err == 0);
@@ -2830,7 +2827,6 @@ resume_vm (void)
 static void
 resume_thread (MonoInternalThread *thread)
 {
-	int err;
 	DebuggerTlsData *tls;
 
 	g_assert (is_debugger_thread ());
@@ -2852,8 +2848,7 @@ resume_thread (MonoInternalThread *thread)
 	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
 	 * but only the one whose resume_count field is > 0 will be resumed.
 	 */
-	err = mono_coop_cond_broadcast (&suspend_cond);
-	g_assert (err == 0);
+	mono_coop_cond_broadcast (&suspend_cond);
 
 	mono_coop_mutex_unlock (&suspend_mutex);
 	//g_assert (err == 0);
@@ -2900,7 +2895,6 @@ static void
 suspend_current (void)
 {
 	DebuggerTlsData *tls;
-	int err;
 
 	g_assert (!is_debugger_thread ());
 
@@ -2928,8 +2922,7 @@ suspend_current (void)
 	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
 	while (suspend_count - tls->resume_count > 0) {
-		err = mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
-		g_assert (err == 0);
+		mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
 	}
 
 	tls->suspended = FALSE;
@@ -8383,11 +8376,15 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	case CMD_TYPE_GET_METHODS_BY_NAME_FLAGS: {
 		char *name = decode_string (p, &p, end);
 		int i, flags = decode_int (p, &p, end);
-		MonoException *ex = NULL;
-		GPtrArray *array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, (flags & BINDING_FLAGS_IGNORE_CASE) != 0, TRUE, &ex);
+		MonoError error;
+		GPtrArray *array;
 
-		if (!array)
+		mono_error_init (&error);
+		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, (flags & BINDING_FLAGS_IGNORE_CASE) != 0, TRUE, &error);
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error);
 			return ERR_LOADER_ERROR;
+		}
 		buffer_add_int (buf, array->len);
 		for (i = 0; i < array->len; ++i) {
 			MonoMethod *method = (MonoMethod *)g_ptr_array_index (array, i);
@@ -9145,7 +9142,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	sig = mono_method_signature (frame->actual_method);
 
-	if (!mono_get_seq_points (frame->domain, frame->actual_method))
+	if (!jit->has_var_info || !mono_get_seq_points (frame->domain, frame->actual_method))
 		/*
 		 * The method is probably from an aot image compiled without soft-debug, variables might be dead, etc.
 		 */
@@ -9463,10 +9460,10 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				g_free (val);
 			} else {
 				guint8 *field_value = NULL;
-				void *field_storage = NULL;
 
 				if (remote_obj) {
 #ifndef DISABLE_REMOTING
+					void *field_storage = NULL;
 					field_value = mono_load_remote_field_checked(obj, obj_type, f, &field_storage, &error);
 					if (!is_ok (&error)) {
 						mono_error_cleanup (&error); /* FIXME report the error */

@@ -922,9 +922,6 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			}
 			break;
 		}
-		case MONO_WRAPPER_STFLD_REMOTE:
-			ref->method = mono_marshal_get_stfld_remote_wrapper (NULL);
-			break;
 #endif
 		case MONO_WRAPPER_ALLOC: {
 			int atype = decode_value (p, &p);
@@ -5834,7 +5831,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 
 gpointer
 mono_aot_get_method_checked (MonoDomain *domain,
-							 MonoMethod *method, MonoError *error);
+							 MonoMethod *method, MonoError *error)
 {
 	mono_error_init (error);
 	return NULL;

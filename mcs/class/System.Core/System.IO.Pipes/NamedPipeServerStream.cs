@@ -70,10 +70,18 @@ namespace System.IO.Pipes
 		}
 
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize)
+#if MOBILE		
+			: base (direction, inBufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+#else
 			: this (pipeName, direction, maxNumberOfServerInstances, transmissionMode, options, inBufferSize, outBufferSize, null)
 		{
 		}
+#endif
 
+#if !MOBILE
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity)
 			: this (pipeName, direction, maxNumberOfServerInstances, transmissionMode, options, inBufferSize, outBufferSize, pipeSecurity, HandleInheritability.None)
 		{
@@ -101,16 +109,26 @@ namespace System.IO.Pipes
 
 			InitializeHandle (impl.Handle, false, (options & PipeOptions.Asynchronous) != PipeOptions.None);
 		}
+#endif
 
 		public NamedPipeServerStream (PipeDirection direction, bool isAsync, bool isConnected, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			if (IsWindows)
 				impl = new Win32NamedPipeServer (this, safePipeHandle);
 			else
 				impl = new UnixNamedPipeServer (this, safePipeHandle);
 			IsConnected = isConnected;
 			InitializeHandle (safePipeHandle, true, isAsync);
+#endif
+		}
+
+		~NamedPipeServerStream ()
+		{
+			// To be compatible with .net
 		}
 
 		INamedPipeServer impl;
@@ -120,12 +138,14 @@ namespace System.IO.Pipes
 			impl.Disconnect ();
 		}
 
+#if !MOBILE
 		[MonoTODO]
 		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlPrincipal)]
 		public void RunAsClient (PipeStreamImpersonationWorker impersonationWorker)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public void WaitForConnection ()
 		{
@@ -140,6 +160,7 @@ namespace System.IO.Pipes
 			throw new NotImplementedException ();
 		}
 
+#if !MOBILE
 		// async operations
 
 		Action wait_connect_delegate;
@@ -156,6 +177,7 @@ namespace System.IO.Pipes
 		{
 			wait_connect_delegate.EndInvoke (asyncResult);
 		}
+#endif
 	}
 }
 

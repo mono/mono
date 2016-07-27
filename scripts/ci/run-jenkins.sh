@@ -20,6 +20,9 @@ if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FL
 if [[ ${CI_TAGS} == 'mobile_static' ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=mobile_static";
+elif [[ ${CI_TAGS} == 'acceptance-tests' ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]];
     then
     # Override the defaults to skip profiles
@@ -52,4 +55,7 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
     # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
 fi
 
-make check-ci
+if [[ ${CI_TAGS} == 'acceptance-tests' ]];
+then $(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
+else make check-ci
+fi
