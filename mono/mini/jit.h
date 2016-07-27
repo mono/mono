@@ -39,21 +39,45 @@ mono_set_crash_chaining   (mono_bool chain_signals);
 MONO_API void
 mono_jit_set_aot_only      (mono_bool aot_only);
 
+typedef enum {
+	/* Include AOTted code for generic classes */
+	MONO_AOT_FEATURE_GENERICCLASS = 1 << 0,
+	/* Include AOTted code for gsharedvt */
+	MONO_AOT_FEATURE_GSHAREDVT    = 1 << 1,
+	/* Include AOTted code for trampolines */
+	MONO_AOT_FEATURE_TRAMPOLINE   = 1 << 2,
+	/* Include AOTted code for wrappers */
+	MONO_AOT_FEATURE_WRAPPER      = 1 << 3,
+	/* Value used exclusively for llvmonly.
+	 * We special-case it, as it doesn't fit well
+	 * into this Mode/Feature model, but we need to
+	 * be compatible because of mono_jit_set_aot_mode */
+	MONO_AOT_FEATURE_LLVMONLY     = 1 << 7,
+} MonoAotFeature;
+
 /**
  * Allows control over our AOT (Ahead-of-time) compilation mode.
  */
 typedef enum {
 	/* Disables AOT mode */
-	MONO_AOT_MODE_NONE,
+	MONO_AOT_MODE_NONE = -1,
 	/* Enables normal AOT mode, equivalent to mono_jit_set_aot_only (false) */
-	MONO_AOT_MODE_NORMAL,
+	MONO_AOT_MODE_NORMAL = 0,
 	/* Enables hybrid AOT mode, JIT can still be used for wrappers */
-	MONO_AOT_MODE_HYBRID,
+	MONO_AOT_MODE_HYBRID =
+		  MONO_AOT_MODE_NORMAL
+		| MONO_AOT_FEATURE_GENERICCLASS
+		| MONO_AOT_FEATURE_GSHAREDVT
+		,
 	/* Enables full AOT mode, JIT is disabled and not allowed,
 	 * equivalent to mono_jit_set_aot_only (true) */
-	MONO_AOT_MODE_FULL,
+	MONO_AOT_MODE_FULL =
+		  MONO_AOT_MODE_HYBRID
+		| MONO_AOT_FEATURE_TRAMPOLINE
+		| MONO_AOT_FEATURE_WRAPPER
+		,
 	/* Same as full, but use only llvm compiled code */
-	MONO_AOT_MODE_LLVMONLY
+	MONO_AOT_MODE_LLVMONLY = MONO_AOT_FEATURE_LLVMONLY,
 } MonoAotMode;
 
 MONO_API void

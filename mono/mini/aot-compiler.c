@@ -140,6 +140,11 @@ typedef struct MonoAotOptions {
 	char *instances_logfile_path;
 	char *logfile;
 	gboolean dump_json;
+	/* boolean for MonoAotFeature */
+	gboolean enable_genericclass;
+	gboolean enable_gsharedvt;
+	gboolean enable_trampoline;
+	gboolean enable_wrapper;
 } MonoAotOptions;
 
 typedef enum {
@@ -4333,7 +4338,7 @@ static void
 add_generic_class (MonoAotCompile *acfg, MonoClass *klass, gboolean force, const char *ref)
 {
 	/* This might lead to a huge code blowup so only do it if neccesary */
-	if (!acfg->aot_opts.llvm_only && !mono_aot_mode_is_full (&acfg->aot_opts) && !force)
+	if (!acfg->aot_opts.llvm_only && !acfg->aot_opts.enable_genericclass && !force)
 		return;
 
 	add_generic_class_with_depth (acfg, klass, 0, ref);
@@ -6585,7 +6590,7 @@ emit_trampolines (MonoAotCompile *acfg)
 	int tramp_type;
 #endif
 
-	if (!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only)
+	if (!acfg->aot_opts.enable_trampoline || acfg->aot_opts.llvm_only)
 		return;
 	
 	g_assert (acfg->image->assembly);
@@ -7167,6 +7172,15 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		opts->ngsharedvt_arg_trampolines = 0;
 	}
 
+	if (opts->mode & MONO_AOT_FEATURE_GENERICCLASS)
+		opts->enable_genericclass = TRUE;
+	if (opts->mode & MONO_AOT_FEATURE_GSHAREDVT)
+		opts->enable_gsharedvt = TRUE;
+	if (opts->mode & MONO_AOT_FEATURE_TRAMPOLINE)
+		opts->enable_trampoline = TRUE;
+	if (opts->mode & MONO_AOT_FEATURE_WRAPPER)
+		opts->enable_wrapper = TRUE;
+
 	g_ptr_array_free (args, /*free_seg=*/TRUE);
 }
 
@@ -7602,7 +7616,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 						  mono_method_is_generic_sharable_full (m, FALSE, FALSE, FALSE)) &&
 						(!method_has_type_vars (m) || mono_method_is_generic_sharable_full (m, TRUE, TRUE, FALSE))) {
 						if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
-							if ((acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) && !method_has_type_vars (m))
+							if ((acfg->aot_opts.llvm_only || acfg->aot_opts.enable_wrapper) && !method_has_type_vars (m))
 								add_extra_method_with_depth (acfg, mono_marshal_get_native_wrapper (m, TRUE, TRUE), depth + 1);
 						} else {
 							add_extra_method_with_depth (acfg, m, depth + 1);
@@ -8361,7 +8375,7 @@ emit_code (MonoAotCompile *acfg)
 		method = cfg->orig_method;
 
 		/* Emit unbox trampoline */
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
+		if (acfg->aot_opts.enable_trampoline && cfg->orig_method->klass->valuetype) {
 			sprintf (symbol, "ut_%d", get_method_index (acfg, method));
 
 			emit_section_change (acfg, ".text", 0);
@@ -8472,7 +8486,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
+		if (acfg->aot_opts.enable_trampoline && cfg->orig_method->klass->valuetype) {
 			index = get_method_index (acfg, method);
 
 			emit_int32 (acfg, index);
@@ -8502,7 +8516,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
+		if (acfg->aot_opts.enable_trampoline && cfg->orig_method->klass->valuetype) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
 			int call_size;
 
@@ -9699,7 +9713,7 @@ collect_methods (MonoAotCompile *acfg)
 		/* Load all methods eagerly to skip the slower lazy loading code */
 		mono_class_setup_methods (method->klass);
 
-		if ((acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) && method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
+		if ((acfg->aot_opts.llvm_only || acfg->aot_opts.enable_wrapper) && method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 			/* Compile the wrapper instead */
 			/* We do this here instead of add_wrappers () because it is easy to do it here */
 			MonoMethod *wrapper = mono_marshal_get_native_wrapper (method, TRUE, TRUE);
@@ -9752,7 +9766,7 @@ collect_methods (MonoAotCompile *acfg)
 
 	add_generic_instances (acfg);
 
-	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts))
+	if (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_wrapper)
 		add_wrappers (acfg);
 	return TRUE;
 }
@@ -10409,7 +10423,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	//acfg->aot_opts.print_skipped_methods = TRUE;
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
-	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) {
+	if (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_gsharedvt) {
 		acfg->opts |= MONO_OPT_GSHAREDVT;
 		opts |= MONO_OPT_GSHAREDVT;
 	}
@@ -10510,14 +10524,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	load_profile_files (acfg);
 
-	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) ? acfg->aot_opts.ntrampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.ntrampolines : 0;
 #ifdef MONO_ARCH_GSHARED_SUPPORTED
-	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) ? acfg->aot_opts.nrgctx_trampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.nrgctx_trampolines : 0;
 #endif
-	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) ? acfg->aot_opts.nimt_trampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.nimt_trampolines : 0;
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
-		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;
+		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;
 #endif
 
 	acfg->temp_prefix = mono_img_writer_get_temp_label_prefix (NULL);
