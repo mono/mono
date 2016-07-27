@@ -37,7 +37,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+#if !MOBILE_STATIC
 using System.Data;
+#endif
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1475,6 +1477,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (parent, parent.Child.Parent, "#2");
 		}
 
+#if !MOBILE_STATIC
 		[Test]
 		public void IXmlSerializableCallConstructor ()
 		{
@@ -1525,6 +1528,7 @@ namespace MonoTests.System.Runtime.Serialization
 			
 			var ds = (DataSet) x.ReadObject (r);
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))] // BaseConstraintType1 is neither DataContract nor Serializable.

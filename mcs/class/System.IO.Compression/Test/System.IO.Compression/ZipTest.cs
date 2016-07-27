@@ -275,11 +275,10 @@ namespace MonoTests.System.IO.Compression
 			}
 		}
 
-		[Test]
-		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		public void ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode mode)
 		{
-			using (var archive = new ZipArchive(File.Open("test.nupkg", FileMode.Open),
-				ZipArchiveMode.Read))
+			File.Copy("test.nupkg", "test2.nupkg", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("test2.nupkg", FileMode.Open), mode))
 			{
 				var entry = archive.GetEntry("_rels/.rels");
 				using (var stream = entry.Open())
@@ -287,8 +286,32 @@ namespace MonoTests.System.IO.Compression
 					Assert.AreEqual(0, stream.Position);
 					Assert.AreEqual(425, stream.Length);
 				}
+
+				// .NET does not support these in Read mode but we do.
+				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
+				using (var stream = entry2.Open())
+				{
+					Assert.AreEqual(857, stream.Length);
+					if (mode == ZipArchiveMode.Update)
+					{
+						Assert.AreEqual(0, stream.Position);
+					}
+				}
 			}
+			File.Delete ("test2.nupkg");	
 		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Read);
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionUpdateMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Update);
+		}		
 
 		[Test]
 		public void ZipEnumerateEntriesReadMode()
@@ -354,6 +377,23 @@ namespace MonoTests.System.IO.Compression
 				{
 					sw.Write("TEST");
 				}
+			}
+		}
+
+		[Test]
+		public void ZipCreateDuplicateEntriesUpdateMode()
+		{
+			var stream = new MemoryStream();
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update, true))
+			{
+				var e2 = zipArchive.CreateEntry("BBB");
+				var e3 = zipArchive.CreateEntry("BBB");
+			}
+
+			stream.Position = 0;
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read))
+			{
+				Assert.AreEqual(2, zipArchive.Entries.Count);
 			}
 		}
 
@@ -439,6 +479,25 @@ namespace MonoTests.System.IO.Compression
 			{
 			}
 			File.Delete ("empty.zip");
+		}
+
+		class MyFakeStream : FileStream 
+		{
+			public MyFakeStream (string path, FileMode mode) : base(path, mode) {}
+
+			/// <summary>
+			/// Simulate "CanSeek" is false, which is the case when you are retreiving data from web.
+			/// </summary>
+			public override bool CanSeek => false;
+		}
+
+		[Test]
+		public void ZipReadNonSeekableStream()
+		{
+			var stream = new MyFakeStream("test.nupkg", FileMode.Open);
+			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
+			{
+			}
 		}
 	}
 }

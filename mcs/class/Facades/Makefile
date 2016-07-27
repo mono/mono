@@ -28,7 +28,7 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
-DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
+DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS) $(net_4_x_SUBDIRS) $(mobile_only_SUBDIRS)
 DISTFILES=subdirs.make
 
 doc-update-local:
@@ -39,7 +39,7 @@ doc-update-recursive:
 
 System System.Core System.ComponentModel.DataAnnotations System.Numerics System.Runtime.Serialization System.XML \
 System.ComponentModel.Composition System.ServiceModel System.Xml.Linq System.Data System.IO.Compression.FileSystem \
-System.ServiceProcess System.Security System.Net.Http.WebRequest System.Net.Http:
+System.ServiceProcess System.Security System.Net.Http.WebRequest System.Net.Http System.ServiceProcess:
 
 all-local-aot:
 

@@ -47,4 +47,5 @@
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.Serialization.IXmlSerializable))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XmlDateTimeSerializationMode))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.Serialization.XmlSchemaProviderAttribute))]
 

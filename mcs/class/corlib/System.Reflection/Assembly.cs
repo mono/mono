@@ -138,6 +138,9 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string InternalImageRuntimeVersion ();
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static internal extern string GetAotId ();
+
 		// SECURITY: this should be the only caller to icall get_code_base
 		private string GetCodeBase (bool escaped)
 		{

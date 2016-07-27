@@ -67,6 +67,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/w32handle.h>
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -963,7 +964,9 @@ ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomai
 {
 	MonoError error;
 	MonoAppDomain *ad = NULL;
+
 #ifdef DISABLE_APPDOMAINS
+	mono_error_init (&error);
 	mono_error_set_not_supported (&error, "AppDomain creation is not supported on this runtime.");
 #else
 	char *fname;
@@ -1516,97 +1519,6 @@ get_shadow_assembly_location (const char *filename, MonoError *error)
 }
 
 static gboolean
-ensure_directory_exists (const char *filename)
-{
-#ifdef HOST_WIN32
-	gchar *dir_utf8 = g_path_get_dirname (filename);
-	gunichar2 *p;
-	gunichar2 *dir_utf16 = NULL;
-	int retval;
-	
-	if (!dir_utf8 || !dir_utf8 [0])
-		return FALSE;
-
-	dir_utf16 = g_utf8_to_utf16 (dir_utf8, strlen (dir_utf8), NULL, NULL, NULL);
-	g_free (dir_utf8);
-
-	if (!dir_utf16)
-		return FALSE;
-
-	p = dir_utf16;
-
-	/* make life easy and only use one directory seperator */
-	while (*p != '\0')
-	{
-		if (*p == '/')
-			*p = '\\';
-		p++;
-	}
-
-	p = dir_utf16;
-
-	/* get past C:\ )*/
-	while (*p++ != '\\')	
-	{
-	}
-
-	while (1) {
-		BOOL bRet = FALSE;
-		p = wcschr (p, '\\');
-		if (p)
-			*p = '\0';
-		retval = _wmkdir (dir_utf16);
-		if (retval != 0 && errno != EEXIST) {
-			g_free (dir_utf16);
-			return FALSE;
-		}
-		if (!p)
-			break;
-		*p++ = '\\';
-	}
-	
-	g_free (dir_utf16);
-	return TRUE;
-#else
-	char *p;
-	gchar *dir = g_path_get_dirname (filename);
-	int retval;
-	struct stat sbuf;
-	
-	if (!dir || !dir [0]) {
-		g_free (dir);
-		return FALSE;
-	}
-	
-	if (stat (dir, &sbuf) == 0 && S_ISDIR (sbuf.st_mode)) {
-		g_free (dir);
-		return TRUE;
-	}
-	
-	p = dir;
-	while (*p == '/')
-		p++;
-
-	while (1) {
-		p = strchr (p, '/');
-		if (p)
-			*p = '\0';
-		retval = mkdir (dir, 0777);
-		if (retval != 0 && errno != EEXIST) {
-			g_free (dir);
-			return FALSE;
-		}
-		if (!p)
-			break;
-		*p++ = '/';
-	}
-	
-	g_free (dir);
-	return TRUE;
-#endif
-}
-
-static gboolean
 private_file_needs_copying (const char *src, struct stat *sbuf_src, char *dest)
 {
 	struct stat sbuf_dest;
@@ -1804,7 +1716,7 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 		return NULL;
 	}
 
-	if (ensure_directory_exists (shadow) == FALSE) {
+	if (g_ensure_directory_exists (shadow) == FALSE) {
 		g_free (shadow);
 		mono_error_set_execution_engine (oerror, "Failed to create shadow copy (ensure directory exists).");
 		return NULL;
@@ -1854,13 +1766,13 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	sibling_target_len = strlen (sibling_target);
 	
 	copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".mdb", sibling_target, sibling_target_len, 7);
-	if (copy_result == TRUE)
+	if (copy_result)
 		copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".config", sibling_target, sibling_target_len, 7);
 	
 	g_free (sibling_source);
 	g_free (sibling_target);
 	
-	if (copy_result == FALSE)  {
+	if (!copy_result)  {
 		g_free (shadow);
 		mono_error_set_execution_engine (oerror, "Failed to create shadow copy of sibling data (CopyFile).");
 		return NULL;

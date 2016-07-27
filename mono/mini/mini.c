@@ -1169,7 +1169,7 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 		vars = g_list_prepend (vars, vmv);
 	}
 
-	vars = g_list_sort (g_list_copy (vars), compare_by_interval_start_pos_func);
+	vars = g_list_sort (vars, compare_by_interval_start_pos_func);
 
 	/* Sanity check */
 	/*
@@ -1886,28 +1886,59 @@ mono_verify_cfg (MonoCompile *cfg)
 		mono_verify_bblock (bb);
 }
 
+// This will free many fields in cfg to save
+// memory. Note that this must be safe to call
+// multiple times. It must be idempotent. 
+void
+mono_empty_compile (MonoCompile *cfg)
+{
+	mono_free_loop_info (cfg);
+
+	// These live in the mempool, and so must be freed
+	// first
+	for (GSList *l = cfg->headers_to_free; l; l = l->next) {
+		mono_metadata_free_mh ((MonoMethodHeader *)l->data);
+	}
+	cfg->headers_to_free = NULL;
+
+	if (cfg->mempool) {
+	//mono_mempool_stats (cfg->mempool);
+		mono_mempool_destroy (cfg->mempool);
+		cfg->mempool = NULL;
+	}
+
+	g_free (cfg->varinfo);
+	cfg->varinfo = NULL;
+
+	g_free (cfg->vars);
+	cfg->vars = NULL;
+
+	if (cfg->rs) {
+		mono_regstate_free (cfg->rs);
+		cfg->rs = NULL;
+	}
+}
+
 void
 mono_destroy_compile (MonoCompile *cfg)
 {
-	GSList *l;
+	mono_empty_compile (cfg);
 
 	if (cfg->header)
 		mono_metadata_free_mh (cfg->header);
-	//mono_mempool_stats (cfg->mempool);
-	mono_free_loop_info (cfg);
-	if (cfg->rs)
-		mono_regstate_free (cfg->rs);
+
 	if (cfg->spvars)
 		g_hash_table_destroy (cfg->spvars);
 	if (cfg->exvars)
 		g_hash_table_destroy (cfg->exvars);
-	for (l = cfg->headers_to_free; l; l = l->next)
-		mono_metadata_free_mh ((MonoMethodHeader *)l->data);
+
 	g_list_free (cfg->ldstr_list);
-	g_hash_table_destroy (cfg->token_info_hash);
+
+	if (cfg->token_info_hash)
+		g_hash_table_destroy (cfg->token_info_hash);
+
 	if (cfg->abs_patches)
 		g_hash_table_destroy (cfg->abs_patches);
-	mono_mempool_destroy (cfg->mempool);
 
 	mono_debug_free_method (cfg);
 
@@ -3241,7 +3272,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->disable_omit_fp = debug_options.disable_omit_fp;
 	cfg->skip_visibility = method->skip_visibility;
 	cfg->orig_method = method;
-	cfg->gen_seq_points = debug_options.gen_seq_points_compact_data || debug_options.gen_sdb_seq_points;
+	cfg->gen_seq_points = !debug_options.no_seq_points_compact_data || debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
 	cfg->backend = current_backend;
@@ -3253,6 +3284,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->gen_sdb_seq_points = FALSE;
 	}
 #endif
+	if (cfg->method->wrapper_type == MONO_WRAPPER_ALLOC) {
+		/* We can't have seq points inside gc critical regions */
+		cfg->gen_seq_points = FALSE;
+		cfg->gen_sdb_seq_points = FALSE;
+	}
 	/* coop / nacl requires loop detection to happen */
 #if defined(__native_client_codegen__)
 	cfg->opt |= MONO_OPT_LOOP;
@@ -3363,6 +3399,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 					//g_free (nm);
 				}
 				if (cfg->llvm_only) {
+					g_free (cfg->exception_message);
 					cfg->disable_aot = TRUE;
 					return cfg;
 				}

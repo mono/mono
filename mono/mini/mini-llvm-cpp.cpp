@@ -54,10 +54,20 @@ mono_llvm_build_alloca (LLVMBuilderRef builder, LLVMTypeRef Ty,
 
 LLVMValueRef 
 mono_llvm_build_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
-					  const char *Name, gboolean is_volatile, BarrierKind barrier)
+					  const char *Name, gboolean is_volatile)
 {
 	LoadInst *ins = unwrap(builder)->CreateLoad(unwrap(PointerVal), is_volatile, Name);
 
+	return wrap(ins);
+}
+
+LLVMValueRef
+mono_llvm_build_atomic_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
+							 const char *Name, gboolean is_volatile, int alignment, BarrierKind barrier)
+{
+	LoadInst *ins = unwrap(builder)->CreateLoad(unwrap(PointerVal), is_volatile, Name);
+
+	ins->setAlignment (alignment);
 	switch (barrier) {
 	case LLVM_BARRIER_NONE:
 		break;
@@ -219,6 +229,14 @@ mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
 	unwrap<CallInst>(func)->setCallingConv (CallingConv::PreserveAll);
 }
 
+void
+mono_llvm_set_call_notail (LLVMValueRef func)
+{
+#if LLVM_API_VERSION > 100
+	//unwrap<CallInst>(func)->setTailCallKind (CallInst::TailCallKind::TCK_NoTail);
+#endif
+}
+
 #if LLVM_API_VERSION > 100
 
 void*
@@ -236,16 +254,21 @@ mono_llvm_di_create_compile_unit (void *di_builder, const char *cu_name, const c
 }
 
 void*
-mono_llvm_di_create_function (void *di_builder, void *cu, const char *name, const char *mangled_name, const char *dir, const char *file, int line)
+mono_llvm_di_create_function (void *di_builder, void *cu, LLVMValueRef func, const char *name, const char *mangled_name, const char *dir, const char *file, int line)
 {
 	DIBuilder *builder = (DIBuilder*)di_builder;
 	DIFile *di_file;
 	DISubroutineType *type;
+	DISubprogram *di_func;
 
 	// FIXME: Share DIFile
 	di_file = builder->createFile (file, dir);
 	type = builder->createSubroutineType (builder->getOrCreateTypeArray (ArrayRef<Metadata*> ()));
-	return builder->createFunction (di_file, name, mangled_name, di_file, line, type, true, true, 0);
+	di_func = builder->createFunction (di_file, name, mangled_name, di_file, line, type, true, true, 0);
+
+	unwrap<Function>(func)->setMetadata ("dbg", di_func);
+
+	return di_func;
 }
 
 void*

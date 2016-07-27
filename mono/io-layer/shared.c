@@ -27,17 +27,12 @@ _wapi_shm_semaphores_init (void)
 		mono_os_mutex_init (&noshm_sems [i]);
 }
 
-void
-_wapi_shm_semaphores_remove (void)
-{
-	/* Nothing */
-}
-
 int
 _wapi_shm_sem_lock (int sem)
 {
 	DEBUGLOG ("%s: locking nosem %d", __func__, sem);
-	return mono_os_mutex_lock (&noshm_sems[sem]);
+	mono_os_mutex_lock (&noshm_sems[sem]);
+	return 0;
 }
 
 int
@@ -51,5 +46,6 @@ int
 _wapi_shm_sem_unlock (int sem)
 {
 	DEBUGLOG ("%s: unlocking nosem %d", __func__, sem);
-	return mono_os_mutex_unlock (&noshm_sems[sem]);
+	mono_os_mutex_unlock (&noshm_sems[sem]);
+	return 0;
 }

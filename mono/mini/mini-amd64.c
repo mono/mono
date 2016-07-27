@@ -8,6 +8,7 @@
  *   Dietmar Maurer (dietmar@ximian.com)
  *   Patrik Torstensson
  *   Zoltan Varga (vargaz@gmail.com)
+ *   Johan Lorensson (lateralusx.github@gmail.com)
  *
  * (C) 2003 Ximian, Inc.
  * Copyright 2003-2011 Novell, Inc (http://www.novell.com)
@@ -339,59 +340,256 @@ merge_argument_class_from_type (MonoType *type, ArgumentClass class1)
 }
 
 static int
-count_fields_nested (MonoClass *klass)
+count_fields_nested (MonoClass *klass, gboolean pinvoke)
 {
 	MonoMarshalType *info;
 	int i, count;
 
-	info = mono_marshal_load_type_info (klass);
-	g_assert(info);
 	count = 0;
-	for (i = 0; i < info->num_fields; ++i) {
-		if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type))
-			count += count_fields_nested (mono_class_from_mono_type (info->fields [i].field->type));
-		else
-			count ++;
+	if (pinvoke) {
+		info = mono_marshal_load_type_info (klass);
+		g_assert(info);
+		for (i = 0; i < info->num_fields; ++i) {
+			if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type))
+				count += count_fields_nested (mono_class_from_mono_type (info->fields [i].field->type), pinvoke);
+			else
+				count ++;
+		}
+	} else {
+		gpointer iter;
+		MonoClassField *field;
+
+		iter = NULL;
+		while ((field = mono_class_get_fields (klass, &iter))) {
+			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				continue;
+			if (MONO_TYPE_ISSTRUCT (field->type))
+				count += count_fields_nested (mono_class_from_mono_type (field->type), pinvoke);
+			else
+				count ++;
+		}
 	}
 	return count;
 }
 
+typedef struct {
+	MonoType *type;
+	int size, offset;
+} StructFieldInfo;
+
+/*
+ * collect_field_info_nested:
+ *
+ *   Collect field info from KLASS recursively into FIELDS.
+ */
 static int
-collect_field_info_nested (MonoClass *klass, MonoMarshalField *fields, int index, int offset)
+collect_field_info_nested (MonoClass *klass, StructFieldInfo *fields, int index, int offset, gboolean pinvoke, gboolean unicode)
 {
 	MonoMarshalType *info;
 	int i;
 
-	info = mono_marshal_load_type_info (klass);
-	g_assert(info);
-	for (i = 0; i < info->num_fields; ++i) {
-		if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type)) {
-			index = collect_field_info_nested (mono_class_from_mono_type (info->fields [i].field->type), fields, index, info->fields [i].offset);
-		} else {
-			memcpy (&fields [index], &info->fields [i], sizeof (MonoMarshalField));
-			fields [index].offset += offset;
-			index ++;
+	if (pinvoke) {
+		info = mono_marshal_load_type_info (klass);
+		g_assert(info);
+		for (i = 0; i < info->num_fields; ++i) {
+			if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type)) {
+				index = collect_field_info_nested (mono_class_from_mono_type (info->fields [i].field->type), fields, index, info->fields [i].offset, pinvoke, unicode);
+			} else {
+				guint32 align;
+
+				fields [index].type = info->fields [i].field->type;
+				fields [index].size = mono_marshal_type_size (info->fields [i].field->type,
+															   info->fields [i].mspec,
+															   &align, TRUE, unicode);
+				fields [index].offset = offset + info->fields [i].offset;
+				index ++;
+			}
+		}
+	} else {
+		gpointer iter;
+		MonoClassField *field;
+
+		iter = NULL;
+		while ((field = mono_class_get_fields (klass, &iter))) {
+			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				continue;
+			if (MONO_TYPE_ISSTRUCT (field->type)) {
+				index = collect_field_info_nested (mono_class_from_mono_type (field->type), fields, index, field->offset - sizeof (MonoObject), pinvoke, unicode);
+			} else {
+				int align;
+
+				fields [index].type = field->type;
+				fields [index].size = mono_type_size (field->type, &align);
+				fields [index].offset = field->offset - sizeof (MonoObject) + offset;
+				index ++;
+			}
 		}
 	}
 	return index;
 }
 
 #ifdef TARGET_WIN32
-static void
-add_valuetype_win64 (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
-					 gboolean is_return,
-					 guint32 *gr, guint32 *fr, guint32 *stack_size)
-{
-	guint32 size, i, nfields;
-	guint32 argsize = 8;
-	ArgumentClass arg_class;
-	MonoMarshalType *info = NULL;
-	MonoMarshalField *fields = NULL;
-	MonoClass *klass;
-	gboolean pass_on_stack = FALSE;
 
-	klass = mono_class_from_mono_type (type);
-	size = mini_type_stack_size_full (&klass->byval_arg, NULL, sig->pinvoke);
+/* Windows x64 ABI can pass/return value types in register of size 1,2,4,8 bytes. */
+#define MONO_WIN64_VALUE_TYPE_FITS_REG(arg_size) (arg_size <= SIZEOF_REGISTER && (arg_size == 1 || arg_size == 2 || arg_size == 4 || arg_size == 8))
+
+static gboolean
+allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, AMD64_Reg_No int_regs [], int int_reg_count, AMD64_Reg_No float_regs [], int float_reg_count, guint32 *current_int_reg, guint32 *current_float_reg)
+{
+	gboolean result = FALSE;
+
+	assert (arg_info != NULL && int_regs != NULL && float_regs != NULL && current_int_reg != NULL && current_float_reg != NULL);
+	assert (arg_info->storage == ArgValuetypeInReg || arg_info->storage == ArgValuetypeAddrInIReg);
+
+	arg_info->pair_storage [0] = arg_info->pair_storage [1] = ArgNone;
+	arg_info->pair_regs [0] = arg_info->pair_regs [1] = ArgNone;
+	arg_info->pair_size [0] = 0;
+	arg_info->pair_size [1] = 0;
+	arg_info->nregs = 0;
+
+	if (arg_class == ARG_CLASS_INTEGER && *current_int_reg < int_reg_count) {
+		/* Pass parameter in integer register. */
+		arg_info->pair_storage [0] = ArgInIReg;
+		arg_info->pair_regs [0] = int_regs [*current_int_reg];
+		(*current_int_reg) ++;
+		result = TRUE;
+	} else if (arg_class == ARG_CLASS_SSE && *current_float_reg < float_reg_count) {
+		/* Pass parameter in float register. */
+		arg_info->pair_storage [0] = (arg_size <= sizeof (gfloat)) ? ArgInFloatSSEReg : ArgInDoubleSSEReg;
+		arg_info->pair_regs [0] = float_regs [*current_float_reg];
+		(*current_float_reg) ++;
+		result = TRUE;
+	}
+
+	if (result == TRUE) {
+		arg_info->pair_size [0] = arg_size;
+		arg_info->nregs = 1;
+	}
+
+	return result;
+}
+
+inline gboolean
+allocate_parameter_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
+{
+	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, param_regs, PARAM_REGS, float_param_regs, FLOAT_PARAM_REGS, current_int_reg, current_float_reg);
+}
+
+inline gboolean
+allocate_return_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
+{
+	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, return_regs, RETURN_REGS, float_return_regs, FLOAT_RETURN_REGS, current_int_reg, current_float_reg);
+}
+
+static void
+allocate_storage_for_valuetype_win64 (ArgInfo *arg_info, MonoType *type, gboolean is_return, ArgumentClass arg_class,
+									  guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg, guint32 *stack_size)
+{
+	/* Windows x64 value type ABI.
+	*
+	* Parameters: https://msdn.microsoft.com/en-us/library/zthk2dkh.aspx
+	*
+	* Integer/Float types smaller than or equals to 8 bytes or porperly sized struct/union (1,2,4,8)
+	*    Try pass in register using ArgValuetypeInReg/(ArgInIReg|ArgInFloatSSEReg|ArgInDoubleSSEReg) as storage and size of parameter(1,2,4,8), if no more registers, pass on stack using ArgOnStack as storage and size of parameter(1,2,4,8).
+	* Integer/Float types bigger than 8 bytes or struct/unions larger than 8 bytes or (3,5,6,7).
+	*    Try to pass pointer in register using ArgValuetypeAddrInIReg, if no more registers, pass pointer on stack using ArgValuetypeAddrOnStack as storage and parameter size of register (8 bytes).
+	*
+	* Return values:  https://msdn.microsoft.com/en-us/library/7572ztz4.aspx.
+	*
+	* Integers/Float types smaller than or equal to 8 bytes
+	*    Return in corresponding register RAX/XMM0 using ArgValuetypeInReg/(ArgInIReg|ArgInFloatSSEReg|ArgInDoubleSSEReg) as storage and size of parameter(1,2,4,8).
+	* Properly sized struct/unions (1,2,4,8)
+	*    Return in register RAX using ArgValuetypeInReg as storage and size of parameter(1,2,4,8).
+	* Types bigger than 8 bytes or struct/unions larger than 8 bytes or (3,5,6,7).
+	*    Return pointer to allocated stack space (allocated by caller) using ArgValuetypeAddrInIReg as storage and parameter size.
+	*/
+
+	assert (arg_info != NULL && type != NULL && current_int_reg != NULL && current_float_reg != NULL && stack_size != NULL);
+
+	if (!is_return) {
+
+		/* Parameter cases. */
+		if (arg_class != ARG_CLASS_MEMORY && MONO_WIN64_VALUE_TYPE_FITS_REG (arg_size)) {
+			assert (arg_size == 1 || arg_size == 2 || arg_size == 4 || arg_size == 8);
+
+			/* First, try to use registers for parameter. If type is struct it can only be passed by value in integer register. */
+			arg_info->storage = ArgValuetypeInReg;
+			if (!allocate_parameter_register_for_valuetype_win64 (arg_info, !MONO_TYPE_ISSTRUCT (type) ? arg_class : ARG_CLASS_INTEGER, arg_size, current_int_reg, current_float_reg)) {
+				/* No more registers, fallback passing parameter on stack as value. */
+				assert (arg_info->pair_storage [0] == ArgNone && arg_info->pair_storage [1] == ArgNone && arg_info->pair_size [0] == 0 && arg_info->pair_size [1] == 0 && arg_info->nregs == 0);
+				
+				/* Passing value directly on stack, so use size of value. */
+				arg_info->storage = ArgOnStack;
+				arg_size = ALIGN_TO (arg_size, sizeof (mgreg_t));
+				arg_info->offset = *stack_size;
+				arg_info->arg_size = arg_size;
+				*stack_size += arg_size;
+			}
+		} else {
+			/* Fallback to stack, try to pass address to parameter in register. Always use integer register to represent stack address. */
+			arg_info->storage = ArgValuetypeAddrInIReg;
+			if (!allocate_parameter_register_for_valuetype_win64 (arg_info, ARG_CLASS_INTEGER, arg_size, current_int_reg, current_float_reg)) {
+				/* No more registers, fallback passing address to parameter on stack. */
+				assert (arg_info->pair_storage [0] == ArgNone && arg_info->pair_storage [1] == ArgNone && arg_info->pair_size [0] == 0 && arg_info->pair_size [1] == 0 && arg_info->nregs == 0);
+								
+				/* Passing an address to value on stack, so use size of register as argument size. */
+				arg_info->storage = ArgValuetypeAddrOnStack;
+				arg_size = sizeof (mgreg_t);
+				arg_info->offset = *stack_size;
+				arg_info->arg_size = arg_size;
+				*stack_size += arg_size;
+			}
+		}
+	} else {
+		/* Return value cases. */
+		if (arg_class != ARG_CLASS_MEMORY && MONO_WIN64_VALUE_TYPE_FITS_REG (arg_size)) {
+			assert (arg_size == 1 || arg_size == 2 || arg_size == 4 || arg_size == 8);
+
+			/* Return value fits into return registers. If type is struct it can only be returned by value in integer register. */
+			arg_info->storage = ArgValuetypeInReg;
+			allocate_return_register_for_valuetype_win64 (arg_info, !MONO_TYPE_ISSTRUCT (type) ? arg_class : ARG_CLASS_INTEGER, arg_size, current_int_reg, current_float_reg);
+
+			/* Only RAX/XMM0 should be used to return valuetype. */
+			assert ((arg_info->pair_regs[0] == AMD64_RAX && arg_info->pair_regs[1] == ArgNone) || (arg_info->pair_regs[0] == AMD64_XMM0 && arg_info->pair_regs[1] == ArgNone));
+		} else {
+			/* Return value doesn't fit into return register, return address to allocated stack space (allocated by caller and passed as input). */
+			arg_info->storage = ArgValuetypeAddrInIReg;
+			allocate_return_register_for_valuetype_win64 (arg_info, ARG_CLASS_INTEGER, arg_size, current_int_reg, current_float_reg);
+
+			/* Only RAX should be used to return valuetype address. */
+			assert (arg_info->pair_regs[0] == AMD64_RAX && arg_info->pair_regs[1] == ArgNone);
+
+			arg_size = ALIGN_TO (arg_size, sizeof (mgreg_t));
+			arg_info->offset = *stack_size;
+			*stack_size += arg_size;
+		}
+	}
+}
+
+static void
+get_valuetype_size_win64 (MonoClass *klass, gboolean pinvoke, ArgInfo *arg_info, MonoType *type, ArgumentClass *arg_class, guint32 *arg_size)
+{
+	*arg_size = 0;
+	*arg_class = ARG_CLASS_NO_CLASS;
+
+	assert (klass != NULL && arg_info != NULL && type != NULL && arg_class != NULL && arg_size != NULL);
+	
+	if (pinvoke) {
+		/* Calculate argument class type and size of marshalled type. */
+		MonoMarshalType *info = mono_marshal_load_type_info (klass);
+		*arg_size = info->native_size;
+	} else {
+		/* Calculate argument class type and size of managed type. */
+		*arg_size = mono_class_value_size (klass, NULL);
+	}
+
+	/* Windows ABI only handle value types on stack or passed in integer register (if it fits register size). */
+	*arg_class = MONO_WIN64_VALUE_TYPE_FITS_REG (*arg_size) ? ARG_CLASS_INTEGER : ARG_CLASS_MEMORY;
+
+	if (*arg_class == ARG_CLASS_MEMORY) {
+		/* Value type has a size that doesn't seem to fit register according to ABI. Try to used full stack size of type. */
+		*arg_size = mini_type_stack_size_full (&klass->byval_arg, NULL, pinvoke);
+	}
 
 	/*
 	* Standard C and C++ doesn't allow empty structs, empty structs will always have a size of 1 byte.
@@ -400,189 +598,38 @@ add_valuetype_win64 (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
 	* it must be represented in call and cannot be dropped.
 	*/
-	if (0 == size && MONO_TYPE_ISSTRUCT (type) && sig->pinvoke)
-		ainfo->pass_empty_struct = TRUE;
+	if (*arg_size == 0 && MONO_TYPE_ISSTRUCT (type)) {
+		arg_info->pass_empty_struct = TRUE;
+		*arg_size = SIZEOF_REGISTER;
+		*arg_class = ARG_CLASS_INTEGER;
+	}
+
+	assert (*arg_class != ARG_CLASS_NO_CLASS);
+}
+
+static void
+add_valuetype_win64 (MonoMethodSignature *signature, ArgInfo *arg_info, MonoType *type,
+						gboolean is_return, guint32 *current_int_reg, guint32 *current_float_reg, guint32 *stack_size)
+{
+	guint32 arg_size = SIZEOF_REGISTER;
+	MonoClass *klass = NULL;
+	ArgumentClass arg_class;
 	
-	if (!sig->pinvoke)
-		pass_on_stack = TRUE;
+	assert (signature != NULL && arg_info != NULL && type != NULL && current_int_reg != NULL && current_float_reg != NULL && stack_size != NULL);
 
-	/* If this struct can't be split up naturally into 8-byte */
-	/* chunks (registers), pass it on the stack.              */
-	if (sig->pinvoke && !pass_on_stack) {
-		guint32 align;
-		guint32 field_size;
+	klass = mono_class_from_mono_type (type);
+	get_valuetype_size_win64 (klass, signature->pinvoke, arg_info, type, &arg_class, &arg_size);
 
-		info = mono_marshal_load_type_info (klass);
-		g_assert (info);
-
-		/*
-		 * Collect field information recursively to be able to
-		 * handle nested structures.
-		 */
-		nfields = count_fields_nested (klass);
-		fields = g_new0 (MonoMarshalField, nfields);
-		collect_field_info_nested (klass, fields, 0, 0);
-
-		for (i = 0; i < nfields; ++i) {
-			field_size = mono_marshal_type_size (fields [i].field->type,
-							   fields [i].mspec,
-							   &align, TRUE, klass->unicode);
-			if ((fields [i].offset < 8) && (fields [i].offset + field_size) > 8) {
-				pass_on_stack = TRUE;
-				break;
-			}
-		}
-	}
-
-	if (pass_on_stack) {
-		/* Allways pass in memory */
-		ainfo->offset = *stack_size;
-		*stack_size += ALIGN_TO (size, 8);
-		ainfo->storage = is_return ? ArgValuetypeAddrInIReg : ArgOnStack;
-		if (!is_return)
-			ainfo->arg_size = ALIGN_TO (size, 8);
-
-		g_free (fields);
-		return;
-	}
-
-	if (!sig->pinvoke) {
-		int n = mono_class_value_size (klass, NULL);
-
-		argsize = n;
-
-		if (n > 8)
-			arg_class = ARG_CLASS_MEMORY;
-		else
-			/* Always pass in 1 integer register */
-			arg_class = ARG_CLASS_INTEGER;
+	/* Only drop value type if its not an empty struct as input that must be represented in call */
+	if ((arg_size == 0 && !arg_info->pass_empty_struct) || (arg_size == 0 && arg_info->pass_empty_struct && is_return)) {
+		arg_info->storage = ArgValuetypeInReg;
+		arg_info->pair_storage [0] = arg_info->pair_storage [1] = ArgNone;
 	} else {
-		g_assert (info);
-
-		/*Only drop value type if its not an empty struct as input that must be represented in call*/
-		if ((!fields && !ainfo->pass_empty_struct) || (!fields && ainfo->pass_empty_struct && is_return)) {
-			ainfo->storage = ArgValuetypeInReg;
-			ainfo->pair_storage [0] = ainfo->pair_storage [1] = ArgNone;
-			return;
-		}
-
-		switch (info->native_size) {
-		case 0:
-			g_assert (!fields && MONO_TYPE_ISSTRUCT (type) && !is_return);
-			break;
-		case 1: case 2: case 4: case 8:
-			break;
-		default:
-			if (is_return) {
-				ainfo->storage = ArgValuetypeAddrInIReg;
-				ainfo->offset = *stack_size;
-				*stack_size += ALIGN_TO (info->native_size, 8);
-			}
-			else {
-				ainfo->storage = ArgValuetypeAddrInIReg;
-
-				if (*gr < PARAM_REGS) {
-					ainfo->pair_storage [0] = ArgInIReg;
-					ainfo->pair_regs [0] = param_regs [*gr];
-					(*gr) ++;
-				}
-				else {
-					ainfo->pair_storage [0] = ArgOnStack;
-					ainfo->offset = *stack_size;
-					ainfo->arg_size = sizeof (mgreg_t);
-					*stack_size += 8;
-				}
-			}
-
-			g_free (fields);
-			return;
-		}
-
-		int size;
-		guint32 align;
-		ArgumentClass class1;
-
-		if (nfields == 0 && ainfo->pass_empty_struct) {
-			g_assert (!fields && !is_return);
-			class1 = ARG_CLASS_INTEGER;
-		}
-		else if (nfields == 0)
-			class1 = ARG_CLASS_MEMORY;
-		else
-			class1 = ARG_CLASS_NO_CLASS;
-		for (i = 0; i < nfields; ++i) {
-			size = mono_marshal_type_size (fields [i].field->type,
-										   fields [i].mspec,
-										   &align, TRUE, klass->unicode);
-			/* How far into this quad this data extends.*/
-			/* (8 is size of quad) */
-			argsize = fields [i].offset + size;
-
-			class1 = merge_argument_class_from_type (fields [i].field->type, class1);
-		}
-		g_assert (class1 != ARG_CLASS_NO_CLASS);
-		arg_class = class1;
-	}
-
-	g_free (fields);
-
-	/* Allocate registers */
-	{
-		int orig_gr = *gr;
-		int orig_fr = *fr;
-
-		while (argsize != 1 && argsize != 2 && argsize != 4 && argsize != 8)
-			argsize ++;
-
-		ainfo->storage = ArgValuetypeInReg;
-		ainfo->pair_storage [0] = ainfo->pair_storage [1] = ArgNone;
-		ainfo->pair_size [0] = argsize;
-		ainfo->pair_size [1] = 0;
-		ainfo->nregs = 1;
-		switch (arg_class) {
-		case ARG_CLASS_INTEGER:
-			if (*gr >= PARAM_REGS)
-				arg_class = ARG_CLASS_MEMORY;
-			else {
-				ainfo->pair_storage [0] = ArgInIReg;
-				if (is_return)
-					ainfo->pair_regs [0] = return_regs [*gr];
-				else
-					ainfo->pair_regs [0] = param_regs [*gr];
-				(*gr) ++;
-			}
-			break;
-		case ARG_CLASS_SSE:
-			if (*fr >= FLOAT_PARAM_REGS)
-				arg_class = ARG_CLASS_MEMORY;
-			else {
-				if (argsize <= 4)
-					ainfo->pair_storage [0] = ArgInFloatSSEReg;
-				else
-					ainfo->pair_storage [0] = ArgInDoubleSSEReg;
-				ainfo->pair_regs [0] = *fr;
-				(*fr) ++;
-			}
-			break;
-		case ARG_CLASS_MEMORY:
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-
-		if (arg_class == ARG_CLASS_MEMORY) {
-			/* Revert possible register assignments */
-			*gr = orig_gr;
-			*fr = orig_fr;
-
-			ainfo->offset = *stack_size;
-			*stack_size += sizeof (mgreg_t);
-			ainfo->storage = is_return ? ArgValuetypeAddrInIReg : ArgOnStack;
-			if (!is_return)
-				ainfo->arg_size = sizeof (mgreg_t);
-		}
+		/* Alocate storage for value type. */
+		allocate_storage_for_valuetype_win64 (arg_info, type, is_return, arg_class, arg_size, current_int_reg, current_float_reg, stack_size);
 	}
 }
+
 #endif /* TARGET_WIN32 */
 
 static void
@@ -598,10 +645,10 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	/* use the right size when copying args/return vars.  */
 	guint32 quadsize [2] = {8, 8};
 	ArgumentClass args [2];
-	MonoMarshalType *info = NULL;
-	MonoMarshalField *fields = NULL;
+	StructFieldInfo *fields = NULL;
 	MonoClass *klass;
 	gboolean pass_on_stack = FALSE;
+	int struct_size;
 
 	klass = mono_class_from_mono_type (type);
 	size = mini_type_stack_size_full (&klass->byval_arg, NULL, sig->pinvoke);
@@ -614,29 +661,25 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 	/* If this struct can't be split up naturally into 8-byte */
 	/* chunks (registers), pass it on the stack.              */
-	if (sig->pinvoke && !pass_on_stack) {
-		guint32 align;
-		guint32 field_size;
-
-		info = mono_marshal_load_type_info (klass);
+	if (sig->pinvoke) {
+		MonoMarshalType *info = mono_marshal_load_type_info (klass);
 		g_assert (info);
+		struct_size = info->native_size;
+	} else {
+		struct_size = mono_class_value_size (klass, NULL);
+	}
+	/*
+	 * Collect field information recursively to be able to
+	 * handle nested structures.
+	 */
+	nfields = count_fields_nested (klass, sig->pinvoke);
+	fields = g_new0 (StructFieldInfo, nfields);
+	collect_field_info_nested (klass, fields, 0, 0, sig->pinvoke, klass->unicode);
 
-		/*
-		 * Collect field information recursively to be able to
-		 * handle nested structures.
-		 */
-		nfields = count_fields_nested (klass);
-		fields = g_new0 (MonoMarshalField, nfields);
-		collect_field_info_nested (klass, fields, 0, 0);
-
-		for (i = 0; i < nfields; ++i) {
-			field_size = mono_marshal_type_size (fields [i].field->type,
-							   fields [i].mspec,
-							   &align, TRUE, klass->unicode);
-			if ((fields [i].offset < 8) && (fields [i].offset + field_size) > 8) {
-				pass_on_stack = TRUE;
-				break;
-			}
+	for (i = 0; i < nfields; ++i) {
+		if ((fields [i].offset < 8) && (fields [i].offset + fields [i].size) > 8) {
+			pass_on_stack = TRUE;
+			break;
 		}
 	}
 
@@ -683,20 +726,18 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		 * The X87 and SSEUP stuff is left out since there are no such types in
 		 * the CLR.
 		 */
-		g_assert (info);
-
-		if (!fields) {
+		if (!nfields) {
 			ainfo->storage = ArgValuetypeInReg;
 			ainfo->pair_storage [0] = ainfo->pair_storage [1] = ArgNone;
 			return;
 		}
 
-		if (info->native_size > 16) {
+		if (struct_size > 16) {
 			ainfo->offset = *stack_size;
-			*stack_size += ALIGN_TO (info->native_size, 8);
+			*stack_size += ALIGN_TO (struct_size, 8);
 			ainfo->storage = is_return ? ArgValuetypeAddrInIReg : ArgOnStack;
 			if (!is_return)
-				ainfo->arg_size = ALIGN_TO (info->native_size, 8);
+				ainfo->arg_size = ALIGN_TO (struct_size, 8);
 
 			g_free (fields);
 			return;
@@ -705,8 +746,6 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		args [0] = ARG_CLASS_NO_CLASS;
 		args [1] = ARG_CLASS_NO_CLASS;
 		for (quad = 0; quad < nquads; ++quad) {
-			int size;
-			guint32 align;
 			ArgumentClass class1;
 
 			if (nfields == 0)
@@ -714,10 +753,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 			else
 				class1 = ARG_CLASS_NO_CLASS;
 			for (i = 0; i < nfields; ++i) {
-				size = mono_marshal_type_size (fields [i].field->type,
-											   fields [i].mspec,
-											   &align, TRUE, klass->unicode);
-				if ((fields [i].offset < 8) && (fields [i].offset + size) > 8) {
+				if ((fields [i].offset < 8) && (fields [i].offset + fields [i].size) > 8) {
 					/* Unaligned field */
 					NOT_IMPLEMENTED;
 				}
@@ -730,11 +766,13 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 				/* How far into this quad this data extends.*/
 				/* (8 is size of quad) */
-				quadsize [quad] = fields [i].offset + size - (quad * 8);
+				quadsize [quad] = fields [i].offset + fields [i].size - (quad * 8);
 
-				class1 = merge_argument_class_from_type (fields [i].field->type, class1);
+				class1 = merge_argument_class_from_type (fields [i].type, class1);
 			}
-			g_assert (class1 != ARG_CLASS_NO_CLASS);
+			/* Empty structs have a nonzero size, causing this assert to be hit */
+			if (sig->pinvoke)
+				g_assert (class1 != ARG_CLASS_NO_CLASS);
 			args [quad] = class1;
 		}
 	}
@@ -789,6 +827,8 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 				break;
 			case ARG_CLASS_MEMORY:
 				break;
+			case ARG_CLASS_NO_CLASS:
+				break;
 			default:
 				g_assert_not_reached ();
 			}
@@ -802,7 +842,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 
 			ainfo->offset = *stack_size;
 			if (sig->pinvoke)
-				arg_size = ALIGN_TO (info->native_size, 8);
+				arg_size = ALIGN_TO (struct_size, 8);
 			else
 				arg_size = nquads * sizeof(mgreg_t);
 			*stack_size += arg_size;
@@ -1018,7 +1058,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 			/* fall through */
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_TYPEDBYREF:
-			add_valuetype (sig, ainfo, sig->params [i], FALSE, &gr, &fr, &stack_size);
+			add_valuetype (sig, ainfo, ptype, FALSE, &gr, &fr, &stack_size);
 			break;
 		case MONO_TYPE_U8:
 
@@ -1149,6 +1189,8 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
 	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
 	mono_aot_register_jit_icall ("mono_amd64_get_original_ip", mono_amd64_get_original_ip);
+	mono_aot_register_jit_icall ("mono_amd64_handler_block_trampoline_helper", mono_amd64_handler_block_trampoline_helper);
+
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
 #endif
@@ -1186,6 +1228,15 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	} else {
 		*exclude_mask |= MONO_OPT_CMOV;
 	}
+
+#ifdef TARGET_WIN32
+	/* The current SIMD doesn't support the argument used by a LD_ADDR to be of type OP_VTARG_ADDR. */
+	/* This will now be used for value types > 8 or of size 3,5,6,7 as dictated by windows x64 value type ABI. */
+	/* Since OP_VTARG_ADDR needs to be resolved in mono_spill_global_vars and the SIMD implementation optimize */
+	/* away the LD_ADDR in load_simd_vreg, that will cause an error in mono_spill_global_vars since incorrect opcode */
+	/* will now have a reference to an argument that won't be fully decomposed. */
+	*exclude_mask |= MONO_OPT_SIMD;
+#endif
 
 	return opts;
 }
@@ -1310,7 +1361,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
 
-		if (ainfo->storage == ArgOnStack) {
+		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgValuetypeAddrInIReg || ainfo->storage == ArgValuetypeAddrOnStack) {
 			/* 
 			 * The stack offset can only be determined when the frame
 			 * size is known.
@@ -1550,9 +1601,11 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	}
 
 	cfg->arch.saved_iregs = cfg->used_int_regs;
-	if (cfg->method->save_lmf)
-		/* Save all callee-saved registers normally, and restore them when unwinding through an LMF */
-		cfg->arch.saved_iregs |= (1 << AMD64_RBX) | (1 << AMD64_R12) | (1 << AMD64_R13) | (1 << AMD64_R14) | (1 << AMD64_R15);
+	if (cfg->method->save_lmf) {
+		/* Save all callee-saved registers normally (except RBP, if not already used), and restore them when unwinding through an LMF */
+		guint32 iregs_to_save = AMD64_CALLEE_SAVED_REGS & ~(1<<AMD64_RBP);
+		cfg->arch.saved_iregs |= iregs_to_save;
+	}
 
 	if (cfg->arch.omit_fp)
 		cfg->arch.reg_save_area_offset = offset;
@@ -1687,11 +1740,13 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				break;
 			case ArgValuetypeInReg:
 				break;
-			case ArgValuetypeAddrInIReg: {
+			case ArgValuetypeAddrInIReg:
+			case ArgValuetypeAddrOnStack: {
 				MonoInst *indir;
 				g_assert (!cfg->arch.omit_fp);
-				
+				g_assert (ainfo->storage == ArgValuetypeAddrInIReg || (ainfo->storage == ArgValuetypeAddrOnStack && ainfo->pair_storage [0] == ArgNone));
 				MONO_INST_NEW (cfg, indir, 0);
+
 				indir->opcode = OP_REGOFFSET;
 				if (ainfo->pair_storage [0] == ArgInIReg) {
 					indir->inst_basereg = cfg->frame_reg;
@@ -1713,7 +1768,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				NOT_IMPLEMENTED;
 			}
 
-			if (!inreg && (ainfo->storage != ArgOnStack) && (ainfo->storage != ArgValuetypeAddrInIReg) && (ainfo->storage != ArgGSharedVtOnStack)) {
+			if (!inreg && (ainfo->storage != ArgOnStack) && (ainfo->storage != ArgValuetypeAddrInIReg) && (ainfo->storage != ArgValuetypeAddrOnStack) && (ainfo->storage != ArgGSharedVtOnStack)) {
 				ins->opcode = OP_REGOFFSET;
 				ins->inst_basereg = cfg->frame_reg;
 				/* These arguments are saved to the stack in the prolog */
@@ -2099,6 +2154,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case ArgOnStack:
 		case ArgValuetypeInReg:
 		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
 		case ArgGSharedVtInReg:
 		case ArgGSharedVtOnStack: {
 			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tail_call)
@@ -2259,8 +2315,12 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		}
 		break;
 	}
-	case ArgValuetypeAddrInIReg: {
+	case ArgValuetypeAddrInIReg:
+	case ArgValuetypeAddrOnStack: {
 		MonoInst *vtaddr, *load;
+
+		g_assert (ainfo->storage == ArgValuetypeAddrInIReg || (ainfo->storage == ArgValuetypeAddrOnStack && ainfo->pair_storage [0] == ArgNone));
+		
 		vtaddr = mono_compile_create_var (cfg, &ins->klass->byval_arg, OP_LOCAL);
 		
 		MONO_INST_NEW (cfg, load, OP_LDADDR);
@@ -2361,16 +2421,8 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 	case ArgInFloatSSEReg:
 	case ArgInDoubleSSEReg:
 	case ArgValuetypeAddrInIReg:
+	case ArgValuetypeInReg:
 		break;
-	case ArgValuetypeInReg: {
-		ArgInfo *ainfo = &cinfo->ret;
-
-		if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
-			return FALSE;
-		if (ainfo->pair_storage [1] != ArgNone && ainfo->pair_storage [1] != ArgInIReg)
-			return FALSE;
-		break;
-	}
 	default:
 		return FALSE;
 	}
@@ -2381,12 +2433,7 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		case ArgInIReg:
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
-			break;
 		case ArgValuetypeInReg:
-			if (ainfo->pair_storage [0] != ArgNone && ainfo->pair_storage [0] != ArgInIReg)
-				return FALSE;
-			if (ainfo->pair_storage [1] != ArgNone && ainfo->pair_storage [1] != ArgInIReg)
-				return FALSE;
 			break;
 		case ArgOnStack:
 			if (!(ainfo->offset + (ainfo->arg_size / 8) <= DYN_CALL_STACK_ARGS))
@@ -2592,15 +2639,22 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_VALUETYPE: {
 			switch (ainfo->storage) {
 			case ArgValuetypeInReg:
-				if (ainfo->pair_storage [0] != ArgNone) {
-					slot = param_reg_to_index [ainfo->pair_regs [0]];
-					g_assert (ainfo->pair_storage [0] == ArgInIReg);
-					p->regs [slot] = ((mgreg_t*)(arg))[0];
-				}
-				if (ainfo->pair_storage [1] != ArgNone) {
-					slot = param_reg_to_index [ainfo->pair_regs [1]];
-					g_assert (ainfo->pair_storage [1] == ArgInIReg);
-					p->regs [slot] = ((mgreg_t*)(arg))[1];
+				for (i = 0; i < 2; ++i) {
+					switch (ainfo->pair_storage [i]) {
+					case ArgNone:
+						break;
+					case ArgInIReg:
+						slot = param_reg_to_index [ainfo->pair_regs [i]];
+						p->regs [slot] = ((mgreg_t*)(arg))[i];
+						break;
+					case ArgInDoubleSSEReg:
+						p->has_fp = 1;
+						p->fregs [ainfo->pair_regs [i]] = ((double*)(arg))[i];
+						break;
+					default:
+						g_assert_not_reached ();
+						break;
+					}
 				}
 				break;
 			case ArgOnStack:
@@ -2637,6 +2691,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	guint8 *ret = dargs->ret;
 	mgreg_t res = dargs->res;
 	MonoType *sig_ret = mini_get_underlying_type (sig->ret);
+	int i;
 
 	switch (sig_ret->type) {
 	case MONO_TYPE_VOID:
@@ -2697,12 +2752,21 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 
 			g_assert (ainfo->storage == ArgValuetypeInReg);
 
-			if (ainfo->pair_storage [0] != ArgNone) {
-				g_assert (ainfo->pair_storage [0] == ArgInIReg);
-				((mgreg_t*)ret)[0] = res;
+			for (i = 0; i < 2; ++i) {
+				switch (ainfo->pair_storage [0]) {
+				case ArgInIReg:
+					((mgreg_t*)ret)[i] = res;
+					break;
+				case ArgInDoubleSSEReg:
+					((double*)ret)[i] = dargs->fregs [i];
+					break;
+				case ArgNone:
+					break;
+				default:
+					g_assert_not_reached ();
+					break;
+				}
 			}
-
-			g_assert (ainfo->pair_storage [1] == ArgNone);
 		}
 		break;
 	default:
@@ -3674,6 +3738,30 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 	return code;
 }
+
+#ifdef TARGET_WIN32
+
+#define TEB_LAST_ERROR_OFFSET 0x068
+
+static guint8*
+emit_get_last_error (guint8* code, int dreg)
+{
+	/* Threads last error value is located in TEB_LAST_ERROR_OFFSET. */
+	x86_prefix (code, X86_GS_PREFIX);
+	amd64_mov_reg_membase (code, dreg, TEB_LAST_ERROR_OFFSET, 0, sizeof (guint32));
+
+	return code;
+}
+
+#else
+
+static guint8*
+emit_get_last_error (guint8* code, int dreg)
+{
+	g_assert_not_reached ();
+}
+
+#endif
 
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
@@ -4764,6 +4852,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
 			amd64_mov_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, res), AMD64_RAX, 8);
 			amd64_sse_movsd_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs), AMD64_XMM0);
+			amd64_sse_movsd_membase_reg (code, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + sizeof (double), AMD64_XMM1);
 			break;
 		}
 		case OP_AMD64_SAVE_SP_TO_LMF: {
@@ -6510,6 +6599,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->backend.pc_offset = code - cfg->native_code;
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
+		case OP_GET_LAST_ERROR:
+			emit_get_last_error(code, ins->dreg);
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -6708,7 +6800,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 #if defined(TARGET_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 		guint32 remaining_size = alloc_size;
 		/*FIXME handle unbounded code expansion, we should use a loop in case of more than X interactions*/
-		guint32 required_code_size = ((remaining_size / 0x1000) + 1) * 10; /*10 is the max size of amd64_alu_reg_imm + amd64_test_membase_reg*/
+		guint32 required_code_size = ((remaining_size / 0x1000) + 1) * 11; /*11 is the max size of amd64_alu_reg_imm + amd64_test_membase_reg*/
 		guint32 offset = code - cfg->native_code;
 		if (G_UNLIKELY (required_code_size >= (cfg->code_size - offset))) {
 			while (required_code_size >= (cfg->code_size - offset))
@@ -6937,6 +7029,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			case ArgValuetypeAddrInIReg:
 				if (ainfo->pair_storage [0] == ArgInIReg)
 					amd64_mov_membase_reg (code, ins->inst_left->inst_basereg, ins->inst_left->inst_offset, ainfo->pair_regs [0],  sizeof (gpointer));
+				break;
+			case ArgValuetypeAddrOnStack:
 				break;
 			case ArgGSharedVtInReg:
 				amd64_mov_membase_reg (code, ins->inst_basereg, ins->inst_offset, ainfo->reg, 8);
@@ -7742,10 +7836,7 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	amd64_jump_membase (code, AMD64_RAX, offset);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
-	if (load_imt_reg)
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_imt_%d", - offset / sizeof (gpointer));
-	else
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_%d", offset / sizeof (gpointer));
+	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
 	*info = mono_tramp_info_create (tramp_name, start, code - start, NULL, unwind_ops);
 	g_free (tramp_name);
 
@@ -7773,11 +7864,15 @@ mono_arch_get_delegate_invoke_impls (void)
 		res = g_slist_prepend (res, info);
 	}
 
-	for (i = 0; i <= MAX_VIRTUAL_DELEGATE_OFFSET; ++i) {
+	for (i = 1; i <= MONO_IMT_SIZE; ++i) {
 		get_delegate_virtual_invoke_impl (&info, TRUE, - i * SIZEOF_VOID_P);
 		res = g_slist_prepend (res, info);
+	}
 
+	for (i = 0; i <= MAX_VIRTUAL_DELEGATE_OFFSET; ++i) {
 		get_delegate_virtual_invoke_impl (&info, FALSE, i * SIZEOF_VOID_P);
+		res = g_slist_prepend (res, info);
+		get_delegate_virtual_invoke_impl (&info, TRUE, i * SIZEOF_VOID_P);
 		res = g_slist_prepend (res, info);
 	}
 

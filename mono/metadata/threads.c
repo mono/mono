@@ -745,7 +745,14 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 		args [0] = start_arg;
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
 		mono_runtime_delegate_invoke_checked (start_delegate, args, &error);
-		mono_error_raise_exception (&error); /* OK, triggers unhandled exn handler */
+
+		if (!mono_error_ok (&error)) {
+			MonoException *ex = mono_error_convert_to_exception (&error);
+			if (ex)
+				mono_unhandled_exception (&ex->object);
+		} else {
+			mono_error_cleanup (&error);
+		}
 	}
 
 	/* If the thread calls ExitThread at all, this remaining code
@@ -3157,7 +3164,7 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 		wait->num++;
 
 		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
-		mono_thread_internal_stop (thread);
+		mono_thread_internal_abort (thread);
 		return TRUE;
 	}
 
@@ -4584,7 +4591,7 @@ mono_thread_resume_interruption (void)
 		return NULL;
 
 	LOCK_THREAD (thread);
-	still_aborting = (thread->state & ThreadState_AbortRequested) != 0;
+	still_aborting = (thread->state & (ThreadState_AbortRequested|ThreadState_StopRequested)) != 0;
 	UNLOCK_THREAD (thread);
 
 	/*This can happen if the protected block called Thread::ResetAbort*/

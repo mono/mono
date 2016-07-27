@@ -19,7 +19,11 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
+ifndef MOBILE_PROFILE
 TEST_LIB_REFS = System.Drawing Mono.Security System.Data System.Xml System.Core System.Configuration
+else
+TEST_LIB_REFS = Mono.Security System.Data System.Xml System.Core
+endif
 
 TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))

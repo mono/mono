@@ -1,3 +1,11 @@
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
+Assembly/TypeForwarders.cs
+SR.cs
+System.Numerics/ConstantHelper.cs
+System.Numerics/HashCodeHelper.cs
+System.Numerics/JitIntrinsicAttribute.cs
+System.Numerics/Register.cs
+System.Numerics/Vector_Operations.cs
+System.Numerics/Vector.cs

@@ -922,9 +922,6 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			}
 			break;
 		}
-		case MONO_WRAPPER_STFLD_REMOTE:
-			ref->method = mono_marshal_get_stfld_remote_wrapper (NULL);
-			break;
 #endif
 		case MONO_WRAPPER_ALLOC: {
 			int atype = decode_value (p, &p);
@@ -1782,17 +1779,6 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 		msg = g_strdup_printf ("not compiled with --aot=llvmonly");
 		usable = FALSE;
 	}
-#ifdef TARGET_ARM
-	/* mono_arch_find_imt_method () requires this */
-	if ((info->flags & MONO_AOT_FILE_FLAG_WITH_LLVM) && !mono_use_llvm) {
-		msg = g_strdup_printf ("compiled against LLVM");
-		usable = FALSE;
-	}
-	if (!(info->flags & MONO_AOT_FILE_FLAG_WITH_LLVM) && mono_use_llvm) {
-		msg = g_strdup_printf ("not compiled against LLVM");
-		usable = FALSE;
-	}
-#endif
 	if (mini_get_debug_options ()->mdb_optimizations && !(info->flags & MONO_AOT_FILE_FLAG_DEBUG) && !full_aot) {
 		msg = g_strdup_printf ("not compiled for debugging");
 		usable = FALSE;
@@ -2012,6 +1998,9 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		find_symbol (sofile, globals, "mono_aot_version", (gpointer *) &version_symbol);
 		find_symbol (sofile, globals, "mono_aot_file_info", (gpointer*)&info);
 	}
+
+	// Copy aotid to MonoImage
+	memcpy(&assembly->image->aotid, info->aotid, 16);
 
 	if (version_symbol) {
 		/* Old file format */
@@ -5842,7 +5831,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 
 gpointer
 mono_aot_get_method_checked (MonoDomain *domain,
-							 MonoMethod *method, MonoError *error);
+							 MonoMethod *method, MonoError *error)
 {
 	mono_error_init (error);
 	return NULL;

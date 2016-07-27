@@ -33,7 +33,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+#if !MOBILE_STATIC
 using System.Data;
+#endif
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;

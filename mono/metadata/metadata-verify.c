@@ -730,7 +730,7 @@ verify_cli_header (VerifyContext *ctx)
 	if (!read32 (ptr + 8) || !read32 (ptr + 12))
 		ADD_ERROR (ctx, g_strdup_printf ("Missing medatata section in the CLI header"));
 
-	if ((read32 (ptr + 16) & ~0x0001000B) != 0)
+	if ((read32 (ptr + 16) & ~0x0003000B) != 0)
 		ADD_ERROR (ctx, g_strdup_printf ("Invalid CLI header flags"));
 
 	ptr += 24;
@@ -4227,8 +4227,6 @@ mono_verifier_is_sig_compatible (MonoImage *image, MonoMethod *method, MonoMetho
 		if (original_sig->call_convention != signature->call_convention)
 			return FALSE;
 		if (original_sig->explicit_this != signature->explicit_this)
-			return FALSE;
-		if (original_sig->call_convention != signature->call_convention)
 			return FALSE;
 		if (original_sig->pinvoke != signature->pinvoke)
 			return FALSE;

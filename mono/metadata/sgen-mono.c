@@ -525,17 +525,13 @@ object_in_domain_predicate (MonoObject *obj, void *user_data)
  * @out_array: output array
  * @out_size: size of output array
  *
- * Store inside @out_array up to @out_size objects that belong to the unloading
- * appdomain @domain. Returns the number of stored items. Can be called repeteadly
- * until it returns 0.
- * The items are removed from the finalizer data structure, so the caller is supposed
- * to finalize them.
- * @out_array should be on the stack to allow the GC to know the objects are still alive.
+ * Enqueue for finalization all objects that belong to the unloading appdomain @domain
+ * @suspend is used for early termination of the enqueuing process.
  */
-int
-mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size)
+void
+mono_gc_finalize_domain (MonoDomain *domain, volatile gboolean *suspend)
 {
-	return sgen_gather_finalizers_if (object_in_domain_predicate, domain, out_array, out_size);
+	sgen_finalize_if (object_in_domain_predicate, domain, suspend);
 }
 
 /*
@@ -1145,14 +1141,6 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 
 	EMIT_TLS_ACCESS_VAR (mb, thread_var);
 
-#ifdef MANAGED_ALLOCATOR_CAN_USE_CRITICAL_REGION
-	EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR (mb, thread_var);
-	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_ATOMIC_STORE_I4);
-	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_NONE);
-#endif
-
 	size_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	if (atype == ATYPE_SMALL) {
 		/* size_var = size_arg */
@@ -1278,6 +1266,14 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	} else {
 		g_assert_not_reached ();
 	}
+
+#ifdef MANAGED_ALLOCATOR_CAN_USE_CRITICAL_REGION
+	EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR (mb, thread_var);
+	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_ATOMIC_STORE_I4);
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_NONE);
+#endif
 
 	/* size += ALLOC_ALIGN - 1; */
 	mono_mb_emit_ldloc (mb, size_var);

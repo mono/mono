@@ -1,3 +1,9 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+../../../build/common/MonoTODOAttribute.cs
+X509ServiceCertificateAuthentication_mobile.cs
+X509CertificateValidator_mobile.cs
+X509CertificateValidationMode_mobile.cs
+X509CertificateRecipientClientCredential_mobile.cs
+X509CertificateInitiatorClientCredential_mobile.cs

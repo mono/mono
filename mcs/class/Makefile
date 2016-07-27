@@ -23,6 +23,7 @@ mobile_common_dirs := \
 	Mono.Security \
 	System	\
 	System.Core	\
+	System.Security	\
 	System.XML	\
 	I18N		\
 	System.ServiceModel.Internals	\
@@ -36,6 +37,7 @@ mobile_common_dirs := \
 	Mono.Data.Tds	\
 	System.Transactions	\
 	System.Numerics	\
+	System.Numerics.Vectors		\
 	System.Data	\
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
@@ -46,18 +48,25 @@ mobile_common_dirs := \
 	System.ComponentModel.Composition.4.5 \
 	System.Net \
 	System.Net.Http	\
-	System.Net.Http.WebRequest	\
 	System.Windows \
 	System.Xml.Serialization \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	Mono.Security.Providers.DotNet	\
 	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls
+	Mono.Security.Providers.NewTls	\
+	System.Runtime.InteropServices.RuntimeInformation	\
+	System.Reflection.DispatchProxy	\
+	System.Xml.XPath.XmlDocument \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler
 
 mobile_static_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.Dynamic.Interpreter	\
+	PEAPI	\
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.Simd			\
 	$(pcl_facade_dirs)
 
 mobile_dynamic_dirs := \
@@ -94,6 +103,7 @@ xammac_4_5_dirs := \
 	System	\
 	Mono.Posix			\
 	System.Core	\
+	System.Security			\
 	System.XML	\
 	I18N		\
 	System.ServiceModel.Internals	\
@@ -129,10 +139,14 @@ xammac_4_5_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	System.Data.Linq		\
 	System.Net.Http \
+	System.Net.Http.WebRequest \
 	Mono.Security.Providers.DotNet \
 	Mono.Security.Providers.OldTls \
 	Mono.Security.Providers.NewSystemSource \
 	Mono.Security.Providers.NewTls \
+	System.Runtime.InteropServices.RuntimeInformation \
+	System.Reflection.Context	\
+	System.Net.Http.WinHttpHandler	\
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
@@ -219,7 +233,8 @@ net_4_x_dirs := \
 	System.Web.Http.SelfHost \
 	System.Web.Http.WebHost \
 	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls
+	Mono.Security.Providers.NewTls \
+	System.Runtime.InteropServices.RuntimeInformation
 
 # These are the subdirs which depends on libs in net_4_x_dirs
 # or have proper dependencies between each other
@@ -275,6 +290,7 @@ net_4_x_parallel_dirs := \
 	System.Workflow.Activities \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
+	System.Reflection.Context \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \
@@ -303,13 +319,13 @@ binary_reference_assemblies_SUBDIRS := reference-assemblies
 net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
 net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
-xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
+xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
 include ../build/rules.make
 
 SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
-DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs)
+DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess

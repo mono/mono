@@ -1,6 +1,5 @@
 #ifndef __GLIB_H
 #define __GLIB_H
-
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +7,7 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <limits.h>
+
 
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
@@ -126,6 +126,7 @@ void g_free (void *ptr);
 gpointer g_realloc (gpointer obj, gsize size);
 gpointer g_malloc (gsize x);
 gpointer g_malloc0 (gsize x);
+gpointer g_calloc (gsize n, gsize x);
 gpointer g_try_malloc (gsize x);
 gpointer g_try_realloc (gpointer obj, gsize size);
 
@@ -138,7 +139,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_alloca(size)		alloca (size)
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
-static inline gchar   *g_strdup (const gchar *str) { if (str) {return strdup (str);} return NULL; }
+static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
 gchar **g_strdupv (gchar **str_array);
 
 typedef struct {
@@ -146,11 +147,9 @@ typedef struct {
 	gpointer (*realloc)     (gpointer mem, gsize n_bytes);
 	void     (*free)        (gpointer mem);
 	gpointer (*calloc)      (gsize    n_blocks, gsize n_block_bytes);
-	gpointer (*try_malloc)  (gsize    n_bytes);
-	gpointer (*try_realloc) (gpointer mem, gsize n_bytes);
 } GMemVTable;
 
-#define g_mem_set_vtable(x)
+void g_mem_set_vtable (GMemVTable* vtable);
 
 struct _GMemChunk {
 	guint alloc_size;
@@ -223,11 +222,11 @@ gint         g_printf          (gchar const *format, ...);
 gint         g_fprintf         (FILE *file, gchar const *format, ...);
 gint         g_sprintf         (gchar *string, gchar const *format, ...);
 gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ...);
+gint         g_vasprintf       (gchar **ret, const gchar *fmt, va_list ap);
 #define g_vprintf vprintf
 #define g_vfprintf vfprintf
 #define g_vsprintf vsprintf
 #define g_vsnprintf vsnprintf
-#define g_vasprintf vasprintf
 
 gsize   g_strlcpy            (gchar *dest, const gchar *src, gsize dest_size);
 gchar  *g_stpcpy             (gchar *dest, const char *src);
@@ -772,6 +771,8 @@ const gchar *g_get_tmp_dir     (void);
 const gchar *g_get_user_name   (void);
 gchar *g_get_prgname           (void);
 void  g_set_prgname            (const gchar *prgname);
+
+gboolean g_ensure_directory_exists (const gchar *filename);
 
 /*
  * Shell

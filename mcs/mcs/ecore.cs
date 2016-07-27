@@ -4594,13 +4594,14 @@ namespace Mono.CSharp {
 
 			if (p.IsNullableType) {
 				p = Nullable.NullableInfo.GetUnderlyingType (p);
-				if (!BuiltinTypeSpec.IsPrimitiveType (p))
+				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (p))
 					return 0;
 
 				//
 				// Spec expects implicit conversion check between p and q, q and p
-				// to be done before nullable unwrapping but that's expensive operation
-				// Hence manual tweak is needed because BetterTypeConversion works on
+				// to be done before nullable unwrapping but that's expensive operation.
+				// 
+				// Extra manual tweak is needed because BetterTypeConversion works on
 				// unwrapped types
 				//
 				if (p == q)
@@ -4609,7 +4610,7 @@ namespace Mono.CSharp {
 
 			if (q.IsNullableType) {
 				q = Nullable.NullableInfo.GetUnderlyingType (q);
-				if (!BuiltinTypeSpec.IsPrimitiveType (q))
+				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (q))
 					return 0;
 
 				if (q == p)

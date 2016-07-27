@@ -3351,10 +3351,16 @@ boolean_literal
 interpolated_string
 	: INTERPOLATED_STRING interpolations INTERPOLATED_STRING_END
 	  {
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "interpolated strings");
+
 		$$ = new InterpolatedString ((StringLiteral) $1, (List<Expression>) $2, (StringLiteral) $3);
 	  }
 	| INTERPOLATED_STRING_END
 	  {
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "interpolated strings");
+
 		$$ = new InterpolatedString ((StringLiteral) $1, null, null);
 	  }
 	;

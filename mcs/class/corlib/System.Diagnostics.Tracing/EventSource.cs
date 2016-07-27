@@ -33,6 +33,12 @@ namespace System.Diagnostics.Tracing
 {
 	public class EventSource : IDisposable
 	{
+		protected internal struct EventData
+		{
+			public IntPtr DataPointer { get; set; }
+			public int Size { get; set; }
+		}
+
 		protected EventSource ()
 		{
 			this.Name = this.GetType().Name;

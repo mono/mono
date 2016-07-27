@@ -21,6 +21,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class WebClientTest
 	{
 		private string _tempFolder;

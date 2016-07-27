@@ -6,6 +6,25 @@ System.IO.MemoryMappedFiles/MemoryMappedFile.cs
 System.IO.MemoryMappedFiles/MemoryMappedView.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
+System.Security.Cryptography/AesCng.cs
+System.Security.Cryptography/TripleDESCng.cs
+System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
+System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
+Microsoft.Win32.SafeHandles/SafeNCryptHandle.cs
+Microsoft.Win32.SafeHandles/SafeNCryptKeyHandle.cs
+Microsoft.Win32.SafeHandles/SafeNCryptProviderHandle.cs
+Microsoft.Win32.SafeHandles/SafeNCryptSecretHandle.cs
+Microsoft.Win32.SafeHandles/SafePipeHandle.cs
+
+System.IO.Pipes/AnonymousPipeClientStream.cs
+System.IO.Pipes/AnonymousPipeServerStream.cs
+System.IO.Pipes/NamedPipeClientStream.cs
+System.IO.Pipes/NamedPipeServerStream.cs
+System.IO.Pipes/PipeDirection.cs
+System.IO.Pipes/PipeInterfaces.cs
+System.IO.Pipes/PipeOptions.cs
+System.IO.Pipes/PipeStream.cs
+System.IO.Pipes/PipeTransmissionMode.cs
 
 ReferenceSources/SR.cs
 ReferenceSources/SR.missing.cs
@@ -185,9 +204,20 @@ ReferenceSources/Strings.cs
 ../referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
 
 ../referencesource/System.Core/System/Security/Cryptography/Aes.cs
+../referencesource/System.Core/System/Security/Cryptography/BCryptNative.cs
+../referencesource/System.Core/System/Security/Cryptography/CngAlgorithm.cs
+../referencesource/System.Core/System/Security/Cryptography/CngAlgorithmGroup.cs
+../referencesource/System.Core/System/Security/Cryptography/CngKey.cs
 ../referencesource/System.Core/System/Security/Cryptography/CngKeyBlobFormat.cs
+../referencesource/System.Core/System/Security/Cryptography/CngKeyCreationParameters.cs
+../referencesource/System.Core/System/Security/Cryptography/CngProperty.cs
+../referencesource/System.Core/System/Security/Cryptography/CngProvider.cs
+../referencesource/System.Core/System/Security/Cryptography/CngUIPolicy.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
+../referencesource/System.Core/System/Security/Cryptography/ECDsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/NCryptNative.cs
+../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 

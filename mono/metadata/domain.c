@@ -43,6 +43,7 @@
 #include <metadata/threads.h>
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
+#include <mono/utils/w32handle.h>
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -525,6 +526,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 #endif
 
 #ifndef HOST_WIN32
+	mono_w32handle_init ();
 	wapi_init ();
 #endif
 
@@ -893,6 +895,7 @@ mono_cleanup (void)
 
 #ifndef HOST_WIN32
 	wapi_cleanup ();
+	mono_w32handle_cleanup ();
 #endif
 
 	mono_perfcounters_cleanup ();
@@ -1485,8 +1488,10 @@ mono_context_get_domain_id (MonoAppContext *context)
 void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap)
 {
-	/* The first entry in the array is the index of the next free slot
-	 * and the total size of the array
+	/* Note [Domain Static Data Array]:
+	 *
+	 * Entry 0 in the array is the index of the next free slot.
+	 * Entry 1 is the total size of the array.
 	 */
 	int next;
 	if (domain->static_data_array) {

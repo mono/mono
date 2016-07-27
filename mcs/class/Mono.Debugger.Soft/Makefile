@@ -15,10 +15,13 @@ VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
 # The test exe is not profile specific, and compiling a 2.0 will make the 4.5 tests fail
 ifdef VALID_TEST_PROFILE
 
+TEST_HELPERS_SOURCES = \
+	../test-helpers/NetworkHelpers.cs
+
 test-local: dtest-app.exe dtest-excfilter.exe
 
-dtest-app.exe: Test/dtest-app.cs
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs
+dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 dtest-excfilter.exe: Test/dtest-excfilter.il
 	MONO_PATH=$(topdir)/class/lib/$(PROFILE) $(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il

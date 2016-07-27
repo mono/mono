@@ -31,8 +31,6 @@
 #include <stdlib.h>
 #include <glib.h>
 
-#include "vasprintf.h"
-
 /* The current fatal levels, error is always fatal */
 static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 static GLogFunc default_log_func;
@@ -49,7 +47,7 @@ g_print (const gchar *format, ...)
 	va_list args;
 
 	va_start (args, format);
-	if (vasprintf (&msg, format, args) < 0)
+	if (g_vasprintf (&msg, format, args) < 0)
 		return;
 	va_end (args);
 
@@ -57,7 +55,7 @@ g_print (const gchar *format, ...)
 		stdout_handler = default_stdout_handler;
 
 	stdout_handler (msg);
-	free (msg);
+	g_free (msg);
 }
 
 void
@@ -67,7 +65,7 @@ g_printerr (const gchar *format, ...)
 	va_list args;
 
 	va_start (args, format);
-	if (vasprintf (&msg, format, args) < 0)
+	if (g_vasprintf (&msg, format, args) < 0)
 		return;
 	va_end (args);
 
@@ -75,7 +73,7 @@ g_printerr (const gchar *format, ...)
 		stderr_handler = default_stderr_handler;
 
 	stderr_handler (msg);
-	free (msg);
+	g_free (msg);
 }
 
 GLogLevelFlags
@@ -107,11 +105,11 @@ g_logv (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, 
 	if (!default_log_func)
 		default_log_func = g_log_default_handler;
 	
-	if (vasprintf (&msg, format, args) < 0)
+	if (g_vasprintf (&msg, format, args) < 0)
 		return;
 
 	default_log_func (log_domain, log_level, msg, default_log_func_user_data);
-	free (msg);
+	g_free (msg);
 }
 
 void

@@ -912,7 +912,7 @@ namespace System
 
 		public bool IsDaylightSavingTime (DateTimeOffset dateTimeOffset)
 		{
-			throw new NotImplementedException ();
+			return IsDaylightSavingTime (dateTimeOffset.DateTime);
 		}
 
 		internal DaylightTime GetDaylightChanges (int year)

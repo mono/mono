@@ -28,6 +28,21 @@ namespace Mono {
 
 		internal struct MonoClass {
 		}
+
+		// class-internals.h MonoGenericParamInfo
+		internal unsafe struct GenericParamInfo {
+			internal MonoClass* pklass;
+			internal IntPtr name;
+			internal ushort flags;
+			internal uint token;
+			internal MonoClass** constraints; /* NULL terminated */
+		}
+
+		// glib.h GPtrArray
+		internal unsafe struct GPtrArray {
+			internal IntPtr* data;
+			internal int len;
+		}
 	}
 
 }

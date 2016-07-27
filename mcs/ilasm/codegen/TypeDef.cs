@@ -348,8 +348,10 @@ namespace Mono.ILASM {
 
                                 if (IsValueType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
                                         is_value_class = true;
-                                else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
+                                else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name)) {
                                         is_enum_class = true;
+                                        is_value_class = false;
+                                }
 
                                 if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
                                         is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {

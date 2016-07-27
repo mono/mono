@@ -1,5 +1,4 @@
 NUnitMoonHelper.cs
-../../test-helpers/NetworkHelpers.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
 FeatureBased/Features.Client/DataContractTesterProxy.cs

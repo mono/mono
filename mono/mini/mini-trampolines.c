@@ -799,7 +799,11 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTable *
 				 */
 				no_patch = TRUE;
 			}
-
+#if LLVM_API_VERSION > 100
+			/* LLVM code doesn't make direct calls */
+			if (ji && ji->from_llvm)
+				no_patch = TRUE;
+#endif
 			if (!no_patch && mono_method_same_domain (ji, target_ji))
 				mono_arch_patch_callsite ((guint8 *)ji->code_start, code, (guint8 *)addr);
 		}
@@ -1300,15 +1304,19 @@ gpointer
 mono_create_handler_block_trampoline (void)
 {
 	static gpointer code;
-	if (code) {
+
+	if (code)
+		return code;
+
+	if (mono_aot_only) {
+		gpointer tmp = mono_aot_get_trampoline ("handler_block_trampoline");
+		g_assert (tmp);
 		mono_memory_barrier ();
+		code = tmp;
 		return code;
 	}
 
-	g_assert (!mono_aot_only);
-
 	mono_trampolines_lock ();
-
 	if (!code) {
 		MonoTrampInfo *info;
 		gpointer tmp;
@@ -1505,14 +1513,16 @@ mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *e
 	mono_error_init (error);
 
 	if (mono_aot_only) {
+		if (mono_llvm_only && method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
+			method = mono_marshal_get_synchronized_wrapper (method);
+
 		/* Avoid creating trampolines if possible */
 		gpointer code = mono_jit_find_compiled_method (domain, method);
 		
 		if (code)
 			return code;
 		if (mono_llvm_only) {
-			if (method->wrapper_type == MONO_WRAPPER_PROXY_ISINST ||
-				method->wrapper_type == MONO_WRAPPER_STFLD_REMOTE)
+			if (method->wrapper_type == MONO_WRAPPER_PROXY_ISINST)
 				/* These wrappers are not generated */
 				return method_not_found;
 			/* Methods are lazily initialized on first call, so this can't lead recursion */

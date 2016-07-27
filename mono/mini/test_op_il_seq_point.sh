@@ -1,7 +1,8 @@
 #!/bin/bash
 
-TEST_FILE=$1
-USE_AOT=$2
+DEFAULT_PROFILE=$1
+TEST_FILE=$2
+USE_AOT=$3
 
 TMP_FILE_PREFIX=$(basename $0).tmp
 BASEDIR=$(dirname $0)
@@ -11,7 +12,7 @@ case "$(uname -s)" in
 	*) PLATFORM_PATH_SEPARATOR=':';;
 esac
 
-MONO_PATH=$BASEDIR/../../mcs/class/lib/net_4_x$PLATFORM_PATH_SEPARATOR$BASEDIR
+MONO_PATH=$BASEDIR/../../mcs/class/lib/$DEFAULT_PROFILE$PLATFORM_PATH_SEPARATOR$BASEDIR
 RUNTIME=$BASEDIR/../../runtime/mono-wrapper
 
 trap "rm -rf ${TMP_FILE_PREFIX}*" EXIT
@@ -49,16 +50,16 @@ get_method () {
 diff_methods () {
 	TMP_FILE1=$(tmp_file)
 	TMP_FILE2=$(tmp_file)
-	echo "$(MONO_DEBUG=single-imm-size get_methods $1 $2 $3 $4)" >$TMP_FILE1
-	echo "$(MONO_DEBUG=gen-compact-seq-points,single-imm-size get_methods $1 $2 $3 $4)" >$TMP_FILE2
+	echo "$(MONO_DEBUG=no-compact-seq-points,single-imm-size get_methods $1 $2 $3 $4)" >$TMP_FILE1
+	echo "$(MONO_DEBUG=single-imm-size get_methods $1 $2 $3 $4)" >$TMP_FILE2
 	diff $TMP_FILE1 $TMP_FILE2
 }
 
 diff_method () {
 	TMP_FILE1=$(tmp_file)
 	TMP_FILE2=$(tmp_file)
-	echo "$(MONO_DEBUG=single-imm-size get_method $1 $2 $3 $4 $5)" >$TMP_FILE1
-	echo "$(MONO_DEBUG=gen-compact-seq-points,single-imm-size get_method $1 $2 $3 $4 $5 | grep -Ev il_seq_point)" >$TMP_FILE2
+	echo "$(MONO_DEBUG=no-compact-seq-points,single-imm-size get_method $1 $2 $3 $4 $5)" >$TMP_FILE1
+	echo "$(MONO_DEBUG=single-imm-size get_method $1 $2 $3 $4 $5 | grep -Ev il_seq_point)" >$TMP_FILE2
 	sdiff -w 150 $TMP_FILE1 $TMP_FILE2
 }
 

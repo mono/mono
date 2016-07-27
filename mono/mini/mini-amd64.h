@@ -188,12 +188,20 @@ typedef struct MonoCompileArch {
 } MonoCompileArch;
 
 #ifdef TARGET_WIN32
-#define PARAM_REGS 4
-#define FLOAT_PARAM_REGS 4
 
 static AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
 
-static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
+static AMD64_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
+
+static AMD64_Reg_No return_regs [] = { AMD64_RAX };
+
+static AMD64_Reg_No float_return_regs [] = { AMD64_XMM0 };
+
+#define PARAM_REGS G_N_ELEMENTS(param_regs)
+#define FLOAT_PARAM_REGS G_N_ELEMENTS(float_param_regs)
+#define RETURN_REGS G_N_ELEMENTS(return_regs)
+#define FLOAT_RETURN_REGS G_N_ELEMENTS(float_return_regs)
+
 #else
 #define PARAM_REGS 6
 #define FLOAT_PARAM_REGS 8
@@ -248,6 +256,7 @@ typedef enum {
 	ArgOnStack,
 	ArgValuetypeInReg,
 	ArgValuetypeAddrInIReg,
+	ArgValuetypeAddrOnStack,
 	/* gsharedvt argument passed by addr */
 	ArgGSharedVtInReg,
 	ArgGSharedVtOnStack,
@@ -269,7 +278,7 @@ typedef struct {
 	int nregs;
 	/* Only if storage == ArgOnStack */
 	int arg_size; // Bytes, will always be rounded up/aligned to 8 byte boundary
-	gboolean pass_empty_struct; // Set in scenarios when empty structs needs to be represented as argument.
+	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
 typedef struct {
@@ -393,6 +402,7 @@ typedef struct {
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
+#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
@@ -471,6 +481,9 @@ mono_amd64_get_exception_trampolines (gboolean aot);
 
 int
 mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
+
+gpointer
+mono_amd64_handler_block_trampoline_helper (void);
 
 #ifdef TARGET_WIN32
 
