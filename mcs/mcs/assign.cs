@@ -719,9 +719,11 @@ namespace Mono.CSharp {
 				this.loc = child.Location;
 			}
 
+			public bool RequiresEmitWithAwait { get; set; }
+
 			public override bool ContainsEmitWithAwait ()
 			{
-				return child.ContainsEmitWithAwait ();
+				return RequiresEmitWithAwait || child.ContainsEmitWithAwait ();
 			}
 
 			public override Expression CreateExpressionTree (ResolveContext ec)
