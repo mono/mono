@@ -477,7 +477,7 @@ namespace System
 		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (name, bindingAttr, ignoreCase), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (name, bindingAttr, ignoreCase))) {
 				var n = h.Length;
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -497,7 +497,7 @@ namespace System
 		RuntimeConstructorInfo[] GetConstructors_internal (BindingFlags bindingAttr, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetConstructors_native (bindingAttr), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetConstructors_native (bindingAttr))) {
 				var n = h.Length;
 				var a = new RuntimeConstructorInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -511,7 +511,7 @@ namespace System
 		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (name, bindingAttr, icase), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (name, bindingAttr, icase))) {
 				var n = h.Length;
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -677,7 +677,7 @@ namespace System
 		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (name, bindingAttr), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (name, bindingAttr))) {
 				int n = h.Length;
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
@@ -691,7 +691,7 @@ namespace System
 		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (name, bindingAttr), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (name, bindingAttr))) {
 				int n = h.Length;
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {

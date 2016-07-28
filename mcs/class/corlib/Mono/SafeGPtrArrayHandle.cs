@@ -13,29 +13,16 @@ using System;
 using System.Runtime.CompilerServices;
 
 namespace Mono {
-	internal sealed class SafeGPtrArrayHandle : IDisposable {
+	internal struct SafeGPtrArrayHandle : IDisposable {
 		RuntimeGPtrArrayHandle handle;
-		bool freeSeg;
 
-		internal SafeGPtrArrayHandle (IntPtr ptr, bool freeSeg)
+		internal SafeGPtrArrayHandle (IntPtr ptr)
 		{
 			handle = new RuntimeGPtrArrayHandle (ptr);
-			this.freeSeg = freeSeg;
-		}
-
-		~SafeGPtrArrayHandle ()
-		{
-			Dispose (false);
-		}
-
-		void Dispose (bool disposing)
-		{
-			RuntimeGPtrArrayHandle.DestroyAndFree (ref handle, freeSeg);
 		}
 
 		public void Dispose () {
-			Dispose (true);
-			GC.SuppressFinalize (this);
+			RuntimeGPtrArrayHandle.DestroyAndFree (ref handle);
 		}
 
 		internal int Length {
