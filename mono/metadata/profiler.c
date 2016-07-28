@@ -107,6 +107,14 @@ struct _ProfilerDesc {
 	MonoProfilerCodeChunkNew code_chunk_new;
 	MonoProfilerCodeChunkDestroy code_chunk_destroy;
 	MonoProfilerCodeBufferNew code_buffer_new;
+
+	MonoProfilerMemdomNew memdom_new;
+	MonoProfilerMemdomDestroy memdom_destroy;
+	MonoProfilerMemdomAlloc memdom_alloc;
+	MonoProfilerAlloc malloc_event;
+	MonoProfilerVAlloc valloc_event;
+	MonoProfilerVFree vfree_event;
+	MonoProfilerMProtect mprotect_event;
 };
 
 #define PROF_EVENT_1(FUNC_NAME, EVENT_NAME, CB_NAME, ARG0_TYPE)	\
@@ -518,6 +526,13 @@ PROF_EVENT_2 (mono_profiler_gc_event, MONO_PROFILE_GC, gc_event, MonoGCEvent, in
 PROF_EVENT_2 (mono_profiler_gc_moves, MONO_PROFILE_GC_MOVES, gc_moves, void**, int)
 PROF_EVENT_4 (mono_profiler_gc_handle, MONO_PROFILE_GC_ROOTS, gc_handle, int, int, uintptr_t, MonoObject*)
 PROF_EVENT_4 (mono_profiler_gc_roots, MONO_PROFILE_GC_ROOTS, gc_roots, int, void **, int*, uintptr_t *)
+PROF_EVENT_2(mono_profiler_memdom_new, MONO_PROFILE_RUNTIME_MEM_EVENTS, memdom_new, gpointer, MonoProfilerMemoryDomain)
+PROF_EVENT_1(mono_profiler_memdom_destroy, MONO_PROFILE_RUNTIME_MEM_EVENTS, memdom_destroy, gpointer)
+PROF_EVENT_3(mono_profiler_memdom_alloc, MONO_PROFILE_RUNTIME_MEM_EVENTS, memdom_alloc, void*, size_t, const char*)
+PROF_EVENT_3(mono_profiler_malloc, MONO_PROFILE_RUNTIME_MEM_EVENTS, malloc_event, void*, size_t, const char*)
+PROF_EVENT_4(mono_profiler_valloc, MONO_PROFILE_RUNTIME_MEM_EVENTS, valloc_event, void*, size_t, int, const char*)
+PROF_EVENT_2(mono_profiler_vfree, MONO_PROFILE_RUNTIME_MEM_EVENTS, vfree_event, void*, size_t)
+PROF_EVENT_3(mono_profiler_mprotect, MONO_PROFILE_RUNTIME_MEM_EVENTS, mprotect_event, void*, size_t, int)
 
 void 
 mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result)
