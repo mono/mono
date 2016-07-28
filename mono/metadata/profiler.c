@@ -109,6 +109,52 @@ struct _ProfilerDesc {
 	MonoProfilerCodeBufferNew code_buffer_new;
 };
 
+#define PROF_EVENT_1(FUNC_NAME, EVENT_NAME, CB_NAME, ARG0_TYPE)	\
+void \
+FUNC_NAME (ARG0_TYPE arg0) \
+{	\
+	ProfilerDesc *prof;	\
+	for (prof = prof_list; prof; prof = prof->next) {	\
+		if ((prof-> events & EVENT_NAME) && prof->CB_NAME)	\
+			prof->CB_NAME (prof->profiler, arg0);	\
+	}	\
+}
+
+#define PROF_EVENT_2(FUNC_NAME, EVENT_NAME, CB_NAME, ARG0_TYPE, ARG1_TYPE)	\
+void \
+FUNC_NAME (ARG0_TYPE arg0, ARG1_TYPE arg1) \
+{	\
+	ProfilerDesc *prof;	\
+	for (prof = prof_list; prof; prof = prof->next) {	\
+		if ((prof-> events & EVENT_NAME) && prof->CB_NAME)	\
+			prof->CB_NAME (prof->profiler, arg0, arg1);	\
+	}	\
+}
+
+#define PROF_EVENT_3(FUNC_NAME, EVENT_NAME, CB_NAME, ARG0_TYPE, ARG1_TYPE, ARG2_TYPE)	\
+void \
+FUNC_NAME (ARG0_TYPE arg0, ARG1_TYPE arg1, ARG2_TYPE arg2) \
+{	\
+	ProfilerDesc *prof;	\
+	for (prof = prof_list; prof; prof = prof->next) {	\
+		if ((prof-> events & EVENT_NAME) && prof->CB_NAME)	\
+			prof->CB_NAME (prof->profiler, arg0, arg1, arg2);	\
+	}	\
+}
+
+#define PROF_EVENT_4(FUNC_NAME, EVENT_NAME, CB_NAME, ARG0_TYPE, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE)	\
+void \
+FUNC_NAME (ARG0_TYPE arg0, ARG1_TYPE arg1, ARG2_TYPE arg2, ARG3_TYPE arg3) \
+{	\
+	ProfilerDesc *prof;	\
+	for (prof = prof_list; prof; prof = prof->next) {	\
+		if ((prof-> events & EVENT_NAME) && prof->CB_NAME)	\
+			prof->CB_NAME (prof->profiler, arg0, arg1, arg2, arg3);	\
+	}	\
+}
+
+
+
 static ProfilerDesc *prof_list = NULL;
 
 #define mono_profiler_coverage_lock() mono_os_mutex_lock (&profiler_coverage_mutex)
@@ -442,35 +488,36 @@ mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileC
 	prof_list->class_end_unload = end_unload;
 }
 
-void
-mono_profiler_method_enter (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_ENTER_LEAVE) && prof->method_enter)
-			prof->method_enter (prof->profiler, method);
-	}
-}
-
-void
-mono_profiler_method_leave (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_ENTER_LEAVE) && prof->method_leave)
-			prof->method_leave (prof->profiler, method);
-	}
-}
-
-void 
-mono_profiler_method_jit (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->jit_start)
-			prof->jit_start (prof->profiler, method);
-	}
-}
+// Standard form events
+PROF_EVENT_1 (mono_profiler_method_enter, MONO_PROFILE_ENTER_LEAVE, method_enter, MonoMethod*)
+PROF_EVENT_1 (mono_profiler_method_leave, MONO_PROFILE_ENTER_LEAVE, method_leave, MonoMethod*)
+PROF_EVENT_1 (mono_profiler_method_jit, MONO_PROFILE_JIT_COMPILATION, jit_start, MonoMethod*)
+PROF_EVENT_1 (mono_profiler_method_free, MONO_PROFILE_METHOD_EVENTS, method_free, MonoMethod*)
+PROF_EVENT_1 (mono_profiler_method_start_invoke, MONO_PROFILE_METHOD_EVENTS, method_start_invoke, MonoMethod*)
+PROF_EVENT_1 (mono_profiler_method_end_invoke, MONO_PROFILE_METHOD_EVENTS, method_end_invoke, MonoMethod*)
+PROF_EVENT_2 (mono_profiler_code_transition, MONO_PROFILE_TRANSITIONS, man_unman_transition, MonoMethod*, int)
+PROF_EVENT_2 (mono_profiler_monitor_event, MONO_PROFILE_MONITOR_EVENTS, monitor_event_cb, MonoObject*, MonoProfilerMonitorEvent)
+PROF_EVENT_2 (mono_profiler_stat_hit, MONO_PROFILE_STATISTICAL, statistical_cb, guchar*, void*)
+PROF_EVENT_3 (mono_profiler_stat_call_chain, MONO_PROFILE_STATISTICAL, statistical_call_chain_cb, int, guchar **, void*)
+PROF_EVENT_1 (mono_profiler_exception_thrown, MONO_PROFILE_EXCEPTIONS, exception_throw_cb, MonoObject*)
+PROF_EVENT_1 (mono_profiler_exception_method_leave, MONO_PROFILE_EXCEPTIONS, exception_method_leave_cb, MonoMethod*)
+PROF_EVENT_3 (mono_profiler_exception_clause_handler, MONO_PROFILE_EXCEPTIONS, exception_clause_cb, MonoMethod*, int, int)
+PROF_EVENT_1 (mono_profiler_thread_start, MONO_PROFILE_THREADS, thread_start, gsize)
+PROF_EVENT_1 (mono_profiler_thread_end, MONO_PROFILE_THREADS, thread_end, gsize)
+PROF_EVENT_2 (mono_profiler_thread_name, MONO_PROFILE_THREADS, thread_name, gsize, const char*)
+PROF_EVENT_2 (mono_profiler_assembly_loaded, MONO_PROFILE_ASSEMBLY_EVENTS, assembly_end_load, MonoAssembly*, int)
+PROF_EVENT_3 (mono_profiler_iomap, MONO_PROFILE_IOMAP_EVENTS, iomap_cb, char*, const char*, const char *)
+PROF_EVENT_2 (mono_profiler_module_loaded, MONO_PROFILE_MODULE_EVENTS, module_end_load, MonoImage*, int)
+PROF_EVENT_2 (mono_profiler_class_loaded, MONO_PROFILE_CLASS_EVENTS, class_end_load, MonoClass*, int)
+PROF_EVENT_2 (mono_profiler_appdomain_loaded, MONO_PROFILE_APPDOMAIN_EVENTS, domain_end_load, MonoDomain*, int)
+PROF_EVENT_2 (mono_profiler_appdomain_name, MONO_PROFILE_APPDOMAIN_EVENTS, domain_name, MonoDomain*, const char*)
+PROF_EVENT_1 (mono_profiler_context_loaded, MONO_PROFILE_CONTEXT_EVENTS, context_load, MonoAppContext*)
+PROF_EVENT_1 (mono_profiler_context_unloaded, MONO_PROFILE_CONTEXT_EVENTS, context_unload, MonoAppContext*)
+PROF_EVENT_1 (mono_profiler_gc_heap_resize, MONO_PROFILE_GC, gc_heap_resize, gint64)
+PROF_EVENT_2 (mono_profiler_gc_event, MONO_PROFILE_GC, gc_event, MonoGCEvent, int)
+PROF_EVENT_2 (mono_profiler_gc_moves, MONO_PROFILE_GC_MOVES, gc_moves, void**, int)
+PROF_EVENT_4 (mono_profiler_gc_handle, MONO_PROFILE_GC_ROOTS, gc_handle, int, int, uintptr_t, MonoObject*)
+PROF_EVENT_4 (mono_profiler_gc_roots, MONO_PROFILE_GC_ROOTS, gc_roots, int, void **, int*, uintptr_t *)
 
 void 
 mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result)
@@ -487,141 +534,12 @@ mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result
 }
 
 void 
-mono_profiler_method_free (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_free)
-			prof->method_free (prof->profiler, method);
-	}
-}
-
-void
-mono_profiler_method_start_invoke (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_start_invoke)
-			prof->method_start_invoke (prof->profiler, method);
-	}
-}
-
-void
-mono_profiler_method_end_invoke (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_end_invoke)
-			prof->method_end_invoke (prof->profiler, method);
-	}
-}
-
-void 
-mono_profiler_code_transition (MonoMethod *method, int result)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_TRANSITIONS) && prof->man_unman_transition)
-			prof->man_unman_transition (prof->profiler, method, result);
-	}
-}
-
-void 
 mono_profiler_allocation (MonoObject *obj)
 {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ALLOCATIONS) && prof->allocation_cb)
 			prof->allocation_cb (prof->profiler, obj, obj->vtable->klass);
-	}
-}
-
-void
-mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent event) {
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_MONITOR_EVENTS) && prof->monitor_event_cb)
-			prof->monitor_event_cb (prof->profiler, obj, event);
-	}
-}
-
-void
-mono_profiler_stat_hit (guchar *ip, void *context)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_STATISTICAL) && prof->statistical_cb)
-			prof->statistical_cb (prof->profiler, ip, context);
-	}
-}
-
-void
-mono_profiler_stat_call_chain (int call_chain_depth, guchar **ips, void *context)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_STATISTICAL) && prof->statistical_call_chain_cb)
-			prof->statistical_call_chain_cb (prof->profiler, call_chain_depth, ips, context);
-	}
-}
-
-void
-mono_profiler_exception_thrown (MonoObject *exception)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_throw_cb)
-			prof->exception_throw_cb (prof->profiler, exception);
-	}
-}
-
-void
-mono_profiler_exception_method_leave (MonoMethod *method)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_method_leave_cb)
-			prof->exception_method_leave_cb (prof->profiler, method);
-	}
-}
-
-void
-mono_profiler_exception_clause_handler (MonoMethod *method, int clause_type, int clause_num)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_clause_cb)
-			prof->exception_clause_cb (prof->profiler, method, clause_type, clause_num);
-	}
-}
-
-void
-mono_profiler_thread_start (gsize tid)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_start)
-			prof->thread_start (prof->profiler, tid);
-	}
-}
-
-void 
-mono_profiler_thread_end (gsize tid)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_end)
-			prof->thread_end (prof->profiler, tid);
-	}
-}
-
-void
-mono_profiler_thread_name (gsize tid, const char *name)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_name)
-			prof->thread_name (prof->profiler, tid, name);
 	}
 }
 
@@ -653,25 +571,6 @@ mono_profiler_assembly_event  (MonoAssembly *assembly, int code)
 }
 
 void 
-mono_profiler_assembly_loaded (MonoAssembly *assembly, int result)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_ASSEMBLY_EVENTS) && prof->assembly_end_load)
-			prof->assembly_end_load (prof->profiler, assembly, result);
-	}
-}
-
-void mono_profiler_iomap (char *report, const char *pathname, const char *new_pathname)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_IOMAP_EVENTS) && prof->iomap_cb)
-			prof->iomap_cb (prof->profiler, report, pathname, new_pathname);
-	}
-}
-
-void 
 mono_profiler_module_event  (MonoImage *module, int code)
 {
 	ProfilerDesc *prof;
@@ -698,15 +597,6 @@ mono_profiler_module_event  (MonoImage *module, int code)
 	}
 }
 
-void 
-mono_profiler_module_loaded (MonoImage *module, int result)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_MODULE_EVENTS) && prof->module_end_load)
-			prof->module_end_load (prof->profiler, module, result);
-	}
-}
 
 void 
 mono_profiler_class_event  (MonoClass *klass, int code)
@@ -732,16 +622,6 @@ mono_profiler_class_event  (MonoClass *klass, int code)
 		default:
 			g_assert_not_reached ();
 		}
-	}
-}
-
-void 
-mono_profiler_class_loaded (MonoClass *klass, int result)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_CLASS_EVENTS) && prof->class_end_load)
-			prof->class_end_load (prof->profiler, klass, result);
 	}
 }
 
@@ -773,40 +653,6 @@ mono_profiler_appdomain_event  (MonoDomain *domain, int code)
 }
 
 void 
-mono_profiler_appdomain_loaded (MonoDomain *domain, int result)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_APPDOMAIN_EVENTS) && prof->domain_end_load)
-			prof->domain_end_load (prof->profiler, domain, result);
-	}
-}
-
-void
-mono_profiler_appdomain_name (MonoDomain *domain, const char *name)
-{
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
-		if ((prof->events & MONO_PROFILE_APPDOMAIN_EVENTS) && prof->domain_name)
-			prof->domain_name (prof->profiler, domain, name);
-}
-
-void
-mono_profiler_context_loaded (MonoAppContext *context)
-{
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
-		if ((prof->events & MONO_PROFILE_CONTEXT_EVENTS) && prof->context_load)
-			prof->context_load (prof->profiler, context);
-}
-
-void
-mono_profiler_context_unloaded (MonoAppContext *context)
-{
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
-		if ((prof->events & MONO_PROFILE_CONTEXT_EVENTS) && prof->context_unload)
-			prof->context_unload (prof->profiler, context);
-}
-
-void 
 mono_profiler_shutdown (void)
 {
 	ProfilerDesc *prof;
@@ -816,56 +662,6 @@ mono_profiler_shutdown (void)
 	}
 
 	mono_profiler_set_events ((MonoProfileFlags)0);
-}
-
-void
-mono_profiler_gc_heap_resize (gint64 new_size)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC) && prof->gc_heap_resize)
-			prof->gc_heap_resize (prof->profiler, new_size);
-	}
-}
-
-void
-mono_profiler_gc_event (MonoGCEvent event, int generation)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC) && prof->gc_event)
-			prof->gc_event (prof->profiler, event, generation);
-	}
-}
-
-void
-mono_profiler_gc_moves (void **objects, int num)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC_MOVES) && prof->gc_moves)
-			prof->gc_moves (prof->profiler, objects, num);
-	}
-}
-
-void
-mono_profiler_gc_handle (int op, int type, uintptr_t handle, MonoObject *obj)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_handle)
-			prof->gc_handle (prof->profiler, op, type, handle, obj);
-	}
-}
-
-void
-mono_profiler_gc_roots (int num, void **objects, int *root_types, uintptr_t *extra_info)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_roots)
-			prof->gc_roots (prof->profiler, num, objects, root_types, extra_info);
-	}
 }
 
 void
