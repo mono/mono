@@ -262,11 +262,11 @@ namespace Mono {
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		unsafe extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value, bool freeSeg);
+		unsafe extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value);
 
-		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h, bool freeSeg) {
+		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h) {
 			unsafe {
-				GPtrArrayFree (h.value, freeSeg);
+				GPtrArrayFree (h.value);
 				h.value = null;
 			}
 		}
