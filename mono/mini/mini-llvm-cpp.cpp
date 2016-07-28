@@ -220,13 +220,17 @@ mono_llvm_set_is_constant (LLVMValueRef global_var)
 void
 mono_llvm_set_preserveall_cc (LLVMValueRef func)
 {
+#ifndef __linux__
 	unwrap<Function>(func)->setCallingConv (CallingConv::PreserveAll);
+#endif
 }
 
 void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
 {
+#ifndef __linux__
 	unwrap<CallInst>(func)->setCallingConv (CallingConv::PreserveAll);
+#endif
 }
 
 void
