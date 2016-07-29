@@ -119,7 +119,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		mono_threads_get_runtime_callbacks ()->setup_async_callback (&ctx, info->async_target, info->user_data);
 		info->async_target = info->user_data = NULL;
 
-		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_FLOATING_POINT;
 
 		if (!GetThreadContext (handle, &context)) {
 			CloseHandle (handle);
@@ -128,10 +128,11 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 
 		g_assert (context.ContextFlags & CONTEXT_INTEGER);
 		g_assert (context.ContextFlags & CONTEXT_CONTROL);
+		g_assert (context.ContextFlags & CONTEXT_FLOATING_POINT);
 
 		mono_monoctx_to_sigctx (&ctx, &context);
 
-		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_FLOATING_POINT;
 		res = SetThreadContext (handle, &context);
 		if (!res) {
 			CloseHandle (handle);

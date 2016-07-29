@@ -210,6 +210,23 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->gregs [AMD64_R13] = context->R13;
 	mctx->gregs [AMD64_R14] = context->R14;
 	mctx->gregs [AMD64_R15] = context->R15;
+
+	mctx->fregs [AMD64_XMM0] = context->Xmm0;
+	mctx->fregs [AMD64_XMM1] = context->Xmm1;
+	mctx->fregs [AMD64_XMM2] = context->Xmm2;
+	mctx->fregs [AMD64_XMM3] = context->Xmm3;
+	mctx->fregs [AMD64_XMM4] = context->Xmm4;
+	mctx->fregs [AMD64_XMM5] = context->Xmm5;
+	mctx->fregs [AMD64_XMM6] = context->Xmm6;
+	mctx->fregs [AMD64_XMM7] = context->Xmm7;
+	mctx->fregs [AMD64_XMM8] = context->Xmm8;
+	mctx->fregs [AMD64_XMM9] = context->Xmm9;
+	mctx->fregs [AMD64_XMM10] = context->Xmm10;
+	mctx->fregs [AMD64_XMM11] = context->Xmm11;
+	mctx->fregs [AMD64_XMM12] = context->Xmm12;
+	mctx->fregs [AMD64_XMM13] = context->Xmm13;
+	mctx->fregs [AMD64_XMM14] = context->Xmm14;
+	mctx->fregs [AMD64_XMM15] = context->Xmm15;
 #else
 	g_assert_not_reached ();
 #endif
@@ -284,6 +301,24 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	context->R13 = mctx->gregs [AMD64_R13];
 	context->R14 = mctx->gregs [AMD64_R14];
 	context->R15 = mctx->gregs [AMD64_R15];
+
+	context->Xmm0 = mctx->fregs [AMD64_XMM0];
+	context->Xmm1 = mctx->fregs [AMD64_XMM1];
+	context->Xmm2 = mctx->fregs [AMD64_XMM2];
+	context->Xmm3 = mctx->fregs [AMD64_XMM3];
+	context->Xmm4 = mctx->fregs [AMD64_XMM4];
+	context->Xmm5 = mctx->fregs [AMD64_XMM5];
+	context->Xmm6 = mctx->fregs [AMD64_XMM6];
+	context->Xmm7 = mctx->fregs [AMD64_XMM7];
+	context->Xmm8 = mctx->fregs [AMD64_XMM8];
+	context->Xmm9 = mctx->fregs [AMD64_XMM9];
+	context->Xmm10 = mctx->fregs [AMD64_XMM10];
+	context->Xmm11 = mctx->fregs [AMD64_XMM11];
+	context->Xmm12 = mctx->fregs [AMD64_XMM12];
+	context->Xmm13 = mctx->fregs [AMD64_XMM13];
+	context->Xmm14 = mctx->fregs [AMD64_XMM14];
+	context->Xmm15 = mctx->fregs [AMD64_XMM15];
+
 #else
 	g_assert_not_reached ();
 #endif
