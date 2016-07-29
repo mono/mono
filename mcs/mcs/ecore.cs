@@ -4468,6 +4468,10 @@ namespace Mono.CSharp {
 			TypeSpec argument_type = a.Type;
 
 			//
+			// Exactly matching Expression phase
+			//
+
+			//
 			// If argument is an anonymous function
 			//
 			if (argument_type == InternalType.AnonymousMethod && ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2) {
@@ -4528,17 +4532,20 @@ namespace Mono.CSharp {
 
 				if (q != p) {
 					//
-					// An inferred return type X exists for E in the context of that parameter list, and 
-					// the conversion from X to Y1 is better than the conversion from X to Y2
+					// An inferred return type X exists for E in the context of the parameter list, and
+					// an identity conversion exists from X to the return type of D
 					//
-					argument_type = am.InferReturnType (ec, null, orig_q);
-					if (argument_type == null) {
-						// TODO: Can this be hit?
-						return 1;
-					}
+					var inferred_type = am.InferReturnType (ec, null, orig_q);
+					if (inferred_type != null) {
+						if (inferred_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							inferred_type = ec.BuiltinTypes.Object;
 
-					if (argument_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-						argument_type = ec.BuiltinTypes.Object;
+						if (inferred_type == p)
+							return 1;
+
+						if (inferred_type == q)
+							return 2;
+					}
 				}
 			}
 
