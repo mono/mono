@@ -10524,14 +10524,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	load_profile_files (acfg);
 
-	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.ntrampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = acfg->aot_opts.enable_trampoline ? acfg->aot_opts.ntrampolines : 0;
 #ifdef MONO_ARCH_GSHARED_SUPPORTED
-	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.nrgctx_trampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = acfg->aot_opts.enable_trampoline ? acfg->aot_opts.nrgctx_trampolines : 0;
 #endif
-	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.nimt_trampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = acfg->aot_opts.enable_trampoline ? acfg->aot_opts.nimt_trampolines : 0;
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
-		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (acfg->aot_opts.llvm_only || acfg->aot_opts.enable_trampoline) ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;
+		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = acfg->aot_opts.enable_trampoline ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;
 #endif
 
 	acfg->temp_prefix = mono_img_writer_get_temp_label_prefix (NULL);
