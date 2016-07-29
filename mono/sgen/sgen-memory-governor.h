@@ -30,7 +30,8 @@ gboolean sgen_need_major_collection (mword space_needed);
 typedef enum {
 	SGEN_ALLOC_INTERNAL = 0,
 	SGEN_ALLOC_HEAP = 1,
-	SGEN_ALLOC_ACTIVATE = 2
+	SGEN_ALLOC_ACTIVATE = 2,
+	SGEN_ALLOC_NON_FATAL = 4,
 } SgenAllocFlags;
 
 typedef enum {
@@ -59,7 +60,7 @@ void* sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags
 void sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags);
 
 /* Error handling */
-void sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_description);
+void sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *description, gboolean non_fatal);
 
 #endif
 
