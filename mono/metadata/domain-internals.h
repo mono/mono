@@ -508,10 +508,10 @@ gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name);
 
 gpointer
-mono_domain_alloc  (MonoDomain *domain, guint size);
+mono_domain_alloc  (MonoDomain *domain, guint size, const char *what);
 
 gpointer
-mono_domain_alloc0 (MonoDomain *domain, guint size);
+mono_domain_alloc0 (MonoDomain *domain, guint size, const char *what);
 
 gpointer
 mono_domain_alloc0_lock_free (MonoDomain *domain, guint size);

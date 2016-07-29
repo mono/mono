@@ -51,6 +51,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/monitor.h>
+#include <mono/metadata/mono-alloc.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
@@ -437,7 +438,7 @@ register_trampoline_jit_info (MonoDomain *domain, MonoTrampInfo *info)
 {
 	MonoJitInfo *ji;
 
-	ji = (MonoJitInfo *)mono_domain_alloc0 (domain, mono_jit_info_size ((MonoJitInfoFlags)0, 0, 0));
+	ji = (MonoJitInfo *)mono_domain_alloc0 (domain, mono_jit_info_size ((MonoJitInfoFlags)0, 0, 0), "jit-info-trampoline");
 	mono_jit_info_init (ji, NULL, info->code, info->code_size, (MonoJitInfoFlags)0, 0, 0);
 	ji->d.tramp_info = info;
 	ji->is_trampoline = TRUE;
@@ -1389,7 +1390,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			domain_jit_info (domain)->method_code_hash = g_hash_table_new (NULL, NULL);
 		code_slot = g_hash_table_lookup (domain_jit_info (domain)->method_code_hash, patch_info->data.method);
 		if (!code_slot) {
-			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));
+			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer), "method-code-slot");
 			g_hash_table_insert (domain_jit_info (domain)->method_code_hash, patch_info->data.method, code_slot);
 		}
 		mono_domain_unlock (domain);
@@ -1416,7 +1417,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			jump_table = (void **)mono_code_manager_reserve (mono_dynamic_code_hash_lookup (domain, method)->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
 		} else {
 			if (mono_aot_only) {
-				jump_table = (void **)mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size);
+				jump_table = (void **)mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size, "switch-jump-table");
 			} else {
 				jump_table = (void **)mono_domain_code_reserve (domain, sizeof (gpointer) * patch_info->data.table->table_size);
 			}
@@ -1625,7 +1626,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_CASTCLASS_CACHE: {
-		target = mono_domain_alloc0 (domain, sizeof (gpointer));
+		target = mono_domain_alloc0 (domain, sizeof (gpointer), "cast-class-cache");
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_TLS_ID: {
@@ -1651,7 +1652,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		char *s;
 
 		len = strlen ((const char *)patch_info->data.target);
-		s = (char *)mono_domain_alloc0 (domain, len + 1);
+		s = (char *)mono_domain_alloc0 (domain, len + 1, "ldstr-lit");
 		memcpy (s, patch_info->data.target, len);
 		target = s;
 
@@ -2693,7 +2694,7 @@ mono_llvmonly_get_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTChec
 	}
 
 	/* Save the entries into an array */
-	buf = (void **)mono_domain_alloc (domain, (real_count + 1) * 2 * sizeof (gpointer));
+	buf = (void **)mono_domain_alloc (domain, (real_count + 1) * 2 * sizeof (gpointer), "llvmonly-imt-thunk:entries");
 	index = 0;
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
@@ -2716,7 +2717,7 @@ mono_llvmonly_get_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTChec
 	 * Return a function descriptor for a C function with 'buf' as its argument.
 	 * It will by called by JITted code.
 	 */
-	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer));
+	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer), "llvmonly-imt-thunk");
 	switch (real_count) {
 	case 1:
 		res [0] = mono_llvmonly_imt_thunk_1;
@@ -2979,7 +2980,7 @@ mini_get_vtable_trampoline (MonoVTable *vt, int slot_index)
 			new_size = vtable_trampolines_size ? vtable_trampolines_size * 2 : 128;
 			while (new_size <= index)
 				new_size *= 2;
-			new_table = g_new0 (gpointer, new_size);
+			new_table = m_new0 (gpointer, new_size, "jit:vtable_trampolines");
 
 			if (vtable_trampolines)
 				memcpy (new_table, vtable_trampolines, vtable_trampolines_size * sizeof (gpointer));
@@ -3101,7 +3102,7 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 			guint8 **new_cache;
 			int new_cache_size = idx + 1;
 
-			new_cache = g_new0 (guint8*, new_cache_size);
+			new_cache = m_new0 (guint8*, new_cache_size, "jit:delegate_virtual_invoke_impl_cache");
 			if (cache)
 				memcpy (new_cache, cache, cache_size * sizeof (guint8*));
 			g_free (cache);
@@ -3244,7 +3245,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 	desc [1] = NULL;
 #	elif defined(__ppc64__) || defined(__powerpc64__)
 
-	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer));
+	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer), "ppc-fntptr");
 
 	desc [0] = addr;
 	desc [1] = NULL;

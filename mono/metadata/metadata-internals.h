@@ -627,12 +627,12 @@ void
 mono_image_check_for_module_cctor (MonoImage *image);
 
 gpointer
-mono_image_alloc  (MonoImage *image, guint size);
+mono_image_alloc  (MonoImage *image, guint size, const char *what);
 
 gpointer
-mono_image_alloc0 (MonoImage *image, guint size);
+mono_image_alloc0 (MonoImage *image, guint size, const char *what);
 
-#define mono_image_new0(image,type,size) ((type *) mono_image_alloc0 (image, sizeof (type)* (size)))
+#define mono_image_new0(image,type,size,what) ((type *) mono_image_alloc0 (image, sizeof (type)* (size), what))
 
 char*
 mono_image_strdup (MonoImage *image, const char *s);
@@ -679,10 +679,10 @@ void
 mono_image_append_class_to_reflection_info_set (MonoClass *klass);
 
 gpointer
-mono_image_set_alloc  (MonoImageSet *set, guint size);
+mono_image_set_alloc  (MonoImageSet *set, guint size, const char *what);
 
 gpointer
-mono_image_set_alloc0 (MonoImageSet *set, guint size);
+mono_image_set_alloc0 (MonoImageSet *set, guint size, const char *what);
 
 void
 mono_image_set_lock (MonoImageSet *set);
@@ -693,7 +693,7 @@ mono_image_set_unlock (MonoImageSet *set);
 char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
-#define mono_image_set_new0(image,type,size) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size)))
+#define mono_image_set_new0(image,type,size,what) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size),what))
 
 gboolean
 mono_image_load_cli_header (MonoImage *image, MonoCLIImageInfo *iinfo);

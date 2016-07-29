@@ -831,8 +831,8 @@ mono_arch_init (void)
 	if (mini_get_debug_options ()->soft_breakpoints) {
 		breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
-		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
-		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
+		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, "ss-trigger-page");
+		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, "bp-trigger-page");
 		mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 	}
 
