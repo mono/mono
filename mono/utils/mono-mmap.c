@@ -322,7 +322,12 @@ mono_valloc (void *addr, size_t length, int flags)
 	mflags |= MAP_PRIVATE;
 
 	BEGIN_CRITICAL_SECTION;
+#ifdef VM_MAKE_TAG
+	int fd = strstr (what, "sgen") ? VM_MAKE_TAG (VM_MEMORY_APPLICATION_SPECIFIC_1) : VM_MAKE_TAG (VM_MEMORY_APPLICATION_SPECIFIC_1 + 1);
+	ptr = mmap (addr, length, prot, mflags, fd, 0);
+#else
 	ptr = mmap (addr, length, prot, mflags, -1, 0);
+#endif
 	if (ptr == MAP_FAILED) {
 		int fd = open ("/dev/zero", O_RDONLY);
 		if (fd != -1) {
