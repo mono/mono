@@ -1853,7 +1853,7 @@ namespace Mono.CSharp
 					return base_type;
 			}
 
-			if (iface_exprs != null) {
+			if (iface_exprs != null && this is Interface) {
 				foreach (var iface in iface_exprs) {
 					// the interface might not have been resolved, prevents a crash, see #442144
 					if (iface == null)
