@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs
 Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs

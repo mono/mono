@@ -1,1 +1,2 @@
+../../test-helpers/NunitHelpers.cs
 Mono.XBuild.Tasks/PcFileCacheTest.cs
