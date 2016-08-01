@@ -1570,8 +1570,11 @@ public class Tests : TestsBase, ITest2
 			var streamIn = c.GetStream ();
 			var bs = new byte[nbytes];
 			int nread = 0;
+			int nremain = nbytes;
 			while (nread < nbytes) {
-				nread += await streamIn.ReadAsync (bs, nread, nbytes);
+				int r = await streamIn.ReadAsync (bs, nread, nremain);
+				nread += r;
+				nremain -= r;
 			}
 			streamIn.Close ();
 			return bs;
