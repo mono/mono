@@ -30,9 +30,6 @@
 using NUnit.Framework;
 using System;
 using System.Data;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Data
 {

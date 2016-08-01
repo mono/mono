@@ -159,7 +159,7 @@ using nwind;
 
             var q3 = q1.Union(q2);
 
-            Assert.Greater(q1.Count(), 0);
+            AssertHelper.Greater(q1.Count(), 0);
             Assert.IsTrue(q1.Count() + q2.Count() >= q3.Count());
 
         }
