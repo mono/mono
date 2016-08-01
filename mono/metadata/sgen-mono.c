@@ -3002,6 +3002,19 @@ mono_gc_base_init (void)
 		sgen_set_use_managed_allocator (FALSE);
 #endif
 
+#if defined(TARGET_ARM) && !defined(MANAGED_ALLOCATOR_CAN_USE_CRITICAL_REGION)
+	/*
+	 * On arm we call to tls thunks in order to fetch the thread pointer. This
+	 * means that when checking whether is_ip_in_managed_allocator we need to
+	 * also account for unwinding from these thunks. While this can be done,
+	 * tls thunks can also be called through separate method thunks, which lack
+	 * unwind info. Also, if we fallback to pthread it's not possible to unwind.
+	 * Rely on the critical region which is need for the profiler anyways.
+	 * With coop we would no longer need to check the ip and unwind at all.
+	 */
+	sgen_set_use_managed_allocator (FALSE);
+#endif
+
 	gc_inited = TRUE;
 }
 
