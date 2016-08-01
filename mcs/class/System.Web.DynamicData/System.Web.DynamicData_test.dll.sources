@@ -72,7 +72,6 @@ Common/FooWithToString.cs
 Common/ITestDataContext.cs
 Common/KnownResponseHeader.cs
 Common/MiscExtensions.cs
-Common/Mocks.cs
 Common/MyDynamicDataRouteHandler.cs
 Common/MyHttpContextWrapper.cs
 Common/MyHttpRequestWrapper.cs
