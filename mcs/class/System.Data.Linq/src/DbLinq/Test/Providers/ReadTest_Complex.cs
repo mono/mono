@@ -136,7 +136,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p;
             int productCount = q.Count();
-            Assert.Greater(productCount, 0, "Expected non-zero product count");
+            AssertHelper.Greater(productCount, 0, "Expected non-zero product count");
         }
 
         [Test]
@@ -144,7 +144,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p.ProductID;
             int productCount = q.Count();
-            Assert.Greater(productCount, 0, "Expected non-zero product count");
+            AssertHelper.Greater(productCount, 0, "Expected non-zero product count");
             Console.WriteLine();
         }
         [Test]
@@ -152,7 +152,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p.ProductID;
             int productCount = q.Count(i => i < 3);
-            Assert.Greater(productCount, 0, "Expected non-zero product count");
+            AssertHelper.Greater(productCount, 0, "Expected non-zero product count");
             Assert.IsTrue(productCount < 4, "Expected product count < 3");
         }
 
@@ -161,7 +161,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p.ProductID;
             var maxID = q.Max();
-            Assert.Greater(maxID, 0, "Expected non-zero product count");
+            AssertHelper.Greater(maxID, 0, "Expected non-zero product count");
         }
 
         [Test]
@@ -169,7 +169,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p.ProductID;
             var minID = q.Min();
-            Assert.Greater(minID, 0, "Expected non-zero product count");
+            AssertHelper.Greater(minID, 0, "Expected non-zero product count");
         }
 
 #if !ORACLE // picrap: this test causes an internal buffer overflow when marshaling with oracle win32 driver
@@ -179,7 +179,7 @@ using Id = System.Int32;
         {
             var q = from p in db.Products select p.ProductID;
             double avg = q.Average();
-            Assert.Greater(avg, 0, "Expected non-zero productID average");
+            AssertHelper.Greater(avg, 0, "Expected non-zero productID average");
         }
 
 #endif
@@ -268,7 +268,7 @@ using Id = System.Int32;
             var q4 = from p in db.Products select p.ProductName + p.ProductID;
             //var q4 = from p in db.Products select p.ProductID;
             var q5 = q4.ToList();
-            Assert.Greater(q5.Count, 2, "Expected to see some concat strings");
+            AssertHelper.Greater(q5.Count, 2, "Expected to see some concat strings");
             foreach (string s0 in q5)
             {
                 bool startWithLetter = Char.IsLetter(s0[0]);
@@ -288,7 +288,7 @@ using Id = System.Int32;
                      select p.ProductName+p.ProductID;
             //var q4 = from p in db.Products select p.ProductID;
             //var q5 = q4.ToList();
-            Assert.Greater( q4.Count(), 2, "Expected to see some concat strings");
+            AssertHelper.Greater( q4.Count(), 2, "Expected to see some concat strings");
             foreach(string s0 in q4)
             {
                 bool startWithLetter = Char.IsLetter(s0[0]);
@@ -312,8 +312,8 @@ using Id = System.Int32;
                                           CustomerID = c.CustomerID
                                       });
             var list = q.ToList();
-            Assert.Greater(list.Count(), 0, "Expected list");
-            //Assert.Greater(list.Count(), 0, "Expected list");
+            AssertHelper.Greater(list.Count(), 0, "Expected list");
+            //AssertHelper.Greater(list.Count(), 0, "Expected list");
             Assert.Ignore("test passed but: theoretically constructions of entity types are not allowed");
         }
 
@@ -331,8 +331,8 @@ using Id = System.Int32;
             //this OrderBy clause messes up the SQL statement
             var q2 = q.OrderBy(c => c.CustomerID);
             var list = q2.ToList();
-            Assert.Greater(list.Count(), 0, "Expected list");
-            //Assert.Greater(list.Count(), 0, "Expected list");
+            AssertHelper.Greater(list.Count(), 0, "Expected list");
+            //AssertHelper.Greater(list.Count(), 0, "Expected list");
         }
 
 
@@ -344,7 +344,7 @@ using Id = System.Int32;
                     orderby c.ContactName ?? ""
                     select c;
             var list = q.ToList();
-            Assert.Greater(list.Count(), 0, "Expected list");
+            AssertHelper.Greater(list.Count(), 0, "Expected list");
         }
 
         [Test(Description = "Non-dynamic version of DL5_NestedObjectSelect")]

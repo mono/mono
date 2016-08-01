@@ -4,10 +4,6 @@ using System.Text;
 using NUnit.Framework;
 using Mono;
 
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
-
 namespace MonoTests.Mono {
 
 	[TestFixture]

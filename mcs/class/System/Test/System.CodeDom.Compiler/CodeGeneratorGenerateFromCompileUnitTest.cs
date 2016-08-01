@@ -53,7 +53,7 @@ namespace MonoTests.System.CodeDom.Compiler
 			int importPosition = result.IndexOf (IMPORT);
 			int attributePosition = result.IndexOf (ATTRIBUTE);
 
-			Assert.Greater (attributePosition, importPosition, "Actual order: " + result);
+			AssertHelper.Greater (attributePosition, importPosition, "Actual order: " + result);
 		}
 
 		[Test]

@@ -90,7 +90,7 @@ namespace MonoTests.System.Resources {
 			// get value passing no params
 			object val = returnedNode.GetValue ((ITypeResolutionService) null);
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A3");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A3");
 
 			//get value type passing different params
 			string newType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
