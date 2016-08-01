@@ -18,8 +18,6 @@ ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += /d:NO_CODEDOM
 endif
 
-PLATFORM_DEBUG_FLAGS =
-
 NO_TEST = yes
 
 include $(MCS_BUILD_DIR)/library.make
