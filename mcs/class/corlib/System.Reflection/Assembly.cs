@@ -88,7 +88,7 @@ namespace System.Reflection {
 
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 #pragma warning disable 649
-		private IntPtr _mono_assembly;
+		internal IntPtr _mono_assembly;
 #pragma warning restore 649
 
 		private ResolveEventHolder resolve_event_holder;
@@ -424,9 +424,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern internal void FillName (Assembly ass, AssemblyName aname);
 
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{

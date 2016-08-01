@@ -1114,8 +1114,7 @@ namespace System.Reflection.Emit
 
 		public override AssemblyName GetName (bool copiedName)
 		{
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
+			var aname = AssemblyName.Create (this, false);
 
 			if (sn != null) {
 				aname.SetPublicKey (sn.PublicKey);

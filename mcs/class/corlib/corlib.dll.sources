@@ -23,8 +23,9 @@ Mono.Globalization.Unicode/SortKeyBuffer.cs
 Mono.Globalization.Unicode/Normalization.cs
 Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
-Mono/RuntimeStructs.cs
 Mono/RuntimeHandles.cs
+Mono/RuntimeMarshal.cs
+Mono/RuntimeStructs.cs
 Mono/SafeGPtrArrayHandle.cs
 Mono/SafeStringMarshal.cs
 Mono/DataConverter.cs
