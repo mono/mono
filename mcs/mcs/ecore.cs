@@ -4599,10 +4599,11 @@ namespace Mono.CSharp {
 				return IsBetterConversionTarget (rc, p, q);
 			}
 
+			var p_orig = p;
 			if (p.IsNullableType) {
 				p = Nullable.NullableInfo.GetUnderlyingType (p);
 				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (p))
-					return 0;
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q);
 
 				//
 				// Spec expects implicit conversion check between p and q, q and p
@@ -4615,10 +4616,11 @@ namespace Mono.CSharp {
 					return 2;
 			}
 
+			var q_orig = q;
 			if (q.IsNullableType) {
 				q = Nullable.NullableInfo.GetUnderlyingType (q);
 				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (q))
-					return 0;
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q_orig);
 
 				if (q == p)
 					return 1;
@@ -4699,12 +4701,17 @@ namespace Mono.CSharp {
 				break;
 			}
 
+			return BetterTypeConversionImplicitConversion (ec, p, q);
+		}
+
+		static int BetterTypeConversionImplicitConversion (ResolveContext rc, TypeSpec p, TypeSpec q)
+		{
 			// TODO: this is expensive
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
 
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+			bool p_to_q = Convert.ImplicitConversionExists (rc, p_tmp, q);
+			bool q_to_p = Convert.ImplicitConversionExists (rc, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
 				return 1;
