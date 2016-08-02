@@ -11,7 +11,9 @@ namespace System.Runtime.Serialization.Json
     using System.IO;
     using System.Text;
     using System.Xml;
+#if !MONO
     using System.ServiceModel;
+#endif
     using System.Collections;
     using DataContractDictionary = System.Collections.Generic.Dictionary<System.Xml.XmlQualifiedName, DataContract>;
     using System.Runtime.CompilerServices;

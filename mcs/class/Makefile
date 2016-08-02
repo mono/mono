@@ -27,7 +27,6 @@ mobile_common_dirs := \
 	System.XML	\
 	I18N		\
 	System.ServiceModel.Internals	\
-	SMDiagnostics	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq	\
 	System.IdentityModel		\
@@ -40,7 +39,6 @@ mobile_common_dirs := \
 	System.Numerics	\
 	System.Numerics.Vectors		\
 	System.Data	\
-	Mono.Cairo	\
 	Mono.Data.Sqlite	\
 	System.Data.Services.Client \
 	System.IO.Compression \

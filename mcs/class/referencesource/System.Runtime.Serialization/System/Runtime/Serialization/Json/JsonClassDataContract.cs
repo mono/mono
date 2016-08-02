@@ -7,7 +7,9 @@ namespace System.Runtime.Serialization.Json
     using System.Threading;
     using System.Xml;
     using System.Diagnostics;
+#if !MONO
     using System.ServiceModel;
+#endif
     using System.Collections.Generic;
     using System.Security;
 

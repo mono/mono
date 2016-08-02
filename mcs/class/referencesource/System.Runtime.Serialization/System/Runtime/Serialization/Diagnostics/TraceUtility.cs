@@ -9,7 +9,9 @@ namespace System.Runtime.Serialization.Diagnostics
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.Diagnostics;
+#if !MONO
     using System.ServiceModel.Diagnostics;
+#endif
 
     static class TraceUtility
     {
