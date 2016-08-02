@@ -48,7 +48,7 @@ if [[ ${label} == w* ]];
     then
     ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release /p:MONO_TARGET_GC=sgen msvc/mono.sln
 fi
-${TESTCMD} --label=make --timeout=300m --fatal make -w V=1
+${TESTCMD} --label=make --timeout=300m --fatal make -j4 -w V=1
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
     then
     exit 0
