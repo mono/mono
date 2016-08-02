@@ -9,7 +9,9 @@ namespace System.Runtime.Serialization.Json
     using System.Runtime.Serialization;
     using System.Security;
     using System.Reflection;
+#if !MONO
     using System.ServiceModel;
+#endif
     using System.Xml;
 
 #if USE_REFEMIT

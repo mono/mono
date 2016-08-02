@@ -9,7 +9,9 @@ namespace System.Runtime.Serialization.Json
     using System.Text;
     using System.Xml;
     using System.IO;
+#if !MONO
     using System.ServiceModel;
+#endif
     using System.Runtime.Serialization.Json;
     using System.Runtime.CompilerServices;
 

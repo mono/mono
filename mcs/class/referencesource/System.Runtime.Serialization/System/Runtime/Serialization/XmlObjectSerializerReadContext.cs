@@ -9,7 +9,9 @@ namespace System.Runtime.Serialization
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.Diagnostics;
+#if !MONO
     using System.ServiceModel.Diagnostics;
+#endif
     using System.Text;
     using System.Xml;
     using System.Xml.Serialization;

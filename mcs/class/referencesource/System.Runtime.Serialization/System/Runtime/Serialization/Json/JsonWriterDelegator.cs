@@ -6,7 +6,9 @@ namespace System.Runtime.Serialization.Json
 {
     using System.Xml;
     using System.Globalization;
+#if !MONO
     using System.ServiceModel;
+#endif
 
 #if USE_REFEMIT
     public class JsonWriterDelegator : XmlWriterDelegator

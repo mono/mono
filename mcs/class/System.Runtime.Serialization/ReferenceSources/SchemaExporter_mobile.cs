@@ -10,7 +10,6 @@ namespace System.Runtime.Serialization
 	using System.IO;
 	using System.Reflection;
 	using System.Runtime.Diagnostics;
-	using System.ServiceModel.Diagnostics;
 	using System.Security;
 	using System.Xml;
 	using System.Xml.Schema;

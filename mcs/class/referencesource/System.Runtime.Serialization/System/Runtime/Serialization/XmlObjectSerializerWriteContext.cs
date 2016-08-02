@@ -14,7 +14,9 @@ namespace System.Runtime.Serialization
     using System.Xml;
     using System.Collections.Generic;
     using System.Xml.Serialization;
+#if !MONO
     using System.ServiceModel.Diagnostics;
+#endif
     using System.Security;
     using System.Security.Permissions;
     using System.Runtime.CompilerServices;
