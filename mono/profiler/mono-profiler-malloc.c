@@ -1,14 +1,8 @@
 /*
- * mono-profiler-aot.c: Ahead of Time Compiler Profiler for Mono.
+ * mono-profiler-malloc.c: Runtime memory allocation profiler for mono.
  *
+ * Copyright 2016 Microsoft.
  *
- * Copyright 2008-2009 Novell, Inc (http://www.novell.com)
- *
- * This profiler collects profiling information usable by the Mono AOT compiler
- * to generate better code. It saves the information into files under ~/.mono. 
- * The AOT compiler can load these files during compilation.
- * Currently, only the order in which methods were compiled is saved, 
- * allowing more efficient function ordering in the AOT files.
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
@@ -30,20 +24,41 @@
 #include <sys/stat.h>
 #include <pthread.h>
 #include <sys/mman.h>
+#include <glib.h>
 
-//OSX only
+//XXX for now all configuration is here
+#define TAG_BASED_DEDUP TRUE
+
+#define PRINT_ALLOCATION TRUE
+#define PRINT_MEMDOM FALSE
+#define PRINT_RT_ALLOC FALSE
+#define POKE_HASH_TABLES FALSE
+#define PRINT_VM_OPS FALSE
+
+//portability bits
+#ifdef __APPLE__
+
 #include <malloc/malloc.h>
 #include <execinfo.h>
 #include <dlfcn.h>
 
-//XXX for now all configuration is here
-#define PRINT_ALLOCATION TRUE
-#define PRINT_MEMDOM FALSE
-#define PRINT_RT_ALLOC FALSE
-#define STRAY_ALLOCS FALSE
-#define POKE_HASH_TABLES FALSE
+#define COLLECT_BACKTRACES
 
-#define PRINT_VM_OPS FALSE
+static size_t
+malloc_waste (void *address, size_t size)
+{
+	return malloc_size (address) - size;
+}
+
+#else
+
+static size_t
+malloc_waste (void *address, size_t alloc)
+{
+	return 0;
+}
+
+#endif
 
 void mono_profiler_startup (const char *desc);
 static void dump_alloc_stats (void);
@@ -54,7 +69,7 @@ struct _MonoProfiler {
 };
 
 /*config */
-static bool log_malloc, log_valloc, log_memdom;
+static int log_malloc, log_valloc, log_memdom;
 
 /* Misc stuff */
 static pthread_mutex_t alloc_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -84,7 +99,7 @@ struct _HashNode {
 	HashNode *next;
 };
 
-typedef bool (*ht_equals) (const void *keyA, const void *keyB);
+typedef gboolean (*ht_equals) (const void *keyA, const void *keyB);
 typedef unsigned int (*ht_hash) (const void *key);
 
 typedef struct {
@@ -188,13 +203,13 @@ hash_str (const void *key)
 	return abs (hash);
 }
 
-static bool
+static gboolean
 equals_ptr (const void *a, const void *b)
 {
 	return a == b;
 }
 
-static bool
+static gboolean
 equals_str (const void *a, const void *b)
 {
 	return !strcmp (a, b);
@@ -205,8 +220,10 @@ typedef struct {
 	size_t size;
 	size_t waste;
 	const char *tag;
+#ifdef COLLECT_BACKTRACES
 	const char *alloc_func;
 	char *ips[4];
+#endif
 } AllocInfo;
 
 /* malloc tracking */
@@ -343,30 +360,6 @@ memdom_alloc (MonoProfiler *prof, void* memdom, size_t size, const char *tag)
 		printf ("memdom %p alloc %zu %s\n", memdom, size, tag);
 }
 
-static const char*
-filter_bt (int skip, const char *filter_funcs)
-{
-	void *bt_ptrs [10];
- 	int c = backtrace (bt_ptrs, 10);
-	if (c) {
-		int i;
-		const char *it = NULL;
-		for (i = 0; i < c - (skip + 1); ++i) {
-			Dl_info info;
-			if (!dladdr (bt_ptrs [skip + i], &info))
-				continue;
-			if (strstr (info.dli_sname, "_malloc") || strstr (info.dli_sname, "report_alloc"))
-				continue;
-			if (strstr (info.dli_sname, filter_funcs))
-				continue;
-			it = info.dli_sname;
-			break;
-		}
-		return it;
-	}
-	return NULL;
-}
-
 static void
 runtime_malloc_event (MonoProfiler *prof, void *address, size_t size, const char *tag)
 {
@@ -393,12 +386,13 @@ runtime_malloc_event (MonoProfiler *prof, void *address, size_t size, const char
 	info->tag = tag;
 	update_tag (&malloc_tags, tag, info->size, info->waste);
 
-
+#ifdef COLLECT_BACKTRACES
 	if (info->alloc_func) {
 		//we got it reported, take away from the stray list
 		update_tag (&malloc_tags_by_fun, info->alloc_func, -info->size, -info->waste);
 		info->alloc_func = NULL;
 	}
+#endif
 
 done:
 	alloc_unlock ();
@@ -630,7 +624,7 @@ struct _VMEntry {
 
 static VMEntry *vm_entries;
 
-static bool
+static gboolean
 entry_overlaps (VMEntry *e, char *addr_start, char *addr_end)
 {
 	return (e->addr_start <= addr_start && e->addr_end > addr_start) ||
@@ -816,11 +810,9 @@ dump_actual_map (void)
 		free (array);
 	}
 
-#define TAG_BASED_DEDUP TRUE
-
 	if (TAG_BASED_DEDUP) {
 		for (entry = vm_entries; entry; entry = entry->next) {
-			while (true) {
+			while (TRUE) {
 				VMEntry *next = entry->next;
 				if (next && entry->addr_end == next->addr_start && entry->tag == next->tag && entry->prot == next->prot) {
 					entry->addr_end = next->addr_end;
@@ -932,8 +924,11 @@ del_alloc (void *address)
 		if (info->tag)
 			update_tag (&malloc_tags, info->tag, -info->size, -info->waste);
 
+#ifdef COLLECT_BACKTRACES
 		if (info->alloc_func)
 			update_tag (&malloc_tags_by_fun, info->alloc_func, -info->size, -info->waste);
+#endif
+
 		free (info);
 	}
 
@@ -945,8 +940,9 @@ add_alloc (void *address, size_t size, const char *tag)
 {
 	AllocInfo *info = malloc (sizeof (AllocInfo));
 	info->size = size;
-	info->waste = malloc_size (address) - size;
+	info->waste = malloc_waste (address, size);
 	info->tag = NULL;
+#ifdef COLLECT_BACKTRACES
 	info->alloc_func = NULL;
 	info->ips [0] = info->ips [1] = info->ips [2] = info->ips [3] = NULL;
 	{
@@ -957,6 +953,7 @@ add_alloc (void *address, size_t size, const char *tag)
 			info->ips [i] = bt_ptrs [i + 2];
 		}
 	}
+#endif
 
 	alloc_lock ();
 	hashtable_add (&alloc_table, &info->node, address);
@@ -964,28 +961,6 @@ add_alloc (void *address, size_t size, const char *tag)
 	alloc_bytes += size;
 	++alloc_count;
 	alloc_waste += info->waste;
-
-	if (STRAY_ALLOCS) {
-		int skip = 2;
-		void *bt_ptrs [10];
-	 	int c = backtrace (bt_ptrs, 10);
-		if (c) {
-			int i;
-			const char *it = NULL;
-			for (i = 0; i < c - (skip + 1); ++i) {
-				Dl_info info;
-				if (!dladdr (bt_ptrs [skip + i], &info))
-					continue;
-				if (strstr (info.dli_sname, "g_malloc") || strstr (info.dli_sname, "g_calloc") || strstr (info.dli_sname, "m_malloc")
-					|| strstr (info.dli_sname, "g_realloc") || strstr (info.dli_sname, "g_memdup") || strstr (info.dli_sname, "g_slist_alloc") || strstr (info.dli_sname, "g_list_alloc")
-					|| strstr (info.dli_sname, "g_strndup") || strstr (info.dli_sname, "g_vasprintf") || strstr (info.dli_sname, "g_slist_prepend"))
-					continue;
-				it = info.dli_sname;
-				break;
-			}
-			info->alloc_func = it;
-		}
-	}
 
 	alloc_unlock ();
 
@@ -1087,6 +1062,7 @@ dump_stats (void)
 
 		dump_tag_bag (&malloc_tags, "malloc", 0);
 
+#ifdef COLLECT_BACKTRACES
 		// Decode function names of allocations that did not get tagged by the runtime and are still alive
 		HT_FOREACH (&alloc_table, AllocInfo, info, {
 			if (!info->tag && !info->alloc_func) {
@@ -1114,13 +1090,6 @@ dump_stats (void)
 
 		dump_tag_bag (&malloc_tags_by_fun, "malloc-by-fun", 0);
 
-		if (STRAY_ALLOCS) {
-			HT_FOREACH (&alloc_table, AllocInfo, info, {
-					if (!info->tag)
-						printf ("stay alloc from %s\n", info->alloc_func);
-			});
-		}
-
 		if (POKE_HASH_TABLES) {
 			HT_FOREACH (&alloc_table, AllocInfo, info, {
 				if (!info->tag || strcmp ("ghashtable", info->tag))
@@ -1128,6 +1097,7 @@ dump_stats (void)
 				printf ("hashtable size %d from %s\n", g_hash_table_size ((GHashTable*)info->node.key), info->alloc_func);
 			});
 		}
+#endif
 	}
 
 	if (log_memdom) {
@@ -1225,7 +1195,7 @@ gc_event (MonoProfiler *prof, MonoGCEvent event, int generation)
 }
 
 static void
-usage (bool do_exit)
+usage (gboolean do_exit)
 {
 	printf ("Usage: mono --profile=malloc[:OPTION1[,OPTION2...]] program.exe\n");
 	printf ("Options:\n");
@@ -1262,7 +1232,7 @@ match_option (const char* p, const char *opt, char **rval)
 				*rval = NULL;
 				return p + len + (p [len] == ',');
 			}
-			usage (true);
+			usage (TRUE);
 		} else {
 			if (p [len] == 0)
 				return p + len;
@@ -1279,7 +1249,7 @@ mono_profiler_startup (const char *desc)
 {
 	char filename[1024];
 	MonoProfiler *prof;
-	bool use_stdout = FALSE;
+	gboolean use_stdout = FALSE;
 
 	prof = g_new0 (MonoProfiler, 1);
 
@@ -1287,7 +1257,7 @@ mono_profiler_startup (const char *desc)
 
 	const char *p = desc, *opt = NULL;
 	if (strncmp (p, "malloc", 6))
-		usage (true);
+		usage (TRUE);
 	p += 6;
 	if (*p == ':')
 		p++;
@@ -1299,7 +1269,7 @@ mono_profiler_startup (const char *desc)
 		}
 
 		if ((opt = match_option (p, "help", NULL)) != p) {
-			usage (false);
+			usage (FALSE);
 		} else if ((opt = match_option (p, "log-malloc", NULL)) != p) {
 			log_malloc = TRUE;
 		} else if ((opt = match_option (p, "log-valloc", NULL)) != p) {
