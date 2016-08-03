@@ -562,6 +562,20 @@ op_name (int flags)
 	return "no-clue";
 }
 
+
+static gboolean
+safe_append (char *dest, const char *str, size_t buffer_len)
+{
+	int dest_len = strlen (dest);
+	int str_len = strlen (str);
+
+	if (dest_len + 1 >= buffer_len)
+		return FALSE;
+
+	strncat (dest, str, MIN (str_len, buffer_len - (dest_len + 1)));
+	return (dest_len + str_len + 1) <= buffer_len;
+}
+
 static const char*
 op_flags (int flags)
 {
@@ -571,26 +585,26 @@ op_flags (int flags)
 	buffer [0] = 0;
 
 	if (!flags)
-		strlcat (buffer, "none ", sizeof (buffer));
+		safe_append (buffer, "none ", sizeof (buffer));
 
 	if (flags & MONO_MMAP_READ)
-		strlcat (buffer, "read ", sizeof (buffer));
+		safe_append (buffer, "read ", sizeof (buffer));
 	if (flags & MONO_MMAP_WRITE)
-		strlcat (buffer, "write ", sizeof (buffer));
+		safe_append (buffer, "write ", sizeof (buffer));
 	if (flags & MONO_MMAP_EXEC)
-		strlcat (buffer, "exec ", sizeof (buffer));
+		safe_append (buffer, "exec ", sizeof (buffer));
 	if (flags & MONO_MMAP_DISCARD)
-		strlcat (buffer, "discard ", sizeof (buffer));
+		safe_append (buffer, "discard ", sizeof (buffer));
 	if (flags & MONO_MMAP_PRIVATE)
-		strlcat (buffer, "private ", sizeof (buffer));
+		safe_append (buffer, "private ", sizeof (buffer));
 	if (flags & MONO_MMAP_SHARED)
-		strlcat (buffer, "shared ", sizeof (buffer));
+		safe_append (buffer, "shared ", sizeof (buffer));
 	if (flags & MONO_MMAP_ANON)
-		strlcat (buffer, "anon ", sizeof (buffer));
+		safe_append (buffer, "anon ", sizeof (buffer));
 	if (flags & MONO_MMAP_FIXED)
-		strlcat (buffer, "fixed ", sizeof (buffer));
+		safe_append (buffer, "fixed ", sizeof (buffer));
 	if (flags & MONO_MMAP_32BIT)
-		strlcat (buffer, "32bits ", sizeof (buffer));
+		safe_append (buffer, "32bits ", sizeof (buffer));
 
 	return buffer;
 }
@@ -1022,12 +1036,12 @@ dump_memdom (MemDomInfo *memdom)
 
 	case MONO_PROFILE_MEMDOM_IMAGE_SET: {
 		MonoImageSet *set = (MonoImageSet*)memdom->node.key;
-		strlcat (name, "imageset", sizeof (name));
+		safe_append (name, "imageset", sizeof (name));
 		int i;
 		for (i = 0; i < set->nimages; ++i) {
-			if (strlcat (name, "_", sizeof (name)) >= sizeof(name))
+			if (!safe_append (name, "_", sizeof (name)))
 				break;
-			if (strlcat (name, set->images [i]->module_name, sizeof (name)) >= sizeof(name))
+			if (!safe_append (name, set->images [i]->module_name, sizeof (name)))
 				break;
 		}
 		mempool = set->mempool;
