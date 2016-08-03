@@ -6,7 +6,7 @@ namespace Mono
 {
 	class StackFrameData
 	{
-		static Regex regex = new Regex (@"\w*at (?<Method>.+) *(\[0x(?<IL>.+)\]|<0x.+ \+ 0x(?<NativeOffset>.+)>( (?<MethodIndex>\d+)|)) in <filename unknown>:0");
+		static Regex regex = new Regex (@"\w*at (?<Method>.+) *(\[0x(?<IL>.+)\]|<0x.+ \+ 0x(?<NativeOffset>.+)>( (?<MethodIndex>\d+)|)) in <(?<MVID>[^>#]+)(#(?<AOTID>[^>]+)|)>:0");
 
 		public readonly string TypeFullName;
 		public readonly string MethodSignature;
@@ -14,13 +14,13 @@ namespace Mono
 		public readonly bool IsILOffset;
 		public readonly uint MethodIndex;
 		public readonly string Line;
-
-		public readonly bool IsValid;
+		public readonly string Mvid;
+		public readonly string Aotid;
 
 		public string File { get; private set; }
 		public int LineNumber { get; private set; }
 
-		private StackFrameData (string line, string typeFullName, string methodSig, int offset, bool isILOffset, uint methodIndex)
+		private StackFrameData (string line, string typeFullName, string methodSig, int offset, bool isILOffset, uint methodIndex, string mvid, string aotid)
 		{
 			LineNumber = -1;
 
@@ -30,15 +30,8 @@ namespace Mono
 			Offset = offset;
 			IsILOffset = isILOffset;
 			MethodIndex = methodIndex;
-
-			IsValid = true;
-		}
-
-		private StackFrameData (string line)
-		{
-			LineNumber = -1;
-
-			Line = line;
+			Mvid = mvid;
+			Aotid = aotid;
 		}
 
 		public static bool TryParse (string line, out StackFrameData stackFrame)
@@ -46,13 +39,8 @@ namespace Mono
 			stackFrame = null;
 
 			var match = regex.Match (line);
-			if (!match.Success) {
-				if (line.Trim ().StartsWith ("at ", StringComparison.InvariantCulture)) {
-					stackFrame = new StackFrameData (line);
-					return true;
-				}
+			if (!match.Success)
 				return false;
-			}
 
 			string typeFullName, methodSignature;
 			var methodStr = match.Groups ["Method"].Value.Trim ();
@@ -67,7 +55,10 @@ namespace Mono
 			if (!string.IsNullOrEmpty (match.Groups ["MethodIndex"].Value))
 				methodIndex = uint.Parse (match.Groups ["MethodIndex"].Value, CultureInfo.InvariantCulture);
 
-			stackFrame = new StackFrameData (line, typeFullName, methodSignature, offset, isILOffset, methodIndex);
+			var mvid = match.Groups ["MVID"].Value;
+			var aotid = match.Groups ["AOTID"].Value;
+
+			stackFrame = new StackFrameData (line, typeFullName, methodSignature, offset, isILOffset, methodIndex, mvid, aotid);
 
 			return true;
 		}
@@ -106,11 +97,9 @@ namespace Mono
 			LineNumber = lineNumber;
 		}
 
-		public override string ToString () {
-			if (Line.Contains ("<filename unknown>:0") && LineNumber != -1)
-				return Line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", File, LineNumber));
-
-			return Line;
+		public override string ToString ()
+		{
+			return string.Format ("{0} in {1}:{2} ", Line.Substring (0, Line.IndexOf(" in <", StringComparison.Ordinal)), File, LineNumber);
 		}
 	}
 }
