@@ -204,7 +204,7 @@ namespace Mono.CodeContracts.Rewrite {
 				method.Parameters.Add (new ParameterDefinition ("message", ParameterAttributes.None, typeString));
 				method.Parameters.Add (new ParameterDefinition ("conditionText", ParameterAttributes.None, typeString));
 				method.Parameters.Add (new ParameterDefinition ("inner", ParameterAttributes.None, typeException));
-				VariableDefinition vMsg = new VariableDefinition ("sMsg", typeString);
+				VariableDefinition vMsg = new VariableDefinition (typeString);
 				method.Body.Variables.Add (vMsg);
 				method.Body.InitLocals = true;
 				var il = method.Body.GetILProcessor ();

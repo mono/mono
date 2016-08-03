@@ -3007,26 +3007,6 @@ static class CecilExtensions {
 		return method.GenericParameters.Count > 0;
 	}
 
-	public static MemberReference Resolve (this MemberReference member)
-	{
-		FieldReference fr = member as FieldReference;
-		if (fr != null)
-			return fr.Resolve ();
-		MethodReference mr = member as MethodReference;
-		if (mr != null)
-			return mr.Resolve ();
-		TypeReference tr = member as TypeReference;
-		if (tr != null)
-			return tr.Resolve ();
-		PropertyReference pr = member as PropertyReference;
-		if (pr != null)
-			return pr;
-		EventReference er = member as EventReference;
-		if (er != null)
-			return er;
-		throw new NotSupportedException ("Cannot find definition for " + member.ToString ());
-	}
-
 	public static TypeReference GetUnderlyingType (this TypeDefinition type)
 	{
 		if (!type.IsEnum)
@@ -3256,7 +3236,8 @@ static class DocUtils {
 	{
 		HashSet<string> inheritedInterfaces = GetInheritedInterfaces (type);
 		List<TypeReference> userInterfaces = new List<TypeReference> ();
-		foreach (TypeReference iface in type.Interfaces) {
+		foreach (var ii in type.Interfaces) {
+			var iface = ii.InterfaceType;
 			TypeReference lookup = iface.Resolve () ?? iface;
 			if (!inheritedInterfaces.Contains (GetQualifiedTypeName (lookup)))
 				userInterfaces.Add (iface);
@@ -3275,9 +3256,9 @@ static class DocUtils {
 		Action<TypeDefinition> a = null;
 		a = t => {
 			if (t == null) return;
-			foreach (TypeReference r in t.Interfaces) {
-				inheritedInterfaces.Add (GetQualifiedTypeName (r));
-				a (r.Resolve ());
+			foreach (var r in t.Interfaces) {
+				inheritedInterfaces.Add (GetQualifiedTypeName (r.InterfaceType));
+				a (r.InterfaceType.Resolve ());
 			}
 		};
 		TypeReference baseRef = type.BaseType;
@@ -3290,8 +3271,8 @@ static class DocUtils {
 			else
 				baseRef = null;
 		}
-		foreach (TypeReference r in type.Interfaces)
-			a (r.Resolve ());
+		foreach (var r in type.Interfaces)
+			a (r.InterfaceType.Resolve ());
 		return inheritedInterfaces;
 	}
 }
@@ -4366,8 +4347,13 @@ public abstract class MemberFormatter {
 	{
 		return e.Name;
 	}
+	
+	public string GetDeclaration (MemberReference mreference)
+	{
+		return GetDeclaration (mreference.Resolve ());
+	}
 
-	public virtual string GetDeclaration (MemberReference member)
+	string GetDeclaration (IMemberDefinition member)
 	{
 		if (member == null)
 			throw new ArgumentNullException ("member");
@@ -4631,8 +4617,8 @@ class ILFullMemberFormatter : MemberFormatter {
 				buf.Append (full.GetName (type.BaseType).Substring ("class ".Length));
 		}
 		bool first = true;
-		foreach (var name in type.Interfaces.Where (i => MDocUpdater.IsPublic (i.Resolve ()))
-				.Select (i => full.GetName (i))
+		foreach (var name in type.Interfaces.Where (i => MDocUpdater.IsPublic (i.InterfaceType.Resolve ()))
+				.Select (i => full.GetName (i.InterfaceType))
 				.OrderBy (n => n)) {
 			if (first) {
 				buf.Append (" implements ");
@@ -5682,15 +5668,6 @@ class SlashDocMemberFormatter : MemberFormatter {
 				buf.Append ('`').Append (numArgs);
 		}
 		return buf;
-	}
-
-	public override string GetDeclaration (MemberReference member)
-	{
-		TypeReference r = member as TypeReference;
-		if (r != null) {
-			return "T:" + GetTypeName (r);
-		}
-		return base.GetDeclaration (member);
 	}
 
 	protected override string GetConstructorName (MethodReference constructor)
