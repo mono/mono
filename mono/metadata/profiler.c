@@ -799,6 +799,34 @@ mono_profiler_install_iomap (MonoProfileIomapFunc callback)
 }
 
 void
+mono_profiler_install_memdom (MonoProfilerMemdomNew memdom_new, MonoProfilerMemdomDestroy memdom_destroy, MonoProfilerMemdomAlloc memdom_alloc)
+{
+	if (!prof_list)
+		return;
+	prof_list->memdom_new = memdom_new;
+	prof_list->memdom_destroy = memdom_destroy;
+	prof_list->memdom_alloc = memdom_alloc;
+}
+
+void
+mono_profiler_install_malloc (MonoProfilerAlloc malloc_event)
+{
+	if (!prof_list)
+		return;
+	prof_list->malloc_event = malloc_event;
+}
+
+void
+mono_profiler_install_valloc (MonoProfilerVAlloc valloc_event, MonoProfilerVFree vfree_event, MonoProfilerMProtect mprotect_event)
+{
+	if (!prof_list)
+		return;
+	prof_list->valloc_event = valloc_event;
+	prof_list->vfree_event = vfree_event;
+	prof_list->mprotect_event = mprotect_event;
+}
+
+void
 mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, gconstpointer data) {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
