@@ -71,6 +71,7 @@ namespace System.Net.Mail {
 		ICredentialsByHost credentials;
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
+		SmtpDeliveryFormat deliveryFormat;
 		bool enableSsl;
 #if SECURITY_DEP		
 		X509CertificateCollection clientCertificates;
@@ -223,7 +224,15 @@ namespace System.Net.Mail {
 				port = value;
 			}
 		}
-
+		
+		public SmtpDeliveryFormat DeliveryFormat {
+			get { return deliveryFormat; }
+			set {
+				CheckState ();
+				deliveryFormat = value;
+			}
+		}
+		
 		[MonoTODO]
 		public ServicePoint ServicePoint {
 			get { throw new NotImplementedException (); }
