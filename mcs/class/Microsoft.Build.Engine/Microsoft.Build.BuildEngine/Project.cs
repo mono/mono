@@ -1077,6 +1077,11 @@ namespace Microsoft.Build.BuildEngine {
 			if (!String.IsNullOrEmpty (ToolsVersion))
 				return ToolsVersion;
 
+#if XBUILD_14
+			return "14.0";
+#elif XBUILD_12
+			return "12.0";
+#else
 			if (!HasToolsVersionAttribute)
 				return parentEngine.DefaultToolsVersion;
 
@@ -1088,6 +1093,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			return DefaultToolsVersion;
+#endif
 		}
 		
 		void AddProjectExtensions (XmlElement xmlElement)
