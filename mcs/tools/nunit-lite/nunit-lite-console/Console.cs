@@ -76,6 +76,9 @@ namespace NUnitLite
         public static void Main(string[] args)
         {
             new TextUI().Execute(args);
+
+            // Force exit, otherwise remaining threads will keep process alive.
+            Environment.Exit(Environment.ExitCode);
         }
     }
 }
