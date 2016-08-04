@@ -53,7 +53,7 @@ static size_t dynamic_code_frees_count;
 #define MAX_WASTAGE 32
 #define MIN_BSIZE 32
 
-#ifdef __x86_64__
+#if !defined(MONO_ARCH_NOMAP32BIT) && defined(__x86_64__)
 #define ARCH_MAP_FLAGS MONO_MMAP_32BIT
 #else
 #define ARCH_MAP_FLAGS 0

@@ -754,6 +754,7 @@ AC_ARG_WITH(monotouch_tv,    [  --with-monotouch_tv=yes,no      If you want to b
 AC_ARG_WITH(bitcode,         [  --with-bitcode=yes,no           If bitcode is enabled (defaults to no)],                              [], [with_bitcode=default])
 AC_ARG_WITH(xammac,          [  --with-xammac=yes,no            If you want to build the Xamarin.Mac assemblies (defaults to no)],    [], [with_xammac=default])
 AC_ARG_WITH(mobile_static,   [  --with-mobile_static=yes,no     If you want to build the mobile_static assemblies (defaults to no)],  [], [with_mobile_static=default])
+AC_ARG_WITH(bitcode_valgrind,         [  --with-bitcode_valgrind=yes,no           If bitcode C defines will aid valgrind (defaults to no)],                              [], [with_bitcode_valgrind=default])
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,mobile_static,bitcode_mobile_static   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 
@@ -840,6 +841,11 @@ elif test x$with_runtime_preset = xbitcode_mobile_static; then
 
    AOT_BUILD_FLAGS="--aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--llvmonly"
+
+if test x$with_bitcode_valgrind = xyes; then
+   CFLAGS="$CFLAGS -DMONO_ARCH_NOMAP32BIT=1"
+fi
+
 else
    with_profile4_x_default=yes
    with_monodroid_default=no
@@ -4272,6 +4278,10 @@ fi
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test x$with_bitcode_valgrind = xyes; then
+      echo 'RUNTIME_TOOLING_INJECT="valgrind --tool=memcheck --track-origins=yes --leak-check=full --show-leak-kinds=all --quiet --xml=yes --xml-file=valgrind_log_`date +"%s.%N"`.xml  -- ' "$mono_build_root/$mono_runtime" '"' >> $srcdir/$mcsdir/build/config.make
     fi
 
   fi
