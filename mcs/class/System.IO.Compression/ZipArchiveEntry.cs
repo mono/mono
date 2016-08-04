@@ -210,7 +210,7 @@ namespace System.IO.Compression
 				throw new IOException("The entry is already open for reading or writing.");
 
 			wasDeleted = true;
-			Archive.zipFile.RemoveEntry(entry);
+			Archive.RemoveEntryInternal(this);
 		}
 
 		public Stream Open()

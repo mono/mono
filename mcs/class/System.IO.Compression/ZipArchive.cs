@@ -237,6 +237,12 @@ namespace System.IO.Compression
 			}
 		}
 
+		internal void RemoveEntryInternal(ZipArchiveEntry entry)
+		{
+			zipFile.RemoveEntry(entry.entry);
+			entries.Remove(entry);
+		}
+
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposed)
