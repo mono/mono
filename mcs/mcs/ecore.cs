@@ -126,11 +126,12 @@ namespace Mono.CSharp {
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
-	public abstract class Expression {
+	public abstract class Expression
+	{
 		public ExprClass eclass;
 		protected TypeSpec type;
 		protected Location loc;
-		
+
 		public TypeSpec Type {
 			get { return type; }
 			set { type = value; }
@@ -258,7 +259,7 @@ namespace Mono.CSharp {
 		{
 			report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
-		
+
 		public void Error_InvalidExpressionStatement (BlockContext bc)
 		{
 			Error_InvalidExpressionStatement (bc.Report, loc);
@@ -286,6 +287,10 @@ namespace Mono.CSharp {
 				return;
 
 			if (type == InternalType.ErrorType || target == InternalType.ErrorType)
+				return;
+
+			if (type.MemberDefinition.DeclaringAssembly.IsMissing ||
+				target.MemberDefinition.DeclaringAssembly.IsMissing)
 				return;
 
 			string from_type = type.GetSignatureForError ();
