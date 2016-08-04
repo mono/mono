@@ -1084,6 +1084,27 @@ namespace MonoTests.System.Diagnostics
 				Assert.Fail ();
 			}
 		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestExitedRaisedTooSoon ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("using sleep command, only available on unix");
+
+			int sleeptime = 5;
+
+			using (Process p = Process.Start("sleep", sleeptime.ToString ())) {
+				ManualResetEvent mre = new ManualResetEvent (false);
+
+				p.EnableRaisingEvents = true;
+				p.Exited += (sender, e) => {
+					mre.Set ();
+				};
+
+				Assert.IsFalse (mre.WaitOne ((sleeptime - 2) * 1000), "Exited triggered before the process returned");
+			}
+		}
 #endif // MONO_FEATURE_PROCESS_START
 	}
 }
