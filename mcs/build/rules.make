@@ -116,12 +116,6 @@ endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 
-# If the profile is using nunit-lite, use it
-TEST_HARNESS=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe
-
-# Make sure propagates
-export TEST_HARNESS
-
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif
