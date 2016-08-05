@@ -23,7 +23,7 @@ if [[ ${CI_TAGS} == *'mobile_static'* ]];
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
-elif [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]];
+elif [[ ${label} != w* ]] && [[ ${label} != 'debian-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]] && [[ ${CI_TAGS} != *'monolite'* ]];
     then
     # Override the defaults to skip profiles
     # only enable the mobile profiles and mobile_static on the main architectures
