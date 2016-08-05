@@ -55,12 +55,6 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
 }
 
-gboolean
-mono_threads_suspend_needs_abort_syscall (void)
-{
-	return FALSE;
-}
-
 #else /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
 
 gboolean
@@ -188,12 +182,6 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	} while (ret == KERN_ABORTED);
 
 	g_assert (ret == KERN_SUCCESS);
-}
-
-gboolean
-mono_threads_suspend_needs_abort_syscall (void)
-{
-	return TRUE;
 }
 
 #endif /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */

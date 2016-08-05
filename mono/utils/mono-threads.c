@@ -1062,7 +1062,7 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 	MonoThreadHazardPointers *hp;
 	MonoThreadInfo *info;
 
-	if (tid == mono_native_thread_id_get () || !mono_threads_suspend_needs_abort_syscall ())
+	if (tid == mono_native_thread_id_get ())
 		return;
 
 	hp = mono_hazard_pointer_get ();

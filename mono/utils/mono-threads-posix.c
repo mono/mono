@@ -656,10 +656,4 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 		mono_threads_add_to_pending_operation_set (info);
 }
 
-gboolean
-mono_threads_suspend_needs_abort_syscall (void)
-{
-	return TRUE;
-}
-
 #endif /* defined(USE_POSIX_BACKEND) */

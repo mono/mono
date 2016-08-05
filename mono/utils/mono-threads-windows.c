@@ -147,12 +147,6 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	CloseHandle (handle);
 }
 
-gboolean
-mono_threads_suspend_needs_abort_syscall (void)
-{
-	return TRUE;
-}
-
 #endif
 
 #if defined (HOST_WIN32)
