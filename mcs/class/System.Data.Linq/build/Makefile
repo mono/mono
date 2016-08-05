@@ -32,8 +32,7 @@ $(sqlite_tests): $(sqlite_tests_dep)
 test-sqlite: $(sqlite_tests)
 
 RUN_TEST_COMMAND = \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(1) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(1:.dll=)-$(PROFILE).xml -out:TestResult-$(1:.dll=)-$(PROFILE).out $(FIXTURE_ARG) $(TESTNAME_ARG) ; \
-	xsltproc $(topdir)/build/nunit-summary.xsl TestResult-$(1)-$(PROFILE).xml > TestResult-$(1:.dll=)-$(PROFILE).log
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(1) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(1:.dll=)-$(PROFILE).xml -out:TestResult-$(1:.dll=)-$(PROFILE).out $(FIXTURE_ARG) $(TESTNAME_ARG) ;
 
 run-test-sqlite:
 	$(call RUN_TEST_COMMAND,$(sqlite_tests))
