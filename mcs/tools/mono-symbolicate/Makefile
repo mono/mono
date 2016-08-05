@@ -27,7 +27,7 @@ CHECK_DIFF = @\
 	$(MONO) $(TEST_EXE) > $(STACKTRACE_FILE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) $(MSYM_DIR) $(STACKTRACE_FILE) > $(SYMBOLICATE_RAW_FILE); \
 	sed "s/) .* in .*\/mcs\//) in mcs\//" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
-	DIFF=$$(diff $(SYMBOLICATE_RESULT_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
+	DIFF=$$(diff -up $(SYMBOLICATE_EXPECTED_FILE) $(SYMBOLICATE_RESULT_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \
 		echo "If $(SYMBOLICATE_RESULT_FILE) is correct copy it to $(SYMBOLICATE_EXPECTED_FILE)."; \
