@@ -3539,6 +3539,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 #endif /* DISABLE_JIT */
 
 	info = mono_wrapper_info_create (mb, subtype);
+	info->d.delegate_invoke.method = method;
 
 	if (ctx) {
 		MonoMethod *def;
