@@ -289,6 +289,7 @@ net_4_x_parallel_dirs := \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
 	System.Reflection.Context \
+	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \
