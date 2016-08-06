@@ -72,15 +72,22 @@ namespace Mono
 			if (ilOffset < 0)
 				return false;
 
-			SequencePoint sp = null;
-			foreach (var instr in method.Body.Instructions) {
-				if (instr.SequencePoint != null)
-					sp = instr.SequencePoint;
-				
-				if (instr.Offset >= ilOffset) {
+			if (!method.DebugInformation.HasSequencePoints)
+				return false;
+
+			SequencePoint prev = null;
+			foreach (var sp in method.DebugInformation.SequencePoints.OrderBy (l => l.Offset)) {
+				if (sp.Offset >= ilOffset) {
 					sfData.SetLocation (sp.Document.Url, sp.StartLine);
 					return true;
 				}
+
+				prev = sp;
+			}
+
+			if (prev != null) {
+				sfData.SetLocation (prev.Document.Url, prev.StartLine);
+				return true;
 			}
 
 			return false;

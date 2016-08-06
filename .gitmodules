@@ -35,3 +35,7 @@
 [submodule "external/buildtools"]
 	path = external/buildtools
 	url = git://github.com/mono/buildtools.git
+[submodule "external/cecil-legacy"]
+	path = external/cecil-legacy
+	url = git://github.com/mono/cecil.git
+	branch = mono-legacy-0.9.5

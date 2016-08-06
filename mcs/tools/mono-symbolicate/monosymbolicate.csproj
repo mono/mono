@@ -45,6 +45,13 @@
     <Compile Include="LocationProvider.cs" />
     <Compile Include="SeqPointInfo.cs" />
     <Compile Include="symbolicate.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="StackFrameData.cs" />
+    <Compile Include="StackTraceMetadata.cs" />
+    <Compile Include="SymbolManager.cs" />
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs">
+      <Link>Options.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

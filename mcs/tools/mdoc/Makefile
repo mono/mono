@@ -16,7 +16,7 @@ MDOC_COMMON_FLAGS = \
 LIB_REFS = monodoc System System.Xml System.Core Mono.Cecil ICSharpCode.SharpZipLib System.Xml.Linq System.Web
 	
 LOCAL_MCS_FLAGS = $(MDOC_COMMON_FLAGS)
-PROGRAM = mdoc.exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/mdoc.exe
 PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
 
 ifdef NET
@@ -65,11 +65,6 @@ $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
 PROGRAM_COMPILE = $(CSCOMPILE) -platform:x86
 
 include ../../build/executable.make
-
-$(PROGRAM) : $(build_lib)
-	cp $< $@
-
-$(PROGRAM) : Makefile
 
 MONO = \
 	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
