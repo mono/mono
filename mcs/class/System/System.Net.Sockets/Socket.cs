@@ -1244,7 +1244,6 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			// FIXME: do non-blocking sockets Poll here?
 			int error = 0;
 			foreach (IPAddress address in addresses) {
 				IPEndPoint iep = new IPEndPoint (address, port);
@@ -1258,19 +1257,7 @@ namespace System.Net.Sockets
 					seed_endpoint = iep;
 					return;
 				}
-				if (error != (int)SocketError.InProgress && error != (int)SocketError.WouldBlock)
-					continue;
-
-				if (!is_blocking) {
-					Poll (-1, SelectMode.SelectWrite);
-					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-					if (error == 0) {
-						is_connected = true;
-						is_bound = true;
-						seed_endpoint = iep;
-						return;
-					}
-				}
+				// On a non-blocking socket, we want to continue to pass the exception back to the user.
 			}
 
 			if (error != 0)
