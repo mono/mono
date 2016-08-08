@@ -315,7 +315,7 @@ binary_protocol_get_buffer (int length)
 	if (buffer && buffer->index + length <= BINARY_PROTOCOL_BUFFER_SIZE)
 		return buffer;
 
-	new_buffer = (BinaryProtocolBuffer *)sgen_alloc_os_memory (sizeof (BinaryProtocolBuffer), (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "debugging memory");
+	new_buffer = (BinaryProtocolBuffer *)sgen_alloc_os_memory (sizeof (BinaryProtocolBuffer), (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "sgen:debugging memory");
 	new_buffer->next = buffer;
 	new_buffer->index = 0;
 

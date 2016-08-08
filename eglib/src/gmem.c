@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
+#include <eg-alloc.h>
 
 #if defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 
@@ -59,6 +60,23 @@ g_mem_set_vtable (GMemVTable* vtable)
 #define G_CALLOC_INTERNAL calloc
 #define G_MALLOC_INTERNAL malloc
 #endif
+
+
+static EGAllocTagCallback eg_alloc_tag_callback;
+
+void
+eg_mem_set_alloc_tag_callback (EGAllocTagCallback cb)
+{
+	eg_alloc_tag_callback = cb;
+}
+
+void
+eg_report_alloc (void *p, size_t s, const char *t)
+{
+	if (eg_alloc_tag_callback)
+		eg_alloc_tag_callback (p, s, t);
+}
+
 void
 g_free (void *ptr)
 {

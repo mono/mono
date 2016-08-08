@@ -19,6 +19,7 @@
 
 #include "mempool.h"
 #include "mempool-internals.h"
+#include "mono-alloc.h"
 
 /*
  * MonoMemPool is for fast allocation of memory. We free
@@ -108,7 +109,7 @@ mono_mempool_new_size (int initial_size)
 		initial_size = MONO_MEMPOOL_MINSIZE;
 #endif
 
-	pool = (MonoMemPool *)g_malloc (initial_size);
+	pool = (MonoMemPool *)m_malloc (initial_size, "mempool");
 
 	pool->next = NULL;
 	pool->pos = (guint8*)pool + SIZEOF_MEM_POOL; // Start after header
@@ -279,7 +280,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 		// (In individual allocation mode, the constant will be 0 and this path will always be taken)
 		if (size >= MONO_MEMPOOL_PREFER_INDIVIDUAL_ALLOCATION_SIZE) {
 			guint new_size = SIZEOF_MEM_POOL + size;
-			MonoMemPool *np = (MonoMemPool *)g_malloc (new_size);
+			MonoMemPool *np = (MonoMemPool *)m_malloc (new_size, "mempool");
 
 			np->next = pool->next;
 			np->size = new_size;
@@ -291,7 +292,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 		} else {
 			// Notice: any unused memory at the end of the old head becomes simply abandoned in this case until the mempool is freed (see Bugzilla #35136)
 			guint new_size = get_next_size (pool, size);
-			MonoMemPool *np = (MonoMemPool *)g_malloc (new_size);
+			MonoMemPool *np = (MonoMemPool *)m_malloc (new_size, "mempool");
 
 			np->next = pool->next;
 			np->size = new_size;

@@ -163,7 +163,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 	{
 		/* Realloc the method info into a mempool */
 
-		method = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethodWrapper));
+		method = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethodWrapper), "method-wrapper");
 		memcpy (method, mb->method, sizeof (MonoMethodWrapper));
 		mw = (MonoMethodWrapper*) method;
 
@@ -174,9 +174,9 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 
 #ifndef DISABLE_JIT
 		mw->header = header = (MonoMethodHeader *) 
-			mono_image_alloc0 (image, MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *));
+			mono_image_alloc0 (image, MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *), "method-wrapper:header");
 
-		header->code = (const unsigned char *)mono_image_alloc (image, mb->pos);
+		header->code = (const unsigned char *)mono_image_alloc (image, mb->pos, "method-wrapper:code");
 		memcpy ((char*)header->code, mb->code, mb->pos);
 
 		for (i = 0, l = mb->locals_list; l; l = l->next, i++) {
@@ -219,7 +219,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 		if (method_is_dynamic (method))
 			data = (void **)g_malloc (sizeof (gpointer) * (i + 1));
 		else
-			data = (void **)mono_image_alloc (image, sizeof (gpointer) * (i + 1));
+			data = (void **)mono_image_alloc (image, sizeof (gpointer) * (i + 1), "method-wrapper:data");
 		/* store the size in the first element */
 		data [0] = GUINT_TO_POINTER (i);
 		i = 1;
@@ -246,7 +246,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 #endif
 
 	if (mb->param_names) {
-		char **param_names = (char **)mono_image_alloc0 (image, signature->param_count * sizeof (gpointer));
+		char **param_names = (char **)mono_image_alloc0 (image, signature->param_count * sizeof (gpointer), "method-wrapper:param-names");
 		for (i = 0; i < signature->param_count; ++i)
 			param_names [i] = mono_image_strdup (image, mb->param_names [i]);
 

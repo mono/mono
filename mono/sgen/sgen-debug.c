@@ -326,7 +326,7 @@ static void
 setup_valid_nursery_objects (void)
 {
 	if (!valid_nursery_objects)
-		valid_nursery_objects = (GCObject **)sgen_alloc_os_memory (DEFAULT_NURSERY_SIZE, (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "debugging data");
+		valid_nursery_objects = (GCObject **)sgen_alloc_os_memory (DEFAULT_NURSERY_SIZE, (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), "sgen:debugging data");
 	valid_nursery_object_count = 0;
 	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data, setup_mono_sgen_scan_area_with_callback, NULL, FALSE, FALSE);
 }

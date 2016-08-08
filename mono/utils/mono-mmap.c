@@ -35,6 +35,7 @@
 #include "mono-mmap-internals.h"
 #include "mono-proclib.h"
 #include <mono/utils/mono-threads.h>
+#include <mono/metadata/profiler-private.h>
 
 
 #define BEGIN_CRITICAL_SECTION do { \
@@ -118,7 +119,7 @@ prot_from_flags (int flags)
 }
 
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *what)
 {
 	void *ptr;
 	int mflags = MEM_RESERVE|MEM_COMMIT;
@@ -126,11 +127,13 @@ mono_valloc (void *addr, size_t length, int flags)
 	/* translate the flags */
 
 	ptr = VirtualAlloc (addr, length, mflags, prot);
+	if (ptr)
+		mono_profiler_valloc (addr, length, flags, what);
 	return ptr;
 }
 
 void*
-mono_valloc_aligned (size_t length, size_t alignment, int flags)
+mono_valloc_aligned (size_t length, size_t alignment, int flags, const char *what)
 {
 	int prot = prot_from_flags (flags);
 	char *mem = VirtualAlloc (NULL, length + alignment, MEM_RESERVE, prot);
@@ -143,6 +146,8 @@ mono_valloc_aligned (size_t length, size_t alignment, int flags)
 
 	aligned = VirtualAlloc (aligned, length, MEM_COMMIT, prot);
 	g_assert (aligned);
+
+	mono_profiler_valloc (addr, length, flags, what);
 
 	return aligned;
 }
@@ -160,6 +165,7 @@ mono_vfree (void *addr, size_t length)
 
 	res = VirtualFree (mbi.AllocationBase, 0, MEM_RELEASE);
 
+	mono_profiler_vfree (addr, lenght);
 	g_assert (res);
 
 	return 0;
@@ -215,6 +221,8 @@ mono_mprotect (void *addr, size_t length, int flags)
 	DWORD oldprot;
 	int prot = prot_from_flags (flags);
 
+	mono_profiler_mprotect (addr, lengtht, flags);
+
 	if (flags & MONO_MMAP_DISCARD) {
 		VirtualFree (addr, length, MEM_DECOMMIT);
 		VirtualAlloc (addr, length, MEM_COMMIT, prot);
@@ -263,7 +271,7 @@ mono_shared_area_instances (void **array, int count)
 /**
  * mono_pagesize:
  * Get the page size in use on the system. Addresses and sizes in the
- * mono_mmap(), mono_munmap() and mono_mprotect() calls must be pagesize
+ * mono_mmap(), mono_munmap() and \tect() calls must be pagesize
  * aligned.
  *
  * Returns: the page size in bytes.
@@ -307,7 +315,7 @@ prot_from_flags (int flags)
  * Returns: NULL on failure, the address of the memory area otherwise
  */
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *what)
 {
 	void *ptr;
 	int mflags = 0;
@@ -322,7 +330,12 @@ mono_valloc (void *addr, size_t length, int flags)
 	mflags |= MAP_PRIVATE;
 
 	BEGIN_CRITICAL_SECTION;
+#ifdef VM_MAKE_TAG
+	int fd = strstr (what, "sgen") ? VM_MAKE_TAG (VM_MEMORY_APPLICATION_SPECIFIC_1) : VM_MAKE_TAG (VM_MEMORY_APPLICATION_SPECIFIC_1 + 1);
+	ptr = mmap (addr, length, prot, mflags, fd, 0);
+#else
 	ptr = mmap (addr, length, prot, mflags, -1, 0);
+#endif
 	if (ptr == MAP_FAILED) {
 		int fd = open ("/dev/zero", O_RDONLY);
 		if (fd != -1) {
@@ -334,6 +347,8 @@ mono_valloc (void *addr, size_t length, int flags)
 
 	if (ptr == MAP_FAILED)
 		return NULL;
+
+	mono_profiler_valloc (ptr, length, flags, what);
 	return ptr;
 }
 
@@ -352,6 +367,7 @@ mono_vfree (void *addr, size_t length)
 	int res;
 	BEGIN_CRITICAL_SECTION;
 	res = munmap (addr, length);
+	mono_profiler_vfree (addr, length);
 	END_CRITICAL_SECTION;
 	return res;
 }
@@ -441,6 +457,8 @@ mono_mprotect (void *addr, size_t length, int flags)
 	int prot = prot_from_flags (flags);
 	void *new_addr;
 
+	mono_profiler_mprotect (addr, length, flags);
+
 	if (flags & MONO_MMAP_DISCARD) memset (addr, 0, length);
 
 	new_addr = mmap(addr, length, prot, MAP_PRIVATE | MAP_FIXED | MAP_ANONYMOUS, -1, 0);
@@ -452,6 +470,7 @@ int
 mono_mprotect (void *addr, size_t length, int flags)
 {
 	int prot = prot_from_flags (flags);
+	mono_profiler_mprotect (addr, length, flags);
 
 	if (flags & MONO_MMAP_DISCARD) {
 		/* on non-linux the pages are not guaranteed to be zeroed (*bsd, osx at least) */
@@ -482,9 +501,11 @@ mono_pagesize (void)
 }
 
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *what);
 {
-	return malloc (length);
+	void *addr = malloc (length);
+	mono_profiler_valloc (addr, length, flags, what);
+	return addr;
 }
 
 void*
@@ -499,12 +520,14 @@ int
 mono_vfree (void *addr, size_t length)
 {
 	free (addr);
+	mono_profiler_vfree (addr, length);
 	return 0;
 }
 
 int
 mono_mprotect (void *addr, size_t length, int flags)
 {
+	mono_profiler_mprotect (addr, length, flags);
 	if (flags & MONO_MMAP_DISCARD) {
 		memset (addr, 0, length);
 	}
@@ -747,10 +770,10 @@ mono_shared_area_instances (void **array, int count)
 
 #ifndef HAVE_VALLOC_ALIGNED
 void*
-mono_valloc_aligned (size_t size, size_t alignment, int flags)
+mono_valloc_aligned (size_t size, size_t alignment, int flags, const char *what)
 {
 	/* Allocate twice the memory to be able to put the block on an aligned address */
-	char *mem = (char *) mono_valloc (NULL, size + alignment, flags);
+	char *mem = (char *) mono_valloc (NULL, size + alignment, flags, what);
 	char *aligned;
 
 	if (!mem)

@@ -1194,7 +1194,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 
 		mono_mb_patch_short_branch (mb, pos);
 
-		clause = (MonoExceptionClause *)mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause));
+		clause = (MonoExceptionClause *)mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause), "exception-clause");
 		clause->try_offset = mono_mb_get_label (mb);
 
 		/* vtable->klass->sizes.element_size */

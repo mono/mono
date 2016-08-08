@@ -15,6 +15,7 @@
 #include <mono/utils/hazard-pointer.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
+#include <mono/metadata/mono-alloc.h>
 
 typedef enum {
 	LOC_SAME,
@@ -448,7 +449,7 @@ mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enab
 	
 	g_assert (p - buf < 4096);
 	*out_len = p - buf;
-	res = (guint8 *)g_malloc (p - buf);
+	res = (guint8 *)m_malloc (p - buf, "jit:unwind-ops");
 	memcpy (res, buf, p - buf);
 	return res;
 }

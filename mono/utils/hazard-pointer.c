@@ -113,7 +113,7 @@ mono_thread_small_id_alloc (void)
 		if (hazard_table == NULL) {
 			hazard_table = (MonoThreadHazardPointers *volatile) mono_valloc (NULL,
 				sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE,
-				MONO_MMAP_NONE);
+				MONO_MMAP_NONE, "hazard-table");
 		}
 
 		g_assert (hazard_table != NULL);

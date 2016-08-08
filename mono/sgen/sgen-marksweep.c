@@ -297,9 +297,9 @@ major_alloc_heap (mword nursery_size, mword nursery_align, int the_nursery_bits)
 {
 	char *start;
 	if (nursery_align)
-		start = (char *)sgen_alloc_os_memory_aligned (nursery_size, nursery_align, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery");
+		start = (char *)sgen_alloc_os_memory_aligned (nursery_size, nursery_align, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "sgen:nursery");
 	else
-		start = (char *)sgen_alloc_os_memory (nursery_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery");
+		start = (char *)sgen_alloc_os_memory (nursery_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "sgen:nursery");
 
 	return start;
 }
@@ -330,8 +330,8 @@ ms_get_empty_block (void)
 		int alloc_num = MS_BLOCK_ALLOC_NUM;
 		for (;;) {
 			p = (char *)sgen_alloc_os_memory_aligned (MS_BLOCK_SIZE * alloc_num, MS_BLOCK_SIZE,
-				(SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE),
-				alloc_num == 1 ? "major heap section" : NULL);
+				(SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE | (alloc_num > 1 ? SGEN_ALLOC_NON_FATAL : 0)),
+				"sgen:major heap section");
 			if (p)
 				break;
 			alloc_num >>= 1;

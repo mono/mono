@@ -31,7 +31,8 @@ typedef enum {
 	MONO_PROFILE_IOMAP_EVENTS     = 1 << 18, /* this should likely be removed, too */
 	MONO_PROFILE_GC_MOVES         = 1 << 19,
 	MONO_PROFILE_GC_ROOTS         = 1 << 20,
-	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21
+	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21,
+	MONO_PROFILE_RUNTIME_MEM_EVENTS = 1 << 22,
 } MonoProfileFlags;
 
 typedef enum {
@@ -112,6 +113,12 @@ typedef enum {
 	MONO_PROFILE_GC_ROOT_TYPEMASK = 0xff
 } MonoProfileGCRootType;
 
+typedef enum {
+	MONO_PROFILE_MEMDOM_APPDOMAIN = 1,
+	MONO_PROFILE_MEMDOM_IMAGE = 2,
+	MONO_PROFILE_MEMDOM_IMAGE_SET = 3,
+} MonoProfilerMemoryDomain;
+
 /*
  * Functions that the runtime will call on the profiler.
  */
@@ -160,6 +167,15 @@ typedef void (*MonoProfilerCodeChunkNew) (MonoProfiler *prof, void* chunk, int s
 typedef void (*MonoProfilerCodeChunkDestroy) (MonoProfiler *prof, void* chunk);
 typedef void (*MonoProfilerCodeBufferNew) (MonoProfiler *prof, void* buffer, int size, MonoProfilerCodeBufferType type, void *data);
 
+typedef void (*MonoProfilerMemdomNew) (MonoProfiler *prof, void* memdom, MonoProfilerMemoryDomain kind);
+typedef void (*MonoProfilerMemdomDestroy) (MonoProfiler *prof, void* memdom);
+typedef void (*MonoProfilerMemdomAlloc) (MonoProfiler *prof, void* memdom, size_t size, const char *tag);
+
+typedef void (*MonoProfilerAlloc) (MonoProfiler *prof, void *address, size_t size, const char *tag);
+typedef void (*MonoProfilerVAlloc) (MonoProfiler *prof, void *address, size_t size, int flags,const char *tag);
+typedef void (*MonoProfilerVFree) (MonoProfiler *prof, void *address, size_t size);
+typedef void (*MonoProfilerMProtect) (MonoProfiler *prof, void *address, size_t size, int flags);
+
 /*
  * Function the profiler may call.
  */
@@ -204,6 +220,10 @@ MONO_API void mono_profiler_install_code_chunk_destroy (MonoProfilerCodeChunkDes
 MONO_API void mono_profiler_install_code_buffer_new (MonoProfilerCodeBufferNew callback);
 
 MONO_API void mono_profiler_install_iomap (MonoProfileIomapFunc callback);
+
+MONO_API void mono_profiler_install_memdom (MonoProfilerMemdomNew new_cb, MonoProfilerMemdomDestroy destroy_cb, MonoProfilerMemdomAlloc alloc_cb);
+MONO_API void mono_profiler_install_malloc (MonoProfilerAlloc malloc);
+MONO_API void mono_profiler_install_valloc (MonoProfilerVAlloc valloc, MonoProfilerVFree vfree, MonoProfilerMProtect mprotect);
 
 MONO_API void mono_profiler_load             (const char *desc);
 

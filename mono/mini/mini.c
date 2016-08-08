@@ -2263,7 +2263,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 			mono_domain_lock (domain);
 			jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, patch_info->data.method);
 			if (!jlist) {
-				jlist = (MonoJumpList *)mono_domain_alloc0 (domain, sizeof (MonoJumpList));
+				jlist = (MonoJumpList *)mono_domain_alloc0 (domain, sizeof (MonoJumpList), "jump-list");
 				g_hash_table_insert (domain_jit_info (domain)->jump_target_hash, patch_info->data.method, jlist);
 			}
 			jlist->list = g_slist_prepend (jlist->list, ip);
@@ -2605,7 +2605,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	if (cfg->method->dynamic)
 		jinfo = (MonoJitInfo *)g_malloc0 (mono_jit_info_size (flags, num_clauses, num_holes));
 	else
-		jinfo = (MonoJitInfo *)mono_domain_alloc0 (cfg->domain, mono_jit_info_size (flags, num_clauses, num_holes));
+		jinfo = (MonoJitInfo *)mono_domain_alloc0 (cfg->domain, mono_jit_info_size (flags, num_clauses, num_holes), "jit-info");
 	mono_jit_info_init (jinfo, cfg->method_to_register, cfg->native_code, cfg->code_len, flags, num_clauses, num_holes);
 	jinfo->domain_neutral = (cfg->opt & MONO_OPT_SHARED) != 0;
 
@@ -2623,7 +2623,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		if (cfg->method->dynamic)
 			gi->generic_sharing_context = g_new0 (MonoGenericSharingContext, 1);
 		else
-			gi->generic_sharing_context = (MonoGenericSharingContext *)mono_domain_alloc0 (cfg->domain, sizeof (MonoGenericSharingContext));
+			gi->generic_sharing_context = (MonoGenericSharingContext *)mono_domain_alloc0 (cfg->domain, sizeof (MonoGenericSharingContext), "generic-sharing-context");
 		mini_init_gsctx (cfg->method->dynamic ? NULL : cfg->domain, NULL, cfg->gsctx_context, gi->generic_sharing_context);
 
 		if ((method_to_compile->flags & METHOD_ATTRIBUTE_STATIC) ||
@@ -2655,7 +2655,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			if (cfg->method->dynamic)
 				gi->locations = (MonoDwarfLocListEntry *)g_malloc0 (gi->nlocs * sizeof (MonoDwarfLocListEntry));
 			else
-				gi->locations = (MonoDwarfLocListEntry *)mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry));
+				gi->locations = (MonoDwarfLocListEntry *)mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry), "dwarf-loc-list");
 			i = 0;
 			for (l = loclist; l; l = l->next) {
 				memcpy (&(gi->locations [i]), l->data, sizeof (MonoDwarfLocListEntry));
@@ -4061,7 +4061,7 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 		uw_info = mono_unwind_ops_encode (info->unwind_ops, &info_len);
 	}
 
-	jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO, "jit-info-wrapper");
 	jinfo->d.method = wrapper;
 	jinfo->code_start = info->code;
 	jinfo->code_size = info->code_size;

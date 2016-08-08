@@ -25,6 +25,8 @@ lib_LTLIBRARIES = \
 	libmono-profiler-iomap-static.la \
 	libmono-profiler-log.la \
 	libmono-profiler-log-static.la \
+	libmono-profiler-malloc.la \
+	libmono-profiler-malloc-static.la \
 	$(vtune_libs)
 
 suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
@@ -78,6 +80,13 @@ libmono_profiler_log_la_LIBADD = $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS)
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_log_static_la_SOURCES = proflog.c
 libmono_profiler_log_static_la_LDFLAGS = -static
+
+libmono_profiler_malloc_la_SOURCES = mono-profiler-malloc.c
+libmono_profiler_malloc_la_LIBADD =  $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_malloc_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_malloc_static_la_SOURCES = mono-profiler-malloc.c
+libmono_profiler_malloc_static_la_LDFLAGS = -static
+
 
 if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = mono-profiler-vtune.c

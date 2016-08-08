@@ -115,9 +115,9 @@ codechunk_valloc (void *preferred, guint32 size)
 		freelist = g_slist_delete_link (freelist, freelist);
 		g_hash_table_insert (valloc_freelists, GUINT_TO_POINTER (size), freelist);
 	} else {
-		ptr = mono_valloc (preferred, size, MONO_PROT_RWX | ARCH_MAP_FLAGS);
+		ptr = mono_valloc (preferred, size, MONO_PROT_RWX | ARCH_MAP_FLAGS, "codeman");
 		if (!ptr && preferred)
-			ptr = mono_valloc (NULL, size, MONO_PROT_RWX | ARCH_MAP_FLAGS);
+			ptr = mono_valloc (NULL, size, MONO_PROT_RWX | ARCH_MAP_FLAGS, "codeman");
 	}
 	mono_os_mutex_unlock (&valloc_mutex);
 	return ptr;

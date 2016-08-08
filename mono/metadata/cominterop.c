@@ -2018,7 +2018,7 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 
 	if (!ccw_entry) {
 		int vtable_index = method_count-1+start_slot;
-		vtable = (void **)mono_image_alloc0 (klass->image, sizeof (gpointer)*(method_count+start_slot));
+		vtable = (void **)mono_image_alloc0 (klass->image, sizeof (gpointer)*(method_count+start_slot), "cominterop:vtable");
 		memcpy (vtable, iunknown, sizeof (iunknown));
 		if (start_slot == 7)
 			memcpy (vtable+3, idispatch, sizeof (idispatch));

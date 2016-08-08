@@ -1793,7 +1793,7 @@ mono_init_vtable_slot (MonoVTable *vtable, int slot)
 	addr = resolve_vcall (vtable, slot, NULL, &arg, FALSE, &error);
 	if (mono_error_set_pending_exception (&error))
 		return NULL;
-	ftnptr = mono_domain_alloc0 (vtable->domain, 2 * sizeof (gpointer));
+	ftnptr = mono_domain_alloc0 (vtable->domain, 2 * sizeof (gpointer), "jit:llvmonly-vtable-slot");
 	ftnptr [0] = addr;
 	ftnptr [1] = arg;
 	mono_memory_barrier ();

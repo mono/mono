@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <glib.h>
+#include <eg-alloc.h>
 
 typedef struct _Slot Slot;
 
@@ -113,13 +114,13 @@ g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func)
 		hash_func = g_direct_hash;
 	if (key_equal_func == NULL)
 		key_equal_func = g_direct_equal;
-	hash = g_new0 (GHashTable, 1);
+	hash = eg_new0 (GHashTable, 1, "ghashtable");
 
 	hash->hash_func = hash_func;
 	hash->key_equal_func = key_equal_func;
 
 	hash->table_size = g_spaced_primes_closest (1);
-	hash->table = g_new0 (Slot *, hash->table_size);
+	hash->table = eg_new0 (Slot *, hash->table_size, "ghashtable:table");
 	hash->last_rehash = hash->table_size;
 	
 	return hash;
@@ -196,7 +197,7 @@ do_rehash (GHashTable *hash)
 	hash->table_size = g_spaced_primes_closest (hash->in_use);
 	/* printf ("New size: %d\n", hash->table_size); */
 	table = hash->table;
-	hash->table = g_new0 (Slot *, hash->table_size);
+	hash->table = eg_new0 (Slot *, hash->table_size, "ghashtable:table");
 	
 	for (i = 0; i < current_size; i++){
 		Slot *s, *next;
@@ -255,7 +256,7 @@ g_hash_table_insert_replace (GHashTable *hash, gpointer key, gpointer value, gbo
 			return;
 		}
 	}
-	s = g_new (Slot, 1);
+	s = eg_new (Slot, 1, "ghashtable:slot");
 	s->key = key;
 	s->value = value;
 	s->next = hash->table [hashcode];
