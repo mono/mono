@@ -166,7 +166,7 @@ def parse_duration(duration): # Accept units
 def parse_signal(sig):        # Accept names
 	if sig.isdigit():
 		return int(sig)
-	for k,v in signal.__dict__.iteritems():
+	for k,v in signal.__dict__.items():
 		if k == ("SIG%s" % sig):
 			return v
 	argparser.error("Could not understand signal name %s" % sig)
