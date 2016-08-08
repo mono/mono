@@ -5,18 +5,20 @@
 namespace System.ServiceModel
 {
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Runtime;
     using System.Security.Claims;
     using System.Security.Principal;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Dispatcher;
     using System.ServiceModel.Security;
+    using System.Threading;
 
     public sealed class OperationContext : IExtensibleObject<OperationContext>
     {
         [ThreadStatic]
         static Holder currentContext;
+
+        static AsyncLocal<OperationContext> currentAsyncLocalContext = new AsyncLocal<OperationContext>();
 
         ServiceChannel channel;
         Message clientReply;
@@ -33,6 +35,7 @@ namespace System.ServiceModel
         MessageHeaders outgoingMessageHeaders;
         MessageVersion outgoingMessageVersion;
         EndpointDispatcher endpointDispatcher;
+        bool isAsyncFlowEnabled;
 
         public event EventHandler OperationCompleted;
 
@@ -92,12 +95,19 @@ namespace System.ServiceModel
         {
             get
             {
-                return CurrentHolder.Context;
+                return ShouldUseAsyncLocalContext ? OperationContext.currentAsyncLocalContext.Value : CurrentHolder.Context;
             }
 
             set
             {
-                CurrentHolder.Context = value;
+                if (ShouldUseAsyncLocalContext)
+                {
+                    OperationContext.currentAsyncLocalContext.Value = value;
+                }
+                else
+                {
+                    CurrentHolder.Context = value;
+                }                
             }
         }
 
@@ -112,6 +122,14 @@ namespace System.ServiceModel
                     OperationContext.currentContext = holder;
                 }
                 return holder;
+            }
+        }
+
+        private static bool ShouldUseAsyncLocalContext
+        {
+            get
+            {
+                return CurrentHolder.Context == null && OperationContext.currentAsyncLocalContext.Value != null && OperationContext.currentAsyncLocalContext.Value.isAsyncFlowEnabled;
             }
         }
 
@@ -337,6 +355,21 @@ namespace System.ServiceModel
         internal void ClearClientReplyNoThrow()
         {
             this.clientReply = null;
+        }
+
+        internal static void EnableAsyncFlow()
+        {
+            CurrentHolder.Context.isAsyncFlowEnabled = true;
+            currentAsyncLocalContext.Value = CurrentHolder.Context;
+        }
+
+        internal static void DisableAsyncFlow()
+        {
+            if (OperationContext.Current != null && OperationContext.Current.isAsyncFlowEnabled)
+            {
+                OperationContext.Current.isAsyncFlowEnabled = false;
+                currentAsyncLocalContext.Value = null;
+            }
         }
 
         internal void FireOperationCompleted()

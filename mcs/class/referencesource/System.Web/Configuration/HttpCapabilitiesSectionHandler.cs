@@ -8,6 +8,7 @@ namespace System.Web.Configuration {
 
     using System.Collections;
     using System.Configuration;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Security;
     using System.Security.Permissions;
@@ -15,7 +16,6 @@ namespace System.Web.Configuration {
     using System.Web.Configuration;
     using System.Web.Util;
     using System.Xml;
-
     using Pair = System.Web.UI.Pair;
 
     //
@@ -276,6 +276,7 @@ namespace System.Web.Configuration {
         // 
         // ResolveFiles - parse files referenced with <file src="" />
         //
+        [SuppressMessage("Microsoft.Security.Xml", "CA3056:UseXmlReaderForLoad", Justification = "Developer-controlled .xml files in application directory are implicitly trusted by ASP.Net.")]
         static void ResolveFiles(ParseState parseState, object configurationContext) {
 
             //

@@ -7,6 +7,7 @@ namespace System.ServiceModel.Dispatcher
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Diagnostics;
@@ -262,6 +263,7 @@ namespace System.ServiceModel.Dispatcher
             }
         }
 
+        [SuppressMessage("Microsoft.Security.Xml", "CA3057:DoNotUseLoadXml")]
         static QueryMatcher()
         {
             QueryMatcher.defaultFunctionLibs = new IFunctionLibrary[] { new XPathFunctionLibrary() };

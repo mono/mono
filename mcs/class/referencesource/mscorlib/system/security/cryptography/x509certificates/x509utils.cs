@@ -159,7 +159,7 @@ namespace System.Security.Cryptography.X509Certificates
                 if (group != OidGroup.AllGroups) {
                     IntPtr allGroupOidInfo = CryptFindOIDInfo(keyType, rawKey, OidGroup.AllGroups);
                     if (allGroupOidInfo != IntPtr.Zero) {
-                        return (CRYPT_OID_INFO)Marshal.PtrToStructure(fullOidInfo, typeof(CRYPT_OID_INFO));
+                        return (CRYPT_OID_INFO)Marshal.PtrToStructure(allGroupOidInfo, typeof(CRYPT_OID_INFO));
                     }
                 }
 

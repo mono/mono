@@ -140,6 +140,10 @@ namespace System.Web {
         // Event signals that ASP.NET has started processing a request.
         // Overload used only for deducing ETW parameters; use the public entry point instead.
         //
+        // Visual Studio Online #222067 - This event is hardcoded to opt-out of EventSource activityID tracking. 
+        // This would normally be done by setting ActivityOptions = EventActivityOptions.Disable in the 
+        // Event attribute, but this causes a dependency between System.Web and mscorlib that breaks servicing. 
+        // 
         // !! WARNING !!
         // The logic in RequestStartedImpl must be kept in [....] with these parameters, otherwise
         // type safety violations could occur.
@@ -150,6 +154,10 @@ namespace System.Web {
         }
 
         // Event signals that ASP.NET has completed processing a request.
+        //
+        // Visual Studio Online #222067 - This event is hardcoded to opt-out of EventSource activityID tracking. 
+        // This would normally be done by setting ActivityOptions = EventActivityOptions.Disable in the 
+        // Event attribute, but this causes a dependency between System.Web and mscorlib that breaks servicing. 
         [Event((int)Events.RequestCompleted, Level = EventLevel.Informational, Task = (EventTask)Tasks.Request, Opcode = EventOpcode.Stop, Version = 1)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RequestCompleted() {

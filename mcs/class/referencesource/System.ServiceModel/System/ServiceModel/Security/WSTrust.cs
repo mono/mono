@@ -1417,7 +1417,7 @@ namespace System.ServiceModel.Security
                     writer.Flush();
                     stream.Seek(0, SeekOrigin.Begin);
                     XmlNode skiNode;
-                    using (XmlDictionaryReader reader = XmlDictionaryReader.CreateDictionaryReader(new XmlTextReader(stream)))
+                    using (XmlDictionaryReader reader = XmlDictionaryReader.CreateDictionaryReader(new XmlTextReader(stream) { DtdProcessing = DtdProcessing.Prohibit }))
                     {
                         reader.MoveToContent();
                         skiNode = doc.ReadNode(reader);

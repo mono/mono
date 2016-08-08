@@ -1543,7 +1543,7 @@ namespace System.Data.SqlClient {
             return Res.GetString(Res.SQL_SSPIGenerateError);
         }
         static internal string Timeout() {
-            return Res.GetString(Res.SQL_Timeout);
+            return Res.GetString(Res.SQL_Timeout_Execution);
         }
         static internal string Timeout_PreLogin_Begin() {
             return Res.GetString(Res.SQL_Timeout_PreLogin_Begin);

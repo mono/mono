@@ -105,7 +105,7 @@ namespace System.Web.Util {
             // This method only schedules work; it doesn't itself do any work. The lock is held for a very
             // short period of time.
             lock (_lockObj) {
-                Task newTask = _lastScheduledTask.ContinueWith(_ => SafeWrapCallback(action));
+                Task newTask = _lastScheduledTask.ContinueWith(_ => SafeWrapCallback(action), TaskScheduler.Default);
                 _lastScheduledTask = newTask; // the newly-created task is now the last one
             }
         }

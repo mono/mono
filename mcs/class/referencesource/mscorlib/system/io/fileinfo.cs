@@ -132,7 +132,7 @@ namespace System.IO {
         {
 #if FEATURE_MONO_CAS
 #if !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { FullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, FullPath, false, false);
 #endif
 #endif
             _name = Path.GetFileName(OriginalPath);
@@ -192,7 +192,7 @@ namespace System.IO {
                     FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, DisplayPath, FullPath);
                     state.EnsureState();
 #else
-                    new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { directoryName }, false, false).Demand();
+                    FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, directoryName, false, false);
 #endif
 #endif
                 }
@@ -344,7 +344,7 @@ namespace System.IO {
             state.EnsureState();
 #else
             // For security check, path should be resolved to an absolute path.
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { FullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, FullPath, false, false);
 #endif
 #endif
 
@@ -483,7 +483,7 @@ namespace System.IO {
             sourceState.EnsureState();
             destState.EnsureState();
 #else
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { FullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, FullPath, false, false);
             FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 #endif
 #endif

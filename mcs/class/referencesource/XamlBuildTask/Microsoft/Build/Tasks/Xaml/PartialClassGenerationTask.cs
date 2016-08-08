@@ -198,8 +198,11 @@ namespace Microsoft.Build.Tasks.Xaml
                     }
                     else
                     {
-                        AppDomain.Unload(inProcessAppDomain);
-                        inProcessAppDomain = null;
+                        if (inProcessAppDomain != null)
+                        {
+                            AppDomain.Unload(inProcessAppDomain);
+                            inProcessAppDomain = null;
+                        }
                         return GetAppDomainAndExecute();
                     }
                 }

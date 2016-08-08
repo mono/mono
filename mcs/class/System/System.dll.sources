@@ -562,6 +562,7 @@ ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/Internal.cs
 ReferenceSources/HttpApi.cs
 ReferenceSources/HttpSysSettings.cs
+ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RequestCacheProtocol.cs

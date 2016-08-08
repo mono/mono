@@ -21,8 +21,10 @@ namespace System.ComponentModel.DataAnnotations {
         }
 
         public static void SetDefaultsLessOrEqual_46() {
+#pragma warning disable BCL0012 //disable warning about AppContextDefaults not following the recommended pattern
             // Define the switches that should be true for 4.6 or less, false for 4.6.1+.
             LocalAppContext.DefineSwitchDefault(UseLegacyRegExTimeoutString, true);
+#pragma warning restore BCL0012
         }
     }
 }

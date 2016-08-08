@@ -32,7 +32,17 @@ namespace System.Web.UI.WebControls {
             }
 
             ParameterExpression parameter = Expression.Parameter(source.ElementType, String.Empty);
-            MemberExpression property = Expression.Property(parameter, sortExpression);
+            //VSO bug 173528-- Add support for sorting by nested property names
+            MemberExpression property = null;
+            string[] sortExpressionFields = sortExpression.Split('.');
+            foreach (string sortExpressionField in sortExpressionFields) {
+                if (property == null) {
+                    property = Expression.Property(parameter, sortExpressionField);
+                }
+                else {
+                    property = Expression.Property(property, sortExpressionField);
+                }
+            }
             LambdaExpression lambda = Expression.Lambda(property, parameter);
 
             string methodName = (isDescending) ? "OrderByDescending" : "OrderBy" ;

@@ -447,6 +447,9 @@ namespace System.Security.Cryptography {
                                                                     buffer.Length);
                     }
                     else {
+                        if (!LocalAppContextSwitches.AesCryptoServiceProviderDontCorrectlyResetDecryptor) {
+                            resetSize = buffer.Length;
+                        }
                         CapiNative.UnsafeNativeMethods.CryptDecrypt(m_key,
                                                                     SafeCapiHashHandle.InvalidHandle,
                                                                     true,

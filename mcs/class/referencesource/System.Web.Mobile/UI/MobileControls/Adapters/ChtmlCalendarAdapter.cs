@@ -59,7 +59,7 @@ namespace System.Web.UI.MobileControls.Adapters
 
         // This member variable is set each time when calendar info needs to
         // be accessed and be shared for other helper functions.
-        private Globalization.Calendar _threadCalendar;
+        private System.Globalization.Calendar _threadCalendar;
 
         private String _textBoxErrorMessage;
 

@@ -193,7 +193,7 @@ namespace System.Workflow.ComponentModel.Design
             {
                 ArrayList objects = new ArrayList();
                 WorkflowMarkupSerializationManager xomlSerializationManager = new WorkflowMarkupSerializationManager(serializationManager);
-                XmlTextReader reader = new XmlTextReader(this.serializedXmlString, XmlNodeType.Element, null);
+                XmlTextReader reader = new XmlTextReader(this.serializedXmlString, XmlNodeType.Element, null) { DtdProcessing = DtdProcessing.Prohibit };
                 reader.MoveToElement();
                 do
                 {
@@ -235,7 +235,7 @@ namespace System.Workflow.ComponentModel.Design
                 xomlSerializationManager.AddSerializationProvider(propertySegmentSerializationProvider);
 
                 StringReader stringReader = new StringReader(this.serializedXmlString);
-                using (XmlTextReader reader = new XmlTextReader(stringReader))
+                using (XmlTextReader reader = new XmlTextReader(stringReader) { DtdProcessing = DtdProcessing.Prohibit })
                 {
                     while (reader.NodeType != XmlNodeType.Element && reader.NodeType != XmlNodeType.ProcessingInstruction && reader.Read());
 

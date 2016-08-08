@@ -2636,6 +2636,7 @@ namespace System.Web.Compilation {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1207:UseXmlReaderForLoad", Justification = "Xml file is created by us and only accessible to admins.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3056:UseXmlReaderForLoad", Justification = "Xml file is created by us and only accessible to admins.")]
         private static bool ReadPrecompMarkerFile(string appRoot, out bool updatable) {
 
             updatable = false;

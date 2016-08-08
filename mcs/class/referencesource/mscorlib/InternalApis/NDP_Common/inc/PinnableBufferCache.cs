@@ -155,7 +155,14 @@ namespace System
             if (PinnableBufferCacheEventSource.Log.IsEnabled())
                 PinnableBufferCacheEventSource.Log.FreeBuffer(m_CacheName, PinnableBufferCacheEventSource.AddressOf(buffer), buffer.GetHashCode(), m_FreeList.Count);
 
-
+            if(buffer == null)
+            {
+                if (PinnableBufferCacheEventSource.Log.IsEnabled())
+                    PinnableBufferCacheEventSource.Log.FreeBufferNull(m_CacheName, m_FreeList.Count);
+                    
+                return;
+            }
+            
             // After we've done 3 gen1 GCs, assume that all buffers have aged into gen2 on the free path.
             if ((m_gen1CountAtLastRestock + 3) > GC.CollectionCount(GC.MaxGeneration - 1))
             {
@@ -567,6 +574,7 @@ namespace System
         public void AllocateBufferAged(string cacheName, int agedCount) {}
         public void AllocateBufferFreeListEmpty(string cacheName, int notGen2CountBefore) {}
         public void FreeBuffer(string cacheName, ulong objectId, int objectHash, int freeCountBefore) {}
+        public void FreeBufferNull(string cacheName, int freeCountBefore) { }
         public void FreeBufferStillTooYoung(string cacheName, int notGen2CountBefore) {}
         public void TrimCheck(string cacheName, int totalBuffs, bool neededMoreThanFreeList, int deltaMSec) {}
         public void TrimFree(string cacheName, int totalBuffs, int freeListCount, int toBeFreed) {}
@@ -643,6 +651,8 @@ namespace System
         public void AgePendingBuffersResults(string cacheName, int promotedToFreeListCount, int heldBackCount) { if (IsEnabled()) WriteEvent(20, cacheName, promotedToFreeListCount, heldBackCount); }
         [Event(21)]
         public void WalkFreeListResult(string cacheName, int freeListCount, int gen0BuffersInFreeList) { if (IsEnabled()) WriteEvent(21, cacheName, freeListCount, gen0BuffersInFreeList); }
+        [Event(22)]
+        public void FreeBufferNull(string cacheName, int freeCountBefore) { if(IsEnabled()) WriteEvent(22, cacheName, freeCountBefore); }
 
 
         static internal ulong AddressOf(object obj)

@@ -54,12 +54,12 @@ namespace System.Security.Cryptography {
         [SecuritySafeCritical]
         public ECDsaCng(CngKey key) {
             Contract.Ensures(LegalKeySizesValue != null);
-            Contract.Ensures(m_key != null && m_key.AlgorithmGroup == CngAlgorithmGroup.ECDsa);
+            Contract.Ensures(m_key != null && IsEccAlgorithmGroup(m_key.AlgorithmGroup));
 
             if (key == null) {
                 throw new ArgumentNullException("key");
             }
-            if (key.AlgorithmGroup != CngAlgorithmGroup.ECDsa) {
+            if (!IsEccAlgorithmGroup(key.AlgorithmGroup)) {
                 throw new ArgumentException(SR.GetString(SR.Cryptography_ArgECDsaRequiresECDsaKey), "key");
             }
 
@@ -83,7 +83,21 @@ namespace System.Security.Cryptography {
             }
             CodeAccessPermission.RevertAssert();
 
-            KeySize = m_key.KeySize;
+            // Our LegalKeySizes value stores the values that we encoded as being the correct
+            // legal key size limitations for this algorithm, as documented on MSDN.
+            //
+            // But on a new OS version we might not question if our limit is accurate, or MSDN
+            // could have been innacurate to start with.
+            //
+            // Since the key is already loaded, we know that Windows thought it to be valid;
+            // therefore we should set KeySizeValue directly to bypass the LegalKeySizes conformance
+            // check.
+            //
+            // For RSA there are known cases where this change matters. RSACryptoServiceProvider can
+            // create a 384-bit RSA key, which we consider too small to be legal. It can also create
+            // a 1032-bit RSA key, which we consider illegal because it doesn't match our 64-bit
+            // alignment requirement. (In both cases Windows loads it just fine)
+            KeySizeValue = m_key.KeySize;
         }
 
         /// <summary>
@@ -112,8 +126,8 @@ namespace System.Security.Cryptography {
         public CngKey Key {
             get {
                 Contract.Ensures(Contract.Result<CngKey>() != null);
-                Contract.Ensures(Contract.Result<CngKey>().AlgorithmGroup == CngAlgorithmGroup.ECDsa);
-                Contract.Ensures(m_key != null && m_key.AlgorithmGroup == CngAlgorithmGroup.ECDsa);
+                Contract.Ensures(IsEccAlgorithmGroup(Contract.Result<CngKey>().AlgorithmGroup));
+                Contract.Ensures(m_key != null && IsEccAlgorithmGroup(m_key.AlgorithmGroup));
 
                 // If the size of the key no longer matches our stored value, then we need to replace it with
                 // a new key of the correct size.
@@ -151,9 +165,9 @@ namespace System.Security.Cryptography {
 
             private set {
                 Contract.Requires(value != null);
-                Contract.Ensures(m_key != null && m_key.AlgorithmGroup == CngAlgorithmGroup.ECDsa);
+                Contract.Ensures(m_key != null && IsEccAlgorithmGroup(m_key.AlgorithmGroup));
 
-                if (value.AlgorithmGroup != CngAlgorithmGroup.ECDsa) {
+                if (!IsEccAlgorithmGroup(value.AlgorithmGroup)) {
                     throw new ArgumentException(SR.GetString(SR.Cryptography_ArgECDsaRequiresECDsaKey));
                 }
 
@@ -168,7 +182,22 @@ namespace System.Security.Cryptography {
                 //
 
                 m_key = value;
-                KeySize = m_key.KeySize;
+
+                // Our LegalKeySizes value stores the values that we encoded as being the correct
+                // legal key size limitations for this algorithm, as documented on MSDN.
+                //
+                // But on a new OS version we might not question if our limit is accurate, or MSDN
+                // could have been innacurate to start with.
+                //
+                // Since the key is already loaded, we know that Windows thought it to be valid;
+                // therefore we should set KeySizeValue directly to bypass the LegalKeySizes conformance
+                // check.
+                //
+                // For RSA there are known cases where this change matters. RSACryptoServiceProvider can
+                // create a 384-bit RSA key, which we consider too small to be legal. It can also create
+                // a 1032-bit RSA key, which we consider illegal because it doesn't match our 64-bit
+                // alignment requirement. (In both cases Windows loads it just fine)
+                KeySizeValue = m_key.KeySize;
             }
         }
 
@@ -416,6 +445,16 @@ namespace System.Security.Cryptography {
                 return hasher.HashFinal();
             }
         }
-    #endif
+
+        private static bool IsEccAlgorithmGroup(CngAlgorithmGroup algorithmGroup)
+        {
+            // Sometimes, when reading from certificates, ECDSA keys get identified as ECDH.
+            // Windows allows the ECDH keys to perform both key exchange (ECDH) and signing (ECDSA),
+            // so either value is acceptable for the ECDSA wrapper object.
+            //
+            // It is worth noting, however, that ECDSA-identified keys cannot be used for key exchange (ECDH) in CNG.
+            return algorithmGroup == CngAlgorithmGroup.ECDsa || algorithmGroup == CngAlgorithmGroup.ECDiffieHellman;
+        }
+#endif
     }
 }

@@ -63,10 +63,11 @@ namespace System.Activities.Core.Presentation
                     trueLabelText = (string)virtualizingContainer.ModelItem.Properties["TrueLabel"].ComputedValue;
                 }
 
+                double pixelsPerDip = VisualTreeHelper.GetDpi(trueConnectionPoint).PixelsPerDip;
                 actualPoint = new Point(trueConnectionPoint.Location.X - origin.X, trueConnectionPoint.Location.Y - origin.Y);
                 FormattedText trueMarkerFormattedText = new FormattedText(trueLabelText, new System.Globalization.CultureInfo(textCulture),
                     this.FlowDirection, FlowchartDesigner.FlowElementCaptionTypeface, FlowchartDesigner.FlowNodeCaptionFontSize,
-                    new SolidColorBrush(WorkflowDesignerColors.WorkflowViewElementCaptionColor));
+                    new SolidColorBrush(WorkflowDesignerColors.WorkflowViewElementCaptionColor), pixelsPerDip);
                 actualPoint.Y += ConnectionPoint.DrawingLargeSide / 2;
                 actualPoint.X -= trueMarkerFormattedText.WidthIncludingTrailingWhitespace;
 
@@ -94,9 +95,10 @@ namespace System.Activities.Core.Presentation
                 actualPoint = new Point(falseConnectionPoint.Location.X - origin.X, falseConnectionPoint.Location.Y - origin.Y);
                 actualPoint.Y += ConnectionPoint.DrawingLargeSide / 2;
 
+                double pixelsPerDip = VisualTreeHelper.GetDpi(falseConnectionPoint).PixelsPerDip;
                 FormattedText falseMarkerFormattedText = new FormattedText(falseLabelText, new System.Globalization.CultureInfo(textCulture),
                     this.FlowDirection, FlowchartDesigner.FlowElementCaptionTypeface, FlowchartDesigner.FlowNodeCaptionFontSize,
-                    new SolidColorBrush(WorkflowDesignerColors.WorkflowViewElementCaptionColor));
+                    new SolidColorBrush(WorkflowDesignerColors.WorkflowViewElementCaptionColor), pixelsPerDip);
 
                 DrawtWithTransform(
                     drawingContext,

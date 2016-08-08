@@ -184,6 +184,11 @@ namespace System.Web.Hosting {
             // start watching for app domain unloading
             _onAppDomainUnload = new EventHandler(OnAppDomainUnload);
             Thread.GetDomain().DomainUnload += _onAppDomainUnload;
+
+            // VSO 160528: We used to listen to the default AppDomain's UnhandledException only.
+            // However, non-serializable exceptions cannot be passed to the default domain. Therefore
+            // we should try to log exceptions in application AppDomains.
+            Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(ApplicationManager.OnUnhandledException);
         }
 
         internal long TrimCache(int percent) {

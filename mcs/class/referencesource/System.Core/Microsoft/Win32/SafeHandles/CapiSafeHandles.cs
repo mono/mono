@@ -186,6 +186,8 @@ namespace Microsoft.Win32.SafeHandles {
 #pragma warning restore 618
 #endif
     internal sealed class SafeCapiHashHandle : SafeCapiHandleBase {
+        private static volatile SafeCapiHashHandle s_invalidHandle;
+
 #if FEATURE_CORESYSTEM
         [System.Security.SecurityCritical]
 #endif
@@ -197,9 +199,17 @@ namespace Microsoft.Win32.SafeHandles {
         /// </summary>
         public static SafeCapiHashHandle InvalidHandle {
             get {
-                SafeCapiHashHandle handle = new SafeCapiHashHandle();
-                handle.SetHandle(IntPtr.Zero);
-                return handle;
+                if (s_invalidHandle == null) {
+                    // More than one of these might get created in parallel, but that's okay.
+                    // Saving one to the field saves on GC tracking, but by SuppressingFinalize on
+                    // any instance returned there's already less finalization pressure.
+                    SafeCapiHashHandle handle = new SafeCapiHashHandle();
+                    handle.SetHandle(IntPtr.Zero);
+                    GC.SuppressFinalize(handle);
+                    s_invalidHandle = handle;
+                }
+
+                return s_invalidHandle;
             }
         }
 
@@ -233,6 +243,8 @@ namespace Microsoft.Win32.SafeHandles {
 #pragma warning restore 618
 #endif
     internal sealed class SafeCapiKeyHandle : SafeCapiHandleBase {
+        private static volatile SafeCapiKeyHandle s_invalidHandle;
+
 #if FEATURE_CORESYSTEM
         [System.Security.SecurityCritical]
 #endif
@@ -245,9 +257,17 @@ namespace Microsoft.Win32.SafeHandles {
         internal static SafeCapiKeyHandle InvalidHandle {
             [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
             get {
-                SafeCapiKeyHandle handle = new SafeCapiKeyHandle();
-                handle.SetHandle(IntPtr.Zero);
-                return handle;
+                if (s_invalidHandle == null) {
+                    // More than one of these might get created in parallel, but that's okay.
+                    // Saving one to the field saves on GC tracking, but by SuppressingFinalize on
+                    // any instance returned there's already less finalization pressure.
+                    SafeCapiKeyHandle handle = new SafeCapiKeyHandle();
+                    handle.SetHandle(IntPtr.Zero);
+                    GC.SuppressFinalize(handle);
+                    s_invalidHandle = handle;
+                }
+
+                return s_invalidHandle;
             }
         }
 

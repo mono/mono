@@ -5,6 +5,7 @@
 namespace System.ServiceModel.Description
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -313,6 +314,8 @@ namespace System.ServiceModel.Description
             return newWsdl;
         }
 
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3069:ReviewDtdProcessingAssignment", Justification = "This is trusted server code from the application only. We should allow the customer add dtd.")]
         private static XmlSchema CloneXsd(XmlSchema originalXsd)
         {
             Fx.Assert(originalXsd != null, "originalXsd must not be null");
@@ -321,7 +324,7 @@ namespace System.ServiceModel.Description
             {
                 originalXsd.Write(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                newXsd = XmlSchema.Read(memoryStream, null);
+                newXsd = XmlSchema.Read(new XmlTextReader(memoryStream) { DtdProcessing = DtdProcessing.Parse }, null);
             }
 
             return newXsd;

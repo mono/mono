@@ -82,6 +82,9 @@ namespace System.Web.Hosting {
         // delegate OnRespondToPing
         private WaitCallback _onRespondToPingWaitCallback;
 
+        // flag indicates whether any fatal exception has been recorded
+        private bool _fatalExceptionRecorded = false;
+
         // single instance of app manager
         private static ApplicationManager _theAppManager;
 
@@ -154,6 +157,16 @@ namespace System.Web.Hosting {
             }
         }
 
+        private bool FatalExceptionRecorded
+        {
+            get {
+                return _fatalExceptionRecorded;
+            }
+            set {
+                _fatalExceptionRecorded = value;
+            }
+        }
+
         internal static void RecordFatalException(Exception e) {
             RecordFatalException(AppDomain.CurrentDomain, e);
         }
@@ -168,7 +181,7 @@ namespace System.Web.Hosting {
             }
         }
 
-        private static void OnUnhandledException(Object sender, UnhandledExceptionEventArgs eventArgs) {
+        internal static void OnUnhandledException(Object sender, UnhandledExceptionEventArgs eventArgs) {
             // if the CLR is not terminating, ignore the notification
             if (!eventArgs.IsTerminating) {
                 return;
@@ -183,6 +196,15 @@ namespace System.Web.Hosting {
             if (appDomain == null) {
                 return;
             }
+
+            // If any fatal exception was recorded in applicaiton AppDomains,
+            // we wouldn't record exceptions in the default AppDomain. 
+            var appManager = GetApplicationManager();
+            if (AppDomain.CurrentDomain.IsDefaultAppDomain() && appManager.FatalExceptionRecorded) {
+                return;
+            }
+
+            appManager.FatalExceptionRecorded = true;
 
             RecordFatalException(appDomain, exception);
         }

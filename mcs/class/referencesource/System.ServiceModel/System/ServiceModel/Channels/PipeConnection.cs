@@ -6,6 +6,7 @@ namespace System.ServiceModel.Channels
 {
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
     using System.Net;
@@ -1684,6 +1685,9 @@ namespace System.ServiceModel.Channels
             // then the Exact HostName, and lastly the WeakWildcard
             string[] hostChoices = new string[] { "+", uri.Host, "*" };
             bool[] globalChoices = new bool[] { true, false };
+            string matchPath = String.Empty;
+            string matchPipeName = null;
+
             for (int i = 0; i < hostChoices.Length; i++)
             {
                 for (int iGlobal = 0; iGlobal < globalChoices.Length; iGlobal++)
@@ -1696,7 +1700,7 @@ namespace System.ServiceModel.Channels
                         continue;
                     }
 
-                    // walk up the path hierarchy, looking for first match
+                    // walk up the path hierarchy, looking for match
                     string path = PipeUri.GetPath(uri);
 
                     while (path.Length > 0)
@@ -1713,7 +1717,21 @@ namespace System.ServiceModel.Channels
                                     string pipeName = sharedMemory.GetPipeName(appInfo);
                                     if (pipeName != null)
                                     {
-                                        return pipeName;
+                                        // Found a matching pipe name. 
+                                        // If the best match app setting is enabled, save the match if it is the best so far and continue.
+                                        // Otherwise, just return the first match we find.
+                                        if (ServiceModelAppSettings.UseBestMatchNamedPipeUri)
+                                        {
+                                            if (path.Length > matchPath.Length)
+                                            {
+                                                matchPath = path;
+                                                matchPipeName = pipeName;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            return pipeName;
+                                        }
                                     }
                                 }
                                 finally
@@ -1733,9 +1751,14 @@ namespace System.ServiceModel.Channels
                 }
             }
 
-            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
-                new EndpointNotFoundException(SR.GetString(SR.EndpointNotFound, uri.AbsoluteUri),
-                new PipeException(SR.GetString(SR.PipeEndpointNotFound, uri.AbsoluteUri))));
+            if (string.IsNullOrEmpty(matchPipeName))
+            {
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
+                    new EndpointNotFoundException(SR.GetString(SR.EndpointNotFound, uri.AbsoluteUri),
+                    new PipeException(SR.GetString(SR.PipeEndpointNotFound, uri.AbsoluteUri))));
+            }
+
+            return matchPipeName;
         }
 
         public IAsyncResult BeginConnect(Uri uri, TimeSpan timeout, AsyncCallback callback, object state)
@@ -1758,7 +1781,6 @@ namespace System.ServiceModel.Channels
                     new StringTraceRecord("Uri", remoteUri.ToString()), this, null);
             }
             resolvedAddress = GetPipeName(remoteUri, this.pipeSettings);
-
             const int backoffBufferMilliseconds = 150;
             TimeSpan backoffTimeout;
             if (timeout >= TimeSpan.FromMilliseconds(backoffBufferMilliseconds * 2))
@@ -2815,6 +2837,7 @@ namespace System.ServiceModel.Channels
             return builder.ToString();
         }
 
+        [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:DoNotUseSHA1", Justification = "Cannot change. It will cause compatibility issue. Not used for cryptographic purposes.")]
         static HashAlgorithm GetHashAlgorithm()
         {
             if (SecurityUtilsEx.RequiresFipsCompliance)

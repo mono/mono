@@ -937,6 +937,10 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.Machine)]
         internal unsafe static extern int GetFullPathName(char* path, int numBufferChars, char* buffer, IntPtr mustBeZero);
 
+        [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false, ExactSpelling = true)]
+        [ResourceExposure(ResourceScope.Machine)]
+        internal unsafe static extern uint GetFullPathNameW(char* path, uint numBufferChars, SafeHandle buffer, IntPtr mustBeZero);
+
         [DllImport(KERNEL32, SetLastError=true, CharSet=CharSet.Auto, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.Machine)]
         internal unsafe static extern int GetFullPathName(String path, int numBufferChars, [Out]StringBuilder buffer, IntPtr mustBeZero);
@@ -948,6 +952,14 @@ namespace Microsoft.Win32 {
         [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         internal static extern int GetLongPathName(String path, [Out]StringBuilder longPathBuffer, int bufferLength);
+
+        [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false, ExactSpelling = true)]
+        [ResourceExposure(ResourceScope.Machine)]
+        internal static extern uint GetLongPathNameW(SafeHandle lpszShortPath, SafeHandle lpszLongPath, uint cchBuffer);
+
+        [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false, ExactSpelling = true)]
+        [ResourceExposure(ResourceScope.Machine)]
+        internal static extern uint GetLongPathNameW(string lpszShortPath, SafeHandle lpszLongPath, uint cchBuffer);
 
         // Disallow access to all non-file devices from methods that take
         // a String.  This disallows DOS devices like "con:", "com1:", 
@@ -1396,6 +1408,10 @@ namespace Microsoft.Win32 {
         internal static extern int GetCurrentDirectory(
                   int nBufferLength,
                   [Out]StringBuilder lpBuffer);
+
+        [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false, ExactSpelling = true)]
+        [ResourceExposure(ResourceScope.Machine)]
+        internal static extern uint GetCurrentDirectoryW(uint nBufferLength, SafeHandle lpBuffer);
 
         [DllImport(KERNEL32, SetLastError=true, CharSet=CharSet.Auto, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.None)]

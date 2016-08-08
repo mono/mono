@@ -247,12 +247,15 @@ namespace System.Net {
         private static volatile CertPolicyValidationCallback s_CertPolicyValidationCallback = new CertPolicyValidationCallback();
         private static volatile ServerCertValidationCallback s_ServerCertValidationCallback = null;
 
+        private const string sendAuxRecordValueName = "SchSendAuxRecord";
+        private const string sendAuxRecordAppSetting = "System.Net.ServicePointManager.SchSendAuxRecord";
         private const string strongCryptoValueName = "SchUseStrongCrypto";
         private const string secureProtocolAppSetting = "System.Net.ServicePointManager.SecurityProtocol";
 
-        private static object disableStrongCryptoLock = new object();
-        private static volatile bool disableStrongCryptoInitialized = false;
+        private static object configurationLoadedLock = new object();
+        private static volatile bool configurationLoaded = false;
         private static bool disableStrongCrypto = false;
+        private static bool disableSendAuxRecord = false;
 
         private static SecurityProtocolType s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 
@@ -427,11 +430,11 @@ namespace System.Net {
         [SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "Reviewed for thread-safety")]
         public static SecurityProtocolType SecurityProtocol {
             get {
-                EnsureStrongCryptoSettingsInitialized();
+                EnsureConfigurationLoaded();
                 return s_SecurityProtocolType;
             }
             set {
-                EnsureStrongCryptoSettingsInitialized();
+                EnsureConfigurationLoaded();
                 ValidateSecurityProtocol(value);
                 s_SecurityProtocolType = value;
             }
@@ -640,77 +643,118 @@ namespace System.Net {
 
         internal static bool DisableStrongCrypto {
             get {
-                EnsureStrongCryptoSettingsInitialized();
-                return (bool)disableStrongCrypto; 
+                EnsureConfigurationLoaded();
+                return disableStrongCrypto; 
             }
         }
 
-        private static void EnsureStrongCryptoSettingsInitialized() {
-            
-            if (disableStrongCryptoInitialized) {
+        internal static bool DisableSendAuxRecord {
+            get {
+                EnsureConfigurationLoaded();
+                return disableSendAuxRecord;
+            }
+        }
+
+        private static void EnsureConfigurationLoaded() {
+            if (configurationLoaded) {
                 return;
             }
 
-            lock (disableStrongCryptoLock) {
-                if (disableStrongCryptoInitialized) {
+            lock (configurationLoadedLock) {
+                if (configurationLoaded) {
                     return;
                 }
 
-                try {
-                    bool disableStrongCryptoInternal = false;
-                    int schUseStrongCryptoKeyValue = 0;
+                LoadDisableStrongCryptoConfiguration();
+                LoadDisableSendAuxRecordConfiguration();
 
-                    if (LocalAppContextSwitches.DontEnableSchUseStrongCrypto)
-                    {
-                        //.Net 4.5.2 and below will default to false unless the registry key is specifically set to 1.
-                        schUseStrongCryptoKeyValue =
-                            RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 0);
+                configurationLoaded = true;
+            }
+        }
 
-                        disableStrongCryptoInternal = schUseStrongCryptoKeyValue != 1;
-                    }
-                    else
-                    {
-                        // .Net 4.6 and above will default to true unless the registry key is specifically set to 0.
-                        schUseStrongCryptoKeyValue = 
-                            RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 1);
+        private static void LoadDisableStrongCryptoConfiguration() {
+            try {
+                bool disableStrongCryptoInternal = false;
+                int schUseStrongCryptoKeyValue = 0;
 
-                        disableStrongCryptoInternal = schUseStrongCryptoKeyValue == 0;
-                    }
-                    
-                    if (disableStrongCryptoInternal) {
-                        // Revert the SecurityProtocol selection to the legacy combination.
-                        s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
-                    }
-                    else {
-                        s_SecurityProtocolType =
-                            SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                if (LocalAppContextSwitches.DontEnableSchUseStrongCrypto) {
+                    //.Net 4.5.2 and below will default to false unless the registry key is specifically set to 1.
+                    schUseStrongCryptoKeyValue =
+                        RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 0);
 
-                        string appSetting = RegistryConfiguration.AppConfigReadString(secureProtocolAppSetting, null);
-
-                        SecurityProtocolType value;
-                        try {
-                            value = (SecurityProtocolType)Enum.Parse(typeof(SecurityProtocolType), appSetting);
-                            ValidateSecurityProtocol(value);
-                            s_SecurityProtocolType = value;
-                        }
-                        // Ignore all potential exceptions caused by Enum.Parse.
-                        catch (ArgumentNullException) { }
-                        catch (ArgumentException) { }
-                        catch (NotSupportedException) { }
-                        catch (OverflowException) { }
-                    }
-
-                    disableStrongCrypto = disableStrongCryptoInternal;
-                    disableStrongCryptoInitialized = true;
+                    disableStrongCryptoInternal = schUseStrongCryptoKeyValue != 1;
                 }
-                catch (Exception e) {
-                    if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
-                        throw;
+                else {
+                    // .Net 4.6 and above will default to true unless the registry key is specifically set to 0.
+                    schUseStrongCryptoKeyValue =
+                        RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 1);
+
+                    disableStrongCryptoInternal = schUseStrongCryptoKeyValue == 0;
+                }
+
+                if (disableStrongCryptoInternal) {
+                    // Revert the SecurityProtocol selection to the legacy combination.
+                    s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+                }
+                else {
+                    s_SecurityProtocolType =
+                        SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                    string appSetting = RegistryConfiguration.AppConfigReadString(secureProtocolAppSetting, null);
+
+                    SecurityProtocolType value;
+                    try {
+                        value = (SecurityProtocolType)Enum.Parse(typeof(SecurityProtocolType), appSetting);
+                        ValidateSecurityProtocol(value);
+                        s_SecurityProtocolType = value;
                     }
+                    // Ignore all potential exceptions caused by Enum.Parse.
+                    catch (ArgumentNullException) { }
+                    catch (ArgumentException) { }
+                    catch (NotSupportedException) { }
+                    catch (OverflowException) { }
+                }
+
+                disableStrongCrypto = disableStrongCryptoInternal;
+            }
+            catch (Exception e)
+            {
+                if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException)
+                {
+                    throw;
                 }
             }
         }
-        
+
+        private static void LoadDisableSendAuxRecordConfiguration() {
+            try { 
+                if (LocalAppContextSwitches.DontEnableSchSendAuxRecord) {
+                    disableSendAuxRecord = true;
+                    return;
+                }
+
+                int schSendAuxRecordKeyValue = 1;
+                schSendAuxRecordKeyValue = RegistryConfiguration.AppConfigReadInt(sendAuxRecordAppSetting, 1);
+                if (schSendAuxRecordKeyValue == 0) {
+                    disableSendAuxRecord = true;
+                    return;
+                }
+            
+                schSendAuxRecordKeyValue = RegistryConfiguration.GlobalConfigReadInt(sendAuxRecordValueName, 1);
+                if (schSendAuxRecordKeyValue == 0) {
+                    disableSendAuxRecord = true;
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException)
+                {
+                    throw;
+                }
+            }
+        }
+
         public static bool ReusePort {
             get {
                 EnsureReusePortSettingsInitialized();

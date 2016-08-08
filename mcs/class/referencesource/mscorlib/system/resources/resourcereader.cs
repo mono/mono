@@ -1014,10 +1014,15 @@ namespace System.Resources {
                 }
             }
             else {
-                int seekPos = unchecked(4 * _numResources);
-                if (seekPos < 0) {
+                // The hexadecimal E translates to binary 1110
+                // So, with this & condition we are checking that none of the highest 3 bits are
+                // set before multiplying, as that would cause an overflow.
+                if ((_numResources & 0xE0000000) != 0){
+
                     throw new BadImageFormatException(Environment.GetResourceString("BadImageFormat_ResourcesHeaderCorrupted"));
                 }
+
+                int seekPos = unchecked(4 * _numResources);
                 unsafe {
                     _nameHashesPtr = (int*)_ums.PositionPointer;
                     // Skip over the array of nameHashes.
@@ -1046,10 +1051,14 @@ namespace System.Resources {
                 }
             }
             else {
-                int seekPos = unchecked(4 * _numResources);
-                if (seekPos < 0) {
+                // The hexadecimal E translates to binary 1110
+                // So, with this & condition we are checking that none of the highest 3 bits are
+                // set before multiplying, as that would cause an overflow.
+                if ((_numResources & 0xE0000000) != 0){
                     throw new BadImageFormatException(Environment.GetResourceString("BadImageFormat_ResourcesHeaderCorrupted"));
                 }
+
+                int seekPos = unchecked(4 * _numResources);
                 unsafe {
                     _namePositionsPtr = (int*)_ums.PositionPointer;
                     // Skip over the array of namePositions.

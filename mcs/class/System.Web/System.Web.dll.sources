@@ -1400,6 +1400,7 @@ ReferenceSources/SR.cs
 ../referencesource/System.Web/Hosting/IProcessHostSupportFunctions.cs
 ../referencesource/System.Web/Hosting/HTTP_COOKED_URL.cs
 ../referencesource/System.Web/Hosting/HostingEnvironmentException.cs
+../referencesource/System.Web/Util/Debug.cs
 ../referencesource/System.Web/Util/SynchronizationContextMode.cs
 ../referencesource/System.Web/Util/ISyncContextLock.cs
 ../referencesource/System.Web/Util/DoNotResetAttribute.cs

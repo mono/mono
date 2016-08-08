@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Resources;
+﻿using System.ComponentModel.DataAnnotations.Resources;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -19,7 +19,18 @@ namespace System.ComponentModel.DataAnnotations {
         ///     Gets or sets the timeout to use when matching the regular expression pattern (in milliseconds)
         ///     (-1 means never timeout).
         /// </summary>
-        public int MatchTimeoutInMilliseconds { get; set; } = GetDefaultTimeout();
+        public int MatchTimeoutInMilliseconds { 
+            get {
+                return _matchTimeoutInMilliseconds;
+            }
+            set {               
+                _matchTimeoutInMilliseconds = value; 
+                _matchTimeoutSet = true;
+            }
+        }
+
+        private int _matchTimeoutInMilliseconds;
+        private bool _matchTimeoutSet;
 
         private Regex Regex { get; set; }
 
@@ -90,6 +101,11 @@ namespace System.ComponentModel.DataAnnotations {
                 if (string.IsNullOrEmpty(this.Pattern)) {
                     throw new InvalidOperationException(DataAnnotationsResources.RegularExpressionAttribute_Empty_Pattern);
                 }
+
+                if (!_matchTimeoutSet) { 
+                    MatchTimeoutInMilliseconds = GetDefaultTimeout();
+                }
+
                 Regex = MatchTimeoutInMilliseconds == -1
                     ? new Regex(Pattern)
                     : Regex = new Regex(Pattern, default(RegexOptions), TimeSpan.FromMilliseconds((double)MatchTimeoutInMilliseconds));

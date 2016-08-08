@@ -71,8 +71,14 @@ namespace System.Security.Cryptography.X509Certificates
             {
                 if (privateKeyHandle == null)
                 {
+                    if (LocalAppContextSwitches.DontReliablyClonePrivateKey)
+                        return (RSA)certificate.PrivateKey;
+
                     // fall back to CAPI if we cannot acquire the key using CNG.
-                    return (RSA)certificate.PrivateKey;
+                    RSACryptoServiceProvider rsaCsp = (RSACryptoServiceProvider)certificate.PrivateKey;
+                    CspParameters cspParameters = DSACertificateExtensions.CopyCspParameters(rsaCsp);
+                    RSACryptoServiceProvider clone = new RSACryptoServiceProvider(cspParameters);
+                    return clone;
                 }
 
                 CngKey key = CngKey.Open(privateKeyHandle, CngKeyHandleOpenOptions.None);

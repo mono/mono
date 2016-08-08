@@ -15,6 +15,7 @@ using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Web.Hosting;
+using System.Diagnostics.CodeAnalysis;
 
 /*
  * Various string handling utilities
@@ -294,6 +295,7 @@ internal static class StringUtil {
     // Instead use the default AppDomain, because it doesn't have string hash randomization enabled.
     // Marshal the call to reuse the default StringComparer behavior. 
     // PERF isn't optimal, so apply consideration!
+    [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "We carefully control the callers.")]
     internal static int GetNonRandomizedStringComparerHashCode(string s) {
         // Preserve the default behavior when string hash randomization is off
         if (!AppSettings.UseRandomizedStringHashAlgorithm) {

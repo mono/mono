@@ -21,6 +21,7 @@ namespace System.Web.Configuration {
     using System.Security.AccessControl;
 #endif // !FEATURE_PAL
     using System.Security.Permissions;
+    using System.Diagnostics.CodeAnalysis;
 
 
 #if !FEATURE_PAL // FEATURE_PAL does not enable COM
@@ -215,6 +216,7 @@ namespace System.Web.Configuration {
             return sb.ToString();
         }
 
+        [SuppressMessage("Microsoft.Security.Xml", "CA3057:DoNotUseLoadXml", Justification = "Developer-controlled xml contents are implicitly trusted by ASP.Net.")]
         public string DoEncryptOrDecrypt(bool doEncrypt, string xmlString, string protectionProviderName, string protectionProviderType, string[] paramKeys, string[] paramValues)
         {
             Type t = Type.GetType(protectionProviderType, true);

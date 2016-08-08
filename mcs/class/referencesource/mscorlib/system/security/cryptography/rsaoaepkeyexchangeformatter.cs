@@ -12,6 +12,7 @@ namespace System.Security.Cryptography {
     public class RSAOAEPKeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
         private byte[] ParameterValue;
         private RSA _rsaKey;
+        private bool?  _rsaOverridesEncrypt;
         private RandomNumberGenerator RngValue;
 
         //
@@ -64,6 +65,7 @@ namespace System.Security.Cryptography {
                 throw new ArgumentNullException("key");
             Contract.EndContractBlock();
             _rsaKey = (RSA) key;
+            _rsaOverridesEncrypt = default(bool?);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -71,8 +73,8 @@ namespace System.Security.Cryptography {
             if (_rsaKey == null)
                 throw new CryptographicUnexpectedOperationException(Environment.GetResourceString("Cryptography_MissingKey"));
 
-            if (_rsaKey is RSACryptoServiceProvider) {
-                return ((RSACryptoServiceProvider) _rsaKey).Encrypt(rgbData, true);
+            if (OverridesEncrypt) {
+                return _rsaKey.Encrypt(rgbData, RSAEncryptionPadding.OaepSHA1);
             } else {
                 return Utils.RsaOaepEncrypt(_rsaKey, SHA1.Create(), new PKCS1MaskGenerationMethod(), RandomNumberGenerator.Create(), rgbData);
             }
@@ -80,6 +82,15 @@ namespace System.Security.Cryptography {
 
         public override byte[] CreateKeyExchange(byte[] rgbData, Type symAlgType) {
             return CreateKeyExchange(rgbData);
+        }
+
+        private bool OverridesEncrypt {
+            get {
+                if (!_rsaOverridesEncrypt.HasValue) {
+                    _rsaOverridesEncrypt = Utils.DoesRsaKeyOverride(_rsaKey, "Encrypt", new Type[] { typeof(byte[]), typeof(RSAEncryptionPadding) });
+                }
+                return _rsaOverridesEncrypt.Value;
+            }
         }
     }
 }

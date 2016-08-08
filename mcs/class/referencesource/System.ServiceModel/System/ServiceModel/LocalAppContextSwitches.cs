@@ -14,9 +14,11 @@ namespace System.ServiceModel
     {
         private const string DisableExplicitConnectionCloseHeaderString = "Switch.System.ServiceModel.DisableExplicitConnectionCloseHeader";
         private const string AllowUnsignedToHeaderString = "Switch.System.ServiceModel.AllowUnsignedToHeader";
+        private const string DisableCngCertificatesString = "Switch.System.ServiceModel.DisableCngCertificates";
 
         private static int disableExplicitConnectionCloseHeader;
         private static int allowUnsignedToHeader;
+        private static int disableCngCertificates;
 
         public static bool DisableExplicitConnectionCloseHeader
         {
@@ -36,10 +38,29 @@ namespace System.ServiceModel
             }
         }
 
+        public static bool DisableCngCertificates
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DisableCngCertificatesString, ref disableCngCertificates);
+            }
+        }
+
         public static void SetDefaultsLessOrEqual_452()
         {
+#pragma warning disable BCL0012            
             // Define the switches that should be true for 4.5.2 or less, false for 4.6+.
             LocalAppContext.DefineSwitchDefault(DisableExplicitConnectionCloseHeaderString, true);
+#pragma warning restore BCL0012
+        }
+
+        public static void SetDefaultsLessOrEqual_461()
+        {
+#pragma warning disable BCL0012            
+            // Define the switches that should be true for 4.6.1 or less, false for 4.6.2+.
+            LocalAppContext.DefineSwitchDefault(DisableCngCertificatesString, true);
+#pragma warning restore BCL0012
         }
     }
 }

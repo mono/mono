@@ -17,6 +17,7 @@ namespace System.Web.Security {
     using System.Security;
     using System.Security.Claims;
     using System.Security.Permissions;
+    using System.Security.Principal;
 
     /// <devdoc>
     ///    This class is an IIdentity derived class
@@ -77,7 +78,7 @@ namespace System.Web.Security {
         ///    Constructor.
         /// </devdoc>
         protected FormsIdentity(FormsIdentity identity)
-            : base(identity)
+            : base((IIdentity)identity)
         {
             _Ticket = identity._Ticket;
         }

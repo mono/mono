@@ -311,15 +311,15 @@ public class SignatureDescriptionTest {
 	{
 		// internal class - we cannot create one without CryptoConfig
 		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.SHA1Cng", sd.DigestAlgorithm);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sd.DeformatterAlgorithm);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureFormatter", sd.FormatterAlgorithm);
-		Assert.AreEqual ("System.Security.Cryptography.RSACryptoServiceProvider", sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSA", sd.KeyAlgorithm);
 
 		HashAlgorithm hash = sd.CreateDigest();
-		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.SHA1Cng", hash.ToString ());
 
-		Assert.AreEqual (rsa.ToString (), sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSA", sd.KeyAlgorithm);
 
 		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (rsa);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", asd.ToString ());

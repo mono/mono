@@ -326,9 +326,19 @@ namespace System.ComponentModel {
                 return false;
             }
 
-            if ((mdObj.description == null) != (description == null) ||
-                (description != null && !mdObj.category.Equals(description))) {
-                return false;
+            // VSO 149471 - Technically fixing this could cause a behavior change, so we are
+            // adding a quirk in case anyone is bit by this and needs the old, buggy behavior.
+            if (!LocalAppContextSwitches.MemberDescriptorEqualsReturnsFalseIfEquivalent) {
+                if ((mdObj.description == null) != (description == null) ||
+                    (description != null && !mdObj.description.Equals(description))) {
+                    return false;
+                }
+            }
+            else {
+                if ((mdObj.description == null) != (description == null) ||
+                    (description != null && !mdObj.category.Equals(description))) {
+                    return false;
+                }
             }
 
             if ((mdObj.attributes == null) != (attributes == null)) {

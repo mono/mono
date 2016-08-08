@@ -17,6 +17,7 @@ using XmlSerialization = System.Xml.Serialization;
 
 #if WEB_EXTENSIONS_CODE
 using System.Web.Resources;
+using System.Diagnostics.CodeAnalysis;
 #else
 using Microsoft.VSDesigner.WCF.Resources;
 #endif
@@ -551,6 +552,7 @@ namespace Microsoft.VSDesigner.WCFModel
         /// </summary>
         /// <param name="contentReader"></param>
         /// <remarks></remarks>
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Legacy code that trusts our developer-controlled input.")]
         private void LoadContentFromTextReader(TextReader contentReader)
         {
             if (contentReader == null)
@@ -597,6 +599,7 @@ namespace Microsoft.VSDesigner.WCFModel
         /// </summary>
         /// <return></return>
         /// <remarks></remarks>
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Legacy code that trusts our developer-controlled input.")]
         private MetadataContent LoadMetadataContent(MetadataType fileType)
         {
             if (ErrorInLoading != null)

@@ -708,28 +708,25 @@ namespace System.IO {
             // Get absolute path - Security needs this to prevent something
             // like trying to create a file in c:\tmp with the name 
             // "..\WinNT\System32\ntoskrnl.exe".  Store it for user convenience.
-            int maxPath = useLongPath ? Path.MaxLongPath : Path.MaxPath;
-            String filePath = Path.NormalizePath(path, true, maxPath);
+            int maxPath = useLongPath
+                ? PathInternal.MaxLongPath 
+                : AppContextSwitches.BlockLongPaths ? PathInternal.MaxShortPath : PathInternal.MaxLongPath;
+
+            string filePath = Path.NormalizePath(path, true, maxPath);
 
             _fileName = filePath;
 
             // Prevent access to your disk drives as raw block devices.
-            if (filePath.StartsWith("\\\\.\\", StringComparison.Ordinal))
+            //
+            // We'll allow if in full trust and not in legacy mode. You can also get device access via \\?\ and \??\ so there isn't
+            // much point in making users jump through these hoops. Blocking is pointless in full trust as well.
+            if (
+#if FEATURE_CAS_POLICY
+                (!CodeAccessSecurityEngine.QuickCheckForAllDemands() || AppContextSwitches.UseLegacyPathHandling)
+                &&
+#endif
+                filePath.StartsWith("\\\\.\\", StringComparison.Ordinal))
                 throw new ArgumentException(Environment.GetResourceString("Arg_DevicesNotSupported"));
-
-            // In 4.0, we always construct a FileIOPermission object below. 
-            // If filePath contained a ':', we would throw a NotSupportedException in 
-            // System.Security.Util.StringExpressionSet.CanonicalizePath. 
-            // If filePath contained other illegal characters, we would throw an ArgumentException in 
-            // FileIOPermission.CheckIllegalCharacters.
-            // In 4.5 we on longer construct the FileIOPermission object in full trust.
-            // To preserve the 4.0 behavior we do an explicit check for ':' here and also call Path.CheckInvalidPathChars.
-            // Note that we need to call CheckInvalidPathChars before checking for ':' because that is what FileIOPermission does.
-
-            Path.CheckInvalidPathChars(filePath, true);
-
-            if (filePath.IndexOf( ':', 2 ) != -1)
-                throw new NotSupportedException( Environment.GetResourceString( "Argument_PathFormatNotSupported" ) );
 
             bool read = false;
 
@@ -747,7 +744,12 @@ namespace System.IO {
 
             // All demands in full trust domains are no-ops, so skip 
 #if FEATURE_CAS_POLICY
-            if (!CodeAccessSecurityEngine.QuickCheckForAllDemands()) 
+            if (CodeAccessSecurityEngine.QuickCheckForAllDemands())
+            {
+                // Need to throw the same exceptions that are thrown if we actually called QuickDemand() below.
+                FileIOPermission.EmulateFileIOPermissionChecks(filePath);
+            }
+            else
 #endif // FEATURE_CAS_POLICY
             {
                 // Build up security permissions required, as well as validate we
@@ -796,7 +798,7 @@ namespace System.IO {
                 }
                 
                 AccessControlActions control = specifiedAcl ? AccessControlActions.Change : AccessControlActions.None;
-                new FileIOPermission(secAccess, control, new String[] { filePath }, false, false).Demand();
+                FileIOPermission.QuickDemand(secAccess, control, new String[] { filePath }, false, false);
 #else
 #if FEATURE_CORECLR
                 if (checkHost) {
@@ -804,7 +806,7 @@ namespace System.IO {
                     state.EnsureState();
                 }
 #else
-                new FileIOPermission(secAccess, new String[] { filePath }, false, false).Demand();
+                FileIOPermission.QuickDemand(secAccess, filePath, false, false);
 #endif // FEATURE_CORECLR
 #endif
             }
@@ -867,7 +869,7 @@ namespace System.IO {
                     {
                         try {
 #if !FEATURE_CORECLR
-                            new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { _fileName }, false, false ).Demand();
+                            FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, _fileName, false, false);
 #endif
                             canGiveFullPath = true;
                         }
@@ -1202,7 +1204,7 @@ namespace System.IO {
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, _fileName);
                 sourceState.EnsureState();
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { _fileName }, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, _fileName, false, false);
 #endif
                 return _fileName;
             }

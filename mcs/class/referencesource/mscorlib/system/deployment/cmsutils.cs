@@ -79,18 +79,18 @@ namespace System.Deployment.Internal.Isolation.Manifest {
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        internal static string GetEntryPointFullPath (ActivationContext activationContext) {
+        internal static string GetEntryPointFullPath (ActivationContext activationContext)
+        {
             string file, parameters;
             GetEntryPoint(activationContext, out file, out parameters);
 
-            if (!String.IsNullOrEmpty(file)) {
+            if (!string.IsNullOrEmpty(file))
+            {
                 string directoryName = activationContext.ApplicationDirectory;
-                if (directoryName == null || directoryName.Length == 0) {
+                if (directoryName == null || directoryName.Length == 0)
+                {
                     // If we were passed a relative path, assume the app base is the current working directory
-                    StringBuilder sb = new StringBuilder(Path.MAX_PATH + 1);
-                    if (Win32Native.GetCurrentDirectory(sb.Capacity, sb) == 0)
-                        System.IO.__Error.WinIOError();
-                    directoryName = sb.ToString();
+                    directoryName = Directory.UnsafeGetCurrentDirectory();
                 }
 
                 file = Path.Combine(directoryName, file);

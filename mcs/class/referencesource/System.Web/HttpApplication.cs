@@ -500,17 +500,37 @@ namespace System.Web {
             }
         }
 
-        // DevDiv Bugs 151914: Release session state before executing child request
-        internal void EnsureReleaseState() {
+        private ISessionStateModule FindISessionStateModule() {
+            if (!HttpRuntime.UseIntegratedPipeline)
+                return null;
+
             if (_moduleCollection != null) {
                 for (int i = 0; i < _moduleCollection.Count; i++) {
-                    IHttpModule module = _moduleCollection.Get(i);
-                    if (module is SessionStateModule) {
-                        ((SessionStateModule) module).EnsureReleaseState(this);
-                        break;
+                    ISessionStateModule module = _moduleCollection.Get(i) as ISessionStateModule;
+                    if (module != null) {
+                        return module;
                     }
                 }
             }
+
+            return null;
+        }
+
+        // DevDiv Bugs 151914: Release session state before executing child request
+        internal void EnsureReleaseState() {
+            ISessionStateModule module = FindISessionStateModule();
+            if (module != null) {
+                module.ReleaseSessionState(Context);
+            }
+        }
+
+        internal Task EnsureReleaseStateAsync() {
+            ISessionStateModule module = FindISessionStateModule();
+            if (module != null) {
+                return module.ReleaseSessionStateAsync(Context);
+            }
+
+            return TaskAsyncHelper.CompletedTask;
         }
 
         /// <devdoc>

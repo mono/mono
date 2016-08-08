@@ -15,6 +15,7 @@ namespace System.Security.Cryptography {
     using System.Runtime.Serialization;
     using System.Security.Util;
     using System.Globalization;
+    using System.IO;
     using System.Diagnostics.Contracts;
 
     // DSAParameters is serializable so that one could pass the public parameters
@@ -63,9 +64,77 @@ namespace System.Security.Cryptography {
             return (DSA) CryptoConfig.CreateFromName(algName);
         }
 
+        // DSA does not encode the algorithm identifier into the signature blob, therefore CreateSignature and
+        // VerifySignature do not need the HashAlgorithmName value, only SignData and VerifyData do.
         abstract public byte[] CreateSignature(byte[] rgbHash);
 
         abstract public bool VerifySignature(byte[] rgbHash, byte[] rgbSignature); 
+
+        protected virtual byte[] HashData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+        {
+            throw DerivedClassMustOverride();
+        }
+
+        protected virtual byte[] HashData(Stream data, HashAlgorithmName hashAlgorithm)
+        {
+            throw DerivedClassMustOverride();
+        }
+
+        public byte[] SignData(byte[] data, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+
+            return SignData(data, 0, data.Length, hashAlgorithm);
+        }
+
+        public virtual byte[] SignData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+            if (offset < 0 || offset > data.Length) { throw new ArgumentOutOfRangeException("offset"); }
+            if (count < 0 || count > data.Length - offset) { throw new ArgumentOutOfRangeException("count"); }
+            if (String.IsNullOrEmpty(hashAlgorithm.Name)) { throw HashAlgorithmNameNullOrEmpty(); }
+
+            byte[] hash = HashData(data, offset, count, hashAlgorithm);
+            return CreateSignature(hash);
+        }
+
+        public virtual byte[] SignData(Stream data, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+            if (String.IsNullOrEmpty(hashAlgorithm.Name)) { throw HashAlgorithmNameNullOrEmpty(); }
+
+            byte[] hash = HashData(data, hashAlgorithm);
+            return CreateSignature(hash);
+        }
+
+        public bool VerifyData(byte[] data, byte[] signature, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+
+            return VerifyData(data, 0, data.Length, signature, hashAlgorithm);
+        }
+
+        public virtual bool VerifyData(byte[] data, int offset, int count, byte[] signature, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+            if (offset < 0 || offset > data.Length) { throw new ArgumentOutOfRangeException("offset"); }
+            if (count < 0 || count > data.Length - offset) { throw new ArgumentOutOfRangeException("count"); }
+            if (signature == null) { throw new ArgumentNullException("signature"); }
+            if (String.IsNullOrEmpty(hashAlgorithm.Name)) { throw HashAlgorithmNameNullOrEmpty(); }
+
+            byte[] hash = HashData(data, offset, count, hashAlgorithm);
+            return VerifySignature(hash, signature);
+        }
+
+        public virtual bool VerifyData(Stream data, byte[] signature, HashAlgorithmName hashAlgorithm)
+        {
+            if (data == null) { throw new ArgumentNullException("data"); }
+            if (signature == null) { throw new ArgumentNullException("signature"); }
+            if (String.IsNullOrEmpty(hashAlgorithm.Name)) { throw HashAlgorithmNameNullOrEmpty(); }
+
+            byte[] hash = HashData(data, hashAlgorithm);
+            return VerifySignature(hash, signature);
+        }
 
         // We can provide a default implementation of FromXmlString because we require 
         // every DSA implementation to implement ImportParameters
@@ -187,5 +256,15 @@ namespace System.Security.Cryptography {
         abstract public DSAParameters ExportParameters(bool includePrivateParameters);
 
         abstract public void ImportParameters(DSAParameters parameters);
+
+        private static Exception DerivedClassMustOverride()
+        {
+            return new NotImplementedException(Environment.GetResourceString("NotSupported_SubclassOverride"));
+        }
+
+        internal static Exception HashAlgorithmNameNullOrEmpty()
+        {
+            return new ArgumentException(Environment.GetResourceString("Cryptography_HashAlgorithmNameNullOrEmpty"), "hashAlgorithm");
+        }
     }
 }

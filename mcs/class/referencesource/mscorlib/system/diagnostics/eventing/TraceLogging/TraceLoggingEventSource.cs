@@ -460,6 +460,7 @@ namespace System.Diagnostics.Tracing
                     }
 
                     this.WriteEventRaw(
+                        eventName,
                         ref descriptor,
                         activityID,
                         childActivityID,
@@ -564,6 +565,7 @@ namespace System.Diagnostics.Tracing
                     }
 
                     this.WriteEventRaw(
+                        eventName,
                         ref descriptor,
                         activityID,
                         childActivityID,
@@ -646,6 +648,7 @@ namespace System.Diagnostics.Tracing
                             eventTypes.typeInfo.WriteData(TraceLoggingDataCollector.Instance, ref data);
                             
                             this.WriteEventRaw(
+                                eventName,
                                 ref descriptor,
                                 pActivityId,
                                 pRelatedActivityId,
@@ -665,7 +668,7 @@ namespace System.Diagnostics.Tracing
                             if (ex is EventSourceException)
                                 throw;
                             else
-                                ThrowEventSourceException(ex);
+                                ThrowEventSourceException(eventName, ex);
                         }
                         finally
                         {
@@ -679,7 +682,7 @@ namespace System.Diagnostics.Tracing
                 if (ex is EventSourceException)
                     throw;
                 else
-                    ThrowEventSourceException(ex);
+                    ThrowEventSourceException(eventName, ex);
             }
         }
 
@@ -703,7 +706,7 @@ namespace System.Diagnostics.Tracing
                 eventCallbackArgs.PayloadNames = new ReadOnlyCollection<string>((IList<string>)payload.Keys);
             }
 
-            DisptachToAllListeners(-1, pActivityId, eventCallbackArgs);
+            DispatchToAllListeners(-1, pActivityId, eventCallbackArgs);
         }
 
 #if !ES_BUILD_PCL

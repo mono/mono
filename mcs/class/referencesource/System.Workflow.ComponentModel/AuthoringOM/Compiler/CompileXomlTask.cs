@@ -6,6 +6,7 @@ namespace System.Workflow.ComponentModel.Compiler
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using System.Xml;
     using System.Text;
     using System.Collections;
     using System.Collections.Specialized;
@@ -1142,7 +1143,7 @@ namespace System.Workflow.ComponentModel.Compiler
                 string name = null;
                 try
                 {
-                    Xml.XmlTextReader reader = new Xml.XmlTextReader(binaryStream);
+                    Xml.XmlTextReader reader = new Xml.XmlTextReader(binaryStream) { DtdProcessing = DtdProcessing.Prohibit };
                     if (reader.MoveToContent() == System.Xml.XmlNodeType.Element)
                     {
                         if (reader.MoveToAttribute("Class", StandardXomlKeys.Definitions_XmlNs))

@@ -300,6 +300,9 @@ namespace System.Net {
             }
         }
 
+        // Note: RequestBuffer may get moved in memory. If you dereference a pointer from inside the RequestBuffer, 
+        // you must use 'OriginalBlobAddress' below to adjust the location of the pointer to match the location of
+        // RequestBuffer.
         internal byte[] RequestBuffer
         {
             get
@@ -1061,7 +1064,7 @@ namespace System.Net {
 
             m_TokenBindings = new List<TokenBinding>();
 
-            UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* pTokenBindingInfo = GetTlsTokenBindingRequestInfo();
+            UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* pTokenBindingInfo = UnsafeNclNativeMethods.HttpApi.GetTlsTokenBindingRequestInfo(RequestBuffer, OriginalBlobAddress);
 
             if (pTokenBindingInfo == null)
             {
@@ -1114,23 +1117,6 @@ namespace System.Net {
                     }
                 }
             }
-        }
-
-        private UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* GetTlsTokenBindingRequestInfo() {
-            fixed (byte* pMemoryBlob = RequestBuffer)
-            {
-                UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2* request = (UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2*)pMemoryBlob;
-
-                for (int i = 0; i < request->RequestInfoCount; i++)
-                {
-                    UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_INFO* pThisInfo = &request->pRequestInfo[i];
-                    if (pThisInfo != null && pThisInfo->InfoType == UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_INFO_TYPE.HttpRequestInfoTypeSslTokenBinding)
-                    {
-                        return (UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO*)pThisInfo->pInfo;
-                    }
-                }
-            }
-            return null;
         }
 
         internal void CheckDisposed() {

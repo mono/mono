@@ -1,5 +1,5 @@
 ﻿namespace System.Web.ModelBinding {
-    using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Web.Globalization;
 
     // A factory for validators based on ValidationAttribute
     public delegate ModelValidator DataAnnotationsModelValidationFactory(ModelMetadata metadata, ModelBindingExecutionContext context, ValidationAttribute attribute);
@@ -26,7 +27,7 @@ using System.Threading;
     public class DataAnnotationsModelValidatorProvider : AssociatedValidatorProvider {
         private static bool _addImplicitRequiredAttributeForValueTypes = true;
         private static ReaderWriterLockSlim _adaptersLock = new ReaderWriterLockSlim();
-
+        
         // Factories for validation attributes
 
         internal static DataAnnotationsModelValidationFactory DefaultAttributeFactory =
@@ -49,6 +50,14 @@ using System.Threading;
                 typeof(StringLengthAttribute),
                 (metadata, context, attribute) => new StringLengthAttributeAdapter(metadata, context, (StringLengthAttribute)attribute)
             },
+            {
+                typeof(MinLengthAttribute),
+                (metadata, context, attribute) => new MinLengthAttributeAdapter(metadata, context, (MinLengthAttribute)attribute)
+            },
+            {
+                typeof(MaxLengthAttribute),
+                (metadata, context, attribute) => new MaxLengthAttributeAdapter(metadata, context, (MaxLengthAttribute)attribute)
+            },
         };
 
         // Factories for IValidatableObject models
@@ -66,7 +75,7 @@ using System.Threading;
                 _addImplicitRequiredAttributeForValueTypes = value;
             }
         }
-
+        
         protected override IEnumerable<ModelValidator> GetValidators(ModelMetadata metadata, ModelBindingExecutionContext context, IEnumerable<Attribute> attributes) {
             _adaptersLock.EnterReadLock();
 
