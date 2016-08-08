@@ -22,6 +22,11 @@
 #define __BSD_VISIBLE 1
 #endif
 
+#ifdef __NetBSD__
+/* For mincore () */
+#define _NETBSD_SOURCE
+#endif
+
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <errno.h>
