@@ -438,10 +438,12 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 		/* If the initialization failed, mark the class as unusable. */
 		/* Avoid infinite loops */
-		if (!(mono_error_ok(error) ||
-			  (klass->image == mono_defaults.corlib &&
-			   !strcmp (klass->name_space, "System") &&
-			   !strcmp (klass->name, "TypeInitializationException")))) {
+		if (!mono_error_ok(error)
+			 && !(klass->image == mono_defaults.corlib &&
+			      !strcmp (klass->name_space, "System") &&
+			      !strcmp (klass->name, "TypeInitializationException"))
+			 && !mono_class_has_parent (mono_object_class (exc), mono_defaults.threadabortexception_class))
+		{
 			vtable->init_failed = 1;
 
 			if (klass->name_space && *klass->name_space)
