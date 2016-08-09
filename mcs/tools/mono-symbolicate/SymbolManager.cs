@@ -19,18 +19,18 @@ namespace Mono
 			this.logger = logger;
 		}
 
-		internal bool TryResolveLocation (StackFrameData sfData, string mvid, string aotid)
+		internal bool TryResolveLocation (StackFrameData sfData)
 		{
-			if (mvid == null)
+			if (sfData.Mvid == null)
 				return false;
 
-			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (mvid);
+			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (sfData.Mvid);
 			if (assemblyLocProvider == null)
 				return false;
 
 			SeqPointInfo seqPointInfo = null;
-			if (!sfData.IsILOffset && aotid != null)
-				seqPointInfo = GetOrCreateSeqPointInfo (aotid);
+			if (!sfData.IsILOffset && sfData.Aotid != null)
+				seqPointInfo = GetOrCreateSeqPointInfo (sfData.Aotid);
 
 			return assemblyLocProvider.TryResolveLocation (sfData, seqPointInfo);
 		}

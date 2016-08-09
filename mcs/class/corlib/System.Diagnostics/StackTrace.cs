@@ -182,6 +182,20 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
+		static bool isAotidSet;
+		static string aotid;
+		static string GetAotId ()
+		{
+			if (!isAotidSet) {
+				aotid = Assembly.GetAotId ();
+				if (aotid != null)
+					aotid = new Guid (aotid).ToString ("N");
+				isAotidSet = true;
+			}
+
+			return aotid;
+		}
+
 		bool AddFrames (StringBuilder sb)
 		{
 			bool printOffset;
@@ -219,8 +233,18 @@ namespace System.Diagnostics {
 						sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
 					}
 
-					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
-					                 frame.GetFileLineNumber ());
+					var filename = frame.GetSecureFileName ();
+					if (filename[0] == '<') {
+						var mvid = frame.GetMethod ().Module.ModuleVersionId.ToString ("N");
+						var aotid = GetAotId ();
+						if (frame.GetILOffset () != -1 || aotid == null) {
+							filename = string.Format ("<{0}>", mvid);
+						} else {
+							filename = string.Format ("<{0}#{1}>", mvid, aotid);
+						}
+					}
+
+					sb.AppendFormat (debugInfo, filename, frame.GetFileLineNumber ());
 				}
 			}
 
@@ -291,8 +315,6 @@ namespace System.Diagnostics {
 					if (!t.AddFrames (sb))
 						continue;
 
-					t.AddMetadata (sb);
-
 					sb.Append (Environment.NewLine);
 					sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
 					sb.Append (Environment.NewLine);
@@ -300,78 +322,14 @@ namespace System.Diagnostics {
 			}
 
 			AddFrames (sb);
-			AddMetadata (sb);
 
 			return sb.ToString ();
-		}
-
-		void AddMetadata (StringBuilder sb)
-		{
-			if (metadataHandlers == null)
-				InitMetadataHandlers ();
-
-			foreach (var handler in metadataHandlers) {
-				var lines = handler.Value (this);
-				using (var reader = new StringReader (lines)) {
-					string line;
-					while ((line = reader.ReadLine()) != null) {
-						sb.AppendLine ();
-						sb.AppendFormat ("[{0}] {1}", handler.Key, line);
-					}
-				}
-			}
 		}
 
 		internal String ToString (TraceFormat traceFormat)
 		{
 			// TODO:
 			return ToString ();
-		}
-
-		static void InitMetadataHandlers ()
-		{
-			metadataHandlers = new Dictionary<string, Func<StackTrace, string>> (StringComparer.Ordinal);
-
-			var aotid = Assembly.GetAotId ();
-			if (aotid != null)
-				AddMetadataHandler ("AOTID", st => { return new Guid (aotid).ToString ("N"); });
-
-			AddMetadataHandler ("MVID", st => {
-				var mvidLines = new Dictionary<Guid, List<int>> ();
-				var frames = st.GetFrames ();
-				for (var lineNumber = 0; lineNumber < frames.Length; lineNumber++) {
-					var method = frames[lineNumber].GetMethod ();
-					if (method == null)
-						continue;
-					var mvid = method.Module.ModuleVersionId;
-
-					List<int> lines = null;
-					if (!mvidLines.TryGetValue (mvid, out lines)) {
-						lines = new List<int> ();
-						mvidLines.Add (mvid, lines);
-					}
-
-					lines.Add (lineNumber);
-				}
-
-				var mvids = new List<Guid> (mvidLines.Keys);
-				mvids.Sort ();
-
-				var sb = new StringBuilder ();
-				foreach (var mvid in mvids)
-					sb.AppendLine (string.Format ("{0} {1}", mvid.ToString ("N"), string.Join (",", mvidLines[mvid])));
-
-				return sb.ToString ();
-			});
-		}
-
-		// This method signature should not change, apps can use it with reflection to add custom metadata handlers.
-		private static void AddMetadataHandler (string id, Func<StackTrace, string> handler)
-		{
-			if (metadataHandlers == null)
-				InitMetadataHandlers ();
-
-			metadataHandlers.Add (id, handler);
 		}
 	}
 }
