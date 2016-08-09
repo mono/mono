@@ -123,6 +123,13 @@ struct MonoJitTlsData {
 	 */
 	guint32 thrown_non_exc;
 
+	/* 
+	 * A temporary reference to the ips for the whole
+	 * stack t			race when thrown. These are truncated when the
+	 * exception is final	ly caught. 
+	 */
+	GList *trace_ips;
+
 	/*
 	 * The calling assembly in llvmonly mode.
 	 */
