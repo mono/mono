@@ -421,7 +421,7 @@ def run(): # Returns exit code
 				print(message)
 
 			if not log[SUPPORT_JSON]:
-				for xml in (xml_list + wrote_xml):
+				for xml in (xml_list + list(wrote_xml)):
 					verbose_print("Will attempt to load XML from %s" % (xml))
 					try:
 						data = xmlparse(xml).documentElement
