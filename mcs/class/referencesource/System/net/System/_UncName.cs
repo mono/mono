@@ -55,13 +55,6 @@ namespace System {
             if (start==end)
                 return false;
 
-#if MONO
-            if (!Uri.IsWindowsFileSystem) {
-                if (!(end - start > 2 && name[start] == '\\' && name[start + 1] == '\\')) {
-                    return false;
-                }
-            }
-#endif
             //
             // First segment could consist of only '_' or '-' but it cannot be all digits or empty
             //

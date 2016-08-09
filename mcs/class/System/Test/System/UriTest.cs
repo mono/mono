@@ -2072,5 +2072,12 @@ namespace MonoTests.System
 			Uri uri;
 			Assert.IsTrue (Uri.TryCreate (value, UriKind.Absolute, out uri));
 		}
+
+		[Test]
+		public void UncValidPath ()
+		{
+			var uri = new Uri ("https://_foo/bar.html");
+			Assert.AreEqual ("https", uri.Scheme);
+		}
 	}
 }
