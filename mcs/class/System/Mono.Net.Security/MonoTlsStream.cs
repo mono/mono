@@ -97,7 +97,7 @@ namespace Mono.Net.Security
 
 			try {
 				sslStream.AuthenticateAsClient (
-					request.Address.Host, request.ClientCertificates,
+					request.Host, request.ClientCertificates,
 					(SslProtocols)ServicePointManager.SecurityProtocol,
 					ServicePointManager.CheckCertificateRevocationList);
 
