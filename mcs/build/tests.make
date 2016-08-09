@@ -19,11 +19,7 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ## Unit test support
 ifndef NO_TEST
 
-ifdef NUNIT_LITE
 test_nunit_lib = nunitlite.dll
-else
-test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll nunit.mocks.dll
-endif
 
 TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(TEST_LIB_REFS))
 
@@ -58,19 +54,11 @@ ifndef NO_TEST
 $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
-ifdef NUNIT_LITE
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
 ifndef PARENT_PROFILE
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
 endif
 	echo "stamp" >$@
-else
-$(topdir)/build/deps/nunit-$(PROFILE).stamp:
-ifndef PARENT_PROFILE
-	cd ${topdir}/nunit24 && $(MAKE)
-endif
-	echo "stamp" >$@
-endif
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 endif
@@ -90,25 +78,9 @@ run-test-ondotnet-local: run-test-ondotnet-lib
 TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
 
-ifdef NUNIT_LITE
 NOSHADOW_FLAG =
 NUNIT_XML_FLAG = -format:nunit2 -result:
 OUTPUT_FILE_FLAG=-out
-else
-OUTPUT_FILE_FLAG=-output
-NOSHADOW_FLAG = -noshadow
-NUNIT_XML_FLAG = -xml=
-endif
-
-ifdef NUNIT_LITE
-NOSHADOW_FLAG =
-NUNIT_XML_FLAG = -format:nunit2 -result:
-OUTPUT_FILE_FLAG=-out
-else
-OUTPUT_FILE_FLAG=-output
-NOSHADOW_FLAG = -noshadow
-NUNIT_XML_FLAG = -xml=
-endif
 
 ifdef TEST_HARNESS_VERBOSE
 TEST_HARNESS_OUTPUT = -labels
@@ -123,11 +95,11 @@ TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).lo
 endif
 
 ifdef FIXTURE
-FIXTURE_ARG = -fixture=MonoTests.$(FIXTURE)
+FIXTURE_ARG = -test=MonoTests.$(FIXTURE)
 endif
 
 ifdef TESTNAME
-TESTNAME_ARG = -run=MonoTests.$(TESTNAME)
+TESTNAME_ARG = -test=MonoTests.$(TESTNAME)
 endif
 
 ifdef ALWAYS_AOT

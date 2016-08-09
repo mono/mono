@@ -36,7 +36,6 @@ using WS = System.Web.Services.Description;
 
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 

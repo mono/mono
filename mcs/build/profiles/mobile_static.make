@@ -32,7 +32,6 @@ PROFILE_MCS_FLAGS = \
 	$(PLATFORM_DEBUG_FLAGS)
 
 FRAMEWORK_VERSION = 2.1
-NUNIT_LITE = yes
 
 # the tuner takes care of the install
 NO_INSTALL = yes

@@ -43,7 +43,6 @@ using System.Xml.Serialization;
 using Microsoft.CSharp;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using QName = System.Xml.XmlQualifiedName;
 

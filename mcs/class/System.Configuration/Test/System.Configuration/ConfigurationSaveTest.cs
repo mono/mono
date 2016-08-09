@@ -37,7 +37,6 @@ using SysConfig = System.Configuration.Configuration;
 
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.Configuration {
 	using Util;

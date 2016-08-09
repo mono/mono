@@ -547,7 +547,7 @@ namespace MonoTests.System.Web {
 
 			KnownResponseHeader known;
 
-			Assert.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
+			AssertHelper.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
 
 			known = (KnownResponseHeader)f.KnownResponseHeaders ["Content-Type"];
 			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B2");
@@ -571,7 +571,7 @@ namespace MonoTests.System.Web {
 
 			KnownResponseHeader known;
 
-			Assert.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
+			AssertHelper.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
 
 			known = (KnownResponseHeader)f.KnownResponseHeaders ["Content-Type"];
 			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B2");
