@@ -1181,11 +1181,19 @@ typedef struct {
 	 * The current exception in flight
 	 */
 	guint32 thrown_exc;
+
 	/*
 	 * If the current exception is not a subclass of Exception,
 	 * the original exception.
 	 */
 	guint32 thrown_non_exc;
+
+	/* 
+	 * A temporary reference to the ips for the whole
+	 * stack trace when thrown. These are truncated when the
+	 * exception is final	ly caught. 
+	 */
+	GList *trace_ips;		
 
 	/*
 	 * The calling assembly in llvmonly mode.

@@ -240,11 +240,10 @@ static gboolean show_native_addresses = TRUE;
 static gboolean show_native_addresses = FALSE;
 #endif
 
-static _Unwind_Reason_Code
-build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
+static gboolean
+add_ptr_to_stack_trace (uintptr_t ip)
 {
 	MonoDomain *domain = mono_domain_get ();
-	uintptr_t ip = _Unwind_GetIP (frame_ctx);
 
 	gboolean add_ptr = FALSE;
 	if (show_native_addresses) {
@@ -255,6 +254,29 @@ build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
 			add_ptr = TRUE;
 	}
 
+	return add_ptr;
+}
+
+static _Unwind_Reason_Code
+count_frames (struct _Unwind_Context *frame_ctx, void *state)
+{
+	uintptr_t ip = _Unwind_GetIP (frame_ctx);
+	gboolean add_ptr = add_ptr_to_stack_trace (ip);
+
+	if (add_ptr) {
+		size_t *frame_size = (size_t *)state;
+		++*frame_size;
+	}
+
+	return _URC_NO_REASON;
+}
+
+static _Unwind_Reason_Code
+build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
+{
+	uintptr_t ip = _Unwind_GetIP (frame_ctx);
+	gboolean add_ptr = add_ptr_to_stack_trace (ip);
+ 
 	if (add_ptr) {
 		GList **trace_ips = (GList **)state;
 		*trace_ips = g_list_prepend (*trace_ips, (gpointer)ip);
@@ -262,6 +284,9 @@ build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
 
 	return _URC_NO_REASON;
 }
+
+
+
 
 static GSList*
 get_unwind_backtrace (void)
@@ -2908,22 +2933,9 @@ throw_exception (MonoObject *ex, gboolean rethrow)
 
 	if (!rethrow) {
 #ifdef MONO_ARCH_HAVE_UNWIND_BACKTRACE
-		GList *l, *ips = NULL;
-		GList *trace;
-
-		_Unwind_Backtrace (build_stack_trace, &ips);
-		/* The list contains ip-gshared info pairs */
-		trace = NULL;
-		ips = g_list_reverse (ips);
-		for (l = ips; l; l = l->next) {
-			trace = g_list_append (trace, l->data);
-			trace = g_list_append (trace, NULL);
-		}
-		MonoArray *ips_arr = mono_glist_to_array (trace, mono_defaults.int_class, &error);
-		mono_error_assert_ok (&error);
-		MONO_OBJECT_SETREF (mono_ex, trace_ips, ips_arr);
-		g_list_free (l);
-		g_list_free (trace);
+		GList *trace = NULL;
+		_Unwind_Backtrace (build_stack_trace, &trace);
+		jit_tls->trace_ips = trace;
 #endif
 	}
 
@@ -3094,6 +3106,53 @@ mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 reg
 			g_assert_not_reached ();
 		}
 	}
+
+ // If no trace_ips, then a rethrow
+	if (index != -1 && ((MonoException *)exc)->trace_ips == NULL) {
+#ifdef MONO_ARCH_HAVE_UNWIND_BACKTRACE
+		// Find the number of frames above us
+		size_t count = 0;
+		_Unwind_Backtrace (count_frames, &count);
+
+		GList *forward = jit_tls->trace_ips;
+
+		// Skip the frames above us
+		for (size_t i = 1; i < count; i++)
+			forward = forward->next;
+
+		g_assert (forward != NULL);
+
+		// Build stacktrace backwards, move cursor to end
+		GList *backward = forward;
+		int size = 2;
+		while(backward->next) {
+			backward = backward->next;
+			/* The list contains ip-gshared info pairs and so grows by 2 */
+			size += 2;
+		}
+
+		MonoError error;
+		mono_error_init (&error);
+		MonoArray *trace_arr = mono_array_new_checked (mono_domain_get (), mono_defaults.int_class, size, &error);
+		mono_error_assert_ok (&error);
+
+		for(int index = 0; index < size; index += 2, backward = backward->prev) {
+			g_assert(backward != NULL);
+
+			/* The list contains ip-gshared info pairs */
+			mono_array_set (trace_arr, gpointer, index, backward->data);
+			// Done by internals, but note here
+			// mono_array_set (trace_arr, gpointer, index + 1, NULL);
+		}
+
+		g_list_free (jit_tls->trace_ips);
+		jit_tls->trace_ips = NULL;
+
+		MONO_OBJECT_SETREF ((MonoException *)exc, trace_ips, trace_arr);
+		mono_memory_barrier ();
+#endif
+	}
+
 
 	return index;
 }
