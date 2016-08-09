@@ -586,9 +586,6 @@ namespace System.IO {
                             }
                             else {
                                 if (oldName != null) {
-                                    Debug.Assert(false, "FileSystemWatcher: FILE_ACTION_RENAMED_OLD_NAME with no" +
-                                                                  "new name!  [" + oldName + "]");
-    
                                     NotifyRenameEventArgs(WatcherChangeTypes.Renamed, null, oldName);
                                     oldName = null;
                                 }

@@ -83,19 +83,51 @@ namespace System.Security.Cryptography {
         }
     }
 
-    internal class RSAPKCS1SHA1SignatureDescription : SignatureDescription {
-        public RSAPKCS1SHA1SignatureDescription() {
-            KeyAlgorithm = "System.Security.Cryptography.RSACryptoServiceProvider";
-            DigestAlgorithm = "System.Security.Cryptography.SHA1CryptoServiceProvider";
+    internal abstract class RSAPKCS1SignatureDescription : SignatureDescription {
+        protected RSAPKCS1SignatureDescription(string hashAlgorithm, string digestAlgorithm) {
+            KeyAlgorithm = "System.Security.Cryptography.RSA";
+            DigestAlgorithm = digestAlgorithm;
             FormatterAlgorithm = "System.Security.Cryptography.RSAPKCS1SignatureFormatter";
             DeformatterAlgorithm = "System.Security.Cryptography.RSAPKCS1SignatureDeformatter";
+            _hashAlgorithm = hashAlgorithm;
+        }
+ 
+        public sealed override AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key) {
+            AsymmetricSignatureDeformatter item = base.CreateDeformatter(key);
+            item.SetHashAlgorithm(_hashAlgorithm);
+            return item;
         }
 
-        public override AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key) {
-            AsymmetricSignatureDeformatter item = (AsymmetricSignatureDeformatter) CryptoConfig.CreateFromName(DeformatterAlgorithm);
-            item.SetKey(key);
-            item.SetHashAlgorithm("SHA1");
+        public sealed override AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key) {
+            AsymmetricSignatureFormatter item = base.CreateFormatter(key);
+            item.SetHashAlgorithm(_hashAlgorithm);
             return item;
+        }
+
+        private string _hashAlgorithm;
+    }
+
+    internal class RSAPKCS1SHA1SignatureDescription : RSAPKCS1SignatureDescription {
+        public RSAPKCS1SHA1SignatureDescription()
+            : base("SHA1", "System.Security.Cryptography.SHA1Cng") {
+        }
+    }
+
+    internal class RSAPKCS1SHA256SignatureDescription : RSAPKCS1SignatureDescription {
+        public RSAPKCS1SHA256SignatureDescription()
+            : base("SHA256", "System.Security.Cryptography.SHA256Cng") {
+        }
+    }
+
+    internal class RSAPKCS1SHA384SignatureDescription : RSAPKCS1SignatureDescription {
+        public RSAPKCS1SHA384SignatureDescription()
+            : base("SHA384", "System.Security.Cryptography.SHA384Cng") {
+        }
+    }
+
+    internal class RSAPKCS1SHA512SignatureDescription : RSAPKCS1SignatureDescription {
+        public RSAPKCS1SHA512SignatureDescription()
+            : base("SHA512", "System.Security.Cryptography.SHA512Cng") {
         }
     }
 

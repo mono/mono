@@ -38,6 +38,35 @@ namespace System.Security.Cryptography {
         /// </summary>
         Pss = 8                         // BCRYPT_PAD_PSS
     }
+#if !MONO
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct BCRYPT_DSA_KEY_BLOB_V2
+    {
+        public BCryptNative.KeyBlobMagicNumber dwMagic;  // BCRYPT_DSA_PUBLIC_MAGIC_V2 or BCRYPT_DSA_PRIVATE_MAGIC_V2
+        public int cbKey;               // key lengths in BYTES (e.g. for a 3072-bit key, cbKey = 3072/8 = 384)
+        public HASHALGORITHM_ENUM hashAlgorithm;
+        public DSAFIPSVERSION_ENUM standardVersion;
+        public int cbSeedLength;        // size (in bytes) of the seed value
+        public int cbGroupSize;         // size (in bytes) of the Q value
+        public byte Count3;             // # of iterations used to generate Q. In big-endian format.
+        public byte Count2;
+        public byte Count1;
+        public byte Count0;
+    }
+#endif
+    internal enum HASHALGORITHM_ENUM : int
+    {
+        DSA_HASH_ALGORITHM_SHA1 = 0,
+        DSA_HASH_ALGORITHM_SHA256 = 1,
+        DSA_HASH_ALGORITHM_SHA512 = 2,
+    }
+
+    internal enum DSAFIPSVERSION_ENUM : int
+    {
+        DSA_FIPS186_2 = 0,
+        DSA_FIPS186_3 = 1,
+    }
+
     /// <summary>
     ///     Native interop with CNG's BCrypt layer. Native definitions can be found in bcrypt.h
     /// </summary>
@@ -102,6 +131,10 @@ namespace System.Security.Cryptography {
         ///     Magic numbers identifying blob types
         /// </summary>
         internal enum KeyBlobMagicNumber {
+            DsaPublic = 0x42505344,                             // BCRYPT_DSA_PUBLIC_MAGIC for key lengths <= 1024 bits
+            DsaPublicV2 = 0x32425044,                           // BCRYPT_DSA_PUBLIC_MAGIC_V2 for key lengths > 1024 bits
+            DsaPrivate = 0x56505344,                            // BCRYPT_DSA_PRIVATE_MAGIC for key lengths <= 1024 bits
+            DsaPrivateV2 = 0x32565044,                          // BCRYPT_DSA_PRIVATE_MAGIC_V2 for key lengths > 1024 bits
             ECDHPublicP256 = 0x314B4345,                        // BCRYPT_ECDH_PUBLIC_P256_MAGIC
             ECDHPublicP384 = 0x334B4345,                        // BCRYPT_ECDH_PUBLIC_P384_MAGIC
             ECDHPublicP521 = 0x354B4345,                        // BCRYPT_ECDH_PUBLIC_P521_MAGIC

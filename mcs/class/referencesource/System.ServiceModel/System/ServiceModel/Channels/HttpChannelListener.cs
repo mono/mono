@@ -839,16 +839,10 @@ namespace System.ServiceModel.Channels
                 {
                     AspNetEnvironment env = AspNetEnvironment.Current;
 
-                    // When IIS hosted, WebSockets can be used if the pipeline mode is integrated and the WebSocketModule is loaded.
-                    // Otherwise, the client requests will not be upgraded to web sockets (see the code in HostedHttpTransportManager.HttpContextReceived(..)).
-                    // We do the checks below (and fail the service activation), to avoid starting a WebSockets listener that won't get called.
+                    // When IIS hosted, WebSockets can be used if the pipeline mode is integrated
                     if (!env.UsingIntegratedPipeline)
                     {
                         throw FxTrace.Exception.AsError(new NotSupportedException(SR.GetString(SR.WebSocketsNotSupportedInClassicPipeline)));
-                    }
-                    else if (!env.IsWebSocketModuleLoaded)
-                    {
-                        throw FxTrace.Exception.AsError(new NotSupportedException(SR.GetString(SR.WebSocketModuleNotLoaded)));
                     }
                 }
                 else if (!WebSocketHelper.OSSupportsWebSockets())

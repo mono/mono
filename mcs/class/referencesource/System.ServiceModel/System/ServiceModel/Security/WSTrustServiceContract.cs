@@ -2064,7 +2064,8 @@ namespace System.ServiceModel.Security
                     throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID5004, ns));
             }
 
-            return XmlSchema.Read(new StringReader(xmlSchema), null);
+            StringReader reader = new StringReader(xmlSchema);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         /// <summary>

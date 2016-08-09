@@ -27,6 +27,11 @@ namespace System
                         {
                             LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DontEnableSchUseStrongCryptoName, true);
                         }
+
+                        if (version <= 40601)
+                        {
+                            LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.MemberDescriptorEqualsReturnsFalseIfEquivalentName, true);
+                        }
                         break;
                     }
                 case "WindowsPhone":
@@ -34,7 +39,7 @@ namespace System
                     {
                         if (version <= 80100)
                         {
-                            LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DontEnableSchUseStrongCryptoName, true);
+                             LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DontEnableSchUseStrongCryptoName, true);
                         }
                         break;
                     }

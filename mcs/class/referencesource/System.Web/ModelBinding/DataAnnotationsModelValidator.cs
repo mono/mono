@@ -2,8 +2,10 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Threading;
+    using System.Web.Globalization;
 
-    public class DataAnnotationsModelValidator : ModelValidator {
+    public class DataAnnotationsModelValidator : ModelValidator {        
         public DataAnnotationsModelValidator(ModelMetadata metadata, ModelBindingExecutionContext context, ValidationAttribute attribute)
             : base(metadata, context) {
 
@@ -18,7 +20,24 @@
 
         protected internal string ErrorMessage {
             get {
-                return Attribute.FormatErrorMessage(Metadata.GetDisplayName());
+                if (UseStringLocalizerProvider) {
+                    var errorMsg = GetLocalizedString(Attribute.ErrorMessage);
+
+                    return errorMsg ?? Attribute.FormatErrorMessage(Metadata.GetDisplayName());
+                }
+                else {
+                    return Attribute.FormatErrorMessage(Metadata.GetDisplayName());
+                }
+            }
+        }
+
+        protected string GetLocalizedString(string name, params object[] arguments) {
+            if (StringLocalizerProviders.DataAnnotationStringLocalizerProvider != null) {
+                return StringLocalizerProviders.DataAnnotationStringLocalizerProvider
+                    .GetLocalizedString(Thread.CurrentThread.CurrentUICulture, name, arguments);
+            }
+            else {
+                return null;
             }
         }
 
@@ -55,8 +74,36 @@
             ValidationResult result = Attribute.GetValidationResult(Metadata.Model, context);
             if (result != ValidationResult.Success) {
                 yield return new ModelValidationResult {
-                    Message = result.ErrorMessage
+                    Message = GetValidationErrorMessage(result)
                 };
+            }
+        }
+
+        protected virtual string GetLocalizedErrorMessage(string errorMessage) {
+            return GetLocalizedString(errorMessage, Metadata.GetDisplayName());
+        }
+
+        private string GetValidationErrorMessage(ValidationResult result) {
+            string errorMsg;
+
+            if (UseStringLocalizerProvider) {
+                errorMsg = GetLocalizedErrorMessage(Attribute.ErrorMessage);
+
+                errorMsg = errorMsg ?? result.ErrorMessage;
+            }
+            else {
+                errorMsg = result.ErrorMessage;
+            }
+            return errorMsg;
+        }
+
+        private bool UseStringLocalizerProvider {
+            get {
+                // if developer already uses existing localization feature,
+                // then we don't opt in the new localization feature.
+                return (!string.IsNullOrEmpty(Attribute.ErrorMessage) &&
+                    string.IsNullOrEmpty(Attribute.ErrorMessageResourceName) &&
+                    Attribute.ErrorMessageResourceType == null);
             }
         }
     }

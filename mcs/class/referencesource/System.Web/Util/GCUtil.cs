@@ -36,4 +36,33 @@ namespace System.Web.Util {
         }
 
     }
+
+    // This wrapper around a managed object is opaque to SizedReference GC handle
+    // and therefore helps with calculating size of only relevant graph of objects
+    internal class DisposableGCHandleRef<T> : IDisposable
+    where T : class, IDisposable {
+        GCHandle _handle;
+        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
+        public DisposableGCHandleRef(T t) {
+            Debug.Assert(t != null);
+            _handle = GCHandle.Alloc(t);
+        }
+
+        public T Target {
+            [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
+            get {
+                Debug.Assert(_handle.IsAllocated);
+                return (T)_handle.Target;
+            }
+        }
+
+        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
+        public void Dispose() {
+            Target.Dispose();
+            Debug.Assert(_handle.IsAllocated);
+            if (_handle.IsAllocated) {
+                _handle.Free();
+            }
+        }
+    }
 }

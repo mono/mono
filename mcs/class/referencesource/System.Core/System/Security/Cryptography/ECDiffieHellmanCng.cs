@@ -93,7 +93,21 @@ namespace System.Security.Cryptography {
             }
             CodeAccessPermission.RevertAssert();
 
-            KeySize = m_key.KeySize;
+            // Our LegalKeySizes value stores the values that we encoded as being the correct
+            // legal key size limitations for this algorithm, as documented on MSDN.
+            //
+            // But on a new OS version we might not question if our limit is accurate, or MSDN
+            // could have been innacurate to start with.
+            //
+            // Since the key is already loaded, we know that Windows thought it to be valid;
+            // therefore we should set KeySizeValue directly to bypass the LegalKeySizes conformance
+            // check.
+            //
+            // For RSA there are known cases where this change matters. RSACryptoServiceProvider can
+            // create a 384-bit RSA key, which we consider too small to be legal. It can also create
+            // a 1032-bit RSA key, which we consider illegal because it doesn't match our 64-bit
+            // alignment requirement. (In both cases Windows loads it just fine)
+            KeySizeValue = m_key.KeySize;
         }
 
         /// <summary>
@@ -247,7 +261,22 @@ namespace System.Security.Cryptography {
                 //
 
                 m_key = value;
-                KeySize = m_key.KeySize;
+
+                // Our LegalKeySizes value stores the values that we encoded as being the correct
+                // legal key size limitations for this algorithm, as documented on MSDN.
+                //
+                // But on a new OS version we might not question if our limit is accurate, or MSDN
+                // could have been innacurate to start with.
+                //
+                // Since the key is already loaded, we know that Windows thought it to be valid;
+                // therefore we should set KeySizeValue directly to bypass the LegalKeySizes conformance
+                // check.
+                //
+                // For RSA there are known cases where this change matters. RSACryptoServiceProvider can
+                // create a 384-bit RSA key, which we consider too small to be legal. It can also create
+                // a 1032-bit RSA key, which we consider illegal because it doesn't match our 64-bit
+                // alignment requirement. (In both cases Windows loads it just fine)
+                KeySizeValue = m_key.KeySize;
             }
         }
 
@@ -366,6 +395,84 @@ namespace System.Security.Cryptography {
                         return NCryptNative.DeriveKeyMaterialTls(secretAgreement, label, seed, flags);
                     }
                 }
+            }
+        }
+
+        [SecuritySafeCritical]
+        public override byte[] DeriveKeyFromHash(
+            ECDiffieHellmanPublicKey otherPartyPublicKey,
+            HashAlgorithmName hashAlgorithm,
+            byte[] secretPrepend,
+            byte[] secretAppend)
+        {
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
+            if (otherPartyPublicKey == null)
+                throw new ArgumentNullException("otherPartyPublicKey");
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+                throw new ArgumentException(SR.GetString(SR.Cryptography_HashAlgorithmNameNullOrEmpty), "hashAlgorithm");
+
+            using (SafeNCryptSecretHandle secretAgreement = DeriveSecretAgreementHandle(otherPartyPublicKey))
+            {
+                return NCryptNative.DeriveKeyMaterialHash(
+                    secretAgreement,
+                    hashAlgorithm.Name, 
+                    secretPrepend,
+                    secretAppend,
+                    NCryptNative.SecretAgreementFlags.None);
+            }
+        }
+
+        [SecuritySafeCritical]
+        public override byte[] DeriveKeyFromHmac(
+            ECDiffieHellmanPublicKey otherPartyPublicKey,
+            HashAlgorithmName hashAlgorithm,
+            byte[] hmacKey,
+            byte[] secretPrepend,
+            byte[] secretAppend)
+        {
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
+            if (otherPartyPublicKey == null)
+                throw new ArgumentNullException("otherPartyPublicKey");
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+                throw new ArgumentException(SR.GetString(SR.Cryptography_HashAlgorithmNameNullOrEmpty), "hashAlgorithm");
+
+            using (SafeNCryptSecretHandle secretAgreement = DeriveSecretAgreementHandle(otherPartyPublicKey))
+            {
+                NCryptNative.SecretAgreementFlags flags = hmacKey == null ?
+                    NCryptNative.SecretAgreementFlags.UseSecretAsHmacKey :
+                    NCryptNative.SecretAgreementFlags.None;
+
+                return NCryptNative.DeriveKeyMaterialHmac(
+                    secretAgreement,
+                    hashAlgorithm.Name,
+                    hmacKey,
+                    secretPrepend,
+                    secretAppend,
+                    flags);
+            }
+        }
+
+        [SecuritySafeCritical]
+        public override byte[] DeriveKeyTls(ECDiffieHellmanPublicKey otherPartyPublicKey, byte[] prfLabel, byte[] prfSeed)
+        {
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
+            if (otherPartyPublicKey == null)
+                throw new ArgumentNullException("otherPartyPublicKey");
+            if (prfLabel == null)
+                throw new ArgumentNullException("prfLabel");
+            if (prfSeed == null)
+                throw new ArgumentNullException("prfSeed");
+
+            using (SafeNCryptSecretHandle secretAgreement = DeriveSecretAgreementHandle(otherPartyPublicKey))
+            {
+                return NCryptNative.DeriveKeyMaterialTls(
+                    secretAgreement,
+                    prfLabel,
+                    prfSeed,
+                    NCryptNative.SecretAgreementFlags.None);
             }
         }
 

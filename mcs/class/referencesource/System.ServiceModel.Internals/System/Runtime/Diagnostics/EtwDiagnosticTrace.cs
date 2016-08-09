@@ -288,6 +288,7 @@ namespace System.Runtime.Diagnostics
 
         [Fx.Tag.SecurityNote(Critical = "Usage of EventDescriptor, which is protected by a LinkDemand")]
         [SecurityCritical]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3057:DoNotUseLoadXml", Justification = "It is internal code. No security concern.")]
         public void WriteTraceSource(ref EventDescriptor eventDescriptor, string description, TracePayload payload)
         {
             if (this.TracingEnabled)

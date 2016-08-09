@@ -609,6 +609,8 @@ namespace System.Security.Principal
         // Public methods.
         //
         [SecuritySafeCritical]
+        [DynamicSecurityMethodAttribute()]
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static void RunImpersonated(SafeAccessTokenHandle safeAccessTokenHandle, Action action)
         {
             if (action == null)
@@ -627,6 +629,8 @@ namespace System.Security.Principal
         }
 
         [SecuritySafeCritical]
+        [DynamicSecurityMethodAttribute()]
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static T RunImpersonated<T>(SafeAccessTokenHandle safeAccessTokenHandle, Func<T> func)
         {
             if (func == null)

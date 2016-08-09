@@ -6,6 +6,7 @@
 #endregion
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -50,6 +51,7 @@ namespace Microsoft.VSDesigner.WCFModel
             return mapFile is DataSvcMapFile ? ((DataSvcMapFile)mapFile).Impl : null;
         }
 
+        [SuppressMessage("Microsoft.Security.Xml", "CA3060:UseXmlReaderForSchemaRead", Justification = "asp.net controls this .xsd file")]
         protected override XmlSchemaSet GetMapFileSchemaSet()
         {
             if (_mapFileSchemaSet == null)

@@ -51,7 +51,7 @@ namespace System.Runtime.Serialization
             if (!schemaSet.Contains(Globals.SerializationNamespace))
             {
                 StringReader reader = new StringReader(Globals.SerializationSchema);
-                XmlSchema schema = XmlSchema.Read(reader, null);
+                XmlSchema schema = XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
                 if (schema == null)
                     throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.CouldNotReadSerializationSchema, Globals.SerializationNamespace)));
                 schemaSet.Add(schema);

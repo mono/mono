@@ -1,5 +1,6 @@
 namespace System {
 	static class AppContextSwitches {
-		public const bool ThrowExceptionIfDisposedCancellationTokenSource = true;
+		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = true;
+		public static readonly bool SetActorAsReferenceWhenCopyingClaimsIdentity = false;
 	}
 }

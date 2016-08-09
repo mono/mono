@@ -28,6 +28,10 @@ namespace System
                             LocalAppContext.DefineSwitchDefault("Switch.System.Xml.DontThrowOnInvalidSurrogatePairs", true);
                             LocalAppContext.DefineSwitchDefault("Switch.System.Xml.IgnoreEmptyKeySequences", true);
                         }
+                        if (version <= 40601)
+                        {
+                            LocalAppContext.DefineSwitchDefault("Switch.System.Xml.IgnoreKindInUtcTimeSerialization", true);
+                        }
                         break;
                     }
                 case "WindowsPhone":
@@ -37,6 +41,7 @@ namespace System
                         {
                             LocalAppContext.DefineSwitchDefault("Switch.System.Xml.DontThrowOnInvalidSurrogatePairs", true);
                             LocalAppContext.DefineSwitchDefault("Switch.System.Xml.IgnoreEmptyKeySequences", true);
+                            LocalAppContext.DefineSwitchDefault("Switch.System.Xml.IgnoreKindInUtcTimeSerialization", true);
                         }
                         break;
                     }

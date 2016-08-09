@@ -10,6 +10,7 @@ namespace System.Web.Caching {
     internal class SRef {
         private static Type s_type = Type.GetType("System.SizedReference", true, false);
         private Object _sizedRef;
+        private long _lastReportedSize; // This helps tremendously when looking at large dumps
         
         internal SRef(Object target) {
             _sizedRef = HttpRuntime.CreateNonPublicInstance(s_type, new object[] {target});
@@ -24,7 +25,7 @@ namespace System.Web.Caching {
                                                _sizedRef, // target
                                                null, // args
                                                CultureInfo.InvariantCulture);
-                return (long) o;
+                return _lastReportedSize = (long) o;
             }
         }
         

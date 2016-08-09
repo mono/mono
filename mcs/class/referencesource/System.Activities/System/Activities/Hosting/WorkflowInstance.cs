@@ -48,6 +48,20 @@ namespace System.Activities.Hosting
         StackTrace abortStack;
 #endif
 
+        static WorkflowInstance()
+        {
+            try
+            {
+                using (TelemetryEventSource eventSource = new TelemetryEventSource())
+                {
+                    eventSource.V2Runtime();
+                }
+            }
+            catch
+            {
+            }
+        }
+
         protected WorkflowInstance(Activity workflowDefinition)
             : this(workflowDefinition, null)
         {

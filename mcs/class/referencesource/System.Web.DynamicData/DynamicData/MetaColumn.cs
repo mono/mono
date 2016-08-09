@@ -250,7 +250,8 @@ namespace System.Web.DynamicData {
         public string RequiredErrorMessage {
             get {
                 var requiredAttribute = Metadata.RequiredAttribute;
-                return requiredAttribute != null ? requiredAttribute.FormatErrorMessage(DisplayName) : String.Empty;
+                return requiredAttribute != null ? 
+                    StringLocalizerUtil.GetLocalizedString(requiredAttribute, DisplayName) : String.Empty;
             }
         }
 
@@ -590,7 +591,7 @@ namespace System.Web.DynamicData {
 
             public string Description {
                 get {
-                    return DisplayAttribute.GetPropertyValue(a => a.GetDescription(), null) ??
+                    return DisplayAttribute.GetLocalizedDescription() ??
                         DescriptionAttribute.GetPropertyValue(a => a.Description, null);
                 }
             }
@@ -599,14 +600,14 @@ namespace System.Web.DynamicData {
 
             public string DisplayName {
                 get {
-                    return DisplayAttribute.GetPropertyValue(a => a.GetName(), null) ??
+                    return DisplayAttribute.GetLocalizedName() ??
                         DisplayNameAttribute.GetPropertyValue(a => a.DisplayName, null);
                 }
             }
 
             public string ShortDisplayName {
                 get {
-                    return DisplayAttribute.GetPropertyValue(a => a.GetShortName(), null);
+                    return DisplayAttribute.GetLocalizedShortName();
                 }
             }
 
@@ -622,7 +623,7 @@ namespace System.Web.DynamicData {
 
             public string Prompt {
                 get {
-                    return DisplayAttribute.GetPropertyValue(a => a.GetPrompt(), null);
+                    return DisplayAttribute.GetLocalizedPrompt();
                 }
             }
 

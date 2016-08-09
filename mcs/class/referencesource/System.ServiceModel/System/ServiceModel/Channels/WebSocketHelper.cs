@@ -6,6 +6,7 @@ namespace System.ServiceModel.Channels
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Net;
@@ -44,6 +45,7 @@ namespace System.ServiceModel.Channels
         static readonly HashSet<char> InvalidSeparatorSet = new HashSet<char>(new char[] { '(', ')', '<', '>', '@', ',', ';', ':', '\\', '"', '/', '[', ']', '?', '=', '{', '}', ' ' });
         static string currentWebSocketVersion;
 
+        [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:DoNotUseSHA1", Justification = "Cannot change. Usage of SHA1 is part of WebSocket spec. Justification in RFC6455 section 10.8")]
         internal static string ComputeAcceptHeader(string webSocketKey)
         {
             Fx.Assert(webSocketKey != null, "webSocketKey should not be null.");

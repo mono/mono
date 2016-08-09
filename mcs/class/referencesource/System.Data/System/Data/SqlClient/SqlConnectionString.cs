@@ -30,6 +30,7 @@ namespace System.Data.SqlClient {
             internal const  string Application_Name               = TdsEnums.SQL_PROVIDER_NAME;
             internal const  bool   Asynchronous                   = false;
             internal const  string AttachDBFilename               = "";
+            internal const  PoolBlockingPeriod PoolBlockingPeriod = DbConnectionStringDefaults.PoolBlockingPeriod;
             internal const  int    Connect_Timeout                = ADP.DefaultConnectionTimeout;
             internal const  bool   Connection_Reset               = true;
             internal const  bool   Context_Connection             = false;
@@ -69,6 +70,7 @@ namespace System.Data.SqlClient {
             internal const string Application_Name					= "application name";
             internal const string AsynchronousProcessing			= "asynchronous processing";
             internal const string AttachDBFilename					= "attachdbfilename";
+            internal const string PoolBlockingPeriod                = "poolblockingperiod";
             internal const string ColumnEncryptionSetting			= "column encryption setting";
             internal const string Connect_Timeout					= "connect timeout";
             internal const string Connection_Reset					= "connection reset";
@@ -190,6 +192,7 @@ namespace System.Data.SqlClient {
 
         private readonly bool _integratedSecurity;
 
+        private readonly PoolBlockingPeriod _poolBlockingPeriod;
         private readonly bool _connectionReset;
         private readonly bool _contextConnection;
         private readonly bool _encrypt;
@@ -247,6 +250,7 @@ namespace System.Data.SqlClient {
             ConvertValueToBoolean(KEY.AsynchronousProcessing, DEFAULT.Asynchronous); // while we don't use it anymore, we still need to verify it is true/false
 
             // SQLPT 41700: Ignore ResetConnection=False (still validate the keyword/value)
+            _poolBlockingPeriod = ConvertValueToPoolBlockingPeriod();
             _connectionReset     = ConvertValueToBoolean(KEY.Connection_Reset,      DEFAULT.Connection_Reset);
             _contextConnection   = ConvertValueToBoolean(KEY.Context_Connection,    DEFAULT.Context_Connection);
             _encrypt             = ConvertValueToEncrypt();
@@ -490,6 +494,7 @@ namespace System.Data.SqlClient {
             _userInstance                   = userInstance;
             _connectTimeout                 = connectionOptions._connectTimeout;
             _loadBalanceTimeout             = connectionOptions._loadBalanceTimeout;
+            _poolBlockingPeriod       = connectionOptions._poolBlockingPeriod;
             _maxPoolSize                    = connectionOptions._maxPoolSize;
             _minPoolSize                    = connectionOptions._minPoolSize;
             _multiSubnetFailover            = connectionOptions._multiSubnetFailover;
@@ -524,6 +529,8 @@ namespace System.Data.SqlClient {
         // We always initialize in Async mode so that both synchronous and asynchronous methods
         // will work.  In the future we can deprecate the keyword entirely.
         internal bool Asynchronous { get { return true; } }
+
+        internal PoolBlockingPeriod PoolBlockingPeriod { get { return _poolBlockingPeriod; } }
 
         // SQLPT 41700: Ignore ResetConnection=False, always reset the connection for security
         internal bool ConnectionReset { get { return true; } }
@@ -620,6 +627,7 @@ namespace System.Data.SqlClient {
                 hash.Add(KEY.Application_Name,               KEY.Application_Name);
                 hash.Add(KEY.AsynchronousProcessing,         KEY.AsynchronousProcessing);
                 hash.Add(KEY.AttachDBFilename,               KEY.AttachDBFilename);
+                hash.Add(KEY.PoolBlockingPeriod,       KEY.PoolBlockingPeriod);
                 hash.Add(KEY.Connect_Timeout,                KEY.Connect_Timeout);
                 hash.Add(KEY.Connection_Reset,               KEY.Connection_Reset);
                 hash.Add(KEY.Context_Connection,             KEY.Context_Connection);
@@ -777,6 +785,28 @@ namespace System.Data.SqlClient {
                 throw ADP.InvalidConnectionOptionValue(KEY.ApplicationIntent, e);
             }
             // ArgumentException and other types are raised as is (no wrapping)
+        }
+
+        internal System.Data.SqlClient.PoolBlockingPeriod ConvertValueToPoolBlockingPeriod()
+        {
+            object value = base.Parsetable[KEY.PoolBlockingPeriod];
+            if (value == null)
+            {
+                return DEFAULT.PoolBlockingPeriod;
+            }
+            
+            try
+            {
+                return DbConnectionStringBuilderUtil.ConvertToPoolBlockingPeriod(KEY.PoolBlockingPeriod, value);
+            }
+            catch (FormatException e)
+            {
+                throw ADP.InvalidConnectionOptionValue(KEY.PoolBlockingPeriod, e);
+            }
+            catch (OverflowException e)
+            {
+                throw ADP.InvalidConnectionOptionValue(KEY.PoolBlockingPeriod, e);
+            }
         }
 
         internal SqlAuthenticationMethod ConvertValueToAuthenticationType() {

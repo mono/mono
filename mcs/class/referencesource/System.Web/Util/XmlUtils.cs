@@ -17,6 +17,7 @@ namespace System.Web.Util {
         public static readonly long MaxEntityExpansion = 1024 * 1024;
 
         [SuppressMessage("Microsoft.Security", "MSEC1208:DoNotUseLoadXml", Justification = "Handles developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3057:DoNotUseLoadXml", Justification = "Handles developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         public static XmlDocument CreateXmlDocumentFromContent(string content)
         {
             XmlDocument doc = new XmlDocument();
@@ -35,6 +36,7 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1210:UseXmlReaderForXPathDocument", Justification = "Handles developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3059:UseXmlReaderForXPathDocument", Justification = "Handles developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         public static XPathDocument CreateXPathDocumentFromContent(string content)
         {
             StringReader reader = new StringReader(content);
@@ -47,6 +49,7 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1220:ReviewDtdProcessingAssignment", Justification = "Dtd processing is needed for back-compat, but is being done as safely as possible.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3069:ReviewDtdProcessingAssignment", Justification = "Dtd processing is needed for back-compat, but is being done as safely as possible.")]
         public static XmlReaderSettings CreateXmlReaderSettings()
         {
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -68,7 +71,9 @@ namespace System.Web.Util {
         // try to guess at how to set matching defaults with XmlReader.Create().
         // (E.g. DtdProcessing is Parse by default using XmlTextReader directly.  It's Prohibit in default XmlReaderSettings.)
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         [SuppressMessage("Microsoft.Security", "MSEC1225:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3074:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
         public static XmlReader CreateXmlReader(string filepath)
         {
             if (AppSettings.RestrictXmlControls)
@@ -84,7 +89,9 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         [SuppressMessage("Microsoft.Security", "MSEC1225:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3074:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
         public static XmlReader CreateXmlReader(Stream datastream)
         {
             if (AppSettings.RestrictXmlControls)
@@ -100,7 +107,9 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         [SuppressMessage("Microsoft.Security", "MSEC1225:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3074:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
         public static XmlReader CreateXmlReader(TextReader reader)
         {
             if (AppSettings.RestrictXmlControls)
@@ -116,7 +125,9 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Handles trusted or developer-controlled input xml.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         [SuppressMessage("Microsoft.Security", "MSEC1225:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3074:ReviewClassesDerivedFromXmlTextReader", Justification = "NoEntitiesXmlReader is our internal mechanism for using XmlTextReaders in a reasonably safe manner.")]
         public static XmlReader CreateXmlReader(Stream contentStream, string baseURI)
         {
             if (AppSettings.RestrictXmlControls)
@@ -179,6 +190,7 @@ namespace System.Web.Util {
 
 #pragma warning disable 0618    // To avoid deprecation warning
         [SuppressMessage("Microsoft.Security", "MSEC1201:DoNotUseXslTransform", Justification = "Handles developer-controlled input xsl.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3050:DoNotUseXslTransform", Justification = "Handles developer-controlled input xsl.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         public static XslTransform CreateXslTransform(XmlReader reader)
         {
             if (!AppSettings.RestrictXmlControls)
@@ -191,6 +203,7 @@ namespace System.Web.Util {
         }
 
         [SuppressMessage("Microsoft.Security", "MSEC1201:DoNotUseXslTransform", Justification = "Handles developer-controlled input xsl.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3050:DoNotUseXslTransform", Justification = "Handles developer-controlled input xsl.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         public static XslTransform CreateXslTransform(XmlReader reader, XmlResolver resolver)
         {
             if (!AppSettings.RestrictXmlControls)

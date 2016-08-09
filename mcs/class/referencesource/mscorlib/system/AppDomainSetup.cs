@@ -318,17 +318,23 @@ namespace System {
             }
         }
 
-        [ResourceExposure(ResourceScope.Machine)]
-        [ResourceConsumption(ResourceScope.Machine)]
-        private String NormalizePath(String path, bool useAppBase)
+        [System.Security.SecuritySafeCritical]
+        private string NormalizePath(string path, bool useAppBase)
         {
             if(path == null)
                 return null;
 
             // If we add very long file name support ("\\?\") to the Path class then this is unnecesary,
             // but we do not plan on doing this for now.
+
+            // Long path checks can be quirked, and as loading default quirks too early in the setup of an AppDomain is risky
+            // we'll avoid checking path lengths- we'll still fail at MAX_PATH later if we're !useAppBase when we call Path's
+            // NormalizePath.
             if (!useAppBase)
-                path = System.Security.Util.URLString.PreProcessForExtendedPathRemoval(path, false);
+                path = System.Security.Util.URLString.PreProcessForExtendedPathRemoval(
+                    checkPathLength: false,
+                    url: path,
+                    isFileUrl: false);
 
             int len = path.Length;
             if (len == 0)
@@ -417,10 +423,10 @@ namespace System {
 
             if (localPath) 
             {
-
                 if (useAppBase &&
-                    ( (len == 1) || (path[1] != ':') )) {
-                    String appBase = Value[(int) LoaderInformation.ApplicationBaseValue];
+                    ((len == 1) || (path[1] != ':'))) 
+                {
+                    String appBase = Value[(int)LoaderInformation.ApplicationBaseValue];
 
                     if ((appBase == null) || (appBase.Length == 0))
                         throw new MemberAccessException(Environment.GetResourceString("AppDomain_AppBaseNotSet"));
@@ -429,7 +435,9 @@ namespace System {
 
                     bool slash = false;
                     if ((path[0] == '/') || (path[0] == '\\')) {
-                        String pathRoot = Path.GetPathRoot(appBase);
+                        // Emulate Path.GetPathRoot without hitting code paths that check quirks
+                        string pathRoot = AppDomain.NormalizePath(appBase, fullCheck: false);
+                        pathRoot = pathRoot.Substring(0, System.IO.PathInternal.GetRootLength(pathRoot));
                         if (pathRoot.Length == 0) { // URL
                             int index = appBase.IndexOf(":/", StringComparison.Ordinal);
                             if (index == -1)
@@ -439,11 +447,11 @@ namespace System {
                             int urlLen = appBase.Length;
                             for (index += 1;
                                  (index < urlLen) && ((appBase[index] == '/') || (appBase[index] == '\\'));
-                                 index++);
+                                 index++) ;
 
                             // Now find the next slash to get domain name
-                            for(; (index < urlLen) && (appBase[index] != '/') && (appBase[index] != '\\');
-                                index++);
+                            for (; (index < urlLen) && (appBase[index] != '/') && (appBase[index] != '\\');
+                                index++) ;
 
                             pathRoot = appBase.Substring(0, index);
                         }
@@ -472,7 +480,9 @@ namespace System {
                     path = StringBuilderCache.GetStringAndRelease(result);
                 }
                 else
-                    path = Path.GetFullPathInternal(path);
+                {
+                    path = AppDomain.NormalizePath(path, fullCheck: true);
+                }
             }
 
             return path;
@@ -792,20 +802,32 @@ namespace System {
         [ResourceConsumption(ResourceScope.Machine)]
         private String VerifyDir(String dir, bool normalize)
         {
-            if (dir != null) {
+            if (dir != null)
+            {
                 if (dir.Length == 0)
+                {
                     dir = null;
-                else {
+                }
+                else
+                {
                     if (normalize)
                         dir = NormalizePath(dir, true);
 
-                // The only way AppDomainSetup is exposed in coreclr is through the AppDomainManager 
-                // and the AppDomainManager is a SecurityCritical type. Also, all callers of callstacks 
-                // leading from VerifyDir are SecurityCritical. So we can remove the Demand because 
-                // we have validated that all callers are SecurityCritical
+                    // The only way AppDomainSetup is exposed in coreclr is through the AppDomainManager 
+                    // and the AppDomainManager is a SecurityCritical type. Also, all callers of callstacks 
+                    // leading from VerifyDir are SecurityCritical. So we can remove the Demand because 
+                    // we have validated that all callers are SecurityCritical
 #if !FEATURE_CORECLR
                     if (IsFilePath(dir))
-                        new FileIOPermission( FileIOPermissionAccess.PathDiscovery, dir ).Demand();
+                    {
+                        // If we've already normalized we don't need to do it again, and can avoid hitting
+                        // quirks in FileIOPermission.
+                        new FileIOPermission(
+                            access: FileIOPermissionAccess.PathDiscovery,
+                            pathList: new string[] { dir },
+                            checkForDuplicates: false,
+                            needFullPath: false).Demand();
+                    }
 #endif // !FEATURE_CORECLR
                 }
             }

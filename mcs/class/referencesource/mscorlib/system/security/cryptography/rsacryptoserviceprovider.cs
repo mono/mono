@@ -37,9 +37,10 @@ namespace System.Security.Cryptography {
     }
 
     [System.Runtime.InteropServices.ComVisible(true)]
-    public sealed class RSACryptoServiceProvider : RSA
+    public sealed partial class RSACryptoServiceProvider : RSA
         , ICspAsymmetricAlgorithm
     {
+#if !MONO
         private int _dwKeySize;
         private CspParameters  _parameters;
         private bool _randomKeyContainer;
@@ -47,13 +48,13 @@ namespace System.Security.Cryptography {
         private SafeProvHandle _safeProvHandle;
         [System.Security.SecurityCritical] // auto-generated
         private SafeKeyHandle _safeKeyHandle;
-
+#endif
         private static volatile CspProviderFlags s_UseMachineKeyStore = 0;
 
         //
         // QCalls
         //
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [ResourceExposure(ResourceScope.None)]
@@ -194,7 +195,7 @@ namespace System.Security.Cryptography {
                 return null;
             }
         }
-
+#endif
         public override string SignatureAlgorithm {
             get { return "http://www.w3.org/2000/09/xmldsig#rsa-sha1"; }
         }
@@ -203,7 +204,7 @@ namespace System.Security.Cryptography {
             get { return (s_UseMachineKeyStore == CspProviderFlags.UseMachineKeyStore); }
             set { s_UseMachineKeyStore = (value ? CspProviderFlags.UseMachineKeyStore : 0); }
         }
-
+#if !MONO
         public bool PersistKeyInCsp {
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {
@@ -502,7 +503,7 @@ namespace System.Security.Cryptography {
         private static bool IsPublic(RSAParameters rsaParams) {
             return (rsaParams.P == null);
         }
-        
+#endif
         //
         // Adapt new RSA abstraction to legacy RSACryptoServiceProvider surface area.
         //
@@ -524,10 +525,14 @@ namespace System.Security.Cryptography {
             Contract.Assert(count >= 0 && count <= data.Length);
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
+#if MONO
+            throw new NotImplementedException ();
+#else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 Utils.HashData(hashHandle, data, offset, count);
                 return Utils.EndHash(hashHandle);
             }
+#endif
         }
 
         [SecuritySafeCritical]
@@ -536,6 +541,9 @@ namespace System.Security.Cryptography {
             Contract.Assert(data != null);
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
+#if MONO
+            throw new NotImplementedException ();
+#else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 // Read the data 4KB at a time, providing similar read characteristics to a standard HashAlgorithm
                 byte[] buffer = new byte[4096];
@@ -549,6 +557,7 @@ namespace System.Security.Cryptography {
 
                 return Utils.EndHash(hashHandle);
             }
+#endif
         }
         
         private static int GetAlgorithmId(HashAlgorithmName hashAlgorithm) {

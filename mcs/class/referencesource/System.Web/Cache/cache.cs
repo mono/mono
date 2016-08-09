@@ -519,13 +519,14 @@ namespace System.Web.Caching {
         internal Cache                      _cachePublic;
         internal protected CacheMemoryStats _cacheMemoryStats;
         private  object                     _timerLock = new object();
-        private  Timer                      _timer;
+        private  DisposableGCHandleRef<Timer> _timerHandleRef;
         private  int                        _currentPollInterval = MEMORYSTATUS_INTERVAL_30_SECONDS;
         internal int                        _inCacheManagerThread;
         internal bool                       _enableMemoryCollection;
         internal bool                       _enableExpiration;
         internal bool                       _internalConfigRead;
         internal SRefMultiple               _srefMultiple;
+        private  int                        _disposed = 0;
 
         internal CacheCommon() {
             _cachePublic = new Cache(0);
@@ -537,13 +538,16 @@ namespace System.Web.Caching {
 
         internal void Dispose(bool disposing) {
             if (disposing) {
-                EnableCacheMemoryTimer(false);
-                _cacheMemoryStats.Dispose();
+                // This method must be tolerant to multiple calls to Dispose on the same instance
+                if (Interlocked.Exchange(ref _disposed, 1) == 0) {
+                    EnableCacheMemoryTimer(false);
+                    _cacheMemoryStats.Dispose();
+                }
             }
         }
 
-        internal void AddSRefTarget(CacheInternal c) {
-            _srefMultiple.AddSRefTarget(c);
+        internal void AddSRefTarget(object o) {
+            _srefMultiple.AddSRefTarget(o);
         }
 
         internal void SetCacheInternal(CacheInternal cacheInternal) {
@@ -591,19 +595,20 @@ namespace System.Web.Caching {
                 
                 if (enable) {
                     
-                    if (_timer == null) {
+                    if (_timerHandleRef == null) {
                         // <cache privateBytesPollTime> has not been read yet
-                        _timer = new Timer(new TimerCallback(this.CacheManagerTimerCallback), null, _currentPollInterval, _currentPollInterval);
+                        Timer timer = new Timer(new TimerCallback(this.CacheManagerTimerCallback), null, _currentPollInterval, _currentPollInterval);
+                        _timerHandleRef = new DisposableGCHandleRef<Timer>(timer);
                         Debug.Trace("Cache", "Started CacheMemoryTimers");
                     }
                     else {
-                        _timer.Change(_currentPollInterval, _currentPollInterval);
+                        _timerHandleRef.Target.Change(_currentPollInterval, _currentPollInterval);
                     }
                 }
                 else {
-                    Timer timer = _timer;
-                    if (timer != null && Interlocked.CompareExchange(ref _timer, null, timer) == timer) {
-                        timer.Dispose();
+                    var timerHandleRef = _timerHandleRef;
+                    if (timerHandleRef != null && Interlocked.CompareExchange(ref _timerHandleRef, null, timerHandleRef) == timerHandleRef) {
+                        timerHandleRef.Dispose();
                         Debug.Trace("Cache", "Stopped CacheMemoryTimers");
                     }
                 }
@@ -620,7 +625,7 @@ namespace System.Web.Caching {
         void AdjustTimer() {
             lock (_timerLock) {
 
-                if (_timer == null)
+                if (_timerHandleRef == null)
                     return;
 
                 // the order of these if statements is important
@@ -629,7 +634,7 @@ namespace System.Web.Caching {
                 if (_cacheMemoryStats.IsAboveHighPressure()) {
                     if (_currentPollInterval > MEMORYSTATUS_INTERVAL_5_SECONDS) {
                         _currentPollInterval = MEMORYSTATUS_INTERVAL_5_SECONDS;
-                        _timer.Change(_currentPollInterval, _currentPollInterval);
+                        _timerHandleRef.Target.Change(_currentPollInterval, _currentPollInterval);
                     }
                     return;
                 }
@@ -641,7 +646,7 @@ namespace System.Web.Caching {
                     int newPollInterval = Math.Min(CacheMemorySizePressure.PollInterval, MEMORYSTATUS_INTERVAL_30_SECONDS);
                     if (_currentPollInterval != newPollInterval) {
                         _currentPollInterval = newPollInterval;
-                        _timer.Change(_currentPollInterval, _currentPollInterval);
+                        _timerHandleRef.Target.Change(_currentPollInterval, _currentPollInterval);
                     }
                     return;
                 }
@@ -649,7 +654,7 @@ namespace System.Web.Caching {
                 // there is no pressure, interval should be the value from config
                 if (_currentPollInterval != CacheMemorySizePressure.PollInterval) {
                     _currentPollInterval = CacheMemorySizePressure.PollInterval;
-                    _timer.Change(_currentPollInterval, _currentPollInterval);
+                    _timerHandleRef.Target.Change(_currentPollInterval, _currentPollInterval);
                 }
             }
         }
@@ -666,7 +671,7 @@ namespace System.Web.Caching {
 #endif
             try {
                 // Dev10 633335: if the timer has been disposed, return without doing anything
-                if (_timer == null)
+                if (_timerHandleRef == null)
                     return 0;
 
                 // The timer thread must always call Update so that the CacheManager
@@ -1188,7 +1193,7 @@ namespace System.Web.Caching {
             _usage = new CacheUsage(this);
             _lock = new object();
             _insertBlock = new ManualResetEvent(true);
-            cacheCommon.AddSRefTarget(this);
+            cacheCommon.AddSRefTarget(new { _entries, _expires, _usage });
         }
 
         /*
@@ -1880,24 +1885,32 @@ namespace System.Web.Caching {
 
     class CacheMultiple : CacheInternal {
         int             _disposed;
-        CacheSingle[]   _caches;
+        DisposableGCHandleRef<CacheSingle>[] _cachesRefs;
         int             _cacheIndexMask;
 
         internal CacheMultiple(CacheCommon cacheCommon, int numSingleCaches) : base(cacheCommon) {
             Debug.Assert(numSingleCaches > 1, "numSingleCaches is not greater than 1");
             Debug.Assert((numSingleCaches & (numSingleCaches - 1)) == 0, "numSingleCaches is not a power of 2");
             _cacheIndexMask = numSingleCaches - 1;
-            _caches = new CacheSingle[numSingleCaches];
+
+            // Each CacheSingle will have its own SRef reporting the size of the data it references.
+            // Objects in this CacheSingle may have refs to the root Cache and therefore reference other instances of CacheSingle.
+            // This leads to an unbalanced tree of SRefs and makes GC less efficient while calculating multiple SRefs on multiple cores.
+            // Using DisposableGCHandleRef here prevents SRefs from calculating data that does not belong to other CacheSingle instances.
+            _cachesRefs = new DisposableGCHandleRef<CacheSingle>[numSingleCaches];
             for (int i = 0; i < numSingleCaches; i++) {
-                _caches[i] = new CacheSingle(cacheCommon, this, i);
+                _cachesRefs[i] = new DisposableGCHandleRef<CacheSingle>(new CacheSingle(cacheCommon, this, i));
             }
         }
 
         protected override void Dispose(bool disposing) {
             if (disposing) {
                 if (Interlocked.Exchange(ref _disposed, 1) == 0) {
-                    foreach (CacheSingle cacheSingle in _caches) {
-                        cacheSingle.Dispose();
+                    foreach (var cacheSingleRef in _cachesRefs) {
+                        // Unfortunately the application shutdown logic allows user to access cache even after its disposal.
+                        // We'll keep the GCHandle inside cacheSingleRef until it gets reclaimed during appdomain shutdown.
+                        // And we'll only dispose the Target to preserve the old behavior.
+                        cacheSingleRef.Target.Dispose(); 
                     }
                 }
             }
@@ -1908,8 +1921,8 @@ namespace System.Web.Caching {
         internal override int PublicCount {
             get {
                 int count = 0;
-                foreach (CacheSingle cacheSingle in _caches) {
-                    count += cacheSingle.PublicCount;
+                foreach (var cacheSingleRef in _cachesRefs) {
+                    count += cacheSingleRef.Target.PublicCount;
                 }
 
                 return count;
@@ -1919,8 +1932,8 @@ namespace System.Web.Caching {
         internal override long TotalCount {
             get {
                 long count = 0;
-                foreach (CacheSingle cacheSingle in _caches) {
-                    count += cacheSingle.TotalCount;
+                foreach (var cacheSingleRef in _cachesRefs) {
+                    count += cacheSingleRef.Target.TotalCount;
                 }
 
                 return count;
@@ -1928,22 +1941,23 @@ namespace System.Web.Caching {
         }
 
         internal override IDictionaryEnumerator CreateEnumerator() {
-            IDictionaryEnumerator[] enumerators = new IDictionaryEnumerator[_caches.Length];
-            for (int i = 0, c = _caches.Length; i < c; i++) {
-                enumerators[i] = _caches[i].CreateEnumerator();
+            IDictionaryEnumerator[] enumerators = new IDictionaryEnumerator[_cachesRefs.Length];
+            for (int i = 0, c = _cachesRefs.Length; i < c; i++) {
+                enumerators[i] = _cachesRefs[i].Target.CreateEnumerator();
             }
 
             return new AggregateEnumerator(enumerators);
         }
 
         internal CacheSingle GetCacheSingle(int hashCode) {
-            Debug.Assert(_caches != null && _caches.Length != 0);
+            Debug.Assert(_cachesRefs != null && _cachesRefs.Length != 0);
             // Dev10 865907: Math.Abs throws OverflowException for Int32.MinValue
             if (hashCode < 0) {
                 hashCode = (hashCode == Int32.MinValue) ? 0 : -hashCode;
             }
             int index = (hashCode & _cacheIndexMask);
-            return _caches[index];
+            Debug.Assert(_cachesRefs[index].Target != null);
+            return _cachesRefs[index].Target;
         }
 
         internal override CacheEntry UpdateCache(
@@ -1960,15 +1974,15 @@ namespace System.Web.Caching {
 
         internal override long TrimIfNecessary(int percent) {
             long count = 0;
-            foreach (CacheSingle cacheSingle in _caches) {
-                count += cacheSingle.TrimIfNecessary(percent);
+            foreach (var cacheSingleRef in _cachesRefs) {
+                count += cacheSingleRef.Target.TrimIfNecessary(percent);
             }
             return count;
         }
 
         internal override void EnableExpirationTimer(bool enable) {
-            foreach (CacheSingle cacheSingle in _caches) {
-                cacheSingle.EnableExpirationTimer(enable);
+            foreach (var cacheSingleRef in _cachesRefs) {
+                cacheSingleRef.Target.EnableExpirationTimer(enable);
             }
         }
     }

@@ -234,7 +234,7 @@ namespace System.IO
                     state2.EnsureState();
                 }
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false);
 #endif
 
                 // normalize search criteria
@@ -340,7 +340,7 @@ namespace System.IO
                     state2.EnsureState();
                 }
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false);
 #endif
                 searchData = new Directory.SearchData(normalizedSearchPath, userPath, searchOption);
                 CommonInit();
@@ -591,8 +591,7 @@ namespace System.IO
             }
 #else
             String demandDir = Directory.GetDemandDir(fullPathToDemand, true);
-            String[] demandPaths = new String[] { demandDir };
-            new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir, false, false);
 #endif
         }
 
@@ -706,8 +705,7 @@ namespace System.IO
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
             state.EnsureState();
 #else
-            String[] names = new String[] { name };
-            new FileIOPermission(FileIOPermissionAccess.Read, names, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, name, false, false);
 #endif
             FileInfo fi = new FileInfo(name, false);
             fi.InitializeFrom(result.FindData);
@@ -733,8 +731,7 @@ namespace System.IO
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
             state.EnsureState();
 #else
-            String[] permissionNames = new String[] { permissionName };
-            new FileIOPermission(FileIOPermissionAccess.Read, permissionNames, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, permissionName, false, false);
 #endif
             DirectoryInfo di = new DirectoryInfo(name, false);
             di.InitializeFrom(result.FindData);
@@ -770,8 +767,7 @@ namespace System.IO
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
                 state.EnsureState();
 #else
-                String[] permissionNames = new String[] { permissionName };
-                new FileIOPermission(FileIOPermissionAccess.Read, permissionNames, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, permissionName, false, false);
 #endif
                 DirectoryInfo di = new DirectoryInfo(name, false);
                 di.InitializeFrom(result.FindData);
@@ -786,8 +782,7 @@ namespace System.IO
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
                 state.EnsureState();
 #else
-                String[] names = new String[] { name };
-                new FileIOPermission(FileIOPermissionAccess.Read, names, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, name, false, false);
 #endif
                 FileInfo fi = new FileInfo(name, false);
                 fi.InitializeFrom(result.FindData);

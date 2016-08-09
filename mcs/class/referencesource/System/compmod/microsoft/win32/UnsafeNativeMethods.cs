@@ -169,6 +169,23 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         public static extern bool WTSUnRegisterSessionNotification(HandleRef hWnd);
 
+        private static IntPtr GetCurrentProcessToken() { return new IntPtr(-4); }
+
+        private const int ERROR_SUCCESS = 0;
+
+        enum AppPolicyClrCompat
+        {
+            AppPolicyClrCompat_Others = 0,
+            AppPolicyClrCompat_ClassicDesktop = 1,
+            AppPolicyClrCompat_Universal = 2,
+            AppPolicyClrCompat_PackagedDesktop = 3
+        };
+
+        [DllImport(ExternDll.Kernel32, CharSet = CharSet.None, EntryPoint = "AppPolicyGetClrCompat")]
+        [System.Security.SecuritySafeCritical]
+        [return: MarshalAs(UnmanagedType.I4)]
+        private static extern Int32 _AppPolicyGetClrCompat(IntPtr processToken, out AppPolicyClrCompat appPolicyClrCompat);
+
         private const int ERROR_INSUFFICIENT_BUFFER = 0x007A;
         private const int ERROR_NO_PACKAGE_IDENTITY = 0x3d54;
 
@@ -204,8 +221,20 @@ namespace Microsoft.Win32 {
         [System.Security.SecuritySafeCritical]
         private static bool _IsPackagedProcess()
         {
+            Version windows8Version = new Version(6, 2, 0, 0);
             OperatingSystem os = Environment.OSVersion;
-            if(os.Platform == PlatformID.Win32NT && os.Version >= new Version(6,2,0,0) && DoesWin32MethodExist(ExternDll.Kernel32, "GetCurrentPackageId"))
+            bool osSupportsPackagedProcesses = os.Platform == PlatformID.Win32NT && os.Version >= windows8Version;
+
+            if (osSupportsPackagedProcesses && DoesWin32MethodExist(ExternDll.Kernel32, "AppPolicyGetClrCompat"))
+            {
+                // Use AppPolicyGetClrCompat if it is available. Return true if and only if this is a UWA which means if
+                // this is packaged desktop app this method will return false. This may cause some confusion however 
+                // this is necessary to make the behavior of packaged desktop apps identical to desktop apps.
+                AppPolicyClrCompat appPolicyClrCompat;
+                return _AppPolicyGetClrCompat(GetCurrentProcessToken(), out appPolicyClrCompat) == ERROR_SUCCESS && 
+                    appPolicyClrCompat == AppPolicyClrCompat.AppPolicyClrCompat_Universal;
+            }
+            else if(osSupportsPackagedProcesses && DoesWin32MethodExist(ExternDll.Kernel32, "GetCurrentPackageId"))
             {
                 Int32 bufLen = 0;
                 // Will return ERROR_INSUFFICIENT_BUFFER when running within a packaged application,

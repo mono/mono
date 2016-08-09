@@ -1,4 +1,4 @@
-﻿// ==++==
+// ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -13,8 +13,11 @@ namespace System
         internal static readonly string SwitchNoAsyncCurrentCulture = "Switch.System.Globalization.NoAsyncCurrentCulture";
         internal static readonly string SwitchThrowExceptionIfDisposedCancellationTokenSource = "Switch.System.Threading.ThrowExceptionIfDisposedCancellationTokenSource";
         internal static readonly string SwitchPreserveEventListnerObjectIdentity = "Switch.System.Diagnostics.EventSource.PreserveEventListnerObjectIdentity";
+        internal static readonly string SwitchUseLegacyPathHandling = "Switch.System.IO.UseLegacyPathHandling";
+        internal static readonly string SwitchBlockLongPaths = "Switch.System.IO.BlockLongPaths";
+        internal static readonly string SwitchSetActorAsReferenceWhenCopyingClaimsIdentity = "Switch.System.Security.ClaimsIdentity.SetActorAsReferenceWhenCopyingClaimsIdentity";
 
-        
+
         // This is a partial method. Platforms can provide an implementation of it that will set override values
         // from whatever mechanism is available on that platform. If no implementation is provided, the compiler is going to remove the calls
         // to it from the code
@@ -41,6 +44,14 @@ namespace System
                             AppContext.DefineSwitchDefault(SwitchNoAsyncCurrentCulture, true);
                             AppContext.DefineSwitchDefault(SwitchThrowExceptionIfDisposedCancellationTokenSource, true);
                         }
+
+                        if (version <= 40601)
+                        {
+                            AppContext.DefineSwitchDefault(SwitchUseLegacyPathHandling, true);
+                            AppContext.DefineSwitchDefault(SwitchBlockLongPaths, true);
+                            AppContext.DefineSwitchDefault(SwitchSetActorAsReferenceWhenCopyingClaimsIdentity, true);
+                        }
+
                         break;
                     }
                 case "WindowsPhone":
@@ -50,6 +61,8 @@ namespace System
                         {
                             AppContext.DefineSwitchDefault(SwitchNoAsyncCurrentCulture, true);
                             AppContext.DefineSwitchDefault(SwitchThrowExceptionIfDisposedCancellationTokenSource, true);
+                            AppContext.DefineSwitchDefault(SwitchUseLegacyPathHandling, true);
+                            AppContext.DefineSwitchDefault(SwitchBlockLongPaths, true);
                         }
                         break;
                     }

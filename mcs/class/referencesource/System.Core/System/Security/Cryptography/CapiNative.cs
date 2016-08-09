@@ -169,6 +169,14 @@ namespace System.Security.Cryptography {
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        internal struct CERT_DSS_PARAMETERS
+        {
+            public CRYPTOAPI_BLOB p;
+            public CRYPTOAPI_BLOB q;
+            public CRYPTOAPI_BLOB g;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct PROV_ENUMALGS {
             public AlgorithmId aiAlgId;
             public int dwBitLen;
@@ -187,6 +195,8 @@ namespace System.Security.Cryptography {
         internal const uint CALG_DSS_SIGN = (ALG_CLASS_SIGNATURE | ALG_TYPE_DSS | ALG_SID_DSS_ANY);
         internal const uint CALG_RSA_KEYX = (ALG_CLASS_KEY_EXCHANGE | ALG_TYPE_RSA | ALG_SID_RSA_ANY);
         internal const uint CNG_RSA_PUBLIC_KEY_BLOB = 72;
+        internal const uint X509_DSS_PUBLICKEY = 38;
+        internal const uint X509_DSS_PARAMETERS = 39;
 
         internal const uint X509_ASN_ENCODING = 0x00000001;
         internal const uint PKCS_7_ASN_ENCODING = 0x00010000;

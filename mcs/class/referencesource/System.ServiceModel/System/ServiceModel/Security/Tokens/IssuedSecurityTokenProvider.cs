@@ -461,7 +461,7 @@ namespace System.ServiceModel.Security.Tokens
 
             XmlDocument dom = new XmlDocument();
             dom.PreserveWhitespace = true;
-            dom.Load(stream);
+            dom.Load(new XmlTextReader(stream) { DtdProcessing = DtdProcessing.Prohibit });
             stream.Close();
 
             return dom.DocumentElement;

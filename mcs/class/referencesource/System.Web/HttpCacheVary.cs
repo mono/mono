@@ -37,10 +37,12 @@ namespace System.Web {
             _headers = null;
         }
 
-        /*
-         * Reset based on the cached vary headers.
-         */
-        internal void ResetFromHeaders(String[] headers) {
+        /// <summary>
+        /// Set the Headers in Cache Vary
+        /// </summary>
+        /// <param name="headers"></param>
+        public void SetHeaders(string[] headers) {
+
             int i, n;
 
             if (headers == null) {
@@ -48,7 +50,7 @@ namespace System.Web {
                 _varyStar = false;
                 _headers = null;
             }
-            else {
+            else {           
                 _isModified = true;
                 if (headers[0].Equals("*")) {
                     Debug.Assert(headers.Length == 1, "headers.Length == 1");
@@ -97,19 +99,19 @@ namespace System.Web {
 
             return null;
         }
+ 
+        /// <summary>
+        /// Get the Headers in Cache Vary
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetHeaders() {
+            string[]    s = null;
 
-        /*
-         * Returns the headers, for package access only.
-         * 
-         * @return the headers.
-         */
-        internal String[] GetHeaders() {
-            String[]    s = null;
             Object      item;
             int         i, j, c, n;
 
             if (_varyStar) {
-                return new String[1] {"*"};
+                return new string[1] {"*"};
             }
             else if (_headers != null) {
                 n = _headers.Size;
@@ -127,7 +129,7 @@ namespace System.Web {
                     for (i = 0; i < n; i++) {
                         item = _headers.GetValue(i);
                         if (item != null) {
-                            s[j] = (String) item;
+                            s[j] = (string) item;
                             j++;
                         }
                     }
@@ -138,7 +140,7 @@ namespace System.Web {
 
             return s;
         }
-
+  
         //
         // Public methods and properties
         //

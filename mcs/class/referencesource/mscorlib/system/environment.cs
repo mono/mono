@@ -416,7 +416,7 @@ namespace System {
                 
 #if !FEATURE_CORECLR
                 // Do security check
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, path).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, path);
 #endif
 
                 return path;

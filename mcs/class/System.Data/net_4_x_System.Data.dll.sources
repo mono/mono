@@ -6,6 +6,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/AssemblyRef.cs
 
 ReferenceSources/NativeOledbWrapper.cs
+ReferenceSources/PoolBlockingPeriod.cs
 ReferenceSources/Res.cs
 ReferenceSources/Res.missing.cs
 ReferenceSources/ResCategoryAttribute.cs

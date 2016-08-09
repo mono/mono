@@ -1126,9 +1126,18 @@ namespace System.Web {
             }
 
             // restore content
-            _httpWriter.UseSnapshot(rawResponse.Buffers);
+            SetResponseBuffers(rawResponse.Buffers);
+  
+            _suppressContent = !sendBody;         
+        }
 
-            _suppressContent = !sendBody;
+        // set the response content bufffers
+        internal void SetResponseBuffers(ArrayList buffers) {
+            if (_httpWriter == null) {
+                throw new HttpException(SR.GetString(SR.Cannot_use_snapshot_for_TextWriter));
+            }
+
+            _httpWriter.UseSnapshot(buffers);
         }
 
         internal void CloseConnectionAfterError() {

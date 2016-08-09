@@ -6,27 +6,27 @@
 
 namespace System.Web.UI {
 
-using System;
-using System.IO;
-using System.Text;
-using System.Collections;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Web;
-using System.Web.Util;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.Caching;
-using System.Web.Compilation;
-using System.Web.Configuration;
-using System.Security.Permissions;
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Collections;
+    using System.Collections.Specialized;
+    using System.ComponentModel;
+    using System.ComponentModel.Design;
+    using System.Globalization;
+    using System.Web;
+    using System.Web.Util;
+    using System.Web.UI.HtmlControls;
+    using System.Web.UI.WebControls;
+    using System.Web.Caching;
+    using System.Web.Compilation;
+    using System.Web.Configuration;
+    using System.Security.Permissions;
 
 
-// Keeps track of one call to Page Register* API
-// The semantics of the fields depends to the call type
-[Serializable]
+    // Keeps track of one call to Page Register* API
+    // The semantics of the fields depends to the call type
+    [Serializable]
 internal class RegisterCallData {
     internal ClientAPIRegisterType Type;
     internal ScriptKey Key;
@@ -406,8 +406,8 @@ public abstract class BasePartialCachingControl : Control {
         }
         else {
             string[] varyByParams = null;
-            if (_varyByParamsCollection != null)
-                varyByParams = _varyByParamsCollection.GetParams();
+                if (_varyByParamsCollection != null)
+                    varyByParams = _varyByParamsCollection.GetParams();
 
             cachedVary = new ControlCachedVary(varyByParams, _varyByControlsCollection, _varyByCustom);
 
@@ -576,7 +576,7 @@ public abstract class BasePartialCachingControl : Control {
 
         string[] varyByParamsStrings = varyByParams.Split(varySeparator);
         _varyByParamsCollection = new HttpCacheVaryByParams();
-        _varyByParamsCollection.ResetFromParams(varyByParamsStrings);
+        _varyByParamsCollection.SetParams(varyByParamsStrings);
     }
 
     internal void RegisterPostBackScript() {

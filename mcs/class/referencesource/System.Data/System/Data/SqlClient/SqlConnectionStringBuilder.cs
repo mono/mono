@@ -41,6 +41,7 @@ namespace System.Data.SqlClient {
             Pooling,
             MinPoolSize,
             MaxPoolSize,
+            PoolBlockingPeriod,
 
             AsynchronousProcessing,
             ConnectionReset,
@@ -127,6 +128,7 @@ namespace System.Data.SqlClient {
         private bool _userInstance					= DbConnectionStringDefaults.UserInstance;
         private SqlAuthenticationMethod _authentication     = DbConnectionStringDefaults.Authentication;
         private SqlConnectionColumnEncryptionSetting _columnEncryptionSetting = DbConnectionStringDefaults.ColumnEncryptionSetting;
+        private PoolBlockingPeriod _poolBlockingPeriod = DbConnectionStringDefaults.PoolBlockingPeriod;
 
         static SqlConnectionStringBuilder() {
             string[] validKeywords = new string[KeywordsCount];
@@ -134,6 +136,7 @@ namespace System.Data.SqlClient {
             validKeywords[(int)Keywords.ApplicationName]                = DbConnectionStringKeywords.ApplicationName;
             validKeywords[(int)Keywords.AsynchronousProcessing]         = DbConnectionStringKeywords.AsynchronousProcessing;
             validKeywords[(int)Keywords.AttachDBFilename]               = DbConnectionStringKeywords.AttachDBFilename;
+            validKeywords[(int)Keywords.PoolBlockingPeriod]       = DbConnectionStringKeywords.PoolBlockingPeriod;
             validKeywords[(int)Keywords.ConnectionReset]                = DbConnectionStringKeywords.ConnectionReset;
             validKeywords[(int)Keywords.ContextConnection]              = DbConnectionStringKeywords.ContextConnection;
             validKeywords[(int)Keywords.ConnectTimeout]                 = DbConnectionStringKeywords.ConnectTimeout;
@@ -174,6 +177,7 @@ namespace System.Data.SqlClient {
             hash.Add(DbConnectionStringKeywords.ApplicationName,					Keywords.ApplicationName);
             hash.Add(DbConnectionStringKeywords.AsynchronousProcessing,				Keywords.AsynchronousProcessing);
             hash.Add(DbConnectionStringKeywords.AttachDBFilename,					Keywords.AttachDBFilename);
+            hash.Add(DbConnectionStringKeywords.PoolBlockingPeriod,           Keywords.PoolBlockingPeriod);
             hash.Add(DbConnectionStringKeywords.ConnectTimeout,						Keywords.ConnectTimeout);
             hash.Add(DbConnectionStringKeywords.ConnectionReset,					Keywords.ConnectionReset);
             hash.Add(DbConnectionStringKeywords.ContextConnection,					Keywords.ContextConnection);
@@ -278,6 +282,7 @@ namespace System.Data.SqlClient {
                     case Keywords.Authentication:					Authentication = ConvertToAuthenticationType(keyword, value); break;
                     case Keywords.ColumnEncryptionSetting:			ColumnEncryptionSetting = ConvertToColumnEncryptionSetting(keyword, value); break;
                     case Keywords.AsynchronousProcessing:			AsynchronousProcessing = ConvertToBoolean(value); break;
+                    case Keywords.PoolBlockingPeriod:               PoolBlockingPeriod = ConvertToPoolBlockingPeriod(keyword, value); break;
 #pragma warning disable 618 // Obsolete ConnectionReset
                     case Keywords.ConnectionReset:					ConnectionReset = ConvertToBoolean(value); break;
 #pragma warning restore 618
@@ -357,6 +362,25 @@ namespace System.Data.SqlClient {
             set {
                 SetValue(DbConnectionStringKeywords.AttachDBFilename, value);
                 _attachDBFilename = value;
+            }
+        }
+
+        [DisplayName(DbConnectionStringKeywords.PoolBlockingPeriod)]
+        [ResCategoryAttribute(Res.DataCategory_Pooling)]
+        [ResDescriptionAttribute(Res.DbConnectionString_PoolBlockingPeriod)]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public PoolBlockingPeriod PoolBlockingPeriod
+        {
+            get { return _poolBlockingPeriod; }
+            set
+            {
+                if (!DbConnectionStringBuilderUtil.IsValidPoolBlockingPeriodValue(value))
+                {
+                    throw ADP.InvalidEnumerationValue(typeof(PoolBlockingPeriod), (int)value);
+                }
+
+                SetPoolBlockingPeriodValue(value);
+                _poolBlockingPeriod = value;
             }
         }
 
@@ -881,6 +905,10 @@ namespace System.Data.SqlClient {
         private static SqlAuthenticationMethod ConvertToAuthenticationType(string keyword, object value) {
             return DbConnectionStringBuilderUtil.ConvertToAuthenticationType(keyword, value);
         }
+        private static PoolBlockingPeriod ConvertToPoolBlockingPeriod(string keyword, object value)
+        {
+            return DbConnectionStringBuilderUtil.ConvertToPoolBlockingPeriod(keyword, value);
+        }
 
         /// <summary>
         /// Convert to SqlConnectionColumnEncryptionSetting.
@@ -906,6 +934,7 @@ namespace System.Data.SqlClient {
             case Keywords.ApplicationName:					return ApplicationName;
             case Keywords.AsynchronousProcessing:			return AsynchronousProcessing;
             case Keywords.AttachDBFilename:					return AttachDBFilename;
+            case Keywords.PoolBlockingPeriod:         return PoolBlockingPeriod;
             case Keywords.ConnectTimeout:					return ConnectTimeout;
 #pragma warning disable 618 // Obsolete ConnectionReset
             case Keywords.ConnectionReset:					return ConnectionReset;
@@ -1012,6 +1041,10 @@ namespace System.Data.SqlClient {
             case Keywords.Authentication:
                 _authentication = DbConnectionStringDefaults.Authentication;
                 break;
+            case Keywords.PoolBlockingPeriod:
+                _poolBlockingPeriod = DbConnectionStringDefaults.PoolBlockingPeriod;
+                break;
+              
             case Keywords.ConnectTimeout:
                 _connectTimeout = DbConnectionStringDefaults.ConnectTimeout;
                 break;
@@ -1127,6 +1160,11 @@ namespace System.Data.SqlClient {
         private void SetApplicationIntentValue(ApplicationIntent value) {
             Debug.Assert(DbConnectionStringBuilderUtil.IsValidApplicationIntentValue(value), "Invalid value for ApplicationIntent");
             base[DbConnectionStringKeywords.ApplicationIntent] = DbConnectionStringBuilderUtil.ApplicationIntentToString(value);
+        }
+        private void SetPoolBlockingPeriodValue(PoolBlockingPeriod value)
+        {
+            Debug.Assert(DbConnectionStringBuilderUtil.IsValidPoolBlockingPeriodValue(value), "Invalid value for PoolBlockingPeriod");
+            base[DbConnectionStringKeywords.PoolBlockingPeriod] = DbConnectionStringBuilderUtil.PoolBlockingPeriodToString(value);
         }
         private void SetAuthenticationValue(SqlAuthenticationMethod value) {
             Debug.Assert(DbConnectionStringBuilderUtil.IsValidAuthenticationTypeValue(value), "Invalid value for AuthenticationType");

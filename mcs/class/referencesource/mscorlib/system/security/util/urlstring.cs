@@ -354,13 +354,24 @@ namespace System.Security.Util {
         // 3. Throws a PathTooLongException if the length of the resulting URL is >= MAX_PATH.
         //    This is done to prevent security issues due to canonicalization truncations.
         // Remove this method when the Path class supports "\\?\"
-        internal static String PreProcessForExtendedPathRemoval(String url, bool isFileUrl)
+        internal static string PreProcessForExtendedPathRemoval(string url, bool isFileUrl)
         {
-            bool uncShare = false;
-            return PreProcessForExtendedPathRemoval(url, isFileUrl, ref uncShare);
+            return PreProcessForExtendedPathRemoval(checkPathLength: true, url: url, isFileUrl: isFileUrl);
         }
 
-        private static String PreProcessForExtendedPathRemoval(String url, bool isFileUrl, ref bool isUncShare)
+        internal static string PreProcessForExtendedPathRemoval(bool checkPathLength, string url, bool isFileUrl)
+        {
+            bool isUncShare = false;
+            return PreProcessForExtendedPathRemoval(checkPathLength: checkPathLength, url: url, isFileUrl: isFileUrl, isUncShare: ref isUncShare);
+        }
+
+        // Keeping this signature to avoid reflection breaks
+        private static string PreProcessForExtendedPathRemoval(string url, bool isFileUrl, ref bool isUncShare)
+        {
+            return PreProcessForExtendedPathRemoval(checkPathLength: true, url: url, isFileUrl: isFileUrl, isUncShare: ref isUncShare);
+        }
+
+        private static string PreProcessForExtendedPathRemoval(bool checkPathLength, string url, bool isFileUrl, ref bool isUncShare)
         {
             // This is the modified URL that we will return
             StringBuilder modifiedUrl = new StringBuilder(url);
@@ -434,15 +445,24 @@ namespace System.Security.Util {
             }
 
             // ITEM 3 - If the path is greater than or equal (due to terminating NULL in windows) MAX_PATH, we throw.
-            if (modifiedUrl.Length >= Path.MAX_PATH)
+            if (checkPathLength)
             {
-                throw new PathTooLongException(Environment.GetResourceString("IO.PathTooLong"));
+                // This needs to be a separate method to avoid hitting the static constructor on AppContextSwitches
+                CheckPathTooLong(modifiedUrl);
             }
 
             // Create the result string from the StringBuilder
             return modifiedUrl.ToString();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void CheckPathTooLong(StringBuilder path)
+        {
+            if (path.Length >= (AppContextSwitches.BlockLongPaths ? PathInternal.MaxShortPath : PathInternal.MaxLongPath))
+            {
+                throw new PathTooLongException(Environment.GetResourceString("IO.PathTooLong"));
+            }
+        }
 
         // Do any misc massaging of data in the URL
         private String PreProcessURL(String url, bool isFileURL)

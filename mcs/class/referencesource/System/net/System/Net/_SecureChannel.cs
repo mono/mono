@@ -393,7 +393,7 @@ namespace System.Net.Security {
                 if (store != null)
                 {
                     collectionEx = store.Certificates.Find(X509FindType.FindByThumbprint, certHash, false);
-                    if (collectionEx.Count > 0 && collectionEx[0].PrivateKey != null)
+                    if (collectionEx.Count > 0 && collectionEx[0].HasPrivateKey)
                     {
                         if (Logging.On) Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_found_cert_in_store, (m_ServerMode ? "LocalMachine" : "CurrentUser")));
                         return collectionEx[0];
@@ -404,7 +404,7 @@ namespace System.Net.Security {
                 if (store != null)
                 {
                     collectionEx = store.Certificates.Find(X509FindType.FindByThumbprint, certHash, false);
-                    if (collectionEx.Count > 0 && collectionEx[0].PrivateKey != null)
+                    if (collectionEx.Count > 0 && collectionEx[0].HasPrivateKey)
                     {
                         if (Logging.On) Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_found_cert_in_store, (m_ServerMode ? "CurrentUser" : "LocalMachine")));
                         return collectionEx[0];
@@ -791,6 +791,12 @@ namespace System.Net.Security {
                 else
                 {
                     SecureCredential.Flags flags = SecureCredential.Flags.ValidateManual | SecureCredential.Flags.NoDefaultCred;
+
+                    if (!ServicePointManager.DisableSendAuxRecord)
+                    {
+                        flags |= SecureCredential.Flags.SendAuxRecord;
+                    }
+
                     if (!ServicePointManager.DisableStrongCrypto 
                         && ((m_ProtocolFlags & (SchProtocols.Tls10 | SchProtocols.Tls11 | SchProtocols.Tls12)) != 0)
                         && (m_EncryptionPolicy != EncryptionPolicy.AllowNoEncryption) && (m_EncryptionPolicy != EncryptionPolicy.NoEncryption))
@@ -876,7 +882,14 @@ namespace System.Net.Security {
                 }
                 else
                 {
-                    SecureCredential secureCredential = new SecureCredential(SecureCredential.CurrentVersion, selectedCert, SecureCredential.Flags.Zero, m_ProtocolFlags, m_EncryptionPolicy);
+                    SecureCredential.Flags flags = SecureCredential.Flags.Zero;
+
+                    if (!ServicePointManager.DisableSendAuxRecord)
+                    {
+                        flags |= SecureCredential.Flags.SendAuxRecord;
+                    }
+
+                    SecureCredential secureCredential = new SecureCredential(SecureCredential.CurrentVersion, selectedCert, flags, m_ProtocolFlags, m_EncryptionPolicy);
                     m_CredentialsHandle = AcquireCredentialsHandle(CredentialUse.Inbound, ref secureCredential);
                     thumbPrint = guessedThumbPrint;
                     m_ServerCertificate = localCertificate;

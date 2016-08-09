@@ -27,9 +27,8 @@ namespace System.Runtime.Caching {
         private static object s_initLock = new object();
         private static MemoryCache s_defaultCache;
         private static CacheEntryRemovedCallback s_sentinelRemovedCallback = new CacheEntryRemovedCallback(SentinelEntry.OnCacheEntryRemovedCallback);
-        private MemoryCacheStore[] _stores;
+        private GCHandleRef<MemoryCacheStore>[] _storeRefs;
         private int _storeCount;
-        private int _storeMask;
         private int _disposed;
         private MemoryCacheStatistics _stats;
         private string _name;
@@ -150,8 +149,18 @@ namespace System.Runtime.Caching {
             if (hashCode < 0) {
                 hashCode = (hashCode == Int32.MinValue) ? 0 : -hashCode;
             }
-            int idx = hashCode & _storeMask;
-            return _stores[idx];
+            int idx = hashCode % _storeCount;
+            return _storeRefs[idx].Target;
+        }
+
+        internal object[] AllSRefTargets {
+            get {
+                var allStores = new MemoryCacheStore[_storeCount];
+                for (int i = 0; i < _storeCount; i++) {
+                    allStores[i] = _storeRefs[i].Target;
+                }
+                return allStores;
+            }
         }
 
         [SecuritySafeCritical]
@@ -166,8 +175,8 @@ namespace System.Runtime.Caching {
                 catch {
                     // ignore exceptions from perf counters
                 }
-                for (int i = 0; i < _stores.Length; i++) {
-                    _stores[i] = new MemoryCacheStore(this, _perfCounters);
+                for (int i = 0; i < _storeCount; i++) {
+                    _storeRefs[i] = new GCHandleRef<MemoryCacheStore> (new MemoryCacheStore(this, _perfCounters));
                 }
                 _stats = new MemoryCacheStatistics(this, config);
                 AppDomain appDomain = Thread.GetDomain();
@@ -321,8 +330,7 @@ namespace System.Runtime.Caching {
                 }
             }
 #endif
-            _storeMask = _storeCount - 1;
-            _stores = new MemoryCacheStore[_storeCount];
+            _storeRefs = new GCHandleRef<MemoryCacheStore>[_storeCount];
             InitDisposableMembers(config);
         }
 
@@ -392,10 +400,10 @@ namespace System.Runtime.Caching {
                 if (_stats != null) {
                     _stats.Dispose();
                 }
-                if (_stores != null) {
-                    foreach (MemoryCacheStore store in _stores) {
-                        if (store != null) {
-                            store.Dispose();
+                if (_storeRefs != null) {
+                    foreach (var storeRef in _storeRefs) {
+                        if (storeRef != null) {
+                            storeRef.Dispose();
                         }
                     }
                 }
@@ -442,8 +450,8 @@ namespace System.Runtime.Caching {
         IEnumerator IEnumerable.GetEnumerator() {
             Hashtable h = new Hashtable();
             if (!IsDisposed) {
-                foreach (MemoryCacheStore store in _stores) {
-                    store.CopyTo(h);
+                foreach (var storeRef in _storeRefs) {
+                    storeRef.Target.CopyTo(h);
                 }
             }
             return h.GetEnumerator();
@@ -452,8 +460,8 @@ namespace System.Runtime.Caching {
         protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator() {
             Dictionary<string, object> h = new Dictionary<string, object>();
             if (!IsDisposed) {
-                foreach (MemoryCacheStore store in _stores) {
-                    store.CopyTo(h);
+                foreach (var storeRef in _storeRefs) {
+                    storeRef.Target.CopyTo(h);
                 }
             }
             return h.GetEnumerator();
@@ -471,8 +479,8 @@ namespace System.Runtime.Caching {
             }
             long trimmed = 0;
             if (_disposed == 0) {
-                foreach (MemoryCacheStore store in _stores) {
-                    trimmed += store.TrimInternal(percent);
+                foreach (var storeRef in _storeRefs) {
+                    trimmed += storeRef.Target.TrimInternal(percent);
                 }
             }
             return trimmed;
@@ -680,8 +688,8 @@ namespace System.Runtime.Caching {
             }
             long count = 0;
             if (!IsDisposed) {
-                foreach (MemoryCacheStore store in _stores) {
-                    count += store.Count;
+                foreach (var storeRef in _storeRefs) {
+                    count += storeRef.Target.Count;
                 }
             }
             return count;

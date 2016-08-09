@@ -40,6 +40,10 @@ namespace System.Security.Cryptography {
             return m_keyBlob.Clone() as byte[];
         }
 
-        public abstract string ToXmlString();
+        // This method must be implemented by derived classes. In order to conform to the contract, it cannot be abstract.
+        public virtual string ToXmlString()
+        {
+            throw new NotImplementedException(SR.GetString(SR.NotSupported_SubclassOverride));
+        }
     }
 }

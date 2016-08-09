@@ -543,7 +543,14 @@ namespace System.ServiceModel.Security
             bool hasPrivateKey = false;
             try
             {
-                hasPrivateKey = certificate != null && certificate.PrivateKey != null;
+                if (System.ServiceModel.LocalAppContextSwitches.DisableCngCertificates)
+                {
+                    hasPrivateKey = certificate != null && certificate.PrivateKey != null;
+                }
+                else
+                {
+                    hasPrivateKey = certificate.HasPrivateKey && SecurityUtils.CanReadPrivateKey(certificate);
+                }
             }
             catch (SecurityException e)
             {

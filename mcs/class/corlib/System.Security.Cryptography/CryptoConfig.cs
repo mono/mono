@@ -421,6 +421,7 @@ public partial class CryptoConfig {
 		oid.Add (managedSHA1, oidSHA1);
 		oid.Add (nameSHA1b, oidSHA1);
 		oid.Add (nameSHA1c, oidSHA1);
+		oid.Add (nameSHA1Cng, oidSHA1);
 
 		oid.Add (nameMD5, oidMD5);
 		oid.Add (nameMD5a, oidMD5);

@@ -129,6 +129,17 @@ namespace System.Workflow.Runtime
             // listen to activity definition resolve events
             Activity.ActivityResolve += OnActivityDefinitionResolve;
             Activity.WorkflowChangeActionsResolve += OnWorkflowChangeActionsResolve;
+            
+            try
+            {
+                using (TelemetryEventSource eventSource = new TelemetryEventSource())
+                {
+                    eventSource.V1Runtime();
+                }
+            }
+            catch
+            {
+            }
         }
 
         public WorkflowRuntime()

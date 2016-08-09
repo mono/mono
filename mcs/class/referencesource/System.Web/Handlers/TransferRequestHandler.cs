@@ -6,11 +6,21 @@
 
 namespace System.Web.Handlers {
     using System;
+    using System.Threading.Tasks;
     using System.Web.Hosting;
-    
-    internal class TransferRequestHandler : IHttpHandler {
-        
-        public void ProcessRequest(HttpContext context) {
+
+    internal class TransferRequestHandler : IHttpAsyncHandler {
+        public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
+        {
+            return TaskAsyncHelper.BeginTask(() => ProcessRequestAsync(context), cb, extraData);
+        }
+
+        public void EndProcessRequest(IAsyncResult result)
+        {
+            TaskAsyncHelper.EndTask(result);
+        }
+
+        private Task ProcessRequestAsync(HttpContext context) {
             IIS7WorkerRequest wr = context.WorkerRequest as IIS7WorkerRequest;
             if (wr == null) {
                 throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
@@ -24,14 +34,26 @@ namespace System.Web.Handlers {
                                   context.Request.EntityBody,
                                   null,
                                   preserveUser: false);
-            
+
             // force the completion of the current request so that the 
             // child execution can be performed immediately after unwind
-            context.ApplicationInstance.EnsureReleaseState();
+            var releaseStateTask = context.ApplicationInstance.EnsureReleaseStateAsync();
 
             // DevDiv Bugs 162750: IIS7 Integrated Mode:  TransferRequest performance issue
             // Instead of calling Response.End we call HttpApplication.CompleteRequest()
-            context.ApplicationInstance.CompleteRequest();
+            if (releaseStateTask.IsCompleted) {
+                context.ApplicationInstance.CompleteRequest();
+                return TaskAsyncHelper.CompletedTask;
+            }
+            else {
+                return releaseStateTask.ContinueWith((_) => context.ApplicationInstance.CompleteRequest());
+            }
+        }
+
+        public void ProcessRequest(HttpContext context)
+        {
+            string errorMessage = SR.GetString(SR.HttpTaskAsyncHandler_CannotExecuteSynchronously, GetType());
+            throw new NotSupportedException(errorMessage);
         }
 
         public bool IsReusable {

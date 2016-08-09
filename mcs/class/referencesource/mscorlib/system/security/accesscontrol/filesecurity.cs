@@ -435,9 +435,9 @@ namespace System.Security.AccessControl
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        internal void Persist( String fullPath )
+        internal void Persist(string fullPath)
         {
-            new FileIOPermission( FileIOPermissionAccess.NoAccess, AccessControlActions.Change, fullPath ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.NoAccess, AccessControlActions.Change, fullPath);
 
             WriteLock();
 
@@ -455,12 +455,12 @@ namespace System.Security.AccessControl
         
         [System.Security.SecuritySafeCritical]  // auto-generated
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
-        internal void Persist( SafeFileHandle handle, String fullPath )
+        internal void Persist(SafeFileHandle handle, string fullPath)
         {
-            if ( fullPath != null )
-                new FileIOPermission( FileIOPermissionAccess.NoAccess, AccessControlActions.Change, fullPath ).Demand();
+            if (fullPath != null)
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.NoAccess, AccessControlActions.Change, fullPath);
             else
-                new FileIOPermission( PermissionState.Unrestricted ).Demand();
+                FileIOPermission.QuickDemand(PermissionState.Unrestricted);
 
             WriteLock();
 
@@ -627,11 +627,9 @@ namespace System.Security.AccessControl
 
     public sealed class FileSecurity : FileSystemSecurity
     {
-        #region Constructors
-
         [System.Security.SecuritySafeCritical]  // auto-generated
         public FileSecurity()
-            : base( false )
+            : base(false)
         {
         }
 
@@ -639,11 +637,11 @@ namespace System.Security.AccessControl
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        public FileSecurity( String fileName, AccessControlSections includeSections )
+        public FileSecurity(string fileName, AccessControlSections includeSections)
             : base(false, fileName, includeSections, false)
         {
-            String fullPath = Path.GetFullPathInternal(fileName);
-            new FileIOPermission(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath).Demand();
+            string fullPath = Path.GetFullPathInternal(fileName);
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath, checkForDuplicates: false, needFullPath: false);
         }
 
         // Warning!  Be exceedingly careful with this constructor.  Do not make
@@ -654,26 +652,21 @@ namespace System.Security.AccessControl
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        internal FileSecurity( SafeFileHandle handle, String fullPath, AccessControlSections includeSections )
-            : base( false, handle, includeSections, false )
+        internal FileSecurity(SafeFileHandle handle, string fullPath, AccessControlSections includeSections)
+            : base(false, handle, includeSections, false)
         {
             if (fullPath != null)
-                new FileIOPermission(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath);
             else
-                new FileIOPermission(PermissionState.Unrestricted).Demand();
+                FileIOPermission.QuickDemand(PermissionState.Unrestricted);
         }
-
-        #endregion
     }
-    
 
     public sealed class DirectorySecurity : FileSystemSecurity
     {
-        #region Constructors
-
         [System.Security.SecuritySafeCritical]  // auto-generated
         public DirectorySecurity()
-            : base( true )
+            : base(true)
         {
         }
 
@@ -681,14 +674,12 @@ namespace System.Security.AccessControl
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        public DirectorySecurity( String name, AccessControlSections includeSections )
-            : base( true, name, includeSections, true )
+        public DirectorySecurity(string name, AccessControlSections includeSections)
+            : base(true, name, includeSections, true)
         {
-            String fullPath = Path.GetFullPathInternal(name);
-            new FileIOPermission(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath).Demand();
+            string fullPath = Path.GetFullPathInternal(name);
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.NoAccess, AccessControlActions.View, fullPath, checkForDuplicates: false, needFullPath: false);
         }
-
-        #endregion
     }
 }
 

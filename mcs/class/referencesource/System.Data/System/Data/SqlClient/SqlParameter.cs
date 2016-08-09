@@ -99,9 +99,6 @@ namespace System.Data.SqlClient {
             }
 
             set {
-                Debug.Assert(_columnEncryptionCipherMetadata == null || value == null,
-                    "_columnEncryptionCipherMetadata should be set to a non-null value only once.");
-
                 _columnEncryptionCipherMetadata = value;
             }
         }

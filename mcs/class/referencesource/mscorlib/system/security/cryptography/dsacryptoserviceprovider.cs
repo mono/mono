@@ -268,6 +268,36 @@ namespace System.Security.Cryptography {
             return VerifyHash(rgbHash, null, rgbSignature);
         }
 
+        protected override byte[] HashData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+        {
+            // we're sealed and the base should have checked this before calling us
+            Contract.Assert(data != null);
+            Contract.Assert(offset >= 0 && offset <= data.Length);
+            Contract.Assert(count >= 0 && count <= data.Length - offset);
+            Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
+
+            if (hashAlgorithm != HashAlgorithmName.SHA1)
+            {
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+            }
+
+            return _sha1.ComputeHash(data, offset, count);
+        }
+
+        protected override byte[] HashData(Stream data, HashAlgorithmName hashAlgorithm)
+        {
+            // we're sealed and the base should have checked this before calling us
+            Contract.Assert(data != null);
+            Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
+
+            if (hashAlgorithm != HashAlgorithmName.SHA1)
+            {
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+            }
+
+            return _sha1.ComputeHash(data);
+        }
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public byte[] SignHash(byte[] rgbHash, string str) {
             if (rgbHash == null)
