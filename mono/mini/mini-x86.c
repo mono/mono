@@ -1072,6 +1072,18 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		break;
 	}
 
+	/* Allocate a local for any register arguments that need them. */
+	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
+		ArgInfo *ainfo = &cinfo->args [i];
+		inst = cfg->args [i];
+		if (inst->opcode != OP_REGVAR && storage_in_ireg (ainfo->storage)) {
+			offset += 4;
+			cfg->args[i]->opcode = OP_REGOFFSET;
+			cfg->args[i]->inst_basereg = X86_EBP;
+			cfg->args[i]->inst_offset = - offset;
+		}
+	}
+
 	/* Allocate locals */
 	offsets = mono_allocate_stack_slots (cfg, TRUE, &locals_stack_size, &locals_stack_align);
 	if (locals_stack_size > MONO_ARCH_MAX_FRAME_SIZE) {
@@ -1160,9 +1172,13 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		ArgInfo *ainfo = &cinfo->args [i];
 		inst = cfg->args [i];
 		if (inst->opcode != OP_REGVAR) {
-			inst->opcode = OP_REGOFFSET;
-			inst->inst_basereg = X86_EBP;
-			inst->inst_offset = ainfo->offset + ARGS_OFFSET;
+			if (storage_in_ireg (ainfo->storage)) {
+				/* We already allocated locals for register arguments. */
+			} else {
+				inst->opcode = OP_REGOFFSET;
+				inst->inst_basereg = X86_EBP;
+				inst->inst_offset = ainfo->offset + ARGS_OFFSET;
+			}
 		}
 	}
 
@@ -5350,10 +5366,18 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		inst = cfg->args [pos];
 		ainfo = &cinfo->args [pos];
 		if (inst->opcode == OP_REGVAR) {
-			g_assert (need_stack_frame);
-			x86_mov_reg_membase (code, inst->dreg, X86_EBP, ainfo->offset + ARGS_OFFSET, 4);
+			if (storage_in_ireg (ainfo->storage)) {
+				x86_mov_reg_reg (code, inst->dreg, ainfo->reg, 4);
+			} else {
+				g_assert (need_stack_frame);
+				x86_mov_reg_membase (code, inst->dreg, X86_EBP, ainfo->offset + ARGS_OFFSET, 4);
+			}
 			if (cfg->verbose_level > 2)
 				g_print ("Argument %d assigned to register %s\n", pos, mono_arch_regname (inst->dreg));
+		} else {
+			if (storage_in_ireg (ainfo->storage)) {
+				x86_mov_membase_reg (code, inst->inst_basereg, inst->inst_offset, ainfo->reg, 4);
+			}
 		}
 		pos++;
 	}
