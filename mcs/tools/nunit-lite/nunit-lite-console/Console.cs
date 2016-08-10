@@ -78,7 +78,7 @@ namespace NUnitLite
             var runner = new TextUI();
             runner.Execute(args);
             
-            return (runner.success ? 0 : 1);
+            return (runner.Failure ? 1 : 0);
         }
     }
 }
