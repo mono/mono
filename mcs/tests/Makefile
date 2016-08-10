@@ -98,4 +98,8 @@ csproj-local:
 setup:
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll
+	$(CSCOMPILE) -t:library dlls/test-939-common.cs -keyfile:key.snk -publicsign
+	$(CSCOMPILE) -t:library dlls/test-939-1/test-939-lib.cs -keyfile:key.snk -publicsign
+	$(CSCOMPILE) -t:library dlls/test-939-1/test-939-ref.cs -r:dlls/test-939-1/test-939-lib.dll -keyfile:key.snk -publicsign
+	$(CSCOMPILE) -t:library dlls/test-939-2/test-939-lib.cs -r:dlls/test-939-common.dll -keyfile:key.snk -publicsign
 	$(ILASM) -dll dlls/test-883.il
