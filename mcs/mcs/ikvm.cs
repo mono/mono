@@ -238,7 +238,7 @@ namespace Mono.CSharp
 		Assembly corlib;
 		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
-		Dictionary<AssemblyName, List<string[]>> resolved_version_mismatches;
+		Dictionary<AssemblyName, List<AssemblyReferenceErrorInfo>> resolved_version_mismatches;
 
 		static StaticLoader ()
 		{
