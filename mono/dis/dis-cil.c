@@ -42,6 +42,8 @@ isinf (double num)
 	return 0;
 }
 #endif
+#elif defined(__GNUC__)
+#define isinf __isinf
 #else
 #error "Don't know how to implement isinf for this platform."
 #endif
