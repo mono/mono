@@ -2,7 +2,7 @@
 #AC_PREREQ([2.62])
 
 # when bumping version number below, keep it in sync with man/mono.1 too
-AC_INIT(mono, [4.5.2],
+AC_INIT(mono, [4.7.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -355,6 +355,18 @@ AM_CONDITIONAL(PLATFORM_DARWIN, test x$host_darwin = xyes)
 AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(PLATFORM_ANDROID, test x$platform_android = xyes)
 
+if test -z "$PLATFORM_DARWIN_TRUE"; then :
+PLATFORM_AOT_SUFFIX=.dylib
+fi
+
+if test -z "$PLATFORM_LINUX_TRUE"; then :
+PLATFORM_AOT_SUFFIX=.so
+fi
+
+AC_SUBST(PLATFORM_AOT_SUFFIX)
+
+## PLATFORM_AOT_SUFFIX not so simple for windows :-)
+
 AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
@@ -521,6 +533,9 @@ if test x"$GCC" = xyes; then
 
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
+
+		# We rely on zero length arrays in structs
+		CFLAGS="$CFLAGS -Wno-zero-length-array"
 
 		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
 		if test x"$disable_visibility_hidden" = xno; then
@@ -750,6 +765,8 @@ dnl
 TEST_PROFILE=default
 enable_llvm_default=no
 
+INVARIANT_AOT_OPTIONS=nimt-trampolines=900,ntrampolines=8000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=2800
+
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
    with_profile4_x_default=no
@@ -779,7 +796,7 @@ elif test x$with_runtime_preset = xall; then
    with_monotouch_watch_default=yes
    with_monotouch_tv_default=yes
    with_xammac_default=yes
-   with_mobile_static_default=yes
+   with_mobile_static_default=no
    with_bitcode_default=no
 elif test x$with_runtime_preset = xmobile_static; then
    DISABLE_MCS_DOCS_default=yes
@@ -794,6 +811,15 @@ elif test x$with_runtime_preset = xmobile_static; then
    with_bitcode_default=no
    with_cooperative_gc_default=no
    TEST_PROFILE=mobile_static 
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="-O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xbitcode_mobile_static; then
    DISABLE_MCS_DOCS_default=yes
    with_profile4_x_default=no
@@ -807,7 +833,15 @@ elif test x$with_runtime_preset = xbitcode_mobile_static; then
    with_cooperative_gc_default=yes
    TEST_PROFILE=mobile_static 
    enable_llvm_default=yes
-   MONO_LLVMONLY=yes
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=llvmonly,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--llvmonly"
 else
    with_profile4_x_default=yes
    with_monodroid_default=no
@@ -818,6 +852,13 @@ else
    with_xammac_default=no
    with_mobile_static_default=no
    with_cooperative_gc_default=no
+fi
+
+if test "x$AOT_BUILD_FLAGS" != "x"; then :
+   AC_SUBST(AOT_BUILD_FLAGS)
+   AC_SUBST(AOT_RUN_FLAGS)
+   # For llvmonlycheck + fullaotcheck
+   AC_SUBST(INVARIANT_AOT_OPTIONS)
 fi
 
 AC_SUBST(TEST_PROFILE)
@@ -856,9 +897,7 @@ AM_CONDITIONAL(BITCODE, test "x$with_bitcode" = "xyes")
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
 AM_CONDITIONAL(INSTALL_MOBILE_STATIC, [test "x$with_mobile_static" != "xno"])
 
-AC_SUBST(MONO_LLVMONLY)
-
-AC_SUBST(BITCODE)
+AC_SUBST(INSTALL_MOBILE_STATIC)
 
 default_profile=net_4_x
 if test -z "$INSTALL_MONODROID_TRUE"; then :
@@ -4206,6 +4245,10 @@ fi
       echo "PLATFORM = darwin" >> $mcs_topdir/build/config.make
     fi
 
+    if test "x$PLATFORM_AOT_SUFFIX" != "x"; then
+      echo "PLATFORM_AOT_SUFFIX = $PLATFORM_AOT_SUFFIX" >> $mcs_topdir/build/config.make
+    fi
+
 	if test x$AOT_SUPPORTED = xyes -a x$enable_system_aot = xdefault; then
 	   enable_system_aot=yes
 	fi
@@ -4228,8 +4271,9 @@ fi
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
-    if test "x$MONO_LLVMONLY" = "xyes" ; then
-      echo "MONO_LLVMONLY = 1" >> $srcdir/$mcsdir/build/config.make
+    if test "x$AOT_BUILD_FLAGS" != "x" ; then
+      echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
+      echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
     fi
 
   fi

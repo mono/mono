@@ -1253,6 +1253,7 @@ namespace System.Data.EntityModel.SchemaObjectModel
                 return schemaSet;
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security.Xml", "CA3060:UseXmlReaderForSchemaRead", Justification = "The schema files are embedded in the product assembly as resources")]
             private static void AddXmlSchemaToSet(XmlSchemaSet schemaSet, XmlSchemaResource schemaResource, HashSet<string> schemasAlreadyAdded)
             {
                 // loop through the children to do a depth first load

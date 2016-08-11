@@ -1,4 +1,4 @@
- //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //-----------------------------------------------------------------------------
 
@@ -1076,6 +1076,9 @@ namespace System.ServiceModel
                 {
                     ManagementExtension.OnServiceOpened(this);
                 }
+
+                // log telemetry data for the current WCF service.
+                TelemetryTraceLogging.LogSeriveKPIData(this.Description);
             }
             base.OnOpened();
 

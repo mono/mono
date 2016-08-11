@@ -104,7 +104,7 @@ namespace System.Activities
         IList<Handle> rootExecutionProperties;
 
         IDictionary<XName, InstanceValue> instanceMetadata;
-
+        
         public WorkflowApplication(Activity workflowDefinition)
             : this(workflowDefinition, (WorkflowIdentity)null)
         {

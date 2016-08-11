@@ -12,6 +12,7 @@ namespace System.Data.ProviderBase {
     using System.Collections;
     using System.Collections.Generic;
     using System.Data.Common;
+    using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.CompilerServices;
@@ -756,7 +757,81 @@ namespace System.Data.ProviderBase {
         private Timer CreateCleanupTimer() {
             return (new Timer(new TimerCallback(this.CleanupCallback), null, _cleanupWait, _cleanupWait));
         }
-        
+
+        private static readonly string[] AzureSqlServerEndpoints = {Res.GetString(Res.AZURESQL_GenericEndpoint),
+                                                                    Res.GetString(Res.AZURESQL_GermanEndpoint),
+                                                                    Res.GetString(Res.AZURESQL_UsGovEndpoint),
+                                                                    Res.GetString(Res.AZURESQL_ChinaEndpoint) };
+        private static bool IsAzureSqlServerEndpoint(string dataSource)
+        {
+            // remove server port
+            var i = dataSource.LastIndexOf(',');
+            if (i >= 0)
+            {
+                dataSource = dataSource.Substring(0, i);
+            }
+
+            // check for the instance name
+            i = dataSource.LastIndexOf('\\');
+            if (i >= 0)
+            {
+                dataSource = dataSource.Substring(0, i);
+            }
+
+            // trim redundant whitespaces
+            dataSource = dataSource.Trim();
+
+            // check if servername end with any azure endpoints
+            for (i = 0; i < AzureSqlServerEndpoints.Length; i++)
+            {
+                if (dataSource.EndsWith(AzureSqlServerEndpoints[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool IsBlockingPeriodEnabled()
+        {
+            var poolGroupConnectionOptions = _connectionPoolGroup.ConnectionOptions as SqlConnectionString;
+            if (poolGroupConnectionOptions == null)
+            {
+                return true;
+            }
+
+            var policy = poolGroupConnectionOptions.PoolBlockingPeriod;
+
+            switch (policy)
+            {
+                case PoolBlockingPeriod.Auto:
+                {
+                    if (IsAzureSqlServerEndpoint(poolGroupConnectionOptions.DataSource))
+                    {
+                        return false; // in Azure it will be Disabled
+                    }
+                    else
+                    {
+                        return true; // in Non Azure, it will be Enabled
+                    }
+                }
+                case PoolBlockingPeriod.AlwaysBlock:
+                {
+                    return true; //Enabled
+                }
+                case PoolBlockingPeriod.NeverBlock:
+                {
+                    return false; //Disabled
+                }
+                default:
+                {
+                    //we should never get into this path.
+                    Debug.Fail("Unknown PoolBlockingPeriod. Please specify explicit results in above switch case statement.");
+                    return true;
+                }
+            }
+        }
+
         private DbConnectionInternal CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection) {
             DbConnectionInternal newObj = null;
 
@@ -797,13 +872,18 @@ namespace System.Data.ProviderBase {
                 // Reset the error wait:
                 _errorWait = ERROR_WAIT_DEFAULT;
             }
-            catch(Exception e)  {
+            catch(Exception e)   {
                 // 
                 if (!ADP.IsCatchableExceptionType(e)) {
                     throw;
                 }
 
                 ADP.TraceExceptionForCapture(e);
+
+                if (!IsBlockingPeriodEnabled())
+                {
+                    throw;
+                }
 
                 newObj = null; // set to null, so we do not return bad new object
                 // Failed to create instance

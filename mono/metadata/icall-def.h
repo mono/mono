@@ -35,6 +35,32 @@
  * you need to insert a method in the middle, don't bother renaming all the symbols.
  * Remember to change also the first_icall_id argument in the ICALL_TYPE 
  * declaration if you add a new icall at the beginning of a type's icall list.
+ *
+ *
+ * *** (Experimental) Cooperative GC support via Handles and MonoError ***
+ * An icall can use the coop GC handles infrastructure from handles.h to avoid some
+ * boilerplate when manipulating managed objects from runtime code and to use MonoError for
+ * threading exceptions out to managed callerrs:
+ *
+ * HANDLES(ICALL(icallid, methodname, cfuncptr))
+ *
+ * An icall with a HANDLES() declaration wrapped around it will have a generated wrapper
+ * that:
+ *   (1) Updates the coop handle stack on entry and exit
+ *   (2) Call the cfuncptr with a new signature:
+ *     (a) All managed object reference in arguments will be wrapped in a handle
+ *         (ie, MonoString* becomes MonoStringHandle)
+ *     (b) the same for the return value (MonoObject* return becomes MonoObjectHandle)
+ *     (c) An additional final argument is added of type MonoError*
+ *     example:    class object {
+ *                     [MethodImplOptions(InternalCall)]
+ *                     String some_icall (object[] x);
+ *                 }
+ *     should be implemented as:
+ *        MonoStringHandle some_icall (MonoObjectHandle this_handle, MonoArrayHandle x_handle, MonoError *error);
+ *   (3) The wrapper will automatically call mono_error_set_pending_exception (error) and raise the resulting exception.
+ * Note:  valuetypes use the same calling convention as normal.
+ * Limitations: "out" and "ref" arguments are not supported yet. 
  */
 
 #ifndef DISABLE_PROCESS_HANDLING
@@ -67,6 +93,13 @@ ICALL(RTCLASS_1, "GetTypeFromClass", ves_icall_Mono_RuntimeClassHandle_GetTypeFr
 
 ICALL_TYPE(RTPTRARRAY, "Mono.RuntimeGPtrArrayHandle", RTPTRARRAY_1)
 ICALL(RTPTRARRAY_1, "GPtrArrayFree", ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree)
+
+ICALL_TYPE(RTMARSHAL, "Mono.RuntimeMarshal", RTMARSHAL_1)
+ICALL(RTMARSHAL_1, "FreeAssemblyName", ves_icall_Mono_RuntimeMarshal_FreeAssemblyName)
+
+ICALL_TYPE(SAFESTRMARSHAL, "Mono.SafeStringMarshal", SAFESTRMARSHAL_1)
+ICALL(SAFESTRMARSHAL_1, "GFree", ves_icall_Mono_SafeStringMarshal_GFree)
+ICALL(SAFESTRMARSHAL_2, "StringToUtf8", ves_icall_Mono_SafeStringMarshal_StringToUtf8)
 
 #ifndef PLATFORM_RO_FS
 ICALL_TYPE(KPAIR, "Mono.Security.Cryptography.KeyPairPersistence", KPAIR_1)
@@ -460,8 +493,7 @@ ICALL(OBJ_1, "GetType", ves_icall_System_Object_GetType)
 ICALL(OBJ_2, "InternalGetHashCode", mono_object_hash)
 ICALL(OBJ_3, "MemberwiseClone", ves_icall_System_Object_MemberwiseClone)
 
-ICALL_TYPE(ASSEM, "System.Reflection.Assembly", ASSEM_1)
-ICALL(ASSEM_1, "FillName", ves_icall_System_Reflection_Assembly_FillName)
+ICALL_TYPE(ASSEM, "System.Reflection.Assembly", ASSEM_1a)
 ICALL(ASSEM_1a, "GetAotId", ves_icall_System_Reflection_Assembly_GetAotId)
 ICALL(ASSEM_2, "GetCallingAssembly", ves_icall_System_Reflection_Assembly_GetCallingAssembly)
 ICALL(ASSEM_3, "GetEntryAssembly", ves_icall_System_Reflection_Assembly_GetEntryAssembly)
@@ -490,8 +522,9 @@ ICALL(ASSEM_24, "get_global_assembly_cache", ves_icall_System_Reflection_Assembl
 ICALL(ASSEM_25, "get_location", ves_icall_System_Reflection_Assembly_get_location)
 ICALL(ASSEM_26, "load_with_partial_name", ves_icall_System_Reflection_Assembly_load_with_partial_name)
 
-ICALL_TYPE(ASSEMN, "System.Reflection.AssemblyName", ASSEMN_1)
-ICALL(ASSEMN_1, "ParseName", ves_icall_System_Reflection_AssemblyName_ParseName)
+ICALL_TYPE(ASSEMN, "System.Reflection.AssemblyName", ASSEMN_0)
+ICALL(ASSEMN_0, "GetNativeName", ves_icall_System_Reflection_AssemblyName_GetNativeName)
+ICALL(ASSEMN_3, "ParseAssemblyName", ves_icall_System_Reflection_AssemblyName_ParseAssemblyName)
 ICALL(ASSEMN_2, "get_public_token", mono_digest_get_public_token)
 
 ICALL_TYPE(CATTR_DATA, "System.Reflection.CustomAttributeData", CATTR_DATA_1)
@@ -547,6 +580,9 @@ ICALL(TYPEB_4, "get_IsGenericParameter", ves_icall_TypeBuilder_get_IsGenericPara
 ICALL(TYPEB_5, "get_event_info", mono_reflection_event_builder_get_event_info)
 ICALL(TYPEB_6, "setup_generic_class", mono_reflection_setup_generic_class)
 ICALL(TYPEB_7, "setup_internal_class", mono_reflection_setup_internal_class)
+
+ICALL_TYPE(EVENTI, "System.Reflection.EventInfo", EVENTI_1)
+ICALL(EVENTI_1, "internal_from_handle_type", ves_icall_System_Reflection_EventInfo_internal_from_handle_type)
 
 ICALL_TYPE(FIELDI, "System.Reflection.FieldInfo", FILEDI_1)
 ICALL(FILEDI_1, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers)
@@ -625,6 +661,9 @@ ICALL_TYPE(PARAMI, "System.Reflection.ParameterInfo", PARAMI_1)
 ICALL(PARAMI_1, "GetMetadataToken", ves_icall_reflection_get_token)
 ICALL(PARAMI_2, "GetTypeModifiers", ves_icall_ParameterInfo_GetTypeModifiers)
 
+ICALL_TYPE(PROPI, "System.Reflection.PropertyInfo", PROPI_1)
+ICALL(PROPI_1, "internal_from_handle_type", ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type)
+
 ICALL_TYPE(RTFIELD, "System.Reflection.RtFieldInfo", RTFIELD_1)
 ICALL(RTFIELD_1, "UnsafeGetValue", ves_icall_MonoField_GetValueInternal)
 
@@ -653,6 +692,7 @@ ICALL_TYPE(MARSHAL, "System.Runtime.InteropServices.Marshal", MARSHAL_2)
 #endif
 ICALL(MARSHAL_2, "AllocCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem)
 ICALL(MARSHAL_3, "AllocHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal)
+ICALL(MARSHAL_50, "BufferToBSTR", ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR)
 ICALL(MARSHAL_4, "DestroyStructure", ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure)
 ICALL(MARSHAL_5, "FreeBSTR", ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR)
 ICALL(MARSHAL_6, "FreeCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem)
@@ -699,6 +739,7 @@ ICALL(MARSHAL_32, "StringToHGlobalAnsi", ves_icall_System_Runtime_InteropService
 ICALL(MARSHAL_33, "StringToHGlobalUni", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni)
 ICALL(MARSHAL_34, "StructureToPtr", ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr)
 ICALL(MARSHAL_35, "UnsafeAddrOfPinnedArrayElement", ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement)
+
 ICALL(MARSHAL_41, "copy_from_unmanaged", ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged)
 ICALL(MARSHAL_42, "copy_to_unmanaged", ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged)
 
@@ -739,22 +780,22 @@ ICALL(RT_1, "CreateInstanceInternal", ves_icall_System_Activator_CreateInstanceI
 ICALL(RT_2, "GetConstructors_native", ves_icall_RuntimeType_GetConstructors_native)
 ICALL(RT_30, "GetCorrespondingInflatedConstructor", ves_icall_RuntimeType_GetCorrespondingInflatedMethod)
 ICALL(RT_31, "GetCorrespondingInflatedMethod", ves_icall_RuntimeType_GetCorrespondingInflatedMethod)
-ICALL(RT_3, "GetEvents_internal", ves_icall_RuntimeType_GetEvents_internal)
+ICALL(RT_3, "GetEvents_native", ves_icall_RuntimeType_GetEvents_native)
 ICALL(RT_5, "GetFields_native", ves_icall_RuntimeType_GetFields_native)
 ICALL(RT_6, "GetGenericArgumentsInternal", ves_icall_RuntimeType_GetGenericArguments)
 ICALL(RT_9, "GetGenericParameterPosition", ves_icall_RuntimeType_GetGenericParameterPosition)
 ICALL(RT_10, "GetInterfaceMapData", ves_icall_RuntimeType_GetInterfaceMapData)
 ICALL(RT_11, "GetInterfaces", ves_icall_RuntimeType_GetInterfaces)
 ICALL(RT_12, "GetMethodsByName_native", ves_icall_RuntimeType_GetMethodsByName_native)
-ICALL(RT_13, "GetNestedTypes_internal", ves_icall_RuntimeType_GetNestedTypes)
+ICALL(RT_13, "GetNestedTypes_native", ves_icall_RuntimeType_GetNestedTypes_native)
 ICALL(RT_14, "GetPacking", ves_icall_RuntimeType_GetPacking)
-ICALL(RT_15, "GetPropertiesByName", ves_icall_RuntimeType_GetPropertiesByName)
+ICALL(RT_15, "GetPropertiesByName_native", ves_icall_RuntimeType_GetPropertiesByName_native)
 ICALL(RT_16, "GetTypeCodeImplInternal", ves_icall_type_GetTypeCodeInternal)
 ICALL(RT_28, "IsTypeExportedToWindowsRuntime", ves_icall_System_RuntimeType_IsTypeExportedToWindowsRuntime)
 ICALL(RT_29, "IsWindowsRuntimeObjectType", ves_icall_System_RuntimeType_IsWindowsRuntimeObjectType)
 ICALL(RT_17, "MakeGenericType", ves_icall_RuntimeType_MakeGenericType)
 ICALL(RT_18, "MakePointerType", ves_icall_RuntimeType_MakePointerType)
-ICALL(RT_19, "getFullName", ves_icall_System_MonoType_getFullName)
+HANDLES(ICALL(RT_19, "getFullName", ves_icall_System_RuntimeType_getFullName))
 ICALL(RT_21, "get_DeclaringMethod", ves_icall_RuntimeType_get_DeclaringMethod)
 ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringType)
 ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name)

@@ -2712,7 +2712,7 @@ namespace System {
             get {
                 String dyndir = GetDynamicDir();
                 if (dyndir != null)
-                    new FileIOPermission( FileIOPermissionAccess.PathDiscovery, dyndir ).Demand();
+                    FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, dyndir);
 
                 return dyndir;
             }
@@ -3726,7 +3726,7 @@ namespace System {
             AppDomainInitializerInfo initializerInfo    = (AppDomainInitializerInfo)args[5];
             string           sandboxName                = (string)args[6];
             string[]         propertyNames              = (string[])args[7]; // can contain null elements
-            string[]         propertyValues             = (string[])args[8]; // can contain null elements           
+            string[]         propertyValues             = (string[])args[8]; // can contain null elements
             // extract evidence
             Evidence providedSecurityInfo = null;
             Evidence creatorsSecurityInfo = null;
@@ -3748,18 +3748,17 @@ namespace System {
                         if (Path.IsRelative(propertyValues[i]))
                             throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
 
-                        newSetup.ApplicationBase=Path.NormalizePath(propertyValues[i],true);
-
+                        newSetup.ApplicationBase = NormalizePath(propertyValues[i], fullCheck: true);
                     }
 #if FEATURE_CAS_POLICY
                     else if(propertyNames[i]=="LOCATION_URI" && providedSecurityInfo==null)
                     {
                         providedSecurityInfo=new Evidence();
                         providedSecurityInfo.AddHostEvidence(new Url(propertyValues[i]));
-                        ad.SetDataHelper(propertyNames[i],propertyValues[i],null);                        
+                        ad.SetDataHelper(propertyNames[i],propertyValues[i],null);
                     }
 #endif // FEATURE_CAS_POLICY
-#if FEATURE_LOADER_OPTIMIZATION                    
+#if FEATURE_LOADER_OPTIMIZATION
                     else
                     if(propertyNames[i]=="LOADER_OPTIMIZATION")
                     {
@@ -3775,8 +3774,8 @@ namespace System {
                             default: throw new ArgumentException(Environment.GetResourceString("Argument_UnrecognizedLoaderOptimization"), "LOADER_OPTIMIZATION");
                         }
                     }
-#endif // FEATURE_LOADER_OPTIMIZATION                    
-#if FEATURE_CORECLR      
+#endif // FEATURE_LOADER_OPTIMIZATION
+#if FEATURE_CORECLR
                     else
                     if(propertyNames[i]=="NATIVE_DLL_SEARCH_DIRECTORIES")
                     {
@@ -3804,7 +3803,8 @@ namespace System {
                             if (Path.IsRelative(path))
                                 throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
 
-                            string appPath=Path.NormalizePath(path,true);
+                            string appPath = NormalizePath(path, fullCheck: true);
+
                             normalisedAppPathList.Append(appPath);
                             normalisedAppPathList.Append(Path.PathSeparator);
                         }
@@ -3813,7 +3813,7 @@ namespace System {
                         {
                             normalisedAppPathList.Remove(normalisedAppPathList.Length - 1, 1);
                         }
-                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly                
+                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly
                     }
                     else
                     if(propertyNames[i]=="PLATFORM_RESOURCE_ROOTS")
@@ -3831,7 +3831,8 @@ namespace System {
                             if (Path.IsRelative(path))
                                 throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
 
-                            string appPath=Path.NormalizePath(path,true);
+                            string appPath = NormalizePath(path, fullCheck: true);
+
                             normalisedAppPathList.Append(appPath);
                             normalisedAppPathList.Append(Path.PathSeparator);
                         }
@@ -3840,7 +3841,7 @@ namespace System {
                         {
                             normalisedAppPathList.Remove(normalisedAppPathList.Length - 1, 1);
                         }
-                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly                
+                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly
                     }
                     else
                     if(propertyNames[i]=="APP_PATHS")
@@ -3858,7 +3859,8 @@ namespace System {
                             if (Path.IsRelative(path))
                                 throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
 
-                            string appPath=Path.NormalizePath(path,true);
+                            string appPath = NormalizePath(path, fullCheck: true);
+
                             normalisedAppPathList.Append(appPath);
                             normalisedAppPathList.Append(Path.PathSeparator);
                         }
@@ -3867,7 +3869,7 @@ namespace System {
                         {
                             normalisedAppPathList.Remove(normalisedAppPathList.Length - 1, 1);
                         }
-                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly                
+                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly
                     }
                     else
                     if(propertyNames[i]=="APP_NI_PATHS")
@@ -3885,7 +3887,8 @@ namespace System {
                             if (Path.IsRelative(path))
                                 throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
 
-                            string appPath=Path.NormalizePath(path,true);
+                            string appPath = NormalizePath(path, fullCheck: true);
+
                             normalisedAppPathList.Append(appPath);
                             normalisedAppPathList.Append(Path.PathSeparator);
                         }
@@ -3894,12 +3897,12 @@ namespace System {
                         {
                             normalisedAppPathList.Remove(normalisedAppPathList.Length - 1, 1);
                         }
-                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly                
+                        ad.SetDataHelper(propertyNames[i],normalisedAppPathList.ToString(),null);        // not supported by fusion, so set explicitly
                     }
                     else
                     if(propertyNames[i]!= null)
                     {
-                        ad.SetDataHelper(propertyNames[i],propertyValues[i],null);     // just propagate                   
+                        ad.SetDataHelper(propertyNames[i],propertyValues[i],null);     // just propagate
                     }
 #endif
 
@@ -3993,6 +3996,19 @@ namespace System {
 #endif // FEATURE_CLICKONCE
         }
 
+        [SecuritySafeCritical]
+        internal static string NormalizePath(string path, bool fullCheck)
+        {
+            // We have to directly hit LegacyNormalizePath to avoid loading quirks for
+            // the AppDomain. (Once we have runtime support for long paths we can
+            // use the new normalization in path, but we still need to go in directly
+            // to avoid quirks.)
+            return  Path.LegacyNormalizePath(
+                path: path,
+                fullCheck: fullCheck,
+                maxPathLength: PathInternal.MaxShortPath,
+                expandShortPaths: true);
+        }
 
 #if FEATURE_APTCA
         // Called from DomainAssembly in Conditional APTCA cases
@@ -4654,7 +4670,7 @@ namespace System {
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]              
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal extern Int32 GetId();
         
         internal const Int32 DefaultADID = 1;
@@ -4675,6 +4691,7 @@ namespace System {
             Contract.Assert(i != -1, "invalid image location");
 
             AppDomainSetup info = new AppDomainSetup();
+
             info.ApplicationBase = imageLocation.Substring(0, i+1);
 
             StringBuilder config = new StringBuilder(imageLocation.Substring(i+1));
@@ -4685,7 +4702,7 @@ namespace System {
         }
 
         // Used by the validator for testing but not executing an assembly
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private static AppDomain InternalCreateDomain(String imageLocation)

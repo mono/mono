@@ -63,9 +63,9 @@ static mono_mutex_t mini_arch_mutex;
 
 #ifdef TARGET_WIN32
 /* Under windows, the default pinvoke calling convention is stdcall */
-#define CALLCONV_IS_STDCALL(sig) ((((sig)->call_convention) == MONO_CALL_STDCALL) || ((sig)->pinvoke && ((sig)->call_convention) == MONO_CALL_DEFAULT) || ((sig)->pinvoke && ((sig)->call_convention) == MONO_CALL_THISCALL))
+#define CALLCONV_IS_STDCALL(sig) ((sig)->pinvoke && ((sig)->call_convention == MONO_CALL_STDCALL || (sig)->call_convention == MONO_CALL_DEFAULT || (sig)->call_convention == MONO_CALL_THISCALL))
 #else
-#define CALLCONV_IS_STDCALL(sig) (((sig)->call_convention) == MONO_CALL_STDCALL || ((sig)->pinvoke && ((sig)->call_convention) == MONO_CALL_THISCALL))
+#define CALLCONV_IS_STDCALL(sig) ((sig)->pinvoke && ((sig)->call_convention == MONO_CALL_STDCALL || (sig)->call_convention == MONO_CALL_THISCALL))
 #endif
 
 #define X86_IS_CALLEE_SAVED_REG(reg) (((reg) == X86_EBX) || ((reg) == X86_EDI) || ((reg) == X86_ESI))
@@ -543,7 +543,7 @@ get_call_info_internal (CallInfo *cinfo, MonoMethodSignature *sig)
 	if (cinfo->vtype_retaddr) {
 		/* if the function returns a struct on stack, the called method already does a ret $0x4 */
 		cinfo->callee_stack_pop = 4;
-	} else if (CALLCONV_IS_STDCALL (sig) && sig->pinvoke) {
+	} else if (CALLCONV_IS_STDCALL (sig)) {
 		/* Have to compensate for the stack space popped by the native callee */
 		cinfo->callee_stack_pop = stack_size;
 	}
@@ -6050,10 +6050,7 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	x86_jump_membase (code, X86_EAX, offset);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
-	if (load_imt_reg)
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_imt_%d", - offset / sizeof (gpointer));
-	else
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_%d", offset / sizeof (gpointer));
+	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
 	*info = mono_tramp_info_create (tramp_name, start, code - start, NULL, unwind_ops);
 	g_free (tramp_name);
 

@@ -909,10 +909,11 @@ namespace System.Web.Caching {
             return false;
         }
 
-        //
-        //  This method will return only the file dependencies from this dependency
-        //
-        internal virtual string[] GetFileDependencies()
+        /// <summary>
+        /// This method will return only the file dependencies from this dependency
+        /// </summary>
+        /// <returns></returns>
+        public virtual string[] GetFileDependencies()
         {
 #if USE_MEMORY_CACHE
             if (CacheInternal.UseMemoryCache) {
@@ -1121,11 +1122,12 @@ namespace System.Web.Caching {
 
             return true;
         }
-
-        //
-        //  This method will return only the file dependencies from this dependency
-        //
-        internal override string[] GetFileDependencies()
+ 
+        /// <summary>
+        /// This method will return only the file dependencies from this dependency
+        /// </summary>
+        /// <returns></returns>
+        public override string[] GetFileDependencies()
         {
             ArrayList fileNames = null;
             CacheDependency[] dependencies = null;

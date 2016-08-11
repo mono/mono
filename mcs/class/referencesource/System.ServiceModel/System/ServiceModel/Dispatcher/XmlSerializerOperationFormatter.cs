@@ -92,7 +92,7 @@ namespace System.ServiceModel.Dispatcher
                     bufferWriter.Flush();
                     XmlDocument doc = new XmlDocument();
                     memoryStream.Position = 0;
-                    doc.Load(memoryStream);
+                    doc.Load(new XmlTextReader(memoryStream) { DtdProcessing = DtdProcessing.Prohibit });
                     //doc.Save(Console.Out);
                     foreach (XmlElement element in doc.DocumentElement.ChildNodes)
                     {

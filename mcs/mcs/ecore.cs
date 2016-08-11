@@ -126,11 +126,12 @@ namespace Mono.CSharp {
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
-	public abstract class Expression {
+	public abstract class Expression
+	{
 		public ExprClass eclass;
 		protected TypeSpec type;
 		protected Location loc;
-		
+
 		public TypeSpec Type {
 			get { return type; }
 			set { type = value; }
@@ -258,7 +259,7 @@ namespace Mono.CSharp {
 		{
 			report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
-		
+
 		public void Error_InvalidExpressionStatement (BlockContext bc)
 		{
 			Error_InvalidExpressionStatement (bc.Report, loc);
@@ -286,6 +287,10 @@ namespace Mono.CSharp {
 				return;
 
 			if (type == InternalType.ErrorType || target == InternalType.ErrorType)
+				return;
+
+			if (type.MemberDefinition.DeclaringAssembly.IsMissing ||
+				target.MemberDefinition.DeclaringAssembly.IsMissing)
 				return;
 
 			string from_type = type.GetSignatureForError ();
@@ -4468,6 +4473,10 @@ namespace Mono.CSharp {
 			TypeSpec argument_type = a.Type;
 
 			//
+			// Exactly matching Expression phase
+			//
+
+			//
 			// If argument is an anonymous function
 			//
 			if (argument_type == InternalType.AnonymousMethod && ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2) {
@@ -4528,17 +4537,20 @@ namespace Mono.CSharp {
 
 				if (q != p) {
 					//
-					// An inferred return type X exists for E in the context of that parameter list, and 
-					// the conversion from X to Y1 is better than the conversion from X to Y2
+					// An inferred return type X exists for E in the context of the parameter list, and
+					// an identity conversion exists from X to the return type of D
 					//
-					argument_type = am.InferReturnType (ec, null, orig_q);
-					if (argument_type == null) {
-						// TODO: Can this be hit?
-						return 1;
-					}
+					var inferred_type = am.InferReturnType (ec, null, orig_q);
+					if (inferred_type != null) {
+						if (inferred_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							inferred_type = ec.BuiltinTypes.Object;
 
-					if (argument_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-						argument_type = ec.BuiltinTypes.Object;
+						if (inferred_type == p)
+							return 1;
+
+						if (inferred_type == q)
+							return 2;
+					}
 				}
 			}
 
@@ -4592,10 +4604,11 @@ namespace Mono.CSharp {
 				return IsBetterConversionTarget (rc, p, q);
 			}
 
+			var p_orig = p;
 			if (p.IsNullableType) {
 				p = Nullable.NullableInfo.GetUnderlyingType (p);
 				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (p))
-					return 0;
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q);
 
 				//
 				// Spec expects implicit conversion check between p and q, q and p
@@ -4608,10 +4621,11 @@ namespace Mono.CSharp {
 					return 2;
 			}
 
+			var q_orig = q;
 			if (q.IsNullableType) {
 				q = Nullable.NullableInfo.GetUnderlyingType (q);
 				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (q))
-					return 0;
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q_orig);
 
 				if (q == p)
 					return 1;
@@ -4692,12 +4706,17 @@ namespace Mono.CSharp {
 				break;
 			}
 
+			return BetterTypeConversionImplicitConversion (ec, p, q);
+		}
+
+		static int BetterTypeConversionImplicitConversion (ResolveContext rc, TypeSpec p, TypeSpec q)
+		{
 			// TODO: this is expensive
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
 
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+			bool p_to_q = Convert.ImplicitConversionExists (rc, p_tmp, q);
+			bool q_to_p = Convert.ImplicitConversionExists (rc, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
 				return 1;

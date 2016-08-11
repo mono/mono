@@ -516,7 +516,8 @@ namespace System.Web.DynamicData {
             validator.MaximumValue = converter(rangeAttribute.Maximum);
 
             if (String.IsNullOrEmpty(validator.ErrorMessage)) {
-                validator.ErrorMessage = HttpUtility.HtmlEncode(rangeAttribute.FormatErrorMessage(column.DisplayName));
+                validator.ErrorMessage = HttpUtility.HtmlEncode(
+                    StringLocalizerUtil.GetLocalizedString(rangeAttribute, column.DisplayName));
             }
         }
 
@@ -533,7 +534,8 @@ namespace System.Web.DynamicData {
             validator.ValidationExpression = regexAttribute.Pattern;
 
             if (String.IsNullOrEmpty(validator.ErrorMessage)) {
-                validator.ErrorMessage = HttpUtility.HtmlEncode(regexAttribute.FormatErrorMessage(column.DisplayName));
+                validator.ErrorMessage = HttpUtility.HtmlEncode(
+                    StringLocalizerUtil.GetLocalizedString(regexAttribute, column.DisplayName));
             }
         }
 

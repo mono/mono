@@ -1968,7 +1968,7 @@ namespace System.Text {
 
             VerifyClassInvariant();
 
-            if ((minBlockCharCount + Length) > m_MaxCapacity)
+            if (minBlockCharCount + Length < minBlockCharCount || (minBlockCharCount + Length) > m_MaxCapacity)
                 throw new ArgumentOutOfRangeException("requiredLength", Environment.GetResourceString("ArgumentOutOfRange_SmallCapacity"));
 
             // Compute the length of the new block we need 
@@ -2028,7 +2028,8 @@ namespace System.Text {
             VerifyClassInvariant();
             Contract.Assert(count > 0, "Count must be strictly positive");
             Contract.Assert(index >= 0, "Index can't be negative");
-            if (count + Length > m_MaxCapacity)
+
+            if (count + Length < count || count + Length > m_MaxCapacity)
                 throw new ArgumentOutOfRangeException("requiredLength", Environment.GetResourceString("ArgumentOutOfRange_SmallCapacity"));
 
             chunk = this;

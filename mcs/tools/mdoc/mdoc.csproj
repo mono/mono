@@ -37,9 +37,11 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="System.Xml" />
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <Reference Include="monodoc">
-      <HintPath>..\..\class\lib\net_4_5\monodoc.dll</HintPath>
+      <HintPath>..\..\class\lib\net_4_x\monodoc.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\class\lib\net_4_x\Mono.Cecil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

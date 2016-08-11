@@ -12,7 +12,7 @@ LIBRARY = System.Drawing.Primitives.dll
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS)
+LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 ifndef XAMMAC_4_5

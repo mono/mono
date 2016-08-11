@@ -187,14 +187,23 @@ void mono_handle_verify (MonoRawHandle handle);
 
 #define TYPED_HANDLE_PAYLOAD_NAME(TYPE) TYPE ## HandlePayload
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
+
 /*
+ * TYPED_HANDLE_DECL(SomeType):
+ *   Expands to a decl for handles to SomeType and to an internal payload struct.
+ *
+ * For example, TYPED_HANDLE_DECL(MonoObject) (see below) expands to:
+ *
  * typedef struct {
  *   MonoObject *__obj;
  * } MonoObjectHandlePayload;
  *
  * typedef MonoObjectHandlePayload* MonoObjectHandle;
  */
-#define TYPED_HANDLE_DECL(TYPE) typedef struct { TYPE *__obj; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE);
+#define TYPED_HANDLE_DECL(TYPE) typedef struct { TYPE *__obj; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE)
+/* Have to double expand because MONO_STRUCT_OFFSET is doing token pasting on cross-compilers. */
+#define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __obj)
+#define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
 #define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
 #define NULL_HANDLE mono_null_value_handle
@@ -244,9 +253,11 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 
 
 /* Baked typed handles we all want */
-TYPED_HANDLE_DECL (MonoString)
-TYPED_HANDLE_DECL (MonoArray)
-TYPED_HANDLE_DECL (MonoObject)
+TYPED_HANDLE_DECL (MonoString);
+TYPED_HANDLE_DECL (MonoArray);
+TYPED_HANDLE_DECL (MonoObject);
+
+#define NULL_HANDLE_STRING MONO_HANDLE_CAST(MonoString, NULL_HANDLE)
 
 /*
 This is the constant for a handle that points nowhere.

@@ -13,7 +13,10 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Mono {
-	internal class RuntimeStructs {
+	//
+	// Managed representations of mono runtime types
+	//
+	internal static class RuntimeStructs {
 		// class-internals.h MonoRemoteClass
 		[StructLayout(LayoutKind.Sequential)]
 		internal unsafe struct RemoteClass {
@@ -43,7 +46,36 @@ namespace Mono {
 			internal IntPtr* data;
 			internal int len;
 		}
+
+		// handle.h HandleStackMark
+		struct HandleStackMark {
+			int size;
+			IntPtr chunk;
+		}
+
+		// mono-error.h MonoError
+		struct MonoError {
+			ushort error_code;
+			ushort hidden_0;
+			IntPtr hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, hidden_6, hidden_7, hidden_8;
+			IntPtr hidden_11, hidden_12, hidden_13, hidden_14, hidden_15, hidden_16, hidden_17, hidden_18;
+		}
 	}
 
+	//Maps to metadata-internals.h:: MonoAssemblyName
+	internal unsafe struct MonoAssemblyName
+	{
+		const int MONO_PUBLIC_KEY_TOKEN_LENGTH = 17;
+
+		internal IntPtr name;
+		internal IntPtr culture;
+		internal IntPtr hash_value;
+		internal IntPtr public_key;
+		internal fixed byte public_key_token [MONO_PUBLIC_KEY_TOKEN_LENGTH];
+		internal uint hash_alg;
+		internal uint hash_len;
+		internal uint flags;
+		internal ushort major, minor, build, revision;
+		internal ushort arch;
+	}
 }
-	

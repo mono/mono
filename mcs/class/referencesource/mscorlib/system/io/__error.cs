@@ -79,29 +79,21 @@ namespace System.IO {
         [System.Security.SecurityCritical]  // auto-generated
         internal static String GetDisplayablePath(String path, bool isInvalidPath)
         {
-            
             if (String.IsNullOrEmpty(path))
                 return String.Empty;
 
-            // Is it a fully qualified path?
-            bool isFullyQualified = false;
             if (path.Length < 2)
                 return path;
-            if (Path.IsDirectorySeparator(path[0]) && Path.IsDirectorySeparator(path[1]))
-                isFullyQualified = true;
-            else if (path[1] == Path.VolumeSeparatorChar) {
-                isFullyQualified = true;
-            }
 
-            if (!isFullyQualified && !isInvalidPath)
+            // Return the path as is if we're relative (not fully qualified) and not a bad path
+            if (PathInternal.IsPartiallyQualified(path) && !isInvalidPath)
                 return path;
 
-#if FEATURE_MONO_CAS
             bool safeToReturn = false;
             try {
                 if (!isInvalidPath) {
-#if !FEATURE_CORECLR
-                    new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { path }, false, false).Demand();
+#if !FEATURE_CORECLR && FEATURE_MONO_CAS
+                    FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, path, false, false);
 #endif
                     safeToReturn = true;
                 }
@@ -117,9 +109,7 @@ namespace System.IO {
                 // from Security.Util.StringExpressionSet.CanonicalizePath when ':' is found in the path
                 // beyond string index position 1.  
             }
-#else
-            bool safeToReturn = !isInvalidPath;
-#endif // FEATURE_MONO_CAS
+            
             if (!safeToReturn) {
                 if (Path.IsDirectorySeparator(path[path.Length - 1]))
                     path = Environment.GetResourceString("IO.IO_NoPermissionToDirectoryName");

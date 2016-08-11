@@ -883,7 +883,6 @@ namespace System.Xml {
             RealFoliate();
             AssertValid();
             if ( NodeType == XPathNodeType.Namespace ) {
-                Debug.Assert( _parentOfNS != null );
                 MoveTo( _parentOfNS );
                 return true;
             }

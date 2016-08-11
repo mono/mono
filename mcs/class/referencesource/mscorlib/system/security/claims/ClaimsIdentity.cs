@@ -315,7 +315,14 @@ namespace System.Security.Claims
                     //
                     if(!IsCircular(claimsIdentity.Actor))
                     {
-                        m_actor = claimsIdentity.Actor;
+                        if (!AppContextSwitches.SetActorAsReferenceWhenCopyingClaimsIdentity)
+                        {
+                            m_actor = claimsIdentity.Actor.Clone();
+                        }
+                        else
+                        {
+                            m_actor = claimsIdentity.Actor;
+                        }
                     }
                     else
                     {
@@ -334,6 +341,10 @@ namespace System.Security.Claims
                 else
                     SafeAddClaims(claimsIdentity.m_instanceClaims);
 
+                if (claimsIdentity.m_userSerializationData != null)
+                {
+                    m_userSerializationData = claimsIdentity.m_userSerializationData.Clone() as byte[];
+                }
             }
             else
             {
@@ -594,7 +605,14 @@ namespace System.Security.Claims
                 // the Actor property and so not really needed here. But checking just for sanity sake
                 if(!IsCircular(this.Actor))
                 {
-                    newIdentity.Actor = this.Actor;
+                    if (!AppContextSwitches.SetActorAsReferenceWhenCopyingClaimsIdentity)
+                    {
+                        newIdentity.Actor = this.Actor.Clone();
+                    }
+                    else
+                    {
+                        newIdentity.Actor = this.Actor;
+                    }
                 }
                 else
                 {
@@ -945,6 +963,7 @@ namespace System.Security.Claims
                 return;
 
             m_instanceClaims = new List<Claim>();
+
             m_externalClaims = new Collection<IEnumerable<Claim>>();
         }
 

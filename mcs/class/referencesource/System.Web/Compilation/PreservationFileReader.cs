@@ -61,6 +61,7 @@ internal class PreservationFileReader {
     }
 
     [SuppressMessage("Microsoft.Security", "MSEC1207:UseXmlReaderForLoad", Justification = "Xml file is created by us and only accessible to admins.")]
+    [SuppressMessage("Microsoft.Security.Xml", "CA3056:UseXmlReaderForLoad", Justification = "Xml file is created by us and only accessible to admins.")]
     private BuildResult ReadFileInternal(VirtualPath virtualPath, string preservationFile, long hashCode, bool ensureIsUpToDate) {
 
         XmlDocument doc = new XmlDocument();

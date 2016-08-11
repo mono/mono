@@ -107,7 +107,7 @@ namespace System.IO {
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
                 sourceState.EnsureState();
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandDir).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
 #endif
 #endif
                 return FullPath;
@@ -126,7 +126,7 @@ namespace System.IO {
                     demandDir = FullPath;
 #if FEATURE_MONO_CAS
 #if !FEATURE_CORECLR
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandDir).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
 #endif
 #endif
                 return FullPath;
@@ -353,7 +353,7 @@ namespace System.IO {
             set {
 #if FEATURE_MONO_CAS
 #if !FEATURE_CORECLR
-                new FileIOPermission(FileIOPermissionAccess.Write, FullPath).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, FullPath);
 #endif
 #endif
 #if MONO
@@ -386,7 +386,7 @@ namespace System.IO {
         {
 #if FEATURE_MONO_CAS
 #if !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.PathDiscovery, FullPath).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif
 #endif
 

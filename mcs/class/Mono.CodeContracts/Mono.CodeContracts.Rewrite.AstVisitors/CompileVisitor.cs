@@ -57,9 +57,9 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 			Instruction originalInst;
 			if (this.instructionLookup != null) {
 				// TODO: Doesn't handle inherited contracts - need to check what to do in this case.
-				if (this.instructionLookup.TryGetValue (originalExpr, out originalInst)) {
-					inst.SequencePoint = originalInst.SequencePoint;
-				}
+				//if (this.instructionLookup.TryGetValue (originalExpr, out originalInst)) {
+				//	inst.SequencePoint = originalInst.SequencePoint;
+				//}
 			}
 			this.fnEmit (inst);
 		}

@@ -207,10 +207,10 @@ namespace System.Data.SqlClient
                     durationString = null;
                     break;
             }
-
+            
             // This message is to be added only when within the various stages of a connection. 
             // In all other cases, it will default to the original error message.
-            if ((currentPhase != SqlConnectionTimeoutErrorPhase.Undefined) || (currentPhase != SqlConnectionTimeoutErrorPhase.Complete))
+            if ((currentPhase != SqlConnectionTimeoutErrorPhase.Undefined) && (currentPhase != SqlConnectionTimeoutErrorPhase.Complete))
             {
                 // NOTE: In case of a failover scenario, add a string that this failure occured as part of the primary or secondary server
                 if (isFailoverScenario)
@@ -229,13 +229,13 @@ namespace System.Data.SqlClient
                         originalPhaseDurations[(int)SqlConnectionTimeoutErrorPhase.ProcessConnectionAuth].GetMilliSecondDuration(),
                         originalPhaseDurations[(int)SqlConnectionTimeoutErrorPhase.PostLogin].GetMilliSecondDuration());
                 }
+            }
 
-                // NOTE: To display duration in each phase.
-                if (durationString != null)
-                {
-                    errorBuilder.Append("  ");
-                    errorBuilder.Append(durationString);
-                }
+            // NOTE: To display duration in each phase.
+            if (durationString != null)
+            {
+                errorBuilder.Append("  ");
+                errorBuilder.Append(durationString);
             }
 
             return errorBuilder.ToString();

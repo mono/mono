@@ -1482,7 +1482,7 @@ namespace System.Net {
                                                 [Out] out int bytesTransferred,
                                                 [In]  SafeHandle overlapped,
                                                 [In]  IntPtr completionRoutine
-                                                );			
+                                                );		    
 
             [DllImport(WS2_32,SetLastError=true)]
             internal static extern SocketError WSAEnumNetworkEvents(
@@ -3146,6 +3146,25 @@ namespace System.Net {
 
                 GlobalLog.Leave("HttpApi::GetLocalEndPoint()");
                 return endpoint;
+            }
+            
+            internal static HTTP_REQUEST_TOKEN_BINDING_INFO* GetTlsTokenBindingRequestInfo(byte[] memoryBlob, IntPtr originalAddress){
+                
+                fixed (byte* pMemoryBlob = memoryBlob)
+                {
+                    HTTP_REQUEST_V2* request = (HTTP_REQUEST_V2*)pMemoryBlob;                    
+                    long fixup = pMemoryBlob - (byte*) originalAddress;
+
+                    for (int i = 0; i < request->RequestInfoCount; i++)
+                    {
+                        HTTP_REQUEST_INFO* pThisInfo = (HTTP_REQUEST_INFO*)(fixup + (byte*)&request->pRequestInfo[i]);
+                        if (pThisInfo != null && pThisInfo->InfoType == HTTP_REQUEST_INFO_TYPE.HttpRequestInfoTypeSslTokenBinding)
+                        {
+                            return (HTTP_REQUEST_TOKEN_BINDING_INFO*)pThisInfo->pInfo;
+                        }
+                    }
+                }
+                return null;
             }
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]

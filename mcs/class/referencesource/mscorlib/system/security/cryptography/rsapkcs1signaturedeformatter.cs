@@ -27,6 +27,7 @@ namespace System.Security.Cryptography {
 
         private RSA    _rsaKey; // RSA Key value to do decrypt operation
         private String _strOID; // OID value for the HASH algorithm
+        private bool?  _rsaOverridesVerifyHash;
 
         //
         // public constructors
@@ -49,6 +50,7 @@ namespace System.Security.Cryptography {
                 throw new ArgumentNullException("key");
             Contract.EndContractBlock();
             _rsaKey = (RSA) key;
+            _rsaOverridesVerifyHash = default(bool?);
         }
 
         public override void SetHashAlgorithm(String strName) {
@@ -70,14 +72,31 @@ namespace System.Security.Cryptography {
 
             // Two cases here -- if we are talking to the CSP version or if we are talking to some other RSA provider.
             if (_rsaKey is RSACryptoServiceProvider) {
+                // This path is kept around for desktop compat: in case someone is using this with a hash algorithm that's known to GetAlgIdFromOid but
+                // not from OidToHashAlgorithmName.
                 int calgHash = X509Utils.GetAlgIdFromOid(_strOID, OidGroup.HashAlgorithm);
                 return ((RSACryptoServiceProvider)_rsaKey).VerifyHash(rgbHash, calgHash, rgbSignature);
             }
+            else if (OverridesVerifyHash) {
+                HashAlgorithmName hashAlgorithmName = Utils.OidToHashAlgorithmName(_strOID);
+                return _rsaKey.VerifyHash(rgbHash, rgbSignature, hashAlgorithmName, RSASignaturePadding.Pkcs1);
+            }
             else {
+                // Fallback compat path for 3rd-party RSA classes that don't override VerifyHash()
+
                 byte[] pad = Utils.RsaPkcs1Padding(_rsaKey, CryptoConfig.EncodeOID(_strOID), rgbHash);
                 // Apply the public key to the signature data to get back the padded buffer actually signed.
                 // Compare the two buffers to see if they match; ignoring any leading zeros
                 return Utils.CompareBigIntArrays(_rsaKey.EncryptValue(rgbSignature), pad);
+            }
+        }
+
+        private bool OverridesVerifyHash {
+            get {
+                if (!_rsaOverridesVerifyHash.HasValue) {
+                    _rsaOverridesVerifyHash = Utils.DoesRsaKeyOverride(_rsaKey, "VerifyHash", new Type[] { typeof(byte[]), typeof(byte[]), typeof(HashAlgorithmName), typeof(RSASignaturePadding) });
+                }
+                return _rsaOverridesVerifyHash.Value;
             }
         }
     }

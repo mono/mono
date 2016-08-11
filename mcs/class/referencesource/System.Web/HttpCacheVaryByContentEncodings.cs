@@ -32,11 +32,13 @@ namespace System.Web {
             _isModified = false;
             _contentEncodings = null;
         }
+  
+        /// <summary>
+        /// Set the Content Encodings in Cache Vary
+        /// </summary>
+        /// <param name="contentEncodings"></param>
+        public void SetContentEncodings(string[] contentEncodings) {
 
-        /*
-         * Reset based on content encodings.
-         */
-        internal void ResetFromContentEncodings(String[] contentEncodings) {
             Reset();
             if (contentEncodings != null) {
                 _isModified = true;
@@ -75,9 +77,18 @@ namespace System.Web {
         internal bool IsModified() {
             return _isModified;
         }
-
-        internal String[] GetContentEncodings() {
-            return _contentEncodings;
+               
+        /// <summary>
+        /// Get the Content Encodings in Cache Vary
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetContentEncodings() {
+            if (_contentEncodings != null) {
+                string[] contentEncodings = new string[_contentEncodings.Length];
+                _contentEncodings.CopyTo(contentEncodings, 0);
+                return contentEncodings;
+            }
+            return null;
         }
 
         //

@@ -309,22 +309,26 @@ namespace System.IdentityModel.Tokens
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(algorithm, SR.GetString(SR.EmptyOrNullArgumentString, "algorithm"));
             }
-            // We support one of the two algoritms, but not both.
+
+            // We support:
             //     XmlDsigDSAUrl = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
             //     XmlDsigRSASHA1Url = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+            //     RsaSha256Signature = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+            AsymmetricAlgorithm privateKey = LevelUpRsa(this.PrivateKey, algorithm);
+
             object algorithmObject = CryptoHelper.GetAlgorithmFromConfig(algorithm);
             if (algorithmObject != null)
             {
                 SignatureDescription description = algorithmObject as SignatureDescription;
                 if (description != null)
-                    return description.CreateFormatter(this.PrivateKey);
+                    return description.CreateFormatter(privateKey);
 
                 try
                 {
                     AsymmetricSignatureFormatter asymmetricSignatureFormatter = algorithmObject as AsymmetricSignatureFormatter;
                     if (asymmetricSignatureFormatter != null)
                     {
-                        asymmetricSignatureFormatter.SetKey(this.PrivateKey);
+                        asymmetricSignatureFormatter.SetKey(privateKey);
                         return asymmetricSignatureFormatter;
                     }
                 }
@@ -356,24 +360,54 @@ namespace System.IdentityModel.Tokens
 
                 case SecurityAlgorithms.RsaSha256Signature:
                     // Ensure that we have an RSA algorithm object.
-                    RSACryptoServiceProvider rsa_prov_full = (this.PrivateKey as RSACryptoServiceProvider);
-                    if (rsa_prov_full == null)
+                    RSA rsaSha256 = (privateKey as RSA);
+                    if (rsaSha256 == null)
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PrivateKeyNotRSA)));
-                    CspParameters csp = new CspParameters();
-                    csp.ProviderType = 24;
-                    csp.KeyContainerName = rsa_prov_full.CspKeyContainerInfo.KeyContainerName;
-                    csp.KeyNumber = (int)rsa_prov_full.CspKeyContainerInfo.KeyNumber;
-                    if (rsa_prov_full.CspKeyContainerInfo.MachineKeyStore)
-                        csp.Flags = CspProviderFlags.UseMachineKeyStore;
-                    
-                    csp.Flags |= CspProviderFlags.UseExistingKey;
-
-                    return new RSAPKCS1SignatureFormatter(new RSACryptoServiceProvider(csp));
+                    return new RSAPKCS1SignatureFormatter(rsaSha256);
 
                 default:
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.UnsupportedCryptoAlgorithm, algorithm)));
             }
 
+        }
+
+        private static AsymmetricAlgorithm LevelUpRsa(AsymmetricAlgorithm asymmetricAlgorithm, string algorithm)
+        {
+            // If user turned off leveling up at app level, return
+            if (LocalAppContextSwitches.DisableUpdatingRsaProviderType)
+                return asymmetricAlgorithm;
+
+            if (asymmetricAlgorithm == null)
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("asymmetricAlgorithm"));
+
+            if (string.IsNullOrEmpty(algorithm))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(algorithm, SR.GetString(SR.EmptyOrNullArgumentString, "algorithm"));
+
+            // only level up if alg is sha256
+            if (!string.Equals(algorithm, SecurityAlgorithms.RsaSha256Signature))
+                return asymmetricAlgorithm;
+
+            RSACryptoServiceProvider rsaCsp = asymmetricAlgorithm as RSACryptoServiceProvider;
+            if (rsaCsp == null)
+                return asymmetricAlgorithm;
+
+            // ProviderType == 1(PROV_RSA_FULL) and providerType == 12(PROV_RSA_SCHANNEL) are provider types that only support SHA1. Change them to PROV_RSA_AES=24 that supports SHA2 also.
+            // Only levels up if the associated key is not a hardware key.
+            // Another provider type related to rsa, PROV_RSA_SIG == 2 that only supports Sha1 is no longer supported
+            if ((rsaCsp.CspKeyContainerInfo.ProviderType == 1 || rsaCsp.CspKeyContainerInfo.ProviderType == 12) && !rsaCsp.CspKeyContainerInfo.HardwareDevice)
+            {
+                CspParameters csp = new CspParameters();
+                csp.ProviderType = 24;
+                csp.KeyContainerName = rsaCsp.CspKeyContainerInfo.KeyContainerName;
+                csp.KeyNumber = (int)rsaCsp.CspKeyContainerInfo.KeyNumber;
+                if (rsaCsp.CspKeyContainerInfo.MachineKeyStore)
+                    csp.Flags = CspProviderFlags.UseMachineKeyStore;
+
+                csp.Flags |= CspProviderFlags.UseExistingKey;
+                return new RSACryptoServiceProvider(csp);
+            }
+
+            return rsaCsp;
         }
 
         public override bool HasPrivateKey()

@@ -39,10 +39,11 @@ namespace System.Web {
             _ignoreParams = -1;
         }
 
-        /*
-         * Reset based on the cached vary headers.
-         */
-        internal void ResetFromParams(String[] parameters) {
+        /// <summary>
+        /// Set the Parameters in Cache Vary 
+        /// </summary>
+        /// <param name="parameters"></param>
+        public void SetParams(string[] parameters) {
             int i, n;
 
             Reset();
@@ -75,16 +76,20 @@ namespace System.Web {
             return _ignoreParams == 1 || _paramsStar || _parameters != null;
         }
 
-        internal String[] GetParams() {
-            String[]    s = null;
+        /// <summary>
+        /// Get the Parameters in Cache Vary
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetParams() {
+            string[]    s = null;
             Object      item;
             int         i, j, c, n;
 
             if (_ignoreParams == 1) {
-                s =  new String[1] {String.Empty};
+                s =  new string[1] {string.Empty};
             }
             else if (_paramsStar) {
-                s =  new String[1] {"*"};
+                s =  new string[1] {"*"};
             }
             else if (_parameters != null) {
                 n = _parameters.Size;
@@ -102,7 +107,7 @@ namespace System.Web {
                     for (i = 0; i < n; i++) {
                         item = _parameters.GetValue(i);
                         if (item != null) {
-                            s[j] = (String) item;
+                            s[j] = (string) item;
                             j++;
                         }
                     }
@@ -116,7 +121,7 @@ namespace System.Web {
 
         //
         // Public methods and properties
-        //
+        // 
 
 
         /// <devdoc>

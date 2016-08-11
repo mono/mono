@@ -1322,10 +1322,23 @@ namespace System.IO {
             destState.EnsureState();
             backupState.EnsureState();
 #else
-            FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, new String[] { fullSrcPath, fullDestPath});
-            if (destinationBackupFileName != null)
-                perm.AddPathList(FileIOPermissionAccess.Write, fullBackupPath);
-            perm.Demand();
+#if FEATURE_CAS_POLICY
+            // All demands in full trust domains are no-ops, just do additional checks
+            if (CodeAccessSecurityEngine.QuickCheckForAllDemands())
+            {
+                FileIOPermission.EmulateFileIOPermissionChecks(fullSrcPath);
+                FileIOPermission.EmulateFileIOPermissionChecks(fullDestPath);
+                if (fullBackupPath != null)
+                    FileIOPermission.EmulateFileIOPermissionChecks(fullBackupPath);
+            }
+            else
+#endif
+            {
+                FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, new String[] { fullSrcPath, fullDestPath });
+                if (fullBackupPath != null)
+                    perm.AddPathList(FileIOPermissionAccess.Write, fullBackupPath);
+                perm.Demand();
+            }
 #endif
 
             int flags = Win32Native.REPLACEFILE_WRITE_THROUGH;

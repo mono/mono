@@ -17,6 +17,7 @@ namespace System.ServiceModel.Security
     using System.Text;
     using System.Xml;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Security.Cryptography;
 
     using Psha1DerivedKeyGenerator = System.IdentityModel.Psha1DerivedKeyGenerator;
@@ -57,6 +58,7 @@ namespace System.ServiceModel.Security
             return CryptoHelper.CreateHashAlgorithm(SecurityAlgorithms.Sha256Digest);
         }
 
+        [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:DoNotUseSHA1", Justification = "Cannot change. Required as SOAP spec requires supporting SHA1.")]
         internal static HashAlgorithm CreateHashAlgorithm(string digestMethod)
         {
             object algorithmObject = CryptoAlgorithms.GetAlgorithmFromConfig(digestMethod);
@@ -86,6 +88,7 @@ namespace System.ServiceModel.Security
             }
         }
 
+        [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:DoNotUseSHA1", Justification = "Cannot change. Required as SOAP spec requires supporting SHA1.")]
         internal static HashAlgorithm CreateHashForAsymmetricSignature(string signatureMethod)
         {
             object algorithmObject = CryptoAlgorithms.GetAlgorithmFromConfig(signatureMethod);

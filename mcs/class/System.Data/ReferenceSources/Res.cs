@@ -1265,6 +1265,13 @@ namespace System.Data {
 		public const string SQLCR_UnrecoverableServer = "The connection is broken and recovery is not possible.  The connection is marked by the server as unrecoverable.  No attempt was made to restore the connection.";
 		public const string SQLCR_UnrecoverableClient = "The connection is broken and recovery is not possible.  The connection is marked by the client driver as unrecoverable.  No attempt was made to restore the connection.";
 		public const string SQLCR_NoCRAckAtReconnection = "The server did not acknowledge a recovery attempt, connection recovery is not possible.";
+
+		public const string AZURESQL_GenericEndpoint = ".database.windows.net";
+		public const string AZURESQL_GermanEndpoint = ".database.cloudapi.de";
+		public const string AZURESQL_UsGovEndpoint = ".database.usgovcloudapi.net";
+		public const string AZURESQL_ChinaEndpoint = ".database.chinacloudapi.cn";
+		public const string DbConnectionString_PoolBlockingPeriod = "Defines the blocking period behavior for a connection pool.";
+		public const string SQL_Timeout_Execution = "Execution Timeout Expired. The timeout period elapsed prior to completion of the operation or the server is not responding.";
 	}
 
 

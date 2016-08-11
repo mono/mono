@@ -83,7 +83,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 151
+#define MONO_CORLIB_VERSION 152
 
 typedef struct
 {
@@ -962,7 +962,9 @@ ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomai
 {
 	MonoError error;
 	MonoAppDomain *ad = NULL;
+
 #ifdef DISABLE_APPDOMAINS
+	mono_error_init (&error);
 	mono_error_set_not_supported (&error, "AppDomain creation is not supported on this runtime.");
 #else
 	char *fname;
@@ -1762,13 +1764,13 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 	sibling_target_len = strlen (sibling_target);
 	
 	copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".mdb", sibling_target, sibling_target_len, 7);
-	if (copy_result == TRUE)
+	if (copy_result)
 		copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".config", sibling_target, sibling_target_len, 7);
 	
 	g_free (sibling_source);
 	g_free (sibling_target);
 	
-	if (copy_result == FALSE)  {
+	if (!copy_result)  {
 		g_free (shadow);
 		mono_error_set_execution_engine (oerror, "Failed to create shadow copy of sibling data (CopyFile).");
 		return NULL;
@@ -2353,7 +2355,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static guint32 WINAPI
+static gsize WINAPI
 unload_thread_main (void *arg)
 {
 	MonoError error;
@@ -2560,10 +2562,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	 * First we create a separate thread for unloading, since
 	 * we might have to abort some threads, including the current one.
 	 */
-	tp.priority = 0;
+	tp.priority = MONO_THREAD_PRIORITY_NORMAL;
 	tp.stack_size = 0;
 	tp.creation_flags = CREATE_SUSPENDED;
-	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, &tp, &tid);
+	thread_handle = mono_threads_create_thread (unload_thread_main, thread_data, &tp, &tid);
 	if (thread_handle == NULL)
 		return;
 	mono_thread_info_resume (tid);

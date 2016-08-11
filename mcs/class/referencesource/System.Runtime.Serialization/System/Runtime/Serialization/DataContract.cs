@@ -458,7 +458,8 @@ namespace System.Runtime.Serialization
                 if (dataContract == null)
                 {
                     dataContract = CreateGetOnlyCollectionDataContract(id, typeHandle, type);
-                    dataContractCache[id] = dataContract;
+
+                    AssignDataContractToId(dataContract, id);
                 }
                 return dataContract;
             }
@@ -480,7 +481,10 @@ namespace System.Runtime.Serialization
                 {
                     return id;
                 }
-                for (int i = 0; i < DataContractCriticalHelper.dataContractID; i++)
+
+                int currentDataContractId = DataContractCriticalHelper.dataContractID;
+
+                for (int i = 0; i < currentDataContractId; i++)
                 {
                     if (ContractMatches(classContract, dataContractCache[i]))
                     {
@@ -542,49 +546,66 @@ namespace System.Runtime.Serialization
             // check whether a corresponding update is required in ClassDataContract.IsNonAttributedTypeValidForSerialization
             static DataContract CreateDataContract(int id, RuntimeTypeHandle typeHandle, Type type)
             {
-                lock (createDataContractLock)
+                DataContract dataContract = dataContractCache[id];
+
+                if (dataContract == null)
                 {
-                    DataContract dataContract = dataContractCache[id];
-                    if (dataContract == null)
+                    lock (createDataContractLock)
                     {
-                        if (type == null)
-                            type = Type.GetTypeFromHandle(typeHandle);
-                        type = UnwrapNullableType(type);
-                        type = GetDataContractAdapterType(type);
-                        dataContract = GetBuiltInDataContract(type);
+                        dataContract = dataContractCache[id];
+
                         if (dataContract == null)
                         {
-                            if (type.IsArray)
-                                dataContract = new CollectionDataContract(type);
-                            else if (type.IsEnum)
-                                dataContract = new EnumDataContract(type);
-                            else if (type.IsGenericParameter)
-                                dataContract = new GenericParameterDataContract(type);
-                            else if (Globals.TypeOfIXmlSerializable.IsAssignableFrom(type))
-                                dataContract = new XmlDataContract(type);
-                            else
+                            if (type == null)
+                                type = Type.GetTypeFromHandle(typeHandle);
+                            type = UnwrapNullableType(type);
+                            type = GetDataContractAdapterType(type);
+                            dataContract = GetBuiltInDataContract(type);
+                            if (dataContract == null)
                             {
-                                //if (type.ContainsGenericParameters)
-                                //    ThrowInvalidDataContractException(SR.GetString(SR.TypeMustNotBeOpenGeneric, type), type);
-                                if (type.IsPointer)
-                                    type = Globals.TypeOfReflectionPointer;
-
-                                if (!CollectionDataContract.TryCreate(type, out dataContract))
+                                if (type.IsArray)
+                                    dataContract = new CollectionDataContract(type);
+                                else if (type.IsEnum)
+                                    dataContract = new EnumDataContract(type);
+                                else if (type.IsGenericParameter)
+                                    dataContract = new GenericParameterDataContract(type);
+                                else if (Globals.TypeOfIXmlSerializable.IsAssignableFrom(type))
+                                    dataContract = new XmlDataContract(type);
+                                else
                                 {
-                                    if (type.IsSerializable || type.IsDefined(Globals.TypeOfDataContractAttribute, false) || ClassDataContract.IsNonAttributedTypeValidForSerialization(type))
+                                    //if (type.ContainsGenericParameters)
+                                    //    ThrowInvalidDataContractException(SR.GetString(SR.TypeMustNotBeOpenGeneric, type), type);
+                                    if (type.IsPointer)
+                                        type = Globals.TypeOfReflectionPointer;
+
+                                    if (!CollectionDataContract.TryCreate(type, out dataContract))
                                     {
-                                        dataContract = new ClassDataContract(type);
-                                    }
-                                    else
-                                    {
-                                        ThrowInvalidDataContractException(SR.GetString(SR.TypeNotSerializable, type), type);
+                                        if (type.IsSerializable || type.IsDefined(Globals.TypeOfDataContractAttribute, false) || ClassDataContract.IsNonAttributedTypeValidForSerialization(type))
+                                        {
+                                            dataContract = new ClassDataContract(type);
+                                        }
+                                        else
+                                        {
+                                            ThrowInvalidDataContractException(SR.GetString(SR.TypeNotSerializable, type), type);
+                                        }
                                     }
                                 }
                             }
-                        }
+
+                            AssignDataContractToId(dataContract, id);
+                        }                        
                     }
+                }
+
+                return dataContract;
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            static void AssignDataContractToId(DataContract dataContract, int id)
+            {
+                lock (cacheLock)
+                {
                     dataContractCache[id] = dataContract;
-                    return dataContract;
                 }
             }
 
@@ -1200,7 +1221,8 @@ namespace System.Runtime.Serialization
 
                         parseMethodSet = true;
                     }
-                    return parseMethod; }
+                    return parseMethod;
+                }
             }
 
             internal virtual void WriteRootElement(XmlWriterDelegator writer, XmlDictionaryString name, XmlDictionaryString ns)

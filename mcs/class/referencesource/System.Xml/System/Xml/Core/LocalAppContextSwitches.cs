@@ -29,5 +29,15 @@ namespace System
                 return LocalAppContext.GetCachedSwitchValue(@"Switch.System.Xml.IgnoreEmptyKeySequences", ref _ignoreEmptyKeySequences);
             }
         }
+
+        private static int _ignoreKindInUtcTimeSerialization;
+        public static bool IgnoreKindInUtcTimeSerialization
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(@"Switch.System.Xml.IgnoreKindInUtcTimeSerialization", ref _ignoreKindInUtcTimeSerialization);
+            }
+        }
     }
 }

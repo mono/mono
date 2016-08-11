@@ -23,8 +23,6 @@ PLATFORM_PATH_SEPARATOR = :
 # This is for changing / to \ on windows
 PLATFORM_CHANGE_SEPARATOR_CMD = cat
 
-PLATFORM_AOT_SUFFIX = .dylib
-
 hidden_prefix = .
 hidden_suffix = 
 

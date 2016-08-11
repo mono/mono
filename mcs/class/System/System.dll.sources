@@ -459,6 +459,7 @@ System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImplCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs
 System.Security.Cryptography.X509Certificates/X509ChainElementCollection.cs
 System.Security.Cryptography.X509Certificates/X509ChainElement.cs
@@ -538,12 +539,15 @@ System.Windows.Input/ICommand.cs
 
 System/IOSelector.cs
 
+Mono.Net.Security/AsyncProtocolRequest.cs
 Mono.Net.Security/CallbackHelpers.cs
 Mono.Net.Security/ChainValidationHelper.cs
 Mono.Net.Security/IMonoTlsProvider.cs
 Mono.Net.Security/IMonoSslStream.cs
 Mono.Net.Security/LegacySslStream.cs
-Mono.Net.Security/MonoDefaultTlsProvider.cs
+Mono.Net.Security/MobileAuthenticatedStream.cs
+Mono.Net.Security/MobileTlsContext.cs
+Mono.Net.Security/MonoLegacyTlsProvider.cs
 Mono.Net.Security/MonoSslStreamImpl.cs
 Mono.Net.Security/MonoSslStreamWrapper.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
@@ -562,6 +566,7 @@ ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/Internal.cs
 ReferenceSources/HttpApi.cs
 ReferenceSources/HttpSysSettings.cs
+ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RequestCacheProtocol.cs

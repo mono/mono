@@ -195,9 +195,9 @@ namespace System.IO {
             Contract.Requires(destFileName.Length > 0);
 
             String fullSourceFileName = LongPath.NormalizePath(sourceFileName);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullSourceFileName }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullSourceFileName, false, false);
             String fullDestFileName = LongPath.NormalizePath(destFileName);
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullDestFileName }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 
             InternalCopy(fullSourceFileName, fullDestFileName, sourceFileName, destFileName, overwrite);
         }
@@ -258,7 +258,7 @@ namespace System.IO {
             String fullPath = LongPath.NormalizePath(path);
 
             // For security check, path should be resolved to an absolute path.
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullPath }, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullPath, false, false);
 
             String tempPath = Path.AddLongPathPrefix(fullPath);
             bool r = Win32Native.DeleteFile(tempPath);
@@ -297,8 +297,8 @@ namespace System.IO {
                 if (path.Length > 0 && Path.IsDirectorySeparator(path[path.Length - 1])) {
                     return false;
                 }
-                    
-                new FileIOPermission(FileIOPermissionAccess.Read, new String[] { path }, false, false ).Demand();
+
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, path, false, false );
 
                 return InternalExists(path);
             }
@@ -326,7 +326,7 @@ namespace System.IO {
             Contract.Requires(path != null);
 
             String fullPath = LongPath.NormalizePath(path);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 
             String tempPath = Path.AddLongPathPrefix(fullPath);
 
@@ -348,7 +348,7 @@ namespace System.IO {
             Contract.Requires(path != null);
 
             String fullPath = LongPath.NormalizePath(path);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 
             String tempPath = Path.AddLongPathPrefix(fullPath);
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -369,7 +369,7 @@ namespace System.IO {
             Contract.Requires(path != null);
 
             String fullPath = LongPath.NormalizePath(path);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 
             String tempPath = Path.AddLongPathPrefix(fullPath);
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -400,9 +400,9 @@ namespace System.IO {
             Contract.Requires(destFileName.Length > 0);
 
             String fullSourceFileName = LongPath.NormalizePath(sourceFileName);
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { fullSourceFileName }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, fullSourceFileName, false, false);
             String fullDestFileName = LongPath.NormalizePath(destFileName);
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullDestFileName }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 
             if (!LongPathFile.InternalExists(fullSourceFileName))
                 __Error.WinIOError(Win32Native.ERROR_FILE_NOT_FOUND, fullSourceFileName);
@@ -423,7 +423,7 @@ namespace System.IO {
             Contract.Requires(path != null);
 
             String fullPath = LongPath.NormalizePath(path);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 
             String tempPath = Path.AddLongPathPrefix(fullPath);
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -435,7 +435,6 @@ namespace System.IO {
                 __Error.WinIOError(Win32Native.ERROR_FILE_NOT_FOUND, path);
 
             return ((long)data.fileSizeHigh) << 32 | ((long)data.fileSizeLow & 0xFFFFFFFFL);
-            
         }
 
          // Defined in WinError.h
@@ -460,7 +459,7 @@ namespace System.IO {
             // We attempt to create directories only after all the security checks have passed. This is avoid doing
             // a demand at every level.
             String demandDir = GetDemandDir(fullPath, true);
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { demandDir }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandDir, false, false);
 
             InternalCreateDirectory(fullPath, path, null);
         }
@@ -514,7 +513,15 @@ namespace System.IO {
 
             int count = stackDir.Count;
 
-            if (stackDir.Count != 0)
+            if (stackDir.Count != 0
+#if FEATURE_CAS_POLICY
+                // All demands in full trust domains are no-ops, so skip
+                //
+                // The full path went through validity checks by being passed through FileIOPermissions already.
+                // As a sub string of the full path can't fail the checks if the full path passes.
+                && !CodeAccessSecurityEngine.QuickCheckForAllDemands()
+#endif
+            )
             {
                 String[] securityList = new String[stackDir.Count];
                 stackDir.CopyTo(securityList, 0);
@@ -524,9 +531,9 @@ namespace System.IO {
                 // Security check for all directories not present only.
 #if !FEATURE_PAL  && FEATURE_MACL
                 AccessControlActions control = (dirSecurity == null) ? AccessControlActions.None : AccessControlActions.Change;
-                new FileIOPermission(FileIOPermissionAccess.Write, control, securityList, false, false ).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, control, securityList, false, false);
 #else
-                new FileIOPermission(FileIOPermissionAccess.Write, securityList, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, securityList, false, false);
 #endif
             }
 
@@ -554,9 +561,11 @@ namespace System.IO {
             {
                 String name = stackDir[stackDir.Count - 1];
                 stackDir.RemoveAt(stackDir.Count - 1);
+
                 if (name.Length >= Path.MaxLongPath)
                     throw new PathTooLongException(Environment.GetResourceString("IO.PathTooLong"));
-                r = Win32Native.CreateDirectory(Path.AddLongPathPrefix(name), secAttrs);
+
+                r = Win32Native.CreateDirectory(PathInternal.EnsureExtendedPrefix(name), secAttrs);
                 if (!r && (firstError == 0))
                 {
                     int currentError = Marshal.GetLastWin32Error();
@@ -579,7 +588,7 @@ namespace System.IO {
                             // Give the user a nice error message, but don't leak path information.
                             try
                             {
-                                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { GetDemandDir(name, true) }, false, false).Demand();
+                                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, GetDemandDir(name, true), false, false);
                                 errorString = name;
                             }
                             catch (SecurityException) { }
@@ -631,8 +640,8 @@ namespace System.IO {
             if (destPath.Length >= Path.MaxLongPath)
                 throw new PathTooLongException(Environment.GetResourceString("IO.PathTooLong"));
 
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { sourcePath }, false, false).Demand();
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { destPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, sourcePath, false, false);
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, destPath, false, false);
 
             if (String.Compare(sourcePath, destPath, StringComparison.OrdinalIgnoreCase) == 0)
                 throw new IOException(Environment.GetResourceString("IO.IO_SourceDestMustBeDifferent"));
@@ -643,8 +652,8 @@ namespace System.IO {
                 throw new IOException(Environment.GetResourceString("IO.IO_SourceDestMustHaveSameRoot"));
 
 
-            String tempSourceDirName = Path.AddLongPathPrefix(sourceDirName);
-            String tempDestDirName = Path.AddLongPathPrefix(destDirName);
+            String tempSourceDirName = PathInternal.EnsureExtendedPrefix(sourceDirName);
+            String tempDestDirName = PathInternal.EnsureExtendedPrefix(destDirName);
 
             if (!Win32Native.MoveFile(tempSourceDirName, tempDestDirName))
             {
@@ -683,7 +692,7 @@ namespace System.IO {
             demandPath = GetDemandDir(fullPath, !recursive);
 
             // Make sure we have write permission to this directory
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { demandPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, demandPath, false, false);
 
             String longPath = Path.AddLongPathPrefix(fullPath);
             // Do not recursively delete through reparse points.  Perhaps in a 
@@ -904,7 +913,7 @@ namespace System.IO {
                 String fullPath = LongPath.NormalizePath(path);
                 String demandPath = GetDemandDir(fullPath, true);
 
-                new FileIOPermission(FileIOPermissionAccess.Read, new String[] { demandPath }, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandPath, false, false);
 
                 return InternalExists(fullPath);
             }

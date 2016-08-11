@@ -74,7 +74,8 @@ namespace Mono.Documentation {
 			get {
 				if (member == null)
 					throw new ArgumentNullException ("member");
-				MemberReference memberDef = member.Resolve ();
+
+				var memberDef = member.Resolve ();
 				if (memberDef == null) {
 					ArrayType array = member.DeclaringType as ArrayType;
 					if (array != null && array.Rank > 1) {
@@ -87,7 +88,7 @@ namespace Mono.Documentation {
 								"Unable to resolve member {0}::{1}.",
 								member.DeclaringType.FullName, member.Name));
 				}
-				string memberDecl = xdoc.GetDeclaration (member.Resolve ());
+				string memberDecl = xdoc.GetDeclaration (member);
 				Dictionary<string, ExceptionSources> e;
 				if (!db.TryGetValue (memberDecl, out e)) {
 					e = new Dictionary<string, ExceptionSources> ();

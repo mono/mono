@@ -6,7 +6,9 @@ namespace System.Runtime.Serialization.Json
 {
     using System.Globalization;
     using System.IO;
+#if !MONO
     using System.ServiceModel;
+#endif
     using System.Text;
     using System.Runtime.Serialization;
     using System.Collections.Generic;

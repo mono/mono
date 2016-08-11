@@ -11,6 +11,7 @@ namespace System.Security.Cryptography {
     [System.Runtime.InteropServices.ComVisible(true)]
     public class RSAOAEPKeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
         private RSA _rsaKey; // RSA Key value to do decrypt operation
+        private bool?  _rsaOverridesDecrypt;
 
         //
         // public constructors
@@ -42,8 +43,8 @@ namespace System.Security.Cryptography {
             if (_rsaKey == null)
                 throw new CryptographicUnexpectedOperationException(Environment.GetResourceString("Cryptography_MissingKey"));
 
-            if (_rsaKey is RSACryptoServiceProvider) {
-                return ((RSACryptoServiceProvider) _rsaKey).Decrypt(rgbData, true);
+            if (OverridesDecrypt) {
+                return _rsaKey.Decrypt(rgbData, RSAEncryptionPadding.OaepSHA1);
             } else {
                 return Utils.RsaOaepDecrypt(_rsaKey, SHA1.Create(), new PKCS1MaskGenerationMethod(), rgbData);
             }
@@ -54,6 +55,16 @@ namespace System.Security.Cryptography {
                 throw new ArgumentNullException("key");
             Contract.EndContractBlock();
             _rsaKey = (RSA) key;
+            _rsaOverridesDecrypt = default(bool?);
+        }
+
+        private bool OverridesDecrypt {
+            get {
+                if (!_rsaOverridesDecrypt.HasValue) {
+                    _rsaOverridesDecrypt = Utils.DoesRsaKeyOverride(_rsaKey, "Decrypt", new Type[] { typeof(byte[]), typeof(RSAEncryptionPadding) });
+                }
+                return _rsaOverridesDecrypt.Value;
+            }
         }
     }
 }

@@ -57,6 +57,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("RequiresBSDSockets")]
 		public void AddOne ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -70,6 +71,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category ("RequiresBSDSockets")]
 		public void Duplicate ()
 		{
 			HttpListener listener = new HttpListener ();

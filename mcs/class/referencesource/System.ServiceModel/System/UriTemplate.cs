@@ -4,6 +4,7 @@
 
 namespace System
 {
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
@@ -11,6 +12,7 @@ namespace System
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.Text;
+    using System.Threading;
     using System.Runtime.CompilerServices;
     using System.Globalization;
 
@@ -31,7 +33,7 @@ namespace System
         const string NullableDefault = "null";
         readonly WildcardInfo wildcard;
         IDictionary<string, string> defaults;
-        Dictionary<string, string> unescapedDefaults;
+        ConcurrentDictionary<string, string> unescapedDefaults;
 
         VariablesCollection variables;
 
@@ -263,7 +265,7 @@ namespace System
             {
                 if (this.defaults == null)
                 {
-                    this.defaults = new UriTemplateDefaults(this);
+                    Interlocked.CompareExchange<IDictionary<string, string>>(ref this.defaults, new UriTemplateDefaults(this), null);
                 }
                 return this.defaults;
             }
@@ -943,16 +945,10 @@ namespace System
             }
             if (this.unescapedDefaults == null)
             {
-                this.unescapedDefaults = new Dictionary<string, string>(StringComparer.Ordinal);
-            }
-            string unescapedValue;
-            if (!this.unescapedDefaults.TryGetValue(escapedValue, out unescapedValue))
-            {
-                unescapedValue = Uri.UnescapeDataString(escapedValue);
-                this.unescapedDefaults.Add(escapedValue, unescapedValue);
+                this.unescapedDefaults = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
             }
 
-            return unescapedValue;
+            return this.unescapedDefaults.GetOrAdd(escapedValue, Uri.UnescapeDataString);
         }
 
         struct BindInformation
@@ -1181,8 +1177,8 @@ namespace System
                 {
                     if (this.pathSegmentVariableNamesSnapshot == null)
                     {
-                        this.pathSegmentVariableNamesSnapshot = new ReadOnlyCollection<string>(
-                            this.pathSegmentVariableNames);
+                        Interlocked.CompareExchange<ReadOnlyCollection<string>>(ref this.pathSegmentVariableNamesSnapshot, new ReadOnlyCollection<string>(
+                            this.pathSegmentVariableNames), null);
                     }
                     return this.pathSegmentVariableNamesSnapshot;
                 }
@@ -1193,8 +1189,8 @@ namespace System
                 {
                     if (this.queryValueVariableNamesSnapshot == null)
                     {
-                        this.queryValueVariableNamesSnapshot = new ReadOnlyCollection<string>(
-                            this.queryValueVariableNames);
+                        Interlocked.CompareExchange<ReadOnlyCollection<string>>(ref this.queryValueVariableNamesSnapshot, new ReadOnlyCollection<string>(
+                            this.queryValueVariableNames), null);
                     }
                     return this.queryValueVariableNamesSnapshot;
                 }

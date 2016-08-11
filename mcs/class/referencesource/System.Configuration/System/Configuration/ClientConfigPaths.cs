@@ -26,6 +26,8 @@ namespace System.Configuration {
         const string                ClickOnceDataDirectory = "DataDirectory";
         const string                ConfigExtension = ".config";
         const int                   MAX_PATH = 260;
+        const int                   MAX_UNICODESTRING_LEN = short.MaxValue;
+        const int                   ERROR_INSUFFICIENT_BUFFER = 122; //https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382(v=vs.85).aspx
         const int                   MAX_LENGTH_TO_USE = 25;
         const string                FILE_URI_LOCAL = "file:///";
         const string                FILE_URI_UNC = "file://";
@@ -108,7 +110,18 @@ namespace System.Configuration {
                 }
                 else {
                     StringBuilder sb = new StringBuilder(MAX_PATH);
-                    UnsafeNativeMethods.GetModuleFileName(new HandleRef(null, IntPtr.Zero), sb, sb.Capacity);
+                    int noOfTimes = 1;
+                    int length = 0;
+                    // Iterating by allocating chunk of memory each time we find the length is not sufficient.
+                    // Performance should not be an issue for current MAX_PATH length due to this change.
+                    while (((length = UnsafeNativeMethods.GetModuleFileName(new HandleRef(null, IntPtr.Zero), sb, sb.Capacity)) == sb.Capacity) 
+                            && Marshal.GetLastWin32Error() == ERROR_INSUFFICIENT_BUFFER 
+                            && sb.Capacity < MAX_UNICODESTRING_LEN) {
+                        noOfTimes += 2; // increasing buffer size by 520 in each iteration - perf.
+                        int capacity = noOfTimes * MAX_PATH < MAX_UNICODESTRING_LEN ? noOfTimes * MAX_PATH : MAX_UNICODESTRING_LEN;
+                        sb.EnsureCapacity(capacity);
+                    }
+                    sb.Length = length;
                     applicationUri = Path.GetFullPath(sb.ToString());
                     applicationFilename = applicationUri;
                 }

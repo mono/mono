@@ -7,7 +7,7 @@
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
-.TH Mono "Mono 4.5.2"
+.TH Mono "Mono 4.7.0"
 .SH NAME
 mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
@@ -1100,7 +1100,7 @@ a Mono process through the environment.   This is useful for example
 to force all of your Mono processes to use LLVM or SGEN without having
 to modify any launch scripts.
 .TP
-\fBMONO_ENV_OPTIONS\fR
+\fBMONO_SDB_ENV_OPTIONS\fR
 Used to pass extra options to the debugger agent in the runtime, as they were passed
 using --debugger-agent=.
 .TP
@@ -1302,12 +1302,12 @@ statistics when shutting down.
 .TP
 \fBcollect-before-allocs\fR
 .TP
-\fBcheck-at-minor-collections\fR
-This performs a consistency check on minor collections and also clears
-the nursery at collection time, instead of the default, when buffers
-are allocated (clear-at-gc).   The consistency check ensures that
-there are no major to minor references that are not on the remembered
-sets. 
+\fBcheck-remset-consistency\fR
+This performs a remset consistency check at various opportunities, and
+also clears the nursery at collection time, instead of the default,
+when buffers are allocated (clear-at-gc).  The consistency check
+ensures that there are no major to minor references that are not on
+the remembered sets.
 .TP
 \fBmod-union-consistency-check\fR
 Checks that the mod-union cardtable is consistent before each

@@ -20,18 +20,35 @@ else
 install-local: install-extras
 endif
 
+PORTABLE_TARGETS_SRC=../../../external/buildtools/src/Portable/Targets
+PCL5_FX_SRC=../../../external/buildtools/src/Portable/Frameworks/v5.0
+
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
+PCL5_FX_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETPortable/v5.0
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
+NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
 
+ifeq (14.0, $(XBUILD_VERSION))
+install-extras: install-versioned-files install-global-files
+else
+install-extras: install-versioned-files
+endif
 
-install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets
+#install files into xbuild's versioned locations
+install-versioned-files: install-bin-data install-nuget-imports
+
+#install files that are only installed once across all xbuild versions
+install-global-files: install-frameworks install-web-targets install-pcl-targets install-pcl5-framework install-nuget-targets
 
 install-bin-data:
 	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
 	$(INSTALL_DATA) data/xbuild.rsp $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.targets $(DESTDIR)$(XBUILD_BIN_DIR)
+ifeq (14.0, $(XBUILD_VERSION))
+	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.props $(DESTDIR)$(XBUILD_BIN_DIR)/../
+endif
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.CSharp.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.Build.xsd $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.VisualBasic.targets $(DESTDIR)$(XBUILD_BIN_DIR)
@@ -62,20 +79,16 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_4.6.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.1/RedistList/FrameworkList.xml
 
 install-pcl-targets:
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.VisualBasic.targets
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.VisualBasic.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6
-	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.Common.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.CSharp.targets
-	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.VisualBasic.targets
+	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)
+	$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
+	$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
+
+	for VERSION in v4.0 v4.5 v4.6 v5.0; do \
+		$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.Common.targets; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.CSharp.targets; \
+		$(INSTALL_DATA) $(PORTABLE_TARGETS_SRC)/$$VERSION/Microsoft.Portable.VisualBasic.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/$$VERSION/Microsoft.Portable.VisualBasic.targets; \
+	done
 
 install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
@@ -89,6 +102,31 @@ install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
 	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
 
+NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
+
+install-nuget-targets:
+	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+
+install-nuget-imports:
+ifeq (14.0, $(XBUILD_VERSION))
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(XBUILD_BIN_DIR)/../Imports/Microsoft.Common.props/ImportBefore
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(XBUILD_BIN_DIR)/../Microsoft.Common.targets/ImportAfter
+endif
+
+# The .NETPortable,Version=v5.0 framework contains no assemblies, and essentially just fills the requirement
+# for a framework moniker. When using it, assemblies are provided by NuGet packages such as .NETStandard.Library
+install-pcl5-framework:
+	$(MKINSTALLDIRS) $(DESTDIR)$(PCL5_FX_DIR)/RedistList
+	$(INSTALL_DATA) $(PCL5_FX_SRC)/FrameworkList.xml $(DESTDIR)$(PCL5_FX_DIR)/RedistList/FrameworkList.xml
+
+	$(MKINSTALLDIRS) $(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/.NET Framework 4.6.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/.NET Framework 4.6.xml"
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/ASP.NET Core 1.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/ASP.NET Core 1.0.xml"
+	$(INSTALL_DATA) "$(PCL5_FX_SRC)/Windows Universal 10.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/Windows Universal 10.0.xml"
 
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
@@ -104,6 +142,7 @@ EXTRA_DISTFILES = \
 	data/4.0/Microsoft.Common.targets \
 	data/12.0/Microsoft.Common.targets \
 	data/14.0/Microsoft.Common.targets \
+	data/14.0/Microsoft.Common.props \
 	data/2.0/Microsoft.CSharp.targets \
 	data/3.5/Microsoft.CSharp.targets \
 	data/4.0/Microsoft.CSharp.targets \
@@ -122,13 +161,10 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.5.2.xml \
 	frameworks/net_4.6.xml \
 	frameworks/net_4.6.1.xml \
-	targets/Microsoft.Portable.CSharp_4.0.targets \
-	targets/Microsoft.Portable.CSharp_4.5.targets \
-	targets/Microsoft.Portable.VisualBasic_4.0.targets \
-	targets/Microsoft.Portable.VisualBasic_4.5.targets \
-	targets/Microsoft.Portable.Common.targets \
-	targets/Microsoft.Portable.Core.targets \
-	targets/Microsoft.Portable.Core.props \
-	targets/Microsoft.WebApplication.targets \
+	targets/Microsoft.WebApplication.targets	\
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets \
+	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props \
 	xbuild.make \
 	xbuild_test.make

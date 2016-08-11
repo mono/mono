@@ -15,6 +15,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Net.Sockets {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class UdpClientTest {
 		[Test] // .ctor ()
 		public void Constructor1 ()

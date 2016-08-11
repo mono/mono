@@ -28,7 +28,8 @@ namespace System.Workflow.Runtime.Tracking
     {
         public TrackingProfileSerializer()
         {
-            _schema = XmlSchema.Read(new StringReader(_xsd), null);
+            StringReader reader = new StringReader(_xsd);
+            _schema = XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
             _schema.Namespaces.Add("", _ns);
         }
 

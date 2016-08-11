@@ -30,6 +30,7 @@ using TypedDataSetGenerator=System.Data.Design.TypedDataSetGenerator;
 internal class XsdBuildProvider: BuildProvider {
 
     [SuppressMessage("Microsoft.Security", "MSEC1207:UseXmlReaderForLoad", Justification = "Developer-controlled .xsd files in application directory are implicitly trusted by ASP.Net.")]
+    [SuppressMessage("Microsoft.Security.Xml", "CA3056:UseXmlReaderForLoad", Justification = "Developer-controlled .xml files in application directory are implicitly trusted by ASP.Net.")]
     public override void GenerateCode(AssemblyBuilder assemblyBuilder)  {
 #if !FEATURE_PAL // FEATURE_PAL does not support System.Data.Design
         // Get the namespace that we will use

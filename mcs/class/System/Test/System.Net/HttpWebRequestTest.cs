@@ -36,6 +36,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpWebRequestTest
 	{
 		private Random rand = new Random ();
@@ -2762,6 +2763,7 @@ namespace MonoTests.System.Net
 	}
 
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class HttpRequestStreamTest
 	{
 		[Test]

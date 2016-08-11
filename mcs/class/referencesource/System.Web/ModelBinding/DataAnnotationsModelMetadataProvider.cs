@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Web.Globalization;
 
     public class DataAnnotationsModelMetadataProvider : AssociatedMetadataProvider {
 
@@ -11,7 +12,7 @@
             List<Attribute> attributeList = new List<Attribute>(attributes);
             DisplayColumnAttribute displayColumnAttribute = attributeList.OfType<DisplayColumnAttribute>().FirstOrDefault();
             DataAnnotationsModelMetadata result = new DataAnnotationsModelMetadata(this, containerType, modelAccessor, modelType, propertyName, displayColumnAttribute);
-
+            
 #if UNDEF
             // Do [HiddenInput] before [UIHint], so you can override the template hint
             HiddenInputAttribute hiddenInputAttribute = attributeList.OfType<HiddenInputAttribute>().FirstOrDefault();
@@ -71,12 +72,13 @@
             DisplayAttribute display = attributes.OfType<DisplayAttribute>().FirstOrDefault();
             string name = null;
             if (display != null) {
-                result.Description = display.GetDescription();
-                result.ShortDisplayName = display.GetShortName();
-                result.Watermark = display.GetPrompt();
-                result.Order = display.GetOrder() ?? ModelMetadata.DefaultOrder;
+                var displayAdapter = new DisplayAttributeAdapter(display);
+                result.Description = displayAdapter.GetDescription();
+                result.ShortDisplayName = displayAdapter.GetShortName();
+                result.Watermark = displayAdapter.GetPrompt();
+                result.Order = displayAdapter.GetOrder() ?? ModelMetadata.DefaultOrder;
 
-                name = display.GetName();
+                name = displayAdapter.GetName();
             }
 
             if (name != null) {

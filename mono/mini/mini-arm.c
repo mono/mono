@@ -827,9 +827,14 @@ mono_arch_init (void)
 {
 	const char *cpu_arch;
 
+#ifdef TARGET_WATCHOS
+	mini_get_debug_options ()->soft_breakpoints = TRUE;
+#endif
+
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
 	if (mini_get_debug_options ()->soft_breakpoints) {
-		breakpoint_tramp = mini_get_breakpoint_trampoline ();
+		if (!mono_aot_only)
+			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 	} else {
 		ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
 		bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
@@ -879,6 +884,21 @@ mono_arch_init (void)
 	v5_supported = mono_hwcap_arm_is_v5;
 	v6_supported = mono_hwcap_arm_is_v6;
 	v7_supported = mono_hwcap_arm_is_v7;
+
+	/*
+	 * On weird devices, the hwcap code may fail to detect
+	 * the ARM version. In that case, we can at least safely
+	 * assume the version the runtime was compiled for.
+	 */
+#ifdef HAVE_ARMV5
+	v5_supported = TRUE;
+#endif
+#ifdef HAVE_ARMV6
+	v6_supported = TRUE;
+#endif
+#ifdef HAVE_ARMV7
+	v7_supported = TRUE;
+#endif
 
 #if defined(__APPLE__)
 	/* iOS is special-cased here because we don't yet
@@ -1883,6 +1903,9 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		ins->inst_basereg = cfg->frame_reg;
 		ins->inst_offset = offset;
 		offset += size;
+	}
+	if (cfg->arch.ss_trigger_page_var) {
+		MonoInst *ins;
 
 		ins = cfg->arch.ss_trigger_page_var;
 		size = 4;
@@ -1907,6 +1930,9 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		ins->inst_basereg = cfg->frame_reg;
 		ins->inst_offset = offset;
 		offset += size;
+	}
+	if (cfg->arch.seq_point_bp_method_var) {
+		MonoInst *ins;
 
 		ins = cfg->arch.seq_point_bp_method_var;
 		size = 4;
@@ -2087,6 +2113,18 @@ mono_arch_create_vars (MonoCompile *cfg)
 	}
 
 	if (cfg->gen_sdb_seq_points) {
+		if (cfg->compile_aot) {
+			MonoInst *ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+			ins->flags |= MONO_INST_VOLATILE;
+			cfg->arch.seq_point_info_var = ins;
+
+			if (!cfg->soft_breakpoints) {
+				/* Allocate a separate variable for this to save 1 load per seq point */
+				ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+				ins->flags |= MONO_INST_VOLATILE;
+				cfg->arch.ss_trigger_page_var = ins;
+			}
+		}
 		if (cfg->soft_breakpoints) {
 			MonoInst *ins;
 
@@ -2097,17 +2135,6 @@ mono_arch_create_vars (MonoCompile *cfg)
 			ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_bp_method_var = ins;
-
-			g_assert (!cfg->compile_aot);
-		} else if (cfg->compile_aot) {
-			MonoInst *ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-			ins->flags |= MONO_INST_VOLATILE;
-			cfg->arch.seq_point_info_var = ins;
-
-			/* Allocate a separate variable for this to save 1 load per seq point */
-			ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-			ins->flags |= MONO_INST_VOLATILE;
-			cfg->arch.ss_trigger_page_var = ins;
 		}
 	}
 }
@@ -4575,9 +4602,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			MonoInst *var;
 			int dreg = ARMREG_LR;
 
+#if 0
 			if (cfg->soft_breakpoints) {
 				g_assert (!cfg->compile_aot);
 			}
+#endif
 
 			/*
 			 * For AOT, we use one got slot per method, which will point to a
@@ -4600,6 +4629,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (((guint64)(gsize)ss_trigger_page >> 32) == 0);
 			}
 
+			/* Single step check */
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
 				if (cfg->soft_breakpoints) {
 					/* Load the address of the sequence point method variable. */
@@ -4634,20 +4664,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
 
-			if (cfg->soft_breakpoints) {
-				/* Load the address of the breakpoint method into ip. */
-				var = bp_method_var;
-				g_assert (var);
-				g_assert (var->opcode == OP_REGOFFSET);
-				g_assert (arm_is_imm12 (var->inst_offset));
-				ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
-
-				/*
-				 * A placeholder for a possible breakpoint inserted by
-				 * mono_arch_set_breakpoint ().
-				 */
-				ARM_NOP (code);
-			} else if (cfg->compile_aot) {
+			/* Breakpoint check */
+			if (cfg->compile_aot) {
 				guint32 offset = code - cfg->native_code;
 				guint32 val;
 
@@ -4670,7 +4688,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				/* What is faster, a branch or a load ? */
 				ARM_CMP_REG_IMM (code, dreg, 0, 0);
 				/* The breakpoint instruction */
-				ARM_LDR_IMM_COND (code, dreg, dreg, 0, ARMCOND_NE);
+				if (cfg->soft_breakpoints)
+					ARM_BLX_REG_COND (code, ARMCOND_NE, dreg);
+				else
+					ARM_LDR_IMM_COND (code, dreg, dreg, 0, ARMCOND_NE);
+			} else if (cfg->soft_breakpoints) {
+				/* Load the address of the breakpoint method into ip. */
+				var = bp_method_var;
+				g_assert (var);
+				g_assert (var->opcode == OP_REGOFFSET);
+				g_assert (arm_is_imm12 (var->inst_offset));
+				ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
+
+				/*
+				 * A placeholder for a possible breakpoint inserted by
+				 * mono_arch_set_breakpoint ().
+				 */
+				ARM_NOP (code);
 			} else {
 				/* 
 				 * A placeholder for a possible breakpoint inserted by
@@ -6511,22 +6545,36 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (cfg->arch.seq_point_ss_method_var) {
 		MonoInst *ss_method_ins = cfg->arch.seq_point_ss_method_var;
 		MonoInst *bp_method_ins = cfg->arch.seq_point_bp_method_var;
+
 		g_assert (ss_method_ins->opcode == OP_REGOFFSET);
 		g_assert (arm_is_imm12 (ss_method_ins->inst_offset));
-		g_assert (bp_method_ins->opcode == OP_REGOFFSET);
-		g_assert (arm_is_imm12 (bp_method_ins->inst_offset));
 
-		ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-		ARM_B (code, 1);
-		*(gpointer*)code = &single_step_tramp;
-		code += 4;
-		*(gpointer*)code = breakpoint_tramp;
-		code += 4;
+		if (cfg->compile_aot) {
+			MonoInst *info_var = cfg->arch.seq_point_info_var;
+			int dreg = ARMREG_LR;
 
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 0);
-		ARM_STR_IMM (code, ARMREG_IP, ss_method_ins->inst_basereg, ss_method_ins->inst_offset);
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 4);
-		ARM_STR_IMM (code, ARMREG_IP, bp_method_ins->inst_basereg, bp_method_ins->inst_offset);
+			g_assert (info_var->opcode == OP_REGOFFSET);
+			g_assert (arm_is_imm12 (info_var->inst_offset));
+
+			ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
+			ARM_LDR_IMM (code, dreg, dreg, MONO_STRUCT_OFFSET (SeqPointInfo, ss_tramp_addr));
+			ARM_STR_IMM (code, dreg, ss_method_ins->inst_basereg, ss_method_ins->inst_offset);
+		} else {
+			g_assert (bp_method_ins->opcode == OP_REGOFFSET);
+			g_assert (arm_is_imm12 (bp_method_ins->inst_offset));
+
+			ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
+			ARM_B (code, 1);
+			*(gpointer*)code = &single_step_tramp;
+			code += 4;
+			*(gpointer*)code = breakpoint_tramp;
+			code += 4;
+
+			ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 0);
+			ARM_STR_IMM (code, ARMREG_IP, ss_method_ins->inst_basereg, ss_method_ins->inst_offset);
+			ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 4);
+			ARM_STR_IMM (code, ARMREG_IP, bp_method_ins->inst_basereg, bp_method_ins->inst_offset);
+		}
 	}
 
 	cfg->code_len = code - cfg->native_code;
@@ -7169,17 +7217,19 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	guint32 native_offset = ip - (guint8*)ji->code_start;
 	MonoDebugOptions *opt = mini_get_debug_options ();
 
-	if (opt->soft_breakpoints) {
-		g_assert (!ji->from_aot);
-		code += 4;
-		ARM_BLX_REG (code, ARMREG_LR);
-		mono_arch_flush_icache (code - 4, 4);
-	} else if (ji->from_aot) {
+	if (ji->from_aot) {
 		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), ji->code_start);
+
+		if (!breakpoint_tramp)
+			breakpoint_tramp = mini_get_breakpoint_trampoline ();
 
 		g_assert (native_offset % 4 == 0);
 		g_assert (info->bp_addrs [native_offset / 4] == 0);
-		info->bp_addrs [native_offset / 4] = bp_trigger_page;
+		info->bp_addrs [native_offset / 4] = opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page;
+	} else if (opt->soft_breakpoints) {
+		code += 4;
+		ARM_BLX_REG (code, ARMREG_LR);
+		mono_arch_flush_icache (code - 4, 4);
 	} else {
 		int dreg = ARMREG_LR;
 
@@ -7215,18 +7265,20 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	guint8 *code = ip;
 	int i;
 
-	if (opt->soft_breakpoints) {
-		g_assert (!ji->from_aot);
-		code += 4;
-		ARM_NOP (code);
-		mono_arch_flush_icache (code - 4, 4);
-	} else if (ji->from_aot) {
+	if (ji->from_aot) {
 		guint32 native_offset = ip - (guint8*)ji->code_start;
 		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), ji->code_start);
 
+		if (!breakpoint_tramp)
+			breakpoint_tramp = mini_get_breakpoint_trampoline ();
+
 		g_assert (native_offset % 4 == 0);
-		g_assert (info->bp_addrs [native_offset / 4] == bp_trigger_page);
+		g_assert (info->bp_addrs [native_offset / 4] == (opt->soft_breakpoints ? breakpoint_tramp : bp_trigger_page));
 		info->bp_addrs [native_offset / 4] = 0;
+	} else if (opt->soft_breakpoints) {
+		code += 4;
+		ARM_NOP (code);
+		mono_arch_flush_icache (code - 4, 4);
 	} else {
 		for (i = 0; i < 4; ++i)
 			ARM_NOP (code);
@@ -7364,6 +7416,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 
 		info->ss_trigger_page = ss_trigger_page;
 		info->bp_trigger_page = bp_trigger_page;
+		info->ss_tramp_addr = &single_step_tramp;
 
 		mono_domain_lock (domain);
 		g_hash_table_insert (domain_jit_info (domain)->arch_seq_points,

@@ -1138,8 +1138,19 @@ static LLVMValueRef
 emit_volatile_load (EmitContext *ctx, int vreg)
 {
 	MonoType *t;
+	LLVMValueRef v;
 
-	LLVMValueRef v = LLVMBuildLoad (ctx->builder, ctx->addresses [vreg], "");
+#ifdef TARGET_ARM64
+	// FIXME: This hack is required because we pass the rgctx in a callee saved
+	// register on arm64 (x15), and llvm might keep the value in that register
+	// even through the register is marked as 'reserved' inside llvm.
+	if (ctx->cfg->rgctx_var && ctx->cfg->rgctx_var->dreg == vreg)
+		v = mono_llvm_build_load (ctx->builder, ctx->addresses [vreg], "", TRUE);
+	else
+		v = LLVMBuildLoad (ctx->builder, ctx->addresses [vreg], "");
+#else
+	v = LLVMBuildLoad (ctx->builder, ctx->addresses [vreg], "");
+#endif
 	t = ctx->vreg_cli_types [vreg];
 	if (t && !t->byref) {
 		/* 
@@ -5780,12 +5791,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (!var) {
 				LLVMValueRef indexes [16];
 
-				LLVMValueRef name_var = LLVMAddGlobal (ctx->lmodule, LLVMArrayType (LLVMInt8Type (), strlen (name) + 1), "@OBJC_METH_VAR_NAME");
+				LLVMValueRef name_var = LLVMAddGlobal (ctx->lmodule, LLVMArrayType (LLVMInt8Type (), strlen (name) + 1), "@OBJC_METH_VAR_NAME_");
 				LLVMSetInitializer (name_var, mono_llvm_create_constant_data_array ((const uint8_t*)name, strlen (name) + 1));
 				LLVMSetLinkage (name_var, LLVMPrivateLinkage);
 				LLVMSetSection (name_var, "__TEXT,__objc_methname,cstring_literals");
+				mark_as_used (ctx->module, name_var);
 
-				LLVMValueRef ref_var = LLVMAddGlobal (ctx->lmodule, LLVMPointerType (LLVMInt8Type (), 0), "@OBJC_SELECTOR_REFERENCES");
+				LLVMValueRef ref_var = LLVMAddGlobal (ctx->lmodule, LLVMPointerType (LLVMInt8Type (), 0), "@OBJC_SELECTOR_REFERENCES_");
 
 				indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, 0);
 				indexes [1] = LLVMConstInt (LLVMInt32Type (), 0, 0);
@@ -5794,6 +5806,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				LLVMSetExternallyInitialized (ref_var, TRUE);
 				LLVMSetSection (ref_var, "__DATA, __objc_selrefs, literal_pointers, no_dead_strip");
 				LLVMSetAlignment (ref_var, sizeof (mgreg_t));
+				mark_as_used (ctx->module, ref_var);
 
 				g_hash_table_insert (ctx->module->objc_selector_to_var, g_strdup (name), ref_var);
 				var = ref_var;
@@ -6062,6 +6075,33 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_INSERT_R8:
 			values [ins->dreg] = LLVMBuildInsertElement (builder, values [ins->sreg1], convert (ctx, values [ins->sreg2], LLVMDoubleType ()), LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE), dname);
 			break;
+
+#if 0
+			// Requires a later llvm version
+		case OP_CVTDQ2PD: {
+			LLVMValueRef indexes [16];
+
+			indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+			indexes [1] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+			LLVMValueRef mask = LLVMConstVector (indexes, 2);
+			LLVMValueRef shuffle = LLVMBuildShuffleVector (builder, lhs, LLVMConstNull (LLVMTypeOf (lhs)), mask, "");
+			values [ins->dreg] = LLVMBuildSIToFP (builder, shuffle, LLVMVectorType (LLVMDoubleType (), 2), dname);
+			break;
+		}
+		case OP_CVTPS2PD: {
+			LLVMValueRef indexes [16];
+
+			indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+			indexes [1] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+			LLVMValueRef mask = LLVMConstVector (indexes, 2);
+			LLVMValueRef shuffle = LLVMBuildShuffleVector (builder, lhs, LLVMConstNull (LLVMTypeOf (lhs)), mask, "");
+			values [ins->dreg] = LLVMBuildFPExt (builder, shuffle, LLVMVectorType (LLVMDoubleType (), 2), dname);
+			break;
+		}
+		case OP_CVTTPS2DQ:
+			values [ins->dreg] = LLVMBuildFPToSI (builder, lhs, LLVMVectorType (LLVMInt32Type (), 4), dname);
+			break;
+#endif
 
 		case OP_CVTDQ2PD:
 		case OP_CVTDQ2PS:
@@ -8994,7 +9034,8 @@ default_mono_llvm_unhandled_exception (void)
 	MonoObject *target = mono_gchandle_get_target (jit_tls->thrown_exc);
 
 	mono_unhandled_exception (target);
-	exit (mono_environment_exitcode_get ());
+	mono_invoke_unhandled_exception_hook (target);
+	g_assert_not_reached ();
 }
 
 /*

@@ -386,6 +386,18 @@ unlock_thread (MonoInternalThread *thread)
 	mono_coop_mutex_unlock (thread->synch_cs);
 }
 
+static inline gboolean
+is_appdomainunloaded_exception (MonoClass *klass)
+{
+	return klass == mono_class_get_appdomain_unloaded_exception_class ();
+}
+
+static inline gboolean
+is_threadabort_exception (MonoClass *klass)
+{
+	return klass == mono_defaults.threadabortexception_class;
+}
+
 /*
  * NOTE: this function can be called also for threads different from the current one:
  * make sure no code called from it will ever assume it is run on the thread that is
@@ -591,7 +603,7 @@ new_thread_with_internal (MonoDomain *domain, MonoInternalThread *internal)
 	MonoThread *thread;
 
 	thread = create_thread_object (domain);
-	thread->priority = THREAD_PRIORITY_NORMAL;
+	thread->priority = MONO_THREAD_PRIORITY_NORMAL;
 
 	MONO_OBJECT_SETREF (thread, internal_thread, internal);
 
@@ -745,7 +757,21 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 		args [0] = start_arg;
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
 		mono_runtime_delegate_invoke_checked (start_delegate, args, &error);
-		mono_error_raise_exception (&error); /* OK, triggers unhandled exn handler */
+
+		if (!mono_error_ok (&error)) {
+			MonoException *ex = mono_error_convert_to_exception (&error);
+
+			g_assert (ex != NULL);
+			MonoClass *klass = mono_object_get_class (&ex->object);
+			if ((mono_runtime_unhandled_exception_policy_get () != MONO_UNHANDLED_POLICY_LEGACY) &&
+			    !is_threadabort_exception (klass)) {
+				mono_unhandled_exception (&ex->object);
+				mono_invoke_unhandled_exception_hook (&ex->object);
+				g_assert_not_reached ();
+			}
+		} else {
+			mono_error_cleanup (&error);
+		}
 	}
 
 	/* If the thread calls ExitThread at all, this remaining code
@@ -779,7 +805,7 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	return(0);
 }
 
-static guint32 WINAPI start_wrapper(void *data)
+static gsize WINAPI start_wrapper(void *data)
 {
 	volatile int dummy;
 
@@ -844,7 +870,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	tp.stack_size = stack_size;
 	tp.creation_flags = CREATE_SUSPENDED;
 
-	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)start_wrapper, start_info, &tp, &tid);
+	thread_handle = mono_threads_create_thread (start_wrapper, start_info, &tp, &tid);
 
 	if (thread_handle == NULL) {
 		/* The thread couldn't be created, so set an exception */
@@ -930,6 +956,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 	mono_error_init (error);
 
 	thread = create_thread_object (domain);
+	thread->priority = MONO_THREAD_PRIORITY_NORMAL;
 
 	internal = create_internal_thread ();
 
@@ -1102,7 +1129,7 @@ mono_thread_detach_if_exiting (void)
 }
 
 void
-mono_thread_exit ()
+mono_thread_exit (void)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
 
@@ -1422,9 +1449,9 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj)
 
 	LOCK_THREAD (internal);
 	if (internal->handle != NULL)
-		priority = GetThreadPriority (internal->handle) + 2;
+		priority = mono_thread_info_get_priority ((MonoThreadInfo*) internal->thread_info);
 	else
-		priority = this_obj->priority + 2;
+		priority = this_obj->priority;
 	UNLOCK_THREAD (internal);
 	return priority;
 }
@@ -1442,9 +1469,9 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priorit
 	MonoInternalThread *internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
-	this_obj->priority = priority - 2;
+	this_obj->priority = priority;
 	if (internal->handle != NULL)
-		SetThreadPriority (internal->handle, this_obj->priority);
+		mono_thread_info_set_priority ((MonoThreadInfo*) internal->thread_info, this_obj->priority);
 	UNLOCK_THREAD (internal);
 }
 
@@ -2915,17 +2942,14 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 
 void mono_thread_cleanup (void)
 {
-#if !defined(HOST_WIN32) && !defined(RUN_IN_SUBTHREAD)
-	MonoThreadInfo *info;
-
+#if !defined(RUN_IN_SUBTHREAD)
 	/* The main thread must abandon any held mutexes (particularly
 	 * important for named mutexes as they are shared across
 	 * processes, see bug 74680.)  This will happen when the
 	 * thread exits, but if it's not running in a subthread it
 	 * won't exit in time.
 	 */
-	info = mono_thread_info_current ();
-	wapi_thread_handle_set_exited (info->handle, mono_environment_exitcode_get ());
+	mono_thread_info_set_exited (mono_thread_info_current ());
 #endif
 
 #if 0
@@ -3157,7 +3181,7 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 		wait->num++;
 
 		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
-		mono_thread_internal_stop (thread);
+		mono_thread_internal_abort (thread);
 		return TRUE;
 	}
 
@@ -3456,11 +3480,9 @@ get_thread_dump (MonoThreadInfo *info, gpointer ud)
 
 #if 0
 /* This no longer works with remote unwinding */
-#ifndef HOST_WIN32
-	wapi_desc = wapi_current_thread_desc ();
-	g_string_append_printf (text, " tid=0x%p this=0x%p %s\n", (gpointer)(gsize)thread->tid, thread,  wapi_desc);
-	free (wapi_desc);
-#endif
+	g_string_append_printf (text, " tid=0x%p this=0x%p ", (gpointer)(gsize)thread->tid, thread);
+	mono_thread_info_describe (info, text);
+	g_string_append (text, "\n");
 #endif
 
 	if (thread == mono_thread_internal_current ())
@@ -5040,18 +5062,6 @@ mono_thread_internal_check_for_interruption_critical (MonoInternalThread *thread
 		mono_thread_interruption_checkpoint ();
 }
 
-static inline gboolean
-is_appdomainunloaded_exception (MonoClass *klass)
-{
-	return klass == mono_class_get_appdomain_unloaded_exception_class ();
-}
-
-static inline gboolean
-is_threadabort_exception (MonoClass *klass)
-{
-	return klass == mono_defaults.threadabortexception_class;
-}
-
 void
 mono_thread_internal_unhandled_exception (MonoObject* exc)
 {
@@ -5061,8 +5071,11 @@ mono_thread_internal_unhandled_exception (MonoObject* exc)
 			mono_thread_internal_reset_abort (mono_thread_internal_current ());
 		} else if (!is_appdomainunloaded_exception (klass)) {
 			mono_unhandled_exception (exc);
-			if (mono_environment_exitcode_get () == 1)
-				exit (255);
+			if (mono_environment_exitcode_get () == 1) {
+				mono_environment_exitcode_set (255);
+				mono_invoke_unhandled_exception_hook (exc);
+				g_assert_not_reached ();
+			}
 		}
 	}
 }

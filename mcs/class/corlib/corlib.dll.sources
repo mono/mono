@@ -23,9 +23,11 @@ Mono.Globalization.Unicode/SortKeyBuffer.cs
 Mono.Globalization.Unicode/Normalization.cs
 Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
-Mono/RuntimeStructs.cs
 Mono/RuntimeHandles.cs
+Mono/RuntimeMarshal.cs
+Mono/RuntimeStructs.cs
 Mono/SafeGPtrArrayHandle.cs
+Mono/SafeStringMarshal.cs
 Mono/DataConverter.cs
 Mono.Interop/ComInteropProxy.cs
 Mono.Interop/IDispatch.cs
@@ -898,6 +900,7 @@ ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
 ReferenceSources/SharedStatics.cs
 ReferenceSources/SecurityContext.cs
+ReferenceSources/PathInternal.cs
 
 ../referencesource/mscorlib/system/__filters.cs
 ../referencesource/mscorlib/system/__hresults.cs
@@ -1446,6 +1449,7 @@ ReferenceSources/SecurityContext.cs
 ../referencesource/mscorlib/system/security/cryptography/ripemd160.cs
 ../referencesource/mscorlib/system/security/cryptography/ripemd160managed.cs
 ../referencesource/mscorlib/system/security/cryptography/rsa.cs
+../referencesource/mscorlib/system/security/cryptography/rsacryptoserviceprovider.cs
 ../referencesource/mscorlib/system/security/cryptography/rsaoaepkeyexchangedeformatter.cs
 ../referencesource/mscorlib/system/security/cryptography/rsaoaepkeyexchangeformatter.cs
 ../referencesource/mscorlib/system/security/cryptography/rsapkcs1keyexchangedeformatter.cs

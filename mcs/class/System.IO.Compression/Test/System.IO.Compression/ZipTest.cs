@@ -183,6 +183,24 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		public void ZipDeleteEntryCheckEntries()
+		{
+			File.Copy("archive.zip", "delete.zip", overwrite: true);
+			using (var archive = new ZipArchive(File.Open("delete.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.IsNotNull(entry);
+
+				entry.Delete();
+
+				Assert.IsNull(archive.Entries.FirstOrDefault(e => e == entry));
+			}
+
+			File.Delete ("delete.zip");
+		}		
+
+		[Test]
 		public void ZipGetEntryDeleteUpdateMode()
 		{
 			File.Copy("archive.zip", "delete.zip", overwrite: true);

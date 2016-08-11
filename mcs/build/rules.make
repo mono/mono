@@ -45,9 +45,9 @@ INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PR
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 INTERNAL_CSC = $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
 
-RESGEN_EXE = $(topdir)/class/lib/$(PROFILE)/resgen.exe
+RESGEN_EXE = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)resgen.exe
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE)
-RESGEN = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN)
+RESGEN = MONO_PATH="$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN)
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
 
 depsdir = $(topdir)/build/deps
@@ -132,29 +132,6 @@ endif
 # Make sure propagates
 export TEST_HARNESS
 
-# start aot config
-
-# We set the prefix of the aot build flags
-# in the profile. This determines the aot type,
-# whether it be llvmonly or full. To this we append the
-# options which do not change between them, the INVARIANT_AOT_OPTIONS
-ifndef AOT_BUILD_FLAGS_PREFIX
-AOT_BUILD_FLAGS_PREFIX = --aot=
-endif
-
-# Set the options for building and running AOT
-# The trampoline numbers are provisional, they are what is required
-# to run the mcs/class test suites. They should be considered a lower bound.
-INVARIANT_AOT_OPTIONS=nimt-trampolines=900,ntrampolines=8000,nrgctx-fetch-trampolines=256
-
-ifndef MONO_DISABLE_GSHAREDVT
-INVARIANT_AOT_OPTIONS:=$(INVARIANT_AOT_OPTIONS),ngsharedvt-trampolines=2800
-endif
-
-AOT_BUILD_FLAGS = $(AOT_BUILD_FLAGS_PREFIX)$(INVARIANT_AOT_OPTIONS)
-
-# end AOT config
-
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif
@@ -223,7 +200,7 @@ aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUF
 
 $(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PROFILE)/%
 	@ mkdir -p $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
-	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode $* >> $(PROFILE)-aot.log
+	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode_tmp $* >> $(PROFILE)-aot.log
 	@ rm -rf $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")

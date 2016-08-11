@@ -41,6 +41,7 @@ namespace System.Web.UI.WebControls {
 
 
         [SuppressMessage("Microsoft.Security", "MSEC1220:ReviewDtdProcessingAssignment", Justification = "Dtd processing is needed for back-compat, but is being done as safely as possible.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3069:ReviewDtdProcessingAssignment", Justification = "Dtd processing is needed for back-compat, but is being done as safely as possible.")]
         public override void SetTagInnerText(string text) {
             if (!Util.IsWhiteSpaceString(text)) {
 
@@ -114,7 +115,9 @@ namespace System.Web.UI.WebControls {
 #pragma warning restore 0618
 
         [SuppressMessage("Microsoft.Security", "MSEC1201:DoNotUseXslTransform", Justification = "_identityTransform contents are trusted hard-coded string.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3050:DoNotUseXslTransform", Justification = "_identityTransform contents are trusted hard-coded string.")]
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "_identityTransform contents are trusted hard-coded string.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "_identityTransform contents are trusted hard-coded string.")]
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         static Xml() {
 
@@ -332,6 +335,7 @@ namespace System.Web.UI.WebControls {
 
 
         [SuppressMessage("Microsoft.Security", "MSEC1218:ReviewWebControlForSet_DocumentContent", Justification = "Legacy code that trusts our developer input.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3067:ReviewWebControlForSet_DocumentContent", Justification = "Legacy code that trusts our developer input.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]
         protected override void AddParsedSubObject(object obj) {
             if (obj is LiteralControl) {
                 // Trim the initial whitespaces since XML is very picky (related to ASURT 58100)

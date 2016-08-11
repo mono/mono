@@ -24,7 +24,9 @@ namespace CppSharp
         static List<string> Abis = new List<string> ();
         static string OutputDir;
 
+        static bool XamarinAndroid;
         static string MonodroidDir = @"";
+        static string AndroidNdkPath = @"";
         static string MaccoreDir = @"";
 
         public enum TargetPlatform
@@ -87,28 +89,28 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "i686-none-linux-android",
-                Build = "mono-x86",
+                Build = XamarinAndroid ? "x86" : "mono-x86",
                 Defines = { "TARGET_X86" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "x86_64-none-linux-android",
-                Build = "mono-x86_64",
+                Build = XamarinAndroid ? "x86_64" : "mono-x86_64",
                 Defines = { "TARGET_AMD64" }
             });            
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv5-none-linux-androideabi",
-                Build = "mono-armv6",
+                Build = XamarinAndroid ? "armeabi" : "mono-armv6",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv7-none-linux-androideabi",
-                Build = "mono-armv7",                    
+                Build = XamarinAndroid ? "armeabi-v7a" : "mono-armv7",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6",
                     "HAVE_ARMV7"
                 }
@@ -117,7 +119,7 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "aarch64-v8a-linux-android",
-                Build = "mono-aarch64",                    
+                Build = XamarinAndroid ? "arm64-v8a" : "mono-aarch64",
                 Defines = { "TARGET_ARM64" }
             });            
 
@@ -254,6 +256,9 @@ namespace CppSharp
 
         static string GetAndroidNdkPath()
         {
+            if (!String.IsNullOrEmpty (AndroidNdkPath))
+                return AndroidNdkPath;
+
             // Find the Android NDK's path from Monodroid's config.
             var configFile = Path.Combine(MonodroidDir, "env.config");
             if (!File.Exists(configFile))
@@ -272,7 +277,9 @@ namespace CppSharp
                 { "abi=", "ABI triple to generate", v => Abis.Add(v) },
                 { "o|out=", "output directory", v => OutputDir = v },
                 { "maccore=", "include directory", v => MaccoreDir = v },
-                { "monodroid=", "include directory", v => MonodroidDir = v },
+                { "monodroid=", "top monodroid directory", v => MonodroidDir = v },
+                { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
+                { "xamarin-android", "Generate for Xamarin.Android instead of monodroid", v => XamarinAndroid = true },
                 { "mono=", "include directory", v => MonoDir = v },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
@@ -319,7 +326,7 @@ namespace CppSharp
             string targetPath;
             switch (target.Platform) {
             case TargetPlatform.Android:
-                targetPath = Path.Combine (MonodroidDir, "builds");
+                targetPath = Path.Combine (MonodroidDir, XamarinAndroid ? "build-tools/mono-runtimes/obj/Debug" : "builds");
                 break;
             case TargetPlatform.WatchOS:
             case TargetPlatform.iOS:
@@ -747,6 +754,7 @@ namespace CppSharp
             var types = new List<string>
             {
                 "MonoObject",
+		"MonoObjectHandlePayload",
                 "MonoClass",
                 "MonoVTable",
                 "MonoDelegate",

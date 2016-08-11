@@ -10,14 +10,12 @@ namespace System.ServiceModel
 
     public sealed class OperationContextScope : IDisposable
     {
-        [ThreadStatic]
-        static OperationContextScope currentScope;
+        static AsyncLocal<OperationContextScope> currentScope = new AsyncLocal<OperationContextScope>();
 
         OperationContext currentContext;
         bool disposed;
         readonly OperationContext originalContext = OperationContext.Current;
-        readonly OperationContextScope originalScope = OperationContextScope.currentScope;
-        readonly Thread thread = Thread.CurrentThread;
+        readonly OperationContextScope originalScope = OperationContextScope.currentScope.Value;
 
         public OperationContextScope(IContextChannel channel)
         {
@@ -41,22 +39,19 @@ namespace System.ServiceModel
         void PushContext(OperationContext context)
         {
             this.currentContext = context;
-            OperationContextScope.currentScope = this;
+            OperationContextScope.currentScope.Value = this;
             OperationContext.Current = this.currentContext;
         }
 
         void PopContext()
         {
-            if (this.thread != Thread.CurrentThread)
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxInvalidContextScopeThread0)));
-
-            if (OperationContextScope.currentScope != this)
+            if (OperationContextScope.currentScope.Value != this)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxInterleavedContextScopes0)));
 
             if (OperationContext.Current != this.currentContext)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxContextModifiedInsideScope0)));
 
-            OperationContextScope.currentScope = this.originalScope;
+            OperationContextScope.currentScope.Value = this.originalScope;
             OperationContext.Current = this.originalContext;
 
             if (this.currentContext != null)

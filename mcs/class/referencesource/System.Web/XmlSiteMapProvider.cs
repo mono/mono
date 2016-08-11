@@ -232,6 +232,7 @@ namespace System.Web {
 
 
         [SuppressMessage("Microsoft.Security", "MSEC1205:DoNotAllowDtdOnXmlTextReader", Justification = "Legacy code that trusts our developer-controlled input.")]
+        [SuppressMessage("Microsoft.Security.Xml", "CA3054:DoNotAllowDtdOnXmlTextReader", Justification = "Legacy code that trusts our developer-controlled input.")]
         public override SiteMapNode BuildSiteMap() {
 
             SiteMapNode tempNode = _siteMapNode;

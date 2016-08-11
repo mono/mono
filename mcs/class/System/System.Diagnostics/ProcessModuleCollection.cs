@@ -58,7 +58,6 @@ namespace System.Diagnostics
 			InnerList.AddRange (processModules);
 		}
 		
-#if !NET_2_1		
 		public ProcessModule this[int index] {
 			get {
 				return (ProcessModule)InnerList[index];
@@ -79,6 +78,5 @@ namespace System.Diagnostics
 		{
 			return InnerList.IndexOf (module);
 		}
-#endif
 	}
 }

@@ -9,8 +9,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
+using MonoTests.Helpers;
 
 public class TestsBase
 {
@@ -309,6 +312,10 @@ public class Tests : TestsBase, ITest2
 		}
 		if (args.Length >0 && args [0] == "wait-one") {
 			wait_one ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "threadpool-io") {
+			threadpool_io ();
 			return 0;
 		}
 		breakpoints ();
@@ -1540,6 +1547,49 @@ public class Tests : TestsBase, ITest2
 
 	public override string virtual_method () {
 		return "V2";
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void threadpool_bp () { }
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void threadpool_io () {
+		// Start a threadpool task that blocks on I/O.
+		// Regression test for #42625
+		const int nbytes = 16;
+		var bsOut = new byte[nbytes];
+		for (int i = 0; i < nbytes; i++) {
+			bsOut[i] = (byte)i;
+		}
+		var endPoint = NetworkHelpers.LocalEphemeralEndPoint ();
+		var l = new TcpListener (endPoint);
+		l.Start ();
+		Task<byte[]> t = Task.Run (async () => {
+			var c = new TcpClient ();
+			await c.ConnectAsync (endPoint.Address, endPoint.Port);
+			var streamIn = c.GetStream ();
+			var bs = new byte[nbytes];
+			int nread = 0;
+			int nremain = nbytes;
+			while (nread < nbytes) {
+				int r = await streamIn.ReadAsync (bs, nread, nremain);
+				nread += r;
+				nremain -= r;
+			}
+			streamIn.Close ();
+			return bs;
+			});
+		var s = l.AcceptTcpClient ();
+		l.Stop ();
+		// write bytes in two groups so that the task blocks on the ReadAsync
+		var streamOut = s.GetStream ();
+		var nbytesFirst = nbytes / 2;
+		var nbytesRest = nbytes - nbytesFirst;
+		streamOut.Write (bsOut, 0, nbytesFirst);
+		threadpool_bp ();
+		streamOut.Write (bsOut, nbytesFirst, nbytesRest);
+		streamOut.Close ();
+		var bsIn = t.Result;
 	}
 }
 

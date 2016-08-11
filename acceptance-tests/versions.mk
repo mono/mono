@@ -1,5 +1,6 @@
 .PHONY: validate-versions reset-versions
 
+SUBMODULES_CONFIG_FILE = $(top_srcdir)/acceptance-tests/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
 
 $(eval $(call ValidateVersionTemplate,roslyn,ROSLYN))

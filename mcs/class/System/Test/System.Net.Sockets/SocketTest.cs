@@ -28,6 +28,7 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category ("RequiresBSDSockets")]
 	public class SocketTest
 	{
 		// note: also used in SocketCas tests

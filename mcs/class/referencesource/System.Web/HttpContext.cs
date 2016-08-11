@@ -22,6 +22,7 @@ namespace System.Web {
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Remoting.Messaging;
     using System.Security.Permissions;
     using System.Security.Principal;
@@ -1009,6 +1010,8 @@ namespace System.Web {
                 if (_delayedSessionState) {
                     lock (this) {
                         if (_delayedSessionState) {
+                            Debug.Assert(_sessionStateModule != null, "_sessionStateModule != null");
+
                             // If it's not null, it means we have a delayed session state item
                             _sessionStateModule.InitStateStoreItem(true);
                             _delayedSessionState = false;
@@ -1020,8 +1023,21 @@ namespace System.Web {
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void EnsureSessionStateIfNecessary() {
-            Debug.Assert(_sessionStateModule != null, "_sessionStateModule != null");
+            if (_sessionStateModule == null)
+            {
+                // If _sessionStateModule is null, we wouldn't be able to call 
+                // _sessionStateModule.EnsureStateStoreItemLocked(), so we return here.
+                // _sessionStateModule could be null in the following cases,
+                // 1. No session state acquired.
+                // 2. HttpResponse.Flush() happens after session state being released.
+                // 3. The session state module in use is not System.Web.SessionState.SessionStateModule.
+                //
+                // This method is for the in-framework SessionStateModule only.
+                //  OOB SessionStateModule can achieve this by using HttpResponse.AddOnSendingHeaders. 
+                return;
+            }
 
             HttpSessionState session = (HttpSessionState)Items[SessionStateUtility.SESSION_KEY];
 
@@ -1042,7 +1058,6 @@ namespace System.Web {
         }
 
         internal void RemoveHttpSessionStateModule() {
-            Debug.Assert(_sessionStateModule != null, "_sessionStateModule != null");
             _delayedSessionState = false;
             _sessionStateModule = null;
         }

@@ -89,9 +89,6 @@ static gpointer throw_corlib_exception_func;
 static gpointer try_more_restore_tramp = NULL;
 static gpointer restore_stack_protection_tramp = NULL;
 
-static MonoUnhandledExceptionFunc unhandled_exception_hook = NULL;
-static gpointer unhandled_exception_hook_data = NULL;
-
 static void try_more_restore (void);
 static void restore_stack_protection (void);
 static void mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data);
@@ -2487,9 +2484,6 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 #endif
 	GString* text;
 	char *name;
-#ifndef HOST_WIN32
-	char *wapi_desc;
-#endif
 	GError *error = NULL;
 
 	if (!thread)
@@ -2507,11 +2501,9 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	else
 		g_string_append (text, "\n\"<unnamed thread>\"");
 
-#ifndef HOST_WIN32
-	wapi_desc = wapi_current_thread_desc ();
-	g_string_append_printf (text, " tid=0x%p this=0x%p %s\n", (gpointer)(gsize)thread->tid, thread,  wapi_desc);
-	free (wapi_desc);
-#endif
+	g_string_append_printf (text, " tid=0x%p this=0x%p ", (gpointer)(gsize)thread->tid, thread);
+	mono_thread_info_describe ((MonoThreadInfo*) thread->thread_info, text);
+	g_string_append (text, "\n");
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	if (start_ctx) {
@@ -2645,7 +2637,6 @@ install_handler_block_guard (MonoJitInfo *ji, MonoContext *ctx)
 
 /*
  * Finds the bottom handler block running and install a block guard if needed.
- * FIXME add full-aot support.
  */
 gboolean
 mono_install_handler_block_guard (MonoThreadUnwindState *ctx)
@@ -2654,9 +2645,10 @@ mono_install_handler_block_guard (MonoThreadUnwindState *ctx)
 	MonoJitTlsData *jit_tls = (MonoJitTlsData *)ctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS];
 	gpointer resume_ip;
 
-	/* FIXME */
+#ifndef MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT
 	if (mono_aot_only)
 		return FALSE;
+#endif
 
 	/* Guard against a null MonoJitTlsData. This can happens if the thread receives the
          * interrupt signal before the JIT has time to initialize its TLS data for the given thread.
@@ -2822,54 +2814,6 @@ mono_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpoint
 #else
 	g_error ("This target doesn't support mono_arch_setup_async_callback");
 #endif
-}
-
-void
-mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, gpointer user_data)
-{
-	unhandled_exception_hook = func;
-	unhandled_exception_hook_data = user_data;
-}
-
-void
-mono_invoke_unhandled_exception_hook (MonoObject *exc)
-{
-	if (unhandled_exception_hook) {
-		unhandled_exception_hook (exc, unhandled_exception_hook_data);
-	} else {
-		MonoError inner_error;
-		MonoObject *other = NULL;
-		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
-		char *msg = NULL;
-		
-		if (str && is_ok (&inner_error)) {
-			msg = mono_string_to_utf8_checked (str, &inner_error);
-		}
-		if (!is_ok (&inner_error)) {
-			msg = g_strdup_printf ("Nested exception while formatting original exception");
-			mono_error_cleanup (&inner_error);
-		} else if (other) {
-			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
-			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
-
-			msg = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
-				original_backtrace, nested_backtrace);
-
-			g_free (original_backtrace);
-			g_free (nested_backtrace);
-		} else {
-			msg = g_strdup ("Nested exception trying to figure out what went wrong");
-		}
-		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg);
-		g_free (msg);
-#if defined(HOST_IOS)
-		g_assertion_message ("Terminating runtime due to unhandled exception");
-#else
-		exit (mono_environment_exitcode_get ());
-#endif
-	}
-
-	g_assert_not_reached ();
 }
 
 /*

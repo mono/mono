@@ -4,6 +4,14 @@
 // 
 // ==--==
 
+// There are cases where we have multiple assemblies that are going to import this file and 
+// if they are going to also have InternalsVisibleTo between them, there will be a compiler warning
+// that the type is found both in the source and in a referenced assembly. The compiler will prefer 
+// the version of the type defined in the source
+//
+// In order to disable the warning for this type we are disabling this warning for this entire file.
+#pragma warning disable 436
+
 // NOTE: This file should not be included in mscorlib. This should only be included in FX libraries that need to provide switches
 using System;
 using System.Collections.Generic;
@@ -126,3 +134,5 @@ namespace System
         }
     }
 }
+
+#pragma warning restore 436

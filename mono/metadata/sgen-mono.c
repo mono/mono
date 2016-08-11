@@ -140,7 +140,8 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 
 	HEAVY_STAT (++stat_wbarrier_object_copy);
 
-	if (sgen_ptr_in_nursery (obj) || ptr_on_stack (obj) || !SGEN_OBJECT_HAS_REFERENCES (src)) {
+	SGEN_ASSERT (6, !ptr_on_stack (obj), "Why is this called for a non-reference type?");
+	if (sgen_ptr_in_nursery (obj) || !SGEN_OBJECT_HAS_REFERENCES (src)) {
 		size = mono_object_class (obj)->instance_size;
 		mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 				size - sizeof (MonoObject));
@@ -525,17 +526,19 @@ object_in_domain_predicate (MonoObject *obj, void *user_data)
  * @out_array: output array
  * @out_size: size of output array
  *
- * Store inside @out_array up to @out_size objects that belong to the unloading
- * appdomain @domain. Returns the number of stored items. Can be called repeteadly
- * until it returns 0.
- * The items are removed from the finalizer data structure, so the caller is supposed
- * to finalize them.
- * @out_array should be on the stack to allow the GC to know the objects are still alive.
+ * Enqueue for finalization all objects that belong to the unloading appdomain @domain
+ * @suspend is used for early termination of the enqueuing process.
  */
-int
-mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size)
+void
+mono_gc_finalize_domain (MonoDomain *domain)
 {
-	return sgen_gather_finalizers_if (object_in_domain_predicate, domain, out_array, out_size);
+	sgen_finalize_if (object_in_domain_predicate, domain);
+}
+
+void
+mono_gc_suspend_finalizers (void)
+{
+	sgen_set_suspend_finalizers ();
 }
 
 /*
@@ -2401,6 +2404,21 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		g_assert (info->client_info.stack_end);
 
 		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+#ifdef HOST_WIN32
+		/* Windows uses a guard page before the committed stack memory pages to detect when the
+		   stack needs to be grown. If we suspend a thread just after a function prolog has
+		   decremented the stack pointer to point into the guard page but before the thread has
+		   been able to read or write to that page, starting the stack scan at aligned_stack_start
+		   will raise a STATUS_GUARD_PAGE_VIOLATION and the process will crash. This code uses
+		   VirtualQuery() to determine whether stack_start points into the guard page and then
+		   updates aligned_stack_start to point at the next non-guard page. */
+		MEMORY_BASIC_INFORMATION mem_info;
+		SIZE_T result = VirtualQuery(info->client_info.stack_start, &mem_info, sizeof(mem_info));
+		g_assert (result != 0);
+		if (mem_info.Protect & PAGE_GUARD) {
+			aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
+		}
+#endif
 
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());

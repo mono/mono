@@ -5,6 +5,7 @@ using System.Threading;
 class X
 {
 	static ManualResetEvent dispose = new ManualResetEvent (false);
+	static ManualResetEvent wait = new ManualResetEvent (false);
 
 	static IEnumerable GetIt2 ()
 	{
@@ -15,7 +16,7 @@ class X
 	static int Delay ()
 	{
 		dispose.Set ();
-		Thread.Sleep (10);
+		wait.WaitOne ();
 		return 1;
 	}
 
@@ -25,6 +26,7 @@ class X
 		ThreadPool.QueueUserWorkItem (l => {
 			dispose.WaitOne ();
 			((IDisposable) e).Dispose ();
+			wait.Set ();
 		});
 
 		if (!e.MoveNext ())

@@ -6,7 +6,9 @@ namespace System.Runtime.Serialization.Json
 {
     using System.Xml;
     using System.Globalization;
+#if !MONO
     using System.ServiceModel;
+#endif
 
 #if USE_REFEMIT
     public class JsonWriterDelegator : XmlWriterDelegator
@@ -202,7 +204,15 @@ namespace System.Runtime.Serialization.Json
             // This will break round-tripping of these dates (see bug 9690 in CSD Developer Framework)
             if (value.Kind != DateTimeKind.Utc)
             {
-                long tickCount = value.Ticks - TimeZone.CurrentTimeZone.GetUtcOffset(value).Ticks;
+                long tickCount;
+                if (!LocalAppContextSwitches.DoNotUseTimeZoneInfo)
+                {
+                    tickCount = value.Ticks - TimeZoneInfo.Local.GetUtcOffset(value).Ticks;
+                }
+                else
+                {
+                    tickCount = value.Ticks - TimeZone.CurrentTimeZone.GetUtcOffset(value).Ticks;
+                }
                 if ((tickCount > DateTime.MaxValue.Ticks) || (tickCount < DateTime.MinValue.Ticks))
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
@@ -218,7 +228,15 @@ namespace System.Runtime.Serialization.Json
                 case DateTimeKind.Unspecified:
                 case DateTimeKind.Local:
                     // +"zzzz";
-                    TimeSpan ts = TimeZone.CurrentTimeZone.GetUtcOffset(value.ToLocalTime());
+                    TimeSpan ts;
+                    if (!LocalAppContextSwitches.DoNotUseTimeZoneInfo)
+                    {
+                        ts = TimeZoneInfo.Local.GetUtcOffset(value.ToLocalTime());
+                    }
+                    else
+                    {
+                        ts = TimeZone.CurrentTimeZone.GetUtcOffset(value.ToLocalTime());
+                    }
                     if (ts.Ticks < 0)
                     {
                         writer.WriteString("-");

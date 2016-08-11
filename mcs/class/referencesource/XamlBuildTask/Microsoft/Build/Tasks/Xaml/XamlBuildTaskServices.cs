@@ -215,6 +215,12 @@ namespace Microsoft.Build.Tasks.Xaml
             appDomainSetup.ApplicationBase = buildTaskPath;
             appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
 
+            // Set the AppDomainManager class name and assembly name to the empty string. We don't want the AppDomain to try to load the
+            // Microsoft.VisualStudio.Platform.AppDomainManager.dll because it is no longer in the GAC, so it won't be found
+            // by the AppDomain that is created for the in-process build to support Intellisense in Visual Studio.
+            appDomainSetup.AppDomainManagerType = "";
+            appDomainSetup.AppDomainManagerAssembly = "";
+
             // Create appdomain with fulltrust.
             return AppDomain.CreateDomain(
                 friendlyName,

@@ -14,6 +14,7 @@ namespace System.Security.Cryptography {
     public class RSAPKCS1KeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
         RandomNumberGenerator RngValue;
         RSA _rsaKey;
+        bool?  _rsaOverridesEncrypt;
 
         //
         // public constructors
@@ -50,6 +51,7 @@ namespace System.Security.Cryptography {
                 throw new ArgumentNullException("key");
             Contract.EndContractBlock();
             _rsaKey = (RSA) key;
+            _rsaOverridesEncrypt = default(bool?);
         }
 
         public override byte[] CreateKeyExchange(byte[] rgbData) {
@@ -62,8 +64,8 @@ namespace System.Security.Cryptography {
                 throw new CryptographicUnexpectedOperationException(Environment.GetResourceString("Cryptography_MissingKey"));
 
             byte[] rgbKeyEx;
-            if (_rsaKey is RSACryptoServiceProvider) {
-                rgbKeyEx = ((RSACryptoServiceProvider) _rsaKey).Encrypt(rgbData, false);
+            if (OverridesEncrypt) {
+                rgbKeyEx = _rsaKey.Encrypt(rgbData, RSAEncryptionPadding.Pkcs1);
             }
             else {
                 int cb = _rsaKey.KeySize/8;
@@ -100,6 +102,15 @@ namespace System.Security.Cryptography {
 
         public override byte[] CreateKeyExchange(byte[] rgbData, Type symAlgType) {
             return CreateKeyExchange(rgbData);
+        }
+
+        private bool OverridesEncrypt {
+            get {
+                if (!_rsaOverridesEncrypt.HasValue) {
+                    _rsaOverridesEncrypt = Utils.DoesRsaKeyOverride(_rsaKey, "Encrypt", new Type[] { typeof(byte[]), typeof(RSAEncryptionPadding) });
+                }
+                return _rsaOverridesEncrypt.Value;
+            }
         }
     }
 }

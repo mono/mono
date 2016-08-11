@@ -7156,7 +7156,7 @@ mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int t
 	MONO_OBJECT_SETREF (res, fqname, mono_string_new (domain, name));
 	MONO_OBJECT_SETREF (res, name, mono_string_new (domain, name));
 	MONO_OBJECT_SETREF (res, scopename, mono_string_new (domain, name));
-	res->is_resource = cols [MONO_FILE_FLAGS] && FILE_CONTAINS_NO_METADATA;
+	res->is_resource = cols [MONO_FILE_FLAGS] & FILE_CONTAINS_NO_METADATA;
 	res->token = mono_metadata_make_token (MONO_TABLE_FILE, table_index + 1);
 
 	return res;
@@ -7638,6 +7638,7 @@ mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *
 	MonoReflectionEvent *res;
 	MonoReflectionMonoEvent *mono_event;
 
+	mono_error_init (error);
 	CHECK_OBJECT (MonoReflectionEvent *, event, klass);
 	mono_event = (MonoReflectionMonoEvent *)mono_object_new_checked (domain, mono_class_get_mono_event_class (), error);
 	if (!mono_event)

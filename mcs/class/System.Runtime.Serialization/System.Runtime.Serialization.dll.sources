@@ -4,6 +4,7 @@ Assembly/AssemblyInfo.cs
 
 ReferenceSources/DiagnosticUtility.cs
 ReferenceSources/FxTrace.cs
+ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/SR.cs
 ReferenceSources/SR.missing.cs
 ReferenceSources/XmlExceptionHelper.cs

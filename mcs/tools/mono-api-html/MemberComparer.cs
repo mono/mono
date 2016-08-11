@@ -424,8 +424,13 @@ namespace Xamarin.ApiDiff {
 				if (tgtAbstract) {
 					change.AppendAdded ("abstract", true).Append (" ");
 				} else if (srcWord != tgtWord) {
-					if (!tgtFinal)
-						change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+					if (!tgtFinal) {
+						if (State.IgnoreVirtualChanges) {
+							change.HasIgnoredChanges = true;
+						} else {
+							change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+						}
+					}
 				} else if (tgtWord.Length > 0) {
 					change.Append (tgtWord).Append (" ");
 				} else if (srcWord.Length > 0) {
@@ -437,7 +442,11 @@ namespace Xamarin.ApiDiff {
 				if (tgtFinal) {
 					change.Append ("final ");
 				} else {
-					change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					if (srcVirtual && !tgtVirtual && State.IgnoreVirtualChanges) {
+						change.HasIgnoredChanges = true;
+					} else {
+						change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					}
 				}
 			} else {
 				if (tgtFinal && srcVirtual) {

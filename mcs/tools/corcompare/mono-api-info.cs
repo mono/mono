@@ -59,6 +59,9 @@ namespace CorCompare
 				{ "h|?|help",
 					"Show this message and exit.",
 					v => showHelp = v != null },
+				{ "contract-api",
+					"Produces contract API with all members at each level of inheritance hierarchy",
+					v => FullAPISet = v != null },
 			};
 
 			var asms = options.Parse (args);
@@ -116,6 +119,7 @@ namespace CorCompare
 
 		internal static bool AbiMode { get; private set; }
 		internal static bool FollowForwarders { get; private set; }
+		internal static bool FullAPISet { get; set; }
 	}
 
 	public class Utils {
@@ -538,7 +542,7 @@ namespace CorCompare
 					members.Add (new ConstructorData (writer, ctors));
 				}
 
-				PropertyDefinition[] properties = GetProperties (type);
+				PropertyDefinition[] properties = GetProperties (type, Driver.FullAPISet);
 				if (properties.Length > 0) {
 					Array.Sort (properties, PropertyDefinitionComparer.Default);
 					members.Add (new PropertyData (writer, properties));
@@ -550,7 +554,7 @@ namespace CorCompare
 					members.Add (new EventData (writer, events));
 				}
 
-				MethodDefinition [] methods = GetMethods (type);
+				MethodDefinition [] methods = GetMethods (type, Driver.FullAPISet);
 				if (methods.Length > 0) {
 					Array.Sort (methods, MethodDefinitionComparer.Default);
 					members.Add (new MethodData (writer, methods));
@@ -693,53 +697,104 @@ namespace CorCompare
 		}
 
 
-		internal static PropertyDefinition [] GetProperties (TypeDefinition type) {
-			ArrayList list = new ArrayList ();
+		internal static PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
+			var list = new List<PropertyDefinition> ();
 
-			var properties = type.Properties;//type.GetProperties (flags);
-			foreach (PropertyDefinition property in properties) {
-				MethodDefinition getMethod = property.GetMethod;
-				MethodDefinition setMethod = property.SetMethod;
+			var t = type;
+			do {
+				var properties = t.Properties;//type.GetProperties (flags);
+				foreach (PropertyDefinition property in properties) {
+					MethodDefinition getMethod = property.GetMethod;
+					MethodDefinition setMethod = property.SetMethod;
 
-				bool hasGetter = (getMethod != null) && MustDocumentMethod (getMethod);
-				bool hasSetter = (setMethod != null) && MustDocumentMethod (setMethod);
+					bool hasGetter = (getMethod != null) && MustDocumentMethod (getMethod);
+					bool hasSetter = (setMethod != null) && MustDocumentMethod (setMethod);
 
-				// if neither the getter or setter should be documented, then
-				// skip the property
-				if (hasGetter || hasSetter) {
-					list.Add (property);
+					// if neither the getter or setter should be documented, then
+					// skip the property
+					if (hasGetter || hasSetter) {
+
+						if (t != type && list.Any (l => l.Name == property.Name))
+							continue;
+
+						list.Add (property);
+					}
 				}
-			}
 
-			return (PropertyDefinition []) list.ToArray (typeof (PropertyDefinition));
+				if (!fullAPI)
+					break;
+
+				if (t.IsInterface || t.IsEnum)
+					break;
+
+				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
+					t = null;
+				else
+					t = t.BaseType.Resolve ();
+
+			} while (t != null);
+
+			return list.ToArray ();
 		}
 
-		private MethodDefinition[] GetMethods (TypeDefinition type)
+		private MethodDefinition[] GetMethods (TypeDefinition type, bool fullAPI)
 		{
-			ArrayList list = new ArrayList ();
+			var list = new List<MethodDefinition> ();
 
-			var methods = type.Methods;//type.GetMethods (flags);
-			foreach (MethodDefinition method in methods) {
-				if (method.IsSpecialName && !method.Name.StartsWith ("op_", StringComparison.Ordinal))
-					continue;
+			var t = type;
+			do {
+				var methods = t.Methods;//type.GetMethods (flags);
+				foreach (MethodDefinition method in methods) {
+					if (method.IsSpecialName && !method.Name.StartsWith ("op_", StringComparison.Ordinal))
+						continue;
 
-				// we're only interested in public or protected members
-				if (!MustDocumentMethod(method))
-					continue;
+					// we're only interested in public or protected members
+					if (!MustDocumentMethod (method))
+						continue;
 
-				if (IsFinalizer (method)) {
-					string name = method.DeclaringType.Name;
-					int arity = name.IndexOf ('`');
-					if (arity > 0)
-						name = name.Substring (0, arity);
+					if (t == type && IsFinalizer (method)) {
+						string name = method.DeclaringType.Name;
+						int arity = name.IndexOf ('`');
+						if (arity > 0)
+							name = name.Substring (0, arity);
 
-					method.Name = "~" + name;
+						method.Name = "~" + name;
+					}
+
+					if (t != type && list.Any (l => l.DeclaringType != method.DeclaringType && l.Name == method.Name && l.Parameters.Count == method.Parameters.Count &&
+					                           l.Parameters.SequenceEqual (method.Parameters, new ParameterComparer ())))
+						continue;
+
+					list.Add (method);
 				}
 
-				list.Add (method);
+				if (!fullAPI)
+					break;
+
+				if (t.IsInterface || t.IsEnum)
+					break;
+
+				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
+					t = null;
+				else
+					t = t.BaseType.Resolve ();
+
+			} while (t != null);
+
+			return list.ToArray ();
+		}
+
+		sealed class ParameterComparer : IEqualityComparer<ParameterDefinition>
+		{
+			public bool Equals (ParameterDefinition x, ParameterDefinition y)
+			{
+				return x.ParameterType.Name == y.ParameterType.Name;
 			}
 
-			return (MethodDefinition []) list.ToArray (typeof (MethodDefinition));
+			public int GetHashCode (ParameterDefinition obj)
+			{
+				return obj.ParameterType.Name.GetHashCode ();
+			}
 		}
 
 		static bool IsFinalizer (MethodDefinition method)
@@ -1476,15 +1531,13 @@ namespace CorCompare
 
 				ParameterDefinition info = infos [i];
 
-				string modifier;
-				if ((info.Attributes & ParameterAttributes.In) != 0)
-					modifier = "in";
-				else if ((info.Attributes & ParameterAttributes.Out) != 0)
-					modifier = "out";
-				else
-					modifier = string.Empty;
+				if (info.ParameterType.IsByReference) {
+					string modifier;
+					if ((info.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
+						modifier = "out";
+					else
+						modifier = "ref";
 
-				if (modifier.Length > 0) {
 					signature.Append (modifier);
 					signature.Append (" ");
 				}

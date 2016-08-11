@@ -101,20 +101,13 @@ namespace System.ServiceModel.Activation
             }
         }
 
-        // Provides the version of the WebSocket protocol supported by IIS. Throws an exception if called before we determined the value.
+        // Provides the version of the WebSocket protocol supported by IIS.
         // Returns null if WebSockets are not supported (because the IIS WebSocketModule is not installed or enabled).
         public override string WebSocketVersion
         {
             get
             {
-                if (isWebSocketVersionSet)
-                {
-                    return webSocketVersion;
-                }
-                else
-                {
-                    throw Fx.AssertAndFailFast("The supported WebSocket protocol version is not determined at this time.");
-                }
+                return isWebSocketVersionSet ? webSocketVersion : null;
             }
         }
 
@@ -136,8 +129,6 @@ namespace System.ServiceModel.Activation
         /// </remarks>
         public static void TrySetWebSocketVersion(HttpApplication application)
         {
-            Fx.Assert(application != null, "Invalid argument.");
-
             if (!isWebSocketVersionSet)
             {
                 webSocketVersion = application.Request.ServerVariables[WebSocketVersionServerProperty];

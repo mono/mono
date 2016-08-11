@@ -1101,31 +1101,82 @@ namespace System.ServiceModel.Channels
 
 
 #if !FEATURE_CORECLR
-        // On CoreCLR this is not the way to determine if a process is a tailored application (which means APPX).
-        // On CoreCLR AppX is determined by a flag past to the host which is exposed by AppDomain.IsAppXProcess in mscorlib.
-        // The reason for this if-def is to ensure nobody takes a dependency on this on CoreCLR.
-        
+        private static IntPtr GetCurrentProcessToken() { return new IntPtr(-4); }
+
+        enum AppPolicyClrCompat
+        {
+            AppPolicyClrCompat_Others = 0,
+            AppPolicyClrCompat_ClassicDesktop = 1,
+            AppPolicyClrCompat_Universal = 2,
+            AppPolicyClrCompat_PackagedDesktop = 3
+        };
+
+        [DllImport(KERNEL32, CharSet = CharSet.None, EntryPoint = "AppPolicyGetClrCompat")]
+        [System.Security.SecuritySafeCritical]
+        [return: MarshalAs(UnmanagedType.I4)]
+        private static extern Int32 _AppPolicyGetClrCompat(IntPtr processToken, out AppPolicyClrCompat appPolicyClrCompat);
+
         // AppModel.h functions (Win8+)
         [DllImport(KERNEL32, CharSet = CharSet.None, EntryPoint = "GetCurrentPackageId")]
-        [SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         [return: MarshalAs(UnmanagedType.I4)]
-        private static extern Int32 GetCurrentPackageId(ref Int32 pBufferLength, Byte[] pBuffer);
+        private static extern Int32 _GetCurrentPackageId(ref Int32 pBufferLength, Byte[] pBuffer);
 
-        [Fx.Tag.SecurityNote(
-            Critical = "Critical because it calls the native function GetCurrentPackageId.",
-            Safe = "Safe because it takes no user input and it doesn't leak security sensitive information.")]
-        [SecuritySafeCritical]
+        [DllImport(KERNEL32, CharSet=System.Runtime.InteropServices.CharSet.Auto, BestFitMapping=false)]
+        [ResourceExposure(ResourceScope.Machine)]
+        private static extern IntPtr GetModuleHandle(string modName);
+
+        // Copied from Win32Native.cs
+        // Note - do NOT use this to call methods.  Use P/Invoke, which will
+        // do much better things w.r.t. marshaling, pinning memory, security 
+        // stuff, better interactions with thread aborts, etc.  This is used
+        // solely by DoesWin32MethodExist for avoiding try/catch EntryPointNotFoundException
+        // in scenarios where an OS Version check is insufficient
+        [DllImport(KERNEL32, CharSet=CharSet.Ansi, BestFitMapping=false, SetLastError=true, ExactSpelling=true)]
+        [ResourceExposure(ResourceScope.None)]
+        private static extern IntPtr GetProcAddress(IntPtr hModule, String methodName);
+
+        [System.Security.SecurityCritical]  // auto-generated
+        private static bool DoesWin32MethodExist(String moduleName, String methodName)
+        {
+            // GetModuleHandle does not increment the module's ref count, so we don't need to call FreeLibrary.
+            IntPtr hModule = GetModuleHandle(moduleName);
+            if (hModule == IntPtr.Zero) {
+                System.Diagnostics.Debug.Assert(hModule != IntPtr.Zero, "GetModuleHandle failed.  Dll isn't loaded?");
+                return false;
+            }
+            IntPtr functionPointer = GetProcAddress(hModule, methodName);
+            return (functionPointer != IntPtr.Zero);       
+        }
+        
+        // On CoreCLR this is not the way to determine if a process is a tailored application (which means APPX).
+        // On CoreCLR AppX is determined by a flag past to the host which is exposed by AppDomain.IsAppXProcess in mscorlib.
+        // The reason for this if-def is to ensure nobody takes a dependency on this on CoreCLR.        
+        [System.Security.SecuritySafeCritical]
         private static bool _IsTailoredApplication()
         {
-            if (OSEnvironmentHelper.IsAtLeast(OSVersion.Win8))
+            Version windows8Version = new Version(6, 2, 0, 0);
+            OperatingSystem os = Environment.OSVersion;
+            bool osSupportsPackagedProcesses = os.Platform == PlatformID.Win32NT && os.Version >= windows8Version;
+
+            if (osSupportsPackagedProcesses && DoesWin32MethodExist(KERNEL32, "AppPolicyGetClrCompat"))
             {
-                int bufLen = 0;
-                // Will return ERROR_INSUFFICIENT_BUFFER when running within a tailored application,
+                // Use AppPolicyGetClrCompat if it is available. Return true if and only if this is a UWA which means if
+                // this is packaged desktop app this method will return false. This may cause some confusion however 
+                // this is necessary to make the behavior of packaged desktop apps identical to desktop apps.
+                AppPolicyClrCompat appPolicyClrCompat;
+                return _AppPolicyGetClrCompat(GetCurrentProcessToken(), out appPolicyClrCompat) == ERROR_SUCCESS && 
+                    appPolicyClrCompat == AppPolicyClrCompat.AppPolicyClrCompat_Universal;
+            }
+            else if(osSupportsPackagedProcesses && DoesWin32MethodExist(KERNEL32, "GetCurrentPackageId"))
+            {
+                Int32 bufLen = 0;
+                // Will return ERROR_INSUFFICIENT_BUFFER when running within a packaged application,
                 // and will return ERROR_NO_PACKAGE_IDENTITY otherwise.
-                return GetCurrentPackageId(ref bufLen, null) == ERROR_INSUFFICIENT_BUFFER;
+                return _GetCurrentPackageId(ref bufLen, null) == ERROR_INSUFFICIENT_BUFFER;
             }
             else
-            {
+            {   // We must be running on a downlevel OS.
                 return false;
             }
         }

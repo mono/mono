@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls {
 
         private ArrayList dateList;
         private SelectedDatesCollection selectedDates;
-        private Globalization.Calendar threadCalendar;
+        private System.Globalization.Calendar threadCalendar;
         private DateTime minSupportedDate;
         private DateTime maxSupportedDate;
 #if DEBUG

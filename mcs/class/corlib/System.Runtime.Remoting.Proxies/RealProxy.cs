@@ -81,8 +81,10 @@ namespace System.Runtime.Remoting.Proxies
 				return field.GetValue(o);
 			}
 
-			object[] inArgs = new object[] { Type.GetTypeFromHandle(typeHandle).FullName,
-							  field.Name };
+			string typeName = Type.GetTypeFromHandle(typeHandle).FullName;
+			string fieldName = field.Name;
+			object[] inArgs = new object[] { typeName,
+							  fieldName };
 			object[] outArgsMsg = new object[1];
 			MethodInfo minfo = typeof(object).GetMethod("FieldGetter", BindingFlags.NonPublic | BindingFlags.Instance);
 			if (minfo == null)
@@ -95,6 +97,36 @@ namespace System.Runtime.Remoting.Proxies
 				throw exc;
 			return outArgs[0];
 		}
+
+		internal void StoreRemoteField (IntPtr classPtr, IntPtr fieldPtr, object arg) {
+			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
+			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
+			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
+			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
+
+			if (InCurrentContext ()) {
+				object o = _rp._server;
+				field.SetValue (o, arg);
+				return;
+			}
+
+			string typeName = Type.GetTypeFromHandle (typeHandle).FullName;
+			string fieldName = field.Name;
+			object [] inArgs = new object[] { typeName,
+							  fieldName,
+							  arg };
+			MethodInfo minfo = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic | BindingFlags.Instance);
+			if (minfo == null)
+				throw new MissingMethodException ("System.Object", "FieldSetter");
+
+			MonoMethodMessage msg = new MonoMethodMessage (minfo, inArgs, null);
+			object [] outArgs;
+			Exception exc;
+			RealProxy.PrivateInvoke (_rp, msg, out exc, out outArgs);
+			if (exc != null)
+				throw exc;
+		}
+
 	}
 #pragma warning restore 169, 649
 	

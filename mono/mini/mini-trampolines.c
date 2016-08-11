@@ -1304,15 +1304,19 @@ gpointer
 mono_create_handler_block_trampoline (void)
 {
 	static gpointer code;
-	if (code) {
+
+	if (code)
+		return code;
+
+	if (mono_aot_only) {
+		gpointer tmp = mono_aot_get_trampoline ("handler_block_trampoline");
+		g_assert (tmp);
 		mono_memory_barrier ();
+		code = tmp;
 		return code;
 	}
 
-	g_assert (!mono_aot_only);
-
 	mono_trampolines_lock ();
-
 	if (!code) {
 		MonoTrampInfo *info;
 		gpointer tmp;
@@ -1518,8 +1522,7 @@ mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *e
 		if (code)
 			return code;
 		if (mono_llvm_only) {
-			if (method->wrapper_type == MONO_WRAPPER_PROXY_ISINST ||
-				method->wrapper_type == MONO_WRAPPER_STFLD_REMOTE)
+			if (method->wrapper_type == MONO_WRAPPER_PROXY_ISINST)
 				/* These wrappers are not generated */
 				return method_not_found;
 			/* Methods are lazily initialized on first call, so this can't lead recursion */

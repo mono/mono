@@ -5044,7 +5044,12 @@ namespace System.Data {
             if (stream == null)
                 return XmlReadMode.Auto;
 
-            return ReadXml( new XmlTextReader(stream), false);
+            XmlTextReader xr = new XmlTextReader(stream);
+
+            // Prevent Dtd entity in DataTable 
+            xr.XmlResolver = null;
+
+            return ReadXml(xr, false);
         }
 
         public XmlReadMode ReadXml(TextReader reader)
@@ -5052,7 +5057,12 @@ namespace System.Data {
             if (reader == null)
                 return XmlReadMode.Auto;
 
-            return ReadXml( new XmlTextReader(reader), false);
+            XmlTextReader xr = new XmlTextReader(reader);
+
+            // Prevent Dtd entity in DataTable 
+            xr.XmlResolver = null;
+
+            return ReadXml(xr, false);
         }
 
         [ResourceExposure(ResourceScope.Machine)]
@@ -5060,7 +5070,12 @@ namespace System.Data {
         public XmlReadMode ReadXml(string fileName)
         {
             XmlTextReader xr = new XmlTextReader(fileName);
-            try {
+
+            // Prevent Dtd entity in DataTable 
+            xr.XmlResolver = null;
+
+            try
+            {
                 return ReadXml( xr , false);
             }
             finally {

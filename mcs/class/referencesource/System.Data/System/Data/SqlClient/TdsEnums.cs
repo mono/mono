@@ -544,6 +544,9 @@ namespace System.Data.SqlClient {
         public const int IMPERSONATION_FAILED = 1346;
         public const int P_TOKENTOOLONG = 103;
 
+        // SQL error that indicates retry for Always Encrypted
+        public const int TCE_CONVERSION_ERROR_CLIENT_RETRY = 33514;
+
         // SNI\Win32 error values
         // NOTE: these are simply windows system error codes, not SNI specific
         public const uint  SNI_UNINITIALIZED        = unchecked((uint)-1);

@@ -102,7 +102,7 @@ namespace System.IO {
                 state.EnsureState();
             }
 #else
-            new FileIOPermission(FileIOPermissionAccess.Read, demandDir, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandDir, false, false);
 #endif
 
             FullPath = fullPath;
@@ -130,7 +130,7 @@ namespace System.IO {
         {
 #if !FEATURE_CORECLR
             demandDir = new String[] {Directory.GetDemandDir(FullPath, true)};
-            new FileIOPermission(FileIOPermissionAccess.Read, demandDir, false, false ).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandDir, false, false );
 #endif
             DisplayPath = GetDisplayName(OriginalPath, FullPath);
         }
@@ -169,7 +169,7 @@ namespace System.IO {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.PathDiscovery | FileSecurityStateAccess.Read, String.Empty, dir.demandDir[0]);
                 state.EnsureState();
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery | FileIOPermissionAccess.Read, dir.demandDir, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery | FileIOPermissionAccess.Read, dir.demandDir, false, false);
 #endif
                 return dir;
             }
@@ -234,7 +234,7 @@ namespace System.IO {
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, OriginalPath, demandDirForCreation);
             state.EnsureState();
 #else
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { demandDirForCreation }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, demandDirForCreation, false, false);
 #endif
 
             Directory.InternalCreateDirectory(fullPath, path, directorySecurity);
@@ -609,7 +609,7 @@ namespace System.IO {
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPath);
                 sourceState.EnsureState();
 #else
-                new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { demandPath }, false, false).Demand();
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandPath, false, false);
 #endif
                 return new DirectoryInfo(rootPath);
             }
@@ -629,7 +629,7 @@ namespace System.IO {
             FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, DisplayPath, Directory.GetDemandDir(FullPath, true));
             sourceState.EnsureState();
 #else
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandDir, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandDir, false, false);
 #endif
             String fullDestDirName = Path.GetFullPathInternal(destDirName);
             String demandPath;
@@ -648,9 +648,9 @@ namespace System.IO {
             FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destDirName, demandPath);
             destState.EnsureState();
 #else
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandPath).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandPath);
 #endif
-            
+
             String fullSourcePath;
             if (FullPath.EndsWith(Path.DirectorySeparatorChar))
                 fullSourcePath = FullPath;

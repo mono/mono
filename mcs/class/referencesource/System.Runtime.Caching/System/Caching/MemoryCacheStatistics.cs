@@ -27,7 +27,7 @@ namespace System.Runtime.Caching {
         private int _lastTrimPercent;
         private DateTime _lastTrimTime;        
         private int _pollingInterval;
-        private Timer _timer;
+        private GCHandleRef<Timer> _timerHandleRef;
         private Object _timerLock;
         private long _totalCountBeforeTrim;
 
@@ -44,8 +44,10 @@ namespace System.Runtime.Caching {
         private void AdjustTimer() {
             lock (_timerLock) {
 
-                if (_timer == null)
+                if (_timerHandleRef == null)
                     return;
+
+                Timer timer = _timerHandleRef.Target;
 
                 // the order of these if statements is important
 
@@ -53,7 +55,7 @@ namespace System.Runtime.Caching {
                 if (_physicalMemoryMonitor.IsAboveHighPressure() || _cacheMemoryMonitor.IsAboveHighPressure()) {
                     if (_pollingInterval > MEMORYSTATUS_INTERVAL_5_SECONDS) {
                         _pollingInterval = MEMORYSTATUS_INTERVAL_5_SECONDS;
-                        _timer.Change(_pollingInterval, _pollingInterval);
+                        timer.Change(_pollingInterval, _pollingInterval);
                     }
                     return;
                 }
@@ -65,7 +67,7 @@ namespace System.Runtime.Caching {
                     int newPollingInterval = Math.Min(_configPollingInterval, MEMORYSTATUS_INTERVAL_30_SECONDS);
                     if (_pollingInterval != newPollingInterval) {
                         _pollingInterval = newPollingInterval;
-                        _timer.Change(_pollingInterval, _pollingInterval);
+                        timer.Change(_pollingInterval, _pollingInterval);
                     }
                     return;
                 }
@@ -73,7 +75,7 @@ namespace System.Runtime.Caching {
                 // there is no pressure, interval should be the value from config
                 if (_pollingInterval != _configPollingInterval) {
                     _pollingInterval = _configPollingInterval;
-                    _timer.Change(_pollingInterval, _pollingInterval);
+                    timer.Change(_pollingInterval, _pollingInterval);
                 }
             }
         }
@@ -126,7 +128,8 @@ namespace System.Runtime.Caching {
             bool dispose = true;
             try {
                 _cacheMemoryMonitor = new CacheMemoryMonitor(_memoryCache, _configCacheMemoryLimitMegabytes);
-                _timer = new Timer(new TimerCallback(CacheManagerTimerCallback), null, _configPollingInterval, _configPollingInterval);
+                Timer timer = new Timer(new TimerCallback(CacheManagerTimerCallback), null, _configPollingInterval, _configPollingInterval);
+                _timerHandleRef = new GCHandleRef<Timer>(timer);
                 dispose = false;
             }
             finally {
@@ -246,9 +249,9 @@ namespace System.Runtime.Caching {
         public void Dispose() {
             if (Interlocked.Exchange(ref _disposed, 1) == 0) {
                 lock (_timerLock) {
-                    Timer timer = _timer;
-                    if (timer != null && Interlocked.CompareExchange(ref _timer, null, timer) == timer) {
-                        timer.Dispose();
+                    GCHandleRef<Timer> timerHandleRef = _timerHandleRef;
+                    if (timerHandleRef != null && Interlocked.CompareExchange(ref _timerHandleRef, null, timerHandleRef) == timerHandleRef) {
+                        timerHandleRef.Dispose();
                         Dbg.Trace("MemoryCacheStats", "Stopped CacheMemoryTimers");
                     }
                 }

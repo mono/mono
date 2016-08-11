@@ -220,7 +220,7 @@ namespace Mono.CSharp
 			return Builder.__AddModule (moduleFile);
 		}
 
-		protected override List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		protected override List<AssemblyReferenceErrorInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
 			return loader.GetNotUnifiedReferences (assemblyName);
 		}
@@ -238,7 +238,7 @@ namespace Mono.CSharp
 		Assembly corlib;
 		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
-		Dictionary<AssemblyName, List<string[]>> resolved_version_mismatches;
+		Dictionary<AssemblyName, List<AssemblyReferenceErrorInfo>> resolved_version_mismatches;
 		static readonly TypeName objectTypeName = new TypeName ("System", "Object");
 
 		static StaticLoader ()
@@ -359,25 +359,24 @@ namespace Mono.CSharp
 				if (version_mismatch is AssemblyBuilder)
 					return version_mismatch;
 
-				var v1 = new AssemblyName (refname).Version;
+				var ref_an = new AssemblyName (refname);
+				var v1 = ref_an.Version;
 				var v2 = version_mismatch.GetName ().Version;
 
 				if (v1 > v2) {
 					if (resolved_version_mismatches == null)
-						resolved_version_mismatches = new Dictionary<AssemblyName, List<string[]>> ();
+						resolved_version_mismatches = new Dictionary<AssemblyName, List<AssemblyReferenceErrorInfo>> ();
 
 					var an = args.RequestingAssembly.GetName ();
-					List<string[]> names;
+					List<AssemblyReferenceErrorInfo> names;
 					if (!resolved_version_mismatches.TryGetValue (an, out names)) {
-						names = new List<string[]> ();
+						names = new List<AssemblyReferenceErrorInfo> ();
 						resolved_version_mismatches.Add (an, names);
 					}
 
-					names.Add (new[] {
-						args.RequestingAssembly.Location,
+					names.Add (new AssemblyReferenceErrorInfo (ref_an, args.RequestingAssembly.Location,
 						string.Format ("Assembly `{0}' depends on `{1}' which has a higher version number than referenced assembly `{2}'",
-							args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName)
-					});
+					                   args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName)));
 
 					return version_mismatch;
 				}
@@ -434,9 +433,9 @@ namespace Mono.CSharp
 			return default_references.ToArray ();
 		}
 
-		public List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		public List<AssemblyReferenceErrorInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
-			List<string[]> list = null;
+			List<AssemblyReferenceErrorInfo> list = null;
 			if (resolved_version_mismatches != null)
 				resolved_version_mismatches.TryGetValue (assemblyName, out list);
 

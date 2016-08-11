@@ -1347,31 +1347,38 @@ namespace System.ServiceModel.Description
 
         internal static XmlSchema CreateWsdl()
         {
-            return XmlSchema.Read(new StringReader(wsdl), null);
+            StringReader reader = new StringReader(wsdl);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
+
         internal static XmlSchema CreateSoap()
         {
-            return XmlSchema.Read(new StringReader(soap), null);
+            StringReader reader = new StringReader(soap);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         internal static XmlSchema CreateSoapEncoding()
         {
-            return XmlSchema.Read(new StringReader(soapEncoding), null);
+            StringReader reader = new StringReader(soapEncoding);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         internal static XmlSchema CreateFakeSoapEncoding()
         {
-            return XmlSchema.Read(new StringReader(fakeSoapEncoding), null);
+            StringReader reader = new StringReader(fakeSoapEncoding);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         internal static XmlSchema CreateFakeXsdSchema()
         {
-            return XmlSchema.Read(new StringReader(fakeXsd), null);
+            StringReader reader = new StringReader(fakeXsd);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         internal static XmlSchema CreateFakeXmlSchema()
         {
-            return XmlSchema.Read(new StringReader(fakeXmlSchema), null);
+            StringReader reader = new StringReader(fakeXmlSchema);
+            return XmlSchema.Read(new XmlTextReader(reader) { DtdProcessing = DtdProcessing.Prohibit }, null);
         }
 
         internal static bool IsKnownSchema(string ns)

@@ -44,6 +44,7 @@ namespace System.Web.Security.Cryptography {
             return new DESCryptoServiceProvider();
         }
 
+        [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:SHA1CannotBeUsed", Justification = @"This is only used by legacy code; new features do not use this algorithm.")]
         internal static HMACSHA1 CreateHMACSHA1() {
             return new HMACSHA1();
         }

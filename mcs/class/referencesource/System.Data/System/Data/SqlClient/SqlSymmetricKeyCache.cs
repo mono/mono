@@ -13,18 +13,19 @@ namespace System.Data.SqlClient {
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.Caching;
     using System.Text;
 
     /// <summary>
     /// <para> Implements a cache of Symmetric Keys (once they are decrypted).Useful for rapidly decrypting multiple data values.</para>
     /// </summary>
     sealed internal class SqlSymmetricKeyCache {
-        private readonly ConcurrentDictionary<string,SqlClientSymmetricKey> _cache;
+        private readonly MemoryCache _cache;
         private static readonly SqlSymmetricKeyCache _singletonInstance = new SqlSymmetricKeyCache();
 
 
         private SqlSymmetricKeyCache () {
-            _cache = new ConcurrentDictionary<string, SqlClientSymmetricKey>(concurrencyLevel: 4 * Environment.ProcessorCount /* default value in ConcurrentDictionary*/, capacity: 2);
+            _cache = new MemoryCache("ColumnEncryptionKeyCache");
         }
 
         internal static SqlSymmetricKeyCache GetInstance () {
@@ -54,10 +55,10 @@ namespace System.Data.SqlClient {
             Debug.Assert(cacheLookupKey.Length <= capacity, "We needed to allocate a larger array");
 #endif //DEBUG
 
-            encryptionKey = null;
-
             // Lookup the key in cache
-            if (!_cache.TryGetValue(cacheLookupKey, out encryptionKey)) {
+            encryptionKey = _cache.Get(cacheLookupKey) as SqlClientSymmetricKey;
+            
+            if (encryptionKey == null) {
                 Debug.Assert(SqlConnection.ColumnEncryptionTrustedMasterKeyPaths != null, @"SqlConnection.ColumnEncryptionTrustedMasterKeyPaths should not be null");
 
                 // Check against the trusted key paths
@@ -96,9 +97,13 @@ namespace System.Data.SqlClient {
 
                 encryptionKey = new SqlClientSymmetricKey (plaintextKey);
 
-                // In case multiple threads reach here at the same time, the first one wins.
-                // The allocated memory will be reclaimed by Garbage Collector.
-                _cache.TryAdd(cacheLookupKey, encryptionKey);
+                // If the cache TTL is zero, don't even bother inserting to the cache.
+                if (SqlConnection.ColumnEncryptionKeyCacheTtl != TimeSpan.Zero) {
+                    // In case multiple threads reach here at the same time, the first one wins.
+                    // The allocated memory will be reclaimed by Garbage Collector.
+                    DateTimeOffset expirationTime = DateTimeOffset.UtcNow.Add(SqlConnection.ColumnEncryptionKeyCacheTtl);
+                    _cache.Add(cacheLookupKey, encryptionKey, expirationTime);
+                }
             }
 
             return true;

@@ -81,7 +81,12 @@ namespace System.Data.SqlClient {
         /// Force the client to sleep during sp_describe_parameter_encryption after ReadDescribeEncryptionParameterResults.
         /// </summary>
         private static bool _sleepAfterReadDescribeEncryptionParameterResults = false;
-#endif
+
+        /// <summary>
+        /// Internal flag for testing purposes that forces all queries to internally end async calls.
+        /// </summary>
+        private static bool _forceInternalEndQuery = false;
+#endif 
 
         // devnote: Prepare
         // Against 7.0 Server (Sphinx) a prepare/unprepare requires an extra roundtrip to the server.
@@ -286,6 +291,16 @@ namespace System.Data.SqlClient {
                 return _isDescribeParameterEncryptionRPCCurrentlyInProgress;
             }
         }
+
+        /// <summary>
+        /// A flag to indicate if EndExecute was already initiated by the Begin call.
+        /// </summary>
+        private volatile bool _internalEndExecuteInitiated;
+
+        /// <summary>
+        /// A flag to indicate whether we postponed caching the query metadata for this command.
+        /// </summary>
+        internal bool CachingQueryMetadataPostponed { get; set; }
 
         //
         //  Smi execution-specific stuff
@@ -1170,7 +1185,8 @@ namespace System.Data.SqlClient {
             try {
                 statistics = SqlStatistics.StartTimer(Statistics);
                 WriteBeginExecuteEvent();
-                InternalExecuteNonQuery(null, ADP.ExecuteNonQuery, false, CommandTimeout);
+                bool usedCache;
+                InternalExecuteNonQuery(null, ADP.ExecuteNonQuery, false, CommandTimeout, out usedCache);
                 success = true;
                 return _rowsAffected;
             }
@@ -1199,7 +1215,8 @@ namespace System.Data.SqlClient {
             Bid.ScopeEnter(out hscp, "<sc.SqlCommand.ExecuteToPipe|INFO> %d#", ObjectID);
             try {
                 statistics = SqlStatistics.StartTimer(Statistics);
-                InternalExecuteNonQuery(null, ADP.ExecuteNonQuery, true, CommandTimeout);
+                bool usedCache;
+                InternalExecuteNonQuery(null, ADP.ExecuteNonQuery, true, CommandTimeout, out usedCache);
             }
             finally {
                 SqlStatistics.StopTimer(statistics);
@@ -1217,34 +1234,41 @@ namespace System.Data.SqlClient {
         public IAsyncResult BeginExecuteNonQuery(AsyncCallback callback, object stateObject) {
             Bid.CorrelationTrace("<sc.SqlCommand.BeginExecuteNonQuery|API|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
             SqlConnection.ExecutePermission.Demand();
-            return BeginExecuteNonQueryInternal(callback, stateObject, 0);
+            return BeginExecuteNonQueryInternal(0, callback, stateObject, 0, inRetry: false);
         }
 
         private IAsyncResult BeginExecuteNonQueryAsync(AsyncCallback callback, object stateObject) {
-            return BeginExecuteNonQueryInternal(callback, stateObject, CommandTimeout, asyncWrite:true);
+            return BeginExecuteNonQueryInternal(0, callback, stateObject, CommandTimeout, inRetry: false, asyncWrite:true);
         }
 
-        private IAsyncResult BeginExecuteNonQueryInternal(AsyncCallback callback, object stateObject, int timeout, bool asyncWrite = false) {
-            // Reset _pendingCancel upon entry into any Execute - used to synchronize state
-            // between entry into Execute* API and the thread obtaining the stateObject.
-            _pendingCancel = false;
+        private IAsyncResult BeginExecuteNonQueryInternal(CommandBehavior behavior, AsyncCallback callback, object stateObject, int timeout, bool inRetry, bool asyncWrite = false) {
+            TaskCompletionSource<object> globalCompletion = new TaskCompletionSource<object>(stateObject);
+            TaskCompletionSource<object> localCompletion = new TaskCompletionSource<object>(stateObject);
 
-            ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
-                                    // back into pool when we should not.
-            
+            if (!inRetry) {
+                // Reset _pendingCancel upon entry into any Execute - used to synchronize state
+                // between entry into Execute* API and the thread obtaining the stateObject.
+                _pendingCancel = false;
+
+                ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
+                                        // back into pool when we should not.
+            }
+
             SqlStatistics statistics = null;
             try {
-                statistics = SqlStatistics.StartTimer(Statistics);
-                WriteBeginExecuteEvent();
-                TaskCompletionSource<object> completion = new TaskCompletionSource<object>(stateObject);
+                if (!inRetry) {
+                    statistics = SqlStatistics.StartTimer(Statistics);
+                    WriteBeginExecuteEvent();
+                }
 
+                bool usedCache;
                 try { // InternalExecuteNonQuery already has reliability block, but if failure will not put stateObj back into pool.
-                    Task execNQ = InternalExecuteNonQuery(completion, ADP.BeginExecuteNonQuery, false, timeout, asyncWrite);
+                    Task execNQ = InternalExecuteNonQuery(localCompletion, ADP.BeginExecuteNonQuery, false, timeout, out usedCache, asyncWrite, inRetry: inRetry);
                     if (execNQ != null) {
-                        AsyncHelper.ContinueTask(execNQ, completion, () => BeginExecuteNonQueryInternalReadStage(completion));
+                        AsyncHelper.ContinueTask(execNQ, localCompletion, () => BeginExecuteNonQueryInternalReadStage(localCompletion));
                     }
                     else {
-                        BeginExecuteNonQueryInternalReadStage(completion);
+                        BeginExecuteNonQueryInternalReadStage(localCompletion);
                     }
                 }
                 catch (Exception e) {
@@ -1258,12 +1282,18 @@ namespace System.Data.SqlClient {
                     throw;
                 }
 
-                // Add callback after work is done to avoid overlapping Begin\End methods
-                if (callback != null) {
-                    completion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
+                // When we use query caching for parameter encryption we need to retry on specific errors.
+                // In these cases finalize the call internally and trigger a retry when needed.
+                if (!TriggerInternalEndAndRetryIfNecessary(behavior, stateObject, timeout, ADP.EndExecuteNonQuery, usedCache, inRetry, asyncWrite, globalCompletion, localCompletion, InternalEndExecuteNonQuery, BeginExecuteNonQueryInternal)) {
+                    globalCompletion = localCompletion;
                 }
 
-                return completion.Task;
+                // Add callback after work is done to avoid overlapping Begin\End methods
+                if (callback != null) {
+                    globalCompletion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
+                }
+
+                return globalCompletion.Task;
             }
             finally {
                 SqlStatistics.StopTimer(statistics);
@@ -1319,7 +1349,7 @@ namespace System.Data.SqlClient {
             }
         }
 
-        private void VerifyEndExecuteState(Task completionTask, String endMethod) {
+        private void VerifyEndExecuteState(Task completionTask, String endMethod, bool fullCheckForColumnEncryption = false) {
             if (null == completionTask) {
                 throw ADP.ArgumentNull("asyncResult");
             }
@@ -1340,7 +1370,7 @@ namespace System.Data.SqlClient {
 
             // If transparent parameter encryption was attempted, then we need to skip other checks like those on EndMethodName
             // since we want to wait for async results before checking those fields.
-            if (IsColumnEncryptionEnabled) {
+            if (IsColumnEncryptionEnabled && !fullCheckForColumnEncryption) {
                 if (_activeConnection.State != ConnectionState.Open) {
                     // If the connection is not 'valid' then it was closed while we were executing
                     throw ADP.ClosedConnectionError();
@@ -1361,13 +1391,24 @@ namespace System.Data.SqlClient {
             }
         }
 
-        private void WaitForAsyncResults(IAsyncResult asyncResult) {
+        private void WaitForAsyncResults(IAsyncResult asyncResult, bool isInternal) {
             Task completionTask = (Task) asyncResult;
             if (!asyncResult.IsCompleted) {
                 asyncResult.AsyncWaitHandle.WaitOne();
             }
-            _stateObj._networkPacketTaskSource = null;
-            _activeConnection.GetOpenTdsConnection().DecrementAsyncCount();
+
+            if (_stateObj != null) {
+                _stateObj._networkPacketTaskSource = null;
+            }
+
+            // If this is an internal command we will decrement the count when the End method is actually called by the user.
+            // If we are using Column Encryption and the previous task failed, the async count should have already been fixed up. 
+            // There is a generic issue in how we handle the async count because:
+            // a) BeginExecute might or might not clean it up on failure.
+            // b) In EndExecute, we check the task state before waiting and throw if it's failed, whereas if we wait we will always adjust the count.
+            if (!isInternal && (!IsColumnEncryptionEnabled || !completionTask.IsFaulted)) {
+                _activeConnection.GetOpenTdsConnection().DecrementAsyncCount();
+            }
         }
 
         public int EndExecuteNonQuery(IAsyncResult asyncResult) {
@@ -1390,6 +1431,7 @@ namespace System.Data.SqlClient {
         
         private int EndExecuteNonQueryAsync(IAsyncResult asyncResult) {
             Bid.CorrelationTrace("<sc.SqlCommand.EndExecuteNonQueryAsync|Info|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
+            Debug.Assert(!_internalEndExecuteInitiated || _stateObj == null);
 
             Exception asyncException = ((Task)asyncResult).Exception;
             if (asyncException != null) {
@@ -1400,7 +1442,13 @@ namespace System.Data.SqlClient {
             else {
                 ThrowIfReconnectionHasBeenCanceled();
                 // lock on _stateObj prevents ----s with close/cancel.
-                lock (_stateObj) {
+                // If we have already initiate the End call internally, we have already done that, so no point doing it again.
+                if (!_internalEndExecuteInitiated) {
+                    lock (_stateObj) {
+                        return EndExecuteNonQueryInternal(asyncResult);
+                    }
+                }
+                else {
                     return EndExecuteNonQueryInternal(asyncResult);
                 }
             }
@@ -1408,11 +1456,43 @@ namespace System.Data.SqlClient {
 
         private int EndExecuteNonQueryInternal(IAsyncResult asyncResult) {
             SqlStatistics statistics = null;
-
-            TdsParser bestEffortCleanupTarget = null;
-            RuntimeHelpers.PrepareConstrainedRegions();
             bool success = false;
             int? sqlExceptionNumber = null;
+            try {
+                statistics = SqlStatistics.StartTimer(Statistics);
+                int result = (int)InternalEndExecuteNonQuery(asyncResult, ADP.EndExecuteNonQuery, isInternal: false);
+                success = true;
+                return result;
+            }
+            catch (SqlException e) {
+                sqlExceptionNumber = e.Number;
+                if (cachedAsyncState != null) {
+                    cachedAsyncState.ResetAsyncState();
+                };
+
+                //  SqlException is always catchable 
+                ReliablePutStateObject();
+                throw;
+            }
+            catch (Exception e) {
+                if (cachedAsyncState != null) {
+                    cachedAsyncState.ResetAsyncState();
+                };
+                if (ADP.IsCatchableExceptionType(e)) {
+                    ReliablePutStateObject();
+                };
+                throw;
+            }
+            finally {
+                SqlStatistics.StopTimer(statistics);
+                WriteEndExecuteEvent(success, sqlExceptionNumber, synchronous: false);
+            }
+        }
+
+        private object InternalEndExecuteNonQuery(IAsyncResult asyncResult, string endMethod, bool isInternal) {
+            TdsParser bestEffortCleanupTarget = null;
+            RuntimeHelpers.PrepareConstrainedRegions();
+
             try {
 #if DEBUG
                 TdsParser.ReliabilitySection tdsReliabilitySection = new TdsParser.ReliabilitySection();
@@ -1424,30 +1504,32 @@ namespace System.Data.SqlClient {
                 {
 #endif //DEBUG
                     bestEffortCleanupTarget = SqlInternalConnection.GetBestEffortCleanupTarget(_activeConnection);
-                    statistics = SqlStatistics.StartTimer(Statistics);
-                    VerifyEndExecuteState((Task)asyncResult, ADP.EndExecuteNonQuery);
-                    WaitForAsyncResults(asyncResult);
+                    VerifyEndExecuteState((Task)asyncResult, endMethod);
+                    WaitForAsyncResults(asyncResult, isInternal);
 
-                    // If Transparent parameter encryption was attempted, then we would have skipped the below 
-                    // checks in VerifyEndExecuteState since we wanted to wait for WaitForAsyncResults to complete.
+                    // If column encryption is enabled, also check the state after waiting for the task.
+                    // It would be better to do this for all cases, but avoiding for compatibility reasons.
                     if (IsColumnEncryptionEnabled) {
-                        if (cachedAsyncState.EndMethodName == null) {
-                            throw ADP.MethodCalledTwice(ADP.EndExecuteNonQuery);
-                        }
-
-                        if (ADP.EndExecuteNonQuery != cachedAsyncState.EndMethodName) {
-                            throw ADP.MismatchedAsyncResult(cachedAsyncState.EndMethodName, ADP.EndExecuteNonQuery);
-                        }
-
-                        if (!cachedAsyncState.IsActiveConnectionValid(_activeConnection)) {
-                            // If the connection is not 'valid' then it was closed while we were executing
-                            throw ADP.ClosedConnectionError();
-                        }
+                        VerifyEndExecuteState((Task)asyncResult, endMethod, fullCheckForColumnEncryption: true);
                     }
 
                     bool processFinallyBlock = true;
                     try {
-                        NotifyDependency();
+                        // If this is not for internal usage, notify the dependency. 
+                        // If we have already initiated the end internally, the reader should be ready, so just return the rows affected.
+                        if (!isInternal) {
+                            NotifyDependency();
+
+                            if (_internalEndExecuteInitiated) {
+                                Debug.Assert(_stateObj == null);
+
+                                // Reset the state since we exit early.
+                                cachedAsyncState.ResetAsyncState();
+
+                                return _rowsAffected;
+                            }
+                        }
+
                         CheckThrowSNIException();
 
                         // only send over SQL Batch command if we are not a stored proc and have no parameters
@@ -1459,19 +1541,18 @@ namespace System.Data.SqlClient {
                                 if (!result) { throw SQL.SynchronousCallMayNotPend(); }
                             }
                             finally {
-                                cachedAsyncState.ResetAsyncState();
+                                // Don't reset the state for internal End. The user End will do that eventually.
+                                if (!isInternal) {
+                                    cachedAsyncState.ResetAsyncState();
+                                }
                             }
                         }
                         else { // otherwise, use a full-fledged execute that can handle params and stored procs
-                            SqlDataReader reader = CompleteAsyncExecuteReader();
+                            SqlDataReader reader = CompleteAsyncExecuteReader(isInternal);
                             if (null != reader) {
                                 reader.Close();
                             }
                         }
-                    }
-                    catch (SqlException e) {
-                        sqlExceptionNumber = e.Number;
-                        throw;
                     }
                     catch (Exception e) {
                         processFinallyBlock = ADP.IsCatchableExceptionType(e);
@@ -1484,7 +1565,6 @@ namespace System.Data.SqlClient {
                     }
 
                     Debug.Assert(null == _stateObj, "non-null state object in EndExecuteNonQuery");
-                    success = true;
                     return _rowsAffected;
                 }
 #if DEBUG
@@ -1506,23 +1586,11 @@ namespace System.Data.SqlClient {
                 SqlInternalConnection.BestEffortCleanup(bestEffortCleanupTarget);
                 throw;
             }
-            catch (Exception e) {
-                if (cachedAsyncState != null) {
-                    cachedAsyncState.ResetAsyncState();
-                };
-                if (ADP.IsCatchableExceptionType(e)) {
-                    ReliablePutStateObject();
-                };
-                throw;
-            }
-            finally {
-                SqlStatistics.StopTimer(statistics);
-                WriteEndExecuteEvent(success, sqlExceptionNumber, synchronous: false);
-            }
         }
 
-        private Task InternalExecuteNonQuery(TaskCompletionSource<object> completion, string methodName, bool sendToPipe, int timeout, bool asyncWrite = false) {
+        private Task InternalExecuteNonQuery(TaskCompletionSource<object> completion, string methodName, bool sendToPipe, int timeout, out bool usedCache, bool asyncWrite = false, bool inRetry = false) {
             bool async = (null != completion);
+            usedCache = false;
 
             SqlStatistics statistics = Statistics;
             _rowsAffected = -1;
@@ -1542,7 +1610,9 @@ namespace System.Data.SqlClient {
                     bestEffortCleanupTarget = SqlInternalConnection.GetBestEffortCleanupTarget(_activeConnection);
                     // @devnote: this function may throw for an invalid connection
                     // @devnote: returns false for empty command text
-                    ValidateCommand(methodName, async);
+                    if (!inRetry) {
+                        ValidateCommand(methodName, async);
+                    }
                     CheckNotificationStateAndAutoEnlist(); // Only call after validate - requires non null connection!
 
                     Task task = null;
@@ -1566,12 +1636,15 @@ namespace System.Data.SqlClient {
                             }
                         }
 
+                        // We should never get here for a retry since we only have retries for parameters.
+                        Debug.Assert(!inRetry);
+
                         task = RunExecuteNonQueryTds(methodName, async, timeout, asyncWrite);
                     }
                     else  { // otherwise, use a full-fledged execute that can handle params and stored procs
                         Debug.Assert( !sendToPipe, "trying to send non-context command to pipe" );
                         Bid.Trace("<sc.SqlCommand.ExecuteNonQuery|INFO> %d#, Command executed as RPC.\n", ObjectID);
-                        SqlDataReader reader = RunExecuteReader(0, RunBehavior.UntilDone, false, methodName, completion, timeout, out task, asyncWrite);
+                        SqlDataReader reader = RunExecuteReader(0, RunBehavior.UntilDone, false, methodName, completion, timeout, out task, out usedCache, asyncWrite, inRetry);
                         if (null!=reader) {
                             if (task != null) {
                                 task = AsyncHelper.CreateContinuationTask(task, () => reader.Close());
@@ -1649,31 +1722,38 @@ namespace System.Data.SqlClient {
         [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
         public IAsyncResult BeginExecuteXmlReader(AsyncCallback callback, object stateObject) {
             Bid.CorrelationTrace("<sc.SqlCommand.BeginExecuteXmlReader|API|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
-            SqlConnection.ExecutePermission.Demand();   
-            return BeginExecuteXmlReaderInternal(callback, stateObject, 0);
+            SqlConnection.ExecutePermission.Demand();
+            return BeginExecuteXmlReaderInternal(CommandBehavior.SequentialAccess, callback, stateObject, 0, inRetry: false);
         }
 
         private IAsyncResult BeginExecuteXmlReaderAsync(AsyncCallback callback, object stateObject) {
-            return BeginExecuteXmlReaderInternal(callback, stateObject, CommandTimeout, asyncWrite:true);
+            return BeginExecuteXmlReaderInternal(CommandBehavior.SequentialAccess, callback, stateObject, CommandTimeout, inRetry: false, asyncWrite: true);
         }
 
-        private IAsyncResult BeginExecuteXmlReaderInternal(AsyncCallback callback, object stateObject, int timeout, bool asyncWrite = false) {        
-            // Reset _pendingCancel upon entry into any Execute - used to synchronize state
-            // between entry into Execute* API and the thread obtaining the stateObject.
-            _pendingCancel = false;
+        private IAsyncResult BeginExecuteXmlReaderInternal(CommandBehavior behavior, AsyncCallback callback, object stateObject, int timeout, bool inRetry, bool asyncWrite = false) {
+            TaskCompletionSource<object> globalCompletion = new TaskCompletionSource<object>(stateObject);
+            TaskCompletionSource<object> localCompletion = new TaskCompletionSource<object>(stateObject);
 
-            ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
-                                    // back into pool when we should not.
+            if (!inRetry) {
+                // Reset _pendingCancel upon entry into any Execute - used to synchronize state
+                // between entry into Execute* API and the thread obtaining the stateObject.
+                _pendingCancel = false;
+
+                ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
+                                        // back into pool when we should not.
+            }
 
             SqlStatistics statistics = null;
             try {
-                statistics = SqlStatistics.StartTimer(Statistics);
-                WriteBeginExecuteEvent();
-                TaskCompletionSource<object> completion = new TaskCompletionSource<object>(stateObject);
+                if (!inRetry) {
+                    statistics = SqlStatistics.StartTimer(Statistics);
+                    WriteBeginExecuteEvent();
+                }
 
+                bool usedCache;
                 Task writeTask;
                 try { // InternalExecuteNonQuery already has reliability block, but if failure will not put stateObj back into pool.
-                    RunExecuteReader(CommandBehavior.SequentialAccess, RunBehavior.ReturnImmediately, true, ADP.BeginExecuteXmlReader, completion, timeout, out writeTask, asyncWrite);
+                    RunExecuteReader(behavior, RunBehavior.ReturnImmediately, true, ADP.BeginExecuteXmlReader, localCompletion, timeout, out writeTask, out usedCache, asyncWrite, inRetry);
                 }
                 catch (Exception e) {
                     if (!ADP.IsCatchableOrSecurityExceptionType(e)) {
@@ -1687,17 +1767,23 @@ namespace System.Data.SqlClient {
                 }
 
                 if (writeTask != null) {
-                    AsyncHelper.ContinueTask(writeTask, completion, () => BeginExecuteXmlReaderInternalReadStage(completion));
+                    AsyncHelper.ContinueTask(writeTask, localCompletion, () => BeginExecuteXmlReaderInternalReadStage(localCompletion));
                 }
                 else {
-                    BeginExecuteXmlReaderInternalReadStage(completion);
+                    BeginExecuteXmlReaderInternalReadStage(localCompletion);
+                }
+
+                // When we use query caching for parameter encryption we need to retry on specific errors.
+                // In these cases finalize the call internally and trigger a retry when needed.
+                if (!TriggerInternalEndAndRetryIfNecessary(behavior, stateObject, timeout, ADP.EndExecuteXmlReader, usedCache, inRetry, asyncWrite, globalCompletion, localCompletion, InternalEndExecuteReader, BeginExecuteXmlReaderInternal)) {
+                    globalCompletion = localCompletion;
                 }
 
                 // Add callback after work is done to avoid overlapping Begin\End methods
                 if (callback != null) {
-                    completion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
+                    globalCompletion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
                 }
-                return completion.Task;
+                return globalCompletion.Task;
             }
             finally {
                 SqlStatistics.StopTimer(statistics);
@@ -1768,6 +1854,7 @@ namespace System.Data.SqlClient {
 
         private XmlReader EndExecuteXmlReaderAsync(IAsyncResult asyncResult) {
             Bid.CorrelationTrace("<sc.SqlCommand.EndExecuteXmlReaderAsync|Info|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
+            Debug.Assert(!_internalEndExecuteInitiated || _stateObj == null);
 
             Exception asyncException = ((Task)asyncResult).Exception;
             if (asyncException != null) {
@@ -1778,7 +1865,13 @@ namespace System.Data.SqlClient {
             else {
                 ThrowIfReconnectionHasBeenCanceled();
                 // lock on _stateObj prevents ----s with close/cancel.
-                lock (_stateObj) {
+                // If we have already initiate the End call internally, we have already done that, so no point doing it again.
+                if (!_internalEndExecuteInitiated) {
+                    lock (_stateObj) {
+                        return EndExecuteXmlReaderInternal(asyncResult);
+                    }
+                }
+                else {
                     return EndExecuteXmlReaderInternal(asyncResult);
                 }
             }
@@ -1788,7 +1881,7 @@ namespace System.Data.SqlClient {
             bool success = false;
             int? sqlExceptionNumber = null;
             try {
-                XmlReader result = CompleteXmlReader(InternalEndExecuteReader(asyncResult, ADP.EndExecuteXmlReader));
+                XmlReader result = CompleteXmlReader(InternalEndExecuteReader(asyncResult, ADP.EndExecuteXmlReader, isInternal: false));
                 success = true;
                 return result;
             }
@@ -1894,7 +1987,7 @@ namespace System.Data.SqlClient {
         public IAsyncResult BeginExecuteReader(AsyncCallback callback, object stateObject, CommandBehavior behavior) {
             Bid.CorrelationTrace("<sc.SqlCommand.BeginExecuteReader|API|Correlation> ObjectID%d#, behavior=%d{ds.CommandBehavior}, ActivityID %ls\n", ObjectID, (int)behavior);
             SqlConnection.ExecutePermission.Demand();
-            return BeginExecuteReaderInternal(behavior, callback, stateObject, 0);
+            return BeginExecuteReaderInternal(behavior, callback, stateObject, 0, inRetry: false);
         }
 
         internal SqlDataReader ExecuteReader(CommandBehavior behavior, string method) {
@@ -1967,6 +2060,7 @@ namespace System.Data.SqlClient {
 
         private SqlDataReader EndExecuteReaderAsync(IAsyncResult asyncResult) {
             Bid.CorrelationTrace("<sc.SqlCommand.EndExecuteReaderAsync|Info|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
+            Debug.Assert(!_internalEndExecuteInitiated || _stateObj == null);
 
             Exception asyncException = ((Task)asyncResult).Exception;
             if (asyncException != null) {
@@ -1977,8 +2071,14 @@ namespace System.Data.SqlClient {
             else {
                 ThrowIfReconnectionHasBeenCanceled();
                 // lock on _stateObj prevents ----s with close/cancel.
-                lock (_stateObj) {
+                // If we have already initiate the End call internally, we have already done that, so no point doing it again.
+                if (!_internalEndExecuteInitiated) {
+                    lock (_stateObj) {
                         return EndExecuteReaderInternal(asyncResult);
+                    }
+                }
+                else {
+                    return EndExecuteReaderInternal(asyncResult);
                 }
             }
         }
@@ -1989,7 +2089,7 @@ namespace System.Data.SqlClient {
             int? sqlExceptionNumber = null;
             try {
                 statistics = SqlStatistics.StartTimer(Statistics);
-                SqlDataReader result = InternalEndExecuteReader(asyncResult, ADP.EndExecuteReader);
+                SqlDataReader result = InternalEndExecuteReader(asyncResult, ADP.EndExecuteReader, isInternal: false);
                 success = true;
                 return result;
             }
@@ -2020,26 +2120,33 @@ namespace System.Data.SqlClient {
         }
 
         private IAsyncResult BeginExecuteReaderAsync(CommandBehavior behavior, AsyncCallback callback, object stateObject) {
-            return BeginExecuteReaderInternal(behavior, callback, stateObject, CommandTimeout, asyncWrite:true);
+            return BeginExecuteReaderInternal(behavior, callback, stateObject, CommandTimeout, inRetry: false, asyncWrite:true);
         }
 
-        private IAsyncResult BeginExecuteReaderInternal(CommandBehavior behavior, AsyncCallback callback, object stateObject, int timeout, bool asyncWrite = false) {        
-            // Reset _pendingCancel upon entry into any Execute - used to synchronize state
-            // between entry into Execute* API and the thread obtaining the stateObject.
-            _pendingCancel = false;
+        private IAsyncResult BeginExecuteReaderInternal(CommandBehavior behavior, AsyncCallback callback, object stateObject, int timeout, bool inRetry, bool asyncWrite = false) {
+            TaskCompletionSource<object> globalCompletion = new TaskCompletionSource<object>(stateObject);
+            TaskCompletionSource<object> localCompletion = new TaskCompletionSource<object>(stateObject);
+
+            if (!inRetry) {
+                // Reset _pendingCancel upon entry into any Execute - used to synchronize state
+                // between entry into Execute* API and the thread obtaining the stateObject.
+                _pendingCancel = false;
+            }
 
             SqlStatistics statistics = null;
             try {
-                statistics = SqlStatistics.StartTimer(Statistics);
-                WriteBeginExecuteEvent();
-                TaskCompletionSource<object> completion = new TaskCompletionSource<object>(stateObject);
+                if (!inRetry) {
+                    statistics = SqlStatistics.StartTimer(Statistics);
+                    WriteBeginExecuteEvent();
 
-                ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
-                                        // back into pool when we should not.
-
+                    ValidateAsyncCommand(); // Special case - done outside of try/catches to prevent putting a stateObj
+                                            // back into pool when we should not.
+                }
+                
+                bool usedCache;
                 Task writeTask = null;
                 try { // InternalExecuteNonQuery already has reliability block, but if failure will not put stateObj back into pool.
-                    RunExecuteReader(behavior, RunBehavior.ReturnImmediately, true, ADP.BeginExecuteReader, completion, timeout, out writeTask, asyncWrite);
+                    RunExecuteReader(behavior, RunBehavior.ReturnImmediately, true, ADP.BeginExecuteReader, localCompletion, timeout, out writeTask, out usedCache, asyncWrite, inRetry);
                 }
                 catch (Exception e) {
                     if (!ADP.IsCatchableOrSecurityExceptionType(e)) {
@@ -2053,20 +2160,125 @@ namespace System.Data.SqlClient {
                 }
 
                 if (writeTask != null ) {
-                    AsyncHelper.ContinueTask(writeTask,completion,()=> BeginExecuteReaderInternalReadStage(completion));
+                    AsyncHelper.ContinueTask(writeTask, localCompletion, () => BeginExecuteReaderInternalReadStage(localCompletion));
                 }
                 else {
-                    BeginExecuteReaderInternalReadStage(completion);
+                    BeginExecuteReaderInternalReadStage(localCompletion);
+                }
+
+                // When we use query caching for parameter encryption we need to retry on specific errors.
+                // In these cases finalize the call internally and trigger a retry when needed.
+                if (!TriggerInternalEndAndRetryIfNecessary(behavior, stateObject, timeout, ADP.EndExecuteReader, usedCache, inRetry, asyncWrite, globalCompletion, localCompletion, InternalEndExecuteReader, BeginExecuteReaderInternal)) {
+                    globalCompletion = localCompletion;
                 }
 
                 // Add callback after work is done to avoid overlapping Begin\End methods
                 if (callback != null) {
-                    completion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
+                    globalCompletion.Task.ContinueWith((t) => callback(t), TaskScheduler.Default);
                 }
-                return completion.Task;
+
+                return globalCompletion.Task;
             }
             finally {
                 SqlStatistics.StopTimer(statistics);
+            }
+        }
+
+        private bool TriggerInternalEndAndRetryIfNecessary(CommandBehavior behavior, object stateObject, int timeout, string endMethod, bool usedCache, bool inRetry, bool asyncWrite, TaskCompletionSource<object> globalCompletion, TaskCompletionSource<object> localCompletion, Func<IAsyncResult, string, bool, object> endFunc, Func<CommandBehavior, AsyncCallback, object, int, bool, bool, IAsyncResult> retryFunc) {
+            // We shouldn't be using the cache if we are in retry.
+            Debug.Assert(!usedCache || !inRetry);
+
+            // If column ecnryption is enabled and we used the cache, we want to catch any potential exceptions that were caused by the query cache and retry if the error indicates that we should.
+            // So, try to read the result of the query before completing the overall task and trigger a retry if appropriate.
+            if ((IsColumnEncryptionEnabled && !inRetry && usedCache) 
+#if DEBUG
+                || _forceInternalEndQuery
+#endif
+                ) {
+                long firstAttemptStart = ADP.TimerCurrent();
+
+                localCompletion.Task.ContinueWith(tsk => {
+                    if (tsk.IsFaulted) {
+                        globalCompletion.TrySetException(tsk.Exception.InnerException);
+                    }
+                    else if (tsk.IsCanceled) {
+                        globalCompletion.TrySetCanceled();
+                    }
+                    else {
+                        try {
+                            // Mark that we initiated the internal EndExecute. This should always be false until we set it here.
+                            Debug.Assert(!_internalEndExecuteInitiated);
+                            _internalEndExecuteInitiated = true;
+
+                            // lock on _stateObj prevents ----s with close/cancel.
+                            lock (_stateObj) {
+                                endFunc(tsk, endMethod, true/*inInternal*/);
+                            }
+                            globalCompletion.TrySetResult(tsk.Result);
+                        }
+                        catch (Exception e) {
+                            // Put the state object back to the cache.
+                            // Do not reset the async state, since this is managed by the user Begin/End and not internally.
+                            if (ADP.IsCatchableExceptionType(e)) {
+                                ReliablePutStateObject();
+                            }
+
+                            bool shouldRetry = false;
+
+                            // Check if we have an error indicating that we can retry.
+                            if (e is SqlException) {
+                                SqlException sqlEx = e as SqlException;
+
+                                for (int i = 0; i < sqlEx.Errors.Count; i++) {
+                                    if (sqlEx.Errors[i].Number == TdsEnums.TCE_CONVERSION_ERROR_CLIENT_RETRY) {
+                                        shouldRetry = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!shouldRetry) {
+                                // If we cannot retry, Reset the async state to make sure we leave a clean state.
+                                if (null != _cachedAsyncState) {
+                                    _cachedAsyncState.ResetAsyncState();
+                                }
+                                _activeConnection.GetOpenTdsConnection().DecrementAsyncCount();
+
+                                globalCompletion.TrySetException(e);
+                            }
+                            else {
+                                // Remove the enrty from the cache since it was inconsistent.
+                                SqlQueryMetadataCache.GetInstance().InvalidateCacheEntry(this);
+
+                                try {
+                                    // Kick off the retry.
+                                    _internalEndExecuteInitiated = false;
+                                    Task<object> retryTask = (Task<object>)retryFunc(behavior, null, stateObject, TdsParserStaticMethods.GetRemainingTimeout(timeout, firstAttemptStart), true/*inRetry*/, asyncWrite);
+
+                                    retryTask.ContinueWith(retryTsk => {
+                                        if (retryTsk.IsFaulted) {
+                                            globalCompletion.TrySetException(retryTsk.Exception.InnerException);
+                                        }
+                                        else if (retryTsk.IsCanceled) {
+                                            globalCompletion.TrySetCanceled();
+                                        }
+                                        else {
+                                            globalCompletion.TrySetResult(retryTsk.Result);
+                                        }
+                                    }, TaskScheduler.Default);
+                                }
+                                catch (Exception e2) {
+                                    globalCompletion.TrySetException(e2);
+                                }
+                            }
+                        }
+                    }
+                }, TaskScheduler.Default);
+
+                return true;
+            }
+            else {
+                return false;
             }
         }
 
@@ -2123,26 +2335,15 @@ namespace System.Data.SqlClient {
             }
         }
 
-        private SqlDataReader InternalEndExecuteReader(IAsyncResult asyncResult, string endMethod) {
+        private SqlDataReader InternalEndExecuteReader(IAsyncResult asyncResult, string endMethod, bool isInternal) {
+            
+            VerifyEndExecuteState((Task)asyncResult, endMethod);
+            WaitForAsyncResults(asyncResult, isInternal);
 
-            VerifyEndExecuteState((Task) asyncResult, endMethod);
-            WaitForAsyncResults(asyncResult);
-
-            // If Transparent parameter encryption was attempted, then we would have skipped the below 
-            // checks in VerifyEndExecuteState since we wanted to wait for WaitForAsyncResults to complete.
+            // If column encryption is enabled, also check the state after waiting for the task.
+            // It would be better to do this for all cases, but avoiding for compatibility reasons.
             if (IsColumnEncryptionEnabled) {
-                if (cachedAsyncState.EndMethodName == null) {
-                    throw ADP.MethodCalledTwice(endMethod);
-                }
-
-                if (endMethod != cachedAsyncState.EndMethodName) {
-                    throw ADP.MismatchedAsyncResult(cachedAsyncState.EndMethodName, endMethod);
-                }
-
-                if (!cachedAsyncState.IsActiveConnectionValid(_activeConnection)) {
-                    // If the connection is not 'valid' then it was closed while we were executing
-                    throw ADP.ClosedConnectionError();
-                }
+                VerifyEndExecuteState((Task)asyncResult, endMethod, fullCheckForColumnEncryption: true);
             }
 
             CheckThrowSNIException();
@@ -2160,7 +2361,7 @@ namespace System.Data.SqlClient {
                 {
 #endif //DEBUG
                     bestEffortCleanupTarget = SqlInternalConnection.GetBestEffortCleanupTarget(_activeConnection);
-                    SqlDataReader reader = CompleteAsyncExecuteReader();
+                    SqlDataReader reader = CompleteAsyncExecuteReader(isInternal);
                     Debug.Assert(null == _stateObj, "non-null state object in InternalEndExecuteReader");
                     return reader;
                 }
@@ -2188,7 +2389,7 @@ namespace System.Data.SqlClient {
         public override Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken) {
 
             Bid.CorrelationTrace("<sc.SqlCommand.ExecuteNonQueryAsync|API|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
-            SqlConnection.ExecutePermission.Demand();   
+            SqlConnection.ExecutePermission.Demand();
 
             TaskCompletionSource<int> source = new TaskCompletionSource<int>();
 
@@ -2220,7 +2421,7 @@ namespace System.Data.SqlClient {
                         }
                     }
                 }, TaskScheduler.Default);
-            } 
+            }
             catch (Exception e) {
                 source.SetException(e);
             }
@@ -2252,7 +2453,7 @@ namespace System.Data.SqlClient {
         new public Task<SqlDataReader> ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken) {
 
             Bid.CorrelationTrace("<sc.SqlCommand.ExecuteReaderAsync|API|Correlation> ObjectID%d#, behavior=%d{ds.CommandBehavior}, ActivityID %ls\n", ObjectID, (int)behavior);
-            SqlConnection.ExecutePermission.Demand();   
+            SqlConnection.ExecutePermission.Demand();
 
             TaskCompletionSource<SqlDataReader> source = new TaskCompletionSource<SqlDataReader>();
 
@@ -2264,12 +2465,12 @@ namespace System.Data.SqlClient {
                 }
                 registration = cancellationToken.Register(CancelIgnoreFailure);
             }
-            
+
             Task<SqlDataReader> returnedTask = source.Task;
             try {
                 RegisterForConnectionCloseNotification(ref returnedTask);
 
-                Task<SqlDataReader>.Factory.FromAsync(BeginExecuteReaderAsync, EndExecuteReaderAsync, behavior, null).ContinueWith((t) => {                    
+                Task<SqlDataReader>.Factory.FromAsync(BeginExecuteReaderAsync, EndExecuteReaderAsync, behavior, null).ContinueWith((t) => {
                     registration.Dispose();
                     if (t.IsFaulted) {
                         Exception e = t.Exception.InnerException;
@@ -2284,7 +2485,7 @@ namespace System.Data.SqlClient {
                         }
                     }
                 }, TaskScheduler.Default);
-            } 
+            }
             catch (Exception e) {
                 source.SetException(e);
             }
@@ -2356,8 +2557,8 @@ namespace System.Data.SqlClient {
         public Task<XmlReader> ExecuteXmlReaderAsync(CancellationToken cancellationToken) {
 
             Bid.CorrelationTrace("<sc.SqlCommand.ExecuteXmlReaderAsync|API|Correlation> ObjectID%d#, ActivityID %ls\n", ObjectID);
-            SqlConnection.ExecutePermission.Demand();   
-            
+            SqlConnection.ExecutePermission.Demand();
+
             TaskCompletionSource<XmlReader> source = new TaskCompletionSource<XmlReader>();
 
             CancellationTokenRegistration registration = new CancellationTokenRegistration();
@@ -2368,7 +2569,7 @@ namespace System.Data.SqlClient {
                 }
                 registration = cancellationToken.Register(CancelIgnoreFailure);
             }
-            
+
             Task<XmlReader> returnedTask = source.Task;
             try {
                 RegisterForConnectionCloseNotification(ref returnedTask);
@@ -2388,7 +2589,7 @@ namespace System.Data.SqlClient {
                         }
                     }
                 }, TaskScheduler.Default);
-            } 
+            }
             catch (Exception e) {
                 source.SetException(e);
             }
@@ -2882,6 +3083,9 @@ namespace System.Data.SqlClient {
 
                 GetStateObject();
 
+                // Reset the encryption state in case it has been set by a previous command.
+                ResetEncryptionState();
+
                 // we just send over the raw text with no annotation
                 // no parameters are sent over
                 // no data reader is returned
@@ -2993,6 +3197,12 @@ namespace System.Data.SqlClient {
             // First reset the command level state.
             ClearDescribeParameterEncryptionRequests();
 
+            // Reset the state for internal End execution.
+            _internalEndExecuteInitiated = false;
+
+            // Reset the state for the cache.
+            CachingQueryMetadataPostponed = false;
+
             // Reset the state of each of the parameters.
             if (_parameters != null) {
                 for (int i = 0; i < _parameters.Count; i++) {
@@ -3047,13 +3257,13 @@ namespace System.Data.SqlClient {
         /// <param name="task"></param>
         /// <param name="asyncWrite"></param>
         /// <returns></returns>
-        private void PrepareForTransparentEncryption(CommandBehavior cmdBehavior, bool returnStream, bool async, int timeout, TaskCompletionSource<object> completion, out Task returnTask, bool asyncWrite)
-        {
+        private void PrepareForTransparentEncryption(CommandBehavior cmdBehavior, bool returnStream, bool async, int timeout, TaskCompletionSource<object> completion, out Task returnTask, bool asyncWrite, out bool usedCache, bool inRetry) {
             // Fetch reader with input params
             Task fetchInputParameterEncryptionInfoTask = null;
             bool describeParameterEncryptionNeeded = false;
             SqlDataReader describeParameterEncryptionDataReader = null;
             returnTask = null;
+            usedCache = false;
 
             Debug.Assert(_activeConnection != null, "_activeConnection should not be null in PrepareForTransparentEncryption.");
             Debug.Assert(_activeConnection.Parser != null, "_activeConnection.Parser should not be null in PrepareForTransparentEncryption.");
@@ -3064,11 +3274,18 @@ namespace System.Data.SqlClient {
                         "ColumnEncryption setting should be enabled for input parameter encryption.");
             Debug.Assert(async == (completion != null), "completion should can be null if and only if mode is async.");
 
+            // If we are not in Batch RPC and not already retrying, attempt to fetch the cipher MD for each parameter from the cache.
+            // If this succeeds then return immediately, otherwise just fall back to the full crypto MD discovery.
+            if (!BatchRPCMode && !inRetry && SqlQueryMetadataCache.GetInstance().GetQueryMetadataIfExists(this)) {
+                usedCache = true;
+                return;
+            }
+
             // A flag to indicate if finallyblock needs to execute.
             bool processFinallyBlock = true;
 
             // A flag to indicate if we need to decrement async count on the connection in finally block.
-            bool decrementAsyncCountInFinallyBlock = async;
+            bool decrementAsyncCountInFinallyBlock = false;
 
             // Flag to indicate if exception is caught during the execution, to govern clean up.
             bool exceptionCaught = false;
@@ -3118,6 +3335,9 @@ namespace System.Data.SqlClient {
                             return;
                         }
 
+                        // If we are in async execution, we need to decrement our async count on exception.
+                        decrementAsyncCountInFinallyBlock = async;
+
                         Debug.Assert(describeParameterEncryptionDataReader != null,
                             "describeParameterEncryptionDataReader should not be null, as it is required to get results of describe parameter encryption.");
 
@@ -3128,6 +3348,7 @@ namespace System.Data.SqlClient {
                             processFinallyBlock = false;
                             returnTask = AsyncHelper.CreateContinuationTask(fetchInputParameterEncryptionInfoTask, () => {
                                 bool processFinallyBlockAsync = true;
+                                bool decrementAsyncCountInFinallyBlockAsync = true;
 
                                 RuntimeHelpers.PrepareConstrainedRegions();
                                 try {
@@ -3143,14 +3364,13 @@ namespace System.Data.SqlClient {
                                         // If it is async, then TryFetchInputParameterEncryptionInfo-> RunExecuteReaderTds would have incremented the async count.
                                         // Decrement it when we are about to complete async execute reader.
                                         SqlInternalConnectionTds internalConnectionTds = _activeConnection.GetOpenTdsConnection();
-                                        if (internalConnectionTds != null)
-                                        {
+                                        if (internalConnectionTds != null) {
                                             internalConnectionTds.DecrementAsyncCount();
-                                            decrementAsyncCountInFinallyBlock = false;
+                                            decrementAsyncCountInFinallyBlockAsync = false;
                                         }
 
                                         // Complete executereader.
-                                        describeParameterEncryptionDataReader = CompleteAsyncExecuteReader();
+                                        describeParameterEncryptionDataReader = CompleteAsyncExecuteReader(forDescribeParameterEncryption: true);
                                         Debug.Assert(null == _stateObj, "non-null state object in PrepareForTransparentEncryption.");
 
                                         // Read the results of describe parameter encryption.
@@ -3173,7 +3393,7 @@ namespace System.Data.SqlClient {
                                 }
                                 finally {
                                     PrepareTransparentEncryptionFinallyBlock(   closeDataReader: processFinallyBlockAsync,
-                                                                                decrementAsyncCount: decrementAsyncCountInFinallyBlock,
+                                                                                decrementAsyncCount: decrementAsyncCountInFinallyBlockAsync,
                                                                                 clearDataStructures: processFinallyBlockAsync,
                                                                                 wasDescribeParameterEncryptionNeeded: describeParameterEncryptionNeeded,
                                                                                 describeParameterEncryptionRpcOriginalRpcMap: describeParameterEncryptionRpcOriginalRpcMap,
@@ -3187,6 +3407,8 @@ namespace System.Data.SqlClient {
                             if (exception != null) {
                                 throw exception;
                             }}));
+
+                            decrementAsyncCountInFinallyBlock = false;
                         }
                         else {
                             // If it was async, ending the reader is still pending.
@@ -3196,6 +3418,7 @@ namespace System.Data.SqlClient {
                                 processFinallyBlock = false;
                                 returnTask = Task.Run(() => {
                                         bool processFinallyBlockAsync = true;
+                                        bool decrementAsyncCountInFinallyBlockAsync = true;
 
                                         RuntimeHelpers.PrepareConstrainedRegions();
                                         try {
@@ -3214,11 +3437,11 @@ namespace System.Data.SqlClient {
                                                 SqlInternalConnectionTds internalConnectionTds = _activeConnection.GetOpenTdsConnection();
                                                 if (internalConnectionTds != null) {
                                                     internalConnectionTds.DecrementAsyncCount();
-                                                    decrementAsyncCountInFinallyBlock = false;
+                                                    decrementAsyncCountInFinallyBlockAsync = false;
                                                 }
 
                                                 // Complete executereader.
-                                                describeParameterEncryptionDataReader = CompleteAsyncExecuteReader();
+                                                describeParameterEncryptionDataReader = CompleteAsyncExecuteReader(forDescribeParameterEncryption: true);
                                                 Debug.Assert(null == _stateObj, "non-null state object in PrepareForTransparentEncryption.");
 
                                                 // Read the results of describe parameter encryption.
@@ -3242,13 +3465,15 @@ namespace System.Data.SqlClient {
                                         }
                                         finally {
                                             PrepareTransparentEncryptionFinallyBlock(   closeDataReader: processFinallyBlockAsync,
-                                                                                        decrementAsyncCount: decrementAsyncCountInFinallyBlock,
+                                                                                        decrementAsyncCount: decrementAsyncCountInFinallyBlockAsync,
                                                                                         clearDataStructures: processFinallyBlockAsync,
                                                                                         wasDescribeParameterEncryptionNeeded: describeParameterEncryptionNeeded,
                                                                                         describeParameterEncryptionRpcOriginalRpcMap: describeParameterEncryptionRpcOriginalRpcMap,
                                                                                         describeParameterEncryptionDataReader: describeParameterEncryptionDataReader);
                                         }
                                     });
+
+                                decrementAsyncCountInFinallyBlock = false;
                             }
                             else {
                                 // For synchronous execution, read the results of describe parameter encryption here.
@@ -3413,6 +3638,7 @@ namespace System.Data.SqlClient {
                                             timeout: timeout,
                                             task: out task,
                                             asyncWrite: asyncWrite,
+                                            inRetry: false,
                                             ds: null,
                                             describeParameterEncryptionRequest: true);
             }
@@ -3494,6 +3720,13 @@ namespace System.Data.SqlClient {
                     SqlParameter param = originalRpcRequest.parameters[i];
                     paramCopy = new SqlParameter(param.ParameterName, param.SqlDbType, param.Size, param.Direction, param.Precision, param.Scale, param.SourceColumn, param.SourceVersion,
                         param.SourceColumnNullMapping, param.Value, param.XmlSchemaCollectionDatabase, param.XmlSchemaCollectionOwningSchema, param.XmlSchemaCollectionName);
+                    paramCopy.CompareInfo = param.CompareInfo;
+                    paramCopy.TypeName = param.TypeName;
+                    paramCopy.UdtTypeName = param.UdtTypeName;
+                    paramCopy.IsNullable = param.IsNullable;
+                    paramCopy.LocaleId = param.LocaleId;
+                    paramCopy.Offset = param.Offset;
+
                     tempCollection.Add(paramCopy);
                 }
 
@@ -3715,18 +3948,25 @@ namespace System.Data.SqlClient {
                     }
                 }
             }
+
+            // If we are not in Batch RPC mode, update the query cache with the encryption MD.
+            if (!BatchRPCMode) {
+                SqlQueryMetadataCache.GetInstance().AddQueryMetadata(this, ignoreQueriesWithReturnValueParams: true);
+            }
         }
 
         internal SqlDataReader RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, bool returnStream, string method) {
             Task unused; // sync execution 
-            SqlDataReader reader = RunExecuteReader(cmdBehavior, runBehavior, returnStream, method, completion:null, timeout:CommandTimeout, task:out unused);
+            bool usedCache;
+            SqlDataReader reader = RunExecuteReader(cmdBehavior, runBehavior, returnStream, method, completion: null, timeout: CommandTimeout, task: out unused, usedCache: out usedCache);
             Debug.Assert(unused == null, "returned task during synchronous execution");
             return reader;
         }
 
         // task is created in case of pending asynchronous write, returned SqlDataReader should not be utilized until that task is complete 
-        internal SqlDataReader RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, bool returnStream, string method, TaskCompletionSource<object> completion, int timeout, out Task task, bool asyncWrite = false) {
+        internal SqlDataReader RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, bool returnStream, string method, TaskCompletionSource<object> completion, int timeout, out Task task, out bool usedCache, bool asyncWrite = false, bool inRetry = false) {
             bool async = (null != completion);
+            usedCache = false;
 
             task = null;
 
@@ -3740,7 +3980,10 @@ namespace System.Data.SqlClient {
 
             // @devnote: this function may throw for an invalid connection
             // @devnote: returns false for empty command text
-            ValidateCommand(method, async);
+            if (!inRetry) {
+                ValidateCommand(method, async);
+            }
+
             CheckNotificationStateAndAutoEnlist(); // Only call after validate - requires non null connection!
 
             TdsParser bestEffortCleanupTarget = null;
@@ -3777,14 +4020,46 @@ namespace System.Data.SqlClient {
                     }
                     else if (IsColumnEncryptionEnabled) {
                         Task returnTask = null;
-                        PrepareForTransparentEncryption(cmdBehavior, returnStream, async, timeout, completion, out returnTask, asyncWrite && async);
-                        Debug.Assert(async == (returnTask != null), @"returnTask should be null if and only if async is false.");
+                        PrepareForTransparentEncryption(cmdBehavior, returnStream, async, timeout, completion, out returnTask, asyncWrite && async, out usedCache, inRetry);
+                        Debug.Assert(usedCache || (async == (returnTask != null)), @"if we didn't use the cache, returnTask should be null if and only if async is false.");
 
-                        return RunExecuteReaderTdsWithTransparentParameterEncryption( cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite && async, ds: null,
-                            describeParameterEncryptionRequest: false, describeParameterEncryptionTask: returnTask);
+                        long firstAttemptStart = ADP.TimerCurrent();
+
+                        try {
+                            return RunExecuteReaderTdsWithTransparentParameterEncryption(cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite && async, inRetry: inRetry, ds: null,
+                                describeParameterEncryptionRequest: false, describeParameterEncryptionTask: returnTask);
+                        }
+                        catch (SqlException ex) {
+                            // We only want to retry once, so don't retry if we are already in retry.
+                            // If we didn't use the cache, we don't want to retry.
+                            // The async retried are handled separately, handle only [....] calls here.
+                            if (inRetry || async || !usedCache) {
+                                throw;
+                            }
+
+                            bool shouldRetry = false;
+
+                            // Check if we have an error indicating that we can retry.
+                            for (int i = 0; i < ex.Errors.Count; i++) {
+                                if (ex.Errors[i].Number == TdsEnums.TCE_CONVERSION_ERROR_CLIENT_RETRY) {
+                                    shouldRetry = true;
+                                    break;
+                                }
+                            }
+
+                            if (!shouldRetry) {
+                                throw;
+                            }
+                            else {
+                                // Retry if the command failed with appropriate error.
+                                // First invalidate the entry from the cache, so that we refresh our encryption MD.
+                                SqlQueryMetadataCache.GetInstance().InvalidateCacheEntry(this);
+                                return RunExecuteReader(cmdBehavior, runBehavior, returnStream, method, null, TdsParserStaticMethods.GetRemainingTimeout(timeout, firstAttemptStart), out task, out usedCache, async, inRetry: true);
+                            }
+                        }
                     }
                     else {
-                        return RunExecuteReaderTds( cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite && async);
+                        return RunExecuteReaderTds( cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite && async, inRetry: inRetry);
                     }
 
                 }
@@ -3830,11 +4105,11 @@ namespace System.Data.SqlClient {
                                                                                     int timeout,
                                                                                     out Task task,
                                                                                     bool asyncWrite,
+                                                                                    bool inRetry,
                                                                                     SqlDataReader ds=null,
                                                                                     bool describeParameterEncryptionRequest = false,
                                                                                     Task describeParameterEncryptionTask = null) {
             Debug.Assert(!asyncWrite || async, "AsyncWrite should be always accompanied by Async");
-            Debug.Assert((describeParameterEncryptionTask != null) == async, @"async should be true if and only if describeParameterEncryptionTask is not null.");
 
             if (ds == null && returnStream) {
                 ds = new SqlDataReader(this, cmdBehavior);
@@ -3842,40 +4117,42 @@ namespace System.Data.SqlClient {
 
             if (describeParameterEncryptionTask != null) {
                 long parameterEncryptionStart = ADP.TimerCurrent();
-                    TaskCompletionSource<object> completion = new TaskCompletionSource<object>();
-                    AsyncHelper.ContinueTask(describeParameterEncryptionTask, completion,
-                        () => {
-                            Task subTask = null;
-                            RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, TdsParserStaticMethods.GetRemainingTimeout(timeout, parameterEncryptionStart), out subTask, asyncWrite, ds);
-                            if (subTask == null) {
-                                completion.SetResult(null);
-                            }
-                            else {
-                                AsyncHelper.ContinueTask(subTask, completion, () => completion.SetResult(null));
-                            }
-                        }, connectionToDoom: null,
-                        onFailure: ((exception) => {
-                            if (_cachedAsyncState != null) {
-                                _cachedAsyncState.ResetAsyncState();
-                            }
-                            if (exception != null) {
-                                throw exception;
-                            }}),
-                        onCancellation: (() => {
-                            if (_cachedAsyncState != null) {
-                                _cachedAsyncState.ResetAsyncState();
-                            }}),
-                        connectionToAbort: _activeConnection);
-                    task = completion.Task;
-                    return ds;
+                TaskCompletionSource<object> completion = new TaskCompletionSource<object>();
+                AsyncHelper.ContinueTask(describeParameterEncryptionTask, completion,
+                    () => {
+                        Task subTask = null;
+                        RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, TdsParserStaticMethods.GetRemainingTimeout(timeout, parameterEncryptionStart), out subTask, asyncWrite, inRetry, ds);
+                        if (subTask == null) {
+                            completion.SetResult(null);
+                        }
+                        else {
+                            AsyncHelper.ContinueTask(subTask, completion, () => completion.SetResult(null));
+                        }
+                    }, connectionToDoom: null,
+                    onFailure: ((exception) => {
+                        if (_cachedAsyncState != null) {
+                            _cachedAsyncState.ResetAsyncState();
+                        }
+                        if (exception != null) {
+                            throw exception;
+                        }
+                    }),
+                    onCancellation: (() => {
+                        if (_cachedAsyncState != null) {
+                            _cachedAsyncState.ResetAsyncState();
+                        }
+                    }),
+                    connectionToAbort: _activeConnection);
+                task = completion.Task;
+                return ds;
             }
             else {
                 // Synchronous execution.
-                return RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite, ds);
+                return RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, timeout, out task, asyncWrite, inRetry, ds);
             }
         }
 
-        private SqlDataReader RunExecuteReaderTds( CommandBehavior cmdBehavior, RunBehavior runBehavior, bool returnStream, bool async, int timeout, out Task task, bool asyncWrite, SqlDataReader ds=null, bool describeParameterEncryptionRequest = false) {
+        private SqlDataReader RunExecuteReaderTds( CommandBehavior cmdBehavior, RunBehavior runBehavior, bool returnStream, bool async, int timeout, out Task task, bool asyncWrite, bool inRetry, SqlDataReader ds=null, bool describeParameterEncryptionRequest = false) {
             Debug.Assert(!asyncWrite || async, "AsyncWrite should be always accompanied by Async");
 
             if (ds == null && returnStream) {
@@ -3900,7 +4177,7 @@ namespace System.Data.SqlClient {
                             Interlocked.CompareExchange(ref _reconnectionCompletionSource, null, completion);
                             timeoutCTS.Cancel();
                             Task subTask;                            
-                            RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, TdsParserStaticMethods.GetRemainingTimeout(timeout, reconnectionStart), out subTask, asyncWrite, ds);
+                            RunExecuteReaderTds(cmdBehavior, runBehavior, returnStream, async, TdsParserStaticMethods.GetRemainingTimeout(timeout, reconnectionStart), out subTask, asyncWrite, inRetry, ds);
                             if (subTask == null) {
                                 completion.SetResult(null);
                             }
@@ -3933,7 +4210,8 @@ namespace System.Data.SqlClient {
             bool processFinallyBlock = true;
             bool decrementAsyncCountOnFailure = false;
 
-            if (async) {
+            // If we are in retry, don't increment the Async count. This should have already been set.
+            if (async && !inRetry) {
                 _activeConnection.GetOpenTdsConnection().IncrementAsyncCount();
                 decrementAsyncCountOnFailure = true;
             }
@@ -4077,7 +4355,7 @@ namespace System.Data.SqlClient {
                 }
                 else {
                     // Always execute - even if no reader!
-                    FinishExecuteReader(ds, runBehavior, optionSettings);
+                    FinishExecuteReader(ds, runBehavior, optionSettings, isInternal: false, forDescribeParameterEncryption: false);
                 }
             }
             catch (Exception e) {                
@@ -4177,11 +4455,11 @@ namespace System.Data.SqlClient {
         return ds;
         }
 
-        private SqlDataReader CompleteAsyncExecuteReader() {
+        private SqlDataReader CompleteAsyncExecuteReader(bool isInternal = false, bool forDescribeParameterEncryption = false) {
             SqlDataReader ds = cachedAsyncState.CachedAsyncReader; // should not be null
             bool processFinallyBlock = true;
             try {
-                FinishExecuteReader(ds, cachedAsyncState.CachedRunBehavior, cachedAsyncState.CachedSetOptions);
+                FinishExecuteReader(ds, cachedAsyncState.CachedRunBehavior, cachedAsyncState.CachedSetOptions, isInternal, forDescribeParameterEncryption);
             }
             catch (Exception e) {
                 processFinallyBlock = ADP.IsCatchableExceptionType(e);
@@ -4190,7 +4468,11 @@ namespace System.Data.SqlClient {
             finally {
                 TdsParser.ReliabilitySection.Assert("unreliable call to CompleteAsyncExecuteReader");  // you need to setup for a thread abort somewhere before you call this method
                 if (processFinallyBlock) {
-                    cachedAsyncState.ResetAsyncState();
+                    // Don't reset the state for internal End. The user End will do that eventually.
+                    if (!isInternal) {
+                        cachedAsyncState.ResetAsyncState();
+                    }
+
                     PutStateObject();
                 }
             }
@@ -4198,10 +4480,19 @@ namespace System.Data.SqlClient {
             return ds;
         }
 
-        private void FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, string resetOptionsString) {
+        private void FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, string resetOptionsString, bool isInternal, bool forDescribeParameterEncryption) {
             // always wrap with a try { FinishExecuteReader(...) } finally { PutStateObject(); }
 
-            NotifyDependency();
+            // If this is not for internal usage, notify the dependency. If we have already initiated the end internally, the reader should be ready, so just return.
+            if (!isInternal && !forDescribeParameterEncryption) {
+                NotifyDependency();
+
+                if (_internalEndExecuteInitiated) {
+                    Debug.Assert(_stateObj == null);
+                    return;
+                }
+            }
+
             if (runBehavior == RunBehavior.UntilDone) {
                 try {
                     bool dataReady;
@@ -4618,6 +4909,14 @@ namespace System.Data.SqlClient {
                         parameter.Value = status;
 
                     }
+
+                // If we are not in Batch RPC mode, update the query cache with the encryption MD.
+                // We can do this now that we have distinguished between ReturnValue and ReturnStatus.
+                // Read comment in AddQueryMetadata() for more details.
+                if (!BatchRPCMode && CachingQueryMetadataPostponed) {
+                    SqlQueryMetadataCache.GetInstance().AddQueryMetadata(this, ignoreQueriesWithReturnValueParams: false);
+                }
+
                     break;
                 }
             }

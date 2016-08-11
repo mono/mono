@@ -889,6 +889,7 @@ namespace System.Data.SqlClient
         }
 
         internal void DecrementAsyncCount() {
+            Debug.Assert(_asyncCommandCount > 0);
             Interlocked.Decrement(ref _asyncCommandCount);
         }
 

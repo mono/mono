@@ -11,6 +11,7 @@
     using System.Web.Resources;
     using System.Web.UI;
     using System.Web.UI.WebControls;
+    using System.Web.DynamicData.Util;
 
     /// <summary>
     /// Validator that enforces model validation. It can be used either at the field level or the entity level
@@ -163,7 +164,7 @@
                 }
 
                 if (!attrib.IsValid(value)) {
-                    ErrorMessage = HttpUtility.HtmlEncode(attrib.FormatErrorMessage(Column.DisplayName));
+                    ErrorMessage = HttpUtility.HtmlEncode(StringLocalizerUtil.GetLocalizedString(attrib, Column.DisplayName));
                     return false;
                 }
             }

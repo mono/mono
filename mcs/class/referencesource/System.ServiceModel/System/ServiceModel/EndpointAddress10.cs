@@ -67,7 +67,7 @@ namespace System.ServiceModel
 
         static XmlSchema GetEprSchema()
         {
-            using (XmlTextReader reader = new XmlTextReader(new StringReader(Schema)))
+            using (XmlTextReader reader = new XmlTextReader(new StringReader(Schema)) { DtdProcessing = DtdProcessing.Prohibit })
             {
                 return XmlSchema.Read(reader, null);
             }

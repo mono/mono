@@ -2310,7 +2310,7 @@ namespace System.ServiceModel.Security
                 writer.WriteEndElement();
                 writer.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
-                result = (XmlElement)doc.ReadNode(new XmlTextReader(stream));
+                result = (XmlElement)doc.ReadNode(new XmlTextReader(stream) { DtdProcessing = DtdProcessing.Prohibit });
             }
             return result;
         }

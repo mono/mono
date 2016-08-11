@@ -27,6 +27,7 @@ namespace System.Web.SessionState {
     using System.Globalization;
     using System.Security.Permissions;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Web.Hosting;
     using System.Web.Management;
     using Microsoft.Win32;
@@ -111,7 +112,7 @@ namespace System.Web.SessionState {
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    public sealed class SessionStateModule : IHttpModule {
+    public sealed class SessionStateModule : ISessionStateModule {
 
         internal const string SQL_CONNECTION_STRING_DEFAULT = "data source=localhost;Integrated Security=SSPI";
         internal const string STATE_CONNECTION_STRING_DEFAULT = "tcpip=loopback:42424";
@@ -1446,15 +1447,19 @@ namespace System.Web.SessionState {
                 }
             }
         }
-
-        // DevDiv Bugs 151914: Release session state before executing child request
-        internal void EnsureReleaseState(HttpApplication app) {
+        
+        public void ReleaseSessionState(HttpContext context) {
             if (HttpRuntime.UseIntegratedPipeline && _acquireCalled && !_releaseCalled) {
                 try {
-                    OnReleaseState(app, null);
+                    OnReleaseState(context.ApplicationInstance, null);
                 }
                 catch { }
             }
+        }
+
+        public Task ReleaseSessionStateAsync(HttpContext context) {
+            ReleaseSessionState(context);
+            return TaskAsyncHelper.CompletedTask;
         }
     }
 }

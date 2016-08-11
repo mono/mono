@@ -7,6 +7,7 @@ namespace Microsoft.Activities.Presentation.Xaml
     using System;
     using System.Activities;
     using System.Activities.Debugger;
+    using System.Activities.DynamicUpdate;
     using System.Activities.Presentation.View;
     using System.Activities.Presentation.ViewState;
     using System.Collections.Generic;
@@ -29,6 +30,18 @@ namespace Microsoft.Activities.Presentation.Xaml
                 XamlDebuggerXmlReader.EndLineName.MemberName,
                 XamlDebuggerXmlReader.EndColumnName.MemberName
             };
+
+        // These are used to discover that we have found a DynamicUpdateInfo.OriginalDefintion or OriginalActivityBuilder
+        // attached property member. We have "hardcoded" the *MemberName" here because DynamicUpdateInfo has the
+        // AttachableMemberIdentifier properties marked as private. But the DynamicUpdateInfo class itself is public,
+        // as are the Get and Set methods.
+        static readonly string DynamicUpdateOriginalDefinitionMemberName = "OriginalDefinition";
+        static readonly MethodInfo GetOriginalDefinition = typeof(DynamicUpdateInfo).GetMethod("GetOriginalDefinition");
+        static readonly MethodInfo SetOriginalDefinition = typeof(DynamicUpdateInfo).GetMethod("SetOriginalDefinition");
+
+        static readonly string DynamicUpdateOriginalActivityBuilderMemberName = "OriginalActivityBuilder";
+        static readonly MethodInfo GetOriginalActivityBuilder = typeof(DynamicUpdateInfo).GetMethod("GetOriginalActivityBuilder");
+        static readonly MethodInfo SetOriginalActivityBuilder = typeof(DynamicUpdateInfo).GetMethod("SetOriginalActivityBuilder");
 
         // This method collects view state attached properties and generates a Xaml node stream 
         // with all view state information appearing within the ViewStateManager node. 
@@ -279,6 +292,22 @@ namespace Microsoft.Activities.Presentation.Xaml
             // Xaml member definition for IdRef. Used to identify existing IdRef properties in the input nodestream.
             XamlMember idRefMember = new XamlMember(IdRef, GetIdRef, SetIdRef, inputReader.SchemaContext);
 
+            // These are used to ignore the IdRef members that are inside a DynamicUpdateInfo.OriginalDefinition/OriginalActivityBuilder attached property.
+            // We need to ignore these because if we don't, the IdRef values for the objects in the actual workflow defintion will be ignored because of the
+            // duplicate IdRef value. This causes problems with activity designers that depend on the ViewStateManager data to correctly display the workflow
+            // on the WorkflowDesigner canvas.
+            XamlMember originalDefinitionMember = new XamlMember(DynamicUpdateOriginalDefinitionMemberName, GetOriginalDefinition, SetOriginalDefinition, inputReader.SchemaContext);
+            XamlMember originalActivityBuilderMember = new XamlMember(DynamicUpdateOriginalActivityBuilderMemberName, GetOriginalActivityBuilder, SetOriginalActivityBuilder, inputReader.SchemaContext);
+
+            // insideOriginalDefintion gets set to true when we find a "StartMember" node for either of the above two attached properties.
+            // originalDefintionMemberCount gets incremented if we find any "StartMember" and insideOriginalDefinition is true.
+            // originalDefintionMemberCount gets decremented if we find any "EndMember" and insideOriginalDefintion is true.
+            // insideOriginalDefintion gets set to false when we find an "EndMember" and originalDefinitionMemberCount gets decremented to 0.
+            // If insideOriginalDefintion is true when we find an "IdRef" member, we do NOT add that IdRef to the idRefsSeen HashSet to avoid
+            // duplicates being defined by the IdRefs inside of the OriginalDefinition attached properties.
+            bool insideOriginalDefinition = false;
+            int originalDefinitionMemberCount = 0;
+
             // Dictionary containing Ids and corresponding viewstate related
             // attached property nodes. Populated by StripViewStateElement method.
             Dictionary<string, XamlNodeList> viewStateInfo = null;
@@ -323,9 +352,21 @@ namespace Microsoft.Activities.Presentation.Xaml
                                 break;
 
                             case XamlNodeType.StartMember:
+                                // If we find a StartMember for DynamicUpdateInfo.OriginalDefinition or OriginalActivityBuilder, remember that we are
+                                // inside one of those. We don't want to "remember" IdRef values in the idRefsSeen HashSet while inside these attached properties.
+                                if (workflowDefinition.Member.Equals(originalDefinitionMember) || workflowDefinition.Member.Equals(originalActivityBuilderMember))
+                                {
+                                    insideOriginalDefinition = true;
+                                }
+                                
+                                if (insideOriginalDefinition)
+                                {
+                                    originalDefinitionMemberCount++;
+                                }
+
                                 // Track when the reader enters IdRef. Skip writing the start 
                                 // node to the output nodelist until we check for duplicates.
-                                if (workflowDefinition.Member.Equals(idRefMember))
+                                else if (workflowDefinition.Member.Equals(idRefMember))
                                 {
                                     inIdRefMember = true;
                                     skipWritingWorkflowDefinition = true;
@@ -341,38 +382,43 @@ namespace Microsoft.Activities.Presentation.Xaml
                             case XamlNodeType.Value:
                                 if (inIdRefMember)
                                 {
-                                    string idRef = workflowDefinition.Value as string;
-                                    if (!string.IsNullOrWhiteSpace(idRef))
+                                    // We don't want to deal with the IdRef if we are inside a DynamicUpdateInfo.OriginalDefinition/OriginalActivityBuilder
+                                    // attached property.
+                                    if (!insideOriginalDefinition)
                                     {
-                                        // If IdRef value is a duplicate then do not associate it with 
-                                        // the stack frame (top of stack == activity node with IdRef member on it).
-                                        if (idRefsSeen.Contains(idRef))
+                                        string idRef = workflowDefinition.Value as string;
+                                        if (!string.IsNullOrWhiteSpace(idRef))
                                         {
-                                            stack.Peek().IdRef = null;
-                                        }
-                                        // If the IdRef value is unique then associate it with the
-                                        // stack frame and also write its value into the output nodestream.
-                                        else
-                                        {
-                                            stack.Peek().IdRef = idRef;
-                                            idManager.UpdateMap(idRef);
-                                            idRefsSeen.Add(idRef);
-
-                                            if (shouldPassLineInfo)
+                                            // If IdRef value is a duplicate then do not associate it with 
+                                            // the stack frame (top of stack == activity node with IdRef member on it).
+                                            if (idRefsSeen.Contains(idRef))
                                             {
-                                                lineInfoComsumer.SetLineInfo(idRefLineNumber, idRefLinePosition);
+                                                stack.Peek().IdRef = null;
                                             }
-
-                                            mergedNodeWriter.WriteStartMember(idRefMember);
-
-                                            if (shouldPassLineInfo)
+                                            // If the IdRef value is unique then associate it with the
+                                            // stack frame and also write its value into the output nodestream.
+                                            else
                                             {
-                                                lineInfoComsumer.SetLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
+                                                stack.Peek().IdRef = idRef;
+                                                idManager.UpdateMap(idRef);
+                                                idRefsSeen.Add(idRef);
+
+                                                if (shouldPassLineInfo)
+                                                {
+                                                    lineInfoComsumer.SetLineInfo(idRefLineNumber, idRefLinePosition);
+                                                }
+
+                                                mergedNodeWriter.WriteStartMember(idRefMember);
+
+                                                if (shouldPassLineInfo)
+                                                {
+                                                    lineInfoComsumer.SetLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
+                                                }
+
+                                                mergedNodeWriter.WriteValue(idRef);
+
+                                                shouldWriteIdRefEndMember = true;
                                             }
-
-                                            mergedNodeWriter.WriteValue(idRef);
-
-                                            shouldWriteIdRefEndMember = true;
                                         }
                                     }
                                     // Don't need to write IdRef value into the output
@@ -382,9 +428,21 @@ namespace Microsoft.Activities.Presentation.Xaml
                                 break;
 
                             case XamlNodeType.EndMember:
+                                // If we are inside an OriginalDefinition/OriginalActivityBuilder attached property,
+                                // decrement the count and if it goes to zero, set insideOriginalDefintion to false
+                                // because we just encountered the EndMember for it.
+                                if (insideOriginalDefinition)
+                                {
+                                    originalDefinitionMemberCount--;
+                                    if (originalDefinitionMemberCount == 0)
+                                    {
+                                        insideOriginalDefinition = false;
+                                    }
+                                }
+
                                 // Exit IdRef node. Skip writing the EndMember node, we would have done 
                                 // it as part of reading the IdRef value.
-                                if (inIdRefMember)
+                                if (inIdRefMember && !insideOriginalDefinition)
                                 {
                                     inIdRefMember = false;
                                     skipWritingWorkflowDefinition = true;
@@ -401,6 +459,7 @@ namespace Microsoft.Activities.Presentation.Xaml
                                         mergedNodeWriter.WriteEndMember();
                                     }
                                 }
+
                                 break;
 
                             case XamlNodeType.EndObject:
@@ -592,6 +651,7 @@ namespace Microsoft.Activities.Presentation.Xaml
             viewStateSourceLocationMap = null;
             XamlNodeList strippedNodeList = new XamlNodeList(inputReader.SchemaContext);
             XamlMember viewStateManager = new XamlMember(ViewStateManager, GetViewStateManager, SetViewStateManager, inputReader.SchemaContext);
+
             using (XamlWriter strippedWriter = strippedNodeList.Writer)
             {
                 IXamlLineInfo lineInfo = inputReader as IXamlLineInfo;
@@ -618,7 +678,7 @@ namespace Microsoft.Activities.Presentation.Xaml
 
             return strippedNodeList.GetReader();
         }
-        
+
         // This method reads ViewStateManager nodes from the xaml nodestream and outputs that in the 
         // viewStateInfo dictionary. The input reader is positioned on the ViewStateManagerNode in the nodestream.
         static void ReadViewStateInfo(XamlReader inputReader, out Dictionary<string, XamlNodeList> viewStateInfo, out Dictionary<string, SourceLocation> viewStateSourceLocationMap)
@@ -700,7 +760,11 @@ namespace Microsoft.Activities.Presentation.Xaml
                                 }
                             }
                         } 
-                        else if (globalMemberLevel == 1 && !IsAttachablePropertyForConvert(xamlReader)) 
+                        // The xamlReader.ReadSubtree and subsequent while loop to get the Id member
+                        // has moved the xamlReader forward to the next member. We need to check to see
+                        // if it is an Attached Property that we care about. If it isn't then we need to
+                        // skip it and not put it in the resulting XamlNodeList.
+                        if (globalMemberLevel == 1 && !IsAttachablePropertyForConvert(xamlReader)) 
                         {
                             skippingUnexpectedAttachedProperty = true;
                         }

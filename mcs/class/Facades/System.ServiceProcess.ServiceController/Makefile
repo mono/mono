@@ -21,8 +21,6 @@ endif
 
 LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
-PLATFORM_DEBUG_FLAGS =
-
 NO_TEST = yes
 
 include $(MCS_BUILD_DIR)/library.make

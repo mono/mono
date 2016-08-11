@@ -294,6 +294,10 @@ namespace System.Net
 			get { return false; }
 		}
 
+		internal static bool DisableSendAuxRecord {
+			get { return false; }
+		}
+
 		// Methods
 		public static void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval)
 		{

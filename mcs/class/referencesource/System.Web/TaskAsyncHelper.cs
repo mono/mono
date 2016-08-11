@@ -16,6 +16,8 @@ namespace System.Web {
 
     internal static class TaskAsyncHelper {
 
+        private static readonly Task s_completedTask = Task.FromResult<object>(null);
+
         internal static IAsyncResult BeginTask(Func<Task> taskFunc, AsyncCallback callback, object state) {
             Task task = taskFunc();
             if (task == null) {
@@ -76,5 +78,10 @@ namespace System.Web {
             taskWrapper.Task.GetAwaiter().GetResult();
         }
 
+        internal static Task CompletedTask {
+            get {
+                return s_completedTask;
+            }
+        }
     }
 }

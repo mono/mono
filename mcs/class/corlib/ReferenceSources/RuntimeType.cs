@@ -472,12 +472,13 @@ namespace System
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetMethodsByName_native (string name, BindingFlags bindingAttr, bool ignoreCase);
+		internal extern IntPtr GetMethodsByName_native (IntPtr namePtr, BindingFlags bindingAttr, bool ignoreCase);
 
 		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (name, bindingAttr, ignoreCase), false)) {
+			using (var namePtr = new Mono.SafeStringMarshal (name))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (namePtr.Value, bindingAttr, ignoreCase))) {
 				var n = h.Length;
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -489,7 +490,7 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, Type reflected_type);		
+		extern IntPtr GetPropertiesByName_native (IntPtr name, BindingFlags bindingAttr, bool icase);		
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetConstructors_native (BindingFlags bindingAttr);
@@ -497,7 +498,7 @@ namespace System
 		RuntimeConstructorInfo[] GetConstructors_internal (BindingFlags bindingAttr, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetConstructors_native (bindingAttr), false)) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetConstructors_native (bindingAttr))) {
 				var n = h.Length;
 				var a = new RuntimeConstructorInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -508,6 +509,20 @@ namespace System
 			}
 		}
 
+		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var namePtr = new Mono.SafeStringMarshal (name))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (namePtr.Value, bindingAttr, icase))) {
+				var n = h.Length;
+				var a = new RuntimePropertyInfo [n];
+				for (int i = 0; i < n; i++) {
+					var ph = new Mono.RuntimePropertyHandle (h[i]);
+					a[i] = (RuntimePropertyInfo) PropertyInfo.GetPropertyFromHandle (ph, refh);
+				}
+				return a;
+			}
+		}
 
 		public override InterfaceMapping GetInterfaceMap (Type ifaceType)
 		{
@@ -656,15 +671,16 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, Type reflected_type);
+		extern IntPtr GetEvents_native (IntPtr name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetFields_native (string name, BindingFlags bindingAttr);
+		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr);
 
 		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
-			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (name, bindingAttr), false)) {
+			using (var namePtr = new Mono.SafeStringMarshal (name))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (namePtr.Value, bindingAttr))) {
 				int n = h.Length;
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
@@ -675,11 +691,43 @@ namespace System
 			}
 		}
 
+		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		{
+			var refh = new RuntimeTypeHandle (reflectedType);
+			using (var namePtr = new Mono.SafeStringMarshal (name))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, bindingAttr))) {
+				int n = h.Length;
+				var a = new RuntimeEventInfo[n];
+				for (int i = 0; i < n; i++) {
+					var eh = new Mono.RuntimeEventHandle (h[i]);
+					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
+				}
+				return a;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type[] GetInterfaces();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern RuntimeType[] GetNestedTypes_internal (string name, BindingFlags bindingAttr);		
+		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr);
+
+		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr)
+		{
+			string internalName = null;
+			if (displayName != null)
+				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
+			using (var namePtr = new Mono.SafeStringMarshal (internalName))
+			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr))) {
+				int n = h.Length;
+				var a = new RuntimeType [n];
+				for (int i = 0; i < n; i++) {
+					var th = new RuntimeTypeHandle (h[i]);
+					a[i] = (RuntimeType) Type.GetTypeFromHandle (th);
+				}
+				return a;
+			}
+		}
 
 		public override string AssemblyQualifiedName {
 			get {

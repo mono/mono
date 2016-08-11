@@ -27,7 +27,7 @@ namespace System.Runtime.Caching {
         private long[] _cacheSizeSamples;
         private DateTime[] _cacheSizeSampleTimes;
         private int _idx;
-        private SRef _sizedRef;
+        private SRefMultiple _sizedRefMultiple;
         private int _gen2Count;
         private long _memoryLimit;
 
@@ -51,7 +51,7 @@ namespace System.Runtime.Caching {
         private void InitDisposableMembers(int cacheMemoryLimitMegabytes) {
             bool dispose = true;
             try {
-                _sizedRef = new SRef(_memoryCache);
+                _sizedRefMultiple = new SRefMultiple(_memoryCache.AllSRefTargets);
                 SetLimit(cacheMemoryLimitMegabytes);
                 InitHistory();
                 dispose = false;
@@ -112,8 +112,8 @@ namespace System.Runtime.Caching {
         }
 
         public void Dispose() {
-            SRef sref = _sizedRef;
-            if (sref != null && Interlocked.CompareExchange(ref _sizedRef, null, sref) == sref) {
+            SRefMultiple sref = _sizedRefMultiple;
+            if (sref != null && Interlocked.CompareExchange(ref _sizedRefMultiple, null, sref) == sref) {
                 sref.Dispose();
             }
             IMemoryCacheManager memoryCacheManager = s_memoryCacheManager;
@@ -139,7 +139,7 @@ namespace System.Runtime.Caching {
             // This update must happen, otherwise the CacheManager won't 
             // know the total cache size.
             int gen2Count = GC.CollectionCount(2);
-            SRef sref = _sizedRef;
+            SRefMultiple sref = _sizedRefMultiple;
             if (gen2Count != _gen2Count && sref != null) {
                 // update _gen2Count
                 _gen2Count = gen2Count;

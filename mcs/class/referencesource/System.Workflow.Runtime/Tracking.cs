@@ -1837,18 +1837,25 @@ namespace System.Workflow.Runtime
             return HashServiceType(serviceType.AssemblyQualifiedName);
         }
 
-        [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5350:MD5CannotBeUsed", 
+        [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5350:MD5CannotBeUsed",
             Justification = "Design has been approved.  We are not using MD5 for any security or cryptography purposes but rather as a hash.")]
         internal static Guid HashServiceType(String serviceFullTypeName)
         {
-            MD5 md5 = new MD5CryptoServiceProvider();
             byte[] data;
             byte[] result;
 
             UnicodeEncoding ue = new UnicodeEncoding();
             data = ue.GetBytes(serviceFullTypeName);
 
-            result = md5.ComputeHash(data);
+            if (AppSettings.FIPSRequired)
+            {
+                result = MD5PInvokeHelper.CalculateHash(data);
+            }
+            else
+            {
+                MD5 md5 = new MD5CryptoServiceProvider();
+                result = md5.ComputeHash(data);
+            }
 
             return new Guid(result);
         }

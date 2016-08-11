@@ -22,16 +22,32 @@
 
 namespace System.Text
 {
-	public sealed partial class CodePagesEncodingProvider
+	public sealed class CodePagesEncodingProvider : EncodingProvider
 	{
+		static readonly CodePagesEncodingProvider instance = new CodePagesEncodingProvider ();
+
 		private CodePagesEncodingProvider ()
 		{
 		}
 		
-		public static System.Text.EncodingProvider Instance { 
+		public static EncodingProvider Instance {
 			get {
-				throw new NotImplementedException ();
+				return instance;
 			}
+		}
+
+		public override Encoding GetEncoding (string name)
+		{
+			// MSDN: "if name is not the name of an encoding that you support, the method should return null."
+			// We do this here since all our encodings are already supported by the main Encoding class
+			return null;
+		}
+
+		public override Encoding GetEncoding (int codepage)
+		{
+			// MSDN: "if codepage is not the code page identifier of an encoding that you support, the method should return null."
+			// We do this here since all our encodings are already supported by the main Encoding class
+			return null;
 		}
 	}
 }

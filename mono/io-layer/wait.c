@@ -18,6 +18,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/w32handle.h>
+#include <mono/utils/mono-threads.h>
 
 static gboolean own_if_signalled(gpointer handle)
 {
@@ -68,21 +69,7 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 	guint32 ret, waited;
 	int thr_ret;
 	gboolean apc_pending = FALSE;
-	gpointer current_thread = wapi_get_current_thread_handle ();
-	gint64 now, end;
-	
-	if (current_thread == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return(WAIT_FAILED);
-	}
-
-	if (handle == _WAPI_THREAD_CURRENT) {
-		handle = wapi_get_current_thread_handle ();
-		if (handle == NULL) {
-			SetLastError (ERROR_INVALID_HANDLE);
-			return(WAIT_FAILED);
-		}
-	}
+	gint64 wait_start, timeout_in_ticks;
 
 	if ((GPOINTER_TO_UINT (handle) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -102,9 +89,9 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 	if (mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_SPECIAL_WAIT) == TRUE) {
 		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p has special wait", __func__, handle);
 
-		ret = mono_w32handle_ops_specialwait (handle, timeout, alertable);
+		ret = mono_w32handle_ops_specialwait (handle, timeout, alertable ? &apc_pending : NULL);
 	
-		if (alertable && _wapi_thread_cur_apc_pending ())
+		if (apc_pending)
 			ret = WAIT_IO_COMPLETION;
 
 		return ret;
@@ -139,8 +126,10 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		goto done;
 	}
 	
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 
 	do {
 		/* Check before waiting on the condition, just in case
@@ -158,13 +147,13 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		if (timeout == INFINITE) {
 			waited = mono_w32handle_timedwait_signal_handle (handle, INFINITE, FALSE, alertable ? &apc_pending : NULL);
 		} else {
-			now = mono_100ns_ticks ();
-			if (end < now) {
+			gint64 elapsed = mono_100ns_ticks () - wait_start;
+			if (elapsed >= timeout_in_ticks) {
 				ret = WAIT_TIMEOUT;
 				goto done;
 			}
 
-			waited = mono_w32handle_timedwait_signal_handle (handle, (end - now) / 10 / 1000, FALSE, alertable ? &apc_pending : NULL);
+			waited = mono_w32handle_timedwait_signal_handle (handle, (timeout_in_ticks - elapsed) / 10 / 1000, FALSE, alertable ? &apc_pending : NULL);
 		}
 
 		if(waited==0 && !apc_pending) {
@@ -247,29 +236,7 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 	guint32 ret = 0, waited;
 	int thr_ret;
 	gboolean apc_pending = FALSE;
-	gpointer current_thread = wapi_get_current_thread_handle ();
-	gint64 now, end;
-	
-	if (current_thread == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return(WAIT_FAILED);
-	}
-
-	if (signal_handle == _WAPI_THREAD_CURRENT) {
-		signal_handle = wapi_get_current_thread_handle ();
-		if (signal_handle == NULL) {
-			SetLastError (ERROR_INVALID_HANDLE);
-			return(WAIT_FAILED);
-		}
-	}
-
-	if (wait == _WAPI_THREAD_CURRENT) {
-		wait = wapi_get_current_thread_handle ();
-		if (wait == NULL) {
-			SetLastError (ERROR_INVALID_HANDLE);
-			return(WAIT_FAILED);
-		}
-	}
+	gint64 wait_start, timeout_in_ticks;
 
 	if ((GPOINTER_TO_UINT (signal_handle) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
 		SetLastError (ERROR_INVALID_HANDLE);
@@ -323,9 +290,10 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		goto done;
 	}
 
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
-
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 	do {
 		/* Check before waiting on the condition, just in case
 		 */
@@ -341,13 +309,13 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		if (timeout == INFINITE) {
 			waited = mono_w32handle_timedwait_signal_handle (wait, INFINITE, FALSE, alertable ? &apc_pending : NULL);
 		} else {
-			now = mono_100ns_ticks ();
-			if (end < now) {
+			gint64 elapsed = mono_100ns_ticks () - wait_start;
+			if (elapsed >= timeout_in_ticks) {
 				ret = WAIT_TIMEOUT;
 				goto done;
 			}
 
-			waited = mono_w32handle_timedwait_signal_handle (wait, (end - now) / 10 / 1000, FALSE, alertable ? &apc_pending : NULL);
+			waited = mono_w32handle_timedwait_signal_handle (wait, (timeout_in_ticks - elapsed) / 10 / 1000, FALSE, alertable ? &apc_pending : NULL);
 		}
 
 		if (waited==0 && !apc_pending) {
@@ -449,17 +417,11 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	guint i;
 	guint32 ret;
 	int thr_ret;
-	gpointer current_thread = wapi_get_current_thread_handle ();
 	guint32 retval;
 	gboolean poll;
 	gpointer sorted_handles [MAXIMUM_WAIT_OBJECTS];
 	gboolean apc_pending = FALSE;
-	gint64 now, end;
-	
-	if (current_thread == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return(WAIT_FAILED);
-	}
+	gint64 wait_start, timeout_in_ticks;
 	
 	if (numobjects > MAXIMUM_WAIT_OBJECTS) {
 		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Too many handles: %d", __func__, numobjects);
@@ -473,17 +435,6 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 
 	/* Check for duplicates */
 	for (i = 0; i < numobjects; i++) {
-		if (handles[i] == _WAPI_THREAD_CURRENT) {
-			handles[i] = wapi_get_current_thread_handle ();
-			
-			if (handles[i] == NULL) {
-				MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Handle %d bogus", __func__, i);
-
-				bogustype = TRUE;
-				break;
-			}
-		}
-
 		if ((GPOINTER_TO_UINT (handles[i]) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Handle %d pseudo process", __func__,
 				   i);
@@ -539,8 +490,10 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 		return WAIT_TIMEOUT;
 	}
 
-	if (timeout != INFINITE)
-		end = mono_100ns_ticks () + timeout * 1000 * 10;
+	if (timeout != INFINITE) {
+		wait_start = mono_100ns_ticks ();
+		timeout_in_ticks = (gint64)timeout * 10 * 1000; //can't overflow as timeout is 32bits
+	}
 
 	/* Have to wait for some or all handles to become signalled
 	 */
@@ -561,7 +514,7 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			mono_w32handle_ops_prewait (handles[i]);
 		
 			if (mono_w32handle_test_capabilities (handles[i], MONO_W32HANDLE_CAP_SPECIAL_WAIT) == TRUE && mono_w32handle_issignalled (handles[i]) == FALSE) {
-				mono_w32handle_ops_specialwait (handles[i], 0, alertable);
+				mono_w32handle_ops_specialwait (handles[i], 0, alertable ? &apc_pending : NULL);
 			}
 		}
 		
@@ -588,11 +541,11 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			if (timeout == INFINITE) {
 				ret = mono_w32handle_timedwait_signal (INFINITE, poll, &apc_pending);
 			} else {
-				now = mono_100ns_ticks ();
-				if (end < now) {
+				gint64 elapsed = mono_100ns_ticks () - wait_start;
+				if (elapsed >= timeout_in_ticks) {
 					ret = WAIT_TIMEOUT;
 				} else {
-					ret = mono_w32handle_timedwait_signal ((end - now) / 10 / 1000, poll, &apc_pending);
+					ret = mono_w32handle_timedwait_signal ((timeout_in_ticks - elapsed) / 10 / 1000, poll, &apc_pending);
 				}
 			}
 		} else {
@@ -620,17 +573,11 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			retval = WAIT_OBJECT_0+lowest;
 			break;
 		} else if (ret != 0) {
-			/* Didn't get all handles, and there was a
-			 * timeout or other error
-			 */
+			/* Didn't get all handles, and there was a timeout */
 			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: wait returned error: %s", __func__,
 				   strerror (ret));
 
-			if(ret==ETIMEDOUT) {
-				retval = WAIT_TIMEOUT;
-			} else {
-				retval = WAIT_FAILED;
-			}
+			retval = WAIT_TIMEOUT;
 			break;
 		}
 	}
