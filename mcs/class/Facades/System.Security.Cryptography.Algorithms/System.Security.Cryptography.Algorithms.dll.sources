@@ -1,7 +1,2 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-
-../../System.Core/System.Security.Cryptography/ECCurve.cs
-../../System.Core/System.Security.Cryptography/ECPoint.cs
-../../System.Core/System.Security.Cryptography/ECParameters.cs
-../../System.Core/System.Security.Cryptography/IncrementalHash.cs
