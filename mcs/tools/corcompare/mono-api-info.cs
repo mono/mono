@@ -761,8 +761,8 @@ namespace CorCompare
 						method.Name = "~" + name;
 					}
 
-					// TODO: Better check
-					if (t != type && list.Any (l => l.DeclaringType != method.DeclaringType && l.Name == method.Name && l.Parameters.Count == method.Parameters.Count))
+					if (t != type && list.Any (l => l.DeclaringType != method.DeclaringType && l.Name == method.Name && l.Parameters.Count == method.Parameters.Count &&
+					                           l.Parameters.SequenceEqual (method.Parameters, new ParameterComparer ())))
 						continue;
 
 					list.Add (method);
@@ -771,7 +771,7 @@ namespace CorCompare
 				if (!fullAPI)
 					break;
 
-				if (!t.IsInterface || t.IsEnum)
+				if (t.IsInterface || t.IsEnum)
 					break;
 
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
@@ -782,6 +782,19 @@ namespace CorCompare
 			} while (t != null);
 
 			return list.ToArray ();
+		}
+
+		sealed class ParameterComparer : IEqualityComparer<ParameterDefinition>
+		{
+			public bool Equals (ParameterDefinition x, ParameterDefinition y)
+			{
+				return x.ParameterType.Name == y.ParameterType.Name;
+			}
+
+			public int GetHashCode (ParameterDefinition obj)
+			{
+				return obj.ParameterType.Name.GetHashCode ();
+			}
 		}
 
 		static bool IsFinalizer (MethodDefinition method)
@@ -1518,15 +1531,13 @@ namespace CorCompare
 
 				ParameterDefinition info = infos [i];
 
-				string modifier;
-				if ((info.Attributes & ParameterAttributes.In) != 0)
-					modifier = "in";
-				else if ((info.Attributes & ParameterAttributes.Out) != 0)
-					modifier = "out";
-				else
-					modifier = string.Empty;
+				if (info.ParameterType.IsByReference) {
+					string modifier;
+					if ((info.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
+						modifier = "out";
+					else
+						modifier = "ref";
 
-				if (modifier.Length > 0) {
 					signature.Append (modifier);
 					signature.Append (" ");
 				}
