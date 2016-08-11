@@ -472,7 +472,15 @@ namespace System {
 		public extern static string[] GetCommandLineArgs ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string internalGetEnvironmentVariable (string variable);
+		internal extern static string internalGetEnvironmentVariable_native (IntPtr variable);
+
+		internal static string internalGetEnvironmentVariable (string variable) {
+			if (variable == null)
+				return null;
+			using (var h = Mono.RuntimeMarshal.MarshalString (variable)) {
+				return internalGetEnvironmentVariable_native (h.Value);
+			}
+		}
 
 		/// <summary>
 		/// Return a string containing the value of the environment
