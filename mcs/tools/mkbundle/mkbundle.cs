@@ -252,10 +252,30 @@ class MakeBundle {
 
 		}
 
+		if (fetch_target != null){
+			var truntime = Path.Combine (targets_dir, fetch_target, "mono");
+			Directory.CreateDirectory (Path.GetDirectoryName (truntime));
+			var wc = new WebClient ();
+			var uri = new Uri ($"{target_server}{fetch_target}");
+			try {
+				if (!quiet){
+					Console.WriteLine ($"Downloading runtime {uri} to {truntime}");
+				}
+				
+				wc.DownloadFile (uri, truntime);
+			} catch {
+				Console.Error.WriteLine ($"Failure to download the specified runtime from {uri}");
+				File.Delete (truntime);
+				return 1;
+			}
+			return 0;
+		}
+		
 		if (!quiet) {
 			Console.WriteLine (os_message);
 			Console.WriteLine ("Sources: {0} Auto-dependencies: {1}", sources.Count, autodeps);
 		}
+
 		if (sources.Count == 0 || output == null) {
 			Help ();
 			Environment.Exit (1);
@@ -267,33 +287,31 @@ class MakeBundle {
 			if (!QueueAssembly (files, file))
 				return 1;
 
-		if (fetch_target != null){
-			var truntime = Path.Combine (targets_dir, fetch_target, "mono");
-			Directory.CreateDirectory (Path.GetDirectoryName (truntime));
-			var wc = new WebClient ();
-			var uri = new Uri ($"{target_server}{fetch_target}");
-			try {
-				wc.DownloadFile (uri, truntime);
-			} catch {
-				Console.Error.WriteLine ($"Failure to download the specified runtime from {uri}");
-				File.Delete (truntime);
-				return 1;
-			}
-			return 0;
-		}
-		
 		if (custom_mode)
 			GenerateBundles (files);
 		else {
 			if (cross_target == "default")
 				runtime = null;
 			else {
-				var truntime = Path.Combine (targets_dir, cross_target, "mono");
-				if (!File.Exists (truntime)){
-					Console.Error.WriteLine ($"The runtime for the {cross_target} does not exist, use --fetch-target {cross_target} to download first");
-					return 1;
+				if (runtime == null){
+					if (cross_target == null){
+						Console.Error.WriteLine ("you should specify either a --runtime or a --cross compilation target");
+						Environment.Exit (1);
+					}
+					runtime = Path.Combine (targets_dir, cross_target, "mono");
+					if (!File.Exists (runtime)){
+						Console.Error.WriteLine ($"The runtime for the {cross_target} does not exist, use --fetch-target {cross_target} to download first");
+						return 1;
+					}
+				} else {
+					if (!File.Exists (runtime)){
+						Console.Error.WriteLine ($"The Mono runtime specified with --runtime does not exist");
+						return 1;
+					}
 				}
-			}				
+				
+				Console.WriteLine ("Using runtime {0}", runtime);
+			}
 			GeneratePackage (files);
 		}
 		
