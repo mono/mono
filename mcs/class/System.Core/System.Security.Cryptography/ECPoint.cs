@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if (NETSTANDARD && !IN_FACADE) || (!NETSTANDARD && IN_FACADE)
+#if NETSTANDARD
 
 namespace System.Security.Cryptography
 {

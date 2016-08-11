@@ -26,7 +26,7 @@ System.Security.Principal.Windows System.Threading.Thread System.Threading.Threa
 System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win32.Registry.AccessControl System.Diagnostics.StackTrace System.Globalization.Extensions \
 System.IO.FileSystem.AccessControl System.Private.CoreLib.InteropServices System.Reflection.TypeExtensions \
 System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument \
-System.Security.Cryptography.Algorithms System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
+System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
 System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
 
 # common_SUBDIRS dependencies
