@@ -120,6 +120,16 @@ typedef struct {
 	GSList *phi_nodes;
 } BBInfo;
 
+
+/*
+ * Interval tree for mono protected regions 
+ */
+typedef struct MonoProtectedRegion {
+	GSList *children;
+	GSList *subintervals; // Contains list of MonoProtectedRegion elements
+	MonoExceptionClause *finally;
+} MonoProtectedRegion;
+
 /*
  * Structure containing emit state
  */
@@ -149,7 +159,7 @@ typedef struct {
 	LLVMValueRef this_arg;
 	LLVMTypeRef *vreg_types;
 	LLVMTypeRef method_type;
-	LLVMBasicBlockRef init_bb, inited_bb;
+	LLVMBasicBlockRef init_bb, inited_bb, resume_bb;
 	gboolean *is_dead;
 	gboolean *unreachable;
 	gboolean llvm_only;
@@ -170,6 +180,8 @@ typedef struct {
 	GPtrArray *bblock_list;
 	char *method_name;
 	GHashTable *jit_callees;
+
+	GSList *protected_regions;
 } EmitContext;
 
 typedef struct {
@@ -274,6 +286,7 @@ static void emit_dbg_info (MonoLLVMModule *module, const char *filename, const c
 static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp);
 static LLVMValueRef get_intrinsic (EmitContext *ctx, const char *name);
 static void decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame);
+static void emit_resume_eh (EmitContext *ctx, MonoBasicBlock *bb);
 
 static inline void
 set_failure (EmitContext *ctx, const char *message)
@@ -3092,6 +3105,17 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 		if (!(bb->region != -1 && (bb->flags & BB_EXCEPTION_HANDLER)))
 			continue;
 
+		if (!ctx->resume_bb) {
+			ctx->resume_bb = gen_bb (ctx, "RESUME_BB");
+			mono_memory_barrier ();
+
+			LLVMBuilderRef resume_builder = create_builder (ctx);
+			ctx->builder = resume_builder;
+			LLVMPositionBuilderAtEnd (resume_builder, ctx->resume_bb);
+			emit_resume_eh (ctx, cfg->bb_entry);
+			ctx->builder = builder;
+		}
+
 		clause_index = MONO_REGION_CLAUSE_INDEX (bb->region);
 		g_hash_table_insert (ctx->region_to_handler, GUINT_TO_POINTER (mono_get_block_region_notry (cfg, bb->region)), bb);
 		g_hash_table_insert (ctx->clause_to_handler, GINT_TO_POINTER (clause_index), bb);
@@ -3824,24 +3848,33 @@ get_mono_personality (EmitContext *ctx)
 	return personality;
 }
 
+// We know that every MonoProtectedRegion will have either a finally
+// or clauses or both. This gets one element that we know the node has
+static MonoExceptionClause *
+mono_protected_region_elem (MonoProtectedRegion *node) 
+{
+	if (node->children)
+		return (MonoExceptionClause *) node->children->data;
+	else
+		return node->finally;
+}
+
+
 static LLVMBasicBlockRef
-emit_landing_pad (EmitContext *ctx, int group_index, int group_size)
+emit_landing_pad (EmitContext *ctx, MonoProtectedRegion *curr)
 {
 	MonoCompile *cfg = ctx->cfg;
 	LLVMBuilderRef old_builder = ctx->builder;
-	MonoExceptionClause *group_start = cfg->header->clauses + group_index;
+	MonoExceptionClause *group_start = mono_protected_region_elem (curr);
 
 	LLVMBuilderRef lpadBuilder = create_builder (ctx);
 	ctx->builder = lpadBuilder;
-
-	MonoBasicBlock *handler_bb = cfg->cil_offset_to_bb [CLAUSE_START (group_start)];
-	g_assert (handler_bb);
 
 	// <resultval> = landingpad <somety> personality <type> <pers_fn> <clause>+
 	LLVMValueRef personality = get_mono_personality (ctx);
 	g_assert (personality);
 
-	char *bb_name = g_strdup_printf ("LPAD%d_BB", group_index);
+	char *bb_name = g_strdup_printf ("LPAD%d_BB", mono_protected_region_elem(curr) - ctx->cfg->header->clauses);
 	LLVMBasicBlockRef lpad_bb = gen_bb (ctx, bb_name);
 	g_free (bb_name);
 	LLVMPositionBuilderAtEnd (lpadBuilder, lpad_bb);
@@ -3851,61 +3884,206 @@ emit_landing_pad (EmitContext *ctx, int group_index, int group_size)
 	LLVMValueRef cast = LLVMBuildBitCast (lpadBuilder, ctx->module->sentinel_exception, LLVMPointerType (LLVMInt8Type (), 0), "int8TypeInfo");
 	LLVMAddClause (landing_pad, cast);
 
-	LLVMBasicBlockRef resume_bb = gen_bb (ctx, "RESUME_BB");
-	LLVMBuilderRef resume_builder = create_builder (ctx);
-	ctx->builder = resume_builder;
-	LLVMPositionBuilderAtEnd (resume_builder, resume_bb);
-
-	emit_resume_eh (ctx, handler_bb);
-
 	// Build match
 	ctx->builder = lpadBuilder;
 	LLVMPositionBuilderAtEnd (lpadBuilder, lpad_bb);
 
-	gboolean finally_only = TRUE;
+	LLVMBasicBlockRef finally_bb;
 
-	MonoExceptionClause *group_cursor = group_start;
-
-	for (int i = 0; i < group_size; i ++) {
-		if (!(group_cursor->flags & MONO_EXCEPTION_CLAUSE_FINALLY))
-			finally_only = FALSE;
-
-		group_cursor++;
+	if (curr->finally) {
+		int clause_index = curr->finally - cfg->header->clauses;
+		MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
+		g_assert (handler_bb);
+		g_assert (ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+		finally_bb = ctx->bblocks [handler_bb->block_num].call_handler_target_bb;
+	} else {
+		finally_bb = ctx->resume_bb;
 	}
 
 	// FIXME:
 	// Handle landing pad inlining
+	g_assert (ctx->ex_var);
 
-	if (!finally_only) {
-		// So at each level of the exception stack we will match the exception again.
-		// During that match, we need to compare against the handler types for the current
-		// protected region. We send the try start and end so that we can only check against
-		// handlers for this lexical protected region.
-		LLVMValueRef match = mono_llvm_emit_match_exception_call (ctx, lpadBuilder, group_start->try_offset, group_start->try_offset + group_start->try_len);
+	// So at each level of the exception stack we will match the exception again.
+	// During that match, we need to compare against the handler types for the current
+	// protected region. We send the try start and end so that we can only check against
+	// handlers for this lexical protected region.
+	LLVMValueRef match = mono_llvm_emit_match_exception_call (ctx, lpadBuilder, group_start->try_offset, group_start->try_offset + group_start->try_len);
 
-		// if returns -1, resume
-		LLVMValueRef switch_ins = LLVMBuildSwitch (lpadBuilder, match, resume_bb, group_size);
+	LLVMValueRef switch_ins = LLVMBuildSwitch (lpadBuilder, match, finally_bb, 0);
 
-		// else move to that target bb
-		for (int i=0; i < group_size; i++) {
-			MonoExceptionClause *clause = group_start + i;
-			int clause_index = clause - cfg->header->clauses;
-			MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
-			g_assert (handler_bb);
-			g_assert (ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
-			LLVMAddCase (switch_ins, LLVMConstInt (LLVMInt32Type (), clause_index, FALSE), ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
-		}
-	} else {
-		int clause_index = group_start - cfg->header->clauses;
-		MonoBasicBlock *finally_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
-		g_assert (finally_bb);
+	// else move to that target bb
+	for (GSList *tmp = curr->children; tmp; tmp = tmp->next) {
+		MonoExceptionClause *clause = tmp->data;
 
-		LLVMBuildBr (ctx->builder, ctx->bblocks [finally_bb->block_num].call_handler_target_bb);
+		int clause_index = clause - cfg->header->clauses;
+		MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
+		g_assert (handler_bb);
+		g_assert (ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+		LLVMAddCase (switch_ins, LLVMConstInt (LLVMInt32Type (), clause_index, FALSE), ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+		LLVMPositionBuilderAtEnd (lpadBuilder, ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
 	}
 
 	ctx->builder = old_builder;
 
 	return lpad_bb;
+}
+
+static void
+mono_protected_region_add (EmitContext *ctx, MonoProtectedRegion *root, MonoExceptionClause *input)
+{
+	if (input->flags & MONO_EXCEPTION_CLAUSE_FINALLY)
+		root->finally = input;
+	else {
+		MOSTLY_ASYNC_SAFE_PRINTF ("Lookme: %p changed to %p\n\n", root->children, input);
+		root->children = g_slist_prepend_mempool (ctx->mempool, root->children, input);
+	}
+}
+
+static gboolean 
+mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoExceptionClause *input)
+{
+	// We have to statically allocate the switches that we do when doing
+	// exception handling. Each function gets visited once. This means that we
+	// need what is essentially an interval tree. When looking at a node we need to know where
+	// the parent is and which clauses are handled by that interval and not any children.
+	// Each clause group needs a parent and it needs a set of children
+
+	MonoExceptionClause *ex = mono_protected_region_elem (*out);
+	MonoProtectedRegion *val = *out;
+
+	if (CLAUSE_START (input) < CLAUSE_START (ex) || CLAUSE_END(ex) > CLAUSE_END (input)) {
+		// Input contains current tree as sub-tree
+		MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
+		mono_protected_region_add (ctx, root, input);
+		root->subintervals = g_slist_prepend_mempool (ctx->mempool, root->subintervals, val);
+		*out = root;
+
+		return TRUE;
+	} else if (CLAUSE_START (input) > CLAUSE_START (ex) || CLAUSE_END(ex) < CLAUSE_END (input)) {
+		// If the element is a child, and at this level
+		mono_protected_region_add (ctx, val, input);
+
+		return TRUE;
+	} else if (CLAUSE_START (input) > CLAUSE_START (ex) || CLAUSE_END(ex) != CLAUSE_END (input)) {
+		// If the element is a child, and not at this level
+		for (GSList *curr = val->subintervals; curr; curr = curr->next) {
+			MonoExceptionClause *cast = mono_protected_region_elem (curr->data);
+			if (CLAUSE_START (input) <= CLAUSE_START (cast) || CLAUSE_END(cast) >= CLAUSE_END (input))
+				return mono_protected_region_insert (ctx, (MonoProtectedRegion **)&curr->data, input);
+		}
+
+		// Not a made subinterval, make our own
+		MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
+		mono_protected_region_add (ctx, root, input);
+		val->subintervals = g_slist_prepend_mempool (ctx->mempool, val->subintervals, root);
+
+		return TRUE;
+	} else {
+		return FALSE;;
+	}
+}
+
+static void 
+print_mono_interval_children (EmitContext *ctx, MonoProtectedRegion *node, int depth)
+{
+	MonoExceptionClause *clause = mono_protected_region_elem (node);
+
+	for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
+	MOSTLY_ASYNC_SAFE_PRINTF ("From %d to %d\n", clause->try_offset, clause->try_offset +  clause->try_len);
+
+	for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
+	MOSTLY_ASYNC_SAFE_PRINTF ("Children\n");
+
+	if (node->finally) {
+		for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
+		MOSTLY_ASYNC_SAFE_PRINTF ("Finally: from %d to %d\n", CLAUSE_START(mono_protected_region_elem (node)), CLAUSE_END(mono_protected_region_elem (node)));
+	}
+
+	for (GSList *lst = node->children; lst ; lst = lst->next) {
+		for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
+		MonoExceptionClause *clause = (MonoExceptionClause *)lst->data;
+		MOSTLY_ASYNC_SAFE_PRINTF ("Child: from %d to %d\n", CLAUSE_START(clause), CLAUSE_END(clause));
+	}
+
+	for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
+	MOSTLY_ASYNC_SAFE_PRINTF ("Subnodes\n");
+	for (GSList *lst = node->subintervals; lst ; lst = lst->next)
+		print_mono_interval_children (ctx, (MonoProtectedRegion *) lst->data, depth + 1);
+}
+
+// Recursion depth limited by nesting of clauses
+static void 
+emit_protected_region (EmitContext *ctx, MonoProtectedRegion *node)
+{
+	LLVMBasicBlockRef lpad_bb = emit_landing_pad (ctx, node);
+	// Should always have at least one clause
+	intptr_t key = CLAUSE_END (mono_protected_region_elem (node));
+	g_hash_table_insert (ctx->exc_meta, (gpointer)key, lpad_bb);
+
+	GSList *lst;
+
+	for (lst = node->subintervals; lst ; lst = lst->next)
+		emit_protected_region (ctx, (MonoProtectedRegion*)lst->data);
+}
+
+static MonoProtectedRegion *
+find_parent_in_node_tree (MonoProtectedRegion *node, size_t offset, MonoProtectedRegion *parent)
+{
+	for (GSList *sub = node->subintervals; sub; sub = sub->next) {
+		MonoExceptionClause *child = mono_protected_region_elem ((MonoProtectedRegion *)sub);
+		if (CLAUSE_END (child) >= offset && CLAUSE_START (child) <= offset) {
+			return find_parent_in_node_tree ((MonoProtectedRegion *) sub, offset, node);
+		}
+	}
+
+	return parent;
+}
+
+
+static MonoProtectedRegion *
+find_parent_handler_group (EmitContext *ctx, size_t offset) 
+{
+	for (GSList *lst = ctx->protected_regions; lst; lst = lst->next) {
+		MonoProtectedRegion *node = lst->data;
+		MonoExceptionClause *clause = mono_protected_region_elem (node);
+		if (CLAUSE_END(clause) >= offset && CLAUSE_START(clause) <= offset) {
+			return find_parent_in_node_tree (node, offset, NULL);
+		}
+	}
+
+	return NULL;
+}
+
+static void
+emit_landing_pads (EmitContext *ctx)
+{
+	if (ctx->cfg->header->num_clauses == 0)
+		return;
+
+	for (int offset = 0; offset < ctx->cfg->header->num_clauses; offset++) {
+		gboolean success = FALSE;
+
+		MonoExceptionClause *clause = &ctx->cfg->header->clauses [offset];
+		for (GSList *cursor = ctx->protected_regions; cursor; cursor = cursor->next) {
+			MOSTLY_ASYNC_SAFE_PRINTF ("%p\n", &cursor->data);
+			if (mono_protected_region_insert (ctx, (MonoProtectedRegion **) &cursor->data, clause)) {
+				success = TRUE;
+				break;
+			}
+		}
+
+		if (!success) {
+			MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
+			mono_protected_region_add (ctx, root, clause);
+			ctx->protected_regions = g_slist_prepend_mempool (ctx->mempool, ctx->protected_regions, root);
+		}
+	}
+
+	for (GSList *lst = ctx->protected_regions; lst; lst = lst->next) {
+		print_mono_interval_children (ctx, (MonoProtectedRegion *)lst->data, 0);
+		emit_protected_region (ctx, (MonoProtectedRegion *)lst->data);
+	}
 }
 
 
@@ -6503,7 +6681,22 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMPositionBuilderAtEnd (ctx->builder, resume_bb);
 
 			if (ctx->llvm_only) {
-				emit_resume_eh (ctx, bb);
+				MonoProtectedRegion *parent = find_parent_handler_group (ctx, bb->real_offset);
+				MOSTLY_ASYNC_SAFE_PRINTF("Parent is PREQUEL");
+				if (parent != NULL && parent->finally) {
+				MOSTLY_ASYNC_SAFE_PRINTF("Parent is %d to %d for real_offset %d",
+				CLAUSE_START(mono_protected_region_elem (parent)),
+				CLAUSE_END(mono_protected_region_elem (parent)),
+				bb->real_offset
+				);
+					int clause_index = parent->finally - cfg->header->clauses;
+					MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
+					g_assert (handler_bb);
+					g_assert (ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+					LLVMBuildBr (builder, ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+				} else {
+					LLVMBuildBr (builder, ctx->resume_bb);
+				}
 			} else {
 				if (ctx->cfg->compile_aot) {
 					callee = get_callee (ctx, LLVMFunctionType (LLVMVoidType (), NULL, 0, FALSE), MONO_PATCH_INFO_INTERNAL_METHOD, "llvm_resume_unwind_trampoline");
@@ -7143,25 +7336,8 @@ emit_method_inner (EmitContext *ctx)
 	// Make landing pads first
 	ctx->exc_meta = g_hash_table_new_full (NULL, NULL, NULL, NULL);
 
-	if (ctx->llvm_only) {
-		size_t group_index = 0;
-		while (group_index < cfg->header->num_clauses) {
-			int count = 0;
-			size_t cursor = group_index;
-			while (cursor < cfg->header->num_clauses &&
-				   CLAUSE_START (&cfg->header->clauses [cursor]) == CLAUSE_START (&cfg->header->clauses [group_index]) &&
-				   CLAUSE_END (&cfg->header->clauses [cursor]) == CLAUSE_END (&cfg->header->clauses [group_index])) {
-				count++;
-				cursor++;
-			}
-
-			LLVMBasicBlockRef lpad_bb = emit_landing_pad (ctx, group_index, count);
-			intptr_t key = CLAUSE_END (&cfg->header->clauses [group_index]);
-			g_hash_table_insert (ctx->exc_meta, (gpointer)key, lpad_bb);
-
-			group_index = cursor;
-		}
-	}
+	if (ctx->llvm_only)
+		emit_landing_pads (ctx);
 
 	for (bb_index = 0; bb_index < bblock_list->len; ++bb_index) {
 		bb = (MonoBasicBlock*)g_ptr_array_index (bblock_list, bb_index);
@@ -7301,7 +7477,7 @@ emit_method_inner (EmitContext *ctx)
 		}
 	}
 
-	if (cfg->verbose_level > 1)
+	if (strcmp(cfg->method->name, "test") == 0)
 		mono_llvm_dump_value (method);
 
 	if (cfg->compile_aot && !cfg->llvm_only)
