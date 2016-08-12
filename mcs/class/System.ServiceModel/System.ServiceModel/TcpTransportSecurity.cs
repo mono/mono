@@ -27,6 +27,7 @@
 //
 using System;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.ServiceModel.Security;
 
 namespace System.ServiceModel
@@ -44,5 +45,12 @@ namespace System.ServiceModel
 		public TcpClientCredentialType ClientCredentialType { get; set; }
 
 		public ProtectionLevel ProtectionLevel { get; set; }
+
+		[MonoTODO]
+		public SslProtocols SslProtocols
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 	}
 }

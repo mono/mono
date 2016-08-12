@@ -163,6 +163,13 @@ namespace System.Data.SqlClient
 			}
 		}
 	
+		[MonoTODO]
+		public Guid ClientConnectionId {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
 		override
@@ -1663,6 +1670,17 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[MonoTODO]
+		public void ResetStatistics ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public IDictionary RetrieveStatistics ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		#endregion // Methods
 

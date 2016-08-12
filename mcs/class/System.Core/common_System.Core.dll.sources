@@ -223,3 +223,8 @@ ReferenceSources/Strings.cs
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
 ../referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
+
+System.Security.Cryptography/ECCurve.cs
+System.Security.Cryptography/ECPoint.cs
+System.Security.Cryptography/ECParameters.cs
+System.Security.Cryptography/IncrementalHash.cs

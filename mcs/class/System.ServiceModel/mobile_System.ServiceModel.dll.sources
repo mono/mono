@@ -179,6 +179,9 @@ System.ServiceModel.Security/MessageSecurityException.cs
 System.ServiceModel.Security/SecurityAccessDeniedException.cs
 System.ServiceModel.Security/UserNamePasswordClientCredential.cs
 System.ServiceModel.Security/WindowsClientCredential.cs
+System.ServiceModel.Security/X509CertificateInitiatorClientCredential.cs
+System.ServiceModel.Security/X509CertificateRecipientClientCredential.cs
+System.ServiceModel.Security/X509ServiceCertificateAuthentication.cs
 System.ServiceModel/ActionNotSupportedException.cs
 System.ServiceModel/AllEnums.cs
 System.ServiceModel/HttpBindingBase.cs
@@ -277,8 +280,11 @@ System.ServiceModel/UpnEndpointIdentity.cs
 System.ServiceModel/MessageSecurityVersion.cs
 
 System.ServiceModel.Security/BasicSecurityProfileVersion.cs
+System.ServiceModel.Security/ChannelProtectionRequirements.cs
 System.ServiceModel.Security/SecurityVersion.cs
 System.ServiceModel.Security/TrustVersion.cs
+System.ServiceModel.Security/MessagePartSpecification.cs
+System.ServiceModel.Security/ScopedMessagePartSpecification.cs
 System.ServiceModel.Security/SecureConversationVersion.cs
 System.ServiceModel.Security/SecurityPolicyVersion.cs
 

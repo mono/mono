@@ -41,6 +41,38 @@ namespace System.Security.Cryptography {
             return CryptoConfig.CreateFromName(algorithm) as ECDsa;
         }
 
+#if NETSTANDARD
+        public static ECDsa Create (ECCurve curve)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public static ECDsa Create (ECParameters parameters)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public virtual ECParameters ExportExplicitParameters (bool includePrivateParameters)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public virtual ECParameters ExportParameters (bool includePrivateParameters)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public virtual void GenerateKey (ECCurve curve)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public virtual void ImportParameters (ECParameters parameters)
+        {
+            throw new NotImplementedException ();
+        }
+#endif
+
         //
         // Signature operations
         //

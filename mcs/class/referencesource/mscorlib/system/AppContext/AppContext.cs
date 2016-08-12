@@ -33,6 +33,21 @@ namespace System
             }
         }
 
+#if NETSTANDARD
+        public static string TargetFrameworkName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public static object GetData (string name)
+        {
+            throw new NotImplementedException();
+        }
+#endif
+
         #region Switch APIs
 #if !MONO
         static AppContext()

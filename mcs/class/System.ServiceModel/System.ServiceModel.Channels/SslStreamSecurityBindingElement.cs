@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
@@ -62,6 +63,12 @@ namespace System.ServiceModel.Channels
 		public bool RequireClientCertificate {
 			get { return require_client_certificate; }
 			set { require_client_certificate = value; }
+		}
+
+		[MonoTODO]
+		public SslProtocols SslProtocols {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		private SslStreamSecurityBindingElement (

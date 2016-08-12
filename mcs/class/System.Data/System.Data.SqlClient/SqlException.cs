@@ -162,6 +162,11 @@ namespace System.Data.SqlClient
 			get { return Errors [0].Class; }
 		}
 
+		[MonoTODO]
+		public Guid ClientConnectionId {
+			get { throw new NotImplementedException (); }
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SqlErrorCollection Errors {
 			get { return errors; }

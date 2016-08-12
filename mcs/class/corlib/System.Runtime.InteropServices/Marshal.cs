@@ -68,6 +68,12 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
+		[MonoTODO]
+		public static bool AreComObjectsAvailableForCleanup ()
+		{
+			return false;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
 
@@ -339,6 +345,12 @@ namespace System.Runtime.InteropServices
 #else
 			throw new NotImplementedException ();
 #endif
+		}
+
+		[MonoTODO]
+		public static IntPtr GetComInterfaceForObject (object o, Type T, CustomQueryInterfaceMode mode)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public static IntPtr GetComInterfaceForObject<T, TInterface> (T o) {

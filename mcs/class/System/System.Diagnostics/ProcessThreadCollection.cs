@@ -45,6 +45,11 @@ namespace System.Diagnostics
 			base.Add (thread);
 			return Count - 1;
 		}
+
+		public System.Collections.IEnumerator GetEnumerator ()
+		{
+			return ((System.Collections.IEnumerable)InnerList).GetEnumerator ();
+		}
 	}
 #endif
 

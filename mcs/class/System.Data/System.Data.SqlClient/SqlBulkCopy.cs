@@ -32,6 +32,8 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 
@@ -144,6 +146,12 @@ namespace System.Data.SqlClient {
 		public string DestinationTableName {
 			get { return _destinationTableName; }
 			set { _destinationTableName = value; }
+		}
+
+		[MonoTODO]
+		public bool EnableStreaming {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public int NotifyAfter {
@@ -596,6 +604,24 @@ namespace System.Data.SqlClient {
 		public void WriteToServer (DataTable table, DataRowState rowState)
 		{
 			BulkCopyToServer (table, rowState);
+		}
+
+		[MonoTODO]
+		public void WriteToServer (DbDataReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DbDataReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DbDataReader reader, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		private void RowsCopied (long rowsCopied)

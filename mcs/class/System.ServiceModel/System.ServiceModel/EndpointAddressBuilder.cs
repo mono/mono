@@ -62,12 +62,12 @@ namespace System.ServiceModel
 			set { uri = value; }
 		}
 
-#if !NET_2_1
 		public EndpointIdentity Identity {
 			get { return identity; }
 			set { identity = value; }
 		}
 
+#if !NET_2_1
 		public XmlDictionaryReader GetReaderAtExtensions ()
 		{
 			if (extension == null)

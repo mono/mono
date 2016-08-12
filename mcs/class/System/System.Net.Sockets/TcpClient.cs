@@ -267,7 +267,7 @@ namespace System.Net.Sockets
 		
 		public void Close ()
 		{
-			((IDisposable) this).Dispose ();
+			Dispose ();
 		}
 
 		public void Connect (IPEndPoint remoteEP)
@@ -382,7 +382,7 @@ namespace System.Net.Sockets
 			return client.BeginConnect (host, port, requestCallback, state);
 		}
 		
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
