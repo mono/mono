@@ -72,7 +72,6 @@ namespace System.Threading {
 		/* current System.Runtime.Remoting.Contexts.Context instance
 		   keep as an object to avoid triggering its class constructor when not needed */
 		private object current_appcontext;
-		private object pending_exception;
 		private object root_domain_thread;
 		internal byte[] _serialized_principal;
 		internal int _serialized_principal_version;
@@ -116,6 +115,7 @@ namespace System.Threading {
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
+		object pending_exception;
 		#endregion
 #pragma warning restore 414
 
