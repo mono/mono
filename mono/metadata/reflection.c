@@ -9927,7 +9927,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 		if (!centry->ctor) {
 			/* The cattr type is not finished yet */
 			/* We should include the type name but cinfo doesn't contain it */
-			mono_error_set_type_load_name (error, NULL, NULL, "");
+			mono_error_set_type_load_name (error, NULL, NULL, "Custom attribute constructor is null because the custom attribute type is not finished yet.");
 			return NULL;
 		}
 	}
