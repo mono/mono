@@ -66107,6 +66107,65 @@
       </method>
     </type>
   </test>
+  <test name="test-async-87.cs">
+    <type name="CA">
+      <method name="CB get_CB()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_CB(CB)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="DeviceDetails get_DeviceDetails()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_DeviceDetails(DeviceDetails)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CB">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="DeviceDetails">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="BB">
+      <method name="System.Threading.Tasks.Task`1[System.String] GetUser()" attrs="134">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] GetDevice()" attrs="134">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="System.Threading.Tasks.Task`1[CA] GetCAAsync()" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetCAAsync&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>366</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
