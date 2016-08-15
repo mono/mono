@@ -7041,6 +7041,7 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Stloc, temp);
 
 			var exception_field = ec.GetTemporaryField (type);
+			exception_field.AutomaticallyReuse = false;
 			ec.EmitThis ();
 			ec.Emit (OpCodes.Ldloc, temp);
 			exception_field.EmitAssignFromStack (ec);
@@ -7064,7 +7065,7 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Throw);
 			ec.MarkLabel (skip_throw);
 
-			exception_field.IsAvailableForReuse = true;
+			exception_field.PrepareCleanup (ec);
 
 			EmitUnwindFinallyTable (ec);
 		}
