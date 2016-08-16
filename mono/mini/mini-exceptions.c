@@ -3078,7 +3078,7 @@ mono_llvm_match_exception (MonoJitInfo *jinfo, guint32 region_start, guint32 reg
 		MonoJitExceptionInfo *ei = &jinfo->clauses [i];
 		MonoClass *catch_class;
 
-		if (! (ei->try_offset == region_start && ei->try_offset + ei->try_len == region_end) )
+		if (! (ei->flags == MONO_EXCEPTION_CLAUSE_NONE && ei->try_offset == region_start && ei->try_offset + ei->try_len == region_end) )
 			continue;
 
 		catch_class = ei->data.catch_class;

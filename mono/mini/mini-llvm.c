@@ -125,8 +125,8 @@ typedef struct {
  * Interval tree for mono protected regions 
  */
 typedef struct MonoProtectedRegion {
-	GSList *children;
-	GSList *subintervals; // Contains list of MonoProtectedRegion elements
+	GSList *catch_clauses;
+	GSList *nested; // Contains list of MonoProtectedRegion elements
 	MonoExceptionClause *finally;
 } MonoProtectedRegion;
 
@@ -287,6 +287,8 @@ static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, co
 static LLVMValueRef get_intrinsic (EmitContext *ctx, const char *name);
 static void decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame);
 static void emit_resume_eh (EmitContext *ctx, MonoBasicBlock *bb);
+static MonoProtectedRegion *find_protected_region (EmitContext *ctx, size_t offset);
+static MonoExceptionClause *mono_protected_region_elem (MonoProtectedRegion *node);
 
 static inline void
 set_failure (EmitContext *ctx, const char *message)
@@ -1749,21 +1751,6 @@ get_handler_clause (MonoCompile *cfg, MonoBasicBlock *bb)
 	return -1;
 }
 
-static MonoExceptionClause *
-get_most_deep_clause (MonoCompile *cfg, EmitContext *ctx, MonoBasicBlock *bb)
-{
-	// Since they're sorted by nesting we just need
-	// the first one that the bb is a member of
-	for (int i = 0; i < cfg->header->num_clauses; i++) {
-		MonoExceptionClause *curr = &cfg->header->clauses [i];
-
-		if (MONO_OFFSET_IN_CLAUSE (curr, bb->real_offset))
-			return curr;
-	}
-
-	return NULL;
-}
-	
 static void
 set_metadata_flag (LLVMValueRef v, const char *flag_name)
 {
@@ -1801,10 +1788,13 @@ emit_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, LL
 	MonoCompile *cfg = ctx->cfg;
 	LLVMValueRef lcall = NULL;
 	LLVMBuilderRef builder = *builder_ref;
-	MonoExceptionClause *clause;
+	MonoExceptionClause *clause = NULL;
 
 	if (ctx->llvm_only) {
-		clause = get_most_deep_clause (cfg, ctx, bb);
+		MonoProtectedRegion *parent = find_protected_region (ctx, bb->real_offset);
+
+		if (parent)
+			clause = mono_protected_region_elem (parent);
 
 		if (clause) {
 			g_assert (clause->flags == MONO_EXCEPTION_CLAUSE_NONE || clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY);
@@ -3620,6 +3610,12 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 		}
 	}
 
+	// In the case that we throw in a catch clause and there is a finally block,
+	// we want to
+	// not actually call the c++ thrower. Instead, we will load the exception
+	// jump to the finally block
+	gboolean local_finally_first = FALSE;
+
 	LLVMValueRef args [2];
 
 	args [0] = convert (ctx, exc, exc_type);
@@ -3786,8 +3782,6 @@ mono_llvm_emit_match_exception_call (EmitContext *ctx, LLVMBuilderRef builder, g
 
 	g_assert (builder && callee);
 
-	g_assert (ctx->ex_var);
-
 	return LLVMBuildCall (builder, callee, args, num_args, icall_name);
 }
 
@@ -3853,8 +3847,8 @@ get_mono_personality (EmitContext *ctx)
 static MonoExceptionClause *
 mono_protected_region_elem (MonoProtectedRegion *node) 
 {
-	if (node->children)
-		return (MonoExceptionClause *) node->children->data;
+	if (node->catch_clauses)
+		return (MonoExceptionClause *) node->catch_clauses->data;
 	else
 		return node->finally;
 }
@@ -3865,7 +3859,7 @@ emit_landing_pad (EmitContext *ctx, MonoProtectedRegion *curr)
 {
 	MonoCompile *cfg = ctx->cfg;
 	LLVMBuilderRef old_builder = ctx->builder;
-	MonoExceptionClause *group_start = mono_protected_region_elem (curr);
+	MonoExceptionClause *group_elem = mono_protected_region_elem (curr);
 
 	LLVMBuilderRef lpadBuilder = create_builder (ctx);
 	ctx->builder = lpadBuilder;
@@ -3874,7 +3868,7 @@ emit_landing_pad (EmitContext *ctx, MonoProtectedRegion *curr)
 	LLVMValueRef personality = get_mono_personality (ctx);
 	g_assert (personality);
 
-	char *bb_name = g_strdup_printf ("LPAD%d_BB", mono_protected_region_elem(curr) - ctx->cfg->header->clauses);
+	char *bb_name = g_strdup_printf ("LPAD_%d_to_%d_BB", CLAUSE_START(group_elem), CLAUSE_END(group_elem));
 	LLVMBasicBlockRef lpad_bb = gen_bb (ctx, bb_name);
 	g_free (bb_name);
 	LLVMPositionBuilderAtEnd (lpadBuilder, lpad_bb);
@@ -3902,18 +3896,17 @@ emit_landing_pad (EmitContext *ctx, MonoProtectedRegion *curr)
 
 	// FIXME:
 	// Handle landing pad inlining
-	g_assert (ctx->ex_var);
 
 	// So at each level of the exception stack we will match the exception again.
 	// During that match, we need to compare against the handler types for the current
 	// protected region. We send the try start and end so that we can only check against
 	// handlers for this lexical protected region.
-	LLVMValueRef match = mono_llvm_emit_match_exception_call (ctx, lpadBuilder, group_start->try_offset, group_start->try_offset + group_start->try_len);
+	LLVMValueRef match = mono_llvm_emit_match_exception_call (ctx, lpadBuilder, CLAUSE_START(group_elem), CLAUSE_END(group_elem));
 
 	LLVMValueRef switch_ins = LLVMBuildSwitch (lpadBuilder, match, finally_bb, 0);
 
 	// else move to that target bb
-	for (GSList *tmp = curr->children; tmp; tmp = tmp->next) {
+	for (GSList *tmp = curr->catch_clauses; tmp; tmp = tmp->next) {
 		MonoExceptionClause *clause = tmp->data;
 
 		int clause_index = clause - cfg->header->clauses;
@@ -3934,10 +3927,8 @@ mono_protected_region_add (EmitContext *ctx, MonoProtectedRegion *root, MonoExce
 {
 	if (input->flags & MONO_EXCEPTION_CLAUSE_FINALLY)
 		root->finally = input;
-	else {
-		MOSTLY_ASYNC_SAFE_PRINTF ("Lookme: %p changed to %p\n\n", root->children, input);
-		root->children = g_slist_prepend_mempool (ctx->mempool, root->children, input);
-	}
+	else if(input->flags == MONO_EXCEPTION_CLAUSE_NONE)
+		root->catch_clauses = g_slist_prepend_mempool (ctx->mempool, root->catch_clauses, input);
 }
 
 static gboolean 
@@ -3946,46 +3937,66 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 	// We have to statically allocate the switches that we do when doing
 	// exception handling. Each function gets visited once. This means that we
 	// need what is essentially an interval tree. When looking at a node we need to know where
-	// the parent is and which clauses are handled by that interval and not any children.
-	// Each clause group needs a parent and it needs a set of children
+	// the parent is and which clauses are handled by that interval and not any catch_clauses.
+	// Each clause group needs a parent and it needs a set of catch_clauses
 
 	MonoExceptionClause *ex = mono_protected_region_elem (*out);
 	MonoProtectedRegion *val = *out;
 
 	if (CLAUSE_START (input) < CLAUSE_START (ex) || CLAUSE_END(ex) > CLAUSE_END (input)) {
+		g_assert_not_reached ();
 		// Input contains current tree as sub-tree
 		MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
 		mono_protected_region_add (ctx, root, input);
-		root->subintervals = g_slist_prepend_mempool (ctx->mempool, root->subintervals, val);
+		root->nested = g_slist_prepend_mempool (ctx->mempool, root->nested, val);
 		*out = root;
 
 		return TRUE;
-	} else if (CLAUSE_START (input) > CLAUSE_START (ex) || CLAUSE_END(ex) < CLAUSE_END (input)) {
-		// If the element is a child, and at this level
+	} else if (CLAUSE_START (input) == CLAUSE_START (ex) || CLAUSE_END(ex) == CLAUSE_END (input)) {
+		// If the element is mutually protecting, and at this level
 		mono_protected_region_add (ctx, val, input);
 
 		return TRUE;
-	} else if (CLAUSE_START (input) > CLAUSE_START (ex) || CLAUSE_END(ex) != CLAUSE_END (input)) {
-		// If the element is a child, and not at this level
-		for (GSList *curr = val->subintervals; curr; curr = curr->next) {
-			MonoExceptionClause *cast = mono_protected_region_elem (curr->data);
-			if (CLAUSE_START (input) <= CLAUSE_START (cast) || CLAUSE_END(cast) >= CLAUSE_END (input))
-				return mono_protected_region_insert (ctx, (MonoProtectedRegion **)&curr->data, input);
+	} else if (CLAUSE_START (input) >= CLAUSE_START (ex) || CLAUSE_END(ex) != CLAUSE_END (input)) {
+		// If the clause protects a protected region which nests the current region
+		// This has a lot of iteration, but we're limited by the 
+		// number of entirely disjoint protected regions in a single function
+		// FIXME: Make faster with hashing or binary search?
+		GSList *p_region = NULL;
+		MonoExceptionClause *exc = NULL;
+
+		for (GSList *curr = val->nested; curr; curr = curr->next) {
+			g_assert (curr->data);
+			MonoExceptionClause *following = mono_protected_region_elem (curr->data);
+
+			g_assert (CLAUSE_START (input) >= CLAUSE_START (following));
+
+			if (CLAUSE_END(following) < CLAUSE_END (input)) {
+				break;
+			} else {
+				exc = following;
+				p_region = curr;
+			}
 		}
 
-		// Not a made subinterval, make our own
-		MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
-		mono_protected_region_add (ctx, root, input);
-		val->subintervals = g_slist_prepend_mempool (ctx->mempool, val->subintervals, root);
+		if (p_region->data && CLAUSE_END(exc) >= CLAUSE_END (input)) {
+			// Insert into found nested protected region, may update pr->data in-place
+			return mono_protected_region_insert (ctx, (MonoProtectedRegion **)(&p_region->data), input);
+		} else {
+			// Not a made subinterval, make our own
+			MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
+			mono_protected_region_add (ctx, root, input);
+			val->nested = g_slist_prepend_mempool (ctx->mempool, val->nested, root);
+			return TRUE;
+		}
 
-		return TRUE;
 	} else {
 		return FALSE;;
 	}
 }
 
 static void 
-print_mono_interval_children (EmitContext *ctx, MonoProtectedRegion *node, int depth)
+print_mono_interval_catch_clauses (EmitContext *ctx, MonoProtectedRegion *node, int depth)
 {
 	MonoExceptionClause *clause = mono_protected_region_elem (node);
 
@@ -3993,14 +4004,14 @@ print_mono_interval_children (EmitContext *ctx, MonoProtectedRegion *node, int d
 	MOSTLY_ASYNC_SAFE_PRINTF ("From %d to %d\n", clause->try_offset, clause->try_offset +  clause->try_len);
 
 	for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
-	MOSTLY_ASYNC_SAFE_PRINTF ("Children\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("catch_clauses\n");
 
 	if (node->finally) {
 		for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
 		MOSTLY_ASYNC_SAFE_PRINTF ("Finally: from %d to %d\n", CLAUSE_START(mono_protected_region_elem (node)), CLAUSE_END(mono_protected_region_elem (node)));
 	}
 
-	for (GSList *lst = node->children; lst ; lst = lst->next) {
+	for (GSList *lst = node->catch_clauses; lst ; lst = lst->next) {
 		for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
 		MonoExceptionClause *clause = (MonoExceptionClause *)lst->data;
 		MOSTLY_ASYNC_SAFE_PRINTF ("Child: from %d to %d\n", CLAUSE_START(clause), CLAUSE_END(clause));
@@ -4008,8 +4019,8 @@ print_mono_interval_children (EmitContext *ctx, MonoProtectedRegion *node, int d
 
 	for (int i=0; i < depth; i++) MOSTLY_ASYNC_SAFE_PRINTF ("\t");
 	MOSTLY_ASYNC_SAFE_PRINTF ("Subnodes\n");
-	for (GSList *lst = node->subintervals; lst ; lst = lst->next)
-		print_mono_interval_children (ctx, (MonoProtectedRegion *) lst->data, depth + 1);
+	for (GSList *lst = node->nested; lst ; lst = lst->next)
+		print_mono_interval_catch_clauses (ctx, (MonoProtectedRegion *) lst->data, depth + 1);
 }
 
 // Recursion depth limited by nesting of clauses
@@ -4023,32 +4034,38 @@ emit_protected_region (EmitContext *ctx, MonoProtectedRegion *node)
 
 	GSList *lst;
 
-	for (lst = node->subintervals; lst ; lst = lst->next)
+	for (lst = node->nested; lst ; lst = lst->next)
 		emit_protected_region (ctx, (MonoProtectedRegion*)lst->data);
 }
 
 static MonoProtectedRegion *
-find_parent_in_node_tree (MonoProtectedRegion *node, size_t offset, MonoProtectedRegion *parent)
+find_protected_region_inner (MonoProtectedRegion *node, size_t offset)
 {
-	for (GSList *sub = node->subintervals; sub; sub = sub->next) {
-		MonoExceptionClause *child = mono_protected_region_elem ((MonoProtectedRegion *)sub);
+	// So here we're moving through the tree. At a given node, the nested are
+	// disjoint protected regions contained in this protected region. Therefore if the
+	// offset is in one of them, we must only go deeper. 
+	for (GSList *sub = node->nested; sub; sub = sub->next) {
+		MonoExceptionClause *child = mono_protected_region_elem ((MonoProtectedRegion *)sub->data);
 		if (CLAUSE_END (child) >= offset && CLAUSE_START (child) <= offset) {
-			return find_parent_in_node_tree ((MonoProtectedRegion *) sub, offset, node);
+			return find_protected_region_inner((MonoProtectedRegion *) sub->data, offset);
 		}
 	}
 
-	return parent;
+	// When we can't go any deeper, we're in the deepest node that fits. 
+	return node;
 }
 
 
+// Running time here is better than it looks because it's 
+// big-Oh ( depth of deepest protected region + number of disjoint protected regions )
 static MonoProtectedRegion *
-find_parent_handler_group (EmitContext *ctx, size_t offset) 
+find_protected_region (EmitContext *ctx, size_t offset) 
 {
 	for (GSList *lst = ctx->protected_regions; lst; lst = lst->next) {
 		MonoProtectedRegion *node = lst->data;
 		MonoExceptionClause *clause = mono_protected_region_elem (node);
 		if (CLAUSE_END(clause) >= offset && CLAUSE_START(clause) <= offset) {
-			return find_parent_in_node_tree (node, offset, NULL);
+			return find_protected_region_inner(node, offset);
 		}
 	}
 
@@ -4066,7 +4083,6 @@ emit_landing_pads (EmitContext *ctx)
 
 		MonoExceptionClause *clause = &ctx->cfg->header->clauses [offset];
 		for (GSList *cursor = ctx->protected_regions; cursor; cursor = cursor->next) {
-			MOSTLY_ASYNC_SAFE_PRINTF ("%p\n", &cursor->data);
 			if (mono_protected_region_insert (ctx, (MonoProtectedRegion **) &cursor->data, clause)) {
 				success = TRUE;
 				break;
@@ -4081,7 +4097,8 @@ emit_landing_pads (EmitContext *ctx)
 	}
 
 	for (GSList *lst = ctx->protected_regions; lst; lst = lst->next) {
-		print_mono_interval_children (ctx, (MonoProtectedRegion *)lst->data, 0);
+		// Debug printer
+		// print_mono_interval_catch_clauses (ctx, (MonoProtectedRegion *)lst->data, 0);
 		emit_protected_region (ctx, (MonoProtectedRegion *)lst->data);
 	}
 }
@@ -6681,14 +6698,10 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMPositionBuilderAtEnd (ctx->builder, resume_bb);
 
 			if (ctx->llvm_only) {
-				MonoProtectedRegion *parent = find_parent_handler_group (ctx, bb->real_offset);
-				MOSTLY_ASYNC_SAFE_PRINTF("Parent is PREQUEL");
+				// Note that this real_offset is of the finally handler, so we only need to see what
+				// is the deepest clause for *it*
+				MonoProtectedRegion *parent = find_protected_region (ctx, bb->real_offset);
 				if (parent != NULL && parent->finally) {
-				MOSTLY_ASYNC_SAFE_PRINTF("Parent is %d to %d for real_offset %d",
-				CLAUSE_START(mono_protected_region_elem (parent)),
-				CLAUSE_END(mono_protected_region_elem (parent)),
-				bb->real_offset
-				);
 					int clause_index = parent->finally - cfg->header->clauses;
 					MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
 					g_assert (handler_bb);
@@ -7476,9 +7489,6 @@ emit_method_inner (EmitContext *ctx)
 			}
 		}
 	}
-
-	if (strcmp(cfg->method->name, "test") == 0)
-		mono_llvm_dump_value (method);
 
 	if (cfg->compile_aot && !cfg->llvm_only)
 		mark_as_used (ctx->module, method);
