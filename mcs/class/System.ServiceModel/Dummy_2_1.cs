@@ -47,7 +47,6 @@ namespace System.ServiceModel
 
 		public InstanceContext (object implementation)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public object GetServiceInstance (Message message)
