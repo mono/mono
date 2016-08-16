@@ -736,6 +736,11 @@ namespace System.Net
 					goto retry;
 
 				Exception cnc_exc = connect_exception;
+				if (cnc_exc == null && (Data.StatusCode == 401 || Data.StatusCode == 407)) {
+					st = WebExceptionStatus.ProtocolError;
+					cnc_exc = new WebException (Data.StatusCode == 407 ? "(407) Proxy Authentication Required" : "(401) Unauthorized" , st);
+				}
+			
 				connect_exception = null;
 				request.SetWriteStreamError (st, cnc_exc);
 				Close (true);
