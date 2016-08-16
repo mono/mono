@@ -814,7 +814,7 @@ namespace Mono.CSharp
 						if (t.Kind == MemberKind.MissingType)
 							spec = t;
 						else
-							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity, false);
 
 						if (t.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
@@ -834,7 +834,7 @@ namespace Mono.CSharp
 						if (index > 0)
 							name = name.Substring (0, index);
 
-						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos, false);
 
 						if (spec.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());

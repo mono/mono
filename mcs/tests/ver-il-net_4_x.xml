@@ -71945,6 +71945,26 @@
       </method>
     </type>
   </test>
+  <test name="test-static-using-12.cs">
+    <type name="A.B.G`1[T]">
+      <method name="System.Object Dock()" attrs="150">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="A.B.G`1+DD[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N2.M">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

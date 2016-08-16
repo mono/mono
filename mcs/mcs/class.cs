@@ -2500,7 +2500,7 @@ namespace Mono.CSharp
 			//	return null;
 
 			var container = PartialContainer.CurrentType;
-			return MemberCache.FindNestedType (container, name, arity);
+			return MemberCache.FindNestedType (container, name, arity, false);
 		}
 
 		public void Mark_HasEquals ()
