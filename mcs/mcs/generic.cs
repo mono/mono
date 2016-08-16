@@ -1551,7 +1551,7 @@ namespace Mono.CSharp {
 				// Parent was inflated, find the same type on inflated type
 				// to use same cache for nested types on same generic parent
 				//
-				type = MemberCache.FindNestedType (parent, type.Name, type.Arity);
+				type = MemberCache.FindNestedType (parent, type.Name, type.Arity, false);
 
 				//
 				// Handle the tricky case where parent shares local type arguments

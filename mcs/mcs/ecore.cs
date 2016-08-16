@@ -2924,15 +2924,6 @@ namespace Mono.CSharp {
 					return me;
 				}
 
-				//
-				// Stage 3: Lookup nested types, namespaces and type parameters in the context
-				//
-				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
-					if (IsPossibleTypeOrNamespace (rc)) {
-						return ResolveAsTypeOrNamespace (rc, false);
-					}
-				}
-
 				var expr = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
 				if (expr != null) {
 					if (Arity > 0) {
@@ -2943,6 +2934,15 @@ namespace Mono.CSharp {
 							me.SetTypeArguments (rc, targs);
 					}
 					return expr;
+				}
+
+				//
+				// Stage 3: Lookup nested types, namespaces and type parameters in the context
+				//
+				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
+					if (IsPossibleTypeOrNamespace (rc)) {
+						return ResolveAsTypeOrNamespace (rc, false);
+					}
 				}
 
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
