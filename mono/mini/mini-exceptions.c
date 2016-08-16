@@ -2911,7 +2911,7 @@ mono_jinfo_get_epilog_size (MonoJitInfo *ji)
  */
 
 static void
-throw_exception (MonoObject *ex, gboolean rethrow)
+throw_exception (MonoObject *ex, gboolean rethrow, gboolean actually_throw)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -2939,19 +2939,20 @@ throw_exception (MonoObject *ex, gboolean rethrow)
 #endif
 	}
 
-	mono_llvm_cpp_throw_exception ();
+	if (actually_throw)
+		mono_llvm_cpp_throw_exception ();
 }
 
 void
-mono_llvm_throw_exception (MonoObject *ex)
+mono_llvm_throw_exception (MonoObject *ex, gboolean actually_throw)
 {
-	throw_exception (ex, FALSE);
+	throw_exception (ex, FALSE, actually_throw);
 }
 
 void
-mono_llvm_rethrow_exception (MonoObject *ex)
+mono_llvm_rethrow_exception (MonoObject *ex, gboolean actually_throw)
 {
-	throw_exception (ex, TRUE);
+	throw_exception (ex, TRUE, actually_throw);
 }
 
 void

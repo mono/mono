@@ -3592,9 +3592,10 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	LLVMValueRef callee = rethrow ? ctx->module->rethrow : ctx->module->throw_icall;
 
 	LLVMTypeRef exc_type = type_to_llvm_type (ctx, &mono_get_exception_class ()->byval_arg);
+	LLVMTypeRef bool_type = type_to_llvm_type (ctx, MONO_TYPE_BOOLEAN);
 
 	if (!callee) {
-		LLVMTypeRef fun_sig = LLVMFunctionType1 (LLVMVoidType (), exc_type, FALSE);
+		LLVMTypeRef fun_sig = LLVMFunctionType2 (LLVMVoidType (), exc_type, bool_type, FALSE);
 
 		if (ctx->cfg->compile_aot) {
 			callee = get_callee (ctx, fun_sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
@@ -3611,15 +3612,17 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	}
 
 	// In the case that we throw in a catch clause and there is a finally block,
-	// we want to
-	// not actually call the c++ thrower. Instead, we will load the exception
-	// jump to the finally block
+	// we want to  not actually call the c++ thrower. Instead, we will 
+	// load the exception, jump to the finally block, and let the endfinally do the throw
 	gboolean local_finally_first = FALSE;
+
+	
 
 	LLVMValueRef args [2];
 
 	args [0] = convert (ctx, exc, exc_type);
-	emit_call (ctx, bb, &ctx->builder, callee, args, 1);
+	args [1] = LLVMConstInt (bool_type, local_finally_first, FALSE);
+	emit_call (ctx, bb, &ctx->builder, callee, args, 2);
 
 	LLVMBuildUnreachable (ctx->builder);
 
@@ -3979,8 +3982,8 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 			}
 		}
 
-		if (p_region->data && CLAUSE_END(exc) >= CLAUSE_END (input)) {
-			// Insert into found nested protected region, may update pr->data in-place
+		if (p_region && CLAUSE_END(exc) >= CLAUSE_END (input)) {
+			// Insert into found nested protected region, may update ->data in-place
 			return mono_protected_region_insert (ctx, (MonoProtectedRegion **)(&p_region->data), input);
 		} else {
 			// Not a made subinterval, make our own
