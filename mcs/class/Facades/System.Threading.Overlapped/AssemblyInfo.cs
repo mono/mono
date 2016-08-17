@@ -35,7 +35,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyFileVersion ("4.0.0.0")]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-
