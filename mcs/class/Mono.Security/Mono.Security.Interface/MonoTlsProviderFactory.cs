@@ -72,14 +72,18 @@ namespace Mono.Security.Interface
 		}
 
 		/*
-		 * Selects the default TLS Provider.
+		 * Selects the current TLS Provider.
 		 *
-		 * May only be called at application startup and will throw
-		 * @InvalidOperationException if a provider has already been installed.
 		 */
+		public static void SetProvider (string name)
+		{
+			NoReflectionHelper.SetProvider (name);
+		}
+
+		[Obsolete ("Use SetProvider(name); modifying the default provider is not supported.")]
 		public static void SetDefaultProvider (string name)
 		{
-			NoReflectionHelper.SetDefaultProvider (name);
+			NoReflectionHelper.SetProvider (name);
 		}
 
 		public static MonoTlsProvider GetProvider (string name)
