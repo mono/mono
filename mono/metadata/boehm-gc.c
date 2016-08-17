@@ -424,7 +424,6 @@ on_gc_notification (GC_EventType event)
 	switch (e) {
 	case MONO_GC_EVENT_PRE_STOP_WORLD:
 		MONO_GC_WORLD_STOP_BEGIN ();
-		mono_thread_info_suspend_lock ();
 		break;
 
 	case MONO_GC_EVENT_POST_STOP_WORLD:
@@ -437,7 +436,6 @@ on_gc_notification (GC_EventType event)
 
 	case MONO_GC_EVENT_POST_START_WORLD:
 		MONO_GC_WORLD_RESTART_END (1);
-		mono_thread_info_suspend_unlock ();
 		break;
 
 	case MONO_GC_EVENT_START:
@@ -477,7 +475,21 @@ on_gc_notification (GC_EventType event)
 	}
 
 	mono_profiler_gc_event (e, 0);
+
+	switch (e) {
+	case MONO_GC_EVENT_PRE_STOP_WORLD:
+		mono_thread_info_suspend_lock ();
+		mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, 0);
+		break;
+	case MONO_GC_EVENT_POST_START_WORLD:
+		mono_thread_info_suspend_unlock ();
+		mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, 0);
+		break;
+	default:
+		break;
+	}
 }
+
  
 static void
 on_gc_heap_resize (size_t new_size)
