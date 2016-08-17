@@ -344,32 +344,31 @@ namespace System.Net
 			get {
 				lock (hostE) {
 					string uriHost = uri.Host;
+					
+					// Cannot do DNS resolution on literal IP addresses
+					if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
+                        if (host == null) { 
+						    if (uri.HostNameType == UriHostNameType.IPv6) {
+							    // Remove square brackets
+							    uriHost = uriHost.Substring (1, uriHost.Length - 2);
+						    }
 
-					if (host == null) {
-						// Cannot do DNS resolution on literal IP addresses
-						if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
-
-							if (uri.HostNameType == UriHostNameType.IPv6) {
-								// Remove square brackets
-								uriHost = uriHost.Substring (1, uriHost.Length - 2);
-							}
-
-							// Creates IPHostEntry
-							host = new IPHostEntry();
-							host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
-							return host;
+						    // Creates IPHostEntry
+						    host = new IPHostEntry();
+						    host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
 						}
-					} else {
-						if (!HasTimedOut)
-							return host;
+						return host;
 					}
 
-					lastDnsResolve = DateTime.UtcNow;
+					if (host == null || HasTimedOut) { 
+					
+					    lastDnsResolve = DateTime.UtcNow;
 
-					try {
-						host = Dns.GetHostEntry (uriHost);
-					} catch {
-						return null;
+					    try {
+						    host = Dns.GetHostEntry (uriHost);
+					    } catch {
+						    return null;
+					    }
 					}
 				}
 
