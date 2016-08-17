@@ -963,7 +963,7 @@ namespace System.Net
 			initialMethod = method;
 
 			SimpleAsyncResult.RunWithLock (locker, CheckIfForceWrite, inner => {
-				var synch = inner.CompletedSynchronously;
+				var synch = inner.CompletedSynchronouslyPeek;
 
 				if (inner.GotException) {
 					aread.SetCompleted (synch, inner.Exception);
@@ -1374,7 +1374,7 @@ namespace System.Net
 					}
 
 					if (asyncWrite != null) {
-						asyncWrite.SetCompleted (inner.CompletedSynchronously, writeStream);
+						asyncWrite.SetCompleted (inner.CompletedSynchronouslyPeek, writeStream);
 						asyncWrite.DoCallback ();
 						asyncWrite = null;
 					}
