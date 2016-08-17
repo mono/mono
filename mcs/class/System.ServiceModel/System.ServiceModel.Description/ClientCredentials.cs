@@ -31,7 +31,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
-#if !NET_2_1
+#if !MOBILE
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.ServiceModel.Security.Tokens;
@@ -40,7 +40,7 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Description
 {
 	public class ClientCredentials
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 		: IEndpointBehavior
 #else
 		: SecurityCredentialsManager, IEndpointBehavior
@@ -58,7 +58,7 @@ namespace System.ServiceModel.Description
 			initiator = source.initiator.Clone ();
 			recipient = source.recipient.Clone ();
 			windows = source.windows.Clone ();
-#if !NET_2_1
+#if !MOBILE
 			issued_token = source.issued_token.Clone ();
 			peer = source.peer.Clone ();
 			support_interactive = source.support_interactive;
@@ -93,7 +93,7 @@ namespace System.ServiceModel.Description
 			get { return windows; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		IssuedTokenClientCredential issued_token =
 			new IssuedTokenClientCredential ();
 		PeerCredential peer = new PeerCredential ();
@@ -130,7 +130,7 @@ namespace System.ServiceModel.Description
 			return new ClientCredentials (this);
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		public override SecurityTokenManager CreateSecurityTokenManager ()
 		{
 			return new ClientCredentialsSecurityTokenManager (this);

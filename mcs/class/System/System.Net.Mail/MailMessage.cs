@@ -255,7 +255,7 @@ namespace System.Net.Mail {
 			if (Encoding.ASCII.Equals (enc))
 				return TransferEncoding.SevenBit;
 			else if (Encoding.UTF8.CodePage == enc.CodePage ||
-#if !NET_2_1
+#if !MOBILE
 			    Encoding.Unicode.CodePage == enc.CodePage || Encoding.UTF32.CodePage == enc.CodePage
 #else
 			    Encoding.Unicode.CodePage == enc.CodePage

@@ -324,7 +324,7 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 		}
 		
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Read_Disposed_Break () 

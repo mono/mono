@@ -21,7 +21,7 @@ using System.Linq;
 using Mono.CompilerServices.SymbolWriter;
 using System.Runtime.CompilerServices;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #else
 using System.Xml;

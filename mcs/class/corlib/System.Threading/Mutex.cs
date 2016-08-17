@@ -206,7 +206,7 @@ namespace System.Threading
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public void SetAccessControl (MutexSecurity mutexSecurity)
 		{
 			if (null == mutexSecurity)

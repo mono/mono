@@ -185,7 +185,7 @@ namespace System.Net
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy
 		{

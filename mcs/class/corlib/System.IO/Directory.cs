@@ -86,7 +86,7 @@ namespace System.IO
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, path).Demand ();
 			}
@@ -232,7 +232,7 @@ namespace System.IO
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			string result = InsecureGetCurrentDirectory();
-#if !NET_2_1
+#if !MOBILE
 			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
 			}

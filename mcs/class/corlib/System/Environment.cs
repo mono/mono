@@ -322,7 +322,7 @@ namespace System {
 				return trace.ToString ();
 			}
 		}
-#if !NET_2_1
+#if !MOBILE
 		/// <summary>
 		/// Get a fully qualified path to the system directory
 		/// </summary>
@@ -480,7 +480,7 @@ namespace System {
 		/// </summary>
 		public static string GetEnvironmentVariable (string variable)
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
@@ -503,7 +503,7 @@ namespace System {
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
-#if !NET_2_1
+#if !MOBILE
 		public static IDictionary GetEnvironmentVariables ()
 		{
 			StringBuilder sb = null;
@@ -565,7 +565,7 @@ namespace System {
 			else
 				dir = UnixGetFolderPath (folder, option);
 
-#if !NET_2_1
+#if !MOBILE
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
 			}
@@ -927,7 +927,7 @@ namespace System {
 		}
 #endif
 
-#if !NET_2_1
+#if !MOBILE
 		//
 		// Used by gacutil.exe
 		//

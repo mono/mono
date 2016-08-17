@@ -175,7 +175,7 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
-#if NET_2_1
+#if MOBILE
 			return null;
 #else
 			// looks like permission is internal

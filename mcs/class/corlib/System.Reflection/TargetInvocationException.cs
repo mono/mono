@@ -36,7 +36,7 @@ namespace System.Reflection
 {
 	[ComVisible (true)]
 	[Serializable]
-#if NET_2_1
+#if MOBILE
 	public sealed class TargetInvocationException : Exception {
 #else
 	public sealed class TargetInvocationException : ApplicationException {

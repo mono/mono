@@ -57,7 +57,7 @@ namespace System.ServiceModel.Security
 			StoreName storeName, X509FindType findType,
 			object findValue)
 		{
-#if !NET_2_1
+#if !MOBILE
 			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 #else
 			throw new NotImplementedException ();
@@ -68,7 +68,7 @@ namespace System.ServiceModel.Security
 			string subjectName, StoreLocation storeLocation,
 			StoreName storeName)
 		{
-#if !NET_2_1
+#if !MOBILE
 			certificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, X509FindType.FindBySubjectName, subjectName);
 #else
 			throw new NotImplementedException ();

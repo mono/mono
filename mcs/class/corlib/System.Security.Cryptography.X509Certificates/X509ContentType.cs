@@ -37,7 +37,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	enum X509ContentType {
 		Unknown,
 		Cert,
-		// not supported by Silverlight 2.0 (NET_2_1)
+		// not supported by Silverlight 2.0 (MOBILE)
 		SerializedCert,
 		Pfx,
 		SerializedStore,

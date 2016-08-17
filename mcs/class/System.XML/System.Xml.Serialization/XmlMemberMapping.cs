@@ -126,7 +126,7 @@ namespace System.Xml.Serialization
 		{
 			get { return _mapMember.Name; }
 		}
-#if !NET_2_1
+#if !MOBILE
 		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
 			string ret = codeProvider.CreateValidIdentifier (_mapMember.TypeData.FullTypeName);

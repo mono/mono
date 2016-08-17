@@ -50,7 +50,7 @@ namespace System.ServiceModel
 		{
 		}
 		
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		public BasicHttpsBinding (string configurationName)
 			: this ()
 		{
@@ -102,7 +102,7 @@ namespace System.ServiceModel
 			SecurityBindingElement element;
 			switch (Security.Mode) {
 			case BasicHttpsSecurityMode.TransportWithMessageCredential:
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 
 				throw new NotImplementedException ();
 #else
@@ -117,7 +117,7 @@ namespace System.ServiceModel
 				return null;
 			}
 			
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 			element.SetKeyDerivation (false);
 			element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
 #endif
@@ -132,7 +132,7 @@ namespace System.ServiceModel
 				ReaderQuotas.CopyTo (tm.ReaderQuotas);
 				return tm;
 			} else {
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 				throw new NotImplementedException ();
 #else
 				return new MtomMessageEncodingBindingElement (

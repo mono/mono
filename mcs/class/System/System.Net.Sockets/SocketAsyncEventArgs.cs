@@ -111,7 +111,7 @@ namespace System.Net.Sockets
 			set;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public TransmitFileOptions SendPacketsFlags {
 			get;
 			set;

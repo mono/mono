@@ -41,7 +41,7 @@ namespace System
 {
 	public static partial class Console
 	{
-#if !NET_2_1
+#if !MOBILE
 		private class WindowsConsole
 		{
 			public static bool ctrlHandlerAdded = false;
@@ -100,7 +100,7 @@ namespace System
 				//
 				// On Windows, follow the Windows tradition
 				//
-#if NET_2_1
+#if MOBILE
 				// should never happen since Moonlight does not run on windows
 				inputEncoding = outputEncoding = Encoding.Default;
 #else			
@@ -134,7 +134,7 @@ namespace System
 
 		static void SetupStreams (Encoding inputEncoding, Encoding outputEncoding)
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 				stdout = TextWriter.Synchronized (new CStreamWriter (OpenStandardOutput (0), outputEncoding, true) { AutoFlush = true });
@@ -488,7 +488,7 @@ namespace System
 			stdout.WriteLine (String.Format (format, args));
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public static int Read ()
 		{
 			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
@@ -539,7 +539,7 @@ namespace System
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public static ConsoleColor BackgroundColor {
 			get { return ConsoleDriver.BackgroundColor; }
 			set { ConsoleDriver.BackgroundColor = value; }

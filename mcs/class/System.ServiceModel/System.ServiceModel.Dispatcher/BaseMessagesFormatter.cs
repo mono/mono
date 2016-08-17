@@ -243,7 +243,7 @@ namespace System.ServiceModel.Dispatcher
 			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
-#if NET_2_1
+#if MOBILE
 				parameters [0] = Activator.CreateInstance (md.MessageType);
 #else
 				parameters [0] = Activator.CreateInstance (md.MessageType, true);
@@ -271,7 +271,7 @@ namespace System.ServiceModel.Dispatcher
 			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
-#if NET_2_1
+#if MOBILE
 				object msgObject = Activator.CreateInstance (md.MessageType);
 #else
 				object msgObject = Activator.CreateInstance (md.MessageType, true);
@@ -355,14 +355,14 @@ namespace System.ServiceModel.Dispatcher
 	class DataContractMessagesFormatter : BaseMessagesFormatter
 	{
 		DataContractFormatAttribute attr;
-#if !NET_2_1
+#if !MOBILE
 		DataContractSerializerOperationBehavior serializerBehavior;
 #endif
 
 		public DataContractMessagesFormatter (OperationDescription desc, DataContractFormatAttribute attr)
 			: base (desc)
 		{
-#if !NET_2_1
+#if !MOBILE
 			this.serializerBehavior = desc.Behaviors.Find<DataContractSerializerOperationBehavior>();
 #endif
 			this.attr = attr;
@@ -442,7 +442,7 @@ namespace System.ServiceModel.Dispatcher
 		XmlObjectSerializer GetSerializer (MessagePartDescription partDesc)
 		{
 			if (!serializers.ContainsKey (partDesc))
-#if !NET_2_1
+#if !MOBILE
 				if (serializerBehavior != null)
 					serializers [partDesc] = serializerBehavior.CreateSerializer(
 						partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes as IList<Type>);

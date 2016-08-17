@@ -48,7 +48,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
-#if NET_2_1
+#if MOBILE
 	public partial class X509Certificate {
 #else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {

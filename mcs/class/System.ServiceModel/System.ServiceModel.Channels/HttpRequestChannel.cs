@@ -56,7 +56,7 @@ namespace System.ServiceModel.Channels
 			get { return source.MessageEncoder; }
 		}
 
-#if NET_2_1
+#if MOBILE
 		public override T GetProperty<T> ()
 		{
 			if (typeof (T) == typeof (IHttpCookieContainerManager))
@@ -189,7 +189,7 @@ namespace System.ServiceModel.Channels
 					suppressEntityBody = true;
 			}
 
-#if !NET_2_1
+#if !MOBILE
 			if (source.ClientCredentials != null) {
 				var cred = source.ClientCredentials;
 				if ((cred.ClientCertificate != null) && (cred.ClientCertificate.Certificate != null))
@@ -476,7 +476,7 @@ namespace System.ServiceModel.Channels
 					// FIXME: Do we need to use the timeout? If so, what happens when the timeout is reached.
 					// Is the current request cancelled and an exception thrown? If so we need to pass the
 					// exception to the Complete () method and allow the result to complete 'normally'.
-#if NET_2_1
+#if MOBILE
 					// neither Moonlight nor MonoTouch supports contexts (WaitOne default to false)
 					bool result = AsyncWaitHandle.WaitOne (Timeout);
 #else

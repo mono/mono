@@ -181,7 +181,7 @@ namespace System.Globalization
 			get { return territory; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		// FIXME: It is implemented, but would be hell slow.
 		[ComVisible (false)]
 		public CultureTypes CultureTypes {

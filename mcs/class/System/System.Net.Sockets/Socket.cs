@@ -123,7 +123,7 @@ namespace System.Net.Sockets
 				//
 				// Also note that catching ConfigurationErrorsException specifically would require library dependency
 				// System.Configuration, and wanted to avoid that.
-#if !NET_2_1
+#if !MOBILE
 #if CONFIGURATION_DEP
 				try {
 					SettingsSection config;
@@ -170,7 +170,7 @@ namespace System.Net.Sockets
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
-#if NET_2_1 && !MOBILE
+#if MOBILE && !MOBILE
 			switch (addressFamily) {
 			case AddressFamily.InterNetwork:    // ok
 			case AddressFamily.InterNetworkV6:  // ok
@@ -208,7 +208,7 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-#if !NET_2_1 || MOBILE
+#if !MOBILE || MOBILE
 			SocketDefaults ();
 #endif
 		}
@@ -289,7 +289,7 @@ namespace System.Net.Sockets
 			get { return ipv6_supported == 1; }
 		}
 
-#if NET_2_1
+#if MOBILE
 		public static bool OSSupportsIPv4 {
 			get { return ipv4_supported == 1; }
 		}
@@ -308,7 +308,7 @@ namespace System.Net.Sockets
 		}
 #endif
 
-#if NET_2_1
+#if MOBILE
 		public static bool OSSupportsIPv6 {
 			get { return ipv6_supported == 1; }
 		}
@@ -3408,7 +3408,7 @@ namespace System.Net.Sockets
 
 		void ThrowIfUdp ()
 		{
-#if !NET_2_1 || MOBILE
+#if !MOBILE || MOBILE
 			if (protocol_type == ProtocolType.Udp)
 				throw new SocketException ((int)SocketError.ProtocolOption);
 #endif
