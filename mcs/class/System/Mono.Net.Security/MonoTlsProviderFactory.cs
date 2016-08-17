@@ -244,7 +244,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static void SetDefaultProvider (string name)
+		internal static void SetProvider (string name)
 		{
 			lock (locker) {
 				var provider = LookupProvider (name, true);

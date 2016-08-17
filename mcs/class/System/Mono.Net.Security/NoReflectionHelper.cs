@@ -84,10 +84,10 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static void SetDefaultProvider (string name)
+		internal static void SetProvider (string name)
 		{
 			#if SECURITY_DEP
-			MonoTlsProviderFactory.SetDefaultProvider (name);
+			MonoTlsProviderFactory.SetProvider (name);
 			#else
 			throw new NotSupportedException ();
 			#endif
