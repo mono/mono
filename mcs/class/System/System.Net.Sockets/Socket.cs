@@ -170,34 +170,6 @@ namespace System.Net.Sockets
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
-#if MOBILE && !MOBILE
-			switch (addressFamily) {
-			case AddressFamily.InterNetwork:    // ok
-			case AddressFamily.InterNetworkV6:  // ok
-			case AddressFamily.Unknown:         // SocketException will be thrown later (with right error #)
-				break;
-			// case AddressFamily.Unspecified:
-			default:
-				throw new ArgumentException ("addressFamily");
-			}
-
-			switch (socketType) {
-			case SocketType.Stream:             // ok
-			case SocketType.Unknown:            // SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("socketType");
-			}
-
-			switch (protocolType) {
-			case ProtocolType.Tcp:              // ok
-			case ProtocolType.Unspecified:      // ok
-			case ProtocolType.Unknown:          // SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("protocolType");
-			}
-#endif
 			this.address_family = addressFamily;
 			this.socket_type = socketType;
 			this.protocol_type = protocolType;
@@ -208,9 +180,7 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-#if !MOBILE || MOBILE
 			SocketDefaults ();
-#endif
 		}
 
 #if !MOBILE
@@ -3408,10 +3378,8 @@ namespace System.Net.Sockets
 
 		void ThrowIfUdp ()
 		{
-#if !MOBILE || MOBILE
 			if (protocol_type == ProtocolType.Udp)
 				throw new SocketException ((int)SocketError.ProtocolOption);
-#endif
 		}
 
 		SocketAsyncResult ValidateEndIAsyncResult (IAsyncResult ares, string methodName, string argName)
