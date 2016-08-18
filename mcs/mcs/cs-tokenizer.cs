@@ -2547,7 +2547,7 @@ namespace Mono.CSharp
 						id_builder [pos] = (char)c;
 
 						if (c >= '0' && c <= '9') {
-							if (pos == 6 && id_builder [0] == 'C' && id_builder [1] == 'S') {
+							if (pos == 5 && id_builder [0] == 'C' && id_builder [1] == 'S') {
 								// Recognize CSXXXX as C# XXXX warning
 								number = 0;
 								int pow = 1000;

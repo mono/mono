@@ -51615,6 +51615,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void TestCS()" attrs="150">
+        <size>7</size>
+      </method>
     </type>
   </test>
   <test name="test-909.cs">
