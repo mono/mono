@@ -255,13 +255,8 @@ public class TestRunner
 
 						compiler.Start ();
 
-						if (!compiler.WaitForExit (timeout * 1000)) {
-							try {
-								compiler.Kill ();
-							} catch {
-							}
-							throw new Exception(String.Format("Timeout AOT compiling tests, output in {0}", test_bitcode_output));
-						} else if (compiler.ExitCode != 0) {
+						compiler.WaitForExit ();
+						if (compiler.ExitCode != 0) {
 							throw new Exception(String.Format("Error AOT compiling tests, output in {0}", test_bitcode_output));
 						} else {
 							Directory.Delete (test_bitcode_output, true);
@@ -364,29 +359,8 @@ public class TestRunner
 					p.BeginOutputReadLine ();
 					p.BeginErrorReadLine ();
 
-					if (!p.WaitForExit (timeout * 1000)) {
-						lock (monitor) {
-							timedout.Add (data);
-						}
-
-#if !MOBILE_STATIC
-						// Force the process to print a thread dump
-						try {
-							Syscall.kill (p.Id, Signum.SIGQUIT);
-							Thread.Sleep (1000);
-						} catch {
-						}
-#endif
-
-						if (verbose) {
-							output.Write ($"timed out ({timeout}s)");
-						}
-
-						try {
-							p.Kill ();
-						} catch {
-						}
-					} else if (p.ExitCode != expectedExitCode) {
+					p.WaitForExit ();
+					if (p.ExitCode != expectedExitCode) {
 						var end = DateTime.UtcNow;
 
 						lock (monitor) {
