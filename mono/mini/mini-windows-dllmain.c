@@ -7,9 +7,14 @@
  */
 
 #include <mono/metadata/coree.h>
+#include <mono/metadata/gc-internals.h>
+#include <mono/metadata/domain-internals.h>
+#include <mono/utils/mono-threads.h>
 #include "mini.h"
 
 #ifdef HOST_WIN32
+#include <windows.h>
+
 BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
 	if (!mono_gc_dllmain (module_handle, reason, reserved))
