@@ -33,7 +33,7 @@ using System.Collections;
 
 namespace System.Diagnostics 
 {
-#if NET_2_1
+#if MOBILE
 	public class ProcessThreadCollectionBase : System.Collections.Generic.List<ProcessThread>
 	{
 		protected ProcessThreadCollectionBase InnerList {
@@ -45,11 +45,16 @@ namespace System.Diagnostics
 			base.Add (thread);
 			return Count - 1;
 		}
+
+		public System.Collections.IEnumerator GetEnumerator ()
+		{
+			return ((System.Collections.IEnumerable)InnerList).GetEnumerator ();
+		}
 	}
 #endif
 
 	public class ProcessThreadCollection :
-#if !NET_2_1
+#if !MOBILE
 		ReadOnlyCollectionBase
 #else
 		ProcessThreadCollectionBase

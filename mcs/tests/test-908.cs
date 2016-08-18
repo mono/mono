@@ -11,4 +11,12 @@ public class Test
 	}
 #pragma warning restore CS1685
 #pragma warning restore public, 1701
+
+	public static void TestCS ()
+	{
+		return;
+#pragma warning disable CS0162
+		return;
+#pragma warning restore
+	}
 }

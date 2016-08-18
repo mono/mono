@@ -345,24 +345,24 @@ namespace System.Net
 				lock (hostE) {
 					string uriHost = uri.Host;
 
-					if (host == null) {
-						// Cannot do DNS resolution on literal IP addresses
-						if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
-
-							if (uri.HostNameType == UriHostNameType.IPv6) {
-								// Remove square brackets
-								uriHost = uriHost.Substring (1, uriHost.Length - 2);
-							}
-
-							// Creates IPHostEntry
-							host = new IPHostEntry();
-							host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
+					// Cannot do DNS resolution on literal IP addresses
+					if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
+						if (host != null)
 							return host;
+
+						if (uri.HostNameType == UriHostNameType.IPv6) {
+							// Remove square brackets
+							uriHost = uriHost.Substring (1, uriHost.Length - 2);
 						}
-					} else {
-						if (!HasTimedOut)
-							return host;
+
+						// Creates IPHostEntry
+						host = new IPHostEntry();
+						host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
+						return host;
 					}
+
+					if (!HasTimedOut)
+						return host;
 
 					lastDnsResolve = DateTime.UtcNow;
 

@@ -671,7 +671,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		public void TestGetComSlotForMethodInfo ()
 		{
@@ -819,7 +819,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		);
 #endif
 	}
-#if !NET_2_1
+#if !MOBILE
 	[ComImport()]
 	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
 	interface ITestDefault

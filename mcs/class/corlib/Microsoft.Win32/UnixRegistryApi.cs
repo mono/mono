@@ -37,7 +37,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if !MOBILE
 
 using System;
 using System.Collections;
@@ -1029,5 +1029,5 @@ namespace Microsoft.Win32 {
 	}
 }
 
-#endif // NET_2_1
+#endif // MOBILE
 

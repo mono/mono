@@ -465,7 +465,7 @@ namespace Mono.CSharp {
 		//
 		// Finds the nested type in container
 		//
-		public static TypeSpec FindNestedType (TypeSpec container, string name, int arity)
+		public static TypeSpec FindNestedType (TypeSpec container, string name, int arity, bool declaredOnlyClass)
 		{
 			IList<MemberSpec> applicable;
 			TypeSpec best_match = null;
@@ -494,7 +494,7 @@ namespace Mono.CSharp {
 						if (arity < 0) {
 							if (best_match == null) {
 								best_match = ts;
-							} else if (System.Math.Abs (ts.Arity + arity) < System.Math.Abs (ts.Arity + arity)) {
+							} else if (System.Math.Abs (ts.Arity + arity) < System.Math.Abs (best_match.Arity + arity)) {
 								best_match = ts;
 							}
 						}
@@ -502,7 +502,7 @@ namespace Mono.CSharp {
 				}
 
 				container = container.BaseType;
-			} while (container != null);
+			} while (container != null && !declaredOnlyClass);
 
 			return best_match;
 		}

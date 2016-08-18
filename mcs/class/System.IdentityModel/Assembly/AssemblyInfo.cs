@@ -61,4 +61,6 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
 
+#if !MOBILE
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
+#endif

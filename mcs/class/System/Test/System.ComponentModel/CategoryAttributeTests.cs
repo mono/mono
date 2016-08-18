@@ -47,7 +47,7 @@ namespace MonoTests.System.ComponentModel {
 		    Assert.AreEqual(CM.CategoryAttribute.Key.Category, "Key", "#9");
 		    Assert.AreEqual(CM.CategoryAttribute.Layout.Category, "Layout", "#10");
 		    Assert.AreEqual(CM.CategoryAttribute.Mouse.Category, "Mouse", "#11");
-#if NET_2_1
+#if MOBILE
 		    Assert.AreEqual(CM.CategoryAttribute.Default.Category, "Default", "#12");
 		    Assert.AreEqual(CM.CategoryAttribute.DragDrop.Category, "DragDrop", "#13");
 		    Assert.AreEqual(CM.CategoryAttribute.WindowStyle.Category, "WindowStyle", "#14");

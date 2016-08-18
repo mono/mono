@@ -32,6 +32,7 @@ System.ServiceModel.Dispatcher/SeekableXPathNavigator.cs
 System.ServiceModel.Dispatcher/XPathMessageFilter.cs
 System.ServiceModel.Security.Tokens/SecurityContextSecurityToken.cs
 System.ServiceModel.Security.Tokens/SslnegoCookieResolver.cs
+System.ServiceModel.Security.Tokens/SupportingTokenParameters.cs
 System.ServiceModel.Security/ChannelProtectionRequirements.cs
 System.ServiceModel.Security/IdentityVerifier.cs
 System.ServiceModel.Security/IssuedTokenClientCredential.cs

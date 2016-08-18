@@ -420,7 +420,7 @@ public class RSACryptoServiceProviderTest {
 		rsa.VerifyHash (hash, "1.3.14.3.2.26", null);
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")]
 	public void ImportDisposed ()
@@ -1161,7 +1161,7 @@ public class RSACryptoServiceProviderTest {
 		Assert.IsNotNull (r.Decrypt (bytes, true));
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()

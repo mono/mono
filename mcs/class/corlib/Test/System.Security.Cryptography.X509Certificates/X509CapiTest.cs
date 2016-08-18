@@ -104,8 +104,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-#if NET_2_1
-		[Ignore ("This constructor always throw a NotSupportedException under NET_2_1 and is useless without CryptoAPI (i.e. outside Windows)")]
+#if MOBILE
+		[Ignore ("This constructor always throw a NotSupportedException under MOBILE and is useless without CryptoAPI (i.e. outside Windows)")]
 #endif
 		public void ConstructorIntPtr ()
 		{

@@ -33,7 +33,7 @@
 // https://github.com/dotnet/corefx
 // src/System.Console/src/System/ConsolePal.Unix.cs
 //
-#if !NET_2_1
+#if !MOBILE
 
 //
 // Defining this writes the output to console.log

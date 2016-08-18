@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Text;
 using Mono.CompilerServices.SymbolWriter;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #else
 using System.Xml;

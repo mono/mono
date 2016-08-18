@@ -33,7 +33,7 @@ namespace System.ServiceModel.Channels
 	[MonoTODO]
 	public sealed class LocalClientSecuritySettings
 	{
-#if !NET_2_1
+#if !MOBILE
 		bool cache_cookies = true;
 		int cookie_renewal = 60;
 		bool detect_replays = true;
@@ -56,7 +56,7 @@ namespace System.ServiceModel.Channels
 		public TimeSpan ReplayWindow { get; set; }
 		public TimeSpan TimestampValidityDuration { get; set; }
 
-#if !NET_2_1
+#if !MOBILE
 		public bool CacheCookies {
 			get { return cache_cookies; }
 			set { cache_cookies = value; }

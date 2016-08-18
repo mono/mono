@@ -46,12 +46,24 @@ class MakeBundle {
 	static bool? use_dos2unix = null;
 	static bool skip_scan;
 	static string ctor_func;
-	static bool quiet;
+	static bool quiet = true;
 	static string cross_target = null;
 	static string fetch_target = null;
 	static bool custom_mode = true;
 	static string embedded_options = null;
 	static string runtime = null;
+	static string [] i18n = new string [] {
+		"West",
+		""
+	};
+	static string [] i18n_all = new string [] {
+		"CJK", 
+		"MidEast",
+		"Other",
+		"Rare",
+		"West",
+		""
+	};
 	static string target_server = "https://download.mono-project.com/runtimes/raw/";
 	
 	static int Main (string [] args)
@@ -71,6 +83,24 @@ class MakeBundle {
 			case "--simple":
 				custom_mode = false;
 				autodeps = true;
+				break;
+
+			case "-v":
+				quiet = false;
+				break;
+				
+			case "--i18n":
+				if (i+1 == top){
+					Help ();
+					return 1;
+				}
+				var iarg = args [++i];
+				if (iarg == "all")
+					i18n = i18n_all;
+				else if (iarg == "none")
+					i18n = new string [0];
+				else
+					i18n = iarg.Split (',');
 				break;
 				
 			case "--custom":
@@ -138,6 +168,8 @@ class MakeBundle {
 					Help (); 
 					return 1;
 				}
+				custom_mode = false;
+				autodeps = true;
 				runtime = args [++i];
 				break;
 			case "-oo":
@@ -290,7 +322,6 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
-
 		if (custom_mode)
 			GenerateBundles (files);
 		else {
@@ -314,7 +345,7 @@ class MakeBundle {
 					}
 				}
 				
-				Console.WriteLine ("Using runtime {0}", runtime);
+				Console.WriteLine ("Using runtime {0} for {1}", runtime, output);
 			}
 			GeneratePackage (files);
 		}
@@ -420,8 +451,9 @@ class MakeBundle {
 		{
 			using (Stream fileStream = File.OpenRead (fname)){
 				var ret = fileStream.Length;
-				
-				Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
+
+				if (!quiet)
+					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
 
@@ -447,6 +479,8 @@ class MakeBundle {
 
 		public void Dump ()
 		{
+			if (quiet)
+				return;
 			foreach (var floc in locations.Keys){
 				Console.WriteLine ($"{floc} at {locations[floc]:x}");
 			}
@@ -903,8 +937,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	{
 		List<string> assemblies = new List<string> ();
 		bool error = false;
+
+		var other = i18n.Select (x=> "I18N." + x + (x.Length > 0 ? "." : "") + "dll");
 		
-		foreach (string name in sources){
+		foreach (string name in sources.Concat (other)){
 			try {
 				Assembly a = LoadAssembly (name);
 
@@ -936,7 +972,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static bool QueueAssembly (List<string> files, string codebase)
 	{
-		// Console.WriteLine ("CODE BASE IS {0}", codebase);
+		//Console.WriteLine ("CODE BASE IS {0}", codebase);
 		if (files.Contains (codebase))
 			return true;
 
@@ -1034,6 +1070,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "    -o out              Specifies output filename\n" +
 				   "    --nodeps            Turns off automatic dependency embedding (default on custom)\n" +
 				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
+				   "    --i18n ENCODING     none, all or comma separated list of CJK, MidWest, Other, Rare, West.\n" +
+				   "    -v                  Verbose output\n" + 
 				   "\n" + 
 				   "--simple   Simple mode does not require a C toolchain and can cross compile\n" + 
 				   "    --cross TARGET      Generates a binary for the given TARGET\n"+

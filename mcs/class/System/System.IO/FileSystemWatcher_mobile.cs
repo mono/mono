@@ -28,7 +28,7 @@
 
 namespace System.IO
 {
-    public class FileSystemWatcher
+    public class FileSystemWatcher : IDisposable
     {
         public FileSystemWatcher () { throw new NotImplementedException (); }
         public FileSystemWatcher (string path) { throw new NotImplementedException (); }
@@ -51,5 +51,13 @@ namespace System.IO
         protected void OnRenamed (RenamedEventArgs e) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout) { throw new NotImplementedException (); }
+
+        public virtual void Dispose ()
+        {
+        }
+
+        protected virtual void Dispose (bool disposing)
+        {
+        }
     }
 }

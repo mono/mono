@@ -89,7 +89,7 @@ namespace System.ServiceModel.Channels
 		}
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	internal class XPathMessageBuffer : MessageBuffer
 	{
 		IXPathNavigable source;

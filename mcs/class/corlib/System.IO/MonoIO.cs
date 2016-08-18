@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
-#if NET_2_1
+#if MOBILE
 using System.IO.IsolatedStorage;
 #endif
 
@@ -108,7 +108,7 @@ namespace System.IO
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 			case MonoIOError.ERROR_INVALID_DRIVE:
 				message = String.Format ("Could not find the drive  '{0}'. The drive might not be ready or might not be mapped.", path);
-#if !NET_2_1
+#if !MOBILE
 				return new DriveNotFoundException (message);
 #else
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);

@@ -36,7 +36,7 @@ namespace System.ServiceModel
 #endif
 		MessageCredentialType client_credential_type;
 
-		internal MessageSecurityOverTcp ()
+		public MessageSecurityOverTcp ()
 		{
 #if !MOBILE && !XAMMAC_4_5
 			alg_suite = SecurityAlgorithmSuite.Default;

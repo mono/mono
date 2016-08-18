@@ -1,5 +1,5 @@
 //
-// TypeForwarders.cs
+// AssemblyInfo.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -40,5 +40,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../ecma.pub")]
-
-[assembly: ReferenceAssembly]

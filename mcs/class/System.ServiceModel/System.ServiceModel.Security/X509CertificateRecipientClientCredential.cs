@@ -27,7 +27,9 @@
 //
 using System;
 using System.Collections.Generic;
+#if !MOBILE
 using System.IdentityModel.Selectors;
+#endif
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -47,7 +49,9 @@ namespace System.ServiceModel.Security
 		X509Certificate2 certificate;
 		Dictionary<Uri,X509Certificate2> scoped =
 			new Dictionary<Uri,X509Certificate2> ();
+#if !MOBILE
 		X509CertificateValidator validator;
+#endif
 		X509RevocationMode revocation_mode;
 		StoreLocation store_loc;
 
@@ -72,6 +76,13 @@ namespace System.ServiceModel.Security
 			get { return scoped; }
 		}
 
+		[MonoTODO]
+		public X509ServiceCertificateAuthentication SslCertificateAuthentication
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
 		public void SetDefaultCertificate (string subjectName,
 			StoreLocation storeLocation, StoreName storeName)
 		{
@@ -81,7 +92,11 @@ namespace System.ServiceModel.Security
 		public void SetDefaultCertificate (StoreLocation storeLocation,
 			StoreName storeName, X509FindType findType, Object findValue)
 		{
+#if !MOBILE
 			DefaultCertificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		public void SetScopedCertificate (string subjectName,
@@ -95,7 +110,11 @@ namespace System.ServiceModel.Security
 			StoreName storeName, X509FindType findType,
 			Object findValue, Uri targetService)
 		{
+#if !MOBILE
 			ScopedCertificates [targetService] = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 	}
 }

@@ -133,7 +133,7 @@ namespace System.Net
 		static HttpWebRequest ()
 		{
 			defaultMaxResponseHeadersLength = 64 * 1024;
-#if !NET_2_1
+#if !MOBILE
 			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
 			if (config != null) {
 				int x = config.MaxResponseHeadersLength;
@@ -145,7 +145,7 @@ namespace System.Net
 #endif
 		}
 
-#if NET_2_1
+#if MOBILE
 		public
 #else
 		internal
@@ -382,7 +382,7 @@ namespace System.Net
 				SetSpecialHeaders(headerName, HttpProtocolUtils.date2string(dateTime));
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy
 		{
@@ -963,7 +963,7 @@ namespace System.Net
 			initialMethod = method;
 
 			SimpleAsyncResult.RunWithLock (locker, CheckIfForceWrite, inner => {
-				var synch = inner.CompletedSynchronously;
+				var synch = inner.CompletedSynchronouslyPeek;
 
 				if (inner.GotException) {
 					aread.SetCompleted (synch, inner.Exception);
@@ -1374,7 +1374,7 @@ namespace System.Net
 					}
 
 					if (asyncWrite != null) {
-						asyncWrite.SetCompleted (inner.CompletedSynchronously, writeStream);
+						asyncWrite.SetCompleted (inner.CompletedSynchronouslyPeek, writeStream);
 						asyncWrite.DoCallback ();
 						asyncWrite = null;
 					}

@@ -719,12 +719,12 @@ namespace System.Net
 
 			SetHeadersAsync (true, inner => {
 				if (inner.GotException) {
-					result.SetCompleted (inner.CompletedSynchronously, inner.Exception);
+					result.SetCompleted (inner.CompletedSynchronouslyPeek, inner.Exception);
 					return;
 				}
 
 				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100) {
-					result.SetCompleted (inner.CompletedSynchronously);
+					result.SetCompleted (inner.CompletedSynchronouslyPeek);
 					return;
 				}
 
@@ -735,7 +735,7 @@ namespace System.Net
 
 				if (length == 0) {
 					complete_request_written = true;
-					result.SetCompleted (inner.CompletedSynchronously);
+					result.SetCompleted (inner.CompletedSynchronouslyPeek);
 					return;
 				}
 

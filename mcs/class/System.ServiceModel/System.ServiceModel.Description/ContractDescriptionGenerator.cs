@@ -373,7 +373,7 @@ namespace System.ServiceModel.Description
 					var fname = a.Name ?? a.DetailType.Name + "Fault";
 					var fns = a.Namespace ?? cd.Namespace;
 					var fd = new FaultDescription (a.Action ?? cd.Namespace + cd.Name + "/" + od.Name + fname) { DetailType = a.DetailType, Name = fname, Namespace = fns };
-#if !NET_2_1
+#if !MOBILE
 					if (a.HasProtectionLevel)
 						fd.ProtectionLevel = a.ProtectionLevel;
 #endif
@@ -400,7 +400,7 @@ namespace System.ServiceModel.Description
 				foreach (object obj in serviceMethod.GetCustomAttributes (typeof(IOperationBehavior),true))
 					od.Behaviors.Add ((IOperationBehavior) obj);
 			}
-#if !NET_2_1
+#if !MOBILE
 			if (od.Behaviors.Find<OperationBehaviorAttribute>() == null)
 				od.Behaviors.Add (new OperationBehaviorAttribute ());
 #endif

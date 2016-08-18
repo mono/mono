@@ -39,7 +39,7 @@ namespace System.ServiceModel.Web
 {
 	public class WebChannelFactory<TChannel> : ChannelFactory<TChannel>
 	{
-#if !NET_2_1
+#if !MOBILE
 		public WebChannelFactory ()
 			: base ()
 		{
@@ -84,7 +84,7 @@ namespace System.ServiceModel.Web
 
 		protected override void OnOpening ()
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (Endpoint.Behaviors.Find<WebHttpBehavior> () == null)
 				Endpoint.Behaviors.Add (new WebHttpBehavior ());
 #endif

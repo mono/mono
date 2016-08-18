@@ -123,7 +123,7 @@ namespace System.Net.Sockets
 				//
 				// Also note that catching ConfigurationErrorsException specifically would require library dependency
 				// System.Configuration, and wanted to avoid that.
-#if !NET_2_1
+#if !MOBILE
 #if CONFIGURATION_DEP
 				try {
 					SettingsSection config;
@@ -170,34 +170,6 @@ namespace System.Net.Sockets
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
-#if NET_2_1 && !MOBILE
-			switch (addressFamily) {
-			case AddressFamily.InterNetwork:    // ok
-			case AddressFamily.InterNetworkV6:  // ok
-			case AddressFamily.Unknown:         // SocketException will be thrown later (with right error #)
-				break;
-			// case AddressFamily.Unspecified:
-			default:
-				throw new ArgumentException ("addressFamily");
-			}
-
-			switch (socketType) {
-			case SocketType.Stream:             // ok
-			case SocketType.Unknown:            // SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("socketType");
-			}
-
-			switch (protocolType) {
-			case ProtocolType.Tcp:              // ok
-			case ProtocolType.Unspecified:      // ok
-			case ProtocolType.Unknown:          // SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("protocolType");
-			}
-#endif
 			this.address_family = addressFamily;
 			this.socket_type = socketType;
 			this.protocol_type = protocolType;
@@ -208,9 +180,7 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-#if !NET_2_1 || MOBILE
 			SocketDefaults ();
-#endif
 		}
 
 #if !MOBILE
@@ -289,7 +259,7 @@ namespace System.Net.Sockets
 			get { return ipv6_supported == 1; }
 		}
 
-#if NET_2_1
+#if MOBILE
 		public static bool OSSupportsIPv4 {
 			get { return ipv4_supported == 1; }
 		}
@@ -308,7 +278,7 @@ namespace System.Net.Sockets
 		}
 #endif
 
-#if NET_2_1
+#if MOBILE
 		public static bool OSSupportsIPv6 {
 			get { return ipv6_supported == 1; }
 		}
@@ -1354,6 +1324,21 @@ namespace System.Net.Sockets
 			}
 
 			return true;
+		}
+
+		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
+		{
+			var sock = new Socket (e.RemoteEndPoint.AddressFamily, socketType, protocolType);
+			return sock.ConnectAsync (e);
+		}
+
+		public static void CancelConnectAsync (SocketAsyncEventArgs e)
+		{
+			if (e == null)
+				throw new ArgumentNullException("e");
+
+			if (e.in_progress != 0 && e.LastOperation == SocketAsyncOperation.Connect)
+				e.current_socket.Close();
 		}
 
 		static AsyncCallback ConnectAsyncCallback = new AsyncCallback (ares => {
@@ -3393,10 +3378,8 @@ namespace System.Net.Sockets
 
 		void ThrowIfUdp ()
 		{
-#if !NET_2_1 || MOBILE
 			if (protocol_type == ProtocolType.Udp)
 				throw new SocketException ((int)SocketError.ProtocolOption);
-#endif
 		}
 
 		SocketAsyncResult ValidateEndIAsyncResult (IAsyncResult ares, string methodName, string argName)

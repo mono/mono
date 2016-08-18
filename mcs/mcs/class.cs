@@ -22,7 +22,7 @@ using System.Text;
 using System.Diagnostics;
 using Mono.CompilerServices.SymbolWriter;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #endif
 
@@ -2500,7 +2500,7 @@ namespace Mono.CSharp
 			//	return null;
 
 			var container = PartialContainer.CurrentType;
-			return MemberCache.FindNestedType (container, name, arity);
+			return MemberCache.FindNestedType (container, name, arity, false);
 		}
 
 		public void Mark_HasEquals ()

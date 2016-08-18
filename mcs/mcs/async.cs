@@ -973,14 +973,17 @@ namespace Mono.CSharp
 		public StackFieldExpr (Field field)
 			: base (field, Location.Null)
 		{
+			AutomaticallyReuse = true;
 		}
+
+		public bool AutomaticallyReuse { get; set; }
 
 		public bool IsAvailableForReuse {
 			get {
 				var field = (Field) spec.MemberDefinition;
 				return field.IsAvailableForReuse;
 			}
-			set {
+			private set {
 				var field = (Field) spec.MemberDefinition;
 				field.IsAvailableForReuse = value;
 			}
@@ -990,7 +993,7 @@ namespace Mono.CSharp
 		{
 			base.AddressOf (ec, mode);
 
-			if (mode == AddressOp.Load) {
+			if (mode == AddressOp.Load && AutomaticallyReuse) {
 				IsAvailableForReuse = true;
 			}
 		}
@@ -999,7 +1002,8 @@ namespace Mono.CSharp
 		{
 			base.Emit (ec);
 
-			PrepareCleanup (ec);
+			if (AutomaticallyReuse)
+				PrepareCleanup (ec);
 		}
 
 		public void EmitLoad (EmitContext ec)

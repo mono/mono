@@ -94,7 +94,7 @@ namespace System.ServiceModel.Channels
 			return base.BuildChannelFactory<TChannel> (context);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -131,7 +131,7 @@ namespace System.ServiceModel.Channels
 			return new BinaryMessageEncoderFactory (this);
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
 			WsdlContractConversionContext context)

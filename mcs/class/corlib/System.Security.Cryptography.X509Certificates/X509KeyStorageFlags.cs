@@ -35,7 +35,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	[ComVisible (true)]
 	public enum X509KeyStorageFlags	{
 		DefaultKeySet = 0,
-		// not supported by Silverlight 2.0 (NET_2_1)
+		// not supported by Silverlight 2.0 (MOBILE)
 		UserKeySet = 1,
 		MachineKeySet = 2,
 		Exportable = 4,

@@ -37,7 +37,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
-#if !NET_2_1
+#if !MOBILE
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -121,7 +121,7 @@ namespace System.Xml.Serialization
 			//       debugging pourposes by adding the "nofallback" option.
 			//       For example: MONO_XMLSERIALIZER_THS=0,nofallback
 			
-#if NET_2_1
+#if MOBILE
 			string db = null;
 			string th = null;
 			generationThreshold = -1;
@@ -150,7 +150,7 @@ namespace System.Xml.Serialization
 			}
 #endif
 			deleteTempFiles = (db == null || db == "no");
-#if !NET_2_1 && CONFIGURATION_DEP
+#if !MOBILE && CONFIGURATION_DEP
 			// DiagnosticsSection
 			ConfigurationSection table = (ConfigurationSection) ConfigurationSettings.GetConfig("system.diagnostics");
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -579,7 +579,7 @@ namespace System.Xml.Serialization
 				}
 			}
 			
-#if !NET_2_1
+#if !MOBILE
 			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
 				return new XmlSerializationWriterInterpreter (typeMapping);
 
@@ -600,7 +600,7 @@ namespace System.Xml.Serialization
 		
 		XmlSerializationReader CreateReader (XmlMapping typeMapping)
 		{
-#if !NET_2_1
+#if !MOBILE
 			XmlSerializationReader reader;
 			
 			lock (this) {
@@ -630,7 +630,7 @@ namespace System.Xml.Serialization
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
-#if NET_2_1
+#if MOBILE
  		void CheckGeneratedTypes (XmlMapping typeMapping)
  		{
 			throw new NotImplementedException();

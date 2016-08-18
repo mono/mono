@@ -36,7 +36,7 @@ namespace System.ServiceModel.Description
 {
 	public class XmlSerializerOperationBehavior
 		: IOperationBehavior
-#if !NET_2_1
+#if !MOBILE
 			, IWsdlExportExtension
 #endif
 	{
@@ -104,7 +104,7 @@ namespace System.ServiceModel.Description
 		{
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		void IWsdlExportExtension.ExportContract (
 			WsdlExporter exporter,
 			WsdlContractConversionContext context)

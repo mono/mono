@@ -1134,7 +1134,7 @@ namespace Mono.CSharp
 			QuitRequested = true;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		/// <summary>
 		///   Describes an object or a type.
 		/// </summary>

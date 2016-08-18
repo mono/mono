@@ -727,6 +727,69 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("foo", res [0][0]);
 			Assert.AreEqual ("bar", res [1][0]);
 		}
+
+		[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+		internal class NonVisibleCustomAttribute : Attribute
+		{
+			public NonVisibleCustomAttribute () {}
+		}
+
+		[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+		public class PublicVisibleCustomAttribute : Attribute
+		{
+			public PublicVisibleCustomAttribute () {}
+		}
+
+		private static void AddCustomClassAttribute (TypeBuilder typeBuilder, Type customAttrType)
+		{
+			var attribCtorParams = new Type[] {};
+			var attribCtorInfo = customAttrType.GetConstructor(attribCtorParams);
+			var attribBuilder = new CustomAttributeBuilder(attribCtorInfo, new object[] { });
+			typeBuilder.SetCustomAttribute(attribBuilder);
+		}
+
+		[Test]
+		public void NonvisibleCustomAttribute () {
+			//
+			// We build:
+			//  [VisiblePublicCustom]
+			//  [VisiblePublicCustom]
+			//  [NonVisibleCustom]
+			//  [VisiblePublicCustom]
+			//  class BuiltType { public BuiltType () { } }
+			//
+			// And then we try to get all the attributes.
+			//
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=43291
+						var assemblyName = new AssemblyName("Repro43291Asm");
+			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule("Repro43291Mod");
+
+			var typeBuilder = moduleBuilder.DefineType("BuiltType",
+				TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit);
+
+			AddCustomClassAttribute (typeBuilder, typeof (PublicVisibleCustomAttribute));
+			AddCustomClassAttribute (typeBuilder, typeof (PublicVisibleCustomAttribute));
+			AddCustomClassAttribute (typeBuilder, typeof (NonVisibleCustomAttribute));
+			AddCustomClassAttribute (typeBuilder, typeof (PublicVisibleCustomAttribute));
+
+			var createdType = typeBuilder.CreateType ();
+
+			Assert.IsNotNull (createdType);
+
+			var obj = Activator.CreateInstance (createdType);
+
+			Assert.IsNotNull (obj);
+
+			var attrs = obj.GetType ().GetCustomAttributes (typeof (Attribute), true);
+
+			Assert.IsNotNull (attrs);
+
+			Assert.AreEqual (3, attrs.Length);
+			Assert.IsInstanceOfType (typeof (PublicVisibleCustomAttribute), attrs[0]);
+			Assert.IsInstanceOfType (typeof (PublicVisibleCustomAttribute), attrs[1]);
+			Assert.IsInstanceOfType (typeof (PublicVisibleCustomAttribute), attrs[2]);
+		}
 	}
 }
 

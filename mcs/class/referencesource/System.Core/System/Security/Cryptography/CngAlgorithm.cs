@@ -241,5 +241,19 @@ namespace System.Security.Cryptography {
                 return s_sha512;
             }
         }
+
+#if NETSTANDARD
+        public static CngAlgorithm ECDiffieHellman {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public static CngAlgorithm ECDsa {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
+#endif
     }
 }
