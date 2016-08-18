@@ -22,7 +22,7 @@ using System.Text;
 using System.Diagnostics;
 using Mono.CompilerServices.SymbolWriter;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #endif
 

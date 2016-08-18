@@ -581,7 +581,7 @@ namespace System.Runtime.Remoting
 			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
 		}
-#if !NET_2_1
+#if !MOBILE
 		internal static object CreateClientProxyForComInterop (Type type)
 		{
 			Mono.Interop.ComInteropProxy proxy = Mono.Interop.ComInteropProxy.CreateProxy (type);

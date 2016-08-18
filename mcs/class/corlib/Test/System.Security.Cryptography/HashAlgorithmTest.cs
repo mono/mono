@@ -345,7 +345,7 @@ public class HashAlgorithmTest {
 	public virtual bool ManagedHashImplementation {
 		get { return false; }
 	}
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
 	public void TransformFinalBlock_Twice ()
@@ -424,7 +424,7 @@ public class HashAlgorithmTest {
 	{
 		Assert.AreEqual (HashBuffer (false), HashBuffer (true), "Intersect");
 	}
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[ExpectedException (typeof (NullReferenceException))]
 	[Category ("NotWorking")] // initialization problem ? fx2.0 only ?

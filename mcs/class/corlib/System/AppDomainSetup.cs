@@ -47,7 +47,7 @@ namespace System
 	[ClassInterface (ClassInterfaceType.None)]
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_2_1
+#if MOBILE
 	public sealed class AppDomainSetup
 #else
 	public sealed class AppDomainSetup : IAppDomainSetup

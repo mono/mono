@@ -149,7 +149,7 @@ namespace System.ServiceModel.Channels
 			return ctx.DequeueBindingElement ().BuildChannelFactory<TChannel> (ctx);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public IChannelListener<TChannel>
 			BuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
@@ -168,7 +168,7 @@ namespace System.ServiceModel.Channels
 			return ctx.DequeueBindingElement ().CanBuildChannelFactory<TChannel> (ctx);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public bool CanBuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{

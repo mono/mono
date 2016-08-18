@@ -17,7 +17,7 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class FileStreamWithClosedSafeHandleTests
 	{
-#if !NET_2_1
+#if !MOBILE
 		private FileStream GetFileStreamWithClosedHandle ()
 		{
 			var fs1 = new FileStream ("test2", FileMode.OpenOrCreate);

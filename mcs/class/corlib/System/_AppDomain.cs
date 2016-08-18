@@ -159,7 +159,7 @@ namespace System
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		event UnhandledExceptionEventHandler UnhandledException;
 
-#if !NET_2_1
+#if !MOBILE
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
 
 		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);

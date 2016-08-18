@@ -857,7 +857,7 @@ public class DSACryptoServiceProviderTest {
 		}
 	}
 		
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()

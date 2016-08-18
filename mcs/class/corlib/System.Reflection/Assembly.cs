@@ -145,7 +145,7 @@ namespace System.Reflection {
 		private string GetCodeBase (bool escaped)
 		{
 			string cb = get_code_base (escaped);
-#if !NET_2_1
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				// we cannot divulge local file informations
 				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
@@ -215,7 +215,7 @@ namespace System.Reflection {
 					return String.Empty;
 
 				string loc = get_location ();
-#if !NET_2_1
+#if !MOBILE
 				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
@@ -531,7 +531,7 @@ namespace System.Reflection {
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
-#if !NET_2_1
+#if !MOBILE
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
 				a.Evidence.Merge (securityEvidence);
@@ -803,7 +803,7 @@ namespace System.Reflection {
 			return other._mono_assembly == _mono_assembly;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		// Code Access Security
 
 		internal void Resolve () 

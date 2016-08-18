@@ -25,7 +25,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			_algo = new RNGCryptoServiceProvider ();
 		}
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		public void ConstructorByteArray () 
 		{

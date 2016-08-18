@@ -67,7 +67,7 @@ namespace System.ServiceModel
 			set { identity = value; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public XmlDictionaryReader GetReaderAtExtensions ()
 		{
 			if (extension == null)

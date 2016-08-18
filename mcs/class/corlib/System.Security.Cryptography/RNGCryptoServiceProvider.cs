@@ -40,7 +40,7 @@ using System.Text;
 
 namespace System.Security.Cryptography {
 	
-#if !NET_2_1
+#if !MOBILE
 	[ComVisible (true)]
 #endif
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
@@ -58,7 +58,7 @@ namespace System.Security.Cryptography {
 			_handle = RngInitialize (null);
 			Check ();
 		}
-#if !NET_2_1
+#if !MOBILE
 		public RNGCryptoServiceProvider (byte[] rgb)
 		{
 			_handle = RngInitialize (rgb);

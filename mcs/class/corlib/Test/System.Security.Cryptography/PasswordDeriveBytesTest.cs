@@ -79,7 +79,7 @@ public class PasswordDeriveBytesTest {
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt, new CspParameters ());
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltNullCspParameters ()
@@ -100,7 +100,7 @@ public class PasswordDeriveBytesTest {
 		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltCspParameters ()
@@ -176,7 +176,7 @@ public class PasswordDeriveBytesTest {
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt, "SHA1", 1, new CspParameters ());
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltNullHashIterationCspParameters ()
@@ -209,7 +209,7 @@ public class PasswordDeriveBytesTest {
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 0, new CspParameters ());
 	}
 		
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltHashIterationMaxValueCspParameters ()
@@ -230,7 +230,7 @@ public class PasswordDeriveBytesTest {
 		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
 	public void Ctor_PasswordSaltHashIterationCspParameters ()
@@ -669,7 +669,7 @@ public class PasswordDeriveBytesTest {
 		pd.CryptDeriveKey ("AlgName", "MD5", -256, new byte [8]);
 	}
 		
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")] // bug #79499
 	public void LongMultipleGetBytes ()

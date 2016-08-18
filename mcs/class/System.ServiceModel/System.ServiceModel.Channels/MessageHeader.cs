@@ -209,7 +209,7 @@ namespace System.ServiceModel.Channels
 		{
 			bool is_ref, must_understand, relay;
 			string actor;
-#if NET_2_1
+#if MOBILE
 			string body;
 #else
 			// This is required to completely clone body xml that 
@@ -238,7 +238,7 @@ namespace System.ServiceModel.Channels
 
 				local_name = reader.LocalName;
 				namespace_uri = reader.NamespaceURI;
-#if NET_2_1
+#if MOBILE
 				body = reader.ReadOuterXml ();
 #else
 				body = new XmlDocument ();
@@ -250,7 +250,7 @@ namespace System.ServiceModel.Channels
 
 			public XmlReader CreateReader ()
 			{
-#if NET_2_1
+#if MOBILE
 				var reader = XmlReader.Create (new StringReader (body));
 #else
 				var reader = new XmlNodeReader (body);

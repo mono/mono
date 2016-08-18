@@ -273,7 +273,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !NET_2_1 || MOBILE_STATIC
+#if !MOBILE || MOBILE_STATIC
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -531,7 +531,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
-#if !NET_2_1
+#if !MOBILE
 			if (TimeZoneKey != null)
 			{
 				if (id == "Coordinated Universal Time")
@@ -561,7 +561,7 @@ namespace System
 		}
 #endif
 
-#if !NET_2_1
+#if !MOBILE
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");

@@ -221,7 +221,7 @@ namespace System.Threading
 			disposed = true;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{
 			if (null == eventSecurity)

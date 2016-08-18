@@ -81,7 +81,7 @@ namespace System.ServiceModel.Channels
 				q.MaxStringContentLength = (int) MaxReceivedMessageSize;
 				return (T) (object) q;
 			}
-#if !NET_2_1
+#if !MOBILE
 			if (typeof (T) == typeof (ChannelProtectionRequirements))
 				// blank one, basically it should not be used
 				// for any secure channels (
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Channels
 			return context.GetInnerProperty<T> ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		internal static XmlElement CreateTransportBinding (XmlElement transportToken)
 		{
 			var doc = new XmlDocument ();

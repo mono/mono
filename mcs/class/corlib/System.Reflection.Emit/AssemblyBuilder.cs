@@ -384,7 +384,7 @@ namespace System.Reflection.Emit
 
 		internal void AddPermissionRequests (PermissionSet required, PermissionSet optional, PermissionSet refused)
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (created)
 				throw new InvalidOperationException ("Assembly was already saved.");
 

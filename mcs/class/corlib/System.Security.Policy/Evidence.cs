@@ -225,7 +225,7 @@ namespace System.Security.Policy {
 		// "possible" presence of an Authenticode signature
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool IsAuthenticodePresent (Assembly a);
-#if NET_2_1
+#if MOBILE
 		static internal Evidence GetDefaultHostEvidence (Assembly a)
 		{
 			return new Evidence ();
@@ -287,7 +287,7 @@ namespace System.Security.Policy {
 			return e;
 		}
 
-#endif // NET_2_1
+#endif // MOBILE
 
 		private class EvidenceEnumerator : IEnumerator {
 			

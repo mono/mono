@@ -32,7 +32,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
-#if !NET_2_1
+#if !MOBILE
 using System.Security.Permissions;
 #endif
 using MX = Mono.Security.X509;
@@ -49,7 +49,7 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		// typedef struct _CERT_CONTEXT {
 		//	DWORD                   dwCertEncodingType;
 		//	BYTE                    *pbCertEncoded;

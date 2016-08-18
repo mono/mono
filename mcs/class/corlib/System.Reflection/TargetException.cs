@@ -37,7 +37,7 @@ namespace System.Reflection
 {
 	[ComVisible (true)]
 	[Serializable]
-#if NET_2_1
+#if MOBILE
 	public class TargetException : Exception {
 #else
 	public class TargetException : ApplicationException {

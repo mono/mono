@@ -157,7 +157,7 @@ namespace System.Xml.Serialization {
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
-#if !NET_2_1
+#if !MOBILE
 			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, extraTypes);
 			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
 #endif
@@ -226,7 +226,7 @@ namespace System.Xml.Serialization {
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
-#if !NET_2_1
+#if !MOBILE
 				map.Source = new XmlTypeSerializationSource (typeData.Type, root, attributeOverrides, defaultNamespace, extraTypes);
 				if (allowPrivateTypes) map.Source.CanBeGenerated = false;
 #endif

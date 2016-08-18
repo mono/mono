@@ -58,7 +58,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 
 		[Test]
 #if MOBILE
-		[Ignore ("There's no GAC for the NET_2_1 based profiles (Moonlight, MonoTouch and Mono for Android")]
+		[Ignore ("There's no GAC for the MOBILE based profiles (Moonlight, MonoTouch and Mono for Android")]
 #endif
 		public void FromGlobalAccessCache ()
 		{

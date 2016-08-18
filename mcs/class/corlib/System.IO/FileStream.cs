@@ -41,7 +41,7 @@ using System.Security.Permissions;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 
-#if NET_2_1
+#if MOBILE
 using System.IO.IsolatedStorage;
 #else
 using System.Security.AccessControl;
@@ -176,7 +176,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
 
 			if (mode < FileMode.CreateNew || mode > FileMode.Append) {
-#if NET_2_1
+#if MOBILE
 				if (anonymous)
 					throw new ArgumentException ("mode", "Enum value was out of legal range.");
 				else
@@ -942,7 +942,7 @@ namespace System.IO
 				throw exc;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public FileSecurity GetAccessControl ()
 		{
 			if (safeHandle.IsClosed)

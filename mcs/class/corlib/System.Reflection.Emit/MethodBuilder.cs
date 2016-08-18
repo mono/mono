@@ -478,7 +478,7 @@ namespace System.Reflection.Emit
 
 		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
 		{
-#if !NET_2_1
+#if !MOBILE
 			if (pset == null)
 				throw new ArgumentNullException ("pset");
 			if ((action == SecurityAction.RequestMinimum) ||

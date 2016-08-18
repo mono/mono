@@ -281,7 +281,7 @@ namespace System.IO {
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-#if !NET_2_1
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fullpath).Demand ();
 			}

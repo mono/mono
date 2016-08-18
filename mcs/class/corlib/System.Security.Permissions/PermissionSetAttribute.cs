@@ -90,7 +90,7 @@ namespace System.Security.Permissions {
 
 		private PermissionSet CreateFromXml (string xml) 
 		{
-#if !NET_2_1
+#if !MOBILE
 			SecurityParser sp = new SecurityParser ();
 			try {
 				sp.LoadXml (xml);
@@ -125,7 +125,7 @@ namespace System.Security.Permissions {
 		public PermissionSet CreatePermissionSet ()
 		{
 			PermissionSet pset = null;
-#if !NET_2_1
+#if !MOBILE
 			if (this.Unrestricted)
 				pset = new PermissionSet (PermissionState.Unrestricted);
 			else {

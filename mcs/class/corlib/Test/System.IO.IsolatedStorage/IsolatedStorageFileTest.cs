@@ -124,7 +124,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
-#if !NET_2_1
+#if !MOBILE
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
@@ -157,7 +157,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForDomain ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
-#if !NET_2_1
+#if !MOBILE
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
@@ -198,7 +198,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
-#if !NET_2_1
+#if !MOBILE
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf (Assembly.GetExecutingAssembly ().CodeBase) > 0), "Url");
@@ -206,7 +206,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 		
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
 		public void GetUserStoreForApplication_AssemblyIdentity ()
@@ -238,7 +238,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (Zone), typeof (Zone));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
-#if !NET_2_1
+#if !MOBILE
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("MyComputer") > 0), "Zone - Assembly");
@@ -265,7 +265,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (StrongName), typeof (Url));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (scope, isf.Scope, "Scope");
-#if !NET_2_1
+#if !MOBILE
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
@@ -361,7 +361,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 
 			// Maximum size for Internet isn't (by default) Int64.MaxValue
 			Assert.AreEqual (scope, isf.Scope, "Scope");
-#if !NET_2_1
+#if !MOBILE
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("Intranet") > 0), "Zone - Assembly");
 			Assert.IsTrue ((isf.DomainIdentity is Zone), "DomainIdentity");
@@ -577,7 +577,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null);
-#if !NET_2_1
+#if !MOBILE
 			Assert.AreEqual (typeof (Url), isf.AssemblyIdentity.GetType (), "AssemblyIdentity");
 			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
 #endif

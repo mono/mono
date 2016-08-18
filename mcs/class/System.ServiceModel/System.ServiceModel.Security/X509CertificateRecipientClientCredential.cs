@@ -27,7 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
-#if !NET_2_1
+#if !MOBILE
 using System.IdentityModel.Selectors;
 #endif
 using System.Security.Cryptography.X509Certificates;
@@ -49,7 +49,7 @@ namespace System.ServiceModel.Security
 		X509Certificate2 certificate;
 		Dictionary<Uri,X509Certificate2> scoped =
 			new Dictionary<Uri,X509Certificate2> ();
-#if !NET_2_1
+#if !MOBILE
 		X509CertificateValidator validator;
 #endif
 		X509RevocationMode revocation_mode;
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Security
 		public void SetDefaultCertificate (StoreLocation storeLocation,
 			StoreName storeName, X509FindType findType, Object findValue)
 		{
-#if !NET_2_1
+#if !MOBILE
 			DefaultCertificate = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 #else
 			throw new NotImplementedException ();
@@ -110,7 +110,7 @@ namespace System.ServiceModel.Security
 			StoreName storeName, X509FindType findType,
 			Object findValue, Uri targetService)
 		{
-#if !NET_2_1
+#if !MOBILE
 			ScopedCertificates [targetService] = ConfigUtil.CreateCertificateFrom (storeLocation, storeName, findType, findValue);
 #else
 			throw new NotImplementedException ();
