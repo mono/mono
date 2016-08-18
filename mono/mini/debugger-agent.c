@@ -5148,6 +5148,10 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 
 	if (m->is_generic && !m->is_inflated)
 		return ERR_NOT_IMPLEMENTED;
+	
+	/* Do not invoke method with a generic type parameter as return value. */
+	if(sig && sig->ret && sig->ret->type == MONO_TYPE_VAR)
+		return ERR_NOT_IMPLEMENTED;
 
 	if (m->klass->valuetype)
 		this_buf = g_alloca (mono_class_instance_size (m->klass));
