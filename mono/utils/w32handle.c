@@ -47,6 +47,7 @@
 #include "mono-os-mutex.h"
 #include "mono-proclib.h"
 #include "mono-threads.h"
+#include "mono-lazy-init.h"
 
 #undef DEBUG_REFS
 
@@ -74,6 +75,8 @@ static MonoW32HandleOps *handle_ops [MONO_W32HANDLE_COUNT];
 #define SLOT_INDEX(x)	(x / HANDLE_PER_SLOT)
 #define SLOT_OFFSET(x)	(x % HANDLE_PER_SLOT)
 
+static mono_lazy_init_t status = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
+
 static MonoW32HandleBase *private_handles [SLOT_MAX];
 static guint32 private_handles_count = 0;
 static guint32 private_handles_slots_count = 0;
@@ -89,8 +92,6 @@ static mono_mutex_t global_signal_mutex;
 static mono_cond_t global_signal_cond;
 
 static mono_mutex_t scan_mutex;
-
-static gboolean shutting_down = FALSE;
 
 static gboolean
 type_is_fd (MonoW32HandleType type)
@@ -287,8 +288,8 @@ mono_w32handle_unlock_handle (gpointer handle)
  *
  *   Initialize the io-layer.
  */
-void
-mono_w32handle_init (void)
+static void
+initialize (void)
 {
 	g_assert ((sizeof (handle_ops) / sizeof (handle_ops[0]))
 		  == MONO_W32HANDLE_COUNT);
@@ -314,13 +315,10 @@ mono_w32handle_init (void)
 
 static void mono_w32handle_unref_full (gpointer handle, gboolean ignore_private_busy_handles);
 
-void
-mono_w32handle_cleanup (void)
+static void
+cleanup (void)
 {
 	int i, j, k;
-
-	g_assert (!shutting_down);
-	shutting_down = TRUE;
 
 	/* Every shared handle we were using ought really to be closed
 	 * by now, but to make sure just blow them all away.  The
@@ -344,11 +342,21 @@ mono_w32handle_cleanup (void)
 		g_free (private_handles [i]);
 }
 
+void
+mono_w32handle_init (void)
+{
+	mono_lazy_initialize (&status, initialize);
+}
+
+void
+mono_w32handle_cleanup (void)
+{
+	mono_lazy_cleanup (&status, cleanup);
+}
+
 static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
 			       MonoW32HandleType type, gpointer handle_specific)
 {
-	g_assert (!shutting_down);
-	
 	handle->type = type;
 	handle->signalled = FALSE;
 	handle->ref = 1;
@@ -374,8 +382,6 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 	guint32 i, k, count;
 	static guint32 last = 0;
 	gboolean retry = FALSE;
-	
-	g_assert (!shutting_down);
 	
 	/* A linear scan should be fast enough.  Start from the last
 	 * allocation, assuming that handles are allocated more often
@@ -424,7 +430,7 @@ mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific)
 	guint32 handle_idx = 0;
 	gpointer handle;
 
-	g_assert (!shutting_down);
+	mono_lazy_initialize (&status, initialize);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: Creating new handle of type %s", __func__,
 		   mono_w32handle_ops_typename (type));
@@ -471,7 +477,7 @@ gpointer mono_w32handle_new_fd (MonoW32HandleType type, int fd,
 	MonoW32HandleBase *handle_data;
 	int fd_index, fd_offset;
 
-	g_assert (!shutting_down);
+	mono_lazy_initialize (&status, initialize);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: Creating new handle of type %s", __func__,
 		   mono_w32handle_ops_typename (type));
@@ -521,6 +527,9 @@ mono_w32handle_lookup (gpointer handle, MonoW32HandleType type,
 
 	g_assert (handle_specific);
 
+	if (!mono_lazy_is_initialized (&status))
+		return FALSE;
+
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return(FALSE);
 	}
@@ -540,6 +549,9 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 	MonoW32HandleBase *handle_data = NULL;
 	gpointer handle;
 	guint32 i, k;
+
+	if (!mono_lazy_is_initialized (&status))
+		return;
 
 	mono_os_mutex_lock (&scan_mutex);
 
@@ -579,6 +591,9 @@ gpointer mono_w32handle_search (MonoW32HandleType type,
 	guint32 i, k;
 	gboolean found = FALSE;
 
+	if (!mono_lazy_is_initialized (&status))
+		return NULL;
+
 	mono_os_mutex_lock (&scan_mutex);
 
 	for (i = SLOT_INDEX (0); !found && i < private_handles_slots_count; i++) {
@@ -616,6 +631,8 @@ done:
 void mono_w32handle_ref (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: Attempting to ref invalid private handle %p", __func__, handle);
@@ -713,18 +730,21 @@ static void mono_w32handle_unref_full (gpointer handle, gboolean ignore_private_
 
 void mono_w32handle_unref (gpointer handle)
 {
+	g_assert (mono_lazy_is_initialized (&status));
 	mono_w32handle_unref_full (handle, FALSE);
 }
 
 void
 mono_w32handle_register_ops (MonoW32HandleType type, MonoW32HandleOps *ops)
 {
+	mono_lazy_initialize (&status, initialize);
 	handle_ops [type] = ops;
 }
 
 void mono_w32handle_register_capabilities (MonoW32HandleType type,
 					 MonoW32HandleCapability caps)
 {
+	mono_lazy_initialize (&status, initialize);
 	handle_caps[type] = caps;
 }
 
@@ -733,6 +753,8 @@ gboolean mono_w32handle_test_capabilities (gpointer handle,
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return(FALSE);
@@ -761,6 +783,8 @@ void mono_w32handle_ops_close (gpointer handle, gpointer data)
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
 
+	g_assert (mono_lazy_is_initialized (&status));
+
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return;
 	}
@@ -775,6 +799,8 @@ void mono_w32handle_ops_close (gpointer handle, gpointer data)
 
 void mono_w32handle_ops_details (MonoW32HandleType type, gpointer data)
 {
+	g_assert (mono_lazy_is_initialized (&status));
+
 	if (handle_ops[type] != NULL &&
 	    handle_ops[type]->details != NULL) {
 		handle_ops[type]->details (data);
@@ -783,6 +809,8 @@ void mono_w32handle_ops_details (MonoW32HandleType type, gpointer data)
 
 const gchar* mono_w32handle_ops_typename (MonoW32HandleType type)
 {
+	g_assert (mono_lazy_is_initialized (&status));
+
 	g_assert (handle_ops [type]);
 	g_assert (handle_ops [type]->typename);
 	return handle_ops [type]->typename ();
@@ -790,6 +818,8 @@ const gchar* mono_w32handle_ops_typename (MonoW32HandleType type)
 
 gsize mono_w32handle_ops_typesize (MonoW32HandleType type)
 {
+	g_assert (mono_lazy_is_initialized (&status));
+
 	g_assert (handle_ops [type]);
 	g_assert (handle_ops [type]->typesize);
 	return handle_ops [type]->typesize ();
@@ -799,6 +829,8 @@ void mono_w32handle_ops_signal (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return;
@@ -815,6 +847,8 @@ gboolean mono_w32handle_ops_own (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return(FALSE);
@@ -834,6 +868,8 @@ gboolean mono_w32handle_ops_isowned (gpointer handle)
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
 
+	g_assert (mono_lazy_is_initialized (&status));
+
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return(FALSE);
 	}
@@ -851,6 +887,8 @@ guint32 mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboole
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return(WAIT_FAILED);
@@ -870,6 +908,8 @@ void mono_w32handle_ops_prewait (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
 		return;
@@ -902,6 +942,8 @@ mono_w32handle_count_signalled_handles (guint32 numhandles, gpointer *handles,
 	guint32 count, i, iter=0;
 	gboolean ret;
 	int thr_ret;
+
+	g_assert (mono_lazy_is_initialized (&status));
 
 	/* Lock all the handles, with backoff */
 again:
@@ -988,6 +1030,8 @@ void mono_w32handle_unlock_handles (guint32 numhandles, gpointer *handles)
 	guint32 i;
 	int thr_ret;
 
+	mono_lazy_initialize (&status, initialize);
+
 	for(i=0; i<numhandles; i++) {
 		gpointer handle = handles[i];
 
@@ -1053,6 +1097,8 @@ mono_w32handle_timedwait_signal (guint32 timeout, gboolean poll, gboolean *alert
 {
 	int res;
 
+	mono_lazy_initialize (&status, initialize);
+
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: waiting for global", __func__);
 
 	if (alerted)
@@ -1103,6 +1149,8 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 	MonoW32HandleBase *handle_data;
 	int res;
 
+	mono_lazy_initialize (&status, initialize);
+
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("cannot wait on unknown handle %p", handle);
 
@@ -1136,6 +1184,9 @@ void mono_w32handle_dump (void)
 {
 	MonoW32HandleBase *handle_data;
 	guint32 i, k;
+
+	if (!mono_lazy_is_initialized (&status))
+		return;
 
 	mono_os_mutex_lock (&scan_mutex);
 
