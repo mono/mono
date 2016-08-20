@@ -893,7 +893,9 @@ namespace System {
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
-			throw new NotImplementedException ();
+#pragma warning disable 618
+			throw new ExecutionEngineException (message, exception);
+#pragma warning restore
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
