@@ -412,7 +412,14 @@ namespace System
 
 		public static DateTime ConvertTimeBySystemTimeZoneId (DateTime dateTime, string sourceTimeZoneId, string destinationTimeZoneId)
 		{
-			return ConvertTime (dateTime, FindSystemTimeZoneById (sourceTimeZoneId), FindSystemTimeZoneById (destinationTimeZoneId));
+			TimeZoneInfo source_tz;
+			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZoneId == TimeZoneInfo.Utc.Id) {
+				source_tz = Utc;
+			} else {
+				source_tz = FindSystemTimeZoneById (sourceTimeZoneId);
+			}
+
+			return ConvertTime (dateTime, source_tz, FindSystemTimeZoneById (destinationTimeZoneId));
 		}
 
 		public static DateTimeOffset ConvertTimeBySystemTimeZoneId (DateTimeOffset dateTimeOffset, string destinationTimeZoneId)
