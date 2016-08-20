@@ -2958,7 +2958,7 @@ mono_llvm_rethrow_exception (MonoObject *ex, gboolean actually_throw)
 void
 mono_llvm_raise_exception (MonoException *e)
 {
-	mono_llvm_throw_exception ((MonoObject*)e);
+	mono_llvm_throw_exception ((MonoObject*)e, TRUE);
 }
 
 void
@@ -2969,7 +2969,7 @@ mono_llvm_throw_corlib_exception (guint32 ex_token_index)
 
 	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
 
-	mono_llvm_throw_exception ((MonoObject*)ex);
+	mono_llvm_throw_exception ((MonoObject*)ex, TRUE);
 }
 
 /*

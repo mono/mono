@@ -1551,7 +1551,7 @@ mono_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMetho
 	gpointer res = resolve_iface_call (this_obj, imt_slot, imt_method, out_arg, TRUE, &error);
 	if (!is_ok (&error)) {
 		MonoException *ex = mono_error_convert_to_exception (&error);
-		mono_llvm_throw_exception ((MonoObject*)ex);
+		mono_llvm_throw_exception ((MonoObject*)ex, TRUE);
 	}
 	return res;
 }
@@ -1661,7 +1661,7 @@ mono_resolve_vcall_gsharedvt (MonoObject *this_obj, int slot, MonoMethod *imt_me
 	gpointer result = resolve_vcall (this_obj->vtable, slot, imt_method, out_arg, TRUE, &error);
 	if (!is_ok (&error)) {
 		MonoException *ex = mono_error_convert_to_exception (&error);
-		mono_llvm_throw_exception ((MonoObject*)ex);
+		mono_llvm_throw_exception ((MonoObject*)ex, TRUE);
 	}
 	return result;
 }
@@ -1748,7 +1748,7 @@ mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMetho
 	mini_resolve_imt_method (vt, imt + imt_slot, generic_virtual, &m, &aot_addr, &need_rgctx_tramp, &variant_iface, &error);
 	if (!is_ok (&error)) {
 		MonoException *ex = mono_error_convert_to_exception (&error);
-		mono_llvm_throw_exception ((MonoObject*)ex);
+		mono_llvm_throw_exception ((MonoObject*)ex, TRUE);
 	}
 
 	if (vt->klass->valuetype)

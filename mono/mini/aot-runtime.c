@@ -4263,7 +4263,7 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *
 		MonoException *ex = mono_error_convert_to_exception (&error);
 		/* Its okay to raise in llvmonly mode */
 		if (ex)
-			mono_llvm_throw_exception ((MonoObject*)ex);
+			mono_llvm_throw_exception ((MonoObject*)ex, TRUE);
 	}
 }
 

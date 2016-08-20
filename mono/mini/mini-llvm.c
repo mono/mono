@@ -180,8 +180,8 @@ typedef struct {
 	GPtrArray *bblock_list;
 	char *method_name;
 	GHashTable *jit_callees;
-
 	GSList *protected_regions;
+	GHashTable *clause_to_region;
 } EmitContext;
 
 typedef struct {
@@ -3592,7 +3592,7 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	LLVMValueRef callee = rethrow ? ctx->module->rethrow : ctx->module->throw_icall;
 
 	LLVMTypeRef exc_type = type_to_llvm_type (ctx, &mono_get_exception_class ()->byval_arg);
-	LLVMTypeRef bool_type = type_to_llvm_type (ctx, MONO_TYPE_BOOLEAN);
+	LLVMTypeRef bool_type = LLVMInt8Type ();
 
 	if (!callee) {
 		LLVMTypeRef fun_sig = LLVMFunctionType2 (LLVMVoidType (), exc_type, bool_type, FALSE);
@@ -3612,11 +3612,31 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	}
 
 	// In the case that we throw in a catch clause and there is a finally block,
-	// we want to  not actually call the c++ thrower. Instead, we will 
+	// we want to not actually call the c++ thrower. Instead, we will 
 	// load the exception, jump to the finally block, and let the endfinally do the throw
 	gboolean local_finally_first = FALSE;
 
-	
+	// Check if we're in a catch, and there is a finally for our catch
+
+	MonoProtectedRegion *out = NULL;
+	for (int i = 0; i < ctx->cfg->header->num_clauses; i++) {
+		MonoExceptionClause *clause = &ctx->cfg->header->clauses [i];
+
+		// If in clause handler block
+		if (clause->try_offset < bb->real_offset && bb->real_offset < clause->try_len + clause->try_offset) {
+			out = g_hash_table_lookup (ctx->clause_to_region, clause);
+			g_assert (out);
+
+			// If you throw from inside a finally, do unwind
+			if (out->finally == clause)
+				out = NULL;
+		}
+	}
+
+	if (out && out->finally) {
+		// Don't throw after setting up exception state, just jump to finally
+		local_finally_first = TRUE;
+	}
 
 	LLVMValueRef args [2];
 
@@ -3624,7 +3644,15 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	args [1] = LLVMConstInt (bool_type, local_finally_first, FALSE);
 	emit_call (ctx, bb, &ctx->builder, callee, args, 2);
 
-	LLVMBuildUnreachable (ctx->builder);
+	if (local_finally_first) {
+		int clause_index = out->finally - ctx->cfg->header->clauses;
+		MonoBasicBlock *handler_bb = (MonoBasicBlock*)g_hash_table_lookup (ctx->clause_to_handler, GINT_TO_POINTER (clause_index));
+		g_assert (handler_bb);
+		g_assert (ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+		LLVMBuildBr (ctx->builder, ctx->bblocks [handler_bb->block_num].call_handler_target_bb);
+	} else {
+		LLVMBuildUnreachable (ctx->builder);
+	}
 
 	ctx->builder = create_builder (ctx);
 }
@@ -3932,6 +3960,8 @@ mono_protected_region_add (EmitContext *ctx, MonoProtectedRegion *root, MonoExce
 		root->finally = input;
 	else if(input->flags == MONO_EXCEPTION_CLAUSE_NONE)
 		root->catch_clauses = g_slist_prepend_mempool (ctx->mempool, root->catch_clauses, input);
+
+	g_hash_table_insert (ctx->clause_to_region, input, root);
 }
 
 static gboolean 
@@ -3946,8 +3976,7 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 	MonoExceptionClause *ex = mono_protected_region_elem (*out);
 	MonoProtectedRegion *val = *out;
 
-	if (CLAUSE_START (input) < CLAUSE_START (ex) || CLAUSE_END(ex) > CLAUSE_END (input)) {
-		g_assert_not_reached ();
+	if (CLAUSE_START (input) < CLAUSE_START (ex) && CLAUSE_END(ex) < CLAUSE_END (input)) {
 		// Input contains current tree as sub-tree
 		MonoProtectedRegion *root = mono_mempool_alloc0 (ctx->cfg->mempool, sizeof (MonoProtectedRegion));
 		mono_protected_region_add (ctx, root, input);
@@ -3955,12 +3984,16 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 		*out = root;
 
 		return TRUE;
-	} else if (CLAUSE_START (input) == CLAUSE_START (ex) || CLAUSE_END(ex) == CLAUSE_END (input)) {
+	}
+
+	if (CLAUSE_START (input) == CLAUSE_START (ex) && CLAUSE_END(ex) == CLAUSE_END (input)) {
 		// If the element is mutually protecting, and at this level
 		mono_protected_region_add (ctx, val, input);
 
 		return TRUE;
-	} else if (CLAUSE_START (input) >= CLAUSE_START (ex) || CLAUSE_END(ex) != CLAUSE_END (input)) {
+	}
+
+	if (CLAUSE_START (input) >= CLAUSE_START (ex) && CLAUSE_END(ex) >= CLAUSE_END (input)) {
 		// If the clause protects a protected region which nests the current region
 		// This has a lot of iteration, but we're limited by the 
 		// number of entirely disjoint protected regions in a single function
@@ -3970,7 +4003,8 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 
 		for (GSList *curr = val->nested; curr; curr = curr->next) {
 			g_assert (curr->data);
-			MonoExceptionClause *following = mono_protected_region_elem (curr->data);
+			MonoProtectedRegion *prot = (MonoProtectedRegion *) curr->data;
+			MonoExceptionClause *following = mono_protected_region_elem (prot);
 
 			g_assert (CLAUSE_START (input) >= CLAUSE_START (following));
 
@@ -3993,9 +4027,9 @@ mono_protected_region_insert (EmitContext *ctx, MonoProtectedRegion **out, MonoE
 			return TRUE;
 		}
 
-	} else {
-		return FALSE;;
 	}
+
+	return FALSE;;
 }
 
 static void 
@@ -6909,6 +6943,7 @@ free_ctx (EmitContext *ctx)
 	g_hash_table_destroy (ctx->region_to_handler);
 	g_hash_table_destroy (ctx->clause_to_handler);
 	g_hash_table_destroy (ctx->jit_callees);
+	g_hash_table_destroy (ctx->clause_to_region);
 
 	GHashTableIter iter;
 	g_hash_table_iter_init (&iter, ctx->method_to_callers);
@@ -6976,6 +7011,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	ctx->clause_to_handler = g_hash_table_new (NULL, NULL);
 	ctx->method_to_callers = g_hash_table_new (NULL, NULL);
 	ctx->jit_callees = g_hash_table_new (NULL, NULL);
+	ctx->clause_to_region = g_hash_table_new (NULL, NULL);
  	if (cfg->compile_aot) {
 		ctx->module = &aot_module;
 
