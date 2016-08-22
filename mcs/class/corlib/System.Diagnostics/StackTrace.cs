@@ -247,7 +247,7 @@ namespace System.Diagnostics {
 			return i != 0;
 		}
 
-		public static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
 		{
 			var declaringType = mi.DeclaringType;
 			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
