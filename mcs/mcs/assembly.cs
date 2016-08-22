@@ -45,18 +45,16 @@ namespace Mono.CSharp
 		bool IsFriendAssemblyTo (IAssemblyDefinition assembly);
 	}
 
-	public class AssemblyReferenceErrorInfo
+	public class AssemblyReferenceMessageInfo
 	{
-		public AssemblyReferenceErrorInfo (AssemblyName dependencyName, string location, string message)
+		public AssemblyReferenceMessageInfo (AssemblyName dependencyName, Action<Report> reportMessage)
 		{
 			this.DependencyName = dependencyName;
-			this.RequestingAssemblyLocation = location;
-			this.Message = message;
+			this.ReportMessage = reportMessage;
 		}
 
 		public AssemblyName DependencyName { get; private set; }
-		public string RequestingAssemblyLocation { get; private set; }
-		public string Message { get; private set; }
+		public Action<Report> ReportMessage { get; private set; }
 	}
                 
 	public abstract class AssemblyDefinition : IAssemblyDefinition
@@ -456,8 +454,7 @@ namespace Mono.CSharp
 						// due to type-forwarding
 						//
 						if (references.Any (l => l.Name == r.DependencyName.Name)) {
-							Report.SymbolRelatedToPreviousError (r.RequestingAssemblyLocation);
-							Report.Error (1705, r.Message);
+							r.ReportMessage (Report);
 						}
 					}
 				}
@@ -592,7 +589,7 @@ namespace Mono.CSharp
 			return public_key_token;
 		}
 
-		protected virtual List<AssemblyReferenceErrorInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
+		protected virtual List<AssemblyReferenceMessageInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
 			return null;
 		}
