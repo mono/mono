@@ -18,7 +18,7 @@
   {
     "name": "ms-test-suite", 
     "url": "git@github.com:xamarin/ms-test-suite.git", 
-    "rev": "bcd16462b0b427c582c2b4c81846a42d7ccd527f", 
+    "rev": "eb7cd709549bffe170653a50805f1593d66ea81e", 
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "ms-test-suite"
