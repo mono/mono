@@ -263,11 +263,10 @@
 		<FileWrites Include="$(TargetFrameworkMonikerAssemblyAttributesPath)" />
 	</ItemGroup>
 
-	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+	<Target Name="_GenerateTargetFrameworkMonikerAttribute"
 		DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
 		Inputs="$(MSBuildToolsPath)\Microsoft.Common.targets"
-		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
-		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)">
 
 		<WriteLinesToFile
 			File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
@@ -276,6 +275,11 @@
 			ContinueOnError="true"
 			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
 		/>
+	</Target>
+
+	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+		DependsOnTargets="_GenerateTargetFrameworkMonikerAttribute"
+		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
 
 		<ItemGroup Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''">
 			<Compile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
