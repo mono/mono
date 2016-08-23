@@ -3,7 +3,7 @@ SDK_VERSION=9.3
 MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
-XCOMP_ASPEN_ROOT=$PWD/external/mono-build-deps/MacBuildEnvironment/builds/MacOSX${MAC_SDK_VERSION}.sdk
+XCOMP_ASPEN_ROOT=$PWD/../../mono-build-deps/build/MacBuildEnvironment/builds/MacOSX${MAC_SDK_VERSION}.sdk
 BUILDSCRIPTSDIR=external/buildscripts
 
 # allow to build with older SDKs temporarily
@@ -28,9 +28,9 @@ MAKE_JOBS=4
 
 perl "external/buildscripts/prepare_osx_build.pl"
 
-PATH=$PWD/external/mono-build-deps/built-tools/bin:$PATH
-LIBTOOL=$PWD/external/mono-build-deps/built-tools/bin/libtool
-LIBTOOLIZE=$PWD/external/mono-build-deps/built-tools/bin/libtoolize
+PATH=$PWD/../../mono-build-deps/build/built-tools/bin:$PATH
+LIBTOOL=$PWD/../../mono-build-deps/build/built-tools/bin/libtool
+LIBTOOLIZE=$PWD/../../mono-build-deps/build/built-tools/bin/libtoolize
 
 echo "LIBTOOL = $LIBTOOL"
 echo "LIBTOOLIZE = $LIBTOOLIZE"

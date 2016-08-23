@@ -1,7 +1,7 @@
 use Cwd;
 use File::Path;
 my $root = getcwd();
-my $externalBuildDeps = "$root/external/mono-build-deps";
+my $externalBuildDeps = "$root/../../mono-build-deps/build";
 
 if ($externalBuildDeps ne "")
 {

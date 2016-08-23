@@ -53,7 +53,7 @@ if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	exit 1
 fi
 
-KRAIT_PATCH_PATH="${CWD}/external/android_krait_signal_handler"
+KRAIT_PATCH_PATH="${CWD}/../../android_krait_signal_handler/build"
 PATH="$TOOLCHAIN/bin:$PATH"
 CC="$TOOLCHAIN/bin/${GCC_PREFIX}gcc --sysroot=$PLATFORM_ROOT"
 CXX="$TOOLCHAIN/bin/${GCC_PREFIX}g++ --sysroot=$PLATFORM_ROOT"
