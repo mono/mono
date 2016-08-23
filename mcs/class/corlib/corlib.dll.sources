@@ -700,7 +700,7 @@ System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
-System.Security.Cryptography/CryptoConfig_2_1.cs
+System.Security.Cryptography/CryptoConfig.common.cs
 System.Security.Cryptography/CryptoConfig.fullaot.cs
 System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
