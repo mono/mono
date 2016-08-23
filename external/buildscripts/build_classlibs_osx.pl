@@ -17,13 +17,13 @@ my $monoprefix = "$root/tmp/monoprefix";
 my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
 my $macversion = '10.5';
 my $sdkversion = '10.6';
-my $externalBuildDeps = "$root/external/mono-build-deps";
+my $externalBuildDeps = "$root/../../mono-build-deps/build";
 
 my $dependencyBranchToUse = "unity3.0";
 
-my $booCheckout = "external/boo";
+my $booCheckout = "$root/../../boo/build";
 my $cecilCheckout = "mcs/class/Mono.Cecil";
-my $usCheckout = "external/unityscript";
+my $usCheckout = "$root/../../unityscript/build";
 
 if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
@@ -398,7 +398,7 @@ sub BuildCecilForUnity
 	
 	if ($useCecilLight) {
 		
-		$cecilCheckout = "external/cecil";
+		$cecilCheckout = "$root/../../cecil/build";
 		if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 			GitClone("http://github.com/Unity-Technologies/cecil", $cecilCheckout, $dependencyBranchToUse);
 		}

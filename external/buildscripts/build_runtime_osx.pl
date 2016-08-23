@@ -9,7 +9,7 @@ my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
 my $jobs = 4;
-my $externalBuildDeps = "$root/external/mono-build-deps";
+my $externalBuildDeps = "$root/../../mono-build-deps/build";
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
