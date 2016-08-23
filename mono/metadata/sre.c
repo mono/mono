@@ -3895,7 +3895,6 @@ static void
 reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoError *error)
 {
 	MonoGenericClass *gclass;
-	MonoDynamicGenericClass *dgclass;
 	MonoClass *klass, *gklass;
 	MonoType *gtype;
 
@@ -3913,9 +3912,8 @@ reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoError
 	gklass = gclass->container_class;
 	mono_class_init (gklass);
 
-	dgclass = (MonoDynamicGenericClass *) gclass;
-	dgclass->initialized = TRUE;
-	return;
+	/* Mark this as needing synchronization with its generic container */
+	gclass->need_sync = TRUE;
 }
 
 void
@@ -3932,7 +3930,7 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
  * @error: set on error
  *
  * Assumes that the generic container of @klass has its vtable
- * initialized, and updates the parent class, insterfaces, methods and
+ * initialized, and updates the parent class, interfaces, methods and
  * fields of @klass by inflating the types using the generic context.
  *
  * On success returns TRUE, on failure returns FALSE and sets @error.
@@ -3942,7 +3940,6 @@ static gboolean
 fix_partial_generic_class (MonoClass *klass, MonoError *error)
 {
 	MonoClass *gklass = klass->generic_class->container_class;
-	MonoDynamicGenericClass *dgclass;
 	int i;
 
 	mono_error_init (error);
@@ -3950,7 +3947,6 @@ fix_partial_generic_class (MonoClass *klass, MonoError *error)
 	if (klass->wastypebuilder)
 		return TRUE;
 
-	dgclass = (MonoDynamicGenericClass *)  klass->generic_class;
 	if (klass->parent != gklass->parent) {
 		MonoType *parent_type = mono_class_inflate_generic_type_checked (&gklass->parent->byval_arg, &klass->generic_class->context, error);
 		if (mono_error_ok (error)) {
@@ -3968,7 +3964,7 @@ fix_partial_generic_class (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	if (!dgclass->initialized)
+	if (!klass->generic_class->need_sync)
 		return TRUE;
 
 	if (klass->method.count != gklass->method.count) {
