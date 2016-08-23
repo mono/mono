@@ -547,13 +547,7 @@ struct _MonoGenericClass {
  */
 struct _MonoDynamicGenericClass {
 	MonoGenericClass generic_class;
-	int count_fields;
-	MonoClassField *fields;
 	guint initialized;
-	/* The non-inflated types of the fields */
-	MonoType **field_generic_types;
-	/* The managed objects representing the fields */
-	MonoObject **field_objects;
 };
 
 /*

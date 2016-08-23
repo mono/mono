@@ -2806,8 +2806,6 @@ static void
 free_generic_class (MonoGenericClass *gclass)
 {
 	/* The gclass itself is allocated from the image set mempool */
-	if (gclass->is_dynamic)
-		mono_reflection_free_dynamic_generic_class (gclass);
 	if (gclass->cached_class && gclass->cached_class->interface_id)
 		mono_unload_interface_id (gclass->cached_class);
 }
