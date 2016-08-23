@@ -409,7 +409,6 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (tasks[1].IsCanceled, "#4");
 		}
 
-#if NET_4_5		
 		[Test]
 		public void WaitAll_CancelledAndTimeout ()
 		{
@@ -418,7 +417,6 @@ namespace MonoTests.System.Threading.Tasks
 			var t2 = Task.Delay (3000);
 			Assert.IsFalse (Task.WaitAll (new[] { t1, t2 }, 10));
 		}
-#endif
 
 		[Test]
 		public void WaitAllExceptionThenCancelled ()
@@ -1219,7 +1217,6 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void ContinuationOnBrokenScheduler ()
 		{
@@ -2114,6 +2111,5 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 		
-#endif
 	}
 }

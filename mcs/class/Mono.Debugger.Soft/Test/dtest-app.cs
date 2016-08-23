@@ -829,9 +829,7 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-#if NET_4_5
 	[StateMachine (typeof (int))]
-#endif
 	public static void locals2<T> (string[] args, int arg, T t, ref string rs, ref AStruct astruct) {
 		long i = 42;
 		string s = "AB";
@@ -1184,12 +1182,10 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_user () {
-#if NET_4_5
 		System.Threading.Tasks.Task.Factory.StartNew (() => {
 				Throw ();
 			});
 		Thread.Sleep (10000);
-#endif
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

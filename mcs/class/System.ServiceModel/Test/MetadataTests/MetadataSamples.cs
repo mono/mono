@@ -136,7 +136,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			return exporter.GetGeneratedMetadata ();
 		}
 		
-#if NET_4_5
 		[MetadataSample]
 		public static MetadataSet BasicHttps ()
 		{
@@ -197,7 +196,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			
 			return exporter.GetGeneratedMetadata ();
 		}
-#endif
 		
 		[MetadataSample]
 		public static MetadataSet NetTcp ()

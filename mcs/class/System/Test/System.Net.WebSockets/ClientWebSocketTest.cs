@@ -1,4 +1,3 @@
-#if NET_4_5
 using System;
 using System.Net;
 using System.Threading;
@@ -297,4 +296,3 @@ namespace MonoTests.System.Net.WebSockets
 	}
 }
 
-#endif

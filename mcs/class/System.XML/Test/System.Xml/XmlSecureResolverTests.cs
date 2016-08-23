@@ -124,7 +124,6 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (site, "Site-2");
 		}
 
-#if NET_4_5
 		[Test]
 		[Category("Async")]
 		public void TestAsync ()
@@ -139,7 +138,6 @@ namespace MonoTests.System.Xml
 			Assert.That (task.Wait (3000));
 			Assert.IsInstanceOfType (typeof (Stream), task.Result);
 		}
-#endif
 
 	}
 }
