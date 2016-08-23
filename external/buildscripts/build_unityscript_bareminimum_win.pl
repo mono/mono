@@ -46,8 +46,8 @@ my $output = Win32::GetLongPathName("$ENV{TEMP}") . "/output/BareMinimum";
 
 print("\nEnvironment Path: $ENV{PATH}\n");
 
-my $booCheckout = "$root/external/boo";
-my $usCheckout = "$root/external/unityscript";
+my $booCheckout = "$root/../../boo/build";
+my $usCheckout = "$root/../../unityscript/build";
 
 my $skipbuild=0;
 GetOptions(
