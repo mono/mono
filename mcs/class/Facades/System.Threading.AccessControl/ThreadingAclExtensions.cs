@@ -36,40 +36,52 @@ namespace System.Threading
 {
     public static class ThreadingAclExtensions
     {
-        [MonoTODO]
-        public static EventWaitHandleSecurity GetAccessControl (EventWaitHandle handle)
+        public static EventWaitHandleSecurity GetAccessControl (this EventWaitHandle handle)
         {
-            throw new NotImplementedException ();
+            if (handle == null)
+                throw new ArgumentNullException (nameof (handle));
+
+            return handle.GetAccessControl ();
         }
 
-        [MonoTODO]
-        public static void SetAccessControl (EventWaitHandle handle, EventWaitHandleSecurity eventSecurity)
+        public static void SetAccessControl (this EventWaitHandle handle, EventWaitHandleSecurity eventSecurity)
         {
-            throw new NotImplementedException ();
+            if (handle == null)
+                throw new ArgumentNullException (nameof (handle));
+
+            handle.SetAccessControl (eventSecurity);
         }
 
-        [MonoTODO]
-        public static MutexSecurity GetAccessControl (Mutex mutex)
+        public static MutexSecurity GetAccessControl (this Mutex mutex)
         {
-            throw new NotImplementedException ();
+            if (mutex == null)
+                throw new ArgumentNullException (nameof (mutex));
+
+            return mutex.GetAccessControl ();
         }
 
-        [MonoTODO]
-        public static void SetAccessControl (Mutex mutex, MutexSecurity mutexSecurity)
+        public static void SetAccessControl (this Mutex mutex, MutexSecurity mutexSecurity)
         {
-            throw new NotImplementedException ();
+            if (mutex == null)
+                throw new ArgumentNullException (nameof (mutex));
+
+            mutex.SetAccessControl (mutexSecurity);
         }
 
-        [MonoTODO]
-        public static SemaphoreSecurity GetAccessControl (Semaphore semaphore)
+        public static SemaphoreSecurity GetAccessControl (this Semaphore semaphore)
         {
-            throw new NotImplementedException ();
+            if (semaphore == null)
+                throw new ArgumentNullException (nameof (semaphore));
+
+            return semaphore.GetAccessControl ();
         }
 
-        [MonoTODO]
-        public static void SetAccessControl (Semaphore semaphore, SemaphoreSecurity semaphoreSecurity)
+        public static void SetAccessControl (this Semaphore semaphore, SemaphoreSecurity semaphoreSecurity)
         {
-            throw new NotImplementedException ();
+            if (semaphore == null)
+                throw new ArgumentNullException (nameof (semaphore));
+
+            semaphore.SetAccessControl (semaphoreSecurity);
         }
     }
 }

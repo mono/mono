@@ -33,28 +33,36 @@ namespace System
 {
 	public static class StringNormalizationExtensions
 	{
-		[MonoTODO]
 		public static bool IsNormalized(this string value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
+			return value.IsNormalized ();
 		}
 
-		[MonoTODO]
 		public static bool IsNormalized(this string value, NormalizationForm normalizationForm)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
+			return value.IsNormalized (normalizationForm);
 		}
 
-		[MonoTODO]
 		public static String Normalize(this string value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
+			return value.Normalize ();
 		}
 
-		[MonoTODO]
 		public static String Normalize(this string value, NormalizationForm normalizationForm)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
+			return value.Normalize (normalizationForm);
 		}
 	}
 }
