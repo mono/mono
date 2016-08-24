@@ -35,21 +35,33 @@ namespace System
 	{
 		public static bool IsNormalized(this string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
 			return value.IsNormalized ();
 		}
 
 		public static bool IsNormalized(this string value, NormalizationForm normalizationForm)
 		{
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
 			return value.IsNormalized (normalizationForm);
 		}
 
 		public static String Normalize(this string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
 			return value.Normalize ();
 		}
 
 		public static String Normalize(this string value, NormalizationForm normalizationForm)
 		{
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
 			return value.Normalize (normalizationForm);
 		}
 	}

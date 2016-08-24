@@ -36,41 +36,65 @@ namespace System.IO
 	{
 		public static DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo)
 		{
+			if (directoryInfo == null)
+				throw new ArgumentNullException (nameof (directoryInfo));
+
 			return directoryInfo.GetAccessControl ();
 		}
 
 		public static DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo, AccessControlSections includeSections)
 		{
+			if (directoryInfo == null)
+				throw new ArgumentNullException (nameof (directoryInfo));
+
 			return directoryInfo.GetAccessControl (includeSections);
 		}
 
 		public static FileSecurity GetAccessControl(this FileInfo fileInfo)
 		{
+			if (fileInfo == null)
+				throw new ArgumentNullException (nameof (fileInfo));
+
 			return fileInfo.GetAccessControl ();
 		}
 
 		public static FileSecurity GetAccessControl(this FileInfo fileInfo, AccessControlSections includeSections)
 		{
+			if (fileInfo == null)
+				throw new ArgumentNullException (nameof (fileInfo));
+
 			return fileInfo.GetAccessControl (includeSections);
 		}
 
 		public static FileSecurity GetAccessControl(this FileStream fileStream)
 		{
+			if (fileStream == null)
+				throw new ArgumentNullException (nameof (fileStream));
+
 			return fileStream.GetAccessControl ();
 		}
 
 		public static void SetAccessControl(this DirectoryInfo directoryInfo, DirectorySecurity directorySecurity)
 		{
+			if (directoryInfo == null)
+				throw new ArgumentNullException (nameof (directoryInfo));
+
 			directoryInfo.SetAccessControl (directorySecurity);
 		}
 
 		public static void SetAccessControl(this FileInfo fileInfo, FileSecurity fileSecurity)
 		{
+			if (fileInfo == null)
+				throw new ArgumentNullException (nameof (fileInfo));
+
 			fileInfo.SetAccessControl (fileSecurity);
 		}
 
 		public static void SetAccessControl(this FileStream fileStream, FileSecurity fileSecurity)
 		{
+			if (fileStream == null)
+				throw new ArgumentNullException (nameof (fileStream));
+
 			fileStream.SetAccessControl (fileSecurity);
 		}
 	}

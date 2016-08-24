@@ -38,31 +38,49 @@ namespace System.Threading
     {
         public static EventWaitHandleSecurity GetAccessControl (this EventWaitHandle handle)
         {
+            if (handle == null)
+                throw new ArgumentNullException (nameof (handle));
+
             return handle.GetAccessControl ();
         }
 
         public static void SetAccessControl (this EventWaitHandle handle, EventWaitHandleSecurity eventSecurity)
         {
+            if (handle == null)
+                throw new ArgumentNullException (nameof (handle));
+
             handle.SetAccessControl (eventSecurity);
         }
 
         public static MutexSecurity GetAccessControl (this Mutex mutex)
         {
+            if (mutex == null)
+                throw new ArgumentNullException (nameof (mutex));
+
             return mutex.GetAccessControl ();
         }
 
         public static void SetAccessControl (this Mutex mutex, MutexSecurity mutexSecurity)
         {
+            if (mutex == null)
+                throw new ArgumentNullException (nameof (mutex));
+
             mutex.SetAccessControl (mutexSecurity);
         }
 
         public static SemaphoreSecurity GetAccessControl (this Semaphore semaphore)
         {
+            if (semaphore == null)
+                throw new ArgumentNullException (nameof (semaphore));
+
             return semaphore.GetAccessControl ();
         }
 
         public static void SetAccessControl (this Semaphore semaphore, SemaphoreSecurity semaphoreSecurity)
         {
+            if (semaphore == null)
+                throw new ArgumentNullException (nameof (semaphore));
+
             semaphore.SetAccessControl (semaphoreSecurity);
         }
     }
