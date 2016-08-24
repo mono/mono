@@ -36,22 +36,19 @@ namespace Microsoft.Win32
 {
 	public static class RegistryAclExtensions
 	{
-		[MonoTODO]
 		public static RegistrySecurity GetAccessControl (this RegistryKey key)
 		{
-			throw new NotImplementedException ();
+			return key.GetAccessControl ();
 		}
 
-		[MonoTODO]
 		public static RegistrySecurity GetAccessControl (this RegistryKey key, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return key.GetAccessControl (includeSections);
 		}
 
-		[MonoTODO]
 		public static void SetAccessControl (this RegistryKey key, RegistrySecurity registrySecurity)
 		{
-			throw new NotImplementedException ();
+			key.SetAccessControl (registrySecurity);
 		}
 	}
 }

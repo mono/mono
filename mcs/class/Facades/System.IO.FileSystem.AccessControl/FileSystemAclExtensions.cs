@@ -28,56 +28,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.AccessControl;
+
 namespace System.IO
 {
-	public static partial class FileSystemAclExtensions
+	public static class FileSystemAclExtensions
 	{
-		[MonoTODO]
-		public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.DirectoryInfo directoryInfo)
+		public static DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo)
 		{
-			throw new NotImplementedException ();
+			return directoryInfo.GetAccessControl ();
 		}
 
-		[MonoTODO]
-		public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.DirectoryInfo directoryInfo, System.Security.AccessControl.AccessControlSections includeSections)
+		public static DirectorySecurity GetAccessControl(this DirectoryInfo directoryInfo, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return directoryInfo.GetAccessControl (includeSections);
 		}
 
-		[MonoTODO]
-		public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileInfo fileInfo)
+		public static FileSecurity GetAccessControl(this FileInfo fileInfo)
 		{
-			throw new NotImplementedException ();
+			return fileInfo.GetAccessControl ();
 		}
 
-		[MonoTODO]
-		public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileInfo fileInfo, System.Security.AccessControl.AccessControlSections includeSections)
+		public static FileSecurity GetAccessControl(this FileInfo fileInfo, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return fileInfo.GetAccessControl (includeSections);
 		}
 
-		[MonoTODO]
-		public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.FileStream fileStream)
+		public static FileSecurity GetAccessControl(this FileStream fileStream)
 		{
-			throw new NotImplementedException ();
+			return fileStream.GetAccessControl ();
 		}
 
-		[MonoTODO]
-		public static void SetAccessControl(this System.IO.DirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity)
+		public static void SetAccessControl(this DirectoryInfo directoryInfo, DirectorySecurity directorySecurity)
 		{
-			throw new NotImplementedException ();
+			directoryInfo.SetAccessControl (directorySecurity);
 		}
 
-		[MonoTODO]
-		public static void SetAccessControl(this System.IO.FileInfo fileInfo, System.Security.AccessControl.FileSecurity fileSecurity)
+		public static void SetAccessControl(this FileInfo fileInfo, FileSecurity fileSecurity)
 		{
-			throw new NotImplementedException ();
+			fileInfo.SetAccessControl (fileSecurity);
 		}
 
-		[MonoTODO]
-		public static void SetAccessControl(this System.IO.FileStream fileStream, System.Security.AccessControl.FileSecurity fileSecurity)
+		public static void SetAccessControl(this FileStream fileStream, FileSecurity fileSecurity)
 		{
-			throw new NotImplementedException ();
+			fileStream.SetAccessControl (fileSecurity);
 		}
 	}
 }
