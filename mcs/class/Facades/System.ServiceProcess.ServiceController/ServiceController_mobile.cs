@@ -37,208 +37,180 @@ namespace System.ServiceProcess
 {
 	public class ServiceController : IDisposable
 	{
-		[MonoTODO]
 		public bool CanPauseAndContinue
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public bool CanShutdown
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public bool CanStop
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceController[] DependentServices
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public string DisplayName
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public string MachineName
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public SafeHandle ServiceHandle
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public string ServiceName
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceController[] ServicesDependedOn
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceType ServiceType
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceStartMode StartType
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceControllerStatus Status
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO]
 		public ServiceController (string name)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public ServiceController (string name, string machineName)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Continue ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public static ServiceController[] GetDevices ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public static ServiceController[] GetDevices (string machineName)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public static ServiceController[] GetServices ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public static ServiceController[] GetServices (string machineName)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Pause ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Refresh ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Start ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Start (string[] args)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Stop ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void WaitForStatus (ServiceControllerStatus desiredStatus)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void WaitForStatus (ServiceControllerStatus desiredStatus, TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 	}
 }
