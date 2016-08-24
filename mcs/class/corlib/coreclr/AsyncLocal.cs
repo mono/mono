@@ -64,21 +64,13 @@ namespace System.Threading
             [SecuritySafeCritical]
             get 
             { 
-#if MONO
-                throw new NotImplementedException ();
-#else                
                 object obj = ExecutionContext.GetLocalValue(this);
                 return (obj == null) ? default(T) : (T)obj;
-#endif                
             }
             [SecuritySafeCritical]
             set 
             {
-#if MONO
-                throw new NotImplementedException ();
-#else                
                 ExecutionContext.SetLocalValue(this, value, m_valueChangedHandler != null); 
-#endif
             }
         }
 
