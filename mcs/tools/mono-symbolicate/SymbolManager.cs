@@ -57,7 +57,7 @@ namespace Mono
 				return null;
 			}
 
-			assemblyPath = (exeFiles.Length > 0)? exeFiles[0] : dllFiles[0];
+			assemblyPath = exeFiles.Length > 0 ? exeFiles[0] : dllFiles[0];
 
 			var locProvider = new AssemblyLocationProvider (assemblyPath, logger);
 
@@ -97,10 +97,13 @@ namespace Mono
 				var dllFiles = Directory.GetFiles (dir, "*.dll");
 				var assemblies = exeFiles.Concat (dllFiles);
 				foreach (var assemblyPath in assemblies) {
-					var mdbPath = assemblyPath + ".mdb";
-					if (!File.Exists (mdbPath)) {
-						logger.LogWarning ("Directory {0} contains {1} but no mdb {2}.", dir, Path.GetFileName (assemblyPath), Path.GetFileName (mdbPath));
-						// assemblies without mdb files are useless
+
+					// TODO: Ignore embedded pdb
+					var symbolFile = GetSymbolFile (assemblyPath);
+
+					if (symbolFile == null) {
+						logger.LogWarning ("Directory {0} contains {1} but no debug symbols file was found.", dir, Path.GetFileName (assemblyPath));
+						// assemblies without debug symbols are useless
 						continue;
 					}
 
@@ -112,7 +115,7 @@ namespace Mono
 					if (Directory.Exists (mvidDir)) {
 						try {
 							Directory.Delete (mvidDir, true);
-						} catch (DirectoryNotFoundException e) {}
+						} catch (DirectoryNotFoundException) {}
 					}
 
 					Directory.CreateDirectory (mvidDir);
@@ -120,12 +123,26 @@ namespace Mono
 					var mvidAssemblyPath = Path.Combine (mvidDir, Path.GetFileName (assemblyPath));
 					File.Copy (assemblyPath, mvidAssemblyPath);
 
-					var mvidMdbPath = Path.Combine (mvidDir, Path.GetFileName (mdbPath));
-					File.Copy (mdbPath, mvidMdbPath);
+					var mvidDebugPath = Path.Combine (mvidDir, Path.GetFileName (symbolFile));
+					File.Copy (symbolFile, mvidDebugPath);
 
 					// TODO create MVID dir for non main modules with links to main module MVID
 				}
 			}
+		}
+
+		static string GetSymbolFile (string assembly)
+		{
+			var pdbName = Path.ChangeExtension (assembly, "pdb");
+			if (File.Exists (pdbName))
+				return pdbName;
+			
+			var mdbName = assembly + ".mdb";
+
+			if (File.Exists (mdbName))
+				return mdbName;
+
+			return null;
 		}
 	}
 }
