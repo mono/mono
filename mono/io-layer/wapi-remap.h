@@ -57,7 +57,6 @@
 #define UnlockFile wapi_UnlockFile 
 #define GetVolumeInformation wapi_GetVolumeInformation 
 #define FormatMessage wapi_FormatMessage 
-#define CreateMutex wapi_CreateMutex 
 #define ReleaseMutex wapi_ReleaseMutex 
 #define OpenMutex wapi_OpenMutex 
 #define ShellExecuteEx wapi_ShellExecuteEx 

@@ -206,14 +206,14 @@ static gpointer namedsem_create (gint32 initial, gint32 max, const gunichar2 *na
 		__func__, sem_handle_type_to_string (MONO_W32HANDLE_NAMEDSEM), initial, max, name);
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
-	thr_ret = _wapi_namespace_lock ();
+	thr_ret = wapi_namespace_lock ();
 	g_assert (thr_ret == 0);
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Creating named sem name [%s] initial %d max %d", __func__, utf8_name, initial, max);
 
-	handle = _wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM, utf8_name);
+	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -236,7 +236,7 @@ static gpointer namedsem_create (gint32 initial, gint32 max, const gunichar2 *na
 
 	g_free (utf8_name);
 
-	thr_ret = _wapi_namespace_unlock (NULL);
+	thr_ret = wapi_namespace_unlock (NULL);
 	g_assert (thr_ret == 0);
 
 	return handle;
@@ -367,14 +367,14 @@ gpointer OpenSemaphore (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UN
 	/* w32 seems to guarantee that opening named objects can't
 	 * race each other
 	 */
-	thr_ret = _wapi_namespace_lock ();
+	thr_ret = wapi_namespace_lock ();
 	g_assert (thr_ret == 0);
 	
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named sem [%s]", __func__, utf8_name);
 
-	handle = _wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM,
+	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM,
 						utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different
@@ -393,7 +393,7 @@ gpointer OpenSemaphore (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UN
 cleanup:
 	g_free (utf8_name);
 	
-	_wapi_namespace_unlock (NULL);
+	wapi_namespace_unlock (NULL);
 	
 	return handle;
 }

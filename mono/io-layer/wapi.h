@@ -28,6 +28,18 @@
 #include <mono/io-layer/timefuncs.h>
 #include <mono/io-layer/versioninfo.h>
 #include <mono/io-layer/wait.h>
+#include <mono/io-layer/shared.h>
+
+#define WAPI_SHARED_SEM_NAMESPACE 0
+/*#define WAPI_SHARED_SEM_COLLECTION 1*/
+#define WAPI_SHARED_SEM_FILESHARE 2
+#define WAPI_SHARED_SEM_PROCESS_COUNT_LOCK 6
+#define WAPI_SHARED_SEM_PROCESS_COUNT 7
+#define WAPI_SHARED_SEM_COUNT 8	/* Leave some future expansion space */
+
+typedef struct {
+	gchar name[MAX_PATH + 1];
+} WapiSharedNamespace;
 
 void
 wapi_init (void);
@@ -44,5 +56,19 @@ DuplicateHandle (gpointer srcprocess, gpointer src, gpointer targetprocess, gpoi
 
 pid_t
 wapi_getpid (void);
+
+gpointer
+wapi_search_handle_namespace (MonoW32HandleType type, gchar *utf8_name);
+
+static inline int wapi_namespace_lock (void)
+{
+	return wapi_shm_sem_lock (WAPI_SHARED_SEM_NAMESPACE);
+}
+
+/* This signature makes it easier to use in pthread cleanup handlers */
+static inline int wapi_namespace_unlock (gpointer data G_GNUC_UNUSED)
+{
+	return wapi_shm_sem_unlock (WAPI_SHARED_SEM_NAMESPACE);
+}
 
 #endif /* _WAPI_WAPI_H_ */

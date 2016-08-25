@@ -66,7 +66,7 @@ _wapi_handle_share_release (_WapiFileShare *share_info)
 	g_assert (share_info->handle_refs > 0);
 	
 	/* Prevent new entries racing with us */
-	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_FILESHARE);
+	thr_ret = wapi_shm_sem_lock (WAPI_SHARED_SEM_FILESHARE);
 	g_assert(thr_ret == 0);
 
 	if (InterlockedDecrement ((gint32 *)&share_info->handle_refs) == 0) {
@@ -75,7 +75,7 @@ _wapi_handle_share_release (_WapiFileShare *share_info)
 		file_share_hash_unlock ();
 	}
 
-	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_FILESHARE);
+	thr_ret = wapi_shm_sem_unlock (WAPI_SHARED_SEM_FILESHARE);
 	g_assert (thr_ret == 0);
 }
 
@@ -105,7 +105,7 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 	gboolean exists = FALSE;
 
 	/* Prevent new entries racing with us */
-	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_FILESHARE);
+	thr_ret = wapi_shm_sem_lock (WAPI_SHARED_SEM_FILESHARE);
 	g_assert (thr_ret == 0);
 
 	_WapiFileShare tmp;
@@ -149,7 +149,7 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 
 	file_share_hash_unlock ();
 	
-	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_FILESHARE);
+	thr_ret = wapi_shm_sem_unlock (WAPI_SHARED_SEM_FILESHARE);
 	g_assert (thr_ret == 0);
 
 	return(exists);

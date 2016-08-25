@@ -208,12 +208,12 @@ static gpointer namedevent_create (gboolean manual, gboolean initial, const guni
 		__func__, event_handle_type_to_string (MONO_W32HANDLE_NAMEDEVENT));
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
-	thr_ret = _wapi_namespace_lock ();
+	thr_ret = wapi_namespace_lock ();
 	g_assert (thr_ret == 0);
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 
-	handle = _wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT, utf8_name);
+	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -236,7 +236,7 @@ static gpointer namedevent_create (gboolean manual, gboolean initial, const guni
 
 	g_free (utf8_name);
 
-	thr_ret = _wapi_namespace_unlock (NULL);
+	thr_ret = wapi_namespace_unlock (NULL);
 	g_assert (thr_ret == 0);
 
 	return handle;
@@ -483,14 +483,14 @@ gpointer OpenEvent (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED
 	/* w32 seems to guarantee that opening named objects can't
 	 * race each other
 	 */
-	thr_ret = _wapi_namespace_lock ();
+	thr_ret = wapi_namespace_lock ();
 	g_assert (thr_ret == 0);
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named event [%s]", __func__, utf8_name);
 	
-	handle = _wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT,
+	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT,
 						utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different
@@ -509,7 +509,7 @@ gpointer OpenEvent (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED
 cleanup:
 	g_free (utf8_name);
 
-	_wapi_namespace_unlock (NULL);
+	wapi_namespace_unlock (NULL);
 	
 	return handle;
 

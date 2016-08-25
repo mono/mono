@@ -117,7 +117,7 @@ static gboolean mono_w32handle_search_namespace_callback (gpointer handle, gpoin
 /* Returns the offset of the metadata array, or INVALID_HANDLE_VALUE on error, or NULL for
  * not found
  */
-gpointer _wapi_search_handle_namespace (MonoW32HandleType type, gchar *utf8_name)
+gpointer wapi_search_handle_namespace (MonoW32HandleType type, gchar *utf8_name)
 {
 	_WapiSearchHandleNamespaceData search_data;
 
