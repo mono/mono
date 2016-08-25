@@ -9,6 +9,7 @@
 
 #include "w32event.h"
 
+#include "w32handle-namespace.h"
 #include "mono/io-layer/io-layer.h"
 #include "mono/io-layer/event-private.h"
 #include "mono/utils/mono-logger-internals.h"
@@ -245,15 +246,40 @@ ves_icall_System_Threading_Events_CloseEvent_internal (gpointer handle)
 }
 
 gpointer
-ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name, gint32 rights, gint32 *error)
+ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name, gint32 rights G_GNUC_UNUSED, gint32 *error)
 {
 	gpointer handle;
+	gchar *utf8_name;
+	int thr_ret;
 
 	*error = ERROR_SUCCESS;
 
-	handle = OpenEvent (rights, FALSE, mono_string_chars (name));
-	if (!handle)
-		*error = GetLastError ();
+	/* w32 seems to guarantee that opening named objects can't race each other */
+	thr_ret = wapi_namespace_lock ();
+	g_assert (thr_ret == 0);
+
+	utf8_name = g_utf16_to_utf8 (mono_string_chars (name), -1, NULL, NULL, NULL);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named event [%s]", __func__, utf8_name);
+
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDEVENT, utf8_name);
+	if (handle == INVALID_HANDLE_VALUE) {
+		/* The name has already been used for a different object. */
+		*error = ERROR_INVALID_HANDLE;
+		goto cleanup;
+	} else if (!handle) {
+		/* This name doesn't exist */
+		*error = ERROR_FILE_NOT_FOUND;
+		goto cleanup;
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning named event handle %p", __func__, handle);
+
+cleanup:
+	g_free (utf8_name);
+
+	thr_ret = wapi_namespace_unlock (NULL);
+	g_assert (thr_ret == 0);
 
 	return handle;
 }
