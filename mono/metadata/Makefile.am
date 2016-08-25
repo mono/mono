@@ -1,6 +1,7 @@
 if HOST_WIN32
 win32_sources = \
-	console-win32.c
+	console-win32.c \
+	w32mutex-win32.c
 
 platform_sources = $(win32_sources)
 
@@ -23,7 +24,8 @@ else
 assembliesdir = $(exec_prefix)/lib
 confdir = $(sysconfdir)
 unix_sources = \
-	console-unix.c
+	console-unix.c \
+	w32mutex-unix.c
 
 platform_sources = $(unix_sources)
 endif
@@ -217,7 +219,8 @@ common_sources = \
 	seq-points-data.h	\
 	seq-points-data.c	\
 	handle.c	\
-	handle.h
+	handle.h	\
+	w32mutex.h
 
 
 # These source files have compile time dependencies on GC code

@@ -1822,46 +1822,6 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE toSignal, H
 	return map_native_wait_result_to_managed (ret);
 }
 
-HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoString *name, MonoBoolean *created)
-{ 
-	HANDLE mutex;
-	
-	*created = TRUE;
-	
-	if (name == NULL) {
-		mutex = CreateMutex (NULL, owned, NULL);
-	} else {
-		mutex = CreateMutex (NULL, owned, mono_string_chars (name));
-		
-		if (GetLastError () == ERROR_ALREADY_EXISTS) {
-			*created = FALSE;
-		}
-	}
-
-	return(mutex);
-}                                                                   
-
-MonoBoolean ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle ) { 
-	return(ReleaseMutex (handle));
-}
-
-HANDLE ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name,
-							    gint32 rights,
-							    gint32 *error)
-{
-	HANDLE ret;
-	
-	*error = ERROR_SUCCESS;
-	
-	ret = OpenMutex (rights, FALSE, mono_string_chars (name));
-	if (ret == NULL) {
-		*error = GetLastError ();
-	}
-	
-	return(ret);
-}
-
-
 HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error)
 { 
 	HANDLE sem;
