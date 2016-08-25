@@ -28,9 +28,6 @@ struct _WapiHandle_namedsem
 	MonoW32HandleNamespace sharedns;
 };
 
-extern gpointer CreateSemaphore(WapiSecurityAttributes *security,
-				gint32 initial, gint32 max,
-				const gunichar2 *name);
 extern gboolean ReleaseSemaphore(gpointer handle, gint32 count,
 				 gint32 *prevcount);
 extern gpointer OpenSemaphore (guint32 access, gboolean inherit,

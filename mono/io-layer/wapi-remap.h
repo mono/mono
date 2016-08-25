@@ -77,7 +77,6 @@
 #define SetPriorityClass wapi_SetPriorityClass 
 #define ImpersonateLoggedOnUser wapi_ImpersonateLoggedOnUser 
 #define RevertToSelf wapi_RevertToSelf 
-#define CreateSemaphore wapi_CreateSemaphore
 #define ReleaseSemaphore wapi_ReleaseSemaphore
 #define OpenSemaphore wapi_OpenSemaphore 
 #define WSASetLastError wapi_WSASetLastError
