@@ -15,7 +15,6 @@
 G_BEGIN_DECLS
 
 extern gboolean ResetEvent (gpointer handle);
-extern gboolean SetEvent (gpointer handle);
 extern gpointer OpenEvent (guint32 access, gboolean inherit,
 			   const gunichar2 *name);
 

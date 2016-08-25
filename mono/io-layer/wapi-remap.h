@@ -17,7 +17,6 @@
 #define TransmitFile wapi_TransmitFile
 #define GetThreadContext wapi_GetThreadContext
 #define ResetEvent wapi_ResetEvent 
-#define SetEvent wapi_SetEvent 
 #define OpenEvent wapi_OpenEvent 
 #define CloseHandle wapi_CloseHandle 
 #define DuplicateHandle wapi_DuplicateHandle 

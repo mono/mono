@@ -1247,7 +1247,7 @@ ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 	if (mon->wait_list != NULL) {
 		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
 	
-		SetEvent (mon->wait_list->data);
+		mono_w32event_set (mon->wait_list->data);
 		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
 	}
 }
@@ -1278,7 +1278,7 @@ ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
 	while (mon->wait_list != NULL) {
 		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
 	
-		SetEvent (mon->wait_list->data);
+		mono_w32event_set (mon->wait_list->data);
 		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
 	}
 }

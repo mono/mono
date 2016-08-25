@@ -2067,7 +2067,7 @@ ves_icall_System_Threading_Thread_ClrState (MonoInternalThread* this_obj, guint3
 		 * be notified, since it has to rebuild the list of threads to
 		 * wait for.
 		 */
-		SetEvent (background_change_event);
+		mono_w32event_set (background_change_event);
 	}
 }
 
@@ -2081,7 +2081,7 @@ ves_icall_System_Threading_Thread_SetState (MonoInternalThread* this_obj, guint3
 		 * be notified, since it has to rebuild the list of threads to
 		 * wait for.
 		 */
-		SetEvent (background_change_event);
+		mono_w32event_set (background_change_event);
 	}
 }
 
@@ -3147,7 +3147,7 @@ mono_threads_set_shutting_down (void)
 		 * interrupt the main thread if it is waiting for all
 		 * the other threads.
 		 */
-		SetEvent (background_change_event);
+		mono_w32event_set (background_change_event);
 		
 		mono_threads_unlock ();
 	}

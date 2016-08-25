@@ -19,6 +19,7 @@
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/w32handle.h>
+#include <mono/metadata/w32event.h>
 
 static void event_signal(gpointer handle);
 static gboolean event_own (gpointer handle);
@@ -106,7 +107,7 @@ static gboolean event_handle_own (gpointer handle, MonoW32HandleType type)
 
 static void event_signal(gpointer handle)
 {
-	SetEvent(handle);
+	ves_icall_System_Threading_Events_SetEvent_internal (handle);
 }
 
 static gboolean event_own (gpointer handle)
@@ -116,7 +117,7 @@ static gboolean event_own (gpointer handle)
 
 static void namedevent_signal (gpointer handle)
 {
-	SetEvent (handle);
+	ves_icall_System_Threading_Events_SetEvent_internal (handle);
 }
 
 /* NB, always called with the shared handle lock held */
@@ -213,65 +214,6 @@ gboolean ResetEvent(gpointer handle)
 	}
 
 	event_handle->set_count = 0;
-
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	return TRUE;
-}
-
-/**
- * SetEvent:
- * @handle: The event handle
- *
- * Sets the event handle @handle to the signalled state.
- *
- * If @handle is a manual reset event, it remains signalled until it
- * is reset with ResetEvent().  An auto reset event remains signalled
- * until a single thread has waited for it, at which time @handle is
- * automatically reset to unsignalled.
- *
- * Return value: %TRUE on success, %FALSE otherwise.  (Currently only
- * ever returns %TRUE).
- */
-gboolean SetEvent(gpointer handle)
-{
-	MonoW32HandleType type;
-	struct _WapiHandle_event *event_handle;
-	int thr_ret;
-	
-	if (handle == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-	
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_EVENT:
-	case MONO_W32HANDLE_NAMEDEVENT:
-		break;
-	default:
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, event_handle_type_to_string (type), handle);
-		return FALSE;
-	}
-
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting %s handle %p",
-		__func__, event_handle_type_to_string (type), handle);
-
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	if (!event_handle->manual) {
-		event_handle->set_count = 1;
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
-	} else {
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
-	}
 
 	thr_ret = mono_w32handle_unlock_handle (handle);
 	g_assert (thr_ret == 0);
