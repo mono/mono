@@ -14,7 +14,6 @@ OTHER_H = \
 	access.h	\
 	context.h	\
 	error.h		\
-	events.h	\
 	io.h		\
 	io-trace.h	\
 	io-layer.h	\
@@ -39,9 +38,6 @@ OTHER_SRC = \
 	context.h		\
 	error.c			\
 	error.h			\
-	events.c		\
-	events.h		\
-	event-private.h		\
 	io.c			\
 	io.h			\
 	io-portability.c	\

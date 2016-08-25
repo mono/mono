@@ -15,8 +15,8 @@
 
 #include "w32mutex.h"
 #include "w32semaphore.h"
+#include "w32event.h"
 #include "mono/io-layer/io-layer.h"
-#include "mono/io-layer/event-private.h"
 #include "mono/utils/mono-logger-internals.h"
 
 static gboolean
@@ -54,7 +54,7 @@ mono_w32handle_namespace_search_handle_callback (gpointer handle, gpointer data,
 	switch (type) {
 	case MONO_W32HANDLE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) data); break;
 	case MONO_W32HANDLE_NAMEDSEM:   sharedns = mono_w32semaphore_get_namespace ((MonoW32HandleNamedSemaphore*) data); break;
-	case MONO_W32HANDLE_NAMEDEVENT: sharedns = &((struct _WapiHandle_namedevent*) data)->sharedns; break;
+	case MONO_W32HANDLE_NAMEDEVENT: sharedns = mono_w32event_get_namespace ((MonoW32HandleNamedEvent*) data); break;
 	default:
 		g_assert_not_reached ();
 	}

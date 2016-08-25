@@ -11,9 +11,135 @@
 
 #include "w32handle-namespace.h"
 #include "mono/io-layer/io-layer.h"
-#include "mono/io-layer/event-private.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/utils/w32handle.h"
+
+typedef struct {
+	gboolean manual;
+	guint32 set_count;
+} MonoW32HandleEvent;
+
+struct MonoW32HandleNamedEvent {
+	MonoW32HandleEvent e;
+	MonoW32HandleNamespace sharedns;
+};
+
+static gboolean event_handle_own (gpointer handle, MonoW32HandleType type)
+{
+	MonoW32HandleEvent *event_handle;
+	gboolean ok;
+
+	ok = mono_w32handle_lookup (handle, type, (gpointer *)&event_handle);
+	if (!ok) {
+		g_warning ("%s: error looking up %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+		return FALSE;
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
+		__func__, mono_w32handle_ops_typename (type), handle);
+
+	if (!event_handle->manual) {
+		g_assert (event_handle->set_count > 0);
+		event_handle->set_count --;
+
+		if (event_handle->set_count == 0)
+			mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+	}
+
+	return TRUE;
+}
+
+static void event_signal(gpointer handle)
+{
+	ves_icall_System_Threading_Events_SetEvent_internal (handle);
+}
+
+static gboolean event_own (gpointer handle)
+{
+	return event_handle_own (handle, MONO_W32HANDLE_EVENT);
+}
+
+static void namedevent_signal (gpointer handle)
+{
+	ves_icall_System_Threading_Events_SetEvent_internal (handle);
+}
+
+/* NB, always called with the shared handle lock held */
+static gboolean namedevent_own (gpointer handle)
+{
+	return event_handle_own (handle, MONO_W32HANDLE_NAMEDEVENT);
+}
+
+static void event_details (gpointer data)
+{
+	MonoW32HandleEvent *event = (MonoW32HandleEvent *)data;
+	g_print ("manual: %s, set_count: %d",
+		event->manual ? "TRUE" : "FALSE", event->set_count);
+}
+
+static void namedevent_details (gpointer data)
+{
+	MonoW32HandleNamedEvent *namedevent = (MonoW32HandleNamedEvent *)data;
+	g_print ("manual: %s, set_count: %d, name: \"%s\"",
+		namedevent->e.manual ? "TRUE" : "FALSE", namedevent->e.set_count, namedevent->sharedns.name);
+}
+
+static const gchar* event_typename (void)
+{
+	return "Event";
+}
+
+static gsize event_typesize (void)
+{
+	return sizeof (MonoW32HandleEvent);
+}
+
+static const gchar* namedevent_typename (void)
+{
+	return "N.Event";
+}
+
+static gsize namedevent_typesize (void)
+{
+	return sizeof (MonoW32HandleNamedEvent);
+}
+
+void
+mono_w32event_init (void)
+{
+	static MonoW32HandleOps event_ops = {
+		NULL,			/* close */
+		event_signal,		/* signal */
+		event_own,		/* own */
+		NULL,			/* is_owned */
+		NULL,			/* special_wait */
+		NULL,			/* prewait */
+		event_details,	/* details */
+		event_typename, /* typename */
+		event_typesize, /* typesize */
+	};
+
+	static MonoW32HandleOps namedevent_ops = {
+		NULL,			/* close */
+		namedevent_signal,	/* signal */
+		namedevent_own,		/* own */
+		NULL,			/* is_owned */
+		NULL,			/* special_wait */
+		NULL,			/* prewait */
+		namedevent_details,	/* details */
+		namedevent_typename, /* typename */
+		namedevent_typesize, /* typesize */
+	};
+
+	mono_w32handle_register_ops (MONO_W32HANDLE_EVENT,      &event_ops);
+	mono_w32handle_register_ops (MONO_W32HANDLE_NAMEDEVENT, &namedevent_ops);
+
+	mono_w32handle_register_capabilities (MONO_W32HANDLE_EVENT,
+		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL));
+	mono_w32handle_register_capabilities (MONO_W32HANDLE_NAMEDEVENT,
+		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL));
+}
 
 gpointer
 mono_w32event_create (gboolean manual, gboolean initial)
@@ -40,7 +166,7 @@ mono_w32event_reset (gpointer handle)
 	ves_icall_System_Threading_Events_ResetEvent_internal (handle);
 }
 
-static gpointer event_handle_create (struct _WapiHandle_event *event_handle, MonoW32HandleType type, gboolean manual, gboolean initial)
+static gpointer event_handle_create (MonoW32HandleEvent *event_handle, MonoW32HandleType type, gboolean manual, gboolean initial)
 {
 	gpointer handle;
 	int thr_ret;
@@ -73,7 +199,7 @@ static gpointer event_handle_create (struct _WapiHandle_event *event_handle, Mon
 
 static gpointer event_create (gboolean manual, gboolean initial)
 {
-	struct _WapiHandle_event event_handle;
+	MonoW32HandleEvent event_handle;
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle",
 		__func__, mono_w32handle_ops_typename (MONO_W32HANDLE_EVENT));
 	return event_handle_create (&event_handle, MONO_W32HANDLE_EVENT, manual, initial);
@@ -107,12 +233,12 @@ static gpointer namedevent_create (gboolean manual, gboolean initial, const guni
 		mono_w32handle_ref (handle);
 	} else {
 		/* A new named event */
-		struct _WapiHandle_namedevent namedevent_handle;
+		MonoW32HandleNamedEvent namedevent_handle;
 
 		strncpy (&namedevent_handle.sharedns.name [0], utf8_name, MAX_PATH);
 		namedevent_handle.sharedns.name [MAX_PATH] = '\0';
 
-		handle = event_handle_create ((struct _WapiHandle_event*) &namedevent_handle, MONO_W32HANDLE_NAMEDEVENT, manual, initial);
+		handle = event_handle_create ((MonoW32HandleEvent*) &namedevent_handle, MONO_W32HANDLE_NAMEDEVENT, manual, initial);
 	}
 
 	g_free (utf8_name);
@@ -144,7 +270,7 @@ gboolean
 ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 {
 	MonoW32HandleType type;
-	struct _WapiHandle_event *event_handle;
+	MonoW32HandleEvent *event_handle;
 	int thr_ret;
 
 	if (handle == NULL) {
@@ -190,7 +316,7 @@ gboolean
 ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 {
 	MonoW32HandleType type;
-	struct _WapiHandle_event *event_handle;
+	MonoW32HandleEvent *event_handle;
 	int thr_ret;
 
 	SetLastError (ERROR_SUCCESS);
@@ -282,4 +408,10 @@ cleanup:
 	g_assert (thr_ret == 0);
 
 	return handle;
+}
+
+MonoW32HandleNamespace*
+mono_w32event_get_namespace (MonoW32HandleNamedEvent *event)
+{
+	return &event->sharedns;
 }

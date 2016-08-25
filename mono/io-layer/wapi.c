@@ -1,7 +1,6 @@
 
 #include "wapi.h"
 
-#include "event-private.h"
 #include "io-trace.h"
 #include "io.h"
 #include "process-private.h"
@@ -19,7 +18,6 @@ wapi_init (void)
 	_wapi_shm_semaphores_init ();
 	_wapi_io_init ();
 	_wapi_processes_init ();
-	_wapi_event_init ();
 	_wapi_socket_init ();
 }
 
