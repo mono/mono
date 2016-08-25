@@ -28,8 +28,5 @@ struct _WapiHandle_namedsem
 	MonoW32HandleNamespace sharedns;
 };
 
-extern gpointer OpenSemaphore (guint32 access, gboolean inherit,
-			       const gunichar2 *name);
-
 G_END_DECLS
 #endif /* _WAPI_SEMAPHORES_H_ */
