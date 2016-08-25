@@ -1822,38 +1822,6 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE toSignal, H
 	return map_native_wait_result_to_managed (ret);
 }
 
-HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error)
-{ 
-	HANDLE sem;
-	
-	if (name == NULL) {
-		sem = CreateSemaphore (NULL, initialCount, maximumCount, NULL);
-	} else {
-		sem = CreateSemaphore (NULL, initialCount, maximumCount,
-				       mono_string_chars (name));
-	}
-
-	*error = GetLastError ();
-
-	return(sem);
-}                                                                   
-
-MonoBoolean ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE handle, gint32 releaseCount, gint32 *prevcount)
-{ 
-	return ReleaseSemaphore (handle, releaseCount, prevcount);
-}
-
-HANDLE ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, gint32 rights, gint32 *error)
-{
-	HANDLE sem;
-
-	sem = OpenSemaphore (rights, FALSE, mono_string_chars (name));
-
-	*error = GetLastError ();
-
-	return(sem);
-}
-
 HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error)
 {
 	HANDLE event;

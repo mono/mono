@@ -19,6 +19,9 @@
     <ClCompile Include="..\mono\metadata\w32mutex-win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\metadata\w32semaphore-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\mono\metadata\coree.c">
       <Filter>Source Files</Filter>
     </ClCompile>

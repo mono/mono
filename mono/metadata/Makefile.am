@@ -1,7 +1,8 @@
 if HOST_WIN32
 win32_sources = \
 	console-win32.c \
-	w32mutex-win32.c
+	w32mutex-win32.c \
+	w32semaphore-win32.c
 
 platform_sources = $(win32_sources)
 
@@ -25,7 +26,8 @@ assembliesdir = $(exec_prefix)/lib
 confdir = $(sysconfdir)
 unix_sources = \
 	console-unix.c \
-	w32mutex-unix.c
+	w32mutex-unix.c \
+	w32semaphore-unix.c
 
 platform_sources = $(unix_sources)
 endif
@@ -221,9 +223,9 @@ common_sources = \
 	handle.c	\
 	handle.h	\
 	w32mutex.h	\
+	w32semaphore.h	\
 	w32handle-namespace.h	\
 	w32handle-namespace.c
-
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
