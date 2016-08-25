@@ -8,6 +8,7 @@
  */
 
 #include "w32mutex.h"
+#include "w32mutex-utils.h"
 
 #include <pthread.h>
 
@@ -229,4 +230,45 @@ cleanup:
 	g_assert (thr_ret == 0);
 
 	return handle;
+}
+
+void
+mono_w32mutex_abandon (gpointer handle, MonoNativeThreadId tid)
+{
+	MonoW32HandleType type;
+	struct _WapiHandle_mutex *mutex_handle;
+	int thr_ret;
+
+	switch (type = mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_MUTEX:
+	case MONO_W32HANDLE_NAMEDMUTEX:
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+		g_warning ("%s: error looking up %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+		return;
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: abandon %s handle %p",
+		__func__, mono_w32handle_ops_typename (type), handle);
+
+	thr_ret = mono_w32handle_lock_handle (handle);
+	g_assert (thr_ret == 0);
+
+	if (pthread_equal (mutex_handle->tid, tid)) {
+		mutex_handle->recursion = 0;
+		mutex_handle->tid = 0;
+
+		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: abandoned %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+	}
+
+	thr_ret = mono_w32handle_unlock_handle (handle);
+	g_assert (thr_ret == 0);
 }

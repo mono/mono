@@ -19,7 +19,6 @@
 #include <mono/io-layer/error.h>
 #include <mono/io-layer/events.h>
 #include <mono/io-layer/messages.h>
-#include <mono/io-layer/mutexes.h>
 #include <mono/io-layer/processes.h>
 #include <mono/io-layer/security.h>
 #include <mono/io-layer/semaphores.h>
