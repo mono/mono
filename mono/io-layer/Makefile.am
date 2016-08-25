@@ -23,7 +23,6 @@ OTHER_H = \
 	messages.h	\
 	processes.h	\
 	security.h	\
-	semaphores.h	\
 	sockets.h	\
 	status.h	\
 	timefuncs.h	\
@@ -59,9 +58,6 @@ OTHER_SRC = \
 	process-private.h	\
 	security.c		\
 	security.h		\
-	semaphores.c		\
-	semaphores.h		\
-	semaphore-private.h	\
 	shared.c		\
 	shared.h		\
 	sockets.c		\

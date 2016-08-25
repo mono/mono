@@ -12,6 +12,11 @@
 #include <windows.h>
 #include <winbase.h>
 
+void
+mono_w32semaphore_init (void)
+{
+}
+
 gpointer
 ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error)
 { 
