@@ -20,6 +20,7 @@
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/w32handle.h>
+#include <mono/metadata/w32mutex.h>
 
 static void mutex_signal(gpointer handle);
 static gboolean mutex_own (gpointer handle);
@@ -132,7 +133,7 @@ mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
 
 static void mutex_signal(gpointer handle)
 {
-	ReleaseMutex(handle);
+	ves_icall_System_Threading_Mutex_ReleaseMutex_internal (handle);
 }
 
 static gboolean mutex_own (gpointer handle)
@@ -148,7 +149,7 @@ static gboolean mutex_is_owned (gpointer handle)
 
 static void namedmutex_signal (gpointer handle)
 {
-	ReleaseMutex(handle);
+	ves_icall_System_Threading_Mutex_ReleaseMutex_internal (handle);
 }
 
 /* NB, always called with the shared handle lock held */
@@ -277,79 +278,6 @@ void wapi_mutex_abandon (gpointer handle, pid_t pid, pthread_t tid)
 
 	thr_ret = mono_w32handle_unlock_handle (handle);
 	g_assert (thr_ret == 0);
-}
-
-/**
- * ReleaseMutex:
- * @handle: The mutex handle.
- *
- * Releases ownership if the mutex handle @handle.
- *
- * Return value: %TRUE on success, %FALSE otherwise.  This function
- * fails if the calling thread does not own the mutex @handle.
- */
-gboolean ReleaseMutex(gpointer handle)
-{
-	MonoW32HandleType type;
-	struct _WapiHandle_mutex *mutex_handle;
-	pthread_t tid;
-	int thr_ret;
-	gboolean ret;
-
-	if (handle == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_MUTEX:
-	case MONO_W32HANDLE_NAMEDMUTEX:
-		break;
-	default:
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mutex_handle_type_to_string (type), handle);
-		return FALSE;
-	}
-
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
-		__func__, mutex_handle_type_to_string (type), handle);
-
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	tid = pthread_self ();
-
-	if (!pthread_equal (mutex_handle->tid, tid)) {
-		ret = FALSE;
-
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: we don't own %s handle %p (owned by %ld, me %ld)",
-			__func__, mutex_handle_type_to_string (type), handle, mutex_handle->tid, tid);
-	} else {
-		ret = TRUE;
-
-		/* OK, we own this mutex */
-		mutex_handle->recursion--;
-
-		if (mutex_handle->recursion == 0) {
-			mono_thread_info_disown_mutex (mono_thread_info_current (), handle);
-
-			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unlocking %s handle %p",
-				__func__, mutex_handle_type_to_string (type), handle);
-
-			mutex_handle->tid = 0;
-			mono_w32handle_set_signal_state (handle, TRUE, FALSE);
-		}
-	}
-
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	return ret;
 }
 
 gpointer OpenMutex (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, const gunichar2 *name)

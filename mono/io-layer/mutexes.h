@@ -16,7 +16,6 @@
 
 G_BEGIN_DECLS
 
-extern gboolean ReleaseMutex (gpointer handle);
 extern gpointer OpenMutex (guint32 access, gboolean inherit,
 			   const gunichar2 *name);
 
