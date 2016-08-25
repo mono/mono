@@ -13,21 +13,6 @@
 #include <config.h>
 #include <glib.h>
 
-#include "mono/metadata/w32handle-namespace.h"
-
-/* emulate sem_t, so that we can prod the internal state more easily */
-struct _WapiHandle_sem
-{
-	guint32 val;
-	gint32 max;
-};
-
-struct _WapiHandle_namedsem
-{
-	struct _WapiHandle_sem s;
-	MonoW32HandleNamespace sharedns;
-};
-
 void
 _wapi_semaphore_init (void);
 

@@ -14,7 +14,7 @@
 #include "w32handle-namespace.h"
 
 #include "w32mutex.h"
-#include "mono/io-layer/semaphore-private.h"
+#include "mono/io-layer/io-layer.h"
 #include "mono/io-layer/event-private.h"
 #include "mono/utils/mono-logger-internals.h"
 

@@ -14,6 +14,20 @@
 
 G_BEGIN_DECLS
 
+#include "mono/metadata/w32handle-namespace.h"
+
+struct _WapiHandle_sem
+{
+	guint32 val;
+	gint32 max;
+};
+
+struct _WapiHandle_namedsem
+{
+	struct _WapiHandle_sem s;
+	MonoW32HandleNamespace sharedns;
+};
+
 extern gpointer CreateSemaphore(WapiSecurityAttributes *security,
 				gint32 initial, gint32 max,
 				const gunichar2 *name);
