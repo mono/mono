@@ -138,8 +138,62 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)
-{ 
-	return ReleaseSemaphore (handle, releaseCount, prevcount);
+{
+	MonoW32HandleType type;
+	struct _WapiHandle_sem *sem_handle;
+	int thr_ret;
+	MonoBoolean ret;
+
+	if (!handle) {
+		SetLastError (ERROR_INVALID_HANDLE);
+		return FALSE;
+	}
+
+	switch (type = mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_SEM:
+	case MONO_W32HANDLE_NAMEDSEM:
+		break;
+	default:
+		SetLastError (ERROR_INVALID_HANDLE);
+		return FALSE;
+	}
+
+	if (!mono_w32handle_lookup (handle, type, (gpointer *)&sem_handle)) {
+		g_warning ("%s: error looking up sem handle %p", __func__, handle);
+		return FALSE;
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
+		__func__, mono_w32handle_ops_typename (type), handle);
+
+	thr_ret = mono_w32handle_lock_handle (handle);
+	g_assert (thr_ret == 0);
+
+	/* Do this before checking for count overflow, because overflowing
+	 * max is a listed technique for finding the current value */
+	if (prevcount)
+		*prevcount = sem_handle->val;
+
+	/* No idea why max is signed, but thats the spec :-( */
+	if (sem_handle->val + releaseCount > (guint32)sem_handle->max) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
+			__func__, mono_w32handle_ops_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+
+		ret = FALSE;
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d",
+			__func__, mono_w32handle_ops_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+
+		sem_handle->val += releaseCount;
+		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+
+		ret = TRUE;
+	}
+
+	thr_ret = mono_w32handle_unlock_handle (handle);
+	g_assert (thr_ret == 0);
+
+	return ret;
 }
 
 gpointer

@@ -24,6 +24,7 @@
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/w32handle.h>
+#include <mono/metadata/w32semaphore.h>
 
 static void sema_signal(gpointer handle);
 static gboolean sema_own (gpointer handle);
@@ -106,7 +107,7 @@ static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type)
 
 static void sema_signal(gpointer handle)
 {
-	ReleaseSemaphore(handle, 1, NULL);
+	ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal(handle, 1, NULL);
 }
 
 static gboolean sema_own (gpointer handle)
@@ -116,7 +117,7 @@ static gboolean sema_own (gpointer handle)
 
 static void namedsema_signal (gpointer handle)
 {
-	ReleaseSemaphore (handle, 1, NULL);
+	ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (handle, 1, NULL);
 }
 
 /* NB, always called with the shared handle lock held */
@@ -155,77 +156,6 @@ static const gchar* namedsema_typename (void)
 static gsize namedsema_typesize (void)
 {
 	return sizeof (struct _WapiHandle_namedsem);
-}
-
-/**
- * ReleaseSemaphore:
- * @handle: The semaphore handle to release.
- * @count: The amount by which the semaphore's count should be
- * increased.
- * @prevcount: Pointer to a location to store the previous count of
- * the semaphore, or %NULL.
- *
- * Increases the count of semaphore @handle by @count.
- *
- * Return value: %TRUE on success, %FALSE otherwise.
- */
-gboolean ReleaseSemaphore(gpointer handle, gint32 count, gint32 *prevcount)
-{
-	MonoW32HandleType type;
-	struct _WapiHandle_sem *sem_handle;
-	int thr_ret;
-	gboolean ret;
-
-	if (!handle) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_SEM:
-	case MONO_W32HANDLE_NAMEDSEM:
-		break;
-	default:
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&sem_handle)) {
-		g_warning ("%s: error looking up sem handle %p", __func__, handle);
-		return FALSE;
-	}
-
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
-		__func__, sem_handle_type_to_string (type), handle);
-
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	/* Do this before checking for count overflow, because overflowing
-	 * max is a listed technique for finding the current value */
-	if (prevcount)
-		*prevcount = sem_handle->val;
-
-	/* No idea why max is signed, but thats the spec :-( */
-	if (sem_handle->val + count > (guint32)sem_handle->max) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
-			__func__, sem_handle_type_to_string (type), handle, sem_handle->val, count, sem_handle->max, count);
-
-		ret = FALSE;
-	} else {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d",
-			__func__, sem_handle_type_to_string (type), handle, sem_handle->val, count, sem_handle->max, count);
-
-		sem_handle->val += count;
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
-
-		ret = TRUE;
-	}
-
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	return ret;
 }
 
 gpointer OpenSemaphore (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED,
