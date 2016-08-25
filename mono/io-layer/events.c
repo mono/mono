@@ -160,67 +160,6 @@ static gsize namedevent_typesize (void)
 	return sizeof (struct _WapiHandle_namedevent);
 }
 
-/**
- * ResetEvent:
- * @handle: The event handle.
- *
- * Resets the event handle @handle to the unsignalled state.
- *
- * Return value: %TRUE on success, %FALSE otherwise.  (Currently only
- * ever returns %TRUE).
- */
-gboolean ResetEvent(gpointer handle)
-{
-	MonoW32HandleType type;
-	struct _WapiHandle_event *event_handle;
-	int thr_ret;
-
-	SetLastError (ERROR_SUCCESS);
-	
-	if (handle == NULL) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-	
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_EVENT:
-	case MONO_W32HANDLE_NAMEDEVENT:
-		break;
-	default:
-		SetLastError (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, event_handle_type_to_string (type), handle);
-		return FALSE;
-	}
-
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: resetting %s handle %p",
-		__func__, event_handle_type_to_string (type), handle);
-
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	if (!mono_w32handle_issignalled (handle)) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: no need to reset %s handle %p",
-			__func__, event_handle_type_to_string (type), handle);
-	} else {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: obtained write lock on %s handle %p",
-			__func__, event_handle_type_to_string (type), handle);
-
-		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
-	}
-
-	event_handle->set_count = 0;
-
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	return TRUE;
-}
-
 gpointer OpenEvent (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, const gunichar2 *name)
 {
 	gpointer handle;

@@ -33,6 +33,12 @@ mono_w32event_set (gpointer handle)
 	ves_icall_System_Threading_Events_SetEvent_internal (handle);
 }
 
+void
+mono_w32event_reset (gpointer handle)
+{
+	ves_icall_System_Threading_Events_ResetEvent_internal (handle);
+}
+
 static gpointer event_handle_create (struct _WapiHandle_event *event_handle, MonoW32HandleType type, gboolean manual, gboolean initial)
 {
 	gpointer handle;
@@ -182,7 +188,54 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 gboolean
 ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 {
-	return ResetEvent (handle);
+	MonoW32HandleType type;
+	struct _WapiHandle_event *event_handle;
+	int thr_ret;
+
+	SetLastError (ERROR_SUCCESS);
+
+	if (handle == NULL) {
+		SetLastError (ERROR_INVALID_HANDLE);
+		return(FALSE);
+	}
+
+	switch (type = mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_EVENT:
+	case MONO_W32HANDLE_NAMEDEVENT:
+		break;
+	default:
+		SetLastError (ERROR_INVALID_HANDLE);
+		return FALSE;
+	}
+
+	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
+		g_warning ("%s: error looking up %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+		return FALSE;
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: resetting %s handle %p",
+		__func__, mono_w32handle_ops_typename (type), handle);
+
+	thr_ret = mono_w32handle_lock_handle (handle);
+	g_assert (thr_ret == 0);
+
+	if (!mono_w32handle_issignalled (handle)) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: no need to reset %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: obtained write lock on %s handle %p",
+			__func__, mono_w32handle_ops_typename (type), handle);
+
+		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+	}
+
+	event_handle->set_count = 0;
+
+	thr_ret = mono_w32handle_unlock_handle (handle);
+	g_assert (thr_ret == 0);
+
+	return TRUE;
 }
 
 void

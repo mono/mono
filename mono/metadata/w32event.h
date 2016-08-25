@@ -13,6 +13,9 @@ mono_w32event_create (gboolean manual, gboolean initial);
 void
 mono_w32event_set (gpointer handle);
 
+void
+mono_w32event_reset (gpointer handle);
+
 gpointer
 ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error);
 
