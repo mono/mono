@@ -83,11 +83,6 @@ MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInter
 void ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this_obj, MonoObject *culture);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInternalThread *this_obj);
 void ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThread *this_obj, MonoObject *culture);
-HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error);
-gboolean ves_icall_System_Threading_Events_SetEvent_internal (HANDLE handle);
-gboolean ves_icall_System_Threading_Events_ResetEvent_internal (HANDLE handle);
-void ves_icall_System_Threading_Events_CloseEvent_internal (HANDLE handle);
-HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name, gint32 rights, gint32 *error);
 
 gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_handles, gint32 ms);
 gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_handles, gint32 ms);

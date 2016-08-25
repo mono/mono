@@ -1822,51 +1822,6 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE toSignal, H
 	return map_native_wait_result_to_managed (ret);
 }
 
-HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error)
-{
-	HANDLE event;
-
-	if (name == NULL) {
-		event = CreateEvent (NULL, manual, initial, NULL);
-	} else {
-		event = CreateEvent (NULL, manual, initial,
-				     mono_string_chars (name));
-	}
-
-	*error = GetLastError ();
-
-	return(event);
-}
-
-gboolean ves_icall_System_Threading_Events_SetEvent_internal (HANDLE handle) {
-	return (SetEvent(handle));
-}
-
-gboolean ves_icall_System_Threading_Events_ResetEvent_internal (HANDLE handle) {
-	return (ResetEvent(handle));
-}
-
-void
-ves_icall_System_Threading_Events_CloseEvent_internal (HANDLE handle) {
-	CloseHandle (handle);
-}
-
-HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name,
-							     gint32 rights,
-							     gint32 *error)
-{
-	HANDLE ret;
-	
-	ret = OpenEvent (rights, FALSE, mono_string_chars (name));
-	if (ret == NULL) {
-		*error = GetLastError ();
-	} else {
-		*error = ERROR_SUCCESS;
-	}
-
-	return(ret);
-}
-
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int (gint32 *location)
 {
 	return InterlockedIncrement (location);

@@ -2,7 +2,8 @@ if HOST_WIN32
 win32_sources = \
 	console-win32.c \
 	w32mutex-win32.c \
-	w32semaphore-win32.c
+	w32semaphore-win32.c \
+	w32event-win32.c
 
 platform_sources = $(win32_sources)
 
@@ -27,7 +28,8 @@ confdir = $(sysconfdir)
 unix_sources = \
 	console-unix.c \
 	w32mutex-unix.c \
-	w32semaphore-unix.c
+	w32semaphore-unix.c \
+	w32event-unix.c
 
 platform_sources = $(unix_sources)
 endif
@@ -224,6 +226,7 @@ common_sources = \
 	handle.h	\
 	w32mutex.h	\
 	w32semaphore.h	\
+	w32event.h	\
 	w32handle-namespace.h	\
 	w32handle-namespace.c
 
