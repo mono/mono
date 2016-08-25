@@ -13,6 +13,12 @@
 #include <winbase.h>
 
 gpointer
+mono_w32event_create (gboolean manual, gboolean initial)
+{
+	return CreateEvent (NULL, manual, initial, NULL);
+}
+
+gpointer
 ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error)
 {
 	gpointer event;

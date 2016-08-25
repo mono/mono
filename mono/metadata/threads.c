@@ -45,6 +45,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/w32handle.h>
+#include <mono/metadata/w32event.h>
 
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/reflection-internals.h>
@@ -2831,7 +2832,7 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	mono_os_mutex_init_recursive(&interlocked_mutex);
 	mono_os_mutex_init_recursive(&joinable_threads_mutex);
 	
-	background_change_event = CreateEvent (NULL, TRUE, FALSE, NULL);
+	background_change_event = mono_w32event_create (TRUE, FALSE);
 	g_assert(background_change_event != NULL);
 	
 	mono_init_static_data_info (&thread_static_info);

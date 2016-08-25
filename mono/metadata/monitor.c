@@ -26,6 +26,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/w32event.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-time.h>
@@ -1312,7 +1313,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	if (mono_thread_current_check_pending_interrupt ())
 		return FALSE;
 	
-	event = CreateEvent (NULL, FALSE, FALSE, NULL);
+	event = mono_w32event_create (FALSE, FALSE);
 	if (event == NULL) {
 		mono_set_pending_exception (mono_get_exception_synchronization_lock ("Failed to set up wait event"));
 		return FALSE;
