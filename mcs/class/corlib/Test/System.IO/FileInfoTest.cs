@@ -758,9 +758,9 @@ namespace MonoTests.System.IO
 				try {
 					info.MoveTo (destFile);
 					Assert.Fail ("#1");
-				} catch (FileNotFoundException ex) {
+				} catch (DirectoryNotFoundException ex) {
 					// Could not find a part of the path
-					Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
 				}

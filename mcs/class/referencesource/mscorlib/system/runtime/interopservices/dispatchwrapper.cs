@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-#if !FULL_AOT_RUNTIME
+
 namespace System.Runtime.InteropServices {
    
     using System;
@@ -31,11 +31,15 @@ namespace System.Runtime.InteropServices {
         {
             if (obj != null)
             {
+#if FULL_AOT_RUNTIME
+                throw new PlatformNotSupportedException ();
+#else
                 // Make sure this guy has an IDispatch
                 IntPtr pdisp = Marshal.GetIDispatchForObject(obj);
 
                 // If we got here without throwing an exception, the QI for IDispatch succeeded.
                 Marshal.Release(pdisp);
+#endif
             }
             m_WrappedObject = obj;
         }
@@ -51,4 +55,3 @@ namespace System.Runtime.InteropServices {
         private Object m_WrappedObject;
     }
 }
-#endif

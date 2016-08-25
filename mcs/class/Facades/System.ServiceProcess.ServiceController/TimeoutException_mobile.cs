@@ -36,22 +36,19 @@ namespace System.ServiceProcess
 {
 	public class TimeoutException : Exception
 	{
-		[MonoTODO]
 		public TimeoutException ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public TimeoutException (string message)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoTODO]
 		public TimeoutException (string message, Exception innerException)
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 	}
 }

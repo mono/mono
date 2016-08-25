@@ -57,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 152;
+		private const int mono_corlib_version = 153;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -893,7 +893,9 @@ namespace System {
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
-			throw new NotImplementedException ();
+#pragma warning disable 618
+			throw new ExecutionEngineException (message, exception);
+#pragma warning restore
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

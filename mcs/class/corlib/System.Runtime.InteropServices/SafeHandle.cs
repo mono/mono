@@ -122,7 +122,7 @@ namespace System.Runtime.InteropServices
 					old_state = _state;
 
 					if ((old_state & (int) State.Closed) != 0)
-						throw new ObjectDisposedException ("handle");
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
 					new_state = old_state + RefCount_One;
 				} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
@@ -198,7 +198,7 @@ namespace System.Runtime.InteropServices
 					 * hitting zero though -- that can happen if SetHandleAsInvalid is
 					 * used). */
 					if ((old_state & RefCount_Mask) == 0)
-						throw new ObjectDisposedException ("handle");
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
 					if ((old_state & RefCount_Mask) != RefCount_One)
 						perform_release = false;

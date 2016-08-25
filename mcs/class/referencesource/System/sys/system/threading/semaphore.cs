@@ -87,7 +87,11 @@ namespace System.Threading
                 if(null != name && 0 != name.Length && NativeMethods.ERROR_INVALID_HANDLE == errorCode)
                     throw new WaitHandleCannotBeOpenedException(SR.GetString(SR.WaitHandleCannotBeOpenedException_InvalidHandle,name));
                
+#if MONO
+                InternalResources.WinIOError(errorCode, "");
+#else
                 InternalResources.WinIOError();
+#endif
             }
             this.SafeWaitHandle = myHandle;
         }
@@ -161,7 +165,12 @@ namespace System.Threading
             {
                 if(null != name && 0 != name.Length && NativeMethods.ERROR_INVALID_HANDLE == errorCode)
                     throw new WaitHandleCannotBeOpenedException(SR.GetString(SR.WaitHandleCannotBeOpenedException_InvalidHandle,name));
+
+#if MONO
+                InternalResources.WinIOError(errorCode, "");
+#else
                 InternalResources.WinIOError();
+#endif
             }
             createdNew = errorCode != NativeMethods.ERROR_ALREADY_EXISTS;
             this.SafeWaitHandle = myHandle;
@@ -310,7 +319,11 @@ namespace System.Threading
                 if (null != name && 0 != name.Length && NativeMethods.ERROR_INVALID_HANDLE == errorCode)
                     return OpenExistingResult.NameInvalid;
                 //this is for passed through NativeMethods Errors
+#if MONO
+                InternalResources.WinIOError(errorCode, "");
+#else
                 InternalResources.WinIOError();
+#endif
             }
             result = new Semaphore(myHandle);
             return OpenExistingResult.Success;

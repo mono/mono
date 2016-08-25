@@ -155,6 +155,10 @@ namespace System.IO
 			case MonoIOError.ERROR_NOT_SAME_DEVICE:
 				message = "Source and destination are not on the same device";
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);
+
+			case MonoIOError.ERROR_DIRECTORY:
+				message = "The directory name is invalid";
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 				
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);

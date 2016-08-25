@@ -427,20 +427,20 @@ namespace System.IO {
 		static internal IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string full, string searchPattern, SearchOption searchOption)
 		{
 			string path_with_pattern = Path.Combine (full, searchPattern);
-			IntPtr handle;
+			IntPtr handle = IntPtr.Zero;
 			MonoIOError error;
 			FileAttributes rattr;
 			bool subdirs = searchOption == SearchOption.AllDirectories;
 
 			Path.Validate (full);
 			
-			string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
-			if (s == null)
-				yield break;
-			if (error != 0)
-				throw MonoIO.GetException (Path.GetDirectoryName (path_with_pattern), (MonoIOError) error);
-
 			try {
+				string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
+				if (s == null)
+					yield break;
+				if (error != 0)
+					throw MonoIO.GetException (Path.GetDirectoryName (path_with_pattern), (MonoIOError) error);
+
 				do {
 					if (((rattr & FileAttributes.ReparsePoint) == 0)){
 						if ((rattr & FileAttributes.Directory) != 0)
@@ -455,7 +455,8 @@ namespace System.IO {
 
 				} while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null);
 			} finally {
-				MonoIO.FindClose (handle);
+				if (handle != IntPtr.Zero)
+					MonoIO.FindClose (handle);
 			}
 		}
 		

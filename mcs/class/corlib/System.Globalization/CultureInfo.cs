@@ -127,22 +127,18 @@ namespace System.Globalization
 			get {
 				return Thread.CurrentThread.CurrentCulture;
 			}
-#if NETSTANDARD
 			set {
 				throw new NotImplementedException ();
 			}
-#endif
 		}
 
 		public static CultureInfo CurrentUICulture { 
 			get {
 				return Thread.CurrentThread.CurrentUICulture;
 			}
-#if NETSTANDARD
 			set {
 				throw new NotImplementedException ();
 			}
-#endif
 		}
 
 		internal static CultureInfo ConstructCurrentCulture ()

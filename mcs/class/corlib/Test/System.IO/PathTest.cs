@@ -37,6 +37,7 @@ namespace MonoTests.System.IO
 		static string path3;
 		static OsType OS;
 		static char DSC = Path.DirectorySeparatorChar;
+		static char ADSC = Path.AltDirectorySeparatorChar;
 
 		[SetUp]
 		public void SetUp ()
@@ -357,6 +358,12 @@ namespace MonoTests.System.IO
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
 			}
+		}
+
+		[Test]
+		public void GetDirectoryName_Replaces_AltDirectorySeparatorChar ()
+		{
+			Assert.AreEqual ($"foo{DSC}bar", Path.GetDirectoryName ($"foo{ADSC}bar{ADSC}dingus"), "#1");
 		}
 
 		[Test]

@@ -123,11 +123,19 @@ TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).lo
 endif
 
 ifdef FIXTURE
+ifdef NUNIT_LITE
+FIXTURE_ARG = -test=MonoTests.$(FIXTURE)
+else
 FIXTURE_ARG = -fixture=MonoTests.$(FIXTURE)
+endif
 endif
 
 ifdef TESTNAME
+ifdef NUNIT_LITE
+TESTNAME_ARG = -test=MonoTests.$(TESTNAME)
+else
 TESTNAME_ARG = -run=MonoTests.$(TESTNAME)
+endif
 endif
 
 ifdef ALWAYS_AOT

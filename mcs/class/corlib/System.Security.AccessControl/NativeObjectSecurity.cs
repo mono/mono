@@ -129,6 +129,11 @@ namespace System.Security.AccessControl
 		{
 			Persist (name, includeSections, null);
 		}
+
+		internal void Persist (SafeHandle handle)
+		{
+			PersistModifications (handle);
+		}
 		
 		internal void PersistModifications (SafeHandle handle)
 		{

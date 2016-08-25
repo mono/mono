@@ -1089,9 +1089,12 @@ namespace CorCompare
 			if (!(memberDefenition is MethodDefinition))
 				return;
 
-			MethodDefinition mbase = (MethodDefinition) memberDefenition;
+			MethodDefinition mbase = (MethodDefinition)memberDefenition;
 
-			ParameterData parms = new ParameterData (writer, mbase.Parameters);
+			ParameterData parms = new ParameterData (writer, mbase.Parameters) {
+				HasExtensionParameter = mbase.CustomAttributes.Any (l => l.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
+			};
+
 			parms.DoOutput ();
 
 			MemberData.OutputGenericParameters (writer, mbase);
@@ -1137,8 +1140,11 @@ namespace CorCompare
 			this.parameters = parameters;
 		}
 
+		public bool HasExtensionParameter { get; set; }
+
 		public override void DoOutput ()
 		{
+			bool first = true;
 			writer.WriteStartElement ("parameters");
 			foreach (ParameterDefinition parameter in parameters) {
 				writer.WriteStartElement ("parameter");
@@ -1146,7 +1152,8 @@ namespace CorCompare
 				AddAttribute ("position", parameter.Method.Parameters.IndexOf(parameter).ToString(CultureInfo.InvariantCulture));
 				AddAttribute ("attrib", ((int) parameter.Attributes).ToString());
 
-				string direction = "in";
+				string direction = first && HasExtensionParameter ? "this" : "in";
+				first = false;
 
 				if (parameter.ParameterType is ByReferenceType)
 					direction = parameter.IsOut ? "out" : "ref";

@@ -66169,6 +66169,27 @@
       </method>
     </type>
   </test>
+  <test name="test-async-88.cs">
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task`1[System.String] AsyncWithDeepTry()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;AsyncWithDeepTry&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>460</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

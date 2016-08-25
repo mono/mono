@@ -44,6 +44,7 @@
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/w32handle.h>
 
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/reflection-internals.h>
@@ -722,11 +723,16 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 
 	mono_thread_init_apartment_state ();
 
-	if(internal->start_notify!=NULL) {
+	if (internal->start_notify)
 		/* Let the thread that called Start() know we're
 		 * ready
 		 */
-		ReleaseSemaphore (internal->start_notify, 1, NULL);
+		mono_coop_sem_post (internal->start_notify);
+
+	if (InterlockedDecrement ((gint32*)&internal->start_notify_refcount) == 0) {
+		mono_coop_sem_destroy (internal->start_notify);
+		g_free (internal->start_notify);
+		internal->start_notify = NULL;
 	}
 
 	g_free (start_info);
@@ -850,15 +856,9 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	mono_g_hash_table_insert (threads_starting_up, thread, thread);
 	mono_threads_unlock ();
 
-	internal->start_notify = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
-	if (!internal->start_notify) {
-		mono_threads_lock ();
-		mono_g_hash_table_remove (threads_starting_up, thread);
-		mono_threads_unlock ();
-		g_warning ("%s: CreateSemaphore error 0x%x", __func__, GetLastError ());
-		g_free (start_info);
-		return FALSE;
-	}
+	internal->start_notify = g_new0 (MonoCoopSem, 1);
+	mono_coop_sem_init (internal->start_notify, 0);
+	internal->start_notify_refcount = 2;
 
 	if (stack_size == 0)
 		stack_size = default_stacksize_for_thread (internal);
@@ -901,20 +901,18 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 
 	mono_thread_info_resume (tid);
 
-	if (internal->start_notify) {
-		/*
-		 * Wait for the thread to set up its TLS data etc, so
-		 * theres no potential race condition if someone tries
-		 * to look up the data believing the thread has
-		 * started
-		 */
-		THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") waiting for thread %p (%"G_GSIZE_FORMAT") to start", __func__, mono_native_thread_id_get (), internal, (gsize)internal->tid));
+	/*
+	 * Wait for the thread to set up its TLS data etc, so
+	 * theres no potential race condition if someone tries
+	 * to look up the data believing the thread has
+	 * started
+	 */
+	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") waiting for thread %p (%"G_GSIZE_FORMAT") to start", __func__, mono_native_thread_id_get (), internal, (gsize)internal->tid));
 
-		MONO_ENTER_GC_SAFE;
-		WaitForSingleObjectEx (internal->start_notify, INFINITE, FALSE);
-		MONO_EXIT_GC_SAFE;
-
-		CloseHandle (internal->start_notify);
+	mono_coop_sem_wait (internal->start_notify, MONO_SEM_FLAGS_NONE);
+	if (InterlockedDecrement ((gint32*)&internal->start_notify_refcount) == 0) {
+		mono_coop_sem_destroy (internal->start_notify);
+		g_free (internal->start_notify);
 		internal->start_notify = NULL;
 	}
 
@@ -1007,7 +1005,6 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	MonoThreadInfo *info;
 	MonoInternalThread *thread;
 	MonoThread *current_thread;
-	HANDLE thread_handle;
 	MonoNativeThreadId tid;
 
 	if ((thread = mono_thread_internal_current ())) {
@@ -1021,21 +1018,17 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 		g_error ("Thread %"G_GSIZE_FORMAT" calling into managed code is not registered with the GC. On UNIX, this can be fixed by #include-ing <gc.h> before <pthread.h> in the file containing the thread creation code.", mono_native_thread_id_get ());
 	}
 
-	thread = create_internal_thread ();
-
-	thread_handle = mono_thread_info_open_handle ();
-	g_assert (thread_handle);
+	info = mono_thread_info_current ();
 
 	tid=mono_native_thread_id_get ();
 
-	thread->handle = thread_handle;
+	thread = create_internal_thread ();
+	thread->handle = mono_thread_info_get_handle (info);
 	thread->tid = MONO_NATIVE_THREAD_ID_TO_UINT (tid);
 	thread->stack_ptr = &tid;
 
-	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread_handle));
+	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread->handle));
 
-	info = mono_thread_info_current ();
-	g_assert (info);
 	thread->thread_info = info;
 	thread->small_id = info->small_id;
 
@@ -1697,7 +1690,7 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_ha
 gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_handles, gint32 ms)
 {
 	MonoError error;
-	HANDLE handles [MAXIMUM_WAIT_OBJECTS];
+	HANDLE handles [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	uintptr_t numhandles;
 	guint32 ret;
 	guint32 i;
@@ -1709,7 +1702,7 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 		return map_native_wait_result_to_managed (WAIT_FAILED);
 
 	numhandles = mono_array_length(mono_handles);
-	if (numhandles > MAXIMUM_WAIT_OBJECTS)
+	if (numhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
 		return map_native_wait_result_to_managed (WAIT_FAILED);
 
 	for(i = 0; i < numhandles; i++) {	
@@ -1845,6 +1838,7 @@ HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 ini
 	}
 
 	*error = GetLastError ();
+
 	return(sem);
 }                                                                   
 
@@ -1858,28 +1852,25 @@ HANDLE ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *
 	HANDLE sem;
 
 	sem = OpenSemaphore (rights, FALSE, mono_string_chars (name));
+
 	*error = GetLastError ();
 
 	return(sem);
 }
 
-HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, MonoBoolean *created)
+HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error)
 {
 	HANDLE event;
-	
-	*created = TRUE;
 
 	if (name == NULL) {
 		event = CreateEvent (NULL, manual, initial, NULL);
 	} else {
 		event = CreateEvent (NULL, manual, initial,
 				     mono_string_chars (name));
-		
-		if (GetLastError () == ERROR_ALREADY_EXISTS) {
-			*created = FALSE;
-		}
 	}
-	
+
+	*error = GetLastError ();
+
 	return(event);
 }
 
@@ -1902,13 +1893,13 @@ HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name,
 {
 	HANDLE ret;
 	
-	*error = ERROR_SUCCESS;
-	
 	ret = OpenEvent (rights, FALSE, mono_string_chars (name));
 	if (ret == NULL) {
 		*error = GetLastError ();
+	} else {
+		*error = ERROR_SUCCESS;
 	}
-	
+
 	return(ret);
 }
 
@@ -2993,8 +2984,8 @@ static void print_tids (gpointer key, gpointer value, gpointer user)
 
 struct wait_data 
 {
-	HANDLE handles[MAXIMUM_WAIT_OBJECTS];
-	MonoInternalThread *threads[MAXIMUM_WAIT_OBJECTS];
+	HANDLE handles[MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
+	MonoInternalThread *threads[MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	guint32 num;
 };
 
@@ -3062,7 +3053,7 @@ static void wait_for_tids_or_state_change (struct wait_data *wait, guint32 timeo
 	 * to background mode.
 	 */
 	count = wait->num;
-	if (count < MAXIMUM_WAIT_OBJECTS) {
+	if (count < MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
 		wait->handles [count] = background_change_event;
 		count++;
 	}
@@ -3100,7 +3091,7 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 {
 	struct wait_data *wait=(struct wait_data *)user;
 
-	if(wait->num<MAXIMUM_WAIT_OBJECTS) {
+	if(wait->num<MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
 		HANDLE handle;
 		MonoInternalThread *thread=(MonoInternalThread *)value;
 
@@ -3164,7 +3155,7 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 	MonoInternalThread *thread = (MonoInternalThread *)value;
 	HANDLE handle;
 
-	if (wait->num >= MAXIMUM_WAIT_OBJECTS)
+	if (wait->num >= MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
 		return FALSE;
 
 	/* The finalizer thread is not a background thread */
@@ -3268,7 +3259,7 @@ void mono_thread_manage (void)
 		ResetEvent (background_change_event);
 		wait->num=0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
+		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
 		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
 		mono_threads_unlock ();
 		if(wait->num>0) {
@@ -3294,7 +3285,7 @@ void mono_thread_manage (void)
 
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
+		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
 		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, wait);
 
 		mono_threads_unlock ();
@@ -3322,7 +3313,7 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 	HANDLE handle;
 
 	/* 
-	 * We try to exclude threads early, to avoid running into the MAXIMUM_WAIT_OBJECTS
+	 * We try to exclude threads early, to avoid running into the MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS
 	 * limitation.
 	 * This needs no locking.
 	 */
@@ -3330,7 +3321,7 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 		(thread->state & ThreadState_Stopped) != 0)
 		return;
 
-	if (wait->num<MAXIMUM_WAIT_OBJECTS) {
+	if (wait->num<MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
 		handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
 		if (handle == NULL)
 			return;
@@ -3373,7 +3364,7 @@ void mono_thread_suspend_all_other_threads (void)
 
 	/*
 	 * We make multiple calls to WaitForMultipleObjects since:
-	 * - we can only wait for MAXIMUM_WAIT_OBJECTS threads
+	 * - we can only wait for MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS threads
 	 * - some threads could exit without becoming suspended
 	 */
 	finished = FALSE;
@@ -3384,7 +3375,7 @@ void mono_thread_suspend_all_other_threads (void)
 		 */
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
+		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
 		mono_threads_lock ();
 		mono_g_hash_table_foreach (threads, collect_threads_for_suspend, wait);
 		mono_threads_unlock ();
@@ -3858,7 +3849,7 @@ collect_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 	if (mono_thread_internal_has_appdomain_ref (thread, domain)) {
 		/* printf ("ABORTING THREAD %p BECAUSE IT REFERENCES DOMAIN %s.\n", thread->tid, domain->friendly_name); */
 
-		if(data->wait.num<MAXIMUM_WAIT_OBJECTS) {
+		if(data->wait.num<MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
 			HANDLE handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
 			if (handle == NULL)
 				return;

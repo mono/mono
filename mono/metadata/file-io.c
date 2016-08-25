@@ -489,8 +489,13 @@ ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
 	ifh = g_new (IncrementalFind, 1);
 	ifh->find_handle = find_handle;
 	ifh->utf8_path = mono_string_to_utf8_checked (path, &error);
-	if (mono_error_set_pending_exception (&error))
+	if (mono_error_set_pending_exception (&error)) {
+		MONO_ENTER_GC_SAFE;
+		FindClose (find_handle);
+		MONO_EXIT_GC_SAFE;
+		g_free (ifh);
 		return NULL;
+	}
 	ifh->domain = mono_domain_get ();
 	*handle = ifh;
 
@@ -799,10 +804,6 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 
 		if (options & FileOptions_Temporary)
 			attributes |= FILE_ATTRIBUTE_TEMPORARY;
-		
-		/* Not sure if we should set FILE_FLAG_OVERLAPPED, how does this mix with the "Async" bool here? */
-		if (options & FileOptions_Asynchronous)
-			attributes |= FILE_FLAG_OVERLAPPED;
 		
 		if (options & FileOptions_WriteThrough)
 			attributes |= FILE_FLAG_WRITE_THROUGH;

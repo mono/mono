@@ -140,6 +140,7 @@ namespace System.IO {
 		{
 			int l = s.Length;
 			int sub = 0;
+			int alt = 0;
 			int start = 0;
 
 			// Host prefix?
@@ -158,6 +159,8 @@ namespace System.IO {
 				
 				if (c != DirectorySeparatorChar && c != AltDirectorySeparatorChar)
 					continue;
+				if (DirectorySeparatorChar != AltDirectorySeparatorChar && c == AltDirectorySeparatorChar)
+					alt++;
 				if (i+1 == l)
 					sub++;
 				else {
@@ -167,7 +170,7 @@ namespace System.IO {
 				}
 			}
 
-			if (sub == 0)
+			if (sub == 0 && alt == 0)
 				return s;
 
 			char [] copy = new char [l-sub];
@@ -885,5 +888,7 @@ namespace System.IO {
 				return DirectorySeparatorStr;
 			}
 		}
+
+		internal const int MAX_PATH = 260;  // From WinDef.h
 	}
 }

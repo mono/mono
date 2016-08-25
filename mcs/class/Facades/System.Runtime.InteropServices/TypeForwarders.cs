@@ -20,11 +20,9 @@
 // THE SOFTWARE.
 // 
 
-#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ComImportAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.DispatchWrapper))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ErrorWrapper))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.DataMisalignedException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.DllNotFoundException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Missing))]
