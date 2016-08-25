@@ -16,7 +16,6 @@
 #define SetLastError wapi_SetLastError
 #define TransmitFile wapi_TransmitFile
 #define GetThreadContext wapi_GetThreadContext
-#define PulseEvent wapi_PulseEvent 
 #define ResetEvent wapi_ResetEvent 
 #define SetEvent wapi_SetEvent 
 #define OpenEvent wapi_OpenEvent 
