@@ -12,9 +12,15 @@
 #include <glib.h>
 
 #include "mono/utils/mono-threads.h"
+#include "mono/io-layer/wapi.h"
 
 void
 mono_w32mutex_abandon (gpointer handle, MonoNativeThreadId tid);
+
+typedef struct MonoW32HandleNamedMutex MonoW32HandleNamedMutex;
+
+WapiSharedNamespace*
+mono_w32mutex_get_namespace (MonoW32HandleNamedMutex *mutex);
 
 #endif /* _MONO_METADATA_W32MUTEX_UTILS_H_ */
 

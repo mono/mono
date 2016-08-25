@@ -7,6 +7,9 @@
 
 #include "object.h"
 
+void
+mono_w32mutex_init (void);
+
 gpointer
 ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoString *name, MonoBoolean *created);
 

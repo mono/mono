@@ -53,8 +53,6 @@ OTHER_SRC = \
 	macros.h		\
 	messages.c		\
 	messages.h		\
-	mutexes.c		\
-	mutex-private.h		\
 	posix.c			\
 	processes.c		\
 	processes.h		\

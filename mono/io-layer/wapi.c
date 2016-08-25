@@ -4,12 +4,12 @@
 #include "event-private.h"
 #include "io-trace.h"
 #include "io.h"
-#include "mutex-private.h"
 #include "process-private.h"
 #include "semaphore-private.h"
 #include "shared.h"
 #include "socket-private.h"
 
+#include "mono/metadata/w32mutex-utils.h"
 #include "mono/utils/mono-lazy-init.h"
 #include "mono/utils/w32handle.h"
 
@@ -22,7 +22,6 @@ wapi_init (void)
 	_wapi_io_init ();
 	_wapi_processes_init ();
 	_wapi_semaphore_init ();
-	_wapi_mutex_init ();
 	_wapi_event_init ();
 	_wapi_socket_init ();
 }
@@ -89,7 +88,7 @@ static gboolean mono_w32handle_search_namespace_callback (gpointer handle, gpoin
 	search_data = (_WapiSearchHandleNamespaceData*) user_data;
 
 	switch (type) {
-	case MONO_W32HANDLE_NAMEDMUTEX: sharedns = &((struct _WapiHandle_namedmutex*) data)->sharedns; break;
+	case MONO_W32HANDLE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) data); break;
 	case MONO_W32HANDLE_NAMEDSEM:   sharedns = &((struct _WapiHandle_namedsem*)   data)->sharedns; break;
 	case MONO_W32HANDLE_NAMEDEVENT: sharedns = &((struct _WapiHandle_namedevent*) data)->sharedns; break;
 	default:
