@@ -36,6 +36,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using System.Runtime.Hosting;
@@ -139,13 +140,18 @@ namespace System
 				appBase = appBase.Substring (7);
 				if (Path.DirectorySeparatorChar != '/')
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
-				if (Environment.IsRunningOnWindows) {
-					// Under Windows prepend "//" to indicate it's a local file
-					appBase = "//" + appBase;
-				}
-			} else {
-				appBase = Path.GetFullPath (appBase);
 			}
+			appBase = Path.GetFullPath (appBase);
+
+			if (Path.DirectorySeparatorChar != '/') {
+				bool isExtendedPath = appBase.StartsWith (@"\\?\", StringComparison.Ordinal);
+				if (appBase.IndexOf (':', isExtendedPath ? 6 : 2) != -1) {
+					throw new NotSupportedException ("The given path's format is not supported.");
+				}
+			}
+
+			// Trigger a validation of the path
+			new FileIOPermission (FileIOPermissionAccess.PathDiscovery, appBase);
 
 			return appBase;
 		}
