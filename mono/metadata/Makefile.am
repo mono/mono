@@ -220,7 +220,9 @@ common_sources = \
 	seq-points-data.c	\
 	handle.c	\
 	handle.h	\
-	w32mutex.h
+	w32mutex.h	\
+	w32handle-namespace.h	\
+	w32handle-namespace.c
 
 
 # These source files have compile time dependencies on GC code

@@ -12,6 +12,7 @@
 
 #include <pthread.h>
 
+#include "w32handle-namespace.h"
 #include "mono/io-layer/io-layer.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/utils/mono-threads.h"
@@ -24,7 +25,7 @@ typedef struct {
 
 struct MonoW32HandleNamedMutex {
 	MonoW32HandleMutex m;
-	WapiSharedNamespace sharedns;
+	MonoW32HandleNamespace sharedns;
 };
 
 static gboolean
@@ -274,7 +275,7 @@ static gpointer namedmutex_create (gboolean owned, const gunichar2 *name)
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -410,7 +411,7 @@ ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name, gint32 ri
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named mutex [%s]",
 		__func__, utf8_name);
 
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		*error = ERROR_INVALID_HANDLE;
@@ -474,7 +475,7 @@ mono_w32mutex_abandon (gpointer handle, MonoNativeThreadId tid)
 	g_assert (thr_ret == 0);
 }
 
-WapiSharedNamespace*
+MonoW32HandleNamespace*
 mono_w32mutex_get_namespace (MonoW32HandleNamedMutex *mutex)
 {
 	return &mutex->sharedns;

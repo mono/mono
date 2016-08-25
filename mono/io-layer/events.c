@@ -213,7 +213,7 @@ static gpointer namedevent_create (gboolean manual, gboolean initial, const guni
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDEVENT, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -490,7 +490,7 @@ gpointer OpenEvent (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named event [%s]", __func__, utf8_name);
 	
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDEVENT,
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDEVENT,
 						utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different

@@ -213,7 +213,7 @@ static gpointer namedsem_create (gint32 initial, gint32 max, const gunichar2 *na
 
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Creating named sem name [%s] initial %d max %d", __func__, utf8_name, initial, max);
 
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDSEM, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -374,7 +374,7 @@ gpointer OpenSemaphore (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UN
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named sem [%s]", __func__, utf8_name);
 
-	handle = wapi_search_handle_namespace (MONO_W32HANDLE_NAMEDSEM,
+	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDSEM,
 						utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different

@@ -36,10 +36,6 @@
 #define WAPI_SHARED_SEM_PROCESS_COUNT 7
 #define WAPI_SHARED_SEM_COUNT 8	/* Leave some future expansion space */
 
-typedef struct {
-	gchar name[MAX_PATH + 1];
-} WapiSharedNamespace;
-
 void
 wapi_init (void);
 
@@ -55,9 +51,6 @@ DuplicateHandle (gpointer srcprocess, gpointer src, gpointer targetprocess, gpoi
 
 pid_t
 wapi_getpid (void);
-
-gpointer
-wapi_search_handle_namespace (MonoW32HandleType type, gchar *utf8_name);
 
 static inline int wapi_namespace_lock (void)
 {

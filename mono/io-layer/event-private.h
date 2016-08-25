@@ -14,7 +14,7 @@
 #include <glib.h>
 #include <pthread.h>
 
-#include "wapi-private.h"
+#include "mono/metadata/w32handle-namespace.h"
 
 struct _WapiHandle_event
 {
@@ -25,7 +25,7 @@ struct _WapiHandle_event
 struct _WapiHandle_namedevent
 {
 	struct _WapiHandle_event e;
-	WapiSharedNamespace sharedns;
+	MonoW32HandleNamespace sharedns;
 };
 
 void
