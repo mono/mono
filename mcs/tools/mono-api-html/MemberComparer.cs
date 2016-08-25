@@ -342,16 +342,31 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 
+				string mods_tgt = tgt [i].GetAttribute ("direction") ?? "";
+				string mods_src = src [i].GetAttribute ("direction") ?? "";
+
+				if (mods_tgt.Length > 0)
+					mods_tgt = mods_tgt + " ";
+
+				if (mods_src.Length > 0)
+					mods_src = mods_src + " ";
+
 				if (i >= srcCount) {
-					change.AppendAdded (tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
+					change.AppendAdded (mods_tgt + tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
 				} else if (i >= tgtCount) {
-					change.AppendRemoved (src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
+					change.AppendRemoved (mods_src + src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
 				} else {
 					var paramSourceType = src [i].GetTypeName ("type");
 					var paramTargetType = tgt [i].GetTypeName ("type");
 
 					var paramSourceName = src [i].GetAttribute ("name");
 					var paramTargetName = tgt [i].GetAttribute ("name");
+
+					if (mods_src != mods_tgt) {
+						change.AppendModified (mods_src, mods_tgt, true);
+					} else {
+						change.Append (mods_src);
+					}
 
 					if (paramSourceType != paramTargetType) {
 						change.AppendModified (paramSourceType, paramTargetType, true);
@@ -360,7 +375,7 @@ namespace Xamarin.ApiDiff {
 					}
 					change.Append (" ");
 					if (paramSourceName != paramTargetName) {
-						change.AppendModified (paramSourceName, paramTargetName, false);
+						change.AppendModified (paramSourceName, paramTargetName, true);
 					} else {
 						change.Append (paramSourceName);
 					}
