@@ -38,6 +38,8 @@ using Mono.Data.Tds.Protocol;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -1424,6 +1426,25 @@ namespace System.Data.SqlClient
 		public virtual XmlReader GetXmlReader (int i)
 		{
 			throw new NotImplementedException ();	
+		}
+
+		override public Task<T> GetFieldValueAsync<T> (int i, CancellationToken cancellationToken)
+		{
+			return base.GetFieldValueAsync<T> (i, cancellationToken);
+		}
+
+		override public Stream GetStream (int i)
+		{
+			return base.GetStream (i);
+		}
+		override public TextReader GetTextReader (int i)
+		{
+			return base.GetTextReader (i);
+		}
+
+		override public Task<bool> IsDBNullAsync (int i, CancellationToken cancellationToken)
+		{
+			return base.IsDBNullAsync (i, cancellationToken);
 		}
 
 		#endregion // Methods

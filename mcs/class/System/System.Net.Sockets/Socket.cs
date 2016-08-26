@@ -811,7 +811,7 @@ namespace System.Net.Sockets
 
 #region Poll
 
-		public bool Poll (int time_us, SelectMode mode)
+		public bool Poll (int microSeconds, SelectMode mode)
 		{
 			ThrowIfDisposedAndClosed ();
 
@@ -819,7 +819,7 @@ namespace System.Net.Sockets
 				throw new NotSupportedException ("'mode' parameter is not valid.");
 
 			int error;
-			bool result = Poll_internal (safe_handle, mode, time_us, out error);
+			bool result = Poll_internal (safe_handle, mode, microSeconds, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -1115,27 +1115,27 @@ namespace System.Net.Sockets
 
 #region Bind
 
-		public void Bind (EndPoint local_end)
+		public void Bind (EndPoint localEP)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			if (local_end == null)
-				throw new ArgumentNullException("local_end");
+			if (localEP == null)
+				throw new ArgumentNullException("localEP");
 				
-			var ipEndPoint = local_end as IPEndPoint;
+			var ipEndPoint = localEP as IPEndPoint;
 			if (ipEndPoint != null) {
-				local_end = RemapIPEndPoint (ipEndPoint);	
+				localEP = RemapIPEndPoint (ipEndPoint);	
 			}
 			
 			int error;
-			Bind_internal (safe_handle, local_end.Serialize(), out error);
+			Bind_internal (safe_handle, localEP.Serialize(), out error);
 
 			if (error != 0)
 				throw new SocketException (error);
 			if (error == 0)
 				is_bound = true;
 
-			seed_endpoint = local_end;
+			seed_endpoint = localEP;
 		}
 
 		private static void Bind_internal (SafeSocketHandle safeHandle, SocketAddress sa, out int error)
@@ -1732,14 +1732,14 @@ namespace System.Net.Sockets
 			return Receive (buffer, SocketFlags.None);
 		}
 
-		public int Receive (byte [] buffer, SocketFlags flags)
+		public int Receive (byte [] buffer, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
 			SocketError error;
-			int ret = Receive_nochecks (buffer, 0, buffer.Length, flags, out error);
+			int ret = Receive_nochecks (buffer, 0, buffer.Length, socketFlags, out error);
 
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
@@ -1750,14 +1750,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buffer, int size, SocketFlags flags)
+		public int Receive (byte [] buffer, int size, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, size);
 
 			SocketError error;
-			int ret = Receive_nochecks (buffer, 0, size, flags, out error);
+			int ret = Receive_nochecks (buffer, 0, size, socketFlags, out error);
 
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
@@ -1768,14 +1768,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags)
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
 			SocketError error;
-			int ret = Receive_nochecks (buffer, offset, size, flags, out error);
+			int ret = Receive_nochecks (buffer, offset, size, socketFlags, out error);
 
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
@@ -1786,13 +1786,13 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			return Receive_nochecks (buffer, offset, size, flags, out error);
+			return Receive_nochecks (buffer, offset, size, socketFlags, out errorCode);
 		}
 
 		public int Receive (IList<ArraySegment<byte>> buffers)
@@ -2075,24 +2075,24 @@ namespace System.Net.Sockets
 			return ReceiveFrom (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
 		}
 
-		public int ReceiveFrom (byte [] buffer, SocketFlags flags, ref EndPoint remoteEP)
+		public int ReceiveFrom (byte [] buffer, SocketFlags socketFlags, ref EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 
-			return ReceiveFrom (buffer, 0, buffer.Length, flags, ref remoteEP);
+			return ReceiveFrom (buffer, 0, buffer.Length, socketFlags, ref remoteEP);
 		}
 
-		public int ReceiveFrom (byte [] buffer, int size, SocketFlags flags, ref EndPoint remoteEP)
+		public int ReceiveFrom (byte [] buffer, int size, SocketFlags socketFlags, ref EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, size);
 
-			return ReceiveFrom (buffer, 0, size, flags, ref remoteEP);
+			return ReceiveFrom (buffer, 0, size, socketFlags, ref remoteEP);
 		}
 
-		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags, ref EndPoint remoteEP)
+		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
@@ -2102,7 +2102,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("remoteEP");
 
 			int error;
-			return ReceiveFrom_nochecks_exc (buffer, offset, size, flags, ref remoteEP, true, out error);
+			return ReceiveFrom_nochecks_exc (buffer, offset, size, socketFlags, ref remoteEP, true, out error);
 		}
 
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
@@ -2325,14 +2325,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Send (byte [] buffer, SocketFlags flags)
+		public int Send (byte [] buffer, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
 			SocketError error;
-			int ret = Send_nochecks (buffer, 0, buffer.Length, flags, out error);
+			int ret = Send_nochecks (buffer, 0, buffer.Length, socketFlags, out error);
 
 			if (error != SocketError.Success)
 				throw new SocketException ((int) error);
@@ -2340,14 +2340,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Send (byte [] buffer, int size, SocketFlags flags)
+		public int Send (byte [] buffer, int size, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, size);
 
 			SocketError error;
-			int ret = Send_nochecks (buffer, 0, size, flags, out error);
+			int ret = Send_nochecks (buffer, 0, size, socketFlags, out error);
 
 			if (error != SocketError.Success)
 				throw new SocketException ((int) error);
@@ -2355,14 +2355,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Send (byte [] buffer, int offset, int size, SocketFlags flags)
+		public int Send (byte [] buffer, int offset, int size, SocketFlags socketFlags)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
 			SocketError error;
-			int ret = Send_nochecks (buffer, offset, size, flags, out error);
+			int ret = Send_nochecks (buffer, offset, size, socketFlags, out error);
 
 			if (error != SocketError.Success)
 				throw new SocketException ((int) error);
@@ -2370,13 +2370,13 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Send (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
+		public int Send (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			return Send_nochecks (buffer, offset, size, flags, out error);
+			return Send_nochecks (buffer, offset, size, socketFlags, out errorCode);
 		}
 
 		public
@@ -2685,37 +2685,37 @@ namespace System.Net.Sockets
 
 #region SendTo
 
-		public int SendTo (byte [] buffer, EndPoint remote_end)
+		public int SendTo (byte [] buffer, EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 
-			return SendTo (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
+			return SendTo (buffer, 0, buffer.Length, SocketFlags.None, remoteEP);
 		}
 
-		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
+		public int SendTo (byte [] buffer, SocketFlags socketFlags, EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 
-			return SendTo (buffer, 0, buffer.Length, flags, remote_end);
+			return SendTo (buffer, 0, buffer.Length, socketFlags, remoteEP);
 		}
 
-		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
+		public int SendTo (byte [] buffer, int size, SocketFlags socketFlags, EndPoint remoteEP)
 		{
-			return SendTo (buffer, 0, size, flags, remote_end);
+			return SendTo (buffer, 0, size, socketFlags, remoteEP);
 		}
 
-		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
+		public int SendTo (byte [] buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			if (remote_end == null)
-				throw new ArgumentNullException("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException("remoteEP");
 
-			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
+			return SendTo_nochecks (buffer, offset, size, socketFlags, remoteEP);
 		}
 
 		public bool SendToAsync (SocketAsyncEventArgs e)
@@ -3027,12 +3027,12 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 		}
 
-		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int length)
+		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionLength)
 		{
 			ThrowIfDisposedAndClosed ();
 
 			int error;
-			byte[] byte_val = new byte [length];
+			byte[] byte_val = new byte [optionLength];
 			GetSocketOption_arr_internal (safe_handle, optionLevel, optionName, ref byte_val, out error);
 
 			if (error != 0)
@@ -3193,13 +3193,13 @@ namespace System.Net.Sockets
 
 #region IOControl
 
-		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
+		public int IOControl (int ioControlCode, byte [] optionInValue, byte [] optionOutValue)
 		{
 			if (is_disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
-			int result = IOControl_internal (safe_handle, ioctl_code, in_value, out_value, out error);
+			int result = IOControl_internal (safe_handle, ioControlCode, optionInValue, optionOutValue, out error);
 
 			if (error != 0)
 				throw new SocketException (error);

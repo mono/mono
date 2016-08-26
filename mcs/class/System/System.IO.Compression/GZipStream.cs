@@ -70,21 +70,21 @@ namespace System.IO.Compression {
 			base.Dispose (disposing);
 		}
 
-		public override int Read (byte[] dest, int dest_offset, int count)
+		public override int Read (byte[] array, int offset, int count)
 		{
 			if (deflateStream == null)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			return deflateStream.Read(dest, dest_offset, count);
+			return deflateStream.Read(array, offset, count);
 		}
 
 
-		public override void Write (byte[] src, int src_offset, int count)
+		public override void Write (byte[] array, int offset, int count)
 		{
 			if (deflateStream == null)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			deflateStream.Write (src, src_offset, count);
+			deflateStream.Write (array, offset, count);
 		}
 
 		public override void Flush()

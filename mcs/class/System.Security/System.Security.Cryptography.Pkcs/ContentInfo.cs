@@ -53,14 +53,14 @@ namespace System.Security.Cryptography.Pkcs {
 		{
 		} 
 
-		public ContentInfo (Oid oid, byte[] content) 
+		public ContentInfo (Oid contentType, byte[] content) 
 		{
-			if (oid == null)
-				throw new ArgumentNullException ("oid");
+			if (contentType == null)
+				throw new ArgumentNullException ("contentType");
 			if (content == null)
 				throw new ArgumentNullException ("content");
 
-			_oid = oid;
+			_oid = contentType;
 			_content = content;
 		}
 

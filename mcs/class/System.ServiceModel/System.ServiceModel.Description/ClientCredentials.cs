@@ -51,17 +51,17 @@ namespace System.ServiceModel.Description
 		}
 
 		[MonoTODO]
-		protected ClientCredentials (ClientCredentials source)
+		protected ClientCredentials (ClientCredentials other)
 		{
-			userpass = source.userpass.Clone ();
-			digest = source.digest.Clone ();
-			initiator = source.initiator.Clone ();
-			recipient = source.recipient.Clone ();
-			windows = source.windows.Clone ();
+			userpass = other.userpass.Clone ();
+			digest = other.digest.Clone ();
+			initiator = other.initiator.Clone ();
+			recipient = other.recipient.Clone ();
+			windows = other.windows.Clone ();
 #if !MOBILE
-			issued_token = source.issued_token.Clone ();
-			peer = source.peer.Clone ();
-			support_interactive = source.support_interactive;
+			issued_token = other.issued_token.Clone ();
+			peer = other.peer.Clone ();
+			support_interactive = other.support_interactive;
 #endif
 		}
 
@@ -159,10 +159,10 @@ namespace System.ServiceModel.Description
 
 		[MonoTODO]
 		public virtual void ApplyClientBehavior (
-			ServiceEndpoint endpoint, ClientRuntime behavior)
+			ServiceEndpoint serviceEndpoint, ClientRuntime behavior)
 		{
-			if (endpoint == null)
-				throw new ArgumentNullException ("endpoint");
+			if (serviceEndpoint == null)
+				throw new ArgumentNullException ("serviceEndpoint");
 			if (behavior == null)
 				throw new ArgumentNullException ("behavior");
 
