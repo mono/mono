@@ -42,16 +42,16 @@ namespace System.ServiceModel
 		{
 		}
 
-		public FaultCode (string name, FaultCode subcode)
-			: this (name, String.Empty, subcode)
+		public FaultCode (string name, FaultCode subCode)
+			: this (name, String.Empty, subCode)
 		{
 		}
 
-		public FaultCode (string name, string ns, FaultCode subcode)
+		public FaultCode (string name, string ns, FaultCode subCode)
 		{
 			this.name = name;
 			this.ns = ns;
-			this.subcode = subcode;
+			this.subcode = subCode;
 		}
 
 		public bool IsPredefinedFault {
@@ -78,9 +78,9 @@ namespace System.ServiceModel
 			get { return subcode; }
 		}
 
-		public static FaultCode CreateReceiverFaultCode (FaultCode subcode)
+		public static FaultCode CreateReceiverFaultCode (FaultCode subCode)
 		{
-			return new FaultCode ("Receiver", subcode);
+			return new FaultCode ("Receiver", subCode);
 		}
 
 		public static FaultCode CreateReceiverFaultCode (string name, string ns)
@@ -88,9 +88,9 @@ namespace System.ServiceModel
 			return CreateReceiverFaultCode (new FaultCode (name, ns));
 		}
 		
-		public static FaultCode CreateSenderFaultCode (FaultCode subcode)
+		public static FaultCode CreateSenderFaultCode (FaultCode subCode)
 		{
-			return new FaultCode ("Sender", subcode);
+			return new FaultCode ("Sender", subCode);
 		}
 
 		public static FaultCode CreateSenderFaultCode (string name, string ns)

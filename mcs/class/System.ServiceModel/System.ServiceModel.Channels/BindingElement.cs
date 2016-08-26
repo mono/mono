@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		protected BindingElement (BindingElement other)
+		protected BindingElement (BindingElement elementToBeCloned)
 		{
 		}
 

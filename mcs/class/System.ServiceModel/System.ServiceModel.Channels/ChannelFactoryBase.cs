@@ -98,29 +98,29 @@ namespace System.ServiceModel.Channels
 		}
 
 		public TChannel CreateChannel (
-			EndpointAddress remoteAddress)
+			EndpointAddress address)
 		{
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
-			return CreateChannel (remoteAddress, remoteAddress.Uri);
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			return CreateChannel (address, address.Uri);
 		}
 
 		public TChannel CreateChannel (
-			EndpointAddress remoteAddress, Uri via)
+			EndpointAddress address, Uri via)
 		{
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
+			if (address == null)
+				throw new ArgumentNullException ("address");
 			if (via == null)
 				throw new ArgumentNullException ("via");
 
 			ValidateCreateChannel ();
-			var ch = OnCreateChannel (remoteAddress, via);
+			var ch = OnCreateChannel (address, via);
 			channels.Add (ch);
 			return ch;
 		}
 
 		protected abstract TChannel OnCreateChannel (
-			EndpointAddress remoteAddress, Uri via);
+			EndpointAddress address, Uri via);
 
 		protected override void OnAbort ()
 		{

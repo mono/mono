@@ -61,12 +61,12 @@ namespace System.Security.Cryptography.Pkcs {
 			_uattribs = new CryptographicAttributeObjectCollection ();
 		}
 
-		public EnvelopedCms (ContentInfo content) : this ()
+		public EnvelopedCms (ContentInfo contentInfo) : this ()
 		{
-			if (content == null)
-				throw new ArgumentNullException ("content");
+			if (contentInfo == null)
+				throw new ArgumentNullException ("contentInfo");
 
-			_content = content;
+			_content = contentInfo;
 		}
 
 		public EnvelopedCms (ContentInfo contentInfo, AlgorithmIdentifier encryptionAlgorithm)

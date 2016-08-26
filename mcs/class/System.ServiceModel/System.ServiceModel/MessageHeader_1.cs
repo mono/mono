@@ -53,10 +53,10 @@ namespace System.ServiceModel
 		{
 		}
 
-		public MessageHeader (T content, bool must_understand, string actor, bool relay)
+		public MessageHeader (T content, bool mustUnderstand, string actor, bool relay)
 		{
 			this.content = content;
-			this.must_understand = must_understand;
+			this.must_understand = mustUnderstand;
 			this.actor = actor;
 			this.relay = relay;
 		}

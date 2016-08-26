@@ -53,36 +53,36 @@ namespace System.ServiceModel.Channels {
 			this.addressing = addressing;
 		}
 		
-		public static MessageVersion CreateVersion (EnvelopeVersion envelope_version)
+		public static MessageVersion CreateVersion (EnvelopeVersion envelopeVersion)
 		{
-			return CreateVersion (envelope_version,
+			return CreateVersion (envelopeVersion,
 				AddressingVersion.WSAddressing10);
 		}
 
-		public static MessageVersion CreateVersion (EnvelopeVersion envelope_version,
-							    AddressingVersion addressing_version)
+		public static MessageVersion CreateVersion (EnvelopeVersion envelopeVersion,
+							    AddressingVersion addressingVersion)
 		{
-			if (envelope_version == EnvelopeVersion.None && addressing_version == AddressingVersion.None)
+			if (envelopeVersion == EnvelopeVersion.None && addressingVersion == AddressingVersion.None)
 				return None;
-			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.None)
+			if (envelopeVersion == EnvelopeVersion.Soap11 && addressingVersion == AddressingVersion.None)
 				return Soap11;
-			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressing10)
+			if (envelopeVersion == EnvelopeVersion.Soap12 && addressingVersion == AddressingVersion.WSAddressing10)
 				return Soap12WSAddressing10;
 
-			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.None)
+			if (envelopeVersion == EnvelopeVersion.Soap12 && addressingVersion == AddressingVersion.None)
 				return Soap12;
-			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.WSAddressing10)
+			if (envelopeVersion == EnvelopeVersion.Soap11 && addressingVersion == AddressingVersion.WSAddressing10)
 				return Soap11WSAddressing10;
-			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.WSAddressingAugust2004)
+			if (envelopeVersion == EnvelopeVersion.Soap11 && addressingVersion == AddressingVersion.WSAddressingAugust2004)
 				return Soap11WSAddressingAugust2004;
-			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressingAugust2004)
+			if (envelopeVersion == EnvelopeVersion.Soap12 && addressingVersion == AddressingVersion.WSAddressingAugust2004)
 				return Soap12WSAddressingAugust2004;
-			throw new ArgumentException (string.Format ("EnvelopeVersion {0} cannot be used with AddressingVersion {1}", envelope_version, addressing_version));
+			throw new ArgumentException (string.Format ("EnvelopeVersion {0} cannot be used with AddressingVersion {1}", envelopeVersion, addressingVersion));
 		}
 
-		public override bool Equals (object value)
+		public override bool Equals (object obj)
 		{
-			MessageVersion other = value as MessageVersion;
+			MessageVersion other = obj as MessageVersion;
 
 			if (other == null)
 				return false;

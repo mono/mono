@@ -70,11 +70,11 @@ namespace System.ServiceModel
 		{
 		}
 
-		public EndpointAddress (Uri uri, params AddressHeader [] headers)
-			: this (uri, null, new AddressHeaderCollection (headers), null, null) {}
+		public EndpointAddress (Uri uri, params AddressHeader [] addressHeaders)
+			: this (uri, null, new AddressHeaderCollection (addressHeaders), null, null) {}
 
-		public EndpointAddress (Uri uri, EndpointIdentity identity, params AddressHeader [] headers)
-			: this (uri, identity, new AddressHeaderCollection (headers), null, null) {}
+		public EndpointAddress (Uri uri, EndpointIdentity identity, params AddressHeader [] addressHeaders)
+			: this (uri, identity, new AddressHeaderCollection (addressHeaders), null, null) {}
 
 		public EndpointAddress (Uri uri, EndpointIdentity identity, AddressHeaderCollection headers)
 			: this (uri, identity, headers, null, null) {}
