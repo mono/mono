@@ -669,7 +669,43 @@ namespace System.Reflection.Emit {
 			return getToken (this, member, true);
 		}
 
+		static int typespec_tokengen =  0x1bffffff;
+		static int memberref_tokengen =  0x0affffff;
+		Dictionary<MemberInfo, int> inst_tokens = new Dictionary<MemberInfo, int> ();
+
+		//
+		// Assign a pseudo token to the various TypeBuilderInst objects, so the runtime
+		// doesn't have to deal with them.
+		// For Save assemblies, the tokens will be fixed up later during Save ().
+		// For Run assemblies, the tokens will not be fixed up, so the runtime will
+		// still encounter these objects, it will resolve them by calling their
+		// RuntimeResolve () methods.
+		//
+		int GetPseudoToken (MemberInfo member) {
+			int token;
+
+			if (inst_tokens.TryGetValue (member, out token))
+				return token;
+			// Count backwards to avoid collisions with the tokens
+			// allocated by the runtime
+			if (member is MonoGenericClass)
+				token = typespec_tokengen --;
+			else if (member is FieldOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else if (member is ConstructorOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else if (member is MethodOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else
+				throw new NotImplementedException ();
+			inst_tokens [member] = token;
+			RegisterToken (member, token);
+			return token;
+		}
+
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
+			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst)
+				return GetPseudoToken (member);
 			return getToken (this, member, create_open_instance);
 		}
 
@@ -714,6 +750,45 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void WriteToFile (IntPtr handle);
 
+		//
+		// Fixup the pseudo tokens assigned to the various TypeBuilderInst objects
+		//
+		void FixupTokens () {
+			var token_map = new Dictionary<int, int> ();
+			var member_map = new Dictionary<int, MemberInfo> ();
+			foreach (var v in inst_tokens) {
+				var member = v.Key;
+				var old_token = v.Value;
+				MemberInfo finished = null;
+
+				// Construct the concrete reflection object corresponding to the
+				// TypeBuilderInst object, and request a token for it instead.
+				if (member is FieldOnTypeBuilderInst) {
+					finished = (member as FieldOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is MonoGenericClass) {
+					finished = (member as MonoGenericClass).RuntimeResolve ();
+				} else if (member is ConstructorOnTypeBuilderInst) {
+					finished = (member as ConstructorOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is MethodOnTypeBuilderInst) {
+					finished = (member as MethodOnTypeBuilderInst).RuntimeResolve ();
+				} else {
+					throw new NotImplementedException ();
+				}
+
+				int new_token = GetToken (finished);
+				token_map [old_token] = new_token;
+				member_map [old_token] = finished;
+				// Replace the token mapping in the runtime so it points to the new object
+				RegisterToken (finished, old_token);
+			}
+
+			// Replace the tokens in the IL stream
+			if (types != null) {
+				for (int i = 0; i < num_types; ++i)
+					types [i].FixupTokens (token_map, member_map);
+			}
+		}
+
 		internal void Save ()
 		{
 			if (transient && !is_main)
@@ -724,6 +799,8 @@ namespace System.Reflection.Emit {
 					if (!types [i].is_created)
 						throw new NotSupportedException ("Type '" + types [i].FullName + "' was not completed.");
 			}
+
+			FixupTokens ();
 
 			if ((global_type != null) && (global_type_created == null))
 				global_type_created = global_type.CreateType ();

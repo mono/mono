@@ -1776,6 +1776,13 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 				g_assert_not_reached ();
 			}
 			break;
+		case MONO_TABLE_TYPESPEC:
+			if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
+				continue;
+			} else {
+				g_assert_not_reached ();
+			}
+			break;
 		default:
 			g_error ("got unexpected table 0x%02x in fixup", target [3]);
 		}

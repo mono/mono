@@ -1568,22 +1568,11 @@ mono_reflection_get_custom_attrs_info_checked (MonoObject *obj, MonoError *error
 		} 
 #ifndef DISABLE_REFLECTION_EMIT
 		else if (mono_is_sre_method_on_tb_inst (member_class)) {/*XXX This is a workaround for Compiler Context*/
-			MonoMethod *method = mono_reflection_method_on_tb_inst_get_handle ((MonoReflectionMethodOnTypeBuilderInst*)param->MemberImpl, error);
-			return_val_if_nok (error, NULL);
-			cinfo = mono_custom_attrs_from_param_checked (method, param->PositionImpl + 1, error);
-			return_val_if_nok (error, NULL);
+			// FIXME: Is this still needed ?
+			g_assert_not_reached ();
 		} else if (mono_is_sre_ctor_on_tb_inst (member_class)) { /*XX This is a workaround for Compiler Context*/
-			MonoReflectionCtorOnTypeBuilderInst *c = (MonoReflectionCtorOnTypeBuilderInst*)param->MemberImpl;
-			MonoMethod *method = NULL;
-			if (mono_is_sre_ctor_builder (mono_object_class (c->cb)))
-				method = ((MonoReflectionCtorBuilder *)c->cb)->mhandle;
-			else if (mono_is_sr_mono_cmethod (mono_object_class (c->cb)))
-				method = ((MonoReflectionMethod *)c->cb)->method;
-			else
-				g_error ("mono_reflection_get_custom_attrs_info:: can't handle a CTBI with base_method of type %s", mono_type_get_full_name (member_class));
-
-			cinfo = mono_custom_attrs_from_param_checked (method, param->PositionImpl + 1, error);
-			return_val_if_nok (error, NULL);
+			// FIXME: Is this still needed ?
+			g_assert_not_reached ();
 		} 
 #endif
 		else {

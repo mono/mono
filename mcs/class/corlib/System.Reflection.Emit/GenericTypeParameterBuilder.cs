@@ -88,6 +88,8 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
+			if (mbuilder != null)
+				return MethodBase.GetMethodFromHandle (mbuilder.MethodHandleInternal).GetGenericArguments () [index];
 			return tbuilder.InternalResolve ().GetGenericArguments () [index]; 
 		}
 

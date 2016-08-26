@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
@@ -870,6 +871,15 @@ namespace System.Reflection.Emit
 				return t;
 			} else {
 				return t;
+			}
+		}
+
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			if (methods != null) {
+				for (int i = 0; i < num_methods; ++i) {
+					MethodBuilder mb = (MethodBuilder)(methods[i]);
+					mb.FixupTokens (token_map, member_map);
+				}
 			}
 		}
 
