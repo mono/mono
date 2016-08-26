@@ -1320,7 +1320,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (GetType().Assembly, a);
 		}
 
-#if NET_4_5
 		[Test]
 		public void DefinedTypes_Equality ()
 		{
@@ -1329,7 +1328,6 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreSame (x1, x2, "#1");
 		}
-#endif
 
 		class MyAssembly : Assembly { }
 

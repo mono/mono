@@ -58,11 +58,9 @@ namespace MonoTests.Microsoft.Build.Construction
 				ProjectRootElement.Create (XmlReader.Create (new StringReader (" <root/>")));
 				Assert.Fail ("should throw InvalidProjectFileException");
 			} catch (InvalidProjectFileException ex) {
-				#if NET_4_5
 				Assert.AreEqual (1, ex.LineNumber, "#1");
 				// it is very interesting, but unlike XmlReader.LinePosition it returns the position for '<'.
 				Assert.AreEqual (2, ex.ColumnNumber, "#2");
-				#endif
 			}
 		}
 
@@ -102,11 +100,9 @@ namespace MonoTests.Microsoft.Build.Construction
 				ProjectRootElement.Create (xml);
 				Assert.Fail ("should throw InvalidProjectFileException");
 			} catch (InvalidProjectFileException ex) {
-				#if NET_4_5
 				Assert.AreEqual (1, ex.LineNumber, "#1");
 				// unlike unexpected element case which returned the position for '<', it does return the name start char...
 				Assert.AreEqual (70, ex.ColumnNumber, "#2");
-				#endif
 			}
 		}
 

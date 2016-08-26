@@ -2,7 +2,6 @@
 // BootstrapContextTest.cs - NUnit Test Cases for System.IdentityModel.Tokens.BootstrapContext
 //
 
-#if NET_4_5
 using System;
 using System.IO;
 using System.IdentityModel.Tokens;
@@ -248,4 +247,3 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5 {
 		}
 	}
 }
-#endif

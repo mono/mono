@@ -836,11 +836,7 @@ namespace MonoTests.System
 		{
 			Uri u = new Uri("http://localhost/index.asp#main#start", false);
 
-#if NET_4_5
 				Assert.AreEqual (u.Fragment, "#main#start", "#1");
-#else
-				Assert.AreEqual (u.Fragment, "#main%23start", "#1");
-#endif
 
 			u = new Uri("http://localhost/index.asp#main#start", true);
 			Assert.AreEqual (u.Fragment, "#main#start", "#2");
@@ -849,11 +845,7 @@ namespace MonoTests.System
 
 			Uri b = new Uri ("http://www.gnome.org");
 			Uri n = new Uri (b, "blah#main#start");
-#if NET_4_5
 				Assert.AreEqual (n.Fragment, "#main#start", "#3");
-#else
-				Assert.AreEqual (n.Fragment, "#main%23start", "#3");
-#endif
 
 			n = new Uri (b, "blah#main#start", true);
 			Assert.AreEqual (n.Fragment, "#main#start", "#4");
@@ -1071,13 +1063,8 @@ namespace MonoTests.System
 			Uri ftp = new Uri ("FTP://[::ffFF:169.32.14.5]/");
 			Assert.AreEqual ("ftp", ftp.Scheme, "#7");
 
-#if NET_4_5
 			Assert.AreEqual ("[::ffff:169.32.14.5]", ftp.Host, "#8");
 			Assert.AreEqual ("ftp://[::ffff:169.32.14.5]/", ftp.ToString (), "#9");
-#else
-			Assert.AreEqual ("[0000:0000:0000:0000:0000:FFFF:A920:0E05]", ftp.Host, "#8");
-			Assert.AreEqual ("ftp://[0000:0000:0000:0000:0000:FFFF:A920:0E05]/", ftp.ToString (), "#9");
-#endif
 		}
 
 		[Test]
@@ -1484,15 +1471,9 @@ namespace MonoTests.System
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
 
-#if NET_4_5
 			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20%21%22%23%24%25%26%27%28%29%2A%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				Uri.EscapeDataString (sb.ToString ()));
-#else
-			Assert.AreEqual (
-				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-				Uri.EscapeDataString (sb.ToString ()));
-#endif
 
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
@@ -1503,15 +1484,9 @@ namespace MonoTests.System
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
 
-#if NET_4_5
 			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[%5C]%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				Uri.EscapeUriString (sb.ToString ()));
-#else
-			Assert.AreEqual (
-				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-				Uri.EscapeUriString (sb.ToString ()));
-#endif
 
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
 		}

@@ -343,7 +343,6 @@ namespace MonoTests.System.IO.Compression
 			return new MemoryStream (Encoding.UTF8.GetBytes (s));
 		}
 
-#if NET_4_5
 		[Test]
 		public void CheckNet45Overloads () // Xambug #21982
 		{
@@ -361,7 +360,6 @@ namespace MonoTests.System.IO.Compression
 			decompressing.Close();
 			backing.Close();
 		}
-#endif	
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

@@ -36,7 +36,6 @@ using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_5
 	[TestFixture]
 	public class CompareAttributeTest
 	{
@@ -66,5 +65,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsNotNull (sla.GetValidationResult (DateTime.Now, ctx), "#B-4");
 		}
 	}
-#endif
 }
