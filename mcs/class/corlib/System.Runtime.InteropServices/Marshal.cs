@@ -422,16 +422,14 @@ namespace System.Runtime.InteropServices
 
 		public static int GetHRForException (Exception e)
 		{
+			if (e == null) return 0;
+
 #if FEATURE_COMINTEROP
 			var errorInfo = new ManagedErrorInfo(e);
 			SetErrorInfo (0, errorInfo);
+#endif
 
 			return e._HResult;
-#elif FULL_AOT_RUNTIME
-			throw new PlatformNotSupportedException ();
-#else			
-			return -1;
-#endif
 		}
 
 		[MonoTODO]
