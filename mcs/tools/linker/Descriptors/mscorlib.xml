@@ -279,17 +279,17 @@
 			<method name="DefineLPArrayInternal" />
 		</type>
 
-		<type fullname="FieldOnTypeBuilderInst">
+		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst">
 		  <!-- called from the runtime -->
 		  <method name="RuntimeResolve" />
 		</type>
 
-		<type fullname="MethodOnTypeBuilderInst">
+		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst">
 		  <!-- called from the runtime -->
 		  <method name="RuntimeResolve" />
 		</type>
 
-		<type fullname="ConstructorOnTypeBuilderInst">
+		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst">
 		  <!-- called from the runtime -->
 		  <method name="RuntimeResolve" />
 		</type>
