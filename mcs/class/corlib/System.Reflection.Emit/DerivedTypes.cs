@@ -131,6 +131,11 @@ namespace System.Reflection.Emit
 				return m_baseType.IsUserType;
 			}
 		}
+
+		// Called from the runtime to return the corresponding finished Type object
+		internal override Type RuntimeResolve () {
+			return InternalResolve ();
+		}
 	}
 
 	[StructLayout (LayoutKind.Sequential)]

@@ -294,6 +294,11 @@
 		  <method name="RuntimeResolve" />
 		</type>
 
+		<type fullname="System.Reflection.Emit.SymbolType">
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
+		</type>
+
 		<!--
 		<type fullname="System.Runtime.CompilerServices.CallConvCdecl" />
 		<type fullname="System.Runtime.CompilerServices.CallConvStdcall" />

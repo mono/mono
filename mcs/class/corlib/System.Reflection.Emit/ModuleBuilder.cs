@@ -688,7 +688,7 @@ namespace System.Reflection.Emit {
 				return token;
 			// Count backwards to avoid collisions with the tokens
 			// allocated by the runtime
-			if (member is MonoGenericClass)
+			if (member is MonoGenericClass || member is SymbolType)
 				token = typespec_tokengen --;
 			else if (member is FieldOnTypeBuilderInst)
 				token = memberref_tokengen --;
@@ -704,7 +704,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst)
+			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType)
 				return GetPseudoToken (member);
 			return getToken (this, member, create_open_instance);
 		}
@@ -763,10 +763,10 @@ namespace System.Reflection.Emit {
 
 				// Construct the concrete reflection object corresponding to the
 				// TypeBuilderInst object, and request a token for it instead.
-				if (member is FieldOnTypeBuilderInst) {
+				if (member is MonoGenericClass || member is SymbolType) {
+					finished = (member as Type).RuntimeResolve ();
+				} else if (member is FieldOnTypeBuilderInst) {
 					finished = (member as FieldOnTypeBuilderInst).RuntimeResolve ();
-				} else if (member is MonoGenericClass) {
-					finished = (member as MonoGenericClass).RuntimeResolve ();
 				} else if (member is ConstructorOnTypeBuilderInst) {
 					finished = (member as ConstructorOnTypeBuilderInst).RuntimeResolve ();
 				} else if (member is MethodOnTypeBuilderInst) {

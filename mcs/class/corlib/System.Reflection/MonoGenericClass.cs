@@ -96,7 +96,7 @@ namespace System.Reflection
 		}
 
 		// Called from the runtime to return the corresponding finished Type object
-		internal Type RuntimeResolve ()
+		internal override Type RuntimeResolve ()
 		{
 			if (generic_type is TypeBuilder && !(generic_type as TypeBuilder).IsCreated ())
 				AppDomain.CurrentDomain.DoTypeResolve (generic_type);
