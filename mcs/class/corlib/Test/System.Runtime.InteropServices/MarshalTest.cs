@@ -265,7 +265,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		public void GetHRForException ()
 		{
 			Assert.AreEqual (0, Marshal.GetHRForException (null));
-			Assert.Less (Marshal.GetHRForException (new Exception ()), 0);
+			Assert.IsTrue (Marshal.GetHRForException (new Exception ()) < 0);
 			Assert.AreEqual (12345, Marshal.GetHRForException (new IOException ("test message", 12345)));
 		}
 
