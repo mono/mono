@@ -131,7 +131,7 @@ namespace System.Reflection.Emit
 		// Called from the runtime to return the corresponding finished FieldInfo object
 		internal FieldInfo RuntimeResolve () {
 			var type = instantiation.RuntimeResolve ();
-			return type.GetField (Name);
+			return type.GetField (fb);
 		}
 	}
 }
