@@ -96,9 +96,6 @@ namespace System.Reflection.Emit
 		private extern void setup_internal_class ();
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_generic_class ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_generic_class ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1762,8 +1759,6 @@ namespace System.Reflection.Emit
 				throw new ArgumentNullException ("names");
 			if (names.Length == 0)
 				throw new ArgumentException ("names");
-
-			setup_generic_class ();
 
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++) {
