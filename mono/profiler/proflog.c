@@ -17,6 +17,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-gc.h>
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/assembly.h>
@@ -1634,6 +1635,14 @@ gc_handle (MonoProfiler *prof, int op, int type, uintptr_t handle, MonoObject *o
 		emit_bt (prof, logbuffer, &data);
 
 	EXIT_LOG;
+
+	process_requests (prof);
+}
+
+static void
+gc_finalize_begin (MonoProfiler *prof)
+{
+	// TODO: We should actually use the finalization callbacks to write relevant events as well.
 
 	process_requests (prof);
 }
@@ -4421,7 +4430,6 @@ helper_thread (void* arg)
 	int command_socket;
 	int len;
 	char buf [64];
-	MonoThread *thread = NULL;
 
 	mono_threads_attach_tools_thread ();
 	mono_native_thread_set_name (mono_native_thread_id_get (), "Profiler helper");
@@ -4481,8 +4489,6 @@ helper_thread (void* arg)
 		if (FD_ISSET (prof->pipes [0], &rfds)) {
 			char c;
 			read (prof->pipes [0], &c, 1);
-			if (thread)
-				mono_thread_detach (thread);
 			if (do_debug)
 				fprintf (stderr, "helper shutdown\n");
 #if USE_PERF_EVENTS
@@ -4523,17 +4529,9 @@ helper_thread (void* arg)
 			}
 			buf [len] = 0;
 			if (strcmp (buf, "heapshot\n") == 0) {
+				// We process the request in gc_finalize_begin ().
 				heapshot_requested = 1;
-				//fprintf (stderr, "perform heapshot\n");
-				if (InterlockedRead (&runtime_inited) && !thread) {
-					thread = mono_thread_attach (mono_get_root_domain ());
-					/*fprintf (stderr, "attached\n");*/
-				}
-				if (thread) {
-					process_requests (prof);
-					mono_thread_detach (thread);
-					thread = NULL;
-				}
+				mono_gc_finalize_notify ();
 			}
 			continue;
 		}
@@ -5396,6 +5394,11 @@ mono_profiler_startup (const char *desc)
 		events |= MONO_PROFILE_STATISTICAL;
 		mono_profiler_set_statistical_mode (sampling_mode, sample_freq);
 		mono_profiler_install_statistical (mono_sample_hit);
+	}
+
+	if (hs_mode_ondemand) {
+		events |= MONO_PROFILE_GC_FINALIZATION;
+		mono_profiler_install_gc_finalize (gc_finalize_begin, NULL, NULL);
 	}
 
 	mono_profiler_set_events ((MonoProfileFlags)events);
