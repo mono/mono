@@ -781,7 +781,7 @@ mono_gc_invoke_finalizers (void)
 	return 0;
 }
 
-gboolean
+MonoBoolean
 mono_gc_pending_finalizers (void)
 {
 	return GC_should_invoke_finalizers ();
