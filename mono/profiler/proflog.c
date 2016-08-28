@@ -4528,7 +4528,7 @@ helper_thread (void* arg)
 				continue;
 			}
 			buf [len] = 0;
-			if (strcmp (buf, "heapshot\n") == 0) {
+			if (strcmp (buf, "heapshot\n") == 0 && hs_mode_ondemand) {
 				// We process the request in gc_finalize_begin ().
 				heapshot_requested = 1;
 				mono_gc_finalize_notify ();
