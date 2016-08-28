@@ -102,6 +102,10 @@ struct _ProfilerDesc {
 	MonoProfileGCHandleFunc  gc_handle;
 	MonoProfileGCRootFunc    gc_roots;
 
+	MonoProfileGCFinalizeBeginFunc gc_finalize_begin;
+	MonoProfileGCFinalizeObjectFunc gc_finalize_object;
+	MonoProfileGCFinalizeEndFunc gc_finalize_end;
+
 	MonoProfileFunc          runtime_initialized_event;
 
 	MonoProfilerCodeChunkNew code_chunk_new;
@@ -923,6 +927,41 @@ mono_profiler_install_gc_roots (MonoProfileGCHandleFunc handle_callback, MonoPro
 		return;
 	prof_list->gc_handle = handle_callback;
 	prof_list->gc_roots = roots_callback;
+}
+
+void
+mono_profiler_gc_finalize_begin (void)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_begin)
+			prof->gc_finalize_begin (prof->profiler);
+}
+
+void
+mono_profiler_gc_finalize_object (MonoObject *obj)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_object)
+			prof->gc_finalize_object (prof->profiler, obj);
+}
+
+void
+mono_profiler_gc_finalize_end (int count)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_end)
+			prof->gc_finalize_end (prof->profiler, count);
+}
+
+void
+mono_profiler_install_gc_finalize (MonoProfileGCFinalizeBeginFunc begin_callback, MonoProfileGCFinalizeObjectFunc object_callback, MonoProfileGCFinalizeEndFunc end_callback)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->gc_finalize_begin = begin_callback;
+	prof_list->gc_finalize_object = object_callback;
+	prof_list->gc_finalize_end = end_callback;
 }
 
 void
