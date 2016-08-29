@@ -1595,6 +1595,15 @@ namespace Mono.CSharp {
 			if (res && errors != ec.Report.Errors)
 				return null;
 
+			if (block.IsAsync && block.Original.ParametersBlock.HasCapturedThis && ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.block.IsAsync) {
+				//
+				// We'll do ldftn to load the fabricated m_X method but
+				// because we are inside struct the method can be hoisted
+				// anywhere in the parent scope
+				//
+				ec.CurrentBlock.ParametersBlock.HasReferenceToStoreyForInstanceLambdas = true;
+			}
+
 			return res ? this : null;
 		}
 
@@ -1798,6 +1807,8 @@ namespace Mono.CSharp {
 							parent = storey = sm;
 						}
 					}
+				} else if (src_block.ParametersBlock.HasReferenceToStoreyForInstanceLambdas) {
+					src_block.ParametersBlock.StateMachine.AddParentStoreyReference (ec, storey);
 				}
 
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
