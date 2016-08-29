@@ -26,6 +26,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/marshal.h>
+#include <mono/mini/jit.h>
 #include "mono/utils/mono-digest.h"
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-counters.h>
@@ -425,6 +426,8 @@ verify_image_file (const char *fname)
 		"Ok", "Error", "Warning", NULL, "CLS", NULL, NULL, NULL, "Not Verifiable"
 	};
 
+	mono_jit_init_version ("pedump", NULL);
+
 	image = mono_image_open_raw (fname, &status);
 	if (!image) {
 		printf ("Could not open %s\n", fname);
@@ -459,21 +462,8 @@ verify_image_file (const char *fname)
 	image->assembly = assembly;
 	mono_assembly_fill_assembly_name (image, &assembly->aname);
 
-	/*Finish initializing the runtime*/
-	mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-	mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
-
-	mono_init_version ("pedump", image->version);
-
-	mono_install_assembly_preload_hook (pedump_preload, GUINT_TO_POINTER (FALSE));
-
-	mono_icall_init ();
-	mono_marshal_init ();
-
-
 	if (!verify_partial_md && !mono_verifier_verify_full_table_data (image, &errors))
 		goto invalid_image;
-
 
 	table = &image->tables [MONO_TABLE_TYPEDEF];
 	for (i = 1; i <= table->rows; ++i) {
@@ -653,15 +643,6 @@ main (int argc, char *argv [])
 	
 	if (!file)
 		usage ();
-
-#ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters_init ();
-#endif
-	mono_counters_init ();
-	mono_metadata_init ();
-	mono_images_init ();
-	mono_assemblies_init ();
-	mono_loader_init ();
  
 	if (verify_pe) {
 		char *tok = strtok (flags, ",");
