@@ -275,6 +275,9 @@ namespace System.ServiceModel
 			EndpointAddress ea = ReadContents (addressingVersion, reader);
 
 			reader.MoveToContent ();
+			if (reader.IsStartElement ("ReferenceParameters", addressingVersion.Namespace)) {
+				reader.Skip ();
+			}
 			reader.ReadEndElement ();
 			return ea;
 		}
