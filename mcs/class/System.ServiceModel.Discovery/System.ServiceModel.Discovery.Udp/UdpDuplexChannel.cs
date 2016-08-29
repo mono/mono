@@ -67,6 +67,7 @@ namespace System.ServiceModel.Discovery.Udp
 		MessageEncoder message_encoder;
 		UdpClient client;
 		IPAddress multicast_address;
+		IPEndPoint remote_end_point;
 		UdpTransportBindingElement binding_element;
 		
 		// for servers
@@ -91,34 +92,39 @@ namespace System.ServiceModel.Discovery.Udp
 
 		static readonly Random rnd = new Random ();
 
-		UdpClient GetSenderClient (Message message)
+		void GetSenderClient (Message message, out UdpClient cli, out IPEndPoint remote)
 		{
-			if (RemoteAddress != null)
-				return client;
+			if (RemoteAddress != null) {
+				cli = client;
+				remote = remote_end_point;
+				return;
+			}
 				
 			var rmp = message.Properties [RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
 			if (rmp == null)
 				throw new ArgumentException ("This duplex channel from the channel listener cannot send messages without RemoteEndpointMessageProperty");
-			var cli = new UdpClient ();
-			cli.Connect (IPAddress.Parse (rmp.Address), rmp.Port);
-			return cli;
+			cli = new UdpClient ();
+			remote = new IPEndPoint (IPAddress.Parse (rmp.Address), rmp.Port);
 		}
 
 		public void Send (Message message, TimeSpan timeout)
 		{
+			UdpClient cli;
+			IPEndPoint remote;
+
 			if (State != CommunicationState.Opened)
 				throw new InvalidOperationException ("The UDP channel must be opened before sending a message.");
 
-			var cli = GetSenderClient (message);
+			GetSenderClient (message, out cli, out remote);
 			try {
-				SendCore (cli, message, timeout);
+				SendCore (cli, remote, message, timeout);
 			} finally {
 				if (cli != client)
 					cli.Close ();
 			}
 		}
 
-		void SendCore (UdpClient cli, Message message, TimeSpan timeout)
+		void SendCore (UdpClient cli, IPEndPoint remote, Message message, TimeSpan timeout)
 		{
 			Logger.LogMessage (MessageLogSourceKind.TransportSend, ref message, int.MaxValue);
 
@@ -128,7 +134,7 @@ namespace System.ServiceModel.Discovery.Udp
 			for (int i = 0; i < 3; i++) {
 				// FIXME: use MaxAnnouncementDelay. It is fixed now.
 				Thread.Sleep (rnd.Next (50, 500));
-				cli.Send (ms.GetBuffer (), (int) ms.Length);
+				cli.Send (ms.GetBuffer (), (int) ms.Length, remote);
 			}
 		}
 
@@ -253,7 +259,7 @@ namespace System.ServiceModel.Discovery.Udp
 			if (RemoteAddress != null) {
 				client = new UdpClient ();
 				var uri = Via ?? RemoteAddress.Uri;
-				client.Connect (uri.Host, uri.Port);
+				remote_end_point = new IPEndPoint (IPAddress.Parse (uri.Host), uri.Port);
 			} else {
 				var ip = IPAddress.Parse (LocalAddress.Uri.Host);
 				bool isMulticast = NetworkInterface.GetAllNetworkInterfaces ().Any (nic => nic.SupportsMulticast && nic.GetIPProperties ().MulticastAddresses.Any (mca => mca.Address.Equals (ip)));
