@@ -106,6 +106,11 @@ namespace System.ServiceModel
 			get { return (IDuplexContextChannel) base.InnerChannel; }
 		}
 
+		internal override void Initialize (InstanceContext instance, ServiceEndpoint endpoint)
+		{
+			ChannelFactory = new DuplexChannelFactory<TChannel> (instance, endpoint);
+		}
+
 		internal override void Initialize (InstanceContext instance,
 			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{

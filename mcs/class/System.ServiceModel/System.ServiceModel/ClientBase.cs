@@ -135,8 +135,8 @@ namespace System.ServiceModel
 		}
 
 		protected ClientBase (InstanceContext instance, ServiceEndpoint endpoint)
-			: this (instance, new ChannelFactory<TChannel> (endpoint))
 		{
+			Initialize (instance, endpoint);
 		}
 
 		internal ClientBase (ChannelFactory<TChannel> factory)
@@ -148,6 +148,12 @@ namespace System.ServiceModel
 		{
 			// FIXME: use instance
 			ChannelFactory = factory;
+		}
+
+		internal virtual void Initialize (InstanceContext instance, ServiceEndpoint endpoint)
+		{
+			// FIXME: use instance
+			ChannelFactory = new ChannelFactory<TChannel> (endpoint);
 		}
 
 		internal virtual void Initialize (InstanceContext instance,
