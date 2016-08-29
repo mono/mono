@@ -401,6 +401,24 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual (C14N ("<root><Address xmlns=\"http://www.w3.org/2005/08/addressing\">http://localhost:8080/</Address>" + identity1 + "</root>"), C14N (sw.ToString ()), "#2");
 		}
 
+		[Test]
+		public void ReadFromFull ()
+		{
+			string xml = @"<a:ReplyTo xmlns:a='http://www.w3.org/2005/08/addressing'>
+				<a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+				<a:PortType>Foo</a:PortType>
+				<a:ServiceName>Bar</a:ServiceName>
+				<a:ReferenceProperties></a:ReferenceProperties>
+				<a:ReferenceParameters></a:ReferenceParameters></a:ReplyTo>";
+			XmlReader src = XmlReader.Create (new StringReader (xml));
+			XmlDictionaryReader reader =
+				XmlDictionaryReader.CreateDictionaryReader (src);
+			EndpointAddress a = EndpointAddress.ReadFrom (reader);
+			Assert.IsNotNull (a, "#1");
+			Assert.AreEqual ("http://schemas.microsoft.com/2005/12/ServiceModel/Addressing/Anonymous", a.Uri.AbsoluteUri, "#2");
+			Assert.IsTrue (a.IsAnonymous, "#3");
+		}
+
 /* GetSchema() does not exist anymore
 		[Test]
 		public void GetSchemaTest ()

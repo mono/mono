@@ -284,35 +284,46 @@ namespace System.ServiceModel
 		{
 			Uri uri = null;
 			EndpointIdentity identity = null;
-			reader.MoveToContent ();
-			if (reader.LocalName == "Address" && 
-			    reader.NamespaceURI == addressingVersion.Namespace &&
-			    reader.NodeType == XmlNodeType.Element &&
-			    !reader.IsEmptyElement)
-				uri = new Uri (reader.ReadElementContentAsString ());
-			else
-				throw new XmlException (String.Format (
-					"Expecting 'Address' from namespace '{0}', but found '{1}' from namespace '{2}'",
-					addressingVersion.Namespace, reader.LocalName, reader.NamespaceURI));
-
-			reader.MoveToContent ();
 #if !MOBILE
 			MetadataSet metadata = null;
-			if (reader.LocalName == "Metadata" &&
-			    reader.NamespaceURI == addressingVersion.Namespace &&
-			    !reader.IsEmptyElement) {
-				reader.Read ();
-				metadata = (MetadataSet) new XmlSerializer (typeof (MetadataSet)).Deserialize (reader);
-				reader.MoveToContent ();
-				reader.ReadEndElement ();
-			}
-			reader.MoveToContent ();
-			if (reader.LocalName == "Identity" &&
-			    reader.NamespaceURI == Constants.WsaIdentityUri) {
-				// FIXME: implement
-				reader.Skip ();
-			}
 #endif
+
+			reader.MoveToContent ();
+			while (reader.NodeType != XmlNodeType.EndElement) {
+				if (reader.LocalName == "Address" &&
+					reader.NamespaceURI == addressingVersion.Namespace &&
+					reader.NodeType == XmlNodeType.Element &&
+					!reader.IsEmptyElement) {
+					uri = new Uri (reader.ReadElementContentAsString ());
+					reader.MoveToContent ();
+				}
+#if !MOBILE
+				else if (reader.LocalName == "Metadata" &&
+					reader.NamespaceURI == addressingVersion.Namespace &&
+					!reader.IsEmptyElement) {
+					reader.Read ();
+					metadata = (MetadataSet) new XmlSerializer (typeof (MetadataSet)).Deserialize (reader);
+					reader.MoveToContent ();
+					reader.ReadEndElement ();
+				}
+
+				else if (reader.LocalName == "Identity" &&
+					reader.NamespaceURI == Constants.WsaIdentityUri) {
+					// FIXME: implement
+					reader.Skip ();
+				}
+#endif
+				else {
+					reader.Skip ();
+				}
+			}
+
+			if (uri == null) {
+				throw new XmlException (String.Format (
+					"'Address' from namespace '{0}' not found in child nodes",
+					addressingVersion.Namespace));
+			}
+
 
 			if (addressingVersion == AddressingVersion.WSAddressing10 && uri == w3c_anonymous)
 				uri = anonymous_role;
