@@ -365,6 +365,9 @@ AC_SUBST(PLATFORM_AOT_SUFFIX)
 
 ## PLATFORM_AOT_SUFFIX not so simple for windows :-)
 
+: ${CFLAGS="-g -O3"}
+: ${CXXFLAGS="-g -O3"}
+
 AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
