@@ -200,7 +200,9 @@ namespace System.ServiceModel.Discovery.Udp
 				if (message_ids.Count >= binding_element.TransportSettings.DuplicateMessageHistoryLength)
 					message_ids.Dequeue ();
 			}
-			msg.Properties.Add ("Via", LocalAddress.Uri);
+			if (LocalAddress != null) {
+				msg.Properties.Add ("Via", LocalAddress.Uri);
+			}
 			msg.Properties.Add ("Encoder", message_encoder);
 			msg.Properties.Add (RemoteEndpointMessageProperty.Name, new RemoteEndpointMessageProperty (ip.Address.ToString (), ip.Port));
 
