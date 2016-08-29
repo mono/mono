@@ -1055,24 +1055,21 @@ namespace MonoTests.System.Threading.Tasks
 			var token = source.Token;
 			var evt = new ManualResetEventSlim ();
 			bool result = false;
-			bool thrown = false;
 
-			var task = Task.Factory.StartNew (() => evt.Wait (100));
+			var task = Task.Factory.StartNew (() => { Assert.IsTrue (evt.Wait (2000), "#1"); });
 			var cont = task.ContinueWith (t => result = true, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
 
 			source.Cancel();
 			evt.Set ();
-			task.Wait (100);
+			Assert.IsTrue (task.Wait (2000), "#2");
 			try {
-				cont.Wait (100);
-			} catch (Exception ex) {
-				thrown = true;
+				Assert.IsFalse (cont.Wait (4000), "#3");
+			} catch (AggregateException ex) {
 			}
 
-			Assert.IsTrue (task.IsCompleted);
-			Assert.IsTrue (cont.IsCanceled);
-			Assert.IsFalse (result);
-			Assert.IsTrue (thrown);
+			Assert.IsTrue (task.IsCompleted, "#4");
+			Assert.IsTrue (cont.IsCanceled, "#5");
+			Assert.IsFalse (result, "#6");
 		}
 
 		[Test]
