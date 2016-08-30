@@ -122,19 +122,12 @@ namespace System.Threading {
 
 		IPrincipal principal;
 		int principal_version;
-		bool current_culture_set;
-		bool current_ui_culture_set;
-		CultureInfo current_culture;
-		CultureInfo current_ui_culture;
 
 		// the name of current_thread is
 		// important because they are used by the runtime.
 
 		[ThreadStatic]
 		static Thread current_thread;
-
-		static internal CultureInfo default_culture;
-		static internal CultureInfo default_ui_culture;
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate m_Delegate;
@@ -337,54 +330,6 @@ namespace System.Threading {
 
 			set {
 				TrySetApartmentState (value);
-			}
-		}
-
-		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		//private static extern int current_lcid ();
-
-		public CultureInfo CurrentCulture {
-			get {
-				CultureInfo culture = current_culture;
-				if (current_culture_set && culture != null)
-					return culture;
-
-				if (default_culture != null)
-					return default_culture;
-
-				current_culture = culture = CultureInfo.ConstructCurrentCulture ();
-				return culture;
-			}
-			
-			[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				value.CheckNeutral ();
-				current_culture = value;
-				current_culture_set = true;
-			}
-		}
-
-		public CultureInfo CurrentUICulture {
-			get {
-				CultureInfo culture = current_ui_culture;
-				if (current_ui_culture_set && culture != null)
-					return culture;
-
-				if (default_ui_culture != null)
-					return default_ui_culture;
-
-				current_ui_culture = culture = CultureInfo.ConstructCurrentUICulture ();
-				return culture;
-			}
-			
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("value");
-				current_ui_culture = value;
-				current_ui_culture_set = true;
 			}
 		}
 
@@ -721,11 +666,6 @@ namespace System.Threading {
 		public override int GetHashCode ()
 		{
 			return ManagedThreadId;
-		}
-
-		internal CultureInfo GetCurrentUICultureNoAppX ()
-		{
-			return CultureInfo.CurrentUICulture;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
