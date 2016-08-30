@@ -1220,7 +1220,6 @@ void
 mono_profiler_load (const char *desc)
 {
 	char *cdesc = NULL;
-	mono_gc_base_init ();
 
 	if (!desc || (strcmp ("default", desc) == 0)) {
 		desc = "log:report";
