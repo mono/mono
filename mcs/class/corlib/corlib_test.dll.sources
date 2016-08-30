@@ -405,6 +405,7 @@ System.Text/EncoderTest.cs
 System.Text/EncodingTest.cs
 System.Text/EncodingTester.cs
 System.Text/EncodingInfoTest.cs
+System.Text/Latin1EncodingTest.cs
 System.Text/StringBuilderTest.cs
 System.Text/TestEncoding.cs
 System.Text/UnicodeEncodingTest.cs
