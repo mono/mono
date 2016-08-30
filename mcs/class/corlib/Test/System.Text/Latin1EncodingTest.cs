@@ -1,8 +1,30 @@
-// ASCIIEncodingTest - NUnit Test Cases for the System.Text.ASCIIEncoding class
-// 
-// Author: Mike Kestner <mkestner@speakeasy.net>
 //
-// <c> 2002 Mike Kestner
+// Latin1EncodingTest.cs
+//
+// Author:
+//	Alexander Köplinger (alexander.koeplinger@xamarin.com)
+//
+// Copyright (C) 2016 Xamarin, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 using System;
 using System.Text;
@@ -17,7 +39,7 @@ using NUnit.Framework.SyntaxHelpers;
 namespace MonoTests.System.Text
 {
 	[TestFixture]
-	public class ASCIIEncodingTest
+	public class Latin1EncodingTest
 	{
 		private char[] testchars;
 		private byte[] testbytes;
@@ -40,32 +62,32 @@ namespace MonoTests.System.Text
 		[Test]
 		public void IsBrowserDisplay ()
 		{
-			Assert.IsFalse (Encoding.ASCII.IsBrowserDisplay);
+			Assert.IsTrue (Encoding.GetEncoding ("latin1").IsBrowserDisplay);
 		}
 
 		[Test]
 		public void IsBrowserSave ()
 		{
-			Assert.IsFalse (Encoding.ASCII.IsBrowserSave);
+			Assert.IsTrue (Encoding.GetEncoding ("latin1").IsBrowserSave);
 		}
 
 		[Test]
 		public void IsMailNewsDisplay ()
 		{
-			Assert.IsTrue (Encoding.ASCII.IsMailNewsDisplay);
+			Assert.IsTrue (Encoding.GetEncoding ("latin1").IsMailNewsDisplay);
 		}
 
 		[Test]
 		public void IsMailNewsSave ()
 		{
-			Assert.IsTrue (Encoding.ASCII.IsMailNewsSave);
+			Assert.IsTrue (Encoding.GetEncoding ("latin1").IsMailNewsSave);
 		}
 
 		[Test] // Test GetBytes(char[])
 		public void TestGetBytes1 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			byte[] bytes = ascii_encoding.GetBytes(testchars);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			byte[] bytes = latin1_encoding.GetBytes(testchars);
 			for (int i = 0; i < testchars.Length; i++)
 				Assert.AreEqual (testchars[i], (char) bytes[i]);
 		}
@@ -73,18 +95,18 @@ namespace MonoTests.System.Text
 		[Test] // Test GetBytes(char[], int, int)
 		public void TestGetBytes2 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			byte[] bytes = ascii_encoding.GetBytes(testchars, 1, 1);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			byte[] bytes = latin1_encoding.GetBytes(testchars, 1, 1);
 			Assert.AreEqual (1, bytes.Length, "#1");
 			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
 		}
 
-		[Test] // Test non-ASCII char in char[]
+		[Test] // Test non-Latin1 char in char[]
 		public void TestGetBytes3 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			testchars[2] = (char) 0x80;
-			byte[] bytes = ascii_encoding.GetBytes(testchars);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			testchars[2] = (char) 0x100;
+			byte[] bytes = latin1_encoding.GetBytes(testchars);
 			Assert.AreEqual ('T', (char) bytes [0], "#1");
 			Assert.AreEqual ('e', (char) bytes [1], "#2");
 			Assert.AreEqual ('?', (char) bytes [2], "#3");
@@ -94,9 +116,9 @@ namespace MonoTests.System.Text
 		[Test] // Test GetBytes(char[], int, int, byte[], int)
 		public void TestGetBytes4 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
 			byte[] bytes = new Byte[1];
-			int cnt = ascii_encoding.GetBytes(testchars, 1, 1, bytes, 0);
+			int cnt = latin1_encoding.GetBytes(testchars, 1, 1, bytes, 0);
 			Assert.AreEqual (1, cnt, "#1");
 			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
 		}
@@ -104,17 +126,17 @@ namespace MonoTests.System.Text
 		[Test] // Test GetBytes(string, int, int, byte[], int)
 		public void TestGetBytes5 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
 			byte[] bytes = new Byte[1];
-			int cnt = ascii_encoding.GetBytes("Test", 1, 1, bytes, 0);
+			int cnt = latin1_encoding.GetBytes("Test", 1, 1, bytes, 0);
 			Assert.AreEqual ('e', (char) bytes [0], "#1");
 		}
 
 		[Test] // Test GetBytes(string)
 		public void TestGetBytes6 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			byte[] bytes = ascii_encoding.GetBytes("Test");
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			byte[] bytes = latin1_encoding.GetBytes("Test");
 			for (int i = 0; i < testchars.Length; i++)
 				Assert.AreEqual (testchars [i], (char) bytes [i]);
 		}
@@ -156,8 +178,8 @@ namespace MonoTests.System.Text
 		[Test] // Test GetChars(byte[])
 		public void TestGetChars1 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			char[] chars = ascii_encoding.GetChars(testbytes);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			char[] chars = latin1_encoding.GetChars(testbytes);
 			for (int i = 0; i < testbytes.Length; i++)
 				Assert.AreEqual (testbytes[i], (byte) chars[i]);
 		}
@@ -165,30 +187,18 @@ namespace MonoTests.System.Text
 		[Test] // Test GetChars(byte[], int, int)
 		public void TestGetChars2 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			char[] chars = ascii_encoding.GetChars(testbytes, 1, 1);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			char[] chars = latin1_encoding.GetChars(testbytes, 1, 1);
 			Assert.AreEqual (1, chars.Length, "#1");
 			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
-		}
-
-		[Test] // Test non-ASCII char in byte[]
-		public void TestGetChars3 () 
-		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			testbytes[2] = 0x80;
-			char[] chars = ascii_encoding.GetChars(testbytes);
-			Assert.AreEqual ('T', chars [0], "#1");
-			Assert.AreEqual ('e', chars [1], "#2");
-			Assert.AreEqual ('?', chars [2], "#3");
-			Assert.AreEqual ('t', chars [3], "#4");
 		}
 
 		[Test] // Test GetChars(byte[], int, int, char[], int)
 		public void TestGetChars4 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
 			char[] chars = new char[1];
-			int cnt = ascii_encoding.GetChars(testbytes, 1, 1, chars, 0);
+			int cnt = latin1_encoding.GetChars(testbytes, 1, 1, chars, 0);
 			Assert.AreEqual (1, cnt, "#1");
 			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
 		}
@@ -196,34 +206,25 @@ namespace MonoTests.System.Text
 		[Test] // Test GetString(char[])
 		public void TestGetString1 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			string str = ascii_encoding.GetString(testbytes);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			string str = latin1_encoding.GetString(testbytes);
 			Assert.AreEqual ("Test", str);
 		}
 
 		[Test] // Test GetString(char[], int, int)
 		public void TestGetString2 () 
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
-			string str = ascii_encoding.GetString(testbytes, 1, 2);
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
+			string str = latin1_encoding.GetString(testbytes, 1, 2);
 			Assert.AreEqual ("es", str);
-		}
-
-		[Test] // Test invalid byte handling
-		public void TestGetString3 () 
-		{
-			Encoding encoding = Encoding.ASCII;
-			byte [] bytes = new byte [] {0x61, 0xE1, 0xE2};
-			string s = encoding.GetString (bytes, 0, 3);
-			Assert.AreEqual ("a??", s);
 		}
 
 		[Test] // Test Decoder
 		public void TestDecoder ()
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
 			char[] chars = new char[1];
-			int cnt = ascii_encoding.GetDecoder().GetChars(testbytes, 1, 1, chars, 0);
+			int cnt = latin1_encoding.GetDecoder().GetChars(testbytes, 1, 1, chars, 0);
 			Assert.AreEqual (1, cnt, "#1");
 			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
 		}
@@ -231,9 +232,9 @@ namespace MonoTests.System.Text
 		[Test] // Test Decoder
 		public void TestEncoder ()
 		{
-			Encoding ascii_encoding = Encoding.ASCII;
+			Encoding latin1_encoding = Encoding.GetEncoding ("latin1");
 			byte[] bytes = new Byte[1];
-			int cnt = ascii_encoding.GetEncoder().GetBytes(testchars, 1, 1, bytes, 0, false);
+			int cnt = latin1_encoding.GetEncoder().GetBytes(testchars, 1, 1, bytes, 0, false);
 			Assert.AreEqual (1, cnt, "#1");
 			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
 		}
@@ -241,7 +242,7 @@ namespace MonoTests.System.Text
 		[Test]
 		public void TestZero ()
 		{
-			Encoding encoding = Encoding.ASCII;
+			Encoding encoding = Encoding.GetEncoding ("latin1");
 			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0]), "#1");
 			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0], 0, 0), "#2");
 		}
@@ -250,18 +251,9 @@ namespace MonoTests.System.Text
 		[ExpectedException (typeof (EncoderFallbackException))]
 		public void EncoderFallback ()
 		{
-			Encoding e = Encoding.ASCII.Clone () as Encoding;
+			Encoding e = Encoding.GetEncoding ("latin1").Clone () as Encoding;
 			e.EncoderFallback = new EncoderExceptionFallback ();
 			e.GetBytes ("\u24c8");
-		}
-
-		[Test]
-		[ExpectedException (typeof (DecoderFallbackException))]
-		public void DecoderFallback ()
-		{
-			Encoding e = Encoding.ASCII.Clone () as Encoding;
-			e.DecoderFallback = new DecoderExceptionFallback ();
-			e.GetChars (new byte [] {0x80});
 		}
 
 		[Test]
@@ -271,7 +263,7 @@ namespace MonoTests.System.Text
 			var bytes = new byte[] {
 				0x30, 0xa0, 0x31, 0xa8
 			};
-			var enc = (ASCIIEncoding)Encoding.ASCII.Clone ();
+			var enc = (Encoding)Encoding.GetEncoding ("latin1").Clone ();
 			enc.DecoderFallback = new TestFallbackDecoder ();
 			
 			var chars = new char [7];
@@ -290,17 +282,17 @@ namespace MonoTests.System.Text
 			var bytes = new byte[] {
 				0x30, 0xa0, 0x31, 0xa8
 			};
-			var enc = (ASCIIEncoding)Encoding.ASCII.Clone ();
+			var enc = (Encoding)Encoding.GetEncoding ("latin1").Clone ();
 			enc.DecoderFallback = new TestFallbackDecoder ();
 			
 			var chars = new char[] { '9', '8', '7', '6', '5' };
 			var ret = enc.GetChars (bytes, 0, bytes.Length, chars, 0);
 			
-			Assert.That (ret, Is.EqualTo (2), "ret");
+			Assert.That (ret, Is.EqualTo (4), "ret");
 			Assert.That (chars [0], Is.EqualTo ('0'), "chars[0]");
-			Assert.That (chars [1], Is.EqualTo ('1'), "chars[1]");
-			Assert.That (chars [2], Is.EqualTo ('7'), "chars[2]");
-			Assert.That (chars [3], Is.EqualTo ('6'), "chars[3]");
+			Assert.That (chars [1], Is.EqualTo ((char)0xA0), "chars[1]");
+			Assert.That (chars [2], Is.EqualTo ('1'), "chars[2]");
+			Assert.That (chars [3], Is.EqualTo ((char)0xA8), "chars[3]");
 			Assert.That (chars [4], Is.EqualTo ('5'), "chars[4]");
 		}
 		
@@ -353,7 +345,6 @@ namespace MonoTests.System.Text
 				}
 			}
 		}
-		
 
 	}
 }
