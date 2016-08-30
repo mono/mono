@@ -432,6 +432,7 @@ domain_get (MonoDomain *domain, gboolean create)
 	if (create) {
 		tpdomain = g_new0 (ThreadPoolDomain, 1);
 		tpdomain->domain = domain;
+		domain->cleanup_semaphore = CreateSemaphore (NULL, 0, 1, NULL);
 		domain_add (tpdomain);
 	}
 
@@ -683,8 +684,7 @@ worker_thread (gpointer data)
 		if (tpdomain->domain->threadpool_jobs == 0 && mono_domain_is_unloading (tpdomain->domain)) {
 			gboolean removed = domain_remove (tpdomain);
 			g_assert (removed);
-			if (tpdomain->domain->cleanup_semaphore)
-				ReleaseSemaphore (tpdomain->domain->cleanup_semaphore, 1, NULL);
+			ReleaseSemaphore (tpdomain->domain->cleanup_semaphore, 1, NULL);
 			domain_free (tpdomain);
 			tpdomain = NULL;
 		}
@@ -1429,7 +1429,6 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 {
 	gboolean res = TRUE;
 	gint64 end;
-	gpointer sem;
 
 	g_assert (domain);
 	g_assert (timeout >= -1);
@@ -1448,36 +1447,35 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 #endif
 
 	/*
-	 * There might be some threads out that could be about to execute stuff from the given domain.
-	 * We avoid that by setting up a semaphore to be pulsed by the thread that reaches zero.
-	 */
-	sem = domain->cleanup_semaphore = CreateSemaphore (NULL, 0, 1, NULL);
+	* There might be some threads out that could be about to execute stuff from the given domain.
+	* We avoid that by waiting on a semaphore to be pulsed by the thread that reaches zero.
+	* The semaphore is only created for domains which queued threadpool jobs.
+	* We always wait on the semaphore rather than ensuring domain->threadpool_jobs is 0.
+	* There may be pending outstanding requests which will create new jobs.
+	* The semaphore is signaled the threadpool domain has been removed from list
+	* and we know no more jobs for the domain will be processed.
+	*/
 
-	/*
-	 * The memory barrier here is required to have global ordering between assigning to cleanup_semaphone
-	 * and reading threadpool_jobs. Otherwise this thread could read a stale version of threadpool_jobs
-	 * and wait forever.
-	 */
-	mono_memory_write_barrier ();
-
-	while (domain->threadpool_jobs) {
+	if (domain->cleanup_semaphore) {
+		guint32 ret;
 		gint64 now;
 
 		if (timeout != -1) {
 			now = mono_msec_ticks ();
 			if (now > end) {
-				res = FALSE;
-				break;
+				return FALSE;
 			}
 		}
 
 		MONO_ENTER_GC_SAFE;
-		WaitForSingleObjectEx (sem, timeout != -1 ? end - now : timeout, FALSE);
+		ret = WaitForSingleObjectEx (domain->cleanup_semaphore, timeout != -1 ? end - now : timeout, FALSE);
 		MONO_EXIT_GC_SAFE;
-	}
 
-	domain->cleanup_semaphore = NULL;
-	CloseHandle (sem);
+		CloseHandle (domain->cleanup_semaphore);
+		domain->cleanup_semaphore = NULL;
+
+		res = (ret == WAIT_OBJECT_0);
+	}
 
 	return res;
 }
