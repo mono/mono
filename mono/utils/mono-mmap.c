@@ -484,7 +484,7 @@ mono_pagesize (void)
 void*
 mono_valloc (void *addr, size_t length, int flags)
 {
-	return malloc (length);
+	return g_malloc (length);
 }
 
 void*
@@ -498,7 +498,7 @@ mono_valloc_aligned (size_t length, size_t alignment, int flags)
 int
 mono_vfree (void *addr, size_t length)
 {
-	free (addr);
+	g_free (addr);
 	return 0;
 }
 
