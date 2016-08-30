@@ -93,6 +93,7 @@ GC_API GC_PTR (*GC_oom_fn) GC_PROTO((size_t bytes_requested));
 			/* pointer to a previously allocated heap 	*/
 			/* object.					*/
 
+// Keep somewhat in sync with mono/metadata/profiler.h:enum MonoGCEvent
 typedef enum {
 	GC_EVENT_START,
 	GC_EVENT_MARK_START,
