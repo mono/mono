@@ -1862,9 +1862,23 @@ gc_event_name (int ev)
 	case MONO_GC_EVENT_RECLAIM_END: return "reclaim end";
 	case MONO_GC_EVENT_END: return "end";
 	case MONO_GC_EVENT_PRE_STOP_WORLD: return "pre stop";
+	case MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED: return "pre stop lock";
 	case MONO_GC_EVENT_POST_STOP_WORLD: return "post stop";
 	case MONO_GC_EVENT_PRE_START_WORLD: return "pre start";
 	case MONO_GC_EVENT_POST_START_WORLD: return "post start";
+	case MONO_GC_EVENT_POST_START_WORLD_UNLOCKED: return "post start unlock";
+	default:
+		return "unknown";
+	}
+}
+
+static const char*
+sync_point_name (int type)
+{
+	switch (type) {
+	case SYNC_POINT_PERIODIC: return "periodic";
+	case SYNC_POINT_WORLD_STOP: return "world stop";
+	case SYNC_POINT_WORLD_START: return "world start";
 	default:
 		return "unknown";
 	}
@@ -1956,21 +1970,25 @@ get_root_name (int rtype)
 }
 
 static MethodDesc**
-decode_bt (MethodDesc** sframes, int *size, unsigned char *p, unsigned char **endp, intptr_t ptr_base)
+decode_bt (ProfContext *ctx, MethodDesc** sframes, int *size, unsigned char *p, unsigned char **endp, intptr_t ptr_base, intptr_t *method_base)
 {
 	MethodDesc **frames;
 	int i;
-	int flags = decode_uleb128 (p, &p);
+	if (ctx->data_version < 13)
+		decode_uleb128 (p, &p); /* flags */
 	int count = decode_uleb128 (p, &p);
-	if (flags != 0)
-		return NULL;
 	if (count > *size)
 		frames = (MethodDesc **)malloc (count * sizeof (void*));
 	else
 		frames = sframes;
 	for (i = 0; i < count; ++i) {
 		intptr_t ptrdiff = decode_sleb128 (p, &p);
-		frames [i] = lookup_method (ptr_base + ptrdiff);
+		if (ctx->data_version > 12) {
+			*method_base += ptrdiff;
+			frames [i] = lookup_method (*method_base);
+		} else {
+			frames [i] = lookup_method (ptr_base + ptrdiff);
+		}
 	}
 	*size = count;
 	*endp = p;
@@ -2279,8 +2297,16 @@ decode_buffer (ProfContext *ctx)
 				if (new_size > max_heap_size)
 					max_heap_size = new_size;
 			} else if (subtype == TYPE_GC_EVENT) {
-				uint64_t ev = decode_uleb128 (p, &p);
-				int gen = decode_uleb128 (p, &p);
+				uint64_t ev;
+				if (ctx->data_version > 12)
+					ev = *p++;
+				else
+					ev = decode_uleb128 (p, &p);
+				int gen;
+				if (ctx->data_version > 12)
+					gen = *p++;
+				else
+					gen = decode_uleb128 (p, &p);
 				if (debug)
 					fprintf (outfile, "gc event for gen%d: %s at %llu (thread: 0x%zx)\n", gen, gc_event_name (ev), (unsigned long long) time_base, thread->thread_id);
 				if (gen > 2) {
@@ -2318,7 +2344,7 @@ decode_buffer (ProfContext *ctx)
 				intptr_t objdiff = decode_sleb128 (p, &p);
 				if (has_bt) {
 					num_bt = 8;
-					frames = decode_bt (sframes, &num_bt, p, &p, ptr_base);
+					frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
 					if (!frames) {
 						fprintf (outfile, "Cannot load backtrace\n");
 						return 0;
@@ -2352,7 +2378,7 @@ decode_buffer (ProfContext *ctx)
 				uint32_t handle = decode_uleb128 (p, &p);
 				if (has_bt) {
 					num_bt = 8;
-					frames = decode_bt (sframes, &num_bt, p, &p, ptr_base);
+					frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
 					if (!frames) {
 						fprintf (outfile, "Cannot load backtrace\n");
 						return 0;
@@ -2387,11 +2413,8 @@ decode_buffer (ProfContext *ctx)
 			time_base += tdiff;
 			if (mtype == TYPE_CLASS) {
 				intptr_t imptrdiff = decode_sleb128 (p, &p);
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in class\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s class %p (%s in %p) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (void*)(ptr_base + imptrdiff), (unsigned long long) time_base);
 				if (subtype == TYPE_END_LOAD)
@@ -2399,11 +2422,8 @@ decode_buffer (ProfContext *ctx)
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_IMAGE) {
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in image\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s image %p (%s) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (unsigned long long) time_base);
 				if (subtype == TYPE_END_LOAD)
@@ -2411,11 +2431,8 @@ decode_buffer (ProfContext *ctx)
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_ASSEMBLY) {
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in assembly\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s assembly %p (%s) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (unsigned long long) time_base);
 				if (subtype == TYPE_END_LOAD)
@@ -2423,11 +2440,8 @@ decode_buffer (ProfContext *ctx)
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_DOMAIN) {
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in domain\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				DomainContext *nd = get_domain (ctx, ptr_base + ptrdiff);
 				/* no subtype means it's a name event, rather than start/stop */
 				if (subtype == 0)
@@ -2443,22 +2457,16 @@ decode_buffer (ProfContext *ctx)
 					p++;
 				}
 			} else if (mtype == TYPE_CONTEXT) {
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in context\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				intptr_t domaindiff = decode_sleb128 (p, &p);
 				if (debug)
 					fprintf (outfile, "%s context %p (%p) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), (void *) (ptr_base + domaindiff), (unsigned long long) time_base);
 				if (subtype == TYPE_END_LOAD)
 					get_remctx (ctx, ptr_base + ptrdiff)->domain_id = ptr_base + domaindiff;
 			} else if (mtype == TYPE_THREAD) {
-				uint64_t flags = decode_uleb128 (p, &p);
-				if (flags) {
-					fprintf (outfile, "non-zero flags in thread\n");
-					return 0;
-				}
+				if (ctx->data_version < 13)
+					decode_uleb128 (p, &p); /* flags */
 				ThreadContext *nt = get_thread (ctx, ptr_base + ptrdiff);
 				/* no subtype means it's a name event, rather than start/stop */
 				if (subtype == 0)
@@ -2493,7 +2501,7 @@ decode_buffer (ProfContext *ctx)
 				fprintf (outfile, "alloced object %p, size %llu (%s) at %llu\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) len, lookup_class (ptr_base + ptrdiff)->name, (unsigned long long) time_base);
 			if (has_bt) {
 				num_bt = 8;
-				frames = decode_bt (sframes, &num_bt, p, &p, ptr_base);
+				frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
 				if (!frames) {
 					fprintf (outfile, "Cannot load backtrace\n");
 					return 0;
@@ -2670,7 +2678,7 @@ decode_buffer (ProfContext *ctx)
 				}
 				if (has_bt) {
 					num_bt = 8;
-					frames = decode_bt (sframes, &num_bt, p, &p, ptr_base);
+					frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
 					if (!frames) {
 						fprintf (outfile, "Cannot load backtrace\n");
 						return 0;
@@ -2725,7 +2733,11 @@ decode_buffer (ProfContext *ctx)
 			if (!(time_base >= time_from && time_base < time_to))
 				record = 0;
 			if (subtype == TYPE_CLAUSE) {
-				int clause_type = decode_uleb128 (p, &p);
+				int clause_type;
+				if (ctx->data_version > 12)
+					clause_type = *p++;
+				else
+					clause_type = decode_uleb128 (p, &p);
 				int clause_num = decode_uleb128 (p, &p);
 				int64_t ptrdiff = decode_sleb128 (p, &p);
 				method_base += ptrdiff;
@@ -2739,7 +2751,7 @@ decode_buffer (ProfContext *ctx)
 					throw_count++;
 				if (has_bt) {
 					has_bt = 8;
-					frames = decode_bt (sframes, &has_bt, p, &p, ptr_base);
+					frames = decode_bt (ctx, sframes, &has_bt, p, &p, ptr_base, &method_base);
 					if (!frames) {
 						fprintf (outfile, "Cannot load backtrace\n");
 						return 0;
@@ -2763,7 +2775,11 @@ decode_buffer (ProfContext *ctx)
 			LOG_TIME (time_base, tdiff);
 			time_base += tdiff;
 			if (subtype == TYPE_JITHELPER) {
-				int type = decode_uleb128 (p, &p);
+				int type;
+				if (ctx->data_version > 12)
+					type = *p++;
+				else
+					type = decode_uleb128 (p, &p);
 				intptr_t codediff = decode_sleb128 (p, &p);
 				int codelen = decode_uleb128 (p, &p);
 				const char *name;
@@ -2785,7 +2801,12 @@ decode_buffer (ProfContext *ctx)
 			int subtype = *p & 0xf0;
 			if (subtype == TYPE_SAMPLE_HIT) {
 				int i;
-				int sample_type = decode_uleb128 (p + 1, &p);
+				int sample_type;
+				if (ctx->data_version > 12) {
+					p++;
+					sample_type = *p++;
+				} else
+					sample_type = decode_uleb128 (p + 1, &p);
 				uint64_t tstamp = decode_uleb128 (p, &p);
 				void *tid = (void *) thread_id;
 				if (ctx->data_version > 10)
@@ -2803,12 +2824,14 @@ decode_buffer (ProfContext *ctx)
 					for (i = 0; i < count; ++i) {
 						MethodDesc *method;
 						int64_t ptrdiff = decode_sleb128 (p, &p);
-						int il_offset = decode_sleb128 (p, &p);
-						int native_offset = decode_sleb128 (p, &p);
 						method_base += ptrdiff;
 						method = lookup_method (method_base);
 						if (debug)
-							fprintf (outfile, "sample hit bt %d: %s at IL offset %d (native: %d)\n", i, method->name, il_offset, native_offset);
+							fprintf (outfile, "sample hit bt %d: %s\n", i, method->name);
+						if (ctx->data_version < 13) {
+							decode_sleb128 (p, &p); /* il offset */
+							decode_sleb128 (p, &p); /* native offset */
+						}
 					}
 				}
 			} else if (subtype == TYPE_SAMPLE_USYM) {
@@ -2851,9 +2874,15 @@ decode_buffer (ProfContext *ctx)
 					}
 					name = pstrdup ((char*)p);
 					while (*p++);
-					type = decode_uleb128 (p, &p);
-					unit = decode_uleb128 (p, &p);
-					variance = decode_uleb128 (p, &p);
+					if (ctx->data_version > 12) {
+						type = *p++;
+						unit = *p++;
+						variance = *p++;
+					} else {
+						type = decode_uleb128 (p, &p);
+						unit = decode_uleb128 (p, &p);
+						variance = decode_uleb128 (p, &p);
+					}
 					index = decode_uleb128 (p, &p);
 					add_counter (section_str, name, (int)type, (int)unit, (int)variance, (int)index);
 				}
@@ -2875,7 +2904,10 @@ decode_buffer (ProfContext *ctx)
 						}
 					}
 
-					type = decode_uleb128 (p, &p);
+					if (ctx->data_version > 12)
+						type = *p++;
+					else
+						type = decode_uleb128 (p, &p);
 
 					value = (CounterValue *)calloc (1, sizeof (CounterValue));
 					value->timestamp = timestamp;
@@ -3030,6 +3062,18 @@ decode_buffer (ProfContext *ctx)
 
 			default:
 				break;
+			}
+			break;
+		}
+		case TYPE_META: {
+			int subtype = *p & 0xf0;
+			uint64_t tdiff = decode_uleb128 (p + 1, &p);
+			LOG_TIME (time_base, tdiff);
+			time_base += tdiff;
+			if (subtype == TYPE_SYNC_POINT) {
+				int type = *p++;
+				if (debug)
+					fprintf (outfile, "sync point %i (%s)\n", type, sync_point_name (type));
 			}
 			break;
 		}
@@ -3792,6 +3836,8 @@ dump_stats (void)
 	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_METHOD);
 	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_STATEMENT);
 	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_CLASS);
+
+	DUMP_EVENT_STAT (TYPE_META, TYPE_SYNC_POINT);
 }
 
 
