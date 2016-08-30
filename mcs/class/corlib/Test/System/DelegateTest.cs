@@ -1445,6 +1445,18 @@ namespace MonoTests.System
 			var del = Delegate.Remove (del1, del2);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateDelegateThrowsAnArgumentExceptionWhenCalledWithAnOpenGeneric()
+		{
+			var m = GetType().GetMethod("AnyGenericMethod");
+			Delegate.CreateDelegate(typeof(Action), this, m);
+		}
+
+		public void AnyGenericMethod<T>()
+		{
+		}
+
 		static bool Int32D2 (int x, int y)
 		{
 			return (x & y) == y; 
