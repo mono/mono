@@ -157,7 +157,11 @@ internal class Latin1Encoding : Encoding
 					buffer = EncoderFallback.CreateFallbackBuffer ();
 				if (Char.IsSurrogate (ch) && count > 1 &&
 				    Char.IsSurrogate (chars [charIndex]))
-					buffer.Fallback (ch, chars [charIndex], charIndex++ - 1);
+				{
+					buffer.Fallback (ch, chars [charIndex], charIndex - 1);
+					charIndex++;
+					count--;
+				}
 				else
 					buffer.Fallback (ch, charIndex - 1);
 				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
