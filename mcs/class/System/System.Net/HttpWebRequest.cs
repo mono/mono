@@ -450,7 +450,7 @@ namespace System.Net
 					newWebHeaders.Add(headerName,webHeaders[headerName]);
 				}
 
-				webHeaders = newWebHeaders;
+				this.webHeaders = newWebHeaders;
 			}
 		}
 		
