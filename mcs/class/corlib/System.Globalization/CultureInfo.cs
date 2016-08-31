@@ -116,6 +116,9 @@ namespace System.Globalization
 		const int CalendarTypeBits = 8;
 
 		const string MSG_READONLY = "This instance is read only";
+
+		static volatile CultureInfo s_DefaultThreadCurrentUICulture;
+		static volatile CultureInfo s_DefaultThreadCurrentCulture;
 		
 		public static CultureInfo InvariantCulture {
 			get {
@@ -128,7 +131,7 @@ namespace System.Globalization
 				return Thread.CurrentThread.CurrentCulture;
 			}
 			set {
-				throw new NotImplementedException ();
+				Thread.CurrentThread.CurrentCulture = value;
 			}
 		}
 
@@ -137,7 +140,7 @@ namespace System.Globalization
 				return Thread.CurrentThread.CurrentUICulture;
 			}
 			set {
-				throw new NotImplementedException ();
+				Thread.CurrentThread.CurrentUICulture = value;
 			}
 		}
 
@@ -511,7 +514,7 @@ namespace System.Globalization
 			}
 		}
 
-		internal void CheckNeutral ()
+		void CheckNeutral ()
 		{
 		}
 
@@ -1070,19 +1073,19 @@ namespace System.Globalization
 		
 		public static CultureInfo DefaultThreadCurrentCulture {
 			get {
-				return Thread.default_culture;
+				return s_DefaultThreadCurrentCulture;
 			}
 			set {
-				Thread.default_culture = value;
+				s_DefaultThreadCurrentCulture = value;
 			}
 		}
 		
 		public static CultureInfo DefaultThreadCurrentUICulture {
 			get {
-				return Thread.default_ui_culture;
+				return s_DefaultThreadCurrentUICulture;
 			}
 			set {
-				Thread.default_ui_culture = value;
+				s_DefaultThreadCurrentUICulture = value;
 			}
 		}
 
@@ -1091,6 +1094,19 @@ namespace System.Globalization
 				return m_name;
 			}
 		}
+
+		internal static CultureInfo UserDefaultUICulture {
+			get {
+				return ConstructCurrentUICulture ();
+			}
+		}
+
+		internal static CultureInfo UserDefaultCulture {
+			get {
+				return ConstructCurrentCulture ();
+			}
+		}
+
 
 #region reference sources
 		// TODO:
@@ -1142,6 +1158,19 @@ namespace System.Globalization
                 return false;
             }
             return true;
+        }
+
+        internal static bool VerifyCultureName(CultureInfo culture, bool throwException) {
+            Contract.Assert(culture!=null, "[CultureInfo.VerifyCultureName]culture!=null");
+
+            //If we have an instance of one of our CultureInfos, the user can't have changed the
+            //name and we know that all names are valid in files.
+            if (!culture.m_isInherited) {
+                return true;
+            }
+
+            return VerifyCultureName(culture.Name, throwException);
+
         }
 
 #endregion
