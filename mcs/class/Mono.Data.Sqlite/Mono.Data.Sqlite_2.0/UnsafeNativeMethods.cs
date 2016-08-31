@@ -16,6 +16,16 @@ namespace Mono.Data.Sqlite
 #endif
   internal static class UnsafeNativeMethods
   {
+#if MONOTOUCH
+    internal static bool use_sqlite3_close_v2 = false;
+    internal static bool use_sqlite3_open_v2 = false;
+    static UnsafeNativeMethods()
+    {
+      IntPtr lib = ObjCRuntime.Dlfcn.dlopen(SQLITE_DLL, 0);
+      use_sqlite3_open_v2 = ObjCRuntime.Dlfcn.dlsym(lib, "sqlite3_open_v2") != IntPtr.Zero;
+      use_sqlite3_close_v2 = ObjCRuntime.Dlfcn.dlsym(lib, "sqlite3_close_v2") != IntPtr.Zero;
+    }
+#endif
 #if !SQLITE_STANDARD
 
 #if !USE_INTEROP_DLL
