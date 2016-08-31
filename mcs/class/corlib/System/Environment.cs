@@ -862,6 +862,22 @@ namespace System {
 			}
 		}
 #else
+		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				return GetEnvironmentVariable (variable);
+
+			return null;
+		}
+
+		public static IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				return GetEnvironmentVariables ();
+
+			return (IDictionary)new Hashtable ();
+		}
+
 		public static void SetEnvironmentVariable (string variable, string value)
 		{
 			if (variable == null)
@@ -874,6 +890,14 @@ namespace System {
 				throw new ArgumentException ("The first char in the string is the null character.", "variable");
 
 			InternalSetEnvironmentVariable (variable, value);
+		}
+
+		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				SetEnvironmentVariable (variable, value);
+
+			// other targets ignored
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
