@@ -208,8 +208,8 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void GetHINSTANCE ()
 		{
-			if (RunningOnUnix)
-				Assert.Ignore ("GetHINSTANCE only applies to Windows.");
+			if (RunningOnMono)
+				Assert.Ignore ("GetHINSTANCE only applies to .NET on Windows.");
 
 			Assembly a;
 			IntPtr hinstance;
@@ -803,10 +803,9 @@ namespace MonoTests.System.Runtime.InteropServices
 			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
 		}
-		bool RunningOnUnix {
+		bool RunningOnMono {
 			get {
-				int p = (int) Environment.OSVersion.Platform;
-				return ((p == 4) || (p == 128) || (p == 6));
+				return (Type.GetType ("System.MonoType", false) != null);
 			}
 		}
 
