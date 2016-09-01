@@ -125,9 +125,9 @@ namespace Mono.Data.Sqlite
 	// Compatibility with versions < 3.5.0
         int n;
 
-	try {
+	if (UnsafeNativeMethods.use_sqlite3_open_v2) {
 		n = UnsafeNativeMethods.sqlite3_open_v2(ToUTF8(strFilename), out db, (int)flags, IntPtr.Zero);
-	} catch (EntryPointNotFoundException) {
+	} else {
 		Console.WriteLine ("Your sqlite3 version is old - please upgrade to at least v3.5.0!");
 		n = UnsafeNativeMethods.sqlite3_open (ToUTF8 (strFilename), out db);
 	}
