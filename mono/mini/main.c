@@ -61,7 +61,6 @@ load_from_region (int fd, uint64_t offset, uint64_t size)
 		g_free (buffer);
 		return NULL;
 	}
-	printf ("LOADED FROM REGION: %s\n", buffer);
 	return buffer;
 }
 
@@ -150,7 +149,6 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			char *data = load_from_region (fd, offset, item_size);
 			uint8_t count = *data++;
 			char *value = data + count + 1;
-			printf ("Setting %s to %s\n", data, value);
 			setenv (data, value, 0);
 		} else {
 			fprintf (stderr, "Unknown stream on embedded package: %s\n", kind);

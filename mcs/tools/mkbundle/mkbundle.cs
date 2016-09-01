@@ -503,7 +503,6 @@ class MakeBundle {
 			}
 				
 			locations [entry] = Tuple.Create (package.Position, kbytes.Length+vbytes.Length+3);
-			Console.WriteLine ("Adding: {0}", (byte)kbytes.Length);
 			package.WriteByte ((byte)kbytes.Length);
 			package.Write (kbytes, 0, kbytes.Length);
 			package.WriteByte (0);
