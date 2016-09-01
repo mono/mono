@@ -119,6 +119,40 @@ namespace MonoTests.System.Text
 				Assert.AreEqual (testchars [i], (char) bytes [i]);
 		}
 
+		[Test] // Test GetBytes(string)
+		public void TestGetBytes7 ()
+		{
+			var latin1_encoding = Encoding.GetEncoding ("latin1");
+
+			var expected = new byte [] { 0x3F, 0x20, 0x3F, 0x20, 0x3F };
+			var actual = latin1_encoding.GetBytes("\u24c8 \u2075 \u221e"); // normal replacement
+			Assert.AreEqual (expected, actual, "#1");
+
+			expected = new byte [] { 0x3F, 0x3F };
+			actual = latin1_encoding.GetBytes("\ud83d\ude0a"); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#2");
+
+			expected = new byte [] { 0x3F, 0x3F, 0x20 };
+			actual = latin1_encoding.GetBytes("\ud83d\ude0a "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#3");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud83d\ude0a  "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#4");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud834\udd1e  "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#5");
+
+			expected = new byte [] { 0x41, 0x42, 0x43, 0x00, 0x41, 0x42, 0x43 };
+			actual = latin1_encoding.GetBytes("ABC\0ABC"); // embedded zero byte not replaced
+			Assert.AreEqual (expected, actual, "#6");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud834  "); // invalid surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#7");
+		}
+
 		[Test] // Test GetChars(byte[])
 		public void TestGetChars1 () 
 		{
@@ -210,6 +244,15 @@ namespace MonoTests.System.Text
 			Encoding encoding = Encoding.ASCII;
 			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0]), "#1");
 			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0], 0, 0), "#2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (EncoderFallbackException))]
+		public void EncoderFallback ()
+		{
+			Encoding e = Encoding.ASCII.Clone () as Encoding;
+			e.EncoderFallback = new EncoderExceptionFallback ();
+			e.GetBytes ("\u24c8");
 		}
 
 		[Test]

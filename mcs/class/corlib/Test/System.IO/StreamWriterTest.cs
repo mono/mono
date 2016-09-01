@@ -1051,7 +1051,6 @@ namespace MonoTests.System.IO
 		Assert.AreEqual (5, ms.Position, "#2");
 	}
 
-#if NET_4_5
 	[Test]
 	public void FlushAsync ()
 	{
@@ -1098,7 +1097,6 @@ namespace MonoTests.System.IO
 		Assert.IsTrue (t.Wait (1000), "#5");
 	}
 
-#endif
 
 	// TODO - Write - test errors, functionality tested in TestFlush.
 }

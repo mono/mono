@@ -45,12 +45,12 @@ namespace System.ServiceModel
 			Initialize (identity);
 		}
 
-		public SpnEndpointIdentity (string spn)
-			: this (Claim.CreateSpnClaim (spn))
+		public SpnEndpointIdentity (string spnName)
+			: this (Claim.CreateSpnClaim (spnName))
 		{
 		}
 #else
-		public SpnEndpointIdentity (string spn)
+		public SpnEndpointIdentity (string spnName)
 		{
 			throw new NotImplementedException ();
 		}

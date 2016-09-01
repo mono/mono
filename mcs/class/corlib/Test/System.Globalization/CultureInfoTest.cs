@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -623,7 +624,6 @@ namespace MonoTests.System.Globalization
 			Assert.IsFalse (zh2.Equals (zh1), "#2");
 		}
 
-#if NET_4_5
 		CountdownEvent barrier = new CountdownEvent (3);
 		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
 
@@ -728,21 +728,37 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		public void DefaultThreadCurrentCultureAndNumberFormaters () {
+		public void DefaultThreadCurrentCultureIsIgnoredWhenCultureFlowsToThread ()
+		{
 			string us_str = null;
 			string br_str = null;
+
 			var thread = new Thread (() => {
 				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 				us_str = 100000.ToString ("C");
 				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
 				br_str = 100000.ToString ("C");
 			});
+
+			var expected = 100000.ToString ("C");
+
 			thread.Start ();
 			thread.Join ();
 			CultureInfo.DefaultThreadCurrentCulture = null;
-			Assert.AreEqual ("$100,000.00", us_str, "#1");
-			Assert.AreEqual ("R$ 100.000,00", br_str, "#2");
+			Assert.AreEqual (expected, us_str, "#1");
+			Assert.AreEqual (expected, br_str, "#2");
 		}
-#endif
+
+		[Test]
+		public void FlowCultureInfoFromParentThreadSinceNet46 ()
+		{
+			Func<Task> f = async () => {
+				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("pt-BR");
+				await Task.Yield ();
+				Assert.AreEqual ("pt-BR", Thread.CurrentThread.CurrentUICulture.Name);
+			};
+
+			f ().Wait ();
+		}
 	}
 }

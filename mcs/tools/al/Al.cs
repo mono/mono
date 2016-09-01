@@ -13,14 +13,13 @@ using System.Globalization;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 using System.Configuration.Assemblies;
 
+using IKVM.Reflection;
+using IKVM.Reflection.Emit;
 using Mono.Security.Cryptography;
-using IKR = IKVM.Reflection;
 
 namespace Mono.AssemblyLinker
 {
@@ -49,6 +48,15 @@ namespace Mono.AssemblyLinker
 		No
 	}
 
+	public enum Platform {
+		AnyCPU,
+		AnyCPU32Preferred,
+		Arm,
+		X86,
+		X64,
+		IA64
+	}
+
 	public class AssemblyLinker {
 
 		ArrayList inputFiles = new ArrayList ();
@@ -59,24 +67,35 @@ namespace Mono.AssemblyLinker
 		string entryPoint;
 		string win32IconFile;
 		string win32ResFile;
+		string title;
+		string description;
+		string company;
+		string product;
+		string copyright;
+		string trademark;
 		string templateFile;
 		bool isTemplateFile = false;
 		Target target = Target.Dll;
+		Platform platform = Platform.AnyCPU;
 		DelaySign delaysign = DelaySign.NotSet;
 		string keyfile;
 		string keyname;
 		string culture;
+		Universe universe;
 
 		public static int Main (String[] args) {
 			return new AssemblyLinker ().DynMain (args);
 		}
 
 		private int DynMain (String[] args) {
-			ParseArgs (args);
+			using (universe = new Universe (UniverseOptions.MetadataOnly)) {
+				universe.LoadFile (typeof (object).Assembly.Location);
+				ParseArgs (args);
 
-			DoIt ();
+				DoIt ();
 
-			return 0;
+				return 0;
+			}
 		}
 
 		private void ParseArgs (string[] args) 
@@ -211,7 +230,7 @@ namespace Mono.AssemblyLinker
 					if (realArg.StartsWith ("0x"))
 						realArg = realArg.Substring (2);
 					uint val = Convert.ToUInt32 (realArg, 16);
-					AddCattr (typeof (AssemblyAlgorithmIdAttribute), typeof (uint), val);
+					AddCattr (typeof (System.Reflection.AssemblyAlgorithmIdAttribute), typeof (uint), val);
 				} catch (Exception) {
 					ReportInvalidArgument (opt, arg);
 				}
@@ -233,21 +252,21 @@ namespace Mono.AssemblyLinker
 			case "company":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyCompanyAttribute), arg);
+				company = arg;
 				return true;
 
 			case "config":
 			case "configuration":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyConfigurationAttribute), arg);
+				AddCattr (typeof (System.Reflection.AssemblyConfigurationAttribute), arg);
 				return true;
 
 			case "copy":
 			case "copyright":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyCopyrightAttribute), arg);
+				copyright = arg;
 				return true;
 
 			case "c":
@@ -273,7 +292,7 @@ namespace Mono.AssemblyLinker
 			case "description":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyDescriptionAttribute), arg);
+				description = arg;
 				return true;
 
 			case "e":
@@ -292,7 +311,7 @@ namespace Mono.AssemblyLinker
 				if (arg == null)
 					ReportMissingText (opt);
 
-				AddCattr (typeof (AssemblyFileVersionAttribute), arg);
+				AddCattr (typeof (System.Reflection.AssemblyFileVersionAttribute), arg);
 				return true;
 
 			case "flags":
@@ -303,7 +322,7 @@ namespace Mono.AssemblyLinker
 					if (realArg.StartsWith ("0x"))
 						realArg = realArg.Substring (2);
 					uint val = Convert.ToUInt32 (realArg, 16);
-					AddCattr (typeof (AssemblyFlagsAttribute), typeof (uint), val);
+					AddCattr (typeof (System.Reflection.AssemblyFlagsAttribute), typeof (uint), val);
 				} catch (Exception) {
 					ReportInvalidArgument (opt, arg);
 				}
@@ -342,18 +361,46 @@ namespace Mono.AssemblyLinker
 				outFile = arg;
 				return true;
 
+		case "platform":
+			if (arg == null)
+				ReportMissingText (opt);
+			switch (arg.ToLowerInvariant ()) {
+				case "arm":
+					platform = Platform.Arm;
+					break;
+				case "anycpu":
+					platform = Platform.AnyCPU;
+					break;
+				case "x86":
+					platform = Platform.X86;
+					break;
+				case "x64":
+					platform = Platform.X64;
+					break;
+				case "itanium":
+					platform = Platform.IA64;
+					break;
+				case "anycpu32bitpreferred":
+					platform = Platform.AnyCPU32Preferred;
+					break;
+				default:
+					ReportInvalidArgument (opt, arg);
+					break;
+				}
+				return true;
+
 			case "prod":
 			case "product":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyProductAttribute), arg);
+				product = arg;
 				return true;
 
 			case "productv":
 			case "productversion":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyInformationalVersionAttribute), arg);
+				AddCattr (typeof (System.Reflection.AssemblyInformationalVersionAttribute), arg);
 				return true;
 
 			case "t":
@@ -388,14 +435,14 @@ namespace Mono.AssemblyLinker
 			case "title":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyTitleAttribute), arg);
+				title = arg;
 				return true;
 
 			case "trade":
 			case "trademark":
 				if (arg == null)
 					ReportMissingText (opt);
-				AddCattr (typeof (AssemblyTrademarkAttribute), arg);
+				trademark = arg;
 				return true;
 
 			case "v":
@@ -405,7 +452,7 @@ namespace Mono.AssemblyLinker
 					Version ();
 					break;
 				}
-				AddCattr (typeof (AssemblyVersionAttribute), arg);
+				AddCattr (typeof (System.Reflection.AssemblyVersionAttribute), arg);
 				return true;
 
 			case "win32icon":
@@ -461,11 +508,14 @@ namespace Mono.AssemblyLinker
 			return command.ToLower ();
 		}
 
-		private void AddCattr (Type attrType, Type arg, object value) {
-			cattrs.Add (new CustomAttributeBuilder (attrType.GetConstructor (new Type [] { arg }), new object [] { value }));
+		private void AddCattr (System.Type attrType, System.Type arg, object value) {
+			var importedAttrType = universe.Import(attrType);
+			var importedArg = universe.Import(arg);
+
+			cattrs.Add (new CustomAttributeBuilder (importedAttrType.GetConstructor (new [] { importedArg }), new [] { value }));
 		}
 
-		private void AddCattr (Type attrType, object value) {
+		private void AddCattr (System.Type attrType, object value) {
 			AddCattr (attrType, typeof (string), value);
 		}
 
@@ -596,12 +646,25 @@ namespace Mono.AssemblyLinker
 			if (isTemplateFile)
 				aname = ReadCustomAttributesFromTemplateFile (templateFile, aname);
 
+			if (!String.IsNullOrEmpty (title))
+				AddCattr (typeof (System.Reflection.AssemblyTitleAttribute), title);
+			if (!String.IsNullOrEmpty (description))
+				AddCattr (typeof (System.Reflection.AssemblyDescriptionAttribute), description);
+			if (!String.IsNullOrEmpty (company))
+				AddCattr (typeof (System.Reflection.AssemblyCompanyAttribute), company);
+			if (!String.IsNullOrEmpty (product))
+				AddCattr (typeof (System.Reflection.AssemblyProductAttribute), product);
+			if (!String.IsNullOrEmpty (copyright))
+				AddCattr (typeof (System.Reflection.AssemblyCopyrightAttribute), copyright);
+			if (!String.IsNullOrEmpty (trademark))
+				AddCattr (typeof (System.Reflection.AssemblyTrademarkAttribute), trademark);
+
 			SetKeyPair (aname);
 
 			if (fileName != outFile)
-				ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (outFile));
+				ab = universe.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (outFile));
 			else
-				ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save);
+				ab = universe.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save);
 
 			foreach (CustomAttributeBuilder cb in cattrs)
 				ab.SetCustomAttribute (cb);
@@ -611,10 +674,6 @@ namespace Mono.AssemblyLinker
 			 */
 
 			foreach (ModuleInfo mod in inputFiles) {
-				MethodInfo mi = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-				if (mi == null)
-					Report (0, "Cannot add modules on this runtime: try the Mono runtime instead.");
-
 				if (mod.target != null) {
 					File.Copy (mod.fileName, mod.target, true);
 					mod.fileName = mod.target;
@@ -631,7 +690,7 @@ namespace Mono.AssemblyLinker
 				if (isAssembly)
 					ReportWarning (1020, "Ignoring included assembly '" + mod.fileName + "'");
 				else
-					mi.Invoke (ab, new object [] { mod.fileName });
+				ab.__AddModule (universe.OpenRawModule(mod.fileName));
 			}
 
 			/*
@@ -645,7 +704,7 @@ namespace Mono.AssemblyLinker
 				MethodInfo mainMethodInfo = null;
 
 				try {
-					Type mainType = ab.GetType (mainClass);
+					IKVM.Reflection.Type mainType = ab.GetType (mainClass);
 					if (mainType != null)
 						mainMethodInfo = mainType.GetMethod (mainMethod);
 				}
@@ -666,10 +725,7 @@ namespace Mono.AssemblyLinker
 
 			if (win32IconFile != null) {
 				try {
-					MethodInfo mi = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-					if (mi == null)
-						Report (0, "Cannot embed win32 icons on this runtime: try the Mono runtime instead.");
-					mi.Invoke (ab, new object [] {  win32IconFile });
+					ab.__DefineIconResource (File.ReadAllBytes (win32IconFile));
 				}
 				catch (Exception ex) {
 					Report (1031, "Error reading icon '" + win32IconFile + "' --" + ex);
@@ -685,6 +741,8 @@ namespace Mono.AssemblyLinker
 				}
 			}
 
+			ModuleBuilder mainModule = null;
+
 			foreach (ResourceInfo res in resources) {
 				if (res.name == null)
 					res.name = Path.GetFileName (res.fileName);
@@ -694,11 +752,13 @@ namespace Mono.AssemblyLinker
 						Report (1046, String.Format ("Resource identifier '{0}' has already been used in this assembly", res.name));
 
 				if (res.isEmbedded) {
-					MethodInfo mi = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,
-						null, CallingConventions.Any, new Type [] { typeof (string), typeof (string) }, null);
-					if (mi == null)
-						Report (0, "Cannot embed resources on this runtime: try the Mono runtime instead.");
-					mi.Invoke (ab, new object [] { res.name, res.fileName });
+					if (mainModule == null) {
+						mainModule = ab.DefineDynamicModule (fileName, fileName, false);
+					}
+
+					Stream stream = new MemoryStream (File.ReadAllBytes (res.fileName));
+
+					mainModule.DefineManifestResource (res.name, stream, res.isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public);
 				}
 				else {
 					if (res.target != null) {
@@ -721,8 +781,36 @@ namespace Mono.AssemblyLinker
 				}
 			}
 
+			PortableExecutableKinds pekind = PortableExecutableKinds.ILOnly;
+			ImageFileMachine machine;
+
+			switch (platform) {
+			case Platform.X86:
+				pekind |= PortableExecutableKinds.Required32Bit;
+				machine = ImageFileMachine.I386;
+				break;
+			case Platform.X64:
+				pekind |= PortableExecutableKinds.PE32Plus;
+				machine = ImageFileMachine.AMD64;
+				break;
+			case Platform.IA64:
+				machine = ImageFileMachine.IA64;
+				break;
+			case Platform.AnyCPU32Preferred:
+				pekind |= PortableExecutableKinds.Preferred32Bit;
+				machine = ImageFileMachine.I386;
+				break;
+			case Platform.Arm:
+				machine = ImageFileMachine.ARM;
+				break;
+			case Platform.AnyCPU:
+			default:
+				machine = ImageFileMachine.I386;
+				break;
+			}
+
 			try {
-				ab.Save (fileName);
+				ab.Save (fileName, pekind, machine);
 			}
 			catch (Exception ex) {
 				Report (1019, "Metadata failure creating assembly -- " + ex);
@@ -733,17 +821,14 @@ namespace Mono.AssemblyLinker
 		{
 			// LAMESPEC: according to MSDN, the template assembly must have a
 			// strong name but this is not enforced
-			const IKR.UniverseOptions options = IKR.UniverseOptions.MetadataOnly;
-
-			var universe = new IKR.Universe (options);
 			var asm = universe.LoadFile (templateFile);
 
 			// Create missing assemblies, we don't want to load them!
 			// Code taken from ikdasm
 			var names = new HashSet<string> ();
-			IKR.AssemblyName[] assembly_refs = asm.ManifestModule.__GetReferencedAssemblies ();
+			AssemblyName[] assembly_refs = asm.ManifestModule.__GetReferencedAssemblies ();
 
-			var resolved_assemblies = new IKR.Assembly [assembly_refs.Length];
+			var resolved_assemblies = new Assembly [assembly_refs.Length];
 			for (int i = 0; i < resolved_assemblies.Length; i++) {
 				string name = assembly_refs [i].Name;
 
@@ -796,6 +881,85 @@ namespace Mono.AssemblyLinker
 						// ignore null or zero-length keyname
 						if (!String.IsNullOrEmpty (key_name_value))
 							keyname = key_name_value;
+					}
+					break;
+
+					case "System.Reflection.AssemblyTitleAttribute": {
+						if (title != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyTitleAttribute .ctor(string title)
+						string title_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (title_value))
+							title = title_value;
+					}
+					break;
+
+					case "System.Reflection.AssemblyDescriptionAttribute": {
+						if (description != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyDescriptionAttribute .ctor(string description)
+						string description_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (description_value))
+							description = description_value;
+					}
+					break;
+
+					case "System.Reflection.AssemblyProductAttribute": {
+						if (product != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyProductAttribute .ctor(string product)
+						string product_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (product_value))
+							product = product_value;
+					}
+					break;
+
+					case "System.Reflection.AssemblyCompanyAttribute": {
+						if (company != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyCompanyAttribute .ctor(string company)
+						string company_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (company_value))
+							company = company_value;
+
+					}
+					break;
+
+					case "System.Reflection.AssemblyCopyrightAttribute": {
+						if (copyright != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyCopyrightAttribute .ctor(string copyright)
+						string copyright_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (copyright_value))
+							copyright = copyright_value;
+					}
+					break;
+
+					case "System.Reflection.AssemblyTrademarkAttribute": {
+						if (trademark != null)
+							// ignore if specified on command line
+							continue;
+
+						// AssemblyTrademarkAttribute .ctor(string trademark)
+						string trademark_value = (string) attr_data.ConstructorArguments [0].Value;
+
+						if (!String.IsNullOrEmpty (trademark_value))
+							trademark = trademark_value;
 					}
 					break;
 				}
@@ -877,6 +1041,9 @@ namespace Mono.AssemblyLinker
 			"  /main:<method>            Specifies the method name of the entry point",
 			"  /nologo                   Suppress the startup banner and copyright message",
 			"  /out:<filename>           Output file name for the assembly manifest",
+			"  /platform:<text>          Limit which platforms this code can run on; must be",
+			"                            one of x86, Itanium, x64, arm, anycpu32bitpreferred,",
+			"                            or anycpu (the default)",
 			"  /prod[uct]:<text>         Product name",
 			"  /productv[ersion]:<text>  Product version",
 			"  /t[arget]:lib[rary]       Create a library",

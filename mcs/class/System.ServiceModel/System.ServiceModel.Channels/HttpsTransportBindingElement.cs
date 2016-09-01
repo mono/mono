@@ -47,10 +47,10 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected HttpsTransportBindingElement (
-			HttpsTransportBindingElement other)
-			: base (other)
+			HttpsTransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			req_cli_cert = other.req_cli_cert;
+			req_cli_cert = elementToBeCloned.req_cli_cert;
 		}
 
 		public bool RequireClientCertificate {

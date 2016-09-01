@@ -21,10 +21,15 @@ System.IO.Pipes/AnonymousPipeClientStream.cs
 System.IO.Pipes/AnonymousPipeServerStream.cs
 System.IO.Pipes/NamedPipeClientStream.cs
 System.IO.Pipes/NamedPipeServerStream.cs
+System.IO.Pipes/PipeAccessRights.cs
+System.IO.Pipes/PipeAccessRule.cs
+System.IO.Pipes/PipeAuditRule.cs
 System.IO.Pipes/PipeDirection.cs
 System.IO.Pipes/PipeInterfaces.cs
 System.IO.Pipes/PipeOptions.cs
+System.IO.Pipes/PipeSecurity.cs
 System.IO.Pipes/PipeStream.cs
+System.IO.Pipes/PipeStreamImpersonationWorker.cs
 System.IO.Pipes/PipeTransmissionMode.cs
 
 ReferenceSources/SR.cs

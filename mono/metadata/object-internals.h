@@ -7,6 +7,7 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/handle.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
@@ -262,6 +263,9 @@ struct _MonoReflectionType {
 	MonoType  *type;
 };
 
+/* Safely access System.Type from native code */
+TYPED_HANDLE_DECL (MonoReflectionType);
+
 /* This corresponds to System.RuntimeType */
 typedef struct {
 	MonoReflectionType type;
@@ -353,7 +357,7 @@ struct _MonoInternalThread {
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
-	HANDLE	    start_notify;
+	MonoCoopSem *start_notify;
 	gpointer stack_ptr;
 	gpointer *static_data;
 	void *thread_info; /*This is MonoThreadInfo*, but to simplify dependencies, let's make it a void* here. */
@@ -382,7 +386,7 @@ struct _MonoInternalThread {
 	 * Please synchronize any changes with InternalThread in Thread.cs, i.e. add the
 	 * same field there.
 	 */
-	gpointer unused1;
+	gsize start_notify_refcount;
 	gpointer unused2;
 };
 
@@ -808,6 +812,9 @@ struct _MonoReflectionAssembly {
 	MonoString *name;
 };
 
+/* Safely access System.Reflection.Assembly from native code */
+TYPED_HANDLE_DECL (MonoReflectionAssembly);
+
 typedef struct {
 	MonoReflectionType *utype;
 	MonoArray *values;
@@ -1097,6 +1104,9 @@ struct _MonoReflectionModule {
 	guint32 token;
 };
 
+/* Safely access System.Reflection.Module from native code */
+TYPED_HANDLE_DECL (MonoReflectionModule);
+
 typedef struct {
 	MonoReflectionModule module;
 	MonoDynamicImage *dynamic_image;
@@ -1329,7 +1339,6 @@ typedef struct {
 } CattrNamedArg;
 
 gboolean          mono_image_create_pefile (MonoReflectionModuleBuilder *module, HANDLE file, MonoError *error);
-MonoReflectionModule * mono_image_load_module_dynamic (MonoReflectionAssemblyBuilder *assembly, MonoString *file_name, MonoError *error);
 guint32       mono_image_insert_string (MonoReflectionModuleBuilder *module, MonoString *str);
 guint32       mono_image_create_token  (MonoDynamicImage *assembly, MonoObject *obj, gboolean create_methodspec, gboolean register_token, MonoError *error);
 guint32       mono_image_create_method_token (MonoDynamicImage *assembly, MonoObject *obj, MonoArray *opt_param_types, MonoError *error);
@@ -1339,9 +1348,6 @@ void          mono_dynamic_image_free_image (MonoDynamicImage *image);
 void          mono_dynamic_image_release_gc_roots (MonoDynamicImage *image);
 
 void        mono_reflection_setup_internal_class  (MonoReflectionTypeBuilder *tb);
-
-void
-ves_icall_TypeBuilder_create_internal_class (MonoReflectionTypeBuilder *tb);
 
 void
 ves_icall_TypeBuilder_setup_generic_class (MonoReflectionTypeBuilder *tb);
@@ -1395,9 +1401,6 @@ ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoRe
 
 MonoType*
 mono_reflection_type_get_handle (MonoReflectionType *ref, MonoError *error);
-
-void
-mono_reflection_free_dynamic_generic_class (MonoGenericClass *gclass);
 
 gboolean
 mono_image_build_metadata (MonoReflectionModuleBuilder *module, MonoError *error);

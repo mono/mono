@@ -57,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 152;
+		private const int mono_corlib_version = 153;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -472,7 +472,15 @@ namespace System {
 		public extern static string[] GetCommandLineArgs ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string internalGetEnvironmentVariable (string variable);
+		internal extern static string internalGetEnvironmentVariable_native (IntPtr variable);
+
+		internal static string internalGetEnvironmentVariable (string variable) {
+			if (variable == null)
+				return null;
+			using (var h = Mono.RuntimeMarshal.MarshalString (variable)) {
+				return internalGetEnvironmentVariable_native (h.Value);
+			}
+		}
 
 		/// <summary>
 		/// Return a string containing the value of the environment
@@ -862,6 +870,22 @@ namespace System {
 			}
 		}
 #else
+		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				return GetEnvironmentVariable (variable);
+
+			return null;
+		}
+
+		public static IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				return GetEnvironmentVariables ();
+
+			return (IDictionary)new Hashtable ();
+		}
+
 		public static void SetEnvironmentVariable (string variable, string value)
 		{
 			if (variable == null)
@@ -874,6 +898,14 @@ namespace System {
 				throw new ArgumentException ("The first char in the string is the null character.", "variable");
 
 			InternalSetEnvironmentVariable (variable, value);
+		}
+
+		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
+		{
+			if (target == EnvironmentVariableTarget.Process)
+				SetEnvironmentVariable (variable, value);
+
+			// other targets ignored
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -893,7 +925,9 @@ namespace System {
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
-			throw new NotImplementedException ();
+#pragma warning disable 618
+			throw new ExecutionEngineException (message, exception);
+#pragma warning restore
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

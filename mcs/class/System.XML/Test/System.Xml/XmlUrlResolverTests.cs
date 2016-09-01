@@ -10,9 +10,7 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-#if NET_4_5
 using System.Reflection;
-#endif
 
 namespace MonoTests.System.Xml
 {
@@ -98,7 +96,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("view:Standard.xslt", uri.AbsoluteUri, "#2");
 		}
 
-#if NET_4_5
 		[Test]
 		public void TestAsync ()
 		{
@@ -126,6 +123,5 @@ namespace MonoTests.System.Xml
 				Assert.IsTrue (ex is XmlException);
 			}
 		}
-#endif
 	}
 }

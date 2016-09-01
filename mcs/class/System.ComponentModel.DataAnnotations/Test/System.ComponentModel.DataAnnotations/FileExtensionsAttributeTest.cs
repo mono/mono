@@ -36,7 +36,6 @@ using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_5
 	[TestFixture]
 	public class FileExtensionsAttributeTest
 	{
@@ -57,5 +56,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsFalse (sla.IsValid (DateTime.Now), "#A1-8");
 		}
 	}
-#endif
 }

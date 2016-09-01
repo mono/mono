@@ -491,7 +491,7 @@ mono_gc_invoke_finalizers (void)
 	return sgen_gc_invoke_finalizers ();
 }
 
-gboolean
+MonoBoolean
 mono_gc_pending_finalizers (void)
 {
 	return sgen_have_pending_finalizers ();
@@ -2896,7 +2896,7 @@ sgen_client_handle_gc_param (const char *opt)
 	} else if (g_str_has_prefix (opt, "toggleref-test")) {
 		/* FIXME: This should probably in MONO_GC_DEBUG */
 		sgen_register_test_toggleref_callback ();
-	} else {
+	} else if (!sgen_bridge_handle_gc_param (opt)) {
 		return FALSE;
 	}
 	return TRUE;

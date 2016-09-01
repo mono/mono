@@ -53,12 +53,12 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected TcpTransportBindingElement (
-			TcpTransportBindingElement other)
-			: base (other)
+			TcpTransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			listen_backlog = other.listen_backlog;
-			port_sharing_enabled = other.port_sharing_enabled;
-			pool.CopyPropertiesFrom (other.pool);
+			listen_backlog = elementToBeCloned.listen_backlog;
+			port_sharing_enabled = elementToBeCloned.port_sharing_enabled;
+			pool.CopyPropertiesFrom (elementToBeCloned.pool);
 		}
 		
 		public TcpConnectionPoolSettings ConnectionPoolSettings {

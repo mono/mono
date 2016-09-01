@@ -45,12 +45,12 @@ namespace System.ServiceModel
 			Initialize (identity);
 		}
 
-		public DnsEndpointIdentity (string dns)
-			: this (Claim.CreateDnsClaim (dns))
+		public DnsEndpointIdentity (string dnsName)
+			: this (Claim.CreateDnsClaim (dnsName))
 		{
 		}
 #else
-		public DnsEndpointIdentity (string dns)
+		public DnsEndpointIdentity (string dnsName)
 		{
 			throw new NotImplementedException ();
 		}

@@ -43,7 +43,6 @@
 #include <metadata/threads.h>
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
-#include <mono/utils/w32handle.h>
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -895,7 +894,6 @@ mono_cleanup (void)
 
 #ifndef HOST_WIN32
 	wapi_cleanup ();
-	mono_w32handle_cleanup ();
 #endif
 }
 

@@ -2482,7 +2482,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void AllowReadStreamBuffering ()
 		{
@@ -2494,7 +2493,6 @@ namespace MonoTests.System.Net
 			} catch (InvalidOperationException) {
 			}
 		}
-#endif
 
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;

@@ -52,13 +52,13 @@ namespace System.IO.Compression
 		bool disposed;
 		DeflateStreamNative native;
 
-		public DeflateStream (Stream compressedStream, CompressionMode mode) :
-			this (compressedStream, mode, false, false)
+		public DeflateStream (Stream stream, CompressionMode mode) :
+			this (stream, mode, false, false)
 		{
 		}
 
-		public DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) :
-			this (compressedStream, mode, leaveOpen, false)
+		public DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen) :
+			this (stream, mode, leaveOpen, false)
 		{
 		}
 
@@ -124,23 +124,23 @@ namespace System.IO.Compression
 			}
 		}
 
-		public override int Read (byte[] dest, int dest_offset, int count)
+		public override int Read (byte[] array, int offset, int count)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
-			if (dest == null)
+			if (array == null)
 				throw new ArgumentNullException ("Destination array is null.");
 			if (!CanRead)
 				throw new InvalidOperationException ("Stream does not support reading.");
-			int len = dest.Length;
-			if (dest_offset < 0 || count < 0)
+			int len = array.Length;
+			if (offset < 0 || count < 0)
 				throw new ArgumentException ("Dest or count is negative.");
-			if (dest_offset > len)
+			if (offset > len)
 				throw new ArgumentException ("destination offset is beyond array size");
-			if ((dest_offset + count) > len)
+			if ((offset + count) > len)
 				throw new ArgumentException ("Reading would overrun buffer");
 
-			return ReadInternal (dest, dest_offset, count);
+			return ReadInternal (array, offset, count);
 		}
 
 		unsafe void WriteInternal (byte[] array, int offset, int count)
@@ -154,16 +154,16 @@ namespace System.IO.Compression
 			}
 		}
 
-		public override void Write (byte[] src, int src_offset, int count)
+		public override void Write (byte[] array, int offset, int count)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			if (src == null)
-				throw new ArgumentNullException ("src");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
-			if (src_offset < 0)
-				throw new ArgumentOutOfRangeException ("src_offset");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
 
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
@@ -171,10 +171,10 @@ namespace System.IO.Compression
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
-			if (src_offset > src.Length - count)
+			if (offset > array.Length - count)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
-			WriteInternal (src, src_offset, count);
+			WriteInternal (array, offset, count);
 		}
 
 		public override void Flush ()

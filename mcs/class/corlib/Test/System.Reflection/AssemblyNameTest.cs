@@ -1152,10 +1152,8 @@ public class AssemblyNameTest {
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
 		Assert.AreEqual ("TestAssembly", an.ToString (), "ToString");
-#if NET_4_5
 		Assert.IsNull (an.CultureName, "CultureName");
 		Assert.AreEqual (AssemblyContentType.Default, an.ContentType, "ContentType");
-#endif
 	}
 
 	[Test] // ctor (String)

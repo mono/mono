@@ -78,6 +78,7 @@ namespace System.IO.Ports
         }
 #endif
 
+#if !MONO
 #if FEATURE_NETCORE
         [SecuritySafeCritical]
 #endif
@@ -95,6 +96,7 @@ namespace System.IO.Ports
             int errorCode = Marshal.GetLastWin32Error();
             WinIOError(errorCode, str);
         }
+#endif
         
         // After calling GetLastWin32Error(), it clears the last error field,
         // so you must save the HResult and pass it to this method.  This method

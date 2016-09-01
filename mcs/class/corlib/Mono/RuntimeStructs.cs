@@ -12,6 +12,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+#pragma warning disable 169
+
 namespace Mono {
 	//
 	// Managed representations of mono runtime types

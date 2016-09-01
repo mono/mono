@@ -36,7 +36,6 @@ using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_5
 	[TestFixture]
 	public class EmailAddressAttributeTest
 	{
@@ -84,5 +83,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Assert.IsFalse (sla.IsValid (InvalidAddresses[i]), "#B1-{0}", i);
 		}
 	}
-#endif
 }

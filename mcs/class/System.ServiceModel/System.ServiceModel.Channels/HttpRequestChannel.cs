@@ -126,6 +126,7 @@ namespace System.ServiceModel.Channels
 			}
 
 			web_request.Timeout = (int) timeout.TotalMilliseconds;
+			web_request.KeepAlive = httpbe.KeepAliveEnabled;
 
 			// There is no SOAP Action/To header when AddressingVersion is None.
 			if (message.Version.Envelope.Equals (EnvelopeVersion.Soap11) ||

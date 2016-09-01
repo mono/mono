@@ -419,7 +419,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("urn:foo", r.BaseURI);
 		}
 
-#if NET_4_5
 		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void ReadonlyAsync ()
@@ -444,6 +443,5 @@ namespace MonoTests.System.Xml
 			var r2 = XmlReader.Create (r, c);
 			Assert.IsTrue (r2.Settings.Async);
 		}
-#endif
 	}
 }

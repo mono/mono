@@ -9,9 +9,7 @@
 using System;
 using System.IO;
 using System.Text;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 using NUnit.Framework;
 
@@ -845,7 +843,6 @@ public class StreamReaderTest
 		Assert.AreEqual (0, StreamReader.Null.ReadBlock (buffer, 0, buffer.Length));
 	}
 
-#if NET_4_5
 	[Test]
 	public void ReadLineAsync ()
 	{
@@ -866,7 +863,6 @@ public class StreamReaderTest
 		Assert.IsTrue (result.Wait (3000), "#1");
 		Assert.AreEqual ("ab" + Environment.NewLine, result.Result);
 	}
-#endif
 }
 
 class MyStream : Stream {

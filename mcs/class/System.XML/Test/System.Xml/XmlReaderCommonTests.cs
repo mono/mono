@@ -15,10 +15,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 using NUnit.Framework;
 
@@ -2298,7 +2296,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ((UInt64) 1, xr.ReadContentAs (typeof (UInt64), null), "#8");
 		}
 
-#if NET_4_5
 		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void MustSetAsyncFlag ()
@@ -2347,6 +2344,5 @@ namespace MonoTests.System.Xml
 			if (task.Result != null)
 				throw task.Result;
 		}
-#endif
 	}
 }

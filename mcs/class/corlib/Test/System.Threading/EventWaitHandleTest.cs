@@ -43,6 +43,18 @@ namespace MonoTests.System.Threading {
 		{
 			new EventWaitHandle (true, (EventResetMode) Int32.MinValue);
 		}
+
+		[Test]
+		public void Disposed_Set ()
+		{
+			var ewh = new EventWaitHandle (false, EventResetMode.ManualReset);
+			ewh.Dispose();
+			try {
+				ewh.Set();
+				Assert.Fail ();
+			} catch (ObjectDisposedException) {
+			}
+		}
 	}
 }
 

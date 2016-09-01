@@ -700,7 +700,7 @@ System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
-System.Security.Cryptography/CryptoConfig_2_1.cs
+System.Security.Cryptography/CryptoConfig.common.cs
 System.Security.Cryptography/CryptoConfig.fullaot.cs
 System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
@@ -849,7 +849,6 @@ System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
 System.Text/Latin1Encoding.cs
 System.Threading/CompressedStack.cs
-System.Threading/EventWaitHandle.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
@@ -965,6 +964,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/fieldaccessexception.cs
 ../referencesource/mscorlib/system/flagsattribute.cs
 ../referencesource/mscorlib/system/formatexception.cs
+../referencesource/mscorlib/system/FormattableString.cs
 ../referencesource/mscorlib/system/guid.cs
 ../referencesource/mscorlib/system/iappdomain.cs
 ../referencesource/mscorlib/system/iappdomainsetup.cs
@@ -1354,10 +1354,12 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/datetimeconstantattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/decimalconstantattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/decoratednameattribute.cs
+../referencesource/mscorlib/system/runtime/compilerservices/disableprivatereflectionattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/discardableattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/extensionattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/fixedaddressvaluetypeattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/fixedbufferattribute.cs
+../referencesource/mscorlib/system/runtime/compilerservices/FormattableStringFactory.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/hascopysemanticsattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/IAsyncStateMachine.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/indexernameattribute.cs
@@ -1496,6 +1498,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/text/encoderreplacementfallback.cs
 ../referencesource/mscorlib/system/text/encoding.cs
 ../referencesource/mscorlib/system/text/encodinginfo.cs
+../referencesource/mscorlib/system/text/encodingprovider.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 ../referencesource/mscorlib/system/text/unicodeencoding.cs
@@ -1564,12 +1567,14 @@ ReferenceSources/PathInternal.cs
 
 ../referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../referencesource/mscorlib/system/threading/apartmentstate.cs
+../referencesource/mscorlib/system/threading/asynclocal.cs
 ../referencesource/mscorlib/system/threading/autoresetevent.cs
 ../referencesource/mscorlib/system/threading/CancellationToken.cs
 ../referencesource/mscorlib/system/threading/CancellationTokenRegistration.cs
 ../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
 ../referencesource/mscorlib/system/threading/CountdownEvent.cs
 ../referencesource/mscorlib/system/threading/eventresetmode.cs
+../referencesource/mscorlib/system/threading/eventwaithandle.cs
 ../referencesource/mscorlib/system/threading/executioncontext.cs
 ../referencesource/mscorlib/system/threading/LazyInitializer.cs
 ../referencesource/mscorlib/system/threading/lockrecursionexception.cs
@@ -1597,6 +1602,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../referencesource/mscorlib/system/threading/threadpool.cs
 ../referencesource/mscorlib/system/threading/waithandle.cs
+../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
@@ -1625,10 +1631,3 @@ ReferenceSources/PathInternal.cs
 
 ReferenceSources/String.cs
 ReferenceSources/Type.cs
-
-coreclr/AsyncLocal.cs
-coreclr/DisablePrivateReflectionAttribute.cs
-coreclr/EncodingProvider.cs
-coreclr/FormattableString.cs
-coreclr/FormattableStringFactory.cs
-coreclr/WaitHandleExtensions.cs

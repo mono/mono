@@ -674,6 +674,14 @@ namespace MonoTests.System
 				Assert.AreEqual (expectedDate, lastMidnightAsEST);
 				Assert.AreEqual (lastMidnight, lastMidnightAsPST);
 			}
+
+			[Test]
+			public void ConvertTimeBySystemTimeZoneId_UtcId ()
+			{
+				DateTime localTime = TimeZoneInfo.ConvertTime (DateTime.UtcNow, TimeZoneInfo.Utc, TimeZoneInfo.Local);
+
+				TimeZoneInfo.ConvertTimeBySystemTimeZoneId (DateTime.UtcNow, TimeZoneInfo.Utc.Id, TimeZoneInfo.Local.Id);
+			}
 		}
 		
 		[TestFixture]

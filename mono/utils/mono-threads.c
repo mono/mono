@@ -279,9 +279,9 @@ If return non null Hazard Pointer 1 holds the return value.
 MonoThreadInfo*
 mono_thread_info_lookup (MonoNativeThreadId id)
 {
-		MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
+	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 
-	if (!mono_lls_find (&thread_list, hp, (uintptr_t)id, HAZARD_FREE_ASYNC_CTX)) {
+	if (!mono_lls_find (&thread_list, hp, (uintptr_t)id)) {
 		mono_hazard_pointer_clear_all (hp, -1);
 		return NULL;
 	} 
@@ -295,7 +295,7 @@ mono_thread_info_insert (MonoThreadInfo *info)
 {
 	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 
-	if (!mono_lls_insert (&thread_list, hp, (MonoLinkedListSetNode*)info, HAZARD_FREE_SAFE_CTX)) {
+	if (!mono_lls_insert (&thread_list, hp, (MonoLinkedListSetNode*)info)) {
 		mono_hazard_pointer_clear_all (hp, -1);
 		return FALSE;
 	} 
@@ -311,7 +311,7 @@ mono_thread_info_remove (MonoThreadInfo *info)
 	gboolean res;
 
 	THREADS_DEBUG ("removing info %p\n", info);
-	res = mono_lls_remove (&thread_list, hp, (MonoLinkedListSetNode*)info, HAZARD_FREE_SAFE_CTX);
+	res = mono_lls_remove (&thread_list, hp, (MonoLinkedListSetNode*)info);
 	mono_hazard_pointer_clear_all (hp, -1);
 	return res;
 }
@@ -373,6 +373,7 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 
 	info->stackdata = g_byte_array_new ();
 
+	mono_threads_platform_register (info);
 	mono_threads_suspend_register (info);
 
 	/*
@@ -690,7 +691,7 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_os_sem_init (&global_suspend_semaphore, 1);
 	mono_os_sem_init (&suspend_semaphore, 0);
 
-	mono_lls_init (&thread_list, NULL, HAZARD_FREE_NO_LOCK);
+	mono_lls_init (&thread_list, NULL);
 	mono_thread_smr_init ();
 	mono_threads_platform_init ();
 	mono_threads_suspend_init ();
@@ -766,10 +767,9 @@ mono_thread_info_core_resume (MonoThreadInfo *info)
 {
 	gboolean res = FALSE;
 	if (info->create_suspended) {
-		MonoNativeThreadId tid = mono_thread_info_get_tid (info);
 		/* Have to special case this, as the normal suspend/resume pair are racy, they don't work if he resume is received before the suspend */
 		info->create_suspended = FALSE;
-		mono_threads_platform_resume_created (info, tid);
+		mono_coop_sem_post (&info->create_suspended_sem);
 		return TRUE;
 	}
 
@@ -1349,19 +1349,6 @@ void
 mono_thread_info_exit (void)
 {
 	mono_threads_platform_exit (0);
-}
-
-/*
- * mono_thread_info_open_handle:
- *
- *   Return a io-layer/win32 handle for the current thread.
- * The handle need to be closed by calling CloseHandle () when it is no
- * longer needed.
- */
-HANDLE
-mono_thread_info_open_handle (void)
-{
-	return mono_threads_platform_open_handle ();
 }
 
 /*

@@ -645,10 +645,7 @@ namespace System.Runtime.InteropServices{
 #endif
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = false)]
     [System.Runtime.InteropServices.ComVisible(true)]
-#if !MONOTOUCH
-    public
-#endif
-    sealed class ComImportAttribute : Attribute
+    public sealed class ComImportAttribute : Attribute
     {
         internal static Attribute GetCustomAttribute(RuntimeType type)
         {

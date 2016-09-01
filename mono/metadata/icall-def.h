@@ -171,7 +171,7 @@ ICALL_TYPE (COMPO_W, "System.ComponentModel.Win32Exception", COMPO_W_1)
 ICALL (COMPO_W_1, "W32ErrorMessage", ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage)
 
 ICALL_TYPE(DEFAULTC, "System.Configuration.DefaultConfig", DEFAULTC_1)
-ICALL(DEFAULTC_1, "get_bundled_machine_config", get_bundled_machine_config)
+HANDLES(ICALL(DEFAULTC_1, "get_bundled_machine_config", get_bundled_machine_config))
 ICALL(DEFAULTC_2, "get_machine_config_path", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path)
 
 /* Note that the below icall shares the same function as DefaultConfig uses */
@@ -281,9 +281,9 @@ ICALL(ENV_14, "get_ProcessorCount", mono_cpu_count)
 ICALL(ENV_15, "get_TickCount", ves_icall_System_Environment_get_TickCount)
 ICALL(ENV_16, "get_UserName", ves_icall_System_Environment_get_UserName)
 ICALL(ENV_16m, "internalBroadcastSettingChange", ves_icall_System_Environment_BroadcastSettingChange)
-ICALL(ENV_17, "internalGetEnvironmentVariable", ves_icall_System_Environment_GetEnvironmentVariable)
-ICALL(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacPath)
-ICALL(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome)
+HANDLES(ICALL(ENV_17, "internalGetEnvironmentVariable_native", ves_icall_System_Environment_GetEnvironmentVariable_native))
+HANDLES(ICALL(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacPath))
+HANDLES(ICALL(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome))
 ICALL(ENV_20, "set_ExitCode", mono_environment_exitcode_set)
 
 ICALL_TYPE(GC, "System.GC", GC_0)
@@ -403,7 +403,7 @@ ICALL(MONOIO_32, "get_PathSeparator", ves_icall_System_IO_MonoIO_get_PathSeparat
 ICALL(MONOIO_33, "get_VolumeSeparatorChar", ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar)
 
 ICALL_TYPE(IOPATH, "System.IO.Path", IOPATH_1)
-ICALL(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path)
+HANDLES(ICALL(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path))
 
 ICALL_TYPE(IOSELECTOR, "System.IOSelector", IOSELECTOR_1)
 ICALL(IOSELECTOR_1, "Add", ves_icall_System_IOSelector_Add)
@@ -494,7 +494,7 @@ ICALL(OBJ_2, "InternalGetHashCode", mono_object_hash)
 ICALL(OBJ_3, "MemberwiseClone", ves_icall_System_Object_MemberwiseClone)
 
 ICALL_TYPE(ASSEM, "System.Reflection.Assembly", ASSEM_1a)
-ICALL(ASSEM_1a, "GetAotId", ves_icall_System_Reflection_Assembly_GetAotId)
+HANDLES(ICALL(ASSEM_1a, "GetAotId", ves_icall_System_Reflection_Assembly_GetAotId))
 ICALL(ASSEM_2, "GetCallingAssembly", ves_icall_System_Reflection_Assembly_GetCallingAssembly)
 ICALL(ASSEM_3, "GetEntryAssembly", ves_icall_System_Reflection_Assembly_GetEntryAssembly)
 ICALL(ASSEM_4, "GetExecutingAssembly", ves_icall_System_Reflection_Assembly_GetExecutingAssembly)
@@ -509,7 +509,7 @@ ICALL(ASSEM_12, "GetReferencedAssemblies", ves_icall_System_Reflection_Assembly_
 ICALL(ASSEM_13, "GetTypes", ves_icall_System_Reflection_Assembly_GetTypes)
 ICALL(ASSEM_14, "InternalGetAssemblyName", ves_icall_System_Reflection_Assembly_InternalGetAssemblyName)
 ICALL(ASSEM_15, "InternalGetType", ves_icall_System_Reflection_Assembly_InternalGetType)
-ICALL(ASSEM_16, "InternalImageRuntimeVersion", ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion)
+HANDLES(ICALL(ASSEM_16, "InternalImageRuntimeVersion", ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion))
 ICALL(ASSEM_17, "LoadFrom", ves_icall_System_Reflection_Assembly_LoadFrom)
 ICALL(ASSEM_18, "LoadPermissions", ves_icall_System_Reflection_Assembly_LoadPermissions)
 
@@ -519,7 +519,7 @@ ICALL(ASSEM_21, "get_ReflectionOnly", ves_icall_System_Reflection_Assembly_get_R
 ICALL(ASSEM_22, "get_code_base", ves_icall_System_Reflection_Assembly_get_code_base)
 ICALL(ASSEM_23, "get_fullname", ves_icall_System_Reflection_Assembly_get_fullName)
 ICALL(ASSEM_24, "get_global_assembly_cache", ves_icall_System_Reflection_Assembly_get_global_assembly_cache)
-ICALL(ASSEM_25, "get_location", ves_icall_System_Reflection_Assembly_get_location)
+HANDLES(ICALL(ASSEM_25, "get_location", ves_icall_System_Reflection_Assembly_get_location))
 ICALL(ASSEM_26, "load_with_partial_name", ves_icall_System_Reflection_Assembly_load_with_partial_name)
 
 ICALL_TYPE(ASSEMN, "System.Reflection.AssemblyName", ASSEMN_0)
@@ -530,8 +530,7 @@ ICALL(ASSEMN_2, "get_public_token", mono_digest_get_public_token)
 ICALL_TYPE(CATTR_DATA, "System.Reflection.CustomAttributeData", CATTR_DATA_1)
 ICALL(CATTR_DATA_1, "ResolveArgumentsInternal", ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal)
 
-ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_1)
-ICALL(ASSEMB_1, "InternalAddModule", ves_icall_AssemblyBuilder_InternalAddModule)
+ICALL_TYPE(ASSEMB, "System.Reflection.Emit.AssemblyBuilder", ASSEMB_2)
 ICALL(ASSEMB_2, "basic_init", ves_icall_AssemblyBuilder_basic_init)
 
 #ifndef DISABLE_REFLECTION_EMIT
@@ -574,7 +573,6 @@ ICALL(SYMBOLTYPE_1, "create_unmanaged_type", ves_icall_SymbolType_create_unmanag
 
 ICALL_TYPE(TYPEB, "System.Reflection.Emit.TypeBuilder", TYPEB_1)
 ICALL(TYPEB_1, "create_generic_class", ves_icall_TypeBuilder_create_generic_class)
-ICALL(TYPEB_2, "create_internal_class", ves_icall_TypeBuilder_create_internal_class)
 ICALL(TYPEB_3, "create_runtime_class", ves_icall_TypeBuilder_create_runtime_class)
 ICALL(TYPEB_4, "get_IsGenericParameter", ves_icall_TypeBuilder_get_IsGenericParameter)
 ICALL(TYPEB_5, "get_event_info", ves_icall_TypeBuilder_get_event_info)
@@ -600,7 +598,7 @@ ICALL(MBASE_4, "GetMethodFromHandleInternalType_native", ves_icall_System_Reflec
 ICALL_TYPE(MODULE, "System.Reflection.Module", MODULE_1)
 ICALL(MODULE_1, "Close", ves_icall_System_Reflection_Module_Close)
 ICALL(MODULE_2, "GetGlobalType", ves_icall_System_Reflection_Module_GetGlobalType)
-ICALL(MODULE_3, "GetGuidInternal", ves_icall_System_Reflection_Module_GetGuidInternal)
+HANDLES(ICALL(MODULE_3, "GetGuidInternal", ves_icall_System_Reflection_Module_GetGuidInternal))
 ICALL(MODULE_14, "GetHINSTANCE", ves_icall_System_Reflection_Module_GetHINSTANCE)
 ICALL(MODULE_4, "GetMDStreamVersion", ves_icall_System_Reflection_Module_GetMDStreamVersion)
 ICALL(MODULE_5, "GetPEKind", ves_icall_System_Reflection_Module_GetPEKind)
@@ -798,8 +796,8 @@ ICALL(RT_18, "MakePointerType", ves_icall_RuntimeType_MakePointerType)
 HANDLES(ICALL(RT_19, "getFullName", ves_icall_System_RuntimeType_getFullName))
 ICALL(RT_21, "get_DeclaringMethod", ves_icall_RuntimeType_get_DeclaringMethod)
 ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringType)
-ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name)
-ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace)
+HANDLES(ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name))
+HANDLES(ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace))
 ICALL(RT_25, "get_core_clr_security_level", vell_icall_RuntimeType_get_core_clr_security_level)
 ICALL(RT_26, "make_array_type", ves_icall_RuntimeType_make_array_type)
 ICALL(RT_27, "make_byref_type", ves_icall_RuntimeType_make_byref_type)
@@ -924,8 +922,8 @@ ICALL(MUTEX_3, "ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex
 
 ICALL_TYPE(NATIVEC, "System.Threading.NativeEventCalls", NATIVEC_1)
 ICALL(NATIVEC_1, "CloseEvent_internal", ves_icall_System_Threading_Events_CloseEvent_internal)
-ICALL(NATIVEC_2, "CreateEvent_internal(bool,bool,string,bool&)", ves_icall_System_Threading_Events_CreateEvent_internal)
-ICALL(NATIVEC_3, "OpenEvent_internal(string,System.Security.AccessControl.EventWaitHandleRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Events_OpenEvent_internal)
+ICALL(NATIVEC_2, "CreateEvent_internal(bool,bool,string,int&)", ves_icall_System_Threading_Events_CreateEvent_internal)
+ICALL(NATIVEC_3, "OpenEvent_internal(string,System.Security.AccessControl.EventWaitHandleRights,int&)", ves_icall_System_Threading_Events_OpenEvent_internal)
 ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal)
 ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal)
 

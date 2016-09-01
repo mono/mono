@@ -17,9 +17,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 using NUnit.Framework;
 
@@ -1119,7 +1117,6 @@ namespace MonoTests.System.IO
 			Assert.IsTrue (ms.DisposedCalled, "After");
 		}
 
-#if NET_4_5
 		[Test]
 		public void ReadAsync ()
 		{
@@ -1323,6 +1320,5 @@ namespace MonoTests.System.IO
 				return true;
 			}
 		}
-#endif
 	}
 }

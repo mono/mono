@@ -96,9 +96,6 @@ namespace System.Reflection.Emit
 		private extern void setup_internal_class (TypeBuilder tb);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_internal_class (TypeBuilder tb);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_generic_class ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -672,7 +669,6 @@ namespace System.Reflection.Emit
 				fields = new FieldBuilder [1];
 				fields [0] = res;
 				num_fields ++;
-				create_internal_class (this);
 			}
 
 			if (IsEnum) {

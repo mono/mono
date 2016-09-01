@@ -100,7 +100,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public static FaultException CreateFault (MessageFault fault,  params Type [] details)
+		public static FaultException CreateFault (MessageFault messageFault,  params Type [] faultDetailTypes)
 		{
 			throw new NotImplementedException ();
 		}
