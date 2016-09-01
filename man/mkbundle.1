@@ -41,6 +41,16 @@ command:
 
 .fi
 .PP
+You can configure options to be passed to the Mono runtime directly
+into your executable, for this, use the 
+.I --options
+flag.  For example, the following disables inlining, by passing the
+"-O=-inline" command line option to the embedded executable:
+.nf
+
+	$ mkbundle -o hello --options -O=-inline --simple hello.exe
+
+.PP
 The simple version allows for cross-compiling, this requires a Mono
 runtime to be installed in the ~/.mono/targets/TARGET/mono to be
 available.   You can use the "--local-targets" to list all available
@@ -119,6 +129,12 @@ This option will bundle all of the referenced assemblies for the
 assemblies listed on the command line option.  This is useful to
 distribute a self-contained image.
 .TP
+.I "--env KEY=VALUE"
+Use this to hardcode an environment variable at runtime for KEY to be
+mapped to VALUE.   This is useful in scenarios where you want to
+enable certain Mono runtime configuration options that are controlled
+by environment variables.
+.TP
 .I "--fetch-target target"
 Downloads a precompiled runtime for the specified target from the Mono
 distribution site.
@@ -166,6 +182,22 @@ image created.
 .I "-o filename"
 Places the output on `out'.  If the flag -c is specified, this is the
 C host program.  If not, this contains the resulting executable.
+.TP
+.I "--options OPTS"
+Since the resulting executable will be treated as a standalone
+program, you can use this option to pass configuration options to the
+Mono runtime and bake those into the resulting executable.  These
+options are specified as 
+.I OPTS.
+.Sp
+You can use the above to configure options that you would typically
+pass on the command line to Mono, before the main program is
+executed.   
+.Sp
+Additionally, users of your binary can still configure their own
+options by setting the 
+.I MONO_ENV_OPTIONS
+environment variable.   
 .TP
 .I "--target-server SERVER"
 By default the mkbundle tool will download from a Mono server the

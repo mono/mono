@@ -52,6 +52,7 @@ class MakeBundle {
 	static bool custom_mode = true;
 	static string embedded_options = null;
 	static string runtime = null;
+	static Dictionary<string,string> environment = new Dictionary<string,string>();
 	static string [] i18n = new string [] {
 		"West",
 		""
@@ -281,6 +282,19 @@ class MakeBundle {
 			case "--quiet":
 				quiet = true;
 				break;
+			case "-e":
+			case "--env":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+				var env = args [++i];
+				var p = env.IndexOf ('=');
+				if (p == -1)
+					environment.Add (env, "");
+				else
+					environment.Add (env.Substring (0, p), env.Substring (p+1));
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -477,6 +491,27 @@ class MakeBundle {
 			package.Position = package.Position + (align - (package.Position % align));
 		}
 
+		public void AddStringPair (string entry, string key, string value)
+		{
+			var kbytes = Encoding.UTF8.GetBytes (key);
+			var vbytes = Encoding.UTF8.GetBytes (value);
+
+			Console.WriteLine ("ADDING {0} to {1}", key, value);
+			if (kbytes.Length > 255){
+				Console.WriteLine ("The key value can not exceed 255 characters: " + key);
+				Environment.Exit (1);
+			}
+				
+			locations [entry] = Tuple.Create (package.Position, kbytes.Length+vbytes.Length+3);
+			Console.WriteLine ("Adding: {0}", (byte)kbytes.Length);
+			package.WriteByte ((byte)kbytes.Length);
+			package.Write (kbytes, 0, kbytes.Length);
+			package.WriteByte (0);
+			package.Write (vbytes, 0, vbytes.Length);
+			package.WriteByte (0);
+			package.Position = package.Position + (align - (package.Position % align));
+		}
+
 		public void Dump ()
 		{
 			if (quiet)
@@ -564,6 +599,10 @@ class MakeBundle {
 			maker.Add ("config_dir:", config_dir);
 		if (embedded_options != null)
 			maker.AddString ("options:", embedded_options);
+		if (environment.Count > 0){
+			foreach (var key in environment.Keys)
+				maker.AddStringPair ("env:" + key, key, environment [key]);
+		}
 		maker.Dump ();
 		maker.Close ();
 		return true;
@@ -1080,6 +1119,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "    --options OPTIONS   Embed the specified Mono command line options on target\n" +
 				   "    --runtime RUNTIME   Manually specifies the Mono runtime to use\n" +
 				   "    --target-server URL Specified a server to download targets from, default is " + target_server + "\n" +
+				   "    --env KEY=VALUE     Hardcodes an environment variable for the target\n" +
 				   "\n" +
 				   "--custom   Builds a custom launcher, options for --custom\n" +
 				   "    -c                  Produce stub only, do not compile\n" +
