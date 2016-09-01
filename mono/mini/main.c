@@ -149,7 +149,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			char *data = load_from_region (fd, offset, item_size);
 			uint8_t count = *data++;
 			char *value = data + count + 1;
-			setenv (data, value, 0);
+			g_setenv (data, value, FALSE);
 		} else {
 			fprintf (stderr, "Unknown stream on embedded package: %s\n", kind);
 			exit (1);
