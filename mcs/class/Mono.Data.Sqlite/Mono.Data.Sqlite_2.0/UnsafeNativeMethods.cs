@@ -16,16 +16,29 @@ namespace Mono.Data.Sqlite
 #endif
   internal static class UnsafeNativeMethods
   {
-#if MONOTOUCH
     internal static readonly bool use_sqlite3_close_v2 = false;
     internal static readonly bool use_sqlite3_open_v2 = false;
+    internal static readonly bool use_sqlite3_create_function_v2 = false;
     static UnsafeNativeMethods()
     {
-      IntPtr lib = ObjCRuntime.Dlfcn.dlopen(SQLITE_DLL, 0);
-      use_sqlite3_open_v2 = ObjCRuntime.Dlfcn.dlsym(lib, "sqlite3_open_v2") != IntPtr.Zero;
-      use_sqlite3_close_v2 = ObjCRuntime.Dlfcn.dlsym(lib, "sqlite3_close_v2") != IntPtr.Zero;
+      // calculate the version number parts
+      // https://www.sqlite.org/c3ref/c_source_id.html
+      // (<major> * 1000000) + (<minor> * 1000) + (<release>)
+      int version = sqlite3_libversion_number();
+      int release = version % 1000;
+      int minor = (version / 1000) % 1000;
+      int major = version / 1000000;
+
+      // set the various versions
+      // https://sqlite.org/changes.html
+      bool v3_5_0 = major >= 3 && minor >= 5 && release >= 0;
+      bool v3_7_14 = major >= 3 && minor >= 7 && release >= 14;
+      bool v3_7_3 = major >= 3 && minor >= 7 && release >= 3;
+      use_sqlite3_open_v2 = v3_5_0;
+      use_sqlite3_close_v2 = v3_7_14;
+      use_sqlite3_create_function_v2 = v3_7_3;
     }
-#endif
+
 #if !SQLITE_STANDARD
 
 #if !USE_INTEROP_DLL
@@ -739,6 +752,13 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern int sqlite3_free (IntPtr ptr);
+
+#if !PLATFORM_COMPACTFRAMEWORK
+    [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+    [DllImport(SQLITE_DLL)]
+#endif
+    internal static extern int sqlite3_libversion_number();
 
     #endregion
   }
