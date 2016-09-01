@@ -80,6 +80,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				else
 					host = Dns.GetHostByName(Dns.GetHostName()).HostName;
 			}
+
+			IPAddress hostAddress;
+			if (IPAddress.TryParse(host, out hostAddress))
+			{
+				if (hostAddress.AddressFamily == AddressFamily.InterNetworkV6)
+					host = "[" + host + "]";
+			}
 			
 			// Gets channel data from the chain of channel providers
 
