@@ -24,19 +24,17 @@ namespace Mono.Data.Sqlite
       // calculate the version number parts
       // https://www.sqlite.org/c3ref/c_source_id.html
       // (<major> * 1000000) + (<minor> * 1000) + (<release>)
-      int version = sqlite3_libversion_number();
-      int release = version % 1000;
-      int minor = (version / 1000) % 1000;
-      int major = version / 1000000;
+      int versionNumber = sqlite3_libversion_number();
+      int release = versionNumber % 1000;
+      int minor = (versionNumber / 1000) % 1000;
+      int major = versionNumber / 1000000;
+      Version version = new Version(major, minor, release);
 
       // set the various versions
       // https://sqlite.org/changes.html
-      bool v3_5_0 = major >= 3 && minor >= 5 && release >= 0;
-      bool v3_7_14 = major >= 3 && minor >= 7 && release >= 14;
-      bool v3_7_3 = major >= 3 && minor >= 7 && release >= 3;
-      use_sqlite3_open_v2 = v3_5_0;
-      use_sqlite3_close_v2 = v3_7_14;
-      use_sqlite3_create_function_v2 = v3_7_3;
+      use_sqlite3_open_v2 = version >= new Version(3, 5, 0);
+      use_sqlite3_close_v2 = version >= new Version(3, 7, 14);
+      use_sqlite3_create_function_v2 = version >= new Version(3, 7, 3);
     }
 
 #if !SQLITE_STANDARD
