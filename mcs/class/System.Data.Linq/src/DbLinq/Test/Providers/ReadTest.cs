@@ -443,7 +443,7 @@ namespace nwind
                     select p;
 
             int count = q.Count();
-            Assert.Less(count, db.Customers.Count());
+            AssertHelper.Less(count, db.Customers.Count());
         }
 
         [Test]
@@ -455,7 +455,7 @@ namespace nwind
                     select p;
 
             int count = q.Count();
-            Assert.Less(count, db.Customers.Count());
+            AssertHelper.Less(count, db.Customers.Count());
         }
 
         [Test]
@@ -496,7 +496,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType=typeof(InvalidOperationException), ExpectedMessage="Data context options cannot be modified after results have been returned from a query.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage="Data context options cannot be modified after results have been returned from a query.")]
         public void C13_Changing_ObjectTrackingEnabled2False()
         {
             Northwind db = CreateDB();
@@ -507,7 +507,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Data context options cannot be modified after results have been returned from a query.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Data context options cannot be modified after results have been returned from a query.")]
         public void C14_Changing_DeferredLoadingEnabled2False()
         {
             Northwind db = CreateDB();
@@ -518,7 +518,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Object tracking is not enabled for the current data context instance.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Object tracking is not enabled for the current data context instance.")]
         public void C15_SubmitChanges_DeferredLoadingEnabled_False()
         {
             Northwind db = CreateDB();
@@ -902,7 +902,7 @@ namespace nwind
                 {
                     //int compareNames = prevProductName.CompareTo(p.ProductName);
                     int compareNames = string.Compare(prevProductName, p.ProductName, stringComparisonType);
-                    Assert.Less(compareNames, 0, "When ordering by names, expected " + prevProductName + " to come after " + p.ProductName);
+                    AssertHelper.Less(compareNames, 0, "When ordering by names, expected " + prevProductName + " to come after " + p.ProductName);
                 }
                 prevProductName = p.ProductName;
             }
