@@ -117,7 +117,7 @@ namespace System.Reflection.Emit
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
 		{
 			int sep_index;
-			this.parent = parent;
+			this.parent = ResolveUserType (parent);
 			this.attrs = attr;
 			this.class_size = type_size;
 			this.packing_size = packing_size;
@@ -825,10 +825,52 @@ namespace System.Reflection.Emit
 					ctor.fixup ();
 			}
 
+			ResolveUserTypes ();
+
 			created = create_runtime_class ();
 			if (created != null)
 				return created;
 			return this;
+		}
+
+		void ResolveUserTypes () {
+			parent = ResolveUserType (parent);
+			ResolveUserTypes (interfaces);
+			if (fields != null) {
+				foreach (var fb in fields) {
+					if (fb != null)
+						fb.ResolveUserTypes ();
+				}
+			}
+			if (methods != null) {
+				foreach (var mb in methods) {
+					if (mb != null)
+						mb.ResolveUserTypes ();
+				}
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors) {
+					if (cb != null)
+						cb.ResolveUserTypes ();
+				}
+			}
+		}
+
+		static internal void ResolveUserTypes (Type[] types) {
+			if (types != null)
+				for (int i = 0; i < types.Length; ++i)
+					types [i] = ResolveUserType (types [i]);
+		}
+
+		static internal Type ResolveUserType (Type t) {
+			if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator))) {
+				t = t.UnderlyingSystemType;
+				if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator)))
+					throw new NotSupportedException ("User defined subclasses of System.Type are not yet supported.");
+				return t;
+			} else {
+				return t;
+			}
 		}
 
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
@@ -1599,6 +1641,7 @@ namespace System.Reflection.Emit
 			} else {
 				this.parent = parent;
 			}
+			this.parent = ResolveUserType (this.parent);
 
 			// will just set the parent-related bits if called a second time
 			setup_internal_class ();
