@@ -97,11 +97,21 @@ test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 endif # ALWAYS_AOT
 
-ifdef TEST_NUNITLITE_APP_CONFIG
+NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe.config
+
+ifdef XBUILD_VERSION
+ifneq (4.0, $(XBUILD_VERSION))
+NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/net_4_x/nunit-lite-console.exe.config
+endif
+endif
+
 patch-nunitlite-appconfig:
-	sed "/__INSERT_CUSTOM_APP_CONFIG__/r $(TEST_NUNITLITE_APP_CONFIG)" $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl > $(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe.config
-else
-	sed "s/__INSERT_CUSTOM_APP_CONFIG__//g" $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl > $(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe.config
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(NUNITLITE_CONFIG_FILE)
+ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
+	sed -i '' "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(NUNITLITE_CONFIG_FILE)
+endif
+ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
+	sed -i '' "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
 endif
 
 ## FIXME: i18n problem in the 'sed' command below

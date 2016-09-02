@@ -28,7 +28,7 @@ endif
 TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
-TEST_NUNITLITE_APP_CONFIG=Test/test-config-file
+TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
 ifndef NO_PROCESS_START
