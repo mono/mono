@@ -501,6 +501,44 @@ namespace System.Dynamic {
                         binder.ReturnType
                     );
 
+#if MONO // referencesource version
+                    Expression condition;
+                    // If the return type can not be assigned null then just check for type assignablity otherwise allow null.
+                    if (binder.ReturnType.IsValueType && Nullable.GetUnderlyingType(binder.ReturnType) == null) {
+                        condition = Expression.TypeIs(resultMO.Expression, binder.ReturnType);
+                    }
+                    else {
+                        condition = Expression.OrElse(
+                                        Expression.Equal(resultMO.Expression, Expression.Constant(null)),
+                                        Expression.TypeIs(resultMO.Expression, binder.ReturnType));
+                    }
+
+                    var checkedConvert = Expression.Condition(
+                        condition,
+                        convert,
+                        Expression.Throw(
+                            Expression.New(typeof(InvalidCastException).GetConstructor(new Type[]{typeof(string)}),
+                                Expression.Call(
+                                    typeof(string).GetMethod("Format", new Type[] {typeof(string), typeof(object[])}),
+                                    Expression.Constant(convertFailed),
+                                    Expression.NewArrayInit(typeof(object),
+                                        Expression.Condition(
+                                            Expression.Equal(resultMO.Expression, Expression.Constant(null)),
+                                            Expression.Constant("null"),
+                                            Expression.Call(
+                                                resultMO.Expression,
+                                                typeof(object).GetMethod("GetType")
+                                            ),
+                                            typeof(object)
+                                        )
+                                    )
+                                )
+                            ),
+                            binder.ReturnType
+                        ),
+                        binder.ReturnType
+                    );
+#else
                     var checkedConvert = Expression.Condition(
                         Expression.TypeIs(resultMO.Expression, binder.ReturnType),
                         convert,
@@ -524,6 +562,7 @@ namespace System.Dynamic {
                         ),
                         binder.ReturnType
                     );
+#endif
 
                     resultMO = new DynamicMetaObject(checkedConvert, resultMO.Restrictions);
                 }
