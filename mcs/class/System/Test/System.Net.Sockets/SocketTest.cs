@@ -1207,9 +1207,9 @@ namespace MonoTests.System.Net.Sockets
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
-			
+
 			Assert.AreEqual (false, sock.NoDelay, "NoDelayDefaultTcp");
-			
+
 			sock.Close ();
 		}
 
@@ -4287,51 +4287,84 @@ namespace MonoTests.System.Net.Sockets
 		
 		[Test]
 		public void ConnectToIPV4EndPointUsingDualModelSocket () {
-			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
-			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+			/*
+			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that
+			 * anyways in this test to make it more interoparable with .NET where
+			 * IPv6 and DualMode needs to be specified.
+			 */
+			using (var server = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)) {
+
 				var host = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
-					
+
+				server.DualMode = true;
 				server.Bind (host);
-				server.Listen (0);
+				/*
+				 * Nothing to Accept the connect - we need a backlog to make sure we don't get 
+				 Connection refused.
+				 */
+				server.Listen (3);
 				
 				var ep = server.LocalEndPoint as IPEndPoint;
-				
+				var client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
 				client.Connect (ep);
-				client.Disconnect (true);
-				
+				client.Disconnect (false);
+				client.Close ();
+
+				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
 				client.Connect (IPAddress.Loopback, ep.Port);
-				client.Disconnect (true);
-				
-				client.Connect (new [] {IPAddress.Loopback}, ep.Port);
-				client.Disconnect (true);
+				client.Disconnect (false);
+				client.Close ();
+
+				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
+				client.Connect (new [] { IPAddress.Loopback }, ep.Port);
+				client.Disconnect (false);
+				client.Close ();
 			}
 		}
 		
 		[Test]
 		public void BeginConnectToIPV4EndPointUsingDualModelSocket () {
-			using (var server = new Socket (SocketType.Stream, ProtocolType.Tcp))
-			using (var client = new Socket (SocketType.Stream, ProtocolType.Tcp)) {
+			/*
+			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that
+			 * anyways in this test to make it more interoparable with .NET where
+			 * IPv6 and DualMode needs to be specified.
+			 */
+			using (var server = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp))
+			{
 				var host = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
-					
+
+				server.DualMode = true;
 				server.Bind (host);
-				server.Listen (0);
+				server.Listen (10);
 				
 				var ep = server.LocalEndPoint as IPEndPoint;
-				
+
 				BCCalledBack.Reset ();
+				var client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
 				var ar1 = client.BeginConnect (ep, BCCallback, client);
 				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#1");
-				client.Disconnect (true);
-				
+				client.Disconnect (false);
+				client.Close ();
+
 				BCCalledBack.Reset ();
+				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
 				var ar2 = client.BeginConnect (IPAddress.Loopback, ep.Port, BCCallback, client);
 				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
-				client.Disconnect (true);
-				
+				client.Disconnect (false);
+				client.Close ();
+
 				BCCalledBack.Reset ();
+				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				client.DualMode = true;
 				var ar3 = client.BeginConnect (new [] {IPAddress.Loopback}, ep.Port, BCCallback, client);
 				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
-				client.Disconnect (true);
+				client.Disconnect (false);
+				client.Close();
 			}
 		}
 
