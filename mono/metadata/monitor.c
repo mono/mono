@@ -596,6 +596,22 @@ retry_contended:
 	
 	InterlockedIncrement (&mon->entry_count);
 
+	/* Unity: Double check whether we can acquire monitor to work around race
+	 * between first attempt to acquire and incrementing entry_count to notify
+	 * other threads that we will be waiting on sempahore. The incremental
+	 * wait logic (waitms) attempts to solve the same problem, but has the
+	 * disadvantage of causing a 100ms stall in the race condition case.
+	 * I think with this check we can remove all the special timeout logic but
+	 * let's just make a minimal change for now.
+	 */
+	if (InterlockedCompareExchangePointer ((gpointer *)&mon->owner, (gpointer)id, 0) == 0) {
+		/* Success */
+		g_assert (mon->nest == 1);
+		InterlockedDecrement (&mon->entry_count);
+		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+		return 1;
+	}
+
 	mono_perfcounters->thread_queue_len++;
 	mono_perfcounters->thread_queue_max++;
 	thread = mono_thread_current ();
