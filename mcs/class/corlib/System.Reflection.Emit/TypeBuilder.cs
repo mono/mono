@@ -93,7 +93,7 @@ namespace System.Reflection.Emit
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_internal_class (TypeBuilder tb);
+		private extern void setup_internal_class ();
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_generic_class ();
@@ -114,7 +114,7 @@ namespace System.Reflection.Emit
 			this.nspace = String.Empty;
 			this.fullname = TypeIdentifiers.WithoutEscape(this.tname);
 			pmodule = mb;
-			setup_internal_class (this);
+			setup_internal_class ();
 		}
 
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
@@ -150,7 +150,7 @@ namespace System.Reflection.Emit
 
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
-			setup_internal_class (this);
+			setup_internal_class ();
 			fullname = GetFullName ();
 		}
 
@@ -724,7 +724,7 @@ namespace System.Reflection.Emit
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern TypeInfo create_runtime_class (TypeBuilder tb);
+		private extern TypeInfo create_runtime_class ();
 
 		private bool is_nested_in (Type t)
 		{
@@ -828,7 +828,7 @@ namespace System.Reflection.Emit
 					ctor.fixup ();
 			}
 
-			created = create_runtime_class (this);
+			created = create_runtime_class ();
 			if (created != null)
 				return created;
 			return this;
@@ -1604,7 +1604,7 @@ namespace System.Reflection.Emit
 			}
 
 			// will just set the parent-related bits if called a second time
-			setup_internal_class (this);
+			setup_internal_class ();
 		}
 
 		internal int get_next_table_index (object obj, int table, bool inc) {
