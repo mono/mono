@@ -67766,6 +67766,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void OneMore()" attrs="129">
+        <size>7</size>
+      </method>
     </type>
   </test>
   <test name="test-decl-expr-01.cs">
