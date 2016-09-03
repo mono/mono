@@ -50,7 +50,7 @@ namespace System.Reflection.Emit {
 		string guid;
 		string mcookie;
 		string marshaltype;
-		Type marshaltyperef;
+		internal Type marshaltyperef;
 		private int param_num;
 		private bool has_size;
 #pragma warning restore 169, 414

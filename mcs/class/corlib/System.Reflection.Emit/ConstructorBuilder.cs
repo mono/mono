@@ -360,6 +360,18 @@ namespace System.Reflection.Emit {
 			if (ilgen != null)
 				ilgen.label_fixup (this);
 		}
+
+		internal void ResolveUserTypes () {
+			TypeBuilder.ResolveUserTypes (parameters);
+			if (paramModReq != null) {
+				foreach (var types in paramModReq)
+					TypeBuilder.ResolveUserTypes (types);
+			}
+			if (paramModOpt != null) {
+				foreach (var types in paramModOpt)
+					TypeBuilder.ResolveUserTypes (types);
+			}
+		}
 		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
