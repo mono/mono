@@ -150,8 +150,18 @@ namespace System
 				}
 			}
 
-			// Trigger a validation of the path
-			new FileIOPermission (FileIOPermissionAccess.PathDiscovery, appBase);
+			// validate the path
+			string dir = Path.GetDirectoryName (appBase);
+			if ((dir != null) && (dir.LastIndexOfAny (Path.GetInvalidPathChars ()) >= 0)) {
+				string msg = String.Format (Locale.GetText ("Invalid path characters in path: '{0}'"), appBase);
+				throw new ArgumentException (msg, "appBase");
+			}
+
+			string fname = Path.GetFileName (appBase);
+			if ((fname != null) && (fname.LastIndexOfAny (Path.GetInvalidFileNameChars ()) >= 0)) {
+				string msg = String.Format (Locale.GetText ("Invalid filename characters in path: '{0}'"), appBase);
+				throw new ArgumentException (msg, "appBase");
+			}
 
 			return appBase;
 		}
