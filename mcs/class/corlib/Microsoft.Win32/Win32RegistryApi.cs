@@ -241,48 +241,66 @@ namespace Microsoft.Win32
 		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
 		{
 			Type type = value.GetType ();
-			int result;
 			IntPtr handle = GetHandle (rkey);
 
-			if (valueKind == RegistryValueKind.QWord && type == typeof (long)) {
-				long rawValue = (long)value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.QWord, ref rawValue, Int64ByteSize); 
-			} else if (valueKind == RegistryValueKind.DWord && type == typeof (int)) {
-				int rawValue = (int)value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize); 
-			} else if (valueKind == RegistryValueKind.Binary && type == typeof (byte[])) {
-				byte[] rawValue = (byte[]) value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length);
-			} else if (valueKind == RegistryValueKind.MultiString && type == typeof (string[])) {
-				string[] vals = (string[]) value;
-				StringBuilder fullStringValue = new StringBuilder ();
-				foreach (string v in vals)
-				{
-					fullStringValue.Append (v);
-					fullStringValue.Append ('\0');
+			switch (valueKind) {
+			case RegistryValueKind.QWord:
+				try {
+					long rawValue = Convert.ToInt64 (value);
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.QWord, ref rawValue, Int64ByteSize));
+					return;
+				} catch (OverflowException) {
 				}
-				fullStringValue.Append ('\0');
+				break;
+			case RegistryValueKind.DWord:
+				try {
+					int rawValue = Convert.ToInt32 (value);
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize));
+					return;
+				} catch (OverflowException) {
+				}
+				break;
+			case RegistryValueKind.Binary:
+				if (type == typeof (byte[])) {
+					byte[] rawValue = (byte[]) value;
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length));
+					return;
+				}
+				break;
+			case RegistryValueKind.MultiString:
+				if (type == typeof (string[])) {
+					string[] vals = (string[]) value;
+					StringBuilder fullStringValue = new StringBuilder ();
+					foreach (string v in vals)
+					{
+						fullStringValue.Append (v);
+						fullStringValue.Append ('\0');
+					}
+					fullStringValue.Append ('\0');
 
-				byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
+					byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
 			
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length); 
-			} else if ((valueKind == RegistryValueKind.String || valueKind == RegistryValueKind.ExpandString) &&
-				   type == typeof (string)){
-				string rawValue = String.Format ("{0}{1}", value, '\0');
-				result = RegSetValueEx (handle, name, IntPtr.Zero, valueKind, rawValue,
-							rawValue.Length * NativeBytesPerCharacter);
-				
-			} else if (type.IsArray) {
-				throw new ArgumentException ("Only string and byte arrays can written as registry values");
-			} else {
-				throw new ArgumentException ("Type does not match the valueKind");
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length));
+					return;
+				}
+				break;
+			case RegistryValueKind.String:
+			case RegistryValueKind.ExpandString:
+				if (type == typeof (string)) {
+					string rawValue = String.Format ("{0}{1}", value, '\0');
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, valueKind, rawValue,
+								rawValue.Length * NativeBytesPerCharacter));
+					return;
+				}
+				break;
+			default:
+				if (type.IsArray) {
+					throw new ArgumentException ("Only string and byte arrays can written as registry values");
+				}
+				break;
 			}
 
-			// handle the result codes
-			if (result != Win32ResultCode.Success)
-			{
-				GenerateException (result);
-			}
+			throw new ArgumentException ("Type does not match the valueKind");
 		}
 	
 		public void SetValue (RegistryKey rkey, string name, object value)
@@ -317,9 +335,6 @@ namespace Microsoft.Win32
 				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.String, rawValue,
 							rawValue.Length * NativeBytesPerCharacter);
 			}
-
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
 
 			// handle the result codes
 			if (result != Win32ResultCode.Success)
@@ -356,9 +371,6 @@ namespace Microsoft.Win32
 				int result = RegEnumKey (handle, index, stringBuffer,
 					stringBuffer.Capacity);
 
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
-
 				if (result == Win32ResultCode.Success)
 					continue;
 				
@@ -385,9 +397,6 @@ namespace Microsoft.Win32
 						       buffer, ref bufferCapacity,
 						       IntPtr.Zero, ref type, 
 						       IntPtr.Zero, IntPtr.Zero);
-
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
 
 				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
 					continue;
@@ -470,9 +479,6 @@ namespace Microsoft.Win32
 				RegOptionsNonVolatile,
 				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
 
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
-
 			if (result != Win32ResultCode.Success) {
 				GenerateException (result);
 			}
@@ -489,9 +495,6 @@ namespace Microsoft.Win32
 			int result = RegCreateKeyEx (handle , keyName, 0, IntPtr.Zero,
 				options == RegistryOptions.Volatile ? RegOptionsVolatile : RegOptionsNonVolatile,
 				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
-
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
 
 			if (result != Win32ResultCode.Success)
 				GenerateException (result);
@@ -580,13 +583,17 @@ namespace Microsoft.Win32
 				if (result == Win32ResultCode.NoMoreEntries)
 					break;
 
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
-
 				GenerateException (result);
 			}
 
 			return values.ToArray ();
+		}
+
+		private void CheckResult (int result)
+		{
+			if (result != Win32ResultCode.Success) {
+				GenerateException (result);
+			}
 		}
 
 		/// <summary>
@@ -604,6 +611,10 @@ namespace Microsoft.Win32
 					throw new IOException ("The network path was not found.");
 				case Win32ResultCode.InvalidHandle:
 					throw new IOException ("Invalid handle.");
+				case Win32ResultCode.MarkedForDeletion:
+					throw RegistryKey.CreateMarkedForDeletionException ();
+				case Win32ResultCode.ChildMustBeVolatile:
+					throw new IOException ("Cannot create a stable subkey under a volatile parent key.");
 				default:
 					// unidentified system exception
 					throw new SystemException ();
