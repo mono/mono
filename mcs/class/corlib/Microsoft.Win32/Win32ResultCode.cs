@@ -58,6 +58,7 @@ namespace Microsoft.Win32
 		public const int NetworkPathNotFound = 53;
 		public const int NoMoreEntries = 259;
 		public const int MarkedForDeletion = 1018;
+		public const int ChildMustBeVolatile = 1021;
 	}
 }
 
