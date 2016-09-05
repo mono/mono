@@ -14,10 +14,7 @@ ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-t
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test;
 ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.Drawing run-test
-if [[ ${label} == osx-* ]]
-then ${TESTCMD} --label=Windows.Forms --skip;
-else ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
-fi
+${TESTCMD} --label=Windows.Forms --skip;
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 ${TESTCMD} --label=System.Data.OracleClient --timeout=5m make -w -C mcs/class/System.Data.OracleClient run-test;
 ${TESTCMD} --label=System.Design --timeout=5m make -w -C mcs/class/System.Design run-test;
