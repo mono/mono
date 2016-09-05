@@ -72,7 +72,7 @@ namespace MonoTests.System.Data.Utils {
 
 		public static string ConnectionString {
 			get {
-                                string connection_string = Sys.Configuration.ConfigurationSettings.AppSettings["ConnectionString"];
+                                string connection_string = Environment.GetEnvironmentVariable ("MONO_TESTS_ORACLE_CONNECTION_STRING");
                                 if(connection_string == null)
                                         NUnit.Framework.Assert.Ignore ("Please consult README.tests.");
                                 return connection_string;

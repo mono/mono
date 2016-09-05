@@ -39,14 +39,7 @@ namespace MonoTests.System.Data.OracleClient
 		[SetUp]
 		public void SetUp()
 		{
-			try
-			{
-				_ConnectionString = MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString;
-			}
-			catch(Exception ex)
-			{
-				EndCase(ex);
-			}
+			_ConnectionString = MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString;
 		}
 
 		[TearDown]
