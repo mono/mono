@@ -90,7 +90,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		static void CheckSoapBinding (object extension, string transport, TestLabel label)
 		{
 			label.EnterScope ("soap");
-			Assert.IsInstanceOfType (typeof (WS.SoapBinding), extension, label.Get ());
+			Assert.That (extension, Is.AssignableTo<WS.SoapBinding>(), label.Get ());
 			var soap = (WS.SoapBinding)extension;
 			Assert.That (soap.Style, Is.EqualTo (WS.SoapBindingStyle.Document), label.Get ());
 			Assert.That (soap.Transport, Is.EqualTo (transport), label.Get ());
@@ -788,7 +788,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			label.EnterScope ("extensions");
 			Assert.That (op.Extensions, Is.Not.Null, label.Get ());
 			Assert.That (op.Extensions.Count, Is.EqualTo (1), label.Get ());
-			Assert.IsInstanceOfType (typeof (WS.SoapOperationBinding), op.Extensions [0], label.Get ());
+			Assert.That (op.Extensions [0], Is.AssignableTo<WS.SoapOperationBinding>(), label.Get ());
 			var soap = (WS.SoapOperationBinding)op.Extensions [0];
 			TestSoap (soap, soap12, label);
 			label.LeaveScope ();
@@ -820,7 +820,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			Assert.That (binding.ExtensibleAttributes, Is.Null, label.Get ());
 			Assert.That (binding.Extensions, Is.Not.Null, label.Get ());
 			Assert.That (binding.Extensions.Count, Is.EqualTo (1), label.Get ());
-			Assert.IsInstanceOfType (typeof (WS.SoapBodyBinding), binding.Extensions [0], label.Get ());
+			Assert.That (binding.Extensions [0], Is.AssignableTo<WS.SoapBodyBinding> (), label.Get ());
 			var body = (WS.SoapBodyBinding)binding.Extensions [0];
 			TestSoapBody (body, soap12, label);
 			label.LeaveScope ();
