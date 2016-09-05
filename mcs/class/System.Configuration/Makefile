@@ -21,6 +21,9 @@ configuration_library_deps = \
 
 $(build_lib): $(configuration_library_deps)
 
+test-local:
+	cp Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/Test-appSettings.config
+
 .NOTPARALLEL: $(configuration_library_deps)
 
 $(secxml_libdir)/System.dll:
