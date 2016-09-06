@@ -364,8 +364,11 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Start ()
 			{
-				if (loop_thread == null)
+				if (loop_thread == null) {
 					loop_thread = new Thread (new ThreadStart (Loop));
+					loop_thread.IsBackground = true;
+				}
+
 				loop_thread.Start ();
 			}
 
