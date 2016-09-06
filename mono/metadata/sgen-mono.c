@@ -198,6 +198,50 @@ sgen_has_critical_method (void)
 	return write_barrier_conc_method || write_barrier_noconc_method || sgen_has_managed_allocator ();
 }
 
+#if defined (MANAGED_ALLOCATION) || defined (MANAGED_WBARRIER)
+
+#if defined(HAVE_KW_THREAD) || defined(TARGET_OSX) || defined(TARGET_WIN32) || defined(TARGET_ANDROID) || defined(TARGET_IOS)
+
+// Cache the SgenThreadInfo pointer in a local 'var'.
+#define EMIT_TLS_ACCESS_VAR(mb, var) \
+	do { \
+		var = mono_mb_add_local ((mb), &mono_defaults.int_class->byval_arg); \
+		mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX); \
+		mono_mb_emit_byte ((mb), CEE_MONO_TLS); \
+		mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO); \
+		mono_mb_emit_stloc ((mb), (var)); \
+	} while (0)
+
+#define EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR(mb, var) \
+	do { \
+		mono_mb_emit_ldloc ((mb), (var)); \
+		mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenClientThreadInfo, in_critical_region)); \
+		mono_mb_emit_byte ((mb), CEE_ADD); \
+	} while (0)
+
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb, var)	do {	\
+	mono_mb_emit_ldloc ((mb), (var));		\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next));	\
+	mono_mb_emit_byte ((mb), CEE_ADD);		\
+	} while (0)
+
+#define EMIT_TLS_ACCESS_TEMP_END(mb, var)	do {	\
+	mono_mb_emit_ldloc ((mb), (var));		\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));	\
+	mono_mb_emit_byte ((mb), CEE_ADD);		\
+	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
+	} while (0)
+
+#else
+#define EMIT_TLS_ACCESS_VAR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_TEMP_END(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+
+#endif
+
+#endif
+
 #ifndef DISABLE_JIT
 
 static void
@@ -247,7 +291,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	MonoMethod **write_barrier_method_addr;
 	WrapperInfo *info;
 #ifdef MANAGED_WBARRIER
-	int i, nursery_check_labels [2];
+	int i, nursery_check_labels [2], thread_var G_GNUC_UNUSED;
 #endif
 
 	// FIXME: Maybe create a separate version for ctors (the branch would be
@@ -272,6 +316,20 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 
 #ifndef DISABLE_JIT
 #ifdef MANAGED_WBARRIER
+	/*
+	 * Tls access might call foreign code or code without jinfo. This can
+	 * only happen if we are outside of the critical region.
+	 */
+	EMIT_TLS_ACCESS_VAR (mb, thread_var);
+
+#ifdef MANAGED_ALLOCATOR_CAN_USE_CRITICAL_REGION
+	EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR (mb, thread_var);
+	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_ATOMIC_STORE_I4);
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_NONE);
+#endif
+
 	emit_nursery_check (mb, nursery_check_labels, is_concurrent);
 	/*
 	addr = sgen_cardtable + ((address >> CARD_BITS) & CARD_MASK)
@@ -316,6 +374,15 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 		if (nursery_check_labels [i])
 			mono_mb_patch_branch (mb, nursery_check_labels [i]);
 	}
+
+#ifdef MANAGED_ALLOCATOR_CAN_USE_CRITICAL_REGION
+	EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR (mb, thread_var);
+	mono_mb_emit_byte (mb, CEE_LDC_I4_0);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_ATOMIC_STORE_I4);
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_REL);
+#endif
+
 	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
@@ -994,46 +1061,6 @@ static MonoMethod* slowpath_alloc_method_cache [ATYPE_NUM];
 static gboolean use_managed_allocator = TRUE;
 
 #ifdef MANAGED_ALLOCATION
-
-#if defined(HAVE_KW_THREAD) || defined(TARGET_OSX) || defined(TARGET_WIN32) || defined(TARGET_ANDROID) || defined(TARGET_IOS)
-
-// Cache the SgenThreadInfo pointer in a local 'var'.
-#define EMIT_TLS_ACCESS_VAR(mb, var) \
-	do { \
-		var = mono_mb_add_local ((mb), &mono_defaults.int_class->byval_arg); \
-		mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX); \
-		mono_mb_emit_byte ((mb), CEE_MONO_TLS); \
-		mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO); \
-		mono_mb_emit_stloc ((mb), (var)); \
-	} while (0)
-
-#define EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR(mb, var) \
-	do { \
-		mono_mb_emit_ldloc ((mb), (var)); \
-		mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenClientThreadInfo, in_critical_region)); \
-		mono_mb_emit_byte ((mb), CEE_ADD); \
-	} while (0)
-
-#define EMIT_TLS_ACCESS_NEXT_ADDR(mb, var)	do {	\
-	mono_mb_emit_ldloc ((mb), (var));		\
-	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next));	\
-	mono_mb_emit_byte ((mb), CEE_ADD);		\
-	} while (0)
-
-#define EMIT_TLS_ACCESS_TEMP_END(mb, var)	do {	\
-	mono_mb_emit_ldloc ((mb), (var));		\
-	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));	\
-	mono_mb_emit_byte ((mb), CEE_ADD);		\
-	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
-	} while (0)
-
-#else
-#define EMIT_TLS_ACCESS_VAR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-#define EMIT_TLS_ACCESS_NEXT_ADDR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-#define EMIT_TLS_ACCESS_TEMP_END(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-#define EMIT_TLS_ACCESS_IN_CRITICAL_REGION_ADDR(mb, _var)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
-
-#endif
 
 /* FIXME: Do this in the JIT, where specialized allocation sequences can be created
  * for each class. This is currently not easy to do, as it is hard to generate basic 
