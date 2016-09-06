@@ -90,7 +90,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-		[Test]
+		//[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void RestartNotSupportedExceptionTest ()
 		{
