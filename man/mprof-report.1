@@ -1,4 +1,8 @@
-.TH mprof-report 1 "" 
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.TH mprof-report 1 ""
 .SH The Mono log profiler
 .PP
 The Mono \f[I]log\f[] profiler can be used to collect a lot of
@@ -237,6 +241,9 @@ Methods JITted using mono JIT, Methods JITted using LLVM, Total time
 spent JITting (sec), User Time, System Time, Total Time, Working Set,
 Private Bytes, Virtual Bytes, Page Faults and CPU Load Average (1min,
 5min and 15min).
+.IP \[bu] 2
+\f[I]coverage\f[]: collect code coverage data. This implies enabling
+the \f[I]calls\f[] option.
 .RE
 .SS Analyzing the profile data
 .PP
@@ -260,7 +267,7 @@ To see this info invoke mprof-report as follows:
 \f[B]mprof-report\ --traces\ output.mlpd\f[]
 .PP
 The maximum number of methods in each stack trace can be specified
-with the \f[I]\[em]maxframes=NUM\f[] option:
+with the \f[I]--maxframes=NUM\f[] option:
 .PP
 \f[B]mprof-report\ --traces\ --maxframes=4\ output.mlpd\f[]
 .PP
@@ -272,7 +279,7 @@ specific events when the \f[I]nocalls\f[] option is used, so in
 that case, if more stack frames are required in mprof-report, a
 bigger value for maxframes when profiling must be used, too.
 .PP
-The \f[I]\[em]traces\f[] option also controls the reverse reference
+The \f[I]--traces\f[] option also controls the reverse reference
 feature in the heapshot report: for each class it reports how many
 references to objects of that class come from other classes.
 .SS Sort order for methods and allocations
@@ -362,6 +369,10 @@ version
 \f[I]heapshot\f[]: live heap usage at heap shots
 .IP \[bu] 2
 \f[I]counters\f[]: counters samples
+.IP \[bu] 2
+\f[I]coverage\f[]: code coverage data
+.IP \[bu] 2
+\f[I]stats\f[]: event statistics
 .PP
 It is possible to limit some of the data displayed to a timeframe
 of the program execution with the option:
@@ -391,23 +402,23 @@ Instead of printing the usual reports from the profiler data, it is
 possible to track some interesting information about some specific
 object addresses.
 The objects are selected based on their address with the
-\f[I]\[em]track\f[] option as follows:
+\f[I]--track\f[] option as follows:
 .PP
 \f[B]--track=0xaddr1[,0xaddr2,...]\f[]
 .PP
 The reported info (if available in the data file), will be class
 name, size, creation time, stack trace of creation (with the
-\f[I]\[em]traces\f[] option), etc.
+\f[I]--traces\f[] option), etc.
 If heapshot data is available it will be possible to also track
 what other objects reference one of the listed addresses.
 .PP
 The object addresses can be gathered either from the profiler
 report in some cases (like in the monitor lock report), from the
 live application or they can be selected with the
-\f[I]\[em]find=FINDSPEC\f[] option.
+\f[I]--find=FINDSPEC\f[] option.
 FINDSPEC can be one of the following:
 .IP \[bu] 2
-\f[I]S:SIZE\f[]: where the object is selected if it's size is at
+\f[I]S:SIZE\f[]: where the object is selected if its size is at
 least \f[I]SIZE\f[]
 .IP \[bu] 2
 \f[I]T:NAME\f[]: where the object is selected if \f[I]NAME\f[]
@@ -432,6 +443,13 @@ By default mprof-report will print the summary data to the console.
 To print it to a file, instead, use the option:
 .PP
 \f[B]--out=FILENAME\f[]
+.SS Processing code coverage data
+.PP
+If you ran the profiler with the \f[I]coverage\f[] option, you can
+process the collected coverage data into an XML file by running
+mprof-report like this:
+.PP
+\f[B]mprof-report --coverage-out=coverage.xml output.mlpd\f[]
 .SS Dealing with profiler slowness
 .PP
 If the profiler needs to collect lots of data, the execution of the
@@ -439,20 +457,20 @@ program will slow down significantly, usually 10 to 20 times
 slower.
 There are several ways to reduce the impact of the profiler on the
 program execution.
-.SS Use the statistical sampling mode
-.PP
+.IP "\f[I]Use the statistical sampling mode\f[]" 4
+.Sp
 Statistical sampling allows executing a program under the profiler
 with minimal performance overhead (usually less than 10%).
 This mode allows checking where the program is spending most of
-it's execution time without significantly perturbing its behaviour.
-.SS Collect less data
-.PP
+its execution time without significantly perturbing its behaviour.
+.IP "\f[I]Collect less data\f[]" 4
+.Sp
 Collecting method enter/leave events can be very expensive,
 especially in programs that perform many millions of tiny calls.
 The profiler option \f[I]nocalls\f[] can be used to avoid
 collecting this data or it can be limited to only a few call levels
 with the \f[I]calldepth\f[] option.
-.PP
+.Sp
 Object allocation information is expensive as well, though much
 less than method enter/leave events.
 If it's not needed, it can be skipped with the \f[I]noalloc\f[]
@@ -463,14 +481,14 @@ expensive as well.
 The impact of stack trace information can be reduced by setting a
 low value with the \f[I]maxframes\f[] option or by eliminating them
 completely, by setting it to 0.
-.PP
-The other major source of data is the heapshot profiler option:
-especially if the managed heap is big, since every object needs to
-be inspected.
+.Sp
+The other major source of data is the \f[I]heapshot\f[] profiler
+option: especially if the managed heap is big, since every object
+needs to be inspected.
 The \f[I]MODE\f[] parameter of the \f[I]heapshot\f[] option can be
 used to reduce the frequency of the heap shots.
-.SS Reduce the timestamp overhead
-.PP
+.IP "\f[I]Reduce the timestamp overhead\f[]" 4
+.Sp
 On many operating systems or architectures what actually slows down
 profiling is the function provided by the system to get timestamp
 information.
@@ -486,15 +504,15 @@ There are a few ways to minimize the amount of data, for example by
 not collecting some of the more space-consuming information or by
 compressing the information on the fly or by just generating a
 summary report.
-.SS Reducing the amount of data
-.PP
+.IP "\f[I]Reducing the amount of data\f[]" 4
+.Sp
 Method enter/leave events can be excluded completely with the
 \f[I]nocalls\f[] option or they can be limited to just a few levels
 of calls with the \f[I]calldepth\f[] option.
 For example, the option:
-.PP
+.Sp
 \f[B]calldepth=10\f[]
-.PP
+.Sp
 will ignore the method events when there are more than 10 managed
 stack frames.
 This is very useful for programs that have deep recursion or for
@@ -503,59 +521,59 @@ the call stack.
 The optimal number for the calldepth option depends on the program
 and it needs to be balanced between providing enough profiling
 information and allowing fast execution speed.
-.PP
+.Sp
 Note that by default, if method events are not recorded at all, the
 profiler will collect stack trace information at events like
 allocations.
 To avoid gathering this data, use the \f[I]maxframes=0\f[] profiler
 option.
-.PP
+.Sp
 Allocation events can be eliminated with the \f[I]noalloc\f[]
 option.
-.PP
+.Sp
 Heap shot data can also be huge: by default it is collected at each
 major collection.
 To reduce the frequency, you can specify a heapshot mode: for
 example to collect every 5 collections (including major and minor):
-.PP
+.Sp
 \f[B]heapshot=5gc\f[]
-.PP
+.Sp
 or when at least 5 seconds passed since the last heap shot:
-.PP
+.Sp
 \f[B]heapshot=5000ms\f[]
-.SS Compressing the data
-.PP
+.IP "\f[I]Compressing the data\f[]" 4
+.Sp
 To reduce the amout of disk space used by the data, the data can be
 compressed either after it has been generated with the gzip
 command:
-.PP
+.Sp
 \f[B]gzip\ -9\ output.mlpd\f[]
-.PP
+.Sp
 or it can be compressed automatically by using the \f[I]zip\f[]
 profiler option.
 Note that in this case there could be a significant slowdown of the
 profiled program.
-.PP
+.Sp
 The mprof-report program will tranparently deal with either
 compressed or uncompressed data files.
-.SS Generating only a summary report
-.PP
+.IP "\f[I]Generating only a summary report\f[]" 4
+.Sp
 Often it's enough to look at the profiler summary report to
 diagnose an issue and in this case it's possible to avoid saving
 the profiler data file to disk.
 This can be accomplished with the \f[I]report\f[] profiler option,
 which will basically send the data to the mprof-report program for
 display.
-.PP
+.Sp
 To have more control of what summary information is reported (or to
 use a completely different program to decode the profiler data),
 the \f[I]output\f[] profiler option can be used, with \f[B]|\f[] as
 the first character: the rest of the output name will be executed
 as a program with the data fed in on the standard input.
-.PP
+.Sp
 For example, to print only the Monitor summary with stack trace
 information, you could use it like this:
-.PP
+.Sp
 \f[B]output=|mprof-report\ --reports=monitor\ --traces\ -\f[]
 .SH WEB SITE
 http://www.mono-project.com/docs/debug+profile/profile/profiler/
@@ -563,5 +581,4 @@ http://www.mono-project.com/docs/debug+profile/profile/profiler/
 .PP
 mono(1)
 .SH AUTHORS
-Paolo Molaro.
-
+Paolo Molaro, Alex Rønne Petersen
