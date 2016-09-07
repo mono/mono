@@ -198,6 +198,10 @@ typedef struct {
     guint64 rsi;
 	guint64 rdi;
 	guint64 rip;
+	guint64 r8;
+	guint64 r9;
+	guint64 r10;
+	guint64 r11;
 	guint64 r12;
 	guint64 r13;
 	guint64 r14;
