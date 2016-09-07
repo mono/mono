@@ -9806,7 +9806,6 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [1] = acfg;
 			user_data [2] = frag;
 			
-			tp.priority = MONO_THREAD_PRIORITY_NORMAL;
 			tp.stack_size = 0;
 			handle = mono_threads_create_thread (compile_thread_main, (gpointer) user_data, &tp, NULL);
 			g_ptr_array_add (threads, handle);

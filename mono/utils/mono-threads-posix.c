@@ -61,6 +61,8 @@ mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_
 {
 	pthread_attr_t attr;
 	pthread_t thread;
+	int policy;
+	struct sched_param param;
 	gint res;
 
 	res = pthread_attr_init (&attr);
@@ -86,6 +88,45 @@ mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_
 	res = pthread_attr_setstacksize (&attr, stack_size);
 	g_assert (!res);
 #endif /* HAVE_PTHREAD_ATTR_SETSTACKSIZE */
+
+	memset (&param, 0, sizeof (param));
+
+	res = pthread_attr_getschedpolicy (&attr, &policy);
+	if (res != 0)
+		g_error ("%s: pthread_attr_getschedpolicy failed, error: \"%s\" (%d)", g_strerror (res), res);
+
+#ifdef _POSIX_PRIORITY_SCHEDULING
+	int max, min;
+
+	/* Necessary to get valid priority range */
+
+	min = sched_get_priority_min (policy);
+	max = sched_get_priority_max (policy);
+
+	if (max > 0 && min >= 0 && max > min)
+		param.sched_priority = (max - min) / 2 + min;
+	else
+#endif
+	{
+		switch (policy) {
+		case SCHED_FIFO:
+		case SCHED_RR:
+			param.sched_priority = 50;
+			break;
+#ifdef SCHED_BATCH
+		case SCHED_BATCH:
+#endif
+		case SCHED_OTHER:
+			param.sched_priority = 0;
+			break;
+		default:
+			g_error ("%s: unknown policy %d", __func__, policy);
+		}
+	}
+
+	res = pthread_attr_setschedparam (&attr, &param);
+	if (res != 0)
+		g_error ("%s: pthread_attr_setschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
 
 	/* Actually start the thread */
 	res = mono_gc_pthread_create (&thread, &attr, (gpointer (*)(gpointer)) thread_fn, thread_data);

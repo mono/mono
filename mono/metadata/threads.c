@@ -692,6 +692,8 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	internal = thread->internal_thread;
 	domain = mono_object_domain (start_info->thread);
 
+	mono_thread_info_set_priority (mono_thread_info_current (), thread->priority);
+
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Start wrapper", __func__, mono_native_thread_id_get ()));
 
 	if (!mono_thread_attach_internal (thread, FALSE, FALSE, stack_ptr)) {
@@ -882,9 +884,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	if (stack_size == 0)
 		stack_size = default_stacksize_for_thread (internal);
 
-	tp.priority = thread->priority;
 	tp.stack_size = stack_size;
-
 	thread_handle = mono_threads_create_thread (start_wrapper, start_info, &tp, &tid);
 
 	if (thread_handle == NULL) {
