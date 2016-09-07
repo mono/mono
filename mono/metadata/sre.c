@@ -1045,70 +1045,6 @@ mono_reflection_init_type_builder_generics (MonoObject *type, MonoError *error)
 		mono_reflection_create_generic_class (tb, error);
 }
 
-static guint32
-mono_image_get_generic_field_token (MonoDynamicImage *assembly, MonoReflectionFieldBuilder *fb, MonoError *error)
-{
-	MonoDynamicTable *table;
-	MonoType *custom = NULL, *type;
-	guint32 *values;
-	guint32 token, pclass, parent, sig;
-	gchar *name;
-
-	mono_error_init (error);
-
-	token = GPOINTER_TO_UINT (mono_g_hash_table_lookup (assembly->handleref_managed, fb));
-	if (token)
-		return token;
-
-	MonoType *typeb = mono_reflection_type_get_handle (fb->typeb, error);
-	return_val_if_nok (error, 0);
-	/* FIXME: is this call necessary? */
-	mono_class_from_mono_type (typeb);
-
-	/*FIXME this is one more layer of ugliness due how types are created.*/
-	mono_reflection_init_type_builder_generics (fb->type, error);
-	return_val_if_nok (error, 0);
-
-	/* fb->type does not include the custom modifiers */
-	/* FIXME: We should do this in one place when a fieldbuilder is created */
-	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
-	return_val_if_nok (error, 0);
-
-	if (fb->modreq || fb->modopt) {
-		type = custom = add_custom_modifiers (assembly, type, fb->modreq, fb->modopt, error);
-		return_val_if_nok (error, 0);
-	}
-
-	sig = mono_dynimage_encode_fieldref_signature (assembly, NULL, type);
-	g_free (custom);
-
-	parent = mono_dynimage_encode_generic_typespec (assembly, (MonoReflectionTypeBuilder *) fb->typeb, error);
-	return_val_if_nok (error, 0);
-	g_assert ((parent & MONO_TYPEDEFORREF_MASK) == MONO_TYPEDEFORREF_TYPESPEC);
-	
-	pclass = MONO_MEMBERREF_PARENT_TYPESPEC;
-	parent >>= MONO_TYPEDEFORREF_BITS;
-
-	table = &assembly->tables [MONO_TABLE_MEMBERREF];
-
-	name = mono_string_to_utf8_checked (fb->name, error);
-	return_val_if_nok (error, 0);
-
-	if (assembly->save) {
-		alloc_table (table, table->rows + 1);
-		values = table->values + table->next_idx * MONO_MEMBERREF_SIZE;
-		values [MONO_MEMBERREF_CLASS] = pclass | (parent << MONO_MEMBERREF_PARENT_BITS);
-		values [MONO_MEMBERREF_NAME] = string_heap_insert (&assembly->sheap, name);
-		values [MONO_MEMBERREF_SIGNATURE] = sig;
-	}
-
-	token = MONO_TOKEN_MEMBER_REF | table->next_idx;
-	table->next_idx ++;
-	mono_g_hash_table_insert (assembly->handleref_managed, fb, GUINT_TO_POINTER(token));
-	g_free (name);
-	return token;
-}
-
 static guint32 
 mono_image_get_sighelper_token (MonoDynamicImage *assembly, MonoReflectionSigHelper *helper, MonoError *error)
 {
@@ -1443,18 +1379,8 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		}
 		/*g_print ("got token 0x%08x for %s\n", token, mono_string_to_utf8 (mb->name));*/
 	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
-		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder *)obj;
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)fb->typeb;
-		if (tb->generic_params) {
-			token = mono_image_get_generic_field_token (assembly, fb, error);
-			return_val_if_nok (error, 0);
-		} else {
-			if (tb->module->dynamic_image == assembly) {
-				token = fb->table_idx | MONO_TOKEN_FIELD_DEF;
-			} else {
-				token = mono_image_get_fieldref_token (assembly, (MonoObject*)fb, fb->handle);
-			}
-		}
+		/* These are handled in managed code */
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)obj;
 		if (create_open_instance && tb->generic_params) {
@@ -4512,29 +4438,17 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		*handle_class = mono_defaults.fieldhandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "FieldBuilder") == 0) {
-		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder*)obj;
-		result = fb->handle;
-
-		if (!result) {
-			MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)fb->typeb;
-
-			mono_domain_try_type_resolve_checked (mono_domain_get (), NULL, (MonoObject*)tb, error);
-			return_val_if_nok (error, NULL);
-			result = fb->handle;
+		static MonoMethod *resolve_method;
+		if (!resolve_method) {
+			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
+			g_assert (m);
+			mono_memory_barrier ();
+			resolve_method = m;
 		}
-
-		if (fb->handle && fb->handle->parent->generic_container) {
-			MonoClass *klass = fb->handle->parent;
-			MonoType *type = mono_class_inflate_generic_type_checked (&klass->byval_arg, context, error);
-			return_val_if_nok (error, NULL);
-
-			MonoClass *inflated = mono_class_from_mono_type (type);
-
-			result = mono_class_get_field_from_name (inflated, mono_field_get_name (fb->handle));
-			g_assert (result);
-			mono_metadata_free_type (type);
-		}
-		*handle_class = mono_defaults.fieldhandle_class;
+		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
+		mono_error_assert_ok (error);
+		g_assert (obj);
+		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
 	} else if (strcmp (obj->vtable->klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)obj;
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)tb, error);

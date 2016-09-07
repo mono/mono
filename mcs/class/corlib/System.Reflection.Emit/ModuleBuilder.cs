@@ -696,6 +696,8 @@ namespace System.Reflection.Emit {
 				token = memberref_tokengen --;
 			else if (member is MethodOnTypeBuilderInst)
 				token = memberref_tokengen --;
+			else if (member is FieldBuilder)
+				token = memberref_tokengen --;
 			else
 				throw new NotImplementedException ();
 			inst_tokens [member] = token;
@@ -704,7 +706,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType)
+			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder)
 				return GetPseudoToken (member);
 			return getToken (this, member, create_open_instance);
 		}
@@ -771,6 +773,8 @@ namespace System.Reflection.Emit {
 					finished = (member as ConstructorOnTypeBuilderInst).RuntimeResolve ();
 				} else if (member is MethodOnTypeBuilderInst) {
 					finished = (member as MethodOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is FieldBuilder) {
+					finished = (member as FieldBuilder).RuntimeResolve ();
 				} else {
 					throw new NotImplementedException ();
 				}

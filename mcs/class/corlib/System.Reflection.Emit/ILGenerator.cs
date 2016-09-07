@@ -554,7 +554,7 @@ namespace System.Reflection.Emit {
 			int token = token_gen.GetToken (field, true);
 			make_room (6);
 			ll_emit (opcode);
-			if (field.DeclaringType.Module == module || (field is FieldOnTypeBuilderInst))
+			if (field.DeclaringType.Module == module || (field is FieldOnTypeBuilderInst) || (field is FieldBuilder))
 				add_token_fixup (field);
 			emit_int (token);
 		}
