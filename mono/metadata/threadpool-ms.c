@@ -430,9 +430,11 @@ domain_get (MonoDomain *domain, gboolean create)
 	}
 
 	if (create) {
+		g_assert(!domain->cleanup_semaphore);
+		domain->cleanup_semaphore = CreateSemaphore(NULL, 0, 1, NULL);
+
 		tpdomain = g_new0 (ThreadPoolDomain, 1);
 		tpdomain->domain = domain;
-		domain->cleanup_semaphore = CreateSemaphore (NULL, 0, 1, NULL);
 		domain_add (tpdomain);
 	}
 
@@ -682,8 +684,12 @@ worker_thread (gpointer data)
 		g_assert (tpdomain->domain->threadpool_jobs >= 0);
 
 		if (tpdomain->domain->threadpool_jobs == 0 && mono_domain_is_unloading (tpdomain->domain)) {
-			gboolean removed = domain_remove (tpdomain);
+			gboolean removed;
+
+			removed = domain_remove(tpdomain);
 			g_assert (removed);
+
+			g_assert(tpdomain->domain->cleanup_semaphore);
 			ReleaseSemaphore (tpdomain->domain->cleanup_semaphore, 1, NULL);
 			domain_free (tpdomain);
 			tpdomain = NULL;
@@ -1427,8 +1433,9 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 gboolean
 mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 {
-	gboolean res = TRUE;
-	gint64 end;
+	guint32 res;
+	gint64 now, end;
+	ThreadPoolDomain *tpdomain;
 
 	g_assert (domain);
 	g_assert (timeout >= -1);
@@ -1456,28 +1463,34 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	* and we know no more jobs for the domain will be processed.
 	*/
 
-	if (domain->cleanup_semaphore) {
-		guint32 ret;
-		gint64 now;
+	mono_lazy_initialize(&status, initialize);
+	mono_coop_mutex_lock(&threadpool->domains_lock);
 
-		if (timeout != -1) {
-			now = mono_msec_ticks ();
-			if (now > end) {
-				return FALSE;
-			}
+	tpdomain = domain_get(domain, FALSE);
+	if (!tpdomain || tpdomain->outstanding_request == 0) {
+		mono_coop_mutex_unlock(&threadpool->domains_lock);
+		return TRUE;
+	}
+	g_assert(domain->cleanup_semaphore);
+
+	if (timeout != -1) {
+		now = mono_msec_ticks();
+		if (now > end) {
+			mono_coop_mutex_unlock(&threadpool->domains_lock);
+			return FALSE;
 		}
-
-		MONO_ENTER_GC_SAFE;
-		ret = WaitForSingleObjectEx (domain->cleanup_semaphore, timeout != -1 ? end - now : timeout, FALSE);
-		MONO_EXIT_GC_SAFE;
-
-		CloseHandle (domain->cleanup_semaphore);
-		domain->cleanup_semaphore = NULL;
-
-		res = (ret == WAIT_OBJECT_0);
 	}
 
-	return res;
+	MONO_ENTER_GC_SAFE;
+	res = WaitForSingleObjectEx(domain->cleanup_semaphore, timeout != -1 ? end - now : timeout, FALSE);
+	MONO_EXIT_GC_SAFE;
+
+	CloseHandle(domain->cleanup_semaphore);
+	domain->cleanup_semaphore = NULL;
+
+	mono_coop_mutex_unlock(&threadpool->domains_lock);
+
+	return res == WAIT_OBJECT_0;
 }
 
 void
