@@ -669,7 +669,6 @@ typedef struct {
 	gpointer start_func_arg;
 	gboolean failed;
 	MonoCoopSem registered;
-	MonoCoopSem start_notify;
 } StartInfo;
 
 static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
@@ -687,8 +686,6 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	MonoObject *start_delegate;
 	MonoObject *start_delegate_arg;
 	MonoDomain *domain;
-
-	mono_coop_sem_wait (&start_info->registered, MONO_SEM_FLAGS_NONE);
 
 	thread = start_info->thread;
 	internal = thread->internal_thread;
@@ -732,11 +729,10 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	mono_thread_init_apartment_state ();
 
 	/* Let the thread that called Start() know we're ready */
-	mono_coop_sem_post (&start_info->start_notify);
+	mono_coop_sem_post (&start_info->registered);
 
 	if (InterlockedDecrement (&start_info->ref) == 0) {
 		mono_coop_sem_destroy (&start_info->registered);
-		mono_coop_sem_destroy (&start_info->start_notify);
 		g_free (start_info);
 	}
 
@@ -881,7 +877,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	start_info->start_func_arg = start_func_arg;
 	start_info->failed = FALSE;
 	mono_coop_sem_init (&start_info->registered, 0);
-	mono_coop_sem_init (&start_info->start_notify, 0);
 
 	if (stack_size == 0)
 		stack_size = default_stacksize_for_thread (internal);
@@ -906,8 +901,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Launching thread %p (%"G_GSIZE_FORMAT")", __func__, mono_native_thread_id_get (), internal, (gsize)internal->tid));
 
-	mono_coop_sem_post (&start_info->registered);
-
 	/*
 	 * Wait for the thread to set up its TLS data etc, so
 	 * theres no potential race condition if someone tries
@@ -915,7 +908,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	 * started
 	 */
 
-	mono_coop_sem_wait (&start_info->start_notify, MONO_SEM_FLAGS_NONE);
+	mono_coop_sem_wait (&start_info->registered, MONO_SEM_FLAGS_NONE);
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Done launching thread %p (%"G_GSIZE_FORMAT")", __func__, mono_native_thread_id_get (), internal, (gsize)internal->tid));
 
@@ -924,7 +917,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 done:
 	if (InterlockedDecrement (&start_info->ref) == 0) {
 		mono_coop_sem_destroy (&start_info->registered);
-		mono_coop_sem_destroy (&start_info->start_notify);
 		g_free (start_info);
 	}
 
