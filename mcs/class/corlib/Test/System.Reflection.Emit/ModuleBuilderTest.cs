@@ -535,6 +535,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		// The token is not guaranteed to be 0x0a000002
+		[Category ("NotWorking")]
 		public void ResolveMethodMemberRefWithGenericArguments ()
 		{
 			var assembly = genAssembly ();
