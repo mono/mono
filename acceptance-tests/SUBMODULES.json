@@ -22,5 +22,13 @@
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "ms-test-suite"
+  }, 
+  {
+    "name": "benchmarker", 
+    "url": "git://github.com/xamarin/benchmarker.git", 
+    "rev": "97f618cd585af549dd861b7c142656c496f6a89b", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "benchmarker"
   }
 ]
