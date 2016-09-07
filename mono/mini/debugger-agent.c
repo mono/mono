@@ -1631,7 +1631,6 @@ start_debugger_thread (void)
 
 	tp.priority = MONO_THREAD_PRIORITY_NORMAL;
 	tp.stack_size = 0;
-	tp.creation_flags = 0;
 	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, &tp, NULL);
 	g_assert (debugger_thread_handle);
 }

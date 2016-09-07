@@ -884,7 +884,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 
 	tp.priority = thread->priority;
 	tp.stack_size = stack_size;
-	tp.creation_flags = 0;
 
 	thread_handle = mono_threads_create_thread (start_wrapper, start_info, &tp, &tid);
 

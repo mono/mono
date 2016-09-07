@@ -290,7 +290,6 @@ typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info
  */
 typedef struct {
 	int priority;
-	guint32 creation_flags;	
 	guint32 stack_size;		
 } MonoThreadParm;
 
