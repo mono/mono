@@ -59,6 +59,11 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
 fi
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
-then $(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
-else make check-ci
+    then
+	$(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
+elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
+    then
+	$(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
+else
+	make check-ci
 fi
