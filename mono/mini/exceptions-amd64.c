@@ -160,6 +160,10 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->rsi = ctx->Rsi;
 	sctx->rdi = ctx->Rdi;
 	sctx->rip = ctx->Rip;
+	sctx->r8 = ctx->R8;
+	sctx->r9 = ctx->R9;
+	sctx->r10 = ctx->R10;
+	sctx->r11 = ctx->R11;
 	sctx->r12 = ctx->R12;
 	sctx->r13 = ctx->R13;
 	sctx->r14 = ctx->R14;
@@ -204,6 +208,10 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->Rsi = sctx->rsi;
 		ctx->Rbx = sctx->rbx;
 		ctx->Rbp = sctx->rbp;
+		ctx->R8 = sctx->r8;
+		ctx->R9 = sctx->r9;
+		ctx->R10 = sctx->r10;
+		ctx->R11 = sctx->r11;
 		ctx->R12 = sctx->r12;
 		ctx->R13 = sctx->r13;
 		ctx->R14 = sctx->r14;
@@ -289,9 +297,9 @@ mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gbool
 	amd64_mov_reg_membase (code, AMD64_RBP, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rbp), 8);
 	amd64_mov_reg_membase (code, AMD64_RSI, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rsi), 8);
 	amd64_mov_reg_membase (code, AMD64_RDI, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rdi), 8);
-	//amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r8), 8);
-	//amd64_mov_reg_membase (code, AMD64_R9, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r9), 8);
-	//amd64_mov_reg_membase (code, AMD64_R10, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r10), 8);
+	amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r8), 8);
+	amd64_mov_reg_membase (code, AMD64_R9, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r9), 8);
+	amd64_mov_reg_membase (code, AMD64_R10, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r10), 8);
 	amd64_mov_reg_membase (code, AMD64_R12, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r12), 8);
 	amd64_mov_reg_membase (code, AMD64_R13, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r13), 8);
 	amd64_mov_reg_membase (code, AMD64_R14, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r14), 8);
@@ -935,6 +943,10 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->rsi = ctx->rsi;
 	mctx->rdi = ctx->rdi;
 	mctx->rip = ctx->rip;
+	mctx->r8 = ctx->r8;
+	mctx->r9 = ctx->r9;
+	mctx->r10 = ctx->r10;
+	mctx->r11 = ctx->r11;
 	mctx->r12 = ctx->r12;
 	mctx->r13 = ctx->r13;
 	mctx->r14 = ctx->r14;
@@ -991,6 +1003,10 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	ctx->rsi = mctx->rsi;
 	ctx->rdi = mctx->rdi;
 	ctx->rip = mctx->rip;
+	ctx->r8 = mctx->r8;
+	ctx->r9 = mctx->r9;
+	ctx->r10 = mctx->r10;
+	ctx->r11 = mctx->r11;
 	ctx->r12 = mctx->r12;
 	ctx->r13 = mctx->r13;
 	ctx->r14 = mctx->r14;
