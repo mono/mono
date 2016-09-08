@@ -211,6 +211,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->R8 = sctx->r8;
 		ctx->R9 = sctx->r9;
 		ctx->R10 = sctx->r10;
+		ctx->R11 = sctx->r11;
 		ctx->R12 = sctx->r12;
 		ctx->R13 = sctx->r13;
 		ctx->R14 = sctx->r14;
