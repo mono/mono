@@ -143,8 +143,8 @@ to the control port
 program behaviour.
 The default is to collect a 100 times per second (100 Hz) the
 instruction pointer.
-This is equivalent to the value \[lq]cycles/100\[rq] for
-\f[I]TYPE\f[].
+This is equivalent to the value \[lq]cycles/100\[rq].
+A value of zero for \f[I]FREQ\f[] effectively disables sampling.
 On some systems, like with recent Linux kernels, it is possible to
 cause the sampling to happen for other events provided by the
 performance counters of the cpu.
