@@ -128,6 +128,25 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 {
 }
 
+static void CALLBACK
+abort_apc (ULONG_PTR param)
+{
+}
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	QueueUserAPC ((PAPCFUNC)abort_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
+}
+
 #endif
 
 #if defined (HOST_WIN32)

@@ -696,7 +696,6 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_threads_platform_init ();
 	mono_threads_suspend_init ();
 	mono_threads_coop_init ();
-	mono_threads_abort_syscall_init ();
 
 #if defined(__MACH__)
 	mono_mach_init (thread_info_key);
@@ -1075,7 +1074,7 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 	MonoThreadHazardPointers *hp;
 	MonoThreadInfo *info;
 
-	if (tid == mono_native_thread_id_get () || !mono_threads_suspend_needs_abort_syscall ())
+	if (tid == mono_native_thread_id_get ())
 		return;
 
 	hp = mono_hazard_pointer_get ();

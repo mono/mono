@@ -11,6 +11,7 @@
 #include <glib.h>
 
 #include "mono-threads.h"
+#include "mono-membar.h"
 
 #if defined(USE_POSIX_BACKEND)
 
@@ -52,25 +53,6 @@ mono_threads_posix_signal_search_alternative (int min_signal)
 		}
 	}
 	g_error ("Could not find an available signal");
-#endif
-}
-
-static void
-signal_add_handler (int signo, gpointer handler, int flags)
-{
-#if !defined(__native_client__)
-	/*FIXME, move the code from mini to utils and do the right thing!*/
-	struct sigaction sa;
-	struct sigaction previous_sa;
-	int ret;
-
-	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
-	sigfillset (&sa.sa_mask);
-
-	sa.sa_flags = SA_SIGINFO | flags;
-	ret = sigaction (signo, &sa, &previous_sa);
-
-	g_assert (ret != -1);
 #endif
 }
 
@@ -132,27 +114,39 @@ abort_signal_get (void)
 #endif /* SIGRTMIN */
 }
 
+#if !defined(__native_client__)
+
+static void
+signal_add_handler (int signo, gpointer handler, int flags)
+{
+	/*FIXME, move the code from mini to utils and do the right thing!*/
+	struct sigaction sa;
+	struct sigaction previous_sa;
+	int ret;
+
+	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
+	sigfillset (&sa.sa_mask);
+
+	sa.sa_flags = SA_SIGINFO | flags;
+	ret = sigaction (signo, &sa, &previous_sa);
+
+	g_assert (ret != -1);
+}
+
 static void
 restart_signal_handler (int _dummy, siginfo_t *_info, void *context)
 {
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
 	MonoThreadInfo *info;
 	int old_errno = errno;
 
 	info = mono_thread_info_current ();
 	info->signal = restart_signal_num;
 	errno = old_errno;
-#endif
 }
 
 static void
 suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 {
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
 	int old_errno = errno;
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
@@ -200,6 +194,9 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	*/
 	pthread_sigmask (SIG_BLOCK, &suspend_ack_signal_mask, NULL);
 
+	/* ensure neither the compiler, neither the CPU reorders any memory operation */
+	mono_memory_barrier ();
+
 	/* We're done suspending */
 	mono_threads_notify_initiator_of_suspend (current);
 
@@ -229,65 +226,48 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 done:
 	mono_hazard_pointer_restore_for_signal_handler (hp_save_index);
 	errno = old_errno;
-#endif
 }
 
-static void
-abort_signal_handler (int _dummy, siginfo_t *info, void *context)
-{
-#if defined(__native_client__)
-	g_assert_not_reached ();
-#else
-	suspend_signal_handler (_dummy, info, context);
-#endif
-}
+#endif /* !defined(__native_client__) */
 
 void
-mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals)
+mono_threads_posix_init_signals (void)
 {
 	sigset_t signal_set;
 
-	g_assert ((signals == MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART) ^ (signals == MONO_THREADS_POSIX_INIT_SIGNALS_ABORT));
-
 	sigemptyset (&signal_set);
 
-	switch (signals) {
-	case MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART: {
-		if (mono_thread_info_unified_management_enabled ()) {
-			suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
-			restart_signal_num = DEFAULT_RESTART_SIGNAL;
-		} else {
-			suspend_signal_num = suspend_signal_get ();
-			restart_signal_num = restart_signal_get ();
-		}
-
-		sigfillset (&suspend_signal_mask);
-		sigdelset (&suspend_signal_mask, restart_signal_num);
-		if (!mono_thread_info_unified_management_enabled ())
-			sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
-
-		sigemptyset (&suspend_ack_signal_mask);
-		sigaddset (&suspend_ack_signal_mask, restart_signal_num);
-
-		signal_add_handler (suspend_signal_num, suspend_signal_handler, SA_RESTART);
-		signal_add_handler (restart_signal_num, restart_signal_handler, SA_RESTART);
-
-		sigaddset (&signal_set, suspend_signal_num);
-		sigaddset (&signal_set, restart_signal_num);
-
-		break;
+	if (mono_thread_info_unified_management_enabled ()) {
+		suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
+		restart_signal_num = DEFAULT_RESTART_SIGNAL;
+	} else {
+		suspend_signal_num = suspend_signal_get ();
+		restart_signal_num = restart_signal_get ();
 	}
-	case MONO_THREADS_POSIX_INIT_SIGNALS_ABORT: {
-		abort_signal_num = abort_signal_get ();
 
-		signal_add_handler (abort_signal_num, abort_signal_handler, 0);
+	sigfillset (&suspend_signal_mask);
+	sigdelset (&suspend_signal_mask, restart_signal_num);
+	if (!mono_thread_info_unified_management_enabled ())
+		sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
 
-		sigaddset (&signal_set, abort_signal_num);
+	sigemptyset (&suspend_ack_signal_mask);
+	sigaddset (&suspend_ack_signal_mask, restart_signal_num);
 
-		break;
-	}
-	default: g_assert_not_reached ();
-	}
+#if !defined(__native_client__)
+	signal_add_handler (suspend_signal_num, suspend_signal_handler, SA_RESTART);
+	signal_add_handler (restart_signal_num, restart_signal_handler, SA_RESTART);
+#endif
+
+	sigaddset (&signal_set, suspend_signal_num);
+	sigaddset (&signal_set, restart_signal_num);
+
+	abort_signal_num = abort_signal_get ();
+
+#if !defined(__native_client__)
+	signal_add_handler (abort_signal_num, suspend_signal_handler, 0);
+#endif
+
+	sigaddset (&signal_set, abort_signal_num);
 
 	/* ensure all the new signals are unblocked */
 	sigprocmask (SIG_UNBLOCK, &signal_set, NULL);

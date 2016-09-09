@@ -7,18 +7,13 @@
 
 #include "mono-threads.h"
 
-#if defined(USE_POSIX_BACKEND) || defined(USE_POSIX_SYSCALL_ABORT)
-
-typedef enum {
-	MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART,
-	MONO_THREADS_POSIX_INIT_SIGNALS_ABORT,
-} MonoThreadPosixInitSignals;
+#if defined(USE_POSIX_BACKEND)
 
 int
 mono_threads_posix_signal_search_alternative (int min_signal);
 
 void
-mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals);
+mono_threads_posix_init_signals (void);
 
 gint
 mono_threads_posix_get_suspend_signal (void);
@@ -29,6 +24,6 @@ mono_threads_posix_get_restart_signal (void);
 gint
 mono_threads_posix_get_abort_signal (void);
 
-#endif /* defined(USE_POSIX_BACKEND) || defined(USE_POSIX_SYSCALL_ABORT) */
+#endif /* defined(USE_POSIX_BACKEND) */
 
 #endif /* __MONO_THREADS_POSIX_SIGNALS_H__ */
