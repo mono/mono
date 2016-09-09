@@ -96,6 +96,12 @@ namespace System.Threading {
 		 */
 		private IntPtr unused1;
 		private IntPtr unused2;
+
+		/* This is used only to check that we are in sync between the representation
+		 * of MonoInternalThread in native and InternalThread in managed
+		 *
+		 * DO NOT RENAME! DO NOT ADD FIELDS AFTER! */
+		private IntPtr last;
 		#endregion
 #pragma warning restore 169, 414, 649
 
