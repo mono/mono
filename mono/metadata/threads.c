@@ -913,7 +913,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	StartInfo *start_info = NULL;
 	HANDLE thread_handle;
 	MonoNativeThreadId tid;
-	MonoThreadParm tp;
 	gboolean ret;
 
 	if (start_delegate)
@@ -958,8 +957,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	if (stack_size == 0)
 		stack_size = default_stacksize_for_thread (internal);
 
-	tp.stack_size = stack_size;
-	thread_handle = mono_threads_create_thread (start_wrapper, start_info, &tp, &tid);
+	thread_handle = mono_threads_create_thread (start_wrapper, start_info, stack_size, &tid);
 
 	if (thread_handle == NULL) {
 		/* The thread couldn't be created, so set an exception */

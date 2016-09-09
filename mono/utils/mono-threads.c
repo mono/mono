@@ -1187,7 +1187,7 @@ inner_start_thread (gpointer data)
  * Returns: a windows or io-layer handle for the thread.
  */
 HANDLE
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, MonoThreadParm *tp, MonoNativeThreadId *out_tid)
+mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize stack_size, MonoNativeThreadId *out_tid)
 {
 	CreateThreadData *thread_data;
 	gint res;
@@ -1199,7 +1199,7 @@ mono_threads_create_thread (MonoThreadStart start, gpointer arg, MonoThreadParm 
 	thread_data->start_routine_arg = arg;
 	mono_coop_sem_init (&thread_data->registered, 0);
 
-	res = mono_threads_platform_create_thread (inner_start_thread, (gpointer) thread_data, tp->stack_size, out_tid);
+	res = mono_threads_platform_create_thread (inner_start_thread, (gpointer) thread_data, stack_size, out_tid);
 	if (res != 0) {
 		/* ref is not going to be decremented in inner_start_thread */
 		InterlockedDecrement (&thread_data->ref);

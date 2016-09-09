@@ -284,13 +284,6 @@ typedef enum {
 
 typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
 
-/*
- * Parameters to pass for thread creation
- */
-typedef struct {
-	guint32 stack_size;		
-} MonoThreadParm;
-
 static inline gboolean
 mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
 {
@@ -455,7 +448,7 @@ gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
 HANDLE
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, MonoThreadParm *tp, MonoNativeThreadId *out_tid);
+mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize stack_size, MonoNativeThreadId *out_tid);
 
 int
 mono_threads_get_max_stack_size (void);

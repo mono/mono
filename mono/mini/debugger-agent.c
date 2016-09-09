@@ -1627,10 +1627,7 @@ stop_debugger_thread (void)
 static void
 start_debugger_thread (void)
 {
-	MonoThreadParm tp;
-
-	tp.stack_size = 0;
-	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, &tp, NULL);
+	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, 0, NULL);
 	g_assert (debugger_thread_handle);
 }
 
