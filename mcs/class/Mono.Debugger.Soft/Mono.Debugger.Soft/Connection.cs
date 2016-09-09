@@ -1917,7 +1917,6 @@ namespace Mono.Debugger.Soft
 				int nscopes = res.ReadInt ();
 				info.scopes_start = new int [nscopes];
 				info.scopes_end = new int [nscopes];
-				Console.WriteLine ("A: ");
 				int last_start = 0;
 				for (int i = 0; i < nscopes; ++i) {
 					info.scopes_start [i] = last_start + res.ReadInt ();
