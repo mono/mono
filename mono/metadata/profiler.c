@@ -120,6 +120,24 @@ static ProfilerDesc *prof_list = NULL;
 #define mono_profiler_coverage_unlock() mono_os_mutex_unlock (&profiler_coverage_mutex)
 static mono_mutex_t profiler_coverage_mutex;
 
+static gboolean profiling_enabled;
+
+/*
+ * Used during early startup to switch the runtime to 'profiling mode', i.e.
+ * see to it that anything that might need to be profiled later on can be.
+ */
+void
+mono_profiler_enable (void)
+{
+	profiling_enabled = TRUE;
+}
+
+gboolean
+mono_profiler_enabled (void)
+{
+	return profiling_enabled;
+}
+
 /* this is directly accessible to other mono libs.
  * It is the ORed value of all the profiler's events.
  */
@@ -139,6 +157,8 @@ MonoProfileFlags mono_profiler_events;
 void
 mono_profiler_install (MonoProfiler *prof, MonoProfileFunc callback)
 {
+	mono_profiler_enable ();
+
 	ProfilerDesc *desc = g_new0 (ProfilerDesc, 1);
 	if (!prof_list)
 		mono_os_mutex_init_recursive (&profiler_coverage_mutex);
@@ -1269,6 +1289,8 @@ void
 mono_profiler_load (const char *desc)
 {
 	char *cdesc = NULL;
+
+	mono_profiler_enable ();
 	mono_gc_base_init ();
 
 	if (!desc || (strcmp ("default", desc) == 0)) {

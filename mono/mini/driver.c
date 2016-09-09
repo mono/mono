@@ -1575,7 +1575,6 @@ mono_main (int argc, char* argv[])
 	guint32 opt, action = DO_EXEC, recompilation_times = 1;
 	MonoGraphOptions mono_graph_options = (MonoGraphOptions)0;
 	int mini_verbose = 0;
-	gboolean enable_profile = FALSE;
 	char *trace_options = NULL;
 	char *profile_options = NULL;
 	char *aot_options = NULL;
@@ -1773,10 +1772,10 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--jitmap") == 0) {
 			mono_enable_jit_map ();
 		} else if (strcmp (argv [i], "--profile") == 0) {
-			enable_profile = TRUE;
+			mono_profiler_enable ();
 			profile_options = NULL;
 		} else if (strncmp (argv [i], "--profile=", 10) == 0) {
-			enable_profile = TRUE;
+			mono_profiler_enable ();
 			profile_options = argv [i] + 10;
 		} else if (strncmp (argv [i], "--agent=", 8) == 0) {
 			if (agents == NULL)
@@ -1976,7 +1975,7 @@ mono_main (int argc, char* argv[])
 	 */
 	mono_native_thread_set_name (mono_native_thread_id_get (), "Main");
 
-	if (enable_profile) {
+	if (mono_profiler_enabled ()) {
 		mono_profiler_load (profile_options);
 		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
 	}

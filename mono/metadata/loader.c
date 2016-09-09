@@ -1877,7 +1877,7 @@ mono_free_method  (MonoMethod *method)
 		mono_profiler_method_free (method);
 	
 	/* FIXME: This hack will go away when the profiler will support freeing methods */
-	if (mono_profiler_get_events () != MONO_PROFILE_NONE)
+	if (mono_profiler_enabled ())
 		return;
 	
 	if (method->signature) {

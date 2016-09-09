@@ -23,6 +23,9 @@ typedef struct {
         } data [1];
 } MonoProfileCoverageInfo;
 
+void mono_profiler_enable (void);
+gboolean mono_profiler_enabled (void);
+
 void mono_profiler_shutdown        (void);
 
 void mono_profiler_method_enter    (MonoMethod *method);
