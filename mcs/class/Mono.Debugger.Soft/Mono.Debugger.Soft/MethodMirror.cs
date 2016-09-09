@@ -19,6 +19,7 @@ namespace Mono.Debugger.Soft
 		ParameterInfoMirror[] param_info;
 		ParameterInfoMirror ret_param;
 		LocalVariable[] locals;
+		LocalScope[] scopes;
 		IList<Location> locations;
 		MethodBodyMirror body;
 		MethodMirror gmd;
@@ -239,6 +240,11 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public LocalScope[] GetScopes () {
+			GetLocals ();
+			return scopes;
+		}
+
 		public LocalVariable[] GetLocals () {
 			if (locals == null) {
 				LocalsInfo li = new LocalsInfo ();
@@ -258,6 +264,10 @@ namespace Mono.Debugger.Soft
 
 				for (int i = 0; i < li.names.Length; ++i)
 					locals [i + pi.Length] = new LocalVariable (vm, this, i, li.types [i], li.names [i], li.live_range_start [i], li.live_range_end [i], false);
+
+				scopes = new LocalScope [li.scopes_start.Length];
+				for (int i = 0; i < scopes.Length; ++i)
+					scopes [i] = new LocalScope (vm, this, li.scopes_start [i], li.scopes_end [i]);
 			}
 			return locals;
 		}

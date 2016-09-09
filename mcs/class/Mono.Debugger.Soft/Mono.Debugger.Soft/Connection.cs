@@ -117,6 +117,8 @@ namespace Mono.Debugger.Soft
 		public string[] names;
 		public int[] live_range_start;
 		public int[] live_range_end;
+		public int[] scopes_start;
+		public int[] scopes_end;
 	}
 
 	struct PropInfo {
@@ -418,7 +420,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 42;
+		internal const int MINOR_VERSION = 43;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1910,6 +1912,20 @@ namespace Mono.Debugger.Soft
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_LOCALS_INFO, new PacketWriter ().WriteId (id));
 
 			LocalsInfo info = new LocalsInfo ();
+
+			if (Version.AtLeast (2, 43)) {
+				int nscopes = res.ReadInt ();
+				info.scopes_start = new int [nscopes];
+				info.scopes_end = new int [nscopes];
+				Console.WriteLine ("A: ");
+				int last_start = 0;
+				for (int i = 0; i < nscopes; ++i) {
+					info.scopes_start [i] = last_start + res.ReadInt ();
+					info.scopes_end [i] = info.scopes_start [i] + res.ReadInt ();
+					last_start = info.scopes_start [i];
+				}
+			}
+
 			int nlocals = res.ReadInt ();
 			info.types = new long [nlocals];
 			for (int i = 0; i < nlocals; ++i)

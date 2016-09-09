@@ -1846,6 +1846,9 @@ public class DebuggerTests
 				Assert.Fail ();
 			}
 		}
+
+		var scopes = frame.Method.GetScopes ();
+		Assert.AreEqual (2, scopes.Length);
 	}
 
 	Event step_once () {
