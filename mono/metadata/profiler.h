@@ -15,20 +15,41 @@ typedef enum {
 	MONO_PROFILE_MODULE_EVENTS    = 1 << 2,
 	MONO_PROFILE_CLASS_EVENTS     = 1 << 3,
 	MONO_PROFILE_JIT_COMPILATION  = 1 << 4,
-	MONO_PROFILE_INLINING         = 1 << 5,
+	MONO_PROFILE_INLINING         = 1 << 5, // Currently does nothing.
 	MONO_PROFILE_EXCEPTIONS       = 1 << 6,
 	MONO_PROFILE_ALLOCATIONS      = 1 << 7,
 	MONO_PROFILE_GC               = 1 << 8,
 	MONO_PROFILE_THREADS          = 1 << 9,
 	MONO_PROFILE_REMOTING         = 1 << 10,
-	MONO_PROFILE_TRANSITIONS      = 1 << 11,
+	MONO_PROFILE_TRANSITIONS      = 1 << 11, // Currently does nothing.
+	/*
+	 * NOTE: While all event flags here can be toggled dynamically at runtime,
+	 * the following flags will not have retroactive effect.
+	 *
+	 * MONO_PROFILE_ENTER_LEAVE
+	 * MONO_PROFILE_COVERAGE
+	 * MONO_PROFILE_INS_COVERAGE
+	 *
+	 * Methods which have already been JIT'd with or without instrumentation
+	 * won't be re-JIT'd. Toggling these events only affects subsequent
+	 * JIT'ing.
+	 */
 	MONO_PROFILE_ENTER_LEAVE      = 1 << 12,
-	MONO_PROFILE_COVERAGE         = 1 << 13,
-	MONO_PROFILE_INS_COVERAGE     = 1 << 14,
+	/*
+	 * NOTE: The runtime currently does not support using the two coverage
+	 * modes at the same time, whether it is from a single profiler or from two
+	 * separate profilers. You are free to switch between one or the other at
+	 * runtime, but both cannot be set at the same time.
+	 *
+	 * It is generally recommended to use MONO_PROFILE_INS_COVERAGE as it
+	 * provides more accurate data and is available on all platforms.
+	 */
+	MONO_PROFILE_COVERAGE         = 1 << 13, // Coverage on a basic block basis.
+	MONO_PROFILE_INS_COVERAGE     = 1 << 14, // Coverage on an instruction basis.
 	MONO_PROFILE_STATISTICAL      = 1 << 15,
 	MONO_PROFILE_METHOD_EVENTS    = 1 << 16,
 	MONO_PROFILE_MONITOR_EVENTS   = 1 << 17,
-	MONO_PROFILE_IOMAP_EVENTS     = 1 << 18, /* this should likely be removed, too */
+	MONO_PROFILE_IOMAP_EVENTS     = 1 << 18,
 	MONO_PROFILE_GC_MOVES         = 1 << 19,
 	MONO_PROFILE_GC_ROOTS         = 1 << 20,
 	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21,
