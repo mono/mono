@@ -931,7 +931,7 @@ mono_profiler_gc_handle (int op, int type, uintptr_t handle, MonoObject *obj)
 {
 	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_handle)
+		if ((prof->events & MONO_PROFILE_GC_HANDLES) && prof->gc_handle)
 			prof->gc_handle (prof->profiler, op, type, handle, obj);
 	}
 }

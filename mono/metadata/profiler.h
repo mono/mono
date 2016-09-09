@@ -56,7 +56,8 @@ typedef enum {
 	MONO_PROFILE_GC_MOVES         = 1 << 19,
 	MONO_PROFILE_GC_ROOTS         = 1 << 20,
 	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21,
-	MONO_PROFILE_GC_FINALIZATION  = 1 << 22
+	MONO_PROFILE_GC_FINALIZATION  = 1 << 22,
+	MONO_PROFILE_GC_HANDLES       = 1 << 23
 } MonoProfileFlags;
 
 typedef enum {
