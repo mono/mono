@@ -539,7 +539,7 @@ static volatile gint32 sampling_thread_running;
 static clock_serv_t sampling_clock_service;
 
 static void
-clock_init (void)
+clock_init (MonoProfileSamplingMode mode)
 {
 	kern_return_t ret;
 
@@ -602,9 +602,9 @@ clock_sleep_ns_abs (guint64 ns_abs)
 clockid_t sampling_posix_clock;
 
 static void
-clock_init (void)
+clock_init (MonoProfileSamplingMode mode)
 {
-	switch (mono_profiler_get_sampling_mode ()) {
+	switch (mode) {
 	case MONO_PROFILER_STAT_MODE_PROCESS:
 #ifdef HAVE_CLOCK_NANOSLEEP
 		/*
@@ -707,8 +707,6 @@ sampling_thread_func (void *data)
 	mono_threads_attach_tools_thread ();
 	mono_native_thread_set_name (mono_native_thread_id_get (), "Profiler sampler");
 
-	gint64 rate = 1000000000 / mono_profiler_get_sampling_rate ();
-
 	int old_policy;
 	struct sched_param old_sched;
 	pthread_getschedparam (pthread_self (), &old_policy, &old_sched);
@@ -730,12 +728,28 @@ sampling_thread_func (void *data)
 	struct sched_param sched = { .sched_priority = sched_get_priority_max (SCHED_FIFO) };
 	pthread_setschedparam (pthread_self (), SCHED_FIFO, &sched);
 
-	clock_init ();
+	MonoProfileSamplingMode mode;
 
-	guint64 sleep = clock_get_time_ns ();
+init:
+	mode = mono_profiler_get_sampling_mode ();
 
-	while (InterlockedRead (&sampling_thread_running)) {
-		sleep += rate;
+	clock_init (mode);
+
+loop:
+	for (guint64 sleep = clock_get_time_ns (); InterlockedRead (&sampling_thread_running); clock_sleep_ns_abs (sleep)) {
+		// Keep CPU usage low if sampling is disabled.
+		if (!(mono_profiler_events & MONO_PROFILE_STATISTICAL)) {
+			clock_sleep_ns_abs (clock_get_time_ns () + 1000 * 1000 * 1000 /* 1sec */);
+			goto loop;
+		}
+
+		// If the sampling mode was changed, we need to re-init the clock.
+		if (mono_profiler_get_sampling_mode () != mode) {
+			clock_cleanup ();
+			goto init;
+		}
+
+		sleep += 1000000000 / mono_profiler_get_sampling_rate ();
 
 		FOREACH_THREAD_SAFE (info) {
 			/* info should never be this thread as we're a tools thread. */
@@ -744,8 +758,6 @@ sampling_thread_func (void *data)
 			mono_threads_pthread_kill (info, profiler_signal);
 			InterlockedIncrement (&profiler_signals_sent);
 		} FOREACH_THREAD_SAFE_END
-
-		clock_sleep_ns_abs (sleep);
 	}
 
 	InterlockedWrite (&sampling_thread_exiting, 1);
