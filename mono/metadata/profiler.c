@@ -1001,7 +1001,7 @@ void
 mono_profiler_code_chunk_new (gpointer chunk, int size) {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if (prof->code_chunk_new)
+		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_chunk_new)
 			prof->code_chunk_new (prof->profiler, chunk, size);
 	}
 }
@@ -1016,7 +1016,7 @@ void
 mono_profiler_code_chunk_destroy (gpointer chunk) {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if (prof->code_chunk_destroy)
+		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_chunk_destroy)
 			prof->code_chunk_destroy (prof->profiler, chunk);
 	}
 }
@@ -1040,7 +1040,7 @@ void
 mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, gconstpointer data) {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if (prof->code_buffer_new)
+		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_buffer_new)
 			prof->code_buffer_new (prof->profiler, buffer, size, type, (void*)data);
 	}
 }
