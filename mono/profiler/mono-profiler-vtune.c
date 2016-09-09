@@ -167,9 +167,9 @@ mono_profiler_startup (const char *desc)
 	iJIT_IsProfilingActiveFlags flags = iJIT_IsProfilingActive();
 	if (flags == iJIT_SAMPLING_ON)
 	{
-		mono_profiler_install (NULL, codeanalyst_shutdown);
-		mono_profiler_install_jit_end (method_jit_result);
-		mono_profiler_install_code_buffer_new (code_buffer_new);
-		mono_profiler_set_events (MONO_PROFILE_JIT_COMPILATION);
+		MonoProfilerDesc *desc = mono_profiler_new (NULL, codeanalyst_shutdown);
+		mono_profiler_set_jit_end_cb (desc, method_jit_result);
+		mono_profiler_set_code_buffer_new_cb (desc, code_buffer_new);
+		mono_profiler_set_event_flags (desc, MONO_PROFILE_JIT_COMPILATION);
 	}
 }

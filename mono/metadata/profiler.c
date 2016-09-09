@@ -36,9 +36,8 @@
 #include <execinfo.h>
 #endif
 
-typedef struct _ProfilerDesc ProfilerDesc;
-struct _ProfilerDesc {
-	ProfilerDesc *next;
+struct _MonoProfilerDesc {
+	MonoProfilerDesc *next;
 	MonoProfiler *profiler;
 	MonoProfileFlags events;
 
@@ -114,11 +113,12 @@ struct _ProfilerDesc {
 	MonoProfilerCodeBufferNew code_buffer_new;
 };
 
-static ProfilerDesc *prof_list = NULL;
+static MonoProfilerDesc *prof_list = NULL;
 
-#define mono_profiler_coverage_lock() mono_os_mutex_lock (&profiler_coverage_mutex)
-#define mono_profiler_coverage_unlock() mono_os_mutex_unlock (&profiler_coverage_mutex)
-static mono_mutex_t profiler_coverage_mutex;
+#define mono_profiler_lock() mono_os_mutex_lock (&profiler_mutex)
+#define mono_profiler_unlock() mono_os_mutex_unlock (&profiler_mutex)
+
+static mono_mutex_t profiler_mutex;
 
 static gboolean profiling_enabled;
 
@@ -131,6 +131,9 @@ static gboolean profiling_enabled;
 void
 mono_profiler_enable (void)
 {
+	if (!profiling_enabled)
+		mono_os_mutex_init_recursive (&profiler_mutex);
+
 	profiling_enabled = TRUE;
 }
 
@@ -146,166 +149,99 @@ mono_profiler_enabled (void)
 MonoProfileFlags mono_profiler_events;
 
 /**
- * mono_profiler_install:
+ * mono_profiler_new:
  * @prof: a MonoProfiler structure pointer, or a pointer to a derived structure.
  * @callback: the function to invoke at shutdown
  *
- * Use mono_profiler_install to activate profiling in the Mono runtime.
+ * Use this function to register a profiler with the Mono runtime.
  * Typically developers of new profilers will create a new structure whose
  * first field is a MonoProfiler and put any extra information that they need
  * to access from the various profiling callbacks there.
  *
  */
-void
-mono_profiler_install (MonoProfiler *prof, MonoProfileFunc callback)
+MonoProfilerDesc *
+mono_profiler_new (MonoProfiler *prof, MonoProfileFunc callback)
 {
 	mono_profiler_enable ();
 
-	ProfilerDesc *desc = g_new0 (ProfilerDesc, 1);
-	if (!prof_list)
-		mono_os_mutex_init_recursive (&profiler_coverage_mutex);
+	MonoProfilerDesc *desc = g_new0 (MonoProfilerDesc, 1);
+
 	desc->profiler = prof;
 	desc->shutdown_callback = callback;
 	desc->next = prof_list;
+
 	prof_list = desc;
+
+	return desc;
+}
+
+void
+mono_profiler_shutdown (void)
+{
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next) {
+		if (prof->shutdown_callback)
+			prof->shutdown_callback (prof->profiler);
+
+		mono_profiler_set_event_flags (prof, MONO_PROFILE_NONE);
+	}
+
+	g_assert (!mono_profiler_events);
 }
 
 /**
- * mono_profiler_set_events:
- * @events: an ORed set of values made up of MONO_PROFILER_ flags
+ * mono_profiler_get_event_flags:
  *
- * The events descriped in the @events argument is a set of flags
+ * Return the events that @desc currently wants intercepted.
+ */
+MonoProfileFlags
+mono_profiler_get_event_flags (MonoProfilerDesc *desc)
+{
+	return desc->events;
+}
+
+/**
+ * mono_profiler_set_event_flags:
+ * @desc: the profiler descriptor to set flags on
+ * @events: an ORed set of values made up of MONO_PROFILE_* flags
+ *
+ * The events described in the @events argument is a set of flags
  * that represent which profiling events must be triggered.  For
  * example if you have registered a set of methods for tracking
- * JIT compilation start and end with mono_profiler_install_jit_compile,
+ * JIT compilation start and end with mono_profiler_set_jit_compile_cb,
  * you will want to pass the MONO_PROFILE_JIT_COMPILATION flag to
  * this routine.
  *
- * You can call mono_profile_set_events more than once and you can
+ * You can call mono_profile_set_event_flags more than once and you can
  * do this at runtime to modify which methods are invoked.
+ *
+ * This function must not be called in async context.
  */
 void
-mono_profiler_set_events (MonoProfileFlags events)
+mono_profiler_set_event_flags (MonoProfilerDesc *desc, MonoProfileFlags events)
 {
-	ProfilerDesc *prof;
-	MonoProfileFlags value = (MonoProfileFlags)0;
-	if (prof_list)
-		prof_list->events = events;
-	for (prof = prof_list; prof; prof = prof->next)
-		value = (MonoProfileFlags)(value | prof->events);
-	mono_profiler_events = value;
+	mono_profiler_lock ();
+
+	desc->events = events;
+
+	MonoProfileFlags flags = 0;
+
+	for (MonoProfilerDesc *desc = prof_list; desc; desc = desc->next)
+		flags |= desc->events;
+
+	mono_profiler_events = flags;
+
+	mono_profiler_unlock ();
 }
 
 /**
  * mono_profiler_get_events:
  *
- * Returns a list of active events that will be intercepted. 
+ * Returns a list of active events that will be intercepted globally.
  */
 MonoProfileFlags
 mono_profiler_get_events (void)
 {
 	return mono_profiler_events;
-}
-
-/**
- * mono_profiler_install_enter_leave:
- * @enter: the routine to be called on each method entry
- * @fleave: the routine to be called each time a method returns
- *
- * Use this routine to install routines that will be called everytime
- * a method enters and leaves.   The routines will receive as an argument
- * the MonoMethod representing the method that is entering or leaving.
- */
-void
-mono_profiler_install_enter_leave (MonoProfileMethodFunc enter, MonoProfileMethodFunc fleave)
-{
-	if (!prof_list)
-		return;
-	prof_list->method_enter = enter;
-	prof_list->method_leave = fleave;
-}
-
-/**
- * mono_profiler_install_jit_compile:
- * @start: the routine to be called when the JIT process starts.
- * @end: the routine to be called when the JIT process ends.
- *
- * Use this routine to install routines that will be called when JIT 
- * compilation of a method starts and completes.
- */
-void 
-mono_profiler_install_jit_compile (MonoProfileMethodFunc start, MonoProfileMethodResult end)
-{
-	if (!prof_list)
-		return;
-	prof_list->jit_start = start;
-	prof_list->jit_end = end;
-}
-
-void 
-mono_profiler_install_jit_end (MonoProfileJitResult end)
-{
-	if (!prof_list)
-		return;
-	prof_list->jit_end2 = end;
-}
-
-void 
-mono_profiler_install_method_free (MonoProfileMethodFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->method_free = callback;
-}
-
-void
-mono_profiler_install_method_invoke (MonoProfileMethodFunc start, MonoProfileMethodFunc end)
-{
-	if (!prof_list)
-		return;
-	prof_list->method_start_invoke = start;
-	prof_list->method_end_invoke = end;
-}
-
-void 
-mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc end)
-{
-	if (!prof_list)
-		return;
-	prof_list->thread_start = start;
-	prof_list->thread_end = end;
-}
-
-void 
-mono_profiler_install_thread_name (MonoProfileThreadNameFunc thread_name_cb)
-{
-	if (!prof_list)
-		return;
-	prof_list->thread_name = thread_name_cb;
-}
-
-void 
-mono_profiler_install_transition (MonoProfileMethodResult callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->man_unman_transition = callback;
-}
-
-void 
-mono_profiler_install_allocation (MonoProfileAllocFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->allocation_cb = callback;
-}
-
-void
-mono_profiler_install_monitor  (MonoProfileMonitorFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->monitor_event_cb = callback;
 }
 
 MonoProfileSamplingMode mono_profiler_sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
@@ -330,27 +266,252 @@ mono_profiler_set_statistical_mode (MonoProfileSamplingMode mode, int64_t sampli
 	mono_profiler_sampling_frequency = sampling_frequency_hz;
 }
 
-void 
-mono_profiler_install_statistical (MonoProfileStatFunc callback)
+/**
+ * mono_profiler_set_enter_leave_cb:
+ * @desc: the profiler descriptor to install the callbacks on
+ * @enter: the routine to be called on each method entry
+ * @fleave: the routine to be called each time a method returns
+ *
+ * Use this routine to install routines that will be called everytime
+ * a method enters and leaves.   The routines will receive as an argument
+ * the MonoMethod representing the method that is entering or leaving.
+ */
+void
+mono_profiler_set_enter_leave_cb (MonoProfilerDesc *desc, MonoProfileMethodFunc enter, MonoProfileMethodFunc fleave)
 {
-	if (!prof_list)
-		return;
-	prof_list->statistical_cb = callback;
+	desc->method_enter = enter;
+	desc->method_leave = fleave;
 }
 
-void 
-mono_profiler_install_statistical_call_chain (MonoProfileStatCallChainFunc callback, int call_chain_depth, MonoProfilerCallChainStrategy call_chain_strategy) {
-	if (!prof_list)
-		return;
-	if (call_chain_depth > MONO_PROFILER_MAX_STAT_CALL_CHAIN_DEPTH) {
-		call_chain_depth = MONO_PROFILER_MAX_STAT_CALL_CHAIN_DEPTH;
-	}
-	if ((call_chain_strategy >= MONO_PROFILER_CALL_CHAIN_INVALID) || (call_chain_strategy < MONO_PROFILER_CALL_CHAIN_NONE)) {
-		call_chain_strategy = MONO_PROFILER_CALL_CHAIN_NONE;
-	}
-	prof_list->statistical_call_chain_cb = callback;
-	prof_list->statistical_call_chain_depth = call_chain_depth;
-	prof_list->statistical_call_chain_strategy = call_chain_strategy;
+/**
+ * mono_profiler_set_jit_compile_cb:
+ * @desc: the profiler descriptor to install the callbacks on
+ * @start: the routine to be called when the JIT process starts.
+ * @end: the routine to be called when the JIT process ends.
+ *
+ * Use this routine to install routines that will be called when JIT 
+ * compilation of a method starts and completes.
+ */
+void
+mono_profiler_set_jit_compile_cb (MonoProfilerDesc *desc, MonoProfileMethodFunc start, MonoProfileMethodResult end)
+{
+	desc->jit_start = start;
+	desc->jit_end = end;
+}
+
+void
+mono_profiler_set_jit_end_cb (MonoProfilerDesc *desc, MonoProfileJitResult end)
+{
+	desc->jit_end2 = end;
+}
+
+void
+mono_profiler_set_method_free_cb (MonoProfilerDesc *desc, MonoProfileMethodFunc callback)
+{
+	desc->method_free = callback;
+}
+
+void
+mono_profiler_set_method_invoke_cb (MonoProfilerDesc *desc, MonoProfileMethodFunc start, MonoProfileMethodFunc end)
+{
+	desc->method_start_invoke = start;
+	desc->method_end_invoke = end;
+}
+
+void
+mono_profiler_set_thread_cb (MonoProfilerDesc *desc, MonoProfileThreadFunc start, MonoProfileThreadFunc end)
+{
+	desc->thread_start = start;
+	desc->thread_end = end;
+}
+
+void
+mono_profiler_set_thread_name_cb (MonoProfilerDesc *desc, MonoProfileThreadNameFunc thread_name_cb)
+{
+	desc->thread_name = thread_name_cb;
+}
+
+void
+mono_profiler_set_transition_cb (MonoProfilerDesc *desc, MonoProfileMethodResult callback)
+{
+	desc->man_unman_transition = callback;
+}
+
+void
+mono_profiler_set_allocation_cb (MonoProfilerDesc *desc, MonoProfileAllocFunc callback)
+{
+	desc->allocation_cb = callback;
+}
+
+void
+mono_profiler_set_monitor_cb  (MonoProfilerDesc *desc, MonoProfileMonitorFunc callback)
+{
+	desc->monitor_event_cb = callback;
+}
+
+void
+mono_profiler_set_statistical_cb (MonoProfilerDesc *desc, MonoProfileStatFunc callback)
+{
+	desc->statistical_cb = callback;
+}
+
+void mono_profiler_set_exception_cb (MonoProfilerDesc *desc, MonoProfileExceptionFunc throw_callback, MonoProfileMethodFunc exc_method_leave, MonoProfileExceptionClauseFunc clause_callback)
+{
+	desc->exception_throw_cb = throw_callback;
+	desc->exception_method_leave_cb = exc_method_leave;
+	desc->exception_clause_cb = clause_callback;
+}
+
+void
+mono_profiler_set_coverage_filter_cb (MonoProfilerDesc *desc, MonoProfileCoverageFilterFunc callback)
+{
+	desc->coverage_filter_cb = callback;
+}
+
+void
+mono_profiler_set_appdomain_cb (MonoProfilerDesc *desc, MonoProfileAppDomainFunc start_load, MonoProfileAppDomainResult end_load,
+                                MonoProfileAppDomainFunc start_unload, MonoProfileAppDomainFunc end_unload)
+
+{
+	desc->domain_start_load = start_load;
+	desc->domain_end_load = end_load;
+	desc->domain_start_unload = start_unload;
+	desc->domain_end_unload = end_unload;
+}
+
+void
+mono_profiler_set_appdomain_name_cb (MonoProfilerDesc *desc, MonoProfileAppDomainFriendlyNameFunc domain_name_cb)
+{
+	desc->domain_name = domain_name_cb;
+}
+
+void
+mono_profiler_set_context_cb (MonoProfilerDesc *desc, MonoProfileContextFunc load, MonoProfileContextFunc unload)
+{
+	desc->context_load = load;
+	desc->context_unload = unload;
+}
+
+void
+mono_profiler_set_assembly_cb (MonoProfilerDesc *desc, MonoProfileAssemblyFunc start_load, MonoProfileAssemblyResult end_load,
+                               MonoProfileAssemblyFunc start_unload, MonoProfileAssemblyFunc end_unload)
+{
+	desc->assembly_start_load = start_load;
+	desc->assembly_end_load = end_load;
+	desc->assembly_start_unload = start_unload;
+	desc->assembly_end_unload = end_unload;
+}
+
+void
+mono_profiler_set_module_cb (MonoProfilerDesc *desc, MonoProfileModuleFunc start_load, MonoProfileModuleResult end_load,
+                             MonoProfileModuleFunc start_unload, MonoProfileModuleFunc end_unload)
+{
+	desc->module_start_load = start_load;
+	desc->module_end_load = end_load;
+	desc->module_start_unload = start_unload;
+	desc->module_end_unload = end_unload;
+}
+
+void
+mono_profiler_set_class_cb (MonoProfilerDesc *desc, MonoProfileClassFunc start_load, MonoProfileClassResult end_load,
+                            MonoProfileClassFunc start_unload, MonoProfileClassFunc end_unload)
+{
+	desc->class_start_load = start_load;
+	desc->class_end_load = end_load;
+	desc->class_start_unload = start_unload;
+	desc->class_end_unload = end_unload;
+}
+
+void
+mono_profiler_set_gc_cb (MonoProfilerDesc *desc, MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback)
+{
+	desc->gc_event = callback;
+	desc->gc_heap_resize = heap_resize_callback;
+}
+
+/**
+ * mono_profiler_set_gc_moves_cb:
+ * @desc: the profiler descriptor to install the callback on
+ * @callback: callback function
+ *
+ * Install the @callback function that the GC will call when moving objects.
+ * The callback receives an array of pointers and the number of elements
+ * in the array. Every even element in the array is the original object location
+ * and the following odd element is the new location of the object in memory.
+ * So the number of elements argument will always be a multiple of 2.
+ * Since this callback happens during the GC, it is a restricted environment:
+ * no locks can be taken and the object pointers can be inspected only once
+ * the GC is finished (of course the original location pointers will not
+ * point to valid objects anymore).
+ */
+void
+mono_profiler_set_gc_moves_cb (MonoProfilerDesc *desc, MonoProfileGCMoveFunc callback)
+{
+	desc->gc_moves = callback;
+}
+
+/**
+ * mono_profiler_set_gc_roots_cb:
+ * @desc: the profiler descriptor to install the callbacks on
+ * @handle_callback: callback function
+ * @roots_callback: callback function
+ *
+ * Install the @handle_callback function that the GC will call when GC
+ * handles are created or destroyed.
+ * The callback receives an operation, which is either #MONO_PROFILER_GC_HANDLE_CREATED
+ * or #MONO_PROFILER_GC_HANDLE_DESTROYED, the handle type, the handle value and the
+ * object pointer, if present.
+ * Install the @roots_callback function that the GC will call when tracing
+ * the roots for a collection.
+ * The callback receives the number of elements and three arrays: an array
+ * of objects, an array of root types and flags and an array of extra info.
+ * The size of each array is given by the first argument.
+ */
+void
+mono_profiler_set_gc_roots_cb (MonoProfilerDesc *desc, MonoProfileGCHandleFunc handle_callback, MonoProfileGCRootFunc roots_callback)
+{
+	desc->gc_handle = handle_callback;
+	desc->gc_roots = roots_callback;
+}
+
+void
+mono_profiler_set_gc_finalize_cb (MonoProfilerDesc *desc, MonoProfileGCFinalizeFunc begin, MonoProfileGCFinalizeObjectFunc begin_obj,
+                                  MonoProfileGCFinalizeObjectFunc end_obj, MonoProfileGCFinalizeFunc end)
+{
+	desc->gc_finalize_begin = begin;
+	desc->gc_finalize_object_begin = begin_obj;
+	desc->gc_finalize_object_begin = end_obj;
+	desc->gc_finalize_end = end;
+}
+
+void
+mono_profiler_set_runtime_initialized_cb (MonoProfilerDesc *desc, MonoProfileFunc runtime_initialized_callback)
+{
+	desc->runtime_initialized_event = runtime_initialized_callback;
+}
+
+void
+mono_profiler_set_code_chunk_new_cb (MonoProfilerDesc *desc, MonoProfilerCodeChunkNew callback)
+{
+	desc->code_chunk_new = callback;
+}
+
+void
+mono_profiler_set_code_chunk_destroy_cb (MonoProfilerDesc *desc, MonoProfilerCodeChunkDestroy callback)
+{
+	desc->code_chunk_destroy = callback;
+}
+
+void
+mono_profiler_set_code_buffer_new_cb (MonoProfilerDesc *desc, MonoProfilerCodeBufferNew callback)
+{
+	desc->code_buffer_new = callback;
+}
+
+void
+mono_profiler_set_iomap_cb (MonoProfilerDesc *desc, MonoProfileIomapFunc callback)
+{
+	desc->iomap_cb = callback;
 }
 
 int
@@ -371,95 +532,10 @@ mono_profiler_stat_get_call_chain_strategy (void) {
 	}
 }
 
-void mono_profiler_install_exception (MonoProfileExceptionFunc throw_callback, MonoProfileMethodFunc exc_method_leave, MonoProfileExceptionClauseFunc clause_callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->exception_throw_cb = throw_callback;
-	prof_list->exception_method_leave_cb = exc_method_leave;
-	prof_list->exception_clause_cb = clause_callback;
-}
-
-void 
-mono_profiler_install_coverage_filter (MonoProfileCoverageFilterFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->coverage_filter_cb = callback;
-}
-
-void 
-mono_profiler_install_appdomain   (MonoProfileAppDomainFunc start_load, MonoProfileAppDomainResult end_load,
-                                   MonoProfileAppDomainFunc start_unload, MonoProfileAppDomainFunc end_unload)
-
-{
-	if (!prof_list)
-		return;
-	prof_list->domain_start_load = start_load;
-	prof_list->domain_end_load = end_load;
-	prof_list->domain_start_unload = start_unload;
-	prof_list->domain_end_unload = end_unload;
-}
-
-void
-mono_profiler_install_appdomain_name (MonoProfileAppDomainFriendlyNameFunc domain_name_cb)
-{
-	if (!prof_list)
-		return;
-
-	prof_list->domain_name = domain_name_cb;
-}
-
-void
-mono_profiler_install_context (MonoProfileContextFunc load, MonoProfileContextFunc unload)
-{
-	if (!prof_list)
-		return;
-
-	prof_list->context_load = load;
-	prof_list->context_unload = unload;
-}
-
-void 
-mono_profiler_install_assembly    (MonoProfileAssemblyFunc start_load, MonoProfileAssemblyResult end_load,
-                                   MonoProfileAssemblyFunc start_unload, MonoProfileAssemblyFunc end_unload)
-{
-	if (!prof_list)
-		return;
-	prof_list->assembly_start_load = start_load;
-	prof_list->assembly_end_load = end_load;
-	prof_list->assembly_start_unload = start_unload;
-	prof_list->assembly_end_unload = end_unload;
-}
-
-void 
-mono_profiler_install_module      (MonoProfileModuleFunc start_load, MonoProfileModuleResult end_load,
-                                   MonoProfileModuleFunc start_unload, MonoProfileModuleFunc end_unload)
-{
-	if (!prof_list)
-		return;
-	prof_list->module_start_load = start_load;
-	prof_list->module_end_load = end_load;
-	prof_list->module_start_unload = start_unload;
-	prof_list->module_end_unload = end_unload;
-}
-
-void
-mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileClassResult end_load,
-                                   MonoProfileClassFunc start_unload, MonoProfileClassFunc end_unload)
-{
-	if (!prof_list)
-		return;
-	prof_list->class_start_load = start_load;
-	prof_list->class_end_load = end_load;
-	prof_list->class_start_unload = start_unload;
-	prof_list->class_end_unload = end_unload;
-}
-
 void
 mono_profiler_method_enter (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ENTER_LEAVE) && prof->method_enter)
 			prof->method_enter (prof->profiler, method);
@@ -469,7 +545,7 @@ mono_profiler_method_enter (MonoMethod *method)
 void
 mono_profiler_method_leave (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ENTER_LEAVE) && prof->method_leave)
 			prof->method_leave (prof->profiler, method);
@@ -479,7 +555,7 @@ mono_profiler_method_leave (MonoMethod *method)
 void 
 mono_profiler_method_jit (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->jit_start)
 			prof->jit_start (prof->profiler, method);
@@ -489,7 +565,7 @@ mono_profiler_method_jit (MonoMethod *method)
 void 
 mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_JIT_COMPILATION)) {
 			if (prof->jit_end)
@@ -503,7 +579,7 @@ mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result
 void 
 mono_profiler_method_free (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_free)
 			prof->method_free (prof->profiler, method);
@@ -513,7 +589,7 @@ mono_profiler_method_free (MonoMethod *method)
 void
 mono_profiler_method_start_invoke (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_start_invoke)
 			prof->method_start_invoke (prof->profiler, method);
@@ -523,7 +599,7 @@ mono_profiler_method_start_invoke (MonoMethod *method)
 void
 mono_profiler_method_end_invoke (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_METHOD_EVENTS) && prof->method_end_invoke)
 			prof->method_end_invoke (prof->profiler, method);
@@ -533,7 +609,7 @@ mono_profiler_method_end_invoke (MonoMethod *method)
 void 
 mono_profiler_code_transition (MonoMethod *method, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_TRANSITIONS) && prof->man_unman_transition)
 			prof->man_unman_transition (prof->profiler, method, result);
@@ -543,7 +619,7 @@ mono_profiler_code_transition (MonoMethod *method, int result)
 void 
 mono_profiler_allocation (MonoObject *obj)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ALLOCATIONS) && prof->allocation_cb)
 			prof->allocation_cb (prof->profiler, obj, obj->vtable->klass);
@@ -552,7 +628,7 @@ mono_profiler_allocation (MonoObject *obj)
 
 void
 mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent event) {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_MONITOR_EVENTS) && prof->monitor_event_cb)
 			prof->monitor_event_cb (prof->profiler, obj, event);
@@ -562,7 +638,7 @@ mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent even
 void
 mono_profiler_stat_hit (guchar *ip, void *context)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_STATISTICAL) && prof->statistical_cb)
 			prof->statistical_cb (prof->profiler, ip, context);
@@ -572,7 +648,7 @@ mono_profiler_stat_hit (guchar *ip, void *context)
 void
 mono_profiler_stat_call_chain (int call_chain_depth, guchar **ips, void *context)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_STATISTICAL) && prof->statistical_call_chain_cb)
 			prof->statistical_call_chain_cb (prof->profiler, call_chain_depth, ips, context);
@@ -582,7 +658,7 @@ mono_profiler_stat_call_chain (int call_chain_depth, guchar **ips, void *context
 void
 mono_profiler_exception_thrown (MonoObject *exception)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_throw_cb)
 			prof->exception_throw_cb (prof->profiler, exception);
@@ -592,7 +668,7 @@ mono_profiler_exception_thrown (MonoObject *exception)
 void
 mono_profiler_exception_method_leave (MonoMethod *method)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_method_leave_cb)
 			prof->exception_method_leave_cb (prof->profiler, method);
@@ -602,7 +678,7 @@ mono_profiler_exception_method_leave (MonoMethod *method)
 void
 mono_profiler_exception_clause_handler (MonoMethod *method, int clause_type, int clause_num)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_clause_cb)
 			prof->exception_clause_cb (prof->profiler, method, clause_type, clause_num);
@@ -612,7 +688,7 @@ mono_profiler_exception_clause_handler (MonoMethod *method, int clause_type, int
 void
 mono_profiler_thread_start (gsize tid)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_start)
 			prof->thread_start (prof->profiler, tid);
@@ -622,7 +698,7 @@ mono_profiler_thread_start (gsize tid)
 void 
 mono_profiler_thread_end (gsize tid)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_end)
 			prof->thread_end (prof->profiler, tid);
@@ -632,7 +708,7 @@ mono_profiler_thread_end (gsize tid)
 void
 mono_profiler_thread_name (gsize tid, const char *name)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_name)
 			prof->thread_name (prof->profiler, tid, name);
@@ -642,7 +718,7 @@ mono_profiler_thread_name (gsize tid, const char *name)
 void 
 mono_profiler_assembly_event  (MonoAssembly *assembly, int code)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if (!(prof->events & MONO_PROFILE_ASSEMBLY_EVENTS))
 			continue;
@@ -669,7 +745,7 @@ mono_profiler_assembly_event  (MonoAssembly *assembly, int code)
 void 
 mono_profiler_assembly_loaded (MonoAssembly *assembly, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ASSEMBLY_EVENTS) && prof->assembly_end_load)
 			prof->assembly_end_load (prof->profiler, assembly, result);
@@ -678,7 +754,7 @@ mono_profiler_assembly_loaded (MonoAssembly *assembly, int result)
 
 void mono_profiler_iomap (char *report, const char *pathname, const char *new_pathname)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_IOMAP_EVENTS) && prof->iomap_cb)
 			prof->iomap_cb (prof->profiler, report, pathname, new_pathname);
@@ -688,7 +764,7 @@ void mono_profiler_iomap (char *report, const char *pathname, const char *new_pa
 void 
 mono_profiler_module_event  (MonoImage *module, int code)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if (!(prof->events & MONO_PROFILE_MODULE_EVENTS))
 			continue;
@@ -715,7 +791,7 @@ mono_profiler_module_event  (MonoImage *module, int code)
 void 
 mono_profiler_module_loaded (MonoImage *module, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_MODULE_EVENTS) && prof->module_end_load)
 			prof->module_end_load (prof->profiler, module, result);
@@ -725,7 +801,7 @@ mono_profiler_module_loaded (MonoImage *module, int result)
 void 
 mono_profiler_class_event  (MonoClass *klass, int code)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if (!(prof->events & MONO_PROFILE_CLASS_EVENTS))
 			continue;
@@ -752,7 +828,7 @@ mono_profiler_class_event  (MonoClass *klass, int code)
 void 
 mono_profiler_class_loaded (MonoClass *klass, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_CLASS_EVENTS) && prof->class_end_load)
 			prof->class_end_load (prof->profiler, klass, result);
@@ -762,7 +838,7 @@ mono_profiler_class_loaded (MonoClass *klass, int result)
 void 
 mono_profiler_appdomain_event  (MonoDomain *domain, int code)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if (!(prof->events & MONO_PROFILE_APPDOMAIN_EVENTS))
 			continue;
@@ -789,7 +865,7 @@ mono_profiler_appdomain_event  (MonoDomain *domain, int code)
 void 
 mono_profiler_appdomain_loaded (MonoDomain *domain, int result)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_APPDOMAIN_EVENTS) && prof->domain_end_load)
 			prof->domain_end_load (prof->profiler, domain, result);
@@ -799,7 +875,7 @@ mono_profiler_appdomain_loaded (MonoDomain *domain, int result)
 void
 mono_profiler_appdomain_name (MonoDomain *domain, const char *name)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_APPDOMAIN_EVENTS) && prof->domain_name)
 			prof->domain_name (prof->profiler, domain, name);
 }
@@ -807,7 +883,7 @@ mono_profiler_appdomain_name (MonoDomain *domain, const char *name)
 void
 mono_profiler_context_loaded (MonoAppContext *context)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_CONTEXT_EVENTS) && prof->context_load)
 			prof->context_load (prof->profiler, context);
 }
@@ -815,27 +891,15 @@ mono_profiler_context_loaded (MonoAppContext *context)
 void
 mono_profiler_context_unloaded (MonoAppContext *context)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_CONTEXT_EVENTS) && prof->context_unload)
 			prof->context_unload (prof->profiler, context);
-}
-
-void 
-mono_profiler_shutdown (void)
-{
-	ProfilerDesc *prof;
-	for (prof = prof_list; prof; prof = prof->next) {
-		if (prof->shutdown_callback)
-			prof->shutdown_callback (prof->profiler);
-	}
-
-	mono_profiler_set_events ((MonoProfileFlags)0);
 }
 
 void
 mono_profiler_gc_heap_resize (gint64 new_size)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC) && prof->gc_heap_resize)
 			prof->gc_heap_resize (prof->profiler, new_size);
@@ -845,7 +909,7 @@ mono_profiler_gc_heap_resize (gint64 new_size)
 void
 mono_profiler_gc_event (MonoGCEvent event, int generation)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC) && prof->gc_event)
 			prof->gc_event (prof->profiler, event, generation);
@@ -855,7 +919,7 @@ mono_profiler_gc_event (MonoGCEvent event, int generation)
 void
 mono_profiler_gc_moves (void **objects, int num)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC_MOVES) && prof->gc_moves)
 			prof->gc_moves (prof->profiler, objects, num);
@@ -865,7 +929,7 @@ mono_profiler_gc_moves (void **objects, int num)
 void
 mono_profiler_gc_handle (int op, int type, uintptr_t handle, MonoObject *obj)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_handle)
 			prof->gc_handle (prof->profiler, op, type, handle, obj);
@@ -875,7 +939,7 @@ mono_profiler_gc_handle (int op, int type, uintptr_t handle, MonoObject *obj)
 void
 mono_profiler_gc_roots (int num, void **objects, int *root_types, uintptr_t *extra_info)
 {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_roots)
 			prof->gc_roots (prof->profiler, num, objects, root_types, extra_info);
@@ -883,65 +947,9 @@ mono_profiler_gc_roots (int num, void **objects, int *root_types, uintptr_t *ext
 }
 
 void
-mono_profiler_install_gc (MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->gc_event = callback;
-	prof_list->gc_heap_resize = heap_resize_callback;
-}
-
-/**
- * mono_profiler_install_gc_moves:
- * @callback: callback function
- *
- * Install the @callback function that the GC will call when moving objects.
- * The callback receives an array of pointers and the number of elements
- * in the array. Every even element in the array is the original object location
- * and the following odd element is the new location of the object in memory.
- * So the number of elements argument will always be a multiple of 2.
- * Since this callback happens during the GC, it is a restricted environment:
- * no locks can be taken and the object pointers can be inspected only once
- * the GC is finished (of course the original location pointers will not
- * point to valid objects anymore).
- */
-void
-mono_profiler_install_gc_moves (MonoProfileGCMoveFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->gc_moves = callback;
-}
-
-/**
- * mono_profiler_install_gc_roots:
- * @handle_callback: callback function
- * @roots_callback: callback function
- *
- * Install the @handle_callback function that the GC will call when GC
- * handles are created or destroyed.
- * The callback receives an operation, which is either #MONO_PROFILER_GC_HANDLE_CREATED
- * or #MONO_PROFILER_GC_HANDLE_DESTROYED, the handle type, the handle value and the
- * object pointer, if present.
- * Install the @roots_callback function that the GC will call when tracing
- * the roots for a collection.
- * The callback receives the number of elements and three arrays: an array
- * of objects, an array of root types and flags and an array of extra info.
- * The size of each array is given by the first argument.
- */
-void
-mono_profiler_install_gc_roots (MonoProfileGCHandleFunc handle_callback, MonoProfileGCRootFunc roots_callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->gc_handle = handle_callback;
-	prof_list->gc_roots = roots_callback;
-}
-
-void
 mono_profiler_gc_finalize_begin (void)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_begin)
 			prof->gc_finalize_begin (prof->profiler);
 }
@@ -949,7 +957,7 @@ mono_profiler_gc_finalize_begin (void)
 void
 mono_profiler_gc_finalize_object_begin (MonoObject *obj)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_object_begin)
 			prof->gc_finalize_object_begin (prof->profiler, obj);
 }
@@ -957,7 +965,7 @@ mono_profiler_gc_finalize_object_begin (MonoObject *obj)
 void
 mono_profiler_gc_finalize_object_end (MonoObject *obj)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_object_end)
 			prof->gc_finalize_object_end (prof->profiler, obj);
 }
@@ -965,34 +973,14 @@ mono_profiler_gc_finalize_object_end (MonoObject *obj)
 void
 mono_profiler_gc_finalize_end (void)
 {
-	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+	for (MonoProfilerDesc *prof = prof_list; prof; prof = prof->next)
 		if ((prof->events & MONO_PROFILE_GC_FINALIZATION) && prof->gc_finalize_end)
 			prof->gc_finalize_end (prof->profiler);
 }
 
 void
-mono_profiler_install_gc_finalize (MonoProfileGCFinalizeFunc begin, MonoProfileGCFinalizeObjectFunc begin_obj, MonoProfileGCFinalizeObjectFunc end_obj, MonoProfileGCFinalizeFunc end)
-{
-	if (!prof_list)
-		return;
-
-	prof_list->gc_finalize_begin = begin;
-	prof_list->gc_finalize_object_begin = begin_obj;
-	prof_list->gc_finalize_object_begin = end_obj;
-	prof_list->gc_finalize_end = end;
-}
-
-void
-mono_profiler_install_runtime_initialized (MonoProfileFunc runtime_initialized_callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->runtime_initialized_event = runtime_initialized_callback;
-}
-
-void
 mono_profiler_runtime_initialized (void) {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if (prof->runtime_initialized_event)
 			prof->runtime_initialized_event (prof->profiler);
@@ -1000,14 +988,8 @@ mono_profiler_runtime_initialized (void) {
 }
 
 void
-mono_profiler_install_code_chunk_new (MonoProfilerCodeChunkNew callback) {
-	if (!prof_list)
-		return;
-	prof_list->code_chunk_new = callback;
-}
-void
 mono_profiler_code_chunk_new (gpointer chunk, int size) {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_chunk_new)
 			prof->code_chunk_new (prof->profiler, chunk, size);
@@ -1015,14 +997,8 @@ mono_profiler_code_chunk_new (gpointer chunk, int size) {
 }
 
 void
-mono_profiler_install_code_chunk_destroy (MonoProfilerCodeChunkDestroy callback) {
-	if (!prof_list)
-		return;
-	prof_list->code_chunk_destroy = callback;
-}
-void
 mono_profiler_code_chunk_destroy (gpointer chunk) {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_chunk_destroy)
 			prof->code_chunk_destroy (prof->profiler, chunk);
@@ -1030,23 +1006,8 @@ mono_profiler_code_chunk_destroy (gpointer chunk) {
 }
 
 void
-mono_profiler_install_code_buffer_new (MonoProfilerCodeBufferNew callback) {
-	if (!prof_list)
-		return;
-	prof_list->code_buffer_new = callback;
-}
-
-void
-mono_profiler_install_iomap (MonoProfileIomapFunc callback)
-{
-	if (!prof_list)
-		return;
-	prof_list->iomap_cb = callback;
-}
-
-void
 mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, gconstpointer data) {
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_JIT_COMPILATION) && prof->code_buffer_new)
 			prof->code_buffer_new (prof->profiler, buffer, size, type, (void*)data);
@@ -1060,7 +1021,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, int entries)
 {
 	MonoProfileCoverageInfo *res;
 	int instrument = FALSE;
-	ProfilerDesc *prof;
+	MonoProfilerDesc *prof;
 
 	for (prof = prof_list; prof; prof = prof->next) {
 		/* note that we call the filter on all the profilers even if just
@@ -1073,7 +1034,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, int entries)
 	if (!instrument)
 		return NULL;
 
-	mono_profiler_coverage_lock ();
+	mono_profiler_lock ();
 	if (!coverage_hash)
 		coverage_hash = g_hash_table_new (NULL, NULL);
 
@@ -1082,7 +1043,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, int entries)
 	res->entries = entries;
 
 	g_hash_table_insert (coverage_hash, method, res);
-	mono_profiler_coverage_unlock ();
+	mono_profiler_unlock ();
 
 	return res;
 }
@@ -1093,9 +1054,9 @@ mono_profiler_coverage_free (MonoMethod *method)
 {
 	MonoProfileCoverageInfo* info;
 
-	mono_profiler_coverage_lock ();
+	mono_profiler_lock ();
 	if (!coverage_hash) {
-		mono_profiler_coverage_unlock ();
+		mono_profiler_unlock ();
 		return;
 	}
 
@@ -1104,12 +1065,12 @@ mono_profiler_coverage_free (MonoMethod *method)
 		g_free (info);
 		g_hash_table_remove (coverage_hash, method);
 	}
-	mono_profiler_coverage_unlock ();
+	mono_profiler_unlock ();
 }
 
 /**
  * mono_profiler_coverage_get:
- * @prof: The profiler handle, installed with mono_profiler_install
+ * @prof: The profiler handle, installed with mono_profiler_new
  * @method: the method to gather information from.
  * @func: A routine that will be called back with the results
  *
@@ -1131,10 +1092,10 @@ mono_profiler_coverage_get (MonoProfiler *prof, MonoMethod *method, MonoProfileC
 	MonoProfileCoverageEntry entry;
 	MonoDebugMethodInfo *debug_minfo;
 
-	mono_profiler_coverage_lock ();
+	mono_profiler_lock ();
 	if (coverage_hash)
 		info = (MonoProfileCoverageInfo *)g_hash_table_lookup (coverage_hash, method);
-	mono_profiler_coverage_unlock ();
+	mono_profiler_unlock ();
 
 	if (!info)
 		return;
@@ -1337,3 +1298,289 @@ mono_profiler_load (const char *desc)
 	g_free (cdesc);
 }
 
+/* Deprecated profiler APIs... */
+
+void
+mono_profiler_install (MonoProfiler *prof, MonoProfileFunc callback)
+{
+	mono_profiler_new (prof, callback);
+}
+
+void
+mono_profiler_set_events (MonoProfileFlags events)
+{
+	MonoProfilerDesc *prof;
+	MonoProfileFlags value = (MonoProfileFlags)0;
+	if (prof_list)
+		prof_list->events = events;
+	for (prof = prof_list; prof; prof = prof->next)
+		value = (MonoProfileFlags)(value | prof->events);
+	mono_profiler_events = value;
+}
+
+void
+mono_profiler_install_enter_leave (MonoProfileMethodFunc enter, MonoProfileMethodFunc fleave)
+{
+	if (!prof_list)
+		return;
+	prof_list->method_enter = enter;
+	prof_list->method_leave = fleave;
+}
+
+void 
+mono_profiler_install_jit_compile (MonoProfileMethodFunc start, MonoProfileMethodResult end)
+{
+	if (!prof_list)
+		return;
+	prof_list->jit_start = start;
+	prof_list->jit_end = end;
+}
+
+void 
+mono_profiler_install_jit_end (MonoProfileJitResult end)
+{
+	if (!prof_list)
+		return;
+	prof_list->jit_end2 = end;
+}
+
+void 
+mono_profiler_install_method_free (MonoProfileMethodFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->method_free = callback;
+}
+
+void
+mono_profiler_install_method_invoke (MonoProfileMethodFunc start, MonoProfileMethodFunc end)
+{
+	if (!prof_list)
+		return;
+	prof_list->method_start_invoke = start;
+	prof_list->method_end_invoke = end;
+}
+
+void 
+mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc end)
+{
+	if (!prof_list)
+		return;
+	prof_list->thread_start = start;
+	prof_list->thread_end = end;
+}
+
+void 
+mono_profiler_install_thread_name (MonoProfileThreadNameFunc thread_name_cb)
+{
+	if (!prof_list)
+		return;
+	prof_list->thread_name = thread_name_cb;
+}
+
+void 
+mono_profiler_install_transition (MonoProfileMethodResult callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->man_unman_transition = callback;
+}
+
+void 
+mono_profiler_install_allocation (MonoProfileAllocFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->allocation_cb = callback;
+}
+
+void
+mono_profiler_install_monitor  (MonoProfileMonitorFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->monitor_event_cb = callback;
+}
+
+void 
+mono_profiler_install_statistical (MonoProfileStatFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->statistical_cb = callback;
+}
+
+void 
+mono_profiler_install_statistical_call_chain (MonoProfileStatCallChainFunc callback, int call_chain_depth, MonoProfilerCallChainStrategy call_chain_strategy) {
+	if (!prof_list)
+		return;
+	if (call_chain_depth > MONO_PROFILER_MAX_STAT_CALL_CHAIN_DEPTH) {
+		call_chain_depth = MONO_PROFILER_MAX_STAT_CALL_CHAIN_DEPTH;
+	}
+	if ((call_chain_strategy >= MONO_PROFILER_CALL_CHAIN_INVALID) || (call_chain_strategy < MONO_PROFILER_CALL_CHAIN_NONE)) {
+		call_chain_strategy = MONO_PROFILER_CALL_CHAIN_NONE;
+	}
+	prof_list->statistical_call_chain_cb = callback;
+	prof_list->statistical_call_chain_depth = call_chain_depth;
+	prof_list->statistical_call_chain_strategy = call_chain_strategy;
+}
+
+void mono_profiler_install_exception (MonoProfileExceptionFunc throw_callback, MonoProfileMethodFunc exc_method_leave, MonoProfileExceptionClauseFunc clause_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->exception_throw_cb = throw_callback;
+	prof_list->exception_method_leave_cb = exc_method_leave;
+	prof_list->exception_clause_cb = clause_callback;
+}
+
+void 
+mono_profiler_install_coverage_filter (MonoProfileCoverageFilterFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->coverage_filter_cb = callback;
+}
+
+void 
+mono_profiler_install_appdomain   (MonoProfileAppDomainFunc start_load, MonoProfileAppDomainResult end_load,
+                                   MonoProfileAppDomainFunc start_unload, MonoProfileAppDomainFunc end_unload)
+
+{
+	if (!prof_list)
+		return;
+	prof_list->domain_start_load = start_load;
+	prof_list->domain_end_load = end_load;
+	prof_list->domain_start_unload = start_unload;
+	prof_list->domain_end_unload = end_unload;
+}
+
+void
+mono_profiler_install_appdomain_name (MonoProfileAppDomainFriendlyNameFunc domain_name_cb)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->domain_name = domain_name_cb;
+}
+
+void
+mono_profiler_install_context (MonoProfileContextFunc load, MonoProfileContextFunc unload)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->context_load = load;
+	prof_list->context_unload = unload;
+}
+
+void 
+mono_profiler_install_assembly    (MonoProfileAssemblyFunc start_load, MonoProfileAssemblyResult end_load,
+                                   MonoProfileAssemblyFunc start_unload, MonoProfileAssemblyFunc end_unload)
+{
+	if (!prof_list)
+		return;
+	prof_list->assembly_start_load = start_load;
+	prof_list->assembly_end_load = end_load;
+	prof_list->assembly_start_unload = start_unload;
+	prof_list->assembly_end_unload = end_unload;
+}
+
+void 
+mono_profiler_install_module      (MonoProfileModuleFunc start_load, MonoProfileModuleResult end_load,
+                                   MonoProfileModuleFunc start_unload, MonoProfileModuleFunc end_unload)
+{
+	if (!prof_list)
+		return;
+	prof_list->module_start_load = start_load;
+	prof_list->module_end_load = end_load;
+	prof_list->module_start_unload = start_unload;
+	prof_list->module_end_unload = end_unload;
+}
+
+void
+mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileClassResult end_load,
+                                   MonoProfileClassFunc start_unload, MonoProfileClassFunc end_unload)
+{
+	if (!prof_list)
+		return;
+	prof_list->class_start_load = start_load;
+	prof_list->class_end_load = end_load;
+	prof_list->class_start_unload = start_unload;
+	prof_list->class_end_unload = end_unload;
+}
+
+void
+mono_profiler_install_gc (MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->gc_event = callback;
+	prof_list->gc_heap_resize = heap_resize_callback;
+}
+
+void
+mono_profiler_install_gc_moves (MonoProfileGCMoveFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->gc_moves = callback;
+}
+
+void
+mono_profiler_install_gc_roots (MonoProfileGCHandleFunc handle_callback, MonoProfileGCRootFunc roots_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->gc_handle = handle_callback;
+	prof_list->gc_roots = roots_callback;
+}
+
+void
+mono_profiler_install_gc_finalize (MonoProfileGCFinalizeFunc begin, MonoProfileGCFinalizeObjectFunc begin_obj, MonoProfileGCFinalizeObjectFunc end_obj, MonoProfileGCFinalizeFunc end)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->gc_finalize_begin = begin;
+	prof_list->gc_finalize_object_begin = begin_obj;
+	prof_list->gc_finalize_object_begin = end_obj;
+	prof_list->gc_finalize_end = end;
+}
+
+void
+mono_profiler_install_runtime_initialized (MonoProfileFunc runtime_initialized_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->runtime_initialized_event = runtime_initialized_callback;
+}
+
+void
+mono_profiler_install_code_chunk_new (MonoProfilerCodeChunkNew callback) {
+	if (!prof_list)
+		return;
+	prof_list->code_chunk_new = callback;
+}
+
+void
+mono_profiler_install_code_chunk_destroy (MonoProfilerCodeChunkDestroy callback) {
+	if (!prof_list)
+		return;
+	prof_list->code_chunk_destroy = callback;
+}
+
+void
+mono_profiler_install_code_buffer_new (MonoProfilerCodeBufferNew callback) {
+	if (!prof_list)
+		return;
+	prof_list->code_buffer_new = callback;
+}
+
+void
+mono_profiler_install_iomap (MonoProfileIomapFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->iomap_cb = callback;
+}

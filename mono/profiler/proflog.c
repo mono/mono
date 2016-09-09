@@ -5107,7 +5107,6 @@ mono_profiler_startup_log (const char *desc)
 void
 mono_profiler_startup (const char *desc)
 {
-	MonoProfiler *prof;
 	GPtrArray *filters = NULL;
 	char *filename = NULL;
 	const char *p;
@@ -5307,44 +5306,43 @@ mono_profiler_startup (const char *desc)
 
 	PROF_TLS_INIT ();
 
-	prof = create_profiler (desc, filename, filters);
-	if (!prof) {
-		PROF_TLS_FREE ();
-		return;
-	}
+	MonoProfiler *prof = create_profiler (desc, filename, filters);
 
 	mono_lls_init (&profiler_thread_list, NULL);
 
 	init_thread (TRUE);
 
-	mono_profiler_install (prof, log_shutdown);
-	mono_profiler_install_gc (gc_event, gc_resize);
-	mono_profiler_install_allocation (gc_alloc);
-	mono_profiler_install_gc_moves (gc_moves);
-	mono_profiler_install_gc_roots (gc_handle, gc_roots);
-	mono_profiler_install_gc_finalize (finalize_begin, finalize_object_begin, finalize_object_end, finalize_end);
-	mono_profiler_install_appdomain (NULL, domain_loaded, domain_unloaded, NULL);
-	mono_profiler_install_appdomain_name (domain_name);
-	mono_profiler_install_context (context_loaded, context_unloaded);
-	mono_profiler_install_class (NULL, class_loaded, class_unloaded, NULL);
-	mono_profiler_install_module (NULL, image_loaded, image_unloaded, NULL);
-	mono_profiler_install_assembly (NULL, assembly_loaded, assembly_unloaded, NULL);
-	mono_profiler_install_thread (thread_start, thread_end);
-	mono_profiler_install_thread_name (thread_name);
-	mono_profiler_install_enter_leave (method_enter, method_leave);
-	mono_profiler_install_jit_end (method_jitted);
-	mono_profiler_install_code_buffer_new (code_buffer_new);
-	mono_profiler_install_exception (throw_exc, method_exc_leave, clause_exc);
-	mono_profiler_install_monitor (monitor_event);
-	mono_profiler_install_runtime_initialized (runtime_initialized);
+	MonoProfilerDesc *prof_desc = mono_profiler_new (prof, log_shutdown);
+
+	mono_profiler_set_gc_cb (prof_desc, gc_event, gc_resize);
+	mono_profiler_set_allocation_cb (prof_desc, gc_alloc);
+	mono_profiler_set_gc_moves_cb (prof_desc, gc_moves);
+	mono_profiler_set_gc_roots_cb (prof_desc, gc_handle, gc_roots);
+	mono_profiler_set_gc_finalize_cb (prof_desc, finalize_begin, finalize_object_begin, finalize_object_end, finalize_end);
+	mono_profiler_set_appdomain_cb (prof_desc, NULL, domain_loaded, domain_unloaded, NULL);
+	mono_profiler_set_appdomain_name_cb (prof_desc, domain_name);
+	mono_profiler_set_context_cb (prof_desc, context_loaded, context_unloaded);
+	mono_profiler_set_class_cb (prof_desc, NULL, class_loaded, class_unloaded, NULL);
+	mono_profiler_set_module_cb (prof_desc, NULL, image_loaded, image_unloaded, NULL);
+	mono_profiler_set_assembly_cb (prof_desc, NULL, assembly_loaded, assembly_unloaded, NULL);
+	mono_profiler_set_thread_cb (prof_desc, thread_start, thread_end);
+	mono_profiler_set_thread_name_cb (prof_desc, thread_name);
+	mono_profiler_set_enter_leave_cb (prof_desc, method_enter, method_leave);
+	mono_profiler_set_jit_end_cb (prof_desc, method_jitted);
+	mono_profiler_set_code_buffer_new_cb (prof_desc, code_buffer_new);
+	mono_profiler_set_exception_cb (prof_desc, throw_exc, method_exc_leave, clause_exc);
+	mono_profiler_set_monitor_cb (prof_desc, monitor_event);
+	mono_profiler_set_runtime_initialized_cb (prof_desc, runtime_initialized);
+
 	if (do_coverage)
-		mono_profiler_install_coverage_filter (coverage_filter);
+		mono_profiler_set_coverage_filter_cb (prof_desc, coverage_filter);
 
 	if (do_mono_sample && sample_type == SAMPLE_CYCLES && sample_freq) {
 		events |= MONO_PROFILE_STATISTICAL;
+
 		mono_profiler_set_statistical_mode (sampling_mode, sample_freq);
-		mono_profiler_install_statistical (mono_sample_hit);
+		mono_profiler_set_statistical_cb (prof_desc, mono_sample_hit);
 	}
 
-	mono_profiler_set_events ((MonoProfileFlags)events);
+	mono_profiler_set_event_flags (prof_desc, (MonoProfileFlags) events);
 }
