@@ -164,13 +164,6 @@ In this case, \f[I]TYPE\f[] can be one of:
 \f[I]branchmiss\f[]: mispredicted branches
 .RE
 .IP \[bu] 2
-\f[I]time=TIMER\f[]: use the TIMER timestamp mode.
-TIMER can have the following values:
-.RS 2
-.IP \[bu] 2
-\f[I]fast\f[]: a usually faster but possibly more inaccurate timer
-.RE
-.IP \[bu] 2
 \f[I]maxframes=NUM\f[]: when a stack trace needs to be performed,
 collect \f[I]NUM\f[] frames at the most.
 The default is 32.
@@ -487,15 +480,6 @@ option: especially if the managed heap is big, since every object
 needs to be inspected.
 The \f[I]MODE\f[] parameter of the \f[I]heapshot\f[] option can be
 used to reduce the frequency of the heap shots.
-.IP "\f[I]Reduce the timestamp overhead\f[]" 4
-.Sp
-On many operating systems or architectures what actually slows down
-profiling is the function provided by the system to get timestamp
-information.
-The \f[I]time=fast\f[] profiler option can be usually used to speed
-up this operation, but, depending on the system, time accounting
-may have some level of approximation (though statistically the data
-should be still fairly valuable).
 .SS Dealing with the size of the data files
 .PP
 When collecting a lot of information about a profiled program, huge
