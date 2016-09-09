@@ -3886,6 +3886,8 @@ add_wrappers (MonoAotCompile *acfg)
 					add_method (acfg, m);
 				if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_SLOW_PATH)))
 					add_method (acfg, m);
+				if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_PROFILER)))
+					add_method (acfg, m);
 			}
 		}
 
@@ -5606,6 +5608,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_GC_NURSERY_START:
 	case MONO_PATCH_INFO_GC_NURSERY_BITS:
+	case MONO_PATCH_INFO_PROFILER_EVENTS:
 		break;
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		encode_value (patch_info->data.index, p, &p);

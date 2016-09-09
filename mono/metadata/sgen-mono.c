@@ -991,6 +991,7 @@ mono_gc_free_fixed (void* addr)
 
 static MonoMethod* alloc_method_cache [ATYPE_NUM];
 static MonoMethod* slowpath_alloc_method_cache [ATYPE_NUM];
+static MonoMethod* profiler_alloc_method_cache [ATYPE_NUM];
 static gboolean use_managed_allocator = TRUE;
 
 #ifdef MANAGED_ALLOCATION
@@ -1048,6 +1049,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 {
 	int p_var, size_var, thread_var G_GNUC_UNUSED;
 	gboolean slowpath = variant == MANAGED_ALLOCATOR_SLOW_PATH;
+	gboolean profiler = variant == MANAGED_ALLOCATOR_PROFILER;
 	guint32 slowpath_branch, max_size_branch;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
@@ -1062,17 +1064,18 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
+		mono_register_jit_icall (mono_profiler_allocation, "mono_profiler_allocation", mono_create_icall_signature ("void object"), FALSE);
 		registered = TRUE;
 	}
 
 	if (atype == ATYPE_SMALL) {
-		name = slowpath ? "SlowAllocSmall" : "AllocSmall";
+		name = slowpath ? "SlowAllocSmall" : (profiler ? "ProfilerAllocSmall" : "AllocSmall");
 	} else if (atype == ATYPE_NORMAL) {
-		name = slowpath ? "SlowAlloc" : "Alloc";
+		name = slowpath ? "SlowAlloc" : (profiler ? "ProfilerAlloc" : "Alloc");
 	} else if (atype == ATYPE_VECTOR) {
-		name = slowpath ? "SlowAllocVector" : "AllocVector";
+		name = slowpath ? "SlowAllocVector" : (profiler ? "ProfilerAllocVector" : "AllocVector");
 	} else if (atype == ATYPE_STRING) {
-		name = slowpath ? "SlowAllocString" : "AllocString";
+		name = slowpath ? "SlowAllocString" : (profiler ? "ProfilerAllocString" : "AllocString");
 	} else {
 		g_assert_not_reached ();
 	}
@@ -1392,6 +1395,33 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	mono_mb_emit_ldloc (mb, p_var);
 
  done:
+	/*
+	 * It's important that we do this outside of the critical region as we
+	 * will be invoking arbitrary code.
+	 */
+	if (profiler) {
+		/*
+		 * if (G_UNLIKELY (*&mono_profiler_events & MONO_PROFILE_ALLOCATIONS)) {
+		 * 	mono_profiler_allocation (p);
+		 * }
+		 */
+
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_LDPTR_PROFILER_EVENTS);
+		mono_mb_emit_byte (mb, CEE_LDIND_U4);
+		mono_mb_emit_icon (mb, MONO_PROFILE_ALLOCATIONS);
+		mono_mb_emit_byte (mb, CEE_AND);
+
+		int prof_br = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
+
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
+		mono_mb_emit_byte (mb, CEE_DUP);
+		mono_mb_emit_icall (mb, mono_profiler_allocation);
+
+		mono_mb_patch_short_branch (mb, prof_br);
+	}
+
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
 
@@ -1426,6 +1456,9 @@ MonoMethod*
 mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {
 #ifdef MANAGED_ALLOCATION
+	ManagedAllocatorVariant variant = mono_profiler_enabled () ?
+		MANAGED_ALLOCATOR_PROFILER : MANAGED_ALLOCATOR_REGULAR;
+
 	if (collect_before_allocs)
 		return NULL;
 	if (!mono_runtime_has_tls_get ())
@@ -1438,15 +1471,13 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (klass->rank)
 		return NULL;
-	if (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS)
-		return NULL;
 	if (klass->byval_arg.type == MONO_TYPE_STRING)
-		return mono_gc_get_managed_allocator_by_type (ATYPE_STRING, MANAGED_ALLOCATOR_REGULAR);
+		return mono_gc_get_managed_allocator_by_type (ATYPE_STRING, variant);
 	/* Generic classes have dynamic field and can go above MAX_SMALL_OBJ_SIZE. */
 	if (known_instance_size)
-		return mono_gc_get_managed_allocator_by_type (ATYPE_SMALL, MANAGED_ALLOCATOR_REGULAR);
+		return mono_gc_get_managed_allocator_by_type (ATYPE_SMALL, variant);
 	else
-		return mono_gc_get_managed_allocator_by_type (ATYPE_NORMAL, MANAGED_ALLOCATOR_REGULAR);
+		return mono_gc_get_managed_allocator_by_type (ATYPE_NORMAL, variant);
 #else
 	return NULL;
 #endif
@@ -1460,13 +1491,12 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
 		return NULL;
 	if (!mono_runtime_has_tls_get ())
 		return NULL;
-	if (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS)
-		return NULL;
 	if (has_per_allocation_action)
 		return NULL;
 	g_assert (!mono_class_has_finalizer (klass) && !mono_class_is_marshalbyref (klass));
 
-	return mono_gc_get_managed_allocator_by_type (ATYPE_VECTOR, MANAGED_ALLOCATOR_REGULAR);
+	return mono_gc_get_managed_allocator_by_type (ATYPE_VECTOR,
+		mono_profiler_enabled () ? MANAGED_ALLOCATOR_PROFILER : MANAGED_ALLOCATOR_REGULAR);
 #else
 	return NULL;
 #endif
@@ -1485,15 +1515,16 @@ mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant varian
 	MonoMethod *res;
 	MonoMethod **cache;
 
-	if (variant == MANAGED_ALLOCATOR_REGULAR && !use_managed_allocator)
+	if (variant != MANAGED_ALLOCATOR_SLOW_PATH && !use_managed_allocator)
 		return NULL;
 
-	if (variant == MANAGED_ALLOCATOR_REGULAR && !mono_runtime_has_tls_get ())
+	if (variant != MANAGED_ALLOCATOR_SLOW_PATH && !mono_runtime_has_tls_get ())
 		return NULL;
 
 	switch (variant) {
 	case MANAGED_ALLOCATOR_REGULAR: cache = alloc_method_cache; break;
 	case MANAGED_ALLOCATOR_SLOW_PATH: cache = slowpath_alloc_method_cache; break;
+	case MANAGED_ALLOCATOR_PROFILER: cache = profiler_alloc_method_cache; break;
 	default: g_assert_not_reached (); break;
 	}
 
@@ -1530,7 +1561,7 @@ sgen_is_managed_allocator (MonoMethod *method)
 	int i;
 
 	for (i = 0; i < ATYPE_NUM; ++i)
-		if (method == alloc_method_cache [i] || method == slowpath_alloc_method_cache [i])
+		if (method == alloc_method_cache [i] || method == slowpath_alloc_method_cache [i] || method == profiler_alloc_method_cache [i])
 			return TRUE;
 	return FALSE;
 }
@@ -1541,7 +1572,7 @@ sgen_has_managed_allocator (void)
 	int i;
 
 	for (i = 0; i < ATYPE_NUM; ++i)
-		if (alloc_method_cache [i] || slowpath_alloc_method_cache [i])
+		if (alloc_method_cache [i] || slowpath_alloc_method_cache [i] || profiler_alloc_method_cache [i])
 			return TRUE;
 	return FALSE;
 }

@@ -125,6 +125,8 @@ static gboolean profiling_enabled;
 /*
  * Used during early startup to switch the runtime to 'profiling mode', i.e.
  * see to it that anything that might need to be profiled later on can be.
+ * This is used to instrument managed allocators with a profiling flags check,
+ * for example.
  */
 void
 mono_profiler_enable (void)

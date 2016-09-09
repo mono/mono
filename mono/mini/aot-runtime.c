@@ -926,12 +926,11 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		case MONO_WRAPPER_ALLOC: {
 			int atype = decode_value (p, &p);
 			ManagedAllocatorVariant variant =
-				mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS ?
-				MANAGED_ALLOCATOR_SLOW_PATH : MANAGED_ALLOCATOR_REGULAR;
+				mono_profiler_enabled () ? MANAGED_ALLOCATOR_PROFILER : MANAGED_ALLOCATOR_REGULAR;
 
 			ref->method = mono_gc_get_managed_allocator_by_type (atype, variant);
 			/* Try to fallback to the slow path version */
-			if (!ref->method && variant == MANAGED_ALLOCATOR_REGULAR)
+			if (!ref->method)
 				ref->method = mono_gc_get_managed_allocator_by_type (atype, MANAGED_ALLOCATOR_SLOW_PATH);
 			if (!ref->method) {
 				mono_error_set_bad_image_name (error, module->aot_name, "Error: No managed allocator, but we need one for AOT.\nAre you using non-standard GC options?\n");
@@ -3592,6 +3591,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	case MONO_PATCH_INFO_GC_NURSERY_START:
 	case MONO_PATCH_INFO_GC_NURSERY_BITS:
 	case MONO_PATCH_INFO_JIT_TLS_ID:
+	case MONO_PATCH_INFO_PROFILER_EVENTS:
 		break;
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		ji->data.index = decode_value (p, &p);
