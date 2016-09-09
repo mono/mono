@@ -92,7 +92,7 @@ provided by the Mono runtime and write them to a file named
 \f[I]output.mlpd\f[].
 When no option is specified, it is equivalent to using:
 .PP
-\f[B]--profile=log:calls,alloc,output=output.mlpd,maxframes=8,calldepth=100\f[]
+\f[B]--profile=log:calls,alloc,output=output.mlpd,maxframes=32,calldepth=100\f[]
 .PP
 The following options can be used to modify this default behaviour.
 Each option is separated from the next by a \f[B],\f[] character,
@@ -173,7 +173,7 @@ TIMER can have the following values:
 .IP \[bu] 2
 \f[I]maxframes=NUM\f[]: when a stack trace needs to be performed,
 collect \f[I]NUM\f[] frames at the most.
-The default is 8.
+The default is 32.
 .IP \[bu] 2
 \f[I]maxsamples=NUM\f[]: stop allocating reusable sample events
 once \f[I]NUM\f[] events have been allocated (a value of zero for
@@ -274,10 +274,6 @@ with the \f[I]--maxframes=NUM\f[] option:
 The stack trace info will be available if method enter/leave events
 have been recorded or if stack trace collection wasn't explicitly
 disabled with the \f[I]maxframes=0\f[] profiler option.
-Note that the profiler will collect up to 8 frames by default at
-specific events when the \f[I]nocalls\f[] option is used, so in
-that case, if more stack frames are required in mprof-report, a
-bigger value for maxframes when profiling must be used, too.
 .PP
 The \f[I]--traces\f[] option also controls the reverse reference
 feature in the heapshot report: for each class it reports how many
