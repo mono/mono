@@ -357,68 +357,6 @@ mono_threads_platform_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
 	g_ptr_array_remove (info->owned_mutexes, mutex_handle);
 }
 
-void
-mono_threads_platform_set_priority (MonoThreadInfo *info, MonoThreadPriority priority)
-{
-	int policy;
-	struct sched_param param;
-	pthread_t tid;
-	gint res;
-
-	g_assert (priority >= MONO_THREAD_PRIORITY_LOWEST);
-	g_assert (priority <= MONO_THREAD_PRIORITY_HIGHEST);
-	g_assert (MONO_THREAD_PRIORITY_LOWEST < MONO_THREAD_PRIORITY_HIGHEST);
-
-	tid = mono_thread_info_get_tid (info);
-
-	res = pthread_getschedparam (tid, &policy, &param);
-	if (res != 0)
-		g_error ("%s: pthread_getschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
-
-#ifdef _POSIX_PRIORITY_SCHEDULING
-	int max, min;
-
-	/* Necessary to get valid priority range */
-
-	min = sched_get_priority_min (policy);
-	max = sched_get_priority_max (policy);
-
-	if (max > 0 && min >= 0 && max > min) {
-		double srange, drange, sposition, dposition;
-		srange = MONO_THREAD_PRIORITY_HIGHEST - MONO_THREAD_PRIORITY_LOWEST;
-		drange = max - min;
-		sposition = priority - MONO_THREAD_PRIORITY_LOWEST;
-		dposition = (sposition / srange) * drange;
-		param.sched_priority = (int)(dposition + min);
-	} else
-#endif
-	{
-		switch (policy) {
-		case SCHED_FIFO:
-		case SCHED_RR:
-			param.sched_priority = 50;
-			break;
-#ifdef SCHED_BATCH
-		case SCHED_BATCH:
-#endif
-		case SCHED_OTHER:
-			param.sched_priority = 0;
-			break;
-		default:
-			g_error ("%s: unknown policy %d", __func__, policy);
-		}
-	}
-
-	res = pthread_setschedparam (tid, policy, &param);
-	if (res != 0) {
-		if (res == EPERM) {
-			g_warning ("%s: pthread_setschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
-			return;
-		}
-		g_error ("%s: pthread_setschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
-	}
-}
-
 static const gchar* thread_typename (void)
 {
 	return "Thread";

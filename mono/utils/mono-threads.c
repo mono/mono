@@ -1679,9 +1679,3 @@ mono_thread_info_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
 {
 	mono_threads_platform_disown_mutex (info, mutex_handle);
 }
-
-void
-mono_thread_info_set_priority (MonoThreadInfo *info, MonoThreadPriority priority)
-{
-	mono_threads_platform_set_priority (info, priority);
-}

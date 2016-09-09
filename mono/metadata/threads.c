@@ -585,7 +585,74 @@ create_internal_thread (void)
 static void
 mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPriority priority)
 {
-	mono_thread_info_set_priority ((MonoThreadInfo*) internal->thread_info, priority);
+	g_assert (internal);
+	g_assert (internal->handle);
+
+	g_assert (priority >= MONO_THREAD_PRIORITY_LOWEST);
+	g_assert (priority <= MONO_THREAD_PRIORITY_HIGHEST);
+	g_assert (MONO_THREAD_PRIORITY_LOWEST < MONO_THREAD_PRIORITY_HIGHEST);
+
+#ifdef HOST_WIN32
+	BOOL res;
+
+	res = SetThreadPriority (internal->handle, priority - 2);
+	if (!res)
+		g_error ("%s: SetThreadPriority failed, error %d", __func__, GetLastError ());
+#else /* HOST_WIN32 */
+	pthread_t tid;
+	int policy;
+	struct sched_param param;
+	gint res;
+
+	tid = thread_get_tid (internal);
+
+	res = pthread_getschedparam (tid, &policy, &param);
+	if (res != 0)
+		g_error ("%s: pthread_getschedparam failed, error: \"%s\" (%d)", __func__, g_strerror (res), res);
+
+#ifdef _POSIX_PRIORITY_SCHEDULING
+	int max, min;
+
+	/* Necessary to get valid priority range */
+
+	min = sched_get_priority_min (policy);
+	max = sched_get_priority_max (policy);
+
+	if (max > 0 && min >= 0 && max > min) {
+		double srange, drange, sposition, dposition;
+		srange = MONO_THREAD_PRIORITY_HIGHEST - MONO_THREAD_PRIORITY_LOWEST;
+		drange = max - min;
+		sposition = priority - MONO_THREAD_PRIORITY_LOWEST;
+		dposition = (sposition / srange) * drange;
+		param.sched_priority = (int)(dposition + min);
+	} else
+#endif
+	{
+		switch (policy) {
+		case SCHED_FIFO:
+		case SCHED_RR:
+			param.sched_priority = 50;
+			break;
+#ifdef SCHED_BATCH
+		case SCHED_BATCH:
+#endif
+		case SCHED_OTHER:
+			param.sched_priority = 0;
+			break;
+		default:
+			g_error ("%s: unknown policy %d", __func__, policy);
+		}
+	}
+
+	res = pthread_setschedparam (tid, policy, &param);
+	if (res != 0) {
+		if (res == EPERM) {
+			g_warning ("%s: pthread_setschedparam failed, error: \"%s\" (%d)", __func__, g_strerror (res), res);
+			return;
+		}
+		g_error ("%s: pthread_setschedparam failed, error: \"%s\" (%d)", __func__, g_strerror (res), res);
+	}
+#endif /* HOST_WIN32 */
 }
 
 static void 

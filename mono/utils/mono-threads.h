@@ -291,14 +291,6 @@ typedef struct {
 	guint32 stack_size;		
 } MonoThreadParm;
 
-typedef enum {
-	MONO_THREAD_PRIORITY_LOWEST       = 0,
-	MONO_THREAD_PRIORITY_BELOW_NORMAL = 1,
-	MONO_THREAD_PRIORITY_NORMAL       = 2,
-	MONO_THREAD_PRIORITY_ABOVE_NORMAL = 3,
-	MONO_THREAD_PRIORITY_HIGHEST      = 4,
-} MonoThreadPriority;
-
 static inline gboolean
 mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
 {
@@ -546,7 +538,6 @@ void mono_threads_platform_set_exited (THREAD_INFO_TYPE *info);
 void mono_threads_platform_describe (THREAD_INFO_TYPE *info, GString *text);
 void mono_threads_platform_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
 void mono_threads_platform_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-void mono_threads_platform_set_priority (THREAD_INFO_TYPE *info, MonoThreadPriority priority);
 gpointer mono_threads_platform_duplicate_handle (THREAD_INFO_TYPE *info);
 
 void mono_threads_coop_begin_global_suspend (void);
@@ -673,8 +664,5 @@ mono_thread_info_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
 
 void
 mono_thread_info_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-
-void
-mono_thread_info_set_priority (THREAD_INFO_TYPE *info, MonoThreadPriority priority);
 
 #endif /* __MONO_THREADS_H__ */
