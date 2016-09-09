@@ -629,6 +629,7 @@ struct _BinaryObject {
 };
 
 struct _MonoProfiler {
+	MonoProfilerDesc *desc;
 	FILE* file;
 #if defined (HAVE_SYS_ZLIB)
 	gzFile gzfile;
@@ -1433,6 +1434,9 @@ gc_event (MonoProfiler *profiler, MonoGCEvent ev, int generation)
 			do_heap_walk = heapshot_requested;
 		else if (!hs_mode_ms && !hs_mode_gc && generation == mono_gc_max_generation ())
 			do_heap_walk = TRUE;
+
+		if (do_heap_shot && do_heap_walk)
+			mono_profiler_set_event_flags (profiler->desc, mono_profiler_get_event_flags (profiler->desc) | MONO_PROFILE_GC_ROOTS);
 		break;
 	case MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED:
 		/*
@@ -1474,6 +1478,9 @@ gc_event (MonoProfiler *profiler, MonoGCEvent ev, int generation)
 		 * their buffers again.
 		 */
 		buffer_unlock_excl ();
+		break;
+	case MONO_GC_EVENT_END:
+		mono_profiler_set_event_flags (profiler->desc, mono_profiler_get_event_flags (profiler->desc) & ~MONO_PROFILE_GC_ROOTS);
 		break;
 	default:
 		break;
@@ -5115,12 +5122,22 @@ mono_profiler_startup (const char *desc)
 	int calls_enabled = 0;
 	int allocs_enabled = 0;
 	int only_coverage = 0;
-	int events = MONO_PROFILE_GC|MONO_PROFILE_ALLOCATIONS|
-		MONO_PROFILE_GC_MOVES|MONO_PROFILE_CLASS_EVENTS|MONO_PROFILE_THREADS|
-		MONO_PROFILE_ENTER_LEAVE|MONO_PROFILE_JIT_COMPILATION|MONO_PROFILE_EXCEPTIONS|
-		MONO_PROFILE_MONITOR_EVENTS|MONO_PROFILE_MODULE_EVENTS|MONO_PROFILE_GC_ROOTS|
-		MONO_PROFILE_INS_COVERAGE|MONO_PROFILE_APPDOMAIN_EVENTS|MONO_PROFILE_CONTEXT_EVENTS|
-		MONO_PROFILE_ASSEMBLY_EVENTS|MONO_PROFILE_GC_FINALIZATION|MONO_PROFILE_GC_HANDLES;
+	int events = MONO_PROFILE_GC |
+	             MONO_PROFILE_ALLOCATIONS |
+	             MONO_PROFILE_GC_MOVES |
+	             MONO_PROFILE_CLASS_EVENTS |
+	             MONO_PROFILE_THREADS |
+	             MONO_PROFILE_ENTER_LEAVE |
+	             MONO_PROFILE_JIT_COMPILATION |
+	             MONO_PROFILE_EXCEPTIONS |
+	             MONO_PROFILE_MONITOR_EVENTS |
+	             MONO_PROFILE_MODULE_EVENTS |
+	             MONO_PROFILE_INS_COVERAGE |
+	             MONO_PROFILE_APPDOMAIN_EVENTS |
+	             MONO_PROFILE_CONTEXT_EVENTS |
+	             MONO_PROFILE_ASSEMBLY_EVENTS |
+	             MONO_PROFILE_GC_FINALIZATION |
+	             MONO_PROFILE_GC_HANDLES;
 
 	max_allocated_sample_hits = mono_cpu_count () * 1000;
 
@@ -5313,6 +5330,8 @@ mono_profiler_startup (const char *desc)
 	init_thread (TRUE);
 
 	MonoProfilerDesc *prof_desc = mono_profiler_new (prof, log_shutdown);
+
+	prof->desc = prof_desc;
 
 	mono_profiler_set_gc_cb (prof_desc, gc_event, gc_resize);
 	mono_profiler_set_allocation_cb (prof_desc, gc_alloc);
