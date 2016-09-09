@@ -2481,8 +2481,10 @@ mono_codegen (MonoCompile *cfg)
 #if defined(__native_client_codegen__) && defined(__native_client__)
 	cfg->native_code = code_dest;
 #endif
-	mono_profiler_code_buffer_new (cfg->native_code, cfg->code_len, MONO_PROFILER_CODE_BUFFER_METHOD, cfg->method);
-	
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (cfg->native_code, cfg->code_len, MONO_PROFILER_CODE_BUFFER_METHOD, cfg->method);
+
 	mono_arch_flush_icache (cfg->native_code, cfg->code_len);
 
 	mono_debug_close_method (cfg);
@@ -4153,7 +4155,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		jinfo = mono_jit_info_table_find (target_domain, (char *)code);
 		if (!jinfo)
 			jinfo = mono_jit_info_table_find (mono_domain_get (), (char *)code);
-		if (jinfo)
+
+		if ((mono_profiler_events & MONO_PROFILE_JIT_COMPILATION) && jinfo)
 			mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
 		return code;
 	} else if ((method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME)) {

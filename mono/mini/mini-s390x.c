@@ -6504,7 +6504,8 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		mono_arch_flush_icache (start, size);
 	}
 
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
 	if (has_target) {
 		*info = mono_tramp_info_create ("delegate_invoke_impl_has_target", start, code - start, NULL, NULL);
@@ -6790,7 +6791,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain,
 	}
 
 	mono_arch_flush_icache ((guint8*)start, (code - start));
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
 
 	if (!fail_tramp) 
 		mono_stats.imt_thunks_size += (code - start);

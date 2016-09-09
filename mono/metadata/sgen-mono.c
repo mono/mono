@@ -2713,7 +2713,9 @@ sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_num_handles++;
 #endif
-	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handle_type, handle, obj);
+
+	if (mono_profiler_events & MONO_PROFILE_GC_HANDLES)
+		mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handle_type, handle, obj);
 }
 
 void
@@ -2722,7 +2724,9 @@ sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_num_handles--;
 #endif
-	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handle_type, handle, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_GC_HANDLES)
+		mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handle_type, handle, NULL);
 }
 
 void

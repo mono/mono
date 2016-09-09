@@ -225,7 +225,10 @@ free_chunklist (CodeChunk *chunk)
 
 	for (; chunk; ) {
 		dead = chunk;
-		mono_profiler_code_chunk_destroy ((gpointer) dead->data);
+
+		if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+			mono_profiler_code_chunk_destroy ((gpointer) dead->data);
+
 		chunk = chunk->next;
 		if (dead->flags == CODE_FLAG_MMAP) {
 			codechunk_vfree (dead->data, dead->size);
@@ -412,7 +415,9 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 	chunk->flags = flags;
 	chunk->pos = bsize;
 	chunk->bsize = bsize;
-	mono_profiler_code_chunk_new((gpointer) chunk->data, chunk->size);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_chunk_new((gpointer) chunk->data, chunk->size);
 
 	code_memory_used += chunk_size;
 	mono_runtime_resource_check_limit (MONO_RESOURCE_JIT_CODE, code_memory_used);

@@ -443,7 +443,8 @@ mono_domain_create (void)
 	domain->friendly_name = NULL;
 	domain->search_path = NULL;
 
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_event (domain, MONO_PROFILE_START_LOAD);
 
 	domain->mp = mono_mempool_new ();
 	domain->code_mp = mono_code_manager_new ();
@@ -485,8 +486,9 @@ mono_domain_create (void)
 	if (create_domain_hook)
 		create_domain_hook (domain);
 
-	mono_profiler_appdomain_loaded (domain, MONO_PROFILE_OK);
-	
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_loaded (domain, MONO_PROFILE_OK);
+
 	return domain;
 }
 
@@ -806,7 +808,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	domain->friendly_name = g_path_get_basename (filename);
 
-	mono_profiler_appdomain_name (domain, domain->friendly_name);
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_name (domain, domain->friendly_name);
 
 	/* Have to do this quite late so that we at least have System.Object */
 	MonoError custom_attr_error;
@@ -1090,7 +1093,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (mono_dont_free_domains)
 		return;
 
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_UNLOAD);
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_event (domain, MONO_PROFILE_START_UNLOAD);
 
 	mono_debug_domain_unload (domain);
 

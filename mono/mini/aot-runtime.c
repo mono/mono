@@ -3954,10 +3954,15 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			if (!method)
 				return NULL;
 		}
-		mono_profiler_method_jit (method);
+
+		if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+			mono_profiler_method_jit (method);
+
 		jinfo = mono_jit_info_table_find (domain, (char*)code);
 		g_assert (jinfo);
-		mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
+
+		if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+			mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
 	}
 
 	return code;

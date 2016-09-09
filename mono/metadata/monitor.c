@@ -799,7 +799,8 @@ retry:
 		return 0;
 	}
 
-	mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_CONTENTION);
+	if (mono_profiler_events & MONO_PROFILE_MONITOR_EVENTS)
+		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_CONTENTION);
 
 	/* The slow path begins here. */
 retry_contended:
@@ -822,7 +823,10 @@ retry_contended:
 		if (G_LIKELY (tmp_status == old_status)) {
 			/* Success */
 			g_assert (mon->nest == 1);
-			mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+
+			if (mono_profiler_events & MONO_PROFILE_MONITOR_EVENTS)
+				mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+
 			return 1;
 		}
 	}
@@ -830,7 +834,10 @@ retry_contended:
 	/* If the object is currently locked by this thread... */
 	if (mon_status_get_owner (old_status) == id) {
 		mon->nest++;
-		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+
+		if (mono_profiler_events & MONO_PROFILE_MONITOR_EVENTS)
+			mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_DONE);
+
 		return 1;
 	}
 
@@ -944,7 +951,8 @@ done_waiting:
 	/* Timed out or interrupted */
 	mon_decrement_entry_count (mon);
 
-	mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_FAIL);
+	if (mono_profiler_events & MONO_PROFILE_MONITOR_EVENTS)
+		mono_profiler_monitor_event (obj, MONO_PROFILER_MONITOR_FAIL);
 
 	if (wait_ret == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
 		LOCK_DEBUG (g_message ("%s: (%d) interrupted waiting, returning -1", __func__, id));

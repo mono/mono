@@ -547,7 +547,10 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	arm_brx (code, ARMREG_IP0);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
 	g_assert (code - buf <= tramp_size);
 
 	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);

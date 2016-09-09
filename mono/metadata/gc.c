@@ -326,11 +326,13 @@ mono_gc_run_finalize (void *obj, void *data)
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o->vtable->klass->name, o);
 
-	mono_profiler_gc_finalize_object_begin (o);
+	if (mono_profiler_events & MONO_PROFILE_GC_FINALIZATION)
+		mono_profiler_gc_finalize_object_begin (o);
 
 	runtime_invoke (o, NULL, &exc, NULL);
 
-	mono_profiler_gc_finalize_object_end (o);
+	if (mono_profiler_events & MONO_PROFILE_GC_FINALIZATION)
+		mono_profiler_gc_finalize_object_end (o);
 
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o->vtable->klass->name, o);
@@ -560,7 +562,8 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		mono_gc_finalize_threadpool_threads ();
 	}
 
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
 
 done:
 	if (InterlockedDecrement (&req->ref) == 0) {
@@ -918,14 +921,16 @@ finalizer_thread (gpointer unused)
 
 		finalize_domain_objects ();
 
-		mono_profiler_gc_finalize_begin ();
+		if (mono_profiler_events & MONO_PROFILE_GC_FINALIZATION)
+			mono_profiler_gc_finalize_begin ();
 
 		/* If finished == TRUE, mono_gc_cleanup has been called (from mono_runtime_cleanup),
 		 * before the domain is unloaded.
 		 */
 		mono_gc_invoke_finalizers ();
 
-		mono_profiler_gc_finalize_end ();
+		if (mono_profiler_events & MONO_PROFILE_GC_FINALIZATION)
+			mono_profiler_gc_finalize_end ();
 
 		mono_threads_join_threads ();
 

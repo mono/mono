@@ -209,7 +209,8 @@ sgen_client_stop_world (int generation)
 
 	acquire_gc_locks ();
 
-	mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation);
+	if (mono_profiler_events & MONO_PROFILE_GC)
+		mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation);
 
 	/* We start to scan after locks are taking, this ensures we won't be interrupted. */
 	sgen_process_togglerefs ();
@@ -285,7 +286,8 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 	 */
 	release_gc_locks ();
 
-	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation);
+	if (mono_profiler_events & MONO_PROFILE_GC)
+		mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation);
 
 	*stw_time = usec;
 }
