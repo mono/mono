@@ -208,7 +208,7 @@ typedef void (*MonoProfilerCodeBufferNew) (MonoProfiler *prof, void* buffer, int
 MONO_API void mono_profiler_install       (MonoProfiler *prof, MonoProfileFunc shutdown_callback);
 MONO_API void mono_profiler_set_events    (MonoProfileFlags events);
 
-MONO_API MonoProfileFlags mono_profiler_get_events (void);
+MONO_RT_EXTERNAL_ONLY MONO_API MonoProfileFlags mono_profiler_get_events (void);
 
 MONO_API void mono_profiler_install_appdomain   (MonoProfileAppDomainFunc start_load, MonoProfileAppDomainResult end_load,
                                         MonoProfileAppDomainFunc start_unload, MonoProfileAppDomainFunc end_unload);

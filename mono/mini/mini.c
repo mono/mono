@@ -3211,7 +3211,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	static const char *verbose_method_name;
 
 	InterlockedIncrement (&mono_jit_stats.methods_compiled);
-	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
 		mono_profiler_method_jit (method);
 	if (MONO_METHOD_COMPILE_BEGIN_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_BEGIN (method);
@@ -3275,7 +3275,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->method = method_to_compile;
 	cfg->mempool = mono_mempool_new ();
 	cfg->opt = opts;
-	cfg->prof_options = mono_profiler_get_events ();
+	cfg->prof_options = mono_profiler_events;
 	cfg->run_cctors = run_cctors;
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;

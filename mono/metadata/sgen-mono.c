@@ -1936,7 +1936,7 @@ add_profile_gc_root (GCRootReport *report, void *object, int rtype, uintptr_t ex
 void
 sgen_client_nursery_objects_pinned (void **definitely_pinned, int count)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) {
+	if (mono_profiler_events & MONO_PROFILE_GC_ROOTS) {
 		GCRootReport report;
 		int idx;
 		report.count = 0;
@@ -2048,10 +2048,10 @@ report_registered_roots (void)
 void
 sgen_client_collecting_minor (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
+	if (mono_profiler_events & MONO_PROFILE_GC_ROOTS) {
 		report_registered_roots ();
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
 		report_finalizer_roots (fin_ready_queue, critical_fin_queue);
+	}
 }
 
 static GCRootReport major_root_report;
@@ -2060,7 +2060,7 @@ static gboolean profile_roots;
 void
 sgen_client_collecting_major_1 (void)
 {
-	profile_roots = mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS;
+	profile_roots = mono_profiler_events & MONO_PROFILE_GC_ROOTS;
 	memset (&major_root_report, 0, sizeof (GCRootReport));
 }
 
@@ -2077,14 +2077,14 @@ sgen_client_collecting_major_2 (void)
 	if (profile_roots)
 		notify_gc_roots (&major_root_report);
 
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
+	if (mono_profiler_events & MONO_PROFILE_GC_ROOTS)
 		report_registered_roots ();
 }
 
 void
 sgen_client_collecting_major_3 (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
+	if (mono_profiler_events & MONO_PROFILE_GC_ROOTS)
 		report_finalizer_roots (fin_ready_queue, critical_fin_queue);
 }
 

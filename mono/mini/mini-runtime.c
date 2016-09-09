@@ -3730,7 +3730,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_thread_attach (domain);
 #endif
 
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_events & MONO_PROFILE_STATISTICAL)
 		mono_runtime_setup_stat_profiler ();
 
 	mono_profiler_runtime_initialized ();
@@ -4055,7 +4055,7 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_events & MONO_PROFILE_STATISTICAL)
 		mono_runtime_shutdown_stat_profiler ();
 
 #ifndef DISABLE_COM

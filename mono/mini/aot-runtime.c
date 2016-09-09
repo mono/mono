@@ -3830,7 +3830,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 
 	init_amodule_got (amodule);
 
-	if (mono_profiler_get_events () & MONO_PROFILE_ENTER_LEAVE) {
+	if (mono_profiler_events & MONO_PROFILE_ENTER_LEAVE) {
 		if (mono_aot_only)
 			/* The caller cannot handle this */
 			g_assert_not_reached ();
@@ -3946,7 +3946,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 
 	amodule_unlock (amodule);
 
-	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION) {
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION) {
 		MonoJitInfo *jinfo;
 
 		if (!method) {
