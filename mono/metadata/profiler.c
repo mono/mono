@@ -670,7 +670,7 @@ mono_profiler_exception_method_leave (MonoMethod *method)
 {
 	MonoProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_EXCEPTIONS) && prof->exception_method_leave_cb)
+		if ((prof->events & MONO_PROFILE_ENTER_LEAVE) && prof->exception_method_leave_cb)
 			prof->exception_method_leave_cb (prof->profiler, method);
 	}
 }

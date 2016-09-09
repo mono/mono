@@ -2001,7 +2001,7 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 static void
 method_exc_leave (MonoProfiler *prof, MonoMethod *method)
 {
-	if (!nocalls && --PROF_TLS_GET ()->call_depth <= max_call_depth) {
+	if (--PROF_TLS_GET ()->call_depth <= max_call_depth) {
 		ENTER_LOG (&method_exception_exits_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
