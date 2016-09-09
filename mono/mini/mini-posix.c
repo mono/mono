@@ -339,7 +339,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 	/* See the comment in mono_runtime_shutdown_stat_profiler (). */
 	if (mono_native_thread_id_get () == sampling_thread) {
 #ifdef HAVE_CLOCK_NANOSLEEP
-		if (mono_profiler_get_sampling_mode () == MONO_PROFILER_STAT_MODE_PROCESS) {
+		if (mono_profiler_sampling_mode == MONO_PROFILER_STAT_MODE_PROCESS) {
 			InterlockedIncrement (&profiler_interrupt_signals_received);
 			return;
 		}
@@ -731,7 +731,7 @@ sampling_thread_func (void *data)
 	MonoProfileSamplingMode mode;
 
 init:
-	mode = mono_profiler_get_sampling_mode ();
+	mode = mono_profiler_sampling_mode;
 
 	clock_init (mode);
 
@@ -744,12 +744,12 @@ loop:
 		}
 
 		// If the sampling mode was changed, we need to re-init the clock.
-		if (mono_profiler_get_sampling_mode () != mode) {
+		if (mono_profiler_sampling_mode != mode) {
 			clock_cleanup ();
 			goto init;
 		}
 
-		sleep += 1000000000 / mono_profiler_get_sampling_rate ();
+		sleep += 1000000000 / mono_profiler_sampling_frequency;
 
 		FOREACH_THREAD_SAFE (info) {
 			/* info should never be this thread as we're a tools thread. */
@@ -794,7 +794,7 @@ mono_runtime_shutdown_stat_profiler (void)
 	 * based on a monotonic clock. The sleep will return in a reasonable amount
 	 * of time in those cases.
 	 */
-	if (mono_profiler_get_sampling_mode () == MONO_PROFILER_STAT_MODE_PROCESS) {
+	if (mono_profiler_sampling_mode == MONO_PROFILER_STAT_MODE_PROCESS) {
 		MonoThreadInfo *info;
 
 		// Did it shut down already?

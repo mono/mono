@@ -7,6 +7,8 @@
 #include <glib.h>
 
 extern MonoProfileFlags mono_profiler_events;
+extern MonoProfileSamplingMode mono_profiler_sampling_mode;
+extern int64_t mono_profiler_sampling_frequency;
 
 enum {
 	MONO_PROFILE_START_LOAD,
@@ -88,9 +90,6 @@ void mono_profiler_code_chunk_destroy (gpointer chunk);
 void mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, gconstpointer data);
 
 void mono_profiler_runtime_initialized (void);
-
-int64_t mono_profiler_get_sampling_rate (void);
-MonoProfileSamplingMode mono_profiler_get_sampling_mode (void);
 
 #endif /* __MONO_PROFILER_PRIVATE_H__ */
 

@@ -308,8 +308,8 @@ mono_profiler_install_monitor  (MonoProfileMonitorFunc callback)
 	prof_list->monitor_event_cb = callback;
 }
 
-static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
-static int64_t sampling_frequency = 100; // Hz
+MonoProfileSamplingMode mono_profiler_sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
+int64_t mono_profiler_sampling_frequency = 100; // Hz
 
 /**
  * mono_profiler_set_statistical_mode:
@@ -326,8 +326,8 @@ static int64_t sampling_frequency = 100; // Hz
 void
 mono_profiler_set_statistical_mode (MonoProfileSamplingMode mode, int64_t sampling_frequency_hz)
 {
-	sampling_mode = mode;
-	sampling_frequency = sampling_frequency_hz;
+	mono_profiler_sampling_mode = mode;
+	mono_profiler_sampling_frequency = sampling_frequency_hz;
 }
 
 void 
@@ -336,18 +336,6 @@ mono_profiler_install_statistical (MonoProfileStatFunc callback)
 	if (!prof_list)
 		return;
 	prof_list->statistical_cb = callback;
-}
-
-int64_t
-mono_profiler_get_sampling_rate (void)
-{
-	return sampling_frequency;
-}
-
-MonoProfileSamplingMode
-mono_profiler_get_sampling_mode (void)
-{
-	return sampling_mode;
 }
 
 void 
