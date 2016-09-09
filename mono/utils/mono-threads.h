@@ -245,7 +245,6 @@ typedef struct {
 #if defined(_POSIX_VERSION) || defined(__native_client__)
 	/* This is the data that was stored in the w32 handle */
 	GPtrArray *owned_mutexes;
-	gint32 priority;
 #endif
 } MonoThreadInfo;
 
@@ -547,7 +546,6 @@ void mono_threads_platform_set_exited (THREAD_INFO_TYPE *info);
 void mono_threads_platform_describe (THREAD_INFO_TYPE *info, GString *text);
 void mono_threads_platform_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
 void mono_threads_platform_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-MonoThreadPriority mono_threads_platform_get_priority (THREAD_INFO_TYPE *info);
 void mono_threads_platform_set_priority (THREAD_INFO_TYPE *info, MonoThreadPriority priority);
 gpointer mono_threads_platform_duplicate_handle (THREAD_INFO_TYPE *info);
 
@@ -675,9 +673,6 @@ mono_thread_info_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
 
 void
 mono_thread_info_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-
-MonoThreadPriority
-mono_thread_info_get_priority (THREAD_INFO_TYPE *info);
 
 void
 mono_thread_info_set_priority (THREAD_INFO_TYPE *info, MonoThreadPriority priority);

@@ -90,6 +90,7 @@ namespace System.Threading {
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
+		private int priority = (int) ThreadPriority.Normal;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
@@ -122,7 +123,6 @@ namespace System.Threading {
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
 		object pending_exception;
-		int priority = (int) ThreadPriority.Normal;
 		#endregion
 #pragma warning restore 414
 

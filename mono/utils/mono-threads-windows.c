@@ -335,13 +335,6 @@ mono_threads_platform_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
 	g_assert_not_reached ();
 }
 
-MonoThreadPriority
-mono_threads_platform_get_priority (MonoThreadInfo *info)
-{
-	g_assert (info->handle);
-	return GetThreadPriority (info->handle) + 2;
-}
-
 void
 mono_threads_platform_set_priority (MonoThreadInfo *info, MonoThreadPriority priority)
 {

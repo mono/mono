@@ -46,7 +46,6 @@ mono_threads_platform_register (MonoThreadInfo *info)
 	gpointer thread_handle;
 
 	info->owned_mutexes = g_ptr_array_new ();
-	info->priority = MONO_THREAD_PRIORITY_NORMAL;
 
 	thread_handle = mono_w32handle_new (MONO_W32HANDLE_THREAD, NULL);
 	if (thread_handle == INVALID_HANDLE_VALUE)
@@ -358,12 +357,6 @@ mono_threads_platform_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
 	g_ptr_array_remove (info->owned_mutexes, mutex_handle);
 }
 
-MonoThreadPriority
-mono_threads_platform_get_priority (MonoThreadInfo *info)
-{
-	return info->priority;
-}
-
 void
 mono_threads_platform_set_priority (MonoThreadInfo *info, MonoThreadPriority priority)
 {
@@ -424,8 +417,6 @@ mono_threads_platform_set_priority (MonoThreadInfo *info, MonoThreadPriority pri
 		}
 		g_error ("%s: pthread_setschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
 	}
-
-	info->priority = priority;
 }
 
 static const gchar* thread_typename (void)
