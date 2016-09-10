@@ -63,6 +63,7 @@ static gboolean is_sre_generic_instance (MonoClass *klass);
 static gboolean is_sre_type_builder (MonoClass *klass);
 static gboolean is_sre_method_builder (MonoClass *klass);
 static gboolean is_sre_field_builder (MonoClass *klass);
+static gboolean is_sre_gparam_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
 static gboolean is_sr_mono_field (MonoClass *klass);
 
@@ -1573,6 +1574,12 @@ is_sre_field_builder (MonoClass *klass)
 	check_corlib_type_cached (klass, "System.Reflection.Emit", "FieldBuilder");
 }
 
+static gboolean
+is_sre_gparam_builder (MonoClass *klass)
+{
+	check_corlib_type_cached (klass, "System.Reflection.Emit", "GenericTypeParameterBuilder");
+}
+
 gboolean
 mono_is_sre_method_on_tb_inst (MonoClass *klass)
 {
@@ -1676,6 +1683,36 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 		g_assert (res);
 		gclass->type.type = res;
 		return res;
+	} else if (is_sre_gparam_builder (klass)) {
+		MonoReflectionGenericParam *gparam = (MonoReflectionGenericParam *)ref;
+		MonoGenericParamFull *param;
+		MonoImage *image;
+		MonoClass *pklass;
+
+		image = &gparam->tbuilder->module->dynamic_image->image;
+
+		param = mono_image_new0 (image, MonoGenericParamFull, 1);
+
+		param->info.name = mono_string_to_utf8_image (image, gparam->name, error);
+		mono_error_assert_ok (error);
+		param->param.num = gparam->index;
+
+		if (gparam->mbuilder) {
+			g_assert (gparam->mbuilder->generic_container);
+			param->param.owner = gparam->mbuilder->generic_container;
+		} else if (gparam->tbuilder) {
+			g_assert (gparam->tbuilder->generic_container);
+			param->param.owner = gparam->tbuilder->generic_container;
+		}
+
+		pklass = mono_class_from_generic_parameter_internal ((MonoGenericParam *) param);
+
+		gparam->type.type = &pklass->byval_arg;
+
+		mono_class_set_ref_info (pklass, gparam);
+		mono_image_append_class_to_reflection_info_set (pklass);
+
+		return &pklass->byval_arg;
 	}
 
 	g_error ("Cannot handle corlib user type %s", mono_type_full_name (&mono_object_class(ref)->byval_arg));
@@ -1685,51 +1722,11 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 void
 ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type)
 {
-	MonoError error;
-	mono_reflection_type_get_handle (type, &error);
-	mono_error_set_pending_exception (&error);
-}
-
-static gboolean
-reflection_register_with_runtime (MonoReflectionType *type, MonoError *error)
-{
-	MonoDomain *domain = mono_object_domain ((MonoObject*)type);
-	MonoClass *klass;
-
-	mono_error_init (error);
-
-	MonoType *res = mono_reflection_type_get_handle (type, error);
-
-	if (!res && is_ok (error)) {
-		mono_error_set_argument (error, NULL, "Invalid generic instantiation, one or more arguments are not proper user types");
-	}
-	return_val_if_nok (error, FALSE);
-
-	klass = mono_class_from_mono_type (res);
-
-	mono_loader_lock (); /*same locking as mono_type_get_object_checked */
-	mono_domain_lock (domain);
-
-	if (!image_is_dynamic (klass->image)) {
-		mono_class_setup_supertypes (klass);
-	} else {
-		if (!domain->type_hash)
-			domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
-					(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "domain reflection types table");
-		mono_g_hash_table_insert (domain->type_hash, res, type);
-	}
-	mono_domain_unlock (domain);
-	mono_loader_unlock ();
-
-	return TRUE;
 }
 
 void
 mono_reflection_register_with_runtime (MonoReflectionType *type)
 {
-	MonoError error;
-	(void) reflection_register_with_runtime (type, &error);
-	mono_error_set_pending_exception (&error);
 }
 
 /**
@@ -3030,37 +3027,9 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilder* mb,
 
 #ifndef DISABLE_REFLECTION_EMIT
 
-static void
-reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoError *error)
-{
-	MonoGenericClass *gclass;
-	MonoClass *klass, *gklass;
-	MonoType *gtype;
-
-	mono_error_init (error);
-
-	gtype = mono_reflection_type_get_handle ((MonoReflectionType*)type, error);
-	return_if_nok (error);
-	klass = mono_class_from_mono_type (gtype);
-	g_assert (gtype->type == MONO_TYPE_GENERICINST);
-	gclass = gtype->data.generic_class;
-
-	if (!gclass->is_dynamic)
-		return;
-
-	gklass = gclass->container_class;
-	mono_class_init (gklass);
-
-	/* Mark this as needing synchronization with its generic container */
-	gclass->need_sync = TRUE;
-}
-
 void
 mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *fields)
 {
-	MonoError error;
-	reflection_generic_class_initialize (type, &error);
-	mono_error_set_pending_exception (&error);
 }
 
 /**
@@ -3676,22 +3645,6 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	mono_class_setup_supertypes (klass);
 	mono_class_setup_mono_type (klass);
 
-#if 0
-	if (!((MonoDynamicImage*)klass->image)->run) {
-		if (klass->generic_container) {
-			/* FIXME: The code below can't handle generic classes */
-			klass->wastypebuilder = TRUE;
-			mono_loader_unlock ();
-			mono_domain_unlock (domain);
-
-			res = mono_type_get_object_checked (mono_object_domain (tb), &klass->byval_arg, &error);
-			mono_error_set_pending_exception (&error);
-
-			return res;
-		}
-	}
-#endif
-
 	/* enums are done right away */
 	if (!klass->enumtype)
 		if (!ensure_runtime_vtable (klass, &error))
@@ -3786,19 +3739,11 @@ failure_unlocked:
 static gboolean
 reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam, MonoError *error)
 {
-	MonoGenericParamFull *param;
 	MonoImage *image;
-	MonoClass *pklass;
 
 	mono_error_init (error);
 
 	image = &gparam->tbuilder->module->dynamic_image->image;
-
-	param = mono_image_new0 (image, MonoGenericParamFull, 1);
-
-	param->info.name = mono_string_to_utf8_image (image, gparam->name, error);
-	mono_error_assert_ok (error);
-	param->param.num = gparam->index;
 
 	if (gparam->mbuilder) {
 		if (!gparam->mbuilder->generic_container) {
@@ -3815,7 +3760,6 @@ reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam, Mon
 			gparam->mbuilder->generic_container->is_anonymous = TRUE;
 			gparam->mbuilder->generic_container->owner.image = klass->image;
 		}
-		param->param.owner = gparam->mbuilder->generic_container;
 	} else if (gparam->tbuilder) {
 		if (!gparam->tbuilder->generic_container) {
 			MonoType *tb = mono_reflection_type_get_handle ((MonoReflectionType*)gparam->tbuilder, error);
@@ -3824,21 +3768,13 @@ reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam, Mon
 			gparam->tbuilder->generic_container = (MonoGenericContainer *)mono_image_alloc0 (klass->image, sizeof (MonoGenericContainer));
 			gparam->tbuilder->generic_container->owner.klass = klass;
 		}
-		param->param.owner = gparam->tbuilder->generic_container;
 	}
-
-	pklass = mono_class_from_generic_parameter_internal ((MonoGenericParam *) param);
-
-	gparam->type.type = &pklass->byval_arg;
-
-	mono_class_set_ref_info (pklass, gparam);
-	mono_image_append_class_to_reflection_info_set (pklass);
 
 	return TRUE;
 }
 
 void
-ves_icall_GenericTypeParameterBuilder_initialize_generic_parameter (MonoReflectionGenericParam *gparam)
+ves_icall_GenericTypeParameterBuilder_initialize (MonoReflectionGenericParam *gparam)
 {
 	MonoError error;
 	(void) reflection_initialize_generic_parameter (gparam, &error);

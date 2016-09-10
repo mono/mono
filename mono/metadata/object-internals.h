@@ -1791,7 +1791,7 @@ void
 ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilder *moduleb, MonoReflectionType *type);
 
 void
-ves_icall_GenericTypeParameterBuilder_initialize_generic_parameter (MonoReflectionGenericParam *gparam);
+ves_icall_GenericTypeParameterBuilder_initialize (MonoReflectionGenericParam *gparam);
 
 MonoReflectionMethod*
 ves_icall_MethodBuilder_MakeGenericMethod (MonoReflectionMethod *rmethod, MonoArray *types);
