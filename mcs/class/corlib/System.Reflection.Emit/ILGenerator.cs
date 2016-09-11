@@ -814,7 +814,7 @@ namespace System.Reflection.Emit {
 			make_room (6);
 			ll_emit (opcode);
 			int token = token_gen.GetToken (cls, opcode != OpCodes.Ldtoken);
-			if (cls is MonoGenericClass || cls is SymbolType)
+			if (cls is MonoGenericClass || cls is SymbolType || cls is TypeBuilder)
 				add_token_fixup (cls);
 			emit_int (token);
 		}

@@ -1730,10 +1730,19 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			}
 			break;
 		case MONO_TABLE_TYPEDEF:
-			if (strcmp (iltoken->member->vtable->klass->name, "TypeBuilder"))
+			if (!strcmp (iltoken->member->vtable->klass->name, "TypeBuilder")) {
+				tb = (MonoReflectionTypeBuilder *)iltoken->member;
+				idx = tb->table_idx;
+			} else if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
+				MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
+				MonoObject *obj = mono_class_get_ref_info (k);
+				g_assert (obj);
+				g_assert (!strcmp (obj->vtable->klass->name, "TypeBuilder"));
+				tb = (MonoReflectionTypeBuilder*)obj;
+				idx = tb->table_idx;
+			} else {
 				g_assert_not_reached ();
-			tb = (MonoReflectionTypeBuilder *)iltoken->member;
-			idx = tb->table_idx;
+			}
 			break;
 		case MONO_TABLE_MEMBERREF:
 			if (!strcmp (iltoken->member->vtable->klass->name, "MonoArrayMethod")) {

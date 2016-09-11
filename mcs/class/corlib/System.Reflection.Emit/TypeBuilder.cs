@@ -1676,6 +1676,12 @@ namespace System.Reflection.Emit
 			return created;
 		}
 
+		internal override Type RuntimeResolve ()
+		{
+			check_created ();
+			return created;
+		}
+
 		internal bool is_created {
 			get {
 				return createTypeCalled;

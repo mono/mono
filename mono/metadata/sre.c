@@ -1328,23 +1328,8 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		/* These are handled in managed code */
 		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)obj;
-		if (create_open_instance && tb->generic_params) {
-			MonoType *type;
-			mono_reflection_init_type_builder_generics (obj, error);
-			return_val_if_nok (error, 0);
-			type = mono_reflection_type_get_handle ((MonoReflectionType *)obj, error);
-			return_val_if_nok (error, 0);
-			token = mono_dynimage_encode_typedef_or_ref_full (assembly, type, TRUE);
-			token = mono_metadata_token_from_dor (token);
-		} else if (tb->module->dynamic_image == assembly) {
-			token = tb->table_idx | MONO_TOKEN_TYPE_DEF;
-		} else {
-			MonoType *type;
-			type = mono_reflection_type_get_handle ((MonoReflectionType *)obj, error);
-			return_val_if_nok (error, 0);
-			token = mono_metadata_token_from_dor (mono_image_typedef_or_ref (assembly, type));
-		}
+		/* These are handled in managed code */
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "RuntimeType") == 0) {
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType *)obj, error);
 		return_val_if_nok (error, 0);
