@@ -180,14 +180,12 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 {
 	gpointer handle;
 	gchar *utf8_name;
-	int thr_ret;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle, initial %d max %d name \"%s\"",
 		__func__, mono_w32handle_ops_typename (MONO_W32HANDLE_NAMEDSEM), initial, max, name);
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
-	thr_ret = wapi_namespace_lock ();
-	g_assert (thr_ret == 0);
+	mono_w32handle_namespace_lock ();
 
 	utf8_name = g_utf16_to_utf8 (name, -1, NULL, NULL, NULL);
 
@@ -216,8 +214,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 
 	g_free (utf8_name);
 
-	thr_ret = wapi_namespace_unlock (NULL);
-	g_assert (thr_ret == 0);
+	mono_w32handle_namespace_unlock ();
 
 	return handle;
 }
@@ -322,13 +319,11 @@ ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, g
 {
 	gpointer handle;
 	gchar *utf8_name;
-	int thr_ret;
 
 	*error = ERROR_SUCCESS;
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
-	thr_ret = wapi_namespace_lock ();
-	g_assert (thr_ret == 0);
+	mono_w32handle_namespace_lock ();
 
 	utf8_name = g_utf16_to_utf8 (mono_string_chars (name), -1, NULL, NULL, NULL);
 
@@ -350,8 +345,7 @@ ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, g
 cleanup:
 	g_free (utf8_name);
 
-	thr_ret = wapi_namespace_unlock (NULL);
-	g_assert (thr_ret == 0);
+	mono_w32handle_namespace_unlock ();
 
 	return handle;
 }

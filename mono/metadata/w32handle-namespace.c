@@ -18,6 +18,27 @@
 #include "w32event.h"
 #include "mono/io-layer/io-layer.h"
 #include "mono/utils/mono-logger-internals.h"
+#include "mono/utils/mono-coop-mutex.h"
+
+static MonoCoopMutex lock;
+
+void
+mono_w32handle_namespace_init (void)
+{
+	mono_coop_mutex_init (&lock);
+}
+
+void
+mono_w32handle_namespace_lock (void)
+{
+	mono_coop_mutex_lock (&lock);
+}
+
+void
+mono_w32handle_namespace_unlock (void)
+{
+	mono_coop_mutex_unlock (&lock);
+}
 
 static gboolean
 has_namespace (MonoW32HandleType type)

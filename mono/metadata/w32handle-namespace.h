@@ -13,6 +13,15 @@ typedef struct {
 	gchar name [MONO_W32HANDLE_NAMESPACE_MAX_PATH + 1];
 } MonoW32HandleNamespace;
 
+void
+mono_w32handle_namespace_init (void);
+
+void
+mono_w32handle_namespace_lock (void);
+
+void
+mono_w32handle_namespace_unlock (void);
+
 gpointer
 mono_w32handle_namespace_search_handle (MonoW32HandleType type, gchar *name);
 

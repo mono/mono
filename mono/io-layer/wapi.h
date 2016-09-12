@@ -50,15 +50,4 @@ DuplicateHandle (gpointer srcprocess, gpointer src, gpointer targetprocess, gpoi
 pid_t
 wapi_getpid (void);
 
-static inline int wapi_namespace_lock (void)
-{
-	return wapi_shm_sem_lock (WAPI_SHARED_SEM_NAMESPACE);
-}
-
-/* This signature makes it easier to use in pthread cleanup handlers */
-static inline int wapi_namespace_unlock (gpointer data G_GNUC_UNUSED)
-{
-	return wapi_shm_sem_unlock (WAPI_SHARED_SEM_NAMESPACE);
-}
-
 #endif /* _WAPI_WAPI_H_ */
