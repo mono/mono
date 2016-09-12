@@ -1699,6 +1699,8 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 	guint32 i, idx = 0;
 	unsigned char *target;
 
+	// FIXME: Remove support for builder objects
+
 	for (i = 0; i < ilgen->num_token_fixups; ++i) {
 		iltoken = (MonoReflectionILTokenInfo *)mono_array_addr_with_size (ilgen->token_fixups, sizeof (MonoReflectionILTokenInfo), i);
 		target = (guchar*)assembly->code.data + code_idx + iltoken->code_pos;

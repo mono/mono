@@ -254,6 +254,10 @@ namespace System.Reflection.Emit
 			return parameters [pos];
 		}
 
+		internal MethodBase RuntimeResolve () {
+			return type.RuntimeResolve ().GetMethod (this);
+		}
+
 		public Module GetModule ()
 		{
 			return type.Module;

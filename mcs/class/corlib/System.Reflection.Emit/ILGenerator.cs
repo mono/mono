@@ -521,7 +521,7 @@ namespace System.Reflection.Emit {
 			int token = token_gen.GetToken (con, true);
 			make_room (6);
 			ll_emit (opcode);
-			if (con.DeclaringType.Module == module || (con is ConstructorOnTypeBuilderInst))
+			if (con.DeclaringType.Module == module || (con is ConstructorOnTypeBuilderInst) || (con is ConstructorBuilder))
 				add_token_fixup (con);
 			emit_int (token);
 			
@@ -737,7 +737,7 @@ namespace System.Reflection.Emit {
 			Type declaringType = meth.DeclaringType;
 			// Might be a DynamicMethod with no declaring type
 			if (declaringType != null) {
-				if (declaringType.Module == module || meth is MethodOnTypeBuilderInst)
+				if (declaringType.Module == module || meth is MethodOnTypeBuilderInst || meth is MethodBuilder || meth is ConstructorBuilder)
 					add_token_fixup (meth);
 			}
 			emit_int (token);
@@ -755,7 +755,7 @@ namespace System.Reflection.Emit {
 			// Might be a DynamicMethod with no declaring type
 			Type declaringType = method.DeclaringType;
 			if (declaringType != null) {
-				if (declaringType.Module == module)
+				if (declaringType.Module == module || method is MethodBuilder || method is ConstructorBuilder)
 					add_token_fixup (method);
 			}
 			emit_int (token);

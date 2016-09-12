@@ -665,14 +665,11 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		internal int GetToken (MemberInfo member) {
-			return getToken (this, member, true);
-		}
-
 		static int typeref_tokengen =  0x01ffffff;
 		static int typedef_tokengen =  0x02ffffff;
 		static int typespec_tokengen =  0x1bffffff;
 		static int memberref_tokengen =  0x0affffff;
+		static int methoddef_tokengen =  0x06ffffff;
 		Dictionary<MemberInfo, int> inst_tokens = new Dictionary<MemberInfo, int> ();
 		Dictionary<MemberInfo, int> inst_tokens_open = new Dictionary<MemberInfo, int> ();
 
@@ -713,6 +710,17 @@ namespace System.Reflection.Emit {
 					token = typedef_tokengen --;
 				else
 					token = typeref_tokengen --;
+			} else if (member is ConstructorBuilder) {
+				if (member.Module == this && !(member as ConstructorBuilder).TypeBuilder.ContainsGenericParameters)
+					token = methoddef_tokengen --;
+				else
+					token = memberref_tokengen --;
+			} else if (member is MethodBuilder) {
+				var mb = member as MethodBuilder;
+				if (member.Module == this && !mb.TypeBuilder.ContainsGenericParameters && !mb.IsGenericMethodDefinition)
+					token = methoddef_tokengen --;
+				else
+					token = memberref_tokengen --;
 			} else
 				throw new NotImplementedException ();
 			if (create_open_instance)
@@ -723,13 +731,22 @@ namespace System.Reflection.Emit {
 			return token;
 		}
 
+		internal int GetToken (MemberInfo member) {
+			if (member is ConstructorBuilder || member is MethodBuilder)
+				return GetPseudoToken (member, false);
+			return getToken (this, member, true);
+		}
+
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder)
+			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder)
 				return GetPseudoToken (member, create_open_instance);
 			return getToken (this, member, create_open_instance);
 		}
 
 		internal int GetToken (MethodBase method, IEnumerable<Type> opt_param_types) {
+			if (method is ConstructorBuilder || method is MethodBuilder)
+				return GetPseudoToken (method, false);
+
 			if (opt_param_types == null)
 				return getToken (this, method, true);
 
@@ -738,6 +755,8 @@ namespace System.Reflection.Emit {
 		}
 		
 		internal int GetToken (MethodBase method, Type[] opt_param_types) {
+			if (method is ConstructorBuilder || method is MethodBuilder)
+				return GetPseudoToken (method, false);
 			return getMethodToken (this, method, opt_param_types);
 		}
 
@@ -791,6 +810,10 @@ namespace System.Reflection.Emit {
 					finished = (member as FieldBuilder).RuntimeResolve ();
 				} else if (member is TypeBuilder) {
 					finished = (member as TypeBuilder).RuntimeResolve ();
+				} else if (member is ConstructorBuilder) {
+					finished = (member as ConstructorBuilder).RuntimeResolve ();
+				} else if (member is MethodBuilder) {
+					finished = (member as MethodBuilder).RuntimeResolve ();
 				} else {
 					throw new NotImplementedException ();
 				}

@@ -46,8 +46,6 @@ static GENERATE_GET_CLASS_WITH_CACHE (marshal_as_attribute, System.Runtime.Inter
 
 #ifndef DISABLE_REFLECTION_EMIT
 static guint32 mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, gboolean create_typespec);
-static guint32 mono_image_get_methodbuilder_token (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *mb, gboolean create_open_instance, MonoError *error);
-static guint32 mono_image_get_ctorbuilder_token (MonoDynamicImage *assembly, MonoReflectionCtorBuilder *cb, MonoError *error);
 static guint32 mono_image_get_sighelper_token (MonoDynamicImage *assembly, MonoReflectionSigHelper *helper, MonoError *error);
 static gboolean ensure_runtime_vtable (MonoClass *klass, MonoError  *error);
 static guint32 mono_image_get_methodref_token_for_methodbuilder (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *method, MonoError *error);
@@ -796,65 +794,6 @@ mono_image_get_methodspec_token_for_generic_method_definition (MonoDynamicImage 
 	mono_g_hash_table_insert (assembly->methodspec, mb, GUINT_TO_POINTER(token));
 	return token;
 }
-
-static guint32
-mono_image_get_methodbuilder_token (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *mb, gboolean create_methodspec, MonoError *error)
-{
-	guint32 token;
-
-	mono_error_init (error);
-
-	if (mb->generic_params && create_methodspec) 
-		return mono_image_get_methodspec_token_for_generic_method_definition (assembly, mb, error);
-
-	token = GPOINTER_TO_UINT (mono_g_hash_table_lookup (assembly->handleref_managed, mb));
-	if (token)
-		return token;
-
-	token = mono_image_get_methodref_token_for_methodbuilder (assembly, mb, error);
-	if (!mono_error_ok (error))
-		return 0;
-	mono_g_hash_table_insert (assembly->handleref_managed, mb, GUINT_TO_POINTER(token));
-	return token;
-}
-
-static guint32
-mono_image_get_ctorbuilder_token (MonoDynamicImage *assembly, MonoReflectionCtorBuilder *mb, MonoError *error)
-{
-	guint32 token, parent, sig;
-	ReflectionMethodBuilder rmb;
-	char *name;
-	MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)mb->type;
-	
-	mono_error_init (error);
-	
-	token = GPOINTER_TO_UINT (mono_g_hash_table_lookup (assembly->handleref_managed, mb));
-	if (token)
-		return token;
-
-	if (!mono_reflection_methodbuilder_from_ctor_builder (&rmb, mb, error))
-		return 0;
-
-	if (tb->generic_params) {
-		parent = mono_dynimage_encode_generic_typespec (assembly, tb, error);
-		return_val_if_nok (error, 0);
-	} else {
-		MonoType * type = mono_reflection_type_get_handle ((MonoReflectionType*)tb, error);
-		return_val_if_nok (error, 0);
-		parent = mono_image_typedef_or_ref (assembly, type);
-	}
-	
-	name = mono_string_to_utf8_checked (rmb.name, error);
-	return_val_if_nok (error, 0);
-	sig = mono_dynimage_encode_method_builder_signature (assembly, &rmb, error);
-	return_val_if_nok (error, 0);
-
-	token = mono_image_add_memberef_row (assembly, parent, name, sig);
-
-	g_free (name);
-	mono_g_hash_table_insert (assembly->handleref_managed, mb, GUINT_TO_POINTER(token));
-	return token;
-}
 #endif
 
 static gboolean
@@ -1241,6 +1180,10 @@ mono_image_create_method_token (MonoDynamicImage *assembly, MonoObject *obj, Mon
 			if (!is_ok (error)) goto fail;
 		}
 
+		// FIXME: This doesn't work, we don't use 'sig' for anything
+		// The token fixup doesn't work either
+		g_assert_not_reached ();
+
 		sig_token = mono_dynimage_encode_method_builder_signature (assembly, &rmb, error);
 		if (!is_ok (error))
 			goto fail;
@@ -1301,29 +1244,11 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 	}
 
 	if (strcmp (klass->name, "MethodBuilder") == 0) {
-		MonoReflectionMethodBuilder *mb = (MonoReflectionMethodBuilder *)obj;
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)mb->type;
-
-		if (tb->module->dynamic_image == assembly && !tb->generic_params && !mb->generic_params)
-			token = mb->table_idx | MONO_TOKEN_METHOD_DEF;
-		else {
-			token = mono_image_get_methodbuilder_token (assembly, mb, create_open_instance, error);
-			if (!mono_error_ok (error))
-				return 0;
-		}
-		/*g_print ("got token 0x%08x for %s\n", token, mono_string_to_utf8 (mb->name));*/
+		/* These are handled in managed code */
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "ConstructorBuilder") == 0) {
-		MonoReflectionCtorBuilder *mb = (MonoReflectionCtorBuilder *)obj;
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)mb->type;
-
-		if (tb->module->dynamic_image == assembly && !tb->generic_params)
-			token = mb->table_idx | MONO_TOKEN_METHOD_DEF;
-		else {
-			token = mono_image_get_ctorbuilder_token (assembly, mb, error);
-			if (!mono_error_ok (error))
-				return 0;
-		}
-		/*g_print ("got token 0x%08x for %s\n", token, mono_string_to_utf8 (mb->name));*/
+		/* These are handled in managed code */
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
 		/* These are handled in managed code */
 		g_assert_not_reached ();
@@ -4143,46 +4068,29 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MethodBuilder") == 0) {
-		MonoReflectionMethodBuilder *mb = (MonoReflectionMethodBuilder*)obj;
-		result = mb->mhandle;
-		if (!result) {
-			/* Type is not yet created */
-			MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)mb->type;
-
-			mono_domain_try_type_resolve_checked (mono_domain_get (), NULL, (MonoObject*)tb, error);
-			return_val_if_nok (error, NULL);
-
-			/*
-			 * Hopefully this has been filled in by calling CreateType() on the
-			 * TypeBuilder.
-			 */
-			/*
-			 * TODO: This won't work if the application finishes another 
-			 * TypeBuilder instance instead of this one.
-			 */
-			result = mb->mhandle;
+		static MonoMethod *resolve_method;
+		if (!resolve_method) {
+			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
+			g_assert (m);
+			mono_memory_barrier ();
+			resolve_method = m;
 		}
-		if (context) {
-			result = mono_class_inflate_generic_method_checked ((MonoMethod *)result, context, error);
-			mono_error_assert_ok (error);
-		}
-		*handle_class = mono_defaults.methodhandle_class;
+		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
+		mono_error_assert_ok (error);
+		g_assert (obj);
+		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
 	} else if (strcmp (obj->vtable->klass->name, "ConstructorBuilder") == 0) {
-		MonoReflectionCtorBuilder *cb = (MonoReflectionCtorBuilder*)obj;
-
-		result = cb->mhandle;
-		if (!result) {
-			MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)cb->type;
-
-			mono_domain_try_type_resolve_checked (mono_domain_get (), NULL, (MonoObject*)tb, error);
-			return_val_if_nok (error, NULL);
-			result = cb->mhandle;
+		static MonoMethod *resolve_method;
+		if (!resolve_method) {
+			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
+			g_assert (m);
+			mono_memory_barrier ();
+			resolve_method = m;
 		}
-		if (context) {
-			result = mono_class_inflate_generic_method_checked ((MonoMethod *)result, context, error);
-			mono_error_assert_ok (error);
-		}
-		*handle_class = mono_defaults.methodhandle_class;
+		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
+		mono_error_assert_ok (error);
+		g_assert (obj);
+		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
 	} else if (strcmp (obj->vtable->klass->name, "MonoField") == 0) {
 		MonoClassField *field = ((MonoReflectionField*)obj)->field;
 

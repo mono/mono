@@ -876,10 +876,12 @@ namespace System.Reflection.Emit
 
 		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
 			if (methods != null) {
-				for (int i = 0; i < num_methods; ++i) {
-					MethodBuilder mb = (MethodBuilder)(methods[i]);
-					mb.FixupTokens (token_map, member_map);
-				}
+				for (int i = 0; i < num_methods; ++i)
+					methods[i].FixupTokens (token_map, member_map);
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors)
+					cb.FixupTokens (token_map, member_map);
 			}
 		}
 
