@@ -4415,9 +4415,13 @@ handle_enum:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_TYPEDBYREF:
-	case MONO_TYPE_GENERICINST:
 		/* box value types */
 		mono_mb_emit_op (mb, CEE_BOX, mono_class_from_mono_type (sig->ret));
+		break;
+	case MONO_TYPE_GENERICINST:
+		/* only box value type generic insts */
+		if (mono_type_generic_inst_is_valuetype (sig->ret))
+			mono_mb_emit_op (mb, CEE_BOX, mono_class_from_mono_type (sig->ret));
 		break;
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_CLASS:  
