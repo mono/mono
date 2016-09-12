@@ -512,6 +512,9 @@ struct _LogBuffer {
 typedef struct {
 	MonoLinkedListSetNode node;
 
+	// Was this thread added to the LLS?
+	gboolean attached;
+
 	// The current log buffer for this thread.
 	LogBuffer *buffer;
 
@@ -824,6 +827,12 @@ create_buffer (void)
 	return buf;
 }
 
+/*
+ * Must be called with the reader lock held if thread is the current thread, or
+ * the exclusive lock if thread is a different thread. However, if thread is
+ * the current thread, and init_thread () was called with add_to_lls = FALSE,
+ * then no locking is necessary.
+ */
 static void
 init_buffer_state (MonoProfilerThread *thread)
 {
@@ -860,6 +869,7 @@ init_thread (gboolean add_to_lls)
 
 	thread = malloc (sizeof (MonoProfilerThread));
 	thread->node.key = thread_id ();
+	thread->attached = add_to_lls;
 	thread->call_depth = 0;
 	thread->busy = 0;
 
@@ -884,6 +894,8 @@ init_thread (gboolean add_to_lls)
 static void
 deinit_thread (MonoProfilerThread *thread)
 {
+	g_assert (!thread->attached && "Why are we manually freeing an attached thread?");
+
 	free (thread);
 	PROF_TLS_SET (NULL);
 }
@@ -1256,6 +1268,12 @@ dump_header (MonoProfiler *profiler)
 	free (hbuf);
 }
 
+/*
+ * Must be called with the reader lock held if thread is the current thread, or
+ * the exclusive lock if thread is a different thread. However, if thread is
+ * the current thread, and init_thread () was called with add_to_lls = FALSE,
+ * then no locking is necessary.
+ */
 static void
 send_buffer (MonoProfiler *prof, MonoProfilerThread *thread)
 {
