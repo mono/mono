@@ -25,14 +25,6 @@
 #include <mono/io-layer/timefuncs.h>
 #include <mono/io-layer/versioninfo.h>
 #include <mono/io-layer/wait.h>
-#include <mono/io-layer/shared.h>
-
-#define WAPI_SHARED_SEM_NAMESPACE 0
-/*#define WAPI_SHARED_SEM_COLLECTION 1*/
-#define WAPI_SHARED_SEM_FILESHARE 2
-#define WAPI_SHARED_SEM_PROCESS_COUNT_LOCK 6
-#define WAPI_SHARED_SEM_PROCESS_COUNT 7
-#define WAPI_SHARED_SEM_COUNT 8	/* Leave some future expansion space */
 
 void
 wapi_init (void);

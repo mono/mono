@@ -54,8 +54,6 @@ OTHER_SRC = \
 	process-private.h	\
 	security.c		\
 	security.h		\
-	shared.c		\
-	shared.h		\
 	sockets.c		\
 	sockets.h		\
 	socket-private.h	\

@@ -16,7 +16,6 @@
 
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/io.h>
-#include <mono/io-layer/shared.h>
 
 #include <mono/utils/mono-os-mutex.h>
 
