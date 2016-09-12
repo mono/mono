@@ -430,7 +430,7 @@ namespace System.Net {
 			string headers_str = headers.ToString ();
 			writer.Write (headers_str);
 			writer.Flush ();
-			int preamble = (encoding.CodePage == 65001) ? 3 : encoding.GetPreamble ().Length;
+			int preamble = encoding.GetPreamble ().Length;
 			if (output_stream == null)
 				output_stream = context.Connection.GetResponseStream ();
 
