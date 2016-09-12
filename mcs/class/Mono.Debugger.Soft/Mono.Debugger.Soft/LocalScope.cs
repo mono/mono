@@ -19,13 +19,13 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		internal int LiveRangeStart {
+		public int LiveRangeStart {
 			get {
 				return live_range_start;
 			}
 		}
 
-		internal int LiveRangeEnd {
+		public int LiveRangeEnd {
 			get {
 				return live_range_end;
 			}
