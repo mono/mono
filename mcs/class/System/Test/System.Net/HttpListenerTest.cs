@@ -534,6 +534,33 @@ namespace MonoTests.System.Net {
 
 			return clientEndPoint;
 		}
+
+		[Test]
+		public void UserHeaderWithDoubleMultiValue ()
+		{
+			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+
+			var l = new HttpListener ();
+			l.Prefixes.Add (uri);
+			l.Start ();
+			l.BeginGetContext (ar => {
+				var ctx = l.EndGetContext (ar);
+
+				var response = ctx.Response;
+				response.Headers.Add ("X-Custom-Header", "A");
+				response.Headers.Add ("X-Custom-Header", "B");
+
+				response.Close ();
+			}, null);
+
+			HttpWebRequest wr = HttpWebRequest.CreateHttp (uri);
+			var resp = wr.GetResponse ();
+			var vls = resp.Headers.GetValues ("X-Custom-Header");
+
+			Assert.AreEqual (2, vls.Length);
+
+			l.Close ();
+		}
 		
 		[Test]
 		public void HttpClientIsDisconnectedCheckForWriteException()

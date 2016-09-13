@@ -670,7 +670,7 @@ namespace System.Net
 						var value = s.Substring (pos_s + 1).Trim ();
 
 						var h = data.Headers;
-						if (h.AllowMultiValues (header)) {
+						if (WebHeaderCollection.AllowMultiValues (header)) {
 							h.AddInternal (header, value);
 						} else  {
 							h.SetInternal (header, value);
