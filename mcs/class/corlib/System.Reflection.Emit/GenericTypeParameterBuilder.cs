@@ -93,6 +93,13 @@ namespace System.Reflection.Emit
 			return tbuilder.InternalResolve ().GetGenericArguments () [index]; 
 		}
 
+		internal override Type RuntimeResolve ()
+		{
+			if (mbuilder != null)
+				return MethodBase.GetMethodFromHandle (mbuilder.MethodHandleInternal, mbuilder.TypeBuilder.RuntimeResolve ().TypeHandle).GetGenericArguments () [index];
+			return tbuilder.RuntimeResolve ().GetGenericArguments () [index]; 
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void initialize ();
 

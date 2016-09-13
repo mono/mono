@@ -721,6 +721,8 @@ namespace System.Reflection.Emit {
 					token = methoddef_tokengen --;
 				else
 					token = memberref_tokengen --;
+			} else if (member is GenericTypeParameterBuilder) {
+				token = typespec_tokengen --;
 			} else
 				throw new NotImplementedException ();
 			if (create_open_instance)
@@ -738,7 +740,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder)
+			if (member is MonoGenericClass || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder)
 				return GetPseudoToken (member, create_open_instance);
 			return getToken (this, member, create_open_instance);
 		}
@@ -814,6 +816,8 @@ namespace System.Reflection.Emit {
 					finished = (member as ConstructorBuilder).RuntimeResolve ();
 				} else if (member is MethodBuilder) {
 					finished = (member as MethodBuilder).RuntimeResolve ();
+				} else if (member is GenericTypeParameterBuilder) {
+					finished = (member as GenericTypeParameterBuilder).RuntimeResolve ();
 				} else {
 					throw new NotImplementedException ();
 				}

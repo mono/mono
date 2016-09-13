@@ -1262,10 +1262,8 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		token = mono_metadata_token_from_dor (
 			mono_dynimage_encode_typedef_or_ref_full (assembly, type, mc->generic_container == NULL || create_open_instance));
 	} else if (strcmp (klass->name, "GenericTypeParameterBuilder") == 0) {
-		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType *)obj, error);
-		return_val_if_nok (error, 0);
-		token = mono_metadata_token_from_dor (
-			mono_image_typedef_or_ref (assembly, type));
+		/* These are handled in managed code */
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "MonoCMethod") == 0 ||
 		   strcmp (klass->name, "MonoMethod") == 0 ||
 		   strcmp (klass->name, "MonoGenericMethod") == 0 ||
@@ -4189,15 +4187,16 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		result = method->mhandle;
 		*handle_class = mono_defaults.methodhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "GenericTypeParameterBuilder") == 0) {
-		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)obj, error);
-		return_val_if_nok (error, NULL);
-		type = mono_class_inflate_generic_type_checked (type, context, error);
-		return_val_if_nok (error, NULL);
-
-		result = mono_class_from_mono_type (type);
-		*handle_class = mono_defaults.typehandle_class;
-		g_assert (result);
-		mono_metadata_free_type (type);
+		static MonoMethod *resolve_method;
+		if (!resolve_method) {
+			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
+			g_assert (m);
+			mono_memory_barrier ();
+			resolve_method = m;
+		}
+		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
+		mono_error_assert_ok (error);
+		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
 	} else if (strcmp (obj->vtable->klass->name, "FieldOnTypeBuilderInst") == 0) {
 		static MonoMethod *resolve_method;
 		if (!resolve_method) {
