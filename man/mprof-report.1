@@ -209,13 +209,8 @@ The following commands are available:
 \f[I]heapshot\f[]: perform a heapshot as soon as possible
 .RE
 .IP \[bu] 2
-\f[I]counters\f[]: sample counters values every 1 second. This allow
-a really lightweight way to have insight in some of the runtime key
-metrics. Counters displayed in non verbose mode are : Methods from AOT,
-Methods JITted using mono JIT, Methods JITted using LLVM, Total time
-spent JITting (sec), User Time, System Time, Total Time, Working Set,
-Private Bytes, Virtual Bytes, Page Faults and CPU Load Average (1min,
-5min and 15min).
+\f[I]nocounters\f[]: disables sampling of runtime and performance
+counters, which is normally done every 1 second.
 .IP \[bu] 2
 \f[I]coverage\f[]: collect code coverage data. This implies enabling
 the \f[I]calls\f[] option.
