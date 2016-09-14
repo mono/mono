@@ -41,15 +41,14 @@ mutex_handle_own (gpointer handle, MonoW32HandleType type, guint32 *statuscode)
 		return FALSE;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p, tid %p, recursion %u",
-		__func__, mono_w32handle_ops_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p, before: [tid: %p, recursion: %d], after: [tid: %p, recursion: %d], abandoned: %s",
+		__func__, mono_w32handle_ops_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion, (gpointer) pthread_self (), mutex_handle->recursion + 1, mutex_handle->abandoned ? "true" : "false");
 
 	mono_thread_info_own_mutex (mono_thread_info_current (), handle);
 
 	mutex_handle->tid = pthread_self ();
 	mutex_handle->recursion++;
 	if (mutex_handle->abandoned) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: mutex handle %p was abandoned", __func__, handle);
 		mutex_handle->abandoned = FALSE;
 		*statuscode = WAIT_ABANDONED_0;
 	}
@@ -77,8 +76,8 @@ mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
 			__func__, mono_w32handle_ops_typename (type), handle, (gpointer) pthread_self ());
 		return TRUE;
 	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p not owned by %p, but locked %d times by %p",
-			__func__, mono_w32handle_ops_typename (type), handle, (gpointer) pthread_self (), mutex_handle->recursion, (gpointer) mutex_handle->tid);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p not owned by %p, tid: %p recursion: %d",
+			__func__, mono_w32handle_ops_typename (type), handle, (gpointer) pthread_self (), (gpointer) mutex_handle->tid, mutex_handle->recursion);
 		return FALSE;
 	}
 }
@@ -363,8 +362,8 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 		return FALSE;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
-		__func__, mono_w32handle_ops_typename (type), handle);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p, tid: %p recursion: %d",
+		__func__, mono_w32handle_ops_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
 	thr_ret = mono_w32handle_lock_handle (handle);
 	g_assert (thr_ret == 0);
@@ -388,8 +387,8 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 		if (mutex_handle->recursion == 0) {
 			mono_thread_info_disown_mutex (mono_thread_info_current (), handle);
 
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unlocking %s handle %p",
-				__func__, mono_w32handle_ops_typename (type), handle);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unlocking %s handle %p, tid: %p recusion : %d",
+				__func__, mono_w32handle_ops_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
 			mutex_handle->tid = 0;
 			mono_w32handle_set_signal_state (handle, TRUE, FALSE);
