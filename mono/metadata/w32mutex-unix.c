@@ -44,10 +44,16 @@ mutex_handle_own (gpointer handle, MonoW32HandleType type, guint32 *statuscode)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p, before: [tid: %p, recursion: %d], after: [tid: %p, recursion: %d], abandoned: %s",
 		__func__, mono_w32handle_ops_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion, (gpointer) pthread_self (), mutex_handle->recursion + 1, mutex_handle->abandoned ? "true" : "false");
 
-	mono_thread_info_own_mutex (mono_thread_info_current (), handle);
+	if (mutex_handle->recursion != 0) {
+		g_assert (pthread_equal (pthread_self (), mutex_handle->tid));
+		mutex_handle->recursion++;
+	} else {
+		mutex_handle->tid = pthread_self ();
+		mutex_handle->recursion = 1;
 
-	mutex_handle->tid = pthread_self ();
-	mutex_handle->recursion++;
+		mono_thread_info_own_mutex (mono_thread_info_current (), mutex_handle);
+	}
+
 	if (mutex_handle->abandoned) {
 		mutex_handle->abandoned = FALSE;
 		*statuscode = WAIT_ABANDONED_0;
