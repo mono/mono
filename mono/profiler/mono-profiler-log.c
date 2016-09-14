@@ -79,6 +79,7 @@ static int sample_freq = 0;
 static int do_mono_sample = 0;
 static int do_debug = 0;
 static int do_coverage = 0;
+static gboolean only_coverage;
 static gboolean debug_coverage = FALSE;
 static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
 static int max_allocated_sample_hits;
@@ -1959,7 +1960,7 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 {
 	process_method_enter_coverage (prof, method);
 
-	if (PROF_TLS_GET ()->call_depth++ <= max_call_depth) {
+	if (!only_coverage && PROF_TLS_GET ()->call_depth++ <= max_call_depth) {
 		ENTER_LOG (&method_entries_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -1975,7 +1976,7 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 static void
 method_leave (MonoProfiler *prof, MonoMethod *method)
 {
-	if (--PROF_TLS_GET ()->call_depth <= max_call_depth) {
+	if (!only_coverage && --PROF_TLS_GET ()->call_depth <= max_call_depth) {
 		ENTER_LOG (&method_exits_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -1991,7 +1992,7 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 static void
 method_exc_leave (MonoProfiler *prof, MonoMethod *method)
 {
-	if (--PROF_TLS_GET ()->call_depth <= max_call_depth) {
+	if (!only_coverage && --PROF_TLS_GET ()->call_depth <= max_call_depth) {
 		ENTER_LOG (&method_exception_exits_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -4788,7 +4789,6 @@ mono_profiler_startup (const char *desc)
 	const char *opt;
 	int calls_enabled = 0;
 	int allocs_enabled = 0;
-	int only_coverage = 0;
 	int events = MONO_PROFILE_GC |
 	             MONO_PROFILE_ALLOCATIONS |
 	             MONO_PROFILE_GC_MOVES |
@@ -4934,7 +4934,7 @@ mono_profiler_startup (const char *desc)
 			continue;
 		}
 		if ((opt = match_option (p, "onlycoverage", NULL)) != p) {
-			only_coverage = 1;
+			only_coverage = TRUE;
 			continue;
 		}
 		if ((opt = match_option (p, "covfilter-file", &val)) != p) {
