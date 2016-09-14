@@ -745,7 +745,7 @@ static char*
 pstrdup (const char *s)
 {
 	int len = strlen (s) + 1;
-	char *p = (char *)malloc (len);
+	char *p = (char *) g_malloc (len);
 	memcpy (p, s, len);
 	return p;
 }
@@ -818,7 +818,7 @@ init_thread (MonoProfiler *prof, gboolean add_to_lls)
 	if (thread)
 		return thread;
 
-	thread = malloc (sizeof (MonoProfilerThread));
+	thread = g_malloc (sizeof (MonoProfilerThread));
 	thread->node.key = thread_id ();
 	thread->profiler = prof;
 	thread->attached = add_to_lls;
@@ -849,7 +849,7 @@ deinit_thread (MonoProfilerThread *thread)
 {
 	g_assert (!thread->attached && "Why are we manually freeing an attached thread?");
 
-	free (thread);
+	g_free (thread);
 	PROF_TLS_SET (NULL);
 }
 
@@ -1020,7 +1020,7 @@ register_method_local (MonoMethod *method, MonoJitInfo *ji)
 	MonoProfilerThread *thread = PROF_TLS_GET ();
 
 	if (!mono_conc_hashtable_lookup (thread->profiler->method_table, method)) {
-		MethodInfo *info = (MethodInfo *) malloc (sizeof (MethodInfo));
+		MethodInfo *info = (MethodInfo *) g_malloc (sizeof (MethodInfo));
 
 		info->method = method;
 		info->ji = ji;
@@ -1128,7 +1128,7 @@ dump_header (MonoProfiler *profiler)
 	const char *arch = mono_config_get_cpu ();
 	const char *os = mono_config_get_os ();
 
-	char *hbuf = malloc (
+	char *hbuf = g_malloc (
 		sizeof (gint32) /* header id */ +
 		sizeof (gint8) /* major version */ +
 		sizeof (gint8) /* minor version */ +
@@ -1169,7 +1169,7 @@ dump_header (MonoProfiler *profiler)
 		fflush (profiler->file);
 	}
 
-	free (hbuf);
+	g_free (hbuf);
 }
 
 /*
@@ -1218,7 +1218,7 @@ free_thread (gpointer p)
 
 	send_buffer (thread);
 
-	free (thread);
+	g_free (thread);
 }
 
 static void
@@ -1774,7 +1774,7 @@ type_name (MonoClass *klass)
 	char buf [1024];
 	char *p;
 	push_nesting (buf, klass);
-	p = (char *)malloc (strlen (buf) + 1);
+	p = (char *) g_malloc (strlen (buf) + 1);
 	strcpy (p, buf);
 	return p;
 }
@@ -2430,7 +2430,7 @@ add_code_pointer (uintptr_t ip)
 		size_code_pages *= 2;
 		if (size_code_pages == 0)
 			size_code_pages = 16;
-		n = (uintptr_t *)calloc (sizeof (uintptr_t) * size_code_pages, 1);
+		n = (uintptr_t *) g_calloc (sizeof (uintptr_t) * size_code_pages, 1);
 		for (i = 0; i < old_size; ++i) {
 			if (code_pages [i])
 				add_code_page (n, size_code_pages, code_pages [i]);
@@ -2846,7 +2846,7 @@ counters_add_agent (MonoCounter *counter)
 		}
 	}
 
-	agent = (MonoCounterAgent *)malloc (sizeof (MonoCounterAgent));
+	agent = (MonoCounterAgent *) g_malloc (sizeof (MonoCounterAgent));
 	agent->counter = counter;
 	agent->value = NULL;
 	agent->value_size = 0;
@@ -3301,7 +3301,7 @@ parse_generic_type_names(char *name)
 	if (name == NULL || *name == '\0')
 		return g_strdup ("");
 
-	if (!(ret = new_name = (char *)calloc (strlen (name) * 4 + 1, sizeof (char))))
+	if (!(ret = new_name = (char *) g_calloc (strlen (name) * 4 + 1, sizeof (char))))
 		return NULL;
 
 	do {
@@ -3439,7 +3439,7 @@ count_queue (MonoLockFreeQueue *queue)
 
 	while ((node = mono_lock_free_queue_dequeue (queue))) {
 		count++;
-		mono_thread_hazardous_try_free (node, free);
+		mono_thread_hazardous_try_free (node, g_free);
 	}
 
 	return count;
@@ -3583,7 +3583,7 @@ process_method_enter_coverage (MonoProfiler *prof, MonoMethod *method)
 static MonoLockFreeQueueNode *
 create_method_node (MonoMethod *method)
 {
-	MethodNode *node = (MethodNode *)g_malloc (sizeof (MethodNode));
+	MethodNode *node = (MethodNode *) g_malloc (sizeof (MethodNode));
 	mono_lock_free_queue_node_init ((MonoLockFreeQueueNode *) node, FALSE);
 	node->method = method;
 
@@ -3723,7 +3723,7 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	image_methods = (MonoLockFreeQueue *)mono_conc_hashtable_lookup (image_to_methods, image);
 
 	if (image_methods == NULL) {
-		image_methods = (MonoLockFreeQueue *)g_malloc (sizeof (MonoLockFreeQueue));
+		image_methods = (MonoLockFreeQueue *) g_malloc (sizeof (MonoLockFreeQueue));
 		mono_lock_free_queue_init (image_methods);
 		mono_os_mutex_lock (&coverage_mutex);
 		mono_conc_hashtable_insert (image_to_methods, image, image_methods);
@@ -3736,7 +3736,7 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	class_methods = (MonoLockFreeQueue *)mono_conc_hashtable_lookup (coverage_classes, klass);
 
 	if (class_methods == NULL) {
-		class_methods = (MonoLockFreeQueue *)g_malloc (sizeof (MonoLockFreeQueue));
+		class_methods = (MonoLockFreeQueue *) g_malloc (sizeof (MonoLockFreeQueue));
 		mono_lock_free_queue_init (class_methods);
 		mono_os_mutex_lock (&coverage_mutex);
 		mono_conc_hashtable_insert (coverage_classes, klass, class_methods);
@@ -3775,7 +3775,7 @@ get_file_content (FILE *stream)
 	if (filesize > MAX_FILE_SIZE)
 	  return NULL;
 
-	buffer = (char *)g_malloc ((filesize + 1) * sizeof (char));
+	buffer = (char *) g_malloc ((filesize + 1) * sizeof (char));
 	while ((bytes_read = fread (buffer + offset, 1, LINE_BUFFER_SIZE, stream)) > 0)
 		offset += bytes_read;
 
@@ -4020,7 +4020,7 @@ new_filename (const char* filename)
 		1900 + ts->tm_year, 1 + ts->tm_mon, ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec);
 	s_date = strlen (time_buf);
 	s_pid = strlen (pid_buf);
-	d = res = (char *)malloc (strlen (filename) + s_date * count_dates + s_pid * count_pids);
+	d = res = (char *) g_malloc (strlen (filename) + s_date * count_dates + s_pid * count_pids);
 	for (p = filename; *p; p++) {
 		if (*p != '%') {
 			*d++ = *p;
@@ -4546,7 +4546,7 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 	MonoProfiler *prof;
 	char *nf;
 	int force_delete = 0;
-	prof = (MonoProfiler *)calloc (1, sizeof (MonoProfiler));
+	prof = (MonoProfiler *) g_calloc (1, sizeof (MonoProfiler));
 
 	prof->args = pstrdup (args);
 	prof->command_port = command_port;
@@ -4564,7 +4564,7 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 		nf = new_filename (filename);
 		if (do_report) {
 			int s = strlen (nf) + 32;
-			char *p = (char *)malloc (s);
+			char *p = (char *) g_malloc (s);
 			snprintf (p, s, "|mprof-report '--out=%s' -", nf);
 			g_free (nf);
 			nf = p;
@@ -4674,7 +4674,7 @@ match_option (const char* p, const char *opt, char **rval)
 				} else {
 					l = end - opt;
 				}
-				val = (char *)malloc (l + 1);
+				val = (char *) g_malloc (l + 1);
 				memcpy (val, opt, l);
 				val [l] = 0;
 				*rval = val;
