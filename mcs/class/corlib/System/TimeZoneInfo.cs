@@ -811,9 +811,16 @@ namespace System
 					return tz.BaseUtcOffset;
 			}
 
-			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime) && tz.IsInDST (tzRule, dstUtcDateTime)) {
+			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime)) {
+				// Replicate what .NET does when given a time which falls into the hour which is lost when
+				// DST starts. isDST should always be true but the offset should be BaseUtcOffset without the
+				// DST delta while in that hour.
 				isDST = true;
-				return tz.BaseUtcOffset + tzRule.DaylightDelta;
+				if (tz.IsInDST (tzRule, dstUtcDateTime)) {
+					return tz.BaseUtcOffset + tzRule.DaylightDelta;
+				} else {
+					return tz.BaseUtcOffset;
+				}
 			}
 
 			return tz.BaseUtcOffset;
@@ -1172,16 +1179,27 @@ namespace System
 					return false;
 			}
 
+			var inDelta = false;
 			for (var i =  transitions.Count - 1; i >= 0; i--) {
 				var pair = transitions [i];
 				DateTime ttime = pair.Key;
 				TimeType ttype = pair.Value;
 
-				if (ttime > date)
+				var delta =  new TimeSpan (0, 0, ttype.Offset) - BaseUtcOffset;
+
+				if ((ttime + delta) > date) {
+					inDelta = ttime <= date;
 					continue;
+				}
 
 				offset =  new TimeSpan (0, 0, ttype.Offset);
-				isDst = ttype.IsDst;
+				if (inDelta) {
+					// Replicate what .NET does when given a time which falls into the hour which is lost when
+					// DST starts. isDST should be true but the offset should be the non-DST offset.
+					isDst = transitions [i - 1].Value.IsDst;
+				} else {
+					isDst = ttype.IsDst;
+				}
 
 				return true;
 			}
