@@ -5023,16 +5023,14 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_set_code_buffer_new_cb (prof_desc, code_buffer_new);
 	mono_profiler_set_exception_cb (prof_desc, throw_exc, method_exc_leave, clause_exc);
 	mono_profiler_set_monitor_cb (prof_desc, monitor_event);
+	mono_profiler_set_coverage_filter_cb (prof_desc, coverage_filter);
+	mono_profiler_set_statistical_cb (prof_desc, mono_sample_hit);
 	mono_profiler_set_runtime_initialized_cb (prof_desc, runtime_initialized);
-
-	if (do_coverage)
-		mono_profiler_set_coverage_filter_cb (prof_desc, coverage_filter);
 
 	if (do_mono_sample && sample_freq) {
 		events |= MONO_PROFILE_STATISTICAL;
 
 		mono_profiler_set_statistical_mode (sampling_mode, sample_freq);
-		mono_profiler_set_statistical_cb (prof_desc, mono_sample_hit);
 	}
 
 	mono_profiler_set_event_flags (prof_desc, (MonoProfileFlags) events);
