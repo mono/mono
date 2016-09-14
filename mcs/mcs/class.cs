@@ -297,6 +297,10 @@ namespace Mono.CSharp
 						throw new InternalErrorException (tc, e);
 					}
 				}
+
+				if (PartialContainer != null && PartialContainer != this) {
+					containers = null;
+				}
 			}
 
 			return true;
@@ -1661,6 +1665,8 @@ namespace Mono.CSharp
 
 		public override void ExpandBaseInterfaces ()
 		{
+			DoResolveTypeParameters ();
+
 			if (!IsPartialPart)
 				DoExpandBaseInterfaces ();
 
@@ -1766,8 +1772,6 @@ namespace Mono.CSharp
 		protected override void DoDefineContainer ()
 		{
 			DefineBaseTypes ();
-
-			DoResolveTypeParameters ();
 		}
 
 		//
