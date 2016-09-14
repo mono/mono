@@ -222,8 +222,7 @@ static gpointer namedevent_create (gboolean manual, gboolean initial, const guni
 		/* Not an error, but this is how the caller is informed that the event wasn't freshly created */
 		SetLastError (ERROR_ALREADY_EXISTS);
 
-		/* this is used as creating a new handle */
-		mono_w32handle_ref (handle);
+		/* _wapi_search_handle_namespace already adds a ref to the handle */
 	} else {
 		/* A new named event */
 		struct _WapiHandle_namedevent namedevent_handle;

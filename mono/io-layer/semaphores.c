@@ -222,8 +222,7 @@ static gpointer namedsem_create (gint32 initial, gint32 max, const gunichar2 *na
 		/* Not an error, but this is how the caller is informed that the semaphore wasn't freshly created */
 		SetLastError (ERROR_ALREADY_EXISTS);
 
-		/* this is used as creating a new handle */
-		mono_w32handle_ref (handle);
+		/* _wapi_search_handle_namespace already adds a ref to the handle */
 	} else {
 		/* A new named semaphore */
 		struct _WapiHandle_namedsem namedsem_handle;
