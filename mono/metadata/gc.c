@@ -53,6 +53,19 @@ typedef struct DomainFinalizationReq {
 	MonoCoopSem done;
 } DomainFinalizationReq;
 
+/*
+ * Internal flags that coreclr uses. These are passed from managed world, synchronized
+ * with mscorlib/system/gc.cs. We convert these flags to MonoGCCollectionFlags which
+ * are mono specific and we properly handle.
+ */
+enum InternalGCCollectionMode
+{
+    INTERNAL_GC_COLLECTION_MODE_NON_BLOCKING = 0x00000001,
+    INTERNAL_GC_COLLECTION_MODE_BLOCKING = 0x00000002,
+    INTERNAL_GC_COLLECTION_MODE_OPTIMIZED = 0x00000004,
+    INTERNAL_GC_COLLECTION_MODE_COMPACTING = 0x00000008,
+};
+
 static gboolean gc_disabled;
 
 static gboolean finalizing_root_domain;
@@ -572,9 +585,14 @@ done:
 }
 
 void
-ves_icall_System_GC_InternalCollect (int generation)
+ves_icall_System_GC_InternalCollect (int generation, gint32 internal_flags)
 {
-	mono_gc_collect (generation);
+	MonoGCCollectionFlags mono_flags = MONO_GC_STW;
+
+	if (internal_flags & INTERNAL_GC_COLLECTION_MODE_BLOCKING)
+		mono_flags |= MONO_GC_FORCE_SERIAL;
+
+	mono_gc_collect_full (generation, mono_flags);
 }
 
 gint64

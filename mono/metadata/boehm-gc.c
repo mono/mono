@@ -282,6 +282,12 @@ mono_gc_collect (int generation)
 	GC_gcollect ();
 }
 
+void
+mono_gc_collect_full (int generation, MonoGCCollectionFlags flags)
+{
+	mono_gc_collect (generation);
+}
+
 /**
  * mono_gc_max_generation:
  *

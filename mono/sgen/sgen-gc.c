@@ -2212,20 +2212,22 @@ sgen_ensure_free_space (size_t size, int generation)
 
 	if (generation_to_collect == -1)
 		return;
-	sgen_perform_collection (size, generation_to_collect, reason, FALSE, TRUE);
+	sgen_perform_collection (size, generation_to_collect, reason, MONO_GC_STW);
 }
 
 /*
  * LOCKING: Assumes the GC lock is held.
  */
 void
-sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, MonoGCCollectionFlags flags)
 {
 	TV_DECLARE (gc_total_start);
 	TV_DECLARE (gc_total_end);
 	int overflow_generation_to_collect = -1;
 	int oldest_generation_collected = generation_to_collect;
 	const char *overflow_reason = NULL;
+	gboolean wait_to_finish = flags & MONO_GC_FORCE_SERIAL;
+	gboolean stw = flags & MONO_GC_STW;
 	gboolean finish_concurrent = concurrent_collection_in_progress && (major_should_finish_concurrent_collection () || generation_to_collect == GENERATION_OLD);
 
 	binary_protocol_collection_requested (generation_to_collect, requested_size, wait_to_finish ? 1 : 0);
@@ -2668,12 +2670,12 @@ sgen_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size, unsign
  */
 
 void
-sgen_gc_collect (int generation)
+sgen_gc_collect (int generation, MonoGCCollectionFlags flags)
 {
 	LOCK_GC;
 	if (generation > 1)
 		generation = 1;
-	sgen_perform_collection (0, generation, "user request", TRUE, TRUE);
+	sgen_perform_collection (0, generation, "user request", flags);
 	UNLOCK_GC;
 }
 

@@ -844,7 +844,7 @@ mono_gc_clear_domain (MonoDomain * domain)
 	sgen_stop_world (0);
 
 	if (sgen_concurrent_collection_in_progress ())
-		sgen_perform_collection (0, GENERATION_OLD, "clear domain", TRUE, FALSE);
+		sgen_perform_collection (0, GENERATION_OLD, "clear domain", MONO_GC_FORCE_SERIAL);
 	SGEN_ASSERT (0, !sgen_concurrent_collection_in_progress (), "We just ordered a synchronous collection.  Why are we collecting concurrently?");
 
 	major_collector.finish_sweeping ();
@@ -2575,7 +2575,14 @@ mono_gc_precise_stack_mark_enabled (void)
 void
 mono_gc_collect (int generation)
 {
-	sgen_gc_collect (generation);
+	/* We do a blocking serial collection for backward compatibility */
+	sgen_gc_collect (generation, MONO_GC_STW | MONO_GC_FORCE_SERIAL);
+}
+
+void
+mono_gc_collect_full (int generation, MonoGCCollectionFlags flags)
+{
+	sgen_gc_collect (generation, flags);
 }
 
 int
