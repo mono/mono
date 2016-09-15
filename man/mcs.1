@@ -18,7 +18,8 @@ prepending the @ symbol to the response file name.
 The 
 .I mcs
 compiler is used to compile against the latest Mono Base Class Library
-version and fully implements C# 1.0, 2.0, 3.0 and 4.0 specifications.
+version and fully implements C# 1.0, 2.0, 3.0, 4.0, 5.0 and 6.0
+specifications.
 .PP
 See the section on packages for more information.
 .PP
@@ -163,7 +164,7 @@ The possible values are:
 .TP
 .I "Default"
 Instruct compiler to use the latest version. Equivalent is to omit the
-switch (this currently defaults to the C# 4.0 language specification).
+switch (this currently defaults to the C# 6.0 language specification).
 .TP
 .I "ISO-1"
 Restrict compiler to use only first ISO standardized features.
@@ -181,6 +182,14 @@ Restrict the compiler to use only the features available in C# 3.0
 .TP
 .I "4"
 Restrict the compiler to use only the features available in C# 4.0
+specification.
+.TP
+.I "5"
+Restrict the compiler to use only the features available in C# 5.0
+specification.
+.TP
+.I "6"
+Restrict the compiler to use only the features available in C# 6.0
 specification.
 .TP
 .I "experimental"
@@ -510,7 +519,7 @@ the MIT X11.  Please read the accompanying `COPYING' file for details.
 Alternative licensing for the compiler is available from Xamarin.
 .PP
 .SH SEE ALSO
-csharp(1), mdb(1), mono(1), mopen(1), pkg-config(1), sn(1)
+csharp(1), mono(1), pkg-config(1), sn(1)
 .PP
 .SH BUGS
 To report bugs in the compiler, you must file them on our bug tracking
