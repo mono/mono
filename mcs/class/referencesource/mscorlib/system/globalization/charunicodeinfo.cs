@@ -46,7 +46,9 @@ namespace System.Globalization {
         internal const int UNICODE_CATEGORY_OFFSET = 0;
         internal const int BIDI_CATEGORY_OFFSET = 1;
 
+#pragma warning disable 414
         static bool s_initialized = InitTable();
+#pragma warning restore
 
         // The native pointer to the 12:4:4 index table of the Unicode cateogry data.
         [SecurityCritical]

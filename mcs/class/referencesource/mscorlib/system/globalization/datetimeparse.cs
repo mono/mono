@@ -4001,8 +4001,10 @@ new DS[] { DS.ERROR, DS.TX_NNN,  DS.TX_NNN,  DS.TX_NNN,  DS.ERROR,   DS.ERROR,  
             parseInfo.fAllowInnerWhite = ((styles & DateTimeStyles.AllowInnerWhite) != 0);
             parseInfo.fAllowTrailingWhite = ((styles & DateTimeStyles.AllowTrailingWhite) != 0);
 
+#if !MONO
             // We need the original values of the following two below.
             String originalFormat = formatParam;
+#endif
 
             if (formatParam.Length == 1) {
                 if (((result.flags & ParseFlags.CaptureOffset) != 0) && formatParam[0] == 'U') {

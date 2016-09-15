@@ -50,7 +50,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
         internal Object m_topObject;
         internal Header[] headers;
         internal HeaderHandler handler;
+#pragma warning disable 649
         internal SerObjectInfoInit serObjectInfoInit;
+#pragma warning restore
         internal IFormatterConverter m_formatterConverter;
 
         // Stack of Object ParseRecords
@@ -669,7 +671,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
         {
             SerTrace.Log( this, "ParseArray Entry");
 
+#if !MONO
             long genId = pr.PRobjectId;
+#endif
 
             if (pr.PRarrayTypeEnum == InternalArrayTypeE.Base64)
             {
@@ -1055,9 +1059,11 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 
             ParseRecord objectPr = (ParseRecord)stack.Peek();
+#if !MONO
             String objName = null;
             if (objectPr != null)
                 objName = objectPr.PRname;
+#endif
 
 #if _DEBUG                        
             SerTrace.Log( this, "ParseMember ",objectPr.PRobjectId," ",pr.PRname);
@@ -1523,7 +1529,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                     TypeInformation typeInfo = BinaryFormatter.GetTypeInformation(resolvedType);
                     if (typeInfo.HasTypeForwardedFrom)
                     {
+#pragma warning disable 219
                         Assembly typeFowardedFromAssembly = null;
+#pragma warning restore
                         try
                         {
                             // if this Assembly.Load failed, we still want to throw security exception

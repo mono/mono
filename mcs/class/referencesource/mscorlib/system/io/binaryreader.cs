@@ -421,7 +421,7 @@ namespace System.IO {
             // put in InternalReadChars.   
             int charsRead = 0;
             int numBytes = 0;
-            long posSav = posSav = 0;
+            long posSav = 0;
             
             if (m_stream.CanSeek)
                 posSav = m_stream.Position;

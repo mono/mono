@@ -398,6 +398,7 @@ namespace System.Globalization {
         [OptionalField(VersionAdded = 1)]
         private bool   m_useUserOverride;
 #if !FEATURE_CORECLR
+#pragma warning disable 169
         [OptionalField(VersionAdded = 1)]
         private bool bUseCalendarInfo;
         [OptionalField(VersionAdded = 1)]
@@ -406,6 +407,7 @@ namespace System.Globalization {
         internal bool m_isDefaultCalendar;                // NEVER USED, DO NOT USE THIS! (Serialized in Whidbey)
         [OptionalField(VersionAdded = 2)]
         private static volatile Hashtable s_calendarNativeNames;   // NEVER USED, DO NOT USE THIS! (Serialized in Whidbey)
+#pragma warning restore
 #endif // !FEATURE_CORECLR
 
         // This was synthesized by Whidbey so we knew what words might appear in the middle of a date string
@@ -1515,10 +1517,11 @@ namespace System.Globalization {
                 ClearTokenHashTable();
             }
         }
-
+#if !MONO
         // Whitespaces that we allow in the month names.
         // U+00a0 is non-breaking space.
         static char[] MonthSpaces = {' ', '\u00a0'};
+#endif
 
         internal bool HasSpacesInMonthNames {
             get {

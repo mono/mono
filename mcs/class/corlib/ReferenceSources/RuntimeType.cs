@@ -140,15 +140,15 @@ namespace System
 
 		internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
 		{
-			bool bNeedSecurityCheck = true;
-			bool bCanBeCached = false;
-			bool bSecurityCheckOff = false;
+			//bool bNeedSecurityCheck = true;
+			//bool bCanBeCached = false;
+			//bool bSecurityCheckOff = false;
 
 			if (!skipCheckThis)
 				CreateInstanceCheckThis();
 
-			if (!fillCache)
-				bSecurityCheckOff = true;
+			//if (!fillCache)
+			//	bSecurityCheckOff = true;
 
 			return CreateInstanceMono (!publicOnly);
 		}

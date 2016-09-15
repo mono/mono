@@ -97,13 +97,10 @@ namespace System
 		static Console ()
 		{
 			if (Environment.IsRunningOnWindows) {
+#if !MOBILE				
 				//
 				// On Windows, follow the Windows tradition
 				//
-#if MOBILE
-				// should never happen since Moonlight does not run on windows
-				inputEncoding = outputEncoding = Encoding.Default;
-#else			
 				try {
 					inputEncoding = Encoding.GetEncoding (WindowsConsole.GetInputCodePage ());
 					outputEncoding = Encoding.GetEncoding (WindowsConsole.GetOutputCodePage ());

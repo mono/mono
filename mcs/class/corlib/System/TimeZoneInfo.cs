@@ -105,10 +105,10 @@ namespace System
 
 			try {
 				ret = readlink (path, buf, buf.Length);
-			} catch (DllNotFoundException e) {
+			} catch (DllNotFoundException) {
 				readlinkNotFound = true;
 				return null;
-			} catch (EntryPointNotFoundException e) {
+			} catch (EntryPointNotFoundException) {
 				readlinkNotFound = true;
 				return null;
 			}
