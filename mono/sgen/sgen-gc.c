@@ -3123,6 +3123,12 @@ sgen_gc_init (void)
 	if (major_collector.needs_thread_pool)
 		sgen_workers_init (1);
 
+	if (!soft_limit) {
+		gint64 ram_size = mono_determine_physical_ram_size ();
+		if (ram_size > 0)
+			soft_limit = ram_size * SGEN_SOFT_HEAP_LIMIT_RATIO;
+	}
+
 	sgen_memgov_init (max_heap, soft_limit, debug_print_allowance, allowance_ratio, save_target);
 
 	memset (&remset, 0, sizeof (remset));
