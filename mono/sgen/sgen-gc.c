@@ -2242,6 +2242,11 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 
 	// FIXME: extract overflow reason
 	// FIXME: minor overflow for concurrent case
+	if (finish_concurrent) {
+		major_finish_concurrent_collection (wait_to_finish);
+		oldest_generation_collected = GENERATION_OLD;
+	}
+
 	if (generation_to_collect == GENERATION_NURSERY && !finish_concurrent) {
 		if (concurrent_collection_in_progress)
 			major_update_concurrent_collection ();
@@ -2250,12 +2255,10 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 			overflow_generation_to_collect = GENERATION_OLD;
 			overflow_reason = "Minor overflow";
 		}
-	} else if (finish_concurrent) {
-		major_finish_concurrent_collection (wait_to_finish);
-		oldest_generation_collected = GENERATION_OLD;
-	} else {
-		SGEN_ASSERT (0, generation_to_collect == GENERATION_OLD, "We should have handled nursery collections above");
+	} else if (generation_to_collect == GENERATION_OLD && (wait_to_finish || !finish_concurrent)) {
+		/* If we finished a concurrent collection, we start a new serial major only if we are forced */
 		if (major_collector.is_concurrent && !wait_to_finish) {
+			SGEN_ASSERT (0, !finish_concurrent, "Why are we starting a new concurrent collection if we just finished one ?");
 			collect_nursery ("Concurrent start", FALSE, NULL);
 			major_start_concurrent_collection (reason);
 			oldest_generation_collected = GENERATION_NURSERY;
