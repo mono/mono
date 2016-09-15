@@ -397,12 +397,12 @@ namespace System.ServiceModel.Channels
 			return GetDetail<T> (new DataContractSerializer (typeof (T)));
 		}
 
-		public T GetDetail<T> (XmlObjectSerializer formatter)
+		public T GetDetail<T> (XmlObjectSerializer serializer)
 		{
 			if (!HasDetail)
 				throw new InvalidOperationException ("This message does not have details.");
 
-			return (T) formatter.ReadObject (GetReaderAtDetailContents ());
+			return (T) serializer.ReadObject (GetReaderAtDetailContents ());
 		}
 
 		public XmlDictionaryReader GetReaderAtDetailContents ()

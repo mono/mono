@@ -97,7 +97,9 @@ namespace System.IO {
             [System.Security.SecuritySafeCritical]
             get 
             {
+#pragma warning disable 219
                 String demandDir;
+#pragma warning restore
                 if (this is DirectoryInfo)
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else
@@ -119,7 +121,9 @@ namespace System.IO {
             [System.Security.SecurityCritical]
             get
             {
+#pragma warning disable 219
                 String demandDir;
+#pragma warning restore
                 if (this is DirectoryInfo)
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else

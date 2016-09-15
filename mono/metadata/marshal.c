@@ -95,7 +95,7 @@ static void
 emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object);
 
 static void
-emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, MonoMarshalNative string_encoding);
+emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int offset_of_first_child_field, MonoMarshalNative string_encoding);
 
 static void 
 mono_struct_delete_old (MonoClass *klass, char *ptr);
@@ -778,7 +778,7 @@ mono_free_lparray (MonoArray *array, gpointer* nativeArray)
 	if (klass->element_class->byval_arg.type == MONO_TYPE_CLASS) {
 		for(i = 0; i < array->max_length; ++i)
 			mono_marshal_free_ccw (mono_array_get (array, MonoObject*, i));
-		free(nativeArray);
+		g_free (nativeArray);
 	}
 #endif
 }
@@ -1940,15 +1940,26 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 	}
 }
 
+static int offset_of_first_nonstatic_field(MonoClass *klass)
+{
+	int i;
+	for (i = 0; i < klass->field.count; i++) {
+		if (!(klass->fields[i].type->attrs & FIELD_ATTRIBUTE_STATIC) && !mono_field_is_deleted (&klass->fields[i]))
+			return klass->fields[i].offset - sizeof (MonoObject);
+	}
+
+	return 0;
+}
+
 static void
 emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object,
-					   MonoMarshalNative string_encoding)
+						int offset_of_first_child_field, MonoMarshalNative string_encoding)
 {
 	MonoMarshalType *info;
 	int i;
 
 	if (klass->parent)
-		emit_struct_conv(mb, klass->parent, to_object);
+		emit_struct_conv_full (mb, klass->parent, to_object, offset_of_first_nonstatic_field (klass), string_encoding);
 
 	info = mono_marshal_load_type_info (klass);
 
@@ -1956,16 +1967,21 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		return;
 
 	if (klass->blittable) {
-		int msize = mono_class_value_size (klass, NULL);
-		g_assert (msize == info->native_size);
+		int usize = mono_class_value_size (klass, NULL);
+		g_assert (usize == info->native_size);
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_icon (mb, msize);
+		mono_mb_emit_icon (mb, usize);
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
 
-		mono_mb_emit_add_to_local (mb, 0, msize);
-		mono_mb_emit_add_to_local (mb, 1, msize);
+		if (to_object) {
+			mono_mb_emit_add_to_local (mb, 0, usize);
+			mono_mb_emit_add_to_local (mb, 1, offset_of_first_child_field);
+		} else {
+			mono_mb_emit_add_to_local (mb, 0, offset_of_first_child_field);
+			mono_mb_emit_add_to_local (mb, 1, usize);
+		}
 		return;
 	}
 
@@ -2178,7 +2194,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 static void
 emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 {
-	emit_struct_conv_full (mb, klass, to_object, (MonoMarshalNative)-1);
+	emit_struct_conv_full (mb, klass, to_object, 0, (MonoMarshalNative)-1);
 }
 
 static void
@@ -3267,7 +3283,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	gboolean closed_over_null = FALSE;
 	MonoGenericContext *ctx = NULL;
 	MonoGenericContainer *container = NULL;
-	MonoMethod *orig_method = NULL;
+	MonoMethod *orig_method = method;
 	WrapperInfo *info;
 	WrapperSubtype subtype = WRAPPER_SUBTYPE_NONE;
 	gboolean found;
@@ -3311,7 +3327,6 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	 * For generic delegates, create a generic wrapper, and return an instance to help AOT.
 	 */
 	if (method->is_inflated && subtype == WRAPPER_SUBTYPE_NONE) {
-		orig_method = method;
 		ctx = &((MonoMethodInflated*)method)->context;
 		method = ((MonoMethodInflated*)method)->declaring;
 
@@ -3560,7 +3575,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 #endif /* DISABLE_JIT */
 
 	info = mono_wrapper_info_create (mb, subtype);
-	info->d.delegate_invoke.method = method;
+	info->d.delegate_invoke.method = orig_method;
 
 	if (ctx) {
 		MonoMethod *def;
@@ -6355,7 +6370,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_stloc (mb, 1);
 
 				/* emit valuetype conversion code */
-				emit_struct_conv_full (mb, eklass, FALSE, eklass == mono_defaults.char_class ? encoding : (MonoMarshalNative)-1);
+				emit_struct_conv_full (mb, eklass, FALSE, 0, eklass == mono_defaults.char_class ? encoding : (MonoMarshalNative)-1);
 			}
 
 			mono_mb_emit_add_to_local (mb, index_var, 1);
@@ -6500,7 +6515,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 					mono_mb_emit_stloc (mb, 1);
 
 					/* emit valuetype conversion code */
-					emit_struct_conv_full (mb, eklass, TRUE, eklass == mono_defaults.char_class ? encoding : (MonoMarshalNative)-1);
+					emit_struct_conv_full (mb, eklass, TRUE, 0, eklass == mono_defaults.char_class ? encoding : (MonoMarshalNative)-1);
 				}
 
 				if (need_free) {
@@ -10967,7 +10982,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString
 	if (!tres)
 		return tres;
 
-	len = strlen (tres) + 1;
+	/*
+	 * mono_string_to_utf8_checked() returns a memory area at least as large as the size of the
+	 * MonoString, even if it contains NULL characters. The copy we allocate here has to be equally
+	 * large.
+	 */
+	len = MAX (strlen (tres) + 1, string->length);
 	ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
 	memcpy (ret, tres, len);
 	g_free (tres);

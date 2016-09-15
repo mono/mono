@@ -45,9 +45,9 @@ namespace System.ServiceModel.Channels
 			return new DefaultAddressHeader (value);
 		}
 
-		public static AddressHeader CreateAddressHeader (object value, XmlObjectSerializer formatter)
+		public static AddressHeader CreateAddressHeader (object value, XmlObjectSerializer serializer)
 		{
-			return new DefaultAddressHeader (value, formatter);
+			return new DefaultAddressHeader (value, serializer);
 		}
 
 		public static AddressHeader CreateAddressHeader (string name, string ns, object value)
@@ -56,11 +56,11 @@ namespace System.ServiceModel.Channels
 		}
 
 		public static AddressHeader CreateAddressHeader (string name, string ns, object value, 
-								 XmlObjectSerializer formatter)
+								 XmlObjectSerializer serializer)
 		{
-			if (formatter == null)
-				throw new ArgumentNullException ("formatter");
-			return new DefaultAddressHeader (name, ns, value, formatter);
+			if (serializer == null)
+				throw new ArgumentNullException ("serializer");
+			return new DefaultAddressHeader (name, ns, value, serializer);
 		}
 
 		public override bool Equals (object obj)
@@ -93,9 +93,9 @@ namespace System.ServiceModel.Channels
 			return GetValue<T> (new DataContractSerializer (typeof (T)));
 		}
 
-		public T GetValue<T> (XmlObjectSerializer formatter)
+		public T GetValue<T> (XmlObjectSerializer serializer)
 		{
-			return (T) formatter.ReadObject (GetAddressHeaderReader ());
+			return (T) serializer.ReadObject (GetAddressHeaderReader ());
 		}
 
 		protected abstract void OnWriteAddressHeaderContents (XmlDictionaryWriter writer);

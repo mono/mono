@@ -10952,9 +10952,18 @@ namespace Mono.CSharp
 
 		#region IBaseMembersProvider Members
 
-		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec baseType)
+		IList<MemberSpec> OverloadResolver.IBaseMembersProvider.GetBaseMembers (TypeSpec type)
 		{
-			return baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
+			var baseType = type.BaseType;
+			var members = baseType == null ? null : MemberCache.FindMembers (baseType, MemberCache.IndexerNameAlias, false);
+
+			if (members == null && !type.IsInterface) {
+				var tps = queried_type as TypeParameterSpec;
+				if (tps != null)
+					members = MemberCache.FindInterfaceMembers (tps, MemberCache.IndexerNameAlias);
+			}
+
+			return members;
 		}
 
 		IParametersMember OverloadResolver.IBaseMembersProvider.GetOverrideMemberParameters (MemberSpec member)
@@ -12353,6 +12362,7 @@ namespace Mono.CSharp
 			int errors = ec.Report.Errors;
 			type.CreateContainer ();
 			type.DefineContainer ();
+			type.ExpandBaseInterfaces ();
 			type.Define ();
 			if ((ec.Report.Errors - errors) == 0) {
 				parent.Module.AddAnonymousType (type);

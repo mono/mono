@@ -1145,7 +1145,7 @@ arm64_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	/* Trampoline argument */
 	arm_ldrx (code, ARMREG_IP1, ARMREG_IP0, 0);
 
-	/* Same as arch_emit_imt_thunk () */
+	/* Same as arch_emit_imt_trampoline () */
 	labels [0] = code;
 	arm_ldrx (code, ARMREG_IP0, ARMREG_IP1, 0);
 	arm_cmpx (code, ARMREG_IP0, MONO_ARCH_RGCTX_REG);
@@ -1177,7 +1177,7 @@ arm64_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	emit_code_bytes (acfg, buf, code - buf);
 
 	common_tramp_size = code - buf;
-	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT_THUNK] = common_tramp_size;
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT] = common_tramp_size;
 
 	arm64_emit_tramp_page_specific_code (acfg, pagesize, common_tramp_size, specific_tramp_size);
 }
@@ -1215,7 +1215,7 @@ arm64_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp
 }
 
 static void
-arm64_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
+arm64_emit_imt_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
 {
 	guint8 buf [128];
 	guint8 *code, *labels [16];
@@ -1758,7 +1758,7 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_SPECIFIC] = 16;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_STATIC_RGCTX] = 16;
-	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT_THUNK] = 72;
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT] = 72;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_GSHAREDVT_ARG] = 16;
 
 	/* Unwind info for specifc trampolines */
@@ -2133,9 +2133,9 @@ arch_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp_
 }	
 
 /*
- * arch_emit_imt_thunk:
+ * arch_emit_imt_trampoline:
  *
- *   Emit an IMT thunk usable in full-aot mode. The thunk uses 1 got slot which
+ *   Emit an IMT trampoline usable in full-aot mode. The trampoline uses 1 got slot which
  * points to an array of pointer pairs. The pairs of the form [key, ptr], where
  * key is the IMT key, and ptr holds the address of a memory location holding
  * the address to branch to if the IMT arg matches the key. The array is 
@@ -2144,7 +2144,7 @@ arch_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp_
  * TRAMP_SIZE is set to the size of the emitted trampoline.
  */
 static void
-arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
+arch_emit_imt_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
 {
 #if defined(TARGET_AMD64)
 	guint8 *buf, *code;
@@ -2333,7 +2333,7 @@ arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
 
 	*tramp_size = code - buf + 4;
 #elif defined(TARGET_ARM64)
-	arm64_emit_imt_thunk (acfg, offset, tramp_size);
+	arm64_emit_imt_trampoline (acfg, offset, tramp_size);
 #elif defined(TARGET_POWERPC)
 	guint8 buf [128];
 	guint8 *code, *labels [16];
@@ -4327,13 +4327,19 @@ gboolean mono_aot_mode_is_full (MonoAotOptions *opts)
 	return opts->mode == MONO_AOT_MODE_FULL;
 }
 
+static
+gboolean mono_aot_mode_is_hybrid (MonoAotOptions *opts)
+{
+	return opts->mode == MONO_AOT_MODE_HYBRID;
+}
+
 static void add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth, const char *ref);
 
 static void
 add_generic_class (MonoAotCompile *acfg, MonoClass *klass, gboolean force, const char *ref)
 {
 	/* This might lead to a huge code blowup so only do it if neccesary */
-	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !force)
+	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !mono_aot_mode_is_hybrid (&acfg->aot_opts) && !force)
 		return;
 
 	add_generic_class_with_depth (acfg, klass, 0, ref);
@@ -6704,7 +6710,7 @@ emit_trampolines (MonoAotCompile *acfg)
 		 * These include the following:
 		 * - specific trampolines
 		 * - static rgctx invoke trampolines
-		 * - imt thunks
+		 * - imt trampolines
 		 * These trampolines have the same code, they are parameterized by GOT 
 		 * slots. 
 		 * They are defined in this file, in the arch_... routines instead of
@@ -6740,8 +6746,8 @@ emit_trampolines (MonoAotCompile *acfg)
 			case MONO_AOT_TRAMP_STATIC_RGCTX:
 				sprintf (symbol, "static_rgctx_trampolines");
 				break;
-			case MONO_AOT_TRAMP_IMT_THUNK:
-				sprintf (symbol, "imt_thunks");
+			case MONO_AOT_TRAMP_IMT:
+				sprintf (symbol, "imt_trampolines");
 				break;
 			case MONO_AOT_TRAMP_GSHAREDVT_ARG:
 				sprintf (symbol, "gsharedvt_arg_trampolines");
@@ -6772,8 +6778,8 @@ emit_trampolines (MonoAotCompile *acfg)
 					arch_emit_static_rgctx_trampoline (acfg, tramp_got_offset, &tramp_size);				
 					tramp_got_offset += 2;
 					break;
-				case MONO_AOT_TRAMP_IMT_THUNK:
-					arch_emit_imt_thunk (acfg, tramp_got_offset, &tramp_size);
+				case MONO_AOT_TRAMP_IMT:
+					arch_emit_imt_trampoline (acfg, tramp_got_offset, &tramp_size);
 					tramp_got_offset += 1;
 					break;
 				case MONO_AOT_TRAMP_GSHAREDVT_ARG:
@@ -8363,7 +8369,7 @@ emit_code (MonoAotCompile *acfg)
 		method = cfg->orig_method;
 
 		/* Emit unbox trampoline */
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 			sprintf (symbol, "ut_%d", get_method_index (acfg, method));
 
 			emit_section_change (acfg, ".text", 0);
@@ -8445,11 +8451,7 @@ emit_code (MonoAotCompile *acfg)
 		int call_size;
 
 		if (acfg->cfgs [i]) {
-			if (acfg->aot_opts.llvm_only && acfg->cfgs [i]->compile_llvm)
-				/* Obtained by calling a generated function in the LLVM image */
-				arch_emit_direct_call (acfg, symbol, FALSE, FALSE, NULL, &call_size);
-			else
-				arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
+			arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
 		} else {
 			arch_emit_direct_call (acfg, symbol, FALSE, FALSE, NULL, &call_size);
 		}
@@ -8478,7 +8480,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 			index = get_method_index (acfg, method);
 
 			emit_int32 (acfg, index);
@@ -8508,7 +8510,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
 			int call_size;
 
@@ -8685,7 +8687,7 @@ mono_aot_method_hash (MonoMethod *method)
 		break;
 	}
 	
-	free (hashes_start);
+	g_free (hashes_start);
 	
 	return c;
 }
@@ -9468,7 +9470,7 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	if (acfg->num_trampoline_got_entries) {
 		symbols [sindex ++] = "specific_trampolines";
 		symbols [sindex ++] = "static_rgctx_trampolines";
-		symbols [sindex ++] = "imt_thunks";
+		symbols [sindex ++] = "imt_trampolines";
 		symbols [sindex ++] = "gsharedvt_arg_trampolines";
 	} else {
 		symbols [sindex ++] = NULL;
@@ -9775,7 +9777,6 @@ compile_methods (MonoAotCompile *acfg)
 		HANDLE handle;
 		gpointer *user_data;
 		MonoMethod **methods;
-		MonoThreadParm tp;
 
 		methods_len = acfg->methods->len;
 
@@ -9806,16 +9807,14 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [1] = acfg;
 			user_data [2] = frag;
 			
-			tp.priority = MONO_THREAD_PRIORITY_NORMAL;
-			tp.stack_size = 0;
-			tp.creation_flags = 0;
-			handle = mono_threads_create_thread (compile_thread_main, (gpointer) user_data, &tp, NULL);
+			handle = mono_threads_create_thread (compile_thread_main, (gpointer) user_data, 0, NULL);
 			g_ptr_array_add (threads, handle);
 		}
 		g_free (methods);
 
 		for (i = 0; i < threads->len; ++i) {
 			WaitForSingleObjectEx (g_ptr_array_index (threads, i), INFINITE, FALSE);
+			mono_threads_close_thread_handle (g_ptr_array_index (threads, i));
 		}
 	} else {
 		methods_len = 0;
@@ -9964,7 +9963,7 @@ compile_asm (MonoAotCompile *acfg)
 		wrap_path (g_strdup_printf ("%s.o", acfg->tmpfname)), ld_flags);
 #else
 	// Default (linux)
-	char *args = g_strdup_printf ("%s %s -shared -o %s %s %s %s", tool_prefix, LD_OPTIONS,
+	char *args = g_strdup_printf ("%s -shared -o %s %s %s %s", LD_OPTIONS,
 		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
 		wrap_path (g_strdup_printf ("%s.o", acfg->tmpfname)), ld_flags);
 
@@ -10433,10 +10432,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		aot_printerrf (acfg, "--aot=llvmonly requires a runtime that supports gsharedvt.\n");
 		return 1;
 #endif
+#ifndef ENABLE_LLVM
+		aot_printerrf (acfg, "--aot=llvmonly requires a runtime compiled with llvm support.\n");
+		return 1;
+#endif
 	}
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) {
+	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts)) {
 		acfg->opts |= MONO_OPT_GSHAREDVT;
 		opts |= MONO_OPT_GSHAREDVT;
 	}
@@ -10532,7 +10535,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #ifdef MONO_ARCH_GSHARED_SUPPORTED
 	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.nrgctx_trampolines : 0;
 #endif
-	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.nimt_trampolines : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_IMT] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.nimt_trampolines : 0;
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
 		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;

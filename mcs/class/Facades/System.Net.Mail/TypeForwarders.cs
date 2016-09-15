@@ -33,7 +33,9 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.MailMessage))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.MailPriority))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.SmtpAccess))]
+#pragma warning disable 618
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.SmtpClient))]
+#pragma warning restore
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.SmtpDeliveryFormat))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.SmtpDeliveryMethod))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Mail.SmtpException))]

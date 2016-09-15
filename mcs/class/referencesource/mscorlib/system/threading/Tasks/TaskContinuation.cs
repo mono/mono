@@ -550,7 +550,9 @@ namespace System.Threading.Tasks
         /// <summary>The action to invoke.</summary>
         protected readonly Action m_action;
 
+#if !MONO
         protected int m_continuationId;
+#endif
 
         /// <summary>Initializes the continuation.</summary>
         /// <param name="action">The action to invoke. Must not be null.</param>

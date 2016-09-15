@@ -531,29 +531,29 @@ namespace System.ServiceModel.Channels
 #endif
 
 		public static SecurityBindingElement 
-			CreateSecureConversationBindingElement (SecurityBindingElement binding)
+			CreateSecureConversationBindingElement (SecurityBindingElement bootstrapSecurity)
 		{
-			return CreateSecureConversationBindingElement (binding, false);
+			return CreateSecureConversationBindingElement (bootstrapSecurity, false);
 		}
 
 		public static SecurityBindingElement 
 			CreateSecureConversationBindingElement (
-			SecurityBindingElement binding, bool requireCancellation)
+			SecurityBindingElement bootstrapSecurity, bool requireCancellation)
 		{
-			return CreateSecureConversationBindingElement (binding, requireCancellation, null);
+			return CreateSecureConversationBindingElement (bootstrapSecurity, requireCancellation, null);
 		}
 
 		public static SecurityBindingElement 
 			CreateSecureConversationBindingElement (
-			SecurityBindingElement binding, bool requireCancellation,
-			ChannelProtectionRequirements protectionRequirements)
+			SecurityBindingElement bootstrapSecurity, bool requireCancellation,
+			ChannelProtectionRequirements bootstrapProtectionRequirements)
 		{
 #if !MOBILE && !XAMMAC_4_5
 			SymmetricSecurityBindingElement be =
 				new SymmetricSecurityBindingElement ();
 			be.ProtectionTokenParameters =
 				new SecureConversationSecurityTokenParameters (
-					binding, requireCancellation, protectionRequirements);
+					bootstrapSecurity, requireCancellation, bootstrapProtectionRequirements);
 			return be;
 #else
 			throw new NotImplementedException ();

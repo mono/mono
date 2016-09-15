@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <symbols>
   <files>
-    <file id="1" name="test-debug-30.cs" checksum="d3addfa69f16faf00991ef839451a975" />
+    <file id="1" name="test-debug-30.cs" checksum="5303b32b0208123737567d53022ae3d5" />
   </files>
   <methods>
     <method token="0x6000001">
@@ -23,6 +23,15 @@
         <entry il="0x0" row="15" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="16" col="3" file_ref="1" hidden="false" />
         <entry il="0x6" row="17" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000004">
+      <sequencepoints>
+        <entry il="0x0" row="23" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="24" col="3" file_ref="1" hidden="false" />
+        <entry il="0x6" row="25" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />

@@ -32,8 +32,10 @@ namespace System.IO {
         // This information isn't guaranteed to be correct, but is our second 
         // best effort at a file or directory involved, after the exception 
         // message.
+#pragma warning disable 414
         [NonSerialized]
         private String _maybeFullPath;  // For debuggers on partial trust code
+#pragma warning restore
 
         public IOException() 
             : base(Environment.GetResourceString("Arg_IOException")) {

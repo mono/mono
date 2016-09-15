@@ -24,6 +24,7 @@ namespace System.Security.Cryptography {
     using System.Security.Permissions;
     using System.Diagnostics.Contracts;
 
+#if !MONO
     // Object layout of the RSAParameters structure
     internal class RSACspObject {
         internal byte[] Exponent;
@@ -35,6 +36,7 @@ namespace System.Security.Cryptography {
         internal byte[] InverseQ;
         internal byte[] D;
     }
+#endif
 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed partial class RSACryptoServiceProvider : RSA

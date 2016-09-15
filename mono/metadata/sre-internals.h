@@ -69,9 +69,6 @@ gboolean
 mono_is_sre_ctor_on_tb_inst (MonoClass *klass);
 
 gboolean
-mono_is_sr_field_on_inst (MonoClassField *field);
-
-gboolean
 mono_is_sr_mono_cmethod (MonoClass *klass);
 
 gboolean
@@ -82,9 +79,6 @@ mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb, MonoError *
 
 MonoMethod*
 mono_reflection_method_builder_to_mono_method (MonoReflectionMethodBuilder *mb, MonoError *error);
-
-MonoType*
-mono_reflection_get_field_on_inst_generic_type (MonoClassField *field);
 
 MonoMethod*
 mono_reflection_method_on_tb_inst_get_handle (MonoReflectionMethodOnTypeBuilderInst *m, MonoError *error);
@@ -110,8 +104,6 @@ mono_reflection_init_type_builder_generics (MonoObject *type, MonoError *error);
 							    
 guint32
 mono_reflection_resolution_scope_from_image (MonoDynamicImage *assembly, MonoImage *image);
-
-void mono_reflection_check_array_for_usertypes (MonoArray *arr, MonoError *error);
 
 guint32 mono_reflection_method_count_clauses (MonoReflectionILGen *ilgen);
 

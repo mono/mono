@@ -189,13 +189,13 @@ static MonoMethod *write_barrier_noconc_method;
 gboolean
 sgen_is_critical_method (MonoMethod *method)
 {
-	return (method == write_barrier_conc_method || method == write_barrier_noconc_method || sgen_is_managed_allocator (method));
+	return sgen_is_managed_allocator (method);
 }
 
 gboolean
 sgen_has_critical_method (void)
 {
-	return write_barrier_conc_method || write_barrier_noconc_method || sgen_has_managed_allocator ();
+	return sgen_has_managed_allocator ();
 }
 
 #ifndef DISABLE_JIT
@@ -491,7 +491,7 @@ mono_gc_invoke_finalizers (void)
 	return sgen_gc_invoke_finalizers ();
 }
 
-gboolean
+MonoBoolean
 mono_gc_pending_finalizers (void)
 {
 	return sgen_have_pending_finalizers ();
@@ -968,11 +968,11 @@ void*
 mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
 {
 	/* FIXME: do a single allocation */
-	void *res = calloc (1, size);
+	void *res = g_calloc (1, size);
 	if (!res)
 		return NULL;
 	if (!mono_gc_register_root ((char *)res, size, descr, source, msg)) {
-		free (res);
+		g_free (res);
 		res = NULL;
 	}
 	return res;
@@ -982,7 +982,7 @@ void
 mono_gc_free_fixed (void* addr)
 {
 	mono_gc_deregister_root ((char *)addr);
-	free (addr);
+	g_free (addr);
 }
 
 /*
@@ -2896,7 +2896,7 @@ sgen_client_handle_gc_param (const char *opt)
 	} else if (g_str_has_prefix (opt, "toggleref-test")) {
 		/* FIXME: This should probably in MONO_GC_DEBUG */
 		sgen_register_test_toggleref_callback ();
-	} else {
+	} else if (!sgen_bridge_handle_gc_param (opt)) {
 		return FALSE;
 	}
 	return TRUE;

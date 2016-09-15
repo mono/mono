@@ -103,11 +103,13 @@ namespace System.Globalization {
         [NonSerialized] 
         private String m_sortName; // The name that defines our behavior
 
+#if !MONO
         [NonSerialized]
         private IntPtr m_dataHandle;
 
         [NonSerialized]
         private IntPtr m_handleOrigin;
+#endif
 
         ////////////////////////////////////////////////////////////////////////
         //
@@ -258,8 +260,10 @@ namespace System.Globalization {
         // the following fields are defined to keep the compatibility with Whidbey.
         // don't change/remove the names/types of these fields.
 #if FEATURE_USE_LCID || MONO
+#pragma warning disable 169
                 [OptionalField(VersionAdded = 1)]
                 private int win32LCID;             // mapped sort culture id of this instance
+#pragma warning restore
                 private int culture;               // the culture ID used to create this instance.
 #endif
         [OnDeserializing]
@@ -1143,12 +1147,17 @@ namespace System.Globalization {
             {
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
             }
+
+#if !MONO            
             byte[] keyData = null;
+#endif
             // The OS doesn't have quite the same behavior so we have to test for empty inputs
             if (String.IsNullOrEmpty(source))
             {
+#if !MONO                
                 // Empty strings get an empty sort key
                 keyData = EmptyArray<Byte>.Value;
+#endif
                 // Fake value to test though so we can verify our flags
                 source = "\x0000";
             }

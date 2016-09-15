@@ -1781,7 +1781,6 @@ namespace MonoTests.System.Net
 			Assert.AreSame (wc.Proxy, WebRequest.DefaultWebProxy);
 		}
 		 
-#if NET_4_5
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void UploadStringAsyncCancelEvent ()
@@ -1873,7 +1872,6 @@ namespace MonoTests.System.Net
 			}
 			listener.Close ();
 		}
-#endif
 
 		public void UploadAsyncCancelEventTest (int port, Action<WebClient, Uri, EventWaitHandle> uploadAction)
 		{

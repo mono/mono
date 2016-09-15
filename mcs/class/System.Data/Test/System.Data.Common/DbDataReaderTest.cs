@@ -61,7 +61,6 @@ namespace MonoTests.System.Data.Common
 		{
 		}
 
-		#if NET_4_5
 		[Test]
 		public void GetFieldValueTest ()
 		{
@@ -155,7 +154,6 @@ namespace MonoTests.System.Data.Common
 			Assert.IsFalse (dataReader.Read (), "#5");
 		}
 
-		#endif //NET_4_5
 	}
 }
 

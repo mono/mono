@@ -38,7 +38,6 @@ namespace MonoTests.System.Threading
 	[TestFixture]
 	public class CancellationTokenSourceTest
 	{
-#if NET_4_5
 
 		[Test]
 		public void Ctor_Invalid ()
@@ -100,7 +99,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (0, called, "#1");
 		}
 
-#endif
 
 		[Test]
 		public void Token ()
@@ -345,13 +343,11 @@ namespace MonoTests.System.Threading
 			} catch (ObjectDisposedException) {
 			}
 
-#if NET_4_5
 			try {
 				cts.CancelAfter (1);
 				Assert.Fail ("#6");
 			} catch (ObjectDisposedException) {
 			}
-#endif
 		}
 
 		[Test]
@@ -478,7 +474,6 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void DisposeRace ()
 		{
@@ -490,7 +485,6 @@ namespace MonoTests.System.Threading
 				c1.Dispose ();
 			}
 		}
-#endif
 	}
 }
 

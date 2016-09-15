@@ -276,9 +276,9 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (void)
 	 */
 
 	/* thread may be impersonating somebody */
-	if (OpenThreadToken (GetCurrentThread (), TOKEN_QUERY, 1, &token) == 0) {
+	if (OpenThreadToken (GetCurrentThread (), MAXIMUM_ALLOWED, 1, &token) == 0) {
 		/* if not take the process identity */
-		OpenProcessToken (GetCurrentProcess (), TOKEN_QUERY, &token);
+		OpenProcessToken (GetCurrentProcess (), MAXIMUM_ALLOWED, &token);
 	}
 #else
 	token = GINT_TO_POINTER (geteuid ());
@@ -660,9 +660,10 @@ IsMachineProtected (gunichar2 *path)
 {
 	gboolean success = FALSE;
 	PACL pDACL = NULL;
+	PSECURITY_DESCRIPTOR pSD = NULL;
 	PSID pEveryoneSid = NULL;
 
-	DWORD dwRes = GetNamedSecurityInfoW (path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &pDACL, NULL, NULL);
+	DWORD dwRes = GetNamedSecurityInfoW (path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &pDACL, NULL, &pSD);
 	if (dwRes != ERROR_SUCCESS)
 		return FALSE;
 
@@ -679,8 +680,8 @@ IsMachineProtected (gunichar2 *path)
 	/* Note: we don't need to check our own access - 
 	we'll know soon enough when reading the file */
 
-	if (pDACL)
-		LocalFree (pDACL);
+	if (pSD)
+		LocalFree (pSD);
 
 	return success;
 }

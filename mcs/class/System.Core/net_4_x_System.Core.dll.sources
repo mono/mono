@@ -1,11 +1,6 @@
 #include common_System.Core.dll.sources
 #include dynamic_System.Core.dll.sources
 
-System.IO.Pipes/PipeAccessRights.cs
-System.IO.Pipes/PipeAccessRule.cs
-System.IO.Pipes/PipeAuditRule.cs
-System.IO.Pipes/PipeSecurity.cs
-System.IO.Pipes/PipeStreamImpersonationWorker.cs
 System.IO.Pipes/PipeUnix.cs
 System.IO.Pipes/PipeWin32.cs
 

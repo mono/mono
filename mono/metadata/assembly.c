@@ -203,6 +203,7 @@ static GSList *loaded_assembly_bindings = NULL;
 
 /* Class lazy loading functions */
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (internals_visible, System.Runtime.CompilerServices, InternalsVisibleToAttribute)
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (reference_assembly, System.Runtime.CompilerServices, ReferenceAssemblyAttribute)
 
 static MonoAssembly*
 mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly, gboolean postload);
@@ -1803,6 +1804,37 @@ mono_assembly_load_friends (MonoAssembly* ass)
 	mono_assemblies_unlock ();
 }
 
+
+/**
+ * mono_assembly_get_reference_assembly_attribute:
+ * @assembly: a MonoAssembly
+ * @error: set on error.
+ *
+ * Returns TRUE if @assembly has the System.Runtime.CompilerServices.ReferenceAssemblyAttribute set.
+ * On error returns FALSE and sets @error.
+ */
+gboolean
+mono_assembly_get_reference_assembly_attribute (MonoAssembly *assembly, MonoError *error)
+{
+	mono_error_init (error);
+
+	MonoCustomAttrInfo *attrs = mono_custom_attrs_from_assembly_checked (assembly, error);
+	return_val_if_nok (error, FALSE);
+	if (!attrs)
+		return FALSE;
+	MonoClass *ref_asm_class = mono_class_try_get_reference_assembly_class ();
+	gboolean result = FALSE;
+	for (int i = 0; i < attrs->num_attrs; ++i) {
+		MonoCustomAttrEntry *attr = &attrs->attrs [i];
+		if (attr->ctor && attr->ctor->klass && attr->ctor->klass == ref_asm_class) {
+			result = TRUE;
+			break;
+		}
+	}
+	mono_custom_attrs_free (attrs);
+	return result;
+}
+
 /**
  * mono_assembly_open:
  * @filename: Opens the assembly pointed out by this name
@@ -2306,11 +2338,11 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 			if (!g_ascii_strcasecmp (retargetable, "yes")) {
 				flags |= ASSEMBLYREF_RETARGETABLE_FLAG;
 			} else if (g_ascii_strcasecmp (retargetable, "no")) {
-				free (retargetable_uq);
+				g_free (retargetable_uq);
 				goto cleanup_and_fail;
 			}
 
-			free (retargetable_uq);
+			g_free (retargetable_uq);
 			tmp++;
 			continue;
 		}
@@ -2330,11 +2362,11 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 			else if (!g_ascii_strcasecmp (procarch, "AMD64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
 			else {
-				free (procarch_uq);
+				g_free (procarch_uq);
 				goto cleanup_and_fail;
 			}
 
-			free (procarch_uq);
+			g_free (procarch_uq);
 			tmp++;
 			continue;
 		}
@@ -2362,11 +2394,11 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		key_uq == NULL ? key : key_uq,
 		flags, arch, aname, save_public_key);
 
-	free (dllname_uq);
-	free (version_uq);
-	free (culture_uq);
-	free (token_uq);
-	free (key_uq);
+	g_free (dllname_uq);
+	g_free (version_uq);
+	g_free (culture_uq);
+	g_free (token_uq);
+	g_free (key_uq);
 
 	g_strfreev (parts);
 	return res;

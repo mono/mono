@@ -360,6 +360,77 @@ namespace MonoTests.System
 				Assert.AreEqual (new TimeSpan (2,0,0), tzi.GetUtcOffset (date));
 			}
 
+			[Test]
+			public void TestAthensDST_InDSTDelta ()
+			{
+				// In .NET GetUtcOffset() returns the BaseUtcOffset for times within the hour
+				// lost when DST starts but IsDaylightSavingTime() returns true.
+
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Europe/Athens");
+
+				var date = new DateTime (2014, 3, 30 , 3, 0, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				date = new DateTime (2014, 3, 30 , 3, 1, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				date = new DateTime (2014, 3, 30 , 3, 59, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				date = new DateTime (2014, 3, 30 , 4, 0, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (3, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+			}
+
+			[Test]
+			public void TestAthensDST_InDSTDelta_NoTransitions ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					Assert.Ignore ("TimeZoneInfo on Mono on Windows and .NET has no transitions");
+
+				// Repeat the previous test but this time force using AdjustmentRules by nulling out TimeZoneInfo.transitions
+
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Europe/Athens");
+
+				var transitionsField = typeof (TimeZoneInfo).GetField ("transitions", BindingFlags.Instance | BindingFlags.NonPublic);
+				var transitions = transitionsField.GetValue (tzi);
+				Assert.IsNotNull (transitions, "Expected Athens TimeZoneInfo.transitions to be non-null");
+				transitionsField.SetValue (tzi, null);
+
+				try {
+
+					var date = new DateTime (2014, 3, 30 , 3, 0, 0);
+					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 3, 1, 0);
+					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 3, 59, 0);
+					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 4, 0, 0);
+					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (3, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				} finally {
+					transitionsField.SetValue (tzi, transitions);
+				}
+			}
+
 			[Test] //Covers #41349
 			public void TestIsDST_DateTimeOffset ()
 			{

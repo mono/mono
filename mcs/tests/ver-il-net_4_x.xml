@@ -3137,6 +3137,32 @@
       </method>
     </type>
   </test>
+  <test name="dtest-065.cs">
+    <type name="TestConvert">
+      <method name="Boolean TryConvert(System.Dynamic.ConvertBinder, System.Object ByRef)" attrs="198">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Boolean TryInvokeMember(System.Dynamic.InvokeMemberBinder, System.Object[], System.Object ByRef)" attrs="198">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="XX">
+      <method name="Void Main()" attrs="150">
+        <size>154</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
@@ -19863,6 +19889,71 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-638.cs">
+    <type name="X`3[T1,T2,U]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="F">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-639.cs">
+    <type name="A`1[T]">
+      <method name="Void Foo(T)" attrs="129">
+        <size>53</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CB">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CA">
+      <method name="Int32 get_Prop()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Prop(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="System.String get_Item(Byte)" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A2`2[T,U]">
+      <method name="Void Foo(T)" attrs="129">
+        <size>53</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -66190,6 +66281,68 @@
       </method>
     </type>
   </test>
+  <test name="test-async-89.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void Test()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Foo()" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>158</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey1+&lt;Test&gt;c__AnonStorey2">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>48</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__2()" attrs="131">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey1+&lt;Test&gt;c__AnonStorey2+&lt;Test&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>179</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey1+&lt;Test&gt;c__AnonStorey2+&lt;Test&gt;c__async4">
+      <method name="Void MoveNext()" attrs="486">
+        <size>167</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
@@ -67676,6 +67829,9 @@
         <size>7</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void OneMore()" attrs="129">
         <size>7</size>
       </method>
     </type>
@@ -71369,6 +71525,21 @@
     <type name="CustomAttributes.AttributeB">
       <method name="Void .ctor(String)" attrs="6278">
         <size>8</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-35.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
     <type name="X">

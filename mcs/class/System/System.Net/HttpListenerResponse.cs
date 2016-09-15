@@ -427,16 +427,34 @@ namespace System.Net {
 
 			StreamWriter writer = new StreamWriter (ms, encoding, 256);
 			writer.Write ("HTTP/{0} {1} {2}\r\n", version, status_code, status_description);
-			string headers_str = headers.ToString ();
+			string headers_str = FormatHeaders (headers);
 			writer.Write (headers_str);
 			writer.Flush ();
-			int preamble = (encoding.CodePage == 65001) ? 3 : encoding.GetPreamble ().Length;
+			int preamble = encoding.GetPreamble ().Length;
 			if (output_stream == null)
 				output_stream = context.Connection.GetResponseStream ();
 
 			/* Assumes that the ms was at position 0 */
 			ms.Position = preamble;
 			HeadersSent = true;
+		}
+
+		static string FormatHeaders (WebHeaderCollection headers)
+		{
+			var sb = new StringBuilder();
+
+			for (int i = 0; i < headers.Count ; i++) {
+				string key = headers.GetKey (i);
+				if (WebHeaderCollection.AllowMultiValues (key)) {
+					foreach (string v in headers.GetValues (i)) {
+						sb.Append (key).Append (": ").Append (v).Append ("\r\n");
+					}
+				} else {
+					sb.Append (key).Append (": ").Append (headers.Get (i)).Append ("\r\n");
+				}
+			}
+
+			return sb.Append("\r\n").ToString();
 		}
 
 		static string CookieToClientString (Cookie cookie)

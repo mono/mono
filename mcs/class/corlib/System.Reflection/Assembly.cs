@@ -63,7 +63,9 @@ namespace System.Reflection {
 
 		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
 		{
+#pragma warning disable 414
 			Module module;
+#pragma warning restore
 
 			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
 				: base (pointer, length)

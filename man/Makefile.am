@@ -2,6 +2,7 @@ man_MANS = \
 	al.1                  \
 	cert2spc.1            \
 	certmgr.1             \
+	cert-sync.1           \
 	chktrust.1            \
 	cilc.1                \
 	crlupdate.1           \

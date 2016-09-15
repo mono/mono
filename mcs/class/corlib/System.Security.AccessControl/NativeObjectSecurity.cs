@@ -38,7 +38,9 @@ namespace System.Security.AccessControl
 	public abstract class NativeObjectSecurity : CommonObjectSecurity
 	{
 		ExceptionFromErrorCode exception_from_error_code;
+#if !MOBILE
 		ResourceType resource_type;
+#endif
 		
 		protected internal delegate Exception ExceptionFromErrorCode (int errorCode,
 									      string name, SafeHandle handle,
@@ -47,7 +49,9 @@ namespace System.Security.AccessControl
 		internal NativeObjectSecurity (CommonSecurityDescriptor securityDescriptor, ResourceType resourceType)
 			: base (securityDescriptor)
 		{
+#if !MOBILE			
 			resource_type = resourceType;
+#endif
 		}
 
 		protected NativeObjectSecurity (bool isContainer,
@@ -63,7 +67,9 @@ namespace System.Security.AccessControl
 			: base (isContainer)
 		{
 			exception_from_error_code = exceptionFromErrorCode;
+#if !MOBILE			
 			resource_type = resourceType;
+#endif
 		}
 		
 		protected NativeObjectSecurity (bool isContainer,

@@ -46,12 +46,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected ChannelFactory (Type type)
+		protected ChannelFactory (Type channelType)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (!type.IsInterface)
-				throw new InvalidOperationException ("The type argument to the generic ChannelFactory constructor must be an interface type.");
+			if (channelType == null)
+				throw new ArgumentNullException ("channelType");
+			if (!channelType.IsInterface)
+				throw new InvalidOperationException ("The channelType argument to the generic ChannelFactory constructor must be an interface type.");
 
 			InitializeEndpoint (CreateDescription ());
 		}

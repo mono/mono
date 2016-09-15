@@ -2562,6 +2562,9 @@ namespace Mono.CSharp
 									pow /= 10;
 								}
 							}
+						} else if (c == '\n' || c == UnicodeLS || c == UnicodePS) {
+							advance_line ();
+							break;
 						} else if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
 							break;
 						}
@@ -2586,9 +2589,6 @@ namespace Mono.CSharp
 				// skip over white space
 				while (c == ' ' || c == '\t')
 					c = get_char ();
-
-				if (c == '\n' || c == UnicodeLS || c == UnicodePS)
-					advance_line ();
 
 				return number;
 			}

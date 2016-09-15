@@ -132,7 +132,7 @@ namespace System.Net
 		// Fields
 		
 		public const int DefaultNonPersistentConnectionLimit = 4;
-#if MONOTOUCH
+#if MOBILE
 		public const int DefaultPersistentConnectionLimit = 10;
 #else
 		public const int DefaultPersistentConnectionLimit = 2;

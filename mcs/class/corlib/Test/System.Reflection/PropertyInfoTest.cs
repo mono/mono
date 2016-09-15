@@ -391,7 +391,12 @@ namespace MonoTests.System.Reflection
 			var p = t.GetProperty ("Prop");
 			Assert.AreEqual ("test", p.GetConstantValue (), "#1");
 
-			File.Delete (Path.Combine (Path.GetTempPath (), an));
+			try {
+				// This throws an exception under MS.NET and Mono on Windows,
+				// open files cannot be deleted. That's fine.
+				File.Delete (Path.Combine (Path.GetTempPath (), an));
+			} catch (Exception) {
+			}
 
 			var pa = typeof (TestE).GetProperty ("PropE");
 			try {

@@ -22,7 +22,9 @@ namespace System {
     public struct TypedReference
     {
 #if MONO
+#pragma warning disable 169
         RuntimeTypeHandle type;
+#pragma warning restore
 #endif
         private IntPtr Value;
         private IntPtr Type;

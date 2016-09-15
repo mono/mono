@@ -2,7 +2,7 @@
 #AC_PREREQ([2.62])
 
 # when bumping version number below, keep it in sync with man/mono.1 too
-AC_INIT(mono, [4.7.0],
+AC_INIT(mono, [4.9.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -2858,13 +2858,12 @@ if test "x$enable_llvm" = "xyes"; then
    LLVM_SYSTEM_LIBS=`$LLVM_CONFIG --system-libs 2>/dev/null | grep -- -`
    llvm_jit_supported=yes
    llvm_jit_libs="jit mcjit $llvm_codegen"
-   if test $llvm_api_version -gt 100; then
-   	  # Based on llvm 3.9, only aot is currently supported
-      llvm_jit_libs="orcjit $llvm_codegen"
-   elif test "x$host" != "x$target"; then
+   if test "x$host" != "x$target"; then
       # No need for jit libs
 	  llvm_jit_supported=no
       llvm_jit_libs=""
+   elif test $llvm_api_version -gt 100; then
+      llvm_jit_libs="orcjit $llvm_codegen"
    fi
    LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter $llvm_jit_libs`
    if test "x$LLVM_LIBS" = "x"; then
