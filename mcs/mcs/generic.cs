@@ -773,6 +773,7 @@ namespace Mono.CSharp {
 		TypeSpec[] targs;
 		TypeSpec[] ifaces_defined;
 		TypeSpec effective_base;
+		MemberCache interface_cache;
 
 		//
 		// Creates type owned type parameter
@@ -879,6 +880,12 @@ namespace Mono.CSharp {
 				}
 
 				return ifaces;
+			}
+		}
+
+		public MemberCache InterfaceCache {
+			get {
+				return interface_cache;
 			}
 		}
 
@@ -1351,13 +1358,27 @@ namespace Mono.CSharp {
 			// For a type parameter the membercache is the union of the sets of members of the types
 			// specified as a primary constraint or secondary constraint
 			//
+			bool has_user_base_type = false;
 			if (BaseType.BuiltinType != BuiltinTypeSpec.Type.Object && BaseType.BuiltinType != BuiltinTypeSpec.Type.ValueType) {
 				cache.AddBaseType (BaseType);
+				has_user_base_type = true;
 			}
 
 			if (InterfacesDefined != null) {
+				var icache = cache;
+				if (has_user_base_type) {
+					//
+					// type-parameter lookup rules are more complicated that other types lookup rules.
+					// Effective base class and its base types member have priority over interface
+					// constraints which means we cannot lookup interface members before class members
+					// hence we setup secondary cache for such cases.
+					//
+					interface_cache = new MemberCache ();
+					icache = interface_cache;
+				}
+
 				foreach (var iface_type in InterfacesDefined) {
-					cache.AddInterface (iface_type);
+					icache.AddInterface (iface_type);
 				}
 			}
 
@@ -1370,8 +1391,14 @@ namespace Mono.CSharp {
 					var ifaces = tps == null ? ta.Interfaces : tps.InterfacesDefined;
 
 					if (ifaces != null) {
+						var icache = cache;
+						if (has_user_base_type) {
+							interface_cache = new MemberCache ();
+							icache = interface_cache;
+						}
+
 						foreach (var iface_type in ifaces) {
-							cache.AddInterface (iface_type);
+							icache.AddInterface (iface_type);
 						}
 					}
 				}
