@@ -49,6 +49,8 @@ typedef enum {
 	MONO_GC_STW = 1 << 0,
 	// Force the collection to be serial
 	MONO_GC_FORCE_SERIAL = 1 << 1,
+	// Force the compaction of the major heap
+	MONO_GC_FORCE_COMPACTION = 1 << 2,
 } MonoGCCollectionFlags;
 
 MONO_API void   mono_gc_collect         (int generation);

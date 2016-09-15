@@ -1870,7 +1870,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 }
 
 static void
-major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean concurrent, size_t *old_next_pin_slot)
+major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean concurrent, gboolean compacting, size_t *old_next_pin_slot)
 {
 	SgenObjectOperations *object_ops;
 
@@ -1906,7 +1906,7 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 	gc_stats.major_gc_count ++;
 
 	if (major_collector.start_major_collection)
-		major_collector.start_major_collection ();
+		major_collector.start_major_collection (compacting);
 
 	major_copy_or_mark_from_roots (gc_thread_gray_queue, old_next_pin_slot, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops);
 }
@@ -2042,7 +2042,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 }
 
 static gboolean
-major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
+major_do_collection (const char *reason, gboolean is_overflow, gboolean forced, gboolean compacting)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
@@ -2061,7 +2061,7 @@ major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 	TV_GETTIME (time_start);
 
 	init_gray_queue (&gc_thread_gray_queue, FALSE);
-	major_start_collection (&gc_thread_gray_queue, reason, FALSE, &old_next_pin_slot);
+	major_start_collection (&gc_thread_gray_queue, reason, FALSE, compacting, &old_next_pin_slot);
 	major_finish_collection (&gc_thread_gray_queue, reason, is_overflow, old_next_pin_slot, forced);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
@@ -2076,7 +2076,7 @@ major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 }
 
 static void
-major_start_concurrent_collection (const char *reason)
+major_start_concurrent_collection (const char *reason, gboolean compacting)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
@@ -2096,7 +2096,7 @@ major_start_concurrent_collection (const char *reason)
 
 	init_gray_queue (&gc_thread_gray_queue, TRUE);
 	// FIXME: store reason and pass it when finishing
-	major_start_collection (&gc_thread_gray_queue, reason, TRUE, NULL);
+	major_start_collection (&gc_thread_gray_queue, reason, TRUE, compacting, NULL);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
@@ -2228,6 +2228,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	const char *overflow_reason = NULL;
 	gboolean wait_to_finish = flags & MONO_GC_FORCE_SERIAL;
 	gboolean stw = flags & MONO_GC_STW;
+	gboolean compacting = flags & MONO_GC_FORCE_COMPACTION;
 	gboolean finish_concurrent = concurrent_collection_in_progress && (major_should_finish_concurrent_collection () || generation_to_collect == GENERATION_OLD);
 
 	binary_protocol_collection_requested (generation_to_collect, requested_size, wait_to_finish ? 1 : 0);
@@ -2262,9 +2263,9 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		if (major_collector.is_concurrent && !wait_to_finish) {
 			SGEN_ASSERT (0, !finish_concurrent, "Why are we starting a new concurrent collection if we just finished one ?");
 			collect_nursery ("Concurrent start", FALSE, NULL);
-			major_start_concurrent_collection (reason);
+			major_start_concurrent_collection (reason, compacting);
 			oldest_generation_collected = GENERATION_NURSERY;
-		} else if (major_do_collection (reason, FALSE, wait_to_finish)) {
+		} else if (major_do_collection (reason, FALSE, wait_to_finish, compacting)) {
 			overflow_generation_to_collect = GENERATION_NURSERY;
 			overflow_reason = "Excessive pinning";
 		}
@@ -2281,7 +2282,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		if (overflow_generation_to_collect == GENERATION_NURSERY)
 			collect_nursery (overflow_reason, TRUE, NULL);
 		else
-			major_do_collection (overflow_reason, TRUE, wait_to_finish);
+			major_do_collection (overflow_reason, TRUE, wait_to_finish, FALSE);
 
 		oldest_generation_collected = MAX (oldest_generation_collected, overflow_generation_to_collect);
 	}

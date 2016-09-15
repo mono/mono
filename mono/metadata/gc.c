@@ -591,7 +591,8 @@ ves_icall_System_GC_InternalCollect (int generation, gint32 internal_flags)
 
 	if (internal_flags & INTERNAL_GC_COLLECTION_MODE_BLOCKING)
 		mono_flags |= MONO_GC_FORCE_SERIAL;
-
+	if (internal_flags & INTERNAL_GC_COLLECTION_MODE_COMPACTING)
+		mono_flags |= MONO_GC_FORCE_COMPACTION;
 	mono_gc_collect_full (generation, mono_flags);
 }
 
