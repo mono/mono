@@ -108,6 +108,7 @@ xammac_4_5_dirs := \
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
 	System.Numerics	\
+	System.Numerics.Vectors		\
 	Mono.Data.Tds	\
 	System.Transactions	\
 	System.EnterpriseServices	\
