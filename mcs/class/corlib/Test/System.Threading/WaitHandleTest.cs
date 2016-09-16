@@ -28,6 +28,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 using NUnit.Framework;
@@ -391,6 +392,148 @@ namespace MonoTests.System.Threading {
 					Assert.IsTrue (done.WaitOne (1000), "done");
 
 					m1.ReleaseMutex ();
+				}
+			}
+		}
+
+		[Test]
+		public void WaitOneWithAbandonedMutex ()
+		{
+			using (var m = new Mutex (false)) {
+				var thread1 = new Thread (() => {
+					m.WaitOne ();
+				});
+				thread1.Start ();
+				thread1.Join (1000);
+				try {
+					m.WaitOne ();
+					Assert.Fail ("Expected AbandonedMutexException");
+				} catch (AbandonedMutexException) {
+				}
+				// Current thread should own the Mutex now
+				var signalled = false;
+				var thread2 = new Thread (() => {
+					signalled = m.WaitOne (100);
+				});
+				thread2.Start ();
+				thread2.Join (1000);
+				Assert.IsFalse (signalled);
+
+				// Since this thread owns the Mutex releasing it shouldn't fail
+				m.ReleaseMutex ();
+				// The Mutex should now be unowned
+				try {
+					m.ReleaseMutex ();
+					Assert.Fail ("Expected ApplicationException");
+				} catch (ApplicationException) {
+				}
+			}
+		}
+
+		[Test]
+		public void WaitOneWithAbandonedMutexAndMultipleThreads ()
+		{
+			using (var m = new Mutex (true)) {
+				var nonAbandoned = 0;
+				var abandoned = 0;
+				var n = 0;
+				var threads = new List<Thread> ();
+				for (int i = 0; i < 50; i++) {
+					var thread = new Thread (() => {
+						try {
+							m.WaitOne ();
+							nonAbandoned++;
+						} catch (AbandonedMutexException) {
+							abandoned++;
+						}
+						if (((n++) % 5) != 0)
+							m.ReleaseMutex ();
+					});
+					thread.Start ();
+					threads.Add (thread);
+				}
+				m.ReleaseMutex ();
+				foreach (var thread in threads) {
+					if (!thread.Join (1000)) {
+						Assert.Fail ("Timed out");
+					}
+				}
+				Assert.AreEqual (40, nonAbandoned);
+				Assert.AreEqual (10, abandoned);
+			}
+		}
+
+		[Test]
+		public void WaitAnyWithSecondMutexAbandoned ()
+		{
+			using (var m1 = new Mutex (false)) {
+				using (var m2 = new Mutex (false)) {
+					var mainProceed = false;
+					var thread2Proceed = false;
+					var thread1 = new Thread (() => {
+						m2.WaitOne ();
+					});
+					var thread2 = new Thread (() => {
+						m1.WaitOne ();
+						mainProceed = true;
+						while (!thread2Proceed) {
+							Thread.Sleep (10);
+						}
+						m1.ReleaseMutex ();
+					});
+					thread1.Start ();
+					thread1.Join (1000);
+					thread2.Start ();
+					while (!mainProceed) {
+						Thread.Sleep (10);
+					}
+					try {
+						WaitHandle.WaitAny (new WaitHandle [] { m1, m2 });
+						Assert.Fail ("Expected AbandonedMutexException");
+					} catch (AbandonedMutexException e) {
+						Assert.AreEqual (1, e.MutexIndex);
+						Assert.AreEqual (m2, e.Mutex);
+					} finally {
+						thread2Proceed = true;
+						thread2.Join (1000);
+					}
+
+					// Current thread should own the second Mutex now
+					var signalled = -1;
+					var thread3 = new Thread (() => {
+						signalled = WaitHandle.WaitAny (new WaitHandle [] { m1, m2 }, 0);
+					});
+					thread3.Start ();
+					thread3.Join (1000);
+					Assert.AreEqual (0, signalled);
+
+					// Since this thread owns the second Mutex releasing it shouldn't fail
+					m2.ReleaseMutex ();
+					// Second Mutex should now be unowned
+					try {
+						m2.ReleaseMutex ();
+						Assert.Fail ("Expected ApplicationException");
+					} catch (ApplicationException) {
+					}
+					// .NET allows the first Mutex which is now abandoned to be released multiple times by this thread
+					m1.ReleaseMutex ();
+					m1.ReleaseMutex ();
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (AbandonedMutexException))]
+		public void WaitAllWithOneAbandonedMutex ()
+		{
+			using (var m1 = new Mutex (false)) {
+				using (var m2 = new Mutex (false)) {
+					var thread = new Thread (() => {
+						m1.WaitOne ();
+					});
+					thread.Start ();
+					thread.Join (1000);
+					WaitHandle.WaitAll (new WaitHandle [] { m1, m2 });
 				}
 			}
 		}
