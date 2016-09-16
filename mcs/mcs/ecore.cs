@@ -3648,6 +3648,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public virtual void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+
+		}
+
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
 		{
 			var inst = new InstanceEmitter (InstanceExpression, TypeSpec.IsValueType (InstanceExpression.Type));
@@ -3752,27 +3757,9 @@ namespace Mono.CSharp {
 				Convert.ImplicitBoxingConversion (null, argType, extensionType) != null;
 		}
 
-		public bool ResolveNameOf (ResolveContext rc, MemberAccess ma)
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
 		{
-			rc.Report.Error (8093, ma.Location, "An argument to nameof operator cannot be extension method group");
-
-			// Not included in C#6
-			/*
-			ExtensionExpression = ExtensionExpression.Resolve (rc);
-			if (ExtensionExpression == null)
-				return false;
-
-			var argType = ExtensionExpression.Type;
-			foreach (MethodSpec candidate in Candidates) {
-				if (ExtensionMethodGroupExpr.IsExtensionTypeCompatible (argType, candidate.Parameters.ExtensionMethodType))
-					return true;
-			}
-
-			// TODO: Scan full hierarchy
-
-			ma.Error_TypeDoesNotContainDefinition (rc, argType, ma.Name);
-			*/
-			return false;
+			rc.Report.Error (8093, expr.Location, "An argument to nameof operator cannot be extension method group");
 		}
 
 		public override MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
@@ -4171,6 +4158,17 @@ namespace Mono.CSharp {
 
 			simple_name = original;
 			return base.ResolveMemberAccess (ec, left, original);
+		}
+
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			if (!HasAccessibleCandidate (rc)) {
+				ErrorIsInaccesible (rc, expr.GetSignatureForError (), loc);
+			}
+
+			if (expr.HasTypeArguments) {
+				rc.Report.Error (8084, expr.Location, "An argument to nameof operator cannot be method group with type arguments");
+			}
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
@@ -6153,6 +6151,11 @@ namespace Mono.CSharp {
 			return constant.GetSignatureForError ();
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			constant.CheckObsoleteness (rc, expr.Location);
+		}
+
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
 			Error_TypeArgumentsCannotBeUsed (ec, "constant", GetSignatureForError (), loc);
@@ -6380,6 +6383,11 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Variable;
 			return this;
+		}
+
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			spec.CheckObsoleteness (rc, expr.Location);
 		}
 
 		public void SetFieldAssigned (FlowAnalysisContext fc)
@@ -7152,6 +7160,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			if (!best_candidate.IsAccessible (rc))
+				ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), expr.Location);
+
+			best_candidate.CheckObsoleteness (rc, expr.Location);
+		}
+
 		public void SetBackingFieldAssigned (FlowAnalysisContext fc)
 		{
 			if (backing_field != null) {
@@ -7571,6 +7587,11 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpSignature (spec);
+		}
+
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			spec.CheckObsoleteness (rc, expr.Location);
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
