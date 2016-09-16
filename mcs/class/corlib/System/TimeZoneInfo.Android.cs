@@ -553,11 +553,10 @@ namespace System {
 					return sign * (hour * 60) * 60;
 			}
 
-			static TimeZoneInfo defaultZone;
 			internal static TimeZoneInfo Local {
 				get {
 					var id  = GetDefaultTimeZoneName ();
-					return defaultZone = GetTimeZone (id, id);
+					return GetTimeZone (id, id);
 				}
 			}
 			

@@ -1080,7 +1080,9 @@ namespace System.Threading
     /// <typeparam name="T">The kind of elements contained within.</typeparam>
     internal class SparselyPopulatedArray<T> where T : class
     {
+#if DEBUG        
         private readonly SparselyPopulatedArrayFragment<T> m_head;
+#endif
         private volatile SparselyPopulatedArrayFragment<T> m_tail;
 
         /// <summary>
@@ -1089,7 +1091,10 @@ namespace System.Threading
         /// <param name="initialSize">How many array slots to pre-allocate.</param>
         internal SparselyPopulatedArray(int initialSize)
         {
-            m_head = m_tail = new SparselyPopulatedArrayFragment<T>(initialSize);
+#if DEBUG            
+            m_head = 
+#endif
+            m_tail = new SparselyPopulatedArrayFragment<T>(initialSize);
         }
 
 #if DEBUG

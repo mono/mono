@@ -839,6 +839,7 @@ emit_thunk (guint8 *code, gconstpointer target)
 	arm_ldrx_lit (code, ARMREG_IP0, code + 8);
 	arm_brx (code, ARMREG_IP0);
 	*(guint64*)code = (guint64)target;
+	code += sizeof (guint64);
 
 	mono_arch_flush_icache (p, code - p);
 	return code;
@@ -1776,7 +1777,33 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #if __APPLE__
 	sys_icache_invalidate (code, size);
 #else
-	__clear_cache (code, code + size);
+	/* Don't rely on GCC's __clear_cache implementation, as it caches
+	 * icache/dcache cache line sizes, that can vary between cores on
+	 * big.LITTLE architectures. */
+	guint64 end = (guint64) (code + size);
+	guint64 addr, ctr_el0;
+	static size_t icache_line_size = 0xffff, dcache_line_size = 0xffff;
+	size_t isize, dsize;
+
+	asm volatile ("mrs %0, ctr_el0" : "=r" (ctr_el0));
+	isize = 4 << ((ctr_el0 >> 0 ) & 0xf);
+	dsize = 4 << ((ctr_el0 >> 16) & 0xf);
+
+	/* determine the global minimum cache line size */
+	icache_line_size = isize = MIN (icache_line_size, isize);
+	dcache_line_size = dsize = MIN (dcache_line_size, dsize);
+
+	addr = (guint64) code & ~(guint64) (dsize - 1);
+	for (; addr < end; addr += dsize)
+		asm volatile("dc civac, %0" : : "r" (addr) : "memory");
+	asm volatile("dsb ish" : : : "memory");
+
+	addr = (guint64) code & ~(guint64) (isize - 1);
+	for (; addr < end; addr += isize)
+		asm volatile("ic ivau, %0" : : "r" (addr) : "memory");
+
+	asm volatile ("dsb ish" : : : "memory");
+	asm volatile ("isb" : : : "memory");
 #endif
 #endif
 }
@@ -4951,14 +4978,14 @@ mono_arch_get_patch_offset (guint8 *code)
 }
 
 gpointer
-mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
-						   gpointer fail_tramp)
+mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
+								gpointer fail_tramp)
 {
 	int i, buf_len, imt_reg;
 	guint8 *buf, *code;
 
 #if DEBUG_IMT
-	printf ("building IMT thunk for class %s %s entries %d code size %d code at %p end %p vtable %p\n", vtable->klass->name_space, vtable->klass->name, count, size, start, ((guint8*)start) + size, vtable);
+	printf ("building IMT trampoline for class %s %s entries %d code size %d code at %p end %p vtable %p\n", vtable->klass->name_space, vtable->klass->name, count, size, start, ((guint8*)start) + size, vtable);
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
 		printf ("method %d (%p) %s vtable slot %p is_equals %d chunk size %d\n", i, item->key, item->key->name, &vtable->vtable [item->value.vtable_slot], item->is_equals, item->chunk_size);
@@ -4993,7 +5020,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	}
 
 	if (fail_tramp)
-		buf = mono_method_alloc_generic_virtual_thunk (domain, buf_len);
+		buf = mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
 	else
 		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;
@@ -5081,8 +5108,8 @@ mono_arch_get_trampolines (gboolean aot)
 #else /* DISABLE_JIT */
 
 gpointer
-mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
-						   gpointer fail_tramp)
+mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
+								gpointer fail_tramp)
 {
 	g_assert_not_reached ();
 	return NULL;

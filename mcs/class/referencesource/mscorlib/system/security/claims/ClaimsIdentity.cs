@@ -1310,7 +1310,7 @@ namespace System.Security.Claims
                 switch (enumerator.Name)
                 {
                     case VersionKey:
-                        string version = info.GetString(VersionKey);
+                        info.GetString(VersionKey);
                         break;
 
                     case AuthenticationTypeKey:

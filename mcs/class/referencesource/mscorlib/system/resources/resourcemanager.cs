@@ -202,10 +202,12 @@ namespace System.Resources {
 
         private bool UseManifest;  // Use Assembly manifest, or grovel disk.
 
+#pragma warning disable 414
         // unused! But need to keep for serialization
         [OptionalField(VersionAdded = 1)]
         private bool UseSatelliteAssem;  // Are all the .resources files in the 
                   // main assembly, or in satellite assemblies for each culture?
+#pragma warning restore
 #if RESOURCE_SATELLITE_CONFIG
         private static volatile Hashtable _installedSatelliteInfo;  // Give the user the option  
                // to prevent certain satellite assembly probes via a config file.
@@ -269,8 +271,9 @@ namespace System.Resources {
         // My private debugging aid.  Set to 5 or 6 for verbose output.  Set to 3
         // for summary level information.
         internal static readonly int DEBUG = 0; //Making this const causes C# to consider all of the code that it guards unreachable.
-        
+#if FEATURE_APPX        
         private static volatile bool s_IsAppXModel;
+#endif
         
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         private void Init()

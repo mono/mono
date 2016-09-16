@@ -65,7 +65,6 @@ namespace System.Threading {
 		/* start_notify is used by the runtime to signal that Start()
 		 * is ok to return
 		 */
-		private IntPtr start_notify;
 		private IntPtr stack_ptr;
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr runtime_thread_info;
@@ -90,12 +89,20 @@ namespace System.Threading {
 		private IntPtr interrupt_on_stop;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
-		private IntPtr start_notify_refcount;
+		private IntPtr abort_protected_block_count;
+		private int priority = (int) ThreadPriority.Normal;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
+		private IntPtr unused1;
 		private IntPtr unused2;
+
+		/* This is used only to check that we are in sync between the representation
+		 * of MonoInternalThread in native and InternalThread in managed
+		 *
+		 * DO NOT RENAME! DO NOT ADD FIELDS AFTER! */
+		private IntPtr last;
 		#endregion
 #pragma warning restore 169, 414, 649
 
@@ -116,7 +123,6 @@ namespace System.Threading {
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
 		object pending_exception;
-		int priority = (int) ThreadPriority.Normal;
 		#endregion
 #pragma warning restore 414
 

@@ -15,7 +15,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
     [Serializable]
     internal sealed class BinaryMethodCallMessage
     {
+#pragma warning disable 414
         Object[] _inargs = null;
+#pragma warning restore
         String _methodName = null;
         String _typeName = null;
         Object _methodSignature = null;
@@ -100,7 +102,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
     [Serializable]
     internal class BinaryMethodReturnMessage
     {
+#pragma warning disable 414
         Object[] _outargs = null;
+#pragma warning restore
         Exception _exception = null;
         Object _returnValue = null;
 

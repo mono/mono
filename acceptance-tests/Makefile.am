@@ -1,4 +1,5 @@
 ACCEPTANCE_TESTS_PATH=external
+BENCHMARKER_PATH=$(ACCEPTANCE_TESTS_PATH)/benchmarker
 ROSLYN_PATH=$(ACCEPTANCE_TESTS_PATH)/roslyn
 CORECLR_PATH=$(ACCEPTANCE_TESTS_PATH)/coreclr
 MSTESTSUITE_PATH=$(ACCEPTANCE_TESTS_PATH)/ms-test-suite
@@ -14,10 +15,11 @@ MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe
 ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 
 include versions.mk
+include profiler-stress.mk
 include roslyn.mk
 include coreclr.mk
 include ms-test-suite.mk
 
-check-full: check-roslyn check-coreclr check-ms-test-suite
+check-full: check-profiler-stress check-roslyn check-coreclr check-ms-test-suite
 
 clean-local: clean-local-coreclr

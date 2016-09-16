@@ -27,11 +27,12 @@ namespace System {
         , IComparable<Boolean>,  IEquatable<Boolean>
 #endif
     {
-    
+#pragma warning disable 649    
       //
       // Member Variables
       //
       private bool m_value;
+#pragma warning disable
 
       // The true value. 
       // 

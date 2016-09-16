@@ -385,14 +385,14 @@ struct _MonoDomain {
 	GHashTable	   *generic_virtual_cases;
 	MonoThunkFreeList **thunk_free_lists;
 
-	GHashTable     *generic_virtual_thunks;
+	GHashTable     *generic_virtual_trampolines;
 
 	/* Information maintained by the JIT engine */
 	gpointer runtime_info;
 
 	/*thread pool jobs, used to coordinate shutdown.*/
 	volatile int			threadpool_jobs;
-	HANDLE				cleanup_semaphore;
+	gpointer				cleanup_semaphore;
 	
 	/* Contains the compiled runtime invoke wrapper used by finalizers */
 	gpointer            finalize_runtime_invoke;
@@ -699,5 +699,9 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 void
 mono_context_init_checked (MonoDomain *domain, MonoError *error);
+
+gboolean
+mono_assembly_get_reference_assembly_attribute (MonoAssembly *assembly, MonoError *error);
+
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

@@ -437,7 +437,9 @@ namespace System.Runtime.Remoting.Messaging {
 	internal class CADMethodReturnMessage : CADMessageBase {
 		object _returnValue;
 		CADArgHolder _exception = null;
+#pragma warning disable 414
 		Type [] _sig;
+#pragma warning restore
 
 		static internal CADMethodReturnMessage Create (IMessage callMsg) {
 			IMethodReturnMessage msg = callMsg as IMethodReturnMessage;

@@ -2356,10 +2356,8 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	runtime_invoke = (MonoObject *(*)(MonoObject *, void **, MonoObject **, void *))info->runtime_invoke;
 
 	runtime_invoke (NULL, args, exc, info->compiled_method);
-	if (exc && *exc) {
-		mono_error_set_exception_instance (error, (MonoException*) *exc);
+	if (exc && *exc)
 		return NULL;
-	}
 
 	if (sig->ret->type != MONO_TYPE_VOID && info->ret_box_class)
 		return mono_value_box_checked (domain, info->ret_box_class, retval, error);
@@ -2545,12 +2543,17 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	}
 #endif
 
-	if (mono_llvm_only)
-		return mono_llvmonly_runtime_invoke (method, info, obj, params, exc, error);
+	MonoObject *result;
 
-	runtime_invoke = (MonoObject *(*)(MonoObject *, void **, MonoObject **, void *))info->runtime_invoke;
+	if (mono_llvm_only) {
+		result = mono_llvmonly_runtime_invoke (method, info, obj, params, exc, error);
+		if (!is_ok (error))
+			return NULL;
+	} else {
+		runtime_invoke = (MonoObject *(*)(MonoObject *, void **, MonoObject **, void *))info->runtime_invoke;
 
-	MonoObject *result = runtime_invoke ((MonoObject *)obj, params, exc, info->compiled_method);
+		result = runtime_invoke ((MonoObject *)obj, params, exc, info->compiled_method);
+	}
 	if (catchExcInMonoError && *exc != NULL)
 		mono_error_set_exception_instance (error, (MonoException*) *exc);
 	return result;
@@ -2559,34 +2562,34 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 typedef struct {
 	MonoVTable *vtable;
 	int slot;
-} IMTThunkInfo;
+} IMTTrampInfo;
 
-typedef gpointer (*IMTThunkFunc) (gpointer *arg, MonoMethod *imt_method);
+typedef gpointer (*IMTTrampFunc) (gpointer *arg, MonoMethod *imt_method);
 
 /*
- * mini_llvmonly_initial_imt_thunk:
+ * mini_llvmonly_initial_imt_tramp:
  *
- *  This function is called the first time a call is made through an IMT thunk.
- * It should have the same signature as the mono_llvmonly_imt_thunk_... functions.
+ *  This function is called the first time a call is made through an IMT trampoline.
+ * It should have the same signature as the mono_llvmonly_imt_tramp_... functions.
  */
 static gpointer
-mini_llvmonly_initial_imt_thunk (gpointer *arg, MonoMethod *imt_method)
+mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
-	IMTThunkInfo *info = (IMTThunkInfo*)arg;
+	IMTTrampInfo *info = (IMTTrampInfo*)arg;
 	gpointer *imt;
 	gpointer *ftndesc;
-	IMTThunkFunc func;
+	IMTTrampFunc func;
 
 	mono_vtable_build_imt_slot (info->vtable, info->slot);
 
 	imt = (gpointer*)info->vtable;
 	imt -= MONO_IMT_SIZE;
 
-	/* Return what the real IMT thunk returns */
+	/* Return what the real IMT trampoline returns */
 	ftndesc = imt [info->slot];
 	func = ftndesc [0];
 
-	if (func == (IMTThunkFunc)mini_llvmonly_initial_imt_thunk)
+	if (func == (IMTTrampFunc)mini_llvmonly_initial_imt_tramp)
 		/* Happens when the imt slot contains only a generic virtual method */
 		return NULL;
 	return func ((gpointer *)ftndesc [1], imt_method);
@@ -2594,11 +2597,11 @@ mini_llvmonly_initial_imt_thunk (gpointer *arg, MonoMethod *imt_method)
 
 /* This is called indirectly through an imt slot. */
 static gpointer
-mono_llvmonly_imt_thunk (gpointer *arg, MonoMethod *imt_method)
+mono_llvmonly_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
 	int i = 0;
 
-	/* arg points to an array created in mono_llvmonly_get_imt_thunk () */
+	/* arg points to an array created in mono_llvmonly_get_imt_trampoline () */
 	while (arg [i] && arg [i] != imt_method)
 		i += 2;
 	g_assert (arg [i]);
@@ -2606,16 +2609,16 @@ mono_llvmonly_imt_thunk (gpointer *arg, MonoMethod *imt_method)
 	return arg [i + 1];
 }
 
-/* Optimized versions of mono_llvmonly_imt_thunk () for different table sizes */
+/* Optimized versions of mono_llvmonly_imt_trampoline () for different table sizes */
 static gpointer
-mono_llvmonly_imt_thunk_1 (gpointer *arg, MonoMethod *imt_method)
+mono_llvmonly_imt_tramp_1 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method);
 	return arg [1];
 }
 
 static gpointer
-mono_llvmonly_imt_thunk_2 (gpointer *arg, MonoMethod *imt_method)
+mono_llvmonly_imt_tramp_2 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method || arg [2] == imt_method);
 	if (arg [0] == imt_method)
@@ -2625,7 +2628,7 @@ mono_llvmonly_imt_thunk_2 (gpointer *arg, MonoMethod *imt_method)
 }
 
 static gpointer
-mono_llvmonly_imt_thunk_3 (gpointer *arg, MonoMethod *imt_method)
+mono_llvmonly_imt_tramp_3 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method || arg [2] == imt_method || arg [4] == imt_method);
 	if (arg [0] == imt_method)
@@ -2637,14 +2640,14 @@ mono_llvmonly_imt_thunk_3 (gpointer *arg, MonoMethod *imt_method)
 }
 
 /*
- * A version of the imt thunk used for generic virtual/variant iface methods.
- * Unlikely a normal imt thunk, its possible that IMT_METHOD is not found
+ * A version of the imt trampoline used for generic virtual/variant iface methods.
+ * Unlikely a normal imt trampoline, its possible that IMT_METHOD is not found
  * in the search table. The original JIT code had a 'fallback' trampoline it could
  * call, but we can't do that, so we just return NULL, and the compiled code
  * will handle it.
  */
 static gpointer
-mono_llvmonly_fallback_imt_thunk (gpointer *arg, MonoMethod *imt_method)
+mono_llvmonly_fallback_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
 	int i = 0;
 
@@ -2657,7 +2660,7 @@ mono_llvmonly_fallback_imt_thunk (gpointer *arg, MonoMethod *imt_method)
 }
 
 static gpointer
-mono_llvmonly_get_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp)
+mono_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp)
 {
 	gpointer *buf;
 	gpointer *res;
@@ -2665,7 +2668,7 @@ mono_llvmonly_get_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTChec
 	gboolean virtual_generic = FALSE;
 
 	/*
-	 * Create an array which is passed to the imt thunk functions.
+	 * Create an array which is passed to the imt trampoline functions.
 	 * The array contains MonoMethod-function descriptor pairs, terminated by a NULL entry.
 	 */
 
@@ -2720,20 +2723,20 @@ mono_llvmonly_get_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTChec
 	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer));
 	switch (real_count) {
 	case 1:
-		res [0] = mono_llvmonly_imt_thunk_1;
+		res [0] = mono_llvmonly_imt_tramp_1;
 		break;
 	case 2:
-		res [0] = mono_llvmonly_imt_thunk_2;
+		res [0] = mono_llvmonly_imt_tramp_2;
 		break;
 	case 3:
-		res [0] = mono_llvmonly_imt_thunk_3;
+		res [0] = mono_llvmonly_imt_tramp_3;
 		break;
 	default:
-		res [0] = mono_llvmonly_imt_thunk;
+		res [0] = mono_llvmonly_imt_tramp;
 		break;
 	}
 	if (virtual_generic || fail_tramp)
-		res [0] = mono_llvmonly_fallback_imt_thunk;
+		res [0] = mono_llvmonly_fallback_imt_tramp;
 	res [1] = buf;
 
 	return res;
@@ -2955,13 +2958,13 @@ mini_get_vtable_trampoline (MonoVTable *vt, int slot_index)
 
 	if (mono_llvm_only) {
 		if (slot_index < 0) {
-			/* Initialize the IMT thunks to a 'trampoline' so the generated code doesn't have to initialize it */
+			/* Initialize the IMT trampoline to a 'trampoline' so the generated code doesn't have to initialize it */
 			// FIXME: Memory management
 			gpointer *ftndesc = g_malloc (2 * sizeof (gpointer));
-			IMTThunkInfo *info = g_new0 (IMTThunkInfo, 1);
+			IMTTrampInfo *info = g_new0 (IMTTrampInfo, 1);
 			info->vtable = vt;
 			info->slot = index;
-			ftndesc [0] = mini_llvmonly_initial_imt_thunk;
+			ftndesc [0] = mini_llvmonly_initial_imt_tramp;
 			ftndesc [1] = info;
 			mono_memory_barrier ();
 			return ftndesc;
@@ -3660,12 +3663,12 @@ mini_init (const char *filename, const char *runtime_version)
 	}
 
 	if (mono_llvm_only) {
-		mono_install_imt_thunk_builder (mono_llvmonly_get_imt_thunk);
-		mono_set_always_build_imt_thunks (TRUE);
+		mono_install_imt_trampoline_builder (mono_llvmonly_get_imt_trampoline);
+		mono_set_always_build_imt_trampolines (TRUE);
 	} else if (mono_aot_only) {
-		mono_install_imt_thunk_builder (mono_aot_get_imt_thunk);
+		mono_install_imt_trampoline_builder (mono_aot_get_imt_trampoline);
 	} else {
-		mono_install_imt_thunk_builder (mono_arch_build_imt_thunk);
+		mono_install_imt_trampoline_builder (mono_arch_build_imt_trampoline);
 	}
 
 	/*Init arch tls information only after the metadata side is inited to make sure we see dynamic appdomain tls keys*/
@@ -3711,6 +3714,8 @@ mini_init (const char *filename, const char *runtime_version)
 		 * might only support aot-only execution.
 		 */
 		mono_runtime_set_no_exec (TRUE);
+
+	mono_mem_account_register_counters ();
 
 #define JIT_RUNTIME_WORKS
 #ifdef JIT_RUNTIME_WORKS
@@ -3980,6 +3985,7 @@ register_icalls (void)
 	register_icall (mono_get_assembly_object, "mono_get_assembly_object", "object ptr", TRUE);
 	register_icall (mono_get_method_object, "mono_get_method_object", "object ptr", TRUE);
 	register_icall (mono_throw_method_access, "mono_throw_method_access", "void ptr ptr", FALSE);
+	register_icall_no_wrapper (mono_dummy_jit_icall, "mono_dummy_jit_icall", "void");
 
 	register_icall_with_wrapper (mono_monitor_enter, "mono_monitor_enter", "void obj");
 	register_icall_with_wrapper (mono_monitor_enter_v4, "mono_monitor_enter_v4", "void obj ptr");
@@ -4028,7 +4034,7 @@ print_jit_stats (void)
 		g_print ("IMT colliding slots:    %ld\n", mono_stats.imt_slots_with_collisions);
 		g_print ("IMT max collisions:     %ld\n", mono_stats.imt_max_collisions_in_slot);
 		g_print ("IMT methods at max col: %ld\n", mono_stats.imt_method_count_when_max_collisions);
-		g_print ("IMT thunks size:        %ld\n", mono_stats.imt_thunks_size);
+		g_print ("IMT trampolines size:   %ld\n", mono_stats.imt_trampolines_size);
 
 		g_print ("JIT info table inserts: %ld\n", mono_stats.jit_info_table_insert_count);
 		g_print ("JIT info table removes: %ld\n", mono_stats.jit_info_table_remove_count);

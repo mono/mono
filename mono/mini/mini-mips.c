@@ -714,8 +714,8 @@ mono_arch_init (void)
 {
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
 
-	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
-	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
+	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
+	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 }
 
@@ -5889,8 +5889,8 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
  * LOCKING: called with the domain lock held
  */
 gpointer
-mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
-	gpointer fail_tramp)
+mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
+								gpointer fail_tramp)
 {
 	int i;
 	int size = 0;
@@ -5928,7 +5928,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	/* the initial load of the vtable address */
 	size += MIPS_LOAD_SEQUENCE_LENGTH;
 	if (fail_tramp) {
-		code = mono_method_alloc_generic_virtual_thunk (domain, size);
+		code = mono_method_alloc_generic_virtual_trampoline (domain, size);
 	} else {
 		code = mono_domain_code_reserve (domain, size);
 	}
@@ -6016,7 +6016,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	}
 
 	if (!fail_tramp)
-		mono_stats.imt_thunks_size += code - start;
+		mono_stats.imt_trampolines_size += code - start;
 	g_assert (code - start <= size);
 	mono_arch_flush_icache (start, size);
 

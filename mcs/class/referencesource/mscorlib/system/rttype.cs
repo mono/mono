@@ -4619,15 +4619,14 @@ namespace System
                     #region Non-TransparentProxy case
                     if (name == null)
                         throw new ArgumentNullException("name");
-
+#if MONO
+                    throw new NotImplementedException ();
+#else
                     bool[] isByRef = modifiers == null ? null : modifiers[0].IsByRefArray;
                     
                     // pass LCID_ENGLISH_US if no explicit culture is specified to match the behavior of VB
                     int lcid = (culture == null ? 0x0409 : culture.LCID);
 
-#if MONO
-                    throw new NotImplementedException ();
-#else
                     return InvokeDispMethod(name, bindingFlags, target, providedArgs, isByRef, lcid, namedParams);
 #endif
                     #endregion
@@ -4660,7 +4659,9 @@ namespace System
             if (binder == null)
                 binder = DefaultBinder;
 
+#if !MONO
             bool bDefaultBinder = (binder == DefaultBinder);
+#endif
             #endregion
             
             #region Delegate to Activator.CreateInstance

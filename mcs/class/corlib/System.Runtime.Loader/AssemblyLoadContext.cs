@@ -100,8 +100,10 @@ namespace System.Runtime.Loader
 		{        	
 		}
 
+#pragma warning disable 67
 		public event Func<AssemblyLoadContext, System.Reflection.AssemblyName, System.Reflection.Assembly> Resolving;
 		public event Action<AssemblyLoadContext> Unloading;
+#pragma warning restore
 	}
 }
 

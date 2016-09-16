@@ -319,7 +319,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
         }
 
         internal BinaryObjectString binaryObjectString;
+#if !MONO
         internal BinaryCrossAppDomainString binaryCrossAppDomainString;
+#endif
 
         internal void WriteObjectString(int objectId, String value)
         {
@@ -397,7 +399,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
         private void WriteArrayAsBytes(Array array, int typeLength)
         {
             InternalWriteItemNull();
+#if !MONO
             int byteLength = array.Length*typeLength;
+#endif
             int arrayOffset = 0;
             if (byteBuffer == null)
                 byteBuffer = new byte[chunkSize];
@@ -689,7 +693,9 @@ if (!BitConverter.IsLittleEndian) {
 
 
         internal BinaryAssembly binaryAssembly;
+#if !MONO        
         internal BinaryCrossAppDomainAssembly crossAppDomainAssembly;
+#endif
 
         internal void WriteAssembly(Type type, String assemblyString, int assemId, bool isNew)
         {

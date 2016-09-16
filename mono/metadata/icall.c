@@ -83,6 +83,9 @@
 #include <mono/metadata/file-mmap.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/metadata/handle.h>
+#include <mono/metadata/w32mutex.h>
+#include <mono/metadata/w32semaphore.h>
+#include <mono/metadata/w32event.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
@@ -6940,7 +6943,7 @@ ves_icall_System_Text_EncodingHelper_InternalCodePage (gint32 *int_code_page)
 	
 	if (strstr (codepage, "utf_8") != NULL)
 		*int_code_page |= 0x10000000;
-	free (codepage);
+	g_free (codepage);
 	
 	if (want_name && *int_code_page == -1)
 		return mono_string_new (mono_domain_get (), cset);

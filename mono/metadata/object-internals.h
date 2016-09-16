@@ -357,7 +357,6 @@ struct _MonoInternalThread {
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
-	MonoCoopSem *start_notify;
 	gpointer stack_ptr;
 	gpointer *static_data;
 	void *thread_info; /*This is MonoThreadInfo*, but to simplify dependencies, let's make it a void* here. */
@@ -380,14 +379,22 @@ struct _MonoInternalThread {
 	gpointer interrupt_on_stop;
 	gsize    flags;
 	gpointer thread_pinning_ref;
+	gsize abort_protected_block_count;
+	gint32 priority;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
 	 * Please synchronize any changes with InternalThread in Thread.cs, i.e. add the
 	 * same field there.
 	 */
-	gsize start_notify_refcount;
-	gpointer unused2;
+	gsize unused1;
+	gsize unused2;
+
+	/* This is used only to check that we are in sync between the representation
+	 * of MonoInternalThread in native and InternalThread in managed
+	 *
+	 * DO NOT RENAME! DO NOT ADD FIELDS AFTER! */
+	gpointer last;
 };
 
 struct _MonoThread {
@@ -395,7 +402,6 @@ struct _MonoThread {
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
-	gint32 priority;
 };
 
 typedef struct {
@@ -588,6 +594,7 @@ typedef struct {
 	void (*mono_raise_exception_with_ctx) (MonoException *ex, MonoContext *ctx);
 	gboolean (*mono_exception_walk_trace) (MonoException *ex, MonoInternalExceptionFrameWalk func, gpointer user_data);
 	gboolean (*mono_install_handler_block_guard) (MonoThreadUnwindState *unwind_state);
+	gboolean (*mono_current_thread_has_handle_block_guard) (void);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 /* used to free a dynamic method */
@@ -1349,9 +1356,6 @@ void          mono_dynamic_image_release_gc_roots (MonoDynamicImage *image);
 
 void        mono_reflection_setup_internal_class  (MonoReflectionTypeBuilder *tb);
 
-void
-ves_icall_TypeBuilder_setup_generic_class (MonoReflectionTypeBuilder *tb);
-
 MonoReflectionType*
 ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb);
 
@@ -1519,14 +1523,14 @@ struct _MonoIMTCheckItem {
 	guint8            has_target_code;
 };
 
-typedef gpointer (*MonoImtThunkBuilder) (MonoVTable *vtable, MonoDomain *domain,
+typedef gpointer (*MonoImtTrampolineBuilder) (MonoVTable *vtable, MonoDomain *domain,
 		MonoIMTCheckItem **imt_entries, int count, gpointer fail_trunk);
 
 void
-mono_install_imt_thunk_builder (MonoImtThunkBuilder func);
+mono_install_imt_trampoline_builder (MonoImtTrampolineBuilder func);
 
 void
-mono_set_always_build_imt_thunks (gboolean value);
+mono_set_always_build_imt_trampolines (gboolean value);
 
 void
 mono_vtable_build_imt_slot (MonoVTable* vtable, int imt_slot);
@@ -1540,7 +1544,7 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 											MonoMethod *method, gpointer code);
 
 gpointer
-mono_method_alloc_generic_virtual_thunk (MonoDomain *domain, int size);
+mono_method_alloc_generic_virtual_trampoline (MonoDomain *domain, int size);
 
 typedef enum {
 	MONO_UNHANDLED_POLICY_LEGACY,

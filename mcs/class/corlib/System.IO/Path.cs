@@ -732,6 +732,7 @@ namespace System.IO {
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
 				if (Environment.IsRunningOnWindows) {
+#if !MOBILE					
 					// append leading '\' of the UNC path that was lost in STEP 3.
 					if (isUnc)
 						ret = Path.DirectorySeparatorStr + ret;
@@ -757,6 +758,7 @@ namespace System.IO {
 						else
 							return current + ret;
 					}
+#endif
 				} else {
 					if (root != "" && ret.Length > 0 && ret [0] != '/')
 						ret = root + ret;
@@ -876,11 +878,13 @@ namespace System.IO {
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+#if !MOBILE				
 			if (Environment.IsRunningOnWindows) {
 				int idx = path.IndexOf (':');
 				if (idx >= 0 && idx != 1)
 					throw new ArgumentException (parameterName);
 			}
+#endif
 		}
 
 		internal static string DirectorySeparatorCharAsString {

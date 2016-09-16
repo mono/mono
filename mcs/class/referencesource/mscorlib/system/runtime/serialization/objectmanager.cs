@@ -44,7 +44,9 @@ namespace System.Runtime.Serialization {
         internal long               m_fixupCount;
         internal ISurrogateSelector m_selector;
         internal StreamingContext   m_context;
+#if !FEATURE_PAL        
         bool m_isCrossAppDomain;
+#endif
     
         [System.Security.SecuritySafeCritical]  // auto-generated
         public ObjectManager(ISurrogateSelector selector, StreamingContext context) : this(selector, context, true, false) {
@@ -60,7 +62,9 @@ namespace System.Runtime.Serialization {
             m_objects = new ObjectHolder[DefaultInitialSize];
             m_selector = selector;
             m_context = context;
+#if !FEATURE_PAL            
             m_isCrossAppDomain = isCrossAppDomain;
+#endif
         }
 
     
@@ -341,7 +345,9 @@ namespace System.Runtime.Serialization {
             int[] arrayIndex = null;
             ValueTypeFixupInfo currFixup=null;
             Object fixupObj=holder.ObjectValue;
+#if false
             ObjectHolder originalHolder = holder;
+#endif
 
             Contract.Assert(holder!=null, "[TypedReferenceBuilder.ctor]holder!=null");
             Contract.Assert(holder.RequiresValueTypeFixup, "[TypedReferenceBuilder.ctor]holder.RequiresValueTypeFixup");

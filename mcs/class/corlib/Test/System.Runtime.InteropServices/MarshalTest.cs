@@ -208,8 +208,8 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void GetHINSTANCE ()
 		{
-			if (RunningOnUnix)
-				Assert.Ignore ("GetHINSTANCE only applies to Windows.");
+			if (RunningOnMono)
+				Assert.Ignore ("GetHINSTANCE only applies to .NET on Windows.");
 
 			Assembly a;
 			IntPtr hinstance;
@@ -803,10 +803,9 @@ namespace MonoTests.System.Runtime.InteropServices
 			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
 		}
-		bool RunningOnUnix {
+		bool RunningOnMono {
 			get {
-				int p = (int) Environment.OSVersion.Platform;
-				return ((p == 4) || (p == 128) || (p == 6));
+				return (Type.GetType ("System.MonoType", false) != null);
 			}
 		}
 
@@ -823,6 +822,151 @@ namespace MonoTests.System.Runtime.InteropServices
 			int nSize
 		);
 #endif
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class FourByteStruct
+		{
+			public UInt16 value1;
+			public UInt16 value2;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArrayFourByteStruct : FourByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class SingleByteStruct
+		{
+			public byte value1;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArraySingleByteStruct : SingleByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array1;
+			public byte value2;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArraySingleByteChildStruct : ByteArraySingleByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array2;
+		}
+
+		[Test]
+		public void CheckByteArrayFourByteStruct()
+		{
+			ByteArrayFourByteStruct myStruct = new ByteArrayFourByteStruct
+			{ value1 = 42, value2 = 53, array = Encoding.UTF8.GetBytes( "Hello" ) };
+
+			byte[] buffer = Serialize (myStruct);
+
+			UInt16 value1 = BitConverter.ToUInt16 (buffer, 0);
+			UInt16 value2 = BitConverter.ToUInt16 (buffer, 2);
+			string array = Encoding.UTF8.GetString (buffer, 4, 5);
+
+			Assert.AreEqual((UInt16)42, value1);
+			Assert.AreEqual((UInt16)53, value2);
+			Assert.AreEqual ("Hello", array);
+		}
+
+		[Test]
+		public void CheckByteArraySingleByteChildStruct()
+		{
+			ByteArraySingleByteChildStruct myStruct = new ByteArraySingleByteChildStruct
+			{ value1 = 42, array1 = Encoding.UTF8.GetBytes( "Hello" ), value2 = 53,  array2 = Encoding.UTF8.GetBytes( "World" ) };
+
+			byte[] array = Serialize (myStruct);
+
+			byte value1 = array [0];
+			string array1 = Encoding.UTF8.GetString (array, 1, 5);
+			byte value2 = array [6];
+			string array2 = Encoding.UTF8.GetString (array, 7, 5);
+
+			Assert.AreEqual((byte)42, value1);
+			Assert.AreEqual ("Hello", array1);
+			Assert.AreEqual((byte)53, value2);
+			Assert.AreEqual ("World", array2);
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct FiveByteStruct
+		{
+			public uint uIntField;
+			public byte byteField;
+		};
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public class Base
+		{
+			public ushort firstUShortField;
+			public ushort secondUShortField;
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public class Derived : Base
+		{
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+			public FiveByteStruct[] arrayField;
+		}
+
+		[Test]
+		public void CheckPtrToStructureWithFixedArrayAndBaseClassFields()
+		{
+			const int arraySize = 6;
+			var derived = new Derived
+			{
+				arrayField = new FiveByteStruct[arraySize],
+				firstUShortField = 42,
+				secondUShortField = 43
+			};
+
+			for (var i = 0; i < arraySize; ++i)
+			{
+				derived.arrayField[i].byteField = (byte)i;
+				derived.arrayField[i].uIntField = (uint)i * 10;
+			}
+
+			var array = Serialize(derived);
+			var deserializedDerived = Deserialize<Derived>(array);
+
+			Assert.AreEqual(derived.firstUShortField, deserializedDerived.firstUShortField, "The firstUShortField differs, which is not expected.");
+			Assert.AreEqual(derived.secondUShortField, deserializedDerived.secondUShortField, "The secondUShortField differs, which is not expected.");
+
+			for (var i = 0; i < arraySize; ++i)
+			{
+				Assert.AreEqual(derived.arrayField[i].byteField, deserializedDerived.arrayField[i].byteField, string.Format("The byteField at index {0} differs, which is not expected.", i));
+				Assert.AreEqual(derived.arrayField[i].uIntField, deserializedDerived.arrayField[i].uIntField, string.Format("The uIntField at index {0} differs, which is not expected.", i));
+			}
+		}
+
+		public static byte[] Serialize( object obj )
+		{
+			int nTypeSize = Marshal.SizeOf( obj );
+			byte[] arrBuffer = new byte[nTypeSize];
+
+			GCHandle hGCHandle = GCHandle.Alloc( arrBuffer, GCHandleType.Pinned );
+			IntPtr pBuffer = hGCHandle.AddrOfPinnedObject();
+			Marshal.StructureToPtr( obj, pBuffer, false );
+			hGCHandle.Free();
+
+			return arrBuffer;
+		}
+
+		public static T Deserialize<T>(byte[] buffer)
+		{
+			var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+			var pBuffer = handle.AddrOfPinnedObject();
+			var objResult = (T)Marshal.PtrToStructure(pBuffer, typeof(T));
+			handle.Free();
+
+			return objResult;
+		}
 	}
 #if !MOBILE
 	[ComImport()]

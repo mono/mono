@@ -271,7 +271,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 42
+#define MINOR_VERSION 43
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -1627,12 +1627,7 @@ stop_debugger_thread (void)
 static void
 start_debugger_thread (void)
 {
-	MonoThreadParm tp;
-
-	tp.priority = MONO_THREAD_PRIORITY_NORMAL;
-	tp.stack_size = 0;
-	tp.creation_flags = 0;
-	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, &tp, NULL);
+	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, 0, NULL);
 	g_assert (debugger_thread_handle);
 }
 
@@ -8627,6 +8622,12 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 
 		locals = mono_debug_lookup_locals (method);
 		if (!locals) {
+			if (CHECK_PROTOCOL_VERSION (2, 43)) {
+				/* Scopes */
+				buffer_add_int (buf, 1);
+				buffer_add_int (buf, 0);
+				buffer_add_int (buf, header->code_size);
+			}
 			buffer_add_int (buf, header->num_locals);
 			/* Types */
 			for (i = 0; i < header->num_locals; ++i) {
@@ -8644,6 +8645,17 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				buffer_add_int (buf, header->code_size);
 			}
 		} else {
+			if (CHECK_PROTOCOL_VERSION (2, 43)) {
+				/* Scopes */
+				buffer_add_int (buf, locals->num_blocks);
+				int last_start = 0;
+				for (i = 0; i < locals->num_blocks; ++i) {
+					buffer_add_int (buf, locals->code_blocks [i].start_offset - last_start);
+					buffer_add_int (buf, locals->code_blocks [i].end_offset - locals->code_blocks [i].start_offset);
+					last_start = locals->code_blocks [i].start_offset;
+				}
+			}
+
 			num_locals = locals->num_locals;
 			buffer_add_int (buf, num_locals);
 

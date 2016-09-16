@@ -473,13 +473,13 @@ allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_clas
 	return result;
 }
 
-inline gboolean
+static inline gboolean
 allocate_parameter_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, param_regs, PARAM_REGS, float_param_regs, FLOAT_PARAM_REGS, current_int_reg, current_float_reg);
 }
 
-inline gboolean
+static inline gboolean
 allocate_return_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	return allocate_register_for_valuetype_win64 (arg_info, arg_class, arg_size, return_regs, RETURN_REGS, float_return_regs, FLOAT_RETURN_REGS, current_int_reg, current_float_reg);
@@ -7989,7 +7989,7 @@ imt_branch_distance (MonoIMTCheckItem **imt_entries, int start, int target)
  * LOCKING: called with the domain lock held
  */
 gpointer
-mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
+mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 	gpointer fail_tramp)
 {
 	int i;
@@ -8043,7 +8043,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 		size += item->chunk_size;
 	}
 	if (fail_tramp)
-		code = (guint8 *)mono_method_alloc_generic_virtual_thunk (domain, size);
+		code = (guint8 *)mono_method_alloc_generic_virtual_trampoline (domain, size);
 	else
 		code = (guint8 *)mono_domain_code_reserve (domain, size);
 	start = code;
@@ -8134,7 +8134,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	}
 
 	if (!fail_tramp)
-		mono_stats.imt_thunks_size += code - start;
+		mono_stats.imt_trampolines_size += code - start;
 	g_assert (code - start <= size);
 
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);

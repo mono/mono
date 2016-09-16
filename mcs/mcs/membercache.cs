@@ -406,8 +406,13 @@ namespace Mono.CSharp {
 
 		public static MemberSpec FindMember (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
 		{
+			if (filter.Kind == MemberKind.Method && container.Kind == MemberKind.TypeParameter && filter.Parameters == null)
+				throw new NotSupportedException ("type parameters methods cannot be lookup up due to two stage setup");
+
+			IList<MemberSpec> applicable;
+			var top_container = container;
+
 			do {
-				IList<MemberSpec> applicable;
 				if (container.MemberCache.member_hash.TryGetValue (filter.Name, out applicable)) {
 					// Start from the end because interface members are in reverse order
 					for (int i = applicable.Count - 1; i >= 0; i--) {
@@ -438,6 +443,26 @@ namespace Mono.CSharp {
 				container = container.BaseType;
 			} while (container != null);
 
+			var tps = top_container as TypeParameterSpec;
+			if (tps != null && tps.InterfaceCache != null) {
+				if (tps.InterfaceCache.member_hash.TryGetValue (filter.Name, out applicable)) {
+					for (int i = applicable.Count - 1; i >= 0; i--) {
+						var entry = applicable [i];
+
+						if ((restrictions & BindingRestriction.NoAccessors) != 0 && entry.IsAccessor)
+							continue;
+
+						if ((restrictions & BindingRestriction.OverrideOnly) != 0 && (entry.Modifiers & Modifiers.OVERRIDE) == 0)
+							continue;
+
+						if (!filter.Equals (entry))
+							continue;
+
+						return entry;
+					}
+				}
+			}
+
 			return null;
 		}
 
@@ -450,14 +475,25 @@ namespace Mono.CSharp {
 		//
 		public static IList<MemberSpec> FindMembers (TypeSpec container, string name, bool declaredOnlyClass)
 		{
-			IList<MemberSpec> applicable;
-
 			do {
+				IList<MemberSpec> applicable;
+				
 				if (container.MemberCache.member_hash.TryGetValue (name, out applicable) || declaredOnlyClass)
 					return applicable;
 
 				container = container.BaseType;
 			} while (container != null);
+
+			return null;
+		}
+
+		public static IList<MemberSpec> FindInterfaceMembers (TypeParameterSpec typeParameter, string name)
+		{
+			if (typeParameter.InterfaceCache != null) {
+				IList<MemberSpec> applicable;
+				typeParameter.InterfaceCache.member_hash.TryGetValue (name, out applicable);
+				return applicable;
+			}
 
 			return null;
 		}

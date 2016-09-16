@@ -93,11 +93,8 @@ namespace System.Reflection.Emit
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_internal_class (TypeBuilder tb);
+		private extern void setup_internal_class ();
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_generic_class ();
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_generic_class ();
 
@@ -114,13 +111,13 @@ namespace System.Reflection.Emit
 			this.nspace = String.Empty;
 			this.fullname = TypeIdentifiers.WithoutEscape(this.tname);
 			pmodule = mb;
-			setup_internal_class (this);
+			setup_internal_class ();
 		}
 
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
 		{
 			int sep_index;
-			this.parent = parent;
+			this.parent = ResolveUserType (parent);
 			this.attrs = attr;
 			this.class_size = type_size;
 			this.packing_size = packing_size;
@@ -150,7 +147,7 @@ namespace System.Reflection.Emit
 
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
-			setup_internal_class (this);
+			setup_internal_class ();
 			fullname = GetFullName ();
 		}
 
@@ -724,7 +721,7 @@ namespace System.Reflection.Emit
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern TypeInfo create_runtime_class (TypeBuilder tb);
+		private extern TypeInfo create_runtime_class ();
 
 		private bool is_nested_in (Type t)
 		{
@@ -828,10 +825,52 @@ namespace System.Reflection.Emit
 					ctor.fixup ();
 			}
 
-			created = create_runtime_class (this);
+			ResolveUserTypes ();
+
+			created = create_runtime_class ();
 			if (created != null)
 				return created;
 			return this;
+		}
+
+		void ResolveUserTypes () {
+			parent = ResolveUserType (parent);
+			ResolveUserTypes (interfaces);
+			if (fields != null) {
+				foreach (var fb in fields) {
+					if (fb != null)
+						fb.ResolveUserTypes ();
+				}
+			}
+			if (methods != null) {
+				foreach (var mb in methods) {
+					if (mb != null)
+						mb.ResolveUserTypes ();
+				}
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors) {
+					if (cb != null)
+						cb.ResolveUserTypes ();
+				}
+			}
+		}
+
+		static internal void ResolveUserTypes (Type[] types) {
+			if (types != null)
+				for (int i = 0; i < types.Length; ++i)
+					types [i] = ResolveUserType (types [i]);
+		}
+
+		static internal Type ResolveUserType (Type t) {
+			if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator))) {
+				t = t.UnderlyingSystemType;
+				if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator)))
+					throw new NotSupportedException ("User defined subclasses of System.Type are not yet supported.");
+				return t;
+			} else {
+				return t;
+			}
 		}
 
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
@@ -1602,9 +1641,10 @@ namespace System.Reflection.Emit
 			} else {
 				this.parent = parent;
 			}
+			this.parent = ResolveUserType (this.parent);
 
 			// will just set the parent-related bits if called a second time
-			setup_internal_class (this);
+			setup_internal_class ();
 		}
 
 		internal int get_next_table_index (object obj, int table, bool inc) {
@@ -1762,8 +1802,6 @@ namespace System.Reflection.Emit
 				throw new ArgumentNullException ("names");
 			if (names.Length == 0)
 				throw new ArgumentException ("names");
-
-			setup_generic_class ();
 
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++) {

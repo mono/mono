@@ -42,6 +42,14 @@ typedef enum {
 	ThreadApartmentState_Unknown = 0x00000002
 } MonoThreadApartmentState;
 
+typedef enum {
+	MONO_THREAD_PRIORITY_LOWEST       = 0,
+	MONO_THREAD_PRIORITY_BELOW_NORMAL = 1,
+	MONO_THREAD_PRIORITY_NORMAL       = 2,
+	MONO_THREAD_PRIORITY_ABOVE_NORMAL = 3,
+	MONO_THREAD_PRIORITY_HIGHEST      = 4,
+} MonoThreadPriority;
+
 #define SPECIAL_STATIC_NONE 0
 #define SPECIAL_STATIC_THREAD 1
 #define SPECIAL_STATIC_CONTEXT 2
@@ -75,17 +83,6 @@ MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInter
 void ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this_obj, MonoObject *culture);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInternalThread *this_obj);
 void ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThread *this_obj, MonoObject *culture);
-HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal(MonoBoolean owned, MonoString *name, MonoBoolean *created);
-MonoBoolean ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle );
-HANDLE ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name, gint32 rights, gint32 *error);
-HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error);
-MonoBoolean ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE handle, gint32 releaseCount, gint32 *prevcount);
-HANDLE ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, gint32 rights, gint32 *error);
-HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name, gint32 *error);
-gboolean ves_icall_System_Threading_Events_SetEvent_internal (HANDLE handle);
-gboolean ves_icall_System_Threading_Events_ResetEvent_internal (HANDLE handle);
-void ves_icall_System_Threading_Events_CloseEvent_internal (HANDLE handle);
-HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name, gint32 rights, gint32 *error);
 
 gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_handles, gint32 ms);
 gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_handles, gint32 ms);
@@ -198,6 +195,7 @@ gboolean mono_thread_current_check_pending_interrupt (void);
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
 gboolean mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test);
+gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set);
 
 void mono_thread_init_apartment_state (void);
 void mono_thread_cleanup_apartment_state (void);
@@ -257,5 +255,9 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy);
 
 MONO_API void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
+
+void mono_threads_begin_abort_protected_block (void);
+void mono_threads_end_abort_protected_block (void);
+MonoException* mono_thread_try_resume_interruption (void);
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -743,7 +743,7 @@ namespace MonoTests.System.Globalization
 			var expected = 100000.ToString ("C");
 
 			thread.Start ();
-			thread.Join ();
+			Assert.IsTrue (thread.Join (5000), "#0");
 			CultureInfo.DefaultThreadCurrentCulture = null;
 			Assert.AreEqual (expected, us_str, "#1");
 			Assert.AreEqual (expected, br_str, "#2");

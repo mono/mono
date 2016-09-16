@@ -4154,7 +4154,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			 * can work around that by doing a volatile load + cond branch from
 			 * localloc-ed memory.
 			 */
-			//set_failure (ctx, "basic block too long");
+			if (!cfg->llvm_only)
+				set_failure (ctx, "basic block too long");
 			cbb = gen_bb (ctx, "CONT_LONG_BB");
 			LLVMBuildBr (ctx->builder, cbb);
 			ctx->builder = builder = create_builder (ctx);
@@ -8610,7 +8611,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	if (info->trampoline_size [0]) {
 		fields [tindex ++] = AddJitGlobal (module, eltype, "specific_trampolines");
 		fields [tindex ++] = AddJitGlobal (module, eltype, "static_rgctx_trampolines");
-		fields [tindex ++] = AddJitGlobal (module, eltype, "imt_thunks");
+		fields [tindex ++] = AddJitGlobal (module, eltype, "imt_trampolines");
 		fields [tindex ++] = AddJitGlobal (module, eltype, "gsharedvt_arg_trampolines");
 	} else {
 		fields [tindex ++] = LLVMConstNull (eltype);

@@ -240,12 +240,10 @@ static guint64 stat_major_blocks_alloced = 0;
 static guint64 stat_major_blocks_freed = 0;
 static guint64 stat_major_blocks_lazy_swept = 0;
 
-#if SIZEOF_VOID_P != 8
 static guint64 stat_major_blocks_freed_ideal = 0;
 static guint64 stat_major_blocks_freed_less_ideal = 0;
 static guint64 stat_major_blocks_freed_individual = 0;
 static guint64 stat_major_blocks_alloced_less_ideal = 0;
-#endif
 
 #ifdef SGEN_COUNT_NUMBER_OF_MAJOR_OBJECTS_MARKED
 static guint64 num_major_objects_marked = 0;
@@ -297,9 +295,9 @@ major_alloc_heap (mword nursery_size, mword nursery_align, int the_nursery_bits)
 {
 	char *start;
 	if (nursery_align)
-		start = (char *)sgen_alloc_os_memory_aligned (nursery_size, nursery_align, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery");
+		start = (char *)sgen_alloc_os_memory_aligned (nursery_size, nursery_align, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery", MONO_MEM_ACCOUNT_SGEN_NURSERY);
 	else
-		start = (char *)sgen_alloc_os_memory (nursery_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery");
+		start = (char *)sgen_alloc_os_memory (nursery_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), "nursery", MONO_MEM_ACCOUNT_SGEN_NURSERY);
 
 	return start;
 }
@@ -331,7 +329,7 @@ ms_get_empty_block (void)
 		for (;;) {
 			p = (char *)sgen_alloc_os_memory_aligned (MS_BLOCK_SIZE * alloc_num, MS_BLOCK_SIZE,
 				(SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE),
-				alloc_num == 1 ? "major heap section" : NULL);
+				alloc_num == 1 ? "major heap section" : NULL, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 			if (p)
 				break;
 			alloc_num >>= 1;
@@ -872,6 +870,7 @@ major_iterate_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc call
 	gboolean pinned = flags & ITERATE_OBJECTS_PINNED;
 	MSBlockInfo *block;
 
+	/* No actual sweeping will take place if we are in the middle of a major collection. */
 	major_finish_sweep_checking ();
 	FOREACH_BLOCK_NO_LOCK (block) {
 		int count = MS_BLOCK_FREE / block->obj_size;
@@ -881,26 +880,13 @@ major_iterate_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc call
 			continue;
 		if (!block->pinned && !non_pinned)
 			continue;
-		if (sweep && lazy_sweep) {
+		if (sweep && lazy_sweep && !block_is_swept_or_marking (block)) {
 			sweep_block (block);
 			SGEN_ASSERT (6, block->state == BLOCK_STATE_SWEPT, "Block must be swept after sweeping");
 		}
 
 		for (i = 0; i < count; ++i) {
 			void **obj = (void**) MS_BLOCK_OBJ (block, i);
-			/*
-			 * We've finished sweep checking, but if we're sweeping lazily and
-			 * the flags don't require us to sweep, the block might still need
-			 * sweeping.  In that case, we need to consult the mark bits to tell
-			 * us whether an object slot is live.
-			 */
-			if (!block_is_swept_or_marking (block)) {
-				int word, bit;
-				SGEN_ASSERT (6, !sweep && block->state == BLOCK_STATE_NEED_SWEEPING, "Has sweeping not finished?");
-				MS_CALC_MARK_BIT (word, bit, obj);
-				if (!MS_MARK_BIT (block, word, bit))
-					continue;
-			}
 			if (MS_OBJ_ALLOCED (obj, block))
 				callback ((GCObject*)obj, block->obj_size, data);
 		}
@@ -1953,7 +1939,6 @@ major_finish_major_collection (ScannedObjectCounts *counts)
 #endif
 }
 
-#if SIZEOF_VOID_P != 8
 static int
 compare_pointers (const void *va, const void *vb) {
 	char *a = *(char**)va, *b = *(char**)vb;
@@ -1963,17 +1948,13 @@ compare_pointers (const void *va, const void *vb) {
 		return 1;
 	return 0;
 }
-#endif
 
 /*
  * This is called with sweep completed and the world stopped.
  */
 static void
-major_free_swept_blocks (size_t allowance)
+major_free_swept_blocks (size_t section_reserve)
 {
-	/* FIXME: This is probably too much.  It's assuming all objects are small. */
-	size_t section_reserve = allowance / MS_BLOCK_SIZE;
-
 	SGEN_ASSERT (0, sweep_state == SWEEP_STATE_SWEPT, "Sweeping must have finished before freeing blocks");
 
 #ifdef TARGET_WIN32
@@ -1984,7 +1965,6 @@ major_free_swept_blocks (size_t allowance)
 		return;
 #endif
 
-#if SIZEOF_VOID_P != 8
 	{
 		int i, num_empty_blocks_orig, num_blocks, arr_length;
 		void *block;
@@ -2057,7 +2037,7 @@ major_free_swept_blocks (size_t allowance)
 					 * we're iterating.
 					 */
 					int j;
-					sgen_free_os_memory (empty_block_arr [first], MS_BLOCK_SIZE * num_blocks, SGEN_ALLOC_HEAP);
+					sgen_free_os_memory (empty_block_arr [first], MS_BLOCK_SIZE * num_blocks, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 					for (j = first; j <= d; ++j)
 						empty_block_arr [j] = NULL;
 					dest = first;
@@ -2104,11 +2084,10 @@ major_free_swept_blocks (size_t allowance)
 	 */
 	if (num_empty_blocks <= num_major_sections)
 		return;
-#endif
 
 	while (num_empty_blocks > section_reserve) {
 		void *next = *(void**)empty_blocks;
-		sgen_free_os_memory (empty_blocks, MS_BLOCK_SIZE, SGEN_ALLOC_HEAP);
+		sgen_free_os_memory (empty_blocks, MS_BLOCK_SIZE, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 		empty_blocks = next;
 		/*
 		 * Needs not be atomic because this is running
@@ -2117,9 +2096,7 @@ major_free_swept_blocks (size_t allowance)
 		--num_empty_blocks;
 
 		++stat_major_blocks_freed;
-#if SIZEOF_VOID_P != 8
 		++stat_major_blocks_freed_individual;
-#endif
 	}
 }
 
@@ -2608,12 +2585,10 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	mono_counters_register ("# major blocks allocated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_alloced);
 	mono_counters_register ("# major blocks freed", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_freed);
 	mono_counters_register ("# major blocks lazy swept", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_lazy_swept);
-#if SIZEOF_VOID_P != 8
 	mono_counters_register ("# major blocks freed ideally", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_freed_ideal);
 	mono_counters_register ("# major blocks freed less ideally", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_freed_less_ideal);
 	mono_counters_register ("# major blocks freed individually", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_freed_individual);
 	mono_counters_register ("# major blocks allocated less ideally", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_alloced_less_ideal);
-#endif
 
 	collector->section_size = MAJOR_SECTION_SIZE;
 

@@ -247,7 +247,7 @@ namespace System.Net {
         private WebHeaderCollectionType m_Type;
 
 #if MONO
-        internal bool AllowMultiValues (string name)
+        internal static bool AllowMultiValues (string name)
         {
             var hinfo = HInfo[name];
             // Is common header which supports multi value or it's unknown header

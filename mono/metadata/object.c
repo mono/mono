@@ -41,6 +41,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
+#include <mono/metadata/w32event.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
@@ -329,6 +330,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 	MonoNativeThreadId tid;
 	int do_initialization = 0;
 	MonoDomain *last_domain = NULL;
+	MonoException * pending_tae = NULL;
 
 	mono_error_init (error);
 
@@ -431,14 +433,22 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 	if (do_initialization) {
 		MonoException *exc = NULL;
+
+		mono_threads_begin_abort_protected_block ();
 		mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
-		if (exc != NULL && mono_error_ok (error)) {
-			mono_error_set_exception_instance (error, exc);
-		}
+		mono_threads_end_abort_protected_block ();
+
+		//exception extracted, error will be set to the right value later
+		if (exc == NULL && !mono_error_ok (error))//invoking failed but exc was not set
+			exc = mono_error_convert_to_exception (error);
+		else
+			mono_error_cleanup (error);
+
+		mono_error_init (error);
 
 		/* If the initialization failed, mark the class as unusable. */
 		/* Avoid infinite loops */
-		if (!(mono_error_ok(error) ||
+		if (!(!exc ||
 			  (klass->image == mono_defaults.corlib &&
 			   !strcmp (klass->name_space, "System") &&
 			   !strcmp (klass->name, "TypeInitializationException")))) {
@@ -451,15 +461,9 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 			MonoException *exc_to_throw = mono_get_exception_type_initialization_checked (full_name, exc, error);
 			g_free (full_name);
-			return_val_if_nok (error, FALSE);
 
-			mono_error_set_exception_instance (error, exc_to_throw);
+			mono_error_assert_ok (error); //We can't recover from this, no way to fail a type we can't alloc a failure.
 
-			MonoException *exc_to_store = mono_error_convert_to_exception (error);
-			/* What we really want to do here is clone the error object and store one copy in the
-			 * domain's exception hash and use the other one to error out here. */
-			mono_error_init (error);
-			mono_error_set_exception_instance (error, exc_to_store);
 			/*
 			 * Store the exception object so it could be thrown on subsequent
 			 * accesses.
@@ -467,7 +471,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			mono_domain_lock (domain);
 			if (!domain->type_init_exception_hash)
 				domain->type_init_exception_hash = mono_g_hash_table_new_type (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "type initialization exceptions table");
-			mono_g_hash_table_insert (domain->type_init_exception_hash, klass, exc_to_store);
+			mono_g_hash_table_insert (domain->type_init_exception_hash, klass, exc_to_throw);
 			mono_domain_unlock (domain);
 		}
 
@@ -475,6 +479,11 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			mono_domain_set (last_domain, TRUE);
 		lock->done = TRUE;
 		mono_type_init_unlock (lock);
+		if (exc && mono_object_class (exc) == mono_defaults.threadabortexception_class)
+			pending_tae = exc;
+		//TAEs are blocked around .cctors, they must escape as soon as no cctor is left to run.
+		if (!pending_tae)
+			pending_tae = mono_thread_try_resume_interruption ();
 	} else {
 		/* this just blocks until the initializing thread is done */
 		mono_type_init_lock (lock);
@@ -495,7 +504,10 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		vtable->initialized = 1;
 	mono_type_initialization_unlock ();
 
-	if (vtable->init_failed) {
+	//TAE wins over TIE
+	if (pending_tae)
+		mono_error_set_exception_instance (error, pending_tae);
+	else if (vtable->init_failed) {
 		/* Either we were the initializing thread or we waited for the initialization */
 		mono_error_set_exception_instance (error, get_type_init_exception_for_vtable (vtable));
 		return FALSE;
@@ -560,8 +572,8 @@ default_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 }
 
 static MonoDelegateTrampoline arch_create_delegate_trampoline = default_delegate_trampoline;
-static MonoImtThunkBuilder imt_thunk_builder;
-static gboolean always_build_imt_thunks;
+static MonoImtTrampolineBuilder imt_trampoline_builder;
+static gboolean always_build_imt_trampolines;
 
 #if (MONO_IMT_SIZE > 32)
 #error "MONO_IMT_SIZE cannot be larger than 32"
@@ -594,14 +606,15 @@ mono_install_delegate_trampoline (MonoDelegateTrampoline func)
 }
 
 void
-mono_install_imt_thunk_builder (MonoImtThunkBuilder func) {
-	imt_thunk_builder = func;
+mono_install_imt_trampoline_builder (MonoImtTrampolineBuilder func)
+{
+	imt_trampoline_builder = func;
 }
 
 void
-mono_set_always_build_imt_thunks (gboolean value)
+mono_set_always_build_imt_trampolines (gboolean value)
 {
-	always_build_imt_thunks = value;
+	always_build_imt_trampolines = value;
 }
 
 /**
@@ -1195,7 +1208,7 @@ mono_method_get_imt_slot (MonoMethod *method)
 		break;
 	}
 	
-	free (hashes_start);
+	g_free (hashes_start);
 	/* Report the result */
 	return c % MONO_IMT_SIZE;
 }
@@ -1323,7 +1336,7 @@ imt_sort_slot_entries (MonoImtBuilderEntry *entries) {
 
 	imt_emit_ir (sorted_array, 0, number_of_entries, result);
 
-	free (sorted_array);
+	g_free (sorted_array);
 	return result;
 }
 
@@ -1333,15 +1346,15 @@ initialize_imt_slot (MonoVTable *vtable, MonoDomain *domain, MonoImtBuilderEntry
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	if (imt_builder_entry != NULL) {
-		if (imt_builder_entry->children == 0 && !fail_tramp && !always_build_imt_thunks) {
+		if (imt_builder_entry->children == 0 && !fail_tramp && !always_build_imt_trampolines) {
 			/* No collision, return the vtable slot contents */
 			return vtable->vtable [imt_builder_entry->value.vtable_slot];
 		} else {
-			/* Collision, build the thunk */
+			/* Collision, build the trampoline */
 			GPtrArray *imt_ir = imt_sort_slot_entries (imt_builder_entry);
 			gpointer result;
 			int i;
-			result = imt_thunk_builder (vtable, domain,
+			result = imt_trampoline_builder (vtable, domain,
 				(MonoIMTCheckItem**)imt_ir->pdata, imt_ir->len, fail_tramp);
 			for (i = 0; i < imt_ir->len; ++i)
 				g_free (g_ptr_array_index (imt_ir, i));
@@ -1463,12 +1476,12 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 
 			if (has_generic_virtual || has_variant_iface) {
 				/*
-				 * There might be collisions later when the the thunk is expanded.
+				 * There might be collisions later when the the trampoline is expanded.
 				 */
 				imt_collisions_bitmap |= (1 << i);
 
 				/* 
-				 * The IMT thunk might be called with an instance of one of the 
+				 * The IMT trampoline might be called with an instance of one of the 
 				 * generic virtual methods, so has to fallback to the IMT trampoline.
 				 */
 				imt [i] = initialize_imt_slot (vt, domain, imt_builder [i], callbacks.get_imt_trampoline (vt, i));
@@ -1503,7 +1516,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			entry = next;
 		}
 	}
-	free (imt_builder);
+	g_free (imt_builder);
 	/* we OR the bitmap since we may build just a single imt slot at a time */
 	vt->imt_collisions_bitmap |= imt_collisions_bitmap;
 }
@@ -1521,7 +1534,7 @@ build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, 
  * @imt_slot: slot in the IMT table
  *
  * Fill the given @imt_slot in the IMT table of @vtable with
- * a trampoline or a thunk for the case of collisions.
+ * a trampoline or a trampoline for the case of collisions.
  * This is part of the internal mono API.
  *
  * LOCKING: Take the domain lock.
@@ -1593,23 +1606,23 @@ list_index_for_size (int item_size)
 }
 
 /**
- * mono_method_alloc_generic_virtual_thunk:
+ * mono_method_alloc_generic_virtual_trampoline:
  * @domain: a domain
  * @size: size in bytes
  *
  * Allocs size bytes to be used for the code of a generic virtual
- * thunk.  It's either allocated from the domain's code manager or
+ * trampoline.  It's either allocated from the domain's code manager or
  * reused from a previously invalidated piece.
  *
  * LOCKING: The domain lock must be held.
  */
 gpointer
-mono_method_alloc_generic_virtual_thunk (MonoDomain *domain, int size)
+mono_method_alloc_generic_virtual_trampoline (MonoDomain *domain, int size)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	static gboolean inited = FALSE;
-	static int generic_virtual_thunks_size = 0;
+	static int generic_virtual_trampolines_size = 0;
 
 	guint32 *p;
 	int i;
@@ -1642,19 +1655,19 @@ mono_method_alloc_generic_virtual_thunk (MonoDomain *domain, int size)
 
 	/* still nothing found - allocate it */
 	if (!inited) {
-		mono_counters_register ("Generic virtual thunk bytes",
-				MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &generic_virtual_thunks_size);
+		mono_counters_register ("Generic virtual trampoline bytes",
+				MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &generic_virtual_trampolines_size);
 		inited = TRUE;
 	}
-	generic_virtual_thunks_size += size;
+	generic_virtual_trampolines_size += size;
 
 	p = (guint32 *)mono_domain_code_reserve (domain, size);
 	*p = size;
 
 	mono_domain_lock (domain);
-	if (!domain->generic_virtual_thunks)
-		domain->generic_virtual_thunks = g_hash_table_new (NULL, NULL);
-	g_hash_table_insert (domain->generic_virtual_thunks, p, p);
+	if (!domain->generic_virtual_trampolines)
+		domain->generic_virtual_trampolines = g_hash_table_new (NULL, NULL);
+	g_hash_table_insert (domain->generic_virtual_trampolines, p, p);
 	mono_domain_unlock (domain);
 
 	return p + 1;
@@ -1664,7 +1677,7 @@ mono_method_alloc_generic_virtual_thunk (MonoDomain *domain, int size)
  * LOCKING: The domain lock must be held.
  */
 static void
-invalidate_generic_virtual_thunk (MonoDomain *domain, gpointer code)
+invalidate_generic_virtual_trampoline (MonoDomain *domain, gpointer code)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
@@ -1673,14 +1686,14 @@ invalidate_generic_virtual_thunk (MonoDomain *domain, gpointer code)
 	gboolean found = FALSE;
 
 	mono_domain_lock (domain);
-	if (!domain->generic_virtual_thunks)
-		domain->generic_virtual_thunks = g_hash_table_new (NULL, NULL);
-	if (g_hash_table_lookup (domain->generic_virtual_thunks, l))
+	if (!domain->generic_virtual_trampolines)
+		domain->generic_virtual_trampolines = g_hash_table_new (NULL, NULL);
+	if (g_hash_table_lookup (domain->generic_virtual_trampolines, l))
 		found = TRUE;
 	mono_domain_unlock (domain);
 
 	if (!found)
-		/* Not allocated by mono_method_alloc_generic_virtual_thunk (), i.e. AOT */
+		/* Not allocated by mono_method_alloc_generic_virtual_trampoline (), i.e. AOT */
 		return;
 	init_thunk_free_lists (domain);
 
@@ -1773,7 +1786,7 @@ get_generic_virtual_entries (MonoDomain *domain, gpointer *vtable_slot)
  * Registers a call via unmanaged code to a generic virtual method
  * instantiation or variant interface method.  If the number of calls reaches a threshold
  * (THUNK_THRESHOLD), the method is added to the vtable slot's generic
- * virtual method thunk.
+ * virtual method trampoline.
  */
 void
 mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtable,
@@ -1829,7 +1842,7 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 			int displacement = (gpointer*)vtable_slot - (gpointer*)vtable;
 			int imt_slot = MONO_IMT_SIZE + displacement;
 
-			/* Force the rebuild of the thunk at the next call */
+			/* Force the rebuild of the trampoline at the next call */
 			imt_trampoline = callbacks.get_imt_trampoline (vtable, imt_slot);
 			*vtable_slot = imt_trampoline;
 		} else {
@@ -1839,8 +1852,8 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 
 			sorted = imt_sort_slot_entries (entries);
 
-			*vtable_slot = imt_thunk_builder (NULL, domain, (MonoIMTCheckItem**)sorted->pdata, sorted->len,
-											  vtable_trampoline);
+			*vtable_slot = imt_trampoline_builder (NULL, domain, (MonoIMTCheckItem**)sorted->pdata, sorted->len,
+												   vtable_trampoline);
 
 			while (entries) {
 				MonoImtBuilderEntry *next = entries->next;
@@ -1854,10 +1867,10 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 		}
 
 #ifndef __native_client__
-		/* We don't re-use any thunks as there is a lot of overhead */
+		/* We don't re-use any trampolines as there is a lot of overhead */
 		/* to deleting and re-using code in Native Client.          */
 		if (old_thunk != vtable_trampoline && old_thunk != imt_trampoline)
-			invalidate_generic_virtual_thunk (domain, old_thunk);
+			invalidate_generic_virtual_trampoline (domain, old_thunk);
 #endif
 	}
 
@@ -4660,10 +4673,13 @@ mono_unhandled_exception (MonoObject *exc)
 	if (!current_appdomain_delegate && !root_appdomain_delegate) {
 		mono_print_unhandled_exception (exc);
 	} else {
+		/* unhandled exception callbacks must not be aborted */
+		mono_threads_begin_abort_protected_block ();
 		if (root_appdomain_delegate)
 			call_unhandled_exception_delegate (root_domain, root_appdomain_delegate, exc);
 		if (current_appdomain_delegate)
 			call_unhandled_exception_delegate (current_domain, current_appdomain_delegate, exc);
+		mono_threads_end_abort_protected_block ();
 	}
 
 	/* set exitcode only if we will abort the process */
@@ -7533,14 +7549,16 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 
 		ac->msg->exc = NULL;
 
-		MonoError invoke_error;
-		res = mono_message_invoke (ares->async_delegate, ac->msg, &ac->msg->exc, &ac->out_args, &invoke_error);
+		res = mono_message_invoke (ares->async_delegate, ac->msg, &ac->msg->exc, &ac->out_args, &error);
+
+		/* The exit side of the invoke must not be aborted as it would leave the runtime in an undefined state */
+		mono_threads_begin_abort_protected_block ();
 
 		if (!ac->msg->exc) {
-			MonoException *ex = mono_error_convert_to_exception (&invoke_error);
+			MonoException *ex = mono_error_convert_to_exception (&error);
 			ac->msg->exc = (MonoObject *)ex;
 		} else {
-			mono_error_cleanup (&invoke_error);
+			mono_error_cleanup (&error);
 		}
 
 		MONO_OBJECT_SETREF (ac, res, res);
@@ -7552,13 +7570,16 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 		mono_monitor_exit ((MonoObject*) ares);
 
 		if (wait_event != NULL)
-			SetEvent (wait_event);
+			mono_w32event_set (wait_event);
 
-		if (ac->cb_method) {
+		mono_error_init (&error); //the else branch would leave it in an undefined state
+		if (ac->cb_method)
 			mono_runtime_invoke_checked (ac->cb_method, ac->cb_target, (gpointer*) &ares, &error);
-			if (mono_error_set_pending_exception (&error))
-				return NULL;
-		}
+
+		mono_threads_end_abort_protected_block ();
+
+		if (mono_error_set_pending_exception (&error))
+			return NULL;
 	}
 
 	return res;

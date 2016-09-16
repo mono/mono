@@ -53,30 +53,21 @@
  * 4MB array.
  */
 static GHashTable *file_share_hash;
-static mono_mutex_t file_share_hash_mutex;
-
-#define file_share_hash_lock() mono_os_mutex_lock (&file_share_hash_mutex)
-#define file_share_hash_unlock() mono_os_mutex_unlock (&file_share_hash_mutex)
+static mono_mutex_t file_share_mutex;
 
 static void
 _wapi_handle_share_release (_WapiFileShare *share_info)
 {
-	int thr_ret;
+	/* Prevent new entries racing with us */
+	mono_os_mutex_lock (&file_share_mutex);
 
 	g_assert (share_info->handle_refs > 0);
-	
-	/* Prevent new entries racing with us */
-	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_FILESHARE);
-	g_assert(thr_ret == 0);
+	share_info->handle_refs -= 1;
 
-	if (InterlockedDecrement ((gint32 *)&share_info->handle_refs) == 0) {
-		file_share_hash_lock ();
+	if (share_info->handle_refs == 0)
 		g_hash_table_remove (file_share_hash, share_info);
-		file_share_hash_unlock ();
-	}
 
-	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_FILESHARE);
-	g_assert (thr_ret == 0);
+	mono_os_mutex_unlock (&file_share_mutex);
 }
 
 static gint
@@ -101,12 +92,10 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 	guint32 *old_sharemode, guint32 *old_access, struct _WapiFileShare **share_info)
 {
 	struct _WapiFileShare *file_share;
-	int thr_ret;
 	gboolean exists = FALSE;
 
 	/* Prevent new entries racing with us */
-	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_FILESHARE);
-	g_assert (thr_ret == 0);
+	mono_os_mutex_lock (&file_share_mutex);
 
 	_WapiFileShare tmp;
 
@@ -115,15 +104,11 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 	 * info. This is needed even if SHM is disabled, to track sharing inside
 	 * the current process.
 	 */
-	if (!file_share_hash) {
+	if (!file_share_hash)
 		file_share_hash = g_hash_table_new_full (wapi_share_info_hash, wapi_share_info_equal, NULL, g_free);
-		mono_os_mutex_init_recursive (&file_share_hash_mutex);
-	}
 
 	tmp.device = device;
 	tmp.inode = inode;
-
-	file_share_hash_lock ();
 
 	file_share = (_WapiFileShare *)g_hash_table_lookup (file_share_hash, &tmp);
 	if (file_share) {
@@ -131,7 +116,9 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 		*old_access = file_share->access;
 		*share_info = file_share;
 
-		InterlockedIncrement ((gint32 *)&file_share->handle_refs);
+		g_assert (file_share->handle_refs > 0);
+		file_share->handle_refs += 1;
+
 		exists = TRUE;
 	} else {
 		file_share = g_new0 (_WapiFileShare, 1);
@@ -147,10 +134,7 @@ _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharem
 		g_hash_table_insert (file_share_hash, file_share, file_share);
 	}
 
-	file_share_hash_unlock ();
-	
-	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_FILESHARE);
-	g_assert (thr_ret == 0);
+	mono_os_mutex_unlock (&file_share_mutex);
 
 	return(exists);
 }
@@ -2038,7 +2022,7 @@ write_file (int src_fd, int dest_fd, struct stat *st_src, gboolean report_errors
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	buf_size = buf_size < 8192 ? 8192 : (buf_size > 65536 ? 65536 : buf_size);
-	buf = (char *) malloc (buf_size);
+	buf = (char *) g_malloc (buf_size);
 
 	for (;;) {
 		remain = read (src_fd, buf, buf_size);
@@ -2049,7 +2033,7 @@ write_file (int src_fd, int dest_fd, struct stat *st_src, gboolean report_errors
 			if (report_errors)
 				_wapi_set_last_error_from_errno ();
 
-			free (buf);
+			g_free (buf);
 			return FALSE;
 		}
 		if (remain == 0) {
@@ -2065,7 +2049,7 @@ write_file (int src_fd, int dest_fd, struct stat *st_src, gboolean report_errors
 				if (report_errors)
 					_wapi_set_last_error_from_errno ();
 				MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: write failed.", __func__);
-				free (buf);
+				g_free (buf);
 				return FALSE;
 			}
 
@@ -2074,7 +2058,7 @@ write_file (int src_fd, int dest_fd, struct stat *st_src, gboolean report_errors
 		}
 	}
 
-	free (buf);
+	g_free (buf);
 	return TRUE ;
 }
 
@@ -4435,6 +4419,7 @@ void
 _wapi_io_init (void)
 {
 	mono_os_mutex_init (&stdhandle_mutex);
+	mono_os_mutex_init (&file_share_mutex);
 
 	mono_w32handle_register_ops (MONO_W32HANDLE_FILE,    &_wapi_file_ops);
 	mono_w32handle_register_ops (MONO_W32HANDLE_CONSOLE, &_wapi_console_ops);
@@ -4453,8 +4438,8 @@ _wapi_io_init (void)
 void
 _wapi_io_cleanup (void)
 {
-	if (file_share_hash) {
+	mono_os_mutex_destroy (&file_share_mutex);
+
+	if (file_share_hash)
 		g_hash_table_destroy (file_share_hash);
-		mono_os_mutex_destroy (&file_share_hash_mutex);
-	}
 }

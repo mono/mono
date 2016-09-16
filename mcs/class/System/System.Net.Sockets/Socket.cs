@@ -230,6 +230,9 @@ namespace System.Net.Sockets
 					 * effects on Linux, as the socket option is kludged by
 					 * turning on or off PMTU discovery... */
 					this.DontFragment = false;
+					this.NoDelay = false;
+				} else if (address_family == AddressFamily.InterNetworkV6) {
+					this.DualMode = true;
 				}
 
 				/* Microsoft sets these to 8192, but we are going to keep them

@@ -94,6 +94,7 @@ static void restore_stack_protection (void);
 static void mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data);
 static void mono_raise_exception_with_ctx (MonoException *exc, MonoContext *ctx);
 static void mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data);
+static gboolean mono_current_thread_has_handle_block_guard (void);
 
 void
 mono_exceptions_init (void)
@@ -136,6 +137,7 @@ mono_exceptions_init (void)
 	cbs.mono_raise_exception_with_ctx = mono_raise_exception_with_ctx;
 	cbs.mono_exception_walk_trace = mono_exception_walk_trace;
 	cbs.mono_install_handler_block_guard = mono_install_handler_block_guard;
+	cbs.mono_current_thread_has_handle_block_guard = mono_current_thread_has_handle_block_guard;
 	mono_install_eh_callbacks (&cbs);
 }
 
@@ -2058,13 +2060,13 @@ mono_setup_altstack (MonoJitTlsData *tls)
 
 	if (mono_mprotect (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE)) {
 		/* mprotect can fail for the main thread stack */
-		gpointer gaddr = mono_valloc (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON|MONO_MMAP_FIXED);
+		gpointer gaddr = mono_valloc (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON|MONO_MMAP_FIXED, MONO_MEM_ACCOUNT_EXCEPTIONS);
 		g_assert (gaddr == tls->stack_ovf_guard_base);
 		tls->stack_ovf_valloced = TRUE;
 	}
 
 	/* Setup an alternate signal stack */
-	tls->signal_stack = mono_valloc (0, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON);
+	tls->signal_stack = mono_valloc (0, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON, MONO_MEM_ACCOUNT_EXCEPTIONS);
 	tls->signal_stack_size = MONO_ARCH_SIGNAL_STACK_SIZE;
 
 	g_assert (tls->signal_stack);
@@ -2090,9 +2092,9 @@ mono_free_altstack (MonoJitTlsData *tls)
 	g_assert (err == 0);
 
 	if (tls->signal_stack)
-		mono_vfree (tls->signal_stack, MONO_ARCH_SIGNAL_STACK_SIZE);
+		mono_vfree (tls->signal_stack, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MEM_ACCOUNT_EXCEPTIONS);
 	if (tls->stack_ovf_valloced)
-		mono_vfree (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size);
+		mono_vfree (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MEM_ACCOUNT_EXCEPTIONS);
 	else
 		mono_mprotect (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_READ|MONO_MMAP_WRITE);
 }
@@ -2387,7 +2389,7 @@ mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *i
 	for (i =0; i < size; ++i) {
 		mono_runtime_printf_err ("\t%s", names [i]);
 	}
-	free (names);
+	g_free (names);
 
 	/* Try to get more meaningful information using gdb */
 
@@ -2676,9 +2678,22 @@ mono_install_handler_block_guard (MonoThreadUnwindState *ctx)
 	return TRUE;
 }
 
+static gboolean
+mono_current_thread_has_handle_block_guard (void)
+{
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	return jit_tls && jit_tls->handler_block_return_address != NULL;
+}
+
 #else
 gboolean
 mono_install_handler_block_guard (MonoThreadUnwindState *ctx)
+{
+	return FALSE;
+}
+
+static gboolean
+mono_current_thread_has_handle_block_guard (void)
 {
 	return FALSE;
 }

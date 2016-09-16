@@ -30,7 +30,9 @@ namespace System.Security.Cryptography {
         private byte[] m_salt;
         private HMACSHA1 m_hmacsha1;  // The pseudo-random generator function used in PBKDF2
         private byte[] m_password;
+#if !MONO
         private CspParameters m_cspParams = new CspParameters();
+#endif
 
         private uint m_iterations;
         private uint m_block;

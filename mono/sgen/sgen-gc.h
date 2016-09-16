@@ -599,7 +599,6 @@ typedef enum {
 	ITERATE_OBJECTS_SWEEP = 1,
 	ITERATE_OBJECTS_NON_PINNED = 2,
 	ITERATE_OBJECTS_PINNED = 4,
-	ITERATE_OBJECTS_ALL = ITERATE_OBJECTS_NON_PINNED | ITERATE_OBJECTS_PINNED,
 	ITERATE_OBJECTS_SWEEP_NON_PINNED = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_NON_PINNED,
 	ITERATE_OBJECTS_SWEEP_PINNED = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_PINNED,
 	ITERATE_OBJECTS_SWEEP_ALL = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_NON_PINNED | ITERATE_OBJECTS_PINNED
@@ -654,7 +653,7 @@ struct _SgenMajorCollector {
 	void (*sweep) (void);
 	gboolean (*have_swept) (void);
 	void (*finish_sweeping) (void);
-	void (*free_swept_blocks) (size_t allowance);
+	void (*free_swept_blocks) (size_t section_reserve);
 	void (*check_scan_starts) (void);
 	void (*dump_heap) (FILE *heap_dump_file);
 	gint64 (*get_used_size) (void);

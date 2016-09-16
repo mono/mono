@@ -1015,7 +1015,7 @@ namespace Mono.Security {
 			}
 			
 			// 5 path
-			pos = uriString.IndexOfAny (new char[] {'/'});
+			pos = uriString.IndexOfAny (new char[] {'/', '\\'});
 			if (unixAbsPath)
 				pos = -1;
 			if (pos == -1) {
@@ -1041,6 +1041,8 @@ namespace Mono.Security {
 			port = -1;
 			pos = uriString.LastIndexOf (":");
 			if (unixAbsPath)
+				pos = -1;
+			if (pos == 1 && scheme == Uri.UriSchemeFile && Char.IsLetter (uriString [0]))
 				pos = -1;
 			if (pos != -1 && pos != (uriString.Length - 1)) {
 				string portStr = uriString.Remove (0, pos + 1);

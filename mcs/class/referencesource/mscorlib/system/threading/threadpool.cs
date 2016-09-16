@@ -579,7 +579,9 @@ namespace System.Threading
         // The head and tail of the queue.  We enqueue to the head, and dequeue from the tail.
         internal volatile QueueSegment queueHead;
         internal volatile QueueSegment queueTail;
+#if !MONO        
         internal bool loggingEnabled;
+#endif
 
         internal static SparseArray<WorkStealingQueue> allThreadQueues = new SparseArray<WorkStealingQueue>(16); //
 

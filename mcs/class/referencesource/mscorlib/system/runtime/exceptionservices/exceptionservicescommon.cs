@@ -32,11 +32,15 @@ namespace System.Runtime.ExceptionServices {
     {
         // Private members that will hold the relevant details.
         private Exception m_Exception;
+#if !MONO
         private string m_remoteStackTrace;
+#endif
         private object m_stackTrace;
+#if !MONO
         private object m_dynamicMethods;
         private UIntPtr m_IPForWatsonBuckets;
         private Object m_WatsonBuckets;
+#endif
         
         private ExceptionDispatchInfo(Exception exception)
         {
@@ -66,6 +70,7 @@ namespace System.Runtime.ExceptionServices {
 #endif
         }
 
+#if !MONO
         internal UIntPtr IPForWatsonBuckets
         {
             get
@@ -81,6 +86,7 @@ namespace System.Runtime.ExceptionServices {
                 return m_WatsonBuckets;   
             }
         }
+#endif
         
         internal object BinaryStackTraceArray
         {
@@ -90,6 +96,7 @@ namespace System.Runtime.ExceptionServices {
             }
         }
 
+#if !MONO
         internal object DynamicMethodArray
         {
             get
@@ -105,6 +112,7 @@ namespace System.Runtime.ExceptionServices {
                 return m_remoteStackTrace;
             }
         }
+#endif
 
         // This static method is used to create an instance of ExceptionDispatchInfo for
         // the specified exception object and save all the required details that maybe
