@@ -3111,8 +3111,8 @@ mono_threads_set_shutting_down (void)
 			UNLOCK_THREAD (current_thread);
 		}
 
-		/*since we're killing the thread, unset the current domain.*/
-		mono_domain_unset ();
+		/*since we're killing the thread, detach it.*/
+		mono_thread_detach_internal (current_thread);
 
 		/* Wake up other threads potentially waiting for us */
 		mono_thread_info_exit ();
