@@ -466,6 +466,11 @@ namespace System.Reflection.Emit
 			return new AssemblyBuilder (name, null, access, false);
 		}
 
+		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
 			return DefineDynamicModule (name, name, false, true);
