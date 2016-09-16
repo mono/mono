@@ -775,6 +775,7 @@ create_buffer (void)
 	buf->last_time = buf->time_base;
 	buf->buf_end = (unsigned char*)buf + buf->size;
 	buf->cursor = buf->buf;
+	buf->thread_id = thread_id ();
 
 	return buf;
 }
