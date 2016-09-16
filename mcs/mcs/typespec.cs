@@ -109,7 +109,6 @@ namespace Mono.CSharp
 					var imported = MemberDefinition as ImportedTypeDefinition;
 					if (imported != null && Kind != MemberKind.MissingType)
 						imported.DefineInterfaces (this);
-
 				}
 
 				return ifaces;
@@ -1603,6 +1602,12 @@ namespace Mono.CSharp
 
 		public TypeSpec Element { get; private set; }
 
+		public override IList<TypeSpec> Interfaces {
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
 		bool ITypeDefinition.IsComImport {
 			get {
 				return false;
@@ -1777,11 +1782,17 @@ namespace Mono.CSharp
 		readonly int rank;
 		readonly ModuleContainer module;
 
-		private ArrayContainer (ModuleContainer module, TypeSpec element, int rank)
+		ArrayContainer (ModuleContainer module, TypeSpec element, int rank)
 			: base (MemberKind.ArrayType, element, null)
 		{
 			this.module = module;
 			this.rank = rank;
+		}
+
+		public override IList<TypeSpec> Interfaces {
+			get {
+				return BaseType.Interfaces;
+			}
 		}
 
 		public int Rank {
@@ -1926,7 +1937,6 @@ namespace Mono.CSharp
 			if (!module.ArrayTypesCache.TryGetValue (key, out ac)) {
 				ac = new ArrayContainer (module, element, rank);
 				ac.BaseType = module.Compiler.BuiltinTypes.Array;
-				ac.Interfaces = ac.BaseType.Interfaces;
 
 				module.ArrayTypesCache.Add (key, ac);
 			}
@@ -1942,9 +1952,15 @@ namespace Mono.CSharp
 
 	class ReferenceContainer : ElementTypeSpec
 	{
-		private ReferenceContainer (TypeSpec element)
+		ReferenceContainer (TypeSpec element)
 			: base (MemberKind.Class, element, null)	// TODO: Kind.Class is most likely wrong
 		{
+		}
+
+		public override IList<TypeSpec> Interfaces {
+			get {
+				return null;
+			}
 		}
 
 		public override MetaType GetMetaInfo ()
@@ -1975,6 +1991,12 @@ namespace Mono.CSharp
 		{
 			// It's never CLS-Compliant
 			state &= ~StateFlags.CLSCompliant_Undetected;
+		}
+
+		public override IList<TypeSpec> Interfaces {
+			get {
+				return null;
+			}
 		}
 
 		public override MetaType GetMetaInfo ()
