@@ -159,10 +159,16 @@ flag to bundle all available encodings.
 Or you can use a comma delimited list of the workds CJK, MidWest,
 Other, Rare and West to specificy which encoding assemblies to distribute.
 .TP
-.TP
 .I "-L path"
 Adds the `path' do the search list for assemblies.  The rules are the
 same as for the compiler -lib: or -L flags.
+.TP
+.I "--library [LIB,]PATH"
+Embeds the dynamic library file pointed to by `PATH' and optionally
+give it the name `LIB' into the bundled executable.   This is used to
+ship native library dependencies that are unpacked at startup and
+loaded from the runtime.
+.TP
 .I "--lists-targets"
 Lists all of the available local cross compilation targets available
 as precompiled binaries on the Mono distribution server.

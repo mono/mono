@@ -883,6 +883,7 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #define g_lstat lstat
 #define g_rmdir rmdir
 #define g_mkstemp mkstemp
+#define g_mkdtemp mkdtemp
 #define g_ascii_isdigit isdigit
 #define g_ascii_strtod strtod
 #define g_ascii_isalnum isalnum
