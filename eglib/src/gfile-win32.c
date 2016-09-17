@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <direct.h>
 
 #ifdef G_OS_WIN32
 #include <io.h>
@@ -68,9 +69,9 @@ int mkstemp (char *tmp_template)
 	return fd;
 }
 
-char *mkdtemp (char *tmp_template)
+gchar *
+g_mkdtemp (char *tmp_template)
 {
-	int fd;
 	gunichar2* utf16_template;
 
 	utf16_template  = u8to16 (tmp_template);
