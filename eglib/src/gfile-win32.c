@@ -76,7 +76,6 @@ g_mkdtemp (char *tmp_template)
 
 	utf16_template  = u8to16 (tmp_template);
 
-	fd = -1;
 	utf16_template = _wmktemp(utf16_template);
 	if (utf16_template && *utf16_template) {
 		if (_wmkdir (utf16_template) == 0){
