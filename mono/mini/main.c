@@ -18,6 +18,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-dl.h>
 #include "mini.h"
 
 #ifdef HAVE_UNISTD_H
@@ -128,7 +129,7 @@ load_from_region (int fd, uint64_t offset, uint64_t size)
 static int bundle_save_library_initialized;
 
 /* List of bundled libraries we unpacked */
-static GSList *bundle_libraries;
+static GSList *bundle_library_paths;
 
 /* Directory where we unpacked dynamic libraries */
 static char *bundled_dylibrary_directory;
@@ -138,7 +139,7 @@ delete_bundled_libraries ()
 {
 	GSList *list;
 
-	for (list = bundle_libraries; list != NULL; list = list->next){
+	for (list = bundle_library_paths; list != NULL; list = list->next){
 		unlink (list->data);
 	}
 	rmdir (bundled_dylibrary_directory);
@@ -159,12 +160,22 @@ bundle_save_library_initialize ()
 static void
 save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 {
+	MonoDl *lib;
+	char *file, *buffer, *err;
 	if (!bundle_save_library_initialized)
 		bundle_save_library_initialize ();
-	char *file = g_build_filename (bundled_dylibrary_directory, destfname);
-	char *buffer = load_from_region (fd, offset, size);
+	
+	file = g_build_filename (bundled_dylibrary_directory, destfname);
+	buffer = load_from_region (fd, offset, size);
 	g_file_set_contents (file, buffer, size, NULL);
-	bundle_libraries = g_slist_append (bundle_libraries, file);
+	lib = mono_dl_open (file, MONO_DL_LAZY, &err);
+	if (err != NULL){
+		fprintf (stderr, "Error loading shared library: %s\n", file);
+		exit (1);
+	}
+	mono_loader_register_module (destfname, lib);
+	bundle_library_paths = g_slist_append (bundle_library_paths, file);
+	
 	g_free (buffer);
 }
 
@@ -262,7 +273,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		}
 	}
 	g_array_append_val (assemblies, last);
-	
+
 	mono_register_bundled_assemblies ((const MonoBundledAssembly **) assemblies->data);
 	new_argv = g_new (char *, (*ref_argc)+1);
 	for (j = 0; j < *ref_argc; j++)
