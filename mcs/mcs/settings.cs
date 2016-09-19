@@ -1228,6 +1228,8 @@ namespace Mono.CSharp {
 			case "/pdb":
 			case "/preferreduilang":
 			case "/publicsign":
+			case "/publicsign+":
+			case "/publicsign-":
 			case "/reportanalyzer":
 			case "/ruleset":
 			case "/sqmsessionguid":
