@@ -236,6 +236,15 @@ sgen_memgov_major_post_sweep (mword used_slots_size)
 
 		sgen_add_log_entry (log_entry);
 	}
+	if (mono_trace_is_traced (G_LOG_LEVEL_WARNING, MONO_TRACE_GC) && get_heap_size () > soft_heap_limit) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+
+		log_entry->type = SGEN_LOG_HEAP_LIMIT_EXCEEDED;
+		log_entry->major_size = major_collector.get_num_major_sections () * major_collector.section_size;
+		log_entry->los_size = los_memory_usage_total;
+
+		sgen_add_log_entry (log_entry);
+	}
 	last_used_slots_size = used_slots_size;
 }
 
@@ -337,6 +346,11 @@ sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 				entry->major_size / 1024,
 				entry->major_size_in_use / 1024);
 			break;
+		case SGEN_LOG_HEAP_LIMIT_EXCEEDED:
+			mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, "WARNING: heap size %dK exceeds soft heap limit %dK",
+				entry->major_size / 1024 + entry->los_size / 1024,
+				soft_heap_limit);
+			break;
 		default:
 			SGEN_ASSERT (0, FALSE, "Invalid log entry type");
 			break;
@@ -350,7 +364,7 @@ sgen_memgov_collection_end (int generation, gint64 stw_time)
 	 * At this moment the world has been restarted which means we can log all pending entries
 	 * without risking deadlocks.
 	 */
-	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+	if (!sgen_pointer_queue_is_empty (&log_entries)) {
 		size_t i;
 		SGEN_ASSERT (0, !sgen_is_world_stopped (), "We can't log if the world is stopped");
 		mono_coop_mutex_lock (&log_entries_mutex);
