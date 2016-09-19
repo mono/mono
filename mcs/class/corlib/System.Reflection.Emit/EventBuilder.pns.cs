@@ -1,14 +1,10 @@
 //
-// System.Reflection.Emit/Label.cs
+// EventBuilder.pns.cs
 //
-// Author:
-//   Paolo Molaro (lupus@ximian.com)
+// Authors:
+//   Marek Safar (marek.safar@gmail.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2016 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,45 +26,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+#if FULL_AOT_RUNTIME
 
-namespace System.Reflection.Emit {
-
-	[ComVisible (true)]
-	[Serializable]
-	public struct Label {
-		internal int label;
-
-		internal Label (int val) {
-			label = val;
-		}
-
-		public override bool Equals (object obj) {
-			bool res = obj is Label;
-
-			if (res) {
-				Label l = (Label)obj;
-				res = (label == l.label);
-			}
-
-			return res;
-		}
-
-		public bool Equals (Label obj)
+namespace System.Reflection.Emit
+{
+	public class EventBuilder
+	{		
+		public void AddOtherMethod (MethodBuilder mdBuilder)
 		{
-			return (label == obj.label);
+			throw new PlatformNotSupportedException ();
 		}
 
-		public static bool operator == (Label a, Label b) {
-			return a.Equals (b);
+		public void SetAddOnMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
 		}
 
-		public static bool operator != (Label a, Label b) {
-			return !(a == b);
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			throw new PlatformNotSupportedException ();
 		}
 
-		public override int GetHashCode () {
-			return label.GetHashCode ();
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetRaiseMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetRemoveOnMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
 		}
 	}
 }
+
+#endif
