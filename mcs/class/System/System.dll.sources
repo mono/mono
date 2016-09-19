@@ -164,6 +164,7 @@ System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
 System.Diagnostics.CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 System/Platform.cs
+System/MonoExeLocator.cs
 System.IO.Compression/CompressionLevel.cs
 System.IO.Compression/CompressionMode.cs
 System.IO.Compression/DeflateStream.cs
