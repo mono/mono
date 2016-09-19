@@ -507,10 +507,14 @@ namespace System.Reflection {
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
-			if (!throwOnFileNotFound && !File.Exists (fullName))
-				return null;
 
-			return (RuntimeAssembly)LoadFrom (fullName);
+			try {
+				return (RuntimeAssembly)LoadFrom (fullName);
+			} catch {
+				if (!throwOnFileNotFound && !File.Exists (fullName))
+					return null;
+				throw;
+			}
 		}
 
 #if !MOBILE
