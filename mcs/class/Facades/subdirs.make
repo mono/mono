@@ -24,7 +24,7 @@ System.Security.Cryptography.Encryption.Aes System.Security.Cryptography.Encrypt
 System.Security.Cryptography.Hashing.Algorithms System.Security.Cryptography.RSA System.Security.Cryptography.RandomNumberGenerator \
 System.Security.Principal.Windows System.Threading.Thread System.Threading.ThreadPool \
 System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win32.Registry.AccessControl System.Diagnostics.StackTrace System.Globalization.Extensions \
-System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions \
+System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Reflection.Emit.Lightweight System.Reflection.Emit.ILGeneration System.Reflection.Emit \
 System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
 System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
@@ -34,8 +34,6 @@ common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.Servi
 
 drawing_DEPS_SUBDIRS = System.Drawing.Primitives
 
-reflection_PARALLEL_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflection.Emit.Lightweight System.Reflection.Emit
-
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
@@ -43,10 +41,10 @@ mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
 mobile_static_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
-net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
+net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
 
 monodroid_SUBDIRS = $(monotouch_SUBDIRS)
-monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
+monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
