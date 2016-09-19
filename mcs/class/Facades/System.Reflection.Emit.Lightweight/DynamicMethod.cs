@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 
 namespace System.Reflection.Emit
 {
