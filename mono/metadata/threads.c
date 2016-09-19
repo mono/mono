@@ -1065,7 +1065,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	MonoNativeThreadId tid;
 	gsize stack_ptr;
 
-	if ((internal = mono_thread_internal_current ())) {
+	if (mono_thread_internal_current_is_attached ()) {
 		if (domain != mono_domain_get ())
 			mono_domain_set (domain, TRUE);
 		/* Already attached */
@@ -1156,6 +1156,18 @@ mono_thread_detach_if_exiting (void)
 		}
 	}
 	return FALSE;
+}
+
+gboolean
+mono_thread_internal_current_is_attached (void)
+{
+	MonoInternalThread *internal;
+
+	internal = GET_CURRENT_OBJECT ();
+	if (!internal)
+		return FALSE;
+
+	return TRUE;
 }
 
 void
