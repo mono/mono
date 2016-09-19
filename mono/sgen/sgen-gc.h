@@ -822,9 +822,6 @@ enum {
 	SPACE_LOS
 };
 
-void sgen_pin_object (GCObject *object, SgenGrayQueue *queue);
-void sgen_set_pinned_from_failed_allocation (mword objsize);
-
 void sgen_ensure_free_space (size_t size, int generation);
 void sgen_gc_collect (int generation, MonoGCCollectionFlags flags);
 void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, MonoGCCollectionFlags flags);
