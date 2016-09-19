@@ -579,11 +579,17 @@ namespace System.Windows.Forms
 				} else {
 					mono_path = Path.Combine (mono_prefix, "bin\\mono.bat");
 
+					if (!String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_EXECUTABLE")))
+						mono_path = Environment.GetEnvironmentVariable ("MONO_EXECUTABLE");
+
 					if (!File.Exists (mono_path))
 						mono_path = Path.Combine (mono_prefix, "bin\\mono.exe");
 
 					if (!File.Exists (mono_path))
 						mono_path = Path.Combine (mono_prefix, "mono\\mono\\mini\\mono.exe");
+
+					if (!File.Exists (mono_path))
+						mono_path = Path.Combine (mono_prefix, "mono\\mini\\mono.exe");
 
 					if (!File.Exists (mono_path))
 						throw new FileNotFoundException (string.Format ("Windows mono path not found: '{0}'", mono_path));

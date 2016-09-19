@@ -66,6 +66,8 @@ namespace Mono.CSharp
 					Path.GetDirectoryName (
 						Path.GetDirectoryName (p)),
 					"bin\\mono.bat");
+				if (!String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_EXECUTABLE")))
+					windowsMonoPath = Environment.GetEnvironmentVariable ("MONO_EXECUTABLE");
 				if (!File.Exists (windowsMonoPath))
 					windowsMonoPath = Path.Combine (
 						Path.GetDirectoryName (
@@ -77,6 +79,12 @@ namespace Mono.CSharp
 							Path.GetDirectoryName (
 								Path.GetDirectoryName (p))),
 						"mono\\mono\\mini\\mono.exe");
+				if (!File.Exists (windowsMonoPath))
+					windowsMonoPath = Path.Combine (
+						Path.GetDirectoryName (
+							Path.GetDirectoryName (
+								Path.GetDirectoryName (p))),
+						"mono\\mini\\mono.exe");
 				if (!File.Exists (windowsMonoPath))
 					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
 
