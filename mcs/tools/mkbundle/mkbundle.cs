@@ -585,7 +585,7 @@ class MakeBundle {
 		
 		foreach (var url in files){
 			string fname = LocateFile (new Uri (url).LocalPath);
-			string aname = Path.GetFileName (fname);
+			string aname = MakeBundle.GetAssemblyName (fname);
 
 			maker.Add ("assembly:" + aname, fname);
 			if (File.Exists (fname + ".config"))
@@ -695,7 +695,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			var symbolEscapeRE = new System.Text.RegularExpressions.Regex ("[^\\w_]");
 			foreach (var url in files) {
 				string fname = LocateFile (new Uri (url).LocalPath);
-				string aname = Path.GetFileName (fname);
+				string aname = MakeBundle.GetAssemblyName (fname);
 				string encoded = symbolEscapeRE.Replace (aname, "_");
 
 				if (prog == null)
@@ -1007,7 +1007,27 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
-	
+
+	public static string GetAssemblyName (string path)
+	{
+		string name = Path.GetFileName (path);
+
+		// A bit of a hack to support satellite assemblies. They all share the same name but
+		// are placed in subdirectories named after the locale they implement. Also, all of
+		// them end in .resources.dll, therefore we can use that to detect the circumstances.
+		if (name.EndsWith (".resources.dll", StringComparison.OrdinalIgnoreCase)) {
+			string dir = Path.GetDirectoryName (path);
+			int idx = dir.LastIndexOf (Path.DirectorySeparatorChar);
+			if (idx >= 0) {
+				name = dir.Substring (idx + 1) + Path.DirectorySeparatorChar + name;
+				Console.WriteLine ($"Storing satellite assembly '{path}' with name '{name}'");
+			} else if (!quiet)
+				Console.WriteLine ($"Warning: satellite assembly {path} doesn't have locale path prefix, name conflicts possible");
+		}
+
+		return name;
+	}
+
 	static bool QueueAssembly (List<string> files, string codebase)
 	{
 		//Console.WriteLine ("CODE BASE IS {0}", codebase);
@@ -1015,7 +1035,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return true;
 
 		var path = new Uri(codebase).LocalPath;
-		var name = Path.GetFileName (path);
+		var name = GetAssemblyName (path);
 		string found;
 		if (loaded_assemblies.TryGetValue (name, out found)) {
 			Error (string.Format ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found));
