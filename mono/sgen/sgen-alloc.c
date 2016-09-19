@@ -79,8 +79,12 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 		SGEN_ATOMIC_ADD_P (degraded_mode, size);
 		sgen_ensure_free_space (size, GENERATION_OLD);
 	} else {
-		if (sgen_need_major_collection (size))
-			sgen_perform_collection (size, GENERATION_OLD, "mature allocation failure", MONO_GC_STW);
+		if (sgen_need_major_collection (size)) {
+			MonoGCCollectionFlags flags = MONO_GC_STW;
+			if (sgen_need_compacting_collection ())
+				flags |= MONO_GC_FORCE_SERIAL | MONO_GC_FORCE_COMPACTION;
+			sgen_perform_collection (size, GENERATION_OLD, "mature allocation failure", flags);
+		}
 	}
 
 

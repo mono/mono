@@ -130,6 +130,17 @@ get_heap_size (void)
 	return major_collector.get_num_major_sections () * major_collector.section_size + los_memory_usage;
 }
 
+/*
+ * If the heap exceeds the soft limit, we should try triggering compacting majors as often
+ * as possible. These collections should also be serial, to avoid as much as possible further
+ * heap growth and memory usage.
+ */
+gboolean
+sgen_need_compacting_collection (void)
+{
+	return ((mword)get_heap_size ()) > soft_heap_limit;
+}
+
 gboolean
 sgen_need_major_collection (mword space_needed)
 {

@@ -2094,6 +2094,7 @@ sgen_ensure_free_space (size_t size, int generation)
 {
 	int generation_to_collect = -1;
 	const char *reason = NULL;
+	MonoGCCollectionFlags flags = MONO_GC_STW;
 
 	if (generation == GENERATION_OLD) {
 		if (sgen_need_major_collection (size)) {
@@ -2124,7 +2125,9 @@ sgen_ensure_free_space (size_t size, int generation)
 
 	if (generation_to_collect == -1)
 		return;
-	sgen_perform_collection (size, generation_to_collect, reason, MONO_GC_STW);
+	if (generation_to_collect == GENERATION_OLD && sgen_need_compacting_collection ())
+		flags |= MONO_GC_FORCE_SERIAL | MONO_GC_FORCE_COMPACTION;
+	sgen_perform_collection (size, generation_to_collect, reason, flags);
 }
 
 /*
