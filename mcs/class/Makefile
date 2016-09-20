@@ -13,7 +13,6 @@ build_SUBDIRS :=  \
 	System.XML \
 	Mono.Posix \
 	System.Core \
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Cecil \
 	Mono.Cecil.Mdb
 
