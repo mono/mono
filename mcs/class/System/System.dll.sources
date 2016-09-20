@@ -1091,7 +1091,7 @@ ReferenceSources/_SslStream.cs
 
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
 
-../referencesource/System/sys/system/diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
+../referencesource/System/sys/system/Diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 
 ../referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
 ../referencesource/System/sys/system/runtime/interopservices/handlecollector.cs
