@@ -974,13 +974,13 @@ mono_debugger_agent_init (void)
 	mono_coop_mutex_init (&debugger_thread_exited_mutex);
 	mono_coop_cond_init (&debugger_thread_exited_cond);
 
-	mono_profiler_install ((MonoProfiler*)&debugger_profiler, runtime_shutdown);
-	mono_profiler_set_events ((MonoProfileFlags)(MONO_PROFILE_APPDOMAIN_EVENTS | MONO_PROFILE_THREADS | MONO_PROFILE_ASSEMBLY_EVENTS | MONO_PROFILE_JIT_COMPILATION | MONO_PROFILE_METHOD_EVENTS));
-	mono_profiler_install_runtime_initialized (runtime_initialized);
-	mono_profiler_install_appdomain (NULL, appdomain_load, appdomain_start_unload, appdomain_unload);
-	mono_profiler_install_thread (thread_startup, thread_end);
-	mono_profiler_install_assembly (NULL, assembly_load, assembly_unload, NULL);
-	mono_profiler_install_jit_end (jit_end);
+	MonoProfilerDesc *desc = mono_profiler_new ((MonoProfiler*)&debugger_profiler, runtime_shutdown);
+	mono_profiler_set_event_flags (desc, (MonoProfileFlags)(MONO_PROFILE_APPDOMAIN_EVENTS | MONO_PROFILE_THREADS | MONO_PROFILE_ASSEMBLY_EVENTS | MONO_PROFILE_JIT_COMPILATION | MONO_PROFILE_METHOD_EVENTS));
+	mono_profiler_set_runtime_initialized_cb (desc, runtime_initialized);
+	mono_profiler_set_appdomain_cb (desc, NULL, appdomain_load, appdomain_start_unload, appdomain_unload);
+	mono_profiler_set_thread_cb (desc, thread_startup, thread_end);
+	mono_profiler_set_assembly_cb (desc, NULL, assembly_load, assembly_unload, NULL);
+	mono_profiler_set_jit_end_cb (desc, jit_end);
 
 	mono_native_tls_alloc (&debugger_tls_id, NULL);
 

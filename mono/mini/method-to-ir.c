@@ -6875,7 +6875,7 @@ mini_redirect_call (MonoCompile *cfg, MonoMethod *method,
 {
 	if (method->klass == mono_defaults.string_class) {
 		/* managed string allocation support */
-		if (strcmp (method->name, "InternalAllocateStr") == 0 && !(mono_profiler_events & MONO_PROFILE_ALLOCATIONS) && !(cfg->opt & MONO_OPT_SHARED)) {
+		if (strcmp (method->name, "InternalAllocateStr") == 0 && !mono_profiler_enabled () && !(cfg->opt & MONO_OPT_SHARED)) {
 			MonoInst *iargs [2];
 			MonoVTable *vtable = mono_class_vtable (cfg->domain, method->klass);
 			MonoMethod *managed_alloc = NULL;
@@ -12488,7 +12488,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_MONO_LDPTR_CARD_TABLE:
 			case CEE_MONO_LDPTR_NURSERY_START:
 			case CEE_MONO_LDPTR_NURSERY_BITS:
-			case CEE_MONO_LDPTR_INT_REQ_FLAG: {
+			case CEE_MONO_LDPTR_INT_REQ_FLAG:
+			case CEE_MONO_LDPTR_PROFILER_EVENTS: {
 				CHECK_STACK_OVF (1);
 
 				switch (ip [1]) {
@@ -12503,6 +12504,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						break;
 					case CEE_MONO_LDPTR_INT_REQ_FLAG:
 						ins = emit_runtime_constant (cfg, MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG, NULL);
+						break;
+					case CEE_MONO_LDPTR_PROFILER_EVENTS:
+						ins = emit_runtime_constant (cfg, MONO_PATCH_INFO_PROFILER_EVENTS, NULL);
 						break;
 				}
 

@@ -142,7 +142,7 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 	DIR *scanning = NULL;
 	size_t len;
 	gboolean drive_stripped = FALSE;
-	gboolean do_report = (mono_profiler_get_events () & MONO_PROFILE_IOMAP_EVENTS) != 0;
+	gboolean do_report = (mono_profiler_events & MONO_PROFILE_IOMAP_EVENTS) != 0;
 
 	if (IS_PORTABILITY_NONE) {
 		return(NULL);

@@ -77,7 +77,10 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < sizeof(start));
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	return start;
 }
 
@@ -169,7 +172,10 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < sizeof(start));
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	return start;
 }
 
@@ -287,7 +293,10 @@ mono_arch_get_throw_exception_generic (guint8 *start, int size, int corlib, gboo
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	return start;
 }
 
@@ -355,7 +364,10 @@ mono_arch_get_throw_exception_by_name (void)
 	start = code = mono_global_codeman_reserve (size);
 	mips_break (code, 0xfd);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	return start;
 }
 

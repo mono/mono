@@ -5762,7 +5762,8 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	klass->name = name;
 	klass->name_space = nspace;
 
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
 
 	klass->image = image;
 	klass->type_token = type_token;
@@ -5837,7 +5838,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 			/*FIXME implement a mono_class_set_failure_from_mono_error */
 			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (error)));
 			mono_loader_unlock ();
-			mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
+			if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+				mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
 			return NULL;
 		}
 	}
@@ -5858,7 +5862,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 
 			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (error)));
 			mono_loader_unlock ();
-			mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
+			if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+				mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
 			return NULL;
 		}
 
@@ -5908,7 +5915,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 			klass->cast_class = klass->element_class = mono_defaults.int32_class;
 			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (error)));
 			mono_loader_unlock ();
-			mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
+			if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+				mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
 			return NULL;
 		}
 		klass->cast_class = klass->element_class = mono_class_from_mono_type (enum_basetype);
@@ -5922,7 +5932,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	if (klass->generic_container && !mono_metadata_load_generic_param_constraints_checked (image, type_token, klass->generic_container, error)) {
 		mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not load generic parameter constrains due to %s", mono_error_get_message (error)));
 		mono_loader_unlock ();
-		mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
+		if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+			mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
 		return NULL;
 	}
 
@@ -5933,14 +5946,18 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 
 	mono_loader_unlock ();
 
-	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
 
 	return klass;
 
 parent_failure:
 	mono_class_setup_mono_type (klass);
 	mono_loader_unlock ();
-	mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (klass, MONO_PROFILE_FAILED);
+
 	return NULL;
 }
 
@@ -6018,9 +6035,10 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 
 	klass->name = gklass->name;
 	klass->name_space = gklass->name_space;
-	
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
-	
+
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+
 	klass->image = gklass->image;
 	klass->flags = gklass->flags;
 	klass->type_token = gklass->type_token;
@@ -6075,7 +6093,8 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 	mono_memory_barrier ();
 	gclass->cached_class = klass;
 
-	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
 
 	inflated_classes ++;
 	inflated_classes_size += sizeof (MonoClass);
@@ -6159,7 +6178,8 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 		CHECKED_METADATA_WRITE_PTR_EXEMPT ( klass->name_space , oklass ? oklass->name_space : "" );
 	}
 
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
 
 	// Count non-NULL items in pinfo->constraints
 	count = 0;
@@ -6376,10 +6396,12 @@ mono_class_from_generic_parameter_internal (MonoGenericParam *param)
 	mono_image_unlock (image);
 
 	/* FIXME: Should this go inside 'make_generic_param_klass'? */
-	if (klass2)
-		mono_profiler_class_loaded (klass2, MONO_PROFILE_FAILED); // Alert profiler about botched class create
-	else
-		mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS) {
+		if (klass2)
+			mono_profiler_class_loaded (klass2, MONO_PROFILE_FAILED); // Alert profiler about botched class create
+		else
+			mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	}
 
 	return klass;
 }
@@ -6427,7 +6449,8 @@ mono_ptr_class_get (MonoType *type)
 	result->name = mono_image_strdup (image, name);
 	g_free (name);
 
-	mono_profiler_class_event (result, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (result, MONO_PROFILE_START_LOAD);
 
 	result->image = el_class->image;
 	result->inited = TRUE;
@@ -6449,7 +6472,10 @@ mono_ptr_class_get (MonoType *type)
 		MonoClass *result2;
 		if ((result2 = (MonoClass *)g_hash_table_lookup (image->ptr_cache, el_class))) {
 			mono_image_unlock (image);
-			mono_profiler_class_loaded (result, MONO_PROFILE_FAILED);
+
+			if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+				mono_profiler_class_loaded (result, MONO_PROFILE_FAILED);
+
 			return result2;
 		}
 	} else {
@@ -6458,7 +6484,8 @@ mono_ptr_class_get (MonoType *type)
 	g_hash_table_insert (image->ptr_cache, el_class, result);
 	mono_image_unlock (image);
 
-	mono_profiler_class_loaded (result, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (result, MONO_PROFILE_OK);
 
 	return result;
 }
@@ -6486,7 +6513,8 @@ mono_fnptr_class_get (MonoMethodSignature *sig)
 	result->name_space = "System";
 	result->name = "MonoFNPtrFakeClass";
 
-	mono_profiler_class_event (result, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (result, MONO_PROFILE_START_LOAD);
 
 	result->image = mono_defaults.corlib; /* need to fix... */
 	result->inited = TRUE;
@@ -6508,7 +6536,8 @@ mono_fnptr_class_get (MonoMethodSignature *sig)
 
 	mono_loader_unlock ();
 
-	mono_profiler_class_loaded (result, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (result, MONO_PROFILE_OK);
 
 	return result;
 }
@@ -6722,7 +6751,8 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	klass->name = mono_image_strdup (image, name);
 	g_free (name);
 
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
 
 	classes_size += sizeof (MonoClass);
 
@@ -6827,7 +6857,8 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 
 	mono_loader_unlock ();
 
-	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
 
 	return klass;
 }

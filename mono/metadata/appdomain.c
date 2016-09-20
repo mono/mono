@@ -553,7 +553,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	data->domain = ad;
 	data->friendly_name = g_strdup (friendly_name);
 
-	mono_profiler_appdomain_name (data, data->friendly_name);
+	if (mono_profiler_events & MONO_PROFILE_APPDOMAIN_EVENTS)
+		mono_profiler_appdomain_name (data, data->friendly_name);
 
 	if (!setup->application_base) {
 		/* Inherit from the root domain since MS.NET does this */

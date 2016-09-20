@@ -1817,8 +1817,9 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	assembly = assemblyb->dynamic_assembly = g_new0 (MonoDynamicAssembly, 1);
 #endif
 
-	mono_profiler_assembly_event (&assembly->assembly, MONO_PROFILE_START_LOAD);
-	
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_event (&assembly->assembly, MONO_PROFILE_START_LOAD);
+
 	assembly->assembly.ref_count = 1;
 	assembly->assembly.dynamic = TRUE;
 	assembly->assembly.corlib_internal = assemblyb->corlib_internal;
@@ -1877,9 +1878,10 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	mono_domain_assemblies_unlock (domain);
 
 	register_assembly (mono_object_domain (assemblyb), &assemblyb->assembly, &assembly->assembly);
-	
-	mono_profiler_assembly_loaded (&assembly->assembly, MONO_PROFILE_OK);
-	
+
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_loaded (&assembly->assembly, MONO_PROFILE_OK);
+
 	mono_assembly_invoke_load_hook ((MonoAssembly*)assembly);
 }
 
@@ -2904,8 +2906,9 @@ reflection_setup_internal_class (MonoReflectionTypeBuilder *tb, MonoError *error
 		goto failure;
 	klass->type_token = MONO_TOKEN_TYPE_DEF | tb->table_idx;
 	klass->flags = tb->attrs;
-	
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
 
 	klass->element_class = klass;
 
@@ -2967,8 +2970,9 @@ reflection_setup_internal_class (MonoReflectionTypeBuilder *tb, MonoError *error
 
 	/*g_print ("setup %s as %s (%p)\n", klass->name, ((MonoObject*)tb)->vtable->klass->name, tb);*/
 
-	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
-	
+	if (mono_profiler_events & MONO_PROFILE_CLASS_EVENTS)
+		mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+
 	mono_loader_unlock ();
 	return TRUE;
 

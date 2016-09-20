@@ -1714,7 +1714,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				mono_print_thread_dump_from_ctx (ctx);
 		}
 		jit_tls->orig_ex_ctx_set = TRUE;
-		mono_profiler_exception_thrown (obj);
+
+		if (mono_profiler_events & MONO_PROFILE_EXCEPTIONS)
+			mono_profiler_exception_thrown (obj);
+
 		jit_tls->orig_ex_ctx_set = FALSE;
 
 		res = mono_handle_exception_internal_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception);
@@ -1901,7 +1904,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: catch found at clause %d of %s\n", i, mono_method_full_name (method, TRUE));
 					jit_tls->orig_ex_ctx_set = TRUE;
-					mono_profiler_exception_clause_handler (method, ei->flags, i);
+
+					if (mono_profiler_events & MONO_PROFILE_EXCEPTIONS)
+						mono_profiler_exception_clause_handler (method, ei->flags, i);
+
 					jit_tls->orig_ex_ctx_set = FALSE;
 					MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 					mono_set_lmf (lmf);
@@ -1918,7 +1924,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: fault clause %d of %s\n", i, mono_method_full_name (method, TRUE));
 					jit_tls->orig_ex_ctx_set = TRUE;
-					mono_profiler_exception_clause_handler (method, ei->flags, i);
+
+					if (mono_profiler_events & MONO_PROFILE_EXCEPTIONS)
+						mono_profiler_exception_clause_handler (method, ei->flags, i);
+
 					jit_tls->orig_ex_ctx_set = FALSE;
 					call_filter (ctx, ei->handler_start);
 				}
@@ -1926,7 +1935,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: finally clause %d of %s\n", i, mono_method_full_name (method, TRUE));
 					jit_tls->orig_ex_ctx_set = TRUE;
-					mono_profiler_exception_clause_handler (method, ei->flags, i);
+
+					if (mono_profiler_events & MONO_PROFILE_EXCEPTIONS)
+						mono_profiler_exception_clause_handler (method, ei->flags, i);
+
 					jit_tls->orig_ex_ctx_set = FALSE;
 #ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_finallys++;
@@ -1959,7 +1971,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		}
 
 		jit_tls->orig_ex_ctx_set = TRUE;
-		mono_profiler_exception_method_leave (method);
+
+		if (mono_profiler_events & MONO_PROFILE_ENTER_LEAVE)
+			mono_profiler_exception_method_leave (method);
+
 		jit_tls->orig_ex_ctx_set = FALSE;
 
 		*ctx = new_ctx;

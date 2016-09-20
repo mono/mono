@@ -383,7 +383,9 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
 
 	/* Sanity check */
 	g_assert ((code - buf) <= buf_len);
@@ -453,7 +455,9 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type));
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type));
 
 	g_assert ((code - buf) <= size);
 
@@ -490,7 +494,10 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	*(guint32*)code = (guint32)addr;
 	code += 4;
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m);
+
 	g_assert ((code - start) <= size);
 	/*g_print ("unbox trampoline at %d for %s:%s\n", this_pos, m->klass->name, m->name);
 	g_print ("unbox code is at %p for method at %p\n", start, addr);*/
@@ -522,7 +529,9 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 	g_assert ((code - start) <= buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -636,7 +645,9 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	}
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 
 	g_assert (code - buf <= tramp_size);
 
@@ -671,7 +682,9 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	code = emit_bx (code, ARMREG_R1);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 
 	g_assert (code - buf <= tramp_size);
 
@@ -727,7 +740,10 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	code += 4;
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
 	g_assert (code - buf <= tramp_size);
 
 	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
@@ -810,7 +826,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	ARM_LDM (code, ARMREG_IP, 0xffff);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
 
 	const char *tramp_name = single_step ? "sdb_single_step_trampoline" : "sdb_breakpoint_trampoline";
 	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
@@ -976,7 +994,9 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	g_assert ((code - buf) <= buf_len);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, buf, code - buf, NULL, NULL), domain);
 

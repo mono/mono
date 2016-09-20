@@ -540,10 +540,10 @@ void mono_profiler_startup (const char *desc)
 	prof->saved_strings_hash = g_hash_table_new (NULL, NULL);
 	prof->string_locations_hash = g_hash_table_new (mismatched_files_guint32_hash, mismatched_files_guint32_equal);
 
-	mono_profiler_install (prof, profiler_shutdown);
-	mono_profiler_install_runtime_initialized (runtime_initialized_cb);
-	mono_profiler_install_iomap (mono_portability_iomap_event);
-	mono_profiler_install_allocation (mono_portability_remember_alloc);
+	MonoProfilerDesc *prof_desc = mono_profiler_new (prof, profiler_shutdown);
+	mono_profiler_set_runtime_initialized_cb (prof_desc, runtime_initialized_cb);
+	mono_profiler_set_iomap_cb (prof_desc, mono_portability_iomap_event);
+	mono_profiler_set_allocation_cb (prof_desc, mono_portability_remember_alloc);
 
-	mono_profiler_set_events ((MonoProfileFlags)(MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_IOMAP_EVENTS));
+	mono_profiler_set_event_flags (prof_desc, (MonoProfileFlags)(MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_IOMAP_EVENTS));
 }

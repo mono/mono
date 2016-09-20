@@ -146,11 +146,11 @@ mono_profiler_startup (const char *desc)
 	prof = g_new0 (MonoProfiler, 1);
 	prof->images = g_hash_table_new (NULL, NULL);
 
-	mono_profiler_install (prof, prof_shutdown);
+	MonoProfilerDesc *prof_desc = mono_profiler_new (prof, prof_shutdown);
 	
-	mono_profiler_install_jit_compile (prof_jit_enter, prof_jit_leave);
+	mono_profiler_set_jit_compile_cb (prof_desc, prof_jit_enter, prof_jit_leave);
 
-	mono_profiler_set_events (MONO_PROFILE_JIT_COMPILATION);
+	mono_profiler_set_event_flags (prof_desc, MONO_PROFILE_JIT_COMPILATION);
 }
 
 

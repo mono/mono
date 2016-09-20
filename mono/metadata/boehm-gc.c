@@ -99,6 +99,9 @@ mono_gc_warning (char *msg, GC_word arg)
 	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, msg, (unsigned long)arg);
 }
 
+static void on_gc_notification (GC_EventType event);
+static void on_gc_heap_resize (size_t new_size);
+
 void
 mono_gc_base_init (void)
 {
@@ -247,7 +250,8 @@ mono_gc_base_init (void)
 
 	mono_thread_info_attach (&dummy);
 
-	mono_gc_enable_events ();
+	GC_set_on_collection_event (on_gc_notification);
+	GC_on_heap_resize = on_gc_heap_resize;
 
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
@@ -488,16 +492,21 @@ on_gc_notification (GC_EventType event)
 		break;
 	}
 
-	mono_profiler_gc_event (e, 0);
+	if (mono_profiler_events & MONO_PROFILE_GC)
+		mono_profiler_gc_event (e, 0);
 
 	switch (e) {
 	case MONO_GC_EVENT_PRE_STOP_WORLD:
 		mono_thread_info_suspend_lock ();
-		mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, 0);
+
+		if (mono_profiler_events & MONO_PROFILE_GC)
+			mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, 0);
 		break;
 	case MONO_GC_EVENT_POST_START_WORLD:
 		mono_thread_info_suspend_unlock ();
-		mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, 0);
+
+		if (mono_profiler_events & MONO_PROFILE_GC)
+			mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, 0);
 		break;
 	default:
 		break;
@@ -516,22 +525,9 @@ on_gc_heap_resize (size_t new_size)
 		mono_perfcounters->gc_gen0size = heap_size;
 	}
 #endif
-	mono_profiler_gc_heap_resize (new_size);
-}
 
-void
-mono_gc_enable_events (void)
-{
-	GC_set_on_collection_event (on_gc_notification);
-	GC_on_heap_resize = on_gc_heap_resize;
-}
-
-static gboolean alloc_events = FALSE;
-
-void
-mono_gc_enable_alloc_events (void)
-{
-	alloc_events = TRUE;
+	if (mono_profiler_events & MONO_PROFILE_GC)
+		mono_profiler_gc_heap_resize (new_size);
 }
 
 int
@@ -675,7 +671,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 		obj->vtable = vtable;
 	}
 
-	if (G_UNLIKELY (alloc_events))
+	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_ALLOCATIONS))
 		mono_profiler_allocation (obj);
 
 	return obj;
@@ -709,7 +705,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	obj->max_length = max_length;
 
-	if (G_UNLIKELY (alloc_events))
+	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_ALLOCATIONS))
 		mono_profiler_allocation (&obj->obj);
 
 	return obj;
@@ -746,7 +742,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	if (bounds_size)
 		obj->bounds = (MonoArrayBounds *) ((char *) obj + size - bounds_size);
 
-	if (G_UNLIKELY (alloc_events))
+	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_ALLOCATIONS))
 		mono_profiler_allocation (&obj->obj);
 
 	return obj;
@@ -764,7 +760,7 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	obj->length = len;
 	obj->chars [len] = 0;
 
-	if (G_UNLIKELY (alloc_events))
+	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_ALLOCATIONS))
 		mono_profiler_allocation (&obj->object);
 
 	return obj;
@@ -1158,7 +1154,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass))
 		return NULL;
-	if (mono_profiler_get_events () & (MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_STATISTICAL))
+	if (mono_profiler_enabled ())
 		return NULL;
 	if (klass->rank)
 		return NULL;
@@ -1701,7 +1697,10 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 #endif
 	unlock_handles (handles);
 	res = MONO_GC_HANDLE (slot, handles->type);
-	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handles->type, res, obj);
+
+	if (mono_profiler_events & MONO_PROFILE_GC_HANDLES)
+		mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handles->type, res, obj);
+
 	return res;
 }
 
@@ -1899,7 +1898,9 @@ mono_gchandle_free (guint32 gchandle)
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
-	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handles->type, gchandle, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_GC_HANDLES)
+		mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handles->type, gchandle, NULL);
 }
 
 /**

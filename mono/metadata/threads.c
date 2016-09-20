@@ -415,7 +415,8 @@ static void thread_cleanup (MonoInternalThread *thread)
 
 	/* Can happen when we attach the profiler helper thread in order to heapshot. */
 	if (!mono_thread_info_lookup (MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid))->tools_thread)
-		mono_profiler_thread_end (thread->tid);
+		if (mono_profiler_events & MONO_PROFILE_THREADS)
+			mono_profiler_thread_end (thread->tid);
 
 	mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
 
@@ -822,12 +823,16 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	 * to lock the thread, and the lock is held by thread_start () which waits for
 	 * start_notify.
 	 */
-	mono_profiler_thread_start (tid);
+	if (mono_profiler_events & MONO_PROFILE_THREADS)
+		mono_profiler_thread_start (tid);
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
 	if (internal->name) {
 		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
-		mono_profiler_thread_name (internal->tid, tname);
+
+		if (mono_profiler_events & MONO_PROFILE_THREADS)
+			mono_profiler_thread_name (internal->tid, tname);
+
 		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), tname);
 		g_free (tname);
 	}
@@ -1103,7 +1108,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	}
 
 	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_current ()->tools_thread)
+	if ((mono_profiler_events & MONO_PROFILE_THREADS) && !mono_thread_info_current ()->tools_thread)
 		// FIXME: Need a separate callback
 		mono_profiler_thread_start (MONO_NATIVE_THREAD_ID_TO_UINT (tid));
 
@@ -1453,7 +1458,10 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 	if (this_obj->name && this_obj->tid) {
 		char *tname = mono_string_to_utf8_checked (name, error);
 		return_if_nok (error);
-		mono_profiler_thread_name (this_obj->tid, tname);
+
+		if (mono_profiler_events & MONO_PROFILE_THREADS)
+			mono_profiler_thread_name (this_obj->tid, tname);
+
 		mono_native_thread_set_name (thread_get_tid (this_obj), tname);
 		mono_free (tname);
 	}
@@ -2791,7 +2799,8 @@ ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppConte
 
 	mono_threads_unlock ();
 
-	mono_profiler_context_loaded (ctx);
+	if (mono_profiler_events & MONO_PROFILE_CONTEXT_EVENTS)
+		mono_profiler_context_loaded (ctx);
 }
 
 void
@@ -2805,7 +2814,8 @@ ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContex
 
 	//g_print ("Releasing context %d in domain %d\n", ctx->context_id, ctx->domain_id);
 
-	mono_profiler_context_unloaded (ctx);
+	if (mono_profiler_events & MONO_PROFILE_CONTEXT_EVENTS)
+		mono_profiler_context_unloaded (ctx);
 }
 
 void
@@ -4933,7 +4943,7 @@ mono_threads_join_threads (void)
 			if (thread != pthread_self ()) {
 				MONO_ENTER_GC_SAFE;
 				/* This shouldn't block */
-				pthread_join (thread, NULL);
+				mono_native_thread_join (thread);
 				MONO_EXIT_GC_SAFE;
 			}
 		} else {
@@ -4969,7 +4979,7 @@ mono_thread_join (gpointer tid)
 		return;
 	thread = (pthread_t)tid;
 	MONO_ENTER_GC_SAFE;
-	pthread_join (thread, NULL);
+	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
 #endif
 }

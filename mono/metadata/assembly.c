@@ -1924,7 +1924,8 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	ass->ref_only = refonly;
 	ass->image = image;
 
-	mono_profiler_assembly_event (ass, MONO_PROFILE_START_LOAD);
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_event (ass, MONO_PROFILE_START_LOAD);
 
 	mono_assembly_fill_assembly_name (image, &ass->aname);
 
@@ -1985,8 +1986,9 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	mono_assembly_invoke_load_hook (ass);
 
-	mono_profiler_assembly_loaded (ass, MONO_PROFILE_OK);
-	
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_loaded (ass, MONO_PROFILE_OK);
+
 	return ass;
 }
 
@@ -3373,7 +3375,8 @@ mono_assembly_close_except_image_pools (MonoAssembly *assembly)
 	if (InterlockedDecrement (&assembly->ref_count) > 0)
 		return FALSE;
 
-	mono_profiler_assembly_event (assembly, MONO_PROFILE_START_UNLOAD);
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_event (assembly, MONO_PROFILE_START_UNLOAD);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading assembly %s [%p].", assembly->aname.name, assembly);
 
@@ -3396,7 +3399,8 @@ mono_assembly_close_except_image_pools (MonoAssembly *assembly)
 	g_slist_free (assembly->friend_assembly_names);
 	g_free (assembly->basedir);
 
-	mono_profiler_assembly_event (assembly, MONO_PROFILE_END_UNLOAD);
+	if (mono_profiler_events & MONO_PROFILE_ASSEMBLY_EVENTS)
+		mono_profiler_assembly_event (assembly, MONO_PROFILE_END_UNLOAD);
 
 	return TRUE;
 }

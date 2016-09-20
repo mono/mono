@@ -218,7 +218,9 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) <= size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -307,7 +309,9 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -440,7 +444,9 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 	ppc_break (code);
 	g_assert ((code - start) <= size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
+	if (mono_profiler_events & MONO_PROFILE_JIT_COMPILATION)
+		mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" : (rethrow ? "rethrow_exception" : "throw_exception"), start, code - start, ji, unwind_ops);

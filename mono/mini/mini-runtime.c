@@ -1222,6 +1222,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_GOT_OFFSET:
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 	case MONO_PATCH_INFO_AOT_MODULE:
+	case MONO_PATCH_INFO_PROFILER_EVENTS:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return (ji->type << 8) | (ji->data.index);
@@ -1623,6 +1624,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		mono_gc_get_nursery (&shift_bits, &size);
 
 		target = (gpointer)(mgreg_t)shift_bits;
+		break;
+	}
+	case MONO_PATCH_INFO_PROFILER_EVENTS: {
+		target = (gpointer) &mono_profiler_events;
 		break;
 	}
 	case MONO_PATCH_INFO_CASTCLASS_CACHE: {
@@ -3725,7 +3730,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_thread_attach (domain);
 #endif
 
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_enabled ())
 		mono_runtime_setup_stat_profiler ();
 
 	mono_profiler_runtime_initialized ();
@@ -4050,7 +4055,7 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
 #ifndef DISABLE_COM
