@@ -814,7 +814,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/NetworkInformation/nodetype.cs
 ../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
 
-../referencesource/System/sys/system/diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
+../referencesource/System/sys/system/Diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
 
