@@ -814,6 +814,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/NetworkInformation/nodetype.cs
 ../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
 
+../referencesource/System/sys/system/diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
+
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
 
 ../referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
@@ -823,6 +825,8 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/sys/system/threading/Barrier.cs
 ../referencesource/System/sys/system/threading/semaphore.cs
+
+../referencesource/System/sys/system/windows/markup/ValueSerializerAttribute.cs
 
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/TokenBinding.cs
 

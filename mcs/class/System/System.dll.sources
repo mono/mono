@@ -162,7 +162,6 @@ System.Diagnostics/ThreadWaitReason.cs
 System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
-System.Diagnostics.CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 System/Platform.cs
 System.IO.Compression/CompressionLevel.cs
 System.IO.Compression/CompressionMode.cs
@@ -1091,6 +1090,8 @@ ReferenceSources/_SslStream.cs
 ../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
 
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
+
+../referencesource/System/sys/system/diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 
 ../referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
 ../referencesource/System/sys/system/runtime/interopservices/handlecollector.cs
