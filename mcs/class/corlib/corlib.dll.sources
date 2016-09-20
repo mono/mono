@@ -267,7 +267,6 @@ System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
 System.Reflection.Emit/ConstructorOnTypeBuilderInst.cs
 System.Reflection.Emit/CustomAttributeBuilder.cs
-System.Reflection.Emit/CustomAttributeBuilder.pns.cs
 System.Reflection.Emit/DerivedTypes.cs
 System.Reflection.Emit/DynamicILInfo.cs
 System.Reflection.Emit/DynamicMethod.cs
@@ -281,7 +280,6 @@ System.Reflection.Emit/FieldToken.cs
 System.Reflection.Emit/FlowControl.cs
 System.Reflection.Emit/GenericTypeParameterBuilder.cs
 System.Reflection.Emit/ILGenerator.cs
-System.Reflection.Emit/ILGenerator.pns.cs
 System.Reflection.Emit/Label.cs
 System.Reflection.Emit/LocalBuilder.cs
 System.Reflection.Emit/MethodBuilder.cs
@@ -297,14 +295,12 @@ System.Reflection.Emit/OpCodeType.cs
 System.Reflection.Emit/OperandType.cs
 System.Reflection.Emit/PackingSize.cs
 System.Reflection.Emit/ParameterBuilder.cs
-System.Reflection.Emit/ParameterBuilder.pns.cs
 System.Reflection.Emit/ParameterToken.cs
 System.Reflection.Emit/PEFileKinds.cs
 System.Reflection.Emit/PropertyBuilder.cs
 System.Reflection.Emit/PropertyOnTypeBuilderInst.cs
 System.Reflection.Emit/PropertyToken.cs
 System.Reflection.Emit/SignatureHelper.cs
-System.Reflection.Emit/SignatureHelper.pns.cs
 System.Reflection.Emit/SignatureToken.cs
 System.Reflection.Emit/StackBehaviour.cs
 System.Reflection.Emit/StringToken.cs
