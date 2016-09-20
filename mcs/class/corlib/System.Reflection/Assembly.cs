@@ -58,7 +58,9 @@ namespace System.Reflection {
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
 		internal class ResolveEventHolder {
+#pragma warning disable 67
 			public event ModuleResolveEventHandler ModuleResolve;
+#pragma warning restore
 		}
 
 		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
@@ -507,10 +509,14 @@ namespace System.Reflection {
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
-			if (!throwOnFileNotFound && !File.Exists (fullName))
-				return null;
 
-			return (RuntimeAssembly)LoadFrom (fullName);
+			try {
+				return (RuntimeAssembly)LoadFrom (fullName);
+			} catch {
+				if (!throwOnFileNotFound && !File.Exists (fullName))
+					return null;
+				throw;
+			}
 		}
 
 #if !MOBILE

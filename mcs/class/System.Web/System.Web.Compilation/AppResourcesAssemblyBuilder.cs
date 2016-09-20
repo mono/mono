@@ -47,8 +47,6 @@ namespace System.Web.Compilation
 {
 	class AppResourcesAssemblyBuilder
 	{
-		static string framework_version = "4.5";
-		static string profile_path = "net_4_x";
 		CompilationSection config;
 		CompilerInfo ci;
 		CodeDomProvider _provider;
@@ -233,36 +231,14 @@ namespace System.Web.Compilation
 		string SetAlPath (ProcessStartInfo info)
 		{			
 			if (RuntimeHelpers.RunningOnWindows) {
-				string alPath;
-				string monoPath;
-				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
-                                MethodInfo get_gac = gac.GetGetMethod (true);
-                                string p = Path.GetDirectoryName ((string) get_gac.Invoke (null, null));
-				monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (p)), "bin\\mono.bat");
-                                if (!File.Exists (monoPath)) {
-                                        monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (p)), "bin\\mono.exe");
-					if (!File.Exists (monoPath)) {
-						monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (Path.GetDirectoryName (p))), "mono\\mono\\mini\\mono.exe");
-						if (!File.Exists (monoPath))
-							throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
-					}
-				}
-				alPath = Path.Combine (p, framework_version + "\\al.exe");
-				
-                                if (!File.Exists (alPath)) {
-					alPath = Path.Combine (Path.GetDirectoryName (p), "lib\\" + profile_path + "\\al.exe");
-					if (!File.Exists (alPath))
-						throw new FileNotFoundException ("Windows al path not found: " + alPath);
-				}
-
-				info.FileName = monoPath;
-				return alPath + " ";
+				info.FileName = MonoToolsLocator.Mono;
+				return MonoToolsLocator.AssemblyLinker + " ";
 			} else {
-				info.FileName = "al";
+				info.FileName = MonoToolsLocator.AssemblyLinker;
 				return String.Empty;
 			}
 		}
-		
+
 		string BuildAssemblyPath (string cultureName)
 		{
 			string baseDir = Path.Combine (baseAssemblyDirectory, cultureName);

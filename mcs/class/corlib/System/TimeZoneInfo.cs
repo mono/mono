@@ -998,12 +998,17 @@ namespace System
 			} else {
 				AdjustmentRule first = null, last = null;
 
+				// Rule start/end dates are either very specific or very broad depending on the platform
+				//   2015-10-04..2016-04-03 - Rule for a time zone in southern hemisphere on non-Windows platforms
+				//   2016-03-27..2016-10-03 - Rule for a time zone in northern hemisphere on non-Windows platforms
+				//   0001-01-01..9999-12-31 - Rule for a time zone on Windows
+
 				foreach (var rule in GetAdjustmentRules ()) {
-					if (rule.DateStart.Year != year && rule.DateEnd.Year != year)
+					if (rule.DateStart.Year > year || rule.DateEnd.Year < year)
 						continue;
-					if (rule.DateStart.Year == year)
+					if (rule.DateStart.Year <= year && (first == null || rule.DateStart.Year > first.DateStart.Year))
 						first = rule;
-					if (rule.DateEnd.Year == year)
+					if (rule.DateEnd.Year >= year && (last == null || rule.DateEnd.Year < last.DateEnd.Year))
 						last = rule;
 				}
 

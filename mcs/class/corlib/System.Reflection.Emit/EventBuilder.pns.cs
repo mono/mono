@@ -1,9 +1,10 @@
 //
-// System.GCCollectionMode.cs
+// EventBuilder.pns.cs
 //
-
+// Authors:
+//   Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2016 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,14 +26,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Net 3.5 type
+#if FULL_AOT_RUNTIME
 
-namespace System
+namespace System.Reflection.Emit
 {
-	[Serializable]
-	public enum GCCollectionMode {
-		Default = 0,
-		Forced = 1,
-		Optimized = 2
+	public class EventBuilder
+	{		
+		public void AddOtherMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetAddOnMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetRaiseMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetRemoveOnMethod (MethodBuilder mdBuilder)
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }
+
+#endif

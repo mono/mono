@@ -1,10 +1,10 @@
 //
-// ExcludeFromCodeCoverageAttribute.cs
+// CustomAttributeBuilder.pns.cs
 //
 // Authors:
-//  Jb Evain  <jbevain@novell.com>
+//   Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2016 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,24 +26,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+#if FULL_AOT_RUNTIME
 
-
-namespace System.Diagnostics.CodeAnalysis {
-
-	[AttributeUsage (AttributeTargets.Class
-		| AttributeTargets.Struct
-		| AttributeTargets.Constructor
-		| AttributeTargets.Method
-		| AttributeTargets.Property
-		| AttributeTargets.Event,
-		AllowMultiple = false,
-		Inherited = false)]
-	public sealed class ExcludeFromCodeCoverageAttribute : Attribute
+namespace System.Reflection.Emit
+{
+	public class CustomAttributeBuilder
 	{
-		public ExcludeFromCodeCoverageAttribute ()
+		public CustomAttributeBuilder (ConstructorInfo con, object[] constructorArgs)
 		{
+			throw new PlatformNotSupportedException ();			
+		}
+
+		public CustomAttributeBuilder (ConstructorInfo con, object[] constructorArgs, FieldInfo[] namedFields, object[] fieldValues)
+		{
+			throw new PlatformNotSupportedException ();			
+		}
+
+		public CustomAttributeBuilder (ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues)
+		{
+			throw new PlatformNotSupportedException ();			
+		}
+
+		public CustomAttributeBuilder (ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues)
+		{
+			throw new PlatformNotSupportedException ();			
 		}
 	}
 }
 
+#endif

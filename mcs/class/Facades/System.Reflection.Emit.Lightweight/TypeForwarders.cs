@@ -20,5 +20,6 @@
 // THE SOFTWARE.
 // 
 
+#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.DynamicMethod))]
-
+#endif

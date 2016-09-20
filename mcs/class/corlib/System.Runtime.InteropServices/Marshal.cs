@@ -1426,10 +1426,10 @@ namespace System.Runtime.InteropServices
 			const int COR_E_TARGET = unchecked ((int)0x80131603L);
 			const int COR_E_TARGETINVOCATION = unchecked ((int)0x80131604L);
 			const int COR_E_TARGETPARAMCOUNT = unchecked ((int)0x8002000EL);
-			const int COR_E_THREADABORTED = unchecked ((int)0x80131530L);
+			//const int COR_E_THREADABORTED = unchecked ((int)0x80131530L);
 			const int COR_E_THREADINTERRUPTED = unchecked ((int)0x80131519L);
 			const int COR_E_THREADSTATE = unchecked ((int)0x80131520L);
-			const int COR_E_THREADSTOP = unchecked ((int)0x80131521L);
+			//const int COR_E_THREADSTOP = unchecked ((int)0x80131521L);
 			const int COR_E_TYPEINITIALIZATION = unchecked ((int)0x80131534L);
 			const int COR_E_VERIFICATION = unchecked ((int)0x8013150DL);
 			//const int COR_E_WEAKREFERENCE = unchecked ((int)?);

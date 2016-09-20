@@ -48,38 +48,6 @@ namespace Microsoft.VisualBasic
 {
 	internal class VBCodeCompiler : VBCodeGenerator, ICodeCompiler
 	{
-		static string windowsMonoPath;
-		static string windowsvbncPath;
-		static string unixVbncCommand;
-
-		static VBCodeCompiler ()
-		{
-			if (Path.DirectorySeparatorChar == '\\') {
-				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
-				MethodInfo get_gac = gac.GetGetMethod (true);
-				string p = Path.GetDirectoryName (
-					(string) get_gac.Invoke (null, null));
-				windowsMonoPath = Path.Combine (
-					Path.GetDirectoryName (
-						Path.GetDirectoryName (p)),
-					"bin\\mono.bat");
-				if (!File.Exists (windowsMonoPath))
-					windowsMonoPath = Path.Combine (
-						Path.GetDirectoryName (
-							Path.GetDirectoryName (p)),
-						"bin\\mono.exe");
-				windowsvbncPath =
-					Path.Combine (p, "2.0\\vbnc.exe");
-			} else {
-				var mscorlibPath = new Uri (typeof (object).Assembly.CodeBase).LocalPath;
-				var unixMcsPath = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbnc"));
-				if (File.Exists (unixMcsPath))
-					unixVbncCommand = unixMcsPath;
-				else
-					unixVbncCommand = "vbnc";
-			}
-		}
-
 		public CompilerResults CompileAssemblyFromDom (CompilerParameters options, CodeCompileUnit e)
 		{
 			return CompileAssemblyFromDomBatch (options, new CodeCompileUnit[] { e });
@@ -248,10 +216,10 @@ namespace Microsoft.VisualBasic
 			string[] vbnc_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
-				vbnc.StartInfo.FileName = windowsMonoPath;
-				vbnc.StartInfo.Arguments = windowsvbncPath + ' ' + BuildArgs (options, fileNames);
+				vbnc.StartInfo.FileName = MonoToolsLocator.Mono;
+				vbnc.StartInfo.Arguments = MonoToolsLocator.VBCompiler + ' ' + BuildArgs (options, fileNames);
 			} else {
-				vbnc.StartInfo.FileName = "vbnc";
+				vbnc.StartInfo.FileName = MonoToolsLocator.VBCompiler;
 				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
 			}
 			//Console.WriteLine (vbnc.StartInfo.Arguments);

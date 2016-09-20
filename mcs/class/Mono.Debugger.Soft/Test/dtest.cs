@@ -69,9 +69,17 @@ public class DebuggerTests
 		if (!listening) {
 			var pi = new Diag.ProcessStartInfo ();
 
-			if (runtime != null)
+			if (runtime != null) {
 				pi.FileName = runtime;
-			else
+			} else if (Path.DirectorySeparatorChar == '\\') {
+				string processExe = Diag.Process.GetCurrentProcess ().MainModule.FileName;
+				if (processExe != null) {
+					string fileName = Path.GetFileName (processExe);
+					if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
+						pi.FileName = processExe;
+				}
+			}
+			if (string.IsNullOrEmpty (pi.FileName))
 				pi.FileName = "mono";
 			pi.Arguments = String.Join (" ", args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });

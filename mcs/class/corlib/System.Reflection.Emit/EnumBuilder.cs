@@ -162,6 +162,11 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		public TypeInfo CreateTypeInfo()
+		{
+			return _tb.CreateTypeInfo ();
+		}
+
 		public override Type GetEnumUnderlyingType ()
 		{
 			return _underlyingType;

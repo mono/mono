@@ -52425,6 +52425,24 @@
       </method>
     </type>
   </test>
+  <test name="test-940.cs">
+    <type name="nint">
+      <method name="nint op_Multiply(nint, nint)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Int64 op_Implicit(nint)" attrs="2198">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">

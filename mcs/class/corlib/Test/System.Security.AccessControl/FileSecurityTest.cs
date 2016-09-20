@@ -98,6 +98,13 @@ namespace MonoTests.System.Security.AccessControl
 				security = File.GetAccessControl (path);
 				security.SetOwner (new SecurityIdentifier ("WD"));
 				File.SetAccessControl (path, security);
+				// If we don't get an InvalidOperationException it could be that we are running
+				// with administrator privileges. Don't fail the test if that is the case.
+				WindowsIdentity identity = WindowsIdentity.GetCurrent ();
+				WindowsPrincipal principal = new WindowsPrincipal (identity);
+				if (principal.IsInRole (WindowsBuiltInRole.Administrator)) {
+					Assert.Ignore ("Running as Administrator");
+				}
 			} finally {
 				File.Delete (path);
 			}

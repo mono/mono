@@ -496,7 +496,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Culture ("en")]
+		[SetCulture ("en")]
 		public void TestParse()
 		{
 		    // Boolean Decimal.TryParse(String, NumberStyles, IFormatProvider, Decimal)
@@ -810,7 +810,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Culture ("en")]
+		[SetCulture ("en")]
 		public void TestToString()
 		{
 		    // String Decimal.ToString()
@@ -865,7 +865,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Culture ("en")]
+		[SetCulture ("en")]
 		public void TestNumberBufferLimit()
 		{
 		    Decimal dE = 1234567890123456789012345.6785m;

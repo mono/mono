@@ -560,35 +560,7 @@ namespace System.Windows.Forms
 			if (Assembly.GetEntryAssembly () == null)
 				throw new NotSupportedException ("The method 'Restart' is not supported by this application type.");
 
-			string mono_path = null;
-
-			//Get mono path
-			PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
-			MethodInfo get_gac = null;
-			if (gac != null)
-				get_gac = gac.GetGetMethod (true);
-
-			if (get_gac != null) {
-				string gac_path = Path.GetDirectoryName ((string)get_gac.Invoke (null, null));
-				string mono_prefix = Path.GetDirectoryName (Path.GetDirectoryName (gac_path));
-
-				if (XplatUI.RunningOnUnix) {
-					mono_path = Path.Combine (mono_prefix, "bin/mono");
-					if (!File.Exists (mono_path))
-						mono_path = "mono";
-				} else {
-					mono_path = Path.Combine (mono_prefix, "bin\\mono.bat");
-
-					if (!File.Exists (mono_path))
-						mono_path = Path.Combine (mono_prefix, "bin\\mono.exe");
-
-					if (!File.Exists (mono_path))
-						mono_path = Path.Combine (mono_prefix, "mono\\mono\\mini\\mono.exe");
-
-					if (!File.Exists (mono_path))
-						throw new FileNotFoundException (string.Format ("Windows mono path not found: '{0}'", mono_path));
-				}
-			}
+			string mono_path = MonoToolsLocator.Mono;
 
 			//Get command line arguments
 			StringBuilder argsBuilder = new StringBuilder ();
