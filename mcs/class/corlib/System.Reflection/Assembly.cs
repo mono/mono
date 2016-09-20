@@ -58,7 +58,9 @@ namespace System.Reflection {
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
 		internal class ResolveEventHolder {
+#pragma warning disable 67
 			public event ModuleResolveEventHandler ModuleResolve;
+#pragma warning restore
 		}
 
 		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
