@@ -284,8 +284,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				// On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
-				// gives ERROR_INVALID_PARAMETER (87).
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
 				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
@@ -442,8 +442,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				// On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
-				// gives ERROR_INVALID_PARAMETER (87).
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
 				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
