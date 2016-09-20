@@ -1365,6 +1365,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	gint64 start;
 	gboolean alerted;
 	guint32 statuscode = 0;
+	gpointer handles [2];
 
 	alerted = FALSE;
 
@@ -1378,9 +1379,14 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
-	mono_w32handle_lock_handle (wait_handle);
+	handles [0] = wait_handle;
+	handles [1] = signal_handle;
+
+	mono_w32handle_lock_handles (handles, 2);
 
 	mono_w32handle_ops_signal (signal_handle);
+
+	mono_w32handle_unlock_handle (signal_handle);
 
 	if (mono_w32handle_test_capabilities (wait_handle, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle, &statuscode)) {
