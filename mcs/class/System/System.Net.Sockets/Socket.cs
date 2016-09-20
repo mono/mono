@@ -230,7 +230,8 @@ namespace System.Net.Sockets
 					 * effects on Linux, as the socket option is kludged by
 					 * turning on or off PMTU discovery... */
 					this.DontFragment = false;
-					this.NoDelay = false;
+					if (protocol_type == ProtocolType.Tcp)
+						this.NoDelay = false;
 				} else if (address_family == AddressFamily.InterNetworkV6) {
 					this.DualMode = true;
 				}
@@ -622,7 +623,6 @@ namespace System.Net.Sockets
 			set {
 				ThrowIfDisposedAndClosed ();
 				ThrowIfUdp ();
-
 				SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, value ? 1 : 0);
 			}
 		}
