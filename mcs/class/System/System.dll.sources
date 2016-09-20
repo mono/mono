@@ -562,7 +562,6 @@ ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
 ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
-ReferenceSources/Internal.cs
 ReferenceSources/HttpApi.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/LocalAppContextSwitches.cs
@@ -575,14 +574,6 @@ ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
-
-ReferenceSources/SSPIConfiguration.cs
-ReferenceSources/SSPISafeHandles.cs
-ReferenceSources/SSPIWrapper.cs
-ReferenceSources/SslStream.cs
-ReferenceSources/_SecureChannel.cs
-ReferenceSources/_SslState.cs
-ReferenceSources/_SslStream.cs
 
 ../referencesource/System/misc/PrivilegedConfigurationManager.cs
 ../referencesource/System/regex/system/text/regularexpressions/Regex.cs
