@@ -216,10 +216,10 @@ namespace Microsoft.VisualBasic
 			string[] vbnc_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
-				vbnc.StartInfo.FileName = MonoExeLocator.MonoPath;
-				vbnc.StartInfo.Arguments = MonoExeLocator.VbncPath + ' ' + BuildArgs (options, fileNames);
+				vbnc.StartInfo.FileName = MonoToolsLocator.Mono;
+				vbnc.StartInfo.Arguments = MonoToolsLocator.VBCompiler + ' ' + BuildArgs (options, fileNames);
 			} else {
-				vbnc.StartInfo.FileName = MonoExeLocator.VbncPath;
+				vbnc.StartInfo.FileName = MonoToolsLocator.VBCompiler;
 				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
 			}
 			//Console.WriteLine (vbnc.StartInfo.Arguments);

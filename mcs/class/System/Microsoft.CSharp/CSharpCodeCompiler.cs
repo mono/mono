@@ -132,10 +132,10 @@ namespace Mono.CSharp
 
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
-				mcs.StartInfo.FileName = MonoExeLocator.MonoPath;
-				mcs.StartInfo.Arguments = "\"" + MonoExeLocator.McsPath + "\" ";
+				mcs.StartInfo.FileName = MonoToolsLocator.Mono;
+				mcs.StartInfo.Arguments = "\"" + MonoToolsLocator.CSharpCompiler + "\" ";
 			} else {
-				mcs.StartInfo.FileName = MonoExeLocator.McsPath;
+				mcs.StartInfo.FileName = MonoToolsLocator.CSharpCompiler;
 			}
 
 			mcs.StartInfo.Arguments += BuildArgs (options, fileNames, ProviderOptions);

@@ -231,10 +231,10 @@ namespace System.Web.Compilation
 		string SetAlPath (ProcessStartInfo info)
 		{			
 			if (RuntimeHelpers.RunningOnWindows) {
-				info.FileName = MonoExeLocator.MonoPath;
-				return MonoExeLocator.AlPath + " ";
+				info.FileName = MonoToolsLocator.Mono;
+				return MonoToolsLocator.AssemblyLinker + " ";
 			} else {
-				info.FileName = MonoExeLocator.AlPath;
+				info.FileName = MonoToolsLocator.AssemblyLinker;
 				return String.Empty;
 			}
 		}

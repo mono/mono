@@ -560,7 +560,7 @@ namespace System.Windows.Forms
 			if (Assembly.GetEntryAssembly () == null)
 				throw new NotSupportedException ("The method 'Restart' is not supported by this application type.");
 
-			string mono_path = MonoExeLocator.MonoPath;
+			string mono_path = MonoToolsLocator.Mono;
 
 			//Get command line arguments
 			StringBuilder argsBuilder = new StringBuilder ();

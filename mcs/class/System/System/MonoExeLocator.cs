@@ -1,4 +1,5 @@
-using System;
+#if !MOBILE
+
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -6,88 +7,79 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-	internal static class MonoExeLocator {
+	static class MonoToolsLocator
+	{
+		public static readonly string Mono;
+		public static readonly string CSharpCompiler;
+		public static readonly string VBCompiler;
+		public static readonly string AssemblyLinker;
 
-		public static string GacPath { get; private set; }
-		public static string MonoPath { get; private set; }
-		public static string McsPath { get; private set; }
-		public static string VbncPath { get; private set; }
-		public static string AlPath { get; private set; }
-
-		static MonoExeLocator () {
-
-			PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
-			MethodInfo getGacMethod = gac.GetGetMethod (true);
-			GacPath = Path.GetDirectoryName ((string) getGacMethod.Invoke (null, null));
-
-			string monoPath = null;
-			string mcsPath = null;
-			string vbncPath = null;
-			string alPath = null;
+		// TODO: Should be lazy
+		static MonoToolsLocator ()
+		{
+			var gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
+			var getGacMethod = gac.GetGetMethod (true);
+			var GacPath = Path.GetDirectoryName ((string) getGacMethod.Invoke (null, null));
 
 			if (Path.DirectorySeparatorChar == '\\') {
 				string processExe = Process.GetCurrentProcess ().MainModule.FileName;
 				if (processExe != null) {
 					string fileName = Path.GetFileName (processExe);
 					if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
-						monoPath = processExe;
+						Mono = processExe;
 				}
 
-				if (!File.Exists (monoPath))
-					monoPath = Path.Combine (
+				if (!File.Exists (Mono))
+					Mono = Path.Combine (
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (GacPath)),
 						"bin\\mono.exe");
 
-				if (!File.Exists (monoPath))
-					monoPath = Path.Combine (
+				if (!File.Exists (Mono))
+					Mono = Path.Combine (
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (
 								Path.GetDirectoryName (GacPath))),
 						"mono\\mini\\mono.exe");
 
-				if (!File.Exists (monoPath))
-					throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
+				//if (!File.Exists (Mono))
+				//	throw new FileNotFoundException ("Windows mono path not found: " + Mono);
 
-				mcsPath = Path.Combine (GacPath, "4.5\\mcs.exe");
-				if (!File.Exists (mcsPath))
-					mcsPath = Path.Combine (Path.GetDirectoryName (GacPath), "lib\\build\\mcs.exe");
+				CSharpCompiler = Path.Combine (GacPath, "4.5\\mcs.exe");
+				if (!File.Exists (CSharpCompiler))
+					CSharpCompiler = Path.Combine (Path.GetDirectoryName (GacPath), "lib\\build\\mcs.exe");
 
-				if (!File.Exists (mcsPath))
-					throw new FileNotFoundException ("Windows mcs path not found: " + mcsPath);
+				//if (!File.Exists (CSharpCompiler))
+				//	throw new FileNotFoundException ("C# compiler not found at " + CSharpCompiler);
 
-				vbncPath = Path.Combine (GacPath,  "4.5\\vbnc.exe");
-				vbncPath = Path.Combine (GacPath,  "4.5\\vbnc.exe");
-				alPath = Path.Combine (GacPath, "4.5\\al.exe");
+				VBCompiler = Path.Combine (GacPath,  "4.5\\vbnc.exe");
+				AssemblyLinker = Path.Combine (GacPath, "4.5\\al.exe");
 
-				if (!File.Exists (alPath)) {
-					alPath = Path.Combine (Path.GetDirectoryName (GacPath), "lib\\net_4_x\\al.exe");
-					if (!File.Exists (alPath))
-						throw new FileNotFoundException ("Windows al path not found: " + alPath);
+				if (!File.Exists (AssemblyLinker)) {
+					AssemblyLinker = Path.Combine (Path.GetDirectoryName (GacPath), "lib\\net_4_x\\al.exe");
+				//	if (!File.Exists (AssemblyLinker))
+				//		throw new FileNotFoundException ("Windows al path not found: " + AssemblyLinker);
 				}
 			} else {
-				monoPath = Path.Combine (GacPath, "bin/mono");
-				if (!File.Exists (MonoPath))
-					monoPath = "mono";
+				Mono = Path.Combine (GacPath, "bin", "mono");
+				if (!File.Exists (Mono))
+					Mono = "mono";
 
 				var mscorlibPath = new Uri (typeof (object).Assembly.CodeBase).LocalPath;
-				mcsPath = Path.GetFullPath( Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "mcs"));
-				if (!File.Exists (mcsPath))
-					mcsPath = "mcs";
+				CSharpCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "mcs"));
+				if (!File.Exists (CSharpCompiler))
+					CSharpCompiler = "mcs";
 
-				vbncPath = Path.Combine (Path.GetDirectoryName (mcsPath), "vbnc");
-				if (!File.Exists (vbncPath))
-					vbncPath = "vbnc";
+				VBCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbnc"));
+				if (!File.Exists (VBCompiler))
+					VBCompiler = "vbnc";
 
-				alPath = "al";
+				AssemblyLinker = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "al"));
+				if (!File.Exists (AssemblyLinker))
+					AssemblyLinker = "al";
 			}
-
-			McsPath = mcsPath;
-			MonoPath = monoPath;
-			VbncPath = vbncPath;
-			AlPath = alPath;
 		}
-
-		
 	}
 }
+
+#endif
