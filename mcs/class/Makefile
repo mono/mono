@@ -52,8 +52,6 @@ mobile_common_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	Mono.Security.Providers.DotNet	\
-	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls	\
 	System.Runtime.InteropServices.RuntimeInformation	\
 	System.Reflection.DispatchProxy	\
 	System.Xml.XPath.XmlDocument \
@@ -142,8 +140,6 @@ xammac_4_5_dirs := \
 	System.Net.Http.WebRequest \
 	Mono.Security.Providers.DotNet \
 	Mono.Security.Providers.OldTls \
-	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls \
 	System.Runtime.InteropServices.RuntimeInformation \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
@@ -232,8 +228,6 @@ net_4_x_dirs := \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
 	System.Web.Http.WebHost \
-	Mono.Security.Providers.NewSystemSource \
-	Mono.Security.Providers.NewTls \
 	System.Runtime.InteropServices.RuntimeInformation
 
 # These are the subdirs which depends on libs in net_4_x_dirs
