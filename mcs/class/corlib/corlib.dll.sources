@@ -105,9 +105,6 @@ System/DomainManagerInitializationFlags.cs
 System/EmptyArray.cs
 System/Environment.cs
 System/EnvironmentVariableTarget.cs
-System/GC.cs
-System/GCCollectionMode.cs
-System/GCNotificationStatus.cs
 System/Guid.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
@@ -984,6 +981,7 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/system/flagsattribute.cs
 ../referencesource/mscorlib/system/formatexception.cs
 ../referencesource/mscorlib/system/FormattableString.cs
+../referencesource/mscorlib/system/gc.cs
 ../referencesource/mscorlib/system/guid.cs
 ../referencesource/mscorlib/system/iappdomain.cs
 ../referencesource/mscorlib/system/iappdomainsetup.cs
