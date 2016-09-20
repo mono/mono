@@ -35,7 +35,6 @@ namespace MonoTests.System.Data
     [TestFixture]
     public class DataTableReadWriteXmlTest
     {
-        public static readonly string EOL = Environment.NewLine;
 
         void StandardizeXmlFormat(ref string xml)
         {
@@ -126,11 +125,11 @@ namespace MonoTests.System.Data
             // Get XML for DataSet writes.
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            string xmlDSNone = sw.ToString().Replace ("\n", EOL);
+            string xmlDSNone = sw.ToString();
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDSDiffGram = sw.ToString().Replace ("\n", EOL);
+            string xmlDSDiffGram = sw.ToString();
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
@@ -188,11 +187,11 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            xmlDSNone = sw.ToString().Replace ("\n", EOL);
+            xmlDSNone = sw.ToString();
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            xmlDSDiffGram = sw.ToString().Replace ("\n", EOL);
+            xmlDSDiffGram = sw.ToString();
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
