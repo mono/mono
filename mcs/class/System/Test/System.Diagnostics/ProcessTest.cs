@@ -284,7 +284,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (2, ex.NativeErrorCode, "#6");
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
+				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
 
@@ -440,7 +442,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (2, ex.NativeErrorCode, "#6");
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
+				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
 
@@ -892,8 +896,11 @@ namespace MonoTests.System.Diagnostics
 				path = "/bin/cat";
 #endif
 				return new ProcessStartInfo (path);
-			} else
-				return new ProcessStartInfo ("type");
+			} else {
+				var psi = new ProcessStartInfo ("findstr");
+				psi.Arguments = "\"^\"";
+				return psi;
+			}
 		}
 #endif // MONO_FEATURE_PROCESS_START
 
@@ -1018,7 +1025,7 @@ namespace MonoTests.System.Diagnostics
 
 				StringBuilder sb = new StringBuilder ();
 				sb.AppendFormat ("Could not found: {0} {1}\n", name.Name, name.Version);
-				sb.AppendLine ("Looked in assemblies:");
+				sb.AppendLine ("Looked in modules:");
 
 				foreach (var o in modules) {
 					var m = (ProcessModule) o;
