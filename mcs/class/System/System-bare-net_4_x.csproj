@@ -777,9 +777,6 @@
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
     <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
-    <Compile Include="ReferenceSources\_SecureChannel.cs" />
-    <Compile Include="ReferenceSources\_SslState.cs" />
-    <Compile Include="ReferenceSources\_SslStream.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
@@ -788,7 +785,6 @@
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
     <Compile Include="ReferenceSources\HttpApi.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
-    <Compile Include="ReferenceSources\Internal.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\RequestCacheProtocol.cs" />
@@ -797,10 +793,6 @@
     <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SRCategoryAttribute.cs" />
-    <Compile Include="ReferenceSources\SslStream.cs" />
-    <Compile Include="ReferenceSources\SSPIConfiguration.cs" />
-    <Compile Include="ReferenceSources\SSPISafeHandles.cs" />
-    <Compile Include="ReferenceSources\SSPIWrapper.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeCompiler.cs" />
     <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
