@@ -57,7 +57,6 @@ namespace System.IO.Pipes
 			return new NotImplementedException ("ACL is not supported in Mono");
 		}
 
-#if !MOBILE
 		internal static PipeAccessRights ToAccessRights (PipeDirection direction)
 		{
 			switch (direction) {
@@ -88,7 +87,6 @@ namespace System.IO.Pipes
 					throw new ArgumentOutOfRangeException ();
 			}
 		}
-#endif
 
 		protected PipeStream (PipeDirection direction, int bufferSize)
 			: this (direction, PipeTransmissionMode.Byte, bufferSize)
@@ -144,9 +142,7 @@ namespace System.IO.Pipes
 			set { stream = value; }
 		}
 
-#if !MOBILE
 		protected bool IsHandleExposed { get; private set; }
-#endif
 
 		[MonoTODO]
 		public bool IsMessageComplete { get; private set; }
@@ -182,19 +178,7 @@ namespace System.IO.Pipes
 		}
 
 		// initialize/dispose/state check
-#if MOBILE
-		internal static void CheckPipePropertyOperations ()
-		{
-		}
 
-		static void CheckReadOperations ()
-		{
-		}
-
-		static void CheckWriteOperations ()
-		{
-		}
-#else
 		[MonoTODO]
 		protected internal virtual void CheckPipePropertyOperations ()
 		{
@@ -224,7 +208,6 @@ namespace System.IO.Pipes
 			this.IsHandleExposed = isExposed;
 			this.IsAsync = isAsync;
 		}
-#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -253,23 +236,29 @@ namespace System.IO.Pipes
 			throw new NotSupportedException ();
 		}
 
-#if !MOBILE
 		public PipeSecurity GetAccessControl ()
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			return new PipeSecurity (SafePipeHandle,
 						 AccessControlSections.Owner |
 						 AccessControlSections.Group |
 						 AccessControlSections.Access);
+#endif
 		}
 
 		public void SetAccessControl (PipeSecurity pipeSecurity)
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			if (pipeSecurity == null)
 				throw new ArgumentNullException ("pipeSecurity");
 				
 			pipeSecurity.Persist (SafePipeHandle);
-		}
 #endif
+		}
 
 		// pipe I/O
 
@@ -319,7 +308,6 @@ namespace System.IO.Pipes
 
 		// async
 
-#if !MOBILE
 		Func<byte [],int,int,int> read_delegate;
 
 		[HostProtection (SecurityAction.LinkDemand, ExternalThreading = true)]
@@ -349,7 +337,6 @@ namespace System.IO.Pipes
 		{
 			write_delegate.EndInvoke (asyncResult);
 		}
-#endif
 	}
 }
 
