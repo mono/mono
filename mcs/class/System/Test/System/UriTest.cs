@@ -1678,6 +1678,9 @@ namespace MonoTests.System
 		[Category ("NotDotNet")]
 		public void UnixAbsoluteFilePath_WithSpecialChars1 ()
 		{
+			if (isWin32)
+				Assert.Ignore ();
+
 			Uri unixuri = new Uri ("/home/user/a@b");
 			Assert.AreEqual ("file", unixuri.Scheme, "UnixAbsoluteFilePath_WithSpecialChars #1");
 		}
@@ -1686,6 +1689,9 @@ namespace MonoTests.System
 		[Category ("NotDotNet")]
 		public void UnixAbsoluteFilePath_WithSpecialChars2 ()
 		{
+			if (isWin32)
+				Assert.Ignore ();
+
 			Uri unixuri = new Uri ("/home/user/a:b");
 			Assert.AreEqual ("file", unixuri.Scheme, "UnixAbsoluteFilePath_WithSpecialChars #2");
 		}
@@ -1694,6 +1700,9 @@ namespace MonoTests.System
 		[Category ("NotDotNet")]
 		public void UnixAbsolutePath_ReplaceRelative ()
 		{
+			if (isWin32)
+				Assert.Ignore ();
+
 			var u1 = new Uri ("/Users/demo/Projects/file.xml");
 			var u2 = new Uri (u1, "b.jpg");
 
@@ -1884,6 +1893,11 @@ namespace MonoTests.System
 		[Test]
 		public void DotNetRelativeOrAbsoluteTest ()
 		{
+			// On windows the path /foo is parsed as BadFormat and checking
+			// if this is relative or absolute doesn't make sense.
+			if (isWin32)
+				Assert.Ignore();
+
 			FieldInfo useDotNetRelativeOrAbsoluteField = null;
 			bool useDotNetRelativeOrAbsoluteOld = false;
 
@@ -2043,6 +2057,9 @@ namespace MonoTests.System
 		[Test]
 		public void ImplicitUnixFileWithUnicode ()
 		{
+			if (isWin32)
+				Assert.Ignore ();
+
 			string value = "/Library/Frameworks/System.Runtim…ee";
 			Uri uri;
 			Assert.IsTrue (Uri.TryCreate (value, UriKind.Absolute, out uri));
