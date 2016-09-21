@@ -104,21 +104,7 @@ namespace Mono.Net.Security
 		static IMonoTlsProvider CreateDefaultProvider ()
 		{
 #if SECURITY_DEP
-			MSI.MonoTlsProvider provider = null;
-#if MONO_FEATURE_NEW_SYSTEM_SOURCE
-			/*
-			 * This is a hack, which is used in the Mono.Security.Providers.NewSystemSource
-			 * assembly, which will provide a "fake" System.dll.  Use the public Mono.Security
-			 * API to get the "real" System.dll's provider via reflection, then wrap it with
-			 * the "fake" version's perceived view.
-			 *
-			 * NewSystemSource needs to compile MonoTlsProviderFactory.cs, IMonoTlsProvider.cs,
-			 * MonoTlsProviderWrapper.cs and CallbackHelpers.cs from this directory and only these.
-			 */
-			provider = MSI.MonoTlsProviderFactory.GetProvider ();
-#else
-			provider = CreateDefaultProviderImpl ();
-#endif
+			MSI.MonoTlsProvider provider = CreateDefaultProviderImpl ();
 			if (provider != null)
 				return new Private.MonoTlsProviderWrapper (provider);
 #endif
@@ -131,7 +117,7 @@ namespace Mono.Net.Security
 
 		#endregion
 
-#if SECURITY_DEP && !MONO_FEATURE_NEW_SYSTEM_SOURCE
+#if SECURITY_DEP
 
 		static Dictionary<string,string> providerRegistration;
 
@@ -172,8 +158,6 @@ namespace Mono.Net.Security
 					return;
 				providerRegistration = new Dictionary<string,string> ();
 				providerRegistration.Add ("legacy", "Mono.Net.Security.Private.MonoLegacyTlsProvider");
-				providerRegistration.Add ("newtls", "Mono.Security.Providers.NewTls.NewTlsProvider, Mono.Security.Providers.NewTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
-				providerRegistration.Add ("oldtls", "Mono.Security.Providers.OldTls.OldTlsProvider, Mono.Security.Providers.OldTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
 #if HAVE_BTLS
 				if (Mono.Btls.MonoBtlsProvider.IsSupported ())
 					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");

@@ -308,7 +308,6 @@ ReferenceSources/AssertWrapper.cs
 ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/HttpApi.cs
-ReferenceSources/Internal.cs
 ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
