@@ -150,7 +150,7 @@ bundle_save_library_initialize ()
 {
 	bundle_save_library_initialized = 1;
 	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX");
-	bundled_dylibrary_directory = mkdtemp (path);
+	bundled_dylibrary_directory = g_mkdtemp (path);
 	g_free (path);
 	if (bundled_dylibrary_directory == NULL)
 		return;
