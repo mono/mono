@@ -1210,12 +1210,11 @@ namespace Mono.CSharp
 
 			backing_field = new Field (Parent,
 				new TypeExpression (MemberType, Location),
-				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				MemberName, null);
 
 			Parent.PartialContainer.Members.Add (backing_field);
 			backing_field.Initializer = Initializer;
-			backing_field.ModFlags &= ~Modifiers.COMPILER_GENERATED;
 
 			// Call define because we passed fields definition
 			backing_field.Define ();
