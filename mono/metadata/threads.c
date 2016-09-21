@@ -3144,9 +3144,8 @@ mono_threads_set_shutting_down (void)
 void mono_thread_manage (void)
 {
 	struct wait_data wait_data;
-	struct wait_data *wait = &wait_data;
 
-	memset (wait, 0, sizeof (struct wait_data));
+	memset (&wait_data, 0, sizeof (struct wait_data));
 	/* join each thread that's still running */
 	THREAD_DEBUG (g_message ("%s: Joining each running thread...", __func__));
 	
@@ -3169,17 +3168,19 @@ void mono_thread_manage (void)
 			mono_g_hash_table_foreach (threads, print_tids, NULL));
 	
 		mono_w32event_reset (background_change_event);
-		wait->num=0;
+
+		wait_data.num=0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
+		memset (&wait_data.threads, 0, sizeof (wait_data.threads));
+		mono_g_hash_table_foreach (threads, build_wait_tids, &wait_data);
 		mono_threads_unlock ();
-		if(wait->num>0) {
+
+		if(wait_data.num>0) {
 			/* Something to wait for */
-			wait_for_tids_or_state_change (wait, INFINITE);
+			wait_for_tids_or_state_change (&wait_data, INFINITE);
 		}
-		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait->num));
-	} while(wait->num>0);
+		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait_data.num));
+	} while(wait_data.num>0);
 
 	/* Mono is shutting down, so just wait for the end */
 	if (!mono_runtime_try_shutdown ()) {
@@ -3195,19 +3196,19 @@ void mono_thread_manage (void)
 	do {
 		mono_threads_lock ();
 
-		wait->num = 0;
+		wait_data.num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, wait);
+		memset (&wait_data.threads, 0, sizeof (wait_data.threads));
+		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, &wait_data);
 
 		mono_threads_unlock ();
 
-		THREAD_DEBUG (g_message ("%s: wait->num is now %d", __func__, wait->num));
-		if(wait->num>0) {
+		THREAD_DEBUG (g_message ("%s: wait_data.num is now %d", __func__, wait_data.num));
+		if(wait_data.num>0) {
 			/* Something to wait for */
-			wait_for_tids (wait, INFINITE);
+			wait_for_tids (&wait_data, INFINITE);
 		}
-	} while (wait->num > 0);
+	} while (wait_data.num > 0);
 	
 	/* 
 	 * give the subthreads a chance to really quit (this is mainly needed
