@@ -2052,8 +2052,8 @@ namespace MonoTests.System.XmlSerialization
 				serializer.Serialize (writer, obj);
 				writer.Close ();
 
-				Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>
-<Bug594490Class xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xml:lang=""hello world"" />",
+				Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>" + Environment.NewLine +
+				                 @"<Bug594490Class xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xml:lang=""hello world"" />",
 					writer.ToString (),
 					"Novell bug #594490 (https://bugzilla.novell.com/show_bug.cgi?id=594490) not fixed.");
 			}
