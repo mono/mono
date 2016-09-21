@@ -39,11 +39,9 @@ namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
 
-		int port;
-
-		[SetUp]
-		public void SetUp () {
-			port = NetworkHelpers.FindFreePort ();
+		int? _port;
+		int port {
+			get { return _port ?? (_port = NetworkHelpers.FindFreePort ()).Value; }
 		}
 
 		[Test]

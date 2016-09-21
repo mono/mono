@@ -21,7 +21,10 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class FtpWebRequestTest
 	{
-		FtpWebRequest defaultRequest;
+		FtpWebRequest _defaultRequest;
+		FtpWebRequest defaultRequest {
+			get { return _defaultRequest ?? (_defaultRequest = (FtpWebRequest) WebRequest.Create ("ftp://www.contoso.com")); }
+		}
 		
 		private string _tempDirectory;
 		private string _tempFile;
@@ -48,12 +51,6 @@ namespace MonoTests.System.Net
 				Directory.Delete (_tempDirectory, true);
 		}
 
-		[TestFixtureSetUp]
-		public void Init ()
-		{
-			defaultRequest = (FtpWebRequest) WebRequest.Create ("ftp://www.contoso.com");
-		}
-		
 		[Test]
 		public void ContentLength ()
 		{

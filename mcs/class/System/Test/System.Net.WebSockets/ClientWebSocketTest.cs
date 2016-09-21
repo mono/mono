@@ -18,31 +18,33 @@ namespace MonoTests.System.Net.WebSockets
 	{
 		const string EchoServerUrl = "ws://corefx-net.cloudapp.net/WebSocket/EchoWebSocket.ashx";
 		int Port = NetworkHelpers.FindFreePort ();
-		HttpListener listener;
-		ClientWebSocket socket;
-		MethodInfo headerSetMethod;
-
-		[SetUp]
-		public void Setup ()
-		{
-			listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:" + Port + "/");
-			listener.Start ();
-			socket = new ClientWebSocket ();
+		HttpListener _listener;
+		HttpListener listener {
+			get {
+				if (_listener != null)
+					return _listener;
+				var tmp = new HttpListener ();
+				tmp.Prefixes.Add ("http://localhost:" + Port + "/");
+				tmp.Start ();
+				return _listener = tmp;
+			}
 		}
+		ClientWebSocket _socket;
+		ClientWebSocket socket { get { return _socket ?? (_socket = new ClientWebSocket ()); } }
+		MethodInfo headerSetMethod;
 
 		[TearDown]
 		public void Teardown ()
 		{
-			if (listener != null) {
-				listener.Stop ();
-				listener = null;
+			if (_listener != null) {
+				_listener.Stop ();
+				_listener = null;
 			}
-			if (socket != null) {
-				if (socket.State == WebSocketState.Open)
-					socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (2000);
-				socket.Dispose ();
-				socket = null;
+			if (_socket != null) {
+				if (_socket.State == WebSocketState.Open)
+					_socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (2000);
+				_socket.Dispose ();
+				_socket = null;
 			}
 		}
 
