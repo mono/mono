@@ -8,9 +8,7 @@
 //
 
 using NUnit.Framework;
-#if !MONODROID
-using NUnit.Framework.SyntaxHelpers;
-#endif
+
 using System;
 using System.Text;
 using System.Threading;

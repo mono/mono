@@ -18,6 +18,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Resources
 {
+// TODO: this test is somehow not run with nunitlite
 	[TestFixture]
 	public class ResourceReaderTest
 	{

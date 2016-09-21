@@ -34,11 +34,8 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using System.Linq;
-using NUnit.Framework.SyntaxHelpers;
 using NUnit.Framework.Constraints;
 using System.Diagnostics;
-
-namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
 
 namespace MonoTests.System.Linq
 {

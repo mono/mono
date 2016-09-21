@@ -41,7 +41,6 @@ DISTFILES = \
 	executable.make			\
 	gensources.sh			\
 	library.make			\
-	nunit-summary.xsl		\
 	rules.make			\
 	tests.make			\
 	$(COMMON_SRCS:%=common/%)	\

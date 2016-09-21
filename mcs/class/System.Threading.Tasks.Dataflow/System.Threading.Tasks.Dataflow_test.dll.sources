@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 TestScheduler.cs
 AssertEx.cs
 Blocks.cs

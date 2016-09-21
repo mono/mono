@@ -193,7 +193,7 @@ namespace MonoTests.Remoting
 
 	// The main test class
 	[TestFixture]
-	public class RemotingServicesTest : Assertion
+	public class RemotingServicesTest
 	{
 		private static int MarshalObjectId = 0;
 
@@ -233,13 +233,13 @@ namespace MonoTests.Remoting
 			MarshalObject objMarshal = NewMarshalObject ();
 			ObjRef objRef = RemotingServices.Marshal (objMarshal);
 
-			Assert ("#A01", objRef.URI != null);
+			Assert.IsNotNull (objRef.URI, "#A01");
 
 			MarshalObject objRem = (MarshalObject) RemotingServices.Unmarshal (objRef);
-			AssertEquals ("#A02", objMarshal.Id, objRem.Id);
+			Assert.AreEqual (objMarshal.Id, objRem.Id, "#A02");
 
 			objRem.Id = 2;
-			AssertEquals ("#A03", objMarshal.Id, objRem.Id);
+			Assert.AreEqual (objMarshal.Id, objRem.Id, "#A03");
 
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);
@@ -248,7 +248,7 @@ namespace MonoTests.Remoting
 
 			objRef = RemotingServices.Marshal (objMarshal, objMarshal.Uri);
 
-			Assert ("#A04", objRef.URI.EndsWith (objMarshal.Uri));
+			Assert.IsTrue (objRef.URI.EndsWith (objMarshal.Uri), "#A04");
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);
 		}
@@ -261,7 +261,7 @@ namespace MonoTests.Remoting
 			ObjRef objRef = RemotingServices.Marshal (derivedObjMarshal, derivedObjMarshal.Uri, typeof (MarshalObject));
 
 			// Check that the type of the marshaled object is MarshalObject
-			Assert ("#A05", objRef.TypeInfo.TypeName.StartsWith ((typeof (MarshalObject)).ToString ()));
+			Assert.IsTrue (objRef.TypeInfo.TypeName.StartsWith ((typeof (MarshalObject)).ToString ()), "#A05");
 
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(derivedObjMarshal);
@@ -273,11 +273,11 @@ namespace MonoTests.Remoting
 		{
 			MarshalObject objMarshal = NewMarshalObject ();
 
-			Assert ("#A06", RemotingServices.GetObjectUri (objMarshal) == null);
+			Assert.IsNull (RemotingServices.GetObjectUri (objMarshal), "#A06");
 
 			RemotingServices.Marshal (objMarshal);
 
-			Assert ("#A07", RemotingServices.GetObjectUri (objMarshal) != null);
+			Assert.IsNotNull (RemotingServices.GetObjectUri (objMarshal), "#A07");
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);
 		}
@@ -297,7 +297,7 @@ namespace MonoTests.Remoting
 			try {
 				RemotingServices.Marshal (objMarshal, objMarshal.Uri);
 				MarshalObject objRem = (MarshalObject) RemotingServices.Connect (typeof (MarshalObject), "tcp://localhost:1236/" + objMarshal.Uri);
-				Assert ("#A08", RemotingServices.IsTransparentProxy (objRem));
+				Assert.IsTrue (RemotingServices.IsTransparentProxy (objRem), "#A08");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 				RemotingServices.Disconnect (objMarshal);
@@ -324,7 +324,7 @@ namespace MonoTests.Remoting
 				// a real object
 				try {
 					RemotingServices.Marshal (objRem, objMarshal.Uri);
-					Fail ("#1");
+					Assert.Fail ("#1");
 				} catch (RemotingException e) {
 				}
 			} finally {
@@ -355,15 +355,15 @@ namespace MonoTests.Remoting
 				objRem.Method1 ();
 
 				// Tests RemotingServices.GetMethodBaseFromMethodMessage()
-				AssertEquals ("#A09", "Method1", proxy.MthBase.Name);
-				Assert ("#A09.1", !proxy.IsMethodOverloaded);
+				Assert.AreEqual ("Method1", proxy.MthBase.Name, "#A09");
+				Assert.IsFalse (proxy.IsMethodOverloaded, "#A09.1");
 
 				objRem.Method2 ();
-				Assert ("#A09.2", proxy.IsMethodOverloaded);
+				Assert.IsTrue (proxy.IsMethodOverloaded, "#A09.2");
 
 				// Tests RemotingServices.ExecuteMessage();
 				// If ExecuteMessage does it job well, Method1 should be called 2 times
-				AssertEquals ("#A10", 2, MarshalObject.Called);
+				Assert.AreEqual (2, MarshalObject.Called, "#A10");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -380,14 +380,14 @@ namespace MonoTests.Remoting
 
 				MarshalObject objRem = (MarshalObject) Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1238/MarshalObject.rem");
 
-				Assert ("#A10.1", RemotingServices.IsTransparentProxy (objRem));
+				Assert.IsTrue (RemotingServices.IsTransparentProxy (objRem), "#A10.1");
 
 				objRem.Method1 ();
 				Thread.Sleep (20);
-				Assert ("#A10.2", !MarshalObject.IsMethodOneWay);
+				Assert.IsFalse (MarshalObject.IsMethodOneWay, "#A10.2");
 				objRem.Method3 ();
 				Thread.Sleep (20);
-				Assert ("#A10.3", MarshalObject.IsMethodOneWay);
+				Assert.IsTrue (MarshalObject.IsMethodOneWay, "#A10.3");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -409,7 +409,7 @@ namespace MonoTests.Remoting
 
 				ObjRef objRefRem = RemotingServices.GetObjRefForProxy ((MarshalByRefObject) objRem);
 
-				Assert ("#A11", objRefRem != null);
+				Assert.IsNotNull (objRefRem, "#A11");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -429,8 +429,8 @@ namespace MonoTests.Remoting
 
 				RealProxy rp = RemotingServices.GetRealProxy (objRem);
 
-				Assert ("#A12", rp != null);
-				AssertEquals ("#A13", "MonoTests.System.Runtime.Remoting.RemotingServicesInternal.MyProxy", rp.GetType ().ToString ());
+				Assert.IsNotNull (rp, "#A12");
+				Assert.AreEqual ("MonoTests.System.Runtime.Remoting.RemotingServicesInternal.MyProxy", rp.GetType ().ToString (), "#A13");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -448,7 +448,7 @@ namespace MonoTests.Remoting
 				RemotingServices.Marshal (objRem);
 
 				objRem = (MarshalObject) Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1242/" + objRem.Uri);
-				Assert ("#A14", objRem != null);
+				Assert.IsNotNull (objRem, "#A14");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -468,7 +468,7 @@ namespace MonoTests.Remoting
 				RemotingServices.Marshal (objRem);
 
 				Type typeRem = RemotingServices.GetServerTypeForUri (RemotingServices.GetObjectUri (objRem));
-				AssertEquals ("#A15", type, typeRem);
+				Assert.AreEqual (type, typeRem, "#A15");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -487,12 +487,12 @@ namespace MonoTests.Remoting
 
 				MarshalObject objRem = (MarshalObject) Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1245/MarshalObject2.rem");
 
-				Assert ("#A16", RemotingServices.IsObjectOutOfAppDomain (objRem));
-				Assert ("#A17", RemotingServices.IsObjectOutOfContext (objRem));
+				Assert.IsTrue (RemotingServices.IsObjectOutOfAppDomain (objRem), "#A16");
+				Assert.IsTrue (RemotingServices.IsObjectOutOfContext (objRem), "#A17");
 
 				MarshalObject objMarshal = new MarshalObject ();
-				Assert ("#A18", !RemotingServices.IsObjectOutOfAppDomain (objMarshal));
-				Assert ("#A19", !RemotingServices.IsObjectOutOfContext (objMarshal));
+				Assert.IsFalse (RemotingServices.IsObjectOutOfAppDomain (objMarshal), "#A18");
+				Assert.IsFalse (RemotingServices.IsObjectOutOfContext (objMarshal), "#A19");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -510,16 +510,16 @@ namespace MonoTests.Remoting
 				MarshalObject objRem = (MarshalObject) Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1246/app/obj3.rem");
 				MarshalObject objRem2 = (MarshalObject) Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1246/obj3.rem");
 
-				Assert ("#AN1", RemotingServices.IsTransparentProxy (objRem));
-				Assert ("#AN2", RemotingServices.IsTransparentProxy (objRem2));
+				Assert.IsTrue (RemotingServices.IsTransparentProxy (objRem), "#AN1");
+				Assert.IsTrue (RemotingServices.IsTransparentProxy (objRem2), "#AN2");
 
-				AssertNotNull ("#AN3", RemotingServices.GetServerTypeForUri ("obj3.rem"));
-				AssertNotNull ("#AN4", RemotingServices.GetServerTypeForUri ("/app/obj3.rem"));
-				AssertNull ("#AN5", RemotingServices.GetServerTypeForUri ("//app/obj3.rem"));
-				AssertNull ("#AN6", RemotingServices.GetServerTypeForUri ("app/obj3.rem"));
-				AssertNull ("#AN7", RemotingServices.GetServerTypeForUri ("/whatever/obj3.rem"));
-				AssertNotNull ("#AN8", RemotingServices.GetServerTypeForUri ("/obj3.rem"));
-				AssertNull ("#AN9", RemotingServices.GetServerTypeForUri ("//obj3.rem"));
+				Assert.IsNotNull (RemotingServices.GetServerTypeForUri ("obj3.rem"), "#AN3");
+				Assert.IsNotNull (RemotingServices.GetServerTypeForUri ("/app/obj3.rem"), "#AN4");
+				Assert.IsNull (RemotingServices.GetServerTypeForUri ("//app/obj3.rem"), "#AN5");
+				Assert.IsNull (RemotingServices.GetServerTypeForUri ("app/obj3.rem"), "#AN6");
+				Assert.IsNull (RemotingServices.GetServerTypeForUri ("/whatever/obj3.rem"), "#AN7");
+				Assert.IsNotNull (RemotingServices.GetServerTypeForUri ("/obj3.rem"), "#AN8");
+				Assert.IsNull (RemotingServices.GetServerTypeForUri ("//obj3.rem"), "#AN9");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -534,7 +534,7 @@ namespace MonoTests.Remoting
 				RemotingConfiguration.RegisterWellKnownServiceType (typeof (MarshalObject), "getobjectwithchanneldata.rem", WellKnownObjectMode.Singleton);
 
 				string channelData = "test";
-				AssertNotNull ("#01", Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1247/getobjectwithchanneldata.rem", channelData));
+				Assert.IsNotNull (Activator.GetObject (typeof (MarshalObject), "tcp://localhost:1247/getobjectwithchanneldata.rem", channelData), "#01");
 			} finally {
 				ChannelServices.UnregisterChannel (chn);
 			}
@@ -548,28 +548,28 @@ namespace MonoTests.Remoting
 			RemotingConfiguration.Configure (null);
 
 			o = RemotingServices.Connect (typeof (MarshalByRefObject), "tcp://localhost:3434/ff1.rem");
-			Assert ("#m1", o is DD);
-			Assert ("#m2", o is A);
-			Assert ("#m3", o is B);
-			Assert ("#m4", !(o is CC));
+			Assert.IsInstanceOfType (typeof (DD), o, "#m1");
+			Assert.IsInstanceOfType (typeof (A), o, "#m2");
+			Assert.IsInstanceOfType (typeof (B), o, "#m3");
+			AssertHelper.IsNotInstanceOfType (typeof (CC), !(o is CC), "#m4");
 
 			o = RemotingServices.Connect (typeof (A), "tcp://localhost:3434/ff3.rem");
-			Assert ("#a1", o is DD);
-			Assert ("#a2", o is A);
-			Assert ("#a3", o is B);
-			Assert ("#a4", !(o is CC));
+			Assert.IsInstanceOfType (typeof (DD), o, "#a1");
+			Assert.IsInstanceOfType (typeof (A), o, "#a2");
+			Assert.IsInstanceOfType (typeof (B), o, "#a3");
+			AssertHelper.IsNotInstanceOfType (typeof (CC), o, "#a4");
 
 			o = RemotingServices.Connect (typeof (DD), "tcp://localhost:3434/ff4.rem");
-			Assert ("#d1", o is DD);
-			Assert ("#d2", o is A);
-			Assert ("#d3", o is B);
-			Assert ("#d4", !(o is CC));
+			Assert.IsInstanceOfType (typeof (DD), o, "#d1");
+			Assert.IsInstanceOfType (typeof (A), o, "#d2");
+			Assert.IsInstanceOfType (typeof (B), o, "#d3");
+			AssertHelper.IsNotInstanceOfType (typeof (CC), o, "#d4");
 
 			o = RemotingServices.Connect (typeof (CC), "tcp://localhost:3434/ff5.rem");
-			Assert ("#c1", !(o is DD));
-			Assert ("#c2", o is A);
-			Assert ("#c3", o is B);
-			Assert ("#c4", o is CC);
+			AssertHelper.IsNotInstanceOfType (typeof (DD), o, "#c1");
+			Assert.IsInstanceOfType (typeof (A), o, "#c2");
+			Assert.IsInstanceOfType (typeof (B), o, "#c3");
+			Assert.IsInstanceOfType (typeof (CC), o, "#c4");
 		}
 		// Don't add any tests that must create channels
 		// after ConnectProxyCast (), because this test calls

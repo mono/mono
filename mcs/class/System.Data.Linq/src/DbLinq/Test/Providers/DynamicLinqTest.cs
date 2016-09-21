@@ -186,7 +186,7 @@ using nwind;
             Northwind db = CreateDB();
             Expression<Func<Customer, bool>> predicate = c => c.City == "Paris";
             int count = db.Customers.Count(predicate);
-            Assert.Greater(count, 0); // Some databases have more than 1 customer in Paris
+            AssertHelper.Greater(count, 0); // Some databases have more than 1 customer in Paris
         }
 
         /// <summary>

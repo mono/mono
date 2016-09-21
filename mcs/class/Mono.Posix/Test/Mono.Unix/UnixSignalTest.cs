@@ -8,18 +8,14 @@
 //
 
 using NUnit.Framework;
-#if !MONODROID
-using NUnit.Framework.SyntaxHelpers;
-#endif
+
 using System;
 using System.Text;
 using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Android;
 using Mono.Unix.Native;
-#if !MONODROID
-namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
-#endif
+
 namespace MonoTests.Mono.Unix {
 
 	[TestFixture]
