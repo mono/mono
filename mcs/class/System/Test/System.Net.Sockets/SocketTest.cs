@@ -28,7 +28,6 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SocketTest
 	{
 		// note: also used in SocketCas tests
@@ -36,6 +35,9 @@ namespace MonoTests.System.Net.Sockets
 		public const int BogusPort = 23483;
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectIPAddressAny ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
@@ -86,6 +88,9 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("InetAccess")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BogusEndConnect ()
 		{
 			IPAddress ipOne = IPAddress.Parse (BogusAddress);
@@ -156,6 +161,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AcceptBlockingStatus()
 		{
 			bool block;
@@ -200,6 +208,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectFailAsync ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -222,6 +233,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOptionBoolean ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
@@ -233,6 +247,9 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestSelect1 ()
 		{
 			Socket srv = CreateServer (NetworkHelpers.FindFreePort ());
@@ -370,7 +387,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed19 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -381,7 +402,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed20 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -392,7 +417,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed21 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -403,7 +432,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed22 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -424,6 +457,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetHashCodeTest ()
 		{
 			Socket server = new Socket (AddressFamily.InterNetwork,
@@ -459,6 +495,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("RequiresBSDSockets")] // This verifies particular error codes, which we don't care about when nothing's working anyway.
 		public void SocketErrorTest ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -700,6 +737,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void IsBoundTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -732,6 +772,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void IsBoundUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1304,7 +1347,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(InvalidOperationException))]
+#endif
 		public void BeginAcceptNotListening ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1319,6 +1366,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAccept ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1386,6 +1436,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAcceptData ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1450,6 +1503,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAcceptSocketUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1477,6 +1533,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAcceptSocketBound ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1508,6 +1567,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAcceptSocket ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1589,6 +1651,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginAcceptSocketAccClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1638,6 +1703,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectAddressPort ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1687,6 +1755,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectAddressPortListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1781,6 +1852,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectMultiple2 ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1853,6 +1927,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectMultipleListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1917,6 +1994,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectHostPortListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1984,6 +2064,9 @@ namespace MonoTests.System.Net.Sockets
 		
 		[Test]
 		[Category ("NotDotNet")] // "Needs XP or later"
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginDisconnect ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2080,6 +2163,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BindTwice ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2103,6 +2189,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Close ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2131,6 +2220,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectAddressPort ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2171,6 +2263,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectAddressPortListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2257,6 +2352,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultiple2 ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2314,6 +2412,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultipleListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2376,6 +2477,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectHostPortListen ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2414,7 +2518,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void ConnectHostPortClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2428,6 +2536,9 @@ namespace MonoTests.System.Net.Sockets
 		
 		[Test]
 		[Category ("NotDotNet")] // "Needs XP or later"
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Disconnect ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2485,6 +2596,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveGeneric ()
 		{
 			int i;
@@ -2542,6 +2656,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SendGeneric ()
 		{
 			int i;
@@ -2634,6 +2751,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseWhileReceiving ()
 		{
 			CWRSocket = new Socket (AddressFamily.InterNetwork,
@@ -3003,6 +3123,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom1_Buffer_Null ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3044,6 +3167,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom1_Socket_Closed ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3064,6 +3190,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom2_Buffer_Null ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3105,6 +3234,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom2_Socket_Closed ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3125,6 +3257,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom3_Buffer_Null ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3167,6 +3302,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom3_Size_OutOfRange ()
 		{
 			Socket s;
@@ -3208,6 +3346,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom3_Socket_Closed ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3229,6 +3370,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom4_Buffer_Null ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3248,6 +3392,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom4_Offset_OutOfRange ()
 		{
 			Socket s;
@@ -3311,6 +3458,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom4_Size_OutOfRange ()
 		{
 			Socket s;
@@ -3369,6 +3519,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, ref EndPoint)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveFrom4_Socket_Closed ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
@@ -3391,6 +3544,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReceiveRemoteClosed ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -3418,6 +3574,9 @@ namespace MonoTests.System.Net.Sockets
 		//
 		// Test case for bug #471580
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UdpDoubleBind ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork,
@@ -3451,6 +3610,9 @@ namespace MonoTests.System.Net.Sockets
 
 		// Test case for bug #31557
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TcpDoubleBind ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork,
@@ -3689,6 +3851,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_AddMembershipIPv4_IPv6MulticastOption ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
@@ -3711,6 +3876,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_AddMembershipIPv4_MulticastOption ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
@@ -3747,6 +3915,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_AddMembershipIPv6_IPv6MulticastOption ()
 		{
 			if (!Socket.OSSupportsIPv6)
@@ -3762,6 +3933,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_AddMembershipIPv6_MulticastOption ()
 		{
 			if (!Socket.OSSupportsIPv6)
@@ -3916,6 +4090,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_DropMembershipIPv4_IPv6MulticastOption ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
@@ -3940,6 +4117,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_DropMembershipIPv4_MulticastOption ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
@@ -3980,6 +4160,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_DropMembershipIPv6_IPv6MulticastOption ()
 		{
 			if (!Socket.OSSupportsIPv6)
@@ -3998,6 +4181,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SetSocketOption3_DropMembershipIPv6_MulticastOption ()
 		{
 			if (!Socket.OSSupportsIPv6)
@@ -4084,6 +4270,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("RequiresBSDSockets")] // on watchOS device this happens: System.Net.Sockets.SocketException : The requested address is not valid in this context. This situation is too complex to detect and throw a PlatformNotSupportedException, so just ignore it.
 		public void SetSocketOption_MulticastInterfaceIndex_Any ()
 		{
 			IPAddress ip = IPAddress.Parse ("239.255.255.250");
@@ -4096,6 +4283,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("RequiresBSDSockets")] // on watchOS device this happens: System.Net.Sockets.SocketException : The requested address is not valid in this context. This situation is too complex to detect and throw a PlatformNotSupportedException, so just ignore it.
 		public void SetSocketOption_MulticastInterfaceIndex_Loopback ()
 		{
 			IPAddress ip = IPAddress.Parse ("239.255.255.250");
@@ -4132,6 +4320,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Shutdown_NoConnect ()
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -4228,6 +4419,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SendAsyncFile ()
 		{
 			Socket serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -4286,6 +4480,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectToIPV4EndPointUsingDualModelSocket () {
 			/*
 			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that
@@ -4326,6 +4523,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectToIPV4EndPointUsingDualModelSocket () {
 			/*
 			 * IPv6 DualMode sockets are defaults in Mono. Explicitly specify that
@@ -4369,6 +4569,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UdpMulticasTimeToLive ()
 		{
 			/* see https://bugzilla.xamarin.com/show_bug.cgi?id=36941 */

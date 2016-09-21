@@ -8,7 +8,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SocketAsyncTest
 	{
 		Socket serverSocket;
@@ -93,6 +92,9 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category("Test")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SendAsync ()
 		{
 			var buffer = new byte [] { 0x12, 0x34, 0x56, 0x78 };

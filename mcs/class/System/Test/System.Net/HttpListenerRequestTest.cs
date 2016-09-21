@@ -42,7 +42,6 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class HttpListenerRequestTest
 	{
 		[Test]
@@ -151,6 +150,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpMethod ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -165,6 +167,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpBasicAuthScheme ()
 		{
 			var port = NetworkHelpers.FindFreePort ();			
@@ -180,6 +185,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriIsNotDecoded ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -194,6 +202,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestIsLocal ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -221,6 +232,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // #29927
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriUnescape ()
 		{
 			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";

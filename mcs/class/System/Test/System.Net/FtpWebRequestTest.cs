@@ -19,7 +19,6 @@ using System.Threading;
 namespace MonoTests.System.Net 
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class FtpWebRequestTest
 	{
 		FtpWebRequest defaultRequest;
@@ -60,14 +59,26 @@ namespace MonoTests.System.Net
 		{
 			try {
 				long l = defaultRequest.ContentLength;
+#if FEATURE_NO_BSD_SOCKETS
+				Assert.Fail ("#1a");
+			} catch (PlatformNotSupportedException) {
+				// OK.
+#else
 			} catch (NotSupportedException) {
 				Assert.Fail ("#1"); // Not overriden
+#endif
 			}
 
 			try {
 				defaultRequest.ContentLength = 2;
+#if FEATURE_NO_BSD_SOCKETS
+				Assert.Fail ("#2a");
+			} catch (PlatformNotSupportedException) {
+				// OK.
+#else
 			} catch (NotSupportedException) {
 				Assert.Fail ("#2"); // Not overriden
+#endif
 			}
 		}
 
@@ -88,6 +99,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ContentOffset ()
 		{
 			try {
@@ -98,6 +112,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Credentials ()
 		{
 			try {
@@ -109,6 +126,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Method ()
 		{
 			try {
@@ -146,6 +166,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReadWriteTimeout ()
 		{
 			try {
@@ -156,6 +179,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Timeout ()
 		{
 			try {
@@ -166,6 +192,9 @@ namespace MonoTests.System.Net
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultValues ()
 		{
 			FtpWebRequest request = (FtpWebRequest) WebRequest.Create ("ftp://www.contoso.com");
@@ -183,6 +212,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void RenameTo ()
 		{
 			try {
@@ -199,6 +231,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadFile1 ()
 		{
 			ServerPut sp = new ServerPut ();
@@ -229,6 +264,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadFile_WebClient ()
 		{
 			ServerPut sp = new ServerPut ();
@@ -247,6 +285,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DownloadFile1 ()
 		{
 			DownloadFile (new ServerDownload ());
@@ -279,6 +320,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DownloadFile2 ()
 		{
 			// Some embedded FTP servers in Industrial Automation Hardware report
@@ -287,6 +331,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DeleteFile1 ()
 		{
 			ServerDeleteFile sp = new ServerDeleteFile ();
@@ -313,6 +360,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ListDirectory1 ()
 		{
 			ServerListDirectory sp = new ServerListDirectory ();
