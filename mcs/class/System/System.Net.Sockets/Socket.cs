@@ -2457,18 +2457,19 @@ namespace System.Net.Sockets
 			}
 
 			int nativeError;
-			int ret = Send_internal (safe_handle, buf, offset, size, flags, out nativeError);
+			int sent = 0;
+			do {
+				sent += Send_internal (safe_handle, buf, offset + sent, size - sent, flags, out nativeError);
+				error = (SocketError)nativeError;
+				if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
+					is_connected = false;
+					is_bound = false;
+				} else {
+					is_connected = true;
+				}
+			} while (sent < size);
 
-			error = (SocketError)nativeError;
-
-			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
-				is_connected = false;
-				is_bound = false;
-			} else {
-				is_connected = true;
-			}
-
-			return ret;
+			return sent;
 		}
 
 		public bool SendAsync (SocketAsyncEventArgs e)
