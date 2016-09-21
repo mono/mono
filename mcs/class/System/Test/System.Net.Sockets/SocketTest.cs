@@ -2633,22 +2633,27 @@ namespace MonoTests.System.Net.Sockets
 				sendbuf[i] = (byte)i;
 			}
 
-			SocketError err;
-			int sent = sendsock.Send (sendbuf);
+			Task sendTask = Task.Factory.StartNew(() => {
+				int sent = sendsock.Send (sendbuf);
 
-			Assert.AreEqual (BUFFER_SIZE, sent, "#1");
+				Assert.AreEqual (BUFFER_SIZE, sent, "#1");
+			});
 
 			byte[] recvbuf = new byte[BUFFER_SIZE];
 
-			int totalReceived = 0;
-			byte[] buffer = new byte[256];
-			while (totalReceived < sendbuf.Length) {
-				int recvd = clientsock.Receive (buffer, 0, buffer.Length, SocketFlags.None);
-				buffer.CopyTo (recvbuf, totalReceived);
-				totalReceived += recvd;
-			}
+			Task recvTask = Task.Factory.StartNew(() => {
+				int totalReceived = 0;
+				byte[] buffer = new byte[256];
+				while (totalReceived < sendbuf.Length) {
+					int recvd = clientsock.Receive (buffer, 0, buffer.Length, SocketFlags.None);
+					buffer.CopyTo (recvbuf, totalReceived);
+					totalReceived += recvd;
+				}
 
-			Assert.AreEqual (BUFFER_SIZE, totalReceived, "#2");
+				Assert.AreEqual (BUFFER_SIZE, totalReceived, "#2");
+			});
+
+			Task.WaitAll (new []{sendTask, recvTask});
 
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				Assert.AreEqual (recvbuf[i], sendbuf[i],

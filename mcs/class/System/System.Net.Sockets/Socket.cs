@@ -2464,6 +2464,7 @@ namespace System.Net.Sockets
 				if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
 					is_connected = false;
 					is_bound = false;
+					break;
 				} else {
 					is_connected = true;
 				}
