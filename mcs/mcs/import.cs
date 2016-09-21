@@ -142,6 +142,7 @@ namespace Mono.CSharp
 			compiled_types = new Dictionary<MetaType, TypeSpec> (40, ReferenceEquality<MetaType>.Default);
 			assembly_2_definition = new Dictionary<Assembly, IAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
+			IgnoreCompilerGeneratedField = true;
 		}
 
 		#region Properties
@@ -153,6 +154,8 @@ namespace Mono.CSharp
 		}
 
 		public bool IgnorePrivateMembers { get; set; }
+
+		public bool IgnoreCompilerGeneratedField { get; set; }
 
 		#endregion
 
@@ -179,8 +182,10 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if ((IgnorePrivateMembers && !declaringType.IsStruct) ||
-						HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
+					if (IgnorePrivateMembers && !declaringType.IsStruct)
+						return null;
+
+					if (IgnoreCompilerGeneratedField && HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;
