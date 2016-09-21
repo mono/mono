@@ -189,6 +189,10 @@ public class ServicePointTest
 	}
 
 	[Test] //Covers #19823
+#if FEATURE_NO_BSD_SOCKETS
+	// This test uses HttpWebRequest
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void CloseConnectionGroupConcurency ()
 	{
 		// Try with multiple service points
@@ -208,6 +212,7 @@ public class ServicePointTest
 
 
 	[Test]
+	[Category ("RequiresBSDSockets")] // Tests internals, so it doesn't make sense to assert that PlatformNotSupportedExceptions are thrown.
 	public void DnsRefreshTimeout ()
 	{
 		const int dnsRefreshTimeout = 2000;

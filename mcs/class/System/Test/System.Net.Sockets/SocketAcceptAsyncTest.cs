@@ -6,10 +6,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SocketAcceptAsyncTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
 			var readyEvent = new ManualResetEvent(false);

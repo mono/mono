@@ -25,7 +25,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class FileWebRequestTest
 	{
 		private string _tempDirectory;
