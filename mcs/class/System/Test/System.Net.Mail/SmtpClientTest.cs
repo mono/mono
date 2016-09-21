@@ -18,13 +18,13 @@ namespace MonoTests.System.Net.Mail
 	[TestFixture]
 	public class SmtpClientTest
 	{
-		SmtpClient smtp;
+		SmtpClient _smtp;
+		SmtpClient smtp { get { return _smtp ?? (_smtp = new SmtpClient ()); } }
 		string tempFolder;
 		
 		[SetUp]
 		public void GetReady ()
 		{
-			smtp = new SmtpClient ();
 			tempFolder = Path.Combine (Path.GetTempPath (), this.GetType ().FullName);
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
