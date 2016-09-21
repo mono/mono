@@ -1422,11 +1422,11 @@ namespace MonoTests.System.Net
 
 			internal void LaunchWebRequest ()
 			{
-				var req = (HttpWebRequest) WebRequest.Create (url_to_test);
-				req.Timeout = TimeOutInMilliSeconds;
-
-				Start = DateTime.Now;
 				try {
+					var req = (HttpWebRequest) WebRequest.Create (url_to_test);
+					req.Timeout = TimeOutInMilliSeconds;
+
+					Start = DateTime.Now;
 					using (var resp = (HttpWebResponse) req.GetResponse ())
 					{
 						var sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
