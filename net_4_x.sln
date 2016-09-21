@@ -283,10 +283,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows-net_4_x", "m
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Xml.Serialization-net_4_x", "mcs/class/System.Xml.Serialization/System.Xml.Serialization-net_4_x.csproj", "{2210873E-99FC-48A2-A261-D650BAE33A1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security.Providers.DotNet-net_4_x", "mcs/class/Mono.Security.Providers.DotNet/Mono.Security.Providers.DotNet-net_4_x.csproj", "{391EDD2B-85AC-4FCA-B607-AAD6C51E6799}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security.Providers.OldTls-net_4_x", "mcs/class/Mono.Security.Providers.OldTls/Mono.Security.Providers.OldTls-net_4_x.csproj", "{E485E885-59B1-4081-BC66-56AAAFD8771A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.DirectoryServices.Protocols-net_4_x", "mcs/class/System.DirectoryServices.Protocols/System.DirectoryServices.Protocols-net_4_x.csproj", "{EF08F249-31A1-4E62-8391-ECBA5227B686}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualC-net_4_x", "mcs/class/Microsoft.VisualC/Microsoft.VisualC-net_4_x.csproj", "{ACA2694D-9F07-4AE2-9171-9AB5DD1A8C18}"
@@ -1241,14 +1237,6 @@ Global
 		{2210873E-99FC-48A2-A261-D650BAE33A1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2210873E-99FC-48A2-A261-D650BAE33A1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2210873E-99FC-48A2-A261-D650BAE33A1C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{391EDD2B-85AC-4FCA-B607-AAD6C51E6799}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{391EDD2B-85AC-4FCA-B607-AAD6C51E6799}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{391EDD2B-85AC-4FCA-B607-AAD6C51E6799}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{391EDD2B-85AC-4FCA-B607-AAD6C51E6799}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E485E885-59B1-4081-BC66-56AAAFD8771A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E485E885-59B1-4081-BC66-56AAAFD8771A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E485E885-59B1-4081-BC66-56AAAFD8771A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E485E885-59B1-4081-BC66-56AAAFD8771A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF08F249-31A1-4E62-8391-ECBA5227B686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF08F249-31A1-4E62-8391-ECBA5227B686}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF08F249-31A1-4E62-8391-ECBA5227B686}.Release|Any CPU.ActiveCfg = Release|Any CPU
