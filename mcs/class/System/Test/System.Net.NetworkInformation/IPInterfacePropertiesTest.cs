@@ -113,6 +113,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		[Test]
 		public void DnsEnabled ()
 		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Assert.Ignore ("IsDnsEnabled is not nessasarily enabled for all interfaces on windows.");
+
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			foreach (NetworkInterface adapter in adapters)
 			{
