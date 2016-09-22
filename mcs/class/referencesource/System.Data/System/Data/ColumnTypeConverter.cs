@@ -88,7 +88,7 @@ namespace System.Data {
                     return String.Empty;
                 }
                 else {
-                    value.ToString();
+                    return value.ToString();
                 }
             }
             if (value != null && destinationType == typeof(InstanceDescriptor)) {
