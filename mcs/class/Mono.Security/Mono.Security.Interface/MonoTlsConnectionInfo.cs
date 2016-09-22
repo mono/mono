@@ -29,6 +29,7 @@ namespace Mono.Security.Interface
 {
 	public class MonoTlsConnectionInfo
 	{
+		[CLSCompliant (false)]
 		public CipherSuiteCode CipherSuiteCode {
 			get; set;
 		}
