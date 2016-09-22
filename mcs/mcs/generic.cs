@@ -3159,9 +3159,8 @@ namespace Mono.CSharp {
 					var ga_u = u.TypeArguments;
 					var ga_v = v.TypeArguments;
 
-					if (u.TypeArguments.Length != u.TypeArguments.Length)
+					if (u.TypeArguments.Length != v.TypeArguments.Length)
 						return 0;
-
 					int score = 0;
 					for (int i = 0; i < ga_v.Length; ++i)
 						score += ExactInference (ga_u [i], ga_v [i]);
