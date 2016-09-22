@@ -1155,11 +1155,14 @@ namespace CorCompare
 				string direction = first && HasExtensionParameter ? "this" : "in";
 				first = false;
 
-				if (parameter.ParameterType is ByReferenceType)
+				var pt = parameter.ParameterType;
+				var brt = pt as ByReferenceType;
+				if (brt != null) {
 					direction = parameter.IsOut ? "out" : "ref";
+					pt = brt.ElementType;
+				}
 
-				TypeReference t = parameter.ParameterType;
-				AddAttribute ("type", Utils.CleanupTypeName (t));
+				AddAttribute ("type", Utils.CleanupTypeName (pt));
 
 				if (parameter.IsOptional) {
 					AddAttribute ("optional", "true");
@@ -1537,17 +1540,6 @@ namespace CorCompare
 					signature.Append (", ");
 
 				ParameterDefinition info = infos [i];
-
-				if (info.ParameterType.IsByReference) {
-					string modifier;
-					if ((info.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
-						modifier = "out";
-					else
-						modifier = "ref";
-
-					signature.Append (modifier);
-					signature.Append (" ");
-				}
 
 				signature.Append (Utils.CleanupTypeName (info.ParameterType));
 			}
