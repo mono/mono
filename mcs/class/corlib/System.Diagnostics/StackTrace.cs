@@ -182,20 +182,6 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
-		static bool isAotidSet;
-		static string aotid;
-		static string GetAotId ()
-		{
-			if (!isAotidSet) {
-				aotid = Assembly.GetAotId ();
-				if (aotid != null)
-					aotid = new Guid (aotid).ToString ("N");
-				isAotidSet = true;
-			}
-
-			return aotid;
-		}
-
 		bool AddFrames (StringBuilder sb)
 		{
 			string debugInfo, indentation;
@@ -234,8 +220,9 @@ namespace System.Diagnostics {
 
 					var filename = frame.GetSecureFileName ();
 					if (filename[0] == '<') {
-						var mvid = frame.GetMethod ().Module.ModuleVersionId.ToString ("N");
-						var aotid = GetAotId ();
+						var module = frame.GetMethod ().Module;
+						var mvid = module.ModuleVersionId.ToString ("N");
+						var aotid = module.GetAotId ().ToString ("N");
 						if (frame.GetILOffset () != -1 || aotid == null) {
 							filename = string.Format ("<{0}>", mvid);
 						} else {
