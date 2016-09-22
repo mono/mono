@@ -590,7 +590,7 @@ worker_kill (ThreadPoolWorkingThread *thread)
 	mono_thread_internal_stop ((MonoInternalThread*) thread);
 }
 
-static void
+static gsize WINAPI
 worker_thread (gpointer data)
 {
 	MonoError error;
@@ -730,6 +730,8 @@ worker_thread (gpointer data)
 	});
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] worker finishing", mono_native_thread_id_get ());
+
+	return 0;
 }
 
 static gboolean

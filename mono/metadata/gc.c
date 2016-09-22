@@ -882,7 +882,7 @@ finalize_domain_objects (void)
 	}
 }
 
-static guint32
+static guint32 WINAPI
 finalizer_thread (gpointer unused)
 {
 	MonoError error;

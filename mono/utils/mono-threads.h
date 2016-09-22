@@ -32,8 +32,6 @@ typedef DWORD mono_native_thread_return_t;
 #define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (tid)
 #define MONO_UINT_TO_NATIVE_THREAD_ID(tid) ((MonoNativeThreadId)(tid))
 
-typedef LPTHREAD_START_ROUTINE MonoThreadStart;
-
 #else
 
 #include <pthread.h>
@@ -58,9 +56,9 @@ typedef void* mono_native_thread_return_t;
 #define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (gsize)(tid)
 #define MONO_UINT_TO_NATIVE_THREAD_ID(tid) (MonoNativeThreadId)(gsize)(tid)
 
-typedef gsize (*MonoThreadStart)(gpointer);
-
 #endif /* #ifdef HOST_WIN32 */
+
+typedef gsize (WINAPI *MonoThreadStart)(gpointer);
 
 /*
 THREAD_INFO_TYPE is a way to make the mono-threads module parametric - or sort of.

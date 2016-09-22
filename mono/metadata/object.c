@@ -4577,6 +4577,22 @@ mono_unhandled_exception (MonoObject *exc)
 	}
 }
 
+struct exec_managed_args {
+	MonoMainThreadFunc main_func;
+	gpointer main_args;
+};
+
+static gsize WINAPI
+exec_managed_thread (void *args)
+{
+	struct exec_managed_args exec_args = *(struct exec_managed_args*)args;
+
+	g_free (args);
+	exec_args.main_func (exec_args.main_args);
+
+	return 0;
+}
+
 /**
  * mono_runtime_exec_managed_code:
  * @domain: Application domain
@@ -4599,7 +4615,13 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	MonoError error;
-	mono_thread_create_checked (domain, main_func, main_args, &error);
+	struct exec_managed_args *exec_args;
+
+	exec_args = g_malloc (sizeof (*exec_args));
+	exec_args->main_func = main_func;
+	exec_args->main_args = main_args;
+
+	mono_thread_create_checked (domain, exec_managed_thread, exec_args, &error);
 	mono_error_assert_ok (&error);
 
 	mono_thread_manage ();
