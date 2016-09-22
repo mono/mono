@@ -596,7 +596,7 @@ namespace System.Windows.Forms {
 
 				if (this.title_style == TitleStyle.Normal)  {
 					pt.Y += caption_height;
-				} else if (this.title_style == TitleStyle.Normal)  {
+				} else if (this.title_style == TitleStyle.Tool)  {
 					pt.Y += tool_caption_height;
 				}
 
