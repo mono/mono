@@ -337,10 +337,19 @@ typedef struct {
 static ImplVtable*
 create_vtable (void *arg, SampleFunc sample, UpdateFunc update)
 {
+	MonoCounterSample dummy_sample;
+
 	ImplVtable *vtable = g_new0 (ImplVtable, 1);
 	vtable->arg = arg;
 	vtable->sample = sample;
 	vtable->update = update;
+
+	if (!sample (vtable, TRUE, &dummy_sample)) {
+		/* If we fail to get the value for the counter, don't expose it */
+		g_free (vtable);
+		return NULL;
+	}
+
 	return vtable;
 }
 
@@ -411,7 +420,7 @@ predef_cleanup (ImplVtable *vtable)
 	perfctr_unlock ();
 }
 
-static guint64
+static gint64
 mono_determine_physical_ram_size (void)
 {
 #if defined (TARGET_WIN32)
@@ -419,7 +428,7 @@ mono_determine_physical_ram_size (void)
 
 	memstat.dwLength = sizeof (memstat);
 	GlobalMemoryStatusEx (&memstat);
-	return (guint64)memstat.ullTotalPhys;
+	return (gint64)memstat.ullTotalPhys;
 #elif defined (__NetBSD__) || defined (__APPLE__)
 #ifdef __NetBSD__
 	unsigned long value;
@@ -438,34 +447,34 @@ mono_determine_physical_ram_size (void)
 
 	sysctl (mib, 2, &value, &size_sys, NULL, 0);
 	if (value == 0)
-		return 134217728;
+		return -1;
 
-	return (guint64)value;
+	return (gint64)value;
 #elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
+	gint64 page_size = 0, num_pages = 0;
 
 	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
 	 * reports invalid values, please add your OS specific code below. */
 #ifdef _SC_PAGESIZE
-	page_size = (guint64)sysconf (_SC_PAGESIZE);
+	page_size = (gint64)sysconf (_SC_PAGESIZE);
 #endif
 
 #ifdef _SC_PHYS_PAGES
-	num_pages = (guint64)sysconf (_SC_PHYS_PAGES);
+	num_pages = (gint64)sysconf (_SC_PHYS_PAGES);
 #endif
 
 	if (!page_size || !num_pages) {
 		g_warning ("Your operating system's sysconf (3) function doesn't correctly report physical memory size!");
-		return 134217728;
+		return -1;
 	}
 
 	return page_size * num_pages;
 #else
-	return 134217728;
+	return -1;
 #endif
 }
 
-static guint64
+static gint64
 mono_determine_physical_ram_available_size (void)
 {
 #if defined (TARGET_WIN32)
@@ -477,7 +486,7 @@ mono_determine_physical_ram_available_size (void)
 
 #elif defined (__NetBSD__)
 	struct vmtotal vm_total;
-	guint64 page_size;
+	gint64 page_size;
 	int mib[2];
 	size_t len;
 
@@ -493,7 +502,7 @@ mono_determine_physical_ram_available_size (void)
 	len = sizeof (page_size);
 	sysctl (mib, 2, &page_size, &len, NULL, 0);
 
-	return ((guint64) vm_total.t_free * page_size) / 1024;
+	return ((gint64) vm_total.t_free * page_size) / 1024;
 #elif defined (__APPLE__)
 	mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
 	mach_port_t host = mach_host_self();
@@ -506,33 +515,33 @@ mono_determine_physical_ram_available_size (void)
 
 	if (ret != KERN_SUCCESS) {
 		g_warning ("Mono was unable to retrieve memory usage!");
-		return 0;
+		return -1;
 	}
 
 	host_page_size(host, &page_size);
-	return (guint64) vmstat.free_count * page_size;
+	return (gint64) vmstat.free_count * page_size;
 
 #elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
+	gint64 page_size = 0, num_pages = 0;
 
 	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
 	 * reports invalid values, please add your OS specific code below. */
 #ifdef _SC_PAGESIZE
-	page_size = (guint64)sysconf (_SC_PAGESIZE);
+	page_size = (gint64)sysconf (_SC_PAGESIZE);
 #endif
 
 #ifdef _SC_AVPHYS_PAGES
-	num_pages = (guint64)sysconf (_SC_AVPHYS_PAGES);
+	num_pages = (gint64)sysconf (_SC_AVPHYS_PAGES);
 #endif
 
 	if (!page_size || !num_pages) {
 		g_warning ("Your operating system's sysconf (3) function doesn't correctly report physical memory size!");
-		return 0;
+		return -1;
 	}
 
 	return page_size * num_pages;
 #else
-	return 0;
+	return -1;
 #endif
 }
 
@@ -995,10 +1004,10 @@ mono_mem_counter (ImplVtable *vtable, MonoBoolean only_value, MonoCounterSample 
 		return TRUE;
 	case COUNTER_MEM_PHYS_TOTAL:
 		sample->rawValue = mono_determine_physical_ram_size ();;
-		return TRUE;
+		return sample->rawValue > 0;
 	case COUNTER_MEM_PHYS_AVAILABLE:
 		sample->rawValue = mono_determine_physical_ram_available_size ();;
-		return TRUE;
+		return sample->rawValue > 0;
 	}
 	return FALSE;
 }
