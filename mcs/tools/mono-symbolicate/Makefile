@@ -13,7 +13,7 @@ include ../../build/executable.make
 
 LIB_PATH = $(topdir)/class/lib/$(PROFILE)
 
-MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
+MONO = MONO_PATH="$(OUT_DIR)$(PLATFORM_PATH_SEPARATOR)$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
 
 MSYM_DIR = $(OUT_DIR)/msymdir
 TEST_CS = Test/StackTraceDumper.cs
@@ -65,6 +65,8 @@ ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
 	$(COMPILE)
+	cp -R $(LIB_PATH)/mscorlib.* $(OUT_DIR)
+	@$(MONO) --aot $(OUT_DIR)/mscorlib.dll > /dev/null
 	@$(MONO) --aot $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
@@ -75,6 +77,8 @@ ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT (using .msym) in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
 	$(COMPILE)
+	cp -R $(LIB_PATH)/mscorlib.* $(OUT_DIR)
+	@$(MONO) --aot=msym-dir=$(MSYM_DIR) $(OUT_DIR)/mscorlib.dll > /dev/null
 	@$(MONO) --aot=msym-dir=$(MSYM_DIR) $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
