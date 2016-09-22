@@ -40,6 +40,7 @@
 #include "metadata/mono-perfcounters.h"
 #include "metadata/appdomain.h"
 #include "metadata/object-internals.h"
+#include "metadata/exception.h"
 /* for mono_stats */
 #include "metadata/class-internals.h"
 #include "utils/mono-time.h"
@@ -1334,13 +1335,15 @@ mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString
 	cdesc = find_category (category);
 	if (!cdesc) {
 		SharedCategory *scat = find_custom_category (category);
-		if (!scat)
+		if (!scat) {
+			mono_set_pending_exception (mono_get_exception_invalid_operation ("Category does not exist"));
 			return NULL;
+		}
 		*custom = TRUE;
 		result = custom_get_impl (scat, counter, instance, type, &error);
 		if (mono_error_set_pending_exception (&error))
 			return NULL;
-		return result;
+		goto done;
 	}
 	gchar *c_instance = mono_string_to_utf8_checked (instance, &error);
 	if (mono_error_set_pending_exception (&error))
@@ -1372,6 +1375,10 @@ mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString
 		break;
 	}
 	g_free (c_instance);
+
+done:
+	if (!result)
+		mono_set_pending_exception (mono_get_exception_invalid_operation ("Could not locate Performance Counter with specified name"));
 	return result;
 }
 
