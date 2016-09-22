@@ -166,6 +166,15 @@ namespace Mono.Debugger.Soft
 			return vm.DecodeValue (vm.conn.StackFrame_GetThis (thread.Id, Id));
 		}
 
+		// Since protocol version 2.44
+		public void SetThis (Value value) {
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (Method.IsStatic || !Method.DeclaringType.IsValueType)
+				throw new InvalidOperationException ("The frame's method needs to be a valuetype instance method.");
+			vm.conn.StackFrame_SetThis (thread.Id, Id, vm.EncodeValue (value));
+		}
+
 		public void SetValue (LocalVariable var, Value value) {
 			if (var == null)
 				throw new ArgumentNullException ("var");

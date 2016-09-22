@@ -1789,6 +1789,16 @@ public class DebuggerTests
 		AssertValue ("T", s ["s"]);
 		AssertValue (45, s ["k"]);
 
+		// Test SetThis ()
+		s ["i"] = vm.CreateValue (55);
+		frame.SetThis (s);
+		obj = frame.GetThis ();
+		Assert.IsTrue (obj is StructMirror);
+		s = obj as StructMirror;
+		AssertValue (55, s ["i"]);
+		AssertValue ("T", s ["s"]);
+		AssertValue (45, s ["k"]);
+
 		// this on static vtype methods
 		e = run_until ("vtypes3");
 		e = step_until (e.Thread, "static_foo");
