@@ -3125,7 +3125,7 @@ namespace Mono.CSharp {
 		//
 		public int ExactInference (TypeSpec u, TypeSpec v)
 		{
-			// If V is an array type
+			// If Vi s an array type
 			if (v.IsArray) {
 				if (!u.IsArray)
 					return 0;
@@ -3161,6 +3161,7 @@ namespace Mono.CSharp {
 
 					if (u.TypeArguments.Length != v.TypeArguments.Length)
 						return 0;
+						
 					int score = 0;
 					for (int i = 0; i < ga_v.Length; ++i)
 						score += ExactInference (ga_u [i], ga_v [i]);
