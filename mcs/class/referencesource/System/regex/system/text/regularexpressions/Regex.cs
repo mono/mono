@@ -473,6 +473,7 @@ namespace System.Text.RegularExpressions {
         }
 
 #if NETSTANDARD
+        [CLSCompliant (false)]
         protected IDictionary Caps
         {
             get
@@ -500,6 +501,7 @@ namespace System.Text.RegularExpressions {
             }
         }
 
+        [CLSCompliant (false)]
         protected IDictionary CapNames
         {
             get
