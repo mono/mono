@@ -2600,6 +2600,72 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		public void ConcurrentExceedSocketLimit ()
+		{
+			var tasks = new Task[4];
+			for (int i = 0; i < 4; i++) {
+				tasks[i] = Task.Factory.StartNew (() => SendGenericExceedBuffer ());
+			}
+			Task.WaitAll (tasks);
+		}
+
+		[Test]
+		public void SendGenericExceedBuffer ()
+		{
+			// Create a buffer larger than the default max.
+			const int BUFFER_SIZE = 256 * 256 * 65;
+			int i;
+
+			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, NetworkHelpers.FindFreePort ());
+
+			Socket listensock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			listensock.Bind (endpoint);
+			listensock.Listen (1);
+
+			Socket sendsock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			sendsock.Connect (endpoint);
+
+			Socket clientsock = listensock.Accept ();
+
+			byte[] sendbuf = new byte[BUFFER_SIZE];
+
+			for (i = 0; i < BUFFER_SIZE; i++) {
+				sendbuf[i] = (byte)i;
+			}
+
+			Task sendTask = Task.Factory.StartNew(() => {
+				int sent = sendsock.Send (sendbuf);
+
+				Assert.AreEqual (BUFFER_SIZE, sent, "#1");
+			});
+
+			byte[] recvbuf = new byte[BUFFER_SIZE];
+
+			Task recvTask = Task.Factory.StartNew(() => {
+				int totalReceived = 0;
+				byte[] buffer = new byte[256];
+				while (totalReceived < sendbuf.Length) {
+					int recvd = clientsock.Receive (buffer, 0, buffer.Length, SocketFlags.None);
+					buffer.CopyTo (recvbuf, totalReceived);
+					totalReceived += recvd;
+				}
+
+				Assert.AreEqual (BUFFER_SIZE, totalReceived, "#2");
+			});
+
+			Task.WaitAll (new []{sendTask, recvTask});
+
+			for (i = 0; i < BUFFER_SIZE; i++) {
+				Assert.AreEqual (recvbuf[i], sendbuf[i],
+						 "#3/" + i.ToString());
+			}
+
+			sendsock.Close ();
+			clientsock.Close ();
+			listensock.Close ();
+		}
+
+		[Test]
 		public void ListenNotBound ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
