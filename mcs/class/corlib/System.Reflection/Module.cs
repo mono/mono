@@ -85,6 +85,22 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int GetMDStreamVersion (IntPtr module_handle);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern string GetAotIdInternal ();
+
+		bool isAotidSet;
+		Guid aotid;
+		internal Guid GetAotId ()
+		{
+			if (!isAotidSet) {
+				var aotidStr = GetAotIdInternal ();
+				aotid = aotidStr != null ? new Guid (aotidStr) : Guid.Empty;
+				isAotidSet = true;
+			}
+
+			return aotid;
+		}
+
 		public FieldInfo GetField (string name) 
 		{
 			return GetField (name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);

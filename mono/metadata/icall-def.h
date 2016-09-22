@@ -456,7 +456,6 @@ ICALL(OBJ_3, "MemberwiseClone", ves_icall_System_Object_MemberwiseClone)
 
 ICALL_TYPE(ASSEM, "System.Reflection.Assembly", ASSEM_1)
 ICALL(ASSEM_1, "FillName", ves_icall_System_Reflection_Assembly_FillName)
-ICALL(ASSEM_1a, "GetAotId", ves_icall_System_Reflection_Assembly_GetAotId)
 ICALL(ASSEM_2, "GetCallingAssembly", ves_icall_System_Reflection_Assembly_GetCallingAssembly)
 ICALL(ASSEM_3, "GetEntryAssembly", ves_icall_System_Reflection_Assembly_GetEntryAssembly)
 ICALL(ASSEM_4, "GetExecutingAssembly", ves_icall_System_Reflection_Assembly_GetExecutingAssembly)
@@ -557,6 +556,7 @@ ICALL(MBASE_4, "GetMethodFromHandleInternalType", ves_icall_System_Reflection_Me
 
 ICALL_TYPE(MODULE, "System.Reflection.Module", MODULE_1)
 ICALL(MODULE_1, "Close", ves_icall_System_Reflection_Module_Close)
+ICALL(MODULE_1a, "GetAotIdInternal", ves_icall_System_Reflection_Module_GetAotIdInternal)
 ICALL(MODULE_2, "GetGlobalType", ves_icall_System_Reflection_Module_GetGlobalType)
 ICALL(MODULE_3, "GetGuidInternal", ves_icall_System_Reflection_Module_GetGuidInternal)
 ICALL(MODULE_14, "GetHINSTANCE", ves_icall_System_Reflection_Module_GetHINSTANCE)
