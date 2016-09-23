@@ -2138,7 +2138,7 @@ namespace System.Windows.Forms
 		static bool AreEqual (VisualStyleElement value1, VisualStyleElement value2)
 		{
 			return
-				value1.ClassName == value1.ClassName &&
+				value1.ClassName == value2.ClassName &&
 				value1.Part == value2.Part &&
 				value1.State == value2.State;
 		}
