@@ -21,6 +21,12 @@ namespace System.Net {
 			}
 		}
 
+		internal static TraceSource Sockets {
+			get {
+				return null;
+			}
+		}
+
 		[Conditional ("TRACE")]
 		internal static void Enter(TraceSource traceSource, object obj, string method, object paramObject) {
 		}
