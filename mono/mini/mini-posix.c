@@ -140,11 +140,15 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 static GHashTable *mono_saved_signal_handlers = NULL;
 
 static struct sigaction *
-get_saved_signal_handler (int signo)
+get_saved_signal_handler (int signo, gboolean remove)
 {
-	if (mono_saved_signal_handlers)
+	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		return (struct sigaction *)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		if (remove && handler)
+			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		return handler;
+	}
 	return NULL;
 }
 
@@ -167,21 +171,14 @@ save_old_signal_handler (int signo, struct sigaction *old_action)
 	handler_to_save->sa_flags = old_action->sa_flags;
 	
 	if (!mono_saved_signal_handlers)
-		mono_saved_signal_handlers = g_hash_table_new (NULL, NULL);
+		mono_saved_signal_handlers = g_hash_table_new_full (NULL, NULL, NULL, g_free);
 	g_hash_table_insert (mono_saved_signal_handlers, GINT_TO_POINTER (signo), handler_to_save);
-}
-
-static void
-free_saved_sig_handler_func (gpointer key, gpointer value, gpointer user_data)
-{
-	g_free (value);
 }
 
 static void
 free_saved_signal_handlers (void)
 {
 	if (mono_saved_signal_handlers) {
-		g_hash_table_foreach (mono_saved_signal_handlers, free_saved_sig_handler_func, NULL);
 		g_hash_table_destroy (mono_saved_signal_handlers);
 		mono_saved_signal_handlers = NULL;
 	}
@@ -198,7 +195,7 @@ gboolean
 MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
 	int signal = MONO_SIG_HANDLER_GET_SIGNO ();
-	struct sigaction *saved_handler = (struct sigaction *)get_saved_signal_handler (signal);
+	struct sigaction *saved_handler = (struct sigaction *)get_saved_signal_handler (signal, FALSE);
 
 	if (saved_handler && saved_handler->sa_handler) {
 		if (!(saved_handler->sa_flags & SA_SIGINFO)) {
@@ -453,7 +450,7 @@ static void
 remove_signal_handler (int signo)
 {
 	struct sigaction sa;
-	struct sigaction *saved_action = get_saved_signal_handler (signo);
+	struct sigaction *saved_action = get_saved_signal_handler (signo, TRUE);
 
 	if (!saved_action) {
 		sa.sa_handler = SIG_DFL;
