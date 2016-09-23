@@ -91,7 +91,7 @@ retry:
 		 * (have to do 1 then 3 so that if we're interrupted
 		 * between 1 and 2, the object is still live)
 		 */
-	        top->objects [idx] = NULL;
+		top->objects [idx] = NULL;
 		mono_memory_write_barrier ();
 		top->size++;
 		mono_memory_write_barrier ();
