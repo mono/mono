@@ -30,10 +30,10 @@ using System;
 
 namespace Microsoft.Win32.SafeHandles
 {
-	public abstract class SafeNCryptHandle : System.Runtime.InteropServices.SafeHandle
+	public abstract class SafeNCryptHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		protected SafeNCryptHandle ()
-			: base (IntPtr.Zero, true)
+			: base (true)
 		{
 		}
 

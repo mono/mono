@@ -34,7 +34,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
     
     [System.Runtime.InteropServices.ComVisible(true)]
     sealed public class BinaryFormatter :
-#if !FEATURE_REMOTING
+#if !FEATURE_REMOTING && !MONO
         IFormatter
 #else
         IRemotingFormatter 

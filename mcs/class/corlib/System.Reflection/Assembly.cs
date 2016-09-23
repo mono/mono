@@ -53,11 +53,12 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public partial class Assembly : ICustomAttributeProvider {
+	public partial class Assembly : ICustomAttributeProvider, ISerializable
 #else
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable
 #endif
-		internal class ResolveEventHolder {
+	{
+		internal class ResolveEventHolder {	
 #pragma warning disable 67
 			public event ModuleResolveEventHandler ModuleResolve;
 #pragma warning restore
