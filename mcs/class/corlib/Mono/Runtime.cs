@@ -40,10 +40,25 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
 
-		static internal void InstallSignalHandlers ()
+#if MOBILE
+		public
+#else
+		internal
+#endif
+		static void InstallSignalHandlers ()
 		{
 			mono_runtime_install_handlers ();
 		}
+
+#if MOBILE
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void mono_runtime_cleanup_handlers ();
+
+		public static void RemoveSignalHandlers ()
+		{
+			mono_runtime_cleanup_handlers ();
+		}
+#endif
 
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
