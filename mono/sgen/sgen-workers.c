@@ -22,6 +22,7 @@
 static int workers_num;
 static volatile gboolean forced_stop;
 static WorkerData *workers_data;
+static SgenWorkerCallback worker_init_cb;
 
 static mono_mutex_t finished_lock;
 
@@ -233,6 +234,9 @@ thread_pool_init_func (void *data_untyped)
 		return;
 
 	init_private_gray_queue (data);
+
+	if (worker_init_cb)
+		worker_init_cb (data);
 }
 
 static gboolean
@@ -294,7 +298,7 @@ sgen_workers_init_distribute_gray_queue (void)
 }
 
 void
-sgen_workers_init (int num_workers)
+sgen_workers_init (int num_workers, SgenWorkerCallback callback)
 {
 	int i;
 	void **workers_data_ptrs = (void **)alloca(num_workers * sizeof(void *));
@@ -316,6 +320,8 @@ sgen_workers_init (int num_workers)
 
 	for (i = 0; i < num_workers; ++i)
 		workers_data_ptrs [i] = (void *) &workers_data [i];
+
+	worker_init_cb = callback;
 
 	sgen_thread_pool_init (num_workers, thread_pool_init_func, marker_idle_func, continue_idle_func, workers_data_ptrs);
 
@@ -437,6 +443,15 @@ int
 sgen_workers_get_job_split_count (void)
 {
 	return (workers_num > 1) ? workers_num * 4 : 1;
+}
+
+void
+sgen_workers_foreach (SgenWorkerCallback callback)
+{
+	int i;
+
+	for (i = 0; i < workers_num; i++)
+		callback (&workers_data [i]);
 }
 
 #endif
