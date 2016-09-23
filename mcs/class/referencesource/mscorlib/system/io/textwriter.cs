@@ -39,7 +39,7 @@ namespace System.IO {
     // There are methods on the Stream class for writing bytes. 
     [Serializable]
     [ComVisible(true)]
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MONO
     public abstract class TextWriter : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class TextWriter : IDisposable {

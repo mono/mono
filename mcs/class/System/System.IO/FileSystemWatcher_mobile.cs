@@ -26,9 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
+
 namespace System.IO
 {
-    public class FileSystemWatcher : IDisposable
+    public class FileSystemWatcher : Component, IDisposable
     {
         public FileSystemWatcher () { throw new NotImplementedException (); }
         public FileSystemWatcher (string path) { throw new NotImplementedException (); }

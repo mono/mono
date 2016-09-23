@@ -39,7 +39,7 @@ namespace System.IO {
 #if CONTRACTS_FULL
     [ContractClass(typeof(StreamContract))]
 #endif
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MONO
     public abstract class Stream : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class Stream : IDisposable {

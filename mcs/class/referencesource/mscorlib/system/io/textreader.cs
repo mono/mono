@@ -39,7 +39,7 @@ namespace System.IO {
     // There are methods on the Stream class for reading bytes. 
     [Serializable]
     [ComVisible(true)]
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MONO
     public abstract class TextReader : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class TextReader : IDisposable {

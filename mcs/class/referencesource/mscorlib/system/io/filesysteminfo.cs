@@ -34,7 +34,7 @@ namespace System.IO {
     [FileIOPermissionAttribute(SecurityAction.InheritanceDemand,Unrestricted=true)]
 #endif
     [ComVisible(true)]
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING || MONO
     public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {
 #else // FEATURE_REMOTING
     public abstract class FileSystemInfo : ISerializable {   

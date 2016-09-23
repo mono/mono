@@ -259,9 +259,6 @@ System.Reflection/PortableExecutableKinds.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/StrongNameKeyPair.cs
-System.Reflection/TargetException.cs
-System.Reflection/TargetInvocationException.cs
-System.Reflection/TargetParameterCountException.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
@@ -1258,6 +1255,9 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/reflection/reflectioncontext.cs
 ../referencesource/mscorlib/system/reflection/resourceattributes.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
+../referencesource/mscorlib/system/reflection/targetexception.cs
+../referencesource/mscorlib/system/reflection/targetinvocationexception.cs
+../referencesource/mscorlib/system/reflection/targetparametercountexception.cs
 ../referencesource/mscorlib/system/reflection/typeattributes.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs
 ../referencesource/mscorlib/system/reflection/typefilter.cs
