@@ -322,7 +322,7 @@ namespace System {
 				return trace.ToString ();
 			}
 		}
-#if !MOBILE
+
 		/// <summary>
 		/// Get a fully qualified path to the system directory
 		/// </summary>
@@ -331,7 +331,7 @@ namespace System {
 				return GetFolderPath (SpecialFolder.System);
 			}
 		}
-#endif
+
 		/// <summary>
 		/// Get the number of milliseconds that have elapsed since the system was booted
 		/// </summary>

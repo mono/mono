@@ -41,11 +41,15 @@ namespace System.IO
         public int InternalBufferSize { get { throw new NotImplementedException (); } set { } }
         public NotifyFilters NotifyFilter { get { throw new NotImplementedException (); } set { } }
         public string Path { get { throw new NotImplementedException (); } set { } }
+        public override ISite Site { get { throw new NotImplementedException (); } set { } }
+        public ISynchronizeInvoke SynchronizingObject { get { throw new NotImplementedException (); } set { } }
         public event FileSystemEventHandler Changed;
         public event FileSystemEventHandler Created;
         public event FileSystemEventHandler Deleted;
         public event ErrorEventHandler Error;
         public event RenamedEventHandler Renamed;
+        public void BeginInit() { throw new NotImplementedException (); }
+        public void EndInit() { throw new NotImplementedException (); }
         protected void OnChanged (FileSystemEventArgs e) { throw new NotImplementedException (); }
         protected void OnCreated (FileSystemEventArgs e) { throw new NotImplementedException (); }
         protected void OnDeleted (System.IO.FileSystemEventArgs e) { throw new NotImplementedException (); }
@@ -53,13 +57,7 @@ namespace System.IO
         protected void OnRenamed (RenamedEventArgs e) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout) { throw new NotImplementedException (); }
-
-        public virtual void Dispose ()
-        {
-        }
-
-        protected virtual void Dispose (bool disposing)
-        {
-        }
+        public virtual void Dispose () { throw new NotImplementedException (); }
+        protected override void Dispose (bool disposing) { throw new NotImplementedException (); }
     }
 }

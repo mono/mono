@@ -183,7 +183,6 @@ namespace System.Net.Sockets
 			SocketDefaults ();
 		}
 
-#if !MOBILE
 		public Socket (SocketInformation socketInformation)
 		{
 			this.is_listening      = (socketInformation.Options & SocketInformationOptions.Listening) != 0;
@@ -201,7 +200,6 @@ namespace System.Net.Sockets
 
 			SocketDefaults ();
 		}
-#endif
 
 		/* private constructor used by Accept, which already has a socket handle to use */
 		internal Socket(AddressFamily family, SocketType type, ProtocolType proto, SafeSocketHandle safe_handle)
@@ -2311,6 +2309,22 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region SetIPProtectionLevel
+
+		public void SetIPProtectionLevel (IPProtectionLevel level) {
+			if (level == IPProtectionLevel.Unspecified)
+				throw new ArgumentException (SR.GetString (SR.net_sockets_invalid_optionValue_all), "level");
+
+			if (address_family == AddressFamily.InterNetworkV6)
+				SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.IPProtectionLevel, (int)level);
+			else if (address_family == AddressFamily.InterNetwork)
+				SetSocketOption (SocketOptionLevel.IP, SocketOptionName.IPProtectionLevel, (int)level);
+			else
+				throw new NotSupportedException (SR.GetString (SR.net_invalidversion));
+		}
+
+#endregion
+
 #region Send
 
 		public int Send (byte [] buffer)
@@ -2996,7 +3010,6 @@ namespace System.Net.Sockets
 
 #region DuplicateAndClose
 
-#if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
 		{
@@ -3012,7 +3025,6 @@ namespace System.Net.Sockets
 
 			return si;
 		}
-#endif
 
 #endregion
 

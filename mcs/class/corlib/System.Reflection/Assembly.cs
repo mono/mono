@@ -120,7 +120,7 @@ namespace System.Reflection {
 		// We can't store the event directly in this class, since the
 		// compiler would silently insert the fields before _mono_assembly
 		//
-		public event ModuleResolveEventHandler ModuleResolve {
+		public virtual event ModuleResolveEventHandler ModuleResolve {
 			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			add {
 				resolve_event_holder.ModuleResolve += value;
@@ -897,12 +897,11 @@ namespace System.Reflection {
 		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
-		
+#endif
+
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
-
-#endif
 
 		static Exception CreateNIE ()
 		{

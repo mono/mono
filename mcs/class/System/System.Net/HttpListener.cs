@@ -42,6 +42,7 @@ using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -69,6 +70,12 @@ namespace System.Net {
 		ArrayList wait_queue; // List<ListenerAsyncResult> wait_queue;
 		Hashtable connections;
 
+		ServiceNameStore defaultServiceNames;
+		ExtendedProtectionPolicy extendedProtectionPolicy;
+		ExtendedProtectionSelector extendedProtectionSelectorDelegate;
+
+		public delegate ExtendedProtectionPolicy ExtendedProtectionSelector (HttpListenerRequest request);
+
 		public HttpListener ()
 		{
 			prefixes = new HttpListenerPrefixCollection (this);
@@ -77,6 +84,8 @@ namespace System.Net {
 			ctx_queue = new ArrayList ();
 			wait_queue = new ArrayList ();
 			auth_schemes = AuthenticationSchemes.Anonymous;
+			defaultServiceNames = new ServiceNameStore ();
+			extendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.Never);
 		}
 
 		internal HttpListener (X509Certificate certificate, IMonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
@@ -146,6 +155,21 @@ namespace System.Net {
 			}
 		}
 
+		public ExtendedProtectionSelector ExtendedProtectionSelectorDelegate
+		{
+			get { return extendedProtectionSelectorDelegate; }
+			set {
+				CheckDisposed();
+				if (value == null)
+					throw new ArgumentNullException ();
+
+				if (!AuthenticationManager.OSSupportsExtendedProtection)
+					throw new PlatformNotSupportedException (SR.GetString (SR.security_ExtendedProtection_NoOSSupport));
+
+				extendedProtectionSelectorDelegate = value;
+			}
+		}
+
 		public bool IgnoreWriteExceptions {
 			get { return ignore_write_exceptions; }
 			set {
@@ -166,6 +190,42 @@ namespace System.Net {
 			get {
 				CheckDisposed ();
 				return prefixes;
+			}
+		}
+
+		[MonoTODO]
+		public HttpListenerTimeoutManager TimeoutManager {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO ("not used anywhere in the implementation")]
+		public ExtendedProtectionPolicy ExtendedProtectionPolicy
+		{
+			get {
+				return extendedProtectionPolicy;
+			}
+			set {
+				CheckDisposed ();
+
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				if (!AuthenticationManager.OSSupportsExtendedProtection && value.PolicyEnforcement == PolicyEnforcement.Always)
+					throw new PlatformNotSupportedException (SR.GetString(SR.security_ExtendedProtection_NoOSSupport));
+
+				if (value.CustomChannelBinding != null)
+					throw new ArgumentException (SR.GetString (SR.net_listener_cannot_set_custom_cbt), "CustomChannelBinding");
+ 
+				extendedProtectionPolicy = value;
+			}
+		}
+
+		public ServiceNameCollection DefaultServiceNames
+		{
+			get {
+				return defaultServiceNames.ServiceNames;
 			}
 		}
 

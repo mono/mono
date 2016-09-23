@@ -153,6 +153,11 @@ namespace System.Net.Mail {
 			set { bodyEncoding = value; }
 		}
 
+		public TransferEncoding BodyTransferEncoding {
+			get { return GuessTransferEncoding (BodyEncoding); }
+			set { throw new NotImplementedException (); }
+		}
+
 		public MailAddressCollection CC {
 			get { return cc; }
 		}

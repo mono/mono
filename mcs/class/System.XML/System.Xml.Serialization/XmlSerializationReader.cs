@@ -729,6 +729,29 @@ namespace System.Xml.Serialization
 			return serializable;
 		}
 
+		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable, bool wrappedAny)
+		{
+			string name = null;
+			string ns = null;
+
+			if (wrappedAny) {
+				name = reader.LocalName;
+				ns = reader.NamespaceURI;
+				reader.Read ();
+				reader.MoveToContent ();
+			}
+			serializable.ReadXml (reader);
+
+			if (wrappedAny) {
+				while (reader.NodeType == XmlNodeType.Whitespace) reader.Skip ();
+				if (reader.NodeType == XmlNodeType.None) reader.Skip ();
+				if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == name && reader.NamespaceURI == ns) {
+					reader.Read ();
+				}
+			}
+			return serializable;
+		}
+
 		protected string ReadString (string value)
 		{
 			readCount++;

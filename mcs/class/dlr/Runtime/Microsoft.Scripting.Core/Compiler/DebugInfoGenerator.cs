@@ -48,6 +48,10 @@ namespace System.Runtime.CompilerServices {
         public static DebugInfoGenerator CreatePdbGenerator() {
             return new SymbolDocumentGenerator();
         }
+#else
+        public static DebugInfoGenerator CreatePdbGenerator() {
+            throw new PlatformNotSupportedException();
+        }
 #endif
         /// <summary>
         /// Marks a sequence point.

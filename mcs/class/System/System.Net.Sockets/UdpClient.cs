@@ -125,6 +125,14 @@ namespace System.Net.Sockets
 				socket.Bind (localEP);
 		}
 
+		public void AllowNatTraversal (bool allowed)
+		{
+			if (allowed)
+				socket.SetIPProtectionLevel (IPProtectionLevel.Unrestricted);
+			else
+				socket.SetIPProtectionLevel (IPProtectionLevel.EdgeRestricted);
+		}
+
 		public void Close ()
 		{
 			Dispose ();

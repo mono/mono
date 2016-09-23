@@ -111,12 +111,10 @@ namespace System.Net.Sockets
 			set;
 		}
 
-#if !MOBILE
 		public TransmitFileOptions SendPacketsFlags {
 			get;
 			set;
 		}
-#endif
 
 		[MonoTODO ("unused property")]
 		public int SendPacketsSendSize {
