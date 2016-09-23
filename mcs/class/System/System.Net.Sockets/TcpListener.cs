@@ -200,7 +200,29 @@ namespace System.Net.Sockets
 			
 			return client;
 		}
-		
+
+		public void AllowNatTraversal (bool allowed)
+		{
+			if (active)
+				throw new InvalidOperationException (SR.GetString (SR.net_tcplistener_mustbestopped));
+
+			if (allowed)
+				server.SetIPProtectionLevel (IPProtectionLevel.Unrestricted);
+			else
+				server.SetIPProtectionLevel (IPProtectionLevel.EdgeRestricted);
+		}
+
+		public static TcpListener Create (int port)
+		{
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
+			TcpListener listener = new TcpListener (IPAddress.IPv6Any, port);
+			listener.Server.DualMode = true;
+
+			return listener;
+		}
+
 		/// <summary>
 		/// Destructor - stops the listener listening
 		/// </summary>

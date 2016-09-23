@@ -45,6 +45,7 @@ using MX = Mono.Security.X509;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -131,6 +132,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 (X509Certificate certificate) 
 			: base (X509Helper2.Import (certificate))
+		{
+		}
+
+		protected X509Certificate2 (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 

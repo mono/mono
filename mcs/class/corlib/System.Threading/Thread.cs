@@ -459,6 +459,12 @@ namespace System.Threading {
 		{
 			throw new PlatformNotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
 		}
+
+		internal object AbortReason {
+			get {
+				throw new PlatformNotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
+			}
+		}
 #endif // MONO_FEATURE_THREAD_ABORT
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -703,5 +709,10 @@ namespace System.Threading {
 			throw new PlatformNotSupportedException ("Thread.Resume is not supported on the current platform.");
 		}
 #endif
+
+		public void DisableComObjectEagerCleanup ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }

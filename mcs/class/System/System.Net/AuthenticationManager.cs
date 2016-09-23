@@ -106,6 +106,13 @@ namespace System.Net
 			}
 		}
 
+		[MonoTODO]
+		internal static bool OSSupportsExtendedProtection {
+			get {
+				return false;
+			}
+		}
+
 		internal static void Clear ()
 		{
 			EnsureModules ();

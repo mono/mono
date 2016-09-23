@@ -137,16 +137,25 @@ namespace System.Net {
 			} 
 		}
 
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, TimeSpan keepAliveInterval)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval, ArraySegment<byte> internalBuffer)
 		{
 			throw new NotImplementedException ();

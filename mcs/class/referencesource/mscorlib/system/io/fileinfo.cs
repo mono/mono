@@ -17,7 +17,7 @@
 ===========================================================*/
 
 using System;
-#if FEATURE_MACL
+#if FEATURE_MACL || MONO
 using System.Security.AccessControl;
 #endif
 using System.Security.Permissions;
@@ -226,7 +226,7 @@ namespace System.IO {
             }
         }
 
-#if FEATURE_MACL
+#if FEATURE_MACL || MONO
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public FileSecurity GetAccessControl()

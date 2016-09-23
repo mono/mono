@@ -436,7 +436,6 @@ System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicy.cs
 System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicyTypeConverter.cs
 System.Security.Authentication.ExtendedProtection/PolicyEnforcement.cs
 System.Security.Authentication.ExtendedProtection/ProtectionScenario.cs
-System.Security.Authentication.ExtendedProtection/ServiceNameCollection.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ConfigUtil.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtectionPolicyElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
@@ -972,6 +971,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/_Semaphore.cs
+../referencesource/System/net/System/Net/_ServiceNameStore.cs
 ../referencesource/System/net/System/Net/_TimerThread.cs
 ../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
@@ -1095,6 +1095,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/sys/system/windows/markup/ValueSerializerAttribute.cs
 
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/TokenBinding.cs
+../referencesource/System/security/system/security/Authentication/ExtendedProtection/ServiceNameCollection.cs
 
 ../referencesource/System/security/system/security/cryptography/oid.cs
 

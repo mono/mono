@@ -39,12 +39,11 @@ namespace System.Threading
             : base(info, context) 
         {
         }
-#if !MOBILE
+
         public Object ExceptionState 
         {
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {return Thread.CurrentThread.AbortReason;}
         }
-#endif
     }
 }

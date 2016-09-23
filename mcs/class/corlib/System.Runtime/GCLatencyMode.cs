@@ -35,6 +35,7 @@ namespace System.Runtime
 		Batch = 0,
 		Interactive = 1,
 		LowLatency = 2,
-		SustainedLowLatency = 3
+		SustainedLowLatency = 3,
+		NoGCRegion = 4
 	}
 }

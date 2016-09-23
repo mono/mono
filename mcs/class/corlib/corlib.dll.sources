@@ -177,7 +177,6 @@ System.Diagnostics.Tracing/EventFieldFormat.cs
 System.Diagnostics.Tracing/EventFieldTags.cs
 System.Diagnostics.Tracing/EventIgnoreAttribute.cs
 System.Diagnostics.Tracing/EventManifestOptions.cs
-System.Diagnostics.Tracing/EventSourceException.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs
@@ -1138,6 +1137,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
 ../referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../referencesource/mscorlib/system/diagnostics/eventing/eventsourceexception.cs
 ../referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
 
 ../referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
@@ -1378,6 +1378,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/FormattableStringFactory.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/hascopysemanticsattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/IAsyncStateMachine.cs
+../referencesource/mscorlib/system/runtime/compilerservices/idispatchconstantattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/indexernameattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/INotifyCompletion.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/internalsvisibletoattribute.cs
