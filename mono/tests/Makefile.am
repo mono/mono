@@ -467,7 +467,7 @@ BASE_TEST_CS_SRC_UNIVERSAL=		\
 	pinvoke_ppcd.cs	\
 	bug-29585.cs	\
 	priority.cs	\
-	abort-cctor.cs	\
+	abort-cctor.cs
 
 if INSTALL_MOBILE_STATIC
 BASE_TEST_CS_SRC= \
