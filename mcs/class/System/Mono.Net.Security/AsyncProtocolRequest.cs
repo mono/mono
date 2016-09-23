@@ -99,7 +99,8 @@ namespace Mono.Net.Security
 		Complete,
 		WantRead,
 		WantWrite,
-		ReadDone
+		ReadDone,
+		FinishWrite
 	}
 
 	class AsyncProtocolRequest
@@ -160,9 +161,16 @@ namespace Mono.Net.Security
 			Debug ("ResetRead: {0} {1}", oldStatus, Status);
 		}
 
+		internal void ResetWrite ()
+		{
+			var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.Complete, (int)AsyncOperationStatus.WantWrite);
+			Debug ("ResetWrite: {0} {1}", oldStatus, Status);
+		}
+
 		internal void RequestWrite ()
 		{
 			var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.WantWrite, (int)AsyncOperationStatus.Running);
+			Debug ("RequestWrite: {0} {1}", oldStatus, Status);
 			if (oldStatus == AsyncOperationStatus.Running)
 				return;
 			else if (oldStatus != AsyncOperationStatus.WantRead && oldStatus != AsyncOperationStatus.WantWrite)
@@ -209,7 +217,19 @@ namespace Mono.Net.Security
 
 				status = ProcessOperation (status);
 
-				var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)status, (int)AsyncOperationStatus.Running);
+				Debug ("ProcessOperation done: {0}", status);
+
+				AsyncOperationStatus oldStatus;
+				if (status == AsyncOperationStatus.Complete) {
+					oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.FinishWrite, (int)AsyncOperationStatus.WantWrite);
+					if (oldStatus == AsyncOperationStatus.WantWrite) {
+						// We are done, but still need to flush the write queue.
+						status = AsyncOperationStatus.FinishWrite;
+						continue;
+					}
+				}
+
+				oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)status, (int)AsyncOperationStatus.Running);
 				Debug ("ProcessOperation done: {0} -> {1}", oldStatus, status);
 
 				if (oldStatus != AsyncOperationStatus.Running) {
@@ -243,7 +263,9 @@ namespace Mono.Net.Security
 				else
 					return AsyncOperationStatus.WantRead;
 			} else if (status == AsyncOperationStatus.WantWrite) {
+				Debug ("ProcessOperation - want write");
 				Parent.InnerWrite ();
+				Debug ("ProcessOperation - want write done");
 				return AsyncOperationStatus.Continue;
 			} else if (status == AsyncOperationStatus.Initialize || status == AsyncOperationStatus.Continue) {
 				Debug ("ProcessOperation - continue");
@@ -255,6 +277,11 @@ namespace Mono.Net.Security
 				status = Operation (this, status);
 				Debug ("ProcessOperation - read done: {0}", status);
 				return status;
+			} else if (status == AsyncOperationStatus.FinishWrite) {
+				Debug ("ProcessOperation - finish write");
+				Parent.InnerWrite ();
+				Debug ("ProcessOperation - finish write done");
+				return AsyncOperationStatus.Complete;
 			}
 
 			throw new InvalidOperationException ();
