@@ -166,7 +166,7 @@ namespace System.Security.AccessControl
 			SetAuditRule((AuditRule)rule);
 		}
 		
-		protected new void Persist (SafeHandle handle)
+		protected void Persist (SafeHandle handle)
 		{
 			WriteLock ();
 			try {

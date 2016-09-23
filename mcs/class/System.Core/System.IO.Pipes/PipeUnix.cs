@@ -205,7 +205,7 @@ namespace System.IO.Pipes
 			opener = delegate {
 				var fs = new FileStream (name, FileMode.Open, RightsToFileAccess (desiredAccessRights), FileShare.ReadWrite);
 				owner.Stream = fs;
-				handle = new SafePipeHandle (fs.Handle, false);
+				handle = new SafePipeHandle (fs.SafeFileHandle.DangerousGetHandle (), false);
 			};
 		}
 
@@ -271,7 +271,7 @@ namespace System.IO.Pipes
 			// FIXME: maxNumberOfServerInstances, modes, sizes, handle inheritability
 			
 			var fs = new FileStream (name, FileMode.Open, RightsToFileAccess (rights), FileShare.ReadWrite);
-			handle = new SafePipeHandle (fs.Handle, false);
+			handle = new SafePipeHandle (fs.SafeFileHandle.DangerousGetHandle (), false);
 			owner.Stream = fs;
 			should_close_handle = true;
 		}

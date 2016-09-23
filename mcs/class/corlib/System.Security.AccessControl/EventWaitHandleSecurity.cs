@@ -127,6 +127,11 @@ namespace System.Security.AccessControl
 		{
 			SetAuditRule((AuditRule)rule);
 		}
+
+		internal void Persist (SafeHandle handle)
+		{
+			PersistModifications (handle);
+		}
 	}
 }
 
