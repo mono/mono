@@ -1541,13 +1541,13 @@ namespace CorCompare
 
 				ParameterDefinition info = infos [i];
 
-				string modifier;
-				if ((info.Attributes & ParameterAttributes.In) != 0)
-					modifier = string.Empty;
-				else if ((info.Attributes & ParameterAttributes.Out) != 0 && info.ParameterType.IsByReference)
-					modifier = "out";
-				else
-					modifier = string.Empty;
+				string modifier = string.Empty;
+				if (info.ParameterType.IsByReference) {
+					if ((info.Attributes & ParameterAttributes.In) != 0)
+						modifier = "in";
+					else if ((info.Attributes & ParameterAttributes.Out) != 0)
+						modifier = "out";
+				}
 
 				if (modifier.Length > 0) {
 					signature.Append (modifier);
