@@ -4,6 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+#if MONO
+#undef FEATURE_PAL
+#endif
+
 namespace System.Net.Sockets {
     using System.Collections;
     using System.Collections.Generic;
@@ -24,9 +28,9 @@ namespace System.Net.Sockets {
     ///    interface.</para>
     /// </devdoc>
 
-
-    public class Socket : IDisposable
+    public partial class Socket : IDisposable
     {
+#if !MONO
         internal const int DefaultCloseTimeout = -1; // don't change for default, otherwise breaking change
 
         // AcceptQueue - queued list of accept requests for BeginAccept or async Result for Begin Connect
@@ -81,12 +85,12 @@ namespace System.Net.Sockets {
         //
         // Overlapped constants.
         //
-#if !FEATURE_PAL || CORIOLIS
+#if !(FEATURE_PAL && !MONO) || CORIOLIS
         internal static volatile bool UseOverlappedIO;
 #else
         // Disable the I/O completion port for Rotor
         internal static volatile bool UseOverlappedIO = true;
-#endif // !FEATURE_PAL || CORIOLIS
+#endif // !(FEATURE_PAL && !MONO) || CORIOLIS
         private bool useOverlappedIO;
 
         // Bool marked true if the native socket m_Handle was bound to the ThreadPool
@@ -120,6 +124,7 @@ namespace System.Net.Sockets {
 #if !FEATURE_PAL // perfcounter
         internal static volatile bool s_PerfCountersEnabled;
 #endif
+#endif // !MONO
 
 //************* constructors *************************
 
@@ -131,6 +136,7 @@ namespace System.Net.Sockets {
             DualMode = true;
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Initializes a new instance of the <see cref='Sockets.Socket'/> class.
@@ -475,6 +481,7 @@ namespace System.Net.Sockets {
                 return m_RemoteEndPoint;
             }
         }
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>
@@ -484,10 +491,13 @@ namespace System.Net.Sockets {
         /// </devdoc>
         public IntPtr Handle {
             get {
+#if !MONO
                 ExceptionHelper.UnmanagedPermission.Demand();
+#endif
                 return m_Handle.DangerousGetHandle();
             }
         }
+#if !MONO
         internal SafeCloseSocket SafeHandle {
             get {
                 return m_Handle;
@@ -534,6 +544,7 @@ namespace System.Net.Sockets {
                 willBlock = current;
             }
         }
+#endif // !MONO
 
         public bool UseOnlyOverlappedIO{
             get {
@@ -544,16 +555,17 @@ namespace System.Net.Sockets {
 
             }
             set {
-
+#if !MONO
                 if (m_BoundToThreadPool) {
                     throw new InvalidOperationException(SR.GetString(SR.net_io_completionportwasbound));
                 }
+#endif
 
                 useOverlappedIO = value;
             }
         }
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets the connection state of the Socket. This property will return the latest
@@ -577,6 +589,7 @@ namespace System.Net.Sockets {
                 return m_IsConnected;
             }
         }
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>
@@ -611,13 +624,13 @@ namespace System.Net.Sockets {
             }
         }
 
-
+#if !MONO
         public bool IsBound{
             get{
                 return (m_RightEndPoint != null);
             }
         }
-
+#endif // !MONO
 
         public bool ExclusiveAddressUse{
             get {
@@ -707,6 +720,7 @@ namespace System.Net.Sockets {
             }
         }
 
+#if !MONO
         public bool NoDelay {
             get {
                 return (int)GetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay) != 0 ? true : false;
@@ -715,6 +729,7 @@ namespace System.Net.Sockets {
                 SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, value ? 1 : 0);
             }
         }
+#endif // !MONO
 
         public short Ttl{
             get {
@@ -769,6 +784,7 @@ namespace System.Net.Sockets {
             }
         }
 
+#if !MONO
         public bool MulticastLoopback{
             get {
                 if (addressFamily == AddressFamily.InterNetwork) {
@@ -796,7 +812,6 @@ namespace System.Net.Sockets {
             }
         }
 
-
         public bool EnableBroadcast{
             get {
                 return (int)GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast) != 0 ? true : false;
@@ -805,7 +820,8 @@ namespace System.Net.Sockets {
                 SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, value ? 1 : 0);
             }
         }
-                
+#endif // !MONO
+
         public bool DualMode {
             get {
                 if (AddressFamily != AddressFamily.InterNetworkV6) {
@@ -837,7 +853,7 @@ namespace System.Net.Sockets {
 
 
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>Associates a socket with an end point.</para>
         /// </devdoc>
@@ -1258,7 +1274,7 @@ namespace System.Net.Sockets {
             }
             return socket;
         }
-
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>Sends a data buffer to a connected socket.</para>
@@ -1300,7 +1316,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
-
+#if !MONO
         public int Send(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Send", "");
             if (CleanedUp) {
@@ -1392,8 +1408,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Send", bytesTransferred);
             return bytesTransferred;
         }
-
-
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>Sends a file to
@@ -1406,8 +1421,7 @@ namespace System.Net.Sockets {
             SendFile(fileName,null,null,TransmitFileOptions.UseDefaultWorkerThread);
         }
 
-
-
+#if !MONO
         /// <devdoc>
         ///    <para>Sends a file to
         ///       a connected socket.</para>
@@ -1492,6 +1506,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "SendFile", errorCode);
             return;
         }
+#endif // !MONO
 #endif // !FEATURE_PAL
 
 
@@ -1511,8 +1526,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
-
-
+#if !MONO
         public int Send(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Send", "");
 
@@ -1688,6 +1702,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "SendTo", bytesTransferred);
             return bytesTransferred;
         }
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>Sends data to a specific end point, starting at the indicated location in the data.</para>
@@ -1695,12 +1710,14 @@ namespace System.Net.Sockets {
         public int SendTo(byte[] buffer, int size, SocketFlags socketFlags, EndPoint remoteEP) {
             return SendTo(buffer, 0, size, socketFlags, remoteEP);
         }
+
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public int SendTo(byte[] buffer, SocketFlags socketFlags, EndPoint remoteEP) {
             return SendTo(buffer, 0, buffer!=null ? buffer.Length : 0, socketFlags, remoteEP);
         }
+
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -1742,7 +1759,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
-
+#if !MONO
         public int Receive(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Receive", "");
             if (CleanedUp) {
@@ -1820,7 +1837,7 @@ namespace System.Net.Sockets {
 
             return bytesTransferred;
         }
-
+#endif // !MONO
 
         public int Receive(IList<ArraySegment<byte>> buffers) {
             return Receive(buffers,SocketFlags.None);
@@ -1836,6 +1853,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
+#if !MONO
         public int Receive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Receive", "");
             if (CleanedUp) {
@@ -2153,8 +2171,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "ReceiveFrom", bytesTransferred);
             return bytesTransferred;
         }
-
-
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>Receives a datagram and stores the source end point.</para>
@@ -2175,6 +2192,7 @@ namespace System.Net.Sockets {
             return ReceiveFrom(buffer, 0, buffer!=null ? buffer.Length : 0, SocketFlags.None, ref remoteEP);
         }
 
+#if !MONO
         // UE
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
@@ -2220,6 +2238,7 @@ namespace System.Net.Sockets {
 
             return realOptionLength;
         }
+#endif // !MONO
 
         // UE
         /// <devdoc>
@@ -2229,6 +2248,7 @@ namespace System.Net.Sockets {
             return IOControl(unchecked((int)ioControlCode),optionInValue,optionOutValue);
         }
 
+#if !MONO
         internal int IOControl(	IOControlCode ioControlCode, 
 									IntPtr optionInValue, 
 									int inValueSize,
@@ -2273,6 +2293,7 @@ namespace System.Net.Sockets {
 
             return realOptionLength;
         }
+#endif // !MONO
 
         public void SetIPProtectionLevel(IPProtectionLevel level) {
             if (level == IPProtectionLevel.Unspecified) {
@@ -2290,6 +2311,7 @@ namespace System.Net.Sockets {
             }
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Sets the specified option to the specified value.
@@ -2660,6 +2682,7 @@ namespace System.Net.Sockets {
             SelectFileDescriptor(checkWrite, writefileDescriptorSet);
             SelectFileDescriptor(checkError, errfileDescriptorSet);
         }
+#endif // !MONO
 
 #if !FEATURE_PAL
         /// <devdoc>
@@ -2678,7 +2701,7 @@ namespace System.Net.Sockets {
         }
 #endif
 
-
+#if !MONO
         //
         // Async Winsock Support, the following functions use either
         //   the Async Winsock support to do overlapped I/O WSASend/WSARecv
@@ -3100,6 +3123,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "BeginConnect", result);
             return result;
         }
+#endif // !MONO
 
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginConnect(IPAddress address, int port, AsyncCallback requestCallback, object state){
@@ -3124,6 +3148,7 @@ namespace System.Net.Sockets {
             return result;
         }
 
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginConnect(IPAddress[] addresses, int port, AsyncCallback requestCallback, object state)
         {
@@ -3193,7 +3218,7 @@ namespace System.Net.Sockets {
 
             GlobalLog.Print("Socket#" + ValidationHelper.HashString(this) + "::DoBeginDisconnect() ");
 
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
             throw new PlatformNotSupportedException(SR.GetString(SR.WinXPRequired));
 #endif
 
@@ -3242,9 +3267,9 @@ namespace System.Net.Sockets {
                  throw new ObjectDisposedException(this.GetType().FullName);
              }
 
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
             throw new PlatformNotSupportedException(SR.GetString(SR.WinXPRequired));
-#endif // FEATURE_PAL
+#endif // FEATURE_PAL && !MONO
 
 
              GlobalLog.Print("Socket#" + ValidationHelper.HashString(this) + "::Disconnect() ");
@@ -3370,9 +3395,9 @@ namespace System.Net.Sockets {
                throw new ObjectDisposedException(this.GetType().FullName);
              }
 
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
             throw new PlatformNotSupportedException(SR.GetString(SR.WinNTRequired));
-#endif // FEATURE_PAL
+#endif // FEATURE_PAL && !MONO
 
              if (asyncResult==null) {
                throw new ArgumentNullException("asyncResult");
@@ -3412,7 +3437,7 @@ namespace System.Net.Sockets {
              if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "EndDisconnect", null);
              return;
         }
-
+#endif // !MONO
 
         /*++
 
@@ -3451,6 +3476,7 @@ namespace System.Net.Sockets {
             return result;
         }
 
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginSend(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
@@ -3620,9 +3646,9 @@ namespace System.Net.Sockets {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
 
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
             throw new PlatformNotSupportedException(SR.GetString(SR.WinNTRequired));
-#endif // FEATURE_PAL
+#endif // FEATURE_PAL && !MONO
 
 
             if (!Connected) {
@@ -3698,7 +3724,7 @@ namespace System.Net.Sockets {
         }
 
 #endif // !FEATURE_PAL
-
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
@@ -3714,7 +3740,7 @@ namespace System.Net.Sockets {
             return result;
         }
 
-
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginSend(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
@@ -3804,7 +3830,7 @@ namespace System.Net.Sockets {
             }
             return errorCode;
         }
-
+#endif // !MONO
 
         /*++
 
@@ -3836,7 +3862,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
-
+#if !MONO
         public int EndSend(IAsyncResult asyncResult, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "EndSend", asyncResult);
             if (CleanedUp) {
@@ -3904,9 +3930,9 @@ namespace System.Net.Sockets {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
 
-#if FEATURE_PAL
+#if FEATURE_PAL && !MONO
             throw new PlatformNotSupportedException(SR.GetString(SR.WinNTRequired));
-#endif // FEATURE_PAL
+#endif // FEATURE_PAL && !MONO
             //
             // parameter validation
             //
@@ -4160,7 +4186,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "EndSendTo", bytesTransferred);
             return bytesTransferred;
         }
-
+#endif // !MONO
 
         /*++
 
@@ -4206,6 +4232,7 @@ namespace System.Net.Sockets {
         }
 
 
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginReceive(byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
@@ -4329,7 +4356,7 @@ namespace System.Net.Sockets {
 
             return errorCode;
         }
-
+#endif // !MONO
 
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginReceive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
@@ -4342,7 +4369,7 @@ namespace System.Net.Sockets {
             return result;
         }
 
-
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public IAsyncResult BeginReceive(IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
         {
@@ -4451,6 +4478,8 @@ namespace System.Net.Sockets {
         private int m_LastReceiveTick;
 #endif
 
+#endif // !MONO
+
         /*++
 
         Routine Description:
@@ -4481,7 +4510,7 @@ namespace System.Net.Sockets {
             return bytesTransferred;
         }
 
-
+#if !MONO
         public int EndReceive(IAsyncResult asyncResult, out SocketError errorCode) {
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "EndReceive", asyncResult);
             if (CleanedUp) {
@@ -5342,8 +5371,10 @@ namespace System.Net.Sockets {
                 }
             }
         }
+#endif // !MONO
 
 #if !FEATURE_PAL
+#if !MONO
         private bool CanUseAcceptEx
         {
             get
@@ -5352,6 +5383,7 @@ namespace System.Net.Sockets {
                     (Thread.CurrentThread.IsThreadPoolThread || SettingsSectionInternal.Section.AlwaysUseCompletionPortsForAccept || m_IsDisconnected);
             }
         }
+#endif // !MONO
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
@@ -5363,6 +5395,7 @@ namespace System.Net.Sockets {
 
         ///  This is the true async version that uses AcceptEx
 
+#if !MONO
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -5461,9 +5494,8 @@ namespace System.Net.Sockets {
                 throw socketException;
             }
         }
-
+#endif // !MONO
 #endif // !FEATURE_PAL
-
 
         /*++
 
@@ -5483,6 +5515,7 @@ namespace System.Net.Sockets {
 
         --*/
 
+#if !MONO
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -5552,9 +5585,9 @@ namespace System.Net.Sockets {
             }
             return acceptedSocket;
         }
+#endif // !MONO
 
 #if !FEATURE_PAL
-
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -5569,6 +5602,7 @@ namespace System.Net.Sockets {
             return socket;
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -5635,13 +5669,13 @@ namespace System.Net.Sockets {
             }
             return socket;
         }
-
+#endif // !MONO
 #endif // !FEATURE_PAL
 
 
 
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Disables sends and receives on a socket.
@@ -5821,6 +5855,7 @@ namespace System.Net.Sockets {
                 Interlocked.CompareExchange(ref m_AcceptQueueOrConnectResult, new Queue(16), null);
             return (Queue)m_AcceptQueueOrConnectResult;
         }
+#endif // !MONO
 
         internal bool CleanedUp {
             get {
@@ -5828,6 +5863,7 @@ namespace System.Net.Sockets {
             }
         }
 
+#if !MONO
         internal TransportType Transport {
             get {
                 return
@@ -6330,6 +6366,7 @@ namespace System.Net.Sockets {
                 m_AsyncEvent.Close();
             }
         }
+#endif // !MONO
 
         public void Dispose() {
             Dispose(true);
@@ -6340,6 +6377,7 @@ namespace System.Net.Sockets {
             Dispose(false);
         }
 
+#if !MONO
         // this version does not throw.
         internal void InternalShutdown(SocketShutdown how) {
             GlobalLog.Print("Socket#" + ValidationHelper.HashString(this) + "::InternalShutdown() how:" + how.ToString());
@@ -8350,10 +8388,10 @@ namespace System.Net.Sockets {
 
             return retval;
         }
-
+#endif // !MONO
     }  // end of class Socket
 
-
+#if !MONO
     internal class ConnectAsyncResult:ContextAwareResult{
         private EndPoint m_EndPoint;
         internal ConnectAsyncResult(object myObject, EndPoint endPoint, object myState, AsyncCallback myCallBack):base(myObject, myState, myCallBack) {
@@ -10234,5 +10272,6 @@ namespace System.Net.Sockets {
         }
     }
 #endif // SOCKETTHREADPOOL
+#endif // !MONO
 
 }

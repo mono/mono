@@ -140,7 +140,7 @@ namespace System.Net.Sockets
 
 		public void Complete ()
 		{
-			if (operation != SocketOperation.Receive && socket.is_disposed)
+			if (operation != SocketOperation.Receive && socket.CleanedUp)
 				DelayedException = new ObjectDisposedException (socket.GetType ().ToString ());
 
 			IsCompleted = true;
@@ -173,7 +173,7 @@ namespace System.Net.Sockets
 					if (queue.Count > 0)
 						queue.Dequeue (); /* remove ourselves */
 					if (queue.Count > 0) {
-						if (!socket.is_disposed) {
+						if (!socket.CleanedUp) {
 							IOSelector.Add (queue.Peek ().Key, queue.Peek ().Value);
 						} else {
 							/* CompleteAllOnDispose */
