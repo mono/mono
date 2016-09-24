@@ -153,7 +153,10 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (!string.IsNullOrEmpty (ToolPath))
 				return Path.Combine (ToolPath, ToolExe);
-			return ToolLocationHelper.GetPathToDotNetFrameworkFile (ToolExe, TargetDotNetFrameworkVersion.VersionLatest);
+			var possibleToolPath = ToolLocationHelper.GetPathToDotNetFrameworkFile (ToolExe, TargetDotNetFrameworkVersion.VersionLatest);
+			if (!string.IsNullOrEmpty(possibleToolPath))
+				return  possibleToolPath;
+			return ToolLocationHelper.GetPathToDotNetFrameworkBinFile(ToolExe); 
 		}
 		
 		[MonoTODO]
