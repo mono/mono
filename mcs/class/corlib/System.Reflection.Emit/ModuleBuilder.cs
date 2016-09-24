@@ -348,9 +348,6 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
-
 		private TypeBuilder GetMaybeNested (TypeBuilder t, IEnumerable<TypeName> nested) {
 			TypeBuilder result = t;
 
@@ -392,8 +389,27 @@ namespace System.Reflection.Emit {
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
 			if (result != null && (ts.HasModifiers || ts.IsByRef)) {
-				string modifiers = ts.ModifierString ();
-				Type mt = create_modified_type (result, modifiers);
+				Type mt = result;
+				if (result is TypeBuilder) {
+					var tb = result as TypeBuilder;
+					if (tb.is_created)
+						mt = tb.CreateType ();
+				}
+				foreach (var mod in ts.Modifiers) {
+					if (mod is PointerSpec)
+						mt = mt.MakePointerType ();
+					else if (mod is ArraySpec) {
+						var spec = mod as ArraySpec;
+						if (spec.IsBound)
+							return null;
+						if (spec.Rank == 1)
+							mt = mt.MakeArrayType ();
+						else
+							mt = mt.MakeArrayType (spec.Rank);
+					}
+				}
+				if (ts.IsByRef)
+					mt = mt.MakeByRefType ();
 				result = mt as TypeBuilder;
 				if (result == null)
 					return mt;

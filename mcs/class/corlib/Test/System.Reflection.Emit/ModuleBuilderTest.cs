@@ -794,5 +794,18 @@ namespace MonoTests.System.Reflection.Emit
 			// ArgumentNullException should not occur.
 			module.GetConstructorToken (method, null);
 		}
+
+		[Test]
+		public void GetType ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			TypeBuilder tb = module.DefineType ("t1", TypeAttributes.Public);
+
+			Assert.AreEqual ("t1[]", module.GetType ("t1[]").FullName);
+			Assert.AreEqual ("t1*", module.GetType ("t1*").FullName);
+			Assert.AreEqual ("t1&", module.GetType ("t1&").FullName);
+			Assert.AreEqual ("t1[]&", module.GetType ("t1[]&").FullName);
+		}
 	}
 }

@@ -70,6 +70,18 @@ namespace System {
 		{
 			return Append (new Text.StringBuilder ()).ToString ();
 		}
+
+		public int Rank {
+			get {
+				return dimensions;
+			}
+		}
+
+		public bool IsBound {
+			get {
+				return bound;
+			}
+		}
 	}
 
 	internal class PointerSpec : ModifierSpec
