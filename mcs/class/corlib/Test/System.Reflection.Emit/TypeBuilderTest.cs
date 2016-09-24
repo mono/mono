@@ -9094,6 +9094,8 @@ namespace MonoTests.System.Reflection.Emit
 
 
 		[Test]
+		// Casts don't work with unfinished types
+		[Category ("NotWorking")]
 		[Category ("NotDotNet")]
 		public void IsAssignableFrom_NotCreated_Array ()
 		{
