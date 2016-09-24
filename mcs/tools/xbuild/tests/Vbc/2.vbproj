@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTarget="Build">
+	
+	<ItemGroup>
+		<Input Include="test.vb" />
+		<Output Include="test.exe" />
+	</ItemGroup>
+	
+	<Target Name="Build" >
+		<Vbc
+			Sources="@(Input)"
+		/>
+	</Target>
+</Project>
