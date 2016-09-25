@@ -145,14 +145,6 @@ namespace System.Net
 #endif
 		}
 
-		[Obsolete ("This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.", true)]
-#if !BOOTSTRAP_BASIC
-		[System.ComponentModel.EditorBrowsable (System.ComponentModel.EditorBrowsableState.Never)]
-#endif
-		public HttpWebRequest ()
-		{
-		}
-
 #if MOBILE
 		public
 #else
