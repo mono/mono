@@ -30,7 +30,7 @@ using System.ComponentModel;
 
 namespace System.IO
 {
-    public class FileSystemWatcher : Component, IDisposable
+    public class FileSystemWatcher : Component, IDisposable, ISupportInitialize
     {
         public FileSystemWatcher () { throw new NotImplementedException (); }
         public FileSystemWatcher (string path) { throw new NotImplementedException (); }
