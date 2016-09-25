@@ -107,14 +107,6 @@ namespace System.Net
 			statusCode = (HttpStatusCode) info.GetValue ("statusCode", typeof (HttpStatusCode));
 		}
 
-		[Obsolete ("This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.", true)]
-#if !BOOTSTRAP_BASIC
-		[System.ComponentModel.EditorBrowsable (System.ComponentModel.EditorBrowsableState.Never)]
-#endif
-		public HttpWebResponse ()
-		{
-		}
-
 		// Properties
 		
 		public string CharacterSet {
