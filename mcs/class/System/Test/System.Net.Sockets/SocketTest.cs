@@ -2646,14 +2646,14 @@ namespace MonoTests.System.Net.Sockets
 				byte[] buffer = new byte[256];
 				while (totalReceived < sendbuf.Length) {
 					int recvd = clientsock.Receive (buffer, 0, buffer.Length, SocketFlags.None);
-					buffer.CopyTo (recvbuf, totalReceived);
+					Array.Copy (buffer, 0, recvbuf, totalReceived, recvd);
 					totalReceived += recvd;
 				}
 
 				Assert.AreEqual (BUFFER_SIZE, totalReceived, "#2");
 			});
 
-			Task.WaitAll (new []{sendTask, recvTask});
+			Assert.IsTrue (Task.WaitAll (new []{sendTask, recvTask}, 15 * 1000), "#2a");
 
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				Assert.AreEqual (recvbuf[i], sendbuf[i],
