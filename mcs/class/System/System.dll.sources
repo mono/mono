@@ -148,11 +148,9 @@ System.Diagnostics/PerformanceCounterPermissionEntryCollection.cs
 System.Diagnostics/PerformanceCounterPermissionEntry.cs
 System.Diagnostics/PerformanceCounterType.cs
 System.Diagnostics/Process.cs
-System.Diagnostics/ProcessModuleCollection.cs
 System.Diagnostics/ProcessModule.cs
 System.Diagnostics/ProcessPriorityClass.cs
 System.Diagnostics/ProcessStartInfo.cs
-System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
@@ -1104,6 +1102,9 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/security/system/security/cryptography/x509/x509utils.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
+
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessThreadCollection.cs
 
 ../referencesource/System/services/timers/system/timers/ElapsedEventHandler.cs
 ../referencesource/System/services/timers/system/timers/Timer.cs

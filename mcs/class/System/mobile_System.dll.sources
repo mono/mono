@@ -11,11 +11,9 @@ System.Diagnostics/FileVersionInfo.cs
 System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/Process.cs
 System.Diagnostics/ProcessModule.cs
-System.Diagnostics/ProcessModuleCollection.cs
 System.Diagnostics/ProcessPriorityClass.cs
 System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThread.cs
-System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
 System.Diagnostics/ThreadPriorityLevel.cs
@@ -837,6 +835,9 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/security/system/security/cryptography/x509/x509utils.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
+
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessThreadCollection.cs
 
 ../referencesource/System/services/timers/system/timers/ElapsedEventHandler.cs
 ../referencesource/System/services/timers/system/timers/Timer.cs
