@@ -15,19 +15,22 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 6. [Configuration Options](#configuration-options)
 7. [Working with Submodules](#working-with-submodules)
 
-**Build Status**
+### Build Status
 
-Officially supported architectures:
+| OS           | Architecture       | Status                       |
+|--------------|--------------------|------------------------------|
+| Ubuntu 14.04 | amd64              | [![ubuntu-1404-amd64][1]][2] |
+| Ubuntu 14.04 | i386               | [![ubuntu-1404-i386][3]][4]  |
+| Debian 8     | armel              | [![debian-8-armel][5]][6]    |
+| Debian 8     | armhf              | [![debian-8-armhf][7]][8]    |
+| Debian 8     | arm64              | [![debian-8-arm64][9]][10]   |
+| OS X         | amd64              | [![osx-amd64][11]][12]       |
+| OS X         | i386               | [![osx-i386][13]][14]        |
+| Windows      | amd64              | [![windows-amd64][15]][16]   |
+| Windows      | i386               | [![windows-amd64][17]][18]   |
+| CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
 
-| ubuntu-1404-amd64            | ubuntu-1404-i386            | debian-8-armel            | debian-8-armhf            | debian-8-arm64              | windows-amd64              |
-|------------------------------|-----------------------------|---------------------------|---------------------------|-----------------------------|----------------------------|
-| [![ubuntu-1404-amd64][1]][2] | [![ubuntu-1404-i386][3]][4] | [![debian-8-armel][5]][6] | [![debian-8-armhf][7]][8] | [![debian-8-arm64][9]][10]  | [![windows-amd64][11]][12] |
-
-Community supported architectures:
-
-| centos-s390x              |
-|---------------------------|
-| [![centos-s390x][13]][14] |
+_(cs) = community supported architecture_
 
 [1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64/badge/icon
 [2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64
@@ -39,10 +42,16 @@ Community supported architectures:
 [8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/
 [9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/badge/icon
 [10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/
-[11]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
-[12]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
-[13]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
-[14]: https://jenkins.mono-project.com/job/z/label=centos-s390x
+[11]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/badge/icon
+[12]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/
+[13]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-i386/badge/icon
+[14]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-i386/
+[15]: https://jenkins.mono-project.com/job/z/label=w64/badge/icon
+[16]: https://jenkins.mono-project.com/job/z/label=w64/
+[17]: https://jenkins.mono-project.com/job/z/label=w32/badge/icon
+[18]: https://jenkins.mono-project.com/job/z/label=w32/
+[19]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
+[20]: https://jenkins.mono-project.com/job/z/label=centos-s390x
 
 Compilation and Installation
 ============================
