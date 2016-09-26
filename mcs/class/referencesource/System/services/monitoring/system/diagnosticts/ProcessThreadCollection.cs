@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <copyright file="ProcessThread.cs" company="Microsoft">
+// <copyright file="ProcessThreadCollection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
