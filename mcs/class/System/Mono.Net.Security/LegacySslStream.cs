@@ -91,7 +91,7 @@ namespace Mono.Net.Security.Private
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			this.provider = provider;
-			certificateValidator = ChainValidationHelper.GetDefaultValidator (provider, settings);
+			certificateValidator = ChainValidationHelper.GetInternalValidator (provider, settings);
 		}
 		#endregion // Constructors
 
