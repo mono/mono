@@ -3879,6 +3879,15 @@ else
 fi
 AC_SUBST(docs_dir)
 
+#
+# BTLS
+#
+
+AC_PATH_PROG(CMAKE, [cmake], [no], [$PATH:/Applications/CMake.app/Contents/bin:/usr/local/bin])
+if test "x$CMAKE" = "xno"; then
+   AC_MSG_ERROR("cmake not found")
+fi
+
 ## Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
 AM_CONDITIONAL(BUILD_MCS, [test x$cross_compiling = xno && test x$enable_mcs_build != xno])
 
