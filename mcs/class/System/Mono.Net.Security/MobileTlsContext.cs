@@ -54,7 +54,7 @@ namespace Mono.Net.Security
 			this.clientCertificates = clientCertificates;
 			this.askForClientCert = askForClientCert;
 
-			certificateValidator = CertificateValidationHelper.GetDefaultValidator (
+			certificateValidator = CertificateValidationHelper.GetInternalValidator (
 				parent.Settings, parent.Provider);
 		}
 
