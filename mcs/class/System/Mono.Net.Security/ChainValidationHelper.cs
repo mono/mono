@@ -77,12 +77,22 @@ namespace Mono.Net.Security
 		readonly MonoTlsStream tlsStream;
 		readonly HttpWebRequest request;
 
-		internal static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
+		internal static ICertificateValidator GetInternalValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
 			if (settings == null)
 				return new ChainValidationHelper (provider, null, false, null, null);
 			if (settings.CertificateValidator != null)
 				return settings.CertificateValidator;
+			return new ChainValidationHelper (provider, settings, false, null, null);
+		}
+
+		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
+		{
+			var provider = MonoTlsProviderFactory.GetProvider ();
+			if (settings == null)
+				return new ChainValidationHelper (provider, null, false, null, null);
+			if (settings.CertificateValidator != null)
+				throw new NotSupportedException ();
 			return new ChainValidationHelper (provider, settings, false, null, null);
 		}
 
@@ -138,6 +148,8 @@ namespace Mono.Net.Security
 				settings = MonoTlsSettings.CopyDefaultSettings ();
 			if (cloneSettings)
 				settings = settings.CloneWithValidator (this);
+			if (provider == null)
+				provider = MonoTlsProviderFactory.GetProvider ();
 
 			this.provider = provider;
 			this.settings = settings;
