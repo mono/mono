@@ -34,7 +34,6 @@ using System.Security.Cryptography.X509Certificates;
 namespace System.Net
 {
 	[Serializable]
-	[Obsolete (HttpWebRequest.EXCEPTION_MESSAGE)]
 	public class HttpWebRequest : WebRequest, ISerializable
 	{
 		internal const string EXCEPTION_MESSAGE = "System.Net.HttpWebRequest is not supported on the current platform.";

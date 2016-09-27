@@ -32,7 +32,6 @@ using System.Threading.Tasks;
 
 namespace System.Net.Sockets
 {
-	[Obsolete (TcpClient.EXCEPTION_MESSAGE)]
 	public class TcpClient : IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.Sockets.TcpClient is not supported on the current platform.";

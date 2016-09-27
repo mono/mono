@@ -30,7 +30,6 @@ using System.IO;
 using System.Text;
 
 namespace System.Net {
-	[Obsolete (HttpListenerResponse.EXCEPTION_MESSAGE)]
 	public sealed class HttpListenerResponse : IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpListenerResponse is not supported on the current platform.";

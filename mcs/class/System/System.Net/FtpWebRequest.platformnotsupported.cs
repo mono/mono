@@ -31,7 +31,6 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net
 {
-	[Obsolete (FtpWebRequest.EXCEPTION_MESSAGE)]
 	public sealed class FtpWebRequest : WebRequest
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.FtpWebRequest is not supported on the current platform.";

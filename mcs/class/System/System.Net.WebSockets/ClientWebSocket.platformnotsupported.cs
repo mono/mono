@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 
 namespace System.Net.WebSockets
 {
-	[Obsolete (ClientWebSocket.EXCEPTION_MESSAGE)]
 	public class ClientWebSocket : WebSocket, IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.WebSockets.ClientWebSocket is not supported on the current platform.";

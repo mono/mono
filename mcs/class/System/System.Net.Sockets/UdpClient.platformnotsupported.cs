@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 
 namespace System.Net.Sockets
 {
-	[Obsolete (UdpClient.EXCEPTION_MESSAGE)]
 	public class UdpClient : IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.Sockets.UdpClient is not supported on the current platform.";
