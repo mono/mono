@@ -6,10 +6,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SocketAcceptAsyncTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AcceptAsyncShouldUseAcceptSocketFromEventArgs()
 		{
 			var readyEvent = new ManualResetEvent(false);
@@ -19,27 +21,41 @@ namespace MonoTests.System.Net.Sockets
 			var serverSocket = new Socket(
 					AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			Socket acceptedSocket = null;
-
+			Exception ex = null;
 			ThreadPool.QueueUserWorkItem(_ =>
 			{
-				listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
-				listenSocket.Listen(1);
+				SocketAsyncEventArgs asyncEventArgs;
+				try {
+					listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+					listenSocket.Listen(1);
 
-				var asyncEventArgs = new SocketAsyncEventArgs {AcceptSocket = serverSocket};
-				asyncEventArgs.Completed += (s, e) =>
-				{
-					acceptedSocket = e.AcceptSocket;
-					mainEvent.Set();
-				};
+					asyncEventArgs = new SocketAsyncEventArgs {AcceptSocket = serverSocket};
+					asyncEventArgs.Completed += (s, e) =>
+					{
+						acceptedSocket = e.AcceptSocket;
+						mainEvent.Set();
+					};
 
-				readyEvent.Set();
-
-				if (listenSocket.AcceptAsync(asyncEventArgs))
+				} catch (Exception e) {
+					ex = e;
 					return;
-				acceptedSocket = asyncEventArgs.AcceptSocket;
-				mainEvent.Set();
+				} finally {
+					readyEvent.Set();
+				}
+
+				try {
+					if (listenSocket.AcceptAsync(asyncEventArgs))
+						return;
+					acceptedSocket = asyncEventArgs.AcceptSocket;
+				} catch (Exception e) {
+					ex = e;
+				} finally {
+					mainEvent.Set();
+				}
 			});
 			Assert.IsTrue(readyEvent.WaitOne(1500));
+			if (ex != null)
+				throw ex;
 
 			var clientSocket = new Socket(
 				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

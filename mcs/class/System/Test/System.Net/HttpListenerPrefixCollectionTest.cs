@@ -36,6 +36,9 @@ namespace MonoTests.System.Net {
 	public class HttpListenerPrefixCollectionTest {
 		// NL -> Not listening -> tests when listener.IsListening == false
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NL_DefaultProperties ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -46,6 +49,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultProperties ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -57,7 +63,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-		[Category ("RequiresBSDSockets")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AddOne ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -71,7 +79,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-		[Category ("RequiresBSDSockets")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Duplicate ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -86,6 +96,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void EndsWithSlash ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -93,6 +106,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DifferentPath ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -102,6 +118,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NL_Clear ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -110,6 +129,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NL_Remove ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -118,6 +140,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NL_RemoveBadUri ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -126,7 +151,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void NL_AddBadUri ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -135,7 +164,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void NoHostInUrl ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -143,6 +176,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void MultipleSlashes ()
 		{
 			// this one throws on Start(), not when adding it.
@@ -156,6 +192,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PercentSign ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -169,6 +208,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Disposed1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -180,7 +222,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed2 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -190,7 +236,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed3 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -200,7 +250,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed4 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -210,7 +264,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void Disposed5 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -221,6 +279,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Disposed6 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -234,6 +295,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Disposed7 ()
 		{
 			HttpListener listener = new HttpListener ();

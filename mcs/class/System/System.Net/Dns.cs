@@ -130,6 +130,9 @@ namespace System.Net {
 		[Obsolete ("Use BeginGetHostEntry instead")]
 		public static IAsyncResult BeginGetHostByName (string hostName, AsyncCallback requestCallback, object stateObject)
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			throw new PlatformNotSupportedException ("System.Net.Dns:BeginGetHostByName is not supported on this platform.");
+#else
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
@@ -140,11 +143,15 @@ namespace System.Net {
 
 			GetHostByNameCallback c = new GetHostByNameCallback (GetHostByName);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
+#endif // FEATURE_NO_BSD_SOCKETS
 		}
 
 		[Obsolete ("Use BeginGetHostEntry instead")]
 		public static IAsyncResult BeginResolve (string hostName, AsyncCallback requestCallback, object stateObject)
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			throw new PlatformNotSupportedException ("System.Net.Dns:BeginResolve is not supported on this platform.");
+#else
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
@@ -155,6 +162,7 @@ namespace System.Net {
 
 			ResolveCallback c = new ResolveCallback (Resolve);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
+#endif // FEATURE_NO_BSD_SOCKETS
 		}
 
 		public static IAsyncResult BeginGetHostAddresses (string hostNameOrAddress, AsyncCallback requestCallback, object state)
@@ -178,6 +186,9 @@ namespace System.Net {
 
 		public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject)
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			throw new PlatformNotSupportedException ("System.Net.Dns:GetHostEntry is not supported on this platform.");
+#else
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostName");
 			if (hostNameOrAddress == "0.0.0.0" || hostNameOrAddress == "::0")
@@ -193,10 +204,14 @@ namespace System.Net {
 
 			GetHostEntryNameCallback c = new GetHostEntryNameCallback (GetHostEntry);
 			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
+#endif // FEATURE_NO_BSD_SOCKETS
 		}
 
 		public static IAsyncResult BeginGetHostEntry (IPAddress address, AsyncCallback requestCallback, object stateObject)
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			throw new PlatformNotSupportedException ("System.Net.Dns:BeginGetHostEntry is not supported on this platform.");
+#else
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
@@ -207,6 +222,7 @@ namespace System.Net {
 
 			GetHostEntryIPCallback c = new GetHostEntryIPCallback (GetHostEntry);
 			return c.BeginInvoke (address, requestCallback, stateObject);
+#endif // FEATURE_NO_BSD_SOCKETS
 		}
 
 		[Obsolete ("Use EndGetHostEntry instead")]
@@ -409,6 +425,10 @@ namespace System.Net {
 		[Obsolete ("Use GetHostEntry instead")]
 		public static IPHostEntry GetHostByName (string hostName)
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			if (!string.IsNullOrEmpty (hostName))
+				throw new PlatformNotSupportedException ("System.Net.Dns:GetHostByName is not supported on this platform.");
+#endif // FEATURE_NO_BSD_SOCKETS
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 			string h_name;
@@ -436,6 +456,9 @@ namespace System.Net {
 		[Obsolete ("Use GetHostEntry instead")]
 		public static IPHostEntry Resolve(string hostName) 
 		{
+#if FEATURE_NO_BSD_SOCKETS
+			throw new PlatformNotSupportedException ("System.Net.Dns:Resolve is not supported on this platform.");
+#else
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
@@ -450,6 +473,7 @@ namespace System.Net {
 				ret =  GetHostByName(hostName);
 
 			return ret;
+#endif // FEATURE_NO_BSD_SOCKETS
 		}
 
 		public static Task<IPAddress[]> GetHostAddressesAsync (string hostNameOrAddress)
