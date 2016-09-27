@@ -360,7 +360,7 @@ namespace Mono.Net.Security
 			return new ValidationResult (result, user_denied, status11, (MonoSslPolicyErrors)errors);
 		}
 
-		public bool InvokeSystemValidator (string targetHost, bool serverMode, X509CertificateCollection certificates, X509Chain chain, ref MonoSslPolicyErrors xerrors, ref int status11)
+		bool InvokeSystemValidator (string targetHost, bool serverMode, X509CertificateCollection certificates, X509Chain chain, ref MonoSslPolicyErrors xerrors, ref int status11)
 		{
 			var errors = (SslPolicyErrors)xerrors;
 			var result = SystemCertificateValidator.Evaluate (settings, targetHost, certificates, chain, ref errors, ref status11);
