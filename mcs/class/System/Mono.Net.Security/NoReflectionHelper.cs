@@ -74,29 +74,29 @@ namespace Mono.Net.Security
 			#endif
 		}
 
-		internal static object GetDefaultProvider ()
-		{
-			#if SECURITY_DEP
-			return MonoTlsProviderFactory.GetDefaultProvider ();
-			#else
-			throw new NotSupportedException ();
-			#endif
-		}
-
-		internal static bool HasProvider {
+		internal static bool IsInitialized {
 			get {
 				#if SECURITY_DEP
-				return MonoTlsProviderFactory.HasProvider;
+				return MonoTlsProviderFactory.IsInitialized;
 				#else
 				throw new NotSupportedException ();
 				#endif
 			}
 		}
 
-		internal static void SetDefaultProvider (string name)
+		internal static void Initialize ()
 		{
 			#if SECURITY_DEP
-			MonoTlsProviderFactory.SetDefaultProvider (name);
+			MonoTlsProviderFactory.Initialize ();
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static void Initialize (string provider)
+		{
+			#if SECURITY_DEP
+			MonoTlsProviderFactory.Initialize (provider);
 			#else
 			throw new NotSupportedException ();
 			#endif
@@ -124,6 +124,15 @@ namespace Mono.Net.Security
 		{
 			#if SECURITY_DEP
 			return stream.Impl;
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static bool IsProviderSupported (string name)
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.IsProviderSupported (name);
 			#else
 			throw new NotSupportedException ();
 			#endif
