@@ -21,7 +21,6 @@ namespace MonoTests.System.Net.Sockets
 	/// Tests System.Net.Sockets.TcpClient
 	/// </summary>
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class TcpClientTest
 	{
 		
@@ -30,6 +29,9 @@ namespace MonoTests.System.Net.Sockets
 		/// (from System.Net.Sockets)
 		/// </summary>
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TcpClient()
 		{
 			// set up a listening Socket
@@ -77,6 +79,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // bug #81105
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseTest ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -140,7 +145,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConnectMultiNull ()
 		{
 			TcpClient client = new TcpClient ();
@@ -150,6 +159,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultiAny ()
 		{
 			TcpClient client = new TcpClient ();
@@ -168,6 +180,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultiRefused ()
 		{
 			TcpClient client = new TcpClient ();

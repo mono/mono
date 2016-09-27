@@ -172,6 +172,7 @@ System.Net/HttpListenerContext.cs
 System.Net/HttpListenerPrefixCollection.cs
 System.Net/HttpListenerRequest.cs
 System.Net/HttpListenerResponse.cs
+System.Net/HttpListenerResponseHelper.cs
 System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs

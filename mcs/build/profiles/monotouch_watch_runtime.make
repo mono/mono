@@ -1,6 +1,7 @@
 include $(topdir)/build/profiles/monotouch_runtime.make
 
 PROFILE_MCS_FLAGS += \
+	-d:FEATURE_NO_BSD_SOCKETS \
 	-d:MONOTOUCH_WATCH
 
 NO_THREAD_ABORT=1
