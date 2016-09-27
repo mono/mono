@@ -1,6 +1,8 @@
 thisdir = class
 
-basic_SUBDIRS := corlib Mono.Security System System.XML System.Core 
+basic_SUBDIRS := corlib Mono.Security System System.XML System.Core
+
+pcl_facade_dirs := Facades
 
 # resgen is corlib specific so we need to wait until corlib is build
 # and build it just a step before first dll needs it
@@ -14,9 +16,11 @@ build_SUBDIRS :=  \
 	Mono.Posix \
 	System.Core \
 	Mono.Cecil \
-	Mono.Cecil.Mdb
-
-pcl_facade_dirs := Facades
+	Mono.Cecil.Mdb \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	$(pcl_facade_dirs)
 
 mobile_common_dirs := \
 	corlib	\
@@ -347,20 +351,33 @@ all-local $(STD_TARGETS:=-local):
 all-local-aot:
 
 # Files needed to bootstrap C# compiler
-basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll
-monolite_files = $(basic_files:%=lib/monolite/%)
+build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+	System.Numerics.dll System.Xml.Linq.dll \
+	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
+	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
+	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \
+	Facades/System.Threading.Tasks.Parallel.dll Facades/System.Dynamic.Runtime.dll Facades/System.Resources.ResourceManager.dll \
+	Facades/System.Threading.Tasks.dll Facades/System.Globalization.dll Facades/System.Runtime.Extensions.dll Facades/System.Threading.dll \
+	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
+	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll
+
+monolite_files = $(build_files:%=lib/monolite/%)
 
 lib/monolite:
+lib/monolite/Facades:
 	$(MKINSTALLDIRS) $@
 
 $(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/basic/%
+$(monolite_files): | lib/monolite/Facades
+$(monolite_files): lib/monolite/%: lib/build/%
 	cp -p $< $@
 
-$(basic_files:%=lib/basic/%):
-	cd $(topdir) && $(MAKE) profile-do--basic--all NO_DIR_CHECK=1 SKIP_AOT=1
+$(build_files:%=lib/build/%):
+	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
 dist-default: $(monolite_files)
+	cp -p lib/basic/basic.exe lib/monolite
+
 dist-local: dist-default
 
 csproj-local:

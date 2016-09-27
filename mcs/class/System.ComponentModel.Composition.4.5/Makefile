@@ -5,7 +5,11 @@ include ../../build/rules.make
 LIBRARY = System.ComponentModel.Composition.dll
 LIB_REFS = System System.Core
 
-RESOURCE_DEFS = Microsoft.Internal.Strings,src/ComponentModel/Strings.resx
+NO_RESGEN := $(filter basic build, $(PROFILE))
+ifndef NO_RESGEN
+  RESOURCE_DEFS = Microsoft.Internal.Strings,src/ComponentModel/Strings.resx
+endif
+
 LIB_MCS_FLAGS = -d:CLR40 -d:USE_ECMA_KEY,FEATURE_REFLECTIONCONTEXT,FEATURE_REFLECTIONFILEIO,FEATURE_SERIALIZATION,FEATURE_SLIMLOCK -nowarn:219,414
 
 
