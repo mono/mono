@@ -184,9 +184,6 @@ namespace System.Net {
 			return c.BeginInvoke (hostNameOrAddress, requestCallback, state);
 		}
 
-#if FEATURE_NO_BSD_SOCKETS
-		[Obsolete  ("System.Net.Dns:GetHostEntry is not supported on this platform.")]
-#endif
 		public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress, AsyncCallback requestCallback, object stateObject)
 		{
 #if FEATURE_NO_BSD_SOCKETS
@@ -210,9 +207,6 @@ namespace System.Net {
 #endif // FEATURE_NO_BSD_SOCKETS
 		}
 
-#if FEATURE_NO_BSD_SOCKETS
-		[Obsolete  ("System.Net.Dns:BeginGetHostEntry is not supported on this platform.")]
-#endif
 		public static IAsyncResult BeginGetHostEntry (IPAddress address, AsyncCallback requestCallback, object stateObject)
 		{
 #if FEATURE_NO_BSD_SOCKETS

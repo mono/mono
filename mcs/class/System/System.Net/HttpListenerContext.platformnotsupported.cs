@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 
 namespace System.Net {
-	[Obsolete (HttpListenerContext.EXCEPTION_MESSAGE)]
 	public sealed class HttpListenerContext {
 		const string EXCEPTION_MESSAGE = "System.Net.HttpListenerContext is not supported on the current platform.";
 

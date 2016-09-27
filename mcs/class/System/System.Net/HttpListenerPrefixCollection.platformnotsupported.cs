@@ -30,7 +30,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Net {
-	[Obsolete (HttpListenerPrefixCollection.EXCEPTION_MESSAGE)]
 	public class HttpListenerPrefixCollection : ICollection<string>, IEnumerable<string>, IEnumerable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpListenerPrefixCollection is not supported on the current platform.";

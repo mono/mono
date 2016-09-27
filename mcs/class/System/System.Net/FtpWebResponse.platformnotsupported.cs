@@ -30,7 +30,6 @@ using System.IO;
 
 namespace System.Net
 {
-	[Obsolete (FtpWebResponse.EXCEPTION_MESSAGE)]
 	public class FtpWebResponse : WebResponse
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.FtpWebResponse is not supported on the current platform.";

@@ -32,7 +32,6 @@ using System.Threading.Tasks;
 
 namespace System.Net.Sockets
 {
-	[Obsolete (TcpListener.EXCEPTION_MESSAGE)]
 	public class TcpListener
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.Sockets.TcpListener is not supported on the current platform.";

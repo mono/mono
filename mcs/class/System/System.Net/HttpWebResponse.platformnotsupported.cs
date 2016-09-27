@@ -32,7 +32,6 @@ using System.Runtime.Serialization;
 namespace System.Net
 {
 	[Serializable]
-	[Obsolete (HttpWebResponse.EXCEPTION_MESSAGE)]
 	public class HttpWebResponse : WebResponse, ISerializable, IDisposable
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpWebResponse is not supported on the current platform.";

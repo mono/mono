@@ -31,7 +31,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace System.Net.Mail {
-	[Obsolete (SmtpClient.EXCEPTION_MESSAGE)]
 	public class SmtpClient
 		: IDisposable
 	{

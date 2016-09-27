@@ -33,7 +33,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace System.Net {
-	[Obsolete (HttpListenerRequest.EXCEPTION_MESSAGE)]
 	public sealed class HttpListenerRequest
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpListenerRequest is not supported on the current platform.";

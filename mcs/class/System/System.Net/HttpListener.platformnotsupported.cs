@@ -29,7 +29,6 @@
 using System.Threading.Tasks;
 
 namespace System.Net {
-	[Obsolete (HttpListener.EXCEPTION_MESSAGE)]
 	public sealed class HttpListener : IDisposable
 	{
 		internal const string EXCEPTION_MESSAGE = "System.Net.HttpListener is not supported on the current platform.";
