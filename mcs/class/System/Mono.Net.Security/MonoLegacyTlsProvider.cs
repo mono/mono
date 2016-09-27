@@ -30,7 +30,6 @@ extern alias MonoSecurity;
 
 using XHttpWebRequest = System.Net.HttpWebRequest;
 using XSslProtocols = System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;

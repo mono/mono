@@ -34,7 +34,6 @@ using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System;
@@ -73,7 +72,7 @@ namespace Mono.Net.Security
 
 		IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
 			MonoEncryptionPolicy encryptionPolicy, MonoTlsSettings settings);
 #endif
