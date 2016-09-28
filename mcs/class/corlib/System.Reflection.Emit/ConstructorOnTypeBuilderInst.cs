@@ -136,8 +136,7 @@ namespace System.Reflection.Emit
 
 		internal override Type[] GetParameterTypes () {
 			if (cb is ConstructorBuilder) {
-				ConstructorBuilder cbuilder = (ConstructorBuilder)cb;
-				return cbuilder.parameters;
+				return (cb as ConstructorBuilder).parameters;
 			} else {
 				ParameterInfo[] parms = cb.GetParameters ();
 				var res = new Type [parms.Length];
