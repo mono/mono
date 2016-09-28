@@ -1,5 +1,5 @@
 Mono.Net.Security/LegacySslStream.cs
-Mono.Net.Security/MonoLegacyTlsProvider.cs
+Mono.Net.Security/LegacyTlsProvider.cs
 System.Net.Mail/SmtpClient.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
