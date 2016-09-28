@@ -155,7 +155,7 @@ namespace Mono.Net.Security
 				if (providerRegistration != null)
 					return;
 				providerRegistration = new Dictionary<string,string> ();
-				providerRegistration.Add ("legacy", "Mono.Net.Security.Private.MonoLegacyTlsProvider");
+				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
 #if HAVE_BTLS
 				if (Mono.Btls.MonoBtlsProvider.IsSupported ())
 					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
@@ -183,7 +183,7 @@ namespace Mono.Net.Security
 			if (provider != null)
 				return provider;
 
-			return new Private.MonoLegacyTlsProvider ();
+			return new LegacyTlsProvider ();
 		}
 #endif
 
