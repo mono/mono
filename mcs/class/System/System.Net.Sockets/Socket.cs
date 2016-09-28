@@ -2354,8 +2354,8 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			if (!is_blocking)
 				throw new InvalidOperationException ();
 
-			int error;
-			if (!SendFile_internal (m_Handle, fileName, preBuffer, postBuffer, flags, out error, is_blocking)) {
+			int error = 0;
+			if (!SendFile_internal (m_Handle, fileName, preBuffer, postBuffer, flags, out error, is_blocking) || error != 0) {
 				SocketException exc = new SocketException (error);
 				if (exc.ErrorCode == 2 || exc.ErrorCode == 3)
 					throw new FileNotFoundException ();
