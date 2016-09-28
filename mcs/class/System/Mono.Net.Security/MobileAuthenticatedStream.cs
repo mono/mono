@@ -660,6 +660,7 @@ namespace Mono.Net.Security
 			if (wantMore || writeBuffer.Size > 0)
 				return AsyncOperationStatus.WantWrite;
 
+			asyncRequest.ResetWrite ();
 			asyncRequest.UserResult = asyncRequest.CurrentSize;
 			return AsyncOperationStatus.Complete;
 		}
