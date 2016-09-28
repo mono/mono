@@ -546,7 +546,7 @@ Mono.Net.Security/IMonoSslStream.cs
 Mono.Net.Security/LegacySslStream.cs
 Mono.Net.Security/MobileAuthenticatedStream.cs
 Mono.Net.Security/MobileTlsContext.cs
-Mono.Net.Security/MonoLegacyTlsProvider.cs
+Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MonoSslStreamImpl.cs
 Mono.Net.Security/MonoSslStreamWrapper.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
