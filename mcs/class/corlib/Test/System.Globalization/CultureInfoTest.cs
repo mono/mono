@@ -752,13 +752,18 @@ namespace MonoTests.System.Globalization
 		[Test]
 		public void FlowCultureInfoFromParentThreadSinceNet46 ()
 		{
+			if (SynchronizationContext.Current != null) {
+				Assert.Ignore ();
+				return;
+			}
+
 			Func<Task> f = async () => {
 				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("pt-BR");
 				await Task.Yield ();
 				Assert.AreEqual ("pt-BR", Thread.CurrentThread.CurrentUICulture.Name);
 			};
 
-			f ().Wait ();
+			Assert.IsTrue (f ().Wait (5 * 1000), "#1");
 		}
 	}
 }
