@@ -2730,7 +2730,7 @@ namespace MonoTests.System.Net.Sockets
 		public void SendGenericExceedBuffer ()
 		{
 			// Create a buffer larger than the default max.
-			const int BUFFER_SIZE = 256 * 256 * 65;
+			const int BUFFER_SIZE = 65 * 1024;
 			int i;
 
 			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, NetworkHelpers.FindFreePort ());
@@ -2770,7 +2770,7 @@ namespace MonoTests.System.Net.Sockets
 				Assert.AreEqual (BUFFER_SIZE, totalReceived, "#2");
 			});
 
-			Assert.IsTrue (Task.WaitAll (new []{sendTask, recvTask}, 15 * 1000), "#2a");
+			Assert.IsTrue (Task.WaitAll (new []{sendTask, recvTask}, 20 * 1000), "#2a");
 
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				Assert.AreEqual (recvbuf[i], sendbuf[i],
