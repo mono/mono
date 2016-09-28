@@ -218,7 +218,10 @@
 		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
 		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoField" preserve="fields" />
-		<type fullname="System.Reflection.MonoGenericClass" preserve="fields" />
+		<type fullname="System.Reflection.MonoGenericClass" preserve="fields" >
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
+		</type>
 		<type fullname="System.Reflection.MonoGenericMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoGenericCMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoMethod" preserve="fields" />
@@ -274,6 +277,26 @@
 		<type fullname="System.Reflection.Emit.UnmanagedMarshal" preserve="fields">
 			<method name="DefineCustom" />
 			<method name="DefineLPArrayInternal" />
+		</type>
+
+		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst">
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
+		</type>
+
+		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst">
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
+		</type>
+
+		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst">
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
+		</type>
+
+		<type fullname="System.Reflection.Emit.SymbolType">
+		  <!-- called from the runtime -->
+		  <method name="RuntimeResolve" />
 		</type>
 
 		<!--

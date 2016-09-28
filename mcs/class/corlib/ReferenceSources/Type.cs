@@ -102,6 +102,12 @@ namespace System
 			return UnderlyingSystemType;
 		}
 
+		// Called from the runtime to return the corresponding finished Type object
+		internal virtual Type RuntimeResolve ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal virtual bool IsUserType {
 			get {
 				return true;

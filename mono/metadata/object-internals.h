@@ -1284,26 +1284,6 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
-	MonoReflectionGenericClass *inst;
-	MonoObject *fb; /*can be either a MonoField or a FieldBuilder*/
-} MonoReflectionFieldOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
-	MonoReflectionGenericClass *inst;
-	MonoObject *cb; /*can be either a MonoCMethod or ConstructorBuilder*/
-} MonoReflectionCtorOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
-	MonoReflectionType *inst;
-	MonoObject *mb; /*can be either a MonoMethod or MethodBuilder*/
-	MonoArray *method_args;
-	MonoReflectionMethodBuilder *generic_method_definition;
-} MonoReflectionMethodOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
 	MonoBoolean visible;
 } MonoReflectionComVisibleAttribute;
 
@@ -1811,7 +1791,7 @@ void
 ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilder *moduleb, MonoReflectionType *type);
 
 void
-ves_icall_GenericTypeParameterBuilder_initialize_generic_parameter (MonoReflectionGenericParam *gparam);
+ves_icall_GenericTypeParameterBuilder_initialize (MonoReflectionGenericParam *gparam);
 
 MonoReflectionMethod*
 ves_icall_MethodBuilder_MakeGenericMethod (MonoReflectionMethod *rmethod, MonoArray *types);

@@ -545,7 +545,7 @@ ICALL_TYPE(ENUMB, "System.Reflection.Emit.EnumBuilder", ENUMB_1)
 ICALL(ENUMB_1, "setup_enum_type", ves_icall_EnumBuilder_setup_enum_type)
 
 ICALL_TYPE(GPARB, "System.Reflection.Emit.GenericTypeParameterBuilder", GPARB_1)
-ICALL(GPARB_1, "initialize", ves_icall_GenericTypeParameterBuilder_initialize_generic_parameter)
+ICALL(GPARB_1, "initialize", ves_icall_GenericTypeParameterBuilder_initialize)
 
 ICALL_TYPE(METHODB, "System.Reflection.Emit.MethodBuilder", METHODB_1)
 ICALL(METHODB_1, "MakeGenericMethod", ves_icall_MethodBuilder_MakeGenericMethod)
