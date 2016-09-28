@@ -127,6 +127,12 @@ namespace System.Reflection.Emit
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
 			throw new NotSupportedException ();
 		}
+
+		// Called from the runtime to return the corresponding finished FieldInfo object
+		internal FieldInfo RuntimeResolve () {
+			var type = instantiation.RuntimeResolve ();
+			return type.GetField (fb);
+		}
 	}
 }
 #endif

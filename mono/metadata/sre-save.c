@@ -1699,6 +1699,8 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 	guint32 i, idx = 0;
 	unsigned char *target;
 
+	// FIXME: Remove support for builder objects
+
 	for (i = 0; i < ilgen->num_token_fixups; ++i) {
 		iltoken = (MonoReflectionILTokenInfo *)mono_array_addr_with_size (ilgen->token_fixups, sizeof (MonoReflectionILTokenInfo), i);
 		target = (guchar*)assembly->code.data + code_idx + iltoken->code_pos;
@@ -1730,10 +1732,19 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			}
 			break;
 		case MONO_TABLE_TYPEDEF:
-			if (strcmp (iltoken->member->vtable->klass->name, "TypeBuilder"))
+			if (!strcmp (iltoken->member->vtable->klass->name, "TypeBuilder")) {
+				tb = (MonoReflectionTypeBuilder *)iltoken->member;
+				idx = tb->table_idx;
+			} else if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
+				MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
+				MonoObject *obj = mono_class_get_ref_info (k);
+				g_assert (obj);
+				g_assert (!strcmp (obj->vtable->klass->name, "TypeBuilder"));
+				tb = (MonoReflectionTypeBuilder*)obj;
+				idx = tb->table_idx;
+			} else {
 				g_assert_not_reached ();
-			tb = (MonoReflectionTypeBuilder *)iltoken->member;
-			idx = tb->table_idx;
+			}
 			break;
 		case MONO_TABLE_MEMBERREF:
 			if (!strcmp (iltoken->member->vtable->klass->name, "MonoArrayMethod")) {
@@ -1771,6 +1782,13 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			} else if (!strcmp (iltoken->member->vtable->klass->name, "MethodBuilder")) {
 				continue;
 			} else if (!strcmp (iltoken->member->vtable->klass->name, "MethodOnTypeBuilderInst")) {
+				continue;
+			} else {
+				g_assert_not_reached ();
+			}
+			break;
+		case MONO_TABLE_TYPESPEC:
+			if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
 				continue;
 			} else {
 				g_assert_not_reached ();

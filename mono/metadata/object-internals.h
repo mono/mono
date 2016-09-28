@@ -1284,26 +1284,6 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
-	MonoReflectionGenericClass *inst;
-	MonoObject *fb; /*can be either a MonoField or a FieldBuilder*/
-} MonoReflectionFieldOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
-	MonoReflectionGenericClass *inst;
-	MonoObject *cb; /*can be either a MonoCMethod or ConstructorBuilder*/
-} MonoReflectionCtorOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
-	MonoReflectionType *inst;
-	MonoObject *mb; /*can be either a MonoMethod or MethodBuilder*/
-	MonoArray *method_args;
-	MonoReflectionMethodBuilder *generic_method_definition;
-} MonoReflectionMethodOnTypeBuilderInst;
-
-typedef struct {
-	MonoObject object;
 	MonoBoolean visible;
 } MonoReflectionComVisibleAttribute;
 

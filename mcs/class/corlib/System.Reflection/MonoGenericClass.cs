@@ -95,6 +95,19 @@ namespace System.Reflection
 			return gtd.MakeGenericType (args);
 		}
 
+		// Called from the runtime to return the corresponding finished Type object
+		internal override Type RuntimeResolve ()
+		{
+			if (generic_type is TypeBuilder && !(generic_type as TypeBuilder).IsCreated ())
+				AppDomain.CurrentDomain.DoTypeResolve (generic_type);
+			for (int i = 0; i < type_arguments.Length; ++i) {
+				var t = type_arguments [i];
+				if (t is TypeBuilder && !(t as TypeBuilder).IsCreated ())
+					AppDomain.CurrentDomain.DoTypeResolve (t);
+			}
+			return InternalResolve ();
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (FieldInfo[] fields);
 

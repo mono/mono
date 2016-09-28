@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
@@ -873,6 +874,17 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			if (methods != null) {
+				for (int i = 0; i < num_methods; ++i)
+					methods[i].FixupTokens (token_map, member_map);
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors)
+					cb.FixupTokens (token_map, member_map);
+			}
+		}
+
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			symbolWriter.OpenNamespace (this.Namespace);
@@ -1661,6 +1673,12 @@ namespace System.Reflection.Emit
 		}
 
 		internal override Type InternalResolve ()
+		{
+			check_created ();
+			return created;
+		}
+
+		internal override Type RuntimeResolve ()
 		{
 			check_created ();
 			return created;
