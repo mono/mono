@@ -350,6 +350,8 @@ all-local $(STD_TARGETS:=-local):
 
 all-local-aot:
 
+monolite_dir := monolite
+
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll \
@@ -361,22 +363,24 @@ build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Co
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll
 
-monolite_files = $(build_files:%=lib/monolite/%)
+monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
-lib/monolite:
-lib/monolite/Facades:
+lib/$(monolite_dir):
+lib/$(monolite_dir)/Facades:
 	$(MKINSTALLDIRS) $@
 
-$(monolite_files): | lib/monolite
-$(monolite_files): | lib/monolite/Facades
-$(monolite_files): lib/monolite/%: lib/build/%
+$(monolite_files): | lib/$(monolite_dir)
+$(monolite_files): | lib/$(monolite_dir)/Facades
+$(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
 $(build_files:%=lib/build/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
-dist-default: $(monolite_files)
-	cp -p lib/basic/basic.exe lib/monolite
+dist-monolite: $(monolite_files)
+	cp -p lib/basic/basic.exe lib/$(monolite_dir)
+
+dist-default: dist-monolite
 
 dist-local: dist-default
 
