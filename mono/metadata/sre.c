@@ -70,7 +70,6 @@ static gboolean is_sr_mono_field (MonoClass *klass);
 
 static guint32 mono_image_get_methodspec_token (MonoDynamicImage *assembly, MonoMethod *method);
 static guint32 mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m);
-static MonoMethod * inflate_method (MonoReflectionType *type, MonoObject *obj, MonoError *error);
 
 #define mono_type_array_get_and_resolve(array, index, error) mono_reflection_type_get_handle ((MonoReflectionType*)mono_array_get (array, gpointer, index), error)
 
@@ -914,59 +913,6 @@ mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m)
 		assembly, &m->klass->byval_arg, m->name, sig);
 
 	return token;
-}
-
-/*
- * Return a copy of TYPE, adding the custom modifiers in MODREQ and MODOPT.
- */
-static MonoType*
-add_custom_modifiers (MonoDynamicImage *assembly, MonoType *type, MonoArray *modreq, MonoArray *modopt, MonoError *error)
-{
-	int i, count, len, pos;
-	MonoType *t;
-
-	mono_error_init (error);
-
-	count = 0;
-	if (modreq)
-		count += mono_array_length (modreq);
-	if (modopt)
-		count += mono_array_length (modopt);
-
-	if (count == 0)
-		return mono_metadata_type_dup (NULL, type);
-
-	len = MONO_SIZEOF_TYPE + ((gint32)count) * sizeof (MonoCustomMod);
-	t = (MonoType *)g_malloc (len);
-	memcpy (t, type, MONO_SIZEOF_TYPE);
-
-	t->num_mods = count;
-	pos = 0;
-	if (modreq) {
-		for (i = 0; i < mono_array_length (modreq); ++i) {
-			MonoType *mod = mono_type_array_get_and_resolve (modreq, i, error);
-			if (!is_ok (error))
-				goto fail;
-			t->modifiers [pos].required = 1;
-			t->modifiers [pos].token = mono_image_typedef_or_ref (assembly, mod);
-			pos ++;
-		}
-	}
-	if (modopt) {
-		for (i = 0; i < mono_array_length (modopt); ++i) {
-			MonoType *mod = mono_type_array_get_and_resolve (modopt, i, error);
-			if (!is_ok (error))
-				goto fail;
-			t->modifiers [pos].required = 0;
-			t->modifiers [pos].token = mono_image_typedef_or_ref (assembly, mod);
-			pos ++;
-		}
-	}
-
-	return t;
-fail:
-	g_free (t);
-	return NULL;
 }
 
 void
@@ -3062,8 +3008,7 @@ ctorbuilder_to_mono_method (MonoClass *klass, MonoReflectionCtorBuilder* mb, Mon
 	return_val_if_nok (error, NULL);
 	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs);
 
-	/* If we are in a generic class, we might be called multiple times from inflate_method */
-	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save && !klass->generic_container) {
+	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save) {
 		/* ilgen is no longer needed */
 		mb->ilgen = NULL;
 	}
@@ -3092,108 +3037,14 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilder* mb,
 	return_val_if_nok (error, NULL);
 	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs);
 
-	/* If we are in a generic class, we might be called multiple times from inflate_method */
-	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save && !klass->generic_container) {
+	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save)
 		/* ilgen is no longer needed */
 		mb->ilgen = NULL;
-	}
 	return mb->mhandle;
 }
 #endif
 
 #ifndef DISABLE_REFLECTION_EMIT
-
-static MonoMethod *
-inflate_mono_method (MonoClass *klass, MonoMethod *method, MonoObject *obj)
-{
-	MonoMethodInflated *imethod;
-	MonoGenericContext *context;
-	int i;
-
-	/*
-	 * With generic code sharing the klass might not be inflated.
-	 * This can happen because classes inflated with their own
-	 * type arguments are "normalized" to the uninflated class.
-	 */
-	if (!klass->generic_class)
-		return method;
-
-	context = mono_class_get_context (klass);
-
-	if (klass->method.count && klass->methods) {
-		/* Find the already created inflated method */
-		for (i = 0; i < klass->method.count; ++i) {
-			g_assert (klass->methods [i]->is_inflated);
-			if (((MonoMethodInflated*)klass->methods [i])->declaring == method)
-				break;
-		}
-		g_assert (i < klass->method.count);
-		imethod = (MonoMethodInflated*)klass->methods [i];
-	} else {
-		MonoError error;
-		imethod = (MonoMethodInflated *) mono_class_inflate_generic_method_full_checked (method, klass, context, &error);
-		mono_error_assert_ok (&error);
-	}
-
-	if (method->is_generic && image_is_dynamic (method->klass->image)) {
-		MonoDynamicImage *image = (MonoDynamicImage*)method->klass->image;
-
-		mono_image_lock ((MonoImage*)image);
-		mono_g_hash_table_insert (image->generic_def_objects, imethod, obj);
-		mono_image_unlock ((MonoImage*)image);
-	}
-	return (MonoMethod *) imethod;
-}
-
-static MonoMethod *
-inflate_method (MonoReflectionType *type, MonoObject *obj, MonoError *error)
-{
-	MonoMethod *method;
-	MonoClass *gklass;
-
-	mono_error_init (error);
-
-	MonoClass *type_class = mono_object_class (type);
-
-	if (is_sre_generic_instance (type_class)) {
-		MonoReflectionGenericClass *mgc = (MonoReflectionGenericClass*)type;
-		MonoType *generic_type = mono_reflection_type_get_handle ((MonoReflectionType*)mgc->generic_type, error);
-		return_val_if_nok (error, NULL);
-		gklass = mono_class_from_mono_type (generic_type);
-	} else if (is_sre_type_builder (type_class)) {
-		MonoType *t = mono_reflection_type_get_handle (type, error);
-		return_val_if_nok (error, NULL);
-		gklass = mono_class_from_mono_type (t);
-	} else if (type->type) {
-		gklass = mono_class_from_mono_type (type->type);
-		gklass = mono_class_get_generic_type_definition (gklass);
-	} else {
-		g_error ("Can't handle type %s", mono_type_get_full_name (mono_object_class (type)));
-	}
-
-	if (!strcmp (obj->vtable->klass->name, "MethodBuilder"))
-		if (((MonoReflectionMethodBuilder*)obj)->mhandle)
-			method = ((MonoReflectionMethodBuilder*)obj)->mhandle;
-		else {
-			method = methodbuilder_to_mono_method (gklass, (MonoReflectionMethodBuilder *) obj, error);
-			if (!method)
-				return NULL;
-		}
-	else if (!strcmp (obj->vtable->klass->name, "ConstructorBuilder")) {
-		method = ctorbuilder_to_mono_method (gklass, (MonoReflectionCtorBuilder *) obj, error);
-		if (!method)
-			return NULL;
-	} else if (!strcmp (obj->vtable->klass->name, "MonoMethod") || !strcmp (obj->vtable->klass->name, "MonoCMethod"))
-		method = ((MonoReflectionMethod *) obj)->method;
-	else {
-		method = NULL; /* prevent compiler warning */
-		g_error ("can't handle type %s", obj->vtable->klass->name);
-	}
-
-	MonoType *t = mono_reflection_type_get_handle (type, error);
-	return_val_if_nok (error, NULL);
-	return inflate_mono_method (mono_class_from_mono_type (t), method, obj);
-}
 
 static void
 reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoError *error)
