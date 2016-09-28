@@ -219,8 +219,6 @@
 		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoField" preserve="fields" />
 		<type fullname="System.Reflection.MonoGenericClass" preserve="fields" />
-		<type fullname="System.Reflection.MonoGenericMethod" preserve="fields" />
-		<type fullname="System.Reflection.MonoGenericCMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoMethodInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoPropertyInfo" preserve="fields" />

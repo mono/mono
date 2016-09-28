@@ -64,8 +64,6 @@ static gboolean is_sre_type_builder (MonoClass *klass);
 static gboolean is_sre_method_builder (MonoClass *klass);
 static gboolean is_sre_field_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
-static gboolean is_sr_mono_generic_method (MonoClass *klass);
-static gboolean is_sr_mono_generic_cmethod (MonoClass *klass);
 static gboolean is_sr_mono_field (MonoClass *klass);
 
 static guint32 mono_image_get_methodspec_token (MonoDynamicImage *assembly, MonoMethod *method);
@@ -1265,9 +1263,7 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		/* These are handled in managed code */
 		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "MonoCMethod") == 0 ||
-		   strcmp (klass->name, "MonoMethod") == 0 ||
-		   strcmp (klass->name, "MonoGenericMethod") == 0 ||
-		   strcmp (klass->name, "MonoGenericCMethod") == 0) {
+			   strcmp (klass->name, "MonoMethod") == 0) {
 		MonoReflectionMethod *m = (MonoReflectionMethod *)obj;
 		if (m->method->is_inflated) {
 			if (create_open_instance)
@@ -1932,22 +1928,10 @@ mono_is_sr_mono_cmethod (MonoClass *klass)
 	check_corlib_type_cached (klass, "System.Reflection", "MonoCMethod");
 }
 
-static gboolean
-is_sr_mono_generic_method (MonoClass *klass)
-{
-	check_corlib_type_cached (klass, "System.Reflection", "MonoGenericMethod");
-}
-
-static gboolean
-is_sr_mono_generic_cmethod (MonoClass *klass)
-{
-	check_corlib_type_cached (klass, "System.Reflection", "MonoGenericCMethod");
-}
-
 gboolean
 mono_class_is_reflection_method_or_constructor (MonoClass *klass)
 {
-	return is_sr_mono_method (klass) || mono_is_sr_mono_cmethod (klass) || is_sr_mono_generic_method (klass) || is_sr_mono_generic_cmethod (klass);
+	return is_sr_mono_method (klass) || mono_is_sr_mono_cmethod (klass);
 }
 
 gboolean
@@ -3284,7 +3268,7 @@ mono_reflection_method_get_handle (MonoObject *method, MonoError *error)
 {
 	mono_error_init (error);
 	MonoClass *klass = mono_object_class (method);
-	if (is_sr_mono_method (klass) || is_sr_mono_generic_method (klass)) {
+	if (is_sr_mono_method (klass)) {
 		MonoReflectionMethod *sr_method = (MonoReflectionMethod*)method;
 		return sr_method->method;
 	}
@@ -4120,9 +4104,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		*handle_class = mono_defaults.typehandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MonoMethod") == 0 ||
-		   strcmp (obj->vtable->klass->name, "MonoCMethod") == 0 ||
-		   strcmp (obj->vtable->klass->name, "MonoGenericCMethod") == 0 ||
-		   strcmp (obj->vtable->klass->name, "MonoGenericMethod") == 0) {
+			   strcmp (obj->vtable->klass->name, "MonoCMethod") == 0) {
 		result = ((MonoReflectionMethod*)obj)->method;
 		if (context) {
 			result = mono_class_inflate_generic_method_checked ((MonoMethod *)result, context, error);

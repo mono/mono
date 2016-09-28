@@ -1742,9 +1742,7 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 				am = (MonoReflectionArrayMethod*)iltoken->member;
 				idx = am->table_idx;
 			} else if (!strcmp (iltoken->member->vtable->klass->name, "MonoMethod") ||
-				   !strcmp (iltoken->member->vtable->klass->name, "MonoCMethod") ||
-				   !strcmp (iltoken->member->vtable->klass->name, "MonoGenericMethod") ||
-				   !strcmp (iltoken->member->vtable->klass->name, "MonoGenericCMethod")) {
+					   !strcmp (iltoken->member->vtable->klass->name, "MonoCMethod")) {
 				MonoMethod *m = ((MonoReflectionMethod*)iltoken->member)->method;
 				g_assert (m->klass->generic_class || m->klass->generic_container);
 				continue;
@@ -1771,7 +1769,7 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			}
 			break;
 		case MONO_TABLE_METHODSPEC:
-			if (!strcmp (iltoken->member->vtable->klass->name, "MonoGenericMethod")) {
+			if (!strcmp (iltoken->member->vtable->klass->name, "MonoMethod")) {
 				MonoMethod *m = ((MonoReflectionMethod*)iltoken->member)->method;
 				g_assert (mono_method_signature (m)->generic_param_count);
 				continue;
