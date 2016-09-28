@@ -65,7 +65,7 @@ do-profile-check: $(depsdir)/.stamp
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need Mono version 3.8 or better installed to build MCS" 1>&2 ; \
+                echo "*** You need Mono version 4.0 or better installed to build MCS" 1>&2 ; \
                 echo "*** Check mono README for information on how to bootstrap a Mono installation." 1>&2 ; \
 		echo "*** The version of '$(BOOTSTRAP_MCS)' is: `$(BOOTSTRAP_MCS) --version`." 1>&2 ; \
 	        exit 1; fi; fi
@@ -74,17 +74,17 @@ do-profile-check: $(depsdir)/.stamp
 ifdef use_monolite
 
 do-profile-check-monolite:
-	echo "*** The contents of your 'monolite' directory may be out-of-date" 1>&2
-	echo "*** You may want to try 'make get-monolite-latest'" 1>&2
+	@echo "*** The contents of your 'monolite' directory may be out-of-date" 1>&2
+	@echo "*** You may want to try 'make get-monolite-latest'" 1>&2
 	rm -f $(monolite_flag)
 	exit 1
 
 else
 
 do-profile-check-monolite: $(depsdir)/.stamp
-	echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2
-	echo "*** Trying the 'monolite' directory." 1>&2
-	echo dummy > $(monolite_flag)
+	@echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2
+	@echo "*** Trying the 'monolite' directory." 1>&2
+	@echo dummy > $(monolite_flag)
 	$(MAKE) do-profile-check
 
 endif
