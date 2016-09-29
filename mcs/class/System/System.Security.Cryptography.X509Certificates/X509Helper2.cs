@@ -37,10 +37,47 @@ using MonoSecurity::Mono.Security.Interface;
 using Mono.Security.Interface;
 #endif
 
+using Mono.Btls;
+#endif
+
+using System.IO;
+using System.Text;
+
 namespace System.Security.Cryptography.X509Certificates
 {
 	internal static class X509Helper2
 	{
+		internal static long GetSubjectNameHash (X509Certificate certificate)
+		{
+			return GetSubjectNameHash (certificate.Impl);
+		}
+
+		internal static long GetSubjectNameHash (X509CertificateImpl impl)
+		{
+#if SECURITY_DEP
+			using (var x509 = GetNativeInstance (impl))
+				return GetSubjectNameHash (x509);
+#else
+			throw new NotSupportedException ();
+#endif
+		}
+
+		internal static void ExportAsPEM (X509Certificate certificate, Stream stream, bool includeHumanReadableForm)
+		{
+			ExportAsPEM (certificate.Impl, stream, includeHumanReadableForm);
+		}
+
+		internal static void ExportAsPEM (X509CertificateImpl impl, Stream stream, bool includeHumanReadableForm)
+		{
+#if SECURITY_DEP
+			using (var x509 = GetNativeInstance (impl))
+				ExportAsPEM (x509, stream, includeHumanReadableForm);
+#else
+			throw new NotSupportedException ();
+#endif
+		}
+
+#if SECURITY_DEP
 		internal static void Initialize ()
 		{
 			X509Helper.InstallNativeHelper (new MyNativeHelper ());
@@ -49,6 +86,29 @@ namespace System.Security.Cryptography.X509Certificates
 		internal static void ThrowIfContextInvalid (X509CertificateImpl impl)
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
+		}
+
+		static MonoBtlsX509 GetNativeInstance (X509CertificateImpl impl)
+		{
+			ThrowIfContextInvalid (impl);
+			var btlsImpl = impl as X509CertificateImplBtls;
+			if (btlsImpl != null)
+				return btlsImpl.X509.Copy ();
+			else
+				return MonoBtlsX509.LoadFromData (impl.GetRawCertData (), MonoBtlsX509Format.DER);
+		}
+
+		internal static long GetSubjectNameHash (MonoBtlsX509 x509)
+		{
+			using (var subject = x509.GetSubjectName ())
+				return subject.GetHash ();
+		}
+
+		internal static void ExportAsPEM (MonoBtlsX509 x509, Stream stream, bool includeHumanReadableForm)
+		{
+			using (var bio = MonoBtlsBio.CreateMonoStream (stream)) {
+				x509.ExportAsPEM (bio, includeHumanReadableForm);
+			}
 		}
 
 		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
@@ -111,6 +171,6 @@ namespace System.Security.Cryptography.X509Certificates
 				return X509Helper2.Import (cert);
 			}
 		}
+#endif
 	}
 }
-#endif
