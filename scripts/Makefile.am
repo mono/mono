@@ -34,8 +34,9 @@ bin_SCRIPTS = \
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mono-test-install	\
-	peverify			\
-	mcs					\
+	peverify		\
+	mcs			\
+	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
