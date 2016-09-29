@@ -70,10 +70,6 @@ namespace Mono.Net.Security
 			get { return false; }
 		}
 
-		internal override bool SupportsTlsContext {
-			get { return false; }
-		}
-
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls; }
 		}
@@ -84,15 +80,6 @@ namespace Mono.Net.Security
 		{
 			var impl = new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
 			return new Private.MonoSslStreamImpl (impl);
-		}
-
-		internal override MSI.IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
-			MSI.MonoTlsSettings settings)
-		{
-			throw new NotSupportedException ();
 		}
 	}
 }

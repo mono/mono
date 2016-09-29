@@ -69,12 +69,6 @@ namespace Mono.Net.Security
 		IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings);
-
-		IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
-			MonoEncryptionPolicy encryptionPolicy, MonoTlsSettings settings);
 #endif
 	}
 }
