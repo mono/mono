@@ -270,10 +270,14 @@ namespace Mono.CSharp {
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
 
 			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			var labels = fc.CopyLabelStack ();
 
 			var res = TrueStatement.FlowAnalysis (fc);
 
+			fc.SetLabelStack (labels);
+
 			if (FalseStatement == null) {
+
 				var c = expr as Constant;
 				if (c != null && !c.IsDefaultValue)
 					return true_returns;
@@ -288,13 +292,19 @@ namespace Mono.CSharp {
 
 			if (true_returns) {
 				fc.DefiniteAssignment = da_false;
-				return FalseStatement.FlowAnalysis (fc);
+
+				res = FalseStatement.FlowAnalysis (fc);
+				fc.SetLabelStack (labels);
+				return res;
 			}
 
 			var da_true = fc.DefiniteAssignment;
 
 			fc.DefiniteAssignment = da_false;
+
 			res &= FalseStatement.FlowAnalysis (fc);
+
+			fc.SetLabelStack (labels);
 
 			if (!TrueStatement.IsUnreachable) {
 				if (false_returns || FalseStatement.IsUnreachable)
