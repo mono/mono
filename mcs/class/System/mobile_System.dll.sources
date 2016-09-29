@@ -297,7 +297,6 @@ Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MonoSslStreamImpl.cs
 Mono.Net.Security/MonoSslStreamWrapper.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
-Mono.Net.Security/MonoTlsProviderImpl.cs
 Mono.Net.Security/MonoTlsProviderWrapper.cs
 Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs
@@ -942,7 +941,6 @@ ReferenceSources/Win32Exception.cs
 ../Mono.Security/Mono.Security.Interface/HashAlgorithmType.cs
 ../Mono.Security/Mono.Security.Interface/IBufferOffsetSize.cs
 ../Mono.Security/Mono.Security.Interface/IMonoTlsEventSink.cs
-../Mono.Security/Mono.Security.Interface/IMonoTlsContext.cs
 ../Mono.Security/Mono.Security.Interface/IMonoSslStream.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsProvider.cs

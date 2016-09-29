@@ -92,7 +92,6 @@
     <Compile Include=".\Mono.Security.Interface\HashAlgorithmType.cs" />
     <Compile Include=".\Mono.Security.Interface\IBufferOffsetSize.cs" />
     <Compile Include=".\Mono.Security.Interface\IMonoSslStream.cs" />
-    <Compile Include=".\Mono.Security.Interface\IMonoTlsContext.cs" />
     <Compile Include=".\Mono.Security.Interface\IMonoTlsEventSink.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsConnectionInfo.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsProvider.cs" />
