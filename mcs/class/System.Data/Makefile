@@ -12,11 +12,17 @@ LIB_MCS_FLAGS = \
 	-d:MONO_PARTIAL_DATA_IMPORT \
 	-unsafe
 
+ifdef NO_MONO_SECURITY
+MONO_DATA_TDS=
+else
+MONO_DATA_TDS=Mono.Data.Tds
+endif
+
 ifdef MOBILE_PROFILE
-LIB_REFS += Mono.Data.Tds System.Transactions
+LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
-LIB_REFS += System.EnterpriseServices Mono.Data.Tds System.Configuration System.Transactions
+LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
 BUILT_SOURCES = \
 	gen_OdbcConnection.cs \
 	gen_OleDbConnection.cs \
