@@ -386,11 +386,11 @@ class MakeBundle {
 					}
 				}
 				
-				Console.WriteLine ("Using runtime {0} for {1}", runtime, output);
 			}
 			GeneratePackage (files);
 		}
-		
+		Console.WriteLine ("Generated {0}", output);
+
 		return 0;
 	}
 
@@ -608,6 +608,7 @@ class MakeBundle {
 		}
 		
 		var maker = new PackageMaker (output);
+		Console.WriteLine ("Using runtime: " + runtime);
 		maker.AddFile (runtime);
 		
 		foreach (var url in files){
@@ -615,9 +616,13 @@ class MakeBundle {
 			string aname = MakeBundle.GetAssemblyName (fname);
 
 			maker.Add ("assembly:" + aname, fname);
-			if (File.Exists (fname + ".config"))
+			Console.WriteLine ("     Assembly: " + fname);
+			if (File.Exists (fname + ".config")){
 				maker.Add ("config:" + aname, fname + ".config");
+				Console.WriteLine ("       Config: " + runtime);
+			}
 		}
+		
 		if (!MaybeAddFile (maker, "systemconfig:", config_file) || !MaybeAddFile (maker, "machineconfig:", machine_config_file))
 			return false;
 
@@ -631,6 +636,7 @@ class MakeBundle {
 		}
 		if (libraries.Count > 0){
 			foreach (var alias_and_path in libraries){
+				Console.WriteLine ("     Library:  " + alias_and_path.Value);
 				maker.Add ("library:" + alias_and_path.Key, alias_and_path.Value);
 			}
 		}
