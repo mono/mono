@@ -81,6 +81,19 @@ namespace Mono.Net.Security
 			var impl = new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
 			return new Private.MonoSslStreamImpl (impl);
 		}
+
+		internal override bool ValidateCertificate (
+			MSI.ICertificateValidator2 validator, string targetHost, bool serverMode,
+			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
+			ref MSI.MonoSslPolicyErrors errors, ref int status11)
+		{
+			if (wantsChain)
+				chain = SystemCertificateValidator.CreateX509Chain (certificates);
+			var xerrors = (SslPolicyErrors)errors;
+			var result = SystemCertificateValidator.Evaluate (validator.Settings, targetHost, certificates, chain, ref xerrors, ref status11);
+			errors = (MSI.MonoSslPolicyErrors)xerrors;
+			return result;
+		}
 	}
 }
 #endif

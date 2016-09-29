@@ -324,17 +324,9 @@ namespace Mono.Net.Security
 					wantsChain = true;
 			}
 
-			bool providerValidated = false;
-			if (provider != null && provider.HasCustomSystemCertificateValidator) {
-				var xerrors = (MonoSslPolicyErrors)errors;
-				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, wantsChain, ref chain, out result, ref xerrors, ref status11);
-				errors = (SslPolicyErrors)xerrors;
-			} else if (wantsChain) {
-				chain = SystemCertificateValidator.CreateX509Chain (certs);
-			}
-
-			if (!providerValidated)
-				result = SystemCertificateValidator.Evaluate (settings, host, certs, chain, ref errors, ref status11);
+			var xerrors = (MonoSslPolicyErrors)errors;
+			result = provider.ValidateCertificate (this, host, server, certs, wantsChain, ref chain, ref xerrors, ref status11);
+			errors = (SslPolicyErrors)xerrors;
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
