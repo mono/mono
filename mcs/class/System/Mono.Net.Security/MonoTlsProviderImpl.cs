@@ -71,37 +71,6 @@ namespace Mono.Net.Security.Private
 			var sslStream = CreateSslStreamImpl (innerStream, leaveInnerStreamOpen, settings);
 			return new MonoSslStreamImpl (sslStream);
 		}
-
-		MSI.IMonoTlsContext IMonoTlsProvider.CreateTlsContext (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
-			MSI.MonoEncryptionPolicy encryptionPolicy, MSI.MonoTlsSettings settings)
-		{
-			return CreateTlsContextImpl (
-				hostname, serverMode, protocolFlags,
-				serverCertificate, clientCertificates,
-				remoteCertRequired, encryptionPolicy, settings);
-		}
-
-		protected abstract MSI.IMonoTlsContext CreateTlsContextImpl (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
-			MSI.MonoTlsSettings settings);
-
-		internal override MSI.IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
-			MSI.MonoTlsSettings settings)
-		{
-			return CreateTlsContextImpl (
-				hostname, serverMode, (MSI.TlsProtocols)protocolFlags,
-				serverCertificate, clientCertificates,
-				remoteCertRequired, (MSI.MonoEncryptionPolicy)encryptionPolicy,
-				settings);
-		}
 	}
 }
 

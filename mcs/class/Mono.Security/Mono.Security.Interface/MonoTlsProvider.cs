@@ -171,23 +171,5 @@ namespace Mono.Security.Interface
 		}
 
 #endregion
-
-#region Manged SSPI
-
-		/*
-		 * The managed SSPI implementation from the new TLS code.
-		 */
-
-		internal abstract bool SupportsTlsContext {
-			get;
-		}
-
-		internal abstract IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,
-			MonoTlsSettings settings);
-
-#endregion
 	}
 }
