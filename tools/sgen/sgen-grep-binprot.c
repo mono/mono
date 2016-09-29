@@ -571,8 +571,13 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 		return FALSE;
 	if (type == PROTOCOL_ID (binary_protocol_header)) {
 		PROTOCOL_STRUCT (binary_protocol_header) * str = (PROTOCOL_STRUCT (binary_protocol_header) *) data;
-		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P)
+		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P) {
+			if (str->version > PROTOCOL_HEADER_VERSION) {
+				fprintf (stderr, "The file contains a newer version %d. We support up to %d. Please update.\n", str->version, PROTOCOL_HEADER_VERSION);
+				exit (1);
+			}
 			return TRUE;
+		}
 	}
 	return FALSE;
 #else
