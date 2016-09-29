@@ -131,9 +131,6 @@ namespace Mono.Btls
 		extern static void mono_btls_x509_free (IntPtr handle);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static IntPtr mono_btls_x509_martin_test (IntPtr handle);
-
-		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static IntPtr mono_btls_x509_dup (IntPtr handle);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -144,11 +141,6 @@ namespace Mono.Btls
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static int mono_btls_x509_add_explicit_trust (IntPtr handle, MonoBtlsX509TrustKind kind);
-
-		internal void MartinTest ()
-		{
-			mono_btls_x509_martin_test (Handle.DangerousGetHandle ());
-		}
 
 		internal MonoBtlsX509 Copy ()
 		{

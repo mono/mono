@@ -101,21 +101,6 @@ namespace Mono.Btls
 			return new MonoBtlsX509 (new MonoBtlsX509.BoringX509Handle (handle));
 		}
 
-#if MARTIN_TEST
-		public void Dump ()
-		{
-			Console.Error.WriteLine ("CHAIN: {0:x} {1}", Handle, Count);
-			for (int i = 0; i < Count; i++) {
-				using (var cert = GetCertificate (i)) {
-					var bcert = new X509CertificateImplBoring (cert);
-					var mcert = new X509Certificate (bcert);
-					Console.Error.WriteLine ("CERT: {0} - {1}", cert.GetSubjectName (), mcert.ToString (true));
-					MartinTest.PrintCertificate (mcert);
-				}
-			}
-		}
-#endif
-
 		public void AddCertificate (MonoBtlsX509 x509)
 		{
 			mono_btls_pkcs12_add_cert (

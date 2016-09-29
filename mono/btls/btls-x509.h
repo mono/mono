@@ -115,9 +115,6 @@ mono_btls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *si
 int
 mono_btls_x509_print (X509 *x509, BIO *bio);
 
-void
-mono_btls_x509_martin_test (X509 *x509);
-
 int
 mono_btls_x509_add_trust_object (X509 *x509, MonoBtlsX509Purpose purpose);
 

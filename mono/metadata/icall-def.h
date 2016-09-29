@@ -196,7 +196,6 @@ ICALL(BTLS_X509_21, "mono_btls_x509_get_subject_key_identifier", mono_btls_x509_
 ICALL(BTLS_X509_22, "mono_btls_x509_get_subject_name", mono_btls_x509_get_subject_name)
 ICALL(BTLS_X509_23, "mono_btls_x509_get_subject_name_string", mono_btls_x509_get_subject_name_string)
 ICALL(BTLS_X509_24, "mono_btls_x509_get_version", mono_btls_x509_get_version)
-ICALL(BTLS_X509_24a, "mono_btls_x509_martin_test", mono_btls_x509_martin_test)
 ICALL(BTLS_X509_25, "mono_btls_x509_print", mono_btls_x509_print)
 ICALL(BTLS_X509_26, "mono_btls_x509_up_ref", mono_btls_x509_up_ref)
 

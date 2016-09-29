@@ -311,18 +311,6 @@ mono_btls_x509_get_pubkey (X509 *x509)
 	return X509_get_pubkey (x509);
 }
 
-void
-mono_btls_x509_martin_test (X509 *x509)
-{
-	ASN1_OCTET_STRING *skid;
-
-	if (X509_get_version (x509) != 2)
-		return;
-
-	skid = X509_get_ext_d2i (x509, NID_subject_key_identifier, NULL, NULL);
-	fprintf (stderr, "TEST: %p\n", skid);
-}
-
 int
 mono_btls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *size)
 {
