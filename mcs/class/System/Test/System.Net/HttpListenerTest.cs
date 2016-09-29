@@ -44,6 +44,12 @@ namespace MonoTests.System.Net {
 			get { return _port ?? (_port = NetworkHelpers.FindFreePort ()).Value; }
 		}
 
+		[TearDown]
+		public void Teardown ()
+		{
+			_port = null;
+		}
+
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
