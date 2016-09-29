@@ -70,10 +70,6 @@ namespace Mono.Net.Security
 			get { return false; }
 		}
 
-		internal override bool SupportsTlsContext {
-			get { return false; }
-		}
-
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls; }
 		}
@@ -86,13 +82,17 @@ namespace Mono.Net.Security
 			return new Private.MonoSslStreamImpl (impl);
 		}
 
-		internal override MSI.IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
-			MSI.MonoTlsSettings settings)
+		internal override bool ValidateCertificate (
+			MSI.ICertificateValidator2 validator, string targetHost, bool serverMode,
+			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
+			ref MSI.MonoSslPolicyErrors errors, ref int status11)
 		{
-			throw new NotSupportedException ();
+			if (wantsChain)
+				chain = SystemCertificateValidator.CreateX509Chain (certificates);
+			var xerrors = (SslPolicyErrors)errors;
+			var result = SystemCertificateValidator.Evaluate (validator.Settings, targetHost, certificates, chain, ref xerrors, ref status11);
+			errors = (MSI.MonoSslPolicyErrors)xerrors;
+			return result;
 		}
 	}
 }
