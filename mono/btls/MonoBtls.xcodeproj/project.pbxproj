@@ -1,0 +1,393 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5BB1FA6C1C88EB3D00003FC1 /* btls-x509-store.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1FA6A1C88EB3D00003FC1 /* btls-x509-store.c */; };
+		5BB1FA6D1C88EB3D00003FC1 /* btls-x509-store.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB1FA6B1C88EB3D00003FC1 /* btls-x509-store.h */; };
+		5BB1FA701C88FE4200003FC1 /* btls-x509-chain.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1FA6E1C88FE4200003FC1 /* btls-x509-chain.c */; };
+		5BB1FA711C88FE4200003FC1 /* btls-x509-chain.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB1FA6F1C88FE4200003FC1 /* btls-x509-chain.h */; };
+		5BBF76F51CBBE74A002A9E71 /* btls-ssl-ctx.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BBF76F31CBBE74A002A9E71 /* btls-ssl-ctx.c */; };
+		5BBF76F61CBBE74A002A9E71 /* btls-ssl-ctx.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBF76F41CBBE74A002A9E71 /* btls-ssl-ctx.h */; };
+		5BCFFA9B1BF70E4200AF5C29 /* btls-ssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BCFFA991BF70E4200AF5C29 /* btls-ssl.c */; };
+		5BCFFA9C1BF70E4200AF5C29 /* btls-ssl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BCFFA9A1BF70E4200AF5C29 /* btls-ssl.h */; };
+		5BCFFA9E1BF710F600AF5C29 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCFFA9D1BF710F600AF5C29 /* libssl.a */; };
+		5BCFFAA01BF7113400AF5C29 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCFFA9F1BF7113400AF5C29 /* libcrypto.a */; };
+		5BCFFAA31BF8004100AF5C29 /* btls-bio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BCFFAA11BF8004100AF5C29 /* btls-bio.c */; };
+		5BCFFAA41BF8004100AF5C29 /* btls-bio.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BCFFAA21BF8004100AF5C29 /* btls-bio.h */; };
+		5BCFFAA71BF8353A00AF5C29 /* btls-x509.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BCFFAA51BF8353A00AF5C29 /* btls-x509.c */; };
+		5BCFFAA81BF8353A00AF5C29 /* btls-x509.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BCFFAA61BF8353A00AF5C29 /* btls-x509.h */; };
+		5BD15FB51C8E659500570114 /* btls-key.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD15FB31C8E659500570114 /* btls-key.c */; };
+		5BD15FB61C8E659500570114 /* btls-key.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD15FB41C8E659500570114 /* btls-key.h */; };
+		5BD15FB91C8FCAC700570114 /* btls-pkcs12.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD15FB71C8FCAC700570114 /* btls-pkcs12.c */; };
+		5BD15FBA1C8FCAC700570114 /* btls-pkcs12.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD15FB81C8FCAC700570114 /* btls-pkcs12.h */; };
+		5BD74D501CA3281900BEF576 /* btls-x509-crl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD74D4E1CA3281900BEF576 /* btls-x509-crl.c */; };
+		5BD74D511CA3281900BEF576 /* btls-x509-crl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD74D4F1CA3281900BEF576 /* btls-x509-crl.h */; };
+		5BD74D541CA3304800BEF576 /* btls-x509-revoked.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD74D521CA3304800BEF576 /* btls-x509-revoked.c */; };
+		5BD74D551CA3304800BEF576 /* btls-x509-revoked.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD74D531CA3304800BEF576 /* btls-x509-revoked.h */; };
+		5BD74D581CA352DF00BEF576 /* btls-util.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD74D561CA352DF00BEF576 /* btls-util.c */; };
+		5BD74D591CA352DF00BEF576 /* btls-util.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD74D571CA352DF00BEF576 /* btls-util.h */; };
+		5BD9522C1C8BC7B7009CB396 /* btls-x509-store-ctx.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD9522A1C8BC7B7009CB396 /* btls-x509-store-ctx.c */; };
+		5BD9522D1C8BC7B7009CB396 /* btls-x509-store-ctx.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD9522B1C8BC7B7009CB396 /* btls-x509-store-ctx.h */; };
+		5BD952301C8BDFE7009CB396 /* btls-x509-verify-param.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD9522E1C8BDFE7009CB396 /* btls-x509-verify-param.c */; };
+		5BD952311C8BDFE7009CB396 /* btls-x509-verify-param.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD9522F1C8BDFE7009CB396 /* btls-x509-verify-param.h */; };
+		5BD952341C8BED76009CB396 /* btls-x509-name.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD952321C8BED76009CB396 /* btls-x509-name.c */; };
+		5BD952351C8BED76009CB396 /* btls-x509-name.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD952331C8BED76009CB396 /* btls-x509-name.h */; };
+		5BD952381C8BFFED009CB396 /* btls-x509-lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD952361C8BFFED009CB396 /* btls-x509-lookup.c */; };
+		5BD952391C8BFFED009CB396 /* btls-x509-lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD952371C8BFFED009CB396 /* btls-x509-lookup.h */; };
+		5BD9523C1C8C0DA2009CB396 /* btls-x509-lookup-method.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BD9523A1C8C0DA2009CB396 /* btls-x509-lookup-method.c */; };
+		5BD9523D1C8C0DA2009CB396 /* btls-x509-lookup-method.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD9523B1C8C0DA2009CB396 /* btls-x509-lookup-method.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5BB1FA6A1C88EB3D00003FC1 /* btls-x509-store.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-store.c; sourceTree = "<group>"; };
+		5BB1FA6B1C88EB3D00003FC1 /* btls-x509-store.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-store.h; sourceTree = "<group>"; };
+		5BB1FA6E1C88FE4200003FC1 /* btls-x509-chain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-chain.c; sourceTree = "<group>"; };
+		5BB1FA6F1C88FE4200003FC1 /* btls-x509-chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-chain.h; sourceTree = "<group>"; };
+		5BBF76F31CBBE74A002A9E71 /* btls-ssl-ctx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-ssl-ctx.c; sourceTree = "<group>"; };
+		5BBF76F41CBBE74A002A9E71 /* btls-ssl-ctx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-ssl-ctx.h; sourceTree = "<group>"; };
+		5BCFFA921BF70DC000AF5C29 /* libMonoBtls.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libMonoBtls.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BCFFA991BF70E4200AF5C29 /* btls-ssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-ssl.c; sourceTree = "<group>"; };
+		5BCFFA9A1BF70E4200AF5C29 /* btls-ssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-ssl.h; sourceTree = "<group>"; };
+		5BCFFA9D1BF710F600AF5C29 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../boringssl/build/ssl/libssl.a; sourceTree = "<group>"; };
+		5BCFFA9F1BF7113400AF5C29 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../boringssl/build/crypto/libcrypto.a; sourceTree = "<group>"; };
+		5BCFFAA11BF8004100AF5C29 /* btls-bio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-bio.c; sourceTree = "<group>"; };
+		5BCFFAA21BF8004100AF5C29 /* btls-bio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-bio.h; sourceTree = "<group>"; };
+		5BCFFAA51BF8353A00AF5C29 /* btls-x509.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509.c; sourceTree = "<group>"; };
+		5BCFFAA61BF8353A00AF5C29 /* btls-x509.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509.h; sourceTree = "<group>"; };
+		5BD15FB31C8E659500570114 /* btls-key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-key.c; sourceTree = "<group>"; };
+		5BD15FB41C8E659500570114 /* btls-key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-key.h; sourceTree = "<group>"; };
+		5BD15FB71C8FCAC700570114 /* btls-pkcs12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-pkcs12.c; sourceTree = "<group>"; };
+		5BD15FB81C8FCAC700570114 /* btls-pkcs12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-pkcs12.h; sourceTree = "<group>"; };
+		5BD74D4E1CA3281900BEF576 /* btls-x509-crl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-crl.c; sourceTree = "<group>"; };
+		5BD74D4F1CA3281900BEF576 /* btls-x509-crl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-crl.h; sourceTree = "<group>"; };
+		5BD74D521CA3304800BEF576 /* btls-x509-revoked.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-revoked.c; sourceTree = "<group>"; };
+		5BD74D531CA3304800BEF576 /* btls-x509-revoked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-revoked.h; sourceTree = "<group>"; };
+		5BD74D561CA352DF00BEF576 /* btls-util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-util.c; sourceTree = "<group>"; };
+		5BD74D571CA352DF00BEF576 /* btls-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-util.h; sourceTree = "<group>"; };
+		5BD9522A1C8BC7B7009CB396 /* btls-x509-store-ctx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-store-ctx.c; sourceTree = "<group>"; };
+		5BD9522B1C8BC7B7009CB396 /* btls-x509-store-ctx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-store-ctx.h; sourceTree = "<group>"; };
+		5BD9522E1C8BDFE7009CB396 /* btls-x509-verify-param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-verify-param.c; sourceTree = "<group>"; };
+		5BD9522F1C8BDFE7009CB396 /* btls-x509-verify-param.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-verify-param.h; sourceTree = "<group>"; };
+		5BD952321C8BED76009CB396 /* btls-x509-name.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-name.c; sourceTree = "<group>"; };
+		5BD952331C8BED76009CB396 /* btls-x509-name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-name.h; sourceTree = "<group>"; };
+		5BD952361C8BFFED009CB396 /* btls-x509-lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-lookup.c; sourceTree = "<group>"; };
+		5BD952371C8BFFED009CB396 /* btls-x509-lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-lookup.h; sourceTree = "<group>"; };
+		5BD9523A1C8C0DA2009CB396 /* btls-x509-lookup-method.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btls-x509-lookup-method.c; sourceTree = "<group>"; };
+		5BD9523B1C8C0DA2009CB396 /* btls-x509-lookup-method.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = btls-x509-lookup-method.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5BCFFA8F1BF70DC000AF5C29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BCFFAA01BF7113400AF5C29 /* libcrypto.a in Frameworks */,
+				5BCFFA9E1BF710F600AF5C29 /* libssl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5BCFFA891BF70DC000AF5C29 = {
+			isa = PBXGroup;
+			children = (
+				5BBF76F31CBBE74A002A9E71 /* btls-ssl-ctx.c */,
+				5BBF76F41CBBE74A002A9E71 /* btls-ssl-ctx.h */,
+				5BD74D561CA352DF00BEF576 /* btls-util.c */,
+				5BD74D571CA352DF00BEF576 /* btls-util.h */,
+				5BD74D521CA3304800BEF576 /* btls-x509-revoked.c */,
+				5BD74D531CA3304800BEF576 /* btls-x509-revoked.h */,
+				5BD74D4E1CA3281900BEF576 /* btls-x509-crl.c */,
+				5BD74D4F1CA3281900BEF576 /* btls-x509-crl.h */,
+				5BD15FB71C8FCAC700570114 /* btls-pkcs12.c */,
+				5BD15FB81C8FCAC700570114 /* btls-pkcs12.h */,
+				5BD15FB31C8E659500570114 /* btls-key.c */,
+				5BD15FB41C8E659500570114 /* btls-key.h */,
+				5BD9523A1C8C0DA2009CB396 /* btls-x509-lookup-method.c */,
+				5BD9523B1C8C0DA2009CB396 /* btls-x509-lookup-method.h */,
+				5BD952361C8BFFED009CB396 /* btls-x509-lookup.c */,
+				5BD952371C8BFFED009CB396 /* btls-x509-lookup.h */,
+				5BD952321C8BED76009CB396 /* btls-x509-name.c */,
+				5BD952331C8BED76009CB396 /* btls-x509-name.h */,
+				5BD9522E1C8BDFE7009CB396 /* btls-x509-verify-param.c */,
+				5BD9522F1C8BDFE7009CB396 /* btls-x509-verify-param.h */,
+				5BD9522A1C8BC7B7009CB396 /* btls-x509-store-ctx.c */,
+				5BD9522B1C8BC7B7009CB396 /* btls-x509-store-ctx.h */,
+				5BB1FA6E1C88FE4200003FC1 /* btls-x509-chain.c */,
+				5BB1FA6F1C88FE4200003FC1 /* btls-x509-chain.h */,
+				5BB1FA6A1C88EB3D00003FC1 /* btls-x509-store.c */,
+				5BB1FA6B1C88EB3D00003FC1 /* btls-x509-store.h */,
+				5BCFFAA51BF8353A00AF5C29 /* btls-x509.c */,
+				5BCFFAA61BF8353A00AF5C29 /* btls-x509.h */,
+				5BCFFAA11BF8004100AF5C29 /* btls-bio.c */,
+				5BCFFAA21BF8004100AF5C29 /* btls-bio.h */,
+				5BCFFA9F1BF7113400AF5C29 /* libcrypto.a */,
+				5BCFFA9D1BF710F600AF5C29 /* libssl.a */,
+				5BCFFA991BF70E4200AF5C29 /* btls-ssl.c */,
+				5BCFFA9A1BF70E4200AF5C29 /* btls-ssl.h */,
+				5BCFFA931BF70DC000AF5C29 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5BCFFA931BF70DC000AF5C29 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5BCFFA921BF70DC000AF5C29 /* libMonoBtls.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5BCFFA901BF70DC000AF5C29 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BD952311C8BDFE7009CB396 /* btls-x509-verify-param.h in Headers */,
+				5BB1FA6D1C88EB3D00003FC1 /* btls-x509-store.h in Headers */,
+				5BCFFAA81BF8353A00AF5C29 /* btls-x509.h in Headers */,
+				5BBF76F61CBBE74A002A9E71 /* btls-ssl-ctx.h in Headers */,
+				5BD74D551CA3304800BEF576 /* btls-x509-revoked.h in Headers */,
+				5BD952351C8BED76009CB396 /* btls-x509-name.h in Headers */,
+				5BD74D511CA3281900BEF576 /* btls-x509-crl.h in Headers */,
+				5BD9522D1C8BC7B7009CB396 /* btls-x509-store-ctx.h in Headers */,
+				5BD9523D1C8C0DA2009CB396 /* btls-x509-lookup-method.h in Headers */,
+				5BD15FBA1C8FCAC700570114 /* btls-pkcs12.h in Headers */,
+				5BD74D591CA352DF00BEF576 /* btls-util.h in Headers */,
+				5BD952391C8BFFED009CB396 /* btls-x509-lookup.h in Headers */,
+				5BD15FB61C8E659500570114 /* btls-key.h in Headers */,
+				5BCFFA9C1BF70E4200AF5C29 /* btls-ssl.h in Headers */,
+				5BB1FA711C88FE4200003FC1 /* btls-x509-chain.h in Headers */,
+				5BCFFAA41BF8004100AF5C29 /* btls-bio.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5BCFFA911BF70DC000AF5C29 /* MonoBtls */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BCFFA961BF70DC000AF5C29 /* Build configuration list for PBXNativeTarget "MonoBtls" */;
+			buildPhases = (
+				5BCFFA8E1BF70DC000AF5C29 /* Sources */,
+				5BCFFA8F1BF70DC000AF5C29 /* Frameworks */,
+				5BCFFA901BF70DC000AF5C29 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MonoBtls;
+			productName = MonoBtls;
+			productReference = 5BCFFA921BF70DC000AF5C29 /* libMonoBtls.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5BCFFA8A1BF70DC000AF5C29 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = Xamarin;
+				TargetAttributes = {
+					5BCFFA911BF70DC000AF5C29 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 5BCFFA8D1BF70DC000AF5C29 /* Build configuration list for PBXProject "MonoBtls" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5BCFFA891BF70DC000AF5C29;
+			productRefGroup = 5BCFFA931BF70DC000AF5C29 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5BCFFA911BF70DC000AF5C29 /* MonoBtls */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5BCFFA8E1BF70DC000AF5C29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BD74D501CA3281900BEF576 /* btls-x509-crl.c in Sources */,
+				5BD9523C1C8C0DA2009CB396 /* btls-x509-lookup-method.c in Sources */,
+				5BD74D541CA3304800BEF576 /* btls-x509-revoked.c in Sources */,
+				5BCFFAA31BF8004100AF5C29 /* btls-bio.c in Sources */,
+				5BD9522C1C8BC7B7009CB396 /* btls-x509-store-ctx.c in Sources */,
+				5BCFFA9B1BF70E4200AF5C29 /* btls-ssl.c in Sources */,
+				5BD952301C8BDFE7009CB396 /* btls-x509-verify-param.c in Sources */,
+				5BD15FB91C8FCAC700570114 /* btls-pkcs12.c in Sources */,
+				5BD952381C8BFFED009CB396 /* btls-x509-lookup.c in Sources */,
+				5BD15FB51C8E659500570114 /* btls-key.c in Sources */,
+				5BCFFAA71BF8353A00AF5C29 /* btls-x509.c in Sources */,
+				5BB1FA701C88FE4200003FC1 /* btls-x509-chain.c in Sources */,
+				5BD952341C8BED76009CB396 /* btls-x509-name.c in Sources */,
+				5BB1FA6C1C88EB3D00003FC1 /* btls-x509-store.c in Sources */,
+				5BBF76F51CBBE74A002A9E71 /* btls-ssl-ctx.c in Sources */,
+				5BD74D581CA352DF00BEF576 /* btls-util.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5BCFFA941BF70DC000AF5C29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.11;
+			};
+			name = Debug;
+		};
+		5BCFFA951BF70DC000AF5C29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx10.11;
+			};
+			name = Release;
+		};
+		5BCFFA971BF70DC000AF5C29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../boringssl/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Developer/Work/fluffy-octo-duck/boringssl/build/ssl",
+					"/Developer/Work/fluffy-octo-duck/boringssl/build/crypto",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+			};
+			name = Debug;
+		};
+		5BCFFA981BF70DC000AF5C29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../boringssl/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Developer/Work/fluffy-octo-duck/boringssl/build/ssl",
+					"/Developer/Work/fluffy-octo-duck/boringssl/build/crypto",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.11;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5BCFFA8D1BF70DC000AF5C29 /* Build configuration list for PBXProject "MonoBtls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BCFFA941BF70DC000AF5C29 /* Debug */,
+				5BCFFA951BF70DC000AF5C29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BCFFA961BF70DC000AF5C29 /* Build configuration list for PBXNativeTarget "MonoBtls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BCFFA971BF70DC000AF5C29 /* Debug */,
+				5BCFFA981BF70DC000AF5C29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5BCFFA8A1BF70DC000AF5C29 /* Project object */;
+}

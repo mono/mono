@@ -1,0 +1,75 @@
+macro (get_target_property_with_default variable target property default_value)
+	get_target_property (${variable} ${target} ${property})
+	if (${variable} MATCHES NOTFOUND)
+		set (${variable} ${default_value})
+	endif (${variable} MATCHES NOTFOUND)
+endmacro (get_target_property_with_default)
+
+function (create_libtool name template enable_shared enable_static shared_target static_target dir)
+	set (script ${PROJECT_SOURCE_DIR}/generate-libtool.sh)
+	set (lafile lib${name}.la)
+	set (lafile_path ${PROJECT_BINARY_DIR}/${lafile})
+	if (${enable_shared})
+		set (dlname $<TARGET_FILE_NAME:${shared_target}>)
+		set (soname $<TARGET_SONAME_FILE_NAME:${shared_target}>)
+	else ()
+		set (dlname '')
+		set (soname '')
+	endif ()
+	if (${enable_static})
+		set (old_library $<TARGET_FILE_NAME:${static_target}>)
+	else ()
+		set (old_library '')
+	endif ()
+	set (libdir ${dir})
+
+	if (${enable_shared})
+		get_target_property_with_default (target_current ${shared_target} LT_VERSION_CURRENT 0)
+		get_target_property_with_default (target_dependency_libs ${shared_target} LT_DEPENDENCY_LIBS "")
+		get_target_property_with_default (target_current ${shared_target} LT_VERSION_CURRENT 0)
+		get_target_property_with_default (target_age ${shared_target} LT_VERSION_AGE 0)
+		get_target_property_with_default (target_revision ${shared_target} LT_VERSION_REVISION 0)
+		get_target_property_with_default (target_installed ${shared_target} LT_INSTALLED yes)
+		get_target_property_with_default (target_shouldnotlink ${shared_target} LT_SHOULDNOTLINK yes)
+		get_target_property_with_default (target_dlopen ${shared_target} LT_DLOPEN "")
+		get_target_property_with_default (target_dlpreopen ${shared_target} LT_DLPREOPEN "")
+		set (library_names "'${soname}.${target_current}.${target_age}.${target_revision} ${soname}.${target_current} ${soname}'")
+	else ()
+		set (target_current '')
+		set (target_dependency_libs '')
+		set (target_current '')
+		set (target_age '')
+		set (target_revision '')
+		set (target_installed no)
+		set (target_shouldnotlink yes)
+		set (target_dlopen '')
+		set (target_dlpreopen '')
+		set (library_name '')
+	endif ()
+
+	set (
+		script_args
+
+		${template}
+		${lafile_path}
+		${lafile}
+		${dlname}
+		${libdir}
+		${library_names}
+		${old_library}
+		${target_current}
+		${target_age}
+		${target_revision}
+		${target_installed}
+	)
+
+	add_custom_command (
+		OUTPUT ${lafile}
+		COMMAND ${script} ${script_args}
+	)
+	add_custom_target (
+		create_libtool_${name} ALL
+		DEPENDS ${lafile}
+	)
+endfunction (create_libtool)
+
