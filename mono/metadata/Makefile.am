@@ -292,7 +292,7 @@ libmonoruntime_static_la_LIBADD = $(bundle_obj) libmonoruntime-config.la $(btls_
 libmonoruntimesgen_static_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)
 libmonoruntimesgen_static_la_LDFLAGS = -static
 libmonoruntimesgen_static_la_CFLAGS = $(SGEN_DEFINES)
-libmonoruntimesgen_static_la_LIBADD = $(libmonoruntime-config.la) $(btls_static_libs)
+libmonoruntimesgen_static_la_LIBADD = libmonoruntime-config.la $(btls_static_libs)
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
