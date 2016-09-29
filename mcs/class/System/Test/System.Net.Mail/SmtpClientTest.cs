@@ -34,6 +34,7 @@ namespace MonoTests.System.Net.Mail
 		[TearDown]
 		public void TearDown ()
 		{
+			_smtp = null;
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
 		}
