@@ -43,6 +43,7 @@ mono_sre_generic_param_table_entry_free (GenericParamTableEntry *entry)
 }
 
 static GENERATE_GET_CLASS_WITH_CACHE (marshal_as_attribute, System.Runtime.InteropServices, MarshalAsAttribute);
+static GENERATE_GET_CLASS_WITH_CACHE (module_builder, System.Reflection.Emit, ModuleBuilder);
 
 #ifndef DISABLE_REFLECTION_EMIT
 static guint32 mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, gboolean create_typespec);
@@ -4010,16 +4011,17 @@ ensure_complete_type (MonoClass *klass, MonoError *error)
 gpointer
 mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, MonoGenericContext *context, MonoError *error)
 {
+	MonoClass *oklass = obj->vtable->klass;
 	gpointer result = NULL;
 
 	mono_error_init (error);
 
-	if (strcmp (obj->vtable->klass->name, "String") == 0) {
+	if (strcmp (oklass->name, "String") == 0) {
 		result = mono_string_intern_checked ((MonoString*)obj, error);
 		return_val_if_nok (error, NULL);
 		*handle_class = mono_defaults.string_class;
 		g_assert (result);
-	} else if (strcmp (obj->vtable->klass->name, "RuntimeType") == 0) {
+	} else if (strcmp (oklass->name, "RuntimeType") == 0) {
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)obj, error);
 		return_val_if_nok (error, NULL);
 		MonoClass *mc = mono_class_from_mono_type (type);
@@ -4039,8 +4041,8 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.typehandle_class;
 		g_assert (result);
-	} else if (strcmp (obj->vtable->klass->name, "MonoMethod") == 0 ||
-			   strcmp (obj->vtable->klass->name, "MonoCMethod") == 0) {
+	} else if (strcmp (oklass->name, "MonoMethod") == 0 ||
+			   strcmp (oklass->name, "MonoCMethod") == 0) {
 		result = ((MonoReflectionMethod*)obj)->method;
 		if (context) {
 			result = mono_class_inflate_generic_method_checked ((MonoMethod *)result, context, error);
@@ -4048,31 +4050,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
-	} else if (strcmp (obj->vtable->klass->name, "MethodBuilder") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		g_assert (obj);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "ConstructorBuilder") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		g_assert (obj);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "MonoField") == 0) {
+	} else if (strcmp (oklass->name, "MonoField") == 0) {
 		MonoClassField *field = ((MonoReflectionField*)obj)->field;
 
 		ensure_complete_type (field->parent, error);
@@ -4097,19 +4075,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.fieldhandle_class;
 		g_assert (result);
-	} else if (strcmp (obj->vtable->klass->name, "FieldBuilder") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		g_assert (obj);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "TypeBuilder") == 0) {
+	} else if (strcmp (oklass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)obj;
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)tb, error);
 		return_val_if_nok (error, NULL);
@@ -4127,7 +4093,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			g_assert (result);
 		}
 		*handle_class = mono_defaults.typehandle_class;
-	} else if (strcmp (obj->vtable->klass->name, "SignatureHelper") == 0) {
+	} else if (strcmp (oklass->name, "SignatureHelper") == 0) {
 		MonoReflectionSigHelper *helper = (MonoReflectionSigHelper*)obj;
 		MonoMethodSignature *sig;
 		int nargs, i;
@@ -4163,73 +4129,13 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 
 		result = sig;
 		*handle_class = NULL;
-	} else if (strcmp (obj->vtable->klass->name, "DynamicMethod") == 0) {
+	} else if (strcmp (oklass->name, "DynamicMethod") == 0) {
 		MonoReflectionDynamicMethod *method = (MonoReflectionDynamicMethod*)obj;
 		/* Already created by the managed code */
 		g_assert (method->mhandle);
 		result = method->mhandle;
 		*handle_class = mono_defaults.methodhandle_class;
-	} else if (strcmp (obj->vtable->klass->name, "GenericTypeParameterBuilder") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "FieldOnTypeBuilderInst") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "ConstructorOnTypeBuilderInst") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "MethodOnTypeBuilderInst") == 0) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (obj->vtable->klass, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		obj = mono_runtime_invoke_checked (resolve_method, obj, NULL, error);
-		mono_error_assert_ok (error);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (is_sre_generic_instance (mono_object_get_class(obj)) ||
-			   is_sre_array (mono_object_get_class(obj)) ||
-			   is_sre_byref (mono_object_get_class(obj)) ||
-			   is_sre_pointer (mono_object_get_class(obj))) {
-		static MonoMethod *resolve_method;
-		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (mono_defaults.systemtype_class, "RuntimeResolve", 0, 0);
-			g_assert (m);
-			mono_memory_barrier ();
-			resolve_method = m;
-		}
-		MonoMethod *m2 = mono_object_get_virtual_method (obj, resolve_method);
-		g_assert (m2);
-		obj = mono_runtime_invoke_checked (m2, obj, NULL, error);
-		mono_error_assert_ok (error);
-		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
-	} else if (strcmp (obj->vtable->klass->name, "MonoArrayMethod") == 0) {
+	} else if (strcmp (oklass->name, "MonoArrayMethod") == 0) {
 		MonoReflectionArrayMethod *m = (MonoReflectionArrayMethod*)obj;
 		MonoType *mtype;
 		MonoClass *klass;
@@ -4258,6 +4164,30 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 
 		result = method;
 		*handle_class = mono_defaults.methodhandle_class;
+	} else if (is_sre_method_builder (oklass) ||
+			   mono_is_sre_ctor_builder (oklass) ||
+			   is_sre_field_builder (oklass) ||
+			   is_sre_gparam_builder (oklass) ||
+			   is_sre_generic_instance (oklass) ||
+			   is_sre_array (oklass) ||
+			   is_sre_byref (oklass) ||
+			   is_sre_pointer (oklass) ||
+			   !strcmp (oklass->name, "FieldOnTypeBuilderInst") ||
+			   !strcmp (oklass->name, "MethodOnTypeBuilderInst") ||
+			   !strcmp (oklass->name, "ConstructorOnTypeBuilderInst")) {
+		static MonoMethod *resolve_method;
+		if (!resolve_method) {
+			MonoMethod *m = mono_class_get_method_from_name_flags (mono_class_get_module_builder_class (), "RuntimeResolve", 1, 0);
+			g_assert (m);
+			mono_memory_barrier ();
+			resolve_method = m;
+		}
+		void *args [16];
+		args [0] = obj;
+		obj = mono_runtime_invoke_checked (resolve_method, NULL, args, error);
+		mono_error_assert_ok (error);
+		g_assert (obj);
+		return mono_reflection_resolve_object (image, obj, handle_class, context, error);
 	} else {
 		g_print ("%s\n", obj->vtable->klass->name);
 		g_assert_not_reached ();

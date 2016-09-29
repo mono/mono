@@ -801,6 +801,27 @@ namespace System.Reflection.Emit {
 			return token_gen;
 		}
 
+		// Called from the runtime to return the corresponding finished reflection object
+		internal static object RuntimeResolve (object obj) {
+			if (obj is MethodBuilder)
+				return (obj as MethodBuilder).RuntimeResolve ();
+			if (obj is ConstructorBuilder)
+				return (obj as ConstructorBuilder).RuntimeResolve ();
+			if (obj is FieldBuilder)
+				return (obj as FieldBuilder).RuntimeResolve ();
+			if (obj is GenericTypeParameterBuilder)
+				return (obj as GenericTypeParameterBuilder).RuntimeResolve ();
+			if (obj is FieldOnTypeBuilderInst)
+				return (obj as FieldOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is MethodOnTypeBuilderInst)
+				return (obj as MethodOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is ConstructorOnTypeBuilderInst)
+				return (obj as ConstructorOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is Type)
+				return (obj as Type).RuntimeResolve ();
+			throw new NotImplementedException (obj.GetType ().FullName);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void build_metadata (ModuleBuilder mb);
 

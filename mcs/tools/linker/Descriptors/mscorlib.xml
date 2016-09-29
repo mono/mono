@@ -260,6 +260,7 @@
 		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" />
 		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields">
 			<method name="Mono_GetGuid" />
+			<method name="RuntimeResolve" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" />
