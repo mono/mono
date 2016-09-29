@@ -48,10 +48,9 @@ namespace MonoTests.System.Net.Sockets
 					if (listenSocket.AcceptAsync(asyncEventArgs))
 						return;
 					acceptedSocket = asyncEventArgs.AcceptSocket;
+					mainEvent.Set();
 				} catch (Exception e) {
 					ex = e;
-				} finally {
-					mainEvent.Set();
 				}
 			});
 			Assert.IsTrue(readyEvent.WaitOne(1500));
@@ -64,7 +63,7 @@ namespace MonoTests.System.Net.Sockets
 			clientSocket.NoDelay = true;
 
 			Assert.IsTrue(mainEvent.WaitOne(1500));
-			Assert.AreEqual(serverSocket, acceptedSocket);
+			Assert.AreEqual(serverSocket, acceptedSocket, "x");
 			mainEvent.Reset();
 
 			if (acceptedSocket != null)
