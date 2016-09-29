@@ -27,10 +27,6 @@ set (MONO_BTLS 1)
 
 add_subdirectory (${BTLS_ROOT} boringssl)
 
-# SET (CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
-# SET (CMAKE_SKIP_BUILD_RPATH FALSE)
-# SET (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
-
 include_directories (
 	${SRC_DIR}
 	${BTLS_ROOT}/include
@@ -84,30 +80,10 @@ if (BUILD_SHARED_LIBS)
 	set_target_properties (mono-btls-shared PROPERTIES RULE_LAUNCH_LINK
 		"${PROJECT_SOURCE_DIR}/create-object-library.sh ${CMAKE_BINARY_DIR} mono-btls-shared.txt mono-btls-shared-lo.txt libmono-btls-shared.a shared ${CMAKE_AR} ${CMAKE_RANLIB} <OBJECTS> --"
 	)
-#	install (
-#		TARGETS mono-btls-shared
-#		LIBRARY DESTINATION lib
-#	)
 else ()
 	add_library (mono-btls-static STATIC ${MONO_BTLS_SOURCES})
 	set_target_properties (mono-btls-static PROPERTIES RULE_LAUNCH_LINK
 		"${PROJECT_SOURCE_DIR}/create-object-library.sh ${CMAKE_BINARY_DIR} mono-btls-static.txt mono-btls-static-lo.txt libmono-btls-static.a static ${CMAKE_AR} ${CMAKE_RANLIB} <OBJECTS> --"
 	)
-#	install (
-#		TARGETS mono-btls-static
-#		ARCHIVE DESTINATION lib
-#	)
 endif ()
-
-#include (CMakeMacros.txt)
-#
-#if (BUILD_SHARED_LIBS)
-#	create_libtool (mono-btls-shared ${PROJECT_SOURCE_DIR}/libmono-btls.la.in true false mono-btls-shared mono-btls-static ${PROJECT_BINARY_DIR})
-#	install (
-#		FILES ${PROJECT_BINARY_DIR}/libmono-btls-shared.la
-#		DESTINATION lib
-#	)
-#else ()
-#	create_libtool (mono-btls-static ${PROJECT_SOURCE_DIR}/libmono-btls.la.in false true mono-btls-shared mono-btls-static ${PROJECT_BINARY_DIR})
-#endif ()
 
