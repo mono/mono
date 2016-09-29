@@ -927,6 +927,10 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->rsi = UCONTEXT_REG_RSI (ctx);
 	mctx->rdi = UCONTEXT_REG_RDI (ctx);
 	mctx->rip = UCONTEXT_REG_RIP (ctx);
+	mctx->r8 = UCONTEXT_REG_R8 (ctx);
+	mctx->r9 = UCONTEXT_REG_R9 (ctx);
+	mctx->r10 = UCONTEXT_REG_R10 (ctx);
+	mctx->r11 = UCONTEXT_REG_R11 (ctx);
 	mctx->r12 = UCONTEXT_REG_R12 (ctx);
 	mctx->r13 = UCONTEXT_REG_R13 (ctx);
 	mctx->r14 = UCONTEXT_REG_R14 (ctx);
@@ -987,6 +991,10 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_RSI (ctx) = mctx->rsi;
 	UCONTEXT_REG_RDI (ctx) = mctx->rdi;
 	UCONTEXT_REG_RIP (ctx) = mctx->rip;
+	UCONTEXT_REG_R8 (ctx) = mctx->r8;
+	UCONTEXT_REG_R9 (ctx) = mctx->r9;
+	UCONTEXT_REG_R10 (ctx) = mctx->r10;
+	UCONTEXT_REG_R11 (ctx) = mctx->r11;
 	UCONTEXT_REG_R12 (ctx) = mctx->r12;
 	UCONTEXT_REG_R13 (ctx) = mctx->r13;
 	UCONTEXT_REG_R14 (ctx) = mctx->r14;
