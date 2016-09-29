@@ -4484,12 +4484,6 @@ ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	mono_reflection_dynimage_basic_init (assemblyb);
 }
 
-MonoBoolean
-ves_icall_TypeBuilder_get_IsGenericParameter (MonoReflectionTypeBuilder *tb)
-{
-	return mono_type_is_generic_parameter (tb->type.type);
-}
-
 void
 ves_icall_EnumBuilder_setup_enum_type (MonoReflectionType *enumtype,
 									   MonoReflectionType *t)

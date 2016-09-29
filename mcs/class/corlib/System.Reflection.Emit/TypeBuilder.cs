@@ -1782,9 +1782,10 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public extern override bool IsGenericParameter {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override bool IsGenericParameter {
+			get {
+				return false;
+			}
 		}
 
 		public override GenericParameterAttributes GenericParameterAttributes {
