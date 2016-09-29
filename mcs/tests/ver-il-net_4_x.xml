@@ -52443,6 +52443,22 @@
       </method>
     </type>
   </test>
+  <test name="test-941.cs">
+    <type name="GotoCodeFlowBug">
+      <method name="Void Test(Boolean, Int32 ByRef)" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="Void Test2(Boolean, Int32 ByRef)" attrs="150">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
