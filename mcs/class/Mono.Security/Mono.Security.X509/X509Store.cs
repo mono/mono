@@ -157,7 +157,7 @@ namespace Mono.Security.X509 {
 					ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
 				}
 			}
-#if !NET_2_1
+#if !MOBILE
 			// Try to save privateKey if available..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
@@ -334,7 +334,7 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
-#if !NET_2_1
+#if !MOBILE
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
@@ -426,7 +426,7 @@ namespace Mono.Security.X509 {
 			}
 			return list;
 		}
-#if !NET_2_1
+#if !MOBILE
 		private void ImportPrivateKey (X509Certificate certificate, CspParameters cspParams)
 		{
 			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;
