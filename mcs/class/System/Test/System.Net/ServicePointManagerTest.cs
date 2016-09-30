@@ -29,8 +29,10 @@ public class ServicePointManagerTest
 	[SetUp]
         public void GetReady () 
 	{
+#if !FEATURE_NO_BSD_SOCKETS
 		maxIdle = ServicePointManager.MaxServicePointIdleTime;
 		ServicePointManager.MaxServicePointIdleTime = 10;
+#endif
 		googleUri = new Uri ("http://www.google.com");
 		yahooUri = new Uri ("http://www.yahoo.com");
 		apacheUri = new Uri ("http://www.apache.org");
@@ -39,7 +41,9 @@ public class ServicePointManagerTest
 	[TearDown]
 	public void Finish ()
 	{
+#if !FEATURE_NO_BSD_SOCKETS
 		ServicePointManager.MaxServicePointIdleTime = maxIdle;
+#endif
 	}
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
@@ -82,6 +86,9 @@ public class ServicePointManagerTest
 	}
 	
         [Test]
+#if FEATURE_NO_BSD_SOCKETS
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void FindServicePoint ()
 	{
 		ServicePointManager.MaxServicePoints = 0;

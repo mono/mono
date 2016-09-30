@@ -23,6 +23,8 @@ namespace MonoTests.System.Net
 public class ServicePointTest
 {
 	static private int max;
+
+#if !FEATURE_NO_BSD_SOCKETS
 	[SetUp]
 	public void SaveMax () {
 		max = ServicePointManager.MaxServicePoints;
@@ -33,6 +35,7 @@ public class ServicePointTest
 	public void RestoreMax () {
 		ServicePointManager.MaxServicePoints = max;
 	}
+#endif
 
         [Test]
 		[Category ("InetAccess")]
