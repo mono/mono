@@ -77,8 +77,8 @@ namespace System.IO.Pipes
 			throw new NotImplementedException ();
 #else
 			InitializeHandle (safePipeHandle, false, false);
-#endif
 			IsConnected = true;
+#endif
 		}
 
 		~AnonymousPipeClientStream ()
