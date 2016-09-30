@@ -95,9 +95,6 @@ namespace Mono.Btls
 		extern static int mono_btls_ssl_get_error (IntPtr handle, int ret_code);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static void mono_btls_ssl_test (IntPtr handle);
-
-		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static int mono_btls_ssl_get_version (IntPtr handle);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -392,12 +389,6 @@ namespace Mono.Btls
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
-		}
-
-		public void Test ()
-		{
-			CheckThrow ();
-			mono_btls_ssl_test (Handle.DangerousGetHandle ());
 		}
 
 		protected override void Close ()

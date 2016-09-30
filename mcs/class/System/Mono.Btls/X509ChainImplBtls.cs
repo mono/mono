@@ -55,9 +55,6 @@ namespace Mono.Btls
 			this.chain = storeCtx.GetChain ();
 
 			policy = new X509ChainPolicy ();
-			using (var test = (IDisposable)null) {
-				;
-			}
 
 			untrustedChain = storeCtx.GetUntrusted ();
 
@@ -70,7 +67,6 @@ namespace Mono.Btls
 						untrusted.Add (new X509Certificate2 (impl));
 				}
 			}
-			storeCtx.Test ();
 		}
 
 		internal X509ChainImplBtls ()
