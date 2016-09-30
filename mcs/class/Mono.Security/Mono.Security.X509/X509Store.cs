@@ -38,6 +38,8 @@ using System.Security.Cryptography;
 using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 
+using SSCX = System.Security.Cryptography.X509Certificates;
+
 namespace Mono.Security.X509 {
 
 #if INSIDE_CORLIB
@@ -51,12 +53,14 @@ namespace Mono.Security.X509 {
 		private X509CertificateCollection _certificates;
 		private ArrayList _crls;
 		private bool _crl;
+		private bool _newFormat;
 		private string _name;
 
-		internal X509Store (string path, bool crl) 
+		internal X509Store (string path, bool crl, bool newFormat)
 		{
 			_storePath = path;
 			_crl = crl;
+			_newFormat = newFormat;
 		}
 
 		// properties
@@ -126,6 +130,11 @@ namespace Mono.Security.X509 {
 		{
 			CheckStore (_storePath, true);
 
+			if (_newFormat) {
+				ImportNewFormat (certificate);
+				return;
+			}
+
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (!File.Exists (filename)) {
 				filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
@@ -165,6 +174,9 @@ namespace Mono.Security.X509 {
 		{
 			CheckStore (_storePath, true);
 
+			if (_newFormat)
+				throw new NotSupportedException ();
+
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (!File.Exists (filename)) {
 				using (FileStream fs = File.Create (filename)) {
@@ -177,6 +189,11 @@ namespace Mono.Security.X509 {
 
 		public void Remove (X509Certificate certificate) 
 		{
+			if (_newFormat) {
+				RemoveNewFormat (certificate);
+				return;
+			}
+
 			string filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
@@ -192,11 +209,49 @@ namespace Mono.Security.X509 {
 
 		public void Remove (X509Crl crl) 
 		{
+			if (_newFormat)
+				throw new NotSupportedException ();
+
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 				ClearCrls ();	// We have modified the store on disk.  So forget the old state.
 			}
+		}
+
+		// new format
+
+		void ImportNewFormat (X509Certificate certificate)
+		{
+#if INSIDE_CORLIB
+			throw new NotSupportedException ();
+#else
+			using (var sscxCert = new SSCX.X509Certificate (certificate.RawData)) {
+				var hash = SSCX.X509Helper2.GetSubjectNameHash (sscxCert);
+				var filename = Path.Combine (_storePath, string.Format ("{0:x8}.0", hash));
+				if (!File.Exists (filename)) {
+					using (FileStream fs = File.Create (filename))
+						SSCX.X509Helper2.ExportAsPEM (sscxCert, fs, true);
+					ClearCertificates ();
+				}
+			}
+#endif
+		}
+
+		void RemoveNewFormat (X509Certificate certificate)
+		{
+#if INSIDE_CORLIB
+			throw new NotSupportedException ();
+#else
+			using (var sscxCert = new SSCX.X509Certificate (certificate.RawData)) {
+				var hash = SSCX.X509Helper2.GetSubjectNameHash (sscxCert);
+				var filename = Path.Combine (_storePath, string.Format ("{0:x8}.0", hash));
+				if (File.Exists (filename)) {
+					File.Delete (filename);
+					ClearCertificates ();
+				}
+			}
+#endif
 		}
 
 		// private stuff
