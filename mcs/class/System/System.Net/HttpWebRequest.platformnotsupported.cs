@@ -38,11 +38,6 @@ namespace System.Net
 	{
 		internal const string EXCEPTION_MESSAGE = "System.Net.HttpWebRequest is not supported on the current platform.";
 
-		internal WebConnection WebConnection {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
 #if MOBILE
 		public
 #else
@@ -93,14 +88,6 @@ namespace System.Net
 		}
 
 		internal bool InternalAllowBuffering {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		internal Mono.Net.Security.IMonoTlsProvider TlsProvider {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		internal Mono.Security.Interface.MonoTlsSettings TlsSettings {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
@@ -430,31 +417,6 @@ namespace System.Net
 		internal byte[] GetRequestHeaders ()
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		internal void SetWriteStream (WebConnectionStream stream)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		internal void SetResponseData (WebConnectionData data)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		internal bool ReuseConnection {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		internal WebConnection StoredConnection {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 	}
 }
