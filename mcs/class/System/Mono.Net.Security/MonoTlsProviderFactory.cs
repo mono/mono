@@ -170,8 +170,8 @@ namespace Mono.Net.Security
 		static MSI.MonoTlsProvider TryDynamicLoad ()
 		{
 			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
-			if (variable == null)
-				return null;
+			if (string.IsNullOrEmpty (variable))
+				variable = "default";
 
 			return LookupProvider (variable, true);
 		}
