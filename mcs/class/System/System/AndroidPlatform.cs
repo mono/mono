@@ -44,9 +44,7 @@ namespace System {
 		
 #if SECURITY_DEP
 		static readonly Converter<List <byte[]>, bool> trustEvaluateSsl;
-#if HAVE_BTLS
 		static readonly Func<long, bool, byte[]> certStoreLookup;
-#endif
 #endif  // SECURITY_DEP
 		static readonly Func<IWebProxy> getDefaultProxy;
 		static readonly GetInterfaceAddressesDelegate getInterfaceAddresses;
@@ -62,14 +60,12 @@ namespace System {
 							"TrustEvaluateSsl",
 							ignoreCase:false,
 							throwOnBindFailure:true);
-#if HAVE_BTLS
 			certStoreLookup = (Func<long, bool, byte[]>)
 				Delegate.CreateDelegate (typeof (Func<long, bool, byte[]>),
 							t,
 							"CertStoreLookup",
 							ignoreCase:false,
 							throwOnBindFailure:true);
-#endif
 #endif  // SECURITY_DEP
 			getDefaultProxy = (Func<IWebProxy>)Delegate.CreateDelegate (
 				typeof (Func<IWebProxy>), t, "GetDefaultProxy",
@@ -98,7 +94,6 @@ namespace System {
 
 		internal static MonoBtlsX509 CertStoreLookup (MonoBtlsX509Name name)
 		{
-#if HAVE_BTLS
 			var hash = name.GetHash ();
 			var hashOld = name.GetHashOld ();
 			var result = certStoreLookup (hash, false);
@@ -113,9 +108,6 @@ namespace System {
 				return null;
 
 			return MonoBtlsX509.LoadFromData (result, MonoBtlsX509Format.DER);
-#else
-			return null;
-#endif
 		}
 #endif  // SECURITY_DEP
 
