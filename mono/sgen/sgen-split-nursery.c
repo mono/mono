@@ -418,7 +418,6 @@ print_gc_param_usage (void)
 
 /******************************************Copy/Scan functins ************************************************/
 
-#define collector_pin_object(obj, queue) sgen_pin_object (obj, queue);
 #define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION alloc_for_promotion
 
 #include "sgen-copy-object.h"

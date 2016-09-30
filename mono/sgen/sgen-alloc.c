@@ -79,8 +79,12 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 		SGEN_ATOMIC_ADD_P (degraded_mode, size);
 		sgen_ensure_free_space (size, GENERATION_OLD);
 	} else {
-		if (sgen_need_major_collection (size))
-			sgen_perform_collection (size, GENERATION_OLD, "mature allocation failure", !for_mature, TRUE);
+		if (sgen_need_major_collection (size)) {
+			MonoGCCollectionFlags flags = MONO_GC_STW;
+			if (sgen_need_compacting_collection ())
+				flags |= MONO_GC_FORCE_SERIAL | MONO_GC_FORCE_COMPACTION;
+			sgen_perform_collection (size, GENERATION_OLD, "mature allocation failure", flags);
+		}
 	}
 
 
@@ -148,7 +152,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 		if (collect_before_allocs) {
 			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
-				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE, TRUE);
+				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", MONO_GC_STW | MONO_GC_FORCE_SERIAL);
 				if (!degraded_mode && sgen_can_alloc_size (size) && real_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
 					// FIXME:
 					g_assert_not_reached ();
@@ -408,7 +412,7 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 		if (collect_before_allocs) {
 			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
 				LOCK_GC;
-				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE, TRUE);
+				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", MONO_GC_STW | MONO_GC_FORCE_SERIAL);
 				UNLOCK_GC;
 			}
 		}

@@ -130,6 +130,17 @@ get_heap_size (void)
 	return major_collector.get_num_major_sections () * major_collector.section_size + los_memory_usage;
 }
 
+/*
+ * If the heap exceeds the soft limit, we should try triggering compacting majors as often
+ * as possible. These collections should also be serial, to avoid as much as possible further
+ * heap growth and memory usage.
+ */
+gboolean
+sgen_need_compacting_collection (void)
+{
+	return ((mword)get_heap_size ()) > soft_heap_limit;
+}
+
 gboolean
 sgen_need_major_collection (mword space_needed)
 {
@@ -182,7 +193,7 @@ sgen_add_log_entry (SgenLogEntry *log_entry)
 }
 
 void
-sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
+sgen_memgov_minor_collection_end (const char *reason)
 {
 	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
 		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
@@ -191,7 +202,6 @@ sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
 
 		log_entry->type = SGEN_LOG_NURSERY;
 		log_entry->reason = reason;
-		log_entry->is_overflow = is_overflow;
 		log_entry->time = SGEN_TV_ELAPSED (last_minor_start, current_time);
 		log_entry->promoted_size = total_promoted_size - total_promoted_size_start;
 		log_entry->major_size = major_collector.get_num_major_sections () * major_collector.section_size;
@@ -226,6 +236,15 @@ sgen_memgov_major_post_sweep (mword used_slots_size)
 
 		sgen_add_log_entry (log_entry);
 	}
+	if (mono_trace_is_traced (G_LOG_LEVEL_WARNING, MONO_TRACE_GC) && get_heap_size () > soft_heap_limit) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+
+		log_entry->type = SGEN_LOG_HEAP_LIMIT_EXCEEDED;
+		log_entry->major_size = major_collector.get_num_major_sections () * major_collector.section_size;
+		log_entry->los_size = los_memory_usage_total;
+
+		sgen_add_log_entry (log_entry);
+	}
 	last_used_slots_size = used_slots_size;
 }
 
@@ -250,7 +269,7 @@ sgen_memgov_major_collection_start (gboolean concurrent, const char *reason)
 }
 
 void
-sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const char *reason, gboolean is_overflow)
+sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const char *reason)
 {
 	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
 		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
@@ -264,7 +283,6 @@ sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const ch
 		}
 		log_entry->time = SGEN_TV_ELAPSED (last_major_start, current_time);
 		log_entry->reason = reason;
-		log_entry->is_overflow = is_overflow;
 		log_entry->los_size = los_memory_usage_total;
 		log_entry->los_size_in_use = los_memory_usage;
 
@@ -290,13 +308,11 @@ sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 	char full_timing_buff [1024];
 	full_timing_buff [0] = '\0';
 
-	if (!entry->is_overflow)
-                sprintf (full_timing_buff, "stw %.2fms", stw_time / 10000.0f);
+	sprintf (full_timing_buff, "stw %.2fms", stw_time / 10000.0f);
 
 	switch (entry->type) {
 		case SGEN_LOG_NURSERY:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) time %.2fms, %s promoted %dK major size: %dK in use: %dK los size: %dK in use: %dK",
-				entry->is_overflow ? "_OVERFLOW" : "",
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR: (%s) time %.2fms, %s promoted %dK major size: %dK in use: %dK los size: %dK in use: %dK",
 				entry->reason ? entry->reason : "",
 				entry->time / 10000.0f,
 				(generation == GENERATION_NURSERY) ? full_timing_buff : "",
@@ -307,8 +323,7 @@ sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 				entry->los_size_in_use / 1024);
 			break;
 		case SGEN_LOG_MAJOR_SERIAL:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) time %.2fms, %s los size: %dK in use: %dK",
-				entry->is_overflow ? "_OVERFLOW" : "",
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR: (%s) time %.2fms, %s los size: %dK in use: %dK",
 				entry->reason ? entry->reason : "",
 				(int)entry->time / 10000.0f,
 				full_timing_buff,
@@ -331,6 +346,11 @@ sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 				entry->major_size / 1024,
 				entry->major_size_in_use / 1024);
 			break;
+		case SGEN_LOG_HEAP_LIMIT_EXCEEDED:
+			mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, "WARNING: heap size %dK exceeds soft heap limit %dK",
+				entry->major_size / 1024 + entry->los_size / 1024,
+				soft_heap_limit);
+			break;
 		default:
 			SGEN_ASSERT (0, FALSE, "Invalid log entry type");
 			break;
@@ -344,7 +364,7 @@ sgen_memgov_collection_end (int generation, gint64 stw_time)
 	 * At this moment the world has been restarted which means we can log all pending entries
 	 * without risking deadlocks.
 	 */
-	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+	if (!sgen_pointer_queue_is_empty (&log_entries)) {
 		size_t i;
 		SGEN_ASSERT (0, !sgen_is_world_stopped (), "We can't log if the world is stopped");
 		mono_coop_mutex_lock (&log_entries_mutex);

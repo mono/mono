@@ -343,8 +343,6 @@ MonoCoopMutex gc_mutex;
 
 size_t degraded_mode = 0;
 
-static mword bytes_pinned_from_failed_allocation = 0;
-
 GCMemSection *nursery_section = NULL;
 static volatile mword lowest_heap_address = ~(mword)0;
 static volatile mword highest_heap_address = 0;
@@ -386,9 +384,6 @@ guint32 tlab_size = (1024 * 4);
 #ifdef SGEN_DEBUG_INTERNAL_ALLOC
 MonoNativeThreadId main_gc_thread = NULL;
 #endif
-
-/*Object was pinned during the current collection*/
-static mword objects_pinned;
 
 /*
  * ######################################################################
@@ -700,30 +695,6 @@ pin_objects_in_nursery (gboolean do_scan_objects, ScanCopyContext ctx)
 
 	reduced_to = pin_objects_from_nursery_pin_queue (do_scan_objects, ctx);
 	nursery_section->pin_queue_last_entry = nursery_section->pin_queue_first_entry + reduced_to;
-}
-
-/*
- * This function is only ever called (via `collector_pin_object()` in `sgen-copy-object.h`)
- * when we can't promote an object because we're out of memory.
- */
-void
-sgen_pin_object (GCObject *object, SgenGrayQueue *queue)
-{
-	SGEN_ASSERT (0, sgen_ptr_in_nursery (object), "We're only supposed to use this for pinning nursery objects when out of memory.");
-
-	/*
-	 * All pinned objects are assumed to have been staged, so we need to stage as well.
-	 * Also, the count of staged objects shows that "late pinning" happened.
-	 */
-	sgen_pin_stage_ptr (object);
-
-	SGEN_PIN_OBJECT (object);
-	binary_protocol_pin (object, (gpointer)LOAD_VTABLE (object), safe_object_get_size (object));
-
-	++objects_pinned;
-	sgen_pin_stats_register_object (object, GENERATION_NURSERY);
-
-	GRAY_OBJECT_ENQUEUE (queue, object, sgen_obj_get_descriptor_safe (object));
 }
 
 /* Sort the addresses in array in increasing order.
@@ -1265,19 +1236,6 @@ init_stats (void)
 	inited = TRUE;
 }
 
-
-static void
-reset_pinned_from_failed_allocation (void)
-{
-	bytes_pinned_from_failed_allocation = 0;
-}
-
-void
-sgen_set_pinned_from_failed_allocation (mword objsize)
-{
-	bytes_pinned_from_failed_allocation += objsize;
-}
-
 gboolean
 sgen_collection_is_concurrent (void)
 {
@@ -1456,13 +1414,10 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
 
 /*
  * Perform a nursery collection.
- *
- * Return whether any objects were late-pinned due to being out of memory.
  */
-static gboolean
-collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_queue)
+static void
+collect_nursery (const char *reason, SgenGrayQueue *unpin_queue)
 {
-	gboolean needs_major;
 	size_t max_garbage_amount;
 	char *nursery_next;
 	mword fragment_total;
@@ -1476,7 +1431,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	SGEN_TV_DECLARE (last_minor_collection_end_tv);
 
 	if (disable_minor_collections)
-		return TRUE;
+		return;
 
 	TV_GETTIME (last_minor_collection_start_tv);
 	atv = last_minor_collection_start_tv;
@@ -1495,14 +1450,11 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 
 	SGEN_ASSERT (0, !sgen_collection_is_concurrent (), "Why is the nursery collection concurrent?");
 
-	reset_pinned_from_failed_allocation ();
-
 	check_scan_starts ();
 
 	sgen_nursery_alloc_prepare_for_minor ();
 
 	degraded_mode = 0;
-	objects_pinned = 0;
 	nursery_next = sgen_nursery_alloc_get_upper_alloc_bound ();
 	/* FIXME: optimize later to use the higher address where an object can be present */
 	nursery_next = MAX (nursery_next, sgen_get_nursery_end ());
@@ -1585,11 +1537,6 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	time_minor_finish_gray_stack += TV_ELAPSED (btv, atv);
 	sgen_client_binary_protocol_mark_end (GENERATION_NURSERY);
 
-	if (objects_pinned) {
-		sgen_optimize_pin_queue ();
-		sgen_pinning_setup_section (nursery_section);
-	}
-
 	/*
 	 * This is the latest point at which we can do this check, because
 	 * sgen_build_nursery_fragments() unpins nursery objects again.
@@ -1642,19 +1589,15 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 
 	binary_protocol_flush_buffers (FALSE);
 
-	sgen_memgov_minor_collection_end (reason, is_overflow);
+	sgen_memgov_minor_collection_end (reason);
 
 	/*objects are late pinned because of lack of memory, so a major is a good call*/
-	needs_major = objects_pinned > 0;
 	current_collection_generation = -1;
-	objects_pinned = 0;
 
 	binary_protocol_collection_end (gc_stats.minor_gc_count - 1, GENERATION_NURSERY, 0, 0);
 
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
 		sgen_check_nursery_objects_pinned (unpin_queue != NULL);
-
-	return needs_major;
 }
 
 typedef enum {
@@ -1664,7 +1607,7 @@ typedef enum {
 } CopyOrMarkFromRootsMode;
 
 static void
-major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops)
+major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops)
 {
 	LOSObject *bigobj;
 	TV_DECLARE (atv);
@@ -1706,8 +1649,6 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	/* we should also coalesce scanning from sections close to each other
 	 * and deal with pointers outside of the sections later.
 	 */
-
-	objects_pinned = 0;
 
 	sgen_client_pre_collection_checks ();
 
@@ -1782,8 +1723,6 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 		sgen_check_nursery_objects_pinned (mode != COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT);
 
 	major_collector.pin_objects (gc_thread_gray_queue);
-	if (old_next_pin_slot)
-		*old_next_pin_slot = sgen_get_pinned_count ();
 
 	TV_GETTIME (btv);
 	time_major_pinning += TV_ELAPSED (atv, btv);
@@ -1870,7 +1809,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 }
 
 static void
-major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean concurrent, size_t *old_next_pin_slot)
+major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean concurrent, gboolean compacting)
 {
 	SgenObjectOperations *object_ops;
 
@@ -1892,8 +1831,6 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 		object_ops = &major_collector.major_ops_serial;
 	}
 
-	reset_pinned_from_failed_allocation ();
-
 	sgen_memgov_major_collection_start (concurrent, reason);
 
 	//count_ref_nonref_objs ();
@@ -1906,13 +1843,13 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 	gc_stats.major_gc_count ++;
 
 	if (major_collector.start_major_collection)
-		major_collector.start_major_collection ();
+		major_collector.start_major_collection (compacting);
 
-	major_copy_or_mark_from_roots (gc_thread_gray_queue, old_next_pin_slot, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops);
+	major_copy_or_mark_from_roots (gc_thread_gray_queue, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops);
 }
 
 static void
-major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean is_overflow, size_t old_next_pin_slot, gboolean forced)
+major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean forced)
 {
 	ScannedObjectCounts counts;
 	SgenObjectOperations *object_ops;
@@ -1925,7 +1862,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	if (concurrent_collection_in_progress) {
 		object_ops = &major_collector.major_ops_concurrent_finish;
 
-		major_copy_or_mark_from_roots (gc_thread_gray_queue, NULL, COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, object_ops);
+		major_copy_or_mark_from_roots (gc_thread_gray_queue, COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT, object_ops);
 
 #ifdef SGEN_DEBUG_INTERNAL_ALLOC
 		main_gc_thread = NULL;
@@ -1941,28 +1878,6 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	time_major_finish_gray_stack += TV_ELAPSED (btv, atv);
 
 	SGEN_ASSERT (0, sgen_workers_all_done (), "Can't have workers working after joining");
-
-	if (objects_pinned) {
-		g_assert (!concurrent_collection_in_progress);
-
-		/*
-		 * This is slow, but we just OOM'd.
-		 *
-		 * See comment at `sgen_pin_queue_clear_discarded_entries` for how the pin
-		 * queue is laid out at this point.
-		 */
-		sgen_pin_queue_clear_discarded_entries (nursery_section, old_next_pin_slot);
-		/*
-		 * We need to reestablish all pinned nursery objects in the pin queue
-		 * because they're needed for fragment creation.  Unpinning happens by
-		 * walking the whole queue, so it's not necessary to reestablish where major
-		 * heap block pins are - all we care is that they're still in there
-		 * somewhere.
-		 */
-		sgen_optimize_pin_queue ();
-		sgen_find_section_pin_queue_start_end (nursery_section);
-		objects_pinned = 0;
-	}
 
 	reset_heap_boundaries ();
 	sgen_update_heap_boundaries ((mword)sgen_get_nursery_start (), (mword)sgen_get_nursery_end ());
@@ -2020,7 +1935,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 		sgen_client_finalize_notify ();
 	}
 
-	sgen_memgov_major_collection_end (forced, concurrent_collection_in_progress, reason, is_overflow);
+	sgen_memgov_major_collection_end (forced, concurrent_collection_in_progress, reason);
 	current_collection_generation = -1;
 
 	memset (&counts, 0, sizeof (ScannedObjectCounts));
@@ -2041,16 +1956,15 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	binary_protocol_collection_end (gc_stats.major_gc_count - 1, GENERATION_OLD, counts.num_scanned_objects, counts.num_unique_scanned_objects);
 }
 
-static gboolean
-major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
+static void
+major_do_collection (const char *reason, gboolean forced, gboolean compacting)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
-	size_t old_next_pin_slot;
 	SgenGrayQueue gc_thread_gray_queue;
 
 	if (disable_major_collections)
-		return FALSE;
+		return;
 
 	if (major_collector.get_and_reset_num_major_objects_marked) {
 		long long num_marked = major_collector.get_and_reset_num_major_objects_marked ();
@@ -2061,8 +1975,8 @@ major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 	TV_GETTIME (time_start);
 
 	init_gray_queue (&gc_thread_gray_queue, FALSE);
-	major_start_collection (&gc_thread_gray_queue, reason, FALSE, &old_next_pin_slot);
-	major_finish_collection (&gc_thread_gray_queue, reason, is_overflow, old_next_pin_slot, forced);
+	major_start_collection (&gc_thread_gray_queue, reason, FALSE, compacting);
+	major_finish_collection (&gc_thread_gray_queue, reason, forced);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	TV_GETTIME (time_end);
@@ -2071,12 +1985,10 @@ major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 	/* FIXME: also report this to the user, preferably in gc-end. */
 	if (major_collector.get_and_reset_num_major_objects_marked)
 		major_collector.get_and_reset_num_major_objects_marked ();
-
-	return bytes_pinned_from_failed_allocation > 0;
 }
 
 static void
-major_start_concurrent_collection (const char *reason)
+major_start_concurrent_collection (const char *reason, gboolean compacting)
 {
 	TV_DECLARE (time_start);
 	TV_DECLARE (time_end);
@@ -2096,7 +2008,7 @@ major_start_concurrent_collection (const char *reason)
 
 	init_gray_queue (&gc_thread_gray_queue, TRUE);
 	// FIXME: store reason and pass it when finishing
-	major_start_collection (&gc_thread_gray_queue, reason, TRUE, NULL);
+	major_start_collection (&gc_thread_gray_queue, reason, TRUE, compacting);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
@@ -2163,7 +2075,7 @@ major_finish_concurrent_collection (gboolean forced)
 	current_collection_generation = GENERATION_OLD;
 	sgen_cement_reset ();
 	init_gray_queue (&gc_thread_gray_queue, FALSE);
-	major_finish_collection (&gc_thread_gray_queue, "finishing", FALSE, -1, forced);
+	major_finish_collection (&gc_thread_gray_queue, "finishing", forced);
 	sgen_gray_object_queue_dispose (&gc_thread_gray_queue);
 
 	TV_GETTIME (total_end);
@@ -2182,6 +2094,7 @@ sgen_ensure_free_space (size_t size, int generation)
 {
 	int generation_to_collect = -1;
 	const char *reason = NULL;
+	MonoGCCollectionFlags flags = MONO_GC_STW;
 
 	if (generation == GENERATION_OLD) {
 		if (sgen_need_major_collection (size)) {
@@ -2212,20 +2125,23 @@ sgen_ensure_free_space (size_t size, int generation)
 
 	if (generation_to_collect == -1)
 		return;
-	sgen_perform_collection (size, generation_to_collect, reason, FALSE, TRUE);
+	if (generation_to_collect == GENERATION_OLD && sgen_need_compacting_collection ())
+		flags |= MONO_GC_FORCE_SERIAL | MONO_GC_FORCE_COMPACTION;
+	sgen_perform_collection (size, generation_to_collect, reason, flags);
 }
 
 /*
  * LOCKING: Assumes the GC lock is held.
  */
 void
-sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, MonoGCCollectionFlags flags)
 {
 	TV_DECLARE (gc_total_start);
 	TV_DECLARE (gc_total_end);
-	int overflow_generation_to_collect = -1;
 	int oldest_generation_collected = generation_to_collect;
-	const char *overflow_reason = NULL;
+	gboolean wait_to_finish = flags & MONO_GC_FORCE_SERIAL;
+	gboolean stw = flags & MONO_GC_STW;
+	gboolean compacting = flags & MONO_GC_FORCE_COMPACTION;
 	gboolean finish_concurrent = concurrent_collection_in_progress && (major_should_finish_concurrent_collection () || generation_to_collect == GENERATION_OLD);
 
 	binary_protocol_collection_requested (generation_to_collect, requested_size, wait_to_finish ? 1 : 0);
@@ -2240,45 +2156,26 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 
 	TV_GETTIME (gc_total_start);
 
-	// FIXME: extract overflow reason
-	// FIXME: minor overflow for concurrent case
+	if (finish_concurrent) {
+		major_finish_concurrent_collection (wait_to_finish);
+		oldest_generation_collected = GENERATION_OLD;
+	}
+
 	if (generation_to_collect == GENERATION_NURSERY && !finish_concurrent) {
 		if (concurrent_collection_in_progress)
 			major_update_concurrent_collection ();
 
-		if (collect_nursery (reason, FALSE, NULL) && !concurrent_collection_in_progress) {
-			overflow_generation_to_collect = GENERATION_OLD;
-			overflow_reason = "Minor overflow";
-		}
-	} else if (finish_concurrent) {
-		major_finish_concurrent_collection (wait_to_finish);
-		oldest_generation_collected = GENERATION_OLD;
-	} else {
-		SGEN_ASSERT (0, generation_to_collect == GENERATION_OLD, "We should have handled nursery collections above");
+		collect_nursery (reason, NULL);
+	} else if (generation_to_collect == GENERATION_OLD && (wait_to_finish || !finish_concurrent)) {
+		/* If we finished a concurrent collection, we start a new serial major only if we are forced */
 		if (major_collector.is_concurrent && !wait_to_finish) {
-			collect_nursery ("Concurrent start", FALSE, NULL);
-			major_start_concurrent_collection (reason);
+			SGEN_ASSERT (0, !finish_concurrent, "Why are we starting a new concurrent collection if we just finished one ?");
+			collect_nursery ("Concurrent start", NULL);
+			major_start_concurrent_collection (reason, compacting);
 			oldest_generation_collected = GENERATION_NURSERY;
-		} else if (major_do_collection (reason, FALSE, wait_to_finish)) {
-			overflow_generation_to_collect = GENERATION_NURSERY;
-			overflow_reason = "Excessive pinning";
+		} else {
+			major_do_collection (reason, wait_to_finish, compacting);
 		}
-	}
-
-	if (overflow_generation_to_collect != -1) {
-		SGEN_ASSERT (0, !concurrent_collection_in_progress, "We don't yet support overflow collections with the concurrent collector");
-
-		/*
-		 * We need to do an overflow collection, either because we ran out of memory
-		 * or the nursery is fully pinned.
-		 */
-
-		if (overflow_generation_to_collect == GENERATION_NURSERY)
-			collect_nursery (overflow_reason, TRUE, NULL);
-		else
-			major_do_collection (overflow_reason, TRUE, wait_to_finish);
-
-		oldest_generation_collected = MAX (oldest_generation_collected, overflow_generation_to_collect);
 	}
 
 	SGEN_LOG (2, "Heap size: %lu, LOS size: %lu", (unsigned long)sgen_gc_get_total_heap_allocation (), (unsigned long)los_memory_usage);
@@ -2665,12 +2562,12 @@ sgen_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size, unsign
  */
 
 void
-sgen_gc_collect (int generation)
+sgen_gc_collect (int generation, MonoGCCollectionFlags flags)
 {
 	LOCK_GC;
 	if (generation > 1)
 		generation = 1;
-	sgen_perform_collection (0, generation, "user request", TRUE, TRUE);
+	sgen_perform_collection (0, generation, "user request", flags);
 	UNLOCK_GC;
 }
 
@@ -3122,6 +3019,12 @@ sgen_gc_init (void)
 
 	if (major_collector.needs_thread_pool)
 		sgen_workers_init (1);
+
+	if (!soft_limit) {
+		gint64 ram_size = mono_determine_physical_ram_size ();
+		if (ram_size > 0)
+			soft_limit = ram_size * SGEN_SOFT_HEAP_LIMIT_RATIO;
+	}
 
 	sgen_memgov_init (max_heap, soft_limit, debug_print_allowance, allowance_ratio, save_target);
 

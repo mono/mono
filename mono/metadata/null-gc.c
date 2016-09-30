@@ -51,6 +51,11 @@ mono_gc_collect (int generation)
 {
 }
 
+void
+mono_gc_collect_full (int generation, MonoGCCollectionFlags flags)
+{
+}
+
 int
 mono_gc_max_generation (void)
 {

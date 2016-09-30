@@ -735,7 +735,7 @@ major_alloc_small_pinned_obj (GCVTable vtable, size_t size, gboolean has_referen
 	  *as pinned alloc is requested by the runtime.
 	  */
 	 if (!res) {
-		sgen_perform_collection (0, GENERATION_OLD, "pinned alloc failure", TRUE, TRUE);
+		sgen_perform_collection (0, GENERATION_OLD, "pinned alloc failure", MONO_GC_STW | MONO_GC_FORCE_SERIAL);
 		res = alloc_obj (vtable, size, TRUE, has_references);
 	 }
 	 return (GCObject *)res;
@@ -1870,17 +1870,18 @@ sgen_evacuation_freelist_blocks (MSBlockInfo * volatile *block_list, int size_in
 }
 
 static void
-major_start_major_collection (void)
+major_start_major_collection (gboolean compacting)
 {
 	MSBlockInfo *block;
 	int i;
 
 	major_finish_sweep_checking ();
 
-	/*
-	 * Clear the free lists for block sizes where we do evacuation.  For those block
-	 * sizes we will have to allocate new blocks.
-	 */
+	if (compacting) {
+		for (i = 0; i < num_block_obj_sizes; ++i)
+			evacuate_block_obj_sizes [i] = TRUE;
+	}
+
 	for (i = 0; i < num_block_obj_sizes; ++i) {
 		if (!evacuate_block_obj_sizes [i])
 			continue;

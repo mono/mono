@@ -44,7 +44,17 @@ typedef enum {
 	MONO_ROOT_SOURCE_HANDLE = 14,
 } MonoGCRootSource;
 
+typedef enum {
+	// Ask to stop the world. We can't collect if the world is not stopped
+	MONO_GC_STW = 1 << 0,
+	// Force the collection to be serial
+	MONO_GC_FORCE_SERIAL = 1 << 1,
+	// Force the compaction of the major heap
+	MONO_GC_FORCE_COMPACTION = 1 << 2,
+} MonoGCCollectionFlags;
+
 MONO_API void   mono_gc_collect         (int generation);
+MONO_API void   mono_gc_collect_full    (int generation, MonoGCCollectionFlags flags);
 MONO_API int    mono_gc_max_generation  (void);
 MONO_API int    mono_gc_get_generation  (MonoObject *object);
 MONO_API int    mono_gc_collection_count (int generation);

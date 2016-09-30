@@ -26,20 +26,10 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#if defined (__APPLE__)
-#include <mach/message.h>
-#include <mach/mach_host.h>
-#include <mach/host_info.h>
-#include <sys/sysctl.h>
-#endif
-#if defined (__NetBSD__)
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/vmmeter.h>
-#endif
 #include "metadata/mono-perfcounters.h"
 #include "metadata/appdomain.h"
 #include "metadata/object-internals.h"
+#include "metadata/exception.h"
 /* for mono_stats */
 #include "metadata/class-internals.h"
 #include "utils/mono-time.h"
@@ -336,10 +326,19 @@ typedef struct {
 static ImplVtable*
 create_vtable (void *arg, SampleFunc sample, UpdateFunc update)
 {
+	MonoCounterSample dummy_sample;
+
 	ImplVtable *vtable = g_new0 (ImplVtable, 1);
 	vtable->arg = arg;
 	vtable->sample = sample;
 	vtable->update = update;
+
+	if (!sample (vtable, TRUE, &dummy_sample)) {
+		/* If we fail to get the value for the counter, don't expose it */
+		g_free (vtable);
+		return NULL;
+	}
+
 	return vtable;
 }
 
@@ -408,131 +407,6 @@ predef_cleanup (ImplVtable *vtable)
 	}
 	unref_pid_unlocked (vt->pid);
 	perfctr_unlock ();
-}
-
-static guint64
-mono_determine_physical_ram_size (void)
-{
-#if defined (TARGET_WIN32)
-	MEMORYSTATUSEX memstat;
-
-	memstat.dwLength = sizeof (memstat);
-	GlobalMemoryStatusEx (&memstat);
-	return (guint64)memstat.ullTotalPhys;
-#elif defined (__NetBSD__) || defined (__APPLE__)
-#ifdef __NetBSD__
-	unsigned long value;
-#else
-	guint64 value;
-#endif
-	int mib[2] = {
-		CTL_HW,
-#ifdef __NetBSD__
-		HW_PHYSMEM64
-#else
-		HW_MEMSIZE
-#endif
-	};
-	size_t size_sys = sizeof (value);
-
-	sysctl (mib, 2, &value, &size_sys, NULL, 0);
-	if (value == 0)
-		return 134217728;
-
-	return (guint64)value;
-#elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
-
-	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
-	 * reports invalid values, please add your OS specific code below. */
-#ifdef _SC_PAGESIZE
-	page_size = (guint64)sysconf (_SC_PAGESIZE);
-#endif
-
-#ifdef _SC_PHYS_PAGES
-	num_pages = (guint64)sysconf (_SC_PHYS_PAGES);
-#endif
-
-	if (!page_size || !num_pages) {
-		g_warning ("Your operating system's sysconf (3) function doesn't correctly report physical memory size!");
-		return 134217728;
-	}
-
-	return page_size * num_pages;
-#else
-	return 134217728;
-#endif
-}
-
-static guint64
-mono_determine_physical_ram_available_size (void)
-{
-#if defined (TARGET_WIN32)
-	MEMORYSTATUSEX memstat;
-
-	memstat.dwLength = sizeof (memstat);
-	GlobalMemoryStatusEx (&memstat);
-	return (guint64)memstat.ullAvailPhys;
-
-#elif defined (__NetBSD__)
-	struct vmtotal vm_total;
-	guint64 page_size;
-	int mib[2];
-	size_t len;
-
-	mib[0] = CTL_VM;
-	mib[1] = VM_METER;
-
-	len = sizeof (vm_total);
-	sysctl (mib, 2, &vm_total, &len, NULL, 0);
-
-	mib[0] = CTL_HW;
-	mib[1] = HW_PAGESIZE;
-
-	len = sizeof (page_size);
-	sysctl (mib, 2, &page_size, &len, NULL, 0);
-
-	return ((guint64) vm_total.t_free * page_size) / 1024;
-#elif defined (__APPLE__)
-	mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-	mach_port_t host = mach_host_self();
-	vm_size_t page_size;
-	vm_statistics_data_t vmstat;
-	kern_return_t ret;
-	do {
-		ret = host_statistics(host, HOST_VM_INFO, (host_info_t)&vmstat, &count);
-	} while (ret == KERN_ABORTED);
-
-	if (ret != KERN_SUCCESS) {
-		g_warning ("Mono was unable to retrieve memory usage!");
-		return 0;
-	}
-
-	host_page_size(host, &page_size);
-	return (guint64) vmstat.free_count * page_size;
-
-#elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
-
-	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
-	 * reports invalid values, please add your OS specific code below. */
-#ifdef _SC_PAGESIZE
-	page_size = (guint64)sysconf (_SC_PAGESIZE);
-#endif
-
-#ifdef _SC_AVPHYS_PAGES
-	num_pages = (guint64)sysconf (_SC_AVPHYS_PAGES);
-#endif
-
-	if (!page_size || !num_pages) {
-		g_warning ("Your operating system's sysconf (3) function doesn't correctly report physical memory size!");
-		return 0;
-	}
-
-	return page_size * num_pages;
-#else
-	return 0;
-#endif
 }
 
 void
@@ -994,10 +868,10 @@ mono_mem_counter (ImplVtable *vtable, MonoBoolean only_value, MonoCounterSample 
 		return TRUE;
 	case COUNTER_MEM_PHYS_TOTAL:
 		sample->rawValue = mono_determine_physical_ram_size ();;
-		return TRUE;
+		return sample->rawValue > 0;
 	case COUNTER_MEM_PHYS_AVAILABLE:
 		sample->rawValue = mono_determine_physical_ram_available_size ();;
-		return TRUE;
+		return sample->rawValue > 0;
 	}
 	return FALSE;
 }
@@ -1334,13 +1208,15 @@ mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString
 	cdesc = find_category (category);
 	if (!cdesc) {
 		SharedCategory *scat = find_custom_category (category);
-		if (!scat)
+		if (!scat) {
+			mono_set_pending_exception (mono_get_exception_invalid_operation ("Category does not exist"));
 			return NULL;
+		}
 		*custom = TRUE;
 		result = custom_get_impl (scat, counter, instance, type, &error);
 		if (mono_error_set_pending_exception (&error))
 			return NULL;
-		return result;
+		goto done;
 	}
 	gchar *c_instance = mono_string_to_utf8_checked (instance, &error);
 	if (mono_error_set_pending_exception (&error))
@@ -1372,6 +1248,10 @@ mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString
 		break;
 	}
 	g_free (c_instance);
+
+done:
+	if (!result)
+		mono_set_pending_exception (mono_get_exception_invalid_operation ("Could not locate Performance Counter with specified name"));
 	return result;
 }
 

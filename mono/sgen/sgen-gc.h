@@ -659,7 +659,7 @@ struct _SgenMajorCollector {
 	gint64 (*get_used_size) (void);
 	void (*start_nursery_collection) (void);
 	void (*finish_nursery_collection) (void);
-	void (*start_major_collection) (void);
+	void (*start_major_collection) (gboolean compacting);
 	void (*finish_major_collection) (ScannedObjectCounts *counts);
 	gboolean (*ptr_is_in_non_pinned_space) (char *ptr, char **start);
 	gboolean (*ptr_is_from_pinned_alloc) (char *ptr);
@@ -822,12 +822,9 @@ enum {
 	SPACE_LOS
 };
 
-void sgen_pin_object (GCObject *object, SgenGrayQueue *queue);
-void sgen_set_pinned_from_failed_allocation (mword objsize);
-
 void sgen_ensure_free_space (size_t size, int generation);
-void sgen_gc_collect (int generation);
-void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw);
+void sgen_gc_collect (int generation, MonoGCCollectionFlags flags);
+void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, MonoGCCollectionFlags flags);
 
 int sgen_gc_collection_count (int generation);
 /* FIXME: what exactly does this return? */

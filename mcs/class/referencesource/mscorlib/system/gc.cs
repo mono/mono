@@ -73,7 +73,7 @@ namespace System {
         extern static int GetMaxGeneration ();
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        extern static void InternalCollect (int generation);
+        extern static void InternalCollect (int generation, int mode);
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         extern static void RecordPressure (long bytesAllocated);
@@ -230,7 +230,7 @@ namespace System {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void Collect() {
 #if MONO
-            InternalCollect (MaxGeneration);
+            InternalCollect (MaxGeneration, (int)InternalGCCollectionMode.Blocking);
 #else
             //-1 says to GC all generations.
             _Collect(-1, (int)InternalGCCollectionMode.Blocking);
@@ -284,7 +284,7 @@ namespace System {
             }
 
 #if MONO
-            InternalCollect (generation);
+            InternalCollect (generation, iInternalModes);
 #else
             _Collect(generation, iInternalModes);
 #endif

@@ -72,6 +72,8 @@ gint64    mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *err
 gint32    mono_cpu_usage (MonoCpuUsageState *prev);
 
 int       mono_atexit (void (*func)(void));
+gint64    mono_determine_physical_ram_size (void);
+gint64    mono_determine_physical_ram_available_size (void);
 
 #endif /* __MONO_PROC_LIB_H__ */
 

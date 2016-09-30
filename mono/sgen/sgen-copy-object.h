@@ -76,12 +76,7 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	/* FIXME: Does this not mark the newly allocated object? */
 	void *destination = COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
 
-	if (G_UNLIKELY (!destination)) {
-		/* FIXME: Is this path ever tested? */
-		collector_pin_object (obj, queue);
-		sgen_set_pinned_from_failed_allocation (objsize);
-		return obj;
-	}
+	SGEN_ASSERT (0, destination, "We failed to promote object. OOM ?");
 
 	if (!has_references)
 		queue = NULL;
@@ -96,4 +91,3 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 }
 
 #undef COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION
-#undef collector_pin_object
