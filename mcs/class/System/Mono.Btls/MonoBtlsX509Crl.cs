@@ -71,9 +71,6 @@ namespace Mono.Btls
 		extern static IntPtr mono_btls_x509_crl_ref (IntPtr handle);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static void mono_btls_x509_crl_test (IntPtr handle);
-
-		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static IntPtr mono_btls_x509_crl_from_data (IntPtr data, int len, MonoBtlsX509Format format);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

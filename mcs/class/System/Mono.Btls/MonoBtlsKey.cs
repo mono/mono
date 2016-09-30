@@ -63,9 +63,6 @@ namespace Mono.Btls
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static int mono_btls_key_is_rsa (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static int mono_btls_key_test (IntPtr handle);
-
 		new internal BoringKeyHandle Handle {
 			get { return (BoringKeyHandle)base.Handle; }
 		}
@@ -87,11 +84,6 @@ namespace Mono.Btls
 			Marshal.Copy (data, buffer, 0, size);
 			FreeDataPtr (data);
 			return buffer;
-		}
-
-		public void Test ()
-		{
-			mono_btls_key_test (Handle.DangerousGetHandle ());
 		}
 
 		public MonoBtlsKey Copy ()
