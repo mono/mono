@@ -45,8 +45,12 @@ namespace Mono.Security.X509 {
 
 		static private string _userPath;
 		static private string _localMachinePath;
+		static private string _newUserPath;
+		static private string _newLocalMachinePath;
 		static private X509Stores _userStore;
 		static private X509Stores _machineStore;
+		static private X509Stores _newUserStore;
+		static private X509Stores _newMachineStore;
 
 		private X509StoreManager ()
 		{
@@ -55,10 +59,10 @@ namespace Mono.Security.X509 {
 		internal static string CurrentUserPath {
 			get {
 				if (_userPath == null) {
-					_userPath = Path.Combine(
-							Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+					_userPath = Path.Combine (
+							Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
 							".mono");
-					_userPath = Path.Combine(_userPath, "certs");
+					_userPath = Path.Combine (_userPath, "certs");
 				}
 				return _userPath;
 			}
@@ -76,10 +80,34 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		internal static string NewCurrentUserPath {
+			get {
+				if (_newUserPath == null) {
+					_newUserPath = Path.Combine (
+							Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+							".mono");
+					_newUserPath = Path.Combine (_newUserPath, "new-certs");
+				}
+				return _newUserPath;
+			}
+		}
+
+		internal static string NewLocalMachinePath {
+			get {
+				if (_newLocalMachinePath == null) {
+					_newLocalMachinePath = Path.Combine (
+						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+						".mono");
+					_newLocalMachinePath = Path.Combine (_newLocalMachinePath, "new-certs");
+				}
+				return _newLocalMachinePath;
+			}
+		}
+
 		static public X509Stores CurrentUser {
 			get { 
 				if (_userStore == null)
-					_userStore = new X509Stores(CurrentUserPath);
+					_userStore = new X509Stores (CurrentUserPath, false);
 				
 				return _userStore;
 			}
@@ -88,9 +116,27 @@ namespace Mono.Security.X509 {
 		static public X509Stores LocalMachine {
 			get {
 				if (_machineStore == null) 
-					_machineStore = new X509Stores (LocalMachinePath);
+					_machineStore = new X509Stores (LocalMachinePath, false);
 
 				return _machineStore;
+			}
+		}
+
+		static public X509Stores NewCurrentUser {
+			get {
+				if (_newUserStore == null)
+					_newUserStore = new X509Stores (NewCurrentUserPath, true);
+
+				return _newUserStore;
+			}
+		}
+
+		static public X509Stores NewLocalMachine {
+			get {
+				if (_newMachineStore == null)
+					_newMachineStore = new X509Stores (NewLocalMachinePath, true);
+
+				return _newMachineStore;
 			}
 		}
 
