@@ -293,6 +293,7 @@ namespace System.Net
 
 				Data.StatusCode = status;
 				Data.Challenge = result.GetValues ("Proxy-Authentic");
+				Data.Headers = result;
 				return false;
 			} else if (status != 200) {
 				string msg = String.Format ("The remote server returned a {0} status code.", status);
@@ -368,6 +369,9 @@ namespace System.Net
 					}
 
 					status = (int)UInt32.Parse (parts [1]);
+					if (parts.Length >= 3)
+						Data.StatusDescription = String.Join (" ", parts, 2, parts.Length - 2);
+
 					gotStatus = true;
 				}
 			}
@@ -738,7 +742,11 @@ namespace System.Net
 				Exception cnc_exc = connect_exception;
 				if (cnc_exc == null && (Data.StatusCode == 401 || Data.StatusCode == 407)) {
 					st = WebExceptionStatus.ProtocolError;
-					cnc_exc = new WebException (Data.StatusCode == 407 ? "(407) Proxy Authentication Required" : "(401) Unauthorized" , st);
+					if (Data.Headers == null)
+						Data.Headers = new WebHeaderCollection ();
+
+					var webResponse = new HttpWebResponse (sPoint.Address, "CONNECT", Data, null);
+					cnc_exc = new WebException (Data.StatusCode == 407 ? "(407) Proxy Authentication Required" : "(401) Unauthorized", null, st, webResponse);
 				}
 			
 				connect_exception = null;

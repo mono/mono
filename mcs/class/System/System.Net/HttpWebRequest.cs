@@ -1320,8 +1320,11 @@ namespace System.Net
 					msg = "Error: " + status;
 					wex = new WebException (msg, status);
 				} else {
-					msg = String.Format ("Error: {0} ({1})", status, exc.Message);
-					wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					wex = exc as WebException;
+					if (wex == null) {
+						msg = String.Format ("Error: {0} ({1})", status, exc.Message);
+						wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					}
 				}
 				r.SetCompleted (false, wex);
 				r.DoCallback ();
