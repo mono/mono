@@ -50,7 +50,7 @@ namespace Mono.Tools
 		static string inputFile;
 		static bool quiet;
 		static bool userStore;
-		static bool btlsStore;
+		static bool btlsStore = true;
 
 		static X509Certificate DecodeCertificate (string s)
 		{
@@ -179,8 +179,8 @@ namespace Mono.Tools
 				case "--user":
 					userStore = true;
 					break;
-				case "--btls":
-					btlsStore = true;
+				case "--legacy":
+					btlsStore = false;
 					break;
 				default:
 					WriteLine ("Unknown option '{0}'.", args[i]);
