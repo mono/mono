@@ -79,7 +79,7 @@ monodroid_dirs := \
 monotouch_dirs := \
 	$(mobile_static_dirs)
 
-monotouch_watch_dirs := $(monotouch_dirs)
+monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
 monotouch_tv_dirs   := $(monotouch_dirs)
 
 monotouch_runtime_dirs := \
@@ -90,7 +90,7 @@ monotouch_runtime_dirs := \
 	System.XML \
 	Mono.CSharp
 
-monotouch_watch_runtime_dirs := $(monotouch_runtime_dirs)
+monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
 monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
 
 xammac_4_5_dirs := \
