@@ -19,10 +19,16 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
+ifndef NO_MONO_SECURITY
+MONO_SECURITY=Mono.Security
+MONO_SECURITY_REF=MonoSecurity=Mono.Security
+MONO_SECURITY_DLL=$(the_libdir_base)Mono.Security.dll
+endif
+
 ifndef MOBILE_PROFILE
-TEST_LIB_REFS = System.Drawing Mono.Security System.Data System.Xml System.Core System.Configuration
+TEST_LIB_REFS = System.Drawing $(MONO_SECURITY) System.Data System.Xml System.Core System.Configuration
 else
-TEST_LIB_REFS = Mono.Security System.Data System.Xml System.Core
+TEST_LIB_REFS = $(MONO_SECURITY) System.Data System.Xml System.Core
 endif
 
 TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
@@ -67,7 +73,7 @@ endif
 #
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS =
-LIB_REFS += bare/System.Xml MonoSecurity=Mono.Security
+LIB_REFS += bare/System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 endif
 
@@ -75,7 +81,7 @@ endif
 # Flags used to build the final version of System (when intermediate is not defined)
 #
 ifndef intermediate
-LIB_REFS += System.Xml MonoSecurity=Mono.Security
+LIB_REFS += System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 
 ifndef MOBILE_PROFILE
@@ -99,7 +105,7 @@ include ../../build/library.make
 system_library_deps := \
 	$(secxml_libdir)/System.dll 		\
 	$(the_libdir_base)System.Xml.dll	\
-	$(the_libdir_base)Mono.Security.dll	\
+	$(MONO_SECURITY_DLL)				\
 	$(bare_libdir)/System.dll
 
 ifndef MOBILE_PROFILE
@@ -108,7 +114,7 @@ endif
 
 artifacts = $(system_library_deps) 			\
 	$(bare_libdir)/System.Xml.dll			\
-	$(the_libdir_base)Mono.Security.dll		\
+	$(MONO_SECURITY_DLL)				\
 	$(the_libdir_base)System.Configuration.dll
 
 .NOTPARALLEL: $(system_library_deps)
@@ -123,7 +129,7 @@ $(bare_libdir)/System.dll:
 endif
 
 ifneq (secxml/,$(intermediate))
-$(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(the_libdir_base)Mono.Security.dll $(bare_libdir)/System.dll
+$(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(MONO_SECURITY_DLL) $(bare_libdir)/System.dll
 	$(MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
 else
 build-sec:
