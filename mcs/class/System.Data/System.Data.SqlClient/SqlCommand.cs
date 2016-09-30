@@ -994,6 +994,9 @@ namespace System.Data.SqlClient {
 
 		#endregion // Asynchronous Methods
 
+#pragma warning disable 0067
+		// TODO: Not implemented
 		public event StatementCompletedEventHandler StatementCompleted;
+#pragma warning restore
 	}
 }

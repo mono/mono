@@ -65,8 +65,11 @@ namespace System.Data.SqlClient
 		public bool HasChanges {
 			get { return true; }
 		}
-		
+
+#pragma warning disable 0067
+		[MonoTODO]
 		public event OnChangeEventHandler OnChange;
+#pragma warning restore
 
 		[MonoTODO]
 		public void AddCommandDependency(SqlCommand command)

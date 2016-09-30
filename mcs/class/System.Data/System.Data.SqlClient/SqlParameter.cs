@@ -361,13 +361,13 @@ namespace System.Data.SqlClient {
 		}
 
 		[DefaultValue (0)]
-		public byte Precision {
+		public new byte Precision {
 			get { return metaParameter.Precision; }
 			set { metaParameter.Precision = value; }
 		}
 
 		[DefaultValue (0)]
-		public byte Scale {
+		public new byte Scale {
 			get { return metaParameter.Scale; }
 			set { metaParameter.Scale = value; }
 		}

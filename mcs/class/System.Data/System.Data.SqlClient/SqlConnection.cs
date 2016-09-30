@@ -138,7 +138,9 @@ namespace System.Data.SqlClient
 
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[RecommendedAsConfigurable (true)]
+#pragma warning disable 618 // ignore obsolete warning about RecommendedAsConfigurable to use SettingsBindableAttribute
+		[RecommendedAsConfigurable(true)]
+#pragma warning restore 618
 		[RefreshProperties (RefreshProperties.All)]
 		public override string ConnectionString {
 			get {
