@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "96D9F0144C1ED7B9F1CA0A518E53E93974CB9E23",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "96D9F0144C1ED7B9F1CA0A518E53E93974CB9E23" : 0,
+    "1F749A9C17645530CD5B454B2D8030B9C45FEF70" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "021B8FA0-D2EC-423B-B708-6FCFE74253F9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "96D9F0144C1ED7B9F1CA0A518E53E93974CB9E23" : "fluffy-octo-duck\/",
+    "1F749A9C17645530CD5B454B2D8030B9C45FEF70" : "fluffy-octo-duck\/boringssl\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "MonoBtls",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "MonoBtls\/MonoBtls.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/boringssl.googlesource.com\/boringssl",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1F749A9C17645530CD5B454B2D8030B9C45FEF70"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:baulig\/fluffy-octo-duck.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "96D9F0144C1ED7B9F1CA0A518E53E93974CB9E23"
+    }
+  ]
+}
