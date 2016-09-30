@@ -38,11 +38,6 @@ namespace System.Net {
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
-		internal HttpListener (System.Security.Cryptography.X509Certificates.X509Certificate certificate, Mono.Net.Security.IMonoTlsProvider tlsProvider, Mono.Security.Interface.MonoTlsSettings tlsSettings)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
 		public AuthenticationSchemes AuthenticationSchemes {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
