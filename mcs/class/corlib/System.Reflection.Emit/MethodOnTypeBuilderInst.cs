@@ -50,7 +50,7 @@ namespace System.Reflection.Emit
 		#endregion
 		MethodInfo generic_method_definition;
 
-		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodInfo base_method)
+		public MethodOnTypeBuilderInst (TypeBuilderInstantiation instantiation, MethodInfo base_method)
 		{
 			this.instantiation = instantiation;
 			this.base_method = base_method;

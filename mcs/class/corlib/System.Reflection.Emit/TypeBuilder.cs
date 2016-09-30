@@ -1812,7 +1812,7 @@ namespace System.Reflection.Emit
 
 		static bool IsValidGetMethodType (Type type)
 		{
-			if (type is TypeBuilder || type is MonoGenericClass)
+			if (type is TypeBuilder || type is TypeBuilderInstantiation)
 				return true;
 			/*GetMethod() must work with TypeBuilders after CreateType() was called.*/
 			if (type.Module is ModuleBuilder)

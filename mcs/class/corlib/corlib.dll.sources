@@ -245,7 +245,6 @@ System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
 System.Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
-System.Reflection/MonoGenericClass.cs
 System.Reflection/MonoEvent.cs
 System.Reflection/MonoField.cs
 System.Reflection/MonoMethod.cs
@@ -300,6 +299,7 @@ System.Reflection.Emit/SignatureToken.cs
 System.Reflection.Emit/StackBehaviour.cs
 System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
+System.Reflection.Emit/TypeBuilderInstantiation.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
 System.Reflection.Emit/AssemblyBuilder.pns.cs
@@ -899,7 +899,6 @@ ReferenceSources/MethodBase.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
-ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
