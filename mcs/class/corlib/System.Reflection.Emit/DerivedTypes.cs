@@ -45,9 +45,6 @@ namespace System.Reflection.Emit
 	{
 		internal Type m_baseType;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern void create_unmanaged_type (Type type);
-
 		internal SymbolType (Type elementType)
 		{
 			this.m_baseType = elementType;
@@ -121,7 +118,6 @@ namespace System.Reflection.Emit
 	
 		public override Type UnderlyingSystemType {
 			get {
-				create_unmanaged_type (this);
 				return this;
 			}
 		}
@@ -130,6 +126,11 @@ namespace System.Reflection.Emit
 			get {
 				return m_baseType.IsUserType;
 			}
+		}
+
+		// Called from the runtime to return the corresponding finished Type object
+		internal override Type RuntimeResolve () {
+			return InternalResolve ();
 		}
 	}
 

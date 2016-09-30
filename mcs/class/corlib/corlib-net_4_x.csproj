@@ -982,7 +982,6 @@
     <Compile Include="System.Reflection\MonoEvent.cs" />
     <Compile Include="System.Reflection\MonoField.cs" />
     <Compile Include="System.Reflection\MonoGenericClass.cs" />
-    <Compile Include="System.Reflection\MonoGenericMethod.cs" />
     <Compile Include="System.Reflection\MonoMethod.cs" />
     <Compile Include="System.Reflection\MonoModule.cs" />
     <Compile Include="System.Reflection\MonoParameterInfo.cs" />

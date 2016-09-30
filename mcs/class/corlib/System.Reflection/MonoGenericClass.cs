@@ -57,7 +57,6 @@ namespace System.Reflection
 #pragma warning disable 649
 		internal Type generic_type;
 		Type[] type_arguments;
-		bool initialized;
 #pragma warning restore 649
 		#endregion
 
@@ -73,17 +72,6 @@ namespace System.Reflection
 		{
 			this.generic_type = tb;
 			this.type_arguments = args;
-			/*
-			This is a temporary hack until we can fix the rest of the runtime
-			to properly handle this class to be a complete UT.
-
-			We must not regisrer this with the runtime after the type is created
-			otherwise created_type.MakeGenericType will return an instance of MonoGenericClass,
-			which is very very broken.
-			*/
-			if (tb is TypeBuilder && !(tb as TypeBuilder).is_created)
-				register_with_runtime (this);
-			
 		}
 
 		internal override Type InternalResolve ()
@@ -95,11 +83,18 @@ namespace System.Reflection
 			return gtd.MakeGenericType (args);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern void initialize (FieldInfo[] fields);
-
- 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
- 		internal static extern void register_with_runtime (Type type);
+		// Called from the runtime to return the corresponding finished Type object
+		internal override Type RuntimeResolve ()
+		{
+			if (generic_type is TypeBuilder && !(generic_type as TypeBuilder).IsCreated ())
+				AppDomain.CurrentDomain.DoTypeResolve (generic_type);
+			for (int i = 0; i < type_arguments.Length; ++i) {
+				var t = type_arguments [i];
+				if (t is TypeBuilder && !(t as TypeBuilder).IsCreated ())
+					AppDomain.CurrentDomain.DoTypeResolve (t);
+			}
+			return InternalResolve ();
+		}
 
 		internal bool IsCreated {
 			get {
@@ -110,20 +105,6 @@ namespace System.Reflection
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-		void initialize ()
-		{
-			if (initialized)
-				return;
-
-			MonoGenericClass parent = GetParentType () as MonoGenericClass;
-			if (parent != null)
-				parent.initialize ();
-				
-			initialize (generic_type.GetFields (flags));
-
-			initialized = true;
-		}
 
 		Type GetParentType ()
 		{
@@ -188,8 +169,6 @@ namespace System.Reflection
 
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
 		{
-			initialize ();
-
 			if (methods == null)
 				methods = new Hashtable ();
 			if (!methods.ContainsKey (fromNoninstanciated))
@@ -199,8 +178,6 @@ namespace System.Reflection
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
-			initialize ();
-
 			if (ctors == null)
 				ctors = new Hashtable ();
 			if (!ctors.ContainsKey (fromNoninstanciated))
@@ -210,7 +187,6 @@ namespace System.Reflection
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
-			initialize ();
 			if (fields == null)
 				fields = new Hashtable ();
 			if (!fields.ContainsKey (fromNoninstanciated))

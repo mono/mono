@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
@@ -97,9 +98,6 @@ namespace System.Reflection.Emit
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_generic_class ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern EventInfo get_event_info (EventBuilder eb);
 
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
@@ -873,6 +871,17 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			if (methods != null) {
+				for (int i = 0; i < num_methods; ++i)
+					methods[i].FixupTokens (token_map, member_map);
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors)
+					cb.FixupTokens (token_map, member_map);
+			}
+		}
+
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			symbolWriter.OpenNamespace (this.Namespace);
@@ -966,53 +975,6 @@ namespace System.Reflection.Emit
 			if (is_created)
 				return created.GetEvents (bindingAttr);
 			throw new NotSupportedException ();
-		}
-
-		// This is only used from MonoGenericInst.initialize().
-		internal EventInfo[] GetEvents_internal (BindingFlags bindingAttr)
-		{
-			if (events == null)
-				return new EventInfo [0];
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-			MethodInfo accessor;
-
-			foreach (EventBuilder eb in events) {
-				if (eb == null)
-					continue;
-				EventInfo c = get_event_info (eb);
-				match = false;
-				accessor = c.GetAddMethod (true);
-				if (accessor == null)
-					accessor = c.GetRemoveMethod (true);
-				if (accessor == null)
-					continue;
-				mattrs = accessor.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (c);
-			}
-			EventInfo[] result = new EventInfo [l.Count];
-			l.CopyTo (result);
-			return result;
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
@@ -1666,6 +1628,12 @@ namespace System.Reflection.Emit
 			return created;
 		}
 
+		internal override Type RuntimeResolve ()
+		{
+			check_created ();
+			return created;
+		}
+
 		internal bool is_created {
 			get {
 				return createTypeCalled;
@@ -1764,9 +1732,10 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public extern override bool IsGenericParameter {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override bool IsGenericParameter {
+			get {
+				return false;
+			}
 		}
 
 		public override GenericParameterAttributes GenericParameterAttributes {
