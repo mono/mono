@@ -1185,7 +1185,6 @@ struct _MonoReflectionGenericClass {
 	MonoReflectionType type;
 	MonoReflectionType *generic_type; /*Can be either a MonoType or a TypeBuilder*/
 	MonoArray *type_arguments;
-	guint32 initialized;
 };
 
 typedef struct {

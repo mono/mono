@@ -1720,16 +1720,6 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 	return NULL;
 }
 
-void
-ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type)
-{
-}
-
-void
-mono_reflection_register_with_runtime (MonoReflectionType *type)
-{
-}
-
 /**
  * LOCKING: Assumes the loader lock is held.
  */
@@ -1856,12 +1846,6 @@ get_field_name_and_type (MonoObject *field, char **name, MonoType **type, MonoEr
 }
 
 #else /* DISABLE_REFLECTION_EMIT */
-
-void
-mono_reflection_register_with_runtime (MonoReflectionType *type)
-{
-	/* This is empty */
-}
 
 static gboolean
 is_sre_type_builder (MonoClass *klass)
@@ -3028,11 +3012,6 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilder* mb,
 
 #ifndef DISABLE_REFLECTION_EMIT
 
-void
-mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *fields)
-{
-}
-
 /**
  * fix_partial_generic_class:
  * @klass: a generic instantiation MonoClass
@@ -4190,24 +4169,11 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 }
 
 void
-mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *fields)
-{
-	g_assert_not_reached ();
-}
-
-void
 mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides, int *num_overrides, MonoError *error)
 {
 	mono_error_init (error);
 	*overrides = NULL;
 	*num_overrides = 0;
-}
-
-MonoReflectionEvent *
-ves_icall_TypeBuilder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb)
-{
-	g_assert_not_reached ();
-	return NULL;
 }
 
 MonoReflectionType*

@@ -565,11 +565,6 @@ ICALL_TYPE(SIGH, "System.Reflection.Emit.SignatureHelper", SIGH_1)
 ICALL(SIGH_1, "get_signature_field", ves_icall_SignatureHelper_get_signature_field)
 ICALL(SIGH_2, "get_signature_local", ves_icall_SignatureHelper_get_signature_local)
 
-#ifndef DISABLE_REFLECTION_EMIT
-ICALL_TYPE(SYMBOLTYPE, "System.Reflection.Emit.SymbolType", SYMBOLTYPE_1)
-ICALL(SYMBOLTYPE_1, "create_unmanaged_type", ves_icall_SymbolType_create_unmanaged_type)
-#endif
-
 ICALL_TYPE(TYPEB, "System.Reflection.Emit.TypeBuilder", TYPEB_1)
 ICALL(TYPEB_1, "create_generic_class", ves_icall_TypeBuilder_create_generic_class)
 ICALL(TYPEB_3, "create_runtime_class", ves_icall_TypeBuilder_create_runtime_class)
@@ -623,10 +618,6 @@ ICALL(MFIELD_3, "GetValueInternal", ves_icall_MonoField_GetValueInternal)
 ICALL(MFIELD_6, "ResolveType", ves_icall_MonoField_ResolveType)
 ICALL(MFIELD_4, "SetValueInternal", ves_icall_MonoField_SetValueInternal)
 ICALL(MFIELD_7, "get_core_clr_security_level", ves_icall_MonoField_get_core_clr_security_level)
-
-ICALL_TYPE(MGENCL, "System.Reflection.MonoGenericClass", MGENCL_5)
-ICALL(MGENCL_5, "initialize", mono_reflection_generic_class_initialize)
-ICALL(MGENCL_6, "register_with_runtime", mono_reflection_register_with_runtime)
 
 ICALL_TYPE(MMETH, "System.Reflection.MonoMethod", MMETH_2)
 ICALL(MMETH_2, "GetGenericArguments", ves_icall_MonoMethod_GetGenericArguments)
