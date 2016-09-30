@@ -3458,68 +3458,6 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 	}
 }
 
-static MonoReflectionEvent *
-reflection_event_builder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb, MonoError *error)
-{
-	mono_error_init (error);
-
-	MonoEvent *event = g_new0 (MonoEvent, 1);
-	MonoClass *klass;
-
-	MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)tb, error);
-	if (!is_ok (error)) {
-		g_free (event);
-		return NULL;
-	}
-	klass = mono_class_from_mono_type (type);
-
-	event->parent = klass;
-	event->attrs = eb->attrs;
-	event->name = mono_string_to_utf8_checked (eb->name, error);
-	if (!is_ok (error)) {
-		g_free (event);
-		return NULL;
-	}
-	if (eb->add_method)
-		event->add = eb->add_method->mhandle;
-	if (eb->remove_method)
-		event->remove = eb->remove_method->mhandle;
-	if (eb->raise_method)
-		event->raise = eb->raise_method->mhandle;
-
-#ifndef MONO_SMALL_CONFIG
-	if (eb->other_methods) {
-		int j;
-		event->other = g_new0 (MonoMethod*, mono_array_length (eb->other_methods) + 1);
-		for (j = 0; j < mono_array_length (eb->other_methods); ++j) {
-			MonoReflectionMethodBuilder *mb = 
-				mono_array_get (eb->other_methods,
-						MonoReflectionMethodBuilder*, j);
-			event->other [j] = mb->mhandle;
-		}
-	}
-#endif
-
-	MonoReflectionEvent *ev_obj = mono_event_get_object_checked (mono_object_domain (tb), klass, event, error);
-	if (!is_ok (error)) {
-#ifndef MONO_SMALL_CONFIG
-		g_free (event->other);
-#endif
-		g_free (event);
-		return NULL;
-	}
-	return ev_obj;
-}
-
-MonoReflectionEvent *
-ves_icall_TypeBuilder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb)
-{
-	MonoError error;
-	MonoReflectionEvent *result = reflection_event_builder_get_event_info (tb, eb, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
-}
-
 static void
 typebuilder_setup_events (MonoClass *klass, MonoError *error)
 {
