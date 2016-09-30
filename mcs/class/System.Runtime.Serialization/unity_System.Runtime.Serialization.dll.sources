@@ -1,2 +1,5 @@
 #include net_2_1_raw_System.Runtime.Serialization.dll.sources
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 System.Xml/OnXmlDictionaryReaderClose.cs

@@ -55,7 +55,7 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 #endif
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if NET_2_1 && !UNITY
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]

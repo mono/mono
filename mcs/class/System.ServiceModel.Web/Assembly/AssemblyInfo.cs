@@ -52,7 +52,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if NET_2_1 && !UNITY
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else

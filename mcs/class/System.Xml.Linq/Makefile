@@ -13,6 +13,10 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_3_5
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =

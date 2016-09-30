@@ -19,6 +19,10 @@ USE_BOOT_COMBILE = yes
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_3_5
+endif
+
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
 ifdef CLR_PROFILE
 LIB_MCS_FLAGS += -r:Mono.Posix -unsafe
