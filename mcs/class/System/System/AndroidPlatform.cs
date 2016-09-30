@@ -96,9 +96,9 @@ namespace System {
 			return trustEvaluateSsl (certsRawData);
 		}
 
-#if HAVE_BTLS
 		internal static MonoBtlsX509 CertStoreLookup (MonoBtlsX509Name name)
 		{
+#if HAVE_BTLS
 			var hash = name.GetHash ();
 			var hashOld = name.GetHashOld ();
 			var result = certStoreLookup (hash, false);
@@ -113,8 +113,10 @@ namespace System {
 				return null;
 
 			return MonoBtlsX509.LoadFromData (result, MonoBtlsX509Format.DER);
-		}
+#else
+			return null;
 #endif
+		}
 #endif  // SECURITY_DEP
 
 		internal static IWebProxy GetDefaultProxy ()
