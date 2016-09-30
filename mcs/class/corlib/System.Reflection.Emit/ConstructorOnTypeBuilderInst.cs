@@ -42,11 +42,11 @@ namespace System.Reflection.Emit
 	internal class ConstructorOnTypeBuilderInst : ConstructorInfo
 	{
 		#region Keep in sync with object-internals.h
-		internal MonoGenericClass instantiation;
+		internal TypeBuilderInstantiation instantiation;
 		internal ConstructorInfo cb;
 		#endregion
 
-		public ConstructorOnTypeBuilderInst (MonoGenericClass instantiation, ConstructorInfo cb)
+		public ConstructorOnTypeBuilderInst (TypeBuilderInstantiation instantiation, ConstructorInfo cb)
 		{
 			this.instantiation = instantiation;
 			this.cb = cb;

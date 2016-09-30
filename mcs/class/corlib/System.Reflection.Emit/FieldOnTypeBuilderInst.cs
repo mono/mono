@@ -42,11 +42,11 @@ namespace System.Reflection.Emit
 	internal class FieldOnTypeBuilderInst : FieldInfo
 	{
 		#region Keep in sync with object-internals.h
-		internal MonoGenericClass instantiation;
+		internal TypeBuilderInstantiation instantiation;
 		internal FieldInfo fb;
 		#endregion
 
-		public FieldOnTypeBuilderInst (MonoGenericClass instantiation, FieldInfo fb) {
+		public FieldOnTypeBuilderInst (TypeBuilderInstantiation instantiation, FieldInfo fb) {
 			this.instantiation = instantiation;
 			this.fb = fb;
 		}

@@ -1046,7 +1046,7 @@ namespace System.Reflection.Emit
 		/*Warning, @typeArguments must be a mscorlib internal array. So make a copy before passing it in*/
 		internal Type MakeGenericType (Type gtd, Type[] typeArguments)
 		{
-			return new MonoGenericClass (gtd, typeArguments);
+			return new TypeBuilderInstantiation (gtd, typeArguments);
 		}
 
 		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

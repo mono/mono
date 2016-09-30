@@ -1,5 +1,5 @@
 //
-// System.Reflection.MonoGenericClass
+// System.Reflection.Emit.TypeBuilderInstantiation
 //
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
@@ -41,16 +41,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace System.Reflection
+namespace System.Reflection.Emit
 {
 	/*
-	 * MonoGenericClass represents an instantiation of a generic TypeBuilder. MS
-	 * calls this class TypeBuilderInstantiation (a much better name). MS returns 
-	 * NotImplementedException for many of the methods but we can't do that as gmcs
-	 * depends on them.
+	 * TypeBuilderInstantiation represents an instantiation of a generic TypeBuilder.
 	 */
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoGenericClass :
+	sealed class TypeBuilderInstantiation :
 		TypeInfo
 	{
 		#region Keep in sync with object-internals.h
@@ -62,13 +59,13 @@ namespace System.Reflection
 
 		Hashtable fields, ctors, methods;
 
-		internal MonoGenericClass ()
+		internal TypeBuilderInstantiation ()
 		{
 			// this should not be used
 			throw new InvalidOperationException ();
 		}
 
-		internal MonoGenericClass (Type tb, Type[] args)
+		internal TypeBuilderInstantiation (Type tb, Type[] args)
 		{
 			this.generic_type = tb;
 			this.type_arguments = args;
@@ -489,6 +486,14 @@ namespace System.Reflection
 			}
 		}
 
+		internal static Type MakeGenericType (Type type, Type[] typeArguments)
+		{
+#if FULL_AOT_RUNTIME
+			throw new NotSupportedException ("User types are not supported under full aot");
+#else
+			return new TypeBuilderInstantiation (type, typeArguments);
+#endif
+		}
 	}
 }
 
