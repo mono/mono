@@ -37,9 +37,7 @@ using MonoSecurity::Mono.Security.Interface;
 using Mono.Security.Interface;
 #endif
 
-#if HAVE_BTLS
 using Mono.Btls;
-#endif
 #endif
 
 using System.IO;
@@ -56,7 +54,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal static long GetSubjectNameHash (X509CertificateImpl impl)
 		{
-#if SECURITY_DEP && HAVE_BTLS
+#if SECURITY_DEP
 			using (var x509 = GetNativeInstance (impl))
 				return GetSubjectNameHash (x509);
 #else
@@ -71,7 +69,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal static void ExportAsPEM (X509CertificateImpl impl, Stream stream, bool includeHumanReadableForm)
 		{
-#if SECURITY_DEP && HAVE_BTLS
+#if SECURITY_DEP
 			using (var x509 = GetNativeInstance (impl))
 				ExportAsPEM (x509, stream, includeHumanReadableForm);
 #else
@@ -90,7 +88,6 @@ namespace System.Security.Cryptography.X509Certificates
 			X509Helper.ThrowIfContextInvalid (impl);
 		}
 
-#if HAVE_BTLS
 		static MonoBtlsX509 GetNativeInstance (X509CertificateImpl impl)
 		{
 			ThrowIfContextInvalid (impl);
@@ -113,7 +110,6 @@ namespace System.Security.Cryptography.X509Certificates
 				x509.ExportAsPEM (bio, includeHumanReadableForm);
 			}
 		}
-#endif
 
 		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{

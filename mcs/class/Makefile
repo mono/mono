@@ -137,6 +137,7 @@ xammac_4_5_dirs := \
 	System.Data.Linq		\
 	System.Net.Http \
 	System.Net.Http.WebRequest \
+	Mono.Btls.Interface \
 	System.Runtime.InteropServices.RuntimeInformation \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
@@ -232,6 +233,7 @@ net_4_x_dirs := \
 net_4_x_parallel_dirs := \
 	PEAPI				\
 	I18N				\
+	Mono.Btls.Interface		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	Mono.Cecil			\
