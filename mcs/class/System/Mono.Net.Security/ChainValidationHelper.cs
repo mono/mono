@@ -305,6 +305,13 @@ namespace Mono.Net.Security
 				return new ValidationResult (result, user_denied, 0, (MonoSslPolicyErrors)errors);
 			}
 
+			// Ignore port number when validating certificates.
+			if (!string.IsNullOrEmpty (host)) {
+				var pos = host.IndexOf (':');
+				if (pos > 0)
+					host = host.Substring (0, pos);
+			}
+
 			ICertificatePolicy policy = ServicePointManager.GetLegacyCertificatePolicy ();
 
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
