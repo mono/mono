@@ -134,6 +134,8 @@ namespace Mono.Btls
 
 			if (IsServer) {
 				SetPrivateCertificate (nativeServerCertificate);
+			} else {
+				ssl.SetServerName (TargetHost);
 			}
 		}
 

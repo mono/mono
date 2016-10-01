@@ -121,6 +121,9 @@ namespace Mono.Btls
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static int mono_btls_ssl_set_verify_param (IntPtr handle, IntPtr param);
 
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static int mono_btls_ssl_set_server_name (IntPtr handle, IntPtr name);
+
 		static BoringSslHandle Create_internal (MonoBtlsSslCtx ctx)
 		{
 			var handle = mono_btls_ssl_new (ctx.Handle.DangerousGetHandle ());
@@ -389,6 +392,21 @@ namespace Mono.Btls
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
+		}
+
+		public void SetServerName (string name)
+		{
+			CheckThrow ();
+			IntPtr namePtr = IntPtr.Zero;
+			try {
+				namePtr = Marshal.StringToHGlobalAnsi (name);
+				var ret = mono_btls_ssl_set_server_name (
+					Handle.DangerousGetHandle (), namePtr);
+				CheckError (ret);
+			} finally {
+				if (namePtr != IntPtr.Zero)
+					Marshal.FreeHGlobal (namePtr);
+			}
 		}
 
 		protected override void Close ()
