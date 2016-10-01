@@ -92,12 +92,6 @@ namespace System.Reflection.Emit
 		{
 			return attrs;
 		}
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_internal_class ();
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_generic_class ();
 
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
@@ -109,7 +103,6 @@ namespace System.Reflection.Emit
 			this.nspace = String.Empty;
 			this.fullname = TypeIdentifiers.WithoutEscape(this.tname);
 			pmodule = mb;
-			setup_internal_class ();
 		}
 
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
@@ -145,7 +138,6 @@ namespace System.Reflection.Emit
 
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
-			setup_internal_class ();
 			fullname = GetFullName ();
 		}
 
@@ -761,8 +753,6 @@ namespace System.Reflection.Emit
 			if (!IsInterface && (parent == null) && (this != pmodule.assemblyb.corlib_object_type) && (FullName != "<Module>")) {
 				SetParent (pmodule.assemblyb.corlib_object_type);
 			}
-
-			create_generic_class ();
 
 			// Fire TypeResolve events for fields whose type is an unfinished
 			// value type.
@@ -1604,9 +1594,6 @@ namespace System.Reflection.Emit
 				this.parent = parent;
 			}
 			this.parent = ResolveUserType (this.parent);
-
-			// will just set the parent-related bits if called a second time
-			setup_internal_class ();
 		}
 
 		internal int get_next_table_index (object obj, int table, bool inc) {

@@ -151,9 +151,17 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			Type et = m_baseType.InternalResolve (); 
+			Type et = m_baseType.InternalResolve ();
 			if (rank == 0)
-				return et.MakeArrayType ();			
+				return et.MakeArrayType ();
+			return et.MakeArrayType (rank);
+		}
+
+		internal override Type RuntimeResolve ()
+		{
+			Type et = m_baseType.RuntimeResolve ();
+			if (rank == 0)
+				return et.MakeArrayType ();
 			return et.MakeArrayType (rank);
 		}
 

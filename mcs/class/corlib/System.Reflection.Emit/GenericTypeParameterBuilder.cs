@@ -82,8 +82,6 @@ namespace System.Reflection.Emit
 			this.mbuilder = mbuilder;
 			this.name = name;
 			this.index = index;
-
-			initialize ();
 		}
 
 		internal override Type InternalResolve ()
@@ -99,9 +97,6 @@ namespace System.Reflection.Emit
 				return MethodBase.GetMethodFromHandle (mbuilder.MethodHandleInternal, mbuilder.TypeBuilder.RuntimeResolve ().TypeHandle).GetGenericArguments () [index];
 			return tbuilder.RuntimeResolve ().GetGenericArguments () [index];
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void initialize ();
 
 		[ComVisible (true)]
 		public override bool IsSubclassOf (Type c)
