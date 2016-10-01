@@ -488,13 +488,19 @@ namespace System.Reflection.Emit
 
 		internal static Type MakeGenericType (Type type, Type[] typeArguments)
 		{
-#if FULL_AOT_RUNTIME
-			throw new NotSupportedException ("User types are not supported under full aot");
-#else
 			return new TypeBuilderInstantiation (type, typeArguments);
-#endif
 		}
 	}
 }
-
+#else
+namespace System.Reflection.Emit
+{
+	abstract class TypeBuilderInstantiation : TypeInfo
+	{
+		internal static Type MakeGenericType (Type type, Type[] typeArguments)
+		{
+			throw new NotSupportedException ("User types are not supported under full aot");
+		}
+	}
+}
 #endif
