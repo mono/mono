@@ -36,6 +36,11 @@ namespace System.Net
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.HttpWebResponse is not supported on the current platform.";
 
+		internal HttpWebResponse (Uri uri, string method, WebConnectionData data, CookieContainer container)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		[Obsolete ("Serialization is obsoleted for this type", false)]
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
