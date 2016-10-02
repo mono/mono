@@ -753,13 +753,13 @@ pstrdup (const char *s)
 static void *
 alloc_buffer (int size)
 {
-	return mono_valloc (NULL, size, MONO_MMAP_READ | MONO_MMAP_WRITE | MONO_MMAP_ANON | MONO_MMAP_PRIVATE, MONO_MEM_ACCOUNT_PROFILER);
+	return mono_valloc (NULL, size, MONO_MMAP_READ | MONO_MMAP_WRITE | MONO_MMAP_ANON | MONO_MMAP_PRIVATE);
 }
 
 static void
 free_buffer (void *buf, int size)
 {
-	mono_vfree (buf, size, MONO_MEM_ACCOUNT_PROFILER);
+	mono_vfree (buf, size);
 }
 
 static LogBuffer*
