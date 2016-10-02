@@ -4966,7 +4966,7 @@ mono_threads_join_threads (void)
 			if (thread != pthread_self ()) {
 				MONO_ENTER_GC_SAFE;
 				/* This shouldn't block */
-				pthread_join (thread, NULL);
+				mono_native_thread_join (thread);
 				MONO_EXIT_GC_SAFE;
 			}
 		} else {
@@ -5002,7 +5002,7 @@ mono_thread_join (gpointer tid)
 		return;
 	thread = (pthread_t)tid;
 	MONO_ENTER_GC_SAFE;
-	pthread_join (thread, NULL);
+	mono_native_thread_join (thread);
 	MONO_EXIT_GC_SAFE;
 #endif
 }
