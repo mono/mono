@@ -225,7 +225,7 @@ namespace System.Net
 		public string Server {
 			get {
 				CheckDisposed ();
-				return webHeaders ["Server"]; 
+				return webHeaders ["Server"] ?? "";
 			}
 		}
 		
