@@ -558,7 +558,11 @@ public class DebuggerTests
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
 		Assert.IsNotNull (m);
-		//Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
+
+//		foreach (var x in m.Locations) {
+//			Console.WriteLine (x);
+//		}
+
 		var offset = -1;
 		int method_base_linum = m.Locations [0].LineNumber;
 		foreach (var location in m.Locations)
@@ -586,7 +590,11 @@ public class DebuggerTests
 		e = single_step (e.Thread);
 
 		var frame = e.Thread.GetFrames ()[0];
-		Value variable = frame.GetValue (frame.Method.GetLocal ("reflectMe"));
+
+		Assert.IsNotNull (frame);
+		var field = frame.Method.GetLocal ("reflectMe");
+		Assert.IsNotNull (field);
+		Value variable = frame.GetValue (field);
 
 		ObjectMirror thisObj = (ObjectMirror)variable;
 		TypeMirror thisType = thisObj.Type;

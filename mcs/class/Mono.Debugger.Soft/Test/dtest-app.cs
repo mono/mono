@@ -1620,6 +1620,25 @@ public class Foo
 	public ProcessStartInfo info;
 }
 
+class LocalReflectClass
+{
+	public static void RunMe ()
+	{
+		var reflectMe = new someClass ();
+		var temp = reflectMe; // Breakpoint location
+		reflectMe.someMethod ();
+	}
+
+	class someClass : ContextBoundObject
+	{
+		public object someField;
+
+		public void someMethod ()
+		{
+		}
+	}
+}
+
 // Class used for line number info testing, don't change its layout
 public class LineNumbers
 {
@@ -1643,22 +1662,5 @@ public class LineNumbers
 	}
 }
 
-class LocalReflectClass
-{
-	public static void RunMe ()
-	{
-		var reflectMe = new someClass ();
-		reflectMe.someMethod ();
-	}
-
-	class someClass : ContextBoundObject
-	{
-		public object someField;
-
-		public void someMethod ()
-		{
-		}
-	}
-}
 
 
