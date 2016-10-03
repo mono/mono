@@ -156,6 +156,7 @@ namespace Mono.Net.Security
 					return;
 				providerRegistration = new Dictionary<string,string> ();
 				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
+				providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
 				if (Mono.Btls.MonoBtlsProvider.IsSupported ())
 					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
 				X509Helper2.Initialize ();
