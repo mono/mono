@@ -122,13 +122,15 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 #endif // !FEATURE_NO_BSD_SOCKETS
 
-		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags, bool disableProvider = false)
 		{
 #if !FEATURE_NO_BSD_SOCKETS
-			var provider = MonoTlsProviderFactory.GetProvider ();
-			if (provider.HasNativeCertificates) {
-				var impl = provider.GetNativeCertificate (rawData, password, keyStorageFlags);
-				return impl;
+			if (!disableProvider) {
+				var provider = MonoTlsProviderFactory.GetProvider ();
+				if (provider.HasNativeCertificates) {
+					var impl = provider.GetNativeCertificate (rawData, password, keyStorageFlags);
+					return impl;
+				}
 			}
 #endif // FEATURE_NO_BSD_SOCKETS
 			var impl2 = new X509Certificate2ImplMono ();
@@ -136,13 +138,15 @@ namespace System.Security.Cryptography.X509Certificates
 			return impl2;
 		}
 
-		internal static X509Certificate2Impl Import (X509Certificate cert)
+		internal static X509Certificate2Impl Import (X509Certificate cert, bool disableProvider = false)
 		{
 #if !FEATURE_NO_BSD_SOCKETS
-			var provider = MonoTlsProviderFactory.GetProvider ();
-			if (provider.HasNativeCertificates) {
-				var impl = provider.GetNativeCertificate (cert);
-				return impl;
+			if (!disableProvider) {
+				var provider = MonoTlsProviderFactory.GetProvider ();
+				if (provider.HasNativeCertificates) {
+					var impl = provider.GetNativeCertificate (cert);
+					return impl;
+				}
 			}
 #endif // FEATURE_NO_BSD_SOCKETS
 			var impl2 = cert.Impl as X509Certificate2Impl;

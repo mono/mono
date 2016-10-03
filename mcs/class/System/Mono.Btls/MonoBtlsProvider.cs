@@ -99,7 +99,7 @@ namespace Mono.Btls
 		internal override X509Certificate2Impl GetNativeCertificate (
 			byte[] data, string password, X509KeyStorageFlags flags)
 		{
-			var impl = new X509CertificateImplBtls (true);
+			var impl = new X509CertificateImplBtls (false);
 			impl.Import (data, password, flags);
 			return impl;
 		}
