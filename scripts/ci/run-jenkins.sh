@@ -55,11 +55,6 @@ fi
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 
 ${TESTCMD} --label=make --timeout=300m --fatal make -j4 -w V=1
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
-    then
-    exit 0
-    # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
-fi
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
