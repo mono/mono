@@ -3,8 +3,6 @@
 TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
-export MONO_TLS_PROVIDER=legacy
-
 if [[ ${label} == w* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
     export CFLAGS="-g -O2"
