@@ -3601,6 +3601,8 @@ public class DebuggerTests
 			return;
 
 		string srcfile = (e as BreakpointEvent).Method.DeclaringType.GetSourceFiles (true)[0];
+		srcfile = srcfile.Replace ("dtest-app.cs", "TypeLoadClass.cs");
+		Assert.IsTrue (srcfile.Contains ("TypeLoadClass.cs"));
 
 		var req = vm.CreateTypeLoadRequest ();
 		req.SourceFileFilter = new string [] { srcfile.ToUpper () };

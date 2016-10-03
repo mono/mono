@@ -1589,12 +1589,6 @@ public class Tests : TestsBase, ITest2
 	}
 }
 
-class TypeLoadClass {
-}
-
-class TypeLoadClass2 {
-}
-
 public class SentinelClass : MarshalByRefObject {
 }
 
