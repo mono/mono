@@ -2717,6 +2717,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException	
+#endif
 		public void ConcurrentExceedSocketLimit ()
 		{
 			var tasks = new Task[4];
@@ -2727,6 +2730,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SendGenericExceedBuffer ()
 		{
 			// Create a buffer larger than the default max.

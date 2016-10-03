@@ -1,0 +1,11 @@
+System.Data.SqlClient/SqlBulkCopy.cs
+System.Data.SqlClient/SqlCommand.cs
+System.Data.SqlClient/SqlCommandBuilder.cs
+System.Data.SqlClient/SqlConnection.cs
+System.Data.SqlClient/SqlDataReader.cs
+System.Data.SqlClient/SqlDecimalExtensions.cs
+System.Data.SqlClient/SqlException.cs
+System.Data.SqlClient/SqlParameter.cs
+System.Data.SqlClient/SqlParameterCollection.cs
+System.Data.SqlClient/SqlTransaction.cs
+System.Data.SqlClient/SqlXmlTextReader.cs
