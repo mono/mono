@@ -11,6 +11,10 @@ LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
 			-r:System.Web.Extensions.dll
 endif
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_3_5
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)

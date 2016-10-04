@@ -56,7 +56,7 @@ using System.Runtime.InteropServices;
 #if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if NET_2_1 && !UNITY
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]

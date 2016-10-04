@@ -28,7 +28,7 @@
 
 namespace System.Security {
 
-#if NET_2_1
+#if NET_2_1 && !UNITY
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
 		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |

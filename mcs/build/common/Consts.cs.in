@@ -57,18 +57,18 @@ internal
 	
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "10.0.0.0"; // TODO:
-#elif NET_3_5
+#elif NET_3_5 || UNITY_3_5
 	// Versions of .NET Framework 3.5 RTM
 	public const string FxVersion = "3.5.0.0";
 	public const string FxFileVersion = "3.5.21022.8";
 	
 	public const string VsVersion = "0.0.0.0"; // Useless ?
-#elif NET_3_0
+#elif NET_3_0 || UNITY_3_0
 	public const string FxVersion = "3.0.0.0";
 	public const string VsVersion = "8.0.0.0";
 	public const string FxFileVersion = "3.0.4506.648";
 	public const string VsFileVersion = "6.0.6001.17014";
-#elif NET_2_1
+#elif (NET_2_1 && !UNITY) || UNITY_2_1
 	// Versions of .NET Framework for Silverlight 3.0
 	public const string FxVersion = "2.0.5.0";
 	public const string VsVersion = "9.0.0.0"; // unused, but needed for compilation

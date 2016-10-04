@@ -17,6 +17,10 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += /d:NET_3_0 /r:System.Data.dll /r:System.Configuration.dll
 endif
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_3_0
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.ServiceModel.dll
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \
