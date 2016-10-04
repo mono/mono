@@ -24,13 +24,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #if SECURITY_DEP
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
+#if MONO_SECURITY_ALIAS
+using MX = MonoSecurity::Mono.Security.X509;
+#else
+using MX = Mono.Security.X509;
+#endif
+
 using System;
 using System.Text;
+using System.Collections;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Cryptography;
-using MX = Mono.Security.X509;
 
 namespace Mono.Btls
 {
@@ -283,9 +293,7 @@ namespace Mono.Btls
 				if (privateKey == null || !privateKey.IsRsa)
 					return null;
 				var bytes = privateKey.GetBytes (true);
-				var rsa = PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
-				Console.Error.WriteLine ("RSA: {0}", rsa);
-				return rsa;
+				return PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
 			}
 			set { FallbackImpl.PrivateKey = value; }
 		}
@@ -408,7 +416,44 @@ namespace Mono.Btls
 
 		public override byte[] Export (X509ContentType contentType, string password)
 		{
-			return FallbackImpl.Export (contentType, password);
+			ThrowIfContextInvalid ();
+
+			switch (contentType) {
+			case X509ContentType.Cert:
+				return GetRawCertData ();
+			case X509ContentType.Pfx: // this includes Pkcs12
+				return ExportPkcs12 (password);
+			case X509ContentType.SerializedCert:
+				// TODO
+				throw new NotSupportedException ();
+			default:
+				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
+				throw new CryptographicException (msg);
+			}
+		}
+
+		byte[] ExportPkcs12 (string password)
+		{
+			var pfx = new MX.PKCS12 ();
+			try {
+				var attrs = new Hashtable ();
+				var localKeyId = new ArrayList ();
+				localKeyId.Add (new byte[] { 1, 0, 0, 0 });
+				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
+				if (password != null)
+					pfx.Password = password;
+				pfx.AddCertificate (new MX.X509Certificate (GetRawCertData ()), attrs);
+				if (IntermediateCertificates != null) {
+					for (int i = 0; i < IntermediateCertificates.Count; i++)
+						pfx.AddCertificate (new MX.X509Certificate (IntermediateCertificates [i].GetRawCertData ()));
+				}
+				var privateKey = PrivateKey;
+				if (privateKey != null)
+					pfx.AddPkcs8ShroudedKeyBag (privateKey, attrs);
+				return pfx.GetBytes ();
+			} finally {
+				pfx.Password = null;
+			}
 		}
 
 		public override bool Verify (X509Certificate2 thisCertificate)
