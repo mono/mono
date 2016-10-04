@@ -323,36 +323,6 @@ mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int t
 	return res;
 }
 
-static gboolean
-verify_safe_for_managed_space (MonoType *type)
-{
-	switch (type->type) {
-#ifdef DEBUG_HARDER
-	case MONO_TYPE_ARRAY:
-		return verify_safe_for_managed_space (&type->data.array->eklass->byval_arg);
-	case MONO_TYPE_PTR:
-		return verify_safe_for_managed_space (type->data.type);
-	case MONO_TYPE_SZARRAY:
-		return verify_safe_for_managed_space (&type->data.klass->byval_arg);
-	case MONO_TYPE_GENERICINST: {
-		MonoGenericInst *inst = type->data.generic_class->inst;
-		int i;
-		if (!inst->is_open)
-			break;
-		for (i = 0; i < inst->type_argc; ++i)
-			if (!verify_safe_for_managed_space (inst->type_argv [i]))
-				return FALSE;
-		return TRUE;
-	}
-#endif
-	case MONO_TYPE_VAR:
-	case MONO_TYPE_MVAR:
-		return TRUE;
-	default:
-		return TRUE;
-	}
-}
-
 static MonoType*
 mono_type_normalize (MonoType *type)
 {
@@ -480,13 +450,6 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	/* This MonoGenericClass hack is no longer necessary. Let's leave it here until we finish with the 2-stage type-builder setup.*/
 	if ((type->type == MONO_TYPE_GENERICINST) && type->data.generic_class->is_dynamic && !type->data.generic_class->container_class->wastypebuilder)
 		g_assert (0);
-
-	if (!verify_safe_for_managed_space (type)) {
-		mono_domain_unlock (domain);
-		mono_loader_unlock ();
-		mono_error_set_generic_error (error, "System", "InvalidOperationException", "This type cannot be propagated to managed space");
-		return NULL;
-	}
 
 	if (mono_class_get_ref_info (klass) && !klass->wastypebuilder && !type->byref) {
 		mono_domain_unlock (domain);
