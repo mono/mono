@@ -7,6 +7,10 @@ LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_2_1
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =

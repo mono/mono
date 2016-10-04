@@ -34,6 +34,10 @@ ifeq (net_2_1_raw, $(PROFILE))
 LIB_MCS_FLAGS += /r:System.Net
 endif
 
+ifeq (unity, $(PROFILE))
+LIB_MCS_FLAGS += -d:UNITY_3_0
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 TEST_EXTRA_FILES = \
