@@ -10,7 +10,9 @@ ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
 ${TESTCMD} --label=compiler-errors --timeout=30m make -w -C mcs/errors run-test
 ${TESTCMD} --label=System --timeout=10m MONO_TLS_PROVIDER=legacy make -w -C mcs/class/System run-test
-${TESTCMD} --label=System --timeout=10m MONO_TLS_PROVIDER=btls make -w -C mcs/class/System run-test
+if [[ ${label} == osx-* ]]
+then ${TESTCMD} --label=System-btls --timeout=10m MONO_TLS_PROVIDER=btls make -w -C mcs/class/System run-test
+fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test;
