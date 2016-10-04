@@ -48,7 +48,7 @@ namespace MonoTests.System.ServiceModel.Web
 	public class WebOperationContextTest
 	{
 // MonoTouch does not support dynamic proxy code generation.
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 #endif
 		public void Current ()
