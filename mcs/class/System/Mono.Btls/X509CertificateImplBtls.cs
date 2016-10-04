@@ -458,7 +458,16 @@ namespace Mono.Btls
 
 		public override bool Verify (X509Certificate2 thisCertificate)
 		{
-			return FallbackImpl.Verify (thisCertificate);
+			using (var chain = new MonoBtlsX509Chain ()) {
+				chain.AddCertificate (x509.Copy ());
+				if (intermediateCerts != null) {
+					for (int i = 0; i < intermediateCerts.Count; i++) {
+						var intermediate = (X509CertificateImplBtls)intermediateCerts [i];
+						chain.AddCertificate (intermediate.x509.Copy ());
+					}
+				}
+				return MonoBtlsProvider.ValidateCertificate (chain, null);
+			}
 		}
 
 		public override void Reset ()

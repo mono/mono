@@ -154,8 +154,7 @@ namespace Mono.Btls
 			using (var nativeChain = MonoBtlsProvider.GetNativeChain (certificates))
 			using (var param = GetVerifyParam (targetHost, serverMode))
 			using (var storeCtx = new MonoBtlsX509StoreCtx ()) {
-				store.LoadLocations (null, GetSystemStoreLocation ());
-				store.SetDefaultPaths ();
+				SetupCertificateStore (store);
 
 				storeCtx.Initialize (store, nativeChain);
 
@@ -177,6 +176,23 @@ namespace Mono.Btls
 			}
 		}
 
+		internal static bool ValidateCertificate (MonoBtlsX509Chain chain, MonoBtlsX509VerifyParam param)
+		{
+			using (var store = new MonoBtlsX509Store ())
+			using (var storeCtx = new MonoBtlsX509StoreCtx ()) {
+				SetupCertificateStore (store);
+
+				storeCtx.Initialize (store, chain);
+
+				if (param != null)
+					storeCtx.SetVerifyParam (param);
+
+				var ret = storeCtx.Verify ();
+
+				return ret == 1;
+			}
+		}
+
 		void CheckValidationResult (
 			ICertificateValidator validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain,
@@ -187,6 +203,21 @@ namespace Mono.Btls
 				errors = MonoSslPolicyErrors.RemoteCertificateChainErrors;
 				status11 = unchecked((int)0x800B010B);
 			}
+		}
+
+		internal static void SetupCertificateStore (MonoBtlsX509Store store)
+		{
+#if MONODROID
+			store.SetDefaultPaths ();
+			store.AddAndroidLookup ();
+#else
+			var userPath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.UserTrustedRoots);
+			if (Directory.Exists (userPath))
+				store.AddDirectoryLookup (userPath, MonoBtlsX509FileType.PEM);
+			var machinePath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
+			if (Directory.Exists (machinePath))
+				store.AddDirectoryLookup (machinePath, MonoBtlsX509FileType.PEM);
+#endif
 		}
 
 		public static string GetSystemStoreLocation ()

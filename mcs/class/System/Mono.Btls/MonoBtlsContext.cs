@@ -212,17 +212,7 @@ namespace Mono.Btls
 
 		void SetupCertificateStore ()
 		{
-#if MONODROID
-			ctx.CertificateStore.SetDefaultPaths ();
-			ctx.CertificateStore.AddAndroidLookup ();
-#else
-			var userPath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.UserTrustedRoots);
-			if (Directory.Exists (userPath))
-				ctx.CertificateStore.AddDirectoryLookup (userPath, MonoBtlsX509FileType.PEM);
-			var machinePath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
-			if (Directory.Exists (machinePath))
-				ctx.CertificateStore.AddDirectoryLookup (machinePath, MonoBtlsX509FileType.PEM);
-#endif
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
 
 			if (Settings != null && Settings.TrustAnchors != null) {
 				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
