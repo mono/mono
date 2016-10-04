@@ -83,13 +83,13 @@ namespace System.Net
 		}
 
 		public static SecurityProtocolType SecurityProtocol {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
+			get;
+			set;
+		} = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			get;
+			set;
 		}
 
 		public static EncryptionPolicy EncryptionPolicy {
