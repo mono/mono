@@ -203,5 +203,21 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.IsTrue (RuntimeHelpers.Equals (o1, o3));
 			Assert.IsTrue (!RuntimeHelpers.Equals (o1, o4));
 		}
+
+		[Test]
+		public void TestEnsureSufficientExecutionStack ()
+		{
+			var t = new Thread (() => {
+				unsafe {
+					var s = stackalloc byte [1024];
+				}
+
+				RuntimeHelpers.EnsureSufficientExecutionStack ();
+			});
+
+
+			t.Start ();
+			t.Join ();
+		}
 	}
 }
