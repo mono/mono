@@ -29,6 +29,7 @@ using System.Text;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
 
 namespace Mono.Btls
@@ -278,7 +279,14 @@ namespace Mono.Btls
 		}
 
 		public override AsymmetricAlgorithm PrivateKey {
-			get { return FallbackImpl.PrivateKey; }
+			get {
+				if (privateKey == null || !privateKey.IsRsa)
+					return null;
+				var bytes = privateKey.GetBytes (true);
+				var rsa = PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
+				Console.Error.WriteLine ("RSA: {0}", rsa);
+				return rsa;
+			}
 			set { FallbackImpl.PrivateKey = value; }
 		}
 
