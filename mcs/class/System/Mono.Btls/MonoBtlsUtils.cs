@@ -55,7 +55,8 @@ namespace Mono.Btls
 				if (Compare (oidValue, emailOid))
 					type = MonoBtlsX509NameEntryType.Email;
 			}
-			var text = name.GetEntryValue (index);
+			int tag;
+			var text = name.GetEntryValue (index, out tag);
 			if (text == null)
 				return false;
 			var oid = name.GetEntryOid (index);
@@ -121,7 +122,7 @@ namespace Mono.Btls
 
 			// 16bits or 8bits string ? TODO not complete (+special chars!)
 			char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
-			if (quotes) {
+			if (quotes && tag != 0x1E) {
 				if ((text.IndexOfAny (specials, 0, text.Length) > 0) ||
 				    text.StartsWith (" ") || (text.EndsWith (" ")))
 					text = "\"" + text + "\"";
