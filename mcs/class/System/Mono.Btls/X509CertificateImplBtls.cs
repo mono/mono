@@ -115,12 +115,12 @@ namespace Mono.Btls
 			return true;
 		}
 
-		protected override byte [] GetCertHash (bool lazy)
+		protected override byte[] GetCertHash (bool lazy)
 		{
 			return X509.GetCertHash ();
 		}
 
-		public override byte [] GetRawCertData ()
+		public override byte[] GetRawCertData ()
 		{
 			return X509.GetRawData (MonoBtlsX509Format.DER);
 		}
@@ -169,7 +169,7 @@ namespace Mono.Btls
 			return PublicKey.EncodedParameters.RawData;
 		}
 
-		public override byte [] Export (X509ContentType contentType, byte [] password)
+		public override byte[] Export (X509ContentType contentType, byte[] password)
 		{
 			ThrowIfContextInvalid ();
 
@@ -259,7 +259,7 @@ namespace Mono.Btls
 		}
 
 		public override bool HasPrivateKey {
-			get { return FallbackImpl.HasPrivateKey; }
+			get { return privateKey != null; }
 		}
 
 		public override X500DistinguishedName IssuerName {
@@ -325,19 +325,62 @@ namespace Mono.Btls
 			return FallbackImpl.GetNameInfo (nameType, forIssuer);
 		}
 
-		public override void Import (byte [] data, string password, X509KeyStorageFlags keyStorageFlags)
+		public override void Import (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			if (password == null) {
-				// Does it look like PEM?
-				if ((data.Length > 0) && (data [0] != 0x30))
-					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
-				else
-					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
-				return;
+				try {
+					Import (data);
+				} catch (Exception e) {
+					try {
+						 ImportPkcs12 (data, null);
+					} catch {
+						string msg = Locale.GetText ("Unable to decode certificate.");
+						// inner exception is the original (not second) exception
+						throw new CryptographicException (msg, e);
+					}
+				}
+			} else {
+				// try PKCS#12
+				try {
+					ImportPkcs12 (data, password);
+				} catch (Exception e) {
+					try {
+						// it's possible to supply a (unrequired/unusued) password
+						// fix bug #79028
+						Import (data);
+					} catch {
+						string msg = Locale.GetText ("Unable to decode certificate.");
+						// inner exception is the original (not second) exception
+						throw new CryptographicException (msg, e);
+					}
+				}
 			}
+		}
 
+		void Import (byte[] data)
+		{
+			// Does it look like PEM?
+			if ((data.Length > 0) && (data [0] != 0x30))
+				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
+			else
+				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
+		}
+
+		void ImportPkcs12 (byte[] data, string password)
+		{
 			using (var pkcs12 = new MonoBtlsPkcs12 ()) {
-				pkcs12.Import (data, password);
+				if (string.IsNullOrEmpty (password)) {
+					try {
+						// Support both unencrypted PKCS#12..
+						pkcs12.Import (data, null);
+					} catch {
+						// ..and PKCS#12 encrypted with an empty password
+						pkcs12.Import (data, string.Empty);
+					}
+				} else {
+					pkcs12.Import (data, password);
+				}
+
 				x509 = pkcs12.GetCertificate (0);
 				if (pkcs12.HasPrivateKey)
 					privateKey = pkcs12.GetPrivateKey ();
@@ -355,7 +398,7 @@ namespace Mono.Btls
 			}
 		}
 
-		public override byte [] Export (X509ContentType contentType, string password)
+		public override byte[] Export (X509ContentType contentType, string password)
 		{
 			return FallbackImpl.Export (contentType, password);
 		}
