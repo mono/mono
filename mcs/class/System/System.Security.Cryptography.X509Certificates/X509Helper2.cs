@@ -33,10 +33,12 @@ extern alias MonoSecurity;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
+using MX = MonoSecurity::Mono.Security.X509;
 #else
 #if !FEATURE_NO_BSD_SOCKETS
 using Mono.Security.Interface;
 #endif
+using MX = Mono.Security.X509;
 #endif
 
 #if !FEATURE_NO_BSD_SOCKETS
@@ -153,6 +155,27 @@ namespace System.Security.Cryptography.X509Certificates
 			if (impl2 != null)
 				return (X509Certificate2Impl)impl2.Clone ();
 			return Import (cert.GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet);
+		}
+
+		/*
+		 * This is used by X509ChainImplMono
+		 * 
+		 * Some of the missing APIs such as X509v3 extensions can be added to the native
+		 * BTLS implementation.
+		 * 
+		 * We should also consider replacing X509ChainImplMono with a new X509ChainImplBtls
+		 * at some point.
+		 */
+		[MonoTODO ("Investigate replacement; see comments in source.")]
+		internal static MX.X509Certificate GetMonoCertificate (X509Certificate2 certificate)
+		{
+			var impl2 = certificate.Impl as X509Certificate2Impl;
+			if (impl2 == null)
+				impl2 = Import (certificate, true);
+			var fallbackImpl = impl2.FallbackImpl as X509Certificate2ImplMono;
+			if (fallbackImpl == null)
+				throw new NotSupportedException ();
+			return fallbackImpl.MonoCertificate;
 		}
 
 		internal static X509ChainImpl CreateChainImpl (bool useMachineContext)

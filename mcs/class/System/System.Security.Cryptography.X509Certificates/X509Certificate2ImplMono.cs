@@ -718,6 +718,10 @@ namespace System.Security.Cryptography.X509Certificates
 		internal MX.X509Certificate MonoCertificate {
 			get { return _cert; }
 		}
+
+		internal override X509Certificate2Impl FallbackImpl {
+			get { return this; }
+		}
 	}
 }
 

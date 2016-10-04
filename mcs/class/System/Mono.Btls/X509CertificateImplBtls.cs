@@ -235,7 +235,7 @@ namespace Mono.Btls
 			fallback = X509Helper2.Import (GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet, true);
 		}
 
-		internal X509Certificate2Impl FallbackImpl {
+		internal override X509Certificate2Impl FallbackImpl {
 			get {
 				MustFallback ();
 				return fallback;
