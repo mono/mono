@@ -1425,13 +1425,17 @@ mono_class_alloc0 (MonoClass *klass, int size)
  * mono_class_setup_basic_field_info:
  * @class: The class to initialize
  *
- * Initializes the klass->fields.
- * LOCKING: Assumes the loader lock is held.
+ * Initializes the following fields in MonoClass:
+ * * klass->fields (only field->parent and field->name)
+ * * klass->field.count
+ * * klass->field.first
+ * LOCKING: Acquires the loader lock
  */
 static void
 mono_class_setup_basic_field_info (MonoClass *klass)
 {
 	MonoClassField *field;
+	MonoClassField *fields;
 	MonoClass *gtd;
 	MonoImage *image;
 	int i, top;
@@ -1441,7 +1445,6 @@ mono_class_setup_basic_field_info (MonoClass *klass)
 
 	gtd = klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
 	image = klass->image;
-	top = klass->field.count;
 
 	if (klass->generic_class && image_is_dynamic (klass->generic_class->container_class->image) && !klass->generic_class->container_class->wastypebuilder) {
 		/*
@@ -1456,18 +1459,21 @@ mono_class_setup_basic_field_info (MonoClass *klass)
 	if (gtd) {
 		mono_class_setup_basic_field_info (gtd);
 
-		top = gtd->field.count;
+		mono_loader_lock ();
 		klass->field.first = gtd->field.first;
 		klass->field.count = gtd->field.count;
+		mono_loader_unlock ();
 	}
 
-	klass->fields = (MonoClassField *)mono_class_alloc0 (klass, sizeof (MonoClassField) * top);
+	top = klass->field.count;
+
+	fields = (MonoClassField *)mono_class_alloc0 (klass, sizeof (MonoClassField) * top);
 
 	/*
 	 * Fetch all the field information.
 	 */
 	for (i = 0; i < top; i++){
-		field = &klass->fields [i];
+		field = &fields [i];
 		field->parent = klass;
 
 		if (gtd) {
@@ -1480,6 +1486,13 @@ mono_class_setup_basic_field_info (MonoClass *klass)
 			field->name = mono_metadata_string_heap (image, name_idx);
 		}
 	}
+
+	mono_memory_barrier ();
+
+	mono_loader_lock ();
+	if (!klass->fields)
+		klass->fields = fields;
+	mono_loader_unlock ();
 }
 
 /**
@@ -10729,21 +10742,6 @@ mono_field_resolve_flags (MonoClassField *field)
 }
 
 /**
- * mono_class_setup_basic_field_info:
- * @class: The class to initialize
- *
- * Initializes the klass->fields array of fields.
- * Aquires the loader lock.
- */
-static void
-mono_class_setup_basic_field_info_locking (MonoClass *klass)
-{
-	mono_loader_lock ();
-	mono_class_setup_basic_field_info (klass);
-	mono_loader_unlock ();
-}
-
-/**
  * mono_class_get_fields_lazy:
  * @klass: the MonoClass to act on
  *
@@ -10764,7 +10762,7 @@ mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter)
 	if (!iter)
 		return NULL;
 	if (!*iter) {
-		mono_class_setup_basic_field_info_locking (klass);
+		mono_class_setup_basic_field_info (klass);
 		if (!klass->fields)
 			return NULL;
 		/* start from the first */
