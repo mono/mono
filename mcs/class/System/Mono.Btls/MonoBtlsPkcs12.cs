@@ -113,7 +113,8 @@ namespace Mono.Btls
 			var passptr = IntPtr.Zero;
 			fixed (void* ptr = buffer)
 			try {
-				passptr = Marshal.StringToHGlobalAnsi (password ?? string.Empty);
+				if (password != null)
+					passptr = Marshal.StringToHGlobalAnsi (password);
 				var ret = mono_btls_pkcs12_import (
 					Handle.DangerousGetHandle (), ptr,
 					buffer.Length, passptr);

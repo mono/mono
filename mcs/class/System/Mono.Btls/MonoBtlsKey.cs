@@ -86,6 +86,12 @@ namespace Mono.Btls
 			return buffer;
 		}
 
+		public bool IsRsa {
+			get {
+				return mono_btls_key_is_rsa (Handle.DangerousGetHandle ()) != 0;
+			}
+		}
+
 		public MonoBtlsKey Copy ()
 		{
 			CheckThrow ();

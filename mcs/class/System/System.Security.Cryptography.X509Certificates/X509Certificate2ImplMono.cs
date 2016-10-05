@@ -483,6 +483,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			MX.X509Certificate cert = null;
 			if (password == null) {
 				try {
@@ -717,6 +718,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal MX.X509Certificate MonoCertificate {
 			get { return _cert; }
+		}
+
+		internal override X509Certificate2Impl FallbackImpl {
+			get { return this; }
 		}
 	}
 }
