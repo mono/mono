@@ -259,6 +259,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
+		[SetCulture ("en-us")]
 		public void ToStringTest ()
 		{
 			Rect r = new Rect (1.0, 2.5, 3, 4);
