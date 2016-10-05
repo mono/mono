@@ -399,13 +399,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		// internal stuff because X509Certificate2 isn't complete enough
 		// (maybe X509Certificate3 will be better?)
 
-		[Obsolete ("KILL")]
+		[MonoTODO ("See comment in X509Helper2.GetMonoCertificate().")]
 		internal MX.X509Certificate MonoCertificate {
 			get {
-				var monoImpl = Impl as X509Certificate2ImplMono;
-				if (monoImpl == null)
-					throw new NotSupportedException ();
-				return monoImpl.MonoCertificate;
+				return X509Helper2.GetMonoCertificate (this);
 			}
 		}
 
