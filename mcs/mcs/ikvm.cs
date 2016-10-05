@@ -356,26 +356,23 @@ namespace Mono.CSharp
 			}
 
 			if (version_mismatch != null) {
-				if (version_mismatch is AssemblyBuilder)
+				if (is_fx_assembly || version_mismatch is AssemblyBuilder)
 					return version_mismatch;
 
 				var ref_an = new AssemblyName (refname);
 				var v1 = ref_an.Version;
 				var v2 = version_mismatch.GetName ().Version;
+				AssemblyReferenceMessageInfo messageInfo;
 
 				if (v1 > v2) {
-					var messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
+					messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
 						report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
 						report.Error (1705, string.Format ("Assembly `{0}' depends on `{1}' which has a higher version number than referenced assembly `{2}'",
 														   args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName));
 					});
 
-					AddReferenceVersionMismatch (args.RequestingAssembly.GetName (), messageInfo);
-					return version_mismatch;
-				}
-
-				if (!is_fx_assembly) {
-					var messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
+				} else {
+					messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
 						if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
 							report.Warning (1701, 2,
 								"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
@@ -386,9 +383,9 @@ namespace Mono.CSharp
 								refname, version_mismatch.GetName ().FullName);
 						}
 					});
-
-					AddReferenceVersionMismatch (args.RequestingAssembly.GetName (), messageInfo);
 				}
+
+				AddReferenceVersionMismatch (args.RequestingAssembly.GetName (), messageInfo);
 
 				return version_mismatch;
 			}
