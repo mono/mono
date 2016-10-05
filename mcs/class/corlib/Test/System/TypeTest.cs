@@ -3058,9 +3058,15 @@ namespace MonoTests.System
 		public void MakeArrayTypeTest ()
 		{
 			// This should not crash:
-			typeof (void).MakeArrayType ();
+			Type t = typeof (void).MakeArrayType ();
 		}
 		
+		[Test]
+		[ExpectedException (typeof (InvalidProgramException))]
+		public void MakeArrayTypedReferenceInstanceTest ()
+		{
+			object o = Array.CreateInstance (typeof (global::System.TypedReference), 1);
+		}
 
 		[ComVisible (true)]
 		public class ComFoo<T> {
