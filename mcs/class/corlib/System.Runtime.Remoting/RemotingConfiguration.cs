@@ -106,7 +106,8 @@ namespace System.Runtime.Remoting
 		{
 			lock (channelTemplates) {
 				if (!defaultConfigRead) {
-					ReadConfigFile (Environment.GetMachineConfigPath ());
+					if (File.Exists (Environment.GetMachineConfigPath ()))
+						ReadConfigFile (Environment.GetMachineConfigPath ());
 					defaultConfigRead = true;
 				}
 
