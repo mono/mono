@@ -906,6 +906,8 @@ ReferenceSources/SharedStatics.cs
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
+ReferenceSources/String.cs
+ReferenceSources/Type.cs
 
 ../referencesource/mscorlib/system/__filters.cs
 ../referencesource/mscorlib/system/__hresults.cs
@@ -1640,5 +1642,10 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
-ReferenceSources/String.cs
-ReferenceSources/Type.cs
+corefx/SR.cs
+
+../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+
+../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs
+../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/TupleExtensions.cs
+../../../external/corefx/src/System.ValueTuple/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
