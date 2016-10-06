@@ -1655,21 +1655,7 @@ mono_class_setup_fields (MonoClass *klass)
 		real_size += instance_size;
 	}
 
-	if (!top) {
-		if (explicit_size && real_size) {
-			instance_size = MAX (real_size, instance_size);
-		}
-		klass->blittable = blittable;
-		if (!klass->instance_size)
-			klass->instance_size = instance_size;
-		mono_memory_barrier ();
-		klass->size_inited = 1;
-		klass->fields_inited = 1;
-		klass->setup_fields_called = 1;
-		return;
-	}
-
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (klass->image) && !strcmp (klass->name_space, "System") && !strcmp (klass->name, "ValueType")))
+	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (klass->image) && !strcmp (klass->name_space, "System") && !strcmp (klass->name, "ValueType")) && top)
 		blittable = FALSE;
 
 	/* Prevent infinite loops if the class references itself */
@@ -1778,12 +1764,12 @@ mono_class_setup_fields (MonoClass *klass)
 		mono_class_set_type_load_failure (klass, "The enumeration's base type is invalid.");
 		return;
 	}
-	if (explicit_size && real_size) {
+	if (explicit_size && real_size)
 		instance_size = MAX (real_size, instance_size);
-	}
 
 	if (mono_class_has_failure (klass))
 		return;
+
 	mono_class_layout_fields (klass, instance_size);
 
 	/*valuetypes can't be neither bigger than 1Mb or empty. */
@@ -1887,6 +1873,14 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	gboolean gc_aware_layout = FALSE;
 	gboolean has_static_fields = FALSE;
 	MonoClassField *field;
+
+	if (!top) {
+		if (!klass->instance_size)
+			klass->instance_size = instance_size;
+		mono_memory_barrier ();
+		klass->size_inited = 1;
+		return;
+	}
 
 	/*
 	 * When we do generic sharing we need to have layout
