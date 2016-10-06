@@ -996,6 +996,14 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static int GetPageSize ();
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_bundled_machine_config ();
+
+		internal static string GetBundledMachineConfig ()
+		{
+			return get_bundled_machine_config ();
+		}
+
 		static internal bool IsUnix {
 			get {
 				int platform = (int) Environment.Platform;
