@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System {
 
@@ -22,12 +23,12 @@ namespace System {
 			var GacPath = Path.GetDirectoryName ((string) getGacMethod.Invoke (null, null));
 
 			if (Path.DirectorySeparatorChar == '\\') {
-				string processExe = Process.GetCurrentProcess ().MainModule.FileName;
-				if (processExe != null) {
-					string fileName = Path.GetFileName (processExe);
-					if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
-						Mono = processExe;
-				}
+				StringBuilder moduleName = new StringBuilder (1024);
+				GetModuleFileName (IntPtr.Zero, moduleName, moduleName.Capacity);
+				string processExe = moduleName.ToString ();
+				string fileName = Path.GetFileName (processExe);
+				if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
+					Mono = processExe;
 
 				if (!File.Exists (Mono))
 					Mono = Path.Combine (
@@ -79,6 +80,16 @@ namespace System {
 					AssemblyLinker = "al";
 			}
 		}
+
+		// Due to an issue with shadow copying  and app domains in mono, we cannot currently use 
+		// Process.GetCurrentProcess ().MainModule.FileName (which would give the same result)
+		// when running in an AppDomain (eg System.Web hosts).
+		//
+		// Using native Windows API to get current process filename. This will only
+		// be called when running on Windows. 
+		[DllImport ("kernel32.dll")]
+		static extern uint GetModuleFileName ([In] IntPtr hModule, [Out] StringBuilder lpFilename, [In] int nSize);
+
 	}
 }
 
