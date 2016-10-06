@@ -1536,7 +1536,7 @@ mono_class_setup_fields (MonoClass *klass)
 	MonoImage *m = klass->image;
 	int top;
 	guint32 layout = klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK;
-	int i, blittable = TRUE;
+	int i;
 	guint32 real_size = 0;
 	guint32 packing_size = 0;
 	int instance_size;
@@ -1629,7 +1629,6 @@ mono_class_setup_fields (MonoClass *klass)
 		klass->min_align = klass->parent->min_align;
 		/* we use |= since it may have been set already */
 		klass->has_references |= klass->parent->has_references;
-		blittable = klass->parent->blittable;
 	} else {
 		instance_size = sizeof (MonoObject);
 		klass->min_align = 1;
@@ -1654,9 +1653,6 @@ mono_class_setup_fields (MonoClass *klass)
 		klass->packing_size = packing_size;
 		real_size += instance_size;
 	}
-
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (klass->image) && !strcmp (klass->name_space, "System") && !strcmp (klass->name, "ValueType")) && top)
-		blittable = FALSE;
 
 	/* Prevent infinite loops if the class references itself */
 	klass->setup_fields_called = 1;
@@ -1714,34 +1710,6 @@ mono_class_setup_fields (MonoClass *klass)
 				}
 			}
 		}
-
-		/* Only do these checks if we still think this type is blittable */
-		if (blittable && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-			if (field->type->byref || MONO_TYPE_IS_REFERENCE (field->type)) {
-				blittable = FALSE;
-			} else {
-				MonoClass *field_class = mono_class_from_mono_type (field->type);
-				if (field_class) {
-					mono_class_setup_fields (field_class);
-					if (mono_class_has_failure (field_class)) {
-						MonoError field_error;
-						mono_error_init (&field_error);
-						mono_error_set_for_class_failure (&field_error, field_class);
-						mono_class_set_type_load_failure (klass, "Could not set up field '%s' due to: %s", field->name, mono_error_get_message (&field_error));
-						mono_error_cleanup (&field_error);
-						break;
-					}
-				}
-				if (!field_class || !field_class->blittable)
-					blittable = FALSE;
-			}
-		}
-
-		if (klass->enumtype && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-			klass->cast_class = klass->element_class = mono_class_from_mono_type (field->type);
-			blittable = klass->element_class->blittable;
-		}
-
 		if (mono_type_has_exceptions (field->type)) {
 			char *class_name = mono_type_get_full_name (klass);
 			char *type_name = mono_type_full_name (field->type);
@@ -1755,15 +1723,6 @@ mono_class_setup_fields (MonoClass *klass)
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
-	if (klass == mono_defaults.string_class)
-		blittable = FALSE;
-
-	klass->blittable = blittable;
-
-	if (klass->enumtype && !mono_class_enum_basetype (klass)) {
-		mono_class_set_type_load_failure (klass, "The enumeration's base type is invalid.");
-		return;
-	}
 	if (explicit_size && real_size)
 		instance_size = MAX (real_size, instance_size);
 
@@ -1771,6 +1730,8 @@ mono_class_setup_fields (MonoClass *klass)
 		return;
 
 	mono_class_layout_fields (klass, instance_size);
+	if (mono_class_has_failure (klass))
+		return;
 
 	/*valuetypes can't be neither bigger than 1Mb or empty. */
 	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
@@ -1855,11 +1816,13 @@ type_has_references (MonoClass *klass, MonoType *ftype)
  *
  * Compute the placement of fields inside an object or struct, according to
  * the layout rules and set the following fields in @class:
+ *  - blittable
  *  - has_references (if the class contains instance references firled or structs that contain references)
  *  - has_static_refs (same, but for static fields)
  *  - instance_size (size of the object in memory)
  *  - class_size (size needed for the static fields)
  *  - size_inited (flag set when the instance_size is set)
+ *  - element_class/cast_class (for enums)
  *
  * LOCKING: this is supposed to be called with the loader lock held.
  */
@@ -1873,12 +1836,17 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	gboolean gc_aware_layout = FALSE;
 	gboolean has_static_fields = FALSE;
 	MonoClassField *field;
+	gboolean blittable;
 
 	if (!top) {
 		if (!klass->instance_size)
 			klass->instance_size = instance_size;
 		mono_memory_barrier ();
 		klass->size_inited = 1;
+		if (klass->parent)
+			klass->blittable = klass->parent->blittable;
+		else
+			klass->blittable = 1;
 		return;
 	}
 
@@ -1888,6 +1856,21 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	 * context containing type variables or with a generic
 	 * container), so we don't return in that case anymore.
 	 */
+
+	if (klass->enumtype) {
+		for (i = 0; i < top; i++) {
+			field = &klass->fields [i];
+			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
+				klass->cast_class = klass->element_class = mono_class_from_mono_type (field->type);
+				break;
+			}
+		}
+
+		if (!mono_class_enum_basetype (klass)) {
+			mono_class_set_type_load_failure (klass, "The enumeration's base type is invalid.");
+			return;
+		}
+	}
 
 	/*
 	 * Enable GC aware auto layout: in this mode, reference
@@ -1903,6 +1886,48 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 		if (!klass->valuetype)
 			gc_aware_layout = TRUE;
 	}
+
+	/* Compute klass->blittable */
+	blittable = TRUE;
+	if (klass->parent)
+		blittable = klass->parent->blittable;
+	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (klass->image) && !strcmp (klass->name_space, "System") && !strcmp (klass->name, "ValueType")) && top)
+		blittable = FALSE;
+	for (i = 0; i < top; i++){
+		field = &klass->fields [i];
+
+		if (mono_field_is_deleted (field))
+			continue;
+		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+			continue;
+		if (blittable) {
+			if (field->type->byref || MONO_TYPE_IS_REFERENCE (field->type)) {
+				blittable = FALSE;
+			} else {
+				MonoClass *field_class = mono_class_from_mono_type (field->type);
+				if (field_class) {
+					mono_class_setup_fields (field_class);
+					if (mono_class_has_failure (field_class)) {
+						MonoError field_error;
+						mono_error_init (&field_error);
+						mono_error_set_for_class_failure (&field_error, field_class);
+						mono_class_set_type_load_failure (klass, "Could not set up field '%s' due to: %s", field->name, mono_error_get_message (&field_error));
+						mono_error_cleanup (&field_error);
+						break;
+					}
+				}
+				if (!field_class || !field_class->blittable)
+					blittable = FALSE;
+			}
+		}
+		if (klass->enumtype)
+			blittable = klass->element_class->blittable;
+	}
+	if (mono_class_has_failure (klass))
+		return;
+	if (klass == mono_defaults.string_class)
+		blittable = FALSE;
+	klass->blittable = blittable;
 
 	/* Compute klass->has_references */
 	/* 
