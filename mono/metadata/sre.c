@@ -3167,6 +3167,7 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
+/* This initializes the same data as mono_class_setup_fields () */
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 {
@@ -3177,6 +3178,22 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	const char *p, *p2;
 	int i;
 	guint32 len, idx, real_size = 0;
+
+	if (klass->parent) {
+		if (!klass->parent->size_inited)
+			mono_class_init (klass->parent);
+		klass->instance_size = klass->parent->instance_size;
+		klass->sizes.class_size = 0;
+		klass->min_align = klass->parent->min_align;
+		/*
+		 * if the type has no fields we won't call the field_setup
+		 * routine which sets up klass->has_references.
+		 */
+		klass->has_references |= klass->parent->has_references;
+	} else {
+		klass->instance_size = sizeof (MonoObject);
+		klass->min_align = 1;
+	}
 
 	klass->field.count = tb->num_fields;
 	klass->field.first = 0;
@@ -3190,11 +3207,6 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 		klass->packing_size = tb->packing_size;
 		real_size = klass->instance_size + tb->class_size;
-	}
-
-	if (!klass->field.count) {
-		klass->instance_size = MAX (klass->instance_size, real_size);
-		return;
 	}
 	
 	klass->fields = image_g_new0 (image, MonoClassField, klass->field.count);
@@ -3252,8 +3264,10 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	klass->instance_size = MAX (klass->instance_size, real_size);
-	mono_class_layout_fields (klass, klass->instance_size);
+	mono_class_layout_fields (klass, MAX (klass->instance_size, real_size));
+
+	klass->setup_fields_called = 1;
+	klass->fields_inited = 1;
 }
 
 static void
@@ -3458,23 +3472,6 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 
 	klass->nested_classes_inited = TRUE;
 
-	/* fields and object layout */
-	if (klass->parent) {
-		if (!klass->parent->size_inited)
-			mono_class_init (klass->parent);
-		klass->instance_size = klass->parent->instance_size;
-		klass->sizes.class_size = 0;
-		klass->min_align = klass->parent->min_align;
-		/* if the type has no fields we won't call the field_setup
-		 * routine which sets up klass->has_references.
-		 */
-		klass->has_references |= klass->parent->has_references;
-	} else {
-		klass->instance_size = sizeof (MonoObject);
-		klass->min_align = 1;
-	}
-
-	/* FIXME: handle packing_size and instance_size */
 	typebuilder_setup_fields (klass, &error);
 	if (!mono_error_ok (&error))
 		goto failure;

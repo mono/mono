@@ -1839,8 +1839,7 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	gboolean blittable;
 
 	if (!top) {
-		if (!klass->instance_size)
-			klass->instance_size = instance_size;
+		klass->instance_size = instance_size;
 		mono_memory_barrier ();
 		klass->size_inited = 1;
 		if (klass->parent)
