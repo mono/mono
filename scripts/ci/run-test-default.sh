@@ -75,7 +75,7 @@ ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build --skip; else ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test; fi
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=monodoc --skip; else ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
+${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build-12 --skip; else ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12; fi
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build.Engine-12 --skip; else ${TESTCMD} --label=Microsoft.Build.Engine-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Engine run-test PROFILE=xbuild_12; fi
 ${TESTCMD} --label=Microsoft.Build.Framework-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_12
