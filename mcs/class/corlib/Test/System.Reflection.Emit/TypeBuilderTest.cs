@@ -112,7 +112,7 @@ namespace MonoTests.System.Reflection.Emit
 				Thread.GetDomain ().DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 
-			module = assembly.DefineDynamicModule ("module1");
+			module = assembly.DefineDynamicModule (ASSEMBLY_NAME, ASSEMBLY_NAME + ".dll");
 		}
 
 		static int typeIndexer = 0;
@@ -1825,6 +1825,23 @@ namespace MonoTests.System.Reflection.Emit
 			}
 
 			// TODO:
+		}
+
+		[Test]
+		public void NestedTypeSave () {
+			var tb = module.DefineType (genTypeName ());
+
+			var tbuilder = tb.DefineNestedType ("Test.CodeGen", TypeAttributes.Public | TypeAttributes.Class);
+			var entryp = tbuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (void), null);
+			var ilg = entryp.GetILGenerator (128);
+			ilg.Emit (OpCodes.Ldtoken, tb);
+			ilg.Emit (OpCodes.Pop);
+			ilg.Emit (OpCodes.Ret);
+
+			tbuilder.CreateType ();
+			tb.CreateType ();
+
+			assembly.Save (ASSEMBLY_NAME + ".dll");
 		}
 
 		[Test]

@@ -870,6 +870,10 @@ namespace System.Reflection.Emit
 				foreach (var cb in ctors)
 					cb.FixupTokens (token_map, member_map);
 			}
+			if (subtypes != null) {
+				foreach (var tb in subtypes)
+					tb.FixupTokens (token_map, member_map);
+			}
 		}
 
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
