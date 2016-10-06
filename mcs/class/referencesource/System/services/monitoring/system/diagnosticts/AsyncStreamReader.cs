@@ -57,6 +57,11 @@ namespace System.Diagnostics {
         // Cache the last position scanned in sb when searching for lines.
         private int currentLinePos;
 		
+#if MONO
+		//users to coordinate between Dispose and BeginReadLine
+		private object syncObject = new Object ();
+#endif
+
         internal AsyncStreamReader(Process process, Stream stream, UserCallBack callback, Encoding encoding) 
             : this(process, stream, callback, encoding, DefaultBufferSize) {
         }
@@ -104,6 +109,9 @@ namespace System.Diagnostics {
 
         protected virtual void Dispose(bool disposing)
         {
+#if MONO
+            lock (syncObject) {
+#endif
             if (disposing) {
                 if (stream != null)
                     stream.Close();
@@ -120,6 +128,9 @@ namespace System.Diagnostics {
                 eofEvent.Close();
                 eofEvent = null;
             }
+#if MONO
+            }
+#endif
         }
         
         public virtual Encoding CurrentEncoding {
@@ -155,6 +166,12 @@ namespace System.Diagnostics {
             int byteLen;
             
             try {
+#if MONO
+                var stream = this.stream;
+                if (stream == null)
+                byteLen = 0;
+                else
+#endif
                 byteLen = stream.EndRead(ar);
             }
             catch (IOException ) {
@@ -186,13 +203,32 @@ namespace System.Diagnostics {
                     FlushMessageQueue();
                 }
                 finally {
+#if MONO
+                    lock (syncObject) {
+                        if (eofEvent != null) {
+                            try {
+                                eofEvent.Set ();
+                            } catch (System.ObjectDisposedException) {
+                                // This races with Dispose, it's safe to ignore the error as it comes from a SafeHandle doing its job
+                            }
+                        }
+                    }
+#else
                     eofEvent.Set();
+#endif
                 }
             } else {
                 int charLen = decoder.GetChars(byteBuffer, 0, byteLen, charBuffer, 0);
                 sb.Append(charBuffer, 0, charLen);
                 GetLinesFromStringBuilder();
+#if MONO
+                lock (syncObject) {
+                    if (stream != null) //not continue if the stream is gone / dispose
+#endif
                 stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
+#if MONO
+                }
+#endif
             }
         }
         
