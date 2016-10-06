@@ -549,8 +549,13 @@ namespace System.Data.SqlClient
 			int idx = 0;
 			if ((idx = theDataSource.IndexOf (',')) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
+				
 				string p = theDataSource.Substring (idx + 1);
 				thePort = Int32.Parse (p);
+				if ((idx = theServerName.IndexOf('\\')) > -1) {
+					theInstanceName = theServerName.Substring(idx + 1);
+					theServerName = theServerName.Substring(0, idx);
+				}
 			} else if ((idx = theDataSource.IndexOf ('\\')) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
 				theInstanceName = theDataSource.Substring (idx + 1);
