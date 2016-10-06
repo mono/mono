@@ -80,7 +80,7 @@ namespace Mono.Btls
 		extern static int mono_btls_x509_name_get_entry_oid_data (IntPtr name, int index, out IntPtr data);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static int mono_btls_x509_name_get_entry_value (IntPtr name, int index, out IntPtr str);
+		extern static int mono_btls_x509_name_get_entry_value (IntPtr name, int index, out int tag, out IntPtr str);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern unsafe static IntPtr mono_btls_x509_name_from_data (void* data, int len, int use_canon_enc);
@@ -185,13 +185,13 @@ namespace Mono.Btls
 			return bytes;
 		}
 
-		public unsafe string GetEntryValue (int index)
+		public unsafe string GetEntryValue (int index, out int tag)
 		{
 			if (index >= GetEntryCount ())
 				throw new ArgumentOutOfRangeException ();
 			IntPtr data;
 			var ret = mono_btls_x509_name_get_entry_value (
-				Handle.DangerousGetHandle (), index, out data);
+				Handle.DangerousGetHandle (), index, out tag, out data);
 			if (ret <= 0)
 				return null;
 			try {

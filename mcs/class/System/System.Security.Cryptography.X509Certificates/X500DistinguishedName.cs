@@ -124,7 +124,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		internal X500DistinguishedName (byte[] encoded, byte[] canonEncoding, string name)
-			: this (encoded)
 		{
 			this.canonEncoding = canonEncoding;
 			this.name = name;

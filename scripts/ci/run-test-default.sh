@@ -9,7 +9,10 @@ ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
 ${TESTCMD} --label=compiler-errors --timeout=30m make -w -C mcs/errors run-test
+export MONO_TLS_PROVIDER=legacy
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System --skip; else ${TESTCMD} --label=System --timeout=10m make -w -C mcs/class/System run-test; fi
+if [[ ${label} == osx-* ]]; then export MONO_TLS_PROVIDER=btls && ${TESTCMD} --label=System-btls --timeout=10m make -w -C mcs/class/System run-test; fi
+unset MONO_TLS_PROVIDER
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Security --skip; else ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test; fi
@@ -72,7 +75,7 @@ ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build --skip; else ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test; fi
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=monodoc --skip; else ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
+${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build-12 --skip; else ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12; fi
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Microsoft.Build.Engine-12 --skip; else ${TESTCMD} --label=Microsoft.Build.Engine-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Engine run-test PROFILE=xbuild_12; fi
 ${TESTCMD} --label=Microsoft.Build.Framework-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_12
