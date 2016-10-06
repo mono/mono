@@ -1374,13 +1374,17 @@ namespace System.Diagnostics {
 
                 var tmpAsync = output;
                 output = null;
-                if (outputStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null)
+                if (outputStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null) {
+                    tmpAsync.CancelOperation ();
                     tmpAsync.Close ();
+                }
 
                 tmpAsync = error;
                 error = null;
-                if (errorStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null)
+                if (errorStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null) {
+                    tmpAsync.CancelOperation ();
                     tmpAsync.Close ();
+                }
 #else
                 //Don't call close on the Readers and writers
                 //since they might be referenced by somebody else while the 
