@@ -9,10 +9,8 @@ ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
 ${TESTCMD} --label=compiler-errors --timeout=30m make -w -C mcs/errors run-test
-export MONO_TLS_PROVIDER=legacy
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System --skip; else ${TESTCMD} --label=System --timeout=10m make -w -C mcs/class/System run-test; fi
-if [[ ${label} == osx-* ]]; then export MONO_TLS_PROVIDER=btls && ${TESTCMD} --label=System-btls --timeout=10m make -w -C mcs/class/System run-test; fi
-unset MONO_TLS_PROVIDER
+if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System --skip; else ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"; fi
+if [[ ${label} == osx-* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Security --skip; else ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test; fi
