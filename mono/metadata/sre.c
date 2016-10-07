@@ -3252,8 +3252,6 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	klass->setup_fields_called = 1;
-
 	mono_class_layout_fields (klass, instance_size, packing_size);
 }
 

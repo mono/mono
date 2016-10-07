@@ -108,6 +108,9 @@ static int record_gclass_instantiation;
 static GSList *gclass_recorded_list;
 typedef gboolean (*gclass_record_func) (MonoClass*, void*);
 
+/* This TLS variable points to a GSList of classes which have setup_fields () executing */
+static MonoNativeTlsKey setup_fields_tls_id;
+
 static inline void
 classes_lock (void)
 {
@@ -1547,53 +1550,7 @@ mono_class_setup_fields (MonoClass *klass)
 	MonoClassField *field;
 	MonoClass *gtd;
 
-	/*
-	 * FIXME: We have a race condition here.  It's possible that this function returns
-	 * to its caller with `instance_size` set to `0` instead of the actual size.  This
-	 * is not a problem when the function is called recursively on the same class,
-	 * because the size will be initialized by the outer invocation.  What follows is a
-	 * description of how it can occur in other cases, too.  There it is a problem,
-	 * because it can lead to the GC being asked to allocate an object of size `0`,
-	 * which SGen chokes on.  The race condition is triggered infrequently by
-	 * `tests/sgen-suspend.cs`.
-	 *
-	 * This function is called for a class whenever one of its subclasses is inited.
-	 * For example, it's called for every subclass of Object.  What it does is this:
-	 *
-	 *     if (klass->setup_fields_called)
-	 *         return;
-	 *     ...
-	 *     klass->instance_size = 0;
-	 *     ...
-	 *     klass->setup_fields_called = 1;
-	 *     ... critical point
-	 *     klass->instance_size = actual_instance_size;
-	 *
-	 * The last two steps are sometimes reversed, but that only changes the way in which
-	 * the race condition works.
-	 *
-	 * Assume thread A goes through this function and makes it to the critical point.
-	 * Now thread B runs the function and, since `setup_fields_called` is set, returns
-	 * immediately, but `instance_size` is incorrect.
-	 *
-	 * The other case looks like this:
-	 *
-	 *     if (klass->setup_fields_called)
-	 *         return;
-	 *     ... critical point X
-	 *     klass->instance_size = 0;
-	 *     ... critical point Y
-	 *     klass->instance_size = actual_instance_size;
-	 *     ...
-	 *     klass->setup_fields_called = 1;
-	 *
-	 * Assume thread A goes through the function and makes it to critical point X.  Now
-	 * thread B runs through the whole of the function, returning, assuming
-	 * `instance_size` is set.  At that point thread A gets to run and makes it to
-	 * critical point Y, at which time `instance_size` is `0` again, invalidating thread
-	 * B's assumption.
-	 */
-	if (klass->setup_fields_called)
+	if (klass->fields_inited)
 		return;
 
 	if (klass->generic_class && image_is_dynamic (klass->generic_class->container_class->image) && !klass->generic_class->container_class->wastypebuilder) {
@@ -1620,11 +1577,9 @@ mono_class_setup_fields (MonoClass *klass)
 	if (klass->parent) {
 		/* For generic instances, klass->parent might not have been initialized */
 		mono_class_init (klass->parent);
-		if (!klass->parent->size_inited) {
-			mono_class_setup_fields (klass->parent);
-			if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Could not set up parent class"))
-				return;
-		}
+		mono_class_setup_fields (klass->parent);
+		if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Could not set up parent class"))
+			return;
 		instance_size = klass->parent->instance_size;
 	} else {
 		instance_size = sizeof (MonoObject);
@@ -1635,8 +1590,15 @@ mono_class_setup_fields (MonoClass *klass)
 	if (explicit_size)
 		instance_size += real_size;
 
-	/* Prevent infinite loops if the class references itself */
-	klass->setup_fields_called = 1;
+	/*
+	 * This function can recursively call itself.
+	 * Prevent infinite recursion by using a list in TLS.
+	 */
+	GSList *init_list = (GSList *)mono_native_tls_get_value (setup_fields_tls_id);
+	if (g_slist_find (init_list, klass))
+		return;
+	init_list = g_slist_prepend (init_list, klass);
+	mono_native_tls_set_value (setup_fields_tls_id, init_list);
 
 	/*
 	 * Fetch all the field information.
@@ -1652,7 +1614,7 @@ mono_class_setup_fields (MonoClass *klass)
 			if (!mono_error_ok (&error)) {
 				/*mono_field_resolve_type already failed class*/
 				mono_error_cleanup (&error);
-				return;
+				break;
 			}
 			if (!field->type)
 				g_error ("could not resolve %s:%s\n", mono_type_get_full_name(klass), field->name);
@@ -1697,10 +1659,11 @@ mono_class_setup_fields (MonoClass *klass)
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
-	if (mono_class_has_failure (klass))
-		return;
+	if (!mono_class_has_failure (klass))
+		mono_class_layout_fields (klass, instance_size, packing_size);
 
-	mono_class_layout_fields (klass, instance_size, packing_size);
+	init_list = g_slist_remove (init_list, klass);
+	mono_native_tls_set_value (setup_fields_tls_id, init_list);
 }
 
 /** 
@@ -1833,6 +1796,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		klass->instance_size = instance_size;
 		mono_memory_barrier ();
 		klass->size_inited = 1;
+		klass->fields_inited = 1;
 		if (klass->parent)
 			klass->blittable = klass->parent->blittable;
 		else
@@ -6217,7 +6181,6 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 	klass->instance_size = sizeof (MonoObject) + mono_type_stack_size_internal (&klass->byval_arg, NULL, TRUE);
 	mono_memory_barrier ();
 	klass->size_inited = 1;
-	klass->setup_fields_called = 1;
 
 	mono_class_setup_supertypes (klass);
 
@@ -10016,6 +9979,8 @@ mono_classes_init (void)
 {
 	mono_os_mutex_init (&classes_mutex);
 
+	mono_native_tls_alloc (&setup_fields_tls_id, NULL);
+
 	mono_counters_register ("Inflated methods size",
 							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_methods_size);
 	mono_counters_register ("Inflated classes",
@@ -10036,6 +10001,8 @@ mono_classes_init (void)
 void
 mono_classes_cleanup (void)
 {
+	mono_native_tls_free (setup_fields_tls_id);
+
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
 	global_interface_bitset = NULL;

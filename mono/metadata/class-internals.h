@@ -322,8 +322,7 @@ struct _MonoClass {
 	guint is_generic : 1; /* class is a generic type definition */
 	guint is_inflated : 1; /* class is a generic instance */
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
-	guint fields_inited : 1; /* fields is initialized */
-	guint setup_fields_called : 1; /* to prevent infinite loops in setup_fields */
+	guint fields_inited : 1; /* setup_fields () has finished */
 	guint has_failure : 1; /* See MONO_CLASS_PROP_EXCEPTION_DATA for a MonoErrorBoxed with the details */
 
 	MonoClass  *parent;
