@@ -28,7 +28,7 @@ ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run
 ${TESTCMD} --label=System.Data.OracleClient --timeout=5m make -w -C mcs/class/System.Data.OracleClient run-test;
 ${TESTCMD} --label=System.Design --timeout=5m make -w -C mcs/class/System.Design run-test;
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Mono.Posix --skip; else ${TESTCMD} --label=Mono.Posix --timeout=5m make -w -C mcs/class/Mono.Posix run-test; fi
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Web --skip; else ${TESTCMD} --label=System.Web --timeout=30m make -w -C mcs/class/System.Web run-test; fi
+${TESTCMD} --label=System.Web --timeout=30m make -w -C mcs/class/System.Web run-test
 ${TESTCMD} --label=System.Web.Services --timeout=5m make -w -C mcs/class/System.Web.Services run-test
 ${TESTCMD} --label=System.Runtime.SFS --timeout=5m make -w -C mcs/class/System.Runtime.Serialization.Formatters.Soap run-test;
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Runtime.Remoting --skip; else ${TESTCMD} --label=System.Runtime.Remoting --timeout=5m make -w -C mcs/class/System.Runtime.Remoting run-test; fi
@@ -47,7 +47,7 @@ ${TESTCMD} --label=Mono.C5 --timeout=5m make -w -C mcs/class/Mono.C5 run-test
 ${TESTCMD} --label=Mono.Tasklets --timeout=5m make -w -C mcs/class/Mono.Tasklets run-test
 ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System.Configuration run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Web.Extensions --skip; else ${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/System.Web.Extensions run-test; fi
+${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/System.Web.Extensions run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Core --skip; else ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test; fi
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=System.Xml.Linq --timeout=5m make -w -C mcs/class/System.Xml.Linq run-test
@@ -63,7 +63,7 @@ ${TESTCMD} --label=System.ComponentModel.DataAnnotations --timeout=5m make -w -C
 ${TESTCMD} --label=Mono.CodeContracts --timeout=5m make -w -C mcs/class/Mono.CodeContracts run-test
 ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-test
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Web.DynamicData --skip; else ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test; fi
+${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=WindowsBase --skip; else ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test; fi
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
