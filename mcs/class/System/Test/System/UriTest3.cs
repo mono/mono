@@ -312,6 +312,8 @@ namespace MonoTests.System
 			Assert.IsFalse (Uri.IsWellFormedUriString (null, UriKind.Absolute), "null");
 			Assert.IsFalse (Uri.IsWellFormedUriString ("data", UriKind.Absolute), "data");
 			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main_Page#1", UriKind.Absolute), "http/hex");
+			Assert.IsTrue (Uri.IsWellFormedUriString ("test", UriKind.RelativeOrAbsolute), "rel1");
+			Assert.IsTrue (Uri.IsWellFormedUriString ("/test", UriKind.RelativeOrAbsolute), "rel2");
 		}
 
 		[Test]
