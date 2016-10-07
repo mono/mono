@@ -3176,23 +3176,15 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	MonoClassField *field;
 	MonoImage *image = klass->image;
 	const char *p, *p2;
-	int i;
-	guint32 len, idx, real_size = 0;
+	int i, instance_size, packing_size = 0;
+	guint32 len, idx;
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
 			mono_class_init (klass->parent);
-		klass->instance_size = klass->parent->instance_size;
-		klass->sizes.class_size = 0;
-		klass->min_align = klass->parent->min_align;
-		/*
-		 * if the type has no fields we won't call the field_setup
-		 * routine which sets up klass->has_references.
-		 */
-		klass->has_references |= klass->parent->has_references;
+		instance_size = klass->parent->instance_size;
 	} else {
-		klass->instance_size = sizeof (MonoObject);
-		klass->min_align = 1;
+		instance_size = sizeof (MonoObject);
 	}
 
 	klass->field.count = tb->num_fields;
@@ -3201,12 +3193,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	mono_error_init (error);
 
 	if (tb->class_size) {
-		if ((tb->packing_size & 0xffffff00) != 0) {
-			mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, tb->packing_size);
-			return;
-		}
-		klass->packing_size = tb->packing_size;
-		real_size = klass->instance_size + tb->class_size;
+		packing_size = tb->packing_size;
+		instance_size += tb->class_size;
 	}
 	
 	klass->fields = image_g_new0 (image, MonoClassField, klass->field.count);
@@ -3264,10 +3252,9 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	mono_class_layout_fields (klass, MAX (klass->instance_size, real_size));
-
 	klass->setup_fields_called = 1;
-	klass->fields_inited = 1;
+
+	mono_class_layout_fields (klass, instance_size, packing_size);
 }
 
 static void

@@ -1524,9 +1524,12 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
 
 /** 
  * mono_class_setup_fields:
- * @class: The class to initialize
+ * @klass: The class to initialize
  *
- * Initializes the klass->fields.
+ * Initializes klass->fields, computes class layout and sizes.
+ * typebuilder_setup_fields () is the corresponding function for dynamic classes.
+ * See mono_class_layout_fields () for all the fields initialized by this function.
+ *
  * LOCKING: Assumes the loader lock is held.
  */
 static void
@@ -1542,8 +1545,7 @@ mono_class_setup_fields (MonoClass *klass)
 	int instance_size;
 	gboolean explicit_size;
 	MonoClassField *field;
-	MonoGenericContainer *container = NULL;
-	MonoClass *gtd = klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
+	MonoClass *gtd;
 
 	/*
 	 * FIXME: We have a race condition here.  It's possible that this function returns
@@ -1607,6 +1609,7 @@ mono_class_setup_fields (MonoClass *klass)
 	mono_class_setup_basic_field_info (klass);
 	top = klass->field.count;
 
+	gtd = klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
 	if (gtd) {
 		mono_class_setup_fields (gtd);
 		if (mono_class_set_type_load_failure_causedby_class (klass, gtd, "Generic type definition failed"))
@@ -1614,9 +1617,6 @@ mono_class_setup_fields (MonoClass *klass)
 	}
 
 	instance_size = 0;
-	if (!klass->rank)
-		klass->sizes.class_size = 0;
-
 	if (klass->parent) {
 		/* For generic instances, klass->parent might not have been initialized */
 		mono_class_init (klass->parent);
@@ -1625,44 +1625,18 @@ mono_class_setup_fields (MonoClass *klass)
 			if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Could not set up parent class"))
 				return;
 		}
-		instance_size += klass->parent->instance_size;
-		klass->min_align = klass->parent->min_align;
-		/* we use |= since it may have been set already */
-		klass->has_references |= klass->parent->has_references;
+		instance_size = klass->parent->instance_size;
 	} else {
 		instance_size = sizeof (MonoObject);
-		klass->min_align = 1;
 	}
 
-	/* We can't really enable 16 bytes alignment until the GC supports it.
-	The whole layout/instance size code must be reviewed because we do alignment calculation in terms of the
-	boxed instance, which leads to unexplainable holes at the beginning of an object embedding a simd type.
-	Bug #506144 is an example of this issue.
-
-	 if (klass->simd_type)
-		klass->min_align = 16;
-	 */
 	/* Get the real size */
 	explicit_size = mono_metadata_packing_from_typedef (klass->image, klass->type_token, &packing_size, &real_size);
-
-	if (explicit_size) {
-		if ((packing_size & 0xffffff00) != 0) {
-			mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, packing_size);
-			return;
-		}
-		klass->packing_size = packing_size;
-		real_size += instance_size;
-	}
+	if (explicit_size)
+		instance_size += real_size;
 
 	/* Prevent infinite loops if the class references itself */
 	klass->setup_fields_called = 1;
-
-	if (klass->generic_container) {
-		container = klass->generic_container;
-	} else if (gtd) {
-		container = gtd->generic_container;
-		g_assert (container);
-	}
 
 	/*
 	 * Fetch all the field information.
@@ -1723,22 +1697,10 @@ mono_class_setup_fields (MonoClass *klass)
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
-	if (explicit_size && real_size)
-		instance_size = MAX (real_size, instance_size);
-
 	if (mono_class_has_failure (klass))
 		return;
 
-	mono_class_layout_fields (klass, instance_size);
-	if (mono_class_has_failure (klass))
-		return;
-
-	/*valuetypes can't be neither bigger than 1Mb or empty. */
-	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
-		mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
-
-	mono_memory_barrier ();
-	klass->fields_inited = 1;
+	mono_class_layout_fields (klass, instance_size, packing_size);
 }
 
 /** 
@@ -1812,10 +1774,15 @@ type_has_references (MonoClass *klass, MonoType *ftype)
 /*
  * mono_class_layout_fields:
  * @class: a class
- * @instance_size: base instance size
+ * @base_instance_size: base instance size
+ * @packing_size:
  *
- * Compute the placement of fields inside an object or struct, according to
- * the layout rules and set the following fields in @class:
+ * This contains the common code for computing the layout of classes and sizes.
+ * This should only be called from mono_class_setup_fields () and
+ * typebuilder_setup_fields ().
+ * Sets the following fields in @klass:
+ *  - packing_size
+ *  - min_align
  *  - blittable
  *  - has_references (if the class contains instance references firled or structs that contain references)
  *  - has_static_refs (same, but for static fields)
@@ -1823,11 +1790,12 @@ type_has_references (MonoClass *klass, MonoType *ftype)
  *  - class_size (size needed for the static fields)
  *  - size_inited (flag set when the instance_size is set)
  *  - element_class/cast_class (for enums)
+ *  - fields_inited
  *
  * LOCKING: this is supposed to be called with the loader lock held.
  */
 void
-mono_class_layout_fields (MonoClass *klass, int instance_size)
+mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size)
 {
 	int i;
 	const int top = klass->field.count;
@@ -1837,6 +1805,29 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	gboolean has_static_fields = FALSE;
 	MonoClassField *field;
 	gboolean blittable;
+	int instance_size = base_instance_size;
+
+	if ((packing_size & 0xffffff00) != 0) {
+		mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, packing_size);
+		return;
+	}
+	klass->packing_size = packing_size;
+
+	if (klass->parent) {
+		klass->min_align = klass->parent->min_align;
+		/* we use |= since it may have been set already */
+		klass->has_references |= klass->parent->has_references;
+	} else {
+		klass->min_align = 1;
+	}
+	/* We can't really enable 16 bytes alignment until the GC supports it.
+	The whole layout/instance size code must be reviewed because we do alignment calculation in terms of the
+	boxed instance, which leads to unexplainable holes at the beginning of an object embedding a simd type.
+	Bug #506144 is an example of this issue.
+
+	 if (klass->simd_type)
+		klass->min_align = 16;
+	 */
 
 	if (!top) {
 		klass->instance_size = instance_size;
@@ -2203,6 +2194,13 @@ mono_class_layout_fields (MonoClass *klass, int instance_size)
 	if (has_static_fields && klass->sizes.class_size == 0)
 		/* Simplify code which depends on class_size != 0 if the class has static fields */
 		klass->sizes.class_size = 8;
+
+	/*valuetypes can't be neither bigger than 1Mb or empty. */
+	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
+		mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
+
+	mono_memory_barrier ();
+	klass->fields_inited = 1;
 }
 
 static MonoMethod*
