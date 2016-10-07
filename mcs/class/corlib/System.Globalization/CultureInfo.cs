@@ -180,7 +180,6 @@ namespace System.Globalization
 			get { return territory; }
 		}
 
-#if !MOBILE
 		// FIXME: It is implemented, but would be hell slow.
 		[ComVisible (false)]
 		public CultureTypes CultureTypes {
@@ -266,7 +265,6 @@ namespace System.Globalization
 				}
 			}
 		}
-#endif
 
 		public virtual int LCID {
 			get {

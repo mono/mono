@@ -44,6 +44,16 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public partial class CryptoConfig {
 
+		public static void AddAlgorithm (Type algorithm, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static void AddOID (string oid, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		// try to avoid hitting the CreateFromName overloads to help the linker
 
 		public static object CreateFromName (string name)

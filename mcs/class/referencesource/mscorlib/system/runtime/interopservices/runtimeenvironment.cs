@@ -151,7 +151,13 @@ namespace System.Runtime.InteropServices {
             }
         }
 
-#if FEATURE_COMINTEROP && !MONO
+#if FEATURE_COMINTEROP || MONO
+#if MONO
+        private static IntPtr GetRuntimeInterfaceImpl(Guid clsid, Guid riid)
+        {
+            throw new NotSupportedException();
+        }
+#else
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.Process)]
         [ResourceConsumption(ResourceScope.Process)]
@@ -160,6 +166,7 @@ namespace System.Runtime.InteropServices {
         private static extern IntPtr GetRuntimeInterfaceImpl(
             [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid,
             [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid);
+#endif
 
         //
         // This function does the equivalent of calling GetInterface(clsid, riid) on the
