@@ -2,7 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../System/System/MonoExeLocator.cs
+../System/System/MonoToolsLocator.cs
 ../System.Windows.Forms/System.Resources/AssemblyNamesTypeResolutionService.cs
 ../System.Windows.Forms/System.Resources/ByteArrayFromResXHandler.cs
 ../System.Windows.Forms/System.Resources/ResXNullRef.cs
