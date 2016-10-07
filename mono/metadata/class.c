@@ -1785,18 +1785,6 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		klass->min_align = 16;
 	 */
 
-	if (!top) {
-		klass->instance_size = instance_size;
-		mono_memory_barrier ();
-		klass->size_inited = 1;
-		klass->fields_inited = 1;
-		if (klass->parent)
-			klass->blittable = klass->parent->blittable;
-		else
-			klass->blittable = 1;
-		return;
-	}
-
 	/*
 	 * When we do generic sharing we need to have layout
 	 * information for open generic classes (either with a generic
@@ -1840,7 +1828,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		blittable = klass->parent->blittable;
 	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (klass->image) && !strcmp (klass->name_space, "System") && !strcmp (klass->name, "ValueType")) && top)
 		blittable = FALSE;
-	for (i = 0; i < top; i++){
+	for (i = 0; i < top; i++) {
 		field = &klass->fields [i];
 
 		if (mono_field_is_deleted (field))
@@ -2104,13 +2092,13 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		 * performance, and since the JIT memset/memcpy code assumes this and generates 
 		 * unaligned accesses otherwise. See #78990 for a testcase.
 		 */
-		if (mono_align_small_structs) {
+		if (mono_align_small_structs && top) {
 			if (instance_size <= sizeof (MonoObject) + sizeof (gpointer))
 				klass->min_align = MAX (klass->min_align, instance_size - sizeof (MonoObject));
 		}
 	}
 
-	if (klass->instance_size && !klass->image->dynamic) {
+	if (klass->instance_size && !klass->image->dynamic && top) {
 		/* Might be already set using cached info */
 		g_assert (klass->instance_size == instance_size);
 	} else {
@@ -2122,7 +2110,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	/*
 	 * Compute static field layout and size
 	 */
-	for (i = 0; i < top; i++){
+	for (i = 0; i < top; i++) {
 		gint32 align;
 		guint32 size;
 
