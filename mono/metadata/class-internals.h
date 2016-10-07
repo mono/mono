@@ -706,7 +706,7 @@ void
 mono_class_setup_supertypes (MonoClass *klass);
 
 void
-mono_class_setup_fields_locking (MonoClass *klass);
+mono_class_setup_fields (MonoClass *klass);
 
 /* WARNING
  * Only call this function if you can ensure both @klass and @parent

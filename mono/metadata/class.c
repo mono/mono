@@ -1533,9 +1533,9 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
  * typebuilder_setup_fields () is the corresponding function for dynamic classes.
  * See mono_class_layout_fields () for all the fields initialized by this function.
  *
- * LOCKING: Assumes the loader lock is held.
+ * LOCKING: Acquires the loader lock.
  */
-static void
+void
 mono_class_setup_fields (MonoClass *klass)
 {
 	MonoError error;
@@ -1549,6 +1549,7 @@ mono_class_setup_fields (MonoClass *klass)
 	gboolean explicit_size;
 	MonoClassField *field;
 	MonoClass *gtd;
+	int *field_offsets;
 
 	if (klass->fields_inited)
 		return;
@@ -1603,11 +1604,10 @@ mono_class_setup_fields (MonoClass *klass)
 	/*
 	 * Fetch all the field information.
 	 */
+	field_offsets = g_new0 (int, top);
 	for (i = 0; i < top; i++){
 		int idx = klass->field.first + i;
 		field = &klass->fields [i];
-
-		field->parent = klass;
 
 		if (!field->type) {
 			mono_field_resolve_type (field, &error);
@@ -1625,19 +1625,19 @@ mono_class_setup_fields (MonoClass *klass)
 			continue;
 		if (gtd) {
 			MonoClassField *gfield = &gtd->fields [i];
-			field->offset = gfield->offset;
+			field_offsets [i] = gfield->offset;
 		} else {
 			if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
 				guint32 offset;
 				mono_metadata_field_info (m, idx, &offset, NULL, NULL);
-				field->offset = offset;
+				field_offsets [i] = offset;
 
-				if (field->offset == (guint32)-1 && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
+				if (field_offsets [i] == (guint32)-1 && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
 					mono_class_set_type_load_failure (klass, "Missing field layout info for %s", field->name);
 					break;
 				}
-				if (field->offset < -1) { /*-1 is used to encode special static fields */
-					mono_class_set_type_load_failure (klass, "Field '%s' has a negative offset %d", field->name, field->offset);
+				if (field_offsets [i] < -1) { /*-1 is used to encode special static fields */
+					mono_class_set_type_load_failure (klass, "Field '%s' has a negative offset %d", field->name, field_offsets [i]);
 					break;
 				}
 				if (klass->generic_container) {
@@ -1659,29 +1659,22 @@ mono_class_setup_fields (MonoClass *klass)
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
-	if (!mono_class_has_failure (klass))
-		mono_class_layout_fields (klass, instance_size, packing_size);
+	/* Publish the data */
+	mono_loader_lock ();
+	for (i = 0; i < top; i++)
+		klass->fields [i].offset = field_offsets [i];
+	mono_loader_unlock ();
+	g_free (field_offsets);
+
+	if (!mono_class_has_failure (klass)) {
+		mono_loader_lock ();
+		if (!klass->fields_inited)
+			mono_class_layout_fields (klass, instance_size, packing_size);
+		mono_loader_unlock ();
+	}
 
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (setup_fields_tls_id, init_list);
-}
-
-/** 
- * mono_class_setup_fields_locking:
- * @class: The class to initialize
- *
- * Initializes the klass->fields array of fields.
- * Aquires the loader lock.
- */
-void
-mono_class_setup_fields_locking (MonoClass *klass)
-{
-	/* This can be checked without locks */
-	if (klass->fields_inited)
-		return;
-	mono_loader_lock ();
-	mono_class_setup_fields (klass);
-	mono_loader_unlock ();
 }
 
 /*
@@ -6894,7 +6887,7 @@ mono_class_data_size (MonoClass *klass)
 		mono_class_init (klass);
 	/* This can happen with dynamically created types */
 	if (!klass->fields_inited)
-		mono_class_setup_fields_locking (klass);
+		mono_class_setup_fields (klass);
 
 	/* in arrays, sizes.class_size is unioned with element_size
 	 * and arrays have no static fields
@@ -6912,7 +6905,7 @@ mono_class_data_size (MonoClass *klass)
 static MonoClassField *
 mono_class_get_field_idx (MonoClass *klass, int idx)
 {
-	mono_class_setup_fields_locking (klass);
+	mono_class_setup_fields (klass);
 	if (mono_class_has_failure (klass))
 		return NULL;
 
@@ -6994,7 +6987,7 @@ mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoTyp
 {
 	int i;
 
-	mono_class_setup_fields_locking (klass);
+	mono_class_setup_fields (klass);
 	if (mono_class_has_failure (klass))
 		return NULL;
 
@@ -7032,7 +7025,7 @@ mono_class_get_field_token (MonoClassField *field)
 	MonoClass *klass = field->parent;
 	int i;
 
-	mono_class_setup_fields_locking (klass);
+	mono_class_setup_fields (klass);
 
 	while (klass) {
 		if (!klass->fields)
@@ -9112,7 +9105,7 @@ mono_class_get_fields (MonoClass* klass, gpointer *iter)
 	if (!iter)
 		return NULL;
 	if (!*iter) {
-		mono_class_setup_fields_locking (klass);
+		mono_class_setup_fields (klass);
 		if (mono_class_has_failure (klass))
 			return NULL;
 		/* start from the first */
