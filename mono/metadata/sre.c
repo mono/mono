@@ -3252,7 +3252,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	mono_class_layout_fields (klass, instance_size, packing_size);
+	mono_class_layout_fields (klass, instance_size, packing_size, TRUE);
 }
 
 static void

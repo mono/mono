@@ -1531,7 +1531,17 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
  *
  * Initializes klass->fields, computes class layout and sizes.
  * typebuilder_setup_fields () is the corresponding function for dynamic classes.
- * See mono_class_layout_fields () for all the fields initialized by this function.
+ * Sets the following fields in @klass:
+ *  - packing_size
+ *  - min_align
+ *  - blittable
+ *  - has_references (if the class contains instance references firled or structs that contain references)
+ *  - has_static_refs (same, but for static fields)
+ *  - instance_size (size of the object in memory)
+ *  - class_size (size needed for the static fields)
+ *  - size_inited (flag set when the instance_size is set)
+ *  - element_class/cast_class (for enums)
+ *  - fields_inited
  *
  * LOCKING: Acquires the loader lock.
  */
@@ -1549,7 +1559,6 @@ mono_class_setup_fields (MonoClass *klass)
 	gboolean explicit_size;
 	MonoClassField *field;
 	MonoClass *gtd;
-	int *field_offsets;
 
 	if (klass->fields_inited)
 		return;
@@ -1604,8 +1613,7 @@ mono_class_setup_fields (MonoClass *klass)
 	/*
 	 * Fetch all the field information.
 	 */
-	field_offsets = g_new0 (int, top);
-	for (i = 0; i < top; i++){
+	for (i = 0; i < top; i++) {
 		int idx = klass->field.first + i;
 		field = &klass->fields [i];
 
@@ -1623,27 +1631,22 @@ mono_class_setup_fields (MonoClass *klass)
 
 		if (mono_field_is_deleted (field))
 			continue;
-		if (gtd) {
-			MonoClassField *gfield = &gtd->fields [i];
-			field_offsets [i] = gfield->offset;
-		} else {
-			if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
-				guint32 offset;
-				mono_metadata_field_info (m, idx, &offset, NULL, NULL);
-				field_offsets [i] = offset;
+		if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
+			guint32 uoffset;
+			mono_metadata_field_info (m, idx, &uoffset, NULL, NULL);
+			int offset = uoffset;
 
-				if (field_offsets [i] == (guint32)-1 && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-					mono_class_set_type_load_failure (klass, "Missing field layout info for %s", field->name);
-					break;
-				}
-				if (field_offsets [i] < -1) { /*-1 is used to encode special static fields */
-					mono_class_set_type_load_failure (klass, "Field '%s' has a negative offset %d", field->name, field_offsets [i]);
-					break;
-				}
-				if (klass->generic_container) {
-					mono_class_set_type_load_failure (klass, "Generic class cannot have explicit layout.");
-					break;
-				}
+			if (offset == (guint32)-1 && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
+				mono_class_set_type_load_failure (klass, "Missing field layout info for %s", field->name);
+				break;
+			}
+			if (offset < -1) { /*-1 is used to encode special static fields */
+				mono_class_set_type_load_failure (klass, "Field '%s' has a negative offset %d", field->name, offset);
+				break;
+			}
+			if (klass->generic_container) {
+				mono_class_set_type_load_failure (klass, "Generic class cannot have explicit layout.");
+				break;
 			}
 		}
 		if (mono_type_has_exceptions (field->type)) {
@@ -1659,19 +1662,8 @@ mono_class_setup_fields (MonoClass *klass)
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
-	/* Publish the data */
-	mono_loader_lock ();
-	for (i = 0; i < top; i++)
-		klass->fields [i].offset = field_offsets [i];
-	mono_loader_unlock ();
-	g_free (field_offsets);
-
-	if (!mono_class_has_failure (klass)) {
-		mono_loader_lock ();
-		if (!klass->fields_inited)
-			mono_class_layout_fields (klass, instance_size, packing_size);
-		mono_loader_unlock ();
-	}
+	if (!mono_class_has_failure (klass))
+		mono_class_layout_fields (klass, instance_size, packing_size, FALSE);
 
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (setup_fields_tls_id, init_list);
@@ -1736,22 +1728,11 @@ type_has_references (MonoClass *klass, MonoType *ftype)
  * This contains the common code for computing the layout of classes and sizes.
  * This should only be called from mono_class_setup_fields () and
  * typebuilder_setup_fields ().
- * Sets the following fields in @klass:
- *  - packing_size
- *  - min_align
- *  - blittable
- *  - has_references (if the class contains instance references firled or structs that contain references)
- *  - has_static_refs (same, but for static fields)
- *  - instance_size (size of the object in memory)
- *  - class_size (size needed for the static fields)
- *  - size_inited (flag set when the instance_size is set)
- *  - element_class/cast_class (for enums)
- *  - fields_inited
  *
- * LOCKING: this is supposed to be called with the loader lock held.
+ * LOCKING: Acquires the loader lock
  */
 void
-mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size)
+mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, gboolean sre)
 {
 	int i;
 	const int top = klass->field.count;
@@ -1766,6 +1747,13 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	int instance_size = base_instance_size;
 	int class_size, min_align;
 	int *field_offsets;
+
+	/*
+	 * We want to avoid doing complicated work inside locks, so we compute all the required
+	 * information and write it to @klass inside a lock.
+	 */
+	if (klass->fields_inited)
+		return;
 
 	if ((packing_size & 0xffffff00) != 0) {
 		mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, packing_size);
@@ -1891,7 +1879,6 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	switch (layout) {
 	case TYPE_ATTRIBUTE_AUTO_LAYOUT:
 	case TYPE_ATTRIBUTE_SEQUENTIAL_LAYOUT:
-
 		if (gc_aware_layout)
 			passes = 2;
 		else
@@ -1993,14 +1980,15 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			align = packing_size ? MIN (packing_size, align): align;
 			min_align = MAX (align, min_align);
 
-			/*
-			 * When we get here, field->offset is already set by the
-			 * loader (for either runtime fields or fields loaded from metadata).
-			 * The offset is from the start of the object: this works for both
-			 * classes and valuetypes.
-			 * FIXME: This will not work without locking.
-			 */
-			field_offsets [i] = field->offset + sizeof (MonoObject);
+			if (sre) {
+				/* Already set by typebuilder_setup_fields () */
+				field_offsets [i] = field->offset + sizeof (MonoObject);
+			} else {
+				int idx = klass->field.first + i;
+				guint32 offset;
+				mono_metadata_field_info (klass->image, idx, &offset, NULL, NULL);
+				field_offsets [i] = offset + sizeof (MonoObject);
+			}
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
 			if (type_has_references (klass, ftype)) {
@@ -2074,6 +2062,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		}
 	}
 
+	/* Publish the data */
+	mono_loader_lock ();
 	if (klass->instance_size && !klass->image->dynamic && top) {
 		/* Might be already set using cached info */
 		g_assert (klass->instance_size == instance_size);
@@ -2089,6 +2079,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 	mono_memory_barrier ();
 	klass->size_inited = 1;
+	mono_loader_unlock ();
 
 	/*
 	 * Compute static field layout and size
@@ -2145,6 +2136,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
 		mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
 
+	/* Publish the data */
+	mono_loader_lock ();
 	if (!klass->rank)
 		klass->sizes.class_size = class_size;
 	klass->has_static_refs = has_static_refs;
@@ -2157,6 +2150,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 	mono_memory_barrier ();
 	klass->fields_inited = 1;
+	mono_loader_unlock ();
 
 	g_free (field_offsets);
 }

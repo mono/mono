@@ -910,7 +910,7 @@ void
 mono_classes_cleanup (void);
 
 void
-mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size);
+mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, gboolean sre);
 
 void
 mono_class_setup_interface_offsets (MonoClass *klass);
