@@ -1759,22 +1759,25 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	guint32 pass, passes, real_size;
 	gboolean gc_aware_layout = FALSE;
 	gboolean has_static_fields = FALSE;
+	gboolean has_references = FALSE;
+	gboolean has_static_refs = FALSE;
 	MonoClassField *field;
 	gboolean blittable;
 	int instance_size = base_instance_size;
+	int class_size, min_align;
+	int *field_offsets;
 
 	if ((packing_size & 0xffffff00) != 0) {
 		mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, packing_size);
 		return;
 	}
-	klass->packing_size = packing_size;
 
 	if (klass->parent) {
-		klass->min_align = klass->parent->min_align;
-		/* we use |= since it may have been set already */
-		klass->has_references |= klass->parent->has_references;
+		min_align = klass->parent->min_align;
+		/* we use | since it may have been set already */
+		has_references = klass->has_references | klass->parent->has_references;
 	} else {
-		klass->min_align = 1;
+		min_align = 1;
 	}
 	/* We can't really enable 16 bytes alignment until the GC supports it.
 	The whole layout/instance size code must be reviewed because we do alignment calculation in terms of the
@@ -1782,7 +1785,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	Bug #506144 is an example of this issue.
 
 	 if (klass->simd_type)
-		klass->min_align = 16;
+		min_align = 16;
 	 */
 
 	/*
@@ -1862,7 +1865,6 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		return;
 	if (klass == mono_defaults.string_class)
 		blittable = FALSE;
-	klass->blittable = blittable;
 
 	/* Compute klass->has_references */
 	/* 
@@ -1878,41 +1880,14 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
 			if (type_has_references (klass, ftype))
-				klass->has_references = TRUE;
-		}
-	}
-
-	for (i = 0; i < top; i++) {
-		MonoType *ftype;
-
-		field = &klass->fields [i];
-
-		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC) {
-			ftype = mono_type_get_underlying_type (field->type);
-			ftype = mono_type_get_basic_type_from_generic (ftype);
-			if (type_has_references (klass, ftype))
-				klass->has_static_refs = TRUE;
-		}
-	}
-
-	for (i = 0; i < top; i++) {
-		MonoType *ftype;
-
-		field = &klass->fields [i];
-
-		ftype = mono_type_get_underlying_type (field->type);
-		ftype = mono_type_get_basic_type_from_generic (ftype);
-		if (type_has_references (klass, ftype)) {
-			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
-				klass->has_static_refs = TRUE;
-			else
-				klass->has_references = TRUE;
+				has_references = TRUE;
 		}
 	}
 
 	/*
 	 * Compute field layout and total size (not considering static fields)
 	 */
+	field_offsets = g_new0 (int, top);
 	switch (layout) {
 	case TYPE_ATTRIBUTE_AUTO_LAYOUT:
 	case TYPE_ATTRIBUTE_SEQUENTIAL_LAYOUT:
@@ -1959,7 +1934,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 					}
 				}
 
-				if ((top == 1) && (klass->instance_size == sizeof (MonoObject)) &&
+				if ((top == 1) && (instance_size == sizeof (MonoObject)) &&
 					(strcmp (mono_field_get_name (field), "$PRIVATE$") == 0)) {
 					/* This field is a hack inserted by MCS to empty structures */
 					continue;
@@ -1968,29 +1943,29 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 				size = mono_type_size (field->type, &align);
 			
 				/* FIXME (LAMESPEC): should we also change the min alignment according to pack? */
-				align = klass->packing_size ? MIN (klass->packing_size, align): align;
+				align = packing_size ? MIN (packing_size, align): align;
 				/* if the field has managed references, we need to force-align it
 				 * see bug #77788
 				 */
 				if (type_has_references (klass, ftype))
 					align = MAX (align, sizeof (gpointer));
 
-				klass->min_align = MAX (align, klass->min_align);
-				field->offset = real_size;
+				min_align = MAX (align, min_align);
+				field_offsets [i] = real_size;
 				if (align) {
-					field->offset += align - 1;
-					field->offset &= ~(align - 1);
+					field_offsets [i] += align - 1;
+					field_offsets [i] &= ~(align - 1);
 				}
 				/*TypeBuilders produce all sort of weird things*/
-				g_assert (image_is_dynamic (klass->image) || field->offset > 0);
-				real_size = field->offset + size;
+				g_assert (image_is_dynamic (klass->image) || field_offsets [i] > 0);
+				real_size = field_offsets [i] + size;
 			}
 
 			instance_size = MAX (real_size, instance_size);
        
-			if (instance_size & (klass->min_align - 1)) {
-				instance_size += klass->min_align - 1;
-				instance_size &= ~(klass->min_align - 1);
+			if (instance_size & (min_align - 1)) {
+				instance_size += min_align - 1;
+				instance_size &= ~(min_align - 1);
 			}
 		}
 		break;
@@ -2015,20 +1990,21 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 				continue;
 
 			size = mono_type_size (field->type, &align);
-			align = klass->packing_size ? MIN (klass->packing_size, align): align;
-			klass->min_align = MAX (align, klass->min_align);
+			align = packing_size ? MIN (packing_size, align): align;
+			min_align = MAX (align, min_align);
 
 			/*
 			 * When we get here, field->offset is already set by the
 			 * loader (for either runtime fields or fields loaded from metadata).
 			 * The offset is from the start of the object: this works for both
 			 * classes and valuetypes.
+			 * FIXME: This will not work without locking.
 			 */
-			field->offset += sizeof (MonoObject);
+			field_offsets [i] = field->offset + sizeof (MonoObject);
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
 			if (type_has_references (klass, ftype)) {
-				if (field->offset % sizeof (gpointer)) {
+				if (field_offsets [i] % sizeof (gpointer)) {
 					mono_class_set_type_load_failure (klass, "Reference typed field '%s' has explicit offset that is not pointer-size aligned.", field->name);
 				}
 			}
@@ -2036,7 +2012,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			/*
 			 * Calc max size.
 			 */
-			real_size = MAX (real_size, size + field->offset);
+			real_size = MAX (real_size, size + field_offsets [i]);
 		}
 
 		if (klass->has_references) {
@@ -2054,7 +2030,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 					continue;
 				ftype = mono_type_get_underlying_type (field->type);
 				if (MONO_TYPE_IS_REFERENCE (ftype))
-					ref_bitmap [field->offset / sizeof (gpointer)] = 1;
+					ref_bitmap [field_offsets [i] / sizeof (gpointer)] = 1;
 			}
 			for (i = 0; i < top; i++) {
 				field = &klass->fields [i];
@@ -2066,8 +2042,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 				// FIXME: Too much code does this
 #if 0
-				if (!MONO_TYPE_IS_REFERENCE (field->type) && ref_bitmap [field->offset / sizeof (gpointer)]) {
-					mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field->offset);
+				if (!MONO_TYPE_IS_REFERENCE (field->type) && ref_bitmap [field_offsets [i] / sizeof (gpointer)]) {
+					mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field_offsets [i]);
 				}
 #endif
 			}
@@ -2075,9 +2051,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		}
 
 		instance_size = MAX (real_size, instance_size);
-		if (instance_size & (klass->min_align - 1)) {
-			instance_size += klass->min_align - 1;
-			instance_size &= ~(klass->min_align - 1);
+		if (instance_size & (min_align - 1)) {
+			instance_size += min_align - 1;
+			instance_size &= ~(min_align - 1);
 		}
 		break;
 	}
@@ -2094,7 +2070,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		 */
 		if (mono_align_small_structs && top) {
 			if (instance_size <= sizeof (MonoObject) + sizeof (gpointer))
-				klass->min_align = MAX (klass->min_align, instance_size - sizeof (MonoObject));
+				min_align = MAX (min_align, instance_size - sizeof (MonoObject));
 		}
 	}
 
@@ -2104,12 +2080,22 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	} else {
 		klass->instance_size = instance_size;
 	}
+	klass->blittable = blittable;
+	klass->has_references = has_references;
+	klass->packing_size = packing_size;
+	klass->min_align = min_align;
+	for (i = 0; i < top; ++i)
+		klass->fields [i].offset = field_offsets [i];
+
 	mono_memory_barrier ();
 	klass->size_inited = 1;
 
 	/*
 	 * Compute static field layout and size
+	 * Static fields can reference the class itself, so this has to be
+	 * done after instance_size etc. are initialized.
 	 */
+	class_size = 0;
 	for (i = 0; i < top; i++) {
 		gint32 align;
 		guint32 size;
@@ -2129,23 +2115,50 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		has_static_fields = TRUE;
 
 		size = mono_type_size (field->type, &align);
-		field->offset = klass->sizes.class_size;
+		field_offsets [i] = class_size;
 		/*align is always non-zero here*/
-		field->offset += align - 1;
-		field->offset &= ~(align - 1);
-		klass->sizes.class_size = field->offset + size;
+		field_offsets [i] += align - 1;
+		field_offsets [i] &= ~(align - 1);
+		class_size = field_offsets [i] + size;
 	}
 
-	if (has_static_fields && klass->sizes.class_size == 0)
+	if (has_static_fields && class_size == 0)
 		/* Simplify code which depends on class_size != 0 if the class has static fields */
-		klass->sizes.class_size = 8;
+		class_size = 8;
+
+	/* Compute klass->has_static_refs */
+	has_static_refs = FALSE;
+	for (i = 0; i < top; i++) {
+		MonoType *ftype;
+
+		field = &klass->fields [i];
+
+		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC) {
+			ftype = mono_type_get_underlying_type (field->type);
+			ftype = mono_type_get_basic_type_from_generic (ftype);
+			if (type_has_references (klass, ftype))
+				has_static_refs = TRUE;
+		}
+	}
 
 	/*valuetypes can't be neither bigger than 1Mb or empty. */
 	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
 		mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
 
+	if (!klass->rank)
+		klass->sizes.class_size = class_size;
+	klass->has_static_refs = has_static_refs;
+	for (i = 0; i < top; ++i) {
+		field = &klass->fields [i];
+
+		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+			field->offset = field_offsets [i];
+	}
+
 	mono_memory_barrier ();
 	klass->fields_inited = 1;
+
+	g_free (field_offsets);
 }
 
 static MonoMethod*
