@@ -5352,11 +5352,7 @@ mono_class_has_finalizer (MonoClass *klass)
 gboolean
 mono_is_corlib_image (MonoImage *image)
 {
-	/* FIXME: allow the dynamic case for our compilers and with full trust */
-	if (image_is_dynamic (image))
-		return image->assembly && !strcmp (image->assembly->aname.name, "mscorlib");
-	else
-		return image == mono_defaults.corlib;
+	return image == mono_defaults.corlib;
 }
 
 /*
@@ -6611,7 +6607,6 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	GSList *list, *rootlist = NULL;
 	int nsize;
 	char *name;
-	gboolean corlib_type = FALSE;
 
 	g_assert (rank <= 255);
 
@@ -6653,15 +6648,9 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		}
 	}
 
-	/* for the building corlib use System.Array from it */
-	if (image->assembly && assembly_is_dynamic (image->assembly) && image->assembly_name && strcmp (image->assembly_name, "mscorlib") == 0) {
-		parent = mono_class_load_from_name (image, "System", "Array");
-		corlib_type = TRUE;
-	} else {
-		parent = mono_defaults.array_class;
-		if (!parent->inited)
-			mono_class_init (parent);
-	}
+	parent = mono_defaults.array_class;
+	if (!parent->inited)
+		mono_class_init (parent);
 
 	klass = (MonoClass *)mono_image_alloc0 (image, sizeof (MonoClass));
 
@@ -6765,9 +6754,6 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	}
 	klass->this_arg = klass->byval_arg;
 	klass->this_arg.byref = 1;
-	if (corlib_type) {
-		klass->inited = 1;
-	}
 
 	klass->generic_container = eclass->generic_container;
 
