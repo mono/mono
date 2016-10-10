@@ -233,7 +233,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (name1.canonEncoding.Length != name2.canonEncoding.Length)
 					return false;
 				for (int i = 0; i < name1.canonEncoding.Length; i++) {
-					if (name1.canonEncoding[i] != name2.canonEncoding[2])
+					if (name1.canonEncoding[i] != name2.canonEncoding[i])
 						return false;
 				}
 				return true;
