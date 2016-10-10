@@ -111,6 +111,8 @@ typedef gboolean (*gclass_record_func) (MonoClass*, void*);
 /* This TLS variable points to a GSList of classes which have setup_fields () executing */
 static MonoNativeTlsKey setup_fields_tls_id;
 
+static MonoNativeTlsKey init_pending_tls_id;
+
 static inline void
 classes_lock (void)
 {
@@ -5119,12 +5121,16 @@ mono_class_init (MonoClass *klass)
 		return !mono_class_has_failure (klass);
 	}
 
-	if (klass->init_pending) {
+	/*
+	 * This function can recursively call itself.
+	 */
+	GSList *init_list = (GSList *)mono_native_tls_get_value (init_pending_tls_id);
+	if (g_slist_find (init_list, klass)) {
 		mono_class_set_type_load_failure (klass, "Recursive type definition detected");
 		goto leave;
 	}
-
-	klass->init_pending = 1;
+	init_list = g_slist_prepend (init_list, klass);
+	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
 	if (mono_verifier_is_enabled_for_class (klass) && !mono_verifier_verify_class (klass)) {
 		mono_class_set_type_load_failure (klass, "%s", concat_two_strings_with_zero (klass->image, klass->name, klass->image->assembly_name));
@@ -5302,10 +5308,12 @@ mono_class_init (MonoClass *klass)
 	goto leave;
 
  leave:
+	init_list = g_slist_remove (init_list, klass);
+	mono_native_tls_set_value (init_pending_tls_id, init_list);
+
 	/* Because of the double-checking locking pattern */
 	mono_memory_barrier ();
 	klass->inited = 1;
-	klass->init_pending = 0;
 
 	mono_loader_unlock ();
 
@@ -9980,6 +9988,7 @@ mono_classes_init (void)
 	mono_os_mutex_init (&classes_mutex);
 
 	mono_native_tls_alloc (&setup_fields_tls_id, NULL);
+	mono_native_tls_alloc (&init_pending_tls_id, NULL);
 
 	mono_counters_register ("Inflated methods size",
 							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_methods_size);
@@ -10002,6 +10011,7 @@ void
 mono_classes_cleanup (void)
 {
 	mono_native_tls_free (setup_fields_tls_id);
+	mono_native_tls_free (init_pending_tls_id);
 
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
