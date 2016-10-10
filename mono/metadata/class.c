@@ -1711,25 +1711,6 @@ mono_class_init_sizes (MonoClass *klass)
 }
 
 /*
- * mono_class_has_references:
- *
- *   Returns whenever @klass->has_references is set, initializing it if needed.
- * Aquires the loader lock.
- */
-static gboolean
-mono_class_has_references (MonoClass *klass)
-{
-	if (klass->init_pending) {
-		/* Be conservative */
-		return TRUE;
-	} else {
-		mono_class_init_sizes (klass);
-
-		return klass->has_references;
-	}
-}
-
-/*
  * mono_type_get_basic_type_from_generic:
  * @type: a type
  *
@@ -1747,15 +1728,28 @@ mono_type_get_basic_type_from_generic (MonoType *type)
 }
 
 static gboolean
+class_has_references (MonoClass *klass)
+{
+	mono_class_init_sizes (klass);
+
+	/*
+	 * has_references is not set if this is called recursively, but this is not a problem since this is only used
+	 * during field layout, and instance fields are initialized before static fields, and instance fields can't
+	 * embed themselves.
+	 */
+	return klass->has_references;
+}
+
+static gboolean
 type_has_references (MonoClass *klass, MonoType *ftype)
 {
-	if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (klass, ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype)))))
+	if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (klass, ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && class_has_references (mono_class_from_mono_type (ftype)))))
 		return TRUE;
 	if (!ftype->byref && (ftype->type == MONO_TYPE_VAR || ftype->type == MONO_TYPE_MVAR)) {
 		MonoGenericParam *gparam = ftype->data.generic_param;
 
 		if (gparam->gshared_constraint)
-			return mono_class_has_references (mono_class_from_mono_type (gparam->gshared_constraint));
+			return class_has_references (mono_class_from_mono_type (gparam->gshared_constraint));
 	}
 	return FALSE;
 }
