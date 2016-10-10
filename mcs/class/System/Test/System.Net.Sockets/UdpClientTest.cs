@@ -558,25 +558,12 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
-		[Category ("NotWorking")]
 		public void JoinMulticastGroup1_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			UdpClient client = new UdpClient (AddressFamily.InterNetwork);
-			try {
+			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr);
-				Assert.Fail ("#1");
-			} catch (SocketException ex) {
-				// An invalid argument was supplied
-				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
-				Assert.AreEqual (10022, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
-				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
-			} finally {
-				client.Close ();
 			}
 		}
 
@@ -666,25 +653,12 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (Int32, IPAddress)
-		[Category ("NotWorking")]
 		public void JoinMulticastGroup2_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
-			UdpClient client = new UdpClient (AddressFamily.InterNetworkV6);
-			try {
+			using (UdpClient client = new UdpClient (AddressFamily.InterNetworkV6)) {
 				client.JoinMulticastGroup (0, mcast_addr);
-				Assert.Fail ("#1");
-			} catch (SocketException ex) {
-				// An invalid argument was supplied
-				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
-				Assert.AreEqual (10022, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
-				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
-			} finally {
-				client.Close ();
 			}
 		}
 
@@ -767,25 +741,12 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
-		[Category ("NotWorking")]
 		public void JoinMulticastGroup3_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			UdpClient client = new UdpClient (AddressFamily.InterNetwork);
-			try {
+			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr, 5);
-				Assert.Fail ("#1");
-			} catch (SocketException ex) {
-				// An invalid argument was supplied
-				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
-				Assert.AreEqual (10022, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
-				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
-			} finally {
-				client.Close ();
 			}
 		}
 
@@ -896,26 +857,13 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, IPAddress)
-		[Category ("NotWorking")]
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 			IPAddress local_addr = Dns.GetHostEntry (string.Empty).AddressList [0];
 
-			UdpClient client = new UdpClient (AddressFamily.InterNetwork);
-			try {
+			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
-				Assert.Fail ("#1");
-			} catch (SocketException ex) {
-				// An invalid argument was supplied
-				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
-				Assert.AreEqual (10022, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
-				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
-			} finally {
-				client.Close ();
 			}
 		}
 
