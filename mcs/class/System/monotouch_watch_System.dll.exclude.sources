@@ -111,7 +111,6 @@ System.Net.Mail/SmtpClient.cs
 System.Net.Security/SslStream.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
-System.Net.Sockets/UdpClient.cs
 System.Net.WebSockets/ClientWebSocket.cs
 System.Net/AuthenticationManager.cs
 System.Net/ChunkedInputStream.cs
@@ -180,3 +179,4 @@ Mono.Btls/MonoBtlsX509VerifyFlags.cs
 Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
+../referencesource/System/net/System/Net/Sockets/UDPClient.cs
