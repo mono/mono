@@ -13,7 +13,7 @@ if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Sy
 if [[ ${label} == osx-* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Security --skip; else ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test; fi
+${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 if [[ ${label} == w* ]]
 then ${TESTCMD} --label=System.Drawing --skip;
 else ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.Drawing run-test
