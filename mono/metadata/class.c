@@ -1532,15 +1532,9 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
  * Initializes klass->fields, computes class layout and sizes.
  * typebuilder_setup_fields () is the corresponding function for dynamic classes.
  * Sets the following fields in @klass:
- *  - packing_size
- *  - min_align
- *  - blittable
- *  - has_references (if the class contains instance references firled or structs that contain references)
- *  - has_static_refs (same, but for static fields)
- *  - instance_size (size of the object in memory)
- *  - class_size (size needed for the static fields)
- *  - size_inited (flag set when the instance_size is set)
+ *  - all the fields initialized by mono_class_init_sizes ()
  *  - element_class/cast_class (for enums)
+ *  - field->type/offset for all fields
  *  - fields_inited
  *
  * LOCKING: Acquires the loader lock.
@@ -1669,6 +1663,53 @@ mono_class_setup_fields (MonoClass *klass)
 	mono_native_tls_set_value (setup_fields_tls_id, init_list);
 }
 
+static void
+init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
+{
+	if (cached_info) {
+		klass->instance_size = cached_info->instance_size;
+		klass->sizes.class_size = cached_info->class_size;
+		klass->packing_size = cached_info->packing_size;
+		klass->min_align = cached_info->min_align;
+		klass->blittable = cached_info->blittable;
+		klass->has_references = cached_info->has_references;
+		klass->has_static_refs = cached_info->has_static_refs;
+		klass->no_special_static_fields = cached_info->no_special_static_fields;
+	}
+	else {
+		if (!klass->size_inited)
+			mono_class_setup_fields (klass);
+	}
+}
+/*
+
+ * mono_class_init_sizes:
+ *
+ *   Initializes the size related fields of @klass without loading all field data if possible.
+ * Sets the following fields in @klass:
+ * - instance_size
+ * - sizes.class_size
+ * - packing_size
+ * - min_align
+ * - blittable
+ * - has_references
+ * - has_static_refs
+ * - size_inited
+ * Can fail the class.
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+static void
+mono_class_init_sizes (MonoClass *klass)
+{
+	MonoCachedClassInfo cached_info;
+	gboolean has_cached_info;
+
+	has_cached_info = mono_class_get_cached_class_info (klass, &cached_info);
+
+	init_sizes_with_info (klass, has_cached_info ? &cached_info : NULL);
+}
+
 /*
  * mono_class_has_references:
  *
@@ -1682,7 +1723,7 @@ mono_class_has_references (MonoClass *klass)
 		/* Be conservative */
 		return TRUE;
 	} else {
-		mono_class_init (klass);
+		mono_class_init_sizes (klass);
 
 		return klass->has_references;
 	}
@@ -5134,25 +5175,10 @@ mono_class_init (MonoClass *klass)
 	if (klass->generic_class || image_is_dynamic (klass->image) || !klass->type_token || (has_cached_info && !cached_info.has_nested_classes))
 		klass->nested_classes_inited = TRUE;
 
-	/*
-	 * Computes the size used by the fields, and their locations
-	 */
-	if (has_cached_info) {
-		klass->instance_size = cached_info.instance_size;
-		klass->sizes.class_size = cached_info.class_size;
-		klass->packing_size = cached_info.packing_size;
-		klass->min_align = cached_info.min_align;
-		klass->blittable = cached_info.blittable;
-		klass->has_references = cached_info.has_references;
-		klass->has_static_refs = cached_info.has_static_refs;
-		klass->no_special_static_fields = cached_info.no_special_static_fields;
-	}
-	else
-		if (!klass->size_inited){
-			mono_class_setup_fields (klass);
-			if (mono_class_has_failure (klass))
-				goto leave;
-		}
+	/* Compute instance size etc. */
+	init_sizes_with_info (klass, has_cached_info ? &cached_info : NULL);
+	if (mono_class_has_failure (klass))
+		goto leave;
 				
 	/* Initialize arrays */
 	if (klass->rank) {
@@ -6707,8 +6733,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 
 	if (eclass->generic_class)
 		mono_class_init (eclass);
-	if (!eclass->size_inited)
-		mono_class_setup_fields (eclass);
+	mono_class_init_sizes (eclass);
 	mono_class_set_type_load_failure_causedby_class (klass, eclass, "Could not load array element type");
 	/*FIXME we fail the array type, but we have to let other fields be set.*/
 
@@ -6813,7 +6838,7 @@ gint32
 mono_class_instance_size (MonoClass *klass)
 {	
 	if (!klass->size_inited)
-		mono_class_init (klass);
+		mono_class_init_sizes (klass);
 
 	return klass->instance_size;
 }
@@ -6824,13 +6849,13 @@ mono_class_instance_size (MonoClass *klass)
  *
  * Use to get the computed minimum alignment requirements for the specified class.
  *
- * Returns: minimm alignment requirements 
+ * Returns: minimum alignment requirements
  */
 gint32
 mono_class_min_align (MonoClass *klass)
 {	
 	if (!klass->size_inited)
-		mono_class_init (klass);
+		mono_class_init_sizes (klass);
 
 	return klass->min_align;
 }
@@ -6845,7 +6870,7 @@ mono_class_min_align (MonoClass *klass)
  * Returns: the size of a value of kind @klass
  */
 gint32
-mono_class_value_size      (MonoClass *klass, guint32 *align)
+mono_class_value_size (MonoClass *klass, guint32 *align)
 {
 	gint32 size;
 
@@ -6874,8 +6899,8 @@ mono_class_data_size (MonoClass *klass)
 	if (!klass->inited)
 		mono_class_init (klass);
 	/* This can happen with dynamically created types */
-	if (!klass->fields_inited)
-		mono_class_setup_fields (klass);
+	if (!klass->size_inited)
+		mono_class_init_sizes (klass);
 
 	/* in arrays, sizes.class_size is unioned with element_size
 	 * and arrays have no static fields
