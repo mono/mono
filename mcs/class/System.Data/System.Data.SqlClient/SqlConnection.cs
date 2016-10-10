@@ -928,7 +928,11 @@ namespace System.Data.SqlClient
 
 				if (Client.Available <= 0)
 					return -1; // Error
-				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostEntry ("localhost").AddressList [0], 0);
+
+				IPEndPoint endpoint = CreateLocalEndpoint ();
+				if (endpoint == null)
+					return -1;
+
 				Byte [] rawrs;
 
 				rawrs = Receive (ref endpoint);
@@ -952,6 +956,16 @@ namespace System.Data.SqlClient
 				Close ();
 
 				return SqlServerTcpPort;
+			}
+
+			IPEndPoint CreateLocalEndpoint ()
+			{
+				foreach (var addr in Dns.GetHostEntry ("localhost").AddressList) {
+					if (addr.AddressFamily == Client.AddressFamily)
+						return new IPEndPoint (addr, 0);
+				}
+
+				return null;
 			}
 		}
 
