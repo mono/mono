@@ -258,7 +258,7 @@ namespace Mono.Btls
 		public void SetTime (DateTime time)
 		{
 			WantToModify ();
-			var epoch = new DateTime (1970, 1, 1);
+			var epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 			var ticks = (long)time.Subtract (epoch).TotalSeconds;
 			var ret = mono_btls_x509_verify_param_set_time (
 				Handle.DangerousGetHandle (), ticks);
