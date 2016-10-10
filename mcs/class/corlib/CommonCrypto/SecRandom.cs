@@ -39,6 +39,18 @@ namespace System.Security.Cryptography {
 		{
 		}
 		
+		public RNGCryptoServiceProvider (byte[] rgb)
+		{
+		}
+
+		public RNGCryptoServiceProvider (CspParameters cspParams)
+		{
+		}
+
+		public RNGCryptoServiceProvider (string str) 
+		{
+		}
+
 		~RNGCryptoServiceProvider () 
 		{
 		}
