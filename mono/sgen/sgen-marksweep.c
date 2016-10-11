@@ -32,15 +32,17 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/utils/mono-memory-model.h"
 
-#if defined(ARCH_MIN_MS_BLOCK_SIZE) && defined(ARCH_MIN_MS_BLOCK_SIZE_SHIFT)
-#define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
-#define MS_BLOCK_SIZE_SHIFT	ARCH_MIN_MS_BLOCK_SIZE_SHIFT
-#else
-#define MS_BLOCK_SIZE_SHIFT     14      /* INT FASTENABLE */
-#define MS_BLOCK_SIZE           (1 << MS_BLOCK_SIZE_SHIFT)
-#endif
+static int ms_block_size;
+
+/*
+ * Blocks must be at least this size, meaning that if we detect a
+ * page size lower than this, we'll use this instead.
+ */
+#define MS_BLOCK_SIZE_MIN (1024 * 16)
+
 #define MAJOR_SECTION_SIZE	MS_BLOCK_SIZE
-#define CARDS_PER_BLOCK (MS_BLOCK_SIZE / CARD_SIZE_IN_BYTES)
+
+#define CARDS_PER_BLOCK (ms_block_size / CARD_SIZE_IN_BYTES)
 
 /*
  * Don't allocate single blocks, but alloc a contingent of this many
@@ -48,16 +50,22 @@
  */
 #define MS_BLOCK_ALLOC_NUM	32
 
+#define MS_NUM_MARK_WORDS	((ms_block_size / SGEN_ALLOC_ALIGN + sizeof (mword) * 8 - 1) / (sizeof (mword) * 8))
+
+/*
+ * Use this instead of sizeof (MSBlockInfo) since the mark_words
+ * array size depends on page size at runtime.
+ */
+#define SIZEOF_MS_BLOCK_INFO (sizeof (MSBlockInfo) + sizeof (mword) * (MS_NUM_MARK_WORDS - MONO_ZERO_LEN_ARRAY))
+
 /*
  * Number of bytes before the first object in a block.  At the start
- * of a block is the MSBlockHeader, then opional padding, then come
- * the objects, so this must be >= sizeof (MSBlockHeader).
+ * of a block is the MSBlockInfo, then opional padding, then come
+ * the objects, so this must be >= SIZEOF_MS_BLOCK_INFO.
  */
-#define MS_BLOCK_SKIP	((sizeof (MSBlockHeader) + 15) & ~15)
+#define MS_BLOCK_SKIP	((SIZEOF_MS_BLOCK_INFO + 15) & ~15)
 
-#define MS_BLOCK_FREE	(MS_BLOCK_SIZE - MS_BLOCK_SKIP)
-
-#define MS_NUM_MARK_WORDS	((MS_BLOCK_SIZE / SGEN_ALLOC_ALIGN + sizeof (mword) * 8 - 1) / (sizeof (mword) * 8))
+#define MS_BLOCK_FREE	(ms_block_size - MS_BLOCK_SKIP)
 
 /*
  * Blocks progress from one state to the next:
@@ -107,20 +115,16 @@ struct _MSBlockInfo {
 	void ** volatile free_list;
 	MSBlockInfo * volatile next_free;
 	guint8 * volatile cardtable_mod_union;
-	mword mark_words [MS_NUM_MARK_WORDS];
+	mword mark_words [MONO_ZERO_LEN_ARRAY];
 };
 
 #define MS_BLOCK_FOR_BLOCK_INFO(b)	((char*)(b))
 
 #define MS_BLOCK_OBJ(b,i)		((GCObject *)(MS_BLOCK_FOR_BLOCK_INFO(b) + MS_BLOCK_SKIP + (b)->obj_size * (i)))
 #define MS_BLOCK_OBJ_FOR_SIZE(b,i,obj_size)		(MS_BLOCK_FOR_BLOCK_INFO(b) + MS_BLOCK_SKIP + (obj_size) * (i))
-#define MS_BLOCK_DATA_FOR_OBJ(o)	((char*)((mword)(o) & ~(mword)(MS_BLOCK_SIZE - 1)))
+#define MS_BLOCK_DATA_FOR_OBJ(o)	((char*)((mword)(o) & ~(mword)(ms_block_size - 1)))
 
-typedef struct {
-	MSBlockInfo info;
-} MSBlockHeader;
-
-#define MS_BLOCK_FOR_OBJ(o)		(&((MSBlockHeader*)MS_BLOCK_DATA_FOR_OBJ ((o)))->info)
+#define MS_BLOCK_FOR_OBJ(o)		((MSBlockInfo*)MS_BLOCK_DATA_FOR_OBJ ((o)))
 
 /* object index will always be small */
 #define MS_BLOCK_OBJ_INDEX(o,b)	((int)(((char*)(o) - (MS_BLOCK_FOR_BLOCK_INFO(b) + MS_BLOCK_SKIP)) / (b)->obj_size))
@@ -140,7 +144,7 @@ typedef struct {
 #define MS_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] & (ONE_P << (b)))
 #define MS_SET_MARK_BIT(bl,w,b)	((bl)->mark_words [(w)] |= (ONE_P << (b)))
 
-#define MS_OBJ_ALLOCED(o,b)	(*(void**)(o) && (*(char**)(o) < MS_BLOCK_FOR_BLOCK_INFO (b) || *(char**)(o) >= MS_BLOCK_FOR_BLOCK_INFO (b) + MS_BLOCK_SIZE))
+#define MS_OBJ_ALLOCED(o,b)	(*(void**)(o) && (*(char**)(o) < MS_BLOCK_FOR_BLOCK_INFO (b) || *(char**)(o) >= MS_BLOCK_FOR_BLOCK_INFO (b) + ms_block_size))
 
 #define MS_BLOCK_OBJ_SIZE_FACTOR	(pow (2.0, 1.0 / 3))
 
@@ -305,7 +309,7 @@ major_alloc_heap (mword nursery_size, mword nursery_align, int the_nursery_bits)
 static void
 update_heap_boundaries_for_block (MSBlockInfo *block)
 {
-	sgen_update_heap_boundaries ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), (mword)MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE);
+	sgen_update_heap_boundaries ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), (mword)MS_BLOCK_FOR_BLOCK_INFO (block) + ms_block_size);
 }
 
 /*
@@ -327,7 +331,7 @@ ms_get_empty_block (void)
 		 */
 		int alloc_num = MS_BLOCK_ALLOC_NUM;
 		for (;;) {
-			p = (char *)sgen_alloc_os_memory_aligned (MS_BLOCK_SIZE * alloc_num, MS_BLOCK_SIZE,
+			p = (char *)sgen_alloc_os_memory_aligned (ms_block_size * alloc_num, ms_block_size,
 				(SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE),
 				alloc_num == 1 ? "major heap section" : NULL, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 			if (p)
@@ -346,7 +350,7 @@ ms_get_empty_block (void)
 				empty = empty_blocks;
 				*(void**)block = empty;
 			} while (SGEN_CAS_PTR ((gpointer*)&empty_blocks, block, empty) != empty);
-			p += MS_BLOCK_SIZE;
+			p += ms_block_size;
 		}
 
 		SGEN_ATOMIC_ADD_P (num_empty_blocks, alloc_num);
@@ -370,7 +374,7 @@ ms_get_empty_block (void)
 
 	*(void**)block = NULL;
 
-	g_assert (!((mword)block & (MS_BLOCK_SIZE - 1)));
+	g_assert (!((mword)block & (ms_block_size - 1)));
 
 	return block;
 }
@@ -385,10 +389,10 @@ ms_free_block (MSBlockInfo *info)
 	void *empty;
 	char *block = MS_BLOCK_FOR_BLOCK_INFO (info);
 
-	sgen_memgov_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
+	sgen_memgov_release_space (ms_block_size, SPACE_MAJOR);
 	if (info->cardtable_mod_union)
-		sgen_card_table_free_mod_union (info->cardtable_mod_union, block, MS_BLOCK_SIZE);
-	memset (block, 0, MS_BLOCK_SIZE);
+		sgen_card_table_free_mod_union (info->cardtable_mod_union, block, ms_block_size);
+	memset (block, 0, ms_block_size);
 
 	do {
 		empty = empty_blocks;
@@ -397,7 +401,7 @@ ms_free_block (MSBlockInfo *info)
 
 	SGEN_ATOMIC_ADD_P (num_empty_blocks, 1);
 
-	binary_protocol_block_free (block, MS_BLOCK_SIZE);
+	binary_protocol_block_free (block, ms_block_size);
 }
 
 static gboolean
@@ -512,7 +516,7 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	char *obj_start;
 	int i;
 
-	if (!sgen_memgov_try_alloc_space (MS_BLOCK_SIZE, SPACE_MAJOR))
+	if (!sgen_memgov_try_alloc_space (ms_block_size, SPACE_MAJOR))
 		return FALSE;
 
 	info = (MSBlockInfo*)ms_get_empty_block ();
@@ -538,7 +542,7 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 
 	update_heap_boundaries_for_block (info);
 
-	binary_protocol_block_alloc (info, MS_BLOCK_SIZE);
+	binary_protocol_block_alloc (info, ms_block_size);
 
 	/* build free list */
 	obj_start = MS_BLOCK_FOR_BLOCK_INFO (info) + MS_BLOCK_SKIP;
@@ -566,7 +570,7 @@ ptr_is_in_major_block (char *ptr, char **start, gboolean *pinned)
 	MSBlockInfo *block;
 
 	FOREACH_BLOCK_NO_LOCK (block) {
-		if (ptr >= MS_BLOCK_FOR_BLOCK_INFO (block) && ptr <= MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE) {
+		if (ptr >= MS_BLOCK_FOR_BLOCK_INFO (block) && ptr <= MS_BLOCK_FOR_BLOCK_INFO (block) + ms_block_size) {
 			int count = MS_BLOCK_FREE / block->obj_size;
 			int i;
 
@@ -902,7 +906,7 @@ major_is_valid_object (char *object)
 		int idx;
 		char *obj;
 
-		if ((MS_BLOCK_FOR_BLOCK_INFO (block) > object) || ((MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE) <= object))
+		if ((MS_BLOCK_FOR_BLOCK_INFO (block) > object) || ((MS_BLOCK_FOR_BLOCK_INFO (block) + ms_block_size) <= object))
 			continue;
 
 		idx = MS_BLOCK_OBJ_INDEX (object, block);
@@ -929,7 +933,7 @@ major_describe_pointer (char *ptr)
 		int w, b;
 		gboolean marked;
 
-		if ((MS_BLOCK_FOR_BLOCK_INFO (block) > ptr) || ((MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE) <= ptr))
+		if ((MS_BLOCK_FOR_BLOCK_INFO (block) > ptr) || ((MS_BLOCK_FOR_BLOCK_INFO (block) + ms_block_size) <= ptr))
 			continue;
 
 		SGEN_LOG (0, "major-ptr (block %p sz %d pin %d ref %d)\n",
@@ -1030,13 +1034,13 @@ get_cardtable_mod_union_for_block (MSBlockInfo *block, gboolean allocate)
 		return mod_union;
 	else if (!allocate)
 		return NULL;
-	mod_union = sgen_card_table_alloc_mod_union (MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
+	mod_union = sgen_card_table_alloc_mod_union (MS_BLOCK_FOR_BLOCK_INFO (block), ms_block_size);
 	other = (guint8 *)SGEN_CAS_PTR ((gpointer*)&block->cardtable_mod_union, mod_union, NULL);
 	if (!other) {
 		SGEN_ASSERT (0, block->cardtable_mod_union == mod_union, "Why did CAS not replace?");
 		return mod_union;
 	}
-	sgen_card_table_free_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
+	sgen_card_table_free_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), ms_block_size);
 	return other;
 }
 
@@ -1294,7 +1298,7 @@ try_set_block_state (MSBlockInfo *block, gint32 new_state, gint32 expected_state
 	gint32 old_state = SGEN_CAS (&block->state, new_state, expected_state);
 	gboolean success = old_state == expected_state;
 	if (success)
-		binary_protocol_block_set_state (block, MS_BLOCK_SIZE, old_state, new_state);
+		binary_protocol_block_set_state (block, ms_block_size, old_state, new_state);
 	return success;
 }
 
@@ -1303,7 +1307,7 @@ set_block_state (MSBlockInfo *block, gint32 new_state, gint32 expected_state)
 {
 	SGEN_ASSERT (6, block->state == expected_state, "Block state incorrect before set");
 	block->state = new_state;
-	binary_protocol_block_set_state (block, MS_BLOCK_SIZE, expected_state, new_state);
+	binary_protocol_block_set_state (block, ms_block_size, expected_state, new_state);
 }
 
 /*
@@ -2023,7 +2027,7 @@ major_free_swept_blocks (size_t section_reserve)
 
 				SGEN_ASSERT (6, first >= 0 && d > first, "algorithm is wrong");
 
-				if ((char*)block != ((char*)empty_block_arr [d-1]) + MS_BLOCK_SIZE) {
+				if ((char*)block != ((char*)empty_block_arr [d-1]) + ms_block_size) {
 					first = d;
 					continue;
 				}
@@ -2037,7 +2041,7 @@ major_free_swept_blocks (size_t section_reserve)
 					 * we're iterating.
 					 */
 					int j;
-					sgen_free_os_memory (empty_block_arr [first], MS_BLOCK_SIZE * num_blocks, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
+					sgen_free_os_memory (empty_block_arr [first], ms_block_size * num_blocks, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 					for (j = first; j <= d; ++j)
 						empty_block_arr [j] = NULL;
 					dest = first;
@@ -2087,7 +2091,7 @@ major_free_swept_blocks (size_t section_reserve)
 
 	while (num_empty_blocks > section_reserve) {
 		void *next = *(void**)empty_blocks;
-		sgen_free_os_memory (empty_blocks, MS_BLOCK_SIZE, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
+		sgen_free_os_memory (empty_blocks, ms_block_size, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_MARKSWEEP);
 		empty_blocks = next;
 		/*
 		 * Needs not be atomic because this is running
@@ -2108,7 +2112,7 @@ major_pin_objects (SgenGrayQueue *queue)
 	FOREACH_BLOCK_NO_LOCK (block) {
 		size_t first_entry, last_entry;
 		SGEN_ASSERT (6, block_is_swept_or_marking (block), "All blocks must be swept when we're pinning.");
-		sgen_find_optimized_pin_queue_area (MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SKIP, MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SIZE,
+		sgen_find_optimized_pin_queue_area (MS_BLOCK_FOR_BLOCK_INFO (block) + MS_BLOCK_SKIP, MS_BLOCK_FOR_BLOCK_INFO (block) + ms_block_size,
 				&first_entry, &last_entry);
 		mark_pinned_objects_in_block (block, first_entry, last_entry, queue);
 	} END_FOREACH_BLOCK_NO_LOCK;
@@ -2164,7 +2168,7 @@ static size_t
 get_bytes_survived_last_sweep (void)
 {
 	SGEN_ASSERT (0, sweep_state == SWEEP_STATE_SWEPT, "Can only query unswept sections after sweep");
-	return (num_major_sections_before_sweep - num_major_sections_freed_in_sweep) * MS_BLOCK_SIZE;
+	return (num_major_sections_before_sweep - num_major_sections_freed_in_sweep) * ms_block_size;
 }
 
 static gboolean
@@ -2218,7 +2222,7 @@ major_iterate_block_ranges (sgen_cardtable_block_callback callback)
 
 	FOREACH_BLOCK_HAS_REFERENCES_NO_LOCK (block, has_references) {
 		if (has_references)
-			callback ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
+			callback ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), ms_block_size);
 	} END_FOREACH_BLOCK_NO_LOCK;
 }
 
@@ -2231,7 +2235,7 @@ major_iterate_live_block_ranges (sgen_cardtable_block_callback callback)
 	major_finish_sweep_checking ();
 	FOREACH_BLOCK_HAS_REFERENCES_NO_LOCK (block, has_references) {
 		if (has_references)
-			callback ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE);
+			callback ((mword)MS_BLOCK_FOR_BLOCK_INFO (block), ms_block_size);
 	} END_FOREACH_BLOCK_NO_LOCK;
 }
 
@@ -2280,17 +2284,22 @@ initial_skip_card (guint8 *card_data)
 
 #define MS_BLOCK_OBJ_INDEX_FAST(o,b,os)	(((char*)(o) - ((b) + MS_BLOCK_SKIP)) / (os))
 #define MS_BLOCK_OBJ_FAST(b,os,i)			((b) + MS_BLOCK_SKIP + (os) * (i))
-#define MS_OBJ_ALLOCED_FAST(o,b)		(*(void**)(o) && (*(char**)(o) < (b) || *(char**)(o) >= (b) + MS_BLOCK_SIZE))
+#define MS_OBJ_ALLOCED_FAST(o,b)		(*(void**)(o) && (*(char**)(o) < (b) || *(char**)(o) >= (b) + ms_block_size))
 
 static void
 scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, ScanCopyContext ctx)
 {
 	SgenGrayQueue *queue = ctx.queue;
 	ScanObjectFunc scan_func = ctx.ops->scan_object;
+	/*
+	 * FIXME: On systems with very large pages, we allocate fairly large
+	 * arrays on the stack here. This shouldn't be a problem once block
+	 * size is no longer required to be a multiple of the system page size.
+	 */
 #ifndef SGEN_HAVE_OVERLAPPING_CARDS
-	guint8 cards_copy [CARDS_PER_BLOCK];
+	guint8 *cards_copy = alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 #endif
-	guint8 cards_preclean [CARDS_PER_BLOCK];
+	guint8 *cards_preclean = alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 	gboolean small_objects;
 	int block_obj_size;
 	char *block_start;
@@ -2531,7 +2540,7 @@ update_cardtable_mod_union (void)
 		if (has_dirty_cards) {
 			size_t num_cards;
 			guint8 *mod_union = get_cardtable_mod_union_for_block (block, TRUE);
-			sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), MS_BLOCK_SIZE, &num_cards);
+			sgen_card_table_update_mod_union (mod_union, MS_BLOCK_FOR_BLOCK_INFO (block), ms_block_size, &num_cards);
 			SGEN_ASSERT (6, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
 		}
 	} END_FOREACH_BLOCK_NO_LOCK;
@@ -2551,7 +2560,12 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 {
 	int i;
 
-	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_MS_BLOCK_INFO, sizeof (MSBlockInfo));
+	ms_block_size = mono_pagesize ();
+
+	if (ms_block_size < MS_BLOCK_SIZE_MIN)
+		ms_block_size = MS_BLOCK_SIZE_MIN;
+
+	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_MS_BLOCK_INFO, SIZEOF_MS_BLOCK_INFO);
 
 	num_block_obj_sizes = ms_calculate_block_obj_sizes (MS_BLOCK_OBJ_SIZE_FACTOR, NULL);
 	block_obj_sizes = (int *)sgen_alloc_internal_dynamic (sizeof (int) * num_block_obj_sizes, INTERNAL_MEM_MS_TABLES, TRUE);
@@ -2590,7 +2604,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	mono_counters_register ("# major blocks freed individually", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_freed_individual);
 	mono_counters_register ("# major blocks allocated less ideally", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_major_blocks_alloced_less_ideal);
 
-	collector->section_size = MAJOR_SECTION_SIZE;
+	collector->section_size = ms_block_size;
 
 	concurrent_mark = is_concurrent;
 	collector->is_concurrent = is_concurrent;
@@ -2682,7 +2696,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	SGEN_ASSERT (0, SGEN_MAX_SMALL_OBJ_SIZE <= MS_BLOCK_FREE / 2, "MAX_SMALL_OBJ_SIZE must be at most MS_BLOCK_FREE / 2");
 
 	/*cardtable requires major pages to be 8 cards aligned*/
-	g_assert ((MS_BLOCK_SIZE % (8 * CARD_SIZE_IN_BYTES)) == 0);
+	g_assert ((ms_block_size % (8 * CARD_SIZE_IN_BYTES)) == 0);
 }
 
 void
