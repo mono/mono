@@ -179,4 +179,6 @@ Mono.Btls/MonoBtlsX509VerifyFlags.cs
 Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
+../referencesource/System/net/System/Net/Sockets/TCPClient.cs
+../referencesource/System/net/System/Net/Sockets/TCPListener.cs
 ../referencesource/System/net/System/Net/Sockets/UDPClient.cs

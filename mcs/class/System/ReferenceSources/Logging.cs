@@ -32,6 +32,10 @@ namespace System.Net {
 		}
 
 		[Conditional ("TRACE")]
+		internal static void Enter(TraceSource traceSource, string msg, string parameters) {
+		}
+
+		[Conditional ("TRACE")]
 		internal static void Exception(TraceSource traceSource, object obj, string method, Exception e) {
 		}
 
@@ -41,6 +45,10 @@ namespace System.Net {
 
 		[Conditional ("TRACE")]
 		internal static void Exit(TraceSource traceSource, string msg) {
+		}
+
+		[Conditional ("TRACE")]
+		internal static void Exit(TraceSource traceSource, string msg, string parameters) {
 		}
 
 		[Conditional ("TRACE")]
