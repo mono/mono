@@ -188,6 +188,9 @@ namespace System.Diagnostics {
                 byteLen = 0; // Treat this as EOF
             }
                 
+#if MONO
+retry_dispose:
+#endif
             if (byteLen == 0) { 
                 // We're at EOF, we won't call this function again from here on.
                 lock(messageQueue) {
@@ -218,12 +221,25 @@ namespace System.Diagnostics {
 #endif
                 }
             } else {
+#if MONO
+                lock (syncObject) {
+                    if (decoder == null) { //we got disposed after the EndRead, retry as Diposed
+                        byteLen = 0;
+                        goto retry_dispose;
+                    }
+#endif
                 int charLen = decoder.GetChars(byteBuffer, 0, byteLen, charBuffer, 0);
                 sb.Append(charBuffer, 0, charLen);
+#if MONO
+                }
+#endif
                 GetLinesFromStringBuilder();
 #if MONO
                 lock (syncObject) {
-                    if (stream != null) //not continue if the stream is gone / dispose
+                    if (stream == null) { //we got disposed after the EndRead, retry as Diposed
+                        byteLen = 0;
+                        goto retry_dispose;
+                    }
 #endif
                 stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
 #if MONO
