@@ -558,6 +558,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void JoinMulticastGroup1_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
@@ -653,6 +656,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (Int32, IPAddress)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void JoinMulticastGroup2_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
@@ -741,6 +747,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void JoinMulticastGroup3_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
@@ -857,6 +866,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, IPAddress)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
