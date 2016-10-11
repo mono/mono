@@ -50,7 +50,6 @@ namespace Mono.Tools
 		static string inputFile;
 		static bool quiet;
 		static bool userStore;
-		static bool btlsStore = true;
 
 		static X509Certificate DecodeCertificate (string s)
 		{
@@ -119,9 +118,9 @@ namespace Mono.Tools
 				
 			X509Stores stores;
 			if (userStore)
-				stores = btlsStore ? X509StoreManager.NewCurrentUser : X509StoreManager.CurrentUser;
+				stores = X509StoreManager.CurrentUser;
 			else
-				stores = btlsStore ? X509StoreManager.NewLocalMachine : X509StoreManager.LocalMachine;
+				stores = X509StoreManager.LocalMachine;
 			X509Store store = stores.TrustedRoot;
 			X509CertificateCollection trusted = store.Certificates;
 			int additions = 0;
@@ -178,9 +177,6 @@ namespace Mono.Tools
 					break;
 				case "--user":
 					userStore = true;
-					break;
-				case "--legacy":
-					btlsStore = false;
 					break;
 				default:
 					WriteLine ("Unknown option '{0}'.", args[i]);
