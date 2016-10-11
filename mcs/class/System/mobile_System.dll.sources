@@ -146,7 +146,6 @@ System.Net.Sockets/SocketOperation.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
 ../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
-System.Net.Sockets/UdpClient.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
@@ -807,6 +806,7 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
+../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
