@@ -54,6 +54,20 @@ namespace Mono.Net.Security
 	{
 		#region Internal API
 
+		internal static readonly Guid LegacyID = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
+		internal static readonly Guid BtlsID = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
+
+		internal static bool UsingBtls {
+			get {
+				#if SECURITY_DEP
+				var provider = GetProviderInternal ();
+				return provider.Provider.ID == BtlsID;
+				#else
+				throw new NotSupportedException ("TLS Support not available.");
+				#endif
+			}
+		}
+
 		/*
 		 * APIs in this section are for consumption within System.dll only - do not access via
 		 * reflection or from friend assemblies.

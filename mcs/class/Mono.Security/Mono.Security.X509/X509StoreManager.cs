@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using MNS = Mono.Net.Security;
 
 using Mono.Security.X509.Extensions;
 
@@ -54,6 +55,10 @@ namespace Mono.Security.X509 {
 
 		private X509StoreManager ()
 		{
+		}
+
+		static bool UsingBtls {
+			get { return MNS.MonoTlsProviderFactory.UsingBtls; }
 		}
 
 		internal static string CurrentUserPath {
@@ -106,8 +111,12 @@ namespace Mono.Security.X509 {
 
 		static public X509Stores CurrentUser {
 			get { 
-				if (_userStore == null)
-					_userStore = new X509Stores (CurrentUserPath, false);
+				if (_userStore == null) {
+					if (UsingBtls)
+						_userStore = new X509Stores (NewCurrentUserPath, true);
+					else
+						_userStore = new X509Stores (CurrentUserPath, false);
+				}
 				
 				return _userStore;
 			}
@@ -115,28 +124,14 @@ namespace Mono.Security.X509 {
 
 		static public X509Stores LocalMachine {
 			get {
-				if (_machineStore == null) 
-					_machineStore = new X509Stores (LocalMachinePath, false);
+				if (_machineStore == null) {
+					if (UsingBtls)
+						_machineStore = new X509Stores (NewLocalMachinePath, true);
+					else
+						_machineStore = new X509Stores (LocalMachinePath, false);
+				}
 
 				return _machineStore;
-			}
-		}
-
-		static public X509Stores NewCurrentUser {
-			get {
-				if (_newUserStore == null)
-					_newUserStore = new X509Stores (NewCurrentUserPath, true);
-
-				return _newUserStore;
-			}
-		}
-
-		static public X509Stores NewLocalMachine {
-			get {
-				if (_newMachineStore == null)
-					_newMachineStore = new X509Stores (NewLocalMachinePath, true);
-
-				return _newMachineStore;
 			}
 		}
 

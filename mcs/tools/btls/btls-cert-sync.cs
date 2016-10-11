@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Btls;
+using Mono.Security.Interface;
 
 namespace Mono.Btls
 {
@@ -14,6 +14,8 @@ namespace Mono.Btls
 				Console.Error.WriteLine ("BTLS is not supported in this runtime!");
 				Environment.Exit (255);
 			}
+
+			MonoTlsProviderFactory.Initialize ("btls");
 
 			var configPath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 			configPath = Path.Combine (configPath, ".mono");
