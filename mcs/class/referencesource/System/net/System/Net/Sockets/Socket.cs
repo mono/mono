@@ -108,12 +108,15 @@ namespace System.Net.Sockets {
         private SocketAddress   m_PermittedRemoteAddress;
 
         private DynamicWinsockMethods m_DynamicWinsockMethods;
+#endif // !MONO
 
         private static object s_InternalSyncObject;
+#if !MONO
         private int m_CloseTimeout = Socket.DefaultCloseTimeout;
         private int m_IntCleanedUp;                 // 0 if not completed >0 otherwise.
         private const int microcnv = 1000000;
         private readonly static int protocolInformationSize = Marshal.SizeOf(typeof(UnsafeNclNativeMethods.OSSOCK.WSAPROTOCOL_INFO));
+#endif // !MONO
 
         internal static volatile bool s_SupportsIPv4;
         internal static volatile bool s_SupportsIPv6;
@@ -124,7 +127,6 @@ namespace System.Net.Sockets {
 #if !FEATURE_PAL // perfcounter
         internal static volatile bool s_PerfCountersEnabled;
 #endif
-#endif // !MONO
 
 //************* constructors *************************
 
@@ -136,7 +138,6 @@ namespace System.Net.Sockets {
             DualMode = true;
         }
 
-#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Initializes a new instance of the <see cref='Sockets.Socket'/> class.
@@ -146,10 +147,16 @@ namespace System.Net.Sockets {
             s_LoggingEnabled = Logging.On;
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Socket", addressFamily);
             InitializeSockets();
+
+#if MONO
+            int error;
+            m_Handle = new SafeSocketHandle (Socket_internal (addressFamily, socketType, protocolType, out error), true);
+#else
             m_Handle = SafeCloseSocket.CreateWSASocket(
                     addressFamily,
                     socketType,
                     protocolType);
+#endif
 
             if (m_Handle.IsInvalid) {
                 //
@@ -167,10 +174,14 @@ namespace System.Net.Sockets {
                 SetIPProtectionLevel(defaultProtectionLevel);
             }
 
+#if MONO
+            SocketDefaults ();
+#endif
+
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Socket", null);
         }
 
-
+#if !MONO
         public Socket(SocketInformation socketInformation) {
             s_LoggingEnabled = Logging.On;
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Socket", addressFamily);
@@ -288,7 +299,7 @@ namespace System.Net.Sockets {
             protocolType = Sockets.ProtocolType.Unknown;
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Socket", null);
         }
-
+#endif
 
 
 //************* properties *************************
@@ -339,7 +350,7 @@ namespace System.Net.Sockets {
             }
         }
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Gets the amount of data pending in the network's input buffer that can be
@@ -5716,7 +5727,7 @@ namespace System.Net.Sockets {
             InternalSetBlocking(willBlockInternal);
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Shutdown", "");
         }
-
+#endif
 
 
 //************* internal and private properties *************************
@@ -5731,6 +5742,7 @@ namespace System.Net.Sockets {
             }
         }
 
+#if !MONO
         private CacheSet Caches
         {
             get
@@ -6004,13 +6016,14 @@ namespace System.Net.Sockets {
 
             return socketAddress;
         }
-
+#endif
 
         internal static void InitializeSockets() {
             if (!s_Initialized) {
                 lock(InternalSyncObject){
                     if (!s_Initialized) {
 
+#if !MONO
                         WSAData wsaData = new WSAData();
 
                         SocketError errorCode =
@@ -6025,6 +6038,7 @@ namespace System.Net.Sockets {
                             // WSAStartup does not set LastWin32Error
                             throw new SocketException(errorCode);
                         }
+#endif
 
 #if !FEATURE_PAL
                         //
@@ -6045,6 +6059,10 @@ namespace System.Net.Sockets {
                         bool   ipv4      = true; 
                         bool   ipv6      = true; 
 
+#if MONO
+                        ipv4 = IsProtocolSupported (System.Net.NetworkInformation.NetworkInterfaceComponent.IPv4);
+                        ipv6 = IsProtocolSupported (System.Net.NetworkInformation.NetworkInterfaceComponent.IPv6);
+#else
                         SafeCloseSocket.InnerSafeCloseSocket socketV4 = 
                                                              UnsafeNclNativeMethods.OSSOCK.WSASocket(
                                                                     AddressFamily.InterNetwork, 
@@ -6078,7 +6096,7 @@ namespace System.Net.Sockets {
                         socketV6.Close();
 
                         // <
-
+#endif // MONO
 
 
 #if COMNET_DISABLEIPV6
@@ -6112,16 +6130,19 @@ namespace System.Net.Sockets {
 
                         // Cache some settings locally.
 
+#if !MONO
 #if !FEATURE_PAL // perfcounter
                         s_PerfCountersEnabled = NetworkingPerfCounters.Instance.Enabled;
 #endif
+#endif
+
                         s_Initialized = true;
                     }
                 }
             }
         }
 
-
+#if !MONO
         internal void InternalConnect(EndPoint remoteEP)
         {
             EndPoint endPointSnapshot = remoteEP;

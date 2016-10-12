@@ -295,10 +295,10 @@ namespace System.Net {
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool GetHostByName_internal(string host, out string h_name, out string[] h_aliases, out string[] h_addr_list);
+		private extern static bool GetHostByName_internal(string host, out string h_name, out string[] h_aliases, out string[] h_addr_list, int hint);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list);
+		private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list, int hint);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool GetHostName_internal(out string h_name);
@@ -372,7 +372,7 @@ namespace System.Net {
 
 			string h_name;
 			string[] h_aliases, h_addrlist;
-			bool ret = GetHostByAddr_internal(address, out h_name, out h_aliases, out h_addrlist);
+			bool ret = GetHostByAddr_internal(address, out h_name, out h_aliases, out h_addrlist, Socket.FamilyHint);
 			if (!ret)
 				Error_11001 (address);
 			return (hostent_to_IPHostEntry (address, h_name, h_aliases, h_addrlist));
@@ -434,7 +434,7 @@ namespace System.Net {
 			string h_name;
 			string[] h_aliases, h_addrlist;
 
-			bool ret = GetHostByName_internal(hostName, out h_name, out h_aliases, out h_addrlist);
+			bool ret = GetHostByName_internal(hostName, out h_name, out h_aliases, out h_addrlist, Socket.FamilyHint);
 			if (ret == false)
 				Error_11001 (hostName);
 

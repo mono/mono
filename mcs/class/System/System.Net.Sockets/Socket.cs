@@ -55,13 +55,6 @@ namespace System.Net.Sockets
 		const string TIMEOUT_EXCEPTION_MSG = "A connection attempt failed because the connected party did not properly respond" +
 			"after a period of time, or established connection failed because connected host has failed to respond";
 
-		/*
-		 *	These two fields are looked up by name by the runtime, don't change
-		 *  their name without also updating the runtime code.
-		 */
-		static int ipv4_supported = -1;
-		static int ipv6_supported = -1;
-
 		/* true if we called Close_internal */
 		bool is_closed;
 
@@ -98,80 +91,8 @@ namespace System.Net.Sockets
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
 
-		private static volatile bool s_LoggingEnabled = Logging.On;
-
 #region Constructors
 
-		static Socket ()
-		{
-			if (ipv4_supported == -1) {
-				try {
-					Socket tmp = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-					tmp.Close();
-
-					ipv4_supported = 1;
-				} catch {
-					ipv4_supported = 0;
-				}
-			}
-
-			if (ipv6_supported == -1) {
-				// We need to put a try/catch around ConfigurationManager methods as will always throw an exception 
-				// when run in a mono embedded application.  This occurs as embedded applications do not have a setup
-				// for application config.  The exception is not thrown when called from a normal .NET application. 
-				//
-				// We, then, need to guard calls to the ConfigurationManager.  If the config is not found or throws an
-				// exception, will fall through to the existing Socket / API directly below in the code.
-				//
-				// Also note that catching ConfigurationErrorsException specifically would require library dependency
-				// System.Configuration, and wanted to avoid that.
-#if !MOBILE
-#if CONFIGURATION_DEP
-				try {
-					SettingsSection config;
-					config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
-					if (config != null)
-						ipv6_supported = config.Ipv6.Enabled ? -1 : 0;
-				} catch {
-					ipv6_supported = -1;
-				}
-#else
-				try {
-					NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
-					if (config != null)
-						ipv6_supported = config.ipv6Enabled ? -1 : 0;
-				} catch {
-					ipv6_supported = -1;
-				}
-#endif
-#endif
-				if (ipv6_supported != 0) {
-					try {
-						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-						tmp.Close();
-
-						ipv6_supported = 1;
-					} catch {
-						ipv6_supported = 0;
-					}
-				}
-			}
-		}
-
-		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
-		{
-			this.addressFamily = addressFamily;
-			this.socketType = socketType;
-			this.protocolType = protocolType;
-
-			int error;
-			this.m_Handle = new SafeSocketHandle (Socket_internal (addressFamily, socketType, protocolType, out error), true);
-
-			if (error != 0)
-				throw new SocketException (error);
-
-			SocketDefaults ();
-		}
 
 		public Socket (SocketInformation socketInformation)
 		{
@@ -188,6 +109,8 @@ namespace System.Net.Sockets
 			this.is_bound = (ProtocolType) (int) result [3] != 0;
 			this.m_Handle = new SafeSocketHandle ((IntPtr) (long) result [4], true);
 
+			InitializeSockets ();
+
 			SocketDefaults ();
 		}
 
@@ -200,6 +123,8 @@ namespace System.Net.Sockets
 			
 			this.m_Handle = safe_handle;
 			this.is_connected = true;
+
+			InitializeSockets ();	
 		}
 
 		void SocketDefaults ()
@@ -235,54 +160,6 @@ namespace System.Net.Sockets
 #endregion
 
 #region Properties
-
-		[ObsoleteAttribute ("Use OSSupportsIPv4 instead")]
-		public static bool SupportsIPv4 {
-			get { return ipv4_supported == 1; }
-		}
-
-		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
-		public static bool SupportsIPv6 {
-			get { return ipv6_supported == 1; }
-		}
-
-#if MOBILE
-		public static bool OSSupportsIPv4 {
-			get { return ipv4_supported == 1; }
-		}
-#else
-		public static bool OSSupportsIPv4 {
-			get {
-				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
-
-				foreach (NetworkInterface adapter in nics) {
-					if (adapter.Supports (NetworkInterfaceComponent.IPv4))
-						return true;
-				}
-
-				return false;
-			}
-		}
-#endif
-
-#if MOBILE
-		public static bool OSSupportsIPv6 {
-			get { return ipv6_supported == 1; }
-		}
-#else
-		public static bool OSSupportsIPv6 {
-			get {
-				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
-
-				foreach (NetworkInterface adapter in nics) {
-					if (adapter.Supports (NetworkInterfaceComponent.IPv6))
-						return true;
-				}
-
-				return false;
-			}
-		}
-#endif
 
 		public int Available {
 			get {
@@ -2918,6 +2795,41 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SupportsPortReuse (ProtocolType proto);
+
+		internal static int FamilyHint {
+			get {
+				// Returns one of
+				//	MONO_HINT_UNSPECIFIED		= 0,
+				//	MONO_HINT_IPV4				= 1,
+				//	MONO_HINT_IPV6				= 2,
+
+				int hint = 0;
+				if (OSSupportsIPv4) {
+					hint = 1;
+				}
+
+				if (OSSupportsIPv6) {
+					hint = hint == 0 ? 2 : 0;
+				}
+
+				return hint;
+			}
+		}
+
+		static bool IsProtocolSupported (NetworkInterfaceComponent networkInterface)
+		{
+#if MOBILE
+			return true;
+#else
+			var nics = NetworkInterface.GetAllNetworkInterfaces ();
+			foreach (var adapter in nics) {
+				if (adapter.Supports (networkInterface))
+					return true;
+			}
+
+			return false;
+#endif
+		}
 	}
 }
 

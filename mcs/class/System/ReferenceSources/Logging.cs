@@ -1,12 +1,9 @@
 using System.Diagnostics;
 
 namespace System.Net {
-	class Logging {
-		internal static bool On {
-			get {
-				return false;
-			}
-		}
+	static class Logging
+	{
+		internal static readonly bool On = false;
 
 		internal static TraceSource Web {
 			get {
