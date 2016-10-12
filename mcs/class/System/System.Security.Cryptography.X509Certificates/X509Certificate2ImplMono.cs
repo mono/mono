@@ -52,7 +52,6 @@ namespace System.Security.Cryptography.X509Certificates
 	{
 		bool _archived;
 		X509ExtensionCollection _extensions;
-		string _serial;
 		PublicKey _publicKey;
 		X500DistinguishedName issuer_name;
 		X500DistinguishedName subject_name;
@@ -559,7 +558,6 @@ namespace System.Security.Cryptography.X509Certificates
 			_cert = null;
 			_archived = false;
 			_extensions = null;
-			_serial = null;
 			_publicKey = null;
 			issuer_name = null;
 			subject_name = null;

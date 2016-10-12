@@ -83,7 +83,6 @@ namespace System.Net
 		HttpWebRequest connect_request;
 
 		Exception connect_exception;
-		static object classLock = new object ();
 		MonoTlsStream tlsStream;
 
 #if MONOTOUCH && !MONOTOUCH_TV && !MONOTOUCH_WATCH

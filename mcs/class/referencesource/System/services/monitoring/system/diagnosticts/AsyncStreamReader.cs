@@ -41,8 +41,10 @@ namespace System.Diagnostics {
         // a user's char[] directly, instead of our internal char[].
         private int _maxCharsPerBuffer;
 
+#pragma warning disable 414
         // Store a backpointer to the process class, to check for user callbacks
         private Process process;
+#pragma warning restore
 
         // Delegate to call user function.
         private UserCallBack userCallBack;

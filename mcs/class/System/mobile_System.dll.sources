@@ -840,7 +840,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemGatewayIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemMulticastIPAddressInformation.cs
-../referencesource/System/net/System/Net/NetworkInformation/SystemUnicastIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemTcpConnection.cs
 ../referencesource/System/net/System/Net/NetworkInformation/TcpConnection.cs
 ../referencesource/System/net/System/Net/NetworkInformation/TcpState.cs
