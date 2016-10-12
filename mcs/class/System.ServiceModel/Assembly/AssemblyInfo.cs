@@ -82,4 +82,13 @@ using System.Runtime.InteropServices;
 
 #endif
 
+#if !MOBILE
 
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.BinarySecretKeyIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.KeyNameIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.SecurityContextKeyIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.X509CertificateValidationMode))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.Tokens.BinarySecretSecurityToken))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.Tokens.WrappedKeySecurityToken))]
+
+#endif

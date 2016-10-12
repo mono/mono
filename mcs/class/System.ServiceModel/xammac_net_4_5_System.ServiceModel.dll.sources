@@ -41,7 +41,6 @@ System.ServiceModel.Security/MessagePartSpecification.cs
 System.ServiceModel.Security/PeerCredential.cs
 System.ServiceModel.Security/ScopedMessagePartSpecification.cs
 System.ServiceModel.Security/SecurityAlgorithmSuite.cs
-System.ServiceModel.Security/SecurityContextKeyIdentifierClause.cs
 System.ServiceModel.Security/SecurityMessageProperty.cs
 System.ServiceModel.Security/SecurityStateEncoder.cs
 System.ServiceModel.Security/SecurityTokenAttachmentMode.cs
