@@ -9,7 +9,6 @@
 // Copyright 2015 Xamarin Inc.
 //
 
-#if MONOTOUCH
 using System;
 using System.Data;
 using System.IO;
@@ -96,13 +95,14 @@ namespace MonoTests.Mono.Data.Sqlite {
 					}
 				}
 			} catch (SqliteException ex) {
+#if MONOTOUCH
 				// Expected Exception from iOS 8.2 (broken) to 9.0 (fixed)
 				if (BCL.Tests.TestRuntime.CheckSystemVersion (8,2) && !BCL.Tests.TestRuntime.CheckSystemVersion (9,0)) 
 					Assert.That (ex.Message.Contains ("no such column: com.Name"));
 				else
-					throw new AssertionException ("Unexpected Sqlite Error", ex); // This should not happen
+					throw;
+#endif
 			}
 		}
 	}
 }
-#endif
