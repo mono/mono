@@ -173,7 +173,7 @@ namespace MonoTests.System.Net.Sockets
 				client.Connect (ipAddresses, 1234);
 				Assert.Fail ("ConnectMultiAny #1");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10049, ex.ErrorCode, "ConnectMultiAny #2");
+				Assert.AreEqual (10061, ex.ErrorCode, "ConnectMultiAny #2");
 			} catch {
 				Assert.Fail ("ConnectMultiAny #3");
 			}

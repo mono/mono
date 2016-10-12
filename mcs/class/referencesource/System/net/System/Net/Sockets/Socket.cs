@@ -8427,7 +8427,7 @@ namespace System.Net.Sockets {
         internal AcceptAsyncResult(object myObject, object myState, AsyncCallback myCallBack):base(myObject, myState, myCallBack) {
         }
     }
-
+#endif
 
     public enum SocketAsyncOperation {
         None = 0,
@@ -8448,7 +8448,11 @@ namespace System.Net.Sockets {
         internal byte [] m_Buffer;
         internal int m_Offset;
         internal int m_Count;
+#if MONO
+        bool m_endOfPacket;
+#else
         internal UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags m_Flags;
+#endif
 
         // hide default constructor
         private SendPacketsElement() {}
@@ -8474,8 +8478,13 @@ namespace System.Net.Sockets {
             }
             Contract.EndContractBlock();
 
+#if MONO
+            Initialize(filepath, null, offset, count, /*UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.File,*/
+                endOfPacket);
+#else
             Initialize(filepath, null, offset, count, UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.File,
                 endOfPacket);
+#endif
         }
 
         // constructors for buffer elements
@@ -8497,21 +8506,30 @@ namespace System.Net.Sockets {
             }
             Contract.EndContractBlock();
 
+#if MONO
+            Initialize(null, buffer, offset, count, /*UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.Memory,*/
+                endOfPacket);
+#else
             Initialize(null, buffer, offset, count, UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.Memory, 
                 endOfPacket);
+#endif
         }
 
         private void Initialize(string filePath, byte[] buffer, int offset, int count, 
-            UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags flags, bool endOfPacket) {
+            /*UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags flags,*/ bool endOfPacket) {
 
             m_FilePath = filePath;
             m_Buffer = buffer;
             m_Offset = offset;
             m_Count = count;
+#if MONO
+            m_endOfPacket = endOfPacket;
+#else
             m_Flags = flags;
             if (endOfPacket) {
                 m_Flags |= UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.EndOfPacket;
             }
+#endif
         }
 
         // Filename property
@@ -8536,7 +8554,13 @@ namespace System.Net.Sockets {
 
         // EndOfPacket property
         public bool EndOfPacket {
-            get { return (m_Flags & UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.EndOfPacket) != 0; }
+            get {
+#if MONO
+                return m_endOfPacket;
+#else
+                return (m_Flags & UnsafeNclNativeMethods.OSSOCK.TransmitPacketsElementFlags.EndOfPacket) != 0;
+#endif
+             }
         }
     }
 
@@ -8551,6 +8575,7 @@ namespace System.Net.Sockets {
     }
     #endregion        
 
+#if !MONO
     public class SocketAsyncEventArgs : EventArgs, IDisposable {
 
         // Struct sizes needed for some custom marshalling.
