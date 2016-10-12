@@ -401,6 +401,7 @@ namespace System.Net
 						State = RequestState.Scheduled;
 
 					Thread thread = new Thread (ProcessRequest);
+					thread.IsBackground = true;
 					thread.Start ();
 				}
 			}
@@ -452,6 +453,7 @@ namespace System.Net
 
 			asyncResult = new FtpAsyncResult (callback, state);
 			Thread thread = new Thread (ProcessRequest);
+			thread.IsBackground = true;
 			thread.Start ();
 
 			return asyncResult;
