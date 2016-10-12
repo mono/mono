@@ -10028,7 +10028,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Common call */
-			INLINE_FAILURE ("call");
+			if (!(cmethod->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
+				INLINE_FAILURE ("call");
 			ins = mono_emit_method_call_full (cfg, cmethod, fsig, tail_call, sp, virtual_ ? sp [0] : NULL,
 											  imt_arg, vtable_arg);
 
@@ -11501,6 +11502,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoInst *load;
 
 					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
+
+					if (sp [0]->opcode == OP_LDADDR && klass->simd_type && cfg->opt & MONO_OPT_SIMD) {
+						ins = mono_emit_simd_field_load (cfg, field, sp [0]);
+						if (ins) {
+							*sp++ = ins;
+							ins_flag = 0;
+							ip += 5;
+							break;
+						}
+					}
 
 					if (mini_is_gsharedvt_klass (klass)) {
 						MonoInst *offset_ins;

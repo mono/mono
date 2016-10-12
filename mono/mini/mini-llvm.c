@@ -358,6 +358,9 @@ simd_class_to_llvm_type (EmitContext *ctx, MonoClass *klass)
 		return LLVMVectorType (LLVMInt8Type (), 16);
 	} else if (!strcmp (klass->name, "Vector16b")) {
 		return LLVMVectorType (LLVMInt8Type (), 16);
+	} else if (!strcmp (klass->name, "Vector2")) {
+		/* System.Numerics */
+		return LLVMVectorType (LLVMFloatType (), 4);
 	} else {
 		printf ("%s\n", klass->name);
 		NOT_IMPLEMENTED;
@@ -916,6 +919,8 @@ simd_op_to_intrins (int opcode)
 		return "llvm.x86.sse2.pmulh.w";
 	case OP_PMULW_HIGH_UN:
 		return "llvm.x86.sse2.pmulhu.w";
+	case OP_DPPS:
+		return "llvm.x86.sse41.dpps";
 #endif
 	default:
 		g_assert_not_reached ();
@@ -6441,6 +6446,18 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 
+		case OP_DPPS: {
+			LLVMValueRef args [3];
+
+			args [0] = lhs;
+			args [1] = rhs;
+			/* 0xf1 == multiply all 4 elements, add them together, and store the result to the lowest element */
+			args [2] = LLVMConstInt (LLVMInt32Type (), 0xf1, FALSE);
+
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, simd_op_to_intrins (ins->opcode)), args, 3, dname);
+			break;
+		}
+
 #endif /* SIMD */
 
 		case OP_DUMMY_USE:
@@ -7858,6 +7875,7 @@ typedef enum {
 	INTRINS_SSE_PSUBUSB,
 	INTRINS_SSE_PAVGB,
 	INTRINS_SSE_PAUSE,
+	INTRINS_SSE_DPPS,
 #endif
 	INTRINS_NUM
 } IntrinsicId;
@@ -7939,7 +7957,8 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_PADDUSB, "llvm.x86.sse2.paddus.b"},
 	{INTRINS_SSE_PSUBUSB, "llvm.x86.sse2.psubus.b"},
 	{INTRINS_SSE_PAVGB, "llvm.x86.sse2.pavg.b"},
-	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"}
+	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"},
+	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"}
 #endif
 };
 
@@ -8171,6 +8190,13 @@ add_intrinsic (LLVMModuleRef module, int id)
 		break;
 	case INTRINS_SSE_PAUSE:
 		AddFunc (module, "llvm.x86.sse2.pause", LLVMVoidType (), NULL, 0);
+		break;
+	case INTRINS_SSE_DPPS:
+		ret_type = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [1] = type_to_simd_type (MONO_TYPE_R4);
+		arg_types [2] = LLVMInt32Type ();
+		AddFunc (module, name, ret_type, arg_types, 3);
 		break;
 #endif
 	default:
