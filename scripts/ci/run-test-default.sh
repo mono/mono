@@ -63,7 +63,7 @@ ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/Syst
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
 ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=WindowsBase --skip; else ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test; fi
+${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
 ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/class/System.Runtime.DurableInstancing run-test
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
