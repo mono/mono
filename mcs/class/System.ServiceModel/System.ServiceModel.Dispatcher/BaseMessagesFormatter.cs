@@ -70,17 +70,14 @@ namespace System.ServiceModel.Dispatcher
 
 		internal static void Validate (OperationDescription od, bool isRpc, bool isEncoded)
 		{
-			bool hasParameter = false, hasVoid = false;
+			bool hasVoid = false;
 			foreach (var md in od.Messages) {
 				if (md.IsTypedMessage || md.IsUntypedMessage) {
 					if (isRpc && !isEncoded)
 						throw new InvalidOperationException ("Message with action {0} is either strongly-typed or untyped, but defined as RPC and encoded.");
-					if (hasParameter && !md.IsVoid)
-						throw new InvalidOperationException (String.Format ("Operation '{0}' contains a message with parameters. Strongly-typed or untyped message can be paired only with strongly-typed, untyped or void message.", od.Name));
 					if (isRpc && hasVoid)
 						throw new InvalidOperationException (String.Format ("This operation '{0}' is defined as RPC and contains a message with void, which is not allowed.", od.Name));
 				} else {
-					hasParameter |= !md.IsVoid;
 					hasVoid |= md.IsVoid;
 				}
 			}
