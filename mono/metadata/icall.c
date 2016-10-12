@@ -7257,7 +7257,7 @@ get_bundled_app_config (void)
 }
 
 /* this is an icall */
-static MonoStringHandle
+ICALL_EXPORT MonoStringHandle
 get_bundled_machine_config (MonoError *error)
 {
 	const gchar *machine_config;
