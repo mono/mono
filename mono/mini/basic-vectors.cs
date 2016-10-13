@@ -479,6 +479,11 @@ public class VectorTests {
 		return 0;
 	}
 
+	public static int test_0_vector4_length () {
+		var v = new Vector4 (2.0f, 2.0f, 2.0f, 2.0f);
+		return v.Length () == 4.0f ? 0 : 1;
+	}
+
 	//
 	// Vector3 tests
 	//

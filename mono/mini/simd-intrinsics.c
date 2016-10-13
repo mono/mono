@@ -1846,10 +1846,21 @@ emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 static MonoInst*
 emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
+	const char *nspace = cmethod->klass->name_space;
 	const char *class_name = cmethod->klass->name;
 
 	if (!strcmp ("Vector2", class_name) || !strcmp ("Vector4", class_name) || !strcmp ("Vector3", class_name))
 		return emit_vector_intrinsics (cfg, cmethod, fsig, args);
+
+	if (!strcmp ("System.Numerics", nspace) && !strcmp ("Vector", class_name)) {
+		if (!strcmp (cmethod->name, "get_IsHardwareAccelerated")) {
+			MonoInst *ins;
+
+			EMIT_NEW_ICONST (cfg, ins, 0);
+			ins->type = STACK_I4;
+			return ins;
+		}
+	}
 
 	return NULL;
 }
