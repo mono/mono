@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Btls;
+using MNS = Mono.Net.Security;
 
 namespace Mono.Btls
 {
@@ -10,7 +10,7 @@ namespace Mono.Btls
 	{
 		static void Main (string[] args)
 		{
-			if (!MonoBtlsProvider.IsSupported ()) {
+			if (!MNS.MonoTlsProviderFactory.IsBtlsSupported ()) {
 				Console.Error.WriteLine ("BTLS is not supported in this runtime!");
 				Environment.Exit (255);
 			}
