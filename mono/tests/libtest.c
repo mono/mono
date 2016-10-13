@@ -7406,6 +7406,7 @@ StringBuilderParameterReturn(int index)
     ret[strLength] = '\0';
 
     return  ret;
+}
 
 LIBTEST_API int STDCALL
 mono_test_marshal_pointer_array (int *arr[])
