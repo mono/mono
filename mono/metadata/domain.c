@@ -1239,10 +1239,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		g_hash_table_destroy (domain->generic_virtual_cases);
 		domain->generic_virtual_cases = NULL;
 	}
-	if (domain->generic_virtual_thunks) {
-		g_hash_table_destroy (domain->generic_virtual_thunks);
-		domain->generic_virtual_thunks = NULL;
-	}
 	if (domain->ftnptrs_hash) {
 		g_hash_table_destroy (domain->ftnptrs_hash);
 		domain->ftnptrs_hash = NULL;
