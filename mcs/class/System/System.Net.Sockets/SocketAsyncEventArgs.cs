@@ -177,13 +177,6 @@ namespace System.Net.Sockets
 
 			if (disposing && in_progress != 0)
 				return;
-
-			AcceptSocket = null;
-			Buffer = null;
-			BufferList = null;
-			RemoteEndPoint = null;
-			UserToken = null;
-			SendPacketsElements = null;
 		}
 
 		public void Dispose ()
