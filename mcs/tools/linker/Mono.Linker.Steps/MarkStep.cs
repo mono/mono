@@ -69,29 +69,27 @@ namespace Mono.Linker.Steps {
 		protected virtual void InitializeAssembly (AssemblyDefinition assembly)
 		{
 			MarkAssembly (assembly);
-			foreach (TypeDefinition type in assembly.MainModule.Types) {
-				if (!Annotations.IsMarked (type))
-					continue;
 
+			foreach (TypeDefinition type in assembly.MainModule.Types)
 				InitializeType (type);
-			}
 		}
 
 		void InitializeType (TypeDefinition type)
 		{
+			if (type.HasNestedTypes) {
+				foreach (var nested in type.NestedTypes)
+					InitializeType (nested);
+			}
+
+			if (!Annotations.IsMarked (type))
+				return;
+
 			MarkType (type);
 
 			if (type.HasFields)
 				InitializeFields (type);
 			if (type.HasMethods)
 				InitializeMethods (type.Methods);
-
-			if (type.HasNestedTypes) {
-				foreach (var nested in type.NestedTypes) {
-					if (Annotations.IsMarked (nested))
-						InitializeType (nested);
-				}
-			}
 		}
 
 		void InitializeFields (TypeDefinition type)

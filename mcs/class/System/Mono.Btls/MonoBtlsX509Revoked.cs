@@ -103,7 +103,7 @@ namespace Mono.Btls
 		{
 			var ticks = mono_btls_x509_revoked_get_revocation_date (
 				Handle.DangerousGetHandle ());
-			return new DateTime (1970, 1, 1).AddSeconds (ticks);
+			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
 		public int GetReason ()

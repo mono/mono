@@ -3033,7 +3033,9 @@ namespace System.Text.RegularExpressions {
 
     internal class RegexTypeCompiler : RegexCompiler {
         private static int _typeCount = 0;
+#if !MONO
         private static LocalDataStoreSlot _moduleSlot = Thread.AllocateDataSlot();
+#endif
 
         private  AssemblyBuilder _assembly;
         private  ModuleBuilder  _module;

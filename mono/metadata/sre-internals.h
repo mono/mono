@@ -74,12 +74,6 @@ mono_is_sr_mono_cmethod (MonoClass *klass);
 gboolean
 mono_is_sr_mono_property (MonoClass *klass);
 
-gboolean
-mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb, MonoError *error);
-
-MonoMethod*
-mono_reflection_method_builder_to_mono_method (MonoReflectionMethodBuilder *mb, MonoError *error);
-
 gpointer
 mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
@@ -95,9 +89,6 @@ mono_reflection_methodbuilder_from_method_builder (ReflectionMethodBuilder *rmb,
 gboolean
 mono_reflection_methodbuilder_from_ctor_builder (ReflectionMethodBuilder *rmb, MonoReflectionCtorBuilder *mb,
 						 MonoError *error);
-
-void
-mono_reflection_init_type_builder_generics (MonoObject *type, MonoError *error);
 							    
 guint32
 mono_reflection_resolution_scope_from_image (MonoDynamicImage *assembly, MonoImage *image);
@@ -127,13 +118,7 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 					       MonoError *error);
 
 guint32
-mono_dynimage_encode_generic_method_definition_sig (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *mb);
-
-guint32
 mono_dynimage_encode_generic_method_sig (MonoDynamicImage *assembly, MonoGenericContext *context);
-
-guint32
-mono_dynimage_encode_generic_typespec (MonoDynamicImage *assembly, MonoReflectionTypeBuilder *tb, MonoError *error);
 
 guint32
 mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *type, gboolean try_typespec);

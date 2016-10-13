@@ -96,10 +96,14 @@ namespace MonoTests.System.Data.Common
 			try {
 				da.AddToBatch (new SqlCommand ());
 				Assert.Fail ("#1");
+#if FEATURE_NO_BSD_SOCKETS
+			} catch (PlatformNotSupportedException) {
+#else
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+#endif
 			}
 		}
 

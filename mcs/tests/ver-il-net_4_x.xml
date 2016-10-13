@@ -68363,6 +68363,9 @@
       <method name="Void Test2()" attrs="129">
         <size>12</size>
       </method>
+      <method name="Void Test3()" attrs="129">
+        <size>62</size>
+      </method>
     </type>
   </test>
   <test name="test-interpolation-06.cs">

@@ -443,7 +443,7 @@ gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
 HANDLE
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize stack_size, MonoNativeThreadId *out_tid);
+mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize * const stack_size, MonoNativeThreadId *out_tid);
 
 int
 mono_threads_get_max_stack_size (void);
@@ -516,7 +516,7 @@ gboolean mono_threads_suspend_needs_abort_syscall (void);
 
 void mono_threads_platform_register (THREAD_INFO_TYPE *info);
 void mono_threads_platform_unregister (THREAD_INFO_TYPE *info);
-int mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize stack_size, MonoNativeThreadId *out_tid);
+int mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid);
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
 gboolean mono_threads_platform_yield (void);
 void mono_threads_platform_exit (int exit_code);
@@ -531,14 +531,17 @@ void mono_threads_coop_end_global_suspend (void);
 MONO_API MonoNativeThreadId
 mono_native_thread_id_get (void);
 
-gboolean
+MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
-gboolean
+MONO_API gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
+
+MONO_API gboolean
+mono_native_thread_join (MonoNativeThreadId tid);
 
 /*Mach specific internals */
 void mono_threads_init_dead_letter (void);

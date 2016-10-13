@@ -181,6 +181,7 @@ System.Windows.Threading/DispatcherUnhandledExceptionEventArgs.cs
 System.Windows.Threading/DispatcherUnhandledExceptionEventHandler.cs
 System.Windows.Threading/DispatcherUnhandledExceptionFilterEventArgs.cs
 System.Windows.Threading/DispatcherUnhandledExceptionFilterEventHandler.cs
+ZipSharp/NativeVersion.cs
 ZipSharp/IOFunctions.cs
 ZipSharp/ZipArchive.cs
 ZipSharp/UnzipArchive.cs

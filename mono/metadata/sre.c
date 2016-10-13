@@ -35,13 +35,6 @@
 #include "mono/utils/checked-build.h"
 #include "mono/utils/mono-digest.h"
 
-void
-mono_sre_generic_param_table_entry_free (GenericParamTableEntry *entry)
-{
-	mono_gc_deregister_root ((char*) &entry->gparam);
-	g_free (entry);
-}
-
 static GENERATE_GET_CLASS_WITH_CACHE (marshal_as_attribute, System.Runtime.InteropServices, MarshalAsAttribute);
 static GENERATE_GET_CLASS_WITH_CACHE (module_builder, System.Reflection.Emit, ModuleBuilder);
 
@@ -49,8 +42,8 @@ static GENERATE_GET_CLASS_WITH_CACHE (module_builder, System.Reflection.Emit, Mo
 static guint32 mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, gboolean create_typespec);
 static guint32 mono_image_get_sighelper_token (MonoDynamicImage *assembly, MonoReflectionSigHelper *helper, MonoError *error);
 static gboolean ensure_runtime_vtable (MonoClass *klass, MonoError  *error);
-static guint32 mono_image_get_methodref_token_for_methodbuilder (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *method, MonoError *error);
 static void reflection_methodbuilder_from_dynamic_method (ReflectionMethodBuilder *rmb, MonoReflectionDynamicMethod *mb);
+static gboolean reflection_setup_internal_class (MonoReflectionTypeBuilder *tb, MonoError *error);
 
 static gpointer register_assembly (MonoDomain *domain, MonoReflectionAssembly *res, MonoAssembly *assembly);
 #endif
@@ -65,6 +58,7 @@ static gboolean is_sre_type_builder (MonoClass *klass);
 static gboolean is_sre_method_builder (MonoClass *klass);
 static gboolean is_sre_field_builder (MonoClass *klass);
 static gboolean is_sre_gparam_builder (MonoClass *klass);
+static gboolean is_sre_enum_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
 static gboolean is_sr_mono_field (MonoClass *klass);
 
@@ -360,7 +354,6 @@ mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
 
 }
 #endif
-
 
 guint32
 mono_reflection_resolution_scope_from_image (MonoDynamicImage *assembly, MonoImage *image)
@@ -683,52 +676,6 @@ mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, 
 }
 
 static guint32
-mono_image_get_methodref_token_for_methodbuilder (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *method, MonoError *error)
-{
-	guint32 token, parent, sig;
-	ReflectionMethodBuilder rmb;
-	MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)method->type;
-	
-	mono_error_init (error);
-	token = GPOINTER_TO_UINT (g_hash_table_lookup (assembly->handleref, method));
-	if (token)
-		return token;
-
-	if (!mono_reflection_methodbuilder_from_method_builder (&rmb, method, error))
-		return 0;
-
-	/*
-	 * A methodref signature can't contain an unmanaged calling convention.
-	 * Since some flags are encoded as part of call_conv, we need to check against it.
-	*/
-	if ((rmb.call_conv & ~0x60) != MONO_CALL_DEFAULT && (rmb.call_conv & ~0x60) != MONO_CALL_VARARG)
-		rmb.call_conv = (rmb.call_conv & 0x60) | MONO_CALL_DEFAULT;
-
-	sig = mono_dynimage_encode_method_builder_signature (assembly, &rmb, error);
-	return_val_if_nok (error, 0);
-
-	if (tb->generic_params) {
-		parent = mono_dynimage_encode_generic_typespec (assembly, tb, error);
-		return_val_if_nok (error, 0);
-	} else {
-		MonoType *t = mono_reflection_type_get_handle ((MonoReflectionType*)rmb.type, error);
-		return_val_if_nok (error, 0);
-
-		parent = mono_image_typedef_or_ref (assembly, t);
-	}
-
-	char *name = mono_string_to_utf8_checked (method->name, error);
-	return_val_if_nok (error, 0);
-
-	token = mono_image_add_memberef_row (assembly, parent, name, sig);
-	g_free (name);
-
-	g_hash_table_insert (assembly->handleref, method, GUINT_TO_POINTER(token));
-
-	return token;
-}
-
-static guint32
 mono_image_get_varargs_method_token (MonoDynamicImage *assembly, guint32 original,
 				     const gchar *name, guint32 sig)
 {
@@ -752,48 +699,6 @@ mono_image_get_varargs_method_token (MonoDynamicImage *assembly, guint32 origina
 	return token;
 }
 
-static guint32
-mono_image_get_methodspec_token_for_generic_method_definition (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *mb, MonoError *error)
-{
-	MonoDynamicTable *table;
-	guint32 *values;
-	guint32 token, mtoken = 0;
-
-	mono_error_init (error);
-	token = GPOINTER_TO_UINT (mono_g_hash_table_lookup (assembly->methodspec, mb));
-	if (token)
-		return token;
-
-	table = &assembly->tables [MONO_TABLE_METHODSPEC];
-
-	mtoken = mono_image_get_methodref_token_for_methodbuilder (assembly, mb, error);
-	if (!mono_error_ok (error))
-		return 0;
-
-	switch (mono_metadata_token_table (mtoken)) {
-	case MONO_TABLE_MEMBERREF:
-		mtoken = (mono_metadata_token_index (mtoken) << MONO_METHODDEFORREF_BITS) | MONO_METHODDEFORREF_METHODREF;
-		break;
-	case MONO_TABLE_METHOD:
-		mtoken = (mono_metadata_token_index (mtoken) << MONO_METHODDEFORREF_BITS) | MONO_METHODDEFORREF_METHODDEF;
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-
-	if (assembly->save) {
-		alloc_table (table, table->rows + 1);
-		values = table->values + table->next_idx * MONO_METHODSPEC_SIZE;
-		values [MONO_METHODSPEC_METHOD] = mtoken;
-		values [MONO_METHODSPEC_SIGNATURE] = mono_dynimage_encode_generic_method_definition_sig (assembly, mb);
-	}
-
-	token = MONO_TOKEN_METHOD_SPEC | table->next_idx;
-	table->next_idx ++;
-
-	mono_g_hash_table_insert (assembly->methodspec, mb, GUINT_TO_POINTER(token));
-	return token;
-}
 #endif
 
 static gboolean
@@ -913,21 +818,6 @@ mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m)
 		assembly, &m->klass->byval_arg, m->name, sig);
 
 	return token;
-}
-
-void
-mono_reflection_init_type_builder_generics (MonoObject *type, MonoError *error)
-{
-	MonoReflectionTypeBuilder *tb;
-
-	mono_error_init (error);
-
-	if (!is_sre_type_builder(mono_object_class (type)))
-		return;
-	tb = (MonoReflectionTypeBuilder *)type;
-
-	if (tb && tb->generic_container)
-		mono_reflection_create_generic_class (tb, error);
 }
 
 static guint32 
@@ -1243,27 +1133,12 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		return 0;
 	}
 
-	if (strcmp (klass->name, "MethodBuilder") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "ConstructorBuilder") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "RuntimeType") == 0) {
+	if (strcmp (klass->name, "RuntimeType") == 0) {
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType *)obj, error);
 		return_val_if_nok (error, 0);
 		MonoClass *mc = mono_class_from_mono_type (type);
 		token = mono_metadata_token_from_dor (
 			mono_dynimage_encode_typedef_or_ref_full (assembly, type, mc->generic_container == NULL || create_open_instance));
-	} else if (strcmp (klass->name, "GenericTypeParameterBuilder") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "MonoCMethod") == 0 ||
 			   strcmp (klass->name, "MonoMethod") == 0) {
 		MonoReflectionMethod *m = (MonoReflectionMethod *)obj;
@@ -1317,18 +1192,6 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj,
 		return_val_if_nok (error, 0);
 		token = mono_metadata_token_from_dor (
 			mono_image_typedef_or_ref (assembly, type));
-	} else if (is_sre_generic_instance (klass) || is_sre_array (klass) || is_sre_byref (klass) || is_sre_pointer (klass)) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "FieldOnTypeBuilderInst") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "ConstructorOnTypeBuilderInst") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
-	} else if (strcmp (klass->name, "MethodOnTypeBuilderInst") == 0) {
-		/* These are handled in managed code */
-		g_assert_not_reached ();
 	} else {
 		g_error ("requested token for %s\n", klass->name);
 	}
@@ -1581,6 +1444,12 @@ is_sre_gparam_builder (MonoClass *klass)
 	check_corlib_type_cached (klass, "System.Reflection.Emit", "GenericTypeParameterBuilder");
 }
 
+static gboolean
+is_sre_enum_builder (MonoClass *klass)
+{
+	check_corlib_type_cached (klass, "System.Reflection.Emit", "EnumBuilder");
+}
+
 gboolean
 mono_is_sre_method_on_tb_inst (MonoClass *klass)
 {
@@ -1699,11 +1568,23 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 		param->param.num = gparam->index;
 
 		if (gparam->mbuilder) {
-			g_assert (gparam->mbuilder->generic_container);
+			if (!gparam->mbuilder->generic_container) {
+				gparam->mbuilder->generic_container = (MonoGenericContainer *)mono_image_alloc0 (image, sizeof (MonoGenericContainer));
+				gparam->mbuilder->generic_container->is_method = TRUE;
+				/*
+				 * Cannot set owner.method, since the MonoMethod is not created yet.
+				 * Set the image field instead, so type_in_image () works.
+				 */
+				gparam->mbuilder->generic_container->is_anonymous = TRUE;
+				gparam->mbuilder->generic_container->owner.image = image;
+			}
 			param->param.owner = gparam->mbuilder->generic_container;
 		} else if (gparam->tbuilder) {
-			g_assert (gparam->tbuilder->generic_container);
-			param->param.owner = gparam->tbuilder->generic_container;
+			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)(gparam->tbuilder), error);
+			mono_error_assert_ok (error);
+			MonoClass *owner = mono_class_from_mono_type (type);
+			g_assert (owner->generic_container);
+			param->param.owner = owner->generic_container;
 		}
 
 		pklass = mono_class_from_generic_parameter_internal ((MonoGenericParam *) param);
@@ -1714,6 +1595,18 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 		mono_image_append_class_to_reflection_info_set (pklass);
 
 		return &pklass->byval_arg;
+	} else if (is_sre_enum_builder (klass)) {
+		MonoReflectionEnumBuilder *ebuilder = (MonoReflectionEnumBuilder *)ref;
+
+		return mono_reflection_type_get_handle ((MonoReflectionType*)ebuilder->tb, error);
+	} else if (is_sre_type_builder (klass)) {
+		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)ref;
+
+		/* This happens when a finished type references an unfinished one. Have to create the minimal type */
+		reflection_setup_internal_class (tb, error);
+		mono_error_assert_ok (error);
+		g_assert (ref->type);
+		return ref->type;
 	}
 
 	g_error ("Cannot handle corlib user type %s", mono_type_full_name (&mono_object_class(ref)->byval_arg));
@@ -1875,12 +1768,6 @@ gboolean
 mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 {
 	return FALSE;
-}
-
-void
-mono_reflection_init_type_builder_generics (MonoObject *type, MonoError *error)
-{
-	mono_error_init (error);
 }
 
 #endif /* !DISABLE_REFLECTION_EMIT */
@@ -2479,6 +2366,7 @@ reflection_setup_internal_class (MonoReflectionTypeBuilder *tb, MonoError *error
 	tb->type.type = &klass->byval_arg;
 
 	if (tb->nesting_type) {
+		reflection_setup_internal_class ((MonoReflectionTypeBuilder*)tb->nesting_type, error);
 		g_assert (tb->nesting_type->type);
 		MonoType *nesting_type = mono_reflection_type_get_handle (tb->nesting_type, error);
 		if (!is_ok (error)) goto failure;
@@ -2498,49 +2386,29 @@ failure:
 }
 
 /**
- * ves_icall_TypeBuilder_setup_internal_class:
- * @tb: a TypeBuilder object
- *
- * (icall)
- * Creates a MonoClass that represents the TypeBuilder.
- * This is a trick that lets us simplify a lot of reflection code
- * (and will allow us to support Build and Run assemblies easier).
- *
- */
-void
-ves_icall_TypeBuilder_setup_internal_class (MonoReflectionTypeBuilder *tb)
-{
-	MonoError error;
-	(void) reflection_setup_internal_class (tb, &error);
-	mono_error_set_pending_exception (&error);
-}
-
-/**
- * mono_reflection_create_generic_class:
+ * reflection_create_generic_class:
  * @tb: a TypeBuilder object
  * @error: set on error
  *
  * Creates the generic class after all generic parameters have been added.
  * On success returns TRUE, on failure returns FALSE and sets @error.
- * 
  */
-gboolean
-mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb, MonoError *error)
+static gboolean
+reflection_create_generic_class (MonoReflectionTypeBuilder *tb, MonoError *error)
 {
-
 	MonoClass *klass;
 	int count, i;
 
 	mono_error_init (error);
 
+	reflection_setup_internal_class (tb, error);
+
 	klass = mono_class_from_mono_type (tb->type.type);
 
 	count = tb->generic_params ? mono_array_length (tb->generic_params) : 0;
 
-	if (klass->generic_container || (count == 0))
+	if (count == 0)
 		return TRUE;
-
-	g_assert (tb->generic_container && (tb->generic_container->owner.klass == klass));
 
 	klass->generic_container = (MonoGenericContainer *)mono_image_alloc0 (klass->image, sizeof (MonoGenericContainer));
 
@@ -2812,14 +2680,14 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 
 	if (rmb->generic_params) {
 		int count = mono_array_length (rmb->generic_params);
-		MonoGenericContainer *container = rmb->generic_container;
+		MonoGenericContainer *container;
 
-		g_assert (container);
-
+		container = (MonoGenericContainer *)mono_image_alloc0 (klass->image, sizeof (MonoGenericContainer));
+		container->is_method = TRUE;
+		container->is_anonymous = FALSE;
 		container->type_argc = count;
 		container->type_params = image_g_new0 (image, MonoGenericParamFull, count);
 		container->owner.method = m;
-		container->is_anonymous = FALSE; // Method is now known, container is no longer anonymous
 
 		m->is_generic = TRUE;
 		mono_method_set_generic_container (m, container);
@@ -2831,6 +2699,12 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 			mono_error_assert_ok (error);
 			MonoGenericParamFull *param = (MonoGenericParamFull *) gp_type->data.generic_param;
 			container->type_params [i] = *param;
+			container->type_params [i].param.owner = container;
+
+			gp->type.type->data.generic_param = (MonoGenericParam*)&container->type_params [i];
+
+			MonoClass *gklass = mono_class_from_mono_type (gp_type);
+			gklass->wastypebuilder = TRUE;
 		}
 
 		/*
@@ -2962,13 +2836,14 @@ ctorbuilder_to_mono_method (MonoClass *klass, MonoReflectionCtorBuilder* mb, Mon
 	MonoMethodSignature *sig;
 
 	mono_loader_lock ();
+
+	if (!mono_reflection_methodbuilder_from_ctor_builder (&rmb, mb, error))
+		return NULL;
+
 	g_assert (klass->image != NULL);
 	sig = ctor_builder_to_signature (klass->image, mb, error);
 	mono_loader_unlock ();
 	return_val_if_nok (error, NULL);
-
-	if (!mono_reflection_methodbuilder_from_ctor_builder (&rmb, mb, error))
-		return NULL;
 
 	mb->mhandle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
@@ -2991,13 +2866,14 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilder* mb,
 	mono_error_init (error);
 
 	mono_loader_lock ();
+
+	if (!mono_reflection_methodbuilder_from_method_builder (&rmb, mb, error))
+		return NULL;
+
 	g_assert (klass->image != NULL);
 	sig = method_builder_to_signature (klass->image, mb, error);
 	mono_loader_unlock ();
 	return_val_if_nok (error, NULL);
-
-	if (!mono_reflection_methodbuilder_from_method_builder (&rmb, mb, error))
-		return NULL;
 
 	mb->mhandle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
@@ -3180,7 +3056,7 @@ ensure_runtime_vtable (MonoClass *klass, MonoError *error)
 		}
 	} else if (klass->generic_class){
 		if (!ensure_generic_class_runtime_vtable (klass, error)) {
-			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+			mono_class_set_type_load_failure (klass, "Could not initialize vtable for generic class due to: %s", mono_error_get_message (error));
 			return FALSE;
 		}
 	}
@@ -3312,8 +3188,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	if (tb->class_size) {
 		if ((tb->packing_size & 0xffffff00) != 0) {
-			char *err_msg = mono_image_strdup_printf (klass->image, "Could not load struct '%s' with packing size %d >= 256", klass->name, tb->packing_size);
-			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, err_msg);
+			mono_class_set_type_load_failure (klass, "Could not load struct '%s' with packing size %d >= 256", klass->name, tb->packing_size);
 			return;
 		}
 		klass->packing_size = tb->packing_size;
@@ -3508,7 +3383,7 @@ remove_instantiations_of_and_ensure_contents (gpointer key,
 		MonoClass *inst_klass = mono_class_from_mono_type (type);
 		//Ensure it's safe to use it.
 		if (!fix_partial_generic_class (inst_klass, error)) {
-			mono_class_set_failure (inst_klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+			mono_class_set_type_load_failure (inst_klass, "Could not initialized generic type instance due to: %s", mono_error_get_message (error));
 			// Marked the class with failure, but since some other instantiation already failed,
 			// just report that one, and swallow the error from this one.
 			if (already_failed)
@@ -3529,6 +3404,9 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	int i;
 
 	mono_error_init (&error);
+
+	reflection_create_generic_class (tb, &error);
+	mono_error_assert_ok (&error);
 
 	domain = mono_object_domain (tb);
 	klass = mono_class_from_mono_type (tb->type.type);
@@ -3572,6 +3450,12 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 		for (i = 0; i < mono_array_length (tb->subtypes); ++i) {
 			MonoReflectionTypeBuilder *subtb = mono_array_get (tb->subtypes, MonoReflectionTypeBuilder*, i);
 			mono_class_alloc_ext (klass);
+
+			if (!subtb->type.type) {
+				reflection_setup_internal_class (subtb, &error);
+				mono_error_assert_ok (&error);
+			}
+
 			MonoType *subtype = mono_reflection_type_get_handle ((MonoReflectionType*)subtb, &error);
 			if (!is_ok (&error)) goto failure;
 			klass->ext->nested_classes = g_list_prepend_image (klass->image, klass->ext->nested_classes, mono_class_from_mono_type (subtype));
@@ -3610,6 +3494,16 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 
 	klass->wastypebuilder = TRUE;
 
+	if (tb->generic_params) {
+		for (i = 0; i < mono_array_length (tb->generic_params); i++) {
+			MonoReflectionGenericParam *gparam = (MonoReflectionGenericParam *)mono_array_get (tb->generic_params, gpointer, i);
+			MonoType *param_type = mono_reflection_type_get_handle ((MonoReflectionType*)gparam, &error);
+			MonoClass *gklass = mono_class_from_mono_type (param_type);
+
+			gklass->wastypebuilder = TRUE;
+		}
+	}
+
 	/* 
 	 * If we are a generic TypeBuilder, there might be instantiations in the type cache
 	 * which have type System.Reflection.MonoGenericClass, but after the type is created, 
@@ -3631,7 +3525,7 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	mono_loader_unlock ();
 
 	if (klass->enumtype && !mono_class_is_valid_enum (klass)) {
-		mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		mono_class_set_type_load_failure (klass, "Not a valid enumeration");
 		mono_error_set_type_load_class (&error, klass, "Not a valid enumeration");
 		goto failure_unlocked;
 	}
@@ -3645,7 +3539,7 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	return res;
 
 failure:
-	mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+	mono_class_set_type_load_failure (klass, "TypeBuilder could not create runtime class due to: %s", mono_error_get_message (&error));
 	klass->wastypebuilder = TRUE;
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
@@ -3653,52 +3547,6 @@ failure_unlocked:
 	mono_error_set_pending_exception (&error);
 	return NULL;
 }
-
-static gboolean
-reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam, MonoError *error)
-{
-	MonoImage *image;
-
-	mono_error_init (error);
-
-	image = &gparam->tbuilder->module->dynamic_image->image;
-
-	if (gparam->mbuilder) {
-		if (!gparam->mbuilder->generic_container) {
-			MonoType *tb = mono_reflection_type_get_handle ((MonoReflectionType*)gparam->mbuilder->type, error);
-			return_val_if_nok (error, FALSE);
-
-			MonoClass *klass = mono_class_from_mono_type (tb);
-			gparam->mbuilder->generic_container = (MonoGenericContainer *)mono_image_alloc0 (klass->image, sizeof (MonoGenericContainer));
-			gparam->mbuilder->generic_container->is_method = TRUE;
-			/* 
-			 * Cannot set owner.method, since the MonoMethod is not created yet.
-			 * Set the image field instead, so type_in_image () works.
-			 */
-			gparam->mbuilder->generic_container->is_anonymous = TRUE;
-			gparam->mbuilder->generic_container->owner.image = klass->image;
-		}
-	} else if (gparam->tbuilder) {
-		if (!gparam->tbuilder->generic_container) {
-			MonoType *tb = mono_reflection_type_get_handle ((MonoReflectionType*)gparam->tbuilder, error);
-			return_val_if_nok (error, FALSE);
-			MonoClass *klass = mono_class_from_mono_type (tb);
-			gparam->tbuilder->generic_container = (MonoGenericContainer *)mono_image_alloc0 (klass->image, sizeof (MonoGenericContainer));
-			gparam->tbuilder->generic_container->owner.klass = klass;
-		}
-	}
-
-	return TRUE;
-}
-
-void
-ves_icall_GenericTypeParameterBuilder_initialize (MonoReflectionGenericParam *gparam)
-{
-	MonoError error;
-	(void) reflection_initialize_generic_parameter (gparam, &error);
-	mono_error_set_pending_exception (&error);
-}
-
 
 typedef struct {
 	MonoMethod *handle;
@@ -4122,19 +3970,6 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
 }
 
 void
-ves_icall_TypeBuilder_setup_internal_class (MonoReflectionTypeBuilder *tb)
-{
-	g_assert_not_reached ();
-}
-
-gboolean
-mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb, MonoError *error)
-{
-	g_assert_not_reached ();
-	return FALSE;
-}
-
-void
 mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 {
 	g_error ("This mono runtime was configured with --enable-minimal=reflection_emit, so System.Reflection.Emit is not supported.");
@@ -4183,12 +4018,6 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	return NULL;
 }
 
-void
-ves_icall_GenericTypeParameterBuilder_initialize_generic_parameter (MonoReflectionGenericParam *gparam)
-{
-	g_assert_not_reached ();
-}
-
 void 
 ves_icall_DynamicMethod_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 {
@@ -4205,27 +4034,12 @@ mono_reflection_type_get_handle (MonoReflectionType* ref, MonoError *error)
 
 #endif /* DISABLE_REFLECTION_EMIT */
 
-#ifndef DISABLE_REFLECTION_EMIT
-MonoMethod*
-mono_reflection_method_builder_to_mono_method (MonoReflectionMethodBuilder *mb, MonoError *error)
+void
+mono_sre_generic_param_table_entry_free (GenericParamTableEntry *entry)
 {
-	MonoType *tb;
-	MonoClass *klass;
-
-	tb = mono_reflection_type_get_handle ((MonoReflectionType*)mb->type, error);
-	return_val_if_nok (error, NULL);
-	klass = mono_class_from_mono_type (tb);
-
-	return methodbuilder_to_mono_method (klass, mb, error);
+	mono_gc_deregister_root ((char*) &entry->gparam);
+	g_free (entry);
 }
-#else /* DISABLE_REFLECTION_EMIT */
-MonoMethod*
-mono_reflection_method_builder_to_mono_method (MonoReflectionMethodBuilder *mb, MonoError *error)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-#endif /* DISABLE_REFLECTION_EMIT */
 
 gint32
 ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilder *mb, MonoObject *obj, gboolean create_open_instance)
@@ -4284,21 +4098,6 @@ ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilder *mb, gui
 	mono_loader_unlock ();
 
 	return obj;
-}
-
-/**
- * ves_icall_TypeBuilder_create_generic_class:
- * @tb: a TypeBuilder object
- *
- * (icall)
- * Creates the generic class after all generic parameters have been added.
- */
-void
-ves_icall_TypeBuilder_create_generic_class (MonoReflectionTypeBuilder *tb)
-{
-	MonoError error;
-	(void) mono_reflection_create_generic_class (tb, &error);
-	mono_error_set_pending_exception (&error);
 }
 
 #ifndef DISABLE_REFLECTION_EMIT

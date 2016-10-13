@@ -39,6 +39,7 @@ using System.Security.Cryptography.X509Certificates;
 using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 #if !MOBILE
 using System.Reflection;
@@ -107,6 +108,9 @@ namespace Mono.Net.Security
 				initialized = true;
 			}
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal extern static bool IsBtlsSupported ();
 #endif
 
 		static object locker = new object ();
@@ -156,12 +160,9 @@ namespace Mono.Net.Security
 					return;
 				providerRegistration = new Dictionary<string,string> ();
 				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
-				if (Mono.Btls.MonoBtlsProvider.IsSupported ()) {
+				providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
+				if (IsBtlsSupported ())
 					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
-					providerRegistration.Add ("default", "Mono.Btls.MonoBtlsProvider");
-				} else {
-					providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
-				}
 				X509Helper2.Initialize ();
 			}
 		}

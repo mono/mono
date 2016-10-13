@@ -1092,7 +1092,11 @@ namespace System.Net {
 
             internal long ContentLength;
             internal long Length;
+#if MONO
+            const int Offset = 0;
+#else
             internal int  Offset;
+#endif
 
 
             internal ProgressData Progress;
@@ -1365,8 +1369,10 @@ namespace System.Net {
                 WebClient = webClient;
             }
 
+#if !MONO
             internal long Length;
             internal int  Offset;
+#endif
 
             internal ProgressData Progress;
 

@@ -111,16 +111,6 @@ mono_object_is_alive (MonoObject* o)
 	return TRUE;
 }
 
-void
-mono_gc_enable_events (void)
-{
-}
-
-void
-mono_gc_enable_alloc_events (void)
-{
-}
-
 int
 mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
@@ -472,6 +462,16 @@ mono_gc_get_logfile (void)
 }
 
 void
+mono_gc_params_set (const char* options)
+{
+}
+
+void
+mono_gc_debug_set (const char* options)
+{
+}
+
+void
 mono_gc_conservatively_scan_area (void *start, void *end)
 {
 	g_assert_not_reached ();
@@ -556,8 +556,9 @@ mono_gc_is_null (void)
 	return TRUE;
 }
 #else
-	#ifdef _MSC_VER
-		// Quiet Visual Studio linker warning, LNK4221, in cases when this source file intentional ends up empty.
-		void __mono_win32_null_gc_quiet_lnk4221(void) {}
-	#endif
+
+#ifdef _MSC_VER
+// Quiet Visual Studio linker warning, LNK4221, in cases when this source file intentional ends up empty.
+void __mono_win32_null_gc_quiet_lnk4221(void) {}
+#endif
 #endif /* HAVE_NULL_GC */

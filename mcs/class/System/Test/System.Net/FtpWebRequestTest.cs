@@ -231,11 +231,28 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void UploadFile1 ()
+		public void UploadFile1_v4 ()
 		{
-			ServerPut sp = new ServerPut ();
+			UploadFile1 (false);
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void UploadFile1_v6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
+			UploadFile1 (true);
+		}
+
+		void UploadFile1 (bool ipv6)
+		{
+			ServerPut sp = new ServerPut (ipv6);
 			sp.Start ();
-			string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", sp.IPAddress, sp.Port);
+			string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", EncloseIPv6 (sp.IPAddress), sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
 				ftp.KeepAlive = false;
@@ -264,15 +281,32 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void UploadFile_WebClient ()
+		public void UploadFile_WebClient_v4 ()
 		{
-			ServerPut sp = new ServerPut ();
+			UploadFile_WebClient (false);
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void UploadFile_WebClient_v6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
+			UploadFile_WebClient (true);
+		}
+
+		public void UploadFile_WebClient (bool ipv6)
+		{
+			ServerPut sp = new ServerPut (ipv6);
 			File.WriteAllText (_tempFile, "0123456789");
 			sp.Start ();
 
 			using (WebClient m_WebClient = new WebClient())
 			{
-				string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", sp.IPAddress, sp.Port);
+				string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", EncloseIPv6 (sp.IPAddress), sp.Port);
 				
 				m_WebClient.UploadFile(uri, _tempFile);
 			}
@@ -285,15 +319,27 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void DownloadFile1 ()
+		public void DownloadFile1_v4 ()
 		{
-			DownloadFile (new ServerDownload ());
+			DownloadFile (new ServerDownload (false));
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void DownloadFile1_v6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
+			DownloadFile (new ServerDownload (true));
 		}
 
 		void DownloadFile (ServerDownload sp)
 		{
 			sp.Start ();
-			string uri = String.Format ("ftp://{0}:{1}/file.txt", sp.IPAddress, sp.Port);
+			string uri = String.Format ("ftp://{0}:{1}/file.txt", EncloseIPv6 (sp.IPAddress), sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
 				ftp.KeepAlive = false;
@@ -320,22 +366,50 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void DownloadFile2 ()
+		public void DownloadFile2_v4 ()
 		{
 			// Some embedded FTP servers in Industrial Automation Hardware report
 			// the PWD using backslashes, but allow forward slashes for CWD.
-			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/"));
+			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", false));
 		}
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void DeleteFile1 ()
+		public void DownloadFile2_v6 ()
 		{
-			ServerDeleteFile sp = new ServerDeleteFile ();
+			// Some embedded FTP servers in Industrial Automation Hardware report
+			// the PWD using backslashes, but allow forward slashes for CWD.
+			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", true));
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void DeleteFile1_v4 ()
+		{
+			DeleteFile1 (false);
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void DeleteFile1_v6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
+			DeleteFile1 (true);
+		}
+
+		void DeleteFile1 (bool ipv6)
+		{
+			ServerDeleteFile sp = new ServerDeleteFile (ipv6);
 			sp.Start ();
-			string uri = String.Format ("ftp://{0}:{1}/file.txt", sp.IPAddress, sp.Port);
+			string uri = String.Format ("ftp://{0}:{1}/file.txt", EncloseIPv6 (sp.IPAddress), sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
 				Console.WriteLine (ftp.RequestUri);
@@ -360,11 +434,28 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void ListDirectory1 ()
+		public void ListDirectory1_v4 ()
 		{
-			ServerListDirectory sp = new ServerListDirectory ();
+			ListDirectory1 (false);
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void ListDirectory1_v6 ()
+		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
+			ListDirectory1 (true);
+		}
+
+		void ListDirectory1 (bool ipv6)
+		{
+			ServerListDirectory sp = new ServerListDirectory (ipv6);
 			sp.Start ();
-			string uri = String.Format ("ftp://{0}:{1}/somedir/", sp.IPAddress, sp.Port);
+			string uri = String.Format ("ftp://{0}:{1}/somedir/", EncloseIPv6 (sp.IPAddress), sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
 				Console.WriteLine (ftp.RequestUri);
@@ -387,7 +478,20 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		string EncloseIPv6 (IPAddress address)
+		{
+			if (address.AddressFamily == AddressFamily.InterNetwork)
+				return address.ToString ();
+			
+			return String.Format ("[{0}]", address.ToString ());
+		}
+
 		class ServerListDirectory : FtpServer {
+			public ServerListDirectory (bool ipv6)
+				: base (ipv6)
+			{
+			}
+
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
@@ -405,24 +509,12 @@ namespace MonoTests.System.Net
 				}
 
 				string str = reader.ReadLine ();
-				if (str != "PASV") {
-					Where = "PASV";
+				string resp = FormatPassiveResponse (str);
+				if (resp == null) {
 					client.Close ();
 					return;
 				}
-
-				IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
-				byte [] addr_bytes = end_data.Address.GetAddressBytes ();
-				byte [] port = new byte [2];
-				port[0] = (byte) ((end_data.Port >> 8) & 255);
-				port[1] = (byte) (end_data.Port & 255);
-				StringBuilder sb = new StringBuilder ("227 Passive (");
-				foreach (byte b in addr_bytes) {
-					sb.AppendFormat ("{0},", b);	
-				}
-				sb.AppendFormat ("{0},", port [0]);	
-				sb.AppendFormat ("{0})", port [1]);	
-				writer.WriteLine (sb.ToString ());
+				writer.WriteLine (resp);
 				writer.Flush ();
 
 				str = reader.ReadLine ();
@@ -449,6 +541,11 @@ namespace MonoTests.System.Net
 		}
 
 		class ServerDeleteFile : FtpServer {
+			public ServerDeleteFile (bool ipv6)
+				: base (ipv6)
+			{
+			}
+
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
@@ -485,12 +582,13 @@ namespace MonoTests.System.Net
 
 			string Pwd, Cwd;
 
-			public ServerDownload ()
-				: this (null, null)
+			public ServerDownload (bool ipv6)
+				: this (null, null, ipv6)
 			{
 			}
 
-			public ServerDownload (string pwd, string cwd)
+			public ServerDownload (string pwd, string cwd, bool ipv6)
+				: base (ipv6)
 			{
 				Pwd = pwd ?? "/home/someuser";
 				Cwd = cwd ?? "/home/someuser/";
@@ -513,24 +611,12 @@ namespace MonoTests.System.Net
 				}
 
 				string str = reader.ReadLine ();
-				if (str != "PASV") {
-					Where = "PASV";
+				string resp = FormatPassiveResponse (str);
+				if (resp == null) {
 					client.Close ();
 					return;
 				}
-
-				IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
-				byte [] addr_bytes = end_data.Address.GetAddressBytes ();
-				byte [] port = new byte [2];
-				port[0] = (byte) ((end_data.Port >> 8) & 255);
-				port[1] = (byte) (end_data.Port & 255);
-				StringBuilder sb = new StringBuilder ("227 Passive (");
-				foreach (byte b in addr_bytes) {
-					sb.AppendFormat ("{0},", b);	
-				}
-				sb.AppendFormat ("{0},", port [0]);	
-				sb.AppendFormat ("{0})", port [1]);	
-				writer.WriteLine (sb.ToString ());
+				writer.WriteLine (resp);
 				writer.Flush ();
 
 				str = reader.ReadLine ();
@@ -559,6 +645,11 @@ namespace MonoTests.System.Net
 		class ServerPut : FtpServer {
 			public List<byte> result = new List<byte> ();
 			
+			public ServerPut (bool ipv6)
+				: base (ipv6)
+			{
+			}
+
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
@@ -576,24 +667,12 @@ namespace MonoTests.System.Net
 				}
 
 				string str = reader.ReadLine ();
-				if (str != "PASV") {
-					Where = "PASV";
+				string resp = FormatPassiveResponse (str);
+				if (resp == null) {
 					client.Close ();
 					return;
 				}
-
-				IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
-				byte [] addr_bytes = end_data.Address.GetAddressBytes ();
-				byte [] port = new byte [2];
-				port[0] = (byte) ((end_data.Port >> 8) & 255);
-				port[1] = (byte) (end_data.Port & 255);
-				StringBuilder sb = new StringBuilder ("227 Passive (");
-				foreach (byte b in addr_bytes) {
-					sb.AppendFormat ("{0},", b);	
-				}
-				sb.AppendFormat ("{0},", port [0]);	
-				sb.AppendFormat ("{0})", port [1]);	
-				writer.WriteLine (sb.ToString ());
+				writer.WriteLine (resp);
 				writer.Flush ();
 
 				str = reader.ReadLine ();
@@ -627,16 +706,18 @@ namespace MonoTests.System.Net
 			protected Socket control;
 			protected Socket data;
 			protected ManualResetEvent evt;
+			protected bool ipv6;
 			public string Where = "";
 
-			public FtpServer ()
+			public FtpServer (bool ipv6)
 			{
-				control = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				control.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+				control = new Socket (ipv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				control.Bind (new IPEndPoint (ipv6 ? IPAddress.IPv6Loopback : IPAddress.Loopback, 0));
 				control.Listen (1);
-				data = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				data.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+				data = new Socket (ipv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				data.Bind (new IPEndPoint (ipv6 ? IPAddress.IPv6Loopback : IPAddress.Loopback, 0));
 				data.Listen (1);
+				this.ipv6 = ipv6;
 			}
 
 			public void Start ()
@@ -720,7 +801,39 @@ namespace MonoTests.System.Net
 				writer.Flush ();
 				return true;
 			}
-			
+
+			protected string FormatPassiveResponse (string request)
+			{
+				if (ipv6) {
+					if (request != "EPSV") {
+						Where = "EPSV";
+						return null;
+					}
+
+					IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
+					return String.Format ("229 Extended Passive (|||{0}|)", end_data.Port);
+				}
+				else {
+					if (request != "PASV") {
+						Where = "PASV";
+						return null;
+					}
+
+					IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
+					byte [] addr_bytes = end_data.Address.GetAddressBytes ();
+					byte [] port = new byte [2];
+					port[0] = (byte) ((end_data.Port >> 8) & 255);
+					port[1] = (byte) (end_data.Port & 255);
+					StringBuilder sb = new StringBuilder ("227 Passive (");
+					foreach (byte b in addr_bytes) {
+						sb.AppendFormat ("{0},", b);	
+					}
+					sb.AppendFormat ("{0},", port [0]);	
+					sb.AppendFormat ("{0})", port [1]);	
+					return sb.ToString ();
+				}
+			}
+
 			public IPAddress IPAddress {
 				get { return ((IPEndPoint) control.LocalEndPoint).Address; }
 			}

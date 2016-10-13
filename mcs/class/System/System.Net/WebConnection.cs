@@ -83,7 +83,6 @@ namespace System.Net
 		HttpWebRequest connect_request;
 
 		Exception connect_exception;
-		static object classLock = new object ();
 		MonoTlsStream tlsStream;
 
 #if MONOTOUCH && !MONOTOUCH_TV && !MONOTOUCH_WATCH
@@ -257,14 +256,16 @@ namespace System.Net
 					connect_request.Credentials = creds;
 				}
 
-				for (int i = 0; i < challenge.Length; i++) {
-					var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
-					if (auth == null)
-						continue;
-					ntlm = (auth.ModuleAuthenticationType == "NTLM");
-					sb.Append ("\r\nProxy-Authorization: ");
-					sb.Append (auth.Message);
-					break;
+				if (creds != null) {
+					for (int i = 0; i < challenge.Length; i++) {
+						var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
+						if (auth == null)
+							continue;
+						ntlm = (auth.ModuleAuthenticationType == "NTLM");
+						sb.Append ("\r\nProxy-Authorization: ");
+						sb.Append (auth.Message);
+						break;
+					}
 				}
 			}
 
@@ -292,12 +293,14 @@ namespace System.Net
 				}
 
 				Data.StatusCode = status;
-				Data.Challenge = result.GetValues ("Proxy-Authentic");
+				Data.Challenge = result.GetValues ("Proxy-Authenticate");
 				Data.Headers = result;
 				return false;
-			} else if (status != 200) {
-				string msg = String.Format ("The remote server returned a {0} status code.", status);
-				HandleError (WebExceptionStatus.SecureChannelFailure, null, msg);
+			}
+
+			if (status != 200) {
+				Data.StatusCode = status;
+				Data.Headers = result;
 				return false;
 			}
 

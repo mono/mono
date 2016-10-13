@@ -68,7 +68,11 @@ AC_SUBST(libmono_cflags)
 AC_SUBST(libmono_ldflags)
 
 # Variable to have relocatable .pc files (lib, or lib64)
-reloc_libdir=`basename ${libdir}`
+# realpath isn't always available, and requires that all but the tip of the provided
+# path exists. Fall back to the old behaviour, but realpath allows depth >1
+# e.g. Debian puts Mono in /usr/bin and libs in /usr/lib/x86_64-linux-gnu/ which is
+# too deep for the old method to work
+reloc_libdir=`realpath --relative-to=${prefix} ${libdir} 2> /dev/null || basename ${libdir}`
 AC_SUBST(reloc_libdir)
 
 # Set to yes if Unix sockets cannot be created in an anonymous namespace
@@ -1159,20 +1163,6 @@ AC_COMPILE_IFELSE([
    AC_MSG_RESULT(yes)
 ], [
    have_visibility_hidden=no
-   AC_MSG_RESULT(no)
-])
-
-AC_MSG_CHECKING(for deprecated __attribute__)
-AC_TRY_COMPILE([
-     int doit (void) __attribute__ ((deprecated));
-     int doit (void) { return 0; }
-], [
-	return 0;
-], [
-   have_deprecated=yes
-   AC_MSG_RESULT(yes)
-], [
-   have_deprecated=no
    AC_MSG_RESULT(no)
 ])
 
@@ -2672,12 +2662,6 @@ fi
 
 AC_ARG_ENABLE(bcl-opt, [  --disable-bcl-opt	BCL is compiled with no optimizations (allows accurate BCL debugging)], test_bcl_opt=$enableval, test_bcl_opt=yes)
 
-AC_ARG_ENABLE(perf-events, [  --enable-perf-events Enable using `perf` for profiling on Linux], test_perf_events=$enableval, test_perf_events=no)
-if test "x$test_perf_events" = "xyes"; then
-	AC_DEFINE(ENABLE_PERF_EVENTS, 1, [Enable using `perf` for profiling on Linux])
-	AC_SUBST(ENABLE_PERF_EVENTS)
-fi
-
 AC_MSG_CHECKING([if big-arrays are to be enabled])
 AC_ARG_ENABLE(big-arrays,  [  --enable-big-arrays	Enable the allocation and indexing of arrays greater than Int32.MaxValue], enable_big_arrays=$enableval, enable_big_arrays=no)
 if test "x$enable_big_arrays" = "xyes" ; then
@@ -3935,7 +3919,7 @@ dnl **************
 dnl ***  Btls  ***
 dnl **************
 
-AC_ARG_ENABLE(btls, [  --disable-blts             Disable the BoringTls provider], enable_btls=$enableval, enable_btls=$BTLS_SUPPORTED)
+AC_ARG_ENABLE(btls, [  --disable-btls             Disable the BoringTls provider], enable_btls=$enableval, enable_btls=$BTLS_SUPPORTED)
 AC_ARG_WITH(btls_android_ndk, [  --with-btls-android-ndk        Android NDK for BoringTls])
 
 AM_CONDITIONAL(BTLS, test x$enable_btls = xyes)
@@ -3957,7 +3941,11 @@ if test "x$enable_btls" = "xyes"; then
 	case "$BTLS_PLATFORM" in
 	i386)
 		btls_arch=i386
-		btls_cflags="-m32 -arch i386"
+		btls_cflags="-m32"
+		case $host_os in
+			darwin*)
+				btls_cflags="$btls_cflags -arch i386"
+		esac
 		;;
 	x86_64)
 		btls_arch=x86_64

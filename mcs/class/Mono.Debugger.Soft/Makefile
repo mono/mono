@@ -16,7 +16,8 @@ VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
 ifdef VALID_TEST_PROFILE
 
 TEST_HELPERS_SOURCES = \
-	../test-helpers/NetworkHelpers.cs
+	../test-helpers/NetworkHelpers.cs \
+	Test/TypeLoadClass.cs
 
 test-local: dtest-app.exe dtest-excfilter.exe
 

@@ -158,6 +158,7 @@ EXTRA_DIST =			\
 	update_submodules		\
 	mcs.in				\
 	dmcs.in				\
+	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\

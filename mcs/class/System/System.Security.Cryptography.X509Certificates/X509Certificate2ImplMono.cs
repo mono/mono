@@ -52,7 +52,6 @@ namespace System.Security.Cryptography.X509Certificates
 	{
 		bool _archived;
 		X509ExtensionCollection _extensions;
-		string _serial;
 		PublicKey _publicKey;
 		X500DistinguishedName issuer_name;
 		X500DistinguishedName subject_name;
@@ -483,6 +482,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			MX.X509Certificate cert = null;
 			if (password == null) {
 				try {
@@ -558,7 +558,6 @@ namespace System.Security.Cryptography.X509Certificates
 			_cert = null;
 			_archived = false;
 			_extensions = null;
-			_serial = null;
 			_publicKey = null;
 			issuer_name = null;
 			subject_name = null;
@@ -717,6 +716,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal MX.X509Certificate MonoCertificate {
 			get { return _cert; }
+		}
+
+		internal override X509Certificate2Impl FallbackImpl {
+			get { return this; }
 		}
 	}
 }

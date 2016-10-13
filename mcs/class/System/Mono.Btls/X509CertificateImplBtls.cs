@@ -24,12 +24,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #if SECURITY_DEP
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
+#if MONO_SECURITY_ALIAS
+using MX = MonoSecurity::Mono.Security.X509;
+#else
+using MX = Mono.Security.X509;
+#endif
+
 using System;
 using System.Text;
+using System.Collections;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using MX = Mono.Security.X509;
+using Mono.Security.Cryptography;
 
 namespace Mono.Btls
 {
@@ -115,12 +126,12 @@ namespace Mono.Btls
 			return true;
 		}
 
-		protected override byte [] GetCertHash (bool lazy)
+		protected override byte[] GetCertHash (bool lazy)
 		{
 			return X509.GetCertHash ();
 		}
 
-		public override byte [] GetRawCertData ()
+		public override byte[] GetRawCertData ()
 		{
 			return X509.GetRawData (MonoBtlsX509Format.DER);
 		}
@@ -169,7 +180,7 @@ namespace Mono.Btls
 			return PublicKey.EncodedParameters.RawData;
 		}
 
-		public override byte [] Export (X509ContentType contentType, byte [] password)
+		public override byte[] Export (X509ContentType contentType, byte[] password)
 		{
 			ThrowIfContextInvalid ();
 
@@ -232,10 +243,10 @@ namespace Mono.Btls
 				throw new InvalidOperationException ();
 			if (fallback != null)
 				return;
-			fallback = X509Helper2.Import (GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet);
+			fallback = X509Helper2.Import (GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet, true);
 		}
 
-		internal X509Certificate2Impl FallbackImpl {
+		internal override X509Certificate2Impl FallbackImpl {
 			get {
 				MustFallback ();
 				return fallback;
@@ -259,7 +270,7 @@ namespace Mono.Btls
 		}
 
 		public override bool HasPrivateKey {
-			get { return FallbackImpl.HasPrivateKey; }
+			get { return privateKey != null; }
 		}
 
 		public override X500DistinguishedName IssuerName {
@@ -278,7 +289,12 @@ namespace Mono.Btls
 		}
 
 		public override AsymmetricAlgorithm PrivateKey {
-			get { return FallbackImpl.PrivateKey; }
+			get {
+				if (privateKey == null || !privateKey.IsRsa)
+					return null;
+				var bytes = privateKey.GetBytes (true);
+				return PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
+			}
 			set { FallbackImpl.PrivateKey = value; }
 		}
 
@@ -325,19 +341,62 @@ namespace Mono.Btls
 			return FallbackImpl.GetNameInfo (nameType, forIssuer);
 		}
 
-		public override void Import (byte [] data, string password, X509KeyStorageFlags keyStorageFlags)
+		public override void Import (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			if (password == null) {
-				// Does it look like PEM?
-				if ((data.Length > 0) && (data [0] != 0x30))
-					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
-				else
-					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
-				return;
+				try {
+					Import (data);
+				} catch (Exception e) {
+					try {
+						 ImportPkcs12 (data, null);
+					} catch {
+						string msg = Locale.GetText ("Unable to decode certificate.");
+						// inner exception is the original (not second) exception
+						throw new CryptographicException (msg, e);
+					}
+				}
+			} else {
+				// try PKCS#12
+				try {
+					ImportPkcs12 (data, password);
+				} catch (Exception e) {
+					try {
+						// it's possible to supply a (unrequired/unusued) password
+						// fix bug #79028
+						Import (data);
+					} catch {
+						string msg = Locale.GetText ("Unable to decode certificate.");
+						// inner exception is the original (not second) exception
+						throw new CryptographicException (msg, e);
+					}
+				}
 			}
+		}
 
+		void Import (byte[] data)
+		{
+			// Does it look like PEM?
+			if ((data.Length > 0) && (data [0] != 0x30))
+				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
+			else
+				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
+		}
+
+		void ImportPkcs12 (byte[] data, string password)
+		{
 			using (var pkcs12 = new MonoBtlsPkcs12 ()) {
-				pkcs12.Import (data, password);
+				if (string.IsNullOrEmpty (password)) {
+					try {
+						// Support both unencrypted PKCS#12..
+						pkcs12.Import (data, null);
+					} catch {
+						// ..and PKCS#12 encrypted with an empty password
+						pkcs12.Import (data, string.Empty);
+					}
+				} else {
+					pkcs12.Import (data, password);
+				}
+
 				x509 = pkcs12.GetCertificate (0);
 				if (pkcs12.HasPrivateKey)
 					privateKey = pkcs12.GetPrivateKey ();
@@ -355,14 +414,60 @@ namespace Mono.Btls
 			}
 		}
 
-		public override byte [] Export (X509ContentType contentType, string password)
+		public override byte[] Export (X509ContentType contentType, string password)
 		{
-			return FallbackImpl.Export (contentType, password);
+			ThrowIfContextInvalid ();
+
+			switch (contentType) {
+			case X509ContentType.Cert:
+				return GetRawCertData ();
+			case X509ContentType.Pfx: // this includes Pkcs12
+				return ExportPkcs12 (password);
+			case X509ContentType.SerializedCert:
+				// TODO
+				throw new NotSupportedException ();
+			default:
+				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
+				throw new CryptographicException (msg);
+			}
+		}
+
+		byte[] ExportPkcs12 (string password)
+		{
+			var pfx = new MX.PKCS12 ();
+			try {
+				var attrs = new Hashtable ();
+				var localKeyId = new ArrayList ();
+				localKeyId.Add (new byte[] { 1, 0, 0, 0 });
+				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
+				if (password != null)
+					pfx.Password = password;
+				pfx.AddCertificate (new MX.X509Certificate (GetRawCertData ()), attrs);
+				if (IntermediateCertificates != null) {
+					for (int i = 0; i < IntermediateCertificates.Count; i++)
+						pfx.AddCertificate (new MX.X509Certificate (IntermediateCertificates [i].GetRawCertData ()));
+				}
+				var privateKey = PrivateKey;
+				if (privateKey != null)
+					pfx.AddPkcs8ShroudedKeyBag (privateKey, attrs);
+				return pfx.GetBytes ();
+			} finally {
+				pfx.Password = null;
+			}
 		}
 
 		public override bool Verify (X509Certificate2 thisCertificate)
 		{
-			return FallbackImpl.Verify (thisCertificate);
+			using (var chain = new MonoBtlsX509Chain ()) {
+				chain.AddCertificate (x509.Copy ());
+				if (intermediateCerts != null) {
+					for (int i = 0; i < intermediateCerts.Count; i++) {
+						var intermediate = (X509CertificateImplBtls)intermediateCerts [i];
+						chain.AddCertificate (intermediate.x509.Copy ());
+					}
+				}
+				return MonoBtlsProvider.ValidateCertificate (chain, null);
+			}
 		}
 
 		public override void Reset ()

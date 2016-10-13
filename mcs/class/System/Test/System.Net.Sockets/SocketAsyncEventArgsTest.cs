@@ -247,6 +247,25 @@ namespace MonoTests.System.Net.Sockets {
 			SocketAsyncEventArgsPoker saea = new SocketAsyncEventArgsPoker ();
 			saea.OnCompleted_ (null);
 		}
+
+		[Test]
+		public void TransparentDispose ()
+		{
+			var buffer = new byte[5];
+			var elements = new SendPacketsElement[2];
+			var utoken = new object();
+
+			var saea = new SocketAsyncEventArgs();
+			saea.SetBuffer(buffer, 0, 3);
+			saea.SendPacketsElements = elements;
+			saea.UserToken = utoken;
+
+			saea.Dispose();
+
+			Assert.AreEqual (buffer, saea.Buffer);
+			Assert.AreEqual (elements, saea.SendPacketsElements);
+			Assert.AreEqual (utoken, saea.UserToken);
+		}
 	}
 }
 

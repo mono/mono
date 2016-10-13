@@ -3844,13 +3844,14 @@ add_wrappers (MonoAotCompile *acfg)
 		csig->params [1] = &mono_defaults.exception_class->byval_arg;
 		add_method (acfg, get_runtime_invoke_sig (csig));
 
-		/* Assembly runtime-invoke (string, bool) [DoAssemblyResolve] */
-		csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
+		/* Assembly runtime-invoke (string, Assembly, bool) [DoAssemblyResolve] */
+		csig = mono_metadata_signature_alloc (mono_defaults.corlib, 3);
 		csig->hasthis = 1;
 		csig->ret = &(mono_class_load_from_name (
 											mono_defaults.corlib, "System.Reflection", "Assembly"))->byval_arg;
 		csig->params [0] = &mono_defaults.string_class->byval_arg;
-		csig->params [1] = &mono_defaults.boolean_class->byval_arg;
+		csig->params [1] = &(mono_class_load_from_name (mono_defaults.corlib, "System.Reflection", "Assembly"))->byval_arg;
+		csig->params [2] = &mono_defaults.boolean_class->byval_arg;
 		add_method (acfg, get_runtime_invoke_sig (csig));
 
 		/* runtime-invoke used by finalizers */
@@ -8895,13 +8896,13 @@ emit_extra_methods (MonoAotCompile *acfg)
 static void
 generate_aotid (guint8* aotid)
 {
-	gpointer *rand_handle;
+	gpointer rand_handle;
 	MonoError error;
 
 	mono_rand_open ();
 	rand_handle = mono_rand_init (NULL, 0);
 
-	mono_rand_try_get_bytes (rand_handle, aotid, 16, &error);
+	mono_rand_try_get_bytes (&rand_handle, aotid, 16, &error);
 	mono_error_assert_ok (&error);
 
 	mono_rand_close (rand_handle);
@@ -9813,7 +9814,7 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [1] = acfg;
 			user_data [2] = frag;
 			
-			handle = mono_threads_create_thread (compile_thread_main, (gpointer) user_data, 0, NULL);
+			handle = mono_threads_create_thread (compile_thread_main, (gpointer) user_data, NULL, NULL);
 			g_ptr_array_add (threads, handle);
 		}
 		g_free (methods);

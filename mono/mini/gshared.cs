@@ -1907,6 +1907,40 @@ public class Tests
 		bool success = zz == 0xAAAAAAAAAAAAAAAA;
 		return success ? 20 : 1;
 	}
+
+	void gsharedvt_try_at_offset_0<T> (ref T disposable)
+		where T : class, IDisposable {
+			try {
+				disposable.Dispose ();
+			} finally {
+				disposable = null;
+			}
+		}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static DateTimeOffset gsharedvt_vphi_inner<T> (T t) {
+		return DateTimeOffset.MinValue;
+	}
+
+	static DateTimeOffset gsharedvt_vphi<T> (T t) {
+		int[] arr = new int [10];
+
+		try {
+			DateTimeOffset v;
+			if (arr [0] == 0)
+				v = gsharedvt_vphi_inner (t);
+			else
+				v = gsharedvt_vphi_inner (t);
+			return v;
+		} catch {
+			return DateTimeOffset.MinValue;
+		}
+	}
+
+	static int test_0_gsharedvt_vphi_volatile () {
+		gsharedvt_vphi (0);
+		return 0;
+	}
 }
 
 // #13191

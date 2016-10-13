@@ -1,9 +1,21 @@
 if HOST_WIN32
 win32_sources = \
 	console-win32.c \
+	console-win32-internals.h \
+	file-io-windows.c \
+	file-io-windows-internals.h \
+	icall-windows.c \
+	icall-windows-internals.h \
+	marshal-windows.c \
+	marshal-windows-internals.h \
+	mono-security-windows.c \
+	mono-security-windows-internals.h \
+	process-windows.c \
+	process-windows-internals.h \
 	w32mutex-win32.c \
 	w32semaphore-win32.c \
-	w32event-win32.c
+	w32event-win32.c \
+	socket-io-windows.c
 
 platform_sources = $(win32_sources)
 
@@ -96,7 +108,7 @@ mono-config-dirs.lo: Makefile
 libmonoruntime_config_la_SOURCES = \
 	mono-config-dirs.h		\
 	mono-config-dirs.c
-libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
+libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" -DMONO_RELOC_LIBDIR=\"../$(reloc_libdir)\"
 
 CLEANFILES = mono-bundle.stamp
 
@@ -120,6 +132,7 @@ common_sources = \
 	console-io.h		\
 	coree.c 		\
 	coree.h 		\
+	coree-internals.h \
 	culture-info.h  	\
 	culture-info-tables.h	\
 	debug-helpers.c		\
@@ -137,10 +150,12 @@ common_sources = \
 	exception-internals.h	\
 	file-io.c		\
 	file-io.h		\
+	file-io-internals.h \
 	filewatcher.c		\
 	filewatcher.h		\
 	gc-internals.h		\
 	icall.c			\
+	icall-internals.h \
 	icall-def.h		\
 	image.c			\
 	image-internals.h	\
@@ -152,6 +167,7 @@ common_sources = \
 	lock-tracer.h		\
 	marshal.c		\
 	marshal.h		\
+	marshal-internals.h \
 	mempool.c		\
 	mempool.h		\
 	mempool-internals.h	\
@@ -189,6 +205,7 @@ common_sources = \
 	socket-io.h		\
 	process.c		\
 	process.h		\
+	process-internals.h \
 	profiler.c		\
 	profiler-private.h	\
 	rand.h			\

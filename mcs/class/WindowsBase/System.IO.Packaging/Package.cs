@@ -404,7 +404,12 @@ namespace System.IO.Packaging {
 				throw new FileFormatException ("Stream length cannot be zero with FileMode.Open");
 
 			Stream s = File.Open (path, packageMode, packageAccess, packageShare);
-			return Open (s, packageMode, packageAccess, true);
+			try {
+				return Open (s, packageMode, packageAccess, true);
+			} catch {
+				s.Close  ();
+				throw;
+			}
 		}
 
 		static Package OpenCore (Stream stream, FileMode packageMode, FileAccess packageAccess, bool ownsStream)

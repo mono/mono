@@ -40,6 +40,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class TargetTest {
 		
+		static bool isMono = Type.GetType ("Mono.Runtime", false) != null;
 		Engine			engine;
 		Project			project;
 		
@@ -351,16 +352,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		bool Build (string projectXml, ILogger logger)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+			if (!isMono) {
 				var reader = new StringReader (projectXml);
 				var xml = XmlReader.Create (reader);
-				return BuildOnWindows (xml, logger);
+				return BuildOnDotNet (xml, logger);
 			} else {
-				return BuildOnLinux (projectXml, logger);
+				return BuildOnMono (projectXml, logger);
 			}
 		}
 
-		bool BuildOnWindows (XmlReader reader, ILogger logger)
+		bool BuildOnDotNet (XmlReader reader, ILogger logger)
 		{
 			var type = Type.GetType ("Microsoft.Build.Evaluation.ProjectCollection, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
@@ -376,7 +377,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			return ret;
 		}
 
-		bool BuildOnLinux (string projectXml, ILogger logger)
+		bool BuildOnMono (string projectXml, ILogger logger)
 		{
 			var engine = new Engine (Consts.BinPath);
 			var project = engine.CreateNewProject ();
