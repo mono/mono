@@ -1629,12 +1629,12 @@ ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms)
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
 	MONO_ENTER_GC_SAFE;
-	ret=WaitForSingleObjectEx (handle, ms, TRUE);
+	ret=mono_thread_info_wait_one_handle (handle, ms, TRUE);
 	MONO_EXIT_GC_SAFE;
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
 	
-	if(ret==WAIT_OBJECT_0) {
+	if(ret==MONO_THREAD_INFO_WAIT_RET_SUCCESS_0) {
 		THREAD_DEBUG (g_message ("%s: join successful", __func__));
 
 		return(TRUE);
@@ -2917,15 +2917,16 @@ struct wait_data
 static void
 wait_for_tids (struct wait_data *wait, guint32 timeout)
 {
-	guint32 i, ret;
+	guint32 i;
+	MonoThreadInfoWaitRet ret;
 	
 	THREAD_DEBUG (g_message("%s: %d threads to wait for in this batch", __func__, wait->num));
 
 	MONO_ENTER_GC_SAFE;
-	ret=WaitForMultipleObjectsEx(wait->num, wait->handles, TRUE, timeout, TRUE);
+	ret=mono_thread_info_wait_multiple_handle(wait->handles, wait->num, TRUE, timeout, TRUE);
 	MONO_EXIT_GC_SAFE;
 
-	if(ret==WAIT_FAILED) {
+	if(ret==MONO_THREAD_INFO_WAIT_RET_FAILED) {
 		/* See the comment in build_wait_tids() */
 		THREAD_DEBUG (g_message ("%s: Wait failed", __func__));
 		return;
@@ -2934,7 +2935,7 @@ wait_for_tids (struct wait_data *wait, guint32 timeout)
 	for(i=0; i<wait->num; i++)
 		mono_threads_close_thread_handle (wait->handles [i]);
 
-	if (ret == WAIT_TIMEOUT)
+	if (ret == MONO_THREAD_INFO_WAIT_RET_TIMEOUT)
 		return;
 
 	for(i=0; i<wait->num; i++) {
@@ -2951,7 +2952,8 @@ wait_for_tids (struct wait_data *wait, guint32 timeout)
 
 static void wait_for_tids_or_state_change (struct wait_data *wait, guint32 timeout)
 {
-	guint32 i, ret, count;
+	guint32 i, count;
+	MonoThreadInfoWaitRet ret;
 	
 	THREAD_DEBUG (g_message("%s: %d threads to wait for in this batch", __func__, wait->num));
 
@@ -2965,10 +2967,10 @@ static void wait_for_tids_or_state_change (struct wait_data *wait, guint32 timeo
 	}
 
 	MONO_ENTER_GC_SAFE;
-	ret=WaitForMultipleObjectsEx (count, wait->handles, FALSE, timeout, TRUE);
+	ret=mono_thread_info_wait_multiple_handle (wait->handles, count, FALSE, timeout, TRUE);
 	MONO_EXIT_GC_SAFE;
 
-	if(ret==WAIT_FAILED) {
+	if(ret==MONO_THREAD_INFO_WAIT_RET_FAILED) {
 		/* See the comment in build_wait_tids() */
 		THREAD_DEBUG (g_message ("%s: Wait failed", __func__));
 		return;
@@ -2977,7 +2979,7 @@ static void wait_for_tids_or_state_change (struct wait_data *wait, guint32 timeo
 	for(i=0; i<wait->num; i++)
 		mono_threads_close_thread_handle (wait->handles [i]);
 
-	if (ret == WAIT_TIMEOUT)
+	if (ret == MONO_THREAD_INFO_WAIT_RET_TIMEOUT)
 		return;
 	
 	if (ret < wait->num) {

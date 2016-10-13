@@ -1653,3 +1653,15 @@ mono_thread_info_duplicate_handle (MonoThreadInfo *info)
 	g_assert (mono_thread_info_is_current (info));
 	return mono_threads_platform_duplicate_handle (info);
 }
+
+MonoThreadInfoWaitRet
+mono_thread_info_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
+{
+	return mono_threads_platform_wait_one_handle (handle, timeout, alertable);
+}
+
+MonoThreadInfoWaitRet
+mono_thread_info_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
+{
+	return mono_threads_platform_wait_multiple_handle (handles, nhandles, waitall, timeout, alertable);
+}

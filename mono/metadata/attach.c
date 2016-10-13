@@ -260,7 +260,7 @@ mono_attach_cleanup (void)
 
 	/* Wait for the receiver thread to exit */
 	if (receiver_thread_handle)
-		WaitForSingleObjectEx (receiver_thread_handle, 0, FALSE);
+		mono_thread_info_wait_one_handle (receiver_thread_handle, 0, FALSE);
 }
 
 static int

@@ -607,4 +607,23 @@ mono_thread_info_is_current (THREAD_INFO_TYPE *info);
 gpointer
 mono_thread_info_duplicate_handle (THREAD_INFO_TYPE *info);
 
+typedef enum {
+	MONO_THREAD_INFO_WAIT_RET_SUCCESS_0   =  0,
+	MONO_THREAD_INFO_WAIT_RET_ALERTED     = -1,
+	MONO_THREAD_INFO_WAIT_RET_TIMEOUT     = -2,
+	MONO_THREAD_INFO_WAIT_RET_FAILED      = -3,
+} MonoThreadInfoWaitRet;
+
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable);
+
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable);
+
+MonoThreadInfoWaitRet
+mono_thread_info_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable);
+
+MonoThreadInfoWaitRet
+mono_thread_info_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable);
+
 #endif /* __MONO_THREADS_H__ */

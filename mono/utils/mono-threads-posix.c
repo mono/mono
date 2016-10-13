@@ -215,6 +215,43 @@ mono_threads_platform_close_thread_handle (HANDLE handle)
 	mono_w32handle_unref (handle);
 }
 
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
+{
+	MonoW32HandleWaitRet res;
+
+	res = mono_w32handle_wait_one (handle, timeout, alertable);
+	if (res == MONO_W32HANDLE_WAIT_RET_SUCCESS_0)
+		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0;
+	else if (res == MONO_W32HANDLE_WAIT_RET_ALERTED)
+		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
+	else if (res == MONO_W32HANDLE_WAIT_RET_TIMEOUT)
+		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+	else if (res == MONO_W32HANDLE_WAIT_RET_FAILED)
+		return MONO_THREAD_INFO_WAIT_RET_FAILED;
+	else
+		g_error ("%s: unknown res value %d", __func__, res);
+}
+
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
+{
+	MonoW32HandleWaitRet res;
+
+	res = mono_w32handle_wait_multiple (handles, nhandles, waitall, timeout, alertable);
+	if (res >= MONO_W32HANDLE_WAIT_RET_SUCCESS_0 && res <= MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + nhandles - 1)
+		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_W32HANDLE_WAIT_RET_SUCCESS_0);
+	else if (res == MONO_W32HANDLE_WAIT_RET_ALERTED)
+		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
+	else if (res == MONO_W32HANDLE_WAIT_RET_TIMEOUT)
+		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+	else if (res == MONO_W32HANDLE_WAIT_RET_FAILED)
+		return MONO_THREAD_INFO_WAIT_RET_FAILED;
+	else
+		g_error ("%s: unknown res value %d", __func__, res);
+}
+
+
 int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {

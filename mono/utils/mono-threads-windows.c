@@ -357,6 +357,42 @@ mono_threads_platform_close_thread_handle (HANDLE handle)
 	CloseHandle (handle);
 }
 
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
+{
+	MonoW32HandleWaitRet res;
+
+	res = WaitForSingleObjectEx (handle, timeout, alertable);
+	if (res == WAIT_OBJECT_0)
+		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0;
+	else if (res == WAIT_IO_COMPLETION)
+		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
+	else if (res == WAIT_TIMEOUT)
+		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+	else if (res == WAIT_FAILED)
+		return MONO_THREAD_INFO_WAIT_RET_FAILED;
+	else
+		g_error ("%s: unknown res value %d", __func__, res);
+}
+
+MonoThreadInfoWaitRet
+mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
+{
+	MonoW32HandleWaitRet res;
+
+	res = WaitForMultipleObjectsEx (nhandles, handles, waitall, timeout, alertable);
+	if (res >= WAIT_OBJECT_0 && res <= WAIT_OBJECT_0 + nhandles - 1)
+		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - WAIT_OBJECT_0);
+	else if (res == WAIT_IO_COMPLETION)
+		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
+	else if (res == WAIT_TIMEOUT)
+		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+	else if (res == WAIT_FAILED)
+		return MONO_THREAD_INFO_WAIT_RET_FAILED;
+	else
+		g_error ("%s: unknown res value %d", __func__, res);
+}
+
 #if defined(_MSC_VER)
 const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)

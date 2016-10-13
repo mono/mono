@@ -2480,13 +2480,13 @@ mono_domain_unload (MonoDomain *domain)
 	mono_domain_try_unload (domain, &exc);
 }
 
-static guint32
+static MonoThreadInfoWaitRet
 guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
 {
-	guint32 result;
+	MonoThreadInfoWaitRet result;
 
 	MONO_ENTER_GC_SAFE;
-	result = WaitForSingleObjectEx (handle, timeout, alertable);
+	result = mono_thread_info_wait_one_handle (handle, timeout, alertable);
 	MONO_EXIT_GC_SAFE;
 
 	return result;
@@ -2582,7 +2582,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		return;
 
 	/* Wait for the thread */	
-	while (!thread_data->done && guarded_wait (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {
+	while (!thread_data->done && guarded_wait (thread_handle, INFINITE, TRUE) == MONO_THREAD_INFO_WAIT_RET_ALERTED) {
 		if (mono_thread_internal_has_appdomain_ref (mono_thread_internal_current (), domain) && (mono_thread_interruption_requested ())) {
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */
