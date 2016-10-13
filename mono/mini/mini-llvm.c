@@ -361,6 +361,10 @@ simd_class_to_llvm_type (EmitContext *ctx, MonoClass *klass)
 	} else if (!strcmp (klass->name, "Vector2")) {
 		/* System.Numerics */
 		return LLVMVectorType (LLVMFloatType (), 4);
+	} else if (!strcmp (klass->name, "Vector3")) {
+		return LLVMVectorType (LLVMFloatType (), 4);
+	} else if (!strcmp (klass->name, "Vector4")) {
+		return LLVMVectorType (LLVMFloatType (), 4);
 	} else {
 		printf ("%s\n", klass->name);
 		NOT_IMPLEMENTED;
