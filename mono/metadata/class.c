@@ -5984,7 +5984,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 		if (!strncmp (name, "Vector", 6))
 			klass->simd_type = !strcmp (name + 6, "2d") || !strcmp (name + 6, "2ul") || !strcmp (name + 6, "2l") || !strcmp (name + 6, "4f") || !strcmp (name + 6, "4ui") || !strcmp (name + 6, "4i") || !strcmp (name + 6, "8s") || !strcmp (name + 6, "8us") || !strcmp (name + 6, "16b") || !strcmp (name + 6, "16sb");
 	} else if (klass->image->assembly_name && !strcmp (klass->image->assembly_name, "System.Numerics") && !strcmp (nspace, "System.Numerics")) {
-		if (!strcmp (name, "Vector2"))
+		if (!strcmp (name, "Vector2") || !strcmp (name, "Vector4"))
 			klass->simd_type = 1;
 	}
 

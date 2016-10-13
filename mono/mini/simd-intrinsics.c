@@ -1756,6 +1756,7 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 }
 
 // The entries should be ordered by name
+// System.Numerics.Vector2/Vector4
 static const SimdIntrinsic vector2_intrinsics[] = {
 	{ SN_ctor, OP_EXPAND_R4 },
 	{ SN_Abs },
@@ -1771,11 +1772,14 @@ static const SimdIntrinsic vector2_intrinsics[] = {
 };
 
 static MonoInst*
-emit_vector2_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const SimdIntrinsic *intrins;
 	MonoMethodSignature *sig = mono_method_signature (cmethod);
 
+	/*
+	 * Vector2 and Vector4 are handled the same way, since the underlying SIMD type is the same (4 * r4).
+	 */
 	intrins = (const SimdIntrinsic*)mono_binary_search (cmethod->name, vector2_intrinsics, sizeof (vector2_intrinsics) / sizeof (SimdIntrinsic), sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);
 	if (!intrins) {
 		//printf ("%s\n", mono_method_full_name (cmethod, 1));
@@ -1844,8 +1848,8 @@ emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 {
 	const char *class_name = cmethod->klass->name;
 
-	if (!strcmp ("Vector2", class_name))
-		return emit_vector2_intrinsics (cfg, cmethod, fsig, args);
+	if (!strcmp ("Vector2", class_name) || !strcmp ("Vector4", class_name))
+		return emit_vector_intrinsics (cfg, cmethod, fsig, args);
 
 	return NULL;
 }
@@ -1861,6 +1865,15 @@ mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *ad
 				index = 0;
 			else if (!strcmp (field->name, "Y"))
 				index = 1;
+		} else if (!strcmp (field->parent->name, "Vector4")) {
+			if (!strcmp (field->name, "X"))
+				index = 0;
+			else if (!strcmp (field->name, "Y"))
+				index = 1;
+			else if (!strcmp (field->name, "Z"))
+				index = 2;
+			else if (!strcmp (field->name, "W"))
+				index = 3;
 		}
 
 		if (index != -1) {
