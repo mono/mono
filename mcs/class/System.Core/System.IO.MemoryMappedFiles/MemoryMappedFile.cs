@@ -111,9 +111,9 @@ namespace System.IO.MemoryMappedFiles
 
 
 	public class MemoryMappedFile : IDisposable {
-		MemoryMappedFileAccess fileAccess;
-		string name;
-		long fileCapacity;
+		// MemoryMappedFileAccess fileAccess;
+		// string name;
+		// long fileCapacity;
 
 		//
 		// We allow the use of either the FileStream/keepOpen combo
@@ -144,8 +144,8 @@ namespace System.IO.MemoryMappedFiles
 
 			return new MemoryMappedFile () {
 				handle = handle,
-				fileAccess = MemoryMappedFileAccess.ReadWrite,
-				fileCapacity = capacity
+				// fileAccess = MemoryMappedFileAccess.ReadWrite,
+				// fileCapacity = capacity
 			};
 		}
 
@@ -176,9 +176,9 @@ namespace System.IO.MemoryMappedFiles
 			
 			return new MemoryMappedFile () {
 				handle = handle,
-				fileAccess = access,
-				name = mapName,
-				fileCapacity = capacity
+				// fileAccess = access,
+				// name = mapName,
+				// fileCapacity = capacity
 			};
 		}
 
@@ -193,15 +193,15 @@ namespace System.IO.MemoryMappedFiles
 			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
-			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.Handle, mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
 			
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
 			return new MemoryMappedFile () {
 				handle = handle,
-				fileAccess = access,
-				name = mapName,
-				fileCapacity = capacity,
+				// fileAccess = access,
+				// name = mapName,
+				// fileCapacity = capacity,
 
 				stream = fileStream,
 				keepOpen = leaveOpen
@@ -220,15 +220,15 @@ namespace System.IO.MemoryMappedFiles
 			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
-			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.Handle, mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
 			
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
 			return new MemoryMappedFile () {
 				handle = handle,
-				fileAccess = access,
-				name = mapName,
-				fileCapacity = capacity,
+				// fileAccess = access,
+				// name = mapName,
+				// fileCapacity = capacity,
 
 				stream = fileStream,
 				keepOpen = leaveOpen
@@ -249,9 +249,9 @@ namespace System.IO.MemoryMappedFiles
 			
 			return new MemoryMappedFile () {
 				handle = handle,
-				fileAccess = access,
-				name = mapName,
-				fileCapacity = capacity
+				// fileAccess = access,
+				// name = mapName,
+				// fileCapacity = capacity
 			};			
 		}
 

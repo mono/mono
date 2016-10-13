@@ -3276,13 +3276,13 @@ exptype_head		: D_CLASS K_EXTERN expt_attr comp_name
 expt_attr 		: { $$ = 0; } /* EMPTY */
 			| expt_attr K_PRIVATE                   { $$ = (TypeAttr)$1 | TypeAttr.Private; }
 			| expt_attr K_PUBLIC                    { $$ = (TypeAttr)$1 | TypeAttr.Public; }
+			| expt_attr K_FORWARDER                 { $$ = (TypeAttr)$1 | TypeAttr.Forwarder; }
 			| expt_attr K_NESTED K_PUBLIC           { $$ = (TypeAttr)$1 | TypeAttr.NestedPublic; }
 			| expt_attr K_NESTED K_PRIVATE          { $$ = (TypeAttr)$1 | TypeAttr.NestedPrivate; }
 			| expt_attr K_NESTED K_FAMILY           { $$ = (TypeAttr)$1 | TypeAttr.NestedFamily; }
 			| expt_attr K_NESTED K_ASSEMBLY         { $$ = (TypeAttr)$1 | TypeAttr.NestedAssembly;}
 			| expt_attr K_NESTED K_FAMANDASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
 			| expt_attr K_NESTED K_FAMORASSEM       { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
-			| K_FORWARDER                           { $$ = TypeAttr.Forwarder; }
 			;
 
 exptype_decls		: /* EMPTY */

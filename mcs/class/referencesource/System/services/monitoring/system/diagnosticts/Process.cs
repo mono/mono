@@ -91,12 +91,14 @@ namespace System.Diagnostics {
 		
         DateTime exitTime;
         bool haveExitTime;
-        
+
+#if !MONO
         bool responding;
         bool haveResponding;
         
         bool priorityBoostEnabled;
         bool havePriorityBoostEnabled;
+#endif
         
         bool raisedOnExited;
         RegisteredWaitHandle registeredWaitHandle;
@@ -108,7 +110,9 @@ namespace System.Diagnostics {
         OperatingSystem operatingSystem;
         bool disposed;
         
+#if !MONO
         static object s_CreateProcessLock = new object();
+#endif
         
         // This enum defines the operation mode for redirected process stream.
         // We don't support switching between synchronous mode and asynchronous mode.
@@ -122,6 +126,9 @@ namespace System.Diagnostics {
         StreamReadMode outputStreamReadMode;
         StreamReadMode errorStreamReadMode;
         
+#if MONO
+        StreamReadMode inputStreamReadMode;
+#endif
        
         // Support for asynchrously reading streams
         [Browsable(true), MonitoringDescription(SR.ProcessAssociated)]
@@ -136,8 +143,9 @@ namespace System.Diagnostics {
         internal bool pendingOutputRead;
         internal bool pendingErrorRead;
 
-
+#if !MONO
         private static SafeFileHandle InvalidPipeHandle = new SafeFileHandle(IntPtr.Zero, false);
+#endif
 #if DEBUG
         internal static TraceSwitch processTracing = new TraceSwitch("processTracing", "Controls debug output from Process component");
 #else
@@ -1183,6 +1191,9 @@ namespace System.Diagnostics {
                     throw new InvalidOperationException(SR.GetString(SR.CantGetStandardIn));
                 }
 
+#if MONO
+                inputStreamReadMode = StreamReadMode.syncMode;
+#endif
                 return standardInput;
             }
         }
@@ -1346,6 +1357,40 @@ namespace System.Diagnostics {
                 machineName = ".";
                 raisedOnExited = false;
 
+#if MONO
+                //Call close on streams if the user never saw them.
+                //A stream in the undefined mode was never fetched by the user.
+                //A stream in the async mode is wrapped on a AsyncStreamReader and we should dispose that instead.
+                //  no way for users to get a hand on a AsyncStreamReader.
+                var tmpIn = standardInput;
+                standardInput = null;
+                if (inputStreamReadMode == StreamReadMode.undefined && tmpIn != null)
+                    tmpIn.Close ();
+
+                var tmpOut = standardOutput;
+                standardOutput = null;
+                if (outputStreamReadMode == StreamReadMode.undefined && tmpOut != null)
+                    tmpOut.Close ();
+
+                tmpOut = standardError;
+                standardError = null;
+                if (errorStreamReadMode == StreamReadMode.undefined && tmpOut != null)
+                    tmpOut.Close ();
+
+                var tmpAsync = output;
+                output = null;
+                if (outputStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null) {
+                    tmpAsync.CancelOperation ();
+                    tmpAsync.Close ();
+                }
+
+                tmpAsync = error;
+                error = null;
+                if (errorStreamReadMode == StreamReadMode.asyncMode && tmpAsync != null) {
+                    tmpAsync.CancelOperation ();
+                    tmpAsync.Close ();
+                }
+#else
                 //Don't call close on the Readers and writers
                 //since they might be referenced by somebody else while the 
                 //process is still alive but this method called.
@@ -1356,6 +1401,7 @@ namespace System.Diagnostics {
                 output = null;
                 error = null;
 	
+#endif
 
                 Refresh();
             }
@@ -1832,8 +1878,10 @@ namespace System.Diagnostics {
             haveProcessorAffinity = false;
             havePriorityClass = false;
             haveExitTime = false;
+#if !MONO
             haveResponding = false;
             havePriorityBoostEnabled = false;
+#endif
         }
 
         /// <devdoc>

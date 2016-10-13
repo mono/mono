@@ -140,7 +140,7 @@ namespace System.Net.Sockets
 
 		public void Complete ()
 		{
-			if (operation != SocketOperation.Receive && socket.is_disposed)
+			if (operation != SocketOperation.Receive && socket.CleanedUp)
 				DelayedException = new ObjectDisposedException (socket.GetType ().ToString ());
 
 			IsCompleted = true;
@@ -150,40 +150,18 @@ namespace System.Net.Sockets
 				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
 			}
 
-			Queue<KeyValuePair<IntPtr, IOSelectorJob>> queue = null;
 			switch (operation) {
 			case SocketOperation.Receive:
 			case SocketOperation.ReceiveFrom:
 			case SocketOperation.ReceiveGeneric:
 			case SocketOperation.Accept:
-				queue = socket.readQ;
+				socket.ReadSem.Release ();
 				break;
 			case SocketOperation.Send:
 			case SocketOperation.SendTo:
 			case SocketOperation.SendGeneric:
-				queue = socket.writeQ;
+				socket.WriteSem.Release ();
 				break;
-			}
-
-			if (queue != null) {
-				lock (queue) {
-					/* queue.Count will only be 0 if the socket is closed while receive/send/accept
-					 * operation(s) are pending and at least one call to this method is waiting
-					 * on the lock while another one calls CompleteAllOnDispose() */
-					if (queue.Count > 0)
-						queue.Dequeue (); /* remove ourselves */
-					if (queue.Count > 0) {
-						if (!socket.is_disposed) {
-							IOSelector.Add (queue.Peek ().Key, queue.Peek ().Value);
-						} else {
-							/* CompleteAllOnDispose */
-							KeyValuePair<IntPtr, IOSelectorJob> [] jobs = queue.ToArray ();
-							for (int i = 0; i < jobs.Length; i++)
-								ThreadPool.QueueUserWorkItem (j => ((IOSelectorJob) j).MarkDisposed (), jobs [i].Value);
-							queue.Clear ();
-						}
-					}
-				}
 			}
 
 			// IMPORTANT: 'callback', if any is scheduled from unmanaged code

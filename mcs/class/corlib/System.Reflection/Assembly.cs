@@ -53,11 +53,12 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public partial class Assembly : ICustomAttributeProvider {
+	public partial class Assembly : ICustomAttributeProvider, ISerializable
 #else
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable
 #endif
-		internal class ResolveEventHolder {
+	{
+		internal class ResolveEventHolder {	
 #pragma warning disable 67
 			public event ModuleResolveEventHandler ModuleResolve;
 #pragma warning restore
@@ -119,7 +120,7 @@ namespace System.Reflection {
 		// We can't store the event directly in this class, since the
 		// compiler would silently insert the fields before _mono_assembly
 		//
-		public event ModuleResolveEventHandler ModuleResolve {
+		public virtual event ModuleResolveEventHandler ModuleResolve {
 			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			add {
 				resolve_event_holder.ModuleResolve += value;
@@ -896,12 +897,11 @@ namespace System.Reflection {
 		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
-		
+#endif
+
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
-
-#endif
 
 		static Exception CreateNIE ()
 		{

@@ -659,7 +659,10 @@ mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 static gboolean
 mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guint minimum)
 {
+	MonoW32HandleType type;
 	guint old, new;
+
+	type = handle_data->type;
 
 	do {
 		old = handle_data->ref;
@@ -669,8 +672,11 @@ mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guin
 		new = old - 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->ref, new, old) != old);
 
+	/* handle_data might contain invalid data from now on, if
+	 * another thread is unref'ing this handle at the same time */
+
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: unref %s handle %p, ref: %d -> %d destroy: %s",
-		__func__, mono_w32handle_ops_typename (handle_data->type), handle, old, new, new == 0 ? "true" : "false");
+		__func__, mono_w32handle_ops_typename (type), handle, old, new, new == 0 ? "true" : "false");
 
 	return new == 0;
 }
@@ -1289,7 +1295,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	alerted = FALSE;
 
 	if (nhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: too many handles: %d",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: too many handles: %zd",
 			__func__, nhandles);
 
 		return MONO_W32HANDLE_WAIT_RET_FAILED;

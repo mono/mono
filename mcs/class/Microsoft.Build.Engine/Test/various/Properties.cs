@@ -129,6 +129,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[SetCulture ("en-us")]
 		public void AllowedFrameworkMembers ()
 		{
 			string documentString = @"
@@ -202,6 +203,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[SetCulture ("en-us")]
 		public void MSBuildPropertyFunctions ()
 		{
 			string documentString = @"

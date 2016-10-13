@@ -4784,7 +4784,7 @@ namespace Mono.CSharp {
 				// is no better expression conversion
 				//
 				if (candidate_pd.Count < best_pd.Count) {
-					if (!candidate_params && !candidate_pd.FixedParameters [j - j].HasDefaultValue) {
+					if (!candidate_params && !candidate_pd.FixedParameters [j - 1].HasDefaultValue) {
 						return true;
 					}
 				} else if (candidate_pd.Count == best_pd.Count) {

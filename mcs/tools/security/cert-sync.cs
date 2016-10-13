@@ -50,6 +50,7 @@ namespace Mono.Tools
 		static string inputFile;
 		static bool quiet;
 		static bool userStore;
+		static bool btlsStore = false;
 
 		static X509Certificate DecodeCertificate (string s)
 		{
@@ -116,14 +117,19 @@ namespace Mono.Tools
 				return 0;
 			}
 				
-			X509Stores stores = userStore ? X509StoreManager.CurrentUser : X509StoreManager.LocalMachine;
-			X509CertificateCollection trusted = stores.TrustedRoot.Certificates;
+			X509Stores stores;
+			if (userStore)
+				stores = btlsStore ? X509StoreManager.NewCurrentUser : X509StoreManager.CurrentUser;
+			else
+				stores = btlsStore ? X509StoreManager.NewLocalMachine : X509StoreManager.LocalMachine;
+			X509Store store = stores.TrustedRoot;
+			X509CertificateCollection trusted = store.Certificates;
 			int additions = 0;
 			WriteLine ("I already trust {0}, your new list has {1}", trusted.Count, roots.Count);
 			foreach (X509Certificate root in roots) {
 				if (!trusted.Contains (root)) {
 					try {
-						stores.TrustedRoot.Import (root);
+						store.Import (root);
 						WriteLine ("Certificate added: {0}", root.SubjectName);
 						additions++;
 					} catch (Exception e) {
@@ -145,7 +151,7 @@ namespace Mono.Tools
 				WriteLine ("{0} previously trusted certificates were removed.", removed.Count);
 
 				foreach (X509Certificate old in removed) {
-					stores.TrustedRoot.Remove (old);
+					store.Remove (old);
 					WriteLine ("Certificate removed: {0}", old.SubjectName);
 				}
 			}
@@ -172,6 +178,9 @@ namespace Mono.Tools
 					break;
 				case "--user":
 					userStore = true;
+					break;
+				case "--btls":
+					btlsStore = true;
 					break;
 				default:
 					WriteLine ("Unknown option '{0}'.", args[i]);

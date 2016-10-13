@@ -14,7 +14,6 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Text;
-using System.Reflection;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -22,6 +21,8 @@ using System.Security.Cryptography;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
+
+using IKVM.Reflection;
 
 namespace Mono.Tools {
 
@@ -48,6 +49,7 @@ namespace Mono.Tools {
 
 		private static bool silent;
 		static bool in_bootstrap;
+		private static Universe _universe;
 
 		public static int Main (string [] args)
 		{
@@ -244,7 +246,7 @@ namespace Mono.Tools {
 			AssemblyName an = null;
 
 			try {
-				assembly = Assembly.LoadFrom (name);
+				assembly = ReflectionOnlyLoadFrom (name);
 			} catch {
 				WriteLine (string.Format (failure_msg, name) + "The file specified is not a valid assembly.");
 				return false;
@@ -744,12 +746,27 @@ namespace Mono.Tools {
 			}
 		}
 
+		private static Universe GetUniverse () {
+			if (_universe == null) {
+				_universe = new Universe (UniverseOptions.MetadataOnly);
+			}
+			return _universe;
+		}
+
+		private static Assembly ReflectionOnlyLoadFrom (string fileName)
+		{
+			return GetUniverse ().LoadFile (fileName);
+		}
+		private static AssemblyName GetCorlibName ()
+		{
+			return GetUniverse ().Mscorlib.GetName ();
+		}
+
 		private static bool CheckReferencedAssemblies (AssemblyName an)
 		{
-			AppDomain d = null;
 			try {
-				Assembly a = Assembly.LoadFrom (an.CodeBase);
-				AssemblyName corlib = typeof (object).Assembly.GetName ();
+				Assembly a = ReflectionOnlyLoadFrom (an.CodeBase);
+				AssemblyName corlib = GetCorlibName ();
 
 				foreach (AssemblyName ref_an in a.GetReferencedAssemblies ()) {
 					if (ref_an.Name == corlib.Name) // Just do a string compare so we can install on diff versions
@@ -763,12 +780,6 @@ namespace Mono.Tools {
 			} catch (Exception e) {
 				WriteLine (e.ToString ()); // This should be removed pre beta3
 				return false;
-			} finally {
-				if (d != null) {
-					try {
-						AppDomain.Unload (d);
-					} catch { }
-				}
 			}
 
 			return true;
@@ -800,8 +811,8 @@ namespace Mono.Tools {
 
 		static bool LoadConfig (bool quiet)
 		{
-			MethodInfo config = typeof (System.Environment).GetMethod ("GetMachineConfigPath",
-				BindingFlags.Static | BindingFlags.NonPublic);
+			System.Reflection.MethodInfo config = typeof (System.Environment).GetMethod ("GetMachineConfigPath",
+				System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
 			if (config != null) {
 				string path = (string) config.Invoke (null, null);
@@ -832,7 +843,7 @@ namespace Mono.Tools {
 
 			// Note: MustVerify is based on the original token (by design). Public key
 			// remapping won't affect if the assembly is verified or not.
-			if (StrongNameManager.MustVerify (an)) {
+			if (StrongNameManager.MustVerify (new System.Reflection.AssemblyName (an.FullName))) {
 				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
 				StrongName sn = new StrongName (rsa);
 				if (sn.Verify (assemblyFile)) {
@@ -899,20 +910,20 @@ namespace Mono.Tools {
 		public static extern int symlink (string oldpath, string newpath);
 
 		private static string GetGacDir () {
-			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
-					BindingFlags.Static|BindingFlags.NonPublic);
+			System.Reflection.PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
+					System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
 			if (gac == null) {
 				WriteLine ("ERROR: Mono runtime not detected, please use " +
 						"the mono runtime for gacutil.exe");
 				Environment.Exit (1);
 			}
-			MethodInfo get_gac = gac.GetGetMethod (true);
+			System.Reflection.MethodInfo get_gac = gac.GetGetMethod (true);
 			return (string) get_gac.Invoke (null, null);
 		}
 
 		private static string GetLibDir () {
-			MethodInfo libdir = typeof (System.Environment).GetMethod ("internalGetGacPath",
-					BindingFlags.Static|BindingFlags.NonPublic);
+			System.Reflection.MethodInfo libdir = typeof (System.Environment).GetMethod ("internalGetGacPath",
+					System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
 			if (libdir == null) {
 				WriteLine ("ERROR: Mono runtime not detected, please use " +
 						"the mono runtime for gacutil.exe");

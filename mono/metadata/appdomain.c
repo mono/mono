@@ -84,7 +84,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 156
+#define MONO_CORLIB_VERSION 160
 
 typedef struct
 {
@@ -1415,7 +1415,12 @@ shadow_copy_sibling (gchar *src, gint srclen, const char *extension, gchar *targ
 	dest = g_utf8_to_utf16 (target, strlen (target), NULL, NULL, NULL);
 	
 	DeleteFile (dest);
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	copy_result = CopyFile (orig, dest, FALSE);
+#else
+	copy_result = SUCCEEDED (CopyFile2 (orig, dest, NULL));
+#endif
 
 	/* Fix for bug #556884 - make sure the files have the correct mode so that they can be
 	 * overwritten when updated in their original locations. */
@@ -1743,7 +1748,11 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 		return (char *)filename;
 	}
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	copy_result = CopyFile (orig, dest, FALSE);
+#else
+	copy_result = SUCCEEDED (CopyFile2 (orig, dest, NULL));
+#endif
 
 	/* Fix for bug #556884 - make sure the files have the correct mode so that they can be
 	 * overwritten when updated in their original locations. */
@@ -2568,7 +2577,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	 * First we create a separate thread for unloading, since
 	 * we might have to abort some threads, including the current one.
 	 */
-	thread_handle = mono_threads_create_thread (unload_thread_main, thread_data, 0, &tid);
+	thread_handle = mono_threads_create_thread (unload_thread_main, thread_data, NULL, &tid);
 	if (thread_handle == NULL)
 		return;
 

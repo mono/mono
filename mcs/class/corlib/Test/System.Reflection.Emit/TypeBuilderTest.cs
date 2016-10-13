@@ -112,7 +112,7 @@ namespace MonoTests.System.Reflection.Emit
 				Thread.GetDomain ().DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 
-			module = assembly.DefineDynamicModule ("module1");
+			module = assembly.DefineDynamicModule (ASSEMBLY_NAME, ASSEMBLY_NAME + ".dll");
 		}
 
 		static int typeIndexer = 0;
@@ -1825,6 +1825,23 @@ namespace MonoTests.System.Reflection.Emit
 			}
 
 			// TODO:
+		}
+
+		[Test]
+		public void NestedTypeSave () {
+			var tb = module.DefineType (genTypeName ());
+
+			var tbuilder = tb.DefineNestedType ("Test.CodeGen", TypeAttributes.Public | TypeAttributes.Class);
+			var entryp = tbuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (void), null);
+			var ilg = entryp.GetILGenerator (128);
+			ilg.Emit (OpCodes.Ldtoken, tb);
+			ilg.Emit (OpCodes.Pop);
+			ilg.Emit (OpCodes.Ret);
+
+			tbuilder.CreateType ();
+			tb.CreateType ();
+
+			assembly.Save (ASSEMBLY_NAME + ".dll");
 		}
 
 		[Test]
@@ -9094,6 +9111,8 @@ namespace MonoTests.System.Reflection.Emit
 
 
 		[Test]
+		// Casts don't work with unfinished types
+		[Category ("NotWorking")]
 		[Category ("NotDotNet")]
 		public void IsAssignableFrom_NotCreated_Array ()
 		{
@@ -9724,6 +9743,33 @@ namespace MonoTests.System.Reflection.Emit
 		public void FieldWithInitializedDataWorksWithCompilerRuntimeHelpers ()
 		{
 			TypeBuilder tb = module.DefineType ("Type1", TypeAttributes.Public);
+			FieldBuilder fb = tb.DefineInitializedData ("Foo", new byte [] {1,2,3,4}, FieldAttributes.Static|FieldAttributes.Public);
+			tb.CreateType ();
+
+			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			module = assembly.DefineDynamicModule ("Instance.exe");
+
+			TypeBuilder tb2 = module.DefineType ("Type2", TypeAttributes.Public);
+			MethodBuilder mb = tb2.DefineMethod ("Test", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type [0]);
+			ILGenerator il = mb.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldc_I4_1);
+			il.Emit (OpCodes.Newarr, typeof (int));
+			il.Emit (OpCodes.Dup);
+			il.Emit (OpCodes.Ldtoken, fb);
+			il.Emit (OpCodes.Call, typeof (RuntimeHelpers).GetMethod ("InitializeArray"));
+			il.Emit (OpCodes.Ret);
+
+			Type t = tb2.CreateType ();
+			int[] res = (int[])t.GetMethod ("Test").Invoke (null, new object[0]);
+			//Console.WriteLine (res[0]);
+		}
+
+		[Test]
+		public void FieldWithInitializedDataWorksWithCompilerRuntimeHelpers2 ()
+		{
+			TypeBuilder tb = module.DefineType ("Type1", TypeAttributes.Public);
+			var garg = tb.DefineGenericParameters ("T") [0];
 			FieldBuilder fb = tb.DefineInitializedData ("Foo", new byte [] {1,2,3,4}, FieldAttributes.Static|FieldAttributes.Public);
 			tb.CreateType ();
 

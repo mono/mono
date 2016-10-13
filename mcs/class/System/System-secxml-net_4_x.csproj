@@ -772,7 +772,6 @@
     <Compile Include="Mono.Net.Security\MonoSslStreamImpl.cs" />
     <Compile Include="Mono.Net.Security\MonoSslStreamWrapper.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
-    <Compile Include="Mono.Net.Security\MonoTlsProviderImpl.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderWrapper.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />

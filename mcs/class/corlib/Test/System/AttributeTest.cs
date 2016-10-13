@@ -903,7 +903,13 @@ namespace MonoTests.System
 			Assert.AreEqual (1, res.Length, "#1");
 		}
 
-		abstract class Abs
+		abstract class Root
+		{
+			[MyAttribute]
+			public abstract void Foo ();
+		}
+
+		abstract class Abs : Root
 		{
 			public abstract string Name { get; set; }
 		}
@@ -915,6 +921,8 @@ namespace MonoTests.System
 				get { return ""; }
 				set {}
 			}
+
+			public override void Foo () { }
 		}
 		
 		class Sub: Base
@@ -1030,6 +1038,27 @@ namespace MonoTests.System
 			//check for not throwing stack overflow exception
 			AttributeWithTypeId a = new AttributeWithTypeId ();
 			a.GetHashCode ();
+		}
+
+
+		[Test]
+		public void DerivedClassOverrideHasInhertedAttributeFromAbstractRoot ()
+		{
+			// regression test for #44010
+			// we have
+			// abstract class Root {
+			//   [MyAttribute]
+			//   public abstract void Foo ();
+			// }
+			// abstract class Abs : Root { }
+			// class Base : Abs {
+			//   public override void  Foo () { }
+			// }
+			// note that Abs does not itself override Foo.
+			var bt = typeof(Base);
+			var m = bt.GetMethod ("Foo");
+			var attribute = Attribute.GetCustomAttribute (m, typeof (MyAttribute), true);
+			Assert.IsNotNull (attribute);
 		}
 
 		class ArrayAttribute : Attribute

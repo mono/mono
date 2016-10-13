@@ -138,6 +138,12 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		internal RuntimeMethodHandle MethodHandleInternal {
+			get {
+				return mhandle;
+			}
+		}
+
 		public override Type ReturnType {
 			get { return rtype; }
 		}
@@ -246,6 +252,10 @@ namespace System.Reflection.Emit
 
 		internal override Type GetParameterType (int pos) {
 			return parameters [pos];
+		}
+
+		internal MethodBase RuntimeResolve () {
+			return type.RuntimeResolve ().GetMethod (this);
 		}
 
 		public Module GetModule ()
@@ -378,6 +388,11 @@ namespace System.Reflection.Emit
 				foreach (var types in paramModOpt)
 					TypeBuilder.ResolveUserTypes (types);
 			}
+		}
+
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			if (ilgen != null)
+				ilgen.FixupTokens (token_map, member_map);
 		}
 
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)

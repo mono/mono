@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 namespace Mono {
 
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 	public
 #endif
 	static class Runtime
@@ -40,16 +40,31 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
 
-		static internal void InstallSignalHandlers ()
+#if MOBILE || XAMMAC_4_5
+		public
+#else
+		internal
+#endif
+		static void InstallSignalHandlers ()
 		{
 			mono_runtime_install_handlers ();
 		}
+
+#if MOBILE || XAMMAC_4_5
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void mono_runtime_cleanup_handlers ();
+
+		public static void RemoveSignalHandlers ()
+		{
+			mono_runtime_cleanup_handlers ();
+		}
+#endif
 
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 		public
 #else
 		internal

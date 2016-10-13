@@ -42,11 +42,11 @@ namespace System.Reflection.Emit
 	internal class FieldOnTypeBuilderInst : FieldInfo
 	{
 		#region Keep in sync with object-internals.h
-		internal MonoGenericClass instantiation;
+		internal TypeBuilderInstantiation instantiation;
 		internal FieldInfo fb;
 		#endregion
 
-		public FieldOnTypeBuilderInst (MonoGenericClass instantiation, FieldInfo fb) {
+		public FieldOnTypeBuilderInst (TypeBuilderInstantiation instantiation, FieldInfo fb) {
 			this.instantiation = instantiation;
 			this.fb = fb;
 		}
@@ -126,6 +126,12 @@ namespace System.Reflection.Emit
 
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
 			throw new NotSupportedException ();
+		}
+
+		// Called from the runtime to return the corresponding finished FieldInfo object
+		internal FieldInfo RuntimeResolve () {
+			var type = instantiation.RuntimeResolve ();
+			return type.GetField (fb);
 		}
 	}
 }

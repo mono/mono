@@ -380,7 +380,9 @@ namespace System.Net.Http
 				}
 			} catch (WebException we) {
 				if (we.Status != WebExceptionStatus.RequestCanceled)
-					throw;
+					throw new HttpRequestException ("An error occurred while sending the request", we);
+			} catch (System.IO.IOException ex) {
+				throw new HttpRequestException ("An error occurred while sending the request", ex);
 			}
 
 			if (cancellationToken.IsCancellationRequested) {

@@ -18,8 +18,10 @@ namespace System.Net {
 
         private static WaitCallback s_GetRequestStreamCallback = new WaitCallback(GetRequestStreamCallback);
         private static WaitCallback s_GetResponseCallback = new WaitCallback(GetResponseCallback);
+#if !MONO
         private static ContextCallback s_WrappedGetRequestStreamCallback = new ContextCallback(GetRequestStreamCallback);
         private static ContextCallback s_WrappedResponseCallback = new ContextCallback(GetResponseCallback);
+#endif
 
     // fields
 

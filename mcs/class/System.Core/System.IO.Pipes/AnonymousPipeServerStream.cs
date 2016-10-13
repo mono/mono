@@ -70,13 +70,15 @@ namespace System.IO.Pipes
 		}
 #endif
 
-#if !MOBILE
 		public AnonymousPipeServerStream (PipeDirection direction, HandleInheritability inheritability, int bufferSize, PipeSecurity pipeSecurity)
 			: base (direction, bufferSize)
 		{
 			if (direction == PipeDirection.InOut)
 				throw new NotSupportedException ("Anonymous pipe direction can only be either in or out.");
 
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			if (IsWindows)
 				impl = new Win32AnonymousPipeServer (this, direction, inheritability, bufferSize, pipeSecurity);
 			else
@@ -84,8 +86,8 @@ namespace System.IO.Pipes
 
 			InitializeHandle (impl.Handle, false, false);
 			IsConnected = true;
-		}
 #endif
+		}
 
 		[MonoTODO]
 		public AnonymousPipeServerStream (PipeDirection direction, SafePipeHandle serverSafePipeHandle, SafePipeHandle clientSafePipeHandle)

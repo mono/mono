@@ -226,12 +226,12 @@ namespace System.Net
 			internal set { actualUri = value; } // Used by Ftp+proxy
 		}
 		
-		public bool AllowAutoRedirect {
+		public virtual bool AllowAutoRedirect {
 			get { return allowAutoRedirect; }
 			set { this.allowAutoRedirect = value; }
 		}
 		
-		public bool AllowWriteStreamBuffering {
+		public virtual bool AllowWriteStreamBuffering {
 			get { return allowBuffering; }
 			set { allowBuffering = value; }
 		}
@@ -918,6 +918,12 @@ namespace System.Net
 			return EndGetRequestStream (asyncResult);
 		}
 
+		[MonoTODO]
+		public Stream GetRequestStream (out TransportContext context)
+		{
+			throw new NotImplementedException ();
+		}
+
 		bool CheckIfForceWrite (SimpleAsyncResult result)
 		{
 			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
@@ -1314,8 +1320,11 @@ namespace System.Net
 					msg = "Error: " + status;
 					wex = new WebException (msg, status);
 				} else {
-					msg = String.Format ("Error: {0} ({1})", status, exc.Message);
-					wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					wex = exc as WebException;
+					if (wex == null) {
+						msg = String.Format ("Error: {0} ({1})", status, exc.Message);
+						wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					}
 				}
 				r.SetCompleted (false, wex);
 				r.DoCallback ();

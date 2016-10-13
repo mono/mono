@@ -16,16 +16,15 @@ using System.Threading;
 namespace MonoTests.System.Net.Mail
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SmtpClientTest
 	{
-		SmtpClient smtp;
+		SmtpClient _smtp;
+		SmtpClient smtp { get { return _smtp ?? (_smtp = new SmtpClient ()); } }
 		string tempFolder;
 		
 		[SetUp]
 		public void GetReady ()
 		{
-			smtp = new SmtpClient ();
 			tempFolder = Path.Combine (Path.GetTempPath (), this.GetType ().FullName);
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
@@ -35,17 +34,24 @@ namespace MonoTests.System.Net.Mail
 		[TearDown]
 		public void TearDown ()
 		{
+			_smtp = null;
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Credentials_Default ()
 		{
 			Assert.IsNull (smtp.Credentials);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DeliveryMethod ()
 		{
 			Assert.AreEqual (SmtpDeliveryMethod.Network, smtp.DeliveryMethod, "#1");
@@ -61,6 +67,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void EnableSsl ()
 		{
 			Assert.IsFalse (smtp.EnableSsl, "#1");
@@ -71,6 +80,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Host ()
 		{
 			smtp.Host = "127.0.0.1";
@@ -87,6 +99,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Host_Value_Null ()
 		{
 			try {
@@ -101,6 +116,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Host_Value_Empty ()
 		{
 			try {
@@ -116,6 +134,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PickupDirectoryLocation ()
 		{
 			Assert.IsNull (smtp.PickupDirectoryLocation, "#1");
@@ -132,6 +153,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Port ()
 		{
 			Assert.AreEqual (25, smtp.Port, "#1");
@@ -142,6 +166,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Port_Value_Invalid ()
 		{
 			// zero
@@ -168,6 +195,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_Message_Null ()
 		{
 			try {
@@ -182,6 +212,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_Network_Host_Null ()
 		{
 			try {
@@ -197,6 +230,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_Network_Host_Whitespace ()
 		{
 			smtp.Host = " \r\n ";
@@ -213,6 +249,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory ()
 		{
 			smtp.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -226,6 +265,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_DirectoryNotFound ()
 		{
 			Directory.Delete (tempFolder);
@@ -253,6 +295,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_Empty ()
 		{
 			smtp.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -272,6 +317,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_IllegalChars ()
 		{
 			smtp.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -297,6 +345,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_NotAbsolute ()
 		{
 			smtp.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -316,6 +367,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Send_SpecifiedPickupDirectory_PickupDirectoryLocation_Null ()
 		{
 			smtp.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -334,6 +388,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Timeout ()
 		{
 			Assert.AreEqual (100000, smtp.Timeout, "#1");
@@ -344,19 +401,29 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void Timeout_Value_Negative ()
 		{
 			smtp.Timeout = -1;
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UseDefaultCredentials_Default ()
 		{
 			Assert.IsFalse (smtp.UseDefaultCredentials);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Deliver ()
 		{
 			var server = new SmtpServer ();
@@ -373,6 +440,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Deliver_Envelope ()
 		{
 			var server = new SmtpServer ();
@@ -391,6 +461,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Deliver_Async ()
 		{
 			// SmtpClient uses BackgroundWorker and listens for the RunWorkerCompleted

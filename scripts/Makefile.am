@@ -34,8 +34,9 @@ bin_SCRIPTS = \
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mono-test-install	\
-	peverify			\
-	mcs					\
+	peverify		\
+	mcs			\
+	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
@@ -72,6 +73,7 @@ scripts_4_0 = \
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
+	btls-cert-sync$(SCRIPT_SUFFIX)		\
 	cert-sync$(SCRIPT_SUFFIX)		\
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
@@ -156,6 +158,7 @@ EXTRA_DIST =			\
 	update_submodules		\
 	mcs.in				\
 	dmcs.in				\
+	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\

@@ -20,6 +20,7 @@
 #include "loader.h"
 #include "cil-coff.h"
 #include "metadata/marshal.h"
+#include "metadata/marshal-internals.h"
 #include "metadata/method-builder.h"
 #include "metadata/tabledefs.h"
 #include "metadata/exception.h"
@@ -106,8 +107,10 @@ mono_marshal_string_to_utf16 (MonoString *s);
 static void *
 mono_marshal_string_to_utf16_copy (MonoString *s);
 
+#ifndef HOST_WIN32
 static gpointer
 mono_string_to_lpstr (MonoString *string_obj);
+#endif
 
 static MonoStringBuilder *
 mono_string_utf8_to_builder2 (char *text);
@@ -1076,42 +1079,16 @@ mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 }
 
 /* This is a JIT icall, it sets the pending exception and returns NULL on error. */
+#ifndef HOST_WIN32
 static gpointer
 mono_string_to_lpstr (MonoString *s)
 {
-#ifdef TARGET_WIN32
-	char *as, *tmp;
-	glong len;
-	GError *error = NULL;
-
-	if (s == NULL)
-		return NULL;
-
-	if (!s->length) {
-		as = CoTaskMemAlloc (1);
-		as [0] = '\0';
-		return as;
-	}
-
-	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &error);
-	if (error) {
-		MonoException *exc = mono_get_exception_argument ("string", error->message);
-		g_error_free (error);
-		mono_set_pending_exception (exc);
-		return NULL;
-	} else {
-		as = CoTaskMemAlloc (len + 1);
-		memcpy (as, tmp, len + 1);
-		g_free (tmp);
-		return as;
-	}
-#else
 	MonoError error;
 	char *result = mono_string_to_utf8_checked (s, &error);
 	mono_error_set_pending_exception (&error);
 	return result;
-#endif
-}	
+}
+#endif /* HOST_WIN32 */
 
 gpointer
 mono_string_to_ansibstr (MonoString *string_obj)
@@ -2701,6 +2678,11 @@ mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 	case MONO_WRAPPER_RUNTIME_INVOKE:
 		if (info && (info->subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT || info->subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL))
 			return info->d.runtime_invoke.method;
+		else
+			return NULL;
+	case MONO_WRAPPER_DELEGATE_INVOKE:
+		if (info)
+			return info->d.delegate_invoke.method;
 		else
 			return NULL;
 	default:
@@ -9378,7 +9360,8 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 #endif
 
 	if (method->klass->valuetype && !(method->flags & MONO_METHOD_ATTR_STATIC)) {
-		mono_class_set_failure (method->klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		/* FIXME Is this really the best way to signal an error here?  Isn't this called much later after class setup? -AK */
+		mono_class_set_type_load_failure (method->klass, "");
 #ifndef DISABLE_JIT
 		/* This will throw the type load exception when the wrapper is compiled */
 		mono_mb_emit_byte (mb, CEE_LDNULL);
@@ -10532,6 +10515,18 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 	return res;	
 }
 
+#ifndef HOST_WIN32
+static inline void*
+mono_marshal_alloc_co_task_mem (size_t size)
+{
+	if ((gulong)size == 0)
+		/* This returns a valid pointer for size 0 on MS.NET */
+		size = 4;
+
+	return g_try_malloc ((gulong)size);
+}
+#endif
+
 void*
 mono_marshal_alloc (gulong size, MonoError *error)
 {
@@ -10539,13 +10534,10 @@ mono_marshal_alloc (gulong size, MonoError *error)
 
 	mono_error_init (error);
 
-#ifdef HOST_WIN32
-	res = CoTaskMemAlloc (size);
-#else
-	res = g_try_malloc ((gulong)size);
+	res = mono_marshal_alloc_co_task_mem (size);
 	if (!res)
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", size);
-#endif
+		mono_error_set_out_of_memory (error, "Could not allocate %lu bytes", size);
+
 	return res;
 }
 
@@ -10563,14 +10555,19 @@ ves_icall_marshal_alloc (gulong size)
 	return ret;
 }
 
+#ifndef HOST_WIN32
+static inline void
+mono_marshal_free_co_task_mem (void *ptr)
+{
+	g_free (ptr);
+	return;
+}
+#endif
+
 void
 mono_marshal_free (gpointer ptr)
 {
-#ifdef HOST_WIN32
-	CoTaskMemFree (ptr);
-#else
-	g_free (ptr);
-#endif
+	mono_marshal_free_co_task_mem (ptr);
 }
 
 void
@@ -10969,35 +10966,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *t
 	return info->fields [match_index].offset;
 }
 
+#ifndef HOST_WIN32
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string)
 {
 	MonoError error;
-#ifdef HOST_WIN32
-	char* tres, *ret;
-	size_t len;
-	tres = mono_string_to_utf8_checked (string, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
-	if (!tres)
-		return tres;
-
-	/*
-	 * mono_string_to_utf8_checked() returns a memory area at least as large as the size of the
-	 * MonoString, even if it contains NULL characters. The copy we allocate here has to be equally
-	 * large.
-	 */
-	len = MAX (strlen (tres) + 1, string->length);
-	ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
-	memcpy (ret, tres, len);
-	g_free (tres);
-	return ret;
-
-#else
 	char *ret = mono_string_to_utf8_checked (string, &error);
 	mono_error_set_pending_exception (&error);
 	return ret;
-#endif
 }
 
 gpointer
@@ -11006,17 +10982,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoString 
 	if (string == NULL)
 		return NULL;
 	else {
-#ifdef TARGET_WIN32
-		gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal 
-			((mono_string_length (string) + 1) * 2);
-#else
 		gunichar2 *res = (gunichar2 *)g_malloc ((mono_string_length (string) + 1) * 2);
-#endif
+
 		memcpy (res, mono_string_chars (string), mono_string_length (string) * 2);
 		res [mono_string_length (string)] = 0;
 		return res;
 	}
 }
+#endif /* !HOST_WIN32 */
 
 static void
 mono_struct_delete_old (MonoClass *klass, char *ptr)
@@ -11085,6 +11058,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 	mono_struct_delete_old (klass, (char *)src);
 }
 
+#ifndef HOST_WIN32
+static inline void *
+mono_marshal_alloc_hglobal (size_t size)
+{
+	return g_try_malloc (size);
+}
+#endif
+
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gpointer size)
 {
@@ -11095,11 +11076,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gpointer size)
 		/* This returns a valid pointer for size 0 on MS.NET */
 		s = 4;
 
-#ifdef HOST_WIN32
-	res = GlobalAlloc (GMEM_FIXED, s);
-#else
-	res = g_try_malloc (s);
-#endif
+	res = mono_marshal_alloc_hglobal (s);
+
 	if (!res) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
@@ -11107,6 +11085,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gpointer size)
 
 	return res;
 }
+
+#ifndef HOST_WIN32
+static inline gpointer
+mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
+{
+	return g_try_realloc (ptr, size);
+}
+#endif
 
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gpointer size)
@@ -11119,11 +11105,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, g
 		return NULL;
 	}
 
-#ifdef HOST_WIN32
-	res = GlobalReAlloc (ptr, s, GMEM_MOVEABLE);
-#else
-	res = g_try_realloc (ptr, s);
-#endif
+	res = mono_marshal_realloc_hglobal (ptr, s);
+
 	if (!res) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
@@ -11132,30 +11115,26 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, g
 	return res;
 }
 
+#ifndef HOST_WIN32
+static inline void
+mono_marshal_free_hglobal (gpointer ptr)
+{
+	g_free (ptr);
+	return;
+}
+#endif
+
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 {
-#ifdef HOST_WIN32
-	GlobalFree (ptr);
-#else
-	g_free (ptr);
-#endif
+	mono_marshal_free_hglobal (ptr);
 }
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size)
 {
-	void *res;
+	void *res = mono_marshal_alloc_co_task_mem (size);
 
-#ifdef HOST_WIN32
-	res = CoTaskMemAlloc (size);
-#else
-	if ((gulong)size == 0)
-		/* This returns a valid pointer for size 0 on MS.NET */
-		size = 4;
-
-	res = g_try_malloc ((gulong)size);
-#endif
 	if (!res) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
@@ -11166,23 +11145,23 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size)
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 {
-#ifdef HOST_WIN32
-	CoTaskMemFree (ptr);
-#else
-	g_free (ptr);
-#endif
+	mono_marshal_free_co_task_mem (ptr);
+	return;
 }
+
+#ifndef HOST_WIN32
+static inline gpointer
+mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
+{
+	return g_try_realloc (ptr, (gulong)size);
+}
+#endif
 
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size)
 {
-	void *res;
+	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
 
-#ifdef HOST_WIN32
-	res = CoTaskMemRealloc (ptr, size);
-#else
-	res = g_try_realloc (ptr, (gulong)size);
-#endif
 	if (!res) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
@@ -11340,6 +11319,9 @@ mono_marshal_load_type_info (MonoClass* klass)
 		}	
 		j++;
 	}
+
+	if (klass->byval_arg.type == MONO_TYPE_PTR)
+		info->native_size = sizeof (gpointer);
 
 	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		info->native_size = MAX (native_size, info->native_size);

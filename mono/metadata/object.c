@@ -1891,7 +1891,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		if (mono_class_has_failure (element_class)) {
 			/*Can happen if element_class only got bad after mono_class_setup_vtable*/
 			if (!mono_class_has_failure (klass))
-				mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+				mono_class_set_type_load_failure (klass, "");
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			mono_error_set_for_class_failure (error, klass);
@@ -5499,7 +5499,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 
 	*pass_size_in_words = FALSE;
 
-	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
+	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass))
 		return ves_icall_object_new_specific;
 
 	if (vtable->gc_descr != MONO_GC_DESCRIPTOR_NULL) {
@@ -5864,7 +5864,7 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 		o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, len);
 
 	if (G_UNLIKELY (!o)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", byte_len);
+		mono_error_set_out_of_memory (error, "Could not allocate %zd bytes", (gsize) byte_len);
 		return NULL;
 	}
 
@@ -5978,7 +5978,7 @@ mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *err
 	o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, n);
 
 	if (G_UNLIKELY (!o)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", byte_len);
+		mono_error_set_out_of_memory (error, "Could not allocate %zd bytes", (gsize) byte_len);
 		return NULL;
 	}
 
@@ -6136,7 +6136,7 @@ mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error)
 	s = (MonoString *)mono_gc_alloc_string (vtable, size, len);
 
 	if (G_UNLIKELY (!s)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", size);
+		mono_error_set_out_of_memory (error, "Could not allocate %zd bytes", size);
 		return NULL;
 	}
 

@@ -6,7 +6,7 @@ else
 FEATUREFUL_RUNTIME_TEST = test-appdomain-unload
 endif
 
-check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform	\
+check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-multi-netmodule test-cattr-type-load test-reflection-load-with-context test_platform	\
 		 test-console-output test-messages test-env-options test-unhandled-exception-2 $(FEATUREFUL_RUNTIME_TEST) test-process-stress rm-empty-logs
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
@@ -140,6 +140,7 @@ BASE_TEST_MOBILE_STATIC_NOT_SUPPORTED= \
 	threadpool-exceptions7.cs # Needs AppDomains \
 	cross-domain.cs # Needs AppDomains \
 	generic-unloading.2.cs # Needs AppDomains \
+	namedmutex-destroy-race.cs # needs named Mutex \
 	thread6.cs # On MOBILE, ThreadAbortException doesn't have necessary field for this test
 
 # Disabled until ?mcs is fixed
@@ -468,7 +469,7 @@ BASE_TEST_CS_SRC_UNIVERSAL=		\
 	bug-29585.cs	\
 	priority.cs	\
 	abort-cctor.cs	\
-	namedmutex-destroy-race.cs
+	thread-native-exit.cs
 
 if INSTALL_MOBILE_STATIC
 BASE_TEST_CS_SRC= \
@@ -1065,6 +1066,14 @@ test-type-load: $(TEST_DRIVER_DEPEND)
 	@$(MCS) -t:library -out:t.dll $(srcdir)/t-missing.cs
 	@echo "Testing load-exception.exe..."
 	@$(RUNTIME) load-exceptions.exe > load-exceptions.exe.stdout 2> load-exceptions.exe.stderr
+
+EXTRA_DIST += test-multi-netmodule-1-netmodule.cs test-multi-netmodule-2-dll1.cs test-multi-netmodule-3-dll2.cs test-multi-netmodule-4-exe.cs
+test-multi-netmodule:
+	@$(MCS) -t:module test-multi-netmodule-1-netmodule.cs
+	@$(MCS) -addmodule:test-multi-netmodule-1-netmodule.netmodule -t:library test-multi-netmodule-2-dll1.cs
+	@$(MCS) -addmodule:test-multi-netmodule-1-netmodule.netmodule -t:library test-multi-netmodule-3-dll2.cs
+	@$(MCS) -r:test-multi-netmodule-2-dll1.dll test-multi-netmodule-4-exe.cs
+	$(RUNTIME) test-multi-netmodule-4-exe.exe > test-multi-netmodule-4-exe.exe.stdout 2> test-multi-netmodule-4-exe.exe.stderr
 
 EXTRA_DIST += custom-attr-errors.cs custom-attr-errors-lib.cs
 test-cattr-type-load: $(TEST_DRIVER_DEPEND) custom-attr-errors.cs custom-attr-errors-lib.cs

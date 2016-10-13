@@ -40,7 +40,7 @@ class X {
 		if (!Version.TryParse (field.GetValue (null) as string, out version))
 			return 4;
 
-		if (version < new Version (3, 8))
+		if (version < new Version (4, 0))
 			return 5;
 
 		return 0;

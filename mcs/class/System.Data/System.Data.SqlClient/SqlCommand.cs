@@ -510,40 +510,104 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		[MonoTODO]
 		public new Task<SqlDataReader> ExecuteReaderAsync ()
 		{
-			throw new NotImplementedException ();
+			return ExecuteReaderAsync (CommandBehavior.Default, CancellationToken.None);
 		}
 
-		[MonoTODO]
 		public new Task<SqlDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			return ExecuteReaderAsync (behavior, CancellationToken.None);
 		}
 
-		[MonoTODO]
 		public new Task<SqlDataReader> ExecuteReaderAsync (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			return ExecuteReaderAsync (CommandBehavior.Default, CancellationToken.None);
 		}
 
-		[MonoTODO]
 		public new Task<SqlDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			TaskCompletionSource<SqlDataReader> source = new TaskCompletionSource<SqlDataReader>();
+
+			CancellationTokenRegistration registration = new CancellationTokenRegistration();
+			if (cancellationToken.CanBeCanceled) {
+				if (cancellationToken.IsCancellationRequested) {
+					source.SetCanceled();
+					return source.Task;
+				}
+				registration = cancellationToken.Register(CancelIgnoreFailure);
+			}
+
+			Task<SqlDataReader> returnedTask = source.Task;
+			try {
+				// TODO: RegisterForConnectionCloseNotification(ref returnedTask);
+
+				Task<SqlDataReader>.Factory.FromAsync(BeginExecuteReaderAsync, EndExecuteReader, behavior, null).ContinueWith((t) => {
+					registration.Dispose();
+					if (t.IsFaulted) {
+						Exception e = t.Exception.InnerException;
+						source.SetException(e);
+					}
+					else {
+						if (t.IsCanceled) {
+							source.SetCanceled();
+						}
+						else {
+							source.SetResult(t.Result);
+						}
+					}
+				}, TaskScheduler.Default);
+			}
+			catch (Exception e) {
+				source.SetException(e);
+			}
+
+			return returnedTask;
 		}
 
-		[MonoTODO]
 		public Task<XmlReader> ExecuteXmlReaderAsync ()
 		{
-			throw new NotImplementedException ();
+			return ExecuteXmlReaderAsync (CancellationToken.None);
 		}
  
-		[MonoTODO]
 		public Task<XmlReader> ExecuteXmlReaderAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			TaskCompletionSource<XmlReader> source = new TaskCompletionSource<XmlReader>();
+
+			CancellationTokenRegistration registration = new CancellationTokenRegistration();
+			if (cancellationToken.CanBeCanceled) {
+				if (cancellationToken.IsCancellationRequested) {
+					source.SetCanceled();
+					return source.Task;
+				}
+				registration = cancellationToken.Register(CancelIgnoreFailure);
+			}
+
+			Task<XmlReader> returnedTask = source.Task;
+			try {
+				// TODO: RegisterForConnectionCloseNotification(ref returnedTask);
+
+				Task<XmlReader>.Factory.FromAsync(BeginExecuteXmlReader, EndExecuteXmlReader, null).ContinueWith((t) => {
+					registration.Dispose();
+					if (t.IsFaulted) {
+						Exception e = t.Exception.InnerException;
+						source.SetException(e);
+					}
+					else {
+						if (t.IsCanceled) {
+							source.SetCanceled();
+						}
+						else {
+							source.SetResult(t.Result);
+						}
+					}
+				}, TaskScheduler.Default);
+			}
+			catch (Exception e) {
+				source.SetException(e);
+			}
+
+			return returnedTask;
 		}
 
 		public
@@ -846,6 +910,11 @@ namespace System.Data.SqlClient {
 			return BeginExecuteReader (callback, stateObject, CommandBehavior.Default);
 		}
 
+		IAsyncResult BeginExecuteReaderAsync(CommandBehavior behavior, AsyncCallback callback, object stateObject)
+		{
+			return BeginExecuteReader (callback, stateObject, behavior);
+		}
+
 		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object stateObject, CommandBehavior behavior)
 		{
 			ValidateCommand ("BeginExecuteReader", true);
@@ -925,6 +994,9 @@ namespace System.Data.SqlClient {
 
 		#endregion // Asynchronous Methods
 
+#pragma warning disable 0067
+		// TODO: Not implemented
 		public event StatementCompletedEventHandler StatementCompleted;
+#pragma warning restore
 	}
 }

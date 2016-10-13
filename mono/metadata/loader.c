@@ -194,7 +194,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
 
 	if (!mono_verifier_verify_memberref_field_signature (image, cols [MONO_MEMBERREF_SIGNATURE], NULL)) {
-		mono_error_set_bad_image (error, image, "Bad field '%s' signature 0x%08x", class_index, token);
+		mono_error_set_bad_image (error, image, "Bad field '%u' signature 0x%08x", class_index, token);
 		return NULL;
 	}
 
@@ -209,7 +209,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		klass = mono_class_get_and_inflate_typespec_checked (image, MONO_TOKEN_TYPE_SPEC | nindex, context, error);
 		break;
 	default:
-		mono_error_set_bad_image (error, image, "Bad field field '%s' signature 0x%08x", class_index, token);
+		mono_error_set_bad_image (error, image, "Bad field field '%u' signature 0x%08x", class_index, token);
 	}
 
 	if (!klass)
@@ -1121,6 +1121,14 @@ cached_module_load (const char *name, int flags, char **err)
 		g_hash_table_insert (global_module_map, g_strdup (name), res);
 	global_loader_data_unlock ();
 	return res;
+}
+
+void
+mono_loader_register_module (const char *name, MonoDl *module)
+{
+	if (!global_module_map)
+		global_module_map = g_hash_table_new (g_str_hash, g_str_equal);
+	g_hash_table_insert (global_module_map, g_strdup (name), module);
 }
 
 static MonoDl *internal_module;
@@ -2133,8 +2141,6 @@ mono_method_get_wrapper_data (MonoMethod *method, guint32 id)
 	g_assert (method != NULL);
 	g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
 
-	if (method->is_inflated)
-		method = ((MonoMethodInflated *) method)->declaring;
 	data = (void **)((MonoMethodWrapper *)method)->method_data;
 	g_assert (data != NULL);
 	g_assert (id <= GPOINTER_TO_UINT (*data));

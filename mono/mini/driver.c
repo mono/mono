@@ -1438,6 +1438,10 @@ mono_jit_parse_options (int argc, char * argv[])
 			
 			if (!mono_debugger_insert_breakpoint (argv [++i], FALSE))
 				fprintf (stderr, "Error: invalid method name '%s'\n", argv [i]);
+		} else if (strncmp (argv[i], "--gc-params=", 12) == 0) {
+			mono_gc_params_set (argv[i] + 12);
+		} else if (strncmp (argv[i], "--gc-debug=", 11) == 0) {
+			mono_gc_debug_set (argv[i] + 11);
 		} else if (strcmp (argv [i], "--llvm") == 0) {
 #ifndef MONO_ARCH_LLVM_SUPPORTED
 			fprintf (stderr, "Mono Warning: --llvm not supported on this platform.\n");
@@ -1504,6 +1508,7 @@ switch_gc (char* argv[], const char* target_gc)
 
 #ifdef HAVE_EXECVP
 	execvp (path->str, argv);
+	fprintf (stderr, "Error: Failed to switch to %s gc. mono-%s is not installed.\n", target_gc, target_gc);
 #else
 	fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");
 #endif
@@ -1682,6 +1687,10 @@ mono_main (int argc, char* argv[])
 			switch_gc (argv, "sgen");
 		} else if (strcmp (argv [i], "--gc=boehm") == 0) {
 			switch_gc (argv, "boehm");
+		} else if (strncmp (argv[i], "--gc-params=", 12) == 0) {
+			mono_gc_params_set (argv[i] + 12);
+		} else if (strncmp (argv[i], "--gc-debug=", 11) == 0) {
+			mono_gc_debug_set (argv[i] + 11);
 		}
 #ifdef TARGET_OSX
 		else if (strcmp (argv [i], "--arch=32") == 0) {
@@ -2116,7 +2125,7 @@ mono_main (int argc, char* argv[])
 			exit (1);
 		}
 
-#ifdef HOST_WIN32
+#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
 		if (!enable_debugging && !mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();

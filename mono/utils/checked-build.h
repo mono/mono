@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
 typedef enum {
@@ -185,11 +186,17 @@ void assert_in_gc_critical_region (void);
 void check_metadata_store(void *from, void *to);
 void check_metadata_store_local(void *from, void *to);
 
+#define CHECKED_METADATA_STORE(ptr, val) check_metadata_store ((ptr), (val))
+#define CHECKED_METADATA_STORE_LOCAL(ptr, val) check_metadata_store_local ((ptr), (val))
+
 #else
 
 #define CHECKED_METADATA_WRITE_PTR(ptr, val) do { (ptr) = (val); } while (0)
 #define CHECKED_METADATA_WRITE_PTR_LOCAL(ptr, val) do { (ptr) = (val); } while (0)
 #define CHECKED_METADATA_WRITE_PTR_ATOMIC(ptr, val) do { mono_atomic_store_release (&(ptr), (val)); } while (0)
+
+#define CHECKED_METADATA_STORE(ptr, val) do { (ptr); (val); } while (0)
+#define CHECKED_METADATA_STORE_LOCAL(ptr, val) do { (ptr); (val); } while (0)
 
 #endif /* defined(ENABLE_CHECKED_BUILD_METADATA) */
 
@@ -201,7 +208,7 @@ void check_metadata_store_local(void *from, void *to);
 
 void checked_build_thread_transition(const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta);
 
-G_GNUC_NORETURN void mono_fatal_with_history(const char *msg, ...);
+G_GNUC_NORETURN MONO_ATTR_FORMAT_PRINTF(1,2) void mono_fatal_with_history(const char *msg, ...);
 
 #else
 

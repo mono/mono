@@ -29,7 +29,9 @@ namespace System.Linq.Expressions.Compiler {
         private const MethodAttributes CtorAttributes = MethodAttributes.RTSpecialName | MethodAttributes.HideBySig | MethodAttributes.Public;
         private const MethodImplAttributes ImplAttributes = MethodImplAttributes.Runtime | MethodImplAttributes.Managed;
         private const MethodAttributes InvokeAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual;
+#if FEATURE_REFEMIT
         private static readonly Type[] _DelegateCtorSignature = new Type[] { typeof(object), typeof(IntPtr) };
+#endif
 
         private static Type MakeNewCustomDelegate(Type[] types) {
 #if FEATURE_REFEMIT

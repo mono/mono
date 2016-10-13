@@ -1052,7 +1052,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 					else if (info->exception_type == MONO_EXCEPTION_FIELD_ACCESS)
 						mono_error_set_generic_error (&cfg->error, "System", "FieldAccessException", "%s", msg);
 					else if (info->exception_type == MONO_EXCEPTION_UNVERIFIABLE_IL)
-						mono_error_set_generic_error (&cfg->error, "System.Security", "VerificationException", msg);
+						mono_error_set_generic_error (&cfg->error, "System.Security", "VerificationException", "%s", msg);
 					if (!mono_error_ok (&cfg->error)) {
 						mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 						g_free (msg);
@@ -3175,6 +3175,9 @@ init_backend (MonoBackend *backend)
 #ifdef MONO_ARCH_DYN_CALL_PARAM_AREA
 	backend->dyn_call_param_area = MONO_ARCH_DYN_CALL_PARAM_AREA;
 #endif
+#ifdef MONO_ARCH_NO_DIV_WITH_MUL
+	backend->disable_div_with_mul = 1;
+#endif
 }
 
 /*
@@ -4053,7 +4056,7 @@ void
 mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg)
 {
 	mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
-	mono_error_set_generic_error (&cfg->error, "System", "InvalidProgramException", msg);
+	mono_error_set_generic_error (&cfg->error, "System", "InvalidProgramException", "%s", msg);
 }
 
 #endif /* DISABLE_JIT */
@@ -4397,9 +4400,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	vtable = mono_class_vtable (target_domain, method->klass);
 	if (!vtable) {
-		ex = mono_class_get_exception_for_failure (method->klass);
-		g_assert (ex);
-		mono_error_set_exception_instance (error, ex);
+		g_assert (mono_class_has_failure (method->klass));
+		mono_error_set_for_class_failure (error, method->klass);
 		return NULL;
 	}
 

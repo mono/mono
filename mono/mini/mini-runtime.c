@@ -2405,10 +2405,9 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 			 */
 			mono_class_setup_vtable (method->klass);
 			if (mono_class_has_failure (method->klass)) {
-				MonoException *fail_exc = mono_class_get_exception_for_failure (method->klass);
+				mono_error_set_for_class_failure (error, method->klass);
 				if (exc)
-					*exc = (MonoObject*)fail_exc;
-				mono_error_set_exception_instance (error, fail_exc);
+					*exc = (MonoObject*)mono_class_get_exception_for_failure (method->klass);
 				return NULL;
 			}
 		}
@@ -3744,6 +3743,8 @@ register_icalls (void)
 				ves_icall_get_trace);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers",
 				mono_runtime_install_handlers);
+	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
+				mono_runtime_cleanup_handlers);
 
 #if defined(PLATFORM_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",

@@ -260,8 +260,6 @@ mono_threads_wait_pending_operations (void)
 
 //Thread initialization code
 
-static void mono_threads_unregister_current_thread (MonoThreadInfo *info);
-
 static inline void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 {
@@ -400,6 +398,8 @@ unregister_thread (void *arg)
 	gpointer gc_unsafe_stackdata;
 	MonoThreadInfo *info;
 	int small_id;
+	gboolean result;
+	gpointer handle;
 
 	info = (MonoThreadInfo *) arg;
 	g_assert (info);
@@ -416,8 +416,6 @@ unregister_thread (void *arg)
 
 	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
 
-	mono_threads_platform_unregister (info);
-
 	/*
 	 * TLS destruction order is not reliable so small_id might be cleaned up
 	 * before us.
@@ -425,6 +423,10 @@ unregister_thread (void *arg)
 #ifndef HAVE_KW_THREAD
 	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (info->small_id + 1));
 #endif
+
+	/* we need to duplicate it, as the info->handle is going
+	 * to be closed when unregistering from the platform */
+	handle = mono_threads_platform_duplicate_handle (info);
 
 	/*
 	First perform the callback that requires no locks.
@@ -444,7 +446,10 @@ unregister_thread (void *arg)
 	*/
 	if (threads_callbacks.thread_unregister)
 		threads_callbacks.thread_unregister (info);
-	mono_threads_unregister_current_thread (info);
+
+	mono_threads_platform_unregister (info);
+	result = mono_thread_info_remove (info);
+	g_assert (result);
 	mono_threads_transition_detach (info);
 
 	mono_thread_info_suspend_unlock ();
@@ -457,6 +462,13 @@ unregister_thread (void *arg)
 	mono_thread_hazardous_try_free_some ();
 
 	mono_thread_small_id_free (small_id);
+
+	/* Signal the w32handle. It can be done as late as here
+	 * because w32handle does not access the current MonoThreadInfo,
+	 * neither does it switch state to BLOCKING. */
+	mono_threads_platform_set_exited (handle);
+
+	mono_threads_platform_close_thread_handle (handle);
 }
 
 static void
@@ -478,20 +490,6 @@ thread_exited_dtor (void *arg)
 	 */
 	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
 #endif
-}
-
-/**
- * Removes the current thread from the thread list.
- * This must be called from the thread unregister callback and nowhere else.
- * The current thread must be passed as TLS might have already been cleaned up.
-*/
-static void
-mono_threads_unregister_current_thread (MonoThreadInfo *info)
-{
-	gboolean result;
-	g_assert (mono_thread_info_get_tid (info) == mono_native_thread_id_get ());
-	result = mono_thread_info_remove (info);
-	g_assert (result);
 }
 
 MonoThreadInfo*
@@ -1187,7 +1185,7 @@ inner_start_thread (gpointer data)
  * Returns: a windows or io-layer handle for the thread.
  */
 HANDLE
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize stack_size, MonoNativeThreadId *out_tid)
+mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize * const stack_size, MonoNativeThreadId *out_tid)
 {
 	CreateThreadData *thread_data;
 	gint res;
@@ -1652,7 +1650,9 @@ void
 mono_thread_info_set_exited (THREAD_INFO_TYPE *info)
 {
 	g_assert (mono_thread_info_is_current (info));
-	mono_threads_platform_set_exited (info);
+
+	g_assert (info->handle);
+	mono_threads_platform_set_exited (info->handle);
 }
 
 gpointer
@@ -1660,22 +1660,4 @@ mono_thread_info_duplicate_handle (MonoThreadInfo *info)
 {
 	g_assert (mono_thread_info_is_current (info));
 	return mono_threads_platform_duplicate_handle (info);
-}
-
-void
-mono_thread_info_describe (MonoThreadInfo *info, GString *text)
-{
-	mono_threads_platform_describe (info, text);
-}
-
-void
-mono_thread_info_own_mutex (MonoThreadInfo *info, gpointer mutex_handle)
-{
-	mono_threads_platform_own_mutex (info, mutex_handle);
-}
-
-void
-mono_thread_info_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
-{
-	mono_threads_platform_disown_mutex (info, mutex_handle);
 }

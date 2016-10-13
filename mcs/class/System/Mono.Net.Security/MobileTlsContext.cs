@@ -54,7 +54,7 @@ namespace Mono.Net.Security
 			this.clientCertificates = clientCertificates;
 			this.askForClientCert = askForClientCert;
 
-			certificateValidator = CertificateValidationHelper.GetDefaultValidator (
+			certificateValidator = CertificateValidationHelper.GetInternalValidator (
 				parent.Settings, parent.Provider);
 		}
 
@@ -159,30 +159,35 @@ namespace Mono.Net.Security
 
 		public abstract void Close ();
 
-		protected ValidationResult ValidateCertificate (X509Certificate leaf, X509Chain chain)
+		protected bool ValidateCertificate (X509Certificate leaf, X509Chain chain)
 		{
-			return certificateValidator.ValidateCertificate (
-				targetHost, serverMode, leaf, chain);
+			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, leaf, chain);
+			return result != null && result.Trusted && !result.UserDenied;
 		}
 
-		protected X509Certificate SelectClientCertificate (string[] acceptableIssuers)
-                {
-                        X509Certificate certificate;
-                        var selected = certificateValidator.SelectClientCertificate (
-				targetHost, clientCertificates, serverCertificate,
-				null, out certificate);
-                        if (selected)
-                                return certificate;
+		protected bool ValidateCertificate (X509CertificateCollection certificates)
+		{
+			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, certificates);
+			return result != null && result.Trusted && !result.UserDenied;
+		}
 
-                        if (clientCertificates == null || clientCertificates.Count == 0)
-                                return null;
+		protected X509Certificate SelectClientCertificate (X509Certificate serverCertificate, string[] acceptableIssuers)
+		{
+			X509Certificate certificate;
+			var selected = certificateValidator.SelectClientCertificate (
+				TargetHost, ClientCertificates, serverCertificate, acceptableIssuers, out certificate);
+			if (selected)
+				return certificate;
 
-                        if (clientCertificates.Count == 1)
-                                return clientCertificates [0];
+			if (clientCertificates == null || clientCertificates.Count == 0)
+				return null;
 
-                        // FIXME: select one.
-                        throw new NotImplementedException ();
-                }
+			if (clientCertificates.Count == 1)
+				return clientCertificates [0];
+
+			// FIXME: select onne.
+			throw new NotImplementedException ();
+		}
 
 		public void Dispose ()
 		{

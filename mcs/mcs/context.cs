@@ -526,6 +526,19 @@ namespace Mono.CSharp
 			return da;
 		}
 
+		public Dictionary<Statement, List<DefiniteAssignmentBitSet>> CopyLabelStack ()
+		{
+			if (LabelStack == null)
+				return null;
+
+			var dest = new Dictionary<Statement, List<DefiniteAssignmentBitSet>> ();
+			foreach (var entry in LabelStack) {
+				dest.Add (entry.Key, new List<DefiniteAssignmentBitSet> (entry.Value));
+			}
+
+			return dest;
+		}
+
 		public bool IsDefinitelyAssigned (VariableInfo variable)
 		{
 			return variable.IsAssigned (DefiniteAssignment);
@@ -534,6 +547,11 @@ namespace Mono.CSharp
 		public bool IsStructFieldDefinitelyAssigned (VariableInfo variable, string name)
 		{
 			return variable.IsStructFieldAssigned (DefiniteAssignment, name);
+		}
+
+		public void SetLabelStack (Dictionary<Statement, List<DefiniteAssignmentBitSet>> labelStack)
+		{
+			LabelStack = labelStack;
 		}
 
 		public void SetVariableAssigned (VariableInfo variable, bool generatedAssignment = false)

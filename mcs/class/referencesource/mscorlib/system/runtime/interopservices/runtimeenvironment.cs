@@ -151,7 +151,7 @@ namespace System.Runtime.InteropServices {
             }
         }
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MONO
 		[DllImport("mscoree")]
 		private extern static int CLRCreateInstance (
 		    [MarshalAs(UnmanagedType.LPStruct)] Guid clsid,

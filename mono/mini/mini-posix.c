@@ -140,11 +140,15 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 static GHashTable *mono_saved_signal_handlers = NULL;
 
 static struct sigaction *
-get_saved_signal_handler (int signo)
+get_saved_signal_handler (int signo, gboolean remove)
 {
-	if (mono_saved_signal_handlers)
+	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		return (struct sigaction *)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		if (remove && handler)
+			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		return handler;
+	}
 	return NULL;
 }
 
@@ -167,21 +171,14 @@ save_old_signal_handler (int signo, struct sigaction *old_action)
 	handler_to_save->sa_flags = old_action->sa_flags;
 	
 	if (!mono_saved_signal_handlers)
-		mono_saved_signal_handlers = g_hash_table_new (NULL, NULL);
+		mono_saved_signal_handlers = g_hash_table_new_full (NULL, NULL, NULL, g_free);
 	g_hash_table_insert (mono_saved_signal_handlers, GINT_TO_POINTER (signo), handler_to_save);
-}
-
-static void
-free_saved_sig_handler_func (gpointer key, gpointer value, gpointer user_data)
-{
-	g_free (value);
 }
 
 static void
 free_saved_signal_handlers (void)
 {
 	if (mono_saved_signal_handlers) {
-		g_hash_table_foreach (mono_saved_signal_handlers, free_saved_sig_handler_func, NULL);
 		g_hash_table_destroy (mono_saved_signal_handlers);
 		mono_saved_signal_handlers = NULL;
 	}
@@ -198,7 +195,7 @@ gboolean
 MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
 	int signal = MONO_SIG_HANDLER_GET_SIGNO ();
-	struct sigaction *saved_handler = (struct sigaction *)get_saved_signal_handler (signal);
+	struct sigaction *saved_handler = (struct sigaction *)get_saved_signal_handler (signal, FALSE);
 
 	if (saved_handler && saved_handler->sa_handler) {
 		if (!(saved_handler->sa_flags & SA_SIGINFO)) {
@@ -338,14 +335,8 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	/* See the comment in mono_runtime_shutdown_stat_profiler (). */
 	if (mono_native_thread_id_get () == sampling_thread) {
-#ifdef HAVE_CLOCK_NANOSLEEP
-		if (mono_profiler_get_sampling_mode () == MONO_PROFILER_STAT_MODE_PROCESS) {
-			InterlockedIncrement (&profiler_interrupt_signals_received);
-			return;
-		}
-#endif
-
-		g_error ("%s: Unexpected profiler signal received by the sampler thread", __func__);
+		InterlockedIncrement (&profiler_interrupt_signals_received);
+		return;
 	}
 
 	InterlockedIncrement (&profiler_signals_received);
@@ -453,7 +444,7 @@ static void
 remove_signal_handler (int signo)
 {
 	struct sigaction sa;
-	struct sigaction *saved_action = get_saved_signal_handler (signo);
+	struct sigaction *saved_action = get_saved_signal_handler (signo, TRUE);
 
 	if (!saved_action) {
 		sa.sa_handler = SIG_DFL;
@@ -764,7 +755,7 @@ mono_runtime_shutdown_stat_profiler (void)
 {
 	InterlockedWrite (&sampling_thread_running, 0);
 
-#ifdef HAVE_CLOCK_NANOSLEEP
+#ifndef PLATFORM_MACOSX
 	/*
 	 * There is a slight problem when we're using CLOCK_PROCESS_CPUTIME_ID: If
 	 * we're shutting down and there's largely no activity in the process other
@@ -777,28 +768,22 @@ mono_runtime_shutdown_stat_profiler (void)
 	 * sampling_thread_running upon an interrupt and return immediately if it's
 	 * zero. profiler_signal_handler () has a special case to ignore the signal
 	 * for the sampler thread.
-	 *
-	 * We do not need to do this on platforms where we use a regular sleep
-	 * based on a monotonic clock. The sleep will return in a reasonable amount
-	 * of time in those cases.
 	 */
-	if (mono_profiler_get_sampling_mode () == MONO_PROFILER_STAT_MODE_PROCESS) {
-		MonoThreadInfo *info;
+	MonoThreadInfo *info;
 
-		// Did it shut down already?
-		if ((info = mono_thread_info_lookup (sampling_thread))) {
-			while (!InterlockedRead (&sampling_thread_exiting)) {
-				mono_threads_pthread_kill (info, profiler_signal);
-				mono_thread_info_usleep (10 * 1000 /* 10ms */);
-			}
-
-			// Make sure info can be freed.
-			mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
+	// Did it shut down already?
+	if ((info = mono_thread_info_lookup (sampling_thread))) {
+		while (!InterlockedRead (&sampling_thread_exiting)) {
+			mono_threads_pthread_kill (info, profiler_signal);
+			mono_thread_info_usleep (10 * 1000 /* 10ms */);
 		}
+
+		// Make sure info can be freed.
+		mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
 	}
 #endif
 
-	pthread_join (sampling_thread, NULL);
+	mono_native_thread_join (sampling_thread);
 
 	/*
 	 * We can't safely remove the signal handler because we have no guarantee

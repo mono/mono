@@ -83,7 +83,6 @@ namespace System.IO.Pipes
 		}
 #endif
 
-#if !MOBILE
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity)
 			: this (pipeName, direction, maxNumberOfServerInstances, transmissionMode, options, inBufferSize, outBufferSize, pipeSecurity, HandleInheritability.None)
 		{
@@ -98,6 +97,9 @@ namespace System.IO.Pipes
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights)
 			: base (direction, transmissionMode, outBufferSize)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			var rights = ToAccessRights (direction) | additionalAccessRights;
 			// FIXME: reject some rights declarations (for ACL).
 
@@ -110,8 +112,8 @@ namespace System.IO.Pipes
 								rights, options, inBufferSize, outBufferSize, inheritability);
 
 			InitializeHandle (impl.Handle, false, (options & PipeOptions.Asynchronous) != PipeOptions.None);
-		}
 #endif
+		}
 
 		public NamedPipeServerStream (PipeDirection direction, bool isAsync, bool isConnected, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
@@ -140,14 +142,12 @@ namespace System.IO.Pipes
 			impl.Disconnect ();
 		}
 
-#if !MOBILE
 		[MonoTODO]
 		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlPrincipal)]
 		public void RunAsClient (PipeStreamImpersonationWorker impersonationWorker)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void WaitForConnection ()
 		{
@@ -173,7 +173,6 @@ namespace System.IO.Pipes
 			throw new NotImplementedException ();
 		}
 
-#if !MOBILE
 		// async operations
 
 		Action wait_connect_delegate;
@@ -190,7 +189,6 @@ namespace System.IO.Pipes
 		{
 			wait_connect_delegate.EndInvoke (asyncResult);
 		}
-#endif
 	}
 }
 

@@ -10,7 +10,10 @@ else
     export CFLAGS="-ggdb3 -O2"
 fi
 
-if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; export MONO_CHECK_MODE=gc,thread; fi
+if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; fi
+
+if [[ ${CI_TAGS} == *'checked-coop'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=gc,thread"; export MONO_CHECK_MODE=gc,thread; fi
+if [[ ${CI_TAGS} == *'checked-all'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=all"; export MONO_CHECK_MODE=all; fi
 
 if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --build=i386-apple-darwin11.2.0"; fi
 if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib "; fi
@@ -52,11 +55,6 @@ fi
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 
 ${TESTCMD} --label=make --timeout=300m --fatal make -j4 -w V=1
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]];
-    then
-    exit 0
-    # we don't run the test suite on Windows PRs, we just ensure the build succeeds, so end here
-fi
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then

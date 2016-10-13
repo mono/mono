@@ -1209,7 +1209,6 @@ namespace System.Net {
             }
         }
 
-#if !MONO
         //
         internal void SetupCacheProtocol(Uri uri)
         {
@@ -1224,6 +1223,7 @@ namespace System.Net {
             }
         }
 
+#if !MONO
         delegate void DelEtwFireBeginWRGet(object id, string uri, bool success, bool synchronous);
         delegate void DelEtwFireEndWRGet(object id, bool success, bool synchronous);
         delegate void DelEtwFireEndWRespGet(object id, bool success, bool synchronous, int statusCode);

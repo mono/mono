@@ -13,8 +13,6 @@ using Mono.Security.Interface;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 #endif
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
 
 using System;
 using System.Net;
@@ -62,7 +60,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public static X509Chain CreateX509Chain (XX509CertificateCollection certs)
+		public static X509Chain CreateX509Chain (X509CertificateCollection certs)
 		{
 			var chain = new X509Chain ();
 			chain.ChainPolicy = new X509ChainPolicy ((X509CertificateCollection)(object)certs);
@@ -74,7 +72,7 @@ namespace Mono.Net.Security
 			return chain;
 		}
 
-		static bool BuildX509Chain (XX509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool BuildX509Chain (X509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 #if MOBILE
 			return false;
@@ -106,7 +104,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		static bool CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
+		static bool CheckUsage (X509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MONOTOUCH
 			var leaf = certs[0] as X509Certificate2;
@@ -130,7 +128,7 @@ namespace Mono.Net.Security
 			return true;
 		}
 
-		static bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool EvaluateSystem (X509CertificateCollection certs, X509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			var leaf = certs [0];
 			bool result;
@@ -191,7 +189,7 @@ namespace Mono.Net.Security
 		}
 
 		public static bool Evaluate (
-			MonoTlsSettings settings, string host, XX509CertificateCollection certs,
+			MonoTlsSettings settings, string host, X509CertificateCollection certs,
 			X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			if (!CheckUsage (certs, host, ref errors, ref status11))

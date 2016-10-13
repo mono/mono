@@ -39,3 +39,10 @@
 	path = external/cecil-legacy
 	url = git://github.com/mono/cecil.git
 	branch = mono-legacy-0.9.5
+[submodule "external/boringssl"]
+	path = external/boringssl
+	url = git://github.com/mono/boringssl.git
+	branch = mono
+[submodule "external/corefx"]
+	path = external/corefx
+	url = git://github.com/mono/corefx.git

@@ -1357,8 +1357,9 @@ namespace System.Globalization {
         {
             return NativeInternalInitSortHandle(localeName, out handleOrigin);
         }
+#endif
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR || MONO
         private const int SORT_VERSION_WHIDBEY = 0x00001000;
         private const int SORT_VERSION_V4 = 0x00060101;
 
@@ -1375,7 +1376,11 @@ namespace System.Globalization {
             [System.Security.SecuritySafeCritical]
             get
             {
+#if MONO
+                return SORT_VERSION_V4;
+#else
                 return InternalGetSortVersion();
+#endif
             }
         }
 
@@ -1389,16 +1394,21 @@ namespace System.Globalization {
             {
                 if(m_SortVersion == null) 
                 {
+#if MONO
+                    m_SortVersion = new SortVersion(SORT_VERSION_V4, new Guid("00000001-57ee-1e5c-00b4-d0000bb1e11e")); // Guid returned by corefx and .NET 4.6
+#else
                     Win32Native.NlsVersionInfoEx v = new Win32Native.NlsVersionInfoEx();
                     v.dwNLSVersionInfoSize = Marshal.SizeOf(typeof(Win32Native.NlsVersionInfoEx));
                     InternalGetNlsVersionEx(m_dataHandle, m_handleOrigin, m_sortName, ref v);
                     m_SortVersion = new SortVersion(v.dwNLSVersion, (v.dwEffectiveId != 0) ? v.dwEffectiveId : LCID, v.guidCustomVersion);
+#endif
                 }
 
                 return m_SortVersion;
             }
         }
-        
+
+#if !MONO
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1412,7 +1422,6 @@ namespace System.Globalization {
         [SuppressUnmanagedCodeSecurity]
         private static extern uint InternalGetSortVersion();
 
-#endif
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1456,6 +1465,8 @@ namespace System.Globalization {
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern int InternalGetSortKey(IntPtr handle, IntPtr handleOrigin, String localeName, int flags, String source, int sourceCount, byte[] target, int targetCount);
+#endif
+
 #endif
     }
 }

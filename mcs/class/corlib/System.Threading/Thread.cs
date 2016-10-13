@@ -91,6 +91,7 @@ namespace System.Threading {
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
 		private int priority = (int) ThreadPriority.Normal;
+		private IntPtr owned_mutex;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
@@ -459,6 +460,12 @@ namespace System.Threading {
 		{
 			throw new PlatformNotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
 		}
+
+		internal object AbortReason {
+			get {
+				throw new PlatformNotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
+			}
+		}
 #endif // MONO_FEATURE_THREAD_ABORT
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -703,5 +710,10 @@ namespace System.Threading {
 			throw new PlatformNotSupportedException ("Thread.Resume is not supported on the current platform.");
 		}
 #endif
+
+		public void DisableComObjectEagerCleanup ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }

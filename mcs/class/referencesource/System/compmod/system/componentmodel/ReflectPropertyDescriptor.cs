@@ -64,7 +64,9 @@ namespace System.ComponentModel {
         
         private static TraceSwitch PropDescCreateSwitch = new TraceSwitch("PropDescCreate", "ReflectPropertyDescriptor: Dump errors when creating property info");
         private static TraceSwitch PropDescUsageSwitch  = new TraceSwitch("PropDescUsage", "ReflectPropertyDescriptor: Debug propertydescriptor usage");
+#if !MONO
         private static TraceSwitch PropDescSwitch       = new TraceSwitch("PropDesc", "ReflectPropertyDescriptor: Debug property descriptor");
+#endif
         
         private static readonly int BitDefaultValueQueried      = BitVector32.CreateMask();
         private static readonly int BitGetQueried               = BitVector32.CreateMask(BitDefaultValueQueried);

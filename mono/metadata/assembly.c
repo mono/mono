@@ -16,7 +16,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "assembly.h"
+#include "assembly-internals.h"
 #include "image.h"
+#include "image-internals.h"
 #include "object-internals.h"
 #include <mono/metadata/loader.h>
 #include <mono/metadata/tabledefs.h>
@@ -555,6 +557,21 @@ G_CONST_RETURN gchar *
 mono_assembly_getrootdir (void)
 {
 	return default_path [0];
+}
+
+/**
+ * mono_native_getrootdir:
+ * 
+ * Obtains the root directory used for looking up native libs (.so, .dylib).
+ *
+ * Returns: a string with the directory, this string should be freed by
+ * the caller.
+ */
+G_CONST_RETURN gchar *
+mono_native_getrootdir (void)
+{
+	gchar* fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (), mono_config_get_reloc_lib_dir(), NULL);
+	return fullpath;
 }
 
 /**
@@ -3433,8 +3450,18 @@ mono_assembly_close (MonoAssembly *assembly)
 MonoImage*
 mono_assembly_load_module (MonoAssembly *assembly, guint32 idx)
 {
-	return mono_image_load_file_for_image (assembly->image, idx);
+	MonoError error;
+	MonoImage *result = mono_assembly_load_module_checked (assembly, idx, &error);
+	mono_error_assert_ok (&error);
+	return result;
 }
+
+MONO_API MonoImage*
+mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error)
+{
+	return mono_image_load_file_for_image_checked (assembly->image, idx, error);
+}
+
 
 /**
  * mono_assembly_foreach:

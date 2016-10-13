@@ -18,7 +18,6 @@
 #include <mono/utils/mono-threads-posix-signals.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
-#include <mono/metadata/w32mutex-utils.h>
 #include <mono/utils/w32handle.h>
 
 #include <errno.h>
@@ -46,8 +45,6 @@ mono_threads_platform_register (MonoThreadInfo *info)
 {
 	gpointer thread_handle;
 
-	info->owned_mutexes = g_ptr_array_new ();
-
 	thread_handle = mono_w32handle_new (MONO_W32HANDLE_THREAD, NULL);
 	if (thread_handle == INVALID_HANDLE_VALUE)
 		g_error ("%s: failed to create handle", __func__);
@@ -57,35 +54,42 @@ mono_threads_platform_register (MonoThreadInfo *info)
 }
 
 int
-mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize stack_size, MonoNativeThreadId *out_tid)
+mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid)
 {
 	pthread_attr_t attr;
 	pthread_t thread;
 	int policy;
 	struct sched_param param;
 	gint res;
+	gsize set_stack_size;
+	size_t min_size;
 
 	res = pthread_attr_init (&attr);
 	g_assert (!res);
 
+	if (stack_size)
+		set_stack_size = *stack_size;
+	else
+		set_stack_size = 0;
+
 #ifdef HAVE_PTHREAD_ATTR_SETSTACKSIZE
-	if (stack_size == 0) {
+	if (set_stack_size == 0) {
 #if HAVE_VALGRIND_MEMCHECK_H
 		if (RUNNING_ON_VALGRIND)
-			stack_size = 1 << 20;
+			set_stack_size = 1 << 20;
 		else
-			stack_size = (SIZEOF_VOID_P / 4) * 1024 * 1024;
+			set_stack_size = (SIZEOF_VOID_P / 4) * 1024 * 1024;
 #else
-		stack_size = (SIZEOF_VOID_P / 4) * 1024 * 1024;
+		set_stack_size = (SIZEOF_VOID_P / 4) * 1024 * 1024;
 #endif
 	}
 
 #ifdef PTHREAD_STACK_MIN
-	if (stack_size < PTHREAD_STACK_MIN)
-		stack_size = PTHREAD_STACK_MIN;
+	if (set_stack_size < PTHREAD_STACK_MIN)
+		set_stack_size = PTHREAD_STACK_MIN;
 #endif
 
-	res = pthread_attr_setstacksize (&attr, stack_size);
+	res = pthread_attr_setstacksize (&attr, set_stack_size);
 	g_assert (!res);
 #endif /* HAVE_PTHREAD_ATTR_SETSTACKSIZE */
 
@@ -128,6 +132,14 @@ mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_
 	if (res != 0)
 		g_error ("%s: pthread_attr_setschedparam failed, error: \"%s\" (%d)", g_strerror (res), res);
 
+	if (stack_size) {
+		res = pthread_attr_getstacksize (&attr, &min_size);
+		if (res != 0)
+			g_error ("%s: pthread_attr_getstacksize failed, error: \"%s\" (%d)", g_strerror (res), res);
+		else
+			*stack_size = min_size;
+	}
+
 	/* Actually start the thread */
 	res = mono_gc_pthread_create (&thread, &attr, (gpointer (*)(gpointer)) thread_fn, thread_data);
 	if (res)
@@ -160,7 +172,11 @@ mono_threads_platform_exit (int exit_code)
 void
 mono_threads_platform_unregister (MonoThreadInfo *info)
 {
-	mono_threads_platform_set_exited (info);
+	g_assert (info->handle);
+
+	/* The thread is no longer active, so unref it */
+	mono_w32handle_unref (info->handle);
+	info->handle = NULL;
 }
 
 int
@@ -287,73 +303,32 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 #endif
 }
 
-void
-mono_threads_platform_set_exited (MonoThreadInfo *info)
+gboolean
+mono_native_thread_join (MonoNativeThreadId tid)
 {
-	gpointer mutex_handle;
-	int i, thr_ret;
-	pthread_t tid;
+	void *res;
 
-	g_assert (info->handle);
+	return !pthread_join (tid, &res);
+}
 
-	if (mono_w32handle_issignalled (info->handle))
-		g_error ("%s: handle %p thread %p has already exited, it's handle is signalled", __func__, info->handle, mono_thread_info_get_tid (info));
-	if (mono_w32handle_get_type (info->handle) == MONO_W32HANDLE_UNUSED)
-		g_error ("%s: handle %p thread %p has already exited, it's handle type is 'unused'", __func__, info->handle, mono_thread_info_get_tid (info));
+void
+mono_threads_platform_set_exited (gpointer handle)
+{
+	int thr_ret;
 
-	tid = pthread_self ();
+	g_assert (handle);
+	if (mono_w32handle_issignalled (handle))
+		g_error ("%s: handle %p thread %p has already exited, it's handle is signalled", __func__, handle, mono_native_thread_id_get ());
+	if (mono_w32handle_get_type (handle) == MONO_W32HANDLE_UNUSED)
+		g_error ("%s: handle %p thread %p has already exited, it's handle type is 'unused'", __func__, handle, mono_native_thread_id_get ());
 
-	for (i = 0; i < info->owned_mutexes->len; i++) {
-		mutex_handle = g_ptr_array_index (info->owned_mutexes, i);
-		mono_w32mutex_abandon (mutex_handle, tid);
-		mono_thread_info_disown_mutex (info, mutex_handle);
-	}
-
-	g_ptr_array_free (info->owned_mutexes, TRUE);
-
-	thr_ret = mono_w32handle_lock_handle (info->handle);
+	thr_ret = mono_w32handle_lock_handle (handle);
 	g_assert (thr_ret == 0);
 
-	mono_w32handle_set_signal_state (info->handle, TRUE, TRUE);
+	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
 
-	thr_ret = mono_w32handle_unlock_handle (info->handle);
+	thr_ret = mono_w32handle_unlock_handle (handle);
 	g_assert (thr_ret == 0);
-
-	/* The thread is no longer active, so unref it */
-	mono_w32handle_unref (info->handle);
-
-	info->handle = NULL;
-}
-
-void
-mono_threads_platform_describe (MonoThreadInfo *info, GString *text)
-{
-	int i;
-
-	g_string_append_printf (text, "thread handle %p state : ", info->handle);
-
-	mono_thread_info_describe_interrupt_token (info, text);
-
-	g_string_append_printf (text, ", owns (");
-	for (i = 0; i < info->owned_mutexes->len; i++)
-		g_string_append_printf (text, i > 0 ? ", %p" : "%p", g_ptr_array_index (info->owned_mutexes, i));
-	g_string_append_printf (text, ")");
-}
-
-void
-mono_threads_platform_own_mutex (MonoThreadInfo *info, gpointer mutex_handle)
-{
-	mono_w32handle_ref (mutex_handle);
-
-	g_ptr_array_add (info->owned_mutexes, mutex_handle);
-}
-
-void
-mono_threads_platform_disown_mutex (MonoThreadInfo *info, gpointer mutex_handle)
-{
-	mono_w32handle_unref (mutex_handle);
-
-	g_ptr_array_remove (info->owned_mutexes, mutex_handle);
 }
 
 static const gchar* thread_typename (void)

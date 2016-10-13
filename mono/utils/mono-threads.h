@@ -239,11 +239,6 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
-
-#if defined(_POSIX_VERSION) || defined(__native_client__)
-	/* This is the data that was stored in the w32 handle */
-	GPtrArray *owned_mutexes;
-#endif
 } MonoThreadInfo;
 
 typedef struct {
@@ -446,7 +441,7 @@ gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
 HANDLE
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize stack_size, MonoNativeThreadId *out_tid);
+mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize * const stack_size, MonoNativeThreadId *out_tid);
 
 int
 mono_threads_get_max_stack_size (void);
@@ -519,16 +514,13 @@ gboolean mono_threads_suspend_needs_abort_syscall (void);
 
 void mono_threads_platform_register (THREAD_INFO_TYPE *info);
 void mono_threads_platform_unregister (THREAD_INFO_TYPE *info);
-int mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize stack_size, MonoNativeThreadId *out_tid);
+int mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid);
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
 gboolean mono_threads_platform_yield (void);
 void mono_threads_platform_exit (int exit_code);
 HANDLE mono_threads_platform_open_thread_handle (HANDLE handle, MonoNativeThreadId tid);
 void mono_threads_platform_close_thread_handle (HANDLE handle);
-void mono_threads_platform_set_exited (THREAD_INFO_TYPE *info);
-void mono_threads_platform_describe (THREAD_INFO_TYPE *info, GString *text);
-void mono_threads_platform_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-void mono_threads_platform_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
+void mono_threads_platform_set_exited (gpointer handle);
 gpointer mono_threads_platform_duplicate_handle (THREAD_INFO_TYPE *info);
 
 void mono_threads_coop_begin_global_suspend (void);
@@ -537,14 +529,17 @@ void mono_threads_coop_end_global_suspend (void);
 MONO_API MonoNativeThreadId
 mono_native_thread_id_get (void);
 
-gboolean
+MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
-gboolean
+MONO_API gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
+
+MONO_API gboolean
+mono_native_thread_join (MonoNativeThreadId tid);
 
 /*Mach specific internals */
 void mono_threads_init_dead_letter (void);
@@ -646,14 +641,5 @@ mono_thread_info_is_current (THREAD_INFO_TYPE *info);
 
 gpointer
 mono_thread_info_duplicate_handle (THREAD_INFO_TYPE *info);
-
-void
-mono_thread_info_describe (THREAD_INFO_TYPE *info, GString *text);
-
-void
-mono_thread_info_own_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
-
-void
-mono_thread_info_disown_mutex (THREAD_INFO_TYPE *info, gpointer mutex_handle);
 
 #endif /* __MONO_THREADS_H__ */

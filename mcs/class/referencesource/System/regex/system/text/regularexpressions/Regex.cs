@@ -473,6 +473,7 @@ namespace System.Text.RegularExpressions {
         }
 
 #if NETSTANDARD
+        [CLSCompliant (false)]
         protected IDictionary Caps
         {
             get
@@ -500,6 +501,7 @@ namespace System.Text.RegularExpressions {
             }
         }
 
+        [CLSCompliant (false)]
         protected IDictionary CapNames
         {
             get
@@ -1398,7 +1400,7 @@ namespace System.Text.RegularExpressions {
             return newcached;
         }
 
-#if !(SILVERLIGHT||FULL_AOT_RUNTIME)
+#if !SILVERLIGHT
         /*
          * True if the O option was set
          */
@@ -1408,7 +1410,11 @@ namespace System.Text.RegularExpressions {
         protected bool UseOptionC() {
 		/* Mono: Set to false until we investigate  https://bugzilla.xamarin.com/show_bug.cgi?id=25671 */
 	    return false;
+#if FULL_AOT_RUNTIME
+            return false;
+#else
             return(roptions & RegexOptions.Compiled) != 0;
+#endif
         }
 #endif
 

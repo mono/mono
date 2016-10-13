@@ -151,6 +151,7 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		[CLSCompliant (false)]
 		public void Write<T> (string eventName, ref EventSourceOptions options, ref T data)
 		{
 		}

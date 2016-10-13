@@ -522,7 +522,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	if (domain)
 		g_assert_not_reached ();
 
-#ifdef HOST_WIN32
+#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	/* Avoid system error message boxes. */
 	SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
 #endif
@@ -1174,6 +1174,12 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	}
 	g_slist_free (domain->domain_assemblies);
 	domain->domain_assemblies = NULL;
+
+	/* 
+	 * Send this after the assemblies have been unloaded and the domain is still in a 
+	 * usable state.
+	 */
+	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
 
 	if (free_domain_hook)
 		free_domain_hook (domain);

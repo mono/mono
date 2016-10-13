@@ -1556,22 +1556,52 @@ namespace System {
 				case 'O':                                         // logical
 					int second = stack.Pop().Int32; // it's a stack... the second value was pushed last
 					int first = stack.Pop().Int32;
-					char c = format[pos];
-					stack.Push(
-						c == '+' ? (first + second) :
-						c == '-' ? (first - second) :
-						c == '*' ? (first * second) :
-						c == '/' ? (first / second) :
-						c == 'm' ? (first % second) :
-						c == '^' ? (first ^ second) :
-						c == '&' ? (first & second) :
-						c == '|' ? (first | second) :
-						c == '=' ? AsInt(first == second) :
-						c == '>' ? AsInt(first > second) :
-						c == '<' ? AsInt(first < second) :
-						c == 'A' ? AsInt(AsBool(first) && AsBool(second)) :
-						c == 'O' ? AsInt(AsBool(first) || AsBool(second)) :
-						0); // not possible; we just validated above
+					int res;
+					switch (format[pos]) {
+					case '+':
+						res = first + second;
+						break;
+					case '-':
+						res = first - second;
+						break;
+					case '*':
+						res = first * second;
+						break;
+					case '/':
+						res = first / second;
+						break;
+					case 'm':
+						res = first % second;
+						break;
+					case '^':
+						res = first ^ second;
+						break;
+					case '&':
+						res = first & second;
+						break;
+					case '|':
+						res = first | second;
+						break;
+					case '=':
+						res = AsInt(first == second);
+						break;
+					case '>':
+						res = AsInt(first > second);
+						break;
+					case '<':
+						res = AsInt(first < second);
+						break;
+					case 'A':
+						res = AsInt(AsBool(first) && AsBool(second));
+						break;
+					case 'O':
+						res = AsInt(AsBool(first) || AsBool(second));
+						break;
+					default:
+						res = 0;
+						break;
+					}
+					stack.Push(res);
 					break;
 
 					// Unary operations

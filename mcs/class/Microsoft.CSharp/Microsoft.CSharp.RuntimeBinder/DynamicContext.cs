@@ -93,7 +93,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 				module.SetDeclaringAssembly (temp);
 
 				var importer = new Compiler.ReflectionImporter (module, cc.BuiltinTypes) {
-					IgnorePrivateMembers = false
+					IgnorePrivateMembers = false,
+					IgnoreCompilerGeneratedField = false
 				};
 
 				// Import all currently loaded assemblies

@@ -42,7 +42,13 @@ namespace Xamarin {
 			// mscorlib replacements
 			CommonCryptor.Generate ("System.Security.Cryptography", "DESCryptoServiceProvider", "DES", "DES");
 			CommonCryptor.Generate ("System.Security.Cryptography", "TripleDESCryptoServiceProvider", "TripleDES", "TripleDES");
-			CommonCryptor.Generate ("System.Security.Cryptography", "RC2CryptoServiceProvider", "RC2", "RC2", ctorInitializers: "LegalKeySizesValue = new[] { new KeySizes(40, 128, 8) };");
+
+			const string checkUseSalt = "if (UseSalt) throw new NotImplementedException (\"UseSalt=true is not implemented on Mono yet\");";
+			CommonCryptor.Generate ("System.Security.Cryptography", "RC2CryptoServiceProvider", "RC2", "RC2",
+				ctorInitializers: "LegalKeySizesValue = new[] { new KeySizes(40, 128, 8) };",
+				decryptorInitializers: checkUseSalt,
+				encryptorInitializers: checkUseSalt,
+				properties: "public bool UseSalt { get; set; }");
 			// Rijndael supports block sizes that are not available in AES - as such it does not use the same generated code
 			// but has it's own version, using AES (128 bits block size) and falling back to managed (192/256 bits block size)
 

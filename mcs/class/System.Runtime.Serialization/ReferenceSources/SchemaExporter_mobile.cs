@@ -55,6 +55,11 @@ namespace System.Runtime.Serialization
             return false;
         }
 
+        internal static void AddDefaultXmlType(XmlSchemaSet schemas, string localName, string ns)
+        {
+            throw new NotImplementedException();
+        }
+
         static bool InvokeSchemaProviderMethod(Type clrType, XmlSchemaSet schemas, out XmlQualifiedName stableName, out XmlSchemaType xsdType, out bool hasRoot)
         {
             xsdType = null;

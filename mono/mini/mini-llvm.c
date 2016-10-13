@@ -148,6 +148,7 @@ typedef struct {
 	LLVMValueRef rgctx_arg;
 	LLVMValueRef this_arg;
 	LLVMTypeRef *vreg_types;
+	gboolean *is_vphi;
 	LLVMTypeRef method_type;
 	LLVMBasicBlockRef init_bb, inited_bb;
 	gboolean *is_dead;
@@ -170,6 +171,7 @@ typedef struct {
 	GPtrArray *bblock_list;
 	char *method_name;
 	GHashTable *jit_callees;
+	LLVMValueRef long_bb_break_var;
 } EmitContext;
 
 typedef struct {
@@ -1739,6 +1741,8 @@ get_handler_clause (MonoCompile *cfg, MonoBasicBlock *bb)
 static MonoExceptionClause *
 get_most_deep_clause (MonoCompile *cfg, EmitContext *ctx, MonoBasicBlock *bb)
 {
+	if (bb == cfg->bb_init)
+		return NULL;
 	// Since they're sorted by nesting we just need
 	// the first one that the bb is a member of
 	for (int i = 0; i < cfg->header->num_clauses; i++) {
@@ -4150,14 +4154,36 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		if (nins > 1000) {
 			/*
 			 * Some steps in llc are non-linear in the size of basic blocks, see #5714.
-			 * Start a new bblock. If the llvm optimization passes merge these, we
-			 * can work around that by doing a volatile load + cond branch from
-			 * localloc-ed memory.
+			 * Start a new bblock.
+			 * Prevent the bblocks to be merged by doing a volatile load + cond branch
+			 * from localloc-ed memory.
 			 */
 			if (!cfg->llvm_only)
-				set_failure (ctx, "basic block too long");
+				;//set_failure (ctx, "basic block too long");
+
+			if (!ctx->long_bb_break_var) {
+				ctx->long_bb_break_var = build_alloca_llvm_type_name (ctx, LLVMInt32Type (), 0, "long_bb_break");
+				mono_llvm_build_store (ctx->alloca_builder, LLVMConstInt (LLVMInt32Type (), 0, FALSE), ctx->long_bb_break_var, TRUE, LLVM_BARRIER_NONE);
+			}
+
 			cbb = gen_bb (ctx, "CONT_LONG_BB");
-			LLVMBuildBr (ctx->builder, cbb);
+			LLVMBasicBlockRef dummy_bb = gen_bb (ctx, "CONT_LONG_BB_DUMMY");
+
+			LLVMValueRef load = mono_llvm_build_load (builder, ctx->long_bb_break_var, "", TRUE);
+			/*
+			 * The long_bb_break_var is initialized to 0 in the prolog, so this branch will always go to 'cbb'
+			 * but llvm doesn't know that, so the branch is not going to be eliminated.
+			 */
+			LLVMValueRef cmp = LLVMBuildICmp (builder, LLVMIntEQ, load, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
+
+			LLVMBuildCondBr (builder, cmp, cbb, dummy_bb);
+
+			/* Emit a dummy false bblock which does nothing but contains a volatile store so it cannot be eliminated */
+			ctx->builder = builder = create_builder (ctx);
+			LLVMPositionBuilderAtEnd (builder, dummy_bb);
+			mono_llvm_build_store (builder, LLVMConstInt (LLVMInt32Type (), 1, FALSE), ctx->long_bb_break_var, TRUE, LLVM_BARRIER_NONE);
+			LLVMBuildBr (builder, cbb);
+
 			ctx->builder = builder = create_builder (ctx);
 			LLVMPositionBuilderAtEnd (builder, cbb);
 			ctx->bblocks [bb->block_num].end_bblock = cbb;
@@ -6543,7 +6569,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 		/* Convert the value to the type required by phi nodes */
 		if (spec [MONO_INST_DEST] != ' ' && !MONO_IS_STORE_MEMBASE (ins) && ctx->vreg_types [ins->dreg]) {
-			if (!values [ins->dreg])
+			if (ctx->is_vphi [ins->dreg])
 				/* vtypes */
 				values [ins->dreg] = addresses [ins->dreg];
 			else
@@ -6692,6 +6718,7 @@ free_ctx (EmitContext *ctx)
 	g_free (ctx->values);
 	g_free (ctx->addresses);
 	g_free (ctx->vreg_types);
+	g_free (ctx->is_vphi);
 	g_free (ctx->vreg_cli_types);
 	g_free (ctx->is_dead);
 	g_free (ctx->unreachable);
@@ -6752,6 +6779,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	 */
 	ctx->addresses = g_new0 (LLVMValueRef, cfg->next_vreg);
 	ctx->vreg_types = g_new0 (LLVMTypeRef, cfg->next_vreg);
+	ctx->is_vphi = g_new0 (gboolean, cfg->next_vreg);
 	ctx->vreg_cli_types = g_new0 (MonoType*, cfg->next_vreg);
 	ctx->phi_values = g_ptr_array_sized_new (256);
 	/* 
@@ -7100,8 +7128,11 @@ emit_method_inner (EmitContext *ctx)
 				for (i = 0; i < ins->inst_phi_args [0]; i++) {
 					int sreg1 = ins->inst_phi_args [i + 1];
 					
-					if (sreg1 != -1)
+					if (sreg1 != -1) {
+						if (ins->opcode == OP_VPHI)
+							ctx->is_vphi [sreg1] = TRUE;
 						ctx->vreg_types [sreg1] = phi_type;
+					}
 				}
 				break;
 				}

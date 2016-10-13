@@ -22,6 +22,7 @@ System/CharCategoryTest.cs
 System/CharEnumeratorTest.cs
 System/CharTest.cs
 System/DelegateTest.cs
+System/GCTest.cs
 System/ModuleHandleTest.cs
 System/NullableTest.cs
 System/ObsoleteAttributeTest.cs

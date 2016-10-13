@@ -11,11 +11,9 @@ System.Diagnostics/FileVersionInfo.cs
 System.Diagnostics/MonitoringDescriptionAttribute.cs
 System.Diagnostics/Process.cs
 System.Diagnostics/ProcessModule.cs
-System.Diagnostics/ProcessModuleCollection.cs
 System.Diagnostics/ProcessPriorityClass.cs
 System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThread.cs
-System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
 System.Diagnostics/ThreadPriorityLevel.cs
@@ -28,6 +26,7 @@ System.IO.Compression/DeflateStream.cs
 System.IO.Compression/GZipStream.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/InvalidDataException.cs
+System.IO/IODescriptionAttribute.cs
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
 System.IO/FileSystemEventArgs.cs
@@ -119,35 +118,11 @@ System.Net.Security/SslPolicyErrors.cs
 System.Net.Security/SslStream.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
-../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
-../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
-../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
-../referencesource/System/net/System/Net/Sockets/LingerOption.cs
-../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
-../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
-../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
 System.Net.Sockets/SafeSocketHandle.cs
-../referencesource/System/net/System/Net/Sockets/SelectMode.cs
-System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
-System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketAsyncResult.cs
-../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
-../referencesource/System/net/System/Net/SocketException.cs
-../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
-../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
-../referencesource/System/net/System/Net/Sockets/SocketInformationOptions.cs
 System.Net.Sockets/SocketOperation.cs
-../referencesource/System/net/System/Net/Sockets/SocketOptionLevel.cs
-../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
-../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
-../referencesource/System/net/System/Net/Sockets/SocketType.cs
-System.Net.Sockets/TcpClient.cs
-System.Net.Sockets/TcpListener.cs
-../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
-System.Net.Sockets/UdpClient.cs
-../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
@@ -173,6 +148,7 @@ System.Net/HttpListenerContext.cs
 System.Net/HttpListenerPrefixCollection.cs
 System.Net/HttpListenerRequest.cs
 System.Net/HttpListenerResponse.cs
+System.Net/HttpListenerResponseHelper.cs
 System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs
@@ -227,7 +203,6 @@ System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicy.cs
 System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicyTypeConverter.cs
 System.Security.Authentication.ExtendedProtection/PolicyEnforcement.cs
 System.Security.Authentication.ExtendedProtection/ProtectionScenario.cs
-System.Security.Authentication.ExtendedProtection/ServiceNameCollection.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ConfigUtil.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtectionPolicyElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
@@ -293,22 +268,59 @@ Mono.Net.Security/IMonoSslStream.cs
 Mono.Net.Security/LegacySslStream.cs
 Mono.Net.Security/MobileAuthenticatedStream.cs
 Mono.Net.Security/MobileTlsContext.cs
-Mono.Net.Security/MonoLegacyTlsProvider.cs
+Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MonoSslStreamImpl.cs
 Mono.Net.Security/MonoSslStreamWrapper.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
-Mono.Net.Security/MonoTlsProviderImpl.cs
 Mono.Net.Security/MonoTlsProviderWrapper.cs
 Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs
 Mono.Net.Security/SystemCertificateValidator.cs
+
+Mono.Btls/MonoBtlsBio.cs
+Mono.Btls/MonoBtlsContext.cs
+Mono.Btls/MonoBtlsError.cs
+Mono.Btls/MonoBtlsException.cs
+Mono.Btls/MonoBtlsKey.cs
+Mono.Btls/MonoBtlsObject.cs
+Mono.Btls/MonoBtlsPkcs12.cs
+Mono.Btls/MonoBtlsProvider.cs
+Mono.Btls/MonoBtlsSsl.cs
+Mono.Btls/MonoBtlsSslCtx.cs
+Mono.Btls/MonoBtlsSslError.cs
+Mono.Btls/MonoBtlsStream.cs
+Mono.Btls/MonoBtlsUtils.cs
+Mono.Btls/MonoBtlsX509.cs
+Mono.Btls/MonoBtlsX509Chain.cs
+Mono.Btls/MonoBtlsX509Crl.cs
+Mono.Btls/MonoBtlsX509Error.cs
+Mono.Btls/MonoBtlsX509Exception.cs
+Mono.Btls/MonoBtlsX509FileType.cs
+Mono.Btls/MonoBtlsX509Format.cs
+Mono.Btls/MonoBtlsX509Lookup.cs
+Mono.Btls/MonoBtlsX509LookupMonoCollection.cs
+Mono.Btls/MonoBtlsX509LookupMono.cs
+Mono.Btls/MonoBtlsX509LookupType.cs
+Mono.Btls/MonoBtlsX509Name.cs
+Mono.Btls/MonoBtlsX509NameList.cs
+Mono.Btls/MonoBtlsX509NameEntryType.cs
+Mono.Btls/MonoBtlsX509Purpose.cs
+Mono.Btls/MonoBtlsX509Revoked.cs
+Mono.Btls/MonoBtlsX509Store.cs
+Mono.Btls/MonoBtlsX509StoreCtx.cs
+Mono.Btls/MonoBtlsX509StoreManager.cs
+Mono.Btls/MonoBtlsX509StoreType.cs
+Mono.Btls/MonoBtlsX509TrustKind.cs
+Mono.Btls/MonoBtlsX509VerifyFlags.cs
+Mono.Btls/MonoBtlsX509VerifyParam.cs
+Mono.Btls/X509CertificateImplBtls.cs
+Mono.Btls/X509ChainImplBtls.cs
 
 ReferenceSources/AutoWebProxyScriptEngine.cs
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/HttpApi.cs
-ReferenceSources/Internal.cs
 ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
@@ -706,6 +718,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/_Semaphore.cs
+../referencesource/System/net/System/Net/_ServiceNameStore.cs
 ../referencesource/System/net/System/Net/_TimerThread.cs
 ../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
@@ -748,6 +761,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../referencesource/System/net/System/Net/ServicePointManager.cs
 ../referencesource/System/net/System/Net/SocketAddress.cs
+../referencesource/System/net/System/Net/SocketException.cs
 ../referencesource/System/net/System/Net/webclient.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
@@ -767,8 +781,30 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/net/System/Net/Configuration/DefaultProxySection.cs
 
+../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
+../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
+../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
 ../referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
+../referencesource/System/net/System/Net/Sockets/LingerOption.cs
+../referencesource/System/net/System/Net/Sockets/MulticastOption.cs
 ../referencesource/System/net/System/Net/Sockets/NetworkStream.cs
+../referencesource/System/net/System/Net/Sockets/ProtocolFamily.cs
+../referencesource/System/net/System/Net/Sockets/ProtocolType.cs
+../referencesource/System/net/System/Net/Sockets/SelectMode.cs
+../referencesource/System/net/System/Net/Sockets/Socket.cs
+../referencesource/System/net/System/Net/Sockets/SocketErrors.cs
+../referencesource/System/net/System/Net/Sockets/SocketFlags.cs
+../referencesource/System/net/System/Net/Sockets/SocketInformation.cs
+../referencesource/System/net/System/Net/Sockets/SocketInformationOptions.cs
+../referencesource/System/net/System/Net/Sockets/SocketOptionLevel.cs
+../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
+../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
+../referencesource/System/net/System/Net/Sockets/SocketType.cs
+../referencesource/System/net/System/Net/Sockets/TCPClient.cs
+../referencesource/System/net/System/Net/Sockets/TCPListener.cs
+../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
+../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
+../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
@@ -802,7 +838,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemGatewayIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemMulticastIPAddressInformation.cs
-../referencesource/System/net/System/Net/NetworkInformation/SystemUnicastIPAddressInformation.cs
 ../referencesource/System/net/System/Net/NetworkInformation/SystemTcpConnection.cs
 ../referencesource/System/net/System/Net/NetworkInformation/TcpConnection.cs
 ../referencesource/System/net/System/Net/NetworkInformation/TcpState.cs
@@ -829,12 +864,16 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/sys/system/windows/markup/ValueSerializerAttribute.cs
 
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/TokenBinding.cs
+../referencesource/System/security/system/security/Authentication/ExtendedProtection/ServiceNameCollection.cs
 
 ../referencesource/System/security/system/security/cryptography/oid.cs
 
 ../referencesource/System/security/system/security/cryptography/x509/x509utils.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
+
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
+../referencesource/System/services/monitoring/system/diagnosticts/ProcessThreadCollection.cs
 
 ../referencesource/System/services/timers/system/timers/ElapsedEventHandler.cs
 ../referencesource/System/services/timers/system/timers/Timer.cs
@@ -938,7 +977,6 @@ ReferenceSources/Win32Exception.cs
 ../Mono.Security/Mono.Security.Interface/HashAlgorithmType.cs
 ../Mono.Security/Mono.Security.Interface/IBufferOffsetSize.cs
 ../Mono.Security/Mono.Security.Interface/IMonoTlsEventSink.cs
-../Mono.Security/Mono.Security.Interface/IMonoTlsContext.cs
 ../Mono.Security/Mono.Security.Interface/IMonoSslStream.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsProvider.cs

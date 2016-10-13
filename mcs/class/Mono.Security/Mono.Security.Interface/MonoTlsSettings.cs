@@ -82,6 +82,7 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		[CLSCompliant (false)]
 		public CipherSuiteCode[] EnabledCiphers {
 			get; set;
 		}

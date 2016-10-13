@@ -29,6 +29,7 @@ namespace Mono.Security.Interface
 {
 	public class MonoTlsConnectionInfo
 	{
+		[CLSCompliant (false)]
 		public CipherSuiteCode CipherSuiteCode {
 			get; set;
 		}
@@ -46,6 +47,10 @@ namespace Mono.Security.Interface
 		}
 
 		public ExchangeAlgorithmType ExchangeAlgorithmType {
+			get; set;
+		}
+
+		public string PeerDomainName {
 			get; set;
 		}
 

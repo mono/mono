@@ -101,7 +101,9 @@ namespace System.Linq {
         object IQueryProvider.Execute(Expression expression){
             if (expression == null)
                 throw Error.ArgumentNull("expression");
+#if !MONO
             Type execType = typeof(EnumerableExecutor<>).MakeGenericType(expression.Type);
+#endif
             return EnumerableExecutor.Create(expression).ExecuteBoxed();
         }
 
@@ -194,7 +196,9 @@ namespace System.Linq {
 
             // check for args changed
             if (obj != m.Object || args != m.Arguments) {
+#if !MONO
                 Expression[] argArray = args.ToArray();
+#endif
                 Type[] typeArgs = (m.Method.IsGenericMethod) ? m.Method.GetGenericArguments() : null;
 
                 if ((m.Method.IsStatic || m.Method.DeclaringType.IsAssignableFrom(obj.Type)) 

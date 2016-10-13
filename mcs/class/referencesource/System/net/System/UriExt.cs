@@ -443,6 +443,11 @@ namespace System {
         {
             Uri result;
 
+#if MONO
+            if (uriKind == UriKind.RelativeOrAbsolute)
+                uriKind = DotNetRelativeOrAbsolute;
+#endif
+
             if (!Uri.TryCreate(uriString, uriKind, out result))
                 return false;
 

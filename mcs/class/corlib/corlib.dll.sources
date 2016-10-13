@@ -177,7 +177,6 @@ System.Diagnostics.Tracing/EventFieldFormat.cs
 System.Diagnostics.Tracing/EventFieldTags.cs
 System.Diagnostics.Tracing/EventIgnoreAttribute.cs
 System.Diagnostics.Tracing/EventManifestOptions.cs
-System.Diagnostics.Tracing/EventSourceException.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs
@@ -246,8 +245,6 @@ System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
 System.Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
-System.Reflection/MonoGenericClass.cs
-System.Reflection/MonoGenericMethod.cs
 System.Reflection/MonoEvent.cs
 System.Reflection/MonoField.cs
 System.Reflection/MonoMethod.cs
@@ -259,9 +256,6 @@ System.Reflection/PortableExecutableKinds.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/StrongNameKeyPair.cs
-System.Reflection/TargetException.cs
-System.Reflection/TargetInvocationException.cs
-System.Reflection/TargetParameterCountException.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
@@ -305,6 +299,7 @@ System.Reflection.Emit/SignatureToken.cs
 System.Reflection.Emit/StackBehaviour.cs
 System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
+System.Reflection.Emit/TypeBuilderInstantiation.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
 System.Reflection.Emit/AssemblyBuilder.pns.cs
@@ -904,7 +899,6 @@ ReferenceSources/MethodBase.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
-ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
@@ -912,6 +906,8 @@ ReferenceSources/SharedStatics.cs
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
+ReferenceSources/String.cs
+ReferenceSources/Type.cs
 
 ../referencesource/mscorlib/system/__filters.cs
 ../referencesource/mscorlib/system/__hresults.cs
@@ -1138,6 +1134,7 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
 ../referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../referencesource/mscorlib/system/diagnostics/eventing/eventsourceexception.cs
 ../referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
 
 ../referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
@@ -1255,6 +1252,9 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/system/reflection/reflectioncontext.cs
 ../referencesource/mscorlib/system/reflection/resourceattributes.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
+../referencesource/mscorlib/system/reflection/targetexception.cs
+../referencesource/mscorlib/system/reflection/targetinvocationexception.cs
+../referencesource/mscorlib/system/reflection/targetparametercountexception.cs
 ../referencesource/mscorlib/system/reflection/typeattributes.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs
 ../referencesource/mscorlib/system/reflection/typefilter.cs
@@ -1375,6 +1375,7 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/FormattableStringFactory.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/hascopysemanticsattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/IAsyncStateMachine.cs
+../referencesource/mscorlib/system/runtime/compilerservices/idispatchconstantattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/indexernameattribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/INotifyCompletion.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/internalsvisibletoattribute.cs
@@ -1641,5 +1642,10 @@ ReferenceSources/BinaryCompatibility.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
-ReferenceSources/String.cs
-ReferenceSources/Type.cs
+corefx/SR.cs
+
+../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+
+../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs
+../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/TupleExtensions.cs
+../../../external/corefx/src/System.ValueTuple/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs

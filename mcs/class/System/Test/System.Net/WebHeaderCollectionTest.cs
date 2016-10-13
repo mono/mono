@@ -124,6 +124,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AddRestricted ()
 		{
 			col = CreateRestrictedHeaders ();
@@ -236,6 +239,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void RemoveRestricted ()
 		{
 			col = CreateRestrictedHeaders ();
