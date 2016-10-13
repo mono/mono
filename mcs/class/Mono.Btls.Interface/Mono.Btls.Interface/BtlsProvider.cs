@@ -26,6 +26,7 @@
 using System;
 using Mono.Security.Interface;
 using System.Security.Cryptography.X509Certificates;
+using MNS = Mono.Net.Security;
 
 namespace Mono.Btls.Interface
 {
@@ -33,7 +34,7 @@ namespace Mono.Btls.Interface
 	{
 		public static bool IsSupported ()
 		{
-			return MonoBtlsProvider.IsSupported ();
+			return MNS.MonoTlsProviderFactory.IsBtlsSupported ();
 		}
 
 		public static MonoTlsProvider GetProvider ()
