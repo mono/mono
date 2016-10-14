@@ -1722,5 +1722,31 @@ namespace System.Runtime.InteropServices
 		internal static void SetLastWin32Error (int error)
 		{
 		}
+
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//====================================================================
+		// return the raw IUnknown* for a COM Object not related to current 
+		// context
+		// Does not call AddRef
+		//====================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern IntPtr /* IUnknown* */ GetRawIUnknownForComObjectNoAddRef(Object o);
+		
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//====================================================================
+		// Converts the CLR exception to an HRESULT. This function also sets
+		// up an IErrorInfo for the exception.
+		// This function is only used in WinRT and converts ObjectDisposedException
+		// to RO_E_CLOSED
+		//====================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int GetHRForException_WinRT(Exception e);
+
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//========================================================================
+		// Create activation factory and wraps it with a unique RCW
+		//========================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern object GetNativeActivationFactory(Type type);
 	}
 }
