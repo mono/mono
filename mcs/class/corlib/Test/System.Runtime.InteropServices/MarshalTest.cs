@@ -155,6 +155,58 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
+		readonly String[] TestStrings = new String[] {
+			"", //Empty String
+			"Test String",
+			"A", //Single character string
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself.",
+			"This \n is \n a \n multiline \n string",
+			"This \0 is \0 a \0 string \0 with \0 nulls",
+			"\0string",
+			"string\0",
+			"\0\0\0\0\0\0\0\0"
+		};
+
+		[Test]
+		public unsafe void PtrToStringUTF8_Test ()
+		{
+			foreach (String srcString in TestStrings)
+			{
+				// we assume string null terminated
+				if (srcString.Contains("\0"))
+					continue;
+
+				IntPtr ptrString = Marshal.StringToAllocatedMemoryUTF8(srcString);
+				string retString = Marshal.PtrToStringUTF8(ptrString);
+
+				if (!srcString.Equals(retString))
+				{
+					throw new Exception("Round triped strings do not match...");
+				}
+				if (srcString.Length > 0)
+				{
+					string retString2 = Marshal.PtrToStringUTF8(ptrString, srcString.Length - 1);
+					if (!retString2.Equals(srcString.Substring(0, srcString.Length - 1)))
+					{
+						throw new Exception("Round triped strings do not match...");
+					}
+				}
+				Marshal.FreeHGlobal(ptrString);
+			}			
+		}
+		
 		[Test]
 		public unsafe void UnsafeAddrOfPinnedArrayElement ()
 		{
