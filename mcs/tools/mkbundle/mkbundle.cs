@@ -3,15 +3,6 @@
 //
 // Based on the `make-bundle' Perl script written by Paolo Molaro (lupus@debian.org)
 //
-// TODO:
-//   [x] Rename the paths for the zip file that is downloaded
-//   [ ] Update documentation with new flag
-//   [x] Load internationalized assemblies
-//   [ ] Dependencies - if System.dll -> include Mono.Security.*
-//   [x] --list-targets should download from a different url
-//   [ ] target list should contain different files
-//   [ ] --fetch-target should unpack zip file
-//
 // Author:
 //   Miguel de Icaza
 //
@@ -61,8 +52,6 @@ class MakeBundle {
 	static bool custom_mode = true;
 	static string embedded_options = null;
 	static string runtime = null;
-	static string sdk_path = null;
-	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
 	static string [] i18n = new string [] {
 		"West",
@@ -85,7 +74,7 @@ class MakeBundle {
 		link_paths.Add (".");
 
 		DetectOS ();
-
+		
 		for (int i = 0; i < top; i++){
 			switch (args [i]){
 			case "--help": case "-h": case "-?":
@@ -157,8 +146,10 @@ class MakeBundle {
 					alias = lspec.Substring (0, p);
 					path = lspec.Substring (p+1);
 				}
-				if (!File.Exists (path))
-					Error ($"The specified library file {path} does not exist");
+				if (!File.Exists (path)){
+					Console.Error.WriteLine ($"The specified library file {path} does not exist");
+					return 1;
+				}
 				libraries [alias] = path;
 				break;
 
@@ -172,7 +163,7 @@ class MakeBundle {
 
 			case "--list-targets":
 				var wc = new WebClient ();
-				var s = wc.DownloadString (new Uri (target_server + "target-sdks.txt"));
+				var s = wc.DownloadString (new Uri (target_server + "target-list.txt"));
 				Console.WriteLine ("Cross-compilation targets available:\n" + s);
 				
 				return 0;
@@ -199,15 +190,6 @@ class MakeBundle {
 					return 1;
 				}
 				embedded_options = args [++i];
-				break;
-			case "--sdk":
-				if (i + 1 == top) {
-					Help ();
-					return 1;
-				}
-				custom_mode = false;
-				autodeps = true;
-				sdk_path = args [++i];
 				break;
 			case "--runtime":
 				if (i+1 == top){
@@ -301,7 +283,7 @@ class MakeBundle {
 				case "linux":
 					break;
 				default:
-					Error ("Invalid style '{0}' - only 'windows', 'mac' and 'linux' are supported for --style argument", style);
+					Console.Error.WriteLine ("Invalid style '{0}' - only 'windows', 'mac' and 'linux' are supported for --style argument", style);
 					return 1;
 				}
 					
@@ -347,27 +329,20 @@ class MakeBundle {
 
 		}
 
-		if (sdk_path != null) {
-			VerifySdk (sdk_path);
-		}
-
 		if (fetch_target != null){
-			var directory = Path.Combine (targets_dir, fetch_target);
-			var zip_download = Path.Combine (directory, "sdk.zip");
-			Directory.CreateDirectory (Path.GetDirectoryName (directory));
+			var truntime = Path.Combine (targets_dir, fetch_target, "mono");
+			Directory.CreateDirectory (Path.GetDirectoryName (truntime));
 			var wc = new WebClient ();
 			var uri = new Uri ($"{target_server}{fetch_target}");
 			try {
 				if (!quiet){
-					Console.WriteLine ($"Downloading runtime {uri} to {zip_download}");
+					Console.WriteLine ($"Downloading runtime {uri} to {truntime}");
 				}
 				
-				wc.DownloadFile (uri, zip_download);
-				ZipFile.ExtractToDirectory(zip_download, directory);
-				File.Delete (zip_download);
+				wc.DownloadFile (uri, truntime);
 			} catch {
 				Console.Error.WriteLine ($"Failure to download the specified runtime from {uri}");
-				File.Delete (zip_download);
+				File.Delete (truntime);
 				return 1;
 			}
 			return 0;
@@ -384,7 +359,6 @@ class MakeBundle {
 		}
 
 		List<string> assemblies = LoadAssemblies (sources);
-		LoadLocalizedAssemblies (assemblies);
 		List<string> files = new List<string> ();
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
@@ -418,19 +392,6 @@ class MakeBundle {
 		Console.WriteLine ("Generated {0}", output);
 
 		return 0;
-	}
-
-	static void VerifySdk (string path)
-	{
-		if (!Directory.Exists (path))
-			Error ($"The specified SDK path does not exist: {path}");
-		runtime = Path.Combine (sdk_path, "bin", "mono");
-		if (!File.Exists (runtime))
-			Error ($"The SDK location does not contain a {path}/bin/mono runtime");
-		lib_path = Path.Combine (path, "lib", "mono", "4.5");
-		if (!Directory.Exists (lib_path))
-			Error ($"The SDK location does not contain a {path}/lib/mono/4.5 directory");
-		link_paths.Add (lib_path);
 	}
 
 	static string targets_dir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono", "targets");
@@ -619,7 +580,7 @@ class MakeBundle {
 			return true;
 		
 		if (!File.Exists (file)){
-			Error ("The file {0} does not exist", file);
+			Console.Error.WriteLine ("The file {0} does not exist", file);
 			return false;
 		}
 		maker.Add (code, file);
@@ -632,17 +593,17 @@ class MakeBundle {
 			if (IsUnix)
 				runtime = Process.GetCurrentProcess().MainModule.FileName;
 			else {
-				Error ("You must specify at least one runtime with --runtime or --cross");
+				Console.Error.WriteLine ("You must specify at least one runtime with --runtime or --cross");
 				Environment.Exit (1);
 			}
 		}
 		if (!File.Exists (runtime)){
-			Error ($"The specified runtime at {runtime} does not exist");
+			Console.Error.WriteLine ($"The specified runtime at {runtime} does not exist");
 			Environment.Exit (1);
 		}
 		
 		if (ctor_func != null){
-			Error ("--static-ctor not supported with package bundling, you must use native compilation for this");
+			Console.Error.WriteLine ("--static-ctor not supported with package bundling, you must use native compilation for this");
 			return false;
 		}
 		
@@ -825,7 +786,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				try {
 					conf = File.OpenRead (config_file);
 				} catch {
-					Error ("Failure to open {0}", config_file);
+					Error (String.Format ("Failure to open {0}", config_file));
 					return;
 				}
 				if (!quiet)
@@ -844,7 +805,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				try {
 					conf = File.OpenRead (machine_config_file);
 				} catch {
-					Error ("Failure to open {0}", machine_config_file);
+					Error (String.Format ("Failure to open {0}", machine_config_file));
 					return;
 				}
 				if (!quiet)
@@ -1053,9 +1014,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		List<string> assemblies = new List<string> ();
 		bool error = false;
 
-		foreach (string name in sources){
+		var other = i18n.Select (x=> "I18N." + x + (x.Length > 0 ? "." : "") + "dll");
+		
+		foreach (string name in sources.Concat (other)){
 			try {
-				Assembly a = LoadAssemblyFile (name);
+				Assembly a = LoadAssembly (name);
 
 				if (a == null){
 					error = true;
@@ -1076,40 +1039,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 		if (error)
 			Environment.Exit (1);
-		
+
 		return assemblies;
 	}
-
-	static void LoadLocalizedAssemblies (List<string> assemblies)
-	{
-		var other = i18n.Select (x => "I18N." + x + (x.Length > 0 ? "." : "") + "dll");
-		bool error = false;
-
-		foreach (string name in other) {
-			try {
-				Assembly a = LoadAssembly (name);
-
-				if (a == null) {
-					error = true;
-					continue;
-				}
-
-				assemblies.Add (a.CodeBase);
-			} catch (Exception) {
-				if (skip_scan) {
-					if (!quiet)
-						Console.WriteLine ("File will not be scanned: {0}", name);
-					assemblies.Add (new Uri (new FileInfo (name).FullName).ToString ());
-				} else {
-					throw;
-				}
-			}
-		}
-
-		if (error)
-			Environment.Exit (1);
-	}
-
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
@@ -1144,7 +1076,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		var name = GetAssemblyName (path);
 		string found;
 		if (loaded_assemblies.TryGetValue (name, out found)) {
-			Error ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found);
+			Error (string.Format ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found));
 			return false;
 		}
 
@@ -1157,7 +1089,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Assembly a = universe.LoadFile (path);
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-				LoadAssembly (an.FullName);
+				a = universe.Load (an.FullName);
 				if (!QueueAssembly (files, a.CodeBase))
 					return false;
 			}
@@ -1169,56 +1101,56 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		return true;
 	}
 
-	//
-	// Loads an assembly from a specific path
-	//
-	static Assembly LoadAssemblyFile (string assembly)
+	static Assembly LoadAssembly (string assembly)
 	{
-		Assembly a = null;
+		Assembly a;
 		
 		try {
-			a = universe.LoadFile (assembly);
+			char[] path_chars = { '/', '\\' };
+			
+			if (assembly.IndexOfAny (path_chars) != -1) {
+				a = universe.LoadFile (assembly);
+			} else {
+				string ass = assembly;
+				if (ass.EndsWith (".dll"))
+					ass = assembly.Substring (0, assembly.Length - 4);
+				a = universe.Load (ass);
+			}
+			return a;
 		} catch (FileNotFoundException){
-			Error ($"Cannot find assembly `{assembly}'");
+			string total_log = "";
+			
+			foreach (string dir in link_paths){
+				string full_path = Path.Combine (dir, assembly);
+				if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
+					full_path += ".dll";
+				
+				try {
+					a = universe.LoadFile (full_path);
+					return a;
+				} catch (FileNotFoundException ff) {
+					total_log += ff.FusionLog;
+					continue;
+				}
+			}
+			Error ("Cannot find assembly `" + assembly + "'" );
+			if (!quiet)
+				Console.WriteLine ("Log: \n" + total_log);
 		} catch (IKVM.Reflection.BadImageFormatException f) {
 			if (skip_scan)
 				throw;
-			Error ($"Cannot load assembly (bad file format) " + f.Message);
+			Error ("Cannot load assembly (bad file format) " + f.Message);
 		} catch (FileLoadException f){
-			Error ($"Cannot load assembly " + f.Message);
+			Error ("Cannot load assembly " + f.Message);
 		} catch (ArgumentNullException){
-			Error( $"Cannot load assembly (null argument)");
+			Error("Cannot load assembly (null argument)");
 		}
-		return a;
-	}
-
-	//
-	// Loads an assembly from any of the link directories provided
-	//
-	static Assembly LoadAssembly (string assembly)
-	{
-		string total_log = "";
-		foreach (string dir in link_paths){
-			string full_path = Path.Combine (dir, assembly);
-			if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
-				full_path += ".dll";
-			
-			try {
-				var a = universe.LoadFile (full_path);
-				return a;
-			} catch (FileNotFoundException ff) {
-				total_log += ff.FusionLog;
-				continue;
-			}
-		}
-		if (!quiet)
-			Console.WriteLine ("Log: \n" + total_log);
 		return null;
 	}
-	
-	static void Error (string msg, params object [] args)
+
+	static void Error (string msg)
 	{
-		Console.Error.WriteLine ("ERROR: ", string.Format (msg, args));
+		Console.Error.WriteLine ("ERROR: " + msg);
 		Environment.Exit (1);
 	}
 
@@ -1376,7 +1308,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			p.WaitForExit ();
 			int ret = p.ExitCode;
 			if (ret != 0){
-				Error ("[Fail] {0}", ret);
+				Error (String.Format("[Fail] {0}", ret));
 			}
 		}
 	}
