@@ -2384,7 +2384,7 @@ get_local_ips (int family, int *nips)
 
 #endif /* HAVE_SIOCGIFCONF */
 
-#ifndef AF_INET6
+#if defined(AF_INET6) && !defined(HAVE_GETHOSTBYNAME2_R)
 static gboolean hostent_to_IPHostEntry(struct hostent *he, MonoString **h_name,
 				       MonoArray **h_aliases,
 				       MonoArray **h_addr_list,
@@ -2814,11 +2814,13 @@ addrinfo_to_IPHostEntry(struct addrinfo *info, MonoString **h_name,
 MonoBoolean ves_icall_System_Net_Dns_GetHostByName_internal(MonoString *host, MonoString **h_name, MonoArray **h_aliases, MonoArray **h_addr_list)
 {
 	gboolean add_local_ips = FALSE;
+	gboolean result = FALSE;
 #ifdef HAVE_SIOCGIFCONF
 	gchar this_hostname [256];
 #endif
 #if !defined(HAVE_GETHOSTBYNAME2_R)
 	struct addrinfo *info = NULL, hints;
+	struct hostent *he;
 	char *hostname;
 	
 	MONO_ARCH_SAVE_REGS;
@@ -2841,10 +2843,29 @@ MonoBoolean ves_icall_System_Net_Dns_GetHostByName_internal(MonoString *host, Mo
 	if (*hostname && getaddrinfo(hostname, NULL, &hints, &info) == -1) {
 		return(FALSE);
 	}
-	
-	g_free(hostname);
 
-	return(addrinfo_to_IPHostEntry(info, h_name, h_aliases, h_addr_list, add_local_ips));
+	if (info != NULL)
+	{
+		// Prefer parsing the return value from getaddrinfo, as it supports IPv6 correctly.
+		result = addrinfo_to_IPHostEntry(info, h_name, h_aliases, h_addr_list, add_local_ips);
+	}
+	else
+	{
+		// If getaddrinfo doesn't give us back anything (maybe the network is down), fall back to
+		// using a hostent, which should work for IPv4 but does not support IPv6.
+#ifndef HOST_WIN32
+		he = NULL;
+		if (*hostname)
+			he = _wapi_gethostbyname(hostname);
+#else
+		he = _wapi_gethostbyname(hostname);
+#endif
+
+		result = hostent_to_IPHostEntry(he, h_name, h_aliases, h_addr_list, add_local_ips);
+	}
+
+	g_free(hostname);
+	return result;
 #else
 	struct hostent he1,*hp1, he2, *hp2;
 	int buffer_size1, buffer_size2;
