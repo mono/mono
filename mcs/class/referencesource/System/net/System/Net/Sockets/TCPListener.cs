@@ -285,8 +285,13 @@ namespace System.Net.Sockets {
                 throw new ArgumentNullException("asyncResult");
             }
 
+#if MONO
+            var sar = asyncResult as SocketAsyncResult;
+            Socket asyncSocket = sar == null ? null : sar.socket;
+#else
             LazyAsyncResult lazyResult = asyncResult as LazyAsyncResult;
             Socket asyncSocket = lazyResult == null ? null : lazyResult.AsyncObject as Socket;
+#endif
             if (asyncSocket == null)
             {
                 throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
@@ -318,8 +323,13 @@ namespace System.Net.Sockets {
                 throw new ArgumentNullException("asyncResult");
             }
 
+#if MONO
+            var sar = asyncResult as SocketAsyncResult;
+            Socket asyncSocket = sar == null ? null : sar.socket;
+#else
             LazyAsyncResult lazyResult = asyncResult as LazyAsyncResult;
             Socket asyncSocket = lazyResult == null ? null : lazyResult.AsyncObject as Socket;
+#endif
             if (asyncSocket == null)
             {
                 throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
