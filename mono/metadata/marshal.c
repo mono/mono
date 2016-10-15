@@ -924,7 +924,7 @@ mono_string_utf8_to_builder (MonoStringBuilder *sb, char *text)
 	glong copied;
 	gunichar2* ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &error);
 	int capacity = mono_string_builder_capacity (sb);
-	
+
 	if (copied > capacity)
 		copied = capacity;
 
@@ -983,7 +983,6 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 	MonoError error;
 	GError *gerror = NULL;
 	glong byte_count;
-	
 	if (!sb)
 		return NULL;
 
@@ -999,7 +998,8 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 		mono_set_pending_exception (mono_get_exception_execution_engine ("Failed to convert StringBuilder from utf16 to utf8"));
 		return NULL;
 	} else {
-		gchar *res = (gchar *)mono_marshal_alloc (byte_count+1, &error);
+		guint len = mono_string_builder_capacity (sb) + 1;
+		gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), &error);
 		if (!mono_error_ok (&error)) {
 			mono_marshal_free (str_utf16);
 			g_free (tmp);
