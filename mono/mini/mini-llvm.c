@@ -365,6 +365,29 @@ simd_class_to_llvm_type (EmitContext *ctx, MonoClass *klass)
 		return LLVMVectorType (LLVMFloatType (), 4);
 	} else if (!strcmp (klass->name, "Vector4")) {
 		return LLVMVectorType (LLVMFloatType (), 4);
+	} else if (!strcmp (klass->name, "Vector`1")) {
+		MonoType *etype = mono_class_get_generic_class (klass)->context.class_inst->type_argv [0];
+		switch (etype->type) {
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+			return LLVMVectorType (LLVMInt8Type (), 16);
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+			return LLVMVectorType (LLVMInt16Type (), 8);
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+			return LLVMVectorType (LLVMInt32Type (), 4);
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+			return LLVMVectorType (LLVMInt64Type (), 2);
+		case MONO_TYPE_R4:
+			return LLVMVectorType (LLVMFloatType (), 4);
+		case MONO_TYPE_R8:
+			return LLVMVectorType (LLVMDoubleType (), 2);
+		default:
+			g_assert_not_reached ();
+			return NULL;
+		}
 	} else {
 		printf ("%s\n", klass->name);
 		NOT_IMPLEMENTED;
