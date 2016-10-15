@@ -11142,17 +11142,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size)
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size)
 {
-	void *res;
+	void *res = mono_marshal_alloc_co_task_mem (size);
 
-#ifdef HOST_WIN32
-	res = CoTaskMemAlloc (size);
-#else
-	if (size == 0)
-		/* This returns a valid pointer for size 0 on MS.NET */
-		size = 4;
-
-	res = g_try_malloc (size);
-#endif
 	if (!res) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
