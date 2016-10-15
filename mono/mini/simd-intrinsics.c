@@ -2106,6 +2106,10 @@ emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodS
 	const char *nspace = cmethod->klass->name_space;
 	const char *class_name = cmethod->klass->name;
 
+	if (cfg->r4fp)
+		// FIXME:
+		return NULL;
+
 	if (!strcmp ("Vector2", class_name) || !strcmp ("Vector4", class_name) || !strcmp ("Vector3", class_name))
 		return emit_vector_intrinsics (cfg, cmethod, fsig, args);
 
@@ -2130,6 +2134,10 @@ emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 {
 	const char *class_name = cmethod->klass->name;
 
+	if (cfg->r4fp)
+		// FIXME:
+		return NULL;
+
 	if (!strcmp (class_name, "Vector`1"))
 		return emit_vector_t_intrinsics (cfg, cmethod, fsig, args);
 	return NULL;
@@ -2138,6 +2146,10 @@ emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 MonoInst*
 mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr)
 {
+	if (cfg->r4fp)
+		// FIXME:
+		return NULL;
+
 	if (is_sys_numerics_assembly (field->parent->image->assembly)) {
 		int index = -1;
 
