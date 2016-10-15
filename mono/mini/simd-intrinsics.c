@@ -1856,7 +1856,7 @@ emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		if (!strcmp (cmethod->name, "get_IsHardwareAccelerated")) {
 			MonoInst *ins;
 
-			EMIT_NEW_ICONST (cfg, ins, 0);
+			EMIT_NEW_ICONST (cfg, ins, 1);
 			ins->type = STACK_I4;
 			return ins;
 		}
