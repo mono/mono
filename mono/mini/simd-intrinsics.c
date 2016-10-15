@@ -596,7 +596,8 @@ static const SimdIntrinsic vector16sb_intrinsics[] = {
 
 static guint32 simd_supported_versions;
 
-static MonoInst* emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+static MonoInst* emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+static MonoInst* emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 
 /*TODO match using number of parameters as well*/
 static int
@@ -920,6 +921,49 @@ mono_type_to_expand_op (MonoType *type)
 }
 
 static int
+type_to_comp_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return OP_PCMPEQB;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+		return OP_PCMPEQW;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_PCMPEQD;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_PCMPEQQ;
+	case MONO_TYPE_R4:
+		return OP_COMPPS;
+	case MONO_TYPE_R8:
+		return OP_COMPPD;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+type_to_gt_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_I1:
+		return OP_PCMPGTB;
+	case MONO_TYPE_I2:
+		return OP_PCMPGTW;
+	case MONO_TYPE_I4:
+		return OP_PCMPGTD;
+	case MONO_TYPE_I8:
+		return OP_PCMPGTQ;
+	default:
+		return -1;
+	}
+}
+
+static int
 get_simd_vreg_or_expanded_scalar (MonoCompile *cfg, MonoClass *klass, MonoType *param_type, MonoInst *src)
 {
 	MonoInst *ins;
@@ -1160,9 +1204,31 @@ static MonoInst*
 simd_intrinsic_emit_getter_op (MonoCompile *cfg, int index, MonoClass *klass, MonoType *type, MonoInst *arg)
 {
 	MonoInst *ins;
-	int vreg, shift_bits = mono_type_elements_shift_bits (type);
+	int vreg, shift_bits;
 
 	vreg = load_simd_vreg_class (cfg, klass, arg, NULL);
+
+	if (type->type == MONO_TYPE_I8 || type->type == MONO_TYPE_U8 || type->type == MONO_TYPE_R8) {
+		MonoInst *ins;
+		gboolean is_r8 = type->type == MONO_TYPE_R8;
+
+		MONO_INST_NEW (cfg, ins, is_r8 ? OP_EXTRACT_R8 : OP_EXTRACT_I8);
+		ins->klass = klass;
+		ins->sreg1 = vreg;
+		ins->inst_c0 = index;
+		if (is_r8) {
+			ins->type = STACK_R8;
+			ins->dreg = alloc_freg (cfg);
+			ins->backend.spill_var = get_double_spill_area (cfg);
+		} else {
+			ins->type = STACK_I8;
+			ins->dreg = alloc_lreg (cfg);
+		}
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	}
+
+	shift_bits = mono_type_elements_shift_bits (type);
 
 	if ((index >> shift_bits) && !cfg->compile_llvm) {
 		MONO_INST_NEW (cfg, ins, OP_PSHUFLED);
@@ -1240,6 +1306,7 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 	MonoMethodSignature *sig = mono_method_signature (cmethod);
 	int store_op = mono_type_to_store_membase (cfg, sig->params [0]);
 	int arg_size = mono_type_size (sig->params [0], &i);
+	int opcode;
 
 	if (sig->param_count == 1) {
 		int dreg;
@@ -1252,7 +1319,11 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 			dreg = alloc_ireg (cfg);
 		}
 
-		MONO_INST_NEW (cfg, ins, intrinsic->opcode);
+		if (intrinsic)
+			opcode = intrinsic->opcode;
+		else
+			opcode = mono_type_to_expand_op (sig->params [0]);
+		MONO_INST_NEW (cfg, ins, opcode);
 		ins->klass = cmethod->klass;
 		ins->sreg1 = args [1]->dreg;
 		ins->type = STACK_VTYPE;
@@ -1318,13 +1389,19 @@ static MonoInst*
 simd_intrinsic_emit_cast (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
 	MonoInst *ins;
+	MonoClass *klass;
 	int vreg;
 
 	vreg = get_simd_vreg (cfg, cmethod, args [0]);		
 
-	//TODO macroize this
+	if (cmethod->is_inflated)
+		/* Vector<T> */
+		klass = mono_class_from_mono_type (mono_method_signature (cmethod)->ret);
+	else
+		klass = cmethod->klass;
+
 	MONO_INST_NEW (cfg, ins, OP_XMOVE);
-	ins->klass = cmethod->klass;
+	ins->klass = klass;
 	ins->type = STACK_VTYPE;
 	ins->sreg1 = vreg;
 	ins->dreg = alloc_ireg (cfg);
@@ -1374,7 +1451,7 @@ mono_op_is_packed_compare (int op)
 }
 
 static MonoInst*
-simd_intrinsic_emit_equality (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
+simd_intrinsic_emit_equality_op (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args, int opcode, int flags)
 {
 	MonoInst* ins;
 	int left_vreg, right_vreg, tmp_vreg;
@@ -1382,14 +1459,14 @@ simd_intrinsic_emit_equality (const SimdIntrinsic *intrinsic, MonoCompile *cfg, 
 	left_vreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
 	right_vreg = get_simd_vreg (cfg, cmethod, args [1]);
 	
-	MONO_INST_NEW (cfg, ins, intrinsic->opcode);
+	MONO_INST_NEW (cfg, ins, opcode);
 	ins->klass = cmethod->klass;
 	ins->sreg1 = left_vreg;
 	ins->sreg2 = right_vreg;
 	ins->type = STACK_VTYPE;
 	ins->klass = cmethod->klass;
 	ins->dreg = tmp_vreg = alloc_ireg (cfg);
-	ins->inst_c0 = intrinsic->flags;
+	ins->inst_c0 = flags;
 	MONO_ADD_INS (cfg->cbb, ins);
 
 	/*FIXME the next ops are SSE specific*/
@@ -1401,9 +1478,9 @@ simd_intrinsic_emit_equality (const SimdIntrinsic *intrinsic, MonoCompile *cfg, 
 	MONO_ADD_INS (cfg->cbb, ins);
 
 	/*FP ops have a not equal instruction, which means that we must test the results with OR semantics.*/
-	if (mono_op_is_packed_compare (intrinsic->opcode) || intrinsic->flags == SIMD_COMP_EQ) {
+	if (mono_op_is_packed_compare (opcode) || flags == SIMD_COMP_EQ) {
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_vreg, 0xFFFF);
-		NEW_UNALU (cfg, ins, intrinsic->flags == SIMD_COMP_EQ ? OP_CEQ : OP_CLT_UN, tmp_vreg, -1);
+		NEW_UNALU (cfg, ins, flags == SIMD_COMP_EQ ? OP_CEQ : OP_CLT_UN, tmp_vreg, -1);
 	} else {
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_vreg, 0);
 		NEW_UNALU (cfg, ins, OP_CGT_UN, tmp_vreg, -1);
@@ -1412,6 +1489,11 @@ simd_intrinsic_emit_equality (const SimdIntrinsic *intrinsic, MonoCompile *cfg, 
 	return ins;
 }
 
+static MonoInst*
+simd_intrinsic_emit_equality (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
+{
+	return simd_intrinsic_emit_equality_op (cfg, cmethod, args, intrinsic->opcode, intrinsic->flags);
+}
 
 static MonoInst*
 simd_intrinsic_emit_shuffle (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
@@ -1516,7 +1598,7 @@ simd_intrinsic_emit_const (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mon
 	MONO_INST_NEW (cfg, ins, intrinsic->opcode);
 	ins->klass = cmethod->klass;
 	ins->type = STACK_VTYPE;
-	ins->dreg = alloc_ireg (cfg);
+	ins->dreg = alloc_xreg (cfg);
 	MONO_ADD_INS (cfg->cbb, ins);
 	return ins;
 }
@@ -1704,13 +1786,22 @@ is_sys_numerics_assembly (MonoAssembly *assembly)
 	return !strcmp ("System.Numerics", assembly->aname.name);
 }
 
+static gboolean
+is_sys_numerics_vectors_assembly (MonoAssembly *assembly)
+{
+	return !strcmp ("System.Numerics.Vectors", assembly->aname.name);
+}
+
 MonoInst*
 mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const char *class_name;
 
 	if (is_sys_numerics_assembly (cmethod->klass->image->assembly))
-		return emit_numerics_intrinsics (cfg, cmethod, fsig, args);
+		return emit_sys_numerics_intrinsics (cfg, cmethod, fsig, args);
+
+	if (is_sys_numerics_vectors_assembly (cmethod->klass->image->assembly))
+		return emit_sys_numerics_vectors_intrinsics (cfg, cmethod, fsig, args);
 
 	if (strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
 	    strcmp ("Mono.Simd", cmethod->klass->name_space))
@@ -1838,19 +1929,188 @@ emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 	return NULL;
 }
 
+static const SimdIntrinsic vector_t_intrinsics[] = {
+	{ SN_ctor },
+	{ SN_Abs },
+	{ SN_Equals },
+	{ SN_GreaterThan },
+	{ SN_GreaterThanOrEqual },
+	{ SN_LessThan },
+	{ SN_LessThanOrEqual },
+	{ SN_get_AllOnes, OP_XONES },
+	{ SN_get_Count },
+	{ SN_get_Item },
+	{ SN_get_Zero, OP_XZERO },
+	{ SN_op_Explicit }
+};
+
+static MonoInst*
+emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	const SimdIntrinsic *intrins;
+	MonoType *etype;
+	MonoInst *ins;
+	int size, len, index;
+
+	// FIXME:
+	if (COMPILE_LLVM (cfg))
+		return NULL;
+
+	intrins = (const SimdIntrinsic*)mono_binary_search (cmethod->name, vector_t_intrinsics, sizeof (vector_t_intrinsics) / sizeof (SimdIntrinsic), sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);
+	if (!intrins) {
+		//printf ("%s\n", mono_method_full_name (cmethod, 1));
+		return NULL;
+	}
+
+	if (cfg->verbose_level > 1) {
+		char *name = mono_method_full_name (cmethod, TRUE);
+		printf ("  SIMD intrinsic %s\n", name);
+		g_free (name);
+	}
+
+	etype = cmethod->klass->generic_class->context.class_inst->type_argv [0];
+	size = mono_class_value_size (mono_class_from_mono_type (etype), NULL);
+	g_assert (size);
+	len = 16 / size;
+
+	switch (intrins->name) {
+	case SN_get_Count:
+		EMIT_NEW_ICONST (cfg, ins, len);
+		return ins;
+	case SN_get_AllOnes:
+	case SN_get_Zero:
+		return simd_intrinsic_emit_const (intrins, cfg, cmethod, args);
+	case SN_get_Item:
+		g_assert (fsig->param_count == 1);
+		if (args [1]->opcode != OP_ICONST)
+			return NULL;
+		index = args [1]->inst_c0;
+		if (index < 0 || index >= len)
+			return NULL;
+		return simd_intrinsic_emit_getter_op (cfg, index, cmethod->klass, etype, args [0]);
+	case SN_ctor:
+		if (fsig->param_count == 1 && mono_metadata_type_equal (fsig->params [0], etype))
+			return simd_intrinsic_emit_ctor (NULL, cfg, cmethod, args);
+		if ((fsig->param_count == 1 || fsig->param_count == 2) && (fsig->params [0]->type == MONO_TYPE_SZARRAY)) {
+			MonoInst *array_ins = args [1];
+			MonoInst *index_ins;
+			MonoInst *ldelema_ins;
+			MonoInst *var;
+			int end_index_reg;
+
+			/* .ctor (T[]) or .ctor (T[], index) */
+
+			if (fsig->param_count == 2) {
+				index_ins = args [2];
+			} else {
+				EMIT_NEW_ICONST (cfg, index_ins, 0);
+			}
+
+			/* Emit index check for the end (index + len - 1 < array length) */
+			end_index_reg = alloc_ireg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_IADD_IMM, end_index_reg, index_ins->dreg, len - 1);
+			MONO_EMIT_BOUNDS_CHECK (cfg, array_ins->dreg, MonoArray, max_length, end_index_reg);
+
+			/* Load the array slice into the simd reg */
+			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
+			g_assert (args [0]->opcode == OP_LDADDR);
+			var = args [0]->inst_p0;
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
+
+			return args [0];
+		}
+		break;
+	case SN_op_Explicit:
+		return simd_intrinsic_emit_cast (intrins, cfg, cmethod, args);
+	case SN_Equals:
+		if (fsig->param_count == 1)
+			return simd_intrinsic_emit_equality_op (cfg, cmethod, args, type_to_comp_op (etype), SIMD_COMP_EQ);
+		if (fsig->param_count == 2)
+			return simd_intrinsic_emit_binary_op (cfg, type_to_comp_op (etype), 0, cmethod->klass, fsig->params [0], fsig->params [1], args [0], args [1]);
+		break;
+
+	case SN_GreaterThan:
+	case SN_GreaterThanOrEqual:
+	case SN_LessThan: {
+		MonoInst *cmp1, *cmp2;
+		int eq_op, gt_op;
+
+		switch (etype->type) {
+		case MONO_TYPE_I1:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_I4:
+		case MONO_TYPE_I8:
+			break;
+		default:
+			return NULL;
+		}
+
+		eq_op = type_to_comp_op (etype);
+		gt_op = type_to_gt_op (etype);
+
+		switch (intrins->name) {
+		case SN_GreaterThan:
+			return simd_intrinsic_emit_binary_op (cfg, gt_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [0], args [1]);
+		case SN_LessThanOrEqual:
+			return simd_intrinsic_emit_binary_op (cfg, gt_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [1], args [0]);
+		case SN_GreaterThanOrEqual:
+			cmp1 = simd_intrinsic_emit_binary_op (cfg, eq_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [0], args [1]);
+			cmp2 = simd_intrinsic_emit_binary_op (cfg, gt_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [0], args [1]);
+			return simd_intrinsic_emit_binary_op (cfg, OP_POR, 0, cmethod->klass, fsig->params [0], fsig->params [1], cmp1, cmp2);
+		case SN_LessThan:
+			cmp1 = simd_intrinsic_emit_binary_op (cfg, eq_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [1], args [0]);
+			cmp2 = simd_intrinsic_emit_binary_op (cfg, gt_op, 0, cmethod->klass, fsig->params [0], fsig->params [1], args [1], args [0]);
+			return simd_intrinsic_emit_binary_op (cfg, OP_POR, 0, cmethod->klass, fsig->params [0], fsig->params [1], cmp1, cmp2);
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+	}
+	case SN_Abs:
+		/* Vector<T>.Abs */
+		switch (etype->type) {
+		case MONO_TYPE_U1:
+		case MONO_TYPE_U2:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_U8: {
+			MonoInst *ins;
+
+			/* No-op */
+			MONO_INST_NEW (cfg, ins, OP_XMOVE);
+			ins->klass = cmethod->klass;
+			ins->type = STACK_VTYPE;
+			ins->sreg1 = args [0]->dreg;
+			ins->dreg = alloc_xreg (cfg);
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return NULL;
+}
+
 /*
- * emit_numerics_intrinsics:
+ * emit_sys_numerics_intrinsics:
  *
- *   Emit intrinsics for the System.Numerics.Vectors assembly.
+ *   Emit intrinsics for the System.Numerics assembly.
  */
 static MonoInst*
-emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const char *nspace = cmethod->klass->name_space;
 	const char *class_name = cmethod->klass->name;
 
 	if (!strcmp ("Vector2", class_name) || !strcmp ("Vector4", class_name) || !strcmp ("Vector3", class_name))
 		return emit_vector_intrinsics (cfg, cmethod, fsig, args);
+
+	if (!strcmp ("Vector`1", class_name))
+		return emit_vector_t_intrinsics (cfg, cmethod, fsig, args);
 
 	if (!strcmp ("System.Numerics", nspace) && !strcmp ("Vector", class_name)) {
 		if (!strcmp (cmethod->name, "get_IsHardwareAccelerated")) {
@@ -1862,6 +2122,16 @@ emit_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		}
 	}
 
+	return NULL;
+}
+
+static MonoInst*
+emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	const char *class_name = cmethod->klass->name;
+
+	if (!strcmp (class_name, "Vector`1"))
+		return emit_vector_t_intrinsics (cfg, cmethod, fsig, args);
 	return NULL;
 }
 

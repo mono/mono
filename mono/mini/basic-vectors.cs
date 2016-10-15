@@ -717,4 +717,496 @@ public class VectorTests {
 		return 0;
 	}
 
+	//
+	// Vector<T>
+	//
+
+	public static int test_0_vector_t_count () {
+		// This assumes a 16 byte simd register size
+		if (Vector<byte>.Count != 16)
+			return 1;
+		if (Vector<short>.Count != 8)
+			return 2;
+		if (Vector<int>.Count != 4)
+			return 3;
+		if (Vector<long>.Count != 2)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_vector_t_zero () {
+		var v = Vector<byte>.Zero;
+		for (int i = 0; i < Vector<byte>.Count; ++i)
+			if (v [i] != 0)
+				return 1;
+		var v2 = Vector<double>.Zero;
+		for (int i = 0; i < Vector<double>.Count; ++i)
+			if (v2 [i] != 0.0)
+				return 2;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_accessor () {
+		var elems = new byte [] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+		var v = new Vector<byte> (elems, 0);
+		for (int i = 0; i < Vector<byte>.Count; ++i)
+			if (v [i] != i + 1)
+				return 1;
+		if (v [0] != 1)
+			return 2;
+		if (v [1] != 2)
+			return 2;
+		if (v [15] != 16)
+			return 2;
+		try {
+			int r = v [-1];
+			return 3;
+		} catch (IndexOutOfRangeException) {
+		}
+		try {
+			int r = v [16];
+			return 4;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i4_accessor () {
+		var elems = new int [] { 1, 2, 3, 4 };
+		var v = new Vector<int> (elems, 0);
+		for (int i = 0; i < Vector<int>.Count; ++i)
+			if (v [i] != i + 1)
+				return 1;
+		if (v [0] != 1)
+			return 2;
+		if (v [1] != 2)
+			return 2;
+		if (v [3] != 4)
+			return 2;
+		try {
+			int r = v [-1];
+			return 3;
+		} catch (IndexOutOfRangeException) {
+		}
+		try {
+			int r = v [Vector<int>.Count];
+			return 4;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i8_accessor () {
+		var elems = new long [] { 1, 2 };
+		var v = new Vector<long> (elems, 0);
+		for (int i = 0; i < Vector<long>.Count; ++i)
+			if (v [i] != i + 1)
+				return 1;
+		if (v [0] != 1)
+			return 2;
+		if (v [1] != 2)
+			return 2;
+		try {
+			var r = v [-1];
+			return 3;
+		} catch (IndexOutOfRangeException) {
+		}
+		try {
+			var r = v [Vector<long>.Count];
+			return 4;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_r8_accessor () {
+		var elems = new double [] { 1.0, 2.0 };
+		var v = new Vector<double> (elems, 0);
+		for (int i = 0; i < Vector<double>.Count; ++i)
+			if (v [i] != (double)i + 1.0)
+				return 1;
+		if (v [0] != 1.0)
+			return 2;
+		if (v [1] != 2.0)
+			return 2;
+		try {
+			var r = v [-1];
+			return 3;
+		} catch (IndexOutOfRangeException) {
+		}
+		try {
+			var r = v [Vector<double>.Count];
+			return 4;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_ctor_3 () {
+		var v = new Vector<byte> (5);
+		for (int i = 0; i < 16; ++i)
+			if (v [i] != 5)
+				return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i2_ctor_3 () {
+		var v = new Vector<short> (5);
+		for (int i = 0; i < 8; ++i)
+			if (v [i] != 5)
+				return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i4_ctor_3 () {
+		var v = new Vector<int> (0xffffeee);
+		for (int i = 0; i < 4; ++i)
+			if (v [i] != 0xffffeee)
+				return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i8_ctor_3 () {
+		var v = new Vector<long> (0xffffeeeeabcdefL);
+		for (int i = 0; i < 2; ++i)
+			if (v [i] != 0xffffeeeeabcdefL)
+				return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_r4_ctor_3 () {
+		var v = new Vector<float> (0.5f);
+		for (int i = 0; i < 4; ++i) {
+			if (v [i] != 0.5f)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_r8_ctor_3 () {
+		var v = new Vector<double> (0.5f);
+		for (int i = 0; i < 2; ++i) {
+			if (v [i] != 0.5f)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_ctor () {
+		var elems = new byte [] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+								  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+		var v = new Vector<byte> (elems, 16);
+		for (int i = 0; i < 16; ++i)
+			if (v [i] != i)
+				return 1;
+		try {
+			var v2 = new Vector<byte> (elems, 16 + 4);
+			return 2;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_ctor_2 () {
+		var elems = new byte [] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+		var v = new Vector<byte> (elems);
+		for (int i = 0; i < 16; ++i)
+			if (v [i] != i + 1)
+				return 1;
+		try {
+			var elems2 = new byte [] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+			var v2 = new Vector<byte> (elems2);
+			return 2;
+		} catch (IndexOutOfRangeException) {
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_r4_equal () {
+		var elems1 = new float [4] { 1.0f, 1.0f, 1.0f, 1.0f };
+		var v1 = new Vector<float> (elems1);
+		var elems2 = new float [4] { 1.0f, 2.0f, 1.0f, 2.0f };
+		var v2 = new Vector<float> (elems2);
+		Vector<int> v = Vector.Equals (v1, v2);
+		if (v [0] != -1 || v [1] != 0 || v [2] != -1 || v [3] != 0)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_r8_equal () {
+		var elems1 = new double [] { 1.0f, 1.0f };
+		var v1 = new Vector<double> (elems1);
+		var elems2 = new double [] { 1.0f, 2.0f };
+		var v2 = new Vector<double> (elems2);
+		Vector<long> v = Vector.Equals (v1, v2);
+		if (v [0] != -1 || v [1] != 0)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i8_equal () {
+		var elems1 = new long [] { 1, 1 };
+		var v1 = new Vector<long> (elems1);
+		var elems2 = new long [] { 1, 2 };
+		var v2 = new Vector<long> (elems2);
+		Vector<long> v = Vector.Equals (v1, v2);
+		if (v [0] != -1 || v [1] != 0)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i4_equal () {
+		var elems1 = new int [] { 1, 1, 1, 1 };
+		var v1 = new Vector<int> (elems1);
+		var elems2 = new int [] { 1, 2, 1, 2 };
+		var v2 = new Vector<int> (elems2);
+		Vector<int> v = Vector.Equals (v1, v2);
+		if (v [0] != -1 || v [1] != 0 || v [2] != -1 || v[3] != 0)
+			return 1;
+		return 0;
+	}
+
+	/*
+	public static int test_0_vector_t_u4_equal () {
+		var elems1 = new uint [] { 1, 1, 1, 1 };
+		var v1 = new Vector<uint> (elems1);
+		var elems2 = new uint [] { 1, 2, 1, 2 };
+		var v2 = new Vector<uint> (elems2);
+		Vector<uint> v = Vector.Equals (v1, v2);
+		if (v [0] != 0xffffffff || v [1] != 0 || v [2] != 0xffffffff || v[3] != 0)
+			return 1;
+		return 0;
+	}
+	*/
+
+	public static int test_0_vector_t_i2_equal () {
+		var elems1 = new short [] { 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<short> (elems1);
+		var elems2 = new short [] { 1, 2, 1, 2, 1, 2, 1, 2 };
+		var v2 = new Vector<short> (elems2);
+		Vector<short> v = Vector.Equals (v1, v2);
+		for (int i = 0; i < Vector<short>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_u2_equal () {
+		var elems1 = new ushort [] { 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<ushort> (elems1);
+		var elems2 = new ushort [] { 1, 2, 1, 2, 1, 2, 1, 2 };
+		var v2 = new Vector<ushort> (elems2);
+		Vector<ushort> v = Vector.Equals (v1, v2);
+		for (int i = 0; i < Vector<ushort>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != 0xffff)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_equal () {
+		var elems1 = new sbyte [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 };
+		var v2 = new Vector<sbyte> (elems2);
+		Vector<sbyte> v = Vector.Equals (v1, v2);
+		for (int i = 0; i < Vector<sbyte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_u1_equal () {
+		var elems1 = new byte [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<byte> (elems1);
+		var elems2 = new byte [] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 };
+		var v2 = new Vector<byte> (elems2);
+		Vector<byte> v = Vector.Equals (v1, v2);
+		for (int i = 0; i < Vector<byte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != 0xff)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	/* op_Explicit () -> Vector<int32> */
+
+	public static int test_0_vector_t_cast_vector_int32 () {
+		var v1 = new Vector<long> (new long [] { 0x123456789abcdef0L, 0x23456789abcdef01L });
+		var v = (Vector<int>)v1;
+		if ((uint)v [0] != 0x9abcdef0 || (uint)v [1] != 0x12345678)
+			return 1;
+		if ((uint)v [2] != 0xabcdef01 || (uint)v [3] != 0x23456789)
+			return 2;
+		return 0;
+	}
+
+	/* Vector.GreaterThanOrEqual */
+
+	public static int test_0_vector_t_i1_ge () {
+		var elems1 = new sbyte [] { 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v2 = new Vector<sbyte> (elems2);
+		Vector<sbyte> v = Vector.GreaterThanOrEqual (v1, v2);
+		for (int i = 0; i < Vector<sbyte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i2_ge () {
+		var elems1 = new short [] { 1, 1, 0, 1, 1, 1, 0, 1 };
+		var v1 = new Vector<short> (elems1);
+		var elems2 = new short [] { 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v2 = new Vector<short> (elems2);
+		Vector<short> v = Vector.GreaterThanOrEqual (v1, v2);
+		for (int i = 0; i < Vector<short>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	public static int test_0_vector_t_i4_ge () {
+		var elems1 = new int [] { 1, 1, 0, 1 };
+		var v1 = new Vector<int> (elems1);
+		var elems2 = new int [] { 0, 2, 0, 2 };
+		var v2 = new Vector<int> (elems2);
+		Vector<int> v = Vector.GreaterThanOrEqual (v1, v2);
+		if (v [0] != -1 || v [1] != 0 || v [2] != -1 || v[3] != 0)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i8_ge () {
+		var elems1 = new long [] { 1, 1 };
+		var v1 = new Vector<long> (elems1);
+		var elems2 = new long [] { 0, 1 };
+		var v2 = new Vector<long> (elems2);
+		Vector<long> v = Vector.GreaterThanOrEqual (v1, v2);
+		if (v [0] != -1 || v [1] != -1)
+			return 1;
+		return 0;
+	}
+
+	/* Vector.LessThan */
+
+	public static int test_0_vector_t_i1_lt () {
+		var elems1 = new sbyte [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v2 = new Vector<sbyte> (elems2);
+		Vector<sbyte> v = Vector.LessThan (v2, v1);
+		for (int i = 0; i < Vector<sbyte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	/* Vector.GreaterThan */
+
+	public static int test_0_vector_t_i1_gt () {
+		var elems1 = new sbyte [] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v2 = new Vector<sbyte> (elems2);
+		Vector<sbyte> v = Vector.GreaterThan (v1, v2);
+		for (int i = 0; i < Vector<sbyte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	/* Vector.LessThanOrEqual */
+	public static int test_0_vector_t_i1_le () {
+		var elems1 = new sbyte [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1 };
+		var v2 = new Vector<sbyte> (elems2);
+		Vector<sbyte> v = Vector.LessThanOrEqual (v1, v2);
+		for (int i = 0; i < Vector<sbyte>.Count; ++i) {
+			if (i % 2 == 0 && v [i] != -1)
+				return 1;
+			if (i % 2 == 1 && v [i] != 0)
+				return 1;
+		}
+		return 0;
+	}
+
+	/* Vector.Abs */
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Vector<T> vector_t_abs<T> (Vector<T> v1) where T: struct {
+		return Vector.Abs (v1);
+	}
+
+	public static int test_0_vector_t_u1_abs () {
+		var elems1 = new byte [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v1 = new Vector<byte> (elems1);
+
+		if (vector_t_abs (v1) != v1)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_u2_abs () {
+		var elems1 = new ushort [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v1 = new Vector<ushort> (elems1);
+
+		if (vector_t_abs (v1) != v1)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_u4_abs () {
+		var elems1 = new uint [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v1 = new Vector<uint> (elems1);
+
+		if (vector_t_abs (v1) != v1)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_u8_abs () {
+		var elems1 = new ulong [] { 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 };
+		var v1 = new Vector<ulong> (elems1);
+
+		if (vector_t_abs (v1) != v1)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_t_i1_abs () {
+		var elems1 = new sbyte [] { 1, -2, 1, -2, 1, -2, 1, -2, 1, -2, 1, -2, 1, -2, 1, -2 };
+		var v1 = new Vector<sbyte> (elems1);
+		var elems2 = new sbyte [] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 };
+		var v2 = new Vector<sbyte> (elems2);
+
+		if (vector_t_abs (v1) != v2)
+			return 1;
+		return 0;
+	}
+
 }

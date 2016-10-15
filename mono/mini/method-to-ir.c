@@ -5441,7 +5441,7 @@ mini_field_access_needs_cctor_run (MonoCompile *cfg, MonoMethod *method, MonoCla
 	return TRUE;
 }
 
-static MonoInst*
+MonoInst*
 mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index, gboolean bcheck)
 {
 	MonoInst *ins;

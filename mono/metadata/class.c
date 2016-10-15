@@ -5986,6 +5986,9 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	} else if (klass->image->assembly_name && !strcmp (klass->image->assembly_name, "System.Numerics") && !strcmp (nspace, "System.Numerics")) {
 		if (!strcmp (name, "Vector2") || !strcmp (name, "Vector3") || !strcmp (name, "Vector4"))
 			klass->simd_type = 1;
+	} else if (klass->image->assembly_name && !strcmp (klass->image->assembly_name, "System.Numerics.Vectors") && !strcmp (nspace, "System.Numerics")) {
+		if (!strcmp (name, "Vector`1"))
+			klass->simd_type = 1;
 	}
 
 	mono_loader_unlock ();
