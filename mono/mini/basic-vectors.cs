@@ -717,6 +717,7 @@ public class VectorTests {
 		return 0;
 	}
 
+#if FALSE
 	//
 	// Vector<T>
 	//
@@ -1208,5 +1209,6 @@ public class VectorTests {
 			return 1;
 		return 0;
 	}
+#endif
 
 }
