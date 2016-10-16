@@ -6809,6 +6809,13 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		 * all inputs:
 		 * http://everything2.com/?node_id=1051618
 		 */
+	} else if (cmethod->klass == mono_defaults.systemtype_class && !strcmp (cmethod->name, "op_Equality")) {
+		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
+		MONO_INST_NEW (cfg, ins, OP_PCEQ);
+		ins->dreg = alloc_preg (cfg);
+		ins->type = STACK_I4;
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
 	} else if (((!strcmp (cmethod->klass->image->assembly->aname.name, "MonoMac") ||
 	            !strcmp (cmethod->klass->image->assembly->aname.name, "monotouch")) &&
 				!strcmp (cmethod->klass->name_space, "XamCore.ObjCRuntime") &&
