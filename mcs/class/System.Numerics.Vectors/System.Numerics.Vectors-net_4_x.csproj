@@ -14,7 +14,7 @@
     <NoStdLib>True</NoStdLib>
     
     <NoConfig>True</NoConfig>
-    
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -50,7 +50,8 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -80,6 +81,10 @@
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Numerics/System.Numerics-net_4_x.csproj">
+      <Project>{BD2FFDDC-BD89-4041-82F5-A696C941C7BE}</Project>
+      <Name>System.Numerics-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

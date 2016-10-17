@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -55,7 +55,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="TypeForwarders.cs" />  </ItemGroup>
+    <Compile Include="TypeForwarders.cs" />
+    <Compile Include="XDocumentExtensions.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -85,6 +86,10 @@
     <ProjectReference Include="../../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../System.XML/System.Xml-net_4_x.csproj">
+      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
+      <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../../System.Xml.Linq/System.Xml.Linq-net_4_x.csproj">
       <Project>{526286D5-38D9-4579-B001-471440D57752}</Project>

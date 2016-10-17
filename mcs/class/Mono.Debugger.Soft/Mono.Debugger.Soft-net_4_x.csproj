@@ -33,7 +33,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -91,6 +91,7 @@
     <Compile Include="Mono.Debugger.Soft\InvocationException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
     <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
+    <Compile Include="Mono.Debugger.Soft\LocalScope.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalVariable.cs" />
     <Compile Include="Mono.Debugger.Soft\Location.cs" />
     <Compile Include="Mono.Debugger.Soft\MethodBodyMirror.cs" />
@@ -159,10 +160,11 @@
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../Mono.Cecil/Mono.Cecil-net_4_x.csproj">
-      <Project>{2C0D558F-0B38-4691-967E-A910A1B995C1}</Project>
-      <Name>Mono.Cecil-net_4_x</Name>
-    </ProjectReference>
+    <Reference Include="./../../class/lib/net_4_x/Mono.Cecil.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_4_x/Mono.Cecil.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../System.Core/System.Core-net_4_x.csproj">
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>

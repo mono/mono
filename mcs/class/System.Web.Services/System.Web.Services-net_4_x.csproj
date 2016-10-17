@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,168,169,219,414,612,649</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO_BROKEN_CONFIGURATION_DLL</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;MONO_BROKEN_CONFIGURATION_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,168,169,219,414,612,649</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO_BROKEN_CONFIGURATION_DLL</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;MONO_BROKEN_CONFIGURATION_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

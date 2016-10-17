@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -85,6 +85,10 @@
     <ProjectReference Include="../../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../System.Core/System.Core-net_4_x.csproj">
+      <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
+      <Name>System.Core-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

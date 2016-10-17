@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EC439BB8-FFED-4A32-A05D-2FA3A70CAD64}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,169,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -26,17 +26,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,169,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,169,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -442,6 +442,7 @@
     <Compile Include="Microsoft.SqlServer.Server\SqlDataRecord.cs" />
     <Compile Include="Microsoft.SqlServer.Server\SqlMetaData.cs" />
     <Compile Include="ReferenceSources\NativeOledbWrapper.cs" />
+    <Compile Include="ReferenceSources\PoolBlockingPeriod.cs" />
     <Compile Include="ReferenceSources\Res.cs" />
     <Compile Include="ReferenceSources\Res.missing.cs" />
     <Compile Include="ReferenceSources\ResCategoryAttribute.cs" />
