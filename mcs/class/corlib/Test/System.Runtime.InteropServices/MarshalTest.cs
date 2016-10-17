@@ -182,8 +182,10 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public unsafe void PtrToStringUTF8_Test ()
 		{
+			int i = 0; 
 			foreach (String srcString in TestStrings)
 			{
+				i++;
 				// we assume string null terminated
 				if (srcString.Contains("\0"))
 					continue;
@@ -191,17 +193,11 @@ namespace MonoTests.System.Runtime.InteropServices
 				IntPtr ptrString = Marshal.StringToAllocatedMemoryUTF8(srcString);
 				string retString = Marshal.PtrToStringUTF8(ptrString);
 
-				if (!srcString.Equals(retString))
-				{
-					throw new Exception("Round triped strings do not match...");
-				}
+				Assert.AreEqual (srcString, retString, "#" + i);
 				if (srcString.Length > 0)
 				{
 					string retString2 = Marshal.PtrToStringUTF8(ptrString, srcString.Length - 1);
-					if (!retString2.Equals(srcString.Substring(0, srcString.Length - 1)))
-					{
-						throw new Exception("Round triped strings do not match...");
-					}
+					Assert.AreEqual (srcString.Substring(0, srcString.Length - 1), retString2, "#s" + i);
 				}
 				Marshal.FreeHGlobal(ptrString);
 			}			

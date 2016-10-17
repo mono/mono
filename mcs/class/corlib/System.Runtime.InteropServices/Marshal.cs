@@ -79,7 +79,7 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr AllocCoTaskMem (int cb);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr AllocCoTaskMemSize (UIntPtr sizet);
+		internal extern static IntPtr AllocCoTaskMemSize (UIntPtr sizet);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
