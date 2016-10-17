@@ -168,6 +168,8 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->r13 = ctx->R13;
 	sctx->r14 = ctx->R14;
 	sctx->r15 = ctx->R15;
+	sctx->xmm0_low = ctx->Xmm0.Low;
+	sctx->xmm0_high = ctx->Xmm0.High;
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
@@ -217,6 +219,9 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->R14 = sctx->r14;
 		ctx->R15 = sctx->r15;
 		ctx->Rip = sctx->rip;
+
+		ctx->Xmm0.Low = sctx->xmm0_low;
+		ctx->Xmm0.High = sctx->xmm0_high;
 
 		/* Volatile But should not matter?*/
 		ctx->Rax = sctx->rax;
@@ -304,6 +309,7 @@ mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gbool
 	amd64_mov_reg_membase (code, AMD64_R13, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r13), 8);
 	amd64_mov_reg_membase (code, AMD64_R14, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r14), 8);
 	amd64_mov_reg_membase (code, AMD64_R15, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r15), 8);
+	amd64_movsd_reg_membase (code, AMD64_XMM0, AMD64_R11, G_STRUCT_OFFSET (MonoContext, xmm0_low));
 
 	if (mono_running_on_valgrind ()) {
 		/* Prevent 'Address 0x... is just below the stack ptr.' errors */
@@ -955,6 +961,7 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = ctx->r13;
 	mctx->r14 = ctx->r14;
 	mctx->r15 = ctx->r15;
+	mctx->xmm0_low = ctx->xmm0_low;
 #endif
 }
 
@@ -1019,6 +1026,7 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	ctx->r13 = mctx->r13;
 	ctx->r14 = mctx->r14;
 	ctx->r15 = mctx->r15;
+	ctx->xmm0_low = mctx->xmm0_low;
 #endif
 }
 
