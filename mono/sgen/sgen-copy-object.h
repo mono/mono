@@ -45,7 +45,7 @@ extern guint64 stat_slots_allocated_in_vain;
  * anymore, which is the case in the parallel collector.
  */
 static MONO_ALWAYS_INLINE void
-par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objsize, SgenGrayQueue *queue)
+par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objsize, SgenGrayQueue *queue, gboolean is_parallel)
 {
 	sgen_client_pre_copy_checks (destination, vt, obj, objsize);
 	binary_protocol_copy (obj, destination, vt, objsize);
@@ -60,7 +60,7 @@ par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objs
 	obj = destination;
 	if (queue) {
 		SGEN_LOG (9, "Enqueuing gray object %p (%s)", obj, sgen_client_vtable_get_name (vt));
-		GRAY_OBJECT_ENQUEUE (queue, (GCObject *)obj, sgen_vtable_get_descriptor (vt));
+		GRAY_OBJECT_ENQUEUE (queue, (GCObject *)obj, sgen_vtable_get_descriptor (vt), is_parallel);
 	}
 }
 
@@ -85,7 +85,7 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	if (!has_references)
 		queue = NULL;
 
-	par_copy_object_no_checks ((char *)destination, vt, obj, objsize, queue);
+	par_copy_object_no_checks ((char *)destination, vt, obj, objsize, queue, FALSE);
 
 	/* set the forwarding pointer */
 	SGEN_FORWARD_OBJECT (obj, destination);
@@ -117,7 +117,7 @@ copy_object_no_checks_par (GCObject *obj, SgenGrayQueue *queue)
 			queue = NULL;
 
 		/* FIXME we can potentially queue an object that will never be alive */
-		par_copy_object_no_checks ((char*)destination, vt, obj, objsize, queue);
+		par_copy_object_no_checks ((char*)destination, vt, obj, objsize, queue, TRUE);
 
 		/* FIXME we might need a membar here so other threads see the vtable before we forward */
 
