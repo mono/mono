@@ -1106,6 +1106,7 @@ namespace System.Net.Sockets {
             Connect(addresses,port);
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Connect", null);
         }
+#endif // !MONO
 
         public void Connect(IPAddress[] addresses, int port){
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Connect", addresses);
@@ -1154,7 +1155,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Connect", null);
         }
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Forces a socket connection to close.

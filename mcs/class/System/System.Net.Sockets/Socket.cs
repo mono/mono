@@ -844,51 +844,6 @@ namespace System.Net.Sockets
 			Connect (Dns.GetHostAddresses (host), port);
 		}
 
-		public void Connect (IPAddress[] addresses, int port)
-		{
-			ThrowIfDisposedAndClosed ();
-
-			if (addresses == null)
-				throw new ArgumentNullException ("addresses");
-			if (this.AddressFamily != AddressFamily.InterNetwork && this.AddressFamily != AddressFamily.InterNetworkV6)
-				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
-			if (is_listening)
-				throw new InvalidOperationException ();
-
-			// FIXME: do non-blocking sockets Poll here?
-			int error = 0;
-			foreach (IPAddress address in addresses) {
-				IPEndPoint iep = new IPEndPoint (address, port);
-				
-				iep = RemapIPEndPoint (iep);
-
-				Connect_internal (m_Handle, iep.Serialize (), out error, is_blocking);
-				if (error == 0) {
-					is_connected = true;
-					is_bound = true;
-					seed_endpoint = iep;
-					return;
-				}
-				if (error != (int)SocketError.InProgress && error != (int)SocketError.WouldBlock)
-					continue;
-
-				if (!is_blocking) {
-					Poll (-1, SelectMode.SelectWrite);
-					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-					if (error == 0) {
-						is_connected = true;
-						is_bound = true;
-						seed_endpoint = iep;
-						return;
-					}
-				}
-			}
-
-			if (error != 0)
-				throw new SocketException (error);
-		}
-
-
 		public void Connect (EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
