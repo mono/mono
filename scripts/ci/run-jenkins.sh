@@ -62,6 +62,9 @@ if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
 elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
     then
 	$(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
+elif [[ ${CI_TAGS} == *'no-tests'* ]];
+    then
+	exit 0
 else
 	make check-ci
 fi
