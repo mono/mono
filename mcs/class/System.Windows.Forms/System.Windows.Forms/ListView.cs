@@ -5479,7 +5479,7 @@ namespace System.Windows.Forms
 
 					value.SetGroup (group);
 				}
-
+				value.DisplayIndex = -1;
 				list.Add (value);
 
 				// force an update of the selected info if the new item is selected.
