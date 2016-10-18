@@ -7781,6 +7781,7 @@ namespace System.Net.Sockets {
             return retval;
         }
 
+#endif // MONO
         public static bool ConnectAsync(SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e) {
 
             bool retval;
@@ -7823,6 +7824,7 @@ namespace System.Net.Sockets {
             return retval;
         }
 
+#if !MONO
         public static void CancelConnectAsync(SocketAsyncEventArgs e) {
 
             if (e == null) {

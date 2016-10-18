@@ -1331,12 +1331,6 @@ namespace System.Net.Sockets
 			return true;
 		}
 
-		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
-		{
-			var sock = new Socket (e.RemoteEndPoint.AddressFamily, socketType, protocolType);
-			return sock.ConnectAsync (e);
-		}
-
 		public static void CancelConnectAsync (SocketAsyncEventArgs e)
 		{
 			if (e == null)

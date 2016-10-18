@@ -100,5 +100,10 @@ namespace System.Net.Sockets
 			if (!silent && error != 0)
 				throw new SocketException (error);
 		}
+
+        internal bool CanTryAddressFamily (AddressFamily family)
+        {
+			return (family == address_family) || (family == AddressFamily.InterNetwork && IsDualMode);
+        }
 	}
 }
