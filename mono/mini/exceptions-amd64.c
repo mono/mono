@@ -169,37 +169,21 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->r14 = ctx->R14;
 	sctx->r15 = ctx->R15;
 	sctx->xmm0_low = ctx->Xmm0.Low;
-	sctx->xmm0_high = ctx->Xmm0.High;
 	sctx->xmm1_low = ctx->Xmm1.Low;
-	sctx->xmm1_high = ctx->Xmm1.High;
 	sctx->xmm2_low = ctx->Xmm2.Low;
-	sctx->xmm2_high = ctx->Xmm2.High;
 	sctx->xmm3_low = ctx->Xmm3.Low;
-	sctx->xmm3_high = ctx->Xmm3.High;
 	sctx->xmm4_low = ctx->Xmm4.Low;
-	sctx->xmm4_high = ctx->Xmm4.High;
 	sctx->xmm5_low = ctx->Xmm5.Low;
-	sctx->xmm5_high = ctx->Xmm5.High;
 	sctx->xmm6_low = ctx->Xmm6.Low;
-	sctx->xmm6_high = ctx->Xmm6.High;
 	sctx->xmm7_low = ctx->Xmm7.Low;
-	sctx->xmm7_high = ctx->Xmm7.High;
 	sctx->xmm8_low = ctx->Xmm8.Low;
-	sctx->xmm8_high = ctx->Xmm8.High;
 	sctx->xmm9_low = ctx->Xmm9.Low;
-	sctx->xmm9_high = ctx->Xmm9.High;
 	sctx->xmm10_low = ctx->Xmm10.Low;
-	sctx->xmm10_high = ctx->Xmm10.High;
 	sctx->xmm11_low = ctx->Xmm11.Low;
-	sctx->xmm11_high = ctx->Xmm11.High;
 	sctx->xmm12_low = ctx->Xmm12.Low;
-	sctx->xmm12_high = ctx->Xmm12.High;
 	sctx->xmm13_low = ctx->Xmm13.Low;
-	sctx->xmm13_high = ctx->Xmm13.High;
 	sctx->xmm14_low = ctx->Xmm14.Low;
-	sctx->xmm14_high = ctx->Xmm14.High;
 	sctx->xmm15_low = ctx->Xmm15.Low;
-	sctx->xmm15_high = ctx->Xmm15.High;
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
@@ -251,37 +235,21 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->Rip = sctx->rip;
 
 		ctx->Xmm0.Low = sctx->xmm0_low;
-		ctx->Xmm0.High = sctx->xmm0_high;
 		ctx->Xmm1.Low = sctx->xmm1_low;
-		ctx->Xmm1.High = sctx->xmm1_high;
 		ctx->Xmm2.Low = sctx->xmm2_low;
-		ctx->Xmm2.High = sctx->xmm2_high;
 		ctx->Xmm3.Low = sctx->xmm3_low;
-		ctx->Xmm3.High = sctx->xmm3_high;
 		ctx->Xmm4.Low = sctx->xmm4_low;
-		ctx->Xmm4.High = sctx->xmm4_high;
 		ctx->Xmm5.Low = sctx->xmm5_low;
-		ctx->Xmm5.High = sctx->xmm5_high;
 		ctx->Xmm6.Low = sctx->xmm6_low;
-		ctx->Xmm6.High = sctx->xmm6_high;
 		ctx->Xmm7.Low = sctx->xmm7_low;
-		ctx->Xmm7.High = sctx->xmm7_high;
 		ctx->Xmm8.Low = sctx->xmm8_low;
-		ctx->Xmm8.High = sctx->xmm8_high;
 		ctx->Xmm9.Low = sctx->xmm9_low;
-		ctx->Xmm9.High = sctx->xmm9_high;
 		ctx->Xmm10.Low = sctx->xmm10_low;
-		ctx->Xmm10.High = sctx->xmm10_high;
 		ctx->Xmm11.Low = sctx->xmm11_low;
-		ctx->Xmm11.High = sctx->xmm11_high;
 		ctx->Xmm12.Low = sctx->xmm12_low;
-		ctx->Xmm12.High = sctx->xmm12_high;
 		ctx->Xmm13.Low = sctx->xmm13_low;
-		ctx->Xmm13.High = sctx->xmm13_high;
 		ctx->Xmm14.Low = sctx->xmm14_low;
-		ctx->Xmm14.High = sctx->xmm14_high;
 		ctx->Xmm15.Low = sctx->xmm15_low;
-		ctx->Xmm15.High = sctx->xmm15_high;
 
 		/* Volatile But should not matter?*/
 		ctx->Rax = sctx->rax;
