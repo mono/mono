@@ -16,8 +16,8 @@
 
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-coop-semaphore.h>
+#include <mono/utils/os-event.h>
 #include <mono/metadata/gc-internals.h>
-#include <mono/utils/w32handle.h>
 #include <mono/utils/mono-threads-debug.h>
 
 #include <errno.h>
@@ -40,14 +40,19 @@ extern int tkill (pid_t tid, int signal);
 void nacl_shutdown_gc_thread(void);
 #endif
 
+typedef struct {
+	guint32 ref;
+	MonoOSEvent event;
+} ThreadHandle;
+
 void
 mono_threads_platform_register (MonoThreadInfo *info)
 {
-	gpointer thread_handle;
+	ThreadHandle *thread_handle;
 
-	thread_handle = mono_w32handle_new (MONO_W32HANDLE_THREAD, NULL);
-	if (thread_handle == INVALID_HANDLE_VALUE)
-		g_error ("%s: failed to create handle", __func__);
+	thread_handle = g_new0 (ThreadHandle, 1);
+	thread_handle->ref = 1;
+	mono_os_event_init (&thread_handle->event, TRUE, FALSE);
 
 	g_assert (!info->handle);
 	info->handle = thread_handle;
@@ -175,7 +180,7 @@ mono_threads_platform_unregister (MonoThreadInfo *info)
 	g_assert (info->handle);
 
 	/* The thread is no longer active, so unref it */
-	mono_w32handle_unref (info->handle);
+	mono_threads_platform_close_thread_handle (info->handle);
 	info->handle = NULL;
 }
 
@@ -196,15 +201,25 @@ mono_threads_get_max_stack_size (void)
 gpointer
 mono_threads_platform_duplicate_handle (MonoThreadInfo *info)
 {
-	g_assert (info->handle);
-	mono_w32handle_ref (info->handle);
-	return info->handle;
+	return mono_threads_platform_open_thread_handle (info->handle, (MonoNativeThreadId) (gsize) -1);
 }
 
 HANDLE
 mono_threads_platform_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 {
-	mono_w32handle_ref (handle);
+	ThreadHandle *thread_handle;
+	guint32 oldref, newref;
+
+	g_assert (handle);
+	thread_handle = (ThreadHandle*) handle;
+
+	do {
+		oldref = thread_handle->ref;
+		if (!(oldref >= 1))
+			g_error ("%s: thread_handle %p has ref %u, it should be >= 1", __func__, thread_handle, oldref);
+
+		newref = oldref + 1;
+	} while (InterlockedCompareExchange ((gint32*) &thread_handle->ref, newref, oldref) != oldref);
 
 	return handle;
 }
@@ -212,23 +227,42 @@ mono_threads_platform_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 void
 mono_threads_platform_close_thread_handle (HANDLE handle)
 {
-	mono_w32handle_unref (handle);
+	ThreadHandle *thread_handle;
+	guint32 oldref, newref;
+
+	g_assert (handle);
+	thread_handle = (ThreadHandle*) handle;
+
+	do {
+		oldref = thread_handle->ref;
+		if (!(oldref >= 1))
+			g_error ("%s: thread_handle %p has ref %u, it should be >= 1", __func__, thread_handle, oldref);
+
+		newref = oldref - 1;
+	} while (InterlockedCompareExchange ((gint32*) &thread_handle->ref, newref, oldref) != oldref);
+
+	if (newref == 0) {
+		mono_os_event_destroy (&thread_handle->event);
+		g_free (thread_handle);
+	}
 }
 
 MonoThreadInfoWaitRet
 mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
 {
-	MonoW32HandleWaitRet res;
+	MonoOSEventWaitRet res;
+	ThreadHandle *thread_handle;
 
-	res = mono_w32handle_wait_one (handle, timeout, alertable);
-	if (res == MONO_W32HANDLE_WAIT_RET_SUCCESS_0)
+	g_assert (handle);
+	thread_handle = (ThreadHandle*) handle;
+
+	res = mono_os_event_wait_one (&thread_handle->event, timeout);
+	if (res == MONO_OS_EVENT_WAIT_RET_SUCCESS_0)
 		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0;
-	else if (res == MONO_W32HANDLE_WAIT_RET_ALERTED)
+	else if (res == MONO_OS_EVENT_WAIT_RET_ALERTED)
 		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == MONO_W32HANDLE_WAIT_RET_TIMEOUT)
+	else if (res == MONO_OS_EVENT_WAIT_RET_TIMEOUT)
 		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else if (res == MONO_W32HANDLE_WAIT_RET_FAILED)
-		return MONO_THREAD_INFO_WAIT_RET_FAILED;
 	else
 		g_error ("%s: unknown res value %d", __func__, res);
 }
@@ -236,17 +270,28 @@ mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolea
 MonoThreadInfoWaitRet
 mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
 {
-	MonoW32HandleWaitRet res;
+	MonoOSEventWaitRet res;
+	MonoOSEvent **thread_events;
+	gint i;
 
-	res = mono_w32handle_wait_multiple (handles, nhandles, waitall, timeout, alertable);
-	if (res >= MONO_W32HANDLE_WAIT_RET_SUCCESS_0 && res <= MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + nhandles - 1)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_W32HANDLE_WAIT_RET_SUCCESS_0);
-	else if (res == MONO_W32HANDLE_WAIT_RET_ALERTED)
+	thread_events = g_alloca (sizeof (MonoOSEvent*) * nhandles);
+
+	for (i = 0; i < nhandles; ++i) {
+		ThreadHandle *thread_handle;
+
+		g_assert (handles [i]);
+		thread_handle = handles [i];
+
+		thread_events [i] = &thread_handle->event;
+	}
+
+	res = mono_os_event_wait_multiple (thread_events, nhandles, waitall, timeout);
+	if (res >= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 && res <= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + nhandles - 1)
+		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_OS_EVENT_WAIT_RET_SUCCESS_0);
+	else if (res == MONO_OS_EVENT_WAIT_RET_ALERTED)
 		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == MONO_W32HANDLE_WAIT_RET_TIMEOUT)
+	else if (res == MONO_OS_EVENT_WAIT_RET_TIMEOUT)
 		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else if (res == MONO_W32HANDLE_WAIT_RET_FAILED)
-		return MONO_THREAD_INFO_WAIT_RET_FAILED;
 	else
 		g_error ("%s: unknown res value %d", __func__, res);
 }
@@ -351,51 +396,17 @@ mono_native_thread_join (MonoNativeThreadId tid)
 void
 mono_threads_platform_set_exited (gpointer handle)
 {
-	int thr_ret;
+	ThreadHandle *thread_handle;
 
 	g_assert (handle);
-	if (mono_w32handle_issignalled (handle))
-		g_error ("%s: handle %p thread %p has already exited, it's handle is signalled", __func__, handle, mono_native_thread_id_get ());
-	if (mono_w32handle_get_type (handle) == MONO_W32HANDLE_UNUSED)
-		g_error ("%s: handle %p thread %p has already exited, it's handle type is 'unused'", __func__, handle, mono_native_thread_id_get ());
+	thread_handle = (ThreadHandle*) handle;
 
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
-
-	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
-
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
+	mono_os_event_set (&thread_handle->event);
 }
-
-static const gchar* thread_typename (void)
-{
-	return "Thread";
-}
-
-static gsize thread_typesize (void)
-{
-	return 0;
-}
-
-static MonoW32HandleOps thread_ops = {
-	NULL,				/* close */
-	NULL,				/* signal */
-	NULL,				/* own */
-	NULL,				/* is_owned */
-	NULL,				/* special_wait */
-	NULL,				/* prewait */
-	NULL,				/* details */
-	thread_typename,	/* typename */
-	thread_typesize,	/* typesize */
-};
 
 void
 mono_threads_platform_init (void)
 {
-	mono_w32handle_register_ops (MONO_W32HANDLE_THREAD, &thread_ops);
-
-	mono_w32handle_register_capabilities (MONO_W32HANDLE_THREAD, MONO_W32HANDLE_CAP_WAIT);
 }
 
 #endif /* defined(_POSIX_VERSION) || defined(__native_client__) */
