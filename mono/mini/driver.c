@@ -2303,6 +2303,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 		mono_llvm_only = TRUE;
 	}
 	if (mono_aot_mode == MONO_AOT_MODE_HYBRID) {
+		mono_set_generic_sharing_vt_supported (TRUE);
 		mono_set_partial_sharing_supported (TRUE);
 	}
 }
