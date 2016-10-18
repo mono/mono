@@ -781,6 +781,7 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/net/System/Net/Configuration/DefaultProxySection.cs
 
+../referencesource/System/net/System/Net/Sockets/_MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
 ../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
 ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs
