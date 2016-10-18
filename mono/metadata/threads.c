@@ -44,7 +44,7 @@
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
-#include <mono/utils/w32handle.h>
+#include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/w32mutex.h>
 
