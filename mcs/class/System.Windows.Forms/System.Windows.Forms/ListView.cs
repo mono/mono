@@ -5411,9 +5411,12 @@ namespace System.Windows.Forms
 				bool selection_changed = false;
 				if (is_main_collection && owner != null) {
 
-					int display_index = item.DisplayIndex;
-					if (item.Focused && display_index + 1 == Count) // Last item
-						owner.SetFocusedItem (display_index == 0 ? -1 : display_index - 1);
+					ListViewItem focused_item = owner.FocusedItem;
+					if (focused_item != null) {
+						int focused_item_index = focused_item.DisplayIndex;
+						if (focused_item_index + 1 >= Count) // Last item
+							owner.SetFocusedItem (Count - 2);
+					}
 
 					selection_changed = owner.SelectedIndices.Contains (index);
 					owner.item_control.CancelEdit (item);
