@@ -1249,7 +1249,6 @@ namespace System {
             get {return IsCOMObjectImpl();}
         }
 
-#if FEATURE_COMINTEROP || MONO_COM
         internal bool IsWindowsRuntimeObject {
             [Pure]
             get { return IsWindowsRuntimeObjectImpl(); }
@@ -1259,7 +1258,6 @@ namespace System {
             [Pure]
             get { return IsExportedToWindowsRuntimeImpl(); }
         }
-#endif // FEATURE_COMINTEROP
 
          public bool HasElementType {
              [Pure]
@@ -1313,7 +1311,6 @@ namespace System {
         // Protected routine to determine if this class represents a COM object
         abstract protected bool IsCOMObjectImpl();
 
-#if FEATURE_COMINTEROP || MONO_COM
         // Protected routine to determine if this class represents a Windows Runtime object
         virtual internal bool IsWindowsRuntimeObjectImpl() {
             throw new NotImplementedException();
@@ -1323,7 +1320,6 @@ namespace System {
         virtual internal bool IsExportedToWindowsRuntimeImpl() {
             throw new NotImplementedException();
         }
-#endif // FEATURE_COMINTEROP
 
         // 
         public virtual Type MakeGenericType(params Type[] typeArguments) {
