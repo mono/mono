@@ -41,8 +41,8 @@ typedef struct {
 	MonoOSEvent event;
 } ThreadHandle;
 
-void
-mono_threads_platform_register (MonoThreadInfo *info)
+HANDLE
+mono_threads_platform_create_thread_handle (void)
 {
 	ThreadHandle *thread_handle;
 
@@ -50,8 +50,7 @@ mono_threads_platform_register (MonoThreadInfo *info)
 	thread_handle->ref = 1;
 	mono_os_event_init (&thread_handle->event, TRUE, FALSE);
 
-	g_assert (!info->handle);
-	info->handle = thread_handle;
+	return thread_handle;
 }
 
 int
@@ -162,16 +161,6 @@ void
 mono_threads_platform_exit (gsize exit_code)
 {
 	pthread_exit ((gpointer) exit_code);
-}
-
-void
-mono_threads_platform_unregister (MonoThreadInfo *info)
-{
-	g_assert (info->handle);
-
-	/* The thread is no longer active, so unref it */
-	mono_threads_platform_close_thread_handle (info->handle);
-	info->handle = NULL;
 }
 
 int

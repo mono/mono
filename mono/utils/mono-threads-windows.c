@@ -189,8 +189,8 @@ mono_threads_suspend_get_abort_signal (void)
 
 #if defined (HOST_WIN32)
 
-void
-mono_threads_platform_register (MonoThreadInfo *info)
+HANDLE
+mono_threads_platform_create_thread_handle (void)
 {
 	HANDLE thread_handle;
 
@@ -201,8 +201,7 @@ mono_threads_platform_register (MonoThreadInfo *info)
 	 * be used to refer to the thread from other threads for things like aborting. */
 	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle, THREAD_ALL_ACCESS, TRUE, 0);
 
-	g_assert (!info->handle);
-	info->handle = thread_handle;
+	return thread_handle;
 }
 
 int
@@ -315,15 +314,6 @@ void
 mono_threads_platform_exit (gsize exit_code)
 {
 	ExitThread (exit_code);
-}
-
-void
-mono_threads_platform_unregister (MonoThreadInfo *info)
-{
-	g_assert (info->handle);
-
-	CloseHandle (info->handle);
-	info->handle = NULL;
 }
 
 int

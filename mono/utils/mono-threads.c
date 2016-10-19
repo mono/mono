@@ -346,6 +346,7 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	gboolean result;
 	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
 	info->small_id = small_id;
+	info->handle = mono_threads_platform_create_thread_handle ();
 
 	mono_os_sem_init (&info->resume_semaphore, 0);
 
@@ -371,7 +372,6 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 
 	info->stackdata = g_byte_array_new ();
 
-	mono_threads_platform_register (info);
 	mono_threads_suspend_register (info);
 
 	/*
@@ -447,7 +447,10 @@ unregister_thread (void *arg)
 	if (threads_callbacks.thread_unregister)
 		threads_callbacks.thread_unregister (info);
 
-	mono_threads_platform_unregister (info);
+	/* The thread is no longer active, so unref its handle */
+	mono_threads_close_thread_handle (info->handle);
+	info->handle = NULL;
+
 	result = mono_thread_info_remove (info);
 	g_assert (result);
 	mono_threads_transition_detach (info);
