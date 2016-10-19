@@ -2120,7 +2120,10 @@ emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodS
 		if (!strcmp (cmethod->name, "get_IsHardwareAccelerated")) {
 			MonoInst *ins;
 
-			EMIT_NEW_ICONST (cfg, ins, 1);
+			if (simd_supported_versions)
+				EMIT_NEW_ICONST (cfg, ins, 1);
+			else
+				EMIT_NEW_ICONST (cfg, ins, 0);
 			ins->type = STACK_I4;
 			return ins;
 		}
