@@ -198,14 +198,8 @@ mono_threads_get_max_stack_size (void)
 	return (int)lim.rlim_max;
 }
 
-gpointer
-mono_threads_platform_duplicate_handle (MonoThreadInfo *info)
-{
-	return mono_threads_platform_open_thread_handle (info->handle, (MonoNativeThreadId) (gsize) -1);
-}
-
 HANDLE
-mono_threads_platform_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
+mono_threads_platform_open_thread_handle (HANDLE handle)
 {
 	ThreadHandle *thread_handle;
 	guint32 oldref, newref;

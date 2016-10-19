@@ -426,7 +426,7 @@ unregister_thread (void *arg)
 
 	/* we need to duplicate it, as the info->handle is going
 	 * to be closed when unregistering from the platform */
-	handle = mono_threads_platform_duplicate_handle (info);
+	handle = mono_thread_info_duplicate_handle (info);
 
 	/*
 	First perform the callback that requires no locks.
@@ -468,7 +468,7 @@ unregister_thread (void *arg)
 	 * neither does it switch state to BLOCKING. */
 	mono_threads_platform_set_exited (handle);
 
-	mono_threads_platform_close_thread_handle (handle);
+	mono_threads_close_thread_handle (handle);
 }
 
 static void
@@ -1417,13 +1417,13 @@ mono_thread_info_exit (void)
  * mono_threads_open_thread_handle:
  *
  *   Return a io-layer/win32 handle for the thread identified by HANDLE/TID.
- * The handle need to be closed by calling CloseHandle () when it is no
+ * The handle need to be closed by calling mono_threads_close_thread_handle () when it is no
  * longer needed.
  */
 HANDLE
-mono_threads_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
+mono_threads_open_thread_handle (HANDLE handle)
 {
-	return mono_threads_platform_open_thread_handle (handle, tid);
+	return mono_threads_platform_open_thread_handle (handle);
 }
 
 void
@@ -1651,7 +1651,7 @@ gpointer
 mono_thread_info_duplicate_handle (MonoThreadInfo *info)
 {
 	g_assert (mono_thread_info_is_current (info));
-	return mono_threads_platform_duplicate_handle (info);
+	return mono_threads_open_thread_handle (info->handle);
 }
 
 MonoThreadInfoWaitRet

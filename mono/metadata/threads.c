@@ -3029,7 +3029,7 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 			return;
 		}
 
-		handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
+		handle = mono_threads_open_thread_handle (thread->handle);
 		if (handle == NULL) {
 			THREAD_DEBUG (g_message ("%s: ignoring unopenable thread %"G_GSIZE_FORMAT, __func__, (gsize)thread->tid));
 			return;
@@ -3070,7 +3070,7 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 	     && (thread->state & ThreadState_Background) != 0
 	     && (thread->flags & MONO_THREAD_FLAG_DONT_MANAGE) == 0
 	) {
-		handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
+		handle = mono_threads_open_thread_handle (thread->handle);
 		if (handle == NULL)
 			return FALSE;
 
@@ -3229,7 +3229,7 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 		return;
 
 	if (wait->num<MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
-		handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
+		handle = mono_threads_open_thread_handle (thread->handle);
 		if (handle == NULL)
 			return;
 
@@ -3757,7 +3757,7 @@ collect_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 		/* printf ("ABORTING THREAD %p BECAUSE IT REFERENCES DOMAIN %s.\n", thread->tid, domain->friendly_name); */
 
 		if(data->wait.num<MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
-			HANDLE handle = mono_threads_open_thread_handle (thread->handle, thread_get_tid (thread));
+			HANDLE handle = mono_threads_open_thread_handle (thread->handle);
 			if (handle == NULL)
 				return;
 			data->wait.handles [data->wait.num] = handle;
