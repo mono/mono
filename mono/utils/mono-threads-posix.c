@@ -16,7 +16,6 @@
 
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-coop-semaphore.h>
-#include <mono/utils/os-event.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads-debug.h>
 
@@ -35,23 +34,6 @@ extern int tkill (pid_t tid, int signal);
 #include <pthread.h>
 
 #include <sys/resource.h>
-
-typedef struct {
-	guint32 ref;
-	MonoOSEvent event;
-} ThreadHandle;
-
-HANDLE
-mono_threads_platform_create_thread_handle (void)
-{
-	ThreadHandle *thread_handle;
-
-	thread_handle = g_new0 (ThreadHandle, 1);
-	thread_handle->ref = 1;
-	mono_os_event_init (&thread_handle->event, TRUE, FALSE);
-
-	return thread_handle;
-}
 
 int
 mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid)
@@ -177,99 +159,6 @@ mono_threads_get_max_stack_size (void)
 	return (int)lim.rlim_max;
 }
 
-HANDLE
-mono_threads_platform_open_thread_handle (HANDLE handle)
-{
-	ThreadHandle *thread_handle;
-	guint32 oldref, newref;
-
-	g_assert (handle);
-	thread_handle = (ThreadHandle*) handle;
-
-	do {
-		oldref = thread_handle->ref;
-		if (!(oldref >= 1))
-			g_error ("%s: thread_handle %p has ref %u, it should be >= 1", __func__, thread_handle, oldref);
-
-		newref = oldref + 1;
-	} while (InterlockedCompareExchange ((gint32*) &thread_handle->ref, newref, oldref) != oldref);
-
-	return handle;
-}
-
-void
-mono_threads_platform_close_thread_handle (HANDLE handle)
-{
-	ThreadHandle *thread_handle;
-	guint32 oldref, newref;
-
-	g_assert (handle);
-	thread_handle = (ThreadHandle*) handle;
-
-	do {
-		oldref = thread_handle->ref;
-		if (!(oldref >= 1))
-			g_error ("%s: thread_handle %p has ref %u, it should be >= 1", __func__, thread_handle, oldref);
-
-		newref = oldref - 1;
-	} while (InterlockedCompareExchange ((gint32*) &thread_handle->ref, newref, oldref) != oldref);
-
-	if (newref == 0) {
-		mono_os_event_destroy (&thread_handle->event);
-		g_free (thread_handle);
-	}
-}
-
-MonoThreadInfoWaitRet
-mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
-{
-	MonoOSEventWaitRet res;
-	ThreadHandle *thread_handle;
-
-	g_assert (handle);
-	thread_handle = (ThreadHandle*) handle;
-
-	res = mono_os_event_wait_one (&thread_handle->event, timeout);
-	if (res == MONO_OS_EVENT_WAIT_RET_SUCCESS_0)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0;
-	else if (res == MONO_OS_EVENT_WAIT_RET_ALERTED)
-		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == MONO_OS_EVENT_WAIT_RET_TIMEOUT)
-		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else
-		g_error ("%s: unknown res value %d", __func__, res);
-}
-
-MonoThreadInfoWaitRet
-mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
-{
-	MonoOSEventWaitRet res;
-	MonoOSEvent **thread_events;
-	gint i;
-
-	thread_events = g_alloca (sizeof (MonoOSEvent*) * nhandles);
-
-	for (i = 0; i < nhandles; ++i) {
-		ThreadHandle *thread_handle;
-
-		g_assert (handles [i]);
-		thread_handle = handles [i];
-
-		thread_events [i] = &thread_handle->event;
-	}
-
-	res = mono_os_event_wait_multiple (thread_events, nhandles, waitall, timeout);
-	if (res >= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 && res <= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + nhandles - 1)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_OS_EVENT_WAIT_RET_SUCCESS_0);
-	else if (res == MONO_OS_EVENT_WAIT_RET_ALERTED)
-		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == MONO_OS_EVENT_WAIT_RET_TIMEOUT)
-		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else
-		g_error ("%s: unknown res value %d", __func__, res);
-}
-
-
 int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
@@ -364,22 +253,6 @@ mono_native_thread_join (MonoNativeThreadId tid)
 	void *res;
 
 	return !pthread_join (tid, &res);
-}
-
-void
-mono_threads_platform_set_exited (gpointer handle)
-{
-	ThreadHandle *thread_handle;
-
-	g_assert (handle);
-	thread_handle = (ThreadHandle*) handle;
-
-	mono_os_event_set (&thread_handle->event);
-}
-
-void
-mono_threads_platform_init (void)
-{
 }
 
 #endif /* defined(_POSIX_VERSION) || defined(__native_client__) */

@@ -94,7 +94,7 @@ static char *ipc_filename;
 
 static char *server_uri;
 
-static HANDLE receiver_thread_handle;
+static MonoThreadHandle *receiver_thread_handle;
 
 static gboolean stop_receiver_thread;
 

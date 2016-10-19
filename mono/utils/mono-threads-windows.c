@@ -189,21 +189,6 @@ mono_threads_suspend_get_abort_signal (void)
 
 #if defined (HOST_WIN32)
 
-HANDLE
-mono_threads_platform_create_thread_handle (void)
-{
-	HANDLE thread_handle;
-
-	thread_handle = GetCurrentThread ();
-	g_assert (thread_handle);
-
-	/* The handle returned by GetCurrentThread () is a pseudo handle, so it can't
-	 * be used to refer to the thread from other threads for things like aborting. */
-	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle, THREAD_ALL_ACCESS, TRUE, 0);
-
-	return thread_handle;
-}
-
 int
 mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid)
 {
@@ -323,59 +308,6 @@ mono_threads_get_max_stack_size (void)
 	return INT_MAX;
 }
 
-HANDLE
-mono_threads_platform_open_thread_handle (HANDLE handle)
-{
-	HANDLE thread_handle;
-
-	g_assert (handle);
-	DuplicateHandle (GetCurrentProcess (), handle, GetCurrentProcess (), &thread_handle, THREAD_ALL_ACCESS, TRUE, 0);
-
-	return thread_handle;
-}
-
-void
-mono_threads_platform_close_thread_handle (HANDLE handle)
-{
-	CloseHandle (handle);
-}
-
-MonoThreadInfoWaitRet
-mono_threads_platform_wait_one_handle (gpointer handle, guint32 timeout, gboolean alertable)
-{
-	MonoW32HandleWaitRet res;
-
-	res = WaitForSingleObjectEx (handle, timeout, alertable);
-	if (res == WAIT_OBJECT_0)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0;
-	else if (res == WAIT_IO_COMPLETION)
-		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == WAIT_TIMEOUT)
-		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else if (res == WAIT_FAILED)
-		return MONO_THREAD_INFO_WAIT_RET_FAILED;
-	else
-		g_error ("%s: unknown res value %d", __func__, res);
-}
-
-MonoThreadInfoWaitRet
-mono_threads_platform_wait_multiple_handle (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable)
-{
-	MonoW32HandleWaitRet res;
-
-	res = WaitForMultipleObjectsEx (nhandles, handles, waitall, timeout, alertable);
-	if (res >= WAIT_OBJECT_0 && res <= WAIT_OBJECT_0 + nhandles - 1)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - WAIT_OBJECT_0);
-	else if (res == WAIT_IO_COMPLETION)
-		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
-	else if (res == WAIT_TIMEOUT)
-		return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-	else if (res == WAIT_FAILED)
-		return MONO_THREAD_INFO_WAIT_RET_FAILED;
-	else
-		g_error ("%s: unknown res value %d", __func__, res);
-}
-
 #if defined(_MSC_VER)
 const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)
@@ -406,16 +338,6 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
 #endif
-}
-
-void
-mono_threads_platform_set_exited (gpointer handle)
-{
-}
-
-void
-mono_threads_platform_init (void)
-{
 }
 
 #endif

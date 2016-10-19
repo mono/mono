@@ -92,12 +92,12 @@ static void reference_queue_clear_for_domain (MonoDomain *domain);
 
 
 static MonoThreadInfoWaitRet
-guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
+guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertable)
 {
 	MonoThreadInfoWaitRet result;
 
 	MONO_ENTER_GC_SAFE;
-	result = mono_thread_info_wait_one_handle (handle, timeout, alertable);
+	result = mono_thread_info_wait_one_handle (thread_handle, timeout, alertable);
 	MONO_EXIT_GC_SAFE;
 
 	return result;

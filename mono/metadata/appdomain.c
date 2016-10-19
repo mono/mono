@@ -84,7 +84,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 160
+#define MONO_CORLIB_VERSION 161
 
 typedef struct
 {
@@ -2481,12 +2481,12 @@ mono_domain_unload (MonoDomain *domain)
 }
 
 static MonoThreadInfoWaitRet
-guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
+guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertable)
 {
 	MonoThreadInfoWaitRet result;
 
 	MONO_ENTER_GC_SAFE;
-	result = mono_thread_info_wait_one_handle (handle, timeout, alertable);
+	result = mono_thread_info_wait_one_handle (thread_handle, timeout, alertable);
 	MONO_EXIT_GC_SAFE;
 
 	return result;
@@ -2515,7 +2515,7 @@ void
 mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 {
 	MonoError error;
-	HANDLE thread_handle;
+	MonoThreadHandle *thread_handle;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
 	unload_data *thread_data;
