@@ -737,7 +737,7 @@ mono_monitor_exit (MonoObject *obj)
 		 * need to set it when the lock is reacquired
 		 */
 		mono_memory_release_barrier(); // synchronize with the 'acquire' in InterlockedCompareExchangePointer
-		mon->owner = 0;
+		InterlockedExchange (&mon->owner, 0);
 
 		/* Do the wakeup stuff.  It's possible that the last
 		 * blocking thread gave up waiting just before we
@@ -746,7 +746,7 @@ mono_monitor_exit (MonoObject *obj)
 		 * it means we don't have to waste time locking the
 		 * struct.
 		 */
-		if (mon->entry_count > 0) {
+		if (InterlockedCompareExchange (&mon->entry_count, 0, 0) > 0) {
 			ReleaseSemaphore (mon->entry_sem, 1, NULL);
 		}
 	} else {
