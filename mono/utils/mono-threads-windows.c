@@ -312,9 +312,8 @@ mono_threads_platform_yield (void)
 }
 
 void
-mono_threads_platform_exit (int exit_code)
+mono_threads_platform_exit (gsize exit_code)
 {
-	mono_thread_info_detach ();
 	ExitThread (exit_code);
 }
 

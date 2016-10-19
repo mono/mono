@@ -1197,7 +1197,7 @@ mono_thread_exit (void)
 	if (mono_thread_get_main () && (thread == mono_thread_get_main ()->internal_thread))
 		exit (mono_environment_exitcode_get ());
 
-	mono_thread_info_exit ();
+	mono_thread_info_exit (0);
 }
 
 void
@@ -3122,7 +3122,7 @@ mono_threads_set_shutting_down (void)
 		mono_thread_detach_internal (current_thread);
 
 		/* Wake up other threads potentially waiting for us */
-		mono_thread_info_exit ();
+		mono_thread_info_exit (0);
 	} else {
 		shutting_down = TRUE;
 

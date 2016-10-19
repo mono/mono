@@ -36,10 +36,6 @@ extern int tkill (pid_t tid, int signal);
 
 #include <sys/resource.h>
 
-#if defined(__native_client__)
-void nacl_shutdown_gc_thread(void);
-#endif
-
 typedef struct {
 	guint32 ref;
 	MonoOSEvent event;
@@ -163,15 +159,9 @@ mono_threads_platform_yield (void)
 }
 
 void
-mono_threads_platform_exit (int exit_code)
+mono_threads_platform_exit (gsize exit_code)
 {
-#if defined(__native_client__)
-	nacl_shutdown_gc_thread();
-#endif
-
-	mono_thread_info_detach ();
-
-	pthread_exit (NULL);
+	pthread_exit ((gpointer) exit_code);
 }
 
 void
