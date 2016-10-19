@@ -159,9 +159,6 @@ namespace System.ServiceModel.Channels
 			if (length == 0)
 				return empty_bytes;
 
-			if (length > 65536)
-				throw new InvalidOperationException ("The message is too large.");
-
 			byte [] buffer = new byte [length];
 			for (int readSize = 0; readSize < length; )
 				readSize += reader.Read (buffer, readSize, length - readSize);

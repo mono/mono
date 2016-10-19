@@ -168,6 +168,22 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->r13 = ctx->R13;
 	sctx->r14 = ctx->R14;
 	sctx->r15 = ctx->R15;
+	sctx->xmm0_low = ctx->Xmm0.Low;
+	sctx->xmm1_low = ctx->Xmm1.Low;
+	sctx->xmm2_low = ctx->Xmm2.Low;
+	sctx->xmm3_low = ctx->Xmm3.Low;
+	sctx->xmm4_low = ctx->Xmm4.Low;
+	sctx->xmm5_low = ctx->Xmm5.Low;
+	sctx->xmm6_low = ctx->Xmm6.Low;
+	sctx->xmm7_low = ctx->Xmm7.Low;
+	sctx->xmm8_low = ctx->Xmm8.Low;
+	sctx->xmm9_low = ctx->Xmm9.Low;
+	sctx->xmm10_low = ctx->Xmm10.Low;
+	sctx->xmm11_low = ctx->Xmm11.Low;
+	sctx->xmm12_low = ctx->Xmm12.Low;
+	sctx->xmm13_low = ctx->Xmm13.Low;
+	sctx->xmm14_low = ctx->Xmm14.Low;
+	sctx->xmm15_low = ctx->Xmm15.Low;
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
@@ -217,6 +233,23 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->R14 = sctx->r14;
 		ctx->R15 = sctx->r15;
 		ctx->Rip = sctx->rip;
+
+		ctx->Xmm0.Low = sctx->xmm0_low;
+		ctx->Xmm1.Low = sctx->xmm1_low;
+		ctx->Xmm2.Low = sctx->xmm2_low;
+		ctx->Xmm3.Low = sctx->xmm3_low;
+		ctx->Xmm4.Low = sctx->xmm4_low;
+		ctx->Xmm5.Low = sctx->xmm5_low;
+		ctx->Xmm6.Low = sctx->xmm6_low;
+		ctx->Xmm7.Low = sctx->xmm7_low;
+		ctx->Xmm8.Low = sctx->xmm8_low;
+		ctx->Xmm9.Low = sctx->xmm9_low;
+		ctx->Xmm10.Low = sctx->xmm10_low;
+		ctx->Xmm11.Low = sctx->xmm11_low;
+		ctx->Xmm12.Low = sctx->xmm12_low;
+		ctx->Xmm13.Low = sctx->xmm13_low;
+		ctx->Xmm14.Low = sctx->xmm14_low;
+		ctx->Xmm15.Low = sctx->xmm15_low;
 
 		/* Volatile But should not matter?*/
 		ctx->Rax = sctx->rax;
@@ -304,6 +337,22 @@ mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gbool
 	amd64_mov_reg_membase (code, AMD64_R13, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r13), 8);
 	amd64_mov_reg_membase (code, AMD64_R14, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r14), 8);
 	amd64_mov_reg_membase (code, AMD64_R15, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r15), 8);
+	amd64_movsd_reg_membase (code, AMD64_XMM0, AMD64_R11, G_STRUCT_OFFSET (MonoContext, xmm0_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM1, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm1_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM2, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm2_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM3, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm3_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM4, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm4_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM5, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm5_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM6, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm6_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM7, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm7_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM8, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm8_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM9, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm9_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM10, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm10_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM11, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm11_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM12, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm12_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM13, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm13_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM14, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm14_low));
+	amd64_movsd_reg_membase (code, AMD64_XMM15, AMD64_R11, G_STRUCT_OFFSET(MonoContext, xmm15_low));
 
 	if (mono_running_on_valgrind ()) {
 		/* Prevent 'Address 0x... is just below the stack ptr.' errors */
@@ -935,6 +984,22 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = UCONTEXT_REG_R13 (ctx);
 	mctx->r14 = UCONTEXT_REG_R14 (ctx);
 	mctx->r15 = UCONTEXT_REG_R15 (ctx);
+	mctx->xmm0_low = UCONTEXT_REG_FPR0_LOW(ctx);
+	mctx->xmm1_low = UCONTEXT_REG_FPR1_LOW(ctx);
+	mctx->xmm2_low = UCONTEXT_REG_FPR2_LOW(ctx);
+	mctx->xmm3_low = UCONTEXT_REG_FPR3_LOW(ctx);
+	mctx->xmm4_low = UCONTEXT_REG_FPR4_LOW(ctx);
+	mctx->xmm5_low = UCONTEXT_REG_FPR5_LOW(ctx);
+	mctx->xmm6_low = UCONTEXT_REG_FPR6_LOW(ctx);
+	mctx->xmm7_low = UCONTEXT_REG_FPR7_LOW(ctx);
+	mctx->xmm8_low = UCONTEXT_REG_FPR8_LOW(ctx);
+	mctx->xmm9_low = UCONTEXT_REG_FPR9_LOW(ctx);
+	mctx->xmm10_low = UCONTEXT_REG_FPR10_LOW(ctx);
+	mctx->xmm11_low = UCONTEXT_REG_FPR11_LOW(ctx);
+	mctx->xmm12_low = UCONTEXT_REG_FPR12_LOW(ctx);
+	mctx->xmm13_low = UCONTEXT_REG_FPR13_LOW(ctx);
+	mctx->xmm14_low = UCONTEXT_REG_FPR14_LOW(ctx);
+	mctx->xmm15_low = UCONTEXT_REG_FPR15_LOW(ctx);
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
@@ -955,6 +1020,22 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = ctx->r13;
 	mctx->r14 = ctx->r14;
 	mctx->r15 = ctx->r15;
+	mctx->xmm0_low = ctx->xmm0_low;
+	mctx->xmm1_low = ctx->xmm1_low;
+	mctx->xmm2_low = ctx->xmm2_low;
+	mctx->xmm3_low = ctx->xmm3_low;
+	mctx->xmm4_low = ctx->xmm4_low;
+	mctx->xmm5_low = ctx->xmm5_low;
+	mctx->xmm6_low = ctx->xmm6_low;
+	mctx->xmm7_low = ctx->xmm7_low;
+	mctx->xmm8_low = ctx->xmm8_low;
+	mctx->xmm9_low = ctx->xmm9_low;
+	mctx->xmm10_low = ctx->xmm10_low;
+	mctx->xmm11_low = ctx->xmm11_low;
+	mctx->xmm12_low = ctx->xmm12_low;
+	mctx->xmm13_low = ctx->xmm13_low;
+	mctx->xmm14_low = ctx->xmm14_low;
+	mctx->xmm15_low = ctx->xmm15_low;
 #endif
 }
 
@@ -999,6 +1080,23 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_R13 (ctx) = mctx->r13;
 	UCONTEXT_REG_R14 (ctx) = mctx->r14;
 	UCONTEXT_REG_R15 (ctx) = mctx->r15;
+
+	UCONTEXT_REG_FPR0_LOW(ctx) = mctx->xmm0_low;
+	UCONTEXT_REG_FPR1_LOW(ctx) = mctx->xmm1_low;
+	UCONTEXT_REG_FPR2_LOW(ctx) = mctx->xmm2_low;
+	UCONTEXT_REG_FPR3_LOW(ctx) = mctx->xmm3_low;
+	UCONTEXT_REG_FPR4_LOW(ctx) = mctx->xmm4_low;
+	UCONTEXT_REG_FPR5_LOW(ctx) = mctx->xmm5_low;
+	UCONTEXT_REG_FPR6_LOW(ctx) = mctx->xmm6_low;
+	UCONTEXT_REG_FPR7_LOW(ctx) = mctx->xmm7_low;
+	UCONTEXT_REG_FPR8_LOW(ctx) = mctx->xmm8_low;
+	UCONTEXT_REG_FPR9_LOW(ctx) = mctx->xmm9_low;
+	UCONTEXT_REG_FPR10_LOW(ctx) = mctx->xmm10_low;
+	UCONTEXT_REG_FPR11_LOW(ctx) = mctx->xmm11_low;
+	UCONTEXT_REG_FPR12_LOW(ctx) = mctx->xmm12_low;
+	UCONTEXT_REG_FPR13_LOW(ctx) = mctx->xmm13_low;
+	UCONTEXT_REG_FPR14_LOW(ctx) = mctx->xmm14_low;
+	UCONTEXT_REG_FPR15_LOW(ctx) = mctx->xmm15_low;
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
@@ -1019,6 +1117,22 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	ctx->r13 = mctx->r13;
 	ctx->r14 = mctx->r14;
 	ctx->r15 = mctx->r15;
+	ctx->xmm0_low = mctx->xmm0_low;
+	ctx->xmm1_low = mctx->xmm1_low;
+	ctx->xmm2_low = mctx->xmm2_low;
+	ctx->xmm3_low = mctx->xmm3_low;
+	ctx->xmm4_low = mctx->xmm4_low;
+	ctx->xmm5_low = mctx->xmm5_low;
+	ctx->xmm6_low = mctx->xmm6_low;
+	ctx->xmm7_low = mctx->xmm7_low;
+	ctx->xmm8_low = mctx->xmm8_low;
+	ctx->xmm9_low = mctx->xmm9_low;
+	ctx->xmm10_low = mctx->xmm10_low;
+	ctx->xmm11_low = mctx->xmm11_low;
+	ctx->xmm12_low = mctx->xmm12_low;
+	ctx->xmm13_low = mctx->xmm13_low;
+	ctx->xmm14_low = mctx->xmm14_low;
+	ctx->xmm15_low = mctx->xmm15_low;
 #endif
 }
 
