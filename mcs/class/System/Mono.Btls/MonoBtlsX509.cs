@@ -70,8 +70,7 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_up_ref (IntPtr handle);
 
-		//[DllImport (BTLS_DYLIB)]
-		[DllImport ("__Internal")]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_from_data (IntPtr data, int len, MonoBtlsX509Format format);
 
 		[DllImport (BTLS_DYLIB)]

@@ -33,7 +33,11 @@ namespace Mono.Btls
 {
 	abstract class MonoBtlsObject : IDisposable
 	{
+#if DYNAMIC_BTLS
+		internal const string BTLS_DYLIB = "libmono-btls-shared";
+#else
 		internal const string BTLS_DYLIB = "__Internal";
+#endif
 
 		internal MonoBtlsObject (MonoBtlsHandle handle)
 		{
