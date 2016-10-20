@@ -378,9 +378,6 @@ void
 mono_thread_info_exit (gsize exit_code);
 
 void
-mono_threads_signal_thread_handle (MonoThreadHandle *handle);
-
-void
 mono_thread_info_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted);
 
 void

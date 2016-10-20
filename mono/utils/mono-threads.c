@@ -397,6 +397,9 @@ static void
 mono_thread_info_suspend_lock_with_info (MonoThreadInfo *info);
 
 static void
+mono_threads_signal_thread_handle (MonoThreadHandle* thread_handle);
+
+static void
 unregister_thread (void *arg)
 {
 	gpointer gc_unsafe_stackdata;
@@ -1471,7 +1474,7 @@ mono_threads_close_thread_handle (MonoThreadHandle *thread_handle)
 	}
 }
 
-void
+static void
 mono_threads_signal_thread_handle (MonoThreadHandle* thread_handle)
 {
 	mono_os_event_set (&thread_handle->event);

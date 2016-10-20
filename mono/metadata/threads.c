@@ -2867,14 +2867,14 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 
 void mono_thread_cleanup (void)
 {
-#if !defined(RUN_IN_SUBTHREAD)
+#if !defined(RUN_IN_SUBTHREAD) && !defined(HOST_WIN32)
 	/* The main thread must abandon any held mutexes (particularly
 	 * important for named mutexes as they are shared across
 	 * processes, see bug 74680.)  This will happen when the
 	 * thread exits, but if it's not running in a subthread it
 	 * won't exit in time.
 	 */
-	mono_threads_signal_thread_handle (mono_thread_info_current ()->handle);
+	mono_w32mutex_abandon ();
 #endif
 
 #if 0
