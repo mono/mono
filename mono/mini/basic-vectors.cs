@@ -1209,6 +1209,189 @@ public class VectorTests {
 			return 1;
 		return 0;
 	}
+
+	// Vector<T>.Add
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Vector<T> vector_add<T> (Vector<T> v1, Vector<T> v2) where T: struct {
+		return v1 + v2;
+	}
+
+	public static int test_0_vector_byte_add () {
+		var v1 = new Vector<byte> (new byte[] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 });
+		var v2 = new Vector<byte> (new byte[] { 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_sbyte_add () {
+		var v1 = new Vector<sbyte> (new sbyte[] { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 });
+		var v2 = new Vector<sbyte> (new sbyte[] { 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_ushort_add () {
+		var v1 = new Vector<ushort> (new ushort[] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 });
+		var v2 = new Vector<ushort> (new ushort[] { 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_short_add () {
+		var v1 = new Vector<short> (new short[] { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 });
+		var v2 = new Vector<short> (new short[] { 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_uint_add () {
+		var v1 = new Vector<uint> (new uint[] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 });
+		var v2 = new Vector<uint> (new uint[] { 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_int_add () {
+		var v1 = new Vector<int> (new int[] { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 });
+		var v2 = new Vector<int> (new int[] { 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, 2, 2, -2, 2, -2 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_double_add () {
+		var v1 = new Vector<double> (new double[] { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 });
+		var v2 = new Vector<double> (new double[] { 2.0, -2.0, 2.0, -2.0, 2.0, -2.0, 2.0, -2.0, 2.0, -2.0, 2.0, 2.0, 2.0, -2.0, 2.0, -2.0 });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_float_add () {
+		var v1 = new Vector<float> (new float[] { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f });
+		var v2 = new Vector<float> (new float[] { 2.0f, -2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 2.0f, -2.0f, 2.0f, -2.0f });
+
+		var res = vector_add (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	// Vector<T>.op_Subtraction
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Vector<T> vector_sub<T> (Vector<T> v1, Vector<T> v2) where T: struct {
+		return v1 - v2;
+	}
+
+	public static int test_0_vector_byte_sub () {
+		var v1 = new Vector<byte> (new byte[] { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 });
+
+		var res = vector_sub (v1, v1);
+		if (res != Vector<byte>.Zero)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_double_sub () {
+		var v1 = new Vector<double> (new double[] { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 });
+
+		var res = vector_sub (v1, v1);
+		if (res != Vector<double>.Zero)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_float_sub () {
+		var v1 = new Vector<float> (new float[] { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f });
+
+		var res = vector_sub (v1, v1);
+		if (res != Vector<float>.Zero)
+			return 1;
+		return 0;
+	}
+
+	// Vector<T>.op_Multiply
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Vector<T> vector_mul<T> (Vector<T> v1, Vector<T> v2) where T: struct {
+		return v1 * v2;
+	}
+
+	public static int test_0_vector_int_mul () {
+		var v1 = new Vector<int> (new int[] { 1, 2, -1, 2, 1, 2, -1, 2, 1, -2, 1, 2, 1, 2, -1, 2 });
+		var v2 = new Vector<int> (new int[] { 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4 });
+
+		var res = vector_mul (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_double_mul () {
+		var v1 = new Vector<double> (new double[] { 2.0, -1.0, 2.0, -1.0 });
+		var v2 = new Vector<double> (new double[] { 4.0, 1.0, 4.0, 1.0 });
+
+		var res = vector_mul (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_float_mul () {
+		var v1 = new Vector<float> (new float[] { 2.0f, -1.0f, 2.0f, -1.0f });
+		var v2 = new Vector<float> (new float[] { 4.0f, 1.0f, 4.0f, 1.0f });
+
+		var res = vector_mul (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	// Vector<T>.op_Division
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Vector<T> vector_div<T> (Vector<T> v1, Vector<T> v2) where T: struct {
+		return v1 / v2;
+	}
+
+	public static int test_0_vector_double_div () {
+		var v1 = new Vector<double> (new double[] { 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0 });
+		var v2 = new Vector<double> (new double[] { 1.0, 1.0, 1.0, 1.0 });
+
+		var res = vector_div (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_vector_float_div () {
+		var v1 = new Vector<float> (new float[] { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f });
+		var v2 = new Vector<float> (new float[] { 1.0f, 1.0f, 1.0f, 1.0f });
+
+		var res = vector_div (v1, v1);
+		if (res != v2)
+			return 1;
+		return 0;
+	}
+
 #endif
 
 }

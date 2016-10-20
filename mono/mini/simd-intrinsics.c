@@ -964,6 +964,95 @@ type_to_gt_op (MonoType *t)
 }
 
 static int
+type_to_padd_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I1:
+		return OP_PADDB;
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I2:
+		return OP_PADDW;
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I4:
+		return OP_PADDD;
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+		return OP_PADDQ;
+	case MONO_TYPE_R4:
+		return OP_ADDPS;
+	case MONO_TYPE_R8:
+		return OP_ADDPD;
+	default:
+		break;
+	}
+	return -1;
+}
+
+static int
+type_to_psub_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I1:
+		return OP_PSUBB;
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I2:
+		return OP_PSUBW;
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I4:
+		return OP_PSUBD;
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+		return OP_PSUBQ;
+	case MONO_TYPE_R4:
+		return OP_SUBPS;
+	case MONO_TYPE_R8:
+		return OP_SUBPD;
+	default:
+		break;
+	}
+	return -1;
+}
+
+static int
+type_to_pmul_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I2:
+		return OP_PMULW;
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I4:
+		return OP_PMULD;
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+		return OP_PMULQ;
+	case MONO_TYPE_R4:
+		return OP_MULPS;
+	case MONO_TYPE_R8:
+		return OP_MULPD;
+	default:
+		break;
+	}
+	return -1;
+}
+
+static int
+type_to_pdiv_op (MonoType *t)
+{
+	switch (t->type) {
+	case MONO_TYPE_R4:
+		return OP_DIVPS;
+	case MONO_TYPE_R8:
+		return OP_DIVPD;
+	default:
+		break;
+	}
+	return -1;
+}
+
+static int
 get_simd_vreg_or_expanded_scalar (MonoCompile *cfg, MonoClass *klass, MonoType *param_type, MonoInst *src)
 {
 	MonoInst *ins;
@@ -1941,7 +2030,11 @@ static const SimdIntrinsic vector_t_intrinsics[] = {
 	{ SN_get_Count },
 	{ SN_get_Item },
 	{ SN_get_Zero, OP_XZERO },
-	{ SN_op_Explicit }
+	{ SN_op_Addition },
+	{ SN_op_Division },
+	{ SN_op_Explicit },
+	{ SN_op_Multiply },
+	{ SN_op_Subtraction }
 };
 
 static MonoInst*
@@ -1951,10 +2044,6 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 	MonoType *etype;
 	MonoInst *ins;
 	int size, len, index;
-
-	// FIXME:
-	if (COMPILE_LLVM (cfg))
-		return NULL;
 
 	intrins = (const SimdIntrinsic*)mono_binary_search (cmethod->name, vector_t_intrinsics, sizeof (vector_t_intrinsics) / sizeof (SimdIntrinsic), sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);
 	if (!intrins) {
@@ -2016,7 +2105,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			g_assert (args [0]->opcode == OP_LDADDR);
 			var = args [0]->inst_p0;
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
-
+			ins->klass = cmethod->klass;
 			return args [0];
 		}
 		break;
@@ -2088,6 +2177,30 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			break;
 		}
 		break;
+	case SN_op_Addition: {
+		int op = type_to_padd_op (etype);
+		if (op != -1)
+			return simd_intrinsic_emit_binary_op (cfg, op, 0, cmethod->klass, fsig->params [0], fsig->params [0], args [0], args [1]);
+		break;
+	}
+	case SN_op_Subtraction: {
+		int op = type_to_psub_op (etype);
+		if (op != -1)
+			return simd_intrinsic_emit_binary_op (cfg, op, 0, cmethod->klass, fsig->params [0], fsig->params [0], args [0], args [1]);
+		break;
+	}
+	case SN_op_Multiply: {
+		int op = type_to_pmul_op (etype);
+		if (op != -1)
+			return simd_intrinsic_emit_binary_op (cfg, op, 0, cmethod->klass, fsig->params [0], fsig->params [0], args [0], args [1]);
+		break;
+	}
+	case SN_op_Division: {
+		int op = type_to_pdiv_op (etype);
+		if (op != -1)
+			return simd_intrinsic_emit_binary_op (cfg, op, 0, cmethod->klass, fsig->params [0], fsig->params [0], args [0], args [1]);
+		break;
+	}
 	default:
 		break;
 	}
