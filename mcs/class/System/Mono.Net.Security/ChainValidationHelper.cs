@@ -335,14 +335,15 @@ namespace Mono.Net.Security
 			result = provider.ValidateCertificate (this, host, server, certs, wantsChain, ref chain, ref xerrors, ref status11);
 			errors = (SslPolicyErrors)xerrors;
 
+			if (status11 == 0 && errors != 0) {
+				// TRUST_E_FAIL
+				status11 = unchecked ((int)0x800B010B);
+			}
+
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
 				if (request != null)
 					sp = request.ServicePointNoLock;
-				if (status11 == 0 && errors != 0) {
-					// TRUST_E_FAIL
-					status11 = unchecked ((int)0x800B010B);
-				}
 
 				// pre 2.0 callback
 				result = policy.CheckValidationResult (sp, leaf, request, status11);
