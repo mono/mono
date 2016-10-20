@@ -25,6 +25,7 @@
 #include "metadata/sgen-bridge-internals.h"
 #include "metadata/gc-internals.h"
 #include "utils/mono-threads.h"
+#include "utils/mono-threads-debug.h"
 
 #define TV_DECLARE SGEN_TV_DECLARE
 #define TV_GETTIME SGEN_TV_GETTIME

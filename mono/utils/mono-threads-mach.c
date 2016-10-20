@@ -23,6 +23,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/hazard-pointer.h>
+#include <mono/utils/mono-threads-debug.h>
 
 void
 mono_threads_suspend_init (void)

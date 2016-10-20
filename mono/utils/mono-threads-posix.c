@@ -18,6 +18,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/w32handle.h>
+#include <mono/utils/mono-threads-debug.h>
 
 #include <errno.h>
 

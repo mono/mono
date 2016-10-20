@@ -17,6 +17,8 @@
 #include <errno.h>
 #include <signal.h>
 
+#include "mono-threads-debug.h"
+
 #if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 #define DEFAULT_SUSPEND_SIGNAL SIGXFSZ
 #else

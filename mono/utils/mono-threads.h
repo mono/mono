@@ -90,44 +90,6 @@ and reduce the number of casts drastically.
 
 /* Mono Threads internal configuration knows*/
 
-/* Logging - enable them below if you need specific logging for the category you need */
-#define MOSTLY_ASYNC_SAFE_PRINTF(...) do { \
-	char __buff[1024];	__buff [0] = '\0'; \
-	g_snprintf (__buff, sizeof (__buff), __VA_ARGS__);	\
-	write (1, __buff, strlen (__buff));	\
-} while (0)
-
-
-#if 1
-#define THREADS_DEBUG(...)
-#else
-#define THREADS_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
-#endif
-
-#if 1
-#define THREADS_STW_DEBUG(...)
-#else
-#define THREADS_STW_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
-#endif
-
-#if 1
-#define THREADS_SUSPEND_DEBUG(...)
-#else
-#define THREADS_SUSPEND_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
-#endif
-
-#if 1
-#define THREADS_STATE_MACHINE_DEBUG(...)
-#else
-#define THREADS_STATE_MACHINE_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
-#endif
-
-#if 1
-#define THREADS_INTERRUPT_DEBUG(...)
-#else
-#define THREADS_INTERRUPT_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
-#endif
-
 /* If this is defined, use the signals backed on Mach. Debug only as signals can't be made usable on OSX. */
 // #define USE_SIGNALS_ON_MACH
 

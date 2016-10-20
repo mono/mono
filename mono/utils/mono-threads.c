@@ -29,6 +29,7 @@
 #include <mono/utils/mono-coop-mutex.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/mono-threads-debug.h>
 
 #include <errno.h>
 
