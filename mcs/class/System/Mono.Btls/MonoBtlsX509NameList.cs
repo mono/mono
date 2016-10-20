@@ -52,19 +52,19 @@ namespace Mono.Btls
 			}
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_name_list_new ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_list_get_count (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_list_add (IntPtr handle, IntPtr name);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_name_list_get_item (IntPtr handle, int index);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_name_list_free (IntPtr handle);
 
 		new internal BoringX509NameListHandle Handle {

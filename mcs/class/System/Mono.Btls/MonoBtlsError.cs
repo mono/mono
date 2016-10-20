@@ -38,16 +38,16 @@ namespace Mono.Btls
 {
 	static class MonoBtlsError
 	{
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static int mono_btls_error_peek_error ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static int mono_btls_error_get_error ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static void mono_btls_error_clear_error ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static void mono_btls_error_get_error_string_n (int error, IntPtr buf, int len);
 
 		public static int PeekError ()

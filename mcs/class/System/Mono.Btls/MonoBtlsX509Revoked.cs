@@ -67,19 +67,19 @@ namespace Mono.Btls
 		{
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_revoked_get_serial_number (IntPtr handle, IntPtr data, int size);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static long mono_btls_x509_revoked_get_revocation_date (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_revoked_get_reason (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_revoked_get_sequence (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_revoked_free (IntPtr handle);
 
 		public byte[] GetSerialNumber ()
