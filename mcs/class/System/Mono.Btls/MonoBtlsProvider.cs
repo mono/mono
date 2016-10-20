@@ -119,7 +119,7 @@ namespace Mono.Btls
 			else
 				param = MonoBtlsX509VerifyParam.GetSslServer ();
 
-			if (string.IsNullOrEmpty (targetHost))
+			if (targetHost == null)
 				return param;
 
 			try {
