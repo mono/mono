@@ -42,4 +42,4 @@
 [submodule "external/boringssl"]
 	path = external/boringssl
 	url = git://github.com/mono/boringssl.git
-	branch = mono
+	branch = work-upstream-merge
