@@ -33,6 +33,12 @@ namespace Mono.Btls
 {
 	abstract class MonoBtlsObject : IDisposable
 	{
+#if DYNAMIC_BTLS
+		internal const string BTLS_DYLIB = "libmono-btls-shared";
+#else
+		internal const string BTLS_DYLIB = "__Internal";
+#endif
+
 		internal MonoBtlsObject (MonoBtlsHandle handle)
 		{
 			this.handle = handle;
@@ -100,7 +106,7 @@ namespace Mono.Btls
 			CheckError (ret == 1, callerName);
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_free (IntPtr data);
 
 		protected void FreeDataPtr (IntPtr data)

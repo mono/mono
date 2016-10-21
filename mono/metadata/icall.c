@@ -107,7 +107,7 @@
 #include <sys/utsname.h>
 #endif
 
-#if HAVE_BTLS
+#if defined(HAVE_BTLS) && !defined(HAVE_DYNAMIC_BTLS)
 #include <btls/btls-ssl.h>
 #include <btls/btls-bio.h>
 #include <btls/btls-error.h>
