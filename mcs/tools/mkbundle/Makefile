@@ -11,7 +11,7 @@ RESOURCE_FILES = $(OTHER_RES)
 LOCAL_MCS_FLAGS= $(OTHER_RES:%=-resource:%)
 
 LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
-LIB_REFS = System.Xml System System.Core
+LIB_REFS = System.Xml System System.Core System.IO.Compression.FileSystem
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
