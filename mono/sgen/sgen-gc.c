@@ -327,8 +327,8 @@ nursery_canaries_enabled (void)
 
 #if defined(HAVE_CONC_GC_AS_DEFAULT)
 /* Use concurrent major on deskstop platforms */
-#define DEFAULT_MAJOR_INIT sgen_marksweep_conc_init
-#define DEFAULT_MAJOR_NAME "marksweep-conc"
+#define DEFAULT_MAJOR_INIT sgen_marksweep_conc_par_init
+#define DEFAULT_MAJOR_NAME "marksweep-conc-par"
 #else
 #define DEFAULT_MAJOR_INIT sgen_marksweep_init
 #define DEFAULT_MAJOR_NAME "marksweep"
@@ -2923,7 +2923,7 @@ sgen_gc_init (void)
 	} else if (!strcmp (major_collector_opt, "marksweep")) {
 		sgen_marksweep_init (&major_collector);
 	} else if (!strcmp (major_collector_opt, "marksweep-conc")) {
-		sgen_marksweep_conc_init (&major_collector);
+		sgen_marksweep_conc_par_init (&major_collector);
 	} else if (!strcmp (major_collector_opt, "marksweep-conc-par")) {
 		sgen_marksweep_conc_par_init (&major_collector);
 	} else {
@@ -3236,7 +3236,7 @@ sgen_gc_init (void)
 		int num_workers = 1;
 		if (major_collector.is_parallel) {
 			/* FIXME Detect the number of physical cores, instead of logical */
-			num_workers = mono_cpu_count () / 2;
+			num_workers = mono_cpu_count ();
 			if (num_workers < 1)
 				num_workers = 1;
 		}
