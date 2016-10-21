@@ -5,14 +5,13 @@
 //
 // TODO:
 //   [x] Rename the paths for the zip file that is downloaded
-//   [ ] Update documentation with new flag
+//   [x] Update documentation with new flag
 //   [x] Load internationalized assemblies
-//   [ ] Dependencies - if System.dll -> include Mono.Security.*
+//   [x] Dependencies - if System.dll -> include Mono.Security.* (not needed, automatic)
 //   [x] --list-targets should download from a different url
-//   [ ] target list should contain different files
-//   [ ] --fetch-target should unpack zip file
-//   [ ] Update --cross to use not a runtime, but an SDK
-//   [ ] Update --list-targets to show the downloaded SDKs
+//   [x] --fetch-target should unpack zip file
+//   [x] Update --cross to use not a runtime, but an SDK
+//   [x] Update --local-targets to show the downloaded SDKs
 //
 // Author:
 //   Miguel de Icaza
@@ -134,6 +133,8 @@ class MakeBundle {
 					Help (); 
 					return 1;
 				}
+				if (sdk_path != null || runtime != null)
+					Error ("You can not specify one of --runtime, --sdk or --cross");
 				custom_mode = false;
 				autodeps = true;
 				cross_target = args [++i];
@@ -173,10 +174,10 @@ class MakeBundle {
 				break;
 
 			case "--list-targets":
+				CommandLocalTargets ();
 				var wc = new WebClient ();
 				var s = wc.DownloadString (new Uri (target_server + "target-sdks.txt"));
-				Console.WriteLine ("Cross-compilation targets available:\n" + s);
-				
+				Console.WriteLine ("Targets available for download with --fetch-target:\n" + s);
 				return 0;
 				
 			case "--target-server":
@@ -210,12 +211,16 @@ class MakeBundle {
 				custom_mode = false;
 				autodeps = true;
 				sdk_path = args [++i];
+				if (cross_target != null || runtime != null)
+					Error ("You can not specify one of --runtime, --sdk or --cross");
 				break;
 			case "--runtime":
 				if (i+1 == top){
 					Help (); 
 					return 1;
 				}
+				if (sdk_path != null || cross_target != null)
+					Error ("You can only specify one of --runtime, --sdk or --cross");
 				custom_mode = false;
 				autodeps = true;
 				runtime = args [++i];
@@ -348,9 +353,20 @@ class MakeBundle {
 			}
 
 		}
-
-		if (sdk_path != null) {
-			VerifySdk (sdk_path);
+		// Modern bundling starts here
+		if (!custom_mode){
+			if (runtime != null){
+				// Nothing to do here, the user has chosen to manually specify --runtime nad libraries
+			} else if (sdk_path != null) {
+				VerifySdk (sdk_path);
+			} else if (cross_target == "default" || cross_target == null){
+				sdk_path = Path.GetFullPath (Path.Combine (Process.GetCurrentProcess().MainModule.FileName, "..", ".."));
+				VerifySdk (sdk_path);
+			} else {
+				sdk_path = Path.Combine (targets_dir, cross_target);
+				Console.WriteLine ("From: " + sdk_path);
+				VerifySdk (sdk_path);
+			}
 		}
 
 		if (fetch_target != null){
@@ -393,30 +409,9 @@ class MakeBundle {
 				return 1;
 		if (custom_mode)
 			GenerateBundles (files);
-		else {
-			if (cross_target == "default")
-				runtime = null;
-			else {
-				if (runtime == null){
-					if (cross_target == null){
-						Console.Error.WriteLine ("you should specify either a --runtime or a --cross compilation target");
-						Environment.Exit (1);
-					}
-					runtime = Path.Combine (targets_dir, cross_target, "mono");
-					if (!File.Exists (runtime)){
-						Console.Error.WriteLine ($"The runtime for the {cross_target} does not exist, use --fetch-target {cross_target} to download first");
-						return 1;
-					}
-				} else {
-					if (!File.Exists (runtime)){
-						Console.Error.WriteLine ($"The Mono runtime specified with --runtime does not exist");
-						return 1;
-					}
-				}
-				
-			}
+		else 
 			GeneratePackage (files);
-		}
+
 		Console.WriteLine ("Generated {0}", output);
 
 		return 0;
@@ -441,7 +436,7 @@ class MakeBundle {
 	{
 		string [] targets;
 
-		Console.WriteLine ("Available targets:");
+		Console.WriteLine ("Available targets locally:");
 		Console.WriteLine ("\tdefault\t- Current System Mono");
 		try {
 			targets = Directory.GetDirectories (targets_dir);
@@ -449,7 +444,7 @@ class MakeBundle {
 			return;
 		}
 		foreach (var target in targets){
-			var p = Path.Combine (target, "mono");
+			var p = Path.Combine (target, "bin", "mono");
 			if (File.Exists (p))
 				Console.WriteLine ("\t{0}", Path.GetFileName (target));
 		}
@@ -1220,7 +1215,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static void Error (string msg, params object [] args)
 	{
-		Console.Error.WriteLine ("ERROR: ", string.Format (msg, args));
+		Console.Error.WriteLine ("ERROR: {0}", string.Format (msg, args));
+		throw new Exception ();
 		Environment.Exit (1);
 	}
 
@@ -1242,12 +1238,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "--simple   Simple mode does not require a C toolchain and can cross compile\n" + 
 				   "    --cross TARGET       Generates a binary for the given TARGET\n"+
 				   "    --env KEY=VALUE      Hardcodes an environment variable for the target\n" +
+				   "    --fetch-target NAME  Downloads the target SDK from the remote server\n" + 
 				   "    --library [LIB,]PATH Bundles the specified dynamic library to be used at runtime\n" +
 				   "                         LIB is optional shortname for file located at PATH\n" + 
 				   "    --list-targets       Lists available targets on the remote server\n" +
 				   "    --local-targets      Lists locally available targets\n" +
 				   "    --options OPTIONS    Embed the specified Mono command line options on target\n" +
 				   "    --runtime RUNTIME    Manually specifies the Mono runtime to use\n" +
+				   "    --sdk PATH           Use a Mono SDK root location instead of a target\n" + 
 				   "    --target-server URL  Specified a server to download targets from, default is " + target_server + "\n" +
 				   "\n" +
 				   "--custom   Builds a custom launcher, options for --custom\n" +
