@@ -203,7 +203,22 @@ executed.
 Additionally, users of your binary can still configure their own
 options by setting the 
 .I MONO_ENV_OPTIONS
-environment variable.   
+environment variable.
+.TP
+.I "--sdk SDK_PATH"
+Use this flag to specify a path from which mkbundle will resolve the
+Mono SDK from.   The SDK path should be the prefix path that you used
+to configure a Mono installation.   And would typically contain files
+lik
+.I SDK_PATH/bin/mono
+,
+.I SDK_PATH/lib/mono/4.5
+and so on.
+.Sp
+When this flag is specified,
+.I mkbundle
+will resolve the runtime, the framework libraries, unmanaged resources
+and configuration files from the files located in this directory.
 .TP
 .I "--target-server SERVER"
 By default the mkbundle tool will download from a Mono server the
