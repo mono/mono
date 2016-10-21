@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NETSTANDARD
+
 namespace System.Net.Sockets
 {
 	public struct SocketReceiveMessageFromResult
@@ -36,3 +38,5 @@ namespace System.Net.Sockets
 		public IPPacketInformation PacketInformation;
 	}
 }
+
+#endif

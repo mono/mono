@@ -46,4 +46,8 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.UdpClient))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.UdpReceiveResult))]
 
-
+#if NETSTANDARD
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketReceiveFromResult))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketReceiveMessageFromResult))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketTaskExtensions))]
+#endif

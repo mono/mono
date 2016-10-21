@@ -123,6 +123,9 @@ System.Net.Sockets/Socket.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncResult.cs
 System.Net.Sockets/SocketOperation.cs
+System.Net.Sockets/SocketReceiveFromResult.cs
+System.Net.Sockets/SocketReceiveMessageFromResult.cs
+System.Net.Sockets/SocketTaskExtensions.cs
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
