@@ -164,6 +164,7 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
+System.Diagnostics.Tracing/EventCounter.cs
 System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
 System.Diagnostics.Tracing/EventSourceSettings.cs
@@ -717,6 +718,7 @@ System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
 System.Security.Cryptography/DSACryptoServiceProvider.cs
 System.Security.Cryptography/ICspAsymmetricAlgorithm.cs
+System.Security.Cryptography/IncrementalHash.cs
 System.Security.Cryptography/KeyNumber.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/RC2CryptoServiceProvider.cs

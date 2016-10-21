@@ -141,6 +141,9 @@ System.Net.Sockets/SocketOperation.cs
 ../referencesource/System/net/System/Net/Sockets/SocketOptionLevel.cs
 ../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
 ../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
+System.Net.Sockets/SocketReceiveFromResult.cs
+System.Net.Sockets/SocketReceiveMessageFromResult.cs
+System.Net.Sockets/SocketTaskExtensions.cs
 ../referencesource/System/net/System/Net/Sockets/SocketType.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
