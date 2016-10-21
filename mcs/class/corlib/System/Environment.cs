@@ -1040,6 +1040,15 @@ namespace System {
 			// Do not include a trailing newline for backwards compatibility
 			return st.ToString( System.Diagnostics.StackTrace.TraceFormat.Normal );
 		}
+
+		// Copied from referencesource Environment
+		internal static bool IsWinRTSupported
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }
 
