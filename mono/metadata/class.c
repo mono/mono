@@ -3094,6 +3094,12 @@ fill_valuetype_array_derived_types (MonoClass **valuetype_types, MonoClass *ecla
 		valuetype_types [1] = mono_class_from_mono_type (mono_class_enum_basetype (eclass));
 }
 
+static GENERATE_GET_CLASS_WITH_CACHE (generic_icollection, System.Collections.Generic, ICollection`1)
+static GENERATE_GET_CLASS_WITH_CACHE (generic_ienumerable, System.Collections.Generic, IEnumerable`1)
+static GENERATE_GET_CLASS_WITH_CACHE (generic_ienumerator, System.Collections.Generic, IEnumerator`1)
+static GENERATE_GET_CLASS_WITH_CACHE (generic_ireadonlylist, System.Collections.Generic, IReadOnlyList`1)
+static GENERATE_GET_CLASS_WITH_CACHE (generic_ireadonlycollection, System.Collections.Generic, IReadOnlyCollection`1)
+
 /* this won't be needed once bug #325495 is completely fixed
  * though we'll need something similar to know which interfaces to allow
  * in arrays when they'll be lazyly created
@@ -3111,11 +3117,11 @@ static MonoClass**
 get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enumerator)
 {
 	MonoClass *eclass = klass->element_class;
-	static MonoClass* generic_icollection_class = NULL;
-	static MonoClass* generic_ienumerable_class = NULL;
-	static MonoClass* generic_ienumerator_class = NULL;
-	static MonoClass* generic_ireadonlylist_class = NULL;
-	static MonoClass* generic_ireadonlycollection_class = NULL;
+	MonoClass* generic_icollection_class;
+	MonoClass* generic_ienumerable_class;
+	MonoClass* generic_ienumerator_class;
+	MonoClass* generic_ireadonlylist_class;
+	MonoClass* generic_ireadonlycollection_class;
 	MonoClass *valuetype_types[2] = { NULL, NULL };
 	MonoClass **interfaces = NULL;
 	int i, nifaces, interface_count, real_count, original_rank;
@@ -3153,18 +3159,11 @@ get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enume
 	 */
 	all_interfaces = eclass->rank && eclass->element_class->rank? FALSE: TRUE;
 
-	if (!generic_icollection_class) {
-		generic_icollection_class = mono_class_load_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "ICollection`1");
-		generic_ienumerable_class = mono_class_load_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerable`1");
-		generic_ienumerator_class = mono_class_load_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerator`1");
-		generic_ireadonlylist_class = mono_class_load_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyList`1");
-		generic_ireadonlycollection_class = mono_class_load_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyCollection`1");
-	}
+	generic_icollection_class = mono_class_get_generic_icollection_class ();
+	generic_ienumerable_class = mono_class_get_generic_ienumerable_class ();
+	generic_ienumerator_class = mono_class_get_generic_ienumerator_class ();
+	generic_ireadonlylist_class = mono_class_get_generic_ireadonlylist_class ();
+	generic_ireadonlycollection_class = mono_class_get_generic_ireadonlycollection_class ();
 
 	mono_class_init (eclass);
 
@@ -3530,8 +3529,8 @@ mono_class_interface_match (const uint8_t *bitmap, int id)
 #endif
 
 /*
- * LOCKING: this is supposed to be called with the loader lock held.
  * Return -1 on failure and set klass->has_failure and store a MonoErrorBoxed with the details.
+ * LOCKING: Acquires the loader lock.
  */
 static int
 setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
@@ -3566,8 +3565,7 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 		for (i = 0; i < k->interface_count; i++) {
 			ic = k->interfaces [i];
 
-			if (!ic->inited)
-				mono_class_init (ic);
+			mono_class_init (ic);
 
 			if (max_iid < ic->interface_id)
 				max_iid = ic->interface_id;
@@ -3604,14 +3602,13 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 		if (max_iid < klass->interface_id)
 			max_iid = klass->interface_id;
 	}
-	klass->max_interface_id = max_iid;
+
 	/* compute vtable offset for interfaces */
 	interfaces_full = (MonoClass **)g_malloc0 (sizeof (MonoClass*) * num_ifaces);
 	interface_offsets_full = (int *)g_malloc (sizeof (int) * num_ifaces);
 
-	for (i = 0; i < num_ifaces; i++) {
+	for (i = 0; i < num_ifaces; i++)
 		interface_offsets_full [i] = -1;
-	}
 
 	/* skip the current class */
 	for (j = 0; j < klass->idepth - 1; j++) {
@@ -3704,11 +3701,14 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 	}
 
 	for (interface_offsets_count = 0, i = 0; i < num_ifaces; i++) {
-		if (interface_offsets_full [i] != -1) {
+		if (interface_offsets_full [i] != -1)
 			interface_offsets_count ++;
-		}
 	}
 
+	/* Publish the data */
+	mono_loader_lock ();
+
+	klass->max_interface_id = max_iid;
 	/*
 	 * We might get called multiple times:
 	 * - mono_class_init ()
@@ -3749,6 +3749,7 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 		klass->interface_bitmap = bitmap;
 #endif
 	}
+	mono_loader_unlock ();
 
 end:
 	g_free (interfaces_full);
@@ -3763,7 +3764,7 @@ end:
 	
 	//printf ("JUST DONE: ");
 	//print_implemented_interfaces (klass);
- 
+
  	return cur_slot;
 }
 
@@ -3781,11 +3782,7 @@ end:
 void
 mono_class_setup_interface_offsets (MonoClass *klass)
 {
-	mono_loader_lock ();
-
 	setup_interface_offsets (klass, 0, FALSE);
-
-	mono_loader_unlock ();
 }
 
 /*Checks if @klass has @parent as one of it's parents type gtd
@@ -5268,9 +5265,6 @@ mono_class_init (MonoClass *klass)
 			mono_class_setup_vtable (klass->parent);
 		if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Parent class vtable failed to initialize"))
 			goto leave;
-	}
-
-	if (klass->parent) {
 		g_assert (klass->parent->vtable_size);
 		first_iface_slot = klass->parent->vtable_size;
 		if (mono_class_need_stelemref_method (klass))
@@ -5313,10 +5307,10 @@ mono_class_init (MonoClass *klass)
 	if (klass->rank)
 		klass->method.count = array_method_count;
 
-	setup_interface_offsets (klass, first_iface_slot, TRUE);
-
 	mono_loader_unlock ();
 	locked = FALSE;
+
+	setup_interface_offsets (klass, first_iface_slot, TRUE);
 
 	if (mono_security_core_clr_enabled ())
 		mono_security_core_clr_check_inheritance (klass);
