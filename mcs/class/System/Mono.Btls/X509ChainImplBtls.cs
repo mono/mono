@@ -163,6 +163,7 @@ namespace Mono.Btls
 				if (untrusted != null) {
 					foreach (var cert in untrusted)
 						cert.Dispose ();
+					untrusted = null;
 				}
 				if (certificates != null) {
 					foreach (var cert in certificates)
