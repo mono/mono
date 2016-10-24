@@ -107,6 +107,7 @@ Mono.Net.Security/MonoTlsProviderWrapper.cs
 Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs
 Mono.Net.Security/SystemCertificateValidator.cs
+System.Net/MacProxy.cs
 System.Net.Mail/SmtpClient.cs
 System.Net.Security/SslStream.cs
 System.Net.Sockets/TcpClient.cs
