@@ -1771,6 +1771,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if MONOTOUCH_WATCH
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultProxy ()
 		{
 			WebClient wc = new WebClient ();
