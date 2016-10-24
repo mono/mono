@@ -11,7 +11,7 @@ caspol \- Command line tool to modify Code Access Security policies.
 .PP
 .B caspol [options] [policy level] [actions] [parameters] ... 
 .SH DESCRIPTION
-This tools allow to list and modify the different policy levels (user, 
+This tool allows to list and modify the different policy levels (user, 
 machine and enterprise).
 .SH OPTIONS
 .TP
@@ -20,7 +20,7 @@ Do not ask confirmation to change the policy level.
 .TP
 .I -f[orce]
 Caspol.exe is a managed tool. Changing the security policies could affect
-it's ability to work properly. This option permit changes that could 
+it's ability to work properly. This option permits changes that could 
 disallow caspol.exe from working properly.
 .TP
 .I -? | /? | -h[elp]
@@ -90,7 +90,7 @@ Remove the specified named permission set from the policy level
 .TP
 .I -af | -addfulltrust assemblyname
 Add the specified assembly to the fully trusted assembly list in the 
-policy level. If a policy use some custom security permissions then the
+policy level. If a policy uses some custom security permissions then the
 assembly containing the custom permissions must be in the fully trusted
 list. Note that this requirement is recursive (all assemblies required 
 by the specified assembly must also be in the list). The assembly must be
@@ -148,33 +148,33 @@ Use the option to load a custom condition into the policy. The class that
 will deserialize the XML policy must be in a fully trusted assembly.
 .TP
 .I -hash algo [-hex hash | -file assemblyname]
-This condition specify a specific hash that an assembly must generate
+This condition specifies a specific hash that an assembly must generate
 (from itself) to be satisfied. Any change to the assembly will require the
 policy to be updated (as the hash value will have changed).
 .TP
 .I -pub [-cert certificate | -file signedfile | -hex rawdata]
-This condition specify a X.509 Authenticode(r) certificate that must have 
+This condition specifies a X.509 Authenticode(r) certificate that must have 
 signed an assembly in order to be satisfied. The certificate can be referenced
 as a file (binary DER), a signed file (containing the certificate) or with
 the hexadecimal value of the certificate. Note that files outside the 
 policy must also be protected against tempering.
 .TP
 .I -strong -file filename [name | -noname] [version | -noversion]
-This condition specify a specific StrongName that must have signed an
+This condition specifies a specific StrongName that must have signed an
 assembly to be satisfied. Use -noname if the assembly name isn't known
 (or important) and -version if the version isn't known (or important) in
 the resolution.
 .TP
 .I -site hostname
-This condition specify the site from where the assembly must come from to 
+This condition specifies the site from where the assembly must come from to 
 be satisfied.
 .TP
 .I -url URL
-This condition specify the URL from where the assembly must come from to 
+This condition specifies the URL from where the assembly must come from to 
 be satisfied.
 .TP
 .I -zone zonename
-This condition specify the zone from where the assembly must come from to 
+This condition specifies the zone from where the assembly must come from to 
 be satisfied. Existing zones are MyComputer, Internet, Intranet, Trusted 
 and Untrusted.
 
@@ -204,7 +204,7 @@ It is possible to chain several commands with the tool, like:
 .TP
 This will list all machine level code groups, then remove the code group
 labeled 1.6, list again all code groups (missing 1.6), reset the policy
-and finally showing all code groups (where 1.6 is back).
+and finally show all code groups (where 1.6 is back).
 
 .SH KNOWN ISSUES
 .TP
