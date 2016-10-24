@@ -24,7 +24,8 @@ dependencies referenced, use the "--deps" command line option.
 There are two modes of operation, one uses an existing Mono binary or
 a server-hosted list of binaries and is enabled when you use either
 the 
-.B --cross
+.B --cross,
+.B --sdk
 or the
 .B --runtime
 command line options.   
@@ -119,10 +120,19 @@ are using (1.0 or 2.0)
 When passed, DIR will be set for the MONO_CFG_DIR environment variable
 .TP
 .I "--cross target"
-Creates a bundle for the specified target platform.   The target
-must be a directory in ~/.mono/targets/ that contains a "mono"
-binary.   You can fetch various targets using the --fetch-target
-command line option.
+Use this to request mkbundle generate a cross-compiled binary.  It
+Creates a bundle for the specified target platform.  The target must
+be a directory in ~/.mono/targets/ that contains an SDK installation
+as produced by the mono-package-runtime tool.  You can get a list of
+the precompiled versions of the runtime using --list-targets and you
+can fetch a specific target using the --fetch-target command line
+option.
+.Sp
+This flag is mutually exclusive with 
+.I --sdk
+which is used to specify an absolute path to resolve the Mono runtime
+from and the --runtime option which is used to manually construct the
+cross-platform package.
 .TP
 .I "--deps"
 This option will bundle all of the referenced assemblies for the
@@ -203,7 +213,26 @@ executed.
 Additionally, users of your binary can still configure their own
 options by setting the 
 .I MONO_ENV_OPTIONS
-environment variable.   
+environment variable.
+.TP
+.I "--sdk SDK_PATH"
+Use this flag to specify a path from which mkbundle will resolve the
+Mono SDK from.   The SDK path should be the prefix path that you used
+to configure a Mono installation.   And would typically contain files
+lik
+.I SDK_PATH/bin/mono
+,
+.I SDK_PATH/lib/mono/4.5
+and so on.
+.Sp
+When this flag is specified,
+.I mkbundle
+will resolve the runtime, the framework libraries, unmanaged resources
+and configuration files from the files located in this directory.
+.Sp
+This flag is mutually exlusive with 
+.I --cross
+.
 .TP
 .I "--target-server SERVER"
 By default the mkbundle tool will download from a Mono server the
