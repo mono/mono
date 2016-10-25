@@ -42,7 +42,9 @@ executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_
 
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 
+ifndef NO_BUILD
 all-local: $(the_lib) $(PROGRAM_config)
+endif
 
 install-local: all-local
 test-local: all-local
