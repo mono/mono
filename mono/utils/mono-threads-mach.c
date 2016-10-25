@@ -101,7 +101,7 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	} else {
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (gpointer)(gsize)info->native_handle, 0);
 	}
-	return info->suspend_can_continue;
+	return TRUE;
 }
 
 gboolean
