@@ -63,7 +63,7 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	}
 
 	CloseHandle (handle);
-	return info->suspend_can_continue;
+	return TRUE;
 }
 
 gboolean
