@@ -105,5 +105,45 @@ namespace System.Net.Sockets
         {
 			return (family == address_family) || (family == AddressFamily.InterNetwork && IsDualMode);
         }
+
+        public static bool ConnectAsync(SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e) {
+
+            bool retval;
+
+            // Throw if multiple buffers specified.
+            if (e.m_BufferList != null) {
+                throw new ArgumentException(SR.GetString(SR.net_multibuffernotsupported), "BufferList");
+            }
+
+            // Throw if RemoteEndPoint is null.
+            if (e.RemoteEndPoint == null) {
+                throw new ArgumentNullException("remoteEP");
+            }
+
+            EndPoint endPointSnapshot = e.RemoteEndPoint;
+            DnsEndPoint dnsEP = endPointSnapshot as DnsEndPoint;
+
+            if (dnsEP != null) {
+                Socket attemptSocket = null;
+                MultipleConnectAsync multipleConnectAsync = null;
+                if (dnsEP.AddressFamily == AddressFamily.Unspecified) {
+                    multipleConnectAsync = new MultipleSocketMultipleConnectAsync(socketType, protocolType);
+                } else {
+                    attemptSocket = new Socket(dnsEP.AddressFamily, socketType, protocolType);
+                    multipleConnectAsync = new SingleSocketMultipleConnectAsync(attemptSocket, false);
+                }
+
+                e.StartOperationCommon(attemptSocket);
+                e.StartOperationWrapperConnect(multipleConnectAsync);
+
+                retval = multipleConnectAsync.StartConnectAsync(e, dnsEP);
+            } else {
+                Socket attemptSocket = new Socket(endPointSnapshot.AddressFamily, socketType, protocolType);
+                retval = attemptSocket.ConnectAsync(e);
+            }
+
+            return retval;
+        }
+
 	}
 }
