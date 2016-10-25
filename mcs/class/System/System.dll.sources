@@ -537,8 +537,8 @@ Mono.Btls/MonoBtlsX509Exception.cs
 Mono.Btls/MonoBtlsX509FileType.cs
 Mono.Btls/MonoBtlsX509Format.cs
 Mono.Btls/MonoBtlsX509Lookup.cs
-Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupMonoCollection.cs
+Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupType.cs
 Mono.Btls/MonoBtlsX509Name.cs
 Mono.Btls/MonoBtlsX509NameList.cs
