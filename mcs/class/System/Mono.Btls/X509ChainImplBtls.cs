@@ -62,7 +62,7 @@ namespace Mono.Btls
 				untrusted = new X509Certificate2Collection ();
 				policy.ExtraStore = untrusted;
 				for (int i = 0; i < untrustedChain.Count; i++) {
-					using (var cert = untrustedChain.GetCertificate (i))
+					var cert = untrustedChain.GetCertificate (i);
 					using (var impl = new X509CertificateImplBtls (cert))
 						untrusted.Add (new X509Certificate2 (impl));
 				}
@@ -109,8 +109,8 @@ namespace Mono.Btls
 
 				for (int i = 0; i < certificates.Length; i++) {
 					var cert = chain.GetCertificate (i);
-					var impl = new X509CertificateImplBtls (cert);
-					certificates [i] = new X509Certificate2 (impl);
+					using (var impl = new X509CertificateImplBtls (cert))
+						certificates [i] = new X509Certificate2 (impl);
 					elements.Add (certificates [i]);
 				}
 
@@ -163,6 +163,12 @@ namespace Mono.Btls
 				if (untrusted != null) {
 					foreach (var cert in untrusted)
 						cert.Dispose ();
+					untrusted = null;
+				}
+				if (certificates != null) {
+					foreach (var cert in certificates)
+						cert.Dispose ();
+					certificates = null;
 				}
 			}
 			base.Dispose (disposing);
