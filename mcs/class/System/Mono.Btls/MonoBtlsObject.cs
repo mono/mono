@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -33,7 +33,7 @@ namespace Mono.Btls
 {
 	abstract class MonoBtlsObject : IDisposable
 	{
-#if DYNAMIC_BTLS
+#if MONO_FEATURE_DYNAMIC_BTLS
 		internal const string BTLS_DYLIB = "libmono-btls-shared";
 #else
 		internal const string BTLS_DYLIB = "__Internal";
