@@ -380,6 +380,9 @@ System.Net.Sockets/Socket.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncResult.cs
 System.Net.Sockets/SocketOperation.cs
+System.Net.Sockets/SocketReceiveFromResult.cs
+System.Net.Sockets/SocketReceiveMessageFromResult.cs
+System.Net.Sockets/SocketTaskExtensions.cs
 System.Net/WebAsyncResult.cs
 System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
@@ -534,8 +537,8 @@ Mono.Btls/MonoBtlsX509Exception.cs
 Mono.Btls/MonoBtlsX509FileType.cs
 Mono.Btls/MonoBtlsX509Format.cs
 Mono.Btls/MonoBtlsX509Lookup.cs
-Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupMonoCollection.cs
+Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupType.cs
 Mono.Btls/MonoBtlsX509Name.cs
 Mono.Btls/MonoBtlsX509NameList.cs
@@ -1048,6 +1051,7 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/net/System/Net/Configuration/DefaultProxySection.cs
 
+../referencesource/System/net/System/Net/Sockets/_MultipleConnectAsync.cs
 ../referencesource/System/net/System/Net/Sockets/AddressFamily.cs
 ../referencesource/System/net/System/Net/Sockets/IOControlCode.cs
 ../referencesource/System/net/System/Net/Sockets/IPPacketInformation.cs

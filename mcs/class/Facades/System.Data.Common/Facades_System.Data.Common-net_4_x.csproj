@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -55,6 +55,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DbColumn.cs" />
+    <Compile Include="DbDataReaderExtensions.Facade.cs" />
+    <Compile Include="IDbColumnSchemaGenerator.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -89,6 +92,10 @@
     <ProjectReference Include="../../System.Data/System.Data-net_4_x.csproj">
       <Project>{EC439BB8-FFED-4A32-A05D-2FA3A70CAD64}</Project>
       <Name>System.Data-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../System.XML/System.Xml-net_4_x.csproj">
+      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
+      <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

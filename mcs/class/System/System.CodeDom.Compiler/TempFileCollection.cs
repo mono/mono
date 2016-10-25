@@ -103,11 +103,13 @@ namespace System.CodeDom.Compiler {
 						}
 					}
 
+#if FEATURE_MONO_CAS
 					// and you must have discovery access to the combined path
 					// note: the cache behaviour is tested in the CAS tests
 					if (SecurityManager.SecurityEnabled) {
 						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, basepath).Demand ();
 					}
+#endif
 				}
 
 				return(basepath);

@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NETSTANDARD
+
 namespace System.Net.Sockets
 {
 	public struct SocketReceiveFromResult
@@ -34,3 +36,5 @@ namespace System.Net.Sockets
 		public EndPoint RemoteEndPoint;
 	}
 }
+
+#endif

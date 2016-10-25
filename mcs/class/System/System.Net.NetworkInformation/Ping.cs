@@ -209,9 +209,12 @@ namespace System.Net.NetworkInformation {
 
 		static IPAddress GetNonLoopbackIP ()
 		{
+#pragma warning disable 618
 			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
 				if (!IPAddress.IsLoopback (addr))
 					return addr;
+#pragma warning restore 618
+
 			throw new InvalidOperationException ("Could not resolve non-loopback IP address for localhost");
 		}
 

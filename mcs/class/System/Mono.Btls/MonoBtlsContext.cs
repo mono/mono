@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -154,12 +154,9 @@ namespace Mono.Btls
 			}
 		}
 
-		Exception GetException (MonoBtlsSslError status)
+		static Exception GetException (MonoBtlsSslError status)
 		{
 			var error = MonoBtlsError.GetError ();
-			if (error == null)
-				return new MonoBtlsException (status);
-
 			var text = MonoBtlsError.GetErrorString (error);
 			return new MonoBtlsException ("{0} {1}", status, text);
 		}

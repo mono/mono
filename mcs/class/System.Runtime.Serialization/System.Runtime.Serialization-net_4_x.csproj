@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,168,169,219,414</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,168,169,219,414</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -206,6 +206,7 @@
     <Compile Include="ReferenceSources\FxTrace.cs" />
     <Compile Include="ReferenceSources\JsonFormatReaderGenerator_static.cs" />
     <Compile Include="ReferenceSources\JsonFormatWriterGenerator_static.cs" />
+    <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="ReferenceSources\SR.missing.cs" />
     <Compile Include="ReferenceSources\XmlDataContract_static.cs" />
@@ -254,10 +255,6 @@
       <Project>{5769B536-7E8E-4C2A-8671-6B256D0F620B}</Project>
       <Name>System.ServiceModel.Internals-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../SMDiagnostics/SMDiagnostics-net_4_x.csproj">
-      <Project>{8B8C3ED9-96F9-49B3-B355-9FD3D29DD3AD}</Project>
-      <Name>SMDiagnostics-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System.Data/System.Data-net_4_x.csproj">
       <Project>{EC439BB8-FFED-4A32-A05D-2FA3A70CAD64}</Project>
       <Name>System.Data-net_4_x</Name>
@@ -265,6 +262,10 @@
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
       <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
       <Name>System.Configuration-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../SMDiagnostics/SMDiagnostics-net_4_x.csproj">
+      <Project>{8B8C3ED9-96F9-49B3-B355-9FD3D29DD3AD}</Project>
+      <Name>SMDiagnostics-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

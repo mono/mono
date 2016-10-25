@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -504,6 +504,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\_ProxyChain.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_Semaphore.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\_ServiceNameStore.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_TimerThread.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\_WebProxyDataBuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\AuthenticationScheme.cs" />
@@ -610,7 +611,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\SystemIPAddressInformation.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\SystemMulticastIPAddressInformation.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\SystemTcpConnection.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\SystemUnicastIPAddressInformation.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\TcpConnection.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\TcpState.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\TcpStatistics.cs" />
@@ -623,6 +623,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\ServicePointManager.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\SocketAddress.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\SocketException.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\_MultipleConnectAsync.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\AddressFamily.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\IOControlCode.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\IPPacketInformation.cs" />
@@ -633,6 +634,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\ProtocolFamily.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\ProtocolType.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SelectMode.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\Socket.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketErrors.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketFlags.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketInformation.cs" />
@@ -641,7 +643,10 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketOptionName.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketShutdown.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\SocketType.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TransmitFileFlags.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UdpReceiveResult.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\TransportContext.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\TransportType.cs" />
@@ -693,19 +698,23 @@
     <Compile Include="..\referencesource\System\regex\system\text\regularexpressions\RegexRunnerFactory.cs" />
     <Compile Include="..\referencesource\System\regex\system\text\regularexpressions\RegexTree.cs" />
     <Compile Include="..\referencesource\System\regex\system\text\regularexpressions\RegexWriter.cs" />
+    <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\ServiceNameCollection.cs" />
     <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\TokenBinding.cs" />
     <Compile Include="..\referencesource\System\security\system\security\cryptography\oid.cs" />
     <Compile Include="..\referencesource\System\security\system\security\cryptography\x509\x509utils.cs" />
     <Compile Include="..\referencesource\System\security\system\security\permissions\typedescriptorpermission.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\AsyncStreamReader.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\Process.cs" />
+    <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\ProcessModuleCollection.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\ProcessStartInfo.cs" />
+    <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\ProcessThreadCollection.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\processwaithandle.cs" />
     <Compile Include="..\referencesource\System\services\timers\system\timers\ElapsedEventHandler.cs" />
     <Compile Include="..\referencesource\System\services\timers\system\timers\Timer.cs" />
     <Compile Include="..\referencesource\System\services\timers\system\timers\TimersDescriptionAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
     <Compile Include="..\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
+    <Compile Include="..\referencesource\System\sys\system\Diagnostics\CodeAnalysis\ExcludeFromCodeCoverageAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\IO\ports\InternalResources.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\interopservices\DefaultParameterValueAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\interopservices\handlecollector.cs" />
@@ -720,6 +729,7 @@
     <Compile Include="Microsoft.VisualBasic\VBCodeCompiler.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeProvider.cs" />
+    <Compile Include="Microsoft.Win32.SafeHandles\SafeX509ChainHandle.cs" />
     <Compile Include="Microsoft.Win32\IntranetZoneCredentialPolicy.cs" />
     <Compile Include="Microsoft.Win32\PowerModeChangedEventArgs.cs" />
     <Compile Include="Microsoft.Win32\PowerModeChangedEventHandler.cs" />
@@ -740,6 +750,44 @@
     <Compile Include="Microsoft.Win32\UserPreferenceChangedEventHandler.cs" />
     <Compile Include="Microsoft.Win32\UserPreferenceChangingEventArgs.cs" />
     <Compile Include="Microsoft.Win32\UserPreferenceChangingEventHandler.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsBio.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsContext.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsError.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsException.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsKey.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsObject.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsPkcs12.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsProvider.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsSsl.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsSslCtx.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsSslError.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsStream.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsUtils.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Chain.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Crl.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Error.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Exception.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509FileType.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Format.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Lookup.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509LookupMono.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509LookupMonoCollection.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509LookupType.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Name.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509NameEntryType.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509NameList.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Purpose.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Revoked.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509Store.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509StoreCtx.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509StoreManager.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509StoreType.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509TrustKind.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509VerifyFlags.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsX509VerifyParam.cs" />
+    <Compile Include="Mono.Btls\X509CertificateImplBtls.cs" />
+    <Compile Include="Mono.Btls\X509ChainImplBtls.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Dns\DnsClass.cs" />
     <Compile Include="Mono.Net.Dns\DnsHeader.cs" />
@@ -763,12 +811,15 @@
     <Compile Include="Mono.Net.Dns\ResolverError.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+    <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
     <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
     <Compile Include="Mono.Net.Security\IMonoSslStream.cs" />
     <Compile Include="Mono.Net.Security\IMonoTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-    <Compile Include="Mono.Net.Security\MonoDefaultTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+    <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
     <Compile Include="Mono.Net.Security\MonoSslStreamImpl.cs" />
     <Compile Include="Mono.Net.Security\MonoSslStreamWrapper.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
@@ -784,6 +835,7 @@
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
     <Compile Include="ReferenceSources\HttpApi.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
+    <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\RequestCacheProtocol.cs" />
@@ -865,7 +917,6 @@
     <Compile Include="System.Configuration\UriSection.cs" />
     <Compile Include="System.Configuration\UserScopedSettingAttribute.cs" />
     <Compile Include="System.Configuration\UserSettingsGroup.cs" />
-    <Compile Include="System.Diagnostics.CodeAnalysis\ExcludeFromCodeCoverageAttribute.cs" />
     <Compile Include="System.Diagnostics\AlphabeticalEnumConverter.cs" />
     <Compile Include="System.Diagnostics\CounterCreationData.cs" />
     <Compile Include="System.Diagnostics\CounterCreationDataCollection.cs" />
@@ -914,11 +965,9 @@
     <Compile Include="System.Diagnostics\PerformanceCounterType.cs" />
     <Compile Include="System.Diagnostics\Process.cs" />
     <Compile Include="System.Diagnostics\ProcessModule.cs" />
-    <Compile Include="System.Diagnostics\ProcessModuleCollection.cs" />
     <Compile Include="System.Diagnostics\ProcessPriorityClass.cs" />
     <Compile Include="System.Diagnostics\ProcessStartInfo.cs" />
     <Compile Include="System.Diagnostics\ProcessThread.cs" />
-    <Compile Include="System.Diagnostics\ProcessThreadCollection.cs" />
     <Compile Include="System.Diagnostics\ProcessWindowStyle.cs" />
     <Compile Include="System.Diagnostics\Stopwatch.cs" />
     <Compile Include="System.Diagnostics\ThreadPriorityLevel.cs" />
@@ -1057,15 +1106,13 @@
     <Compile Include="System.Net.Security\SslPolicyErrors.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net.Sockets\SafeSocketHandle.cs" />
-    <Compile Include="System.Net.Sockets\SendPacketsElement.cs" />
     <Compile Include="System.Net.Sockets\Socket.cs" />
     <Compile Include="System.Net.Sockets\SocketAsyncEventArgs.cs" />
-    <Compile Include="System.Net.Sockets\SocketAsyncOperation.cs" />
     <Compile Include="System.Net.Sockets\SocketAsyncResult.cs" />
     <Compile Include="System.Net.Sockets\SocketOperation.cs" />
-    <Compile Include="System.Net.Sockets\TcpClient.cs" />
-    <Compile Include="System.Net.Sockets\TcpListener.cs" />
-    <Compile Include="System.Net.Sockets\UdpClient.cs" />
+    <Compile Include="System.Net.Sockets\SocketReceiveFromResult.cs" />
+    <Compile Include="System.Net.Sockets\SocketReceiveMessageFromResult.cs" />
+    <Compile Include="System.Net.Sockets\SocketTaskExtensions.cs" />
     <Compile Include="System.Net.WebSockets\ClientWebSocket.cs" />
     <Compile Include="System.Net.WebSockets\ClientWebSocketOptions.cs" />
     <Compile Include="System.Net.WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1105,6 +1152,7 @@
     <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
     <Compile Include="System.Net\HttpListenerRequest.cs" />
     <Compile Include="System.Net\HttpListenerResponse.cs" />
+    <Compile Include="System.Net\HttpListenerResponseHelper.cs" />
     <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
     <Compile Include="System.Net\HttpRequestCreator.cs" />
     <Compile Include="System.Net\HttpStreamAsyncResult.cs" />
@@ -1160,7 +1208,6 @@
     <Compile Include="System.Security.Authentication.ExtendedProtection\ExtendedProtectionPolicyTypeConverter.cs" />
     <Compile Include="System.Security.Authentication.ExtendedProtection\PolicyEnforcement.cs" />
     <Compile Include="System.Security.Authentication.ExtendedProtection\ProtectionScenario.cs" />
-    <Compile Include="System.Security.Authentication.ExtendedProtection\ServiceNameCollection.cs" />
     <Compile Include="System.Security.Authentication\AuthenticationException.cs" />
     <Compile Include="System.Security.Authentication\CipherAlgorithmType.cs" />
     <Compile Include="System.Security.Authentication\ExchangeAlgorithmType.cs" />
@@ -1181,6 +1228,7 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2Impl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2ImplMono.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateCollection.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplCollection.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Chain.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509ChainElement.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509ChainElementCollection.cs" />
@@ -1223,6 +1271,7 @@
     <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
     <Compile Include="System.Windows.Input\ICommand.cs" />
     <Compile Include="System\IOSelector.cs" />
+    <Compile Include="System\MonoToolsLocator.cs" />
     <Compile Include="System\Platform.cs" />
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\UriTypeConverter.cs" />  </ItemGroup>

@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -52,22 +52,22 @@ namespace Mono.Btls
 			get { return (BoringX509ChainHandle)base.Handle; }
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_chain_new ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_chain_get_count (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_chain_get_cert (IntPtr Handle, int index);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_chain_add_cert (IntPtr chain, IntPtr x509);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_chain_up_ref (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_chain_free (IntPtr handle);
 
 		public MonoBtlsX509Chain ()

@@ -805,7 +805,7 @@ namespace MonoTests.System.Reflection.Emit
 		public void GetType ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll");
 			TypeBuilder tb = module.DefineType ("t1", TypeAttributes.Public);
 
 			Assert.AreEqual ("t1[]", module.GetType ("t1[]").FullName);

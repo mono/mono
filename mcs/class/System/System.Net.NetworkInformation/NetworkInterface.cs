@@ -510,7 +510,6 @@ namespace System.Net.NetworkInformation {
 #if MONOTOUCH || XAMMAC
 			return new MacOsNetworkInterfaceAPI ();
 #else
-			Version windowsVer51 = new Version (5, 1);
 			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
 
 			if (runningOnUnix) {
@@ -521,6 +520,7 @@ namespace System.Net.NetworkInformation {
 			}
 
 #if !MOBILE
+			Version windowsVer51 = new Version (5, 1);
 			if (Environment.OSVersion.Version >= windowsVer51)
 				return new Win32NetworkInterfaceAPI ();
 #endif
@@ -631,6 +631,19 @@ namespace System.Net.NetworkInformation {
 		string               iface_operstate_path;
 		string               iface_flags_path;		
 
+#if MONODROID
+		[DllImport ("__Internal")]
+		static extern int _monodroid_get_android_api_level ();
+
+		[DllImport ("__Internal")]
+		static extern bool _monodroid_get_network_interface_up_state (string ifname, ref bool is_up);
+
+		[DllImport ("__Internal")]
+		static extern bool _monodroid_get_network_interface_supports_multicast (string ifname, ref bool supports_multicast);
+
+		bool android_use_java_api;
+#endif
+
 		internal string IfacePath {
 			get { return iface_path; }
 		}
@@ -641,6 +654,9 @@ namespace System.Net.NetworkInformation {
 			iface_path = "/sys/class/net/" + name + "/";
 			iface_operstate_path = iface_path + "operstate";
 			iface_flags_path = iface_path + "flags";
+#if MONODROID
+			android_use_java_api = _monodroid_get_android_api_level () >= 24;
+#endif
 		}
 
 		public override IPInterfaceProperties GetIPProperties ()
@@ -659,6 +675,23 @@ namespace System.Net.NetworkInformation {
 
 		public override OperationalStatus OperationalStatus {
 			get {
+#if MONODROID
+				if (android_use_java_api) {
+					// Starting from API 24 (Android 7 "Nougat") Android restricts access to many
+					// files in the /sys filesystem (see https://code.google.com/p/android/issues/detail?id=205565
+					// for more information) and therefore we are forced to call into Java API in
+					// order to get the information. Alas, what we can obtain in this way is quite
+					// limited. In the case of OperationalStatus we can only determine whether the
+					// interface is up or down. There is a way to get more detailed information but
+					// it requires an instance of the Android Context class which is not available
+					// to us here.
+					bool is_up = false;
+					if (_monodroid_get_network_interface_up_state (Name, ref is_up))
+						return is_up ? OperationalStatus.Up : OperationalStatus.Down;
+					else
+						return OperationalStatus.Unknown;
+				}
+#endif
 				if (!Directory.Exists (iface_path))
 					return OperationalStatus.Unknown;
 				
@@ -695,6 +728,17 @@ namespace System.Net.NetworkInformation {
 
 		public override bool SupportsMulticast {
 			get {
+#if MONODROID
+				if (android_use_java_api) {
+					// Starting from API 24 (Android 7 "Nougat") Android restricts access to many
+					// files in the /sys filesystem (see https://code.google.com/p/android/issues/detail?id=205565
+					// for more information) and therefore we are forced to call into Java API in
+					// order to get the information.
+					bool supports_multicast = false;
+					_monodroid_get_network_interface_supports_multicast (Name, ref supports_multicast);
+					return supports_multicast;
+				}
+#endif
 				if (!Directory.Exists (iface_path))
 					return false;
 				

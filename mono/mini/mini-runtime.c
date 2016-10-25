@@ -341,7 +341,7 @@ void *mono_global_codeman_reserve (int size)
 	void *ptr;
 
 	if (mono_aot_only)
-		g_error ("Attempting to allocate from the global code manager while running with --aot-only.\n");
+		g_error ("Attempting to allocate from the global code manager while running in aot-only mode.\n");
 
 	if (!global_codeman) {
 		/* This can happen during startup */
@@ -4256,3 +4256,23 @@ mono_personality (void)
 	/* Not used */
 	g_assert_not_reached ();
 }
+
+// Custom handlers currently only implemented by Windows.
+#ifndef HOST_WIN32
+gboolean
+mono_runtime_install_custom_handlers (const char *handlers)
+{
+	return FALSE;
+}
+
+void
+mono_runtime_install_custom_handlers_usage (void)
+{
+	fprintf (stdout,
+		 "Custom Handlers:\n"
+		 "   --handlers=HANDLERS            Enable handler support, HANDLERS is a comma\n"
+		 "                                  separated list of available handlers to install.\n"
+		 "\n"
+		 "No handlers supported on current platform.\n");
+}
+#endif /* HOST_WIN32 */

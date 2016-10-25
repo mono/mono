@@ -2323,6 +2323,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("<:ErrorneousGetSchema></>", Infoset (sw.ToString ()));
 		}
 
+		[Test]
 		public void DateTimeRoundtrip ()
 		{
 			// bug #337729

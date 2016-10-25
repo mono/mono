@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -45,12 +45,14 @@ namespace Mono.Btls
 	static class MonoBtlsX509StoreManager
 	{
 		static bool initialized;
+#if !ANDROID
 		static string machineTrustedRootPath;
 		static string machineIntermediateCAPath;
 		static string machineUntrustedPath;
 		static string userTrustedRootPath;
 		static string userIntermediateCAPath;
 		static string userUntrustedPath;
+#endif
 
 		static void Initialize ()
 		{

@@ -1278,6 +1278,7 @@ mini_usage (void)
 #ifdef HOST_WIN32
 	        "    --mixed-mode           Enable mixed-mode image support.\n"
 #endif
+		"    --handlers             Install custom handlers, use --help-handlers for details.\n"
 	  );
 }
 
@@ -1560,6 +1561,10 @@ switch_arch (char* argv[], const char* target_arch)
 }
 
 #endif
+
+#define MONO_HANDLERS_ARGUMENT "--handlers="
+#define MONO_HANDLERS_ARGUMENT_LEN G_N_ELEMENTS(MONO_HANDLERS_ARGUMENT)-1
+
 /**
  * mono_main:
  * @argc: number of arguments in the argv array
@@ -1757,11 +1762,11 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--verify-all") == 0) {
 			mono_verifier_enable_verify_all ();
 		} else if (strcmp (argv [i], "--full-aot") == 0) {
-			mono_aot_only = TRUE;
+			mono_jit_set_aot_mode (MONO_AOT_MODE_FULL);
 		} else if (strcmp (argv [i], "--llvmonly") == 0) {
-			mono_aot_only = TRUE;
-			mono_llvm_only = TRUE;
+			mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
 		} else if (strcmp (argv [i], "--hybrid-aot") == 0) {
+			mono_jit_set_aot_mode (MONO_AOT_MODE_HYBRID);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -1912,6 +1917,15 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--nacl-null-checks-off") == 0){
 			nacl_null_checks_off = TRUE;
 #endif
+		} else if (strncmp (argv [i], MONO_HANDLERS_ARGUMENT, MONO_HANDLERS_ARGUMENT_LEN) == 0) {
+			//Install specific custom handlers.
+			if (!mono_runtime_install_custom_handlers (argv[i] + MONO_HANDLERS_ARGUMENT_LEN)) {
+				fprintf (stderr, "error: " MONO_HANDLERS_ARGUMENT ", one or more unknown handlers: '%s'\n", argv [i]);
+				return 1;
+			}
+		} else if (strcmp (argv [i], "--help-handlers") == 0) {
+			mono_runtime_install_custom_handlers_usage ();
+			return 0;
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
@@ -1983,12 +1997,6 @@ mono_main (int argc, char* argv[])
 
 	/* Set rootdir before loading config */
 	mono_set_rootdir ();
-
-	/*
-	 * We only set the native name of the thread since MS.NET leaves the
-	 * managed thread name for the main thread as null.
-	 */
-	mono_native_thread_set_name (mono_native_thread_id_get (), "Main");
 
 	if (enable_profile) {
 		mono_profiler_load (profile_options);
@@ -2316,10 +2324,20 @@ mono_jit_set_aot_only (gboolean val)
 void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
+	/* we don't want to set mono_aot_mode twice */
+	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
 	mono_aot_mode = mode;
+
 	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY) {
 		mono_aot_only = TRUE;
 		mono_llvm_only = TRUE;
+	}
+	if (mono_aot_mode == MONO_AOT_MODE_FULL) {
+		mono_aot_only = TRUE;
+	}
+	if (mono_aot_mode == MONO_AOT_MODE_HYBRID) {
+		mono_set_generic_sharing_vt_supported (TRUE);
+		mono_set_partial_sharing_supported (TRUE);
 	}
 }
 

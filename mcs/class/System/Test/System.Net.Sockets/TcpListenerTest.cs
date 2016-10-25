@@ -219,5 +219,27 @@ namespace MonoTests.System.Net.Sockets
 			listen.Start (65536);
 			listen.Stop ();
 		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void EndAcceptTcpClient ()
+		{
+			var port = NetworkHelpers.FindFreePort ();
+
+			var listenerSocket = new TcpListener (IPAddress.Any, port);
+			listenerSocket.Start ();
+			listenerSocket.BeginAcceptTcpClient (new AsyncCallback (l => {
+				listenerSocket.EndAcceptTcpClient (l);
+			}), null);
+
+
+			using (var outClient = new TcpClient ("localhost", port)) {
+				using (var stream = outClient.GetStream ()) {
+					stream.WriteByte (3);
+				}
+			}
+		}
 	}
 }

@@ -528,7 +528,8 @@ namespace System.Security.Cryptography {
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
 #if MONO
-            throw new NotImplementedException ();
+            var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+            return hash.ComputeHash (data, offset, count);
 #else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 Utils.HashData(hashHandle, data, offset, count);
@@ -544,7 +545,8 @@ namespace System.Security.Cryptography {
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
 #if MONO
-            throw new NotImplementedException ();
+            var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+            return hash.ComputeHash (data);
 #else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 // Read the data 4KB at a time, providing similar read characteristics to a standard HashAlgorithm

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BD2FFDDC-BD89-4041-82F5-A696C941C7BE}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,414</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -26,17 +26,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,414</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,414</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;MONO</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -54,9 +54,21 @@
     <Compile Include="..\referencesource\System.Numerics\System\Numerics\BigIntegerBuilder.cs" />
     <Compile Include="..\referencesource\System.Numerics\System\Numerics\BigNumber.cs" />
     <Compile Include="..\referencesource\System.Numerics\System\Numerics\Complex.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\HashCodeHelper.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\JITIntrinsicAttribute.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Matrix3x2.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Matrix4x4.cs" />
     <Compile Include="..\referencesource\System.Numerics\System\Numerics\NumericsHelpers.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Plane.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Quaternion.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector_Operations.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector2.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector2_Intrinsics.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector3.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector3_Intrinsics.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector4.cs" />
+    <Compile Include="..\referencesource\System.Numerics\System\Numerics\Vector4_Intrinsics.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="ReferenceSources\Environment.cs" />
     <Compile Include="ReferenceSources\SR.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

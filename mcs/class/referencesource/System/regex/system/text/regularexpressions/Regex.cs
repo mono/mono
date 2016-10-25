@@ -1408,12 +1408,16 @@ namespace System.Text.RegularExpressions {
         /// <devdoc>
         /// </devdoc>
         protected bool UseOptionC() {
-		/* Mono: Set to false until we investigate  https://bugzilla.xamarin.com/show_bug.cgi?id=25671 */
-	    return false;
 #if FULL_AOT_RUNTIME
             return false;
 #else
+
+#if MONO
+            /* Mono: Set to false until we investigate  https://bugzilla.xamarin.com/show_bug.cgi?id=25671 */
+            return false;
+#else
             return(roptions & RegexOptions.Compiled) != 0;
+#endif
 #endif
         }
 #endif

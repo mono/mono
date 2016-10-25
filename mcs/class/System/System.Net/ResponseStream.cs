@@ -97,7 +97,7 @@ namespace System.Net {
 							InternalWrite (bytes, 0, bytes.Length);
 							trailer_sent = true;
 						}
-					} catch (IOException ex) {
+					} catch (IOException) {
 						// Ignore error due to connection reset by peer
 					}
 				}

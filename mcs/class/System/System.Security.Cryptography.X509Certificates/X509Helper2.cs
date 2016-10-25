@@ -35,13 +35,13 @@ extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Interface;
 using MX = MonoSecurity::Mono.Security.X509;
 #else
-#if !FEATURE_NO_BSD_SOCKETS
+#if MONO_FEATURE_BTLS
 using Mono.Security.Interface;
 #endif
 using MX = Mono.Security.X509;
 #endif
 
-#if !FEATURE_NO_BSD_SOCKETS
+#if MONO_FEATURE_BTLS
 using Mono.Btls;
 #endif
 #endif
@@ -94,7 +94,7 @@ namespace System.Security.Cryptography.X509Certificates
 			X509Helper.ThrowIfContextInvalid (impl);
 		}
 
-#if FEATURE_NO_BSD_SOCKETS
+#if !MONO_FEATURE_BTLS
 		static X509Certificate GetNativeInstance (X509CertificateImpl impl)
 		{
 			throw new PlatformNotSupportedException ();
@@ -122,11 +122,11 @@ namespace System.Security.Cryptography.X509Certificates
 				x509.ExportAsPEM (bio, includeHumanReadableForm);
 			}
 		}
-#endif // !FEATURE_NO_BSD_SOCKETS
+#endif // !MONO_FEATURE_BTLS
 
 		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags, bool disableProvider = false)
 		{
-#if !FEATURE_NO_BSD_SOCKETS
+#if MONO_FEATURE_BTLS
 			if (!disableProvider) {
 				var provider = MonoTlsProviderFactory.GetProvider ();
 				if (provider.HasNativeCertificates) {
@@ -134,7 +134,7 @@ namespace System.Security.Cryptography.X509Certificates
 					return impl;
 				}
 			}
-#endif // FEATURE_NO_BSD_SOCKETS
+#endif // MONO_FEATURE_BTLS
 			var impl2 = new X509Certificate2ImplMono ();
 			impl2.Import (rawData, password, keyStorageFlags);
 			return impl2;
@@ -142,7 +142,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal static X509Certificate2Impl Import (X509Certificate cert, bool disableProvider = false)
 		{
-#if !FEATURE_NO_BSD_SOCKETS
+#if MONO_FEATURE_BTLS
 			if (!disableProvider) {
 				var provider = MonoTlsProviderFactory.GetProvider ();
 				if (provider.HasNativeCertificates) {
@@ -150,7 +150,7 @@ namespace System.Security.Cryptography.X509Certificates
 					return impl;
 				}
 			}
-#endif // FEATURE_NO_BSD_SOCKETS
+#endif // MONO_FEATURE_BTLS
 			var impl2 = cert.Impl as X509Certificate2Impl;
 			if (impl2 != null)
 				return (X509Certificate2Impl)impl2.Clone ();

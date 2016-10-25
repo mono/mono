@@ -94,7 +94,7 @@ public class ServicePointManagerTest
 		ServicePointManager.MaxServicePoints = 0;
 		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri, new WebProxy (apacheUri));
 		Assert.AreEqual (apacheUri, sp.Address, "#1");
-#if MOBILE && !MONODROID
+#if MOBILE
 		Assert.AreEqual (10, sp.ConnectionLimit, "#2");
 #else
 		Assert.AreEqual (2, sp.ConnectionLimit, "#2");

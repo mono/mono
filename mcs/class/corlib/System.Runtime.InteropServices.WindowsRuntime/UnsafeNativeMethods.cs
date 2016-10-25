@@ -1,10 +1,10 @@
-//
-// EventRegistrationTokenTable.cs
+﻿//
+// UnsafeNativeMethods.cs
 //
 // Author:
-//       Martin Baulig <martin.baulig@xamarin.com>
+//   Tautvydas Žilys <zilys@unity3d.com>
 //
-// Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2016 Unity Technologies (https://www.unity3d.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,44 +23,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	[MonoTODO]
-	public sealed class EventRegistrationTokenTable<T>
-		where T : class
+	internal unsafe static class UnsafeNativeMethods
 	{
-		public EventRegistrationTokenTable ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public T InvocationList {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		public EventRegistrationToken AddEventHandler (T handler)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static EventRegistrationTokenTable<T> GetOrCreateEventRegistrationTokenTable(ref EventRegistrationTokenTable<T> refEventTable)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void RemoveEventHandler (T handler)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void RemoveEventHandler (EventRegistrationToken token)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern int WindowsCreateString(string sourceString, int length, IntPtr* hstring);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern int WindowsDeleteString(IntPtr hstring);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern char* WindowsGetStringRawBuffer(IntPtr hstring, uint* length);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern bool RoOriginateLanguageException(int error, string message, IntPtr languageException);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void RoReportUnhandledError(IRestrictedErrorInfo error);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern IRestrictedErrorInfo GetRestrictedErrorInfo();
 	}
 }
-

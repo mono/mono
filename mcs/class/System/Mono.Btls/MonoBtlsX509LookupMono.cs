@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -51,14 +51,14 @@ namespace Mono.Btls
 			get { return (BoringX509LookupMonoHandle)base.Handle; }
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_mono_new ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_lookup_mono_init (
 			IntPtr handle, IntPtr instance, IntPtr by_subject_func);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_mono_free (IntPtr handle);
 
 		delegate int BySubjectFunc (IntPtr instance, IntPtr name, out IntPtr x509_ptr);

@@ -2348,11 +2348,11 @@ namespace System.ComponentModel
             {
                 TypeDescriptionNode head = (TypeDescriptionNode)_providerTable[key];
                 TypeDescriptionNode target = head;
-                TypeDescriptionNode prev = null;
+//                TypeDescriptionNode prev = null;
 
                 while(target != null && target.Provider != provider)
                 {
-                    prev = target;
+//                    prev = target;
                     target = target.Next;
                 }
 

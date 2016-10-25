@@ -1743,7 +1743,7 @@ typedef struct {
 	guint8          *thunks;
 	/* Offset between the start of code and the thunks area */
 	int              thunks_offset;
-	guint32          exception_type;	/* MONO_EXCEPTION_* */
+	MonoExceptionType exception_type;	/* MONO_EXCEPTION_* */
 	guint32          exception_data;
 	char*            exception_message;
 	gpointer         exception_ptr;
@@ -3152,6 +3152,8 @@ gboolean mono_jit_map_is_enabled (void);
  * Per-OS implementation functions.
  */
 void mono_runtime_install_handlers (void);
+gboolean mono_runtime_install_custom_handlers (const char *handlers);
+void mono_runtime_install_custom_handlers_usage (void);
 void mono_runtime_cleanup_handlers (void);
 void mono_runtime_setup_stat_profiler (void);
 void mono_runtime_shutdown_stat_profiler (void);

@@ -122,7 +122,9 @@ namespace System.Net.Sockets {
         internal static volatile bool s_SupportsIPv6;
         internal static volatile bool s_OSSupportsIPv6;
         internal static volatile bool s_Initialized;
+#if !MONO
         private static volatile WaitOrTimerCallback s_RegisteredWaitCallback;
+#endif
         private static volatile bool s_LoggingEnabled;
 #if !FEATURE_PAL // perfcounter
         internal static volatile bool s_PerfCountersEnabled;
@@ -1106,6 +1108,7 @@ namespace System.Net.Sockets {
             Connect(addresses,port);
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Connect", null);
         }
+#endif // !MONO
 
         public void Connect(IPAddress[] addresses, int port){
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Connect", addresses);
@@ -1154,7 +1157,7 @@ namespace System.Net.Sockets {
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Connect", null);
         }
 
-
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Forces a socket connection to close.
@@ -7840,6 +7843,7 @@ namespace System.Net.Sockets {
             return retval;
         }
 
+#endif // MONO
         public static bool ConnectAsync(SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e) {
 
             bool retval;
@@ -7882,6 +7886,7 @@ namespace System.Net.Sockets {
             return retval;
         }
 
+#if !MONO
         public static void CancelConnectAsync(SocketAsyncEventArgs e) {
 
             if (e == null) {

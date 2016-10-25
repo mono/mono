@@ -158,7 +158,10 @@ namespace System.Net
 				return;
 			}
 #endif
+
+#pragma warning disable 618
 			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
+#pragma warning restore 618
 			if (manager != null) {
 				defaultConnectionLimit = (int) manager.GetMaxConnections ("*");				
 			}

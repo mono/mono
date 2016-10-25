@@ -194,6 +194,7 @@ BASE_TEST_CS_SRC_UNIVERSAL=		\
 	typeof-ptr.cs		\
 	static-constructor.cs	\
 	pinvoke.cs		\
+	pinvoke-utf8.cs		\
 	pinvoke3.cs		\
 	pinvoke11.cs		\
 	pinvoke13.cs		\
@@ -514,7 +515,7 @@ if X86
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
-	bug-18026.exe monitor.exe threadpool-exceptions5.exe
+	bug-18026.exe monitor.exe threadpool-exceptions5.exe pinvoke-utf8.exe
 endif
 
 endif
@@ -691,6 +692,7 @@ DISABLED_TESTS=			\
 	bug-459094.exe \
 	delegate-invoke.exe \
 	bug-Xamarin-5278.exe \
+	reference-loader.cs \
 	$(PLATFORM_DISABLED_TESTS) \
 	$(EXTRA_DISABLED_TESTS) \
 	$(COOP_DISABLED_TESTS) \
@@ -787,7 +789,8 @@ TEST_IL_SRC_UNIVERSAL=			\
 	delegate-with-null-target.il	\
 	bug-318677.il	\
 	gsharing-valuetype-layout.il	\
-	invalid_generic_instantiation.il
+	invalid_generic_instantiation.il \
+	bug-45841-fpstack-exceptions.il
 
 if INSTALL_MOBILE_STATIC
 TEST_IL_SRC= \
@@ -802,18 +805,22 @@ endif
 # but that need to be compiled
 PREREQ_IL_SRC=event-il.il module-cctor.il
 PREREQ_CS_SRC=
-PREREQ_IL_DLL_SRC=event-il.il module-cctor.il
-PREREQ_CS_DLL_SRC=
+PREREQ_IL_DLL_SRC=
+PREREQ_CS_DLL_SRC=TestingReferenceAssembly.cs TestingReferenceReferenceAssembly.cs
 
-PREREQSI_IL=$(PREREQ_IL_SRC:.il=.exe)
-PREREQSI_CS=$(PREREQ_CS_SRC:.cs=.exe)
+PREREQSI_IL=$(PREREQ_IL_SRC:.il=.exe) \
+	$(PREREQ_IL_DLL_SRC:.il=.dll)
+PREREQSI_CS=$(PREREQ_CS_SRC:.cs=.exe) \
+	$(PREREQ_CS_DLL_SRC:.cs=.dll)
 TESTSI_CS=$(TEST_CS_SRC:.cs=.exe)
 TESTSI_IL=$(TEST_IL_SRC:.il=.exe)
 TESTBS=$(BENCHSRC:.cs=.exe)
 STRESS_TESTS=$(STRESS_TESTS_SRC:.cs=.exe)
 
-PREREQSI_IL_AOT=$(PREREQ_IL_SRC:.il=.exe$(PLATFORM_AOT_SUFFIX))
-PREREQSI_CS_AOT=$(PREREQ_CS_SRC:.cs=.exe$(PLATFORM_AOT_SUFFIX))
+PREREQSI_IL_AOT=$(PREREQ_IL_SRC:.il=.exe$(PLATFORM_AOT_SUFFIX)) \
+		$(PREREQ_IL_DLL_SRC:.il=.dll$(PLATFORM_AOT_SUFFIX))
+PREREQSI_CS_AOT=$(PREREQ_CS_SRC:.cs=.exe$(PLATFORM_AOT_SUFFIX)) \
+		$(PREREQ_CS_DLL_SRC:.cs=.dll$(PLATFORM_AOT_SUFFIX))
 
 EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 	$(BENCHSRC) $(STRESS_TESTS_SRC) stress-runner.pl $(PREREQ_IL_SRC) $(PREREQ_CS_SRC)
@@ -833,6 +840,12 @@ endif
 
 %.exe: %.cs $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:System.dll -r:System.Xml.dll -r:System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
+
+%.dll: %.cs
+	$(MCS) -r:System.dll -target:library -out:$@ $<
+
+TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs TestingReferenceAssembly.dll
+	$(MCS) -r:TestingReferenceAssembly.dll -target:library -out:$@ $<
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe 
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $<
@@ -1137,31 +1150,31 @@ SGEN_REGULAR_TESTS= \
 endif
 
 sgen-regular-tests: $(SGEN_REGULAR_TESTS)
-	$(MAKE) sgen-regular-tests-plain
+	$(MAKE) sgen-regular-tests-ms
 	$(MAKE) sgen-regular-tests-ms-conc
 	$(MAKE) sgen-regular-tests-ms-conc-split
 	$(MAKE) sgen-regular-tests-ms-split
-	$(MAKE) sgen-regular-tests-ms-split-95
-	$(MAKE) sgen-regular-tests-plain-clear-at-gc
+	$(MAKE) sgen-regular-tests-ms-conc-split-95
+	$(MAKE) sgen-regular-tests-ms-clear-at-gc
 	$(MAKE) sgen-regular-tests-ms-conc-clear-at-gc
-	$(MAKE) sgen-regular-tests-ms-split-clear-at-gc
+	$(MAKE) sgen-regular-tests-ms-conc-split-clear-at-gc
 
-sgen-regular-tests-plain: $(SGEN_REGULAR_TESTS) test-runner.exe
-	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+sgen-regular-tests-ms: $(SGEN_REGULAR_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 sgen-regular-tests-ms-conc: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 sgen-regular-tests-ms-conc-split: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep-conc,minor=split" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 sgen-regular-tests-ms-split: $(SGEN_REGULAR_TESTS) test-runner.exe
-	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="minor=split" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
-sgen-regular-tests-ms-split-95: $(SGEN_REGULAR_TESTS) test-runner.exe
-	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="minor=split,alloc-ratio=95" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
-sgen-regular-tests-plain-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
-	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep,minor=split" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+sgen-regular-tests-ms-conc-split-95: $(SGEN_REGULAR_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="" MONO_GC_PARAMS="major=marksweep-conc,minor=split,alloc-ratio=95" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+sgen-regular-tests-ms-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="major=marksweep" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 sgen-regular-tests-ms-conc-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
 	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="major=marksweep-conc" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
-sgen-regular-tests-ms-split-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
-	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="minor=split" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
+sgen-regular-tests-ms-conc-split-clear-at-gc: $(SGEN_REGULAR_TESTS) test-runner.exe
+	MONO_ENV_OPTIONS="--gc=sgen" MONO_GC_DEBUG="clear-at-gc" MONO_GC_PARAMS="major=marksweep-conc,minor=split" $(RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --timeout 900 $(SGEN_REGULAR_TESTS)
 
 SGEN_TOGGLEREF_TESTS=	\
 	sgen-toggleref.exe

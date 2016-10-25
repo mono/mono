@@ -1555,6 +1555,13 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (new DateTime (2012,2,5,9,0,0,DateTimeKind.Utc), o.SomeDate.ToUniversalTime ());
 		}
 
+		[Test]
+		public void TimeWithUtc ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (UtcTimeClass));
+			var o = (UtcTimeClass) xs.Deserialize (new StringReader ("<UtcTimeClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DateTimeValue>12:34:56.0Z</DateTimeValue></UtcTimeClass>"));
+			Assert.AreEqual (new DateTime (1,1,1,12,34,56,DateTimeKind.Utc), o.DateTimeValue);
+		}
 
 		public class Foo
 		{

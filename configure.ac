@@ -119,6 +119,7 @@ case "$host" in
 		libgc_threads=win32
 		with_sigaltstack=no
 		with_tls=pthread
+		with_sgen_default_concurrent=yes
 		LN_S=cp
 		# This forces libgc to use the DllMain based thread registration code on win32
 		libgc_configure_args="$libgc_configure_args --enable-win32-dllmain=yes"
@@ -134,6 +135,7 @@ case "$host" in
 		libgc_threads=pthreads
 		with_sigaltstack=no
 		use_sigposix=yes
+		with_sgen_default_concurrent=yes
 		;;
 	*-*-kfreebsd*-gnu)
 		CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP -DUSE_MUNMAP -DTHREAD_LOCAL_ALLOC -pthread"
@@ -144,6 +146,7 @@ case "$host" in
 		need_link_unlink=yes
 		with_sigaltstack=no
 		use_sigposix=yes
+		with_sgen_default_concurrent=yes
 		;;
 	*-*-*freebsd*)
 		if test "x$PTHREAD_CFLAGS" = "x"; then
@@ -167,6 +170,7 @@ case "$host" in
 		libgc_threads=pthreads
 		use_sigposix=yes
 		has_dtrace=yes
+		with_sgen_default_concurrent=yes
 		;;
 	*-*-*openbsd*)
 		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_OPENBSD_THREADS -DPLATFORM_BSD -D_REENTRANT -DUSE_MMAP"
@@ -181,6 +185,7 @@ case "$host" in
 		libgc_threads=pthreads
 		with_sigaltstack=no
 		use_sigposix=yes
+		with_sgen_default_concurrent=yes
 		;;
 	*-*-linux-android*)
 		platform_android=yes
@@ -244,6 +249,7 @@ case "$host" in
 			disable_munmap=yes
 			;;
 		esac
+		with_sgen_default_concurrent=yes
 		;;
 	*-*-nacl*)
 		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
@@ -316,8 +322,10 @@ case "$host" in
 				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC $BROKEN_DARWIN_FLAGS"
 				CPPFLAGS_FOR_EGLIB="$CPPFLAGS_FOR_EGLIB $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB $BROKEN_DARWIN_FLAGS"
+				with_sgen_default_concurrent=yes
 				;;
 			x*64-*-darwin*)
+				with_sgen_default_concurrent=yes
 				;;
 			arm*-darwin*)
 				has_dtrace=no
@@ -544,9 +552,6 @@ if test x"$GCC" = xyes; then
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
 
-		# We rely on zero length arrays in structs
-		CFLAGS="$CFLAGS -Wno-zero-length-array"
-
 		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
 		if test x"$disable_visibility_hidden" = xno; then
 		   # Don't export any symbols by default
@@ -573,6 +578,8 @@ if test x"$GCC" = xyes; then
 	   	   # https://bugzilla.samba.org/show_bug.cgi?id=8118
 	   	   WARN="$WARN -Qunused-arguments"
 		   WARN="$WARN -Wno-unused-function -Wno-tautological-compare -Wno-parentheses-equality -Wno-self-assign -Wno-return-stack-address -Wno-constant-logical-operand"
+		   # We rely on zero length arrays in structs
+		   WARN="$WARN -Wno-zero-length-array"
 		fi
 else
 	# The Sun Forte compiler complains about inline functions that access static variables
@@ -3924,7 +3931,10 @@ dnl **************
 AC_ARG_ENABLE(btls, [  --disable-btls             Disable the BoringTls provider], enable_btls=$enableval, enable_btls=$BTLS_SUPPORTED)
 AC_ARG_WITH(btls_android_ndk, [  --with-btls-android-ndk        Android NDK for BoringTls])
 
+AC_ARG_ENABLE(dynamic-btls, [ --enable-dynamic-btls Place the BTLS provider into a separate shared library/archive.], enable_dynamic_btls=$enableval, enable_dynamic_btls=no)
+
 AM_CONDITIONAL(BTLS, test x$enable_btls = xyes)
+AM_CONDITIONAL(DYNAMIC_BTLS, test x$enable_dynamic_btls = xyes)
 
 btls_android=no
 if test "x$enable_btls" = "xyes"; then
@@ -3993,6 +4003,10 @@ if test "x$enable_btls" = "xyes"; then
 	AC_SUBST(BTLS_CMAKE_ARGS)
 
 	AC_DEFINE(HAVE_BTLS, 1, [BoringTls is supported])
+
+	if test "x$enable_dynamic_btls" = "xyes"; then
+		AC_DEFINE(HAVE_DYNAMIC_BTLS, 1, [BTLS in a shared libraty])
+	fi
 else
 	enable_btls=no
 fi
@@ -4399,6 +4413,13 @@ fi
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test "x$enable_btls" = "xyes"; then
+      echo "HAVE_BTLS=1" >> $srcdir/$mcsdir/build/config.make
+      if test "x$enable_dynamic_btls" = "xyes"; then
+        echo "HAVE_DYNAMIC_BTLS=1" >> $srcdir/$mcsdir/build/config.make
+      fi
     fi
 
   fi

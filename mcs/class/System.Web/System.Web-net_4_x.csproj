@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,7 +36,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -492,6 +492,7 @@
     <Compile Include="..\referencesource\System.Web\Util\AssemblyUtil.cs" />
     <Compile Include="..\referencesource\System.Web\Util\BinaryCompatibility.cs" />
     <Compile Include="..\referencesource\System.Web\Util\DateTimeUtil.cs" />
+    <Compile Include="..\referencesource\System.Web\Util\Debug.cs" />
     <Compile Include="..\referencesource\System.Web\Util\DisposableAction.cs" />
     <Compile Include="..\referencesource\System.Web\Util\DoNotResetAttribute.cs" />
     <Compile Include="..\referencesource\System.Web\Util\EmptyCollection.cs" />
@@ -539,6 +540,7 @@
     <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceWriter.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\SerializedFromResXHandler.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\TypeConverterFromResXHandler.cs" />
+    <Compile Include="..\System\System\MonoToolsLocator.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Web.Util\ISectionSettingsMapper.cs" />
     <Compile Include="Mono.Web.Util\MembershipSectionMapper.cs" />

@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
 using System.Text;
@@ -52,40 +52,40 @@ namespace Mono.Btls
 			}
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_print_bio (IntPtr handle, IntPtr bio);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_print_string (IntPtr handle, IntPtr buffer, int size);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_get_raw_data (IntPtr handle, out IntPtr buffer, int use_canon_enc);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static long mono_btls_x509_name_hash (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static long mono_btls_x509_name_hash_old (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_get_entry_count (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static MonoBtlsX509NameEntryType mono_btls_x509_name_get_entry_type (IntPtr name, int index);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_get_entry_oid (IntPtr name, int index, IntPtr buffer, int size);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_get_entry_oid_data (IntPtr name, int index, out IntPtr data);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_name_get_entry_value (IntPtr name, int index, out int tag, out IntPtr str);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern unsafe static IntPtr mono_btls_x509_name_from_data (void* data, int len, int use_canon_enc);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_name_free (IntPtr handle);
 
 		new internal BoringX509NameHandle Handle {
