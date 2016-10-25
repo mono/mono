@@ -154,12 +154,9 @@ namespace Mono.Btls
 			}
 		}
 
-		Exception GetException (MonoBtlsSslError status)
+		static Exception GetException (MonoBtlsSslError status)
 		{
 			var error = MonoBtlsError.GetError ();
-			if (error == null)
-				return new MonoBtlsException (status);
-
 			var text = MonoBtlsError.GetErrorString (error);
 			return new MonoBtlsException ("{0} {1}", status, text);
 		}

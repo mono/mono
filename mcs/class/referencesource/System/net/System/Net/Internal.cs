@@ -953,7 +953,7 @@ namespace System.Net {
         // There are threading tricks a malicious app can use to create an ArraySegment with mismatched 
         // array/offset/count.  Copy locally and make sure they're valid before using them.
         internal static void ValidateSegment(ArraySegment<byte> segment) {
-            if (segment == null || segment.Array == null) {
+            if (/*segment == null ||*/ segment.Array == null) {
                 throw new ArgumentNullException("segment");
             }
             // Length zero is explicitly allowed

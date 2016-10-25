@@ -1754,7 +1754,7 @@ namespace System.Net.Sockets
 			if (endPoint == null)
 				throw new ArgumentNullException ("endPoint");
 
-			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndReceiveMessageFrom", "asyncResult");
+			/*SocketAsyncResult sockares =*/ ValidateEndIAsyncResult (asyncResult, "EndReceiveMessageFrom", "asyncResult");
 
 			throw new NotImplementedException ();
 		}

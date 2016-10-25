@@ -737,7 +737,7 @@ namespace System.Diagnostics
 			while (true) {
 				try {
 					resetEvent.WaitOne ();
-				} catch (ObjectDisposedException e) {
+				} catch (ObjectDisposedException) {
 					// Notifications have been disabled and event 
 					// has been closed but not yet nulled. End thread.
 					break;

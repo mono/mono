@@ -37,6 +37,8 @@ using System.Security.Permissions;
 #if (XML_DEP)
 using System.Xml;
 
+#pragma warning disable 618
+
 namespace System.Configuration
 {
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]

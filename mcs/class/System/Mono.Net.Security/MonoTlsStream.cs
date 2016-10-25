@@ -101,7 +101,7 @@ namespace Mono.Net.Security
 					ServicePointManager.CheckCertificateRevocationList);
 
 				status = WebExceptionStatus.Success;
-			} catch (Exception ex) {
+			} catch (Exception) {
 				status = WebExceptionStatus.SecureChannelFailure;
 				throw;
 			} finally {

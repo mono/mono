@@ -487,7 +487,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IcmpV4Statistics GetIcmpV4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIBICMPINFO stats;
 			GetIcmpStatistics (out stats, AF_INET);
@@ -505,7 +505,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IPGlobalStatistics GetIPv4GlobalStatistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_IPSTATS stats;
 			GetIpStatisticsEx (out stats, AF_INET);
@@ -523,7 +523,7 @@ namespace System.Net.NetworkInformation {
 
 		public override TcpStatistics GetTcpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_TCPSTATS stats;
 			GetTcpStatisticsEx (out stats, AF_INET);
@@ -541,7 +541,7 @@ namespace System.Net.NetworkInformation {
 
 		public override UdpStatistics GetUdpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_UDPSTATS stats;
 			GetUdpStatisticsEx (out stats, AF_INET);

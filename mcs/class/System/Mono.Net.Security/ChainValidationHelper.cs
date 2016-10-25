@@ -75,6 +75,8 @@ namespace Mono.Net.Security
 		readonly MonoTlsStream tlsStream;
 		readonly HttpWebRequest request;
 
+#pragma warning disable 618
+
 		internal static ICertificateValidator GetInternalValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
 			if (settings == null)
@@ -181,6 +183,8 @@ namespace Mono.Net.Security
 			if (fallbackToSPM && certValidationCallback == null)
 				certValidationCallback = ServicePointManager.ServerCertValidationCallback;
 		}
+
+#pragma warning restore 618
 
 		static X509Certificate DefaultSelectionCallback (string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers)
 		{

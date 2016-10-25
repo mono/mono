@@ -216,7 +216,9 @@ namespace System.Net {
         public override IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
         {
             GlobalLog.Enter("FileWebRequest::BeginGetRequestStream");
+#if !MONO
             bool success = true;
+#endif
             try {
                 if (Aborted)
                     throw ExceptionHelper.RequestAbortedException;
@@ -244,7 +246,9 @@ namespace System.Net {
                 m_ReadAResult = new LazyAsyncResult(this, state, callback);
                 ThreadPool.QueueUserWorkItem(s_GetRequestStreamCallback, m_ReadAResult);
             } catch (Exception exception) {
+#if !MONO
                 success = false; 
+#endif
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetRequestStream", exception);
                 throw;
             } finally {
@@ -263,7 +267,9 @@ namespace System.Net {
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {
             GlobalLog.Enter("FileWebRequest::BeginGetResponse");
+#if !MONO
             bool success = true;
+#endif
 
             try {
                 if (Aborted)
@@ -280,7 +286,9 @@ namespace System.Net {
                 m_WriteAResult = new LazyAsyncResult(this,state,callback);
                 ThreadPool.QueueUserWorkItem(s_GetResponseCallback,m_WriteAResult);
             } catch (Exception exception) {
+#if !MONO
                 success = false;
+#endif
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetResponse", exception);
                 throw;
             } finally {
@@ -304,7 +312,9 @@ namespace System.Net {
             GlobalLog.Enter("FileWebRequest::EndGetRequestStream");
 
             Stream stream;
+#if !MONO
             bool success = false;
+#endif
             try {
                 LazyAsyncResult  ar = asyncResult as LazyAsyncResult;
                 if (asyncResult == null || ar == null) {
@@ -319,7 +329,9 @@ namespace System.Net {
                 }
                 stream = (Stream) result;
                 m_writePending = false;
+#if !MONO
                 success = true;
+#endif
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetRequestStream", exception);
                 throw;
@@ -340,7 +352,9 @@ namespace System.Net {
             GlobalLog.Enter("FileWebRequest::EndGetResponse");
 
             WebResponse response;
+#if !MONO
             bool success = false;
+#endif
             try {
                 LazyAsyncResult  ar = asyncResult as LazyAsyncResult;
                 if (asyncResult == null || ar == null) {
@@ -356,7 +370,9 @@ namespace System.Net {
                 }
                 response = (WebResponse) result;
                 m_readPending = false;
+#if !MONO
                 success = true;
+#endif
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetResponse", exception);
                 throw;

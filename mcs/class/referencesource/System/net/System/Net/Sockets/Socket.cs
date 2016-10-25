@@ -122,7 +122,9 @@ namespace System.Net.Sockets {
         internal static volatile bool s_SupportsIPv6;
         internal static volatile bool s_OSSupportsIPv6;
         internal static volatile bool s_Initialized;
+#if !MONO
         private static volatile WaitOrTimerCallback s_RegisteredWaitCallback;
+#endif
         private static volatile bool s_LoggingEnabled;
 #if !FEATURE_PAL // perfcounter
         internal static volatile bool s_PerfCountersEnabled;

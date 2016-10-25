@@ -510,7 +510,6 @@ namespace System.Net.NetworkInformation {
 #if MONOTOUCH || XAMMAC
 			return new MacOsNetworkInterfaceAPI ();
 #else
-			Version windowsVer51 = new Version (5, 1);
 			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
 
 			if (runningOnUnix) {
@@ -521,6 +520,7 @@ namespace System.Net.NetworkInformation {
 			}
 
 #if !MOBILE
+			Version windowsVer51 = new Version (5, 1);
 			if (Environment.OSVersion.Version >= windowsVer51)
 				return new Win32NetworkInterfaceAPI ();
 #endif
@@ -633,13 +633,13 @@ namespace System.Net.NetworkInformation {
 
 #if MONODROID
 		[DllImport ("__Internal")]
-		protected static extern int _monodroid_get_android_api_level ();
+		static extern int _monodroid_get_android_api_level ();
 
 		[DllImport ("__Internal")]
-		protected static extern bool _monodroid_get_network_interface_up_state (string ifname, ref bool is_up);
+		static extern bool _monodroid_get_network_interface_up_state (string ifname, ref bool is_up);
 
 		[DllImport ("__Internal")]
-		protected static extern bool _monodroid_get_network_interface_supports_multicast (string ifname, ref bool supports_multicast);
+		static extern bool _monodroid_get_network_interface_supports_multicast (string ifname, ref bool supports_multicast);
 
 		bool android_use_java_api;
 #endif

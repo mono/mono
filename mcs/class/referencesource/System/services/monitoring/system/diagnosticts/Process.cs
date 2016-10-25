@@ -66,16 +66,20 @@ namespace System.Diagnostics {
         ProcessModuleCollection modules;
 #endif // !FEATURE_PAL        
 
+#if !MONO
         bool haveMainWindow;
         IntPtr mainWindowHandle;  // no need to use SafeHandle for window        
         string mainWindowTitle;
+#endif
         
         bool haveWorkingSetLimits;
         IntPtr minWorkingSet;
         IntPtr maxWorkingSet;
-        
+
+#if !MONO
         bool haveProcessorAffinity;
         IntPtr processorAffinity;
+#endif
 
         bool havePriorityClass;
         ProcessPriorityClass priorityClass;
@@ -1870,12 +1874,18 @@ namespace System.Diagnostics {
             threads = null;
             modules = null;
 #endif // !FEATURE_PAL            
+#if !MONO
             mainWindowTitle = null;
+#endif
             exited = false;
             signaled = false;
+#if !MONO
             haveMainWindow = false;
+#endif
             haveWorkingSetLimits = false;
+#if !MONO
             haveProcessorAffinity = false;
+#endif
             havePriorityClass = false;
             haveExitTime = false;
 #if !MONO

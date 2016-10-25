@@ -64,9 +64,9 @@ namespace System.Net.Configuration
 					continue;
 				}
 
-				string prefix = HandlersUtil.ExtractAttributeValue ("prefix", child);
+				//string prefix = HandlersUtil.ExtractAttributeValue ("prefix", child);
 				if (name == "add") {
-					string type = HandlersUtil.ExtractAttributeValue ("type", child, false);
+					//string type = HandlersUtil.ExtractAttributeValue ("type", child, false);
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 

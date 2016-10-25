@@ -94,7 +94,9 @@ namespace System.Net.Security
 
 		static MonoTlsProvider GetProvider ()
 		{
+#pragma warning disable 612
 			return MonoTlsProviderFactory.GetDefaultProvider ();
+#pragma warning restore 612
 		}
 
 		public SslStream (Stream innerStream)

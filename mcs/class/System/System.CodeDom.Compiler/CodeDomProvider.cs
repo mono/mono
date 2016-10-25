@@ -37,6 +37,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
+#pragma warning disable 618
+
 namespace System.CodeDom.Compiler {
 
 	[ComVisible (true)]
@@ -314,3 +316,5 @@ namespace System.CodeDom.Compiler {
 		}		
 	}
 }
+
+#pragma warning restore 618
