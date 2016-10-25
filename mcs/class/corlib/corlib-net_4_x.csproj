@@ -896,6 +896,7 @@
     <Compile Include="System.Diagnostics.Tracing\EventAttribute.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommand.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommandEventArgs.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventCounter.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventDataAttribute.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventFieldAttribute.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventFieldFormat.cs" />
@@ -1407,6 +1408,7 @@
     <Compile Include="System.Security.Cryptography\DESCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\DSACryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\ICspAsymmetricAlgorithm.cs" />
+    <Compile Include="System.Security.Cryptography\IncrementalHash.cs" />
     <Compile Include="System.Security.Cryptography\KeyNumber.cs" />
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RC2CryptoServiceProvider.cs" />

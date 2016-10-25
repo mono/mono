@@ -386,7 +386,6 @@
     <Compile Include="System.Security.Cryptography\ECCurve.cs" />
     <Compile Include="System.Security.Cryptography\ECParameters.cs" />
     <Compile Include="System.Security.Cryptography\ECPoint.cs" />
-    <Compile Include="System.Security.Cryptography\IncrementalHash.cs" />
     <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
     <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
     <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
