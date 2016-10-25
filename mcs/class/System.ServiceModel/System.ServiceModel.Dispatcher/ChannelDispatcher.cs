@@ -426,7 +426,7 @@ namespace System.ServiceModel.Dispatcher
 					owner.Listener.Abort ();
 				}
 				if (loop_thread != null && loop_thread.IsAlive)
-					loop_thread.Abort ();
+					loop_thread.Join ();
 				loop_thread = null;
 			}
 
