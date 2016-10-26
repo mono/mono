@@ -171,7 +171,7 @@ static void process_add_sigchld_handler (void);
  * operations don't mess with eachother. (This lock is not used in the
  * signal handler)
  */
-static struct MonoProcess *mono_processes = NULL;
+static MonoProcess *mono_processes = NULL;
 static volatile gint32 mono_processes_cleaning_up = 0;
 static mono_mutex_t mono_processes_mutex;
 static void mono_processes_cleanup (void);
@@ -607,7 +607,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 	pid_t pid = 0;
 	int startup_pipe [2] = {-1, -1};
 	int dummy;
-	struct MonoProcess *mono_process;
+	MonoProcess *mono_process;
 	gboolean fork_failed = FALSE;
 
 	mono_once (&process_sig_chld_once, process_add_sigchld_handler);
@@ -1062,7 +1062,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 			process_handle_data->id = pid;
 
 			/* Add our mono_process into the linked list of mono_processes */
-			mono_process = (struct MonoProcess *) g_malloc0 (sizeof (struct MonoProcess));
+			mono_process = (MonoProcess *) g_malloc0 (sizeof (MonoProcess));
 			mono_process->pid = pid;
 			mono_process->handle_count = 1;
 			mono_os_sem_init (&mono_process->exit_sem, 0);
@@ -1207,82 +1207,12 @@ GetProcessId (gpointer handle)
 	return process_handle->id;
 }
 
-static gboolean
-process_open_compare (gpointer handle, gpointer user_data)
-{
-	pid_t wanted_pid;
-	WapiHandle_process *process_handle;
-	pid_t checking_pid;
-
-	g_assert (!WAPI_IS_PSEUDO_PROCESS_HANDLE (handle));
-	
-	process_handle = lookup_process_handle (handle);
-	g_assert (process_handle);
-	
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking at process %d", __func__, process_handle->id);
-
-	checking_pid = process_handle->id;
-
-	if (checking_pid == 0)
-		return FALSE;
-	
-	wanted_pid = GPOINTER_TO_UINT (user_data);
-
-	/* It's possible to have more than one process handle with the
-	 * same pid, but only the one running process can be
-	 * unsignalled
-	 */
-	if (checking_pid == wanted_pid &&
-	    !mono_w32handle_issignalled (handle)) {
-		/* If the handle is blown away in the window between
-		 * returning TRUE here and mono_w32handle_search pinging
-		 * the timestamp, the search will continue
-		 */
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
-
 gboolean
 CloseProcess (gpointer handle)
 {
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
 		return TRUE;
 	return CloseHandle (handle);
-}
-
-/*
- * The caller owns the returned handle and must call CloseProcess () on it to clean it up.
- */
-gpointer
-OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, guint32 pid)
-{
-	/* Find the process handle that corresponds to pid */
-	gpointer handle = NULL;
-	
-	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking for process %d", __func__, pid);
-
-	handle = mono_w32handle_search (MONO_W32HANDLE_PROCESS,
-				      process_open_compare,
-				      GUINT_TO_POINTER (pid), NULL, TRUE);
-	if (handle == 0) {
-		if (is_pid_valid (pid)) {
-			/* Return a pseudo handle for processes we
-			 * don't have handles for
-			 */
-			return WAPI_PID_TO_HANDLE (pid);
-		} else {
-			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find pid %d", __func__, pid);
-
-			SetLastError (ERROR_PROC_NOT_FOUND);
-	
-			return NULL;
-		}
-	}
-
-	/* mono_w32handle_search () already added a ref */
-	return handle;
 }
 
 gboolean
@@ -2592,8 +2522,8 @@ SetPriorityClass (gpointer process, guint32  priority_class)
 static void
 mono_processes_cleanup (void)
 {
-	struct MonoProcess *mp;
-	struct MonoProcess *prev = NULL;
+	MonoProcess *mp;
+	MonoProcess *prev = NULL;
 	GSList *finished = NULL;
 	GSList *l;
 	gpointer unref_handle;
@@ -2704,7 +2634,7 @@ MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, sigi
 {
 	int status;
 	int pid;
-	struct MonoProcess *p;
+	MonoProcess *p;
 
 	do {
 		do {
@@ -2756,7 +2686,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 	pid_t pid G_GNUC_UNUSED, ret;
 	int status;
 	gint64 start, now;
-	struct MonoProcess *mp;
+	MonoProcess *mp;
 
 	/* FIXME: We can now easily wait on processes that aren't our own children,
 	 * but WaitFor*Object won't call us for pseudo handles. */

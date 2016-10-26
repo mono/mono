@@ -58,7 +58,6 @@
 #define GetCurrentProcess wapi_GetCurrentProcess 
 #define GetProcessId wapi_GetProcessId 
 #define CloseProcess wapi_CloseProcess 
-#define OpenProcess wapi_OpenProcess 
 #define GetExitCodeProcess wapi_GetExitCodeProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
 #define EnumProcessModules wapi_EnumProcessModules 

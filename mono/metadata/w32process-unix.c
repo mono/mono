@@ -28,23 +28,88 @@
 /* FIXME: fix this code to not depend so much on the internals */
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/w32handle.h>
+#include <mono/utils/mono-logger-internals.h>
 
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
+/* Check if a pid is valid - i.e. if a process exists with this pid. */
+static gboolean
+is_pid_valid (pid_t pid)
+{
+	gboolean result = FALSE;
+
+#if defined(HOST_WATCHOS)
+	result = TRUE; // TODO: Rewrite using sysctl
+#elif defined(PLATFORM_MACOSX) || defined(__OpenBSD__) || defined(__FreeBSD__)
+	if (((kill(pid, 0) == 0) || (errno == EPERM)) && pid != 0)
+		result = TRUE;
+#elif defined(__HAIKU__)
+	team_info teamInfo;
+	if (get_team_info ((team_id)pid, &teamInfo) == B_OK)
+		result = TRUE;
+#else
+	char *dir = g_strdup_printf ("/proc/%d", pid);
+	if (!access (dir, F_OK))
+		result = TRUE;
+	g_free (dir);
+#endif
+
+	return result;
+}
+
+static gboolean
+process_open_compare (gpointer handle, gpointer user_data)
+{
+	gboolean res;
+	WapiHandle_process *process_handle;
+	pid_t wanted_pid, checking_pid;
+
+	g_assert (!WAPI_IS_PSEUDO_PROCESS_HANDLE (handle));
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res)
+		g_error ("%s: unknown process handle %p", __func__, handle);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking at process %d", __func__, process_handle->id);
+
+	checking_pid = process_handle->id;
+	if (checking_pid == 0)
+		return FALSE;
+
+	wanted_pid = GPOINTER_TO_UINT (user_data);
+
+	/* It's possible to have more than one process handle with the
+	 * same pid, but only the one running process can be
+	 * unsignalled.
+	 * If the handle is blown away in the window between
+	 * returning TRUE here and mono_w32handle_search pinging
+	 * the timestamp, the search will continue. */
+	return checking_pid == wanted_pid && !mono_w32handle_issignalled (handle);
+}
+
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 {
-	HANDLE handle;
-	
-	/* GetCurrentProcess returns a pseudo-handle, so use
-	 * OpenProcess instead
-	 */
-	handle = OpenProcess (PROCESS_ALL_ACCESS, TRUE, pid);
-	if (handle == NULL)
-		/* FIXME: Throw an exception */
+	gpointer handle;
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking for process %d", __func__, pid);
+
+	handle = mono_w32handle_search (MONO_W32HANDLE_PROCESS, process_open_compare, GUINT_TO_POINTER (pid), NULL, TRUE);
+	if (handle) {
+		/* mono_w32handle_search () already added a ref */
+		return handle;
+	}
+
+	if (is_pid_valid (pid)) {
+		/* Return a pseudo handle for processes we don't have handles for */
+		return WAPI_PID_TO_HANDLE (pid);
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find pid %d", __func__, pid);
+
+		SetLastError (ERROR_PROC_NOT_FOUND);
 		return NULL;
-	return handle;
+	}
 }
 
 static MonoImage *system_assembly;
