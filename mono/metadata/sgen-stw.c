@@ -335,34 +335,24 @@ sgen_unified_suspend_stop_world (void)
 	FOREACH_THREAD (info) {
 		int reason = 0;
 		if (sgen_is_thread_in_current_stw (info, &reason)) {
-			MonoThreadUnwindState *state;
 			gpointer stopped_ip;
 
 			g_assert (info->client_info.suspend_done);
 
-			state = mono_thread_info_get_suspend_state (info);
+			info->client_info.ctx = mono_thread_info_get_suspend_state (info)->ctx;
 
-			info->client_info.ctx = state->ctx;
+			/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
+			info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
 
-			if (!state->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !state->unwind_data [MONO_UNWIND_DATA_LMF]) {
-				stopped_ip = NULL;
-
-				/* thread is starting or detaching, nothing to scan here */
-				info->client_info.stack_start = NULL;
-			} else {
-				stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
-
-				/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
-				info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
-
-				/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
-				if (!info->client_info.stack_start
-					 || info->client_info.stack_start < info->client_info.stack_start_limit
-					 || info->client_info.stack_start >= info->client_info.stack_end) {
-					g_error ("BAD STACK: stack_start = %p, stack_start_limit = %p, stack_end = %p",
-						info->client_info.stack_start, info->client_info.stack_start_limit, info->client_info.stack_end);
-				}
+			/* altstack signal handler, sgen can't handle them, mono-threads should have handled this. */
+			if (!info->client_info.stack_start
+				 || info->client_info.stack_start < info->client_info.stack_start_limit
+				 || info->client_info.stack_start >= info->client_info.stack_end) {
+				g_error ("BAD STACK: stack_start = %p, stack_start_limit = %p, stack_end = %p",
+					info->client_info.stack_start, info->client_info.stack_start_limit, info->client_info.stack_end);
 			}
+
+			stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
 
 			THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended, stopped_ip = %p, stack = %p -> %p\n",
 				mono_thread_info_get_tid (info), stopped_ip, info->client_info.stack_start, info->client_info.stack_start ? info->client_info.stack_end : NULL);
