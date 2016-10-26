@@ -7960,7 +7960,11 @@ ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage (guint32 code)
 ICALL_EXPORT gpointer
 ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 {
+#ifdef HOST_WIN32
 	return GetCurrentProcess ();
+#else
+	return _WAPI_PROCESS_CURRENT;
+#endif
 }
 
 ICALL_EXPORT MonoBoolean

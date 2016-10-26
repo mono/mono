@@ -175,7 +175,9 @@ typedef struct {
 #define WAPI_PID_TO_HANDLE(pid) GINT_TO_POINTER (_WAPI_PROCESS_UNHANDLED + (pid))
 #define WAPI_HANDLE_TO_PID(handle) (GPOINTER_TO_UINT ((handle)) - _WAPI_PROCESS_UNHANDLED)
 
-	
+/* There doesn't seem to be a defined symbol for this */
+#define _WAPI_PROCESS_CURRENT (gpointer)0xFFFFFFFF
+
 #define DEBUG_PROCESS 0x00000001
 #define DEBUG_ONLY_THIS_PROCESS 0x00000002
 #define DETACHED_PROCESS 0x00000008
@@ -236,7 +238,6 @@ extern gboolean CreateProcessWithLogonW (const gunichar2 *username,
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
-extern gpointer GetCurrentProcess (void);
 extern guint32 GetProcessId (gpointer handle);
 extern gboolean CloseProcess (gpointer handle);
 extern gboolean GetExitCodeProcess (gpointer process, guint32 *code);

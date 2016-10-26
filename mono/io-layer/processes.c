@@ -1182,13 +1182,6 @@ _wapi_process_duplicate (void)
 	return current_process;
 }
 
-/* Returns a pseudo handle that doesn't need to be closed afterwards */
-gpointer
-GetCurrentProcess (void)
-{
-	return _WAPI_PROCESS_CURRENT;
-}
-
 guint32
 GetProcessId (gpointer handle)
 {

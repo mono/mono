@@ -55,7 +55,6 @@
 #define ShellExecuteEx wapi_ShellExecuteEx 
 #define CreateProcess wapi_CreateProcess 
 #define CreateProcessWithLogonW wapi_CreateProcessWithLogonW 
-#define GetCurrentProcess wapi_GetCurrentProcess 
 #define GetProcessId wapi_GetProcessId 
 #define CloseProcess wapi_CloseProcess 
 #define GetExitCodeProcess wapi_GetExitCodeProcess 
