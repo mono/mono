@@ -81,14 +81,14 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	}
 	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->
 		thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info);
-	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (gpointer)(gsize)info->native_handle, res);
+	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (gpointer)(gsize)info->native_handle, info->suspend_can_continue);
 	if (info->suspend_can_continue) {
 		if (interrupt_kernel)
 			thread_abort (info->native_handle);
 	} else {
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (gpointer)(gsize)info->native_handle, 0);
 	}
-	return info->suspend_can_continue;
+	return TRUE;
 }
 
 gboolean
