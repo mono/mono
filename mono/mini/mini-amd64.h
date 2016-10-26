@@ -206,6 +206,22 @@ typedef struct {
 	guint64 r13;
 	guint64 r14;
 	guint64 r15;
+	guint64 xmm0_low;
+	guint64 xmm1_low;
+	guint64 xmm2_low;
+	guint64 xmm3_low;
+	guint64 xmm4_low;
+	guint64 xmm5_low;
+	guint64 xmm6_low;
+	guint64 xmm7_low;
+	guint64 xmm8_low;
+	guint64 xmm9_low;
+	guint64 xmm10_low;
+	guint64 xmm11_low;
+	guint64 xmm12_low;
+	guint64 xmm13_low;
+	guint64 xmm14_low;
+	guint64 xmm15_low;
 } MonoContext;
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->rip = (guint64)(ip); } while (0); 
