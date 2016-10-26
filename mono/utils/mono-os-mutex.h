@@ -118,12 +118,21 @@ mono_os_mutex_unlock (mono_mutex_t *mutex)
 		g_error ("%s: pthread_mutex_unlock failed with \"%s\" (%d)", __func__, g_strerror (res), res);
 }
 
+#if !defined(PLATFORM_MACOSX)	
+	pthread_condattr_t attr;
+#endif
+
 static inline void
 mono_os_cond_init (mono_cond_t *cond)
 {
 	int res;
-
+#if !defined(PLATFORM_MACOSX)	
+	pthread_condattr_init(&attr);
+	pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+	res=pthread_cond_init(cond, &attr);
+#else
 	res = pthread_cond_init (cond, NULL);
+#endif
 	if (G_UNLIKELY (res != 0))
 		g_error ("%s: pthread_cond_init failed with \"%s\" (%d)", __func__, g_strerror (res), res);
 }
@@ -151,22 +160,36 @@ mono_os_cond_wait (mono_cond_t *cond, mono_mutex_t *mutex)
 static inline int
 mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_ms)
 {
+	
+#if defined(PLATFORM_MACOSX)
 	struct timeval tv;
-	struct timespec ts;
 	gint64 usecs;
+#endif	
+	struct timespec ts;
 	int res;
-
+	
 	if (timeout_ms == MONO_INFINITE_WAIT) {
 		mono_os_cond_wait (cond, mutex);
 		return 0;
 	}
 
 	/* ms = 10^-3, us = 10^-6, ns = 10^-9 */
-
+#if !defined(PLATFORM_MACOSX)
+	res = clock_gettime (CLOCK_MONOTONIC, &ts);
+#else
 	res = gettimeofday (&tv, NULL);
+#endif	
 	if (G_UNLIKELY (res != 0))
 		g_error ("%s: gettimeofday failed with \"%s\" (%d)", __func__, g_strerror (errno), errno);
-
+	
+#if !defined(PLATFORM_MACOSX)
+	ts.tv_sec += timeout_ms / 1000;
+	ts.tv_nsec = ((timeout_ms % 1000) * 1000) * 1000;
+	if (ts.tv_nsec >= 1000000000){
+		ts.tv_nsec -= 1000000000;
+		ts.tv_sec ++;
+	}
+#else	
 	tv.tv_sec += timeout_ms / 1000;
 	usecs = tv.tv_usec + ((timeout_ms % 1000) * 1000);
 	if (usecs >= 1000000) {
@@ -175,6 +198,7 @@ mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_
 	}
 	ts.tv_sec = tv.tv_sec;
 	ts.tv_nsec = usecs * 1000;
+#endif
 
 	res = pthread_cond_timedwait (cond, mutex, &ts);
 	if (G_UNLIKELY (res != 0 && res != ETIMEDOUT))
