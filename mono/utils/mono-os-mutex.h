@@ -126,6 +126,7 @@ static inline void
 mono_os_cond_init (mono_cond_t *cond)
 {
 	int res;
+/* Attach an attribute having CLOCK_MONOTONIC to condition */	
 #if !defined(PLATFORM_MACOSX)	
 	pthread_condattr_init(&attr);
 	pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
@@ -175,8 +176,10 @@ mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_
 
 	/* ms = 10^-3, us = 10^-6, ns = 10^-9 */
 #if !defined(PLATFORM_MACOSX)
+/* cond is using CLOCK_MONOTONIC as time source */	
 	res = clock_gettime (CLOCK_MONOTONIC, &ts);
 #else
+/* clock_gettime is not supported in MAC OS x */	
 	res = gettimeofday (&tv, NULL);
 #endif	
 	if (G_UNLIKELY (res != 0))
