@@ -5222,7 +5222,7 @@ namespace Mono.CSharp {
 						if ((fp.ModFlags & Parameter.Modifier.CallerLineNumber) != 0) {
 							e = new IntLiteral (ec.BuiltinTypes, loc.Row, loc);
 						} else if ((fp.ModFlags & Parameter.Modifier.CallerFilePath) != 0) {
-							e = new StringLiteral (ec.BuiltinTypes, loc.NameFullPath, loc);
+							e = new StringLiteral (ec.BuiltinTypes, loc.SourceFile.GetFullPathName (ec.Module.Compiler.Settings.PathMap), loc);
 						} else if (ec.MemberContext.CurrentMemberDefinition != null) {
 							e = new StringLiteral (ec.BuiltinTypes, ec.MemberContext.CurrentMemberDefinition.GetCallerMemberName (), loc);
 						}

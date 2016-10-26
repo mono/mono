@@ -674,13 +674,13 @@ namespace Mono.CSharp
 			if (all_source_files == null) {
 				all_source_files = new Dictionary<string, SourceFile> ();
 				foreach (var source in SourceFiles)
-					all_source_files[source.FullPathName] = source;
+					all_source_files[source.OriginalFullPathName] = source;
 			}
 
 			string path;
 			if (!Path.IsPathRooted (name)) {
 				var loc = comp_unit.SourceFile;
-				string root = Path.GetDirectoryName (loc.FullPathName);
+				string root = Path.GetDirectoryName (loc.OriginalFullPathName);
 				path = Path.GetFullPath (Path.Combine (root, name));
 				var dir = Path.GetDirectoryName (loc.Name);
 				if (!string.IsNullOrEmpty (dir))

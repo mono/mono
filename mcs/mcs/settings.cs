@@ -87,6 +87,8 @@ namespace Mono.CSharp {
 		//
 		public List<Tuple<string, string>> AssemblyReferencesAliases;
 
+		public List<KeyValuePair<string, string>> PathMap;
+
 		//
 		// Modules to be embedded
 		//
@@ -1210,6 +1212,31 @@ namespace Mono.CSharp {
 				settings.RuntimeMetadataVersion = value;
 				return ParseResult.Success;
 
+			case "/pathmap":
+				if (value.Length == 0) {
+					return ParseResult.Success;
+				}
+
+				foreach (var pair in value.Split (',')) {
+					var kv = pair.Split ('=');
+					if (kv.Length != 2) {
+						report.Error (8101, "The pathmap option was incorrectly formatted");
+						return ParseResult.Error;
+					}
+
+					if (settings.PathMap == null)
+						settings.PathMap = new List<KeyValuePair<string, string>> ();
+
+					var key = kv [0].TrimEnd (Path.DirectorySeparatorChar);
+					var path = kv [1].TrimEnd (Path.DirectorySeparatorChar);
+					if (key.Length == 0 || path.Length == 0)
+						report.Error (8101, "The pathmap option was incorrectly formatted");
+
+					settings.PathMap.Add (new KeyValuePair<string, string> (key, path));
+				}
+
+				return ParseResult.Success;
+
 			// csc options that we don't support
 			case "/analyzer":
 			case "/appconfig":
@@ -1224,7 +1251,6 @@ namespace Mono.CSharp {
 			case "/link":
 			case "/moduleassemblyname":
 			case "/nowin32manifest":
-			case "/pathmap":
 			case "/pdb":
 			case "/preferreduilang":
 			case "/publicsign":
@@ -1595,7 +1621,7 @@ namespace Mono.CSharp {
 				"   -help                Lists all compiler options (short: -?)\n" +
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, 4, 5, Default or Experimental\n" +
+				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, 4, 5, 6, Default or Experimental\n" +
 				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig            Disables implicitly referenced assemblies\n" +
@@ -1603,6 +1629,7 @@ namespace Mono.CSharp {
 				"   -nowarn:W1[,Wn]      Suppress one or more compiler warnings\n" +
 				"   -optimize[+|-]       Enables advanced compiler optimizations (short: -o)\n" +
 				"   -out:FILE            Specifies output assembly name\n" +
+				"   -pathmap:K=V[,Kn=Vn] Sets a mapping for source path names used in generated output\n" +
 				"   -pkg:P1[,Pn]         References packages P1..Pn\n" +
 				"   -platform:ARCH       Specifies the target platform of the output assembly\n" +
 				"                        ARCH can be one of: anycpu, anycpu32bitpreferred, arm,\n" +
