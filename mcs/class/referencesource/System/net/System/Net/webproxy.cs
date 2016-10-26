@@ -504,7 +504,7 @@ namespace System.Net {
 #if MONO
         public static IWebProxy CreateDefaultProxy ()
         {
-#if MONOTOUCH_WATCH
+#if FEATURE_NO_BSD_SOCKETS
             throw new PlatformNotSupportedException ();
 #elif MONOTOUCH
             return Mono.Net.CFNetwork.GetDefaultProxy ();
