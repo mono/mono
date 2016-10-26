@@ -61,7 +61,6 @@
 #define GetProcessTimes wapi_GetProcessTimes 
 #define EnumProcessModules wapi_EnumProcessModules 
 #define GetModuleBaseName wapi_GetModuleBaseName 
-#define GetModuleFileNameEx wapi_GetModuleFileNameEx 
 #define GetModuleInformation wapi_GetModuleInformation 
 #define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
 #define SetProcessWorkingSetSize wapi_SetProcessWorkingSetSize 

@@ -535,6 +535,50 @@ get_domain_assemblies (MonoDomain *domain)
 	return assemblies;
 }
 
+static guint32
+get_module_filename (gpointer process, gpointer module,
+					 gunichar2 *basename, guint32 size)
+{
+	gint pid, len;
+	gsize bytes;
+	gchar *path;
+	gunichar2 *proc_path;
+
+	size *= sizeof (gunichar2); /* adjust for unicode characters */
+
+	if (basename == NULL || size == 0)
+		return 0;
+
+	pid = GetProcessId (process);
+
+	path = wapi_process_get_path (pid);
+	if (path == NULL)
+		return 0;
+
+	proc_path = mono_unicode_from_external (path, &bytes);
+	g_free (path);
+
+	if (proc_path == NULL)
+		return 0;
+
+	len = (bytes / 2);
+
+	/* Add the terminator */
+	bytes += 2;
+
+	if (size < bytes) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d smaller than needed (%ld); truncating", __func__, size, bytes);
+		memcpy (basename, proc_path, size);
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d larger than needed (%ld)", __func__, size, bytes);
+		memcpy (basename, proc_path, bytes);
+	}
+
+	g_free (proc_path);
+
+	return len;
+}
+
 /* Returns an array of System.Diagnostics.ProcessModule */
 MonoArray *
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
@@ -568,7 +612,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 
 	for (i = 0; i < module_count; i++) {
 		if (GetModuleBaseName (process, mods[i], modname, MAX_PATH) &&
-				GetModuleFileNameEx (process, mods[i], filename, MAX_PATH)) {
+				get_module_filename (process, mods[i], filename, MAX_PATH)) {
 			MonoObject *module = process_add_module (process, mods[i],
 													 filename, modname, mono_class_get_process_module_class (), &error);
 			if (!mono_error_ok (&error)) {
