@@ -598,6 +598,9 @@ get_process_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 	return item;
 }
 
+static gboolean
+get_module_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size);
+
 static MonoObject*
 process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class, MonoError *error)
 {
@@ -621,7 +624,7 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 	process_set_field_string (filever, "filename", filename,
 							  unicode_chars (filename), error);
 	return_val_if_nok (error, NULL);
-	ok = GetModuleInformation (process, mod, &modinfo, sizeof(MODULEINFO));
+	ok = get_module_information (process, mod, &modinfo, sizeof(MODULEINFO));
 	if (ok) {
 		process_set_field_intptr (item, "baseaddr",
 					  modinfo.lpBaseOfDll);
@@ -1428,6 +1431,82 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 	}
 
 	return 0;
+}
+
+static gboolean
+get_module_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size)
+{
+	WapiHandle_process *process_handle;
+	pid_t pid;
+#if !defined(USE_OSX_LOADER) && !defined(USE_BSD_LOADER)
+	FILE *fp;
+#endif
+	GSList *mods = NULL;
+	WapiProcModule *found_module;
+	guint32 count;
+	int i;
+	gboolean ret = FALSE;
+	char *proc_name = NULL;
+	gboolean res;
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Getting module info, process handle %p module %p",
+		   __func__, process, module);
+
+	if (modinfo == NULL || size < sizeof (WapiModuleInfo))
+		return FALSE;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
+		pid = (pid_t)WAPI_HANDLE_TO_PID (process);
+		proc_name = get_process_name_from_proc (pid);
+	} else {
+		res = mono_w32handle_lookup (process, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+		if (!res) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
+			return FALSE;
+		}
+
+		pid = process_handle->id;
+		proc_name = g_strdup (process_handle->proc_name);
+	}
+
+#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER)
+	mods = load_modules ();
+#else
+	/* Look up the address in /proc/<pid>/maps */
+	if ((fp = open_process_map (pid, "r")) == NULL) {
+		/* No /proc/<pid>/maps, so just return failure
+		 * for now
+		 */
+		g_free (proc_name);
+		return FALSE;
+	}
+	mods = load_modules (fp);
+	fclose (fp);
+#endif
+	count = g_slist_length (mods);
+
+	/* If module != NULL compare the address.
+	 * If module == NULL we are looking for the main module.
+	 * The best we can do for now check it the module name end with the process name.
+	 */
+	for (i = 0; i < count; i++) {
+			found_module = (WapiProcModule *)g_slist_nth_data (mods, i);
+			if (ret == FALSE &&
+				((module == NULL && match_procname_to_modulename (proc_name, found_module->filename)) ||
+				 (module != NULL && found_module->address_start == module))) {
+				modinfo->lpBaseOfDll = found_module->address_start;
+				modinfo->SizeOfImage = (gsize)(found_module->address_end) - (gsize)(found_module->address_start);
+				modinfo->EntryPoint = found_module->address_offset;
+				ret = TRUE;
+			}
+
+			free_procmodule (found_module);
+	}
+
+	g_slist_free (mods);
+	g_free (proc_name);
+
+	return ret;
 }
 
 /* Returns an array of System.Diagnostics.ProcessModule */
