@@ -194,9 +194,10 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 	while (zs->avail_out > 0) {
 		if (zs->avail_in == 0) {
 			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
+			n = n < 0 ? 0 : n;
 			stream->total_in += n;
 			zs->next_in = stream->buffer;
-			zs->avail_in = n < 0 ? 0 : n;
+			zs->avail_in = n;
 		}
 
 		if (zs->avail_in == 0 && zs->total_in == 0)
