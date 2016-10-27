@@ -15,7 +15,7 @@ certmgr \- Mono Certificate Manager (CLI version)
 or
 .B certmgr -ssl [options] url
 .SH DESCRIPTION
-This tool allow to list, add, remove or extract certificates, certificate 
+This tool allows to list, add, remove or extract certificates, certificate 
 revocation lists (CRL) or certificate trust lists (CTL) to/from a 
 certificate store. Certificate stores are used to build and validate 
 certificate chains for Authenticode(r) code signing validation and SSL 
@@ -23,7 +23,7 @@ server certificates.
 .SH STORES
 The 
 .I store
-represents the certificate store to use.   It can be one of the
+represents the certificate store to use. It can be one of the
 following:
 .TP
 .I "My"
@@ -46,7 +46,7 @@ This is for untrusted roots
 List the certificates, CTL or CTL in the specified store.
 .TP
 .I "-add"
-Add a certificate, CRL or CTL to specified store. If filename it's a pkcs12 
+Add a certificate, CRL or CTL to specified store. If filename is a pkcs12 
 or pfx file, and it contains a private key, it will be imported to local key
 pair container.
 .TP
@@ -64,25 +64,25 @@ Copy a certificate, CRL or CTL from a store to a file.
 Download and add the certificates from a SSL session. You'll be asked to 
 confirm the addition of every certificate received from the server. Note 
 that SSL/TLS protocols do not requires a server to send the root certificate.
-This action assume an certificate (-c) object type and will import the 
+This action assumes a certificate (-c) object type and will import the 
 certificates in appropriate stores (i.e. server certificate in the 
-OtherPeople store, the root certificate in the Trust store, any other 
+OtherPeople store, the root certificate in the Trust store and any other 
 intermediate certificates in the IntermediateCA store).
 .TP
 .I "-importKey"
 Allows importing a private key from a pkcs12 file into a local key pair
-store. (Usefull when you already have the key's corresponding certificate
+store. (Useful when you already have the key's corresponding certificate
 installed at the specific store.)
 
 .SH OBJECT TYPES
 .TP
 .I "-c", "-cert", "-certificate"
-Add, Delete or Put certificates. That is the specified file must/will contains
+Add, Delete or Put certificates. That is the specified file must/will contain
 X.509 certificates in DER binary encoding.
 .TP
 .I "-crl"
 Add, Delete or Put certificate revocation lists (CRL). That is the specified 
-file must/will contains X.509 CRL in DER binary encoding.
+file must/will contain X.509 CRL in DER binary encoding.
 .TP
 .I "-ctl"
 Add, Delete or Put certificate trust lists (CRL). UNSUPPORTED.
@@ -96,7 +96,7 @@ Use the machine's certificate stores (instead of the default user's stores).
 More details displayed on the console.
 .TP
 .I "-p password"
-Use the specify password when accessing a pkcs12 file.
+Use the specified password when accessing a pkcs12 file.
 .TP
 .I "-help", "-h", "-?", "/?"
 Display help about this tool.
@@ -113,7 +113,7 @@ For example the trusted root certificates for a user would be kept under
 .TP
 Certificates files are kept in DER (binary) format (extension .cer).
 .TP
-The filenames either starts with
+The filenames either start with
 .I tbp 
 (thumbprint) or
 .I ski
