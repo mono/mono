@@ -432,6 +432,24 @@ namespace MonoTests.System.IO.Compression
 
 			Assert.AreEqual(81942, unZipped.Length);
 		}
+
+		[Test]
+		public void Bug44994_InflateByteByByte()
+		{
+			int byteCount = 0;
+			using (var fileStream = File.OpenRead(Path.Combine("Test", "compressed.bin")))
+			{
+				using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress, false))
+				{
+					while (deflateStream.ReadByte() != -1)
+					{
+						byteCount++;
+					}
+				}
+			}
+
+			Assert.AreEqual(125387, byteCount);
+		}
 	}
 }
 
