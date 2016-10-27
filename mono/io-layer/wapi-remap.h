@@ -59,7 +59,6 @@
 #define CloseProcess wapi_CloseProcess 
 #define GetExitCodeProcess wapi_GetExitCodeProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
-#define EnumProcessModules wapi_EnumProcessModules 
 #define GetModuleInformation wapi_GetModuleInformation 
 #define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
 #define SetProcessWorkingSetSize wapi_SetProcessWorkingSetSize 

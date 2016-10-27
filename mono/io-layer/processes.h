@@ -245,8 +245,6 @@ extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
 				 WapiFileTime *exit_time,
 				 WapiFileTime *kernel_time,
 				 WapiFileTime *user_time);
-extern gboolean EnumProcessModules (gpointer process, gpointer *modules,
-				    guint32 size, guint32 *needed);
 extern gboolean GetModuleInformation (gpointer process, gpointer module,
 				      WapiModuleInfo *modinfo, guint32 size);
 extern gboolean GetProcessWorkingSetSize (gpointer process, size_t *min,

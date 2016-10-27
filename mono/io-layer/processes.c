@@ -135,11 +135,6 @@ static const gchar* process_typename (void);
 static gsize process_typesize (void);
 static gboolean is_pid_valid (pid_t pid);
 
-#if !(defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER))
-static FILE *
-open_process_map (int pid, const char *mode);
-#endif
-
 static MonoW32HandleOps _wapi_process_ops = {
 	process_close,		/* close_shared */
 	NULL,				/* signal */
@@ -1689,102 +1684,6 @@ open_process_map (int pid, const char *mode)
 	return fp;
 }
 #endif
-
-static char *get_process_name_from_proc (pid_t pid);
-
-gboolean EnumProcessModules (gpointer process, gpointer *modules,
-			     guint32 size, guint32 *needed)
-{
-	WapiHandle_process *process_handle;
-#if !defined(USE_OSX_LOADER) && !defined(USE_BSD_LOADER)
-	FILE *fp;
-#endif
-	GSList *mods = NULL;
-	WapiProcModule *module;
-	guint32 count, avail = size / sizeof(gpointer);
-	int i;
-	pid_t pid;
-	char *proc_name = NULL;
-	
-	/* Store modules in an array of pointers (main module as
-	 * modules[0]), using the load address for each module as a
-	 * token.  (Use 'NULL' as an alternative for the main module
-	 * so that the simple implementation can just return one item
-	 * for now.)  Get the info from /proc/<pid>/maps on linux,
-	 * /proc/<pid>/map on FreeBSD, other systems will have to
-	 * implement /dev/kmem reading or whatever other horrid
-	 * technique is needed.
-	 */
-	if (size < sizeof(gpointer))
-		return FALSE;
-
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
-		pid = WAPI_HANDLE_TO_PID (process);
-		proc_name = get_process_name_from_proc (pid);
-	} else {
-		process_handle = lookup_process_handle (process);
-		if (!process_handle) {
-			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-		
-			return FALSE;
-		}
-		pid = process_handle->id;
-		proc_name = g_strdup (process_handle->proc_name);
-	}
-	
-#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER)
-	mods = load_modules ();
-	if (!proc_name) {
-		modules[0] = NULL;
-		*needed = sizeof(gpointer);
-		return TRUE;
-	}
-#else
-	fp = open_process_map (pid, "r");
-	if (!fp) {
-		/* No /proc/<pid>/maps so just return the main module
-		 * shortcut for now
-		 */
-		modules[0] = NULL;
-		*needed = sizeof(gpointer);
-		g_free (proc_name);
-		return TRUE;
-	}
-	mods = load_modules (fp);
-	fclose (fp);
-#endif
-	count = g_slist_length (mods);
-		
-	/* count + 1 to leave slot 0 for the main module */
-	*needed = sizeof(gpointer) * (count + 1);
-
-	/*
-	 * Use the NULL shortcut, as the first line in
-	 * /proc/<pid>/maps isn't the executable, and we need
-	 * that first in the returned list. Check the module name 
-	 * to see if it ends with the proc name and substitute 
-	 * the first entry with it.  FIXME if this turns out to 
-	 * be a problem.
-	 */
-	modules[0] = NULL;
-	for (i = 0; i < (avail - 1) && i < count; i++) {
-		module = (WapiProcModule *)g_slist_nth_data (mods, i);
-		if (modules[0] != NULL)
-			modules[i] = module->address_start;
-		else if (match_procname_to_modulename (proc_name, module->filename))
-			modules[0] = module->address_start;
-		else
-			modules[i + 1] = module->address_start;
-	}
-		
-	for (i = 0; i < count; i++) {
-		free_procmodule ((WapiProcModule *)g_slist_nth_data (mods, i));
-	}
-	g_slist_free (mods);
-	g_free (proc_name);
-	
-	return TRUE;
-}
 
 static char *
 get_process_name_from_proc (pid_t pid)
