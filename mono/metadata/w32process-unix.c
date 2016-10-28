@@ -138,6 +138,10 @@ static char *mono_environ[1] = { NULL };
 extern char **environ;
 #endif
 
+#define WAPI_IS_PSEUDO_PROCESS_HANDLE(handle) ((GPOINTER_TO_UINT(handle) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED)
+#define WAPI_PID_TO_HANDLE(pid) GINT_TO_POINTER (_WAPI_PROCESS_UNHANDLED + (pid))
+#define WAPI_HANDLE_TO_PID(handle) (GPOINTER_TO_UINT ((handle)) - _WAPI_PROCESS_UNHANDLED)
+
 typedef enum {
 	STARTF_USESHOWWINDOW=0x001,
 	STARTF_USESIZE=0x002,
