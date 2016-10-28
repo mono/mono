@@ -52,7 +52,6 @@ namespace System.Reflection.Emit {
 		private String name;
 		private object def_value;
 		private int offset;
-		private int table_idx;
 		internal TypeBuilder typeb;
 		private byte[] rva_data;
 		private CustomAttributeBuilder[] cattrs;
@@ -74,7 +73,6 @@ namespace System.Reflection.Emit {
 			this.modOpt = modOpt;
 			offset = -1;
 			typeb = tb;
-			table_idx = tb.get_next_table_index (this, 0x04, true);
 
 			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
@@ -123,6 +121,8 @@ namespace System.Reflection.Emit {
 			else
 				throw CreateNotSupportedException ();
 		}
+
+		public override int MetadataToken { get { return ((ModuleBuilder) typeb.Module).GetToken (this); } }
 
 		public FieldToken GetToken() {
 			return new FieldToken (MetadataToken);
