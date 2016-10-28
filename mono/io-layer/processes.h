@@ -106,8 +106,6 @@ typedef struct {
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
-gchar* wapi_process_get_path (pid_t pid);
-
 G_END_DECLS
 
 #endif /* _WAPI_PROCESSES_H_ */

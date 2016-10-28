@@ -1494,7 +1494,7 @@ get_module_filename (gpointer process, gpointer module,
 
 	pid = process_get_pid (process);
 
-	path = wapi_process_get_path (pid);
+	path = mono_w32process_get_path (pid);
 	if (path == NULL)
 		return 0;
 
@@ -3218,4 +3218,22 @@ mono_w32process_set_cli_launcher (gchar *path)
 {
 	g_free (cli_launcher);
 	cli_launcher = g_strdup (path);
+}
+
+gchar*
+mono_w32process_get_path (pid_t pid)
+{
+#if defined(PLATFORM_MACOSX) && !defined(__mono_ppc__) && defined(TARGET_OSX)
+	gchar buf [PROC_PIDPATHINFO_MAXSIZE];
+	gint res;
+
+	res = proc_pidpath (pid, buf, sizeof (buf));
+	if (res <= 0)
+		return NULL;
+	if (buf [0] == '\0')
+		return NULL;
+	return g_strdup (buf);
+#else
+	return get_process_name_from_proc (pid);
+#endif
 }

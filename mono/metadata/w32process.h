@@ -13,6 +13,10 @@
 #include <config.h>
 #include <glib.h>
 
+#if HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #include <mono/metadata/object.h>
 
 G_BEGIN_DECLS
@@ -105,6 +109,9 @@ mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityC
 
 void
 mono_w32process_set_cli_launcher (gchar *path);
+
+gchar*
+mono_w32process_get_path (pid_t pid);
 
 #endif
 
