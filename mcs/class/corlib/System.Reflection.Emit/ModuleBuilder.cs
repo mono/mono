@@ -62,6 +62,7 @@ namespace System.Reflection.Emit {
 		private FieldBuilder[] global_fields;
 		bool is_main;
 		private MonoResource[] resources;
+		uint next_field_idx;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -93,6 +94,8 @@ namespace System.Reflection.Emit {
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
+
+			next_field_idx = 0;
 
 			basic_init (this);
 
