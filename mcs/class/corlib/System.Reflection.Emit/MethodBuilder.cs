@@ -103,7 +103,7 @@ namespace System.Reflection.Emit
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = get_next_table_index (this, 0x06, true);
+			table_idx = get_next_table_index (this, 0x06, 1);
 
 			((ModuleBuilder)tb.Module).RegisterToken (this, GetToken ().Token);
 		}
@@ -566,9 +566,9 @@ namespace System.Reflection.Emit
 			return name.GetHashCode ();
 		}
 
-		internal override int get_next_table_index (object obj, int table, bool inc)
+		internal override int get_next_table_index (object obj, int table, int count)
 		{
-			return type.get_next_table_index (obj, table, inc);
+			return type.get_next_table_index (obj, table, count);
 		}
 
 		void ExtendArray<T> (ref T[] array, T elem) {
