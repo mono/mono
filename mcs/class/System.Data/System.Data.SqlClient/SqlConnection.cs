@@ -945,7 +945,7 @@ namespace System.Data.SqlClient
 
 				Byte [] rawrs;
 
-				rawrs = Receive (ref endpoint);
+				rawrs = Receive (ref remoteEndpoint);
 
 				string rs = Encoding.ASCII.GetString (rawrs);
 
