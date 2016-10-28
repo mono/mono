@@ -40,6 +40,16 @@
 #include <shellapi.h>
 #endif
 
+void
+mono_w32process_init (void)
+{
+}
+
+void
+mono_w32process_cleanup (void)
+{
+}
+
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
@@ -643,7 +653,7 @@ mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_info)
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info)
 {
 	SHELLEXECUTEINFO shellex = {0};
 	gboolean ret;
@@ -710,7 +720,7 @@ mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDL
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static gboolean
-mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_path,
+mono_process_create_process (MonoW32ProcessInfo *mono_process_info, gunichar2 *shell_path,
 			     MonoString *cmd, guint32 creation_flags, gchar *env_vars,
 			     gunichar2 *dir, STARTUPINFO *start_info, PROCESS_INFORMATION *process_info)
 {
@@ -748,7 +758,7 @@ mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_p
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 static gboolean
-mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
+mono_process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
 {
 	gchar		*spath = NULL;
 	gchar		*new_cmd, *cmd_utf8;
@@ -783,8 +793,8 @@ mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunicha
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, HANDLE stdin_handle,
-							     HANDLE stdout_handle, HANDLE stderr_handle, MonoProcInfo *process_info)
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info, HANDLE stdin_handle,
+							     HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info)
 {
 	gboolean ret;
 	gunichar2 *dir;

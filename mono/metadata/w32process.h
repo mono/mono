@@ -38,7 +38,7 @@ typedef struct
 	MonoString *domain;
 	gpointer password; /* BSTR from SecureString in 2.0 profile */
 	MonoBoolean load_user_profile;
-} MonoProcInfo;
+} MonoW32ProcessInfo;
 
 typedef struct
 {
@@ -64,7 +64,7 @@ typedef struct
 	MonoBoolean create_no_window;
 	MonoObject *weak_parent_process;
 	MonoObject *envVars;
-} MonoProcessStartInfo;
+} MonoW32ProcessStartInfo;
 
 typedef struct {
 #if G_BYTE_ORDER == G_BIG_ENDIAN
@@ -75,6 +75,12 @@ typedef struct {
 	guint32 highDateTime;
 #endif
 } MonoW32ProcessTime;
+
+void
+mono_w32process_init (void);
+
+void
+mono_w32process_cleanup (void);
 
 gboolean
 mono_w32process_close (gpointer handle);
@@ -112,11 +118,11 @@ void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_handle);
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_handle);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, gpointer stdin_handle,
-	gpointer stdout_handle, gpointer stderr_handle, MonoProcInfo *process_handle);
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info, gpointer stdin_handle,
+	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle);
 
 MonoString*
 ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);

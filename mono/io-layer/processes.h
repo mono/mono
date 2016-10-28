@@ -22,53 +22,6 @@
 
 G_BEGIN_DECLS
 
-typedef enum {
-	STARTF_USESHOWWINDOW=0x001,
-	STARTF_USESIZE=0x002,
-	STARTF_USEPOSITION=0x004,
-	STARTF_USECOUNTCHARS=0x008,
-	STARTF_USEFILLATTRIBUTE=0x010,
-	STARTF_RUNFULLSCREEN=0x020,
-	STARTF_FORCEONFEEDBACK=0x040,
-	STARTF_FORCEOFFFEEDBACK=0x080,
-	STARTF_USESTDHANDLES=0x100
-} WapiStartupFlags;
-
-
-typedef struct _WapiStartupInfo WapiStartupInfo;
-
-struct _WapiStartupInfo 
-{
-	guint32 cb;
-	guchar *lpReserved;
-	guchar *lpDesktop;
-	guchar *lpTitle;
-	guint32 dwX;
-	guint32 dwY;
-	guint32 dwXSize;
-	guint32 dwYSize;
-	guint32 dwXCountChars;
-	guint32 dwYCountChars;
-	guint32 dwFillAttribute;
-	WapiStartupFlags dwFlags;
-	guint16 wShowWindow;
-	guint16 cbReserved2;
-	guint8 *lpReserved2;
-	gpointer hStdInput;
-	gpointer hStdOutput;
-	gpointer hStdError;
-};
-
-typedef struct _WapiProcessInformation WapiProcessInformation;
-
-struct _WapiProcessInformation 
-{
-	gpointer hProcess;
-	gpointer hThread;
-	guint32 dwProcessId;
-	guint32 dwThreadId;
-};
-
 /*
  * MonoProcess describes processes we create.
  * It contains a semaphore that can be waited on in order to wait
@@ -150,14 +103,6 @@ typedef struct {
 #define	PROCESS_QUERY_INFORMATION	0x0400
 #define	PROCESS_ALL_ACCESS		(STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0xfff)
 
-extern gboolean CreateProcess (const gunichar2 *appname,
-			       const gunichar2 *cmdline,
-			       WapiSecurityAttributes *process_attrs,
-			       WapiSecurityAttributes *thread_attrs,
-			       gboolean inherit_handles, guint32 create_flags,
-			       gpointer environ, const gunichar2 *cwd,
-			       WapiStartupInfo *startup,
-			       WapiProcessInformation *process_info);
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 

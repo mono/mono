@@ -61,7 +61,6 @@ OTHER_SRC = \
 	status.h		\
 	timefuncs.c		\
 	timefuncs.h		\
-	timefuncs-private.h	\
 	types.h			\
 	uglify.h		\
 	versioninfo.c		\

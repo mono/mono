@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 #include <mono/io-layer/wapi.h>
-#include <mono/io-layer/timefuncs-private.h>
+#include <mono/io-layer/timefuncs.h>
 #include "mono/utils/mono-time.h"
 
 #undef DEBUG

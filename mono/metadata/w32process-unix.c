@@ -109,6 +109,8 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/mono-path.h>
+#include <mono/utils/mono-lazy-init.h>
+#include <mono/utils/mono-signal-handler.h>
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242
@@ -119,10 +121,77 @@
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
+/* The process' environment strings */
+#if defined(__APPLE__)
+#if defined (TARGET_OSX)
+/* Apple defines this in crt_externs.h but doesn't provide that header for 
+ * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
+ * in fact exist on all implementations (so far) 
+ */
+gchar ***_NSGetEnviron(void);
+#define environ (*_NSGetEnviron())
+#else
+static char *mono_environ[1] = { NULL };
+#define environ mono_environ
+#endif /* defined (TARGET_OSX) */
+#else
+extern char **environ;
+#endif
+
+typedef enum {
+	STARTF_USESHOWWINDOW=0x001,
+	STARTF_USESIZE=0x002,
+	STARTF_USEPOSITION=0x004,
+	STARTF_USECOUNTCHARS=0x008,
+	STARTF_USEFILLATTRIBUTE=0x010,
+	STARTF_RUNFULLSCREEN=0x020,
+	STARTF_FORCEONFEEDBACK=0x040,
+	STARTF_FORCEOFFFEEDBACK=0x080,
+	STARTF_USESTDHANDLES=0x100
+} StartupFlags;
+
+typedef struct {
+	gpointer input;
+	gpointer output;
+	gpointer error;
+} StartupHandles;
+
+#if HAVE_SIGACTION
+static mono_lazy_init_t process_sig_chld_once = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
+#endif
+
+static gchar *cli_launcher;
+
+static MonoProcess *mono_processes;
+static mono_mutex_t mono_processes_mutex;
+static volatile gint32 mono_processes_cleaning_up;
+
 static const gunichar2 utf16_space_bytes [2] = { 0x20, 0 };
 static const gunichar2 *utf16_space = utf16_space_bytes;
 static const gunichar2 utf16_quote_bytes [2] = { 0x22, 0 };
 static const gunichar2 *utf16_quote = utf16_quote_bytes;
+
+void
+mono_w32process_init (void)
+{
+	mono_os_mutex_init (&mono_processes_mutex);
+}
+
+void
+mono_w32process_cleanup (void)
+{
+	g_free (cli_launcher);
+}
+
+static void
+process_set_defaults (WapiHandle_process *process_handle)
+{
+	/* These seem to be the defaults on w2k */
+	process_handle->min_working_set = 204800;
+	process_handle->max_working_set = 1413120;
+
+	_wapi_time_t_to_filetime (time (NULL), &process_handle->create_time);
+}
 
 /* Check if a pid is valid - i.e. if a process exists with this pid. */
 static gboolean
@@ -310,6 +379,84 @@ match_procname_to_modulename (char *procname, char *modulename)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: result is %d", __func__, result);
 	return result;
+}
+
+static void
+mono_processes_cleanup (void)
+{
+	MonoProcess *mp;
+	MonoProcess *prev = NULL;
+	GSList *finished = NULL;
+	GSList *l;
+	gpointer unref_handle;
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s", __func__);
+
+	/* Ensure we're not in here in multiple threads at once, nor recursive. */
+	if (InterlockedCompareExchange (&mono_processes_cleaning_up, 1, 0) != 0)
+		return;
+
+	for (mp = mono_processes; mp; mp = mp->next) {
+		if (mp->pid == 0 && mp->handle) {
+			/* This process has exited and we need to remove the artifical ref
+			 * on the handle */
+			mono_os_mutex_lock (&mono_processes_mutex);
+			unref_handle = mp->handle;
+			mp->handle = NULL;
+			mono_os_mutex_unlock (&mono_processes_mutex);
+			if (unref_handle)
+				mono_w32handle_unref (unref_handle);
+		}
+	}
+
+	/*
+	 * Remove processes which exited from the mono_processes list.
+	 * We need to synchronize with the sigchld handler here, which runs
+	 * asynchronously. The handler requires that the mono_processes list
+	 * remain valid.
+	 */
+	mono_os_mutex_lock (&mono_processes_mutex);
+
+	mp = mono_processes;
+	while (mp) {
+		if (mp->handle_count == 0 && mp->freeable) {
+			/*
+			 * Unlink the entry.
+			 * This code can run parallel with the sigchld handler, but the
+			 * modifications it makes are safe.
+			 */
+			if (mp == mono_processes)
+				mono_processes = mp->next;
+			else
+				prev->next = mp->next;
+			finished = g_slist_prepend (finished, mp);
+
+			mp = mp->next;
+		} else {
+			prev = mp;
+			mp = mp->next;
+		}
+	}
+
+	mono_memory_barrier ();
+
+	for (l = finished; l; l = l->next) {
+		/*
+		 * All the entries in the finished list are unlinked from mono_processes, and
+		 * they have the 'finished' flag set, which means the sigchld handler is done
+		 * accessing them.
+		 */
+		mp = (MonoProcess *)l->data;
+		mono_os_sem_destroy (&mp->exit_sem);
+		g_free (mp);
+	}
+	g_slist_free (finished);
+
+	mono_os_mutex_unlock (&mono_processes_mutex);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s done", __func__);
+
+	InterlockedDecrement (&mono_processes_cleaning_up);
 }
 
 static MonoImage *system_assembly;
@@ -1673,56 +1820,749 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 	}
 }
 
-/* Only used when UseShellExecute is false */
-static inline gchar *
-mono_process_quote_path (const gchar *path)
+static void
+switch_dir_separators (char *path)
 {
-	return g_shell_quote (path);
-}
-
-static inline gchar *
-mono_process_unquote_application_name (gchar *path)
-{
-	return path;
-}
-
-/* Only used when UseShellExecute is false */
-static gboolean
-mono_process_complete_path (const gunichar2 *appname, gchar **completed)
-{
-	gchar *utf8app, *utf8appmemory;
-	gchar *found;
-
-	utf8appmemory = g_utf16_to_utf8 (appname, -1, NULL, NULL, NULL);
-	utf8app = mono_process_unquote_application_name (utf8appmemory);
-
-	if (g_path_is_absolute (utf8app)) {
-		*completed = mono_process_quote_path (utf8app);
-		g_free (utf8appmemory);
-		return TRUE;
-	}
-
-	if (g_file_test (utf8app, G_FILE_TEST_IS_EXECUTABLE) && !g_file_test (utf8app, G_FILE_TEST_IS_DIR)) {
-		*completed = mono_process_quote_path (utf8app);
-		g_free (utf8appmemory);
-		return TRUE;
-	}
+	size_t i, pathLength = strlen(path);
 	
-	found = g_find_program_in_path (utf8app);
-	if (found == NULL) {
-		*completed = NULL;
-		g_free (utf8appmemory);
+	/* Turn all the slashes round the right way, except for \' */
+	/* There are probably other characters that need to be excluded as well. */
+	for (i = 0; i < pathLength; i++) {
+		if (path[i] == '\\' && i < pathLength - 1 && path[i+1] != '\'' )
+			path[i] = '/';
+	}
+}
+
+#if HAVE_SIGACTION
+
+MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, siginfo_t *info, void *context))
+{
+	int status;
+	int pid;
+	MonoProcess *p;
+
+	do {
+		do {
+			pid = waitpid (-1, &status, WNOHANG);
+		} while (pid == -1 && errno == EINTR);
+
+		if (pid <= 0)
+			break;
+
+		/*
+		 * This can run concurrently with the code in the rest of this module.
+		 */
+		for (p = mono_processes; p; p = p->next) {
+			if (p->pid == pid) {
+				break;
+			}
+		}
+		if (p) {
+			p->pid = 0; /* this pid doesn't exist anymore, clear it */
+			p->status = status;
+			mono_os_sem_post (&p->exit_sem);
+			mono_memory_barrier ();
+			/* Mark this as freeable, the pointer becomes invalid afterwards */
+			p->freeable = TRUE;
+		}
+	} while (1);
+}
+
+static void
+process_add_sigchld_handler (void)
+{
+	struct sigaction sa;
+
+	sa.sa_sigaction = mono_sigchld_signal_handler;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = SA_NOCLDSTOP | SA_SIGINFO;
+	g_assert (sigaction (SIGCHLD, &sa, NULL) != -1);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "Added SIGCHLD handler");
+}
+
+#endif
+
+static gboolean
+is_readable_or_executable (const char *prog)
+{
+	struct stat buf;
+	int a = access (prog, R_OK);
+	int b = access (prog, X_OK);
+	if (a != 0 && b != 0)
+		return FALSE;
+	if (stat (prog, &buf))
+		return FALSE;
+	if (S_ISREG (buf.st_mode))
+		return TRUE;
+	return FALSE;
+}
+
+static gboolean
+is_executable (const char *prog)
+{
+	struct stat buf;
+	if (access (prog, X_OK) != 0)
+		return FALSE;
+	if (stat (prog, &buf))
+		return FALSE;
+	if (S_ISREG (buf.st_mode))
+		return TRUE;
+	return FALSE;
+}
+
+static gboolean
+is_managed_binary (const char *filename)
+{
+	int original_errno = errno;
+#if defined(HAVE_LARGE_FILE_SUPPORT) && defined(O_LARGEFILE)
+	int file = open (filename, O_RDONLY | O_LARGEFILE);
+#else
+	int file = open (filename, O_RDONLY);
+#endif
+	off_t new_offset;
+	unsigned char buffer[8];
+	off_t file_size, optional_header_offset;
+	off_t pe_header_offset, clr_header_offset;
+	gboolean managed = FALSE;
+	int num_read;
+	guint32 first_word, second_word, magic_number;
+	
+	/* If we are unable to open the file, then we definitely
+	 * can't say that it is managed. The child mono process
+	 * probably wouldn't be able to open it anyway.
+	 */
+	if (file < 0) {
+		errno = original_errno;
 		return FALSE;
 	}
 
-	*completed = mono_process_quote_path (found);
-	g_free (found);
-	g_free (utf8appmemory);
-	return TRUE;
+	/* Retrieve the length of the file for future sanity checks. */
+	file_size = lseek (file, 0, SEEK_END);
+	lseek (file, 0, SEEK_SET);
+
+	/* We know we need to read a header field at offset 60. */
+	if (file_size < 64)
+		goto leave;
+
+	num_read = read (file, buffer, 2);
+
+	if ((num_read != 2) || (buffer[0] != 'M') || (buffer[1] != 'Z'))
+		goto leave;
+
+	new_offset = lseek (file, 60, SEEK_SET);
+
+	if (new_offset != 60)
+		goto leave;
+	
+	num_read = read (file, buffer, 4);
+
+	if (num_read != 4)
+		goto leave;
+	pe_header_offset =  buffer[0]
+		| (buffer[1] <<  8)
+		| (buffer[2] << 16)
+		| (buffer[3] << 24);
+	
+	if (pe_header_offset + 24 > file_size)
+		goto leave;
+
+	new_offset = lseek (file, pe_header_offset, SEEK_SET);
+
+	if (new_offset != pe_header_offset)
+		goto leave;
+
+	num_read = read (file, buffer, 4);
+
+	if ((num_read != 4) || (buffer[0] != 'P') || (buffer[1] != 'E') || (buffer[2] != 0) || (buffer[3] != 0))
+		goto leave;
+
+	/*
+	 * Verify that the header we want in the optional header data
+	 * is present in this binary.
+	 */
+	new_offset = lseek (file, pe_header_offset + 20, SEEK_SET);
+
+	if (new_offset != pe_header_offset + 20)
+		goto leave;
+
+	num_read = read (file, buffer, 2);
+
+	if ((num_read != 2) || ((buffer[0] | (buffer[1] << 8)) < 216))
+		goto leave;
+
+	optional_header_offset = pe_header_offset + 24;
+
+	/* Read the PE magic number */
+	new_offset = lseek (file, optional_header_offset, SEEK_SET);
+	
+	if (new_offset != optional_header_offset)
+		goto leave;
+
+	num_read = read (file, buffer, 2);
+
+	if (num_read != 2)
+		goto leave;
+
+	magic_number = (buffer[0] | (buffer[1] << 8));
+	
+	if (magic_number == 0x10B)  // PE32
+		clr_header_offset = 208;
+	else if (magic_number == 0x20B)  // PE32+
+		clr_header_offset = 224;
+	else
+		goto leave;
+
+	/* Read the CLR header address and size fields. These will be
+	 * zero if the binary is not managed.
+	 */
+	new_offset = lseek (file, optional_header_offset + clr_header_offset, SEEK_SET);
+
+	if (new_offset != optional_header_offset + clr_header_offset)
+		goto leave;
+
+	num_read = read (file, buffer, 8);
+	
+	/* We are not concerned with endianness, only with
+	 * whether it is zero or not.
+	 */
+	first_word = *(guint32 *)&buffer[0];
+	second_word = *(guint32 *)&buffer[4];
+	
+	if ((num_read != 8) || (first_word == 0) || (second_word == 0))
+		goto leave;
+	
+	managed = TRUE;
+
+leave:
+	close (file);
+	errno = original_errno;
+	return managed;
+}
+
+static gboolean
+process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new_environ,
+	const gunichar2 *cwd, StartupHandles *startup_handles, MonoW32ProcessInfo *process_info)
+{
+#if defined (HAVE_FORK) && defined (HAVE_EXECVE)
+	char *cmd = NULL, *prog = NULL, *full_prog = NULL, *args = NULL, *args_after_prog = NULL;
+	char *dir = NULL, **env_strings = NULL, **argv = NULL;
+	guint32 i, env_count = 0;
+	gboolean ret = FALSE;
+	gpointer handle = NULL;
+	WapiHandle_process process_handle = {0}, *process_handle_data;
+	GError *gerr = NULL;
+	int in_fd, out_fd, err_fd;
+	pid_t pid = 0;
+	int startup_pipe [2] = {-1, -1};
+	int dummy;
+	MonoProcess *mono_process;
+	gboolean fork_failed = FALSE;
+	gboolean res;
+
+#if HAVE_SIGACTION
+	mono_lazy_initialize (&process_sig_chld_once, process_add_sigchld_handler);
+#endif
+
+	/* appname and cmdline specify the executable and its args:
+	 *
+	 * If appname is not NULL, it is the name of the executable.
+	 * Otherwise the executable is the first token in cmdline.
+	 *
+	 * Executable searching:
+	 *
+	 * If appname is not NULL, it can specify the full path and
+	 * file name, or else a partial name and the current directory
+	 * will be used.  There is no additional searching.
+	 *
+	 * If appname is NULL, the first whitespace-delimited token in
+	 * cmdline is used.  If the name does not contain a full
+	 * directory path, the search sequence is:
+	 *
+	 * 1) The directory containing the current process
+	 * 2) The current working directory
+	 * 3) The windows system directory  (Ignored)
+	 * 4) The windows directory (Ignored)
+	 * 5) $PATH
+	 *
+	 * Just to make things more interesting, tokens can contain
+	 * white space if they are surrounded by quotation marks.  I'm
+	 * beginning to understand just why windows apps are generally
+	 * so crap, with an API like this :-(
+	 */
+	if (appname != NULL) {
+		cmd = mono_unicode_to_external (appname);
+		if (cmd == NULL) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL",
+				   __func__);
+
+			SetLastError (ERROR_PATH_NOT_FOUND);
+			goto free_strings;
+		}
+
+		switch_dir_separators(cmd);
+	}
+
+	if (cmdline != NULL) {
+		args = mono_unicode_to_external (cmdline);
+		if (args == NULL) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+
+			SetLastError (ERROR_PATH_NOT_FOUND);
+			goto free_strings;
+		}
+	}
+
+	if (cwd != NULL) {
+		dir = mono_unicode_to_external (cwd);
+		if (dir == NULL) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+
+			SetLastError (ERROR_PATH_NOT_FOUND);
+			goto free_strings;
+		}
+
+		/* Turn all the slashes round the right way */
+		switch_dir_separators(dir);
+	}
+
+
+	/* We can't put off locating the executable any longer :-( */
+	if (cmd != NULL) {
+		char *unquoted;
+		if (g_ascii_isalpha (cmd[0]) && (cmd[1] == ':')) {
+			/* Strip off the drive letter.  I can't
+			 * believe that CP/M holdover is still
+			 * visible...
+			 */
+			g_memmove (cmd, cmd+2, strlen (cmd)-2);
+			cmd[strlen (cmd)-2] = '\0';
+		}
+
+		unquoted = g_shell_unquote (cmd, NULL);
+		if (unquoted[0] == '/') {
+			/* Assume full path given */
+			prog = g_strdup (unquoted);
+
+			/* Executable existing ? */
+			if (!is_readable_or_executable (prog)) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
+					   __func__, prog);
+				g_free (unquoted);
+				SetLastError (ERROR_FILE_NOT_FOUND);
+				goto free_strings;
+			}
+		} else {
+			/* Search for file named by cmd in the current
+			 * directory
+			 */
+			char *curdir = g_get_current_dir ();
+
+			prog = g_strdup_printf ("%s/%s", curdir, unquoted);
+			g_free (curdir);
+
+			/* And make sure it's readable */
+			if (!is_readable_or_executable (prog)) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
+					   __func__, prog);
+				g_free (unquoted);
+				SetLastError (ERROR_FILE_NOT_FOUND);
+				goto free_strings;
+			}
+		}
+		g_free (unquoted);
+
+		args_after_prog = args;
+	} else {
+		char *token = NULL;
+		char quote;
+
+		/* Dig out the first token from args, taking quotation
+		 * marks into account
+		 */
+
+		/* First, strip off all leading whitespace */
+		args = g_strchug (args);
+
+		/* args_after_prog points to the contents of args
+		 * after token has been set (otherwise argv[0] is
+		 * duplicated)
+		 */
+		args_after_prog = args;
+
+		/* Assume the opening quote will always be the first
+		 * character
+		 */
+		if (args[0] == '\"' || args [0] == '\'') {
+			quote = args [0];
+			for (i = 1; args[i] != '\0' && args[i] != quote; i++);
+			if (args [i + 1] == '\0' || g_ascii_isspace (args[i+1])) {
+				/* We found the first token */
+				token = g_strndup (args+1, i-1);
+				args_after_prog = g_strchug (args + i + 1);
+			} else {
+				/* Quotation mark appeared in the
+				 * middle of the token.  Just give the
+				 * whole first token, quotes and all,
+				 * to exec.
+				 */
+			}
+		}
+
+		if (token == NULL) {
+			/* No quote mark, or malformed */
+			for (i = 0; args[i] != '\0'; i++) {
+				if (g_ascii_isspace (args[i])) {
+					token = g_strndup (args, i);
+					args_after_prog = args + i + 1;
+					break;
+				}
+			}
+		}
+
+		if (token == NULL && args[0] != '\0') {
+			/* Must be just one token in the string */
+			token = g_strdup (args);
+			args_after_prog = NULL;
+		}
+
+		if (token == NULL) {
+			/* Give up */
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find what to exec", __func__);
+
+			SetLastError (ERROR_PATH_NOT_FOUND);
+			goto free_strings;
+		}
+
+		/* Turn all the slashes round the right way. Only for
+		 * the prg. name
+		 */
+		switch_dir_separators(token);
+
+		if (g_ascii_isalpha (token[0]) && (token[1] == ':')) {
+			/* Strip off the drive letter.  I can't
+			 * believe that CP/M holdover is still
+			 * visible...
+			 */
+			g_memmove (token, token+2, strlen (token)-2);
+			token[strlen (token)-2] = '\0';
+		}
+
+		if (token[0] == '/') {
+			/* Assume full path given */
+			prog = g_strdup (token);
+
+			/* Executable existing ? */
+			if (!is_readable_or_executable (prog)) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
+					   __func__, token);
+				g_free (token);
+				SetLastError (ERROR_FILE_NOT_FOUND);
+				goto free_strings;
+			}
+		} else {
+			char *curdir = g_get_current_dir ();
+
+			/* FIXME: Need to record the directory
+			 * containing the current process, and check
+			 * that for the new executable as the first
+			 * place to look
+			 */
+
+			prog = g_strdup_printf ("%s/%s", curdir, token);
+			g_free (curdir);
+
+			/* I assume X_OK is the criterion to use,
+			 * rather than F_OK
+			 *
+			 * X_OK is too strict *if* the target is a CLR binary
+			 */
+			if (!is_readable_or_executable (prog)) {
+				g_free (prog);
+				prog = g_find_program_in_path (token);
+				if (prog == NULL) {
+					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s", __func__, token);
+
+					g_free (token);
+					SetLastError (ERROR_FILE_NOT_FOUND);
+					goto free_strings;
+				}
+			}
+		}
+
+		g_free (token);
+	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Exec prog [%s] args [%s]",
+		__func__, prog, args_after_prog);
+
+	/* Check for CLR binaries; if found, we will try to invoke
+	 * them using the same mono binary that started us.
+	 */
+	if (is_managed_binary (prog)) {
+		gunichar2 *newapp, *newcmd;
+		gsize bytes_ignored;
+
+		newapp = mono_unicode_from_external (cli_launcher ? cli_launcher : "mono", &bytes_ignored);
+		if (newapp) {
+			if (appname)
+				newcmd = utf16_concat (utf16_quote, newapp, utf16_quote, utf16_space, appname, utf16_space, cmdline, NULL);
+			else
+				newcmd = utf16_concat (utf16_quote, newapp, utf16_quote, utf16_space, cmdline, NULL);
+
+			g_free (newapp);
+
+			if (newcmd) {
+				ret = process_create (NULL, newcmd, new_environ, cwd, startup_handles, process_info);
+
+				g_free (newcmd);
+
+				goto free_strings;
+			}
+		}
+	} else {
+		if (!is_executable (prog)) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Executable permisson not set on %s", __func__, prog);
+			SetLastError (ERROR_ACCESS_DENIED);
+			goto free_strings;
+		}
+	}
+
+	if (args_after_prog != NULL && *args_after_prog) {
+		char *qprog;
+
+		qprog = g_shell_quote (prog);
+		full_prog = g_strconcat (qprog, " ", args_after_prog, NULL);
+		g_free (qprog);
+	} else {
+		full_prog = g_shell_quote (prog);
+	}
+
+	ret = g_shell_parse_argv (full_prog, NULL, &argv, &gerr);
+	if (ret == FALSE) {
+		g_message ("process_create: %s\n", gerr->message);
+		g_error_free (gerr);
+		gerr = NULL;
+		goto free_strings;
+	}
+
+	if (startup_handles) {
+		in_fd = GPOINTER_TO_UINT (startup_handles->input);
+		out_fd = GPOINTER_TO_UINT (startup_handles->output);
+		err_fd = GPOINTER_TO_UINT (startup_handles->error);
+	} else {
+		in_fd = GPOINTER_TO_UINT (GetStdHandle (STD_INPUT_HANDLE));
+		out_fd = GPOINTER_TO_UINT (GetStdHandle (STD_OUTPUT_HANDLE));
+		err_fd = GPOINTER_TO_UINT (GetStdHandle (STD_ERROR_HANDLE));
+	}
+
+	process_handle.proc_name = g_strdup (prog);
+
+	process_set_defaults (&process_handle);
+
+	handle = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
+	if (handle == INVALID_HANDLE_VALUE) {
+		g_warning ("%s: error creating process handle", __func__);
+
+		ret = FALSE;
+		SetLastError (ERROR_OUTOFMEMORY);
+		goto free_strings;
+	}
+
+	/* new_environ is a block of NULL-terminated strings, which
+	 * is itself NULL-terminated. Of course, passing an array of
+	 * string pointers would have made things too easy :-(
+	 *
+	 * If new_environ is not NULL it specifies the entire set of
+	 * environment variables in the new process.  Otherwise the
+	 * new process inherits the same environment.
+	 */
+	if (new_environ) {
+		gunichar2 *new_environp;
+
+		/* Count the number of strings */
+		for (new_environp = (gunichar2 *)new_environ; *new_environp; new_environp++) {
+			env_count++;
+			while (*new_environp)
+				new_environp++;
+		}
+
+		/* +2: one for the process handle value, and the last
+		 * one is NULL
+		 */
+		env_strings = g_new0 (char *, env_count + 2);
+
+		/* Copy each environ string into 'strings' turning it
+		 * into utf8 (or the requested encoding) at the same
+		 * time
+		 */
+		env_count = 0;
+		for (new_environp = (gunichar2 *)new_environ; *new_environp; new_environp++) {
+			env_strings[env_count] = mono_unicode_to_external (new_environp);
+			env_count++;
+			while (*new_environp) {
+				new_environp++;
+			}
+		}
+	} else {
+		for (i = 0; environ[i] != NULL; i++)
+			env_count++;
+
+		/* +2: one for the process handle value, and the last
+		 * one is NULL
+		 */
+		env_strings = g_new0 (char *, env_count + 2);
+
+		/* Copy each environ string into 'strings' turning it
+		 * into utf8 (or the requested encoding) at the same
+		 * time
+		 */
+		env_count = 0;
+		for (i = 0; environ[i] != NULL; i++) {
+			env_strings[env_count] = g_strdup (environ[i]);
+			env_count++;
+		}
+	}
+
+	/* Create a pipe to make sure the child doesn't exit before
+	 * we can add the process to the linked list of mono_processes */
+	if (pipe (startup_pipe) == -1) {
+		/* Could not create the pipe to synchroniz process startup. We'll just not synchronize.
+		 * This is just for a very hard to hit race condition in the first place */
+		startup_pipe [0] = startup_pipe [1] = -1;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: new process startup not synchronized. We may not notice if the newly created process exits immediately.", __func__);
+	}
+
+	switch (pid = fork ()) {
+	case -1: /* Error */ {
+		SetLastError (ERROR_OUTOFMEMORY);
+		ret = FALSE;
+		fork_failed = TRUE;
+		break;
+	}
+	case 0: /* Child */ {
+		if (startup_pipe [0] != -1) {
+			/* Wait until the parent has updated it's internal data */
+			ssize_t _i G_GNUC_UNUSED = read (startup_pipe [0], &dummy, 1);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: child: parent has completed its setup", __func__);
+			close (startup_pipe [0]);
+			close (startup_pipe [1]);
+		}
+
+		/* should we detach from the process group? */
+
+		/* Connect stdin, stdout and stderr */
+		dup2 (in_fd, 0);
+		dup2 (out_fd, 1);
+		dup2 (err_fd, 2);
+
+		/* Close all file descriptors */
+		for (i = mono_w32handle_fd_reserve - 1; i > 2; i--)
+			close (i);
+
+#ifdef DEBUG_ENABLED
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: exec()ing [%s] in dir [%s]", __func__, cmd,
+			   dir == NULL?".":dir);
+		for (i = 0; argv[i] != NULL; i++)
+			g_message ("arg %d: [%s]", i, argv[i]);
+
+		for (i = 0; env_strings[i] != NULL; i++)
+			g_message ("env %d: [%s]", i, env_strings[i]);
+#endif
+
+		/* set cwd */
+		if (dir != NULL && chdir (dir) == -1) {
+			/* set error */
+			_exit (-1);
+		}
+
+		/* exec */
+		execve (argv[0], argv, env_strings);
+
+		/* set error */
+		_exit (-1);
+
+		break;
+	}
+	default: /* Parent */ {
+		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle_data);
+		if (!res) {
+			g_warning ("%s: error looking up process handle %p", __func__, handle);
+			mono_w32handle_unref (handle);
+		} else {
+			process_handle_data->id = pid;
+
+			/* Add our mono_process into the linked list of mono_processes */
+			mono_process = (MonoProcess *) g_malloc0 (sizeof (MonoProcess));
+			mono_process->pid = pid;
+			mono_process->handle_count = 1;
+			mono_os_sem_init (&mono_process->exit_sem, 0);
+
+			/* Keep the process handle artificially alive until the process
+			 * exits so that the information in the handle isn't lost. */
+			mono_w32handle_ref (handle);
+			mono_process->handle = handle;
+
+			process_handle_data->mono_process = mono_process;
+
+			mono_os_mutex_lock (&mono_processes_mutex);
+			mono_process->next = mono_processes;
+			mono_processes = mono_process;
+			mono_os_mutex_unlock (&mono_processes_mutex);
+
+			if (process_info != NULL) {
+				process_info->process_handle = handle;
+				process_info->pid = pid;
+
+				/* FIXME: we might need to handle the thread info some day */
+				process_info->thread_handle = INVALID_HANDLE_VALUE;
+				process_info->tid = 0;
+			}
+		}
+
+		break;
+	}
+	}
+
+	if (fork_failed)
+		mono_w32handle_unref (handle);
+
+	if (startup_pipe [1] != -1) {
+		/* Write 1 byte, doesn't matter what */
+		ssize_t _i G_GNUC_UNUSED = write (startup_pipe [1], startup_pipe, 1);
+		close (startup_pipe [0]);
+		close (startup_pipe [1]);
+	}
+
+free_strings:
+	if (cmd)
+		g_free (cmd);
+	if (full_prog)
+		g_free (full_prog);
+	if (prog)
+		g_free (prog);
+	if (args)
+		g_free (args);
+	if (dir)
+		g_free (dir);
+	if (env_strings)
+		g_strfreev (env_strings);
+	if (argv)
+		g_strfreev (argv);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning handle %p for pid %d", __func__, handle, pid);
+
+	/* Check if something needs to be cleaned up. */
+	mono_processes_cleanup ();
+
+	return ret;
+#else
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+#endif // defined (HAVE_FORK) && defined (HAVE_EXECVE)
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_info)
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info)
 {
 	const gunichar2 *lpFile;
 	const gunichar2 *lpParameters;
@@ -1742,7 +2582,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartIn
 		mono_string_chars (proc_start_info->working_directory) : NULL;
 
 	/* Put both executable and parameters into the second argument
-	 * to CreateProcess (), so it searches $PATH.  The conversion
+	 * to process_create (), so it searches $PATH.  The conversion
 	 * into and back out of utf8 is because there is no
 	 * g_strdup_printf () equivalent for gunichar2 :-(
 	 */
@@ -1752,7 +2592,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartIn
 		ret = FALSE;
 		goto done;
 	}
-	ret = CreateProcess (NULL, args, NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, NULL, lpDirectory, NULL, (WapiProcessInformation*) process_info);
+	ret = process_create (NULL, args, NULL, lpDirectory, NULL, process_info);
 	g_free (args);
 
 	if (!ret && GetLastError () == ERROR_OUTOFMEMORY)
@@ -1797,7 +2637,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartIn
 		g_free (handler);
 
 		/* Put quotes around the filename, in case it's a url
-		 * that contains #'s (CreateProcess() calls
+		 * that contains #'s (process_create() calls
 		 * g_shell_parse_argv(), which deliberately throws
 		 * away anything after an unquoted #).  Fixes bug
 		 * 371567.
@@ -1809,7 +2649,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartIn
 			ret = FALSE;
 			goto done;
 		}
-		ret = CreateProcess (NULL, args, NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, NULL, lpDirectory, NULL, (WapiProcessInformation*) process_info);
+		ret = process_create (NULL, args, NULL, lpDirectory, NULL, process_info);
 		g_free (args);
 		if (!ret) {
 			if (GetLastError () != ERROR_OUTOFMEMORY)
@@ -1838,19 +2678,42 @@ done:
 	return ret;
 }
 
-static inline void
-mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, STARTUPINFO *startinfo)
+/* Only used when UseShellExecute is false */
+static gboolean
+mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 {
-	startinfo->cb = sizeof(STARTUPINFO);
-	startinfo->dwFlags = STARTF_USESTDHANDLES;
-	startinfo->hStdInput = stdin_handle;
-	startinfo->hStdOutput = stdout_handle;
-	startinfo->hStdError = stderr_handle;
-	return;
+	gchar *utf8app;
+	gchar *found;
+
+	utf8app = g_utf16_to_utf8 (appname, -1, NULL, NULL, NULL);
+
+	if (g_path_is_absolute (utf8app)) {
+		*completed = g_shell_quote (utf8app);
+		g_free (utf8app);
+		return TRUE;
+	}
+
+	if (g_file_test (utf8app, G_FILE_TEST_IS_EXECUTABLE) && !g_file_test (utf8app, G_FILE_TEST_IS_DIR)) {
+		*completed = g_shell_quote (utf8app);
+		g_free (utf8app);
+		return TRUE;
+	}
+	
+	found = g_find_program_in_path (utf8app);
+	if (found == NULL) {
+		*completed = NULL;
+		g_free (utf8app);
+		return FALSE;
+	}
+
+	*completed = g_shell_quote (found);
+	g_free (found);
+	g_free (utf8app);
+	return TRUE;
 }
 
 static gboolean
-mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
+mono_process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
 {
 	gchar *spath = NULL;
 
@@ -1867,24 +2730,21 @@ mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunicha
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, HANDLE stdin_handle,
-							     HANDLE stdout_handle, HANDLE stderr_handle, MonoProcInfo *process_info)
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info,
+	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info)
 {
 	gboolean ret;
 	gunichar2 *dir;
-	STARTUPINFO startinfo={0};
-	PROCESS_INFORMATION procinfo;
+	StartupHandles startup_handles;
 	gunichar2 *shell_path = NULL;
 	gchar *env_vars = NULL;
 	MonoString *cmd = NULL;
-	guint32 creation_flags;
 
-	mono_process_init_startup_info (stdin_handle, stdout_handle, stderr_handle, &startinfo);
+	memset (&startup_handles, 0, sizeof (startup_handles));
+	startup_handles.input = stdin_handle;
+	startup_handles.output = stdout_handle;
+	startup_handles.error = stderr_handle;
 
-	creation_flags = CREATE_UNICODE_ENVIRONMENT;
-	if (proc_start_info->create_no_window)
-		creation_flags |= CREATE_NO_WINDOW;
-	
 	if (mono_process_get_shell_arguments (proc_start_info, &shell_path, &cmd) == FALSE) {
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
 		return FALSE;
@@ -1931,39 +2791,19 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInf
 		env_vars = (gchar *) str;
 	}
 	
-	/* The default dir name is "".  Turn that into NULL to mean
-	 * "current directory"
-	 */
-	if (proc_start_info->working_directory == NULL || mono_string_length (proc_start_info->working_directory) == 0)
-		dir = NULL;
-	else
-		dir = mono_string_chars (proc_start_info->working_directory);
+	/* The default dir name is "".  Turn that into NULL to mean "current directory" */
+	dir = proc_start_info->working_directory && mono_string_length (proc_start_info->working_directory) > 0 ?
+			mono_string_chars (proc_start_info->working_directory) : NULL;
 
-	if (!process_info->username) {
-		ret = CreateProcess (shell_path, cmd ? mono_string_chars (cmd): NULL, NULL, NULL, TRUE,
-			creation_flags, env_vars, dir, &startinfo, &procinfo);
-	} else {
-		/* FIXME: use user information */
-		ret = CreateProcess (shell_path, cmd ? mono_string_chars (cmd) : NULL, NULL, NULL, FALSE,
-			creation_flags, env_vars, dir, &startinfo, &procinfo);
-	}
+	ret = process_create (shell_path, cmd ? mono_string_chars (cmd): NULL, env_vars, dir, &startup_handles, process_info);
 
 	g_free (env_vars);
 	if (shell_path != NULL)
 		g_free (shell_path);
 
-	if (ret) {
-		process_info->process_handle = procinfo.hProcess;
-		/*process_info->thread_handle=procinfo.hThread;*/
-		process_info->thread_handle = NULL;
-		if (procinfo.hThread != NULL && procinfo.hThread != INVALID_HANDLE_VALUE)
-			CloseHandle (procinfo.hThread);
-		process_info->pid = procinfo.dwProcessId;
-		process_info->tid = procinfo.dwThreadId;
-	} else {
+	if (!ret)
 		process_info->pid = -GetLastError ();
-	}
-	
+
 	return ret;
 }
 
