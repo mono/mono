@@ -161,11 +161,6 @@ extern gboolean CreateProcess (const gunichar2 *appname,
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
-extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
-				 WapiFileTime *exit_time,
-				 WapiFileTime *kernel_time,
-				 WapiFileTime *user_time);
-
 gchar* wapi_process_get_path (pid_t pid);
 
 void wapi_process_set_cli_launcher (char *path);

@@ -2303,3 +2303,72 @@ mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityC
 	return FALSE;
 #endif
 }
+
+static void
+ticks_to_filetime (guint64 ticks, MonoW32ProcessTime *filetime)
+{
+	filetime->lowDateTime = ticks & 0xFFFFFFFF;
+	filetime->highDateTime = ticks >> 32;
+}
+
+static void
+wapifiletime_to_filetime (WapiFileTime wapi_filetime, MonoW32ProcessTime *filetime)
+{
+	filetime->lowDateTime = wapi_filetime.dwLowDateTime;
+	filetime->highDateTime = wapi_filetime.dwHighDateTime;
+}
+
+gboolean
+mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
+	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time)
+{
+	WapiHandle_process *process_handle;
+	gboolean res;
+
+	if (!create_time || !exit_time || !kernel_time || !user_time) {
+		/* Not sure if w32 allows NULLs here or not */
+		return FALSE;
+	}
+
+	memset (create_time, 0, sizeof (MonoW32ProcessTime));
+	memset (exit_time, 0, sizeof (MonoW32ProcessTime));
+	memset (kernel_time, 0, sizeof (MonoW32ProcessTime));
+	memset (user_time, 0, sizeof (MonoW32ProcessTime));
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		gint64 start_ticks, user_ticks, kernel_ticks;
+
+		mono_process_get_times (GINT_TO_POINTER (WAPI_HANDLE_TO_PID (handle)),
+			&start_ticks, &user_ticks, &kernel_ticks);
+
+		ticks_to_filetime (start_ticks, create_time);
+		ticks_to_filetime (user_ticks, kernel_time);
+		ticks_to_filetime (kernel_ticks, user_time);
+		return TRUE;
+	}
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+		return FALSE;
+	}
+
+	wapifiletime_to_filetime (process_handle->create_time, create_time);
+
+	/* A process handle is only signalled if the process has
+	 * exited, otherwise exit_time isn't set */
+	if (mono_w32handle_issignalled (handle))
+		wapifiletime_to_filetime (process_handle->exit_time, exit_time);
+
+#ifdef HAVE_GETRUSAGE
+	if (process_handle->id == getpid ()) {
+		struct rusage time_data;
+		if (getrusage (RUSAGE_SELF, &time_data) == 0) {
+			ticks_to_filetime ((guint64)time_data.ru_utime.tv_sec * 10000000 + (guint64)time_data.ru_utime.tv_usec * 10, user_time);
+			ticks_to_filetime ((guint64)time_data.ru_stime.tv_sec * 10000000 + (guint64)time_data.ru_stime.tv_usec * 10, kernel_time);
+		}
+	}
+#endif
+
+	return TRUE;
+}

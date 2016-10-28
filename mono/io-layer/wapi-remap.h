@@ -53,7 +53,6 @@
 #define GetVolumeInformation wapi_GetVolumeInformation 
 #define FormatMessage wapi_FormatMessage 
 #define CreateProcess wapi_CreateProcess 
-#define GetProcessTimes wapi_GetProcessTimes 
 #define ImpersonateLoggedOnUser wapi_ImpersonateLoggedOnUser 
 #define RevertToSelf wapi_RevertToSelf 
 #define WSASetLastError wapi_WSASetLastError

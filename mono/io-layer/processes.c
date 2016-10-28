@@ -1006,68 +1006,6 @@ _wapi_process_duplicate (void)
 	return current_process;
 }
 
-gboolean
-GetProcessTimes (gpointer process, WapiFileTime *create_time,
-				 WapiFileTime *exit_time, WapiFileTime *kernel_time,
-				 WapiFileTime *user_time)
-{
-	WapiHandle_process *process_handle;
-	gboolean ku_times_set = FALSE;
-	
-	if (create_time == NULL || exit_time == NULL || kernel_time == NULL ||
-		user_time == NULL)
-		/* Not sure if w32 allows NULLs here or not */
-		return FALSE;
-	
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
-		gpointer pid = GINT_TO_POINTER (WAPI_HANDLE_TO_PID(process));
-		gint64 start_ticks, user_ticks, kernel_ticks;
-
-		mono_process_get_times (pid, &start_ticks, &user_ticks, &kernel_ticks);
-
-		_wapi_guint64_to_filetime (start_ticks, create_time);
-		_wapi_guint64_to_filetime (user_ticks, kernel_time);
-		_wapi_guint64_to_filetime (kernel_ticks, user_time);
-
-		return TRUE;
-	}
-
-	process_handle = lookup_process_handle (process);
-	if (!process_handle) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-		
-		return FALSE;
-	}
-	
-	*create_time = process_handle->create_time;
-
-	/* A process handle is only signalled if the process has
-	 * exited.  Otherwise exit_time isn't set
-	 */
-	if (mono_w32handle_issignalled (process))
-		*exit_time = process_handle->exit_time;
-
-#ifdef HAVE_GETRUSAGE
-	if (process_handle->id == getpid ()) {
-		struct rusage time_data;
-		if (getrusage (RUSAGE_SELF, &time_data) == 0) {
-			guint64 tick_val;
-			ku_times_set = TRUE;
-			tick_val = (guint64)time_data.ru_utime.tv_sec * 10000000 + (guint64)time_data.ru_utime.tv_usec * 10;
-			_wapi_guint64_to_filetime (tick_val, user_time);
-			tick_val = (guint64)time_data.ru_stime.tv_sec * 10000000 + (guint64)time_data.ru_stime.tv_usec * 10;
-			_wapi_guint64_to_filetime (tick_val, kernel_time);
-		}
-	}
-#endif
-	if (!ku_times_set) {
-		memset (kernel_time, 0, sizeof (WapiFileTime));
-		memset (user_time, 0, sizeof (WapiFileTime));
-	}
-
-	return TRUE;
-}
-
 static char *
 get_process_name_from_proc (pid_t pid)
 {

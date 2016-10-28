@@ -66,6 +66,16 @@ typedef struct
 	MonoObject *envVars;
 } MonoProcessStartInfo;
 
+typedef struct {
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+	guint32 highDateTime;
+	guint32 lowDateTime;
+#else
+	guint32 lowDateTime;
+	guint32 highDateTime;
+#endif
+} MonoW32ProcessTime;
+
 gboolean
 mono_w32process_close (gpointer handle);
 
@@ -84,6 +94,10 @@ MonoW32ProcessPriorityClass
 mono_w32process_get_priority_class (gpointer handle);
 gboolean
 mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class);
+
+gboolean
+mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
+	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time);
 
 gpointer
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);

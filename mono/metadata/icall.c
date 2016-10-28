@@ -8030,7 +8030,8 @@ ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handl
 ICALL_EXPORT MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creationtime, gint64 *exittime, gint64 *kerneltime, gint64 *usertime)
 {
-	return GetProcessTimes (handle, (LPFILETIME) creationtime, (LPFILETIME) exittime, (LPFILETIME) kerneltime, (LPFILETIME) usertime);
+	return mono_w32process_try_get_times (handle, (MonoW32ProcessTime*) creationtime, (MonoW32ProcessTime*) exittime,
+		(MonoW32ProcessTime*) kerneltime, (MonoW32ProcessTime*) usertime);
 }
 
 ICALL_EXPORT gint32

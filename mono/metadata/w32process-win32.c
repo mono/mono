@@ -1012,3 +1012,10 @@ mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityC
 {
 	return SetPriorityClass (handle, (guint32) priority_class);
 }
+
+gboolean
+mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
+	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time)
+{
+	return GetProcessTimes (handle, (LPFILETIME) create_time, (LPFILETIME) exit_time, (LPFILETIME) kernel_time, (LPFILETIME) user_time);
+}
