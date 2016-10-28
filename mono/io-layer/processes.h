@@ -239,7 +239,6 @@ extern gboolean CreateProcessWithLogonW (const gunichar2 *username,
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
 extern guint32 GetProcessId (gpointer handle);
-extern gboolean CloseProcess (gpointer handle);
 extern gboolean GetExitCodeProcess (gpointer process, guint32 *code);
 extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
 				 WapiFileTime *exit_time,

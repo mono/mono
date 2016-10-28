@@ -7973,18 +7973,10 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 	return GetExitCodeProcess (handle, (guint32*) exitcode);
 }
 
-#ifndef HOST_WIN32
-static inline MonoBoolean
-mono_icall_close_process (gpointer handle)
-{
-	return CloseProcess (handle);
-}
-#endif /* !HOST_WIN32 */
-
 ICALL_EXPORT MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
-	return mono_icall_close_process (handle);
+	return mono_w32process_close (handle);
 }
 
 ICALL_EXPORT MonoBoolean

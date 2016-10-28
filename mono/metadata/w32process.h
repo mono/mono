@@ -57,6 +57,9 @@ typedef struct
 	MonoObject *envVars;
 } MonoProcessStartInfo;
 
+gboolean
+mono_w32process_close (gpointer handle);
+
 gpointer
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
 

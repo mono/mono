@@ -49,9 +49,6 @@ mono_icall_broadcast_setting_change (void);
 void
 mono_icall_write_windows_debug_string (MonoString *message);
 
-MonoBoolean
-mono_icall_close_process (gpointer handle);
-
 gint32
 mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds);
 #endif  /* HOST_WIN32 */

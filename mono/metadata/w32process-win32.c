@@ -970,3 +970,9 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 		*error = perror;
 	return res;
 }
+
+gboolean
+mono_w32process_close (gpointer handle)
+{
+	return CloseHandle (handle);
+}

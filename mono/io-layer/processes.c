@@ -1196,14 +1196,6 @@ GetProcessId (gpointer handle)
 }
 
 gboolean
-CloseProcess (gpointer handle)
-{
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
-		return TRUE;
-	return CloseHandle (handle);
-}
-
-gboolean
 GetExitCodeProcess (gpointer process, guint32 *code)
 {
 	WapiHandle_process *process_handle;

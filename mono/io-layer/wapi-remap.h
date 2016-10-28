@@ -56,7 +56,6 @@
 #define CreateProcess wapi_CreateProcess 
 #define CreateProcessWithLogonW wapi_CreateProcessWithLogonW 
 #define GetProcessId wapi_GetProcessId 
-#define CloseProcess wapi_CloseProcess 
 #define GetExitCodeProcess wapi_GetExitCodeProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
 #define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
