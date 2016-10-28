@@ -1034,24 +1034,6 @@ _wapi_process_duplicate (void)
 	return current_process;
 }
 
-guint32
-GetProcessId (gpointer handle)
-{
-	WapiHandle_process *process_handle;
-
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
-		/* This is a pseudo handle */
-		return WAPI_HANDLE_TO_PID (handle);
-	
-	process_handle = lookup_process_handle (handle);
-	if (!process_handle) {
-		SetLastError (ERROR_INVALID_HANDLE);
-		return 0;
-	}
-	
-	return process_handle->id;
-}
-
 gboolean
 GetExitCodeProcess (gpointer process, guint32 *code)
 {

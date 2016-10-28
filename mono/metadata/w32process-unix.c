@@ -191,6 +191,26 @@ utf16_concat (const gunichar2 *first, ...)
 	return ret;
 }
 
+static guint32
+process_get_pid (gpointer handle)
+{
+	WapiHandle_process *process_handle;
+	gboolean res;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		/* This is a pseudo handle */
+		return WAPI_HANDLE_TO_PID (handle);
+	}
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		SetLastError (ERROR_INVALID_HANDLE);
+		return 0;
+	}
+
+	return process_handle->id;
+}
+
 static gboolean
 process_open_compare (gpointer handle, gpointer user_data)
 {
@@ -1323,7 +1343,7 @@ get_module_filename (gpointer process, gpointer module,
 	if (basename == NULL || size == 0)
 		return 0;
 
-	pid = GetProcessId (process);
+	pid = process_get_pid (process);
 
 	path = wapi_process_get_path (pid);
 	if (path == NULL)
@@ -1575,7 +1595,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 
 	stash_system_assembly (this_obj);
 
-	if (GetProcessId (process) == mono_process_current_pid ()) {
+	if (process_get_pid (process) == mono_process_current_pid ()) {
 		assemblies = get_domain_assemblies (mono_domain_get ());
 		assembly_count = assemblies->len;
 	}
@@ -1806,7 +1826,7 @@ done:
 	} else {
 		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
-		process_info->pid = GetProcessId (process_info->process_handle);
+		process_info->pid = process_get_pid (process_info->process_handle);
 #else
 		process_info->pid = 0;
 #endif
