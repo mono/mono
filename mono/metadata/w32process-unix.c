@@ -2089,3 +2089,46 @@ mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
 	*exit_code = mono_w32handle_issignalled (handle) ? process_handle->exitstatus : STILL_ACTIVE;
 	return TRUE;
 }
+
+gboolean
+mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max)
+{
+	WapiHandle_process *process_handle;
+	gboolean res;
+
+	if (!min || !max)
+		return FALSE;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
+		return FALSE;
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+		return FALSE;
+	}
+
+	*min = process_handle->min_working_set;
+	*max = process_handle->max_working_set;
+	return TRUE;
+}
+
+gboolean
+mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
+{
+	WapiHandle_process *process_handle;
+	gboolean res;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
+		return FALSE;
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+		return FALSE;
+	}
+
+	process_handle->min_working_set = min;
+	process_handle->max_working_set = max;
+	return TRUE;
+}

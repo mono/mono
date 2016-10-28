@@ -54,8 +54,6 @@
 #define FormatMessage wapi_FormatMessage 
 #define CreateProcess wapi_CreateProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
-#define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
-#define SetProcessWorkingSetSize wapi_SetProcessWorkingSetSize 
 #define TerminateProcess wapi_TerminateProcess 
 #define GetPriorityClass wapi_GetPriorityClass 
 #define SetPriorityClass wapi_SetPriorityClass 

@@ -1305,56 +1305,6 @@ wapi_process_set_cli_launcher (char *path)
 }
 
 gboolean
-GetProcessWorkingSetSize (gpointer process, size_t *min, size_t *max)
-{
-	WapiHandle_process *process_handle;
-	
-	if (min == NULL || max == NULL)
-		/* Not sure if w32 allows NULLs here or not */
-		return FALSE;
-	
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process))
-		/* This is a pseudo handle, so just fail for now */
-		return FALSE;
-	
-	process_handle = lookup_process_handle (process);
-	if (!process_handle) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-		
-		return FALSE;
-	}
-
-	*min = process_handle->min_working_set;
-	*max = process_handle->max_working_set;
-	
-	return TRUE;
-}
-
-gboolean
-SetProcessWorkingSetSize (gpointer process, size_t min, size_t max)
-{
-	WapiHandle_process *process_handle;
-
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process))
-		/* This is a pseudo handle, so just fail for now
-		 */
-		return FALSE;
-
-	process_handle = lookup_process_handle (process);
-	if (!process_handle) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-		
-		return FALSE;
-	}
-
-	process_handle->min_working_set = min;
-	process_handle->max_working_set = max;
-	
-	return TRUE;
-}
-
-
-gboolean
 TerminateProcess (gpointer process, gint32 exitCode)
 {
 #if defined(HAVE_KILL)

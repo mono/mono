@@ -982,3 +982,15 @@ mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
 {
 	return GetExitCodeProcess (handle, exit_code);
 }
+
+gboolean
+mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max)
+{
+	return GetProcessWorkingSetSize (handle, min, max);
+}
+
+gboolean
+mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
+{
+	return SetProcessWorkingSetSize (handle, min, max);
+}

@@ -8003,7 +8003,7 @@ ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint3
 static inline MonoBoolean
 mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max)
 {
-	return GetProcessWorkingSetSize (handle, min, max);
+	return mono_w32process_try_get_working_get_size (handle, min, max);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
@@ -8017,7 +8017,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handl
 static inline MonoBoolean
 mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
 {
-	return SetProcessWorkingSetSize (handle, min, max);
+	return mono_w32process_try_set_working_set_size (handle, min, max);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 

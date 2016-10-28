@@ -171,10 +171,6 @@ extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
 				 WapiFileTime *exit_time,
 				 WapiFileTime *kernel_time,
 				 WapiFileTime *user_time);
-extern gboolean GetProcessWorkingSetSize (gpointer process, size_t *min,
-					  size_t *max);
-extern gboolean SetProcessWorkingSetSize (gpointer process, size_t min,
-					  size_t max);
 
 extern gboolean TerminateProcess (gpointer process, gint32 exitCode);
 
