@@ -786,7 +786,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member) {
-			if (member is ConstructorBuilder || member is MethodBuilder)
+			if (member is ConstructorBuilder || member is MethodBuilder || member is FieldBuilder)
 				return GetPseudoToken (member, false);
 			return getToken (this, member, true);
 		}
