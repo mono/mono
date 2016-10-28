@@ -823,6 +823,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		);
 #endif
 
+#if !MOBILE_STATIC
 		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		public class FourByteStruct
 		{
@@ -967,6 +968,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 			return objResult;
 		}
+#endif
 	}
 #if !MOBILE
 	[ComImport()]
