@@ -65,10 +65,6 @@ namespace Mono.Btls
 		extern static int mono_btls_x509_lookup_add_mono (IntPtr handle, IntPtr monoLookup);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_x509_lookup_method_mono_init (
-			IntPtr handle, IntPtr instance, IntPtr by_subject_func);
-
-		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_init (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]

@@ -776,7 +776,6 @@
     <Compile Include="Mono.Btls\MonoBtlsX509LookupType.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509Name.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509NameEntryType.cs" />
-    <Compile Include="Mono.Btls\MonoBtlsX509NameList.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509Purpose.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509Revoked.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509Store.cs" />
