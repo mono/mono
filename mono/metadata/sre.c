@@ -3303,6 +3303,16 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
+static guint32
+modulebuilder_next_field_idx (MonoReflectionModuleBuilder *mb, guint32 num_fields, MonoError *error)
+{
+	error_init (error);
+
+	guint32 first_field_idx = mb->next_field_idx;
+	mb->next_field_idx += num_fields;
+	return first_field_idx;
+}
+
 /* This initializes the same data as mono_class_setup_fields () */
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
@@ -3312,6 +3322,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_NEW (MonoReflectionTypeBuilder, mono_class_get_ref_info_raw (klass));
 	MonoImage *image = klass->image;
 	int instance_size, packing_size = 0;
+
+	error_init (error);
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
@@ -3325,6 +3337,14 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	mono_class_set_field_count (klass, fcount);
 
 	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, tb, module);
+
+ 	gint32 first_idx = 0;
+	if (fcount > 0) {
+		first_idx = modulebuilder_next_field_idx (MONO_HANDLE_RAW (mb), fcount, error); /* FIXME use handles */
+		if (!is_ok (error))
+			goto leave;
+ 	}
+ 	mono_class_set_first_field_idx (klass, first_idx);
 
 	gint32 class_size = MONO_HANDLE_GETVAL (tb, class_size);
 	if (class_size) {
