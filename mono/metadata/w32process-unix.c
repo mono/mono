@@ -1844,43 +1844,6 @@ mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunicha
 	return (*shell_path != NULL) ? TRUE : FALSE;
 }
 
-static gboolean
-mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_path,
-			     MonoString *cmd, guint32 creation_flags, gchar *env_vars,
-			     gunichar2 *dir, STARTUPINFO *start_info, PROCESS_INFORMATION *process_info)
-{
-	gboolean result = FALSE;
-
-	if (mono_process_info->username) {
-		guint32 logon_flags = mono_process_info->load_user_profile ? LOGON_WITH_PROFILE : 0;
-
-		result = CreateProcessWithLogonW (mono_string_chars (mono_process_info->username),
-						  mono_process_info->domain ? mono_string_chars (mono_process_info->domain) : NULL,
-						  (const gunichar2 *)mono_process_info->password,
-						  logon_flags,
-						  shell_path,
-						  cmd ? mono_string_chars (cmd) : NULL,
-						  creation_flags,
-						  env_vars, dir, start_info, process_info);
-
-	} else {
-
-		result = CreateProcess (shell_path,
-					cmd ? mono_string_chars (cmd): NULL,
-					NULL,
-					NULL,
-					TRUE,
-					creation_flags,
-					env_vars,
-					dir,
-					start_info,
-					process_info);
-
-	}
-
-	return result;
-}
-
 MonoBoolean
 ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, HANDLE stdin_handle,
 							     HANDLE stdout_handle, HANDLE stderr_handle, MonoProcInfo *process_info)
@@ -1954,7 +1917,14 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInf
 	else
 		dir = mono_string_chars (proc_start_info->working_directory);
 
-	ret = mono_process_create_process (process_info, shell_path, cmd, creation_flags, env_vars, dir, &startinfo, &procinfo);
+	if (!process_info->username) {
+		ret = CreateProcess (shell_path, cmd ? mono_string_chars (cmd): NULL, NULL, NULL, TRUE,
+			creation_flags, env_vars, dir, &startinfo, &procinfo);
+	} else {
+		/* FIXME: use user information */
+		ret = CreateProcess (shell_path, cmd ? mono_string_chars (cmd) : NULL, NULL, NULL, FALSE,
+			creation_flags, env_vars, dir, &startinfo, &procinfo);
+	}
 
 	g_free (env_vars);
 	if (shell_path != NULL)

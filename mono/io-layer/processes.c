@@ -111,23 +111,6 @@
 
 #define STILL_ACTIVE STATUS_PENDING
 
-/* The process' environment strings */
-#if defined(__APPLE__)
-#if defined (TARGET_OSX)
-/* Apple defines this in crt_externs.h but doesn't provide that header for 
- * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
- * in fact exist on all implementations (so far) 
- */
-gchar ***_NSGetEnviron(void);
-#define environ (*_NSGetEnviron())
-#else
-static char *mono_environ[1] = { NULL };
-#define environ mono_environ
-#endif /* defined (TARGET_OSX) */
-#else
-extern char **environ;
-#endif
-
 static guint32 process_wait (gpointer handle, guint32 timeout, gboolean *alerted);
 static void process_close (gpointer handle, gpointer data);
 static void process_details (gpointer data);
@@ -413,23 +396,6 @@ leave:
 	close (file);
 	errno = original_errno;
 	return managed;
-}
-
-gboolean
-CreateProcessWithLogonW (const gunichar2 *username,
-						 const gunichar2 *domain,
-						 const gunichar2 *password,
-						 const guint32 logonFlags,
-						 const gunichar2 *appname,
-						 const gunichar2 *cmdline,
-						 guint32 create_flags,
-						 gpointer env,
-						 const gunichar2 *cwd,
-						 WapiStartupInfo *startup,
-						 WapiProcessInformation *process_info)
-{
-	/* FIXME: use user information */
-	return CreateProcess (appname, cmdline, NULL, NULL, FALSE, create_flags, env, cwd, startup, process_info);
 }
 
 static gboolean

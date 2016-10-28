@@ -164,17 +164,6 @@ extern gboolean CreateProcess (const gunichar2 *appname,
 			       gpointer environ, const gunichar2 *cwd,
 			       WapiStartupInfo *startup,
 			       WapiProcessInformation *process_info);
-extern gboolean CreateProcessWithLogonW (const gunichar2 *username,
-					 const gunichar2 *domain,
-					 const gunichar2 *password,
-					 const guint32 logonFlags,
-					 const gunichar2 *appname,
-					 const gunichar2 *cmdline,
-					 guint32 create_flags,
-					 gpointer environ,
-					 const gunichar2 *cwd,
-					 WapiStartupInfo *startup,
-					 WapiProcessInformation *process_info);
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
