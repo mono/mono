@@ -329,7 +329,6 @@ Mono.Btls/MonoBtlsX509LookupMonoCollection.cs
 Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupType.cs
 Mono.Btls/MonoBtlsX509Name.cs
-Mono.Btls/MonoBtlsX509NameList.cs
 Mono.Btls/MonoBtlsX509NameEntryType.cs
 Mono.Btls/MonoBtlsX509Purpose.cs
 Mono.Btls/MonoBtlsX509Revoked.cs
