@@ -8043,7 +8043,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void)
 static inline gint32
 mono_icall_get_priority_class (gpointer handle)
 {
-	return GetPriorityClass (handle);
+	return (gint32) mono_w32process_get_priority_class (handle);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
@@ -8057,7 +8057,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 static inline MonoBoolean
 mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
 {
-	return SetPriorityClass (handle, priorityClass);
+	return mono_w32process_try_set_priority_class (handle, (MonoW32ProcessPriorityClass) priorityClass);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 

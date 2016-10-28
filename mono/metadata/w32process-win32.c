@@ -994,3 +994,15 @@ mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
 {
 	return SetProcessWorkingSetSize (handle, min, max);
 }
+
+MonoW32ProcessPriorityClass
+mono_w32process_get_priority_class (gpointer handle)
+{
+	return (MonoW32ProcessPriorityClass) GetPriorityClass (handle);
+}
+
+gboolean
+mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class)
+{
+	return SetPriorityClass (handle, (guint32) priority_class);
+}

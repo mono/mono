@@ -2132,3 +2132,133 @@ mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
 	process_handle->max_working_set = max;
 	return TRUE;
 }
+
+MonoW32ProcessPriorityClass
+mono_w32process_get_priority_class (gpointer handle)
+{
+#ifdef HAVE_GETPRIORITY
+	WapiHandle_process *process_handle;
+	gint ret;
+	pid_t pid;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		/* This is a pseudo handle */
+		pid = (pid_t)WAPI_HANDLE_TO_PID (handle);
+	} else {
+		gboolean res;
+
+		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+		if (!res) {
+			SetLastError (ERROR_INVALID_HANDLE);
+			return 0;
+		}
+
+		pid = process_handle->id;
+	}
+
+	errno = 0;
+	ret = getpriority (PRIO_PROCESS, pid);
+	if (ret == -1 && errno != 0) {
+		switch (errno) {
+		case EPERM:
+		case EACCES:
+			SetLastError (ERROR_ACCESS_DENIED);
+			break;
+		case ESRCH:
+			SetLastError (ERROR_PROC_NOT_FOUND);
+			break;
+		default:
+			SetLastError (ERROR_GEN_FAILURE);
+		}
+		return 0;
+	}
+
+	if (ret == 0)
+		return MONO_W32PROCESS_PRIORITY_CLASS_NORMAL;
+	else if (ret < -15)
+		return MONO_W32PROCESS_PRIORITY_CLASS_REALTIME;
+	else if (ret < -10)
+		return MONO_W32PROCESS_PRIORITY_CLASS_HIGH;
+	else if (ret < 0)
+		return MONO_W32PROCESS_PRIORITY_CLASS_ABOVE_NORMAL;
+	else if (ret > 10)
+		return MONO_W32PROCESS_PRIORITY_CLASS_IDLE;
+	else if (ret > 0)
+		return MONO_W32PROCESS_PRIORITY_CLASS_BELOW_NORMAL;
+
+	return MONO_W32PROCESS_PRIORITY_CLASS_NORMAL;
+#else
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return 0;
+#endif
+}
+
+gboolean
+mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class)
+{
+#ifdef HAVE_SETPRIORITY
+	WapiHandle_process *process_handle;
+	int ret;
+	int prio;
+	pid_t pid;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		/* This is a pseudo handle */
+		pid = (pid_t)WAPI_HANDLE_TO_PID (handle);
+	} else {
+		gboolean res;
+
+		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+		if (!res) {
+			SetLastError (ERROR_INVALID_HANDLE);
+			return FALSE;
+		}
+
+		pid = process_handle->id;
+	}
+
+	switch (priority_class) {
+	case MONO_W32PROCESS_PRIORITY_CLASS_IDLE:
+		prio = 19;
+		break;
+	case MONO_W32PROCESS_PRIORITY_CLASS_BELOW_NORMAL:
+		prio = 10;
+		break;
+	case MONO_W32PROCESS_PRIORITY_CLASS_NORMAL:
+		prio = 0;
+		break;
+	case MONO_W32PROCESS_PRIORITY_CLASS_ABOVE_NORMAL:
+		prio = -5;
+		break;
+	case MONO_W32PROCESS_PRIORITY_CLASS_HIGH:
+		prio = -11;
+		break;
+	case MONO_W32PROCESS_PRIORITY_CLASS_REALTIME:
+		prio = -20;
+		break;
+	default:
+		SetLastError (ERROR_INVALID_PARAMETER);
+		return FALSE;
+	}
+
+	ret = setpriority (PRIO_PROCESS, pid, prio);
+	if (ret == -1) {
+		switch (errno) {
+		case EPERM:
+		case EACCES:
+			SetLastError (ERROR_ACCESS_DENIED);
+			break;
+		case ESRCH:
+			SetLastError (ERROR_PROC_NOT_FOUND);
+			break;
+		default:
+			SetLastError (ERROR_GEN_FAILURE);
+		}
+	}
+
+	return ret == 0;
+#else
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+#endif
+}

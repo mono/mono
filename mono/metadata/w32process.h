@@ -17,6 +17,15 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	MONO_W32PROCESS_PRIORITY_CLASS_NORMAL       = 0x0020,
+	MONO_W32PROCESS_PRIORITY_CLASS_IDLE         = 0x0040,
+	MONO_W32PROCESS_PRIORITY_CLASS_HIGH         = 0x0080,
+	MONO_W32PROCESS_PRIORITY_CLASS_REALTIME     = 0x0100,
+	MONO_W32PROCESS_PRIORITY_CLASS_BELOW_NORMAL = 0x4000,
+	MONO_W32PROCESS_PRIORITY_CLASS_ABOVE_NORMAL = 0x8000,
+} MonoW32ProcessPriorityClass;
+
 typedef struct 
 {
 	gpointer process_handle;
@@ -67,6 +76,11 @@ gboolean
 mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max);
 gboolean
 mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max);
+
+MonoW32ProcessPriorityClass
+mono_w32process_get_priority_class (gpointer handle);
+gboolean
+mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class);
 
 gpointer
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
