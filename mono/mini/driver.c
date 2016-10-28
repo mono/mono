@@ -731,7 +731,7 @@ free_jit_info_data (ThreadData *td, JitInfoData *free)
 #define MODE_ALLOC	1
 #define MODE_FREE	2
 
-static void
+static gsize WINAPI
 test_thread_func (ThreadData *td)
 {
 	int mode = MODE_ALLOC;
@@ -833,10 +833,12 @@ test_thread_func (ThreadData *td)
 		else if (td->num_datas > 2000)
 			mode = MODE_FREE;
 	}
+
+	return 0;
 }
 
 /*
-static void
+static gsize WINAPI
 small_id_thread_func (gpointer arg)
 {
 	MonoThread *thread = mono_thread_current ();
@@ -846,6 +848,7 @@ small_id_thread_func (gpointer arg)
 	mono_hazard_pointer_clear (hp, 1);
 	sleep (3);
 	g_print ("done %d\n", (int)thread->small_id);
+	return 0;
 }
 */
 
@@ -966,12 +969,13 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		exit (1);
 }
 
-static void
+static gsize WINAPI
 compile_all_methods_thread_main (CompileAllThreadArgs *args)
 {
 	guint32 i;
 	for (i = 0; i < args->recompilation_times; ++i)
 		compile_all_methods_thread_main_inner (args);
+	return 0;
 }
 
 static void
