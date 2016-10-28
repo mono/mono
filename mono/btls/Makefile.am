@@ -36,5 +36,6 @@ clean-local:
 
 if DYNAMIC_BTLS
 install-exec-local:
-	$(install_sh) build-shared/libmono-btls-shared.* "$(DESTDIR)/$(libdir)"
+	$(mkinstalldirs) "$(DESTDIR)$(libdir)"
+	$(install_sh) build-shared/libmono-btls-shared.* "$(DESTDIR)$(libdir)"
 endif
