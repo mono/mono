@@ -101,6 +101,13 @@ mono_w32process_get_priority_class (gpointer handle);
 gboolean
 mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class);
 
+#ifndef HOST_WIN32
+
+void
+mono_w32process_set_cli_launcher (gchar *path);
+
+#endif
+
 gboolean
 mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
 	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time);

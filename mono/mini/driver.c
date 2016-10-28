@@ -1958,7 +1958,7 @@ mono_main (int argc, char* argv[])
 
 		runtime_path = wapi_process_get_path (getpid ());
 		if (runtime_path) {
-			wapi_process_set_cli_launcher (runtime_path);
+			mono_w32process_set_cli_launcher (runtime_path);
 			g_free (runtime_path);
 		}
 	}

@@ -3212,3 +3212,10 @@ mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time,
 
 	return TRUE;
 }
+
+void
+mono_w32process_set_cli_launcher (gchar *path)
+{
+	g_free (cli_launcher);
+	cli_launcher = g_strdup (path);
+}

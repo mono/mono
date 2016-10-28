@@ -26,7 +26,6 @@ wapi_cleanup (void)
 	_wapi_has_shut_down = TRUE;
 
 	_wapi_error_cleanup ();
-	wapi_processes_cleanup ();
 	_wapi_io_cleanup ();
 }
 

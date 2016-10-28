@@ -146,7 +146,6 @@ static mono_mutex_t mono_processes_mutex;
 static void mono_processes_cleanup (void);
 
 static gpointer current_process;
-static char *cli_launcher;
 
 static WapiHandle_process *
 lookup_process_handle (gpointer handle)
@@ -503,18 +502,6 @@ wapi_process_get_path (pid_t pid)
 #endif
 }
 
-/*
- * wapi_process_set_cli_launcher:
- *
- *   Set the full path of the runtime executable used to launch managed exe's.
- */
-void
-wapi_process_set_cli_launcher (char *path)
-{
-	g_free (cli_launcher);
-	cli_launcher = path ? g_strdup (path) : NULL;
-}
-
 static void
 mono_processes_cleanup (void)
 {
@@ -747,10 +734,4 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
 
 	return WAIT_OBJECT_0;
-}
-
-void
-wapi_processes_cleanup (void)
-{
-	g_free (cli_launcher);
 }

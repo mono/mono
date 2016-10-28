@@ -108,8 +108,6 @@ typedef struct {
 
 gchar* wapi_process_get_path (pid_t pid);
 
-void wapi_process_set_cli_launcher (char *path);
-
 G_END_DECLS
 
 #endif /* _WAPI_PROCESSES_H_ */
