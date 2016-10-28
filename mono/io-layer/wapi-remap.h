@@ -54,7 +54,6 @@
 #define FormatMessage wapi_FormatMessage 
 #define CreateProcess wapi_CreateProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
-#define TerminateProcess wapi_TerminateProcess 
 #define ImpersonateLoggedOnUser wapi_ImpersonateLoggedOnUser 
 #define RevertToSelf wapi_RevertToSelf 
 #define WSASetLastError wapi_WSASetLastError

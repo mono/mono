@@ -2047,6 +2047,47 @@ mono_w32process_close (gpointer handle)
 }
 
 gboolean
+mono_w32process_terminate (gpointer handle, gint32 exit_code)
+{
+#ifdef HAVE_KILL
+	WapiHandle_process *process_handle;
+	int ret;
+	pid_t pid;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		/* This is a pseudo handle */
+		pid = (pid_t)WAPI_HANDLE_TO_PID (handle);
+	} else {
+		gboolean res;
+
+		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+		if (!res) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+			SetLastError (ERROR_INVALID_HANDLE);
+			return FALSE;
+		}
+
+		pid = process_handle->id;
+	}
+
+	ret = kill (pid, exit_code == -1 ? SIGKILL : SIGTERM);
+	if (ret == 0)
+		return TRUE;
+
+	switch (errno) {
+	case EINVAL: SetLastError (ERROR_INVALID_PARAMETER); break;
+	case EPERM:  SetLastError (ERROR_ACCESS_DENIED);     break;
+	case ESRCH:  SetLastError (ERROR_PROC_NOT_FOUND);    break;
+	default:     SetLastError (ERROR_GEN_FAILURE);       break;
+	}
+
+	return FALSE;
+#else
+	g_error ("kill() is not supported by this platform");
+#endif
+}
+
+gboolean
 mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
 {
 	WapiHandle_process *process_handle;

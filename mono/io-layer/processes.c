@@ -1304,53 +1304,6 @@ wapi_process_set_cli_launcher (char *path)
 	cli_launcher = path ? g_strdup (path) : NULL;
 }
 
-gboolean
-TerminateProcess (gpointer process, gint32 exitCode)
-{
-#if defined(HAVE_KILL)
-	WapiHandle_process *process_handle;
-	int signo;
-	int ret;
-	pid_t pid;
-	
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
-		/* This is a pseudo handle */
-		pid = (pid_t)WAPI_HANDLE_TO_PID (process);
-	} else {
-		process_handle = lookup_process_handle (process);
-		if (!process_handle) {
-			MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-			SetLastError (ERROR_INVALID_HANDLE);
-			return FALSE;
-		}
-		pid = process_handle->id;
-	}
-
-	signo = (exitCode == -1) ? SIGKILL : SIGTERM;
-	ret = kill (pid, signo);
-	if (ret == -1) {
-		switch (errno) {
-		case EINVAL:
-			SetLastError (ERROR_INVALID_PARAMETER);
-			break;
-		case EPERM:
-			SetLastError (ERROR_ACCESS_DENIED);
-			break;
-		case ESRCH:
-			SetLastError (ERROR_PROC_NOT_FOUND);
-			break;
-		default:
-			SetLastError (ERROR_GEN_FAILURE);
-		}
-	}
-	
-	return (ret == 0);
-#else
-	g_error ("kill() is not supported by this platform");
-	return FALSE;
-#endif
-}
-
 static void
 mono_processes_cleanup (void)
 {

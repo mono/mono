@@ -166,8 +166,6 @@ extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
 				 WapiFileTime *kernel_time,
 				 WapiFileTime *user_time);
 
-extern gboolean TerminateProcess (gpointer process, gint32 exitCode);
-
 gchar* wapi_process_get_path (pid_t pid);
 
 void wapi_process_set_cli_launcher (char *path);

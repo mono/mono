@@ -7982,7 +7982,7 @@ ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 ICALL_EXPORT MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
 {
-	return TerminateProcess (handle, exitcode);
+	return mono_w32process_terminate (handle, exitcode);
 }
 
 #ifndef HOST_WIN32
