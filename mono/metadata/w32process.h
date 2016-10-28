@@ -60,6 +60,9 @@ typedef struct
 gboolean
 mono_w32process_close (gpointer handle);
 
+gboolean
+mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code);
+
 gpointer
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
 

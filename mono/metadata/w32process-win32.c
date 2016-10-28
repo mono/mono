@@ -976,3 +976,9 @@ mono_w32process_close (gpointer handle)
 {
 	return CloseHandle (handle);
 }
+
+gboolean
+mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
+{
+	return GetExitCodeProcess (handle, exit_code);
+}

@@ -53,7 +53,6 @@
 #define GetVolumeInformation wapi_GetVolumeInformation 
 #define FormatMessage wapi_FormatMessage 
 #define CreateProcess wapi_CreateProcess 
-#define GetExitCodeProcess wapi_GetExitCodeProcess 
 #define GetProcessTimes wapi_GetProcessTimes 
 #define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
 #define SetProcessWorkingSetSize wapi_SetProcessWorkingSetSize 

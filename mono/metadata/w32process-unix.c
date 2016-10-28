@@ -114,6 +114,8 @@
 #define MAXPATHLEN 242
 #endif
 
+#define STILL_ACTIVE ((int) 0x00000103)
+
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
@@ -2042,4 +2044,48 @@ mono_w32process_close (gpointer handle)
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
 		return TRUE;
 	return CloseHandle (handle);
+}
+
+gboolean
+mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
+{
+	WapiHandle_process *process_handle;
+	guint32 pid;
+	gboolean res;
+
+	if (!exit_code)
+		return FALSE;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		pid = WAPI_HANDLE_TO_PID (handle);
+		/* This is a pseudo handle, so we don't know what the exit
+		 * code was, but we can check whether it's alive or not */
+		if (is_pid_valid (pid)) {
+			*exit_code = STILL_ACTIVE;
+			return TRUE;
+		} else {
+			*exit_code = -1;
+			return TRUE;
+		}
+	}
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+		return FALSE;
+	}
+
+	if (process_handle->id == wapi_getpid ()) {
+		*exit_code = STILL_ACTIVE;
+		return TRUE;
+	}
+
+	/* A process handle is only signalled if the process has exited
+	 * and has been waited for. Make sure any process exit has been
+	 * noticed before checking if the process is signalled.
+	 * Fixes bug 325463. */
+	mono_w32handle_wait_one (handle, 0, TRUE);
+
+	*exit_code = mono_w32handle_issignalled (handle) ? process_handle->exitstatus : STILL_ACTIVE;
+	return TRUE;
 }

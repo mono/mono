@@ -109,14 +109,11 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/w32handle.h>
 
-#define STILL_ACTIVE STATUS_PENDING
-
 static guint32 process_wait (gpointer handle, guint32 timeout, gboolean *alerted);
 static void process_close (gpointer handle, gpointer data);
 static void process_details (gpointer data);
 static const gchar* process_typename (void);
 static gsize process_typesize (void);
-static gboolean is_pid_valid (pid_t pid);
 
 static MonoW32HandleOps _wapi_process_ops = {
 	process_close,		/* close_shared */
@@ -168,31 +165,6 @@ lookup_process_handle (gpointer handle)
 	if (!ret)
 		return NULL;
 	return process_data;
-}
-
-/* Check if a pid is valid - i.e. if a process exists with this pid. */
-static gboolean
-is_pid_valid (pid_t pid)
-{
-	gboolean result = FALSE;
-
-#if defined(HOST_WATCHOS)
-	result = TRUE; // TODO: Rewrite using sysctl
-#elif defined(PLATFORM_MACOSX) || defined(__OpenBSD__) || defined(__FreeBSD__)
-	if (((kill(pid, 0) == 0) || (errno == EPERM)) && pid != 0)
-		result = TRUE;
-#elif defined(__HAIKU__)
-	team_info teamInfo;
-	if (get_team_info ((team_id)pid, &teamInfo) == B_OK)
-		result = TRUE;
-#else
-	char *dir = g_strdup_printf ("/proc/%d", pid);
-	if (!access (dir, F_OK))
-		result = TRUE;
-	g_free (dir);
-#endif
-	
-	return result;
 }
 
 static void
@@ -1032,58 +1004,6 @@ _wapi_process_duplicate (void)
 	mono_w32handle_ref (current_process);
 	
 	return current_process;
-}
-
-gboolean
-GetExitCodeProcess (gpointer process, guint32 *code)
-{
-	WapiHandle_process *process_handle;
-	guint32 pid = -1;
-	gboolean alerted;
-	
-	if (!code)
-		return FALSE;
-	
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
-		pid = WAPI_HANDLE_TO_PID (process);
-		/* This is a pseudo handle, so we don't know what the
-		 * exit code was, but we can check whether it's alive or not
-		 */
-		if (is_pid_valid (pid)) {
-			*code = STILL_ACTIVE;
-			return TRUE;
-		} else {
-			*code = -1;
-			return TRUE;
-		}
-	}
-
-	process_handle = lookup_process_handle (process);
-	if (!process_handle) {
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, process);
-		
-		return FALSE;
-	}
-
-	if (process_handle->id == wapi_getpid ()) {
-		*code = STILL_ACTIVE;
-		return TRUE;
-	}
-
-	/* A process handle is only signalled if the process has exited
-	 * and has been waited for */
-
-	/* Make sure any process exit has been noticed, before
-	 * checking if the process is signalled.  Fixes bug 325463.
-	 */
-	process_wait (process, 0, &alerted);
-	
-	if (mono_w32handle_issignalled (process))
-		*code = process_handle->exitstatus;
-	else
-		*code = STILL_ACTIVE;
-	
-	return TRUE;
 }
 
 gboolean

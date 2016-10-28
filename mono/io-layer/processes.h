@@ -167,7 +167,6 @@ extern gboolean CreateProcess (const gunichar2 *appname,
 #define LOGON_WITH_PROFILE 0x00000001
 #define LOGON_NETCREDENTIALS_ONLY 0x00000002
 
-extern gboolean GetExitCodeProcess (gpointer process, guint32 *code);
 extern gboolean GetProcessTimes (gpointer process, WapiFileTime *create_time,
 				 WapiFileTime *exit_time,
 				 WapiFileTime *kernel_time,
