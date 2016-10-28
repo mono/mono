@@ -52,7 +52,6 @@
 #define UnlockFile wapi_UnlockFile 
 #define GetVolumeInformation wapi_GetVolumeInformation 
 #define FormatMessage wapi_FormatMessage 
-#define ShellExecuteEx wapi_ShellExecuteEx 
 #define CreateProcess wapi_CreateProcess 
 #define CreateProcessWithLogonW wapi_CreateProcessWithLogonW 
 #define GetProcessId wapi_GetProcessId 

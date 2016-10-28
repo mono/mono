@@ -117,6 +117,11 @@
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
+static const gunichar2 utf16_space_bytes [2] = { 0x20, 0 };
+static const gunichar2 *utf16_space = utf16_space_bytes;
+static const gunichar2 utf16_quote_bytes [2] = { 0x22, 0 };
+static const gunichar2 *utf16_quote = utf16_quote_bytes;
+
 /* Check if a pid is valid - i.e. if a process exists with this pid. */
 static gboolean
 is_pid_valid (pid_t pid)
@@ -140,6 +145,50 @@ is_pid_valid (pid_t pid)
 #endif
 
 	return result;
+}
+
+static int
+len16 (const gunichar2 *str)
+{
+	int len = 0;
+
+	while (*str++ != 0)
+		len++;
+
+	return len;
+}
+
+static gunichar2 *
+utf16_concat (const gunichar2 *first, ...)
+{
+	va_list args;
+	int total = 0, i;
+	const gunichar2 *s;
+	const gunichar2 *p;
+	gunichar2 *ret;
+
+	va_start (args, first);
+	total += len16 (first);
+	for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg(args, gunichar2 *))
+		total += len16 (s);
+	va_end (args);
+
+	ret = g_new (gunichar2, total + 1);
+	if (ret == NULL)
+		return NULL;
+
+	ret [total] = 0;
+	i = 0;
+	for (s = first; *s != 0; s++)
+		ret [i++] = *s;
+	va_start (args, first);
+	for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg (args, gunichar2 *)){
+		for (p = s; *p != 0; p++)
+			ret [i++] = *p;
+	}
+	va_end (args);
+
+	return ret;
 }
 
 static gboolean
@@ -1653,46 +1702,111 @@ mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_info)
 {
-	SHELLEXECUTEINFO shellex = {0};
+	const gunichar2 *lpFile;
+	const gunichar2 *lpParameters;
+	const gunichar2 *lpDirectory;
+	gunichar2 *args;
 	gboolean ret;
 
-	shellex.cbSize = sizeof(SHELLEXECUTEINFO);
-	shellex.fMask = (gulong)(SEE_MASK_FLAG_DDEWAIT | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_UNICODE);
-	shellex.nShow = (gulong)proc_start_info->window_style;
-	shellex.nShow = (gulong)((shellex.nShow == 0) ? 1 : (shellex.nShow == 1 ? 0 : shellex.nShow));
-
-	if (proc_start_info->filename != NULL) {
-		shellex.lpFile = mono_string_chars (proc_start_info->filename);
+	if (!proc_start_info->filename) {
+		/* w2k returns TRUE for this, for some reason. */
+		ret = TRUE;
+		goto done;
 	}
 
-	if (proc_start_info->arguments != NULL) {
-		shellex.lpParameters = mono_string_chars (proc_start_info->arguments);
+	lpFile = proc_start_info->filename ? mono_string_chars (proc_start_info->filename) : NULL;
+	lpParameters = proc_start_info->arguments ? mono_string_chars (proc_start_info->arguments) : NULL;
+	lpDirectory = proc_start_info->working_directory && mono_string_length (proc_start_info->working_directory) != 0 ?
+		mono_string_chars (proc_start_info->working_directory) : NULL;
+
+	/* Put both executable and parameters into the second argument
+	 * to CreateProcess (), so it searches $PATH.  The conversion
+	 * into and back out of utf8 is because there is no
+	 * g_strdup_printf () equivalent for gunichar2 :-(
+	 */
+	args = utf16_concat (utf16_quote, lpFile, utf16_quote, lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
+	if (args == NULL) {
+		SetLastError (ERROR_INVALID_DATA);
+		ret = FALSE;
+		goto done;
+	}
+	ret = CreateProcess (NULL, args, NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, NULL, lpDirectory, NULL, (WapiProcessInformation*) process_info);
+	g_free (args);
+
+	if (!ret && GetLastError () == ERROR_OUTOFMEMORY)
+		goto done;
+
+	if (!ret) {
+		static char *handler;
+		static gunichar2 *handler_utf16;
+
+		if (handler_utf16 == (gunichar2 *)-1) {
+			ret = FALSE;
+			goto done;
+		}
+
+#ifdef PLATFORM_MACOSX
+		handler = g_strdup ("/usr/bin/open");
+#else
+		/*
+		 * On Linux, try: xdg-open, the FreeDesktop standard way of doing it,
+		 * if that fails, try to use gnome-open, then kfmclient
+		 */
+		handler = g_find_program_in_path ("xdg-open");
+		if (handler == NULL){
+			handler = g_find_program_in_path ("gnome-open");
+			if (handler == NULL){
+				handler = g_find_program_in_path ("kfmclient");
+				if (handler == NULL){
+					handler_utf16 = (gunichar2 *) -1;
+					ret = FALSE;
+					goto done;
+				} else {
+					/* kfmclient needs exec argument */
+					char *old = handler;
+					handler = g_strconcat (old, " exec",
+							       NULL);
+					g_free (old);
+				}
+			}
+		}
+#endif
+		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
+		g_free (handler);
+
+		/* Put quotes around the filename, in case it's a url
+		 * that contains #'s (CreateProcess() calls
+		 * g_shell_parse_argv(), which deliberately throws
+		 * away anything after an unquoted #).  Fixes bug
+		 * 371567.
+		 */
+		args = utf16_concat (handler_utf16, utf16_space, utf16_quote, lpFile, utf16_quote,
+			lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
+		if (args == NULL) {
+			SetLastError (ERROR_INVALID_DATA);
+			ret = FALSE;
+			goto done;
+		}
+		ret = CreateProcess (NULL, args, NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, NULL, lpDirectory, NULL, (WapiProcessInformation*) process_info);
+		g_free (args);
+		if (!ret) {
+			if (GetLastError () != ERROR_OUTOFMEMORY)
+				SetLastError (ERROR_INVALID_DATA);
+			ret = FALSE;
+			goto done;
+		}
+		/* Shell exec should not return a process handle when it spawned a GUI thing, like a browser. */
+		CloseHandle (process_info->process_handle);
+		process_info->process_handle = NULL;
 	}
 
-	if (proc_start_info->verb != NULL &&
-	    mono_string_length (proc_start_info->verb) != 0) {
-		shellex.lpVerb = mono_string_chars (proc_start_info->verb);
-	}
-
-	if (proc_start_info->working_directory != NULL &&
-	    mono_string_length (proc_start_info->working_directory) != 0) {
-		shellex.lpDirectory = mono_string_chars (proc_start_info->working_directory);
-	}
-
-	if (proc_start_info->error_dialog) {	
-		shellex.hwnd = proc_start_info->error_dialog_parent_handle;
-	} else {
-		shellex.fMask = (gulong)(shellex.fMask | SEE_MASK_FLAG_NO_UI);
-	}
-
-	ret = ShellExecuteEx (&shellex);
+done:
 	if (ret == FALSE) {
 		process_info->pid = -GetLastError ();
 	} else {
-		process_info->process_handle = shellex.hProcess;
 		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
-		process_info->pid = GetProcessId (shellex.hProcess);
+		process_info->pid = GetProcessId (process_info->process_handle);
 #else
 		process_info->pid = 0;
 #endif
