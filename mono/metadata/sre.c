@@ -3418,6 +3418,16 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
+static guint32
+modulebuilder_next_field_idx (MonoReflectionModuleBuilder *mb, guint32 num_fields, MonoError *error)
+{
+	mono_error_init (error);
+
+	guint32 first_field_idx = mb->next_field_idx;
+	mb->next_field_idx += num_fields;
+	return first_field_idx;
+}
+
 /* This initializes the same data as mono_class_setup_fields () */
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
@@ -3431,6 +3441,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	int i, instance_size, packing_size = 0;
 	guint32 len, idx;
 
+	mono_error_init (error);
+
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
 			mono_class_init (klass->parent);
@@ -3441,8 +3453,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	int fcount = tb->num_fields;
 	mono_class_set_field_count (klass, fcount);
-
-	error_init (error);
+	mono_class_set_first_field_idx (klass, modulebuilder_next_field_idx (tb->module, tb->num_fields, error));
 
 	if (tb->class_size) {
 		packing_size = tb->packing_size;
