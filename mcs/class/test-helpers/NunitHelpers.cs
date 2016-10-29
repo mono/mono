@@ -74,7 +74,17 @@ namespace NUnit.Framework
 			Assert.That(aString, Is.Not.Empty, message, args);
 		}
 
+		public static void Less(int arg1, int arg2, string message = null, params object[] args) 
+		{
+			Assert.That(arg1, Is.LessThan(arg2), message, args);
+		}
+
 		public static void Greater(int arg1, int arg2, string message = null, params object[] args) 
+		{
+			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
+		}
+
+		public static void Greater(double arg1, double arg2, string message = null, params object[] args) 
 		{
 			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
 		}
