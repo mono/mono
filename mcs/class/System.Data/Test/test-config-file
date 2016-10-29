@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
 	<configSections>
 		<section name="system.data_test" 
 			type="System.Data.Common.DbProviderFactoriesConfigurationHandler, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
@@ -45,4 +43,3 @@
 		<add name="Publications" providerName="System.Data.SqlClient" 
 			connectionString="Data Source=MyServer;Initial Catalog=pubs;integrated security=SSPI" />
 	</connectionStrings_test>
-</configuration>
