@@ -981,51 +981,88 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 	return res;
 }
 
-gboolean
-mono_w32process_close (gpointer handle)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	return CloseHandle (handle);
 }
 
-gboolean
-mono_w32process_terminate (gpointer handle, gint32 exit_code)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
 {
-	return TerminateProcess (handle, exit_code);
+	return TerminateProcess (handle, exitcode);
 }
 
-gboolean
-mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
 {
-	return GetExitCodeProcess (handle, exit_code);
+	return GetExitCodeProcess (handle, exitcode);
 }
 
-gboolean
-mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static inline MonoBoolean
+mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max)
 {
 	return GetProcessWorkingSetSize (handle, min, max);
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-gboolean
-mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
+{
+	return mono_icall_get_process_working_set_size (handle, min, max);
+}
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static inline MonoBoolean
+mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
 {
 	return SetProcessWorkingSetSize (handle, min, max);
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-MonoW32ProcessPriorityClass
-mono_w32process_get_priority_class (gpointer handle)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max)
 {
-	return (MonoW32ProcessPriorityClass) GetPriorityClass (handle);
+	return mono_icall_set_process_working_set_size (handle, min, max);
 }
 
-gboolean
-mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static inline gint32
+mono_icall_get_priority_class (gpointer handle)
 {
-	return SetPriorityClass (handle, (guint32) priority_class);
+	return GetPriorityClass (handle);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+gint32
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
+{
+	return mono_icall_get_priority_class (handle);
 }
 
-gboolean
-mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
-	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static inline MonoBoolean
+mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
 {
-	return GetProcessTimes (handle, (LPFILETIME) create_time, (LPFILETIME) exit_time, (LPFILETIME) kernel_time, (LPFILETIME) user_time);
+	return SetPriorityClass (handle, (guint32) priorityClass);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
+{
+	return mono_icall_set_priority_class (handle, priorityClass);
+}
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creationtime, gint64 *exittime, gint64 *kerneltime, gint64 *usertime)
+{
+	return GetProcessTimes (handle, (LPFILETIME) creationtime, (LPFILETIME) exittime, (LPFILETIME) kerneltime, (LPFILETIME) usertime);
+}
+
+gpointer
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
+{
+	return GetCurrentProcess ();
 }

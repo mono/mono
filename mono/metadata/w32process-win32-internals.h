@@ -23,6 +23,18 @@ gboolean
 mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_path, MonoString *cmd,
 			     guint32 creation_flags, gchar *env_vars, gunichar2 *dir, STARTUPINFO *start_info,
 			     PROCESS_INFORMATION *process_info);
+
+MonoBoolean
+mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max);
+
+MonoBoolean
+mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max);
+
+gint32
+mono_icall_get_priority_class (gpointer handle);
+
+MonoBoolean
+mono_icall_set_priority_class (gpointer handle, gint32 priorityClass);
 #endif  /* !G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 #endif /* __MONO_METADATA_PROCESS_INTERNALS_H__ */

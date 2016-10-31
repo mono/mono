@@ -148,6 +148,70 @@ mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_p
 	return FALSE;
 }
 
+MonoBoolean
+mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max)
+{
+	MonoError mono_error;
+	mono_error_init (&mono_error);
+
+	g_unsupported_api ("GetProcessWorkingSetSize");
+
+	mono_error_set_not_supported(&mono_error, G_UNSUPPORTED_API, "GetProcessWorkingSetSize");
+	mono_error_set_pending_exception (&mono_error);
+
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+	return FALSE;
+}
+
+MonoBoolean
+mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
+{
+	MonoError mono_error;
+	mono_error_init (&mono_error);
+
+	g_unsupported_api ("SetProcessWorkingSetSize");
+
+	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "SetProcessWorkingSetSize");
+	mono_error_set_pending_exception (&mono_error);
+
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+	return FALSE;
+}
+
+gint32
+mono_icall_get_priority_class (gpointer handle)
+{
+	MonoError mono_error;
+	mono_error_init (&mono_error);
+
+	g_unsupported_api ("GetPriorityClass");
+
+	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "GetPriorityClass");
+	mono_error_set_pending_exception (&mono_error);
+
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+	return FALSE;
+}
+
+MonoBoolean
+mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
+{
+	MonoError mono_error;
+	mono_error_init (&mono_error);
+
+	g_unsupported_api ("SetPriorityClass");
+
+	mono_error_set_not_supported(&mono_error, G_UNSUPPORTED_API, "SetPriorityClass");
+	mono_error_set_pending_exception (&mono_error);
+
+	SetLastError (ERROR_NOT_SUPPORTED);
+
+	return FALSE;
+}
+
 #else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */
 
 #ifdef _MSC_VER

@@ -169,6 +169,16 @@ typedef struct {
 	gpointer error;
 } StartupHandles;
 
+typedef struct {
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+	guint32 highDateTime;
+	guint32 lowDateTime;
+#else
+	guint32 lowDateTime;
+	guint32 highDateTime;
+#endif
+} ProcessTime;
+
 /*
  * MonoProcess describes processes we create.
  * It contains a semaphore that can be waited on in order to wait
@@ -532,13 +542,6 @@ mono_w32process_init (void)
 	g_assert (current_process);
 
 	mono_os_mutex_init (&mono_processes_mutex);
-}
-
-gpointer
-mono_w32process_current (void)
-{
-	mono_w32handle_ref (current_process);
-	return current_process;
 }
 
 void
@@ -3154,16 +3157,92 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 	return res;
 }
 
-gboolean
-mono_w32process_close (gpointer handle)
+void
+mono_w32process_set_cli_launcher (gchar *path)
+{
+	g_free (cli_launcher);
+	cli_launcher = g_strdup (path);
+}
+
+gchar*
+mono_w32process_get_path (pid_t pid)
+{
+#if defined(PLATFORM_MACOSX) && !defined(__mono_ppc__) && defined(TARGET_OSX)
+	gchar buf [PROC_PIDPATHINFO_MAXSIZE];
+	gint res;
+
+	res = proc_pidpath (pid, buf, sizeof (buf));
+	if (res <= 0)
+		return NULL;
+	if (buf [0] == '\0')
+		return NULL;
+	return g_strdup (buf);
+#else
+	return get_process_name_from_proc (pid);
+#endif
+}
+
+gpointer
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
+{
+	mono_w32handle_ref (current_process);
+	return current_process;
+}
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
+{
+	MonoW32HandleProcess *process_handle;
+	guint32 pid;
+	gboolean res;
+
+	if (!exitcode)
+		return FALSE;
+
+	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
+		pid = WAPI_HANDLE_TO_PID (handle);
+		/* This is a pseudo handle, so we don't know what the exit
+		 * code was, but we can check whether it's alive or not */
+		if (is_pid_valid (pid)) {
+			*exitcode = STILL_ACTIVE;
+			return TRUE;
+		} else {
+			*exitcode = -1;
+			return TRUE;
+		}
+	}
+
+	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
+	if (!res) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
+		return FALSE;
+	}
+
+	if (process_handle->id == wapi_getpid ()) {
+		*exitcode = STILL_ACTIVE;
+		return TRUE;
+	}
+
+	/* A process handle is only signalled if the process has exited
+	 * and has been waited for. Make sure any process exit has been
+	 * noticed before checking if the process is signalled.
+	 * Fixes bug 325463. */
+	mono_w32handle_wait_one (handle, 0, TRUE);
+
+	*exitcode = mono_w32handle_issignalled (handle) ? process_handle->exitstatus : STILL_ACTIVE;
+	return TRUE;
+}
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
 		return TRUE;
 	return CloseHandle (handle);
 }
 
-gboolean
-mono_w32process_terminate (gpointer handle, gint32 exit_code)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
 {
 #ifdef HAVE_KILL
 	MonoW32HandleProcess *process_handle;
@@ -3186,7 +3265,7 @@ mono_w32process_terminate (gpointer handle, gint32 exit_code)
 		pid = process_handle->id;
 	}
 
-	ret = kill (pid, exit_code == -1 ? SIGKILL : SIGTERM);
+	ret = kill (pid, exitcode == -1 ? SIGKILL : SIGTERM);
 	if (ret == 0)
 		return TRUE;
 
@@ -3203,52 +3282,8 @@ mono_w32process_terminate (gpointer handle, gint32 exit_code)
 #endif
 }
 
-gboolean
-mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code)
-{
-	MonoW32HandleProcess *process_handle;
-	guint32 pid;
-	gboolean res;
-
-	if (!exit_code)
-		return FALSE;
-
-	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
-		pid = WAPI_HANDLE_TO_PID (handle);
-		/* This is a pseudo handle, so we don't know what the exit
-		 * code was, but we can check whether it's alive or not */
-		if (is_pid_valid (pid)) {
-			*exit_code = STILL_ACTIVE;
-			return TRUE;
-		} else {
-			*exit_code = -1;
-			return TRUE;
-		}
-	}
-
-	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
-	if (!res) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
-		return FALSE;
-	}
-
-	if (process_handle->id == wapi_getpid ()) {
-		*exit_code = STILL_ACTIVE;
-		return TRUE;
-	}
-
-	/* A process handle is only signalled if the process has exited
-	 * and has been waited for. Make sure any process exit has been
-	 * noticed before checking if the process is signalled.
-	 * Fixes bug 325463. */
-	mono_w32handle_wait_one (handle, 0, TRUE);
-
-	*exit_code = mono_w32handle_issignalled (handle) ? process_handle->exitstatus : STILL_ACTIVE;
-	return TRUE;
-}
-
-gboolean
-mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
 {
 	MonoW32HandleProcess *process_handle;
 	gboolean res;
@@ -3270,8 +3305,8 @@ mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *ma
 	return TRUE;
 }
 
-gboolean
-mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max)
 {
 	MonoW32HandleProcess *process_handle;
 	gboolean res;
@@ -3290,8 +3325,8 @@ mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max)
 	return TRUE;
 }
 
-MonoW32ProcessPriorityClass
-mono_w32process_get_priority_class (gpointer handle)
+gint32
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 {
 #ifdef HAVE_GETPRIORITY
 	MonoW32HandleProcess *process_handle;
@@ -3350,8 +3385,8 @@ mono_w32process_get_priority_class (gpointer handle)
 #endif
 }
 
-gboolean
-mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
 {
 #ifdef HAVE_SETPRIORITY
 	MonoW32HandleProcess *process_handle;
@@ -3374,7 +3409,7 @@ mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityC
 		pid = process_handle->id;
 	}
 
-	switch (priority_class) {
+	switch (priorityClass) {
 	case MONO_W32PROCESS_PRIORITY_CLASS_IDLE:
 		prio = 19;
 		break;
@@ -3421,35 +3456,40 @@ mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityC
 }
 
 static void
-ticks_to_filetime (guint64 ticks, MonoW32ProcessTime *filetime)
+ticks_to_processtime (guint64 ticks, ProcessTime *processtime)
 {
-	filetime->lowDateTime = ticks & 0xFFFFFFFF;
-	filetime->highDateTime = ticks >> 32;
+	processtime->lowDateTime = ticks & 0xFFFFFFFF;
+	processtime->highDateTime = ticks >> 32;
 }
 
 static void
-wapifiletime_to_filetime (WapiFileTime wapi_filetime, MonoW32ProcessTime *filetime)
+wapifiletime_to_processtime (WapiFileTime wapi_filetime, ProcessTime *processtime)
 {
-	filetime->lowDateTime = wapi_filetime.dwLowDateTime;
-	filetime->highDateTime = wapi_filetime.dwHighDateTime;
+	processtime->lowDateTime = wapi_filetime.dwLowDateTime;
+	processtime->highDateTime = wapi_filetime.dwHighDateTime;
 }
 
-gboolean
-mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
-	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time)
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time)
 {
 	MonoW32HandleProcess *process_handle;
+	ProcessTime *creation_processtime, *exit_processtime, *kernel_processtime, *user_processtime;
 	gboolean res;
 
-	if (!create_time || !exit_time || !kernel_time || !user_time) {
+	if (!creation_time || !exit_time || !kernel_time || !user_time) {
 		/* Not sure if w32 allows NULLs here or not */
 		return FALSE;
 	}
 
-	memset (create_time, 0, sizeof (MonoW32ProcessTime));
-	memset (exit_time, 0, sizeof (MonoW32ProcessTime));
-	memset (kernel_time, 0, sizeof (MonoW32ProcessTime));
-	memset (user_time, 0, sizeof (MonoW32ProcessTime));
+	creation_processtime = (ProcessTime*) creation_time;
+	exit_processtime = (ProcessTime*) exit_time;
+	kernel_processtime = (ProcessTime*) kernel_time;
+	user_processtime = (ProcessTime*) user_time;
+
+	memset (creation_processtime, 0, sizeof (ProcessTime));
+	memset (exit_processtime, 0, sizeof (ProcessTime));
+	memset (kernel_processtime, 0, sizeof (ProcessTime));
+	memset (user_processtime, 0, sizeof (ProcessTime));
 
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle)) {
 		gint64 start_ticks, user_ticks, kernel_ticks;
@@ -3457,9 +3497,9 @@ mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time,
 		mono_process_get_times (GINT_TO_POINTER (WAPI_HANDLE_TO_PID (handle)),
 			&start_ticks, &user_ticks, &kernel_ticks);
 
-		ticks_to_filetime (start_ticks, create_time);
-		ticks_to_filetime (user_ticks, kernel_time);
-		ticks_to_filetime (kernel_ticks, user_time);
+		ticks_to_processtime (start_ticks, creation_processtime);
+		ticks_to_processtime (user_ticks, kernel_processtime);
+		ticks_to_processtime (kernel_ticks, user_processtime);
 		return TRUE;
 	}
 
@@ -3469,47 +3509,22 @@ mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time,
 		return FALSE;
 	}
 
-	wapifiletime_to_filetime (process_handle->create_time, create_time);
+	wapifiletime_to_processtime (process_handle->create_time, creation_processtime);
 
 	/* A process handle is only signalled if the process has
-	 * exited, otherwise exit_time isn't set */
+	 * exited, otherwise exit_processtime isn't set */
 	if (mono_w32handle_issignalled (handle))
-		wapifiletime_to_filetime (process_handle->exit_time, exit_time);
+		wapifiletime_to_processtime (process_handle->exit_time, exit_processtime);
 
 #ifdef HAVE_GETRUSAGE
 	if (process_handle->id == getpid ()) {
 		struct rusage time_data;
 		if (getrusage (RUSAGE_SELF, &time_data) == 0) {
-			ticks_to_filetime ((guint64)time_data.ru_utime.tv_sec * 10000000 + (guint64)time_data.ru_utime.tv_usec * 10, user_time);
-			ticks_to_filetime ((guint64)time_data.ru_stime.tv_sec * 10000000 + (guint64)time_data.ru_stime.tv_usec * 10, kernel_time);
+			ticks_to_processtime ((guint64)time_data.ru_utime.tv_sec * 10000000 + (guint64)time_data.ru_utime.tv_usec * 10, user_processtime);
+			ticks_to_processtime ((guint64)time_data.ru_stime.tv_sec * 10000000 + (guint64)time_data.ru_stime.tv_usec * 10, kernel_processtime);
 		}
 	}
 #endif
 
 	return TRUE;
-}
-
-void
-mono_w32process_set_cli_launcher (gchar *path)
-{
-	g_free (cli_launcher);
-	cli_launcher = g_strdup (path);
-}
-
-gchar*
-mono_w32process_get_path (pid_t pid)
-{
-#if defined(PLATFORM_MACOSX) && !defined(__mono_ppc__) && defined(TARGET_OSX)
-	gchar buf [PROC_PIDPATHINFO_MAXSIZE];
-	gint res;
-
-	res = proc_pidpath (pid, buf, sizeof (buf));
-	if (res <= 0)
-		return NULL;
-	if (buf [0] == '\0')
-		return NULL;
-	return g_strdup (buf);
-#else
-	return get_process_name_from_proc (pid);
-#endif
 }

@@ -70,40 +70,11 @@ typedef struct
 	MonoObject *envVars;
 } MonoW32ProcessStartInfo;
 
-typedef struct {
-#if G_BYTE_ORDER == G_BIG_ENDIAN
-	guint32 highDateTime;
-	guint32 lowDateTime;
-#else
-	guint32 lowDateTime;
-	guint32 highDateTime;
-#endif
-} MonoW32ProcessTime;
-
 void
 mono_w32process_init (void);
 
 void
 mono_w32process_cleanup (void);
-
-gboolean
-mono_w32process_close (gpointer handle);
-
-gboolean
-mono_w32process_terminate (gpointer handle, gint32 exit_code);
-
-gboolean
-mono_w32process_try_get_exit_code (gpointer handle, guint32 *exit_code);
-
-gboolean
-mono_w32process_try_get_working_get_size (gpointer handle, gsize *min, gsize *max);
-gboolean
-mono_w32process_try_set_working_set_size (gpointer handle, gsize min, gsize max);
-
-MonoW32ProcessPriorityClass
-mono_w32process_get_priority_class (gpointer handle);
-gboolean
-mono_w32process_try_set_priority_class (gpointer handle, MonoW32ProcessPriorityClass priority_class);
 
 #ifndef HOST_WIN32
 
@@ -113,14 +84,7 @@ mono_w32process_set_cli_launcher (gchar *path);
 gchar*
 mono_w32process_get_path (pid_t pid);
 
-gpointer
-mono_w32process_current (void);
-
 #endif
-
-gboolean
-mono_w32process_try_get_times (gpointer handle, MonoW32ProcessTime *create_time, MonoW32ProcessTime *exit_time,
-	MonoW32ProcessTime *kernel_time, MonoW32ProcessTime *user_time);
 
 gpointer
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
@@ -146,6 +110,31 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);
 
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error);
+
+gpointer
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void);
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode);
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle);
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode);
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max);
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max);
+
+gint32
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle);
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass);
+
+MonoBoolean
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creationtime, gint64 *exittime, gint64 *kerneltime, gint64 *usertime);
 
 G_END_DECLS
 
