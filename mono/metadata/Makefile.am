@@ -41,8 +41,13 @@ unix_sources = \
 	console-unix.c \
 	w32mutex-unix.c \
 	w32semaphore-unix.c \
+	w32event-unix.c \
 	w32process-unix.c \
-	w32event-unix.c
+	w32process-unix-internals.h \
+	w32process-unix-osx.c \
+	w32process-unix-bsd.c \
+	w32process-unix-haiku.c \
+	w32process-unix-default.c
 
 platform_sources = $(unix_sources)
 endif

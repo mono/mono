@@ -46,55 +46,8 @@
 #include <utime.h>
 #endif
 
-/* sys/resource.h (for rusage) is required when using osx 10.3 (but not 10.4) */
-#ifdef __APPLE__
-#include <TargetConditionals.h>
-#include <sys/resource.h>
-#ifdef HAVE_LIBPROC_H
-/* proc_name */
-#include <libproc.h>
-#endif
-#endif
-
-#if defined(PLATFORM_MACOSX)
-#define USE_OSX_LOADER
-#endif
-
-#if ( defined(__OpenBSD__) || defined(__FreeBSD__) ) && defined(HAVE_LINK_H)
-#define USE_BSD_LOADER
-#endif
-
-#if defined(__HAIKU__)
-#define USE_HAIKU_LOADER
-#endif
-
-#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER)
-#include <sys/proc.h>
-#include <sys/sysctl.h>
-#if !defined(__OpenBSD__)
-#include <sys/utsname.h>
-#endif
-#if defined(__FreeBSD__)
-#include <sys/user.h> /* struct kinfo_proc */
-#endif
-#endif
-
-#ifdef PLATFORM_SOLARIS
-/* procfs.h cannot be included if this define is set, but it seems to work fine if it is undefined */
-#if _FILE_OFFSET_BITS == 64
-#undef _FILE_OFFSET_BITS
-#include <procfs.h>
-#define _FILE_OFFSET_BITS 64
-#else
-#include <procfs.h>
-#endif
-#endif
-
-#if defined(USE_HAIKU_LOADER)
-#include <KernelKit.h>
-#endif
-
 #include <mono/metadata/w32process.h>
+#include <mono/metadata/w32process-unix-internals.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object.h>
@@ -1164,513 +1117,12 @@ get_domain_assemblies (MonoDomain *domain)
 	return assemblies;
 }
 
-static char *
-get_process_name_from_proc (pid_t pid)
-{
-#if defined(USE_BSD_LOADER)
-	int mib [6];
-	size_t size;
-	struct kinfo_proc *pi;
-#elif defined(USE_OSX_LOADER)
-#if !(!defined (__mono_ppc__) && defined (TARGET_OSX))
-	size_t size;
-	struct kinfo_proc *pi;
-	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
-#endif
-#else
-	FILE *fp;
-	char *filename = NULL;
-#endif
-	char buf[256];
-	char *ret = NULL;
-
-#if defined(PLATFORM_SOLARIS)
-	filename = g_strdup_printf ("/proc/%d/psinfo", pid);
-	if ((fp = fopen (filename, "r")) != NULL) {
-		struct psinfo info;
-		int nread;
-
-		nread = fread (&info, sizeof (info), 1, fp);
-		if (nread == 1) {
-			ret = g_strdup (info.pr_fname);
-		}
-
-		fclose (fp);
-	}
-	g_free (filename);
-#elif defined(USE_OSX_LOADER)
-#if !defined (__mono_ppc__) && defined (TARGET_OSX)
-	/* No proc name on OSX < 10.5 nor ppc nor iOS */
-	memset (buf, '\0', sizeof(buf));
-	proc_name (pid, buf, sizeof(buf));
-
-	// Fixes proc_name triming values to 15 characters #32539
-	if (strlen (buf) >= MAXCOMLEN - 1) {
-		char path_buf [PROC_PIDPATHINFO_MAXSIZE];
-		char *name_buf;
-		int path_len;
-
-		memset (path_buf, '\0', sizeof(path_buf));
-		path_len = proc_pidpath (pid, path_buf, sizeof(path_buf));
-
-		if (path_len > 0 && path_len < sizeof(path_buf)) {
-			name_buf = path_buf + path_len;
-			for(;name_buf > path_buf; name_buf--) {
-				if (name_buf [0] == '/') {
-					name_buf++;
-					break;
-				}
-			}
-
-			if (memcmp (buf, name_buf, MAXCOMLEN - 1) == 0)
-				ret = g_strdup (name_buf);
-		}
-	}
-
-	if (ret == NULL && strlen (buf) > 0)
-		ret = g_strdup (buf);
-#else
-	if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0)
-		return(ret);
-
-	if ((pi = g_malloc (size)) == NULL)
-		return(ret);
-
-	if (sysctl (mib, 4, pi, &size, NULL, 0) < 0) {
-		if (errno == ENOMEM) {
-			g_free (pi);
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Didn't allocate enough memory for kproc info", __func__);
-		}
-		return(ret);
-	}
-
-	if (strlen (pi->kp_proc.p_comm) > 0)
-		ret = g_strdup (pi->kp_proc.p_comm);
-
-	g_free (pi);
-#endif
-#elif defined(USE_BSD_LOADER)
-#if defined(__FreeBSD__)
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC;
-	mib [2] = KERN_PROC_PID;
-	mib [3] = pid;
-	if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sysctl() failed: %d", __func__, errno);
-		return(ret);
-	}
-
-	if ((pi = g_malloc (size)) == NULL)
-		return(ret);
-
-	if (sysctl (mib, 4, pi, &size, NULL, 0) < 0) {
-		if (errno == ENOMEM) {
-			g_free (pi);
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Didn't allocate enough memory for kproc info", __func__);
-		}
-		return(ret);
-	}
-
-	if (strlen (pi->ki_comm) > 0)
-		ret = g_strdup (pi->ki_comm);
-	g_free (pi);
-#elif defined(__OpenBSD__)
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC;
-	mib [2] = KERN_PROC_PID;
-	mib [3] = pid;
-	mib [4] = sizeof(struct kinfo_proc);
-	mib [5] = 0;
-
-retry:
-	if (sysctl(mib, 6, NULL, &size, NULL, 0) < 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sysctl() failed: %d", __func__, errno);
-		return(ret);
-	}
-
-	if ((pi = g_malloc (size)) == NULL)
-		return(ret);
-
-	mib[5] = (int)(size / sizeof(struct kinfo_proc));
-
-	if ((sysctl (mib, 6, pi, &size, NULL, 0) < 0) ||
-		(size != sizeof (struct kinfo_proc))) {
-		if (errno == ENOMEM) {
-			g_free (pi);
-			goto retry;
-		}
-		return(ret);
-	}
-
-	if (strlen (pi->p_comm) > 0)
-		ret = g_strdup (pi->p_comm);
-
-	g_free (pi);
-#endif
-#elif defined(USE_HAIKU_LOADER)
-	image_info imageInfo;
-	int32 cookie = 0;
-
-	if (get_next_image_info ((team_id)pid, &cookie, &imageInfo) == B_OK) {
-		ret = g_strdup (imageInfo.name);
-	}
-#else
-	memset (buf, '\0', sizeof(buf));
-	filename = g_strdup_printf ("/proc/%d/exe", pid);
-	if (readlink (filename, buf, 255) > 0) {
-		ret = g_strdup (buf);
-	}
-	g_free (filename);
-
-	if (ret != NULL) {
-		return(ret);
-	}
-
-	filename = g_strdup_printf ("/proc/%d/cmdline", pid);
-	if ((fp = fopen (filename, "r")) != NULL) {
-		if (fgets (buf, 256, fp) != NULL) {
-			ret = g_strdup (buf);
-		}
-
-		fclose (fp);
-	}
-	g_free (filename);
-
-	if (ret != NULL) {
-		return(ret);
-	}
-
-	filename = g_strdup_printf ("/proc/%d/stat", pid);
-	if ((fp = fopen (filename, "r")) != NULL) {
-		if (fgets (buf, 256, fp) != NULL) {
-			char *start, *end;
-
-			start = strchr (buf, '(');
-			if (start != NULL) {
-				end = strchr (start + 1, ')');
-
-				if (end != NULL) {
-					ret = g_strndup (start + 1,
-							 end - start - 1);
-				}
-			}
-		}
-
-		fclose (fp);
-	}
-	g_free (filename);
-#endif
-
-	return ret;
-}
-
-typedef struct
-{
-	gpointer address_start;
-	gpointer address_end;
-	char *perms;
-	gpointer address_offset;
-	guint64 device;
-	guint64 inode;
-	char *filename;
-} WapiProcModule;
-
-static void free_procmodule (WapiProcModule *mod)
-{
-	if (mod->perms != NULL) {
-		g_free (mod->perms);
-	}
-	if (mod->filename != NULL) {
-		g_free (mod->filename);
-	}
-	g_free (mod);
-}
-
-static gint find_procmodule (gconstpointer a, gconstpointer b)
-{
-	WapiProcModule *want = (WapiProcModule *)a;
-	WapiProcModule *compare = (WapiProcModule *)b;
-	return want->device == compare->device && want->inode == compare->inode ? 0 : 1;
-}
-
-#if defined(USE_OSX_LOADER)
-#include <mach-o/dyld.h>
-#include <mach-o/getsect.h>
-
-static GSList*
-load_modules (void)
-{
-	GSList *ret = NULL;
-	WapiProcModule *mod;
-	uint32_t count = _dyld_image_count ();
-	int i = 0;
-
-	for (i = 0; i < count; i++) {
-#if SIZEOF_VOID_P == 8
-		const struct mach_header_64 *hdr;
-		const struct section_64 *sec;
-#else
-		const struct mach_header *hdr;
-		const struct section *sec;
-#endif
-		const char *name;
-
-		name = _dyld_get_image_name (i);
-#if SIZEOF_VOID_P == 8
-		hdr = (const struct mach_header_64*)_dyld_get_image_header (i);
-		sec = getsectbynamefromheader_64 (hdr, SEG_DATA, SECT_DATA);
-#else
-		hdr = _dyld_get_image_header (i);
-		sec = getsectbynamefromheader (hdr, SEG_DATA, SECT_DATA);
-#endif
-
-		/* Some dynlibs do not have data sections on osx (#533893) */
-		if (sec == 0) {
-			continue;
-		}
-
-		mod = g_new0 (WapiProcModule, 1);
-		mod->address_start = GINT_TO_POINTER (sec->addr);
-		mod->address_end = GINT_TO_POINTER (sec->addr+sec->size);
-		mod->perms = g_strdup ("r--p");
-		mod->address_offset = 0;
-		mod->device = makedev (0, 0);
-		mod->inode = i;
-		mod->filename = g_strdup (name);
-
-		if (g_slist_find_custom (ret, mod, find_procmodule) == NULL) {
-			ret = g_slist_prepend (ret, mod);
-		} else {
-			free_procmodule (mod);
-		}
-	}
-
-	ret = g_slist_reverse (ret);
-
-	return(ret);
-}
-#elif defined(USE_BSD_LOADER)
-#include <link.h>
-
-static int
-load_modules_callback (struct dl_phdr_info *info, size_t size, void *ptr)
-{
-	if (size < offsetof (struct dl_phdr_info, dlpi_phnum) + sizeof (info->dlpi_phnum))
-		return (-1);
-
-	struct dl_phdr_info *cpy = g_calloc (1, sizeof(struct dl_phdr_info));
-	if (!cpy)
-		return (-1);
-
-	memcpy(cpy, info, sizeof(*info));
-
-	g_ptr_array_add ((GPtrArray *)ptr, cpy);
-
-	return (0);
-}
-
-static GSList*
-load_modules (void)
-{
-	GSList *ret = NULL;
-	WapiProcModule *mod;
-	GPtrArray *dlarray = g_ptr_array_new();
-	int i;
-
-	if (dl_iterate_phdr(load_modules_callback, dlarray) < 0)
-		return (ret);
-
-	for (i = 0; i < dlarray->len; i++) {
-		struct dl_phdr_info *info = g_ptr_array_index (dlarray, i);
-
-		mod = g_new0 (WapiProcModule, 1);
-		mod->address_start = (gpointer)(info->dlpi_addr + info->dlpi_phdr[0].p_vaddr);
-		mod->address_end = (gpointer)(info->dlpi_addr + info->dlpi_phdr[info->dlpi_phnum - 1].p_vaddr);
-		mod->perms = g_strdup ("r--p");
-		mod->address_offset = 0;
-		mod->inode = i;
-		mod->filename = g_strdup (info->dlpi_name);
-
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: inode=%d, filename=%s, address_start=%p, address_end=%p",
-			__func__, mod->inode, mod->filename, mod->address_start, mod->address_end);
-
-		g_free (info);
-
-		if (g_slist_find_custom (ret, mod, find_procmodule) == NULL) {
-			ret = g_slist_prepend (ret, mod);
-		} else {
-			free_procmodule (mod);
-		}
-	}
-
-	g_ptr_array_free (dlarray, TRUE);
-
-	ret = g_slist_reverse (ret);
-
-	return(ret);
-}
-#elif defined(USE_HAIKU_LOADER)
-static GSList*
-load_modules (void)
-{
-	GSList *ret = NULL;
-	WapiProcModule *mod;
-	int32 cookie = 0;
-	image_info imageInfo;
-
-	while (get_next_image_info (B_CURRENT_TEAM, &cookie, &imageInfo) == B_OK) {
-		mod = g_new0 (WapiProcModule, 1);
-		mod->device = imageInfo.device;
-		mod->inode = imageInfo.node;
-		mod->filename = g_strdup (imageInfo.name);
-		mod->address_start = MIN (imageInfo.text, imageInfo.data);
-		mod->address_end = MAX ((uint8_t*)imageInfo.text + imageInfo.text_size,
-			(uint8_t*)imageInfo.data + imageInfo.data_size);
-		mod->perms = g_strdup ("r--p");
-		mod->address_offset = 0;
-
-		if (g_slist_find_custom (ret, mod, find_procmodule) == NULL) {
-			ret = g_slist_prepend (ret, mod);
-		} else {
-			free_procmodule (mod);
-		}
-	}
-
-	ret = g_slist_reverse (ret);
-
-	return ret;
-}
-#else
-static GSList*
-load_modules (FILE *fp)
-{
-	GSList *ret = NULL;
-	WapiProcModule *mod;
-	char buf[MAXPATHLEN + 1], *p, *endp;
-	char *start_start, *end_start, *prot_start, *offset_start;
-	char *maj_dev_start, *min_dev_start, *inode_start, prot_buf[5];
-	gpointer address_start, address_end, address_offset;
-	guint32 maj_dev, min_dev;
-	guint64 inode;
-	guint64 device;
-
-	while (fgets (buf, sizeof(buf), fp)) {
-		p = buf;
-		while (g_ascii_isspace (*p)) ++p;
-		start_start = p;
-		if (!g_ascii_isxdigit (*start_start)) {
-			continue;
-		}
-		address_start = (gpointer)strtoul (start_start, &endp, 16);
-		p = endp;
-		if (*p != '-') {
-			continue;
-		}
-
-		++p;
-		end_start = p;
-		if (!g_ascii_isxdigit (*end_start)) {
-			continue;
-		}
-		address_end = (gpointer)strtoul (end_start, &endp, 16);
-		p = endp;
-		if (!g_ascii_isspace (*p)) {
-			continue;
-		}
-
-		while (g_ascii_isspace (*p)) ++p;
-		prot_start = p;
-		if (*prot_start != 'r' && *prot_start != '-') {
-			continue;
-		}
-		memcpy (prot_buf, prot_start, 4);
-		prot_buf[4] = '\0';
-		while (!g_ascii_isspace (*p)) ++p;
-
-		while (g_ascii_isspace (*p)) ++p;
-		offset_start = p;
-		if (!g_ascii_isxdigit (*offset_start)) {
-			continue;
-		}
-		address_offset = (gpointer)strtoul (offset_start, &endp, 16);
-		p = endp;
-		if (!g_ascii_isspace (*p)) {
-			continue;
-		}
-
-		while(g_ascii_isspace (*p)) ++p;
-		maj_dev_start = p;
-		if (!g_ascii_isxdigit (*maj_dev_start)) {
-			continue;
-		}
-		maj_dev = strtoul (maj_dev_start, &endp, 16);
-		p = endp;
-		if (*p != ':') {
-			continue;
-		}
-
-		++p;
-		min_dev_start = p;
-		if (!g_ascii_isxdigit (*min_dev_start)) {
-			continue;
-		}
-		min_dev = strtoul (min_dev_start, &endp, 16);
-		p = endp;
-		if (!g_ascii_isspace (*p)) {
-			continue;
-		}
-
-		while (g_ascii_isspace (*p)) ++p;
-		inode_start = p;
-		if (!g_ascii_isxdigit (*inode_start)) {
-			continue;
-		}
-		inode = (guint64)strtol (inode_start, &endp, 10);
-		p = endp;
-		if (!g_ascii_isspace (*p)) {
-			continue;
-		}
-
-		device = makedev ((int)maj_dev, (int)min_dev);
-		if ((device == 0) &&
-		    (inode == 0)) {
-			continue;
-		}
-
-		while(g_ascii_isspace (*p)) ++p;
-		/* p now points to the filename */
-
-		mod = g_new0 (WapiProcModule, 1);
-		mod->address_start = address_start;
-		mod->address_end = address_end;
-		mod->perms = g_strdup (prot_buf);
-		mod->address_offset = address_offset;
-		mod->device = device;
-		mod->inode = inode;
-		mod->filename = g_strdup (g_strstrip (p));
-
-		if (g_slist_find_custom (ret, mod, find_procmodule) == NULL) {
-			ret = g_slist_prepend (ret, mod);
-		} else {
-			free_procmodule (mod);
-		}
-	}
-
-	ret = g_slist_reverse (ret);
-
-	return(ret);
-}
-#endif
-
 static gboolean
 get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
 {
 	MonoW32HandleProcess *process_handle;
-#if !defined(USE_OSX_LOADER) && !defined(USE_BSD_LOADER)
-	FILE *fp;
-#endif
 	GSList *mods = NULL;
-	WapiProcModule *module;
+	MonoW32ProcessModule *module;
 	guint32 count, avail = size / sizeof(gpointer);
 	int i;
 	pid_t pid;
@@ -1691,7 +1143,7 @@ get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 
 
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
 		pid = WAPI_HANDLE_TO_PID (process);
-		proc_name = get_process_name_from_proc (pid);
+		proc_name = mono_w32process_get_name (pid);
 	} else {
 		res = mono_w32handle_lookup (process, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
@@ -1703,27 +1155,20 @@ get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 
 		proc_name = g_strdup (process_handle->proc_name);
 	}
 
-#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER)
-	mods = load_modules ();
 	if (!proc_name) {
 		modules[0] = NULL;
 		*needed = sizeof(gpointer);
 		return TRUE;
 	}
-#else
-	fp = open_process_map (pid, "r");
-	if (!fp) {
-		/* No /proc/<pid>/maps so just return the main module
-		 * shortcut for now
-		 */
+
+	mods = mono_w32process_get_modules (pid);
+	if (!mods) {
 		modules[0] = NULL;
 		*needed = sizeof(gpointer);
 		g_free (proc_name);
 		return TRUE;
 	}
-	mods = load_modules (fp);
-	fclose (fp);
-#endif
+
 	count = g_slist_length (mods);
 
 	/* count + 1 to leave slot 0 for the main module */
@@ -1739,7 +1184,7 @@ get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 
 	 */
 	modules[0] = NULL;
 	for (i = 0; i < (avail - 1) && i < count; i++) {
-		module = (WapiProcModule *)g_slist_nth_data (mods, i);
+		module = (MonoW32ProcessModule *)g_slist_nth_data (mods, i);
 		if (modules[0] != NULL)
 			modules[i] = module->address_start;
 		else if (match_procname_to_modulename (proc_name, module->filename))
@@ -1749,7 +1194,7 @@ get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 
 	}
 
 	for (i = 0; i < count; i++) {
-		free_procmodule ((WapiProcModule *)g_slist_nth_data (mods, i));
+		mono_w32process_module_free ((MonoW32ProcessModule *)g_slist_nth_data (mods, i));
 	}
 	g_slist_free (mods);
 	g_free (proc_name);
@@ -1810,11 +1255,8 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 	char *procname_ext = NULL;
 	glong len;
 	gsize bytes;
-#if !defined(USE_OSX_LOADER) && !defined(USE_BSD_LOADER)
-	FILE *fp;
-#endif
 	GSList *mods = NULL;
-	WapiProcModule *found_module;
+	MonoW32ProcessModule *found_module;
 	guint32 count;
 	int i;
 	char *proc_name = NULL;
@@ -1831,7 +1273,7 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
 		/* This is a pseudo handle */
 		pid = (pid_t)WAPI_HANDLE_TO_PID (process);
-		proc_name = get_process_name_from_proc (pid);
+		proc_name = mono_w32process_get_name (pid);
 	} else {
 		res = mono_w32handle_lookup (process, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
@@ -1843,26 +1285,12 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 		proc_name = g_strdup (process_handle->proc_name);
 	}
 
-	/* Look up the address in /proc/<pid>/maps */
-#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER)
-	mods = load_modules ();
-#else
-	fp = open_process_map (pid, "r");
-	if (fp == NULL) {
-		if (errno == EACCES && module == NULL && base == TRUE) {
-			procname_ext = get_process_name_from_proc (pid);
-		} else {
-			/* No /proc/<pid>/maps, so just return failure
-			 * for now
-			 */
-			g_free (proc_name);
-			return 0;
-		}
-	} else {
-		mods = load_modules (fp);
-		fclose (fp);
+	mods = mono_w32process_get_modules (pid);
+	if (!mods) {
+		g_free (proc_name);
+		return 0;
 	}
-#endif
+
 	count = g_slist_length (mods);
 
 	/* If module != NULL compare the address.
@@ -1870,7 +1298,7 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 	 * The best we can do for now check it the module name end with the process name.
 	 */
 	for (i = 0; i < count; i++) {
-		found_module = (WapiProcModule *)g_slist_nth_data (mods, i);
+		found_module = (MonoW32ProcessModule *)g_slist_nth_data (mods, i);
 		if (procname_ext == NULL &&
 			((module == NULL && match_procname_to_modulename (proc_name, found_module->filename)) ||
 			 (module != NULL && found_module->address_start == module))) {
@@ -1880,7 +1308,7 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 				procname_ext = g_strdup (found_module->filename);
 		}
 
-		free_procmodule (found_module);
+		mono_w32process_module_free (found_module);
 	}
 
 	if (procname_ext == NULL) {
@@ -1888,7 +1316,7 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 		 * case where reading /proc/$pid/maps gives an
 		 * empty file for this user.
 		 */
-		procname_ext = get_process_name_from_proc (pid);
+		procname_ext = mono_w32process_get_name (pid);
 	}
 
 	g_slist_free (mods);
@@ -1935,11 +1363,8 @@ get_module_information (gpointer process, gpointer module, WapiModuleInfo *modin
 {
 	MonoW32HandleProcess *process_handle;
 	pid_t pid;
-#if !defined(USE_OSX_LOADER) && !defined(USE_BSD_LOADER)
-	FILE *fp;
-#endif
 	GSList *mods = NULL;
-	WapiProcModule *found_module;
+	MonoW32ProcessModule *found_module;
 	guint32 count;
 	int i;
 	gboolean ret = FALSE;
@@ -1954,7 +1379,7 @@ get_module_information (gpointer process, gpointer module, WapiModuleInfo *modin
 
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (process)) {
 		pid = (pid_t)WAPI_HANDLE_TO_PID (process);
-		proc_name = get_process_name_from_proc (pid);
+		proc_name = mono_w32process_get_name (pid);
 	} else {
 		res = mono_w32handle_lookup (process, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
@@ -1966,20 +1391,12 @@ get_module_information (gpointer process, gpointer module, WapiModuleInfo *modin
 		proc_name = g_strdup (process_handle->proc_name);
 	}
 
-#if defined(USE_OSX_LOADER) || defined(USE_BSD_LOADER) || defined(USE_HAIKU_LOADER)
-	mods = load_modules ();
-#else
-	/* Look up the address in /proc/<pid>/maps */
-	if ((fp = open_process_map (pid, "r")) == NULL) {
-		/* No /proc/<pid>/maps, so just return failure
-		 * for now
-		 */
+	mods = mono_w32process_get_modules (pid);
+	if (!mods) {
 		g_free (proc_name);
 		return FALSE;
 	}
-	mods = load_modules (fp);
-	fclose (fp);
-#endif
+
 	count = g_slist_length (mods);
 
 	/* If module != NULL compare the address.
@@ -1987,7 +1404,7 @@ get_module_information (gpointer process, gpointer module, WapiModuleInfo *modin
 	 * The best we can do for now check it the module name end with the process name.
 	 */
 	for (i = 0; i < count; i++) {
-			found_module = (WapiProcModule *)g_slist_nth_data (mods, i);
+			found_module = (MonoW32ProcessModule *)g_slist_nth_data (mods, i);
 			if (ret == FALSE &&
 				((module == NULL && match_procname_to_modulename (proc_name, found_module->filename)) ||
 				 (module != NULL && found_module->address_start == module))) {
@@ -1997,7 +1414,7 @@ get_module_information (gpointer process, gpointer module, WapiModuleInfo *modin
 				ret = TRUE;
 			}
 
-			free_procmodule (found_module);
+			mono_w32process_module_free (found_module);
 	}
 
 	g_slist_free (mods);
@@ -3162,24 +2579,6 @@ mono_w32process_set_cli_launcher (gchar *path)
 {
 	g_free (cli_launcher);
 	cli_launcher = g_strdup (path);
-}
-
-gchar*
-mono_w32process_get_path (pid_t pid)
-{
-#if defined(PLATFORM_MACOSX) && !defined(__mono_ppc__) && defined(TARGET_OSX)
-	gchar buf [PROC_PIDPATHINFO_MAXSIZE];
-	gint res;
-
-	res = proc_pidpath (pid, buf, sizeof (buf));
-	if (res <= 0)
-		return NULL;
-	if (buf [0] == '\0')
-		return NULL;
-	return g_strdup (buf);
-#else
-	return get_process_name_from_proc (pid);
-#endif
 }
 
 gpointer
