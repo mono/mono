@@ -702,7 +702,7 @@ stash_system_assembly (MonoObject *obj)
 
 //Hand coded version that loads from system
 static MonoClass*
-mono_class_get_file_version_info_class (void)
+get_file_version_info_class (void)
 {
 	static MonoClass *tmp_class;
 	MonoClass *klass = tmp_class;
@@ -715,7 +715,7 @@ mono_class_get_file_version_info_class (void)
 }
 
 static MonoClass*
-mono_class_get_process_module_class (void)
+process_get_process_module_class (void)
 {
 	static MonoClass *tmp_class;
 	MonoClass *klass = tmp_class;
@@ -899,7 +899,7 @@ process_module_stringtable (MonoObject *filever, gpointer data,
 }
 
 static void
-mono_process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
+process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
 {
 	DWORD verinfohandle;
 	VS_FIXEDFILEINFO *ffi;
@@ -1016,7 +1016,7 @@ process_get_assembly_fileversion (MonoObject *filever, MonoAssembly *assembly)
 }
 
 static MonoObject*
-get_process_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *error)
+process_get_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *error)
 {
 	MonoObject *item, *filever;
 	MonoDomain *domain = mono_domain_get ();
@@ -1029,7 +1029,7 @@ get_process_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 	 */
 	item = mono_object_new_checked (domain, proc_class, error);
 	return_val_if_nok (error, NULL);
-	filever = mono_object_new_checked (domain, mono_class_get_file_version_info_class (), error);
+	filever = mono_object_new_checked (domain, get_file_version_info_class (), error);
 	return_val_if_nok (error, NULL);
 
 	filename = g_strdup_printf ("[In Memory] %s", modulename);
@@ -1049,7 +1049,7 @@ get_process_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 }
 
 static gboolean
-get_module_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size);
+module_get_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size);
 
 static MonoObject*
 process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class, MonoError *error)
@@ -1065,16 +1065,16 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 	 */
 	item = mono_object_new_checked (domain, proc_class, error);
 	return_val_if_nok (error, NULL);
-	filever = mono_object_new_checked (domain, mono_class_get_file_version_info_class (), error);
+	filever = mono_object_new_checked (domain, get_file_version_info_class (), error);
 	return_val_if_nok (error, NULL);
 
-	mono_process_get_fileversion (filever, filename, error);
+	process_get_fileversion (filever, filename, error);
 	return_val_if_nok (error, NULL);
 
 	process_set_field_string (filever, "filename", filename,
 							  unicode_chars (filename), error);
 	return_val_if_nok (error, NULL);
-	ok = get_module_information (process, mod, &modinfo, sizeof(MODULEINFO));
+	ok = module_get_information (process, mod, &modinfo, sizeof(MODULEINFO));
 	if (ok) {
 		process_set_field_intptr (item, "baseaddr",
 					  modinfo.lpBaseOfDll);
@@ -1095,7 +1095,7 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 }
 
 static GPtrArray*
-get_domain_assemblies (MonoDomain *domain)
+domain_get_assemblied (MonoDomain *domain)
 {
 	GSList *tmp;
 	GPtrArray *assemblies;
@@ -1118,7 +1118,7 @@ get_domain_assemblies (MonoDomain *domain)
 }
 
 static gboolean
-get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
+process_get_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
 {
 	MonoW32HandleProcess *process_handle;
 	GSList *mods = NULL;
@@ -1203,7 +1203,7 @@ get_process_modules (gpointer process, gpointer *modules, guint32 size, guint32 
 }
 
 static guint32
-get_module_filename (gpointer process, gpointer module,
+module_get_filename (gpointer process, gpointer module,
 					 gunichar2 *basename, guint32 size)
 {
 	gint pid, len;
@@ -1247,7 +1247,7 @@ get_module_filename (gpointer process, gpointer module,
 }
 
 static guint32
-get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size, gboolean base)
+module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size, gboolean base)
 {
 	MonoW32HandleProcess *process_handle;
 	pid_t pid;
@@ -1359,7 +1359,7 @@ get_module_name (gpointer process, gpointer module, gunichar2 *basename, guint32
 }
 
 static gboolean
-get_module_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size)
+module_get_information (gpointer process, gpointer module, WapiModuleInfo *modinfo, guint32 size)
 {
 	MonoW32HandleProcess *process_handle;
 	pid_t pid;
@@ -1441,24 +1441,24 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 	stash_system_assembly (this_obj);
 
 	if (process_get_pid (process) == mono_process_current_pid ()) {
-		assemblies = get_domain_assemblies (mono_domain_get ());
+		assemblies = domain_get_assemblied (mono_domain_get ());
 		assembly_count = assemblies->len;
 	}
 
-	if (get_process_modules (process, mods, sizeof(mods), &needed)) {
+	if (process_get_modules (process, mods, sizeof(mods), &needed)) {
 		module_count += needed / sizeof(HMODULE);
 	}
 
 	count = module_count + assembly_count; 
-	temp_arr = mono_array_new_checked (mono_domain_get (), mono_class_get_process_module_class (), count, &error);
+	temp_arr = mono_array_new_checked (mono_domain_get (), process_get_process_module_class (), count, &error);
 	if (mono_error_set_pending_exception (&error))
 		return NULL;
 
 	for (i = 0; i < module_count; i++) {
-		if (get_module_name (process, mods[i], modname, MAX_PATH, TRUE) &&
-				get_module_filename (process, mods[i], filename, MAX_PATH)) {
+		if (module_get_name (process, mods[i], modname, MAX_PATH, TRUE) &&
+				module_get_filename (process, mods[i], filename, MAX_PATH)) {
 			MonoObject *module = process_add_module (process, mods[i],
-													 filename, modname, mono_class_get_process_module_class (), &error);
+													 filename, modname, process_get_process_module_class (), &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_set_pending_exception (&error);
 				return NULL;
@@ -1470,7 +1470,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 	if (assemblies) {
 		for (i = 0; i < assembly_count; i++) {
 			MonoAssembly *ass = (MonoAssembly *)g_ptr_array_index (assemblies, i);
-			MonoObject *module = get_process_module (ass, mono_class_get_process_module_class (), &error);
+			MonoObject *module = process_get_module (ass, process_get_process_module_class (), &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_set_pending_exception (&error);
 				return NULL;
@@ -1484,7 +1484,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 		arr = temp_arr;
 	} else {
 		/* shorter version of the array */
-		arr = mono_array_new_checked (mono_domain_get (), mono_class_get_process_module_class (), num_added, &error);
+		arr = mono_array_new_checked (mono_domain_get (), process_get_process_module_class (), num_added, &error);
 		if (mono_error_set_pending_exception (&error))
 			return NULL;
 
@@ -1502,7 +1502,7 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_assembly (this_obj);
 	
-	mono_process_get_fileversion (this_obj, mono_string_chars (filename), &error);
+	process_get_fileversion (this_obj, mono_string_chars (filename), &error);
 	if (!mono_error_ok (&error)) {
 		mono_error_set_pending_exception (&error);
 		return;
@@ -2376,7 +2376,7 @@ done:
 
 /* Only used when UseShellExecute is false */
 static gboolean
-mono_process_complete_path (const gunichar2 *appname, gchar **completed)
+process_get_complete_path (const gunichar2 *appname, gchar **completed)
 {
 	gchar *utf8app;
 	gchar *found;
@@ -2409,14 +2409,14 @@ mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 }
 
 static gboolean
-mono_process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
+process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
 {
 	gchar *spath = NULL;
 
 	*shell_path = NULL;
 	*cmd = proc_start_info->arguments;
 
-	mono_process_complete_path (mono_string_chars (proc_start_info->filename), &spath);
+	process_get_complete_path (mono_string_chars (proc_start_info->filename), &spath);
 	if (spath != NULL) {
 		*shell_path = g_utf8_to_utf16 (spath, -1, NULL, NULL, NULL);
 		g_free (spath);
@@ -2441,7 +2441,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	startup_handles.output = stdout_handle;
 	startup_handles.error = stderr_handle;
 
-	if (mono_process_get_shell_arguments (proc_start_info, &shell_path, &cmd) == FALSE) {
+	if (process_get_shell_arguments (proc_start_info, &shell_path, &cmd) == FALSE) {
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
 		return FALSE;
 	}
@@ -2514,11 +2514,11 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 	HMODULE mod;
 	DWORD needed;
 
-	ok = get_process_modules (process, &mod, sizeof(mod), &needed);
+	ok = process_get_modules (process, &mod, sizeof(mod), &needed);
 	if (!ok)
 		return NULL;
 
-	len = get_module_name (process, mod, name, MAX_PATH, TRUE);
+	len = module_get_name (process, mod, name, MAX_PATH, TRUE);
 
 	if (len == 0)
 		return NULL;
