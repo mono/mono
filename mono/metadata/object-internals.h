@@ -1130,7 +1130,7 @@ typedef struct {
 	MonoArray *global_fields;
 	gboolean is_main;
 	MonoArray *resources;
-	guint32    next_field_idx;
+	MonoArray *table_indexes;
 } MonoReflectionModuleBuilder;
 
 typedef struct {
