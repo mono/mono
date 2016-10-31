@@ -33,7 +33,9 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #if SECURITY_DEP
 using MSX = Mono.Security.X509;
+#if MONO_FEATURE_BTLS
 using Mono.Btls;
+#endif
 #endif
 
 namespace System {
@@ -60,12 +62,14 @@ namespace System {
 							"TrustEvaluateSsl",
 							ignoreCase:false,
 							throwOnBindFailure:true);
+#if MONO_FEATURE_BTLS
 			certStoreLookup = (Func<long, bool, byte[]>)
 				Delegate.CreateDelegate (typeof (Func<long, bool, byte[]>),
 							t,
 							"CertStoreLookup",
 							ignoreCase:false,
 							throwOnBindFailure:true);
+#endif  // MONO_FEATURE_BTLS
 #endif  // SECURITY_DEP
 			getDefaultProxy = (Func<IWebProxy>)Delegate.CreateDelegate (
 				typeof (Func<IWebProxy>), t, "GetDefaultProxy",
@@ -92,6 +96,7 @@ namespace System {
 			return trustEvaluateSsl (certsRawData);
 		}
 
+#if MONO_FEATURE_BTLS
 		internal static MonoBtlsX509 CertStoreLookup (MonoBtlsX509Name name)
 		{
 			var hash = name.GetHash ();
@@ -109,6 +114,7 @@ namespace System {
 
 			return MonoBtlsX509.LoadFromData (result, MonoBtlsX509Format.DER);
 		}
+#endif  // MONO_FEATURE_BTLS
 #endif  // SECURITY_DEP
 
 		internal static IWebProxy GetDefaultProxy ()
