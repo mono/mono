@@ -178,7 +178,29 @@ static const gunichar2 *utf16_quote = utf16_quote_bytes;
 void
 mono_w32process_init (void)
 {
+	WapiHandle_process process_handle;
+
+	mono_w32handle_register_ops (MONO_W32HANDLE_PROCESS, &_wapi_process_ops);
+
+	mono_w32handle_register_capabilities (MONO_W32HANDLE_PROCESS,
+		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SPECIAL_WAIT));
+
+	memset (&process_handle, 0, sizeof (process_handle));
+	process_handle.id = wapi_getpid ();
+	process_set_defaults (&process_handle);
+	process_set_name (&process_handle);
+
+	current_process = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
+	g_assert (current_process);
+
 	mono_os_mutex_init (&mono_processes_mutex);
+}
+
+gpointer
+mono_w32process_current (void)
+{
+	mono_w32handle_ref (current_process);
+	return current_process;
 }
 
 void

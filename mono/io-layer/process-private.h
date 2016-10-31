@@ -16,6 +16,5 @@
 #include <mono/utils/mono-os-semaphore.h>
 
 void _wapi_processes_init (void);
-extern gpointer _wapi_process_duplicate (void);
 
 #endif /* _WAPI_PROCESS_PRIVATE_H_ */

@@ -160,62 +160,6 @@ lookup_process_handle (gpointer handle)
 	return process_data;
 }
 
-static void
-process_set_defaults (WapiHandle_process *process_handle)
-{
-	/* These seem to be the defaults on w2k */
-	process_handle->min_working_set = 204800;
-	process_handle->max_working_set = 1413120;
-	
-	_wapi_time_t_to_filetime (time (NULL), &process_handle->create_time);
-}
-
-static int
-len16 (const gunichar2 *str)
-{
-	int len = 0;
-	
-	while (*str++ != 0)
-		len++;
-
-	return len;
-}
-
-static gunichar2 *
-utf16_concat (const gunichar2 *first, ...)
-{
-	va_list args;
-	int total = 0, i;
-	const gunichar2 *s;
-	gunichar2 *ret;
-
-	va_start (args, first);
-	total += len16 (first);
-        for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg(args, gunichar2 *)){
-		total += len16 (s);
-        }
-	va_end (args);
-
-	ret = g_new (gunichar2, total + 1);
-	if (ret == NULL)
-		return NULL;
-
-	ret [total] = 0;
-	i = 0;
-	for (s = first; *s != 0; s++)
-		ret [i++] = *s;
-	va_start (args, first);
-	for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg (args, gunichar2 *)){
-		const gunichar2 *p;
-		
-		for (p = s; *p != 0; p++)
-			ret [i++] = *p;
-	}
-	va_end (args);
-	
-	return ret;
-}
-
 #ifdef DEBUG_ENABLED
 /* Useful in gdb */
 void
@@ -259,23 +203,7 @@ _wapi_processes_init (void)
 	mono_w32handle_register_capabilities (MONO_W32HANDLE_PROCESS,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SPECIAL_WAIT));
 
-	memset (&process_handle, 0, sizeof (process_handle));
-	process_handle.id = wapi_getpid ();
-	process_set_defaults (&process_handle);
-	process_set_name (&process_handle);
-
-	current_process = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
-	g_assert (current_process);
-
 	mono_os_mutex_init (&mono_processes_mutex);
-}
-
-gpointer
-_wapi_process_duplicate (void)
-{
-	mono_w32handle_ref (current_process);
-	
-	return current_process;
 }
 
 static void

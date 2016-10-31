@@ -7963,7 +7963,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 #ifdef HOST_WIN32
 	return GetCurrentProcess ();
 #else
-	return _WAPI_PROCESS_CURRENT;
+	return mono_w32process_current ();
 #endif
 }
 

@@ -113,6 +113,9 @@ mono_w32process_set_cli_launcher (gchar *path);
 gchar*
 mono_w32process_get_path (pid_t pid);
 
+gpointer
+mono_w32process_current (void);
+
 #endif
 
 gboolean
