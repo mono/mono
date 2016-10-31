@@ -212,6 +212,9 @@ mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *request
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filanem);
 
+static MonoAssembly*
+prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly);
+
 static gchar*
 encode_public_tok (const guchar *token, gint32 len)
 {
@@ -1191,6 +1194,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 				   aname.major, aname.minor, aname.build, aname.revision,
 				   strlen ((char*)aname.public_key_token) == 0 ? "(none)" : (char*)aname.public_key_token, extra_msg);
 		g_free (extra_msg);
+
 	}
 
 	mono_assemblies_lock ();
@@ -1747,7 +1751,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 	if (ass->friend_assembly_names_inited)
 		return;
 
-	attrs = mono_custom_attrs_from_assembly_checked (ass, &error);
+	attrs = mono_custom_attrs_from_assembly_checked (ass, FALSE, &error);
 	mono_error_assert_ok (&error);
 	if (!attrs) {
 		mono_assemblies_lock ();
@@ -1809,7 +1813,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 
 
 /**
- * mono_assembly_get_reference_assembly_attribute:
+ * mono_assembly_has_reference_assembly_attribute:
  * @assembly: a MonoAssembly
  * @error: set on error.
  *
@@ -1817,25 +1821,28 @@ mono_assembly_load_friends (MonoAssembly* ass)
  * On error returns FALSE and sets @error.
  */
 gboolean
-mono_assembly_get_reference_assembly_attribute (MonoAssembly *assembly, MonoError *error)
+mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoError *error)
 {
 	mono_error_init (error);
 
-	MonoCustomAttrInfo *attrs = mono_custom_attrs_from_assembly_checked (assembly, error);
+/* TODO: mono_custom_attrs_from_assembly_checked returns NULL if a
+ * single assembly is missing.  The custom attr we want is from
+ * corlib, however, so we need a more robust version that doesn't care
+ * about missing attributes.
+ */
+#if 1
+	MonoCustomAttrInfo *attrs = mono_custom_attrs_from_assembly_checked (assembly, TRUE, error);
 	return_val_if_nok (error, FALSE);
 	if (!attrs)
 		return FALSE;
 	MonoClass *ref_asm_class = mono_class_try_get_reference_assembly_class ();
-	gboolean result = FALSE;
-	for (int i = 0; i < attrs->num_attrs; ++i) {
-		MonoCustomAttrEntry *attr = &attrs->attrs [i];
-		if (attr->ctor && attr->ctor->klass && attr->ctor->klass == ref_asm_class) {
-			result = TRUE;
-			break;
-		}
-	}
+	g_assert (ref_asm_class != NULL && ref_asm_class != mono_defaults.object_class && !strcmp(ref_asm_class->name, "ReferenceAssemblyAttribute") );
+	gboolean result = mono_custom_attrs_has_attr (attrs, ref_asm_class);
 	mono_custom_attrs_free (attrs);
 	return result;
+#else
+	return FALSE;
+#endif
 }
 
 /**
@@ -1973,7 +1980,37 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 		return ass2;
 	}
 
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Prepared to set up assembly '%s' (%s)", ass->aname.name, image->name);
+
 	image->assembly = ass;
+
+	/* We need to check for ReferenceAssmeblyAttribute before we
+	 * mark the assembly as loaded and before we fire the load
+	 * hook. Otherwise mono_domain_fire_assembly_load () in
+	 * appdomain.c will cache a mapping from the assembly name to
+	 * this image and we won't be able to look for a different
+	 * candidate. */
+
+	if (!refonly && strcmp (ass->aname.name, "mscorlib") != 0) {
+		/* Don't check for reference assmebly attribute for
+		 * corlib here because if corlib isn't loaded yet,
+		 * it's too early to set up the
+		 * ReferenceAssemblyAttribute class.  We check that
+		 * we're not running with a reference corlib in
+		 * mono_init_internal().
+		 */
+		MonoError refasm_error;
+		if (mono_assembly_has_reference_assembly_attribute (ass, &refasm_error)) {
+			mono_assemblies_unlock ();
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Image for assembly '%s' (%s) has ReferenceAssemblyAttribute, skipping", ass->aname.name, image->name);
+			g_free (ass);
+			g_free (base_dir);
+			mono_image_close (image);
+			*status = MONO_IMAGE_IMAGE_INVALID;
+			return NULL;
+		}
+		mono_error_cleanup (&refasm_error);
+	}
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	mono_assemblies_unlock ();
@@ -3176,6 +3213,19 @@ return_corlib_and_facades:
 	return corlib;
 }
 
+static MonoAssembly*
+prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly)
+{
+	MonoError refasm_error;
+	mono_error_init (&refasm_error);
+	if (candidate && !refonly && mono_assembly_has_reference_assembly_attribute (candidate, &refasm_error)) {
+		candidate = NULL;
+	}
+	mono_error_cleanup (&refasm_error);
+	return candidate;
+}
+
+
 MonoAssembly*
 mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
 								  const char       *basedir, 
@@ -3257,9 +3307,11 @@ mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *request
 {
 	MonoAssembly *result = mono_assembly_load_full_nosearch (aname, basedir, status, refonly);
 
-	if (!result)
+	if (!result) {
 		/* Try a postload search hook */
 		result = mono_assembly_invoke_search_hook_internal (aname, requesting, refonly, TRUE);
+		result = prevent_reference_assembly_from_running (result, refonly);
+	}
 	return result;
 }
 
