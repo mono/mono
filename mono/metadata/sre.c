@@ -3418,14 +3418,23 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
-static guint32
-modulebuilder_next_field_idx (MonoReflectionModuleBuilder *mb, guint32 num_fields, MonoError *error)
+static gint32
+modulebuilder_get_next_table_index (MonoReflectionModuleBuilder *mb, gint32 table, gint32 num_fields, MonoError *error)
 {
 	mono_error_init (error);
 
-	guint32 first_field_idx = mb->next_field_idx;
-	mb->next_field_idx += num_fields;
-	return first_field_idx;
+	if (mb->table_indexes == NULL) {
+		MonoArray *arr = mono_array_new_checked (mono_object_domain (&mb->module.obj), mono_defaults.int_class, 64, error);
+		return_val_if_nok (error, 0);
+		for (int i = 0; i < 64; i++) {
+			mono_array_set (arr, int, i, 1);
+		}
+		MONO_OBJECT_SETREF (mb, table_indexes, arr);
+	}
+	gint32 index = mono_array_get (mb->table_indexes, gint32, table);
+	gint32 next_index = index + num_fields;
+	mono_array_set (mb->table_indexes, gint32, table, next_index);
+	return index;
 }
 
 /* This initializes the same data as mono_class_setup_fields () */
@@ -3453,7 +3462,13 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	int fcount = tb->num_fields;
 	mono_class_set_field_count (klass, fcount);
-	mono_class_set_first_field_idx (klass, modulebuilder_next_field_idx (tb->module, tb->num_fields, error));
+
+	gint32 first_idx = 0;
+	if (tb->num_fields > 0) {
+		first_idx = modulebuilder_get_next_table_index (tb->module, MONO_TABLE_FIELD, (gint32)tb->num_fields, error);
+		return_if_nok (error);
+	}
+	mono_class_set_first_field_idx (klass, first_idx - 1); /* Why do we subtract 1? because mono_class_create_from_typedef does it, too. */
 
 	if (tb->class_size) {
 		packing_size = tb->packing_size;
@@ -3518,6 +3533,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 			def_values [i].data = (const char *)mono_image_alloc (image, len);
 			memcpy ((gpointer)def_values [i].data, p, len);
 		}
+		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), (MonoObject*)fb);
 	}
 
 	if (!mono_class_has_failure (klass))

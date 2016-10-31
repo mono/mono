@@ -63,7 +63,7 @@ namespace System.Reflection.Emit {
 		bool is_main;
 		private MonoResource[] resources;
 		private IntPtr unparented_classes;
-		uint next_field_idx;
+		private int[] table_indexes;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -72,7 +72,6 @@ namespace System.Reflection.Emit {
 		// name_cache keys are display names
 		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
-		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
 		Hashtable resource_writers;
@@ -97,8 +96,6 @@ namespace System.Reflection.Emit {
 			table_idx = get_next_table_index (this, 0x00, 1);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
-
-			next_field_idx = 0;
 
 			basic_init (this);
 
