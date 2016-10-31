@@ -1,10 +1,8 @@
 Some tests located require a connection to Oracle database to execute.
-To configure a connection, copy System.Data.OracleClient_test_default.dll.config.example
-to System.Data.OracleClient_test_default.dll.config and fill in the ConnectionString with appropriate Data Source.
+To configure a connection, set the MONO_TESTS_ORACLE_CONNECTION_STRING environment variable to a connection string like the following:
 
-If no System.Data.OracleClient_test_default.dll.config is present, those tests will be ignored.
+Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=<host ip>)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=<sid>)));uid=<user name>;pwd=<password>;
 
-To test .Net 2.0 profile, copy System.Data.OracleClient_test_default.dll.config
-to System.Data.OracleClient_test_net_2_0.dll.config and launch tests with PROFILE=net_2_0 .
+If the environment variable is not present, those tests will be ignored.
 
 Scripts for populating the database are located in Test/System.Data.OracleClient.jvm (for their usage, consult Test/System.Data.OracleClient.jvm/readme.txt).

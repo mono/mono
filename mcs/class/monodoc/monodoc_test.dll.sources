@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 Monodoc/HelpSourceTests.cs
 Monodoc/EcmaDocTests.cs
 Monodoc/TreeTest.cs

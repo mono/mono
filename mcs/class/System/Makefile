@@ -34,6 +34,8 @@ endif
 TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
+TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
+
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
 ifndef NO_PROCESS_START
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_PROCESS_START
@@ -101,7 +103,6 @@ endif
 
 EXTRA_DISTFILES = \
 	Test/test-config-file				\
-	Test/test-config-file-net-2.0			\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
@@ -157,10 +158,7 @@ $(the_libdir_base)System.Configuration.dll:
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
-$(test_lib): $(test_lib).config $(TEST_RESOURCES)
-
-$(test_lib).config: Test/test-config-file
-	cp $< $@
+$(test_lib): $(TEST_RESOURCES)
 
 CLEAN_FILES = $(test_lib).config $(bare_libdir)/System.dll $(secxml_libdir)/System.dll $(bare_libdir)/System.dll.mdb $(secxml_libdir)/System.dll.mdb
 
