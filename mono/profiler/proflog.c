@@ -674,7 +674,7 @@ pstrdup (const char *s)
 }
 
 static LogBuffer*
-create_buffer (void)
+create_buffer (uintptr_t tid)
 {
 	LogBuffer* buf = (LogBuffer *)alloc_buffer (BUFFER_SIZE);
 
@@ -683,15 +683,17 @@ create_buffer (void)
 	buf->size = BUFFER_SIZE;
 	buf->time_base = current_time ();
 	buf->last_time = buf->time_base;
-	buf->buf_end = (unsigned char*)buf + buf->size;
+	buf->buf_end = (unsigned char *) buf + buf->size;
 	buf->cursor = buf->buf;
+	buf->thread_id = tid;
+
 	return buf;
 }
 
 static void
 init_buffer_state (MonoProfilerThread *thread)
 {
-	thread->buffer = create_buffer ();
+	thread->buffer = create_buffer (thread->node.key);
 	thread->methods = NULL;
 }
 
@@ -758,7 +760,7 @@ ensure_logbuf_inner (LogBuffer *old, int bytes)
 	if (old && old->cursor + bytes + 100 < old->buf_end)
 		return old;
 
-	LogBuffer *new_ = create_buffer ();
+	LogBuffer *new_ = create_buffer (old->thread_id);
 	new_->next = old;
 
 	return new_;
