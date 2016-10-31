@@ -20,7 +20,6 @@ OTHER_H = \
 	io-portability.h	\
 	macros.h	\
 	messages.h	\
-	processes.h	\
 	security.h	\
 	sockets.h	\
 	status.h	\
@@ -49,9 +48,6 @@ OTHER_SRC = \
 	messages.c		\
 	messages.h		\
 	posix.c			\
-	processes.c		\
-	processes.h		\
-	process-private.h	\
 	security.c		\
 	security.h		\
 	sockets.c		\
