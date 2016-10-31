@@ -302,9 +302,10 @@ sgen_unified_suspend_stop_world (void)
 			}
 		} FOREACH_THREAD_END
 
+		mono_threads_wait_pending_operations ();
+
 		if (restart_counter == 0)
 			break;
-		mono_threads_wait_pending_operations ();
 
 		if (sleep_duration < 0) {
 			mono_thread_info_yield ();
