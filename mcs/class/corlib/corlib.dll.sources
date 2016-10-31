@@ -910,7 +910,6 @@ ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
-ReferenceSources/SharedStatics.cs
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
 
@@ -1035,6 +1034,7 @@ ReferenceSources/PathInternal.cs
 ../referencesource/mscorlib/system/rttype.cs
 ../referencesource/mscorlib/system/sbyte.cs
 ../referencesource/mscorlib/system/serializableattribute.cs
+../referencesource/mscorlib/system/sharedstatics.cs
 ../referencesource/mscorlib/system/stackoverflowexception.cs
 ../referencesource/mscorlib/system/single.cs
 ../referencesource/mscorlib/system/string.cs
