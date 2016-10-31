@@ -28,6 +28,15 @@ namespace System {
 
     internal sealed class SharedStatics
     {
+#if MONO
+        // TODO: We are using only GetSharedStringMaker for now which is
+        // ok to be AppDomain static
+        static readonly SharedStatics _sharedStatics = new SharedStatics();
+
+        private SharedStatics()
+        {
+        }
+#else
         // this is declared static but is actually forced to be the same object 
         // for each AppDomain at AppDomain create time.
         private static SharedStatics _sharedStatics;
@@ -38,6 +47,7 @@ namespace System {
         {
             BCLDebug.Assert(false, "SharedStatics..ctor() is never called.");
         }
+#endif
 
         private volatile String _Remoting_Identity_IDGuid;
         public static String Remoting_Identity_IDGuid 
