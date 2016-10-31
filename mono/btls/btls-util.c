@@ -23,7 +23,7 @@ mono_btls_free (void *data)
 	OPENSSL_free (data);
 }
 
-long
+time_t
 mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time)
 {
 	ASN1_GENERALIZEDTIME *gtime;
