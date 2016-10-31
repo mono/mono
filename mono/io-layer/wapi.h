@@ -15,7 +15,6 @@
 #include <mono/io-layer/macros.h>
 #include <mono/io-layer/io.h>
 #include <mono/io-layer/access.h>
-#include <mono/io-layer/context.h>
 #include <mono/io-layer/error.h>
 #include <mono/io-layer/messages.h>
 #include <mono/io-layer/processes.h>

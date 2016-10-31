@@ -12,7 +12,6 @@ libwapiincludedir = $(includedir)/mono-$(API_VER)/mono/io-layer
 
 OTHER_H = \
 	access.h	\
-	context.h	\
 	error.h		\
 	io.h		\
 	io-trace.h	\
@@ -34,8 +33,6 @@ OTHER_H = \
 
 OTHER_SRC = \
 	access.h		\
-	context.c		\
-	context.h		\
 	error.c			\
 	error.h			\
 	io.c			\
