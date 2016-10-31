@@ -434,6 +434,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Bug44994_InflateByteByByte()
 		{
 			int byteCount = 0;
