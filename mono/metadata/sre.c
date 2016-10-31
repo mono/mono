@@ -79,7 +79,7 @@ static MonoType* mono_type_array_get_and_resolve_raw (MonoArray* array, int idx,
 static gboolean mono_image_module_basic_init (MonoReflectionModuleBuilderHandle module, MonoError *error);
 
 static gboolean
-add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, MonoFieldDefaultValue *def_values, MonoError *error);
+add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, gint32 first_idx, MonoFieldDefaultValue *def_values, MonoError *error);
 
 void
 mono_reflection_emit_init (void)
@@ -3303,14 +3303,23 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
-static guint32
-modulebuilder_next_field_idx (MonoReflectionModuleBuilder *mb, guint32 num_fields, MonoError *error)
+static gint32
+modulebuilder_get_next_table_index (MonoReflectionModuleBuilder *mb, gint32 table, gint32 num_fields, MonoError *error)
 {
 	error_init (error);
 
-	guint32 first_field_idx = mb->next_field_idx;
-	mb->next_field_idx += num_fields;
-	return first_field_idx;
+	if (mb->table_indexes == NULL) {
+		MonoArray *arr = mono_array_new_checked (mono_object_domain (&mb->module.obj), mono_defaults.int_class, 64, error);
+		return_val_if_nok (error, 0);
+		for (int i = 0; i < 64; i++) {
+			mono_array_set (arr, int, i, 1);
+		}
+		MONO_OBJECT_SETREF (mb, table_indexes, arr);
+	}
+	gint32 index = mono_array_get (mb->table_indexes, gint32, table);
+	gint32 next_index = index + num_fields;
+	mono_array_set (mb->table_indexes, gint32, table, next_index);
+	return index;
 }
 
 /* This initializes the same data as mono_class_setup_fields () */
@@ -3338,13 +3347,13 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, tb, module);
 
- 	gint32 first_idx = 0;
+	gint32 first_idx = 0;
 	if (fcount > 0) {
-		first_idx = modulebuilder_next_field_idx (MONO_HANDLE_RAW (mb), fcount, error); /* FIXME use handles */
+		first_idx = modulebuilder_get_next_table_index (MONO_HANDLE_RAW (mb), MONO_TABLE_FIELD, fcount, error); /* FIXME use handles */
 		if (!is_ok (error))
 			goto leave;
- 	}
- 	mono_class_set_first_field_idx (klass, first_idx);
+	}
+	mono_class_set_first_field_idx (klass, first_idx - 1); /* Why do we subtract 1? because mono_class_create_from_typedef does it, too. */
 
 	gint32 class_size = MONO_HANDLE_GETVAL (tb, class_size);
 	if (class_size) {
@@ -3366,7 +3375,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	MonoArrayHandle tb_fields = MONO_HANDLE_NEW_GET (MonoArray, tb, fields);
 	for (int i = 0; i < fcount; ++i) {
-		if (!add_field_from_fieldbuilder_array (image, mb, tb_fields, i, klass, def_values, error))
+		if (!add_field_from_fieldbuilder_array (image, mb, tb_fields, i, klass, first_idx, def_values, error))
 			goto leave;
 	}
 
@@ -3376,7 +3385,7 @@ leave:
 }
 
 static gboolean
-add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, MonoFieldDefaultValue *def_values, MonoError *error)
+add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, gint32 first_idx, MonoFieldDefaultValue *def_values, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -3433,6 +3442,7 @@ add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilder
 		def_values [i].data = (const char *)mono_image_alloc (image, len);
 		memcpy ((gpointer)def_values [i].data, p, len);
 	}
+	mono_dynamic_image_register_token (MONO_HANDLE_GETVAL (mb, dynamic_image), mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), MONO_HANDLE_CAST (MonoObject, fb));
 
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
