@@ -1209,6 +1209,8 @@ namespace Mono.CSharp {
 			case "/appconfig":
 			case "/baseaddress":
 			case "/deterministic":
+			case "/deterministic+":
+			case "/deterministic-":
 			case "/errorendlocation":
 			case "/errorlog":
 			case "/features":
