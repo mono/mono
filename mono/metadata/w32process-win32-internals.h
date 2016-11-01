@@ -13,7 +13,7 @@
 // static and in some places even inlined.
 #if !G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 void
-process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error);
+mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error);
 
 void
 mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle,

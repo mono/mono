@@ -201,7 +201,9 @@ common_sources = \
 	opcodes.c		\
 	socket-io.c		\
 	socket-io.h		\
+	w32process.c		\
 	w32process.h		\
+	w32process-internals.h		\
 	profiler.c		\
 	profiler-private.h	\
 	rand.h			\

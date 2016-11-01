@@ -37,7 +37,7 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 }
 
 void
-process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
+mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
 {
 	g_unsupported_api ("GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
 

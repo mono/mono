@@ -7,8 +7,8 @@
  * (C) 2002 Ximian, Inc.
  */
 
-#ifndef _MONO_METADATA_PROCESS_H_
-#define _MONO_METADATA_PROCESS_H_
+#ifndef _MONO_METADATA_W32PROCESS_H_
+#define _MONO_METADATA_W32PROCESS_H_
 
 #include <config.h>
 #include <glib.h>
@@ -138,5 +138,5 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64
 
 G_END_DECLS
 
-#endif /* _MONO_METADATA_PROCESS_H_ */
+#endif /* _MONO_METADATA_W32PROCESS_H_ */
 
