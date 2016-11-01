@@ -10,11 +10,11 @@ win32_sources = \
 	marshal-windows-internals.h \
 	mono-security-windows.c \
 	mono-security-windows-internals.h \
-	process-windows.c \
-	process-windows-internals.h \
 	w32mutex-win32.c \
 	w32semaphore-win32.c \
 	w32event-win32.c \
+	w32process-win32.c \
+	w32process-win32-internals.h \
 	socket-io-windows.c
 
 platform_sources = $(win32_sources)
@@ -41,6 +41,7 @@ unix_sources = \
 	console-unix.c \
 	w32mutex-unix.c \
 	w32semaphore-unix.c \
+	w32process-unix.c \
 	w32event-unix.c
 
 platform_sources = $(unix_sources)
@@ -195,9 +196,7 @@ common_sources = \
 	opcodes.c		\
 	socket-io.c		\
 	socket-io.h		\
-	process.c		\
-	process.h		\
-	process-internals.h \
+	w32process.h		\
 	profiler.c		\
 	profiler-private.h	\
 	rand.h			\

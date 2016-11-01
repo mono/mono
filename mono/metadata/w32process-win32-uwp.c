@@ -9,7 +9,7 @@
 
 #if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 #include <Windows.h>
-#include "mono/metadata/process-windows-internals.h"
+#include "mono/metadata/w32process-win32-internals.h"
 
 gboolean
 mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)

@@ -15,8 +15,7 @@
 #include <string.h>
 
 #include <mono/metadata/object-internals.h>
-#include <mono/metadata/process.h>
-#include <mono/metadata/process-internals.h>
+#include <mono/metadata/w32process.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/image.h>
@@ -33,11 +32,6 @@
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
-#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-#include <shellapi.h>
-#endif
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 {
@@ -52,7 +46,6 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 		return NULL;
 	return handle;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
 static MonoImage *system_assembly;
 
@@ -199,7 +192,6 @@ process_set_field_bool (MonoObject *obj, const gchar *fieldname,
 #define SFI_SPECIALBUILD	"\\StringFileInfo\\%02X%02X%02X%02X\\SpecialBuild"
 #define EMPTY_STRING		(gunichar2*)"\000\000"
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static void
 process_module_string_read (MonoObject *filever, gpointer data,
 			    const gchar *fieldname, guchar lang_hi, guchar lang_lo,
@@ -263,7 +255,7 @@ process_module_stringtable (MonoObject *filever, gpointer data,
 }
 
 static void
-process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
+mono_process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
 {
 	DWORD verinfohandle;
 	VS_FIXEDFILEINFO *ffi;
@@ -370,7 +362,6 @@ process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *er
 		g_free (data);
 	}
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 static void
 process_get_assembly_fileversion (MonoObject *filever, MonoAssembly *assembly)
@@ -413,7 +404,6 @@ get_process_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 	return item;
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static MonoObject*
 process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class, MonoError *error)
 {
@@ -431,7 +421,7 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 	filever = mono_object_new_checked (domain, mono_class_get_file_version_info_class (), error);
 	return_val_if_nok (error, NULL);
 
-	process_get_fileversion (filever, filename, error);
+	mono_process_get_fileversion (filever, filename, error);
 	return_val_if_nok (error, NULL);
 
 	process_set_field_string (filever, "filename", filename,
@@ -456,7 +446,6 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 
 	return item;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 static GPtrArray*
 get_domain_assemblies (MonoDomain *domain)
@@ -482,7 +471,6 @@ get_domain_assemblies (MonoDomain *domain)
 }
 
 /* Returns an array of System.Diagnostics.ProcessModule */
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoArray *
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
 {
@@ -553,7 +541,6 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 
 	return arr;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename)
@@ -562,7 +549,7 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_assembly (this_obj);
 	
-	process_get_fileversion (this_obj, mono_string_chars (filename), &error);
+	mono_process_get_fileversion (this_obj, mono_string_chars (filename), &error);
 	if (!mono_error_ok (&error)) {
 		mono_error_set_pending_exception (&error);
 		return;
@@ -577,7 +564,6 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 }
 
 /* Only used when UseShellExecute is false */
-#ifndef HOST_WIN32
 static inline gchar *
 mono_process_quote_path (const gchar *path)
 {
@@ -589,10 +575,9 @@ mono_process_unquote_application_name (gchar *path)
 {
 	return path;
 }
-#endif /* !HOST_WIN32 */
 
 /* Only used when UseShellExecute is false */
-gboolean
+static gboolean
 mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 {
 	gchar *utf8app, *utf8appmemory;
@@ -626,7 +611,6 @@ mono_process_complete_path (const gunichar2 *appname, gchar **completed)
 	return TRUE;
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_info)
 {
@@ -678,9 +662,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartIn
 
 	return ret;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static inline void
 mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, STARTUPINFO *startinfo)
 {
@@ -691,9 +673,7 @@ mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDL
 	startinfo->hStdError = stderr_handle;
 	return;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-#ifndef HOST_WIN32
 static gboolean
 mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunichar2 **shell_path, MonoString **cmd)
 {
@@ -710,9 +690,7 @@ mono_process_get_shell_arguments (MonoProcessStartInfo *proc_start_info, gunicha
 
 	return (*shell_path != NULL) ? TRUE : FALSE;
 }
-#endif /* !HOST_WIN32 */
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static gboolean
 mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_path,
 			     MonoString *cmd, guint32 creation_flags, gchar *env_vars,
@@ -749,7 +727,6 @@ mono_process_create_process (MonoProcInfo *mono_process_info, gunichar2 *shell_p
 
 	return result;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
 ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, HANDLE stdin_handle,
@@ -845,7 +822,6 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInf
 	return ret;
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoString *
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 {
@@ -874,9 +850,7 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 	
 	return string;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-#ifndef HOST_WIN32
 /* Returns an array of pids */
 MonoArray *
 ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
@@ -906,7 +880,6 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 
 	return procs;
 }
-#endif /* !HOST_WIN32 */
 
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error)

@@ -1,5 +1,5 @@
 /*
- * process.h: System.Diagnostics.Process support
+ * w32process.h: System.Diagnostics.Process support
  *
  * Author:
  *	Dick Porter (dick@ximian.com)
@@ -14,13 +14,13 @@
 #include <glib.h>
 
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
-#include "mono/utils/mono-compiler.h"
+
+G_BEGIN_DECLS
 
 typedef struct 
 {
-	HANDLE process_handle;
-	HANDLE thread_handle;
+	gpointer process_handle;
+	gpointer thread_handle;
 	guint32 pid; /* Contains GetLastError () on failure */
 	guint32 tid;
 	MonoArray *env_keys;
@@ -57,16 +57,30 @@ typedef struct
 	MonoObject *envVars;
 } MonoProcessStartInfo;
 
-G_BEGIN_DECLS
+gpointer
+ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
 
-HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
-MonoArray *ves_icall_System_Diagnostics_Process_GetProcesses_internal (void);
-MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process);
-void ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
-MonoBoolean ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_handle);
-MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoProcInfo *process_handle);
-MonoString *ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process);
-gint64 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error);
+MonoArray*
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (void);
+
+MonoArray*
+ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, gpointer process);
+
+void
+ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
+
+MonoBoolean
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_handle);
+
+MonoBoolean
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoProcessStartInfo *proc_start_info, gpointer stdin_handle,
+	gpointer stdout_handle, gpointer stderr_handle, MonoProcInfo *process_handle);
+
+MonoString*
+ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);
+
+gint64
+ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error);
 
 G_END_DECLS
 
