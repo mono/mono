@@ -61,12 +61,10 @@ namespace Mono.CSharp {
 			8009, 8094
 		};
 
-		static HashSet<int> AllWarningsHashSet;
-
 		public Report (CompilerContext context, ReportPrinter printer)
 		{
 			if (context == null)
-				throw new ArgumentNullException ("settings");
+				throw new ArgumentNullException ("context");
 			if (printer == null)
 				throw new ArgumentNullException ("printer");
 
@@ -173,18 +171,6 @@ namespace Mono.CSharp {
 				return;
 
 			extra_information.Add (msg);
-		}
-
-		public bool CheckWarningCode (int code, Location loc)
-		{
-			if (AllWarningsHashSet == null)
-				AllWarningsHashSet = new HashSet<int> (AllWarnings);
-
-			if (AllWarningsHashSet.Contains (code))
-				return true;
-
-			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
-			return false;
 		}
 
 		public void ExtraInformation (Location loc, string msg)
@@ -1109,8 +1095,7 @@ namespace Mono.CSharp {
 
 		public void WarningDisable (Location location, int code, Report Report)
 		{
-			if (Report.CheckWarningCode (code, location))
-				regions.Add (new Disable (location.Row, code));
+			regions.Add (new Disable (location.Row, code));
 		}
 
 		public void WarningEnable (int line)
@@ -1120,9 +1105,6 @@ namespace Mono.CSharp {
 
 		public void WarningEnable (Location location, int code, CompilerContext context)
 		{
-			if (!context.Report.CheckWarningCode (code, location))
-				return;
-
 			if (context.Settings.IsWarningDisabledGlobally (code))
 				context.Report.Warning (1635, 1, location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
 
