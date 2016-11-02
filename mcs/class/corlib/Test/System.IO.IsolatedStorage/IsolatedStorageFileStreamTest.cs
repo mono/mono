@@ -68,8 +68,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		public void Constructor_StringMode ()
 		{
 			string test = "string-filemode";
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream (test, FileMode.Create);
-			CheckCommonDetails (test, isfs, true, true);
+			using (var isfs = new IsolatedStorageFileStream (test, FileMode.Create)) {
+				CheckCommonDetails (test, isfs, true, true);
+			}
 		}
 
 		[Test]
@@ -83,8 +84,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		public void Constructor_StringModeAccess ()
 		{
 			string test = "string-filemode-fileaccess";
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream (test, FileMode.Create, FileAccess.ReadWrite);
-			CheckCommonDetails (test, isfs, true, true);
+			using (var isfs = new IsolatedStorageFileStream (test, FileMode.Create, FileAccess.ReadWrite)) {
+				CheckCommonDetails (test, isfs, true, true);
+			}
 		}
 
 		[Test]
@@ -98,22 +100,24 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		public void Constructor_StringModeAccessShare ()
 		{
 			string test = "string-filemode-fileaccess-fileshare";
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream (test, FileMode.Create, FileAccess.Write, FileShare.Read);
-			CheckCommonDetails (test, isfs, false, true);
+			using (var isfs = new IsolatedStorageFileStream (test, FileMode.Create, FileAccess.Write, FileShare.Read)) {
+				CheckCommonDetails (test, isfs, false, true);
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
 		public void Handle ()
 		{
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("handle", FileMode.Create);
-			IntPtr p = isfs.Handle;
+			using (var isfs = new IsolatedStorageFileStream ("handle", FileMode.Create)) {
+				IntPtr p = isfs.Handle;
+			}
 		}
 
 		[Test]
 		public void RootPath ()
 		{
-			new IsolatedStorageFileStream ("/rootpath", FileMode.Create);
+			new IsolatedStorageFileStream ("/rootpath", FileMode.Create).Close ();
 		}
 
 		[Test]
