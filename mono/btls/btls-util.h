@@ -33,7 +33,7 @@
 void
 mono_btls_free (void *data);
 
-time_t
+int64_t
 mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time);
 
 int
