@@ -4,7 +4,7 @@ include ../../../build/rules.make
 
 PROGRAM = nunit-lite-console.exe
 LIB_REFS = nunitlite
-LOCAL_MCS_FLAGS = -d:MONO
+LOCAL_MCS_FLAGS =
 
 include ../../../build/executable.make
 
