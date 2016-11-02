@@ -19,7 +19,7 @@ using Mono.Unix.Native;
 namespace MonoTests.Mono.Unix.Native {
 
 	[TestFixture]
-	[Category ("NotOnMac")]
+	[Category ("NotOnMac"), Category ("NotOnWindows")]
 	public class RealTimeSignumTest 
 	{
 		[Test]

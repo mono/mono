@@ -18,7 +18,7 @@ using Mono.Unix.Native;
 
 namespace MonoTests.Mono.Unix {
 
-	[TestFixture]
+	[TestFixture, Category ("NotOnWindows")]
 	public class UnixSignalTest {
 
 		// helper method to create a thread waiting on a UnixSignal

@@ -25,7 +25,7 @@ fi
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 ${TESTCMD} --label=System.Data.OracleClient --timeout=5m make -w -C mcs/class/System.Data.OracleClient run-test;
 ${TESTCMD} --label=System.Design --timeout=5m make -w -C mcs/class/System.Design run-test;
-if [[ -n "${ghprbPullId}" ]] && [[ ${label} == w* ]]; then ${TESTCMD} --label=Mono.Posix --skip; else ${TESTCMD} --label=Mono.Posix --timeout=5m make -w -C mcs/class/Mono.Posix run-test; fi
+${TESTCMD} --label=Mono.Posix --timeout=5m make -w -C mcs/class/Mono.Posix run-test
 ${TESTCMD} --label=System.Web --timeout=30m make -w -C mcs/class/System.Web run-test
 ${TESTCMD} --label=System.Web.Services --timeout=5m make -w -C mcs/class/System.Web.Services run-test
 ${TESTCMD} --label=System.Runtime.SFS --timeout=5m make -w -C mcs/class/System.Runtime.Serialization.Formatters.Soap run-test;

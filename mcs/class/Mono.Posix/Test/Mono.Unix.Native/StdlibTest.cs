@@ -17,7 +17,7 @@ using Mono.Unix.Native;
 
 namespace MonoTests.Mono.Unix.Native {
 
-	[TestFixture]
+	[TestFixture, Category ("NotOnWindows")]
 	public class StdlibTest
 	{
 		private class SignalTest {
