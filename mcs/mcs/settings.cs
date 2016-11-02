@@ -583,7 +583,6 @@ namespace Mono.CSharp {
 
 		public bool ProcessWarningsList (string text, Action<int> action)
 		{
-			bool valid = true;
 			foreach (string wid in text.Split (numeric_value_separator, StringSplitOptions.RemoveEmptyEntries)) {
 				var warning = wid;
 				if (warning.Length == 6 && warning [0] == 'C' && warning [1] == 'S')
@@ -594,15 +593,10 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (report.CheckWarningCode (id, Location.Null)) {
-					action (id);
-				} else {
-					report.Error (1904, "`{0}' is not a valid warning number", wid);
-					valid = false;
-				}
+				action (id);
 			}
 
-			return valid;
+			return true;
 		}
 
 		void Error_RequiresArgument (string option)
