@@ -25,8 +25,7 @@ EXTRA_DISTFILES = \
 	Test/resources/test.cs \
 	Test/resources/Sample.cs \
 	Test/resources/Sample.vb \
-	Test/resources/junk.txt \
-	Test/test-config-file*
+	Test/resources/junk.txt
 
 Test/resources/test.dll: Test/resources/test.cs
 	$(CSCOMPILE) -target:library /out:$@ $<
