@@ -20,7 +20,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Unix.Native
 {
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class SocketTest {
 
 		string TempFolder;

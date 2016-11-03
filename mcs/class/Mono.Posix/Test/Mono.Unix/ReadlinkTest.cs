@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Unix
 {
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class ReadlinkTest {
 
 		static string[] Targets = {
