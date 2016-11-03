@@ -4327,13 +4327,19 @@ gboolean mono_aot_mode_is_full (MonoAotOptions *opts)
 	return opts->mode == MONO_AOT_MODE_FULL;
 }
 
+static
+gboolean mono_aot_mode_is_hybrid (MonoAotOptions *opts)
+{
+	return opts->mode == MONO_AOT_MODE_HYBRID;
+}
+
 static void add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth, const char *ref);
 
 static void
 add_generic_class (MonoAotCompile *acfg, MonoClass *klass, gboolean force, const char *ref)
 {
 	/* This might lead to a huge code blowup so only do it if neccesary */
-	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !force)
+	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !mono_aot_mode_is_hybrid (&acfg->aot_opts) && !force)
 		return;
 
 	add_generic_class_with_depth (acfg, klass, 0, ref);
@@ -8364,7 +8370,7 @@ emit_code (MonoAotCompile *acfg)
 		method = cfg->orig_method;
 
 		/* Emit unbox trampoline */
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 			sprintf (symbol, "ut_%d", get_method_index (acfg, method));
 
 			emit_section_change (acfg, ".text", 0);
@@ -8446,11 +8452,7 @@ emit_code (MonoAotCompile *acfg)
 		int call_size;
 
 		if (acfg->cfgs [i]) {
-			if (acfg->aot_opts.llvm_only && acfg->cfgs [i]->compile_llvm)
-				/* Obtained by calling a generated function in the LLVM image */
-				arch_emit_direct_call (acfg, symbol, FALSE, FALSE, NULL, &call_size);
-			else
-				arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
+			arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
 		} else {
 			arch_emit_direct_call (acfg, symbol, FALSE, FALSE, NULL, &call_size);
 		}
@@ -8479,7 +8481,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 			index = get_method_index (acfg, method);
 
 			emit_int32 (acfg, index);
@@ -8509,7 +8511,7 @@ emit_code (MonoAotCompile *acfg)
 
 		method = cfg->orig_method;
 
-		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype && !(acfg->aot_opts.llvm_only && cfg->compile_llvm)) {
+		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
 			int call_size;
 
@@ -10422,38 +10424,27 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	//acfg->aot_opts.print_skipped_methods = TRUE;
 
 #if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	if (opts & MONO_OPT_GSHAREDVT) {
+	if (acfg->opts & MONO_OPT_GSHAREDVT) {
 		aot_printerrf (acfg, "-O=gsharedvt not supported on this platform.\n");
 		return 1;
 	}
-#endif
-
-#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	if (!acfg->aot_opts.llvm_only && (opts & MONO_OPT_GSHAREDVT)) {
-		aot_printerrf (acfg, "-O=gsharedvt not supported on this platform.\n");
-		return 1;
-	}
-#endif
-
 	if (acfg->aot_opts.llvm_only) {
-#ifndef MONO_ARCH_GSHAREDVT_SUPPORTED
 		aot_printerrf (acfg, "--aot=llvmonly requires a runtime that supports gsharedvt.\n");
 		return 1;
+	}
+#else
+	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts))
+		acfg->opts |= MONO_OPT_GSHAREDVT;
 #endif
-#ifndef ENABLE_LLVM
+
+#if !defined(ENABLE_LLVM)
+	if (acfg->aot_opts.llvm_only) {
 		aot_printerrf (acfg, "--aot=llvmonly requires a runtime compiled with llvm support.\n");
 		return 1;
-#endif
-	}
-
-#if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	if (acfg->aot_opts.llvm_only || mono_aot_mode_is_full (&acfg->aot_opts)) {
-		acfg->opts |= MONO_OPT_GSHAREDVT;
-		opts |= MONO_OPT_GSHAREDVT;
 	}
 #endif
 
-	if (opts & MONO_OPT_GSHAREDVT)
+	if (acfg->opts & MONO_OPT_GSHAREDVT)
 		mono_set_generic_sharing_vt_supported (TRUE);
 
 	aot_printf (acfg, "Mono Ahead of Time compiler - compiling assembly %s\n", image->name);
@@ -10575,7 +10566,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	acfg->method_index = 1;
 
-	if (mono_aot_mode_is_full (&acfg->aot_opts))
+	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts))
 		mono_set_partial_sharing_supported (TRUE);
 
 	res = collect_methods (acfg);
