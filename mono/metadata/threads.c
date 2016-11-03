@@ -4613,11 +4613,24 @@ mono_runtime_has_tls_get (void)
 static void
 self_interrupt_thread (void *_unused)
 {
-	MonoThreadInfo *info = mono_thread_info_current ();
-	MonoException *exc = mono_thread_execute_interruption ();
-	if (exc) /*We must use _with_context since we didn't trampoline into the runtime*/
-		mono_raise_exception_with_context (exc, &info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx); /* FIXME using thread_saved_state [ASYNC_SUSPEND_STATE_INDEX] can race with another suspend coming in. */
-	g_assert_not_reached (); /*this MUST not happen since we can't resume from an async call*/
+	MonoException *exc;
+	MonoThreadInfo *info;
+
+	exc = mono_thread_execute_interruption ();
+	if (!exc) {
+		if (mono_threads_is_coop_enabled ()) {
+			/* We can return from an async call in coop, as
+			 * it's simply called when exiting the safepoint */
+			return;
+		}
+
+		g_error ("%s: we can't resume from an async call", __func__);
+	}
+
+	info = mono_thread_info_current ();
+
+	/* We must use _with_context since we didn't trampoline into the runtime */
+	mono_raise_exception_with_context (exc, &info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx); /* FIXME using thread_saved_state [ASYNC_SUSPEND_STATE_INDEX] can race with another suspend coming in. */
 }
 
 static gboolean
