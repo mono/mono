@@ -336,7 +336,6 @@ System.Net.Mail/SmtpStatusCode.cs
 System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
-System.Net/NetworkCredential.cs
 System.Net.NetworkInformation/IcmpV4Statistics.cs
 System.Net.NetworkInformation/IcmpV6Statistics.cs
 System.Net.NetworkInformation/IPAddressCollection.cs
@@ -607,6 +606,7 @@ ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RequestCacheProtocol.cs
 ReferenceSources/SettingsSectionInternal.cs
+ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
@@ -1046,6 +1046,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/IWebProxyFinder.cs
 ../referencesource/System/net/System/Net/IWebRequestCreate.cs
 ../referencesource/System/net/System/Net/NetworkAccess.cs
+../referencesource/System/net/System/Net/NetworkCredential.cs
 ../referencesource/System/net/System/Net/ProtocolViolationException.cs
 ../referencesource/System/net/System/Net/TransportContext.cs
 ../referencesource/System/net/System/Net/TransportType.cs
