@@ -416,6 +416,15 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameECDsa_2, defaultECDsa);
 		unresolved_algorithms.Add (nameECDsa_3, defaultECDsa);
 
+#if MONODROID
+		algorithms.Add (nameSHA1Cng, defaultSHA1);
+		algorithms.Add (nameSHA256Cng, defaultSHA256);
+		algorithms.Add (nameSHA256Provider, defaultSHA256);
+		algorithms.Add (nameSHA384Cng, defaultSHA384);
+		algorithms.Add (nameSHA384Provider, defaultSHA384);
+		algorithms.Add (nameSHA512Cng, defaultSHA512);
+		algorithms.Add (nameSHA512Provider, defaultSHA512);
+#else
 		unresolved_algorithms.Add (nameSHA1Cng, defaultSHA1Cng);
 		unresolved_algorithms.Add (nameSHA256Cng, defaultSHA256Cng);
 		unresolved_algorithms.Add (nameSHA256Provider, defaultSHA256Provider);
@@ -423,6 +432,7 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
 		unresolved_algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
 		unresolved_algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
+#endif
 		Dictionary<string,string> oid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		// comments here are to match with MS implementation (but not with doc)

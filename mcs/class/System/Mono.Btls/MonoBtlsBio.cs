@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
 using System.Text;
@@ -70,25 +70,25 @@ namespace Mono.Btls
 			return MonoBtlsBioMono.CreateStream (stream, false);
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_read (IntPtr bio, IntPtr data, int len);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_write (IntPtr bio, IntPtr data, int len);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_flush (IntPtr bio);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_indent (IntPtr bio, uint indent, uint max_indent);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_hexdump (IntPtr bio, IntPtr data, int len, uint indent);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_bio_print_errors (IntPtr bio);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_bio_free (IntPtr handle);
 
 		public int Read (byte[] buffer, int offset, int size)
@@ -192,10 +192,10 @@ namespace Mono.Btls
 
 	class MonoBtlsBioMemory : MonoBtlsBio
 	{
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_bio_mem_new ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_bio_mem_get_data (IntPtr handle, out IntPtr data);
 
 		public MonoBtlsBioMemory ()
@@ -278,10 +278,10 @@ namespace Mono.Btls
 		delegate int BioWriteFunc (IntPtr bio, IntPtr data, int dataLength);
 		delegate long BioControlFunc (IntPtr bio, ControlCommand command, long arg);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_bio_mono_new ();
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_bio_mono_initialize (IntPtr handle, IntPtr instance, IntPtr readFunc, IntPtr writeFunc, IntPtr controlFunc);
 
 		long Control (ControlCommand command, long arg)

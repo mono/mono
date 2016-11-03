@@ -74,7 +74,8 @@ xammac_dirs := \
 	$(mobile_dynamic_dirs)
 
 monodroid_dirs := \
-	$(mobile_dynamic_dirs)
+	$(mobile_dynamic_dirs) \
+	Mono.Btls.Interface
 
 monotouch_dirs := \
 	$(mobile_static_dirs)
@@ -137,7 +138,6 @@ xammac_4_5_dirs := \
 	System.Data.Linq		\
 	System.Net.Http \
 	System.Net.Http.WebRequest \
-	Mono.Btls.Interface \
 	System.Runtime.InteropServices.RuntimeInformation \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\

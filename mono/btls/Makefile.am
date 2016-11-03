@@ -10,9 +10,15 @@ CMAKE_ARGS = -D CMAKE_INSTALL_PREFIX:PATH=$(prefix) -D BTLS_ROOT:PATH=$(BTLS_ROO
 
 all-local: $(BTLS_STATIC_LIST) $(BTLS_SHARED_LIST)
 
+if DYNAMIC_BTLS
+build-shared/Makefile:
+	-mkdir -p build-shared
+	(cd build-shared && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_DYNAMIC_BTLS=1 $(abs_top_srcdir)/mono/btls)
+else
 build-shared/Makefile:
 	-mkdir -p build-shared
 	(cd build-shared && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 $(abs_top_srcdir)/mono/btls)
+endif
 
 build-static/Makefile:
 	-mkdir -p build-static
@@ -28,3 +34,8 @@ clean-local:
 	-rm -rf build-static
 	-rm -rf build-shared
 
+if DYNAMIC_BTLS
+install-exec-local:
+	$(mkinstalldirs) "$(DESTDIR)$(libdir)"
+	$(install_sh) build-shared/libmono-btls-shared.* "$(DESTDIR)$(libdir)"
+endif

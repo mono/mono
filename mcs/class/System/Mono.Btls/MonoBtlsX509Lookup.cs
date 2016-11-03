@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -52,38 +52,34 @@ namespace Mono.Btls
 			get { return (BoringX509LookupHandle)base.Handle; }
 		}
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_new (IntPtr store, MonoBtlsX509LookupType type);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_load_file (IntPtr handle, IntPtr file, MonoBtlsX509FileType type);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_add_dir (IntPtr handle, IntPtr dir, MonoBtlsX509FileType type);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_add_mono (IntPtr handle, IntPtr monoLookup);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern static void mono_btls_x509_lookup_method_mono_init (
-			IntPtr handle, IntPtr instance, IntPtr by_subject_func);
-
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_init (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_shutdown (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_by_subject (IntPtr handle, IntPtr name);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_by_fingerprint (IntPtr handle, IntPtr bytes, int len);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_x509_lookup_free (IntPtr handle);
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
+		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_peek_lookup (IntPtr handle);
 
 		MonoBtlsX509LookupType type;

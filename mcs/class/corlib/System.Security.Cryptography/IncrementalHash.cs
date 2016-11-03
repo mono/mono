@@ -1,5 +1,5 @@
 //
-// EventCounter.cs
+// IncrementalHash.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,16 +26,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Diagnostics.Tracing
-{
-	public class EventCounter
-	{
-		public EventCounter (string name, EventSource eventSource)
-		{
-		}
+#if NETSTANDARD
 
-		public void WriteMetric (float value)
-		{
-		}
-	}
+namespace System.Security.Cryptography
+{
+    public sealed class IncrementalHash : IDisposable
+    {
+        public IncrementalHash () { }
+        public HashAlgorithmName AlgorithmName { get { throw new NotImplementedException (); } }
+        public void AppendData (byte[] data) { }
+        public void AppendData (byte[] data, int offset, int count) { }
+        public static IncrementalHash CreateHash (HashAlgorithmName hashAlgorithm) { throw new NotImplementedException (); }
+        public static IncrementalHash CreateHMAC (HashAlgorithmName hashAlgorithm, byte[] key) { throw new NotImplementedException (); }
+        public void Dispose () { }
+        public byte[] GetHashAndReset () { throw new NotImplementedException (); }
+    }
 }
+
+#endif
