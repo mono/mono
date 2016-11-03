@@ -4328,6 +4328,24 @@ namespace MonoTests.System
 		}
 #endif
 
+
+		[Test]
+		public void GetTypeBadArity()
+		{
+			// Regression test for #46250
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String]", true);
+				Assert.Fail ("Did not throw an exception (#1)");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String,System.Int32,System.Int64]", true);
+				Assert.Fail ("Did not throw an exception (#2)");
+			} catch (ArgumentException) {
+			}
+		}
+
 		public abstract class Stream : IDisposable
 		{
 			public void Dispose ()
