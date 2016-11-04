@@ -825,7 +825,8 @@ gboolean mono_w32handle_ops_isowned (gpointer handle)
 	}
 }
 
-guint32 mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboolean *alerted)
+MonoW32HandleWaitRet
+mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboolean *alerted)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
@@ -1131,30 +1132,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait",
 			__func__, handle);
 
-		switch (mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL)) {
-		case WAIT_OBJECT_0:
-			ret = MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
-			break;
-		case WAIT_ABANDONED_0:
-			ret = MONO_W32HANDLE_WAIT_RET_ABANDONED_0;
-			break;
-		case WAIT_IO_COMPLETION:
-			ret = MONO_W32HANDLE_WAIT_RET_ALERTED;
-			break;
-		case WAIT_TIMEOUT:
-			ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
-			break;
-		case WAIT_FAILED:
-			ret = MONO_W32HANDLE_WAIT_RET_FAILED;
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-
-		if (alerted)
-			ret = MONO_W32HANDLE_WAIT_RET_ALERTED;
-
-		return ret;
+		return mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL);
 	}
 
 	if (!mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_WAIT)) {
