@@ -17,6 +17,7 @@ class MonoXamarinPackageProfile(MonoReleaseProfile):
     description = 'The Mono Framework for MacOS (official release)'
 
     def setup (self):
+        MonoReleaseProfile.setup (self)
         bockbuild.packages_to_build.extend(['mono-extensions'])
         if bockbuild.cmd_options.release_build:
             self.setup_codesign()
