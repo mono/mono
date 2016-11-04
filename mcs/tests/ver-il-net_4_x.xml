@@ -70068,6 +70068,22 @@
       </method>
     </type>
   </test>
+  <test name="test-named-10.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>15</size>
+      </method>
+      <method name="Void Method(Int32, Int32, Int32)" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void Method(Int32, Int32, System.Object)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-nameof-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
