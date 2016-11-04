@@ -230,10 +230,10 @@ namespace Mono.CompilerServices.SymbolWriter
 				}
 
 				blocks = sorted.ToArray ();
-				for (int i = 0; i < blocks.Length; ++i) {
-					if (blocks [i].Index - 1 != i)
-							throw new ArgumentException ("CodeBlocks cannot be converted to mdb format");
-				}
+				//for (int i = 0; i < blocks.Length; ++i) {
+				//	if (blocks [i].Index - 1 != i)
+				//			throw new ArgumentException ("CodeBlocks cannot be converted to mdb format");
+				//}
 			}
 
 			var entry = new MethodEntry (
