@@ -93,6 +93,7 @@ namespace System.Threading {
 		private IntPtr abort_protected_block_count;
 		private int priority = (int) ThreadPriority.Normal;
 		private IntPtr owned_mutex;
+		private IntPtr suspended_event;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
