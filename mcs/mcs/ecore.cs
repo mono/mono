@@ -5050,7 +5050,7 @@ namespace Mono.CSharp {
 
 								// The slot has been taken by positional argument
 								if (temp != null && !(temp is NamedArgument))
-									break;
+									return NamedArgumentsMismatch - i - 1;
 							}
 
 							if (!arg_moved) {
