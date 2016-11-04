@@ -70,7 +70,7 @@ namespace System.IO.MemoryMappedFiles
 			case 1:
 				return new ArgumentException ("A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
 			case 2:
-				return new ArgumentOutOfRangeException ("The capacity may not be smaller than the file size.");
+				return new ArgumentOutOfRangeException ("capacity", "The capacity may not be smaller than the file size.");
 			case 3:
 				return new FileNotFoundException (path);
 			case 4:
@@ -85,6 +85,10 @@ namespace System.IO.MemoryMappedFiles
 				return new ArgumentException ("Invalid FileMode value.");
 			case 9:
 				return new IOException ("Could not map file");
+			case 10:
+				return new UnauthorizedAccessException ("Access to the path is denied.");
+			case 11:
+				return new ArgumentOutOfRangeException ("capacity", "The capacity cannot be greater than the size of the system's logical address space.");
 			default:
 				return new IOException ("Failed with unknown error code " + error);
 			}
@@ -140,7 +144,7 @@ namespace System.IO.MemoryMappedFiles
 			if (mode == FileMode.Append)
 				throw new ArgumentException ("mode");
 
-			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, null, out capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, null, out capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.None);
 
 			return new MemoryMappedFile () {
 				handle = handle,
@@ -172,7 +176,7 @@ namespace System.IO.MemoryMappedFiles
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
 
-			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, mapName, out capacity, access, MemoryMappedFileOptions.None);
 			
 			return new MemoryMappedFile () {
 				handle = handle,
@@ -193,7 +197,7 @@ namespace System.IO.MemoryMappedFiles
 			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
-			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.None);
 			
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
@@ -220,7 +224,7 @@ namespace System.IO.MemoryMappedFiles
 			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
-			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.DelayAllocatePages);
+			IntPtr handle = MemoryMapImpl.OpenHandle (fileStream.SafeFileHandle.DangerousGetHandle (), mapName, out capacity, access, MemoryMappedFileOptions.None);
 			
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
@@ -258,13 +262,13 @@ namespace System.IO.MemoryMappedFiles
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity)
 		{
-			return CreateNew (mapName, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
+			return CreateNew (mapName, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.None, null, HandleInheritability.None);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access) 
 		{
-			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
+			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.None, null, HandleInheritability.None);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local; options is ignored")]
@@ -290,7 +294,7 @@ namespace System.IO.MemoryMappedFiles
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access)
 		{
-			return CreateOrOpen (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, HandleInheritability.None);
+			return CreateOrOpen (mapName, capacity, access, MemoryMappedFileOptions.None, null, HandleInheritability.None);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local")]
