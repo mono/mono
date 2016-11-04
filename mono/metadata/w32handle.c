@@ -586,57 +586,6 @@ done:
 	mono_os_mutex_unlock (&scan_mutex);
 }
 
-typedef struct {
-	MonoW32HandleType type;
-	gboolean (*search_user_callback)(gpointer handle, gpointer data);
-	gpointer search_user_data;
-	gpointer handle;
-	gpointer handle_specific;
-} SearchData;
-
-static gboolean
-search_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
-{
-	SearchData *search_data = (SearchData*) user_data;
-
-	if (search_data->type != mono_w32handle_get_type (handle))
-		return FALSE;
-
-	if (!search_data->search_user_callback (handle, search_data->search_user_data))
-		return FALSE;
-
-	mono_w32handle_ref (handle);
-	search_data->handle = handle;
-	search_data->handle_specific = handle_specific;
-	return TRUE;
-}
-
-/* This might list some shared handles twice if they are already
- * opened by this process, and the check function returns FALSE the
- * first time.  Shared handles that are created during the search are
- * unreffed if the check function returns FALSE, so callers must not
- * rely on the handle persisting (unless the check function returns
- * TRUE)
- * The caller owns the returned handle.
- */
-gpointer mono_w32handle_search (MonoW32HandleType type,
-			      gboolean (*check)(gpointer test, gpointer user),
-			      gpointer user_data,
-			      gpointer *handle_specific,
-			      gboolean search_shared)
-{
-	SearchData search_data;
-
-	memset (&search_data, 0, sizeof (search_data));
-	search_data.type = type;
-	search_data.search_user_callback = check;
-	search_data.search_user_data = user_data;
-	mono_w32handle_foreach (search_callback, &search_data);
-	if (handle_specific)
-		*handle_specific = search_data.handle_specific;
-	return search_data.handle;
-}
-
 static gboolean
 mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 {

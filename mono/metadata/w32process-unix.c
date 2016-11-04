@@ -593,58 +593,72 @@ mono_w32process_get_pid (gpointer handle)
 	return process_handle->id;
 }
 
+typedef struct {
+	guint32 pid;
+	gpointer handle;
+} GetProcessForeachData;
+
 static gboolean
-process_open_compare (gpointer handle, gpointer user_data)
+get_process_foreach_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
 {
-	gboolean res;
+	GetProcessForeachData *foreach_data;
 	MonoW32HandleProcess *process_handle;
-	pid_t wanted_pid, checking_pid;
+	pid_t pid;
+
+	foreach_data = (GetProcessForeachData*) user_data;
+
+	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_PROCESS)
+		return FALSE;
 
 	g_assert (!WAPI_IS_PSEUDO_PROCESS_HANDLE (handle));
 
-	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
-	if (!res)
-		g_error ("%s: unknown process handle %p", __func__, handle);
+	process_handle = (MonoW32HandleProcess*) handle_specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking at process %d", __func__, process_handle->id);
 
-	checking_pid = process_handle->id;
-	if (checking_pid == 0)
+	pid = process_handle->id;
+	if (pid == 0)
 		return FALSE;
-
-	wanted_pid = GPOINTER_TO_UINT (user_data);
 
 	/* It's possible to have more than one process handle with the
 	 * same pid, but only the one running process can be
-	 * unsignalled.
-	 * If the handle is blown away in the window between
-	 * returning TRUE here and mono_w32handle_search pinging
-	 * the timestamp, the search will continue. */
-	return checking_pid == wanted_pid && !mono_w32handle_issignalled (handle);
+	 * unsignalled. */
+	if (foreach_data->pid != pid)
+		return FALSE;
+	if (mono_w32handle_issignalled (handle))
+		return FALSE;
+
+	mono_w32handle_ref (handle);
+	foreach_data->handle = handle;
+	return TRUE;
 }
 
 HANDLE
 ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 {
+	GetProcessForeachData foreach_data;
 	gpointer handle;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking for process %d", __func__, pid);
 
-	handle = mono_w32handle_search (MONO_W32HANDLE_PROCESS, process_open_compare, GUINT_TO_POINTER (pid), NULL, TRUE);
+	memset (&foreach_data, 0, sizeof (foreach_data));
+	foreach_data.pid = pid;
+	mono_w32handle_foreach (get_process_foreach_callback, &foreach_data);
+	handle = foreach_data.handle;
 	if (handle) {
-		/* mono_w32handle_search () already added a ref */
+		/* get_process_foreach_callback already added a ref */
 		return handle;
 	}
 
 	if (is_pid_valid (pid)) {
 		/* Return a pseudo handle for processes we don't have handles for */
 		return WAPI_PID_TO_HANDLE (pid);
-	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find pid %d", __func__, pid);
-
-		SetLastError (ERROR_PROC_NOT_FOUND);
-		return NULL;
 	}
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find pid %d", __func__, pid);
+
+	SetLastError (ERROR_PROC_NOT_FOUND);
+	return NULL;
 }
 
 static gboolean

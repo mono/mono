@@ -103,9 +103,6 @@ mono_w32handle_get_type (gpointer handle);
 gboolean
 mono_w32handle_lookup (gpointer handle, MonoW32HandleType type, gpointer *handle_specific);
 
-gpointer
-mono_w32handle_search (MonoW32HandleType type, gboolean (*check)(gpointer, gpointer), gpointer user_data, gpointer *handle_specific, gboolean search_shared);
-
 void
 mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data);
 
