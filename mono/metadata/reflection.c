@@ -2052,9 +2052,7 @@ mono_reflection_get_token_checked (MonoObject *obj, MonoError *error)
 
 		token = mb->table_idx | MONO_TOKEN_METHOD_DEF;
 	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
-		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder *)obj;
-
-		token = fb->table_idx | MONO_TOKEN_FIELD_DEF;
+		g_assert_not_reached ();
 	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)obj;
 		token = tb->table_idx | MONO_TOKEN_TYPE_DEF;

@@ -1074,7 +1074,6 @@ typedef struct {
 	MonoString *name;
 	MonoObject *def_value;
 	gint32 offset;
-	gint32 table_idx;
 	MonoReflectionType *typeb;
 	MonoArray *rva_data;
 	MonoArray *cattrs;
@@ -1130,6 +1129,7 @@ typedef struct {
 	MonoArray *global_fields;
 	gboolean is_main;
 	MonoArray *resources;
+	MonoArray *table_indexes;
 } MonoReflectionModuleBuilder;
 
 typedef struct {
