@@ -362,24 +362,6 @@ struct _MonoClass {
 		int generic_param_token; /* for generic param types, both var and mvar */
 	} sizes;
 
-	/*
-	 * From the TypeDef table
-	 */
-	struct {
-#if MONO_SMALL_CONFIG
-		guint16 count;
-#else
-		guint32 count;
-#endif
-	} field;
-	struct {
-#if MONO_SMALL_CONFIG
-		guint16 count;
-#else
-		guint32 count;
-#endif
-	} method;
-
 	/* A GC handle pointing to the corresponding type builder/generic param builder */
 	guint32 ref_info_handle;
 
@@ -416,6 +398,7 @@ typedef struct {
 	 */
 	guint32 first_method_idx;
 	guint32 first_field_idx;
+	guint32 method_count, field_count;
 	/* next element in the class_cache hash list (in MonoImage) */
 	MonoClass *next_class_cache;
 } MonoClassDef;
@@ -436,6 +419,7 @@ typedef struct {
 
 typedef struct {
 	MonoClass class;
+	guint32 method_count;
 } MonoClassArray;
 
 typedef struct {

@@ -5302,14 +5302,8 @@ mono_class_init (MonoClass *klass)
 
 	mono_stats.initialized_class_count++;
 
-	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic) {
-		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
-
+	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic)
 		mono_stats.generic_class_count++;
-
-		klass->method = gklass->method;
-		klass->field = gklass->field;
-	}
 
 	if (mono_class_is_ginst (klass) || image_is_dynamic (klass->image) || !klass->type_token || (has_cached_info && !cached_info.has_nested_classes))
 		klass->nested_classes_inited = TRUE;
@@ -6051,7 +6045,6 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 	
 	klass->image = gklass->image;
 	klass->type_token = gklass->type_token;
-	mono_class_set_field_count (klass, mono_class_get_field_count (gklass));
 
 	klass->class_kind = MONO_CLASS_GINST;
 	//FIXME add setter

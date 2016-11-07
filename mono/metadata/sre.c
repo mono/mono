@@ -3073,7 +3073,7 @@ ensure_runtime_vtable (MonoClass *klass, MonoError *error)
 		}
 	}
 
-	if (mono_class_is_interface (klass)) {
+	if (mono_class_is_interface (klass) && !mono_class_is_ginst (klass)) {
 		int slot_num = 0;
 		int mcount = mono_class_get_method_count (klass);
 		for (i = 0; i < mcount; ++i) {
