@@ -138,3 +138,27 @@ mono_class_set_first_field_idx (MonoClass *klass, guint32 idx)
 
 	((MonoClassDef*)klass)->first_field_idx = idx;
 }
+
+guint32
+mono_class_get_method_count (MonoClass *klass)
+{
+	return klass->method.count;
+}
+
+void
+mono_class_set_method_count (MonoClass *klass, guint32 count)
+{
+	klass->method.count = count;
+}
+
+guint32
+mono_class_get_field_count (MonoClass *klass)
+{
+	return klass->field.count;
+}
+
+void
+mono_class_set_field_count (MonoClass *klass, guint32 count)
+{
+	klass->field.count = count;
+}

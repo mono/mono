@@ -1498,6 +1498,18 @@ mono_class_get_first_field_idx (MonoClass *klass);
 void
 mono_class_set_first_field_idx (MonoClass *klass, guint32 idx);
 
+guint32
+mono_class_get_method_count (MonoClass *klass);
+
+void
+mono_class_set_method_count (MonoClass *klass, guint32 count);
+
+guint32
+mono_class_get_field_count (MonoClass *klass);
+
+void
+mono_class_set_field_count (MonoClass *klass, guint32 count);
+
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
 
