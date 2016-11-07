@@ -74,6 +74,13 @@ namespace System.Runtime.InteropServices
 			return false;
 		}
 
+		[MonoTODO]
+		public static void CleanupUnusedObjectsInCurrentContext ()
+		{
+			if (Environment.IsRunningOnWindows)
+				throw new PlatformNotSupportedException ();
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
 
