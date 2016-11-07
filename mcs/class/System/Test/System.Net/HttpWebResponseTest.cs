@@ -21,6 +21,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class HttpWebResponseTest
 	{
 		[Test]
@@ -476,6 +479,9 @@ namespace MonoTests.System.Net
 	}
 
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class HttpResponseStreamTest
 	{
 		[Test]

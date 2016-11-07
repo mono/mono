@@ -20,6 +20,9 @@ namespace MonoTests.System.Net
 {
 
 [TestFixture]
+#if __WATCHOS__
+[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 public class ServicePointTest
 {
 	static private int max;

@@ -47,6 +47,9 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net {
 	
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class HttpListener2Test {
 		
 		private HttpListener _listener = null;
@@ -645,6 +648,9 @@ namespace MonoTests.System.Net {
 	}
 
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class HttpListenerBugs {
 		[Test]
 		public void TestNonChunkedAsync ()
