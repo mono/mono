@@ -575,6 +575,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\mail\TransferEncoding.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\mail\WriteStateInfoBase.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkAccess.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\NetworkCredential.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\DuplicateAddressDetectionState.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\GatewayIPAddressInformation.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\GatewayIPAddressInformationCollection.cs" />
@@ -838,6 +839,7 @@
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\RequestCacheProtocol.cs" />
+    <Compile Include="ReferenceSources\SecureStringHelper.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />
     <Compile Include="ReferenceSources\Socket.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
@@ -1166,7 +1168,6 @@
     <Compile Include="System.Net\MacProxy.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />
-    <Compile Include="System.Net\NetworkCredential.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\RequestStream.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
