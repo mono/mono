@@ -345,7 +345,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 	/* Process must have exited */
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): Waited successfully", __func__, handle, timeout);
 
-	status = mp ? mp->status : 0;
+	status = mp->status;
 	if (WIFSIGNALED (status))
 		process_handle->exitstatus = 128 + WTERMSIG (status);
 	else
@@ -1223,15 +1223,12 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 	guint32 i, env_count = 0;
 	gboolean ret = FALSE;
 	gpointer handle = NULL;
-	MonoW32HandleProcess process_handle = {0}, *process_handle_data;
 	GError *gerr = NULL;
 	int in_fd, out_fd, err_fd;
 	pid_t pid = 0;
 	int startup_pipe [2] = {-1, -1};
 	int dummy;
 	MonoProcess *mono_process;
-	gboolean fork_failed = FALSE;
-	gboolean res;
 
 #if HAVE_SIGACTION
 	mono_lazy_initialize (&process_sig_chld_once, process_add_sigchld_handler);
@@ -1529,20 +1526,6 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 		err_fd = GPOINTER_TO_UINT (GetStdHandle (STD_ERROR_HANDLE));
 	}
 
-	process_handle.child = TRUE;
-	process_handle.proc_name = g_strdup (prog);
-
-	process_set_defaults (&process_handle);
-
-	handle = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
-	if (handle == INVALID_HANDLE_VALUE) {
-		g_warning ("%s: error creating process handle", __func__);
-
-		ret = FALSE;
-		SetLastError (ERROR_OUTOFMEMORY);
-		goto free_strings;
-	}
-
 	/* new_environ is a block of NULL-terminated strings, which
 	 * is itself NULL-terminated. Of course, passing an array of
 	 * string pointers would have made things too easy :-(
@@ -1607,11 +1590,14 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: new process startup not synchronized. We may not notice if the newly created process exits immediately.", __func__);
 	}
 
+#if HAVE_SIGACTION
+	/* FIXME: block SIGCHLD */
+#endif
+
 	switch (pid = fork ()) {
 	case -1: /* Error */ {
 		SetLastError (ERROR_OUTOFMEMORY);
 		ret = FALSE;
-		fork_failed = TRUE;
 		break;
 	}
 	case 0: /* Child */ {
@@ -1659,47 +1645,60 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 		break;
 	}
 	default: /* Parent */ {
-		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle_data);
-		if (!res) {
-			g_warning ("%s: error looking up process handle %p", __func__, handle);
-			mono_w32handle_unref (handle);
-		} else {
-			process_handle_data->id = pid;
+		MonoW32HandleProcess process_handle;
 
-			/* Add our mono_process into the linked list of processes */
-			mono_process = (MonoProcess *) g_malloc0 (sizeof (MonoProcess));
-			mono_process->pid = pid;
-			mono_process->handle_count = 1;
-			mono_os_sem_init (&mono_process->exit_sem, 0);
+		memset (&process_handle, 0, sizeof (process_handle));
+		process_handle.id = pid;
+		process_handle.child = TRUE;
+		process_handle.proc_name = g_strdup (prog);
+		process_set_defaults (&process_handle);
 
-			/* Keep the process handle artificially alive until the process
-			 * exits so that the information in the handle isn't lost. */
-			mono_w32handle_ref (handle);
-			mono_process->handle = handle;
+		/* Add our mono_process into the linked list of processes */
+		mono_process = (MonoProcess *) g_malloc0 (sizeof (MonoProcess));
+		mono_process->pid = pid;
+		mono_process->handle_count = 1;
+		mono_os_sem_init (&mono_process->exit_sem, 0);
 
-			process_handle_data->mono_process = mono_process;
+		process_handle.mono_process = mono_process;
 
-			mono_os_mutex_lock (&processes_mutex);
-			mono_process->next = processes;
-			processes = mono_process;
-			mono_os_mutex_unlock (&processes_mutex);
+		handle = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
+		if (handle == INVALID_HANDLE_VALUE) {
+			g_warning ("%s: error creating process handle", __func__);
 
-			if (process_info != NULL) {
-				process_info->process_handle = handle;
-				process_info->pid = pid;
+			mono_os_sem_destroy (&mono_process->exit_sem);
+			g_free (mono_process);
 
-				/* FIXME: we might need to handle the thread info some day */
-				process_info->thread_handle = INVALID_HANDLE_VALUE;
-				process_info->tid = 0;
-			}
+			SetLastError (ERROR_OUTOFMEMORY);
+			ret = FALSE;
+			break;
+		}
+
+		/* Keep the process handle artificially alive until the process
+		 * exits so that the information in the handle isn't lost. */
+		mono_w32handle_ref (handle);
+		mono_process->handle = handle;
+
+		mono_os_mutex_lock (&processes_mutex);
+		mono_process->next = processes;
+		processes = mono_process;
+		mono_os_mutex_unlock (&processes_mutex);
+
+		if (process_info != NULL) {
+			process_info->process_handle = handle;
+			process_info->pid = pid;
+
+			/* FIXME: we might need to handle the thread info some day */
+			process_info->thread_handle = INVALID_HANDLE_VALUE;
+			process_info->tid = 0;
 		}
 
 		break;
 	}
 	}
 
-	if (fork_failed)
-		mono_w32handle_unref (handle);
+#if HAVE_SIGACTION
+	/* FIXME: unblock SIGCHLD */
+#endif
 
 	if (startup_pipe [1] != -1) {
 		/* Write 1 byte, doesn't matter what */
