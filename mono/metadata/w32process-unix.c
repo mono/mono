@@ -174,9 +174,9 @@ static mono_lazy_init_t process_sig_chld_once = MONO_LAZY_INIT_STATUS_NOT_INITIA
 
 static gchar *cli_launcher;
 
-/* The signal-safe logic to use mono_processes goes like this:
+/* The signal-safe logic to use processes goes like this:
  * - The list must be safe to traverse for the signal handler at all times.
- *   It's safe to: prepend an entry (which is a single store to 'mono_processes'),
+ *   It's safe to: prepend an entry (which is a single store to 'processes'),
  *   unlink an entry (assuming the unlinked entry isn't freed and doesn't
  *   change its 'next' pointer so that it can still be traversed).
  * When cleaning up we first unlink an entry, then we verify that
@@ -186,9 +186,8 @@ static gchar *cli_launcher;
  * We also need to lock when adding and cleaning up so that those two
  * operations don't mess with eachother. (This lock is not used in the
  * signal handler) */
-static MonoProcess *mono_processes;
-static mono_mutex_t mono_processes_mutex;
-static volatile gint32 mono_processes_cleaning_up;
+static MonoProcess *processes;
+static mono_mutex_t processes_mutex;
 
 static gpointer current_process;
 
@@ -252,7 +251,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): PID: %d", __func__, handle, timeout, pid);
 
-	/* We don't need to lock mono_processes here, the entry
+	/* We don't need to lock processes here, the entry
 	 * has a handle_count > 0 which means it will not be freed. */
 	mp = process_handle->mono_process;
 	if (!mp) {
@@ -345,6 +344,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 static void
 processes_cleanup (void)
 {
+	static gint32 cleaning_up;
 	MonoProcess *mp;
 	MonoProcess *prev = NULL;
 	GSList *finished = NULL;
@@ -354,31 +354,31 @@ processes_cleanup (void)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s", __func__);
 
 	/* Ensure we're not in here in multiple threads at once, nor recursive. */
-	if (InterlockedCompareExchange (&mono_processes_cleaning_up, 1, 0) != 0)
+	if (InterlockedCompareExchange (&cleaning_up, 1, 0) != 0)
 		return;
 
-	for (mp = mono_processes; mp; mp = mp->next) {
+	for (mp = processes; mp; mp = mp->next) {
 		if (mp->pid == 0 && mp->handle) {
 			/* This process has exited and we need to remove the artifical ref
 			 * on the handle */
-			mono_os_mutex_lock (&mono_processes_mutex);
+			mono_os_mutex_lock (&processes_mutex);
 			unref_handle = mp->handle;
 			mp->handle = NULL;
-			mono_os_mutex_unlock (&mono_processes_mutex);
+			mono_os_mutex_unlock (&processes_mutex);
 			if (unref_handle)
 				mono_w32handle_unref (unref_handle);
 		}
 	}
 
 	/*
-	 * Remove processes which exited from the mono_processes list.
+	 * Remove processes which exited from the processes list.
 	 * We need to synchronize with the sigchld handler here, which runs
-	 * asynchronously. The handler requires that the mono_processes list
+	 * asynchronously. The handler requires that the processes list
 	 * remain valid.
 	 */
-	mono_os_mutex_lock (&mono_processes_mutex);
+	mono_os_mutex_lock (&processes_mutex);
 
-	mp = mono_processes;
+	mp = processes;
 	while (mp) {
 		if (mp->handle_count == 0 && mp->freeable) {
 			/*
@@ -386,8 +386,8 @@ processes_cleanup (void)
 			 * This code can run parallel with the sigchld handler, but the
 			 * modifications it makes are safe.
 			 */
-			if (mp == mono_processes)
-				mono_processes = mp->next;
+			if (mp == processes)
+				processes = mp->next;
 			else
 				prev->next = mp->next;
 			finished = g_slist_prepend (finished, mp);
@@ -403,7 +403,7 @@ processes_cleanup (void)
 
 	for (l = finished; l; l = l->next) {
 		/*
-		 * All the entries in the finished list are unlinked from mono_processes, and
+		 * All the entries in the finished list are unlinked from processes, and
 		 * they have the 'finished' flag set, which means the sigchld handler is done
 		 * accessing them.
 		 */
@@ -413,11 +413,11 @@ processes_cleanup (void)
 	}
 	g_slist_free (finished);
 
-	mono_os_mutex_unlock (&mono_processes_mutex);
+	mono_os_mutex_unlock (&processes_mutex);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s done", __func__);
 
-	InterlockedDecrement (&mono_processes_cleaning_up);
+	InterlockedExchange (&cleaning_up, 0);
 }
 
 static void
@@ -495,7 +495,7 @@ mono_w32process_init (void)
 	current_process = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
 	g_assert (current_process);
 
-	mono_os_mutex_init (&mono_processes_mutex);
+	mono_os_mutex_init (&processes_mutex);
 }
 
 void
@@ -1040,18 +1040,17 @@ MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, sigi
 		/*
 		 * This can run concurrently with the code in the rest of this module.
 		 */
-		for (p = mono_processes; p; p = p->next) {
-			if (p->pid == pid) {
-				break;
-			}
-		}
-		if (p) {
+		for (p = processes; p; p = p->next) {
+			if (p->pid != pid)
+				continue;
+
 			p->pid = 0; /* this pid doesn't exist anymore, clear it */
 			p->status = status;
 			mono_os_sem_post (&p->exit_sem);
 			mono_memory_barrier ();
 			/* Mark this as freeable, the pointer becomes invalid afterwards */
 			p->freeable = TRUE;
+			break;
 		}
 	} while (1);
 }
@@ -1612,7 +1611,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 	}
 
 	/* Create a pipe to make sure the child doesn't exit before
-	 * we can add the process to the linked list of mono_processes */
+	 * we can add the process to the linked list of processes */
 	if (pipe (startup_pipe) == -1) {
 		/* Could not create the pipe to synchroniz process startup. We'll just not synchronize.
 		 * This is just for a very hard to hit race condition in the first place */
@@ -1679,7 +1678,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 		} else {
 			process_handle_data->id = pid;
 
-			/* Add our mono_process into the linked list of mono_processes */
+			/* Add our mono_process into the linked list of processes */
 			mono_process = (MonoProcess *) g_malloc0 (sizeof (MonoProcess));
 			mono_process->pid = pid;
 			mono_process->handle_count = 1;
@@ -1692,10 +1691,10 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline, gpointer new
 
 			process_handle_data->mono_process = mono_process;
 
-			mono_os_mutex_lock (&mono_processes_mutex);
-			mono_process->next = mono_processes;
-			mono_processes = mono_process;
-			mono_os_mutex_unlock (&mono_processes_mutex);
+			mono_os_mutex_lock (&processes_mutex);
+			mono_process->next = processes;
+			processes = mono_process;
+			mono_os_mutex_unlock (&processes_mutex);
 
 			if (process_info != NULL) {
 				process_info->process_handle = handle;
