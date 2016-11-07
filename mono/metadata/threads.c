@@ -222,6 +222,27 @@ static CRITICAL_SECTION delayed_free_table_mutex;
 static GArray *delayed_free_table = NULL;
 
 static gboolean shutting_down = FALSE;
+static gboolean thread_exited_initialized = FALSE;
+
+static void
+mono_thread_exiting_internal (MonoThread *thread)
+{
+	if (thread_exited_initialized && thread && !mono_threads_is_shutting_down ()) {
+		mono_thread_detach (thread);
+	}
+}
+
+
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+static pthread_key_t thread_exited_key;
+
+static void
+thread_exited_callback (void *k)
+{
+	mono_thread_exiting_internal ((MonoThread *)k);
+}
+
+#endif
 
 guint32
 mono_thread_get_tls_key (void)
@@ -991,6 +1012,13 @@ mono_thread_attach (MonoDomain *domain)
 	// FIXME: Need a separate callback
 	mono_profiler_thread_start (tid);
 
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+	{
+		int res = pthread_setspecific (thread_exited_key, thread);
+		g_assert (res == 0);
+	}
+#endif
+
 	return(thread);
 }
 
@@ -1008,6 +1036,13 @@ mono_thread_detach (MonoThread *thread)
 	thread_cleanup (thread);
 
 	SET_CURRENT_OBJECT (NULL);
+
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+	{
+		int res = pthread_setspecific (thread_exited_key, NULL);
+		g_assert (res == 0);
+	}
+#endif
 
 	/* Don't need to CloseHandle this thread, even though we took a
 	 * reference in mono_thread_attach (), because the GC will do it
@@ -1029,6 +1064,13 @@ mono_thread_exit ()
 	if (thread == mono_thread_get_main ())
 		exit (mono_environment_exitcode_get ());
 	ExitThread (-1);
+}
+
+void mono_thread_exiting ()
+{
+	if (thread_exited_initialized) {
+		mono_thread_exiting_internal (mono_thread_current ());
+	}
 }
 
 HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
@@ -2760,6 +2802,12 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	 * anything up.
 	 */
 	GetCurrentProcess ();
+
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+	int res = pthread_key_create (&thread_exited_key, thread_exited_callback);
+	g_assert (res == 0);
+#endif
+	thread_exited_initialized = TRUE;
 }
 
 void mono_thread_cleanup (void)
@@ -2801,6 +2849,13 @@ void mono_thread_cleanup (void)
 	}
 
 	TlsFree (current_object_key);
+	thread_exited_initialized = FALSE;
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+	{
+		int res = pthread_key_delete (thread_exited_key);
+		g_assert (res == 0);
+	}
+#endif
 }
 
 void
