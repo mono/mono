@@ -416,7 +416,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void BSTR_Roundtrip ()
 		{
 			string s = "mono";
@@ -426,7 +425,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void StringToBSTRWithNullValues ()
 		{
 			int size = 128;

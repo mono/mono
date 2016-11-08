@@ -789,15 +789,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringUni (IntPtr ptr, int len);
 
-#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringBSTR (IntPtr ptr);
-#else
-		public static string PtrToStringBSTR (IntPtr ptr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ComVisible (true)]
