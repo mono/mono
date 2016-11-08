@@ -3601,6 +3601,9 @@ clear_cached_culture (gpointer key, gpointer value, gpointer user_data)
 		}
 	}
 
+	if (thread->principal && thread->principal->vtable->domain == domain)
+		thread->principal = NULL;
+
 	LeaveCriticalSection (thread->synch_cs);
 }
 	
