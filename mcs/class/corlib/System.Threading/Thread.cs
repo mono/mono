@@ -94,6 +94,7 @@ namespace System.Threading {
 		private int priority = (int) ThreadPriority.Normal;
 		private IntPtr owned_mutex;
 		private IntPtr suspended_event;
+		private int self_suspended;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.

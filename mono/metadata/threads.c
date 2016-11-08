@@ -2335,8 +2335,7 @@ mono_thread_suspend (MonoInternalThread *thread)
 	}
 	
 	thread->state |= ThreadState_SuspendRequested;
-	if (mono_threads_is_coop_enabled ())
-		mono_os_event_reset (thread->suspended);
+	mono_os_event_reset (thread->suspended);
 
 	if (thread == mono_thread_internal_current ()) {
 		/* calls UNLOCK_THREAD (thread) */
@@ -2364,9 +2363,8 @@ mono_thread_resume (MonoInternalThread *thread)
 {
 	if ((thread->state & ThreadState_SuspendRequested) != 0) {
 		// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (1) thread %p\n", thread_get_tid (thread));
-		if (mono_threads_is_coop_enabled ())
-			mono_os_event_set (thread->suspended);
 		thread->state &= ~ThreadState_SuspendRequested;
+		mono_os_event_set (thread->suspended);
 		return TRUE;
 	}
 
@@ -2381,9 +2379,9 @@ mono_thread_resume (MonoInternalThread *thread)
 
 	// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (3) thread %p\n", thread_get_tid (thread));
 
-	if (mono_threads_is_coop_enabled ()) {
-		mono_os_event_set (thread->suspended);
-	} else {
+	mono_os_event_set (thread->suspended);
+
+	if (!thread->self_suspended) {
 		UNLOCK_THREAD (thread);
 
 		/* Awake the thread */
@@ -3311,8 +3309,7 @@ void mono_thread_suspend_all_other_threads (void)
 				thread->state &= ~ThreadState_AbortRequested;
 			
 			thread->state |= ThreadState_SuspendRequested;
-			if (mono_threads_is_coop_enabled ())
-				mono_os_event_reset (thread->suspended);
+			mono_os_event_reset (thread->suspended);
 
 			/* Signal the thread to suspend + calls UNLOCK_THREAD (thread) */
 			async_suspend_internal (thread, TRUE);
@@ -4833,6 +4830,8 @@ async_suspend_internal (MonoInternalThread *thread, gboolean interrupt)
 
 	// MOSTLY_ASYNC_SAFE_PRINTF ("ASYNC SUSPEND thread %p\n", thread_get_tid (thread));
 
+	thread->self_suspended = FALSE;
+
 	data.thread = thread;
 	data.interrupt = interrupt;
 	data.interrupt_token = NULL;
@@ -4849,32 +4848,26 @@ static void
 self_suspend_internal (void)
 {
 	MonoInternalThread *thread;
+	MonoOSEvent *event;
+	MonoOSEventWaitRet res;
 
 	thread = mono_thread_internal_current ();
 
 	// MOSTLY_ASYNC_SAFE_PRINTF ("SELF SUSPEND thread %p\n", thread_get_tid (thread));
 
-	if (!mono_threads_is_coop_enabled ())
-		mono_thread_info_begin_self_suspend ();
+	thread->self_suspended = TRUE;
 
 	thread->state &= ~ThreadState_SuspendRequested;
 	thread->state |= ThreadState_Suspended;
 
 	UNLOCK_THREAD (thread);
 
-	if (!mono_threads_is_coop_enabled ())
-		mono_thread_info_end_self_suspend ();
-	else {
-		MonoOSEvent *event;
-		MonoOSEventWaitRet res;
+	event = thread->suspended;
 
-		event = thread->suspended;
-
-		MONO_ENTER_GC_SAFE;
-		res = mono_os_event_wait_one (event, MONO_INFINITE_WAIT);
-		g_assert (res == MONO_OS_EVENT_WAIT_RET_SUCCESS_0 || res == MONO_OS_EVENT_WAIT_RET_ALERTED);
-		MONO_EXIT_GC_SAFE;
-	}
+	MONO_ENTER_GC_SAFE;
+	res = mono_os_event_wait_one (event, MONO_INFINITE_WAIT);
+	g_assert (res == MONO_OS_EVENT_WAIT_RET_SUCCESS_0 || res == MONO_OS_EVENT_WAIT_RET_ALERTED);
+	MONO_EXIT_GC_SAFE;
 }
 
 /*
