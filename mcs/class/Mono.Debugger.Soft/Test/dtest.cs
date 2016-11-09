@@ -907,6 +907,28 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void SingleSteppingNoFrames () {
+		//
+		// Test what happens when starting a single step operation on a thread
+		// with no managed frames
+		//
+		// Run a delegate on a tp thread
+		var e = run_until ("ss_no_frames_2");
+
+		var this_type = e.Thread.GetFrames ()[0].Method.DeclaringType;
+		this_type.SetValue (this_type.GetField ("static_i"), vm.CreateValue (56));
+
+		var thread = e.Thread;
+		var e2 = run_until ("ss_no_frames_3");
+		// The tp thread should be idle now
+		step_req = vm.CreateStepRequest (thread);
+		step_req.Depth = StepDepth.Over;
+		AssertThrows<Exception> (delegate {
+			step_req.Enable ();
+			});
+	}
+
+	[Test]
 	public void MethodEntryExit () {
 		run_until ("single_stepping");
 
