@@ -469,16 +469,6 @@ namespace System.Diagnostics
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetProcess_internal(int pid);
 
-		public static Process GetProcessById(int processId)
-		{
-			IntPtr proc = GetProcess_internal(processId);
-			
-			if (proc == IntPtr.Zero)
-				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
-
-			return (new Process (new SafeProcessHandle (proc, false), processId));
-		}
-
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
 		public static Process GetProcessById(int processId, string machineName) {
 			if (machineName == null)
@@ -487,14 +477,25 @@ namespace System.Diagnostics
 			if (!IsLocalMachine (machineName))
 				throw new NotImplementedException ();
 
-			return GetProcessById (processId);
+			IntPtr proc = GetProcess_internal(processId);
+
+			if (proc == IntPtr.Zero)
+				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
+
+			return (new Process (new SafeProcessHandle (proc, false), processId));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
-		public static Process[] GetProcesses ()
-		{
+		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
+		public static Process[] GetProcesses(string machineName) {
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
 			int [] pids = GetProcesses_internal ();
 			if (pids == null)
 				return new Process [0];
@@ -513,46 +514,6 @@ namespace System.Diagnostics
 			}
 
 			return proclist.ToArray ();
-		}
-
-		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
-		public static Process[] GetProcesses(string machineName) {
-			if (machineName == null)
-				throw new ArgumentNullException ("machineName");
-
-			if (!IsLocalMachine (machineName))
-				throw new NotImplementedException ();
-
-			return GetProcesses ();
-		}
-
-		public static Process[] GetProcessesByName(string processName)
-		{
-			int [] pids = GetProcesses_internal ();
-			if (pids == null)
-				return new Process [0];
-			
-			var proclist = new List<Process> (pids.Length);
-			for (int i = 0; i < pids.Length; i++) {
-				try {
-					Process p = GetProcessById (pids [i]);
-					if (String.Compare (processName, p.ProcessName, true) == 0)
-						proclist.Add (p);
-				} catch (SystemException) {
-					/* The process might exit
-					 * between
-					 * GetProcesses_internal and
-					 * GetProcessById
-					 */
-				}
-			}
-
-			return proclist.ToArray ();
-		}
-
-		[MonoTODO]
-		public static Process[] GetProcessesByName(string processName, string machineName) {
-			throw new NotImplementedException();
 		}
 
 		private static bool IsLocalMachine (string machineName)
