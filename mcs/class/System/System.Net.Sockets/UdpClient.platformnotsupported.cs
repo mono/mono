@@ -204,6 +204,11 @@ namespace System.Net.Sockets
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
+		public void AllowNatTraversal (bool allowed)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		public void Dispose ()
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);

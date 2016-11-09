@@ -55,6 +55,11 @@ namespace System.Net {
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, TimeSpan keepAliveInterval)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
