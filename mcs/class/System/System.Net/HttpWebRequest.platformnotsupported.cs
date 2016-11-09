@@ -67,12 +67,12 @@ namespace System.Net
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
-		public bool AllowAutoRedirect {
+		public virtual bool AllowAutoRedirect {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
-		public bool AllowWriteStreamBuffering {
+		public virtual bool AllowWriteStreamBuffering {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
@@ -356,6 +356,11 @@ namespace System.Net
 		}
 
 		public override Stream GetRequestStream()
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public System.IO.Stream GetRequestStream (out TransportContext context)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
