@@ -430,6 +430,7 @@ public class Tests : TestsBase, ITest2
 		ss_recursive2 (1);
 		ss_recursive_chaotic ();
 		ss_fp_clobber ();
+		ss_no_frames ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -677,6 +678,25 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_fp_clobber_2 (double d) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames () {
+		Action a = ss_no_frames_2;
+		var ar = a.BeginInvoke (null, null);
+		ar.AsyncWaitHandle.WaitOne ();
+		// Avoid waiting every time this runs
+		if (static_i == 56)
+			Thread.Sleep (200);
+		ss_no_frames_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
