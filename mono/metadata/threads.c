@@ -453,6 +453,10 @@ static void thread_cleanup (MonoInternalThread *thread)
 		thread->thread_pinning_ref = NULL;
 	}
 
+	g_assert (thread->suspended);
+	mono_os_event_destroy (thread->suspended);
+	g_free (thread->suspended);
+	thread->suspended = NULL;
 }
 
 /*
@@ -1288,11 +1292,6 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		this_obj->name = NULL;
 		g_free (name);
 	}
-
-	g_assert (this_obj->suspended);
-	mono_os_event_destroy (this_obj->suspended);
-	g_free (this_obj->suspended);
-	this_obj->suspended = NULL;
 }
 
 void
