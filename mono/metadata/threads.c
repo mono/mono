@@ -3287,8 +3287,8 @@ void mono_thread_suspend_all_other_threads (void)
 			     || mono_gc_is_finalizer_internal_thread (thread)
 			     || (thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)
 			) {
-				//mono_threads_close_thread_handle (wait->handles [i]);
-				wait->threads [i] = NULL; /* ignore this thread in next loop */
+				mono_threads_close_thread_handle (wait->handles [i]);
+				wait->threads [i] = NULL;
 				continue;
 			}
 
@@ -3299,7 +3299,7 @@ void mono_thread_suspend_all_other_threads (void)
 				(thread->state & ThreadState_Stopped) != 0) {
 				UNLOCK_THREAD (thread);
 				mono_threads_close_thread_handle (wait->handles [i]);
-				wait->threads [i] = NULL; /* ignore this thread in next loop */
+				wait->threads [i] = NULL;
 				continue;
 			}
 
@@ -3315,6 +3315,9 @@ void mono_thread_suspend_all_other_threads (void)
 
 			/* Signal the thread to suspend + calls UNLOCK_THREAD (thread) */
 			async_suspend_internal (thread, TRUE);
+
+			mono_threads_close_thread_handle (wait->handles [i]);
+			wait->threads [i] = NULL;
 		}
 		if (eventidx <= 0) {
 			/* 
