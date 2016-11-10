@@ -699,6 +699,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void ItemGroupInsideTarget_UpdateMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<ProjectReference Include='xyz'/>
+					</ItemGroup>
+
+					<Target Name='Main' DependsOnTargets='CreateBar'>
+						<Message Text='Before: $(Bar)'/>
+						<ItemGroup>
+							<ProjectReference>
+								<AdditionalProperties>A=b</AdditionalProperties>
+							</ProjectReference>
+						</ItemGroup>
+						<Message Text='After: $(Bar)'/>
+					</Target>
+
+					<Target Name='CreateBar'>
+						<PropertyGroup>
+							<Bar>Bar01</Bar>
+						</PropertyGroup>
+					</Target>
+				</Project>", 2, "Before: Bar01", "After: Bar01");
+		}
+
+		[Test]
 		public void ItemGroupInsideTarget_Batching ()
 		{
 			ItemGroupInsideTarget (
