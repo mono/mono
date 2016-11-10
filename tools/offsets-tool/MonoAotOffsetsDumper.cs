@@ -235,7 +235,7 @@ namespace CppSharp
                 if (!driver.ParseCode())
                     return;
 
-                Dump(driver.ASTContext, driver.TargetInfo, target);
+                Dump(driver.Context.ASTContext, driver.Context.TargetInfo, target);
             }
         }
 
@@ -244,13 +244,13 @@ namespace CppSharp
             foreach (var header in driver.Options.Headers)
             {
                 var source = driver.Project.AddFile(header);
-                source.Options = driver.BuildParseOptions(source);
+                source.Options = driver.BuildParserOptions(source);
 
                 if (header.Contains ("mini"))
                     continue;
 
-                source.Options.addDefines ("HAVE_SGEN_GC");
-                source.Options.addDefines ("HAVE_MOVING_COLLECTOR");
+                source.Options.AddDefines ("HAVE_SGEN_GC");
+                source.Options.AddDefines ("HAVE_MOVING_COLLECTOR");
             }
         }
 
@@ -306,22 +306,24 @@ namespace CppSharp
         {
             var options = driver.Options;
             options.DryRun = true;
-            options.Verbose = false;
             options.LibraryName = "Mono";
-            options.MicrosoftMode = false;
-            options.addArguments("-xc");
-            options.addArguments("-std=gnu99");
-            options.addDefines("CPPSHARP");
+
+            var parserOptions = driver.ParserOptions;
+            parserOptions.Verbose = false;
+            parserOptions.MicrosoftMode = false;
+            parserOptions.AddArguments("-xc");
+            parserOptions.AddArguments("-std=gnu99");
+            parserOptions.AddDefines("CPPSHARP");
 
             foreach (var define in target.Defines)
-                options.addDefines(define);
+                parserOptions.AddDefines(define);
 
             SetupToolchainPaths(driver, target);
 
-            SetupMono(options, target);
+            SetupMono(driver, target);
         }
 
-        static void SetupMono(DriverOptions options, Target target)
+        static void SetupMono(Driver driver, Target target)
         {
             string targetPath;
             switch (target.Platform) {
@@ -356,7 +358,7 @@ namespace CppSharp
             };
 
             foreach (var inc in includeDirs)
-                options.addIncludeDirs(inc);
+                driver.ParserOptions.AddIncludeDirs(inc);
 
             var filesToParse = new[]
             {
@@ -365,15 +367,15 @@ namespace CppSharp
             };
 
             foreach (var file in filesToParse)
-                options.Headers.Add(file);
+                driver.Options.Headers.Add(file);
         }
 
         static void SetupMSVC(Driver driver, string triple)
         {
-            var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
-            options.Abi = Parser.AST.CppAbi.Microsoft;
-            options.MicrosoftMode = true;
+            parserOptions.Abi = Parser.AST.CppAbi.Microsoft;
+            parserOptions.MicrosoftMode = true;
 
             var systemIncludeDirs = new[]
             {
@@ -382,9 +384,9 @@ namespace CppSharp
             };
 
             foreach (var inc in systemIncludeDirs)
-                options.addSystemIncludeDirs(inc);
+                parserOptions.AddSystemIncludeDirs(inc);
 
-            options.addDefines("HOST_WIN32");
+            parserOptions.AddDefines("HOST_WIN32");
         }
 
         static void SetupToolchainPaths(Driver driver, Target target)
@@ -487,7 +489,7 @@ namespace CppSharp
 
         static void SetupXcode(Driver driver, Target target)
         {
-            var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
             var builtinsPath = GetXcodeBuiltinIncludesFolder();
             string includePath;
@@ -503,12 +505,12 @@ namespace CppSharp
                 throw new ArgumentOutOfRangeException ();
             }
 
-            options.addSystemIncludeDirs(builtinsPath);
-            options.addSystemIncludeDirs(includePath);
+            parserOptions.AddSystemIncludeDirs(builtinsPath);
+            parserOptions.AddSystemIncludeDirs(includePath);
 
-            options.NoBuiltinIncludes = true;
-            options.NoStandardIncludes = true;
-            options.TargetTriple = target.Triple;
+            parserOptions.NoBuiltinIncludes = true;
+            parserOptions.NoStandardIncludes = true;
+            parserOptions.TargetTriple = target.Triple;
         }
 
         static string GetAndroidHostToolchainPath()
@@ -555,9 +557,10 @@ namespace CppSharp
         static void SetupAndroidNDK(Driver driver, Target target)
         {
             var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
             var builtinsPath = GetAndroidBuiltinIncludesFolder();
-            options.addSystemIncludeDirs(builtinsPath);
+            parserOptions.AddSystemIncludeDirs(builtinsPath);
 
             var androidNdkRoot = GetAndroidNdkPath ();
             const int androidNdkApiLevel = 21;
@@ -565,11 +568,11 @@ namespace CppSharp
             var toolchainPath = Path.Combine(androidNdkRoot, "platforms",
                 "android-" + androidNdkApiLevel, "arch-" + GetArchFromTriple(target.Triple),
                 "usr", "include");
-            options.addSystemIncludeDirs(toolchainPath);
+            parserOptions.AddSystemIncludeDirs(toolchainPath);
 
-            options.NoBuiltinIncludes = true;
-            options.NoStandardIncludes = true;
-            options.TargetTriple = target.Triple;
+            parserOptions.NoBuiltinIncludes = true;
+            parserOptions.NoStandardIncludes = true;
+            parserOptions.TargetTriple = target.Triple;
         }
 
         static uint GetTypeAlign(ParserTargetInfo target, ParserIntType type)
@@ -638,8 +641,8 @@ namespace CppSharp
         {
             var targetFile = target.Triple;
 
-			if (!string.IsNullOrEmpty (OutputDir))
-				targetFile = Path.Combine (OutputDir, targetFile);
+            if (!string.IsNullOrEmpty (OutputDir))
+                targetFile = Path.Combine (OutputDir, targetFile);
 
             targetFile += ".h";
 
@@ -754,7 +757,7 @@ namespace CppSharp
             var types = new List<string>
             {
                 "MonoObject",
-		"MonoObjectHandlePayload",
+                "MonoObjectHandlePayload",
                 "MonoClass",
                 "MonoVTable",
                 "MonoDelegate",
@@ -803,7 +806,7 @@ namespace CppSharp
                 "SeqPointInfo",
                 "DynCallArgs", 
                 "MonoLMFTramp",
-            };            
+            };
 
             DumpClasses(writer, ctx, optionalTypes, optional: true);
 
@@ -813,8 +816,8 @@ namespace CppSharp
         static void DumpStruct(TextWriter writer, Class @class)
         {
             var name = @class.Name;
-			if (name.StartsWith ("_", StringComparison.Ordinal))
-				name = name.Substring (1);
+            if (name.StartsWith ("_", StringComparison.Ordinal))
+                name = name.Substring (1);
 
             foreach (var field in @class.Fields)
             {
@@ -823,8 +826,10 @@ namespace CppSharp
                 if (name == "SgenThreadInfo" && field.Name == "regs")
                     continue;
 
+                var layout = @class.Layout.Fields.First(f => f.FieldPtr == field.OriginalPtr);
+
                 writer.WriteLine("DECL_OFFSET2({0},{1},{2})", name, field.Name,
-                    field.Offset / 8);
+                    layout.Offset);
             }
         }
     }
