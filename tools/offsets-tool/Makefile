@@ -1,4 +1,30 @@
-CPPSHARP_DIR = CppSharp
+CPPSHARP_BASE_DIR = CppSharp
+
+ifeq ($(OS),Windows_NT)
+	CPPSHARP_OS=windows
+	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+		CPPSHARP_ARCH=64
+	else
+		ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+			CPPSHARP_ARCH=64
+		endif
+		ifeq ($(PROCESSOR_ARCHITECTURE),x86)
+			CPPSHARP_ARCH=32
+		endif
+	endif
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		CPPSHARP_OS=linux
+		CPPSHARP_ARCH=64
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		CPPSHARP_OS=osx
+		CPPSHARP_ARCH=32
+	endif
+endif
+
+CPPSHARP_DIR = $(CPPSHARP_BASE_DIR)/$(CPPSHARP_OS)_$(CPPSHARP_ARCH)
 
 CPPSHARP_REFS = -r:$(CPPSHARP_DIR)/CppSharp.dll \
 	-r:$(CPPSHARP_DIR)/CppSharp.AST.dll \
