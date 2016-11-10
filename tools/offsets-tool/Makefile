@@ -2,6 +2,7 @@ CPPSHARP_DIR = CppSharp
 
 CPPSHARP_REFS = -r:$(CPPSHARP_DIR)/CppSharp.dll \
 	-r:$(CPPSHARP_DIR)/CppSharp.AST.dll \
+	-r:$(CPPSHARP_DIR)/CppSharp.Parser.dll \
 	-r:$(CPPSHARP_DIR)/CppSharp.Parser.CSharp.dll \
 	-r:$(CPPSHARP_DIR)/CppSharp.Generator.dll
 
@@ -10,8 +11,8 @@ SRC_ROOT = ../..
 MONO_OPTIONS_SRC = $(SRC_ROOT)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
 .stamp-clone:
-	@if [ ! -d $(CPPSHARP_DIR) ]; then \
-		git clone git://github.com/xamarin/CppSharpBinaries.git $(CPPSHARP_DIR) && touch $@; \
+	@if [ ! -d $(CPPSHARP_BASE_DIR) ]; then \
+		git clone -b 60f763a9 --depth 1 git://github.com/xamarin/CppSharpBinaries.git $(CPPSHARP_DIR) && touch $@; \
 	fi
 
 MonoAotOffsetsDumper.exe: .stamp-clone MonoAotOffsetsDumper.cs $(MONO_OPTIONS_SRC)
