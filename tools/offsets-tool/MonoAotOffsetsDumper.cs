@@ -641,8 +641,8 @@ namespace CppSharp
         {
             var targetFile = target.Triple;
 
-			if (!string.IsNullOrEmpty (OutputDir))
-				targetFile = Path.Combine (OutputDir, targetFile);
+            if (!string.IsNullOrEmpty (OutputDir))
+                targetFile = Path.Combine (OutputDir, targetFile);
 
             targetFile += ".h";
 
@@ -757,7 +757,7 @@ namespace CppSharp
             var types = new List<string>
             {
                 "MonoObject",
-		"MonoObjectHandlePayload",
+                "MonoObjectHandlePayload",
                 "MonoClass",
                 "MonoVTable",
                 "MonoDelegate",
@@ -806,7 +806,7 @@ namespace CppSharp
                 "SeqPointInfo",
                 "DynCallArgs", 
                 "MonoLMFTramp",
-            };            
+            };
 
             DumpClasses(writer, ctx, optionalTypes, optional: true);
 
@@ -816,8 +816,8 @@ namespace CppSharp
         static void DumpStruct(TextWriter writer, Class @class)
         {
             var name = @class.Name;
-			if (name.StartsWith ("_", StringComparison.Ordinal))
-				name = name.Substring (1);
+            if (name.StartsWith ("_", StringComparison.Ordinal))
+                name = name.Substring (1);
 
             foreach (var field in @class.Fields)
             {
