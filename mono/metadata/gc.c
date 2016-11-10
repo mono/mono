@@ -683,7 +683,7 @@ ves_icall_System_GCHandle_GetTarget (guint32 handle)
 }
 
 static gboolean
-is_object_pinnable(MonoObject *obj)
+is_object_pinnable (MonoObject *obj)
 {
 	if (obj == NULL)
 		return TRUE;
@@ -726,8 +726,11 @@ ves_icall_System_GCHandle_GetTargetHandle (MonoObject *obj, guint32 handle, gint
 	case HANDLE_NORMAL:
 		return mono_gchandle_new (obj, FALSE);
 	case HANDLE_PINNED:
-		if (!is_object_pinnable (obj))
+		if (!is_object_pinnable (obj)) {
 			mono_set_pending_exception (mono_get_exception_argument ("value", "Object contains non-primitive or non-blittable data."));
+			return 0;
+		}
+
 		return mono_gchandle_new (obj, TRUE);
 	default:
 		g_assert_not_reached ();

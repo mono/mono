@@ -212,7 +212,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			public T myItem;
 		}
 
-		[StructLayout(LayoutKind.Auto)]
+		[StructLayout (LayoutKind.Auto)]
 		struct StructWithIntInsideAutoLayout
 		{
 			public int myInt;
