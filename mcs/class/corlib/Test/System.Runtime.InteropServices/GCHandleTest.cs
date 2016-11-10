@@ -197,7 +197,241 @@ namespace MonoTests.System.Runtime.InteropServices
 			private readonly string _assemblyName;
 		}
 #endif
-	}
 
+		class AnyClass
+		{
+		}
+
+		struct StructWithReferenceTypeInside
+		{
+			public string myStr;
+		}
+
+		struct GenericStruct<T>
+		{
+			public T myItem;
+		}
+
+		class GenericClass<T>
+		{
+			public T myItem;
+		}
+
+		struct StructWithIntInside
+		{
+			public int myInt;
+		}
+
+		[StructLayout (LayoutKind.Explicit)]
+		struct StructWithIntInsideExplicitLayout
+		{
+			[FieldOffset (0)]
+			public int myInt;
+		}
+
+		[StructLayout (LayoutKind.Auto)]
+		struct StructWithIntInsideAutoLayout
+		{
+			public int myInt;
+		}
+
+		struct StructWithChar
+		{
+			public char value;
+		}
+
+		struct StructWithBool
+		{
+			public bool value;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfStrings ()
+		{
+			var arrayOfStrings = new string[] { "a", "B" };
+			GCHandle.Alloc (arrayOfStrings, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfIntArrays ()
+		{
+			var arrayOfIntArrays = new int[][] { new int[] {1, 2}, new int[] {3, 4, 5} };
+			GCHandle.Alloc (arrayOfIntArrays, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnObject ()
+		{
+			GCHandle.Alloc (new object (), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAClass ()
+		{
+			GCHandle.Alloc (new AnyClass (), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAGenericClass ()
+		{
+			GCHandle.Alloc (new GenericClass<int> (), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToANonBlittableStruct ()
+		{
+			var nonBlittableStruct = default (StructWithReferenceTypeInside);
+			GCHandle.Alloc(nonBlittableStruct, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAGenericStruct ()
+		{
+			var nonBlittableGenericStruct = default (GenericStruct<string>);
+			GCHandle.Alloc (nonBlittableGenericStruct, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToADateTime ()
+		{
+			GCHandle.Alloc (default (DateTime), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnAutoLayoutStruct ()
+		{
+			GCHandle.Alloc (default (StructWithIntInsideAutoLayout), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAllocPinnedHandleForArrayOfStructWithChar ()
+		{
+			var array = new StructWithChar[]
+			{
+				new StructWithChar () { value = 'd' },
+				new StructWithChar () { value = 'f' },
+				new StructWithChar () { value = '2' },
+				new StructWithChar () { value = '-' },
+			};
+
+			GCHandle.Alloc (array, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocPinnedHandleForArrayOfStructWithBool ()
+		{
+			var array = new StructWithBool[]
+			{
+				new StructWithBool () { value = true },
+				new StructWithBool () { value = false },
+				new StructWithBool () { value = false },
+				new StructWithBool () { value = true },
+			};
+
+			GCHandle.Alloc (array, GCHandleType.Pinned);
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForNull ()
+		{
+			var gcHandle = GCHandle.Alloc (null, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForArray ()
+		{
+			var array = new int[] { 1, 2, 3, 4567, 8416415 };
+			var gcHandle = GCHandle.Alloc (array, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForMultidimensionalArray ()
+		{
+			var multiDimensionalArray = new int[2, 3]
+			{
+				{ 2, 3, 4 },
+				{ 2, 3, 5 }
+			};
+
+			var gcHandle = GCHandle.Alloc (multiDimensionalArray, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForCharArray ()
+		{
+			var array = new char[] { 'a', 'b', '9', 'z' };
+			var gcHandle = GCHandle.Alloc (array, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForBoolArray ()
+		{
+			var array = new bool[] { false, true, true, false };
+			var gcHandle = GCHandle.Alloc (array, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForString ()
+		{
+			string myObj = "Hello, world!";
+			var gcHandle = GCHandle.Alloc (myObj, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForStruct ()
+		{
+			var obj = default (StructWithIntInside);
+			obj.myInt = 489794165;
+
+			var gcHandle = GCHandle.Alloc (obj, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForStructWithExplicitLayout ()
+		{
+			var obj = default (StructWithIntInsideExplicitLayout);
+			obj.myInt = 489794165;
+
+			var gcHandle = GCHandle.Alloc (obj, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+
+		[Test]
+		public void CanAllocPinnedHandleForGenericStruct ()
+		{
+			var obj = default (GenericStruct<int>);
+			obj.myItem = 489794165;
+
+			var gcHandle = GCHandle.Alloc (obj, GCHandleType.Pinned);
+			Assert.IsNotNull (gcHandle);
+			gcHandle.Free ();
+		}
+	}
 }
 
