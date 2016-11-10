@@ -23,6 +23,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/mono-mlist.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/threadpool-ms.h>
 #include <mono/sgen/sgen-conf.h>
@@ -681,20 +682,21 @@ ves_icall_System_GCHandle_GetTarget (guint32 handle)
 	return mono_gchandle_get_target (handle);
 }
 
-static gboolean is_object_pinnable(MonoObject* obj)
+static gboolean
+is_object_pinnable(MonoObject *obj)
 {
 	if (obj == NULL)
 		return TRUE;
 
-	MonoClass* klass = obj->vtable->klass;
+	MonoClass *klass = obj->vtable->klass;
 	MonoTypeEnum type = klass->byval_arg.type;
 
 	if (type == MONO_TYPE_CHAR || type == MONO_TYPE_BOOLEAN || type == MONO_TYPE_STRING)
 		return TRUE;
 
 	if (type == MONO_TYPE_ARRAY || type == MONO_TYPE_SZARRAY) {
-		MonoTypeEnum elementType = klass->element_class->byval_arg.type;
-		if (elementType == MONO_TYPE_ARRAY || elementType == MONO_TYPE_SZARRAY)
+		MonoTypeEnum element_type = klass->element_class->byval_arg.type;
+		if (element_type == MONO_TYPE_ARRAY || element_type == MONO_TYPE_SZARRAY)
 			return FALSE;
 		return klass->element_class->blittable;
 	}
@@ -725,7 +727,7 @@ ves_icall_System_GCHandle_GetTargetHandle (MonoObject *obj, guint32 handle, gint
 		return mono_gchandle_new (obj, FALSE);
 	case HANDLE_PINNED:
 		if (!is_object_pinnable (obj))
-			mono_raise_exception (mono_get_exception_argument ("value", "Object contains non-primitive or non-blittable data."));
+			mono_set_pending_exception (mono_get_exception_argument ("value", "Object contains non-primitive or non-blittable data."));
 		return mono_gchandle_new (obj, TRUE);
 	default:
 		g_assert_not_reached ();

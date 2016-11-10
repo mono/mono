@@ -219,56 +219,56 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToAnArrayOfStrings()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfStrings ()
 		{
 			var arrayOfStrings = new string[] { "a", "B" };
-			GCHandle.Alloc(arrayOfStrings, GCHandleType.Pinned);
+			GCHandle.Alloc (arrayOfStrings, GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToAnArrayOfIntArrays()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfIntArrays ()
 		{
 			var arrayOfIntArrays = new int[][] { new int[] {1, 2}, new int[] {3, 4, 5} };
-			GCHandle.Alloc(arrayOfIntArrays, GCHandleType.Pinned);
+			GCHandle.Alloc (arrayOfIntArrays, GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToAClass()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAClass ()
 		{
-			GCHandle.Alloc(new AnyClass(), GCHandleType.Pinned);
+			GCHandle.Alloc (new AnyClass (), GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToANonBlittableStruct()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToANonBlittableStruct ()
 		{
-			var nonBlittableStruct = default(StructWithReferenceTypeInside);
+			var nonBlittableStruct = default (StructWithReferenceTypeInside);
 			GCHandle.Alloc(nonBlittableStruct, GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToAGenericStruct()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAGenericStruct ()
 		{
-			var nonBlittableGenericStruct = default(GenericStruct<string>);
-			GCHandle.Alloc(nonBlittableGenericStruct, GCHandleType.Pinned);
+			var nonBlittableGenericStruct = default (GenericStruct<string>);
+			GCHandle.Alloc (nonBlittableGenericStruct, GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToADateTime()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToADateTime ()
 		{
-			GCHandle.Alloc(default(DateTime), GCHandleType.Pinned);
+			GCHandle.Alloc (default (DateTime), GCHandleType.Pinned);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CannotAllocAPinnedGCHandleToAnAutoLayoutStruct()
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnAutoLayoutStruct ()
 		{
-			GCHandle.Alloc(default(StructWithIntInsideAutoLayout), GCHandleType.Pinned);
+			GCHandle.Alloc (default (StructWithIntInsideAutoLayout), GCHandleType.Pinned);
 		}
 	}
 
