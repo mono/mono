@@ -2856,7 +2856,7 @@ static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 	for(i=0; i<wait->num; i++)
 		CloseHandle (wait->handles[i]);
 
-	if (ret == WAIT_TIMEOUT)
+	if (ret == WAIT_TIMEOUT || ret == WAIT_IO_COMPLETION)
 		return;
 
 	for(i=0; i<wait->num; i++) {
