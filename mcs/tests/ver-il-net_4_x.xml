@@ -30934,6 +30934,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-40.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="System.String AttributeOrDefault(System.String, System.String)" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="System.String AttributeOrDefault(System.String, System.Nullable`1[System.Boolean], System.String)" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">

@@ -4781,12 +4781,18 @@ namespace Mono.CSharp {
 
 				//
 				// A candidate with no default parameters is still better when there
-				// is no better expression conversion
+				// is no better expression conversion and does not have more parameters
 				//
 				if (candidate_pd.Count < best_pd.Count) {
-					if (!candidate_params && !candidate_pd.FixedParameters [j - 1].HasDefaultValue) {
+					if (candidate_params)
+						return false;
+					
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue)
 						return true;
-					}
+
+					if (best_pd.FixedParameters [j].HasDefaultValue)
+						return true;
+					
 				} else if (candidate_pd.Count == best_pd.Count) {
 					if (candidate_params)
 						return false;
