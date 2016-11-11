@@ -3,7 +3,6 @@ thisdir = tools
 net_4_5_dirs := \
 	al		\
 	linker		\
-	tuner		\
 	culevel		\
 	genxs		\
 	mkbundle	\
