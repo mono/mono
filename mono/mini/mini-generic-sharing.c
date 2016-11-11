@@ -2947,7 +2947,7 @@ mono_method_check_context_used (MonoMethod *method)
 
 	if (!method_context) {
 		/* It might be a method of an array of an open generic type */
-		if (method->klass->rank)
+		if (mono_class_is_array (method->klass))
 			context_used = mono_class_check_context_used (method->klass);
 	} else {
 		context_used = mono_generic_context_check_used (method_context);

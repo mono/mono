@@ -1047,7 +1047,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 	bitmap = default_bitmap;
 	if (klass == mono_defaults.string_class) {
 		klass->gc_descr = mono_gc_make_descr_for_string (bitmap, 2);
-	} else if (klass->rank) {
+	} else if (mono_class_is_array (klass)) {
 		mono_class_compute_gc_descriptor (klass->element_class);
 		if (MONO_TYPE_IS_REFERENCE (&klass->element_class->byval_arg)) {
 			gsize abm = 1;
@@ -1944,7 +1944,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	g_assert (!((gsize)vt & 7));
 
 	vt->klass = klass;
-	vt->rank = klass->rank;
+	vt->rank = mono_class_is_array (klass) ? mono_class_get_array_rank (klass) : 0;
 	vt->domain = domain;
 
 	mono_class_compute_gc_descriptor (klass);
@@ -5540,7 +5540,7 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 
 	size = obj->vtable->klass->instance_size;
 
-	if (obj->vtable->klass->rank)
+	if (mono_class_is_array (mono_object_class (obj)))
 		return (MonoObject*)mono_array_clone_checked ((MonoArray*)obj, error);
 
 	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
@@ -5634,14 +5634,15 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array, MonoError *err
 		return o;
 	}
 	
-	sizes = (uintptr_t *)alloca (klass->rank * sizeof(intptr_t) * 2);
+	guint8 rank = mono_class_get_array_rank (klass);
+	sizes = (uintptr_t *)alloca (rank * sizeof(intptr_t) * 2);
 	size = mono_array_element_size (klass);
-	for (i = 0; i < klass->rank; ++i) {
+	for (i = 0; i < rank; ++i) {
 		sizes [i] = array->bounds [i].length;
 		size *= array->bounds [i].length;
-		sizes [i + klass->rank] = array->bounds [i].lower_bound;
+		sizes [i + rank] = array->bounds [i].lower_bound;
 	}
-	o = mono_array_new_full_checked (domain, klass, sizes, (intptr_t*)sizes + klass->rank, error);
+	o = mono_array_new_full_checked (domain, klass, sizes, (intptr_t*)sizes + rank, error);
 	return_val_if_nok (error, NULL);
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
@@ -5771,7 +5772,8 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 	len = 1;
 
 	/* A single dimensional array with a 0 lower bound is the same as an szarray */
-	if (array_class->rank == 1 && ((array_class->byval_arg.type == MONO_TYPE_SZARRAY) || (lower_bounds && lower_bounds [0] == 0))) {
+	guint8 array_rank = mono_class_get_array_rank (array_class);
+	if (array_rank == 1 && ((array_class->byval_arg.type == MONO_TYPE_SZARRAY) || (lower_bounds && lower_bounds [0] == 0))) {
 		len = lengths [0];
 		if (len > MONO_ARRAY_MAX_INDEX) {
 			mono_error_set_generic_error (error, "System", "OverflowException", "");
@@ -5779,9 +5781,9 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 		}
 		bounds_size = 0;
 	} else {
-		bounds_size = sizeof (MonoArrayBounds) * array_class->rank;
+		bounds_size = sizeof (MonoArrayBounds) * array_rank;
 
-		for (i = 0; i < array_class->rank; ++i) {
+		for (i = 0; i < array_rank; ++i) {
 			if (lengths [i] > MONO_ARRAY_MAX_INDEX) {
 				mono_error_set_generic_error (error, "System", "OverflowException", "");
 				return NULL;
@@ -5834,7 +5836,7 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 	bounds = array->bounds;
 
 	if (bounds_size) {
-		for (i = 0; i < array_class->rank; ++i) {
+		for (i = 0; i < array_rank; ++i) {
 			bounds [i].length = lengths [i];
 			if (lower_bounds)
 				bounds [i].lower_bound = lower_bounds [i];
@@ -6417,7 +6419,7 @@ mono_object_get_size (MonoObject* o)
 	MonoClass* klass = mono_object_class (o);
 	if (klass == mono_defaults.string_class) {
 		return sizeof (MonoString) + 2 * mono_string_length ((MonoString*) o) + 2;
-	} else if (o->vtable->rank) {
+	} else if (mono_class_is_array (klass)) {
 		MonoArray *array = (MonoArray*)o;
 		size_t size = MONO_SIZEOF_MONO_ARRAY + mono_array_element_size (klass) * mono_array_length (array);
 		if (array->bounds) {

@@ -284,6 +284,20 @@ mono_class_set_ref_info_handle (MonoClass *class, guint32 value)
 	return prop->value;
 }
 
+guint8
+mono_class_get_array_rank (MonoClass *klass)
+{
+	g_assert (klass->class_kind == MONO_CLASS_ARRAY);
+	return klass->rank;
+}
+
+void
+mono_class_set_array_rank (MonoClass *klass, guint8 rank)
+{
+	g_assert (rank == 0 || klass->class_kind == MONO_CLASS_ARRAY);
+	klass->rank = rank;
+}
+
 void
 mono_class_set_class_size (MonoClass *klass, guint32 class_size)
 {

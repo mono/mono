@@ -681,7 +681,7 @@ mono_array_new_va (MonoMethod *cm, ...)
 	int i, d;
 
 	pcount = mono_method_signature (cm)->param_count;
-	rank = cm->klass->rank;
+	rank = mono_class_get_array_rank (cm->klass);
 
 	va_start (ap, cm);
 	
@@ -728,7 +728,7 @@ mono_array_new_1 (MonoMethod *cm, guint32 length)
 	int rank;
 
 	pcount = mono_method_signature (cm)->param_count;
-	rank = cm->klass->rank;
+	rank = mono_class_get_array_rank (cm->klass);
 
 	lengths [0] = length;
 
@@ -763,7 +763,7 @@ mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 	int rank;
 
 	pcount = mono_method_signature (cm)->param_count;
-	rank = cm->klass->rank;
+	rank = mono_class_get_array_rank (cm->klass);
 
 	lengths [0] = length1;
 	lengths [1] = length2;
@@ -799,7 +799,7 @@ mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int rank;
 
 	pcount = mono_method_signature (cm)->param_count;
-	rank = cm->klass->rank;
+	rank = mono_class_get_array_rank (cm->klass);
 
 	lengths [0] = length1;
 	lengths [1] = length2;
@@ -836,7 +836,7 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int rank;
 
 	pcount = mono_method_signature (cm)->param_count;
-	rank = cm->klass->rank;
+	rank = mono_class_get_array_rank (cm->klass);
 
 	lengths [0] = length1;
 	lengths [1] = length2;

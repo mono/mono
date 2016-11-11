@@ -1285,12 +1285,13 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		if (!klass)
 			return FALSE;
 		method_type = decode_value (p, &p);
+		guint8 rank = mono_class_get_array_rank (klass);
 		switch (method_type) {
 		case 0:
-			ref->method = mono_class_get_method_from_name (klass, ".ctor", klass->rank);
+			ref->method = mono_class_get_method_from_name (klass, ".ctor", rank);
 			break;
 		case 1:
-			ref->method = mono_class_get_method_from_name (klass, ".ctor", klass->rank * 2);
+			ref->method = mono_class_get_method_from_name (klass, ".ctor", rank * 2);
 			break;
 		case 2:
 			ref->method = mono_class_get_method_from_name (klass, "Get", -1);
@@ -2408,7 +2409,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 
 	mono_error_init (error);
 
-	if (MONO_CLASS_IS_INTERFACE (klass) || klass->rank || !amodule)
+	if (MONO_CLASS_IS_INTERFACE (klass) || mono_class_is_array (klass) || !amodule)
 		return NULL;
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->class_info_offsets, mono_metadata_token_index (klass->type_token) - 1)];
@@ -2444,7 +2445,7 @@ mono_aot_get_cached_class_info (MonoClass *klass, MonoCachedClassInfo *res)
 	guint8 *p;
 	gboolean err;
 
-	if (klass->rank || !klass->type_token || !amodule)
+	if (mono_class_is_array (klass) || !klass->type_token || !amodule)
 		return FALSE;
 
 	p = (guint8*)&amodule->blob [mono_aot_get_offset (amodule->class_info_offsets, mono_metadata_token_index (klass->type_token) - 1)];
@@ -4398,7 +4399,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		 * be statically enumerated, and each wrapper ends up calling the same
 		 * method in Array.
 		 */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && method->klass->rank && strstr (method->name, "System.Collections.Generic")) {
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && mono_class_is_array (method->klass) && strstr (method->name, "System.Collections.Generic")) {
 			MonoMethod *m = mono_aot_get_array_helper_from_wrapper (method);
 
 			code = (guint8 *)mono_aot_get_method_checked (domain, m, &inner_error);

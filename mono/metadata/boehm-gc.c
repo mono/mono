@@ -1154,7 +1154,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (mono_profiler_get_events () & (MONO_PROFILE_ALLOCATIONS | MONO_PROFILE_STATISTICAL))
 		return NULL;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return NULL;
 	if (mono_class_is_open_constructed_type (&klass->byval_arg))
 		return NULL;

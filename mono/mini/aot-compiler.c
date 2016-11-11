@@ -2870,9 +2870,9 @@ encode_klass_ref_inner (MonoAotCompile *acfg, MonoClass *klass, guint8 *buf, gui
 		encode_type (acfg, &klass->byval_arg, p, &p);
 	} else {
 		/* Array class */
-		g_assert (klass->rank > 0);
+		g_assert (mono_class_is_array (klass));
 		encode_value (MONO_AOT_TYPEREF_ARRAY, p, &p);
-		encode_value (klass->rank, p, &p);
+		encode_value (mono_class_get_array_rank (klass), p, &p);
 		encode_klass_ref (acfg, klass->element_class, p, &p);
 	}
 	*endbuf = p;
@@ -3315,14 +3315,15 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			encode_value (token, p, &p);
 		} else {
 			/* Array methods */
-			g_assert (method->klass->rank);
+			g_assert (mono_class_is_array (method->klass));
 
 			/* Encode directly */
 			encode_value ((MONO_AOT_METHODREF_ARRAY << 24), p, &p);
 			encode_klass_ref (acfg, method->klass, p, &p);
-			if (!strcmp (method->name, ".ctor") && mono_method_signature (method)->param_count == method->klass->rank)
+			guint8 rank = mono_class_get_array_rank (method->klass);
+			if (!strcmp (method->name, ".ctor") && mono_method_signature (method)->param_count == rank)
 				encode_value (0, p, &p);
-			else if (!strcmp (method->name, ".ctor") && mono_method_signature (method)->param_count == method->klass->rank * 2)
+			else if (!strcmp (method->name, ".ctor") && mono_method_signature (method)->param_count == rank * 2)
 				encode_value (1, p, &p);
 			else if (!strcmp (method->name, "Get"))
 				encode_value (2, p, &p);
@@ -4108,7 +4109,7 @@ add_wrappers (MonoAotCompile *acfg)
 			continue;
 		}
 
-		if (klass->rank && MONO_TYPE_IS_PRIMITIVE (&klass->element_class->byval_arg)) {
+		if (mono_class_is_array (klass) && MONO_TYPE_IS_PRIMITIVE (&klass->element_class->byval_arg)) {
 			MonoMethod *m, *wrapper;
 
 			/* Add runtime-invoke wrappers too */
@@ -4326,7 +4327,7 @@ has_type_vars (MonoClass *klass)
 {
 	if ((klass->byval_arg.type == MONO_TYPE_VAR) || (klass->byval_arg.type == MONO_TYPE_MVAR))
 		return TRUE;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return has_type_vars (klass->element_class);
 	if (mono_class_is_ginst (klass)) {
 		MonoGenericContext *context = &mono_class_get_generic_class (klass)->context;
@@ -4454,7 +4455,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	if (has_type_vars (klass))
 		return;
 
-	if (!mono_class_is_ginst (klass) && !klass->rank)
+	if (!mono_class_is_ginst (klass) && !mono_class_is_array (klass))
 		return;
 
 	if (mono_class_has_failure (klass))
@@ -4861,7 +4862,7 @@ add_generic_instances (MonoAotCompile *acfg)
 		token = MONO_TOKEN_TYPE_SPEC | (i + 1);
 
 		klass = mono_class_get_checked (acfg->image, token, &error);
-		if (!klass || klass->rank) {
+		if (!klass || mono_class_is_array (klass)) {
 			mono_error_cleanup (&error);
 			continue;
 		}
@@ -7252,7 +7253,7 @@ can_encode_class (MonoAotCompile *acfg, MonoClass *klass)
 		return TRUE;
 	if ((klass->byval_arg.type == MONO_TYPE_VAR) || (klass->byval_arg.type == MONO_TYPE_MVAR) || (klass->byval_arg.type == MONO_TYPE_PTR))
 		return TRUE;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return can_encode_class (acfg, klass->element_class);
 	return FALSE;
 }
@@ -7298,7 +7299,7 @@ can_encode_method (MonoAotCompile *acfg, MonoMethod *method)
 			if (!method->token) {
 				/* The method is part of a constructed type like Int[,].Set (). */
 				if (!g_hash_table_lookup (acfg->token_info_hash, method)) {
-					if (method->klass->rank)
+					if (mono_class_is_array (method->klass))
 						return TRUE;
 					return FALSE;
 				}

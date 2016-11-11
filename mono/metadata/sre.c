@@ -2013,7 +2013,7 @@ handle_type:
 			simple_type = MONO_TYPE_STRING;
 			*p++ = 0x0E;
 			goto handle_enum;
-		} else if (klass->rank == 1) {
+		} else if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1) {
 			*p++ = 0x1D;
 			if (klass->element_class->byval_arg.type == MONO_TYPE_OBJECT)
 				/* See Partition II, Appendix B3 */

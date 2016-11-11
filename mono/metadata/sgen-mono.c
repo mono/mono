@@ -1457,7 +1457,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass))
 		return NULL;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return NULL;
 	if (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS)
 		return NULL;
@@ -1477,7 +1477,7 @@ MonoMethod*
 mono_gc_get_managed_array_allocator (MonoClass *klass)
 {
 #ifdef MANAGED_ALLOCATION
-	if (klass->rank != 1)
+	if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) != 1)
 		return NULL;
 	if (!mono_runtime_has_tls_get ())
 		return NULL;
@@ -1638,7 +1638,7 @@ sgen_client_cardtable_scan_object (GCObject *obj, mword block_obj_size, guint8 *
 
 	SGEN_ASSERT (0, SGEN_VTABLE_HAS_REFERENCES (vt), "Why would we ever call this on reference-free objects?");
 
-	if (vt->rank) {
+	if (mono_class_is_array (klass)) {
 		MonoArray *arr = (MonoArray*)obj;
 		guint8 *card_data, *card_base;
 		guint8 *card_data_end;

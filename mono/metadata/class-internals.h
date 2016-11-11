@@ -15,7 +15,7 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
-#define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
+#define MONO_CLASS_IS_ARRAY(c) (mono_class_is_array (c))
 
 #define MONO_CLASS_HAS_STATIC_METADATA(klass) ((klass)->type_token && !(klass)->image->dynamic && !mono_class_is_ginst (klass))
 
@@ -281,7 +281,7 @@ struct _MonoClass {
 	guint16     idepth;
 
 	/* array dimension */
-	guint8     rank;          
+	guint8     rank;
 
 	int        instance_size; /* object instance size */
 
@@ -415,7 +415,9 @@ typedef struct {
 
 typedef struct {
 	MonoClass class;
+
 	guint32 method_count;
+	/* array dimension */
 	gint32 element_size; /* for array types */
 } MonoClassArray;
 
@@ -1508,6 +1510,12 @@ mono_class_get_ref_info_handle (MonoClass *class);
 
 guint32
 mono_class_set_ref_info_handle (MonoClass *class, guint32 value);
+
+guint8
+mono_class_get_array_rank (MonoClass *klass);
+
+void
+mono_class_set_array_rank (MonoClass *klass, guint8 rank);
 
 void
 mono_class_set_class_size (MonoClass *klass, guint32 class_size);
