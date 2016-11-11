@@ -51,4 +51,4 @@
 	url = git://github.com/mono/bockbuild.git
 [submodule "external/linker"]
 	path = external/linker
-	url = git@github.com:mono/linker.git
+	url = git://github.com/mono/linker.git
