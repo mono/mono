@@ -94,7 +94,7 @@ sgen_mono_array_size (GCVTable vtable, MonoArray *array, mword *bounds_size, mwo
 	if ((descr & DESC_TYPE_MASK) == DESC_TYPE_VECTOR)
 		element_size = ((descr) >> VECTOR_ELSIZE_SHIFT) & MAX_ELEMENT_SIZE;
 	else
-		element_size = vtable->klass->sizes.element_size;
+		element_size = mono_class_get_element_size (vtable->klass);
 
 	size_without_bounds = size = MONO_SIZEOF_MONO_ARRAY + element_size * mono_array_length_fast (array);
 

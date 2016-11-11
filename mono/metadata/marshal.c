@@ -10389,7 +10389,7 @@ mono_marshal_get_array_address (int rank, int elem_size)
 	if (elem_size) {
 		mono_mb_emit_icon (mb, elem_size);
 	} else {
-		/* Load arr->vtable->klass->sizes.element_class */
+		/* Load ((MonoClassArray*)arr->vtable->klass)->element_class */
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoObject, vtable));
@@ -10398,8 +10398,8 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		/* sizes is an union, so this reads sizes.element_size */
-		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClass, sizes));
+		/* expect to arr->vtable->klass to be a MonoClassArray, so this reads element_size */
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClassArray, element_size));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I4);
 	}

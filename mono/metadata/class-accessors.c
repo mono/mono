@@ -283,3 +283,61 @@ mono_class_set_ref_info_handle (MonoClass *class, guint32 value)
 	prop = mono_property_bag_add (&class->infrequent_data, prop);
 	return prop->value;
 }
+
+void
+mono_class_set_class_size (MonoClass *klass, guint32 class_size)
+{
+	switch (klass->class_kind) {
+	case MONO_CLASS_DEF:
+	case MONO_CLASS_GTD:
+		((MonoClassDef*)klass)->class_size = class_size;
+		break;
+	case MONO_CLASS_GINST:
+		((MonoClassGenericInst*)klass)->class_size = class_size;
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
+guint32
+mono_class_get_class_size (MonoClass *klass)
+{
+	switch (klass->class_kind) {
+	case MONO_CLASS_DEF:
+	case MONO_CLASS_GTD:
+	case MONO_CLASS_GINST:
+		return ((MonoClassGenericInst*)klass)->class_size;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
+
+void
+mono_class_set_generic_param_token (MonoClass *klass, guint32 generic_param_token)
+{
+	g_assert (klass && klass->class_kind == MONO_CLASS_GPARAM);
+	((MonoClassGenericParam*)klass)->generic_param_token = generic_param_token;
+}
+
+guint32
+mono_class_get_generic_param_token (MonoClass *klass)
+{
+	g_assert (klass && klass->class_kind == MONO_CLASS_GPARAM);
+	return ((MonoClassGenericParam*)klass)->generic_param_token;
+}
+
+void
+mono_class_set_element_size (MonoClass *klass, gint32 element_size)
+{
+	g_assert (klass && klass->class_kind == MONO_CLASS_ARRAY);
+	((MonoClassArray*)klass)->element_size = element_size;
+}
+
+gint32
+mono_class_get_element_size (MonoClass *klass)
+{
+	g_assert (klass && klass->class_kind == MONO_CLASS_ARRAY);
+	return ((MonoClassArray*)klass)->element_size;
+}

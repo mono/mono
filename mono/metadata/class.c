@@ -1651,7 +1651,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 {
 	if (cached_info) {
 		klass->instance_size = cached_info->instance_size;
-		klass->sizes.class_size = cached_info->class_size;
+		mono_class_set_class_size (klass, cached_info->class_size);
 		klass->packing_size = cached_info->packing_size;
 		klass->min_align = cached_info->min_align;
 		klass->blittable = cached_info->blittable;
@@ -1671,7 +1671,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
  *   Initializes the size related fields of @klass without loading all field data if possible.
  * Sets the following fields in @klass:
  * - instance_size
- * - sizes.class_size
+ * - MonoClassDef:class_size
  * - packing_size
  * - min_align
  * - blittable
@@ -2165,8 +2165,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 	/* Publish the data */
 	mono_loader_lock ();
-	if (!klass->rank)
-		klass->sizes.class_size = class_size;
+	if (!mono_class_is_array(klass) && !mono_class_is_pointer (klass) && !mono_class_is_gparam (klass))
+		mono_class_set_class_size (klass, class_size);
 	klass->has_static_refs = has_static_refs;
 	for (i = 0; i < top; ++i) {
 		field = &klass->fields [i];
@@ -6102,7 +6102,7 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 			 * these will be computed normally in mono_class_layout_fields ().
 			 */
 			klass->instance_size = gklass->instance_size;
-			klass->sizes.class_size = gklass->sizes.class_size;
+			mono_class_set_class_size (klass, mono_class_get_class_size (gklass));
 			mono_memory_barrier ();
 			klass->size_inited = 1;
 		}
@@ -6236,7 +6236,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 	klass->this_arg.byref = TRUE;
 
 	/* We don't use type_token for VAR since only classes can use it (not arrays, pointer, VARs, etc) */
-	klass->sizes.generic_param_token = pinfo ? pinfo->token : 0;
+	mono_class_set_generic_param_token (klass,  pinfo ? pinfo->token : 0);
 
 	/*Init these fields to sane values*/
 	klass->min_align = 1;
@@ -6778,9 +6778,9 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 			g_assert (ref_info_handle && !eclass->wastypebuilder);
 		}
 		/* element_size -1 is ok as this is not an instantitable type*/
-		klass->sizes.element_size = -1;
+		mono_class_set_element_size (klass, -1);
 	} else
-		klass->sizes.element_size = mono_class_array_element_size (eclass);
+		mono_class_set_element_size (klass, mono_class_array_element_size (eclass));
 
 	mono_class_setup_supertypes (klass);
 
@@ -6962,7 +6962,7 @@ mono_class_data_size (MonoClass *klass)
 	 */
 	if (klass->rank)
 		return 0;
-	return klass->sizes.class_size;
+	return mono_class_get_class_size (klass);
 }
 
 /*
@@ -8777,8 +8777,8 @@ handle_enum:
 gint32
 mono_array_element_size (MonoClass *ac)
 {
-	g_assert (ac->rank);
-	return ac->sizes.element_size;
+	g_assert (mono_class_is_array(ac));
+	return mono_class_get_element_size (ac);
 }
 
 gpointer
