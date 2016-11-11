@@ -135,7 +135,7 @@ namespace Mono.Btls
 			if (IsServer) {
 				SetPrivateCertificate (nativeServerCertificate);
 			} else {
-				ssl.SetServerName (TargetHost);
+				ssl.SetServerName (ServerName);
 			}
 		}
 
@@ -233,14 +233,7 @@ namespace Mono.Btls
 			if (!IsServer)
 				ctx.SetSelectCallback (SelectCallback);
 
-			var host = TargetHost;
-			if (!string.IsNullOrEmpty (host)) {
-				var pos = TargetHost.IndexOf (':');
-				if (pos > 0)
-					host = host.Substring (0, pos);
-			}
-
-			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (host, IsServer));
+			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (ServerName, IsServer));
 
 			TlsProtocolCode minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
