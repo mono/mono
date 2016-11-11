@@ -406,17 +406,17 @@ namespace System.Net.NetworkInformation {
 			get {
 				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
 				// FIXME: should ipv6 DhcpServer be considered?
-				return ai != null ? Win32FromUnicast ((int) ai.Index, addr.FirstUnicastAddress) : new UnicastIPAddressInformationCollection ();
+				return ai != null ? Win32FromUnicast (addr.FirstUnicastAddress) : new UnicastIPAddressInformationCollection ();
 			}
 		}
 
-		static UnicastIPAddressInformationCollection Win32FromUnicast (int ifIndex, IntPtr ptr)
+		static UnicastIPAddressInformationCollection Win32FromUnicast (IntPtr ptr)
 		{
 			UnicastIPAddressInformationCollection c = new UnicastIPAddressInformationCollection ();
 			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
-				c.InternalAdd (new Win32UnicastIPAddressInformation (ifIndex, a));
+				c.InternalAdd (new Win32UnicastIPAddressInformation (a));
 			}
 			return c;
 		}
