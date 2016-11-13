@@ -8231,7 +8231,7 @@ execute_system (const char * command)
 static gboolean
 emit_llvm_file (MonoAotCompile *acfg)
 {
-	char *command, *opts, *tempbc, *optbc, *output_fname;
+	char *command, *opts, *tempbc, *optbc, *output_fname, *shared_flags;
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only) {
 		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
@@ -8291,7 +8291,19 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (acfg->aot_opts.llvm_only) {
 		/* Use the stock clang from xcode */
 		// FIXME: arch
-		command = g_strdup_printf ("clang++ -fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->llvm_ofile, acfg->tmpbasename);
+		shared_flags = g_strdup_printf("-O2 -fexceptions -fpic -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->llvm_ofile, acfg->tmpbasename);
+    command = NULL;
+
+#if TARGET_ARM
+		command = g_strdup_printf ("clang++ -march=armv7 %s", shared_flags);
+#endif
+
+#ifdef TARGET_AMD64
+		command = g_strdup_printf ("clang++ -march=x86_64 -msse -msse2 -msse3 -msse4 %s", shared_flags);
+#endif
+
+		if (!command)
+ 			g_error("AOT LLVMONLY compiler currently targets ARMv7 and AMD64");
 
 		aot_printf (acfg, "Executing clang: %s\n", command);
 		if (execute_system (command) != 0)
