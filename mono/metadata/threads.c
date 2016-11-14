@@ -2088,7 +2088,9 @@ signal_background_change (void)
 	background_changed = TRUE;
 	mono_os_cond_signal (&thread_wait_cond);
 	thread_wait_unlock ();
+#ifdef HOST_WIN32
 	mono_os_event_set (&background_change_event);
+#endif
 }
 
 void
@@ -2879,7 +2881,9 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	mono_os_mutex_init_recursive(&thread_wait_mutex);
 	mono_os_cond_init(&thread_wait_cond);
 	
+#ifdef HOST_WIN32
 	mono_os_event_init (&background_change_event, FALSE);
+#endif
 	
 	mono_init_static_data_info (&thread_static_info);
 	mono_init_static_data_info (&context_static_info);
@@ -2911,7 +2915,9 @@ void mono_thread_cleanup (void)
 	mono_os_mutex_destroy (&interlocked_mutex);
 	mono_os_mutex_destroy (&delayed_free_table_mutex);
 	mono_os_mutex_destroy (&small_id_mutex);
+#ifdef HOST_WIN32
 	mono_os_event_destroy (&background_change_event);
+#endif
 #endif
 
 	mono_native_tls_free (current_object_key);
@@ -3032,8 +3038,9 @@ static void
 init_wait_data (WaitData *wait)
 {
 	/* This is used calculate the number of joined threads in wait_for_tids () */
+	thread_wait_lock ();
 	wait->njoined = njoined_threads;
-	mono_memory_barrier ();
+	thread_wait_unlock ();
 	wait->num = 0;
 	/* We must zero all InternalThread pointers to avoid making the GC unhappy. */
 	memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
@@ -3202,7 +3209,9 @@ mono_thread_manage (void)
 		THREAD_DEBUG (g_message ("%s: There are %d threads to join", __func__, mono_g_hash_table_size (threads));
 			mono_g_hash_table_foreach (threads, print_tids, NULL));
 	
+#ifdef HOST_WIN32
 		mono_os_event_reset (&background_change_event);
+#endif
 		background_changed = FALSE;
 		init_wait_data (wait);
 		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
