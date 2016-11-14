@@ -5349,7 +5349,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		}
 		case OP_SQRT:
-			EMIT_SSE2_FPFUNC (code, fsqrt, ins->dreg, ins->sreg1);
+			amd64_sse_sqrtsd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 
 		case OP_RADD:
