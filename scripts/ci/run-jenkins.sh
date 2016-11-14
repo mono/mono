@@ -38,8 +38,8 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"
 	#force build arch = dpkg arch, sometimes misdetected
-	mkdir -p ~/.mono/config/
-	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.mono/config/
+	mkdir -p ~/.config/.mono/
+	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
 
