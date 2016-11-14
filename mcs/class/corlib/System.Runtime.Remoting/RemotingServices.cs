@@ -810,6 +810,7 @@ namespace System.Runtime.Remoting
 		{
 			byte[] result = null;
 			try {
+				/* empty - we're only interested in the protected block */
 			} finally {
 				MemoryStream ms = new MemoryStream ();
 				_serializationFormatter.Serialize (ms, ex);
