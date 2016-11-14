@@ -140,7 +140,8 @@ BASE_TEST_MOBILE_STATIC_NOT_SUPPORTED= \
 	threadpool-exceptions7.cs # Needs AppDomains \
 	cross-domain.cs # Needs AppDomains \
 	generic-unloading.2.cs # Needs AppDomains \
-	thread6.cs # On MOBILE, ThreadAbortException doesn't have necessary field for this test
+	thread6.cs # On MOBILE, ThreadAbortException doesn't have necessary field for this test	\
+	appdomain-threadpool-unload.cs
 
 # Disabled until ?mcs is fixed
 #	bug-331958.cs
