@@ -372,9 +372,20 @@ collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, g
 				f.offset = offset + info->fields [i].offset;
 				if (i == info->num_fields - 1 && f.size + f.offset < info->native_size) {
 					/* This can happen with .pack directives eg. 'fixed' arrays */
-					f.size = info->native_size - f.offset;
+					if (MONO_TYPE_IS_PRIMITIVE (f.type)) {
+						/* Replicate the last field to fill out the remaining place, since the code in add_valuetype () needs type information */
+						g_array_append_val (fields_array, f);
+						while (f.size + f.offset < info->native_size) {
+							f.offset += f.size;
+							g_array_append_val (fields_array, f);
+						}
+					} else {
+						f.size = info->native_size - f.offset;
+						g_array_append_val (fields_array, f);
+					}
+				} else {
+					g_array_append_val (fields_array, f);
 				}
-				g_array_append_val (fields_array, f);
 			}
 		}
 	} else {
