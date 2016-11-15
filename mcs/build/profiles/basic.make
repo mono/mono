@@ -67,16 +67,21 @@ do-profile-check: $(depsdir)/.stamp
 	if [ -z '$(MAKE_Q)' ] && [ -n '$(PROFILE_RUNTIME)' ]; then $(PROFILE_RUNTIME) --version; fi; \
 	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
 	if $$ok; then rm -f $(PROFILE_EXE) $(PROFILE_OUT); else \
+	    if test ! -s $(MONOLITE_MSCORLIB); then \
+			$(MAKE) $(MAKE_Q) do-get-monolite ; \
+		fi; \
 	    if test -f $(MONOLITE_MSCORLIB); then \
 		$(MAKE) $(MAKE_Q) do-profile-check-monolite ; \
 	    else \
 		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need Mono version 4.0 or better installed to build MCS" 1>&2 ; \
+                echo "*** You need Mono version 4.8 or better installed to build MCS" 1>&2 ; \
                 echo "*** Check mono README for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
 
 
 ifdef use_monolite
+
+do-get-monolite:
 
 do-profile-check-monolite:
 	@echo "*** The contents of your 'monolite' directory may be out-of-date" 1>&2
@@ -85,6 +90,10 @@ do-profile-check-monolite:
 	exit 1
 
 else
+
+do-get-monolite:
+	@echo "*** Downloading bootstrap required 'monolite'" 1>&2
+	$(MAKE) $(MAKE_Q) -C $(topdir)/../ get-monolite-latest
 
 do-profile-check-monolite: $(depsdir)/.stamp
 	@echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2
