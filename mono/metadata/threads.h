@@ -52,6 +52,9 @@ extern MonoThread *mono_thread_attach (MonoDomain *domain);
 extern void mono_thread_detach (MonoThread *thread);
 extern void mono_thread_exit (void);
 
+/* called by OS APIs on thread exit to give runtime a chance to cleanup threads not properly detached */
+extern void mono_thread_exiting (void);
+
 void     mono_threads_install_cleanup   (MonoThreadCleanupFunc func);
 void     mono_thread_set_manage_callback (MonoThread *thread, MonoThreadManageCallback func);
 

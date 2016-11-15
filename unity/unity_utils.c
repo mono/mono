@@ -149,16 +149,6 @@ unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks)
 	g_mem_set_callbacks (callbacks);
 }
 
-void mono_unity_thread_clear_domain_fields (void)
-{
-	/*
-	 we need to clear fields that may reference objects living in non-root appdomain
-	 since the objects will live but their vtables will be destroyed when domain is torn down.
-	 */
-	MonoThread* thread = mono_thread_current ();
-	thread->principal = NULL;
-}
-
 // classes_ref is a preallocated array of *length_ref MonoClass*
 // returned classes are stored in classes_ref, number of stored classes is stored in length_ref
 // return value is number of classes found (which may be greater than number of classes stored)
