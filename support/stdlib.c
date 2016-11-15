@@ -72,6 +72,12 @@ Mono_Posix_Stdlib_realloc (void* ptr, mph_size_t size)
 	return realloc (ptr, (size_t) size);
 }
 
+void
+Mono_Posix_Stdlib_free (void* p)
+{
+	free (p);
+}
+
 G_END_DECLS
 
 /*

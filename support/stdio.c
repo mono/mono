@@ -142,6 +142,12 @@ Mono_Posix_Stdlib_TMP_MAX (void)
 	return TMP_MAX;
 }
 
+void*
+Mono_Posix_Stdlib_tmpfile (void)
+{
+	return tmpfile ();
+}
+
 gint32
 Mono_Posix_Stdlib_setvbuf (void* stream, void *buf, int mode, mph_size_t size)
 {
@@ -154,6 +160,60 @@ Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
 {
 	setbuf (stream, buf);
 	return 0;
+}
+
+void*
+Mono_Posix_Stdlib_fopen (char* path, char* mode)
+{
+	return fopen (path, mode);
+}
+
+void*
+Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream)
+{
+	return freopen (path, mode, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message)
+{
+	return fprintf (stream, format, message);
+}
+
+gint32
+Mono_Posix_Stdlib_fgetc (void* stream)
+{
+	return fgetc (stream);
+}
+
+char*
+Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream)
+{
+	return fgets (str, size, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fputc (gint32 c, void* stream)
+{
+	return fputc (c, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fputs (char* s, void* stream)
+{
+	return fputs (s, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fclose (void* stream)
+{
+	return fclose (stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fflush (void* stream)
+{
+	return fflush (stream);
 }
 
 gint32
@@ -205,6 +265,24 @@ Mono_Posix_Stdlib_clearerr (void* stream)
 {
 	clearerr (((FILE*) stream));
 	return 0;
+}
+
+gint32
+Mono_Posix_Stdlib_ungetc (gint32 c, void* stream)
+{
+	return ungetc (c, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_feof (void* stream)
+{
+	return feof (stream);
+}
+
+gint32
+Mono_Posix_Stdlib_ferror (void* stream)
+{
+	return ferror (stream);
 }
 
 int
