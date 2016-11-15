@@ -223,8 +223,10 @@ static mono_mutex_t interlocked_mutex;
 /* global count of thread interruptions requested */
 static gint32 thread_interruption_requested = 0;
 
+#ifdef HOST_WIN32
 /* Event signaled when a thread changes its background mode */
 static MonoOSEvent background_change_event;
+#endif
 
 static gboolean shutting_down = FALSE;
 
