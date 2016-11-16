@@ -742,8 +742,8 @@ mono_thread_pool_remove_socket (int sock)
 }
 
 #ifdef PLATFORM_WIN32
-static void
-connect_hack (gpointer x)
+static DWORD WINAPI
+connect_hack (LPVOID x)
 {
 	struct sockaddr_in *addr = (struct sockaddr_in *) x;
 	int count = 0;
@@ -766,6 +766,7 @@ socket_io_init (SocketIOData *data)
 	struct sockaddr_in client;
 	SOCKET srv;
 	int len;
+	HANDLE connect_handle;
 #endif
 	int inited;
 
@@ -822,11 +823,13 @@ socket_io_init (SocketIOData *data)
 	len = sizeof (server);
 	getsockname (srv, (SOCKADDR *) &server, &len);
 	listen (srv, 1);
-	mono_thread_create (mono_get_root_domain (), connect_hack, &server);
+	connect_handle = mono_create_thread (NULL, 0, connect_hack, &server, 0, NULL);
 	len = sizeof (server);
 	data->pipe [0] = accept (srv, (SOCKADDR *) &client, &len);
 	g_assert (data->pipe [0] != INVALID_SOCKET);
 	closesocket (srv);
+	WaitForSingleObject (connect_handle, INFINITE);
+	CloseHandle (connect_handle);
 #endif
 	data->sock_to_state = mono_g_hash_table_new_type (g_direct_hash, g_direct_equal, MONO_HASH_VALUE_GC);
 
