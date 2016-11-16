@@ -1722,32 +1722,32 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 
 	mono_error_init (error);
 
-	start = (ms == -1) ? 0 : mono_100ns_ticks ();
-	do {
+	start = (ms == -1) ? 0 : mono_msec_ticks ();
+	for (;;) {
 		MONO_ENTER_GC_SAFE;
 		ret = mono_thread_info_wait_one_handle (thread_to_join, ms, TRUE);
 		MONO_EXIT_GC_SAFE;
 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			break;
+			return ret;
 
 		exc = mono_thread_execute_interruption ();
 		if (exc) {
 			mono_error_set_exception_instance (error, exc);
-			break;
+			return ret;
 		}
 
 		if (ms == -1)
 			continue;
 
 		/* Re-calculate ms according to the time passed */
-		diff_ms = (gint32)((mono_100ns_ticks () - start) / 10000);
+		diff_ms = (gint32)(mono_msec_ticks () - start);
 		if (diff_ms >= ms) {
 			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-			break;
+			return ret;
 		}
 		wait = ms - diff_ms;
-	} while (TRUE);
+	}
 
 	return ret;
 }
