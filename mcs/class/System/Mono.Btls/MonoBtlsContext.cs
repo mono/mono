@@ -273,11 +273,13 @@ namespace Mono.Btls
 
 			var cipher = (CipherSuiteCode)ssl.GetCipher ();
 			var protocol = (TlsProtocolCode)ssl.GetVersion ();
+			var serverName = ssl.GetServerName ();
 			Debug ("GET CONNECTION INFO: {0:x}:{0} {1:x}:{1} {2}", cipher, protocol, (TlsProtocolCode)protocol);
 
 			connectionInfo = new MonoTlsConnectionInfo {
 				CipherSuiteCode = cipher,
-				ProtocolVersion = GetProtocol (protocol)
+				ProtocolVersion = GetProtocol (protocol),
+				PeerDomainName = serverName
 			};
 		}
 
