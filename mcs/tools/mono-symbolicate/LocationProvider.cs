@@ -32,7 +32,12 @@ namespace Mono
 				return false;
 
 			TypeDefinition type = null;
-			var nested = sfData.TypeFullName.Split ('+');
+			string[] nested;
+			if (sfData.TypeFullName.IndexOf ('/') >= 0)
+				 nested = sfData.TypeFullName.Split ('/');
+			else
+				nested = sfData.TypeFullName.Split ('+');
+
 			var types = assembly.MainModule.Types;
 			foreach (var ntype in nested) {
 				if (type == null) {
@@ -53,11 +58,16 @@ namespace Mono
 			var parensStart = sfData.MethodSignature.IndexOf ('(');
 			var methodName = sfData.MethodSignature.Substring (0, parensStart).TrimEnd ();
 			var methodParameters = sfData.MethodSignature.Substring (parensStart);
-			var method = type.Methods.FirstOrDefault (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters));
-			if (method == null) {
+			var methods = type.Methods.Where (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters)).ToArray ();
+			if (methods.Length == 0) {
 				logger.LogWarning ("Could not find method: {0}", methodName);
 				return false;
 			}
+			if (methods.Length > 1) {
+				logger.LogWarning ("Ambiguous match for method: {0}", sfData.MethodSignature);
+				return false;
+			}
+			var method = methods [0];
 
 			int ilOffset;
 			if (sfData.IsILOffset) {
@@ -100,8 +110,11 @@ namespace Mono
 
 			if (!candidate.HasGenericParameters)
 				return false;
-			
+
 			var genStart = expected.IndexOf ('[');
+			if (genStart < 0)
+				genStart = expected.IndexOf ('<');
+
 			if (genStart < 0)
 				return false;
 
@@ -115,6 +128,36 @@ namespace Mono
 			}
 
 			return candidate.GenericParameters.Count == arity;
+		}
+
+		static string RemoveGenerics (string expected, char open, char close)
+		{
+			if (expected.IndexOf (open) < 0)
+				return expected;
+
+			var sb = new StringBuilder ();
+			for (int i = 0; i < expected.Length;) {
+				int start = expected.IndexOf (open, i);
+				int end = expected.IndexOf (close, i);
+				if (start < 0 || end < 0) {
+					sb.Append (expected, i, expected.Length - i);
+					break;
+				}
+
+				bool is_ginst = false;
+				for (int j = start + 1; j < end; ++j) {
+					if (expected [j] != ',')
+						is_ginst = true;
+				}
+
+				if (is_ginst) //discard the the generic args
+					sb.Append (expected, i, start - i);
+				else //include array arity
+					sb.Append (expected, i, end + 1 - i);
+				i = end + 1;
+
+			}
+			return sb.ToString ();
 		}
 
 		static bool CompareParameters (Collection<ParameterDefinition> candidate, string expected)
@@ -131,11 +174,6 @@ namespace Mono
 					builder.Append ("...,");
 
 				var pt = parameter.ParameterType;
-				if (!string.IsNullOrEmpty (pt.Namespace)) {
-					builder.Append (pt.Namespace);
-					builder.Append (".");
-				}
-
 				FormatElementType (pt, builder);
 
 				builder.Append (" ");
@@ -144,7 +182,150 @@ namespace Mono
 
 			builder.Append (")");
 
-			return builder.ToString () == expected;
+			if (builder.ToString () == RemoveGenerics (expected, '[', ']'))
+				return true;
+
+			//now try the compact runtime format.
+
+			builder.Clear ();
+
+			builder.Append ("(");
+
+			for (int i = 0; i < candidate.Count; i++) {
+				var parameter = candidate [i];
+				if (i > 0)
+					builder.Append (",");
+
+				if (parameter.ParameterType.IsSentinel)
+					builder.Append ("...,");
+
+				var pt = parameter.ParameterType;
+
+				RuntimeFormatElementType (pt, builder);
+			}
+
+			builder.Append (")");
+
+			if (builder.ToString () == RemoveGenerics (expected, '<', '>'))
+				return true;
+			return false;
+
+		}
+
+		static void RuntimeFormatElementType (TypeReference tr, StringBuilder builder)
+		{
+			var ts = tr as TypeSpecification;
+			if (ts != null) {
+				if (ts.IsByReference) {
+					RuntimeFormatElementType (ts.ElementType, builder);
+					builder.Append ("&");
+					return;
+				}
+			}
+
+			switch (tr.MetadataType) {
+			case MetadataType.Void:
+				builder.Append ("void");
+				break;
+			case MetadataType.Boolean:
+				builder.Append ("bool");
+				break;
+			case MetadataType.Char:
+				builder.Append ("char");
+				break;
+			case MetadataType.SByte:
+				builder.Append ("sbyte");
+				break;
+			case MetadataType.Byte:
+				builder.Append ("byte");
+				break;
+			case MetadataType.Int16:
+				builder.Append ("int16");
+				break;
+			case MetadataType.UInt16:
+				builder.Append ("uint16");
+				break;
+			case MetadataType.Int32:
+				builder.Append ("int");
+				break;
+			case MetadataType.UInt32:
+				builder.Append ("uint");
+				break;
+			case MetadataType.Int64:
+				builder.Append ("long");
+				break;
+			case MetadataType.UInt64:
+				builder.Append ("ulong");
+				break;
+			case MetadataType.Single:
+				builder.Append ("single");
+				break;
+			case MetadataType.Double:
+				builder.Append ("double");
+				break;
+			case MetadataType.String:
+				builder.Append ("string");
+				break;
+			case MetadataType.Pointer:
+				builder.Append (((TypeSpecification)tr).ElementType);
+				builder.Append ("*");
+				break;
+			case MetadataType.ValueType:
+			case MetadataType.Class:
+			case MetadataType.GenericInstance: {
+				FormatName (tr, builder, '/');
+				break;
+			}
+			case MetadataType.Var:
+			case MetadataType.MVar:
+				builder.Append (tr.Name);
+				builder.Append ("_REF");
+				break;
+			case MetadataType.Array: {
+				var array = (ArrayType)tr;
+				RuntimeFormatElementType (array.ElementType, builder);
+				builder.Append ("[");
+
+				for (int i = 0; i < array.Rank - 1; ++i)
+					builder.Append (",");
+
+				builder.Append ("]");
+				break;
+			}
+
+			case MetadataType.TypedByReference:
+				builder.Append ("typedbyref");
+				break;
+			case MetadataType.IntPtr:
+				builder.Append ("intptr");
+				break;
+			case MetadataType.UIntPtr:
+				builder.Append ("uintptr");
+				break;
+			case MetadataType.FunctionPointer:
+				builder.Append ("*()");
+				break;
+			case MetadataType.Object:
+				builder.Append ("object");
+				break;
+			default:
+				builder.Append ("-unknown-");
+				break;
+			}
+		}
+
+		static void FormatName (TypeReference tr, StringBuilder builder, char sep)
+		{
+			if (tr.IsNested && !(tr.MetadataType == MetadataType.Var || tr.MetadataType == MetadataType.MVar)) {
+				FormatName (tr.DeclaringType, builder, sep);
+				builder.Append (sep);
+			}
+			if (!string.IsNullOrEmpty (tr.Namespace)) {
+				builder.Append (tr.Namespace);
+				builder.Append (".");
+			}
+
+			builder.Append (tr.Name);
 		}
 
 		static void FormatElementType (TypeReference tr, StringBuilder builder)
@@ -170,8 +351,7 @@ namespace Mono
 					return;
 				}
 			}
-
-			builder.Append (tr.Name);
+			FormatName (tr, builder, '+');
 		}
 	}
 }
