@@ -96,6 +96,15 @@ static void mono_raise_exception_with_ctx (MonoException *exc, MonoContext *ctx)
 static void mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data);
 static gboolean mono_current_thread_has_handle_block_guard (void);
 
+static int
+mono_get_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset)
+{
+	SeqPoint sp;
+	if (mono_find_prev_seq_point_for_native_offset (domain, method, native_offset, NULL, &sp))
+		return sp.il_offset;
+	return -1;
+}
+
 void
 mono_exceptions_init (void)
 {
@@ -139,6 +148,7 @@ mono_exceptions_init (void)
 	cbs.mono_install_handler_block_guard = mono_install_handler_block_guard;
 	cbs.mono_current_thread_has_handle_block_guard = mono_current_thread_has_handle_block_guard;
 	mono_install_eh_callbacks (&cbs);
+	mono_install_get_seq_point (mono_get_seq_point_for_native_offset);
 }
 
 gpointer
