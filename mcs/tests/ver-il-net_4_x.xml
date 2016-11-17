@@ -19960,6 +19960,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-640.cs">
+    <type name="Test">
+      <method name="Test op_Addition[T](Test, T)" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Int32 op_Addition[T](T, Int32)" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Test op_Addition(Test, Test)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Int64 op_Addition(Test, Int32)" attrs="2198">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

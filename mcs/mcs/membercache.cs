@@ -1024,6 +1024,7 @@ namespace Mono.CSharp {
 										shared_list = false;
 										prev = new List<MemberSpec> (found.Count + 1);
 										prev.AddRange (found);
+										found = prev;
 									} else {
 										prev = (List<MemberSpec>) found;
 									}
