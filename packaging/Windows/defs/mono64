@@ -1,0 +1,119 @@
+#!/bin/bash -xe
+
+REPO=https://github.com/mono/mono.git
+REPODIR=$(dirname $(realpath $0))/../repos/mono
+
+error()
+{
+    echo "$(date "+%F@%T") :: $1" 1>&2
+    exit 1
+}
+
+report()
+{
+    echo "$(date "+%F@%T") :: $1"
+}
+
+download()
+{
+	if [ ! -d "${REPODIR}" ]
+	then
+		report "Checking Mono out from Git"
+		git clone $REPO ${REPODIR} || error "*** Could not run git clone ***"
+		cd ${REPODIR} && git submodule init || error "*** Could not run git submodule init ***"
+	else
+		report "Fetching the latest Mono from Git"
+		cd ${REPODIR} && git fetch origin || error "*** Could not run git fetch ***"
+	fi
+	cd ${REPODIR} && git submodule update || error "*** Could not run git submodule update ***"
+	if [ -n "$1" ]
+	then
+		report "Checkout out revision $1"
+		cd ${REPODIR} && git checkout $1 || error "*** Could not run git checkout ***"
+		cd ${REPODIR} && git submodule update || error "*** Could not update modules to revision $1 ***"
+	fi
+	wget --quiet -O ${REPODIR}/pkgconfig.zip http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip
+}
+
+clean()
+{
+	rm -fr ${REPODIR}/../../tmp/mono
+	pushd ${REPODIR}
+	report "Running git clean and reset"
+	git clean -fdx || error "*** Could not run git clean ***"
+	git reset --hard HEAD || error "*** Could not run git reset ***"
+	popd
+	wget --quiet -O ${REPODIR}/pkgconfig.zip http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip
+}
+
+build()
+{
+	pushd ${REPODIR}
+	report "Running configure with Cygwin (runtime plus assemblies)"
+	mkdir -p ../../tmp/mono
+	./autogen.sh --prefix=$(realpath ../../tmp/mono) --host=i686-w64-mingw32 || error "*** Could not run autogen ***"
+	report "Compiling mono runtime with MSVC"
+	pushd msvc
+	./winsetup.bat
+	popd
+	/cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=x64 /p:Configuration=Release /p:MONO_TARGET_GC=sgen msvc/mono.sln || error "*** MSBuild SGen failed ***"
+	export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\build\\\sgen\\\x64\\\bin\\\Release\\\mono-sgen.exe`"
+	make || error "*** gcc building failed ***"
+	popd
+}
+
+install()
+{
+	pushd ${REPODIR}
+	make install || error "*** Installing to temporary prefix failed ***"
+	rm -f	../../tmp/mono/bin/mono-sgen.* \
+		../../tmp/mono/bin/mono-boehm.* \
+		../../tmp/mono/lib/libmono-2.0.* \
+		../../tmp/mono/lib/libmonoboehm-2.0.* \
+		../../tmp/mono/lib/libmonosgen-2.0.* \
+		../../tmp/mono/bin/MonoPosixHelper.* \
+		../../tmp/mono/lib/MonoPosixHelper.* \
+		../../tmp/mono/bin/mono
+	pushd ${REPODIR}
+	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.exe	../../tmp/mono/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.pdb	../../tmp/mono/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/monosgen-2.0.dll	../../tmp/mono/bin/
+	cp -a msvc/build/sgen/x64/lib/Release/monosgen-2.0.lib	../../tmp/mono/lib/
+	cp -a msvc/build/sgen/x64/bin/Release/monosgen-2.0.pdb	../../tmp/mono/lib/
+	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.dll	../../tmp/mono/bin/
+	cp -a msvc/build/sgen/x64/lib/Release/MonoPosixHelper.lib	../../tmp/mono/lib/
+	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.pdb	../../tmp/mono/lib/
+	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0.dll	../../tmp/mono/bin/
+	cp -a msvc/build/sgen/x64/lib/Release/mono-2.0.lib	../../tmp/mono/lib/
+	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0.pdb	../../tmp/mono/lib/
+	cp -a ../../tmp/mono/bin/mono-sgen.exe	../../tmp/mono/bin/mono.exe
+	cp -a ../../tmp/mono/bin/mono-sgen.pdb	../../tmp/mono/bin/mono.pdb
+	popd
+	pushd ${REPODIR}/../../tmp/mono/bin
+	for i in *
+		do if [[ "`file -b $i`" == "POSIX shell script, ASCII text"* ]]
+			then RUNTIME=`grep -ho -m 1 "xbuild/.*/bin/\|[2,3,4]\.[0,5]/" $i | sed 's#/$##'`
+			if [ -n "$(grep -ho '.:/.*\.exe' $i)" ]
+				then EXENAME=$(basename `grep -ho '.:/.*\.exe' $i`)
+			fi
+			if [ -f "../lib/mono/${RUNTIME}/${EXENAME}" ]
+				then sed "s#@@RUNTIME@@#${RUNTIME}#g" ${REPODIR}/../../resources/wrapper.bat > $i.bat
+				sed -i "s#@@COMMAND@@#${EXENAME}#g" $i.bat
+				sed -i 's#/#\\#g' $i.bat
+			fi
+			sed -i "s#.:/.*/#\"\$\(cygpath -w \"\$\{BASH_SOURCE%/\*\}\"/../lib/mono/${RUNTIME}/\)\"#g" $i
+			sed -i 's#/.*/tmp/mono/bin#\"\$\{BASH_SOURCE%/\*\}\"#g' $i
+		fi
+	done
+	unzip -jd . ${REPODIR}/pkgconfig.zip bin/pkg-config.exe
+	chmod a+x *.bat *.exe
+	popd
+	popd
+}
+
+prerequisites()
+{
+	which mcs 2>/dev/null || error "*** mcs is not in \$PATH ***"
+}
+
+$@
