@@ -32,7 +32,7 @@ namespace System.Security.Cryptography
 {
     public sealed class IncrementalHash : IDisposable
     {
-        public IncrementalHash () { }
+        private IncrementalHash () { }
         public HashAlgorithmName AlgorithmName { get { throw new NotImplementedException (); } }
         public void AppendData (byte[] data) { }
         public void AppendData (byte[] data, int offset, int count) { }
