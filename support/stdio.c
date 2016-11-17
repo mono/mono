@@ -276,13 +276,13 @@ Mono_Posix_Stdlib_ungetc (gint32 c, void* stream)
 gint32
 Mono_Posix_Stdlib_feof (void* stream)
 {
-	return feof (stream);
+	return feof (((FILE*) stream));
 }
 
 gint32
 Mono_Posix_Stdlib_ferror (void* stream)
 {
-	return ferror (stream);
+	return ferror (((FILE*) stream));
 }
 
 int
