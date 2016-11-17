@@ -1322,6 +1322,8 @@ public class Tests : TestsBase, ITest2
 
 		o.invoke_2 ();
 
+		o.assembly_load ();
+
 		AppDomain.Unload (domain);
 
 		domains_3 ();
@@ -1351,6 +1353,11 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void invoke_in_domain_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void assembly_load_in_domain () {
+		Assembly.Load ("System.Transactions");
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1632,6 +1639,10 @@ public class CrossDomain : MarshalByRefObject
 
 	public int invoke_3 () {
 		return 42;
+	}
+
+	public void assembly_load () {
+		Tests.assembly_load_in_domain ();
 	}
 }	
 
