@@ -45,7 +45,7 @@ extern guint64 stat_slots_allocated_in_vain;
  * anymore, which is the case in the parallel collector.
  */
 static MONO_ALWAYS_INLINE void
-par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objsize, SgenGrayQueue *queue)
+par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objsize, SgenGrayQueue *queue, gboolean is_parallel)
 {
 	sgen_client_pre_copy_checks (destination, vt, obj, objsize);
 	binary_protocol_copy (obj, destination, vt, objsize);
@@ -60,7 +60,7 @@ par_copy_object_no_checks (char *destination, GCVTable vt, void *obj, mword objs
 	obj = destination;
 	if (queue) {
 		SGEN_LOG (9, "Enqueuing gray object %p (%s)", obj, sgen_client_vtable_get_name (vt));
-		GRAY_OBJECT_ENQUEUE (queue, (GCObject *)obj, sgen_vtable_get_descriptor (vt));
+		GRAY_OBJECT_ENQUEUE (queue, (GCObject *)obj, sgen_vtable_get_descriptor (vt), is_parallel);
 	}
 }
 
@@ -73,7 +73,6 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	GCVTable vt = SGEN_LOAD_VTABLE_UNCHECKED (obj);
 	gboolean has_references = SGEN_VTABLE_HAS_REFERENCES (vt);
 	mword objsize = SGEN_ALIGN_UP (sgen_client_par_object_get_size (vt, obj));
-	/* FIXME: Does this not mark the newly allocated object? */
 	void *destination = COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
 
 	if (G_UNLIKELY (!destination)) {
@@ -86,8 +85,7 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	if (!has_references)
 		queue = NULL;
 
-	par_copy_object_no_checks ((char *)destination, vt, obj, objsize, queue);
-	/* FIXME: mark mod union cards if necessary */
+	par_copy_object_no_checks ((char *)destination, vt, obj, objsize, queue, FALSE);
 
 	/* set the forwarding pointer */
 	SGEN_FORWARD_OBJECT (obj, destination);
@@ -95,5 +93,44 @@ copy_object_no_checks (GCObject *obj, SgenGrayQueue *queue)
 	return (GCObject *)destination;
 }
 
+#if defined(COPY_OR_MARK_PARALLEL)
+static MONO_NEVER_INLINE GCObject *
+copy_object_no_checks_par (GCObject *obj, SgenGrayQueue *queue)
+{
+	mword vtable_word = *(mword*)obj;
+	GCObject *destination;
+
+	destination = (GCObject*) SGEN_VTABLE_IS_FORWARDED (vtable_word);
+
+	if (!destination) {
+		GCVTable vt = (GCVTable) vtable_word;
+		GCObject *final_destination;
+		/*
+		 * At this point we know vt is not tagged and we shouldn't access the vtable through obj
+		 * since it could get copied at any time by another thread.
+		 */
+		gboolean has_references = SGEN_VTABLE_HAS_REFERENCES (vt);
+		mword objsize = SGEN_ALIGN_UP (sgen_client_par_object_get_size (vt, obj));
+		destination = major_collector.alloc_object_par (vt, objsize, has_references);
+
+		if (!has_references)
+			queue = NULL;
+
+		/* FIXME we can potentially queue an object that will never be alive */
+		par_copy_object_no_checks ((char*)destination, vt, obj, objsize, queue, TRUE);
+
+		/* FIXME we might need a membar here so other threads see the vtable before we forward */
+
+		/* set the forwarding pointer */
+		SGEN_FORWARD_OBJECT_PAR (obj, destination, final_destination);
+
+		destination = final_destination;
+	}
+
+	return destination;
+}
+#endif
+
 #undef COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION
 #undef collector_pin_object
+#undef COPY_OR_MARK_PARALLEL
