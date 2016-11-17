@@ -3345,6 +3345,9 @@ public class DebuggerTests
 			vm.Resume ();
 			e = GetNextEvent ();
 			if (e is AssemblyUnloadEvent) {
+				AssertThrows<Exception> (delegate () {
+						var assembly_obj = (e as AssemblyUnloadEvent).Assembly.GetAssemblyObject ();
+					});
 				continue;
 			} else {
 				break;
