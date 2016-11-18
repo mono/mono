@@ -86,8 +86,15 @@ typedef union {
 } ThreadPoolCounter;
 
 typedef struct {
+	gint32 ref;
+	MonoCoopCond cond;
+} CleanupSemaphore;
+
+typedef struct {
 	MonoDomain *domain;
 	gint32 outstanding_request;
+	int	threadpool_jobs;
+	CleanupSemaphore *cleanup_semaphore;
 } ThreadPoolDomain;
 
 typedef MonoInternalThread ThreadPoolWorkingThread;
@@ -159,11 +166,6 @@ typedef struct {
 	/* suspended by the debugger */
 	gboolean suspended;
 } ThreadPool;
-
-typedef struct {
-	gint32 ref;
-	MonoCoopCond cond;
-} ThreadPoolDomainCleanupSemaphore;
 
 typedef enum {
 	TRANSITION_WARMUP,
@@ -438,16 +440,15 @@ domain_get (MonoDomain *domain, gboolean create)
 
 	if (create) {
 		ThreadPoolDomain *tpdomain;
-		ThreadPoolDomainCleanupSemaphore *cleanup_semaphore;
-		cleanup_semaphore = g_new0 (ThreadPoolDomainCleanupSemaphore, 1);
+		CleanupSemaphore *cleanup_semaphore;
+		cleanup_semaphore = g_new0 (CleanupSemaphore, 1);
 		cleanup_semaphore->ref = 2;
 		mono_coop_cond_init (&cleanup_semaphore->cond);
 
-		g_assert(!domain->cleanup_semaphore);
-		domain->cleanup_semaphore = cleanup_semaphore;
-
 		tpdomain = g_new0 (ThreadPoolDomain, 1);
 		tpdomain->domain = domain;
+		tpdomain->cleanup_semaphore = cleanup_semaphore;
+
 		domain_add (tpdomain);
 
 		return tpdomain;
@@ -666,8 +667,8 @@ worker_thread (gpointer data)
 			mono_native_thread_id_get (), tpdomain->domain, tpdomain->outstanding_request);
 
 		g_assert (tpdomain->domain);
-		g_assert (tpdomain->domain->threadpool_jobs >= 0);
-		tpdomain->domain->threadpool_jobs ++;
+		g_assert (tpdomain->threadpool_jobs >= 0);
+		tpdomain->threadpool_jobs ++;
 
 		mono_coop_mutex_unlock (&threadpool->domains_lock);
 
@@ -695,17 +696,17 @@ worker_thread (gpointer data)
 
 		mono_coop_mutex_lock (&threadpool->domains_lock);
 
-		tpdomain->domain->threadpool_jobs --;
-		g_assert (tpdomain->domain->threadpool_jobs >= 0);
+		tpdomain->threadpool_jobs --;
+		g_assert (tpdomain->threadpool_jobs >= 0);
 
-		if (tpdomain->domain->threadpool_jobs == 0 && mono_domain_is_unloading (tpdomain->domain)) {
-			ThreadPoolDomainCleanupSemaphore *cleanup_semaphore;
+		if (tpdomain->threadpool_jobs == 0 && mono_domain_is_unloading (tpdomain->domain)) {
+			CleanupSemaphore *cleanup_semaphore;
 			gboolean removed;
 
 			removed = domain_remove(tpdomain);
 			g_assert (removed);
 
-			cleanup_semaphore = (ThreadPoolDomainCleanupSemaphore*) tpdomain->domain->cleanup_semaphore;
+			cleanup_semaphore = tpdomain->cleanup_semaphore;
 			g_assert (cleanup_semaphore);
 
 			mono_coop_cond_signal (&cleanup_semaphore->cond);
@@ -713,7 +714,7 @@ worker_thread (gpointer data)
 			if (InterlockedDecrement (&cleanup_semaphore->ref) == 0) {
 				mono_coop_cond_destroy (&cleanup_semaphore->cond);
 				g_free (cleanup_semaphore);
-				tpdomain->domain->cleanup_semaphore = NULL;
+				tpdomain->cleanup_semaphore = NULL;
 			}
 
 			domain_free (tpdomain);
@@ -1460,7 +1461,7 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 {
 	gint64 end;
 	ThreadPoolDomain *tpdomain;
-	ThreadPoolDomainCleanupSemaphore *cleanup_semaphore;
+	CleanupSemaphore *cleanup_semaphore;
 	gboolean ret;
 
 	g_assert (domain);
@@ -1483,7 +1484,7 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	* There might be some threads out that could be about to execute stuff from the given domain.
 	* We avoid that by waiting on a semaphore to be pulsed by the thread that reaches zero.
 	* The semaphore is only created for domains which queued threadpool jobs.
-	* We always wait on the semaphore rather than ensuring domain->threadpool_jobs is 0.
+	* We always wait on the semaphore rather than ensuring tpdomain->threadpool_jobs is 0.
 	* There may be pending outstanding requests which will create new jobs.
 	* The semaphore is signaled the threadpool domain has been removed from list
 	* and we know no more jobs for the domain will be processed.
@@ -1498,8 +1499,8 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 		return TRUE;
 	}
 
-	g_assert (domain->cleanup_semaphore);
-	cleanup_semaphore = (ThreadPoolDomainCleanupSemaphore*) domain->cleanup_semaphore;
+	cleanup_semaphore = tpdomain->cleanup_semaphore;
+	g_assert (cleanup_semaphore);
 
 	ret = TRUE;
 
@@ -1527,7 +1528,7 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	if (InterlockedDecrement (&cleanup_semaphore->ref) == 0) {
 		mono_coop_cond_destroy (&cleanup_semaphore->cond);
 		g_free (cleanup_semaphore);
-		domain->cleanup_semaphore = NULL;
+		tpdomain->cleanup_semaphore = NULL;
 	}
 
 	mono_coop_mutex_unlock(&threadpool->domains_lock);
