@@ -14,7 +14,7 @@ monotouch_runtime_SUBDIRS := build class
 monotouch_watch_runtime_SUBDIRS := build class
 monotouch_tv_runtime_SUBDIRS := build class
 xammac_SUBDIRS := build class
-mobile_SUBDIRS := build class
+aot_hybrid_SUBDIRS := build class ilasm
 mobile_static_SUBDIRS := build class ilasm
 binary_reference_assemblies_SUBDIRS := build class
 net_4_x_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
@@ -71,7 +71,7 @@ $(_boot_:%=profile-do--monotouch_watch_runtime--%):  profile-do--monotouch_watch
 $(_boot_:%=profile-do--monotouch_tv_runtime--%):     profile-do--monotouch_tv_runtime--%:     profile-do--build--%
 $(_boot_:%=profile-do--xammac--%):            profile-do--xammac--%:            profile-do--build--%
 $(_boot_:%=profile-do--xammac_net_4_5--%):    profile-do--xammac_net_4_5--%:           profile-do--build--%
-$(_boot_:%=profile-do--mobile--%):            profile-do--mobile--%:         profile-do--build--%
+$(_boot_:%=profile-do--aot_hybrid--%):            profile-do--aot_hybrid--%:         profile-do--build--%
 $(_boot_:%=profile-do--mobile_static--%):     profile-do--mobile_static--%:     profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
