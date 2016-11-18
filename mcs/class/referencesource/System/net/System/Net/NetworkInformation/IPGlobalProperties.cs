@@ -16,7 +16,7 @@ namespace System.Net.NetworkInformation
         {
 #if MONODROID
             return new AndroidIPGlobalProperties ();
-#elif MONOTOUCH || XAMMAC || MOBILE_STATIC
+#elif MONOTOUCH || XAMMAC || MOBILE
             return new UnixIPGlobalProperties ();
 #elif MONO
             switch (Environment.OSVersion.Platform) {

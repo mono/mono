@@ -67,7 +67,9 @@ DEFAULT_REFERENCES =
 TEST_LIB_REFS = System.Core System
 
 ifndef MOBILE_STATIC
+ifneq ($(PROFILE),aot_hybrid)
 TEST_LIB_REFS += Mono.Posix
+endif
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
