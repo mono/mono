@@ -10,6 +10,12 @@
 
 G_BEGIN_DECLS
 
+int
+Mono_Posix_Stdlib_GetLastError (void)
+{
+	return errno;
+}
+
 void
 Mono_Posix_Stdlib_SetLastError (int error_number)
 {

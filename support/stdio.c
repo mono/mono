@@ -49,7 +49,21 @@ Mono_Posix_Stdlib_fwrite (unsigned char *ptr, mph_size_t size, mph_size_t nmemb,
 	mph_return_if_size_t_overflow (size);
 	mph_return_if_size_t_overflow (nmemb);
 
-	return fwrite (ptr, (size_t) size, (size_t) nmemb, (FILE*) stream);
+	size_t ret = fwrite (ptr, (size_t) size, (size_t) nmemb, (FILE*) stream);
+#ifdef HOST_WIN32
+	// Workaround for a particular weirdness on Windows triggered by the
+	// StdioFileStreamTest.Write() test method. The test writes 15 bytes to a
+	// file, then rewinds the file pointer and reads the same bytes. It then
+	// writes 15 additional bytes to the file. This second write fails on
+	// Windows with 0 returned from fwrite(). Calling fseek() followed by a retry
+	// of fwrite() like we do here fixes the issue.
+	if (ret != nmemb)
+	{
+		fseek (stream, 0, SEEK_CUR);
+		ret = fwrite (ptr + (ret * nmemb), (size_t) size, (size_t) nmemb - ret, (FILE*) stream);
+	}
+#endif
+	return ret;
 }
 
 #ifdef HAVE_VSNPRINTF

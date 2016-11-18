@@ -2184,6 +2184,7 @@ void* Mono_Posix_Stdlib_realloc (void* ptr, guint64 size);
 void Mono_Posix_Stdlib_free (void* p);
 int Mono_Posix_Stdlib_rewind (void* stream);
 int Mono_Posix_Stdlib_setbuf (void* stream, void* buf);
+int Mono_Posix_Stdlib_GetLastError (void);
 void Mono_Posix_Stdlib_SetLastError (int error);
 int Mono_Posix_Stdlib_setvbuf (void* stream, void* buf, int mode, guint64 size);
 void* Mono_Posix_Stdlib_fopen (char* path, char* mode);

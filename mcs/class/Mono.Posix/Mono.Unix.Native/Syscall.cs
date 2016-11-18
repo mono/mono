@@ -3085,7 +3085,7 @@ namespace Mono.Unix.Native {
 				EntryPoint="Mono_Posix_Syscall_get_at_fdcwd")]
 		private static extern int get_at_fdcwd ();
 
-		public static readonly int AT_FDCWD = get_at_fdcwd ();
+		public static int AT_FDCWD { get { return get_at_fdcwd (); } }
 
 		#endregion
 
@@ -3657,12 +3657,12 @@ namespace Mono.Unix.Native {
 		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_L_ctermid")]
 		private static extern int _L_ctermid ();
 
-		public static readonly int L_ctermid = _L_ctermid ();
+		public static int L_ctermid { get { return _L_ctermid (); } }
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_L_cuserid")]
 		private static extern int _L_cuserid ();
 
-		public static readonly int L_cuserid = _L_cuserid ();
+		public static int L_cuserid { get { return _L_cuserid (); } }
 
 		internal static object getlogin_lock = new object ();
 
@@ -4043,9 +4043,9 @@ namespace Mono.Unix.Native {
 				EntryPoint="Mono_Posix_Syscall_get_utime_omit")]
 		private static extern long get_utime_omit ();
 
-		public static readonly long UTIME_NOW = get_utime_now ();
+		public static long UTIME_NOW { get { return get_utime_now (); } }
 
-		public static readonly long UTIME_OMIT = get_utime_omit ();
+		public static long UTIME_OMIT { get { return get_utime_omit (); } }
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_futimens")]
