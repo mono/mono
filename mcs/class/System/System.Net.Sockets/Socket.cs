@@ -2296,6 +2296,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				(useOverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
 			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)Handle);
+			GC.SuppressFinalize(m_Handle);
 			m_Handle = null;
 
 			return si;
