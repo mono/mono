@@ -438,6 +438,17 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void OpenReadTaskAsyncOnFile ()
+		{
+			var tmp = Path.GetTempFileName ();
+			string url = "file://" + tmp;
+
+			var client = new WebClient ();
+			var task = client.OpenReadTaskAsync (url);
+			Assert.IsTrue (task.Wait (2000));
+		}
+
 		[Test] // OpenWrite (string)
 		public void OpenWrite1_Address_Null ()
 		{
