@@ -201,7 +201,7 @@ class MonoReleaseProfile(DarwinProfile):
         print "Setting up temporary package directory:", tmpdir
 
         # setup metadata
-        self.packaging_dir = os.path.join(self.resource_path, "packaging")
+        self.packaging_dir = os.path.join(self.path, "packaging")
         run_shell('rsync -aPq %s/* %s' % (self.packaging_dir, tmpdir), False)
 
         packages_list = string.join(
