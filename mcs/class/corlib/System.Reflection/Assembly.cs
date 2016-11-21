@@ -428,7 +428,7 @@ namespace System.Reflection {
 		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
+		internal extern unsafe static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
 
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{

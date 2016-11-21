@@ -415,7 +415,16 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("assemblyFile");
 
 			AssemblyName aname = new AssemblyName ();
-			Assembly.InternalGetAssemblyName (Path.GetFullPath (assemblyFile), aname);
+			unsafe {
+				Mono.MonoAssemblyName nativeName;
+				string codebase;
+				Assembly.InternalGetAssemblyName (Path.GetFullPath (assemblyFile), out nativeName, out codebase);
+				try {
+					aname.FillName (&nativeName, codebase, true, false, true);
+				} finally {
+					RuntimeMarshal.FreeAssemblyName (ref nativeName);
+				}
+			}
 			return aname;
 		}
 
