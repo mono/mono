@@ -211,6 +211,8 @@ namespace MonoTests.System.Net
 			var ips = new List<IPAddress> ();
 			ips.Add (IPAddress.Loopback);
 			foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces ()) {
+				if (adapter.OperationalStatus != OperationalStatus.Up)
+					continue;
 				foreach (var ip in adapter.GetIPProperties ().UnicastAddresses) {
 					ips.Add (ip.Address);
 				}
