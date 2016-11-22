@@ -88,14 +88,11 @@ mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProp
 MonoReflectionEvent*
 mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error);
 
-MonoReflectionModule*
-mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError *error);
-
 MonoReflectionModuleHandle
 mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error);
 
-MonoReflectionModule*
-mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
+MonoReflectionModuleHandle
+mono_module_file_get_object_handle (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
 
 MonoReflectionMethodBody*
 mono_method_body_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoError *error);

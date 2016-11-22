@@ -307,15 +307,6 @@ fail:
 	return MONO_HANDLE_CAST (MonoReflectionModule, NULL_HANDLE);
 }
 
-MonoReflectionModule *
-mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError *error)
-{
-	HANDLE_FUNCTION_ENTER ();
-	mono_error_init (error);
-	MonoReflectionModuleHandle result = mono_module_get_object_handle (domain, image, error);
-	HANDLE_FUNCTION_RETURN_OBJ (result);
-}
-
 MonoReflectionModuleHandle
 mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error)
 {
@@ -326,17 +317,16 @@ mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *
 MonoReflectionModule*
 mono_module_file_get_object (MonoDomain *domain, MonoImage *image, int table_index)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionModule *result;
-	result = mono_module_file_get_object_checked (domain, image, table_index, &error);
+	MonoReflectionModuleHandle result = mono_module_file_get_object_handle (domain, image, table_index, &error);
 	mono_error_cleanup (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-MonoReflectionModule*
-mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error)
+MonoReflectionModuleHandle
+mono_module_file_get_object_handle (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error)
 {
-	MonoReflectionModule *res;
 	MonoTableInfo *table;
 	guint32 cols [MONO_FILE_SIZE];
 	const char *name;
@@ -345,19 +335,19 @@ mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int t
 	
 	mono_error_init (error);
 
-	res = (MonoReflectionModule *)mono_object_new_checked (domain, mono_class_get_mono_module_class (), error);
-	if (!res)
-		return NULL;
+	MonoReflectionModuleHandle res = MONO_HANDLE_NEW (MonoReflectionModule, mono_object_new_checked (domain, mono_class_get_mono_module_class (), error));
+	if (!is_ok (error))
+		goto fail;
 
 	table = &image->tables [MONO_TABLE_FILE];
 	g_assert (table_index < table->rows);
 	mono_metadata_decode_row (table, table_index, cols, MONO_FILE_SIZE);
 
-	res->image = NULL;
-	MonoReflectionAssembly *assm_obj = mono_assembly_get_object_checked (domain, image->assembly, error);
-	if (!assm_obj)
-		return NULL;
-	MONO_OBJECT_SETREF (res, assembly, assm_obj);
+	MONO_HANDLE_SETVAL (res, image, MonoImage*, NULL);
+	MonoReflectionAssemblyHandle assm_obj = mono_assembly_get_object_handle (domain, image->assembly, error);
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, assembly, assm_obj);
 	name = mono_metadata_string_heap (image, cols [MONO_FILE_NAME]);
 
 	/* Check whenever the row has a corresponding row in the moduleref table */
@@ -366,16 +356,24 @@ mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int t
 		name_idx = mono_metadata_decode_row_col (table, i, MONO_MODULEREF_NAME);
 		val = mono_metadata_string_heap (image, name_idx);
 		if (strcmp (val, name) == 0)
-			res->image = image->modules [i];
+			MONO_HANDLE_SETVAL (res, image, MonoImage*, image->modules [i]);
 	}
 
-	MONO_OBJECT_SETREF (res, fqname, mono_string_new (domain, name));
-	MONO_OBJECT_SETREF (res, name, mono_string_new (domain, name));
-	MONO_OBJECT_SETREF (res, scopename, mono_string_new (domain, name));
-	res->is_resource = cols [MONO_FILE_FLAGS] & FILE_CONTAINS_NO_METADATA;
-	res->token = mono_metadata_make_token (MONO_TABLE_FILE, table_index + 1);
+	MONO_HANDLE_SET (res, fqname, mono_string_new_handle (domain, name, error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, name, mono_string_new_handle (domain, name, error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, scopename, mono_string_new_handle (domain, name, error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SETVAL (res, is_resource, MonoBoolean, cols [MONO_FILE_FLAGS] & FILE_CONTAINS_NO_METADATA);
+	MONO_HANDLE_SETVAL (res, token, guint32, mono_metadata_make_token (MONO_TABLE_FILE, table_index + 1));
 
 	return res;
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionModule, NULL_HANDLE);
 }
 
 static MonoType*
