@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Threading;
 using Mono.Security.Interface;
 using System.Security.Cryptography.X509Certificates;
 using MNS = Mono.Net.Security;
@@ -37,9 +38,13 @@ namespace Mono.Btls.Interface
 			return MNS.MonoTlsProviderFactory.IsBtlsSupported ();
 		}
 
+		static MonoTlsProvider provider;
+
 		public static MonoTlsProvider GetProvider ()
 		{
-			return new MonoBtlsProvider ();
+			if (provider == null)
+				Interlocked.CompareExchange (ref provider, new MonoBtlsProvider (), null);
+			return provider;
 		}
 
 		public static BtlsX509 CreateNative (byte[] data, BtlsX509Format format)
@@ -101,6 +106,11 @@ namespace Mono.Btls.Interface
 		public static X509Chain GetManagedChain (BtlsX509Chain chain)
 		{
 			return MonoBtlsProvider.GetManagedChain (chain.Instance);
+		}
+
+		public static ICertificateValidator GetValidator (MonoTlsSettings settings)
+		{
+			return MNS.ChainValidationHelper.GetInternalValidator (GetProvider (), settings);
 		}
 	}
 }

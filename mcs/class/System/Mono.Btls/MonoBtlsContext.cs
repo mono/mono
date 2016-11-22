@@ -220,7 +220,7 @@ namespace Mono.Btls
 
 		void SetupCertificateStore ()
 		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (Settings != null && Settings.TrustAnchors != null) {
 				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
