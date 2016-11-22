@@ -199,25 +199,39 @@ mono_reflection_cleanup_domain (MonoDomain *domain)
 MonoReflectionAssembly*
 mono_assembly_get_object (MonoDomain *domain, MonoAssembly *assembly)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionAssembly *result;
-	result = mono_assembly_get_object_checked (domain, assembly, &error);
+	MonoReflectionAssemblyHandle result = mono_assembly_get_object_handle (domain, assembly, &error);
 	mono_error_cleanup (&error); /* FIXME new API that doesn't swallow the error */
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-static MonoReflectionAssembly*
+static MonoReflectionAssemblyHandle
 assembly_object_construct (MonoDomain *domain, MonoClass *unused_klass, MonoAssembly *assembly, gpointer user_data, MonoError *error)
 {
 	mono_error_init (error);
-	MonoReflectionAssembly *res = (MonoReflectionAssembly *)mono_object_new_checked (domain, mono_class_get_mono_assembly_class (), error);
-	return_val_if_nok (error, NULL);
-	res->assembly = assembly;
+	MonoReflectionAssemblyHandle res = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_object_new_checked (domain, mono_class_get_mono_assembly_class (), error));
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE));
+	MONO_HANDLE_SETVAL (res, assembly, MonoAssembly*, assembly);
 	return res;
 }
 
 /*
- * mono_assembly_get_object_checked:
+ * mono_assembly_get_object_handle:
+ * @domain: an app domain
+ * @assembly: an assembly
+ *
+ * Return an System.Reflection.Assembly object representing the MonoAssembly @assembly.
+ */
+MonoReflectionAssemblyHandle
+mono_assembly_get_object_handle (MonoDomain *domain, MonoAssembly *assembly, MonoError *error)
+{
+	mono_error_init (error);
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoReflectionAssemblyHandle, assembly, NULL, assembly_object_construct, NULL);
+}
+
+/*
+ * mono_assembly_get_object_handle:
  * @domain: an app domain
  * @assembly: an assembly
  *
@@ -226,8 +240,10 @@ assembly_object_construct (MonoDomain *domain, MonoClass *unused_klass, MonoAsse
 MonoReflectionAssembly*
 mono_assembly_get_object_checked (MonoDomain *domain, MonoAssembly *assembly, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	mono_error_init (error);
-	return CHECK_OR_CONSTRUCT (MonoReflectionAssembly*, assembly, NULL, assembly_object_construct, NULL);
+	MonoReflectionAssemblyHandle result = mono_assembly_get_object_handle (domain, assembly, error);
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 

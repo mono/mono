@@ -67,6 +67,9 @@ mono_find_dynamic_image_owner (void *ptr);
 MonoReflectionAssembly*
 mono_assembly_get_object_checked (MonoDomain *domain, MonoAssembly *assembly, MonoError *error);
 
+MonoReflectionAssemblyHandle
+mono_assembly_get_object_handle (MonoDomain *domain, MonoAssembly *assembly, MonoError *error);
+
 MonoReflectionType*
 mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *error);
 
