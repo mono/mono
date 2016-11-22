@@ -8095,6 +8095,13 @@ ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_Wind
 #endif
 
 
+ICALL_EXPORT MonoBoolean
+ves_icall_System_TimeZoneInfo_UseRegistryForTimeZoneInformation()
+{
+	/* Should be false on Windows Store and Xbox One once Mono supports those */
+	return TRUE;
+}
+
 #ifndef DISABLE_ICALL_TABLES
 
 #define ICALL_TYPE(id,name,first)
