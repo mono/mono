@@ -251,59 +251,76 @@ mono_assembly_get_object_checked (MonoDomain *domain, MonoAssembly *assembly, Mo
 MonoReflectionModule*   
 mono_module_get_object   (MonoDomain *domain, MonoImage *image)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionModule *result;
-	result = mono_module_get_object_checked (domain, image, &error);
+	MonoReflectionModuleHandle result = mono_module_get_object_handle (domain, image, &error);
 	mono_error_cleanup (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-static MonoReflectionModule*
+static MonoReflectionModuleHandle
 module_object_construct (MonoDomain *domain, MonoClass *unused_klass, MonoImage *image, gpointer user_data, MonoError *error)
 {
-	MonoReflectionModule *res;
 	char* basename;
 	
 	mono_error_init (error);
-	res = (MonoReflectionModule *)mono_object_new_checked (domain, mono_class_get_mono_module_class (), error);
-	if (!res)
-		return NULL;
+	MonoReflectionModuleHandle res = MONO_HANDLE_NEW (MonoReflectionModule, mono_object_new_checked (domain, mono_class_get_mono_module_class (), error));
+	if (!is_ok (error))
+		goto fail;
 
-	res->image = image;
-	MonoReflectionAssembly *assm_obj = mono_assembly_get_object_checked (domain, image->assembly, error);
-	if (!assm_obj)
-		return NULL;
-	MONO_OBJECT_SETREF (res, assembly, assm_obj);
+	MONO_HANDLE_SETVAL (res, image, MonoImage *, image);
+	MonoReflectionAssemblyHandle assm_obj = mono_assembly_get_object_handle (domain, image->assembly, error);
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, assembly, assm_obj);
 
-	MONO_OBJECT_SETREF (res, fqname, mono_string_new (domain, image->name));
+	MONO_HANDLE_SET (res, fqname, mono_string_new_handle (domain, image->name, error));
+	if (!is_ok (error))
+		goto fail;
 	basename = g_path_get_basename (image->name);
-	MONO_OBJECT_SETREF (res, name, mono_string_new (domain, basename));
-	MONO_OBJECT_SETREF (res, scopename, mono_string_new (domain, image->module_name));
-	
+	MONO_HANDLE_SET (res, name, mono_string_new_handle (domain, basename, error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, scopename, mono_string_new_handle (domain, image->module_name, error));
+	if (!is_ok (error))
+		goto fail;
+
 	g_free (basename);
 
+	guint32 token = 0;
 	if (image->assembly->image == image) {
-		res->token = mono_metadata_make_token (MONO_TABLE_MODULE, 1);
+		token  = mono_metadata_make_token (MONO_TABLE_MODULE, 1);
 	} else {
 		int i;
-		res->token = 0;
 		if (image->assembly->image->modules) {
 			for (i = 0; i < image->assembly->image->module_count; i++) {
 				if (image->assembly->image->modules [i] == image)
-					res->token = mono_metadata_make_token (MONO_TABLE_MODULEREF, i + 1);
+					token = mono_metadata_make_token (MONO_TABLE_MODULEREF, i + 1);
 			}
-			g_assert (res->token);
+			g_assert (token != 0);
 		}
 	}
+	MONO_HANDLE_SETVAL (res, token, guint32, token);
 
 	return res;
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionModule, NULL_HANDLE);
 }
 
 MonoReflectionModule *
 mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	mono_error_init (error);
-	return CHECK_OR_CONSTRUCT (MonoReflectionModule*, image, NULL, module_object_construct, NULL);
+	MonoReflectionModuleHandle result = mono_module_get_object_handle (domain, image, error);
+	HANDLE_FUNCTION_RETURN_OBJ (result);
+}
+
+MonoReflectionModuleHandle
+mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error)
+{
+	mono_error_init (error);
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoReflectionModuleHandle, image, NULL, module_object_construct, NULL);
 }
 
 MonoReflectionModule*

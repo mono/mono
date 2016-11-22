@@ -91,6 +91,9 @@ mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *
 MonoReflectionModule*
 mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError *error);
 
+MonoReflectionModuleHandle
+mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error);
+
 MonoReflectionModule*
 mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
 
