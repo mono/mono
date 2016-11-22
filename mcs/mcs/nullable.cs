@@ -1210,7 +1210,7 @@ namespace Mono.CSharp.Nullable
 						//
 						// Special case null ?? null
 						//
-						if (right.IsNull && ltype == right.Type)
+						if (right is NullLiteral && ltype == right.Type)
 							return null;
 
 						return ReducedExpression.Create (lc != null ? right : left, this, false);

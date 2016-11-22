@@ -19564,6 +19564,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void Foo(System.Action)" attrs="129">
+        <size>4</size>
+      </method>
     </type>
   </test>
   <test name="gtest-622.cs">
