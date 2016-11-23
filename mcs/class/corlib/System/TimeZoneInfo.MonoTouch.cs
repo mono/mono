@@ -58,21 +58,24 @@ namespace System {
 			}
 		}
 
-		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
+		static TimeZoneInfo BuildFromStream(string id, Stream stream)
 		{
-			foreach (string name in GetMonoTouchNames ()) {
-				using (Stream stream = GetMonoTouchData (name, false)) {
-					if (stream == null)
-						continue;
-					systemTimeZones.Add (BuildFromStream (name, stream));
-				}
+			byte[] rawData = new byte [stream.Length];
+			stream.Read (rawData, 0, rawData.Length);
+
+			try {
+				return GetTimeZoneFromTzData (rawData, id);
+			} catch (InvalidTimeZoneException) {
+				throw;
+			} catch (Exception e) {
+				throw new InvalidTimeZoneException ("Time zone information file contains invalid data", e);
 			}
 		}
-		
+
 		[DllImport ("__Internal")]
 		extern static IntPtr xamarin_timezone_get_names (ref int count);
 
-		static ReadOnlyCollection<string> GetMonoTouchNames ()
+		static ReadOnlyCollection<string> GetTimeZoneIds ()
 		{
 			int count = 0;
 			IntPtr array = xamarin_timezone_get_names (ref count);

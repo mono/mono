@@ -12,9 +12,9 @@ namespace MonoTests.System
 		{
 			[Test]
 			[ExpectedException (typeof (ArgumentException))]
-			public void DateTimeKindNotUnspecified ()
+			public void DateTimeKindNotUnspecifiedOrUtc ()
 			{
-				DateTime dateStart = new DateTime (2007,01,01, 0,0,0,DateTimeKind.Utc);
+				DateTime dateStart = new DateTime (2007,01,01, 0,0,0, DateTimeKind.Local);
 				DateTime dateEnd = new DateTime (2008,01,01);
 				TimeZoneInfo.TransitionTime daylightTransitionStart = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 03, 11);
 				TimeZoneInfo.TransitionTime daylightTransitionEnd = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 10, 11);

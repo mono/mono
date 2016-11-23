@@ -167,7 +167,7 @@ namespace System.IO {
                 if (_dataInitialised != 0) // Refresh was unable to initialise the data
                     __Error.WinIOError(_dataInitialised, DisplayPath);
         
-                if ((_data.fileAttributes & Win32Native.FILE_ATTRIBUTE_DIRECTORY) != 0)
+                if ((_data.fileAttributes & (FileAttributes)Win32Native.FILE_ATTRIBUTE_DIRECTORY) != 0)
                     __Error.WinIOError(Win32Native.ERROR_FILE_NOT_FOUND, DisplayPath);
                 
 #if MONO
@@ -401,7 +401,7 @@ namespace System.IO {
                         // but Exists is supposed to return true or false.
                         return false;
                     }
-                    return (_data.fileAttributes & Win32Native.FILE_ATTRIBUTE_DIRECTORY) == 0;
+                    return (_data.fileAttributes & (FileAttributes)Win32Native.FILE_ATTRIBUTE_DIRECTORY) == 0;
                 }
                 catch
                 {

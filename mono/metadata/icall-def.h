@@ -1039,6 +1039,9 @@ ICALL(WAITH_2, "WaitAll_internal", ves_icall_System_Threading_WaitHandle_WaitAll
 ICALL(WAITH_3, "WaitAny_internal", ves_icall_System_Threading_WaitHandle_WaitAny_internal)
 ICALL(WAITH_4, "WaitOne_internal", ves_icall_System_Threading_WaitHandle_WaitOne_internal)
 
+ICALL_TYPE(TIMEZONEINFO, "System.TimeZoneInfo", TIMEZONEINFO_1)
+ICALL(TIMEZONEINFO_1, "UseRegistryForTimeZoneInformation", ves_icall_System_TimeZoneInfo_UseRegistryForTimeZoneInformation)
+
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)
 HANDLES(ICALL(TYPE_1, "internal_from_handle", ves_icall_System_Type_internal_from_handle))
 HANDLES(ICALL(TYPE_2, "internal_from_name", ves_icall_System_Type_internal_from_name))
