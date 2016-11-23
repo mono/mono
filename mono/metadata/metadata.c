@@ -2565,7 +2565,7 @@ get_image_set (MonoImage **images, int nimages)
 		for (i = 0; i < nimages; ++i)
 			set->images [i] = images [i];
 		set->gclass_cache = mono_conc_hashtable_new_full (mono_generic_class_hash, mono_generic_class_equal, NULL, (GDestroyNotify)free_generic_class);
-		set->ginst_cache = g_hash_table_new_full (mono_metadata_generic_inst_hash, mono_metadata_generic_inst_equal, NULL, (GDestroyNotify)free_generic_inst);
+		set->ginst_cache = mono_conc_hashtable_new_full (mono_metadata_generic_inst_hash, mono_metadata_generic_inst_equal, NULL, (GDestroyNotify)free_generic_inst);
 		set->gmethod_cache = g_hash_table_new_full (inflated_method_hash, inflated_method_equal, NULL, (GDestroyNotify)free_inflated_method);
 		set->gsignature_cache = g_hash_table_new_full (inflated_signature_hash, inflated_signature_equal, NULL, (GDestroyNotify)free_inflated_signature);
 
@@ -2594,7 +2594,7 @@ delete_image_set (MonoImageSet *set)
 	int i;
 
 	mono_conc_hashtable_destroy (set->gclass_cache);
-	g_hash_table_destroy (set->ginst_cache);
+	mono_conc_hashtable_destroy (set->ginst_cache);
 	g_hash_table_destroy (set->gmethod_cache);
 	g_hash_table_destroy (set->gsignature_cache);
 
@@ -2955,7 +2955,7 @@ mono_metadata_clean_for_image (MonoImage *image)
 
 		mono_image_set_lock (set);
 		mono_conc_hashtable_foreach_steal (set->gclass_cache, steal_gclass_in_image, &gclass_data);
-		g_hash_table_foreach_steal (set->ginst_cache, steal_ginst_in_image, &ginst_data);
+		mono_conc_hashtable_foreach_steal (set->ginst_cache, steal_ginst_in_image, &ginst_data);
 		g_hash_table_foreach_remove (set->gmethod_cache, inflated_method_in_image, image);
 		g_hash_table_foreach_remove (set->gsignature_cache, inflated_signature_in_image, image);
 		mono_image_set_unlock (set);
@@ -3133,26 +3133,30 @@ mono_metadata_get_canonical_generic_inst (MonoGenericInst *candidate)
 
 	collect_data_free (&data);
 
-	mono_image_set_lock (set);
-
-	MonoGenericInst *ginst = (MonoGenericInst *)g_hash_table_lookup (set->ginst_cache, candidate);
+	MonoGenericInst *ginst = (MonoGenericInst *)mono_conc_hashtable_lookup (set->ginst_cache, candidate);
 	if (!ginst) {
 		int size = MONO_SIZEOF_GENERIC_INST + type_argc * sizeof (MonoType *);
 		ginst = (MonoGenericInst *)mono_image_set_alloc0 (set, size);
 #ifndef MONO_SMALL_CONFIG
-		ginst->id = ++next_generic_inst_id;
+		ginst->id = InterlockedIncrement (&next_generic_inst_id);
 #endif
 		ginst->is_open = is_open;
 		ginst->type_argc = type_argc;
 
 		for (int i = 0; i < type_argc; ++i)
 			ginst->type_argv [i] = mono_metadata_type_dup (NULL, candidate->type_argv [i]);
-
-		g_hash_table_insert (set->ginst_cache, ginst, ginst);
 	}
 
+	mono_image_set_lock (set);
+	MonoGenericInst *ginst2 = (MonoGenericInst *)mono_conc_hashtable_insert (set->ginst_cache, ginst, ginst);
 	mono_image_set_unlock (set);
-	return ginst;
+
+	if (!ginst2)
+		 ginst2 = ginst;
+	else
+		free_generic_inst (ginst);
+
+	return ginst2;
 }
 
 static gboolean
