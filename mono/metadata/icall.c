@@ -52,7 +52,6 @@
 #include <mono/metadata/socket-io.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/tokentype.h>
-#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/reflection-internals.h>
@@ -61,6 +60,7 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/rand.h>
 #include <mono/metadata/sysmath.h>
+#include <mono/metadata/appdomain-icalls.h>
 #include <mono/metadata/string-icalls.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/w32process.h>

@@ -35,6 +35,7 @@
 
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/object.h>
+#include <mono/metadata/appdomain-icalls.h>
 #include <mono/metadata/domain-internals.h>
 #include "mono/metadata/metadata-internals.h"
 #include <mono/metadata/assembly.h>

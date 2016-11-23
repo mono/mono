@@ -169,6 +169,9 @@ struct _MonoAppDomain {
 	MonoDomain *data;
 };
 
+/* Safely access System.AppDomain from native code */
+TYPED_HANDLE_DECL (MonoAppDomain);
+
 typedef struct _MonoStringBuilder MonoStringBuilder;
 
 struct _MonoStringBuilder {
