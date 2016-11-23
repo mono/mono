@@ -304,7 +304,7 @@ struct _MonoImage {
 	/* indexed by typespec tokens. */
 	MonoConcurrentHashTable *typespec_cache; /* protected by the image lock */
 	/* indexed by token */
-	GHashTable *memberref_signatures;
+	MonoConcurrentHashTable *memberref_signatures;
 	GHashTable *helper_signatures;
 
 	/* Indexed by blob heap indexes */

@@ -143,9 +143,7 @@ find_cached_memberref_sig (MonoImage *image, guint32 sig_idx)
 {
 	gpointer res;
 
-	mono_image_lock (image);
-	res = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
-	mono_image_unlock (image);
+	res = mono_conc_hashtable_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
 
 	return res;
 }
@@ -156,19 +154,18 @@ cache_memberref_sig (MonoImage *image, guint32 sig_idx, gpointer sig)
 	gpointer prev_sig;
 
 	mono_image_lock (image);
-	prev_sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
-	if (prev_sig) {
-		/* Somebody got in before us */
-		sig = prev_sig;
-	}
-	else {
-		g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
+
+	prev_sig = mono_conc_hashtable_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
+
+	mono_image_unlock (image);
+
+	if (!prev_sig) {
+		prev_sig = sig;
 		/* An approximation based on glib 2.18 */
 		memberref_sig_cache_size += sizeof (gpointer) * 4;
 	}
-	mono_image_unlock (image);
 
-	return sig;
+	return prev_sig;
 }
 
 static MonoClassField*
