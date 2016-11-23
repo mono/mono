@@ -420,7 +420,8 @@ typedef struct {
 	MonoImage **images;
 
 	// Generic-specific caches
-	GHashTable *ginst_cache, *gmethod_cache, *gsignature_cache;
+	GHashTable *gmethod_cache, *gsignature_cache;
+	MonoConcurrentHashTable *ginst_cache;
 	MonoConcurrentHashTable *gclass_cache;
 
 	MonoWrapperCaches wrapper_caches;
