@@ -294,9 +294,11 @@ namespace System.Threading {
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
-				if (current_thread == null)
-					current_thread = GetCurrentThread ();
-				return current_thread;
+				Thread current = current_thread;
+				if (current != null)
+					return current;
+				// This will set the current_thread tls variable
+				return GetCurrentThread ();
 			}
 		}
 
