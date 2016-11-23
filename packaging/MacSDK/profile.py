@@ -106,7 +106,9 @@ class MonoReleaseProfile(DarwinProfile):
 
     def setup_release(self):
         self.mono_package = self.release_packages['mono']
-        self.mono_package.fetch()
+        dest = os.path.join(self.bockbuild.build_root, self.mono_package.source_dir_name)
+        self.mono_package.fetch(dest)
+
 
         verbose('Mono version: %s' % self.mono_package.version)
         self.RELEASE_VERSION = self.mono_package.version
