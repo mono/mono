@@ -288,11 +288,6 @@ namespace System.Threading {
 			}
 		}
 
-		// Looks up the object associated with the current thread
-		// this is called by the JIT directly, too
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static InternalThread CurrentInternalThread_internal();
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static Thread GetCurrentThread ();
 
