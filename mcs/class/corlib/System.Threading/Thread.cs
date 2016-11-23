@@ -293,11 +293,14 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static InternalThread CurrentInternalThread_internal();
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static Thread GetCurrentThread ();
+
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
 				if (current_thread == null)
-					current_thread = new Thread (CurrentInternalThread_internal ());
+					current_thread = GetCurrentThread ();
 				return current_thread;
 			}
 		}
