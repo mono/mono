@@ -188,6 +188,7 @@ struct _MonoDomain {
 	MonoException      *divide_by_zero_ex;
 	/* typeof (void) */
 	MonoObject         *typeof_void;
+	MonoString         *empty_string;
 	/* 
 	 * The fields between FIRST_GC_TRACKED and LAST_GC_TRACKED are roots, but
 	 * not object references.
