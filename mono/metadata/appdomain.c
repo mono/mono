@@ -1956,84 +1956,97 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	return NULL;
 }
 
-MonoReflectionAssembly *
-ves_icall_System_Reflection_Assembly_LoadFrom (MonoString *fname, MonoBoolean refOnly)
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoolean refOnly, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionAssembly *result;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get ();
 	char *name, *filename;
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
-	MonoAssembly *ass = NULL;
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
 
 	name = NULL;
 	result = NULL;
 
-	mono_error_init (&error);
-
 	if (fname == NULL) {
-		mono_error_set_argument_null (&error, "assemblyFile", "");
+		mono_error_set_argument_null (error, "assemblyFile", "");
 		goto leave;
 	}
 		
-	name = filename = mono_string_to_utf8_checked (fname, &error);
-	if (!is_ok (&error))
+	name = filename = mono_string_handle_to_utf8 (fname, error);
+	if (!is_ok (error))
 		goto leave;
 	
-	ass = mono_assembly_open_full (filename, &status, refOnly);
+	MonoAssembly *ass = mono_assembly_open_full (filename, &status, refOnly);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
-			mono_error_set_bad_image_name (&error, g_strdup (name), "");
+			mono_error_set_bad_image_name (error, g_strdup (name), "");
 		else
-			mono_error_set_assembly_load (&error, g_strdup (name), "%s", "");
+			mono_error_set_assembly_load (error, g_strdup (name), "%s", "");
 		goto leave;
 	}
 
-	result = mono_assembly_get_object_checked (domain, ass, &error);
+	result = mono_assembly_get_object_handle (domain, ass, error);
 
 leave:
-	mono_error_set_pending_exception (&error);
 	g_free (name);
 	return result;
 }
 
-MonoReflectionAssembly *
-ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomain *ad, 
-					    MonoArray *raw_assembly,
-					    MonoArray *raw_symbol_store, MonoObject *evidence,
-					    MonoBoolean refonly)
+MonoReflectionAssemblyHandle
+ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad, 
+					    MonoArrayHandle raw_assembly,
+					    MonoArrayHandle raw_symbol_store, MonoObjectHandle evidence,
+					    MonoBoolean refonly,
+					    MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoAssembly *ass;
-	MonoReflectionAssembly *refass = NULL;
-	MonoDomain *domain = ad->data;
+	MonoReflectionAssemblyHandle refass = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	MonoDomain *domain = MONO_HANDLE_GETVAL(ad, data);
 	MonoImageOpenStatus status;
-	guint32 raw_assembly_len = mono_array_length (raw_assembly);
-	MonoImage *image = mono_image_open_from_data_full (mono_array_addr (raw_assembly, gchar, 0), raw_assembly_len, TRUE, NULL, refonly);
+	guint32 raw_assembly_len = mono_array_handle_length (raw_assembly);
+
+	/* Copy the data ourselves to unpin the raw assembly byte array as soon as possible */
+	char *assembly_data = (char*) g_try_malloc (raw_assembly_len);
+	if (!assembly_data) {
+		mono_error_set_out_of_memory (error, "Could not allocate %ud bytes to copy raw assembly data", raw_assembly_len);
+		return refass;
+	}
+	uint32_t gchandle;
+	mono_byte *raw_data = (mono_byte*) MONO_ARRAY_HANDLE_PIN (raw_assembly, gchar, 0, &gchandle);
+	memcpy (assembly_data, raw_data, raw_assembly_len);
+	mono_gchandle_free (gchandle); /* unpin */
+	MONO_HANDLE_ASSIGN (raw_assembly, NULL_HANDLE); /* don't reference the data anymore */
+	
+	MonoImage *image = mono_image_open_from_data_full (assembly_data, raw_assembly_len, FALSE, NULL, refonly);
 
 	if (!image) {
-		mono_set_pending_exception (mono_get_exception_bad_image_format (""));
-		return NULL;
+		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		return refass;
 	}
 
-	if (raw_symbol_store != NULL)
-		mono_debug_open_image_from_memory (image, mono_array_addr (raw_symbol_store, guint8, 0), mono_array_length (raw_symbol_store));
+	if (!MONO_HANDLE_IS_NULL(raw_symbol_store)) {
+		guint32 symbol_len = mono_array_handle_length (raw_symbol_store);
+		uint32_t symbol_gchandle;
+		mono_byte *raw_symbol_data = (mono_byte*) MONO_ARRAY_HANDLE_PIN (raw_symbol_store, mono_byte, 0, &symbol_gchandle);
+		mono_debug_open_image_from_memory (image, raw_symbol_data, symbol_len);
+		mono_gchandle_free (symbol_gchandle);
+	}
 
 	ass = mono_assembly_load_from_full (image, "", &status, refonly);
 
 
 	if (!ass) {
 		mono_image_close (image);
-		mono_set_pending_exception (mono_get_exception_bad_image_format (""));
-		return NULL; 
+		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		return refass; 
 	}
 
-	refass = mono_assembly_get_object_checked (domain, ass, &error);
-	if (!refass)
-		mono_error_set_pending_exception (&error);
-	else
-		MONO_OBJECT_SETREF (refass, evidence, evidence);
+	refass = mono_assembly_get_object_handle (domain, ass, error);
+	if (!MONO_HANDLE_IS_NULL(refass))
+		MONO_HANDLE_SET (refass, evidence, evidence);
 	return refass;
 }
 

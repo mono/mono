@@ -130,7 +130,7 @@ ICALL(APPDOM_12, "InternalSetDomain", ves_icall_System_AppDomain_InternalSetDoma
 ICALL(APPDOM_13, "InternalSetDomainByID", ves_icall_System_AppDomain_InternalSetDomainByID)
 ICALL(APPDOM_14, "InternalUnload", ves_icall_System_AppDomain_InternalUnload)
 ICALL(APPDOM_15, "LoadAssembly", ves_icall_System_AppDomain_LoadAssembly)
-ICALL(APPDOM_16, "LoadAssemblyRaw", ves_icall_System_AppDomain_LoadAssemblyRaw)
+HANDLES(ICALL(APPDOM_16, "LoadAssemblyRaw", ves_icall_System_AppDomain_LoadAssemblyRaw))
 ICALL(APPDOM_17, "SetData", ves_icall_System_AppDomain_SetData)
 ICALL(APPDOM_18, "createDomain", ves_icall_System_AppDomain_createDomain)
 ICALL(APPDOM_19, "getCurDomain", ves_icall_System_AppDomain_getCurDomain)
@@ -514,7 +514,7 @@ HANDLES(ICALL(ASSEM_14, "InternalGetAssemblyName", ves_icall_System_Reflection_A
 HANDLES(ICALL(ASSEM_12, "InternalGetReferencedAssemblies", ves_icall_System_Reflection_Assembly_InternalGetReferencedAssemblies))
 ICALL(ASSEM_15, "InternalGetType", ves_icall_System_Reflection_Assembly_InternalGetType)
 HANDLES(ICALL(ASSEM_16, "InternalImageRuntimeVersion", ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion))
-ICALL(ASSEM_17, "LoadFrom", ves_icall_System_Reflection_Assembly_LoadFrom)
+HANDLES(ICALL(ASSEM_17, "LoadFrom", ves_icall_System_Reflection_Assembly_LoadFrom))
 ICALL(ASSEM_18, "LoadPermissions", ves_icall_System_Reflection_Assembly_LoadPermissions)
 
 	/* normal icalls again */

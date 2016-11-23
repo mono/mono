@@ -25,12 +25,13 @@ MonoObject *
 ves_icall_System_AppDomain_GetData                 (MonoAppDomain *ad, 
 						    MonoString    *name);
 
-MonoReflectionAssembly *
-ves_icall_System_AppDomain_LoadAssemblyRaw         (MonoAppDomain *ad,
-    						    MonoArray *raw_assembly, 
-						    MonoArray *raw_symbol_store,
-						    MonoObject *evidence,
-						    MonoBoolean refonly);
+MonoReflectionAssemblyHandle
+ves_icall_System_AppDomain_LoadAssemblyRaw         (MonoAppDomainHandle ad,
+    						    MonoArrayHandle raw_assembly,
+						    MonoArrayHandle raw_symbol_store,
+						    MonoObjectHandle evidence,
+						    MonoBoolean refonly,
+						    MonoError *error);
 
 void
 ves_icall_System_AppDomain_SetData                 (MonoAppDomain *ad, 
@@ -48,9 +49,10 @@ ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomainHandle ad,
 						    MonoBoolean refonly,
 						    MonoError *error);
 
-MonoReflectionAssembly *
-ves_icall_System_Reflection_Assembly_LoadFrom      (MonoString *fname,
-						    MonoBoolean refonly);
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFrom      (MonoStringHandle fname,
+						    MonoBoolean refonly,
+						    MonoError *error);
 
 MonoReflectionAssembly *
 ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomain *ad, 
