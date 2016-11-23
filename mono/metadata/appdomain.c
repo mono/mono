@@ -988,18 +988,28 @@ ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomai
 	return ad;
 }
 
-MonoArray *
-ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly)
+static gboolean
+add_assembly_to_array (MonoDomain *domain, MonoArrayHandle dest, int dest_idx, MonoAssembly* assm, MonoError *error)
 {
-	MonoError error;
-	MonoDomain *domain = ad->data; 
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoReflectionAssemblyHandle assm_obj = mono_assembly_get_object_handle (domain, assm, error);
+	if (!is_ok (error))
+		goto leave;
+	MONO_HANDLE_ARRAY_SETREF (dest, dest_idx, assm_obj);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+MonoArrayHandle
+ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean refonly, MonoError *error)
+{
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
 	MonoAssembly* ass;
-	MonoArray *res;
 	GSList *tmp;
 	int i;
 	GPtrArray *assemblies;
-
-	mono_error_init (&error);
 
 	/* 
 	 * Make a copy of the list of assemblies because we can't hold the assemblies
@@ -1018,21 +1028,16 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 	}
 	mono_domain_assemblies_unlock (domain);
 
-	res = mono_array_new_checked (domain, mono_class_get_assembly_class (), assemblies->len, &error);
-	if (!is_ok (&error))
+	MonoArrayHandle res = mono_array_new_handle (domain, mono_class_get_assembly_class (), assemblies->len, error);
+	if (!is_ok (error))
 		goto leave;
 	for (i = 0; i < assemblies->len; ++i) {
-		ass = (MonoAssembly *)g_ptr_array_index (assemblies, i);
-		MonoReflectionAssembly *ass_obj = mono_assembly_get_object_checked (domain, ass, &error);
-		if (!mono_error_ok (&error))
+		if (!add_assembly_to_array (domain, res, i, (MonoAssembly *)g_ptr_array_index (assemblies, i), error))
 			goto leave;
-		mono_array_setref (res, i, ass_obj);
 	}
 
 leave:
 	g_ptr_array_free (assemblies, TRUE);
-	if (!mono_error_ok (&error))
-		mono_error_set_pending_exception (&error);
 	return res;
 }
 

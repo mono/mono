@@ -8,6 +8,8 @@
 #define __MONO_METADATA_APPDOMAIN_ICALLS_H__
 
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/handle.h>
+#include <mono/metadata/object-internals.h>
 
 MonoAppDomain *
 ves_icall_System_AppDomain_getCurDomain            (void);
@@ -41,9 +43,10 @@ ves_icall_System_AppDomain_getSetup                (MonoAppDomain *ad);
 MonoString *
 ves_icall_System_AppDomain_getFriendlyName         (MonoAppDomain *ad);
 
-MonoArray*
-ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomain* ad,
-						    MonoBoolean refonly);
+MonoArrayHandle
+ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomainHandle ad,
+						    MonoBoolean refonly,
+						    MonoError *error);
 
 MonoReflectionAssembly *
 ves_icall_System_Reflection_Assembly_LoadFrom      (MonoString *fname,
