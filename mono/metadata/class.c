@@ -1654,7 +1654,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 {
 	if (cached_info) {
 		klass->instance_size = cached_info->instance_size;
-		klass->sizes.class_size = cached_info->class_size;
+		mono_class_set_class_size (klass, cached_info->class_size);
 		klass->packing_size = cached_info->packing_size;
 		klass->min_align = cached_info->min_align;
 		klass->blittable = cached_info->blittable;
@@ -1674,7 +1674,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
  *   Initializes the size related fields of @klass without loading all field data if possible.
  * Sets the following fields in @klass:
  * - instance_size
- * - sizes.class_size
+ * - MonoClassDef:class_size
  * - packing_size
  * - min_align
  * - blittable
@@ -2189,8 +2189,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 	/* Publish the data */
 	mono_loader_lock ();
-	if (!klass->rank)
-		klass->sizes.class_size = class_size;
+	if (!mono_class_is_array(klass) && !mono_class_is_pointer (klass) && !mono_class_is_gparam (klass))
+		mono_class_set_class_size (klass, class_size);
 	klass->has_static_refs = has_static_refs;
 	for (i = 0; i < top; ++i) {
 		field = &klass->fields [i];
@@ -2275,20 +2275,22 @@ mono_class_setup_methods (MonoClass *klass)
 				return;				
 			}
 		}
-	} else if (klass->rank) {
+	} else if (mono_class_is_array (klass)) {
 		MonoError error;
 		MonoMethod *amethod;
 		MonoMethodSignature *sig;
 		int count_generic = 0, first_generic = 0;
 		int method_num = 0;
 		gboolean jagged_ctor = FALSE;
+		guint8 rank = mono_class_get_array_rank (klass);
 
-		count = 3 + (klass->rank > 1? 2: 1);
+
+		count = 3 + (rank > 1? 2: 1);
 
 		mono_class_setup_interfaces (klass, &error);
 		g_assert (mono_error_ok (&error)); /*FIXME can this fail for array types?*/
 
-		if (klass->rank == 1 && klass->element_class->rank) {
+		if (rank == 1 && mono_class_is_array(klass->element_class)) {
 			jagged_ctor = TRUE;
 			count ++;
 		}
@@ -2301,21 +2303,21 @@ mono_class_setup_methods (MonoClass *klass)
 
 		methods = (MonoMethod **)mono_class_alloc0 (klass, sizeof (MonoMethod*) * count);
 
-		sig = mono_metadata_signature_alloc (klass->image, klass->rank);
+		sig = mono_metadata_signature_alloc (klass->image, rank);
 		sig->ret = &mono_defaults.void_class->byval_arg;
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
-		for (i = 0; i < klass->rank; ++i)
+		for (i = 0; i < rank; ++i)
 			sig->params [i] = &mono_defaults.int32_class->byval_arg;
 
 		amethod = create_array_method (klass, ".ctor", sig);
 		methods [method_num++] = amethod;
-		if (klass->rank > 1) {
-			sig = mono_metadata_signature_alloc (klass->image, klass->rank * 2);
+		if (rank > 1) {
+			sig = mono_metadata_signature_alloc (klass->image, rank * 2);
 			sig->ret = &mono_defaults.void_class->byval_arg;
 			sig->pinvoke = TRUE;
 			sig->hasthis = TRUE;
-			for (i = 0; i < klass->rank * 2; ++i)
+			for (i = 0; i < rank * 2; ++i)
 				sig->params [i] = &mono_defaults.int32_class->byval_arg;
 
 			amethod = create_array_method (klass, ".ctor", sig);
@@ -2324,40 +2326,40 @@ mono_class_setup_methods (MonoClass *klass)
 
 		if (jagged_ctor) {
 			/* Jagged arrays have an extra ctor in .net which creates an array of arrays */
-			sig = mono_metadata_signature_alloc (klass->image, klass->rank + 1);
+			sig = mono_metadata_signature_alloc (klass->image, rank + 1);
 			sig->ret = &mono_defaults.void_class->byval_arg;
 			sig->pinvoke = TRUE;
 			sig->hasthis = TRUE;
-			for (i = 0; i < klass->rank + 1; ++i)
+			for (i = 0; i < rank + 1; ++i)
 				sig->params [i] = &mono_defaults.int32_class->byval_arg;
 			amethod = create_array_method (klass, ".ctor", sig);
 			methods [method_num++] = amethod;
 		}
 
 		/* element Get (idx11, [idx2, ...]) */
-		sig = mono_metadata_signature_alloc (klass->image, klass->rank);
+		sig = mono_metadata_signature_alloc (klass->image, rank);
 		sig->ret = &klass->element_class->byval_arg;
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
-		for (i = 0; i < klass->rank; ++i)
+		for (i = 0; i < rank; ++i)
 			sig->params [i] = &mono_defaults.int32_class->byval_arg;
 		amethod = create_array_method (klass, "Get", sig);
 		methods [method_num++] = amethod;
 		/* element& Address (idx11, [idx2, ...]) */
-		sig = mono_metadata_signature_alloc (klass->image, klass->rank);
+		sig = mono_metadata_signature_alloc (klass->image, rank);
 		sig->ret = &klass->element_class->this_arg;
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
-		for (i = 0; i < klass->rank; ++i)
+		for (i = 0; i < rank; ++i)
 			sig->params [i] = &mono_defaults.int32_class->byval_arg;
 		amethod = create_array_method (klass, "Address", sig);
 		methods [method_num++] = amethod;
 		/* void Set (idx11, [idx2, ...], element) */
-		sig = mono_metadata_signature_alloc (klass->image, klass->rank + 1);
+		sig = mono_metadata_signature_alloc (klass->image, rank + 1);
 		sig->ret = &mono_defaults.void_class->byval_arg;
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
-		for (i = 0; i < klass->rank; ++i)
+		for (i = 0; i < rank; ++i)
 			sig->params [i] = &mono_defaults.int32_class->byval_arg;
 		sig->params [i] = &klass->element_class->byval_arg;
 		amethod = create_array_method (klass, "Set", sig);
@@ -2491,7 +2493,7 @@ mono_class_get_vtable_entry (MonoClass *klass, int offset)
 {
 	MonoMethod *m;
 
-	if (klass->rank == 1) {
+	if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1) {
 		/* 
 		 * szarrays do not overwrite any methods of Array, so we can avoid
 		 * initializing their vtables in some cases.
@@ -3171,7 +3173,7 @@ get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enume
 	}
 	internal_enumerator = FALSE;
 	eclass_is_valuetype = FALSE;
-	original_rank = eclass->rank;
+	original_rank = mono_class_is_array (eclass) ? mono_class_get_array_rank (eclass) : 0;
 	if (klass->byval_arg.type != MONO_TYPE_SZARRAY) {
 		MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
 		if (gklass && klass->nested_in == mono_defaults.array_class && strcmp (klass->name, "InternalEnumerator`1") == 0)	 {
@@ -3179,8 +3181,9 @@ get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enume
 			 * For a Enumerator<T[]> we need to get the list of interfaces for T.
 			 */
 			eclass = mono_class_from_mono_type (gklass->context.class_inst->type_argv [0]);
-			original_rank = eclass->rank;
-			if (!eclass->rank)
+			gboolean is_arr = mono_class_is_array (eclass);
+			original_rank = is_arr ? mono_class_get_array_rank (eclass) : 0;
+			if (!is_arr)
 				eclass = eclass->element_class;
 			internal_enumerator = TRUE;
 			*is_enumerator = TRUE;
@@ -3194,7 +3197,7 @@ get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enume
 	 * with this non-lazy impl we can't implement all the interfaces so we do just the minimal stuff
 	 * for deep levels of arrays of arrays (string[][] has all the interfaces, string[][][] doesn't)
 	 */
-	all_interfaces = eclass->rank && eclass->element_class->rank? FALSE: TRUE;
+	all_interfaces = mono_class_is_array (eclass) && mono_class_is_array (eclass->element_class)? FALSE: TRUE;
 
 	generic_icollection_class = mono_class_get_generic_icollection_class ();
 	generic_ienumerable_class = mono_class_get_generic_ienumerable_class ();
@@ -3254,7 +3257,7 @@ get_implicit_generic_array_interfaces (MonoClass *klass, int *num, int *is_enume
 			interface_count++;
 		else
 			interface_count += idepth;
-		if (eclass->rank && eclass->element_class->valuetype) {
+		if (mono_class_is_array (eclass) && eclass->element_class->valuetype) {
 			fill_valuetype_array_derived_types (valuetype_types, eclass->element_class, original_rank);
 			if (valuetype_types [1])
 				++interface_count;
@@ -4119,7 +4122,7 @@ check_interface_method_override (MonoClass *klass, MonoMethod *im, MonoMethod *c
 			TRACE_INTERFACE_VTABLE (printf ("[INJECTED METHOD REFUSED]"));
 			return FALSE;
 		}
-		if (cm->klass->rank == 0) {
+		if (!mono_class_is_array (cm->klass)) {
 			TRACE_INTERFACE_VTABLE (printf ("[RANK CHECK FAILED]"));
 			return FALSE;
 		}
@@ -4396,7 +4399,7 @@ verify_class_overrides (MonoClass *klass, MonoMethod **overrides, int onum)
 static gboolean
 mono_class_need_stelemref_method (MonoClass *klass)
 {
-	return klass->rank == 1 && MONO_TYPE_IS_REFERENCE (&klass->element_class->byval_arg);
+	return mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1 && MONO_TYPE_IS_REFERENCE (&klass->element_class->byval_arg);
 }
 
 /*
@@ -5240,7 +5243,7 @@ mono_class_init (MonoClass *klass)
 		vtable_size = cached_info.vtable_size;
 		ghcimpl = cached_info.ghcimpl;
 		has_cctor = cached_info.has_cctor;
-	} else if (klass->rank == 1 && klass->byval_arg.type == MONO_TYPE_SZARRAY) {
+	} else if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1 && klass->byval_arg.type == MONO_TYPE_SZARRAY) {
 		/* SZARRAY can have 2 vtable layouts, with and without the stelemref method.
 		 * The first slot if for array with.
 		 */
@@ -5316,8 +5319,8 @@ mono_class_init (MonoClass *klass)
 		}
 	}
 
-	if (klass->rank) {
-		array_method_count = 3 + (klass->rank > 1? 2: 1);
+	if (mono_class_is_array(klass)) {
+		array_method_count = 3 + (mono_class_get_array_rank (klass) > 1? 2: 1);
 
 		if (klass->interface_count) {
 			int count_generic = generic_array_methods (klass);
@@ -5363,7 +5366,7 @@ mono_class_init (MonoClass *klass)
 		klass->has_finalize = cached_info.has_finalize;
 		klass->has_finalize_inited = TRUE;
 	}
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		mono_class_set_method_count (klass, array_method_count);
 
 	mono_loader_unlock ();
@@ -5411,7 +5414,7 @@ mono_class_has_finalizer (MonoClass *klass)
 	if (!(MONO_CLASS_IS_INTERFACE (klass) || klass->valuetype)) {
 		MonoMethod *cmethod = NULL;
 
-		if (klass->rank == 1 && klass->byval_arg.type == MONO_TYPE_SZARRAY) {
+		if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1 && klass->byval_arg.type == MONO_TYPE_SZARRAY) {
 		} else if (mono_class_is_ginst (klass)) {
 			MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
 
@@ -6149,7 +6152,7 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 			 * these will be computed normally in mono_class_layout_fields ().
 			 */
 			klass->instance_size = gklass->instance_size;
-			klass->sizes.class_size = gklass->sizes.class_size;
+			mono_class_set_class_size (klass, mono_class_get_class_size (gklass));
 			mono_memory_barrier ();
 			klass->size_inited = 1;
 		}
@@ -6283,7 +6286,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 	klass->this_arg.byref = TRUE;
 
 	/* We don't use type_token for VAR since only classes can use it (not arrays, pointer, VARs, etc) */
-	klass->sizes.generic_param_token = pinfo ? pinfo->token : 0;
+	mono_class_set_generic_param_token (klass,  pinfo ? pinfo->token : 0);
 
 	/*Init these fields to sane values*/
 	klass->min_align = 1;
@@ -6776,7 +6779,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		if ((rootlist = list = (GSList *)g_hash_table_lookup (image->array_cache, eclass))) {
 			for (; list; list = list->next) {
 				klass = (MonoClass *)list->data;
-				if ((klass->rank == rank) && (klass->byval_arg.type == (((rank > 1) || bounded) ? MONO_TYPE_ARRAY : MONO_TYPE_SZARRAY))) {
+				if ((mono_class_get_array_rank (klass) == rank) && (klass->byval_arg.type == (((rank > 1) || bounded) ? MONO_TYPE_ARRAY : MONO_TYPE_SZARRAY))) {
 					mono_loader_unlock ();
 					return klass;
 				}
@@ -6830,9 +6833,9 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 			g_assert (ref_info_handle && !eclass->wastypebuilder);
 		}
 		/* element_size -1 is ok as this is not an instantitable type*/
-		klass->sizes.element_size = -1;
+		mono_class_set_element_size (klass, -1);
 	} else
-		klass->sizes.element_size = mono_class_array_element_size (eclass);
+		mono_class_set_element_size (klass, mono_class_array_element_size (eclass));
 
 	mono_class_setup_supertypes (klass);
 
@@ -6845,7 +6848,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 
 	klass->has_references = MONO_TYPE_IS_REFERENCE (&eclass->byval_arg) || eclass->has_references? TRUE: FALSE;
 
-	klass->rank = rank;
+	mono_class_set_array_rank (klass, rank);
 	
 	if (eclass->enumtype)
 		klass->cast_class = eclass->element_class;
@@ -7012,9 +7015,9 @@ mono_class_data_size (MonoClass *klass)
 	/* in arrays, sizes.class_size is unioned with element_size
 	 * and arrays have no static fields
 	 */
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return 0;
-	return klass->sizes.class_size;
+	return mono_class_get_class_size (klass);
 }
 
 /*
@@ -8474,10 +8477,12 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 	} else if (klass->delegate) {
 		if (mono_class_has_variant_generic_params (klass) && mono_class_is_variant_compatible (klass, oklass, FALSE))
 			return TRUE;
-	}else if (klass->rank) {
+	}else if (mono_class_is_array (klass)) {
 		MonoClass *eclass, *eoclass;
 
-		if (oklass->rank != klass->rank)
+		if (!mono_class_is_array (oklass))
+			return FALSE;
+		if (mono_class_get_array_rank (oklass) != mono_class_get_array_rank (klass))
 			return FALSE;
 
 		/* vectors vs. one dimensional arrays */
@@ -8640,10 +8645,12 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
  	if (target->delegate && mono_class_has_variant_generic_params (target))
 		return mono_class_is_variant_compatible (target, candidate, FALSE);
 
-	if (target->rank) {
+	if (mono_class_is_array (target)) {
 		MonoClass *eclass, *eoclass;
 
-		if (target->rank != candidate->rank)
+		if (!mono_class_is_array (candidate))
+			return FALSE;
+		if (mono_class_get_array_rank (target) != mono_class_get_array_rank (candidate))
 			return FALSE;
 
 		/* vectors vs. one dimensional arrays */
@@ -8829,8 +8836,8 @@ handle_enum:
 gint32
 mono_array_element_size (MonoClass *ac)
 {
-	g_assert (ac->rank);
-	return ac->sizes.element_size;
+	g_assert (mono_class_is_array(ac));
+	return mono_class_get_element_size (ac);
 }
 
 gpointer
@@ -9081,7 +9088,10 @@ mono_class_get_nesting_type (MonoClass *klass)
 int
 mono_class_get_rank (MonoClass *klass)
 {
-	return klass->rank;
+	if (mono_class_is_array (klass))
+		return mono_class_get_array_rank (klass);
+	else
+		return 0;
 }
 
 /**
@@ -10735,7 +10745,7 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 	if (klass->interfaces_inited)
 		return;
 
-	if (klass->rank == 1 && klass->byval_arg.type != MONO_TYPE_ARRAY) {
+	if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1 && klass->byval_arg.type != MONO_TYPE_ARRAY) {
 		MonoType *args [1];
 
 		/* generic IList, ICollection, IEnumerable */

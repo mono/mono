@@ -399,7 +399,7 @@ static GCVTable
 get_array_fill_vtable (void)
 {
 	if (!array_fill_vtable) {
-		static MonoClass klass;
+		static MonoClassArray klass;
 		static char _vtable[sizeof(MonoVTable)+8];
 		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((mword)_vtable, 8);
 		gsize bmap;
@@ -407,13 +407,14 @@ get_array_fill_vtable (void)
 		MonoDomain *domain = mono_get_root_domain ();
 		g_assert (domain);
 
-		klass.element_class = mono_defaults.byte_class;
-		klass.rank = 1;
-		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
-		klass.sizes.element_size = 1;
-		klass.name = "array_filler_type";
+		klass.class.element_class = mono_defaults.byte_class;
+		klass.class.class_kind = MONO_CLASS_ARRAY;
+		klass.class.rank = 1;
+		klass.class.instance_size = MONO_SIZEOF_MONO_ARRAY;
+		klass.element_size = 1;
+		klass.class.name = "array_filler_type";
 
-		vtable->klass = &klass;
+		vtable->klass = &klass.class;
 		bmap = 0;
 		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
 		vtable->rank = 1;
@@ -1194,12 +1195,12 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 		clause = (MonoExceptionClause *)mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause));
 		clause->try_offset = mono_mb_get_label (mb);
 
-		/* vtable->klass->sizes.element_size */
+		/* ((MonoClassArray*)vtable->klass)->element_size */
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClass, sizes));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClassArray, element_size));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_U4);
 		mono_mb_emit_byte (mb, CEE_CONV_I);
@@ -1480,7 +1481,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass))
 		return NULL;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return NULL;
 	if (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS)
 		return NULL;
@@ -1500,7 +1501,7 @@ MonoMethod*
 mono_gc_get_managed_array_allocator (MonoClass *klass)
 {
 #ifdef MANAGED_ALLOCATION
-	if (klass->rank != 1)
+	if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) != 1)
 		return NULL;
 	if (!mono_runtime_has_tls_get ())
 		return NULL;
@@ -1661,7 +1662,7 @@ sgen_client_cardtable_scan_object (GCObject *obj, mword block_obj_size, guint8 *
 
 	SGEN_ASSERT (0, SGEN_VTABLE_HAS_REFERENCES (vt), "Why would we ever call this on reference-free objects?");
 
-	if (vt->rank) {
+	if (mono_class_is_array (klass)) {
 		MonoArray *arr = (MonoArray*)obj;
 		guint8 *card_data, *card_base;
 		guint8 *card_data_end;

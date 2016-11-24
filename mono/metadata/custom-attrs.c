@@ -1221,7 +1221,7 @@ mono_custom_attrs_from_class_checked (MonoClass *klass, MonoError *error)
 		return lookup_custom_attr (klass->image, klass);
 
 	if (klass->byval_arg.type == MONO_TYPE_VAR || klass->byval_arg.type == MONO_TYPE_MVAR) {
-		idx = mono_metadata_token_index (klass->sizes.generic_param_token);
+		idx = mono_metadata_token_index (mono_class_get_generic_param_token(klass));
 		idx <<= MONO_CUSTOM_ATTR_BITS;
 		idx |= MONO_CUSTOM_ATTR_GENERICPAR;
 	} else {

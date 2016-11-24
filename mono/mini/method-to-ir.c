@@ -1775,13 +1775,13 @@ mini_emit_castclass (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClass *kl
 static void
 mini_emit_castclass_inst (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClass *klass, MonoInst *klass_inst, MonoBasicBlock *object_is_null)
 {
-	if (klass->rank) {
+	if (mono_class_is_array (klass)) {
 		int rank_reg = alloc_preg (cfg);
 		int eclass_reg = alloc_preg (cfg);
 
 		g_assert (!klass_inst);
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, klass_reg, MONO_STRUCT_OFFSET (MonoClass, rank));
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, mono_class_get_array_rank (klass));
 		MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 		//		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, MONO_STRUCT_OFFSET (MonoClass, cast_class));
@@ -1802,7 +1802,7 @@ mini_emit_castclass_inst (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClas
 			mini_emit_castclass (cfg, -1, eclass_reg, klass->cast_class, object_is_null);
 		}
 
-		if ((klass->rank == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY) && (obj_reg != -1)) {
+		if (mono_class_get_array_rank (klass) == 1 && (klass->byval_arg.type == MONO_TYPE_SZARRAY) && (obj_reg != -1)) {
 			/* Check that the object is a vector too */
 			int bounds_reg = alloc_preg (cfg);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, MONO_STRUCT_OFFSET (MonoArray, bounds));
@@ -4092,7 +4092,7 @@ handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, int context_use
 	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, rank));
 
 	/* FIXME: generics */
-	g_assert (klass->rank == 0);
+	g_assert (!mono_class_is_array (klass));
 			
 	// Check rank == 0
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, 0);
@@ -4105,7 +4105,7 @@ handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, int context_use
 		MonoInst *element_class;
 
 		/* This assertion is from the unboxcast insn */
-		g_assert (klass->rank == 0);
+		g_assert (!mono_class_is_array (klass));
 
 		element_class = emit_get_rgctx_klass (cfg, context_used,
 				klass, MONO_RGCTX_INFO_ELEMENT_KLASS);
@@ -4496,7 +4496,7 @@ method_needs_stack_walk (MonoCompile *cfg, MonoMethod *cmethod)
 	return FALSE;
 }
 
-#define is_complex_isinst(klass) (mono_class_is_interface (klass) || klass->rank || mono_class_is_nullable (klass) || mono_class_is_marshalbyref (klass) || mono_class_is_sealed (klass) || klass->byval_arg.type == MONO_TYPE_VAR || klass->byval_arg.type == MONO_TYPE_MVAR)
+#define is_complex_isinst(klass) (mono_class_is_interface (klass) || mono_class_is_array (klass) || mono_class_is_nullable (klass) || mono_class_is_marshalbyref (klass) || mono_class_is_sealed (klass) || klass->byval_arg.type == MONO_TYPE_VAR || klass->byval_arg.type == MONO_TYPE_MVAR)
 
 static MonoInst*
 emit_isinst_with_cache (MonoCompile *cfg, MonoClass *klass, MonoInst **args)
@@ -4614,7 +4614,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, MONO_STRUCT_OFFSET (MonoObject, vtable));
 
-		if (!klass->rank && !cfg->compile_aot && !(cfg->opt & MONO_OPT_SHARED) && mono_class_is_sealed (klass)) {
+		if (!mono_class_is_array (klass) && !cfg->compile_aot && !(cfg->opt & MONO_OPT_SHARED) && mono_class_is_sealed (klass)) {
 			/* the remoting code is broken, access the class for now */
 			if (0) { /*FIXME what exactly is broken? This change refers to r39380 from 2005 and mention some remoting fixes were due.*/
 				MonoVTable *vt = mono_class_vtable (cfg->domain, klass);
@@ -4694,13 +4694,13 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_us
 	} else {
 		int klass_reg = alloc_preg (cfg);
 
-		if (klass->rank) {
+		if (mono_class_is_array (klass)) {
 			int rank_reg = alloc_preg (cfg);
 			int eclass_reg = alloc_preg (cfg);
 
 			g_assert (!context_used);
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, rank));
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, mono_class_get_array_rank (klass));
 			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, MONO_STRUCT_OFFSET (MonoClass, cast_class));
@@ -4720,7 +4720,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_us
 			} else if (mono_class_is_interface (klass->cast_class)) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
 			} else {
-				if ((klass->rank == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY)) {
+				if ((mono_class_get_array_rank (klass) == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY)) {
 					/* Check that the object is a vector too */
 					int bounds_reg = alloc_preg (cfg);
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, MONO_STRUCT_OFFSET (MonoArray, bounds));
@@ -5860,7 +5860,9 @@ emit_array_unsafe_mov (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **a
 		return args [0];
 
 	//Arrays of valuetypes that are semantically equivalent
-	if (param_klass->rank == 1 && return_klass->rank == 1 && is_unsafe_mov_compatible (cfg, param_klass->element_class, return_klass->element_class))
+	if (mono_class_is_array (param_klass) && mono_class_get_array_rank (param_klass) == 1 &&
+	    mono_class_is_array (return_klass) && mono_class_get_array_rank (return_klass) == 1 &&
+	    is_unsafe_mov_compatible (cfg, param_klass->element_class, return_klass->element_class))
 		return args [0];
 
 	return NULL;
@@ -9342,7 +9344,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				LOAD_ERROR;
 			if (cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL &&
 				mini_class_is_system_array (cmethod->klass)) {
-				array_rank = cmethod->klass->rank;
+				array_rank = mono_class_get_array_rank (cmethod->klass);
 			} else if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && icall_is_direct_callable (cfg, cmethod)) {
 				direct_icall = TRUE;
 			} else if (fsig->pinvoke) {
@@ -9813,7 +9815,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * patching gshared method addresses into a gsharedvt method.
 			 */
 			if (cfg->gsharedvt && (mini_is_gsharedvt_signature (fsig) || cmethod->is_inflated || mono_class_is_ginst (cmethod->klass)) &&
-				!(cmethod->klass->rank && cmethod->klass->byval_arg.type != MONO_TYPE_SZARRAY) &&
+			    !(mono_class_is_array (cmethod->klass) && cmethod->klass->byval_arg.type != MONO_TYPE_SZARRAY) &&
 				(!(cfg->llvm_only && virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL)))) {
 				MonoRgctxInfoType info_type;
 

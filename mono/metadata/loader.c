@@ -363,7 +363,7 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 	mono_error_init (error);
 
 	/* FIXME: !mono_class_is_ginst (from_class) condition causes test failures. */
-	if (klass->type_token && !image_is_dynamic (klass->image) && !klass->methods && !klass->rank && klass == from_class && !mono_class_is_ginst (from_class)) {
+	if (klass->type_token && !image_is_dynamic (klass->image) && !klass->methods && !mono_class_is_array (klass) && klass == from_class && !mono_class_is_ginst (from_class)) {
 		int first_idx = mono_class_get_first_method_idx (klass);
 		int mcount = mono_class_get_method_count (klass);
 		for (i = 0; i < mcount; ++i) {
@@ -1949,7 +1949,7 @@ mono_method_get_param_names (MonoMethod *method, const char **names)
 		names [i] = "";
 
 	klass = method->klass;
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		return;
 
 	mono_class_init (klass);
@@ -2614,7 +2614,7 @@ mono_method_get_index (MonoMethod *method)
 	MonoClass *klass = method->klass;
 	int i;
 
-	if (klass->rank)
+	if (mono_class_is_array (klass))
 		/* constructed array methods are not in the MethodDef table */
 		return 0;
 

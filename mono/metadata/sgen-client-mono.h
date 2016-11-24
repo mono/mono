@@ -94,14 +94,14 @@ sgen_mono_array_size (GCVTable vtable, MonoArray *array, mword *bounds_size, mwo
 	if ((descr & DESC_TYPE_MASK) == DESC_TYPE_VECTOR)
 		element_size = ((descr) >> VECTOR_ELSIZE_SHIFT) & MAX_ELEMENT_SIZE;
 	else
-		element_size = vtable->klass->sizes.element_size;
+		element_size = mono_class_get_element_size (vtable->klass);
 
 	size_without_bounds = size = MONO_SIZEOF_MONO_ARRAY + element_size * mono_array_length_fast (array);
 
 	if (G_UNLIKELY (array->bounds)) {
 		size += sizeof (mono_array_size_t) - 1;
 		size &= ~(sizeof (mono_array_size_t) - 1);
-		size += sizeof (MonoArrayBounds) * vtable->klass->rank;
+		size += sizeof (MonoArrayBounds) * mono_class_get_array_rank (vtable->klass);
 	}
 
 	if (bounds_size)
@@ -123,7 +123,7 @@ sgen_client_slow_object_get_size (GCVTable vtable, GCObject* o)
 	 */
 	if (klass == mono_defaults.string_class) {
 		return G_STRUCT_OFFSET (MonoString, chars) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
-	} else if (klass->rank) {
+	} else if (mono_class_is_array (klass)) {
 		return sgen_mono_array_size (vtable, (MonoArray*)o, NULL, 0);
 	} else {
 		/* from a created object: the class must be inited already */

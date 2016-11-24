@@ -727,7 +727,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
 		MonoClass *klass = mono_object_class (obj);
 		if (klass == mono_defaults.string_class) {
 			return mono_string_chars ((MonoString*)obj);
-		} else if (klass->rank) {
+		} else if (mono_class_is_array (klass)) {
 			return mono_array_addr ((MonoArray*)obj, char, 0);
 		} else {
 			/* the C# code will check and throw the exception */

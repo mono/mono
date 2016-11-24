@@ -4105,7 +4105,7 @@ mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual_)
 	if (res)
 		return res;
 		
-	if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
+	if (mono_class_is_array (method->klass) && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
 		(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 		/* 
 		 * Array Get/Set/Address methods. The JIT implements them using inline code
@@ -9611,7 +9611,7 @@ static gboolean
 is_monomorphic_array (MonoClass *klass)
 {
 	MonoClass *element_class;
-	if (klass->rank != 1)
+	if (!mono_class_is_array (klass) || mono_class_get_array_rank (klass) != 1)
 		return FALSE;
 
 	element_class = klass->element_class;
@@ -9633,7 +9633,7 @@ get_virtual_stelemref_kind (MonoClass *element_class)
 		return STELEMREF_INTERFACE;
 #endif
 	/*Arrays are sealed but are covariant on their element type, We can't use any of the fast paths.*/
-	if (mono_class_is_marshalbyref (element_class) || element_class->rank || mono_class_has_variant_generic_params (element_class))
+	if (mono_class_is_marshalbyref (element_class) || mono_class_is_array (element_class) || mono_class_has_variant_generic_params (element_class))
 		return STELEMREF_COMPLEX;
 	if (mono_class_is_sealed (element_class))
 		return STELEMREF_SEALED_CLASS;
@@ -10076,7 +10076,7 @@ mono_marshal_get_virtual_stelemref (MonoClass *array_class)
 {
 	int kind;
 
-	g_assert (array_class->rank == 1);
+	g_assert (mono_class_get_array_rank (array_class) == 1);
 	kind = get_virtual_stelemref_kind (array_class->element_class);
 
 	return get_virtual_stelemref_wrapper (kind);
@@ -10439,7 +10439,7 @@ mono_marshal_get_array_address (int rank, int elem_size)
 	if (elem_size) {
 		mono_mb_emit_icon (mb, elem_size);
 	} else {
-		/* Load arr->vtable->klass->sizes.element_class */
+		/* Load ((MonoClassArray*)arr->vtable->klass)->element_class */
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoObject, vtable));
@@ -10448,8 +10448,8 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		/* sizes is an union, so this reads sizes.element_size */
-		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClass, sizes));
+		/* expect to arr->vtable->klass to be a MonoClassArray, so this reads element_size */
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClassArray, element_size));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I4);
 	}
@@ -10704,7 +10704,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArray *s
 	MONO_CHECK_ARG_NULL (src,);
 	MONO_CHECK_ARG_NULL (dest,);
 
-	if (src->obj.vtable->klass->rank != 1) {
+	if (mono_class_get_array_rank (mono_object_class (src)) != 1) {
 		mono_set_pending_exception (mono_get_exception_argument ("array", "array is multi-dimensional"));
 		return;
 	}
@@ -10739,7 +10739,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer s
 	MONO_CHECK_ARG_NULL (src,);
 	MONO_CHECK_ARG_NULL (dest,);
 
-	if (dest->obj.vtable->klass->rank != 1) {
+	if (mono_class_get_array_rank (mono_object_class (dest)) != 1) {
 		mono_set_pending_exception (mono_get_exception_argument ("array", "array is multi-dimensional"));
 		return;
 	}
@@ -11426,7 +11426,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 		klass->blittable = FALSE;
 
 	/* If this is an array type, ensure that we have element info */
-	if (klass->rank && !mono_marshal_is_loading_type_info (klass->element_class)) {
+	if (mono_class_is_array (klass) && !mono_marshal_is_loading_type_info (klass->element_class)) {
 		mono_marshal_load_type_info (klass->element_class);
 	}
 

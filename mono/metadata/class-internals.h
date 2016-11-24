@@ -15,7 +15,7 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
-#define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
+#define MONO_CLASS_IS_ARRAY(c) (mono_class_is_array (c))
 
 #define MONO_CLASS_HAS_STATIC_METADATA(klass) ((klass)->type_token && !(klass)->image->dynamic && !mono_class_is_ginst (klass))
 
@@ -281,7 +281,7 @@ struct _MonoClass {
 	guint16     idepth;
 
 	/* array dimension */
-	guint8     rank;          
+	guint8     rank;
 
 	int        instance_size; /* object instance size */
 
@@ -361,12 +361,6 @@ struct _MonoClass {
 
 	MonoClass **interfaces;
 
-	union {
-		int class_size; /* size of area for static fields */
-		int element_size; /* for array types */
-		int generic_param_token; /* for generic param types, both var and mvar */
-	} sizes;
-
 	/*
 	 * Field information: Type and location from object base
 	 */
@@ -400,6 +394,7 @@ typedef struct {
 	guint32 method_count, field_count;
 	/* next element in the class_cache hash list (in MonoImage) */
 	MonoClass *next_class_cache;
+	guint32 class_size; /* size of area for static fields */
 } MonoClassDef;
 
 typedef struct {
@@ -410,15 +405,20 @@ typedef struct {
 typedef struct {
 	MonoClass class;
 	MonoGenericClass *generic_class;
+	guint32 class_size; /* size of area for static fields */
 } MonoClassGenericInst;
 
 typedef struct {
 	MonoClass class;
+	guint32 generic_param_token; /* for generic param types, both var and mvar */
 } MonoClassGenericParam;
 
 typedef struct {
 	MonoClass class;
+
 	guint32 method_count;
+	/* array dimension */
+	gint32 element_size; /* for array types */
 } MonoClassArray;
 
 typedef struct {
@@ -1501,6 +1501,30 @@ mono_class_get_ref_info_handle (MonoClass *class);
 
 guint32
 mono_class_set_ref_info_handle (MonoClass *class, guint32 value);
+
+guint8
+mono_class_get_array_rank (MonoClass *klass);
+
+void
+mono_class_set_array_rank (MonoClass *klass, guint8 rank);
+
+void
+mono_class_set_class_size (MonoClass *klass, guint32 class_size);
+
+guint32
+mono_class_get_class_size (MonoClass *klass);
+
+void
+mono_class_set_generic_param_token (MonoClass *klass, guint32 generic_param_token);
+
+guint32
+mono_class_get_generic_param_token (MonoClass *klass);
+
+void
+mono_class_set_element_size (MonoClass *klass, gint32 element_size);
+
+gint32
+mono_class_get_element_size (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

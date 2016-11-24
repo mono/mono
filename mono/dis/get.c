@@ -1054,7 +1054,7 @@ get_escaped_class_name (MonoClass *c)
 		/* <Module> */
 		return NULL;
 
-	if (c->rank || c->byval_arg.type == MONO_TYPE_PTR) 
+	if (mono_class_is_array (c) || c->byval_arg.type == MONO_TYPE_PTR) 
 		g_assert (0);
 
 	esname = get_escaped_name (c->name);

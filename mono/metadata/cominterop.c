@@ -3338,7 +3338,7 @@ mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointe
 #endif
 
 	max_array_length = mono_array_length (input);
-	dim = ((MonoObject *)input)->vtable->klass->rank;
+	dim = mono_class_get_array_rank (mono_object_class (input));
 
 	*indices = g_malloc (dim * sizeof (int));
 	bounds = (SAFEARRAYBOUND *)alloca (dim * sizeof (SAFEARRAYBOUND));

@@ -2143,7 +2143,7 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 			if (MONO_CLASS_IS_INTERFACE (candidate) && mono_class_is_variant_compatible (target, candidate, TRUE))
 				return TRUE;
 
-			if (candidate->rank == 1) {
+			if (mono_class_is_array (candidate) && mono_class_get_array_rank (candidate) == 1) {
 				if (verifier_inflate_and_check_compat (target, mono_defaults.generic_ilist_class, candidate->element_class))
 					return TRUE;
 				if (verifier_inflate_and_check_compat (target, get_icollection_class (), candidate->element_class))
@@ -2189,7 +2189,7 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 	if (mono_class_is_assignable_from (target, candidate))
 		return TRUE;
 
-	if (!MONO_CLASS_IS_INTERFACE (target) || !mono_class_is_ginst (target) || candidate->rank != 1)
+	if (!MONO_CLASS_IS_INTERFACE (target) || !mono_class_is_ginst (target) || (mono_class_is_array (candidate) && mono_class_get_array_rank (candidate) != 1))
 		return FALSE;
 
 	iface_gtd = mono_class_get_generic_class (target)->container_class;
@@ -3287,7 +3287,7 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual_)
 		if (check_overflow (ctx)) {
 			value = stack_push (ctx);
 			set_stack_value (ctx, value, sig->ret, FALSE);
-			if ((ctx->prefix_set & PREFIX_READONLY) && method->klass->rank && !strcmp (method->name, "Address")) {
+			if ((ctx->prefix_set & PREFIX_READONLY) && mono_class_is_array (method->klass) && !strcmp (method->name, "Address")) {
 				ctx->prefix_set &= ~PREFIX_READONLY;
 				value->stype |= CMMP_MASK;
 			}

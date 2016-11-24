@@ -185,8 +185,9 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 	
 	ac = (MonoClass *)arr->obj.vtable->klass;
 
-	g_assert (ic->rank == 1);
-	if (io->bounds != NULL || io->max_length !=  ac->rank) {
+	g_assert (mono_class_get_array_rank(ic) == 1);
+	guint8 ac_rank = mono_class_get_array_rank (ac);
+	if (io->bounds != NULL || io->max_length !=  ac_rank) {
 		mono_set_pending_exception (mono_get_exception_argument (NULL, NULL));
 		return NULL;
 	}
@@ -202,7 +203,7 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 		return ves_icall_System_Array_GetValueImpl (arr, *ind);
 	}
 	
-	for (i = 0; i < ac->rank; i++) {
+	for (i = 0; i < ac_rank; i++) {
 		if ((ind [i] < arr->bounds [i].lower_bound) ||
 		    (ind [i] >=  (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
 			mono_set_pending_exception (mono_get_exception_index_out_of_range ());
@@ -211,7 +212,7 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 	}
 
 	pos = ind [0] - arr->bounds [0].lower_bound;
-	for (i = 1; i < ac->rank; i++)
+	for (i = 1; i < ac_rank; i++)
 		pos = pos * arr->bounds [i].length + ind [i] - 
 			arr->bounds [i].lower_bound;
 
@@ -520,8 +521,9 @@ ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
 	ic = idxs->obj.vtable->klass;
 	ac = arr->obj.vtable->klass;
 
-	g_assert (ic->rank == 1);
-	if (idxs->bounds != NULL || idxs->max_length != ac->rank) {
+	g_assert (mono_class_get_array_rank (ic) == 1);
+	guint8 ac_rank = mono_class_get_array_rank (ac);
+	if (idxs->bounds != NULL || idxs->max_length != ac_rank) {
 		mono_set_pending_exception (mono_get_exception_argument (NULL, NULL));
 		return;
 	}
@@ -538,7 +540,7 @@ ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
 		return;
 	}
 	
-	for (i = 0; i < ac->rank; i++)
+	for (i = 0; i < ac_rank; i++)
 		if ((ind [i] < arr->bounds [i].lower_bound) ||
 		    (ind [i] >= (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
 			mono_set_pending_exception (mono_get_exception_index_out_of_range ());
@@ -546,7 +548,7 @@ ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
 		}
 
 	pos = ind [0] - arr->bounds [0].lower_bound;
-	for (i = 1; i < ac->rank; i++)
+	for (i = 1; i < ac_rank; i++)
 		pos = pos * arr->bounds [i].length + ind [i] - 
 			arr->bounds [i].lower_bound;
 
@@ -589,16 +591,17 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 
 	aklass = mono_bounded_array_class_get (klass, mono_array_length (lengths), bounded);
 
-	sizes = (uintptr_t *)alloca (aklass->rank * sizeof(intptr_t) * 2);
-	for (i = 0; i < aklass->rank; ++i) {
+	guint8 aklass_rank = mono_class_get_array_rank (aklass);
+	sizes = (uintptr_t *)alloca (aklass_rank * sizeof(intptr_t) * 2);
+	for (i = 0; i < aklass_rank; ++i) {
 		sizes [i] = mono_array_get (lengths, guint32, i);
 		if (bounds)
-			sizes [i + aklass->rank] = mono_array_get (bounds, gint32, i);
+			sizes [i + aklass_rank] = mono_array_get (bounds, gint32, i);
 		else
-			sizes [i + aklass->rank] = 0;
+			sizes [i + aklass_rank] = 0;
 	}
 
-	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass->rank, &error);
+	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass_rank, &error);
 	mono_error_set_pending_exception (&error);
 
 	return array;
@@ -641,16 +644,17 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 
 	aklass = mono_bounded_array_class_get (klass, mono_array_length (lengths), bounded);
 
-	sizes = (uintptr_t *)alloca (aklass->rank * sizeof(intptr_t) * 2);
-	for (i = 0; i < aklass->rank; ++i) {
+	guint8 aklass_rank = mono_class_get_array_rank (aklass);
+	sizes = (uintptr_t *)alloca (aklass_rank * sizeof(intptr_t) * 2);
+	for (i = 0; i < aklass_rank; ++i) {
 		sizes [i] = mono_array_get (lengths, guint64, i);
 		if (bounds)
-			sizes [i + aklass->rank] = (mono_array_size_t) mono_array_get (bounds, guint64, i);
+			sizes [i + aklass_rank] = (mono_array_size_t) mono_array_get (bounds, guint64, i);
 		else
-			sizes [i + aklass->rank] = 0;
+			sizes [i + aklass_rank] = 0;
 	}
 
-	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass->rank, &error);
+	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass_rank, &error);
 	mono_error_set_pending_exception (&error);
 
 	return array;
@@ -659,13 +663,13 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 ICALL_EXPORT gint32 
 ves_icall_System_Array_GetRank (MonoObject *arr)
 {
-	return arr->vtable->klass->rank;
+	return mono_class_get_array_rank (mono_object_class (arr));
 }
 
 ICALL_EXPORT gint32
 ves_icall_System_Array_GetLength (MonoArray *arr, gint32 dimension)
 {
-	gint32 rank = arr->obj.vtable->klass->rank;
+	gint32 rank = mono_class_get_array_rank (mono_object_class (arr));
 	uintptr_t length;
 
 	if ((dimension < 0) || (dimension >= rank)) {
@@ -690,7 +694,7 @@ ves_icall_System_Array_GetLength (MonoArray *arr, gint32 dimension)
 ICALL_EXPORT gint64
 ves_icall_System_Array_GetLongLength (MonoArray *arr, gint32 dimension)
 {
-	gint32 rank = arr->obj.vtable->klass->rank;
+	gint32 rank = mono_class_get_array_rank (mono_object_class (arr));
 
 	if ((dimension < 0) || (dimension >= rank)) {
 		mono_set_pending_exception (mono_get_exception_index_out_of_range ());
@@ -706,7 +710,7 @@ ves_icall_System_Array_GetLongLength (MonoArray *arr, gint32 dimension)
 ICALL_EXPORT gint32
 ves_icall_System_Array_GetLowerBound (MonoArray *arr, gint32 dimension)
 {
-	gint32 rank = arr->obj.vtable->klass->rank;
+	gint32 rank = mono_class_get_array_rank (mono_object_class (arr));
 
 	if ((dimension < 0) || (dimension >= rank)) {
 		mono_set_pending_exception (mono_get_exception_index_out_of_range ());
@@ -2706,7 +2710,7 @@ ves_icall_RuntimeTypeHandle_GetArrayRank (MonoReflectionType *type)
 
 	klass = mono_class_from_mono_type (type->type);
 
-	return klass->rank;
+	return mono_class_get_array_rank (klass);
 }
 
 static MonoArray*
@@ -3199,18 +3203,19 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		return NULL;
 	}
 	
-	if (m->klass->rank && !strcmp (m->name, ".ctor")) {
+	if (mono_class_is_array (m->klass) && !strcmp (m->name, ".ctor")) {
 		MonoArray *arr;
 		int i;
 		uintptr_t *lengths;
 		intptr_t *lower_bounds;
+		guint8 rank = mono_class_get_array_rank (m->klass);
 		pcount = mono_array_length (params);
 		lengths = (uintptr_t *)alloca (sizeof (uintptr_t) * pcount);
 		/* Note: the synthetized array .ctors have int32 as argument type */
 		for (i = 0; i < pcount; ++i)
 			lengths [i] = *(int32_t*) ((char*)mono_array_get (params, gpointer, i) + sizeof (MonoObject));
 
-		if (m->klass->rank == 1 && sig->param_count == 2 && m->klass->element_class->rank) {
+		if (rank == 1 && sig->param_count == 2 && mono_class_is_array (m->klass->element_class)) {
 			/* This is a ctor for jagged arrays. MS creates an array of arrays. */
 			arr = mono_array_new_full_checked (mono_object_domain (params), m->klass, lengths, NULL, &error);
 			if (!mono_error_ok (&error)) {
@@ -3229,7 +3234,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 			return (MonoObject*)arr;
 		}
 
-		if (m->klass->rank == pcount) {
+		if (rank == pcount) {
 			/* Only lengths provided. */
 			arr = mono_array_new_full_checked (mono_object_domain (params), m->klass, lengths, NULL, &error);
 			if (!mono_error_ok (&error)) {
@@ -3239,7 +3244,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 
 			return (MonoObject*)arr;
 		} else {
-			g_assert (pcount == (m->klass->rank * 2));
+			g_assert (pcount == rank * 2);
 			/* The arguments are lower-bound-length pairs */
 			lower_bounds = (intptr_t *)g_alloca (sizeof (intptr_t) * pcount);
 
@@ -6159,7 +6164,7 @@ mono_array_get_byte_length (MonoArray *array)
 		length = array->max_length;
 	else {
 		length = 1;
-		for (i = 0; i < klass->rank; ++ i)
+		for (i = 0; i < mono_class_get_array_rank (klass); ++ i)
 			length *= array->bounds [i].length;
 	}
 
@@ -6893,8 +6898,8 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 		return NULL;
 	}
 
-	if (klass->rank >= 1) {
-		g_assert (klass->rank == 1);
+	if (mono_class_is_array (klass)) {
+		g_assert (mono_class_get_array_rank (klass) == 1);
 		ret = (MonoObject *) mono_array_new_checked (domain, klass->element_class, 0, &error);
 		mono_error_set_pending_exception (&error);
 		return ret;

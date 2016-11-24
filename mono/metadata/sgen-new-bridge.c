@@ -191,7 +191,7 @@ class_kind (MonoClass *klass)
 	}
 
 	/* Some arrays can be ignored */
-	if (klass->rank == 1) {
+	if (mono_class_is_array (klass) && mono_class_get_array_rank (klass) == 1) {
 		MonoClass *elem_class = klass->element_class;
 
 		/* FIXME the bridge check can be quite expensive, cache it at the class level. */

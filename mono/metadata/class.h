@@ -142,6 +142,7 @@ mono_class_get_parent        (MonoClass *klass);
 MONO_API MonoClass*
 mono_class_get_nesting_type  (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API int
 mono_class_get_rank          (MonoClass *klass);
 

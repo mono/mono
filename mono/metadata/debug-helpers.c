@@ -941,11 +941,11 @@ mono_object_describe (MonoObject *obj)
 			g_print ("String at %p, length: %d, unable to decode UTF16\n", obj, mono_string_length ((MonoString*) obj));
 		}
 		g_free (utf8);
-	} else if (klass->rank) {
+	} else if (mono_class_is_array (klass)) {
 		MonoArray *array = (MonoArray*)obj;
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);
-		g_print (" at %p, rank: %d, length: %d\n", obj, klass->rank, (int)mono_array_length (array));
+		g_print (" at %p, rank: %d, length: %d\n", obj, mono_class_get_array_rank (klass), (int)mono_array_length (array));
 	} else {
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);

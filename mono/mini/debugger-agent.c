@@ -5872,7 +5872,7 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 				addr = mono_object_unbox (obj);
 				boxed_vtype = TRUE;
 				goto handle_vtype;
-			} else if (obj->vtable->klass->rank) {
+			} else if (mono_class_is_array (mono_object_class (obj))) {
 				buffer_add_byte (buf, obj->vtable->klass->byval_arg.type);
 			} else if (obj->vtable->klass->byval_arg.type == MONO_TYPE_GENERICINST) {
 				buffer_add_byte (buf, MONO_TYPE_CLASS);
@@ -8033,12 +8033,12 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		buffer_add_assemblyid (buf, domain, klass->image->assembly);
 		buffer_add_moduleid (buf, domain, klass->image);
 		buffer_add_typeid (buf, domain, klass->parent);
-		if (klass->rank || klass->byval_arg.type == MONO_TYPE_PTR)
+		if (mono_class_is_array (klass) || klass->byval_arg.type == MONO_TYPE_PTR)
 			buffer_add_typeid (buf, domain, klass->element_class);
 		else
 			buffer_add_id (buf, 0);
 		buffer_add_int (buf, klass->type_token);
-		buffer_add_byte (buf, klass->rank);
+		buffer_add_byte (buf, mono_class_is_array (klass) ? mono_class_get_array_rank (klass) : 0);
 		buffer_add_int (buf, mono_class_get_flags (klass));
 		b = 0;
 		type = &klass->byval_arg;
@@ -9305,6 +9305,7 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
 	MonoArray *arr;
 	int objid, index, len, i, esize;
+	guint8 rank;
 	ErrorCode err;
 	gpointer elem;
 
@@ -9315,12 +9316,13 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_ARRAY_REF_GET_LENGTH:
-		buffer_add_int (buf, arr->obj.vtable->klass->rank);
+		rank = mono_class_get_array_rank (mono_object_class (arr));
+		buffer_add_int (buf, rank);
 		if (!arr->bounds) {
 			buffer_add_int (buf, arr->max_length);
 			buffer_add_int (buf, 0);
 		} else {
-			for (i = 0; i < arr->obj.vtable->klass->rank; ++i) {
+			for (i = 0; i < rank; ++i) {
 				buffer_add_int (buf, arr->bounds [i].length);
 				buffer_add_int (buf, arr->bounds [i].lower_bound);
 			}
