@@ -79,7 +79,6 @@ static void mono_class_setup_vtable_full (MonoClass *klass, GList *in_setup);
 static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass);
 
 static gboolean mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error);
-static gpointer mono_class_get_exception_data (const MonoClass *klass);
 
 
 /*
@@ -1369,10 +1368,9 @@ void
 mono_error_set_for_class_failure (MonoError *oerror, const MonoClass *klass)
 {
 	g_assert (mono_class_has_failure (klass));
-	MonoErrorBoxed *box = (MonoErrorBoxed*)mono_class_get_exception_data (klass);
+	MonoErrorBoxed *box = mono_class_get_exception_data ((MonoClass*)klass);
 	mono_error_set_from_boxed (oerror, box);
 }
-
 
 /*
  * mono_class_alloc:
@@ -10037,7 +10035,7 @@ mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error)
 
 	mono_loader_lock ();
 	klass->has_failure = 1;
-	mono_image_property_insert (klass->image, klass, MONO_CLASS_PROP_EXCEPTION_DATA, boxed_error);
+	mono_class_set_exception_data (klass, boxed_error);
 	mono_loader_unlock ();
 
 	return TRUE;
@@ -10082,19 +10080,6 @@ mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...)
 	MonoErrorBoxed *box = mono_error_box (&prepare_error, klass->image);
 	mono_error_cleanup (&prepare_error);
 	return mono_class_set_failure (klass, box);
-}
-
-/*
- * mono_class_get_exception_data:
- *
- *   Return the exception_data property of KLASS.
- *
- * LOCKING: Acquires the loader lock.
- */
-static gpointer
-mono_class_get_exception_data (const MonoClass *klass)
-{
-	return mono_image_property_lookup (klass->image, (MonoClass*)klass, MONO_CLASS_PROP_EXCEPTION_DATA);
 }
 
 /**

@@ -10,6 +10,7 @@ enum InfrequentDataKind {
 	PROP_MARSHAL_INFO = 1, /* MonoMarshalType */
 	PROP_EXT = 2, /* MonoClassExt */
 	PROP_REF_INFO_HANDLE = 3, /* gchandle */
+	PROP_EXCEPTION_DATA = 4, /* gpointer */
 };
 
 /* Accessors based on class kind*/
@@ -282,4 +283,25 @@ mono_class_set_ref_info_handle (MonoClass *class, guint32 value)
 	prop->value = value;
 	prop = mono_property_bag_add (&class->infrequent_data, prop);
 	return prop->value;
+}
+
+typedef struct {
+	MonoPropertyBagItem head;
+	MonoErrorBoxed *value;
+} ClassErrorProperty;
+
+MonoErrorBoxed*
+mono_class_get_exception_data (MonoClass *klass)
+{
+	ClassErrorProperty *prop = (ClassErrorProperty*)mono_property_bag_get (&klass->infrequent_data, PROP_EXCEPTION_DATA);
+	return prop ? prop->value : NULL;
+}
+
+void
+mono_class_set_exception_data (MonoClass *klass, MonoErrorBoxed *value)
+{
+	ClassErrorProperty *prop = mono_class_alloc (klass, sizeof (ClassErrorProperty));
+	prop->head.tag = PROP_EXCEPTION_DATA;
+	prop->value = value;
+	mono_property_bag_add (&klass->infrequent_data, prop);
 }

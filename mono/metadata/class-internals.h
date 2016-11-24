@@ -227,8 +227,6 @@ typedef struct {
 
 #define MONO_SIZEOF_CLASS_RUNTIME_INFO (sizeof (MonoClassRuntimeInfo) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
-#define MONO_CLASS_PROP_EXCEPTION_DATA 0
-
 /* 
  * This structure contains the rarely used fields of MonoClass
  * Since using just one field causes the whole structure to be allocated, it should
@@ -334,7 +332,7 @@ struct _MonoClass {
 	guint simd_type : 1; /* class is a simd intrinsic type */
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
 	guint fields_inited : 1; /* setup_fields () has finished */
-	guint has_failure : 1; /* See MONO_CLASS_PROP_EXCEPTION_DATA for a MonoErrorBoxed with the details */
+	guint has_failure : 1; /* See mono_class_get_exception_data () for a MonoErrorBoxed with the details */
 
 	MonoClass  *parent;
 	MonoClass  *nested_in;
@@ -1501,6 +1499,12 @@ mono_class_get_ref_info_handle (MonoClass *class);
 
 guint32
 mono_class_set_ref_info_handle (MonoClass *class, guint32 value);
+
+MonoErrorBoxed*
+mono_class_get_exception_data (MonoClass *klass);
+
+void
+mono_class_set_exception_data (MonoClass *klass, MonoErrorBoxed *value);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
