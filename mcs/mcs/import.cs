@@ -365,7 +365,7 @@ namespace Mono.CSharp
 					// }
 					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
-						var start_pos = spec.DeclaringType == null ? 0 : spec.DeclaringType.MemberDefinition.TypeParametersCount;
+						var start_pos = GetDeclaringTypesTypeParametersCount (spec);
 						var targs = CreateGenericArguments (start_pos, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (module, targs);
 					}
@@ -379,6 +379,17 @@ namespace Mono.CSharp
 			}
 
 			return tspec;
+		}
+
+		static int GetDeclaringTypesTypeParametersCount (TypeSpec spec)
+		{
+			int total = 0;
+			while (spec.DeclaringType != null) {
+				total += spec.DeclaringType.MemberDefinition.TypeParametersCount;
+				spec = spec.DeclaringType;
+			}
+
+			return total;
 		}
 
 		public MethodSpec CreateMethod (MethodBase mb, TypeSpec declaringType)
