@@ -227,6 +227,14 @@ typedef struct {
 
 #define MONO_SIZEOF_CLASS_RUNTIME_INFO (sizeof (MonoClassRuntimeInfo) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
+typedef struct {
+	MonoPropertyBagItem head;
+
+	MonoProperty *properties;
+	guint16 first, count;
+	MonoFieldDefaultValue *def_values;
+} MonoClassPropertyInfo;
+
 /* 
  * This structure contains the rarely used fields of MonoClass
  * Since using just one field causes the whole structure to be allocated, it should
@@ -241,10 +249,7 @@ typedef struct {
 #else
 		guint32 first, count;
 #endif
-	} property, event;
-
-	/* Initialized by a call to mono_class_setup_properties () */
-	MonoProperty *properties;
+	} event;
 
 	/* Initialized by a call to mono_class_setup_events () */
 	MonoEvent *events;
@@ -254,7 +259,6 @@ typedef struct {
 	/* Default values/RVA for fields and properties */
 	/* Accessed using mono_class_get_field_default_value () / mono_field_get_data () */
 	MonoFieldDefaultValue *field_def_values;
-	MonoFieldDefaultValue *prop_def_values;
 } MonoClassExt;
 
 typedef enum {
@@ -1509,6 +1513,12 @@ mono_class_get_nested_classes_property (MonoClass *klass);
 
 void
 mono_class_set_nested_classes_property (MonoClass *klass, GList *value);
+
+MonoClassPropertyInfo*
+mono_class_get_property_info (MonoClass *klass);
+
+void
+mono_class_set_property_info (MonoClass *klass, MonoClassPropertyInfo *info);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

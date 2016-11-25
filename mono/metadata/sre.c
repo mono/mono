@@ -3280,21 +3280,23 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 	MonoReflectionPropertyBuilder *pb;
 	MonoImage *image = klass->image;
 	MonoProperty *properties;
-	MonoClassExt *ext;
+	MonoClassPropertyInfo *info;
 	int i;
 
 	mono_error_init (error);
 
-	ext = mono_class_get_ext (klass);
-	if (!ext)
-		mono_class_set_ext (klass, ext = image_g_new0 (image, MonoClassExt, 1));
+	info = mono_class_get_property_info (klass);
+	if (!info) {
+		info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
+		mono_class_set_property_info (klass, info);
+	}
 
-	ext->property.count = tb->properties ? mono_array_length (tb->properties) : 0;
-	ext->property.first = 0;
+	info->count = tb->properties ? mono_array_length (tb->properties) : 0;
+	info->first = 0;
 
-	properties = image_g_new0 (image, MonoProperty, ext->property.count);
-	ext->properties = properties;
-	for (i = 0; i < ext->property.count; ++i) {
+	properties = image_g_new0 (image, MonoProperty, info->count);
+	info->properties = properties;
+	for (i = 0; i < info->count; ++i) {
 		pb = mono_array_get (tb->properties, MonoReflectionPropertyBuilder*, i);
 		properties [i].parent = klass;
 		properties [i].attrs = pb->attrs;
@@ -3311,16 +3313,16 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 			guint32 len, idx;
 			const char *p, *p2;
 			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
-			if (!ext->prop_def_values)
-				ext->prop_def_values = image_g_new0 (image, MonoFieldDefaultValue, ext->property.count);
+			if (!info->def_values)
+				info->def_values = image_g_new0 (image, MonoFieldDefaultValue, info->count);
 			properties [i].attrs |= PROPERTY_ATTRIBUTE_HAS_DEFAULT;
-			idx = mono_dynimage_encode_constant (assembly, pb->def_value, &ext->prop_def_values [i].def_type);
+			idx = mono_dynimage_encode_constant (assembly, pb->def_value, &info->def_values [i].def_type);
 			/* Copy the data from the blob since it might get realloc-ed */
 			p = assembly->blob.data + idx;
 			len = mono_metadata_decode_blob_size (p, &p2);
 			len += p2 - p;
-			ext->prop_def_values [i].data = (const char *)mono_image_alloc (image, len);
-			memcpy ((gpointer)ext->prop_def_values [i].data, p, len);
+			info->def_values [i].data = (const char *)mono_image_alloc (image, len);
+			memcpy ((gpointer)info->def_values [i].data, p, len);
 		}
 	}
 }

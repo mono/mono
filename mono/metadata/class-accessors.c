@@ -11,7 +11,8 @@ typedef enum {
 	PROP_EXT = 2, /* MonoClassExt */
 	PROP_REF_INFO_HANDLE = 3, /* gchandle */
 	PROP_EXCEPTION_DATA = 4, /* MonoErrorBoxed* */
-	PROP_NESTED_CLASSES = 5 /* GList* */
+	PROP_NESTED_CLASSES = 5, /* GList* */
+	PROP_PROPERTY_INFO = 6 /* MonoClassPropertyInfo* */
 }  InfrequentDataKind;
 
 /* Accessors based on class kind*/
@@ -329,4 +330,17 @@ void
 mono_class_set_nested_classes_property (MonoClass *klass, GList *value)
 {
 	set_pointer_property (klass, PROP_NESTED_CLASSES, value);
+}
+
+MonoClassPropertyInfo*
+mono_class_get_property_info (MonoClass *klass)
+{
+	return mono_property_bag_get (&klass->infrequent_data, PROP_PROPERTY_INFO);
+}
+
+void
+mono_class_set_property_info (MonoClass *klass, MonoClassPropertyInfo *info)
+{
+	info->head.tag = PROP_PROPERTY_INFO;
+	mono_property_bag_add (&klass->infrequent_data, info);
 }

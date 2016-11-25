@@ -132,13 +132,14 @@ find_field_index (MonoClass *klass, MonoClassField *field) {
  * Find the property index in the metadata Property table.
  */
 static guint32
-find_property_index (MonoClass *klass, MonoProperty *property) {
+find_property_index (MonoClass *klass, MonoProperty *property)
+{
 	int i;
-	MonoClassExt *ext = mono_class_get_ext (klass);
+	MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
 
-	for (i = 0; i < ext->property.count; ++i) {
-		if (property == &ext->properties [i])
-			return ext->property.first + 1 + i;
+	for (i = 0; i < info->count; ++i) {
+		if (property == &info->properties [i])
+			return info->first + 1 + i;
 	}
 	return 0;
 }

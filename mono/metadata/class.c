@@ -2546,9 +2546,10 @@ mono_class_setup_properties (MonoClass *klass)
 	MonoProperty *properties;
 	guint32 last;
 	int first, count;
+	MonoClassPropertyInfo *info;
 
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (ext && ext->properties)
+	info = mono_class_get_property_info (klass);
+	if (info)
 		return;
 
 	if (mono_class_is_ginst (klass)) {
@@ -2559,14 +2560,14 @@ mono_class_setup_properties (MonoClass *klass)
 		if (mono_class_set_type_load_failure_causedby_class (klass, gklass, "Generic type definition failed to load"))
 			return;
 
-		MonoClassExt *gext = mono_class_get_ext (gklass);
-		properties = mono_class_new0 (klass, MonoProperty, gext->property.count + 1);
+		MonoClassPropertyInfo *ginfo = mono_class_get_property_info (gklass);
+		properties = mono_class_new0 (klass, MonoProperty, ginfo->count + 1);
 
-		for (i = 0; i < gext->property.count; i++) {
+		for (i = 0; i < ginfo->count; i++) {
 			MonoError error;
 			MonoProperty *prop = &properties [i];
 
-			*prop = gext->properties [i];
+			*prop = ginfo->properties [i];
 
 			if (prop->get)
 				prop->get = mono_class_inflate_generic_method_full_checked (
@@ -2579,8 +2580,8 @@ mono_class_setup_properties (MonoClass *klass)
 			prop->parent = klass;
 		}
 
-		first = gext->property.first;
-		count = gext->property.count;
+		first = ginfo->first;
+		count = ginfo->count;
 	} else {
 		first = mono_metadata_properties_from_typedef (klass->image, mono_metadata_token_index (klass->type_token) - 1, &last);
 		count = last - first;
@@ -2628,27 +2629,14 @@ mono_class_setup_properties (MonoClass *klass)
 		}
 	}
 
-	mono_class_alloc_ext (klass);
-	ext = mono_class_get_ext (klass);
-
-	mono_image_lock (klass->image);
-
-	if (ext->properties) {
-		/* We leak 'properties' which was allocated from the image mempool */
-		mono_image_unlock (klass->image);
-		return;
-	}
-
-	ext->property.first = first;
-	ext->property.count = count;
-
-	/* Flush any pending writes as we do double checked locking on klass->ext->properties */
+	info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
+	info->first = first;
+	info->count = count;
+	info->properties = properties;
 	mono_memory_barrier ();
 
-	/* Leave this assignment as the last op in the function */
-	ext->properties = properties;
-
-	mono_image_unlock (klass->image);
+	/* This might leak 'info' which was allocated from the image mempool */
+	mono_class_set_property_info (klass, info);
 }
 
 static MonoMethod**
@@ -7237,10 +7225,10 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 static int
 mono_property_get_index (MonoProperty *prop)
 {
-	MonoClassExt *ext = mono_class_get_ext (prop->parent);
-	int index = prop - ext->properties;
+	MonoClassPropertyInfo *info = mono_class_get_property_info (prop->parent);
+	int index = prop - info->properties;
 
-	g_assert (index >= 0 && index < ext->property.count);
+	g_assert (index >= 0 && index < info->count);
 
 	return index;
 }
@@ -7265,11 +7253,11 @@ mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def
 	 */
 
 	if (image_is_dynamic (klass->image)) {
-		MonoClassExt *ext = mono_class_get_ext (klass);
+		MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
 		int prop_index = mono_property_get_index (property);
-		if (ext->prop_def_values && ext->prop_def_values [prop_index].data) {
-			*def_type = ext->prop_def_values [prop_index].def_type;
-			return ext->prop_def_values [prop_index].data;
+		if (info->def_values && info->def_values [prop_index].data) {
+			*def_type = info->def_values [prop_index].def_type;
+			return info->def_values [prop_index].data;
 		}
 		return NULL;
 	}
@@ -7341,10 +7329,10 @@ mono_class_get_property_token (MonoProperty *prop)
 		MonoProperty* p;
 		int i = 0;
 		gpointer iter = NULL;
-		MonoClassExt *ext = mono_class_get_ext (klass);
+		MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
 		while ((p = mono_class_get_properties (klass, &iter))) {
-			if (&ext->properties [i] == prop)
-				return mono_metadata_make_token (MONO_TABLE_PROPERTY, ext->property.first + i + 1);
+			if (&info->properties [i] == prop)
+				return mono_metadata_make_token (MONO_TABLE_PROPERTY, info->first + i + 1);
 			
 			i ++;
 		}
@@ -9188,7 +9176,7 @@ mono_class_num_properties (MonoClass *klass)
 {
 	mono_class_setup_properties (klass);
 
-	return mono_class_get_ext (klass)->property.count;
+	return mono_class_get_property_info (klass)->count;
 }
 
 /**
@@ -9387,10 +9375,10 @@ mono_class_get_properties (MonoClass* klass, gpointer *iter)
 		return NULL;
 	if (!*iter) {
 		mono_class_setup_properties (klass);
-		MonoClassExt *ext = mono_class_get_ext (klass);
+		MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
 		/* start from the first */
-		if (ext->property.count) {
-			*iter = &ext->properties [0];
+		if (info->count) {
+			*iter = &info->properties [0];
 			return (MonoProperty *)*iter;
 		} else {
 			/* no fields */
@@ -9399,8 +9387,8 @@ mono_class_get_properties (MonoClass* klass, gpointer *iter)
 	}
 	property = (MonoProperty *)*iter;
 	property++;
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (property < &ext->properties [ext->property.count]) {
+	MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
+	if (property < &info->properties [info->count]) {
 		*iter = property;
 		return (MonoProperty *)*iter;
 	}
