@@ -3190,7 +3190,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)mono_class_get_ref_info (klass);
 	MonoReflectionFieldBuilder *fb;
 	MonoClassField *field;
-	MonoClassExt *ext;
+	MonoFieldDefaultValue *def_values;
 	MonoImage *image = klass->image;
 	const char *p, *p2;
 	int i, instance_size, packing_size = 0;
@@ -3215,9 +3215,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	}
 	
 	klass->fields = image_g_new0 (image, MonoClassField, fcount);
-	mono_class_alloc_ext (klass);
-	ext = mono_class_get_ext (klass);
-	ext->field_def_values = image_g_new0 (image, MonoFieldDefaultValue, fcount);
+	def_values = image_g_new0 (image, MonoFieldDefaultValue, fcount);
+	mono_class_set_field_def_values (klass, def_values);
 	/*
 	This is, guess what, a hack.
 	The issue is that the runtime doesn't know how to setup the fields of a typebuider and crash.
@@ -3250,7 +3249,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 			size_t size = mono_array_length (rva_data);
 			char *data = (char *)mono_image_alloc (klass->image, size);
 			memcpy (data, base, size);
-			ext->field_def_values [i].data = data;
+			def_values [i].data = data;
 		}
 		if (fb->offset != -1)
 			field->offset = fb->offset;
@@ -3260,13 +3259,13 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		if (fb->def_value) {
 			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
 			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
-			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &ext->field_def_values [i].def_type);
+			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &def_values [i].def_type);
 			/* Copy the data from the blob since it might get realloc-ed */
 			p = assembly->blob.data + idx;
 			len = mono_metadata_decode_blob_size (p, &p2);
 			len += p2 - p;
-			ext->field_def_values [i].data = (const char *)mono_image_alloc (image, len);
-			memcpy ((gpointer)ext->field_def_values [i].data, p, len);
+			def_values [i].data = (const char *)mono_image_alloc (image, len);
+			memcpy ((gpointer)def_values [i].data, p, len);
 		}
 	}
 

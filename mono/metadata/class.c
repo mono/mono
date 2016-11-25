@@ -7173,28 +7173,20 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 	guint32 constant_cols [MONO_CONSTANT_SIZE];
 	int field_index;
 	MonoClass *klass = field->parent;
+	MonoFieldDefaultValue *def_values;
 
 	g_assert (field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT);
 
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (!ext || !ext->field_def_values) {
-		MonoFieldDefaultValue *def_values;
-
-		mono_class_alloc_ext (klass);
-		ext = mono_class_get_ext (klass);
-
+	def_values = mono_class_get_field_def_values (klass);
+	if (!def_values) {
 		def_values = (MonoFieldDefaultValue *)mono_class_alloc0 (klass, sizeof (MonoFieldDefaultValue) * mono_class_get_field_count (klass));
 
-		mono_image_lock (klass->image);
-		mono_memory_barrier ();
-		if (!ext->field_def_values)
-			ext->field_def_values = def_values;
-		mono_image_unlock (klass->image);
+		mono_class_set_field_def_values (klass, def_values);
 	}
 
 	field_index = mono_field_get_index (field);
 		
-	if (!ext->field_def_values [field_index].data) {
+	if (!def_values [field_index].data) {
 		cindex = mono_metadata_get_constant_index (field->parent->image, mono_class_get_field_token (field), 0);
 		if (!cindex)
 			return NULL;
@@ -7202,12 +7194,13 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 		g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA));
 
 		mono_metadata_decode_row (&field->parent->image->tables [MONO_TABLE_CONSTANT], cindex - 1, constant_cols, MONO_CONSTANT_SIZE);
-		ext->field_def_values [field_index].def_type = (MonoTypeEnum)constant_cols [MONO_CONSTANT_TYPE];
-		ext->field_def_values [field_index].data = (const char *)mono_metadata_blob_heap (field->parent->image, constant_cols [MONO_CONSTANT_VALUE]);
+		def_values [field_index].def_type = (MonoTypeEnum)constant_cols [MONO_CONSTANT_TYPE];
+		mono_memory_barrier ();
+		def_values [field_index].data = (const char *)mono_metadata_blob_heap (field->parent->image, constant_cols [MONO_CONSTANT_VALUE]);
 	}
 
-	*def_type = ext->field_def_values [field_index].def_type;
-	return ext->field_def_values [field_index].data;
+	*def_type = def_values [field_index].def_type;
+	return def_values [field_index].data;
 }
 
 static int
@@ -9682,34 +9675,28 @@ mono_field_get_rva (MonoClassField *field)
 	guint32 rva;
 	int field_index;
 	MonoClass *klass = field->parent;
-	MonoFieldDefaultValue *field_def_values;
+	MonoFieldDefaultValue *def_values;
 
 	g_assert (field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA);
 
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (!ext || !ext->field_def_values) {
-		mono_class_alloc_ext (klass);
-		ext = mono_class_get_ext (klass);
+	def_values = mono_class_get_field_def_values (klass);
+	if (!def_values) {
+		def_values = (MonoFieldDefaultValue *)mono_class_alloc0 (klass, sizeof (MonoFieldDefaultValue) * mono_class_get_field_count (klass));
 
-		field_def_values = (MonoFieldDefaultValue *)mono_class_alloc0 (klass, sizeof (MonoFieldDefaultValue) * mono_class_get_field_count (klass));
-
-		mono_image_lock (klass->image);
-		if (!ext->field_def_values)
-			ext->field_def_values = field_def_values;
-		mono_image_unlock (klass->image);
+		mono_class_set_field_def_values (klass, def_values);
 	}
 
 	field_index = mono_field_get_index (field);
 		
-	if (!ext->field_def_values [field_index].data && !image_is_dynamic (klass->image)) {
+	if (!def_values [field_index].data && !image_is_dynamic (klass->image)) {
 		int first_field_idx = mono_class_get_first_field_idx (klass);
 		mono_metadata_field_info (field->parent->image, first_field_idx + field_index, NULL, &rva, NULL);
 		if (!rva)
 			g_warning ("field %s in %s should have RVA data, but hasn't", mono_field_get_name (field), field->parent->name);
-		ext->field_def_values [field_index].data = mono_image_rva_map (field->parent->image, rva);
+		def_values [field_index].data = mono_image_rva_map (field->parent->image, rva);
 	}
 
-	return ext->field_def_values [field_index].data;
+	return def_values [field_index].data;
 }
 
 /**

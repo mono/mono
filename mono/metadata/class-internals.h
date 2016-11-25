@@ -252,10 +252,6 @@ typedef struct {
 	MonoPropertyBagItem head;
 
 	guint32    declsec_flags;	/* declarative security attributes flags */
-
-	/* Default values/RVA for fields and properties */
-	/* Accessed using mono_class_get_field_default_value () / mono_field_get_data () */
-	MonoFieldDefaultValue *field_def_values;
 } MonoClassExt;
 
 typedef enum {
@@ -1522,6 +1518,12 @@ mono_class_get_event_info (MonoClass *klass);
 
 void
 mono_class_set_event_info (MonoClass *klass, MonoClassEventInfo *info);
+
+MonoFieldDefaultValue*
+mono_class_get_field_def_values (MonoClass *klass);
+
+void
+mono_class_set_field_def_values (MonoClass *klass, MonoFieldDefaultValue *values);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
