@@ -152,7 +152,7 @@ namespace System
 #if !MONODROID && !MONOTOUCH && !XAMMAC
 		static TimeZoneInfo CreateLocal ()
 		{
-#if !MOBILE_STATIC
+#if !AOT_ONLY_DESKTOP
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				if (name == null)
@@ -204,7 +204,7 @@ namespace System
 
 		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
-#if !MOBILE_STATIC
+#if !AOT_ONLY_DESKTOP
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
@@ -273,7 +273,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !MOBILE || !MOBILE_STATIC
+#if !MOBILE || !AOT_ONLY_DESKTOP
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -301,7 +301,7 @@ namespace System
 			return str.Substring (Istart, Iend-Istart+1);
 		}
 		
-#if !MOBILE_STATIC
+#if !AOT_ONLY_DESKTOP
 		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
 			get {
@@ -330,7 +330,7 @@ namespace System
 			}
 		}
 #endif
-#endif // !MOBILE || !MOBILE_STATIC
+#endif // !MOBILE || !AOT_ONLY_DESKTOP
 
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
