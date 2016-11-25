@@ -205,9 +205,14 @@
 		<xsl:param name="cref" />
 		<xsl:param name="xmltarget" select="false()"/>
 		<!-- Search for type in the index.xml file. -->
+		<xsl:variable name="filesystemname">
+			<xsl:call-template name="GetFileSystemTypeName">
+				<xsl:with-param name="typename" select="$type" />
+			</xsl:call-template>
+		</xsl:variable>
 		<xsl:variable name="typeentry-rtf">
 			<xsl:call-template name="FindTypeInIndex">
-				<xsl:with-param name="type" select="$type" />
+				<xsl:with-param name="type" select="$filesystemname" />
 			</xsl:call-template>
 		</xsl:variable>
 		<xsl:variable name="typeentry" select="msxsl:node-set($typeentry-rtf)" />
@@ -257,6 +262,23 @@
 				<xsl:value-of select="$cref" />
 			</xsl:when>
 			<!--<xsl:otherwise>javascript:alert("Documentation not found for <xsl:value-of select="$type"/>.")</xsl:otherwise>-->
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="GetFileSystemTypeName">
+		<xsl:param name="typename" />
+		<xsl:variable name="base" select="substring-before ($typename, '&lt;')" />
+
+		<xsl:choose>
+			<xsl:when test="$base != ''">
+				<xsl:value-of select="translate ($base, '+', '.')" />
+				<xsl:text>`</xsl:text>
+				<xsl:call-template name="GetGenericArgumentCount">
+					<xsl:with-param name="arglist" select="substring-after ($typename, '&lt;')" />
+					<xsl:with-param name="count">1</xsl:with-param>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise><xsl:value-of select="translate ($typename, '+', '.')" /></xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 

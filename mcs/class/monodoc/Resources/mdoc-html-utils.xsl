@@ -208,7 +208,7 @@
 									<xsl:with-param name="TypeNamespace" select="$TypeNamespace"/>
 								</xsl:call-template>
 
-								<xsl:if test="not(position()=last())">, </xsl:if>
+								<xsl:if test="not(position()=last())">,</xsl:if>
 							</xsl:for-each>
 							
 							<xsl:value-of select="')'"/>
@@ -2336,27 +2336,20 @@
 				<xsl:if test="contains($membername, '&lt;')">
 					<xsl:value-of select="substring-before ($membername, '&lt;')" />
 				</xsl:if>
-				<xsl:text>``</xsl:text>
-				<xsl:value-of select="$numgenargs" />
+				<xsl:value-of select="'{'"/>
+					<xsl:for-each select="TypeParameters/TypeParameter">
+						<xsl:if test="not(position()=1)">, </xsl:if>
+						<xsl:value-of select="@Name"/>
+					</xsl:for-each>
+				<xsl:value-of select="'}'"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
+    
 	<xsl:template name="GetEscapedTypeName">
 		<xsl:param name="typename" />
-		<xsl:variable name="base" select="substring-before ($typename, '&lt;')" />
-
-		<xsl:choose>
-			<xsl:when test="$base != ''">
-				<xsl:value-of select="translate ($base, '+', '.')" />
-				<xsl:text>`</xsl:text>
-				<xsl:call-template name="GetGenericArgumentCount">
-					<xsl:with-param name="arglist" select="substring-after ($typename, '&lt;')" />
-					<xsl:with-param name="count">1</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:otherwise><xsl:value-of select="translate ($typename, '+', '.')" /></xsl:otherwise>
-		</xsl:choose>
+		<!-- no longer escaping as it was causing invalid links to be generated -->
+		<xsl:value-of select="$typename" />
 	</xsl:template>
 
 	<xsl:template name="GetGenericArgumentCount">
@@ -2632,52 +2625,16 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			</xsl:call-template>
 		</xsl:variable>
 
-		<xsl:variable name="gen-type">
-			<xsl:call-template name="GetEscapedParameter">
-				<xsl:with-param name="orig-parameter-type" select="$ptype" />
-				<xsl:with-param name="parameter-type">
-					<xsl:variable name="nested">
-						<xsl:call-template name="GetEscapedParameter">
-							<xsl:with-param name="orig-parameter-type" select="$ptype" />
-							<xsl:with-param name="parameter-type" select="$ptype" />
-							<xsl:with-param name="parameter-types" select="$type/Docs/typeparam" />
-							<xsl:with-param name="escape" select="'`'" />
-							<xsl:with-param name="index" select="1" />
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:choose>
-						<xsl:when test="$nested != ''">
-							<xsl:value-of select="$nested" />
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:value-of select="$ptype" />
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:with-param>
-				<xsl:with-param name="parameter-types" select="$member/Docs/typeparam" />
-				<xsl:with-param name="escape" select="'``'" />
-				<xsl:with-param name="index" select="1" />
-			</xsl:call-template>
-		</xsl:variable>
-
 		<!-- the actual parameter type -->
 		<xsl:variable name="parameter-type">
-			<xsl:choose>
-				<xsl:when test="$gen-type != ''">
-					<xsl:value-of select="$gen-type" />
-					<xsl:value-of select="$pmodifier" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="concat($ptype, $pmodifier)" />
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:value-of select="concat($ptype, $pmodifier)" />
 		</xsl:variable>
 
 		<!-- s/</{/g; s/>/}/g; so that less escaping is needed. -->
 		<xsl:call-template name="Replace">
 			<xsl:with-param name="s">
 				<xsl:call-template name="Replace">
-					<xsl:with-param name="s" select="translate ($parameter-type, '+', '.')" />
+					<xsl:with-param name="s" select="$parameter-type" />
 					<xsl:with-param name="from">&gt;</xsl:with-param>
 					<xsl:with-param name="to">}</xsl:with-param>
 				</xsl:call-template>

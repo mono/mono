@@ -470,8 +470,14 @@
 	<xsl:template name="GetLinkTarget">
 		<xsl:param name="type" />
 		<xsl:param name="cref" />
-
-		<xsl:value-of select="$cref" />
+		<xsl:choose>
+			<xsl:when test="string($cref) = ''">
+				<xsl:value-of select="$type" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$cref" />
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="namespacetypes">
