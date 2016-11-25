@@ -1071,9 +1071,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 		}
 
-		if (error)
+		if (error) {
+			Error ("Couldn't load one or more of the assemblies.");
 			Environment.Exit (1);
-		
+		}
+
 		return assemblies;
 	}
 
@@ -1103,8 +1105,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 		}
 
-		if (error)
+		if (error) {
+			Error ("Couldn't load one or more of the i18n assemblies.");
 			Environment.Exit (1);
+		}
 	}
 
 	
