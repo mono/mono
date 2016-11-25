@@ -243,15 +243,6 @@ typedef struct {
 	guint32 first, count;
 } MonoClassEventInfo;
 
-/* 
- * This structure contains the rarely used fields of MonoClass
- * Since using just one field causes the whole structure to be allocated, it should
- * be used for fields which are only used in like 5% of all classes.
- */
-typedef struct {
-	MonoPropertyBagItem head;
-} MonoClassExt;
-
 typedef enum {
 	MONO_CLASS_DEF = 1, /* non-generic type */
 	MONO_CLASS_GTD, /* generic type definition */
@@ -1350,9 +1341,6 @@ gpointer
 mono_class_alloc0 (MonoClass *klass, int size);
 
 void
-mono_class_alloc_ext (MonoClass *klass);
-
-void
 mono_class_setup_interfaces (MonoClass *klass, MonoError *error);
 
 MonoClassField*
@@ -1480,12 +1468,6 @@ mono_class_get_marshal_info (MonoClass *class);
 
 void
 mono_class_set_marshal_info (MonoClass *class, MonoMarshalType *marshal_info);
-
-MonoClassExt*
-mono_class_get_ext (MonoClass *class);
-
-void
-mono_class_set_ext (MonoClass *class, MonoClassExt *ext);
 
 guint32
 mono_class_get_ref_info_handle (MonoClass *class);

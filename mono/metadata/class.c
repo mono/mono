@@ -9496,8 +9496,6 @@ setup_nested_types (MonoClass *klass)
 		i = mono_metadata_nesting_typedef (klass->image, klass->type_token, i + 1);
 	}
 
-	mono_class_alloc_ext (klass);
-
 	nested_classes = NULL;
 	for (l = classes; l; l = l->next)
 		nested_classes = g_list_prepend_image (klass->image, nested_classes, l->data);
@@ -10073,11 +10071,6 @@ mono_classes_init (void)
 							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_classes_size);
 	mono_counters_register ("MonoClass size",
 							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &classes_size);
-	mono_counters_register ("MonoClassExt size",
-							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &class_ext_size);
-
-	mono_counters_register ("MonoClassExt count",
-							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &class_ext_count);
 }
 
 /**
@@ -10644,29 +10637,6 @@ mono_class_setup_interface_id (MonoClass *klass)
 	if (MONO_CLASS_IS_INTERFACE (klass) && !klass->interface_id)
 		klass->interface_id = mono_get_unique_iid (klass);
 	mono_loader_unlock ();
-}
-
-/*
- * mono_class_alloc_ext:
- *
- *   Allocate klass->ext if not already done.
- */
-void
-mono_class_alloc_ext (MonoClass *klass)
-{
-	MonoClassExt *ext;
-
-	if (mono_class_get_ext (klass))
-		return;
-
-	ext = (MonoClassExt *)mono_class_alloc0 (klass, sizeof (MonoClassExt));
-	mono_image_lock (klass->image);
-	mono_memory_barrier ();
-	if (!mono_class_get_ext (klass))
-		mono_class_set_ext (klass, ext);
-	class_ext_size += sizeof (MonoClassExt);
-	++class_ext_count;
-	mono_image_unlock (klass->image);
 }
 
 /*

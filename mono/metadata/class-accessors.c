@@ -8,14 +8,13 @@
 
 typedef enum {
 	PROP_MARSHAL_INFO = 1, /* MonoMarshalType */
-	PROP_EXT = 2, /* MonoClassExt */
-	PROP_REF_INFO_HANDLE = 3, /* gchandle */
-	PROP_EXCEPTION_DATA = 4, /* MonoErrorBoxed* */
-	PROP_NESTED_CLASSES = 5, /* GList* */
-	PROP_PROPERTY_INFO = 6, /* MonoClassPropertyInfo* */
-	PROP_EVENT_INFO = 7, /* MonoClassEventInfo* */
-	PROP_FIELD_DEF_VALUES = 8, /* MonoFieldDefaultValue* */
-	PROP_DECLSEC_FLAGS = 9 /* guint32 */
+	PROP_REF_INFO_HANDLE = 2, /* gchandle */
+	PROP_EXCEPTION_DATA = 3, /* MonoErrorBoxed* */
+	PROP_NESTED_CLASSES = 4, /* GList* */
+	PROP_PROPERTY_INFO = 5, /* MonoClassPropertyInfo* */
+	PROP_EVENT_INFO = 6, /* MonoClassEventInfo* */
+	PROP_FIELD_DEF_VALUES = 7, /* MonoFieldDefaultValue* */
+	PROP_DECLSEC_FLAGS = 8 /* guint32 */
 }  InfrequentDataKind;
 
 /* Accessors based on class kind*/
@@ -246,19 +245,6 @@ mono_class_set_marshal_info (MonoClass *class, MonoMarshalType *marshal_info)
 {
 	marshal_info->head.tag = PROP_MARSHAL_INFO;
 	mono_property_bag_add (&class->infrequent_data, marshal_info);
-}
-
-MonoClassExt*
-mono_class_get_ext (MonoClass *class)
-{
-	return mono_property_bag_get (&class->infrequent_data, PROP_EXT);
-}
-
-void
-mono_class_set_ext (MonoClass *class, MonoClassExt *ext)
-{
-	ext->head.tag = PROP_EXT;
-	mono_property_bag_add (&class->infrequent_data, ext);
 }
 
 typedef struct {
