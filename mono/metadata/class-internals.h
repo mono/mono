@@ -255,8 +255,6 @@ typedef struct {
 	/* Accessed using mono_class_get_field_default_value () / mono_field_get_data () */
 	MonoFieldDefaultValue *field_def_values;
 	MonoFieldDefaultValue *prop_def_values;
-
-	GList      *nested_classes;
 } MonoClassExt;
 
 typedef enum {
@@ -1505,6 +1503,12 @@ mono_class_get_exception_data (MonoClass *klass);
 
 void
 mono_class_set_exception_data (MonoClass *klass, MonoErrorBoxed *value);
+
+GList*
+mono_class_get_nested_classes_property (MonoClass *klass);
+
+void
+mono_class_set_nested_classes_property (MonoClass *klass, GList *value);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

@@ -244,10 +244,10 @@ mono_class_from_typeref_checked (MonoImage *image, guint32 type_token, MonoError
 		enclosing = mono_class_from_typeref_checked (image, MONO_TOKEN_TYPE_REF | idx, error); 
 		return_val_if_nok (error, NULL);
 
-		MonoClassExt *ext = mono_class_get_ext (enclosing);
-		if (enclosing->nested_classes_inited && ext) {
+		GList *nested_classes = mono_class_get_nested_classes_property (enclosing);
+		if (enclosing->nested_classes_inited && nested_classes) {
 			/* Micro-optimization: don't scan the metadata tables if enclosing is already inited */
-			for (tmp = ext->nested_classes; tmp; tmp = tmp->next) {
+			for (tmp = nested_classes; tmp; tmp = tmp->next) {
 				res = (MonoClass *)tmp->data;
 				if (strcmp (res->name, name) == 0)
 					return res;
@@ -9534,16 +9534,13 @@ setup_nested_types (MonoClass *klass)
 		nested_classes = g_list_prepend_image (klass->image, nested_classes, l->data);
 	g_list_free (classes);
 
-	mono_image_lock (klass->image);
-
-	mono_memory_barrier ();
+	mono_loader_lock ();
 	if (!klass->nested_classes_inited) {
-		mono_class_get_ext (klass)->nested_classes = nested_classes;
+		mono_class_set_nested_classes_property (klass, nested_classes);
 		mono_memory_barrier ();
 		klass->nested_classes_inited = TRUE;
 	}
-
-	mono_image_unlock (klass->image);
+	mono_loader_unlock ();
 }
 
 /**
@@ -9570,11 +9567,11 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 		setup_nested_types (klass);
 
 	if (!*iter) {
-		MonoClassExt *ext = mono_class_get_ext (klass);
+		GList *nested_classes = mono_class_get_nested_classes_property (klass);
 		/* start from the first */
-		if (ext && ext->nested_classes) {
-			*iter = ext->nested_classes;
-			return (MonoClass *)ext->nested_classes->data;
+		if (nested_classes) {
+			*iter = nested_classes;
+			return (MonoClass *)nested_classes->data;
 		} else {
 			/* no nested types */
 			return NULL;

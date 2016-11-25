@@ -6,12 +6,13 @@
 #include <mono/metadata/tabledefs.h>
 
 
-enum InfrequentDataKind {
+typedef enum {
 	PROP_MARSHAL_INFO = 1, /* MonoMarshalType */
 	PROP_EXT = 2, /* MonoClassExt */
 	PROP_REF_INFO_HANDLE = 3, /* gchandle */
-	PROP_EXCEPTION_DATA = 4, /* gpointer */
-};
+	PROP_EXCEPTION_DATA = 4, /* MonoErrorBoxed* */
+	PROP_NESTED_CLASSES = 5 /* GList* */
+}  InfrequentDataKind;
 
 /* Accessors based on class kind*/
 
@@ -287,21 +288,45 @@ mono_class_set_ref_info_handle (MonoClass *class, guint32 value)
 
 typedef struct {
 	MonoPropertyBagItem head;
-	MonoErrorBoxed *value;
-} ClassErrorProperty;
+	gpointer value;
+} PointerProperty;
+
+static void
+set_pointer_property (MonoClass *klass, InfrequentDataKind property, gpointer value)
+{
+	PointerProperty *prop = mono_class_alloc (klass, sizeof (PointerProperty));
+	prop->head.tag = property;
+	prop->value = value;
+	mono_property_bag_add (&klass->infrequent_data, prop);
+}
+
+static gpointer
+get_pointer_property (MonoClass *klass, InfrequentDataKind property)
+{
+	PointerProperty *prop = (PointerProperty*)mono_property_bag_get (&klass->infrequent_data, property);
+	return prop ? prop->value : NULL;
+}
 
 MonoErrorBoxed*
 mono_class_get_exception_data (MonoClass *klass)
 {
-	ClassErrorProperty *prop = (ClassErrorProperty*)mono_property_bag_get (&klass->infrequent_data, PROP_EXCEPTION_DATA);
-	return prop ? prop->value : NULL;
+	return (MonoErrorBoxed*)get_pointer_property (klass, PROP_EXCEPTION_DATA);
 }
 
 void
 mono_class_set_exception_data (MonoClass *klass, MonoErrorBoxed *value)
 {
-	ClassErrorProperty *prop = mono_class_alloc (klass, sizeof (ClassErrorProperty));
-	prop->head.tag = PROP_EXCEPTION_DATA;
-	prop->value = value;
-	mono_property_bag_add (&klass->infrequent_data, prop);
+	set_pointer_property (klass, PROP_EXCEPTION_DATA, value);
+}
+
+GList*
+mono_class_get_nested_classes_property (MonoClass *klass)
+{
+	return (GList*)get_pointer_property (klass, PROP_NESTED_CLASSES);
+}
+
+void
+mono_class_set_nested_classes_property (MonoClass *klass, GList *value)
+{
+	set_pointer_property (klass, PROP_NESTED_CLASSES, value);
 }

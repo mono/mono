@@ -3462,9 +3462,9 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 			goto failure;
 
 	if (tb->subtypes) {
+		GList *nested = NULL;
 		for (i = 0; i < mono_array_length (tb->subtypes); ++i) {
 			MonoReflectionTypeBuilder *subtb = mono_array_get (tb->subtypes, MonoReflectionTypeBuilder*, i);
-			mono_class_alloc_ext (klass);
 
 			if (!subtb->type.type) {
 				reflection_setup_internal_class (subtb, &error);
@@ -3473,8 +3473,9 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilder *tb)
 
 			MonoType *subtype = mono_reflection_type_get_handle ((MonoReflectionType*)subtb, &error);
 			if (!is_ok (&error)) goto failure;
-			mono_class_get_ext (klass)->nested_classes = g_list_prepend_image (klass->image, mono_class_get_ext (klass)->nested_classes, mono_class_from_mono_type (subtype));
+			nested = g_list_prepend_image (klass->image, nested, mono_class_from_mono_type (subtype));
 		}
+		mono_class_set_nested_classes_property (klass, nested);
 	}
 
 	klass->nested_classes_inited = TRUE;
