@@ -250,8 +250,6 @@ typedef struct {
  */
 typedef struct {
 	MonoPropertyBagItem head;
-
-	guint32    declsec_flags;	/* declarative security attributes flags */
 } MonoClassExt;
 
 typedef enum {
@@ -1524,6 +1522,12 @@ mono_class_get_field_def_values (MonoClass *klass);
 
 void
 mono_class_set_field_def_values (MonoClass *klass, MonoFieldDefaultValue *values);
+
+guint32
+mono_class_get_declsec_flags (MonoClass *class);
+
+void
+mono_class_set_declsec_flags (MonoClass *class, guint32 value);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

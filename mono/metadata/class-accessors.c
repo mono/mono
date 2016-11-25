@@ -14,7 +14,8 @@ typedef enum {
 	PROP_NESTED_CLASSES = 5, /* GList* */
 	PROP_PROPERTY_INFO = 6, /* MonoClassPropertyInfo* */
 	PROP_EVENT_INFO = 7, /* MonoClassEventInfo* */
-	PROP_FIELD_DEF_VALUES = 8 /* MonoFieldDefaultValue* */
+	PROP_FIELD_DEF_VALUES = 8, /* MonoFieldDefaultValue* */
+	PROP_DECLSEC_FLAGS = 9 /* guint32 */
 }  InfrequentDataKind;
 
 /* Accessors based on class kind*/
@@ -370,4 +371,20 @@ void
 mono_class_set_field_def_values (MonoClass *klass, MonoFieldDefaultValue *values)
 {
 	set_pointer_property (klass, PROP_FIELD_DEF_VALUES, values);
+}
+
+guint32
+mono_class_get_declsec_flags (MonoClass *class)
+{
+	Uint32Property *prop = mono_property_bag_get (&class->infrequent_data, PROP_DECLSEC_FLAGS);
+	return prop ? prop->value : 0;
+}
+
+void
+mono_class_set_declsec_flags (MonoClass *class, guint32 value)
+{
+	Uint32Property *prop = mono_class_alloc (class, sizeof (Uint32Property));
+	prop->head.tag = PROP_DECLSEC_FLAGS;
+	prop->value = value;
+	mono_property_bag_add (&class->infrequent_data, prop);
 }
