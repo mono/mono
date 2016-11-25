@@ -6634,8 +6634,8 @@ mono_metadata_get_corresponding_event_from_generic_type_definition (MonoEvent *e
 		return event;
 
 	gtd = mono_class_get_generic_class (event->parent)->container_class;
-	offset = event - mono_class_get_ext (event->parent)->events;
-	return mono_class_get_ext (gtd)->events + offset;
+	offset = event - mono_class_get_event_info (event->parent)->events;
+	return mono_class_get_event_info (gtd)->events + offset;
 }
 
 /*

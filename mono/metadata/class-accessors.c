@@ -12,7 +12,8 @@ typedef enum {
 	PROP_REF_INFO_HANDLE = 3, /* gchandle */
 	PROP_EXCEPTION_DATA = 4, /* MonoErrorBoxed* */
 	PROP_NESTED_CLASSES = 5, /* GList* */
-	PROP_PROPERTY_INFO = 6 /* MonoClassPropertyInfo* */
+	PROP_PROPERTY_INFO = 6, /* MonoClassPropertyInfo* */
+	PROP_EVENT_INFO = 7 /* MonoClassEventInfo* */
 }  InfrequentDataKind;
 
 /* Accessors based on class kind*/
@@ -342,5 +343,18 @@ void
 mono_class_set_property_info (MonoClass *klass, MonoClassPropertyInfo *info)
 {
 	info->head.tag = PROP_PROPERTY_INFO;
+	mono_property_bag_add (&klass->infrequent_data, info);
+}
+
+MonoClassEventInfo*
+mono_class_get_event_info (MonoClass *klass)
+{
+	return mono_property_bag_get (&klass->infrequent_data, PROP_EVENT_INFO);
+}
+
+void
+mono_class_set_event_info (MonoClass *klass, MonoClassEventInfo *info)
+{
+	info->head.tag = PROP_EVENT_INFO;
 	mono_property_bag_add (&klass->infrequent_data, info);
 }

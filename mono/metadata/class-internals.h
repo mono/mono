@@ -231,9 +231,17 @@ typedef struct {
 	MonoPropertyBagItem head;
 
 	MonoProperty *properties;
-	guint16 first, count;
+	guint32 first, count;
 	MonoFieldDefaultValue *def_values;
 } MonoClassPropertyInfo;
+
+typedef struct {
+	MonoPropertyBagItem head;
+
+	/* Initialized by a call to mono_class_setup_events () */
+	MonoEvent *events;
+	guint32 first, count;
+} MonoClassEventInfo;
 
 /* 
  * This structure contains the rarely used fields of MonoClass
@@ -242,17 +250,6 @@ typedef struct {
  */
 typedef struct {
 	MonoPropertyBagItem head;
-
-	struct {
-#if MONO_SMALL_CONFIG
-		guint16 first, count;
-#else
-		guint32 first, count;
-#endif
-	} event;
-
-	/* Initialized by a call to mono_class_setup_events () */
-	MonoEvent *events;
 
 	guint32    declsec_flags;	/* declarative security attributes flags */
 
@@ -1519,6 +1516,12 @@ mono_class_get_property_info (MonoClass *klass);
 
 void
 mono_class_set_property_info (MonoClass *klass, MonoClassPropertyInfo *info);
+
+MonoClassEventInfo*
+mono_class_get_event_info (MonoClass *klass);
+
+void
+mono_class_set_event_info (MonoClass *klass, MonoClassEventInfo *info);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

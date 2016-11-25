@@ -2670,8 +2670,8 @@ mono_class_setup_events (MonoClass *klass)
 	guint32 last;
 	MonoEvent *events;
 
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (ext && ext->events)
+	MonoClassEventInfo *info = mono_class_get_event_info (klass);
+	if (info)
 		return;
 
 	if (mono_class_is_ginst (klass)) {
@@ -2682,9 +2682,9 @@ mono_class_setup_events (MonoClass *klass)
 		if (mono_class_set_type_load_failure_causedby_class (klass, gklass, "Generic type definition failed to load"))
 			return;
 
-		MonoClassExt *gext = mono_class_get_ext (gklass);
-		first = gext->event.first;
-		count = gext->event.count;
+		MonoClassEventInfo *ginfo = mono_class_get_event_info (gklass);
+		first = ginfo->first;
+		count = ginfo->count;
 
 		events = mono_class_new0 (klass, MonoEvent, count);
 
@@ -2694,7 +2694,7 @@ mono_class_setup_events (MonoClass *klass)
 		for (i = 0; i < count; i++) {
 			MonoError error;
 			MonoEvent *event = &events [i];
-			MonoEvent *gevent = &gext->events [i];
+			MonoEvent *gevent = &ginfo->events [i];
 
 			mono_error_init (&error); //since we do conditional calls, we must ensure the default value is ok
 
@@ -2782,26 +2782,14 @@ mono_class_setup_events (MonoClass *klass)
 		}
 	}
 
-	mono_class_alloc_ext (klass);
-	ext = mono_class_get_ext (klass);
+	info = mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
+	info->events = events;
+	info->first = first;
+	info->count = count;
 
-	mono_image_lock (klass->image);
-
-	if (ext->events) {
-		mono_image_unlock (klass->image);
-		return;
-	}
-
-	ext->event.first = first;
-	ext->event.count = count;
-
-	/* Flush any pending writes as we do double checked locking on klass->ext.events */
 	mono_memory_barrier ();
 
-	/* Leave this assignment as the last op in the function */
-	ext->events = events;
-
-	mono_image_unlock (klass->image);
+	mono_class_set_event_info (klass, info);
 }
 
 /*
@@ -7277,11 +7265,11 @@ mono_class_get_event_token (MonoEvent *event)
 	int i;
 
 	while (klass) {
-		MonoClassExt *ext = mono_class_get_ext (klass);
-		if (ext) {
-			for (i = 0; i < ext->event.count; ++i) {
-				if (&ext->events [i] == event)
-					return mono_metadata_make_token (MONO_TABLE_EVENT, ext->event.first + i + 1);
+		MonoClassEventInfo *info = mono_class_get_event_info (klass);
+		if (info) {
+			for (i = 0; i < info->count; ++i) {
+				if (&info->events [i] == event)
+					return mono_metadata_make_token (MONO_TABLE_EVENT, info->first + i + 1);
 			}
 		}
 		klass = klass->parent;
@@ -9190,7 +9178,7 @@ mono_class_num_events (MonoClass *klass)
 {
 	mono_class_setup_events (klass);
 
-	return mono_class_get_ext (klass)->event.count;
+	return mono_class_get_event_info (klass)->count;
 }
 
 /**
@@ -9415,10 +9403,10 @@ mono_class_get_events (MonoClass* klass, gpointer *iter)
 		return NULL;
 	if (!*iter) {
 		mono_class_setup_events (klass);
-		MonoClassExt *ext = mono_class_get_ext (klass);
+		MonoClassEventInfo *info = mono_class_get_event_info (klass);
 		/* start from the first */
-		if (ext->event.count) {
-			*iter = &ext->events [0];
+		if (info->count) {
+			*iter = &info->events [0];
 			return (MonoEvent *)*iter;
 		} else {
 			/* no fields */
@@ -9427,8 +9415,8 @@ mono_class_get_events (MonoClass* klass, gpointer *iter)
 	}
 	event = (MonoEvent *)*iter;
 	event++;
-	MonoClassExt *ext = mono_class_get_ext (klass);
-	if (event < &ext->events [ext->event.count]) {
+	MonoClassEventInfo *info = mono_class_get_event_info (klass);
+	if (event < &info->events [info->count]) {
 		*iter = event;
 		return (MonoEvent *)*iter;
 	}

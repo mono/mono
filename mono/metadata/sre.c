@@ -3334,21 +3334,20 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 	MonoReflectionEventBuilder *eb;
 	MonoImage *image = klass->image;
 	MonoEvent *events;
-	MonoClassExt *ext;
+	MonoClassEventInfo *info;
 	int i;
 
 	mono_error_init (error);
 
-	ext = mono_class_get_ext (klass);
-	if (!ext)
-		mono_class_set_ext (klass, ext = image_g_new0 (image, MonoClassExt, 1));
+	info = mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
+	mono_class_set_event_info (klass, info);
 
-	ext->event.count = tb->events ? mono_array_length (tb->events) : 0;
-	ext->event.first = 0;
+	info->count = tb->events ? mono_array_length (tb->events) : 0;
+	info->first = 0;
 
-	events = image_g_new0 (image, MonoEvent, ext->event.count);
-	ext->events = events;
-	for (i = 0; i < ext->event.count; ++i) {
+	events = image_g_new0 (image, MonoEvent, info->count);
+	info->events = events;
+	for (i = 0; i < info->count; ++i) {
 		eb = mono_array_get (tb->events, MonoReflectionEventBuilder*, i);
 		events [i].parent = klass;
 		events [i].attrs = eb->attrs;
