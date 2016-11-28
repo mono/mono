@@ -100,14 +100,29 @@ public class Program
 
 	static void RewriteAssembly (string assemblyLocation, Dictionary<string, string> resourcesStrings, CmdOptions options)
 	{
-		var readerParameters = new ReaderParameters { ReadSymbols = true, ReadWrite = true };
+		Stream pdbSymbols = null;
+
+		var debugSymbols = Path.ChangeExtension (assemblyLocation, "pdb");
+		if (File.Exists (debugSymbols))
+			pdbSymbols = File.Open (debugSymbols, FileMode.Open, FileAccess.ReadWrite);
+
+		var readerParameters = new ReaderParameters {
+			ReadWrite = true,
+		};
+
+		if (pdbSymbols != null) {
+			readerParameters.ReadSymbols = true;
+			readerParameters.SymbolReaderProvider = new PortablePdbReaderProvider ();
+			readerParameters.SymbolStream = pdbSymbols;
+		}
+
 		using (var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters)) {
 			foreach (var module in assembly.Modules) {
 				foreach (var type in module.GetTypes ()) {
 					foreach (var method in type.Methods) {
 						if (!method.HasBody)
 							continue;
-						
+
 						foreach (var instr in method.Body.Instructions) {
 							if (instr.OpCode != OpCodes.Ldstr)
 								continue;
@@ -125,9 +140,19 @@ public class Program
 				}
 			}
 
-			var writerParameters = new WriterParameters { WriteSymbols = true };
+			var writerParameters = new WriterParameters ();
+
+			if (pdbSymbols != null) {
+				writerParameters.WriteSymbols = true;
+				writerParameters.SymbolStream = pdbSymbols;
+				writerParameters.SymbolWriterProvider = new PortablePdbWriterProvider ();
+				pdbSymbols.Seek (0, SeekOrigin.Begin);
+			}
+
 			assembly.Write (writerParameters);
 		}
+
+		pdbSymbols?.Dispose ();
 	}
 
 	static bool LoadGetResourceStrings (Dictionary<string, string> resourcesStrings, CmdOptions options)

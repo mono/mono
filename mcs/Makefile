@@ -1,11 +1,11 @@
 thisdir := .
 
-SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
+SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 
 # Resgen is corlib specific tool
 
-basic_SUBDIRS := build jay mcs class
-build_SUBDIRS := build class mcs class/aot-compiler tools
+basic_SUBDIRS := build class
+build_SUBDIRS := build jay class class/aot-compiler tools
 monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class
 monotouch_watch_SUBDIRS := build class
@@ -17,7 +17,7 @@ xammac_SUBDIRS := build class
 aot_hybrid_SUBDIRS := build class ilasm
 aot_only_SUBDIRS := build class ilasm
 binary_reference_assemblies_SUBDIRS := build class
-net_4_x_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
+net_4_x_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs class/aot-compiler
 xammac_net_4_5_SUBDIRS := build class
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild

@@ -52,3 +52,6 @@
 [submodule "external/linker"]
 	path = external/linker
 	url = git://github.com/mono/linker.git
+[submodule "external/roslyn-binaries"]
+	path = external/roslyn-binaries
+	url = git://github.com/mono/roslyn-binaries.git
