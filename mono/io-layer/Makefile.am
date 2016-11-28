@@ -21,7 +21,6 @@ OTHER_H = \
 	security.h	\
 	sockets.h	\
 	timefuncs.h	\
-	types.h		\
 	uglify.h	\
 	versioninfo.h	\
 	wapi.h		\
@@ -49,7 +48,6 @@ OTHER_SRC = \
 	socket-wrappers.h	\
 	timefuncs.c		\
 	timefuncs.h		\
-	types.h			\
 	uglify.h		\
 	versioninfo.c		\
 	versioninfo.h		\

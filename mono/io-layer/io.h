@@ -158,6 +158,14 @@ typedef struct
 	guint32 nFileSizeLow;
 } WapiFileAttributesData;
 
+typedef union {
+	struct {
+		guint32 LowPart;
+		guint32 HighPart;
+	} u;
+	guint64 QuadPart;
+} ULARGE_INTEGER;
+
 #define INVALID_SET_FILE_POINTER ((guint32)-1)
 #define INVALID_FILE_SIZE ((guint32)0xFFFFFFFF)
 #define INVALID_FILE_ATTRIBUTES ((guint32)-1)
@@ -211,9 +219,9 @@ extern gboolean SetCurrentDirectory (const gunichar2 *path);
 extern gboolean CreatePipe (gpointer *readpipe, gpointer *writepipe,
 			    WapiSecurityAttributes *security, guint32 size);
 extern gint32 GetLogicalDriveStrings (guint32 len, gunichar2 *buf);
-extern gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_bytes_avail,
-				   WapiULargeInteger *total_number_of_bytes,
-				   WapiULargeInteger *total_number_of_free_bytes);
+extern gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail,
+				   ULARGE_INTEGER *total_number_of_bytes,
+				   ULARGE_INTEGER *total_number_of_free_bytes);
 extern guint32 GetDriveType(const gunichar2 *root_path_name);
 extern gboolean LockFile (gpointer handle, guint32 offset_low,
 			  guint32 offset_high, guint32 length_low,

@@ -3998,9 +3998,9 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 #endif
 
 #if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
-gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_bytes_avail,
-			    WapiULargeInteger *total_number_of_bytes,
-			    WapiULargeInteger *total_number_of_free_bytes)
+gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail,
+			    ULARGE_INTEGER *total_number_of_bytes,
+			    ULARGE_INTEGER *total_number_of_free_bytes)
 {
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
@@ -4081,9 +4081,9 @@ gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_
 	return(TRUE);
 }
 #else
-gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_bytes_avail,
-			    WapiULargeInteger *total_number_of_bytes,
-			    WapiULargeInteger *total_number_of_free_bytes)
+gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail,
+			    ULARGE_INTEGER *total_number_of_bytes,
+			    ULARGE_INTEGER *total_number_of_free_bytes)
 {
 	if (free_bytes_avail != NULL) {
 		free_bytes_avail->QuadPart = (guint64) -1;
