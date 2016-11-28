@@ -20,7 +20,6 @@ OTHER_H = \
 	messages.h	\
 	security.h	\
 	sockets.h	\
-	status.h	\
 	timefuncs.h	\
 	types.h		\
 	uglify.h	\
@@ -48,7 +47,6 @@ OTHER_SRC = \
 	sockets.h		\
 	socket-private.h	\
 	socket-wrappers.h	\
-	status.h		\
 	timefuncs.c		\
 	timefuncs.h		\
 	types.h			\
