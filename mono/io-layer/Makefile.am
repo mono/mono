@@ -20,7 +20,6 @@ OTHER_H = \
 	messages.h	\
 	security.h	\
 	sockets.h	\
-	timefuncs.h	\
 	uglify.h	\
 	versioninfo.h	\
 	wapi.h		\
@@ -46,8 +45,6 @@ OTHER_SRC = \
 	sockets.h		\
 	socket-private.h	\
 	socket-wrappers.h	\
-	timefuncs.c		\
-	timefuncs.h		\
 	uglify.h		\
 	versioninfo.c		\
 	versioninfo.h		\

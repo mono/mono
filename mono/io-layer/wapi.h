@@ -21,7 +21,6 @@
 #include <mono/io-layer/messages.h>
 #include <mono/io-layer/security.h>
 #include <mono/io-layer/sockets.h>
-#include <mono/io-layer/timefuncs.h>
 #include <mono/io-layer/versioninfo.h>
 
 G_BEGIN_DECLS

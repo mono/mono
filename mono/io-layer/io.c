@@ -39,7 +39,6 @@
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/wapi-private.h>
 #include <mono/io-layer/io-private.h>
-#include <mono/io-layer/timefuncs.h>
 #include <mono/io-layer/io-portability.h>
 #include <mono/io-layer/io-trace.h>
 #include <mono/utils/strenc.h>
@@ -54,6 +53,16 @@
  */
 static GHashTable *file_share_hash;
 static mono_mutex_t file_share_mutex;
+
+static void
+time_t_to_filetime (time_t timeval, WapiFileTime *filetime)
+{
+	guint64 ticks;
+	
+	ticks = ((guint64)timeval * 10000000) + 116444736000000000ULL;
+	filetime->dwLowDateTime = ticks & 0xFFFFFFFF;
+	filetime->dwHighDateTime = ticks >> 32;
+}
 
 static void
 _wapi_handle_share_release (_WapiFileShare *share_info)
@@ -2992,9 +3001,9 @@ retry:
 	find_data->dwFileAttributes = _wapi_stat_to_file_attributes (utf8_filename, &buf, &linkbuf);
 #endif
 
-	_wapi_time_t_to_filetime (create_time, &find_data->ftCreationTime);
-	_wapi_time_t_to_filetime (buf.st_atime, &find_data->ftLastAccessTime);
-	_wapi_time_t_to_filetime (buf.st_mtime, &find_data->ftLastWriteTime);
+	time_t_to_filetime (create_time, &find_data->ftCreationTime);
+	time_t_to_filetime (buf.st_atime, &find_data->ftLastAccessTime);
+	time_t_to_filetime (buf.st_mtime, &find_data->ftLastWriteTime);
 
 	if (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 		find_data->nFileSizeHigh = 0;
@@ -3301,9 +3310,9 @@ gboolean GetFileAttributesEx (const gunichar2 *name, WapiGetFileExInfoLevels lev
 
 	g_free (utf8_name);
 
-	_wapi_time_t_to_filetime (create_time, &data->ftCreationTime);
-	_wapi_time_t_to_filetime (buf.st_atime, &data->ftLastAccessTime);
-	_wapi_time_t_to_filetime (buf.st_mtime, &data->ftLastWriteTime);
+	time_t_to_filetime (create_time, &data->ftCreationTime);
+	time_t_to_filetime (buf.st_atime, &data->ftLastAccessTime);
+	time_t_to_filetime (buf.st_mtime, &data->ftLastWriteTime);
 
 	if (data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 		data->nFileSizeHigh = 0;

@@ -13,7 +13,6 @@
 #include <stdlib.h>
 
 #include "mono/io-layer/wapi.h"
-#include "mono/io-layer/timefuncs.h"
 
 G_BEGIN_DECLS
 
@@ -133,6 +132,16 @@ typedef struct
 	guint16 wSecond;
 	guint16 wMilliseconds;
 } WapiSystemTime;
+
+typedef struct {
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+	guint32 dwHighDateTime;
+	guint32 dwLowDateTime;
+#else
+	guint32 dwLowDateTime;
+	guint32 dwHighDateTime;
+#endif
+} WapiFileTime;
 
 typedef struct
 {
