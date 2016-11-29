@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Win32
 {
@@ -70,6 +72,12 @@ namespace Microsoft.Win32
 		public class SECURITY_ATTRIBUTES
 		{
 
+		}
+
+		internal class WIN32_FIND_DATA
+		{
+			internal int dwFileAttributes = 0;
+			internal String cFileName = null;
 		}
 	}
 }

@@ -894,5 +894,61 @@ namespace System.IO {
 		}
 
 		internal const int MAX_PATH = 260;  // From WinDef.h
+
+#region Copied from referencesource
+		// this was copied from corefx since it's not available in referencesource
+		internal static readonly char[] trimEndCharsWindows = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
+		internal static readonly char[] trimEndCharsUnix = { };
+
+		internal static char[] TrimEndChars => Environment.IsRunningOnWindows ? trimEndCharsWindows : trimEndCharsUnix;
+
+        // ".." can only be used if it is specified as a part of a valid File/Directory name. We disallow
+        //  the user being able to use it to move up directories. Here are some examples eg 
+        //    Valid: a..b  abc..d
+        //    Invalid: ..ab   ab..  ..   abc..d\abc..
+        //
+        internal static void CheckSearchPattern(String searchPattern)
+        {
+            int index;
+            while ((index = searchPattern.IndexOf("..", StringComparison.Ordinal)) != -1) {
+                    
+                 if (index + 2 == searchPattern.Length) // Terminal ".." . Files names cannot end in ".."
+                    throw new ArgumentException(Environment.GetResourceString("Arg_InvalidSearchPattern"));
+                
+                 if ((searchPattern[index+2] ==  DirectorySeparatorChar)
+                    || (searchPattern[index+2] == AltDirectorySeparatorChar))
+                    throw new ArgumentException(Environment.GetResourceString("Arg_InvalidSearchPattern"));
+                
+                searchPattern = searchPattern.Substring(index + 2);
+            }
+        }
+
+        internal static void CheckInvalidPathChars(string path, bool checkAdditional = false)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+
+            if (PathInternal.HasIllegalCharacters(path, checkAdditional))
+                throw new ArgumentException(Environment.GetResourceString("Argument_InvalidPathChars"));
+        }
+
+        internal static String InternalCombine(String path1, String path2) {
+            if (path1==null || path2==null)
+                throw new ArgumentNullException((path1==null) ? "path1" : "path2");
+            CheckInvalidPathChars(path1);
+            CheckInvalidPathChars(path2);
+            
+            if (path2.Length == 0)
+                throw new ArgumentException(Environment.GetResourceString("Argument_PathEmpty"), "path2");
+            if (IsPathRooted(path2))
+                throw new ArgumentException(Environment.GetResourceString("Arg_Path2IsRooted"), "path2");
+            int i = path1.Length;
+            if (i == 0) return path2;
+            char ch = path1[i - 1];
+            if (ch != DirectorySeparatorChar && ch != AltDirectorySeparatorChar && ch != VolumeSeparatorChar) 
+                return path1 + DirectorySeparatorCharAsString + path2;
+            return path1 + path2;
+        }
+#endregion
 	}
 }

@@ -1673,6 +1673,20 @@ public class DirectoryTest
 		}
 	}
 
+	
+	[Test]
+	public void GetFiles_SubDirInPattern ()
+	{
+		string DirPath = TempFolder + Path.DirectorySeparatorChar + "GetFiles_SubDirInPattern";
+		if (Directory.Exists (DirPath))
+			Directory.Delete (DirPath, true);
+
+		Directory.CreateDirectory ($"{DirPath}{Path.DirectorySeparatorChar}something{Path.DirectorySeparatorChar}else");
+		File.WriteAllText($"{DirPath}{Path.DirectorySeparatorChar}something{Path.DirectorySeparatorChar}else{Path.DirectorySeparatorChar}file", "hello");
+
+		var r = Directory.GetFiles (DirPath, $"something{Path.DirectorySeparatorChar}else{Path.DirectorySeparatorChar}*", SearchOption.AllDirectories);
+		Assert.AreEqual (new string[] { Path.Combine (DirPath, "something", "else", "file") }, r);
+	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
