@@ -143,6 +143,8 @@ namespace System.Net {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+			if (count == 0)
+				return;
 
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);

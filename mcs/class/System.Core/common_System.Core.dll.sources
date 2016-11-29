@@ -229,6 +229,8 @@ ReferenceSources/Strings.cs
 
 ../referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
 
+System.Runtime.InteropServices/ComAwareEventInfo.cs
+
 System.Security.Cryptography/ECCurve.cs
 System.Security.Cryptography/ECPoint.cs
 System.Security.Cryptography/ECParameters.cs

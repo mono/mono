@@ -1,8 +1,20 @@
 thisdir = class
 
-basic_SUBDIRS := corlib Mono.Security System System.XML System.Core
-
 pcl_facade_dirs := Facades
+
+# The minimal set of csc dependencies
+basic_SUBDIRS := \
+	corlib \
+	Mono.Security \
+	System \
+	System.XML \
+	System.Core \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	Mono.Cecil \
+	$(pcl_facade_dirs) \
+	../tools/cil-stringreplacer
 
 # resgen is corlib specific so we need to wait until corlib is build
 # and build it just a step before first dll needs it
@@ -15,12 +27,12 @@ build_SUBDIRS :=  \
 	System.XML \
 	Mono.Posix \
 	System.Core \
-	Mono.Cecil \
-	Mono.Cecil.Mdb \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
-	$(pcl_facade_dirs)
+	Mono.Cecil \
+	$(pcl_facade_dirs) \
+	../tools/cil-stringreplacer
 
 mobile_common_dirs := \
 	corlib	\
@@ -61,7 +73,7 @@ mobile_common_dirs := \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler
 
-mobile_static_dirs := \
+aot_only_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.Dynamic.Interpreter	\
 	PEAPI	\
@@ -88,7 +100,7 @@ monodroid_dirs := \
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
-	$(mobile_static_dirs)
+	$(aot_only_dirs)
 
 monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
 monotouch_tv_dirs   := $(monotouch_dirs)
@@ -313,19 +325,19 @@ monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
 monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
-mobile_static_SUBDIRS := $(mobile_static_dirs)
+aot_only_SUBDIRS := $(aot_only_dirs)
 aot_hybrid_SUBDIRS := $(aot_hybrid_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
 xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
 binary_reference_assemblies_SUBDIRS := reference-assemblies
 net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
-net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs) aot-compiler
+net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
 include ../build/rules.make
 
-SUBDIRS = $(mobile_static_dirs) $(aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(aot_only_dirs) $(aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
@@ -350,7 +362,6 @@ DISTFILES = \
 	MicrosoftAjaxLibrary/License.htm	\
 	test-helpers/NetworkHelpers.cs	\
 	test-helpers/SocketResponder.cs	\
-	lib/$(monolite_dir)/basic.exe	\
 	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)
@@ -383,13 +394,10 @@ $(monolite_files): | lib/$(monolite_dir)/Facades
 $(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
-lib/$(monolite_dir)/basic.exe:
-	cp -p lib/basic/basic.exe lib/$(monolite_dir)
-
 $(build_files:%=lib/build/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
-dist-monolite: $(monolite_files) lib/$(monolite_dir)/basic.exe
+dist-monolite: $(monolite_files)
 
 dist-default: dist-monolite
 

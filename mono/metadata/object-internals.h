@@ -586,6 +586,10 @@ typedef struct {
 	void*    (*compile_method) (MonoMethod *method, MonoError *error);
 	gpointer (*create_jump_trampoline) (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error);
 	gpointer (*create_jit_trampoline) (MonoDomain *domain, MonoMethod *method, MonoError *error);
+	/* used to free a dynamic method */
+	void     (*free_method) (MonoDomain *domain, MonoMethod *method);
+	gpointer (*create_remoting_trampoline) (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error);
+	gpointer (*create_delegate_trampoline) (MonoDomain *domain, MonoClass *klass);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -599,10 +603,9 @@ typedef struct {
 	gboolean (*mono_exception_walk_trace) (MonoException *ex, MonoInternalExceptionFrameWalk func, gpointer user_data);
 	gboolean (*mono_install_handler_block_guard) (MonoThreadUnwindState *unwind_state);
 	gboolean (*mono_current_thread_has_handle_block_guard) (void);
+	gboolean (*mono_above_abort_threshold) (void);
+	void (*mono_clear_abort_threshold) (void);
 } MonoRuntimeExceptionHandlingCallbacks;
-
-/* used to free a dynamic method */
-typedef void        (*MonoFreeMethodFunc)       (MonoDomain *domain, MonoMethod *method);
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
 
@@ -647,9 +650,6 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 
 void
 mono_runtime_free_method    (MonoDomain *domain, MonoMethod *method);
-
-void
-mono_install_free_method    (MonoFreeMethodFunc func);
 
 void
 mono_install_callbacks      (MonoRuntimeCallbacks *cbs);
@@ -1211,6 +1211,9 @@ typedef struct {
 	guint32     processor_architecture;
 } MonoReflectionAssemblyName;
 
+/* Safely access System.Reflection.AssemblyName from native code */
+TYPED_HANDLE_DECL (MonoReflectionAssemblyName);
+
 typedef struct {
 	MonoObject  obj;
 	MonoString *name;
@@ -1396,6 +1399,9 @@ mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const 
 
 void
 mono_release_type_locks (MonoInternalThread *thread);
+
+char *
+mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
 
 char *
 mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s, MonoError *error);

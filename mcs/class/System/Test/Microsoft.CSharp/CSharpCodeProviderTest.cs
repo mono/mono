@@ -639,7 +639,7 @@ namespace MonoTests.Microsoft.CSharp
 					continue;
 				}
 
-				throw new Exception (compilerError.ToString ());
+				Assert.Fail (compilerError.ToString ());
 			}
 		}
 

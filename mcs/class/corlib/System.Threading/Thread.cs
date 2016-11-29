@@ -288,17 +288,17 @@ namespace System.Threading {
 			}
 		}
 
-		// Looks up the object associated with the current thread
-		// this is called by the JIT directly, too
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static InternalThread CurrentInternalThread_internal();
+		private extern static Thread GetCurrentThread ();
 
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
-				if (current_thread == null)
-					current_thread = new Thread (CurrentInternalThread_internal ());
-				return current_thread;
+				Thread current = current_thread;
+				if (current != null)
+					return current;
+				// This will set the current_thread tls variable
+				return GetCurrentThread ();
 			}
 		}
 

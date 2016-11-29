@@ -10,7 +10,7 @@
 using System;
 using System.Threading;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.Serialization;
@@ -106,7 +106,7 @@ public class ModuleTest
 	}
 
 	// Some of these tests overlap with the tests for ModuleBuilder
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 	[Test]
 	[Category("NotDotNet")] // path length can cause suprious failures
 	public void TestGlobalData () {
@@ -341,7 +341,7 @@ public class ModuleTest
 		Module m = typeof (ModuleTest).Module;
 		m.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 	[Test]
 	[Category ("AndroidNotWorking")] // Mono.CompilerServices.SymbolWriter not available for Xamarin.Android
 	public void GetTypes ()

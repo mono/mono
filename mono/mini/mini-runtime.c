@@ -1282,6 +1282,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 	case MONO_PATCH_INFO_AOT_MODULE:
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
+	case MONO_PATCH_INFO_JIT_THREAD_ATTACH:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return (ji->type << 8) | (ji->data.index);
@@ -1728,6 +1729,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = NULL;
 #endif
 		break;
+	case MONO_PATCH_INFO_JIT_THREAD_ATTACH: {
+		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach");
+		g_assert (mi);
+		target = mi->func;
+		break;
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -3636,6 +3643,11 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.compile_method = mono_jit_compile_method;
 	callbacks.create_jump_trampoline = mono_create_jump_trampoline;
 	callbacks.create_jit_trampoline = mono_create_jit_trampoline;
+	callbacks.create_delegate_trampoline = mono_create_delegate_trampoline;
+	callbacks.free_method = mono_jit_free_method;
+#ifndef DISABLE_REMOTING
+	callbacks.create_remoting_trampoline = mono_jit_create_remoting_trampoline;
+#endif
 #endif
 
 	mono_install_callbacks (&callbacks);
@@ -3711,11 +3723,6 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_threads_install_cleanup (mini_thread_cleanup);
 
 #ifdef JIT_TRAMPOLINES_WORK
-	mono_install_free_method (mono_jit_free_method);
-#ifndef DISABLE_REMOTING
-	mono_install_remoting_trampoline (mono_jit_create_remoting_trampoline);
-#endif
-	mono_install_delegate_trampoline (mono_create_delegate_trampoline);
 	mono_install_create_domain_hook (mini_create_jit_domain_info);
 	mono_install_free_domain_hook (mini_free_jit_domain_info);
 #endif

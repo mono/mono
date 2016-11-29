@@ -7,7 +7,7 @@
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 
 using System;
 using System.Collections;

@@ -35,10 +35,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
-#if MONOTOUCH || MOBILE_STATIC
-using MonoTouch;
-#endif
-
 namespace System.IO.Compression
 {
 	public class DeflateStream : Stream
@@ -383,8 +379,8 @@ namespace System.IO.Compression
 			CheckResult (res, "WriteInternal");
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#if MONOTOUCH || FULL_AOT_RUNTIME
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 #endif
 		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
 		{
@@ -408,8 +404,8 @@ namespace System.IO.Compression
 			return n;
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#if MONOTOUCH || FULL_AOT_RUNTIME
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 #endif
 		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
 		{

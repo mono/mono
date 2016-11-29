@@ -37,17 +37,19 @@ drawing_DEPS_SUBDIRS = System.Drawing.Primitives
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
-mobile_static_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
+aot_only_SUBDIRS = $(monotouch_SUBDIRS)
+aot_only_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
 
-build_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
+basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
 System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
 System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Tasks.Parallel System.Xml.ReaderWriter \
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
 System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions
+
+build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS)
 
 monodroid_SUBDIRS = $(monotouch_SUBDIRS)
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
@@ -58,7 +60,7 @@ xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 xammac_net_4_5_SUBDIRS = $(net_4_x_SUBDIRS)
 xammac_net_4_5_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
 
-monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS) $(drawing_DEPS_SUBDIRS)
+monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_watch_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)

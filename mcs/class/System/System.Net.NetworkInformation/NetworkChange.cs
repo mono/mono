@@ -299,8 +299,8 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoTouch.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
+#if MONOTOUCH || FULL_AOT_RUNTIME
+		[Mono.Util.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
 #endif
 		static void HandleCallback (IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info)
 		{
