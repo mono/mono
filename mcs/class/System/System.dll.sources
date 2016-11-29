@@ -589,6 +589,7 @@ ReferenceSources/SR.cs
 ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
+ReferenceSources/Win32Native.cs
 
 ../referencesource/System/misc/PrivilegedConfigurationManager.cs
 ../referencesource/System/regex/system/text/regularexpressions/Regex.cs
