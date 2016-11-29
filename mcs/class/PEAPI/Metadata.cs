@@ -95,6 +95,11 @@ namespace PEAPI {
 		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, Optil = 0x0002}
 
 	/// <summary>
+	/// Storage location for initial field data
+	/// </summary>
+	public enum DataSegment { Data, TLS, CIL }
+
+	/// <summary>
 	/// Modes for a parameter
 	/// </summary>
 	public enum ParamAttr { Default, In, Out, Opt = 16, HasDefault = 0x1000, HasFieldMarshal = 0x2000 }
