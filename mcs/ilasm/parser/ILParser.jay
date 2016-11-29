@@ -1716,18 +1716,19 @@ data_decl		: data_head data_body
                           }
 			;
 
-data_head		: D_DATA tls id ASSIGN
+data_head		: D_DATA data_attr id ASSIGN
                           {
-                                $$ = new DataDef ((string) $3, (bool) $2);    
+                                $$ = new DataDef ((string) $3, (DataSegment) $2);
                           } 
-			| D_DATA tls
+			| D_DATA data_attr
                           {
-                                $$ = new DataDef (String.Empty, (bool) $2);
+                                $$ = new DataDef (String.Empty, (DataSegment) $2);
                           }
 			;
 
-tls			: /* EMPTY */   { $$ = false; }
-			| K_TLS         { $$ = true; }
+data_attr		: /* EMPTY */                   { $$ = DataSegment.Data; }
+			| K_TLS                         { $$ = DataSegment.TLS; }
+			| K_CIL                         { $$ = DataSegment.CIL; }
 			;
 
 data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
