@@ -1609,8 +1609,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	_mono_debug_init_corlib (domain);
 
-	mono_string_initialize_empty (domain, mono_defaults.string_class);
-
 	return domain;
 }
 
