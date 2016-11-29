@@ -261,7 +261,11 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 	mono_type_initialization_init ();
 
 	if (!mono_runtime_get_no_exec ())
+	{
 		create_exceptions (domain);
+
+		mono_string_initialize_empty (domain, mono_defaults.string_class);
+	}
 
 	/* GC init has to happen after thread init */
 	mono_gc_init ();
@@ -467,6 +471,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 #endif
 
 	create_exceptions (data);
+
+	mono_string_initialize_empty (data, mono_defaults.string_class);
 
 	return ad;
 }

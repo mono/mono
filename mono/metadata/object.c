@@ -4441,6 +4441,25 @@ mono_array_new_specific (MonoVTable *vtable, mono_array_size_t n)
 	return ao;
 }
 
+void
+mono_string_initialize_empty(MonoDomain *domain, MonoClass *stringClass)
+{
+	MonoVTable *vtable;
+	g_assert(stringClass);
+	vtable = mono_class_vtable (domain, stringClass);
+	g_assert (vtable);
+	g_assert (domain->empty_string == NULL);
+	domain->empty_string = mono_object_allocate_ptrfree (sizeof (MonoString) + 2, vtable);
+	domain->empty_string->length = 0;
+
+#if NEED_TO_ZERO_PTRFREE
+	domain->empty_string->chars [0] = 0;
+#endif
+
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation ((MonoObject*)domain->empty_string, stringClass);
+}
+
 /**
  * mono_string_new_utf16:
  * @text: a pointer to an utf16 string
@@ -4452,7 +4471,6 @@ MonoString *
 mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
 {
 	MonoString *s;
-	
 	s = mono_string_new_size (domain, len);
 	g_assert (s != NULL);
 
@@ -4471,27 +4489,32 @@ mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
 MonoString *
 mono_string_new_size (MonoDomain *domain, gint32 len)
 {
-	MonoString *s;
-	MonoVTable *vtable;
-	size_t size = (sizeof (MonoString) + ((len + 1) * 2));
+	if (len == 0) {
+		g_assert (domain->empty_string);
+		return domain->empty_string;
+	} else {
+		MonoString *s;
+		MonoVTable *vtable;
+		size_t size = (sizeof (MonoString) + ((len + 1) * 2));
 
-	/* overflow ? can't fit it, can't allocate it! */
-	if (len > size)
-		mono_gc_out_of_memory (-1);
+		/* overflow ? can't fit it, can't allocate it! */
+		if (len > size)
+			mono_gc_out_of_memory (-1);
 
-	vtable = mono_class_vtable (domain, mono_defaults.string_class);
-	g_assert (vtable);
+		vtable = mono_class_vtable (domain, mono_defaults.string_class);
+		g_assert (vtable);
 
-	s = mono_object_allocate_ptrfree (size, vtable);
+		s = mono_object_allocate_ptrfree (size, vtable);
 
-	s->length = len;
+		s->length = len;
 #if NEED_TO_ZERO_PTRFREE
-	s->chars [len] = 0;
+		s->chars [len] = 0;
 #endif
-	if (G_UNLIKELY (profile_allocs))
-		mono_profiler_allocation ((MonoObject*)s, mono_defaults.string_class);
+		if (G_UNLIKELY (profile_allocs))
+			mono_profiler_allocation ((MonoObject*)s, mono_defaults.string_class);
 
-	return s;
+		return s;
+	}
 }
 
 /**
