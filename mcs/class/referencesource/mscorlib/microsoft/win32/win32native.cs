@@ -227,73 +227,21 @@ namespace Microsoft.Win32 {
         internal const int LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
         internal const int LOAD_STRING_MAX_LENGTH = 500;
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct SystemTime {
-            [MarshalAs(UnmanagedType.U2)]
-            public short Year;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Month;
-            [MarshalAs(UnmanagedType.U2)]
-            public short DayOfWeek;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Day;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Hour;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Minute;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Second;
-            [MarshalAs(UnmanagedType.U2)]
-            public short Milliseconds;
-        }
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct TimeZoneInformation {
             [MarshalAs(UnmanagedType.I4)]
             public Int32 Bias;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string StandardName;
-            public SystemTime StandardDate;
+            public Interop.mincore.SYSTEMTIME StandardDate;
             [MarshalAs(UnmanagedType.I4)]
             public Int32 StandardBias;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string DaylightName;
-            public SystemTime DaylightDate;
+            public Interop.mincore.SYSTEMTIME DaylightDate;
             [MarshalAs(UnmanagedType.I4)]
             public Int32 DaylightBias;
-
-            public TimeZoneInformation(Win32Native.DynamicTimeZoneInformation dtzi) {
-                Bias = dtzi.Bias;
-                StandardName = dtzi.StandardName;
-                StandardDate = dtzi.StandardDate;
-                StandardBias = dtzi.StandardBias;
-                DaylightName = dtzi.DaylightName;
-                DaylightDate = dtzi.DaylightDate;
-                DaylightBias = dtzi.DaylightBias;
-            }
         }
-
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct DynamicTimeZoneInformation {
-            [MarshalAs(UnmanagedType.I4)]
-            public Int32 Bias;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            public string StandardName;
-            public SystemTime StandardDate;
-            [MarshalAs(UnmanagedType.I4)]
-            public Int32 StandardBias;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            public string DaylightName;
-            public SystemTime DaylightDate;
-            [MarshalAs(UnmanagedType.I4)]
-            public Int32 DaylightBias;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string TimeZoneKeyName;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool DynamicDaylightTimeDisabled;
-        }
-
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct RegistryTimeZoneInformation {
@@ -303,16 +251,8 @@ namespace Microsoft.Win32 {
             public Int32 StandardBias;
             [MarshalAs(UnmanagedType.I4)]
             public Int32 DaylightBias;
-            public SystemTime StandardDate;
-            public SystemTime DaylightDate;
-
-            public RegistryTimeZoneInformation(Win32Native.TimeZoneInformation tzi) {
-                Bias = tzi.Bias;
-                StandardDate = tzi.StandardDate;
-                StandardBias = tzi.StandardBias;
-                DaylightDate = tzi.DaylightDate;
-                DaylightBias = tzi.DaylightBias;
-            }
+            public Interop.mincore.SYSTEMTIME StandardDate;
+            public Interop.mincore.SYSTEMTIME DaylightDate;
 
             public RegistryTimeZoneInformation(Byte[] bytes) {
                 //
@@ -347,23 +287,23 @@ namespace Microsoft.Win32 {
                 StandardBias = BitConverter.ToInt32(bytes, 4);
                 DaylightBias = BitConverter.ToInt32(bytes, 8);
 
-                StandardDate.Year = BitConverter.ToInt16(bytes, 12);
-                StandardDate.Month = BitConverter.ToInt16(bytes, 14);
-                StandardDate.DayOfWeek = BitConverter.ToInt16(bytes, 16);
-                StandardDate.Day = BitConverter.ToInt16(bytes, 18);
-                StandardDate.Hour = BitConverter.ToInt16(bytes, 20);
-                StandardDate.Minute = BitConverter.ToInt16(bytes, 22);
-                StandardDate.Second = BitConverter.ToInt16(bytes, 24);
-                StandardDate.Milliseconds = BitConverter.ToInt16(bytes, 26);
+                StandardDate.wYear = BitConverter.ToUInt16(bytes, 12);
+                StandardDate.wMonth = BitConverter.ToUInt16(bytes, 14);
+                StandardDate.wDayOfWeek = BitConverter.ToUInt16(bytes, 16);
+                StandardDate.wDay = BitConverter.ToUInt16(bytes, 18);
+                StandardDate.wHour = BitConverter.ToUInt16(bytes, 20);
+                StandardDate.wMinute = BitConverter.ToUInt16(bytes, 22);
+                StandardDate.wSecond = BitConverter.ToUInt16(bytes, 24);
+                StandardDate.wMilliseconds = BitConverter.ToUInt16(bytes, 26);
 
-                DaylightDate.Year = BitConverter.ToInt16(bytes, 28);
-                DaylightDate.Month = BitConverter.ToInt16(bytes, 30);
-                DaylightDate.DayOfWeek = BitConverter.ToInt16(bytes, 32);
-                DaylightDate.Day = BitConverter.ToInt16(bytes, 34);
-                DaylightDate.Hour = BitConverter.ToInt16(bytes, 36);
-                DaylightDate.Minute = BitConverter.ToInt16(bytes, 38);
-                DaylightDate.Second = BitConverter.ToInt16(bytes, 40);
-                DaylightDate.Milliseconds = BitConverter.ToInt16(bytes, 42);
+                DaylightDate.wYear = BitConverter.ToUInt16(bytes, 28);
+                DaylightDate.wMonth = BitConverter.ToUInt16(bytes, 30);
+                DaylightDate.wDayOfWeek = BitConverter.ToUInt16(bytes, 32);
+                DaylightDate.wDay = BitConverter.ToUInt16(bytes, 34);
+                DaylightDate.wHour = BitConverter.ToUInt16(bytes, 36);
+                DaylightDate.wMinute = BitConverter.ToUInt16(bytes, 38);
+                DaylightDate.wSecond = BitConverter.ToUInt16(bytes, 40);
+                DaylightDate.wMilliseconds = BitConverter.ToUInt16(bytes, 42);
             }
         }
 
@@ -2732,7 +2672,7 @@ namespace Microsoft.Win32 {
 #endif // FEATURE_PAL
 
         // Fusion APIs
-#if FEATURE_FUSION
+#if FEATURE_FUSION && !MONO
         [DllImport(MSCORWKS, CharSet=CharSet.Unicode)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern int CreateAssemblyNameObject(out IAssemblyName ppEnum, String szAssemblyName, uint dwFlags, IntPtr pvReserved);

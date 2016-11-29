@@ -567,9 +567,6 @@ namespace Microsoft.Win32
 							null,
 							null);
 
-						if (ret == Win32ResultCode.MarkedForDeletion)
-							throw RegistryKey.CreateMarkedForDeletionException();
-
 						if (ret != 0)
 							GenerateException(ret);
 						names[i] = new String(namePtr);
@@ -605,9 +602,6 @@ namespace Microsoft.Win32
 							null,
 							null,
 							null);
-
-						if (ret == Win32ResultCode.MarkedForDeletion)
-							throw RegistryKey.CreateMarkedForDeletionException();
 
 						if (ret != Win32ResultCode.Success && ret != Win32Native.ERROR_MORE_DATA)
 							GenerateException(ret);
