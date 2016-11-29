@@ -147,7 +147,6 @@ namespace System.IO.Compression
 	{
 		internal SharpCompress.Archive.Zip.ZipArchiveEntry entry;
 		internal ZipArchiveEntryStream openStream;
-        internal bool wasWritten;
 		private bool wasDeleted;
 
 		internal ZipArchiveEntry(ZipArchive	archive, SharpCompress.Archive.Zip.ZipArchiveEntry entry)

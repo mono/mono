@@ -36,8 +36,9 @@ namespace System.EnterpriseServices {
 	public sealed class RegistrationException : SystemException {
 
 		#region Fields
-
+#pragma warning disable 649
 		RegistrationErrorInfo[] errorInfo;
+#pragma warning restore 649
 
 		#endregion // Fields
 

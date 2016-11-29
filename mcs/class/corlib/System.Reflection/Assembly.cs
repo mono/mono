@@ -647,7 +647,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, true);
 		}
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -670,7 +670,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
