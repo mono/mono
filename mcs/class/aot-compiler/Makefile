@@ -48,9 +48,11 @@ $(csc_aot_image): $(csc_exe) $(mscorlib_dll) $(runtime_dep)
 $(mscorlib_aot_image): $(mscorlib_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(mscorlib_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
+# Disabled as it hits AOT too big limit
 $(csc_MC_image): $(csc_MC_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version,outfile=$(csc_MC_image) --debug $(csc_MC_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
+# Disabled as it hits AOT too big limit
 $(csc_MCS_image): $(csc_MCS_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version,outfile=$(csc_MCS_image) --debug $(csc_MCS_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
@@ -67,7 +69,7 @@ clean-local:
 
 # AOT build profile mcs to speed up build
 ifeq ($(PROFILE),build)
-all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image) $(csc_MCS_image)
+all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
 install-local:
 endif
 
