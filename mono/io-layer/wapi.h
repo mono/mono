@@ -15,7 +15,6 @@
 #include <sys/types.h>
 
 #include <mono/io-layer/wapi-remap.h>
-#include <mono/io-layer/macros.h>
 #include <mono/io-layer/io.h>
 #include <mono/io-layer/error.h>
 #include <mono/io-layer/messages.h>
