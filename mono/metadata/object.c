@@ -4445,12 +4445,19 @@ void
 mono_string_initialize_empty(MonoDomain *domain, MonoClass *stringClass)
 {
 	MonoVTable *vtable;
-
+	g_assert(stringClass);
 	vtable = mono_class_vtable (domain, stringClass);
 	g_assert (vtable);
+	g_assert (domain->empty_string == NULL);
 	domain->empty_string = mono_object_allocate_ptrfree (sizeof (MonoString) + 2, vtable);
 	domain->empty_string->length = 0;
+
+#if NEED_TO_ZERO_PTRFREE
 	domain->empty_string->chars [0] = 0;
+#endif
+
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation ((MonoObject*)domain->empty_string, stringClass);
 }
 
 /**
@@ -4500,9 +4507,9 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 		s = mono_object_allocate_ptrfree (size, vtable);
 
 		s->length = len;
-	#if NEED_TO_ZERO_PTRFREE
+#if NEED_TO_ZERO_PTRFREE
 		s->chars [len] = 0;
-	#endif
+#endif
 		if (G_UNLIKELY (profile_allocs))
 			mono_profiler_allocation ((MonoObject*)s, mono_defaults.string_class);
 
