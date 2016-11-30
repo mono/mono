@@ -47,7 +47,8 @@ basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections Sys
 System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
 System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Tasks.Parallel System.Xml.ReaderWriter \
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
-System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions
+System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System.IO.FileSystem.Primitives System.IO.FileSystem \
+System.Diagnostics.FileVersionInfo
 
 build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS)
 

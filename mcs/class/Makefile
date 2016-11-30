@@ -12,6 +12,7 @@ basic_SUBDIRS := \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
+	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
 	$(pcl_facade_dirs) \
 	../tools/cil-stringreplacer
@@ -30,6 +31,7 @@ build_SUBDIRS :=  \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
+	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
 	$(pcl_facade_dirs) \
 	../tools/cil-stringreplacer
@@ -374,14 +376,15 @@ monolite_dir := monolite
 
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
-	System.Numerics.dll System.Xml.Linq.dll \
+	System.Numerics.dll System.Xml.Linq.dll System.Runtime.InteropServices.RuntimeInformation.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
 	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \
 	Facades/System.Threading.Tasks.Parallel.dll Facades/System.Dynamic.Runtime.dll Facades/System.Resources.ResourceManager.dll \
 	Facades/System.Threading.Tasks.dll Facades/System.Globalization.dll Facades/System.Runtime.Extensions.dll Facades/System.Threading.dll \
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
-	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll
+	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
+	Facades/System.Diagnostics.FileVersionInfo.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
