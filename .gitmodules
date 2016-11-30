@@ -55,3 +55,6 @@
 [submodule "external/roslyn-binaries"]
 	path = external/roslyn-binaries
 	url = git://github.com/mono/roslyn-binaries.git
+[submodule "external/corert"]
+	path = external/corert
+	url = git://github.com/mono/corert.git

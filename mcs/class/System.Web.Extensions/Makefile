@@ -52,7 +52,7 @@ endif
 LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
 LIB_MCS_FLAGS = \
 	-unsafe \
-	-define:NET_3_5			\
+	-define:NET_3_5	-nowarn:436		\
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)

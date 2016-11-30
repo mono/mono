@@ -38,11 +38,5 @@ namespace System.Drawing
 			: base ()
 		{
 		}
-
-		public virtual object TypeId {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// SecRandom.cs: based on Mono's System.Security.Cryptography.RNGCryptoServiceProvider
+// RngCryptoServiceProvider.cryptor.cs: based on Mono's System.Security.Cryptography.RNGCryptoServiceProvider
 //
 // Authors:
 //	Mark Crichton (crichton@gimp.org)
@@ -32,6 +32,8 @@
 using Crimson.CommonCrypto;
 
 // http://developer.apple.com/library/ios/#DOCUMENTATION/Security/Reference/RandomizationReference/Reference/reference.html
+// we need to use the CommonCrypto implementation instead of the runtime-supported RNGCryptoServiceProvider
+// since we have no guarantee (on iOS) about /dev/[u]random availability or quality
 #if MONOTOUCH || XAMMAC
 namespace System.Security.Cryptography {
 	public class RNGCryptoServiceProvider : RandomNumberGenerator {
@@ -54,14 +56,6 @@ namespace System.Security.Cryptography {
 		~RNGCryptoServiceProvider () 
 		{
 		}
-#else
-using System;
-using System.Security.Cryptography;
-
-namespace Crimson.Security.Cryptography {
-			
-	public class SecRandom : RandomNumberGenerator {
-#endif
 		
 		public override void GetBytes (byte[] data) 
 		{
@@ -91,3 +85,4 @@ namespace Crimson.Security.Cryptography {
 		}
 	}
 }
+#endif

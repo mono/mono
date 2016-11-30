@@ -58,7 +58,11 @@ namespace Microsoft.Build.Tasks {
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
-			commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
+			var dtype = DebugType;
+			if (string.Equals (dtype, "full", StringComparison.OrdinalIgnoreCase))
+				dtype = "portable";
+
+			commandLine.AppendSwitchIfNotNull ("/debug:", dtype);
 
 			if (Bag ["DelaySign"] != null)
 				if (DelaySign)

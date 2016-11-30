@@ -16,12 +16,9 @@ namespace System.Runtime.Serialization {
 		public static bool ShouldTraceError = true;
 		public static bool ShouldTraceVerbose = true;
 
-		static ExceptionTrace exception;
 		public static ExceptionTrace Exception {
 			get {
-				if (exception == null)
-					return new ExceptionTrace ("System.Runtime.Serialization", Trace);
-				return exception;
+				return new ExceptionTrace ("System.Runtime.Serialization", Trace);
 			}
 		}
 

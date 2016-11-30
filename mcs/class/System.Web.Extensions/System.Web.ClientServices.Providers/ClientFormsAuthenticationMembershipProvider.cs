@@ -42,7 +42,9 @@ namespace System.Web.ClientServices.Providers
 {
 	public class ClientFormsAuthenticationMembershipProvider : System.Web.Security.MembershipProvider
 	{
+#pragma warning disable 67
 		public event EventHandler <UserValidatedEventArgs> UserValidated;
+#pragma warning restore 67
 		
 		public override string ApplicationName {
 			get { throw new NotImplementedException (); }

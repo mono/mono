@@ -15,14 +15,14 @@ namespace Mono.ILASM {
         public class DataDef {
 
                 private string name;
-                private bool is_tls;
+                private PEAPI.DataSegment segment;
 
                 private PEAPI.Constant constant;
 
-                public DataDef (string name, bool is_tls)
+                public DataDef (string name, PEAPI.DataSegment segment)
                 {
                         this.name = name;
-                        this.is_tls = is_tls;
+                        this.segment = segment;
                 }
 
                 public PEAPI.Constant PeapiConstant {

@@ -48,11 +48,12 @@ namespace System.Drawing.Printing
 
 		// create a new default Margins object (is 1 inch for all margins)
 		Margins margins = new Margins();
-
+#pragma warning disable 649
 		float hardMarginX;
 		float hardMarginY;
 		RectangleF printableArea;		
 		PrinterSettings printerSettings;
+#pragma warning restore 649
 		
 		public PageSettings() : this(new PrinterSettings())
 		{
