@@ -29,7 +29,7 @@ ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
 endif
 
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
@@ -42,7 +42,6 @@ INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 INTERNAL_CSC = $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
 
@@ -128,7 +127,7 @@ endif
 # For this to be done safely, we really need two passes. This
 # ensures that all of the .dlls are compiled before trying to
 # aot them. Because we want this to be the
-# default target for some profiles(mobile_static) we have a
+# default target for some profiles(aot_only) we have a
 # two-level build system. The do-all-aot target is what
 # gets invoked at the top-level when someone tries to build with aot.
 # It will invoke the do-all target, and will set TOP_LEVEL_DO for this

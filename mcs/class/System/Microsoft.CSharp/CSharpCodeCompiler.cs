@@ -169,7 +169,7 @@ namespace Mono.CSharp
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
-			mcs.ErrorDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
+			mcs.OutputDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
 
 			// Use same text decoder as mcs and not user set values in Console
 			mcs.StartInfo.StandardOutputEncoding =
@@ -268,7 +268,7 @@ namespace Mono.CSharp
 					options.Win32Resource);
 
 			if (options.IncludeDebugInformation)
-				args.Append("/debug+ /optimize- ");
+				args.Append("/debug:portable /optimize- ");
 			else
 				args.Append("/debug- /optimize+ ");
 
@@ -327,7 +327,9 @@ namespace Mono.CSharp
 
 			args.Append ("/noconfig ");
 
-			args.Append (" -- ");
+			args.Append ("/nologo ");
+
+			// args.Append (" -- ");
 			foreach (string source in fileNames)
 				args.AppendFormat("\"{0}\" ",source);
 			return args.ToString();

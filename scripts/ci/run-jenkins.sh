@@ -20,16 +20,19 @@ if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --w
 if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\build\\\sgen\\\Win32\\\bin\\\Release\\\mono-sgen.exe`"; fi
 if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\build\\\sgen\\\x64\\\bin\\\Release\\\mono-sgen.exe`"; fi
 
-if [[ ${CI_TAGS} == *'mobile_static'* ]];
+if [[ ${CI_TAGS} == *'aot_only'* ]];
     then
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=mobile_static";
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only";
+elif [[ ${CI_TAGS} == *'aot_preferred'* ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_preferred";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${label} != w* ]] && [[ ${label} != 'debian-8-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]] && [[ ${CI_TAGS} != *'monolite'* ]];
     then
     # Override the defaults to skip profiles
-    # only enable the mobile profiles and mobile_static on the main architectures
+    # only enable the mobile profiles and aot_only on the main architectures
     # only enable the concurrent collector by default on main unix archs
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all --with-sgen-default-concurrent=yes"
 fi

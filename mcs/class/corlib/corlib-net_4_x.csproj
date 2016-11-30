@@ -1094,7 +1094,6 @@
     <Compile Include="System.Runtime.InteropServices\BIND_OPTS.cs" />
     <Compile Include="System.Runtime.InteropServices\BINDPTR.cs" />
     <Compile Include="System.Runtime.InteropServices\CALLCONV.cs" />
-    <Compile Include="System.Runtime.InteropServices\ComAwareEventInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\ComEventsHelper.cs" />
     <Compile Include="System.Runtime.InteropServices\CustomQueryInterfaceMode.cs" />
     <Compile Include="System.Runtime.InteropServices\DESCKIND.cs" />

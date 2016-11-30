@@ -1,6 +1,6 @@
 using System;
 
-namespace MonoTouch {
+namespace Mono.Util {
 	class MonoPInvokeCallbackAttribute : Attribute {
 			public MonoPInvokeCallbackAttribute (Type t) {}
 	}

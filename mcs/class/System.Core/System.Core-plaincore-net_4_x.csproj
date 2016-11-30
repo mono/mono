@@ -379,6 +379,7 @@
     <Compile Include="System.IO.Pipes\PipeTransmissionMode.cs" />
     <Compile Include="System.IO.Pipes\PipeUnix.cs" />
     <Compile Include="System.IO.Pipes\PipeWin32.cs" />
+    <Compile Include="System.Runtime.InteropServices\ComAwareEventInfo.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\ECDsaCertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\RSACertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography\AesCng.cs" />

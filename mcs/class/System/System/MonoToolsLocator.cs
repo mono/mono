@@ -46,9 +46,12 @@ namespace System {
 				//if (!File.Exists (Mono))
 				//	throw new FileNotFoundException ("Windows mono path not found: " + Mono);
 
-				CSharpCompiler = Path.Combine (GacPath, "4.5\\mcs.exe");
-				if (!File.Exists (CSharpCompiler))
-					CSharpCompiler = Path.Combine (Path.GetDirectoryName (GacPath), "lib\\build\\mcs.exe");
+				CSharpCompiler = Path.Combine (GacPath, "4.5", "csc.exe");
+				if (!File.Exists (CSharpCompiler)) {
+					// Starting from mono\mcs\class
+					CSharpCompiler = Path.Combine (Path.GetDirectoryName (GacPath), "..", "..", "external", "roslyn-binaries",
+						"Microsoft.Net.Compilers", "Microsoft.Net.Compilers.1.3.2", "tools", "csc.exe");
+				}
 
 				//if (!File.Exists (CSharpCompiler))
 				//	throw new FileNotFoundException ("C# compiler not found at " + CSharpCompiler);
@@ -67,9 +70,9 @@ namespace System {
 					Mono = "mono";
 
 				var mscorlibPath = new Uri (typeof (object).Assembly.CodeBase).LocalPath;
-				CSharpCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "mcs"));
+				CSharpCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "csc"));
 				if (!File.Exists (CSharpCompiler))
-					CSharpCompiler = "mcs";
+					CSharpCompiler = "csc";
 
 				VBCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbnc"));
 				if (!File.Exists (VBCompiler))

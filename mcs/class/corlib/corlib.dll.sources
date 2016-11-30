@@ -422,7 +422,6 @@ System.Runtime.InteropServices/UCOMITypeLib.cs
 System.Runtime.InteropServices/VARDESC.cs
 System.Runtime.InteropServices/VARFLAGS.cs
 System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
-System.Runtime.InteropServices/ComAwareEventInfo.cs
 System.Runtime.InteropServices/ComEventsHelper.cs
 
 System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.cs

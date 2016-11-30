@@ -68,7 +68,7 @@ check: run-test-local
 TEST_PATTERN = 'v4'
 TESTER_OPTIONS = -compiler-options:"-v --break-on-ice -d:NET_4_0;NET_4_5"
 
-COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
+COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
@@ -84,34 +84,34 @@ dist-local: dist-default
 csproj-local install-local uninstall-local:
 
 CS0029-26-lib.dll : CS0029-26-lib.cs
-	$(CSCOMPILE) /target:library /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /publicsign /keyfile:key.snk /out:$@ $<
 
 CS0266-25-lib.dll: CS0266-25-lib.cs
 	$(CSCOMPILE) /target:library /r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll /out:$@ $<
 
 dlls/first/CS1701-lib.dll: dlls/first/CS1701-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1702-lib.dll: dlls/first/CS1702-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1703-lib.dll: dlls/first/CS1703-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1705-lib.dll: dlls/first/CS1705-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1701-lib.dll: dlls/second/CS1701-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1702-lib.dll: dlls/second/CS1702-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1703-lib.dll: dlls/second/CS1703-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1705-lib.dll: dlls/second/CS1705-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /out:$@ $<
+	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 CS1701-lib.dll : CS1701-lib.cs
 	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
@@ -121,6 +121,9 @@ CS1702-lib.dll : CS1702-lib.cs
 
 CS1705-lib.dll : CS1705-lib.cs
 	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1705-lib.dll /out:$@ $<
+
+CSFriendAssembly-lib.dll : CSFriendAssembly-lib.cs
+	$(CSCOMPILE) /target:library /publicsign /keyfile:key.snk /warn:0 /out:$@ $<
 
 %-lib.dll: %-lib.cs
 	$(CSCOMPILE) /target:library /warn:0 /out:$@ $<

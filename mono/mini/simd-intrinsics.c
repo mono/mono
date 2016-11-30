@@ -827,7 +827,10 @@ get_simd_vreg (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *src)
 		return src->sreg1;
 	} else if (spec [MONO_INST_DEST] == 'x') {
 		return src->dreg;
+	} else if (src->opcode == OP_VCALL) {
+		return src->dreg;
 	}
+
 	g_warning ("get_simd_vreg:: could not infer source simd vreg for op");
 	mono_print_ins (src);
 	g_assert_not_reached ();
@@ -2051,16 +2054,19 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		return NULL;
 	}
 
+	etype = mono_class_get_context (cmethod->klass)->class_inst->type_argv [0];
+	size = mono_class_value_size (mono_class_from_mono_type (etype), NULL);
+	g_assert (size);
+	len = 16 / size;
+
+	if (!MONO_TYPE_IS_PRIMITIVE (etype))
+		return NULL;
+
 	if (cfg->verbose_level > 1) {
 		char *name = mono_method_full_name (cmethod, TRUE);
 		printf ("  SIMD intrinsic %s\n", name);
 		g_free (name);
 	}
-
-	etype = mono_class_get_context (cmethod->klass)->class_inst->type_argv [0];
-	size = mono_class_value_size (mono_class_from_mono_type (etype), NULL);
-	g_assert (size);
-	len = 16 / size;
 
 	switch (intrins->name) {
 	case SN_get_Count:
@@ -2086,6 +2092,9 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			MonoInst *ldelema_ins;
 			MonoInst *var;
 			int end_index_reg;
+
+			if (args [0]->opcode != OP_LDADDR)
+				return NULL;
 
 			/* .ctor (T[]) or .ctor (T[], index) */
 
