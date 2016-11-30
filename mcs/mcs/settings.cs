@@ -1195,7 +1195,7 @@ namespace Mono.CSharp {
 				}
 				return ParseResult.Success;
 
-			case "runtimemetadataversion":
+			case "/runtimemetadataversion":
 				if (value.Length == 0) {
 					Error_RequiresArgument (option);
 					return ParseResult.Error;
