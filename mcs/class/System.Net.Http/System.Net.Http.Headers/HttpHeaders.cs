@@ -193,7 +193,7 @@ namespace System.Net.Http.Headers
 							continue;
 						}
 
-						throw new FormatException ();
+						throw new FormatException ($"{name}, {value}");
 					}
 
 					if (headerInfo.AllowsMany) {
