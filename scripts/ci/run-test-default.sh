@@ -89,7 +89,7 @@ ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/M
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
 if [[ ${label} == osx-* ]]
-then ${TESTCMD} --label=ms-test-suite --timeout=15m make -w -C acceptance-tests check-ms-test-suite
+then ${TESTCMD} --label=ms-test-suite --timeout=30m make -w -C acceptance-tests check-ms-test-suite
 else ${TESTCMD} --label=ms-test-suite --skip;
 fi
 rm -fr /tmp/jenkins-temp-aspnet*
