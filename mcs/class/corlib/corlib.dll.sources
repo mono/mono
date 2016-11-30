@@ -893,6 +893,7 @@ ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
+ReferenceSources/win32native.cs
 
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
@@ -1644,7 +1645,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 ../referencesource/mscorlib/microsoft/win32/unsafenativemethods.cs
-../referencesource/mscorlib/microsoft/win32/win32native.cs
 
 corefx/SR.cs
 
