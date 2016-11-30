@@ -38,7 +38,7 @@ namespace Microsoft.Win32
 		internal const int ERROR_MORE_DATA = 0xEA;
 		internal const int ERROR_DIRECTORY = 0x10B;
 		internal const int ERROR_OPERATION_ABORTED = 0x3E3;  // 995; For IO Cancellation
-		internal const int ERROR_NOT_FOUND = 0x490;		  // 1168; For IO Cancellation
+		internal const int ERROR_NOT_FOUND = 0x490;          // 1168; For IO Cancellation
 		internal const int ERROR_NO_TOKEN = 0x3f0;
 		internal const int ERROR_DLL_INIT_FAILED = 0x45A;
 		internal const int ERROR_NON_ACCOUNT_SID = 0x4E9;
