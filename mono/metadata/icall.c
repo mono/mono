@@ -2615,15 +2615,14 @@ ves_icall_RuntimeTypeHandle_GetModule (MonoReflectionTypeHandle type, MonoError 
 	return mono_module_get_object_handle (domain, klass->image, error);
 }
 
-ICALL_EXPORT MonoReflectionAssembly*
-ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionType *type)
+ICALL_EXPORT MonoReflectionAssemblyHandle
+ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle type, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get (); 
-	MonoClass *klass = mono_class_from_mono_type (type->type);
-	MonoReflectionAssembly *result = mono_assembly_get_object_checked (domain, klass->image->assembly, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	MonoType *t = MONO_HANDLE_GETVAL (type, type);
+	MonoClass *klass = mono_class_from_mono_type (t);
+	return mono_assembly_get_object_handle (domain, klass->image->assembly, error);
 }
 
 ICALL_EXPORT MonoReflectionType*

@@ -799,7 +799,7 @@ ICALL(RT_27, "make_byref_type", ves_icall_RuntimeType_make_byref_type)
 
 ICALL_TYPE(RTH, "System.RuntimeTypeHandle", RTH_1)
 ICALL(RTH_1, "GetArrayRank", ves_icall_RuntimeTypeHandle_GetArrayRank)
-ICALL(RTH_2, "GetAssembly", ves_icall_RuntimeTypeHandle_GetAssembly)
+HANDLES(ICALL(RTH_2, "GetAssembly", ves_icall_RuntimeTypeHandle_GetAssembly))
 ICALL(RTH_3, "GetAttributes", ves_icall_RuntimeTypeHandle_GetAttributes)
 ICALL(RTH_4, "GetBaseType", ves_icall_RuntimeTypeHandle_GetBaseType)
 ICALL(RTH_5, "GetElementType", ves_icall_RuntimeTypeHandle_GetElementType)
