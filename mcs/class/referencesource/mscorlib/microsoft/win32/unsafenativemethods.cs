@@ -30,28 +30,27 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern int GetTimeZoneInformation(out Win32Native.TimeZoneInformation lpTimeZoneInformation);
 
-
-		[DllImport(Win32Native.KERNEL32, EntryPoint="GetDynamicTimeZoneInformation", SetLastError = true, ExactSpelling = true)]
+        [DllImport(Win32Native.KERNEL32, EntryPoint="GetDynamicTimeZoneInformation", SetLastError = true, ExactSpelling = true)]
         [ResourceExposure(ResourceScope.None)]
 #if !MONO
-		internal static extern int GetDynamicTimeZoneInformation(out Win32Native.DynamicTimeZoneInformation lpDynamicTimeZoneInformation);
+        internal static extern int GetDynamicTimeZoneInformation(out Win32Native.DynamicTimeZoneInformation lpDynamicTimeZoneInformation);
 #else
-		// There's a bug in Mono marshaling code which prevents the original signature to work correctly (strings come out incorrectly)
-		internal static unsafe extern int GetDynamicTimeZoneInformation(Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* lpDynamicTimeZoneInformation);
+        // There's a bug in Mono marshaling code which prevents the original signature to work correctly (strings come out incorrectly)
+        internal static unsafe extern int GetDynamicTimeZoneInformation(Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* lpDynamicTimeZoneInformation);
 #endif
 
-		// 
-		// BOOL GetFileMUIPath(
-		//   DWORD  dwFlags,
-		//   PCWSTR  pcwszFilePath,
-		//   PWSTR  pwszLanguage,
-		//   PULONG  pcchLanguage,
-		//   PWSTR  pwszFileMUIPath,
-		//   PULONG  pcchFileMUIPath,
-		//   PULONGLONG  pululEnumerator
-		// );
-		// 
-		[DllImport(Win32Native.KERNEL32, EntryPoint="GetFileMUIPath", SetLastError = true, ExactSpelling = true)]
+        // 
+        // BOOL GetFileMUIPath(
+        //   DWORD  dwFlags,
+        //   PCWSTR  pcwszFilePath,
+        //   PWSTR  pwszLanguage,
+        //   PULONG  pcchLanguage,
+        //   PWSTR  pwszFileMUIPath,
+        //   PULONG  pcchFileMUIPath,
+        //   PULONGLONG  pululEnumerator
+        // );
+        // 
+        [DllImport(Win32Native.KERNEL32, EntryPoint="GetFileMUIPath", SetLastError = true, ExactSpelling = true)]
         [ResourceExposure(ResourceScope.Machine)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetFileMUIPath(
