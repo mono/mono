@@ -32,7 +32,12 @@ namespace Microsoft.Win32 {
 
         [DllImport(Win32Native.KERNEL32, EntryPoint="GetDynamicTimeZoneInformation", SetLastError = true, ExactSpelling = true)]
         [ResourceExposure(ResourceScope.None)]
+#if !MONO
+        internal static extern int GetDynamicTimeZoneInformation(out Win32Native.DynamicTimeZoneInformation lpDynamicTimeZoneInformation);
+#else
+        // There's a bug in Mono marshaling code which prevents the original signature to work correctly (strings come out incorrectly)
         internal static unsafe extern int GetDynamicTimeZoneInformation(Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* lpDynamicTimeZoneInformation);
+#endif
 
         // 
         // BOOL GetFileMUIPath(
