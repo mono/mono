@@ -74,7 +74,8 @@ clean-local:
 # AOT build profile to speed up build
 ifeq ($(PROFILE),build)
 
-IMAGES = $(mscorlib_aot_image)
+# $(mscorlib_aot_image) is disabled due to runtime bug #50434
+IMAGES =
 
 ifdef MCS_MODE
 IMAGES += $(mcs_aot_image)
