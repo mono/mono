@@ -567,8 +567,8 @@ MonoImage *mono_assembly_open_from_bundle (const char *filename,
 MONO_API void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
-MonoReflectionAssembly *
-mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+MonoAssembly *
+mono_try_assembly_resolve (MonoDomain *domain, const char *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
 MonoAssembly *
 mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly);

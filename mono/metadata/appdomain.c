@@ -124,7 +124,9 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error);
 static MonoLoadFunc load_function = NULL;
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (assembly, System.Reflection, Assembly)
+static GENERATE_GET_CLASS_WITH_CACHE (assembly, System.Reflection, Assembly);
+
+static GENERATE_GET_CLASS_WITH_CACHE (appdomain, System, AppDomain);
 
 void
 mono_install_runtime_load (MonoLoadFunc func)
@@ -543,7 +545,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 
 	mono_error_init (error);
 
-	adclass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomain");
+	adclass = mono_class_get_appdomain_class ();
 
 	/* FIXME: pin all those objects */
 	data = mono_domain_create();
@@ -648,7 +650,6 @@ mono_domain_try_type_resolve_checked (MonoDomain *domain, char *name, MonoObject
 {
 	static MonoMethod *method = NULL;
 	MonoReflectionAssembly *ret;
-	MonoClass *klass;
 	void *params [1];
 
 	mono_error_init (error);
@@ -656,10 +657,7 @@ mono_domain_try_type_resolve_checked (MonoDomain *domain, char *name, MonoObject
 	g_assert (domain != NULL && ((name != NULL) || (tb != NULL)));
 
 	if (method == NULL) {
-		klass = domain->domain->mbr.obj.vtable->klass;
-		g_assert (klass);
-
-		method = mono_class_get_method_from_name (klass, "DoTypeResolve", -1);
+		method = mono_class_get_method_from_name (mono_class_get_appdomain_class (), "DoTypeResolve", -1);
 		if (method == NULL) {
 			g_warning ("Method AppDomain.DoTypeResolve not found.\n");
 			return NULL;
@@ -1041,11 +1039,24 @@ leave:
 	return res;
 }
 
-MonoReflectionAssembly *
-mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error)
+MonoAssembly*
+mono_try_assembly_resolve (MonoDomain *domain, const char *fname_raw, MonoAssembly *requesting, gboolean refonly, MonoError *error)
 {
-	MonoReflectionAssembly *ret;
-	MonoClass *klass;
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoAssembly *result = NULL;
+	MonoStringHandle fname = mono_string_new_handle (domain, fname_raw, error);
+	if (!is_ok (error))
+		goto leave;
+	result = mono_try_assembly_resolve_handle (domain, fname, requesting, refonly, error);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (result);
+}
+
+MonoAssembly*
+mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error)
+{
+	MonoAssembly *ret = NULL;
 	MonoMethod *method;
 	MonoBoolean isrefonly;
 	gpointer params [3];
@@ -1053,31 +1064,24 @@ mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *
 	mono_error_init (error);
 
 	if (mono_runtime_get_no_exec ())
-		return NULL;
+		return ret;
 
-	g_assert (domain != NULL && fname != NULL);
+	g_assert (domain != NULL && !MONO_HANDLE_IS_NULL (fname));
 
-	klass = domain->domain->mbr.obj.vtable->klass;
-	g_assert (klass);
-	
-	method = mono_class_get_method_from_name (klass, "DoAssemblyResolve", -1);
-	if (method == NULL) {
-		g_warning ("Method AppDomain.DoAssemblyResolve not found.\n");
-		return NULL;
-	}
+	method = mono_class_get_method_from_name (mono_class_get_appdomain_class (), "DoAssemblyResolve", -1);
+	g_assert (method != NULL);
 
 	isrefonly = refonly ? 1 : 0;
-	params [0] = fname;
+	MonoReflectionAssemblyHandle requesting_handle;
 	if (requesting) {
-		params[1] = mono_assembly_get_object_checked (domain, requesting, error);
-		return_val_if_nok (error, NULL);
-	} else
-		params [1] = NULL;
+		requesting_handle = mono_assembly_get_object_handle (domain, requesting, error);
+		return_val_if_nok (error, ret);
+	}
+	params [0] = MONO_HANDLE_RAW (fname);
+	params[1] = requesting ? MONO_HANDLE_RAW (requesting_handle) : NULL;
 	params [2] = &isrefonly;
-
-	ret = (MonoReflectionAssembly *) mono_runtime_invoke_checked (method, domain->domain, params, error);
-	return_val_if_nok (error, NULL);
-
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_invoke_checked (method, domain->domain, params, error));
+	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
 	return ret;
 }
 
@@ -1086,27 +1090,19 @@ mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *req
 									  gboolean refonly)
 {
 	MonoError error;
-	MonoReflectionAssembly *assembly;
+	MonoAssembly *assembly;
 	MonoDomain *domain = mono_domain_get ();
 	char *aname_str;
-	MonoString *str;
 
 	aname_str = mono_stringify_assembly_name (aname);
 
 	/* FIXME: We invoke managed code here, so there is a potential for deadlocks */
-	str = mono_string_new (domain, aname_str);
-	g_free (aname_str);
-	if (!str) {
-		return NULL;
-	}
 
-	assembly = mono_try_assembly_resolve (domain, str, requesting, refonly, &error);
+	assembly = mono_try_assembly_resolve (domain, aname_str, requesting, refonly, &error);
+	g_free (aname_str);
 	mono_error_cleanup (&error);
 
-	if (assembly)
-		return assembly->assembly;
-	else
-		return NULL;
+	return assembly;
 }
 	
 /*
@@ -2058,24 +2054,30 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
 	MonoAssembly *ass;
 	MonoAssemblyName aname;
-	MonoReflectionAssembly *refass = NULL;
 	gchar *name = NULL;
 	gboolean parsed;
 
 	g_assert (assRef);
 
 	name = mono_string_to_utf8_checked (assRef, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	if (!is_ok (&error))
+		goto fail;
 	parsed = mono_assembly_name_parse (name, &aname);
 
 	if (!parsed) {
+		MonoReflectionAssembly *refass = NULL;
 		/* This is a parse error... */
 		if (!refOnly) {
-			refass = mono_try_assembly_resolve (domain, assRef, NULL, refOnly, &error);
+			MonoAssembly *assm = mono_try_assembly_resolve (domain, name, NULL, refOnly, &error);
 			if (!is_ok (&error))
-				goto leave;
+				goto fail;
+			if (assm) {
+				refass = mono_assembly_get_object_checked (domain, assm, &error);
+				if (!is_ok (&error))
+					goto fail;
+			}
 		}
+		g_free (name);
 		return refass;
 	}
 
@@ -2085,30 +2087,27 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	if (!ass) {
 		/* MS.NET doesn't seem to call the assembly resolve handler for refonly assemblies */
 		if (!refOnly) {
-			refass = mono_try_assembly_resolve (domain, assRef, NULL, refOnly, &error);
+			ass = mono_try_assembly_resolve (domain, name, NULL, refOnly, &error);
 			if (!is_ok (&error))
-				goto leave;
+				goto fail;
 		}
-		else
-			refass = NULL;
-		if (!refass)
-			goto leave;
-		ass = refass->assembly;
+		if (!ass)
+			goto fail;
 	}
 
 	g_assert (ass);
-	if (refass == NULL) {
-		refass = mono_assembly_get_object_checked (domain, ass, &error);
-		if (!is_ok (&error))
-			goto leave;
-	}
+	MonoReflectionAssembly *refass = mono_assembly_get_object_checked (domain, ass, &error);
+	if (!is_ok (&error))
+		goto fail;
 
 	MONO_OBJECT_SETREF (refass, evidence, evidence);
 
-leave:
+	g_free (name);
+	return refass;
+fail:
 	g_free (name);
 	mono_error_set_pending_exception (&error);
-	return refass;
+	return NULL;
 }
 
 void

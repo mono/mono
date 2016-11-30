@@ -1800,4 +1800,7 @@ ves_icall_ModuleBuilder_getUSIndex (MonoReflectionModuleBuilder *module, MonoStr
 void
 ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilder *moduleb, MonoReflectionType *type);
 
+MonoAssembly*
+mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
