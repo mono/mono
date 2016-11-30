@@ -894,7 +894,6 @@ ReferenceSources/CompareInfo.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
-
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
