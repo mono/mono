@@ -1,7 +1,6 @@
 # -*- makefile -*-
 
-with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/monolite/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 monolite_flag := $(depsdir)/use-monolite
 use_monolite := $(wildcard $(monolite_flag))
@@ -17,8 +16,8 @@ else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
 endif
 
-INTERNAL_CSC = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(INTERNAL_GMCS)
-BOOTSTRAP_MCS = CSC_SDK_PATH_DISABLED= $(INTERNAL_CSC)
+INTERNAL_CSC = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_GMCS)
+BOOTSTRAP_MCS = $(INTERNAL_CSC)
 MCS = $(BOOTSTRAP_MCS)
 
 DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll

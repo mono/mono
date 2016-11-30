@@ -110,16 +110,6 @@ namespace System.IO.Pipes
 			}
 		}
 
-#if BOOTSTRAP_BASIC		
-		AccessControlSections AccessControlSectionsModified {
-			get {
-				return (AccessRulesModified ? AccessControlSections.Access : 0) |
-				       (AuditRulesModified  ? AccessControlSections.Audit  : 0) |
-				       (OwnerModified       ? AccessControlSections.Owner  : 0) |
-				       (GroupModified       ? AccessControlSections.Group  : 0);
-			}
-		}
-#endif
 		public bool RemoveAccessRule (PipeAccessRule rule)
 		{
 			return RemoveAccessRule ((AccessRule)rule);
