@@ -14,7 +14,6 @@ basic_SUBDIRS := \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
-	$(pcl_facade_dirs) \
 	../tools/cil-stringreplacer
 
 # resgen is corlib specific so we need to wait until corlib is build
@@ -33,8 +32,17 @@ build_SUBDIRS :=  \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
-	$(pcl_facade_dirs) \
 	../tools/cil-stringreplacer
+
+-include ../build/config.make
+
+ifdef MCS_MODE
+basic_PARALLEL_SUBDIRS := ../mcs
+build_PARALLEL_SUBDIRS := ../mcs
+else
+basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
+build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
+endif
 
 mobile_common_dirs := \
 	corlib	\
