@@ -1,7 +1,6 @@
 # -*- makefile -*-
 
-with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/monolite/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 monolite_flag := $(depsdir)/use-monolite
 use_monolite := $(wildcard $(monolite_flag))
