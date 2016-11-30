@@ -1071,6 +1071,9 @@ typedef struct {
 	MonoArray *pktoken; /* as hexadecimal byte[] */
 } MonoReflectionAssemblyBuilder;
 
+/* Safely access System.Reflection.Emit.AssemblyBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionAssemblyBuilder);
+
 typedef struct {
 	MonoObject object;
 	guint32 attrs;
@@ -1135,6 +1138,9 @@ typedef struct {
 	gboolean is_main;
 	MonoArray *resources;
 } MonoReflectionModuleBuilder;
+
+/* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
+TYPED_HANDLE_DECL (MonoReflectionModuleBuilder);
 
 typedef struct {
 	MonoReflectionType type;

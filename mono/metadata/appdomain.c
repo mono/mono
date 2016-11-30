@@ -1153,7 +1153,6 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	static MonoMethod *assembly_load_method;
 	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
-	MonoReflectionAssembly *ref_assembly;
 	MonoClass *klass;
 	gpointer load_value;
 	void *params [1];
@@ -1181,7 +1180,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 		return;
 	}
 
-	ref_assembly = mono_assembly_get_object_checked (domain, assembly, &error);
+	MonoReflectionAssemblyHandle ref_assembly = mono_assembly_get_object_handle (domain, assembly, &error);
 	mono_error_assert_ok (&error);
 
 	if (assembly_load_method == NULL) {
@@ -1189,7 +1188,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 		g_assert (assembly_load_method);
 	}
 
-	*params = ref_assembly;
+	*params = MONO_HANDLE_RAW(ref_assembly);
 
 	mono_runtime_invoke_checked (assembly_load_method, domain->domain, params, &error);
 	mono_error_cleanup (&error);
