@@ -31,10 +31,13 @@ elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${label} != w* ]] && [[ ${label} != 'debian-8-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]] && [[ ${CI_TAGS} != *'monolite'* ]];
     then
-    # Override the defaults to skip profiles
-    # only enable the mobile profiles and aot_only on the main architectures
     # only enable the concurrent collector by default on main unix archs
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all --with-sgen-default-concurrent=yes"
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-sgen-default-concurrent=yes"
+
+    if [[ ${label} == 'ubuntu-1404-amd64' ]]; then
+        # only enable build of the additional profiles on one architecture to save time
+        EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
+    fi
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
