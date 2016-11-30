@@ -188,7 +188,7 @@ get_method_from_ip (void *ip)
 		user_data.ip = ip;
 		user_data.method = NULL;
 		mono_domain_lock (domain);
-		g_hash_table_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
+		mono_conc_hashtable_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
 		mono_domain_unlock (domain);
 		if (user_data.method) {
 			char *mname = mono_method_full_name (user_data.method, TRUE);
@@ -275,7 +275,7 @@ mono_print_method_from_ip (void *ip)
 		user_data.ip = ip;
 		user_data.method = NULL;
 		mono_domain_lock (domain);
-		g_hash_table_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
+		mono_conc_hashtable_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
 		mono_domain_unlock (domain);
 
 		if (user_data.method) {
@@ -3351,7 +3351,7 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	MonoJitDomainInfo *info = g_new0 (MonoJitDomainInfo, 1);
 
 	info->jump_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	info->jit_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->jit_trampoline_hash = mono_conc_hashtable_new (mono_aligned_addr_hash, NULL);
 	info->delegate_trampoline_hash = g_hash_table_new (class_method_pair_hash, class_method_pair_equal);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->runtime_invoke_hash = mono_conc_hashtable_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
@@ -3420,7 +3420,7 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	if (info->method_code_hash)
 		g_hash_table_destroy (info->method_code_hash);
 	g_hash_table_destroy (info->jump_trampoline_hash);
-	g_hash_table_destroy (info->jit_trampoline_hash);
+	mono_conc_hashtable_destroy (info->jit_trampoline_hash);
 	g_hash_table_destroy (info->delegate_trampoline_hash);
 	if (info->static_rgctx_trampoline_hash)
 		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
