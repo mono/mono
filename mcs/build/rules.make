@@ -44,9 +44,10 @@ INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
+INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
 
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
-INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(CSC_LOCATION)
+INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
 
 RESGEN_EXE = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)resgen.exe
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE)
@@ -121,6 +122,15 @@ include $(topdir)/build/profiles/$(PROFILE).make
 
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
+endif
+
+ifdef MCS_MODE
+INTERNAL_CSC_LOCATION = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
+
+ifdef PLATFORM_DEBUG_FLAGS
+PLATFORM_DEBUG_FLAGS = /debug:full
+endif
+
 endif
 
 # Design:
