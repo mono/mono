@@ -2046,11 +2046,11 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 	return refass;
 }
 
-MonoReflectionAssembly *
-ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef, MonoObject *evidence, MonoBoolean refOnly)
+MonoReflectionAssemblyHandle
+ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandle assRef, MonoObjectHandle evidence, MonoBoolean refOnly, MonoError *error)
 {
-	MonoError error;
-	MonoDomain *domain = ad->data; 
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
 	MonoAssembly *ass;
 	MonoAssemblyName aname;
@@ -2059,25 +2059,25 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 
 	g_assert (assRef);
 
-	name = mono_string_to_utf8_checked (assRef, &error);
-	if (!is_ok (&error))
+	name = mono_string_handle_to_utf8 (assRef, error);
+	if (!is_ok (error))
 		goto fail;
 	parsed = mono_assembly_name_parse (name, &aname);
+	g_free (name);
 
 	if (!parsed) {
-		MonoReflectionAssembly *refass = NULL;
+		MonoReflectionAssemblyHandle refass = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
 		/* This is a parse error... */
 		if (!refOnly) {
-			MonoAssembly *assm = mono_try_assembly_resolve (domain, name, NULL, refOnly, &error);
-			if (!is_ok (&error))
+			MonoAssembly *assm = mono_try_assembly_resolve_handle (domain, assRef, NULL, refOnly, error);
+			if (!is_ok (error))
 				goto fail;
 			if (assm) {
-				refass = mono_assembly_get_object_checked (domain, assm, &error);
-				if (!is_ok (&error))
+				refass = mono_assembly_get_object_handle (domain, assm, error);
+				if (!is_ok (error))
 					goto fail;
 			}
 		}
-		g_free (name);
 		return refass;
 	}
 
@@ -2087,8 +2087,8 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	if (!ass) {
 		/* MS.NET doesn't seem to call the assembly resolve handler for refonly assemblies */
 		if (!refOnly) {
-			ass = mono_try_assembly_resolve (domain, name, NULL, refOnly, &error);
-			if (!is_ok (&error))
+			ass = mono_try_assembly_resolve_handle (domain, assRef, NULL, refOnly, error);
+			if (!is_ok (error))
 				goto fail;
 		}
 		if (!ass)
@@ -2096,18 +2096,15 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	}
 
 	g_assert (ass);
-	MonoReflectionAssembly *refass = mono_assembly_get_object_checked (domain, ass, &error);
-	if (!is_ok (&error))
+	MonoReflectionAssemblyHandle refass = mono_assembly_get_object_handle (domain, ass, error);
+	if (!is_ok (error))
 		goto fail;
 
-	MONO_OBJECT_SETREF (refass, evidence, evidence);
+	MONO_HANDLE_SET (refass, evidence, evidence);
 
-	g_free (name);
 	return refass;
 fail:
-	g_free (name);
-	mono_error_set_pending_exception (&error);
-	return NULL;
+	return MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
 }
 
 void

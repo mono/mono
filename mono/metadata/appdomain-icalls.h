@@ -54,11 +54,12 @@ ves_icall_System_Reflection_Assembly_LoadFrom      (MonoStringHandle fname,
 						    MonoBoolean refonly,
 						    MonoError *error);
 
-MonoReflectionAssembly *
-ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomain *ad, 
-						    MonoString *assRef,
-						    MonoObject    *evidence,
-						    MonoBoolean refonly);
+MonoReflectionAssemblyHandle
+ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomainHandle ad, 
+						    MonoStringHandle assRef,
+						    MonoObjectHandle evidence,
+						    MonoBoolean refonly,
+						    MonoError *error);
 
 gboolean
 ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id);
