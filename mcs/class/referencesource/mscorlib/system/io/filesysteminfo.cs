@@ -83,15 +83,19 @@ namespace System.IO {
             // Lazily initialize the file attributes.
             _dataInitialised = -1;
         }
-#if !MONO
+
         [System.Security.SecurityCritical]
         internal void InitializeFrom(Win32Native.WIN32_FIND_DATA findData)
         {
+#if MONO
+            throw new NotImplementedException ();
+#else
             _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
             _data.PopulateFrom(findData);
             _dataInitialised = 0;
-        }
 #endif
+        }
+
         // Full path of the direcory/file
         public virtual String FullName {
             [System.Security.SecuritySafeCritical]
