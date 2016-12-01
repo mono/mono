@@ -1,5 +1,5 @@
 /*
- * threadpool-ms.c: Microsoft threadpool runtime support
+ * threadpool.c: Microsoft threadpool runtime support
  *
  * Author:
  *	Ludovic Henry (ludovic.henry@xamarin.com)
@@ -31,8 +31,8 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
-#include <mono/metadata/threadpool-ms.h>
-#include <mono/metadata/threadpool-ms-io.h>
+#include <mono/metadata/threadpool.h>
+#include <mono/metadata/threadpool-io.h>
 #include <mono/metadata/w32event.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
@@ -366,7 +366,7 @@ cleanup (void)
 }
 
 gboolean
-mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, MonoError *error)
+mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, MonoError *error)
 {
 	static MonoClass *threadpool_class = NULL;
 	static MonoMethod *unsafe_queue_custom_work_item_method = NULL;
@@ -1353,16 +1353,16 @@ heuristic_adjust (void)
 }
 
 void
-mono_threadpool_ms_cleanup (void)
+mono_threadpool_cleanup (void)
 {
 #ifndef DISABLE_SOCKETS
-	mono_threadpool_ms_io_cleanup ();
+	mono_threadpool_io_cleanup ();
 #endif
 	mono_lazy_cleanup (&status, cleanup);
 }
 
 MonoAsyncResult *
-mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params, MonoError *error)
+mono_threadpool_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params, MonoError *error)
 {
 	static MonoClass *async_call_klass = NULL;
 	MonoMethodMessage *message;
@@ -1396,14 +1396,14 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 	return_val_if_nok (error, NULL);
 	MONO_OBJECT_SETREF (async_result, async_delegate, target);
 
-	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result, error);
+	mono_threadpool_enqueue_work_item (domain, (MonoObject*) async_result, error);
 	return_val_if_nok (error, NULL);
 
 	return async_result;
 }
 
 MonoObject *
-mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc, MonoError *error)
+mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc, MonoError *error)
 {
 	MonoAsyncCall *ac;
 
@@ -1461,7 +1461,7 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 }
 
 gboolean
-mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
+mono_threadpool_remove_domain_jobs (MonoDomain *domain, int timeout)
 {
 	gint64 end;
 	ThreadPoolDomain *tpdomain;
@@ -1476,7 +1476,7 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 		end = mono_msec_ticks () + timeout;
 
 #ifndef DISABLE_SOCKETS
-	mono_threadpool_ms_io_remove_domain_jobs (domain);
+	mono_threadpool_io_remove_domain_jobs (domain);
 	if (timeout != -1) {
 		if (mono_msec_ticks () > end)
 			return FALSE;
@@ -1532,14 +1532,14 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 }
 
 void
-mono_threadpool_ms_suspend (void)
+mono_threadpool_suspend (void)
 {
 	if (threadpool)
 		threadpool->suspended = TRUE;
 }
 
 void
-mono_threadpool_ms_resume (void)
+mono_threadpool_resume (void)
 {
 	if (threadpool)
 		threadpool->suspended = FALSE;
