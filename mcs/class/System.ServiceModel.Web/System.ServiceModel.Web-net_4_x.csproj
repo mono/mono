@@ -49,9 +49,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Assembly\TypeForwarders.cs" />
     <Compile Include="System.ServiceModel.Activation\WebScriptServiceHostFactory.cs" />

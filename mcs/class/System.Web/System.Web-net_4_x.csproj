@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9DB806CB-B828-49B7-BAE2-2E52402CB4DC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,436,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,436,618</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -35,7 +35,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,436,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>

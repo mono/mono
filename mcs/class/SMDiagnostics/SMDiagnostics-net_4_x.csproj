@@ -49,8 +49,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Activity.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticsTraceCode.cs" />

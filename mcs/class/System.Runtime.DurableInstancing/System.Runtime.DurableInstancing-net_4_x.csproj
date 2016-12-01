@@ -49,9 +49,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\AssemblyInfo.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\DisassociateInstanceKeysExtension.cs" />
