@@ -17,7 +17,6 @@ OTHER_H = \
 	io-layer.h	\
 	io-portability.h	\
 	macros.h	\
-	messages.h	\
 	security.h	\
 	sockets.h	\
 	status.h	\
@@ -39,8 +38,6 @@ OTHER_SRC = \
 	io-layer.h		\
 	locking.c		\
 	macros.h		\
-	messages.c		\
-	messages.h		\
 	posix.c			\
 	security.c		\
 	security.h		\

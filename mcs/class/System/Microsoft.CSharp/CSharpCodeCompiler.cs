@@ -181,7 +181,7 @@ namespace Mono.CSharp
 				Win32Exception exc = e as Win32Exception;
 				if (exc != null) {
 					throw new SystemException (String.Format ("Error running {0}: {1}", mcs.StartInfo.FileName,
-									Win32Exception.W32ErrorMessage (exc.NativeErrorCode)));
+									Win32Exception.GetErrorMessage (exc.NativeErrorCode)));
 				}
 				throw;
 			}
