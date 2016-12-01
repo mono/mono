@@ -4598,7 +4598,7 @@ ICALL_EXPORT MonoStringHandle
 ves_icall_System_Reflection_Assembly_get_location (MonoReflectionAssemblyHandle refassembly, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refassembly);
-	MonoAssembly *assembly = MONO_HANDLE_RAW (refassembly)->assembly;
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (refassembly, assembly);
 	return mono_string_new_handle (domain, mono_image_get_filename (assembly->image), error);
 }
 
@@ -4614,7 +4614,7 @@ ICALL_EXPORT MonoStringHandle
 ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion (MonoReflectionAssemblyHandle refassembly, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refassembly);
-	MonoAssembly *assembly = MONO_HANDLE_RAW (refassembly)->assembly;
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (refassembly, assembly);
 
 	return mono_string_new_handle (domain, assembly->image->version, error);
 }
