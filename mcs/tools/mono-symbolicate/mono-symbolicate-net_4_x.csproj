@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{63E373FB-CE4B-4F7B-A421-5CE8ED7BD851}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>649,1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_x</OutputPath>
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>649,1699</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;NO_AUTHENTICODE;CECIL;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -35,7 +35,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>649,1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NO_AUTHENTICODE;CECIL;NET_4_0;NET_4_5;NET_4_6;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
