@@ -462,7 +462,7 @@ disable it.
   * There are a number of runtime options to control this
 also, see the man page.
 
-* `--with-csc={roslyn,mcs,default}'
+* `--with-csc=roslyn,mcs,default`
 
   * Use this option to configure which C# compiler to use.  By default
     the configure script will pick Roslyn, except on platforms where
@@ -472,8 +472,8 @@ also, see the man page.
     also allows for a complete bootstrap of Mono's core compiler and
     core libraries from source.
 
-    If you specify "roslyn", then Roslyn's C# compiler will be used.
-    This uses currently uses Roslyn binaries.
+    If you specify "roslyn", then Roslyn's C# compiler will be used.
+    This currently uses Roslyn binaries.
   
 * `--enable-nacl`
 
