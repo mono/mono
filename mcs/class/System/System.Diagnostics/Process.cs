@@ -526,10 +526,10 @@ namespace System.Diagnostics
 
 #if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo, ref ProcInfo proc_info);
+		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo, ref ProcInfo procInfo);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo, IntPtr stdin, IntPtr stdout, IntPtr stderr, ref ProcInfo proc_info);
+		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo, IntPtr stdin, IntPtr stdout, IntPtr stderr, ref ProcInfo procInfo);
 
 		bool StartWithShellExecuteEx (ProcessStartInfo startInfo)
 		{
@@ -552,23 +552,23 @@ namespace System.Diagnostics
 			if (startInfo.environmentVariables != null)
 				throw new InvalidOperationException(SR.GetString(SR.CantUseEnvVars));
 
-			ProcInfo proc_info = new ProcInfo();
+			ProcInfo procInfo = new ProcInfo();
 			bool ret;
 
-			FillUserInfo (startInfo, ref proc_info);
+			FillUserInfo (startInfo, ref procInfo);
 			try {
-				ret = ShellExecuteEx_internal (startInfo, ref proc_info);
+				ret = ShellExecuteEx_internal (startInfo, ref procInfo);
 			} finally {
-				if (proc_info.Password != IntPtr.Zero)
-					Marshal.ZeroFreeBSTR (proc_info.Password);
-				proc_info.Password = IntPtr.Zero;
+				if (procInfo.Password != IntPtr.Zero)
+					Marshal.ZeroFreeBSTR (procInfo.Password);
+				procInfo.Password = IntPtr.Zero;
 			}
 			if (!ret) {
-				throw new Win32Exception (-proc_info.pid);
+				throw new Win32Exception (-procInfo.pid);
 			}
 
-			SetProcessHandle (new SafeProcessHandle (proc_info.process_handle, true));
-			SetProcessId (proc_info.pid);
+			SetProcessHandle (new SafeProcessHandle (procInfo.process_handle, true));
+			SetProcessId (procInfo.pid);
 
 			return ret;
 		}
@@ -648,16 +648,16 @@ namespace System.Diagnostics
 			if (this.disposed)
 				throw new ObjectDisposedException (GetType ().Name);
 
-			var proc_info = new ProcInfo ();
+			var procInfo = new ProcInfo ();
 
 			if (startInfo.HaveEnvVars) {
 				string [] strs = new string [startInfo.EnvironmentVariables.Count];
 				startInfo.EnvironmentVariables.Keys.CopyTo (strs, 0);
-				proc_info.envKeys = strs;
+				procInfo.envKeys = strs;
 
 				strs = new string [startInfo.EnvironmentVariables.Count];
 				startInfo.EnvironmentVariables.Values.CopyTo (strs, 0);
-				proc_info.envValues = strs;
+				procInfo.envValues = strs;
 			}
 
 			MonoIOError error;
@@ -687,16 +687,16 @@ namespace System.Diagnostics
 					stderr_write = MonoIO.ConsoleError;
 				}
 
-				FillUserInfo (startInfo, ref proc_info);
+				FillUserInfo (startInfo, ref procInfo);
 
 				//
 				// FIXME: For redirected pipes we need to send descriptors of
 				// stdin_write, stdout_read, stderr_read to child process and
 				// close them there (fork makes exact copy of parent's descriptors)
 				//
-				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref proc_info)) {
-					throw new Win32Exception (-proc_info.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
-						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.GetErrorMessage (-proc_info.pid));
+				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref procInfo)) {
+					throw new Win32Exception (-procInfo.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
+						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.GetErrorMessage (-procInfo.pid));
 				}
 			} catch {
 				if (startInfo.RedirectStandardInput) {
@@ -722,14 +722,14 @@ namespace System.Diagnostics
 
 				throw;
 			} finally {
-				if (proc_info.Password != IntPtr.Zero) {
-					Marshal.ZeroFreeBSTR (proc_info.Password);
-					proc_info.Password = IntPtr.Zero;
+				if (procInfo.Password != IntPtr.Zero) {
+					Marshal.ZeroFreeBSTR (procInfo.Password);
+					procInfo.Password = IntPtr.Zero;
 				}
 			}
 
-			SetProcessHandle (new SafeProcessHandle (proc_info.process_handle, true));
-			SetProcessId (proc_info.pid);
+			SetProcessHandle (new SafeProcessHandle (procInfo.process_handle, true));
+			SetProcessId (procInfo.pid);
 			
 			if (startInfo.RedirectStandardInput) {
 				MonoIO.Close (stdin_read, out error);
@@ -764,16 +764,16 @@ namespace System.Diagnostics
 		}
 
 		// Note that ProcInfo.Password must be freed.
-		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
+		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo procInfo)
 		{
 			if (startInfo.UserName.Length != 0) {
-				proc_info.UserName = startInfo.UserName;
-				proc_info.Domain = startInfo.Domain;
+				procInfo.UserName = startInfo.UserName;
+				procInfo.Domain = startInfo.Domain;
 				if (startInfo.Password != null)
-					proc_info.Password = Marshal.SecureStringToBSTR (startInfo.Password);
+					procInfo.Password = Marshal.SecureStringToBSTR (startInfo.Password);
 				else
-					proc_info.Password = IntPtr.Zero;
-				proc_info.LoadUserProfile = startInfo.LoadUserProfile;
+					procInfo.Password = IntPtr.Zero;
+				procInfo.LoadUserProfile = startInfo.LoadUserProfile;
 			}
 		}
 #else
