@@ -4612,26 +4612,25 @@ ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion (MonoReflection
 	return mono_string_new_handle (domain, assembly->image->version, error);
 }
 
-ICALL_EXPORT MonoReflectionMethod*
-ves_icall_System_Reflection_Assembly_get_EntryPoint (MonoReflectionAssembly *assembly) 
+ICALL_EXPORT MonoReflectionMethodHandle
+ves_icall_System_Reflection_Assembly_get_EntryPoint (MonoReflectionAssemblyHandle assembly_h, MonoError *error) 
 {
-	MonoError error;
-	MonoReflectionMethod *res = NULL;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly_h);
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
 	MonoMethod *method;
 
-	guint32 token = mono_image_get_entry_point (assembly->assembly->image);
+	MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, NULL);
+	guint32 token = mono_image_get_entry_point (assembly->image);
 
 	if (!token)
-		return NULL;
-	method = mono_get_method_checked (assembly->assembly->image, token, NULL, NULL, &error);
-	if (!mono_error_ok (&error))
+		goto leave;
+	method = mono_get_method_checked (assembly->image, token, NULL, NULL, error);
+	if (!is_ok (error))
 		goto leave;
 
-	res = mono_method_get_object_checked (mono_object_domain (assembly), method, NULL, &error);
-
+	MONO_HANDLE_ASSIGN (res, mono_method_get_object_handle (domain, method, NULL, error));
 leave:
-	if (!mono_error_ok (&error))
-		mono_error_set_pending_exception (&error);
 	return res;
 }
 
