@@ -57,7 +57,6 @@ class X {
 
 	static void Main ()
 	{
-		Console.WriteLine ("#if NET_4_0");
 		bool isMono = Type.GetType ("Mono.Runtime", false) != null;
 
 		Console.WriteLine (@"
@@ -104,6 +103,7 @@ using MonoTests.Helpers;
 
 namespace MonoTests.System.Web.UI.WebControls {{
 [TestFixture]
+[SetCulture (""en-us"")]
 public class RepeatInfo_Autogen {{
 ", isMono ? "Mono" : "Microsoft .NET", Environment.Version);		
 		int num = 0;
@@ -180,8 +180,7 @@ public class RepeatInfo_Autogen {{
 		}
 		Console.WriteLine (@"
 }
-}
-#endif");
+}");
 	}
 
 	static void BuildTestCode (StringBuilder sb, Exception ex, int cols, int cnt, RepeatDirection d, RepeatLayout l, bool oti, bool hdr, bool ftr, bool sep, string exp, int num)
