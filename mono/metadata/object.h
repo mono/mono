@@ -112,7 +112,6 @@ mono_array_addr_with_size   (MonoArray *array, int size, uintptr_t idx);
 MONO_API uintptr_t
 mono_array_length           (MonoArray *array);
 
-MONO_RT_EXTERNAL_ONLY
 MONO_API MonoString*
 mono_string_empty	      (MonoDomain *domain);
 
