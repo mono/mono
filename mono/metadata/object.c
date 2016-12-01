@@ -5964,12 +5964,8 @@ ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n)
 MonoString*
 mono_string_empty_wrapper ()
 {
-	MonoError error;
-	MonoString *res = NULL;
 	MonoDomain *domain = mono_domain_get ();
-	res = mono_string_empty_checked (domain, &error);
-	mono_error_cleanup (&error);
-	return res;
+	return mono_string_empty (domain);
 }
 
 /**
@@ -5980,23 +5976,6 @@ mono_string_empty_wrapper ()
 MonoString*
 mono_string_empty (MonoDomain *domain)
 {
-	MonoError error;
-	MonoString *res = NULL;
-	res = mono_string_empty_checked (domain, &error);
-	mono_error_cleanup (&error);
-	return res;
-}
-
-/**
- * mono_string_empty_checked:
- *
- * Returns: The same empty string instance as the managed string.Empty
- */
-MonoString*
-mono_string_empty_checked (MonoDomain *domain, MonoError *error)
-{
-	mono_error_init (error);
-
 	g_assert (domain);
 	g_assert (domain->empty_string);
 	return domain->empty_string;
