@@ -829,7 +829,7 @@ ICALL(RNG_4, "RngOpen", ves_icall_System_Security_Cryptography_RNGCryptoServiceP
 
 #ifndef DISABLE_POLICY_EVIDENCE
 ICALL_TYPE(EVID, "System.Security.Policy.Evidence", EVID_1)
-ICALL(EVID_1, "IsAuthenticodePresent", ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent)
+HANDLES(ICALL(EVID_1, "IsAuthenticodePresent", ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent))
 
 ICALL_TYPE(WINID, "System.Security.Principal.WindowsIdentity", WINID_1)
 ICALL(WINID_1, "GetCurrentToken", ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken)
