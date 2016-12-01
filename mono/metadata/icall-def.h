@@ -505,7 +505,7 @@ HANDLES(ICALL(ASSEM_1a, "GetAotId", ves_icall_System_Reflection_Assembly_GetAotI
 HANDLES(ICALL(ASSEM_2, "GetCallingAssembly", ves_icall_System_Reflection_Assembly_GetCallingAssembly))
 HANDLES(ICALL(ASSEM_3, "GetEntryAssembly", ves_icall_System_Reflection_Assembly_GetEntryAssembly))
 HANDLES(ICALL(ASSEM_4, "GetExecutingAssembly", ves_icall_System_Reflection_Assembly_GetExecutingAssembly))
-ICALL(ASSEM_5, "GetFilesInternal", ves_icall_System_Reflection_Assembly_GetFilesInternal)
+HANDLES(ICALL(ASSEM_5, "GetFilesInternal", ves_icall_System_Reflection_Assembly_GetFilesInternal))
 HANDLES(ICALL(ASSEM_6, "GetManifestModuleInternal", ves_icall_System_Reflection_Assembly_GetManifestModuleInternal))
 HANDLES(ICALL(ASSEM_7, "GetManifestResourceInfoInternal", ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal))
 HANDLES(ICALL(ASSEM_8, "GetManifestResourceInternal", ves_icall_System_Reflection_Assembly_GetManifestResourceInternal))

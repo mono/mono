@@ -4852,35 +4852,51 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal (MonoReflec
 	return get_manifest_resource_info_internal (assembly_h, name, info_h, error);
 }
 
-ICALL_EXPORT MonoObject*
-ves_icall_System_Reflection_Assembly_GetFilesInternal (MonoReflectionAssembly *assembly, MonoString *name, MonoBoolean resource_modules) 
+static gboolean
+add_filename_to_files_array (MonoDomain *domain, MonoAssembly * assembly, MonoTableInfo *table, int i, MonoArrayHandle dest, int dest_idx, MonoError *error)
 {
-	MonoError error;
-	MonoTableInfo *table = &assembly->assembly->image->tables [MONO_TABLE_FILE];
-	MonoArray *result = NULL;
+	HANDLE_FUNCTION_ENTER();
+	mono_error_init (error);
+	const char *val = mono_metadata_string_heap (assembly->image, mono_metadata_decode_row_col (table, i, MONO_FILE_NAME));
+	char *n = g_concat_dir_and_file (assembly->basedir, val);
+	MonoStringHandle str = mono_string_new_handle (domain, n, error);
+	g_free (n);
+	if (!is_ok (error))
+		goto leave;
+	MONO_HANDLE_ARRAY_SETREF (dest, dest_idx, str);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Reflection_Assembly_GetFilesInternal (MonoReflectionAssemblyHandle assembly_h, MonoStringHandle name, MonoBoolean resource_modules, MonoError *error) 
+{
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly_h);
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+	MonoTableInfo *table = &assembly->image->tables [MONO_TABLE_FILE];
 	int i, count;
-	const char *val;
-	char *n;
 
 	/* check hash if needed */
-	if (name) {
-		n = mono_string_to_utf8_checked (name, &error);
-		if (mono_error_set_pending_exception (&error))
-			return NULL;
+	if (!MONO_HANDLE_IS_NULL(name)) {
+		char *n = mono_string_handle_to_utf8 (name, error);
+		if (!is_ok (error))
+			goto fail;
 
 		for (i = 0; i < table->rows; ++i) {
-			val = mono_metadata_string_heap (assembly->assembly->image, mono_metadata_decode_row_col (table, i, MONO_FILE_NAME));
+			const char *val = mono_metadata_string_heap (assembly->image, mono_metadata_decode_row_col (table, i, MONO_FILE_NAME));
 			if (strcmp (val, n) == 0) {
-				MonoString *fn;
 				g_free (n);
-				n = g_concat_dir_and_file (assembly->assembly->basedir, val);
-				fn = mono_string_new (mono_object_domain (assembly), n);
+				n = g_concat_dir_and_file (assembly->basedir, val);
+				MonoStringHandle fn = mono_string_new_handle (domain, n, error);
 				g_free (n);
-				return (MonoObject*)fn;
+				if (!is_ok (error))
+					goto fail;
+				return MONO_HANDLE_CAST (MonoObject, fn);
 			}
 		}
 		g_free (n);
-		return NULL;
+		return NULL_HANDLE;
 	}
 
 	count = 0;
@@ -4889,22 +4905,21 @@ ves_icall_System_Reflection_Assembly_GetFilesInternal (MonoReflectionAssembly *a
 			count ++;
 	}
 
-	result = mono_array_new_checked (mono_object_domain (assembly), mono_defaults.string_class, count, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
-
+	MonoArrayHandle result = mono_array_new_handle (domain, mono_defaults.string_class, count, error);
+	if (!is_ok (error))
+		goto fail;
 
 	count = 0;
 	for (i = 0; i < table->rows; ++i) {
 		if (resource_modules || !(mono_metadata_decode_row_col (table, i, MONO_FILE_FLAGS) & FILE_CONTAINS_NO_METADATA)) {
-			val = mono_metadata_string_heap (assembly->assembly->image, mono_metadata_decode_row_col (table, i, MONO_FILE_NAME));
-			n = g_concat_dir_and_file (assembly->assembly->basedir, val);
-			mono_array_setref (result, count, mono_string_new (mono_object_domain (assembly), n));
-			g_free (n);
-			count ++;
+			if (!add_filename_to_files_array (domain, assembly, table, i, result, count, error))
+				goto fail;
+			count++;
 		}
 	}
-	return (MonoObject*)result;
+	return MONO_HANDLE_CAST (MonoObject, result);
+fail:
+	return NULL_HANDLE;
 }
 
 static gboolean
