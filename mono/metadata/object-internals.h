@@ -1668,6 +1668,9 @@ mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
 MonoObject *
 mono_object_isinst_mbyref_checked   (MonoObject *obj, MonoClass *klass, MonoError *error);
 
+MonoString*
+mono_string_empty_checked (MonoDomain *domain, MonoError *error);
+
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
