@@ -4330,31 +4330,56 @@ ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionType *type, char *str
 	return res_array;
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *assembly, MonoReflectionModule *module, MonoString *name, MonoBoolean throwOnError, MonoBoolean ignoreCase)
+static MonoType*
+get_type_from_module_builder_module (MonoArrayHandle modules, int i, MonoTypeNameParse *info, MonoBoolean ignoreCase, gboolean *type_resolve, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
-	gchar *str;
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
 	MonoType *type = NULL;
+	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW (MonoReflectionModuleBuilder, NULL);
+	MONO_HANDLE_ARRAY_GETREF (mb, modules, i);
+	MonoDynamicImage *dynamic_image = MONO_HANDLE_GETVAL (mb, dynamic_image);
+	type = mono_reflection_get_type_checked (&dynamic_image->image, &dynamic_image->image, info, ignoreCase, type_resolve, error);
+	HANDLE_FUNCTION_RETURN_VAL (type);
+}
+
+static MonoType*
+get_type_from_module_builder_loaded_modules (MonoArrayHandle loaded_modules, int i, MonoTypeNameParse *info, MonoBoolean ignoreCase, gboolean *type_resolve, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoType *type = NULL;
+	MonoReflectionModuleHandle mod = MONO_HANDLE_NEW (MonoReflectionModule, NULL);
+	MONO_HANDLE_ARRAY_GETREF (mod, loaded_modules, i);
+	MonoImage *image = MONO_HANDLE_GETVAL (mod, image);
+	type = mono_reflection_get_type_checked (image, image, info, ignoreCase, type_resolve, error);
+	HANDLE_FUNCTION_RETURN_VAL (type);
+}
+
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHandle assembly_h, MonoReflectionModuleHandle module, MonoStringHandle name, MonoBoolean throwOnError, MonoBoolean ignoreCase, MonoError *error)
+{
+	mono_error_init (error);
+
 	MonoTypeNameParse info;
 	gboolean type_resolve;
 
 	/* On MS.NET, this does not fire a TypeResolve event */
 	type_resolve = TRUE;
-	str = mono_string_to_utf8_checked (name, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	char *str = mono_string_handle_to_utf8 (name, error);
+	if (!is_ok (error))
+		goto fail;
+
 	/*g_print ("requested type %s in %s\n", str, assembly->assembly->aname.name);*/
 	if (!mono_reflection_parse_type (str, &info)) {
 		g_free (str);
 		mono_reflection_free_type_info (&info);
 		if (throwOnError) {
-			mono_set_pending_exception (mono_get_exception_argument("name", "failed parse"));
-			return NULL;
+			mono_error_set_argument (error, "name", "failed to parse the type");
+			goto fail;
 		}
 		/*g_print ("failed parse\n");*/
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	}
 
 	if (info.assembly.name) {
@@ -4363,57 +4388,61 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 		if (throwOnError) {
 			/* 1.0 and 2.0 throw different exceptions */
 			if (mono_defaults.generic_ilist_class)
-				mono_set_pending_exception (mono_get_exception_argument (NULL, "Type names passed to Assembly.GetType() must not specify an assembly."));
+				mono_error_set_argument (error, NULL, "Type names passed to Assembly.GetType() must not specify an assembly.");
 			else
-				mono_set_pending_exception (mono_get_exception_type_load (name, NULL));
-			return NULL;
+				mono_error_set_type_load_name (error, g_strdup (""), g_strdup (""), "Type names passed to Assembly.GetType() must not specify an assembly.");
+			goto fail;
 		}
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	}
 
-	if (module != NULL) {
-		if (module->image) {
-			type = mono_reflection_get_type_checked (module->image, module->image, &info, ignoreCase, &type_resolve, &error);
-			if (!is_ok (&error)) {
+	MonoType *type = NULL;
+	if (!MONO_HANDLE_IS_NULL (module)) {
+		MonoImage *image = MONO_HANDLE_GETVAL (module, image);
+		if (image) {
+			type = mono_reflection_get_type_checked (image, image, &info, ignoreCase, &type_resolve, error);
+			if (!is_ok (error)) {
 				g_free (str);
 				mono_reflection_free_type_info (&info);
-				mono_error_set_pending_exception (&error);
-				return NULL;
+				goto fail;
 			}
-		} else
-			type = NULL;
+		}
 	}
-	else
-		if (assembly_is_dynamic (assembly->assembly)) {
+	else {
+		MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+		if (assembly_is_dynamic (assembly)) {
 			/* Enumerate all modules */
-			MonoReflectionAssemblyBuilder *abuilder = (MonoReflectionAssemblyBuilder*)assembly;
+			MonoReflectionAssemblyBuilderHandle abuilder = MONO_HANDLE_NEW (MonoReflectionAssemblyBuilder, NULL);
+			MONO_HANDLE_ASSIGN (abuilder, assembly_h);
 			int i;
 
-			type = NULL;
-			if (abuilder->modules) {
-				for (i = 0; i < mono_array_length (abuilder->modules); ++i) {
-					MonoReflectionModuleBuilder *mb = mono_array_get (abuilder->modules, MonoReflectionModuleBuilder*, i);
-					type = mono_reflection_get_type_checked (&mb->dynamic_image->image, &mb->dynamic_image->image, &info, ignoreCase, &type_resolve, &error);
-					if (!is_ok (&error)) {
+			MonoArrayHandle modules = MONO_HANDLE_NEW (MonoArray, NULL);
+			MONO_HANDLE_GET (modules, abuilder, modules);
+			if (!MONO_HANDLE_IS_NULL (modules)) {
+				int n = mono_array_handle_length (modules);
+				for (i = 0; i < n; ++i) {
+					type = get_type_from_module_builder_module (modules, i, &info, ignoreCase, &type_resolve, error);
+					if (!is_ok (error)) {
 						g_free (str);
 						mono_reflection_free_type_info (&info);
-						mono_error_set_pending_exception (&error);
-						return NULL;
+						goto fail;
 					}
 					if (type)
 						break;
 				}
 			}
 
-			if (!type && abuilder->loaded_modules) {
-				for (i = 0; i < mono_array_length (abuilder->loaded_modules); ++i) {
-					MonoReflectionModule *mod = mono_array_get (abuilder->loaded_modules, MonoReflectionModule*, i);
-					type = mono_reflection_get_type_checked (mod->image, mod->image, &info, ignoreCase, &type_resolve, &error);
-					if (!is_ok (&error)) {
+			MonoArrayHandle loaded_modules = MONO_HANDLE_NEW (MonoArray, NULL);
+			MONO_HANDLE_GET (loaded_modules, abuilder, loaded_modules);
+			if (!type && !MONO_HANDLE_IS_NULL (loaded_modules)) {
+				int n = mono_array_handle_length (loaded_modules);
+				for (i = 0; i < n; ++i) {
+					type = get_type_from_module_builder_loaded_modules (loaded_modules, i, &info, ignoreCase, &type_resolve, error);
+
+					if (!is_ok (error)) {
 						g_free (str);
 						mono_reflection_free_type_info (&info);
-						mono_error_set_pending_exception (&error);
-						return NULL;
+						goto fail;
 					}
 					if (type)
 						break;
@@ -4421,25 +4450,29 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 			}
 		}
 		else {
-			type = mono_reflection_get_type_checked (assembly->assembly->image, assembly->assembly->image, &info, ignoreCase, &type_resolve, &error);
-			if (!is_ok (&error)) {
+			type = mono_reflection_get_type_checked (assembly->image, assembly->image, &info, ignoreCase, &type_resolve, error);
+			if (!is_ok (error)) {
 				g_free (str);
 				mono_reflection_free_type_info (&info);
-				mono_error_set_pending_exception (&error);
-				return NULL;
+				goto fail;
 			}
 		}
+	}
 	g_free (str);
 	mono_reflection_free_type_info (&info);
-	if (!type) {
-		MonoException *e = NULL;
-		
-		if (throwOnError)
-			e = mono_get_exception_type_load (name, NULL);
 
-		if (e != NULL)
-			mono_set_pending_exception (e);
-		return NULL;
+	if (!type) {
+		if (throwOnError) {
+			MonoError inner_error;
+			char *typename = mono_string_handle_to_utf8 (name, &inner_error);
+			mono_error_assert_ok (&inner_error);
+			MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+			char *assmname = mono_stringify_assembly_name (&assembly->aname);
+			mono_error_set_type_load_name (error, typename, assmname, "%s", "");
+			goto fail;
+		}
+
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	}
 
 	if (type->type == MONO_TYPE_CLASS) {
@@ -4448,17 +4481,16 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 		/* need to report exceptions ? */
 		if (throwOnError && mono_class_has_failure (klass)) {
 			/* report SecurityException (or others) that occured when loading the assembly */
-			mono_error_set_for_class_failure (&error, klass);
-			mono_error_set_pending_exception (&error);
-			return NULL;
+			mono_error_set_for_class_failure (error, klass);
+			goto fail;
 		}
 	}
 
 	/* g_print ("got it\n"); */
-	ret = mono_type_get_object_checked (mono_object_domain (assembly), type, &error);
-	mono_error_set_pending_exception (&error);
-
-	return ret;
+	return mono_type_get_object_handle (MONO_HANDLE_DOMAIN (assembly_h), type, error);
+fail:
+	g_assert (!is_ok (error));
+	return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 }
 
 static gboolean

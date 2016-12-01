@@ -515,7 +515,7 @@ HANDLES(ICALL(ASSEM_10, "GetModulesInternal", ves_icall_System_Reflection_Assemb
 HANDLES(ICALL(ASSEM_13, "GetTypes", ves_icall_System_Reflection_Assembly_GetTypes))
 HANDLES(ICALL(ASSEM_14, "InternalGetAssemblyName", ves_icall_System_Reflection_Assembly_InternalGetAssemblyName))
 HANDLES(ICALL(ASSEM_12, "InternalGetReferencedAssemblies", ves_icall_System_Reflection_Assembly_InternalGetReferencedAssemblies))
-ICALL(ASSEM_15, "InternalGetType", ves_icall_System_Reflection_Assembly_InternalGetType)
+HANDLES(ICALL(ASSEM_15, "InternalGetType", ves_icall_System_Reflection_Assembly_InternalGetType))
 HANDLES(ICALL(ASSEM_16, "InternalImageRuntimeVersion", ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion))
 HANDLES(ICALL(ASSEM_17, "LoadFrom", ves_icall_System_Reflection_Assembly_LoadFrom))
 ICALL(ASSEM_18, "LoadPermissions", ves_icall_System_Reflection_Assembly_LoadPermissions)
