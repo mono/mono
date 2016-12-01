@@ -4644,22 +4644,39 @@ ves_icall_System_Reflection_Assembly_GetManifestModuleInternal (MonoReflectionAs
 	return mono_module_get_object_handle (domain, a->image, error);
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_System_Reflection_Assembly_GetManifestResourceNames (MonoReflectionAssembly *assembly) 
+static gboolean
+add_manifest_resource_name_to_array (MonoDomain *domain, MonoImage *image, MonoTableInfo *table, int i, MonoArrayHandle dest, MonoError *error)
 {
-	MonoError error;
-	MonoTableInfo *table = &assembly->assembly->image->tables [MONO_TABLE_MANIFESTRESOURCE];
-	MonoArray *result = mono_array_new_checked (mono_object_domain (assembly), mono_defaults.string_class, table->rows, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	const char *val = mono_metadata_string_heap (image, mono_metadata_decode_row_col (table, i, MONO_MANIFEST_NAME));
+	MonoStringHandle str = mono_string_new_handle (domain, val, error);
+	if (!is_ok (error))
+		goto leave;
+	MONO_HANDLE_ARRAY_SETREF (dest, i, str);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Reflection_Assembly_GetManifestResourceNames (MonoReflectionAssemblyHandle assembly_h, MonoError *error) 
+{
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly_h);
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+	MonoTableInfo *table = &assembly->image->tables [MONO_TABLE_MANIFESTRESOURCE];
+	MonoArrayHandle result = mono_array_new_handle (domain, mono_defaults.string_class, table->rows, error);
+	if (!is_ok (error))
+		goto fail;
 	int i;
-	const char *val;
 
 	for (i = 0; i < table->rows; ++i) {
-		val = mono_metadata_string_heap (assembly->assembly->image, mono_metadata_decode_row_col (table, i, MONO_MANIFEST_NAME));
-		mono_array_setref (result, i, mono_string_new (mono_object_domain (assembly), val));
+		if (!add_manifest_resource_name_to_array (domain, assembly->image, table, i, result, error))
+			goto fail;
 	}
 	return result;
+fail:
+	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
 ICALL_EXPORT MonoStringHandle
