@@ -72,7 +72,7 @@ ifeq ($(PROFILE),build)
 ifdef MCS_MODE
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 else
-all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image)
+all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MCS_image)
 endif
 install-local:
 endif
