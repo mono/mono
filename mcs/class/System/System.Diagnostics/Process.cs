@@ -34,6 +34,7 @@
 
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
@@ -62,8 +63,7 @@ namespace System.Diagnostics
 			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
 			public int tid;
-			public string [] envKeys;
-			public string [] envValues;
+			public string[] envVariables;
 			public string UserName;
 			public string Domain;
 			public IntPtr Password;
@@ -651,13 +651,29 @@ namespace System.Diagnostics
 			var procInfo = new ProcInfo ();
 
 			if (startInfo.HaveEnvVars) {
-				string [] strs = new string [startInfo.EnvironmentVariables.Count];
-				startInfo.EnvironmentVariables.Keys.CopyTo (strs, 0);
-				procInfo.envKeys = strs;
+				List<string> envVariables = null;
+				StringBuilder sb = null;
 
-				strs = new string [startInfo.EnvironmentVariables.Count];
-				startInfo.EnvironmentVariables.Values.CopyTo (strs, 0);
-				procInfo.envValues = strs;
+				foreach (DictionaryEntry de in startInfo.EnvironmentVariables) {
+					if (de.Value == null)
+						continue;
+
+					if (envVariables == null)
+						envVariables = new List<string> ();
+
+					if (sb == null)
+						sb = new StringBuilder ();
+					else
+						sb.Clear ();
+
+					sb.Append ((string) de.Key);
+					sb.Append ('=');
+					sb.Append ((string) de.Value);
+
+					envVariables.Add (sb.ToString ());
+				}
+
+				procInfo.envVariables = envVariables?.ToArray ();
 			}
 
 			MonoIOError error;
