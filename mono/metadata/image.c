@@ -785,6 +785,9 @@ mono_image_init (MonoImage *image)
 	image->method_signatures = g_hash_table_new (NULL, NULL);
 
 	image->property_hash = mono_property_hash_new ();
+
+	image->method_cache = mono_conc_hashtable_new (NULL, NULL);
+	image->methodref_cache = mono_conc_hashtable_new (NULL, NULL);
 }
 
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
