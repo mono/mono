@@ -18,6 +18,10 @@
 #include <signal.h>
 #endif
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#endif
+
 #define MONO_CONTEXT_OFFSET(field, index, field_type) \
     "i" (offsetof (MonoContext, field) + (index) * sizeof (field_type))
 
@@ -27,10 +31,6 @@ typedef struct __darwin_xmm_reg MonoContextSimdReg;
 typedef struct _libc_xmmreg MonoContextSimdReg;
 #elif defined(HOST_WIN32)
 typedef M128A MonoContextSimdReg;
-#endif
-
-#ifdef HOST_WIN32
-#include <windows.h>
 #endif
 
 /*
