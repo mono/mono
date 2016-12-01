@@ -4522,13 +4522,12 @@ replace_shadow_path (MonoDomain *domain, gchar *dirname, gchar **filename)
 	return FALSE;
 }
 
-ICALL_EXPORT MonoString *
-ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *assembly, MonoBoolean escaped)
+ICALL_EXPORT MonoStringHandle
+ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssemblyHandle assembly, MonoBoolean escaped, MonoError *error)
 {
-	MonoDomain *domain = mono_object_domain (assembly); 
-	MonoAssembly *mass = assembly->assembly;
-	MonoString *res = NULL;
-	gchar *uri;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly);
+	MonoAssembly *mass = MONO_HANDLE_GETVAL (assembly, assembly);
 	gchar *absolute;
 	gchar *dirname;
 	
@@ -4545,6 +4544,7 @@ ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *asse
 
 	mono_icall_make_platform_path (absolute);
 
+	gchar *uri;
 	if (escaped) {
 		uri = g_filename_to_uri (absolute, NULL, NULL);
 	} else {
@@ -4552,18 +4552,23 @@ ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *asse
 		uri = g_strconcat (prepend, absolute, NULL);
 	}
 
-	if (uri) {
-		res = mono_string_new (domain, uri);
-		g_free (uri);
-	}
 	g_free (absolute);
+
+	MonoStringHandle res;
+	if (uri) {
+		res = mono_string_new_handle (domain, uri, error);
+		g_free (uri);
+	} else {
+		res = MONO_HANDLE_NEW (MonoString, NULL);
+	}
 	return res;
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Reflection_Assembly_get_global_assembly_cache (MonoReflectionAssembly *assembly)
+ves_icall_System_Reflection_Assembly_get_global_assembly_cache (MonoReflectionAssemblyHandle assembly, MonoError *error)
 {
-	MonoAssembly *mass = assembly->assembly;
+	mono_error_init (error);
+	MonoAssembly *mass = MONO_HANDLE_GETVAL (assembly,assembly);
 
 	return mass->in_gac;
 }
@@ -4598,9 +4603,11 @@ ves_icall_System_Reflection_Assembly_get_location (MonoReflectionAssemblyHandle 
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Reflection_Assembly_get_ReflectionOnly (MonoReflectionAssembly *assembly)
+ves_icall_System_Reflection_Assembly_get_ReflectionOnly (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
 {
-	return assembly->assembly->ref_only;
+	mono_error_init (error);
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+	return assembly->ref_only;
 }
 
 ICALL_EXPORT MonoStringHandle
@@ -5269,18 +5276,17 @@ ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethod *rfield)
 	return mono_security_core_clr_method_level (method, TRUE);
 }
 
-ICALL_EXPORT MonoString *
-ves_icall_System_Reflection_Assembly_get_fullName (MonoReflectionAssembly *assembly)
+ICALL_EXPORT MonoStringHandle
+ves_icall_System_Reflection_Assembly_get_fullName (MonoReflectionAssemblyHandle assembly, MonoError *error)
 {
-	MonoDomain *domain = mono_object_domain (assembly); 
-	MonoAssembly *mass = assembly->assembly;
-	MonoString *res;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly);
+	MonoAssembly *mass = MONO_HANDLE_GETVAL (assembly, assembly);
 	gchar *name;
 
 	name = mono_stringify_assembly_name (&mass->aname);
-	res = mono_string_new (domain, name);
+	MonoStringHandle res = mono_string_new_handle (domain, name, error);
 	g_free (name);
-
 	return res;
 }
 
