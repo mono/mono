@@ -7176,8 +7176,9 @@ ves_icall_System_Web_Util_ICalls_get_machine_install_dir (void)
 }
 
 ICALL_EXPORT gboolean
-ves_icall_get_resources_ptr (MonoReflectionAssembly *assembly, gpointer *result, gint32 *size)
+ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *result, gint32 *size, MonoError *error)
 {
+	mono_error_init (error);
 	MonoPEResourceDataEntry *entry;
 	MonoImage *image;
 
@@ -7186,7 +7187,8 @@ ves_icall_get_resources_ptr (MonoReflectionAssembly *assembly, gpointer *result,
 
 	*result = NULL;
 	*size = 0;
-	image = assembly->assembly->image;
+	MonoAssembly *assm = MONO_HANDLE_GETVAL (assembly, assembly);
+	image = assm->image;
 	entry = (MonoPEResourceDataEntry *)mono_image_lookup_resource (image, MONO_PE_RESOURCE_ID_ASPNET_STRING, 0, NULL);
 	if (!entry)
 		return FALSE;
