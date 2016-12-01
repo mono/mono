@@ -1764,7 +1764,8 @@ typedef struct {
 typedef struct {
 	GPtrArray *in_flight_methods;
 	int threads_waiting;
-	MonoCoopCond jit_cond;
+	MonoCoopMutex lock;
+	MonoCoopCond cond;
 } JitJobs;
 
 static MethodAndThread*
@@ -1779,6 +1780,26 @@ find_method (JitJobs *sb, MonoMethod *method)
 
 	return NULL;
 }
+
+static void
+jit_jobs_free (JitJobs *sb)
+{
+	mono_coop_cond_destroy (&sb->cond);
+	mono_coop_mutex_destroy (&sb->lock);
+	g_ptr_array_free (sb->in_flight_methods, TRUE);
+	g_free (sb);
+}
+
+static JitJobs *
+jit_jobs_alloc (void)
+{
+	JitJobs *sb = g_new0 (JitJobs, 1);
+	mono_coop_mutex_init (&sb->lock);
+	mono_coop_cond_init (&sb->cond);
+	sb->in_flight_methods = g_ptr_array_new ();
+	return sb;
+}
+
 
 /*
  * Returns true if this method waited successfully for another thread to JIT it
@@ -1797,14 +1818,14 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *target_domai
 		inited = TRUE;
 	}
 
-	//Add this method to the set of methods to be JIT'd
-	mono_domain_lock (target_domain);
-	if (!(sb = target_domain->jit_compilation_data)) {
-		sb = g_new0 (JitJobs, 1);
-		mono_coop_cond_init (&sb->jit_cond);
-		sb->in_flight_methods = g_ptr_array_new ();
-		target_domain->jit_compilation_data = sb;
+	while (!(sb = target_domain->jit_compilation_data)) {
+		sb = jit_jobs_alloc ();
+		if (InterlockedCompareExchangePointer (&target_domain->jit_compilation_data, sb, NULL))
+			jit_jobs_free (sb);
 	}
+
+	//Add this method to the set of methods to be JIT'd
+	mono_coop_mutex_lock (&sb->lock);
 
 	if (!(mt = find_method (sb, method))) {
 		mt = g_new (MethodAndThread, 1);
@@ -1812,24 +1833,24 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *target_domai
 		mt->thread = pthread_self ();
 		mt->count = 1;
 		g_ptr_array_add (sb->in_flight_methods, mt);
-		mono_domain_unlock (target_domain);
+		mono_coop_mutex_unlock (&sb->lock);
 		return FALSE;
 	} else {
 		if (mt->thread == pthread_self ()) {
 			++mt->count;
 			++jit_methods_dupe;
-			mono_domain_unlock (target_domain);
+			mono_coop_mutex_unlock (&sb->lock);
 			return FALSE;
 		}
 		// printf ("waiting %p / %p [%p]\n", method, target_domain, pthread_self ());
 		++jit_methods_waited;
 		while (TRUE) {
 			++sb->threads_waiting;
-			mono_coop_cond_wait (&sb->jit_cond, &target_domain->lock);
+			mono_coop_cond_wait (&sb->cond, &sb->lock);
 			--sb->threads_waiting;
 
 			if (!find_method (sb, method)) {
-				mono_domain_unlock (target_domain);
+				mono_coop_mutex_unlock (&sb->lock);
 				return TRUE;
 			}
 		}
@@ -1839,9 +1860,10 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *target_domai
 static void
 unregister_method_for_compile (MonoMethod *method, MonoDomain *target_domain)
 {
-	mono_domain_lock (target_domain);
 	JitJobs *sb = target_domain->jit_compilation_data;
 	if (sb) {
+		mono_coop_mutex_lock (&sb->lock);
+
 		MethodAndThread *mt = find_method (sb, method);
 		g_assert (mt); // It would be weird to fail
 		if (--mt->count == 0) {
@@ -1850,9 +1872,9 @@ unregister_method_for_compile (MonoMethod *method, MonoDomain *target_domain)
 		}
 
 		if (sb->threads_waiting)
-			mono_coop_cond_broadcast (&sb->jit_cond);
+			mono_coop_cond_broadcast (&sb->cond);
+		mono_coop_mutex_unlock (&sb->lock);
 	}
-	mono_domain_unlock (target_domain);
 }
 
 static gpointer
