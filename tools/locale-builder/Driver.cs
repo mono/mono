@@ -1185,6 +1185,8 @@ namespace Mono.Tools.LocaleBuilder
 					case "\u2212":
 					case "\u200F\u002D": // Remove any right-to-left mark characters
 					case "\u200E\u002D":
+					case "\u061C\u2212":
+					case "\u200F\u2212":
 						ni.NegativeSign = "-";
 						break;
 					default:
