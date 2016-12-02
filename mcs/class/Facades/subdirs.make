@@ -27,7 +27,7 @@ System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win3
 System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Reflection.Emit.Lightweight System.Reflection.Emit.ILGeneration System.Reflection.Emit \
 System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
-System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
+System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes System.Security.Cryptography.Algorithms
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml
@@ -70,6 +70,6 @@ monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng
 
-mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.Algorithms System.Security.Cryptography.OpenSsl
+mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.OpenSsl
 
 PROFILE_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
