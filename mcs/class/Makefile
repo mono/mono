@@ -372,7 +372,6 @@ DISTFILES = \
 	MicrosoftAjaxLibrary/License.htm	\
 	test-helpers/NetworkHelpers.cs	\
 	test-helpers/SocketResponder.cs	\
-	lib/$(monolite_dir)/mcs.exe   \
 	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)
@@ -406,13 +405,10 @@ $(monolite_files): | lib/$(monolite_dir)/Facades
 $(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
-lib/$(monolite_dir)/mcs.exe:
-	cp -p lib/basic/mcs.exe lib/$(monolite_dir)
-
 $(build_files:%=lib/build/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
-dist-monolite: $(monolite_files) lib/$(monolite_dir)/mcs.exe
+dist-monolite: $(monolite_files)
 
 dist-default: dist-monolite
 
