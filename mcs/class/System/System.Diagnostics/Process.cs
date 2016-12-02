@@ -696,7 +696,7 @@ namespace System.Diagnostics
 				//
 				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref proc_info)) {
 					throw new Win32Exception (-proc_info.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
-						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.W32ErrorMessage (-proc_info.pid));
+						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.GetErrorMessage (-proc_info.pid));
 				}
 			} catch {
 				if (startInfo.RedirectStandardInput) {
