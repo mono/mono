@@ -1180,13 +1180,6 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		g_free (msg);
 	}
 
-#if TARGET_WIN32
-	/* Non-main threads started from a now-unloaded domain will trigger an infinite segfault recursion on abort */
-	if (mono_ex && !strcmp (mono_ex->object.vtable->klass->name, "ThreadAbortException")) {
-		mono_thread_exit ();
-	}
-#endif
-
 	if (!call_filter)
 		call_filter = mono_get_call_filter ();
 
