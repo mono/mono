@@ -27,10 +27,11 @@ System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win3
 System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Reflection.Emit.Lightweight System.Reflection.Emit.ILGeneration System.Reflection.Emit \
 System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
-System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes System.Security.Cryptography.Algorithms
+System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
 
 # common_SUBDIRS dependencies
-common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml
+common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives \
+System.Runtime.Serialization.Xml System.Security.Cryptography.Algorithms
 
 drawing_DEPS_SUBDIRS = System.Drawing.Primitives
 
