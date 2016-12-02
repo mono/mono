@@ -2,10 +2,20 @@
 
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
-${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
-${TESTCMD} --label=compile-runtime-tests --timeout=20m make -w -C mono/tests -j4 tests
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
-${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+if [ check_github_label "skip-runtime-tests" ]; then
+    echo "Skipping runtime tests."
+else
+    ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
+    ${TESTCMD} --label=compile-runtime-tests --timeout=20m make -w -C mono/tests -j4 tests
+    ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
+    ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+fi
+
+if [ check_github_label "skip-classlib-tests" ]; then
+    echo "Skipping class library tests."
+    exit 0
+fi
+
 if [[ ${label} == 'debian-8-ppc64el' ]]; then ${TESTCMD} --label=corlib --skip; else ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test; fi
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
@@ -93,3 +103,11 @@ then ${TESTCMD} --label=ms-test-suite --timeout=30m make -w -C acceptance-tests 
 else ${TESTCMD} --label=ms-test-suite --skip;
 fi
 rm -fr /tmp/jenkins-temp-aspnet*
+
+function check_github_label {
+    if [ -z "$1" ]; then echo "No label specified. Skipping GitHub label check."; return 1; fi;
+    if [ -z "${ghprbPullId}" ]; then echo "Not a pull request. Skipping GitHub label check."; return 1; fi;
+    if [ -z "${GITHUB_LABEL_AUTH_TOKEN}" ]; then echo "No auth token specified. Skipping GitHub label check."; return 1; fi;
+
+    return curl -sSL -H "Authorization: token ${GITHUB_LABEL_AUTH_TOKEN}" "https://api.github.com/repos/mono/mono/issues/${ghprbPullId}/labels" | grep -q "$1"
+}
