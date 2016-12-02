@@ -7,17 +7,23 @@ use_monolite := $(wildcard $(monolite_flag))
 
 MONOLITE_MSCORLIB = $(topdir)/class/lib/monolite/mscorlib.dll
 
-# Bootstrap compiler does not have to be same as production compiler
-INTERNAL_GMCS = $(CSC_LOCATION)
-
 ifdef use_monolite
-PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-else
-PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
+ifdef MCS_MODE
+	CSC_LOCATION = $(topdir)/class/lib/monolite/mcs.exe
 endif
 
-INTERNAL_CSC = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(INTERNAL_GMCS)
-BOOTSTRAP_MCS = $(INTERNAL_CSC)
+PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
+BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+
+else
+PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
+ifdef MCS_MODE
+	BOOTSTRAP_MCS = mcs
+else
+	BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+endif
+endif
+
 MCS = $(BOOTSTRAP_MCS)
 
 DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
@@ -104,7 +110,7 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
-	$(INTERNAL_CSC) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
+	$(BOOTSTRAP_MCS) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
