@@ -93,6 +93,7 @@
     <ClCompile Include="..\mono\metadata\sgen-mono.c" />
     <ClCompile Include="..\mono\metadata\threadpool-io.c" />
     <ClCompile Include="..\mono\metadata\threadpool.c" />
+    <ClCompile Include="..\mono\metadata\threadpool-worker-default.c" />
     <ClCompile Include="..\mono\metadata\sgen-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-new-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-old-bridge.c" />
@@ -156,6 +157,7 @@
     <ClInclude Include="..\mono\metadata\socket-io-windows-internals.h" />
     <ClInclude Include="..\mono\metadata\threadpool-io.h" />
     <ClInclude Include="..\mono\metadata\threadpool.h" />
+    <ClInclude Include="..\mono\metadata\threadpool-worker.h" />
     <ClInclude Include="..\mono\sgen\gc-internal-agnostic.h" />
     <ClInclude Include="..\mono\metadata\icall-def.h" />
     <ClInclude Include="..\mono\metadata\image.h" />

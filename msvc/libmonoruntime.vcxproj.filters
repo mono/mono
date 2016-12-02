@@ -166,6 +166,9 @@
     <ClCompile Include="..\mono\metadata\threadpool.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\metadata\threadpool-worker-default.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\mono\metadata\threadpool-io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -466,6 +469,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\threadpool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\metadata\threadpool-worker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\wrapper-types.h">

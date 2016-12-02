@@ -232,6 +232,8 @@ common_sources = \
 	threads-types.h		\
 	threadpool.c	\
 	threadpool.h	\
+	threadpool-worker-default.c	\
+	threadpool-worker.h	\
 	threadpool-io.c	\
 	threadpool-io.h	\
 	verify.c		\
