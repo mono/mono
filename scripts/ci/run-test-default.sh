@@ -3,6 +3,10 @@
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
+if [[ ${label} == osx-* ]]
+then ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j4 -k test-aot
+else ${TESTCMD} --label=aot-test --skip;
+fi
 ${TESTCMD} --label=compile-runtime-tests --timeout=20m make -w -C mono/tests -j4 tests
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
