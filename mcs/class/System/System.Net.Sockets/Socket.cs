@@ -458,7 +458,7 @@ namespace System.Net.Sockets
 			if (list != null) {
 				foreach (Socket sock in list) {
 					if (sock == null) // MS throws a NullRef
-						throw new ArgumentNullException ("name", "Contains a null element");
+						throw new ArgumentNullException (name, "Contains a null element");
 					sockets.Add (sock);
 				}
 			}
