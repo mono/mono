@@ -117,7 +117,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (property_info, System.Reflection, Property
 static GENERATE_GET_CLASS_WITH_CACHE (event_info, System.Reflection, EventInfo)
 static GENERATE_GET_CLASS_WITH_CACHE (module, System.Reflection, Module)
 
-static MonoArray*
+static MonoArrayHandle
 type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoError *error);
 
 static inline MonoBoolean
@@ -1774,21 +1774,17 @@ ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty
 	return mono_property_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionField *field, MonoBoolean optional)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionFieldHandle field_h, MonoBoolean optional, MonoError *error)
 {
-	MonoError error;
-	MonoType *type = mono_field_get_type_checked (field->field, &error);
-	MonoArray *res;
+	mono_error_init (error);
+	MonoClassField *field = MONO_HANDLE_GETVAL (field_h, field);
 
-	if (!mono_error_ok (&error)) {
-		mono_error_set_pending_exception (&error);
-		return NULL;
-	}
+	MonoType *type = mono_field_get_type_checked (field, error);
+	if (!is_ok (error))
+		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 
-	res = type_array_from_modifiers (field->field->parent->image, type, optional, &error);
-	mono_error_set_pending_exception (&error);
-	return res;
+	return type_array_from_modifiers (field->parent->image, type, optional, error);
 }
 
 ICALL_EXPORT int
@@ -7635,16 +7631,33 @@ ves_icall_System_NumberFormatter_GetFormatterTables (guint64 const **mantissas,
 	*decHexDigits = Formatter_DecHexDigits;
 }
 
+static gboolean
+add_modifier_to_array (MonoDomain *domain, MonoImage *image, MonoCustomMod *modifier, MonoArrayHandle dest, int dest_idx, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoClass *klass = mono_class_get_checked (image, modifier->token, error);
+	if (!is_ok (error))
+		goto leave;
+
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, &klass->byval_arg, error);
+	if (!is_ok (error))
+		goto leave;
+
+	MONO_HANDLE_ARRAY_SETREF (dest, dest_idx, rt);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
 /*
  * We return NULL for no modifiers so the corlib code can return Type.EmptyTypes
  * and avoid useless allocations.
  */
-static MonoArray*
+static MonoArrayHandle
 type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoError *error)
 {
-	MonoReflectionType *rt;
-	MonoArray *res;
 	int i, count = 0;
+	MonoDomain *domain = mono_domain_get ();
 
 	mono_error_init (error);
 	for (i = 0; i < type->num_mods; ++i) {
@@ -7652,66 +7665,62 @@ type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoE
 			count++;
 	}
 	if (!count)
-		return NULL;
-	res = mono_array_new_checked (mono_domain_get (), mono_defaults.systemtype_class, count, error);
-	return_val_if_nok (error, NULL);
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+
+	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
+	if (!is_ok (error))
+		goto fail;
 	count = 0;
 	for (i = 0; i < type->num_mods; ++i) {
 		if ((optional && !type->modifiers [i].required) || (!optional && type->modifiers [i].required)) {
-			MonoClass *klass = mono_class_get_checked (image, type->modifiers [i].token, error);
-			return_val_if_nok (error, NULL);
-
-			rt = mono_type_get_object_checked (mono_domain_get (), &klass->byval_arg, error);
-			return_val_if_nok (error, NULL);
-
-			mono_array_setref (res, count, rt);
+			if (!add_modifier_to_array (domain, image, &type->modifiers[i], res, count , error))
+				goto fail;
 			count++;
 		}
 	}
 	return res;
+fail:
+	return MONO_HANDLE_NEW (MonoArray, NULL);
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameter *param, MonoBoolean optional)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameterHandle param, MonoBoolean optional, MonoError *error)
 {
-	MonoError error;
-	MonoType *type = param->ClassImpl->type;
-	MonoClass *member_class = mono_object_class (param->MemberImpl);
+	mono_error_init (error);
+	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+	MONO_HANDLE_GET (rt, param, ClassImpl);
+	MonoType *type = MONO_HANDLE_GETVAL (rt, type);
+	MonoObjectHandle member = MONO_HANDLE_NEW (MonoObject, NULL);
+	MONO_HANDLE_GET (member, param, MemberImpl);
+	MonoClass *member_class = mono_handle_class (member);
 	MonoMethod *method = NULL;
 	MonoImage *image;
 	int pos;
 	MonoMethodSignature *sig;
-	MonoArray *res;
 
 	if (mono_class_is_reflection_method_or_constructor (member_class)) {
-		MonoReflectionMethod *rmethod = (MonoReflectionMethod*)param->MemberImpl;
-		method = rmethod->method;
+		method = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionMethod, member), method);
 	} else if (member_class->image == mono_defaults.corlib && !strcmp ("MonoProperty", member_class->name)) {
-		MonoReflectionProperty *prop = (MonoReflectionProperty *)param->MemberImpl;
-		if (!(method = prop->property->get))
-			method = prop->property->set;
+		MonoProperty *prop = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionProperty, member), property);
+		if (!(method = prop->get))
+			method = prop->set;
 		g_assert (method);	
 	} else {
 		char *type_name = mono_type_get_full_name (member_class);
-		char *msg = g_strdup_printf ("Custom modifiers on a ParamInfo with member %s are not supported", type_name);
-		MonoException *ex = mono_get_exception_not_supported  (msg);
+		mono_error_set_not_supported (error, "Custom modifiers on a ParamInfo with member %s are not supported", type_name);
 		g_free (type_name);
-		g_free (msg);
-		mono_set_pending_exception (ex);
-		return NULL;
+		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 	}
 
 	image = method->klass->image;
-	pos = param->PositionImpl;
+	pos = MONO_HANDLE_GETVAL (param, PositionImpl);
 	sig = mono_method_signature (method);
 	if (pos == -1)
 		type = sig->ret;
 	else
 		type = sig->params [pos];
 
-	res = type_array_from_modifiers (image, type, optional, &error);
-	mono_error_set_pending_exception (&error);
-	return res;
+	return type_array_from_modifiers (image, type, optional, error);
 }
 
 static MonoType*
@@ -7728,19 +7737,18 @@ get_property_type (MonoProperty *prop)
 	return NULL;
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_MonoPropertyInfo_GetTypeModifiers (MonoReflectionProperty *property, MonoBoolean optional)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_MonoPropertyInfo_GetTypeModifiers (MonoReflectionPropertyHandle property, MonoBoolean optional, MonoError *error)
 {
-	MonoError error;
-	MonoType *type = get_property_type (property->property);
-	MonoImage *image = property->klass->image;
-	MonoArray *res;
+	mono_error_init (error);
+	MonoProperty *prop = MONO_HANDLE_GETVAL (property, property);
+	MonoClass *klass = MONO_HANDLE_GETVAL (property, klass);
+	MonoType *type = get_property_type (prop);
+	MonoImage *image = klass->image;
 
 	if (!type)
-		return NULL;
-	res = type_array_from_modifiers (image, type, optional, &error);
-	mono_error_set_pending_exception (&error);
-	return res;
+		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+	return type_array_from_modifiers (image, type, optional, error);
 }
 
 /*

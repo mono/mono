@@ -570,7 +570,7 @@ ICALL_TYPE(EVENTI, "System.Reflection.EventInfo", EVENTI_1)
 ICALL(EVENTI_1, "internal_from_handle_type", ves_icall_System_Reflection_EventInfo_internal_from_handle_type)
 
 ICALL_TYPE(FIELDI, "System.Reflection.FieldInfo", FILEDI_1)
-ICALL(FILEDI_1, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers)
+HANDLES(ICALL(FILEDI_1, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers))
 ICALL(FILEDI_2, "get_marshal_info", ves_icall_System_Reflection_FieldInfo_get_marshal_info)
 HANDLES(ICALL(FILEDI_3, "internal_from_handle_type", ves_icall_System_Reflection_FieldInfo_internal_from_handle_type))
 
@@ -634,13 +634,13 @@ ICALL(MMETHI_2, "get_parameter_info", ves_icall_get_parameter_info)
 ICALL(MMETHI_3, "get_retval_marshal", ves_icall_System_MonoMethodInfo_get_retval_marshal)
 
 ICALL_TYPE(MPROPI, "System.Reflection.MonoPropertyInfo", MPROPI_1)
-ICALL(MPROPI_1, "GetTypeModifiers", ves_icall_MonoPropertyInfo_GetTypeModifiers)
+HANDLES(ICALL(MPROPI_1, "GetTypeModifiers", ves_icall_MonoPropertyInfo_GetTypeModifiers))
 ICALL(MPROPI_3, "get_default_value", property_info_get_default_value)
 ICALL(MPROPI_2, "get_property_info", ves_icall_MonoPropertyInfo_get_property_info)
 
 ICALL_TYPE(PARAMI, "System.Reflection.ParameterInfo", PARAMI_1)
 ICALL(PARAMI_1, "GetMetadataToken", ves_icall_reflection_get_token)
-ICALL(PARAMI_2, "GetTypeModifiers", ves_icall_ParameterInfo_GetTypeModifiers)
+HANDLES(ICALL(PARAMI_2, "GetTypeModifiers", ves_icall_ParameterInfo_GetTypeModifiers))
 
 ICALL_TYPE(PROPI, "System.Reflection.PropertyInfo", PROPI_1)
 HANDLES(ICALL(PROPI_1, "internal_from_handle_type", ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type))
