@@ -314,7 +314,7 @@ mono_w32handle_init (void)
 		private_handles_slots_count ++;
 	} while(mono_w32handle_fd_reserve > private_handles_count);
 
-	mono_os_mutex_init (&scan_mutex);
+	mono_os_mutex_init_recursive (&scan_mutex);
 
 	mono_os_cond_init (&global_signal_cond);
 	mono_os_mutex_init (&global_signal_mutex);
@@ -541,9 +541,6 @@ mono_w32handle_lookup (gpointer handle, MonoW32HandleType type,
 static gboolean
 mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data);
 
-static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guint minimum);
-
 void
 mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data)
 {
@@ -557,7 +554,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 		for (k = SLOT_OFFSET (0); k < HANDLE_PER_SLOT; k++) {
 			MonoW32HandleBase *handle_data = NULL;
 			gpointer handle;
-			gboolean destroy, finished;
+			gboolean finished;
 
 			handle_data = &private_handles [i][k];
 			if (handle_data->type == MONO_W32HANDLE_UNUSED)
@@ -574,10 +571,9 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 
 			finished = on_each (handle, handle_data->specific, user_data);
 
-			/* we do not want to have to destroy the handle here,
-			 * as it would means the ref/unref are unbalanced */
-			destroy = mono_w32handle_unref_core (handle, handle_data, 2);
-			g_assert (!destroy);
+			/* we might destroy the handle now, as the handle might
+			 * have been unrefed while we were looping over them */
+			mono_w32handle_unref (handle);
 
 			if (finished)
 				goto done;
@@ -659,14 +655,14 @@ mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 }
 
 static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guint minimum)
+mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data)
 {
 	guint old, new;
 
 	do {
 		old = handle_data->ref;
-		if (!(old >= minimum))
-			g_error ("%s: handle %p has ref %d, it should be >= %d", __func__, handle, old, minimum);
+		if (!(old >= 1))
+			g_error ("%s: handle %p has ref %d, it should be >= 1", __func__, handle, old);
 
 		new = old - 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->ref, new, old) != old);
@@ -705,7 +701,7 @@ static void mono_w32handle_unref_full (gpointer handle, gboolean ignore_private_
 		return;
 	}
 
-	destroy = mono_w32handle_unref_core (handle, handle_data, 1);
+	destroy = mono_w32handle_unref_core (handle, handle_data);
 
 	if(destroy==TRUE) {
 		/* Need to copy the handle info, reset the slot in the
