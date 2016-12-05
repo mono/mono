@@ -776,6 +776,9 @@ struct _MonoReflectionProperty {
 	MonoProperty *property;
 };
 
+/* Safely access System.Reflection.MonoProperty from native code */
+TYPED_HANDLE_DECL (MonoReflectionProperty);
+
 /*This is System.EventInfo*/
 struct _MonoReflectionEvent {
 	MonoObject object;

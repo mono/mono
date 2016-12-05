@@ -1752,10 +1752,10 @@ ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *hand
 }
 
 
-ICALL_EXPORT MonoReflectionProperty*
-ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty *handle, MonoType *type)
+ICALL_EXPORT MonoReflectionPropertyHandle
+ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty *handle, MonoType *type, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoClass *klass;
 
 	g_assert (handle);
@@ -1768,12 +1768,10 @@ ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty
 		gboolean found = klass == handle->parent || mono_class_has_parent (klass, handle->parent);
 		if (!found)
 			/* Managed code will throw an exception */
-			return NULL;
+			return MONO_HANDLE_CAST (MonoReflectionProperty, NULL_HANDLE);
 	}
 
-	MonoReflectionProperty *result = mono_property_get_object_checked (mono_domain_get (), klass, handle, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	return mono_property_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
 ICALL_EXPORT MonoArray*

@@ -748,26 +748,42 @@ mono_field_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoClassFi
 MonoReflectionProperty*
 mono_property_get_object (MonoDomain *domain, MonoClass *klass, MonoProperty *property)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionProperty *result;
-	result = mono_property_get_object_checked (domain, klass, property, &error);
+	MonoReflectionPropertyHandle result = mono_property_get_object_handle (domain, klass, property, &error);
 	mono_error_cleanup (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-static MonoReflectionProperty*
+static MonoReflectionPropertyHandle
 property_object_construct (MonoDomain *domain, MonoClass *klass, MonoProperty *property, gpointer user_data, MonoError *error)
 {
-	MonoReflectionProperty *res;
-
 	mono_error_init (error);
 
-	res = (MonoReflectionProperty *)mono_object_new_checked (domain, mono_class_get_mono_property_class (), error);
-	if (!res)
-		return NULL;
-	res->klass = klass;
-	res->property = property;
+	MonoReflectionPropertyHandle res = MONO_HANDLE_NEW (MonoReflectionProperty, mono_object_new_checked (domain, mono_class_get_mono_property_class (), error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SETVAL (res, klass, MonoClass *, klass);
+	MONO_HANDLE_SETVAL (res, property, MonoProperty *, property);
 	return res;
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionProperty, NULL_HANDLE);
+}
+
+/**
+ * mono_property_get_object_handle:
+ * @domain: an app domain
+ * @klass: a type
+ * @property: a property
+ * @error: set on error
+ *
+ * Return an System.Reflection.MonoProperty object representing the property @property
+ * in class @klass.  On error returns NULL and sets @error.
+ */
+MonoReflectionPropertyHandle
+mono_property_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error)
+{
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoReflectionPropertyHandle, property, klass, property_object_construct, NULL);
 }
 
 /**
@@ -783,8 +799,9 @@ property_object_construct (MonoDomain *domain, MonoClass *klass, MonoProperty *p
 MonoReflectionProperty*
 mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error)
 {
-	mono_error_init (error);
-	return CHECK_OR_CONSTRUCT (MonoReflectionProperty*, property, klass, property_object_construct, NULL);
+	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionPropertyHandle res = mono_property_get_object_handle (domain, klass, property, error);
+	HANDLE_FUNCTION_RETURN_OBJ (res);
 }
 
 /*
