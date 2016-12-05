@@ -767,6 +767,9 @@ struct _MonoReflectionField {
 	guint32 attrs;
 };
 
+/* Safely access System.Reflection.MonoField from native code */
+TYPED_HANDLE_DECL (MonoReflectionField);
+
 struct _MonoReflectionProperty {
 	MonoObject object;
 	MonoClass *klass;

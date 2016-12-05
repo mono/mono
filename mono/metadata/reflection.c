@@ -665,38 +665,58 @@ mono_method_clear_object (MonoDomain *domain, MonoMethod *method)
 MonoReflectionField*
 mono_field_get_object (MonoDomain *domain, MonoClass *klass, MonoClassField *field)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionField *result;
-	result = mono_field_get_object_checked (domain, klass, field, &error);
+	MonoReflectionFieldHandle result = mono_field_get_object_handle (domain, klass, field, &error);
 	mono_error_cleanup (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-static MonoReflectionField*
+static MonoReflectionFieldHandle
 field_object_construct (MonoDomain *domain, MonoClass *klass, MonoClassField *field, gpointer user_data, MonoError *error)
 {
-	MonoReflectionType *rt;
-	MonoReflectionField *res;
-
 	mono_error_init (error);
 
-	res = (MonoReflectionField *)mono_object_new_checked (domain, mono_class_get_mono_field_class (), error);
-	if (!res)
-		return NULL;
-	res->klass = klass;
-	res->field = field;
-	MONO_OBJECT_SETREF (res, name, mono_string_new (domain, mono_field_get_name (field)));
+	MonoReflectionFieldHandle res = MONO_HANDLE_NEW (MonoReflectionField, mono_object_new_checked (domain, mono_class_get_mono_field_class (), error));
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SETVAL (res, klass, MonoClass *, klass);
+	MONO_HANDLE_SETVAL (res, field, MonoClassField *, field);
+	MonoStringHandle name = mono_string_new_handle (domain, mono_field_get_name (field), error);
+	if (!is_ok (error))
+		goto fail;
+	MONO_HANDLE_SET (res, name, name);
 
 	if (field->type) {
-		rt = mono_type_get_object_checked (domain, field->type, error);
-		if (!mono_error_ok (error))
-			return NULL;
+		MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, field->type, error);
+		if (!is_ok (error))
+			goto fail;
 
-		MONO_OBJECT_SETREF (res, type, rt);
+		MONO_HANDLE_SET (res, type, rt);
 	}
-	res->attrs = mono_field_get_flags (field);
+	MONO_HANDLE_SETVAL (res, attrs, guint32, mono_field_get_flags (field));
 	return res;
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionField, NULL_HANDLE);
 }
+
+/*
+ * mono_field_get_object_handle:
+ * @domain: an app domain
+ * @klass: a type
+ * @field: a field
+ * @error: set on error
+ *
+ * Return an System.Reflection.MonoField object representing the field @field
+ * in class @klass. On error, returns NULL and sets @error.
+ */
+MonoReflectionFieldHandle
+mono_field_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoClassField *field, MonoError *error)
+{
+	mono_error_init (error);
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoReflectionFieldHandle, field, klass, field_object_construct, NULL);
+}
+
 
 /*
  * mono_field_get_object_checked:
@@ -711,8 +731,9 @@ field_object_construct (MonoDomain *domain, MonoClass *klass, MonoClassField *fi
 MonoReflectionField*
 mono_field_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoClassField *field, MonoError *error)
 {
-	mono_error_init (error);
-	return CHECK_OR_CONSTRUCT (MonoReflectionField*, field, klass, field_object_construct, NULL);
+	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionFieldHandle result = mono_field_get_object_handle (domain, klass, field, error);
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 /*

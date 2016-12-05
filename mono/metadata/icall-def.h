@@ -572,7 +572,7 @@ ICALL(EVENTI_1, "internal_from_handle_type", ves_icall_System_Reflection_EventIn
 ICALL_TYPE(FIELDI, "System.Reflection.FieldInfo", FILEDI_1)
 ICALL(FILEDI_1, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers)
 ICALL(FILEDI_2, "get_marshal_info", ves_icall_System_Reflection_FieldInfo_get_marshal_info)
-ICALL(FILEDI_3, "internal_from_handle_type", ves_icall_System_Reflection_FieldInfo_internal_from_handle_type)
+HANDLES(ICALL(FILEDI_3, "internal_from_handle_type", ves_icall_System_Reflection_FieldInfo_internal_from_handle_type))
 
 ICALL_TYPE(MEMBERI, "System.Reflection.MemberInfo", MEMBERI_1)
 ICALL(MEMBERI_1, "get_MetadataToken", ves_icall_reflection_get_token)
