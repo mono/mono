@@ -91,8 +91,8 @@ mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProp
 MonoReflectionPropertyHandle
 mono_property_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error);
 
-MonoReflectionEvent*
-mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error);
+MonoReflectionEventHandle
+mono_event_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error);
 
 MonoReflectionModuleHandle
 mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error);

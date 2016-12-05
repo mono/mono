@@ -785,11 +785,17 @@ struct _MonoReflectionEvent {
 	MonoObject *cached_add_event;
 };
 
+/* Safely access System.Reflection.EventInfo from native code */
+TYPED_HANDLE_DECL (MonoReflectionEvent);
+
 typedef struct {
 	MonoReflectionEvent object;
 	MonoClass *klass;
 	MonoEvent *event;
 } MonoReflectionMonoEvent;
+
+/* Safely access Systme.Reflection.MonoEvent from native code */
+TYPED_HANDLE_DECL (MonoReflectionMonoEvent);
 
 typedef struct {
 	MonoObject object;

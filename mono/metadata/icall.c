@@ -1727,13 +1727,14 @@ ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField 
 	return mono_field_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
-ICALL_EXPORT MonoReflectionEvent*
-ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *handle, MonoType *type)
+ICALL_EXPORT MonoReflectionEventHandle
+ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *handle, MonoType *type, MonoError *error)
 {
-	MonoError error;
 	MonoClass *klass;
 
 	g_assert (handle);
+
+	mono_error_init (error);
 
 	if (!type) {
 		klass = handle->parent;
@@ -1743,12 +1744,10 @@ ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *hand
 		gboolean found = klass == handle->parent || mono_class_has_parent (klass, handle->parent);
 		if (!found)
 			/* Managed code will throw an exception */
-			return NULL;
+			return MONO_HANDLE_CAST (MonoReflectionEvent, NULL_HANDLE);
 	}
 
-	MonoReflectionEvent *result = mono_event_get_object_checked (mono_domain_get (), klass, handle, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	return mono_event_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
 

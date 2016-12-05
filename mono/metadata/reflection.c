@@ -817,29 +817,28 @@ mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProp
 MonoReflectionEvent*
 mono_event_get_object (MonoDomain *domain, MonoClass *klass, MonoEvent *event)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoReflectionEvent *result;
-	result = mono_event_get_object_checked (domain, klass, event, &error);
+	MonoReflectionEventHandle result = mono_event_get_object_handle (domain, klass, event, &error);
 	mono_error_cleanup (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-static MonoReflectionEvent*
+static MonoReflectionEventHandle
 event_object_construct (MonoDomain *domain, MonoClass *klass, MonoEvent *event, gpointer user_data, MonoError *error)
 {
-	MonoReflectionMonoEvent *mono_event;
 
 	mono_error_init (error);
-	mono_event = (MonoReflectionMonoEvent *)mono_object_new_checked (domain, mono_class_get_mono_event_class (), error);
-	if (!mono_event)
-		return NULL;
-	mono_event->klass = klass;
-	mono_event->event = event;
-	return &mono_event->object;
+	MonoReflectionMonoEventHandle mono_event = MONO_HANDLE_NEW (MonoReflectionMonoEvent, mono_object_new_checked (domain, mono_class_get_mono_event_class (), error));
+	if (!is_ok (error))
+		return MONO_HANDLE_CAST (MonoReflectionEvent, NULL_HANDLE);
+	MONO_HANDLE_SETVAL (mono_event, klass, MonoClass* , klass);
+	MONO_HANDLE_SETVAL (mono_event, event, MonoEvent* , event);
+	return MONO_HANDLE_CAST (MonoReflectionEvent, mono_event);
 }
 
 /**
- * mono_event_get_object_checked:
+ * mono_event_get_object_handle:
  * @domain: an app domain
  * @klass: a type
  * @event: a event
@@ -848,12 +847,13 @@ event_object_construct (MonoDomain *domain, MonoClass *klass, MonoEvent *event, 
  * Return an System.Reflection.MonoEvent object representing the event @event
  * in class @klass. On failure sets @error and returns NULL
  */
-MonoReflectionEvent*
-mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error)
+MonoReflectionEventHandle
+mono_event_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error)
 {
 	mono_error_init (error);
-	return CHECK_OR_CONSTRUCT (MonoReflectionEvent*, event, klass, event_object_construct, NULL);
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoReflectionEventHandle, event, klass, event_object_construct, NULL);
 }
+
 
 /**
  * mono_get_reflection_missing_object:
