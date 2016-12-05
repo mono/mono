@@ -35,8 +35,10 @@ namespace Microsoft.Win32 {
 #if !MONO
         internal static extern int GetDynamicTimeZoneInformation(out Win32Native.DynamicTimeZoneInformation lpDynamicTimeZoneInformation);
 #else
-        // There's a bug in Mono marshaling code which prevents the original signature to work correctly (strings come out incorrectly)
-        internal static unsafe extern int GetDynamicTimeZoneInformation(Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* lpDynamicTimeZoneInformation);
+		// We use the version that takes Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION, as that's used in CoreRT 
+		// We use a mix of CoreCLR and CoreRT implementation of TimeZoneInfo, and it's much more convenient to use CoreRT version for code sharing
+		// Also, the consumption of this API using CoreRT version does way less allocations
+        internal static extern int GetDynamicTimeZoneInformation(out Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION lpDynamicTimeZoneInformation);
 #endif
 
         // 

@@ -234,7 +234,7 @@ namespace System {
 				TimeZoneInfo match;
 
 				Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION timeZoneInformation;
-				long result = UnsafeNativeMethods.GetDynamicTimeZoneInformation (&timeZoneInformation);
+				long result = UnsafeNativeMethods.GetDynamicTimeZoneInformation (out timeZoneInformation);
 				if (result == Win32Native.TIME_ZONE_ID_INVALID)
 					match = CreateCustomTimeZone (c_localId, TimeSpan.Zero, c_localId, c_localId);
 				else
@@ -2089,7 +2089,7 @@ namespace System {
 				Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION dynamicTimeZoneInformation;
 
 				// call kernel32!GetDynamicTimeZoneInformation...
-				if (UnsafeNativeMethods.GetDynamicTimeZoneInformation (&dynamicTimeZoneInformation) == Win32Native.TIME_ZONE_ID_INVALID) {
+				if (UnsafeNativeMethods.GetDynamicTimeZoneInformation (out dynamicTimeZoneInformation) == Win32Native.TIME_ZONE_ID_INVALID) {
 					// return a dummy entry
 					return CreateCustomTimeZone (c_localId, TimeSpan.Zero, c_localId, c_localId);
 				}
@@ -3511,10 +3511,8 @@ namespace System {
 		static unsafe uint GetDynamicTimeZoneInformationEffectiveYears (ref Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION timeZoneInformation, out uint firstYear, out uint lastYear)
 		{
 			try {
-				fixed (Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* timeZoneInformationFixed = &timeZoneInformation) {
-					// This API is available since Windows 8
-					return Interop.mincore.GetDynamicTimeZoneInformationEffectiveYears (timeZoneInformationFixed, out firstYear, out lastYear);
-				}
+				// This API is available since Windows 8
+				return Interop.mincore.GetDynamicTimeZoneInformationEffectiveYears (ref timeZoneInformation, out firstYear, out lastYear);
 			} catch (DllNotFoundException) {
 			} catch (EntryPointNotFoundException) {
 			}
@@ -3550,11 +3548,9 @@ namespace System {
 			// First rule
 			//
 
-			fixed (Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* timeZoneInformationFixed = &timeZoneInformation) {
-				if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)firstYear, timeZoneInformationFixed, &tzi)) {
-					zoneRules = null;
-					return TimeZoneInfoResult.InvalidTimeZoneException;
-				}
+			if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)firstYear, ref timeZoneInformation, out tzi)) {
+				zoneRules = null;
+				return TimeZoneInfoResult.InvalidTimeZoneException;
 			}
 
 			rule = CreateAdjustmentRuleFromTimeZoneInformation (ref tzi.StandardDate,
@@ -3569,11 +3565,9 @@ namespace System {
 			}
 
 			for (uint i = firstYear + 1; i < lastYear; i++) {
-				fixed (Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* timeZoneInformationFixed = &timeZoneInformation) {
-					if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)i, timeZoneInformationFixed, &tzi)) {
-						zoneRules = null;
-						return TimeZoneInfoResult.InvalidTimeZoneException;
-					}
+				if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)i, ref timeZoneInformation, out tzi)) {
+					zoneRules = null;
+					return TimeZoneInfoResult.InvalidTimeZoneException;
 				}
 
 				rule = CreateAdjustmentRuleFromTimeZoneInformation (ref tzi.StandardDate,
@@ -3593,11 +3587,9 @@ namespace System {
 			// Last rule
 			//
 
-			fixed (Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* timeZoneInformationFixed = &timeZoneInformation) {
-				if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)lastYear, timeZoneInformationFixed, &tzi)) {
-					zoneRules = null;
-					return TimeZoneInfoResult.InvalidTimeZoneException;
-				}
+			if (!Interop.mincore.GetTimeZoneInformationForYear ((ushort)lastYear, ref timeZoneInformation, out tzi)) {
+				zoneRules = null;
+				return TimeZoneInfoResult.InvalidTimeZoneException;
 			}
 
 			rule = CreateAdjustmentRuleFromTimeZoneInformation (ref tzi.StandardDate,
