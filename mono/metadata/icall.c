@@ -1836,15 +1836,18 @@ ves_icall_get_method_info (MonoMethod *method, MonoMethodInfo *info)
 	info->callconv |= (sig->hasthis << 5) | (sig->explicit_this << 6); 
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_get_parameter_info (MonoMethod *method, MonoReflectionMethod *member)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info (MonoMethod *method, MonoReflectionMethodHandle member, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get (); 
 
-	MonoArray *result = mono_param_get_objects_internal (domain, method, member->reftype ? mono_class_from_mono_type (member->reftype->type) : NULL, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	MonoReflectionTypeHandle reftype = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+	MONO_HANDLE_GET (reftype, member, reftype);
+	MonoClass *klass = NULL;
+	if (!MONO_HANDLE_IS_NULL (reftype))
+		klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (reftype, type));
+	return mono_param_get_objects_internal (domain, method, klass, error);
 }
 
 ICALL_EXPORT MonoReflectionMarshalAsAttribute*

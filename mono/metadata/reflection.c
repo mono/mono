@@ -864,11 +864,10 @@ mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *
  * Used as the value for ParameterInfo.DefaultValue when Optional
  * is present
  */
-static MonoObject *
+static MonoObjectHandle
 mono_get_reflection_missing_object (MonoDomain *domain)
 {
 	MonoError error;
-	MonoObject *obj;
 	static MonoClassField *missing_value_field = NULL;
 	
 	if (!missing_value_field) {
@@ -878,15 +877,15 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 		missing_value_field = mono_class_get_field_from_name (missing_klass, "Value");
 		g_assert (missing_value_field);
 	}
-	obj = mono_field_get_value_object_checked (domain, missing_value_field, NULL, &error);
+	/* FIXME change mono_field_get_value_object_checked to return a handle */
+	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, missing_value_field, NULL, &error));
 	mono_error_assert_ok (&error);
 	return obj;
 }
 
-static MonoObject*
+static MonoObjectHandle
 get_dbnull_object (MonoDomain *domain, MonoError *error)
 {
-	MonoObject *obj;
 	static MonoClassField *dbnull_value_field = NULL;
 
 	mono_error_init (error);
@@ -897,61 +896,124 @@ get_dbnull_object (MonoDomain *domain, MonoError *error)
 		dbnull_value_field = mono_class_get_field_from_name (dbnull_klass, "Value");
 		g_assert (dbnull_value_field);
 	}
-	obj = mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, error);
+	/* FIXME change mono_field_get_value_object_checked to return a handle */
+	MonoObjectHandle obj = MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, error));
 	return obj;
 }
 
-static MonoObject*
-get_dbnull (MonoDomain *domain, MonoObject **dbnull, MonoError *error)
+static MonoObjectHandle
+get_dbnull (MonoDomain *domain, MonoObjectHandle dbnull, MonoError *error)
 {
 	mono_error_init (error);
-	if (!*dbnull)
-		*dbnull = get_dbnull_object (domain, error);
-	return *dbnull;
+	if (MONO_HANDLE_IS_NULL (dbnull))
+		MONO_HANDLE_ASSIGN (dbnull, get_dbnull_object (domain, error));
+	return dbnull;
 }
 
-static MonoObject*
-get_reflection_missing (MonoDomain *domain, MonoObject **reflection_missing)
+static MonoObjectHandle
+get_reflection_missing (MonoDomain *domain, MonoObjectHandleOut reflection_missing)
 {
-	if (!*reflection_missing)
-		*reflection_missing = mono_get_reflection_missing_object (domain);
-	return *reflection_missing;
+	if (MONO_HANDLE_IS_NULL (reflection_missing))
+		MONO_HANDLE_ASSIGN (reflection_missing, mono_get_reflection_missing_object (domain));
+	return reflection_missing;
 }
 
-static MonoArray*
+static gboolean
+add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjectHandle member, int idx, const char *name, MonoType *sig_param, guint32 blob_type_enum, const char *blob, MonoMarshalSpec *mspec, MonoObjectHandle missing, MonoObjectHandle dbnull, MonoArrayHandle dest,  MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoReflectionParameterHandle param = MONO_HANDLE_NEW (MonoReflectionParameter, mono_object_new_checked (domain, mono_class_get_mono_parameter_info_class (), error));
+	if (!is_ok (error))
+		goto leave;
+
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, sig_param, error);
+	if (!is_ok (error))
+		goto leave;
+
+	MONO_HANDLE_SET (param, ClassImpl, rt);
+
+	MONO_HANDLE_SET (param, MemberImpl, member);
+
+	MonoStringHandle name_str = mono_string_new_handle (domain, name, error);
+	if (!is_ok (error))
+		goto leave;
+
+	MONO_HANDLE_SET (param, NameImpl, name_str);
+
+	MONO_HANDLE_SETVAL (param, PositionImpl, gint32, idx);
+
+	MONO_HANDLE_SETVAL (param, AttrsImpl, guint32, sig_param->attrs);
+
+	if (!(sig_param->attrs & PARAM_ATTRIBUTE_HAS_DEFAULT)) {
+		if (sig_param->attrs & PARAM_ATTRIBUTE_OPTIONAL)
+			MONO_HANDLE_SET (param, DefaultValueImpl, get_reflection_missing (domain, missing));
+		else
+			MONO_HANDLE_SET (param, DefaultValueImpl, get_dbnull (domain, dbnull, error));
+		if (!is_ok (error))
+			goto leave;
+	} else {
+
+		MonoType blob_type;
+
+		blob_type.type = (MonoTypeEnum)blob_type_enum;
+		blob_type.data.klass = NULL;
+		if (blob_type_enum == MONO_TYPE_CLASS)
+			blob_type.data.klass = mono_defaults.object_class;
+		else if ((sig_param->type == MONO_TYPE_VALUETYPE) && sig_param->data.klass->enumtype) {
+			/* For enums, types [i] contains the base type */
+
+			blob_type.type = MONO_TYPE_VALUETYPE;
+			blob_type.data.klass = mono_class_from_mono_type (sig_param);
+		} else
+			blob_type.data.klass = mono_class_from_mono_type (&blob_type);
+
+		MonoObjectHandle default_val_obj = MONO_HANDLE_NEW (MonoObject, mono_get_object_from_blob (domain, &blob_type, blob, error)); /* FIXME make mono_get_object_from_blob return a handle */
+		if (!is_ok (error))
+			goto leave;
+		MONO_HANDLE_SET (param, DefaultValueImpl, default_val_obj);
+
+		/* Type in the Constant table is MONO_TYPE_CLASS for nulls */
+		if (blob_type_enum != MONO_TYPE_CLASS && MONO_HANDLE_IS_NULL(default_val_obj)) {
+			if (sig_param->attrs & PARAM_ATTRIBUTE_OPTIONAL)
+				MONO_HANDLE_SET (param, DefaultValueImpl, get_reflection_missing (domain, missing));
+			else
+				MONO_HANDLE_SET (param, DefaultValueImpl, get_dbnull (domain, dbnull, error));
+			if (!is_ok (error))
+				goto leave;
+		}
+	}
+
+	if (mspec) {
+		MonoObjectHandle mobj;
+		mobj = MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspec, error)); /* FIXME change mono_reflection_marshal_as_attribute_from_marshal_spec to return a handle */
+		if (!is_ok (error))
+			goto leave;
+		MONO_HANDLE_SET (param, MarshalAsImpl, mobj);
+	}
+
+	MONO_HANDLE_ARRAY_SETREF (dest, idx, param);
+
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+static MonoArrayHandle
 param_objects_construct (MonoDomain *domain, MonoClass *refclass, MonoMethodSignature **addr_of_sig, gpointer user_data, MonoError *error)
 {
-	static MonoClass *System_Reflection_ParameterInfo;
-	static MonoClass *System_Reflection_ParameterInfo_array;
-
 	MonoMethod *method = (MonoMethod*)user_data;
 	MonoMethodSignature *sig = *addr_of_sig; /* see note in mono_param_get_objects_internal */
 
-	MonoArray *res = NULL;
-	MonoReflectionMethod *member = NULL;
-	MonoReflectionParameter *param = NULL;
+	MonoArrayHandle res = MONO_HANDLE_NEW (MonoArray, NULL);
 	char **names = NULL, **blobs = NULL;
 	guint32 *types = NULL;
-	MonoType *type = NULL;
-	MonoObject *dbnull = NULL;
-	MonoObject *missing = NULL;
 	MonoMarshalSpec **mspecs = NULL;
-	MonoVTable *pinfo_vtable;
-	MonoReflectionType *rt;
 	int i;
 
 	mono_error_init (error);
 	
-	if (!System_Reflection_ParameterInfo_array) {
-		MonoClass *klass;
-		klass = mono_class_get_mono_parameter_info_class ();
-		System_Reflection_ParameterInfo = klass; 
-		klass = mono_array_class_get (klass, 1);
-		System_Reflection_ParameterInfo_array = klass;
-	}
-
-	member = mono_method_get_object_checked (domain, method, refclass, error);
-	if (!member)
+	MonoReflectionMethodHandle member = mono_method_get_object_handle (domain, method, refclass, error);
+	if (!is_ok (error))
 		goto leave;
 	names = g_new (char *, sig->param_count);
 	mono_method_get_param_names (method, (const char **) names);
@@ -959,93 +1021,37 @@ param_objects_construct (MonoDomain *domain, MonoClass *refclass, MonoMethodSign
 	mspecs = g_new (MonoMarshalSpec*, sig->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
 
-	res = mono_array_new_specific_checked (mono_class_vtable (domain, System_Reflection_ParameterInfo_array), sig->param_count, error);
+	res = mono_array_new_handle (domain, mono_class_get_mono_parameter_info_class (), sig->param_count, error);
 	if (!res)
 		goto leave;
 
-	pinfo_vtable = mono_class_vtable (domain, System_Reflection_ParameterInfo);
+	gboolean any_default_value = FALSE;
 	for (i = 0; i < sig->param_count; ++i) {
-		param = (MonoReflectionParameter *) mono_object_new_specific_checked (pinfo_vtable, error);
-		if (!param)
-			goto leave;
-
-		rt = mono_type_get_object_checked (domain, sig->params [i], error);
-		if (!rt)
-			goto leave;
-
-		MONO_OBJECT_SETREF (param, ClassImpl, rt);
-
-		MONO_OBJECT_SETREF (param, MemberImpl, (MonoObject*)member);
-
-		MONO_OBJECT_SETREF (param, NameImpl, mono_string_new (domain, names [i]));
-
-		param->PositionImpl = i;
-		param->AttrsImpl = sig->params [i]->attrs;
-
-		if (!(param->AttrsImpl & PARAM_ATTRIBUTE_HAS_DEFAULT)) {
-			if (param->AttrsImpl & PARAM_ATTRIBUTE_OPTIONAL)
-				MONO_OBJECT_SETREF (param, DefaultValueImpl, get_reflection_missing (domain, &missing));
-			else
-				MONO_OBJECT_SETREF (param, DefaultValueImpl, get_dbnull (domain, &dbnull, error));
-			if (!is_ok (error))
-				goto leave;
-		} else {
-
-			if (!blobs) {
-				blobs = g_new0 (char *, sig->param_count);
-				types = g_new0 (guint32, sig->param_count);
-				get_default_param_value_blobs (method, blobs, types); 
-			}
-
-			/* Build MonoType for the type from the Constant Table */
-			if (!type)
-				type = g_new0 (MonoType, 1);
-			type->type = (MonoTypeEnum)types [i];
-			type->data.klass = NULL;
-			if (types [i] == MONO_TYPE_CLASS)
-				type->data.klass = mono_defaults.object_class;
-			else if ((sig->params [i]->type == MONO_TYPE_VALUETYPE) && sig->params [i]->data.klass->enumtype) {
-				/* For enums, types [i] contains the base type */
-
-					type->type = MONO_TYPE_VALUETYPE;
-					type->data.klass = mono_class_from_mono_type (sig->params [i]);
-			} else
-				type->data.klass = mono_class_from_mono_type (type);
-
-			MonoObject *default_val_obj = mono_get_object_from_blob (domain, type, blobs [i], error);
-			if (!is_ok (error))
-				goto leave;
-			MONO_OBJECT_SETREF (param, DefaultValueImpl, default_val_obj);
-
-			/* Type in the Constant table is MONO_TYPE_CLASS for nulls */
-			if (types [i] != MONO_TYPE_CLASS && !param->DefaultValueImpl) {
-				if (param->AttrsImpl & PARAM_ATTRIBUTE_OPTIONAL)
-					MONO_OBJECT_SETREF (param, DefaultValueImpl, get_reflection_missing (domain, &missing));
-				else
-					MONO_OBJECT_SETREF (param, DefaultValueImpl, get_dbnull (domain, &dbnull, error));
-				if (!is_ok (error))
-					goto leave;
-			}
+		if ((sig->params [i]->attrs & PARAM_ATTRIBUTE_HAS_DEFAULT) != 0) {
+			any_default_value = TRUE;
+			break;
 		}
+	}
+	if (any_default_value) {
+		blobs = g_new0 (char *, sig->param_count);
+		types = g_new0 (guint32, sig->param_count);
+		get_default_param_value_blobs (method, blobs, types);
+	}
 
-		if (mspecs [i + 1]) {
-			MonoReflectionMarshalAsAttribute* mobj;
-			mobj = mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspecs [i + 1], error);
-			if (!mobj)
-				goto leave;
-			MONO_OBJECT_SETREF (param, MarshalAsImpl, (MonoObject*)mobj);
-		}
-		
-		mono_array_setref (res, i, param);
+	/* Handles missing and dbnull are assigned in add_parameter_object_to_array when needed */
+	MonoObjectHandle missing = MONO_HANDLE_NEW (MonoObject, NULL);
+	MonoObjectHandle dbnull = MONO_HANDLE_NEW (MonoObject, NULL);
+	for (i = 0; i < sig->param_count; ++i) {
+		if (!add_parameter_object_to_array (domain, method, MONO_HANDLE_CAST(MonoObject, member), i, names[i], sig->params[i], types ? types[i] : 0, blobs ? blobs[i] : NULL, mspecs [i + 1], missing, dbnull, res, error))
+			goto leave;
 	}
 
 leave:
 	g_free (names);
 	g_free (blobs);
 	g_free (types);
-	g_free (type);
 
-	if (sig) {
+	if (sig && mspecs) {
 		for (i = sig->param_count; i >= 0; i--) {
 			if (mspecs [i])
 				mono_metadata_free_marshal_spec (mspecs [i]);
@@ -1067,19 +1073,20 @@ leave:
  * Return an System.Reflection.ParameterInfo array object representing the parameters
  * in the method @method.
  */
-MonoArray*
+MonoArrayHandle
 mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error)
 {
 	mono_error_init (error);
 
+	/* side-effect: sets method->signature non-NULL on success */
 	MonoMethodSignature *sig = mono_method_signature_checked (method, error);
-	if (!mono_error_ok (error))
-		goto leave;
+	if (!is_ok (error))
+		goto fail;
 
 	if (!sig->param_count) {
-		MonoArray *res = mono_array_new_checked (domain, mono_class_get_mono_parameter_info_class (), 0, error);
-		if (!res)
-			goto leave;
+		MonoArrayHandle res = mono_array_new_handle (domain, mono_class_get_mono_parameter_info_class (), 0, error);
+		if (!is_ok (error))
+			goto fail;
 
 		return res;
 	}
@@ -1087,18 +1094,19 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 	/* Note: the cache is based on the address of the signature into the method
 	 * since we already cache MethodInfos with the method as keys.
 	 */
-	return CHECK_OR_CONSTRUCT (MonoArray*, &method->signature, refclass, param_objects_construct, method);
-leave:
-	return NULL;
+	return CHECK_OR_CONSTRUCT_HANDLE (MonoArrayHandle, &method->signature, refclass, param_objects_construct, method);
+fail:
+	return MONO_HANDLE_NEW (MonoArray, NULL_HANDLE);
 }
 
 MonoArray*
 mono_param_get_objects (MonoDomain *domain, MonoMethod *method)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoArray *result = mono_param_get_objects_internal (domain, method, NULL, &error);
+	MonoArrayHandle result = mono_param_get_objects_internal (domain, method, NULL, &error);
 	mono_error_assert_ok (&error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 /*
@@ -1267,12 +1275,11 @@ mono_method_body_get_object_checked (MonoDomain *domain, MonoMethod *method, Mon
 MonoObject *
 mono_get_dbnull_object (MonoDomain *domain)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-	MonoObject *obj;
-
-	obj = get_dbnull_object (domain, &error);
+	MonoObjectHandle obj = get_dbnull_object (domain, &error);
 	mono_error_assert_ok (&error);
-	return obj;
+	HANDLE_FUNCTION_RETURN_OBJ (obj);
 }
 
 static void
