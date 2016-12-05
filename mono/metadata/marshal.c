@@ -216,10 +216,11 @@ static void
 mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error);
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (string_builder, System.Text, StringBuilder)
-static GENERATE_GET_CLASS_WITH_CACHE (date_time, System, DateTime)
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_function_pointer_attribute, System.Runtime.InteropServices, UnmanagedFunctionPointerAttribute)
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, System.Runtime.InteropServices, ICustomMarshaler)
+static GENERATE_GET_CLASS_WITH_CACHE (string_builder, System.Text, StringBuilder);
+static GENERATE_GET_CLASS_WITH_CACHE (date_time, System, DateTime);
+static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, System.Runtime.CompilerServices, FixedBufferAttribute);
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_function_pointer_attribute, System.Runtime.InteropServices, UnmanagedFunctionPointerAttribute);
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, System.Runtime.InteropServices, ICustomMarshaler);
 
 /* MonoMethod pointers to SafeHandle::DangerousAddRef and ::DangerousRelease */
 static MonoMethod *sh_dangerous_add_ref;
@@ -1158,7 +1159,7 @@ mono_string_to_byvalwstr (gpointer dst, MonoString *src, int size)
 	}
 
 	len = MIN (size, (mono_string_length (src)));
-	memcpy (dst, mono_string_chars (src), size * 2);
+	memcpy (dst, mono_string_chars (src), len * 2);
 	if (size <= mono_string_length (src))
 		len--;
 	*((gunichar2 *) dst + len) = 0;
@@ -1933,12 +1934,152 @@ offset_of_first_nonstatic_field (MonoClass *klass)
 {
 	int i;
 	int fcount = mono_class_get_field_count (klass);
+	mono_class_setup_fields (klass);
 	for (i = 0; i < fcount; i++) {
 		if (!(klass->fields[i].type->attrs & FIELD_ATTRIBUTE_STATIC) && !mono_field_is_deleted (&klass->fields[i]))
 			return klass->fields[i].offset - sizeof (MonoObject);
 	}
 
 	return 0;
+}
+
+static gboolean
+get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len)
+{
+	MonoError error;
+	MonoCustomAttrInfo *cinfo;
+	MonoCustomAttrEntry *attr;
+	int aindex;
+
+	cinfo = mono_custom_attrs_from_field_checked (field->parent, field, &error);
+	if (!is_ok (&error))
+		return FALSE;
+	attr = NULL;
+	if (cinfo) {
+		for (aindex = 0; aindex < cinfo->num_attrs; ++aindex) {
+			MonoClass *ctor_class = cinfo->attrs [aindex].ctor->klass;
+			if (mono_class_has_parent (ctor_class, mono_class_get_fixed_buffer_attribute_class ())) {
+				attr = &cinfo->attrs [aindex];
+				break;
+			}
+		}
+	}
+	if (attr) {
+		MonoArray *typed_args, *named_args;
+		CattrNamedArg *arginfo;
+		MonoObject *o;
+
+		mono_reflection_create_custom_attr_data_args (mono_defaults.corlib, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
+		if (!is_ok (&error))
+			return FALSE;
+		g_assert (mono_array_length (typed_args) == 2);
+
+		/* typed args */
+		o = mono_array_get (typed_args, MonoObject*, 0);
+		*out_etype = monotype_cast (o)->type;
+		o = mono_array_get (typed_args, MonoObject*, 1);
+		g_assert (o->vtable->klass == mono_defaults.int32_class);
+		*out_len = *(gint32*)mono_object_unbox (o);
+		g_free (arginfo);
+	}
+	if (cinfo && !cinfo->cached)
+		mono_custom_attrs_free (cinfo);
+	return attr != NULL;
+}
+
+static void
+emit_fixed_buf_conv (MonoMethodBuilder *mb, MonoType *type, MonoType *etype, int len, gboolean to_object, int *out_usize)
+{
+	MonoClass *klass = mono_class_from_mono_type (type);
+	MonoClass *eklass = mono_class_from_mono_type (etype);
+	int esize;
+
+	esize = mono_class_native_size (eklass, NULL);
+
+	MonoMarshalNative string_encoding = klass->unicode ? MONO_NATIVE_LPWSTR : MONO_NATIVE_LPSTR;
+	int usize = mono_class_value_size (eklass, NULL);
+	int msize = mono_class_value_size (eklass, NULL);
+
+	//printf ("FIXED: %s %d %d\n", mono_type_full_name (type), eklass->blittable, string_encoding);
+
+	if (eklass->blittable) {
+		/* copy the elements */
+		mono_mb_emit_ldloc (mb, 1);
+		mono_mb_emit_ldloc (mb, 0);
+		mono_mb_emit_icon (mb, len * esize);
+		mono_mb_emit_byte (mb, CEE_PREFIX1);
+		mono_mb_emit_byte (mb, CEE_CPBLK);
+	} else {
+		int index_var;
+		guint32 label2, label3;
+
+		/* Emit marshalling loop */
+		index_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+		mono_mb_emit_byte (mb, CEE_LDC_I4_0);
+		mono_mb_emit_stloc (mb, index_var);
+
+		/* Loop header */
+		label2 = mono_mb_get_label (mb);
+		mono_mb_emit_ldloc (mb, index_var);
+		mono_mb_emit_icon (mb, len);
+		label3 = mono_mb_emit_branch (mb, CEE_BGE);
+
+		/* src/dst is already set */
+
+		/* Do the conversion */
+		MonoTypeEnum t = etype->type;
+		switch (t) {
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+		case MONO_TYPE_PTR:
+		case MONO_TYPE_R4:
+		case MONO_TYPE_R8:
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_ldloc (mb, 0);
+			if (t == MONO_TYPE_CHAR && string_encoding != MONO_NATIVE_LPWSTR) {
+				if (to_object) {
+					mono_mb_emit_byte (mb, CEE_LDIND_U1);
+					mono_mb_emit_byte (mb, CEE_STIND_I2);
+				} else {
+					mono_mb_emit_byte (mb, CEE_LDIND_U2);
+					mono_mb_emit_byte (mb, CEE_STIND_I1);
+				}
+				usize = 1;
+			} else {
+				mono_mb_emit_byte (mb, mono_type_to_ldind (etype));
+				mono_mb_emit_byte (mb, mono_type_to_stind (etype));
+			}
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+
+		if (to_object) {
+			mono_mb_emit_add_to_local (mb, 0, usize);
+			mono_mb_emit_add_to_local (mb, 1, msize);
+		} else {
+			mono_mb_emit_add_to_local (mb, 0, msize);
+			mono_mb_emit_add_to_local (mb, 1, usize);
+		}
+
+		/* Loop footer */
+		mono_mb_emit_add_to_local (mb, index_var, 1);
+
+		mono_mb_emit_branch_label (mb, CEE_BR, label2);
+
+		mono_mb_patch_branch (mb, label3);
+	}
+
+	*out_usize = usize * len;
 }
 
 static void
@@ -2067,6 +2208,8 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 				break;
 			case MONO_TYPE_VALUETYPE: {
 				int src_var, dst_var;
+				MonoType *etype;
+				int len;
 
 				if (ftype->data.klass->enumtype) {
 					ftype = mono_class_enum_basetype (ftype->data.klass);
@@ -2083,7 +2226,11 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 				mono_mb_emit_ldloc (mb, 1);
 				mono_mb_emit_stloc (mb, dst_var);
 
-				emit_struct_conv (mb, ftype->data.klass, to_object);
+				if (get_fixed_buffer_attr (info->fields [i].field, &etype, &len)) {
+					emit_fixed_buf_conv (mb, ftype, etype, len, to_object, &usize);
+				} else {
+					emit_struct_conv (mb, ftype->data.klass, to_object);
+				}
 
 				/* restore the old src pointer */
 				mono_mb_emit_ldloc (mb, src_var);
@@ -8965,199 +9112,6 @@ mono_marshal_get_isinst_with_cache (void)
 	mono_mb_free (mb);
 
 	return cached;
-}
-
-/*
- * mono_marshal_get_isinst:
- * @klass: the type of the field
- *
- * This method generates a function which can be used to check if an object is
- * an instance of the given type, icluding the case where the object is a proxy.
- * The generated function has the following signature:
- * MonoObject* __isinst_wrapper_ (MonoObject *obj)
- */
-MonoMethod *
-mono_marshal_get_isinst (MonoClass *klass)
-{
-	static MonoMethodSignature *isint_sig = NULL;
-	GHashTable *cache;
-	MonoMethod *res;
-	WrapperInfo *info;
-	int pos_was_ok, pos_end;
-#ifndef DISABLE_REMOTING
-	int pos_end2, pos_failed;
-#endif
-	char *name;
-	MonoMethodBuilder *mb;
-
-	cache = get_cache (&klass->image->isinst_cache, mono_aligned_addr_hash, NULL);
-	if ((res = mono_marshal_find_in_cache (cache, klass)))
-		return res;
-
-	if (!isint_sig) {
-		isint_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
-		isint_sig->params [0] = &mono_defaults.object_class->byval_arg;
-		isint_sig->ret = &mono_defaults.object_class->byval_arg;
-		isint_sig->pinvoke = 0;
-	}
-	
-	name = g_strdup_printf ("__isinst_wrapper_%s", klass->name); 
-	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ISINST);
-	g_free (name);
-	
-	mb->method->save_lmf = 1;
-
-#ifndef DISABLE_JIT
-	/* check if the object is a proxy that needs special cast */
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_CISINST, klass);
-
-	/* The result of MONO_CISINST can be:
-	   	0) the type check succeeded
-		1) the type check did not succeed
-		2) a CanCastTo call is needed */
-#ifndef DISABLE_REMOTING
-	mono_mb_emit_byte (mb, CEE_DUP);
-	pos_was_ok = mono_mb_emit_branch (mb, CEE_BRFALSE);
-
-	mono_mb_emit_byte (mb, CEE_LDC_I4_2);
-	pos_failed = mono_mb_emit_branch (mb, CEE_BNE_UN);
-	
-	/* get the real proxy from the transparent proxy*/
-
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_managed_call (mb, mono_marshal_get_proxy_cancast (klass), NULL);
-	pos_end = mono_mb_emit_branch (mb, CEE_BR);
-	
-	/* fail */
-	
-	mono_mb_patch_branch (mb, pos_failed);
-	mono_mb_emit_byte (mb, CEE_LDNULL);
-	pos_end2 = mono_mb_emit_branch (mb, CEE_BR);
-	
-	/* success */
-	
-	mono_mb_patch_branch (mb, pos_was_ok);
-	mono_mb_emit_byte (mb, CEE_POP);
-	mono_mb_emit_ldarg (mb, 0);
-	
-	/* the end */
-	
-	mono_mb_patch_branch (mb, pos_end);
-	mono_mb_patch_branch (mb, pos_end2);
-	mono_mb_emit_byte (mb, CEE_RET);
-#else
-	pos_was_ok = mono_mb_emit_branch (mb, CEE_BRFALSE);
-
-	/* fail */
-
-	mono_mb_emit_byte (mb, CEE_LDNULL);
-	pos_end = mono_mb_emit_branch (mb, CEE_BR);
-
-	/* success */
-
-	mono_mb_patch_branch (mb, pos_was_ok);
-	mono_mb_emit_ldarg (mb, 0);
-
-	/* the end */
-
-	mono_mb_patch_branch (mb, pos_end);
-	mono_mb_emit_byte (mb, CEE_RET);
-#endif /* DISABLE_REMOTING */
-#endif /* DISABLE_JIT */
-
-	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
-	info->d.proxy.klass = klass;
-	res = mono_mb_create_and_cache_full (cache, klass, mb, isint_sig, isint_sig->param_count + 16, info, NULL);
-	mono_mb_free (mb);
-
-	return res;
-}
-
-/*
- * mono_marshal_get_castclass:
- * @klass: the type of the field
- *
- * This method generates a function which can be used to cast an object to
- * an instance of the given type, icluding the case where the object is a proxy.
- * The generated function has the following signature:
- * MonoObject* __castclass_wrapper_ (MonoObject *obj)
- */
-MonoMethod *
-mono_marshal_get_castclass (MonoClass *klass)
-{
-	static MonoMethodSignature *castclass_sig = NULL;
-	GHashTable *cache;
-	MonoMethod *res;
-#ifndef DISABLE_REMOTING
-	int pos_was_ok, pos_was_ok2;
-#endif
-	char *name;
-	MonoMethodBuilder *mb;
-	WrapperInfo *info;
-
-	cache = get_cache (&klass->image->castclass_cache, mono_aligned_addr_hash, NULL);
-	if ((res = mono_marshal_find_in_cache (cache, klass)))
-		return res;
-
-	if (!castclass_sig) {
-		castclass_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1);
-		castclass_sig->params [0] = &mono_defaults.object_class->byval_arg;
-		castclass_sig->ret = &mono_defaults.object_class->byval_arg;
-		castclass_sig->pinvoke = 0;
-	}
-	
-	name = g_strdup_printf ("__castclass_wrapper_%s", klass->name); 
-	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_CASTCLASS);
-	g_free (name);
-	
-	mb->method->save_lmf = 1;
-
-#ifndef DISABLE_JIT
-	/* check if the object is a proxy that needs special cast */
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_CCASTCLASS, klass);
-
-	/* The result of MONO_CCASTCLASS can be:
-	   	0) the cast is valid
-		1) cast of unknown proxy type
-		or an exception if the cast is is invalid
-	*/
-#ifndef DISABLE_REMOTING
-	pos_was_ok = mono_mb_emit_branch (mb, CEE_BRFALSE);
-
-	/* get the real proxy from the transparent proxy*/
-
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_managed_call (mb, mono_marshal_get_proxy_cancast (klass), NULL);
-	pos_was_ok2 = mono_mb_emit_branch (mb, CEE_BRTRUE);
-	
-	/* fail */
-	mono_mb_emit_exception (mb, "InvalidCastException", NULL);
-	
-	/* success */
-	mono_mb_patch_branch (mb, pos_was_ok);
-	mono_mb_patch_branch (mb, pos_was_ok2);
-#else
-	/* MONO_CCASTCLASS leaves an int in the stack with the result, pop it. */
-	mono_mb_emit_byte (mb, CEE_POP);
-#endif /* DISABLE_REMOTING */
-
-	mono_mb_emit_ldarg (mb, 0);
-	
-	/* the end */
-	mono_mb_emit_byte (mb, CEE_RET);
-#endif /* DISABLE_JIT */
-
-	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
-
-	res = mono_mb_create_and_cache_full (cache, klass, mb, castclass_sig, castclass_sig->param_count + 16,
-										 info, NULL);
-	mono_mb_free (mb);
-
-	return res;
 }
 
 /**

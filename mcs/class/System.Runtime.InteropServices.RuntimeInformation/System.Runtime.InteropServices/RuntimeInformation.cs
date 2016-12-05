@@ -38,28 +38,25 @@ namespace System.Runtime.InteropServices
 		[DllImport ("__Internal")]
 		extern static string mono_get_runtime_build_info ();
 
-		public static string FrameworkDescription
-		{
-			get
-			{
+		public static string FrameworkDescription {
+			get {
 				return mono_get_runtime_build_info ();
 			}
 		}
 
 		public static bool IsOSPlatform (OSPlatform osPlatform)
 		{
-			// TODO: very barebones implementation
-
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Win32NT:
 				return osPlatform == OSPlatform.Windows;
+			case PlatformID.Unix:
+				if (File.Exists ("/usr/lib/libc.dylib"))
+					return osPlatform == OSPlatform.OSX;
 
-			if (Environment.OSVersion.Platform == PlatformID.Unix && File.Exists ("/usr/lib/libc.dylib"))
-				return osPlatform == OSPlatform.OSX;
-
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
 				return osPlatform == OSPlatform.Linux;
-
-			return false;
+			default:
+				return false;
+			}
 		}
 
 		public static string OSDescription

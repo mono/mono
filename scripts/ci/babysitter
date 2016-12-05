@@ -49,6 +49,7 @@ import copy
 import tempfile
 import calendar
 import json
+import platform
 from xml.dom.minidom import parse as xmlparse
 
 ### Constants
@@ -177,6 +178,24 @@ kill_after = parse_duration(args.kill_after) if args.kill_after is not None else
 timeout_signal = parse_signal(args.signal)
 command = args.command + extra_args
 
+# If we are running in Cygwin, Python will believe it is a UNIX application but Mono will be Windows.
+
+cygwin = platform.system().startswith("CYGWIN")
+
+def outgoingPath(path):
+	if cygwin: # Invoke cygpath and strip newline
+		return subprocess.check_output(["cygpath", "-w", path])[:-1]
+	return path
+
+def incomingPath(path):
+	if cygwin:
+		return subprocess.check_output(["cygpath", path])[:-1]
+	return path
+
+# Some of the things we put in global_env are paths. If we're in cygwin, we have to keep separate
+# local-use and env (mono use) copies of these keys.
+env_source = {}
+
 # Process environment
 global_env = copy.deepcopy( os.environ )
 
@@ -189,10 +208,14 @@ failmax = int(global_env[RETRY_KEY]) if RETRY_KEY in global_env else 0
 babysitting = True # If false, babysitter becomes a timeout clone with no env manipulation or anything.
 if babysitting:
 	babysitter_dir = tempfile.mkdtemp()
-	global_env[CURRENT_TEST_KEY] = os.path.join(babysitter_dir, CURRENT_TEST_FILE)
-	global_env[RAN_TEST_KEY]     = os.path.join(babysitter_dir, RAN_TEST_FILE)
-	global_env[FAILED_TEST_KEY]  = os.path.join(babysitter_dir, FAILED_TEST_FILE)
-	global_env[XML_LIST_KEY]     = os.path.join(babysitter_dir, XML_LIST_FILE)
+	env_source[CURRENT_TEST_KEY] = os.path.join(babysitter_dir, CURRENT_TEST_FILE)
+	env_source[RAN_TEST_KEY]     = os.path.join(babysitter_dir, RAN_TEST_FILE)
+	env_source[FAILED_TEST_KEY]  = os.path.join(babysitter_dir, FAILED_TEST_FILE)
+	env_source[XML_LIST_KEY]     = os.path.join(babysitter_dir, XML_LIST_FILE)
+
+env_source_keys = [CURRENT_TEST_KEY, RAN_TEST_KEY, FAILED_TEST_KEY, XML_LIST_KEY]
+for key in env_source_keys:
+	global_env[key] = outgoingPath(env_source[key])
 
 have_unix_process_groups = 'killpg' in os.__dict__
 have_windows_process_groups = 'CREATE_NEW_PROCESS_GROUP' in subprocess.__dict__
@@ -225,7 +248,10 @@ def send_signal(proc, sig):
 		# For compatibility with GNU timeout, pre-send the signal to just the monitored process
 		os.kill(proc.pid, sig)
 		# Send signal to entire group
-		os.killpg(proc.pid, sig)
+		try:
+			os.killpg(proc.pid, sig)
+		except OSError as e:
+			sys.stderr.write("%s: Warning, could not kill process group %s because %s\n" % (scriptname, proc.pid, e))
 		# For compatibility with GNU Timeout, send a SIGCONT after the signal
 		# (so delivery has a chance to occur even for stopped processes)
 		if sig != signal.SIGKILL and sig != signal.SIGCONT:
@@ -318,8 +344,8 @@ def run(): # Returns exit code
 
 			# Prepare environment/filesystem
 			if babysitting:
-				for key in [CURRENT_TEST_KEY, RAN_TEST_KEY, FAILED_TEST_KEY, XML_LIST_KEY]:
-					attemptDelete(env[key])
+				for key in env_source_keys: # Clear all paths intended for use by mono
+					attemptDelete(env_source[key])
 				if resume_after:
 					env[RUN_KEY] = ";".join(resume_after)
 					env[RUN_MODE_KEY] = "EXCLUDE"
@@ -356,10 +382,10 @@ def run(): # Returns exit code
 			# 4. The suite crashed partway through a run with a whitelist:
 			#   Rerun, using a whitelist consisting of the previous whitelist minus successful testcases.
 
-			crashed_at = attemptFirstLine(env[CURRENT_TEST_KEY])
-			failed_tests = attemptLines(env[FAILED_TEST_KEY])
-			ran_tests = attemptLines(env[RAN_TEST_KEY])
-			wrote_xml = attemptLines(env[XML_LIST_KEY])
+			crashed_at = attemptFirstLine(env_source[CURRENT_TEST_KEY])
+			failed_tests = attemptLines(env_source[FAILED_TEST_KEY])
+			ran_tests = attemptLines(env_source[RAN_TEST_KEY])
+			wrote_xml = attemptLines(env_source[XML_LIST_KEY])
 			bailout = False
 
 			if crashed_at or failed_tests or ran_tests: # Test suite follows the babysitter protocol
@@ -421,7 +447,7 @@ def run(): # Returns exit code
 				print(message)
 
 			if not log[SUPPORT_JSON]:
-				for xml in (xml_list + list(wrote_xml)):
+				for xml in (xml_list + [incomingPath(xml) for xml in wrote_xml]):
 					verbose_print("Will attempt to load XML from %s" % (xml))
 					try:
 						data = xmlparse(xml).documentElement

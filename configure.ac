@@ -758,6 +758,32 @@ fi
 AC_ARG_ENABLE(system-aot, [  --enable-system-aot  Enable the Ahead-Of-Time compilation of system assemblies during the build (on by default on some platforms)], enable_system_aot=$enableval, enable_system_aot=default)
 
 DISABLED_FEATURES=none
+csc_compiler=default
+endian=unknown
+AC_C_BIGENDIAN([endian=big],[endian=little],[endian=unknown])
+AC_MSG_CHECKING([CSharp compiler to use])
+AC_ARG_WITH(csc, [  --with-csc=mcs,roslyn,default      Configures the CSharp compiler to use],[
+   if test x$withval = xmcs; then
+       csc_compiler=mcs
+   elif test x$withval = xroslyn; then
+       csc_compiler=roslyn
+   elif test x$withval = xdefault; then
+       :
+   else
+       AC_MSG_ERROR([You must supply one of "mcs", "roslyn" or "default" to the --with-csc option])
+   fi
+],[csc_compiler=default])
+
+if test $csc_compiler = default; then
+   if test $endian = big; then
+      csc_compiler=mcs
+   elif test $endian = little; then
+      csc_compiler=roslyn
+   else
+      csc_compiler=mcs
+   fi
+fi
+AC_MSG_RESULT($csc_compiler)
 
 #
 # Set the build profiles and options before things which use them
@@ -1035,11 +1061,6 @@ fi
 if test "x$mono_feature_disable_attach" = "xyes"; then
 	AC_DEFINE(DISABLE_ATTACH, 1, [Disable agent attach support])
 	AC_MSG_NOTICE([Disabled agent attach])
-fi
-
-if test "x$mono_feature_disable_full_messages" = "xyes"; then
-	AC_DEFINE(DISABLE_FULL_MESSAGES, 1, [Disables building in the full table of WAPI messages])
-	AC_MSG_NOTICE([Disabled full messages for Win32 errors, only core message strings shipped])
 fi
 
 if test "x$mono_feature_disable_verifier" = "xyes"; then
@@ -1383,7 +1404,15 @@ if test x$host_win32 = xno; then
 		# We have the new, three-parameter version
 		AC_MSG_RESULT(no)
 	])
-
+	AC_TRY_COMPILE([#include <sched.h>], [
+	     CPU_COUNT((void *) 0);
+	], [
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(GLIBC_HAS_CPU_COUNT, 1, [GLIBC has CPU_COUNT macro in sched.h])
+	], [
+		# We have the new, three-parameter version
+		AC_MSG_RESULT(no)
+	])
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -4400,6 +4429,10 @@ fi
 
     echo "CSC_LOCATION = $CSC" >> $srcdir/$mcsdir/build/config.make
 
+    if test $csc_compiler = mcs; then
+      echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make
+    fi
+
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
@@ -4429,6 +4462,7 @@ fi
 
 echo "
         mcs source:    $mcsdir
+	C# Compiler:   $csc_compiler
 
    Engine:
 	Host:	       $host

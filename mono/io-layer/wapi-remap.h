@@ -16,7 +16,6 @@
 #define SetLastError wapi_SetLastError
 #define TransmitFile wapi_TransmitFile
 #define CloseHandle wapi_CloseHandle 
-#define DuplicateHandle wapi_DuplicateHandle 
 #define CreateFile wapi_CreateFile
 #define DeleteFile wapi_DeleteFile
 #define GetStdHandle wapi_GetStdHandle
@@ -50,7 +49,6 @@
 #define LockFile wapi_LockFile 
 #define UnlockFile wapi_UnlockFile 
 #define GetVolumeInformation wapi_GetVolumeInformation 
-#define FormatMessage wapi_FormatMessage 
 #define ImpersonateLoggedOnUser wapi_ImpersonateLoggedOnUser 
 #define RevertToSelf wapi_RevertToSelf 
 #define WSASetLastError wapi_WSASetLastError
@@ -59,12 +57,5 @@
 #define WSARecv wapi_WSARecv 
 #define WSASend wapi_WSASend 
 #define GetSystemInfo wapi_GetSystemInfo
-#define GetFileVersionInfoSize wapi_GetFileVersionInfoSize 
-#define GetFileVersionInfo wapi_GetFileVersionInfo 
-#define VerQueryValue wapi_VerQueryValue 
-#define VerLanguageName wapi_VerLanguageName 
-#define WaitForSingleObjectEx wapi_WaitForSingleObjectEx
-#define SignalObjectAndWait wapi_SignalObjectAndWait
-#define WaitForMultipleObjectsEx wapi_WaitForMultipleObjectsEx
 
 #endif /* __WAPI_REMAP_H__ */

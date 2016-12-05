@@ -2,6 +2,7 @@ if HOST_WIN32
 win32_sources = \
 	console-win32.c \
 	console-win32-internals.h \
+	cominterop-win32-internals.h \
 	file-io-windows.c \
 	file-io-windows-internals.h \
 	icall-windows.c \
@@ -118,6 +119,7 @@ null_gc_sources = \
 
 common_sources = \
 	$(platform_sources)	\
+	appdomain-icalls.h	\
 	assembly.c		\
 	assembly-internals.h	\
 	attach.h		\

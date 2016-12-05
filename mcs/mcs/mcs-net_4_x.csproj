@@ -9,8 +9,8 @@
     <ProjectGuid>{322A755A-ED38-4295-979D-E49EBAFA2852}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\mcs-net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-bin\Debug\mcs-net_4_x</IntermediateOutputPath>
+    <OutputPath>./../class/lib/net_4_x</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
@@ -145,10 +145,6 @@ $(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../class/System/System-net_4_x.csproj">
-      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
-      <Name>System-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../class/System.Core/System.Core-net_4_x.csproj">
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
@@ -156,6 +152,10 @@ $(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)
     <ProjectReference Include="../class/System.XML/System.Xml-net_4_x.csproj">
       <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
       <Name>System.Xml-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../class/System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

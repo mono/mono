@@ -459,6 +459,62 @@ incremental_find_check_match (IncrementalFind *handle, WIN32_FIND_DATA *data, Mo
 	return TRUE;
 }
 
+HANDLE
+ves_icall_System_IO_MonoIO_FindFirstFile (MonoString *path_with_pattern, MonoString **file_name, gint32 *file_attr, gint32 *ioerror)
+{
+	HANDLE hnd;
+	WIN32_FIND_DATA data;
+	MonoError error;
+
+	hnd = FindFirstFile (mono_string_chars (path_with_pattern), &data);
+
+	if (hnd == INVALID_HANDLE_VALUE) {
+		*file_name = NULL;
+		*file_attr = 0;
+		*ioerror = GetLastError ();
+		return hnd;
+	}
+
+	*file_name = mono_string_from_utf16_checked (data.cFileName, &error);
+	mono_error_set_pending_exception (&error);
+
+	*file_attr = data.dwFileAttributes;
+	*ioerror = ERROR_SUCCESS;
+
+	return hnd;
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_FindNextFile (HANDLE hnd, MonoString **file_name, gint32 *file_attr, gint32 *ioerror)
+{
+	MonoBoolean res;
+	WIN32_FIND_DATA data;
+	MonoError error;
+
+	res = FindNextFile (hnd, &data);
+
+	if (res == FALSE) {
+		*file_name = NULL;
+		*file_attr = 0;
+		*ioerror = GetLastError ();
+		return res;
+	}
+
+	*file_name = mono_string_from_utf16_checked (data.cFileName, &error);
+	mono_error_set_pending_exception (&error);
+
+	*file_attr = data.dwFileAttributes;
+	*ioerror = ERROR_SUCCESS;
+
+	return res;
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_FindCloseFile (HANDLE hnd)
+{
+	return FindClose (hnd);
+}
+
 /* FIXME make gc suspendable */
 MonoString *
 ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
@@ -1158,7 +1214,13 @@ ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE
 	gboolean ret;
 	
 	MONO_ENTER_GC_SAFE;
+#ifdef HOST_WIN32
 	ret=DuplicateHandle (source_process_handle, source_handle, target_process_handle, target_handle, access, inherit, options);
+#else
+	mono_w32handle_ref (source_handle);
+	*target_handle = source_handle;
+	ret = TRUE;
+#endif
 	MONO_EXIT_GC_SAFE;
 
 	if(ret==FALSE) {

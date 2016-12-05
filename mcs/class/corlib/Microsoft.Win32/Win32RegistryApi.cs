@@ -93,13 +93,13 @@ namespace Microsoft.Win32
 		private static extern int RegDeleteValue (IntPtr keyHandle, string valueName);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKeyExW")]
-		internal unsafe static extern int RegEnumKeyEx(IntPtr keyHandle, int dwIndex,
+		internal unsafe static extern int RegEnumKeyEx (IntPtr keyHandle, int dwIndex,
 					char* lpName, ref int lpcbName, int[] lpReserved,
 					[Out]StringBuilder lpClass, int[] lpcbClass,
 					long[] lpftLastWriteTime);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumValue")]
-		internal unsafe static extern int RegEnumValue(IntPtr hKey, int dwIndex,
+		internal unsafe static extern int RegEnumValue (IntPtr hKey, int dwIndex,
 					char* lpValueName, ref int lpcbValueName,
 					IntPtr lpReserved_MustBeZero, int[] lpType, byte[] lpData,
 					int[] lpcbData);
@@ -149,8 +149,8 @@ namespace Microsoft.Win32
 				string valueName, IntPtr reserved, ref RegistryValueKind type,
 				ref long data, ref int dataSize);
 
-		[DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint="RegQueryInfoKeyW")]
-		internal static extern int RegQueryInfoKey(IntPtr hKey, [Out]StringBuilder lpClass,
+		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint="RegQueryInfoKeyW")]
+		internal static extern int RegQueryInfoKey (IntPtr hKey, [Out]StringBuilder lpClass,
 			int[] lpcbClass, IntPtr lpReserved_MustBeZero, ref int lpcSubKeys,
 			int[] lpcbMaxSubKeyLen, int[] lpcbMaxClassLen,
 			ref int lpcValues, int[] lpcbMaxValueNameLen,
@@ -377,21 +377,21 @@ namespace Microsoft.Win32
 		{
 			int subkeys = 0;
 			int junk = 0;
-			int ret = RegQueryInfoKey(GetHandle(rkey),
-									  null,
-									  null,
-									  IntPtr.Zero,
-									  ref subkeys,  // subkeys
-									  null,
-									  null,
-									  ref junk,     // values
-									  null,
-									  null,
-									  null,
-									  null);
+			int ret = RegQueryInfoKey (GetHandle (rkey),
+									   null,
+									   null,
+									   IntPtr.Zero,
+									   ref subkeys,  // subkeys
+									   null,
+									   null,
+									   ref junk,     // values
+									   null,
+									   null,
+									   null,
+									   null);
 
 			if (ret != Win32ResultCode.Success)
-				GenerateException(ret);
+				GenerateException (ret);
 			return subkeys;
 		}
 
@@ -399,20 +399,20 @@ namespace Microsoft.Win32
 		{
 			int values = 0;
 			int junk = 0;
-			int ret = RegQueryInfoKey(GetHandle(rkey),
-									  null,
-									  null,
-									  IntPtr.Zero,
-									  ref junk,     // subkeys
-									  null,
-									  null,
-									  ref values,   // values
-									  null,
-									  null,
-									  null,
-									  null);
+			int ret = RegQueryInfoKey (GetHandle (rkey),
+									   null,
+									   null,
+									   IntPtr.Zero,
+									   ref junk,     // subkeys
+									   null,
+									   null,
+									   ref values,   // values
+									   null,
+									   null,
+									   null,
+									   null);
 			if (ret != Win32ResultCode.Success)
-				GenerateException(ret);
+				GenerateException (ret);
 			return values;
 		}
 
@@ -544,21 +544,18 @@ namespace Microsoft.Win32
 
 		public unsafe string [] GetSubKeyNames (RegistryKey rkey)
 		{
-			int subkeys = SubKeyCount(rkey);
-			var names = new string[subkeys];  // Returns 0-length array if empty.
+			int subkeys = SubKeyCount (rkey);
+			var names = new string [subkeys];  // Returns 0-length array if empty.
 
-			if (subkeys > 0)
-			{
-				var hkey = GetHandle(rkey);
-				char[] name = new char[MaxKeyLength + 1];
+			if (subkeys > 0) {
+				var hkey = GetHandle (rkey);
+				char[] name = new char [MaxKeyLength + 1];
 				int namelen;
 
-				fixed (char* namePtr = &name[0])
-				{
-					for (int i = 0; i < subkeys; i++)
-					{
+				fixed (char* namePtr = &name [0]) {
+					for (int i = 0; i < subkeys; i++) {
 						namelen = name.Length; // Don't remove this. The API's doesn't work if this is not properly initialised.
-						int ret = RegEnumKeyEx(hkey,
+						int ret = RegEnumKeyEx (hkey,
 							i,
 							namePtr,
 							ref namelen,
@@ -568,8 +565,8 @@ namespace Microsoft.Win32
 							null);
 
 						if (ret != 0)
-							GenerateException(ret);
-						names[i] = new String(namePtr);
+							GenerateException (ret);
+						names [i] = new String (namePtr);
 					}
 				}
 			}
@@ -579,22 +576,19 @@ namespace Microsoft.Win32
 
 		public unsafe string [] GetValueNames (RegistryKey rkey)
 		{
-			int values = ValueCount(rkey);
-			String[] names = new String[values];
+			int values = ValueCount (rkey);
+			String[] names = new String [values];
 
-			if (values > 0)
-			{
-				IntPtr hkey = GetHandle(rkey);
-				char[] name = new char[MaxValueLength + 1];
+			if (values > 0) {
+				IntPtr hkey = GetHandle (rkey);
+				char[] name = new char [MaxValueLength + 1];
 				int namelen;
 
-				fixed (char* namePtr = &name[0])
-				{
-					for (int i = 0; i < values; i++)
-					{
+				fixed (char* namePtr = &name [0]) {
+					for (int i = 0; i < values; i++) {
 						namelen = name.Length;
 
-						int ret = RegEnumValue(hkey,
+						int ret = RegEnumValue (hkey,
 							i,
 							namePtr,
 							ref namelen,
@@ -604,9 +598,9 @@ namespace Microsoft.Win32
 							null);
 
 						if (ret != Win32ResultCode.Success && ret != Win32Native.ERROR_MORE_DATA)
-							GenerateException(ret);
+							GenerateException (ret);
 
-						names[i] = new String(namePtr);
+						names [i] = new String (namePtr);
 					}
 				}
 			}

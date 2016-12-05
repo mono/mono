@@ -171,5 +171,11 @@ namespace Microsoft.Win32
 				DaylightDate.wMilliseconds = BitConverter.ToUInt16(bytes, 42);
 			}
 		}
+
+		internal class WIN32_FIND_DATA
+		{
+			internal int dwFileAttributes = 0;
+			internal String cFileName = null;
+		}
 	}
 }

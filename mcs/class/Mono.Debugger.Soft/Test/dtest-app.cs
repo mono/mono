@@ -318,6 +318,7 @@ public class Tests : TestsBase, ITest2
 			threadpool_io ();
 			return 0;
 		}
+		assembly_load ();
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -327,7 +328,6 @@ public class Tests : TestsBase, ITest2
 		locals ();
 		line_numbers ();
 		type_info ();
-		assembly_load ();
 		invoke ();
 		exceptions ();
 		exception_filter ();

@@ -5081,12 +5081,13 @@ mono_class_init (MonoClass *klass)
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
-	/* Because of the double-checking locking pattern */
-	mono_memory_barrier ();
-	klass->inited = 1;
-
 	if (locked)
 		mono_loader_unlock ();
+
+	/* Leave this for last */
+	mono_loader_lock ();
+	klass->inited = 1;
+	mono_loader_unlock ();
 
 	return !mono_class_has_failure (klass);
 }
@@ -8467,8 +8468,13 @@ mono_class_get_cctor (MonoClass *klass)
 		return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
 	}
 
+	mono_class_init (klass);
+
 	if (!klass->has_cctor)
 		return NULL;
+
+	if (mono_class_is_ginst (klass) && !klass->methods)
+		return mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class));
 
 	if (mono_class_get_cached_class_info (klass, &cached_info)) {
 		MonoError error;
@@ -8477,9 +8483,6 @@ mono_class_get_cctor (MonoClass *klass)
 			g_error ("Could not lookup class cctor from cached metadata due to %s", mono_error_get_message (&error));
 		return result;
 	}
-
-	if (mono_class_is_ginst (klass) && !klass->methods)
-		return mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class));
 
 	return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
 }

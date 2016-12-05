@@ -1182,6 +1182,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
 ../referencesource/mscorlib/system/io/bufferedstream.cs
+../referencesource/mscorlib/system/io/directory.cs
 ../referencesource/mscorlib/system/io/directorynotfoundexception.cs
 ../referencesource/mscorlib/system/io/drivenotfoundexception.cs
 ../referencesource/mscorlib/system/io/endofstreamexception.cs
@@ -1190,6 +1191,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/io/fileloadexception.cs
 ../referencesource/mscorlib/system/io/filenotfoundexception.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
+../referencesource/mscorlib/system/io/filesystemenumerable.cs
 ../referencesource/mscorlib/system/io/memorystream.cs
 ../referencesource/mscorlib/system/io/pathtoolongexception.cs
 ../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
