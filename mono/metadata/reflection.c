@@ -576,18 +576,20 @@ method_object_construct (MonoDomain *domain, MonoClass *refclass, MonoMethod *me
 		klass = mono_class_get_mono_method_class ();
 	}
 	MonoReflectionMethodHandle ret = MONO_HANDLE_NEW (MonoReflectionMethod, mono_object_new_checked (domain, klass, error));
-	if (!mono_error_ok (error))
-		goto leave;
+	if (!is_ok (error))
+		goto fail;
 	MONO_HANDLE_SETVAL (ret, method, MonoMethod*, method);
 
 	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, &refclass->byval_arg, error);
-	if (!mono_error_ok (error))
-		goto leave;
+	if (!is_ok (error))
+		goto fail;
 
 	MONO_HANDLE_SET (ret, reftype, rt);
 
-leave:
 	return ret;
+
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 }
 
 /*
@@ -623,7 +625,6 @@ MonoReflectionMethod*
 mono_method_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
-	mono_error_init (error);
 	MonoReflectionMethodHandle result = mono_method_get_object_handle (domain, method, refclass, error);
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
