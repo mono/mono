@@ -2,8 +2,6 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/AssemblyRef.cs
-Interop/mincore/Interop.Errors.cs
-Interop/mincore/Interop.TimeZone.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/RegistryKeyPermissionCheck.cs
@@ -895,7 +893,7 @@ ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
-
+ReferenceSources/win32native.cs
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
@@ -1646,7 +1644,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 ../referencesource/mscorlib/microsoft/win32/unsafenativemethods.cs
-../referencesource/mscorlib/microsoft/win32/win32native.cs
 
 corefx/SR.cs
 
@@ -1655,3 +1652,6 @@ corefx/SR.cs
 ../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs
 ../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/TupleExtensions.cs
 ../../../external/corefx/src/System.ValueTuple/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Errors.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.TimeZone.cs

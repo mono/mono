@@ -51,6 +51,12 @@
     <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\ValueTuple\TupleExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\ValueTuple\ValueTuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.Errors.cs">
+      <Link>Interop.Errors.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.TimeZone.cs">
+      <Link>Interop.TimeZone.cs</Link>
+    </Compile>
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -109,9 +115,6 @@
     </Compile>
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\unsafenativemethods.cs">
       <Link>unsafenativemethods.cs</Link>
-    </Compile>
-    <Compile Include="..\referencesource\mscorlib\microsoft\win32\win32native.cs">
-      <Link>win32native.cs</Link>
     </Compile>
     <Compile Include="..\referencesource\mscorlib\\system\runtime\reliability\criticalfinalizerobject.cs" />
     <Compile Include="..\referencesource\mscorlib\\system\runtime\reliability\prepreparemethodattribute.cs" />
@@ -856,6 +859,7 @@
     <Compile Include="Mono\RuntimeStructs.cs" />
     <Compile Include="Mono\SafeGPtrArrayHandle.cs" />
     <Compile Include="Mono\SafeStringMarshal.cs" />
+    <Compile Include="ReferenceSources\win32native.cs" />
     <Compile Include="ReferenceSources\__ConsoleStream.cs" />
     <Compile Include="ReferenceSources\AppContextSwitches.cs" />
     <Compile Include="ReferenceSources\AppDomain.cs" />
