@@ -100,8 +100,8 @@ mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *
 MonoReflectionModuleHandle
 mono_module_file_get_object_handle (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
 
-MonoReflectionMethodBody*
-mono_method_body_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoError *error);
+MonoReflectionMethodBodyHandle
+mono_method_body_get_object_handle (MonoDomain *domain, MonoMethod *method, MonoError *error);
 
 MonoClass *
 mono_class_from_mono_type_handle (MonoReflectionTypeHandle h);

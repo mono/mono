@@ -5146,13 +5146,11 @@ ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (M
 	return res;
 }
 
-ICALL_EXPORT MonoReflectionMethodBody*
-ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal (MonoMethod *method)
+ICALL_EXPORT MonoReflectionMethodBodyHandle
+ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal (MonoMethod *method, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionMethodBody *result = mono_method_body_get_object_checked (mono_domain_get (), method, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	mono_error_init (error);
+	return mono_method_body_get_object_handle (mono_domain_get (), method, error);
 }
 
 ICALL_EXPORT MonoReflectionAssemblyHandle

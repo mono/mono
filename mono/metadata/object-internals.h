@@ -821,6 +821,9 @@ struct _MonoReflectionMethodBody {
 	guint32 max_stack;
 };
 
+/* Safely access System.Reflection.MethodBody from native code */
+TYPED_HANDLE_DECL (MonoReflectionMethodBody);
+
 struct _MonoReflectionAssembly {
 	MonoObject object;
 	MonoAssembly *assembly;
@@ -927,12 +930,19 @@ typedef struct {
 	gint32 handler_length;
 } MonoReflectionExceptionHandlingClause;
 
+
+/* Safely access System.Reflection.ExceptionHandlingClause from native code */
+TYPED_HANDLE_DECL (MonoReflectionExceptionHandlingClause);
+
 typedef struct {
 	MonoObject object;
 	MonoReflectionType *local_type;
 	MonoBoolean is_pinned;
 	guint16 local_index;
 } MonoReflectionLocalVariableInfo;
+
+/* Safely access System.Reflection.LocalVariableInfo from native code */
+TYPED_HANDLE_DECL (MonoReflectionLocalVariableInfo);
 
 typedef struct {
 	/*
