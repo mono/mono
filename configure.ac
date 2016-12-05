@@ -4101,6 +4101,9 @@ AC_CONFIG_FILES([po/mcs/Makefile.in])
 AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
 AC_CONFIG_FILES([runtime/monodis-wrapper],[chmod +x runtime/monodis-wrapper])
 
+AC_CONFIG_LINKS([acceptance-tests/SUBMODULES.json:acceptance-tests/SUBMODULES.json])
+AC_CONFIG_LINKS([llvm/SUBMODULES.json:llvm/SUBMODULES.json])
+
 AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
 [   depth=../../../..
     case $srcdir in
