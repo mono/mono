@@ -986,8 +986,7 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	}
 
 	if (mspec) {
-		MonoObjectHandle mobj;
-		mobj = MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspec, error)); /* FIXME change mono_reflection_marshal_as_attribute_from_marshal_spec to return a handle */
+		MonoReflectionMarshalAsAttributeHandle mobj = mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspec, error);
 		if (!is_ok (error))
 			goto leave;
 		MONO_HANDLE_SET (param, MarshalAsImpl, mobj);

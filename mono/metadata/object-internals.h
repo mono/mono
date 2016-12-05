@@ -1278,6 +1278,9 @@ typedef struct {
 	gint16 size_param_index;
 } MonoReflectionMarshalAsAttribute;
 
+/* Safely access System.Runtime.InteropServices.MarshalAsAttribute */
+TYPED_HANDLE_DECL (MonoReflectionMarshalAsAttribute);
+
 typedef struct {
 	MonoObject object;
 	gint32 call_conv;
@@ -1410,7 +1413,8 @@ ves_icall_SignatureHelper_get_signature_local (MonoReflectionSigHelper *sig);
 MonoArray *
 ves_icall_SignatureHelper_get_signature_field (MonoReflectionSigHelper *sig);
 
-MonoReflectionMarshalAsAttribute* mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
+MonoReflectionMarshalAsAttributeHandle
+mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
 
 gpointer
 mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);

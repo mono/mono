@@ -1666,41 +1666,36 @@ ves_icall_RuntimeTypeHandle_GetAttributes (MonoReflectionType *type)
 	return mono_class_get_flags (klass);
 }
 
-ICALL_EXPORT MonoReflectionMarshalAsAttribute*
-ves_icall_System_Reflection_FieldInfo_get_marshal_info (MonoReflectionField *field)
+ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle
+ves_icall_System_Reflection_FieldInfo_get_marshal_info (MonoReflectionFieldHandle field_h, MonoError *error)
 {
-	MonoError error;
-	MonoClass *klass = field->field->parent;
-	MonoMarshalType *info;
-	MonoType *ftype;
-	int i;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (field_h);
+	MonoClassField *field = MONO_HANDLE_GETVAL (field_h, field);
+	MonoClass *klass = field->parent;
 
 	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
 	if (mono_class_is_gtd (klass) ||
 	    (gklass && gklass->context.class_inst->is_open))
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, NULL_HANDLE);
 
-	ftype = mono_field_get_type (field->field);
+	MonoType *ftype = mono_field_get_type (field);
 	if (ftype && !(ftype->attrs & FIELD_ATTRIBUTE_HAS_FIELD_MARSHAL))
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, NULL_HANDLE);
 
-	info = mono_marshal_load_type_info (klass);
+	MonoMarshalType *info = mono_marshal_load_type_info (klass);
 
-	for (i = 0; i < info->num_fields; ++i) {
-		if (info->fields [i].field == field->field) {
+	for (int i = 0; i < info->num_fields; ++i) {
+		if (info->fields [i].field == field) {
 			if (!info->fields [i].mspec)
-				return NULL;
+				return MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, NULL_HANDLE);
 			else {
-				MonoReflectionMarshalAsAttribute* obj;
-				obj = mono_reflection_marshal_as_attribute_from_marshal_spec (field->object.vtable->domain, klass, info->fields [i].mspec, &error);
-				if (!mono_error_ok (&error))
-					mono_error_set_pending_exception (&error);
-				return obj;
+				return mono_reflection_marshal_as_attribute_from_marshal_spec (domain, klass, info->fields [i].mspec, error);
 			}
 		}
 	}
 
-	return NULL;
+	return MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, NULL_HANDLE);
 }
 
 ICALL_EXPORT MonoReflectionFieldHandle
@@ -1849,27 +1844,24 @@ ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info (MonoMethod *metho
 	return mono_param_get_objects_internal (domain, method, klass, error);
 }
 
-ICALL_EXPORT MonoReflectionMarshalAsAttribute*
-ves_icall_System_MonoMethodInfo_get_retval_marshal (MonoMethod *method)
+ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle
+ves_icall_System_MonoMethodInfo_get_retval_marshal (MonoMethod *method, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get (); 
-	MonoReflectionMarshalAsAttribute* res = NULL;
-	MonoMarshalSpec **mspecs;
-	int i;
+	MonoReflectionMarshalAsAttributeHandle res = MONO_HANDLE_NEW (MonoReflectionMarshalAsAttribute, NULL);
 
-	mspecs = g_new (MonoMarshalSpec*, mono_method_signature (method)->param_count + 1);
+	MonoMarshalSpec **mspecs = g_new (MonoMarshalSpec*, mono_method_signature (method)->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
 
 	if (mspecs [0]) {
-		res = mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspecs [0], &error);
-		if (!mono_error_ok (&error)) {
-			mono_error_set_pending_exception (&error);
-			return NULL;
-		}
+		MONO_HANDLE_ASSIGN (res, mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspecs [0], error));
+		if (!is_ok (error))
+			goto leave;
 	}
 		
-	for (i = mono_method_signature (method)->param_count; i >= 0; i--)
+leave:
+	for (int i = mono_method_signature (method)->param_count; i >= 0; i--)
 		if (mspecs [i])
 			mono_metadata_free_marshal_spec (mspecs [i]);
 	g_free (mspecs);
