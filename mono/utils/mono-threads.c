@@ -1119,7 +1119,7 @@ mono_thread_info_is_async_context (void)
 }
 
 typedef struct {
-	MonoRefCount ref;
+	MonoRefCount refcount;
 	MonoThreadStart start_routine;
 	gpointer start_routine_arg;
 	MonoCoopSem registered;

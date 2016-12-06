@@ -66,7 +66,7 @@ typedef union {
 } ThreadPoolCounter;
 
 typedef struct {
-	MonoRefCount ref;
+	MonoRefCount refcount;
 
 	GPtrArray *domains; // ThreadPoolDomain* []
 	MonoCoopMutex domains_lock;

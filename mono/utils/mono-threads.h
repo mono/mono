@@ -69,7 +69,7 @@ typedef gsize (*MonoThreadStart)(gpointer);
 #endif
 
 typedef struct {
-	MonoRefCount ref;
+	MonoRefCount refcount;
 	MonoOSEvent event;
 } MonoThreadHandle;
 
