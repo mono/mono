@@ -50,6 +50,14 @@ namespace System.IO
 {
 	public static partial class Directory
 	{
+		public static string GetDirectoryRoot (string path)
+		{
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
+			// FIXME nice hack but that does not work under windows
+			return new String(Path.DirectorySeparatorChar, 1);
+		}
 
 		public static DirectoryInfo CreateDirectory (string path)
 		{

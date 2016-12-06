@@ -1527,7 +1527,23 @@ public class DirectoryTest
 		info = Directory.GetParent (Path.GetPathRoot (Path.GetTempPath ()));
 		Assert.IsNull (info);
 	}
-	
+
+	[Test]
+	public void GetDirectoryRoot ()
+	{
+		if (RunningOnUnix)
+		{
+			string path = "/usr/lib";
+			Assert.AreEqual ("/", Directory.GetDirectoryRoot (path));
+		}
+		else
+		{
+			Assert.Ignore ("TODO: no proper implementation on Windows.");
+			string path = "C:\\Windows";
+			Assert.AreEqual ("C:\\", Directory.GetDirectoryRoot (path));
+		}
+	}
+
 	[Test]
 	public void GetFiles ()
 	{
