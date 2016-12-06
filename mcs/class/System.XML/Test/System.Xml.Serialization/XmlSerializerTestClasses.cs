@@ -711,6 +711,13 @@ namespace MonoTests.System.Xml.TestClasses
 		public object data;
 	}
 
+	public class SubclassTestList
+	{
+		[XmlElement ("a", typeof (SimpleClass))]
+		[XmlElement ("b", typeof (SubclassTestBase))]
+		public List<object> Items;
+	}
+
 	public class DictionaryWithIndexer : DictionaryBase
 	{
 		public TimeSpan this[int index]

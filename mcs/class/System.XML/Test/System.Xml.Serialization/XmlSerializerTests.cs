@@ -1939,6 +1939,17 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
 
+		[Test] // Covers #36829
+		public void TestSubclassElementList ()
+		{
+			var o = new SubclassTestList () { Items = new List<object> () { new SubclassTestSub () } };
+			Serialize (o);
+
+			string res = "<SubclassTestList xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			res += "<b xsi:type=\"SubclassTestSub\"/></SubclassTestList>";
+			Assert.AreEqual (Infoset (res), WriterText);
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestArrayAttributeWithWrongDataType ()
