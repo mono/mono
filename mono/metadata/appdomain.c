@@ -72,6 +72,7 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/refcount.h>
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -2411,22 +2412,8 @@ typedef struct unload_data {
 	gboolean done;
 	MonoDomain *domain;
 	char *failure_reason;
-	gint32 refcount;
+	MonoRefCount refcount;
 } unload_data;
-
-static void
-unload_data_unref (unload_data *data)
-{
-	gint32 count;
-	do {
-		mono_atomic_load_acquire (count, gint32, &data->refcount);
-		g_assert (count >= 1 && count <= 2);
-		if (count == 1) {
-			g_free (data);
-			return;
-		}
-	} while (InterlockedCompareExchange (&data->refcount, count - 1, count) != count);
-}
 
 static void
 deregister_reflection_info_roots_from_list (MonoImage *image)
@@ -2557,15 +2544,16 @@ unload_thread_main (void *arg)
 	mono_gc_collect (mono_gc_max_generation ());
 
 	mono_atomic_store_release (&data->done, TRUE);
-	unload_data_unref (data);
+	mono_refcount_dec (data);
 	mono_thread_detach (thread);
 	return 0;
 
 failure:
 	mono_atomic_store_release (&data->done, TRUE);
-	unload_data_unref (data);
+	mono_refcount_dec (data);
 	mono_thread_detach (thread);
 	return 1;
+
 }
 
 /*
@@ -2668,10 +2656,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	mono_domain_set (caller_domain, FALSE);
 
 	thread_data = g_new0 (unload_data, 1);
+	mono_refcount_init (thread_data, g_free);
 	thread_data->domain = domain;
 	thread_data->failure_reason = NULL;
 	thread_data->done = FALSE;
-	thread_data->refcount = 2; /*Must be 2: unload thread + initiator */
 
 	/*The managed callback finished successfully, now we start tearing down the appdomain*/
 	domain->state = MONO_APPDOMAIN_UNLOADING;
@@ -2679,9 +2667,12 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	 * First we create a separate thread for unloading, since
 	 * we might have to abort some threads, including the current one.
 	 */
-	thread_handle = mono_threads_create_thread (unload_thread_main, thread_data, NULL, &tid);
-	if (thread_handle == NULL)
-		return;
+	thread_handle = mono_threads_create_thread (unload_thread_main, mono_refcount_inc (thread_data), NULL, &tid);
+	if (thread_handle == NULL) {
+		/* thread_data refcount is not going to be decremented in unload_thread_main */
+		mono_refcount_dec (thread_data);
+		goto done;
+	}
 
 	/* Wait for the thread */	
 	while (!thread_data->done && guarded_wait (thread_handle, MONO_INFINITE_WAIT, TRUE) == MONO_THREAD_INFO_WAIT_RET_ALERTED) {
@@ -2689,8 +2680,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */
 			mono_threads_close_thread_handle (thread_handle);
-			unload_data_unref (thread_data);
-			return;
+			goto done;
 		}
 	}
 
@@ -2708,5 +2698,6 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		thread_data->failure_reason = NULL;
 	}
 
-	unload_data_unref (thread_data);
+done:
+	mono_refcount_dec (thread_data);
 }
