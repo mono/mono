@@ -1066,7 +1066,7 @@ namespace System.Globalization
 
 		static Exception CreateNotFoundException (string name)
 		{
-			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
+			return new CreateNotFoundException ("name", "Culture name " + name + " is not supported.");
 		}
 		
 		public static CultureInfo DefaultThreadCurrentCulture {
