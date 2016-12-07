@@ -1,4 +1,5 @@
 Microsoft.Build.BuildEngine/BuildChooseTest.cs
+Microsoft.Build.BuildEngine/BuildItemDefinitionGroupTest.cs
 Microsoft.Build.BuildEngine/BuildItemGroupCollectionTest.cs
 Microsoft.Build.BuildEngine/BuildItemGroupTest.cs
 Microsoft.Build.BuildEngine/BuildItemTest.cs

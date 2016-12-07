@@ -172,6 +172,8 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (evaluatedMetadata.Contains (metadataName))
 				return (string) evaluatedMetadata [metadataName];
+			else if (parent_item_group != null)
+				return parent_item_group.ParentProject.GetEvaluatedItemDefinitionMetadata (Name, metadataName);
 			else
 				return String.Empty;
 		}

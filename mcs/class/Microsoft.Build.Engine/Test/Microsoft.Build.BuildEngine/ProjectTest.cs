@@ -1301,6 +1301,34 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestBatchedMetadataEmptyBatch () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""ShowMessage"">
+					<Message Text='@(A)' Condition=""'%(A.Name)' == 'Abc'"" />
+					<Message Text='@(B)' Condition=""'%(Name)' == 'Abc'""/>
+				</Target>
+			 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (projectString);
+			bool result = project.Build ("ShowMessage");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			if (logger.NormalMessageCount != 0) {
+				logger.DumpMessages ();
+				Assert.Fail ("Unexpected messages found");
+			}
+		}
+
+		[Test]
 		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef1 ()
 		{
@@ -2231,6 +2259,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
+#if net_4_0
 		[Test]
 		public void FileNameNotResetOnLoad ()
 		{
@@ -2241,6 +2270,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("foo", p.FullFileName);
 			Assert.AreEqual ("foo", p.EvaluatedProperties ["MSBuildThisFile"].Value);
 		}
+#endif
 
 		void DeleteAllInDir (string path)
 		{

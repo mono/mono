@@ -37,6 +37,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		int	imports;
 		int	itemGroups;
+		int	itemDefGroups;
 		Project	project;
 		int	propertyGroups;
 		int	chooses;
@@ -91,6 +92,13 @@ namespace Microsoft.Build.BuildEngine {
 					yield return o;
 		}
 
+		public IEnumerator GetItemDefinitionGroupEnumerator ()
+		{
+			foreach (object o in list)
+				if (o is BuildItemDefinitionGroup)
+					yield return o;
+		}
+
 		public IEnumerator GetPropertyGroupEnumerator ()
 		{
 			foreach (object o in list)
@@ -106,6 +114,17 @@ namespace Microsoft.Build.BuildEngine {
 				list.AddLast (bpg);
 			else {
 				list.AddAfter (add_iterator, bpg);
+				add_iterator = add_iterator.Next;
+			}
+		}
+
+		internal void Add (BuildItemDefinitionGroup bidg)
+		{
+			itemDefGroups++;
+			if (add_iterator == null)
+				list.AddLast (bidg);
+			else {
+				list.AddAfter (add_iterator, bidg);
 				add_iterator = add_iterator.Next;
 			}
 		}
@@ -163,6 +182,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			Evaluate (EvaluationType.Property | EvaluationType.Choose);
+			Evaluate (EvaluationType.Definition);
 			Evaluate (EvaluationType.Item);
 		}
 
@@ -184,6 +204,13 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 				}
 
+				var bidg = evaluate_iterator.Value as BuildItemDefinitionGroup;
+				if (bidg != null) {
+					if ((type & EvaluationType.Definition) != 0)
+						EvaluateBuildItemDefinitionGroup (bidg);
+					continue;
+				}
+
 				var big = evaluate_iterator.Value as BuildItemGroup;
 				if (big != null) {
 					if ((type & EvaluationType.Item) != 0)
@@ -202,6 +229,17 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			add_iterator = null;
+		}
+
+		void EvaluateBuildItemDefinitionGroup (BuildItemDefinitionGroup bidg)
+		{
+			project.PushThisFileProperty (bidg.DefinedInFileName);
+			try {
+				if (ConditionParser.ParseAndEvaluate (bidg.Condition, project))
+					bidg.Evaluate ();
+			} finally {
+				project.PopThisFileProperty ();
+			}
 		}
 
 		void EvaluateBuildPropertyGroup (BuildPropertyGroup bpg)
@@ -250,6 +288,10 @@ namespace Microsoft.Build.BuildEngine {
 		internal int Imports {
 			get { return this.imports; }
 		}
+
+		internal int ItemDefinitionGroups {
+			get { return this.itemDefGroups; }
+		}
 		
 		internal int ItemGroups {
 			get { return this.itemGroups; }
@@ -269,7 +311,8 @@ namespace Microsoft.Build.BuildEngine {
 		Property = 1 << 0,
 		Item = 1 << 1,
 		Choose = 1 << 2,
+		Definition = 1 << 3,
 
-		Any = Property | Item | Choose
+		Any = Property | Item | Choose | Definition
 	}
 }
