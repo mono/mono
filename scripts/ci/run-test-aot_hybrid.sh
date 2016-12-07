@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
-
 ${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k aotcheck
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
