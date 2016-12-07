@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
-
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
 if [[ ${label} == w* ]]
 then ${TESTCMD} --label=aot-test --skip;
