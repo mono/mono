@@ -286,6 +286,17 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
  * mono_conc_hashtable_insert:
  * 
  * Insert a value into the hashtable. Requires external locking.
+ * Unlike other hashtables, insert doesn't replace an existing value, but simply returns it. The rationale for this behavior
+ * is that this will be used with data that can't be safely freed in case of a duplicated key.
+ * The pattern to use when inserting is the following:
+ *
+ * lock ();
+ * gpointer val2 = mono_conc_hashtable_insert (hash, key, val);
+ * unlock ();
+ * if (!val2)
+ *   val2 = val;
+ * return val2;
+ *
  * @Returns the old value if key is already present or null
  */
 gpointer
