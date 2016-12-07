@@ -22,7 +22,10 @@ if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --w
 if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32 --with-csc=mcs"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\build\\\sgen\\\Win32\\\bin\\\Release\\\mono-sgen.exe`"; fi
 if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="`cygpath -u ${WORKSPACE}\\\msvc\\\build\\\sgen\\\x64\\\bin\\\Release\\\mono-sgen.exe`"; fi
 
-if [[ ${CI_TAGS} == *'aot_only'* ]];
+if [[ ${CI_TAGS} == *'fullaot_llvm'* ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only --enable-llvm=yes";
+elif [[ ${CI_TAGS} == *'fullaot'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only";
 elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];
