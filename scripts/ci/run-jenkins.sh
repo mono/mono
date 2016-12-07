@@ -26,16 +26,16 @@ if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FL
 
 if [[ ${CI_TAGS} == *'fullaot_llvm'* ]];
     then
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only --enable-llvm=yes";
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=fullaot --enable-llvm=yes";
 elif [[ ${CI_TAGS} == *'fullaot'* ]];
     then
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only";
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=fullaot";
 elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];
     then
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_preferred --enable-llvm=yes";
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=hybridaot --enable-llvm=yes";
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];
     then
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_preferred";
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=hybridaot";
 elif [[ ${CI_TAGS} == *'aot_llvm'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot --enable-llvm=yes";
