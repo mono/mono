@@ -175,7 +175,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCondition6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -203,7 +202,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCondition7 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -310,6 +308,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNotNull (proj.EvaluatedProperties ["D"], "A4");
 			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
 		}
+
 		[Test]
 		public void TestCondition11 ()
 		{

@@ -724,6 +724,40 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					"second"});
 		}
 
+		[Test]
+		public void TestGlobalProperties5 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">"
+					+ GetUsingTask ("MSBuild")
+				+ @"
+	<Target Name=""main"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1"" Properties=""External=FirstExternalValue""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">"
+					+ GetUsingTask ("MSBuild")
+				+ @"
+		<Target Name = ""1"">
+			<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		</Target>
+</Project>
+";
+
+			BuildPropertyGroup globalprops = new BuildPropertyGroup ();
+			globalprops.SetProperty ("External", "EngineExternalValue");
+
+			BuildPropertyGroup project_globalprops = new BuildPropertyGroup ();
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				globalprops, project_globalprops,
+				4, 4, 5,
+				new string [] {
+					"(TargetA) foo:  A:  External: EngineExternalValue",
+					"(TargetA) foo: bar A:  External: FirstExternalValue"});
+		}
+
 		// Check for global properties in case of Import
 
 		[Test]

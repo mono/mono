@@ -223,17 +223,20 @@ namespace Microsoft.Build.BuildEngine {
 			return list;
 		}
 
-		//@prefix: @ or $
+		//@prefix: @ or $ or %
 		ConditionExpression ParseReferenceExpression (char prefix)
 		{
 			int token_pos = tokenizer.Token.Position;
-			string ref_type = prefix == '$' ? "a property" : "an item list";
+			string ref_type = 
+				prefix == '$' ? "a property" :
+				prefix == '@' ? "an item list" :
+								"a metadata reference";
 			IsAtToken (TokenType.LeftParen, String.Format (
 						"Expected {0} at position {1} in condition \"{2}\". Missing opening parantheses after the '{3}'.",
 						ref_type, token_pos, conditionStr, prefix));
 
 
-			if (prefix == '$') {
+			if (prefix == '$' || prefix == '%') {
 				//
 				// Tjhe scan should consider quoted parenthesis but it breaks on .net as well
 				// we are bug compatible
