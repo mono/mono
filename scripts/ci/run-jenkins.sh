@@ -25,9 +25,12 @@ if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FL
 if [[ ${CI_TAGS} == *'aot_only'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_only";
-elif [[ ${CI_TAGS} == *'aot_preferred'* ]];
+elif [[ ${CI_TAGS} == *'hybridaot'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_preferred";
+elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot_preferred --enable-llvm=yes";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
