@@ -10,7 +10,7 @@ PLATFORM_TEST_HARNESS_EXCLUDES = NotOnWindows,
 
 EXTERNAL_MCS = mcs
 EXTERNAL_MBAS = vbc.exe
-EXTERNAL_RUNTIME =
+EXTERNAL_RUNTIME = mono
 
 # Disabled since it needs the SDK
 #ILDISASM = ildasm.exe /test

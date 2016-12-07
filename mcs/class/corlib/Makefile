@@ -11,18 +11,10 @@ LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
 #LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
-ifdef MCS_MODE
-LIB_MCS_FLAGS += --runtime:v4
-else
 LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
-endif
 else
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-ifdef MCS_MODE
-LIB_MCS_FLAGS += --runtime:v4
-else
 LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
-endif
 else
 $(error Unknown framework version)
 endif
