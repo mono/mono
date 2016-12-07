@@ -40,6 +40,9 @@ elif [[ ${CI_TAGS} == *'aot_llvm'* ]];
 elif [[ ${CI_TAGS} == *'aot'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot";
+elif [[ ${CI_TAGS} == *'bitcode'* ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=bitcode";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
     EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${WORKSPACE}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
