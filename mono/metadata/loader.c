@@ -40,6 +40,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/lock-tracer.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/unity-utils.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-membar.h>
@@ -1230,6 +1231,22 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 				internal_module = mono_dl_open (NULL, MONO_DL_LAZY, &error_msg);
 			module = internal_module;
 		}
+	}
+
+	if (mono_get_find_plugin_callback ())
+	{
+		const char* unity_new_scope = mono_get_find_plugin_callback () (new_scope);
+		if (unity_new_scope == NULL)
+		{
+			if (exc_class)
+			{
+				*exc_class = "DllNotFoundException";
+				*exc_arg = new_scope;
+			}
+			return NULL;
+		}
+
+		new_scope = unity_new_scope;
 	}
 
 	/*

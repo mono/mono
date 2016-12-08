@@ -298,6 +298,9 @@ genmdesc_LDADD = \
 	$(GLIB_LIBS)					\
 	$(LIBICONV)
 
+unity_sources = \
+	mini-unity.c
+
 x86_sources = \
 	mini-x86.c		\
 	mini-x86.h		\
@@ -601,7 +604,7 @@ os_sources = $(darwin_sources) $(posix_sources)
 monobin_platform_ldflags=-framework CoreFoundation -framework Foundation
 endif
 
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(interpreter_sources) $(arch_sources) $(os_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(interpreter_sources) $(arch_sources) $(os_sources) $(unity_sources)
 libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =

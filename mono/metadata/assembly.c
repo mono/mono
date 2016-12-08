@@ -652,9 +652,7 @@ compute_base (char *path)
 	p = strrchr (path, '/');
 	if (p == NULL)
 		return NULL;
-	
-	if (strcmp (p, "/bin") != 0)
-		return NULL;
+
 	*p = 0;
 	return path;
 }

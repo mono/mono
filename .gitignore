@@ -41,6 +41,11 @@ Ankh.NoLoad
 .vscode/
 *.exp
 
+# Unity build process files
+builds/
+ZippedClasslibs.tar.gz
+tmp/
+
 # Tooling
 _ReSharper*/
 *.resharper
@@ -129,3 +134,5 @@ tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
 
+
+arm-apple-darwin10.h

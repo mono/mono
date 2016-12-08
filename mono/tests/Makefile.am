@@ -273,6 +273,7 @@ BASE_TEST_CS_SRC=		\
 	bug-323114.cs		\
 	bug-Xamarin-5278.cs	\
 	interlocked.cs		\
+	delegate-argument-exception.cs	\
 	delegate-async-exit.cs	\
 	delegate-delegate-exit.cs	\
 	delegate-exit.cs	\

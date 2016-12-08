@@ -109,6 +109,8 @@
     <ClCompile Include="..\mono\metadata\sysmath.c" />
     <ClCompile Include="..\mono\metadata\threads.c" />
     <ClCompile Include="..\mono\metadata\verify.c" />
+    <ClCompile Include="..\mono\metadata\unity-liveness.c" />
+    <ClCompile Include="..\mono\metadata\unity-utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\metadata\appdomain.h" />
@@ -210,6 +212,7 @@
     <ClInclude Include="..\mono\metadata\threads-types.h" />
     <ClInclude Include="..\mono\metadata\verify-internals.h" />
     <ClInclude Include="..\mono\metadata\verify.h" />
+    <ClInclude Include="..\mono\metadata\unity-utils.h" />
     <ClInclude Include="..\mono\metadata\wrapper-types.h" />
   </ItemGroup>
   <ItemGroup>

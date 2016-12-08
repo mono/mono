@@ -225,3 +225,9 @@ g_ptr_array_sort_with_data (GPtrArray *array, GCompareDataFunc compare, gpointer
 	g_qsort_with_data (array->pdata, array->len, sizeof (gpointer), compare, user_data);
 }
 
+guint
+g_ptr_array_reserved_size (GPtrArray *array)
+{
+	return ((GPtrArrayPriv *)array)->size;
+}
+

@@ -261,10 +261,20 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
  * the memory area using mono_file_unmap ().
  *
  */
+extern MonoFileMapMap      file_map_func;
+extern MonoFileMapUnmap    file_unmap_func;
+
 void*
 mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
 {
 	void *ptr;
+	if (file_map_func)
+	{
+		BEGIN_CRITICAL_SECTION;
+		ptr = file_map_func(length, flags, fd, offset, ret_handle);
+		END_CRITICAL_SECTION;
+		return ptr;
+	}
 	int mflags = 0;
 	int prot = prot_from_flags (flags);
 	/* translate the flags */
@@ -302,7 +312,10 @@ mono_file_unmap (void *addr, void *handle)
 	int res;
 
 	BEGIN_CRITICAL_SECTION;
-	res = munmap (addr, (size_t)handle);
+	if (file_unmap_func)
+		res = file_unmap_func(addr, handle);
+	else
+		res = munmap (addr, (size_t)handle);
 	END_CRITICAL_SECTION;
 
 	return res;

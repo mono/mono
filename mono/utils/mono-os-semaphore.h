@@ -44,6 +44,8 @@
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 #endif
 
+#include <mono/utils/mono-compiler.h>
+
 G_BEGIN_DECLS
 
 typedef enum {

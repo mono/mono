@@ -371,6 +371,8 @@ struct _MonoClass {
 
 	/* Infrequently used items. See class-accessors.c: InfrequentDataKind for what goes into here. */
 	MonoPropertyBag infrequent_data;
+
+	void *unity_user_data;
 };
 
 typedef struct {
@@ -1251,7 +1253,7 @@ mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
 
-char*
+MONO_API char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
 
 char*

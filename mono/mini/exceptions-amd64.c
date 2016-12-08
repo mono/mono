@@ -67,7 +67,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;

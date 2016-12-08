@@ -124,6 +124,7 @@
 #define g_propagate_error monoeg_g_propagate_error
 #define g_ptr_array_add monoeg_g_ptr_array_add
 #define g_ptr_array_foreach monoeg_g_ptr_array_foreach
+#define g_ptr_array_reserved_size monoeg_g_ptr_array_reserved_size
 #define g_ptr_array_free monoeg_g_ptr_array_free
 #define g_ptr_array_new monoeg_g_ptr_array_new
 #define g_ptr_array_remove monoeg_g_ptr_array_remove

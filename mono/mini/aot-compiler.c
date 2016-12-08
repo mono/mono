@@ -192,6 +192,9 @@ typedef struct MonoAotOptions {
 	char *logfile;
 	gboolean dump_json;
 	gboolean profile_only;
+#if defined(PLATFORM_IPHONE_XCOMP)
+	gboolean ficall;
+#endif 
 } MonoAotOptions;
 
 typedef enum {
@@ -4343,6 +4346,73 @@ add_wrappers (MonoAotCompile *acfg)
 			add_method (acfg, mono_marshal_get_native_wrapper (method, TRUE, TRUE));
 		}
 	}
+ 
+ 	MonoError error;
+	/* native-to-managed wrappers */
+	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
+		MonoMethod *method;
+		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
+		MonoCustomAttrInfo *cattr;
+		int j;
+
+		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
+		mono_error_assert_ok (&error);
+
+		/* 
+		 * Only generate native-to-managed wrappers for methods which have an
+		 * attribute named MonoPInvokeCallbackAttribute. We search for the attribute by
+		 * name to avoid defining a new assembly to contain it.
+		 */
+		cattr = mono_custom_attrs_from_method_checked (method, &error);
+		mono_error_assert_ok (&error);
+
+		if (cattr) {
+			for (j = 0; j < cattr->num_attrs; ++j)
+				if (cattr->attrs [j].ctor && !strcmp (cattr->attrs [j].ctor->klass->name, "MonoPInvokeCallbackAttribute"))
+					break;
+			if (j < cattr->num_attrs) {
+				MonoCustomAttrEntry *e = &cattr->attrs [j];
+				MonoMethodSignature *sig = mono_method_signature (e->ctor);
+				const char *p = (const char*)e->data;
+				int slen;
+				char *n;
+				MonoType *t;
+				MonoClass *klass;
+
+				g_assert (method->flags & METHOD_ATTRIBUTE_STATIC);
+
+				g_assert (sig->param_count == 1);
+				g_assert (sig->params [0]->type == MONO_TYPE_CLASS && !strcmp (mono_class_from_mono_type (sig->params [0])->name, "Type"));
+
+				/* 
+				 * Decode the cattr manually since we can't create objects
+				 * during aot compilation.
+				 */
+					
+				/* Skip prolog */
+				p += 2;
+
+				/* From load_cattr_value () in reflection.c */
+				slen = mono_metadata_decode_value (p, &p);
+				n = g_memdup (p, slen + 1);
+				n [slen] = 0;
+				t = mono_reflection_type_from_name_checked (n, acfg->image, &error);
+				mono_error_assert_ok (&error);
+				g_assert (t);
+				g_free (n);
+
+				klass = mono_class_from_mono_type (t);
+				g_assert (klass->parent == mono_defaults.multicastdelegate_class);
+
+				add_method (acfg, mono_marshal_get_managed_wrapper (method, klass, NULL));
+			}
+		}
+
+		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
+			(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)) {
+			add_method (acfg, mono_marshal_get_native_wrapper (method, TRUE, TRUE));
+		}
+	}
 
 	/* StructureToPtr/PtrToStructure wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
@@ -7151,6 +7221,10 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->no_dlsym = TRUE;
 		} else if (str_begins_with (arg, "asmonly")) {
 			opts->asm_only = TRUE;
+#if defined(PLATFORM_IPHONE_XCOMP)                                                                                                                                                                
+                } else if (str_begins_with (arg, "ficall")) {
+                        opts->ficall = TRUE;                                                                                                                                                       
+#endif 
 		} else if (str_begins_with (arg, "asmwriter")) {
 			opts->asm_writer = TRUE;
 		} else if (str_begins_with (arg, "nodebug")) {
@@ -7524,6 +7598,9 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 	}
 }
 
+gboolean
+mono_method_marked_as_wrapperless(MonoMethod* method);
+
 /*
  * compile_method:
  *
@@ -7540,6 +7617,20 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	MonoMethod *wrapped;
 	GTimer *jit_timer;
 	JitFlags flags;
+
+#if defined(PLATFORM_IPHONE_XCOMP)
+	if (acfg->aot_opts.ficall && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
+	{
+		wrapped = mono_marshal_method_from_wrapper (method);
+		if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
+			mono_method_marked_as_wrapperless(wrapped))
+		{
+			method->save_lmf = FALSE;
+			if (wrapped->signature->ret->type != MONO_TYPE_R4)
+				return;
+		}
+	}
+#endif
 
 	if (acfg->aot_opts.metadata_only)
 		return;

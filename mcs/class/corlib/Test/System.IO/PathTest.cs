@@ -288,8 +288,8 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (@"C:dir", Path.GetDirectoryName (@"C:dir\"), "#B9");
 
 				Assert.AreEqual ("\\foo\\bar", Path.GetDirectoryName ("/foo//bar/dingus"), "#C1");
-				Assert.AreEqual ("foo\\bar", Path.GetDirectoryName ("foo/bar/"), "#C2");
-				Assert.AreEqual ("foo\\bar", Path.GetDirectoryName ("foo/bar\\xxx"), "#C3");
+				Assert.AreEqual ("foo/bar", Path.GetDirectoryName ("foo/bar/"), "#C2");
+				Assert.AreEqual ("foo/bar", Path.GetDirectoryName ("foo/bar\\xxx"), "#C3");
 				Assert.AreEqual ("\\\\host\\dir\\dir2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\\path"), "#C4");
 
 				// UNC tests

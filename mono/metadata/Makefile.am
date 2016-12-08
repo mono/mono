@@ -270,7 +270,10 @@ common_sources = \
 	w32handle-namespace.c	\
 	w32handle.h	\
 	w32handle.c	\
-	w32error.h
+	w32error.h \
+	unity-utils.c   \
+	unity-utils.h   \
+	unity-liveness.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \

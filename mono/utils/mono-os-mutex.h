@@ -31,6 +31,8 @@
 #include <sys/time.h>
 #endif
 
+#include <mono/utils/mono-compiler.h>
+
 G_BEGIN_DECLS
 
 #ifndef MONO_INFINITE_WAIT

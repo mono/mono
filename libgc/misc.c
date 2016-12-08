@@ -1224,3 +1224,18 @@ void GC_dump()
 }
 
 #endif /* NO_DEBUGGING */
+
+void GC_stop_world_external()
+{
+	DISABLE_SIGNALS();
+	LOCK();
+	GC_stop_world();
+}
+
+void GC_start_world_external()
+{
+	GC_start_world();
+	UNLOCK();
+	ENABLE_SIGNALS();
+}
+
