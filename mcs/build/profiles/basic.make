@@ -98,7 +98,7 @@ else
 
 do-get-monolite:
 	@echo "*** Downloading bootstrap required 'monolite'" 1>&2
-	$(MAKE) $(MAKE_Q) -C $(topdir)/../ get-monolite-latest
+	$(MAKE) $(MAKE_Q) -C $(mono_build_root) get-monolite-latest
 
 do-profile-check-monolite: $(depsdir)/.stamp
 	@echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2
