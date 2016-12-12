@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace Microsoft.Win32
 {
@@ -179,5 +181,11 @@ namespace Microsoft.Win32
 			internal int dwFileAttributes = 0;
 			internal String cFileName = null;
 		}
+
+
+		[DllImport(KERNEL32, SetLastError = true)]
+		[ResourceExposure(ResourceScope.Machine)]
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+		internal static extern bool CloseHandle(IntPtr handle);
 	}
 }
