@@ -59,7 +59,7 @@ namespace Microsoft.Build.Tasks {
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
 			var dtype = DebugType;
-			if (string.Equals (dtype, "full", StringComparison.OrdinalIgnoreCase))
+			if (string.Equals (dtype, "full", StringComparison.OrdinalIgnoreCase) || string.Equals (dtype, "pdbonly", StringComparison.OrdinalIgnoreCase))
 				dtype = "portable";
 
 			commandLine.AppendSwitchIfNotNull ("/debug:", dtype);
