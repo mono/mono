@@ -5837,10 +5837,7 @@ namespace System {
 		private static unsafe uint EnumDynamicTimeZoneInformation (uint index, out Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION timeZoneInformation)
 		{
 			try {
-				fixed (Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION* timeZoneInformationFixed = &timeZoneInformation) {
-					// Available on Win8+
-					return Interop.mincore.EnumDynamicTimeZoneInformation (index, timeZoneInformationFixed);
-				}
+				return Interop.mincore.EnumDynamicTimeZoneInformation (index, out timeZoneInformation);
 			} catch (DllNotFoundException) {
 			} catch (EntryPointNotFoundException) {
 			}
