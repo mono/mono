@@ -3155,6 +3155,3 @@ cant_print_generic_param_name (MonoGenericParam *gparam)
 	return (!container || (mono_generic_params_with_ambiguous_names &&
 			g_hash_table_lookup (mono_generic_params_with_ambiguous_names, gparam)));
 }
-
-
-	{ METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING,  "agressive-inlining" },
