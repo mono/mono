@@ -366,7 +366,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			mc.ARFC (c1);
 			mc.ACLC (c2);
 			
-			Assert.AreEqual ("/keyfile:A", c1.ToString (), "A1");
+			Assert.AreEqual ("/keyfile:A /publicsign", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 

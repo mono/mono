@@ -77,6 +77,9 @@ namespace Microsoft.Build.Tasks {
 			//fileAlignment
 			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
+			if (KeyFile != null)
+				commandLine.AppendSwitch("/publicsign");
+
 			// FIXME: add ids from metadata
 			if (LinkResources != null)
 				foreach (ITaskItem item in LinkResources)
