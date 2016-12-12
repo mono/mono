@@ -218,6 +218,17 @@ namespace System.Transactions
 			return new Enlistment ();
 		}
 
+		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction.")]
+		[PermissionSetAttribute (SecurityAction.LinkDemand)]
+		public Enlistment PromoteAndEnlistDurable (
+			Guid manager,
+			IPromotableSinglePhaseNotification promotableNotification,
+			ISinglePhaseNotification notification,
+			EnlistmentOptions options)
+		{
+			throw new NotImplementedException ("DTC unsupported, multiple durable resource managers aren't supported.");
+		}
+
 		public override bool Equals (object obj)
 		{
 			return Equals (obj as Transaction);
