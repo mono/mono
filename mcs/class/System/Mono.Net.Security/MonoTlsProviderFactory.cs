@@ -168,7 +168,6 @@ namespace Mono.Net.Security
 				if (btls_supported)
 					providerRegistration.Add ("btls", BtlsProviderTypeName);
 
-				Console.WriteLine ("PROBING: {0}", btls_supported);
 				providerRegistration.Add ("default", btls_supported ? BtlsProviderTypeName : LegacyProviderTypeName);
 					
 				X509Helper2.Initialize ();
