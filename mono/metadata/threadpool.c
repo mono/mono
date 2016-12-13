@@ -607,7 +607,9 @@ mono_threadpool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	 * The is_unloading () check in worker_request () ensures that
 	 * no new jobs are added after we enter the lock below.
 	 */
-	mono_lazy_initialize (&status, initialize);
+
+	if (!mono_lazy_is_initialized (&status))
+		return TRUE;
 
 	mono_refcount_inc (threadpool);
 
