@@ -29,6 +29,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -293,6 +294,36 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Call (GetType ().GetMethod ("DoAnotherThing"), i, s), i, s).Compile ();
 
 			Assert.AreEqual ("foo42", lamda (42, "foo"));
+		}
+
+		[Test]
+		public void CallDynamicMethod_ToString ()
+		{
+			// Regression test for #49686
+			var m = new DynamicMethod ("intIntId", typeof (int), new Type [] { typeof (int) });
+			var ilg = m.GetILGenerator ();
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ret);
+
+			var i = Expression.Parameter (typeof (int), "i");
+			var e = Expression.Call (m, i);
+
+			Assert.IsNotNull (e.ToString ());
+		}
+
+		[Test]
+		public void CallDynamicMethod_CompileInvoke ()
+		{
+			var m = new DynamicMethod ("intIntId", typeof (int), new Type [] { typeof (int) });
+			var ilg = m.GetILGenerator ();
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ret);
+
+			var i = Expression.Parameter (typeof (int), "i");
+			var e = Expression.Call (m, i);
+
+			var lambda = Expression.Lambda<Func<int, int>> (e, i).Compile ();
+			Assert.AreEqual (42, lambda (42));
 		}
 
 		public static int Bang (Expression i)
