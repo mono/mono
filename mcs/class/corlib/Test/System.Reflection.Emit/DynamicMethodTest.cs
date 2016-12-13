@@ -11,6 +11,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
@@ -440,6 +441,31 @@ namespace MonoTests.System.Reflection.Emit
 
 			var f = (Func<object, object>) method.CreateDelegate (typeof (Func<object, object>));
 			f.Method.GetMethodBody ();
+		}
+
+		[Test]
+		public void GetCustomAttributes ()
+		{
+			var method = new DynamicMethod ("method", typeof (void), new Type [] { });
+
+			var methodImplAttrType = typeof (MethodImplAttribute);
+			Assert.IsTrue (method.IsDefined (methodImplAttrType, true), "MethodImplAttribute is defined");
+
+			// According to the spec, MethodImplAttribute is the
+			// only custom attr that's present on a DynamicMethod.
+			// And it's always a managed method with no inlining.
+			var a1 = method.GetCustomAttributes (true);
+			Assert.AreEqual (a1.Length, 1, "a1.Length == 1");
+			Assert.AreEqual (a1[0].GetType (), methodImplAttrType, "a1[0] is a MethodImplAttribute");
+			var options = (a1[0] as MethodImplAttribute).Value;
+			Assert.IsTrue ((options & MethodImplOptions.NoInlining) != 0, "NoInlining is set");
+			Assert.IsTrue ((options & MethodImplOptions.Unmanaged) == 0, "Unmanaged isn't set");
+
+
+			// any other custom attribute type
+			var extensionAttrType = typeof (ExtensionAttribute);
+			Assert.IsFalse (method.IsDefined (extensionAttrType, true));
+			Assert.AreEqual (Array.Empty<object>(), method.GetCustomAttributes (extensionAttrType, true));
 		}
 
 	public delegate object RetObj();
