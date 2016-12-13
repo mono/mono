@@ -188,7 +188,5 @@ namespace System.Threading
 				if (exitContext) SynchronizationAttribute.EnterContext ();
 			}
 		}
-		// Can't make this an icall since it has the same name as the other Enter method
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	}
 }
