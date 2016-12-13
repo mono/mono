@@ -608,11 +608,15 @@ mono_threadpool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	 * no new jobs are added after we enter the lock below.
 	 */
 	mono_lazy_initialize (&status, initialize);
+
+	mono_refcount_inc (threadpool);
+
 	domains_lock ();
 
 	tpdomain = tpdomain_get (domain, FALSE);
 	if (!tpdomain) {
 		domains_unlock ();
+		mono_refcount_dec (threadpool);
 		return TRUE;
 	}
 
@@ -646,6 +650,8 @@ mono_threadpool_remove_domain_jobs (MonoDomain *domain, int timeout)
 
 	mono_coop_cond_destroy (&tpdomain->cleanup_cond);
 	tpdomain_free (tpdomain);
+
+	mono_refcount_dec (threadpool);
 
 	return ret;
 }
