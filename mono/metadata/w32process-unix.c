@@ -725,12 +725,8 @@ processes_cleanup (void)
 		if (process->signalled && process->handle) {
 			/* This process has exited and we need to remove the artifical ref
 			 * on the handle */
-			mono_os_mutex_lock (&processes_mutex);
-			unref_handle = process->handle;
+			mono_w32handle_unref (process->handle);
 			process->handle = NULL;
-			mono_os_mutex_unlock (&processes_mutex);
-			if (unref_handle)
-				mono_w32handle_unref (unref_handle);
 		}
 	}
 
@@ -742,8 +738,7 @@ processes_cleanup (void)
 	 */
 	mono_os_mutex_lock (&processes_mutex);
 
-	process = processes;
-	while (process) {
+	for (process = processes; process; process = process->next) {
 		if (process->handle_count == 0 && process->freeable) {
 			/*
 			 * Unlink the entry.
@@ -755,11 +750,8 @@ processes_cleanup (void)
 			else
 				prev->next = process->next;
 			finished = g_slist_prepend (finished, process);
-
-			process = process->next;
 		} else {
 			prev = process;
-			process = process->next;
 		}
 	}
 
