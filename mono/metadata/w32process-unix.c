@@ -152,6 +152,7 @@ typedef struct _Process {
 	 */
 	gpointer handle;
 	gboolean freeable;
+	gboolean signalled;
 	struct _Process *next;
 } Process;
 
@@ -721,7 +722,7 @@ processes_cleanup (void)
 		return;
 
 	for (process = processes; process; process = process->next) {
-		if (process->pid == 0 && process->handle) {
+		if (process->signalled && process->handle) {
 			/* This process has exited and we need to remove the artifical ref
 			 * on the handle */
 			mono_os_mutex_lock (&processes_mutex);
@@ -1401,8 +1402,10 @@ MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, sigi
 		for (process = processes; process; process = process->next) {
 			if (process->pid != pid)
 				continue;
+			if (process->signalled)
+				continue;
 
-			process->pid = 0; /* this pid doesn't exist anymore, clear it */
+			process->signalled = TRUE;
 			process->status = status;
 			mono_os_sem_post (&process->exit_sem);
 			mono_memory_barrier ();
