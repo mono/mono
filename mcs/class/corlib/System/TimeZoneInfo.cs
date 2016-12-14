@@ -5795,11 +5795,11 @@ namespace System {
 			foreach (var rule in GetAdjustmentRules ()) {
 				if (!rule.HasDaylightSaving)
 					continue;
-				if (rule.DateStart.Year != year && rule.DateEnd.Year != year)
+				if (rule.DateStart.Year > year || rule.DateEnd.Year < year)
 					continue;
-				if (rule.DateStart.Year == year)
+				if (rule.DateStart.Year <= year && (first == null || rule.DateStart.Year > first.DateStart.Year))
 					first = rule;
-				if (rule.DateEnd.Year == year)
+				if (rule.DateEnd.Year >= year && (last == null || rule.DateEnd.Year < last.DateEnd.Year))
 					last = rule;
 			}
 
