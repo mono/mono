@@ -2038,6 +2038,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 
 		mono_os_mutex_lock (&processes_mutex);
 		process->next = processes;
+		mono_memory_barrier ();
 		processes = process;
 		mono_os_mutex_unlock (&processes_mutex);
 
