@@ -248,7 +248,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedEqualLifted ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -270,7 +269,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedEqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");

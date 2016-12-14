@@ -85,7 +85,6 @@ mobile_common_dirs := \
 
 aot_only_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.Dynamic.Interpreter	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
