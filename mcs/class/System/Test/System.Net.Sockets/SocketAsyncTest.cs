@@ -8,6 +8,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class SocketAsyncTest
 	{
 		Socket serverSocket;

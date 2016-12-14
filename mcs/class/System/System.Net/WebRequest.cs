@@ -352,7 +352,9 @@ namespace System.Net
 		[MonoTODO("Look in other places for proxy config info")]
 		public static IWebProxy GetSystemWebProxy ()
 		{
-#if MONOTOUCH
+#if MONOTOUCH_WATCH
+			throw new PlatformNotSupportedException ();
+#elif MONOTOUCH
 			return CFNetwork.GetDefaultProxy ();
 #else
 #if MONODROID

@@ -21,6 +21,9 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class WebClientTest
 	{
 		private string _tempFolder;
@@ -1771,6 +1774,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if MONOTOUCH_WATCH
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultProxy ()
 		{
 			WebClient wc = new WebClient ();

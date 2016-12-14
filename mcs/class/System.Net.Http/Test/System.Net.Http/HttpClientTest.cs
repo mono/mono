@@ -286,7 +286,11 @@ namespace MonoTests.System.Net.Http
 				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
+#if __WATCHOS__
+				Assert.IsTrue (e.InnerException is PlatformNotSupportedException, "#2");
+#else
 				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+#endif
 			}
 		}
 
@@ -321,6 +325,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Proxy_Disabled ()
 		{
 			var pp = WebRequest.DefaultWebProxy;
@@ -397,6 +404,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_Default ()
 		{
 			bool? failed = null;
@@ -441,6 +451,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_Version_1_0 ()
 		{
 			bool? failed = null;
@@ -488,6 +501,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_ClientHandlerSettings ()
 		{
 			bool? failed = null;
@@ -552,6 +568,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_CustomHeaders ()
 		{
 			bool? failed = null;
@@ -616,6 +635,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_CustomHeaders_SpecialSeparators ()
 		{
 			bool? failed = null;
@@ -650,6 +672,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_CustomHeaders_Host ()
 		{
 			bool? failed = null;
@@ -683,6 +708,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Transfer_Encoding_Chunked ()
 		{
 			bool? failed = null;
@@ -730,7 +758,11 @@ namespace MonoTests.System.Net.Http
 					client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Wait ();
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
+#if __WATCHOS__
+					Assert.AreEqual (typeof (PlatformNotSupportedException), e.InnerException.GetType (), "#2");
+#else
 					Assert.AreEqual (typeof (ProtocolViolationException), e.InnerException.GetType (), "#2");
+#endif
 				}
 				Assert.IsNull (failed, "#102");
 			} finally {
@@ -740,6 +772,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_Content ()
 		{
 			var listener = CreateListener (l => {
@@ -767,6 +802,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_Content_MaxResponseContentBufferSize ()
 		{
 			var listener = CreateListener (l => {
@@ -806,7 +844,11 @@ namespace MonoTests.System.Net.Http
 					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
 					Assert.Fail ("#2");
 				} catch (AggregateException e) {
+#if __WATCHOS__
+					Assert.IsTrue (e.InnerException is PlatformNotSupportedException, "#3");
+#else
 					Assert.IsTrue (e.InnerException is HttpRequestException, "#3");
+#endif
 				}
 
 			} finally {
@@ -815,6 +857,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_NoContent ()
 		{
 			foreach (var method in new HttpMethod[] { HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete }) {
@@ -847,6 +892,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Complete_Error ()
 		{
 			var listener = CreateListener (l => {
@@ -867,6 +915,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Content_Get ()
 		{
 			var listener = CreateListener (l => {
@@ -886,6 +937,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Content_BomEncoding ()
 		{
 			var listener = CreateListener (l => {
@@ -910,6 +964,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Content_Put ()
 		{
 			bool passed = false;
@@ -935,6 +992,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void Send_Content_Put_CustomStream ()
 		{
 			bool passed = false;
@@ -1037,6 +1097,9 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 		[Category ("MobileNotWorking")] // Missing encoding
+#if __WATCHOS__
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetString_Many ()
 		{
 			Action<HttpListenerContext> context = (HttpListenerContext l) => {
@@ -1080,7 +1143,11 @@ namespace MonoTests.System.Net.Http
 					client.GetByteArrayAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
+#if __WATCHOS__
+					Assert.IsTrue (e.InnerException is PlatformNotSupportedException , "#2");
+#else
 					Assert.IsTrue (e.InnerException is HttpRequestException , "#2");
+#endif
 				}
 			} finally {
 				listener.Close ();
@@ -1107,7 +1174,11 @@ namespace MonoTests.System.Net.Http
 					client.GetStringAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
+#if __WATCHOS__
+					Assert.IsTrue (e.InnerException is PlatformNotSupportedException, "#2");
+#else
 					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
+#endif
 				}
 			} finally {
 				listener.Abort ();
@@ -1116,6 +1187,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		public void RequestUriAfterRedirect ()
 		{
 			var listener = CreateListener (l => {
@@ -1156,6 +1230,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if __WATCHOS__
+		[ExpectedException (typeof (AggregateException))]
+#endif
 		/*
 		 * Properties may only be modified before sending the first request.
 		 */

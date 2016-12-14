@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 // 
 
+#if !MONOTOUCH_WATCH
+
 using System;
 using System.Net;
 using System.Collections.Generic;
@@ -1067,3 +1069,5 @@ namespace Mono.Net
 		}
 	}
 }
+
+#endif // !MONOTOUCH_WATCH

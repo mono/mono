@@ -36,6 +36,9 @@ namespace MonoTests.System.Net {
 	}
 
 	[TestFixture]
+#if __WATCHOS__
+	[Ignore ("watchOS does not have a working networking stack.")]
+#endif
 	public class WebRequestTest {
 
 		private void Callback (IAsyncResult ar)
