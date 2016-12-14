@@ -12,11 +12,3 @@ partial class SR
 	public const string Arg_TypeNotSupported = "Specified type is not supported";
 	public const string Reflection_MethodNotSupported = "Vector<T>.Count cannot be called via reflection when intrinsics are enabled.";
 }
-
-partial class SR
-{
-	public static string Format (string message, object data)
-	{
-		return string.Format (message, data);
-	}
-}

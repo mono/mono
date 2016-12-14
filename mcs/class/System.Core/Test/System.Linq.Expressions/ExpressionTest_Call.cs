@@ -224,7 +224,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallMethodOnStruct ()
 		{
 			var param = Expression.Parameter (typeof (EineStrukt), "s");
@@ -272,7 +271,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallStaticMethodWithRefParameter ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");
@@ -284,7 +282,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallStaticMethodWithRefParameterAndOtherParameter ()
 		{
 			var i = Expression.Parameter (typeof (int), "i");
@@ -339,7 +336,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect282729 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=282729
@@ -366,8 +362,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect290278 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=290278
@@ -390,7 +384,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect297597 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=297597
@@ -408,6 +401,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=319190
+		[Category ("NotWorkingInterpreter")]
 		public void Connect319190 ()
 		{
 			var lambda = Expression.Lambda<Func<bool>> (
@@ -513,7 +507,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallNullableGetValueOrDefault () // #568989
 		{
 			var value = Expression.Parameter (typeof (int?), "value");
