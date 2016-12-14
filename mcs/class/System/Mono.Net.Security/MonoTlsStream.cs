@@ -95,8 +95,15 @@ namespace Mono.Net.Security
 			sslStream = provider.CreateSslStream (networkStream, false, settings);
 
 			try {
+				var host = request.Host;
+				if (!string.IsNullOrEmpty (host)) {
+					var pos = host.IndexOf (':');
+					if (pos > 0)
+						host = host.Substring (0, pos);
+				}
+
 				sslStream.AuthenticateAsClient (
-					request.Host, request.ClientCertificates,
+					host, request.ClientCertificates,
 					(SslProtocols)ServicePointManager.SecurityProtocol,
 					ServicePointManager.CheckCertificateRevocationList);
 
