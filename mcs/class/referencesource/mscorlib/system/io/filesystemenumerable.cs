@@ -186,7 +186,9 @@ namespace System.IO
         private SearchOption searchOption;
         private String fullPath;
         private String normalizedSearchPath;
+#if !MONO        
         private int oldMode;
+#endif
         private bool _checkHost;
 
         [System.Security.SecuritySafeCritical]
