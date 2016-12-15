@@ -1411,7 +1411,6 @@
     <Compile Include="System.Security.Cryptography\DESCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\DSACryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\ICspAsymmetricAlgorithm.cs" />
-    <Compile Include="System.Security.Cryptography\IncrementalHash.cs" />
     <Compile Include="System.Security.Cryptography\KeyNumber.cs" />
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RC2CryptoServiceProvider.cs" />
