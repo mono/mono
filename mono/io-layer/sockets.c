@@ -799,6 +799,10 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 	int ret;
 	const void *tmp_val;
 	struct timeval tv;
+
+#if defined (__linux__)
+	int bufsize = -1;
+#endif
 	
 	if (startup_count == 0) {
 		WSASetLastError (WSANOTINITIALISED);
@@ -825,13 +829,13 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 		 * buffer sizes "to allow space for bookkeeping
 		 * overhead."
 		 */
-		int bufsize = *((int *) optval);
+		bufsize = *((int *) optval);
 
 		bufsize /= 2;
 		tmp_val = &bufsize;
 #endif
 	}
-		
+	
 	ret = setsockopt (fd, level, optname, tmp_val, optlen);
 	if (ret == -1) {
 		gint errnum = errno;
