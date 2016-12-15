@@ -69,11 +69,13 @@ clean-local:
 
 # AOT build profile mcs to speed up build
 ifeq ($(PROFILE),build)
+
+IMAGES = $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
 ifdef MCS_MODE
-all-local: $(mscorlib_aot_image) $(mcs_aot_image)
-else
-all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
+	IMAGES += $(mcs_aot_image)
 endif
+
+all-local: $(IMAGES)
 install-local:
 endif
 
