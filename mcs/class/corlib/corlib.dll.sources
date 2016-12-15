@@ -704,7 +704,6 @@ System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
 System.Security.Cryptography/DSACryptoServiceProvider.cs
 System.Security.Cryptography/ICspAsymmetricAlgorithm.cs
-System.Security.Cryptography/IncrementalHash.cs
 System.Security.Cryptography/KeyNumber.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/RC2CryptoServiceProvider.cs
