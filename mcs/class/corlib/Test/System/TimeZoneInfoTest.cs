@@ -79,16 +79,11 @@ namespace MonoTests.System
 		public static void SetLocal (TimeZoneInfo val)
 		{
 			if (localField == null) {
-				if (Type.GetType ("Mono.Runtime") != null) {
-					localField = typeof (TimeZoneInfo).GetField ("local",
-							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-				} else {
-					cachedDataField = typeof (TimeZoneInfo).GetField ("s_cachedData",
-							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+				cachedDataField = typeof (TimeZoneInfo).GetField ("s_cachedData",
+						BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
 
-					localField = cachedDataField.FieldType.GetField ("m_localTimeZone",
-						BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
-				}
+				localField = cachedDataField.FieldType.GetField ("m_localTimeZone",
+					BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
 			}
 
 			if (cachedDataField != null)
@@ -385,23 +380,20 @@ namespace MonoTests.System
 			[Test]
 			public void TestAthensDST_InDSTDelta ()
 			{
-				// In .NET GetUtcOffset() returns the BaseUtcOffset for times within the hour
-				// lost when DST starts but IsDaylightSavingTime() returns true.
-
 				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Athens"));
 
 				var date = new DateTime (2014, 3, 30 , 3, 0, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 1, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 59, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
@@ -665,7 +657,7 @@ namespace MonoTests.System
 
 				sdt = new DateTime (2014, 1, 9, 23, 0, 0);
 				ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Local);
-				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : sdt.Kind;
+				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : DateTimeKind.Local;
 				Assert.AreEqual (expectedKind,  ddt.Kind, "#3.1");
 				Assert.AreEqual (DateTimeKind.Unspecified, sdt.Kind, "#3.2");
 			}
@@ -800,19 +792,19 @@ namespace MonoTests.System
 			[Test]
 			public void AmbiguousDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 1)));
-				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1)));
 			}
 		
 			[Test]
 			public void AmbiguousUTCDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 1, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 59, 59, DateTimeKind.Utc)));
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
 			}
 		
 		#if SLOW_TESTS
@@ -862,17 +854,6 @@ namespace MonoTests.System
 				var timeZones = (global::System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo>) method.Invoke (null, null);
 				Assert.IsTrue (timeZones.Count > 0, "GetSystemTimeZones should not return an empty collection.");
 			}
-
-#if !MOBILE
-			[Test]
-			public void WindowsRegistryTimezoneWithParentheses ()
-			{
-				var method = (MethodInfo) typeof (TimeZoneInfo).GetMember ("TrimSpecial", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)[0];
-
-				var name = method.Invoke (null, new object [] { " <--->  Central Standard Time (Mexico)   ||<<>>" });
-				Assert.AreEqual (name, "Central Standard Time (Mexico)", "#1");
-			}
-#endif
 		}
 		
 		[TestFixture]
@@ -1232,9 +1213,9 @@ namespace MonoTests.System
 					TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (DateTime.MinValue, DateTime.MaxValue.Date, TimeSpan.FromHours (-1), startTransition, endTransition) });
 
 				var offset = ctz.GetUtcOffset (DateTime.MinValue);
-				Assert.AreEqual (TimeSpan.FromHours (-5), offset); // TODO: Wrong it should be -6
+				Assert.AreEqual (TimeSpan.FromHours (-6), offset);
 			}
-    }
+		}
 
 		[TestFixture]
 		public class GetDaylightChanges
@@ -1289,13 +1270,15 @@ namespace MonoTests.System
 		[TestFixture]
 		public class ParseTZBuffer
 		{
-			MethodInfo parseTZBuffer;
+			MethodInfo findTimeZoneId;
+			MethodInfo getTimeZoneFromTzData;
 
 			[SetUp]
 			public void Setup()
 			{
 				var flags = BindingFlags.Static | BindingFlags.NonPublic;
-				parseTZBuffer = typeof (TimeZoneInfo).GetMethod ("ParseTZBuffer", flags);
+				findTimeZoneId = typeof (TimeZoneInfo).GetMethod ("FindTimeZoneId", flags);
+				getTimeZoneFromTzData = typeof (TimeZoneInfo).GetMethod ("GetTimeZoneFromTzData", flags);
 			}
 
 			[Test]
@@ -1306,7 +1289,10 @@ namespace MonoTests.System
 
 				var data = Convert.FromBase64String (base64Data);
 
-				var tz = parseTZBuffer.Invoke (null, new object[] { "Test", data, data.Length});
+				string id = (string)findTimeZoneId.Invoke (null, new object[] { data });
+				Assert.AreEqual ("Local", id);
+				
+				var tz = (TimeZoneInfo)getTimeZoneFromTzData.Invoke (null, new object[] { data, id });
 				Assert.IsTrue (tz != null);
 			}
 		}

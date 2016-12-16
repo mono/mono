@@ -32,7 +32,14 @@ namespace Microsoft.Win32 {
 
         [DllImport(Win32Native.KERNEL32, EntryPoint="GetDynamicTimeZoneInformation", SetLastError = true, ExactSpelling = true)]
         [ResourceExposure(ResourceScope.None)]
+#if !MONO
         internal static extern int GetDynamicTimeZoneInformation(out Win32Native.DynamicTimeZoneInformation lpDynamicTimeZoneInformation);
+#else
+		// We use the version that takes Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION, as that's used in CoreRT 
+		// We use a mix of CoreCLR and CoreRT implementation of TimeZoneInfo, and it's much more convenient to use CoreRT version for code sharing
+		// Also, the consumption of this API using CoreRT version does way less allocations
+        internal static extern int GetDynamicTimeZoneInformation(out Interop.mincore.TIME_DYNAMIC_ZONE_INFORMATION lpDynamicTimeZoneInformation);
+#endif
 
         // 
         // BOOL GetFileMUIPath(
@@ -75,7 +82,7 @@ namespace Microsoft.Win32 {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern bool FreeLibrary(IntPtr hModule);
 
-
+#if !MONO
         [SecurityCritical]
         [SuppressUnmanagedCodeSecurityAttribute()]
         internal static unsafe class ManifestEtw
@@ -281,6 +288,9 @@ namespace Microsoft.Win32 {
                 ref int ReturnLength);
 
         }
+
+#endif // !MONO
+
 #if FEATURE_COMINTEROP
         [SecurityCritical]
         [DllImport("combase.dll", PreserveSig = true)]
