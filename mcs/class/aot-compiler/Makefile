@@ -64,21 +64,35 @@ $(csc_SCI_image): $(csc_SCI_dll) $(runtime_dep)
 
 ifdef ENABLE_AOT
 
-clean-local:
-	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(PROFILE)_aot.log
+CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
 
-# AOT build profile mcs to speed up build
+clean-local:
+	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES) $(PROFILE)_aot.log
+
+# AOT build profile to speed up build
 ifeq ($(PROFILE),build)
+
+IMAGES = $(mscorlib_aot_image)
+
 ifdef MCS_MODE
-all-local: $(mscorlib_aot_image) $(mcs_aot_image)
+IMAGES += $(mcs_aot_image)
 else
-all-local: $(mscorlib_aot_image) $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
+IMAGES += $(CSC_IMAGES)
 endif
+
+all-local: $(IMAGES)
 install-local:
 endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
-all-local: $(mscorlib_aot_image) $(mcs_aot_image)
+
+IMAGES = $(mscorlib_aot_image) $(mcs_aot_image)
+
+ifdef MCS_MODE
+IMAGES += $(CSC_IMAGES)
+endif
+
+all-local: $(IMAGES)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
