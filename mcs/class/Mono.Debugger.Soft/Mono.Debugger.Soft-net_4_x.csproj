@@ -82,6 +82,7 @@
     <Compile Include="Mono.Debugger.Soft\ExceptionEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\ExceptionEventRequest.cs" />
     <Compile Include="Mono.Debugger.Soft\FieldInfoMirror.cs" />
+    <Compile Include="Mono.Debugger.Soft\IInvocableMethodOwnerMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\IInvokeAsyncResult.cs" />
     <Compile Include="Mono.Debugger.Soft\ILExceptionHandler.cs" />
     <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
@@ -130,7 +131,8 @@
     <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
     <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />  </ItemGroup>
+    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace Mono.Debugger.Soft
 		public Value[] OutArgs { get; set; }
 	}
 
-	public class ObjectMirror : Value {
+	public class ObjectMirror : Value, IInvocableMethodOwnerMirror {
 		TypeMirror type;
 		AppDomainMirror domain;
 	
@@ -142,37 +141,43 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return InvokeMethod (vm, thread, method, this, arguments, InvokeOptions.None);
+		Value IInvocableMethodOwnerMirror.GetThisObject () {
+			return this;
 		}
 
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
-			return InvokeMethod (vm, thread, method, this, arguments, options);
+		void IInvocableMethodOwnerMirror.ProcessResult (InvokeResult result)
+		{
+		}
+
+		// Public invocation API
+
+		public static Value InvokeMethod (IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			return InvokeMethod (mirror, mirror.VirtualMachine, thread, method, mirror.GetThisObject (), arguments, options);
 		}
 
 		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
+		public static IAsyncResult BeginInvokeMethod (IInvocableMethodOwnerMirror mirror, VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return BeginInvokeMethod (vm, thread, method, mirror.GetThisObject (), arguments, options, callback, state);
 		}
 
-		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
+		public static IAsyncResult BeginInvokeMethod (IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return BeginInvokeMethod (mirror.VirtualMachine, thread, method, mirror.GetThisObject (), arguments, options, callback, state);
 		}
 
-		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			return EndInvokeMethodInternal (asyncResult);
+		public static Value EndInvokeMethod (IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
+			return EndInvokeMethodInternal (mirror, asyncResult);
 		}
 
-		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+		public static InvokeResult EndInvokeMethodWithResult (IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
+			return  EndInvokeMethodInternalWithResult (mirror, asyncResult);
 		}
 
-		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+		public static Task<Value> InvokeMethodAsync (IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
+			BeginInvokeMethod (mirror, thread, method, arguments, options, iar =>
 					{
 						try {
-							tcs.SetResult (EndInvokeMethod (iar));
+							tcs.SetResult (EndInvokeMethod (mirror, iar));
 						} catch (OperationCanceledException) {
 							tcs.TrySetCanceled ();
 						} catch (Exception ex) {
@@ -182,12 +187,12 @@ namespace Mono.Debugger.Soft
 			return tcs.Task;
 		}
 
-		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+		public static Task<InvokeResult> InvokeMethodAsyncWithResult (IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<InvokeResult> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
+			BeginInvokeMethod (mirror, thread, method, arguments, options, iar =>
 					{
 						try {
-							tcs.SetResult (EndInvokeMethodInternalWithResult (iar));
+							tcs.SetResult (EndInvokeMethodInternalWithResult (mirror, iar));
 						} catch (OperationCanceledException) {
 							tcs.TrySetCanceled ();
 						} catch (Exception ex) {
@@ -202,11 +207,11 @@ namespace Mono.Debugger.Soft
 		// finished. The callback will be called with a different IAsyncResult that represents one method invocation.
 		// From protocol version 2.22.
 		//
-		public IAsyncResult BeginInvokeMultiple (ThreadMirror thread, MethodMirror[] methods, IList<IList<Value>> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return BeginInvokeMultiple (vm, thread, methods, this, arguments, options, callback, state);
+		public static IAsyncResult BeginInvokeMultiple (IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror[] methods, IList<IList<Value>> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return BeginInvokeMultiple (mirror.VirtualMachine, thread, methods, mirror.GetThisObject (), arguments, options, callback, state);
 		}
 
-		public void EndInvokeMultiple (IAsyncResult asyncResult) {
+		public static void EndInvokeMultiple (IAsyncResult asyncResult) {
 			EndInvokeMultipleInternal (asyncResult);
 		}
 
@@ -281,7 +286,7 @@ namespace Mono.Debugger.Soft
 				if (ID == 0) // Ooops
 					return;
 
-				ObjectMirror.AbortInvoke (VM, Thread, ID);
+				AbortInvoke (VM, Thread, ID);
 			}
 		}
 
@@ -334,7 +339,13 @@ namespace Mono.Debugger.Soft
 				r.Callback.BeginInvoke (r, null, null);
 		}
 
-	    internal static InvokeResult EndInvokeMethodInternalWithResult (IAsyncResult asyncResult) {
+		internal static InvokeResult EndInvokeMethodInternalWithResult (IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
+			var result = EndInvokeMethodInternalWithResultImpl (asyncResult);
+			mirror.ProcessResult (result);
+			return result;
+		}
+
+		internal static InvokeResult EndInvokeMethodInternalWithResultImpl (IAsyncResult asyncResult) {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
@@ -368,8 +379,8 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
- 	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
-			InvokeResult res = EndInvokeMethodInternalWithResult (asyncResult);
+		internal static Value EndInvokeMethodInternal (IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
+			InvokeResult res = EndInvokeMethodInternalWithResult (mirror, asyncResult);
 			return res.Result;
 		}
 
@@ -383,8 +394,8 @@ namespace Mono.Debugger.Soft
 				r.AsyncWaitHandle.WaitOne ();
 		}
 
-		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
-			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
+		internal static Value InvokeMethod (IInvocableMethodOwnerMirror mirror, VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+			return EndInvokeMethodInternal (mirror, BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
 		}
 
 		internal static void AbortInvoke (VirtualMachine vm, ThreadMirror thread, int id)
