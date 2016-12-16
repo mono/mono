@@ -13,7 +13,7 @@
     <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
-    
+
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -91,6 +91,7 @@
     <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\InvalidStackFrameException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvocationException.cs" />
+    <Compile Include="Mono.Debugger.Soft\InvocationsAPI.cs" />
     <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
     <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalScope.cs" />
@@ -177,4 +178,3 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
-

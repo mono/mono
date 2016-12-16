@@ -792,7 +792,7 @@ namespace Mono.Debugger.Soft
 			if (!method.IsConstructor)
 				throw new ArgumentException ("The method must be a constructor.", "method");
 
-			return ObjectMirror.InvokeMethod (this, thread, method, arguments, options);
+			return this.InvokeMethod (thread, method, arguments, options);
 		}
 
 		// Since protocol version 2.31
