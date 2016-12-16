@@ -5,6 +5,28 @@ using System.Threading.Tasks;
 
 namespace Mono.Debugger.Soft
 {
+	public interface IInvokeResult
+	{
+		/// <summary>
+		/// Return value of invoked method
+		/// </summary>
+		Value Result { get; }
+
+		/// <summary>
+		/// The value of the receiver after the call for calls to valuetype methods or null.
+		/// Only set when using the InvokeOptions.ReturnOutThis flag.
+		/// Since protocol version 2.35
+		/// </summary>
+		Value OutThis { get; }
+
+		/// <summary>
+		/// The value of the arguments after the call
+		/// Only set when using the InvokeOptions.ReturnOutArgs flag.
+		/// Since protocol version 2.35
+		/// </summary>
+		Value[] OutArgs { get; }
+	}
+
 	/// <summary>
 	/// A bunch of extension methods to <see cref="IInvocableMethodOwnerMirror"/> to perform invocations on objects
 	/// </summary>
@@ -27,7 +49,7 @@ namespace Mono.Debugger.Soft
 			return EndInvokeMethodInternal (mirror, asyncResult);
 		}
 
-		public static InvokeResult EndInvokeMethodWithResult (this IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
+		public static IInvokeResult EndInvokeMethodWithResult (this IInvocableMethodOwnerMirror mirror, IAsyncResult asyncResult) {
 			return  EndInvokeMethodInternalWithResult (mirror, asyncResult);
 		}
 
@@ -46,8 +68,8 @@ namespace Mono.Debugger.Soft
 			return tcs.Task;
 		}
 
-		public static Task<InvokeResult> InvokeMethodAsyncWithResult (this IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<InvokeResult> ();
+		public static Task<IInvokeResult> InvokeMethodAsyncWithResult (this IInvocableMethodOwnerMirror mirror, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<IInvokeResult> ();
 			BeginInvokeMethod (mirror, thread, method, arguments, options, iar =>
 			{
 				try {
@@ -148,6 +170,14 @@ namespace Mono.Debugger.Soft
 				AbortInvoke (VM, Thread, ID);
 			}
 		}
+
+		class InvokeResult : IInvokeResult
+		{
+			public Value Result { get; set; }
+			public Value OutThis { get; set; }
+			public Value[] OutArgs { get; set; }
+		}
+
 
 		static IInvokeAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			if (thread == null)

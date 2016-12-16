@@ -15,6 +15,6 @@ namespace Mono.Debugger.Soft
 		/// Make some additional processing of invocation result. See implementation in <see cref="StructMirror"/>
 		/// </summary>
 		/// <param name="result"></param>
-		void ProcessResult (InvokeResult result);
+		void ProcessResult (IInvokeResult result);
 	}
 }

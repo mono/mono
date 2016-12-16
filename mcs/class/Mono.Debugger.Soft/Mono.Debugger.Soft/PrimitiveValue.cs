@@ -35,7 +35,7 @@ namespace Mono.Debugger.Soft
 			return this;
 		}
 
-		void IInvocableMethodOwnerMirror.ProcessResult (InvokeResult result)
+		void IInvocableMethodOwnerMirror.ProcessResult (IInvokeResult result)
 		{
 		}
 

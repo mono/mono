@@ -1,26 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Mono.Debugger.Soft
 {
-	public class InvokeResult {
-		public Value Result { get; set; }
-		//
-		// The value of the receiver after the call for calls to valuetype methods or null.
-		// Only set when using the InvokeOptions.ReturnOutThis flag.
-		// Since protocol version 2.35
-		//
-		public Value OutThis { get; set; }
-		//
-		// The value of the arguments after the call
-		// Only set when using the InvokeOptions.ReturnOutArgs flag.
-		// Since protocol version 2.35
-		//
-		public Value[] OutArgs { get; set; }
-	}
-
 	public class ObjectMirror : Value, IInvocableMethodOwnerMirror {
 		TypeMirror type;
 		AppDomainMirror domain;
@@ -145,7 +127,7 @@ namespace Mono.Debugger.Soft
 			return this;
 		}
 
-		void IInvocableMethodOwnerMirror.ProcessResult (InvokeResult result)
+		void IInvocableMethodOwnerMirror.ProcessResult (IInvokeResult result)
 		{
 		}
 

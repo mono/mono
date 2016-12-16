@@ -866,7 +866,7 @@ namespace Mono.Debugger.Soft
 			return null;
 		}
 
-		void IInvocableMethodOwnerMirror.ProcessResult (InvokeResult result)
+		void IInvocableMethodOwnerMirror.ProcessResult (IInvokeResult result)
 		{
 		}
 	}
