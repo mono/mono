@@ -250,6 +250,9 @@ mono_thread_abort_prot_block_count_add (MonoInternalThread *thread, int val)
 	do {
 		old_state = thread->thread_state;
 		int new_val = val + ((old_state & ABORT_PROT_BLOCK_MASK) >> ABORT_PROT_BLOCK_SHIFT);
+
+		// if (val && !(old_state & ABORT_PROT_BLOCK_MASK) && (old_state & INTERRUPT_REQUESTED_BIT))
+		// 	printf ("abort protc inc'd while we have an interruption pending\n");
 		//bounds check abort_prot_count
 		g_assert (new_val >= 0);
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
@@ -269,6 +272,30 @@ mono_thread_dec_abort_prot_block_count (MonoInternalThread *thread)
 {
 	mono_thread_abort_prot_block_count_add (thread, -1);
 }
+
+//Requires @thread to be locked
+static gboolean
+mono_thread_try_inc_abort_prot_block_count (MonoInternalThread *thread)
+{
+	gsize old_state, new_state;
+	do {
+		old_state = thread->thread_state;
+		int new_val = ((old_state & ABORT_PROT_BLOCK_MASK) >> ABORT_PROT_BLOCK_SHIFT) + 1;
+
+		//FIXME YES, this is probably borken. The fact that it's 2 vars don't help
+		if ((old_state & INTERRUPT_REQUESTED_BIT) && (thread->state & (ThreadState_AbortRequested | ThreadState_StopRequested))) {
+			return FALSE;
+		}
+
+		//bounds check abort_prot_count
+		g_assert (new_val >= 0);
+		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
+		new_state = (old_state & ~ABORT_PROT_BLOCK_MASK) | (new_val << ABORT_PROT_BLOCK_SHIFT);
+
+	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	return TRUE;
+}
+
 
 static gboolean
 mono_thread_get_interruption_requested (MonoInternalThread *thread)
@@ -756,6 +783,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 		void *args [1];
 
 		g_assert (start_delegate != NULL);
+		mono_thread_info_sleep (3, NULL);
 
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
 		args [0] = (gpointer) start_delegate_arg;
@@ -5182,6 +5210,20 @@ mono_threads_begin_abort_protected_block (void)
 	mono_memory_barrier ();
 }
 
+
+/* Returns  FALSE if there's a pending interruption */
+gboolean
+mono_threads_try_begin_abort_protected_block (void)
+{
+	MonoInternalThread *thread;
+
+	thread = mono_thread_internal_current ();
+	LOCK_THREAD (thread); //the next call needs it as it accesses MonoInternalThread::state
+	gboolean res = mono_thread_try_inc_abort_prot_block_count (thread);
+	UNLOCK_THREAD (thread);
+	mono_memory_barrier ();
+	return res;
+}
 void
 mono_threads_end_abort_protected_block (void)
 {
