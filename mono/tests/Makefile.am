@@ -1,6 +1,6 @@
 SUBDIRS = assemblyresolve gc-descriptors
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 FEATUREFUL_RUNTIME_TEST =  
 else
 FEATUREFUL_RUNTIME_TEST = test-appdomain-unload
@@ -46,7 +46,7 @@ MKBUNDLE = \
 	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
 	$(RUNTIME) $(CLASS)/mkbundle.exe
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_STATIC,MOBILE_LEGACY 
 endif
 
@@ -60,7 +60,7 @@ MCS = $(MCS_NO_LIB) -lib:$(CLASS)
 
 ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)" --aot-run-flags "$(AOT_RUN_FLAGS)" --aot-build-flags "$(AOT_BUILD_FLAGS)"
 else
 TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
@@ -84,7 +84,7 @@ STRESS_TESTS_SRC=	\
 	process-stress.cs	\
 	assembly-load-stress.cs
 
-BASE_TEST_MOBILE_STATIC_NOT_SUPPORTED= \
+BASE_TEST_AOT_FULL_NOT_SUPPORTED= \
 	remoting4.cs		# Needs remoting support \
 	remoting1.cs		# Needs remoting support \
 	remoting2.cs		# Needs remoting support \
@@ -471,12 +471,12 @@ BASE_TEST_CS_SRC_UNIVERSAL=		\
 	abort-cctor.cs	\
 	reference-loader.cs
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 BASE_TEST_CS_SRC= \
 	$(BASE_TEST_CS_SRC_UNIVERSAL)
 else
 BASE_TEST_CS_SRC= \
-	$(BASE_TEST_MOBILE_STATIC_NOT_SUPPORTED) \
+	$(BASE_TEST_AOT_FULL_NOT_SUPPORTED) \
 	$(BASE_TEST_CS_SRC_UNIVERSAL)
 endif
 
@@ -633,7 +633,7 @@ else
 COOP_DISABLED_TESTS= 
 endif
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 # Tests which rely on TypeLoadExceptions
 # In full-aot mode, these cause the relevant methods to be not AOTed.
 PROFILE_DISABLED_TESTS = \
@@ -717,7 +717,7 @@ TEST_CSC_SRC=			\
 # constraints-load.il: 
 # Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to 
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
-IL_SRC_MOBILE_STATIC_NOT_SUPPORTED=	\
+IL_SRC_AOT_FULL_NOT_SUPPORTED=	\
 	constraints-load.il \
 	bug-515884.il
 
@@ -789,12 +789,12 @@ TEST_IL_SRC_UNIVERSAL=			\
 	gsharing-valuetype-layout.il	\
 	invalid_generic_instantiation.il
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 TEST_IL_SRC= \
 	$(TEST_IL_SRC_UNIVERSAL)
 else
 TEST_IL_SRC= \
-	$(TEST_IL_SRC_MOBILE_STATIC_NOT_SUPPORTED) \
+	$(TEST_IL_SRC_AOT_FULL_NOT_SUPPORTED) \
 	$(TEST_IL_SRC_UNIVERSAL)
 endif
 
@@ -825,11 +825,11 @@ EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 %.exe: %.il
 	$(ILASM) -out:$@ $<
 
-if !INSTALL_MOBILE_STATIC
+if !INSTALL_AOT_FULL
 TEST_DRIVER_HARD_KILL_FEATURE=-r:Mono.Posix.dll
 endif
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 TEST_DRIVER_DEPEND=TestDriver.dll$(PLATFORM_AOT_SUFFIX)
 else
 TEST_DRIVER_DEPEND=TestDriver.dll
@@ -880,7 +880,7 @@ bug-81691-b.dll$(PLATFORM_AOT_SUFFIX)	\
 bug-327438.2.exe$(PLATFORM_AOT_SUFFIX)	\
 bug-81466-lib.dll$(PLATFORM_AOT_SUFFIX)
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 prereqs: $(PREREQSI_IL_AOT) $(PREREQSI_CS_AOT) $(AOT_EXTRA_LIBS)
 else
 prereqs: $(PREREQSI_IL) $(PREREQSI_CS)
@@ -925,7 +925,7 @@ test-sgen : sgen-tests
 # Precompile the test assemblies in parallel
 compile-tests:
 	$(MAKE) -j4 $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(MAKE) $(PREREQSI_IL_AOT) $(PREREQSI_CS_AOT) $(AOT_EXTRA_LIBS)
 endif
 
@@ -1112,7 +1112,7 @@ if !S390X
 	$(MAKE) sgen-bridge2-tests
 endif
 
-SGEN_REGULAR_TESTS_MOBILE_STATIC_NOT_SUPPORTED =	\
+SGEN_REGULAR_TESTS_AOT_FULL_NOT_SUPPORTED =	\
 	sgen-domain-unload.exe	\
 	sgen-domain-unload-2.exe
 
@@ -1129,12 +1129,12 @@ SGEN_REGULAR_TESTS_UNIVERSAL =	\
 	gc-graystack-stress.exe	\
 	bug-17590.exe
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 SGEN_REGULAR_TESTS= \
 	$(SGEN_REGULAR_TESTS_UNIVERSAL)
 else
 SGEN_REGULAR_TESTS= \
-	$(SGEN_REGULAR_TESTS_MOBILE_STATIC_NOT_SUPPORTED) \
+	$(SGEN_REGULAR_TESTS_AOT_FULL_NOT_SUPPORTED) \
 	$(SGEN_REGULAR_TESTS_UNIVERSAL)
 endif
 
@@ -1340,7 +1340,7 @@ imt_big_iface_test.exe: $(TEST_DRIVER_DEPEND) make-imt-test.exe
 EXTRA_DIST += test-inline-call-stack-library.cs test-inline-call-stack.cs
 test-inline-call-stack-library.dll: $(TEST_DRIVER_DEPEND) $(srcdir)/test-inline-call-stack-library.cs
 	$(MCS) -t:library -out:test-inline-call-stack-library.dll $(srcdir)/test-inline-call-stack-library.cs
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
@@ -1387,7 +1387,7 @@ bug-81673.exe bug-81673-interface.dll: $(srcdir)/bug-81673.cs $(srcdir)/bug-8167
 	$(MCS) -target:library -out:bug-81673-interface.dll $(srcdir)/bug-81673-interface.cs
 	$(MCS) -out:bug-81673.exe -r:bug-81673-interface.dll $(srcdir)/bug-81673.cs
 	$(MCS) -define:WITH_STOP -target:library -out:bug-81673-interface.dll $(srcdir)/bug-81673-interface.cs
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
@@ -1396,7 +1396,7 @@ bug-36848.exe bug-36848-a.dll: $(srcdir)/bug-36848.cs $(srcdir)/bug-36848-a.cs
 	$(MCS) -target:library -out:bug-36848-a.dll $(srcdir)/bug-36848-a.cs
 	$(MCS) -r:bug-36848-a.dll -out:bug-36848.exe $(srcdir)/bug-36848.cs
 	$(MCS) -target:library -out:bug-36848-a.dll $(srcdir)/bug-36848-a.cs /define:WITH_STOP
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
@@ -1411,7 +1411,7 @@ bug-81691.exe: bug-81691-b.dll
 EXTRA_DIST += bug-81466-lib.il
 bug-81466-lib.dll: bug-81466-lib.il
 	$(ILASM) /dll /output:bug-81466-lib.dll $(srcdir)/bug-81466-lib.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 bug-81466.exe: bug-81466.il bug-81466-lib.dll
@@ -1420,7 +1420,7 @@ bug-81466.exe: bug-81466.il bug-81466-lib.dll
 EXTRA_DIST += bug-324535-il.il
 bug-324535-il.dll : bug-324535-il.il
 	$(ILASM) /dll /output:bug-324535-il.dll $(srcdir)/bug-324535-il.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 bug-324535.exe : bug-324535.cs bug-324535-il.dll
@@ -1429,7 +1429,7 @@ bug-324535.exe : bug-324535.cs bug-324535-il.dll
 EXTRA_DIST += custom-modifiers.2.cs custom-modifiers-lib.il
 custom-modifiers-lib.dll: custom-modifiers-lib.il
 	$(ILASM) /dll /output:custom-modifiers-lib.dll $(srcdir)/custom-modifiers-lib.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 custom-modifiers.2.exe: custom-modifiers.2.cs custom-modifiers-lib.dll
@@ -1438,7 +1438,7 @@ custom-modifiers.2.exe: custom-modifiers.2.cs custom-modifiers-lib.dll
 EXTRA_DIST += bug-382986-lib.cs
 bug-382986-lib.dll: bug-382986-lib.cs
 	$(MCS) -target:library -out:$@ $(srcdir)/bug-382986-lib.cs
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
@@ -1465,14 +1465,14 @@ test-coreclr-security : coreclr-security.exe
 EXTRA_DIST += generic-unboxing.2.il
 generic-unboxing.2.dll : generic-unboxing.2.il
 	$(ILASM) /dll /output:generic-unboxing.2.dll $(srcdir)/generic-unboxing.2.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
 EXTRA_DIST += generic-boxing.2.il
 generic-boxing.2.dll : generic-boxing.2.il generic-unboxing.2.dll
 	$(ILASM) /dll /output:generic-boxing.2.dll $(srcdir)/generic-boxing.2.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 
@@ -1487,7 +1487,7 @@ generic-box.2.exe : generic-box.2.cs generic-unboxing.2.dll generic-boxing.2.dll
 EXTRA_DIST += generic-delegate2.2.cs generic-delegate2-lib.2.il
 generic-delegate2-lib.2.dll : generic-delegate2-lib.2.il
 	$(ILASM) /dll /output:$@ $(srcdir)/generic-delegate2-lib.2.il
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 	$(RUNTIME) $(AOT_BUILD_FLAGS) $@
 endif
 generic-delegate2.2.exe : generic-delegate2.2.cs generic-delegate2-lib.2.dll
@@ -1501,7 +1501,7 @@ gshared: test-generic-sharing
 gshared-aot:
 	@$(MAKE) AOT=1 gshared
 
-GSHARED_TESTS_MOBILE_STATIC_NOT_SUPPORTED = \
+GSHARED_TESTS_AOT_FULL_NOT_SUPPORTED = \
 		generic-type-builder.2.exe
 
 GSHARED_TESTS_UNIVERSAL = \
@@ -1532,12 +1532,12 @@ GSHARED_TESTS_UNIVERSAL = \
 		generic-type-load-exception.2.exe bug-616463.exe	\
 		bug-1147.exe
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 GSHARED_TESTS= \
 	$(GSHARED_TESTS_UNIVERSAL)
 else
 GSHARED_TESTS= \
-	$(GSHARED_TESTS_MOBILE_STATIC_NOT_SUPPORTED) \
+	$(GSHARED_TESTS_AOT_FULL_NOT_SUPPORTED) \
 	$(GSHARED_TESTS_UNIVERSAL)
 endif
 

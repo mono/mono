@@ -36,7 +36,7 @@ NUNIT_LITE = yes
 
 # the tuner takes care of the install
 NO_INSTALL = yes
-MOBILE_STATIC = yes
+AOT_FULL = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
 
