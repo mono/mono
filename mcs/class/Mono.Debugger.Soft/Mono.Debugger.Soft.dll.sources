@@ -20,6 +20,7 @@ Mono.Debugger.Soft/VMDisconnectedException.cs
 Mono.Debugger.Soft/Mirror.cs
 Mono.Debugger.Soft/EnumMirror.cs
 Mono.Debugger.Soft/FieldInfoMirror.cs
+Mono.Debugger.Soft/IInvocableMethodOwnerMirror.cs
 Mono.Debugger.Soft/TypeMirror.cs
 Mono.Debugger.Soft/CustomAttributeNamedArgumentMirror.cs
 Mono.Debugger.Soft/DataConverter.cs
@@ -31,6 +32,7 @@ Mono.Debugger.Soft/ExceptionEventRequest.cs
 Mono.Debugger.Soft/EventType.cs
 Mono.Debugger.Soft/StructMirror.cs
 Mono.Debugger.Soft/InvocationException.cs
+Mono.Debugger.Soft/InvocationsAPI.cs
 Mono.Debugger.Soft/IMirror.cs
 Mono.Debugger.Soft/VMDeathEvent.cs
 Mono.Debugger.Soft/MethodBodyMirror.cs
