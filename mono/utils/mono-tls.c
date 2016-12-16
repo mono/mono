@@ -116,7 +116,7 @@
 
 #define MONO_THREAD_VAR_OFFSET(var,offset) __asm ("     ldr     %0, 1f; b 2f; 1: .word " #var "(tpoff); 2:" : "=r" (offset))
 
-#elif defined(__s390x__)
+#elif defined(TARGET_S390X)
 # if defined(__PIC__)
 #  if !defined(__PIE__)
 // This only works if libmono is linked into the application
