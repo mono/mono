@@ -593,7 +593,7 @@ HANDLES(ICALL(MODULE_6, "InternalGetTypes", ves_icall_System_Reflection_Module_I
 HANDLES(ICALL(MODULE_7, "ResolveFieldToken", ves_icall_System_Reflection_Module_ResolveFieldToken))
 HANDLES(ICALL(MODULE_8, "ResolveMemberToken", ves_icall_System_Reflection_Module_ResolveMemberToken))
 HANDLES(ICALL(MODULE_9, "ResolveMethodToken", ves_icall_System_Reflection_Module_ResolveMethodToken))
-ICALL(MODULE_10, "ResolveSignature", ves_icall_System_Reflection_Module_ResolveSignature)
+HANDLES(ICALL(MODULE_10, "ResolveSignature", ves_icall_System_Reflection_Module_ResolveSignature))
 ICALL(MODULE_11, "ResolveStringToken", ves_icall_System_Reflection_Module_ResolveStringToken)
 HANDLES(ICALL(MODULE_12, "ResolveTypeToken", ves_icall_System_Reflection_Module_ResolveTypeToken))
 HANDLES(ICALL(MODULE_13, "get_MetadataToken", ves_icall_reflection_get_token))
