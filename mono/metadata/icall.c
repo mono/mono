@@ -1301,7 +1301,7 @@ get_caller_no_system_or_reflection (MonoMethod *m, gint32 no, gint32 ilo, gboole
 	return FALSE;
 }
 
-static MonoReflectionType *
+static MonoReflectionTypeHandle
 type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAssembly **caller_assembly, MonoError *error)
 {
 	MonoMethod *m, *dest;
@@ -1361,7 +1361,8 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAsse
 	if (assembly) {
 		/* When loading from the current assembly, AppDomain.TypeResolve will not be called yet */
 		type = mono_reflection_get_type_checked (rootimage, assembly->image, info, ignoreCase, &type_resolve, error);
-		return_val_if_nok (error, NULL);
+		if (!is_ok (error))
+			goto fail;
 	}
 
 	// XXXX - aleksey -
@@ -1375,33 +1376,37 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAsse
 	if (!info->assembly.name && !type) {
 		/* try mscorlib */
 		type = mono_reflection_get_type_checked (rootimage, NULL, info, ignoreCase, &type_resolve, error);
-		return_val_if_nok (error, NULL);
+		if (!is_ok (error))
+			goto fail;
 	}
 	if (assembly && !type && type_resolve) {
 		type_resolve = FALSE; /* This will invoke TypeResolve if not done in the first 'if' */
 		type = mono_reflection_get_type_checked (rootimage, assembly->image, info, ignoreCase, &type_resolve, error);
-		return_val_if_nok (error, NULL);
+		if (!is_ok (error))
+			goto fail;
 	}
 
 	if (!type) 
-		return NULL;
+		goto fail;
 
-	return mono_type_get_object_checked (mono_domain_get (), type, error);
+	return mono_type_get_object_handle (mono_domain_get (), type, error);
+fail:
+	return MONO_HANDLE_NEW (MonoReflectionType, NULL);
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_System_Type_internal_from_name (MonoString *name,
-										  MonoBoolean throwOnError,
-										  MonoBoolean ignoreCase)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_System_Type_internal_from_name (MonoStringHandle name,
+					  MonoBoolean throwOnError,
+					  MonoBoolean ignoreCase,
+					  MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	MonoTypeNameParse info;
-	MonoReflectionType *type = NULL;
 	gboolean parsedOk;
 	MonoAssembly *caller_assembly;
 
-	char *str = mono_string_to_utf8_checked (name, &error);
-	if (!is_ok (&error))
+	char *str = mono_string_handle_to_utf8 (name, error);
+	if (!is_ok (error))
 		goto leave;
 
 	parsedOk = mono_reflection_parse_type (str, &info);
@@ -1410,18 +1415,18 @@ ves_icall_System_Type_internal_from_name (MonoString *name,
 	if (!parsedOk) {
 		mono_reflection_free_type_info (&info);
 		if (throwOnError)
-			mono_error_set_argument (&error, "typeName", "failed parse: %s", str);
+			mono_error_set_argument (error, "typeName", "failed parse: %s", str);
 		goto leave;
 	}
 
-	type = type_from_parsed_name (&info, ignoreCase, &caller_assembly, &error);
+	MonoReflectionTypeHandle type = type_from_parsed_name (&info, ignoreCase, &caller_assembly, error);
 
-	if (!is_ok (&error)) {
+	if (!is_ok (error)) {
 		mono_reflection_free_type_info (&info);
 		goto leave;
 	}
 
-	if (type == NULL) {
+	if (MONO_HANDLE_IS_NULL (type)) {
 		if (throwOnError) {
 			char *tname = info.name_space ? g_strdup_printf ("%s.%s", info.name_space, info.name) : g_strdup (info.name);
 			char *aname;
@@ -1431,7 +1436,7 @@ ves_icall_System_Type_internal_from_name (MonoString *name,
 				aname = mono_stringify_assembly_name (mono_assembly_get_name (caller_assembly));
 			else
 				aname = g_strdup ("");
-			mono_error_set_type_load_name (&error, tname, aname, "");
+			mono_error_set_type_load_name (error, tname, aname, "");
 		}
 		mono_reflection_free_type_info (&info);
 		goto leave;
@@ -1439,12 +1444,10 @@ ves_icall_System_Type_internal_from_name (MonoString *name,
 	
 leave:
 	g_free (str);
-	if (!is_ok (&error)) {
-		if (throwOnError)
-			mono_error_set_pending_exception (&error);
-		else
-			mono_error_cleanup (&error);
-		return NULL;
+	if (!is_ok (error)) {
+		if (!throwOnError)
+			mono_error_cleanup (error);
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	}
 
 	return type;
