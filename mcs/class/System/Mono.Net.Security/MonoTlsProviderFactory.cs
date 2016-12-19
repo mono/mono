@@ -153,16 +153,23 @@ namespace Mono.Net.Security
 			}
 		}
 
+		const string LegacyProviderTypeName = "Mono.Net.Security.LegacyTlsProvider";
+		const string BtlsProviderTypeName = "Mono.Btls.MonoBtlsProvider";
+			
 		static void InitializeProviderRegistration ()
 		{
 			lock (locker) {
 				if (providerRegistration != null)
 					return;
 				providerRegistration = new Dictionary<string,string> ();
-				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
-				providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
-				if (IsBtlsSupported ())
-					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
+				providerRegistration.Add ("legacy", LegacyProviderTypeName);
+				
+				bool btls_supported = IsBtlsSupported ();
+				if (btls_supported)
+					providerRegistration.Add ("btls", BtlsProviderTypeName);
+
+				providerRegistration.Add ("default", btls_supported ? BtlsProviderTypeName : LegacyProviderTypeName);
+					
 				X509Helper2.Initialize ();
 			}
 		}
