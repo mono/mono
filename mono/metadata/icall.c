@@ -5108,29 +5108,26 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 	return klass->methods [offset];
 }
 
-ICALL_EXPORT MonoReflectionMethod*
-ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (MonoMethod *method, MonoType *type, MonoBoolean generic_check)
+ICALL_EXPORT MonoReflectionMethodHandle
+ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (MonoMethod *method, MonoType *type, MonoBoolean generic_check, MonoError *error)
 {
-	MonoReflectionMethod *res = NULL;
-	MonoError error;
+	mono_error_init (error);
 	MonoClass *klass;
 	if (type && generic_check) {
 		klass = mono_class_from_mono_type (type);
 		if (mono_class_get_generic_type_definition (method->klass) != mono_class_get_generic_type_definition (klass))
-			return NULL;
+			return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 
 		if (method->klass != klass) {
 			method = mono_method_get_equivalent_method (method, klass);
 			if (!method)
-				return NULL;
+				return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 		}
 	} else if (type)
 		klass = mono_class_from_mono_type (type);
 	else
 		klass = method->klass;
-	res = mono_method_get_object_checked (mono_domain_get (), method, klass, &error);
-	mono_error_set_pending_exception (&error);
-	return res;
+	return mono_method_get_object_handle (mono_domain_get (), method, klass, error);
 }
 
 ICALL_EXPORT MonoReflectionMethodBodyHandle
