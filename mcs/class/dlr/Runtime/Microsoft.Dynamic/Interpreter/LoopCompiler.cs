@@ -276,7 +276,7 @@ namespace Microsoft.Scripting.Interpreter {
             LoopVariable existing;
             LocalVariable loc;
 
-            if (_loopLocals.Contains(node)) {
+            if (_loopLocals != null && _loopLocals.Contains(node)) {
                 // local to the loop - not propagated in or out
                 return node;
             } else if (_loopVariables.TryGetValue(node, out existing)) {
