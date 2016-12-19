@@ -999,6 +999,9 @@ typedef struct {
 	MonoArray *permissions;
 } MonoReflectionCtorBuilder;
 
+/* Safely access System.Reflection.Emit.ConstructorBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionCtorBuilder);
+
 typedef struct {
 	MonoObject object;
 	MonoMethod *mhandle;
@@ -1029,6 +1032,9 @@ typedef struct {
 	MonoArray *param_modopt;
 	MonoArray *permissions;
 } MonoReflectionMethodBuilder;
+
+/* Safely access System.Reflection.Emit.MethodBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionMethodBuilder);
 
 typedef struct {
 	MonoObject object;
@@ -1112,6 +1118,9 @@ typedef struct {
 	MonoArray *modopt;
 } MonoReflectionFieldBuilder;
 
+/* Safely access System.Reflection.Emit.FieldBuilder from native code */ 
+TYPED_HANDLE_DECL (MonoReflectionFieldBuilder);
+
 typedef struct {
 	MonoObject object;
 	guint32 attrs;
@@ -1189,6 +1198,9 @@ typedef struct {
 	MonoArray *permissions;
 	MonoReflectionType *created;
 } MonoReflectionTypeBuilder;
+
+/* Safely access System.Reflection.Emit.TypeBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionTypeBuilder);
 
 typedef struct {
 	MonoReflectionType type;
