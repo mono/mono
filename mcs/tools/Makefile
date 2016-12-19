@@ -23,6 +23,7 @@ net_4_5_dirs := \
 	mconfig		\
 	installutil	\
 	nunitreport	\
+	nunit-lite	\
 	pdb2mdb		\
 	sqlsharp	\
 	sqlmetal	\
