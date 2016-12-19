@@ -2583,12 +2583,10 @@ ves_icall_RuntimeTypeHandle_IsComObject (MonoReflectionType *type)
 }
 
 ICALL_EXPORT guint32
-ves_icall_reflection_get_token (MonoObject* obj)
+ves_icall_reflection_get_token (MonoObjectHandle obj, MonoError *error)
 {
-	MonoError error;
-	guint32 result = mono_reflection_get_token_checked (obj, &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	mono_error_init (error);
+	return mono_reflection_get_token_checked (obj, error);
 }
 
 ICALL_EXPORT MonoReflectionModuleHandle
