@@ -12,7 +12,8 @@ LIBRARY = netstandard.dll
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699 /nowarn:618
 LIB_REFS = System System.Xml System.Xml.Linq System.Runtime.Serialization System.Core System.Numerics System.Net.Http \
-System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem
+System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem \
+Facades/System.Security.Cryptography.Algorithms
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Web.Services
