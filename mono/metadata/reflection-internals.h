@@ -27,6 +27,8 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 guint32
 mono_reflection_get_token_checked (MonoObject *obj, MonoError *error);
 
+guint32
+mono_reflection_get_token_handle (MonoObjectHandle obj, MonoError *error);
 
 MonoObject*
 mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass, MonoError *error);
