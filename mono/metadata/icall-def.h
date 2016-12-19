@@ -1038,7 +1038,7 @@ ICALL(WAITH_4, "WaitOne_internal", ves_icall_System_Threading_WaitHandle_WaitOne
 
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)
 ICALL(TYPE_1, "internal_from_handle", ves_icall_System_Type_internal_from_handle)
-ICALL(TYPE_2, "internal_from_name", ves_icall_System_Type_internal_from_name)
+HANDLES(ICALL(TYPE_2, "internal_from_name", ves_icall_System_Type_internal_from_name))
 
 ICALL_TYPE(TYPEDR, "System.TypedReference", TYPEDR_1)
 ICALL(TYPEDR_1, "InternalToObject",	mono_TypedReference_ToObject)
