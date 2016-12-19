@@ -6015,38 +6015,40 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	return NULL_HANDLE;
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error, MonoError *error)
 {
-	MonoError error;
+	mono_error_init (error);
 	int table = mono_metadata_token_table (token);
 	int idx = mono_metadata_token_index (token);
 	MonoTableInfo *tables = image->tables;
 	guint32 sig, len;
 	const char *ptr;
-	MonoArray *res;
 
 	*resolve_error = ResolveTokenError_OutOfRange;
 
 	/* FIXME: Support other tables ? */
 	if (table != MONO_TABLE_STANDALONESIG)
-		return NULL;
+		return MONO_HANDLE_CAST (MonoArray, NULL);
 
 	if (image_is_dynamic (image))
-		return NULL;
+		return MONO_HANDLE_CAST (MonoArray, NULL);
 
 	if ((idx == 0) || (idx > tables [MONO_TABLE_STANDALONESIG].rows))
-		return NULL;
+		return MONO_HANDLE_CAST (MonoArray, NULL);
 
 	sig = mono_metadata_decode_row_col (&tables [MONO_TABLE_STANDALONESIG], idx - 1, 0);
 
 	ptr = mono_metadata_blob_heap (image, sig);
 	len = mono_metadata_decode_blob_size (ptr, &ptr);
 
-	res = mono_array_new_checked (mono_domain_get (), mono_defaults.byte_class, len, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
-	memcpy (mono_array_addr (res, guint8, 0), ptr, len);
+	MonoArrayHandle res = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, len, error);
+	if (!is_ok (error))
+		return MONO_HANDLE_CAST (MonoArray, NULL);
+	uint32_t h;
+	gpointer array_base = MONO_ARRAY_HANDLE_PIN (res, guint8, 0, &h);
+	memcpy (array_base, ptr, len);
+	mono_gchandle_free (h);
 	return res;
 }
 
