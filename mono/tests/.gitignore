@@ -22,6 +22,7 @@
 /*.lo
 /*.so
 /modules-m1.netmodule
+/test-multi-netmodule-1-netmodule.netmodule
 /imt_big_iface_test.cs
 /bin
 /page.aspx
