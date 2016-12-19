@@ -1,0 +1,4 @@
+#include Mono.CSharp.dll.sources
+../corlib/System.Reflection.Emit/PEFileKinds.cs
+../corlib/System.Reflection.Emit/MethodToken.cs
+monotouch.cs

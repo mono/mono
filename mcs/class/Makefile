@@ -123,6 +123,8 @@ monotouch_runtime_dirs := \
 monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
 monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
 
+xbox_dirs := $(monotouch_dirs) System.Drawing
+
 xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
@@ -341,6 +343,7 @@ net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
 net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
+xbox_SUBDIRS := $(xbox_dirs)
 
 include ../build/rules.make
 
