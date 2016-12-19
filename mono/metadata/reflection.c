@@ -2243,7 +2243,7 @@ mono_reflection_get_token (MonoObject *obj_raw)
 	HANDLE_FUNCTION_ENTER ();
 	MONO_HANDLE_DCL (MonoObject, obj);
 	MonoError error;
-	guint32 result = mono_reflection_get_token_handle (obj, &error);
+	guint32 result = mono_reflection_get_token_checked (obj, &error);
 	mono_error_assert_ok (&error);
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
@@ -2257,25 +2257,7 @@ mono_reflection_get_token (MonoObject *obj_raw)
  * representing a metadata element.  On failure sets @error.
  */
 guint32
-mono_reflection_get_token_checked (MonoObject *obj_raw, MonoError *error)
-{
-	HANDLE_FUNCTION_ENTER ();
-	mono_error_init (error);
-	MONO_HANDLE_DCL (MonoObject, obj);
-	guint32 result = mono_reflection_get_token_handle (obj, error);
-	HANDLE_FUNCTION_RETURN_VAL (result);
-}
-
-/**
- * mono_reflection_get_token_handle:
- * @obj: the object
- * @error: set on error
- *
- *   Return the metadata token of @obj which should be an object
- * representing a metadata element.  On failure sets @error.
- */
-guint32
-mono_reflection_get_token_handle (MonoObjectHandle obj, MonoError *error)
+mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 {
 	guint32 token = 0;
 
