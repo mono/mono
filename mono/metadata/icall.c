@@ -5051,25 +5051,22 @@ fail:
 	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
-ICALL_EXPORT MonoReflectionMethod*
-ves_icall_GetCurrentMethod (void) 
+ICALL_EXPORT MonoReflectionMethodHandle
+ves_icall_GetCurrentMethod (MonoError *error) 
 {
-	MonoReflectionMethod *res = NULL;
-	MonoError error;
+	mono_error_init (error);
 
 	MonoMethod *m = mono_method_get_last_managed ();
 
 	if (!m) {
-		mono_set_pending_exception (mono_get_exception_not_supported ("Stack walks are not supported on this platform."));
-		return NULL;
+		mono_error_set_not_supported (error, "Stack walks are not supported on this platform.");
+		return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 	}
 
 	while (m->is_inflated)
 		m = ((MonoMethodInflated*)m)->declaring;
 
-	res = mono_method_get_object_checked (mono_domain_get (), m, NULL, &error);
-	mono_error_set_pending_exception (&error);
-	return res;
+	return mono_method_get_object_handle (mono_domain_get (), m, NULL, error);
 }
 
 
