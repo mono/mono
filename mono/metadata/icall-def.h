@@ -608,7 +608,7 @@ ICALL(MEVIN_1, "get_event_info", ves_icall_MonoEventInfo_get_event_info)
 
 ICALL_TYPE(MFIELD, "System.Reflection.MonoField", MFIELD_1)
 ICALL(MFIELD_1, "GetFieldOffset", ves_icall_MonoField_GetFieldOffset)
-ICALL(MFIELD_2, "GetParentType", ves_icall_MonoField_GetParentType)
+HANDLES(ICALL(MFIELD_2, "GetParentType", ves_icall_MonoField_GetParentType))
 ICALL(MFIELD_5, "GetRawConstantValue", ves_icall_MonoField_GetRawConstantValue)
 ICALL(MFIELD_3, "GetValueInternal", ves_icall_MonoField_GetValueInternal)
 ICALL(MFIELD_6, "ResolveType", ves_icall_MonoField_ResolveType)
