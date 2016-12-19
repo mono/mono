@@ -1212,20 +1212,21 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	}
 }
 
-ICALL_EXPORT MonoReflectionType *
-ves_icall_System_Object_GetType (MonoObject *obj)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_System_Object_GetType (MonoObjectHandle obj, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (obj);
+	MonoClass *klass = mono_handle_class (obj);
 #ifndef DISABLE_REMOTING
-	if (obj->vtable->klass == mono_defaults.transparent_proxy_class)
-		ret = mono_type_get_object_checked (mono_object_domain (obj), &((MonoTransparentProxy*)obj)->remote_class->proxy_class->byval_arg, &error);
-	else
+	if (klass == mono_defaults.transparent_proxy_class) {
+		MonoTransparentProxyHandle proxy_obj = MONO_HANDLE_CAST (MonoTransparentProxy, obj);
+		MonoRemoteClass *remote_class = MONO_HANDLE_GETVAL (proxy_obj, remote_class);
+		MonoType *proxy_type = &remote_class->proxy_class->byval_arg;
+		return mono_type_get_object_handle (domain, proxy_type, error);
+	} else
 #endif
-		ret = mono_type_get_object_checked (mono_object_domain (obj), &obj->vtable->klass->byval_arg, &error);
-
-	mono_error_set_pending_exception (&error);
-	return ret;
+		return mono_type_get_object_handle (domain, &klass->byval_arg, error);
 }
 
 static gboolean
