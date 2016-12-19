@@ -2467,8 +2467,9 @@ mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *i
 	 * this has changed on later versions of Android.  Also, we don't want to
 	 * set this on start-up as DUMPABLE has security implications. */
 	prctl (PR_SET_DUMPABLE, 1);
+
+	mono_runtime_printf_err ("\nNo native Android stacktrace (see debuggerd output).\n");
 #endif
-	mono_exception_native_unwind (ctx, info);
 #endif
 
 	/*
