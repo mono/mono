@@ -306,6 +306,9 @@ typedef struct {
 	MonoBoolean	 custom_type_info;
 } MonoTransparentProxy;
 
+/* Safely access System.Runtime.Remoting.Proxies.TransparentProxy from native code */
+TYPED_HANDLE_DECL (MonoTransparentProxy);
+
 typedef struct {
 	MonoObject obj;
 	MonoReflectionMethod *method;

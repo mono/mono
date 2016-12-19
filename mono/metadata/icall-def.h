@@ -493,7 +493,7 @@ ICALL_TYPE(NUMBER_FORMATTER, "System.NumberFormatter", NUMBER_FORMATTER_1)
 ICALL(NUMBER_FORMATTER_1, "GetFormatterTables", ves_icall_System_NumberFormatter_GetFormatterTables)
 
 ICALL_TYPE(OBJ, "System.Object", OBJ_1)
-ICALL(OBJ_1, "GetType", ves_icall_System_Object_GetType)
+HANDLES(ICALL(OBJ_1, "GetType", ves_icall_System_Object_GetType))
 ICALL(OBJ_2, "InternalGetHashCode", mono_object_hash)
 ICALL(OBJ_3, "MemberwiseClone", ves_icall_System_Object_MemberwiseClone)
 
