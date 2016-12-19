@@ -1878,20 +1878,21 @@ ves_icall_MonoField_GetFieldOffset (MonoReflectionField *field)
 	return field->field->offset - sizeof (MonoObject);
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_MonoField_GetParentType (MonoReflectionField *field, MonoBoolean declaring)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_MonoField_GetParentType (MonoReflectionFieldHandle field, MonoBoolean declaring, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (field);
 	MonoClass *parent;
 
-	parent = declaring? field->field->parent: field->klass;
+	if (declaring) {
+		MonoClassField *f = MONO_HANDLE_GETVAL (field, field);
+		parent = f->parent;
+	} else {
+		parent = MONO_HANDLE_GETVAL (field, klass);
+	}
 
-	ret = mono_type_get_object_checked (mono_object_domain (field), &parent->byval_arg, &error);
-	mono_error_set_pending_exception (&error);
-
-	return ret;
-
+	return mono_type_get_object_handle (domain, &parent->byval_arg, error);
 }
 
 ICALL_EXPORT MonoObject *
