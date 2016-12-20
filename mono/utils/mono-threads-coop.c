@@ -27,6 +27,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-api.h>
 #include <mono/utils/checked-build.h>
+#include <mono/utils/mono-threads-debug.h>
 
 #ifdef TARGET_OSX
 #include <mono/utils/mach-support.h>
@@ -134,7 +135,7 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 	/* commit the saved state and notify others if needed */
 	switch (mono_threads_transition_state_poll (info)) {
 	case SelfSuspendResumed:
-		return;
+		break;
 	case SelfSuspendWait:
 		mono_thread_info_wait_for_resume (info);
 		break;
@@ -142,6 +143,12 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 		mono_threads_notify_initiator_of_suspend (info);
 		mono_thread_info_wait_for_resume (info);
 		break;
+	}
+
+	if (info->async_target) {
+		info->async_target (info->user_data);
+		info->async_target = NULL;
+		info->user_data = NULL;
 	}
 }
 

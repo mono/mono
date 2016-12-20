@@ -167,7 +167,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-#if MOBILE_STATIC || !MOBILE
+#if !MONODROID && !MONOTOUCH && !XAMMAC
 		static MSI.MonoTlsProvider TryDynamicLoad ()
 		{
 			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");

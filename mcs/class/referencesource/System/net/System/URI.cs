@@ -2320,7 +2320,7 @@ namespace System {
             // plus it will set idx value for next steps
             if ((cF & Flags.ImplicitFile) != 0) {
                 idx = (ushort)0;
-                while (IsLWS(m_String[idx])) {
+                while (idx < info.Offset.End && IsLWS(m_String[idx])) {
                     ++idx;
                     ++info.Offset.Scheme;
                 }

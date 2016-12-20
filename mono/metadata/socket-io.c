@@ -54,7 +54,7 @@
 #include <mono/metadata/file-io.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>
-#include <mono/metadata/threadpool-ms-io.h>
+#include <mono/metadata/threadpool-io.h>
 #include <mono/utils/mono-poll.h>
 /* FIXME change this code to not mess so much with the internals */
 #include <mono/metadata/class-internals.h>
@@ -62,7 +62,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
-#include <mono/utils/w32handle.h>
+#include <mono/metadata/w32handle.h>
 
 #include <time.h>
 #ifdef HAVE_SYS_TIME_H
@@ -646,7 +646,7 @@ ves_icall_System_Net_Sockets_Socket_Close_internal (SOCKET sock, gint32 *werror)
 
 	/* Clear any pending work item from this socket if the underlying
 	 * polling system does not notify when the socket is closed */
-	mono_threadpool_ms_io_remove_socket (GPOINTER_TO_INT (sock));
+	mono_threadpool_io_remove_socket (GPOINTER_TO_INT (sock));
 
 	MONO_ENTER_GC_SAFE;
 	closesocket (sock);
@@ -1242,7 +1242,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (SOCKET sock, gint mode,
 
 	if (ret == -1) {
 #ifdef HOST_WIN32
-		*werror = WSAGetLastError ();
+		*werror = (errno > 0 && errno < WSABASEERR) ? errno + WSABASEERR : errno;
 #else
 		*werror = errno_to_WSA (errno, __func__);
 #endif
@@ -1868,7 +1868,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArray **sockets, gint32
 	
 	if (ret == -1) {
 #ifdef HOST_WIN32
-		*werror = WSAGetLastError ();
+		*werror = (errno > 0 && errno < WSABASEERR) ? errno + WSABASEERR : errno;
 #else
 		*werror = errno_to_WSA (errno, __func__);
 #endif

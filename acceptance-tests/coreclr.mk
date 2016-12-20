@@ -5164,13 +5164,13 @@ $(CORECLR_PATH)%_il.exe: $(CORECLR_PATH)%.il
 	$(ILASM) -out:$@ $<
 
 coreclr-testlibrary.dll: $(CORECLR_TESTLIBRARY_CS_SRC)
-	$(MCS) -unsafe -debug -target:library -d:WINCORESYS -d:MONO -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
+	$(MCS) -unsafe -debug:portable -target:library -d:WINCORESYS -d:MONO -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
 
 $(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.cs coreclr-testlibrary.dll
-	$(MCS) -unsafe -debug -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -d:MONO -out:$@ $<
+	$(MCS) -unsafe -debug:portable -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -d:MONO -out:$@ $<
 
 test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
-	$(MCS) -debug -r:Mono.Posix.dll -out:$@ $<
+	$(MCS) -debug:portable -r:Mono.Posix.dll -out:$@ $<
 
 GCStressTests.exe: $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
-	$(MCS) -out:$@ -debug -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
+	$(MCS) -out:$@ -debug:portable -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)

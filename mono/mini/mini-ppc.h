@@ -77,13 +77,8 @@ typedef struct MonoCompileArch {
 #define PPC_USES_FUNCTION_DESCRIPTOR
 #endif
 
-#ifndef __mono_ilp32__
-#define MONO_ARCH_HAVE_TLS_GET 1
-#endif
-
 #else /* must be __mono_ppc__ */
 
-#define MONO_ARCH_HAVE_TLS_GET 1
 #define MONO_ARCH_EMULATE_FCONV_TO_I8 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R4 1
@@ -183,7 +178,6 @@ typedef struct MonoCompileArch {
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
 #define PPC_THREAD_PTR_REG ppc_r13
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #else
 #define PPC_RET_ADDR_OFFSET 4
 #define PPC_STACK_PARAM_OFFSET 8
@@ -200,6 +194,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
 #define PPC_THREAD_PTR_REG ppc_r2
 #endif
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1

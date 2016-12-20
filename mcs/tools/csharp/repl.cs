@@ -55,7 +55,7 @@ namespace Mono {
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
 			foreach (var source in settings.SourceFiles)
-				startup_files [i++] = source.FullPathName;
+				startup_files [i++] = source.OriginalFullPathName;
 			settings.SourceFiles.Clear ();
 
 			TextWriter agent_stderr = null;

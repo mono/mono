@@ -931,13 +931,21 @@ namespace System.Data.SqlClient
 				if (Client.Available <= 0)
 					return -1; // Error
 
-				IPEndPoint endpoint = CreateLocalEndpoint ();
-				if (endpoint == null)
-					return -1;
+				IPEndPoint remoteEndpoint;
+				switch (Client.AddressFamily) {
+					case AddressFamily.InterNetwork:
+						remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+						break;
+					case AddressFamily.InterNetworkV6:
+						remoteEndpoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+						break;
+					default:
+						return -1; // Error
+				}
 
 				Byte [] rawrs;
 
-				rawrs = Receive (ref endpoint);
+				rawrs = Receive (ref remoteEndpoint);
 
 				string rs = Encoding.ASCII.GetString (rawrs);
 
@@ -958,16 +966,6 @@ namespace System.Data.SqlClient
 				Close ();
 
 				return SqlServerTcpPort;
-			}
-
-			IPEndPoint CreateLocalEndpoint ()
-			{
-				foreach (var addr in Dns.GetHostEntry ("localhost").AddressList) {
-					if (addr.AddressFamily == Client.AddressFamily)
-						return new IPEndPoint (addr, 0);
-				}
-
-				return null;
 			}
 		}
 

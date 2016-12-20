@@ -133,9 +133,9 @@ namespace Mono.CSharp
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = MonoToolsLocator.Mono;
-				mcs.StartInfo.Arguments = "\"" + MonoToolsLocator.CSharpCompiler + "\" ";
+				mcs.StartInfo.Arguments = "\"" + MonoToolsLocator.McsCSharpCompiler + "\" ";
 			} else {
-				mcs.StartInfo.FileName = MonoToolsLocator.CSharpCompiler;
+				mcs.StartInfo.FileName = MonoToolsLocator.McsCSharpCompiler;
 			}
 
 			mcs.StartInfo.Arguments += BuildArgs (options, fileNames, ProviderOptions);
@@ -181,7 +181,7 @@ namespace Mono.CSharp
 				Win32Exception exc = e as Win32Exception;
 				if (exc != null) {
 					throw new SystemException (String.Format ("Error running {0}: {1}", mcs.StartInfo.FileName,
-									Win32Exception.W32ErrorMessage (exc.NativeErrorCode)));
+									Win32Exception.GetErrorMessage (exc.NativeErrorCode)));
 				}
 				throw;
 			}

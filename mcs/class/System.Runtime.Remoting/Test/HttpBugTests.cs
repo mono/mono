@@ -169,16 +169,12 @@ namespace MonoTests.Remoting.Http
 		public void Main ()
 		{
 			channel = new HttpChannel (0);
-			try {
 			ChannelServices.RegisterChannel (channel);
 			MarshalByRefObject obj = (MarshalByRefObject) RemotingServices.Connect (
 				typeof (IFactorial),
 				"http://localhost:60000/MyEndPoint");
 			IFactorial cal = (IFactorial) obj;
-			Assert.AreEqual (cal.CalculateFactorial (4), 24); 
-			} finally {
-			ChannelServices.UnregisterChannel (channel);
-			}
+			Assert.AreEqual (cal.CalculateFactorial (4), 24);
 		}
 		
 		[TestFixtureSetUp]

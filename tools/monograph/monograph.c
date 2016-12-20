@@ -260,9 +260,9 @@ method_stats (MonoMethod *method) {
 			if (i == MONO_CEE_CASTCLASS || i == MONO_CEE_ISINST) {
 				guint32 token = read32 (ip + 1);
 				MonoClass *k = mono_class_get (method->klass->image, token);
-				if (k && k->flags & TYPE_ATTRIBUTE_SEALED)
+				if (k && mono_class_get_flags (k) & TYPE_ATTRIBUTE_SEALED)
 					cast_sealed++;
-				if (k && k->flags & TYPE_ATTRIBUTE_INTERFACE)
+				if (k && mono_class_get_flags (k) & TYPE_ATTRIBUTE_INTERFACE)
 					cast_iface++;
 				total_cast++;
 			}
@@ -364,7 +364,7 @@ method_stats (MonoMethod *method) {
 				MonoMethod *cm = mono_get_method (method->klass->image, read32 (ip + 1), NULL);
 				if (cm && !(cm->flags & METHOD_ATTRIBUTE_VIRTUAL))
 					nonvirt_callvirt++;
-				if (cm && (cm->klass->flags & TYPE_ATTRIBUTE_INTERFACE))
+				if (cm && (mono_class_get_flags (cm->klass) & TYPE_ATTRIBUTE_INTERFACE))
 					iface_callvirt++;
 				total_callvirt++;
 			}
@@ -430,7 +430,7 @@ type_stats (MonoClass *klass) {
 	MonoClass *parent;
 	int depth = 1;
 
-	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+	if (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_INTERFACE) {
 		num_ifaces++;
 		return;
 	}

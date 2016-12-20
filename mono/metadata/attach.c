@@ -42,6 +42,8 @@
 #include <mono/utils/mono-threads.h>
 #include "attach.h"
 
+#include <mono/io-layer/io-layer.h>
+
 /*
  * This module enables other processes to attach to a running mono process and
  * load agent assemblies. 
@@ -94,7 +96,7 @@ static char *ipc_filename;
 
 static char *server_uri;
 
-static HANDLE receiver_thread_handle;
+static MonoThreadHandle *receiver_thread_handle;
 
 static gboolean stop_receiver_thread;
 
@@ -260,7 +262,7 @@ mono_attach_cleanup (void)
 
 	/* Wait for the receiver thread to exit */
 	if (receiver_thread_handle)
-		WaitForSingleObjectEx (receiver_thread_handle, 0, FALSE);
+		mono_thread_info_wait_one_handle (receiver_thread_handle, 0, FALSE);
 }
 
 static int

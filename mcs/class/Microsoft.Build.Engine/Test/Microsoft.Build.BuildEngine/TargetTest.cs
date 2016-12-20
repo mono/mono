@@ -286,6 +286,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestRunTargetTwice ()
+		{
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<Target Name=""Foo"">
+				<Message Text=""Foo ran""/>
+			</Target>
+			<Target Name=""Main"">
+				<MSBuild Projects=""$(MSBuildProjectFile)"" Targets=""Foo;Foo"" />
+			</Target>
+
+		</Project>";
+
+			var filepath = Path.GetTempFileName ();
+			try {
+				File.WriteAllText (filepath, documentString);
+
+				var engine = new Engine (Consts.BinPath);
+				var project = engine.CreateNewProject ();
+				project.Load (filepath);
+
+				var logger = new TestMessageLogger ();
+				engine.RegisterLogger (logger);
+
+				var result = project.Build ("Main");
+				if (!result) {
+					logger.DumpMessages ();
+					Assert.Fail ("Build failed, see the logs");
+				}
+
+				Assert.AreEqual(1, logger.NormalMessageCount, "Expected number of messages");
+				logger.CheckLoggedMessageHead ("Foo ran", "A1");
+
+				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+				Assert.AreEqual(0, logger.WarningMessageCount, "Extra warning messages found");
+
+				Assert.AreEqual(2, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual(2, logger.TargetFinished, "TargetFinished count");
+
+				Assert.IsTrue (result);
+			} finally {
+				File.Delete (filepath);
+			}
+		}
+
+		[Test]
 		public void TestTargetOutputs1 ()
 		{
 			Engine engine;
@@ -696,6 +741,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 						<Message Text='%(Foo.Identity)' Condition=""'%(Foo.Test)' != ''""/>
 					</Target>
 				</Project>", "D");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_UpdateMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<ProjectReference Include='xyz'/>
+					</ItemGroup>
+
+					<Target Name='Main' DependsOnTargets='CreateBar'>
+						<Message Text='Before: $(Bar)'/>
+						<ItemGroup>
+							<ProjectReference>
+								<AdditionalProperties>A=b</AdditionalProperties>
+							</ProjectReference>
+						</ItemGroup>
+						<Message Text='After: $(Bar)'/>
+					</Target>
+
+					<Target Name='CreateBar'>
+						<PropertyGroup>
+							<Bar>Bar01</Bar>
+						</PropertyGroup>
+					</Target>
+				</Project>", 2, "Before: Bar01", "After: Bar01");
 		}
 
 		[Test]

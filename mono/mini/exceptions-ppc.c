@@ -666,7 +666,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 		abort ();
 	}
 	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
+		mono_handle_native_crash ("SIGSEGV", sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * The frame looks like:
@@ -697,6 +697,11 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	}
 #else
 	UCONTEXT_REG_NIP(uc) = (unsigned long)altstack_handle_and_restore;
+#if _CALL_ELF == 2
+	/* ELF v2 ABI calling convention requires to put the target address into
+	* r12 if we use the global entry point of a function. */
+	UCONTEXT_REG_Rn(uc, 12) = (unsigned long) altstack_handle_and_restore;
+#endif
 #endif
 	UCONTEXT_REG_Rn(uc, 1) = (unsigned long)sp;
 	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG) = (unsigned long)(sp + 16);
@@ -715,7 +720,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -739,6 +744,11 @@ setup_ucontext_return (void *uc, gpointer func)
 	}
 #else
 	UCONTEXT_REG_NIP(uc) = (unsigned long)func;
+#if _CALL_ELF == 2
+	/* ELF v2 ABI calling convention requires to put the target address into
+	* r12 if we use the global entry point of a function. */
+	UCONTEXT_REG_Rn(uc, 12) = (unsigned long) func;
+#endif
 #endif
 #endif
 }
@@ -752,7 +762,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	mgreg_t sp;
 	void *sigctx = ctx;
 	int frame_size;

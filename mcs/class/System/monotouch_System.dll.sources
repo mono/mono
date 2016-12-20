@@ -1,5 +1,5 @@
 #include mobile_System.dll.sources
-MonoTouch/MonoPInvokeCallbackAttribute.cs
+Mono.Util/MonoPInvokeCallbackAttribute.cs
 Assembly/AssemblyInfoEx.cs
 Mono.Net.Security/MonoTlsProviderFactory.Apple.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsProviderFactory.Apple.cs

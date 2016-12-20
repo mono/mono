@@ -46,7 +46,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../ecma.pub")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
 [assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 [assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]

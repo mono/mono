@@ -26,12 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Authentication.ExtendedProtection;
 using System.Threading.Tasks;
 
 namespace System.Net {
 	public sealed class HttpListener : IDisposable
 	{
 		internal const string EXCEPTION_MESSAGE = "System.Net.HttpListener is not supported on the current platform.";
+
+		public delegate ExtendedProtectionPolicy ExtendedProtectionSelector (HttpListenerRequest request);
 
 		public HttpListener ()
 		{
@@ -73,6 +76,27 @@ namespace System.Net {
 		public bool UnsafeConnectionNtlmAuthentication {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public HttpListenerTimeoutManager TimeoutManager {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public ExtendedProtectionPolicy ExtendedProtectionPolicy
+		{
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public ExtendedProtectionSelector ExtendedProtectionSelectorDelegate
+		{
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public ServiceNameCollection DefaultServiceNames
+		{
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
 		public void Abort ()

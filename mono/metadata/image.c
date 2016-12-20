@@ -520,7 +520,7 @@ load_metadata_ptrs (MonoImage *image, MonoCLIImageInfo *iinfo)
 			image->heap_tables.size = read32 (ptr + 4);
 			ptr += 8 + 3;
 			image->uncompressed_metadata = TRUE;
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly '%s' has the non-standard metadata heap #-.\nRecompile it correctly (without the /incremental switch or in Release mode).\n", image->name);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly '%s' has the non-standard metadata heap #-.\nRecompile it correctly (without the /incremental switch or in Release mode).", image->name);
 		} else if (strncmp (ptr + 8, "#Pdb", 5) == 0) {
 			image->heap_pdb.data = image->raw_metadata + read32 (ptr);
 			image->heap_pdb.size = read32 (ptr + 4);
@@ -721,7 +721,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 					return NULL;
 				}
 
-				image->modules [idx - 1] = image;
+				image->modules [idx - 1] = moduleImage;
 
 #ifdef HOST_WIN32
 				if (image->modules [idx - 1]->is_module_handle)
@@ -761,7 +761,7 @@ class_key_extract (gpointer value)
 static gpointer*
 class_next_value (gpointer value)
 {
-	MonoClass *klass = (MonoClass *)value;
+	MonoClassDef *klass = (MonoClassDef *)value;
 
 	return (gpointer*)&klass->next_class_cache;
 }
@@ -2486,6 +2486,8 @@ mono_image_has_authenticode_entry (MonoImage *image)
 {
 	MonoCLIImageInfo *iinfo = (MonoCLIImageInfo *)image->image_info;
 	MonoDotNetHeader *header = &iinfo->cli_header;
+	if (!header)
+		return FALSE;
 	MonoPEDirEntry *de = &header->datadir.pe_certificate_table;
 	// the Authenticode "pre" (non ASN.1) header is 8 bytes long
 	return ((de->rva != 0) && (de->size > 8));

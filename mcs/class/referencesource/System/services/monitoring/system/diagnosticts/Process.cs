@@ -1618,6 +1618,7 @@ namespace System.Diagnostics {
             
             return new Process(machineName, ProcessManager.IsRemoteMachine(machineName), processId, null);
         }
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -1683,6 +1684,7 @@ namespace System.Diagnostics {
             return GetProcesses(".");
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Creates a new <see cref='System.Diagnostics.Process'/>

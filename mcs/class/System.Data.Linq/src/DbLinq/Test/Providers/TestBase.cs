@@ -33,7 +33,7 @@ using NUnit.Framework;
 
 using nwind;
 
-#if MONO_STRICT && !MONO
+#if MONO_STRICT
 using System.Diagnostics;
 public static class Profiler
 {

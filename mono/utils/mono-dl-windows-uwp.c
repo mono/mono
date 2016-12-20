@@ -6,10 +6,11 @@
 */
 #include <config.h>
 #include <glib.h>
+#include "mono/utils/mono-compiler.h"
 
 #if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
-#include <Windows.h>
-#include "mono/utils/mono-dl-windows.h"
+#include <windows.h>
+#include "mono/utils/mono-dl-windows-internals.h"
 
 void*
 mono_dl_lookup_symbol_in_process (const char *symbol_name)
@@ -37,8 +38,5 @@ mono_dl_current_error_string (void)
 
 #else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */
 
-#ifdef _MSC_VER
-// Quiet Visual Studio linker warning, LNK4221, in cases when this source file intentional ends up empty.
-void __mono_win32_mono_dl_windows_uwp_quiet_lnk4221(void) {}
-#endif
+MONO_EMPTY_SOURCE_FILE (mono_dl_windows_uwp);
 #endif /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */

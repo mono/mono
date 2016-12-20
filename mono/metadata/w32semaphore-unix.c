@@ -12,7 +12,7 @@
 #include "w32handle-namespace.h"
 #include "mono/io-layer/io-layer.h"
 #include "mono/utils/mono-logger-internals.h"
-#include "mono/utils/w32handle.h"
+#include "mono/metadata/w32handle.h"
 
 typedef struct {
 	guint32 val;
@@ -24,20 +24,20 @@ struct MonoW32HandleNamedSemaphore {
 	MonoW32HandleNamespace sharedns;
 };
 
-static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type, guint32 *statuscode)
+static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 {
 	MonoW32HandleSemaphore *sem_handle;
 
-	*statuscode = WAIT_OBJECT_0;
+	*abandoned = FALSE;
 
 	if (!mono_w32handle_lookup (handle, type, (gpointer *)&sem_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_ops_typename (type), handle);
+			__func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
-		__func__, mono_w32handle_ops_typename (type), handle);
+		__func__, mono_w32handle_get_typename (type), handle);
 
 	sem_handle->val--;
 
@@ -52,9 +52,9 @@ static void sema_signal(gpointer handle)
 	ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal(handle, 1, NULL);
 }
 
-static gboolean sema_own (gpointer handle, guint32 *statuscode)
+static gboolean sema_own (gpointer handle, gboolean *abandoned)
 {
-	return sem_handle_own (handle, MONO_W32HANDLE_SEM, statuscode);
+	return sem_handle_own (handle, MONO_W32HANDLE_SEM, abandoned);
 }
 
 static void namedsema_signal (gpointer handle)
@@ -63,9 +63,9 @@ static void namedsema_signal (gpointer handle)
 }
 
 /* NB, always called with the shared handle lock held */
-static gboolean namedsema_own (gpointer handle, guint32 *statuscode)
+static gboolean namedsema_own (gpointer handle, gboolean *abandoned)
 {
-	return sem_handle_own (handle, MONO_W32HANDLE_NAMEDSEM, statuscode);
+	return sem_handle_own (handle, MONO_W32HANDLE_NAMEDSEM, abandoned);
 }
 
 static void sema_details (gpointer data)
@@ -140,7 +140,6 @@ static gpointer
 sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32HandleType type, gint32 initial, gint32 max)
 {
 	gpointer handle;
-	int thr_ret;
 
 	sem_handle->val = initial;
 	sem_handle->max = max;
@@ -148,22 +147,20 @@ sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32HandleType type, g
 	handle = mono_w32handle_new (type, sem_handle);
 	if (handle == INVALID_HANDLE_VALUE) {
 		g_warning ("%s: error creating %s handle",
-			__func__, mono_w32handle_ops_typename (type));
+			__func__, mono_w32handle_get_typename (type));
 		SetLastError (ERROR_GEN_FAILURE);
 		return NULL;
 	}
 
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
+	mono_w32handle_lock_handle (handle);
 
 	if (initial != 0)
 		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
 
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
+	mono_w32handle_unlock_handle (handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: created %s handle %p",
-		__func__, mono_w32handle_ops_typename (type), handle);
+		__func__, mono_w32handle_get_typename (type), handle);
 
 	return handle;
 }
@@ -173,7 +170,7 @@ sem_create (gint32 initial, gint32 max)
 {
 	MonoW32HandleSemaphore sem_handle;
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle, initial %d max %d",
-		__func__, mono_w32handle_ops_typename (MONO_W32HANDLE_SEM), initial, max);
+		__func__, mono_w32handle_get_typename (MONO_W32HANDLE_SEM), initial, max);
 	return sem_handle_create (&sem_handle, MONO_W32HANDLE_SEM, initial, max);
 }
 
@@ -184,7 +181,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 	gchar *utf8_name;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle, initial %d max %d name \"%s\"",
-		    __func__, mono_w32handle_ops_typename (MONO_W32HANDLE_NAMEDSEM), initial, max, (const char*)name);
+		    __func__, mono_w32handle_get_typename (MONO_W32HANDLE_NAMEDSEM), initial, max, (const char*)name);
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
 	mono_w32handle_namespace_lock ();
@@ -260,7 +257,6 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 {
 	MonoW32HandleType type;
 	MonoW32HandleSemaphore *sem_handle;
-	int thr_ret;
 	MonoBoolean ret;
 
 	if (!handle) {
@@ -283,10 +279,9 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
-		__func__, mono_w32handle_ops_typename (type), handle);
+		__func__, mono_w32handle_get_typename (type), handle);
 
-	thr_ret = mono_w32handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
+	mono_w32handle_lock_handle (handle);
 
 	/* Do this before checking for count overflow, because overflowing
 	 * max is a listed technique for finding the current value */
@@ -296,12 +291,12 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	/* No idea why max is signed, but thats the spec :-( */
 	if (sem_handle->val + releaseCount > (guint32)sem_handle->max) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
-			__func__, mono_w32handle_ops_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+			__func__, mono_w32handle_get_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
 
 		ret = FALSE;
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d",
-			__func__, mono_w32handle_ops_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+			__func__, mono_w32handle_get_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
 
 		sem_handle->val += releaseCount;
 		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
@@ -309,8 +304,7 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 		ret = TRUE;
 	}
 
-	thr_ret = mono_w32handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
+	mono_w32handle_unlock_handle (handle);
 
 	return ret;
 }

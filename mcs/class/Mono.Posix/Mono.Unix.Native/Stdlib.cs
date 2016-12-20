@@ -426,9 +426,19 @@ namespace Mono.Unix.Native {
 
 		public static Errno GetLastError ()
 		{
-			int errno = Marshal.GetLastWin32Error ();
-			return NativeConvert.ToErrno (errno);
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+				// On Windows Marshal.GetLastWin32Error() doesn't take errno
+				// into account so we need to call Mono_Posix_Stdlib_GetLastError()
+				// which returns the value of errno in the C runtime
+				// libMonoPosixHelper.dll was linked against.
+				return (Errno) _GetLastError ();
+			}
+			return NativeConvert.ToErrno (Marshal.GetLastWin32Error ());
 		}
+
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				EntryPoint="Mono_Posix_Stdlib_GetLastError")]
+		private static extern int _GetLastError ();
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				EntryPoint="Mono_Posix_Stdlib_SetLastError")]
@@ -675,7 +685,8 @@ namespace Mono.Unix.Native {
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 				string newpath);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_tmpfile")]
 		public static extern IntPtr tmpfile ();
 
 		private static object tmpnam_lock = new object ();
@@ -704,18 +715,22 @@ namespace Mono.Unix.Native {
 			}
 		}
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fclose")]
 		public static extern int fclose (IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fflush")]
 		public static extern int fflush (IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fopen")]
 		public static extern IntPtr fopen (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 				string path, string mode);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_freopen")]
 		public static extern IntPtr freopen (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 				string path, string mode, IntPtr stream);
@@ -741,8 +756,8 @@ namespace Mono.Unix.Native {
 			return setvbuf (stream, (IntPtr) buf, mode, size);
 		}
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
-				EntryPoint="fprintf")]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				EntryPoint="Mono_Posix_Stdlib_fprintf")]
 		private static extern int sys_fprintf (IntPtr stream, string format, string message);
 
 		public static int fprintf (IntPtr stream, string message)
@@ -846,11 +861,12 @@ namespace Mono.Unix.Native {
 		 *    vsscanf(3)
 		 */
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fgetc")]
 		public static extern int fgetc (IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
-				SetLastError=true, EntryPoint="fgets")]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fgets")]
 		private static extern IntPtr sys_fgets (StringBuilder sb, int size, IntPtr stream);
 
 		public static StringBuilder fgets (StringBuilder sb, int size, IntPtr stream)
@@ -866,22 +882,28 @@ namespace Mono.Unix.Native {
 			return fgets (sb, sb.Capacity, stream);
 		}
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fputc")]
 		public static extern int fputc (int c, IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fputs")]
 		public static extern int fputs (string s, IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern int getc (IntPtr stream);
+		public static int getc (IntPtr stream)
+		{
+			return fgetc (stream);
+		}
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern int getchar ();
 
 		/* SKIP: gets(3) */
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern int putc (int c, IntPtr stream);
+		public static int putc (int c, IntPtr stream)
+		{
+			return fputc (c, stream);
+		}
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern int putchar (int c);
@@ -889,7 +911,8 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern int puts (string s);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_ungetc")]
 		public static extern int ungetc (int c, IntPtr stream);
 
 		[CLSCompliant (false)]
@@ -993,10 +1016,12 @@ namespace Mono.Unix.Native {
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_clearerr")]
 		public static extern int clearerr (IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_feof")]
 		public static extern int feof (IntPtr stream);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_ferror")]
 		public static extern int ferror (IntPtr stream);
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl, 
@@ -1050,7 +1075,8 @@ namespace Mono.Unix.Native {
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_calloc")]
 		public static extern IntPtr calloc (ulong nmemb, ulong size);
 
-		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				EntryPoint="Mono_Posix_Stdlib_free")]
 		public static extern void free (IntPtr ptr);
 
 		// malloc(3):

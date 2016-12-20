@@ -15,9 +15,7 @@
 #define GetLastError wapi_GetLastError
 #define SetLastError wapi_SetLastError
 #define TransmitFile wapi_TransmitFile
-#define GetThreadContext wapi_GetThreadContext
 #define CloseHandle wapi_CloseHandle 
-#define DuplicateHandle wapi_DuplicateHandle 
 #define CreateFile wapi_CreateFile
 #define DeleteFile wapi_DeleteFile
 #define GetStdHandle wapi_GetStdHandle
@@ -51,25 +49,6 @@
 #define LockFile wapi_LockFile 
 #define UnlockFile wapi_UnlockFile 
 #define GetVolumeInformation wapi_GetVolumeInformation 
-#define FormatMessage wapi_FormatMessage 
-#define ShellExecuteEx wapi_ShellExecuteEx 
-#define CreateProcess wapi_CreateProcess 
-#define CreateProcessWithLogonW wapi_CreateProcessWithLogonW 
-#define GetCurrentProcess wapi_GetCurrentProcess 
-#define GetProcessId wapi_GetProcessId 
-#define CloseProcess wapi_CloseProcess 
-#define OpenProcess wapi_OpenProcess 
-#define GetExitCodeProcess wapi_GetExitCodeProcess 
-#define GetProcessTimes wapi_GetProcessTimes 
-#define EnumProcessModules wapi_EnumProcessModules 
-#define GetModuleBaseName wapi_GetModuleBaseName 
-#define GetModuleFileNameEx wapi_GetModuleFileNameEx 
-#define GetModuleInformation wapi_GetModuleInformation 
-#define GetProcessWorkingSetSize wapi_GetProcessWorkingSetSize 
-#define SetProcessWorkingSetSize wapi_SetProcessWorkingSetSize 
-#define TerminateProcess wapi_TerminateProcess 
-#define GetPriorityClass wapi_GetPriorityClass 
-#define SetPriorityClass wapi_SetPriorityClass 
 #define ImpersonateLoggedOnUser wapi_ImpersonateLoggedOnUser 
 #define RevertToSelf wapi_RevertToSelf 
 #define WSASetLastError wapi_WSASetLastError
@@ -78,12 +57,5 @@
 #define WSARecv wapi_WSARecv 
 #define WSASend wapi_WSASend 
 #define GetSystemInfo wapi_GetSystemInfo
-#define GetFileVersionInfoSize wapi_GetFileVersionInfoSize 
-#define GetFileVersionInfo wapi_GetFileVersionInfo 
-#define VerQueryValue wapi_VerQueryValue 
-#define VerLanguageName wapi_VerLanguageName 
-#define WaitForSingleObjectEx wapi_WaitForSingleObjectEx
-#define SignalObjectAndWait wapi_SignalObjectAndWait
-#define WaitForMultipleObjectsEx wapi_WaitForMultipleObjectsEx
 
 #endif /* __WAPI_REMAP_H__ */

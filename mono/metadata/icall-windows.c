@@ -35,10 +35,11 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 
 gpointer
-mono_icall_module_get_hinstance (MonoReflectionModule *module)
+mono_icall_module_get_hinstance (MonoReflectionModuleHandle module)
 {
-	if (module->image && module->image->is_module_handle)
-		return module->image->raw_data;
+	MonoImage *image = MONO_HANDLE_GETVAL (module, image);
+	if (image && image->is_module_handle)
+		return image->raw_data;
 
 	return (gpointer) (-1);
 }
@@ -213,9 +214,4 @@ mono_icall_write_windows_debug_string (MonoString *message)
 	OutputDebugString (mono_string_chars (message));
 }
 
-MonoBoolean
-mono_icall_close_process (gpointer handle)
-{
-	return (MonoBoolean)(CloseHandle (handle));
-}
 #endif /* HOST_WIN32 */

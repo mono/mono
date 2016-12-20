@@ -106,7 +106,6 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
-		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void TestCSharp ()
 		{
 			string style = xslstring.Replace ("***** rewrite here *****", cs1);
@@ -136,7 +135,6 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
-		[Ignore ("Actually it should throw compile exception")]
 		[ExpectedException (typeof (XsltException))]
 		public void InvalidScript ()
 		{
@@ -162,7 +160,6 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
-		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void CompilerWarningsShouldBeIgnored ()
 		{
 			string script = @"<xslt:stylesheet xmlns:xslt='http://www.w3.org/1999/XSL/Transform' version='1.0' xmlns:msxsl='urn:schemas-microsoft-com:xslt'
@@ -190,7 +187,6 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
-		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void CompileNoLineInfoSource ()
 		{
 			// bug #76116

@@ -49,10 +49,11 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/coree.h>
 #include <mono/metadata/attach.h>
+#include <mono/metadata/w32process.h>
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-hwcap.h"
 #include "mono/utils/mono-logger-internals.h"
-#include "mono/utils/w32handle.h"
+#include "mono/metadata/w32handle.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -937,7 +938,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		    (method->flags & METHOD_ATTRIBUTE_ABSTRACT))
 			continue;
 
-		if (method->klass->generic_container)
+		if (mono_class_is_gtd (method->klass))
 			continue;
 		sig = mono_method_signature (method);
 		if (!sig) {
@@ -1960,9 +1961,9 @@ mono_main (int argc, char* argv[])
 	{
 		char *runtime_path;
 
-		runtime_path = wapi_process_get_path (getpid ());
+		runtime_path = mono_w32process_get_path (getpid ());
 		if (runtime_path) {
-			wapi_process_set_cli_launcher (runtime_path);
+			mono_w32process_set_cli_launcher (runtime_path);
 			g_free (runtime_path);
 		}
 	}

@@ -61,7 +61,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../winfx.pub")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
 
 [assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]

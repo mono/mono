@@ -75,6 +75,13 @@ namespace System.Runtime.InteropServices
 			return false;
 		}
 
+		[MonoTODO]
+		public static void CleanupUnusedObjectsInCurrentContext ()
+		{
+			if (Environment.IsRunningOnWindows)
+				throw new PlatformNotSupportedException ();
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
 		
@@ -789,15 +796,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringUni (IntPtr ptr, int len);
 
-#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringBSTR (IntPtr ptr);
-#else
-		public static string PtrToStringBSTR (IntPtr ptr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ComVisible (true)]

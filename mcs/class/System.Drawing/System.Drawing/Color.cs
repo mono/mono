@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing 
 {
-#if !MONOTOUCH && !MONOMAC
+#if !MONOTOUCH && !MONOMAC && FEATURE_TYPECONVERTER
 	[TypeConverter(typeof(ColorConverter))]
 	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif

@@ -19,11 +19,7 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ## Unit test support
 ifndef NO_TEST
 
-ifdef NUNIT_LITE
 test_nunit_lib = nunitlite.dll
-else
-test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll nunit.mocks.dll
-endif
 
 TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(TEST_LIB_REFS))
 
@@ -58,19 +54,11 @@ ifndef NO_TEST
 $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
-ifdef NUNIT_LITE
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
 ifndef PARENT_PROFILE
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
 endif
 	echo "stamp" >$@
-else
-$(topdir)/build/deps/nunit-$(PROFILE).stamp:
-ifndef PARENT_PROFILE
-	cd ${topdir}/nunit24 && $(MAKE)
-endif
-	echo "stamp" >$@
-endif
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 endif
@@ -90,52 +78,18 @@ run-test-ondotnet-local: run-test-ondotnet-lib
 TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
 
-ifdef NUNIT_LITE
 NOSHADOW_FLAG =
-NUNIT_XML_FLAG = -format:nunit2 -result:
-OUTPUT_FILE_FLAG=-out
-else
-OUTPUT_FILE_FLAG=-output
-NOSHADOW_FLAG = -noshadow
-NUNIT_XML_FLAG = -xml=
-endif
-
-ifdef NUNIT_LITE
-NOSHADOW_FLAG =
-NUNIT_XML_FLAG = -format:nunit2 -result:
-OUTPUT_FILE_FLAG=-out
-else
-OUTPUT_FILE_FLAG=-output
-NOSHADOW_FLAG = -noshadow
-NUNIT_XML_FLAG = -xml=
-endif
-
-ifdef TEST_HARNESS_VERBOSE
-TEST_HARNESS_OUTPUT = -labels
-TEST_HARNESS_OUTPUT_ONDOTNET = -labels
-TEST_HARNESS_POSTPROC = :
-TEST_HARNESS_POSTPROC_ONDOTNET = :
-else
-TEST_HARNESS_OUTPUT = $(OUTPUT_FILE_FLAG)=TestResult-$(PROFILE).log
-TEST_HARNESS_OUTPUT_ONDOTNET = $(OUTPUT_FILE_FLAG)=TestResult-ondotnet-$(PROFILE).log
-TEST_HARNESS_POSTPROC = (echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-$(PROFILE).xml >> TestResult-$(PROFILE).log
-TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-ondotnet-$(PROFILE).xml >> TestResult-ondotnet-$(PROFILE).log
-endif
 
 ifdef FIXTURE
-ifdef NUNIT_LITE
 FIXTURE_ARG = -test=MonoTests.$(FIXTURE)
-else
-FIXTURE_ARG = -fixture=MonoTests.$(FIXTURE)
-endif
 endif
 
 ifdef TESTNAME
-ifdef NUNIT_LITE
 TESTNAME_ARG = -test=MonoTests.$(TESTNAME)
-else
-TESTNAME_ARG = -run=MonoTests.$(TESTNAME)
 endif
+
+ifdef TEST_HARNESS_VERBOSE
+LABELS_ARG = -labels
 endif
 
 ifdef ALWAYS_AOT
@@ -147,19 +101,30 @@ test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 endif # ALWAYS_AOT
 
+NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
+
+patch-nunitlite-appconfig:
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(NUNITLITE_CONFIG_FILE)
+ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(NUNITLITE_CONFIG_FILE)
+endif
+ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
+endif
+
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile
+run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) $(NUNIT_XML_FLAG)TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
-	$(TEST_HARNESS_POSTPROC) ; $$ok
+	$$ok
 
 ## Instructs compiler to compile to target .net execution, it can be usefull in rare cases when runtime detection is not possible
 run-test-ondotnet-lib: LOCAL_TEST_COMPILER_ONDOTNET_FLAGS:=-d:RUN_ONDOTNET
 run-test-ondotnet-lib: test-local
 	ok=:; \
-	$(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) $(NUNIT_XML_FLAG)=TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
-	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
+	$(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(LABELS_ARG) -format:nunit2 -result:TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
+	$$ok
 
 
 endif # test_assemblies
@@ -194,3 +159,4 @@ $(test_makefrag): $(test_response)
 
 endif
 
+.PHONY: patch-nunitlite-appconfig

@@ -100,6 +100,12 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	public void DefaultCtor ()
+	{
+		Assert.IsNotNull (ab.Evidence, "#1");
+	}
+
+	[Test]
 	[Category ("NotWorking")]
 	public void ManifestModule ()
 	{

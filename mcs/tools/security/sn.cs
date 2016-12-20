@@ -195,7 +195,7 @@ namespace Mono.Tools {
 				return signed;
 			}
 			
-			Console.WriteLine ("Couldn't sign the assembly {0} with this key pair.", assemblyName);
+			Console.WriteLine ("Couldn't sign the assembly {0} with this key pair. Public key of assembly did not match signing public key.", assemblyName);
 			return false;
 		}
 

@@ -131,6 +131,7 @@ install-pcl5-framework:
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
 	data/xbuild.exe.config.in \
+	data/xbuild.exe.config_test.in \
 	data/Microsoft.Build.xsd \
 	data/2.0/Microsoft.Common.tasks \
 	data/3.5/Microsoft.Common.tasks \

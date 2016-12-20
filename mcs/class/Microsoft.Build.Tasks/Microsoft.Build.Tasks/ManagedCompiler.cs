@@ -58,7 +58,11 @@ namespace Microsoft.Build.Tasks {
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
-			commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
+			var dtype = DebugType;
+			if (string.Equals (dtype, "full", StringComparison.OrdinalIgnoreCase) || string.Equals (dtype, "pdbonly", StringComparison.OrdinalIgnoreCase))
+				dtype = "portable";
+
+			commandLine.AppendSwitchIfNotNull ("/debug:", dtype);
 
 			if (Bag ["DelaySign"] != null)
 				if (DelaySign)
@@ -73,6 +77,9 @@ namespace Microsoft.Build.Tasks {
 			//fileAlignment
 			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
+			if (KeyFile != null && !DelaySign)
+				commandLine.AppendSwitch("/publicsign");
+
 			// FIXME: add ids from metadata
 			if (LinkResources != null)
 				foreach (ITaskItem item in LinkResources)

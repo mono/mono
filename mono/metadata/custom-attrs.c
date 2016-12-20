@@ -12,10 +12,10 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
+#include "mono/metadata/assembly.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/mono-endian.h"
 #include "mono/metadata/object-internals.h"
-#include "mono/metadata/reflection-cache.h"
 #include "mono/metadata/custom-attrs-internals.h"
 #include "mono/metadata/sre-internals.h"
 #include "mono/metadata/reflection-internals.h"
@@ -69,7 +69,7 @@ custom_attr_visible (MonoImage *image, MonoReflectionCustomAttr *cattr)
 
 	/* FIXME: Need to do more checks */
 	if (cattr->ctor->method && (cattr->ctor->method->klass->image != image)) {
-		int visibility = cattr->ctor->method->klass->flags & TYPE_ATTRIBUTE_VISIBILITY_MASK;
+		int visibility = mono_class_get_flags (cattr->ctor->method->klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK;
 
 		if ((visibility != TYPE_ATTRIBUTE_PUBLIC) && (visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC))
 			return FALSE;
@@ -119,9 +119,10 @@ static guint32
 find_field_index (MonoClass *klass, MonoClassField *field) {
 	int i;
 
-	for (i = 0; i < klass->field.count; ++i) {
+	int fcount = mono_class_get_field_count (klass);
+	for (i = 0; i < fcount; ++i) {
 		if (field == &klass->fields [i])
-			return klass->field.first + 1 + i;
+			return mono_class_get_first_field_idx (klass) + 1 + i;
 	}
 	return 0;
 }
@@ -130,12 +131,14 @@ find_field_index (MonoClass *klass, MonoClassField *field) {
  * Find the property index in the metadata Property table.
  */
 static guint32
-find_property_index (MonoClass *klass, MonoProperty *property) {
+find_property_index (MonoClass *klass, MonoProperty *property)
+{
 	int i;
+	MonoClassPropertyInfo *info = mono_class_get_property_info (klass);
 
-	for (i = 0; i < klass->ext->property.count; ++i) {
-		if (property == &klass->ext->properties [i])
-			return klass->ext->property.first + 1 + i;
+	for (i = 0; i < info->count; ++i) {
+		if (property == &info->properties [i])
+			return info->first + 1 + i;
 	}
 	return 0;
 }
@@ -144,12 +147,14 @@ find_property_index (MonoClass *klass, MonoProperty *property) {
  * Find the event index in the metadata Event table.
  */
 static guint32
-find_event_index (MonoClass *klass, MonoEvent *event) {
+find_event_index (MonoClass *klass, MonoEvent *event)
+{
 	int i;
+	MonoClassEventInfo *info = mono_class_get_event_info (klass);
 
-	for (i = 0; i < klass->ext->event.count; ++i) {
-		if (event == &klass->ext->events [i])
-			return klass->ext->event.first + 1 + i;
+	for (i = 0; i < info->count; ++i) {
+		if (event == &info->events [i])
+			return info->first + 1 + i;
 	}
 	return 0;
 }
@@ -957,13 +962,12 @@ ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoRe
 	mono_error_set_pending_exception (&error);
 }
 
-static MonoObject*
-create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
+static MonoObjectHandle
+create_custom_attr_data_handle (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
 {
 	static MonoMethod *ctor;
 
 	MonoDomain *domain;
-	MonoObject *attr;
 	void *params [4];
 
 	mono_error_init (error);
@@ -974,18 +978,34 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 		ctor = mono_class_get_method_from_name (mono_defaults.customattribute_data_class, ".ctor", 4);
 
 	domain = mono_domain_get ();
-	attr = mono_object_new_checked (domain, mono_defaults.customattribute_data_class, error);
-	return_val_if_nok (error, NULL);
-	params [0] = mono_method_get_object_checked (domain, cattr->ctor, NULL, error);
-	return_val_if_nok (error, NULL);
-	params [1] = mono_assembly_get_object_checked (domain, image->assembly, error);
-	return_val_if_nok (error, NULL);
+
+	MonoObjectHandle attr = MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (domain, mono_defaults.customattribute_data_class, error));
+	if (!is_ok (error))
+		goto fail;
+
+	MonoReflectionMethod *ctor_obj = mono_method_get_object_checked (domain, cattr->ctor, NULL, error);
+	if (!is_ok (error))
+		goto fail;
+	MonoReflectionAssemblyHandle assm = mono_assembly_get_object_handle (domain, image->assembly, error);
+	if (!is_ok (error))
+		goto fail;
+	params [0] = ctor_obj;
+	params [1] = MONO_HANDLE_RAW (assm);
 	params [2] = (gpointer)&cattr->data;
 	params [3] = &cattr->data_size;
 
-	mono_runtime_invoke_checked (ctor, attr, params, error);
-	return_val_if_nok (error, NULL);
+	mono_runtime_invoke_checked (ctor, MONO_HANDLE_RAW (attr), params, error);
 	return attr;
+fail:
+	return MONO_HANDLE_NEW (MonoObject, NULL);
+}
+
+static MonoObject *
+create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	MonoObjectHandle obj = create_custom_attr_data_handle (image, cattr, error);
+	HANDLE_FUNCTION_RETURN_OBJ (obj);
 }
 
 static MonoArray*
@@ -1072,7 +1092,7 @@ MonoCustomAttrInfo*
 mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 {
 	MonoError error;
-	MonoCustomAttrInfo *result = mono_custom_attrs_from_index_checked (image, idx, &error);
+	MonoCustomAttrInfo *result = mono_custom_attrs_from_index_checked (image, idx, FALSE, &error);
 	mono_error_cleanup (&error);
 	return result;
 }
@@ -1082,7 +1102,7 @@ mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
  * Returns: NULL if no attributes are found.  On error returns NULL and sets @error.
  */
 MonoCustomAttrInfo*
-mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, MonoError *error)
+mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, gboolean ignore_missing, MonoError *error)
 {
 	guint32 mtoken, i, len;
 	guint32 cols [MONO_CUSTOM_ATTR_SIZE];
@@ -1129,10 +1149,15 @@ mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, MonoError *
 		attr = &ainfo->attrs [i - 1];
 		attr->ctor = mono_get_method_checked (image, mtoken, NULL, NULL, error);
 		if (!attr->ctor) {
-			g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x due to %s", image->name, mtoken, mono_error_get_message (error));
-			g_list_free (list);
-			g_free (ainfo);
-			return NULL;
+			g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x due to: %s", image->name, mtoken, mono_error_get_message (error));
+			if (ignore_missing) {
+				mono_error_cleanup (error);
+				mono_error_init (error);
+			} else {
+				g_list_free (list);
+				g_free (ainfo);
+				return NULL;
+			}
 		}
 
 		if (!mono_verifier_verify_cattr_blob (image, cols [MONO_CUSTOM_ATTR_VALUE], NULL)) {
@@ -1186,7 +1211,7 @@ mono_custom_attrs_from_method_checked (MonoMethod *method, MonoError *error)
 	idx = mono_method_get_index (method);
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_METHODDEF;
-	return mono_custom_attrs_from_index_checked (method->klass->image, idx, error);
+	return mono_custom_attrs_from_index_checked (method->klass->image, idx, FALSE, error);
 }
 
 MonoCustomAttrInfo*
@@ -1205,8 +1230,8 @@ mono_custom_attrs_from_class_checked (MonoClass *klass, MonoError *error)
 
 	mono_error_init (error);
 
-	if (klass->generic_class)
-		klass = klass->generic_class->container_class;
+	if (mono_class_is_ginst (klass))
+		klass = mono_class_get_generic_class (klass)->container_class;
 
 	if (image_is_dynamic (klass->image))
 		return lookup_custom_attr (klass->image, klass);
@@ -1220,20 +1245,20 @@ mono_custom_attrs_from_class_checked (MonoClass *klass, MonoError *error)
 		idx <<= MONO_CUSTOM_ATTR_BITS;
 		idx |= MONO_CUSTOM_ATTR_TYPEDEF;
 	}
-	return mono_custom_attrs_from_index_checked (klass->image, idx, error);
+	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
 MonoCustomAttrInfo*
 mono_custom_attrs_from_assembly (MonoAssembly *assembly)
 {
 	MonoError error;
-	MonoCustomAttrInfo *result = mono_custom_attrs_from_assembly_checked (assembly, &error);
+	MonoCustomAttrInfo *result = mono_custom_attrs_from_assembly_checked (assembly, FALSE, &error);
 	mono_error_cleanup (&error);
 	return result;
 }
 
 MonoCustomAttrInfo*
-mono_custom_attrs_from_assembly_checked (MonoAssembly *assembly, MonoError *error)
+mono_custom_attrs_from_assembly_checked (MonoAssembly *assembly, gboolean ignore_missing, MonoError *error)
 {
 	guint32 idx;
 	
@@ -1244,7 +1269,7 @@ mono_custom_attrs_from_assembly_checked (MonoAssembly *assembly, MonoError *erro
 	idx = 1; /* there is only one assembly */
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_ASSEMBLY;
-	return mono_custom_attrs_from_index_checked (assembly->image, idx, error);
+	return mono_custom_attrs_from_index_checked (assembly->image, idx, ignore_missing, error);
 }
 
 static MonoCustomAttrInfo*
@@ -1257,7 +1282,7 @@ mono_custom_attrs_from_module (MonoImage *image, MonoError *error)
 	idx = 1; /* there is only one module */
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_MODULE;
-	return mono_custom_attrs_from_index_checked (image, idx, error);
+	return mono_custom_attrs_from_index_checked (image, idx, FALSE, error);
 }
 
 MonoCustomAttrInfo*
@@ -1281,7 +1306,7 @@ mono_custom_attrs_from_property_checked (MonoClass *klass, MonoProperty *propert
 	idx = find_property_index (klass, property);
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_PROPERTY;
-	return mono_custom_attrs_from_index_checked (klass->image, idx, error);
+	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
 MonoCustomAttrInfo*
@@ -1305,7 +1330,7 @@ mono_custom_attrs_from_event_checked (MonoClass *klass, MonoEvent *event, MonoEr
 	idx = find_event_index (klass, event);
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_EVENT;
-	return mono_custom_attrs_from_index_checked (klass->image, idx, error);
+	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
 MonoCustomAttrInfo*
@@ -1330,7 +1355,7 @@ mono_custom_attrs_from_field_checked (MonoClass *klass, MonoClassField *field, M
 	idx = find_field_index (klass, field);
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_FIELDDEF;
-	return mono_custom_attrs_from_index_checked (klass->image, idx, error);
+	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
 /**
@@ -1426,7 +1451,7 @@ mono_custom_attrs_from_param_checked (MonoMethod *method, guint32 param, MonoErr
 	idx = i;
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_PARAMDEF;
-	return mono_custom_attrs_from_index_checked (image, idx, error);
+	return mono_custom_attrs_from_index_checked (image, idx, FALSE, error);
 }
 
 gboolean
@@ -1525,7 +1550,7 @@ mono_reflection_get_custom_attrs_info_checked (MonoObject *obj, MonoError *error
 		return_val_if_nok (error, NULL);
 	} else if (strcmp ("Assembly", klass->name) == 0 || strcmp ("MonoAssembly", klass->name) == 0) {
 		MonoReflectionAssembly *rassembly = (MonoReflectionAssembly*)obj;
-		cinfo = mono_custom_attrs_from_assembly_checked (rassembly->assembly, error);
+		cinfo = mono_custom_attrs_from_assembly_checked (rassembly->assembly, FALSE, error);
 		return_val_if_nok (error, NULL);
 	} else if (strcmp ("Module", klass->name) == 0 || strcmp ("MonoModule", klass->name) == 0) {
 		MonoReflectionModule *module = (MonoReflectionModule*)obj;
@@ -1704,4 +1729,175 @@ mono_reflection_get_custom_attrs_data_checked (MonoObject *obj, MonoError *error
 		result = mono_array_new_checked (mono_domain_get (), mono_defaults.customattribute_data_class, 0, error);
 
 	return result;
+}
+
+static gboolean
+custom_attr_class_name_from_methoddef (MonoImage *image, guint32 method_token, const gchar **nspace, const gchar **class_name)
+{
+	/* mono_get_method_from_token () */
+	g_assert (mono_metadata_token_table (method_token) == MONO_TABLE_METHOD);
+	guint32 type_token = mono_metadata_typedef_from_method (image, method_token);
+	if (!type_token) {
+		/* Bad method token (could not find corresponding typedef) */
+		return FALSE;
+	}
+	type_token |= MONO_TOKEN_TYPE_DEF;
+	{
+		/* mono_class_create_from_typedef () */
+		MonoTableInfo *tt = &image->tables [MONO_TABLE_TYPEDEF];
+		guint32 cols [MONO_TYPEDEF_SIZE];
+		guint tidx = mono_metadata_token_index (type_token);
+
+		if (mono_metadata_token_table (type_token) != MONO_TABLE_TYPEDEF || tidx > tt->rows) {
+			/* "Invalid typedef token %x", type_token */
+			return FALSE;
+		}
+
+		mono_metadata_decode_row (tt, tidx - 1, cols, MONO_TYPEDEF_SIZE);
+
+		if (class_name)
+			*class_name = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAME]);
+		if (nspace)
+			*nspace = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAMESPACE]);
+		return TRUE;
+	}
+}
+
+
+/**
+ * custom_attr_class_name_from_method_token:
+ * @image: The MonoImage
+ * @method_token: a token for a custom attr constructor in @image
+ * @assembly_token: out argment set to the assembly ref token of the custom attr
+ * @nspace: out argument set to namespace (a string in the string heap of @image) of the custom attr
+ * @class_name: out argument set to the class name of the custom attr.
+ *
+ * Given an @image and a @method_token (which is assumed to be a
+ * constructor), fills in the out arguments with the assembly ref (if
+ * a methodref) and the namespace and class name of the custom
+ * attribute.
+ *
+ * Returns: TRUE on success, FALSE otherwise.
+ *
+ * LOCKING: does not take locks
+ */
+static gboolean
+custom_attr_class_name_from_method_token (MonoImage *image, guint32 method_token, guint32 *assembly_token, const gchar **nspace, const gchar **class_name)
+{
+	/* This only works with method tokens constructed from a
+	 * custom attr token, which can only be methoddef or
+	 * memberref */
+	g_assert (mono_metadata_token_table (method_token) == MONO_TABLE_METHOD
+		  || mono_metadata_token_table  (method_token) == MONO_TABLE_MEMBERREF);
+
+	if (mono_metadata_token_table (method_token) == MONO_TABLE_MEMBERREF) {
+		/* method_from_memberref () */
+		guint32 cols[6];
+		guint32 nindex, class_index;
+
+		int idx = mono_metadata_token_index (method_token);
+
+		mono_metadata_decode_row (&image->tables [MONO_TABLE_MEMBERREF], idx-1, cols, 3);
+		nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
+		class_index = cols [MONO_MEMBERREF_CLASS] & MONO_MEMBERREF_PARENT_MASK;
+		if (class_index == MONO_MEMBERREF_PARENT_TYPEREF) {
+			guint32 type_token = MONO_TOKEN_TYPE_REF | nindex;
+			/* mono_class_from_typeref_checked () */
+			{
+				guint32 cols [MONO_TYPEREF_SIZE];
+				MonoTableInfo  *t = &image->tables [MONO_TABLE_TYPEREF];
+
+				mono_metadata_decode_row (t, (type_token&0xffffff)-1, cols, MONO_TYPEREF_SIZE);
+
+				if (class_name)
+					*class_name = mono_metadata_string_heap (image, cols [MONO_TYPEREF_NAME]);
+				if (nspace)
+					*nspace = mono_metadata_string_heap (image, cols [MONO_TYPEREF_NAMESPACE]);
+				if (assembly_token)
+					*assembly_token = cols [MONO_TYPEREF_SCOPE];
+				return TRUE;
+			}
+		} else if (class_index == MONO_MEMBERREF_PARENT_METHODDEF) {
+			guint32 methoddef_token = MONO_TOKEN_METHOD_DEF | nindex;
+			if (assembly_token)
+				*assembly_token = 0;
+			return custom_attr_class_name_from_methoddef (image, methoddef_token, nspace, class_name);
+		} else {
+			/* Attributes can't be generic, so it won't be
+			 * a typespec, and they're always
+			 * constructors, so it won't be a moduleref */
+			g_assert_not_reached ();
+		}
+	} else {
+		/* must be MONO_TABLE_METHOD */
+		if (assembly_token)
+			*assembly_token = 0;
+		return custom_attr_class_name_from_methoddef (image, method_token, nspace, class_name);
+	}
+}
+
+/**
+ * mono_assembly_metadata_foreach_custom_attr:
+ * @assembly: the assembly to iterate over
+ * @func: the function to call for each custom attribute
+ * @user_data: passed to @func
+ *
+ * Calls @func for each custom attribute type on the given assembly until @func returns TRUE.
+ * Everything is done using low-level metadata APIs, so it is safe to use during assembly loading.
+ *
+ */
+void
+mono_assembly_metadata_foreach_custom_attr (MonoAssembly *assembly, MonoAssemblyMetadataCustomAttrIterFunc func, gpointer user_data)
+{
+	MonoImage *image;
+	guint32 mtoken, i;
+	guint32 cols [MONO_CUSTOM_ATTR_SIZE];
+	MonoTableInfo *ca;
+	guint32 idx;
+
+	/*
+	 * This might be called during assembly loading, so do everything using the low-level
+	 * metadata APIs.
+	 */
+
+	image = assembly->image;
+	g_assert (!image_is_dynamic (image));
+	idx = 1; /* there is only one assembly */
+	idx <<= MONO_CUSTOM_ATTR_BITS;
+	idx |= MONO_CUSTOM_ATTR_ASSEMBLY;
+
+	/* Inlined from mono_custom_attrs_from_index_checked () */
+	ca = &image->tables [MONO_TABLE_CUSTOMATTRIBUTE];
+	i = mono_metadata_custom_attrs_from_index (image, idx);
+	if (!i)
+		return;
+	i --;
+	gboolean stop_iterating = FALSE;
+	while (!stop_iterating && i < ca->rows) {
+		if (mono_metadata_decode_row_col (ca, i, MONO_CUSTOM_ATTR_PARENT) != idx)
+			break;
+		mono_metadata_decode_row (ca, i, cols, MONO_CUSTOM_ATTR_SIZE);
+		i ++;
+		mtoken = cols [MONO_CUSTOM_ATTR_TYPE] >> MONO_CUSTOM_ATTR_TYPE_BITS;
+		switch (cols [MONO_CUSTOM_ATTR_TYPE] & MONO_CUSTOM_ATTR_TYPE_MASK) {
+		case MONO_CUSTOM_ATTR_TYPE_METHODDEF:
+			mtoken |= MONO_TOKEN_METHOD_DEF;
+			break;
+		case MONO_CUSTOM_ATTR_TYPE_MEMBERREF:
+			mtoken |= MONO_TOKEN_MEMBER_REF;
+			break;
+		default:
+			g_warning ("Unknown table for custom attr type %08x", cols [MONO_CUSTOM_ATTR_TYPE]);
+			continue;
+		}
+
+		const char *nspace = NULL;
+		const char *name = NULL;
+		guint32 assembly_token = 0;
+
+		if (!custom_attr_class_name_from_method_token (image, mtoken, &assembly_token, &nspace, &name))
+			continue;
+
+		stop_iterating = func (image, assembly_token, nspace, name, mtoken, user_data);
+	}
 }

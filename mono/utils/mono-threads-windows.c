@@ -12,6 +12,7 @@
 #if defined(USE_WINDOWS_BACKEND)
 
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-threads-debug.h>
 #include <limits.h>
 
 
@@ -63,13 +64,40 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	}
 
 	CloseHandle (handle);
-	return info->suspend_can_continue;
+	return TRUE;
 }
 
 gboolean
 mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
 {
 	return info->suspend_can_continue;
+}
+
+static void CALLBACK
+abort_apc (ULONG_PTR param)
+{
+	THREADS_INTERRUPT_DEBUG ("%06d - abort_apc () called", GetCurrentThreadId ());
+}
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	THREADS_INTERRUPT_DEBUG ("%06d - Aborting syscall in thread %06d", GetCurrentThreadId (), id);
+	QueueUserAPC ((PAPCFUNC)abort_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
+}
+
+gboolean
+mono_threads_suspend_needs_abort_syscall (void)
+{
+	return TRUE;
 }
 
 gboolean
@@ -128,25 +156,38 @@ mono_threads_suspend_free (MonoThreadInfo *info)
 {
 }
 
+void
+mono_threads_suspend_init_signals (void)
+{
+}
+
+gint
+mono_threads_suspend_search_alternative_signal (void)
+{
+	g_assert_not_reached ();
+}
+
+gint
+mono_threads_suspend_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_abort_signal (void)
+{
+	return -1;
+}
+
 #endif
 
 #if defined (HOST_WIN32)
-
-void
-mono_threads_platform_register (MonoThreadInfo *info)
-{
-	HANDLE thread_handle;
-
-	thread_handle = GetCurrentThread ();
-	g_assert (thread_handle);
-
-	/* The handle returned by GetCurrentThread () is a pseudo handle, so it can't
-	 * be used to refer to the thread from other threads for things like aborting. */
-	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle, THREAD_ALL_ACCESS, TRUE, 0);
-
-	g_assert (!info->handle);
-	info->handle = thread_handle;
-}
 
 int
 mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid)
@@ -248,6 +289,56 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 }
 
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+static gboolean is_wow64 = FALSE;
+#endif
+
+/* We do this at init time to avoid potential races with module opening */
+void
+mono_threads_platform_init (void)
+{
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+	LPFN_ISWOW64PROCESS is_wow64_func = (LPFN_ISWOW64PROCESS) GetProcAddress (GetModuleHandle (TEXT ("kernel32")), "IsWow64Process");
+	if (is_wow64_func)
+		is_wow64_func (GetCurrentProcess (), &is_wow64);
+#endif
+}
+
+/*
+ * When running x86 process under x64 system syscalls are done through WoW64. This
+ * needs to do a transition from x86 mode to x64 so it can syscall into the x64 system.
+ * Apparently this transition invalidates the ESP that we would get from calling
+ * GetThreadContext, so we would fail to scan parts of the thread stack. We attempt
+ * to query whether the thread is in such a transition so we try to restart it later.
+ * We check CONTEXT_EXCEPTION_ACTIVE for this, which is highly undocumented.
+ */
+gboolean
+mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
+{
+	gboolean ret = FALSE;
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+/* FIXME On cygwin these are not defined */
+#if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
+	if (is_wow64) {
+		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, FALSE, tid);
+		if (handle) {
+			CONTEXT context;
+			ZeroMemory (&context, sizeof (CONTEXT));
+			context.ContextFlags = CONTEXT_EXCEPTION_REQUEST;
+			if (GetThreadContext (handle, &context)) {
+				if ((context.ContextFlags & CONTEXT_EXCEPTION_REPORTING) &&
+						(context.ContextFlags & CONTEXT_EXCEPTION_ACTIVE))
+					ret = TRUE;
+			}
+			CloseHandle (handle);
+		}
+	}
+#endif
+#endif
+	return ret;
+}
+
 gboolean
 mono_threads_platform_yield (void)
 {
@@ -255,19 +346,9 @@ mono_threads_platform_yield (void)
 }
 
 void
-mono_threads_platform_exit (int exit_code)
+mono_threads_platform_exit (gsize exit_code)
 {
-	mono_thread_info_detach ();
 	ExitThread (exit_code);
-}
-
-void
-mono_threads_platform_unregister (MonoThreadInfo *info)
-{
-	g_assert (info->handle);
-
-	CloseHandle (info->handle);
-	info->handle = NULL;
 }
 
 int
@@ -275,29 +356,6 @@ mono_threads_get_max_stack_size (void)
 {
 	//FIXME
 	return INT_MAX;
-}
-
-gpointer
-mono_threads_platform_duplicate_handle (MonoThreadInfo *info)
-{
-	HANDLE thread_handle;
-
-	g_assert (info->handle);
-	DuplicateHandle (GetCurrentProcess (), info->handle, GetCurrentProcess (), &thread_handle, THREAD_ALL_ACCESS, TRUE, 0);
-
-	return thread_handle;
-}
-
-HANDLE
-mono_threads_platform_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
-{
-	return OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
-}
-
-void
-mono_threads_platform_close_thread_handle (HANDLE handle)
-{
-	CloseHandle (handle);
 }
 
 #if defined(_MSC_VER)
@@ -330,16 +388,6 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
 #endif
-}
-
-void
-mono_threads_platform_set_exited (gpointer handle)
-{
-}
-
-void
-mono_threads_platform_init (void)
-{
 }
 
 #endif

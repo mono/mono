@@ -416,7 +416,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void BSTR_Roundtrip ()
 		{
 			string s = "mono";
@@ -426,7 +425,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void StringToBSTRWithNullValues ()
 		{
 			int size = 128;
@@ -871,6 +869,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		);
 #endif
 
+#if !FULL_AOT_RUNTIME
 		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		public class FourByteStruct
 		{
@@ -1015,6 +1014,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 			return objResult;
 		}
+#endif
 	}
 #if !MOBILE
 	[ComImport()]

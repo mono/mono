@@ -8,10 +8,12 @@
  * Copyright 2011 Xamarin Inc.  http://www.xamarin.com
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
- #include "mini.h"
 
+#include "config.h"
+#include <mono/utils/mono-compiler.h>
 #ifndef DISABLE_JIT
- 
+
+#include "mini.h"
 
 /*
  * Returns true if @bb is a basic block which falls through the next block.
@@ -1478,4 +1480,8 @@ mono_optimize_branches (MonoCompile *cfg)
 	} while (changed && (niterations > 0));
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (branch_opts);
+
+#endif /* !DISABLE_JIT */

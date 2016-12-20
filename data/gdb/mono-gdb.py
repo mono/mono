@@ -167,8 +167,6 @@ class MonoClassPrinter:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        if klass ["generic_class"].cast (gdb.lookup_type ("guint64")) != 0:
-            class_name = "{}<{}>".format (class_name, str (klass ["generic_class"]["context"]["class_inst"]))
         if add_quotes:
             return "\"{}\"".format (class_name)
         else:
@@ -198,7 +196,7 @@ class MonoGenericInstPrinter:
         inst_args = inst ["type_argv"]
         inst_str = ""
         for i in range(0, inst_len):
-            print (inst_args)
+            # print (inst_args)
             type_printer = MonoTypePrinter (inst_args [i])
             if i > 0:
                 inst_str = inst_str + ", "
@@ -240,7 +238,7 @@ class MonoTypePrinter:
 
     def to_string_inner(self, csharp):
         try:
-            t = self.val.dereference ()
+            t = self.val.referenced_value ()
 
             kind = str (t ["type"]).replace ("MONO_TYPE_", "").lower ()
             info = ""
@@ -252,9 +250,9 @@ class MonoTypePrinter:
                 info = str(t ["data"]["generic_class"])
 
             if info != "":
-                return "{{}, {}}".format (kind, info)
+                return "{{{}, {}}}".format (kind, info)
             else:
-                return "{{}}".format (kind)
+                return "{{{}}}".format (kind)
         except:
             #print (sys.exc_info ()[0])
             #print (sys.exc_info ()[1])
@@ -278,7 +276,7 @@ class MonoMethodRgctxPrinter:
         inst_args = inst ["type_argv"]
         inst_str = ""
         for i in range(0, inst_len):
-            print (inst_args)
+            # print (inst_args)
             type_printer = MonoTypePrinter (inst_args [i])
             if i > 0:
                 inst_str = inst_str + ", "

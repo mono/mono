@@ -135,10 +135,16 @@ namespace System.Xml.Serialization
 
 		void LookupTypeConvertor ()
 		{
-			// We only need this for System.Xml.Linq.
-			var convertor = type.GetCustomAttribute<XmlTypeConvertorAttribute> ();
-			if (convertor != null)
-				typeConvertor = type.GetMethod (convertor.Method, BindingFlags.Static | BindingFlags.NonPublic);
+			// We only need this for System.Xml.Linq
+			var t = type;
+			// HACK: because interpreter array handling is so bad
+			if (t.IsArray)
+				t = t.GetElementType ();
+
+			var convertor = t.GetCustomAttribute<XmlTypeConvertorAttribute> ();
+			if (convertor != null) {
+				typeConvertor = t.GetMethod (convertor.Method, BindingFlags.Static | BindingFlags.NonPublic);
+			}
 		}
 
 		internal void ConvertForAssignment (ref object value)

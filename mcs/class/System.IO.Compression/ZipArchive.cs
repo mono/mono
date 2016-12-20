@@ -227,13 +227,20 @@ namespace System.IO.Compression
 
 		private void Save()
 		{
-			using (var newZip = new MemoryStream()) {
-				zipFile.SaveTo(newZip, CompressionType.Deflate, entryNameEncoding ?? Encoding.UTF8);
+			if (mode == ZipArchiveMode.Create)
+			{
+				zipFile.SaveTo(stream, CompressionType.Deflate, entryNameEncoding ?? Encoding.UTF8);
+			}
+			else {
+				using (var newZip = new MemoryStream())
+				{
+					zipFile.SaveTo(newZip, CompressionType.Deflate, entryNameEncoding ?? Encoding.UTF8);
 
-				stream.SetLength(0);
-				stream.Position = 0;
-				newZip.Position = 0;
-				newZip.CopyTo(stream);
+					stream.SetLength(0);
+					stream.Position = 0;
+					newZip.Position = 0;
+					newZip.CopyTo(stream);
+				}
 			}
 		}
 

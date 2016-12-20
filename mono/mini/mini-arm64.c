@@ -745,6 +745,16 @@ mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *code_start, int dreg,
 	return emit_aotconst_full (NULL, (MonoJumpInfo**)ji, code, code_start, dreg, patch_type, data);
 }
 
+gboolean
+mono_arch_have_fast_tls (void)
+{
+#ifdef TARGET_IOS
+	return FALSE;
+#else
+	return TRUE;
+#endif
+}
+
 static guint8*
 emit_tls_get (guint8 *code, int dreg, int tls_offset)
 {
@@ -755,15 +765,6 @@ emit_tls_get (guint8 *code, int dreg, int tls_offset)
 		code = emit_addx_imm (code, dreg, dreg, tls_offset);
 		arm_ldrx (code, dreg, dreg, 0);
 	}
-	return code;
-}
-
-static guint8*
-emit_tls_get_reg (guint8 *code, int dreg, int offset_reg)
-{
-	g_assert (offset_reg != ARMREG_IP0);
-	arm_mrs (code, ARMREG_IP0, ARM_MRS_REG_TPIDR_EL0);
-	arm_ldrx_reg (code, dreg, ARMREG_IP0, offset_reg);
 	return code;
 }
 
@@ -780,18 +781,6 @@ emit_tls_set (guint8 *code, int sreg, int tls_offset)
 		code = emit_addx_imm (code, tmpreg, tmpreg, tls_offset);
 		arm_strx (code, sreg, tmpreg, 0);
 	}
-	return code;
-}
-
-
-static guint8*
-emit_tls_set_reg (guint8 *code, int sreg, int offset_reg)
-{
-	int tmpreg = ARMREG_IP0;
-
-	g_assert (sreg != tmpreg);
-	arm_mrs (code, tmpreg, ARM_MRS_REG_TPIDR_EL0);
-	arm_strx_reg (code, sreg, tmpreg, offset_reg);
 	return code;
 }
 
@@ -1789,25 +1778,21 @@ mono_arch_flush_icache (guint8 *code, gint size)
 	 * icache/dcache cache line sizes, that can vary between cores on
 	 * big.LITTLE architectures. */
 	guint64 end = (guint64) (code + size);
-	guint64 addr, ctr_el0;
-	static size_t icache_line_size = 0xffff, dcache_line_size = 0xffff;
-	size_t isize, dsize;
+	guint64 addr;
+	/* always go with cacheline size of 4 bytes as this code isn't perf critical
+	 * anyway. Reading the cache line size from a machine register can be racy
+	 * on a big.LITTLE architecture if the cores don't have the same cache line
+	 * sizes. */
+	const size_t icache_line_size = 4;
+	const size_t dcache_line_size = 4;
 
-	asm volatile ("mrs %0, ctr_el0" : "=r" (ctr_el0));
-	isize = 4 << ((ctr_el0 >> 0 ) & 0xf);
-	dsize = 4 << ((ctr_el0 >> 16) & 0xf);
-
-	/* determine the global minimum cache line size */
-	icache_line_size = isize = MIN (icache_line_size, isize);
-	dcache_line_size = dsize = MIN (dcache_line_size, dsize);
-
-	addr = (guint64) code & ~(guint64) (dsize - 1);
-	for (; addr < end; addr += dsize)
+	addr = (guint64) code & ~(guint64) (dcache_line_size - 1);
+	for (; addr < end; addr += dcache_line_size)
 		asm volatile("dc civac, %0" : : "r" (addr) : "memory");
 	asm volatile("dsb ish" : : : "memory");
 
-	addr = (guint64) code & ~(guint64) (isize - 1);
-	for (; addr < end; addr += isize)
+	addr = (guint64) code & ~(guint64) (icache_line_size - 1);
+	for (; addr < end; addr += icache_line_size)
 		asm volatile("ic ivau, %0" : : "r" (addr) : "memory");
 
 	asm volatile ("dsb ish" : : : "memory");
@@ -3644,20 +3629,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STOREI8_MEMBASE_REG:
 			code = emit_strx (code, sreg1, ins->inst_destbasereg, ins->inst_offset);
 			break;
-
 		case OP_TLS_GET:
 			code = emit_tls_get (code, dreg, ins->inst_offset);
-			break;
-		case OP_TLS_GET_REG:
-			code = emit_tls_get_reg (code, dreg, sreg1);
 			break;
 		case OP_TLS_SET:
 			code = emit_tls_set (code, sreg1, ins->inst_offset);
 			break;
-		case OP_TLS_SET_REG:
-			code = emit_tls_set_reg (code, sreg1, sreg2);
-			break;
-
 			/* Atomic */
 		case OP_MEMORY_BARRIER:
 			arm_dmb (code, 0);
@@ -4246,18 +4223,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		case OP_GENERIC_CLASS_INIT: {
-			static int byte_offset = -1;
-			static guint8 bitmask;
+			int byte_offset;
 			guint8 *jump;
 
-			if (byte_offset < 0)
-				mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
+			byte_offset = MONO_STRUCT_OFFSET (MonoVTable, initialized);
 
 			/* Load vtable->initialized */
 			arm_ldrsbx (code, ARMREG_IP0, sreg1, byte_offset);
-			// FIXME: No andx_imm yet */
-			code = mono_arm_emit_imm64 (code, ARMREG_IP1, bitmask);
-			arm_andx (code, ARMREG_IP0, ARMREG_IP0, ARMREG_IP1);
 			jump = code;
 			arm_cbnzx (code, ARMREG_IP0, 0);
 

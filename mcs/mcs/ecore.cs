@@ -4781,12 +4781,18 @@ namespace Mono.CSharp {
 
 				//
 				// A candidate with no default parameters is still better when there
-				// is no better expression conversion
+				// is no better expression conversion and does not have more parameters
 				//
 				if (candidate_pd.Count < best_pd.Count) {
-					if (!candidate_params && !candidate_pd.FixedParameters [j - 1].HasDefaultValue) {
+					if (candidate_params)
+						return false;
+					
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue)
 						return true;
-					}
+
+					if (best_pd.FixedParameters [j].HasDefaultValue)
+						return true;
+					
 				} else if (candidate_pd.Count == best_pd.Count) {
 					if (candidate_params)
 						return false;
@@ -5050,7 +5056,7 @@ namespace Mono.CSharp {
 
 								// The slot has been taken by positional argument
 								if (temp != null && !(temp is NamedArgument))
-									break;
+									return NamedArgumentsMismatch - i - 1;
 							}
 
 							if (!arg_moved) {
@@ -5222,7 +5228,7 @@ namespace Mono.CSharp {
 						if ((fp.ModFlags & Parameter.Modifier.CallerLineNumber) != 0) {
 							e = new IntLiteral (ec.BuiltinTypes, loc.Row, loc);
 						} else if ((fp.ModFlags & Parameter.Modifier.CallerFilePath) != 0) {
-							e = new StringLiteral (ec.BuiltinTypes, loc.NameFullPath, loc);
+							e = new StringLiteral (ec.BuiltinTypes, loc.SourceFile.GetFullPathName (ec.Module.Compiler.Settings.PathMap), loc);
 						} else if (ec.MemberContext.CurrentMemberDefinition != null) {
 							e = new StringLiteral (ec.BuiltinTypes, ec.MemberContext.CurrentMemberDefinition.GetCallerMemberName (), loc);
 						}

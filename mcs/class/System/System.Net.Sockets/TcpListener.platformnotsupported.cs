@@ -78,6 +78,16 @@ namespace System.Net.Sockets
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
+		public void AllowNatTraversal (bool allowed)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public static TcpListener Create (int port)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		~TcpListener ()
 		{
 		}

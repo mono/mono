@@ -166,7 +166,6 @@ System.Net/ListenerPrefix.cs
 System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
-System.Net/NetworkCredential.cs
 System.Net/NtlmClient.cs
 System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
@@ -305,7 +304,6 @@ Mono.Btls/MonoBtlsX509LookupMonoCollection.cs
 Mono.Btls/MonoBtlsX509LookupMono.cs
 Mono.Btls/MonoBtlsX509LookupType.cs
 Mono.Btls/MonoBtlsX509Name.cs
-Mono.Btls/MonoBtlsX509NameList.cs
 Mono.Btls/MonoBtlsX509NameEntryType.cs
 Mono.Btls/MonoBtlsX509Purpose.cs
 Mono.Btls/MonoBtlsX509Revoked.cs
@@ -330,6 +328,7 @@ ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RequestCacheProtocol.cs
 ReferenceSources/SettingsSectionInternal.cs
+ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
@@ -757,6 +756,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/IWebProxyFinder.cs
 ../referencesource/System/net/System/Net/IWebRequestCreate.cs
 ../referencesource/System/net/System/Net/NetworkAccess.cs
+../referencesource/System/net/System/Net/NetworkCredential.cs
 ../referencesource/System/net/System/Net/ProtocolViolationException.cs
 ../referencesource/System/net/System/Net/TransportContext.cs
 ../referencesource/System/net/System/Net/TransportType.cs

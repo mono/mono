@@ -35,7 +35,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/strenc.h>
 #include <utils/mono-io-portability.h>
-#include <mono/utils/w32handle.h>
+#include <mono/metadata/w32handle.h>
 
 #undef DEBUG
 
@@ -457,6 +457,62 @@ incremental_find_check_match (IncrementalFind *handle, WIN32_FIND_DATA *data, Mo
 	g_free (full_name);
 	
 	return TRUE;
+}
+
+HANDLE
+ves_icall_System_IO_MonoIO_FindFirstFile (MonoString *path_with_pattern, MonoString **file_name, gint32 *file_attr, gint32 *ioerror)
+{
+	HANDLE hnd;
+	WIN32_FIND_DATA data;
+	MonoError error;
+
+	hnd = FindFirstFile (mono_string_chars (path_with_pattern), &data);
+
+	if (hnd == INVALID_HANDLE_VALUE) {
+		*file_name = NULL;
+		*file_attr = 0;
+		*ioerror = GetLastError ();
+		return hnd;
+	}
+
+	mono_gc_wbarrier_generic_store (file_name, (MonoObject*) mono_string_from_utf16_checked (data.cFileName, &error));
+	mono_error_set_pending_exception (&error);
+
+	*file_attr = data.dwFileAttributes;
+	*ioerror = ERROR_SUCCESS;
+
+	return hnd;
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_FindNextFile (HANDLE hnd, MonoString **file_name, gint32 *file_attr, gint32 *ioerror)
+{
+	MonoBoolean res;
+	WIN32_FIND_DATA data;
+	MonoError error;
+
+	res = FindNextFile (hnd, &data);
+
+	if (res == FALSE) {
+		*file_name = NULL;
+		*file_attr = 0;
+		*ioerror = GetLastError ();
+		return res;
+	}
+
+	mono_gc_wbarrier_generic_store (file_name, (MonoObject*) mono_string_from_utf16_checked (data.cFileName, &error));
+	mono_error_set_pending_exception (&error);
+
+	*file_attr = data.dwFileAttributes;
+	*ioerror = ERROR_SUCCESS;
+
+	return res;
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_FindCloseFile (HANDLE hnd)
+{
+	return FindClose (hnd);
 }
 
 /* FIXME make gc suspendable */
@@ -1085,22 +1141,46 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 	return(ret);
 }
 
-HANDLE 
-ves_icall_System_IO_MonoIO_get_ConsoleOutput ()
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+HANDLE
+mono_file_io_get_console_output (void)
 {
 	return GetStdHandle (STD_OUTPUT_HANDLE);
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+HANDLE 
+ves_icall_System_IO_MonoIO_get_ConsoleOutput ()
+{
+	return mono_file_io_get_console_output ();
+}
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+HANDLE
+mono_file_io_get_console_input (void)
+{
+	return GetStdHandle (STD_INPUT_HANDLE);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 HANDLE 
 ves_icall_System_IO_MonoIO_get_ConsoleInput ()
 {
-	return GetStdHandle (STD_INPUT_HANDLE);
+	return mono_file_io_get_console_input ();
 }
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+HANDLE
+mono_file_io_get_console_error (void)
+{
+	return GetStdHandle (STD_ERROR_HANDLE);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 HANDLE 
 ves_icall_System_IO_MonoIO_get_ConsoleError ()
 {
-	return GetStdHandle (STD_ERROR_HANDLE);
+	return mono_file_io_get_console_error ();
 }
 
 MonoBoolean
@@ -1134,7 +1214,13 @@ ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE
 	gboolean ret;
 	
 	MONO_ENTER_GC_SAFE;
+#ifdef HOST_WIN32
 	ret=DuplicateHandle (source_process_handle, source_handle, target_process_handle, target_handle, access, inherit, options);
+#else
+	mono_w32handle_ref (source_handle);
+	*target_handle = source_handle;
+	ret = TRUE;
+#endif
 	MONO_EXIT_GC_SAFE;
 
 	if(ret==FALSE) {

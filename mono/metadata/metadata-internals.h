@@ -811,6 +811,10 @@ mono_assembly_name_parse_full 		     (const char	   *name,
 					      gboolean *is_version_defined,
 						  gboolean *is_token_defined);
 
+gboolean
+mono_assembly_fill_assembly_name_full (MonoImage *image, MonoAssemblyName *aname, gboolean copyBlobs);
+
+
 MONO_API guint32 mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *owner);
 
 void mono_unload_interface_ids (MonoBitSet *bitset);
@@ -916,6 +920,9 @@ mono_image_set_description (MonoImageSet *);
 
 MonoImageSet *
 mono_find_image_set_owner (void *ptr);
+
+void
+mono_loader_register_module (const char *name, MonoDl *module);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

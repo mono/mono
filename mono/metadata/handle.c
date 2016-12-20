@@ -163,8 +163,10 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data)
 
 	while (cur) {
 		int i;
-		for (i = 0; i < cur->size; ++i)
-			func ((gpointer*)&cur->objects [i], gc_data);
+		for (i = 0; i < cur->size; ++i) {
+			if (cur->objects [i] != NULL)
+				func ((gpointer*)&cur->objects [i], gc_data);
+		}
 		if (cur == last)
 			break;
 		cur = cur->next;
@@ -185,7 +187,7 @@ mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, c
 	}
 
 	if (size > THIS_IS_AN_OK_NUMBER_OF_HANDLES)
-		printf ("%s USED %d handles\n", func_name, size);
+		g_warning ("%s USED %d handles\n", func_name, size);
 }
 
 /*
@@ -196,7 +198,9 @@ mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, c
 MonoRawHandle
 mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value)
 {
-	g_error ("impl me");
+	MonoObject *obj = value ? *((MonoObject**)value) : NULL;
+	mono_stack_mark_pop (info, stackmark);
+	return mono_handle_new (obj);
 }
 
 /* Temporary place for some of the handle enabled wrapper functions*/
@@ -221,3 +225,38 @@ mono_handle_verify (MonoRawHandle raw_handle)
 	
 }
 #endif
+
+uintptr_t
+mono_array_handle_length (MonoArrayHandle arr)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	return MONO_HANDLE_RAW (arr)->max_length;
+}
+
+uint32_t
+mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned)
+{
+	return mono_gchandle_new (MONO_HANDLE_RAW(handle), pinned);
+}
+
+MonoObjectHandle
+mono_gchandle_get_target_handle (uint32_t gchandle)
+{
+	return MONO_HANDLE_NEW (MonoObject, mono_gchandle_get_target);
+}
+
+gpointer
+mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t idx, uint32_t *gchandle)
+{
+	g_assert (gchandle != NULL);
+	*gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST(MonoObject,handle), TRUE);
+	MonoArray *raw = MONO_HANDLE_RAW (handle);
+	return mono_array_addr_with_size (raw, size, idx);
+}
+
+void
+mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArrayHandle src, uintptr_t src_idx, uintptr_t len)
+{
+	mono_array_memcpy_refs (MONO_HANDLE_RAW (dest), dest_idx, MONO_HANDLE_RAW (src), src_idx, len);
+}

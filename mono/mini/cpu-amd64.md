@@ -326,9 +326,7 @@ amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
 amd64_save_sp_to_lmf: len:16
 tls_get: dest:i len:32
-tls_get_reg: dest:i src1:i len:64
 tls_set: src1:i len:16
-tls_set_reg: src1:i src2:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
 atomic_exchange_i4: src1:b src2:i dest:i len:12
@@ -741,6 +739,7 @@ cvttps2dq: dest:x src1:x len:5 clob:1
 
 xmove: dest:x src1:x len:5
 xzero: dest:x len:5
+xones: dest:x len:5
 
 iconv_to_x: dest:x src1:i len:5
 extract_i4: dest:i src1:x len:5

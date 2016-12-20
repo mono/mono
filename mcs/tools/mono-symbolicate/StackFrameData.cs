@@ -84,7 +84,8 @@ namespace Mono
 
 			typeFullName = str.Substring (0, typeNameEnd);
 			// Remove generic parameters
-			typeFullName = Regex.Replace (typeFullName, @"\[[^\[\]]*\]", "");
+			typeFullName = Regex.Replace (typeFullName, @"\[[^\[\]]*\]$", "");
+			typeFullName = Regex.Replace (typeFullName, @"\<[^\[\]]*\>$", "");
 
 			methodSignature = str.Substring (typeNameEnd + 1);
 

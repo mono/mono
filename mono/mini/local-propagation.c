@@ -14,6 +14,8 @@
  */
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
 #ifndef DISABLE_JIT
 
 #include <string.h>
@@ -639,13 +641,15 @@ mono_local_cprop (MonoCompile *cfg)
 				/* FIXME: Make is_inst_imm a macro */
 				/* FIXME: Make is_inst_imm take an opcode argument */
 				/* is_inst_imm is only needed for binops */
-				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST))) &&
+				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST)) || (def->opcode == OP_PCONST)) &&
 					 (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || 
 					(!MONO_ARCH_USE_FPSTACK && (def->opcode == OP_R8CONST))) {
 					guint32 opcode2;
 
 					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
-					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
+					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] &&
+						((defs [ins->sreg1]->opcode == OP_ICONST) || defs [ins->sreg1]->opcode == OP_PCONST) &&
+						defs [ins->sreg2]) {
 						/* Both arguments are constants, perform cfold */
 						mono_constant_fold_ins (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
 					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
@@ -737,6 +741,9 @@ mono_local_cprop (MonoCompile *cfg)
 					dummy_arg1.inst_c0 = 1;
 
 					mono_constant_fold_ins (cfg, ins, &dummy_arg1, NULL, TRUE);
+				} else if (srcindex == 0 && ins->opcode == OP_COMPARE && defs [ins->sreg1]->opcode == OP_PCONST && defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_PCONST) {
+					/* typeof(T) == typeof(..) */
+					mono_constant_fold_ins (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
 				}
 			}
 
@@ -1002,4 +1009,8 @@ mono_local_deadce (MonoCompile *cfg)
 	//mono_print_code (cfg, "AFTER LOCAL-DEADCE");
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (local_propagation);
+
+#endif /* !DISABLE_JIT */

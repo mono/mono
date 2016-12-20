@@ -60,6 +60,6 @@ namespace Mono {
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		internal static extern void FreeAssemblyName (ref MonoAssemblyName name);
+		internal static extern void FreeAssemblyName (ref MonoAssemblyName name, bool freeStruct);
 	}
 }

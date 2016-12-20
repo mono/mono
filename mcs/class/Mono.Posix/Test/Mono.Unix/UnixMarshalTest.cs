@@ -28,7 +28,7 @@ namespace MonoTests.Mono.Unix {
 		}
 	}
 
-	[TestFixture]
+	[TestFixture, Category ("NotOnWindows")]
 	public class UnixMarshalTest {
 #if false
 		public static void Main ()

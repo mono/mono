@@ -191,11 +191,11 @@ typedef struct MonoCompileArch {
 
 static AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
 
-static AMD64_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
+static AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
 
 static AMD64_Reg_No return_regs [] = { AMD64_RAX };
 
-static AMD64_Reg_No float_return_regs [] = { AMD64_XMM0 };
+static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
 
 #define PARAM_REGS G_N_ELEMENTS(param_regs)
 #define FLOAT_PARAM_REGS G_N_ELEMENTS(float_param_regs)
@@ -370,10 +370,11 @@ typedef struct {
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 
+#ifndef HOST_WIN32
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
+#endif
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
-#define MONO_ARCH_HAVE_TLS_GET (mono_amd64_have_tls_get ())
 #define MONO_ARCH_IMT_REG AMD64_R10
 #define MONO_ARCH_IMT_SCRATCH_REG AMD64_R11
 #define MONO_ARCH_VTABLE_REG MONO_AMD64_ARG_REG1
@@ -421,10 +422,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
 #endif
 
-#if defined(TARGET_OSX) || defined(__linux__) || defined(TARGET_WIN32)
-#define MONO_ARCH_HAVE_TLS_GET_REG 1
-#endif
-
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 
 
@@ -469,12 +466,6 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 
 guint64
 mono_amd64_get_original_ip (void);
-
-guint8*
-mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset);
-
-gboolean
-mono_amd64_have_tls_get (void);
 
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);

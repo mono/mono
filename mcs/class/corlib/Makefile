@@ -11,16 +11,17 @@ LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
 #LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += --runtime:v4
+LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
 else
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += --runtime:v4
+LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
 else
 $(error Unknown framework version)
 endif
 endif
 
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
+RESX_RESOURCE_STRING = ../../../external/corefx/src/System.ValueTuple/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -41,7 +42,7 @@ ifndef MOBILE_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
 endif
 
-ifndef MOBILE_STATIC
+ifndef AOT_FRIENDLY_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_REMOTING,MONO_COM,FEATURE_COMINTEROP,FEATURE_ROLE_BASED_SECURITY
 endif
 
@@ -66,8 +67,10 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-ifndef MOBILE_STATIC
+ifndef AOT_FRIENDLY_PROFILE
+ifneq ($(PROFILE),aot_hybrid)
 TEST_LIB_REFS += Mono.Posix
+endif
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix

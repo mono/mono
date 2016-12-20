@@ -800,7 +800,7 @@ namespace System.Xml.Xsl.XsltOld {
                         compilParams.Evidence = evidence;
 #pragma warning restore 618
                         compilParams.ReferencedAssemblies.Add(typeof(XPathNavigator).Module.FullyQualifiedName);
-                        compilParams.ReferencedAssemblies.Add("system.dll");
+                        compilParams.ReferencedAssemblies.Add("System.dll");
 #if !FEATURE_PAL // visualbasic
                         if (lang == ScriptingLanguage.VisualBasic) {
                             compilParams.ReferencedAssemblies.Add("microsoft.visualbasic.dll");

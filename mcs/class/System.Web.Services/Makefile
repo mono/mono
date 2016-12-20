@@ -6,13 +6,13 @@ LIBRARY = System.Web.Services.dll
 ifdef MOBILE_PROFILE
 LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = \
-	-nowarn:649 -nowarn:169			\
+	-nowarn:649 -nowarn:168		\
 	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \
 	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
 	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd
 else
 LIB_REFS = System System.EnterpriseServices System.Xml System.Data
-LIB_MCS_FLAGS = -nowarn:168,169,219,414,612,649 -d:MONO_BROKEN_CONFIGURATION_DLL
+LIB_MCS_FLAGS = -nowarn:168,612,618,649 -d:MONO_BROKEN_CONFIGURATION_DLL
 
 ifndef NO_SYSTEM_WEB_DEPENDENCY
 plainweb = $(the_libdir_base)plainweb/System.Web.dll

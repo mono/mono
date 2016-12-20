@@ -29,6 +29,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -223,7 +224,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallMethodOnStruct ()
 		{
 			var param = Expression.Parameter (typeof (EineStrukt), "s");
@@ -271,7 +271,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallStaticMethodWithRefParameter ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");
@@ -283,7 +282,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallStaticMethodWithRefParameterAndOtherParameter ()
 		{
 			var i = Expression.Parameter (typeof (int), "i");
@@ -293,6 +291,36 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Call (GetType ().GetMethod ("DoAnotherThing"), i, s), i, s).Compile ();
 
 			Assert.AreEqual ("foo42", lamda (42, "foo"));
+		}
+
+		[Test]
+		public void CallDynamicMethod_ToString ()
+		{
+			// Regression test for #49686
+			var m = new DynamicMethod ("intIntId", typeof (int), new Type [] { typeof (int) });
+			var ilg = m.GetILGenerator ();
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ret);
+
+			var i = Expression.Parameter (typeof (int), "i");
+			var e = Expression.Call (m, i);
+
+			Assert.IsNotNull (e.ToString ());
+		}
+
+		[Test]
+		public void CallDynamicMethod_CompileInvoke ()
+		{
+			var m = new DynamicMethod ("intIntId", typeof (int), new Type [] { typeof (int) });
+			var ilg = m.GetILGenerator ();
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ret);
+
+			var i = Expression.Parameter (typeof (int), "i");
+			var e = Expression.Call (m, i);
+
+			var lambda = Expression.Lambda<Func<int, int>> (e, i).Compile ();
+			Assert.AreEqual (42, lambda (42));
 		}
 
 		public static int Bang (Expression i)
@@ -308,7 +336,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect282729 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=282729
@@ -335,8 +362,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect290278 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=290278
@@ -359,7 +384,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect297597 ()
 		{
 			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=297597
@@ -377,6 +401,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=319190
+		[Category ("NotWorkingInterpreter")]
 		public void Connect319190 ()
 		{
 			var lambda = Expression.Lambda<Func<bool>> (
@@ -482,7 +507,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CallNullableGetValueOrDefault () // #568989
 		{
 			var value = Expression.Parameter (typeof (int?), "value");
