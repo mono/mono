@@ -186,16 +186,26 @@ do-all-aot:
 # be able to evaluate the .dylibs to make
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
-AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
+AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
+
+debug:
+	@echo AOT_PROFILE_ASSEMBLIES=$(AOT_PROFILE_ASSEMBLIES)
+	@echo
+	@echo $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
 
 # This can run in parallel
 .PHONY: aot-all-profile
 aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
 
-%$(PLATFORM_AOT_SUFFIX): %
-	@ mkdir -p $*_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(dir $*)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode_tmp --verbose $* > $@.aot-log
-	@ rm -rf $*_bitcode_tmp
+%.dll$(PLATFORM_AOT_SUFFIX): %.dll
+	@ mkdir -p $<_bitcode_tmp
+	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	@ rm -rf $<_bitcode_tmp
+
+%.exe$(PLATFORM_AOT_SUFFIX): %.exe
+	@ mkdir -p $<_bitcode_tmp
+	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	@ rm -rf $<_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
