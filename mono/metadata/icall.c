@@ -2145,26 +2145,17 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 	return o;
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_MonoField_ResolveType (MonoReflectionField *ref_field)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_MonoField_ResolveType (MonoReflectionFieldHandle ref_field, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
-	MonoType *type;
-
-	type = mono_field_get_type_checked (ref_field->field, &error);
-	if (!mono_error_ok (&error)) {
-		mono_error_set_pending_exception (&error);
-		return NULL;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_field);
+	MonoClassField *field = MONO_HANDLE_GETVAL (ref_field, field);
+	MonoType *type = mono_field_get_type_checked (field, error);
+	if (!is_ok (error)) {
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	}
-
-	ret = mono_type_get_object_checked (mono_object_domain (ref_field), type, &error);
-	if (!mono_error_ok (&error)) {
-		mono_error_set_pending_exception (&error);
-		return NULL;
-	}
-
-	return ret;
+	return mono_type_get_object_handle (domain, type, error);
 }
 
 /* From MonoProperty.cs */
