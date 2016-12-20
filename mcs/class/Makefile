@@ -89,7 +89,7 @@ testing_aot_full_dirs := \
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
-aot_hybrid_dirs := \
+testing_aot_hybrid_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
@@ -335,7 +335,7 @@ monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
 monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
 testing_aot_full_SUBDIRS := $(testing_aot_full_dirs)
-aot_hybrid_SUBDIRS := $(aot_hybrid_dirs)
+testing_aot_hybrid_SUBDIRS := $(testing_aot_hybrid_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
 xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
 binary_reference_assemblies_SUBDIRS := reference-assemblies
@@ -347,7 +347,7 @@ xbox_SUBDIRS := $(xbox_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 

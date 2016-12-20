@@ -48,8 +48,8 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
-if INSTALL_AOT_HYBRID
-build_profiles += aot_hybrid
+if INSTALL_TESTING_AOT_HYBRID
+build_profiles += testing_aot_hybrid
 endif
 
 if INSTALL_TESTING_AOT_FULL

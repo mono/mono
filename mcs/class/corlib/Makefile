@@ -68,7 +68,7 @@ DEFAULT_REFERENCES =
 TEST_LIB_REFS = System.Core System
 
 ifndef AOT_FRIENDLY_PROFILE
-ifneq ($(PROFILE),aot_hybrid)
+ifneq ($(PROFILE),testing_aot_hybrid)
 TEST_LIB_REFS += Mono.Posix
 endif
 endif
