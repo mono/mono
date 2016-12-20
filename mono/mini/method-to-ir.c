@@ -11544,7 +11544,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				guint32 offset;
 				int idx, static_data_reg, array_reg, dreg;
 
-				GSHAREDVT_FAILURE (op);
+				if (context_used && cfg->gsharedvt && mini_is_gsharedvt_klass (klass))
+					GSHAREDVT_FAILURE (op);
 
 				MONO_ADD_INS (cfg->cbb, thread_ins);
 				static_data_reg = alloc_ireg (cfg);
