@@ -173,6 +173,32 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
+		public void MSXslFormatDate ()
+		{
+			var arguments = new XsltArgumentList();
+			arguments.AddParam("date", "", new DateTime (2010, 11, 22, 5, 4, 3));
+
+			string xsl = @"
+<xsl:stylesheet version=""1.0"" xmlns=""http://www.w3.org/1999/xhtml"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" exclude-result-prefixes=""msxsl"">
+<xsl:param name='date'/>
+<xsl:template match='/'>
+	<root>
+		<p>The current date is <xsl:value-of select=""msxsl:format-date($date, 'd MMMM yyyy')""/> and current time is <xsl:value-of select=""msxsl:format-time($date, 'HH:mm')""/>.</p>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
+
+			StringWriter sw = new StringWriter ();
+			var t = new XslCompiledTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root></root>"))), arguments, sw);
+
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root xmlns=\"http://www.w3.org/1999/xhtml\"><p>The current date is 22 November 2010 and current time is 05:04.</p></root>", sw.ToString ());
+		}
+
+
+		[Test]
 		public void EvaluateEmptyVariableAsBoolean ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
