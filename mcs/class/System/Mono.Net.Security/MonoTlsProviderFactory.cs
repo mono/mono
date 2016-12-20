@@ -165,10 +165,10 @@ namespace Mono.Net.Security
 				providerRegistration.Add ("legacy", LegacyProviderTypeName);
 				
 				bool btls_supported = IsBtlsSupported ();
-				if (btls_supported && !Platform.IsMacOS)
+				if (btls_supported)
 					providerRegistration.Add ("btls", BtlsProviderTypeName);
 
-				providerRegistration.Add ("default", btls_supported ? BtlsProviderTypeName : LegacyProviderTypeName);
+				providerRegistration.Add ("default", btls_supported  && !Platform.IsMacOS ? BtlsProviderTypeName : LegacyProviderTypeName);
 					
 				X509Helper2.Initialize ();
 			}
