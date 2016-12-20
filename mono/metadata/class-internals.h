@@ -1286,7 +1286,7 @@ MONO_API void mono_class_describe_statics (MonoClass* klass);
 /* method debugging functions, for use inside gdb */
 MONO_API void mono_method_print_code (MonoMethod *method);
 
-char *mono_signature_full_name (MonoMethodSignature *sig) MONO_PROFILER_API;
+MONO_PROFILER_API char *mono_signature_full_name (MonoMethodSignature *sig);
 
 /*Enum validation related functions*/
 MONO_API gboolean
