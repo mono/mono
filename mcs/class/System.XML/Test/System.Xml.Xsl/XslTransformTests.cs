@@ -91,7 +91,6 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test()]
-		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void MsxslTest() {
 			string _styleSheet = @"
 			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" 
@@ -1026,7 +1025,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1065,7 +1063,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"    <else>{0}" +
 				"    </else>{0}" +
 				"  </something>{0}" +
-				"</test>", Environment.NewLine), sw.ToString (), "#1");
+				"</test>", end_of_line), sw.ToString (), "#1");
 
 			// set indent to no
 			sw.GetStringBuilder ().Length = 0;
@@ -1093,7 +1091,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"    <else>{0}" +
 				"    </else>{0}" +
 				"  </something>{0}" +
-				"</test>", Environment.NewLine), sw.ToString (), "#3");
+				"</test>", end_of_line), sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -1159,7 +1157,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1213,7 +1210,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"      </whatever>{0}" +
 				"    </p>{0}" +
 				"  </body>{0}" +
-				"</html>", Environment.NewLine), sw.ToString (), "#1");
+				"</html>", end_of_line), sw.ToString (), "#1");
 
 			// set indent to no
 			sw.GetStringBuilder ().Length = 0;
@@ -1249,7 +1246,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"      </whatever>{0}" +
 				"    </p>{0}" +
 				"  </body>{0}" +
-				"</html>", Environment.NewLine), sw.ToString (), "#3");
+				"</html>", end_of_line), sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -2276,7 +2273,6 @@ NO
 		}
 
 		[Test] // reverse case of #349375
-		[Category ("NotWorking")]
 //		[Category ("NotDotNet")]
 		public void PreserveWhitespace2 ()
 		{
@@ -2361,7 +2357,6 @@ NO
 		}
 
 		[Test]
-		[Category ("NotWorking")] // FIXME: SRE related regression
 		public void Bug487065 ()
 		{
 			using (XmlReader input = GetInput ()) {
