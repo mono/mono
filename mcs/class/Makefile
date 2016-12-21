@@ -363,6 +363,7 @@ DISTFILES = \
 	silverlight.pub		\
 	reactive.pub		\
 	mono.snk		\
+	Open.snk		\
 	LICENSE 		\
 	README			\
 	doc/API-notes		\
