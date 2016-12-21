@@ -296,6 +296,7 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ("foo42", lamda (42, "foo"));
 		}
 
+#if !MONOTOUCH
 		[Test]
 		public void CallDynamicMethod_ToString ()
 		{
@@ -325,6 +326,7 @@ namespace MonoTests.System.Linq.Expressions {
 			var lambda = Expression.Lambda<Func<int, int>> (e, i).Compile ();
 			Assert.AreEqual (42, lambda (42));
 		}
+#endif
 
 		public static int Bang (Expression i)
 		{
