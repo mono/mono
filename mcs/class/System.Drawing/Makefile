@@ -10,7 +10,7 @@ LIB_MCS_FLAGS = /unsafe \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
 	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico
 
-ifneq (xbox, $(PROFILE))
+ifneq (winaot, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
 else
 LIB_MCS_FLAGS += /keyfile:../msfinal.pub
