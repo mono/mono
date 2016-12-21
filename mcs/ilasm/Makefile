@@ -4,7 +4,7 @@ include ../build/rules.make
 
 PROGRAM = ilasm.exe
 BUILT_SOURCES = ILParser.cs
-LOCAL_MCS_FLAGS = /lib:../class/lib/$(PROFILE) /r:../class/lib/$(PROFILE)/PEAPI.dll /r:Mono.CompilerServices.SymbolWriter.dll /r:Mono.Security.dll
+LIB_REFS = PEAPI Mono.CompilerServices.SymbolWriter Mono.Security
 
 CLEAN_FILES = parser/y.output
 

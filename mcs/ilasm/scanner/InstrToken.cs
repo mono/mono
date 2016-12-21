@@ -56,10 +56,11 @@ namespace Mono.ILASM {
 				case OperandType.InlineNone:
 					token = Token.INSTR_NONE;
 					break;
-
+#pragma warning disable 618
 				case OperandType.InlinePhi:
 					token = Token.INSTR_PHI;
 					break;
+#pragma warning restore 618
 
 				case OperandType.InlineR:
 				case OperandType.ShortInlineR:
