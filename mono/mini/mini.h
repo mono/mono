@@ -1200,7 +1200,7 @@ typedef struct {
 	 * in a function stack frame above the water mark(isn't being called by
 	 * the catch block that caught the ThreadAbortException).
 	 */
-	gpointer abort_exc_stack_threshold;
+	size_t abort_exc_stack_threshold;
 } MonoJitTlsData;
 
 /*

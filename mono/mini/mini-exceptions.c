@@ -100,6 +100,8 @@ static void mono_raise_exception_with_ctx (MonoException *exc, MonoContext *ctx)
 static void mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data);
 static gboolean mono_current_thread_has_handle_block_guard (void);
 
+static size_t count_unwind_backtrace (void);
+
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
 {
@@ -127,30 +129,55 @@ mono_thread_get_managed_sp (void)
 	return addr;
 }
 
+/*
+ * This function takes a stack threshold measurement and an actual 
+ * stack measurement and finds their difference. Sometimes both are
+ * offsets, sometimes both are pointers.
+ */ 
 static inline int
-mini_abort_threshold_offset (gpointer threshold, gpointer sp)
+mini_abort_threshold_offset (size_t stack_threshold, size_t stack_size)
 {
-	intptr_t stack_threshold = (intptr_t) threshold;
-	intptr_t stack_pointer = (intptr_t) sp;
-
-	const int direction = MONO_ARCH_STACK_GROWS_UP ? -1 : 1;
-	intptr_t magnitude = stack_pointer - stack_threshold;
-
-	return direction * magnitude;
+	if (mono_llvm_only) {
+		return stack_size - stack_threshold;
+	} else {
+		const int direction = MONO_ARCH_STACK_GROWS_UP ? -1 : 1;
+		size_t magnitude = stack_size - stack_threshold;
+		return direction * magnitude;
+	}
 }
+
+static inline size_t
+mini_thread_get_threshold_scalar (void)
+{
+	if (mono_llvm_only) {
+		size_t count = count_unwind_backtrace ();
+		return count;
+	} else {
+		gpointer sp = mono_thread_get_managed_sp ();
+		return (size_t) sp;
+	}
+}
+
 
 static inline void
 mini_clear_abort_threshold (void)
 {
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
-	jit_tls->abort_exc_stack_threshold = NULL;
+	jit_tls->abort_exc_stack_threshold = 0;
 }
 
 static inline void
 mini_set_abort_threshold (MonoContext *ctx)
 {
-	gpointer sp = MONO_CONTEXT_GET_SP (ctx);
 	MonoJitTlsData *jit_tls = mono_get_jit_tls ();
+	size_t sp;
+
+	if (mono_llvm_only) {
+		sp = mini_thread_get_threshold_scalar ();
+	} else {
+		sp = (size_t) MONO_CONTEXT_GET_SP (ctx);
+	}
+
 	// Only move it up, to avoid thrown/caught
 	// exceptions lower in the stack from triggering
 	// a rethrow
@@ -166,12 +193,10 @@ mini_set_abort_threshold (MonoContext *ctx)
 static inline gboolean
 mini_above_abort_threshold (void)
 {
-	gpointer sp = mono_thread_get_managed_sp ();
-	MonoJitTlsData *jit_tls = (MonoJitTlsData*) mono_tls_get_jit_tls ();
+	size_t sp = mini_thread_get_threshold_scalar ();
 
-	if (!sp)
-		return TRUE;
-
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+	
 	gboolean above_threshold = mini_abort_threshold_offset (jit_tls->abort_exc_stack_threshold, sp) >= 0;
 
 	if (above_threshold)
@@ -337,6 +362,14 @@ static gboolean show_native_addresses = FALSE;
 #endif
 
 static _Unwind_Reason_Code
+count_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
+{
+	size_t *count = (size_t *)state;
+	*count = *count + 1;
+	return _URC_NO_REASON;
+}
+
+static _Unwind_Reason_Code
 build_stack_trace (struct _Unwind_Context *frame_ctx, void *state)
 {
 	MonoDomain *domain = mono_domain_get ();
@@ -360,10 +393,26 @@ get_unwind_backtrace (void)
 	return g_slist_reverse (ips);
 }
 
+static size_t
+count_unwind_backtrace (void)
+{
+	size_t count = 0;
+
+	_Unwind_Backtrace (count_stack_trace, &count);
+
+	return count;
+}
+
 #else
 
 static GSList*
 get_unwind_backtrace (void)
+{
+	return NULL;
+}
+
+static size_t
+count_unwind_backtrace (void)
 {
 	return NULL;
 }
