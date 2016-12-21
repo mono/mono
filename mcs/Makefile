@@ -21,7 +21,7 @@ net_4_x_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs class/a
 xammac_net_4_5_SUBDIRS := build class
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
-xbox_SUBDIRS := build class
+winaot_SUBDIRS := build class
 
 include build/rules.make
 
@@ -74,7 +74,7 @@ $(_boot_:%=profile-do--xammac--%):            profile-do--xammac--%:            
 $(_boot_:%=profile-do--xammac_net_4_5--%):    profile-do--xammac_net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--testing_aot_hybrid--%):        profile-do--testing_aot_hybrid--%:        profile-do--build--%
 $(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_full--%:          profile-do--build--%
-$(_boot_:%=profile-do--xbox--%):              profile-do--xbox--%:              profile-do--build--%
+$(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
 testcorlib:
