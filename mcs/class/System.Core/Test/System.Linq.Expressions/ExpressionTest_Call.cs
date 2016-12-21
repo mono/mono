@@ -296,7 +296,7 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ("foo42", lamda (42, "foo"));
 		}
 
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
 		[Test]
 		public void CallDynamicMethod_ToString ()
 		{
