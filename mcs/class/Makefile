@@ -32,6 +32,8 @@ build_SUBDIRS :=  \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
 	../tools/cil-stringreplacer
 
 -include ../build/config.make
@@ -85,13 +87,11 @@ mobile_common_dirs := \
 
 testing_aot_full_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
 testing_aot_hybrid_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
