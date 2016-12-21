@@ -276,12 +276,12 @@ namespace Mono.ILASM {
                                         case "show_tokens":
                                                 show_tokens = true;
                                                 break;
-//                                        case "show_method_def":
+                                        case "show_method_def":
 //                                                show_method_def = true;
-//                                                break;
-//                                        case "show_method_ref":
+                                                break;
+                                        case "show_method_ref":
 //                                                show_method_ref = true;
-//                                                break;
+                                                break;
                                         case "show_parser":
                                                 show_parser = true;
                                                 break;
