@@ -62,7 +62,7 @@ namespace System.Threading {
 		private int abort_state_handle;
 		/* thread_id is only accessed from unmanaged code */
 		internal Int64 thread_id;
-		private IntPtr stack_ptr;
+		private IntPtr debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr runtime_thread_info;
 		/* current System.Runtime.Remoting.Contexts.Context instance
