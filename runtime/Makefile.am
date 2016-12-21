@@ -48,12 +48,12 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
-if INSTALL_AOT_HYBRID
-build_profiles += aot_hybrid
+if INSTALL_TESTING_AOT_HYBRID
+build_profiles += testing_aot_hybrid
 endif
 
-if INSTALL_AOT_ONLY
-build_profiles += aot_only
+if INSTALL_TESTING_AOT_FULL
+build_profiles += testing_aot_full
 endif
 
 if INSTALL_XAMMAC
@@ -113,20 +113,20 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-if INSTALL_AOT_ONLY
-#  ILASM.exe has features which a aot_only runtime will not support.
+if INSTALL_TESTING_AOT_FULL
+#  ILASM.exe has features which a testing_aot_full runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
 #  We skip it here because otherwise it will fail to verify.
-AOT_ONLY_FILTER=grep -v ilasm
+TESTING_AOT_FULL_FILTER=grep -v ilasm
 else
-AOT_ONLY_FILTER=echo
+TESTING_AOT_FULL_FILTER=echo
 endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip binary_reference_assemblies because they contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
-	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(AOT_ONLY_FILTER)` ; \
+	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(TESTING_AOT_FULL_FILTER)` ; \
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
 	  if [ "binary_reference_assemblies" = "$$profile" ]; then \

@@ -140,7 +140,7 @@ endif
 # For this to be done safely, we really need two passes. This
 # ensures that all of the .dlls are compiled before trying to
 # aot them. Because we want this to be the
-# default target for some profiles(aot_only) we have a
+# default target for some profiles(testing_aot_full) we have a
 # two-level build system. The do-all-aot target is what
 # gets invoked at the top-level when someone tries to build with aot.
 # It will invoke the do-all target, and will set TOP_LEVEL_DO for this

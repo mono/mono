@@ -38,8 +38,8 @@ drawing_DEPS_SUBDIRS = System.Drawing.Primitives
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-aot_only_SUBDIRS = $(monotouch_SUBDIRS)
-aot_only_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
+testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
+testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
