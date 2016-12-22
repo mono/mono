@@ -45,12 +45,14 @@ namespace Mono.Btls
 	static class MonoBtlsX509StoreManager
 	{
 		static bool initialized;
+#if !ANDROID
 		static string machineTrustedRootPath;
 		static string machineIntermediateCAPath;
 		static string machineUntrustedPath;
 		static string userTrustedRootPath;
 		static string userIntermediateCAPath;
 		static string userUntrustedPath;
+#endif
 
 		static void Initialize ()
 		{
