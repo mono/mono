@@ -41,19 +41,20 @@ class T : P {
 		makeP ();
 	}
 
-	static int Main () {
-		for (int i = 0; i < 100; ++i)
-			callMakeP ();
-		GC.Collect ();
-		GC.WaitForPendingFinalizers ();
-		Console.WriteLine (P.count);
-		Console.WriteLine (Q.count);
-		Console.WriteLine (Q.first_p_count);
-		Console.WriteLine (Q.last_p_count);
-		if (P.count == 0)
-			return 1;
-		if (Q.first_p_count < P.count)
-			return 1;
-		return 0;
+	static void Main () {
+		TestTimeout.RepeatFor (TestTimeout.Stress ? 120 : 2, delegate {
+			for (int i = 0; i < 100; ++i)
+				callMakeP ();
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+			Console.WriteLine (P.count);
+			Console.WriteLine (Q.count);
+			Console.WriteLine (Q.first_p_count);
+			Console.WriteLine (Q.last_p_count);
+			if (P.count == 0)
+				Environment.Exit (1);
+			if (Q.first_p_count < P.count)
+				Environment.Exit (2);
+		});
 	}
 }

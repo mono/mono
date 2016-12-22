@@ -225,4 +225,20 @@ public class TestTimeout {
 		}
 	}
 
+	public static bool Stress = Environment.GetEnvironmentVariable ("MONO_TESTS_STRESS") != null;
+
+	public static void RepeatFor (int timeout, Action action)
+	{
+		RepeatFor (timeout, delegate (int i) { action (); });
+	}
+
+	public static void RepeatFor (int timeout, Action<int> action)
+	{
+		DateTime start = DateTime.UtcNow;
+		int i = 0;
+
+		do {
+			action (i++);
+		} while ((DateTime.UtcNow - start).TotalSeconds > timeout);
+	}
 }

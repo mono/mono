@@ -27,13 +27,13 @@ class P
 
 class Driver
 {
-	static int Main ()
+	static void Main ()
 	{
 		Thread thread;
 		ManualResetEvent mre;
 		int collected, total = 100;
 
-		for (int i = 1; i <= 1000; ++i) {
+		TestTimeout.RepeatFor (TestTimeout.Stress ? 600 : 5, delegate (int i) {
 			P.Count = 0;
 
 			mre = new ManualResetEvent (false);
@@ -55,7 +55,7 @@ class Driver
 			if (collected == 0) {
 				if (!mre.WaitOne (5000)) {
 					Console.Write (String.Format ("[{0}] Finalizer never started\n", i));
-					return 1;
+					Environment.Exit (1);
 				}
 
 				Console.Write (String.Format ("[{0}] Wait for pending finalizers (2)\n", i));
@@ -66,7 +66,7 @@ class Driver
 				if (collected == 0) {
 					/* At least 1 finalizer started (as mre has been Set), but P.Count has not been incremented */
 					Console.Write (String.Format ("[{0}] Did not wait for finalizers to run\n", i));
-					return 2;
+					Environment.Exit (2);
 				}
 			}
 
@@ -75,7 +75,6 @@ class Driver
 				 * have been garbage collected; this might be due to false pinning */
 				Console.Write (String.Format ("[{0}] Finalized {1} of {2} objects\n", i, collected, total));
 			}
-		}
-		return 0;
+		});
 	}
 }

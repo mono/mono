@@ -104,11 +104,10 @@ class Driver {
 	}
 
 	static void Main () {
-		int loops = 3;
 		int cycles = 200000;
-		for (int i = 0; i < loops; ++i) {
+		TestTimeout.RepeatFor (TestTimeout.Stress ? 300 : 5, delegate {
 			Fill (cycles);
 			FillPtr (cycles);
-		}
+		});
 	}
 }

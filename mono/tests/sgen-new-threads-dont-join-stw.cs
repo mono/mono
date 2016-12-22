@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 class T {
 
-    static int count = 0;
+    static int count;
     static object count_lock = new object();
 
     const long N = 500000;
@@ -44,12 +44,7 @@ class T {
     }
 
     static void Main (string[] args) {
-        var testTimeout = new TestTimeout ();
-        testTimeout.Start ();
-
-        const int TOTAL_ITERATIONS = 2;
-        for (int j = 0; j < TOTAL_ITERATIONS; j++)
-        {
+        TestTimeout.RepeatFor (TestTimeout.Stress ? 600 : 5, delegate {
             count = 0;
 
             List<Thread> threads = new List<Thread>();
@@ -96,12 +91,7 @@ class T {
             }
 
             Console.WriteLine ();
-            if (!testTimeout.HaveTimeLeft ()) {
-                    var finishTime = DateTime.UtcNow;
-                    var ranFor = finishTime - testTimeout.StartTime;
-                    Console.WriteLine ("Will run out of time soon.  ran for {0}, finished {1}/{2} iterations", ranFor, j+1, TOTAL_ITERATIONS);
-            }
-        }
+        });
 
 	Console.WriteLine ("done");
     }
