@@ -188,11 +188,6 @@ ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
 
-debug:
-	@echo AOT_PROFILE_ASSEMBLIES=$(AOT_PROFILE_ASSEMBLIES)
-	@echo
-	@echo $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
-
 # This can run in parallel
 .PHONY: aot-all-profile
 aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
