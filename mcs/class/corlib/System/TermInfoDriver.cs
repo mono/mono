@@ -33,7 +33,7 @@
 // https://github.com/dotnet/corefx
 // src/System.Console/src/System/ConsolePal.Unix.cs
 //
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 
 //
 // Defining this writes the output to console.log
