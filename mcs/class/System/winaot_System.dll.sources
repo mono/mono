@@ -1,2 +1,2 @@
-#include mobile_System.dll.sources
+#include common.sources
 Mono.Util/MonoPInvokeCallbackAttribute.cs
