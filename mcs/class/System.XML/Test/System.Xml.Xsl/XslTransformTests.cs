@@ -90,7 +90,8 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
 		}
 
-		[Test()]
+		[Test]
+	    [Category ("MobileNotWorking")]
 		public void MsxslTest() {
 			string _styleSheet = @"
 			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" 
@@ -2300,7 +2301,7 @@ NO
 		}
 
 		[Test] // reverse case of #349375
-//		[Category ("NotDotNet")]
+	    [Category ("MobileNotWorking")]
 		public void PreserveWhitespace2 ()
 		{
 			XslCompiledTransform xslt = new XslCompiledTransform ();
@@ -2384,6 +2385,7 @@ NO
 		}
 
 		[Test]
+	    [Category ("MobileNotWorking")]
 		public void Bug487065 ()
 		{
 			using (XmlReader input = GetInput ()) {
