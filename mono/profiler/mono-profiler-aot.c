@@ -152,6 +152,8 @@ mono_profiler_startup (const char *desc)
 			outfile_name = val;
 			continue;
 		}
+		fprintf (stderr, "mono-profiler-aot: Unknown option: '%s'.\n", p);
+		exit (1);
 	}
 
 	if (!outfile_name) {
@@ -367,7 +369,10 @@ prof_shutdown (MonoProfiler *prof)
 	printf ("Creating output file: %s\n", prof->outfile_name);
 
 	outfile = fopen (prof->outfile_name, "w+");
-	g_assert (outfile);
+	if (!outfile) {
+		fprintf (stderr, "Unable to create output file '%s': %s.\n", prof->outfile_name, strerror (errno));
+		return;
+	}
 	prof->outfile = outfile;
 
 	gint32 version = (AOT_PROFILER_MAJOR_VERSION << 16) | AOT_PROFILER_MINOR_VERSION;
