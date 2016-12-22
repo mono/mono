@@ -84,6 +84,9 @@ endif
 
 all-local: $(IMAGES)
 install-local:
+	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+	$(INSTALL_LIB) $(CSC_IMAGES) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+
 endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
