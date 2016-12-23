@@ -417,6 +417,8 @@ struct _MonoDomain {
 	gboolean throw_unobserved_task_exceptions;
 
 	guint32 execution_context_field_offset;
+
+	gpointer jit_compilation_data;
 };
 
 typedef struct  {

@@ -506,6 +506,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 			t = mini_get_shared_gparam (&par_klass->byval_arg, gshared_constraint);
 			klass = mono_class_from_mono_type (t);
 		} else {
+			MonoType temp_type;
 			int type = decode_value (p, &p);
 			int num = decode_value (p, &p);
 			gboolean is_not_anonymous = decode_value (p, &p);
@@ -535,7 +536,8 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 				container = get_anonymous_container_for_image (module->assembly->image, type == MONO_TYPE_MVAR);
 			}
 
-			t = g_new0 (MonoType, 1);
+			t = &temp_type;
+			memset (&temp_type, 0, sizeof  (MonoType));
 			t->type = (MonoTypeEnum)type;
 			if (is_not_anonymous) {
 				t->data.generic_param = mono_generic_container_get_param (container, num);
@@ -551,7 +553,6 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 			// the overhead of creating MonoClass-es
 			klass = mono_class_from_mono_type (t);
 
-			g_free (t);
 		}
 		break;
 	}
