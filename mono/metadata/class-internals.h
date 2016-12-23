@@ -1390,7 +1390,7 @@ mono_class_full_name (MonoClass *klass);
 MonoClass*
 mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext *context, MonoError *error);
 
-MonoClass *
+MONO_API MonoClass *
 mono_class_get_checked (MonoImage *image, guint32 type_token, MonoError *error);
 
 MonoClass *

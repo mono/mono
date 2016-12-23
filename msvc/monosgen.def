@@ -86,6 +86,7 @@ mono_class_from_name_case
 mono_class_from_typeref
 mono_class_from_typeref_checked
 mono_class_get
+mono_class_get_checked
 mono_class_get_byref_type
 mono_class_get_element_class
 mono_class_get_event_token
@@ -634,6 +635,7 @@ mono_method_header_get_locals
 mono_method_header_get_num_clauses
 mono_method_print_code
 mono_method_signature
+mono_method_signature_checked
 mono_method_verify
 mono_mlist_alloc
 mono_mlist_append
