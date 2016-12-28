@@ -182,7 +182,7 @@ namespace System.Net {
 								host, LocalEndPoint.Port);
 
 			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
-				context.ErrorMessage = "Invalid url: " + base_uri + path;
+				context.ErrorMessage = HttpUtility.HtmlEncode ("Invalid url: " + base_uri + path);
 				return;
 			}
 
