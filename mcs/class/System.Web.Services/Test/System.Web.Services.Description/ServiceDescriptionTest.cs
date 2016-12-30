@@ -23,7 +23,9 @@ namespace MonoTests.System.Web.Services.Description
 	[TestFixture]
 	public class ServiceDescriptionTest
 	{
+#if !MONOMAC // https://bugzilla.xamarin.com/show_bug.cgi?id=51254
 		[Test]
+#endif
 		public void SimpleWrite ()
 		{
 			ServiceDescription sd = new ServiceDescription ();

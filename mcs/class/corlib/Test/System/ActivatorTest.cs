@@ -513,7 +513,7 @@ namespace MonoTests.System {
 						  null, null);
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
 		[Test]
 		public void CreateInstanceCustomDomain ()
 		{
