@@ -11,6 +11,8 @@
 #include "mini.h"
 #include "lldb.h"
 
+#if !defined(DISABLE_JIT) && !defined(DISABLE_LLDB)
+
 typedef enum {
 	ENTRY_CODE_REGION = 1,
 	ENTRY_METHOD = 2,
@@ -85,6 +87,10 @@ static gboolean enabled;
 static int id_generator;
 static GHashTable *codegen_regions;
 static DebugEntry *last_entry;
+static mono_mutex_t mutex;
+
+#define lldb_lock() mono_os_mutex_lock (&mutex)
+#define lldb_unlock() mono_os_mutex_unlock (&mutex)
 
 void MONO_NEVER_INLINE __mono_jit_debug_register_code (void);
 
@@ -246,6 +252,8 @@ add_entry (EntryType type, Buffer *buf)
 
 	mono_memory_barrier ();
 
+	lldb_lock ();
+
 	/* The debugger can read the list of entries asynchronously, so this has to be async safe */
 	// FIXME: Make sure this is async safe
 	if (last_entry) {
@@ -258,6 +266,8 @@ add_entry (EntryType type, Buffer *buf)
 
 	__mono_jit_debug_descriptor.entry = entry;
 	__mono_jit_debug_register_code ();
+
+	lldb_unlock ();
 }
 
 /*
@@ -274,16 +284,18 @@ register_codegen_region (gpointer region_start, int region_size)
 	Buffer tmp_buf;
 	Buffer *buf = &tmp_buf;
 
-	// FIXME: Locking
+	lldb_lock ();
 	if (!codegen_regions)
 		codegen_regions = g_hash_table_new (NULL, NULL);
 	id = GPOINTER_TO_INT (g_hash_table_lookup (codegen_regions, region_start));
-	if (id)
+	if (id) {
+		lldb_unlock ();
 		return id;
+	}
 	id = ++id_generator;
 	g_hash_table_insert (codegen_regions, region_start, GINT_TO_POINTER (id));
+	lldb_unlock ();
 
-	/* Register the region with the debugger */
 	buffer_init (buf, 128);
 
 	region_entry = (CodeRegionEntry*)buf->p;
@@ -309,7 +321,6 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 	ret_reg = mono_unwind_get_dwarf_pc_reg ();
 	g_assert (ret_reg < 256);
 
-	/* Add unwind info */
 	/* We use the unencoded version of the unwind info to make it easier to decode */
 	nunwind_ops = 0;
 	for (l = unwind_ops; l; l = l->next) {
@@ -339,6 +350,7 @@ void
 mono_lldb_init (const char *options)
 {
 	enabled = TRUE;
+	mono_os_mutex_init_recursive (&mutex);
 }
 
 void
@@ -422,12 +434,6 @@ mono_lldb_save_trampoline_info (MonoTrampInfo *info)
 	buffer_free (buf);
 }
 
-//
-// FIXME:
-// -add a way to disable this
-// -DISABLE_JIT
-//
-
 /*
 DESIGN:
 
@@ -445,3 +451,23 @@ Packet design:
 - use a flat byte array so the whole data can be read in one operation.
 - use 64 bit ints for pointers.
 */
+
+#else
+
+void
+mono_lldb_init (const char *options)
+{
+	g_error ("lldb support has been disabled at configure time.");
+}
+
+void
+mono_lldb_save_method_info (MonoCompile *cfg)
+{
+}
+
+void
+mono_lldb_save_trampoline_info (MonoTrampInfo *info)
+{
+}
+
+#endif
