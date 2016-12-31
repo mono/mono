@@ -19,6 +19,8 @@ typedef enum {
 
 /* One data packet sent from the runtime to the debugger */
 typedef struct {
+	/* Pointer to the next entry */
+	guint64 next_addr;
 	/* The type of data pointed to by ADDR */
 	/* One of the ENTRY_ constants */
 	guint32 type;
@@ -30,7 +32,10 @@ typedef struct
 {
 	/* (MAJOR << 16) | MINOR */
 	guint32 version;
+	/* Keep these as pointers so accessing them is atomic */
 	DebugEntry *entry;
+	/* List of all entries */
+	DebugEntry *all_entries;
 } JitDescriptor;
 
 /*
@@ -78,6 +83,8 @@ JitDescriptor __mono_jit_debug_descriptor = { (MAJOR_VERSION << 16) | MINOR_VERS
 
 static gboolean enabled;
 static int id_generator;
+static GHashTable *codegen_regions;
+static DebugEntry *last_entry;
 
 void MONO_NEVER_INLINE __mono_jit_debug_register_code (void);
 
@@ -222,8 +229,6 @@ find_code_region (void *data, int csize, int size, void *user_data)
 	return 0;
 }
 
-static GHashTable *codegen_regions;
-
 static void
 add_entry (EntryType type, Buffer *buf)
 {
@@ -240,6 +245,16 @@ add_entry (EntryType type, Buffer *buf)
 	entry->size = size;
 
 	mono_memory_barrier ();
+
+	/* The debugger can read the list of entries asynchronously, so this has to be async safe */
+	// FIXME: Make sure this is async safe
+	if (last_entry) {
+		last_entry->next_addr = (guint64)(gsize) (entry);
+		last_entry = entry;
+	} else {
+		last_entry = entry;
+		__mono_jit_debug_descriptor.all_entries = entry;
+	}
 
 	__mono_jit_debug_descriptor.entry = entry;
 	__mono_jit_debug_register_code ();
