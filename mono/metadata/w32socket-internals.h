@@ -83,6 +83,12 @@ mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfB
 
 #endif
 
+void
+mono_w32socket_set_last_error (gint32 error);
+
+gint32
+mono_w32socket_get_last_error (void);
+
 gint32
 mono_w32socket_convert_error (gint error, const gchar *func);
 

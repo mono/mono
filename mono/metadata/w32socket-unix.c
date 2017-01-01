@@ -45,19 +45,19 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (addr != NULL && *addrlen < sizeof(struct sockaddr)) {
-		WSASetLastError (WSAEFAULT);
+		mono_w32socket_set_last_error (WSAEFAULT);
 		return INVALID_SOCKET;
 	}
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return INVALID_SOCKET;
 	}
 
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		g_warning ("%s: error looking up socket handle %p",
 			   __func__, handle);
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return INVALID_SOCKET;
 	}
 
@@ -71,7 +71,7 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: accept error: %s", __func__, strerror(errno));
 
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return INVALID_SOCKET;
 	}
@@ -79,7 +79,7 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 	if (new_fd >= mono_w32handle_fd_reserve) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File descriptor is too big", __func__);
 
-		WSASetLastError (WSASYSCALLFAILURE);
+		mono_w32socket_set_last_error (WSASYSCALLFAILURE);
 
 		close (new_fd);
 
@@ -95,7 +95,7 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 					  &new_socket_handle);
 	if(new_handle == INVALID_HANDLE_VALUE) {
 		g_warning ("%s: error creating socket handle", __func__);
-		WSASetLastError (ERROR_GEN_FAILURE);
+		mono_w32socket_set_last_error (ERROR_GEN_FAILURE);
 		return INVALID_SOCKET;
 	}
 
@@ -120,7 +120,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -139,7 +139,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			if (errnum == WSAEINPROGRESS)
 				errnum = WSAEWOULDBLOCK; /* see bug #73053 */
 
-			WSASetLastError (errnum);
+			mono_w32socket_set_last_error (errnum);
 
 			/*
 			 * On solaris x86 getsockopt (SO_ERROR) is not set after
@@ -170,7 +170,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect poll error: %s",
 					   __func__, strerror (errno));
 
-				WSASetLastError (errnum);
+				mono_w32socket_set_last_error (errnum);
 				return SOCKET_ERROR;
 			}
 		}
@@ -183,7 +183,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect getsockopt error: %s",
 				   __func__, strerror (errno));
 
-			WSASetLastError (errnum);
+			mono_w32socket_set_last_error (errnum);
 			return SOCKET_ERROR;
 		}
 
@@ -200,7 +200,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect getsockopt returned error: %s",
 				   __func__, strerror (so_error));
 
-			WSASetLastError (errnum);
+			mono_w32socket_set_last_error (errnum);
 			return SOCKET_ERROR;
 		}
 	}
@@ -238,7 +238,7 @@ _wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockad
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -279,7 +279,7 @@ _wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockad
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: recv error: %s", __func__, strerror(errno));
 
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return SOCKET_ERROR;
 	}
@@ -321,7 +321,7 @@ _wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -345,7 +345,7 @@ _wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: recvmsg error: %s", __func__, strerror(errno));
 
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return SOCKET_ERROR;
 	}
@@ -389,7 +389,7 @@ _wapi_send (SOCKET sock, const void *msg, size_t len, int send_flags)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -412,7 +412,7 @@ _wapi_send (SOCKET sock, const void *msg, size_t len, int send_flags)
 		}
 #endif /* O_NONBLOCK */
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return SOCKET_ERROR;
 	}
@@ -433,7 +433,7 @@ _wapi_sendto (SOCKET sock, const void *msg, size_t len, int send_flags, const st
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -447,7 +447,7 @@ _wapi_sendto (SOCKET sock, const void *msg, size_t len, int send_flags, const st
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: send error: %s", __func__, strerror (errno));
 
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return SOCKET_ERROR;
 	}
@@ -468,7 +468,7 @@ _wapi_sendmsg (SOCKET sock,  const struct msghdr *msg, int send_flags)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
@@ -482,7 +482,7 @@ _wapi_sendmsg (SOCKET sock,  const struct msghdr *msg, int send_flags)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sendmsg error: %s", __func__, strerror (errno));
 
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 
 		return SOCKET_ERROR;
 	}
@@ -531,7 +531,7 @@ wapi_sendfile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint3
 	if (n == -1) {
 		errnum = errno;
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 		return SOCKET_ERROR;
 	}
 	do {
@@ -546,7 +546,7 @@ wapi_sendfile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint3
 	if (res == -1) {
 		errnum = errno;
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 		return SOCKET_ERROR;
 	}
 #else
@@ -574,7 +574,7 @@ wapi_sendfile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint3
 	if (n == -1) {
 		gint errnum = errno;
 		errnum = errno_to_WSA (errnum, __func__);
-		WSASetLastError (errnum);
+		mono_w32socket_set_last_error (errnum);
 		g_free (buffer);
 		return SOCKET_ERROR;
 	}
@@ -591,7 +591,7 @@ TransmitFile (SOCKET sock, gpointer file, guint32 bytes_to_write, guint32 bytes_
 	gint ret;
 
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		WSASetLastError (WSAENOTSOCK);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return FALSE;
 	}
 
@@ -623,6 +623,18 @@ BOOL
 mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfBytesToWrite, guint32 nNumberOfBytesPerSend, OVERLAPPED *lpOverlapped, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking)
 {
 	return TransmitFile (hSocket, hFile, nNumberOfBytesToWrite, nNumberOfBytesPerSend, lpOverlapped, lpTransmitBuffers, dwReserved);
+}
+
+void
+mono_w32socket_set_last_error (gint32 error)
+{
+	SetLastError (error);
+}
+
+gint32
+mono_w32socket_get_last_error (void)
+{
+	return GetLastError ();
 }
 
 gint32

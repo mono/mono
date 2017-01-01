@@ -226,6 +226,18 @@ BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumb
 }
 #endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
+void
+mono_w32socket_set_last_error (gint32 error)
+{
+	WSASetLastError (error);
+}
+
+gint32
+mono_w32socket_get_last_error (void)
+{
+	return WSAGetLastError ();
+}
+
 gint32
 mono_w32socket_convert_error (gint error, const gchar *func)
 {
