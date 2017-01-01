@@ -663,12 +663,12 @@ gint32
 ves_icall_System_Net_Sockets_Socket_Available_internal (gsize sock, gint32 *werror)
 {
 	int ret;
-	int amount;
+	guint64 amount;
 	
 	*werror = 0;
 
 	/* FIXME: this might require amount to be unsigned long. */
-	ret = ioctlsocket (sock, FIONREAD, &amount);
+	ret = mono_w32socket_get_available (sock, &amount);
 	if (ret == SOCKET_ERROR) {
 		*werror = mono_w32socket_get_last_error ();
 		return 0;
@@ -684,13 +684,7 @@ ves_icall_System_Net_Sockets_Socket_Blocking_internal (gsize sock, gboolean bloc
 	
 	*werror = 0;
 
-	/*
-	 * block == TRUE/FALSE means we will block/not block.
-	 * But the ioctlsocket call takes TRUE/FALSE for non-block/block
-	 */
-	block = !block;
-	
-	ret = ioctlsocket (sock, FIONBIO, (gulong *)&block);
+	ret = mono_w32socket_set_blocking (sock, block);
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 }

@@ -728,79 +728,6 @@ WSAIoctl (guint32 fd, gint32 command,
 	return(0);
 }
 
-#ifndef PLATFORM_PORT_PROVIDES_IOCTLSOCKET
-int ioctlsocket(guint32 fd, unsigned long command, gpointer arg)
-{
-	gpointer handle = GUINT_TO_POINTER (fd);
-	int ret;
-	
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return(SOCKET_ERROR);
-	}
-
-	switch(command){
-		case FIONBIO:
-#ifdef O_NONBLOCK
-			/* This works better than ioctl(...FIONBIO...) 
-			 * on Linux (it causes connect to return
-			 * EINPROGRESS, but the ioctl doesn't seem to)
-			 */
-			ret = fcntl(fd, F_GETFL, 0);
-			if (ret != -1) {
-				if (*(gboolean *)arg) {
-					ret |= O_NONBLOCK;
-				} else {
-					ret &= ~O_NONBLOCK;
-				}
-				ret = fcntl(fd, F_SETFL, ret);
-			}
-			break;
-#endif /* O_NONBLOCK */
-			/* Unused in Mono */
-		case SIOCATMARK:
-			ret = ioctl (fd, command, arg);
-			break;
-			
-		case FIONREAD:
-		{
-#if defined (PLATFORM_MACOSX)
-			
-			// ioctl (fd, FIONREAD, XXX) returns the size of
-			// the UDP header as well on
-			// Darwin.
-			//
-			// Use getsockopt SO_NREAD instead to get the
-			// right values for TCP and UDP.
-			// 
-			// ai_canonname can be null in some cases on darwin, where the runtime assumes it will
-			// be the value of the ip buffer.
-
-			socklen_t optlen = sizeof (int);
-			ret = getsockopt (fd, SOL_SOCKET, SO_NREAD, arg, &optlen);
-#else
-			ret = ioctl (fd, command, arg);
-#endif
-			break;
-		}
-		default:
-			mono_w32socket_set_last_error (WSAEINVAL);
-			return(SOCKET_ERROR);
-	}
-
-	if (ret == -1) {
-		gint errnum = errno;
-		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: ioctl error: %s", __func__, strerror (errno));
-
-		errnum = errno_to_WSA (errnum, __func__);
-		mono_w32socket_set_last_error (errnum);
-		
-		return(SOCKET_ERROR);
-	}
-	
-	return(0);
-}
-
 int _wapi_select(int nfds G_GNUC_UNUSED, fd_set *readfds, fd_set *writefds,
 		 fd_set *exceptfds, struct timeval *timeout)
 {
@@ -888,6 +815,5 @@ void _wapi_FD_SET(guint32 fd, fd_set *set)
 
 	FD_SET (fd, set);
 }
-#endif
 
 #endif /* ifndef DISABLE_SOCKETS */

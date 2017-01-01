@@ -25,6 +25,8 @@
 #endif
 #include <errno.h>
 
+#include <fcntl.h>
+
 #include <sys/types.h>
 
 #include "w32socket.h"
@@ -623,6 +625,82 @@ BOOL
 mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfBytesToWrite, guint32 nNumberOfBytesPerSend, OVERLAPPED *lpOverlapped, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking)
 {
 	return TransmitFile (hSocket, hFile, nNumberOfBytesToWrite, nNumberOfBytesPerSend, lpOverlapped, lpTransmitBuffers, dwReserved);
+}
+
+gint
+mono_w32socket_set_blocking (SOCKET socket, gboolean blocking)
+{
+	gint ret;
+	gpointer handle;
+
+	handle = GINT_TO_POINTER (socket);
+	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+		mono_w32socket_set_last_error (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+#ifdef O_NONBLOCK
+	/* This works better than ioctl(...FIONBIO...)
+	 * on Linux (it causes connect to return
+	 * EINPROGRESS, but the ioctl doesn't seem to) */
+	ret = fcntl (socket, F_GETFL, 0);
+	if (ret != -1)
+		ret = fcntl (socket, F_SETFL, blocking ? (ret & (~O_NONBLOCK)) : (ret | (O_NONBLOCK)));
+#endif /* O_NONBLOCK */
+
+	if (ret == -1) {
+		gint errnum = errno;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: ioctl error: %s", __func__, strerror (errno));
+
+		errnum = errno_to_WSA (errnum, __func__);
+		mono_w32socket_set_last_error (errnum);
+
+		return SOCKET_ERROR;
+	}
+
+	return 0;
+}
+
+gint
+mono_w32socket_get_available (SOCKET socket, guint64 *amount)
+{
+	gint ret;
+	gpointer handle;
+
+	handle = GINT_TO_POINTER (socket);
+	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+		mono_w32socket_set_last_error (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+#if defined (PLATFORM_MACOSX)
+	// ioctl (socket, FIONREAD, XXX) returns the size of
+	// the UDP header as well on Darwin.
+	//
+	// Use getsockopt SO_NREAD instead to get the
+	// right values for TCP and UDP.
+	//
+	// ai_canonname can be null in some cases on darwin,
+	// where the runtime assumes it will be the value of
+	// the ip buffer.
+
+	socklen_t optlen = sizeof (int);
+	ret = getsockopt (socket, SOL_SOCKET, SO_NREAD, (gulong*) amount, &optlen);
+#else
+	ret = ioctl (socket, FIONREAD, (gulong*) amount);
+#endif
+
+	if (ret == -1) {
+		gint errnum = errno;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: ioctl error: %s", __func__, strerror (errno));
+
+		errnum = errno_to_WSA (errnum, __func__);
+		mono_w32socket_set_last_error (errnum);
+
+		return SOCKET_ERROR;
+	}
+
+	return 0;
 }
 
 void

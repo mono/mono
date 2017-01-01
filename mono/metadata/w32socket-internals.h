@@ -83,6 +83,12 @@ mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfB
 
 #endif
 
+gint
+mono_w32socket_set_blocking (SOCKET socket, gboolean blocking);
+
+gint
+mono_w32socket_get_available (SOCKET socket, guint64 *amount);
+
 void
 mono_w32socket_set_last_error (gint32 error);
 
