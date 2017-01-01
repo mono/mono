@@ -614,7 +614,7 @@ TransmitFile (SOCKET sock, gpointer file, guint32 bytes_to_write, guint32 bytes_
 	}
 
 	if ((flags & TF_DISCONNECT) == TF_DISCONNECT)
-		closesocket (sock);
+		CloseHandle (handle);
 
 	return TRUE;
 }

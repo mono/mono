@@ -34,8 +34,6 @@ typedef struct
 #define SIO_GET_EXTENSION_FUNCTION_POINTER 0xC8000006
 #define SIO_KEEPALIVE_VALS 0x98000004
 
-extern int closesocket(guint32 handle);
-
 extern int ioctlsocket(guint32 handle, unsigned long command, gpointer arg);
 extern int WSAIoctl (guint32 handle, gint32 command,
 		     gchar *input, gint i_len,

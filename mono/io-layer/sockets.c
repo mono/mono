@@ -147,19 +147,6 @@ void _wapi_cleanup_networking(void)
 	in_cleanup = 0;
 }
 
-int closesocket(guint32 fd)
-{
-	gpointer handle = GUINT_TO_POINTER (fd);
-	
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return(0);
-	}
-	
-	mono_w32handle_unref (handle);
-	return(0);
-}
-
 int _wapi_bind(guint32 fd, struct sockaddr *my_addr, socklen_t addrlen)
 {
 	gpointer handle = GUINT_TO_POINTER (fd);

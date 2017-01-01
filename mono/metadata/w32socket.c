@@ -647,7 +647,7 @@ ves_icall_System_Net_Sockets_Socket_Close_internal (gsize sock, gint32 *werror)
 	mono_threadpool_io_remove_socket (GPOINTER_TO_INT (sock));
 
 	MONO_ENTER_GC_SAFE;
-	closesocket (sock);
+	CloseHandle (GINT_TO_POINTER (sock));
 	MONO_EXIT_GC_SAFE;
 }
 
