@@ -4895,27 +4895,6 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceNames (MonoReflectionAss
 	return result;
 }
 
-ICALL_EXPORT MonoString*
-ves_icall_System_Reflection_Assembly_GetAotId ()
-{
-	int i;
-	guint8 aotid_sum = 0;
-	MonoDomain* domain = mono_domain_get ();
-
-	if (!domain->entry_assembly || !domain->entry_assembly->image)
-		return NULL;
-
-	guint8 (*aotid)[16] = &domain->entry_assembly->image->aotid;
-
-	for (i = 0; i < 16; ++i)
-		aotid_sum |= (*aotid)[i];
-
-	if (aotid_sum == 0)
-		return NULL;
-	
-	return mono_string_new (domain, mono_guid_to_string((guint8*) aotid));
-}
-
 static MonoObject*
 create_version (MonoDomain *domain, guint32 major, guint32 minor, guint32 build, guint32 revision, MonoError *error)
 {
@@ -5969,6 +5948,30 @@ ves_icall_System_Reflection_AssemblyName_ParseName (MonoReflectionAssemblyName *
 
 	return TRUE;
 }
+
+ICALL_EXPORT MonoString*
+ves_icall_System_Reflection_Module_GetAotIdInternal (MonoReflectionModule* module)
+{
+	int i;
+	guint8 aotid_sum = 0;
+	MonoDomain* domain = mono_domain_get ();
+
+	g_assert (module->image);
+
+	guint8 (*aotid)[16] = &module->image->aotid;
+
+	for (i = 0; i < 16; ++i)
+		aotid_sum |= (*aotid)[i];
+
+	if (aotid_sum == 0)
+		return NULL;
+
+	gchar *guid = mono_guid_to_string((guint8*) aotid);
+	MonoString* res = mono_string_new (domain, guid);
+	g_free (guid);
+	return res;
+}
+
 
 ICALL_EXPORT MonoReflectionType*
 ves_icall_System_Reflection_Module_GetGlobalType (MonoReflectionModule *module)
