@@ -608,7 +608,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("NotWorking")] // https://bugzilla.xamarin.com/show_bug.cgi?id=44974
 	public void SingleStepping () {
 		Event e = run_until ("single_stepping");
 
@@ -751,6 +750,14 @@ public class DebuggerTests
 		e = step_over ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested");
+		e = step_into ();
 		assert_location (e, "ss_nested_1");
 		e = step_into ();
 		assert_location (e, "ss_nested_1");
@@ -819,6 +826,7 @@ public class DebuggerTests
 				req.Size = StepSize.Line;
 
 				e = step_out ();
+				e = step_over ();//Stepout gets us to ss_recursive2_trap ();, move to ss_recursive2 (next); line
 				assert_location (e, "ss_recursive2");
 
 				// Stack should consist of Main + single_stepping + (1 ss_recursive2 frame per loop iteration)
