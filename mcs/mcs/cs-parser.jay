@@ -3924,7 +3924,10 @@ array_creation_expression
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (List<Expression>) $4,
 				new ComposedTypeSpecifier (((List<Expression>) $4).Count, GetLocation ($3)) {
 	  				Next = (ComposedTypeSpecifier) $6
-			  	}, (ArrayInitializer) $7, GetLocation ($1));
+				}, (ArrayInitializer) $7, GetLocation ($1)) {
+			NoEmptyInterpolation = true
+		};
+
 		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
 	  }
 	| NEW new_expr_type rank_specifiers opt_array_initializer
