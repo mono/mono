@@ -24,6 +24,11 @@
 #define LOGDEBUG(...)  
 
 void
+mono_w32socket_initialize (void)
+{
+}
+
+void
 mono_w32socket_cleanup (void)
 {
 }

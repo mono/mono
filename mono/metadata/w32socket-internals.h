@@ -68,6 +68,9 @@ typedef struct {
 } MonoW32HandleSocket;
 
 void
+mono_w32socket_initialize (void);
+
+void
 mono_w32socket_cleanup (void);
 
 SOCKET

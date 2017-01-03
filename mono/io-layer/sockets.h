@@ -39,7 +39,5 @@ extern int WSAIoctl (guint32 handle, gint32 command,
 		     gchar *output, gint o_len, glong *written,
 		     void *unused1, void *unused2);
 
-void
-_wapi_socket_init (void);
 G_END_DECLS
 #endif /* _WAPI_SOCKETS_H_ */

@@ -2781,6 +2781,7 @@ void
 mono_network_init (void)
 {
 	mono_networking_init ();
+	mono_w32socket_initialize ();
 }
 
 void

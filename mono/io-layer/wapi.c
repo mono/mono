@@ -14,7 +14,6 @@ void
 wapi_init (void)
 {
 	_wapi_io_init ();
-	_wapi_socket_init ();
 }
 
 void

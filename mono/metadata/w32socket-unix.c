@@ -37,6 +37,72 @@
 
 static guint32 in_cleanup = 0;
 
+static void
+socket_close (gpointer handle, gpointer data)
+{
+	int ret;
+	MonoW32HandleSocket *socket_handle = (MonoW32HandleSocket *)data;
+	MonoThreadInfo *info = mono_thread_info_current ();
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing socket handle %p", __func__, handle);
+
+	/* Shutdown the socket for reading, to interrupt any potential
+	 * receives that may be blocking for data.  See bug 75705. */
+	shutdown (GPOINTER_TO_UINT (handle), SHUT_RD);
+
+	do {
+		ret = close (GPOINTER_TO_UINT(handle));
+	} while (ret == -1 && errno == EINTR &&
+		 !mono_thread_info_is_interrupt_state (info));
+
+	if (ret == -1) {
+		gint errnum = errno;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: close error: %s", __func__, strerror (errno));
+		errnum = errno_to_WSA (errnum, __func__);
+		if (!in_cleanup)
+			mono_w32socket_set_last_error (errnum);
+	}
+
+	if (!in_cleanup)
+		socket_handle->saved_error = 0;
+}
+
+static void
+socket_details (gpointer data)
+{
+	/* FIXME: do something */
+}
+
+static const gchar*
+socket_typename (void)
+{
+	return "Socket";
+}
+
+static gsize
+socket_typesize (void)
+{
+	return sizeof (MonoW32HandleSocket);
+}
+
+static MonoW32HandleOps ops = {
+	socket_close,    /* close */
+	NULL,            /* signal */
+	NULL,            /* own */
+	NULL,            /* is_owned */
+	NULL,            /* special_wait */
+	NULL,            /* prewait */
+	socket_details,  /* details */
+	socket_typename, /* typename */
+	socket_typesize, /* typesize */
+};
+
+void
+mono_w32socket_initialize (void)
+{
+	mono_w32handle_register_ops (MONO_W32HANDLE_SOCKET, &ops);
+}
+
 static gboolean
 cleanup_close (gpointer handle, gpointer data, gpointer user_data)
 {
