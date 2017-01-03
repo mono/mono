@@ -2686,7 +2686,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 	}
 
 	MONO_ENTER_GC_SAFE;
-	ret = mono_w32socket_transmit_file (sock, file, 0, 0, NULL, &buffers, flags, blocking);
+	ret = mono_w32socket_transmit_file (sock, file, &buffers, flags, blocking);
 	MONO_EXIT_GC_SAFE;
 
 	if (!ret)

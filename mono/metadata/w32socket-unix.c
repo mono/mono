@@ -552,9 +552,8 @@ mono_w32socket_sendbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 
 #define SF_BUFFER_SIZE	16384
 
-static gboolean
-TransmitFile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32 bytes_per_send, OVERLAPPED *ol,
-		TRANSMIT_FILE_BUFFERS *buffers, guint32 flags)
+BOOL
+mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_BUFFERS *buffers, guint32 flags, gboolean blocking)
 {
 	MonoThreadInfo *info;
 	gpointer handle;
@@ -638,12 +637,6 @@ TransmitFile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32
 		CloseHandle (handle);
 
 	return TRUE;
-}
-
-BOOL
-mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfBytesToWrite, guint32 nNumberOfBytesPerSend, OVERLAPPED *lpOverlapped, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking)
-{
-	return TransmitFile (hSocket, hFile, nNumberOfBytesToWrite, nNumberOfBytesPerSend, lpOverlapped, lpTransmitBuffers, dwReserved);
 }
 
 SOCKET
@@ -1042,7 +1035,7 @@ static gboolean
 extension_transmit_file (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32 bytes_per_send,
 	OVERLAPPED *ol, TRANSMIT_FILE_BUFFERS *buffers, guint32 flags)
 {
-	return TransmitFile (sock, file_handle, bytes_to_write, bytes_per_send, ol, buffers, flags);
+	return mono_w32socket_transmit_file (sock, file_handle, buffers, flags, FALSE);
 }
 
 static struct {

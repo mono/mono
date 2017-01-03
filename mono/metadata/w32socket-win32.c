@@ -194,18 +194,17 @@ int mono_w32socket_sendbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCou
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
-BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfBytesToWrite, guint32 nNumberOfBytesPerSend, OVERLAPPED *lpOverlapped, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking)
+BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking)
 {
 	LOGDEBUG (g_message ("%06d - Performing %s TransmitFile () on socket %d", GetCurrentThreadId (), blocking ? "blocking" : "non-blocking", hSocket));
 
 	int error = 0;
 	if (blocking) {
-		g_assert (lpOverlapped == NULL);
 		OVERLAPPED overlapped = { 0 };
 		overlapped.hEvent = WSACreateEvent ();
 		if (overlapped.hEvent == WSA_INVALID_EVENT)
 			return FALSE;
-		if (!TransmitFile (hSocket, hFile, nNumberOfBytesToWrite, nNumberOfBytesPerSend, &overlapped, lpTransmitBuffers, dwReserved)) {
+		if (!TransmitFile (hSocket, hFile, 0, 0, &overlapped, lpTransmitBuffers, dwReserved)) {
 			error = WSAGetLastError ();
 			if (error == WSA_IO_PENDING) {
 				error = 0;
@@ -223,7 +222,7 @@ BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumb
 		}
 		WSACloseEvent (overlapped.hEvent);
 	} else {
-		if (!TransmitFile (hSocket, hFile, nNumberOfBytesToWrite, nNumberOfBytesPerSend, lpOverlapped, lpTransmitBuffers, dwReserved)) {
+		if (!TransmitFile (hSocket, hFile, 0, 0, NULL, lpTransmitBuffers, dwReserved)) {
 			error = WSAGetLastError ();
 		}
 	}
