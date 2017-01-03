@@ -34,7 +34,6 @@ OTHER_SRC = \
 	posix.c			\
 	sockets.c		\
 	sockets.h		\
-	socket-wrappers.h	\
 	uglify.h		\
 	wapi_glob.h		\
 	wapi_glob.c		\

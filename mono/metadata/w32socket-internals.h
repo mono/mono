@@ -9,7 +9,22 @@
 
 #include <config.h>
 #include <glib.h>
+
+#ifdef HAVE_SYS_SELECT_H
+#include <sys/select.h>
+#endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
 #include <mono/io-layer/io-layer.h>
+
+#ifndef HAVE_SOCKLEN_T
+#define socklen_t int
+#endif
 
 #ifndef HOST_WIN32
 
@@ -52,6 +67,9 @@ typedef struct {
 	int still_readable;
 } MonoW32HandleSocket;
 
+void
+mono_w32socket_cleanup (void);
+
 SOCKET
 mono_w32socket_accept (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking);
 
@@ -82,6 +100,50 @@ BOOL
 mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumberOfBytesToWrite, guint32 nNumberOfBytesPerSend, OVERLAPPED *lpOverlapped, TRANSMIT_FILE_BUFFERS *lpTransmitBuffers, guint32 dwReserved, gboolean blocking);
 
 #endif
+
+#ifndef HOST_WIN32
+
+SOCKET
+mono_w32socket_socket (int domain, int type, int protocol);
+
+gint
+mono_w32socket_bind (SOCKET sock, struct sockaddr *addr, socklen_t addrlen);
+
+gint
+mono_w32socket_getpeername (SOCKET sock, struct sockaddr *name, socklen_t *namelen);
+
+gint
+mono_w32socket_getsockname (SOCKET sock, struct sockaddr *name, socklen_t *namelen);
+
+gint
+mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optval, socklen_t *optlen);
+
+gint
+mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen);
+
+gint
+mono_w32socket_listen (SOCKET sock, gint backlog);
+
+gint
+mono_w32socket_shutdown (SOCKET sock, gint how);
+
+#ifdef HAVE_SYS_SELECT_H
+
+gint
+mono_w32socket_select (gint nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+
+void
+mono_w32socket_FD_CLR (SOCKET sock, fd_set *set);
+
+gint
+mono_w32socket_FD_ISSET (SOCKET sock, fd_set *set);
+
+void
+mono_w32socket_FD_SET (SOCKET sock, fd_set *set);
+
+#endif /* HAVE_SYS_SELECT_H */
+
+#endif /* HOST_WIN32 */
 
 gint
 mono_w32socket_set_blocking (SOCKET socket, gboolean blocking);

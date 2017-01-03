@@ -98,10 +98,84 @@
 #include <MSWSock.h>
 #endif
 
-#include "mono/io-layer/socket-wrappers.h"
-
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
+
+#ifdef HOST_WIN32
+
+static SOCKET
+mono_w32socket_socket (int domain, int type, int protocol)
+{
+	return WSASocket (domain, type, protocol, NULL, 0, WSA_FLAG_OVERLAPPED);
+}
+
+static gint
+mono_w32socket_bind (SOCKET sock, struct sockaddr *addr, socklen_t addrlen)
+{
+	return bind (sock, addr, addrlen);
+}
+
+static gint
+mono_w32socket_getpeername (SOCKET sock, struct sockaddr *name, socklen_t *namelen)
+{
+	return getpeername (sock, name, namelen);
+}
+
+static gint
+mono_w32socket_getsockname (SOCKET sock, struct sockaddr *name, socklen_t *namelen)
+{
+	return getsockname (sock, name, namelen);
+}
+
+static gint
+mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optval, socklen_t *optlen)
+{
+	return getsockopt (sock, level, optname, optval, optlen);
+}
+
+static gint
+mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen)
+{
+	return setsockopt (sock, level, optname, optval, optlen);
+}
+
+static gint
+mono_w32socket_listen (SOCKET sock, gint backlog)
+{
+	return listen (sock, backlog);
+}
+
+static gint
+mono_w32socket_shutdown (SOCKET sock, gint how)
+{
+	return shutdown (sock, how);
+}
+
+static gint
+mono_w32socket_select (gint nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
+{
+	return select (nfds, readfds, writefds, exceptfds, timeout);
+}
+
+static void
+mono_w32socket_FD_CLR (SOCKET sock, fd_set *set)
+{
+	FD_CLR (sock, set);
+}
+
+static gint
+mono_w32socket_FD_ISSET (SOCKET sock, fd_set *set)
+{
+	return FD_ISSET (sock, set);
+}
+
+static void
+mono_w32socket_FD_SET (SOCKET sock, fd_set *set)
+{
+	return FD_SET (sock, set);
+}
+
+#endif /* HOST_WIN32 */
 
 static void
 abort_syscall (gpointer data)
@@ -621,8 +695,7 @@ ves_icall_System_Net_Sockets_Socket_Socket_internal (MonoObject *this_obj, gint3
 		return NULL;
 	}
 	
-	sock = _wapi_socket (sock_family, sock_type, sock_proto,
-			     NULL, 0, WSA_FLAG_OVERLAPPED);
+	sock = mono_w32socket_socket (sock_family, sock_type, sock_proto);
 
 	if (sock == INVALID_SOCKET) {
 		*werror = mono_w32socket_get_last_error ();
@@ -729,7 +802,7 @@ ves_icall_System_Net_Sockets_Socket_Listen_internal(gsize sock, guint32 backlog,
 
 	MONO_ENTER_GC_SAFE;
 
-	ret = _wapi_listen (sock, backlog);
+	ret = mono_w32socket_listen (sock, backlog);
 
 	MONO_EXIT_GC_SAFE;
 
@@ -926,7 +999,7 @@ ves_icall_System_Net_Sockets_Socket_LocalEndPoint_internal (gsize sock, gint32 a
 
 	MONO_ENTER_GC_SAFE;
 
-	ret = _wapi_getsockname (sock, (struct sockaddr *)sa, &salen);
+	ret = mono_w32socket_getsockname (sock, (struct sockaddr *)sa, &salen);
 
 	MONO_EXIT_GC_SAFE;
 	
@@ -968,7 +1041,7 @@ ves_icall_System_Net_Sockets_Socket_RemoteEndPoint_internal (gsize sock, gint32 
 
 	MONO_ENTER_GC_SAFE;
 
-	ret = _wapi_getpeername (sock, (struct sockaddr *)sa, &salen);
+	ret = mono_w32socket_getpeername (sock, (struct sockaddr *)sa, &salen);
 
 	MONO_EXIT_GC_SAFE;
 
@@ -1131,7 +1204,7 @@ ves_icall_System_Net_Sockets_Socket_Bind_internal (gsize sock, MonoObject *socka
 
 	LOGDEBUG (g_message("%s: binding to %s port %d", __func__, inet_ntoa (((struct sockaddr_in *)sa)->sin_addr), ntohs (((struct sockaddr_in *)sa)->sin_port)));
 
-	ret = _wapi_bind (sock, sa, sa_size);
+	ret = mono_w32socket_bind (sock, sa, sa_size);
 
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
@@ -1914,22 +1987,22 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 	switch (name) {
 	case SocketOptionName_Linger:
 	case SocketOptionName_DontLinger:
-		ret = _wapi_getsockopt (sock, system_level, system_name, &linger, &lingersize);
+		ret = mono_w32socket_getsockopt (sock, system_level, system_name, &linger, &lingersize);
 		break;
 		
 	case SocketOptionName_SendTimeout:
 	case SocketOptionName_ReceiveTimeout:
-		ret = _wapi_getsockopt (sock, system_level, system_name, (char *)&time_ms, &time_ms_size);
+		ret = mono_w32socket_getsockopt (sock, system_level, system_name, (char *)&time_ms, &time_ms_size);
 		break;
 
 #ifdef SO_PEERCRED
 	case SocketOptionName_PeerCred: 
-		ret = _wapi_getsockopt (sock, system_level, system_name, &cred, &credsize);
+		ret = mono_w32socket_getsockopt (sock, system_level, system_name, &cred, &credsize);
 		break;
 #endif
 
 	default:
-		ret = _wapi_getsockopt (sock, system_level, system_name, &val, &valsize);
+		ret = mono_w32socket_getsockopt (sock, system_level, system_name, &val, &valsize);
 	}
 
 	MONO_EXIT_GC_SAFE;
@@ -2046,7 +2119,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal (gsize sock, gi
 
 	MONO_ENTER_GC_SAFE;
 
-	ret = _wapi_getsockopt (sock, system_level, system_name, buf, &valsize);
+	ret = mono_w32socket_getsockopt (sock, system_level, system_name, buf, &valsize);
 
 	MONO_EXIT_GC_SAFE;
 
@@ -2183,8 +2256,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 			linger.l_linger = *(guint32 *)(((char *)obj_val) + field->offset);
 			
 			valsize = sizeof (linger);
-			ret = _wapi_setsockopt (sock, system_level,
-									system_name, &linger, valsize);
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, &linger, valsize);
 			break;
 		case SocketOptionName_AddMembership:
 		case SocketOptionName_DropMembership:
@@ -2223,9 +2295,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 					mreq6.ipv6mr_interface = get_local_interface_id (AF_INET6);
 #endif
 					
-				ret = _wapi_setsockopt (sock, system_level,
-										system_name, &mreq6,
-										sizeof (mreq6));
+				ret = mono_w32socket_setsockopt (sock, system_level, system_name, &mreq6, sizeof (mreq6));
 			} else if (system_level == sol_ip) {
 #ifdef HAVE_STRUCT_IP_MREQN
 				struct ip_mreqn mreq = {{0}};
@@ -2260,9 +2330,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 					mreq.imr_interface = ipaddress_to_struct_in_addr (address);
 #endif /* HAVE_STRUCT_IP_MREQN */
 
-				ret = _wapi_setsockopt (sock, system_level,
-										system_name, &mreq,
-										sizeof (mreq));
+				ret = mono_w32socket_setsockopt (sock, system_level, system_name, &mreq, sizeof (mreq));
 			}
 			break;
 		}
@@ -2281,13 +2349,13 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 			if (valsize == 1) {
 				linger.l_onoff = (*buf) ? 0 : 1;
 				linger.l_linger = 0;
-				ret = _wapi_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
+				ret = mono_w32socket_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
 			} else {
 				*werror = WSAEINVAL;
 			}
 			break;
 		default:
-			ret = _wapi_setsockopt (sock, system_level, system_name, buf, valsize);
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, buf, valsize);
 			break;
 		}
 	} else {
@@ -2296,7 +2364,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 		case SocketOptionName_DontLinger:
 			linger.l_onoff = !int_val;
 			linger.l_linger = 0;
-			ret = _wapi_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
 			break;
 		case SocketOptionName_MulticastInterface:
 #ifndef HOST_WIN32
@@ -2306,14 +2374,14 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 				/* int_val is interface index */
 				struct ip_mreqn mreq = {{0}};
 				mreq.imr_ifindex = int_val;
-				ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &mreq, sizeof (mreq));
+				ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &mreq, sizeof (mreq));
 				break;
 			}
 			int_val = GUINT32_TO_BE (int_val);
 #endif /* HAVE_STRUCT_IP_MREQN */
 #endif /* HOST_WIN32 */
 			/* int_val is in_addr */
-			ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
 			break;
 		case SocketOptionName_DontFragment:
 #ifdef HAVE_IP_MTU_DISCOVER
@@ -2326,7 +2394,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 #endif
 			
 		default:
-			ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
 		}
 	}
 
@@ -2351,7 +2419,7 @@ ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, g
 	MONO_ENTER_GC_SAFE;
 
 	/* Currently, the values for how (recv=0, send=1, both=2) match the BSD API */
-	ret = _wapi_shutdown (sock, how);
+	ret = mono_w32socket_shutdown (sock, how);
 
 	MONO_EXIT_GC_SAFE;
 
@@ -2718,7 +2786,7 @@ mono_network_init (void)
 void
 mono_network_cleanup (void)
 {
-	_wapi_cleanup_networking ();
+	mono_w32socket_cleanup ();
 	mono_networking_shutdown ();
 }
 

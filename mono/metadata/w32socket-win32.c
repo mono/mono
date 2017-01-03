@@ -23,6 +23,11 @@
 
 #define LOGDEBUG(...)  
 
+void
+mono_w32socket_cleanup (void)
+{
+}
+
 static gboolean set_blocking (SOCKET sock, gboolean block)
 {
 	u_long non_block = block ? 0 : 1;
