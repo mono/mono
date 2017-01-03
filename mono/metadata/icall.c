@@ -2750,37 +2750,40 @@ ves_icall_RuntimeTypeHandle_IsGenericTypeDefinition (MonoReflectionTypeHandle re
 	return mono_class_is_gtd (klass);
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_RuntimeTypeHandle_GetGenericTypeDefinition_impl (MonoReflectionType *type)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_RuntimeTypeHandle_GetGenericTypeDefinition_impl (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
-	MonoClass *klass;
+	mono_error_init (error);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 
-	if (type->type->byref)
-		return NULL;
+	MonoReflectionTypeHandle ret = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 
-	klass = mono_class_from_mono_type (type->type);
+	if (type->byref)
+		goto leave;
+
+	MonoClass *klass = mono_class_from_mono_type (type);
 
 	if (mono_class_is_gtd (klass)) {
-		return type; /* check this one */
+		/* check this one */
+		MONO_HANDLE_ASSIGN (ret, ref_type);
+		goto leave;
 	}
 	if (mono_class_is_ginst (klass)) {
 		MonoClass *generic_class = mono_class_get_generic_class (klass)->container_class;
-		gpointer tb;
 
-		tb = mono_class_get_ref_info (generic_class);
-
-		if (generic_class->wastypebuilder && tb)
-			return (MonoReflectionType *)tb;
-		else {
-			ret = mono_type_get_object_checked (mono_object_domain (type), &generic_class->byval_arg, &error);
-			mono_error_set_pending_exception (&error);
-
-			return ret;
+		guint32 ref_info_handle = mono_class_get_ref_info_handle (klass);
+		
+		if (generic_class->wastypebuilder && ref_info_handle) {
+			MonoObjectHandle tb = mono_gchandle_get_target_handle (ref_info_handle);
+			g_assert (!MONO_HANDLE_IS_NULL (tb));
+			MONO_HANDLE_ASSIGN (ret, tb);
+		} else {
+			MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
+			MONO_HANDLE_ASSIGN (ret, mono_type_get_object_handle (domain, &generic_class->byval_arg, error));
 		}
 	}
-	return NULL;
+leave:
+	return ret;
 }
 
 ICALL_EXPORT MonoReflectionType*
@@ -2855,9 +2858,11 @@ ves_icall_RuntimeType_GetGenericParameterPosition (MonoReflectionType *type)
 }
 
 ICALL_EXPORT MonoGenericParamInfo *
-ves_icall_RuntimeTypeHandle_GetGenericParameterInfo (MonoReflectionType *type)
+ves_icall_RuntimeTypeHandle_GetGenericParameterInfo (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	return mono_generic_param_info (type->type->data.generic_param);
+	mono_error_init (error);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	return mono_generic_param_info (type->data.generic_param);
 }
 
 ICALL_EXPORT MonoBoolean
