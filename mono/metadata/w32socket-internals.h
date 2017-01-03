@@ -28,6 +28,14 @@
 
 #ifndef HOST_WIN32
 
+#define SIO_GET_EXTENSION_FUNCTION_POINTER 0xC8000006
+
+#define WSAID_DISCONNECTEX {0x7fda2e11,0x8630,0x436f,{0xa0, 0x31, 0xf5, 0x36, 0xa6, 0xee, 0xc1, 0x57}}
+#define WSAID_TRANSMITFILE {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}
+
+#define TF_DISCONNECT 0x01
+#define TF_REUSE_SOCKET 0x02
+
 typedef struct {
 	guint32 len;
 	gpointer buf;
@@ -58,14 +66,6 @@ typedef struct {
 } GUID;
 
 #endif
-
-typedef struct {
-	int domain;
-	int type;
-	int protocol;
-	int saved_error;
-	int still_readable;
-} MonoW32HandleSocket;
 
 void
 mono_w32socket_initialize (void);
@@ -129,6 +129,9 @@ mono_w32socket_listen (SOCKET sock, gint backlog);
 
 gint
 mono_w32socket_shutdown (SOCKET sock, gint how);
+
+gint
+mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written);
 
 #ifdef HAVE_SYS_SELECT_H
 

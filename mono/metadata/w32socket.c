@@ -152,6 +152,12 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 }
 
 static gint
+mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+{
+	return WSAIoctl (sock, command, input, inputlen, output, outputlen, written, NULL, NULL);
+}
+
+static gint
 mono_w32socket_select (gint nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
 	return select (nfds, readfds, writefds, exceptfds, timeout);
@@ -1346,17 +1352,6 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObject *so
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
-/* These #defines from mswsock.h from wine.  Defining them here allows
- * us to build this file on a mingw box that doesn't know the magic
- * numbers, but still run on a newer windows box that does.
- */
-#ifndef WSAID_DISCONNECTEX
-#define WSAID_DISCONNECTEX {0x7fda2e11,0x8630,0x436f,{0xa0, 0x31, 0xf5, 0x36, 0xa6, 0xee, 0xc1, 0x57}}
-#endif
-
-#ifndef WSAID_TRANSMITFILE
-#define WSAID_TRANSMITFILE {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}
-#endif
 
 #ifndef HOST_WIN32
 typedef BOOL (WINAPI *LPFN_DISCONNECTEX)(SOCKET, OVERLAPPED*, guint32, guint32);
@@ -1385,13 +1380,13 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 	 * pointers to functions in managed objects that still works
 	 * on 64bit platforms.
 	 */
-	ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&disco_guid, sizeof (GUID),
-					(gchar *)&_wapi_disconnectex, sizeof (void *), &output_bytes, NULL, NULL);
+	ret = mono_w32socket_ioctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&disco_guid, sizeof (GUID),
+					(gchar *)&_wapi_disconnectex, sizeof (void *), &output_bytes);
 
 	MONO_EXIT_GC_SAFE;
 
 	if (ret != 0) {
-		/* make sure that WSAIoctl didn't put crap in the
+		/* make sure that mono_w32socket_ioctl didn't put crap in the
 		 * output pointer
 		 */
 		_wapi_disconnectex = NULL;
@@ -1406,8 +1401,8 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 		 * For an explanation of why this is done, you can read
 		 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
 		 */
-		ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&trans_guid, sizeof(GUID),
-				(gchar *)&_wapi_transmitfile, sizeof(void *), &output_bytes, NULL, NULL);
+		ret = mono_w32socket_ioctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&trans_guid, sizeof(GUID),
+				(gchar *)&_wapi_transmitfile, sizeof(void *), &output_bytes);
 
 		MONO_EXIT_GC_SAFE;
 
@@ -2465,7 +2460,7 @@ ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code,
 
 	MONO_ENTER_GC_SAFE;
 
-	ret = WSAIoctl (sock, code, i_buffer, i_len, o_buffer, o_len, &output_bytes, NULL, NULL);
+	ret = mono_w32socket_ioctl (sock, code, i_buffer, i_len, o_buffer, o_len, &output_bytes);
 
 	MONO_EXIT_GC_SAFE;
 

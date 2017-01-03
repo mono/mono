@@ -8,6 +8,7 @@
 #include <config.h>
 #include <glib.h>
 
+#include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -24,16 +25,40 @@
 #include <unistd.h>
 #endif
 #include <errno.h>
-
 #include <fcntl.h>
-
 #include <sys/types.h>
+#ifdef HAVE_SYS_UIO_H
+#include <sys/uio.h>
+#endif
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_FILIO_H
+#include <sys/filio.h>     /* defines FIONBIO and FIONREAD */
+#endif
+#ifdef HAVE_SYS_SOCKIO_H
+#include <sys/sockio.h>    /* defines SIOCATMARK */
+#endif
+#ifndef HAVE_MSG_NOSIGNAL
+#include <signal.h>
+#endif
+#ifdef HAVE_SYS_SENDFILE_H
+#include <sys/sendfile.h>
+#endif
 
 #include "w32socket.h"
 #include "w32socket-internals.h"
 #include "w32handle.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-poll.h"
+
+typedef struct {
+	int domain;
+	int type;
+	int protocol;
+	int saved_error;
+	int still_readable;
+} MonoW32HandleSocket;
 
 static guint32 in_cleanup = 0;
 
@@ -1063,6 +1088,224 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 	}
 
 	return ret;
+}
+
+static gboolean socket_disconnect (SOCKET sock)
+{
+	MonoW32HandleSocket *socket_handle;
+	gpointer handle;
+	SOCKET newsock;
+	gint ret;
+
+	handle = GUINT_TO_POINTER (sock);
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
+		g_warning ("%s: error looking up socket handle %p", __func__, handle);
+		mono_w32socket_set_last_error (WSAENOTSOCK);
+		return(FALSE);
+	}
+
+	newsock = socket (socket_handle->domain, socket_handle->type, socket_handle->protocol);
+	if (newsock == -1) {
+		gint errnum = errno;
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: socket error: %s", __func__, strerror (errno));
+
+		errnum = errno_to_WSA (errnum, __func__);
+		mono_w32socket_set_last_error (errnum);
+
+		return(FALSE);
+	}
+
+	/* According to Stevens "Advanced Programming in the UNIX
+	 * Environment: UNIX File I/O" dup2() is atomic so there
+	 * should not be a race condition between the old fd being
+	 * closed and the new socket fd being copied over
+	 */
+	do {
+		ret = dup2 (newsock, sock);
+	} while (ret == -1 && errno == EAGAIN);
+
+	if (ret == -1) {
+		gint errnum = errno;
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: dup2 error: %s", __func__, strerror (errno));
+
+		errnum = errno_to_WSA (errnum, __func__);
+		mono_w32socket_set_last_error (errnum);
+
+		return(FALSE);
+	}
+
+	close (newsock);
+
+	return(TRUE);
+}
+
+static gboolean
+wapi_disconnectex (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 reserved)
+{
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: called on socket %d!", __func__, sock);
+
+	if (reserved != 0) {
+		mono_w32socket_set_last_error (WSAEINVAL);
+		return(FALSE);
+	}
+
+	/* We could check the socket type here and fail unless its
+	 * SOCK_STREAM, SOCK_SEQPACKET or SOCK_RDM (according to msdn)
+	 * if we really wanted to
+	 */
+
+	return(socket_disconnect (sock));
+}
+
+static struct {
+	GUID guid;
+	gpointer func;
+} extension_functions[] = {
+	{ WSAID_DISCONNECTEX, wapi_disconnectex },
+	{ WSAID_TRANSMITFILE, TransmitFile },
+	{ {0} , NULL },
+};
+
+gint
+mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+{
+	gpointer handle;
+	gint ret;
+	gchar *buffer;
+
+	handle = GUINT_TO_POINTER (sock);
+	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+		mono_w32socket_set_last_error (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (command == SIO_GET_EXTENSION_FUNCTION_POINTER) {
+		gint i = 0;
+		GUID *guid = (GUID *)input;
+
+		if (inputlen < sizeof(GUID)) {
+			/* As far as I can tell, windows doesn't
+			 * actually set an error here...
+			 */
+			mono_w32socket_set_last_error (WSAEINVAL);
+			return SOCKET_ERROR;
+		}
+
+		if (outputlen < sizeof(gpointer)) {
+			/* Or here... */
+			mono_w32socket_set_last_error (WSAEINVAL);
+			return SOCKET_ERROR;
+		}
+
+		if (output == NULL) {
+			/* Or here */
+			mono_w32socket_set_last_error (WSAEINVAL);
+			return SOCKET_ERROR;
+		}
+
+		while (extension_functions[i].func != NULL) {
+			if (!memcmp (guid, &extension_functions[i].guid,
+				     sizeof(GUID))) {
+				memcpy (output, &extension_functions[i].func,
+					sizeof(gpointer));
+				*written = sizeof(gpointer);
+				return(0);
+			}
+
+			i++;
+		}
+
+		mono_w32socket_set_last_error (WSAEINVAL);
+		return SOCKET_ERROR;
+	}
+
+	if (command == 0x98000004 /* SIO_KEEPALIVE_VALS */) {
+		guint32 onoff;
+
+		if (inputlen < 3 * sizeof (guint32)) {
+			mono_w32socket_set_last_error (WSAEINVAL);
+			return SOCKET_ERROR;
+		}
+
+		onoff = *((guint32*) input);
+
+		ret = setsockopt (sock, SOL_SOCKET, SO_KEEPALIVE, &onoff, sizeof (guint32));
+		if (ret < 0) {
+			gint errnum = errno;
+			errnum = errno_to_WSA (errnum, __func__);
+			mono_w32socket_set_last_error (errnum);
+			return SOCKET_ERROR;
+		}
+
+#if defined(TCP_KEEPIDLE) && defined(TCP_KEEPINTVL)
+		if (onoff != 0) {
+			/* Values are in ms, but we need s */
+			guint32 keepalivetime, keepaliveinterval, rem;
+
+			keepalivetime = *(((guint32*) input) + 1);
+			keepaliveinterval = *(((guint32*) input) + 2);
+
+			/* keepalivetime and keepaliveinterval are > 0 (checked in managed code) */
+			rem = keepalivetime % 1000;
+			keepalivetime /= 1000;
+			if (keepalivetime == 0 || rem >= 500)
+				keepalivetime++;
+			ret = setsockopt (sock, IPPROTO_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (guint32));
+			if (ret == 0) {
+				rem = keepaliveinterval % 1000;
+				keepaliveinterval /= 1000;
+				if (keepaliveinterval == 0 || rem >= 500)
+					keepaliveinterval++;
+				ret = setsockopt (sock, IPPROTO_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (guint32));
+			}
+			if (ret != 0) {
+				gint errnum = errno;
+				errnum = errno_to_WSA (errnum, __func__);
+				mono_w32socket_set_last_error (errnum);
+				return SOCKET_ERROR;
+			}
+
+			return 0;
+		}
+#endif
+
+		return 0;
+	}
+
+	buffer = inputlen > 0 ? (gchar*) g_memdup (input, inputlen) : NULL;
+
+	ret = ioctl (sock, command, buffer);
+	if (ret == -1) {
+		gint errnum = errno;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: WSAIoctl error: %s", __func__, strerror (errno));
+
+		errnum = errno_to_WSA (errnum, __func__);
+		mono_w32socket_set_last_error (errnum);
+		g_free (buffer);
+
+		return SOCKET_ERROR;
+	}
+
+	if (!buffer) {
+		*written = 0;
+		return 0;
+	}
+
+	/* We just copy the buffer to the output. Some ioctls
+	 * don't even output any data, but, well...
+	 *
+	 * NB windows returns WSAEFAULT if outputlen is too small */
+	inputlen = (inputlen > outputlen) ? outputlen : inputlen;
+
+	if (inputlen > 0 && output != NULL)
+		memcpy (output, buffer, inputlen);
+
+	g_free (buffer);
+	*written = inputlen;
+
+	return 0;
 }
 
 #ifdef HAVE_SYS_SELECT_H

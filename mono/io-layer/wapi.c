@@ -3,7 +3,6 @@
 
 #include "io-trace.h"
 #include "io.h"
-#include "sockets.h"
 
 #include "mono/utils/mono-lazy-init.h"
 #include "mono/metadata/w32handle.h"
