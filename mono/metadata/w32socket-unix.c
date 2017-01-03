@@ -147,30 +147,32 @@ mono_w32socket_cleanup (void)
 	in_cleanup = 0;
 }
 
-static SOCKET
-_wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
+SOCKET
+mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
 {
-	gpointer handle = GUINT_TO_POINTER (sock);
+	gpointer handle;
 	gpointer new_handle;
 	MonoW32HandleSocket *socket_handle;
-	MonoW32HandleSocket new_socket_handle = {0};
+	MonoW32HandleSocket new_socket_handle;
 	SOCKET new_fd;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info;
 
 	if (addr != NULL && *addrlen < sizeof(struct sockaddr)) {
 		mono_w32socket_set_last_error (WSAEFAULT);
 		return INVALID_SOCKET;
 	}
 
+	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return INVALID_SOCKET;
 	}
 
+	info = mono_thread_info_current ();
+
 	do {
 		new_fd = accept (sock, addr, addrlen);
-	} while (new_fd == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+	} while (new_fd == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (new_fd == -1) {
 		gint errnum = errno;
@@ -211,26 +213,21 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 	return new_fd;
 }
 
-SOCKET
-mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
+int
+mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, gboolean blocking)
 {
-	return _wapi_accept (sock, addr, addrlen);
-}
-
-static int
-_wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
-{
-	gpointer handle = GUINT_TO_POINTER (sock);
+	gpointer handle;
 	MonoW32HandleSocket *socket_handle;
 	gint errnum;
-	MonoThreadInfo *info = mono_thread_info_current ();
 
+	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	if (connect (sock, serv_addr, addrlen) == -1) {
+	if (connect (sock, addr, addrlen) == -1) {
+		MonoThreadInfo *info;
 		mono_pollfd fds;
 		int so_error;
 		socklen_t len;
@@ -261,10 +258,11 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			return SOCKET_ERROR;
 		}
 
+		info = mono_thread_info_current ();
+
 		fds.fd = sock;
 		fds.events = MONO_POLLOUT;
-		while (mono_poll (&fds, 1, -1) == -1 &&
-		       !mono_thread_info_is_interrupt_state (info)) {
+		while (mono_poll (&fds, 1, -1) == -1 && !mono_thread_info_is_interrupt_state (info)) {
 			if (errno != EINTR) {
 				errnum = mono_w32socket_convert_error (errno);
 
@@ -306,43 +304,30 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 }
 
 int
-mono_w32socket_connect (SOCKET s, const struct sockaddr *name, int namelen, gboolean blocking)
+mono_w32socket_recv (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
 {
-	return _wapi_connect (s, name, namelen);
-}
-
-static int
-_wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockaddr *from, socklen_t *fromlen);
-
-static int
-_wapi_recv (SOCKET sock, void *buf, size_t len, int recv_flags)
-{
-	return _wapi_recvfrom (sock, buf, len, recv_flags, NULL, 0);
+	return mono_w32socket_recvfrom (sock, buf, len, flags, NULL, 0, blocking);
 }
 
 int
-mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
-	return _wapi_recv (s, buf, len, flags);
-}
-
-static int
-_wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockaddr *from, socklen_t *fromlen)
-{
-	gpointer handle = GUINT_TO_POINTER (sock);
+	gpointer handle;
 	MonoW32HandleSocket *socket_handle;
 	int ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info;
 
+	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
+	info = mono_thread_info_current ();
+
 	do {
-		ret = recvfrom (sock, buf, len, recv_flags, from, fromlen);
-	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		ret = recvfrom (sock, buf, len, flags, from, fromlen);
+	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == 0 && len > 0) {
 		/* According to the Linux man page, recvfrom only
@@ -381,12 +366,6 @@ _wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockad
 	return ret;
 }
 
-int
-mono_w32socket_recvfrom (SOCKET s, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
-{
-	return _wapi_recvfrom (s, buf, len, flags, from, fromlen);
-}
-
 static void
 wsabuf_to_msghdr (WSABUF *buffers, guint32 count, struct msghdr *hdr)
 {
@@ -407,26 +386,36 @@ msghdr_iov_free (struct msghdr *hdr)
 	g_free (hdr->msg_iov);
 }
 
-static int
-_wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
+int
+mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *received, guint32 *flags, gpointer overlapped, gpointer complete, gboolean blocking)
 {
-	gpointer handle = GUINT_TO_POINTER (sock);
 	MonoW32HandleSocket *socket_handle;
-	int ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info;
+	gpointer handle;
+	gint ret;
+	struct msghdr hdr;
 
+	g_assert (overlapped == NULL);
+	g_assert (complete == NULL);
+
+	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
+	info = mono_thread_info_current ();
+
+	wsabuf_to_msghdr (buffers, count, &hdr);
+
 	do {
-		ret = recvmsg (sock, msg, recv_flags);
-	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		ret = recvmsg (sock, &hdr, *flags);
+	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	msghdr_iov_free (&hdr);
 
 	if (ret == 0) {
-		/* see _wapi_recvfrom */
+		/* see mono_w32socket_recvfrom */
 		if (socket_handle->still_readable != 1) {
 			ret = -1;
 			errno = EINTR;
@@ -442,25 +431,6 @@ _wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
 
 		return SOCKET_ERROR;
 	}
-	return ret;
-}
-
-static int
-WSARecv (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *received, guint32 *flags, gpointer overlapped, gpointer complete)
-{
-	int ret;
-	struct msghdr hdr;
-
-	g_assert (overlapped == NULL);
-	g_assert (complete == NULL);
-
-	wsabuf_to_msghdr (buffers, count, &hdr);
-	ret = _wapi_recvmsg (sock, &hdr, *flags);
-	msghdr_iov_free (&hdr);
-
-	if(ret == SOCKET_ERROR) {
-		return ret;
-	}
 
 	*received = ret;
 	*flags = hdr.msg_flags;
@@ -469,27 +439,23 @@ WSARecv (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *received, guint32
 }
 
 int
-mono_w32socket_recvbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 *lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking)
+mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
 {
-	return WSARecv (s, lpBuffers, dwBufferCount,lpNumberOfBytesRecvd,lpFlags, lpOverlapped, lpCompletionRoutine);
-}
-
-static int
-_wapi_send (SOCKET sock, const void *msg, size_t len, int send_flags)
-{
-	gpointer handle = GUINT_TO_POINTER (sock);
+	gpointer handle;
 	int ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info;
 
+	handle = GUINT_TO_POINTER (sock);
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
+	info = mono_thread_info_current ();
+
 	do {
-		ret = send (sock, msg, len, send_flags);
-	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		ret = send (sock, buf, len, flags);
+	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == -1) {
 		gint errnum = errno;
@@ -513,27 +479,23 @@ _wapi_send (SOCKET sock, const void *msg, size_t len, int send_flags)
 }
 
 int
-mono_w32socket_send (SOCKET s, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_sendto (SOCKET sock, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
-	return _wapi_send (s, buf, len, flags);
-}
-
-static int
-_wapi_sendto (SOCKET sock, const void *msg, size_t len, int send_flags, const struct sockaddr *to, socklen_t tolen)
-{
-	gpointer handle = GUINT_TO_POINTER (sock);
+	gpointer handle;
 	int ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info;
 
+	handle = GUINT_TO_POINTER (sock);
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
+	info = mono_thread_info_current ();
+
 	do {
-		ret = sendto (sock, msg, len, send_flags, to, tolen);
-	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		ret = sendto (sock, buf, len, flags, to, tolen);
+	} while (ret == -1 && errno == EINTR &&  !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == -1) {
 		gint errnum = errno;
@@ -548,27 +510,31 @@ _wapi_sendto (SOCKET sock, const void *msg, size_t len, int send_flags, const st
 }
 
 int
-mono_w32socket_sendto (SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
+mono_w32socket_sendbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *sent, guint32 flags, gpointer overlapped, gpointer complete, gboolean blocking)
 {
-	return _wapi_sendto (s, buf, len, flags, to, tolen);
-}
+	struct msghdr hdr;
+	MonoThreadInfo *info;
+	gpointer handle;
+	gint ret;
 
-static int
-_wapi_sendmsg (SOCKET sock,  const struct msghdr *msg, int send_flags)
-{
-	gpointer handle = GUINT_TO_POINTER (sock);
-	int ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	g_assert (overlapped == NULL);
+	g_assert (complete == NULL);
 
+	handle = GUINT_TO_POINTER (sock);
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
+	info = mono_thread_info_current ();
+
+	wsabuf_to_msghdr (buffers, count, &hdr);
+
 	do {
-		ret = sendmsg (sock, msg, send_flags);
-	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		ret = sendmsg (sock, &hdr, flags);
+	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	msghdr_iov_free (&hdr);
 
 	if (ret == -1) {
 		gint errnum = errno;
@@ -579,110 +545,28 @@ _wapi_sendmsg (SOCKET sock,  const struct msghdr *msg, int send_flags)
 
 		return SOCKET_ERROR;
 	}
-	return ret;
-}
-
-static int
-WSASend (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *sent, guint32 flags, gpointer overlapped, gpointer complete)
-{
-	int ret;
-	struct msghdr hdr;
-
-	g_assert (overlapped == NULL);
-	g_assert (complete == NULL);
-
-	wsabuf_to_msghdr (buffers, count, &hdr);
-	ret = _wapi_sendmsg (sock, &hdr, flags);
-	msghdr_iov_free (&hdr);
-
-	if(ret == SOCKET_ERROR)
-		return ret;
 
 	*sent = ret;
 	return 0;
 }
 
-int
-mono_w32socket_sendbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking)
-{
-	return WSASend (s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
-}
-
 #define SF_BUFFER_SIZE	16384
-static gint
-wapi_sendfile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32 bytes_per_send, guint32 flags)
-{
-	MonoThreadInfo *info = mono_thread_info_current ();
-#if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
-	gint file = GPOINTER_TO_INT (file_handle);
-	gint n;
-	gint errnum;
-	gssize res;
-	struct stat statbuf;
-
-	n = fstat (file, &statbuf);
-	if (n == -1) {
-		errnum = errno;
-		errnum = mono_w32socket_convert_error (errnum);
-		mono_w32socket_set_last_error (errnum);
-		return SOCKET_ERROR;
-	}
-	do {
-#ifdef __linux__
-		res = sendfile (sock, file, NULL, statbuf.st_size);
-#elif defined(DARWIN)
-		/* TODO: header/tail could be sent in the 5th argument */
-		/* TODO: Might not send the entire file for non-blocking sockets */
-		res = sendfile (file, sock, 0, &statbuf.st_size, NULL, 0);
-#endif
-	} while (res != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
-	if (res == -1) {
-		errnum = errno;
-		errnum = mono_w32socket_convert_error (errnum);
-		mono_w32socket_set_last_error (errnum);
-		return SOCKET_ERROR;
-	}
-#else
-	/* Default implementation */
-	gint file = GPOINTER_TO_INT (file_handle);
-	gchar *buffer;
-	gint n;
-
-	buffer = g_malloc (SF_BUFFER_SIZE);
-	do {
-		do {
-			n = read (file, buffer, SF_BUFFER_SIZE);
-		} while (n == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
-		if (n == -1)
-			break;
-		if (n == 0) {
-			g_free (buffer);
-			return 0; /* We're done reading */
-		}
-		do {
-			n = send (sock, buffer, n, 0); /* short sends? enclose this in a loop? */
-		} while (n == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
-	} while (n != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
-
-	if (n == -1) {
-		gint errnum = errno;
-		errnum = mono_w32socket_convert_error (errnum);
-		mono_w32socket_set_last_error (errnum);
-		g_free (buffer);
-		return SOCKET_ERROR;
-	}
-	g_free (buffer);
-#endif
-	return 0;
-}
 
 static gboolean
-TransmitFile (SOCKET sock, gpointer file, guint32 bytes_to_write, guint32 bytes_per_send, OVERLAPPED *ol,
+TransmitFile (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32 bytes_per_send, OVERLAPPED *ol,
 		TRANSMIT_FILE_BUFFERS *buffers, guint32 flags)
 {
-	gpointer handle = GUINT_TO_POINTER (sock);
-	gint ret;
+	MonoThreadInfo *info;
+	gpointer handle;
+	gint file;
+	gssize ret;
+#if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
+	struct stat statbuf;
+#else
+	gchar *buffer;
+#endif
 
+	handle = GUINT_TO_POINTER (sock);
 	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return FALSE;
@@ -690,18 +574,62 @@ TransmitFile (SOCKET sock, gpointer file, guint32 bytes_to_write, guint32 bytes_
 
 	/* Write the header */
 	if (buffers != NULL && buffers->Head != NULL && buffers->HeadLength > 0) {
-		ret = _wapi_send (sock, buffers->Head, buffers->HeadLength, 0);
+		ret = mono_w32socket_send (sock, buffers->Head, buffers->HeadLength, 0, FALSE);
 		if (ret == SOCKET_ERROR)
 			return FALSE;
 	}
 
-	ret = wapi_sendfile (sock, file, bytes_to_write, bytes_per_send, flags);
-	if (ret == SOCKET_ERROR)
+	info = mono_thread_info_current ();
+
+	file = GPOINTER_TO_INT (file_handle);
+
+#if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
+	ret = fstat (file, &statbuf);
+	if (ret == -1) {
+		gint errnum = errno;
+		errnum = mono_w32socket_convert_error (errnum);
+		mono_w32socket_set_last_error (errnum);
+		return SOCKET_ERROR;
+	}
+
+	do {
+#ifdef __linux__
+		ret = sendfile (sock, file, NULL, statbuf.st_size);
+#elif defined(DARWIN)
+		/* TODO: header/tail could be sent in the 5th argument */
+		/* TODO: Might not send the entire file for non-blocking sockets */
+		ret = sendfile (file, sock, 0, &statbuf.st_size, NULL, 0);
+#endif
+	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+#else
+	buffer = g_malloc (SF_BUFFER_SIZE);
+
+	do {
+		do {
+			ret = read (file, buffer, SF_BUFFER_SIZE);
+		} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+		if (ret == -1 || ret == 0)
+			break;
+
+		do {
+			ret = send (sock, buffer, ret, 0); /* short sends? enclose this in a loop? */
+		} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
+
+	g_free (buffer);
+#endif
+
+	if (ret == -1) {
+		gint errnum = errno;
+		errnum = mono_w32socket_convert_error (errnum);
+		mono_w32socket_set_last_error (errnum);
 		return FALSE;
+	}
 
 	/* Write the tail */
 	if (buffers != NULL && buffers->Tail != NULL && buffers->TailLength > 0) {
-		ret = _wapi_send (sock, buffers->Tail, buffers->TailLength, 0);
+		ret = mono_w32socket_send (sock, buffers->Tail, buffers->TailLength, 0, FALSE);
 		if (ret == SOCKET_ERROR)
 			return FALSE;
 	}
@@ -1056,12 +984,25 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 	return ret;
 }
 
-static gboolean socket_disconnect (SOCKET sock)
+static gboolean
+socket_disconnect (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 reserved)
 {
 	MonoW32HandleSocket *socket_handle;
 	gpointer handle;
 	SOCKET newsock;
 	gint ret;
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: called on socket %d!", __func__, sock);
+
+	if (reserved != 0) {
+		mono_w32socket_set_last_error (WSAEINVAL);
+		return(FALSE);
+	}
+
+	/* We could check the socket type here and fail unless its
+	 * SOCK_STREAM, SOCK_SEQPACKET or SOCK_RDM (according to msdn)
+	 * if we really wanted to
+	 */
 
 	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
@@ -1107,29 +1048,11 @@ static gboolean socket_disconnect (SOCKET sock)
 	return(TRUE);
 }
 
-static gboolean
-wapi_disconnectex (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 reserved)
-{
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: called on socket %d!", __func__, sock);
-
-	if (reserved != 0) {
-		mono_w32socket_set_last_error (WSAEINVAL);
-		return(FALSE);
-	}
-
-	/* We could check the socket type here and fail unless its
-	 * SOCK_STREAM, SOCK_SEQPACKET or SOCK_RDM (according to msdn)
-	 * if we really wanted to
-	 */
-
-	return(socket_disconnect (sock));
-}
-
 static struct {
 	GUID guid;
 	gpointer func;
 } extension_functions[] = {
-	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, wapi_disconnectex },
+	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, socket_disconnect },
 	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, TransmitFile },
 	{ {0} , NULL },
 };
@@ -1448,7 +1371,7 @@ mono_w32socket_get_available (SOCKET socket, guint64 *amount)
 gint
 mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect)
 {
-	*disconnect = wapi_disconnectex;
+	*disconnect = socket_disconnect;
 	return 0;
 }
 
