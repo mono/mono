@@ -162,14 +162,7 @@ _wapi_accept(SOCKET sock, struct sockaddr *addr, socklen_t *addrlen)
 		return INVALID_SOCKET;
 	}
 
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return INVALID_SOCKET;
-	}
-
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		g_warning ("%s: error looking up socket handle %p",
-			   __func__, handle);
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return INVALID_SOCKET;
 	}
@@ -232,7 +225,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 	gint errnum;
 	MonoThreadInfo *info = mono_thread_info_current ();
 
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -261,14 +254,9 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			 * But don't do this for EWOULDBLOCK (bug 317315)
 			 */
 			if (errnum != WSAEWOULDBLOCK) {
-				if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-					/* ECONNRESET means the socket was closed by another thread */
-					/* Async close on mac raises ECONNABORTED. */
-					if (errnum != WSAECONNRESET && errnum != WSAENETDOWN)
-						g_warning ("%s: error looking up socket handle %p (error %d)", __func__, handle, errnum);
-				} else {
-					socket_handle->saved_error = errnum;
-				}
+				/* ECONNRESET means the socket was closed by another thread */
+				/* Async close on mac raises ECONNABORTED. */
+				socket_handle->saved_error = errnum;
 			}
 			return SOCKET_ERROR;
 		}
@@ -304,11 +292,7 @@ _wapi_connect(SOCKET sock, const struct sockaddr *serv_addr, socklen_t addrlen)
 			errnum = mono_w32socket_convert_error (so_error);
 
 			/* Need to save this socket error */
-			if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-				g_warning ("%s: error looking up socket handle %p", __func__, handle);
-			} else {
-				socket_handle->saved_error = errnum;
-			}
+			socket_handle->saved_error = errnum;
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect getsockopt returned error: %s",
 				   __func__, strerror (so_error));
@@ -350,7 +334,7 @@ _wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockad
 	int ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
 
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -379,9 +363,7 @@ _wapi_recvfrom(SOCKET sock, void *buf, size_t len, int recv_flags, struct sockad
 		 * still_readable != 1 then shutdown
 		 * (SHUT_RD|SHUT_RDWR) has been called locally.
 		 */
-		if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)
-			 || socket_handle->still_readable != 1)
-		{
+		if (socket_handle->still_readable != 1) {
 			ret = -1;
 			errno = EINTR;
 		}
@@ -433,7 +415,7 @@ _wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
 	int ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
 
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -445,9 +427,7 @@ _wapi_recvmsg(SOCKET sock, struct msghdr *msg, int recv_flags)
 
 	if (ret == 0) {
 		/* see _wapi_recvfrom */
-		if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)
-			 || socket_handle->still_readable != 1)
-		{
+		if (socket_handle->still_readable != 1) {
 			ret = -1;
 			errno = EINTR;
 		}
@@ -912,7 +892,7 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 	MonoW32HandleSocket *socket_handle;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -941,18 +921,11 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 	}
 
 	if (optname == SO_ERROR) {
-		if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-			g_warning ("%s: error looking up socket handle %p", __func__, handle);
-
-			/* can't extract the last error */
+		if (*((int *)optval) != 0) {
 			*((int *) optval) = mono_w32socket_convert_error (*((int *)optval));
+			socket_handle->saved_error = *((int *)optval);
 		} else {
-			if (*((int *)optval) != 0) {
-				*((int *) optval) = mono_w32socket_convert_error (*((int *)optval));
-				socket_handle->saved_error = *((int *)optval);
-			} else {
-				*((int *)optval) = socket_handle->saved_error;
-			}
+			*((int *)optval) = socket_handle->saved_error;
 		}
 	}
 
@@ -1061,20 +1034,13 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 	gint ret;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (mono_w32handle_get_type (handle) != MONO_W32HANDLE_SOCKET) {
+	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
 		mono_w32socket_set_last_error (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	if (how == SHUT_RD || how == SHUT_RDWR) {
-		if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-			g_warning ("%s: error looking up socket handle %p", __func__, handle);
-			mono_w32socket_set_last_error (WSAENOTSOCK);
-			return SOCKET_ERROR;
-		}
-
+	if (how == SHUT_RD || how == SHUT_RDWR)
 		socket_handle->still_readable = 0;
-	}
 
 	ret = shutdown (sock, how);
 	if (ret == -1) {
