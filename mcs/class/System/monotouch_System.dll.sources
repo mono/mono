@@ -2,5 +2,4 @@
 
 System.Net/MacProxy.cs
 
-Mono.Util/MonoPInvokeCallbackAttribute.cs
 Mono.Net.Security/MonoTlsProviderFactory.Apple.cs

@@ -706,7 +706,7 @@ namespace Mono.Data.Sqlite
     }
 
 #if MONOTOUCH
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteCallback))]
     internal static void scalar_callback(IntPtr context, int nArgs, IntPtr argsptr)
     {
       var handle = GCHandle.FromIntPtr (UnsafeNativeMethods.sqlite3_user_data(context));
@@ -714,7 +714,7 @@ namespace Mono.Data.Sqlite
       func.Func(context, nArgs, argsptr);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteCallback))]
     internal static void step_callback(IntPtr context, int nArgs, IntPtr argsptr)
     {
       var handle = GCHandle.FromIntPtr(UnsafeNativeMethods.sqlite3_user_data(context));
@@ -722,7 +722,7 @@ namespace Mono.Data.Sqlite
       func.FuncStep(context, nArgs, argsptr);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
     internal static void final_callback(IntPtr context)
     {
       var handle = GCHandle.FromIntPtr(UnsafeNativeMethods.sqlite3_user_data(context));
@@ -730,7 +730,7 @@ namespace Mono.Data.Sqlite
       func.FuncFinal(context);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
     internal static void destroy_callback(IntPtr context)
     {
       GCHandle.FromIntPtr(context).Free();
@@ -958,7 +958,7 @@ namespace Mono.Data.Sqlite
     SQLiteCommitCallback commit_callback;
     SQLiteRollbackCallback rollback_callback;
 		
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteUpdateCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteUpdateCallback))]
     static void update (IntPtr puser, int type, IntPtr database, IntPtr table, Int64 rowid)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
@@ -974,7 +974,7 @@ namespace Mono.Data.Sqlite
         UnsafeNativeMethods.sqlite3_update_hook (_sql, update, GCHandle.ToIntPtr (gch));
     }
 
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCommitCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteCommitCallback))]
     static int commit (IntPtr puser)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
@@ -990,7 +990,7 @@ namespace Mono.Data.Sqlite
         UnsafeNativeMethods.sqlite3_commit_hook (_sql, commit, GCHandle.ToIntPtr (gch));
     }
 
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteRollbackCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteRollbackCallback))]
     static void rollback (IntPtr puser)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;

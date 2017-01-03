@@ -565,7 +565,9 @@ namespace Mono.Data.Sqlite
       DataTable tblIndexes = null;
       DataTable tblIndexColumns;
       DataRow row;
+#if !MONOTOUCH
       string temp;
+#endif
       string strCatalog = "";
       string strTable = "";
       string strColumn = "";
