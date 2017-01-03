@@ -1,10 +1,18 @@
 // Copyright 2015 Xamarin Inc. All rights reserved.
 #if SECURITY_DEP
-using System;
+
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+using MSI = MonoSecurity::Mono.Security.Interface;
+#else
 using MSI = Mono.Security.Interface;
+#endif
+
 #if MONO_FEATURE_BTLS
 using Mono.Btls;
 #endif
+
+using System;
 
 namespace Mono.Net.Security
 {
