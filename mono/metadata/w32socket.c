@@ -1356,41 +1356,9 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObject *so
 void
 ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean reuse, gint32 *werror)
 {
-	int ret;
-	LPFN_DISCONNECTEX _wapi_disconnectex = NULL;
-	LPFN_TRANSMITFILE _wapi_transmitfile = NULL;
 	gboolean interrupted;
 
-	*werror = 0;
-
 	LOGDEBUG (g_message("%s: disconnecting from socket %p (reuse %d)", __func__, sock, reuse));
-
-	MONO_ENTER_GC_SAFE;
-
-	/* I _think_ the extension function pointers need to be looked
-	 * up for each socket.  FIXME: check the best way to store
-	 * pointers to functions in managed objects that still works
-	 * on 64bit platforms.
-	 */
-	ret = mono_w32socket_get_disconnect (sock, &_wapi_disconnectex);
-
-	MONO_EXIT_GC_SAFE;
-
-	if (ret != 0) {
-		/* make sure that mono_w32socket_ioctl didn't put crap in the
-		 * output pointer
-		 */
-		_wapi_disconnectex = NULL;
-
-		MONO_ENTER_GC_SAFE;
-
-		ret = mono_w32socket_get_transmit_file (sock, &_wapi_transmitfile);
-
-		MONO_EXIT_GC_SAFE;
-
-		if (ret != 0)
-			_wapi_transmitfile = NULL;
-	}
 
 	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
@@ -1399,17 +1367,7 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 	}
 
 	MONO_ENTER_GC_SAFE;
-
-	if (_wapi_disconnectex != NULL) {
-		if (!_wapi_disconnectex (sock, NULL, reuse ? TF_REUSE_SOCKET : 0, 0))
-			*werror = mono_w32socket_get_last_error ();
-	} else if (_wapi_transmitfile != NULL) {
-		if (!_wapi_transmitfile (sock, NULL, 0, 0, NULL, NULL, TF_DISCONNECT | (reuse ? TF_REUSE_SOCKET : 0)))
-			*werror = mono_w32socket_get_last_error ();
-	} else {
-		*werror = ERROR_NOT_SUPPORTED;
-	}
-
+	*werror = mono_w32socket_disconnect (sock, reuse);
 	MONO_EXIT_GC_SAFE;
 
 	mono_thread_info_uninstall_interrupt (&interrupted);

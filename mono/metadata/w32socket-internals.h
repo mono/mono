@@ -150,16 +150,13 @@ mono_w32socket_FD_SET (SOCKET sock, fd_set *set);
 #endif /* HOST_WIN32 */
 
 gint
+mono_w32socket_disconnect (SOCKET sock, gboolean reuse);
+
+gint
 mono_w32socket_set_blocking (SOCKET socket, gboolean blocking);
 
 gint
 mono_w32socket_get_available (SOCKET socket, guint64 *amount);
-
-gint
-mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect);
-
-gint
-mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile);
 
 void
 mono_w32socket_set_last_error (gint32 error);

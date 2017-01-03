@@ -984,8 +984,8 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 	return ret;
 }
 
-static gboolean
-socket_disconnect (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 reserved)
+gint
+mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 {
 	MonoW32HandleSocket *socket_handle;
 	gpointer handle;
@@ -994,66 +994,63 @@ socket_disconnect (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 r
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: called on socket %d!", __func__, sock);
 
-	if (reserved != 0) {
-		mono_w32socket_set_last_error (WSAEINVAL);
-		return(FALSE);
-	}
-
 	/* We could check the socket type here and fail unless its
 	 * SOCK_STREAM, SOCK_SEQPACKET or SOCK_RDM (according to msdn)
-	 * if we really wanted to
-	 */
+	 * if we really wanted to */
 
 	handle = GUINT_TO_POINTER (sock);
 	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		g_warning ("%s: error looking up socket handle %p", __func__, handle);
 		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return(FALSE);
+		return SOCKET_ERROR;
 	}
 
 	newsock = socket (socket_handle->domain, socket_handle->type, socket_handle->protocol);
 	if (newsock == -1) {
 		gint errnum = errno;
-
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: socket error: %s", __func__, strerror (errno));
-
-		errnum = mono_w32socket_convert_error (errnum);
-		mono_w32socket_set_last_error (errnum);
-
-		return(FALSE);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: socket error: %s", __func__, g_strerror (errnum));
+		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
+		return SOCKET_ERROR;
 	}
 
 	/* According to Stevens "Advanced Programming in the UNIX
 	 * Environment: UNIX File I/O" dup2() is atomic so there
 	 * should not be a race condition between the old fd being
-	 * closed and the new socket fd being copied over
-	 */
+	 * closed and the new socket fd being copied over */
 	do {
 		ret = dup2 (newsock, sock);
 	} while (ret == -1 && errno == EAGAIN);
 
 	if (ret == -1) {
 		gint errnum = errno;
-
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: dup2 error: %s", __func__, strerror (errno));
-
-		errnum = mono_w32socket_convert_error (errnum);
-		mono_w32socket_set_last_error (errnum);
-
-		return(FALSE);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: dup2 error: %s", __func__, g_strerror (errnum));
+		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
+		return SOCKET_ERROR;
 	}
 
 	close (newsock);
 
-	return(TRUE);
+	return 0;
+}
+
+static gboolean
+extension_disconect (SOCKET sock, OVERLAPPED *overlapped, guint32 flags, guint32 reserved)
+{
+	return mono_w32socket_disconnect (sock, flags & TF_REUSE_SOCKET) == 0;
+}
+
+static gboolean
+extension_transmit_file (SOCKET sock, gpointer file_handle, guint32 bytes_to_write, guint32 bytes_per_send,
+	OVERLAPPED *ol, TRANSMIT_FILE_BUFFERS *buffers, guint32 flags)
+{
+	return TransmitFile (sock, file_handle, bytes_to_write, bytes_per_send, ol, buffers, flags);
 }
 
 static struct {
 	GUID guid;
 	gpointer func;
 } extension_functions[] = {
-	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, socket_disconnect },
-	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, TransmitFile },
+	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, extension_disconect },
+	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, extension_transmit_file },
 	{ {0} , NULL },
 };
 
@@ -1365,20 +1362,6 @@ mono_w32socket_get_available (SOCKET socket, guint64 *amount)
 		return SOCKET_ERROR;
 	}
 
-	return 0;
-}
-
-gint
-mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect)
-{
-	*disconnect = socket_disconnect;
-	return 0;
-}
-
-gint
-mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile)
-{
-	*transmitfile = TransmitFile;
 	return 0;
 }
 

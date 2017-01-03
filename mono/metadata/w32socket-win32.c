@@ -237,6 +237,48 @@ BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, guint32 nNumb
 #endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
 gint
+mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
+{
+	LPFN_DISCONNECTEX disconnect;
+	LPFN_TRANSMITFILE transmit_file;
+	DWORD output_bytes;
+	gint ret;
+
+	/* Use the SIO_GET_EXTENSION_FUNCTION_POINTER to determine
+	 * the address of the disconnect method without taking
+	 * a hard dependency on a single provider
+	 *
+	 * For an explanation of why this is done, you can read the
+	 * article at http://www.codeproject.com/internet/jbsocketserver3.asp
+	 *
+	 * I _think_ the extension function pointers need to be looked
+	 * up for each socket.
+	 *
+	 * FIXME: check the best way to store pointers to functions in
+	 * managed objects that still works on 64bit platforms. */
+
+	GUID disconnect_guid = WSAID_DISCONNECTEX;
+	ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &disconnect_guid, sizeof (GUID), &disconnect, sizeof (LPFN_DISCONNECTEX), &output_bytes, NULL, NULL);
+	if (ret == 0) {
+		if (!disconnect (sock, NULL, reuse ? TF_REUSE_SOCKET : 0, 0))
+			return WSAGetLastError ();
+
+		return 0;
+	}
+
+	GUID transmit_file_guid = WSAID_TRANSMITFILE;
+	ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &transmit_file_guid, sizeof (GUID), &transmit_file, sizeof (LPFN_TRANSMITFILE), &output_bytes, NULL, NULL);
+	if (ret == 0) {
+		if (!transmit_file (sock, NULL, 0, 0, NULL, NULL, TF_DISCONNECT | (reuse ? TF_REUSE_SOCKET : 0)))
+			return WSAGetLastError ();
+
+		return 0;
+	}
+
+	return ERROR_NOT_SUPPORTED;
+}
+
+gint
 mono_w32socket_set_blocking (SOCKET sock, gboolean blocking)
 {
 	gulong nonblocking_long = !blocking;
@@ -247,31 +289,6 @@ gint
 mono_w32socket_get_available (SOCKET sock, guint64 *amount)
 {
 	return ioctlsocket (sock, FIONREAD, (int*) amount);
-}
-
-gint
-mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect)
-{
-	glong output_bytes;
-	GUID guid = WSAID_DISCONNECTEX;
-	return WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar*) &guid, sizeof (GUID), (gchar*) disconnect, sizeof (gpointer), &output_bytes);
-}
-
-gint
-mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile)
-{
-	/*
-	 * Use the SIO_GET_EXTENSION_FUNCTION_POINTER to
-	 * determine the address of the disconnect method without
-	 * taking a hard dependency on a single provider
-	 *
-	 * For an explanation of why this is done, you can read
-	 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
-	 */
-
-	glong output_bytes;
-	GUID guid = WSAID_TRANSMITFILE;
-	return WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar*) &guid, sizeof (GUID), (gchar*) transmitfile, sizeof (gpointer), &output_bytes);
 }
 
 void
