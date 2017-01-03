@@ -513,15 +513,17 @@ namespace System.Net {
             var data = AndroidPlatform.GetDefaultProxy ();
             if (data != null)
                 return data;
+
+            return new WebProxy (true);
 #else
             if (Platform.IsMacOS) {
                 var data = Mono.Net.CFNetwork.GetDefaultProxy ();
                 if (data != null)
                     return data;
             }
-#endif
 
             return new WebProxy (true);
+#endif
         }
 #endif
 
