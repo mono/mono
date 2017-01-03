@@ -1353,18 +1353,10 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObject *so
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
 
-#ifndef HOST_WIN32
-typedef BOOL (WINAPI *LPFN_DISCONNECTEX)(SOCKET, OVERLAPPED*, guint32, guint32);
-typedef BOOL (WINAPI *LPFN_TRANSMITFILE)(SOCKET, HANDLE, guint32, guint32, OVERLAPPED*, TRANSMIT_FILE_BUFFERS*, guint32);
-#endif
-
 void
 ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean reuse, gint32 *werror)
 {
 	int ret;
-	glong output_bytes = 0;
-	GUID disco_guid = WSAID_DISCONNECTEX;
-	GUID trans_guid = WSAID_TRANSMITFILE;
 	LPFN_DISCONNECTEX _wapi_disconnectex = NULL;
 	LPFN_TRANSMITFILE _wapi_transmitfile = NULL;
 	gboolean interrupted;
@@ -1380,8 +1372,7 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 	 * pointers to functions in managed objects that still works
 	 * on 64bit platforms.
 	 */
-	ret = mono_w32socket_ioctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&disco_guid, sizeof (GUID),
-					(gchar *)&_wapi_disconnectex, sizeof (void *), &output_bytes);
+	ret = mono_w32socket_get_disconnect (sock, &_wapi_disconnectex);
 
 	MONO_EXIT_GC_SAFE;
 
@@ -1393,16 +1384,7 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 
 		MONO_ENTER_GC_SAFE;
 
-		/*
-		 * Use the SIO_GET_EXTENSION_FUNCTION_POINTER to
-		 * determine the address of the disconnect method without
-		 * taking a hard dependency on a single provider
-		 * 
-		 * For an explanation of why this is done, you can read
-		 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
-		 */
-		ret = mono_w32socket_ioctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar *)&trans_guid, sizeof(GUID),
-				(gchar *)&_wapi_transmitfile, sizeof(void *), &output_bytes);
+		ret = mono_w32socket_get_transmit_file (sock, &_wapi_transmitfile);
 
 		MONO_EXIT_GC_SAFE;
 

@@ -1163,8 +1163,8 @@ static struct {
 	GUID guid;
 	gpointer func;
 } extension_functions[] = {
-	{ WSAID_DISCONNECTEX, wapi_disconnectex },
-	{ WSAID_TRANSMITFILE, TransmitFile },
+	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, wapi_disconnectex },
+	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, TransmitFile },
 	{ {0} , NULL },
 };
 
@@ -1181,9 +1181,9 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 		return SOCKET_ERROR;
 	}
 
-	if (command == SIO_GET_EXTENSION_FUNCTION_POINTER) {
-		gint i = 0;
-		GUID *guid = (GUID *)input;
+	if (command == 0xC8000006 /* SIO_GET_EXTENSION_FUNCTION_POINTER */) {
+		gint i;
+		GUID *guid;
 
 		if (inputlen < sizeof(GUID)) {
 			/* As far as I can tell, windows doesn't
@@ -1205,16 +1205,13 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 			return SOCKET_ERROR;
 		}
 
-		while (extension_functions[i].func != NULL) {
-			if (!memcmp (guid, &extension_functions[i].guid,
-				     sizeof(GUID))) {
-				memcpy (output, &extension_functions[i].func,
-					sizeof(gpointer));
+		guid = (GUID*) input;
+		for (i = 0; extension_functions[i].func; i++) {
+			if (memcmp (guid, &extension_functions[i].guid, sizeof(GUID)) == 0) {
+				memcpy (output, &extension_functions[i].func, sizeof(gpointer));
 				*written = sizeof(gpointer);
-				return(0);
+				return 0;
 			}
-
-			i++;
 		}
 
 		mono_w32socket_set_last_error (WSAEINVAL);
@@ -1479,6 +1476,20 @@ mono_w32socket_get_available (SOCKET socket, guint64 *amount)
 		return SOCKET_ERROR;
 	}
 
+	return 0;
+}
+
+gint
+mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect)
+{
+	*disconnect = wapi_disconnectex;
+	return 0;
+}
+
+gint
+mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile)
+{
+	*transmitfile = TransmitFile;
 	return 0;
 }
 

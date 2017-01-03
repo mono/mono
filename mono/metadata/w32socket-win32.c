@@ -249,6 +249,31 @@ mono_w32socket_get_available (SOCKET sock, guint64 *amount)
 	return ioctlsocket (sock, FIONREAD, (int*) amount);
 }
 
+gint
+mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect)
+{
+	glong output_bytes;
+	GUID guid = WSAID_DISCONNECTEX;
+	return WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar*) &guid, sizeof (GUID), (gchar*) disconnect, sizeof (gpointer), &output_bytes);
+}
+
+gint
+mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile)
+{
+	/*
+	 * Use the SIO_GET_EXTENSION_FUNCTION_POINTER to
+	 * determine the address of the disconnect method without
+	 * taking a hard dependency on a single provider
+	 *
+	 * For an explanation of why this is done, you can read
+	 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
+	 */
+
+	glong output_bytes;
+	GUID guid = WSAID_TRANSMITFILE;
+	return WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, (gchar*) &guid, sizeof (GUID), (gchar*) transmitfile, sizeof (gpointer), &output_bytes);
+}
+
 void
 mono_w32socket_set_last_error (gint32 error)
 {

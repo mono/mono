@@ -28,11 +28,6 @@
 
 #ifndef HOST_WIN32
 
-#define SIO_GET_EXTENSION_FUNCTION_POINTER 0xC8000006
-
-#define WSAID_DISCONNECTEX {0x7fda2e11,0x8630,0x436f,{0xa0, 0x31, 0xf5, 0x36, 0xa6, 0xee, 0xc1, 0x57}}
-#define WSAID_TRANSMITFILE {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}
-
 #define TF_DISCONNECT 0x01
 #define TF_REUSE_SOCKET 0x02
 
@@ -64,6 +59,9 @@ typedef struct {
 	guint16 Data3;
 	guint8 Data4[8];
 } GUID;
+
+typedef BOOL (WINAPI *LPFN_DISCONNECTEX)(SOCKET, OVERLAPPED*, guint32, guint32);
+typedef BOOL (WINAPI *LPFN_TRANSMITFILE)(SOCKET, HANDLE, guint32, guint32, OVERLAPPED*, TRANSMIT_FILE_BUFFERS*, guint32);
 
 #endif
 
@@ -156,6 +154,12 @@ mono_w32socket_set_blocking (SOCKET socket, gboolean blocking);
 
 gint
 mono_w32socket_get_available (SOCKET socket, guint64 *amount);
+
+gint
+mono_w32socket_get_disconnect (SOCKET sock, LPFN_DISCONNECTEX *disconnect);
+
+gint
+mono_w32socket_get_transmit_file (SOCKET sock, LPFN_TRANSMITFILE *transmitfile);
 
 void
 mono_w32socket_set_last_error (gint32 error);
