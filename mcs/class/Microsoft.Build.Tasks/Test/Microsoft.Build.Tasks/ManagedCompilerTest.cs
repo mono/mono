@@ -291,7 +291,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			mc.ARFC (c1);
 			mc.ACLC (c2);
 			
-			Assert.AreEqual ("/debug+", c1.ToString (), "A1");
+			Assert.AreEqual ("/debug:portable", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
