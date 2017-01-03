@@ -16,7 +16,8 @@
 typedef enum {
 	ENTRY_CODE_REGION = 1,
 	ENTRY_METHOD = 2,
-	ENTRY_TRAMPOLINE = 3
+	ENTRY_TRAMPOLINE = 3,
+	ENTRY_UNLOAD_CODE_REGION = 4
 } EntryType;
 
 /* One data packet sent from the runtime to the debugger */
@@ -54,6 +55,10 @@ typedef struct {
 	int id;
 } CodeRegionEntry;
 
+typedef struct {
+	int id;
+} UnloadCodeRegionEntry;
+
 /*
  * Represents a managed method
  */
@@ -88,6 +93,7 @@ static int id_generator;
 static GHashTable *codegen_regions;
 static DebugEntry *last_entry;
 static mono_mutex_t mutex;
+static GHashTable *dyn_codegen_regions;
 
 #define lldb_lock() mono_os_mutex_lock (&mutex)
 #define lldb_unlock() mono_os_mutex_unlock (&mutex)
@@ -277,24 +283,30 @@ add_entry (EntryType type, Buffer *buf)
  * Return a region id.
  */
 static int
-register_codegen_region (gpointer region_start, int region_size)
+register_codegen_region (gpointer region_start, int region_size, gboolean dynamic)
 {
 	CodeRegionEntry *region_entry;
 	int id;
 	Buffer tmp_buf;
 	Buffer *buf = &tmp_buf;
 
-	lldb_lock ();
-	if (!codegen_regions)
-		codegen_regions = g_hash_table_new (NULL, NULL);
-	id = GPOINTER_TO_INT (g_hash_table_lookup (codegen_regions, region_start));
-	if (id) {
+	if (dynamic) {
+		lldb_lock ();
+		id = ++id_generator;
 		lldb_unlock ();
-		return id;
+	} else {
+		lldb_lock ();
+		if (!codegen_regions)
+			codegen_regions = g_hash_table_new (NULL, NULL);
+		id = GPOINTER_TO_INT (g_hash_table_lookup (codegen_regions, region_start));
+		if (id) {
+			lldb_unlock ();
+			return id;
+		}
+		id = ++id_generator;
+		g_hash_table_insert (codegen_regions, region_start, GINT_TO_POINTER (id));
+		lldb_unlock ();
 	}
-	id = ++id_generator;
-	g_hash_table_insert (codegen_regions, region_start, GINT_TO_POINTER (id));
-	lldb_unlock ();
 
 	buffer_init (buf, 128);
 
@@ -365,16 +377,26 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 	if (!enabled)
 		return;
 
-	if (cfg->method->dynamic)
-		return;
-
 	/* Find the codegen region which contains the code */
 	memset (&udata, 0, sizeof (udata));
 	udata.code = cfg->native_code;
-	mono_domain_code_foreach (cfg->domain, find_code_region, &udata);
-	g_assert (udata.found);
+	if (cfg->method->dynamic) {
+		mono_code_manager_foreach (cfg->dynamic_info->code_mp, find_code_region, &udata);
+		g_assert (udata.found);
 
-	region_id = register_codegen_region (udata.region_start, udata.region_size);
+		region_id = register_codegen_region (udata.region_start, udata.region_size, TRUE);
+
+		lldb_lock ();
+		if (!dyn_codegen_regions)
+			dyn_codegen_regions = g_hash_table_new (NULL, NULL);
+		g_hash_table_insert (dyn_codegen_regions, cfg->method, GINT_TO_POINTER (region_id));
+		lldb_unlock ();
+	} else {
+		mono_domain_code_foreach (cfg->domain, find_code_region, &udata);
+		g_assert (udata.found);
+
+		region_id = register_codegen_region (udata.region_start, udata.region_size, FALSE);
+	}
 
 	buffer_init (buf, 256);
 
@@ -393,6 +415,33 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 
 	add_entry (ENTRY_METHOD, buf);
 	buffer_free (buf);
+}
+
+void
+mono_lldb_remove_method (MonoDomain *domain, MonoMethod *method, MonoJitDynamicMethodInfo *info)
+{
+	int region_id;
+	UnloadCodeRegionEntry *entry;
+	Buffer tmpbuf;
+	Buffer *buf = &tmpbuf;
+
+	g_assert (method->dynamic);
+
+	lldb_lock ();
+	region_id = GPOINTER_TO_INT (g_hash_table_lookup (dyn_codegen_regions, method));
+	g_hash_table_remove (dyn_codegen_regions, method);
+	lldb_unlock ();
+
+	buffer_init (buf, 256);
+
+	entry = (UnloadCodeRegionEntry*)buf->p;
+	buf->p += sizeof (UnloadCodeRegionEntry);
+	entry->id = region_id;
+
+	add_entry (ENTRY_UNLOAD_CODE_REGION, buf);
+	buffer_free (buf);
+
+	/* The method is associated with the code region, so it doesn't have to be unloaded */
 }
 
 void
@@ -415,7 +464,7 @@ mono_lldb_save_trampoline_info (MonoTrampInfo *info)
 		mono_domain_code_foreach (mono_get_root_domain (), find_code_region, &udata);
 	g_assert (udata.found);
 
-	region_id = register_codegen_region (udata.region_start, udata.region_size);
+	region_id = register_codegen_region (udata.region_start, udata.region_size, FALSE);
 
 	buffer_init (buf, 1024);
 
@@ -467,6 +516,11 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 
 void
 mono_lldb_save_trampoline_info (MonoTrampInfo *info)
+{
+}
+
+void
+mono_lldb_remove_method (MonoDomain *domain, MonoMethod *method, MonoJitDynamicMethodInfo *info)
 {
 }
 

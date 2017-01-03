@@ -1951,6 +1951,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		return;
 
 	mono_debug_remove_method (method, domain);
+	mono_lldb_remove_method (domain, method, ji);
 
 	mono_domain_lock (domain);
 	g_hash_table_remove (domain_jit_info (domain)->dynamic_code_hash, method);
@@ -3584,7 +3585,6 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mini_get_debug_options ()->lldb || g_getenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
-		mono_using_xdebug = TRUE;
 	}
 
 #ifdef XDEBUG_ENABLED
