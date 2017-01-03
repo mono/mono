@@ -168,6 +168,6 @@ gint32
 mono_w32socket_get_last_error (void);
 
 gint32
-mono_w32socket_convert_error (gint error, const gchar *func);
+mono_w32socket_convert_error (gint error);
 
 #endif // __MONO_METADATA_W32SOCKET_INTERNALS_H__

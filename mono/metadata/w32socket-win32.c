@@ -287,7 +287,7 @@ mono_w32socket_get_last_error (void)
 }
 
 gint32
-mono_w32socket_convert_error (gint error, const gchar *func)
+mono_w32socket_convert_error (gint error)
 {
 	return (error > 0 && error < WSABASEERR) ? error + WSABASEERR : error;
 }

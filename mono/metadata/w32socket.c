@@ -1301,7 +1301,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 	} while (ret == -1 && errno == EINTR);
 
 	if (ret == -1) {
-		*werror = mono_w32socket_convert_error (errno, __func__);
+		*werror = mono_w32socket_convert_error (errno);
 		g_free (pfds);
 		return FALSE;
 	}
@@ -1851,7 +1851,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArray **sockets, gint32
 	} while (ret == -1 && errno == EINTR);
 	
 	if (ret == -1) {
-		*werror = mono_w32socket_convert_error (errno, __func__);
+		*werror = mono_w32socket_convert_error (errno);
 		g_free (pfds);
 		return;
 	}
