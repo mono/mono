@@ -48,6 +48,12 @@ namespace Mono.Btls
 		extern static void mono_btls_error_clear_error ();
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
+		extern static int mono_btls_error_peek_error_line (out IntPtr file, out int line);
+
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
+		extern static int mono_btls_error_get_error_line (out IntPtr file, out int line);
+
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static void mono_btls_error_get_error_string_n (int error, IntPtr buf, int len);
 
 		public static int PeekError ()
@@ -77,6 +83,28 @@ namespace Mono.Btls
 			} finally {
 				Marshal.FreeHGlobal (buffer);
 			}
+		}
+
+		public static int PeekError (out string file, out int line)
+		{
+			IntPtr filePtr;
+			var error = mono_btls_error_peek_error_line (out filePtr, out line);
+			if (filePtr != IntPtr.Zero)
+				file = Marshal.PtrToStringAnsi (filePtr);
+			else
+				file = null;
+			return error;
+		}
+
+		public static int GetError (out string file, out int line)
+		{
+			IntPtr filePtr;
+			var error = mono_btls_error_get_error_line (out filePtr, out line);
+			if (filePtr != IntPtr.Zero)
+				file = Marshal.PtrToStringAnsi (filePtr);
+			else
+				file = null;
+			return error;
 		}
 	}
 }
