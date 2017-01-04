@@ -789,7 +789,7 @@ ICALL(RT_29, "IsWindowsRuntimeObjectType", ves_icall_System_RuntimeType_IsWindow
 ICALL(RT_17, "MakeGenericType", ves_icall_RuntimeType_MakeGenericType)
 ICALL(RT_18, "MakePointerType", ves_icall_RuntimeType_MakePointerType)
 HANDLES(ICALL(RT_19, "getFullName", ves_icall_System_RuntimeType_getFullName))
-ICALL(RT_21, "get_DeclaringMethod", ves_icall_RuntimeType_get_DeclaringMethod)
+HANDLES(ICALL(RT_21, "get_DeclaringMethod", ves_icall_RuntimeType_get_DeclaringMethod))
 ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringType)
 HANDLES(ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name))
 HANDLES(ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace))
