@@ -6660,15 +6660,19 @@ leave:
  * Returns: @obj if @obj is derived from @klass, returns NULL otherwise.
  */
 MonoObject *
-mono_object_castclass_mbyref (MonoObject *obj, MonoClass *klass)
+mono_object_castclass_mbyref (MonoObject *obj_raw, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
-
-	if (!obj) return NULL;
-	if (mono_object_isinst_mbyref_checked (obj, klass, &error)) return obj;
+	MONO_HANDLE_DCL (MonoObject, obj);
+	MonoObjectHandle result = MONO_HANDLE_NEW (MonoObject, NULL);
+	if (MONO_HANDLE_IS_NULL (obj))
+		goto leave;
+	MONO_HANDLE_ASSIGN (result, mono_object_handle_isinst_mbyref (obj, klass, &error));
 	mono_error_cleanup (&error);
-	return NULL;
+leave:
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 typedef struct {
