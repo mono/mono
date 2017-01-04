@@ -50,16 +50,16 @@ all-local: $(BTLS_STATIC_LIST) $(BTLS_SHARED_LIST)
 if DYNAMIC_BTLS
 build-shared/Makefile:
 	-mkdir -p build-shared
-	(cd build-shared && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_DYNAMIC_BTLS=1 $(abs_top_srcdir)/mono/btls)
+	(cd build-shared && CC="$(CC)" CXX="$(CXX)" $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_DYNAMIC_BTLS=1 $(abs_top_srcdir)/mono/btls)
 else
 build-shared/Makefile:
 	-mkdir -p build-shared
-	(cd build-shared && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 $(abs_top_srcdir)/mono/btls)
+	(cd build-shared && CC="$(CC)" CXX="$(CXX)" $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 $(abs_top_srcdir)/mono/btls)
 endif
 
 build-static/Makefile:
 	-mkdir -p build-static
-	(cd build-static && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) $(abs_top_srcdir)/mono/btls)
+	(cd build-static && CC="$(CC)" CXX="$(CXX)" $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) $(abs_top_srcdir)/mono/btls)
 
 $(BTLS_STATIC_LIST): build-static/Makefile
 	$(MAKE) -C build-static $(CMAKE_VERBOSE)
