@@ -1647,18 +1647,16 @@ ves_icall_RuntimeTypeHandle_type_is_assignable_from (MonoReflectionTypeHandle re
 }
 
 ICALL_EXPORT guint32
-ves_icall_RuntimeTypeHandle_IsInstanceOfType (MonoReflectionType *type, MonoObject *obj)
+ves_icall_RuntimeTypeHandle_IsInstanceOfType (MonoReflectionTypeHandle ref_type, MonoObjectHandle obj, MonoError *error)
 {
-	MonoError error;
-	MonoClass *klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, &error);
-	if (!is_ok (&error)) {
-		mono_error_set_pending_exception (&error);
-		return FALSE;
-	}
-	guint32 result = (mono_object_isinst_checked (obj, klass, &error) != NULL);
-	mono_error_set_pending_exception (&error);
-	return result;
+	mono_error_init (error);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass *klass = mono_class_from_mono_type (type);
+	mono_class_init_checked (klass, error);
+	return_val_if_nok (error, FALSE);
+	MonoObjectHandle inst = mono_object_handle_isinst (obj, klass, error);
+	return_val_if_nok (error, FALSE);
+	return !MONO_HANDLE_IS_NULL (inst);
 }
 
 ICALL_EXPORT guint32
