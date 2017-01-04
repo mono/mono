@@ -6152,27 +6152,24 @@ ves_icall_RuntimeType_make_byref_type (MonoReflectionType *type)
 	return ret;
 }
 
-ICALL_EXPORT MonoReflectionType *
-ves_icall_RuntimeType_MakePointerType (MonoReflectionType *type)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_RuntimeType_MakePointerType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
-	MonoClass *klass, *pklass;
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass *klass = mono_class_from_mono_type (type);
+	mono_class_init_checked (klass, error);
+	if (!is_ok (error))
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
-	klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
-	check_for_invalid_type (klass, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	check_for_invalid_type (klass, error);
+	if (!is_ok (error))
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
-	pklass = mono_ptr_class_get (type->type);
+	MonoClass *pklass = mono_ptr_class_get (type);
 
-	ret = mono_type_get_object_checked (mono_object_domain (type), &pklass->byval_arg, &error);
-	mono_error_set_pending_exception (&error);
-
-	return ret;
+	return mono_type_get_object_handle (domain, &pklass->byval_arg, error);
 }
 
 ICALL_EXPORT MonoObject *
