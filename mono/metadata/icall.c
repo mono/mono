@@ -2622,33 +2622,30 @@ ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle type, MonoErro
 	return mono_assembly_get_object_handle (domain, klass->image->assembly, error);
 }
 
-ICALL_EXPORT MonoReflectionType*
-ves_icall_RuntimeType_get_DeclaringType (MonoReflectionType *type)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_RuntimeType_get_DeclaringType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *ret;
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get ();
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass;
 
-	if (type->type->byref)
-		return NULL;
-	if (type->type->type == MONO_TYPE_VAR) {
-		MonoGenericContainer *param = mono_type_get_generic_param_owner (type->type);
+	if (type->byref)
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
+	if (type->type == MONO_TYPE_VAR) {
+		MonoGenericContainer *param = mono_type_get_generic_param_owner (type);
 		klass = param ? param->owner.klass : NULL;
-	} else if (type->type->type == MONO_TYPE_MVAR) {
-		MonoGenericContainer *param = mono_type_get_generic_param_owner (type->type);
+	} else if (type->type == MONO_TYPE_MVAR) {
+		MonoGenericContainer *param = mono_type_get_generic_param_owner (type);
 		klass = param ? param->owner.method->klass : NULL;
 	} else {
-		klass = mono_class_from_mono_type (type->type)->nested_in;
+		klass = mono_class_from_mono_type (type)->nested_in;
 	}
 
 	if (!klass)
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
-	ret = mono_type_get_object_checked (domain, &klass->byval_arg, &error);
-	mono_error_set_pending_exception (&error);
-
-	return ret;
+	return mono_type_get_object_handle (domain, &klass->byval_arg, error);
 }
 
 ICALL_EXPORT MonoStringHandle
