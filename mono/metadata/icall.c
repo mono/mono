@@ -2430,53 +2430,64 @@ fail:
 	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
-ICALL_EXPORT void
-ves_icall_RuntimeType_GetInterfaceMapData (MonoReflectionType *type, MonoReflectionType *iface, MonoArray **targets, MonoArray **methods)
+static gboolean
+set_interface_map_data_method_object (MonoDomain *domain, MonoMethod *method, MonoClass *iclass, int ioffset, MonoClass *klass, MonoArrayHandle targets, MonoArrayHandle methods, int i, MonoError *error)
 {
-	gboolean variance_used;
-	MonoClass *klass = mono_class_from_mono_type (type->type);
-	MonoClass *iclass = mono_class_from_mono_type (iface->type);
-	MonoReflectionMethod *member;
-	MonoMethod* method;
-	gpointer iter;
-	int i = 0, len, ioffset;
-	MonoDomain *domain;
-	MonoError error;
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoReflectionMethodHandle member = mono_method_get_object_handle (domain, method, iclass, error);
+	if (!is_ok (error))
+		goto leave;
 
-	mono_class_init_checked (klass, &error);
-	if (mono_error_set_pending_exception (&error))
-		return;
-	mono_class_init_checked (iclass, &error);
-	if (mono_error_set_pending_exception (&error))
-		return;
+	MONO_HANDLE_ARRAY_SETREF (methods, i, member);
+
+	MONO_HANDLE_ASSIGN (member, mono_method_get_object_handle (domain, klass->vtable [i + ioffset], klass, error));
+	if (!is_ok (error))
+		goto leave;
+
+	MONO_HANDLE_ARRAY_SETREF (targets, i, member);
+		
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+ICALL_EXPORT void
+ves_icall_RuntimeType_GetInterfaceMapData (MonoReflectionTypeHandle ref_type, MonoReflectionTypeHandle ref_iface, MonoArrayHandleOut targets, MonoArrayHandleOut methods, MonoError *error)
+{
+	mono_error_init (error);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass *klass = mono_class_from_mono_type (type);
+	MonoType *iface = MONO_HANDLE_GETVAL (ref_iface, type);
+	MonoClass *iclass = mono_class_from_mono_type (iface);
+
+	mono_class_init_checked (klass, error);
+	return_if_nok (error);
+	mono_class_init_checked (iclass, error);
+	return_if_nok (error);
 
 	mono_class_setup_vtable (klass);
 
-	ioffset = mono_class_interface_offset_with_variance (klass, iclass, &variance_used);
+	gboolean variance_used;
+	int ioffset = mono_class_interface_offset_with_variance (klass, iclass, &variance_used);
 	if (ioffset == -1)
 		return;
 
-	len = mono_class_num_methods (iclass);
-	domain = mono_object_domain (type);
-	MonoArray *targets_arr = mono_array_new_checked (domain, mono_defaults.method_info_class, len, &error);
-	if (mono_error_set_pending_exception (&error))
-		return;
-	mono_gc_wbarrier_generic_store (targets, (MonoObject*) targets_arr);
-	MonoArray *methods_arr = mono_array_new_checked (domain, mono_defaults.method_info_class, len, &error);
-	if (mono_error_set_pending_exception (&error))
-		return;
-	mono_gc_wbarrier_generic_store (methods, (MonoObject*) methods_arr);
-	iter = NULL;
+	int len = mono_class_num_methods (iclass);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
+	MonoArrayHandle targets_arr = mono_array_new_handle (domain, mono_defaults.method_info_class, len, error);
+	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (targets, targets_arr);
+
+	MonoArrayHandle methods_arr = mono_array_new_handle (domain, mono_defaults.method_info_class, len, error);
+	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (methods, methods_arr);
+
+	MonoMethod* method;
+	int i = 0;
+	gpointer iter = NULL;
 	while ((method = mono_class_get_methods (iclass, &iter))) {
-		member = mono_method_get_object_checked (domain, method, iclass, &error);
-		if (mono_error_set_pending_exception (&error))
+		if (!set_interface_map_data_method_object (domain, method, iclass, ioffset, klass, targets, methods, i, error))
 			return;
-		mono_array_setref (*methods, i, member);
-		member = mono_method_get_object_checked (domain, klass->vtable [i + ioffset], klass, &error);
-		if (mono_error_set_pending_exception (&error))
-			return;
-		mono_array_setref (*targets, i, member);
-		
 		i ++;
 	}
 }
