@@ -156,12 +156,20 @@ namespace Mono.Btls
 
 		Exception GetException (MonoBtlsSslError status)
 		{
-			var error = MonoBtlsError.GetError ();
+			string file;
+			int line;
+			var error = MonoBtlsError.GetError (out file, out line);
 			if (error == null)
 				return new MonoBtlsException (status);
 
 			var text = MonoBtlsError.GetErrorString (error);
-			return new MonoBtlsException ("{0} {1}", status, text);
+
+			string message;
+			if (file != null)
+				message = string.Format ("{0} {1}\n  at {2}:{3}", status, text, file, line);
+			else
+				message = string.Format ("{0} {1}", status, text);
+			return new MonoBtlsException (message);
 		}
 
 		public override bool ProcessHandshake ()
@@ -212,7 +220,7 @@ namespace Mono.Btls
 
 		void SetupCertificateStore ()
 		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (Settings != null && Settings.TrustAnchors != null) {
 				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
