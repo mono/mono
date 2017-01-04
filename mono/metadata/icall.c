@@ -2325,7 +2325,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 }
 
 typedef struct {
-	MonoArray *iface_array;
+	MonoArrayHandle iface_array;
 	MonoGenericContext *context;
 	MonoError *error;
 	MonoDomain *domain;
@@ -2335,28 +2335,32 @@ typedef struct {
 static void
 fill_iface_array (gpointer key, gpointer value, gpointer user_data)
 {
-	MonoReflectionType *rt;
+	HANDLE_FUNCTION_ENTER ();
 	FillIfaceArrayData *data = (FillIfaceArrayData *)user_data;
 	MonoClass *ic = (MonoClass *)key;
 	MonoType *ret = &ic->byval_arg, *inflated = NULL;
+	MonoError *error = data->error;
 
-	if (!mono_error_ok (data->error))
-		return;
+	if (!is_ok (error))
+		goto leave;
 
 	if (data->context && mono_class_is_ginst (ic) && mono_class_get_generic_class (ic)->context.class_inst->is_open) {
-		inflated = ret = mono_class_inflate_generic_type_checked (ret, data->context, data->error);
-		if (!mono_error_ok (data->error))
-			return;
+		inflated = ret = mono_class_inflate_generic_type_checked (ret, data->context, error);
+		if (!is_ok (error))
+			goto leave;
 	}
 
-	rt = mono_type_get_object_checked (data->domain, ret, data->error);
-	if (!mono_error_ok (data->error))
-		return;
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (data->domain, ret, error);
+	if (!is_ok (error))
+		goto leave;
 
-	mono_array_setref (data->iface_array, data->next_idx++, rt);
+	MONO_HANDLE_ARRAY_SETREF (data->iface_array, data->next_idx, rt);
+	data->next_idx++;
 
 	if (inflated)
 		mono_metadata_free_type (inflated);
+leave:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static guint
@@ -2367,50 +2371,55 @@ get_interfaces_hash (gconstpointer v1)
 	return k->type_token;
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_RuntimeType_GetInterfaces (MonoReflectionType* type)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_RuntimeType_GetInterfaces (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	MonoError error;
-	MonoClass *klass = mono_class_from_mono_type (type->type);
-	MonoClass *parent;
-	FillIfaceArrayData data = { 0 };
-	int len;
+	mono_error_init (error);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass *klass = mono_class_from_mono_type (type);
 
 	GHashTable *iface_hash = g_hash_table_new (get_interfaces_hash, NULL);
 
+	MonoGenericContext *context = NULL;
 	if (mono_class_is_ginst (klass) && mono_class_get_generic_class (klass)->context.class_inst->is_open) {
-		data.context = mono_class_get_context (klass);
+		context = mono_class_get_context (klass);
 		klass = mono_class_get_generic_class (klass)->container_class;
 	}
 
-	for (parent = klass; parent; parent = parent->parent) {
-		mono_class_setup_interfaces (parent, &error);
-		if (!mono_error_ok (&error))
+	for (MonoClass *parent = klass; parent; parent = parent->parent) {
+		mono_class_setup_interfaces (parent, error);
+		if (!is_ok (error))
 			goto fail;
-		collect_interfaces (parent, iface_hash, &error);
-		if (!mono_error_ok (&error))
+		collect_interfaces (parent, iface_hash, error);
+		if (!is_ok (error))
 			goto fail;
 	}
 
-	data.error = &error;
-	data.domain = mono_object_domain (type);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
 
-	len = g_hash_table_size (iface_hash);
+	int len = g_hash_table_size (iface_hash);
 	if (len == 0) {
 		g_hash_table_destroy (iface_hash);
-		if (!data.domain->empty_types) {
-			data.domain->empty_types = mono_array_new_cached (data.domain, mono_defaults.runtimetype_class, 0, &error);
-			if (!is_ok (&error))
+		if (!domain->empty_types) {
+			domain->empty_types = mono_array_new_cached (domain, mono_defaults.runtimetype_class, 0, error);
+			if (!is_ok (error))
 				goto fail;
 		}
-		return data.domain->empty_types;
+		return MONO_HANDLE_NEW (MonoArray, domain->empty_types);
 	}
 
-	data.iface_array = mono_array_new_cached (data.domain, mono_defaults.runtimetype_class, len, &error);
-	if (!is_ok (&error))
+	FillIfaceArrayData data;
+	data.iface_array = MONO_HANDLE_NEW (MonoArray, mono_array_new_cached (domain, mono_defaults.runtimetype_class, len, error));
+	if (!is_ok (error))
 		goto fail;
+	data.context = context;
+	data.error = error;
+	data.domain = domain;
+	data.next_idx = 0;
+
 	g_hash_table_foreach (iface_hash, fill_iface_array, &data);
-	if (!mono_error_ok (&error))
+
+	if (!is_ok (error))
 		goto fail;
 
 	g_hash_table_destroy (iface_hash);
@@ -2418,8 +2427,7 @@ ves_icall_RuntimeType_GetInterfaces (MonoReflectionType* type)
 
 fail:
 	g_hash_table_destroy (iface_hash);
-	mono_error_set_pending_exception (&error);
-	return NULL;
+	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
 ICALL_EXPORT void
