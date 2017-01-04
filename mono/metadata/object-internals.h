@@ -1735,9 +1735,6 @@ mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
 MonoObjectHandle
 mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 
-MonoObject *
-mono_object_isinst_mbyref_checked   (MonoObject *obj, MonoClass *klass, MonoError *error);
-
 MonoObjectHandle
 mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 

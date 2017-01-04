@@ -6551,17 +6551,6 @@ mono_object_isinst_mbyref (MonoObject *obj_raw, MonoClass *klass)
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-MonoObject *
-mono_object_isinst_mbyref_checked (MonoObject *obj_raw, MonoClass *klass, MonoError *error)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	HANDLE_FUNCTION_ENTER ();
-	mono_error_init (error);
-	MONO_HANDLE_DCL (MonoObject, obj);
-	MonoObjectHandle result = mono_object_handle_isinst_mbyref (obj, klass, error);
-	HANDLE_FUNCTION_RETURN_OBJ (result);
-}
 MonoObjectHandle
 mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error)
 {
