@@ -2701,53 +2701,61 @@ ves_icall_RuntimeTypeHandle_GetArrayRank (MonoReflectionTypeHandle ref_type, Mon
 	return klass->rank;
 }
 
-static MonoArray*
+static MonoArrayHandle
 create_type_array (MonoDomain *domain, MonoBoolean runtimeTypeArray, int count, MonoError *error)
 {
-	return mono_array_new_checked (domain, runtimeTypeArray ? mono_defaults.runtimetype_class : mono_defaults.systemtype_class, count, error);
+	return mono_array_new_handle (domain, runtimeTypeArray ? mono_defaults.runtimetype_class : mono_defaults.systemtype_class, count, error);
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_RuntimeType_GetGenericArguments (MonoReflectionType *type, MonoBoolean runtimeTypeArray)
+static gboolean
+set_type_object_in_array (MonoDomain *domain, MonoType *type, MonoArrayHandle dest, int i, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *rt;
-	MonoArray *res;
-	MonoClass *klass, *pklass;
-	MonoDomain *domain = mono_object_domain (type);
-	int i;
+	HANDLE_FUNCTION_ENTER();
+	mono_error_init (error);
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, type, error);
+	if (!is_ok (error))
+		goto leave;
 
-	klass = mono_class_from_mono_type (type->type);
+	MONO_HANDLE_ARRAY_SETREF (dest, i, rt);
 
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+ICALL_EXPORT MonoArrayHandle
+ves_icall_RuntimeType_GetGenericArguments (MonoReflectionTypeHandle ref_type, MonoBoolean runtimeTypeArray, MonoError *error)
+{
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
+
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass *klass = mono_class_from_mono_type (type);
+
+	MonoArrayHandle res = MONO_HANDLE_NEW (MonoArray, NULL);
 	if (mono_class_is_gtd (klass)) {
 		MonoGenericContainer *container = mono_class_get_generic_container (klass);
-		res = create_type_array (domain, runtimeTypeArray, container->type_argc, &error);
-		if (mono_error_set_pending_exception (&error))
-			return NULL;
-		for (i = 0; i < container->type_argc; ++i) {
-			pklass = mono_class_from_generic_parameter_internal (mono_generic_container_get_param (container, i));
+		MONO_HANDLE_ASSIGN (res, create_type_array (domain, runtimeTypeArray, container->type_argc, error));
+		if (!is_ok (error))
+			goto leave;
+		for (int i = 0; i < container->type_argc; ++i) {
+			MonoClass *pklass = mono_class_from_generic_parameter_internal (mono_generic_container_get_param (container, i));
 
-			rt = mono_type_get_object_checked (domain, &pklass->byval_arg, &error);
-			if (mono_error_set_pending_exception (&error))
-				return NULL;
-
-			mono_array_setref (res, i, rt);
+			if (!set_type_object_in_array (domain, &pklass->byval_arg, res, i, error))
+				goto leave;
 		}
+		
 	} else if (mono_class_is_ginst (klass)) {
 		MonoGenericInst *inst = mono_class_get_generic_class (klass)->context.class_inst;
-		res = create_type_array (domain, runtimeTypeArray, inst->type_argc, &error);
-		if (mono_error_set_pending_exception (&error))
-			return NULL;
-		for (i = 0; i < inst->type_argc; ++i) {
-			rt = mono_type_get_object_checked (domain, inst->type_argv [i], &error);
-			if (mono_error_set_pending_exception (&error))
-				return NULL;
-
-			mono_array_setref (res, i, rt);
+		MONO_HANDLE_ASSIGN (res, create_type_array (domain, runtimeTypeArray, inst->type_argc, error));
+		if (!is_ok (error))
+			goto leave;
+		for (int i = 0; i < inst->type_argc; ++i) {
+			if (!set_type_object_in_array (domain, inst->type_argv [i], res, i, error))
+				goto leave;
 		}
-	} else {
-		res = NULL;
 	}
+
+leave:
 	return res;
 }
 

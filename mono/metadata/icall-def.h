@@ -775,7 +775,7 @@ ICALL(RT_30, "GetCorrespondingInflatedConstructor", ves_icall_RuntimeType_GetCor
 ICALL(RT_31, "GetCorrespondingInflatedMethod", ves_icall_RuntimeType_GetCorrespondingInflatedMethod)
 ICALL(RT_3, "GetEvents_native", ves_icall_RuntimeType_GetEvents_native)
 ICALL(RT_5, "GetFields_native", ves_icall_RuntimeType_GetFields_native)
-ICALL(RT_6, "GetGenericArgumentsInternal", ves_icall_RuntimeType_GetGenericArguments)
+HANDLES(ICALL(RT_6, "GetGenericArgumentsInternal", ves_icall_RuntimeType_GetGenericArguments))
 ICALL(RT_9, "GetGenericParameterPosition", ves_icall_RuntimeType_GetGenericParameterPosition)
 HANDLES(ICALL(RT_10, "GetInterfaceMapData", ves_icall_RuntimeType_GetInterfaceMapData))
 HANDLES(ICALL(RT_11, "GetInterfaces", ves_icall_RuntimeType_GetInterfaces))
