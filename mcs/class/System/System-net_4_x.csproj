@@ -49,6 +49,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System\compmod\microsoft\win32\safehandles\SafeProcessHandle.cs" />
     <Compile Include="..\referencesource\System\compmod\system\codedom\CodeArgumentReferenceExpression.cs" />
@@ -828,6 +830,7 @@
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
     <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
@@ -978,8 +981,6 @@
     <Compile Include="System.Diagnostics\TraceImpl.cs" />
     <Compile Include="System.Diagnostics\TraceSourceInfo.cs" />
     <Compile Include="System.Diagnostics\Win32EventLog.cs" />
-    <Compile Include="System.IO.Compression\CompressionLevel.cs" />
-    <Compile Include="System.IO.Compression\CompressionMode.cs" />
     <Compile Include="System.IO.Compression\DeflateStream.cs" />
     <Compile Include="System.IO.Compression\GZipStream.cs" />
     <Compile Include="System.IO.Ports\Handshake.cs" />
