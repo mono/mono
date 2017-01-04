@@ -58,6 +58,11 @@ namespace System.IO.Compression
 		{
 		}
 
+		internal DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen, int windowsBits) :
+			this (stream, mode, leaveOpen, true)
+		{
+		}
+
 		internal DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen, bool gzip)
 		{
 			if (compressedStream == null)
@@ -83,6 +88,11 @@ namespace System.IO.Compression
 		
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
 			: this (stream, compressionLevel, leaveOpen, false)
+		{
+		}
+
+		internal DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen, int windowsBits)
+			: this (stream, compressionLevel, leaveOpen, true)
 		{
 		}
 
