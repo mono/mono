@@ -305,13 +305,13 @@ namespace MonoTests.System.IO.Compression
 					Assert.AreEqual(425, stream.Length);
 				}
 
-				// .NET does not support these in Read mode but we do.
 				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
 				using (var stream = entry2.Open())
 				{
-					Assert.AreEqual(857, stream.Length);
+					// .NET does not support these in Read mode
 					if (mode == ZipArchiveMode.Update)
 					{
+						Assert.AreEqual(857, stream.Length);
 						Assert.AreEqual(0, stream.Position);
 					}
 				}
