@@ -41,26 +41,18 @@ CMAKE_VERBOSE=$(if $(V),VERBOSE=1,)
 CMAKE_ARGS = -D CMAKE_INSTALL_PREFIX:PATH=$(prefix) -D BTLS_ROOT:PATH=$(BTLS_ROOT) \
 	-D SRC_DIR:PATH=$(abs_top_srcdir)/mono/btls -D BTLS_CFLAGS:STRING="$(BTLS_CFLAGS)"
 
-all-local: build-shared/libmono-btls-shared$(libsuffix) build-static/libmono-btls-static.a
+all-local: build/libmono-btls-shared$(libsuffix) build/libmono-btls-static.a
 
-build-shared/Makefile:
-	-mkdir -p build-shared
-	(cd build-shared && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 $(abs_top_srcdir)/mono/btls)
+build/libmono-btls-shared$(libsuffix) build/libmono-btls-static.a: build/Makefile
+	$(MAKE) -C build $(CMAKE_VERBOSE)
 
-build-shared/libmono-btls-shared$(libsuffix): build-shared/Makefile
-	$(MAKE) -C build-shared $(CMAKE_VERBOSE)
-
-build-static/Makefile:
-	-mkdir -p build-static
-	(cd build-static && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) $(abs_top_srcdir)/mono/btls)
-
-build-static/libmono-btls-static.a: build-static/Makefile
-	$(MAKE) -C build-static $(CMAKE_VERBOSE)
+build/Makefile:
+	-mkdir -p build
+	(cd build && $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) $(abs_top_srcdir)/mono/btls)
 
 clean-local:
-	-rm -rf build-static
-	-rm -rf build-shared
+	-rm -rf build
 
 install-exec-local:
 	$(mkinstalldirs) "$(DESTDIR)$(libdir)"
-	$(install_sh) build-shared/libmono-btls-shared.* "$(DESTDIR)$(libdir)"
+	$(install_sh) build/libmono-btls-shared.* "$(DESTDIR)$(libdir)"
