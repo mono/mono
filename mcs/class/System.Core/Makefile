@@ -52,8 +52,3 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 include ../../build/library.make
 
 TEST_HARNESS_EXCLUDES += $(extra_test_flags)
-
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local
-endif
