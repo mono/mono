@@ -532,40 +532,22 @@ get_current_locale_name (void)
 	return ret;
 }
 
-MonoString*
+char *
 ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 {
-	gchar *locale;
-	MonoString* ret;
-	MonoDomain *domain;
-
-	locale = get_current_locale_name ();
-	if (locale == NULL)
-		return NULL;
-
-	domain = mono_domain_get ();
-	ret = mono_string_new (domain, locale);
-	g_free (locale);
-
-	return ret;
+	return get_current_locale_name ();
 }
 
-MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj,
-		gint lcid)
+void *
+ves_icall_System_Globalization_CultureInfo_get_base_culture_address (void)
 {
-	MonoError error;
-	const CultureInfoEntry *ci;
-	
-	ci = culture_info_entry_from_lcid (lcid);
-	if(ci == NULL)
-		return FALSE;
+	return (void*)locale_strings;
+}
 
-	if (!construct_culture (this_obj, ci, &error)) {
-		mono_error_set_pending_exception (&error);
-		return FALSE;
-	}
-	return TRUE;
+void *
+ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (gint lcid)
+{
+	return (void*)culture_info_entry_from_lcid (lcid);
 }
 
 MonoBoolean
@@ -595,21 +577,7 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 	}
 	return TRUE;
 }
-/*
-MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specific_name (MonoCultureInfo *ci,
-		MonoString *name)
-{
-	gchar *locale;
-	gboolean ret;
 
-	locale = mono_string_to_utf8 (name);
-	ret = construct_culture_from_specific_name (ci, locale);
-	g_free (locale);
-
-	return ret;
-}
-*/
 MonoBoolean
 ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this_obj,
 		gint lcid)

@@ -78,6 +78,7 @@ typedef struct {
 	const gint number_group_sizes [GROUP_SIZE];	
 } NumberFormatEntry;
 
+/* XXXX This is mapped by managed struct CultureInfo.cs/Data */
 typedef struct {
 	const gint ansi;
 	const gint ebcdic;
@@ -87,6 +88,7 @@ typedef struct {
 	const char list_sep;
 } TextInfoEntry;
 
+/* XXXX This is mapped by managed struct CultureInfo.cs/NativeCultureInfo */
 typedef struct {
 	const gint16 lcid;
 	const gint16 parent_lcid;
