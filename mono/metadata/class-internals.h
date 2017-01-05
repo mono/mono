@@ -1518,6 +1518,9 @@ mono_class_set_declsec_flags (MonoClass *class, guint32 value);
 void
 mono_class_set_is_com_object (MonoClass *klass);
 
+gboolean
+mono_class_set_failure_from_mono_error (MonoClass *klass, MonoError *error);
+
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
 
