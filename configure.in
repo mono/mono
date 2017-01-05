@@ -2798,6 +2798,7 @@ mono/monograph/Makefile
 mono/io-layer/Makefile
 mono/mini/Makefile
 mono/profiler/Makefile
+mono/xamarin-android/Makefile
 ikvm-native/Makefile
 scripts/Makefile
 man/Makefile
