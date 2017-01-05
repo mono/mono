@@ -309,7 +309,9 @@ namespace System.Net {
         private static IPHostEntry GetLocalHost()
         {
 #if MONO
+#pragma warning disable 618
             return Dns.GetHostByName (Dns.GetHostName ());
+#pragma warning restore
 #else
             //
             // IPv6 Changes: If IPv6 is enabled, we can't simply use the

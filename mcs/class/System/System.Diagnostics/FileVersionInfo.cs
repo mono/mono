@@ -144,7 +144,7 @@ namespace System.Diagnostics {
 
 		public string FileName {
 			get {
-#if !MOBILE
+#if FEATURE_MONO_CAS
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, filename).Demand ();
 				}
@@ -278,7 +278,7 @@ namespace System.Diagnostics {
 		
 		public static FileVersionInfo GetVersionInfo (string fileName)
 		{
-#if !MOBILE
+#if FEATURE_MONO_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read, fileName).Demand ();
 			}

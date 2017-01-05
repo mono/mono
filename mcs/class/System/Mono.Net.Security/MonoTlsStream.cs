@@ -54,19 +54,20 @@ namespace Mono.Net.Security
 #if SECURITY_DEP		
 		readonly IMonoTlsProvider provider;
 		readonly NetworkStream networkStream;		
-#endif
 		readonly HttpWebRequest request;
-
-		IMonoSslStream sslStream;
-		WebExceptionStatus status;
 
 		internal HttpWebRequest Request {
 			get { return request; }
 		}
 
+		IMonoSslStream sslStream;
+
 		internal IMonoSslStream SslStream {
 			get { return sslStream; }
 		}
+#endif
+
+		WebExceptionStatus status;
 
 		internal WebExceptionStatus ExceptionStatus {
 			get { return status; }
