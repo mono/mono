@@ -26,6 +26,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/cil-coff.h>
+#include <mono/utils/bsearch.h>
 
 #include "debug-mono-ppdb.h"
 
@@ -593,5 +594,136 @@ mono_ppdb_lookup_locals (MonoDebugMethodInfo *minfo)
 		}
 	}
 
+	return res;
+}
+
+/*
+* We use this to pass context information to the row locator
+*/
+typedef struct {
+	int idx;			/* The index that we are trying to locate */
+	int col_idx;		/* The index in the row where idx may be stored */
+	MonoTableInfo *t;	/* pointer to the table */
+	guint32 result;
+} locator_t;
+
+static int
+table_locator(const void *a, const void *b)
+{
+	locator_t *loc = (locator_t *)a;
+	const char *bb = (const char *)b;
+	guint32 table_index = (bb - loc->t->base) / loc->t->row_size;
+	guint32 col;
+
+	col = mono_metadata_decode_row_col(loc->t, table_index, loc->col_idx);
+
+	if (loc->idx == col) {
+		loc->result = table_index;
+		return 0;
+	}
+	if (loc->idx < col)
+		return -1;
+	else
+		return 1;
+}
+
+typedef gboolean(*GuidComparer) (guint8* guid);
+static gboolean
+is_async_method_stepping_information_guid(guint8* debugInfoKindGuid)
+{
+	return debugInfoKindGuid[0] == 0xC5 &&
+		debugInfoKindGuid[1] == 0x2A &&
+		debugInfoKindGuid[2] == 0xFD &&
+		debugInfoKindGuid[3] == 0x54 &&
+		debugInfoKindGuid[4] == 0x25 &&
+		debugInfoKindGuid[5] == 0xE9 &&
+		debugInfoKindGuid[6] == 0x1A &&
+		debugInfoKindGuid[7] == 0x40 &&
+		debugInfoKindGuid[8] == 0x9C &&
+		debugInfoKindGuid[9] == 0x2A &&
+		debugInfoKindGuid[10] == 0xF9 &&
+		debugInfoKindGuid[11] == 0x4F &&
+		debugInfoKindGuid[12] == 0x17 &&
+		debugInfoKindGuid[13] == 0x10 &&
+		debugInfoKindGuid[14] == 0x72 &&
+		debugInfoKindGuid[15] == 0xF8;
+}
+
+//for parent_type see HasCustomDebugInformation table at https://github.com/dotnet/roslyn/blob/2ae8d5fed96ab3f1164031f9b4ac827f53289159/docs/specs/PortablePdb-Metadata.md#customdebuginformation-table-0x37
+static const char*
+lookup_custom_debug_information(MonoImage* image, guint32 token, uint8_t parent_type, GuidComparer comparer)
+{
+	MonoTableInfo *tables = image->tables;
+	MonoTableInfo *table = &tables[MONO_TABLE_CUSTOMDEBUGINFORMATION];
+	locator_t loc;
+
+	if (!table->base)
+		return 0;
+
+	loc.idx = (mono_metadata_token_index(token) << 5) | parent_type;
+	loc.col_idx = MONO_CUSTOMDEBUGINFORMATION_PARENT;
+	loc.t = table;
+
+	if (!mono_binary_search(&loc, table->base, table->rows, table->row_size, table_locator))
+		return NULL;
+	// Great we found one of possibly many CustomDebugInformations of this entity they are distinguished by KIND guid
+	// First try on this index found by binary search...(it's most likeley to be only one and binary search found the one we want)
+	if (comparer((guint8*)mono_metadata_guid_heap(image, mono_metadata_decode_row_col(table, loc.result, MONO_CUSTOMDEBUGINFORMATION_KIND)))) {
+		return mono_metadata_blob_heap(image, mono_metadata_decode_row_col(table, loc.result, MONO_CUSTOMDEBUGINFORMATION_VALUE));
+	}
+
+	// Move forward from binary found index, until parent token differs
+	for (int i = loc.result + 1; i < table->rows; i++)
+	{
+		if (mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_PARENT) != loc.idx)
+			break;
+		if (comparer((guint8*)mono_metadata_guid_heap(image, mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_KIND)))) {
+			return mono_metadata_blob_heap(image, mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_VALUE));
+		}
+	}
+
+	// Move backward from binary found index, until parent token differs
+	for (int i = loc.result - 1; i >= 0; i--)
+	{
+		if (mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_PARENT) != loc.idx)
+			break;
+		if (comparer((guint8*)mono_metadata_guid_heap(image, mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_KIND)))) {
+			return mono_metadata_blob_heap(image, mono_metadata_decode_row_col(table, i, MONO_CUSTOMDEBUGINFORMATION_VALUE));
+		}
+	}
+	return NULL;
+}
+
+MonoDebugMethodAsyncInfo*
+mono_ppdb_lookup_method_async_debug_info(MonoDebugMethodInfo *minfo)
+{
+	MonoMethod *method = minfo->method;
+	MonoPPDBFile *ppdb = minfo->handle->ppdb;
+	MonoImage *image = ppdb->image;
+	char const *blob = lookup_custom_debug_information(image, method->token, 0, is_async_method_stepping_information_guid);
+	if (!blob)
+		return NULL;
+	int blob_len = mono_metadata_decode_blob_size(blob, &blob);
+	MonoDebugMethodAsyncInfo* res = g_new0(MonoDebugMethodAsyncInfo, 1);
+	char const *pointer = blob;
+	pointer += 4;//catchHandlerOffset
+	while (pointer - blob < blob_len) {
+		res->num_awaits++;
+		pointer += 8;//yieldOffset+resumeOffset
+		mono_metadata_decode_value(pointer, &pointer);//moveNextMethodToken
+	}
+	g_assert(pointer - blob == blob_len); //Check that we used all blob data
+	pointer = blob; //reset pointer after we figured num_awaits
+
+	res->yieldOffsets = g_new(uint32_t, res->num_awaits);
+	res->resumeOffsets = g_new(uint32_t, res->num_awaits);
+	res->moveNextMethodToken = g_new(uint32_t, res->num_awaits);
+
+	res->catchHandlerOffset = read32(pointer); pointer += 4;
+	for (int i = 0; i < res->num_awaits; i++) {
+		res->yieldOffsets[i] = read32(pointer); pointer += 4;
+		res->resumeOffsets[i] = read32(pointer); pointer += 4;
+		res->moveNextMethodToken[i] = mono_metadata_decode_value(pointer, &pointer);
+	}
 	return res;
 }
