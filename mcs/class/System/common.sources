@@ -1,6 +1,8 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
 
+corefx/ZLibNative.cs
+
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
 
 System/IOSelector.cs
@@ -26,7 +28,6 @@ System.Diagnostics/ThreadWaitReason.cs
 System.Diagnostics/TraceImpl.cs
 
 System.IO.Compression/DeflateStream.cs
-System.IO.Compression/GZipStream.cs
 
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
@@ -927,3 +928,4 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
+../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
