@@ -102,7 +102,7 @@ public class Program
 			str.WriteLine ("partial class SR");
 			str.WriteLine ("{");
 			foreach (var entry in txtStrings) {
-				str.Write ($"\tpublic const string {entry.Item1} = \"{entry.Item2}\";");
+				str.Write ($"\tpublic const string {entry.Item1} = \"{ToCSharpString (entry.Item2)}\";");
 
 				if (!string.IsNullOrEmpty (entry.Item3))
 					str.Write (" // {entry.Item3}");
@@ -112,6 +112,13 @@ public class Program
 			}
 			str.WriteLine ("}");
 		}
+	}
+
+	static string ToCSharpString (string str)
+	{
+		str = str.Replace ("\n", "\\n");
+
+		return str.Replace ("\\", "\\\\").Replace ("\"", "\\\"");
 	}
 
 	static bool LoadStrings (List<Tuple<string, string, string>> resourcesStrings, List<string> files)
