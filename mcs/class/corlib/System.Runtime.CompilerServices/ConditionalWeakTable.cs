@@ -72,12 +72,28 @@ namespace System.Runtime.CompilerServices
 		{
 		}
 
-		/*LOCKING: _lock must be held*/
-		void Rehash () {
-			uint newSize = (uint)HashHelpers.GetPrime ((data.Length << 1) | 1);
-			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
+		private void RecomputeSize ()
+		{
+			size = 0;
+			for (int i = 0; i < data.Length; i++) {
+				if (data [i].key != null)
+					size++;
+			}
+		}
 
-			Ephemeron[] tmp = new Ephemeron [newSize];
+		/*LOCKING: _lock must be held*/
+		private void Rehash ()
+		{
+			// Size doesn't track elements that die without being removed. Before attempting
+			// to rehash we traverse the array to see how many entries are left alive. We
+			// rehash the array into a new one which has a capacity relative to the number of
+			// live entries.
+			RecomputeSize ();
+
+			uint newLength = (uint)HashHelpers.GetPrime (((int)(size / LOAD_FACTOR) << 1) | 1);
+			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newLength);
+
+			Ephemeron[] tmp = new Ephemeron [newLength];
 			GC.register_ephemeron_array (tmp);
 			size = 0;
 
