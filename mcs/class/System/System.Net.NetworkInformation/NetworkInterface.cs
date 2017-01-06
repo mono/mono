@@ -255,6 +255,7 @@ namespace System.Net.NetworkInformation {
 
 			try {
 				IntPtr next = ifap;
+				int nullNameCount = 0;
 				while (next != IntPtr.Zero) {
 					ifaddrs   addr = (ifaddrs) Marshal.PtrToStructure (next, typeof (ifaddrs));
 					IPAddress address = IPAddress.None;
@@ -331,6 +332,9 @@ namespace System.Net.NetworkInformation {
 					}
 
 					LinuxNetworkInterface iface = null;
+
+					if (String.IsNullOrEmpty (name))
+						name = "\0" + (++nullNameCount).ToString ();
 
 					if (!interfaces.TryGetValue (name, out iface)) {
 						iface = new LinuxNetworkInterface (name);
