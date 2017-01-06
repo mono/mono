@@ -10,6 +10,11 @@
 #include "config.h"
 #include "mini.h"
 #include "lldb.h"
+#include "seq-points.h"
+
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-mono-symfile.h>
 
 #if !defined(DISABLE_JIT) && !defined(DISABLE_LLDB)
 
@@ -68,6 +73,7 @@ typedef struct {
 	/* The id of the codegen region which contains CODE */
 	int region_id;
 	int code_size;
+	/* Followed by variable size data */
 } MethodEntry;
 
 /*
@@ -79,6 +85,7 @@ typedef struct {
 	/* The id of the codegen region which contains CODE */
 	int region_id;
 	int code_size;
+	/* Followed by variable size data */
 } TrampolineEntry;
 
 #define MAJOR_VERSION 1
@@ -373,6 +380,11 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 	int region_id;
 	Buffer tmpbuf;
 	Buffer *buf = &tmpbuf;
+	MonoDebugMethodInfo *minfo;
+	int i, j, n_il_offsets;
+	int *source_files;
+	GPtrArray *source_file_list;
+	MonoSymSeqPoint *sym_seq_points;
 
 	if (!enabled)
 		return;
@@ -412,6 +424,40 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 	char *s = g_strdup_printf ("%s_%s", cfg->method->klass->name, cfg->method->name);
 	buffer_add_string (buf, s);
 	g_free (s);
+
+	minfo = mono_debug_lookup_method (cfg->method);
+	if (minfo) {
+		mono_debug_get_seq_points (minfo, NULL, &source_file_list, &source_files, &sym_seq_points, &n_il_offsets);
+		buffer_add_int (buf, source_file_list->len);
+		for (i = 0; i < source_file_list->len; ++i) {
+			MonoDebugSourceInfo *sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, i);
+			buffer_add_string (buf, sinfo->source_file);
+			for (j = 0; j < 16; ++j)
+				buffer_add_byte (buf, sinfo->hash [j]);
+		}
+		buffer_add_int (buf, n_il_offsets);
+		for (i = 0; i < n_il_offsets; ++i) {
+			MonoSymSeqPoint *sp = &sym_seq_points [i];
+			const char *srcfile = "";
+
+			if (source_files [i] != -1) {
+				MonoDebugSourceInfo *sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, source_files [i]);
+				srcfile = sinfo->source_file;
+			}
+			buffer_add_int (buf, sp->il_offset);
+			buffer_add_int (buf, sp->line);
+			buffer_add_int (buf, source_files [i]);
+			buffer_add_int (buf, sp->column);
+			buffer_add_int (buf, sp->end_line);
+			buffer_add_int (buf, sp->end_column);
+		}
+		g_free (source_files);
+		g_free (sym_seq_points);
+		g_ptr_array_free (source_file_list, TRUE);
+	} else {
+		buffer_add_int (buf, 0);
+		buffer_add_int (buf, 0);
+	}
 
 	add_entry (ENTRY_METHOD, buf);
 	buffer_free (buf);
