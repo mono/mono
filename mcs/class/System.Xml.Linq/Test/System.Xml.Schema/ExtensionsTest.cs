@@ -220,8 +220,8 @@ namespace MonoTests.System.Xml.Schema
 				}
 			}
 
-			Assert.IsTrue (afterNoOfAttributes >= beforeNoOfAttributes, "newAttributes");
-			Assert.IsTrue (afterNoOfElements >= beforeNoOfElements, "newElements");
+			AssertHelper.GreaterOrEqual (afterNoOfAttributes, beforeNoOfAttributes, "newAttributes");
+			AssertHelper.GreaterOrEqual (afterNoOfElements, beforeNoOfElements, "newElements");
 		}
 
 		/*

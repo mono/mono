@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading;
 
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Diagnostics
 {

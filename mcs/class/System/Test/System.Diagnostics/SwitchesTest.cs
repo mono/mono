@@ -190,8 +190,8 @@ namespace MonoTests.System.Diagnostics {
 		public void NullSwitchHasEmptyDisplayNameAndDescription ()
 		{
 			var s = new TestNullSwitch ();
-			Assert.AreEqual (s.DisplayName.Length, 0);
-			Assert.AreEqual (s.Description.Length, 0);
+			AssertHelper.IsEmpty (s.DisplayName);
+			AssertHelper.IsEmpty (s.Description);
 		}
 	}
 }

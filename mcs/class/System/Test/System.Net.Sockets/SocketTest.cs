@@ -24,7 +24,6 @@ using System.IO;
 using System.Collections.Generic;
 
 using MonoTests.Helpers;
-using Assert = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Net.Sockets
 {

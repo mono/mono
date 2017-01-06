@@ -444,9 +444,8 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
-#if !MONOMAC // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		[Test]
-#endif
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -569,9 +568,8 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (scheduler.ExecutedInline, "#5");
 		}
 
-#if !MONOMAC // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		[Test]
-#endif
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_BeginCallback ()
 		{
 			bool called = false;

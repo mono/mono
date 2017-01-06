@@ -136,7 +136,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("file", resolved.Scheme);
 			var task = sr.GetEntityAsync (resolved, null, typeof (Stream));
 			Assert.That (task.Wait (3000));
-			Assert.IsTrue (task.Result is Stream);
+			Assert.IsTrue (task.Result is FileStream, "Unexpected type: " + task.Result.GetType());
 		}
 
 	}
