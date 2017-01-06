@@ -221,7 +221,7 @@ namespace MonoTests.System.Xml.Schema
 			}
 
 			AssertHelper.GreaterOrEqual (afterNoOfAttributes, beforeNoOfAttributes, "newAttributes");
-			AssertHelper.GreaterOrEqual (afterNoOfElements, beforeNoOfElements, "newElements");
+			AssertHelper.GreaterOrEqual (afterNoOfElements, beforeNoOfElements, "newElements");       
 		}
 
 		/*
