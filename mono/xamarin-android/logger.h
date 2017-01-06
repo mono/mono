@@ -30,6 +30,8 @@ typedef enum _LogCategories {
 	LOG_NETLINK   = 1 << 9,
 } LogCategories;
 
+#if 0
+
 extern unsigned int log_categories;
 
 #if DEBUG
@@ -47,5 +49,16 @@ void log_info (LogCategories category, const char *format, ...);
 void log_warn (LogCategories category, const char *format, ...);
 
 void log_debug (LogCategories category, const char *format, ...);
+
+#else
+
+#define init_categories(override_dir)
+#define log_error(category, format, ...)
+#define log_fatal(category, format, ...)
+#define log_info(category, format, ...)
+#define log_warn(category, format, ...)
+#define log_debug(category, format, ...)
+
+#endif
 
 #endif /* __MONODROID_LOGGER_H__ */

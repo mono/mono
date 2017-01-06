@@ -958,3 +958,8 @@ ICALL(COMOBJ_1, "CreateRCW", ves_icall_System_ComObject_CreateRCW)
 ICALL(COMOBJ_2, "GetInterfaceInternal", ves_icall_System_ComObject_GetInterfaceInternal)
 ICALL(COMOBJ_3, "ReleaseInterfaces", ves_icall_System_ComObject_ReleaseInterfaces)
 #endif
+
+ICALL_TYPE(LINNETIF, "System.Net.NetworkInformation.LinuxNetworkInterface", LINNETIF_1)
+ICALL(LINNETIF_1, "InitializeInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_InitializeInterfaceAddresses)
+ICALL(LINNETIF_2, "GetInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetInterfaceAddresses)
+ICALL(LINNETIF_3, "FreeInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_FreeInterfaceAddresses)

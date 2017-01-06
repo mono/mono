@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
@@ -223,15 +224,6 @@ namespace System.Net.NetworkInformation {
 	//
 	class LinuxNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport ("__Internal")]
-		extern static void _monodroid_getifaddrs_init ();
-		
-		[DllImport ("__Internal")]
-		extern static int _monodroid_getifaddrs (out IntPtr ifap);
-
-		[DllImport ("__Internal")]
-		extern static void _monodroid_freeifaddrs (IntPtr ifap);
-
 		const int AF_INET   = 2;
 		const int AF_INET6  = 10;
 		const int AF_PACKET = 17;
@@ -244,12 +236,21 @@ namespace System.Net.NetworkInformation {
 		internal string IfacePath {
 			get { return iface_path; }
 		}
-		
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static void InitializeInterfaceAddresses ();
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static int GetInterfaceAddresses (out IntPtr ifap);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static void FreeInterfaceAddresses (IntPtr ifap);
+
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
 			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 			IntPtr ifap;
-			if (_monodroid_getifaddrs (out ifap) != 0)
+			if (GetInterfaceAddresses (out ifap) != 0)
 				throw new SystemException ("getifaddrs() failed");
 
 			try {
@@ -351,7 +352,7 @@ namespace System.Net.NetworkInformation {
 					next = addr.ifa_next;
 				}
 			} finally {
-				_monodroid_freeifaddrs (ifap);
+				FreeInterfaceAddresses (ifap);
 			}
 
 			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
@@ -365,7 +366,7 @@ namespace System.Net.NetworkInformation {
 
 		static LinuxNetworkInterface ()
 		{
-			_monodroid_getifaddrs_init ();
+			InitializeInterfaceAddresses ();
 		}
 		
 		LinuxNetworkInterface (string name)

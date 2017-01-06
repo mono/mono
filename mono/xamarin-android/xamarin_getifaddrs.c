@@ -815,7 +815,9 @@ get_link_info (const struct nlmsghdr *message)
 
 			default:
 				log_debug (LOG_NETLINK, "     rta_type: ");
+#if DEBUG
 				print_ifla_name (attribute->rta_type);
+#endif
 				break;
 		}
 
