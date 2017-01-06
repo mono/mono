@@ -1,22 +1,28 @@
 #include <assert.h>
 #include <errno.h>
+#ifndef WIN32
 #include <dlfcn.h>
+#endif
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <sys/types.h>
+#ifndef WIN32
 #include <sys/socket.h>
 
 #include <unistd.h>
+#endif
 
 #if LINUX
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <linux/if_arp.h>
 #endif /* def LINUX */
+#ifndef WIN32
 #include <netinet/in.h>
+#endif
 
 #if ANDROID
 #include <android/log.h>
