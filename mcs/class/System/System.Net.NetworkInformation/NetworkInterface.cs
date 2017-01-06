@@ -223,11 +223,14 @@ namespace System.Net.NetworkInformation {
 	//
 	class LinuxNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport ("libc")]
-		static extern int getifaddrs (out IntPtr ifap);
+		[DllImport ("__Internal")]
+		extern static void _monodroid_getifaddrs_init ();
+		
+		[DllImport ("__Internal")]
+		extern static int _monodroid_getifaddrs (out IntPtr ifap);
 
-		[DllImport ("libc")]
-		static extern void freeifaddrs (IntPtr ifap);
+		[DllImport ("__Internal")]
+		extern static void _monodroid_freeifaddrs (IntPtr ifap);
 
 		const int AF_INET   = 2;
 		const int AF_INET6  = 10;
@@ -246,7 +249,7 @@ namespace System.Net.NetworkInformation {
 		{
 			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 			IntPtr ifap;
-			if (getifaddrs (out ifap) != 0)
+			if (_monodroid_getifaddrs (out ifap) != 0)
 				throw new SystemException ("getifaddrs() failed");
 
 			try {
@@ -348,7 +351,7 @@ namespace System.Net.NetworkInformation {
 					next = addr.ifa_next;
 				}
 			} finally {
-				freeifaddrs (ifap);
+				_monodroid_freeifaddrs (ifap);
 			}
 
 			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
@@ -358,6 +361,11 @@ namespace System.Net.NetworkInformation {
 				x++;
 			}
 			return result;
+		}
+
+		static LinuxNetworkInterface ()
+		{
+			_monodroid_getifaddrs_init ();
 		}
 		
 		LinuxNetworkInterface (string name)
