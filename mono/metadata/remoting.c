@@ -83,8 +83,10 @@ static MonoMethod *method_rs_serialize, *method_rs_deserialize, *method_exc_fixe
 static MonoMethod *method_set_call_context, *method_needs_context_sink, *method_rs_serialize_exc;
 #endif
 
+#if !defined (DISABLE_JIT)
 static gpointer
 mono_compile_method_icall (MonoMethod *method);
+#endif
 
 static void
 register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)

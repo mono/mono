@@ -1352,9 +1352,12 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAsse
 		assembly = dest->klass->image->assembly;
 		type_resolve = TRUE;
 		rootimage = assembly->image;
-	} else {
+	}
+#ifndef IL2CPP_ON_MONO
+	else {
 		g_warning (G_STRLOC);
 	}
+#endif
 	*caller_assembly = assembly;
 
 	if (info->assembly.name)
@@ -5583,11 +5586,18 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 }
 
 ICALL_EXPORT gboolean
-ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char *name, MonoAssemblyName *aname, gboolean *is_version_definited, gboolean *is_token_defined)
+ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char *name, MonoAssemblyName *aname, MonoBoolean *is_version_defined, MonoBoolean *is_token_defined)
 {
-	*is_version_definited = *is_token_defined = FALSE;
+	gboolean gb_is_version_defined, gb_is_token_defined;
 
-	return mono_assembly_name_parse_full (name, aname, TRUE, is_version_definited, is_token_defined);
+	gb_is_version_defined = gb_is_token_defined = FALSE;
+
+	gboolean retVal = mono_assembly_name_parse_full(name, aname, TRUE, &gb_is_version_defined, &gb_is_token_defined);
+
+	*is_version_defined = gb_is_version_defined;
+	*is_token_defined = gb_is_token_defined;
+
+	return retVal;
 }
 
 ICALL_EXPORT MonoReflectionTypeHandle

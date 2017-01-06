@@ -966,3 +966,5 @@ unity_mono_reflection_method_get_method
 mono_unity_g_free
 mono_set_find_plugin_callback
 mono_unity_set_vprintf_func
+mono_type_get_name_full
+mono_unity_set_vprintf_func

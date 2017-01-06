@@ -208,6 +208,9 @@ static gint32 managed_thread_id_counter = 0;
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (appdomain_unloaded_exception, "System", "AppDomainUnloadedException")
 
+static gint32
+mono_wait_uninterrupted(MonoInternalThread *thread, guint32 numhandles, gpointer *handles, gboolean waitall, gint32 ms, MonoError *error);
+
 static void
 mono_threads_lock (void)
 {
@@ -5319,4 +5322,25 @@ mono_thread_internal_is_current (MonoInternalThread *internal)
 {
 	g_assert (internal);
 	return mono_native_thread_id_equals (mono_native_thread_id_get (), MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid));
+}
+
+MonoException* mono_unity_thread_check_exception()
+{
+	MonoInternalThread *thread = mono_thread_internal_current();
+	MonoThread *sys_thread = mono_thread_current();
+
+	lock_thread(thread);
+
+	if (sys_thread->pending_exception) {
+		MonoException *exc;
+
+		exc = sys_thread->pending_exception;
+		sys_thread->pending_exception = NULL;
+		
+		unlock_thread(thread);
+		return exc;
+	}
+
+	unlock_thread(thread);
+	return NULL;
 }
