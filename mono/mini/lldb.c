@@ -25,6 +25,11 @@ typedef enum {
 	ENTRY_UNLOAD_CODE_REGION = 4
 } EntryType;
 
+/*
+ * Need to make sure these structures have the same size and alignment on
+ * all platforms.
+ */
+
 /* One data packet sent from the runtime to the debugger */
 typedef struct {
 	/* Pointer to the next entry */
@@ -32,14 +37,18 @@ typedef struct {
 	/* The type of data pointed to by ADDR */
 	/* One of the ENTRY_ constants */
 	guint32 type;
+	/* Align */
+	guint32 dummy;
 	guint64 size;
-	gpointer addr;
+	guint64 addr;
 } DebugEntry;
 
 typedef struct
 {
 	/* (MAJOR << 16) | MINOR */
 	guint32 version;
+	/* Align */
+	guint32 dummy;
 	/* Keep these as pointers so accessing them is atomic */
 	DebugEntry *entry;
 	/* List of all entries */
@@ -73,6 +82,8 @@ typedef struct {
 	/* The id of the codegen region which contains CODE */
 	int region_id;
 	int code_size;
+	/* Align */
+	guint32 dummy;
 	/* Followed by variable size data */
 } MethodEntry;
 
@@ -85,6 +96,8 @@ typedef struct {
 	/* The id of the codegen region which contains CODE */
 	int region_id;
 	int code_size;
+	/* Align */
+	guint32 dummy;
 	/* Followed by variable size data */
 } TrampolineEntry;
 
@@ -260,7 +273,7 @@ add_entry (EntryType type, Buffer *buf)
 
 	entry = g_malloc0 (sizeof (DebugEntry));
 	entry->type = type;
-	entry->addr = data;
+	entry->addr = (guint64)(gsize)data;
 	entry->size = size;
 
 	mono_memory_barrier ();
