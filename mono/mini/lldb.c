@@ -450,7 +450,7 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 
 	emit_unwind_info (cfg->unwind_ops, buf);
 
-	char *s = g_strdup_printf ("%s_%s", cfg->method->klass->name, cfg->method->name);
+	char *s = mono_method_full_name (cfg->method, TRUE);
 	buffer_add_string (buf, s);
 	g_free (s);
 
