@@ -385,6 +385,21 @@ mono_lldb_init (const char *options)
 	mono_os_mutex_init_recursive (&mutex);
 }
 
+typedef struct
+{
+	MonoSymSeqPoint sp;
+	int native_offset;
+} FullSeqPoint;
+
+static int
+compare_by_addr (const void *arg1, const void *arg2)
+{
+	const FullSeqPoint *sp1 = arg1;
+	const FullSeqPoint *sp2 = arg2;
+
+	return sp1->native_offset - sp2->native_offset;
+}
+
 void
 mono_lldb_save_method_info (MonoCompile *cfg)
 {
@@ -398,6 +413,7 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 	int *source_files;
 	GPtrArray *source_file_list;
 	MonoSymSeqPoint *sym_seq_points;
+	FullSeqPoint *locs;
 
 	if (!enabled)
 		return;
@@ -439,7 +455,8 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 	g_free (s);
 
 	minfo = mono_debug_lookup_method (cfg->method);
-	if (minfo) {
+	MonoSeqPointInfo *seq_points = cfg->seq_point_info;
+	if (minfo && seq_points) {
 		mono_debug_get_seq_points (minfo, NULL, &source_file_list, &source_files, &sym_seq_points, &n_il_offsets);
 		buffer_add_int (buf, source_file_list->len);
 		for (i = 0; i < source_file_list->len; ++i) {
@@ -449,14 +466,31 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 				buffer_add_byte (buf, sinfo->hash [j]);
 		}
 		buffer_add_int (buf, n_il_offsets);
+
+		// The sym seq points are ordered by il offset, need to order them by address
+		locs = g_new0 (FullSeqPoint, n_il_offsets);
 		for (i = 0; i < n_il_offsets; ++i) {
-			MonoSymSeqPoint *sp = &sym_seq_points [i];
+			locs [i].sp = sym_seq_points [i];
+
+			// FIXME: O(n^2)
+			SeqPoint seq_point;
+			if (mono_seq_point_find_by_il_offset (seq_points, sym_seq_points [i].il_offset, &seq_point))
+				locs [i].native_offset = seq_point.native_offset;
+			else
+				locs [i].native_offset = -1;
+		}
+		qsort (locs, n_il_offsets, sizeof (FullSeqPoint), compare_by_addr);
+
+		for (i = 0; i < n_il_offsets; ++i) {
+			MonoSymSeqPoint *sp = &locs [i].sp;
 			const char *srcfile = "";
 
 			if (source_files [i] != -1) {
 				MonoDebugSourceInfo *sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, source_files [i]);
 				srcfile = sinfo->source_file;
 			}
+
+			buffer_add_int (buf, locs [i].native_offset);
 			buffer_add_int (buf, sp->il_offset);
 			buffer_add_int (buf, sp->line);
 			buffer_add_int (buf, source_files [i]);
@@ -464,6 +498,7 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 			buffer_add_int (buf, sp->end_line);
 			buffer_add_int (buf, sp->end_column);
 		}
+		g_free (locs);
 		g_free (source_files);
 		g_free (sym_seq_points);
 		g_ptr_array_free (source_file_list, TRUE);
