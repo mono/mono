@@ -477,22 +477,26 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 			for (j = 0; j < 16; ++j)
 				buffer_add_byte (buf, sinfo->hash [j]);
 		}
-		buffer_add_int (buf, n_il_offsets);
 
 		// The sym seq points are ordered by il offset, need to order them by address
+		int skipped = 0;
 		locs = g_new0 (FullSeqPoint, n_il_offsets);
 		for (i = 0; i < n_il_offsets; ++i) {
 			locs [i].sp = sym_seq_points [i];
 
 			// FIXME: O(n^2)
 			SeqPoint seq_point;
-			if (mono_seq_point_find_by_il_offset (seq_points, sym_seq_points [i].il_offset, &seq_point))
+			if (mono_seq_point_find_by_il_offset (seq_points, sym_seq_points [i].il_offset, &seq_point)) {
 				locs [i].native_offset = seq_point.native_offset;
-			else
-				locs [i].native_offset = -1;
+			} else {
+				locs [i].native_offset = 0xffffff;
+				skipped ++;
+			}
 		}
 		qsort (locs, n_il_offsets, sizeof (FullSeqPoint), compare_by_addr);
 
+		n_il_offsets -= skipped;
+		buffer_add_int (buf, n_il_offsets);
 		for (i = 0; i < n_il_offsets; ++i) {
 			MonoSymSeqPoint *sp = &locs [i].sp;
 			const char *srcfile = "";
