@@ -57,6 +57,9 @@ elif [[ ${label} != w* ]] && [[ ${label} != 'debian-8-ppc64el' ]] && [[ ${label}
         # only enable build of the additional profiles on one architecture to save time
         EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
     fi
+elif [[ ${CI_TAGS} == *'interpreter'* ]];
+    then
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-interpreter=yes";
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
@@ -92,6 +95,9 @@ if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
 elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
     then
 	$(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
+elif [[ ${CI_TAGS} == *'interpreter'* ]];
+    then
+    $(dirname "${BASH_SOURCE[0]}")/run-test-interpreter.sh
 elif [[ ${CI_TAGS} == *'no-tests'* ]];
     then
 	exit 0
