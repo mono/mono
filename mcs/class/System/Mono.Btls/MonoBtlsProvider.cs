@@ -218,7 +218,7 @@ namespace Mono.Btls
 
 		public static string GetSystemStoreLocation ()
 		{
-#if ANDROID
+#if MONODROID
 			return "/system/etc/security/cacerts";
 #else
 			return MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
