@@ -45,7 +45,7 @@ namespace Mono.Btls
 	static class MonoBtlsX509StoreManager
 	{
 		static bool initialized;
-#if !ANDROID
+#if !MONODROID
 		static string machineTrustedRootPath;
 		static string machineIntermediateCAPath;
 		static string machineUntrustedPath;
@@ -70,7 +70,7 @@ namespace Mono.Btls
 
 		static void DoInitialize ()
 		{
-#if !ANDROID
+#if !MONODROID
 			var userPath = MX.X509StoreManager.NewCurrentUserPath;
 			userTrustedRootPath = Path.Combine (userPath, MX.X509Stores.Names.TrustedRoot);
 			userIntermediateCAPath = Path.Combine (userPath, MX.X509Stores.Names.IntermediateCA);
@@ -85,7 +85,7 @@ namespace Mono.Btls
 
 		public static bool HasStore (MonoBtlsX509StoreType type)
 		{
-#if ANDROID
+#if MONODROID
 			return false;
 #else
 			var path = GetStorePath (type);
@@ -95,7 +95,7 @@ namespace Mono.Btls
 
 		public static string GetStorePath (MonoBtlsX509StoreType type)
 		{
-#if ANDROID
+#if MONODROID
 			throw new NotSupportedException ();
 #else
 			Initialize ();
