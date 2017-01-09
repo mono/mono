@@ -577,6 +577,46 @@ mono_lldb_save_trampoline_info (MonoTrampInfo *info)
 	buffer_free (buf);
 }
 
+void
+mono_lldb_save_specific_trampoline_info (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, gpointer code, guint32 code_len)
+{
+	TrampolineEntry *entry;
+	UserData udata;
+	int region_id;
+	Buffer tmpbuf;
+	Buffer *buf = &tmpbuf;
+
+	if (!enabled)
+		return;
+
+	/* Find the codegen region which contains the code */
+	memset (&udata, 0, sizeof (udata));
+	udata.code = code;
+	mono_global_codeman_foreach (find_code_region, &udata);
+	if (!udata.found)
+		mono_domain_code_foreach (mono_get_root_domain (), find_code_region, &udata);
+	g_assert (udata.found);
+
+	region_id = register_codegen_region (udata.region_start, udata.region_size, FALSE);
+
+	buffer_init (buf, 1024);
+
+	entry = (TrampolineEntry*)buf->p;
+	buf->p += sizeof (TrampolineEntry);
+	entry->id = ++id_generator;
+	entry->region_id = region_id;
+	entry->code = (gsize)code;
+	entry->code_size = code_len;
+
+	GSList *unwind_ops = mono_arch_get_cie_program ();
+	emit_unwind_info (unwind_ops, buf);
+
+	buffer_add_string (buf, "");
+
+	add_entry (ENTRY_TRAMPOLINE, buf);
+	buffer_free (buf);
+}
+
 /*
 DESIGN:
 
@@ -615,6 +655,11 @@ mono_lldb_save_trampoline_info (MonoTrampInfo *info)
 
 void
 mono_lldb_remove_method (MonoDomain *domain, MonoMethod *method, MonoJitDynamicMethodInfo *info)
+{
+}
+
+void
+mono_lldb_save_specific_trampoline_info (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, gpointer code, guint32 code_len)
 {
 }
 
