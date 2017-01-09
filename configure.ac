@@ -871,6 +871,9 @@ elif test x$with_runtime_preset = xbitcode; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
+   CPPFLAGS="$CPPFLAGS -DDISABLE_FAST_TLS"
+   CFLAGS="$CFLAGS -DDISABLE_FAST_TLS"
+
    AOT_BUILD_FLAGS="--aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--llvmonly"
 elif test x$with_runtime_preset = xhybridaot; then

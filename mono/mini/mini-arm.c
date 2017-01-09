@@ -333,10 +333,13 @@ gpointer __aeabi_read_tp (void);
 gboolean
 mono_arch_have_fast_tls (void)
 {
-#ifdef HAVE_AEABI_READ_TP
+#if defined(HAVE_AEABI_READ_TP) 
 	static gboolean have_fast_tls = FALSE;
-        static gboolean inited = FALSE;
+  static gboolean inited = FALSE;
 	gpointer tp1, tp2;
+
+	if (mono_llvm_only)
+		return FALSE;
 
 	if (mini_get_debug_options ()->use_fallback_tls)
 		return FALSE;
