@@ -8295,7 +8295,7 @@ emit_llvm_file (MonoAotCompile *acfg)
     command = NULL;
 
 #if TARGET_ARM
-		command = g_strdup_printf ("clang++ -march=armv7 %s", shared_flags);
+		command = g_strdup_printf ("clang++ -march=armv7 -mfpu=vfp3 %s", shared_flags);
 #endif
 
 #ifdef TARGET_AMD64
