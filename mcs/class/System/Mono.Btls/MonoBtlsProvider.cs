@@ -221,9 +221,7 @@ namespace Mono.Btls
 #if ANDROID
 			return "/system/etc/security/cacerts";
 #else
-			var appData = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
-			var path = Path.Combine (appData, ".mono", "certs", "NewTrust");
-			return path;
+			return MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
 #endif
 		}
 
