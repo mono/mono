@@ -30,7 +30,7 @@ class TestLldb(unittest.TestCase):
         bp = self.target.BreakpointCreateByName ("ves_icall_System_Threading_Thread_Sleep_internal")
         self.assertEqual (bp.GetNumLocations (), 1)
 
-        process = self.target.LaunchSimple ([test_exe], ['MONO_LLDB=1'], os.getcwd())
+        process = self.target.LaunchSimple (['--debug', test_exe], ['MONO_LLDB=1'], os.getcwd())
         self.process = process
         self.assertNotEqual (process, None)
 
@@ -38,16 +38,34 @@ class TestLldb(unittest.TestCase):
         self.assertEqual (state, lldb.eStateStopped)
 
         # Stopped in the Sleep icall
+        findex = 0
         thread = process.GetThreadAtIndex (0)
-        frame = thread.GetFrameAtIndex (1)
+        frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
-        self.assertEqual (name, 'Thread_SleepInternal')
-        frame = thread.GetFrameAtIndex (2)
+        findex += 1
+        self.assertEqual (name, 'ves_icall_System_Threading_Thread_Sleep_internal')
+        findex += 1
+
+        frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
-        self.assertEqual (name, 'Thread_Sleep')
-        frame = thread.GetFrameAtIndex (3)
+        if name == 'ves_icall_System_Threading_Thread_Sleep_internal':
+            # inlined
+            findex += 1
+            frame = thread.GetFrameAtIndex (findex)
+            name = frame.GetSymbol().GetName ()
+        self.assertEqual (name, '(wrapper managed-to-native) System.Threading.Thread:SleepInternal (int)')
+
+        findex += 1
+        frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
-        self.assertEqual (name, 'Tests_Main')
+        self.assertEqual (name, 'System.Threading.Thread:Sleep (int)')
+        self.assertTrue (str (frame.GetLineEntry ().GetFileSpec()).find ('thread.cs') != -1)
+        findex += 1
+
+        frame = thread.GetFrameAtIndex (findex)
+        name = frame.GetSymbol().GetName ()
+        self.assertEqual (name, 'Tests:Main ()')
+        self.assertTrue (str (frame.GetLineEntry ().GetFileSpec()).find ('test-lldb.cs') != -1)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestLldb)
