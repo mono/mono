@@ -182,7 +182,7 @@ namespace System.Threading
 					return 1;
 				long result = tx.next_run - ty.next_run;
 				if (result == 0)
-					return x == y ? 0 : -1;
+					return 0;
 				return result > 0 ? 1 : -1;
 			}
 		}

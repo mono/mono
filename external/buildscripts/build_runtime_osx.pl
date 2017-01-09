@@ -21,12 +21,10 @@ GetOptions(
    "j=i"=>\$jobs
 ) or die ("illegal cmdline options");
 
-my $teamcity=0;
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
-	$teamcity=1;
 	$jobs = "";
 	$ENV{'PATH'} = "/usr/local/bin:$ENV{'PATH'}";
 } else {

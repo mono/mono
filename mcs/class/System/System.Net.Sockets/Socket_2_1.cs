@@ -686,7 +686,10 @@ namespace System.Net.Sockets {
 		{
 #if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 			if (protocol_type == ProtocolType.Udp) {
-				EndPoint endpoint = new IPEndPoint (IPAddress.Any, 0);
+				var ipAddress = IPAddress.Any;
+				if (address_family == AddressFamily.InterNetworkV6)
+					ipAddress = IPAddress.IPv6Any;
+				EndPoint endpoint = new IPEndPoint (ipAddress, 0);
 				int sillyError = 0;
 				int received = ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref endpoint, false, out sillyError);
 				error = (SocketError)sillyError;

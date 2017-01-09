@@ -7,7 +7,7 @@ XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.pla
 BUILDSCRIPTSDIR=external/buildscripts
 
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
-	SDK_VERSION=5.1
+	SDK_VERSION=7.1
 fi
 
 echo "Using SDK $SDK_VERSION"
@@ -152,21 +152,69 @@ build_iphone_crosscompiler ()
 	echo "iPhone cross compiler build done"
 }
 
+get_xcode_version()
+{
+	echo $(cat /Applications/Xcode.app/Contents/version.plist | grep -A 1 CFBundleShortVersionString | tail -n 1 | sed 's/.*>\([0-9][0-9]*\).*/\1/g')
+}
+
 build_iphone_simulator ()
 {
 	echo "Building iPhone simulator static lib";
 	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
 	export CPPFLAGS="$CFLAGS"
 	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
-	# we should add something like -mios-simulator-version-min=4.3 to MACSDKOPTIONS
-	# however Xcode 4.x does not support that.
+
+	# Xcode 4.x does not support -mios-simulator-version-min=4.3 in MACSDKOPTIONS
 	export MACSDKOPTIONS="$MACSYSROOT $CFLAGS"
+	if [ "4" != "$(get_xcode_version)" ]; then
+		export MACSDKOPTIONS="$MACSDKOPTIONS -mios-simulator-version-min=4.3"
+	fi
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
-	perl ${BUILDSCRIPTSDIR}/build_runtime_osx.pl -iphone_simulator=1 || exit 1
+	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0"
+
+	if [ ${UNITY_THISISABUILDMACHINE:+1} ]
+	then
+		jobs=""
+		export PATH="/usr/local/bin:$PATH"
+	else
+		jobs="-j$jobs"
+	fi
+
+	make distclean
+
+	#were going to tell autogen to use a specific cache file, that we purposely remove before starting.
+	#that way, autogen is forced to do all its config stuff again, which should make this buildscript
+	#more robust if other targetplatforms have been built from this same workincopy
+	rm osx.cache
+
+	pushd eglib
+	make distclean
+	autoreconf -i
+	popd
+
+	# From Massi: I was getting failures in install_name_tool about space
+	# for the commands being too small, and adding here things like
+	# $ENV{LDFLAGS} = '-headerpad_max_install_names' and
+	# $ENV{LDFLAGS} = '-headerpad=0x40000' did not help at all (and also
+	# adding them to our final gcc invocation to make the bundle).
+	# Lucas noticed that I was lacking a Mono prefix, and having a long
+	# one would give us space, so here is this silly looong prefix.
+	LONG_PREFIX="/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting"
+
+	./autogen.sh --cache-file=osx.cache --disable-mcs-build --with-glib=embedded --disable-nls \
+		--prefix=$LONG_PREFIX || { echo "failing configuring mono"; exit 1; }
+	make clean || echo "failed make cleaning"
+
+	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
+	perl -pi -e 's/#define HAVE_FINITE 1//' config.h
+
+	make $jobs || { echo "failing running make for mono"; exit 1; }
+
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
+
 	cp mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a
 	unsetenv
 }

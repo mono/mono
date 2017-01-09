@@ -328,7 +328,13 @@ namespace System.Net.Sockets
 			CheckDisposed ();
 
 			byte [] recBuffer = new byte [65536]; // Max. size
-			EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
+			EndPoint endPoint;
+			
+			if (family == AddressFamily.InterNetwork) {
+				endPoint = new IPEndPoint (IPAddress.Any, 0);
+			} else {
+				endPoint = new IPEndPoint (IPAddress.IPv6Any, 0);
+			}
 			int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
 			if (dataRead < recBuffer.Length)
 				recBuffer = CutArray (recBuffer, dataRead);
