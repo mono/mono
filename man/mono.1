@@ -844,6 +844,26 @@ The offsets displayed are IL offsets.
 .PP
 A more powerful coverage tool is available in the module `monocov'.
 See the monocov(1) man page for details.
+.SH AOT PROFILING
+You can improve startup performance by using the AOT profiler.
+.PP
+Typically the AOT compiler (\fBmono --aot\fR) will not generate code
+for generic instantiations.   To solve this, you can run Mono with the
+AOT profiler to find out all the generic instantiations that are used,
+and then instructing the AOT compiler to produce code for these.
+.PP
+This command will run the specified app.exe and produce the
+\fBout.aotprof\fR file with the data describing the generic
+instantiations that are needed:
+.nf
+	$ mono --profile=aot:output=out.aotprof app.exe
+.fi
+.PP
+Once you have this data, you can pass this to Mono's AOT compiler to
+instruct it to generate code for it:
+.nf
+	$ mono --aot=profile=out.aotprof
+.fi
 .SH DEBUGGING AIDS
 To debug managed applications, you can use the 
 .B mdb

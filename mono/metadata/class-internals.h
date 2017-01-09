@@ -1003,16 +1003,16 @@ mono_install_get_cached_class_info (MonoGetCachedClassInfo func);
 void
 mono_install_get_class_from_name (MonoGetClassFromName func);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
-MonoMethodSignature*
+MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_method_get_context (MonoMethod *method);
 
 /* Used by monodis, thus cannot be MONO_INTERNAL */
@@ -1296,7 +1296,7 @@ MONO_API void mono_class_describe_statics (MonoClass* klass);
 /* method debugging functions, for use inside gdb */
 MONO_API void mono_method_print_code (MonoMethod *method);
 
-char *mono_signature_full_name (MonoMethodSignature *sig);
+MONO_PROFILER_API char *mono_signature_full_name (MonoMethodSignature *sig);
 
 /*Enum validation related functions*/
 MONO_API gboolean
@@ -1304,6 +1304,9 @@ mono_type_is_valid_enum_basetype (MonoType * type);
 
 MONO_API gboolean
 mono_class_is_valid_enum (MonoClass *klass);
+
+MONO_PROFILER_API gboolean
+mono_type_is_primitive (MonoType *type);
 
 MonoType *
 mono_type_get_checked        (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error);

@@ -1594,7 +1594,7 @@ handle_enum:
 	return 0;
 }
 
-static gboolean
+gboolean
 mono_type_is_primitive (MonoType *type)
 {
 	return (type->type >= MONO_TYPE_BOOLEAN && type->type <= MONO_TYPE_R8) ||

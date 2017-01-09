@@ -20,6 +20,10 @@ $(error Unknown framework version)
 endif
 endif
 
+ifeq ($(PROFILE),build)
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/build/csc.aotprofile
+endif
+
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
