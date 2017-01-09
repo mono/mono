@@ -373,7 +373,19 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 			break;
 		buffer_add_int (buf, op->op);
 		buffer_add_int (buf, op->when);
-		buffer_add_int (buf, mono_hw_reg_to_dwarf_reg (op->reg));
+		int dreg;
+#if TARGET_X86
+		// LLDB doesn't see to use the switched esp/ebp
+		if (op->reg == X86_ESP)
+			dreg = X86_ESP;
+		else if (op->reg == X86_EBP)
+			dreg = X86_EBP;
+		else
+			dreg = mono_hw_reg_to_dwarf_reg (op->reg);
+#else
+		dreg = mono_hw_reg_to_dwarf_reg (op->reg);
+#endif
+		buffer_add_int (buf, dreg);
 		buffer_add_int (buf, op->val);
 	}
 }
@@ -490,6 +502,7 @@ mono_lldb_save_method_info (MonoCompile *cfg)
 				srcfile = sinfo->source_file;
 			}
 
+			//printf ("%s %x %d %d\n", cfg->method->name, locs [i].native_offset, sp->il_offset, sp->line);
 			buffer_add_int (buf, locs [i].native_offset);
 			buffer_add_int (buf, sp->il_offset);
 			buffer_add_int (buf, sp->line);
