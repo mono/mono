@@ -4,8 +4,6 @@
 #include "mono/utils/mono-lazy-init.h"
 #include "mono/metadata/w32handle.h"
 
-gboolean _wapi_has_shut_down = FALSE;
-
 void
 wapi_init (void)
 {
@@ -15,10 +13,11 @@ wapi_init (void)
 void
 wapi_cleanup (void)
 {
-	g_assert (_wapi_has_shut_down == FALSE);
-	_wapi_has_shut_down = TRUE;
+	static gboolean has_shut_down = FALSE;
 
-	_wapi_error_cleanup ();
+	g_assert (has_shut_down == FALSE);
+	has_shut_down = TRUE;
+
 	_wapi_io_cleanup ();
 }
 

@@ -27,19 +27,6 @@ static void error_init(void)
 	g_assert (ret == 0);
 }
 
-static void error_cleanup (void)
-{
-	int ret;
-
-	ret = pthread_key_delete (error_key);
-	g_assert (ret == 0);
-}
-
-void _wapi_error_cleanup (void)
-{
-	mono_lazy_cleanup (&error_key_once, error_cleanup);
-}
-
 /**
  * GetLastError:
  *
@@ -53,8 +40,6 @@ guint32 GetLastError(void)
 	guint32 err;
 	void *errptr;
 
-	if (_wapi_has_shut_down)
-		return 0;
 	mono_lazy_initialize(&error_key_once, error_init);
 	errptr=pthread_getspecific(error_key);
 	err=GPOINTER_TO_UINT(errptr);
@@ -72,8 +57,6 @@ void SetLastError(guint32 code)
 {
 	int ret;
 	
-	if (_wapi_has_shut_down)
-		return;
 	/* Set the thread-local error code */
 	mono_lazy_initialize(&error_key_once, error_init);
 	ret = pthread_setspecific(error_key, GUINT_TO_POINTER(code));

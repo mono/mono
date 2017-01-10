@@ -233,8 +233,6 @@ typedef struct {
 	gsize count;
 } _WapiHandle_find;
 
-extern gboolean _wapi_has_shut_down;
-
 void
 wapi_init (void);
 
