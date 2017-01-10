@@ -11,7 +11,7 @@
 // (C) 2003 Martin Willemoes Hansen
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using NUnit.Framework;
 using System;

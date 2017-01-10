@@ -93,7 +93,7 @@ namespace MonoTests.System.Security {
 			Assert.IsNotNull (e, "PolicyHierarchy");
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		private void ResolveEvidenceHost (SecurityZone zone, bool unrestricted, bool empty)
 		{
 			string prefix = zone.ToString () + "-";

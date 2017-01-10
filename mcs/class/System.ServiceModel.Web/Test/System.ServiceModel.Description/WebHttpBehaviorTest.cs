@@ -74,7 +74,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (0, pl.Count, "#1");
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		[Test]
 		public void ApplyDispatchBehavior ()
 		{
