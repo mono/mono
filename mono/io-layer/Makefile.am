@@ -20,7 +20,6 @@ OTHER_SRC = \
 	error.c			\
 	error.h			\
 	io.c			\
-	io-portability.c	\
 	io-layer.h		\
 	locking.c		\
 	posix.c			\

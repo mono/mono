@@ -68,6 +68,7 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/strenc.h>
+#include <mono/utils/mono-io-portability.h>
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242
@@ -2961,14 +2962,37 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 		return(NULL);
 	}
 
-	fd = _wapi_open (filename_ext, O_RDONLY, 0);
-	if (fd == -1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error opening file %s: %s", __func__, filename_ext, strerror (errno));
+	fd = open (filename_ext, O_RDONLY, 0);
+	if (fd == -1 && (errno == ENOENT || errno == ENOTDIR) && IS_PORTABILITY_SET) {
+		gint saved_errno;
+		gchar *located_filename;
 
-		SetLastError (_wapi_get_win32_file_error (errno));
-		g_free (filename_ext);
+		saved_errno = errno;
 
-		return(NULL);
+		located_filename = mono_portability_find_file (filename_ext, TRUE);
+		if (!located_filename) {
+			errno = saved_errno;
+
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error opening file %s (1): %s", __func__, filename_ext, strerror (errno));
+
+			g_free (filename_ext);
+
+			SetLastError (_wapi_get_win32_file_error (errno));
+			return NULL;
+		}
+
+		fd = open (located_filename, O_RDONLY, 0);
+		if (fd == -1) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error opening file %s (2): %s", __func__, filename_ext, strerror (errno));
+
+			g_free (filename_ext);
+			g_free (located_filename);
+
+			SetLastError (_wapi_get_win32_file_error (errno));
+			return NULL;
+		}
+
+		g_free (located_filename);
 	}
 
 	if (fstat (fd, &statbuf) == -1) {

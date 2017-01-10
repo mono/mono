@@ -350,51 +350,6 @@ _wapi_io_init (void);
 void
 _wapi_io_cleanup (void);
 
-gint
-_wapi_open (const gchar *pathname, gint flags, mode_t mode);
-
-gint
-_wapi_access (const gchar *pathname, gint mode);
-
-gint
-_wapi_chmod (const gchar *pathname, mode_t mode);
-
-gint
-_wapi_utime (const gchar *filename, const struct utimbuf *buf);
-
-gint
-_wapi_unlink (const gchar *pathname);
-
-gint
-_wapi_rename (const gchar *oldpath, const gchar *newpath);
-
-gint
-_wapi_stat (const gchar *path, struct stat *buf);
-
-gint
-_wapi_lstat (const gchar *path, struct stat *buf);
-
-gint
-_wapi_mkdir (const gchar *pathname, mode_t mode);
-
-gint
-_wapi_rmdir (const gchar *pathname);
-
-gint
-_wapi_chdir (const gchar *path);
-
-gchar*
-_wapi_basename (const gchar *filename);
-
-gchar*
-_wapi_dirname (const gchar *filename);
-
-GDir*
-_wapi_g_dir_open (const gchar *path, guint flags, GError **error);
-
-gint
-_wapi_io_scandir (const gchar *dirname, const gchar *pattern, gchar ***namelist);
-
 gboolean
 _wapi_lock_file_region (gint fd, off_t offset, off_t length);
 
