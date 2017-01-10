@@ -2889,6 +2889,80 @@ replace_cleanup:
 
 static mono_mutex_t stdhandle_mutex;
 
+static gpointer
+_wapi_stdhandle_create (gint fd, const gchar *name)
+{
+	gpointer handle;
+	gint flags;
+	_WapiHandle_file file_handle = {0};
+
+	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating standard handle type %s, fd %d", __func__, name, fd);
+
+#if !defined(__native_client__)
+	/* Check if fd is valid */
+	do {
+		flags = fcntl(fd, F_GETFL);
+	} while (flags == -1 && errno == EINTR);
+
+	if (flags == -1) {
+		/* Invalid fd.  Not really much point checking for EBADF
+		 * specifically
+		 */
+		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl error on fd %d: %s", __func__, fd, strerror(errno));
+
+		SetLastError (_wapi_get_win32_file_error (errno));
+		return INVALID_HANDLE_VALUE;
+	}
+
+	switch (flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
+	case O_RDONLY:
+		file_handle.fileaccess = GENERIC_READ;
+		break;
+	case O_WRONLY:
+		file_handle.fileaccess = GENERIC_WRITE;
+		break;
+	case O_RDWR:
+		file_handle.fileaccess = GENERIC_READ | GENERIC_WRITE;
+		break;
+	default:
+		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't figure out flags 0x%x", __func__, flags);
+		file_handle.fileaccess = 0;
+		break;
+	}
+#else
+	/*
+	 * fcntl will return -1 in nacl, as there is no real file system API.
+	 * Yet, standard streams are available.
+	 */
+	file_handle.fileaccess = (fd == STDIN_FILENO) ? GENERIC_READ : GENERIC_WRITE;
+#endif
+
+	file_handle.fd = fd;
+	file_handle.filename = g_strdup(name);
+	/* some default security attributes might be needed */
+	file_handle.security_attributes = 0;
+
+	/* Apparently input handles can't be written to.  (I don't
+	 * know if output or error handles can't be read from.)
+	 */
+	if (fd == 0)
+		file_handle.fileaccess &= ~GENERIC_WRITE;
+
+	file_handle.sharemode = 0;
+	file_handle.attrs = 0;
+
+	handle = mono_w32handle_new_fd (MONO_W32HANDLE_CONSOLE, fd, &file_handle);
+	if (handle == INVALID_HANDLE_VALUE) {
+		g_warning ("%s: error creating file handle", __func__);
+		SetLastError (ERROR_GEN_FAILURE);
+		return INVALID_HANDLE_VALUE;
+	}
+
+	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning handle %p", __func__, handle);
+
+	return handle;
+}
+
 gpointer GetStdHandle(WapiStdHandle stdhandle)
 {
 	_WapiHandle_file *file_handle;

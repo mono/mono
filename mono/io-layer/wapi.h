@@ -350,9 +350,6 @@ _wapi_io_init (void);
 void
 _wapi_io_cleanup (void);
 
-gpointer
-_wapi_stdhandle_create (gint fd, const gchar *name);
-
 G_END_DECLS
 
 #endif /* _WAPI_WAPI_H_ */
