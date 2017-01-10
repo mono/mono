@@ -27,6 +27,7 @@ PROFILE_MCS_FLAGS = \
 	-d:FULL_AOT_RUNTIME \
 	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
+	-d:WIN_PLATFORM \
 	-nowarn:1699 \
 	-nostdlib \
 	$(DEFAULT_REFERENCES) \
