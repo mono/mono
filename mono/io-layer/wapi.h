@@ -350,12 +350,6 @@ _wapi_io_init (void);
 void
 _wapi_io_cleanup (void);
 
-gboolean
-_wapi_lock_file_region (gint fd, off_t offset, off_t length);
-
-gboolean
-_wapi_unlock_file_region (gint fd, off_t offset, off_t length);
-
 gpointer
 _wapi_stdhandle_create (gint fd, const gchar *name);
 

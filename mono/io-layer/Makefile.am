@@ -21,7 +21,6 @@ OTHER_SRC = \
 	error.h			\
 	io.c			\
 	io-layer.h		\
-	locking.c		\
 	posix.c			\
 	wapi_glob.h		\
 	wapi_glob.c		\
