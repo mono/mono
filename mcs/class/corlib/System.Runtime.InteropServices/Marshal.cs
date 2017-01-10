@@ -1752,6 +1752,7 @@ namespace System.Runtime.InteropServices
 		{
 		}
 
+#if FEATURE_COMINTEROP || MONO_COM
 		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
 		//====================================================================
 		// return the raw IUnknown* for a COM Object not related to current 
@@ -1777,5 +1778,18 @@ namespace System.Runtime.InteropServices
 		//========================================================================
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern object GetNativeActivationFactory(Type type);
+#else
+		internal static IntPtr /* IUnknown* */ GetRawIUnknownForComObjectNoAddRef(Object o) {
+			throw new NotSupportedException();
+		}
+
+		internal static int GetHRForException_WinRT(Exception e) {
+			throw new NotSupportedException();
+		}
+
+		internal static object GetNativeActivationFactory(Type type) {
+			throw new NotSupportedException();
+		}
+#endif
 	}
 }
