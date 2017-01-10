@@ -4489,8 +4489,7 @@ mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
 MonoString *
 mono_string_new_size (MonoDomain *domain, gint32 len)
 {
-	if (len == 0) {
-		g_assert (domain->empty_string);
+	if (len == 0 && domain->empty_string) {
 		return domain->empty_string;
 	} else {
 		MonoString *s;

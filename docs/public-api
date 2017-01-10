@@ -112,6 +112,7 @@ mono_class_is_nullable
 mono_class_is_open_constructed_type
 mono_class_is_subclass_of
 mono_class_is_valuetype
+mono_class_is_blittable
 mono_class_layout_fields
 mono_class_min_align
 mono_class_name_from_token

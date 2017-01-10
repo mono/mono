@@ -144,6 +144,9 @@ gboolean
 mono_class_is_valuetype      (MonoClass *klass);
 
 gboolean
+mono_class_is_blittable      (MonoClass *klass);
+
+gboolean
 mono_class_is_enum          (MonoClass *klass);
 
 MonoType*
