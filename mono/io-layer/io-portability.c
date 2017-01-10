@@ -26,9 +26,9 @@
 #include <utime.h>
 #include <sys/stat.h>
 
+#include <mono/io-layer/wapi.h>
 #include <mono/io-layer/error.h>
 #include <mono/io-layer/wapi_glob.h>
-#include <mono/io-layer/io-portability.h>
 #include <mono/utils/mono-io-portability.h>
 
 #undef DEBUG

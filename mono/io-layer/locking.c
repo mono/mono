@@ -14,9 +14,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <mono/io-layer/wapi.h>
-#include <mono/io-layer/wapi-private.h>
-#include <mono/io-layer/io-private.h>
-#include <mono/io-layer/io-trace.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/w32handle.h>
 
@@ -120,7 +117,7 @@ gboolean
 LockFile (gpointer handle, guint32 offset_low, guint32 offset_high,
 	  guint32 length_low, guint32 length_high)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	off_t offset, length;
 	int fd = GPOINTER_TO_UINT(handle);
@@ -167,7 +164,7 @@ UnlockFile (gpointer handle, guint32 offset_low,
 	    guint32 offset_high, guint32 length_low,
 	    guint32 length_high)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	off_t offset, length;
 	int fd = GPOINTER_TO_UINT(handle);

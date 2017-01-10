@@ -21,9 +21,6 @@
 #include <stdio.h>
 
 #include <mono/io-layer/wapi.h>
-#include <mono/io-layer/wapi-private.h>
-#include <mono/io-layer/io-private.h>
-#include <mono/io-layer/io-trace.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/w32handle.h>
 
@@ -54,7 +51,7 @@ convert_from_flags(int flags)
 
 gpointer _wapi_stdhandle_create (int fd, const gchar *name)
 {
-	struct _WapiHandle_file file_handle = {0};
+	_WapiHandle_file file_handle = {0};
 	gpointer handle;
 	int flags;
 	

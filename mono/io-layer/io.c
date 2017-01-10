@@ -37,10 +37,6 @@
 #endif
 
 #include <mono/io-layer/wapi.h>
-#include <mono/io-layer/wapi-private.h>
-#include <mono/io-layer/io-private.h>
-#include <mono/io-layer/io-portability.h>
-#include <mono/io-layer/io-trace.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-once.h>
 #include <mono/utils/mono-logger-internals.h>
@@ -55,7 +51,7 @@ static GHashTable *file_share_hash;
 static mono_mutex_t file_share_mutex;
 
 static void
-time_t_to_filetime (time_t timeval, WapiFileTime *filetime)
+time_t_to_filetime (time_t timeval, FILETIME *filetime)
 {
 	guint64 ticks;
 	
@@ -98,9 +94,9 @@ wapi_share_info_hash (gconstpointer data)
 
 static gboolean
 _wapi_handle_get_or_set_share (guint64 device, guint64 inode, guint32 new_sharemode, guint32 new_access,
-	guint32 *old_sharemode, guint32 *old_access, struct _WapiFileShare **share_info)
+	guint32 *old_sharemode, guint32 *old_access, _WapiFileShare **share_info)
 {
-	struct _WapiFileShare *file_share;
+	_WapiFileShare *file_share;
 	gboolean exists = FALSE;
 
 	/* Prevent new entries racing with us */
@@ -155,22 +151,22 @@ static gsize file_typesize (void);
 static WapiFileType file_getfiletype(void);
 static gboolean file_read(gpointer handle, gpointer buffer,
 			  guint32 numbytes, guint32 *bytesread,
-			  WapiOverlapped *overlapped);
+			  OVERLAPPED *overlapped);
 static gboolean file_write(gpointer handle, gconstpointer buffer,
 			   guint32 numbytes, guint32 *byteswritten,
-			   WapiOverlapped *overlapped);
+			   OVERLAPPED *overlapped);
 static gboolean file_flush(gpointer handle);
 static guint32 file_seek(gpointer handle, gint32 movedistance,
 			 gint32 *highmovedistance, WapiSeekMethod method);
 static gboolean file_setendoffile(gpointer handle);
 static guint32 file_getfilesize(gpointer handle, guint32 *highsize);
-static gboolean file_getfiletime(gpointer handle, WapiFileTime *create_time,
-				 WapiFileTime *last_access,
-				 WapiFileTime *last_write);
+static gboolean file_getfiletime(gpointer handle, FILETIME *create_time,
+				 FILETIME *last_access,
+				 FILETIME *last_write);
 static gboolean file_setfiletime(gpointer handle,
-				 const WapiFileTime *create_time,
-				 const WapiFileTime *last_access,
-				 const WapiFileTime *last_write);
+				 const FILETIME *create_time,
+				 const FILETIME *last_access,
+				 const FILETIME *last_write);
 static guint32 GetDriveTypeFromPath (const gchar *utf8_root_path_name);
 
 /* File handle is only signalled for overlapped IO */
@@ -193,10 +189,10 @@ static gsize console_typesize (void);
 static WapiFileType console_getfiletype(void);
 static gboolean console_read(gpointer handle, gpointer buffer,
 			     guint32 numbytes, guint32 *bytesread,
-			     WapiOverlapped *overlapped);
+			     OVERLAPPED *overlapped);
 static gboolean console_write(gpointer handle, gconstpointer buffer,
 			      guint32 numbytes, guint32 *byteswritten,
-			      WapiOverlapped *overlapped);
+			      OVERLAPPED *overlapped);
 
 /* Console is mostly the same as file, except it can block waiting for
  * input or output
@@ -234,10 +230,10 @@ static const gchar* pipe_typename (void);
 static gsize pipe_typesize (void);
 static WapiFileType pipe_getfiletype (void);
 static gboolean pipe_read (gpointer handle, gpointer buffer, guint32 numbytes,
-			   guint32 *bytesread, WapiOverlapped *overlapped);
+			   guint32 *bytesread, OVERLAPPED *overlapped);
 static gboolean pipe_write (gpointer handle, gconstpointer buffer,
 			    guint32 numbytes, guint32 *byteswritten,
-			    WapiOverlapped *overlapped);
+			    OVERLAPPED *overlapped);
 
 /* Pipe handles
  */
@@ -260,10 +256,10 @@ static const struct {
 	/* File, console and pipe handles */
 	gboolean (*readfile)(gpointer handle, gpointer buffer,
 			     guint32 numbytes, guint32 *bytesread,
-			     WapiOverlapped *overlapped);
+			     OVERLAPPED *overlapped);
 	gboolean (*writefile)(gpointer handle, gconstpointer buffer,
 			      guint32 numbytes, guint32 *byteswritten,
-			      WapiOverlapped *overlapped);
+			      OVERLAPPED *overlapped);
 	gboolean (*flushfile)(gpointer handle);
 	
 	/* File handles */
@@ -271,13 +267,13 @@ static const struct {
 			gint32 *highmovedistance, WapiSeekMethod method);
 	gboolean (*setendoffile)(gpointer handle);
 	guint32 (*getfilesize)(gpointer handle, guint32 *highsize);
-	gboolean (*getfiletime)(gpointer handle, WapiFileTime *create_time,
-				WapiFileTime *last_access,
-				WapiFileTime *last_write);
+	gboolean (*getfiletime)(gpointer handle, FILETIME *create_time,
+				FILETIME *last_access,
+				FILETIME *last_write);
 	gboolean (*setfiletime)(gpointer handle,
-				const WapiFileTime *create_time,
-				const WapiFileTime *last_access,
-				const WapiFileTime *last_write);
+				const FILETIME *create_time,
+				const FILETIME *last_access,
+				const FILETIME *last_write);
 } io_ops[MONO_W32HANDLE_COUNT]={
 	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
 	/* file */
@@ -451,7 +447,7 @@ static void _wapi_set_last_path_error_from_errno (const gchar *dir,
  */
 static void file_close (gpointer handle, gpointer data)
 {
-	struct _WapiHandle_file *file_handle = (struct _WapiHandle_file *)data;
+	_WapiHandle_file *file_handle = (_WapiHandle_file *)data;
 	int fd = file_handle->fd;
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing file handle %p [%s]", __func__, handle,
@@ -470,7 +466,7 @@ static void file_close (gpointer handle, gpointer data)
 
 static void file_details (gpointer data)
 {
-	struct _WapiHandle_file *file = (struct _WapiHandle_file *)data;
+	_WapiHandle_file *file = (_WapiHandle_file *)data;
 	
 	g_print ("[%20s] acc: %c%c%c, shr: %c%c%c, attrs: %5u",
 		 file->filename,
@@ -490,7 +486,7 @@ static const gchar* file_typename (void)
 
 static gsize file_typesize (void)
 {
-	return sizeof (struct _WapiHandle_file);
+	return sizeof (_WapiHandle_file);
 }
 
 static WapiFileType file_getfiletype(void)
@@ -500,9 +496,9 @@ static WapiFileType file_getfiletype(void)
 
 static gboolean file_read(gpointer handle, gpointer buffer,
 			  guint32 numbytes, guint32 *bytesread,
-			  WapiOverlapped *overlapped)
+			  OVERLAPPED *overlapped)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	int fd, ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -553,9 +549,9 @@ static gboolean file_read(gpointer handle, gpointer buffer,
 
 static gboolean file_write(gpointer handle, gconstpointer buffer,
 			   guint32 numbytes, guint32 *byteswritten,
-			   WapiOverlapped *overlapped G_GNUC_UNUSED)
+			   OVERLAPPED *overlapped G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	int ret, fd;
 	off_t current_pos = 0;
@@ -633,7 +629,7 @@ static gboolean file_write(gpointer handle, gconstpointer buffer,
 
 static gboolean file_flush(gpointer handle)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	int ret, fd;
 	
@@ -671,7 +667,7 @@ static gboolean file_flush(gpointer handle)
 static guint32 file_seek(gpointer handle, gint32 movedistance,
 			 gint32 *highmovedistance, WapiSeekMethod method)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	gint64 offset, newpos;
 	int whence, fd;
@@ -768,7 +764,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 
 static gboolean file_setendoffile(gpointer handle)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
 	off_t pos;
@@ -878,7 +874,7 @@ static gboolean file_setendoffile(gpointer handle)
 
 static guint32 file_getfilesize(gpointer handle, guint32 *highsize)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
 	guint32 size;
@@ -961,11 +957,11 @@ static guint32 file_getfilesize(gpointer handle, guint32 *highsize)
 	return(size);
 }
 
-static gboolean file_getfiletime(gpointer handle, WapiFileTime *create_time,
-				 WapiFileTime *last_access,
-				 WapiFileTime *last_write)
+static gboolean file_getfiletime(gpointer handle, FILETIME *create_time,
+				 FILETIME *last_access,
+				 FILETIME *last_write)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
 	guint64 create_ticks, access_ticks, write_ticks;
@@ -1042,11 +1038,11 @@ static gboolean file_getfiletime(gpointer handle, WapiFileTime *create_time,
 }
 
 static gboolean file_setfiletime(gpointer handle,
-				 const WapiFileTime *create_time G_GNUC_UNUSED,
-				 const WapiFileTime *last_access,
-				 const WapiFileTime *last_write)
+				 const FILETIME *create_time G_GNUC_UNUSED,
+				 const FILETIME *last_access,
+				 const FILETIME *last_write)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gboolean ok;
 	struct utimbuf utbuf;
 	struct stat statbuf;
@@ -1156,7 +1152,7 @@ static gboolean file_setfiletime(gpointer handle,
 
 static void console_close (gpointer handle, gpointer data)
 {
-	struct _WapiHandle_file *console_handle = (struct _WapiHandle_file *)data;
+	_WapiHandle_file *console_handle = (_WapiHandle_file *)data;
 	int fd = console_handle->fd;
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing console handle %p", __func__, handle);
@@ -1182,7 +1178,7 @@ static const gchar* console_typename (void)
 
 static gsize console_typesize (void)
 {
-	return sizeof (struct _WapiHandle_file);
+	return sizeof (_WapiHandle_file);
 }
 
 static WapiFileType console_getfiletype(void)
@@ -1192,9 +1188,9 @@ static WapiFileType console_getfiletype(void)
 
 static gboolean console_read(gpointer handle, gpointer buffer,
 			     guint32 numbytes, guint32 *bytesread,
-			     WapiOverlapped *overlapped G_GNUC_UNUSED)
+			     OVERLAPPED *overlapped G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file *console_handle;
+	_WapiHandle_file *console_handle;
 	gboolean ok;
 	int ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1243,9 +1239,9 @@ static gboolean console_read(gpointer handle, gpointer buffer,
 
 static gboolean console_write(gpointer handle, gconstpointer buffer,
 			      guint32 numbytes, guint32 *byteswritten,
-			      WapiOverlapped *overlapped G_GNUC_UNUSED)
+			      OVERLAPPED *overlapped G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file *console_handle;
+	_WapiHandle_file *console_handle;
 	gboolean ok;
 	int ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1303,12 +1299,12 @@ static const gchar* find_typename (void)
 
 static gsize find_typesize (void)
 {
-	return sizeof (struct _WapiHandle_find);
+	return sizeof (_WapiHandle_find);
 }
 
 static void pipe_close (gpointer handle, gpointer data)
 {
-	struct _WapiHandle_file *pipe_handle = (struct _WapiHandle_file*)data;
+	_WapiHandle_file *pipe_handle = (_WapiHandle_file*)data;
 	int fd = pipe_handle->fd;
 
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing pipe handle %p fd %d", __func__, handle, fd);
@@ -1333,7 +1329,7 @@ static const gchar* pipe_typename (void)
 
 static gsize pipe_typesize (void)
 {
-	return sizeof (struct _WapiHandle_file);
+	return sizeof (_WapiHandle_file);
 }
 
 static WapiFileType pipe_getfiletype(void)
@@ -1343,9 +1339,9 @@ static WapiFileType pipe_getfiletype(void)
 
 static gboolean pipe_read (gpointer handle, gpointer buffer,
 			   guint32 numbytes, guint32 *bytesread,
-			   WapiOverlapped *overlapped G_GNUC_UNUSED)
+			   OVERLAPPED *overlapped G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file *pipe_handle;
+	_WapiHandle_file *pipe_handle;
 	gboolean ok;
 	int ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1404,9 +1400,9 @@ static gboolean pipe_read (gpointer handle, gpointer buffer,
 
 static gboolean pipe_write(gpointer handle, gconstpointer buffer,
 			   guint32 numbytes, guint32 *byteswritten,
-			   WapiOverlapped *overlapped G_GNUC_UNUSED)
+			   OVERLAPPED *overlapped G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file *pipe_handle;
+	_WapiHandle_file *pipe_handle;
 	gboolean ok;
 	int ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1522,7 +1518,7 @@ static mode_t convert_perms(guint32 sharemode)
 
 static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 				   guint32 fileaccess,
-				   struct _WapiFileShare **share_info)
+				   _WapiFileShare **share_info)
 {
 	gboolean file_already_shared;
 	guint32 file_existing_share, file_existing_access;
@@ -1575,7 +1571,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 
 
 static gboolean
-share_allows_delete (struct stat *statbuf, struct _WapiFileShare **share_info)
+share_allows_delete (struct stat *statbuf, _WapiFileShare **share_info)
 {
 	gboolean file_already_shared;
 	guint32 file_existing_share, file_existing_access;
@@ -1637,11 +1633,11 @@ share_allows_delete (struct stat *statbuf, struct _WapiFileShare **share_info)
  * Return value: the new handle, or %INVALID_HANDLE_VALUE on error.
  */
 gpointer CreateFile(const gunichar2 *name, guint32 fileaccess,
-		    guint32 sharemode, WapiSecurityAttributes *security,
+		    guint32 sharemode, SECURITY_ATTRIBUTES *security,
 		    guint32 createmode, guint32 attrs,
 		    gpointer template_ G_GNUC_UNUSED)
 {
-	struct _WapiHandle_file file_handle = {0};
+	_WapiHandle_file file_handle = {0};
 	gpointer handle;
 	int flags=convert_flags(fileaccess, createmode);
 	/*mode_t perms=convert_perms(sharemode);*/
@@ -1759,7 +1755,7 @@ gpointer CreateFile(const gunichar2 *name, guint32 fileaccess,
 
 	if(security!=NULL) {
 		//file_handle->security_attributes=_wapi_handle_scratch_store (
-		//security, sizeof(WapiSecurityAttributes));
+		//security, sizeof(SECURITY_ATTRIBUTES));
 	}
 	
 	file_handle.fd = fd;
@@ -1826,7 +1822,7 @@ gboolean DeleteFile(const gunichar2 *name)
 	guint32 attrs;
 #if 0
 	struct stat statbuf;
-	struct _WapiFileShare *shareinfo;
+	_WapiFileShare *shareinfo;
 #endif
 	
 	if(name==NULL) {
@@ -1908,7 +1904,7 @@ gboolean MoveFile (const gunichar2 *name, const gunichar2 *dest_name)
 	int result, errno_copy;
 	struct stat stat_src, stat_dest;
 	gboolean ret = FALSE;
-	struct _WapiFileShare *shareinfo;
+	_WapiFileShare *shareinfo;
 	
 	if(name==NULL) {
 		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
@@ -2306,7 +2302,7 @@ static mono_mutex_t stdhandle_mutex;
 
 gpointer GetStdHandle(WapiStdHandle stdhandle)
 {
-	struct _WapiHandle_file *file_handle;
+	_WapiHandle_file *file_handle;
 	gpointer handle;
 	int fd;
 	const gchar *name;
@@ -2369,7 +2365,7 @@ gpointer GetStdHandle(WapiStdHandle stdhandle)
  * @bytesread: The actual number of bytes read is stored here.  This
  * value can be zero if the handle is positioned at the end of the
  * file.
- * @overlapped: points to a required %WapiOverlapped structure if
+ * @overlapped: points to a required %OVERLAPPED structure if
  * @handle has the %FILE_FLAG_OVERLAPPED option set, should be NULL
  * otherwise.
  *
@@ -2388,7 +2384,7 @@ gpointer GetStdHandle(WapiStdHandle stdhandle)
  * error.
  */
 gboolean ReadFile(gpointer handle, gpointer buffer, guint32 numbytes,
-		  guint32 *bytesread, WapiOverlapped *overlapped)
+		  guint32 *bytesread, OVERLAPPED *overlapped)
 {
 	MonoW32HandleType type;
 
@@ -2412,7 +2408,7 @@ gboolean ReadFile(gpointer handle, gpointer buffer, guint32 numbytes,
  * @byteswritten: The actual number of bytes written is stored here.
  * If the handle is positioned at the file end, the length of the file
  * is extended.  This parameter may be %NULL.
- * @overlapped: points to a required %WapiOverlapped structure if
+ * @overlapped: points to a required %OVERLAPPED structure if
  * @handle has the %FILE_FLAG_OVERLAPPED option set, should be NULL
  * otherwise.
  *
@@ -2429,7 +2425,7 @@ gboolean ReadFile(gpointer handle, gpointer buffer, guint32 numbytes,
  * Return value: %TRUE if the write succeeds, %FALSE on error.
  */
 gboolean WriteFile(gpointer handle, gconstpointer buffer, guint32 numbytes,
-		   guint32 *byteswritten, WapiOverlapped *overlapped)
+		   guint32 *byteswritten, OVERLAPPED *overlapped)
 {
 	MonoW32HandleType type;
 
@@ -2596,13 +2592,13 @@ guint32 GetFileSize(gpointer handle, guint32 *highsize)
  * GetFileTime:
  * @handle: The file handle to query.  The handle must have
  * %GENERIC_READ access.
- * @create_time: Points to a %WapiFileTime structure to receive the
+ * @create_time: Points to a %FILETIME structure to receive the
  * number of ticks since the epoch that file was created.  May be
  * %NULL.
- * @last_access: Points to a %WapiFileTime structure to receive the
+ * @last_access: Points to a %FILETIME structure to receive the
  * number of ticks since the epoch when file was last accessed.  May be
  * %NULL.
- * @last_write: Points to a %WapiFileTime structure to receive the
+ * @last_write: Points to a %FILETIME structure to receive the
  * number of ticks since the epoch when file was last written to.  May
  * be %NULL.
  *
@@ -2617,8 +2613,8 @@ guint32 GetFileSize(gpointer handle, guint32 *highsize)
  *
  * Return value: %TRUE on success, %FALSE otherwise.
  */
-gboolean GetFileTime(gpointer handle, WapiFileTime *create_time,
-		     WapiFileTime *last_access, WapiFileTime *last_write)
+gboolean GetFileTime(gpointer handle, FILETIME *create_time,
+		     FILETIME *last_access, FILETIME *last_write)
 {
 	MonoW32HandleType type;
 
@@ -2637,13 +2633,13 @@ gboolean GetFileTime(gpointer handle, WapiFileTime *create_time,
  * SetFileTime:
  * @handle: The file handle to set.  The handle must have
  * %GENERIC_WRITE access.
- * @create_time: Points to a %WapiFileTime structure that contains the
+ * @create_time: Points to a %FILETIME structure that contains the
  * number of ticks since the epoch that the file was created.  May be
  * %NULL.
- * @last_access: Points to a %WapiFileTime structure that contains the
+ * @last_access: Points to a %FILETIME structure that contains the
  * number of ticks since the epoch when the file was last accessed.
  * May be %NULL.
- * @last_write: Points to a %WapiFileTime structure that contains the
+ * @last_write: Points to a %FILETIME structure that contains the
  * number of ticks since the epoch when the file was last written to.
  * May be %NULL.
  *
@@ -2656,9 +2652,9 @@ gboolean GetFileTime(gpointer handle, WapiFileTime *create_time,
  *
  * Return value: %TRUE on success, %FALSE otherwise.
  */
-gboolean SetFileTime(gpointer handle, const WapiFileTime *create_time,
-		     const WapiFileTime *last_access,
-		     const WapiFileTime *last_write)
+gboolean SetFileTime(gpointer handle, const FILETIME *create_time,
+		     const FILETIME *last_access,
+		     const FILETIME *last_write)
 {
 	MonoW32HandleType type;
 
@@ -2692,17 +2688,17 @@ static const guint16 mon_yday[2][13]={
 
 /**
  * FileTimeToSystemTime:
- * @file_time: Points to a %WapiFileTime structure that contains the
+ * @file_time: Points to a %FILETIME structure that contains the
  * number of ticks to convert.
- * @system_time: Points to a %WapiSystemTime structure to receive the
+ * @system_time: Points to a %SYSTEMTIME structure to receive the
  * broken-out time.
  *
  * Converts a tick count into broken-out time values.
  *
  * Return value: %TRUE on success, %FALSE otherwise.
  */
-gboolean FileTimeToSystemTime(const WapiFileTime *file_time,
-			      WapiSystemTime *system_time)
+gboolean FileTimeToSystemTime(const FILETIME *file_time,
+			      SYSTEMTIME *system_time)
 {
 	gint64 file_ticks, totaldays, rem, y;
 	const guint16 *ip;
@@ -2800,9 +2796,9 @@ gboolean FileTimeToSystemTime(const WapiFileTime *file_time,
 	return(TRUE);
 }
 
-gpointer FindFirstFile (const gunichar2 *pattern, WapiFindData *find_data)
+gpointer FindFirstFile (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 {
-	struct _WapiHandle_find find_handle = {0};
+	_WapiHandle_find find_handle = {0};
 	gpointer handle;
 	gchar *utf8_pattern = NULL, *dir_part, *entry_part;
 	int result;
@@ -2916,9 +2912,9 @@ gpointer FindFirstFile (const gunichar2 *pattern, WapiFindData *find_data)
 	return (handle);
 }
 
-gboolean FindNextFile (gpointer handle, WapiFindData *find_data)
+gboolean FindNextFile (gpointer handle, WIN32_FIND_DATA *find_data)
 {
-	struct _WapiHandle_find *find_handle;
+	_WapiHandle_find *find_handle;
 	gboolean ok;
 	struct stat buf, linkbuf;
 	int result;
@@ -3059,7 +3055,7 @@ cleanup:
  */
 gboolean FindClose (gpointer handle)
 {
-	struct _WapiHandle_find *find_handle;
+	_WapiHandle_find *find_handle;
 	gboolean ok;
 
 	if (handle == NULL) {
@@ -3099,7 +3095,7 @@ gboolean FindClose (gpointer handle)
  * Return value: %TRUE on success, %FALSE otherwise.
  */
 gboolean CreateDirectory (const gunichar2 *name,
-			  WapiSecurityAttributes *security)
+			  SECURITY_ATTRIBUTES *security)
 {
 	gchar *utf8_name;
 	int result;
@@ -3238,16 +3234,16 @@ guint32 GetFileAttributes (const gunichar2 *name)
  * GetFileAttributesEx:
  * @name: a pointer to a NULL-terminated unicode filename.
  * @level: must be GetFileExInfoStandard
- * @info: pointer to a WapiFileAttributesData structure
+ * @info: pointer to a WIN32_FILE_ATTRIBUTE_DATA structure
  *
  * Gets attributes, size and filetimes for @name;
  *
  * Return value: %TRUE on success, %FALSE on failure
  */
-gboolean GetFileAttributesEx (const gunichar2 *name, WapiGetFileExInfoLevels level, gpointer info)
+gboolean GetFileAttributesEx (const gunichar2 *name, GET_FILEEX_INFO_LEVELS level, gpointer info)
 {
 	gchar *utf8_name;
-	WapiFileAttributesData *data;
+	WIN32_FILE_ATTRIBUTE_DATA *data;
 
 	struct stat buf, linkbuf;
 	time_t create_time;
@@ -3297,7 +3293,7 @@ gboolean GetFileAttributesEx (const gunichar2 *name, WapiGetFileExInfoLevels lev
 
 	/* fill data block */
 
-	data = (WapiFileAttributesData *)info;
+	data = (WIN32_FILE_ATTRIBUTE_DATA *)info;
 
 	if (buf.st_mtime < buf.st_ctime)
 		create_time = buf.st_mtime;
@@ -3489,10 +3485,10 @@ extern gboolean SetCurrentDirectory (const gunichar2 *path)
 }
 
 gboolean CreatePipe (gpointer *readpipe, gpointer *writepipe,
-		     WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 size)
+		     SECURITY_ATTRIBUTES *security G_GNUC_UNUSED, guint32 size)
 {
-	struct _WapiHandle_file pipe_read_handle = {0};
-	struct _WapiHandle_file pipe_write_handle = {0};
+	_WapiHandle_file pipe_read_handle = {0};
+	_WapiHandle_file pipe_write_handle = {0};
 	gpointer read_handle;
 	gpointer write_handle;
 	int filedes[2];

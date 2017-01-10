@@ -34,16 +34,6 @@ typedef struct {
 } WSABUF;
 
 typedef struct {
-	guint32 Internal;
-	guint32 InternalHigh;
-	guint32 Offset;
-	guint32 OffsetHigh;
-	gpointer hEvent;
-	gpointer handle1;
-	gpointer handle2;
-} OVERLAPPED;
-
-typedef struct {
 	gpointer Head;
 	guint32 HeadLength;
 	gpointer Tail;

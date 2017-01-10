@@ -12,11 +12,7 @@ libwapiincludedir = $(includedir)/mono-$(API_VER)/mono/io-layer
 
 OTHER_H = \
 	error.h		\
-	io.h		\
-	io-trace.h	\
 	io-layer.h	\
-	io-portability.h	\
-	uglify.h	\
 	wapi.h		\
 	wapi-remap.h
 
@@ -24,18 +20,13 @@ OTHER_SRC = \
 	error.c			\
 	error.h			\
 	io.c			\
-	io.h			\
 	io-portability.c	\
-	io-portability.h	\
-	io-private.h		\
 	io-layer.h		\
 	locking.c		\
 	posix.c			\
-	uglify.h		\
 	wapi_glob.h		\
 	wapi_glob.c		\
 	wapi.h			\
-	wapi-private.h		\
 	wapi.c
 
 

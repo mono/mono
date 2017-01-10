@@ -14,7 +14,6 @@
 #include <errno.h>
 
 #include "mono/io-layer/wapi.h"
-#include "mono/io-layer/wapi-private.h"
 #include "mono/utils/mono-lazy-init.h"
 
 static pthread_key_t error_key;
