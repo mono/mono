@@ -27,7 +27,7 @@ class TestLldb(unittest.TestCase):
             self.process.Kill ()
 
     def test_stacktraces (self):
-        bp = self.target.BreakpointCreateByName ("ves_icall_System_Threading_Thread_Sleep_internal")
+        bp = self.target.BreakpointCreateByName ('ves_icall_System_Threading_Thread_Sleep_internal')
         self.assertEqual (bp.GetNumLocations (), 1)
 
         process = self.target.LaunchSimple (['--debug', test_exe], ['MONO_LLDB=1'], os.getcwd())
@@ -42,7 +42,6 @@ class TestLldb(unittest.TestCase):
         thread = process.GetThreadAtIndex (0)
         frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
-        findex += 1
         self.assertEqual (name, 'ves_icall_System_Threading_Thread_Sleep_internal')
         findex += 1
 
@@ -66,6 +65,21 @@ class TestLldb(unittest.TestCase):
         name = frame.GetSymbol().GetName ()
         self.assertEqual (name, 'Tests:Main ()')
         self.assertTrue (str (frame.GetLineEntry ().GetFileSpec()).find ('test-lldb.cs') != -1)
+
+    def test_breakpoints (self):
+        bp = self.target.BreakpointCreateByLocation ('test-lldb.cs', 9)
+
+        process = self.target.LaunchSimple (['--debug', test_exe], ['MONO_LLDB=1'], os.getcwd())
+        self.process = process
+        self.assertNotEqual (process, None)
+
+        state = process.GetState ()
+        self.assertEqual (state, lldb.eStateStopped)
+        # Stopped in foo ()
+        thread = process.GetThreadAtIndex (0)
+        frame = thread.GetFrameAtIndex (0)
+        name = frame.GetSymbol().GetName ()
+        self.assertEqual (name, 'Tests:Main ()')
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestLldb)
