@@ -343,6 +343,7 @@ namespace Mono.Btls
 
 		public override void Import (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			if (password == null) {
 				try {
 					Import (data);
