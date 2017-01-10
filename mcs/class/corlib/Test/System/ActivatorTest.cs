@@ -513,7 +513,7 @@ namespace MonoTests.System {
 						  null, null);
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !MOBILE_STATIC && !MONOMAC
 		[Test]
 		public void CreateInstanceCustomDomain ()
 		{

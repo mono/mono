@@ -27,7 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using Mono.Security.Authenticode;
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 using Mono.Security.Protocol.Tls;
 #endif
 
@@ -160,7 +160,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		[Test]
 		[Ignore ("Fails on MS.NET")]
 		public void SslClientBlock ()
@@ -2703,7 +2703,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		class SslHttpServer : HttpServer {
 			X509Certificate _certificate;
 

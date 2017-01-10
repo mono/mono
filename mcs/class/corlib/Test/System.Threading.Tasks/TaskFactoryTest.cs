@@ -448,6 +448,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -571,6 +572,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_BeginCallback ()
 		{
 			bool called = false;

@@ -8,7 +8,7 @@
 // (C) 2006 Novell
 // 
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.CodeDom;

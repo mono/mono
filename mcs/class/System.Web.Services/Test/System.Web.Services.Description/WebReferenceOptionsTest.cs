@@ -7,7 +7,7 @@
 // Copyright (C) 2006 Novell, Inc.
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using NUnit.Framework;
 
