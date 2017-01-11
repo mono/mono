@@ -51,7 +51,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/attach.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <mono/metadata/lock-tracer.h>
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/threads-types.h>

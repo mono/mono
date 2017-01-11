@@ -1,5 +1,5 @@
 /*
- * file-io.h: File IO internal calls
+ * w32file.h: File IO internal calls
  *
  * Authors:
  *	Dick Porter (dick@ximian.com)
@@ -10,8 +10,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#ifndef _MONO_METADATA_FILEIO_H_
-#define _MONO_METADATA_FILEIO_H_
+#ifndef _MONO_METADATA_W32FILE_H_
+#define _MONO_METADATA_W32FILE_H_
 
 #include <config.h>
 #include <glib.h>
@@ -274,4 +274,4 @@ ves_icall_System_IO_MonoIO_DumpHandles (void);
 
 G_END_DECLS
 
-#endif /* _MONO_METADATA_FILEIO_H_ */
+#endif /* _MONO_METADATA_W32FILE_H_ */

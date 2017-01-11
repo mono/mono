@@ -46,7 +46,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/exception-internals.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/mono-route.h>
 #include <mono/metadata/w32socket.h>

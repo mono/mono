@@ -1,5 +1,5 @@
 /*
- * file-io-windows.c: Windows File IO internal calls.
+ * w32file-win32.c: Windows File IO internal calls.
  *
  * Copyright 2016 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -10,7 +10,7 @@
 #if defined(HOST_WIN32)
 #include <winsock2.h>
 #include <windows.h>
-#include "mono/metadata/file-io-windows-internals.h"
+#include "mono/metadata/w32file-win32-internals.h"
 
 gunichar2
 ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar ()
