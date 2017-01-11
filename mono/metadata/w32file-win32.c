@@ -141,9 +141,9 @@ mono_w32file_get_attributes (const gunichar2 *name)
 }
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, GET_FILEEX_INFO_LEVELS level, WIN32_FILE_ATTRIBUTE_DATA *data)
+mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data)
 {
-	return GetFileAttributesEx (name, level, data);
+	return GetFileAttributesEx (name, GetFileExInfoStandard, data);
 }
 
 gboolean

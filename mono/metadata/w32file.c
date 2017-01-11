@@ -240,7 +240,7 @@ get_file_attributes_ex (const gunichar2 *path, WIN32_FILE_ATTRIBUTE_DATA *data)
 	HANDLE find_handle;
 	gint32 error;
 
-	res = mono_w32file_get_attributes_ex (path, GetFileExInfoStandard, data);
+	res = mono_w32file_get_attributes_ex (path, data);
 	if (res)
 		return TRUE;
 

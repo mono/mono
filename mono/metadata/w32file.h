@@ -345,11 +345,6 @@ ves_icall_System_IO_MonoIO_DumpHandles (void);
 #define DRIVE_CDROM       5
 #define DRIVE_RAMDISK     6
 
-typedef enum {
-	GetFileExInfoStandard = 0x0000,
-	GetFileExMaxInfoLevel = 0x0001,
-} GET_FILEEX_INFO_LEVELS;
-
 typedef struct {
 	guint16 wYear;
 	guint16 wMonth;
@@ -488,7 +483,7 @@ guint32
 mono_w32file_get_attributes (const gunichar2 *name);
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, GET_FILEEX_INFO_LEVELS level, WIN32_FILE_ATTRIBUTE_DATA *data);
+mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data);
 
 gboolean
 mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs);

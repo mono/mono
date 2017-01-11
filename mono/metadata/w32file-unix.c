@@ -3609,21 +3609,13 @@ mono_w32file_get_attributes (const gunichar2 *name)
 }
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, GET_FILEEX_INFO_LEVELS level, WIN32_FILE_ATTRIBUTE_DATA *data)
+mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data)
 {
 	gchar *utf8_name;
 
 	struct stat buf, linkbuf;
 	time_t create_time;
 	gint result;
-	
-	if (level != GetFileExInfoStandard) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: info level %d not supported.", __func__,
-			   level);
-
-		SetLastError (ERROR_INVALID_PARAMETER);
-		return FALSE;
-	}
 	
 	if (name == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
