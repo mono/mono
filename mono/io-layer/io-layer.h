@@ -46,7 +46,6 @@ typedef struct pollfd {
 #endif
 
 #else	/* EVERYONE ELSE */
-#include "mono/io-layer/wapi.h"
 #endif /* HOST_WIN32 */
 
 #ifdef __native_client__

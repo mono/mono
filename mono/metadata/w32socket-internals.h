@@ -17,7 +17,7 @@
 #include <sys/socket.h>
 #endif
 
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/w32api.h>
 
 #ifndef HAVE_SOCKLEN_T
 #define socklen_t int

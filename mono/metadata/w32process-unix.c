@@ -71,6 +71,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/utils/w32api.h>
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242

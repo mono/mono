@@ -45,6 +45,8 @@
 #ifdef HAVE_SYS_SENDFILE_H
 #include <sys/sendfile.h>
 #endif
+#include <sys/stat.h>
+
 
 #include "w32socket.h"
 #include "w32socket-internals.h"

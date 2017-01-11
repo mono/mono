@@ -31,6 +31,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/w32api.h>
 
 /*
  * Pull the list of opcodes

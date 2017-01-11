@@ -98,6 +98,7 @@
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/metadata/w32error.h>
+#include <mono/utils/w32api.h>
 
 #include "decimal-ms.h"
 #include "number-ms.h"

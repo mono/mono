@@ -30,6 +30,7 @@
 #include "mono/utils/checked-build.h"
 #include "mono/utils/mono-digest.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/w32api.h"
 
 #include "mono/io-layer/io-layer.h"
 

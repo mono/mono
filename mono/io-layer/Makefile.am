@@ -11,12 +11,10 @@ AM_CPPFLAGS = \
 libwapiincludedir = $(includedir)/mono-$(API_VER)/mono/io-layer
 
 OTHER_H = \
-	io-layer.h	\
-	wapi.h
+	io-layer.h
 
 OTHER_SRC = \
-	io-layer.h		\
-	wapi.h
+	io-layer.h
 
 
 WINDOWS_H = \

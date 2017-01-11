@@ -54,6 +54,7 @@
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/w32error.h>
+#include <mono/utils/w32api.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>

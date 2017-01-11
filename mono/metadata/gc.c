@@ -43,6 +43,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/io-layer/io-layer.h>
+#include <mono/utils/w32api.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
