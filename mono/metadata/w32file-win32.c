@@ -141,9 +141,21 @@ mono_w32file_get_attributes (const gunichar2 *name)
 }
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data)
+mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 {
-	return GetFileAttributesEx (name, GetFileExInfoStandard, data);
+	gboolean result;
+	WIN32_FILE_ATTRIBUTE_DATA data;
+
+	result = GetFileAttributesEx (name, GetFileExInfoStandard, &data);
+	if (result) {
+		stat->attributes = data.dwFileAttributes;
+		stat->creation_time = (gint64) ((((guint64) data.ftCreationTime.dwHighDateTime) << 32) + data.ftCreationTime.dwLowDateTime);
+		stat->last_access_time = (gint64) ((((guint64) data.ftLastAccessTime.dwHighDateTime) << 32) + data.ftLastAccessTime.dwLowDateTime);
+		stat->last_write_time = (gint64) ((((guint64) data.ftLastWriteTime.dwHighDateTime) << 32) + data.ftLastWriteTime.dwLowDateTime);
+		stat->length = ((gint64)data.nFileSizeHigh << 32) | data.nFileSizeLow;
+	}
+
+	return result;
 }
 
 gboolean

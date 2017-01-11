@@ -172,19 +172,7 @@ static guint32 convert_seekorigin(MonoSeekOrigin origin)
 
 static gint64 convert_filetime (const FILETIME *filetime)
 {
-	guint64 ticks = filetime->dwHighDateTime;
-	ticks <<= 32;
-	ticks += filetime->dwLowDateTime;
-	return (gint64)ticks;
-}
-
-static void convert_win32_file_attribute_data (const WIN32_FILE_ATTRIBUTE_DATA *data, MonoIOStat *stat)
-{
-	stat->attributes = data->dwFileAttributes;
-	stat->creation_time = convert_filetime (&data->ftCreationTime);
-	stat->last_access_time = convert_filetime (&data->ftLastAccessTime);
-	stat->last_write_time = convert_filetime (&data->ftLastWriteTime);
-	stat->length = ((gint64)data->nFileSizeHigh << 32) | data->nFileSizeLow;
+	return (gint64) ((((guint64) filetime->dwHighDateTime) << 32) + filetime->dwLowDateTime);
 }
 
 /* Managed file attributes have nearly but not quite the same values
@@ -233,19 +221,18 @@ get_file_attributes (const gunichar2 *path)
 }
 
 static gboolean
-get_file_attributes_ex (const gunichar2 *path, WIN32_FILE_ATTRIBUTE_DATA *data)
+get_file_attributes_ex (const gunichar2 *path, MonoIOStat *stat)
 {
 	gboolean res;
 	WIN32_FIND_DATA find_data;
 	HANDLE find_handle;
 	gint32 error;
 
-	res = mono_w32file_get_attributes_ex (path, data);
+	res = mono_w32file_get_attributes_ex (path, stat);
 	if (res)
 		return TRUE;
 
 	error = GetLastError ();
-
 	if (error != ERROR_SHARING_VIOLATION)
 		return FALSE;
 
@@ -255,14 +242,12 @@ get_file_attributes_ex (const gunichar2 *path, WIN32_FILE_ATTRIBUTE_DATA *data)
 		return FALSE;
 
 	mono_w32file_find_close (find_handle);
-
-	data->dwFileAttributes = find_data.dwFileAttributes;
-	data->ftCreationTime = find_data.ftCreationTime;
-	data->ftLastAccessTime = find_data.ftLastAccessTime;
-	data->ftLastWriteTime = find_data.ftLastWriteTime;
-	data->nFileSizeHigh = find_data.nFileSizeHigh;
-	data->nFileSizeLow = find_data.nFileSizeLow;
 	
+	stat->attributes = find_data.dwFileAttributes;
+	stat->creation_time = convert_filetime (&find_data.ftCreationTime);
+	stat->last_access_time = convert_filetime (&find_data.ftLastAccessTime);
+	stat->last_write_time = convert_filetime (&find_data.ftLastWriteTime);
+	stat->length = ((gint64)find_data.nFileSizeHigh << 32) | find_data.nFileSizeLow;
 	return TRUE;
 }
 
@@ -784,20 +769,16 @@ ves_icall_System_IO_MonoIO_GetFileType (HANDLE handle, gint32 *error)
 }
 
 MonoBoolean
-ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat,
-					gint32 *error)
+ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat, gint32 *error)
 {
 	gboolean result;
-	WIN32_FILE_ATTRIBUTE_DATA data;
 	MONO_ENTER_GC_SAFE;
 
 	*error=ERROR_SUCCESS;
 	
-	result = get_file_attributes_ex (mono_string_chars (path), &data);
+	result = get_file_attributes_ex (mono_string_chars (path), stat);
 
-	if (result) {
-		convert_win32_file_attribute_data (&data, stat);
-	} else {
+	if (!result) {
 		*error=GetLastError ();
 		memset (stat, 0, sizeof (MonoIOStat));
 	}

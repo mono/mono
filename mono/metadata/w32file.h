@@ -379,15 +379,6 @@ typedef struct {
 	gunichar2 cAlternateFileName [14];
 } WIN32_FIND_DATA;
 
-typedef struct {
-	guint32 dwFileAttributes;
-	FILETIME ftCreationTime;
-	FILETIME ftLastAccessTime;
-	FILETIME ftLastWriteTime;
-	guint32 nFileSizeHigh;
-	guint32 nFileSizeLow;
-} WIN32_FILE_ATTRIBUTE_DATA;
-
 #endif /* !defined(HOST_WIN32) */
 
 void
@@ -475,7 +466,7 @@ guint32
 mono_w32file_get_attributes (const gunichar2 *name);
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data);
+mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat);
 
 gboolean
 mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs);

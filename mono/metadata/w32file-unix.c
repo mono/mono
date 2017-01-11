@@ -3609,12 +3609,11 @@ mono_w32file_get_attributes (const gunichar2 *name)
 }
 
 gboolean
-mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA *data)
+mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 {
 	gchar *utf8_name;
 
 	struct stat buf, linkbuf;
-	time_t create_time;
 	gint result;
 	
 	if (name == NULL) {
@@ -3651,32 +3650,15 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, WIN32_FILE_ATTRIBUTE_DATA
 		return(FALSE);
 	}
 
-	/* fill data block */
+	/* fill stat block */
 
-	if (buf.st_mtime < buf.st_ctime)
-		create_time = buf.st_mtime;
-	else
-		create_time = buf.st_ctime;
-	
-	data->dwFileAttributes = _wapi_stat_to_file_attributes (utf8_name,
-								&buf,
-								&linkbuf);
+	stat->attributes = _wapi_stat_to_file_attributes (utf8_name, &buf, &linkbuf);
+	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
+	stat->last_access_time = (((guint64) (buf.st_atime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
+	stat->last_write_time = (((guint64) (buf.st_mtime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
+	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
 	g_free (utf8_name);
-
-	time_t_to_filetime (create_time, &data->ftCreationTime);
-	time_t_to_filetime (buf.st_atime, &data->ftLastAccessTime);
-	time_t_to_filetime (buf.st_mtime, &data->ftLastWriteTime);
-
-	if (data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		data->nFileSizeHigh = 0;
-		data->nFileSizeLow = 0;
-	}
-	else {
-		data->nFileSizeHigh = buf.st_size >> 32;
-		data->nFileSizeLow = buf.st_size & 0xFFFFFFFF;
-	}
-
 	return TRUE;
 }
 
