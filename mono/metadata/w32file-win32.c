@@ -50,6 +50,18 @@ void ves_icall_System_IO_MonoIO_DumpHandles (void)
 	return;
 }
 
+gpointer
+mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs)
+{
+	return CreateFile (name, fileaccess, sharemode, NULL, createmode, attrs, NULL);
+}
+
+gboolean
+mono_w32file_delete (const gunichar2 *name)
+{
+	return DeleteFile (name);
+}
+
 gboolean
 mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
