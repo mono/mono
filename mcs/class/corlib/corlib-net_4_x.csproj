@@ -49,14 +49,19 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\ValueTuple\TupleExtensions.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.ValueTuple\src\System\ValueTuple\ValueTuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ITuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Tuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ValueTuple.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\Mono.Parallel\Mono.Threading\AtomicBoolean.cs" />
     <Compile Include="..\Mono.Security\Mono.Math.Prime.Generator\NextPrimeFinder.cs" />
     <Compile Include="..\Mono.Security\Mono.Math.Prime.Generator\PrimeGeneratorBase.cs" />
@@ -790,7 +795,6 @@
     <Compile Include="..\referencesource\mscorlib\system\timespan.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezonenotfoundexception.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\tuple.cs" />
     <Compile Include="..\referencesource\mscorlib\system\type.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typeaccessexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
@@ -807,7 +811,8 @@
     <Compile Include="..\referencesource\mscorlib\system\unsafecharbuffer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\version.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="corefx\SR.cs" />
+    <Compile Include="corert\Debug.cs" />
+    <Compile Include="corert\SR.cs" />
     <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
     <Compile Include="Microsoft.Win32\Registry.cs" />
     <Compile Include="Microsoft.Win32\RegistryHive.cs" />
