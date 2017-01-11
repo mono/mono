@@ -55,6 +55,8 @@ namespace System.Runtime.CompilerServices
 	{
 		const int INITIAL_SIZE = 13;
 		const float LOAD_FACTOR = 0.7f;
+		const float COMPACT_FACTOR = 0.5f;
+		const float EXPAND_FACTOR = 1.1f;
 
 		Ephemeron[] data;
 		object _lock = new object ();
@@ -70,6 +72,42 @@ namespace System.Runtime.CompilerServices
 
 		~ConditionalWeakTable ()
 		{
+		}
+
+		private void RehashWithoutResize ()
+		{
+			int len = data.Length;
+
+			for (int i = 0; i < len; i++) {
+				if (data [i].key == GC.EPHEMERON_TOMBSTONE)
+					data [i].key = null;
+			}
+
+			for (int i = 0; i < len; i++) {
+				object key = data [i].key;
+				if (key != null) {
+					int idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+
+					while (true) {
+						if (data [idx].key == null) {
+							// The object was not stored in its normal slot. Rehash
+							data [idx].key = key;
+							data [idx].value = data [i].value;
+							// At this point we have this Ephemeron entry duplicated in the array. Shouldn't
+							// be a problem.
+							data [i].key = null;
+							data [i].value = null;
+							break;
+						} else if (data [idx].key == key) {
+							/* We already have the key in the first available position, finished */
+							break;
+						}
+
+						if (++idx == len) //Wrap around
+							idx = 0;
+					}
+				}
+			}
 		}
 
 		private void RecomputeSize ()
@@ -91,6 +129,12 @@ namespace System.Runtime.CompilerServices
 			RecomputeSize ();
 
 			uint newLength = (uint)HashHelpers.GetPrime (((int)(size / LOAD_FACTOR) << 1) | 1);
+
+			if (newLength > data.Length * COMPACT_FACTOR && newLength < data.Length * EXPAND_FACTOR) {
+				/* Avoid unnecessary LOS allocations */
+				RehashWithoutResize ();
+				return;
+			}
 			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newLength);
 
 			Ephemeron[] tmp = new Ephemeron [newLength];
