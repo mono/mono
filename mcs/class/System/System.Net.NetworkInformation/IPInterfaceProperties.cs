@@ -54,7 +54,33 @@ namespace System.Net.NetworkInformation {
 		{
 			throw new NotImplementedException ();
 		}
+#if MONODROID
+		[DllImport ("__Internal")]
+		static extern int _monodroid_get_dns_servers (out IntPtr dns_servers_array);
 
+		void GetDNSServersFromOS ()
+		{
+			IntPtr dsa;
+			int len = _monodroid_get_dns_servers (out dsa);
+			if (len <= 0)
+				return;
+
+			var servers = new IntPtr [len];
+			Marshal.Copy (dsa, servers, 0, len);
+
+			dns_servers = new IPAddressCollection ();
+			foreach (IntPtr s in servers) {
+				string server_ip = Marshal.PtrToStringAnsi (s);
+				Marshal.FreeHGlobal (s);
+
+				IPAddress addr;
+				if (!IPAddress.TryParse (server_ip, out addr))
+					continue;
+				dns_servers.InternalAdd (addr);
+			}
+			Marshal.FreeHGlobal (dsa);
+		}
+#else
 		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
 		static Regex search = new Regex (@"\s*search\s+(?<domain>.*)");
 		void ParseResolvConf ()
@@ -95,7 +121,7 @@ namespace System.Net.NetworkInformation {
 			} catch {
 			}
 		}
-
+#endif
 		public override IPAddressInformationCollection AnycastAddresses {
 			get {
 				var c = new IPAddressInformationCollection ();
@@ -119,15 +145,23 @@ namespace System.Net.NetworkInformation {
 
 		public override IPAddressCollection DnsAddresses {
 			get {
+#if MONODROID
+				GetDNSServersFromOS ();
+#else
 				ParseResolvConf ();
+#endif
 				return dns_servers;
 			}
 		}
 
 		public override string DnsSuffix {
 			get {
+#if MONODROID
+				return String.Empty;
+#else
 				ParseResolvConf ();
 				return dns_suffix;
+#endif
 			}
 		}
 
