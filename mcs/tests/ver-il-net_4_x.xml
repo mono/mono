@@ -19997,6 +19997,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-642.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Transform[V](Area`1[V], System.Func`2[V,V])" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="IB`1[W] GetIB[W]()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void Test[T](T, System.Func`2[T,T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="IB`1[U] Transform2[U](IB`1[U], System.Func`2[U,U])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Area`1[TVector]">
+      <method name="IB`1[TVector] GetSegments()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Transform&gt;c__AnonStorey0`1[V]">
+      <method name="IB`1[V] &lt;&gt;m__0(IB`1[V])" attrs="131">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
