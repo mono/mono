@@ -6679,7 +6679,7 @@ mono_icall_get_logical_drives (void)
 	ptr = buf;
 
 	while (size > initial_size) {
-		size = (guint) GetLogicalDriveStrings (initial_size, ptr);
+		size = (guint) mono_w32file_get_logical_drive (initial_size, ptr);
 		if (size > initial_size) {
 			if (ptr != buf)
 				g_free (ptr);
@@ -6735,7 +6735,7 @@ ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString *path)
 	MonoError error;
 	gunichar2 volume_name [MAX_PATH + 1];
 	
-	if (GetVolumeInformation (mono_string_chars (path), NULL, 0, NULL, NULL, NULL, volume_name, MAX_PATH + 1) == FALSE)
+	if (mono_w32file_get_volume_information (mono_string_chars (path), NULL, 0, NULL, NULL, NULL, volume_name, MAX_PATH + 1) == FALSE)
 		return NULL;
 	MonoString *result = mono_string_from_utf16_checked (volume_name, &error);
 	mono_error_set_pending_exception (&error);
@@ -7019,7 +7019,7 @@ ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString *path_name, guint64 *
 	ULARGE_INTEGER wapi_total_number_of_free_bytes;
 
 	*error = ERROR_SUCCESS;
-	result = GetDiskFreeSpaceEx (mono_string_chars (path_name), &wapi_free_bytes_avail, &wapi_total_number_of_bytes,
+	result = mono_w32file_get_disk_free_space (mono_string_chars (path_name), &wapi_free_bytes_avail, &wapi_total_number_of_bytes,
 				     &wapi_total_number_of_free_bytes);
 
 	if (result) {
@@ -7040,7 +7040,7 @@ ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString *path_name, guint64 *
 static inline guint32
 mono_icall_drive_info_get_drive_type (MonoString *root_path_name)
 {
-	return GetDriveType (mono_string_chars (root_path_name));
+	return mono_w32file_get_drive_type (mono_string_chars (root_path_name));
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 

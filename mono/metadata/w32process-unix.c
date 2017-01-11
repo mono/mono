@@ -58,6 +58,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/w32handle.h>
+#include <mono/metadata/w32file.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/strenc.h>
@@ -1887,9 +1888,9 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		out_fd = GPOINTER_TO_UINT (startup_handles->output);
 		err_fd = GPOINTER_TO_UINT (startup_handles->error);
 	} else {
-		in_fd = GPOINTER_TO_UINT (GetStdHandle (STD_INPUT_HANDLE));
-		out_fd = GPOINTER_TO_UINT (GetStdHandle (STD_OUTPUT_HANDLE));
-		err_fd = GPOINTER_TO_UINT (GetStdHandle (STD_ERROR_HANDLE));
+		in_fd = GPOINTER_TO_UINT (mono_w32file_get_console_input ());
+		out_fd = GPOINTER_TO_UINT (mono_w32file_get_console_output ());
+		err_fd = GPOINTER_TO_UINT (mono_w32file_get_console_error ());
 	}
 
 	/*

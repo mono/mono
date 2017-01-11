@@ -19,10 +19,7 @@ OTHER_H = \
 OTHER_SRC = \
 	error.c			\
 	error.h			\
-	io.c			\
 	io-layer.h		\
-	wapi_glob.h		\
-	wapi_glob.c		\
 	wapi.h			\
 	wapi.c
 

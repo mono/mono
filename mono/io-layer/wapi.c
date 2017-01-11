@@ -4,23 +4,6 @@
 #include "mono/utils/mono-lazy-init.h"
 #include "mono/metadata/w32handle.h"
 
-void
-wapi_init (void)
-{
-	_wapi_io_init ();
-}
-
-void
-wapi_cleanup (void)
-{
-	static gboolean has_shut_down = FALSE;
-
-	g_assert (has_shut_down == FALSE);
-	has_shut_down = TRUE;
-
-	_wapi_io_cleanup ();
-}
-
 /* Use this instead of getpid(), to cope with linuxthreads.  It's a
  * function rather than a variable lookup because we need to get at
  * this before share_init() might have been called. */
