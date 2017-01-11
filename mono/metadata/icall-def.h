@@ -103,10 +103,12 @@ ICALL(BTLS_ERROR_3, "mono_btls_error_get_error_string_n", mono_btls_error_get_er
 ICALL(BTLS_ERROR_4, "mono_btls_error_peek_error", mono_btls_error_peek_error)
 
 ICALL_TYPE(BTLS_KEY, "Mono.Btls.MonoBtlsKey", BTLS_KEY_1)
+ICALL(BTLS_KEY_0, "mono_btls_key_assign_rsa_private_key", mono_btls_key_assign_rsa_private_key)
 ICALL(BTLS_KEY_1, "mono_btls_key_free", mono_btls_key_free)
 ICALL(BTLS_KEY_2, "mono_btls_key_get_bits", mono_btls_key_get_bits)
 ICALL(BTLS_KEY_3, "mono_btls_key_get_bytes", mono_btls_key_get_bytes)
 ICALL(BTLS_KEY_4, "mono_btls_key_is_rsa", mono_btls_key_is_rsa)
+ICALL(BTLS_KEY_4a, "mono_btls_key_new", mono_btls_key_new)
 ICALL(BTLS_KEY_5, "mono_btls_key_up_ref", mono_btls_key_up_ref)
 
 ICALL_TYPE(BTLS_OBJECT, "Mono.Btls.MonoBtlsObject", BTLS_OBJECT_1)
