@@ -46,7 +46,6 @@
 typedef struct {
 	guint64 device;
 	guint64 inode;
-	pid_t opened_by_pid;
 	guint32 sharemode;
 	guint32 access;
 	guint32 handle_refs;
@@ -160,7 +159,6 @@ file_share_get (guint64 device, guint64 inode, guint32 new_sharemode, guint32 ne
 
 		file_share->device = device;
 		file_share->inode = inode;
-		file_share->opened_by_pid = wapi_getpid ();
 		file_share->sharemode = new_sharemode;
 		file_share->access = new_access;
 		file_share->handle_refs = 1;
