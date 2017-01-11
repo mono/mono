@@ -64,6 +64,12 @@ libmonoruntime_la_SOURCES = \
 	$(platform_sources)	\
 	../../unity/unity_utils.c	\
 	../../unity/unity_liveness.c	\
+	../xamarin-android/logger.h	\
+	../xamarin-android/monodroid.h	\
+	../xamarin-android/unity_getifaddrs.c	\
+	../xamarin-android/unity_getifaddrs.h	\
+	../xamarin-android/xamarin_getifaddrs.c	\
+	../xamarin-android/xamarin_getifaddrs.h	\
 	appdomain.c		\
 	assembly.c		\
 	attach.h		\
@@ -177,6 +183,10 @@ libmonoruntime_static_la_LDFLAGS = -static
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
 libmonoruntimeinclude_HEADERS = \
+	../xamarin-android/logger.h	\
+	../xamarin-android/monodroid.h	\
+	../xamarin-android/unity_getifaddrs.h	\
+	../xamarin-android/xamarin_getifaddrs.h	\
 	assembly.h		\
 	attrdefs.h		\
 	appdomain.h		\

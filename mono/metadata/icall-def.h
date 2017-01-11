@@ -429,6 +429,11 @@ ICALL(NDNS_1, "GetHostByAddr_internal(string,string&,string[]&,string[]&)", ves_
 ICALL(NDNS_2, "GetHostByName_internal(string,string&,string[]&,string[]&)", ves_icall_System_Net_Dns_GetHostByName_internal)
 ICALL(NDNS_3, "GetHostName_internal(string&)", ves_icall_System_Net_Dns_GetHostName_internal)
 
+ICALL_TYPE(LINNETIF, "System.Net.NetworkInformation.LinuxNetworkInterface", LINNETIF_1)
+ICALL(LINNETIF_1, "FreeInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_FreeInterfaceAddresses)
+ICALL(LINNETIF_2, "GetInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetInterfaceAddresses)
+ICALL(LINNETIF_3, "InitializeInterfaceAddresses", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_InitializeInterfaceAddresses)
+
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal)
 ICALL(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal)
