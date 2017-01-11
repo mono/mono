@@ -1589,7 +1589,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	if (!u16_ini) {
 		return FALSE;
 	}
-	handle = (void **)mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal, NULL);
+	handle = (void **)mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal);
 	g_free (u16_ini);
 	if (handle == INVALID_HANDLE_VALUE) {
 		return FALSE;

@@ -2199,7 +2199,7 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 }
 
 gpointer
-mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs, gpointer template_ G_GNUC_UNUSED)
+mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs)
 {
 	MonoW32HandleFile file_handle = {0};
 	gpointer handle;

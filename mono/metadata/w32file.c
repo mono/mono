@@ -829,9 +829,7 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 		}
 	}
 	
-	ret=mono_w32file_create (chars, convert_access ((MonoFileAccess)access_mode),
-			convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode),
-			attributes, NULL);
+	ret=mono_w32file_create (chars, convert_access ((MonoFileAccess)access_mode), convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode), attributes);
 	if(ret==INVALID_HANDLE_VALUE) {
 		*error=GetLastError ();
 	} 
