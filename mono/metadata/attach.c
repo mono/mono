@@ -42,7 +42,6 @@
 #include <mono/utils/mono-threads.h>
 #include "attach.h"
 
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/w32api.h>
 
 /*

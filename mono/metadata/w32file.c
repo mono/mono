@@ -27,7 +27,6 @@
 #endif
 
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/w32file.h>
 #include <mono/metadata/w32error.h>
 #include <mono/metadata/w32file-internals.h>

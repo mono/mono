@@ -18,7 +18,6 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/threads.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/gc-internals.h>

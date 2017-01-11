@@ -33,7 +33,6 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-rand.h>
 #include <mono/utils/refcount.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/w32api.h>
 
 #define CPU_USAGE_LOW 80

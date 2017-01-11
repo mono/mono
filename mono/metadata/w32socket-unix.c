@@ -47,7 +47,6 @@
 #endif
 #include <sys/stat.h>
 
-
 #include "w32socket.h"
 #include "w32socket-internals.h"
 #include "w32error.h"

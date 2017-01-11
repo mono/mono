@@ -50,7 +50,6 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
 #include "cominterop.h"
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/w32api.h>
 
 static void

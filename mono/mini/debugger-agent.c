@@ -75,7 +75,6 @@
 #include "debugger-agent.h"
 #include "mini.h"
 #include "seq-points.h"
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/w32api.h>
 
 /*

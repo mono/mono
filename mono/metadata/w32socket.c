@@ -46,7 +46,6 @@
 #include <sys/types.h>
 
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/appdomain.h>

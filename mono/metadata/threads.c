@@ -28,7 +28,6 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/runtime.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/utils/monobitset.h>

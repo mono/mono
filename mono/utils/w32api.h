@@ -25,6 +25,33 @@ typedef guint UINT;
 typedef gpointer HANDLE;
 typedef gpointer HMODULE;
 
+#else
+
+#define __USE_W32_SOCKETS
+#include <winsock2.h>
+#include <windows.h>
+#include <winbase.h>
+/* The mingw version says: /usr/i686-pc-mingw32/sys-root/mingw/include/ws2tcpip.h:38:2: error: #error "ws2tcpip.h is not compatible with winsock.h. Include winsock2.h instead." */
+#ifdef _MSC_VER
+#include <ws2tcpip.h>
+#endif
+#include <psapi.h>
+
+/* Workaround for missing WSAPOLLFD typedef in mingw's winsock2.h
+ * that is required for mswsock.h below. Remove once
+ * http://sourceforge.net/p/mingw/bugs/1980/ is fixed. */
+#if defined(__MINGW_MAJOR_VERSION) && __MINGW_MAJOR_VERSION == 4
+typedef struct pollfd {
+	SOCKET fd;
+	short  events;
+	short  revents;
+} WSAPOLLFD, *PWSAPOLLFD, *LPWSAPOLLFD;
+#endif
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#include <mswsock.h>
+#endif
+
 #endif /* HOST_WIN32 */
 
 G_END_DECLS

@@ -70,7 +70,6 @@
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/metadata/w32handle.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
 #ifdef HOST_WIN32

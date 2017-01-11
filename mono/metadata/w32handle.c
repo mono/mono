@@ -249,11 +249,6 @@ mono_w32handle_unlock_handle (gpointer handle)
 	mono_w32handle_unref (handle);
 }
 
-/*
- * mono_w32handle_init:
- *
- *   Initialize the io-layer.
- */
 void
 mono_w32handle_init (void)
 {

@@ -13,7 +13,6 @@
 
 #include "w32error.h"
 #include "w32handle-namespace.h"
-#include "mono/io-layer/io-layer.h"
 #include "mono/metadata/object-internals.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/utils/mono-threads.h"

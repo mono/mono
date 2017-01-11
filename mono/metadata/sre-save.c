@@ -32,8 +32,6 @@
 #include "mono/utils/mono-error-internals.h"
 #include "mono/utils/w32api.h"
 
-#include "mono/io-layer/io-layer.h"
-
 #define TEXT_OFFSET 512
 #define CLI_H_SIZE 136
 #define FILE_ALIGN 512

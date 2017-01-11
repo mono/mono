@@ -27,7 +27,6 @@
 #include "loader.h"
 #include "marshal.h"
 #include "coree.h"
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-path.h>

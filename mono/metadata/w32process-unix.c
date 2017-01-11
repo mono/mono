@@ -57,7 +57,6 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/exception.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32file.h>
 #include <mono/utils/mono-membar.h>
