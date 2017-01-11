@@ -47,7 +47,7 @@ namespace Mono.Btls
 	class X509CertificateImplBtls : X509Certificate2Impl
 	{
 		MonoBtlsX509 x509;
-		MonoBtlsKey privateKey;
+		MonoBtlsKey nativePrivateKey;
 		X500DistinguishedName subjectName;
 		X500DistinguishedName issuerName;
 		X509CertificateImplCollection intermediateCerts;
@@ -70,7 +70,8 @@ namespace Mono.Btls
 		{
 			disallowFallback = other.disallowFallback;
 			x509 = other.x509 != null ? other.x509.Copy () : null;
-			privateKey = other.privateKey != null ? other.privateKey.Copy () : null;
+			nativePrivateKey = other.nativePrivateKey != null ? other.nativePrivateKey.Copy () : null;
+			fallback = other.fallback != null ? (X509Certificate2Impl)other.fallback.Clone () : null;
 			if (other.intermediateCerts != null)
 				intermediateCerts = other.intermediateCerts.Clone ();
 		}
@@ -104,7 +105,13 @@ namespace Mono.Btls
 		internal MonoBtlsKey NativePrivateKey {
 			get {
 				ThrowIfContextInvalid ();
-				return privateKey;
+				if (nativePrivateKey == null && FallbackImpl.HasPrivateKey) {
+					var key = FallbackImpl.PrivateKey as RSA;
+					if (key == null)
+						throw new NotSupportedException ("Currently only supports RSA private keys.");
+					nativePrivateKey = MonoBtlsKey.CreateFromRSAPrivateKey (key);
+				}
+				return nativePrivateKey;
 			}
 		}
 
@@ -270,7 +277,7 @@ namespace Mono.Btls
 		}
 
 		public override bool HasPrivateKey {
-			get { return privateKey != null; }
+			get { return nativePrivateKey != null || FallbackImpl.HasPrivateKey; }
 		}
 
 		public override X500DistinguishedName IssuerName {
@@ -290,12 +297,15 @@ namespace Mono.Btls
 
 		public override AsymmetricAlgorithm PrivateKey {
 			get {
-				if (privateKey == null || !privateKey.IsRsa)
-					return null;
-				var bytes = privateKey.GetBytes (true);
+				if (nativePrivateKey == null || !nativePrivateKey.IsRsa)
+					return FallbackImpl.PrivateKey;
+				var bytes = nativePrivateKey.GetBytes (true);
 				return PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
 			}
-			set { FallbackImpl.PrivateKey = value; }
+			set {
+				nativePrivateKey = null;
+				FallbackImpl.PrivateKey = value;
+			}
 		}
 
 		public override PublicKey PublicKey {
@@ -343,6 +353,7 @@ namespace Mono.Btls
 
 		public override void Import (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			if (password == null) {
 				try {
 					Import (data);
@@ -399,7 +410,7 @@ namespace Mono.Btls
 
 				x509 = pkcs12.GetCertificate (0);
 				if (pkcs12.HasPrivateKey)
-					privateKey = pkcs12.GetPrivateKey ();
+					nativePrivateKey = pkcs12.GetPrivateKey ();
 				if (pkcs12.Count > 1) {
 					intermediateCerts = new X509CertificateImplCollection ();
 					for (int i = 0; i < pkcs12.Count; i++) {
@@ -476,9 +487,8 @@ namespace Mono.Btls
 				x509.Dispose ();
 				x509 = null;
 			}
-			if (privateKey != null) {
-				privateKey = null;
-				privateKey = null;
+			if (nativePrivateKey != null) {
+				nativePrivateKey = null;
 			}
 			subjectName = null;
 			issuerName = null;
