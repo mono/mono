@@ -2738,7 +2738,7 @@ static void
 checked_write_file (HANDLE f, gconstpointer buffer, guint32 numbytes)
 {
 	guint32 dummy;
-	if (!mono_w32file_write (f, buffer, numbytes, &dummy, NULL))
+	if (!mono_w32file_write (f, buffer, numbytes, &dummy))
 		g_error ("mono_w32file_write returned %d\n", GetLastError ());
 }
 

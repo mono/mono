@@ -51,15 +51,15 @@ void ves_icall_System_IO_MonoIO_DumpHandles (void)
 }
 
 gboolean
-mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, OVERLAPPED *overlapped)
+mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
-	return ReadFile (handle, buffer, numbytes, bytesread, overlapped);
+	return ReadFile (handle, buffer, numbytes, bytesread, NULL);
 }
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, OVERLAPPED *overlapped)
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-	return WriteFile (handle, buffer, numbytes, byteswritten, overlapped);
+	return WriteFile (handle, buffer, numbytes, byteswritten, NULL);
 }
 
 gboolean

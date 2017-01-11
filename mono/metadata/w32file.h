@@ -422,10 +422,10 @@ gboolean
 mono_w32file_delete (const gunichar2 *name);
 
 gboolean
-mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, OVERLAPPED *overlapped);
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, OVERLAPPED *overlapped);
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 
 gboolean
 mono_w32file_flush (gpointer handle);

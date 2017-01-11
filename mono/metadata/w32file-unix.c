@@ -761,12 +761,8 @@ static void file_details (gpointer data);
 static const gchar* file_typename (void);
 static gsize file_typesize (void);
 static gint file_getfiletype(void);
-static gboolean file_read(gpointer handle, gpointer buffer,
-			  guint32 numbytes, guint32 *bytesread,
-			  OVERLAPPED *overlapped);
-static gboolean file_write(gpointer handle, gconstpointer buffer,
-			   guint32 numbytes, guint32 *byteswritten,
-			   OVERLAPPED *overlapped);
+static gboolean file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
+static gboolean file_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 static gboolean file_flush(gpointer handle);
 static guint32 file_seek(gpointer handle, gint32 movedistance,
 			 gint32 *highmovedistance, gint method);
@@ -799,12 +795,8 @@ static void console_details (gpointer data);
 static const gchar* console_typename (void);
 static gsize console_typesize (void);
 static gint console_getfiletype(void);
-static gboolean console_read(gpointer handle, gpointer buffer,
-			     guint32 numbytes, guint32 *bytesread,
-			     OVERLAPPED *overlapped);
-static gboolean console_write(gpointer handle, gconstpointer buffer,
-			      guint32 numbytes, guint32 *byteswritten,
-			      OVERLAPPED *overlapped);
+static gboolean console_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
+static gboolean console_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 
 /* Console is mostly the same as file, except it can block waiting for
  * input or output
@@ -841,11 +833,8 @@ static void pipe_details (gpointer data);
 static const gchar* pipe_typename (void);
 static gsize pipe_typesize (void);
 static gint pipe_getfiletype (void);
-static gboolean pipe_read (gpointer handle, gpointer buffer, guint32 numbytes,
-			   guint32 *bytesread, OVERLAPPED *overlapped);
-static gboolean pipe_write (gpointer handle, gconstpointer buffer,
-			    guint32 numbytes, guint32 *byteswritten,
-			    OVERLAPPED *overlapped);
+static gboolean pipe_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
+static gboolean pipe_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 
 /* Pipe handles
  */
@@ -866,12 +855,8 @@ static const struct {
 	gint (*getfiletype)(void);
 	
 	/* File, console and pipe handles */
-	gboolean (*readfile)(gpointer handle, gpointer buffer,
-			     guint32 numbytes, guint32 *bytesread,
-			     OVERLAPPED *overlapped);
-	gboolean (*writefile)(gpointer handle, gconstpointer buffer,
-			      guint32 numbytes, guint32 *byteswritten,
-			      OVERLAPPED *overlapped);
+	gboolean (*readfile)(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
+	gboolean (*writefile)(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 	gboolean (*flushfile)(gpointer handle);
 	
 	/* File handles */
@@ -1106,9 +1091,8 @@ static gint file_getfiletype(void)
 	return(FILE_TYPE_DISK);
 }
 
-static gboolean file_read(gpointer handle, gpointer buffer,
-			  guint32 numbytes, guint32 *bytesread,
-			  OVERLAPPED *overlapped)
+static gboolean
+file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *file_handle;
 	gboolean ok;
@@ -1159,9 +1143,8 @@ static gboolean file_read(gpointer handle, gpointer buffer,
 	return(TRUE);
 }
 
-static gboolean file_write(gpointer handle, gconstpointer buffer,
-			   guint32 numbytes, guint32 *byteswritten,
-			   OVERLAPPED *overlapped G_GNUC_UNUSED)
+static gboolean
+file_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *file_handle;
 	gboolean ok;
@@ -1798,9 +1781,8 @@ static gint console_getfiletype(void)
 	return(FILE_TYPE_CHAR);
 }
 
-static gboolean console_read(gpointer handle, gpointer buffer,
-			     guint32 numbytes, guint32 *bytesread,
-			     OVERLAPPED *overlapped G_GNUC_UNUSED)
+static gboolean
+console_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *console_handle;
 	gboolean ok;
@@ -1849,9 +1831,8 @@ static gboolean console_read(gpointer handle, gpointer buffer,
 	return(TRUE);
 }
 
-static gboolean console_write(gpointer handle, gconstpointer buffer,
-			      guint32 numbytes, guint32 *byteswritten,
-			      OVERLAPPED *overlapped G_GNUC_UNUSED)
+static gboolean
+console_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *console_handle;
 	gboolean ok;
@@ -1949,9 +1930,8 @@ static gint pipe_getfiletype(void)
 	return(FILE_TYPE_PIPE);
 }
 
-static gboolean pipe_read (gpointer handle, gpointer buffer,
-			   guint32 numbytes, guint32 *bytesread,
-			   OVERLAPPED *overlapped G_GNUC_UNUSED)
+static gboolean
+pipe_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *pipe_handle;
 	gboolean ok;
@@ -2010,9 +1990,8 @@ static gboolean pipe_read (gpointer handle, gpointer buffer,
 	return(TRUE);
 }
 
-static gboolean pipe_write(gpointer handle, gconstpointer buffer,
-			   guint32 numbytes, guint32 *byteswritten,
-			   OVERLAPPED *overlapped G_GNUC_UNUSED)
+static gboolean
+pipe_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *pipe_handle;
 	gboolean ok;
@@ -2979,7 +2958,7 @@ mono_w32file_get_std_handle (gint stdhandle)
 }
 
 gboolean
-mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, OVERLAPPED *overlapped)
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleType type;
 
@@ -2990,12 +2969,11 @@ mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *
 		return(FALSE);
 	}
 	
-	return(io_ops[type].readfile (handle, buffer, numbytes, bytesread,
-				      overlapped));
+	return(io_ops[type].readfile (handle, buffer, numbytes, bytesread));
 }
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, OVERLAPPED *overlapped)
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleType type;
 
@@ -3006,8 +2984,7 @@ mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, gui
 		return(FALSE);
 	}
 	
-	return(io_ops[type].writefile (handle, buffer, numbytes, byteswritten,
-				       overlapped));
+	return(io_ops[type].writefile (handle, buffer, numbytes, byteswritten));
 }
 
 gboolean

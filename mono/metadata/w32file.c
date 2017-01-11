@@ -897,7 +897,7 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArray *dest,
 	buffer = mono_array_addr (dest, guchar, dest_offset);
 
 	MONO_ENTER_GC_SAFE;
-	result = mono_w32file_read (handle, buffer, count, &n, NULL);
+	result = mono_w32file_read (handle, buffer, count, &n);
 	MONO_EXIT_GC_SAFE;
 
 	if (!result) {
@@ -928,7 +928,7 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArray *src,
 	
 	buffer = mono_array_addr (src, guchar, src_offset);
 	MONO_ENTER_GC_SAFE;
-	result = mono_w32file_write (handle, buffer, count, &n, NULL);
+	result = mono_w32file_write (handle, buffer, count, &n);
 	MONO_EXIT_GC_SAFE;
 
 	if (!result) {
