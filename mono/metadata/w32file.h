@@ -391,6 +391,9 @@ gpointer
 mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs);
 
 gboolean
+mono_w32file_close (gpointer handle);
+
+gboolean
 mono_w32file_delete (const gunichar2 *name);
 
 gboolean

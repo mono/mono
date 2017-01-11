@@ -157,6 +157,12 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 	return WSAIoctl (sock, command, input, inputlen, output, outputlen, written, NULL, NULL);
 }
 
+static gboolean
+mono_w32socket_close (SOCKET sock)
+{
+	return CloseHandle (sock);
+}
+
 #endif /* HOST_WIN32 */
 
 static void
@@ -702,7 +708,7 @@ ves_icall_System_Net_Sockets_Socket_Close_internal (gsize sock, gint32 *werror)
 	mono_threadpool_io_remove_socket (GPOINTER_TO_INT (sock));
 
 	MONO_ENTER_GC_SAFE;
-	CloseHandle (GINT_TO_POINTER (sock));
+	mono_w32socket_close ((SOCKET) sock);
 	MONO_EXIT_GC_SAFE;
 }
 
@@ -2637,10 +2643,9 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 
 	/* FIXME: replace file by a proper fd that we can call open and close on, as they are interruptible */
 
-	file = ves_icall_System_IO_MonoIO_Open (filename, FileMode_Open, FileAccess_Read, FileShare_Read, 0, werror);
-
+	file = mono_w32file_create (mono_string_chars (filename), OPEN_EXISTING, GENERIC_READ, FILE_SHARE_READ, 0);
 	if (file == INVALID_HANDLE_VALUE) {
-		SetLastError (*werror);
+		*werror = GetLastError ();
 		return FALSE;
 	}
 
@@ -2656,7 +2661,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 
 	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
-		CloseHandle (file);
+		mono_w32file_close (file);
 		SetLastError (WSAEINTR);
 		return FALSE;
 	}
@@ -2670,14 +2675,14 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 
 	mono_thread_info_uninstall_interrupt (&interrupted);
 	if (interrupted) {
-		CloseHandle (file);
+		mono_w32file_close (file);
 		*werror = WSAEINTR;
 		return FALSE;
 	}
 
 	MONO_ENTER_GC_SAFE;
 
-	CloseHandle (file);
+	mono_w32file_close (file);
 
 	MONO_EXIT_GC_SAFE;
 

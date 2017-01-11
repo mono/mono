@@ -2191,7 +2191,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			goto done;
 		}
 		/* Shell exec should not return a process handle when it spawned a GUI thing, like a browser. */
-		CloseHandle (process_info->process_handle);
+		mono_w32handle_close (process_info->process_handle);
 		process_info->process_handle = NULL;
 	}
 
@@ -2391,7 +2391,7 @@ ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	if (WAPI_IS_PSEUDO_PROCESS_HANDLE (handle))
 		return TRUE;
-	return CloseHandle (handle);
+	return mono_w32handle_close (handle);
 }
 
 MonoBoolean

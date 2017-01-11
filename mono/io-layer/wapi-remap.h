@@ -14,6 +14,5 @@
 
 #define GetLastError wapi_GetLastError
 #define SetLastError wapi_SetLastError
-#define CloseHandle wapi_CloseHandle 
 
 #endif /* __WAPI_REMAP_H__ */

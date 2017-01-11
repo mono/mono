@@ -20,8 +20,7 @@ OTHER_SRC = \
 	error.c			\
 	error.h			\
 	io-layer.h		\
-	wapi.h			\
-	wapi.c
+	wapi.h
 
 
 WINDOWS_H = \

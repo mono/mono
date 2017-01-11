@@ -128,6 +128,9 @@ mono_w32socket_shutdown (SOCKET sock, gint how);
 gint
 mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written);
 
+gboolean
+mono_w32socket_close (SOCKET sock);
+
 #endif /* HOST_WIN32 */
 
 gint

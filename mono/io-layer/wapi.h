@@ -50,9 +50,6 @@ typedef guint UINT;
 typedef gpointer HANDLE;
 typedef gpointer HMODULE;
 
-gboolean
-CloseHandle (gpointer handle);
-
 G_END_DECLS
 
 #endif /* _WAPI_WAPI_H_ */

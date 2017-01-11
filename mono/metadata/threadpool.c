@@ -567,7 +567,7 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 			g_assert(wait_event);
 			MonoWaitHandle *wait_handle = mono_wait_handle_new (mono_object_domain (ares), wait_event, error);
 			if (!is_ok (error)) {
-				CloseHandle (wait_event);
+				mono_w32event_close (wait_event);
 				return NULL;
 			}
 			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) wait_handle);

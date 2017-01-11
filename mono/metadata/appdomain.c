@@ -1598,7 +1598,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	full_path = mono_path_resolve_symlinks (filename);
 	result = mono_w32file_write (handle, full_path, strlen (full_path), &n);
 	g_free (full_path);
-	CloseHandle (handle);
+	mono_w32file_close (handle);
 	return result;
 }
 

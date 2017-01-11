@@ -606,7 +606,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 	}
 
 	if ((flags & TF_DISCONNECT) == TF_DISCONNECT)
-		CloseHandle (handle);
+		mono_w32handle_close (handle);
 
 	return TRUE;
 }
@@ -1121,6 +1121,12 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 	*written = inputlen;
 
 	return 0;
+}
+
+gboolean
+mono_w32socket_close (SOCKET sock)
+{
+	return mono_w32handle_close (GINT_TO_POINTER (sock));
 }
 
 gint

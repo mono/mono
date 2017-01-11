@@ -846,7 +846,7 @@ ves_icall_System_IO_MonoIO_Close (HANDLE handle, gint32 *error)
 
 	*error=ERROR_SUCCESS;
 	
-	ret=CloseHandle (handle);
+	ret=mono_w32file_close (handle);
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
