@@ -47,8 +47,10 @@ static partial class SR
 	}
 }
 
+#if !INSIDE_CORLIB
 namespace System.Runtime.CompilerServices
 {
 	class FriendAccessAllowedAttribute : Attribute
 	{ }
 }
+#endif
