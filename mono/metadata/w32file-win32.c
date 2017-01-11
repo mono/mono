@@ -175,9 +175,24 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 }
 
 gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail, ULARGE_INTEGER *total_number_of_bytes, ULARGE_INTEGER *total_number_of_free_bytes)
+mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
-	return GetDiskFreeSpaceEx (path_name, free_bytes_avail, total_number_of_bytes, total_number_of_free_bytes);
+	gboolean result;
+	ULARGE_INTEGER *wapi_free_bytes_avail;
+	ULARGE_INTEGER *wapi_total_number_of_bytes;
+	ULARGE_INTEGER *wapi_total_number_of_free_bytes;
+
+	result = GetDiskFreeSpaceEx (path_name, wapi_free_bytes_avail, wapi_total_number_of_bytes, wapi_total_number_of_free_bytes);
+	if (result) {
+		if (free_bytes_avail)
+			*free_bytes_avail = wapi_free_bytes_avail->QuadPart;
+		if (total_number_of_bytes)
+			*total_number_of_bytes = wapi_total_number_of_bytes->QuadPart;
+		if (total_number_of_free_bytes)
+			*total_number_of_free_bytes = wapi_total_number_of_free_bytes->QuadPart;
+	}
+
+	return result;
 }
 
 gboolean

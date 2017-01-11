@@ -4341,7 +4341,7 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 
 #if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
 gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail, ULARGE_INTEGER *total_number_of_bytes, ULARGE_INTEGER *total_number_of_free_bytes)
+mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
@@ -4397,25 +4397,25 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, ULARGE_INTEGER *fr
 	/* total number of free bytes for non-root */
 	if (free_bytes_avail != NULL) {
 		if (isreadonly) {
-			free_bytes_avail->QuadPart = 0;
+			*free_bytes_avail = 0;
 		}
 		else {
-			free_bytes_avail->QuadPart = block_size * (guint64)fsstat.f_bavail;
+			*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 		}
 	}
 
 	/* total number of bytes available for non-root */
 	if (total_number_of_bytes != NULL) {
-		total_number_of_bytes->QuadPart = block_size * (guint64)fsstat.f_blocks;
+		*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 	}
 
 	/* total number of bytes available for root */
 	if (total_number_of_free_bytes != NULL) {
 		if (isreadonly) {
-			total_number_of_free_bytes->QuadPart = 0;
+			*total_number_of_free_bytes = 0;
 		}
 		else {
-			total_number_of_free_bytes->QuadPart = block_size * (guint64)fsstat.f_bfree;
+			*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 		}
 	}
 	
@@ -4423,18 +4423,18 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, ULARGE_INTEGER *fr
 }
 #else
 gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, ULARGE_INTEGER *free_bytes_avail, ULARGE_INTEGER *total_number_of_bytes, ULARGE_INTEGER *total_number_of_free_bytes)
+mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
 	if (free_bytes_avail != NULL) {
-		free_bytes_avail->QuadPart = (guint64) -1;
+		*free_bytes_avail = (guint64) -1;
 	}
 
 	if (total_number_of_bytes != NULL) {
-		total_number_of_bytes->QuadPart = (guint64) -1;
+		*total_number_of_bytes = (guint64) -1;
 	}
 
 	if (total_number_of_free_bytes != NULL) {
-		total_number_of_free_bytes->QuadPart = (guint64) -1;
+		*total_number_of_free_bytes = (guint64) -1;
 	}
 
 	return(TRUE);
