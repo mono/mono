@@ -116,12 +116,6 @@ unsigned mono_unity_get_all_classes_with_name_case (MonoImage *image, const char
 	return length;
 }
 
-MONO_API gboolean
-unity_mono_method_is_inflated (MonoMethod* method)
-{
-	return method->is_inflated;
-}
-
 gboolean
 unity_mono_method_is_generic (MonoMethod* method)
 {
@@ -141,13 +135,6 @@ MONO_API void
 mono_unity_g_free(void *ptr)
 {
 	g_free (ptr);
-}
-
-MONO_API gboolean
-mono_class_is_generic (MonoClass *klass)
-{
-	g_assert(klass);
-	return (klass->is_generic);
 }
 
 MONO_API gboolean
@@ -196,60 +183,9 @@ mono_get_find_plugin_callback ()
 	return unity_find_plugin_callback;
 }
 
-MonoAssembly* mono_unity_mscorlib()
-{
-	return mono_defaults.corlib->assembly;
-}
+//object
 
-MonoImage* mono_unity_mscorlib_image()
-{
-	return mono_defaults.corlib->assembly->image;
-}
-
-const char* mono_unity_image_name_for(MonoClass* klass)
-{
-	return klass->image->assembly_name;
-}
-
-void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassField *field)
-{
-	// This is a copy of mono_field_get_addr - we need to consider how to expose that on the public API.
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	guint8 *src;
-
-	if (field->type->attrs & FIELD_ATTRIBUTE_STATIC) {
-		if (field->offset == -1) {
-			/* Special static */
-			gpointer addr;
-
-			mono_domain_lock(vt->domain);
-			addr = g_hash_table_lookup(vt->domain->special_static_fields, field);
-			mono_domain_unlock(vt->domain);
-			src = (guint8 *)mono_get_special_static_data(GPOINTER_TO_UINT(addr));
-		}
-		else {
-			src = (guint8*)mono_vtable_get_static_field_data(vt) + field->offset;
-		}
-	}
-	else {
-		src = (guint8*)obj + field->offset;
-	}
-
-	return src;
-}
-
-MonoObject* mono_unity_compare_exchange(MonoObject **location, MonoObject *value, MonoObject *comparand)
-{
-	return ves_icall_System_Threading_Interlocked_CompareExchange_T(location, value, comparand);
-}
-
-MonoObject* mono_unity_exchange(MonoObject **location, MonoObject *value)
-{
-	return ves_icall_System_Threading_Interlocked_Exchange_T(location, value);
-}
-
-void mono_unity_init_obj(void* obj, MonoClass* klass)
+void mono_unity_object_init(void* obj, MonoClass* klass)
 {
 	if (klass->valuetype)
 		memset(obj, 0, klass->instance_size - sizeof(MonoObject));
@@ -257,9 +193,55 @@ void mono_unity_init_obj(void* obj, MonoClass* klass)
 		*(MonoObject**)obj = NULL;
 }
 
-MonoObject* mono_unity_isinst_sealed(MonoObject* obj, MonoClass* targetType)
+MonoObject* mono_unity_object_isinst_sealed(MonoObject* obj, MonoClass* targetType)
 {
 	return obj->vtable->klass == targetType ? obj : NULL;
+}
+
+void mono_unity_object_unbox_nullable(MonoObject* obj, MonoClass* nullableArgumentClass, void* storage)
+{
+	uint32_t valueSize = nullableArgumentClass->instance_size - sizeof(MonoObject);
+
+	if (obj == NULL)
+	{
+		*((mono_byte*)(storage)+valueSize) = 0;
+	}
+	else if (obj->vtable->klass != nullableArgumentClass)
+	{
+		mono_raise_exception(mono_get_exception_invalid_cast());
+	}
+	else
+	{
+		memcpy(storage, mono_object_unbox(obj), valueSize);
+		*((mono_byte*)(storage)+valueSize) = 1;
+	}
+}
+
+MonoClass* mono_unity_object_get_class(MonoObject *obj)
+{
+	return obj->vtable->klass;
+}
+
+MonoObject* mono_unity_object_compare_exchange(MonoObject **location, MonoObject *value, MonoObject *comparand)
+{
+	return ves_icall_System_Threading_Interlocked_CompareExchange_T(location, value, comparand);
+}
+
+MonoObject* mono_unity_object_exchange(MonoObject **location, MonoObject *value)
+{
+	return ves_icall_System_Threading_Interlocked_Exchange_T(location, value);
+}
+
+gboolean mono_unity_object_check_box_cast(MonoObject *obj, MonoClass *klass)
+{
+	return (obj->vtable->klass->element_class == klass->element_class);
+}
+
+//class
+
+const char* mono_unity_class_get_image_name(MonoClass* klass)
+{
+	return klass->image->assembly_name;
 }
 
 MonoClass* mono_unity_class_get_generic_definition(MonoClass* klass)
@@ -270,6 +252,76 @@ MonoClass* mono_unity_class_get_generic_definition(MonoClass* klass)
 	return NULL;
 }
 
+MonoClass* mono_unity_class_inflate_generic_class(MonoClass *gklass, MonoGenericContext *context)
+{
+	MonoError error;
+	return mono_class_inflate_generic_class_checked(gklass, context, &error);
+}
+
+gboolean mono_unity_class_has_parent_unsafe(MonoClass *klass, MonoClass *parent)
+{
+	return mono_class_has_parent_fast(klass, parent);
+}
+
+MonoAssembly* mono_unity_class_get_assembly(MonoClass *klass)
+{
+	return klass->image->assembly;
+}
+
+gboolean mono_unity_class_is_array(MonoClass *klass)
+{
+	return klass->rank > 0;
+}
+
+MonoClass* mono_unity_class_get_element_class(MonoClass *klass)
+{
+	return klass->element_class;
+}
+
+gboolean mono_unity_class_is_delegate(MonoClass *klass)
+{
+	return klass->delegate;
+}
+
+int mono_unity_class_get_instance_size(MonoClass *klass)
+{
+	return klass->instance_size;
+}
+
+MonoClass* mono_unity_class_get_castclass(MonoClass *klass)
+{
+	return klass->cast_class;
+}
+
+guint32 mono_unity_class_get_native_size(MonoClass* klass)
+{
+	MonoMarshalType* info = mono_marshal_load_type_info(klass);
+	return info->native_size;
+}
+
+MonoBoolean mono_unity_class_is_string(MonoClass* klass)
+{
+	if (mono_class_get_type(klass)->type == MONO_TYPE_STRING)
+		return TRUE;
+	return FALSE;
+}
+
+MonoBoolean mono_unity_class_is_class_type(MonoClass* klass)
+{
+	if (mono_class_get_type(klass)->type == MONO_TYPE_CLASS)
+		return TRUE;
+	return FALSE;
+}
+
+MONO_API gboolean
+mono_class_is_generic(MonoClass *klass)
+{
+	g_assert(klass);
+	return (klass->is_generic);
+}
+
+//method
+
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method)
 {
 	if (method->is_inflated)
@@ -278,42 +330,55 @@ MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method)
 	return NULL;
 }
 
-MonoClass* mono_unity_get_class_for_generic_parameter(MonoGenericContainer* generic_container, gint index)
+MonoReflectionMethod* mono_unity_method_get_object(MonoMethod *method)
 {
-	MonoGenericParam *param = mono_generic_container_get_param(generic_container, index);
-	return mono_class_from_generic_parameter_internal(param);
+	return mono_method_get_object(mono_domain_get(), method, NULL);
 }
 
-MonoClass* mono_unity_class_inflate_generic_class(MonoClass *gklass, MonoGenericContext *context)
+MonoMethod* mono_unity_method_alloc0(MonoClass* klass)
 {
-	MonoError error;
-	return mono_class_inflate_generic_class_checked(gklass, context, &error);
+	return mono_image_alloc0(klass->image, sizeof(MonoMethod));
 }
 
-MonoVTable* mono_unity_class_get_vtable(MonoClass* klass)
+gboolean mono_unity_method_is_static(MonoMethod *method)
 {
-	return klass->vtable;
+	return method->flags & METHOD_ATTRIBUTE_STATIC;
 }
 
-gboolean mono_unity_class_has_parent_unsafe(MonoClass *klass, MonoClass *parent)
+MonoClass* mono_unity_method_get_class(const MonoMethod *method)
 {
-	return mono_class_has_parent_fast(klass, parent);
+	return method->klass;
 }
 
-void mono_unity_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback)
+#ifdef IL2CPP_ON_MONO
+
+void* mono_unity_method_get_method_pointer(MonoMethod* method)
 {
-	domain->finalize_runtime_invoke = callback;
+	return method->method_pointer;
 }
 
-void mono_unity_install_capture_context_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback)
+void mono_unity_method_set_method_pointer(MonoMethod* method, void *p)
 {
-	domain->capture_context_runtime_invoke = callback;
+	method->method_pointer = p;
 }
 
-void mono_unity_install_capture_context_method(MonoDomain* domain, gpointer callback)
+void* mono_unity_method_get_invoke_pointer(MonoMethod* method)
 {
-	domain->capture_context_method = callback;
+	return method->invoke_pointer;
 }
+
+void mono_unity_method_set_invoke_pointer(MonoMethod* method, void *p)
+{
+	method->invoke_pointer = p;
+}
+
+#endif
+
+const char* mono_unity_method_get_name(MonoMethod *method)
+{
+	return method->name;
+}
+
 
 //must match the hash in il2cpp code generation
 static guint32 hash_string_djb2(guchar *str)
@@ -365,6 +430,8 @@ static guint32 get_array_structure_hash(MonoArrayType *atype)
 
 	return hash_string_djb2(buffer);
 }
+
+/* Begin: Hash computation helper functions */
 
 static void get_type_hashes(MonoType *type, GList *hashes);
 static void get_type_hashes_generic_inst(MonoGenericInst *inst, GList *hashes);
@@ -505,7 +572,9 @@ static void combine_all_hashes(gpointer data, gpointer user_data)
 		*hash = combine_hashes(*hash, (guint64)(uintptr_t)data);
 }
 
-guint64 mono_unity_get_method_hash(MonoMethod *method)
+/* End: Hash computation helper functions */
+
+guint64 mono_unity_method_get_hash(MonoMethod *method)
 {
 	GList *hashes = get_type_hashes_method(method);
 
@@ -518,72 +587,7 @@ guint64 mono_unity_get_method_hash(MonoMethod *method)
 	return hash;
 }
 
-MonoString* mono_unity_append_assembly_name_if_necessary(MonoString* typeName, const char* assemblyName)
-{
-	if (typeName != NULL)
-	{
-		MonoTypeNameParse info;
-
-		// The mono_reflection_parse_type function will mangle the name, so don't use this copy later.
-		MonoError unused;
-		char* nameForParsing = mono_string_to_utf8_checked(typeName, &unused);
-		if (mono_reflection_parse_type(nameForParsing, &info))
-		{
-			if (!info.assembly.name)
-			{
-				GString* assemblyQualifiedName = g_string_new(0);
-				char* name = mono_string_to_utf8_checked(typeName, &unused);
-				g_string_append_printf(assemblyQualifiedName, "%s, %s", name, assemblyName);
-
-				typeName = mono_string_new(mono_domain_get(), assemblyQualifiedName->str);
-
-				g_string_free(assemblyQualifiedName, FALSE);
-				mono_free(name);
-			}
-		}
-
-		mono_free(nameForParsing);
-	}
-
-	return typeName;
-}
-
-void mono_unity_memory_barrier()
-{
-	mono_memory_barrier();
-}
-
-void mono_unity_object_unbox_nullable(MonoObject* obj, MonoClass* nullableArgumentClass, void* storage)
-{
-	uint32_t valueSize = nullableArgumentClass->instance_size - sizeof(MonoObject);
-
-	if (obj == NULL)
-	{
-		*((mono_byte*)(storage)+valueSize) = 0;
-	}
-	else if (obj->vtable->klass != nullableArgumentClass)
-	{
-		mono_raise_exception(mono_get_exception_invalid_cast());
-	}
-	else
-	{
-		memcpy(storage, mono_object_unbox(obj), valueSize);
-		*((mono_byte*)(storage)+valueSize) = 1;
-	}
-}
-
-MonoReflectionMethod* mono_unity_method_get_object(MonoMethod *method)
-{
-	MonoError unused;
-	return mono_method_get_object_checked(mono_domain_get(), method, NULL, &unused);
-}
-
-MonoAssembly* mono_unity_assembly_from_class(MonoClass *klass)
-{
-	return klass->image->assembly;
-}
-
-MonoMethod* mono_unity_aot_get_array_helper_from_wrapper(MonoMethod *method)
+MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method)
 {
 	MonoMethod *m;
 	const char *prefix;
@@ -622,30 +626,64 @@ MonoMethod* mono_unity_aot_get_array_helper_from_wrapper(MonoMethod *method)
 	return m;
 }
 
-gboolean mono_unity_class_is_array(MonoClass *klass)
+MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, void *value)
 {
-	return klass->rank > 0;
+	if (method->signature && method->signature->ret->type == MONO_TYPE_PTR)
+	{
+		MonoError unused;
+		return mono_value_box_checked(mono_domain_get(), mono_defaults.int_class, &value, &unused);
+	}
+
+	return (MonoObject*)value;
 }
 
-int mono_unity_get_array_element_size(MonoArray *arr)
+MONO_API gboolean
+unity_mono_method_is_inflated(MonoMethod* method)
+{
+	return method->is_inflated;
+}
+
+guint32 mono_unity_method_get_token(MonoMethod *method)
+{
+	return method->token;
+}
+
+//domain
+
+
+void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback)
+{
+	domain->finalize_runtime_invoke = callback;
+}
+
+void mono_unity_domain_install_capture_context_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback)
+{
+	domain->capture_context_runtime_invoke = callback;
+}
+
+void mono_unity_domain_install_capture_context_method(MonoDomain* domain, gpointer callback)
+{
+	domain->capture_context_method = callback;
+}
+
+//array
+
+int mono_unity_array_get_element_size(MonoArray *arr)
 {
 	return arr->obj.vtable->klass->sizes.element_size;
 }
 
-MonoClass* mono_unity_class_from_array(MonoArray *arr)
+MonoClass* mono_unity_array_get_class(MonoArray *arr)
 {
 	return arr->obj.vtable->klass;
 }
 
-MonoClass* mono_unity_element_class_from_class(MonoClass *klass)
+mono_array_size_t mono_unity_array_get_max_length(MonoArray *arr)
 {
-	return klass->element_class;
+	return arr->max_length;
 }
 
-MonoClass* mono_unity_class_from_object(MonoObject *obj)
-{
-	return obj->vtable->klass;
-}
+//type
 
 gboolean mono_unity_type_is_generic_instance(MonoType *type)
 {
@@ -660,6 +698,27 @@ MonoGenericClass* mono_unity_type_get_generic_class(MonoType *type)
 	return type->data.generic_class;
 }
 
+gboolean mono_unity_type_is_enum_type(MonoType *type)
+{
+	if (type->type == MONO_TYPE_VALUETYPE && type->data.klass->enumtype)
+		return TRUE;
+	if (type->type == MONO_TYPE_GENERICINST && type->data.generic_class->container_class->enumtype)
+		return TRUE;
+	return FALSE;
+}
+
+gboolean mono_unity_type_is_boolean(MonoType *type)
+{
+	return type->type == MONO_TYPE_BOOLEAN;
+}
+
+MonoClass* mono_unity_type_get_element_class(MonoType *type)
+{
+	return type->data.klass->element_class;
+}
+
+//generic class
+
 MonoGenericContext mono_unity_generic_class_get_context(MonoGenericClass *klass)
 {
 	return klass->context;
@@ -670,19 +729,152 @@ MonoClass* mono_unity_generic_class_get_container_class(MonoGenericClass *klass)
 	return klass->container_class;
 }
 
-gboolean mono_unity_check_box_cast(MonoObject *obj, MonoClass *klass)
+//method signature
+
+MonoClass* mono_unity_signature_get_class_for_param(MonoMethodSignature *sig, int index)
 {
-	return (obj->vtable->klass->element_class == klass->element_class);
+	MonoType *type = sig->params[index];
+	return mono_class_from_mono_type(type);
 }
 
-mono_array_size_t mono_unity_get_array_max_length(MonoArray *arr)
+int mono_unity_signature_num_parameters(MonoMethodSignature *sig)
 {
-	return arr->max_length;
+	return sig->param_count;
 }
 
-gboolean mono_unity_class_is_delegate(MonoClass *klass)
+gboolean mono_unity_signature_param_is_byref(MonoMethodSignature *sig, int index)
 {
-	return klass->delegate;
+	return sig->params[index]->byref;
+}
+
+//generic inst
+
+guint mono_unity_generic_inst_get_type_argc(MonoGenericInst *inst)
+{
+	return inst->type_argc;
+}
+
+MonoType* mono_unity_generic_inst_get_type_argument(MonoGenericInst *inst, int index)
+{
+	return inst->type_argv[index];
+}
+
+//exception
+
+MonoString* mono_unity_exception_get_message(MonoException *exc)
+{
+	return exc->message;
+}
+
+MonoString* mono_unity_exception_get_stack_trace(MonoException *exc)
+{
+	return exc->stack_trace;
+}
+
+MonoObject* mono_unity_exception_get_inner_exception(MonoException *exc)
+{
+	return exc->inner_ex;
+}
+
+MonoArray* mono_unity_exception_get_trace_ips(MonoException *exc)
+{
+	return exc->trace_ips;
+}
+
+void mono_unity_exception_set_trace_ips(MonoException *exc, MonoArray *ips)
+{
+	assert(sizeof((exc)->trace_ips == sizeof(void**)));
+	mono_gc_wbarrier_set_field((MonoObject*)(exc), &((exc)->trace_ips), (MonoObject*)ips);
+}
+
+MonoException* mono_unity_exception_get_marshal_directive(const char* msg)
+{
+	return mono_exception_from_name_msg(mono_get_corlib(), "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
+}
+
+//defaults
+
+MonoClass* mono_unity_defaults_get_int_class()
+{
+	return mono_defaults.int_class;
+}
+
+MonoClass* mono_unity_defaults_get_stack_frame_class()
+{
+	return mono_defaults.stack_frame_class;
+}
+
+MonoClass* mono_unity_defaults_get_int32_class()
+{
+	return mono_defaults.int32_class;
+}
+
+MonoClass* mono_unity_defaults_get_char_class()
+{
+	return mono_defaults.char_class;
+}
+
+MonoClass* mono_unity_defaults_get_delegate_class()
+{
+	return mono_defaults.delegate_class;
+}
+
+MonoClass* mono_unity_defaults_get_byte_class()
+{
+	return mono_defaults.byte_class;
+}
+
+//misc
+
+MonoAssembly* mono_unity_assembly_get_mscorlib()
+{
+	return mono_defaults.corlib->assembly;
+}
+
+MonoImage* mono_unity_image_get_mscorlib()
+{
+	return mono_defaults.corlib->assembly->image;
+}
+
+MonoClass* mono_unity_generic_container_get_parameter_class(MonoGenericContainer* generic_container, gint index)
+{
+	MonoGenericParam *param = mono_generic_container_get_param(generic_container, index);
+	return mono_class_from_generic_parameter_internal(param);
+}
+
+MonoString* mono_unity_string_append_assembly_name_if_necessary(MonoString* typeName, const char* assemblyName)
+{
+	if (typeName != NULL)
+	{
+		MonoTypeNameParse info;
+
+		// The mono_reflection_parse_type function will mangle the name, so don't use this copy later.
+		MonoError unused;
+		char* nameForParsing = mono_string_to_utf8_checked(typeName, &unused);
+		if (mono_reflection_parse_type(nameForParsing, &info))
+		{
+			if (!info.assembly.name)
+			{
+				GString* assemblyQualifiedName = g_string_new(0);
+				char* name = mono_string_to_utf8_checked(typeName, &unused);
+				g_string_append_printf(assemblyQualifiedName, "%s, %s", name, assemblyName);
+
+				typeName = mono_string_new(mono_domain_get(), assemblyQualifiedName->str);
+
+				g_string_free(assemblyQualifiedName, FALSE);
+				mono_free(name);
+			}
+		}
+
+		mono_free(nameForParsing);
+	}
+
+	return typeName;
+}
+
+void mono_unity_memory_barrier()
+{
+	mono_memory_barrier();
 }
 
 MonoObject* mono_unity_delegate_get_target(MonoDelegate *delegate)
@@ -690,123 +882,56 @@ MonoObject* mono_unity_delegate_get_target(MonoDelegate *delegate)
 	return delegate->target;
 }
 
-MonoObject* mono_unity_convert_return_type_if_needed(MonoMethod *method, void *value)
-{
-	if (method->signature && method->signature->ret->type == MONO_TYPE_PTR)
-	{
-		MonoError unused;
-		return mono_value_box_checked(mono_domain_get(), mono_defaults.int_class, &value, &unused);
-	}
-
-	return (MonoObject*)value;
-}
-
-MonoClass* mono_unity_class_for_method_param(MonoMethodSignature *sig, int index)
-{
-	MonoType *type = sig->params[index];
-	return mono_class_from_mono_type(type);
-}
-
-int mono_unity_num_method_parameters(MonoMethodSignature *sig)
-{
-	return sig->param_count;
-}
-
-int mono_unity_class_instance_size(MonoClass *klass)
-{
-	return klass->instance_size;
-}
-
-gboolean mono_unity_method_param_is_byref(MonoMethodSignature *sig, int index)
-{
-	return sig->params[index]->byref;
-}
-
-MonoClass* mono_unity_int_class_get()
-{
-	return mono_defaults.int_class;
-}
-
-MonoClass* mono_unity_stack_frame_class_get()
-{
-	return mono_defaults.stack_frame_class;
-}
-
-MonoClass* mono_unity_class_get_castclass(MonoClass *klass)
-{
-	return klass->cast_class;
-}
-
 gchar* mono_unity_get_runtime_build_info(const char *date, const char *time)
 {
 	return g_strdup_printf("Unity IL2CPP(%s %s)", date, time);
 }
 
-gboolean mono_unity_type_is_enum_type(MonoType *type)
+void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 {
-	if (type->type == MONO_TYPE_VALUETYPE && type->data.klass->enumtype)
-		return TRUE;
-	if (type->type == MONO_TYPE_GENERICINST && type->data.generic_class->container_class->enumtype)
-		return TRUE;
-	return FALSE;
+	// This is a copy of mono_field_get_addr - we need to consider how to expose that on the public API.
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	guint8 *src;
+
+	if (field->type->attrs & FIELD_ATTRIBUTE_STATIC) {
+		if (field->offset == -1) {
+			/* Special static */
+			gpointer addr;
+
+			mono_domain_lock(vt->domain);
+			addr = g_hash_table_lookup(vt->domain->special_static_fields, field);
+			mono_domain_unlock(vt->domain);
+			src = (guint8 *)mono_get_special_static_data(GPOINTER_TO_UINT(addr));
+		}
+		else {
+			src = (guint8*)mono_vtable_get_static_field_data(vt) + field->offset;
+		}
+	}
+	else {
+		src = (guint8*)obj + field->offset;
+	}
+
+	return src;
 }
 
-MonoClass* mono_unity_int32_class_get()
+gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, MonoThreadInfo *info)
 {
-	return mono_defaults.int32_class;
+	tctx->valid = TRUE;
+	tctx->unwind_data[MONO_UNWIND_DATA_DOMAIN] = mono_domain_get();
+	tctx->unwind_data[MONO_UNWIND_DATA_LMF] = NULL;
+	tctx->unwind_data[MONO_UNWIND_DATA_JIT_TLS] = NULL;
+
+	return TRUE;
 }
 
-MonoClass* mono_unity_char_class_get()
+void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method)
 {
-	return mono_defaults.char_class;
+	assert(sizeof(sf->method) == sizeof(void**));
+	mono_gc_wbarrier_set_field((MonoObject*)(sf), &(sf->method), (MonoObject*)mono_method_get_object(mono_domain_get(), method, NULL));
 }
 
-MonoClass* mono_unity_delegate_class_get()
+MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type)
 {
-	return mono_defaults.delegate_class;
-}
-
-MonoBoolean mono_unity_is_class(MonoClass* klass)
-{
-	if (mono_class_get_type(klass)->type == MONO_TYPE_CLASS)
-		return TRUE;
-	return FALSE;
-}
-
-guint32 mono_unity_native_size(MonoClass* klass)
-{
-	MonoMarshalType* info = mono_marshal_load_type_info(klass);
-	return info->native_size;
-}
-
-MonoBoolean mono_unity_class_is_string(MonoClass* klass)
-{
-	if (mono_class_get_type(klass)->type == MONO_TYPE_STRING)
-		return TRUE;
-	return FALSE;
-}
-
-MonoException* mono_unity_get_exception_marshal_directive(const char* msg)
-{
-	return mono_exception_from_name_msg(mono_get_corlib(), "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
-}
-
-MonoClass* mono_unity_element_class_from_type(MonoType *type)
-{
-	return type->data.klass->element_class;
-}
-
-gboolean mono_unity_type_is_boolean(MonoType *type)
-{
-	return type->type == MONO_TYPE_BOOLEAN;
-}
-
-MonoClass* mono_unity_byte_class_get()
-{
-	return mono_defaults.byte_class;
-}
-
-MonoMethod* mono_unity_method_alloc0(MonoClass* klass)
-{
-	return mono_image_alloc0(klass->image, sizeof(MonoMethod));
+	return type->type;
 }
