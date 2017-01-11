@@ -49,6 +49,7 @@
 #include <mono/metadata/w32process.h>
 #include <mono/metadata/w32process-internals.h>
 #include <mono/metadata/w32process-unix-internals.h>
+#include <mono/metadata/w32error.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object.h>
@@ -946,7 +947,7 @@ mono_w32process_get_pid (gpointer handle)
 
 	res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 	if (!res) {
-		SetLastError (ERROR_INVALID_HANDLE);
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return 0;
 	}
 
@@ -1017,7 +1018,7 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find pid %d", __func__, pid);
 
-	SetLastError (ERROR_PROC_NOT_FOUND);
+	mono_w32error_set_last (ERROR_PROC_NOT_FOUND);
 	return NULL;
 }
 
@@ -1636,7 +1637,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL",
 				   __func__);
 
-			SetLastError (ERROR_PATH_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
 
@@ -1648,7 +1649,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		if (args == NULL) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
 
-			SetLastError (ERROR_PATH_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
 	}
@@ -1658,7 +1659,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		if (dir == NULL) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
 
-			SetLastError (ERROR_PATH_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
 
@@ -1689,7 +1690,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
 					   __func__, prog);
 				g_free (unquoted);
-				SetLastError (ERROR_FILE_NOT_FOUND);
+				mono_w32error_set_last (ERROR_FILE_NOT_FOUND);
 				goto free_strings;
 			}
 		} else {
@@ -1706,7 +1707,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
 					   __func__, prog);
 				g_free (unquoted);
-				SetLastError (ERROR_FILE_NOT_FOUND);
+				mono_w32error_set_last (ERROR_FILE_NOT_FOUND);
 				goto free_strings;
 			}
 		}
@@ -1770,7 +1771,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			/* Give up */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find what to exec", __func__);
 
-			SetLastError (ERROR_PATH_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
 
@@ -1797,7 +1798,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s",
 					   __func__, token);
 				g_free (token);
-				SetLastError (ERROR_FILE_NOT_FOUND);
+				mono_w32error_set_last (ERROR_FILE_NOT_FOUND);
 				goto free_strings;
 			}
 		} else {
@@ -1824,7 +1825,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Couldn't find executable %s", __func__, token);
 
 					g_free (token);
-					SetLastError (ERROR_FILE_NOT_FOUND);
+					mono_w32error_set_last (ERROR_FILE_NOT_FOUND);
 					goto free_strings;
 				}
 			}
@@ -1863,7 +1864,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	} else {
 		if (!is_executable (prog)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Executable permisson not set on %s", __func__, prog);
-			SetLastError (ERROR_ACCESS_DENIED);
+			mono_w32error_set_last (ERROR_ACCESS_DENIED);
 			goto free_strings;
 		}
 	}
@@ -1959,7 +1960,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 
 	switch (pid = fork ()) {
 	case -1: /* Error */ {
-		SetLastError (ERROR_OUTOFMEMORY);
+		mono_w32error_set_last (ERROR_OUTOFMEMORY);
 		ret = FALSE;
 		break;
 	}
@@ -2030,7 +2031,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			mono_os_sem_destroy (&process->exit_sem);
 			g_free (process);
 
-			SetLastError (ERROR_OUTOFMEMORY);
+			mono_w32error_set_last (ERROR_OUTOFMEMORY);
 			ret = FALSE;
 			break;
 		}
@@ -2089,7 +2090,7 @@ free_strings:
 
 	return ret;
 #else
-	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
 	return FALSE;
 #endif // defined (HAVE_FORK) && defined (HAVE_EXECVE)
 }
@@ -2121,14 +2122,14 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 	 */
 	args = utf16_concat (utf16_quote, lpFile, utf16_quote, lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
 	if (args == NULL) {
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		ret = FALSE;
 		goto done;
 	}
 	ret = process_create (NULL, args, lpDirectory, NULL, process_info);
 	g_free (args);
 
-	if (!ret && GetLastError () == ERROR_OUTOFMEMORY)
+	if (!ret && mono_w32error_get_last () == ERROR_OUTOFMEMORY)
 		goto done;
 
 	if (!ret) {
@@ -2178,15 +2179,15 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		args = utf16_concat (handler_utf16, utf16_space, utf16_quote, lpFile, utf16_quote,
 			lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
 		if (args == NULL) {
-			SetLastError (ERROR_INVALID_DATA);
+			mono_w32error_set_last (ERROR_INVALID_DATA);
 			ret = FALSE;
 			goto done;
 		}
 		ret = process_create (NULL, args, lpDirectory, NULL, process_info);
 		g_free (args);
 		if (!ret) {
-			if (GetLastError () != ERROR_OUTOFMEMORY)
-				SetLastError (ERROR_INVALID_DATA);
+			if (mono_w32error_get_last () != ERROR_OUTOFMEMORY)
+				mono_w32error_set_last (ERROR_INVALID_DATA);
 			ret = FALSE;
 			goto done;
 		}
@@ -2197,7 +2198,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 
 done:
 	if (ret == FALSE) {
-		process_info->pid = -GetLastError ();
+		process_info->pid = -mono_w32error_get_last ();
 	} else {
 		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
@@ -2293,7 +2294,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 		g_free (shell_path);
 
 	if (!ret)
-		process_info->pid = -GetLastError ();
+		process_info->pid = -mono_w32error_get_last ();
 
 	return ret;
 }
@@ -2411,7 +2412,7 @@ ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint3
 		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find process %p", __func__, handle);
-			SetLastError (ERROR_INVALID_HANDLE);
+			mono_w32error_set_last (ERROR_INVALID_HANDLE);
 			return FALSE;
 		}
 
@@ -2423,10 +2424,10 @@ ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint3
 		return TRUE;
 
 	switch (errno) {
-	case EINVAL: SetLastError (ERROR_INVALID_PARAMETER); break;
-	case EPERM:  SetLastError (ERROR_ACCESS_DENIED);     break;
-	case ESRCH:  SetLastError (ERROR_PROC_NOT_FOUND);    break;
-	default:     SetLastError (ERROR_GEN_FAILURE);       break;
+	case EINVAL: mono_w32error_set_last (ERROR_INVALID_PARAMETER); break;
+	case EPERM:  mono_w32error_set_last (ERROR_ACCESS_DENIED);     break;
+	case ESRCH:  mono_w32error_set_last (ERROR_PROC_NOT_FOUND);    break;
+	default:     mono_w32error_set_last (ERROR_GEN_FAILURE);       break;
 	}
 
 	return FALSE;
@@ -2494,7 +2495,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 
 		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
-			SetLastError (ERROR_INVALID_HANDLE);
+			mono_w32error_set_last (ERROR_INVALID_HANDLE);
 			return 0;
 		}
 
@@ -2507,13 +2508,13 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 		switch (errno) {
 		case EPERM:
 		case EACCES:
-			SetLastError (ERROR_ACCESS_DENIED);
+			mono_w32error_set_last (ERROR_ACCESS_DENIED);
 			break;
 		case ESRCH:
-			SetLastError (ERROR_PROC_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PROC_NOT_FOUND);
 			break;
 		default:
-			SetLastError (ERROR_GEN_FAILURE);
+			mono_w32error_set_last (ERROR_GEN_FAILURE);
 		}
 		return 0;
 	}
@@ -2533,7 +2534,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 
 	return MONO_W32PROCESS_PRIORITY_CLASS_NORMAL;
 #else
-	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
 	return 0;
 #endif
 }
@@ -2555,7 +2556,7 @@ ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint3
 
 		res = mono_w32handle_lookup (handle, MONO_W32HANDLE_PROCESS, (gpointer*) &process_handle);
 		if (!res) {
-			SetLastError (ERROR_INVALID_HANDLE);
+			mono_w32error_set_last (ERROR_INVALID_HANDLE);
 			return FALSE;
 		}
 
@@ -2582,7 +2583,7 @@ ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint3
 		prio = -20;
 		break;
 	default:
-		SetLastError (ERROR_INVALID_PARAMETER);
+		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return FALSE;
 	}
 
@@ -2591,19 +2592,19 @@ ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint3
 		switch (errno) {
 		case EPERM:
 		case EACCES:
-			SetLastError (ERROR_ACCESS_DENIED);
+			mono_w32error_set_last (ERROR_ACCESS_DENIED);
 			break;
 		case ESRCH:
-			SetLastError (ERROR_PROC_NOT_FOUND);
+			mono_w32error_set_last (ERROR_PROC_NOT_FOUND);
 			break;
 		default:
-			SetLastError (ERROR_GEN_FAILURE);
+			mono_w32error_set_last (ERROR_GEN_FAILURE);
 		}
 	}
 
 	return ret == 0;
 #else
-	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
 	return FALSE;
 #endif
 }
@@ -2801,14 +2802,14 @@ find_pe_file_resources32 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (dos_header->e_magic != IMAGE_DOS_SIGNATURE) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Bad dos signature 0x%x", __func__, dos_header->e_magic);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
 	if (map_size < sizeof(IMAGE_NT_HEADERS32) + GUINT32_FROM_LE (dos_header->e_lfanew)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %d", __func__, map_size);
 
-		SetLastError (ERROR_BAD_LENGTH);
+		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		return(NULL);
 	}
 
@@ -2816,7 +2817,7 @@ find_pe_file_resources32 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (nt_headers->Signature != IMAGE_NT_SIGNATURE) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Bad NT signature 0x%x", __func__, nt_headers->Signature);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2830,7 +2831,7 @@ find_pe_file_resources32 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (resource_rva == 0) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: No resources in file!", __func__);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2838,7 +2839,7 @@ find_pe_file_resources32 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (resource_dir == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find resource directory", __func__);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2873,14 +2874,14 @@ find_pe_file_resources64 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (dos_header->e_magic != IMAGE_DOS_SIGNATURE) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Bad dos signature 0x%x", __func__, dos_header->e_magic);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
 	if (map_size < sizeof(IMAGE_NT_HEADERS64) + GUINT32_FROM_LE (dos_header->e_lfanew)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %d", __func__, map_size);
 
-		SetLastError (ERROR_BAD_LENGTH);
+		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		return(NULL);
 	}
 
@@ -2889,7 +2890,7 @@ find_pe_file_resources64 (gpointer file_map, guint32 map_size, guint32 res_id, g
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Bad NT signature 0x%x", __func__,
 			   nt_headers->Signature);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2903,7 +2904,7 @@ find_pe_file_resources64 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (resource_rva == 0) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: No resources in file!", __func__);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2911,7 +2912,7 @@ find_pe_file_resources64 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	if (resource_dir == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find resource directory", __func__);
 
-		SetLastError (ERROR_INVALID_DATA);
+		mono_w32error_set_last (ERROR_INVALID_DATA);
 		return(NULL);
 	}
 
@@ -2962,7 +2963,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 	if (filename_ext == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
 
-		SetLastError (ERROR_INVALID_NAME);
+		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(NULL);
 	}
 
@@ -2981,7 +2982,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 
 			g_free (filename_ext);
 
-			SetLastError (_wapi_get_win32_file_error (errno));
+			mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
 			return NULL;
 		}
 
@@ -2992,7 +2993,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 			g_free (filename_ext);
 			g_free (located_filename);
 
-			SetLastError (_wapi_get_win32_file_error (errno));
+			mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
 			return NULL;
 		}
 
@@ -3002,7 +3003,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 	if (fstat (fd, &statbuf) == -1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error stat()ing file %s: %s", __func__, filename_ext, strerror (errno));
 
-		SetLastError (_wapi_get_win32_file_error (errno));
+		mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
 		g_free (filename_ext);
 		close (fd);
 		return(NULL);
@@ -3013,7 +3014,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 	if (statbuf.st_size < sizeof(IMAGE_DOS_HEADER)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File %s is too small: %lld", __func__, filename_ext, statbuf.st_size);
 
-		SetLastError (ERROR_BAD_LENGTH);
+		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		g_free (filename_ext);
 		close (fd);
 		return(NULL);
@@ -3023,7 +3024,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 	if (file_map == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error mmap()int file %s: %s", __func__, filename_ext, strerror (errno));
 
-		SetLastError (_wapi_get_win32_file_error (errno));
+		mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
 		g_free (filename_ext);
 		close (fd);
 		return(NULL);

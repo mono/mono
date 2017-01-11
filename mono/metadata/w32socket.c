@@ -64,6 +64,7 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32socket.h>
 #include <mono/metadata/w32socket-internals.h>
+#include <mono/metadata/w32error.h>
 
 #include <time.h>
 #ifdef HAVE_SYS_TIME_H
@@ -2645,7 +2646,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 
 	file = mono_w32file_create (mono_string_chars (filename), OPEN_EXISTING, GENERIC_READ, FILE_SHARE_READ, 0);
 	if (file == INVALID_HANDLE_VALUE) {
-		*werror = GetLastError ();
+		*werror = mono_w32error_get_last ();
 		return FALSE;
 	}
 
@@ -2662,7 +2663,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *f
 	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		mono_w32file_close (file);
-		SetLastError (WSAEINTR);
+		mono_w32error_set_last (WSAEINTR);
 		return FALSE;
 	}
 

@@ -48,6 +48,7 @@
 
 #include "w32socket.h"
 #include "w32socket-internals.h"
+#include "w32error.h"
 #include "w32handle.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-poll.h"
@@ -1202,13 +1203,13 @@ mono_w32socket_get_available (SOCKET socket, guint64 *amount)
 void
 mono_w32socket_set_last_error (gint32 error)
 {
-	SetLastError (error);
+	mono_w32error_set_last (error);
 }
 
 gint32
 mono_w32socket_get_last_error (void)
 {
-	return GetLastError ();
+	return mono_w32error_get_last ();
 }
 
 gint32

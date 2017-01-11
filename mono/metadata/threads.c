@@ -53,6 +53,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/w32error.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -795,7 +796,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
 		mono_threads_unlock ();
-		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", GetLastError());
+		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", mono_w32error_get_last());
 		/* ref is not going to be decremented in start_wrapper_internal */
 		InterlockedDecrement (&start_info->ref);
 		ret = FALSE;

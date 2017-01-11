@@ -21,9 +21,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <mono/io-layer/wapi-remap.h>
-#include <mono/io-layer/error.h>
-
 G_BEGIN_DECLS
 
 #define WAIT_FAILED        ((gint) 0xFFFFFFFF)
