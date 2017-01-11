@@ -123,9 +123,9 @@ mono_w32file_find_close (gpointer handle)
 }
 
 gboolean
-mono_w32file_create_directory (const gunichar2 *name, SECURITY_ATTRIBUTES *security)
+mono_w32file_create_directory (const gunichar2 *name)
 {
-	return CreateDirectory (name, security);
+	return CreateDirectory (name, NULL);
 }
 
 gboolean
@@ -165,9 +165,13 @@ mono_w32file_set_cwd (const gunichar2 *path)
 }
 
 gboolean
-mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, SECURITY_ATTRIBUTES *security, guint32 size)
+mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 {
-	return CreatePipe (readpipe, writepipe, security, size);
+	SECURITY_ATTRIBUTES attr;
+	attr.nLength = sizeof(SECURITY_ATTRIBUTES);
+	attr.bInheritHandle = TRUE;
+	attr.lpSecurityDescriptor = NULL;
+	return CreatePipe (readpipe, writepipe, &attr, size);
 }
 
 gboolean

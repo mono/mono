@@ -401,12 +401,6 @@ typedef union {
 	guint64 QuadPart;
 } ULARGE_INTEGER;
 
-typedef struct {
-	guint32 nLength;
-	gpointer lpSecurityDescriptor;
-	gboolean bInheritHandle;
-} SECURITY_ATTRIBUTES;
-
 #endif /* !defined(HOST_WIN32) */
 
 void
@@ -416,7 +410,7 @@ void
 mono_w32file_cleanup (void);
 
 gpointer
-mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, SECURITY_ATTRIBUTES *security, guint32 createmode, guint32 attrs, gpointer tmplate);
+mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs, gpointer tmplate);
 
 gboolean
 mono_w32file_delete (const gunichar2 *name);
@@ -485,7 +479,7 @@ gboolean
 mono_w32file_find_close (gpointer handle);
 
 gboolean
-mono_w32file_create_directory (const gunichar2 *name, SECURITY_ATTRIBUTES *security);
+mono_w32file_create_directory (const gunichar2 *name);
 
 gboolean
 mono_w32file_remove_directory (const gunichar2 *name);
@@ -506,7 +500,7 @@ gboolean
 mono_w32file_set_cwd (const gunichar2 *path);
 
 gboolean
-mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, SECURITY_ATTRIBUTES *security, guint32 size);
+mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size);
 
 gint32
 mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf);

@@ -2198,10 +2198,8 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 	return(TRUE);
 }
 
-gpointer mono_w32file_create(const gunichar2 *name, guint32 fileaccess,
-		    guint32 sharemode, SECURITY_ATTRIBUTES *security,
-		    guint32 createmode, guint32 attrs,
-		    gpointer template_ G_GNUC_UNUSED)
+gpointer
+mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs, gpointer template_ G_GNUC_UNUSED)
 {
 	MonoW32HandleFile file_handle = {0};
 	gpointer handle;
@@ -2318,11 +2316,6 @@ gpointer mono_w32file_create(const gunichar2 *name, guint32 fileaccess,
 	}
 	
 	file_handle.filename = filename;
-
-	if(security!=NULL) {
-		//file_handle->security_attributes=_wapi_handle_scratch_store (
-		//security, sizeof(SECURITY_ATTRIBUTES));
-	}
 	
 	file_handle.fd = fd;
 	file_handle.fileaccess=fileaccess;
@@ -3495,7 +3488,7 @@ mono_w32file_find_close (gpointer handle)
 }
 
 gboolean
-mono_w32file_create_directory (const gunichar2 *name, SECURITY_ATTRIBUTES *security)
+mono_w32file_create_directory (const gunichar2 *name)
 {
 	gchar *utf8_name;
 	gint result;
@@ -3835,7 +3828,7 @@ mono_w32file_set_cwd (const gunichar2 *path)
 }
 
 gboolean
-mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, SECURITY_ATTRIBUTES *security G_GNUC_UNUSED, guint32 size)
+mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 {
 	MonoW32HandleFile pipe_read_handle = {0};
 	MonoW32HandleFile pipe_write_handle = {0};

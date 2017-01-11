@@ -276,7 +276,7 @@ ves_icall_System_IO_MonoIO_CreateDirectory (MonoString *path, gint32 *error)
 	
 	*error=ERROR_SUCCESS;
 	
-	ret=mono_w32file_create_directory (mono_string_chars (path), NULL);
+	ret=mono_w32file_create_directory (mono_string_chars (path));
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
@@ -849,7 +849,7 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 	}
 	
 	ret=mono_w32file_create (chars, convert_access ((MonoFileAccess)access_mode),
-			convert_share ((MonoFileShare)share), NULL, convert_mode ((MonoFileMode)mode),
+			convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode),
 			attributes, NULL);
 	if(ret==INVALID_HANDLE_VALUE) {
 		*error=GetLastError ();
@@ -1091,15 +1091,10 @@ ves_icall_System_IO_MonoIO_get_ConsoleError ()
 MonoBoolean
 ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle, HANDLE *write_handle, gint32 *error)
 {
-	SECURITY_ATTRIBUTES attr;
 	gboolean ret;
-	
-	attr.nLength=sizeof(SECURITY_ATTRIBUTES);
-	attr.bInheritHandle=TRUE;
-	attr.lpSecurityDescriptor=NULL;
 
 	MONO_ENTER_GC_SAFE;
-	ret=mono_w32file_create_pipe (read_handle, write_handle, &attr, 0);
+	ret=mono_w32file_create_pipe (read_handle, write_handle, 0);
 	MONO_EXIT_GC_SAFE;
 
 	if(ret==FALSE) {
