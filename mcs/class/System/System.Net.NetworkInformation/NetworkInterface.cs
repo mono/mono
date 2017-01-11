@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
@@ -223,12 +224,6 @@ namespace System.Net.NetworkInformation {
 	//
 	class LinuxNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport ("libc")]
-		static extern int getifaddrs (out IntPtr ifap);
-
-		[DllImport ("libc")]
-		static extern void freeifaddrs (IntPtr ifap);
-
 		const int AF_INET   = 2;
 		const int AF_INET6  = 10;
 		const int AF_PACKET = 17;
@@ -241,16 +236,26 @@ namespace System.Net.NetworkInformation {
 		internal string IfacePath {
 			get { return iface_path; }
 		}
-		
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static void InitializeInterfaceAddresses ();
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static int GetInterfaceAddresses (out IntPtr ifap);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		private extern static void FreeInterfaceAddresses (IntPtr ifap);
+
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
 			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 			IntPtr ifap;
-			if (getifaddrs (out ifap) != 0)
+			if (GetInterfaceAddresses (out ifap) != 0)
 				throw new SystemException ("getifaddrs() failed");
 
 			try {
 				IntPtr next = ifap;
+				int nullNameCount = 0;
 				while (next != IntPtr.Zero) {
 					ifaddrs   addr = (ifaddrs) Marshal.PtrToStructure (next, typeof (ifaddrs));
 					IPAddress address = IPAddress.None;
@@ -328,6 +333,9 @@ namespace System.Net.NetworkInformation {
 
 					LinuxNetworkInterface iface = null;
 
+					if (String.IsNullOrEmpty (name))
+						name = "\0" + (++nullNameCount).ToString ();
+
 					if (!interfaces.TryGetValue (name, out iface)) {
 						iface = new LinuxNetworkInterface (name);
 						interfaces.Add (name, iface);
@@ -348,7 +356,7 @@ namespace System.Net.NetworkInformation {
 					next = addr.ifa_next;
 				}
 			} finally {
-				freeifaddrs (ifap);
+				FreeInterfaceAddresses (ifap);
 			}
 
 			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
@@ -358,6 +366,11 @@ namespace System.Net.NetworkInformation {
 				x++;
 			}
 			return result;
+		}
+
+		static LinuxNetworkInterface ()
+		{
+			InitializeInterfaceAddresses ();
 		}
 		
 		LinuxNetworkInterface (string name)

@@ -671,6 +671,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <ClInclude Include="..\mono\mini\mini-arm.h" />
+    <ClInclude Include="..\mono\xamarin-android\logger.h" />
+    <ClInclude Include="..\mono\xamarin-android\monodroid.h" />
+    <ClInclude Include="..\mono\xamarin-android\unity_getifaddrs.h" />
+    <ClInclude Include="..\mono\xamarin-android\xamarin_getifaddrs.h" />
     <ClInclude Include="..\unity\libmono_vcdefs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -4266,6 +4270,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\mono\xamarin-android\unity_getifaddrs.c" />
+    <ClCompile Include="..\mono\xamarin-android\xamarin_getifaddrs.c" />
     <ClCompile Include="..\unity\unity_cross_utils.c" />
     <ClCompile Include="..\unity\unity_liveness.c" />
     <ClCompile Include="..\unity\unity_utils.c" />

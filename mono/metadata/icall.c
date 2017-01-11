@@ -76,6 +76,7 @@
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <unity/unity_utils.h>
+#include <mono/xamarin-android/unity_getifaddrs.h>
 
 #if defined (PLATFORM_WIN32)
 #include <windows.h>
