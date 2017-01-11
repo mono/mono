@@ -53,9 +53,6 @@ typedef gpointer HMODULE;
 gboolean
 CloseHandle (gpointer handle);
 
-pid_t
-wapi_getpid (void);
-
 G_END_DECLS
 
 #endif /* _WAPI_WAPI_H_ */

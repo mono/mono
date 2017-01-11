@@ -4,25 +4,6 @@
 #include "mono/utils/mono-lazy-init.h"
 #include "mono/metadata/w32handle.h"
 
-/* Use this instead of getpid(), to cope with linuxthreads.  It's a
- * function rather than a variable lookup because we need to get at
- * this before share_init() might have been called. */
-static mono_lazy_init_t _wapi_pid_init_lazy = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
-static pid_t _wapi_pid;
-
-static void
-_wapi_pid_init (void)
-{
-	_wapi_pid = getpid ();
-}
-
-pid_t
-wapi_getpid (void)
-{
-	mono_lazy_initialize (&_wapi_pid_init_lazy, _wapi_pid_init);
-	return _wapi_pid;
-}
-
 /**
  * CloseHandle:
  * @handle: The handle to release

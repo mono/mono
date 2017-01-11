@@ -554,6 +554,7 @@ static gchar *cli_launcher;
 static Process *processes;
 static mono_mutex_t processes_mutex;
 
+static pid_t current_pid;
 static gpointer current_process;
 
 static const gunichar2 utf16_space_bytes [2] = { 0x20, 0 };
@@ -844,8 +845,10 @@ mono_w32process_init (void)
 	mono_w32handle_register_capabilities (MONO_W32HANDLE_PROCESS,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SPECIAL_WAIT));
 
+	current_pid = getpid ();
+
 	memset (&process_handle, 0, sizeof (process_handle));
-	process_handle.pid = wapi_getpid ();
+	process_handle.pid = current_pid;
 	process_set_defaults (&process_handle);
 	process_set_name (&process_handle);
 
@@ -2368,7 +2371,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 		return FALSE;
 	}
 
-	if (process_handle->pid == wapi_getpid ()) {
+	if (process_handle->pid == current_pid) {
 		*exitcode = STILL_ACTIVE;
 		return TRUE;
 	}
