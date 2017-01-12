@@ -55,6 +55,8 @@ namespace System.Runtime.CompilerServices
 	{
 		const int INITIAL_SIZE = 13;
 		const float LOAD_FACTOR = 0.7f;
+		const float COMPACT_FACTOR = 0.5f;
+		const float EXPAND_FACTOR = 1.1f;
 
 		Ephemeron[] data;
 		object _lock = new object ();
@@ -72,12 +74,70 @@ namespace System.Runtime.CompilerServices
 		{
 		}
 
-		/*LOCKING: _lock must be held*/
-		void Rehash () {
-			uint newSize = (uint)HashHelpers.GetPrime ((data.Length << 1) | 1);
-			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
+		private void RehashWithoutResize ()
+		{
+			int len = data.Length;
 
-			Ephemeron[] tmp = new Ephemeron [newSize];
+			for (int i = 0; i < len; i++) {
+				if (data [i].key == GC.EPHEMERON_TOMBSTONE)
+					data [i].key = null;
+			}
+
+			for (int i = 0; i < len; i++) {
+				object key = data [i].key;
+				if (key != null) {
+					int idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+
+					while (true) {
+						if (data [idx].key == null) {
+							// The object was not stored in its normal slot. Rehash
+							data [idx].key = key;
+							data [idx].value = data [i].value;
+							// At this point we have this Ephemeron entry duplicated in the array. Shouldn't
+							// be a problem.
+							data [i].key = null;
+							data [i].value = null;
+							break;
+						} else if (data [idx].key == key) {
+							/* We already have the key in the first available position, finished */
+							break;
+						}
+
+						if (++idx == len) //Wrap around
+							idx = 0;
+					}
+				}
+			}
+		}
+
+		private void RecomputeSize ()
+		{
+			size = 0;
+			for (int i = 0; i < data.Length; i++) {
+				if (data [i].key != null)
+					size++;
+			}
+		}
+
+		/*LOCKING: _lock must be held*/
+		private void Rehash ()
+		{
+			// Size doesn't track elements that die without being removed. Before attempting
+			// to rehash we traverse the array to see how many entries are left alive. We
+			// rehash the array into a new one which has a capacity relative to the number of
+			// live entries.
+			RecomputeSize ();
+
+			uint newLength = (uint)HashHelpers.GetPrime (((int)(size / LOAD_FACTOR) << 1) | 1);
+
+			if (newLength > data.Length * COMPACT_FACTOR && newLength < data.Length * EXPAND_FACTOR) {
+				/* Avoid unnecessary LOS allocations */
+				RehashWithoutResize ();
+				return;
+			}
+			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newLength);
+
+			Ephemeron[] tmp = new Ephemeron [newLength];
 			GC.register_ephemeron_array (tmp);
 			size = 0;
 
