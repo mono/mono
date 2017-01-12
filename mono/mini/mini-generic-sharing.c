@@ -3576,7 +3576,9 @@ static gboolean gsharedvt_supported;
 void
 mono_set_generic_sharing_vt_supported (gboolean supported)
 {
-	gsharedvt_supported = supported;
+	/* ensure we do not disable gsharedvt once it's been enabled */
+	if (!gsharedvt_supported  && supported)
+		gsharedvt_supported = TRUE;
 }
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
