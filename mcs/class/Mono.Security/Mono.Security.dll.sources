@@ -1,6 +1,7 @@
-./Assembly/AssemblyInfo.cs
+../../build/common/AssemblyRef.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+./Assembly/AssemblyInfo.cs
 ./Mono.Math/BigInteger.cs
 ./Mono.Math.Prime/ConfidenceFactor.cs
 ./Mono.Math.Prime/PrimalityTests.cs
