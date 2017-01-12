@@ -332,7 +332,8 @@ MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method)
 
 MonoReflectionMethod* mono_unity_method_get_object(MonoMethod *method)
 {
-	return mono_method_get_object(mono_domain_get(), method, NULL);
+	MonoError unused;
+	return mono_method_get_object_checked(mono_domain_get(), method, NULL, &unused);
 }
 
 MonoMethod* mono_unity_method_alloc0(MonoClass* klass)
@@ -374,7 +375,7 @@ void mono_unity_method_set_invoke_pointer(MonoMethod* method, void *p)
 
 #endif
 
-const char* mono_unity_method_get_name(MonoMethod *method)
+const char* mono_unity_method_get_name(const MonoMethod *method)
 {
 	return method->name;
 }
@@ -783,7 +784,7 @@ MonoArray* mono_unity_exception_get_trace_ips(MonoException *exc)
 
 void mono_unity_exception_set_trace_ips(MonoException *exc, MonoArray *ips)
 {
-	assert(sizeof((exc)->trace_ips == sizeof(void**)));
+	g_assert(sizeof((exc)->trace_ips == sizeof(void**)));
 	mono_gc_wbarrier_set_field((MonoObject*)(exc), &((exc)->trace_ips), (MonoObject*)ips);
 }
 
@@ -927,8 +928,9 @@ gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, M
 
 void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method)
 {
-	assert(sizeof(sf->method) == sizeof(void**));
-	mono_gc_wbarrier_set_field((MonoObject*)(sf), &(sf->method), (MonoObject*)mono_method_get_object(mono_domain_get(), method, NULL));
+	g_assert(sizeof(sf->method) == sizeof(void**));
+	MonoError unused;
+	mono_gc_wbarrier_set_field((MonoObject*)(sf), &(sf->method), (MonoObject*)mono_method_get_object_checked(mono_domain_get(), method, NULL, &unused));
 }
 
 MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type)
