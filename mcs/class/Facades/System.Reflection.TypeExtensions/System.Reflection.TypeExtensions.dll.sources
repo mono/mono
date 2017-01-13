@@ -1,6 +1,6 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
-SR.cs
-Requires.cs
-TypeExtensions.CoreCLR.cs
+corefx/SR.cs
+../../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
+../../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/TypeExtensions.cs
