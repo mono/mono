@@ -20035,6 +20035,55 @@
       </method>
     </type>
   </test>
+  <test name="gtest-643.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerable`1[System.Single] FindIntersections[TVector](IBezier`1, Ray`1, Single, Range`1, Int32)" attrs="145">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Intersect">
+      <method name="Boolean s[TVector](Ray`1, BoundingBoxN`1)" attrs="150">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Ray`1[TVector]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;FindIntersections&gt;c__Iterator0`1[TVector]">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>336</size>
+      </method>
+      <method name="Single System.Collections.Generic.IEnumerator&lt;float&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.Single] System.Collections.Generic.IEnumerable&lt;float&gt;.GetEnumerator()" attrs="481">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
