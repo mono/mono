@@ -257,7 +257,8 @@ namespace Mono.CSharp
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute", GetSignatureForError ());
 			}
 
-			ConstraintChecker.Check (this, member_type, type_expr.Location);
+			if (!IsCompilerGenerated)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
 		}
