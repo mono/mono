@@ -47,8 +47,7 @@ net_4_5_dirs := \
 	mdbrebase	\
 	ikdasm		\
 	mono-symbolicate	\
-	linker-analyzer	\
-	btls
+	linker-analyzer
 
 build_SUBDIRS = gacutil security culevel cil-stringreplacer commoncryptogenerator
 net_4_5_SUBDIRS = gacutil
