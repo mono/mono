@@ -692,6 +692,8 @@ namespace System.Windows.Forms {
 			autosized_child = false;
 			for (int i = 0; i < num_of_children; i++) {
 				child = Controls[i];
+				if (!child.VisibleInternal)
+					continue;
 				if (child.AutoSize)
 					autosized_child = true;
 				if (child.Dock == DockStyle.Right) {
@@ -708,6 +710,8 @@ namespace System.Windows.Forms {
 
 			for (int i = 0; i < num_of_children; i++) {
 				child = Controls[i];
+				if (!child.VisibleInternal)
+					continue;
 
 				switch(child.Dock) {
 					case DockStyle.Left: {
