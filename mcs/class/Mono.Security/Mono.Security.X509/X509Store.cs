@@ -387,7 +387,7 @@ namespace Mono.Security.X509 {
 			if (!CheckStore (path, false))
 				return coll;	// empty collection
 
-			string[] files = Directory.GetFiles (path, "*.cer");
+			string[] files = Directory.GetFiles (path, _newFormat ? "*.0" : "*.cer");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
 					try {
