@@ -55,7 +55,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RegistryAclExtensions.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
