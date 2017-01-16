@@ -44,6 +44,7 @@ net_4_5_dirs := \
 	cccheck		\
 	security	\
 	mdbrebase	\
+	mdb2ppdb	\
 	ikdasm		\
 	mono-symbolicate	\
 	linker-analyzer
