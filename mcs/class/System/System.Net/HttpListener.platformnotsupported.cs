@@ -46,10 +46,12 @@ namespace System.Net {
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
 
+#if SECURITY_DEP
 		public AuthenticationSchemeSelector AuthenticationSchemeSelectorDelegate {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
+#endif
 
 		public bool IgnoreWriteExceptions {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }

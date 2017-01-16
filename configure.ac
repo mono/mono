@@ -795,16 +795,16 @@ AC_MSG_RESULT($csc_compiler)
 # Set the build profiles and options before things which use them
 #
 
-AC_ARG_WITH(profile4_x,      [  --with-profile4_x=yes,no        If you want to install the 4.x FX (defaults to yes)],                 [], [with_profile4_x=default])
-AC_ARG_WITH(monodroid,       [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],      [], [with_monodroid=default])
-AC_ARG_WITH(monotouch,       [  --with-monotouch=yes,no         If you want to build the Xamarin.iOS assemblies (defaults to no)],    [], [with_monotouch=default])
-AC_ARG_WITH(monotouch_watch, [  --with-monotouch_watch=yes,no   If you want to build the Xamarin.WatchOS assemblies (defaults to no)],[], [with_monotouch_watch=default])
-AC_ARG_WITH(monotouch_tv,    [  --with-monotouch_tv=yes,no      If you want to build the Xamarin.TVOS assemblies (defaults to no)],   [], [with_monotouch_tv=default])
-AC_ARG_WITH(bitcode,         [  --with-bitcode=yes,no           If bitcode is enabled (defaults to no)],                              [], [with_bitcode=default])
-AC_ARG_WITH(xammac,          [  --with-xammac=yes,no            If you want to build the Xamarin.Mac assemblies (defaults to no)],    [], [with_xammac=default])
-AC_ARG_WITH(aot_hybrid,      [  --with-aot_hybrid=yes,no        If you want to build the aot_hybrid assemblies (defaults to no)],     [], [with_aot_hybrid=default])
-AC_ARG_WITH(aot_only,        [  --with-aot_only=yes,no          If you want to build the aot_only assemblies (defaults to no)],       [], [with_aot_only=default])
-AC_ARG_WITH(xbox,            [  --with-xbox=yes,no              If you want to build the Xbox assemblies (defaults to no)],           [], [with_xbox=default])
+AC_ARG_WITH(profile4_x,          [  --with-profile4_x=yes,no            If you want to install the 4.x FX (defaults to yes)],                       [], [with_profile4_x=default])
+AC_ARG_WITH(monodroid,           [  --with-monodroid=yes,no             If you want to build the MonoDroid assemblies (defaults to no)],            [], [with_monodroid=default])
+AC_ARG_WITH(monotouch,           [  --with-monotouch=yes,no             If you want to build the Xamarin.iOS assemblies (defaults to no)],          [], [with_monotouch=default])
+AC_ARG_WITH(monotouch_watch,     [  --with-monotouch_watch=yes,no       If you want to build the Xamarin.WatchOS assemblies (defaults to no)],      [], [with_monotouch_watch=default])
+AC_ARG_WITH(monotouch_tv,        [  --with-monotouch_tv=yes,no          If you want to build the Xamarin.TVOS assemblies (defaults to no)],         [], [with_monotouch_tv=default])
+AC_ARG_WITH(bitcode,             [  --with-bitcode=yes,no               If bitcode is enabled (defaults to no)],                                    [], [with_bitcode=default])
+AC_ARG_WITH(xammac,              [  --with-xammac=yes,no                If you want to build the Xamarin.Mac assemblies (defaults to no)],          [], [with_xammac=default])
+AC_ARG_WITH(testing_aot_hybrid,  [  --with-testing_aot_hybrid=yes,no    If you want to build the testing_aot_hybrid assemblies (defaults to no)],   [], [with_testing_aot_hybrid=default])
+AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you want to build the testing_aot_full assemblies (defaults to no)],     [], [with_testing_aot_full=default])
+AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 
@@ -820,9 +820,9 @@ with_monotouch_default=no
 with_monotouch_watch_default=no
 with_monotouch_tv_default=no
 with_xammac_default=no
-with_aot_hybrid_default=no
-with_aot_only_default=no
-with_xbox_default=no
+with_testing_aot_hybrid_default=no
+with_testing_aot_full_default=no
+with_winaot_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
@@ -840,10 +840,11 @@ elif test x$with_runtime_preset = xall; then
    with_monotouch_watch_default=yes
    with_monotouch_tv_default=yes
    with_xammac_default=yes
+   with_winaot_default=yes
 elif test x$with_runtime_preset = xfullaot; then
    DISABLE_MCS_DOCS_default=yes
-   with_aot_only_default=yes
-   TEST_PROFILE=aot_only 
+   with_testing_aot_full_default=yes
+   TEST_PROFILE=testing_aot_full
 
    mono_feature_disable_com='yes'
    mono_feature_disable_remoting='yes'
@@ -855,10 +856,10 @@ elif test x$with_runtime_preset = xfullaot; then
    AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
-   with_aot_only_default=yes
+   with_testing_aot_full_default=yes
    with_bitcode_default=yes
    with_cooperative_gc_default=yes
-   TEST_PROFILE=aot_only 
+   TEST_PROFILE=testing_aot_full
    enable_llvm_default=yes
 
    mono_feature_disable_com='yes'
@@ -871,8 +872,8 @@ elif test x$with_runtime_preset = xbitcode; then
    AOT_RUN_FLAGS="--llvmonly"
 elif test x$with_runtime_preset = xhybridaot; then
    DISABLE_MCS_DOCS_default=yes
-   with_aot_hybrid_default=yes
-   TEST_PROFILE=aot_hybrid 
+   with_testing_aot_hybrid_default=yes
+   TEST_PROFILE=testing_aot_hybrid 
 
    mono_feature_disable_com='yes'
    mono_feature_disable_remoting='yes'
@@ -921,14 +922,14 @@ fi
 if test "x$with_xammac" = "xdefault"; then
    with_xammac=$with_xammac_default
 fi
-if test "x$with_aot_hybrid" = "xdefault"; then
-   with_aot_hybrid=$with_aot_hybrid_default
+if test "x$with_testing_aot_hybrid" = "xdefault"; then
+   with_testing_aot_hybrid=$with_testing_aot_hybrid_default
 fi
-if test "x$with_aot_only" = "xdefault"; then
-   with_aot_only=$with_aot_only_default
+if test "x$with_testing_aot_full" = "xdefault"; then
+   with_testing_aot_full=$with_testing_aot_full_default
 fi
-if test "x$with_xbox" = "xdefault"; then
-   with_xbox=$with_xbox_default
+if test "x$with_winaot" = "xdefault"; then
+   with_winaot=$with_winaot_default
 fi
 
 
@@ -939,11 +940,12 @@ AM_CONDITIONAL(INSTALL_MONOTOUCH_WATCH, [test "x$with_monotouch_watch" != "xno"]
 AM_CONDITIONAL(INSTALL_MONOTOUCH_TV, [test "x$with_monotouch_tv" != "xno"])
 AM_CONDITIONAL(BITCODE, test "x$with_bitcode" = "xyes")
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
-AM_CONDITIONAL(INSTALL_AOT_HYBRID, [test "x$with_aot_hybrid" != "xno"])
-AM_CONDITIONAL(INSTALL_AOT_ONLY, [test "x$with_aot_only" != "xno"])
+AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != "xno"])
+AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
+AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 
-AC_SUBST(INSTALL_AOT_HYBRID)
-AC_SUBST(INSTALL_AOT_ONLY)
+AC_SUBST(INSTALL_TESTING_AOT_HYBRID)
+AC_SUBST(INSTALL_TESTING_AOT_FULL)
 
 default_profile=net_4_x
 if test -z "$INSTALL_MONODROID_TRUE"; then :
@@ -955,11 +957,11 @@ fi
 if test -z "$INSTALL_XAMMAC_TRUE"; then :
    default_profile=xammac
 fi
-if test -z "$INSTALL_AOT_HYBRID_TRUE"; then :
-   default_profile=aot_hybrid
+if test -z "$INSTALL_TESTING_AOT_HYBRID_TRUE"; then :
+   default_profile=testing_aot_hybrid
 fi
-if test -z "$INSTALL_AOT_ONLY_TRUE"; then :
-   default_profile=aot_only
+if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
+   default_profile=testing_aot_full
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -992,7 +994,7 @@ fi
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, assembly_remapping, shared_perfcounters, remoting,
-	 security, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
+	 security, lldb, mdb, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1135,6 +1137,16 @@ fi
 if test "x$mono_feature_disable_security" = "xyes"; then
 	AC_DEFINE(DISABLE_SECURITY, 1, [Disable CAS/CoreCLR security])
 	AC_MSG_NOTICE([Disabled CAS/CoreCLR security manager (used e.g. for Moonlight)])
+fi
+
+if test "x$mono_feature_disable_lldb" = "xyes"; then
+	AC_DEFINE(DISABLE_LLDB, 1, [Disable support code for the LLDB plugin.])
+	AC_MSG_NOTICE([Disabled LLDB plugin support code.])
+fi
+
+if test "x$mono_feature_disable_mdb" = "xyes"; then
+	AC_DEFINE(DISABLE_MDB, 1, [Disable support for .mdb symbol files.])
+	AC_MSG_NOTICE([Disabled support for .mdb symbol files.])
 fi
 
 if test "x$mono_feature_disable_sgen_remset" = "xyes"; then
@@ -3037,6 +3049,7 @@ case "$host" in
 			AOT_SUPPORTED="yes"
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=i386
+			AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
 			;;
 		  darwin*)
 			AOT_SUPPORTED="yes"
@@ -3059,11 +3072,13 @@ case "$host" in
 			AOT_SUPPORTED="yes"
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=x86_64
+			AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
 			;;
 		  darwin*)
 			AOT_SUPPORTED="yes"
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=x86_64
+			boehm_supported=false
 			;;
 		  openbsd*|freebsd*|kfreebsd-gnu*)
 			;;
@@ -3520,6 +3535,15 @@ if test "x$have_deprecated" = "xyes"; then
    AC_DEFINE(HAVE_DEPRECATED, 1, [Support for the deprecated attribute])
 fi
 
+AC_ARG_WITH(interpreter, [  --with-interpreter=yes|no       Interpreter, default=no],[buildinterpreter=$with_interpreter],[buildinterpreter=no])
+if test "x$buildinterpreter" = "xyes"; then
+    AC_DEFINE(ENABLE_INTERPRETER, 1, [Enable interpreter in the runtime.])
+    AC_MSG_NOTICE([Enable interpreter in the runtime.])
+fi
+
+AM_CONDITIONAL([ENABLE_INTERPRETER], [test x$buildinterpreter != xno])
+
+
 dnl 
 dnl Simple Generational checks (sgen)
 dnl
@@ -3841,6 +3865,20 @@ if test ${ACCESS_UNALIGNED} = no; then
 	CPPFLAGS="$CPPFLAGS -DNO_UNALIGNED_ACCESS"
 fi
 
+if test x$host_darwin = xyes; then
+	AC_MSG_CHECKING([for ranlib that supports -no_warning_for_no_symbols option])
+	AS_IF(
+		[$RANLIB -no_warning_for_no_symbols 2>&1 | grep -q "unknown option"],
+		[AC_MSG_RESULT([no])],
+		[
+			# avoid AR calling ranlib, libtool calls it anyway. suppress no symbols warning.
+			AR_FLAGS="Scru"
+			RANLIB="$RANLIB -no_warning_for_no_symbols"
+			AC_MSG_RESULT([yes])
+		]
+	)
+fi
+
 case "x$libgc" in
 	xincluded)
 		# Pass CPPFLAGS to libgc configure
@@ -4097,13 +4135,20 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.1.3.2/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.0.0/tools/csc.exe
+
+if test $csc_compiler = mcs; then
+  CSC=$mcs_topdir/class/lib/build/mcs.exe
+else
+  CSC=$CSC_LOCATION
+fi
 
 mono_cfg_root=$mono_build_root/runtime
 if test x$host_win32 = xyes; then
   if test "x$cross_compiling" = "xno"; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
     CSC="'"`cygpath -w -a $CSC`"'"
+	CSC_LOCATION="'"`cygpath -w -a $CSC_LOCATION`"'"
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -4446,7 +4491,7 @@ fi
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
-    echo "CSC_LOCATION = $CSC" >> $srcdir/$mcsdir/build/config.make
+    echo "CSC_LOCATION = $CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make
@@ -4493,6 +4538,7 @@ echo "
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
+	Interpreter:   $buildinterpreter
 
    Libraries:
 	.NET 4.x:        $with_profile4_x
@@ -4501,8 +4547,8 @@ echo "
 	Xamarin.WatchOS: $with_monotouch_watch
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
-	AOT preferred:   $with_aot_hybrid
-	AOT only:        $with_aot_only
+	Windows AOT:     $with_winaot
+	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg
 	zlib:            $zlib_msg

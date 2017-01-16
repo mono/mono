@@ -485,23 +485,49 @@ public class Tests : TestsBase, ITest2
 	public static void ss6_2 () {
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7 () {
-		try {
-			ss7_2 ();
-			ss7_3 ();
-		} catch {
-		}
-		ss7_2 ();
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7 ()
+	{
+		ss7_2();//Used to test stepout inside ss7_2, which may not go to catch
+		ss7_2();//Used to test stepout inside ss7_2_1, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2_1, which must go to catch
+		ss7_3();//Used to test stepin inside ss7_3, which must go to catch
+		ss7_2();//Used to test stepin inside ss7_2_1, which must go to catch
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_2 () {
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_3 () {
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_1 ()
+	{
 		throw new Exception ();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_2 ()
+	{
+		ss7_2_1();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2 ()
+	{
+		try {
+			ss7_2_2();
+		}
+		catch
+		{
+		}
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_3 ()
+	{
+		try {
+			throw new Exception ();
+		}
+		catch
+		{
+		}
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

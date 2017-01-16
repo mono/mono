@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/AssemblyRef.cs
+../../build/common/SR.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/RegistryKeyPermissionCheck.cs
@@ -1035,7 +1036,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/throwhelper.cs
 ../referencesource/mscorlib/system/timezoneinfo.cs
 ../referencesource/mscorlib/system/timezonenotfoundexception.cs
-../referencesource/mscorlib/system/tuple.cs
 ../referencesource/mscorlib/system/type.cs
 ../referencesource/mscorlib/system/typeaccessexception.cs
 ../referencesource/mscorlib/system/typeinitializationexception.cs
@@ -1644,10 +1644,18 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
-corefx/SR.cs
+corert/Debug.cs
+corert/SR.cs
 
-../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
-../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs
-../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/TupleExtensions.cs
-../../../external/corefx/src/System.ValueTuple/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+

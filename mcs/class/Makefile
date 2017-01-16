@@ -32,6 +32,8 @@ build_SUBDIRS :=  \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
 	../tools/cil-stringreplacer
 
 -include ../build/config.make
@@ -83,15 +85,13 @@ mobile_common_dirs := \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler
 
-aot_only_dirs := \
+testing_aot_full_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
-aot_hybrid_dirs := \
+testing_aot_hybrid_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
@@ -107,7 +107,7 @@ monodroid_dirs := \
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
-	$(aot_only_dirs)
+	$(testing_aot_full_dirs)
 
 monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
 monotouch_tv_dirs   := $(monotouch_dirs)
@@ -123,7 +123,7 @@ monotouch_runtime_dirs := \
 monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
 monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
 
-xbox_dirs := $(monotouch_dirs) System.Drawing
+winaot_dirs := $(monotouch_dirs) System.Drawing
 
 xammac_4_5_dirs := \
 	corlib	\
@@ -334,8 +334,8 @@ monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
 monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
-aot_only_SUBDIRS := $(aot_only_dirs)
-aot_hybrid_SUBDIRS := $(aot_hybrid_dirs)
+testing_aot_full_SUBDIRS := $(testing_aot_full_dirs)
+testing_aot_hybrid_SUBDIRS := $(testing_aot_hybrid_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
 xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
 binary_reference_assemblies_SUBDIRS := reference-assemblies
@@ -343,11 +343,11 @@ net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
 net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
-xbox_SUBDIRS := $(xbox_dirs)
+winaot_SUBDIRS := $(winaot_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(aot_only_dirs) $(aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
@@ -363,6 +363,7 @@ DISTFILES = \
 	silverlight.pub		\
 	reactive.pub		\
 	mono.snk		\
+	Open.snk		\
 	LICENSE 		\
 	README			\
 	doc/API-notes		\
@@ -408,8 +409,8 @@ $(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
 lib/$(monolite_dir)/mcs.exe:
-	$(MAKE) -C ../mcs PROFILE=basic
-	cp -p lib/basic/mcs.exe lib/$(monolite_dir)
+	$(MAKE) -C ../mcs PROFILE=build
+	cp -p lib/build/mcs.exe lib/$(monolite_dir)
 
 $(build_files:%=lib/build/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1

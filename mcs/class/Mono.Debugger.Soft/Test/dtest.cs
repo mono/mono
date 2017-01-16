@@ -608,7 +608,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("NotWorking")] // https://bugzilla.xamarin.com/show_bug.cgi?id=44974
 	public void SingleStepping () {
 		Event e = run_until ("single_stepping");
 
@@ -724,23 +723,53 @@ public class DebuggerTests
 		assert_location (e, "ss6");
 		req.Disable ();
 
-		// Check that a step over stops at an EH clause
+		// Testing stepping in, over and out with exception handlers in same or caller method
+
+		//stepout in ss7_2, which may not go to catch(instead out to ss7)
 		e = run_until ("ss7_2");
-		req = create_step (e);
-		req.Depth = StepDepth.Out;
-		req.Enable ();
-		e = step_once ();
-		assert_location (e, "ss7");
-		req.Disable ();
-		req = create_step (e);
-		req.Depth = StepDepth.Over;
-		req.Enable ();
-		e = step_once ();
-		assert_location (e, "ss7");
-		req.Disable ();
+		create_step (e);
+		assert_location (step_out(), "ss7");
+
+		//stepout in ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_out (), "ss7_2");
+
+		//stepover over ss7_2, which must go to catch
+		run_until ("ss7_2");
+		assert_location (step_over (), "ss7_2");//move to "try {" line
+		assert_location (step_over (), "ss7_2");//move to "ss7_2_2();" line
+		assert_location (step_over (), "ss7_2");//step over ss7_2_2();, assume we are at "catch" now
+		assert_location (step_over (), "ss7_2");//move to { of catch
+		assert_location (step_over (), "ss7_2");//move to } of catch
+		assert_location (step_over (), "ss7_2");//move to } of method
+		assert_location (step_over (), "ss7");//finish method
+
+		//stepover over ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_over (), "ss7_2_1");//move from { of method to "throw new Exception ();"
+		assert_location (step_over (), "ss7_2");//step over exception, being in ss7_2 means we are at catch
+
+		//stepin in ss7_3, which must go to catch
+		run_until ("ss7_3");
+		assert_location (step_into (), "ss7_3");//move to "try {"
+		assert_location (step_into (), "ss7_3");//move to "throw new Exception ();"
+		step_req.Disable ();
+		step_req.AssemblyFilter = new AssemblyMirror [] { (e as BreakpointEvent).Method.DeclaringType.Assembly };
+		assert_location (step_into (), "ss7_3");//call "throw new Exception ();", we assume we end up at "catch"
+		assert_location (step_into (), "ss7_3");//move to { of catch
+		assert_location (step_into (), "ss7_3");//move to } of catch
+		assert_location (step_into (), "ss7_3");//move to } of method
+		assert_location (step_into (), "ss7");//move out to ss7
+
+		//stepover in ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_into (), "ss7_2_1");//move from { of method to "throw new Exception ();"
+		assert_location (step_into (), "ss7_2");//step in exception, being in ss7_2 means we are at catch
+		step_req.Disable ();
 
 		// Check that stepping stops between nested calls
 		e = run_until ("ss_nested_2");
+		req = create_step (e);
 		e = step_out ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
@@ -749,6 +778,14 @@ public class DebuggerTests
 		assert_location (e, "ss_nested");
 		// Check that step over steps over nested calls
 		e = step_over ();
+		assert_location (e, "ss_nested");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
 		assert_location (e, "ss_nested_1");
@@ -819,6 +856,7 @@ public class DebuggerTests
 				req.Size = StepSize.Line;
 
 				e = step_out ();
+				e = step_over ();//Stepout gets us to ss_recursive2_trap ();, move to ss_recursive2 (next); line
 				assert_location (e, "ss_recursive2");
 
 				// Stack should consist of Main + single_stepping + (1 ss_recursive2 frame per loop iteration)

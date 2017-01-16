@@ -8,7 +8,11 @@ REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
 LIB_REFS = System
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC -unsafe -nowarn:436
 TXT_RESOURCE_STRINGS = ../referencesource/System.Core/System.Core.txt
-RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Linq.Expressions/src/Resources/Strings.resx
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Linq.Expressions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq.Parallel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq.Queryable/src/Resources/Strings.resx
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5
@@ -48,8 +52,3 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 include ../../build/library.make
 
 TEST_HARNESS_EXCLUDES += $(extra_test_flags)
-
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local
-endif

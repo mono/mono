@@ -488,7 +488,7 @@ namespace System {
 		/// </summary>
 		public static string GetEnvironmentVariable (string variable)
 		{
-#if !MOBILE
+#if FEATURE_MONO_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
@@ -573,7 +573,7 @@ namespace System {
 			else
 				dir = UnixGetFolderPath (folder, option);
 
-#if !MOBILE
+#if FEATURE_MONO_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
 			}

@@ -5,7 +5,7 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 # Resgen is corlib specific tool
 
 basic_SUBDIRS := build jay class
-build_SUBDIRS := build class class/aot-compiler tools
+build_SUBDIRS := build class class/aot-compiler tools ilasm
 monodroid_SUBDIRS := build class
 monotouch_SUBDIRS := build class
 monotouch_watch_SUBDIRS := build class
@@ -14,14 +14,14 @@ monotouch_runtime_SUBDIRS := build class
 monotouch_watch_runtime_SUBDIRS := build class
 monotouch_tv_runtime_SUBDIRS := build class
 xammac_SUBDIRS := build class
-aot_hybrid_SUBDIRS := build class
-aot_only_SUBDIRS := build class
+testing_aot_hybrid_SUBDIRS := build class
+testing_aot_full_SUBDIRS := build class
 binary_reference_assemblies_SUBDIRS := build class
 net_4_x_SUBDIRS := build class nunit24 ilasm tools tests errors docs mcs class/aot-compiler packages
 xammac_net_4_5_SUBDIRS := build class
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
-xbox_SUBDIRS := build class
+winaot_SUBDIRS := build class
 
 include build/rules.make
 
@@ -72,9 +72,9 @@ $(_boot_:%=profile-do--monotouch_watch_runtime--%):  profile-do--monotouch_watch
 $(_boot_:%=profile-do--monotouch_tv_runtime--%):     profile-do--monotouch_tv_runtime--%:     profile-do--build--%
 $(_boot_:%=profile-do--xammac--%):            profile-do--xammac--%:            profile-do--build--%
 $(_boot_:%=profile-do--xammac_net_4_5--%):    profile-do--xammac_net_4_5--%:           profile-do--build--%
-$(_boot_:%=profile-do--aot_hybrid--%):        profile-do--aot_hybrid--%:        profile-do--build--%
-$(_boot_:%=profile-do--aot_only--%):          profile-do--aot_only--%:          profile-do--build--%
-$(_boot_:%=profile-do--xbox--%):              profile-do--xbox--%:              profile-do--build--%
+$(_boot_:%=profile-do--testing_aot_hybrid--%):        profile-do--testing_aot_hybrid--%:        profile-do--build--%
+$(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_full--%:          profile-do--build--%
+$(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
 testcorlib:

@@ -14,6 +14,9 @@ SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
+RESX_RESOURCE_STRING = \
+	../../../../external/corefx/src/System.Reflection.TypeExtensions/src/Resources/Strings.resx
+
 NO_TEST = yes
 
 include $(MCS_BUILD_DIR)/library.make

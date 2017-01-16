@@ -16,7 +16,7 @@ namespace MonoTests.System.ComponentModel
 	[TestFixture]
 	public class ToolboxItemAttributeTests
 	{
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		[Test]
 		public void DefaultType ()
 		{

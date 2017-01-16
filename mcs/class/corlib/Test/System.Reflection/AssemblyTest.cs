@@ -265,7 +265,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || AOT_ONLY_DESKTOP || __WATCHOS__
+#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE
@@ -474,8 +474,8 @@ namespace MonoTests.System.Reflection
 // with the semantics of aot'ed assembly loading, as
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
-#if AOT_ONLY_DESKTOP
-			string [] names = { "aot_only_corlib_test" };
+#if FULL_AOT_DESKTOP
+			string [] names = { "testing_aot_full_corlib_test" };
 #else
 			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
 #endif

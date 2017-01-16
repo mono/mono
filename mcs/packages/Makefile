@@ -12,10 +12,6 @@ ROSLYN_FILES = \
 	$(ROSLYN_CSC_DIR)/System.Collections.Immutable.dll	\
 	$(ROSLYN_CSC_DIR)/System.Reflection.Metadata.dll
 
-ROSLYN_AOT_FILES = \
-	$(ROSLYN_CSC_DIR)/csc.exe$(PLATFORM_AOT_SUFFIX)		\
-	$(ROSLYN_CSC_DIR)/System.Reflection.Metadata.dll$(PLATFORM_AOT_SUFFIX)
-
 DISTFILES = $(ROSLYN_FILES)
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
@@ -25,7 +21,6 @@ TARGET_DIR = $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 install-local:
 	$(MKINSTALLDIRS) $(TARGET_DIR)
 	$(INSTALL_LIB) $(ROSLYN_FILES) $(TARGET_DIR)
-	if test x$(ENABLE_AOT) != x; then $(INSTALL_LIB) $(ROSLYN_AOT_FILES) $(TARGET_DIR); fi
 
 endif
 

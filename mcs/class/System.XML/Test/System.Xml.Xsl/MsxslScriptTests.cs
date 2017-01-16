@@ -106,6 +106,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+    [Category ("MobileNotWorking")]
 		public void TestCSharp ()
 		{
 			string style = xslstring.Replace ("***** rewrite here *****", cs1);
@@ -136,6 +137,7 @@ namespace MonoTests.System.Xml.Xsl
 
 		[Test]
 		[ExpectedException (typeof (XsltException))]
+    [Category ("MobileNotWorking")]
 		public void InvalidScript ()
 		{
 			string script = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:user='urn:my-scripts'

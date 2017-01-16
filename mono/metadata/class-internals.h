@@ -999,16 +999,16 @@ mono_install_get_cached_class_info (MonoGetCachedClassInfo func);
 void
 mono_install_get_class_from_name (MonoGetClassFromName func);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
-MonoMethodSignature*
+MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_method_get_context (MonoMethod *method);
 
 /* Used by monodis, thus cannot be MONO_INTERNAL */
@@ -1117,15 +1117,12 @@ typedef struct {
 #ifdef DISABLE_REMOTING
 #define mono_class_is_transparent_proxy(klass) (FALSE)
 #define mono_class_is_real_proxy(klass) (FALSE)
-#define mono_object_is_transparent_proxy(object) (FALSE)
 #else
-MonoRemoteClass*
-mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_class, MonoError *error);
-
 #define mono_class_is_transparent_proxy(klass) ((klass) == mono_defaults.transparent_proxy_class)
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
-#define mono_object_is_transparent_proxy(object) (((MonoObject*)object)->vtable->klass == mono_defaults.transparent_proxy_class)
 #endif
+
+#define mono_object_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_object_class (object)))
 
 
 #define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
@@ -1286,7 +1283,7 @@ MONO_API void mono_class_describe_statics (MonoClass* klass);
 /* method debugging functions, for use inside gdb */
 MONO_API void mono_method_print_code (MonoMethod *method);
 
-char *mono_signature_full_name (MonoMethodSignature *sig);
+MONO_PROFILER_API char *mono_signature_full_name (MonoMethodSignature *sig);
 
 /*Enum validation related functions*/
 MONO_API gboolean
@@ -1295,7 +1292,7 @@ mono_type_is_valid_enum_basetype (MonoType * type);
 MONO_API gboolean
 mono_class_is_valid_enum (MonoClass *klass);
 
-gboolean
+MONO_PROFILER_API gboolean
 mono_type_is_primitive (MonoType *type);
 
 MonoType *

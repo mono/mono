@@ -50,10 +50,22 @@ Whether this config needs stack watermark recording to know where to start scann
 
 typedef struct _HandleChunk HandleChunk;
 
+/* define MONO_HANDLE_TRACK_OWNER to store the file and line number of each call to MONO_HANDLE_NEW
+ * in the handle stack.  (This doubles the amount of memory used for handles, so it's only useful for debugging).
+ */
+/* #define MONO_HANDLE_TRACK_OWNER */
+
+typedef struct {
+	MonoObject *o;
+#ifdef MONO_HANDLE_TRACK_OWNER
+	const char *owner;
+#endif
+} HandleChunkElem;
+
 struct _HandleChunk {
 	int size; //number of bytes
 	HandleChunk *prev, *next;
-	MonoObject *objects [OBJECTS_PER_HANDLES_CHUNK];
+	HandleChunkElem objects [OBJECTS_PER_HANDLES_CHUNK];
 };
 
 typedef struct {
@@ -71,9 +83,14 @@ typedef void *MonoRawHandle;
 typedef void (*GcScanFunc) (gpointer*, gpointer);
 
 
+#ifndef MONO_HANDLE_TRACK_OWNER
 MonoRawHandle mono_handle_new (MonoObject *object);
+#else
+MonoRawHandle mono_handle_new (MonoObject *object, const char* owner);
+#endif
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data);
+gboolean mono_handle_stack_is_empty (HandleStack *stack);
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
 MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
@@ -223,6 +240,12 @@ void mono_handle_verify (MonoRawHandle handle);
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
 #define TYPED_OUT_HANDLE_NAME(TYPE) TYPE ## HandleOut
 
+#ifdef MONO_HANDLE_TRACK_OWNER
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+#define HANDLE_OWNER_STRINGIFY(file,lineno) (const char*) (file ":" STRINGIFY(lineno))
+#endif
+
 
 /*
  * TYPED_HANDLE_DECL(SomeType):
@@ -250,8 +273,14 @@ void mono_handle_verify (MonoRawHandle handle);
 
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_RAW(HANDLE) (HANDLE_INVARIANTS (HANDLE), ((HANDLE)->__obj))
-#define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = (TYPED_HANDLE_NAME(TYPE))(mono_handle_new ((MonoObject*)(NAME ## _raw)))
+#define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
+
+#ifndef MONO_HANDLE_TRACK_OWNER
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE)) )
+#else
+#define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER_STRINGIFY(__FILE__, __LINE__)))
+#endif
+
 #define MONO_HANDLE_CAST(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( VALUE )
 
 #define MONO_HANDLE_IS_NULL(HANDLE) (MONO_HANDLE_RAW(HANDLE) == NULL)

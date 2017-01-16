@@ -2432,7 +2432,7 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 
 #ifndef MONO_CROSS_COMPILE
 
-static void print_process_map ()
+static void print_process_map (void)
 {
 #ifdef __linux__
 	FILE *fp = fopen ("/proc/self/maps", "r");
@@ -2476,10 +2476,12 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 #endif
 	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 
-	if (handling_sigsegv)
+	gboolean is_sigsegv = !strcmp ("SIGSEGV", signal);
+
+	if (handling_sigsegv && is_sigsegv)
 		return;
 
-	if (mini_get_debug_options ()->suspend_on_sigsegv) {
+	if (mini_get_debug_options ()->suspend_on_sigsegv && is_sigsegv) {
 		mono_runtime_printf_err ("Received %s, suspending...", signal);
 #ifdef HOST_WIN32
 		while (1)
@@ -2492,7 +2494,8 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	}
 
 	/* To prevent infinite loops when the stack walk causes a crash */
-	handling_sigsegv = TRUE;
+	if (is_sigsegv)
+		handling_sigsegv = TRUE;
 
 	/* !jit_tls means the thread was not registered with the runtime */
 	if (jit_tls && mono_thread_internal_current ()) {
@@ -2590,16 +2593,17 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			 "=================================================================\n",
 			signal);
 
-
 #ifdef MONO_ARCH_USE_SIGACTION
-
-	/* Remove our SIGABRT handler */
 	sa.sa_handler = SIG_DFL;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = 0;
 
+	/* Remove our SIGABRT handler */
 	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
 
+	/* On some systems we get a SIGILL when calling abort (), because it might
+	 * fail to raise SIGABRT */
+	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
 #endif
 
 	if (!mono_do_crash_chaining) {

@@ -36,30 +36,32 @@ namespace System.Net.Security
 		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
 
 		public SslStream (Stream innerStream)
-			: this (innerStream, false, null, null)
+			: this (innerStream, false)
 		{
 		}
 
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
-			: this (innerStream, leaveInnerStreamOpen, null, null)
-		{
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
-			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, null)
-		{
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
-			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
+			: this (innerStream, leaveInnerStreamOpen)
 		{
 		}
+
+#if SECURITY_DEP
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
+			: this (innerStream, leaveInnerStreamOpen)
+		{
+		}
+
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+			: this (innerStream, leaveInnerStreamOpen)
+		{
+		}
+#endif
 
 		public virtual void AuthenticateAsClient (string targetHost)
 		{

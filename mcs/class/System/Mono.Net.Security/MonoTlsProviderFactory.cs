@@ -111,12 +111,12 @@ namespace Mono.Net.Security
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		internal extern static bool IsBtlsSupported ();
-#endif
 
 		static object locker = new object ();
 		static bool initialized;
-		static IMonoTlsProvider defaultProvider;
 
+		static IMonoTlsProvider defaultProvider;
+#endif
 		#endregion
 
 #if SECURITY_DEP

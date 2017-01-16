@@ -23,7 +23,7 @@ namespace Mono.ILASM {
                 private PEAPI.NativeType native_type;
 
                 private bool offset_set;
-                private bool datavalue_set;
+//                private bool datavalue_set;
                 private bool value_set;
 
                 private bool is_resolved;
@@ -40,7 +40,7 @@ namespace Mono.ILASM {
                         this.type = type;
 
                         offset_set = false;
-                        datavalue_set = false;
+//                        datavalue_set = false;
                         value_set = false;
 
                         at_data_id = null;

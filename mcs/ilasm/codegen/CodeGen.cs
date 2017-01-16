@@ -29,7 +29,7 @@ namespace Mono.ILASM {
 
                 private PEFile pefile;
                 private ExternAssembly current_assemblyref;
-                private ExternModule current_moduleref;
+//                private ExternModule current_moduleref;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -61,7 +61,6 @@ namespace Mono.ILASM {
                 private long stack_reserve;
 
                 private string output_file;
-		private string debug_file;
                 private bool is_dll;
                 private bool entry_point;
 
@@ -119,9 +118,9 @@ namespace Mono.ILASM {
                         get { return current_assemblyref; }
                 }
 
-                public ExternModule CurrentModuleRef {
-                        get { return current_moduleref; }
-                }
+//                public ExternModule CurrentModuleRef {
+//                        get { return current_moduleref; }
+//                }
 
                 public ICustomAttrTarget CurrentCustomAttrTarget {
                         get { return current_customattrtarget; }

@@ -74,7 +74,7 @@ namespace MonoTests.System.ServiceModel.Web
 			ch.Close ();
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		[Test]
 		public void CreateAtom10Response ()
 		{

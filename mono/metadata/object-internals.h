@@ -286,6 +286,9 @@ typedef struct {
 	MonoObject *stub_data;
 } MonoRealProxy;
 
+/* Safely access System.Runtime.Remoting.Proxies.RealProxy from native code */
+TYPED_HANDLE_DECL (MonoRealProxy);
+
 typedef struct {
 	MonoMarshalByRefObject object;
 	gpointer iunknown;
@@ -305,6 +308,9 @@ typedef struct {
 	MonoRemoteClass *remote_class;
 	MonoBoolean	 custom_type_info;
 } MonoTransparentProxy;
+
+/* Safely access System.Runtime.Remoting.Proxies.TransparentProxy from native code */
+TYPED_HANDLE_DECL (MonoTransparentProxy);
 
 typedef struct {
 	MonoObject obj;
@@ -701,6 +707,8 @@ mono_domain_get_tls_offset (void);
 
 #define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
 
+#define IS_MONOTYPE_HANDLE(obj) IS_MONOTYPE (MONO_HANDLE_RAW (obj))
+
 /* This should be used for accessing members of Type[] arrays */
 #define mono_type_array_get(arr,index) monotype_cast (mono_array_get ((arr), gpointer, (index)))
 
@@ -729,11 +737,6 @@ struct _MonoReflectionMethod {
 
 /* Safely access System.Reflection.MonoMethod from native code */
 TYPED_HANDLE_DECL (MonoReflectionMethod);
-
-typedef struct _MonoReflectionGenericMethod MonoReflectionGenericMethod;
-struct _MonoReflectionGenericMethod {
-	MonoReflectionMethod method;
-};
 
 struct _MonoDelegate {
 	MonoObject object;
@@ -772,11 +775,17 @@ struct _MonoReflectionField {
 	guint32 attrs;
 };
 
+/* Safely access System.Reflection.MonoField from native code */
+TYPED_HANDLE_DECL (MonoReflectionField);
+
 struct _MonoReflectionProperty {
 	MonoObject object;
 	MonoClass *klass;
 	MonoProperty *property;
 };
+
+/* Safely access System.Reflection.MonoProperty from native code */
+TYPED_HANDLE_DECL (MonoReflectionProperty);
 
 /*This is System.EventInfo*/
 struct _MonoReflectionEvent {
@@ -784,11 +793,17 @@ struct _MonoReflectionEvent {
 	MonoObject *cached_add_event;
 };
 
+/* Safely access System.Reflection.EventInfo from native code */
+TYPED_HANDLE_DECL (MonoReflectionEvent);
+
 typedef struct {
 	MonoReflectionEvent object;
 	MonoClass *klass;
 	MonoEvent *event;
 } MonoReflectionMonoEvent;
+
+/* Safely access Systme.Reflection.MonoEvent from native code */
+TYPED_HANDLE_DECL (MonoReflectionMonoEvent);
 
 typedef struct {
 	MonoObject object;
@@ -801,6 +816,9 @@ typedef struct {
 	MonoObject *MarshalAsImpl;
 } MonoReflectionParameter;
 
+/* Safely access System.Reflection.ParameterInfo from native code */
+TYPED_HANDLE_DECL (MonoReflectionParameter);
+
 struct _MonoReflectionMethodBody {
 	MonoObject object;
 	MonoArray *clauses;
@@ -810,6 +828,9 @@ struct _MonoReflectionMethodBody {
 	guint32 local_var_sig_token;
 	guint32 max_stack;
 };
+
+/* Safely access System.Reflection.MethodBody from native code */
+TYPED_HANDLE_DECL (MonoReflectionMethodBody);
 
 struct _MonoReflectionAssembly {
 	MonoObject object;
@@ -917,12 +938,19 @@ typedef struct {
 	gint32 handler_length;
 } MonoReflectionExceptionHandlingClause;
 
+
+/* Safely access System.Reflection.ExceptionHandlingClause from native code */
+TYPED_HANDLE_DECL (MonoReflectionExceptionHandlingClause);
+
 typedef struct {
 	MonoObject object;
 	MonoReflectionType *local_type;
 	MonoBoolean is_pinned;
 	guint16 local_index;
 } MonoReflectionLocalVariableInfo;
+
+/* Safely access System.Reflection.LocalVariableInfo from native code */
+TYPED_HANDLE_DECL (MonoReflectionLocalVariableInfo);
 
 typedef struct {
 	/*
@@ -979,6 +1007,9 @@ typedef struct {
 	MonoArray *permissions;
 } MonoReflectionCtorBuilder;
 
+/* Safely access System.Reflection.Emit.ConstructorBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionCtorBuilder);
+
 typedef struct {
 	MonoObject object;
 	MonoMethod *mhandle;
@@ -1009,6 +1040,9 @@ typedef struct {
 	MonoArray *param_modopt;
 	MonoArray *permissions;
 } MonoReflectionMethodBuilder;
+
+/* Safely access System.Reflection.Emit.MethodBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionMethodBuilder);
 
 typedef struct {
 	MonoObject object;
@@ -1092,6 +1126,9 @@ typedef struct {
 	MonoArray *modopt;
 } MonoReflectionFieldBuilder;
 
+/* Safely access System.Reflection.Emit.FieldBuilder from native code */ 
+TYPED_HANDLE_DECL (MonoReflectionFieldBuilder);
+
 typedef struct {
 	MonoObject object;
 	guint32 attrs;
@@ -1169,6 +1206,9 @@ typedef struct {
 	MonoArray *permissions;
 	MonoReflectionType *created;
 } MonoReflectionTypeBuilder;
+
+/* Safely access System.Reflection.Emit.TypeBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionTypeBuilder);
 
 typedef struct {
 	MonoReflectionType type;
@@ -1257,6 +1297,9 @@ typedef struct {
 	gint32 IidParameterIndex;
 	gint16 size_param_index;
 } MonoReflectionMarshalAsAttribute;
+
+/* Safely access System.Runtime.InteropServices.MarshalAsAttribute */
+TYPED_HANDLE_DECL (MonoReflectionMarshalAsAttribute);
 
 typedef struct {
 	MonoObject object;
@@ -1372,7 +1415,7 @@ void        mono_reflection_register_with_runtime (MonoReflectionType *type);
 void        mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoArray **typed_args, MonoArray **named_args, CattrNamedArg **named_arg_info, MonoError *error);
 MonoMethodSignature * mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token, MonoError *error);
 
-MonoArray* mono_param_get_objects_internal  (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
+MonoArrayHandle mono_param_get_objects_internal  (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
 
 MonoClass*
 mono_class_bind_generic_parameters (MonoClass *klass, int type_argc, MonoType **types, gboolean is_dynamic);
@@ -1390,7 +1433,8 @@ ves_icall_SignatureHelper_get_signature_local (MonoReflectionSigHelper *sig);
 MonoArray *
 ves_icall_SignatureHelper_get_signature_field (MonoReflectionSigHelper *sig);
 
-MonoReflectionMarshalAsAttribute* mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
+MonoReflectionMarshalAsAttributeHandle
+mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
 
 gpointer
 mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
@@ -1451,14 +1495,17 @@ MonoArray*
 ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n);
 
 #ifndef DISABLE_REMOTING
+MonoRemoteClass*
+mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *proxy_class, MonoError *error);
+
 MonoObject *
 mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);
 
 gpointer
-mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxy *real_proxy, MonoError *error);
+mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxyHandle real_proxy, MonoError *error);
 
 gboolean
-mono_upgrade_remote_class (MonoDomain *domain, MonoObject *tproxy, MonoClass *klass, MonoError *error);
+mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle tproxy, MonoClass *klass, MonoError *error);
 
 void*
 mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, void **res, MonoError *error);
@@ -1611,6 +1658,9 @@ mono_field_static_get_value_checked (MonoVTable *vt, MonoClassField *field, void
 void
 mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *vt, MonoClassField *field, void *value, MonoError *error);
 
+MonoMethod*
+mono_object_handle_get_virtual_method (MonoObjectHandle obj, MonoMethod *method, MonoError *error);
+
 /* exported, used by the debugger */
 MONO_API void *
 mono_vtable_get_static_field_data (MonoVTable *vt);
@@ -1684,8 +1734,11 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error);
 MonoObject *
 mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
 
-MonoObject *
-mono_object_isinst_mbyref_checked   (MonoObject *obj, MonoClass *klass, MonoError *error);
+MonoObjectHandle
+mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
+
+MonoObjectHandle
+mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);

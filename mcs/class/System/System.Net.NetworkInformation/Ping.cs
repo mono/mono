@@ -71,6 +71,7 @@ namespace System.Net.NetworkInformation {
 #endif
 		};
 		static readonly string PingBinPath;
+		static bool canSendPrivileged;
 #endif
 		const int default_timeout = 4000; // 4 sec.
 		ushort identifier;
@@ -80,7 +81,6 @@ namespace System.Net.NetworkInformation {
 		const UInt32 linux_cap_version = 0x20071026;
 		
 		static readonly byte [] default_buffer = new byte [0];
-		static bool canSendPrivileged;
 		
 
 		BackgroundWorker worker;

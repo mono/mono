@@ -45,7 +45,7 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
-#if AOT_ONLY_DESKTOP
+#if FULL_AOT_DESKTOP
 			/* It's only for platforms that do not have working syscall abort mechanism, like WatchOS and TvOS */
 			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
 #endif

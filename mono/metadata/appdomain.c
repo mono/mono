@@ -1815,6 +1815,11 @@ mono_domain_from_appdomain (MonoAppDomain *appdomain)
 {
 	if (appdomain == NULL)
 		return NULL;
+
+	if (mono_object_is_transparent_proxy (&appdomain->mbr.obj)) {
+		MonoTransparentProxy *tp = (MonoTransparentProxy*)appdomain;
+		return mono_domain_get_by_id (tp->rp->target_domain_id);
+	}
 	
 	return appdomain->data;
 }

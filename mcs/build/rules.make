@@ -33,7 +33,7 @@ USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_M
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
-CSC_RUNTIME_FLAGS = --gc-params=nursery-size=64m
+CSC_RUNTIME_FLAGS = --aot-path=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) --gc-params=nursery-size=64m
 BASCOMPILE = $(MBAS) $(USE_MBAS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
 BOOT_COMPILE = $(Q_MCS) $(BOOTSTRAP_MCS) $(USE_MCS_FLAGS)
@@ -140,7 +140,7 @@ endif
 # For this to be done safely, we really need two passes. This
 # ensures that all of the .dlls are compiled before trying to
 # aot them. Because we want this to be the
-# default target for some profiles(aot_only) we have a
+# default target for some profiles(testing_aot_full) we have a
 # two-level build system. The do-all-aot target is what
 # gets invoked at the top-level when someone tries to build with aot.
 # It will invoke the do-all target, and will set TOP_LEVEL_DO for this

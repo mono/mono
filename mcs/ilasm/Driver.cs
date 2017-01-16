@@ -44,8 +44,8 @@ namespace Mono.ILASM {
                         private Target target = Target.Exe;
                         private string target_string = "exe";
                         private bool show_tokens = false;
-                        private bool show_method_def = false;
-                        private bool show_method_ref = false;
+//                        private bool show_method_def = false;
+//                        private bool show_method_ref = false;
                         private bool show_parser = false;
                         private bool scan_only = false;
 			private bool debugging_info = false;
@@ -189,7 +189,7 @@ namespace Mono.ILASM {
                                         ie.FilePath = file_path;
                                         ie.Location = scanner.Reader.Location;
                                         throw;
-                                } catch (Exception e){
+                                } catch (Exception){
                                         Console.Write ("{0} ({1}, {2}): ",file_path, scanner.Reader.Location.line, scanner.Reader.Location.column);
                                         throw;
                                 } finally {
@@ -277,10 +277,10 @@ namespace Mono.ILASM {
                                                 show_tokens = true;
                                                 break;
                                         case "show_method_def":
-                                                show_method_def = true;
+//                                                show_method_def = true;
                                                 break;
                                         case "show_method_ref":
-                                                show_method_ref = true;
+//                                                show_method_ref = true;
                                                 break;
                                         case "show_parser":
                                                 show_parser = true;

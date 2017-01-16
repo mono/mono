@@ -12,7 +12,10 @@ LIBRARY = System.Threading.Overlapped.dll
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) -unsafe
+LIB_MCS_FLAGS = $(SIGN_FLAGS) -unsafe -nowarn:3021
+
+RESX_RESOURCE_STRING = \
+    ../../../../external/corefx/src/System.Threading.Overlapped/src/Resources/Strings.resx
 
 NO_TEST = yes
 

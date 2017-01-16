@@ -436,7 +436,7 @@
     </type>
     <type name="Tester+&lt;GetIndex_3&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0(System.Dynamic.GetIndexBinder, System.Object[])" attrs="131">
-        <size>92</size>
+        <size>93</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -444,7 +444,7 @@
     </type>
     <type name="Tester+&lt;InvokeMember_2&gt;c__AnonStorey2">
       <method name="Void &lt;&gt;m__0(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="131">
-        <size>109</size>
+        <size>110</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -452,7 +452,7 @@
     </type>
     <type name="Tester+&lt;InvokeMember_6&gt;c__AnonStorey3">
       <method name="Void &lt;&gt;m__0(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="131">
-        <size>119</size>
+        <size>120</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -460,7 +460,7 @@
     </type>
     <type name="Tester+&lt;SetIndex_3&gt;c__AnonStorey4">
       <method name="Void &lt;&gt;m__0(System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="131">
-        <size>119</size>
+        <size>120</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -601,52 +601,52 @@
         <size>67</size>
       </method>
       <method name="Void &lt;GetIndex_1&gt;m__25(System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
-        <size>92</size>
+        <size>93</size>
       </method>
       <method name="Void &lt;GetIndex_2&gt;m__26(System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
-        <size>111</size>
+        <size>112</size>
       </method>
       <method name="System.Object &lt;GetMember_1&gt;m__27(System.Dynamic.GetMemberBinder)" attrs="145">
         <size>75</size>
       </method>
       <method name="Void &lt;Invoke_1&gt;m__28(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
-        <size>101</size>
+        <size>102</size>
       </method>
       <method name="Void &lt;Invoke_2&gt;m__29(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
-        <size>72</size>
+        <size>74</size>
       </method>
       <method name="Void &lt;Invoke_4&gt;m__2A(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>128</size>
       </method>
       <method name="Void &lt;Invoke_5&gt;m__2B(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
-        <size>91</size>
+        <size>92</size>
       </method>
       <method name="Void &lt;Invoke_5&gt;m__2C(System.Object)" attrs="145">
         <size>94</size>
       </method>
       <method name="Void &lt;Invoke_6&gt;m__2D(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
-        <size>92</size>
+        <size>93</size>
       </method>
       <method name="Void &lt;InvokeMember_1&gt;m__2E(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
-        <size>110</size>
+        <size>111</size>
       </method>
       <method name="Void &lt;InvokeMember_3&gt;m__2F(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
-        <size>111</size>
+        <size>112</size>
       </method>
       <method name="Void &lt;InvokeMember_4&gt;m__30(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
-        <size>110</size>
-      </method>
-      <method name="Void &lt;InvokeMember_7&gt;m__31(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
-        <size>89</size>
-      </method>
-      <method name="Void &lt;InvokeMember_8&gt;m__32(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>111</size>
       </method>
+      <method name="Void &lt;InvokeMember_7&gt;m__31(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+        <size>91</size>
+      </method>
+      <method name="Void &lt;InvokeMember_8&gt;m__32(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+        <size>112</size>
+      </method>
       <method name="Void &lt;SetIndex_1&gt;m__33(System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
-        <size>124</size>
+        <size>125</size>
       </method>
       <method name="Void &lt;SetIndex_2&gt;m__34(System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
-        <size>139</size>
+        <size>140</size>
       </method>
       <method name="Void &lt;SetMember_1&gt;m__35(System.Dynamic.SetMemberBinder, System.Object)" attrs="145">
         <size>102</size>
@@ -2599,7 +2599,7 @@
   <test name="dtest-044.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>867</size>
+        <size>868</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6941,7 +6941,7 @@
         <size>23</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>212</size>
+        <size>213</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6969,7 +6969,7 @@
         <size>84</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>19</size>
+        <size>20</size>
       </method>
       <method name="Void .ctor(E[])" attrs="6278">
         <size>15</size>
@@ -10929,7 +10929,7 @@
     </type>
     <type name="Crash">
       <method name="Void Main()" attrs="150">
-        <size>14</size>
+        <size>15</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -11407,7 +11407,7 @@
     </type>
     <type name="Tests">
       <method name="Void Main()" attrs="150">
-        <size>21</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -11514,7 +11514,7 @@
     </type>
     <type name="Tests">
       <method name="Void Main()" attrs="150">
-        <size>38</size>
+        <size>39</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -13009,7 +13009,7 @@
   <test name="gtest-340.cs">
     <type name="Tests">
       <method name="T[] FindAll[T](T[], System.Predicate`1[T])" attrs="150">
-        <size>14</size>
+        <size>15</size>
       </method>
       <method name="Boolean ProtectedOnly(System.Reflection.MemberInfo)" attrs="129">
         <size>10</size>
@@ -14814,7 +14814,7 @@
     </type>
     <type name="Base">
       <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
-        <size>19</size>
+        <size>20</size>
       </method>
     </type>
   </test>
@@ -14868,7 +14868,7 @@
         <size>10</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>50</size>
+        <size>51</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -16438,7 +16438,7 @@
   <test name="gtest-495.cs">
     <type name="Repro">
       <method name="Void Main()" attrs="150">
-        <size>12</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -17316,7 +17316,7 @@
         <size>2</size>
       </method>
       <method name="Void Test()" attrs="134">
-        <size>37</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18559,7 +18559,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>78</size>
+        <size>80</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18821,7 +18821,7 @@
         <size>2</size>
       </method>
       <method name="Void Main()" attrs="150">
-        <size>48</size>
+        <size>51</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -19324,7 +19324,7 @@
     </type>
     <type name="X2">
       <method name="Void Main()" attrs="150">
-        <size>22</size>
+        <size>24</size>
       </method>
       <method name="Void Foo[T1,T2](T2[])" attrs="145">
         <size>9</size>
@@ -19991,6 +19991,93 @@
     <type name="SomeClass">
       <method name="Void Main()" attrs="150">
         <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-642.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Transform[V](Area`1[V], System.Func`2[V,V])" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="IB`1[W] GetIB[W]()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void Test[T](T, System.Func`2[T,T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="IB`1[U] Transform2[U](IB`1[U], System.Func`2[U,U])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Area`1[TVector]">
+      <method name="IB`1[TVector] GetSegments()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Transform&gt;c__AnonStorey0`1[V]">
+      <method name="IB`1[V] &lt;&gt;m__0(IB`1[V])" attrs="131">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-643.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerable`1[System.Single] FindIntersections[TVector](IBezier`1, Ray`1, Single, Range`1, Int32)" attrs="145">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Intersect">
+      <method name="Boolean s[TVector](Ray`1, BoundingBoxN`1)" attrs="150">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Ray`1[TVector]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;FindIntersections&gt;c__Iterator0`1[TVector]">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>336</size>
+      </method>
+      <method name="Single System.Collections.Generic.IEnumerator&lt;float&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.Single] System.Collections.Generic.IEnumerable&lt;float&gt;.GetEnumerator()" attrs="481">
+        <size>52</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -21415,10 +21502,10 @@
         <size>123</size>
       </method>
       <method name="Void ArrayIndexTest_7()" attrs="129">
-        <size>126</size>
+        <size>127</size>
       </method>
       <method name="Void ArrayLengthTest()" attrs="129">
-        <size>99</size>
+        <size>100</size>
       </method>
       <method name="Void ArrayLengthTest_2()" attrs="129">
         <size>92</size>
@@ -21946,7 +22033,7 @@
         <size>92</size>
       </method>
       <method name="Void NewArrayInitTest_2()" attrs="129">
-        <size>62</size>
+        <size>63</size>
       </method>
       <method name="Void NewArrayInitTest_3()" attrs="129">
         <size>137</size>
@@ -22090,7 +22177,7 @@
         <size>74</size>
       </method>
       <method name="Void ParameterTest_2()" attrs="129">
-        <size>74</size>
+        <size>76</size>
       </method>
       <method name="Void ParameterTest_3()" attrs="129">
         <size>74</size>
@@ -23460,7 +23547,7 @@
   <test name="gtest-exmethod-20.cs">
     <type name="Outer.Inner.Test">
       <method name="Void M(I)" attrs="145">
-        <size>13</size>
+        <size>14</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
@@ -23551,7 +23638,7 @@
   <test name="gtest-exmethod-27.cs">
     <type name="Bar.Program">
       <method name="Void Main()" attrs="150">
-        <size>17</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -23874,7 +23961,7 @@
     </type>
     <type name="A">
       <method name="Void Main()" attrs="150">
-        <size>12</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24104,7 +24191,7 @@
         <size>23</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>87</size>
+        <size>88</size>
       </method>
       <method name="Boolean Foo(Int32[])" attrs="145">
         <size>52</size>
@@ -24306,7 +24393,7 @@
   <test name="gtest-friend-14.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>20</size>
+        <size>21</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -25322,7 +25409,7 @@
     </type>
     <type name="C`1[T]">
       <method name="System.Collections.IEnumerator GetEnumerator()" attrs="134">
-        <size>19</size>
+        <size>20</size>
       </method>
     </type>
     <type name="C`1+&lt;Filter&gt;c__Iterator0[T]">
@@ -27719,7 +27806,7 @@
         <size>10</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>52</size>
+        <size>53</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -27974,7 +28061,7 @@
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void Main()" attrs="150">
-        <size>2179</size>
+        <size>2181</size>
       </method>
       <method name="Void Foo(Int32, Boolean)" attrs="129">
         <size>16</size>
@@ -29103,7 +29190,7 @@
     </type>
     <type name="NameCollisionTest.C">
       <method name="Void Main()" attrs="150">
-        <size>78</size>
+        <size>79</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -29784,10 +29871,10 @@
     </type>
     <type name="C">
       <method name="Void &lt;Main&gt;m__0()" attrs="145">
-        <size>159</size>
+        <size>162</size>
       </method>
       <method name="System.Collections.Generic.IEnumerable`1[B] &lt;Main&gt;m__1(A)" attrs="145">
-        <size>14</size>
+        <size>15</size>
       </method>
       <method name="&lt;&gt;__AnonType0`2[A,B] &lt;Main&gt;m__2(A, B)" attrs="145">
         <size>16</size>
@@ -31345,7 +31432,7 @@
   <test name="gtest-variance-13.cs">
     <type name="A">
       <method name="Void Test()" attrs="150">
-        <size>17</size>
+        <size>18</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -31525,7 +31612,7 @@
   <test name="gtest-variance-19.cs">
     <type name="Test">
       <method name="Void Bla[T,U]()" attrs="145">
-        <size>12</size>
+        <size>13</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>7</size>
@@ -36257,7 +36344,7 @@
   <test name="test-232.cs">
     <type name="CtorInfoTest">
       <method name="Void Main(System.String[])" attrs="150">
-        <size>977</size>
+        <size>978</size>
       </method>
       <method name="Void Assert(System.Object, System.Object)" attrs="145">
         <size>43</size>
@@ -40215,7 +40302,7 @@
     </type>
     <type name="SimpleAttribute">
       <method name="Int64[] get_ArrayValue()" attrs="2182">
-        <size>14</size>
+        <size>15</size>
       </method>
       <method name="Void set_ArrayValue(Int64[])" attrs="2182">
         <size>2</size>
@@ -43458,7 +43545,7 @@
     </type>
     <type name="X+Derived+Nested">
       <method name="Void G()" attrs="134">
-        <size>21</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -49549,7 +49636,7 @@
         <size>7</size>
       </method>
       <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
-        <size>19</size>
+        <size>20</size>
       </method>
     </type>
   </test>
@@ -49585,7 +49672,7 @@
         <size>12</size>
       </method>
       <method name="Void TestCallOnly()" attrs="129">
-        <size>65</size>
+        <size>66</size>
       </method>
       <method name="Void SomeMethod()" attrs="486">
         <size>2</size>
@@ -51811,7 +51898,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>284</size>
+        <size>288</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52288,7 +52375,7 @@
   <test name="test-934.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>106</size>
+        <size>114</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -63746,7 +63833,7 @@
     </type>
     <type name="AwaitNS.MemberAccess">
       <method name="Void M()" attrs="145">
-        <size>12</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -65399,7 +65486,7 @@
     </type>
     <type name="O">
       <method name="Void Main()" attrs="150">
-        <size>22</size>
+        <size>23</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

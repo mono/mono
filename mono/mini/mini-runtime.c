@@ -81,6 +81,7 @@
 #include "mini-gc.h"
 #include "mini-llvm.h"
 #include "debugger-agent.h"
+#include "lldb.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -110,6 +111,8 @@ int mini_verbose = 0;
  */
 gboolean mono_use_llvm = FALSE;
 
+gboolean mono_use_interpreter = FALSE;
+
 #define mono_jit_lock() mono_os_mutex_lock (&jit_mutex)
 #define mono_jit_unlock() mono_os_mutex_unlock (&jit_mutex)
 static mono_mutex_t jit_mutex;
@@ -121,10 +124,17 @@ MonoDebugOptions debug_options;
 #ifdef VALGRIND_JIT_REGISTER_MAP
 int valgrind_register;
 #endif
+GList* mono_aot_paths;
+
+static gboolean mini_enable_profiler = FALSE;
+static char* mini_profiler_options = NULL;
 
 static GSList *tramp_infos;
 
 static void register_icalls (void);
+
+static gboolean mini_profiler_enabled (void) { return mini_enable_profiler; }
+static const char* mini_profiler_get_options (void) {  return mini_profiler_options;  }
 
 gboolean
 mono_running_on_valgrind (void)
@@ -352,6 +362,15 @@ void *mono_global_codeman_reserve (int size)
 	}
 }
 
+/* The callback shouldn't take any locks */
+void
+mono_global_codeman_foreach (MonoCodeManagerFunc func, void *user_data)
+{
+	mono_jit_lock ();
+	mono_code_manager_foreach (global_codeman, func, user_data);
+	mono_jit_unlock ();
+}
+
 #if defined(__native_client_codegen__) && defined(__native_client__)
 void
 mono_nacl_gc()
@@ -480,6 +499,7 @@ mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain)
 	mono_jit_unlock ();
 
 	mono_save_trampoline_xdebug_info (info);
+	mono_lldb_save_trampoline_info (info);
 
 	/* Only register trampolines that have unwind infos */
 	if (mono_get_root_domain () && copy->uw_info)
@@ -1939,6 +1959,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		return;
 
 	mono_debug_remove_method (method, domain);
+	mono_lldb_remove_method (domain, method, ji);
 
 	mono_domain_lock (domain);
 	g_hash_table_remove (domain_jit_info (domain)->dynamic_code_hash, method);
@@ -3120,6 +3141,8 @@ mini_parse_debug_option (const char *option)
 		debug_options.dyn_runtime_invoke = TRUE;
 	else if (!strcmp (option, "gdb"))
 		debug_options.gdb = TRUE;
+	else if (!strcmp (option, "lldb"))
+		debug_options.lldb = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -3408,6 +3431,22 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	domain->runtime_info = NULL;
 }
 
+#ifdef MONO_ARCH_HAVE_CODE_CHUNK_TRACKING
+
+static void
+code_manager_chunk_new (void *chunk, int size)
+{
+	mono_arch_code_chunk_new (chunk, size);
+}
+
+static void
+code_manager_chunk_destroy (void *chunk)
+{
+	mono_arch_code_chunk_destroy (chunk);
+}
+
+#endif
+
 #ifdef ENABLE_LLVM
 static gboolean
 llvm_init_inner (void)
@@ -3445,6 +3484,13 @@ mini_llvm_init (void)
 #endif
 }
 
+void
+mini_profiler_enable_with_options (const char* profile_options)
+{
+	mini_enable_profiler = TRUE;
+	mini_profiler_options = g_strdup (profile_options);
+}
+
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -3452,6 +3498,7 @@ mini_init (const char *filename, const char *runtime_version)
 	MonoDomain *domain;
 	MonoRuntimeCallbacks callbacks;
 	MonoThreadInfoRuntimeCallbacks ticallbacks;
+	MonoCodeManagerCallbacks code_manager_callbacks;
 
 	MONO_VES_INIT_BEGIN ();
 
@@ -3535,6 +3582,13 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_code_manager_init ();
 
+	memset (&code_manager_callbacks, 0, sizeof (code_manager_callbacks));
+#ifdef MONO_ARCH_HAVE_CODE_CHUNK_TRACKING
+	code_manager_callbacks.chunk_new = code_manager_chunk_new;
+	code_manager_callbacks.chunk_destroy = code_manager_chunk_destroy;
+#endif
+	mono_code_manager_install_callbacks (&code_manager_callbacks);
+
 	mono_hwcap_init ();
 
 	mono_arch_cpu_init ();
@@ -3542,6 +3596,11 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_arch_init ();
 
 	mono_unwind_init ();
+
+	if (mini_get_debug_options ()->lldb || g_getenv ("MONO_LLDB")) {
+		mono_lldb_init ("");
+		mono_dont_free_domains = TRUE;
+	}
 
 #ifdef XDEBUG_ENABLED
 	if (g_getenv ("MONO_XDEBUG")) {
@@ -3593,6 +3652,11 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_install_get_cached_class_info (mono_aot_get_cached_class_info);
 	mono_install_get_class_from_name (mono_aot_get_class_from_name);
 	mono_install_jit_info_find_in_aot (mono_aot_find_jit_info);
+
+	if (mini_profiler_enabled ()) {
+		mono_profiler_load (mini_profiler_get_options ());
+		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
+	}
 
 	if (debug_options.collect_pagefault_stats)
 		mono_aot_set_make_unreadable (TRUE);

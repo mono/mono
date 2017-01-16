@@ -747,6 +747,8 @@ namespace System.Diagnostics
 			SetProcessHandle (new SafeProcessHandle (procInfo.process_handle, true));
 			SetProcessId (procInfo.pid);
 			
+#pragma warning disable 618
+
 			if (startInfo.RedirectStandardInput) {
 				MonoIO.Close (stdin_read, out error);
 
@@ -775,6 +777,7 @@ namespace System.Diagnostics
 
 				standardError = new StreamReader (new FileStream (stderr_read, FileAccess.Read, true, 8192), stderrEncoding, true);
 			}
+#pragma warning restore
 
 			return true;
 		}

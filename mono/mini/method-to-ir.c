@@ -6518,7 +6518,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		 * Get rid of the begin and end bblocks if possible to aid local
 		 * optimizations.
 		 */
-		mono_merge_basic_blocks (cfg, prev_cbb, sbblock);
+		if (prev_cbb->out_count == 1)
+			mono_merge_basic_blocks (cfg, prev_cbb, sbblock);
 
 		if ((prev_cbb->out_count == 1) && (prev_cbb->out_bb [0]->in_count == 1) && (prev_cbb->out_bb [0] != ebblock))
 			mono_merge_basic_blocks (cfg, prev_cbb, prev_cbb->out_bb [0]);
@@ -7021,6 +7022,7 @@ emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	gboolean variant_iface = FALSE;
 	guint32 slot;
 	int offset;
+	gboolean special_array_interface = cmethod->klass->is_array_special_interface;
 
 	/*
 	 * In llvm-only mode, vtables contain function descriptors instead of
@@ -7079,7 +7081,7 @@ emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		return emit_extra_arg_calli (cfg, fsig, sp, arg_reg, call_target);
 	}
 
-	if (!fsig->generic_param_count && is_iface && !variant_iface && !is_gsharedvt) {
+	if (!fsig->generic_param_count && is_iface && !variant_iface && !is_gsharedvt && !special_array_interface) {
 		/*
 		 * A simple interface call
 		 *
@@ -7118,7 +7120,7 @@ emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 		return emit_llvmonly_calli (cfg, fsig, sp, ftndesc_ins);
 	}
 
-	if ((fsig->generic_param_count || variant_iface) && !is_gsharedvt) {
+	if ((fsig->generic_param_count || variant_iface || special_array_interface) && !is_gsharedvt) {
 		/*
 		 * This is similar to the interface case, the vtable slot points to an imt thunk which is
 		 * dynamically extended as more instantiations are discovered.
@@ -8592,6 +8594,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						CHECK_CFG_ERROR;
 					}
 				}
+
+				if (constrained_class->enumtype && !strcmp (cmethod->name, "GetHashCode")) {
+					/* Use the corresponding method from the base type to avoid boxing */
+					MonoType *base_type = mono_class_enum_basetype (constrained_class);
+					g_assert (base_type);
+					constrained_class = mono_class_from_mono_type (base_type);
+					cmethod = mono_class_get_method_from_name (constrained_class, cmethod->name, 0);
+					g_assert (cmethod);
+				}
 			}
 					
 			if (!dont_verify && !cfg->skip_visibility) {
@@ -8882,7 +8893,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * request a generic sharing context.
 				 */
 				if (context_used &&
-						((method->flags & METHOD_ATTRIBUTE_STATIC) || method->klass->valuetype))
+						((cfg->method->flags & METHOD_ATTRIBUTE_STATIC) || cfg->method->klass->valuetype))
 					mono_get_vtable_var (cfg);
 			}
 
@@ -13831,7 +13842,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	int orig_next_vreg;
 	guint32 *vreg_to_lvreg;
 	guint32 *lvregs;
-	guint32 i, lvregs_len;
+	guint32 i, lvregs_len, lvregs_size;
 	gboolean dest_has_lvreg = FALSE;
 	MonoStackType stacktypes [128];
 	MonoInst **live_range_start, **live_range_end;
@@ -13904,7 +13915,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	 */
 	orig_next_vreg = cfg->next_vreg;
 	vreg_to_lvreg = (guint32 *)mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * cfg->next_vreg);
-	lvregs = (guint32 *)mono_mempool_alloc (cfg->mempool, sizeof (guint32) * 1024);
+	lvregs_size = 1024;
+	lvregs = (guint32 *)mono_mempool_alloc (cfg->mempool, sizeof (guint32) * lvregs_size);
 	lvregs_len = 0;
 
 	/* 
@@ -14287,7 +14299,12 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 								}
 								g_assert (sreg != -1);
 								vreg_to_lvreg [var->dreg] = sreg;
-								g_assert (lvregs_len < 1024);
+								if (lvregs_len >= lvregs_size) {
+									guint32 *new_lvregs = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
+									memcpy (new_lvregs, lvregs, sizeof (guint32) * lvregs_size);
+									lvregs = new_lvregs;
+									lvregs_size *= 2;
+								}
 								lvregs [lvregs_len ++] = var->dreg;
 							}
 						}
@@ -14334,7 +14351,12 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 			if (dest_has_lvreg) {
 				g_assert (ins->dreg != -1);
 				vreg_to_lvreg [prev_dreg] = ins->dreg;
-				g_assert (lvregs_len < 1024);
+				if (lvregs_len >= lvregs_size) {
+					guint32 *new_lvregs = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
+					memcpy (new_lvregs, lvregs, sizeof (guint32) * lvregs_size);
+					lvregs = new_lvregs;
+					lvregs_size *= 2;
+				}
 				lvregs [lvregs_len ++] = prev_dreg;
 				dest_has_lvreg = FALSE;
 			}

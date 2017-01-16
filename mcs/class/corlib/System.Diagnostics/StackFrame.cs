@@ -134,7 +134,7 @@ namespace System.Diagnostics {
                 
                 public virtual string GetFileName()
                 {
-#if !MOBILE
+#if FEATURE_MONO_CAS
 			if (SecurityManager.SecurityEnabled && (fileName != null) && (fileName.Length > 0)) {
 				string fn = Path.GetFullPath (fileName);
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fn).Demand ();

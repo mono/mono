@@ -58,6 +58,7 @@
 #include "mini.h"
 #include "jit.h"
 #include "aot-compiler.h"
+#include "interpreter/interp.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -1280,6 +1281,7 @@ mini_usage (void)
 	        "    --mixed-mode           Enable mixed-mode image support.\n"
 #endif
 		"    --handlers             Install custom handlers, use --help-handlers for details.\n"
+		"    --aot-path=PATH        List of additional directories to search for AOT images.\n"
 	  );
 }
 
@@ -1783,6 +1785,16 @@ mono_main (int argc, char* argv[])
 			mono_compile_aot = TRUE;
 			aot_options = &argv [i][6];
 #endif
+		} else if (strncmp (argv [i], "--aot-path=", 11) == 0) {
+			char **splitted;
+
+			splitted = g_strsplit (argv [i] + 11, G_SEARCHPATH_SEPARATOR_S, 1000);
+			while (*splitted) {
+				char *tmp = *splitted;
+				mono_aot_paths = g_list_append (mono_aot_paths, g_strdup (tmp));
+				g_free (tmp);
+				splitted++;
+			}
 		} else if (strncmp (argv [i], "--compile-all=", 14) == 0) {
 			action = DO_COMPILE;
 			recompilation_times = atoi (argv [i] + 14);
@@ -1912,6 +1924,11 @@ mono_main (int argc, char* argv[])
 #endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
+#ifdef ENABLE_INTERPRETER
+		} else if (strcmp (argv [i], "--interpreter") == 0) {
+			mono_use_interpreter = TRUE;
+#endif
+
 #ifdef __native_client__
 		} else if (strcmp (argv [i], "--nacl-mono-path") == 0){
 			nacl_mono_path = g_strdup(argv[++i]);
@@ -2000,8 +2017,7 @@ mono_main (int argc, char* argv[])
 	mono_set_rootdir ();
 
 	if (enable_profile) {
-		mono_profiler_load (profile_options);
-		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
+		mini_profiler_enable_with_options (profile_options);
 	}
 
 	mono_attach_parse_options (attach_options);
@@ -2041,6 +2057,11 @@ mono_main (int argc, char* argv[])
 	}
 
 	mono_set_defaults (mini_verbose, opt);
+#if ENABLE_INTERPRETER
+	if (mono_use_interpreter)
+		domain = mono_interp_init (argv [i]);
+	else
+#endif
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2064,6 +2085,17 @@ mono_main (int argc, char* argv[])
 	case DO_SINGLE_METHOD_REGRESSION:
 		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
+#ifdef ENABLE_INTERPRETER
+		if (mono_use_interpreter) {
+			if (interp_regression_list (2, argc -i, argv + i)) {
+				g_print ("Regression ERRORS!\n");
+				// mini_cleanup (domain);
+				return 1;
+			}
+			// mini_cleanup (domain);
+			return 0;
+		}
+#endif
 		if (mini_regression_list (mini_verbose, argc -i, argv + i)) {
 			g_print ("Regression ERRORS!\n");
 			mini_cleanup (domain);
@@ -2096,6 +2128,10 @@ mono_main (int argc, char* argv[])
 		aname = argv [i];
 		break;
 	default:
+#ifdef ENABLE_INTERPRETER
+		if (mono_use_interpreter)
+			g_error ("not yet");
+#endif
 		if (argc - i < 1) {
 			mini_usage ();
 			mini_cleanup (domain);

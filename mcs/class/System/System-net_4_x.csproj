@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,436</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,436</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -49,6 +49,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System\compmod\microsoft\win32\safehandles\SafeProcessHandle.cs" />
     <Compile Include="..\referencesource\System\compmod\system\codedom\CodeArgumentReferenceExpression.cs" />
@@ -725,6 +728,7 @@
     <Compile Include="..\referencesource\System\sys\system\threading\semaphore.cs" />
     <Compile Include="..\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="corefx\ZLibNative.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeProvider.cs" />
@@ -828,6 +832,7 @@
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
     <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
@@ -978,10 +983,7 @@
     <Compile Include="System.Diagnostics\TraceImpl.cs" />
     <Compile Include="System.Diagnostics\TraceSourceInfo.cs" />
     <Compile Include="System.Diagnostics\Win32EventLog.cs" />
-    <Compile Include="System.IO.Compression\CompressionLevel.cs" />
-    <Compile Include="System.IO.Compression\CompressionMode.cs" />
     <Compile Include="System.IO.Compression\DeflateStream.cs" />
-    <Compile Include="System.IO.Compression\GZipStream.cs" />
     <Compile Include="System.IO.Ports\Handshake.cs" />
     <Compile Include="System.IO.Ports\ISerialStream.cs" />
     <Compile Include="System.IO.Ports\Parity.cs" />

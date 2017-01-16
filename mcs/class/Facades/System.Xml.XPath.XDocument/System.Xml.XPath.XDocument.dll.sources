@@ -1,3 +1,3 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-XDocumentExtensions.cs
+../../../../external/corefx/src/System.Xml.XPath.XDocument/src/System/Xml/XPath/XDocumentExtensions.cs

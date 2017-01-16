@@ -2418,7 +2418,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_object_class (delegate->target) == mono_defaults.transparent_proxy_class) {
+	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
 		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
@@ -2636,6 +2636,9 @@ mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 	case MONO_NATIVE_VBBYREFSTR:
 		return MONO_MARSHAL_CONV_LPSTR_STR;
 	case MONO_NATIVE_LPTSTR:
+#ifdef TARGET_WIN32
+		*need_free = FALSE;
+#endif
 		return MONO_MARSHAL_CONV_LPTSTR_STR;
 	case MONO_NATIVE_BSTR:
 		return MONO_MARSHAL_CONV_BSTR_STR;
@@ -7979,6 +7982,8 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 					ret->params [i] = csig->params [i];
 			}
 			ret->params [csig->param_count] = &mono_get_intptr_class ()->byval_arg;
+			ret->pinvoke = csig->pinvoke;
+
 			call_sig = ret;
 		}
 
@@ -9056,10 +9061,8 @@ mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *ca
 	if (mono_error_set_pending_exception (&error))
 		return NULL;
 
-#ifndef DISABLE_REMOTING
-	if (obj->vtable->klass == mono_defaults.transparent_proxy_class)
+	if (mono_object_is_transparent_proxy (obj))
 		return isinst;
-#endif
 
 	uintptr_t cache_update = (uintptr_t)obj->vtable;
 	if (!isinst)

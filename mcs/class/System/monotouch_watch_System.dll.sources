@@ -18,3 +18,4 @@ System.Net/HttpWebRequest.platformnotsupported.cs
 System.Net/HttpWebResponse.platformnotsupported.cs
 System.Net/ServicePoint.platformnotsupported.cs
 System.Net/ServicePointManager.platformnotsupported.cs
+../Mono.Security/Mono.Security.X509.Extensions/AuthorityKeyIdentifierExtension.cs

@@ -8,12 +8,15 @@ namespace System.ComponentModel
 {
 	partial class Win32Exception
 	{
+#if !MOBILE
 		[DllImport ("Kernel32", CharSet = CharSet.Unicode)]
 		static extern int FormatMessage(int dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId,
 			[Out] StringBuilder lpBuffer, int nSize, IntPtr[] arguments);
+#endif
 
 		internal static string GetErrorMessage (int error)
 		{
+#if !MOBILE
 			if (Environment.IsRunningOnWindows) {
 				StringBuilder sb = new StringBuilder (256);
 
@@ -25,6 +28,7 @@ namespace System.ComponentModel
 
 				return sb.ToString ();
 			}
+#endif
 
 			switch (error) {
 			case 0: /* ERROR_SUCCESS */ return "Success";

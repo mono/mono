@@ -20,8 +20,14 @@ $(error Unknown framework version)
 endif
 endif
 
+ifeq ($(PROFILE),build)
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/build/csc.aotprofile
+endif
+
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
-RESX_RESOURCE_STRING = ../../../external/corefx/src/System.ValueTuple/src/Resources/Strings.resx
+
+RESX_RESOURCE_STRING = \
+	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -68,7 +74,7 @@ DEFAULT_REFERENCES =
 TEST_LIB_REFS = System.Core System
 
 ifndef AOT_FRIENDLY_PROFILE
-ifneq ($(PROFILE),aot_hybrid)
+ifneq ($(PROFILE),testing_aot_hybrid)
 TEST_LIB_REFS += Mono.Posix
 endif
 endif
