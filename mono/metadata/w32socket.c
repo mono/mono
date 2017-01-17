@@ -157,30 +157,6 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 	return WSAIoctl (sock, command, input, inputlen, output, outputlen, written, NULL, NULL);
 }
 
-static gint
-mono_w32socket_select (gint nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
-{
-	return select (nfds, readfds, writefds, exceptfds, timeout);
-}
-
-static void
-mono_w32socket_FD_CLR (SOCKET sock, fd_set *set)
-{
-	FD_CLR (sock, set);
-}
-
-static gint
-mono_w32socket_FD_ISSET (SOCKET sock, fd_set *set)
-{
-	return FD_ISSET (sock, set);
-}
-
-static void
-mono_w32socket_FD_SET (SOCKET sock, fd_set *set)
-{
-	return FD_SET (sock, set);
-}
-
 #endif /* HOST_WIN32 */
 
 static void

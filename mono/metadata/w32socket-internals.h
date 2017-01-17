@@ -10,9 +10,6 @@
 #include <config.h>
 #include <glib.h>
 
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -130,22 +127,6 @@ mono_w32socket_shutdown (SOCKET sock, gint how);
 
 gint
 mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written);
-
-#ifdef HAVE_SYS_SELECT_H
-
-gint
-mono_w32socket_select (gint nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
-
-void
-mono_w32socket_FD_CLR (SOCKET sock, fd_set *set);
-
-gint
-mono_w32socket_FD_ISSET (SOCKET sock, fd_set *set);
-
-void
-mono_w32socket_FD_SET (SOCKET sock, fd_set *set);
-
-#endif /* HAVE_SYS_SELECT_H */
 
 #endif /* HOST_WIN32 */
 
