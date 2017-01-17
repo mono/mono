@@ -207,11 +207,11 @@ namespace System.Net.NetworkInformation {
 			return Send (addresses [0], timeout, buffer, options);
 		}
 
-		static IPAddress GetNonLoopbackIP ()
+		static IPAddress GetNonLoopbackIPV4 ()
 		{
 #pragma warning disable 618
 			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
-				if (!IPAddress.IsLoopback (addr))
+				if (!IPAddress.IsLoopback (addr) && addr.AddressFamily == AddressFamily.InterNetwork)
 					return addr;
 #pragma warning restore 618
 
@@ -243,7 +243,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
-			IPEndPoint client = new IPEndPoint (GetNonLoopbackIP (), 0);
+			IPEndPoint client = new IPEndPoint (GetNonLoopbackIPV4 (), 0);
 
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
