@@ -336,7 +336,7 @@ public class TimeZoneTest {
 			dto.ToLocalTime ();
 		}
 
-#if MOBILE
+#if !WIN_PLATFORM
 		// On device we cannot read the OS file system to look for /etc/localtime
 		// and /usr/share/zoneinfo - so we must initialize the BCL TimeZoneInfo
 		// from NSTimeZoneInfo. The tests here check the code paths between the
