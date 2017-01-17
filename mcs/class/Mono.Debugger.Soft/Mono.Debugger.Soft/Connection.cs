@@ -36,7 +36,7 @@ namespace Mono.Debugger.Soft
 
 	struct SourceInfo {
 		public string source_file;
-		public byte[] guid, hash;
+		public byte[] hash;
 	}
 
 	class DebugInfo {

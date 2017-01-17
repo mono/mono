@@ -41,8 +41,6 @@ namespace System.Net.NetworkInformation {
 		protected UnixNetworkInterface iface;
 		List <IPAddress> addresses;
 		IPAddressCollection dns_servers;
-		string dns_suffix;
-		DateTime last_parse;
 		
 		public UnixIPInterfaceProperties (UnixNetworkInterface iface, List <IPAddress> addresses)
 		{
@@ -83,6 +81,10 @@ namespace System.Net.NetworkInformation {
 #else
 		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
 		static Regex search = new Regex (@"\s*search\s+(?<domain>.*)");
+
+		string dns_suffix;
+		DateTime last_parse;
+
 		void ParseResolvConf ()
 		{
 			try {
