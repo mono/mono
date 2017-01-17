@@ -101,7 +101,7 @@ namespace System.Net.NetworkInformation
 	}
 
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	class Win32_IP_ADAPTER_ADDRESSES {
+	struct Win32_IP_ADAPTER_ADDRESSES {
 		public AlignmentUnion Alignment;
 		public IntPtr Next; // to Win32_IP_ADAPTER_ADDRESSES
 		[MarshalAs (UnmanagedType.LPStr)]
@@ -147,7 +147,7 @@ namespace System.Net.NetworkInformation
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	class Win32_IP_ADAPTER_INFO
+	struct Win32_IP_ADAPTER_INFO
 	{
 		const int MAX_ADAPTER_NAME_LENGTH = 256;
 		const int MAX_ADAPTER_DESCRIPTION_LENGTH = 128;

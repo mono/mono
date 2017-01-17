@@ -441,30 +441,28 @@ namespace System.Net.NetworkInformation {
 			private const string IPHLPAPI = "iphlpapi.dll";
 
 			[DllImport (IPHLPAPI, SetLastError = true)]
-			static extern int GetAdaptersAddresses (uint family, uint flags, IntPtr reserved, byte [] info, ref int size);
+			static extern int GetAdaptersAddresses (uint family, uint flags, IntPtr reserved, IntPtr info, ref int size);
 
 			[DllImport (IPHLPAPI)]
 			static extern uint GetBestInterfaceEx (byte[] ipAddress, out int index);
 
-			unsafe static Win32_IP_ADAPTER_ADDRESSES [] GetAdaptersAddresses ()
+			static Win32_IP_ADAPTER_ADDRESSES [] GetAdaptersAddresses ()
 			{
-				byte [] bytes = null;
+				IntPtr ptr = IntPtr.Zero;
 				int len = 0;
-				GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
-				bytes = new byte [len];
-				int ret = GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
+				GetAdaptersAddresses (0, 0, IntPtr.Zero, ptr, ref len);
+				ptr = Marshal.AllocHGlobal(len);
+				int ret = GetAdaptersAddresses (0, 0, IntPtr.Zero, ptr, ref len);
 				if (ret != 0)
 					throw new NetworkInformationException (ret);
 
 				List<Win32_IP_ADAPTER_ADDRESSES> l = new List<Win32_IP_ADAPTER_ADDRESSES> ();
-				fixed (byte* ptr = bytes) {
-					Win32_IP_ADAPTER_ADDRESSES info;
-					for (IntPtr p = (IntPtr) ptr; p != IntPtr.Zero; p = info.Next) {
-						info = new Win32_IP_ADAPTER_ADDRESSES ();
-						Marshal.PtrToStructure (p, info);
-						l.Add (info);
-					}
+				Win32_IP_ADAPTER_ADDRESSES info;
+				for (IntPtr p = ptr; p != IntPtr.Zero; p = info.Next) {
+					info = Marshal.PtrToStructure<Win32_IP_ADAPTER_ADDRESSES> (p);
+					l.Add (info);
 				}
+
 				return l.ToArray ();
 			}
 
@@ -811,7 +809,7 @@ namespace System.Net.NetworkInformation {
 	class Win32NetworkInterface2 : NetworkInterface
 	{
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
-		static extern int GetAdaptersInfo (byte [] info, ref int size);
+		static extern int GetAdaptersInfo (IntPtr info, ref int size);
 
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetIfEntry (ref Win32_MIB_IFROW row);
@@ -821,28 +819,25 @@ namespace System.Net.NetworkInformation {
 			foreach (Win32_IP_ADAPTER_INFO info in GetAdaptersInfo ())
 				if (info.Index == index)
 					return info;
-			return null;
+			throw new IndexOutOfRangeException ("No adapter found for index " + index);
 		}
 
-		unsafe static Win32_IP_ADAPTER_INFO [] GetAdaptersInfo ()
+		static Win32_IP_ADAPTER_INFO [] GetAdaptersInfo ()
 		{
-			byte [] bytes = null;
 			int len = 0;
-			GetAdaptersInfo (bytes, ref len);
-			bytes = new byte [len];
-			int ret = GetAdaptersInfo (bytes, ref len);
+			IntPtr ptr = IntPtr.Zero;
+			GetAdaptersInfo (ptr, ref len);
+			ptr = Marshal.AllocHGlobal(len);
+			int ret = GetAdaptersInfo (ptr, ref len);
 
 			if (ret != 0)
 				throw new NetworkInformationException (ret);
 
 			List<Win32_IP_ADAPTER_INFO> l = new List<Win32_IP_ADAPTER_INFO> ();
-			fixed (byte* ptr = bytes) {
-				Win32_IP_ADAPTER_INFO info;
-				for (IntPtr p = (IntPtr) ptr; p != IntPtr.Zero; p = info.Next) {
-					info = new Win32_IP_ADAPTER_INFO ();
-					Marshal.PtrToStructure (p, info);
-					l.Add (info);
-				}
+			Win32_IP_ADAPTER_INFO info;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = info.Next) {
+				info = Marshal.PtrToStructure<Win32_IP_ADAPTER_INFO> (p);
+				l.Add (info);
 			}
 			return l.ToArray ();
 		}

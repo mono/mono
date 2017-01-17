@@ -342,13 +342,13 @@ namespace System.Net.NetworkInformation {
 		public override IPv4InterfaceProperties GetIPv4Properties ()
 		{
 			Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
-			return v4info != null ? new Win32IPv4InterfaceProperties (v4info, mib4) : null;
+			return new Win32IPv4InterfaceProperties (v4info, mib4);
 		}
 
 		public override IPv6InterfaceProperties GetIPv6Properties ()
 		{
 			Win32_IP_ADAPTER_INFO v6info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib6.Index);
-			return v6info != null ? new Win32IPv6InterfaceProperties (mib6) : null;
+			return new Win32IPv6InterfaceProperties (mib6);
 		}
 
 		public override IPAddressInformationCollection AnycastAddresses {
@@ -373,7 +373,11 @@ namespace System.Net.NetworkInformation {
 			get {
 				Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
 				// FIXME: should ipv6 DhcpServer be considered?
-				return v4info != null ? new Win32IPAddressCollection (v4info.DhcpServer) : Win32IPAddressCollection.Empty;
+				try {
+					return new Win32IPAddressCollection (v4info.DhcpServer);
+				} catch (IndexOutOfRangeException) {
+					return Win32IPAddressCollection.Empty;
+				}
 			}
 		}
 
@@ -387,18 +391,17 @@ namespace System.Net.NetworkInformation {
 
 		public override GatewayIPAddressInformationCollection GatewayAddresses {
 			get {
-				Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
-				// FIXME: should ipv6 DhcpServer be considered?
-
 				var col = new GatewayIPAddressInformationCollection ();
-				if (v4info != null) {
+				try {
+					Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
+					// FIXME: should ipv6 DhcpServer be considered?
+
 					var a = v4info.GatewayList;
 					if (!String.IsNullOrEmpty (a.IpAddress)) {
 						col.InternalAdd(new SystemGatewayIPAddressInformation(IPAddress.Parse (a.IpAddress)));
 						AddSubsequently (a.Next, col);
 					}
-				}
-
+				} catch (IndexOutOfRangeException) {}
 				return col;
 			}
 		}
@@ -440,9 +443,13 @@ namespace System.Net.NetworkInformation {
 
 		public override UnicastIPAddressInformationCollection UnicastAddresses {
 			get {
-				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
-				// FIXME: should ipv6 DhcpServer be considered?
-				return ai != null ? Win32FromUnicast (addr.FirstUnicastAddress) : new UnicastIPAddressInformationCollection ();
+				try {
+					Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
+					// FIXME: should ipv6 DhcpServer be considered?
+					return Win32FromUnicast (addr.FirstUnicastAddress);
+				} catch (IndexOutOfRangeException) {
+					return new UnicastIPAddressInformationCollection ();
+				}
 			}
 		}
 
@@ -459,9 +466,13 @@ namespace System.Net.NetworkInformation {
 
 		public override IPAddressCollection WinsServersAddresses {
 			get {
-				Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
-				// FIXME: should ipv6 DhcpServer be considered?
-				return v4info != null ? new Win32IPAddressCollection (v4info.PrimaryWinsServer, v4info.SecondaryWinsServer) : Win32IPAddressCollection.Empty;
+				try {
+					Win32_IP_ADAPTER_INFO v4info = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
+					// FIXME: should ipv6 DhcpServer be considered?
+					return new Win32IPAddressCollection (v4info.PrimaryWinsServer, v4info.SecondaryWinsServer);
+				} catch (IndexOutOfRangeException) {
+					return Win32IPAddressCollection.Empty;
+				}
 			}
 		}
 
