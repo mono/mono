@@ -137,7 +137,7 @@ namespace MonoTests.Microsoft.CSharp
 				sb.Length = 0;
 				Assert.AreEqual ("6.445F", Generate (new CodePrimitiveExpression ((float) 6.445), sw), "#8");
 				sb.Length = 0;
-				Assert.AreEqual ("5.76", Generate (new CodePrimitiveExpression ((double) 5.76), sw), "#9");
+				Assert.AreEqual ("5.76D", Generate (new CodePrimitiveExpression ((double) 5.76), sw), "#9");
 				sb.Length = 0;
 				Assert.AreEqual ("7.667m", Generate (new CodePrimitiveExpression ((decimal) 7.667), sw), "#10");
 				sb.Length = 0;
