@@ -435,7 +435,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-#if !MOBILE
+#if WIN_PLATFORM
 		class Win32NetworkInterfaceAPI : NetworkInterfaceFactory
 		{
 			private const string IPHLPAPI = "iphlpapi.dll";
@@ -519,7 +519,7 @@ namespace System.Net.NetworkInformation {
 				return new LinuxNetworkInterfaceAPI ();
 			}
 
-#if !MOBILE
+#if WIN_PLATFORM
 			Version windowsVer51 = new Version (5, 1);
 			if (Environment.OSVersion.Version >= windowsVer51)
 				return new Win32NetworkInterfaceAPI ();
@@ -807,7 +807,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32NetworkInterface2 : NetworkInterface
 	{
 		[DllImport ("iphlpapi.dll", SetLastError = true)]

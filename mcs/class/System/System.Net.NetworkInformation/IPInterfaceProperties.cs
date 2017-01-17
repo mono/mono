@@ -326,7 +326,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPInterfaceProperties2 : IPInterfaceProperties
 	{
 		readonly Win32_IP_ADAPTER_ADDRESSES addr;
@@ -413,7 +413,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override bool IsDnsEnabled {
-			get { return Win32_FIXED_INFO.Instance.EnableDns != 0; }
+			get { return Win32NetworkInterface.FixedInfo.EnableDns != 0; }
 		}
 
 		public override bool IsDynamicDnsEnabled {
