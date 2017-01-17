@@ -276,8 +276,10 @@ namespace System.Net {
 		void Close (bool force)
 		{
 			CheckDisposed ();
-			EndPointManager.RemoveListener (this);
-			Cleanup (force);
+			if (!Mono.Runtime.CheckRuntimeShutdown()) {
+				EndPointManager.RemoveListener (this);
+				Cleanup (force);
+			}
 		}
 
 		void Cleanup (bool close_existing)

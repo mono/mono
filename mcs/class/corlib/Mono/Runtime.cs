@@ -60,6 +60,11 @@ namespace Mono {
 		}
 #endif
 
+		// Used to check if shutdown has started so that things like
+		// the threadpool are no longer accessed
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern bool CheckRuntimeShutdown ();
+
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
@@ -73,6 +78,7 @@ namespace Mono {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string GetNativeStackTrace (Exception exception);
+
 
 		public static bool SetGCAllowSynchronousMajor (bool flag)
 		{

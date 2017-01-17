@@ -22,7 +22,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/atomic.h>
 
-static gboolean shutting_down_inited = FALSE;
+gboolean shutting_down_inited = FALSE;
 static gboolean shutting_down = FALSE;
 
 /** 
