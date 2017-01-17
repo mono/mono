@@ -1660,3 +1660,6 @@ corert/SR.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
 
+System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
+System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
+CoreFoundation/CFHelpers.cs
