@@ -7350,7 +7350,6 @@ emit_method_inner (EmitContext *ctx)
 			 * because they might belong to assemblies which
 			 * haven't been loaded yet.
 			 */
-			g_assert (!ctx->is_linkonce);
 			emit_init_method (ctx);
 		} else {
 			LLVMBuildBr (ctx->builder, ctx->inited_bb);

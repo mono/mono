@@ -7946,17 +7946,6 @@ gboolean
 mono_aot_is_linkonce_method (MonoMethod *method)
 {
 	return FALSE;
-#if 0
-	WrapperInfo *info;
-
-	// FIXME: Add more cases
-	if (method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		return FALSE;
-	info = mono_marshal_get_wrapper_info (method);
-	if ((info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)))
-		return TRUE;
-	return FALSE;
-#endif
 }
 
 static gboolean

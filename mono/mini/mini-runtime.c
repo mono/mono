@@ -3730,6 +3730,8 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icalls ();
 
 	mono_generic_sharing_init ();
+
+	mono_aot_poll_amodule_got_init ();
 #endif
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
