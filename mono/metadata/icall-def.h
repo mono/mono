@@ -601,7 +601,7 @@ HANDLES(ICALL(MODULE_13, "get_MetadataToken", ves_icall_reflection_get_token))
 ICALL_TYPE(MCMETH, "System.Reflection.MonoCMethod", MCMETH_1)
 HANDLES(ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition))
 ICALL(MCMETH_2, "InternalInvoke", ves_icall_InternalInvoke)
-ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
+HANDLES(ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
 
 ICALL_TYPE(MEVIN, "System.Reflection.MonoEventInfo", MEVIN_1)
 ICALL(MEVIN_1, "get_event_info", ves_icall_MonoEventInfo_get_event_info)
@@ -624,7 +624,7 @@ HANDLES(ICALL(MMETH_5, "MakeGenericMethod_impl", ves_icall_MonoMethod_MakeGeneri
 HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod))
 HANDLES(ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition))
 HANDLES(ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method))
-ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
+HANDLES(ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
 ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name)
 
 ICALL_TYPE(MMETHI, "System.Reflection.MonoMethodInfo", MMETHI_4)

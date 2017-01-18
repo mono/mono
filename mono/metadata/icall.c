@@ -5247,9 +5247,10 @@ ves_icall_MonoField_get_core_clr_security_level (MonoReflectionField *rfield)
 }
 
 ICALL_EXPORT int
-ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethod *rfield)
+ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfield, MonoError *error)
 {
-	MonoMethod *method = rfield->method;
+	mono_error_init (error);
+	MonoMethod *method = MONO_HANDLE_GETVAL (rfield, method);
 	return mono_security_core_clr_method_level (method, TRUE);
 }
 
