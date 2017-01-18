@@ -3073,55 +3073,68 @@ ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method
 	return method->method->is_generic;
 }
 
-ICALL_EXPORT MonoArray*
-ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
+static gboolean
+set_array_generic_argument_handle_inflated (MonoDomain *domain, MonoGenericInst *inst, int i, MonoArrayHandle arr, MonoError *error)
 {
-	MonoError error;
-	MonoReflectionType *rt;
-	MonoArray *res;
-	MonoDomain *domain;
-	int count, i;
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, inst->type_argv [i], error);
+	if (!is_ok (error))
+		goto leave;
+	MONO_HANDLE_ARRAY_SETREF (arr, i, rt);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
 
-	domain = mono_object_domain (method);
+static gboolean
+set_array_generic_argument_handle_gparam (MonoDomain *domain, MonoGenericContainer *container, int i, MonoArrayHandle arr, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	mono_error_init (error);
+	MonoGenericParam *param = mono_generic_container_get_param (container, i);
+	MonoClass *pklass = mono_class_from_generic_parameter_internal (param);
+	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, &pklass->byval_arg, error);
+	if (!is_ok (error))
+		goto leave;
+	MONO_HANDLE_ARRAY_SETREF (arr, i, rt);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
 
-	if (method->method->is_inflated) {
-		MonoGenericInst *inst = mono_method_get_context (method->method)->method_inst;
+ICALL_EXPORT MonoArrayHandle
+ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethodHandle ref_method, MonoError *error)
+{
+	mono_error_init (error);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_method);
+	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
+
+	if (method->is_inflated) {
+		MonoGenericInst *inst = mono_method_get_context (method)->method_inst;
 
 		if (inst) {
-			count = inst->type_argc;
-			res = mono_array_new_checked (domain, mono_defaults.systemtype_class, count, &error);
-			if (mono_error_set_pending_exception (&error))
-				return NULL;
+			int count = inst->type_argc;
+			MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
+			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
 
-			for (i = 0; i < count; i++) {
-				rt = mono_type_get_object_checked (domain, inst->type_argv [i], &error);
-				if (mono_error_set_pending_exception (&error))
-					return NULL;
-
-				mono_array_setref (res, i, rt);
+			for (int i = 0; i < count; i++) {
+				if (!set_array_generic_argument_handle_inflated (domain, inst, i, res, error))
+					break;
 			}
-
+			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
 			return res;
 		}
 	}
 
-	count = mono_method_signature (method->method)->generic_param_count;
-	res = mono_array_new_checked (domain, mono_defaults.systemtype_class, count, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	int count = mono_method_signature (method)->generic_param_count;
+	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
 
-	for (i = 0; i < count; i++) {
-		MonoGenericContainer *container = mono_method_get_generic_container (method->method);
-		MonoGenericParam *param = mono_generic_container_get_param (container, i);
-		MonoClass *pklass = mono_class_from_generic_parameter_internal (param);
-
-		rt = mono_type_get_object_checked (domain, &pklass->byval_arg, &error);
-		if (mono_error_set_pending_exception (&error))
-			return NULL;
-
-		mono_array_setref (res, i, rt);
+	MonoGenericContainer *container = mono_method_get_generic_container (method);
+	for (int i = 0; i < count; i++) {
+		if (!set_array_generic_argument_handle_gparam (domain, container, i, res, error))
+			break;
 	}
-
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
 	return res;
 }
 
