@@ -31,6 +31,7 @@ build_SUBDIRS :=  \
 	System.Numerics \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
+	System.IO.Compression \
 	Mono.Cecil \
 	Mono.CompilerServices.SymbolWriter	\
 	PEAPI \
