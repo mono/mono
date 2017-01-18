@@ -599,7 +599,7 @@ HANDLES(ICALL(MODULE_12, "ResolveTypeToken", ves_icall_System_Reflection_Module_
 HANDLES(ICALL(MODULE_13, "get_MetadataToken", ves_icall_reflection_get_token))
 
 ICALL_TYPE(MCMETH, "System.Reflection.MonoCMethod", MCMETH_1)
-ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition)
+HANDLES(ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition))
 ICALL(MCMETH_2, "InternalInvoke", ves_icall_InternalInvoke)
 ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
 
@@ -617,12 +617,12 @@ ICALL(MFIELD_7, "get_core_clr_security_level", ves_icall_MonoField_get_core_clr_
 
 ICALL_TYPE(MMETH, "System.Reflection.MonoMethod", MMETH_2)
 HANDLES(ICALL(MMETH_2, "GetGenericArguments", ves_icall_MonoMethod_GetGenericArguments))
-ICALL(MMETH_3, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition)
+HANDLES(ICALL(MMETH_3, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition))
 ICALL(MMETH_11, "GetPInvoke", ves_icall_MonoMethod_GetPInvoke)
 ICALL(MMETH_4, "InternalInvoke", ves_icall_InternalInvoke)
 ICALL(MMETH_5, "MakeGenericMethod_impl", ves_icall_MonoMethod_MakeGenericMethod_impl)
-ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod)
-ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition)
+HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod))
+HANDLES(ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition))
 ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method)
 ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
 ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name)

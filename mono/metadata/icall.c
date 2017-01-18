@@ -3007,40 +3007,37 @@ ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethod *method, int* flags, MonoS
 	*dll_name = mono_string_new (domain, scope);
 }
 
-ICALL_EXPORT MonoReflectionMethod *
-ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
+ICALL_EXPORT MonoReflectionMethodHandle
+ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *error)
 {
-	MonoMethodInflated *imethod;
-	MonoMethod *result;
-	MonoReflectionMethod *ret = NULL;
-	MonoError error;
+	mono_error_init (error);
+	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
 
-	if (method->method->is_generic)
-		return method;
+	if (method->is_generic)
+		return ref_method;
 
-	if (!method->method->is_inflated)
-		return NULL;
+	if (!method->is_inflated)
+		return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 
-	imethod = (MonoMethodInflated *) method->method;
+	MonoMethodInflated *imethod = (MonoMethodInflated *) method;
 
-	result = imethod->declaring;
+	MonoMethod *result = imethod->declaring;
 	/* Not a generic method.  */
 	if (!result->is_generic)
-		return NULL;
+		return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 
-	if (image_is_dynamic (method->method->klass->image)) {
-		MonoDynamicImage *image = (MonoDynamicImage*)method->method->klass->image;
-		MonoReflectionMethod *res;
+	if (image_is_dynamic (method->klass->image)) {
+		MonoDynamicImage *image = (MonoDynamicImage*)method->klass->image;
 
 		/*
 		 * FIXME: Why is this stuff needed at all ? Why can't the code below work for
 		 * the dynamic case as well ?
 		 */
 		mono_image_lock ((MonoImage*)image);
-		res = (MonoReflectionMethod *)mono_g_hash_table_lookup (image->generic_def_objects, imethod);
+		MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, mono_g_hash_table_lookup (image->generic_def_objects, imethod));
 		mono_image_unlock ((MonoImage*)image);
 
-		if (res)
+		if (!MONO_HANDLE_IS_NULL (res))
 			return res;
 	}
 
@@ -3048,29 +3045,26 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 		MonoClass *klass = ((MonoMethod *) imethod)->klass;
 		/*Generic methods gets the context of the GTD.*/
 		if (mono_class_get_context (klass)) {
-			result = mono_class_inflate_generic_method_full_checked (result, klass, mono_class_get_context (klass), &error);
-			if (!mono_error_ok (&error))
-				goto leave;
+			result = mono_class_inflate_generic_method_full_checked (result, klass, mono_class_get_context (klass), error);
+			return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE));
 		}
 	}
 
-	ret = mono_method_get_object_checked (mono_object_domain (method), result, NULL, &error);
-leave:
-	if (!mono_error_ok (&error))
-		mono_error_set_pending_exception (&error);
-	return ret;
+	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (ref_method), result, NULL, error);
 }
 
 ICALL_EXPORT gboolean
-ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethod *method)
+ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
 {
-	return mono_method_signature (method->method)->generic_param_count != 0;
+	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
+	return mono_method_signature (method)->generic_param_count != 0;
 }
 
 ICALL_EXPORT gboolean
-ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method)
+ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *Error)
 {
-	return method->method->is_generic;
+	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
+	return method->is_generic;
 }
 
 static gboolean
