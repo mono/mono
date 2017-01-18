@@ -231,6 +231,9 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 static MonoJumpInfo*
 decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean llvm, guint32 *got_offsets);
 
+static MonoAotModule*
+find_aot_module (guint8 *code);
+
 static inline void
 amodule_lock (MonoAotModule *amodule)
 {
@@ -3836,6 +3839,33 @@ register_jump_target_got_slot (MonoDomain *domain, MonoMethod *method, gpointer 
 	mono_domain_unlock (domain);
 }
 
+static void
+resolve_amodule (MonoAotModule *amodule,  guint8 *code, MonoAotModule **target_amodule, guint32 *target_method_index)
+{
+	if (mono_llvm_only && target_amodule) {
+		/*
+		 * In llvmonly + static mode, method code can be outside the code range of amodule due to
+		 * linkonce. Find the real amodule and method index.
+		 */
+		if (!amodule_contains_code_addr (amodule, code)) {
+			amodule = find_aot_module (code);
+			g_assert (amodule->methods);
+			int idx = -1;
+			// FIXME: Add a hash ?
+			for (int i = 0; i < amodule->info.nmethods; ++i) {
+				if (amodule->methods [i] == code) {
+					idx = i;
+					break;
+				}
+			}
+			g_assert (idx != -1);
+
+			*target_amodule = amodule;
+			*target_method_index = idx;
+		}
+	}
+}
+
 /*
  * load_method:
  *
@@ -3845,13 +3875,18 @@ register_jump_target_got_slot (MonoDomain *domain, MonoMethod *method, gpointer 
  */
 static gpointer
 load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoMethod *method, guint32 token, int method_index,
-			 MonoError *error)
+			 MonoAotModule **target_amodule, guint32 *target_method_index, MonoError *error)
 {
 	MonoJitInfo *jinfo = NULL;
 	guint8 *code = NULL, *info;
 	gboolean res;
 
 	error_init (error);
+
+	if (target_amodule) {
+		*target_amodule = amodule;
+		*target_method_index = method_index;
+	}
 
 	init_amodule_got (amodule);
 
@@ -3896,6 +3931,8 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		}
 		code = (guint8 *)amodule->methods [method_index];
 	}
+
+	resolve_amodule (amodule, code, target_amodule, target_method_index);
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
 
@@ -4356,8 +4393,9 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 {
 	MonoClass *klass = method->klass;
 	MonoMethod *orig_method = method;
-	guint32 method_index;
+	guint32 method_index, target_method_index;
 	MonoAotModule *amodule = (MonoAotModule *)klass->image->aot_module;
+	MonoAotModule *target_amodule;
 	guint8 *code;
 	gboolean cache_result = FALSE;
 	MonoError inner_error;
@@ -4588,7 +4626,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		method_index = mono_metadata_token_index (method->token) - 1;
 	}
 
-	code = (guint8 *)load_method (domain, amodule, klass->image, method, method->token, method_index, error);
+	code = (guint8 *)load_method (domain, amodule, klass->image, method, method->token, method_index, &target_amodule, &target_method_index, error);
 	if (!is_ok (error))
 		return NULL;
 	if (code && cache_result) {
@@ -4635,7 +4673,7 @@ mono_aot_get_method_from_token (MonoDomain *domain, MonoImage *image, guint32 to
 
 	method_index = mono_metadata_token_index (token) - 1;
 
-	res = load_method (domain, aot_module, image, NULL, token, method_index, error);
+	res = load_method (domain, aot_module, image, NULL, token, method_index, NULL, NULL, error);
 	return res;
 }
 
