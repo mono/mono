@@ -2518,6 +2518,7 @@ void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method
 void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
 void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
 void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+void     mono_aot_poll_amodule_got_init (void);
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);

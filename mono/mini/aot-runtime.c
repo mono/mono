@@ -1920,6 +1920,46 @@ init_amodule_got (MonoAotModule *amodule)
 	mono_mempool_destroy (mp);
 }
 
+static GList *defered_initialization = NULL;
+
+static void
+mono_aot_post_amodule_got_init (MonoAotModule *amodule)
+{
+	// Must have icalls loaded
+	if (mono_get_jit_icall_info ())
+		init_amodule_got (amodule);
+	else {
+		gboolean success = FALSE;
+		while (!success) {
+			GList *ref = defered_initialization;
+			GList *new = g_list_prepend (defered_initialization, amodule);
+			success = InterlockedCompareExchangePointer ((gpointer *)&defered_initialization, new, ref) == ref;
+		}
+	}
+}
+
+void
+mono_aot_poll_amodule_got_init (void)
+{
+	if (!defered_initialization)
+		return;
+
+	gboolean success = FALSE;
+	GList *ref;
+
+	while (!success) {
+		ref = defered_initialization;
+		success = InterlockedCompareExchangePointer ((gpointer *)&defered_initialization, NULL, ref) == ref;
+	}
+
+	GList *front = ref;
+	while (ref) {
+		init_amodule_got ((MonoAotModule *)ref->data);
+		ref = ref->next;
+	}
+	g_list_free (front);
+}
+
 static void
 load_aot_module (MonoAssembly *assembly, gpointer user_data)
 {
@@ -2275,6 +2315,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 			),
 		NULL
 		);
+
+	mono_aot_post_amodule_got_init (amodule);
 
 	/*
 	 * Since we store methoddef and classdef tokens when referring to methods/classes in
