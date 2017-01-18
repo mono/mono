@@ -11248,5 +11248,18 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.Throws<TypeLoadException> (delegate { var ft = r.GetField("sr").FieldType; });
 		}
 		
+		[Test]
+		public void GetGenericTypeDefinitionAfterCreateReturnsBuilder () {
+			var aname = new AssemblyName ("genericDefnAfterCreate");
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+			var mb = ab.DefineDynamicModule (aname.Name);
+			var buildX = mb.DefineType ("X", TypeAttributes.Public);
+			buildX.DefineGenericParameters ("T", "U");
+			var x = buildX.CreateType ();
+			var inst = x.MakeGenericType (typeof (string), typeof (int));
+			var defX = inst.GetGenericTypeDefinition ();
+
+			Assert.AreSame (buildX, defX);
+		}
 	}
 }
