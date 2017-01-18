@@ -625,7 +625,7 @@ HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGeneric
 HANDLES(ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition))
 HANDLES(ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method))
 HANDLES(ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
-ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name)
+HANDLES(ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name))
 
 ICALL_TYPE(MMETHI, "System.Reflection.MonoMethodInfo", MMETHI_4)
 ICALL(MMETHI_4, "get_method_attributes", vell_icall_get_method_attributes)

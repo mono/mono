@@ -7283,13 +7283,17 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, gboolean def
 		return mono_method_get_object_handle (mono_domain_get (), base, NULL, error);
 }
 
-ICALL_EXPORT MonoString*
-ves_icall_MonoMethod_get_name (MonoReflectionMethod *m)
+ICALL_EXPORT MonoStringHandle
+ves_icall_MonoMethod_get_name (MonoReflectionMethodHandle m, MonoError *error)
 {
-	MonoMethod *method = m->method;
+	mono_error_init (error);
+	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 
-	MONO_OBJECT_SETREF (m, name, mono_string_new (mono_object_domain (m), method->name));
-	return m->name;
+	MonoStringHandle s = mono_string_new_handle (MONO_HANDLE_DOMAIN (m), method->name, error);
+	if (!is_ok (error))
+		return NULL_HANDLE_STRING;
+	MONO_HANDLE_SET (m, name, s);
+	return s;
 }
 
 ICALL_EXPORT void
