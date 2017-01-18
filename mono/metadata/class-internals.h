@@ -1308,6 +1308,9 @@ mono_class_is_valid_enum (MonoClass *klass);
 MONO_PROFILER_API gboolean
 mono_type_is_primitive (MonoType *type);
 
+MONO_PROFILER_API gboolean
+mono_class_is_ginst (MonoClass *klass);
+
 MonoType *
 mono_type_get_checked        (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error);
 
