@@ -618,7 +618,7 @@ ICALL(MFIELD_7, "get_core_clr_security_level", ves_icall_MonoField_get_core_clr_
 ICALL_TYPE(MMETH, "System.Reflection.MonoMethod", MMETH_2)
 HANDLES(ICALL(MMETH_2, "GetGenericArguments", ves_icall_MonoMethod_GetGenericArguments))
 HANDLES(ICALL(MMETH_3, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition))
-ICALL(MMETH_11, "GetPInvoke", ves_icall_MonoMethod_GetPInvoke)
+HANDLES(ICALL(MMETH_11, "GetPInvoke", ves_icall_MonoMethod_GetPInvoke))
 ICALL(MMETH_4, "InternalInvoke", ves_icall_InternalInvoke)
 HANDLES(ICALL(MMETH_5, "MakeGenericMethod_impl", ves_icall_MonoMethod_MakeGenericMethod_impl))
 HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod))

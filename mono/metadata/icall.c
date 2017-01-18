@@ -2965,11 +2965,12 @@ ves_icall_System_RuntimeType_IsWindowsRuntimeObjectType (MonoError *error)
 }
 
 ICALL_EXPORT void
-ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethod *method, int* flags, MonoString** entry_point, MonoString** dll_name)
+ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethodHandle ref_method, int* flags, MonoStringHandleOut entry_point, MonoStringHandleOut dll_name, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
-	MonoImage *image = method->method->klass->image;
-	MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)method->method;
+	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
+	MonoImage *image = method->klass->image;
+	MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)method;
 	MonoTableInfo *tables = image->tables;
 	MonoTableInfo *im = &tables [MONO_TABLE_IMPLMAP];
 	MonoTableInfo *mr = &tables [MONO_TABLE_MODULEREF];
@@ -2978,16 +2979,18 @@ ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethod *method, int* flags, MonoS
 	const char *import = NULL;
 	const char *scope = NULL;
 
+	mono_error_init (error);
+
 	if (image_is_dynamic (image)) {
 		MonoReflectionMethodAux *method_aux = 
-			(MonoReflectionMethodAux *)g_hash_table_lookup (((MonoDynamicImage*)image)->method_aux_hash, method->method);
+			(MonoReflectionMethodAux *)g_hash_table_lookup (((MonoDynamicImage*)image)->method_aux_hash, method);
 		if (method_aux) {
 			import = method_aux->dllentry;
 			scope = method_aux->dll;
 		}
 
 		if (!import || !scope) {
-			mono_set_pending_exception (mono_get_exception_argument ("method", "System.Reflection.Emit method with invalid pinvoke information"));
+			mono_error_set_argument (error, "method", "System.Refleciton.Emit method with invalid pinvoke information");
 			return;
 		}
 	}
@@ -3003,8 +3006,9 @@ ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethod *method, int* flags, MonoS
 	}
 	
 	*flags = piinfo->piflags;
-	*entry_point = mono_string_new (domain, import);
-	*dll_name = mono_string_new (domain, scope);
+	MONO_HANDLE_ASSIGN (entry_point,  mono_string_new_handle (domain, import, error));
+	return_if_nok (error);
+	MONO_HANDLE_ASSIGN (dll_name, mono_string_new_handle (domain, scope, error));
 }
 
 ICALL_EXPORT MonoReflectionMethodHandle
