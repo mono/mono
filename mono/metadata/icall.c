@@ -7264,159 +7264,18 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 	return MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (domain, klass, error));
 }
 
-ICALL_EXPORT MonoReflectionMethod *
-ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definition)
+ICALL_EXPORT MonoReflectionMethodHandle
+ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, gboolean definition, MonoError *error)
 {
-	MonoReflectionMethod *ret = NULL;
-	MonoError error;
+	mono_error_init (error);
+	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 
-	MonoClass *klass, *parent;
-	MonoGenericContext *generic_inst = NULL;
-	MonoMethod *method = m->method;
-	MonoMethod *result = NULL;
-	int slot;
-
-	if (method->klass == NULL)
+	MonoMethod *base = mono_method_get_base_method (method, definition, error);
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE));
+	if (base == method)
 		return m;
-
-	if (!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) ||
-	    MONO_CLASS_IS_INTERFACE (method->klass) ||
-	    method->flags & METHOD_ATTRIBUTE_NEW_SLOT)
-		return m;
-
-	slot = mono_method_get_vtable_slot (method);
-	if (slot == -1)
-		return m;
-
-	klass = method->klass;
-	if (mono_class_is_ginst (klass)) {
-		generic_inst = mono_class_get_context (klass);
-		klass = mono_class_get_generic_class (klass)->container_class;
-	}
-
-retry:
-	if (definition) {
-		/* At the end of the loop, klass points to the eldest class that has this virtual function slot. */
-		for (parent = klass->parent; parent != NULL; parent = parent->parent) {
-			/* on entry, klass is either a plain old non-generic class and generic_inst == NULL
-			   or klass is the generic container class and generic_inst is the instantiation.
-
-			   when we go to the parent, if the parent is an open constructed type, we need to
-			   replace the type parameters by the definitions from the generic_inst, and then take it
-			   apart again into the klass and the generic_inst.
-
-			   For cases like this:
-			   class C<T> : B<T, int> {
-			       public override void Foo () { ... }
-			   }
-			   class B<U,V> : A<HashMap<U,V>> {
-			       public override void Foo () { ... }
-			   }
-			   class A<X> {
-			       public virtual void Foo () { ... }
-			   }
-
-			   if at each iteration the parent isn't open, we can skip inflating it.  if at some
-			   iteration the parent isn't generic (after possible inflation), we set generic_inst to
-			   NULL;
-			*/
-			MonoGenericContext *parent_inst = NULL;
-			if (mono_class_is_open_constructed_type (mono_class_get_type (parent))) {
-				parent = mono_class_inflate_generic_class_checked (parent, generic_inst, &error);
-				if (!mono_error_ok (&error)) {
-					mono_error_set_pending_exception (&error);
-					return NULL;
-				}
-			}
-			if (mono_class_is_ginst (parent)) {
-				parent_inst = mono_class_get_context (parent);
-				parent = mono_class_get_generic_class (parent)->container_class;
-			}
-
-			mono_class_setup_vtable (parent);
-			if (parent->vtable_size <= slot)
-				break;
-			klass = parent;
-			generic_inst = parent_inst;
-		}
-	} else {
-		klass = klass->parent;
-		if (!klass)
-			return m;
-		if (mono_class_is_open_constructed_type (mono_class_get_type (klass))) {
-			klass = mono_class_inflate_generic_class_checked (klass, generic_inst, &error);
-			if (!mono_error_ok (&error)) {
-				mono_error_set_pending_exception (&error);
-				return NULL;
-			}
-
-			generic_inst = NULL;
-		}
-		if (mono_class_is_ginst (klass)) {
-			generic_inst = mono_class_get_context (klass);
-			klass = mono_class_get_generic_class (klass)->container_class;
-		}
-
-	}
-
-	if (generic_inst) {
-		klass = mono_class_inflate_generic_class_checked (klass, generic_inst, &error);
-		if (!mono_error_ok (&error)) {
-			mono_error_set_pending_exception (&error);
-			return NULL;
-		}
-	}
-
-	if (klass == method->klass)
-		return m;
-
-	/*This is possible if definition == FALSE.
-	 * Do it here to be really sure we don't read invalid memory.
-	 */
-	if (slot >= klass->vtable_size)
-		return m;
-
-	mono_class_setup_vtable (klass);
-
-	result = klass->vtable [slot];
-	if (result == NULL) {
-		/* It is an abstract method */
-		gboolean found = FALSE;
-		gpointer iter = NULL;
-		while ((result = mono_class_get_methods (klass, &iter))) {
-			if (result->slot == slot) {
-				found = TRUE;
-				break;
-			}
-		}
-		/* found might be FALSE if we looked in an abstract class
-		 * that doesn't override an abstract method of its
-		 * parent: 
-		 *   abstract class Base {
-		 *     public abstract void Foo ();
-		 *   }
-		 *   abstract class Derived : Base { }
-		 *   class Child : Derived {
-		 *     public override void Foo () { }
-		 *  }
-		 *
-		 *  if m was Child.Foo and we ask for the base method,
-		 *  then we get here with klass == Derived and found == FALSE
-		 */
-		/* but it shouldn't be the case that if we're looking
-		 * for the definition and didn't find a result; the
-		 * loop above should've taken us as far as we could
-		 * go! */
-		g_assert (!(definition && !found));
-		if (!found)
-			goto retry;
-	}
-
-	g_assert (result != NULL);
-
-	ret = mono_method_get_object_checked (mono_domain_get (), result, NULL, &error);
-	mono_error_set_pending_exception (&error);
-	return ret;
+	else
+		return mono_method_get_object_handle (mono_domain_get (), base, NULL, error);
 }
 
 ICALL_EXPORT MonoString*

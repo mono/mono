@@ -623,7 +623,7 @@ ICALL(MMETH_4, "InternalInvoke", ves_icall_InternalInvoke)
 ICALL(MMETH_5, "MakeGenericMethod_impl", ves_icall_MonoMethod_MakeGenericMethod_impl)
 HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod))
 HANDLES(ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition))
-ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method)
+HANDLES(ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method))
 ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level)
 ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name)
 
