@@ -8059,6 +8059,355 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 	return TRUE;
 }
 
+static void
+append_mangled_wrapper_type (GString *s, guint32 wrapper_type) 
+{
+	const char *label;
+
+	switch (wrapper_type) {
+	case MONO_WRAPPER_REMOTING_INVOKE:
+		label = "remoting_invoke";
+		break;
+	case MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK:
+		label = "remoting_invoke_check";
+		break;
+	case MONO_WRAPPER_XDOMAIN_INVOKE:
+		label = "remoting_invoke_xdomain";
+		break;
+	case MONO_WRAPPER_PROXY_ISINST:
+		label = "proxy_isinst";
+		break;
+	case MONO_WRAPPER_LDFLD:
+		label = "ldfld";
+		break;
+	case MONO_WRAPPER_LDFLDA:
+		label = "ldflda";
+		break;
+	case MONO_WRAPPER_STFLD: 
+		label = "stfld";
+		break;
+	case MONO_WRAPPER_ALLOC:
+		label = "alloc";
+		break;
+	case MONO_WRAPPER_WRITE_BARRIER:
+		label = "write_barrier";
+		break;
+	case MONO_WRAPPER_STELEMREF:
+		label = "stelemref";
+		break;
+	case MONO_WRAPPER_UNKNOWN:
+		label = "unknown";
+		break;
+	case MONO_WRAPPER_MANAGED_TO_NATIVE:
+		label = "man2native";
+		break;
+	case MONO_WRAPPER_SYNCHRONIZED:
+		label = "synch";
+		break;
+	case MONO_WRAPPER_MANAGED_TO_MANAGED:
+		label = "man2man";
+		break;
+	case MONO_WRAPPER_CASTCLASS:
+		label = "castclass";
+		break;
+	case MONO_WRAPPER_RUNTIME_INVOKE:
+		label = "run_invoke";
+		break;
+	case MONO_WRAPPER_DELEGATE_INVOKE:
+		label = "del_inv";
+		break;
+	case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
+		label = "del_beg_inv";
+		break;
+	case MONO_WRAPPER_DELEGATE_END_INVOKE:
+		label = "del_end_inv";
+		break;
+	case MONO_WRAPPER_NATIVE_TO_MANAGED:
+		label = "native2man";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	g_string_append_printf (s, "%s_", label);
+}
+
+static void
+append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype) 
+{
+	const char *label;
+
+	switch (subtype) 
+	{
+	case WRAPPER_SUBTYPE_NONE:
+		return;
+	case WRAPPER_SUBTYPE_ELEMENT_ADDR:
+		label = "elem_addr";
+		break;
+	case WRAPPER_SUBTYPE_STRING_CTOR:
+		label = "str_ctor";
+		break;
+	case WRAPPER_SUBTYPE_VIRTUAL_STELEMREF:
+		label = "virt_stelem";
+		break;
+	case WRAPPER_SUBTYPE_FAST_MONITOR_ENTER:
+		label = "fast_mon_enter";
+		break;
+	case WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4:
+		label = "fast_mon_enter_4";
+		break;
+	case WRAPPER_SUBTYPE_FAST_MONITOR_EXIT:
+		label = "fast_monitor_exit";
+		break;
+	case WRAPPER_SUBTYPE_PTR_TO_STRUCTURE:
+		label = "ptr2struct";
+		break;
+	case WRAPPER_SUBTYPE_STRUCTURE_TO_PTR:
+		label = "struct2ptr";
+		break;
+	case WRAPPER_SUBTYPE_CASTCLASS_WITH_CACHE:
+		label = "castclass_w_cache";
+		break;
+	case WRAPPER_SUBTYPE_ISINST_WITH_CACHE:
+		label = "isinst_w_cache";
+		break;
+	case WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL:
+		label = "run_inv_norm";
+		break;
+	case WRAPPER_SUBTYPE_RUNTIME_INVOKE_DYNAMIC:
+		label = "run_inv_dyn";
+		break;
+	case WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT:
+		label = "run_inv_dir";
+		break;
+	case WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL:
+		label = "run_inv_vir";
+		break;
+	case WRAPPER_SUBTYPE_ICALL_WRAPPER:
+		label = "icall";
+		break;
+	case WRAPPER_SUBTYPE_NATIVE_FUNC_AOT:
+		label = "native_func_aot";
+		break;
+	case WRAPPER_SUBTYPE_PINVOKE:
+		label = "pinvoke";
+		break;
+	case WRAPPER_SUBTYPE_SYNCHRONIZED_INNER:
+		label = "synch_inner";
+		break;
+	case WRAPPER_SUBTYPE_GSHAREDVT_IN:
+		label = "gshared_in";
+		break;
+	case WRAPPER_SUBTYPE_GSHAREDVT_OUT:
+		label = "gshared_out";
+		break;
+	case WRAPPER_SUBTYPE_ARRAY_ACCESSOR:
+		label = "array_acc";
+		break;
+	case WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER:
+		label = "generic_arry_help";
+		break;
+	case WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL:
+		label = "del_inv_virt";
+		break;
+	case WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND:
+		label = "del_inv_bound";
+		break;
+	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
+		label = "gsharedvt_in_sig";
+		break;
+	case WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG:
+		label = "gsharedvt_out_sig";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	g_string_append_printf (s, "%s_", label);
+}
+
+static gboolean
+append_mangled_klass (GString *s, MonoClass *klass)
+{
+	char *klass_desc = mono_class_full_name (klass);
+	g_string_append_printf (s, "_%s_%s_", klass->name_space, klass_desc);
+	g_free (klass_desc);
+
+	// Success
+	return TRUE;
+}
+
+static gboolean
+append_mangled_method (GString *s, MonoMethod *method);
+
+static gboolean
+append_mangled_wrapper (GString *s, MonoMethod *method) 
+{
+	gboolean success = TRUE;
+	WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+	g_string_append_printf (s, "aot_wrapper_");
+
+	append_mangled_wrapper_type (s, method->wrapper_type);
+
+	switch (method->wrapper_type) {
+	case MONO_WRAPPER_REMOTING_INVOKE:
+	case MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK:
+	case MONO_WRAPPER_XDOMAIN_INVOKE: {
+		MonoMethod *m = mono_marshal_method_from_wrapper (method);
+		g_assert (m);
+		success = success && append_mangled_method (s, m);
+		break;
+	}
+	case MONO_WRAPPER_PROXY_ISINST:
+	case MONO_WRAPPER_LDFLD:
+	case MONO_WRAPPER_LDFLDA:
+	case MONO_WRAPPER_STFLD: {
+		g_assert (info);
+		success = success && append_mangled_klass (s, info->d.proxy.klass);
+		break;
+	}
+	case MONO_WRAPPER_ALLOC: {
+		/* The GC name is saved once in MonoAotFileInfo */
+		g_assert (info->d.alloc.alloc_type != -1);
+		g_string_append_printf (s, "%d_", info->d.alloc.alloc_type);
+		break;
+	}
+	case MONO_WRAPPER_WRITE_BARRIER: {
+		break;
+	}
+	case MONO_WRAPPER_STELEMREF: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+		if (info->subtype == WRAPPER_SUBTYPE_VIRTUAL_STELEMREF)
+			g_string_append_printf (s, "%d", info->d.virtual_stelemref.kind);
+		break;
+	}
+	case MONO_WRAPPER_UNKNOWN: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+		if (info->subtype == WRAPPER_SUBTYPE_PTR_TO_STRUCTURE ||
+			info->subtype == WRAPPER_SUBTYPE_STRUCTURE_TO_PTR)
+			success = success && append_mangled_klass (s, method->klass);
+		else if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
+			success = success && append_mangled_method (s, info->d.synchronized_inner.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
+			success = success && append_mangled_method (s, info->d.array_accessor.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
+			append_mangled_signature (s, info->d.gsharedvt.sig);
+		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			append_mangled_signature (s, info->d.gsharedvt.sig);
+		break;
+	}
+	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+		if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
+			g_string_append_printf (s, "%s", method->name);
+		} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
+			success = success && append_mangled_method (s, info->d.managed_to_native.method);
+		} else {
+			g_assert (info->subtype == WRAPPER_SUBTYPE_NONE || info->subtype == WRAPPER_SUBTYPE_PINVOKE);
+			success = success && append_mangled_method (s, info->d.managed_to_native.method);
+		}
+		break;
+	}
+	case MONO_WRAPPER_SYNCHRONIZED: {
+		MonoMethod *m;
+
+		m = mono_marshal_method_from_wrapper (method);
+		g_assert (m);
+		g_assert (m != method);
+		success = success && append_mangled_method (s, m);
+		break;
+	}
+	case MONO_WRAPPER_MANAGED_TO_MANAGED: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+
+		if (info->subtype == WRAPPER_SUBTYPE_ELEMENT_ADDR) {
+			g_string_append_printf (s, "%d_", info->d.element_addr.rank);
+			g_string_append_printf (s, "%d_", info->d.element_addr.elem_size);
+		} else if (info->subtype == WRAPPER_SUBTYPE_STRING_CTOR) {
+			success = success && append_mangled_method (s, info->d.string_ctor.method);
+		} else {
+			g_assert_not_reached ();
+		}
+		break;
+	}
+	case MONO_WRAPPER_CASTCLASS: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+		break;
+	}
+	case MONO_WRAPPER_RUNTIME_INVOKE: {
+		append_mangled_wrapper_subtype (s, info->subtype);
+		if (info->subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT || info->subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL)
+			success = success && append_mangled_method (s, info->d.runtime_invoke.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL)
+			success = success && append_mangled_signature (s, info->d.runtime_invoke.sig);
+		break;
+	}
+	case MONO_WRAPPER_DELEGATE_INVOKE:
+	case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
+	case MONO_WRAPPER_DELEGATE_END_INVOKE: {
+		if (method->is_inflated) {
+			/* These wrappers are identified by their class */
+			g_string_append_printf (s, "i_");
+			success = success && append_mangled_klass (s, method->klass);
+		} else {
+			MonoMethodSignature *sig = mono_method_signature (method);
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+			g_string_append_printf (s, "u_");
+			if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
+				append_mangled_wrapper_subtype (s, info->subtype);
+			g_string_append_printf (s, "u_sigstart");
+			success = success && append_mangled_signature (s, sig);
+		}
+		break;
+	}
+	case MONO_WRAPPER_NATIVE_TO_MANAGED: {
+		g_assert (info);
+		success = success && append_mangled_method (s, info->d.native_to_managed.method);
+		success = success && append_mangled_klass (s, method->klass);
+		break;
+	}
+	default:
+		g_assert_not_reached ();
+	}
+	return success;
+}
+
+static gboolean
+append_mangled_method (GString *s, MonoMethod *method)
+{
+	if (method->wrapper_type) {
+		return append_mangled_wrapper (s, method);
+	} else if (method->is_inflated) {
+		g_string_append_printf (s, "aot_inflated_");
+		MonoMethodInflated *imethod = (MonoMethodInflated*) method;
+		append_mangled_method (s, imethod->declaring);
+
+		if (imethod->context.class_inst != NULL || imethod->context.method_inst != NULL) {
+			g_string_append_printf (s, "_gens_");
+			g_string_append_printf (s, mono_context_get_desc (&imethod->context));
+		}
+	} else if (method->is_generic) {
+		g_string_append_printf (s, "aot_generic_");
+		append_mangled_klass (s, method->klass);
+
+		MonoGenericContainer *container = mono_method_get_generic_container (method);
+		g_string_append_printf (s, "_%s_gens_%s", method->name, mono_context_get_desc (&container->context));
+
+		return append_mangled_signature (s, method->signature);
+	} else {
+		g_string_append_printf (s, "aot_");
+		append_mangled_klass (s, method->klass);
+		g_string_append_printf (s, "_%s", method->name);
+		if (!append_mangled_signature (s, method->signature)) {
+			g_string_free (s, TRUE);
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 /*
  * mono_aot_get_mangled_method_name:
  *
@@ -8067,40 +8416,13 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 char*
 mono_aot_get_mangled_method_name (MonoMethod *method)
 {
-	WrapperInfo *info;
-	GString *s;
-	gboolean supported;
-
-	// FIXME: Add more cases
-	if (method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		return NULL;
-	info = mono_marshal_get_wrapper_info (method);
-	if (!(info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)))
-		return NULL;
-
-	s = g_string_new ("");
-
-	g_string_append_printf (s, "aot_method_w_");
-
-	switch (info->subtype) {
-	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
-		g_string_append_printf (s, "gsharedvt_in_");
-		break;
-	case WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG:
-		g_string_append_printf (s, "gsharedvt_out_");
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
-	}
-
-	supported = append_mangled_signature (s, info->d.gsharedvt.sig);
-	if (!supported) {
+	GString *s = g_string_new ("");
+	if (!append_mangled_method (s, method)) {
 		g_string_free (s, TRUE);
 		return NULL;
+	} else {
+		return g_string_free (s, FALSE);
 	}
-
-	return g_string_free (s, FALSE);
 }
 
 gboolean
