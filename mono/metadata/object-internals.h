@@ -1787,6 +1787,9 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror
 MonoString *
 mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
 
+MonoStringHandle
+mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
+
 MonoString *
 mono_string_from_utf16_checked (mono_unichar2 *data, MonoError *error);
 

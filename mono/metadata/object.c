@@ -6021,6 +6021,21 @@ mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 l
 }
 
 /**
+ * mono_string_new_utf16_handle:
+ * @text: a pointer to an utf16 string
+ * @len: the length of the string
+ * @error: written on error.
+ *
+ * Returns: A newly created string object which contains @text.
+ * On error, returns NULL and sets @error.
+ */
+MonoStringHandle
+mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error)
+{
+	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
+}
+
+/**
  * mono_string_new_utf32:
  * @text: a pointer to an utf32 string
  * @len: the length of the string
