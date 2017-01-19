@@ -440,7 +440,10 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		MonoException *exc = NULL;
 
 		mono_threads_begin_abort_protected_block ();
-		mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
+		/* Its possible that we were already being aborted before calling begin_abort_protected_block () */
+		exc = mono_thread_interruption_checkpoint ();
+		if (!exc)
+			mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
 		mono_threads_end_abort_protected_block ();
 
 		//exception extracted, error will be set to the right value later
