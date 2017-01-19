@@ -438,9 +438,13 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 	if (do_initialization) {
 		MonoException *exc = NULL;
+		MonoException *intr_exc = NULL;
 
 		mono_threads_begin_abort_protected_block ();
-		mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
+		/* Its possible that we were already being aborted before calling begin_abort_protected_block () */
+		intr_exc = mono_thread_interruption_checkpoint ();
+		if (!intr_exc)
+			mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
 		mono_threads_end_abort_protected_block ();
 
 		//exception extracted, error will be set to the right value later
@@ -453,7 +457,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 		/* If the initialization failed, mark the class as unusable. */
 		/* Avoid infinite loops */
-		if (!(!exc ||
+		if (!(!exc || intr_exc ||
 			  (klass->image == mono_defaults.corlib &&
 			   !strcmp (klass->name_space, "System") &&
 			   !strcmp (klass->name, "TypeInitializationException")))) {
@@ -486,6 +490,9 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		mono_type_init_unlock (lock);
 		if (exc && mono_object_class (exc) == mono_defaults.threadabortexception_class)
 			pending_tae = exc;
+		else if (intr_exc)
+			pending_tae = exc;
+			
 		//TAEs are blocked around .cctors, they must escape as soon as no cctor is left to run.
 		if (!pending_tae && mono_get_eh_callbacks ()->mono_above_abort_threshold ())
 			pending_tae = mono_thread_try_resume_interruption ();
