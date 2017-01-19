@@ -1854,6 +1854,11 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	if (mono_allow_gc_aware_layout && (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT)) {
 		if (!klass->valuetype)
 			gc_aware_layout = TRUE;
+		/* Unity depends on List`1 layout in native code */
+		if (klass->image == mono_defaults.corlib &&
+			strcmp (klass->name_space, "System.Collections.Generic") == 0 &&
+			strcmp (klass->name, "List`1") == 0)
+			gc_aware_layout = FALSE;
 	}
 
 	/* Compute klass->blittable */

@@ -784,7 +784,7 @@ MonoArray* mono_unity_exception_get_trace_ips(MonoException *exc)
 
 void mono_unity_exception_set_trace_ips(MonoException *exc, MonoArray *ips)
 {
-	g_assert(sizeof((exc)->trace_ips == sizeof(void**)));
+	g_assert(sizeof((exc)->trace_ips) == sizeof(void**));
 	mono_gc_wbarrier_set_field((MonoObject*)(exc), &((exc)->trace_ips), (MonoObject*)ips);
 }
 
@@ -936,4 +936,55 @@ void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method)
 MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type)
 {
 	return type->type;
+}
+
+// layer to proxy differences between old and new Mono versions
+
+MONO_API void
+mono_unity_runtime_set_main_args (int argc, const char* argv[])
+{
+	mono_runtime_set_main_args (argc, argv);
+}
+
+MONO_API MonoString*
+mono_unity_string_empty_wrapper ()
+{
+	return mono_string_empty_wrapper ();
+}
+
+MONO_API MonoArray*
+mono_unity_array_new_2d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1)
+{
+	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1 };
+	MonoClass* ac = mono_array_class_get (eklass, 2);
+
+	return mono_array_new_full (domain, ac, sizes, NULL);
+}
+
+MONO_API MonoArray*
+mono_unity_array_new_3d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1, size_t size2)
+{
+	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1, (uintptr_t)size1 };
+	MonoClass* ac = mono_array_class_get (eklass, 3);
+
+	return mono_array_new_full (domain, ac, sizes, NULL);
+}
+
+MONO_API void
+mono_unity_domain_set_config (MonoDomain *domain, const char *base_dir, const char *config_file_name)
+{
+	mono_domain_set_config (domain, base_dir, config_file_name);
+}
+
+// only needed on OSX
+MONO_API int
+mono_unity_backtrace_from_context (void* context, void* array[], int count)
+{
+	return 0;
+}
+
+MonoException*
+mono_unity_loader_get_last_error_and_error_prepare_exception ()
+{
+	return NULL;
 }
