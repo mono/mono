@@ -21,9 +21,10 @@ MonoAppDomain *
 ves_icall_System_AppDomain_createDomain            (MonoString         *friendly_name,
 						    MonoAppDomainSetup *setup);
 
-MonoObject *
-ves_icall_System_AppDomain_GetData                 (MonoAppDomain *ad, 
-						    MonoString    *name);
+MonoObjectHandle
+ves_icall_System_AppDomain_GetData                 (MonoAppDomainHandle ad, 
+						    MonoStringHandle    name,
+						    MonoError*          error);
 
 MonoReflectionAssemblyHandle
 ves_icall_System_AppDomain_LoadAssemblyRaw         (MonoAppDomainHandle ad,

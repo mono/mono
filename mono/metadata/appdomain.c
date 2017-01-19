@@ -717,54 +717,52 @@ mono_domain_set (MonoDomain *domain, gboolean force)
 	return TRUE;
 }
 
-MonoObject *
-ves_icall_System_AppDomain_GetData (MonoAppDomain *ad, MonoString *name)
+MonoObjectHandle
+ves_icall_System_AppDomain_GetData (MonoAppDomainHandle ad, MonoStringHandle name, MonoError *error)
 {
-	MonoError error;
-	MonoDomain *add;
-	MonoObject *o;
-	char *str;
+	mono_error_init (error);
 
-	MONO_CHECK_ARG_NULL (name, NULL);
+	if (MONO_HANDLE_IS_NULL (name)) {
+		mono_error_set_argument_null (error, "name", "");
+		return NULL_HANDLE;
+	}
 
-	g_assert (ad);
-	add = ad->data;
+	g_assert (!MONO_HANDLE_IS_NULL (ad));
+	MonoDomain *add = MONO_HANDLE_GETVAL (ad, data);
 	g_assert (add);
 
-	str = mono_string_to_utf8_checked (name, &error);
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	char *str = mono_string_handle_to_utf8 (name, error);
+	return_val_if_nok (error, NULL_HANDLE);
 
 	mono_domain_lock (add);
 
+	MonoAppDomainSetupHandle ad_setup = MONO_HANDLE_NEW (MonoAppDomainSetup, add->setup);
+	MonoStringHandle o;
 	if (!strcmp (str, "APPBASE"))
-		o = (MonoObject *)add->setup->application_base;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, application_base);
 	else if (!strcmp (str, "APP_CONFIG_FILE"))
-		o = (MonoObject *)add->setup->configuration_file;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, configuration_file);
 	else if (!strcmp (str, "DYNAMIC_BASE"))
-		o = (MonoObject *)add->setup->dynamic_base;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, dynamic_base);
 	else if (!strcmp (str, "APP_NAME"))
-		o = (MonoObject *)add->setup->application_name;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, application_name);
 	else if (!strcmp (str, "CACHE_BASE"))
-		o = (MonoObject *)add->setup->cache_path;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, cache_path);
 	else if (!strcmp (str, "PRIVATE_BINPATH"))
-		o = (MonoObject *)add->setup->private_bin_path;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, private_bin_path);
 	else if (!strcmp (str, "BINPATH_PROBE_ONLY"))
-		o = (MonoObject *)add->setup->private_bin_path_probe;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, private_bin_path_probe);
 	else if (!strcmp (str, "SHADOW_COPY_DIRS"))
-		o = (MonoObject *)add->setup->shadow_copy_directories;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, shadow_copy_directories);
 	else if (!strcmp (str, "FORCE_CACHE_INSTALL"))
-		o = (MonoObject *)add->setup->shadow_copy_files;
+		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, shadow_copy_files);
 	else 
-		o = (MonoObject *)mono_g_hash_table_lookup (add->env, name);
+		o = MONO_HANDLE_NEW (MonoString, mono_g_hash_table_lookup (add->env, MONO_HANDLE_RAW (name)));
 
 	mono_domain_unlock (add);
 	g_free (str);
 
-	if (!o)
-		return NULL;
-
-	return o;
+	return MONO_HANDLE_CAST (MonoObject, o);
 }
 
 void
