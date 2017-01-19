@@ -104,8 +104,8 @@ ves_icall_System_AppDomain_InternalSetContext	   (MonoAppContext *mc);
 gint32 
 ves_icall_System_AppDomain_GetIDFromDomain (MonoAppDomain * ad);
 
-MonoString *
-ves_icall_System_AppDomain_InternalGetProcessGuid (MonoString* newguid);
+MonoStringHandle
+ves_icall_System_AppDomain_InternalGetProcessGuid (MonoStringHandle newguid, MonoError *error);
 
 MonoBoolean
 ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions (void);

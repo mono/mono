@@ -120,7 +120,7 @@ HANDLES(ICALL(APPDOM_2, "GetAssemblies", ves_icall_System_AppDomain_GetAssemblie
 HANDLES(ICALL(APPDOM_3, "GetData", ves_icall_System_AppDomain_GetData))
 ICALL(APPDOM_4, "InternalGetContext", ves_icall_System_AppDomain_InternalGetContext)
 ICALL(APPDOM_5, "InternalGetDefaultContext", ves_icall_System_AppDomain_InternalGetDefaultContext)
-ICALL(APPDOM_6, "InternalGetProcessGuid", ves_icall_System_AppDomain_InternalGetProcessGuid)
+HANDLES(ICALL(APPDOM_6, "InternalGetProcessGuid", ves_icall_System_AppDomain_InternalGetProcessGuid))
 ICALL(APPDOM_7, "InternalIsFinalizingForUnload", ves_icall_System_AppDomain_InternalIsFinalizingForUnload)
 ICALL(APPDOM_8, "InternalPopDomainRef", ves_icall_System_AppDomain_InternalPopDomainRef)
 ICALL(APPDOM_9, "InternalPushDomainRef", ves_icall_System_AppDomain_InternalPushDomainRef)

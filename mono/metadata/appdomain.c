@@ -2267,20 +2267,19 @@ ves_icall_System_AppDomain_InternalSetContext (MonoAppContext *mc)
 	return old_context;
 }
 
-MonoString *
-ves_icall_System_AppDomain_InternalGetProcessGuid (MonoString* newguid)
+MonoStringHandle
+ves_icall_System_AppDomain_InternalGetProcessGuid (MonoStringHandle newguid, MonoError *error)
 {
+	mono_error_init (error);
 	MonoDomain* mono_root_domain = mono_get_root_domain ();
 	mono_domain_lock (mono_root_domain);
 	if (process_guid_set) {
 		mono_domain_unlock (mono_root_domain);
-		MonoError error;
-		MonoString *res = NULL;
-		res = mono_string_new_utf16_checked (mono_domain_get (), process_guid, sizeof(process_guid)/2, &error);
-		mono_error_set_pending_exception (&error);
-		return res;
+		return mono_string_new_utf16_handle (mono_domain_get (), process_guid, sizeof(process_guid)/2, error);
 	}
-	memcpy (process_guid, mono_string_chars(newguid), sizeof(process_guid));
+	uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, newguid), TRUE);
+	memcpy (process_guid, mono_string_chars(MONO_HANDLE_RAW (newguid)), sizeof(process_guid));
+	mono_gchandle_free (gchandle);
 	process_guid_set = TRUE;
 	mono_domain_unlock (mono_root_domain);
 	return newguid;
