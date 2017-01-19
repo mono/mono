@@ -2196,17 +2196,18 @@ ves_icall_System_AppDomain_GetIDFromDomain (MonoAppDomain * ad)
 	return ad->data->domain_id;
 }
 
-MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomain (MonoAppDomain *ad)
+MonoAppDomainHandle
+ves_icall_System_AppDomain_InternalSetDomain (MonoAppDomainHandle ad, MonoError* error)
 {
-	MonoDomain *old_domain = mono_domain_get();
+	mono_error_init (error);
+	MonoDomain *old_domain = mono_domain_get ();
 
-	if (!mono_domain_set (ad->data, FALSE)) {
-		mono_set_pending_exception (mono_get_exception_appdomain_unloaded ());
-		return NULL;
+	if (!mono_domain_set (MONO_HANDLE_GETVAL (ad, data), FALSE)) {
+		mono_error_set_appdomain_unloaded (error);
+		return MONO_HANDLE_CAST (MonoAppDomain, NULL_HANDLE);
 	}
 
-	return old_domain->domain;
+	return MONO_HANDLE_NEW (MonoAppDomain, old_domain->domain);
 }
 
 MonoAppDomainHandle

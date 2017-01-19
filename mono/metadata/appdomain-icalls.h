@@ -77,8 +77,8 @@ ves_icall_System_AppDomain_ExecuteAssembly         (MonoAppDomainHandle ad,
 						    MonoArrayHandle args,
 						    MonoError *error);
 
-MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomain	   (MonoAppDomain *ad);
+MonoAppDomainHandle
+ves_icall_System_AppDomain_InternalSetDomain	   (MonoAppDomainHandle ad, MonoError *error);
 
 MonoAppDomainHandle
 ves_icall_System_AppDomain_InternalSetDomainByID   (gint32 domainid, MonoError *error);
