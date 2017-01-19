@@ -130,6 +130,12 @@ static GENERATE_GET_CLASS_WITH_CACHE (assembly, System.Reflection, Assembly);
 
 static GENERATE_GET_CLASS_WITH_CACHE (appdomain, System, AppDomain);
 
+static void
+mono_error_set_appdomain_unloaded (MonoError *error)
+{
+	mono_error_set_generic_error (error, "System", "AppDomainUnloadedException", "");
+}
+
 void
 mono_install_runtime_load (MonoLoadFunc func)
 {
@@ -2138,8 +2144,9 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 }
 
 gboolean
-ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id)
+ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id, MonoError *error)
 {
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get_by_id (domain_id);
 
 	if (!domain)
@@ -2202,29 +2209,31 @@ ves_icall_System_AppDomain_InternalSetDomain (MonoAppDomain *ad)
 	return old_domain->domain;
 }
 
-MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomainByID (gint32 domainid)
+MonoAppDomainHandle
+ves_icall_System_AppDomain_InternalSetDomainByID (gint32 domainid, MonoError *error)
 {
 	MonoDomain *current_domain = mono_domain_get ();
 	MonoDomain *domain = mono_domain_get_by_id (domainid);
 
 	if (!domain || !mono_domain_set (domain, FALSE)) {
-		mono_set_pending_exception (mono_get_exception_appdomain_unloaded ());
-		return NULL;
+		mono_error_set_appdomain_unloaded (error);
+		return MONO_HANDLE_CAST (MonoAppDomain, NULL_HANDLE);
 	}
 
-	return current_domain->domain;
+	return MONO_HANDLE_NEW (MonoAppDomain, current_domain->domain);
 }
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomain *ad)
+ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomainHandle ad, MonoError *error)
 {
-	mono_thread_push_appdomain_ref (ad->data);
+	mono_error_init (error);
+	mono_thread_push_appdomain_ref (MONO_HANDLE_GETVAL (ad, data));
 }
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id)
+ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id, MonoError *error)
 {
+	mono_error_init (error);
 	MonoDomain *domain = mono_domain_get_by_id (domain_id);
 
 	if (!domain) {
@@ -2232,7 +2241,7 @@ ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id)
 		 * Raise an exception to prevent the managed code from executing a pop
 		 * later.
 		 */
-		mono_set_pending_exception (mono_get_exception_appdomain_unloaded ());
+		mono_error_set_appdomain_unloaded (error);
 		return;
 	}
 
@@ -2240,8 +2249,9 @@ ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id)
 }
 
 void
-ves_icall_System_AppDomain_InternalPopDomainRef (void)
+ves_icall_System_AppDomain_InternalPopDomainRef (MonoError *error)
 {
+	mono_error_init (error);
 	mono_thread_pop_appdomain_ref ();
 }
 

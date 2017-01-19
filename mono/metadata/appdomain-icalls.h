@@ -63,7 +63,7 @@ ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomainHandle ad,
 						    MonoError *error);
 
 gboolean
-ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id);
+ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id, MonoError *error);
 
 void
 ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id);
@@ -80,17 +80,17 @@ ves_icall_System_AppDomain_ExecuteAssembly         (MonoAppDomainHandle ad,
 MonoAppDomain * 
 ves_icall_System_AppDomain_InternalSetDomain	   (MonoAppDomain *ad);
 
-MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomainByID   (gint32 domainid);
+MonoAppDomainHandle
+ves_icall_System_AppDomain_InternalSetDomainByID   (gint32 domainid, MonoError *error);
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomain *ad);
+ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomainHandle ad, MonoError *error);
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id);
+ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id, MonoError *error);
 
 void
-ves_icall_System_AppDomain_InternalPopDomainRef (void);
+ves_icall_System_AppDomain_InternalPopDomainRef (MonoError *error);
 
 MonoAppContext * 
 ves_icall_System_AppDomain_InternalGetContext      (void);
