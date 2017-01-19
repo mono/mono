@@ -163,6 +163,28 @@ disable_gclass_recording (gclass_record_func func, void *user_data)
 }
 
 /**
+* mono_clear_gclass_recording:
+*
+* Removes all entries from the glcass_recorded_list and resets the number
+* of instantiations. This is necessary when an app domain is unloaded,
+* so that data from that app domain is not used later (via this list) when
+* it is no longer valid.
+*/
+void
+mono_clear_gclass_recording ()
+{
+	mono_loader_lock ();
+
+	if (gclass_recorded_list) {
+		g_slist_free (gclass_recorded_list);
+		gclass_recorded_list = NULL;
+		record_gclass_instantiation = 0;
+	}
+
+	mono_loader_unlock ();
+}
+
+/**
  * mono_class_from_typeref:
  * @image: a MonoImage
  * @type_token: a TypeRef token
