@@ -35,9 +35,10 @@ ves_icall_System_AppDomain_LoadAssemblyRaw         (MonoAppDomainHandle ad,
 						    MonoError *error);
 
 void
-ves_icall_System_AppDomain_SetData                 (MonoAppDomain *ad, 
-						    MonoString    *name, 
-						    MonoObject    *data);
+ves_icall_System_AppDomain_SetData                 (MonoAppDomainHandle ad, 
+						    MonoStringHandle    name, 
+						    MonoObjectHandle    data,
+						    MonoError           *error);
 
 MonoAppDomainSetup *
 ves_icall_System_AppDomain_getSetup                (MonoAppDomain *ad);

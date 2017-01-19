@@ -772,19 +772,22 @@ ves_icall_System_AppDomain_GetData (MonoAppDomainHandle ad, MonoStringHandle nam
 }
 
 void
-ves_icall_System_AppDomain_SetData (MonoAppDomain *ad, MonoString *name, MonoObject *data)
+ves_icall_System_AppDomain_SetData (MonoAppDomainHandle ad, MonoStringHandle name, MonoObjectHandle data, MonoError *error)
 {
-	MonoDomain *add;
+	mono_error_init (error);
 
-	MONO_CHECK_ARG_NULL (name,);
+	if (MONO_HANDLE_IS_NULL (name)) {
+		mono_error_set_argument_null (error, "name", "");
+		return;
+	}
 
-	g_assert (ad);
-	add = ad->data;
+	g_assert (!MONO_HANDLE_IS_NULL (ad));
+	MonoDomain *add = MONO_HANDLE_GETVAL (ad, data);
 	g_assert (add);
 
 	mono_domain_lock (add);
 
-	mono_g_hash_table_insert (add->env, name, data);
+	mono_g_hash_table_insert (add->env, MONO_HANDLE_RAW (name), MONO_HANDLE_RAW (data));
 
 	mono_domain_unlock (add);
 }
