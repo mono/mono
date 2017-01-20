@@ -983,7 +983,7 @@ mono_unity_backtrace_from_context (void* context, void* array[], int count)
 	return 0;
 }
 
-MonoException*
+MONO_API MonoException*
 mono_unity_loader_get_last_error_and_error_prepare_exception ()
 {
 	return NULL;

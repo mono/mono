@@ -971,3 +971,4 @@ mono_unity_array_new_3d
 mono_unity_domain_set_config
 mono_unity_backtrace_from_context
 mono_unity_loader_get_last_error_and_error_prepare_exception
+mono_unity_jit_cleanup
