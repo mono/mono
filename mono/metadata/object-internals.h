@@ -1483,6 +1483,9 @@ mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const 
 void
 mono_release_type_locks (MonoInternalThread *thread);
 
+int
+mono_string_handle_length (MonoStringHandle s);
+
 char *
 mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
 

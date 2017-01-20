@@ -8416,6 +8416,21 @@ mono_string_length (MonoString *s)
 }
 
 /**
+ * mono_string_handle_length:
+ * @s: MonoString
+ *
+ * Returns the lenght in characters of the string
+ */
+int
+mono_string_handle_length (MonoStringHandle s)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	return MONO_HANDLE_GETVAL (s, length);
+}
+
+
+/**
  * mono_array_length:
  * @array: a MonoArray*
  *
