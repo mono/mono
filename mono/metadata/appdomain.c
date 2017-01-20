@@ -792,38 +792,44 @@ ves_icall_System_AppDomain_SetData (MonoAppDomainHandle ad, MonoStringHandle nam
 	mono_domain_unlock (add);
 }
 
-MonoAppDomainSetup *
-ves_icall_System_AppDomain_getSetup (MonoAppDomain *ad)
+MonoAppDomainSetupHandle
+ves_icall_System_AppDomain_getSetup (MonoAppDomainHandle ad, MonoError *error)
 {
-	g_assert (ad);
-	g_assert (ad->data);
+	mono_error_init (error);
+	g_assert (!MONO_HANDLE_IS_NULL (ad));
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
+	g_assert (domain);
 
-	return ad->data->setup;
+	return MONO_HANDLE_NEW (MonoAppDomainSetup, domain->setup);
 }
 
-MonoString *
-ves_icall_System_AppDomain_getFriendlyName (MonoAppDomain *ad)
+MonoStringHandle
+ves_icall_System_AppDomain_getFriendlyName (MonoAppDomainHandle ad, MonoError *error)
 {
-	g_assert (ad);
-	g_assert (ad->data);
+	mono_error_init (error);
+	g_assert (!MONO_HANDLE_IS_NULL (ad));
+	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
+	g_assert (domain);
 
-	return mono_string_new (ad->data, ad->data->friendly_name);
+	return mono_string_new_handle (domain, domain->friendly_name, error);
 }
 
-MonoAppDomain *
-ves_icall_System_AppDomain_getCurDomain ()
+MonoAppDomainHandle
+ves_icall_System_AppDomain_getCurDomain (MonoError *error)
 {
+	mono_error_init (error);
 	MonoDomain *add = mono_domain_get ();
 
-	return add->domain;
+	return MONO_HANDLE_NEW (MonoAppDomain, add->domain);
 }
 
-MonoAppDomain *
-ves_icall_System_AppDomain_getRootDomain ()
+MonoAppDomainHandle
+ves_icall_System_AppDomain_getRootDomain (MonoError *error)
 {
+	mono_error_init (error);
 	MonoDomain *root = mono_get_root_domain ();
 
-	return root->domain;
+	return MONO_HANDLE_NEW (MonoAppDomain, root->domain);
 }
 
 MonoBoolean

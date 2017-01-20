@@ -11,11 +11,11 @@
 #include <mono/metadata/handle.h>
 #include <mono/metadata/object-internals.h>
 
-MonoAppDomain *
-ves_icall_System_AppDomain_getCurDomain            (void);
+MonoAppDomainHandle
+ves_icall_System_AppDomain_getCurDomain            (MonoError *error);
 
-MonoAppDomain *
-ves_icall_System_AppDomain_getRootDomain           (void);
+MonoAppDomainHandle
+ves_icall_System_AppDomain_getRootDomain           (MonoError *error);
 
 MonoAppDomain *
 ves_icall_System_AppDomain_createDomain            (MonoString         *friendly_name,
@@ -40,11 +40,13 @@ ves_icall_System_AppDomain_SetData                 (MonoAppDomainHandle ad,
 						    MonoObjectHandle    data,
 						    MonoError           *error);
 
-MonoAppDomainSetup *
-ves_icall_System_AppDomain_getSetup                (MonoAppDomain *ad);
+MonoAppDomainSetupHandle
+ves_icall_System_AppDomain_getSetup                (MonoAppDomainHandle ad,
+						    MonoError *error);
 
-MonoString *
-ves_icall_System_AppDomain_getFriendlyName         (MonoAppDomain *ad);
+MonoStringHandle
+ves_icall_System_AppDomain_getFriendlyName         (MonoAppDomainHandle ad,
+						    MonoError *error);
 
 MonoArrayHandle
 ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomainHandle ad,
