@@ -6981,6 +6981,7 @@ emit_method_inner (EmitContext *ctx)
 			LLVMSetVisibility (method, LLVMHiddenVisibility);
 		}
 		if (ctx->is_linkonce) {
+			mono_llvm_set_comdat (method, lmodule);
 			LLVMSetLinkage (method, LLVMLinkOnceAnyLinkage);
 			LLVMSetVisibility (method, LLVMDefaultVisibility);
 		}

@@ -42,6 +42,14 @@ using namespace llvm;
 #define SequentiallyConsistent AtomicOrdering::SequentiallyConsistent
 #endif
 
+void 
+mono_llvm_set_comdat (LLVMValueRef func_val, LLVMModuleRef module_val)
+{
+	Function *func = unwrap<Function>(func_val);
+	Module *module = unwrap(module_val);
+	func->setComdat(module->getOrInsertComdat(func->getName()));
+}
+
 void
 mono_llvm_dump_value (LLVMValueRef value)
 {
