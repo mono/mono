@@ -17,9 +17,10 @@ ves_icall_System_AppDomain_getCurDomain            (MonoError *error);
 MonoAppDomainHandle
 ves_icall_System_AppDomain_getRootDomain           (MonoError *error);
 
-MonoAppDomain *
-ves_icall_System_AppDomain_createDomain            (MonoString         *friendly_name,
-						    MonoAppDomainSetup *setup);
+MonoAppDomainHandle
+ves_icall_System_AppDomain_createDomain            (MonoStringHandle         friendly_name,
+						    MonoAppDomainSetupHandle setup,
+						    MonoError                *error);
 
 MonoObjectHandle
 ves_icall_System_AppDomain_GetData                 (MonoAppDomainHandle ad, 
