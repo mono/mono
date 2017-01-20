@@ -1933,6 +1933,18 @@ mono_jit_cleanup (MonoDomain *domain)
 }
 
 void
+mono_unity_jit_cleanup (MonoDomain *domain)
+{
+	// Unity needs these, not sure why
+	mono_threads_set_shutting_down ();
+	mono_runtime_set_shutting_down ();
+	mono_thread_pool_cleanup ();
+	mono_thread_suspend_all_other_threads ();
+
+	mono_jit_cleanup (domain);
+}
+
+void
 mono_jit_set_aot_only (gboolean val)
 {
 	mono_aot_only = val;

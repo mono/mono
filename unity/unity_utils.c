@@ -197,3 +197,66 @@ unity_mono_reflection_method_get_method(MonoReflectionMethod* mrf)
 
 	return mrf->method;
 }
+
+// layer to proxy differences between old and new Mono
+void
+mono_unity_runtime_set_main_args (int argc, const char* argv[])
+{
+	mono_set_commandline_arguments (argc, argv, NULL);
+}
+
+MonoString*
+mono_unity_string_empty_wrapper ()
+{
+	return mono_string_new (mono_domain_get (), "");
+}
+
+MonoArray*
+mono_unity_array_new_2d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1)
+{
+	mono_array_size_t sizes[] = { (mono_array_size_t)size0, (mono_array_size_t)size1 };
+	MonoClass* ac = mono_array_class_get (eklass, 2);
+
+	return mono_array_new_full (domain, ac, sizes, NULL);
+}
+
+MonoArray*
+mono_unity_array_new_3d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1, size_t size2)
+{
+	mono_array_size_t sizes[] = { (mono_array_size_t)size0, (mono_array_size_t)size1, (mono_array_size_t)size1 };
+	MonoClass* ac = mono_array_class_get (eklass, 3);
+
+	return mono_array_new_full (domain, ac, sizes, NULL);
+}
+
+void
+mono_unity_domain_set_config (MonoDomain *domain, const char *base_dir, const char *config_file_name)
+{
+	// nothing on old Mono
+}
+
+void
+mono_unity_g_free (void* ptr)
+{
+	g_free (ptr);
+}
+
+// only needed on OSX
+int
+mono_unity_backtrace_from_context (void* context, void* array[], int count)
+{
+	return 0;
+}
+
+MonoException*
+mono_unity_loader_get_last_error_and_error_prepare_exception ()
+{
+	// We need to call these two methods to clear the thread local
+	// loader error status in mono. If not we'll randomly process the error
+	// the next time it's checked.
+	void* last_error = mono_loader_get_last_error ();
+	if (last_error == NULL)
+		return NULL;
+
+	return mono_loader_error_prepare_exception (last_error);
+}
