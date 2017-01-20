@@ -26,7 +26,7 @@ namespace System.Net {
     /// </devdoc>
     public class NetworkCredential : ICredentials,ICredentialsByHost {
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         private static volatile EnvironmentPermission m_environmentUserNamePermission;
         private static volatile EnvironmentPermission m_environmentDomainNamePermission;
         private static readonly object lockingObject = new object();
@@ -91,7 +91,7 @@ namespace System.Net {
         }
 #endif //!FEATURE_PAL        
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         void InitializePart1() {
             if (m_environmentUserNamePermission == null) {
                 lock(lockingObject) {
@@ -111,7 +111,7 @@ namespace System.Net {
         /// </devdoc>
         public string UserName {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 InitializePart1();
                 m_environmentUserNamePermission.Demand();
 #endif
@@ -133,7 +133,7 @@ namespace System.Net {
         /// </devdoc>
         public string Password {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.UnmanagedPermission.Demand();
 #endif
                 return InternalGetPassword();
@@ -162,7 +162,7 @@ namespace System.Net {
         /// </devdoc>
         public SecureString SecurePassword {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.UnmanagedPermission.Demand();
 #endif
                 return InternalGetSecurePassword().Copy();
@@ -184,7 +184,7 @@ namespace System.Net {
         /// </devdoc>
         public string Domain {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 InitializePart1();
                 m_environmentDomainNamePermission.Demand();
 #endif

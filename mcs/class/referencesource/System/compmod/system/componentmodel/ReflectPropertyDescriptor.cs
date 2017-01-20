@@ -419,12 +419,12 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     IntSecurity.FullReflection.Assert();
                     try {
 #endif
                         resetMethod = FindMethod(componentClass, "Reset" + Name, args, typeof(void), /* publicOnly= */ false);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     }
                     finally {
                         CodeAccessPermission.RevertAssert();
@@ -526,13 +526,13 @@ namespace System.ComponentModel {
                         args = new Type[] {receiverType};
                     }
                     
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     IntSecurity.FullReflection.Assert();
                     try {
 #endif
                         shouldSerializeMethod = FindMethod(componentClass, "ShouldSerialize" + Name,
                                                          args, typeof(Boolean), /* publicOnly= */ false);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     }
                     finally {
                         CodeAccessPermission.RevertAssert();

@@ -53,7 +53,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -65,7 +65,7 @@ namespace System.Security {
 		public abstract IPermission Copy ();
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #endif
 		public void Demand ()
 		{
@@ -78,7 +78,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -126,7 +126,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -136,7 +136,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -148,7 +148,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -160,7 +160,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif
@@ -172,7 +172,7 @@ namespace System.Security {
 		}
 
 #if MOBILE
-		[Conditional ("FEATURE_MONO_CAS")]
+		[Conditional ("MONO_FEATURE_CAS")]
 #else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #endif

@@ -116,7 +116,7 @@ namespace System.Xml.Xsl {
             if (stylesheet == null) {
                 throw new ArgumentNullException("stylesheet");
             }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (evidence == null) {
                 evidence = new Evidence();
             }
