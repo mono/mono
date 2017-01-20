@@ -2186,6 +2186,8 @@ mono_main (int argc, char* argv[])
 
 		mini_cleanup (domain);
 
+		mono_thread_info_detach ();
+
 		/* Look up return value from System.Environment.ExitCode */
 		i = mono_environment_exitcode_get ();
 		return i;

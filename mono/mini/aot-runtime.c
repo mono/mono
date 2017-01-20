@@ -366,6 +366,9 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 static MonoType*
 decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *error);
 
+static MonoType*
+move_type_image (MonoImage *image, MonoType *t);
+
 static MonoGenericInst*
 decode_generic_inst (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *error)
 {
@@ -503,6 +506,9 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 			if (!par_klass)
 				return NULL;
 
+			MonoImage *owner = get_image_for_generic_param (par_klass->byval_arg.data.generic_param);
+			gshared_constraint = move_type_image (owner, gshared_constraint);
+
 			t = mini_get_shared_gparam (&par_klass->byval_arg, gshared_constraint);
 			klass = mono_class_from_mono_type (t);
 		} else {
@@ -608,6 +614,42 @@ decode_field_info (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 	*endbuf = p;
 
 	return mono_class_get_field (klass, token);
+}
+
+/*
+ * Take a monotype allocated with malloc and move it into a mempool.
+ * This will free the old reference, hence the move semantics
+ */
+static MonoType*
+move_type_image (MonoImage *image, MonoType *t)
+{
+	MonoType *type = (MonoType *) mono_image_alloc0 (image, sizeof (MonoType));
+	memcpy (type, t, sizeof (MonoType));
+
+	switch (t->type) {
+	case MONO_TYPE_PTR: {
+		type->data.type = move_type_image (image, t->data.type);
+		break;
+	}
+	case MONO_TYPE_ARRAY: {
+		MonoArrayType *array = (MonoArrayType *) mono_image_alloc0 (image, sizeof (MonoArrayType));
+		memcpy (array, t->data.array, sizeof (MonoArrayType));
+
+		if (array->numsizes) {
+			array->sizes = (int *) mono_image_alloc0 (image, sizeof (int) * array->numsizes);
+			memcpy (array->sizes, t->data.array->sizes, sizeof (int) * array->numsizes);
+		}
+
+		if (array->numlobounds) {
+			array->lobounds = (int *) mono_image_alloc0 (image, sizeof (int) * array->numlobounds);
+			memcpy (array->lobounds, t->data.array->lobounds, sizeof (int) * array->numlobounds);
+		}
+		break;
+	}
+	}
+
+	g_free (t);
+	return type;
 }
 
 /*
