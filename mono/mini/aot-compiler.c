@@ -7126,7 +7126,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "llvm-outfile=")) {
 			opts->llvm_outfile = g_strdup (arg + strlen ("llvm-outfile="));
 		} else if (str_begins_with (arg, "temp-path=")) {
-			opts->temp_path = clean_path (g_strdup (arg + strlen ("temp-path=")));
+			opts->temp_path = g_strdup (arg + strlen ("temp-path="));
 		} else if (str_begins_with (arg, "save-temps")) {
 			opts->save_temps = TRUE;
 		} else if (str_begins_with (arg, "keep-temps")) {
@@ -11196,7 +11196,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		} else {
 			acfg->tmpbasename = (strcmp (acfg->aot_opts.temp_path, "") == 0) ?
 				g_strdup_printf ("%s", "temp") :
-				g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+				g_strdup_printf ("%s", acfg->aot_opts.temp_path);
 				
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
 			acfg->llvm_sfile = g_strdup_printf ("%s-llvm.s", acfg->tmpbasename);
