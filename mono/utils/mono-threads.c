@@ -615,6 +615,7 @@ mono_thread_info_attach (void *baseptr)
 	info = (MonoThreadInfo *) mono_native_tls_get_value (thread_info_key);
 	if (!info) {
 		info = (MonoThreadInfo *) g_malloc0 (thread_info_size);
+		mono_native_tls_set_value (thread_info_key, info);
 		THREADS_DEBUG ("attaching %p\n", info);
 		if (!register_thread (info, baseptr))
 			return NULL;
