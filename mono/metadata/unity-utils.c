@@ -949,25 +949,33 @@ mono_unity_runtime_set_main_args (int argc, const char* argv[])
 MONO_API MonoString*
 mono_unity_string_empty_wrapper ()
 {
-	return mono_string_empty_wrapper ();
+	return mono_string_empty (mono_domain_get ());
 }
 
 MONO_API MonoArray*
 mono_unity_array_new_2d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1)
 {
+	MonoError error;
 	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1 };
 	MonoClass* ac = mono_array_class_get (eklass, 2);
 
-	return mono_array_new_full (domain, ac, sizes, NULL);
+	MonoArray* array = mono_array_new_full_checked (domain, ac, sizes, NULL, &error);
+	mono_error_cleanup (&error);
+
+	return array;
 }
 
 MONO_API MonoArray*
 mono_unity_array_new_3d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1, size_t size2)
 {
+	MonoError error;
 	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1, (uintptr_t)size1 };
 	MonoClass* ac = mono_array_class_get (eklass, 3);
 
-	return mono_array_new_full (domain, ac, sizes, NULL);
+	MonoArray* array =  mono_array_new_full_checked (domain, ac, sizes, NULL, &error);
+	mono_error_cleanup (&error);
+
+	return array;
 }
 
 MONO_API void
