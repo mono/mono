@@ -27,8 +27,10 @@ namespace MonoTests.System.IO
 		static readonly char DSC = Path.DirectorySeparatorChar;
 		static bool MacOSX = false;
 
+#if !MOBILE
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
+#endif
 
 		[TearDown]
 		public void TearDown ()

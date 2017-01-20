@@ -89,7 +89,7 @@ namespace System.Net.NetworkInformation {
 		
 		public event PingCompletedEventHandler PingCompleted;
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !ORBIS
 		static Ping ()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
@@ -122,7 +122,7 @@ namespace System.Net.NetworkInformation {
 			identifier = (ushort)(randomIdentifier [0] + (randomIdentifier [1] << 8));
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !ORBIS
 		[DllImport ("libc", EntryPoint="capget")]
 		static extern int capget (ref cap_user_header_t header, ref cap_user_data_t data);
 

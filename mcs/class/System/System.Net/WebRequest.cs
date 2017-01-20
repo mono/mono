@@ -396,8 +396,10 @@ namespace System.Net
 				}
 			} else {
 #endif
+#if !ORBIS
 				if (Platform.IsMacOS)
 					return CFNetwork.GetDefaultProxy ();
+#endif
 				
 				string address = Environment.GetEnvironmentVariable ("http_proxy");
 

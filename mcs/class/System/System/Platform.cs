@@ -32,7 +32,12 @@ namespace System {
 		static bool isMacOS;
 		static bool isFreeBSD;
 
-#if MONOTOUCH || XAMMAC
+#if ORBIS
+		private static void CheckOS() {
+			isFreeBSD = true;
+			checkedOS = true;
+		}
+#elif MONOTOUCH || XAMMAC
 		private static void CheckOS() {
 			isMacOS = true;
 			checkedOS = true;
