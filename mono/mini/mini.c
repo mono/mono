@@ -4445,3 +4445,18 @@ mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpoin
 }
 
 #endif /* DISABLE_JIT */
+
+#define WRAPPER(e,n) n,
+static const char* const
+wrapper_type_names [MONO_WRAPPER_NUM + 1] = {
+#include "mono/metadata/wrapper-types.h"
+	NULL
+};
+
+const char*
+mini_get_wrapper_type_name (int type)
+{
+	return wrapper_type_names [type];
+}
+
+

@@ -3164,6 +3164,69 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 }
 
 static void
+check_wrappers_leaf (EmitContext *ctx, MonoMethod *method)
+{
+	if (!ctx->llvm_only)
+		return;
+
+	gboolean fail = FALSE;
+
+	switch (method->wrapper_type) {
+		case MONO_WRAPPER_REMOTING_INVOKE:
+		case MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK:
+		case MONO_WRAPPER_XDOMAIN_INVOKE:
+			fail = TRUE;
+	}
+
+	if (fail) {
+		gchar *callee_name = mono_method_full_name (method, TRUE);
+		gchar *reason = g_strdup_printf ("unsupported wrapper type %s needed to call %s", mini_get_wrapper_type_name (method->wrapper_type), callee_name);
+		set_failure (ctx, reason);
+
+		g_free (reason);
+		g_free (callee_name);
+	}
+}
+
+static void
+check_wrappers (EmitContext *ctx, MonoJumpInfo *patch_info)
+{
+	switch (patch_info->type) {
+	case MONO_PATCH_INFO_METHODCONST:
+	case MONO_PATCH_INFO_METHOD:
+	case MONO_PATCH_INFO_METHOD_JUMP:
+	case MONO_PATCH_INFO_ICALL_ADDR:
+	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
+	case MONO_PATCH_INFO_METHOD_RGCTX:
+	case MONO_PATCH_INFO_METHOD_CODE_SLOT:
+		check_wrappers_leaf (ctx, patch_info->data.method);
+		break;
+	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
+		if (patch_info->data.del_tramp->method) {
+			check_wrappers_leaf (ctx, patch_info->data.del_tramp->method);
+		} 
+		break;
+	case MONO_PATCH_INFO_RGCTX_FETCH:
+	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
+		MonoJumpInfoRgctxEntry *entry = patch_info->data.rgctx_entry;
+		check_wrappers_leaf (ctx, entry->method);
+		check_wrappers (ctx, entry->data);
+		break;
+	}
+	case MONO_PATCH_INFO_GSHAREDVT_CALL:
+		check_wrappers_leaf (ctx, patch_info->data.gsharedvt->method);
+		break;
+	case MONO_PATCH_INFO_GSHAREDVT_METHOD: {
+		check_wrappers_leaf (ctx, patch_info->data.gsharedvt_method->method);
+		break;
+	}
+	case MONO_PATCH_INFO_VIRT_METHOD:
+		check_wrappers_leaf (ctx, patch_info->data.virt_method->method);
+		break;
+	}
+}
+
+static void
 process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, MonoInst *ins)
 {
 	MonoCompile *cfg = ctx->cfg;
@@ -3185,6 +3248,12 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	if ((call->signature->call_convention != MONO_CALL_DEFAULT) && !((call->signature->call_convention == MONO_CALL_C) && ctx->llvm_only)) {
 		set_failure (ctx, "non-default callconv");
 		return;
+	}
+
+	if (call->method) {
+		check_wrappers_leaf (ctx, call->method);
+		if (!ctx_ok (ctx))
+			return;
 	}
 
 	cinfo = call->cinfo;
@@ -5308,6 +5377,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			tmp_ji = g_new0 (MonoJumpInfo, 1);
 			tmp_ji->type = (MonoJumpInfoType)ins->inst_c1;
 			tmp_ji->data.target = ins->inst_p0;
+
+			check_wrappers (ctx, tmp_ji);
+			if (!ctx_ok (ctx)) {
+				g_free (tmp_ji);
+				break;
+			}
 
 			ji = mono_aot_patch_info_dup (tmp_ji);
 			g_free (tmp_ji);

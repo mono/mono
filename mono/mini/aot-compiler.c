@@ -10699,18 +10699,6 @@ acfg_free (MonoAotCompile *acfg)
 	g_free (acfg);
 }
 
-#define WRAPPER(e,n) n,
-static const char* const
-wrapper_type_names [MONO_WRAPPER_NUM + 1] = {
-#include "mono/metadata/wrapper-types.h"
-	NULL
-};
-
-static G_GNUC_UNUSED const char*
-get_wrapper_type_name (int type)
-{
-	return wrapper_type_names [type];
-}
 
 //#define DUMP_PLT
 //#define DUMP_GOT
@@ -10769,7 +10757,7 @@ static void aot_dump (MonoAotCompile *acfg)
 
 		mono_json_writer_indent (&writer);
 		mono_json_writer_object_key(&writer, "wrapper_type");
-		mono_json_writer_printf (&writer, "\"%s\",\n", get_wrapper_type_name(method->wrapper_type));
+		mono_json_writer_printf (&writer, "\"%s\",\n", mini_get_wrapper_type_name (method->wrapper_type));
 
 		mono_json_writer_indent_pop (&writer);
 		mono_json_writer_indent (&writer);
