@@ -102,6 +102,26 @@ namespace System.Transactions
 				TransactionManager.DefaultTimeout, TransactionScopeAsyncFlowOption.Suppress);
 		}
 
+		public TransactionScope (Transaction transactionToUse,
+			TransactionScopeAsyncFlowOption asyncFlowOption)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public TransactionScope (Transaction transactionToUse,
+			TimeSpan scopeTimeout,
+			TransactionScopeAsyncFlowOption asyncFlowOption)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public TransactionScope (TransactionScopeOption scopeOption,
+			TransactionOptions transactionOptions,
+			TransactionScopeAsyncFlowOption asyncFlowOption)
+		{
+			throw new NotImplementedException ();
+		}
+
 		void Initialize (TransactionScopeOption scopeOption,
 			Transaction tx, TransactionOptions options,
 			DTCOption interop, TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
