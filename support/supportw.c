@@ -18,7 +18,6 @@
 #include "mono/metadata/class.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
-#include "mono/io-layer/wapi.h"
 
 typedef struct {
 	const char *fname;
