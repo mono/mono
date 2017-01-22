@@ -144,7 +144,7 @@ mono_unity_class_is_abstract (MonoClass* klass)
 }
 
 void
-unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks)
+mono_unity_install_memory_callbacks (MonoMemoryCallbacks* callbacks)
 {
 	g_mem_set_callbacks (callbacks);
 }
