@@ -369,7 +369,9 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 	}
 
 	tid = mono_native_thread_id_get ();
-
+	int retry_count = 0;
+retry_init:
+	++retry_count;
 	mono_type_initialization_lock ();
 	/* double check... */
 	if (vtable->initialized) {
@@ -383,6 +385,18 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		mono_error_set_exception_instance (error, get_type_init_exception_for_vtable (vtable));
 		return FALSE;
 	}
+	if (!mono_threads_try_begin_abort_protected_block ()) {
+		mono_type_initialization_unlock ();
+		MonoException *exc = mono_thread_interruption_checkpoint ();
+		if (!exc) {
+			if (retry_count > 10)
+				g_error ("Retry count is too big (%d), this should not happen", retry_count);
+			goto retry_init;
+		}
+		mono_error_set_exception_instance (error, exc);
+		return FALSE;
+	}
+
 	lock = (TypeInitializationLock *)g_hash_table_lookup (type_initialization_hash, vtable);
 	if (lock == NULL) {
 		/* This thread will get to do the initialization */
@@ -393,6 +407,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 				vtable->initialized = 1;
 				mono_type_initialization_unlock ();
 				mono_error_set_exception_instance (error, mono_get_exception_appdomain_unloaded ());
+				mono_threads_end_abort_protected_block ();
 				return FALSE;
 			}
 		}
@@ -409,6 +424,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 	} else {
 		gpointer blocked;
 		TypeInitializationLock *pending_lock;
+		mono_threads_end_abort_protected_block ();
 
 		if (mono_native_thread_id_equals (lock->initializing_tid, tid) || lock->done) {
 			mono_type_initialization_unlock ();
@@ -439,7 +455,6 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 	if (do_initialization) {
 		MonoException *exc = NULL;
 
-		mono_threads_begin_abort_protected_block ();
 		mono_runtime_try_invoke (method, NULL, NULL, (MonoObject**) &exc, error);
 		mono_threads_end_abort_protected_block ();
 

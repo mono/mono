@@ -247,6 +247,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy);
 MONO_API void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
 
+gboolean mono_threads_try_begin_abort_protected_block (void);
 void mono_threads_begin_abort_protected_block (void);
 void mono_threads_end_abort_protected_block (void);
 MonoException* mono_thread_try_resume_interruption (void);
