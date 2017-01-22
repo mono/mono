@@ -82,12 +82,6 @@ mono_unity_class_is_abstract (MonoClass* klass)
 	return (klass->flags & TYPE_ATTRIBUTE_ABSTRACT);
 }
 
-void
-unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks)
-{
-	//g_mem_set_callbacks (callbacks);
-}
-
 // classes_ref is a preallocated array of *length_ref MonoClass*
 // returned classes are stored in classes_ref, number of stored classes is stored in length_ref
 // return value is number of classes found (which may be greater than number of classes stored)
@@ -995,4 +989,10 @@ MONO_API MonoException*
 mono_unity_loader_get_last_error_and_error_prepare_exception ()
 {
 	return NULL;
+}
+
+MONO_API void
+mono_unity_install_memory_callbacks (MonoAllocatorVTable* callbacks)
+{
+	mono_set_allocator_vtable (callbacks);
 }
