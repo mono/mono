@@ -71,6 +71,8 @@ monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 winaot_PARALLEL_SUBDIRS :=
 
+orbis_PARALLEL_SUBDIRS :=
+
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng
 

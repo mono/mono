@@ -60,6 +60,10 @@ if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
 endif
 
+if INSTALL_ORBIS
+build_profiles += orbis
+endif
+
 test_profiles = $(build_profiles)
 
 if BUILD_MCS
