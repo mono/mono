@@ -187,7 +187,7 @@ mono_debug_add_delegate_trampoline (void* code, int size);
 MONO_API MonoDebugLocalsInfo*
 mono_debug_lookup_locals (MonoMethod *method);
 
-MONO_API MonoDebugMethodAsyncInfo*
+MonoDebugMethodAsyncInfo*
 mono_debug_lookup_method_async_debug_info (MonoMethod *method);
 
 MonoDebugSourceLocation *

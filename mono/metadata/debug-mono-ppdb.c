@@ -627,31 +627,19 @@ table_locator (const void *a, const void *b)
 		return 1;
 }
 
-typedef gboolean (*GuidComparer) (guint8* guid);
 static gboolean
-is_async_method_stepping_information_guid (guint8* debug_info_kind_guid)
-{
-	return debug_info_kind_guid [0] == 0xC5 &&
-		debug_info_kind_guid [1] == 0x2A &&
-		debug_info_kind_guid [2] == 0xFD &&
-		debug_info_kind_guid [3] == 0x54 &&
-		debug_info_kind_guid [4] == 0x25 &&
-		debug_info_kind_guid [5] == 0xE9 &&
-		debug_info_kind_guid [6] == 0x1A &&
-		debug_info_kind_guid [7] == 0x40 &&
-		debug_info_kind_guid [8] == 0x9C &&
-		debug_info_kind_guid [9] == 0x2A &&
-		debug_info_kind_guid [10] == 0xF9 &&
-		debug_info_kind_guid [11] == 0x4F &&
-		debug_info_kind_guid [12] == 0x17 &&
-		debug_info_kind_guid [13] == 0x10 &&
-		debug_info_kind_guid [14] == 0x72 &&
-		debug_info_kind_guid [15] == 0xF8;
+compare_guid (guint8* guid1, guint8* guid2) {
+	for (int i = 0; i < 16; i++) {
+		if (guid1 [i] != guid2 [i])
+			return FALSE;
+	}
+	return TRUE;
 }
 
-//for parent_type see HasCustomDebugInformation table at https://github.com/dotnet/roslyn/blob/2ae8d5fed96ab3f1164031f9b4ac827f53289159/docs/specs/PortablePdb-Metadata.md#customdebuginformation-table-0x37
+// for parent_type see HasCustomDebugInformation table at
+// https://github.com/dotnet/corefx/blob/master/src/System.Reflection.Metadata/specs/PortablePdb-Metadata.md
 static const char*
-lookup_custom_debug_information (MonoImage* image, guint32 token, uint8_t parent_type, GuidComparer comparer)
+lookup_custom_debug_information (MonoImage* image, guint32 token, uint8_t parent_type, guint8* guid)
 {
 	MonoTableInfo *tables = image->tables;
 	MonoTableInfo *table = &tables[MONO_TABLE_CUSTOMDEBUGINFORMATION];
@@ -668,7 +656,7 @@ lookup_custom_debug_information (MonoImage* image, guint32 token, uint8_t parent
 		return NULL;
 	// Great we found one of possibly many CustomDebugInformations of this entity they are distinguished by KIND guid
 	// First try on this index found by binary search...(it's most likeley to be only one and binary search found the one we want)
-	if (comparer ((guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, loc.result, MONO_CUSTOMDEBUGINFORMATION_KIND))))
+	if (compare_guid (guid, (guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, loc.result, MONO_CUSTOMDEBUGINFORMATION_KIND))))
 		return mono_metadata_blob_heap (image, mono_metadata_decode_row_col (table, loc.result, MONO_CUSTOMDEBUGINFORMATION_VALUE));
 
 	// Move forward from binary found index, until parent token differs
@@ -676,7 +664,7 @@ lookup_custom_debug_information (MonoImage* image, guint32 token, uint8_t parent
 	{
 		if (mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_PARENT) != loc.idx)
 			break;
-		if (comparer ((guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_KIND))))
+		if (compare_guid (guid, (guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_KIND))))
 			return mono_metadata_blob_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_VALUE));
 	}
 
@@ -684,7 +672,7 @@ lookup_custom_debug_information (MonoImage* image, guint32 token, uint8_t parent
 	for (int i = loc.result - 1; i >= 0; i--) {
 		if (mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_PARENT) != loc.idx)
 			break;
-		if (comparer ((guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_KIND))))
+		if (compare_guid (guid, (guint8*)mono_metadata_guid_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_KIND))))
 			return mono_metadata_blob_heap (image, mono_metadata_decode_row_col (table, i, MONO_CUSTOMDEBUGINFORMATION_VALUE));
 	}
 	return NULL;
@@ -696,12 +684,20 @@ mono_ppdb_lookup_method_async_debug_info (MonoDebugMethodInfo *minfo)
 	MonoMethod *method = minfo->method;
 	MonoPPDBFile *ppdb = minfo->handle->ppdb;
 	MonoImage *image = ppdb->image;
-	char const *blob = lookup_custom_debug_information (image, method->token, 0, is_async_method_stepping_information_guid);
+
+	// Guid is taken from Roslyn source code:
+	// https://github.com/dotnet/roslyn/blob/1ad4b58/src/Dependencies/CodeAnalysis.Metadata/PortableCustomDebugInfoKinds.cs#L9
+	guint8 async_method_stepping_information_guid [16] = { 0xC5, 0x2A, 0xFD, 0x54, 0x25, 0xE9, 0x1A, 0x40, 0x9C, 0x2A, 0xF9, 0x4F, 0x17, 0x10, 0x72, 0xF8 };
+	char const *blob = lookup_custom_debug_information (image, method->token, 0, async_method_stepping_information_guid);
 	if (!blob)
 		return NULL;
 	int blob_len = mono_metadata_decode_blob_size (blob, &blob);
 	MonoDebugMethodAsyncInfo* res = g_new0 (MonoDebugMethodAsyncInfo, 1);
 	char const *pointer = blob;
+
+	// Format of this blob is taken from Roslyn source code:
+	// https://github.com/dotnet/roslyn/blob/1ad4b58/src/Compilers/Core/Portable/PEWriter/MetadataWriter.PortablePdb.cs#L566
+
 	pointer += 4;//catch_handler_offset
 	while (pointer - blob < blob_len) {
 		res->num_awaits++;
