@@ -2190,19 +2190,18 @@ fail:
 }
 
 void
-ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
+ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
 {
-	MonoException *exc = NULL;
+	mono_error_init (error);
 	MonoDomain * domain = mono_domain_get_by_id (domain_id);
 
 	if (NULL == domain) {
-		mono_get_exception_execution_engine ("Failed to unload domain, domain id not found");
-		mono_set_pending_exception (exc);
+		mono_error_set_execution_engine (error, "Failed to unload domain, domain id not found");
 		return;
 	}
 	
 	if (domain == mono_get_root_domain ()) {
-		mono_set_pending_exception (mono_get_exception_cannot_unload_appdomain ("The default appdomain can not be unloaded."));
+		mono_error_set_generic_error (error, "System", "CannotUnloadAppDomainException", "The default appdomain can not be unloaded.");
 		return;
 	}
 
@@ -2216,9 +2215,10 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 	return;
 #endif
 
+	MonoException *exc = NULL;
 	mono_domain_try_unload (domain, (MonoObject**)&exc);
 	if (exc)
-		mono_set_pending_exception (exc);
+		mono_error_set_exception_instance (error, exc);
 }
 
 gboolean

@@ -70,7 +70,8 @@ gboolean
 ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id, MonoError *error);
 
 void
-ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id);
+ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id,
+						    MonoError *error);
 
 void
 ves_icall_System_AppDomain_DoUnhandledException (MonoException *exc);
