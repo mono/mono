@@ -183,6 +183,9 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			g_assert (*p == NULL);
 			mono_atomic_store_seq (p, vtable);
 
+			if (G_UNLIKELY (dump_on_oom_enabled () && !p))
+				sgen_debug_dump_heap ("oom", 0, NULL);
+
 			return (GCObject*)p;
 		}
 
@@ -210,8 +213,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			/* when running in degraded mode, we continue allocing that way
 			 * for a while, to decrease the number of useless nursery collections.
 			 */
-			if (degraded_mode && degraded_mode < DEFAULT_NURSERY_SIZE)
-				return alloc_degraded (vtable, size, FALSE);
+			if (degraded_mode && degraded_mode < DEFAULT_NURSERY_SIZE) {
+				p = (void **)alloc_degraded (vtable, size, FALSE);
+				goto done;
+			}
 
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
@@ -239,8 +244,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					if (!degraded_mode)
 						p = (void **)sgen_nursery_alloc (size);
 				}
-				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+				if (!p) {
+					p = (void **)alloc_degraded (vtable, size, FALSE);
+					goto done;
+				}
 
 				zero_tlab_if_necessary (p, size);
 			} else {
@@ -256,8 +263,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					if (!degraded_mode)
 						p = (void **)sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
 				}
-				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+				if (!p) {
+					p = (void **)alloc_degraded (vtable, size, FALSE);
+					goto done;
+				}
 
 				/* Allocate a new TLAB from the current nursery fragment */
 				TLAB_START = (char*)p;
@@ -289,6 +298,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 		binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
 		mono_atomic_store_seq (p, vtable);
 	}
+
+done:
+	if (G_UNLIKELY (dump_on_oom_enabled () && !p))
+		sgen_debug_dump_heap ("oom", 0, NULL);
 
 	return (GCObject*)p;
 }

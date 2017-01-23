@@ -1035,6 +1035,8 @@ void sgen_env_var_error (const char *env_var, const char *fallback, const char *
 void sgen_qsort (void *array, size_t count, size_t element_size, int (*compare) (const void*, const void*));
 gint64 sgen_timestamp (void);
 
+gboolean dump_on_oom_enabled (void);
+
 /*
  * Canary (guard word) support
  * Notes:
