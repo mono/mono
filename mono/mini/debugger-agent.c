@@ -4647,7 +4647,8 @@ breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 }
 
 static MonoObject*
-get_this (StackFrame *frame) {
+get_this (StackFrame *frame)
+{
 	//Logic inspiered by "add_var" method and took out path that happens in async method for getting this
 	MonoDebugVarInfo *var = frame->jit->this_var;
 	if ((var->index & MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS) != MONO_DEBUG_VAR_ADDRESS_MODE_REGOFFSET)
@@ -4661,12 +4662,14 @@ get_this (StackFrame *frame) {
 //This ID is used to figure out if breakpoint hit on resumeOffset belongs to us or not
 //since thread probably changed...
 static int
-get_this_async_id (StackFrame *frame) {
+get_this_async_id (StackFrame *frame)
+{
 	return get_objid (get_this (frame));
 }
 
 static void
-set_SetNotificationForWaitCompletion_flag (StackFrame *frame) {
+set_set_notification_for_wait_completion_flag (StackFrame *frame)
+{
 	MonoObject* obj = get_this (frame);
 	if (obj == NULL)
 		return;
@@ -4693,12 +4696,12 @@ set_SetNotificationForWaitCompletion_flag (StackFrame *frame) {
 		DEBUG_PRINTF (1, "[%p] Failed to get SetNotificationForWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
 		return;
 	}
-	MonoMethod* setNotificationMethod = (MonoMethod *)g_ptr_array_index (array, 0);
+	MonoMethod* set_notification_method = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
 	void* args [1];
 	gboolean arg = TRUE;
 	args [0] = &arg;
-	mono_runtime_invoke_checked (setNotificationMethod, mono_object_unbox (builder), args, &error);
+	mono_runtime_invoke_checked (set_notification_method, mono_object_unbox (builder), args, &error);
 	if (!is_ok (&error)) {
 		DEBUG_PRINTF (1, "[%p] Failed calling SetNotificationForWaitCompletion: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
 		mono_error_cleanup (&error);
@@ -4708,7 +4711,8 @@ set_SetNotificationForWaitCompletion_flag (StackFrame *frame) {
 }
 
 static MonoMethod*
-get_NotifyDebuggerOfWaitCompletion_method () {
+get_notify_debugger_of_wait_completion_method ()
+{
 	MonoError error;
 	MonoClass* taskClass = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading.Tasks", "Task");
@@ -4722,9 +4726,9 @@ get_NotifyDebuggerOfWaitCompletion_method () {
 		DEBUG_PRINTF (1, "[%p] Failed to get NotifyDebuggerOfWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
 		return NULL;
 	}
-	MonoMethod* notifyDebuggerMethod = (MonoMethod *)g_ptr_array_index (array, 0);
+	MonoMethod* notify_debugger_method = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
-	return notifyDebuggerMethod;
+	return notify_debugger_method;
 }
 
 static void
@@ -5348,7 +5352,8 @@ ss_bp_add_one (SingleStepReq *ss_req, int *ss_req_bp_count, GHashTable **ss_req_
 }
 
 static gboolean
-is_last_non_empty (SeqPoint* sp, MonoSeqPointInfo *info) {
+is_last_non_empty (SeqPoint* sp, MonoSeqPointInfo *info)
+{
 	if (!sp->next_len)
 		return TRUE;
 	SeqPoint* next = g_new (SeqPoint, sp->next_len);
@@ -5455,9 +5460,9 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 				ss_req->depth = STEP_DEPTH_OUT;//setting depth to step-out is important, don't inline IF, because code later depends on this
 			}
 			if (ss_req->depth == STEP_DEPTH_OUT) {
-				set_SetNotificationForWaitCompletion_flag (frames [0]);
+				set_set_notification_for_wait_completion_flag (frames [0]);
 				ss_req->async_id = get_this_async_id (frames [0]);
-				ss_req->async_stepout_method = get_NotifyDebuggerOfWaitCompletion_method ();
+				ss_req->async_stepout_method = get_notify_debugger_of_wait_completion_method ();
 				ss_bp_add_one (ss_req, &ss_req_bp_count, &ss_req_bp_cache, ss_req->async_stepout_method, 0);
 				if (ss_req_bp_cache)
 					g_hash_table_destroy (ss_req_bp_cache);
