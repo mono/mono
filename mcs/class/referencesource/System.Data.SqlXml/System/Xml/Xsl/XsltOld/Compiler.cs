@@ -164,7 +164,7 @@ namespace System.Xml.Xsl.XsltOld {
         // The World of Compile
         //
         internal void Compile(NavigatorInput input, XmlResolver xmlResolver, Evidence evidence) {
-#if !FEATURE_MONO_CAS
+#if !MONO_FEATURE_CAS
             evidence = null;
 #endif
             Debug.Assert(input != null);

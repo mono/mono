@@ -15,6 +15,8 @@ namespace System.Transactions
 	[MonoTODO]
 	public static class TransactionInterop
 	{
+		public static readonly Guid PromoterTypeDtc = new Guid ("14229753-FFE1-428D-82B7-DF73045CB8DA");
+
 		[MonoTODO]
 		public static IDtcTransaction GetDtcTransaction (Transaction transaction)
 		{

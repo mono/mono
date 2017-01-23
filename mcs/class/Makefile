@@ -31,6 +31,7 @@ build_SUBDIRS :=  \
 	System.Numerics \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
+	System.IO.Compression \
 	Mono.Cecil \
 	Mono.CompilerServices.SymbolWriter	\
 	PEAPI \
@@ -344,6 +345,7 @@ net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
+orbis_SUBDIRS := $(monotouch_dirs)
 
 include ../build/rules.make
 
@@ -395,7 +397,7 @@ build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Co
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 

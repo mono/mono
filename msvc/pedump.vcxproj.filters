@@ -22,7 +22,7 @@
     <ClCompile Include="..\mono\metadata\environment.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mono\metadata\file-io.c">
+    <ClCompile Include="..\mono\metadata\w32file.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\mono\metadata\filewatcher.c">
@@ -79,7 +79,7 @@
     <ClCompile Include="..\mono\metadata\security-manager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mono\metadata\socket-io.c">
+    <ClCompile Include="..\mono\metadata\w32socket.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\mono\metadata\string-icalls.c">
@@ -100,7 +100,10 @@
     <ClCompile Include="..\mono\metadata\icall-windows.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mono\metadata\file-io-windows.c">
+    <ClCompile Include="..\mono\metadata\w32file-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\metadata\w32error-win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

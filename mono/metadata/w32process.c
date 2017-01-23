@@ -4,13 +4,14 @@
 #include "w32process.h"
 #include "w32process-internals.h"
 #include "w32process-win32-internals.h"
+#include "w32file.h"
 #include "object.h"
 #include "object-internals.h"
 #include "class.h"
 #include "class-internals.h"
 #include "image.h"
 #include "utils/mono-proclib.h"
-#include "io-layer/io-layer.h"
+#include "utils/w32api.h"
 
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */

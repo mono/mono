@@ -276,8 +276,8 @@ struct _MonoClass {
 	 * to 1, because we know the instance size now. After that we 
 	 * initialise all static fields.
 	 */
-	/* size_inited is accessed without locks, so it needs a memory barrier */
-	/* All flag bits should be written while holding the loader lock */
+
+	/* ALL BITFIELDS SHOULD BE WRITTEN WHILE HOLDING THE LOADER LOCK */
 	guint size_inited     : 1;
 	guint valuetype       : 1; /* derives from System.ValueType */
 	guint enumtype        : 1; /* derives from System.Enum */
@@ -434,10 +434,8 @@ int mono_class_interface_match (const uint8_t *bitmap, int id);
 
 #ifdef DISABLE_COM
 #define mono_class_is_com_object(klass) (FALSE)
-#define mono_class_set_is_com_object(klass) do {} while (0)
 #else
 #define mono_class_is_com_object(klass) ((klass)->is_com_object)
-#define mono_class_set_is_com_object(klass) do { (klass)->is_com_object = 1; } while (0)
 #endif
 
 
@@ -958,7 +956,7 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 			       MonoGenericContext *generic_context);
 
 MonoMethod*
-mono_class_get_cctor (MonoClass *klass);
+mono_class_get_cctor (MonoClass *klass) MONO_LLVM_INTERNAL;
 
 MonoMethod*
 mono_class_get_finalizer (MonoClass *klass);
@@ -1329,6 +1327,9 @@ int
 mono_method_get_vtable_index (MonoMethod *method);
 
 MonoMethod*
+mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError *error);
+
+MonoMethod*
 mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMethodSignature *sig);
 
 void
@@ -1513,6 +1514,9 @@ mono_class_get_declsec_flags (MonoClass *class);
 
 void
 mono_class_set_declsec_flags (MonoClass *class, guint32 value);
+
+void
+mono_class_set_is_com_object (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

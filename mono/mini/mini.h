@@ -1527,7 +1527,9 @@ typedef enum {
 	/* Whenever to compile in llvm-only mode */
 	JIT_FLAG_LLVM_ONLY = (1 << 6),
 	/* Whenever calls to pinvoke functions are made directly */
-	JIT_FLAG_DIRECT_PINVOKE = (1 << 7)
+	JIT_FLAG_DIRECT_PINVOKE = (1 << 7),
+	/* Whenever this is a compile-all run and the result should be discarded */
+	JIT_FLAG_DISCARD_RESULTS = (1 << 8),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -2394,7 +2396,7 @@ void      mono_merge_basic_blocks           (MonoCompile *cfg, MonoBasicBlock *b
 void      mono_optimize_branches            (MonoCompile *cfg);
 
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
-const char*mono_ji_type_to_string           (MonoJumpInfoType type);
+const char*mono_ji_type_to_string           (MonoJumpInfoType type) MONO_LLVM_INTERNAL;
 void      mono_print_ji                     (const MonoJumpInfo *ji);
 void      mono_print_ins_index              (int i, MonoInst *ins);
 GString  *mono_print_ins_index_strbuf       (int i, MonoInst *ins);

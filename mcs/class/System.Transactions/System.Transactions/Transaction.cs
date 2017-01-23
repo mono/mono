@@ -189,6 +189,26 @@ namespace System.Transactions
 			return true;
 		}
 
+		public void SetDistributedTransactionIdentifier (IPromotableSinglePhaseNotification promotableNotification, Guid distributedTransactionIdentifier)
+		{
+			throw new NotImplementedException ();
+		}
+
+ 		public bool EnlistPromotableSinglePhase (IPromotableSinglePhaseNotification promotableSinglePhaseNotification, Guid promoterType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public byte[] GetPromotedToken ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Guid PromoterType
+		{
+			get { throw new NotImplementedException (); }
+		}
+
 		[MonoTODO ("EnlistmentOptions being ignored")]
 		public Enlistment EnlistVolatile (
 			IEnlistmentNotification notification,

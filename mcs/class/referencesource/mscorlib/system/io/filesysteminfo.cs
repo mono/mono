@@ -18,7 +18,7 @@
 using System;
 using System.Collections;
 using System.Security;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 using System.Security.Permissions;
 #endif
 using Microsoft.Win32;
@@ -30,7 +30,7 @@ using System.Diagnostics.Contracts;
 
 namespace System.IO {
     [Serializable]
-#if !FEATURE_CORECLR && FEATURE_MONO_CAS
+#if !FEATURE_CORECLR && MONO_FEATURE_CAS
     [FileIOPermissionAttribute(SecurityAction.InheritanceDemand,Unrestricted=true)]
 #endif
     [ComVisible(true)]
@@ -108,7 +108,7 @@ namespace System.IO {
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else
                     demandDir = FullPath;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
                 sourceState.EnsureState();
@@ -132,7 +132,7 @@ namespace System.IO {
                     demandDir = Directory.GetDemandDir(FullPath, true);
                 else
                     demandDir = FullPath;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
                 FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
 #endif
@@ -359,7 +359,7 @@ namespace System.IO {
             [System.Security.SecuritySafeCritical]
             #endif
             set {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
                 FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, FullPath);
 #endif
@@ -392,7 +392,7 @@ namespace System.IO {
         [ComVisible(false)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
             FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif

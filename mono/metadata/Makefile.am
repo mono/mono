@@ -3,8 +3,8 @@ win32_sources = \
 	console-win32.c \
 	console-win32-internals.h \
 	cominterop-win32-internals.h \
-	file-io-windows.c \
-	file-io-windows-internals.h \
+	w32file-win32.c \
+	w32file-win32-internals.h \
 	icall-windows.c \
 	icall-windows-internals.h \
 	marshal-windows.c \
@@ -16,7 +16,8 @@ win32_sources = \
 	w32event-win32.c \
 	w32process-win32.c \
 	w32process-win32-internals.h \
-	socket-io-windows.c
+	w32socket-win32.c \
+	w32error-win32.c
 
 platform_sources = $(win32_sources)
 
@@ -48,7 +49,12 @@ unix_sources = \
 	w32process-unix-osx.c \
 	w32process-unix-bsd.c \
 	w32process-unix-haiku.c \
-	w32process-unix-default.c
+	w32process-unix-default.c \
+	w32socket-unix.c \
+	w32file-unix.c \
+	w32file-unix-glob.c \
+	w32file-unix-glob.h \
+	w32error-unix.c
 
 platform_sources = $(unix_sources)
 endif
@@ -150,9 +156,9 @@ common_sources = \
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
-	file-io.c		\
-	file-io.h		\
-	file-io-internals.h \
+	w32file.c		\
+	w32file.h		\
+	w32file-internals.h \
 	filewatcher.c		\
 	filewatcher.h		\
 	gc-internals.h		\
@@ -205,8 +211,9 @@ common_sources = \
 	opcodes.c		\
 	property-bag.h	\
 	property-bag.c	\
-	socket-io.c		\
-	socket-io.h		\
+	w32socket.c		\
+	w32socket.h		\
+	w32socket-internals.h		\
 	w32process.c		\
 	w32process.h		\
 	w32process-internals.h		\
@@ -262,7 +269,8 @@ common_sources = \
 	w32handle-namespace.h	\
 	w32handle-namespace.c	\
 	w32handle.h	\
-	w32handle.c
+	w32handle.c	\
+	w32error.h
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \

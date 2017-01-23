@@ -233,7 +233,7 @@ namespace System.IO
                 // Do a demand on the combined path so that we can fail early in case of deny
                 demandPaths[1] = Directory.GetDemandDir(normalizedSearchPath, true);
                 _checkHost = checkHost;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                 if (checkHost)
                 {
@@ -350,7 +350,7 @@ namespace System.IO
                 // For filters like foo\*.cs we need to verify if the directory foo is not denied access.
                 // Do a demand on the combined path so that we can fail early in case of deny
                 demandPaths[1] = Directory.GetDemandDir(normalizedSearchPath, true);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                 if (checkHost) 
                 {
@@ -637,7 +637,7 @@ namespace System.IO
         [System.Security.SecurityCritical]
         internal void DoDemand(String fullPathToDemand)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
             if(_checkHost) {
                 String demandDir = Directory.GetDemandDir(fullPathToDemand, true);
@@ -757,7 +757,7 @@ namespace System.IO
         internal override FileInfo CreateObject(SearchResult result)
         {
             String name = result.FullPath;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
             state.EnsureState();
@@ -785,7 +785,7 @@ namespace System.IO
             String name = result.FullPath;
             String permissionName = name + "\\.";
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
             state.EnsureState();
@@ -823,7 +823,7 @@ namespace System.IO
                 String name = result.FullPath;
                 String permissionName = name + "\\.";
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
                 state.EnsureState();
@@ -840,7 +840,7 @@ namespace System.IO
                 Contract.Assert(isFile);
                 String name = result.FullPath;
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
                 state.EnsureState();

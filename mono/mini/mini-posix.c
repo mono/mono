@@ -39,7 +39,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/io-layer/io-layer.h>
 #include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
@@ -899,7 +898,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 
 	commands = fopen (commands_filename, "w");
 	if (!commands) {
-	unlink (commands_filename);
+		unlink (commands_filename);
 		return;
 	}
 
@@ -925,6 +924,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	return;
 
 exec:
+	fclose (commands);
 	execv (argv [0], (char**)argv);
 
 	_exit (-1);

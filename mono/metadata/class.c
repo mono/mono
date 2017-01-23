@@ -1651,6 +1651,7 @@ static void
 init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 {
 	if (cached_info) {
+		mono_loader_lock ();
 		klass->instance_size = cached_info->instance_size;
 		klass->sizes.class_size = cached_info->class_size;
 		klass->packing_size = cached_info->packing_size;
@@ -1659,6 +1660,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 		klass->has_references = cached_info->has_references;
 		klass->has_static_refs = cached_info->has_static_refs;
 		klass->no_special_static_fields = cached_info->no_special_static_fields;
+		mono_loader_unlock ();
 	}
 	else {
 		if (!klass->size_inited)
@@ -5086,16 +5088,14 @@ mono_class_has_finalizer (MonoClass *klass)
 		}
 	}
 
-	mono_image_lock (klass->image);
-
+	mono_loader_lock ();
 	if (!klass->has_finalize_inited) {
 		klass->has_finalize = has_finalize ? 1 : 0;
 
 		mono_memory_barrier ();
 		klass->has_finalize_inited = TRUE;
 	}
-
-	mono_image_unlock (klass->image);
+	mono_loader_unlock ();
 
 	return klass->has_finalize;
 }
@@ -5748,6 +5748,7 @@ mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gtd)
 			mono_error_cleanup (&error);
 		}
 	}
+	mono_loader_lock ();
 	if (klass->parent)
 		mono_class_setup_parent (klass, klass->parent);
 
@@ -5755,6 +5756,7 @@ mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gtd)
 		klass->cast_class = gtd->cast_class;
 		klass->element_class = gtd->element_class;
 	}
+	mono_loader_unlock ();
 }
 
 gboolean
@@ -8290,7 +8292,7 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 
 		/*A TypeBuilder can have more interfaces on tb->interfaces than on candidate->interfaces*/
 		if (image_is_dynamic (candidate->image) && !candidate->wastypebuilder) {
-			MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)mono_class_get_ref_info (candidate);
+			MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)mono_class_get_ref_info_raw (candidate); /* FIXME use handles */
 			int j;
 			if (tb && tb->interfaces) {
 				for (j = mono_array_length (tb->interfaces) - 1; j >= 0; --j) {
@@ -9221,8 +9223,12 @@ setup_nested_types (MonoClass *klass)
 	if (klass->nested_classes_inited)
 		return;
 
-	if (!klass->type_token)
+	if (!klass->type_token) {
+		mono_loader_lock ();
 		klass->nested_classes_inited = TRUE;
+		mono_loader_unlock ();
+		return;
+	}
 
 	i = mono_metadata_nesting_typedef (klass->image, klass->type_token, 1);
 	classes = NULL;
@@ -10441,8 +10447,7 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 		interfaces = NULL;
 	}
 
-	mono_image_lock (klass->image);
-
+	mono_loader_lock ();
 	if (!klass->interfaces_inited) {
 		klass->interface_count = interface_count;
 		klass->interfaces = interfaces;
@@ -10451,8 +10456,7 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 
 		klass->interfaces_inited = TRUE;
 	}
-
-	mono_image_unlock (klass->image);
+	mono_loader_unlock ();
 }
 
 static void
@@ -10533,7 +10537,6 @@ mono_field_resolve_flags (MonoClassField *field)
 	MonoClass *gtd = mono_class_is_ginst (klass) ? mono_class_get_generic_type_definition (klass) : NULL;
 	int field_idx = field - klass->fields;
 
-
 	if (gtd) {
 		MonoClassField *gfield = &gtd->fields [field_idx];
 		return mono_field_get_flags (gfield);
@@ -10597,3 +10600,156 @@ mono_class_full_name (MonoClass *klass)
 
 /* Declare all shared lazy type lookup functions */
 GENERATE_TRY_GET_CLASS_WITH_CACHE (safehandle, System.Runtime.InteropServices, SafeHandle)
+
+/**
+ * mono_method_get_base_method:
+ * @method: a method
+ * @definition: if true, get the definition
+ * @error: set on failure
+ *
+ * Given a virtual method associated with a subclass, return the corresponding
+ * method from an ancestor.  If @definition is FALSE, returns the method in the
+ * superclass of the given method.  If @definition is TRUE, return the method
+ * in the ancestor class where it was first declared.  The type arguments will
+ * be inflated in the ancestor classes.  If the method is not associated with a
+ * class, or isn't virtual, returns the method itself.  On failure returns NULL
+ * and sets @error.
+ */
+MonoMethod*
+mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError *error)
+{
+	MonoClass *klass, *parent;
+	MonoGenericContext *generic_inst = NULL;
+	MonoMethod *result = NULL;
+	int slot;
+
+	if (method->klass == NULL)
+		return method;
+
+	if (!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) ||
+	    MONO_CLASS_IS_INTERFACE (method->klass) ||
+	    method->flags & METHOD_ATTRIBUTE_NEW_SLOT)
+		return method;
+
+	slot = mono_method_get_vtable_slot (method);
+	if (slot == -1)
+		return method;
+
+	klass = method->klass;
+	if (mono_class_is_ginst (klass)) {
+		generic_inst = mono_class_get_context (klass);
+		klass = mono_class_get_generic_class (klass)->container_class;
+	}
+
+retry:
+	if (definition) {
+		/* At the end of the loop, klass points to the eldest class that has this virtual function slot. */
+		for (parent = klass->parent; parent != NULL; parent = parent->parent) {
+			/* on entry, klass is either a plain old non-generic class and generic_inst == NULL
+			   or klass is the generic container class and generic_inst is the instantiation.
+
+			   when we go to the parent, if the parent is an open constructed type, we need to
+			   replace the type parameters by the definitions from the generic_inst, and then take it
+			   apart again into the klass and the generic_inst.
+
+			   For cases like this:
+			   class C<T> : B<T, int> {
+			       public override void Foo () { ... }
+			   }
+			   class B<U,V> : A<HashMap<U,V>> {
+			       public override void Foo () { ... }
+			   }
+			   class A<X> {
+			       public virtual void Foo () { ... }
+			   }
+
+			   if at each iteration the parent isn't open, we can skip inflating it.  if at some
+			   iteration the parent isn't generic (after possible inflation), we set generic_inst to
+			   NULL;
+			*/
+			MonoGenericContext *parent_inst = NULL;
+			if (mono_class_is_open_constructed_type (mono_class_get_type (parent))) {
+				parent = mono_class_inflate_generic_class_checked (parent, generic_inst, error);
+				return_val_if_nok  (error, NULL);
+			}
+			if (mono_class_is_ginst (parent)) {
+				parent_inst = mono_class_get_context (parent);
+				parent = mono_class_get_generic_class (parent)->container_class;
+			}
+
+			mono_class_setup_vtable (parent);
+			if (parent->vtable_size <= slot)
+				break;
+			klass = parent;
+			generic_inst = parent_inst;
+		}
+	} else {
+		klass = klass->parent;
+		if (!klass)
+			return method;
+		if (mono_class_is_open_constructed_type (mono_class_get_type (klass))) {
+			klass = mono_class_inflate_generic_class_checked (klass, generic_inst, error);
+			return_val_if_nok (error, NULL);
+
+			generic_inst = NULL;
+		}
+		if (mono_class_is_ginst (klass)) {
+			generic_inst = mono_class_get_context (klass);
+			klass = mono_class_get_generic_class (klass)->container_class;
+		}
+
+	}
+
+	if (generic_inst) {
+		klass = mono_class_inflate_generic_class_checked (klass, generic_inst, error);
+		return_val_if_nok (error, NULL);
+	}
+
+	if (klass == method->klass)
+		return method;
+
+	/*This is possible if definition == FALSE.
+	 * Do it here to be really sure we don't read invalid memory.
+	 */
+	if (slot >= klass->vtable_size)
+		return method;
+
+	mono_class_setup_vtable (klass);
+
+	result = klass->vtable [slot];
+	if (result == NULL) {
+		/* It is an abstract method */
+		gboolean found = FALSE;
+		gpointer iter = NULL;
+		while ((result = mono_class_get_methods (klass, &iter))) {
+			if (result->slot == slot) {
+				found = TRUE;
+				break;
+			}
+		}
+		/* found might be FALSE if we looked in an abstract class
+		 * that doesn't override an abstract method of its
+		 * parent: 
+		 *   abstract class Base {
+		 *     public abstract void Foo ();
+		 *   }
+		 *   abstract class Derived : Base { }
+		 *   class Child : Derived {
+		 *     public override void Foo () { }
+		 *  }
+		 *
+		 *  if m was Child.Foo and we ask for the base method,
+		 *  then we get here with klass == Derived and found == FALSE
+		 */
+		/* but it shouldn't be the case that if we're looking
+		 * for the definition and didn't find a result; the
+		 * loop above should've taken us as far as we could
+		 * go! */
+		g_assert (!(definition && !found));
+		if (!found)
+			goto retry;
+	}
+
+	g_assert (result != NULL);
+	return result;
+}

@@ -24,12 +24,13 @@
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/tokentype.h"
+#include "mono/metadata/w32file.h"
+#include "mono/metadata/w32error.h"
 
 #include "mono/utils/checked-build.h"
 #include "mono/utils/mono-digest.h"
 #include "mono/utils/mono-error-internals.h"
-
-#include "mono/io-layer/io-layer.h"
+#include "mono/utils/w32api.h"
 
 #define TEXT_OFFSET 512
 #define CLI_H_SIZE 136
@@ -175,6 +176,17 @@ add_mono_string_to_blob_cached (MonoDynamicImage *assembly, MonoString *str)
 	return idx;
 }
 
+static guint32
+image_create_token_raw  (MonoDynamicImage *assembly, MonoObject* obj_raw, gboolean create_methodspec, gboolean register_token, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER (); /* FIXME callers of image_create_token_raw should use handles */
+	mono_error_init (error);
+	MONO_HANDLE_DCL (MonoObject, obj);
+	guint32 result = mono_image_create_token (assembly, obj, create_methodspec, register_token, error);
+	HANDLE_FUNCTION_RETURN_VAL (result);
+}
+
+
 /*
  * idx is the table index of the object
  * type is one of MONO_CUSTOM_ATTR_*
@@ -206,7 +218,7 @@ mono_image_add_cattrs (MonoDynamicImage *assembly, guint32 idx, guint32 type, Mo
 	for (i = 0; i < count; ++i) {
 		cattr = (MonoReflectionCustomAttr*)mono_array_get (cattrs, gpointer, i);
 		values [MONO_CUSTOM_ATTR_PARENT] = idx;
-		token = mono_image_create_token (assembly, (MonoObject*)cattr->ctor, FALSE, FALSE, error);
+		token = image_create_token_raw (assembly, (MonoObject*)cattr->ctor, FALSE, FALSE, error); /* FIXME use handles */
 		if (!mono_error_ok (error)) goto fail;
 		type = mono_metadata_token_index (token);
 		type <<= MONO_CUSTOM_ATTR_TYPE_BITS;
@@ -582,7 +594,7 @@ mono_image_add_methodimpl (MonoDynamicImage *assembly, MonoReflectionMethodBuild
 		values [MONO_METHODIMPL_CLASS] = tb->table_idx;
 		values [MONO_METHODIMPL_BODY] = MONO_METHODDEFORREF_METHODDEF | (mb->table_idx << MONO_METHODDEFORREF_BITS);
 
-		tok = mono_image_create_token (assembly, (MonoObject*)m, FALSE, FALSE, error);
+		tok = image_create_token_raw (assembly, (MonoObject*)m, FALSE, FALSE, error); /* FIXME use handles */
 		return_val_if_nok (error, FALSE);
 
 		switch (mono_metadata_token_table (tok)) {
@@ -1727,9 +1739,9 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 				g_assert_not_reached ();
 			} else if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
 				MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
-				MonoObject *obj = mono_class_get_ref_info (k);
+				MonoObject *obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
 				g_assert (obj);
-				g_assert (!strcmp (obj->vtable->klass->name, "TypeBuilder"));
+				g_assert (!strcmp (mono_object_class (obj)->name, "TypeBuilder"));
 				tb = (MonoReflectionTypeBuilder*)obj;
 				idx = tb->table_idx;
 			} else {
@@ -2726,8 +2738,8 @@ static void
 checked_write_file (HANDLE f, gconstpointer buffer, guint32 numbytes)
 {
 	guint32 dummy;
-	if (!WriteFile (f, buffer, numbytes, &dummy, NULL))
-		g_error ("WriteFile returned %d\n", GetLastError ());
+	if (!mono_w32file_write (f, buffer, numbytes, &dummy))
+		g_error ("mono_w32file_write returned %d\n", mono_w32error_get_last ());
 }
 
 /*
@@ -3021,8 +3033,8 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 		if (!assembly->sections [i].size)
 			continue;
 		
-		if (SetFilePointer (file, assembly->sections [i].offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
-			g_error ("SetFilePointer returned %d\n", GetLastError ());
+		if (mono_w32file_seek (file, assembly->sections [i].offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+			g_error ("mono_w32file_seek returned %d\n", mono_w32error_get_last ());
 		
 		switch (i) {
 		case MONO_SECTION_TEXT:
@@ -3081,10 +3093,10 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 	}
 	
 	/* check that the file is properly padded */
-	if (SetFilePointer (file, file_offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
-		g_error ("SetFilePointer returned %d\n", GetLastError ());
-	if (! SetEndOfFile (file))
-		g_error ("SetEndOfFile returned %d\n", GetLastError ());
+	if (mono_w32file_seek (file, file_offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+		g_error ("mono_w32file_seek returned %d\n", mono_w32error_get_last ());
+	if (! mono_w32file_truncate (file))
+		g_error ("mono_w32file_truncate returned %d\n", mono_w32error_get_last ());
 	
 	mono_dynamic_stream_reset (&assembly->code);
 	mono_dynamic_stream_reset (&assembly->us);

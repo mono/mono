@@ -153,8 +153,6 @@ monoutils_sources = \
 	mono-signal-handler.h	\
 	mono-conc-hashtable.h	\
 	mono-conc-hashtable.c	\
-	sha1.h		\
-	sha1.c	\
 	json.h	\
 	json.c	\
 	networking.c	\
@@ -174,7 +172,8 @@ monoutils_sources = \
 	checked-build.c \
 	checked-build.h \
 	os-event.h \
-	refcount.h
+	refcount.h	\
+	w32api.h
 
 arch_sources = 
 

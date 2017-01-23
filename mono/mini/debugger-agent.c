@@ -59,11 +59,11 @@
 #include <mono/metadata/environment.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/threadpool.h>
-#include <mono/metadata/socket-io.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
+#include <mono/metadata/w32socket.h>
 #include <mono/utils/mono-coop-mutex.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
@@ -75,7 +75,7 @@
 #include "debugger-agent.h"
 #include "mini.h"
 #include "seq-points.h"
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/w32api.h>
 
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
