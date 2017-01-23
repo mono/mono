@@ -187,7 +187,6 @@ System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
 System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs
-System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkCredential.cs
@@ -237,7 +236,6 @@ System.Security.Authentication.ExtendedProtection.Configuration/ConfigUtil.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtectionPolicyElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
-System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.Security.Cryptography.X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs
 System.Security.Cryptography.X509Certificates/StoreLocation.cs
