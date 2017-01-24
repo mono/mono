@@ -3629,12 +3629,20 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud)
 void
 mono_threads_perform_thread_dump (void)
 {
+	if (!thread_dump_requested)
+		return;
+
+	mono_threads_perform_thread_dump_force ();
+
+	thread_dump_requested = FALSE;
+}
+
+void
+mono_threads_perform_thread_dump_force (void)
+{
 	ThreadDumpUserData ud;
 	MonoInternalThread *thread_array [128];
 	int tindex, nthreads;
-
-	if (!thread_dump_requested)
-		return;
 
 	printf ("Full thread dump:\n");
 
@@ -3649,8 +3657,6 @@ mono_threads_perform_thread_dump (void)
 		dump_thread (thread_array [tindex], &ud);
 
 	g_free (ud.frames);
-
-	thread_dump_requested = FALSE;
 }
 
 /* Obtain the thread dump of all threads */
