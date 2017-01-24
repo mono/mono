@@ -137,6 +137,12 @@ mono_marshal_set_last_error_windows (int error);
 static MonoObject *
 mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache);
 
+static gpointer
+mono_marshal_thread_attach (MonoDomain *domain, gpointer *dummy);
+
+static void
+mono_marshal_thread_detach (gpointer cookie, gpointer *dummy);
+
 static void init_safe_handle (void);
 
 /* MonoMethod pointers to SafeHandle::DangerousAddRef and ::DangerousRelease */
@@ -237,6 +243,8 @@ mono_marshal_init (void)
 		register_icall (mono_gc_wbarrier_generic_nostore, "wb_generic", "void ptr", FALSE);
 		register_icall (mono_gchandle_get_target, "mono_gchandle_get_target", "object int32", TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", "object object ptr ptr", FALSE);
+		register_icall (mono_marshal_thread_attach, "mono_marshal_thread_attach", "ptr ptr ptr", TRUE);
+		register_icall (mono_marshal_thread_detach, "mono_marshal_thread_detach", "void ptr ptr", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -310,7 +318,7 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 		target_handle = mono_gchandle_new_weakref (delegate->target, FALSE);
 	}
 
-	wrapper = mono_marshal_get_managed_wrapper (method, klass, target_handle);
+	wrapper = mono_marshal_get_managed_wrapper (method, klass, target_handle, FALSE);
 
 	delegate->delegate_trampoline = mono_compile_method (wrapper);
 
@@ -7682,6 +7690,83 @@ mono_marshal_get_native_func_wrapper_aot (MonoClass *klass)
 }
 
 /*
+ * mono_marshal_thread_attach:
+ *
+ * Called by native->managed wrappers. Store the original domain which needs to be
+ * restored, or NULL, in dummy.
+ *
+ * Return NULL if it was detached when calling this function, and should return to
+ * blocking mode when detaching
+ */
+static gpointer
+mono_marshal_thread_attach (MonoDomain *domain, gpointer *dummy)
+{
+	MonoDomain *orig;
+	MonoThreadInfo *info;
+
+	if (domain == (gpointer)(gsize) -1) {
+		/*
+		 * Happens when called from AOTed code which is only used in the root
+		 * domain.
+		 */
+		domain = mono_get_root_domain ();
+	}
+
+	g_assert (domain);
+
+	info = mono_thread_info_current_unchecked ();
+	if (!info || !mono_thread_info_is_live (info)) {
+		/* thread state STARTING -> RUNNING */
+		mono_thread_attach (domain);
+
+		// #678164
+		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
+
+		*dummy = NULL;
+
+		/* mono_threads_reset_blocking_start returns the current MonoThreadInfo
+		 * if we were in BLOCKING mode */
+		return mono_thread_info_current ();
+	} else {
+		orig = mono_domain_get ();
+
+		/* orig might be null if we did an attach -> detach -> attach sequence */
+
+		if (orig != domain)
+			mono_domain_set (domain, TRUE);
+
+		*dummy = orig;
+
+		/* thread state (BLOCKING|RUNNING) -> RUNNING */
+		return mono_threads_reset_blocking_start (dummy);
+	}
+
+
+}
+
+/* Called by native->managed wrappers */
+static void
+mono_marshal_thread_detach (gpointer cookie, gpointer *dummy)
+{
+	MonoDomain *domain, *orig;
+
+	domain = mono_domain_get ();
+	g_assert (domain);
+
+	orig = (MonoDomain*) *dummy;
+
+	/* it won't do anything if cookie is NULL */
+	mono_threads_reset_blocking_end (cookie, dummy);
+
+	if (orig != domain) {
+		if (!orig)
+			mono_domain_unset ();
+		else
+			mono_domain_set (orig, TRUE);
+	}
+}
+
+/*
  * mono_marshal_emit_managed_wrapper:
  *
  *   Emit the body of a native-to-managed wrapper. INVOKE_SIG is the signature of
@@ -7690,7 +7775,7 @@ mono_marshal_get_native_func_wrapper_aot (MonoClass *klass)
  * THIS_LOC is the memory location where the target of the delegate is stored.
  */
 void
-mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle)
+mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle, gboolean aot)
 {
 #ifdef DISABLE_JIT
 	MonoMethodSignature *sig, *csig;
@@ -7728,7 +7813,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	MonoMethodSignature *sig, *csig;
 	int i, *tmp_locals;
 	gboolean closed = FALSE;
-	int coop_gc_var, coop_gc_dummy_local;
+	int cookie, dummy;
 
 	sig = m->sig;
 	csig = m->csig;
@@ -7755,30 +7840,26 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		mono_mb_add_local (mb, sig->ret);
 	}
 
-	if (mono_threads_is_coop_enabled ()) {
-		/* local 4, the local to be used when calling the reset_blocking funcs */
-		/* tons of code hardcode 3 to be the return var */
-		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-		/* local 5, the local used to get a stack address for suspend funcs */
-		coop_gc_dummy_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	}
+	/* local 4, the local to be used when calling the mono_marshal_thread_attach funcs */
+	/* tons of code hardcode 3 to be the return var */
+	cookie = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	/* local 5, the local used to get a stack address for suspend funcs */
+	dummy = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
 	mono_mb_emit_icon (mb, 0);
 	mono_mb_emit_stloc (mb, 2);
 
-	/*
-	 * Might need to attach the thread to the JIT or change the
-	 * domain for the callback.
-	 */
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
-
-	if (mono_threads_is_coop_enabled ()) {
-		/* XXX can we merge reset_blocking_start with JIT_ATTACH above and save one call? */
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
-		mono_mb_emit_icall (mb, mono_threads_reset_blocking_start);
-		mono_mb_emit_stloc (mb, coop_gc_var);
-	}
+	/* cookie = mono_marshal_threads_attach (mono_domain_get (), &dummy) */
+#if SIZEOF_VOID_P == 4
+	mono_mb_emit_byte (mb, CEE_LDC_I4);
+	mono_mb_emit_i4 (mb, aot ? -1 : (gint32)(gsize) mono_domain_get ());
+#else
+	mono_mb_emit_byte (mb, CEE_LDC_I8);
+	mono_mb_emit_i8 (mb, aot ? -1 : (gint64)(gsize) mono_domain_get ());
+#endif
+	mono_mb_emit_ldloc_addr (mb, dummy);
+	mono_mb_emit_icall (mb, mono_marshal_thread_attach);
+	mono_mb_emit_stloc (mb, cookie);
 
 	/* we first do all conversions */
 	tmp_locals = (int *)alloca (sizeof (int) * sig->param_count);
@@ -7908,15 +7989,10 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		}
 	}
 
-	if (mono_threads_is_coop_enabled ()) {
-		/* XXX merge reset_blocking_end with detach */
-		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
-		mono_mb_emit_icall (mb, mono_threads_reset_blocking_end);
-	}
-
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
+	/* mono_marshal_threads_detach (cookie, &dummy) */
+	mono_mb_emit_ldloc (mb, cookie);
+	mono_mb_emit_ldloc_addr (mb, dummy);
+	mono_mb_emit_icall (mb, mono_marshal_thread_detach);
 
 	if (m->retobj_var) {
 		mono_mb_emit_ldloc (mb, m->retobj_var);
@@ -7976,7 +8052,7 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
  * If target_handle==0, the wrapper info will be a WrapperInfo structure.
  */
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle)
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle, gboolean aot)
 {
 	static MonoClass *UnmanagedFunctionPointerAttribute;
 	MonoMethodSignature *sig, *csig, *invoke_sig;
@@ -8108,7 +8184,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 			mono_custom_attrs_free (cinfo);
 	}
 
-	mono_marshal_emit_managed_wrapper (mb, invoke_sig, mspecs, &m, method, target_handle);
+	mono_marshal_emit_managed_wrapper (mb, invoke_sig, mspecs, &m, method, target_handle, aot);
 
 	if (!target_handle) {
 		WrapperInfo *info;
@@ -8180,7 +8256,7 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 
 		/* FIXME: Implement VTFIXUP_TYPE_FROM_UNMANAGED_RETAIN_APPDOMAIN. */
 
-		mono_marshal_emit_managed_wrapper (mb, sig, mspecs, &m, method, 0);
+		mono_marshal_emit_managed_wrapper (mb, sig, mspecs, &m, method, 0, FALSE);
 
 #ifndef DISABLE_JIT
 		mb->dynamic = TRUE;

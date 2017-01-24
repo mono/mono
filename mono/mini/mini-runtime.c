@@ -919,14 +919,6 @@ mono_jit_thread_attach (MonoDomain *domain)
 	return orig != domain ? orig : NULL;
 }
 
-/* Called by native->managed wrappers */
-void
-mono_jit_set_domain (MonoDomain *domain)
-{
-	if (domain)
-		mono_domain_set (domain, TRUE);
-}
-
 /**
  * mono_thread_abort:
  * @obj: exception object
@@ -3704,8 +3696,6 @@ register_icalls (void)
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
 	register_icall (mono_get_lmf_addr, "mono_get_lmf_addr", "ptr", TRUE);
-	register_icall (mono_jit_thread_attach, "mono_jit_thread_attach", "ptr ptr", TRUE);
-	register_icall (mono_jit_set_domain, "mono_jit_set_domain", "void ptr", TRUE);
 	register_icall (mono_domain_get, "mono_domain_get", "ptr", TRUE);
 
 	register_icall (mono_llvm_throw_exception, "mono_llvm_throw_exception", "void object", TRUE);
