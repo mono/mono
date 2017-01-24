@@ -57,29 +57,52 @@ typedef int64_t mword;
 #define MAX_ENTRY_SIZE (1 << 10)
 
 static int
-read_entry (EntryStream *stream, void *data)
+read_entry (EntryStream *stream, void *data, const char **name)
 {
 	unsigned char type;
 	ssize_t size;
 
-	if (read_stream (stream, &type, 1) <= 0)
+	if (read_stream (stream, &type, 1) <= 0) {
+		*name = NULL;
 		return SGEN_PROTOCOL_EOF;
+	}
 	switch (TYPE (type)) {
 
 #define BEGIN_PROTOCOL_ENTRY0(method) \
-	case PROTOCOL_ID(method): size = 0; break;
+	case PROTOCOL_ID(method): \
+		size = 0; \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 #define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
-	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+	case PROTOCOL_ID(method): \
+		size = sizeof (PROTOCOL_STRUCT(method)); \
+		*name = #method + strlen ("binary_protocol_"); \
+		break;
 
 #define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
 	BEGIN_PROTOCOL_ENTRY0 (method)
@@ -562,11 +585,48 @@ is_vtable_match (mword ptr, int type, void *data)
 #undef TYPE_POINTER
 
 static gboolean
+match_pattern (const char * pattern, const char * string)
+{
+	const char *p = pattern;
+	const char *s = string;
+	for (;;) {
+		/* End of pattern matches end of string. */
+		if (!*p)
+			return !*s;
+		/* "*" matches zero or more characters. */
+		if (*p == '*') {
+			while (*s && *s != *(p + 1))
+				++s;
+			++p;
+		/* Match one character at a time, "?" for any character. */
+		} else if (*p == *s || *p == '?') {
+			++p;
+			++s;
+		} else {
+			return FALSE;
+		}
+	}
+}
+
+static int
+find_pattern (
+	const char *const string,
+	const char **const patterns,
+	const size_t num_patterns)
+{
+	for (size_t i = 0; i < num_patterns; ++i)
+		if (match_pattern (patterns [i], string))
+			return i;
+	return -1;
+}
+
+static gboolean
 sgen_binary_protocol_read_header (EntryStream *stream)
 {
 #ifdef BINPROT_HAS_HEADER
 	char data [MAX_ENTRY_SIZE];
-	int type = read_entry (stream, data);
+	const char *name = NULL;
+	int type = read_entry (stream, data, &name);
 	if (type == SGEN_PROTOCOL_EOF)
 		return FALSE;
 	if (type == PROTOCOL_ID (binary_protocol_header)) {
@@ -591,8 +651,9 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 #define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, CONC(ARCH_SUFFIX,PACKED_SUFFIX))
 
 gboolean
-GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],
-			gboolean dump_all, gboolean pause_times, gboolean color_output, unsigned long long first_entry_to_consider)
+GREP_ENTRIES_FUNCTION_NAME (
+	EntryStream *const stream,
+	const GrepOptions *const options)
 {
 	int type;
 	void *data = g_malloc0 (MAX_ENTRY_SIZE);
@@ -607,10 +668,11 @@ GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int
 		return FALSE;
 
 	entry_index = 0;
-	while ((type = read_entry (stream, data)) != SGEN_PROTOCOL_EOF) {
-		if (entry_index < first_entry_to_consider)
+	const char *name = NULL;
+	while ((type = read_entry (stream, data, &name)) != SGEN_PROTOCOL_EOF) {
+		if (entry_index < options->first_entry_to_consider)
 			goto next_entry;
-		if (pause_times) {
+		if (options->pause_times) {
 			switch (type) {
 			case PROTOCOL_ID (binary_protocol_world_stopping): {
 				PROTOCOL_STRUCT (binary_protocol_world_stopping) *entry = data;
@@ -640,29 +702,31 @@ GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int
 				break;
 			}
 			}
-		} else {
-			int match_indices [num_nums + 1];
+		} else if (options->num_patterns == 0
+			|| find_pattern (name, options->patterns, options->num_patterns) != -1) {
+			int match_indices [options->num_nums + 1];
 			gboolean match = is_always_match (type);
-			match_indices [num_nums] = num_nums == 0 ? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
-			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
-			for (i = 0; i < num_nums; ++i) {
-				match_indices [i] = match_index ((mword) nums [i], type, data);
+			match_indices [options->num_nums] = options->num_nums == 0
+				? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match = match_indices [options->num_nums] != BINARY_PROTOCOL_NO_MATCH;
+			for (i = 0; i < options->num_nums; ++i) {
+				match_indices [i] = match_index ((mword) options->nums [i], type, data);
 				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
-				for (i = 0; i < num_vtables; ++i) {
-					if (is_vtable_match ((mword) vtables [i], type, data)) {
+				for (i = 0; i < options->num_vtables; ++i) {
+					if (is_vtable_match ((mword) options->vtables [i], type, data)) {
 						match = TRUE;
 						break;
 					}
 				}
 			}
-			if (match || dump_all)
+			if (match || options->dump_all)
 				printf ("%12lld ", entry_index);
-			if (dump_all)
+			if (options->dump_all)
 				printf (match ? "* " : "  ");
-			if (match || dump_all)
-				print_entry (type, data, num_nums, match_indices, color_output);
+			if (match || options->dump_all)
+				print_entry (type, data, options->num_nums, match_indices, options->color_output);
 		}
 	next_entry:
 		++entry_index;
