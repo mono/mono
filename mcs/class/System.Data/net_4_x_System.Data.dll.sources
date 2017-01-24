@@ -14,6 +14,7 @@ ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
+ReferenceSources/SR.cs
 
 Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
