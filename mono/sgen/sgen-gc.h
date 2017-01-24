@@ -629,9 +629,12 @@ struct _SgenMajorCollector {
 	GCObject* (*alloc_small_pinned_obj) (GCVTable vtable, size_t size, gboolean has_references);
 	GCObject* (*alloc_degraded) (GCVTable vtable, size_t size);
 
-	SgenObjectOperations major_ops_serial;
-	SgenObjectOperations major_ops_concurrent_start;
-	SgenObjectOperations major_ops_concurrent_finish;
+	SgenObjectOperations major_ops_serial_no_evac;
+	SgenObjectOperations major_ops_serial_with_evac;
+	SgenObjectOperations major_ops_concurrent_start_no_evac;
+	SgenObjectOperations major_ops_concurrent_start_with_evac;
+	SgenObjectOperations major_ops_concurrent_finish_no_evac;
+	SgenObjectOperations major_ops_concurrent_finish_with_evac;
 
 	GCObject* (*alloc_object) (GCVTable vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (GCObject *obj, size_t size);
@@ -674,6 +677,7 @@ struct _SgenMajorCollector {
 	guint8* (*get_cardtable_mod_union_for_reference) (char *object);
 	long long (*get_and_reset_num_major_objects_marked) (void);
 	void (*count_cards) (long long *num_total_cards, long long *num_marked_cards);
+	gboolean (*is_evacuating) (void);
 };
 
 extern SgenMajorCollector major_collector;

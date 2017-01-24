@@ -1150,6 +1150,8 @@ static guint64 stat_drain_loops;
 
 #define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_no_evacuation
 #define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_no_evacuation
+#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_no_evacuation
+#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_no_evacuation
 #define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_no_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
 
@@ -1164,6 +1166,8 @@ static guint64 stat_drain_loops;
 #define COPY_OR_MARK_CONCURRENT
 #define COPY_OR_MARK_FUNCTION_NAME	major_copy_or_mark_object_concurrent_no_evacuation
 #define SCAN_OBJECT_FUNCTION_NAME	major_scan_object_concurrent_no_evacuation
+#define SCAN_VTYPE_FUNCTION_NAME	major_scan_vtype_concurrent_no_evacuation
+#define SCAN_PTR_FIELD_FUNCTION_NAME	major_scan_ptr_field_concurrent_no_evacuation
 #define DRAIN_GRAY_STACK_FUNCTION_NAME	drain_gray_stack_concurrent_no_evacuation
 #include "sgen-marksweep-drain-gray-stack.h"
 
@@ -1188,40 +1192,28 @@ major_is_evacuating (void)
 	return FALSE;
 }
 
-static gboolean
-drain_gray_stack (SgenGrayQueue *queue)
-{
-	if (major_is_evacuating ())
-		return drain_gray_stack_with_evacuation (queue);
-	else
-		return drain_gray_stack_no_evacuation (queue);
-}
-
-static gboolean
-drain_gray_stack_concurrent (SgenGrayQueue *queue)
-{
-	if (major_is_evacuating ())
-		return drain_gray_stack_concurrent_with_evacuation (queue);
-	else
-		return drain_gray_stack_concurrent_no_evacuation (queue);
-}
-
 static void
-major_copy_or_mark_object_canonical (GCObject **ptr, SgenGrayQueue *queue)
+major_copy_or_mark_object_with_evac_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
 }
 
 static void
-major_copy_or_mark_object_concurrent_canonical (GCObject **ptr, SgenGrayQueue *queue)
+major_copy_or_mark_object_no_evac_canonical (GCObject **ptr, SgenGrayQueue *queue)
+{
+	major_copy_or_mark_object_no_evacuation (ptr, *ptr, queue);
+}
+
+static void
+major_copy_or_mark_object_concurrent_with_evac_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
 	major_copy_or_mark_object_concurrent_with_evacuation (ptr, *ptr, queue);
 }
 
 static void
-major_copy_or_mark_object_concurrent_finish_canonical (GCObject **ptr, SgenGrayQueue *queue)
+major_copy_or_mark_object_concurrent_no_evac_canonical (GCObject **ptr, SgenGrayQueue *queue)
 {
-	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
+	major_copy_or_mark_object_concurrent_no_evacuation (ptr, *ptr, queue);
 }
 
 static void
@@ -2639,22 +2631,39 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->is_valid_object = major_is_valid_object;
 	collector->describe_pointer = major_describe_pointer;
 	collector->count_cards = major_count_cards;
+	collector->is_evacuating = major_is_evacuating;
 
-	collector->major_ops_serial.copy_or_mark_object = major_copy_or_mark_object_canonical;
-	collector->major_ops_serial.scan_object = major_scan_object_with_evacuation;
-	collector->major_ops_serial.drain_gray_stack = drain_gray_stack;
+	collector->major_ops_serial_no_evac.copy_or_mark_object = major_copy_or_mark_object_no_evac_canonical;
+	collector->major_ops_serial_no_evac.scan_object = major_scan_object_no_evacuation;
+	collector->major_ops_serial_no_evac.drain_gray_stack = drain_gray_stack_no_evacuation;
+
+	collector->major_ops_serial_with_evac.copy_or_mark_object = major_copy_or_mark_object_with_evac_canonical;
+	collector->major_ops_serial_with_evac.scan_object = major_scan_object_with_evacuation;
+	collector->major_ops_serial_with_evac.drain_gray_stack = drain_gray_stack_with_evacuation;
 	if (is_concurrent) {
-		collector->major_ops_concurrent_start.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
-		collector->major_ops_concurrent_start.scan_object = major_scan_object_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_vtype = major_scan_vtype_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.scan_ptr_field = major_scan_ptr_field_concurrent_with_evacuation;
-		collector->major_ops_concurrent_start.drain_gray_stack = drain_gray_stack_concurrent;
+		collector->major_ops_concurrent_start_no_evac.copy_or_mark_object = major_copy_or_mark_object_concurrent_no_evac_canonical;
+		collector->major_ops_concurrent_start_no_evac.scan_object = major_scan_object_concurrent_no_evacuation;
+		collector->major_ops_concurrent_start_no_evac.scan_vtype = major_scan_vtype_concurrent_no_evacuation;
+		collector->major_ops_concurrent_start_no_evac.scan_ptr_field = major_scan_ptr_field_concurrent_no_evacuation;
+		collector->major_ops_concurrent_start_no_evac.drain_gray_stack = drain_gray_stack_concurrent_no_evacuation;
 
-		collector->major_ops_concurrent_finish.copy_or_mark_object = major_copy_or_mark_object_concurrent_finish_canonical;
-		collector->major_ops_concurrent_finish.scan_object = major_scan_object_with_evacuation;
-		collector->major_ops_concurrent_finish.scan_vtype = major_scan_vtype_with_evacuation;
-		collector->major_ops_concurrent_finish.scan_ptr_field = major_scan_ptr_field_with_evacuation;
-		collector->major_ops_concurrent_finish.drain_gray_stack = drain_gray_stack;
+		collector->major_ops_concurrent_start_with_evac.copy_or_mark_object = major_copy_or_mark_object_concurrent_with_evac_canonical;
+		collector->major_ops_concurrent_start_with_evac.scan_object = major_scan_object_concurrent_with_evacuation;
+		collector->major_ops_concurrent_start_with_evac.scan_vtype = major_scan_vtype_concurrent_with_evacuation;
+		collector->major_ops_concurrent_start_with_evac.scan_ptr_field = major_scan_ptr_field_concurrent_with_evacuation;
+		collector->major_ops_concurrent_start_with_evac.drain_gray_stack = drain_gray_stack_concurrent_with_evacuation;
+
+		collector->major_ops_concurrent_finish_no_evac.copy_or_mark_object = major_copy_or_mark_object_no_evac_canonical;
+		collector->major_ops_concurrent_finish_no_evac.scan_object = major_scan_object_no_evacuation;
+		collector->major_ops_concurrent_finish_no_evac.scan_vtype = major_scan_vtype_no_evacuation;
+		collector->major_ops_concurrent_finish_no_evac.scan_ptr_field = major_scan_ptr_field_no_evacuation;
+		collector->major_ops_concurrent_finish_no_evac.drain_gray_stack = drain_gray_stack_no_evacuation;
+
+		collector->major_ops_concurrent_finish_with_evac.copy_or_mark_object = major_copy_or_mark_object_with_evac_canonical;
+		collector->major_ops_concurrent_finish_with_evac.scan_object = major_scan_object_with_evacuation;
+		collector->major_ops_concurrent_finish_with_evac.scan_vtype = major_scan_vtype_with_evacuation;
+		collector->major_ops_concurrent_finish_with_evac.scan_ptr_field = major_scan_ptr_field_with_evacuation;
+		collector->major_ops_concurrent_finish_with_evac.drain_gray_stack = drain_gray_stack_with_evacuation;
 	}
 
 #ifdef HEAVY_STATISTICS
