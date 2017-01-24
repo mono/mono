@@ -943,7 +943,19 @@ public class DebuggerTests
 		f = e.Thread.GetFrames ()[0];
 		AssertValue (7.0, f.GetValue (f.Method.GetParameters ()[0]));
 		req.Disable ();
-	}
+
+		e = run_until ("ss_await_1");//{
+			create_step (e);
+			assert_location (step_into (), "ss_await_1");//var a = 1;
+			assert_location (step_into (), "ss_await_1");//await Task.Delay (20);
+			assert_location (step_into (), "ss_await_1");//return a + 2;
+			assert_location (step_into (), "ss_await_1");//}
+			assert_location (step_into (), "ss_await_1");//ss_await_1 ().Wait ();//in
+			assert_location (step_into (), "ss_await_1");//ss_await_1 ().Wait ();//over
+			assert_location (step_into (), "ss_await_1");//{
+
+
+		}
 
 	[Test]
 	public void SingleSteppingNoFrames () {
