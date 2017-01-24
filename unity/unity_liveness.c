@@ -56,6 +56,7 @@ void array_grow(custom_growable_array* array)
 }
 
 typedef void (*register_object_callback)(gpointer* arr, int size, void* callback_userdata);
+typedef void (*WorldStateChanged)();
 struct _LivenessState
 {
 	gint                first_index_in_all_objects;
@@ -69,16 +70,18 @@ struct _LivenessState
 	void*               callback_userdata;
 
 	register_object_callback filter_callback;
+	WorldStateChanged        onWorldStartCallback;
+	WorldStateChanged        onWorldStopCallback;
 };
 
 /* Liveness calculation */
-LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata);
-void           mono_unity_liveness_stop_gc_world ();
+LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback);
+void           mono_unity_liveness_stop_gc_world (WorldStateChanged onStopWorldCallback);
 void           mono_unity_liveness_finalize (LivenessState* state);
-void           mono_unity_liveness_start_gc_world ();
+void           mono_unity_liveness_start_gc_world (WorldStateChanged onStartWorldCallback);
 void           mono_unity_liveness_free_struct (LivenessState* state);
 
-LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata);
+LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onStartWorldCallback, WorldStateChanged onStopWorldCallback);
 void           mono_unity_liveness_calculation_end (LivenessState* state);
 
 void           mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* state);
@@ -436,7 +439,7 @@ void mono_unity_liveness_add_object_callback(gpointer* objs, gint count, void* a
  *
  * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
- */
+ *
 gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_handle)
 {
 	int i = 0;
@@ -469,7 +472,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 
 }
-
+*/
 /**
  * mono_unity_liveness_calculation_from_root:
  *
@@ -494,7 +497,7 @@ void mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState*
  * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
  */
-gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle, gpointer filter_handle)
+gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle, gpointer filter_handle, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)
 {
 	int i = 0;
 	MonoArray *res = NULL;
@@ -510,7 +513,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	if (filter_type)
 		filter = mono_class_from_mono_type (filter_type->type);
 
-	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects);
+	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects, onWorldStartCallback, onWorldStopCallback);
 
 	mono_unity_liveness_calculation_from_root (root, liveness_state);
 
@@ -527,7 +530,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 }
 
-LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
+LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)
 {
 	LivenessState* state = NULL;
 
@@ -547,6 +550,8 @@ LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max
 
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
+	state->onWorldStartCallback = onWorldStartCallback;
+	state->onWorldStopCallback = onWorldStopCallback;
 
 	return state;
 }
@@ -569,21 +574,23 @@ void mono_unity_liveness_free_struct (LivenessState* state)
 	g_free(state);
 }
 
-void mono_unity_liveness_stop_gc_world ()
+void mono_unity_liveness_stop_gc_world (WorldStateChanged onStopWorldCallback)
 {
+	onStopWorldCallback();
 	GC_stop_world_external ();
 	// no allocations can happen beyond this point
 }
 
-void mono_unity_liveness_start_gc_world ()
+void mono_unity_liveness_start_gc_world (WorldStateChanged onStartWorldCallback)
 {
 	GC_start_world_external ();
+	onStartWorldCallback();
 }
 
-LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
+LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)
 {
-	LivenessState* state = mono_unity_liveness_allocate_struct (filter, max_count, callback, callback_userdata);
-	mono_unity_liveness_stop_gc_world ();
+	LivenessState* state = mono_unity_liveness_allocate_struct (filter, max_count, callback, callback_userdata, onWorldStartCallback, onWorldStopCallback);
+	mono_unity_liveness_stop_gc_world (state->onWorldStopCallback);
 	// no allocations can happen beyond this point
 	return state;
 }
@@ -591,6 +598,6 @@ LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint m
 void mono_unity_liveness_calculation_end (LivenessState* state)
 {
 	mono_unity_liveness_finalize(state);
-	mono_unity_liveness_start_gc_world();
+	mono_unity_liveness_start_gc_world(state->onWorldStartCallback);
 	mono_unity_liveness_free_struct(state);
 }
