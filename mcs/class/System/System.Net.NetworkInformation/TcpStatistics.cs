@@ -88,7 +88,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32TcpStatistics : TcpStatistics
 	{
 		Win32_MIB_TCPSTATS info;

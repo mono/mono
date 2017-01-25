@@ -38,3 +38,4 @@ NO_TEST = yes
 NO_INSTALL = yes
 MOBILE_DYNAMIC = yes
 MOBILE_PROFILE = yes
+NO_CONSOLE = yes

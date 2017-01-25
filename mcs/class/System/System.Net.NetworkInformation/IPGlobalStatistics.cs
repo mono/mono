@@ -113,7 +113,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPGlobalStatistics : IPGlobalStatistics 
 	{
 		Win32_MIB_IPSTATS info;

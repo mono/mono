@@ -991,8 +991,14 @@ namespace MonoTests.System.Net.Sockets {
 						 "BeginSend #4");
 			}
 
-			IPEndPoint ep = new IPEndPoint (Dns.GetHostEntry (string.Empty).AddressList[0], 1236);
-			
+			IPAddress[] addresses = Dns.GetHostEntry (string.Empty).AddressList;
+			IPEndPoint ep = null;
+			foreach (IPAddress a in addresses) {
+				if (a.AddressFamily == AddressFamily.InterNetwork) {
+					ep = new IPEndPoint (a, 1236);
+					break;
+				}
+			}
 			BSCalledBack.Reset ();
 			
 			client.BeginSend (bytes, bytes.Length, ep,
