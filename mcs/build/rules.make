@@ -190,7 +190,12 @@ AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.
 
 # This can run in parallel
 .PHONY: aot-all-profile
+ifdef AOT_BUILD_FLAGS
 aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+else
+aot-all-profile:
+	echo AOT_BUILD_FLAGS not set, skipping AOT.
+endif
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll
 	@ mkdir -p $<_bitcode_tmp
