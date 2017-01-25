@@ -3684,6 +3684,11 @@ if test "x$icall_tables" = "xno"; then
    AC_DEFINE(DISABLE_ICALL_TABLES, 1, [Icall tables disabled])
 fi
 
+AC_ARG_ENABLE(division-check,[  --enable-division-check Generate manual checks for division errors rather than relying on signals], division_check=$enableval, division_check=no)
+if test "x$division_check" = "xyes"; then
+   AC_DEFINE(MONO_ARCH_NEED_DIV_CHECK, 1, [Manual division check generation enabled])
+fi
+
 if test "x$with_tls" = "x__thread"; then
 	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
 	# Pass the information to libgc
