@@ -44,8 +44,8 @@ sgen_resume_thread (SgenThreadInfo *info)
 gboolean
 sgen_suspend_thread (SgenThreadInfo *info)
 {
-	mach_msg_type_number_t num_state;
-	thread_state_t state;
+	mach_msg_type_number_t num_state, num_fpstate;
+	thread_state_t state, fpstate;
 	kern_return_t ret;
 	ucontext_t ctx;
 	mcontext_t mctx;
@@ -53,6 +53,7 @@ sgen_suspend_thread (SgenThreadInfo *info)
 	gpointer stack_start;
 
 	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
+	fpstate = (thread_state_t) alloca (mono_mach_arch_get_thread_fpstate_size ());
 	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
 	do {
@@ -62,12 +63,12 @@ sgen_suspend_thread (SgenThreadInfo *info)
 		return FALSE;
 
 	do {
-		ret = mono_mach_arch_get_thread_state (info->client_info.info.native_handle, state, &num_state);
+		ret = mono_mach_arch_get_thread_states (info->client_info.info.native_handle, state, &num_state, fpstate, &num_fpstate);
 	} while (ret == KERN_ABORTED);
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
-	mono_mach_arch_thread_state_to_mcontext (state, mctx);
+	mono_mach_arch_thread_states_to_mcontext (state, fpstate, mctx);
 	ctx.uc_mcontext = mctx;
 
 	info->client_info.stopped_domain = mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
