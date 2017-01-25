@@ -70,15 +70,15 @@ struct _LivenessState
 	void*               callback_userdata;
 
 	register_object_callback filter_callback;
-	WorldStateChanged        onWorldStartCallback ;
+	WorldStateChanged        onWorldStartCallback;
 	WorldStateChanged        onWorldStopCallback;
 };
 
 /* Liveness calculation */
 LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback);
-void           mono_unity_liveness_stop_gc_world (WorldStateChanged onStopWorldCallback);
+void           mono_unity_liveness_stop_gc_world (LivenessState* state);
 void           mono_unity_liveness_finalize (LivenessState* state);
-void           mono_unity_liveness_start_gc_world (WorldStateChanged onStartWorldCallback);
+void           mono_unity_liveness_start_gc_world (LivenessState* state);
 void           mono_unity_liveness_free_struct (LivenessState* state);
 
 LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onStartWorldCallback, WorldStateChanged onStopWorldCallback);
@@ -575,23 +575,23 @@ void mono_unity_liveness_free_struct (LivenessState* state)
 	g_free(state);
 }
 
-void mono_unity_liveness_stop_gc_world (WorldStateChanged onStopWorldCallback)
+void mono_unity_liveness_stop_gc_world (LivenessState* state)
 {
-	onStopWorldCallback();
+	state->onWorldStopCallback();
 	GC_stop_world_external ();
 	// no allocations can happen beyond this point
 }
 
-void mono_unity_liveness_start_gc_world (WorldStateChanged onStartWorldCallback)
+void mono_unity_liveness_start_gc_world (LivenessState* state)
 {
 	GC_start_world_external ();
-	onStartWorldCallback();
+	state->onWorldStartCallback();
 }
 
 LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)
 {
 	LivenessState* state = mono_unity_liveness_allocate_struct (filter, max_count, callback, callback_userdata, onWorldStartCallback, onWorldStopCallback);
-	mono_unity_liveness_stop_gc_world (state->onWorldStopCallback);
+	mono_unity_liveness_stop_gc_world (state);
 	// no allocations can happen beyond this point
 	return state;
 }
@@ -599,6 +599,6 @@ LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint m
 void mono_unity_liveness_calculation_end (LivenessState* state)
 {
 	mono_unity_liveness_finalize(state);
-	mono_unity_liveness_start_gc_world(state->onWorldStartCallback);
+	mono_unity_liveness_start_gc_world(state);
 	mono_unity_liveness_free_struct(state);
 }
