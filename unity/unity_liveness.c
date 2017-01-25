@@ -70,7 +70,7 @@ struct _LivenessState
 	void*               callback_userdata;
 
 	register_object_callback filter_callback;
-	WorldStateChanged        onWorldStartCallback;
+	WorldStateChanged        onWorldStartCallback ;
 	WorldStateChanged        onWorldStopCallback;
 };
 
@@ -122,7 +122,8 @@ void array_safe_grow(LivenessState* state, custom_growable_array* array)
 		MonoObject* object = array_at_index(state->all_objects,i);
 		CLEAR_OBJ(object);
 	}
-	GC_start_world_external ();
+	mono_unity_liveness_start_gc_world(state);
+
 	array_grow(array);
 	GC_stop_world_external ();
 	for (i = 0; i < state->all_objects->len; i++)
