@@ -64,6 +64,7 @@ dist-hook:
 
 clean-local:
 	-rm -Rf html
+	-rm -Rf doxygen
 	-rm -f deploy/* convert.exe* AgilityPack.dll*
 	-rm -f $(ASSEMBLED_DOCS)
 
@@ -100,3 +101,5 @@ convert.exe: convert.cs AgilityPack.dll
 AgilityPack.dll: 
 	$(TOOL_MAKE) AgilityPack.dll
 
+doxygen:
+	doxygen doxyfile
