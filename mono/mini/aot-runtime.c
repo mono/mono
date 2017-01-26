@@ -95,6 +95,7 @@ typedef struct MonoAotModule {
 	GHashTable *method_to_code;
 	/* Maps pointers into the method info to the methods themselves */
 	GHashTable *method_ref_to_method;
+	GHashTable *code_to_idx;
 	MonoAssemblyName *image_names;
 	char **image_guids;
 	MonoAssembly *assembly;
@@ -2228,13 +2229,14 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	/* Compute method addresses */
 	amodule->methods = (void **)g_malloc0 (amodule->info.nmethods * sizeof (gpointer));
+	amodule->code_to_idx = g_hash_table_new (NULL, NULL);
 	for (i = 0; i < amodule->info.nmethods; ++i) {
 		void *addr = NULL;
 
 		if (amodule->info.llvm_get_method) {
-			gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
+			gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
 
-			addr = get_method (i);
+			addr = get_method (i, 0);
 		}
 
 		/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
@@ -2246,8 +2248,10 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		}
 		if (addr == NULL)
 			amodule->methods [i] = GINT_TO_POINTER (-1);
-		else
+		else {
 			amodule->methods [i] = addr;
+			g_hash_table_insert (amodule->code_to_idx, addr, GINT_TO_POINTER(i));
+		}
 	}
 
 	if (make_unreadable) {
@@ -2647,11 +2651,14 @@ compute_llvm_code_range (MonoAotModule *amodule, guint8 **code_start, guint8 **c
 	gint32 *table;
 
 	if (amodule->info.llvm_get_method) {
-		gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
+		gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
 
-		*code_start = (guint8 *)get_method (-1);
-		*code_end = (guint8 *)get_method (-2);
+		*code_start = (guint8 *)get_method (-1, 0);
+		*code_end = (guint8 *)get_method (-2, 0);
 
+		// If the code start/end was moved to another module, we're in trouble
+		g_assert (*code_end);
+		g_assert (*code_start);
 		g_assert (*code_end > *code_start);
 		return;
 	}
@@ -3180,8 +3187,13 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 static gboolean
 amodule_contains_code_addr (MonoAotModule *amodule, guint8 *code)
 {
-	return (code >= amodule->jit_code_start && code <= amodule->jit_code_end) ||
-		(code >= amodule->llvm_code_start && code <= amodule->llvm_code_end);
+	gboolean good = g_hash_table_lookup (amodule->code_to_idx, code) != NULL;
+
+	if (!good) 
+		g_assert ((code >= amodule->jit_code_start && code <= amodule->jit_code_end) ||
+		(code >= amodule->llvm_code_start && code <= amodule->llvm_code_end));
+
+	return good;
 }
 
 /*
@@ -3305,9 +3317,10 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 
 	nmethods = amodule->info.nmethods;
 
-	if (domain != mono_get_root_domain ())
-		/* FIXME: */
+	if (domain != mono_get_root_domain ()) {
+		g_assert_not_reached ();
 		return NULL;
+	}
 
 	if (!amodule_contains_code_addr (amodule, (guint8 *)addr))
 		return NULL;
@@ -3950,8 +3963,14 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		/*
 		 * Obtain the method address by calling a generated function in the LLVM module.
 		 */
-		gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
-		code = (guint8 *)get_method (method_index);
+		gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
+		code = (guint8 *)get_method (method_index, 0);
+		while (!code) {
+			fprintf (stderr, "Chasing\n");
+			amodule = (MonoAotModule *)get_method (method_index, 1);
+			get_method = (gpointer (*)(int, int))amodule->info.llvm_get_method;
+			code = (guint8 *)get_method (method_index, 0);
+		}
 	}
 
 	if (!code) {
@@ -3973,8 +3992,9 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		}
 		code = (guint8 *)amodule->methods [method_index];
 	}
+	g_assert (code);
 
-	resolve_amodule (amodule, code, target_amodule, target_method_index);
+	/*resolve_amodule (amodule, code, target_amodule, target_method_index);*/
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
 

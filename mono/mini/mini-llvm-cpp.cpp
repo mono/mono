@@ -43,11 +43,11 @@ using namespace llvm;
 #endif
 
 void 
-mono_llvm_set_comdat (LLVMValueRef func_val, LLVMModuleRef module_val)
+mono_llvm_set_comdat (LLVMValueRef val, LLVMModuleRef module_val)
 {
-	Function *func = unwrap<Function>(func_val);
 	Module *module = unwrap(module_val);
-	func->setComdat(module->getOrInsertComdat(func->getName()));
+	GlobalObject *data = unwrap<GlobalObject>(val);
+	data->setComdat(module->getOrInsertComdat(data->getName()));
 }
 
 void
