@@ -100,20 +100,15 @@ public class Program
 
 	static void RewriteAssembly (string assemblyLocation, Dictionary<string, string> resourcesStrings, CmdOptions options)
 	{
-		Stream pdbSymbols = null;
-
 		var debugSymbols = Path.ChangeExtension (assemblyLocation, "pdb");
-		if (File.Exists (debugSymbols))
-			pdbSymbols = File.Open (debugSymbols, FileMode.Open, FileAccess.ReadWrite);
+		var useDebugSymbols = File.Exists (debugSymbols);
 
 		var readerParameters = new ReaderParameters {
 			ReadWrite = true,
 		};
 
-		if (pdbSymbols != null) {
-			readerParameters.ReadSymbols = true;
+		if (useDebugSymbols) {
 			readerParameters.SymbolReaderProvider = new PortablePdbReaderProvider ();
-			readerParameters.SymbolStream = pdbSymbols;
 		}
 
 		using (var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters)) {
@@ -142,17 +137,12 @@ public class Program
 
 			var writerParameters = new WriterParameters ();
 
-			if (pdbSymbols != null) {
-				writerParameters.WriteSymbols = true;
-				writerParameters.SymbolStream = pdbSymbols;
+			if (useDebugSymbols) {
 				writerParameters.SymbolWriterProvider = new PortablePdbWriterProvider ();
-				pdbSymbols.Seek (0, SeekOrigin.Begin);
 			}
 
 			assembly.Write (writerParameters);
 		}
-
-		pdbSymbols?.Dispose ();
 	}
 
 	static bool LoadGetResourceStrings (Dictionary<string, string> resourcesStrings, CmdOptions options)

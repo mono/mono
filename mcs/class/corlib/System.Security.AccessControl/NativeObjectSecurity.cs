@@ -38,7 +38,7 @@ namespace System.Security.AccessControl
 	public abstract class NativeObjectSecurity : CommonObjectSecurity
 	{
 		ExceptionFromErrorCode exception_from_error_code;
-#if !MOBILE
+#if WIN_PLATFORM
 		ResourceType resource_type;
 #endif
 		
@@ -49,7 +49,7 @@ namespace System.Security.AccessControl
 		internal NativeObjectSecurity (CommonSecurityDescriptor securityDescriptor, ResourceType resourceType)
 			: base (securityDescriptor)
 		{
-#if !MOBILE			
+#if WIN_PLATFORM
 			resource_type = resourceType;
 #endif
 		}
@@ -67,7 +67,7 @@ namespace System.Security.AccessControl
 			: base (isContainer)
 		{
 			exception_from_error_code = exceptionFromErrorCode;
-#if !MOBILE			
+#if WIN_PLATFORM
 			resource_type = resourceType;
 #endif
 		}
@@ -209,7 +209,7 @@ namespace System.Security.AccessControl
 		internal virtual int InternalGet (SafeHandle handle,
 						  AccessControlSections includeSections)
 		{
-#if MOBILE
+#if !WIN_PLATFORM
 			throw new PlatformNotSupportedException ();
 #else
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
@@ -229,7 +229,7 @@ namespace System.Security.AccessControl
 		internal virtual int InternalGet (string name,
 						  AccessControlSections includeSections)
 		{
-#if MOBILE
+#if !WIN_PLATFORM
 			throw new PlatformNotSupportedException ();
 #else
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
@@ -246,7 +246,7 @@ namespace System.Security.AccessControl
 #endif
 		}
 		
-#if MOBILE
+#if !WIN_PLATFORM
 		internal virtual int InternalSet (SafeHandle handle, AccessControlSections includeSections)
 		{
 			throw new PlatformNotSupportedException ();

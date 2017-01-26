@@ -475,7 +475,7 @@ namespace MonoTests.System.Reflection
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
 #if FULL_AOT_DESKTOP
-			string [] names = { "testing_aot_full_corlib_test" };
+			string [] names = { "testing_aot_full_corlib_test", "winaot_corlib_test" };
 #else
 			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
 #endif

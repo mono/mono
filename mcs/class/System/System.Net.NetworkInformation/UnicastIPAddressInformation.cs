@@ -33,7 +33,7 @@ using System.Net.Sockets;
 using System.Diagnostics.Contracts;
 
 namespace System.Net.NetworkInformation {
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32UnicastIPAddressInformation : UnicastIPAddressInformation 
 	{
 		Win32_IP_ADAPTER_UNICAST_ADDRESS info;

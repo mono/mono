@@ -71,7 +71,7 @@ $(csc_SCI_image): $(csc_SCI_dll) $(runtime_dep)
 
 ifdef ENABLE_AOT
 
-CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image)
+CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image) $(csc_MCS_image)
 
 clean-local:
 	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES) $(PROFILE)_aot.log
@@ -79,8 +79,7 @@ clean-local:
 # AOT build profile to speed up build
 ifeq ($(PROFILE),build)
 
-# $(mscorlib_aot_image) is disabled due to runtime bug #50434
-IMAGES =
+IMAGES = $(mscorlib_aot_image)
 
 ifdef MCS_MODE
 IMAGES += $(mcs_aot_image)

@@ -49,7 +49,8 @@ System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System
 System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Tasks.Parallel System.Xml.ReaderWriter \
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
 System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System.IO.FileSystem.Primitives System.IO.FileSystem \
-System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple
+System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple \
+System.Text.Encoding.CodePages
 
 build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS)
 
@@ -69,6 +70,8 @@ monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 winaot_PARALLEL_SUBDIRS :=
+
+orbis_PARALLEL_SUBDIRS :=
 
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng

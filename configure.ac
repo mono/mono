@@ -379,6 +379,10 @@ if test -z "$PLATFORM_LINUX_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.so
 fi
 
+if test -z "$HOST_WIN32_TRUE"; then :
+PLATFORM_AOT_SUFFIX=.dll
+fi
+
 AC_SUBST(PLATFORM_AOT_SUFFIX)
 
 ## PLATFORM_AOT_SUFFIX not so simple for windows :-)
@@ -803,6 +807,8 @@ AC_ARG_WITH(xammac,              [  --with-xammac=yes,no                If you w
 AC_ARG_WITH(testing_aot_hybrid,  [  --with-testing_aot_hybrid=yes,no    If you want to build the testing_aot_hybrid assemblies (defaults to no)],   [], [with_testing_aot_hybrid=default])
 AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you want to build the testing_aot_full assemblies (defaults to no)],     [], [with_testing_aot_full=default])
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
+AC_ARG_WITH(orbis,              [  --with-orbis=yes,no                  If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
+
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 
@@ -821,6 +827,7 @@ with_xammac_default=no
 with_testing_aot_hybrid_default=no
 with_testing_aot_full_default=no
 with_winaot_default=no
+with_orbis_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
@@ -839,6 +846,7 @@ elif test x$with_runtime_preset = xall; then
    with_monotouch_tv_default=yes
    with_xammac_default=yes
    with_winaot_default=yes
+   with_orbis_default=yes
 elif test x$with_runtime_preset = xfullaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -851,6 +859,7 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_appdomains='yes'
 
    AOT_BUILD_FLAGS="-O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
+
    AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
@@ -886,6 +895,32 @@ elif test x$with_runtime_preset = xaot; then
    AOT_RUN_FLAGS=""
 
    DISABLE_MCS_DOCS_default=yes
+elif test x$with_runtime_preset = xwinaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_winaot_default=yes
+   TEST_PROFILE=winaot
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
+elif test x$with_runtime_preset = xorbis; then
+   DISABLE_MCS_DOCS_default=yes
+   with_orbis_default=yes
+   TEST_PROFILE=orbis
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 else
    with_profile4_x_default=yes
 fi
@@ -929,6 +964,9 @@ fi
 if test "x$with_winaot" = "xdefault"; then
    with_winaot=$with_winaot_default
 fi
+if test "x$with_orbis" = "xdefault"; then
+   with_orbis=$with_orbis_default
+fi
 
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
@@ -941,6 +979,8 @@ AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
 AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != "xno"])
 AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
+AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
+AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$with_testing_aot_full" != "xno"] || [test "x$with_winaot" != "xno"])
 
 AC_SUBST(INSTALL_TESTING_AOT_HYBRID)
 AC_SUBST(INSTALL_TESTING_AOT_FULL)
@@ -960,6 +1000,12 @@ if test -z "$INSTALL_TESTING_AOT_HYBRID_TRUE"; then :
 fi
 if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
    default_profile=testing_aot_full
+fi
+if test -z "$INSTALL_WINAOT_TRUE"; then :
+   default_profile=winaot
+fi
+if test -z "$INSTALL_ORBIS_TRUE"; then :
+   default_profile=orbis
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -4145,8 +4191,8 @@ mono_cfg_root=$mono_build_root/runtime
 if test x$host_win32 = xyes; then
   if test "x$cross_compiling" = "xno"; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
-    CSC="'"`cygpath -w -a $CSC`"'"
-	CSC_LOCATION="'"`cygpath -w -a $CSC_LOCATION`"'"
+    CSC=`cygpath -m -a $CSC`
+    CSC_LOCATION=`cygpath -m -a $CSC_LOCATION`
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -4545,6 +4591,7 @@ echo "
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
 	Windows AOT:     $with_winaot
+	Orbis:           $with_orbis
 	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg

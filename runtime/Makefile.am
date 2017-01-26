@@ -56,8 +56,16 @@ if INSTALL_TESTING_AOT_FULL
 build_profiles += testing_aot_full
 endif
 
+if INSTALL_WINAOT
+build_profiles += winaot
+endif
+
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
+endif
+
+if INSTALL_ORBIS
+build_profiles += orbis
 endif
 
 test_profiles = $(build_profiles)
@@ -113,20 +121,20 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-if INSTALL_TESTING_AOT_FULL
+if FULL_AOT_TESTS
 #  ILASM.exe has features which a testing_aot_full runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
 #  We skip it here because otherwise it will fail to verify.
-TESTING_AOT_FULL_FILTER=grep -v ilasm
+FULL_AOT_TESTS_FILTER=grep -v ilasm
 else
-TESTING_AOT_FULL_FILTER=echo
+FULL_AOT_TESTS_FILTER=echo
 endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip binary_reference_assemblies because they contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
-	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(TESTING_AOT_FULL_FILTER)` ; \
+	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(FULL_AOT_TESTS_FILTER)` ; \
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
 	  if [ "binary_reference_assemblies" = "$$profile" ]; then \
