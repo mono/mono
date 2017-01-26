@@ -14,8 +14,9 @@ ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
-
 ReferenceSources/mobile_DbConnectionPoolCounters.cs
+
+corefx/SR.cs
 
 Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
@@ -65,5 +66,4 @@ System.Data.Common/ExceptionHelper.cs
 System.Data.Common/DbConnectionStringBuilderHelper.cs
 
 #include mobile_referencesource.sources
-
-
+#include corefx.common.sources
