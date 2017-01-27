@@ -943,6 +943,142 @@ public class DebuggerTests
 		f = e.Thread.GetFrames ()[0];
 		AssertValue (7.0, f.GetValue (f.Method.GetParameters ()[0]));
 		req.Disable ();
+
+		e = run_until ("ss_await");
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//in
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//return a + 2;
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("ss_await", e);//ss_await_1 ().Wait ();//over
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//out before
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1 ().Wait ();//out before
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//out after
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_out_await ("ss_await", e);//ss_await_1 ().Wait ();//out after
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//if (exc)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//if (handled)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//try {
+		e = step_in_await ("MoveNext", e);//throw new Exception ();
+		e = step_in_await ("MoveNext", e);//catch
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//in
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//if (exc)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//if (handled)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//try {
+		e = step_over_await ("MoveNext", e);//throw new Exception ();
+		e = step_over_await ("MoveNext", e);//catch
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//return a + 2;
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//over
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+
+		e = step_in_await ("ss_await", e);//try {
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//if (exc)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//if (handled)
+		e = step_in_await ("MoveNext", e);//} else {
+		e = step_in_await ("MoveNext", e);//throw new Exception ();
+		e = step_in_await ("ss_await", e);//catch
+		e = step_in_await ("ss_await", e);//{
+		e = step_in_await ("ss_await", e);//}
+		e = step_in_await ("ss_await", e);//try {
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//if (exc)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//if (handled)
+		e = step_over_await ("MoveNext", e);//} else {
+		e = step_over_await ("MoveNext", e);//throw new Exception ();
+		e = step_over_await ("ss_await", e);//catch
+		e = step_over_await ("ss_await", e);//{
+		e = step_over_await ("ss_await", e);//}
+		e = step_over_await ("ss_await", e);//try {
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//out
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+	}
+
+	Event step_in_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_into ();
+		assert_location (ef, method);
+		return ef;
+	}
+
+	Event step_over_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_over ();
+		assert_location (ef, method);
+		return ef;
+	}
+
+	Event step_out_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_out ();
+		assert_location (ef, method);
+		return ef;
 	}
 
 	[Test]
