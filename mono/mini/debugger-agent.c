@@ -4667,6 +4667,31 @@ get_this_async_id (StackFrame *frame)
 	return get_objid (get_this (frame));
 }
 
+static MonoMethod* set_notification_method_cache = NULL;
+
+static MonoMethod*
+get_set_notification_method ()
+{
+	if(set_notification_method_cache != NULL)
+		return set_notification_method_cache;
+	MonoError error;
+	MonoClass* async_builder_class = mono_class_load_from_name (
+		mono_defaults.corlib, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder");
+	GPtrArray* array = mono_class_get_methods_by_name (async_builder_class, "SetNotificationForWaitCompletion", 0x24, FALSE, FALSE, &error);
+	if (!is_ok (&error)) {
+		fprintf (stderr, "[%p] Failed to get SetNotificationForWaitCompletion method: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
+		mono_error_cleanup (&error);
+		g_assert_not_reached ();
+	}
+	if (array->len != 1) {
+		fprintf (stderr, "[%p] Failed to get SetNotificationForWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
+		g_assert_not_reached ();
+	}
+	set_notification_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
+	g_ptr_array_free (array, TRUE);
+	return set_notification_method_cache;
+}
+
 static void
 set_set_notification_for_wait_completion_flag (StackFrame *frame)
 {
@@ -4675,60 +4700,53 @@ set_set_notification_for_wait_completion_flag (StackFrame *frame)
 		return;
 	MonoClassField *builderField = mono_class_get_field_from_name (obj->vtable->klass, "<>t__builder");
 	if (builderField == NULL) {
-		DEBUG_PRINTF (1, "[%p] Failed to get <>t__builder.\n", (gpointer)(gsize)mono_native_thread_id_get ());
-		return;
+		fprintf (stderr, "[%p] Failed to get <>t__builder.\n", (gpointer)(gsize)mono_native_thread_id_get ());
+		g_assert_not_reached ();
 	}
 	MonoObject* builder;
 	MonoError error;
 	builder = mono_field_get_value_object_checked (frame->domain, builderField, obj, &error);
 	if (builder == NULL) {
-		DEBUG_PRINTF (1, "[%p] Failed to get builder value: %s\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
+		fprintf (stderr, "[%p] Failed to get builder value: %s\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
 		mono_error_cleanup (&error);
-		return;
+		g_assert_not_reached ();
 	}
-	GPtrArray* array = mono_class_get_methods_by_name (mono_class_from_mono_type (builderField->type), "SetNotificationForWaitCompletion", 0x24, FALSE, FALSE, &error);
-	if (!is_ok (&error)) {
-		DEBUG_PRINTF (1, "[%p] Failed to get SetNotificationForWaitCompletion method: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
-		mono_error_cleanup (&error);
-		return;
-	}
-	if (array->len != 1) {
-		DEBUG_PRINTF (1, "[%p] Failed to get SetNotificationForWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
-		return;
-	}
-	MonoMethod* set_notification_method = (MonoMethod *)g_ptr_array_index (array, 0);
-	g_ptr_array_free (array, TRUE);
+
 	void* args [1];
 	gboolean arg = TRUE;
 	args [0] = &arg;
-	mono_runtime_invoke_checked (set_notification_method, mono_object_unbox (builder), args, &error);
+	mono_runtime_invoke_checked (get_set_notification_method(), mono_object_unbox (builder), args, &error);
 	if (!is_ok (&error)) {
-		DEBUG_PRINTF (1, "[%p] Failed calling SetNotificationForWaitCompletion: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
+		fprintf (stderr, "[%p] Failed calling SetNotificationForWaitCompletion: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
 		mono_error_cleanup (&error);
-		return;
+		g_assert_not_reached ();
 	}
 	mono_field_set_value (obj, builderField, mono_object_unbox (builder));
 }
 
+static MonoMethod* notify_debugger_of_wait_completion_method_cache = NULL;
+
 static MonoMethod*
 get_notify_debugger_of_wait_completion_method ()
 {
+	if (notify_debugger_of_wait_completion_method_cache != NULL)
+		return notify_debugger_of_wait_completion_method_cache;
 	MonoError error;
-	MonoClass* taskClass = mono_class_load_from_name (
+	MonoClass* task_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading.Tasks", "Task");
-	GPtrArray* array = mono_class_get_methods_by_name (taskClass, "NotifyDebuggerOfWaitCompletion", 0x24, FALSE, FALSE, &error);
+	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, FALSE, FALSE, &error);
 	if (!is_ok (&error)) {
-		DEBUG_PRINTF (1, "[%p] Failed to get NotifyDebuggerOfWaitCompletion method: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
+		fprintf (stderr, "[%p] Failed to get NotifyDebuggerOfWaitCompletion method: %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_error_get_message (&error));
 		mono_error_cleanup (&error);
-		return NULL;
+		g_assert_not_reached ();
 	}
 	if (array->len != 1) {
-		DEBUG_PRINTF (1, "[%p] Failed to get NotifyDebuggerOfWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
-		return NULL;
+		fprintf (stderr, "[%p] Failed to get NotifyDebuggerOfWaitCompletion got %d methods.\n", (gpointer)(gsize)mono_native_thread_id_get (), array->len);
+		g_assert_not_reached ();
 	}
-	MonoMethod* notify_debugger_method = (MonoMethod *)g_ptr_array_index (array, 0);
+	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
-	return notify_debugger_method;
+	return notify_debugger_of_wait_completion_method_cache;
 }
 
 static void
