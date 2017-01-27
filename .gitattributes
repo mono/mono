@@ -2,6 +2,7 @@
 configure.ac	crlf=input
 config.rpath	crlf=input
 configure.host	crlf=input
+mkinstalldirs	crlf=input
 *.sh	crlf=input
 
 # ensure native line endings on checkout

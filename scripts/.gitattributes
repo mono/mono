@@ -1,0 +1,8 @@
+mdassembler	crlf=input
+mdvalidater	crlf=input
+monodocer	crlf=input
+monodocs2html	crlf=input
+monodocs2slashdoc	crlf=input
+mono-heapviz	crlf=input
+mono-package-runtime	crlf=input
+mono-test-install	crlf=input
