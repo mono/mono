@@ -823,7 +823,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		);
 #endif
 
-#if !MOBILE_STATIC
+#if !FULL_AOT_RUNTIME
 		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		public class FourByteStruct
 		{
