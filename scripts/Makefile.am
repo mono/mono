@@ -155,7 +155,7 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	xbuild.in			\
-	update_submodules		\
+	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
 	dmcs.in				\
@@ -163,7 +163,6 @@ EXTRA_DIST =			\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in	\
 	submodules/versions.mk	\
 	submodules/versions.py
