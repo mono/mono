@@ -83,35 +83,24 @@ IMAGES = $(mscorlib_aot_image)
 
 ifdef MCS_MODE
 IMAGES += $(mcs_aot_image)
-
-install-local:
-
 else
 IMAGES += $(CSC_IMAGES)
-
-install-local:
-	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(CSC_IMAGES) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-
 endif
 
 all-local: $(IMAGES)
+install-local:
 
 endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 
-IMAGES = $(mscorlib_aot_image) $(mcs_aot_image)
-
-ifdef MCS_MODE
-IMAGES += $(CSC_IMAGES)
-endif
+IMAGES = $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES)
 
 all-local: $(IMAGES)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_LIB) $(IMAGES) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+
 endif
 
 endif
