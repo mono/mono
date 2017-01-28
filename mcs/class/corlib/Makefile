@@ -21,7 +21,7 @@ endif
 endif
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/build/csc.aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
 endif
 
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
