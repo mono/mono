@@ -388,7 +388,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw_raw = new StringWriter ();
 			t.Transform (d, null, sw_raw);
 
-			Assert.AreEqual (ref_out, sw_raw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (ref_out.Replace ("\r\n", "\n"), sw_raw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		// http://support.microsoft.com/default.aspx?scid=kb;en-us;829014

@@ -205,7 +205,7 @@ public class RepeatInfo_Autogen {{
 			sep ? "true" : "false");
 		if (ex == null) {
 			sb.AppendFormat (@"		string exp = @""{0}"";
-		Assert.AreEqual (exp, v, ""#{1}"");
+		Assert.AreEqual (exp.Replace (""\r\n"", ""\n""), v, ""#{1}"");
 	}}
 ", exp, num);
 		} else {
