@@ -21,8 +21,8 @@ namespace System.Data.Common {
     public abstract class DbDataAdapter : DataAdapter, IDbDataAdapter, ICloneable { // V1.0.3300, MDAC 69629
         public const string DefaultSourceTableName = "Table"; // V1.0.3300
 
-        internal static readonly object ParameterValueNonNullValue = 0;
-        internal static readonly object ParameterValueNullValue = 1;
+        internal static readonly object s_parameterValueNonNullValue = 0;
+        internal static readonly object s_parameterValueNullValue = 1;
 
         private IDbCommand      _deleteCommand, _insertCommand, _selectCommand, _updateCommand;
 
@@ -647,7 +647,7 @@ namespace System.Data.Common {
                         DbParameter dbparameter = (parameter as DbParameter);
                         if ((null != dbparameter) && dbparameter.SourceColumnNullMapping) {
                             Debug.Assert(DbType.Int32 == parameter.DbType, "unexpected DbType");
-                            parameter.Value = ADP.IsNull(parameter.Value) ? ParameterValueNullValue : ParameterValueNonNullValue;
+                            parameter.Value = ADP.IsNull(parameter.Value) ? s_parameterValueNullValue : s_parameterValueNonNullValue;
                         }
                     }
                 }
