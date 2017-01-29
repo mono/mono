@@ -1505,10 +1505,10 @@ namespace System.Data {
 
             if (this.dataViewManager != dataViewManager) {
                 if (dataViewManager != null)
-                    dataViewManager.nViews--;
+                    dataViewManager._nViews--;
                 this.dataViewManager = dataViewManager;
                 if (dataViewManager != null) {
-                    dataViewManager.nViews++;
+                    dataViewManager._nViews++;
                     DataViewSetting dataViewSetting = dataViewManager.DataViewSettings[table];
                     try {
                         // [....]: check that we will not do unnesasary operation here if dataViewSetting.Sort == this.Sort ...
