@@ -1881,6 +1881,21 @@ init_amodule_got (MonoAotModule *amodule)
 		got_offsets [i] = i;
 	patches = decode_patches (amodule, mp, npatches, FALSE, got_offsets);
 	g_assert (patches);
+
+	// Later patching steps can require resolving a method
+	// to an Amodule, which requires that the AOT_MODULE
+	// patches be applied.
+	for (i = 0; i < npatches; ++i) {
+		ji = &patches [i];
+		if (ji->type == MONO_PATCH_INFO_AOT_MODULE) {
+			amodule->shared_got [i] = amodule;
+			if (amodule->llvm_got)
+				amodule->llvm_got [i] = amodule->shared_got [i];
+			if (amodule->got)
+				amodule->got [i] = amodule->shared_got [i];
+		}
+	}
+
 	for (i = 0; i < npatches; ++i) {
 		ji = &patches [i];
 
@@ -1902,7 +1917,7 @@ init_amodule_got (MonoAotModule *amodule)
 				amodule->shared_got [i] = amodule->got;
 			}
 		} else if (ji->type == MONO_PATCH_INFO_AOT_MODULE) {
-			amodule->shared_got [i] = amodule;
+			continue;
 		} else {
 			amodule->shared_got [i] = mono_resolve_patch_target (NULL, mono_get_root_domain (), NULL, ji, FALSE, &error);
 			mono_error_assert_ok (&error);
@@ -2234,9 +2249,9 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		void *addr = NULL;
 
 		if (amodule->info.llvm_get_method) {
-			gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
+			gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
 
-			addr = get_method (i, 0);
+			addr = get_method (i);
 		}
 
 		/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
@@ -2651,10 +2666,10 @@ compute_llvm_code_range (MonoAotModule *amodule, guint8 **code_start, guint8 **c
 	gint32 *table;
 
 	if (amodule->info.llvm_get_method) {
-		gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
+		gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
 
-		*code_start = (guint8 *)get_method (-1, 0);
-		*code_end = (guint8 *)get_method (-2, 0);
+		*code_start = (guint8 *)get_method (-1);
+		*code_end = (guint8 *)get_method (-2);
 
 		// If the code start/end was moved to another module, we're in trouble
 		g_assert (*code_end);
@@ -3187,11 +3202,16 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 static gboolean
 amodule_contains_code_addr (MonoAotModule *amodule, guint8 *code)
 {
-	gboolean good = g_hash_table_lookup (amodule->code_to_idx, code) != NULL;
+	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
+	gpointer (*get_module) (int) = (gpointer (*)(int))amodule->info.llvm_get_module;
 
-	if (!good) 
-		g_assert ((code >= amodule->jit_code_start && code <= amodule->jit_code_end) ||
-		(code >= amodule->llvm_code_start && code <= amodule->llvm_code_end));
+	int good = 0;
+
+	for (int i = 0; i < amodule->info.nmethods + 1; ++i) {
+		MonoAotModule **addr = (MonoAotModule **)get_module (i);
+		if (addr && *addr == amodule)
+			return TRUE;
+	}
 
 	return good;
 }
@@ -3859,7 +3879,8 @@ load_patch_info (MonoAotModule *amodule, MonoMemPool *mp, int n_patches,
 
 	*got_slots = (guint32 *)g_malloc (sizeof (guint32) * n_patches);
 	for (pindex = 0; pindex < n_patches; ++pindex) {
-		(*got_slots)[pindex] = decode_value (p, &p);
+		gint32 byt = decode_value (p, &p);
+		(*got_slots)[pindex] = byt;
 	}
 
 	patches = decode_patches (amodule, mp, n_patches, llvm, *got_slots);
@@ -3895,7 +3916,7 @@ register_jump_target_got_slot (MonoDomain *domain, MonoMethod *method, gpointer 
 }
 
 static void
-resolve_amodule (MonoAotModule *amodule,  guint8 *code, MonoAotModule **target_amodule, guint32 *target_method_index)
+resolve_amodule (MonoAotModule *amodule, guint8 *code, MonoAotModule **target_amodule, guint32 *target_method_index)
 {
 	if (mono_llvm_only && target_amodule) {
 		/*
@@ -3904,6 +3925,8 @@ resolve_amodule (MonoAotModule *amodule,  guint8 *code, MonoAotModule **target_a
 		 */
 		if (!amodule_contains_code_addr (amodule, code)) {
 			amodule = find_aot_module (code);
+			if (!amodule)
+				return;
 			g_assert (amodule->methods);
 			int idx = -1;
 			// FIXME: Add a hash ?
@@ -3913,10 +3936,10 @@ resolve_amodule (MonoAotModule *amodule,  guint8 *code, MonoAotModule **target_a
 					break;
 				}
 			}
-			g_assert (idx != -1);
-
-			*target_amodule = amodule;
-			*target_method_index = idx;
+			if (idx != -1) {
+				*target_amodule = amodule;
+				*target_method_index = idx;
+			}
 		}
 	}
 }
@@ -3963,14 +3986,9 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		/*
 		 * Obtain the method address by calling a generated function in the LLVM module.
 		 */
-		gpointer (*get_method) (int, int) = (gpointer (*)(int, int))amodule->info.llvm_get_method;
-		code = (guint8 *)get_method (method_index, 0);
-		while (!code) {
-			fprintf (stderr, "Chasing\n");
-			amodule = (MonoAotModule *)get_method (method_index, 1);
-			get_method = (gpointer (*)(int, int))amodule->info.llvm_get_method;
-			code = (guint8 *)get_method (method_index, 0);
-		}
+		gpointer (*get_method) (int) = (gpointer (*)(int))amodule->info.llvm_get_method;
+		code = (guint8 *)get_method (method_index);
+		g_assert (amodule);
 	}
 
 	if (!code) {
@@ -3994,7 +4012,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	}
 	g_assert (code);
 
-	/*resolve_amodule (amodule, code, target_amodule, target_method_index);*/
+	resolve_amodule (amodule, code, target_amodule, target_method_index);
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
 
@@ -4369,20 +4387,28 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *
 }
 
 void
-mono_aot_init_llvm_method (gpointer aot_module, guint32 method_index)
+mono_aot_init_llvm_method (gpointer aot_module, intptr_t code)
 {
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
+	MonoAotModule *amodule = *(MonoAotModule **)aot_module;
+	g_assert (amodule->got_initializing);
+	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
+
+	g_assert (amodule->methods[method_index] == code);
 
 	init_llvmonly_method (amodule, method_index, NULL, NULL, NULL);
 }
 
 void
-mono_aot_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this_obj)
+mono_aot_init_gshared_method_this (gpointer aot_module, intptr_t code, MonoObject *this_obj)
 {
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
+	MonoAotModule *amodule = *(MonoAotModule **)aot_module;
+	g_assert (amodule->got_initializing);
+	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
 	MonoClass *klass;
 	MonoGenericContext *context;
 	MonoMethod *method;
+
+	g_assert (amodule->methods[method_index] == code);
 
 	// FIXME:
 	g_assert (this_obj);
@@ -4400,11 +4426,15 @@ mono_aot_init_gshared_method_this (gpointer aot_module, guint32 method_index, Mo
 }
 
 void
-mono_aot_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
+mono_aot_init_gshared_method_mrgctx (gpointer aot_module, intptr_t code, MonoMethodRuntimeGenericContext *rgctx)
 {
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
+	MonoAotModule *amodule = *(MonoAotModule **)aot_module;
+	g_assert (amodule->got_initializing);
+	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
 	MonoGenericContext context = { NULL, NULL };
 	MonoClass *klass = rgctx->class_vtable->klass;
+
+	g_assert (amodule->methods[method_index] == code);
 
 	if (mono_class_is_ginst (klass))
 		context.class_inst = mono_class_get_generic_class (klass)->context.class_inst;
@@ -4416,9 +4446,11 @@ mono_aot_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, 
 }
 
 void
-mono_aot_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
+mono_aot_init_gshared_method_vtable (gpointer aot_module, intptr_t code, MonoVTable *vtable)
 {
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
+	MonoAotModule *amodule = *(MonoAotModule **)aot_module;
+	g_assert (amodule->got_initializing);
+	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
 	MonoClass *klass;
 	MonoGenericContext *context;
 	MonoMethod *method;
@@ -5911,22 +5943,22 @@ mono_aot_find_method_index (MonoMethod *method)
 }
 
 void
-mono_aot_init_llvm_method (gpointer aot_module, guint32 method_index)
+mono_aot_init_llvm_method (gpointer aot_module, intptr_t code)
 {
 }
 
 void
-mono_aot_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this)
+mono_aot_init_gshared_method_this (gpointer aot_module, intptr_t code, MonoObject *this)
 {
 }
 
 void
-mono_aot_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
+mono_aot_init_gshared_method_mrgctx (gpointer aot_module, intptr_t code, MonoMethodRuntimeGenericContext *rgctx)
 {
 }
 
 void
-mono_aot_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
+mono_aot_init_gshared_method_vtable (gpointer aot_module, intptr_t code, MonoVTable *vtable)
 {
 }
 

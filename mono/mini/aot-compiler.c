@@ -9497,6 +9497,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	}
 	/* llvm_get_method */
 	symbols [sindex ++] = NULL;
+	/* llvm_get_module */
+	symbols [sindex ++] = NULL;
 	/* llvm_get_unbox_tramp */
 	symbols [sindex ++] = NULL;
 	if (!acfg->aot_opts.llvm_only) {
