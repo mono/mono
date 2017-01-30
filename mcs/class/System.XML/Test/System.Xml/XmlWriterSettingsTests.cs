@@ -303,7 +303,7 @@ namespace MonoTests.System.Xml
 <!--AAA-->
 
 <root />";
-			Assert.AreEqual (xml, sw.ToString ().Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (xml.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"), "#1");
 		}
 
 		[Test]

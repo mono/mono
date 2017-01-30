@@ -1226,7 +1226,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			
-			Assert.AreEqual (originalHtml_1, renderedHtml, "#A1");
+			Assert.AreEqual (originalHtml_1.Replace ("\r\n", "\n"), renderedHtml, "#A1");
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1236,7 +1236,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHtml = t.Run ();
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
-			Assert.AreEqual (originalHtml_2, renderedHtml, "#A2");
+			Assert.AreEqual (originalHtml_2.Replace ("\r\n", "\n"), renderedHtml, "#A2");
 		}
 
 		[Test (Description="Bug #535701, test 2")]
@@ -1262,7 +1262,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			
-			Assert.AreEqual (originalHtml_1, renderedHtml, "#A1");
+			Assert.AreEqual (originalHtml_1.Replace ("\r\n", "\n"), renderedHtml, "#A1");
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1272,7 +1272,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHtml = t.Run ();
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
-			Assert.AreEqual (originalHtml_2, renderedHtml, "#A2");
+			Assert.AreEqual (originalHtml_2.Replace ("\r\n", "\n"), renderedHtml, "#A2");
 		}
 
 		[Test (Description="Bug #604053")]

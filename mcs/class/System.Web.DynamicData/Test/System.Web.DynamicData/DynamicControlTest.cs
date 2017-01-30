@@ -254,7 +254,7 @@ namespace MonoTests.System.Web.DynamicData
 			string html = @"<span class=""activeCssClass"">
 
 <span class=""field"">Active</span>:";
-			Assert.IsTrue (p.IndexOf (html) != -1, "#Y1");
+			Assert.IsTrue (p.IndexOf (html.Replace ("\r\n", "\n")) != -1, "#Y1");
 		}
 
 		static void CssClass_OnLoad (Page p)

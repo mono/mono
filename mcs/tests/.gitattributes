@@ -1,2 +1,5 @@
 test-853.cs           -text
 test-861.cs			-text
+test-908.cs		crlf=input
+test-debug-*.cs		crlf=input
+support-test-debug-04.cs		crlf=input
