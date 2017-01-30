@@ -21,7 +21,15 @@ class Driver {
 		var l = XElement.Load (new StreamReader (nuspec.Open ()));
 		var version = (from el in l.Descendants() where el.Name.LocalName == "version" select el.Value).FirstOrDefault ();
 
-		foreach (var et in from e in zip.Entries where (e.FullName.StartsWith ("lib/net4") || e.FullName.StartsWith ("lib/netcore")) && e.Name.EndsWith (".dll") select e) {
+		//
+		// Logic copied from https://github.com/NuGet/NuGet.Client/blob/4cccb13833ad29d6a0bcff055460d964f1b49cfe/src/NuGet.Core/NuGet.Frameworks/DefaultFrameworkMappings.cs#L385
+		//
+		var entries = from e in zip.Entries where e.FullName.StartsWith ("lib/net4") && e.Name.EndsWith (".dll") select e;
+		if (!entries.Any ()) {
+			entries = from e in zip.Entries where e.FullName.StartsWith ("lib/netstandard1") && e.Name.EndsWith (".dll") select e;
+		}
+
+		foreach (var et in entries) {
 			LoadAndDump (et, version);
 		}
 	}
@@ -63,6 +71,7 @@ class DoParse : MarshalByRefObject {
 		case "System.IO.Compression.dll": return "SYS_IO_COMPRESSION";
 		case "System.Net.Http.dll": return "SYS_NET_HTTP";
 		case "System.Text.Encoding.CodePages.dll": return "SYS_TEXT_ENC_CODEPAGES";
+		case "System.Reflection.DispatchProxy.dll": return "SYS_REF_DISP_PROXY";
 		default: throw new Exception ($"No idea what to do with {name}");
 		}
 	}

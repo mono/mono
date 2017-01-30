@@ -25,3 +25,9 @@ wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.3.0 -
 wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.1 -O nugets/system.text.encoding.codepages.4.0.1.nupkg
 wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.0 -O nugets/system.text.encoding.codepages.4.0.0.nupkg
 
+#System.Reflection.DispatchProxy
+wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.3.0 -O nugets/system.reflection.dispatchproxy.4.3.0.nupkg
+wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.0.1 -O nugets/system.reflection.dispatchproxy.4.0.1.nupkg
+wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.0.0 -O nugets/system.reflection.dispatchproxy.4.0.0.nupkg
+
+#System.Security.Cryptography.OpenSsl when .net 4.6.2 + 1 is out
