@@ -66,7 +66,7 @@ public class Program
 			return 0;
 		}
 
-		if (extra.Count != 1) {
+		if (extra.Count < 1) {
 			ShowHelp (p);
 			return 2;
 		}
