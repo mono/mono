@@ -50,7 +50,7 @@ namespace System.Data {
         internal MappingType columnMapping = MappingType.Element;
         internal int _hashCode;
 
-        internal int _errors;
+        internal int errors;
         private bool isSqlType = false;
         private bool implementsINullable = false;
         private bool implementsIChangeTracking = false;

@@ -402,7 +402,7 @@ namespace System.Data {
             if (CanRemove(column, true)) {
 
                 // remove
-                if (column._errors > 0) {
+                if (column.errors > 0) {
                     for (int i = 0; i < table.Rows.Count; i++) {
                         table.Rows[i].ClearError(column);
                     }
