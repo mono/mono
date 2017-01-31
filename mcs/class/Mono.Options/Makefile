@@ -17,6 +17,16 @@ mono_options_DATA = Mono.Options/Options.cs
 
 include ../../build/library.make
 
+test-local: Mono.Options-PCL.dll
+
+clean-local: clean-pcl
+
+Mono.Options-PCL.dll: Mono.Options.dll.sources $(shell cat Mono.Options.dll.sources)
+	$(CSCOMPILE) -target:library -out:$@ -debug+ -d:PCL -r:../lib/$(PROFILE)/System.dll @$<
+
+clean-pcl:
+	-rm Mono.Options-PCL.dll
+
 install-local: install-source
 
 uninstall-local: uninstall-source
@@ -35,6 +45,7 @@ fixup-docs:
 
 DOC_EXAMPLES_OUTPUT = \
 	Documentation/en/examples/bundling.txt \
+	Documentation/en/examples/commands.txt \
 	Documentation/en/examples/context.txt \
 	Documentation/en/examples/greet.txt \
 	Documentation/en/examples/localization.txt \
@@ -47,7 +58,7 @@ Documentation/en/examples/Mono.Options.dll: $(the_lib)
 	-cp $^.mdb $@.mdb
 
 %.exe: %.cs Documentation/en/examples/Mono.Options.dll
-	$(CSCOMPILE) -debug+ -r:Mono.Posix.dll -r:System.Core.dll -lib:Documentation/en/examples -r:Mono.Options.dll -out:$@ $<
+	$(CSCOMPILE) -debug+ -r:../lib/$(PROFILE)/System.dll -r:../lib/$(PROFILE)/Mono.Posix.dll -r:../lib/$(PROFILE)/System.Core.dll -lib:Documentation/en/examples -r:../lib/$(PROFILE)/Mono.Options.dll -out:$@ $<
 
 Documentation/en/examples/locale/es/LC_MESSAGES/localization.mo: Documentation/en/examples/localization-es.po
 	msgfmt $< -o $@

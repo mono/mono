@@ -1,0 +1,286 @@
+<Type Name="Command" FullName="Mono.Options.Command">
+  <TypeSignature Language="C#" Value="public class Command" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Command extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>
+    Public <c>static</c> members of this type are thread safe.
+    Any instance members are not guaranteed to be thread safe.
+  </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      Represents a program command.
+    </summary>
+    <remarks>
+      <para>
+        Many command-line utilities are <i>suites</i> of commands, with a single
+        "outer" command and multiple commands. Examples of this style of
+        utility includes <b>git</b>, <b>svn</b>, and <b>mdoc</b>.
+      </para>
+      <para>
+        A <c>Command</c> represents a specific command in such a suite.
+        It has a <see cref="P:Mono.Options.Command.Name" /> which is the
+        command name for invocation purposes, optional help text through
+        the <see cref="P:Mono.Options.Command.Help" /> property, an optional
+        <see cref="T:Mono.Options.OptionSet" /> accessible through the
+        <see cref="P:Mono.Options.Command.Options" /> property for command-line
+        parsing, and two ways to have code executed when a command is
+        invoked: the <see cref="P:Mono.Options.Command.Run" /> property and
+        the <see cref="M:Mono.Options.Command.Invoke" /> method.
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Command (string name, string help = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, string help) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="help" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">
+          A <see cref="T:System.String" /> which is the command name.
+        </param>
+        <param name="help">
+          A <see cref="T:System.String" /> which is the command help text.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the <c>Command</c> class.
+        </summary>
+        <remarks>
+          <para>
+          This constructor initializes the
+          <see cref="P:Mono.Options.Command.Name" /> property of the new
+          instance using <paramref name="name" /> and initializes the
+          <see cref="P:Mono.Options.Command.Help" /> property of the new
+          instance using <paramref name="help" />.
+        </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CommandSet">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet CommandSet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.CommandSet CommandSet" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A <see cref="T:Mono.Options.CommandSet" /> instance which owns the
+          <c>Command</c>.
+        </summary>
+        <value>
+          A <see cref="T:Mono.Options.CommandSet" /> instance which owns the
+          <c>Command</c>.
+        </value>
+        <remarks>
+          <para>
+            A <c>Command</c> instance may belong to only one
+            <see cref="T:Mono.Options.CommandSet" /> instance.
+            The <c>CommandSet</c> property is set upon calling
+            <see cref="M:Mono.Options.CommandSet.Add(Mono.Options.Command)" />.
+          </para>
+          <para>
+            If the <c>Command</c> instance has not yet been added to a
+            <c>CommandSet</c>, then this property is <see langword="null" />.
+          </para>
+          <para>
+            Use the <c>CommandSet</c> instance from either the
+            <see cref="P:Mono.Options.Command.Run" /> property or an overridden
+            <see cref="M:Mono.Options.Command.Invoke" /> method to access
+            localization facilities through
+            <see cref="P:Mono.Options.CommandSet.MessageLocalizer" />, the
+            preferred message output stream through
+            <see cref="P:Mono.Options.CommandSet.Out" />, and other features.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Help">
+      <MemberSignature Language="C#" Value="public string Help { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Help" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          A short, one-line, description of the <c>Command</c>.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing the optional help text
+          of the <c>Command</c>.
+        </value>
+        <remarks>
+          <para>
+            The <c>Help</c> property text is shown when the <c>help</c>
+            command is invoked.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public virtual int Invoke (System.Collections.Generic.IEnumerable&lt;string&gt; arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Invoke(class System.Collections.Generic.IEnumerable`1&lt;string&gt; arguments) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="arguments" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="arguments">
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          which contains the unprocessed command-line arguments.
+        </param>
+        <summary>
+          Invoked by <see cref="M:Mono.Options.CommandSet.Run" /> when a command
+          has been executed.
+        </summary>
+        <returns>
+          A <see cref="T:System.Int32" /> which should be treated as the process
+          exit value.
+        </returns>
+        <remarks>
+          <para>
+            The value returned by <c>Invoke()</c> is the return value of
+            <see cref="M:Mono.Options.CommandSet.Run" />, and should be treated
+            as a possible process exit value.
+          </para>
+          <block subset="none" type="behaviors">
+            <para>
+              If the <c>Invoke()</c> method is not overridden by a subclass,
+              the <c>Invoke()</c> method will use
+              <see cref="P:Mono.Options.Command.Options" /> to parse
+              <paramref name="arguments" />, and pass any un-processed values
+              on to <see cref="P:Mono.Options.Command.Run" />.
+            </para>
+            <para>
+              If the <c>Options</c> property is <see langword="null" />, then no
+              option processing will occur, and <paramref name="arguments" />
+              will be provided to the <c>Run</c> property as-is.
+            </para>
+            <para>
+              If the <c>Run</c> property is <see langword="null" />, then
+              no further processing occurs.
+            </para>
+          </block>
+          <block subset="none" type="overrides">
+            <para>
+              Method overrides do not need to call the base class method.
+            </para>
+          </block>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The name of the <c>Command</c>, which is used for command invocation.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> which is the name of the <c>Command</c>.
+        </value>
+        <remarks>
+          <para>
+            The <c>Name</c> value must be unique across all <c>Commmand</c> instances
+            referred to by a <see cref="T:Mono.Options.CommandSet" />.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Options">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Options { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Options.OptionSet Options" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Optional command-line option information.
+        </summary>
+        <value>
+          A <see cref="T:Mono.Options.OptionSet" /> instance which contains the
+          available command-line options for the <c>Command</c>.
+        </value>
+        <remarks>
+          <para>
+            If the <c>Options</c> property is not <see langword="null" /> when
+            the command is processed,
+            <see cref="M:Mono.Options.OptionSet.Parse" /> will be invoked on
+            the <c>Options</c> instance, and the return value of
+            <c>OptionSet.Parse()</c> will be forwarded to
+            <see cref="M:Mono.Options.Command.Invoke" />.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public Action&lt;System.Collections.Generic.IEnumerable&lt;string&gt;&gt; Run { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Action`1&lt;class System.Collections.Generic.IEnumerable`1&lt;string&gt;&gt; Run" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Action&lt;System.Collections.Generic.IEnumerable&lt;System.String&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Optional command handler.
+        </summary>
+        <value>
+          A <see cref="T:System.Action{System.Collections.Generic.IEnumerable{System.String}}" />
+          delegate which is executed by
+          <see cref="M:Mono.Options.Command.Invoke" />.
+        </value>
+        <remarks>
+          <para>
+            The <c>Run</c> property is executed by the the 
+            <see cref="M:Mono.Options.Command.Invoke" /> method when
+            <see cref="M:Mono.Options.CommandSet.Run" /> dispatches to a
+            <c>Command</c> instance.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
