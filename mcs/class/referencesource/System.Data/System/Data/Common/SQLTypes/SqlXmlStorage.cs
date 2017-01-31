@@ -45,7 +45,7 @@ namespace System.Data.Common {
             catch (OverflowException) {
                 throw ExprException.Overflow(typeof(SqlXml));
             }
-            throw ExceptionBuilder.AggregateException(kind, DataType);
+            throw ExceptionBuilder.AggregateException(kind, _dataType);
         }
 
         override public int Compare(int recordNo1, int recordNo2) {

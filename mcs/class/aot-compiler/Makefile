@@ -40,9 +40,12 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 ifndef SKIP_AOT
 
-profile_file=$(wildcard $(topdir)/class/lib/build/csc.aotprofile)
+profile_file:=$(wildcard $(topdir)/class/lib/build/csc.*.aotprofile)
 ifneq ($(profile_file),)
-profile_arg=,profile=$(profile_file)
+comma:=,
+space:=
+space+=
+profile_arg:=$(subst $(space)$(comma),$(comma),$(foreach pf,$(profile_file),$(comma)profile=$(strip $(pf))))
 endif
 
 ifdef PLATFORM_AOT_SUFFIX
@@ -55,11 +58,9 @@ $(csc_aot_image): $(csc_exe) $(mscorlib_dll) $(runtime_dep)
 $(mscorlib_aot_image): $(mscorlib_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg) --debug $(mscorlib_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
-# Disabled as it hits AOT too big limit
 $(csc_MC_image): $(csc_MC_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MC_image) --debug $(csc_MC_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
-# Disabled as it hits AOT too big limit
 $(csc_MCS_image): $(csc_MCS_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MCS_image) --debug $(csc_MCS_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
@@ -83,35 +84,24 @@ IMAGES = $(mscorlib_aot_image)
 
 ifdef MCS_MODE
 IMAGES += $(mcs_aot_image)
-
-install-local:
-
 else
 IMAGES += $(CSC_IMAGES)
-
-install-local:
-	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(CSC_IMAGES) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-
 endif
 
 all-local: $(IMAGES)
+install-local:
 
 endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 
-IMAGES = $(mscorlib_aot_image) $(mcs_aot_image)
-
-ifdef MCS_MODE
-IMAGES += $(CSC_IMAGES)
-endif
+IMAGES = $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES)
 
 all-local: $(IMAGES)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_LIB) $(IMAGES) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+
 endif
 
 endif

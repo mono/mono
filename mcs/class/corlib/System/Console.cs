@@ -41,7 +41,7 @@ namespace System
 {
 	public static partial class Console
 	{
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		private class WindowsConsole
 		{
 			public static bool ctrlHandlerAdded = false;
@@ -96,8 +96,8 @@ namespace System
 
 		static Console ()
 		{
+#if MONO_FEATURE_CONSOLE
 			if (Environment.IsRunningOnWindows) {
-#if !MOBILE				
 				//
 				// On Windows, follow the Windows tradition
 				//
@@ -110,8 +110,9 @@ namespace System
 					// Use Latin 1 as it is fast and UTF-8 is never used as console code page
 					inputEncoding = outputEncoding = Encoding.Default;
 				}
+			} else 
 #endif
-			} else {
+			{
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
@@ -131,13 +132,13 @@ namespace System
 
 		static void SetupStreams (Encoding inputEncoding, Encoding outputEncoding)
 		{
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 				stdout = TextWriter.Synchronized (new CStreamWriter (OpenStandardOutput (0), outputEncoding, true) { AutoFlush = true });
 				stderr = TextWriter.Synchronized (new CStreamWriter (OpenStandardError (0), outputEncoding, true) { AutoFlush = true });
 			} else
-#endif
+#endif 
 			{
 				stdin = TextReader.Synchronized (new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding));
 
@@ -484,8 +485,7 @@ namespace System
 
 			stdout.WriteLine (String.Format (format, args));
 		}
-
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		public static int Read ()
 		{
 			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
@@ -513,7 +513,6 @@ namespace System
 		{
 			return stdin.ReadLine ();
 		}
-
 #endif
 
 		// FIXME: Console should use these encodings when changed
@@ -536,7 +535,7 @@ namespace System
 			}
 		}
 
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		public static ConsoleColor BackgroundColor {
 			get { return ConsoleDriver.BackgroundColor; }
 			set { ConsoleDriver.BackgroundColor = value; }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using MonoTests.Helpers;
 
 public class TestsBase
@@ -431,6 +432,7 @@ public class Tests : TestsBase, ITest2
 		ss_recursive_chaotic ();
 		ss_fp_clobber ();
 		ss_no_frames ();
+		ss_await ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -715,6 +717,52 @@ public class Tests : TestsBase, ITest2
 		if (static_i == 56)
 			Thread.Sleep (200);
 		ss_no_frames_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_await ()
+	{
+		ss_await_1 ().Wait ();//in
+		ss_await_1 ().Wait ();//over
+		ss_await_1 ().Wait ();//out before
+		ss_await_1 ().Wait ();//out after
+		ss_await_1_exc (true, true).Wait ();//in
+		ss_await_1_exc (true, true).Wait ();//over
+		ss_await_1_exc (true, true).Wait ();//out
+		try {
+			ss_await_1_exc (true, false).Wait ();//in
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//over
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//out
+		} catch { }
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1 () {
+		var a = 1;
+		await Task.Delay (10);
+		return a + 2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1_exc (bool exc, bool handled)
+	{
+		var a = 1;
+		await Task.Delay (10);
+		if (exc) {
+			if (handled) {
+				try {
+					throw new Exception ();
+				} catch {
+				}
+			} else {
+				throw new Exception ();
+			}
+		}
+		return a + 2;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

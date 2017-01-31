@@ -184,10 +184,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void ExpandPropertyThenTrim ()
 		{
-			string test = @"A
-B
-C
-    ";
+			string test = "A\nB\nC\n    ";
 			string project_xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
     <Test>{0}</Test>

@@ -180,7 +180,7 @@ namespace System
 #if !MONODROID && !MONOTOUCH && !XAMMAC
 		static TimeZoneInfo CreateLocal ()
 		{
-#if !FULL_AOT_DESKTOP
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 			if (IsWindows && LocalZoneKey != null) {
 				/* Wine Mono hack: Wine doesn't set TimeZoneKeyName, so use
 				GetTimeZoneInformation to get the name. This may not quite be
@@ -237,7 +237,7 @@ namespace System
 
 		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
-#if !FULL_AOT_DESKTOP
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
@@ -306,7 +306,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !MOBILE || !FULL_AOT_DESKTOP
+#if !MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -334,7 +334,7 @@ namespace System
 			return str.Substring (Istart, Iend-Istart+1);
 		}
 		
-#if !FULL_AOT_DESKTOP
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
 			get {
@@ -363,7 +363,7 @@ namespace System
 			}
 		}
 #endif
-#endif // !MOBILE || !FULL_AOT_DESKTOP
+#endif // !MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM
 
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
@@ -571,7 +571,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
-#if !MOBILE
+#if WIN_PLATFORM
 			if (TimeZoneKey != null)
 			{
 				if (id == "Coordinated Universal Time")
@@ -601,7 +601,7 @@ namespace System
 		}
 #endif
 
-#if !MOBILE
+#if WIN_PLATFORM
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");

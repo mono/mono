@@ -381,6 +381,10 @@ if test -z "$PLATFORM_LINUX_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.so
 fi
 
+if test -z "$HOST_WIN32_TRUE"; then :
+PLATFORM_AOT_SUFFIX=.dll
+fi
+
 AC_SUBST(PLATFORM_AOT_SUFFIX)
 
 ## PLATFORM_AOT_SUFFIX not so simple for windows :-)
@@ -857,6 +861,7 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_appdomains='yes'
 
    AOT_BUILD_FLAGS="-O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
+
    AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
@@ -892,6 +897,32 @@ elif test x$with_runtime_preset = xaot; then
    AOT_RUN_FLAGS=""
 
    DISABLE_MCS_DOCS_default=yes
+elif test x$with_runtime_preset = xwinaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_winaot_default=yes
+   TEST_PROFILE=winaot
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
+elif test x$with_runtime_preset = xorbis; then
+   DISABLE_MCS_DOCS_default=yes
+   with_orbis_default=yes
+   TEST_PROFILE=orbis
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 else
    with_profile4_x_default=yes
 fi
@@ -951,9 +982,8 @@ AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != 
 AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
-
-AC_SUBST(INSTALL_TESTING_AOT_HYBRID)
-AC_SUBST(INSTALL_TESTING_AOT_FULL)
+AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"])
+AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"])
 
 default_profile=net_4_x
 if test -z "$INSTALL_MONODROID_TRUE"; then :
@@ -970,6 +1000,12 @@ if test -z "$INSTALL_TESTING_AOT_HYBRID_TRUE"; then :
 fi
 if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
    default_profile=testing_aot_full
+fi
+if test -z "$INSTALL_WINAOT_TRUE"; then :
+   default_profile=winaot
+fi
+if test -z "$INSTALL_ORBIS_TRUE"; then :
+   default_profile=orbis
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -3509,6 +3545,7 @@ if test "x$target_mach" = "xyes"; then
 	   	  AC_DEFINE(TARGET_OSX,1,[The JIT/AOT targets OSX])
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_OSX"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_OSX"
+          target_osx=yes
        ], [
           AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
@@ -3518,6 +3555,8 @@ if test "x$target_mach" = "xyes"; then
 	fi
    AC_DEFINE(TARGET_MACH,1,[The JIT/AOT targets Apple platforms])
 fi
+
+AM_CONDITIONAL(TARGET_OSX, test x$target_osx = xyes)
 
 if test "x$sizeof_register" = "x4"; then
    AC_DEFINE(SIZEOF_REGISTER,4,[size of machine integer registers])
@@ -4155,8 +4194,8 @@ mono_cfg_root=$mono_build_root/runtime
 if test x$host_win32 = xyes; then
   if test "x$cross_compiling" = "xno"; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
-    CSC="'"`cygpath -w -a $CSC`"'"
-	CSC_LOCATION="'"`cygpath -w -a $CSC_LOCATION`"'"
+    CSC=`cygpath -m -a $CSC`
+    CSC_LOCATION=`cygpath -m -a $CSC_LOCATION`
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -4407,7 +4446,7 @@ po/Makefile
 ])
 
 # Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules
+$srcdir/scripts/update_submodules.sh
 
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
@@ -4555,6 +4594,7 @@ echo "
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
 	Windows AOT:     $with_winaot
+	Orbis:           $with_orbis
 	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg

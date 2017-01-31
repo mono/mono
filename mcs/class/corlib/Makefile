@@ -21,7 +21,7 @@ endif
 endif
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/build/csc.aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
 endif
 
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
@@ -65,6 +65,10 @@ endif
 ifndef NO_MULTIPLE_APPDOMAINS
 REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
 TEST_MCS_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
+endif
+
+ifndef NO_CONSOLE
+LIB_MCS_FLAGS += -d:MONO_FEATURE_CONSOLE
 endif
 
 WARNING_ABOUT_DISABLED_WARNING=1635

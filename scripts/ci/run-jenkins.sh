@@ -80,6 +80,9 @@ elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
 elif [[ ${CI_TAGS} == *'interpreter'* ]];
     then
     $(dirname "${BASH_SOURCE[0]}")/run-test-interpreter.sh
+elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];
+    then
+    $(dirname "${BASH_SOURCE[0]}")/run-test-mcs.sh
 elif [[ ${CI_TAGS} == *'no-tests'* ]];
     then
 	exit 0

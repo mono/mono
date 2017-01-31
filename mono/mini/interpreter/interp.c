@@ -59,7 +59,6 @@
 
 #include "interp.h"
 #include "mintops.h"
-#include "embed.h"
 #include "hacks.h"
 
 #include <mono/mini/mini.h>
@@ -76,14 +75,9 @@
 #endif
 #endif
 
-static gint *abort_requested;
-
-int mono_interp_traceopt = 0;
-
-#define INIT_FRAME(frame,parent_frame,obj_this,method_args,method_retval,domain,mono_method,error)	\
+#define INIT_FRAME(frame,parent_frame,method_args,method_retval,domain,mono_method,error)	\
 	do {	\
 		(frame)->parent = (parent_frame);	\
-		(frame)->obj = (obj_this);	\
 		(frame)->stack_args = (method_args);	\
 		(frame)->retval = (method_retval);	\
 		(frame)->runtime_method = mono_interp_get_runtime_method ((domain), (mono_method), (error));	\
@@ -109,6 +103,7 @@ static char* dump_args (MonoInvocation *inv);
 #define DEBUG_INTERP 0
 #define COUNT_OPS 0
 #if DEBUG_INTERP
+int mono_interp_traceopt = 2;
 /* If true, then we output the opcodes as we interpret them */
 static int global_tracing = 1;
 
@@ -151,9 +146,9 @@ static void debug_enter (MonoInvocation *frame, int *tracing)
 		debug_indent_level++;
 		output_indent ();
 		mn = mono_method_full_name (method, FALSE);
-		g_printerr ("(0x%08x) Entering %s (", mono_thread_internal_current (), mn);
+		g_print ("(%p) Entering %s (", mono_thread_internal_current (), mn);
 		g_free (mn);
-		g_printerr  ("%s)\n", args);
+		g_print  ("%s)\n", args);
 		g_free (args);
 	}
 	if (mono_profiler_events & MONO_PROFILE_ENTER_LEAVE)
@@ -167,9 +162,9 @@ static void debug_enter (MonoInvocation *frame, int *tracing)
 		args = dump_retval (frame);	\
 		output_indent ();	\
 		mn = mono_method_full_name (frame->runtime_method->method, FALSE); \
-		g_printerr  ("(0x%08x) Leaving %s", mono_thread_internal_current (),  mn);	\
+		g_print  ("(%p) Leaving %s", mono_thread_internal_current (),  mn);	\
 		g_free (mn); \
-		g_printerr  (" => %s\n", args);	\
+		g_print  (" => %s\n", args);	\
 		g_free (args);	\
 		debug_indent_level--;	\
 		if (tracing == 3) global_tracing = 0; \
@@ -179,6 +174,7 @@ static void debug_enter (MonoInvocation *frame, int *tracing)
 
 #else
 
+int mono_interp_traceopt = 0;
 static void debug_enter (MonoInvocation *frame, int *tracing)
 {
 }
@@ -254,13 +250,6 @@ ves_real_abort (int line, MonoMethod *mh,
 		ves_real_abort(__LINE__, frame->runtime_method->method, ip, frame->stack, sp); \
 		THROW_EX (mono_get_exception_execution_engine (NULL), ip); \
 	} while (0);
-
-static gpointer
-interp_create_remoting_trampoline (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error)
-{
-	g_error ("FIXME: use domain and error");
-	// return mono_interp_get_runtime_method (mono_marshal_get_remoting_invoke_for_target (method, target));
-}
 
 static mono_mutex_t runtime_method_lookup_section;
 
@@ -501,6 +490,9 @@ stackval_to_data (MonoType *type, stackval *val, char *data, gboolean pinvoke)
 			memcpy (data, val->data.p, size);
 		}
 		return;
+	case MONO_TYPE_GENERICINST:
+		stackval_to_data (&type->data.generic_class->container_class->byval_arg, val, data, pinvoke);
+		return;
 	default:
 		g_warning ("got type %x", type->type);
 		g_assert_not_reached ();
@@ -565,7 +557,7 @@ ves_array_set (MonoInvocation *frame)
 	gpointer ea;
 	MonoType *mt;
 
-	o = frame->obj;
+	o = frame->stack_args->data.p;
 	ao = (MonoArray *)o;
 	ac = o->vtable->klass;
 
@@ -619,7 +611,7 @@ ves_array_get (MonoInvocation *frame)
 	gpointer ea;
 	MonoType *mt;
 
-	o = frame->obj;
+	o = frame->stack_args->data.p;
 	ao = (MonoArray *)o;
 	ac = o->vtable->klass;
 
@@ -662,7 +654,7 @@ ves_array_element_address (MonoInvocation *frame)
 	gint32 i, t, pos, esize;
 	gpointer ea;
 
-	o = frame->obj;
+	o = frame->stack_args->data.p;
 	ao = (MonoArray *)o;
 	ac = o->vtable->klass;
 
@@ -784,7 +776,7 @@ static MethodArguments* build_args_from_sig (MonoMethodSignature *sig, MonoInvoc
 	size_t int_i = 0;
 
 	if (sig->hasthis) {
-		margs->iargs [0] = frame->obj;
+		margs->iargs [0] = frame->stack_args->data.p;
 		int_i++;
 	}
 
@@ -809,7 +801,7 @@ static MethodArguments* build_args_from_sig (MonoMethodSignature *sig, MonoInvoc
 		case MONO_TYPE_I8:
 			margs->iargs [int_i] = frame->stack_args [i].data.p;
 #if DEBUG_INTERP
-			g_printerr ("build_args_from_sig: margs->iargs[%d]: %p (frame @ %d)\n", int_i, margs->iargs[int_i], i);
+			g_print ("build_args_from_sig: margs->iargs[%d]: %p (frame @ %d)\n", int_i, margs->iargs[int_i], i);
 #endif
 			int_i++;
 			break;
@@ -857,8 +849,8 @@ ves_pinvoke_method (MonoInvocation *frame, MonoMethodSignature *sig, MonoFuncV a
 
 	MethodArguments *margs = build_args_from_sig (sig, frame);
 #if DEBUG_INTERP
-	g_printerr ("ICALL: mono_interp_enter_icall_trampoline = %p, addr = %p\n", mono_interp_enter_icall_trampoline, addr);
-	g_printerr ("margs(out): ilen=%d, flen=%d\n", margs->ilen, margs->flen);
+	g_print ("ICALL: mono_interp_enter_icall_trampoline = %p, addr = %p\n", mono_interp_enter_icall_trampoline, addr);
+	g_print ("margs(out): ilen=%d, flen=%d\n", margs->ilen, margs->flen);
 #endif
 
 	context->current_frame = frame;
@@ -870,7 +862,7 @@ ves_pinvoke_method (MonoInvocation *frame, MonoMethodSignature *sig, MonoFuncV a
 	/* domain can only be changed by native code */
 	context->domain = mono_domain_get ();
 
-	if (*abort_requested)
+	if (*mono_thread_interruption_request_flag ())
 		mono_thread_interruption_checkpoint ();
 	
  	if (!MONO_TYPE_ISSTRUCT (sig->ret))
@@ -936,7 +928,7 @@ ves_runtime_method (MonoInvocation *frame, ThreadContext *context)
 {
 	MonoMethod *method = frame->runtime_method->method;
 	const char *name = method->name;
-	MonoObject *obj = (MonoObject*)frame->obj;
+	MonoObject *obj = (MonoObject*) frame->stack_args->data.p;
 	MonoObject *isinst_obj;
 	MonoError error;
 
@@ -946,7 +938,7 @@ ves_runtime_method (MonoInvocation *frame, ThreadContext *context)
 	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 	if (obj && isinst_obj) {
 		if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-			interp_delegate_ctor (context->domain, obj, frame->stack_args[0].data.p, frame->stack_args[1].data.p);
+			interp_delegate_ctor (context->domain, obj, frame->stack_args [1].data.p, frame->stack_args[2].data.p);
 			return;
 		}
 	}
@@ -983,7 +975,7 @@ dump_stack (stackval *stack, stackval *sp)
 		return g_string_free (str, FALSE);
 	
 	while (s < sp) {
-		g_string_append_printf (str, "[%lld/0x%0llx] ", s->data.l, s->data.l);
+		g_string_append_printf (str, "[%p (%lld)] ", s->data.l, s->data.l);
 		++s;
 	}
 	return g_string_free (str, FALSE);
@@ -1025,9 +1017,13 @@ dump_stackval (GString *str, stackval *s, MonoType *type)
 		break;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-	default:
-		g_string_append_printf (str, "[%lld/0x%0llx] ", s->data.l, s->data.l);
+	default: {
+		GString *res = g_string_new ("");
+		mono_type_get_desc (res, type, TRUE);
+		g_string_append_printf (str, "[{%s} %lld/0x%0llx] ", res->str, s->data.l, s->data.l);
+		g_string_free (res, TRUE);
 		break;
+	}
 	}
 }
 
@@ -1038,14 +1034,16 @@ dump_args (MonoInvocation *inv)
 	int i;
 	MonoMethodSignature *signature = mono_method_signature (inv->runtime_method->method);
 	
-	if (signature->param_count == 0)
+	if (signature->param_count == 0 && !signature->hasthis)
 		return g_string_free (str, FALSE);
 
-	if (signature->hasthis)
-		g_string_append_printf (str, "%p ", inv->obj);
+	if (signature->hasthis) {
+		MonoMethod *method = inv->runtime_method->method;
+		dump_stackval (str, inv->stack_args, &method->klass->byval_arg);
+	}
 
 	for (i = 0; i < signature->param_count; ++i)
-		dump_stackval (str, inv->stack_args + i, signature->params [i]);
+		dump_stackval (str, inv->stack_args + (!!signature->hasthis) + i, signature->params [i]);
 
 	return g_string_free (str, FALSE);
 }
@@ -1222,7 +1220,7 @@ get_trace_ips (MonoDomain *domain, MonoInvocation *top)
 #define CHECK_MUL_OVERFLOW_NAT_UN(a,b) CHECK_MUL_OVERFLOW64_UN(a,b)
 #endif
 
-static MonoObject*
+MonoObject*
 interp_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
 {
 	MonoInvocation frame;
@@ -1233,7 +1231,7 @@ interp_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 	int i, type, isobject = 0;
 	void *ret = NULL;
 	stackval result;
-	stackval *args = alloca (sizeof (stackval) * sig->param_count);
+	stackval *args = alloca (sizeof (stackval) * (sig->param_count + !!sig->hasthis));
 	ThreadContext context_struct;
 	MonoInvocation *old_frame = NULL;
 	jmp_buf env;
@@ -1291,9 +1289,13 @@ interp_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 		break;
 	}
 
+	if (sig->hasthis)
+		args [0].data.p = obj;
+
 	for (i = 0; i < sig->param_count; ++i) {
+		int a_index = i + !!sig->hasthis;
 		if (sig->params [i]->byref) {
-			args [i].data.p = params [i];
+			args [a_index].data.p = params [i];
 			continue;
 		}
 		type = sig->params [i]->type;
@@ -1302,12 +1304,12 @@ handle_enum:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_I1:
 		case MONO_TYPE_BOOLEAN:
-			args [i].data.i = *(MonoBoolean*)params [i];
+			args [a_index].data.i = *(MonoBoolean*)params [i];
 			break;
 		case MONO_TYPE_U2:
 		case MONO_TYPE_I2:
 		case MONO_TYPE_CHAR:
-			args [i].data.i = *(gint16*)params [i];
+			args [a_index].data.i = *(gint16*)params [i];
 			break;
 #if SIZEOF_VOID_P == 4
 		case MONO_TYPE_U: /* use VAL_POINTER? */
@@ -1315,7 +1317,7 @@ handle_enum:
 #endif
 		case MONO_TYPE_U4:
 		case MONO_TYPE_I4:
-			args [i].data.i = *(gint32*)params [i];
+			args [a_index].data.i = *(gint32*)params [i];
 			break;
 #if SIZEOF_VOID_P == 8
 		case MONO_TYPE_U:
@@ -1323,14 +1325,14 @@ handle_enum:
 #endif
 		case MONO_TYPE_U8:
 		case MONO_TYPE_I8:
-			args [i].data.l = *(gint64*)params [i];
+			args [a_index].data.l = *(gint64*)params [i];
 			break;
 		case MONO_TYPE_VALUETYPE:
 			if (sig->params [i]->data.klass->enumtype) {
 				type = mono_class_enum_basetype (sig->params [i]->data.klass)->type;
 				goto handle_enum;
 			} else {
-				args [i].data.p = params [i];
+				args [a_index].data.p = params [i];
 			}
 			break;
 		case MONO_TYPE_STRING:
@@ -1338,7 +1340,7 @@ handle_enum:
 		case MONO_TYPE_ARRAY:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_OBJECT:
-			args [i].data.p = params [i];
+			args [a_index].data.p = params [i];
 			break;
 		default:
 			g_error ("type 0x%x not handled in  runtime invoke", sig->params [i]->type);
@@ -1347,7 +1349,7 @@ handle_enum:
 
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 		method = mono_marshal_get_native_wrapper (method, FALSE, FALSE);
-	INIT_FRAME(&frame,context->current_frame,obj,args,&result,mono_get_root_domain (),method,error);
+	INIT_FRAME (&frame,context->current_frame,args,&result,mono_get_root_domain (),method,error);
 	if (exc)
 		frame.invoke_trap = 1;
 	context->managed_code = 1;
@@ -1470,12 +1472,11 @@ static mono_mutex_t create_method_pointer_mutex;
 
 static GHashTable *method_pointer_hash = NULL;
 
-static gpointer
-mono_create_method_pointer (MonoMethod *method, MonoError *error)
+gpointer
+interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
 	gpointer addr;
 	MonoJitInfo *ji;
-	mono_error_init (error);
 
 	mono_os_mutex_lock (&create_method_pointer_mutex);
 	if (!method_pointer_hash) {
@@ -1533,7 +1534,9 @@ static int opcode_counts[512];
 		} \
 		sp->data.l = 0; \
 		output_indent (); \
-		g_print ("(%u) ", mono_thread_internal_current ()); \
+		char *mn = mono_method_full_name (frame->runtime_method->method, FALSE); \
+		g_print ("(%p) %s -> ", mono_thread_internal_current (), mn); \
+		g_free (mn); \
 		mono_interp_dis_mintop(rtm->code, ip); \
 		g_print ("\t%d:%s\n", vt_sp - vtalloc, ins); \
 		g_free (ins); \
@@ -1611,7 +1614,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 		context->managed_code = 0;
 #if DEBUG_INTERP
 		char *mn = mono_method_full_name (frame->runtime_method->method, FALSE);
-		g_printerr ("(0x%08x) Transforming %s\n", mono_thread_internal_current (), mn);
+		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
 		frame->ex = mono_interp_transform_method (frame->runtime_method, context);
@@ -1673,6 +1676,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			vt_sp -= READ32(ip + 2);
 			if (ret_size > 0) {
 				memmove (vt_sp, ret_vt_sp, ret_size);
+				sp [-1].data.p = vt_sp;
 				vt_sp += (ret_size + 7) & ~7;
 			}
 			ip += 4;
@@ -1793,14 +1797,10 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 			/* decrement by the actual number of args */
 			sp -= csignature->param_count;
-			child_frame.stack_args = sp;
-			if (csignature->hasthis) {
+			if (csignature->hasthis)
 				--sp;
-				child_frame.obj = sp->data.p;
-			} else {
-				child_frame.obj = NULL;
-			}
-			if (csignature->hasthis && mono_object_is_transparent_proxy (child_frame.obj)) {
+			child_frame.stack_args = sp;
+			if (csignature->hasthis && mono_object_is_transparent_proxy (sp->data.p)) {
 				child_frame.runtime_method = mono_interp_get_runtime_method (context->domain, mono_marshal_get_remoting_invoke (child_frame.runtime_method->method), &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			} else if (child_frame.runtime_method->method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
@@ -1845,13 +1845,9 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 			/* decrement by the actual number of args */
 			sp -= csignature->param_count;
-			child_frame.stack_args = sp;
-			if (csignature->hasthis) {
+			if (csignature->hasthis)
 				--sp;
-				child_frame.obj = sp->data.p;
-			} else {
-				child_frame.obj = NULL;
-			}
+			child_frame.stack_args = sp;
 			ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context);
 
 			context->current_frame = frame;
@@ -1886,14 +1882,10 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 			/* decrement by the actual number of args */
 			sp -= child_frame.runtime_method->param_count;
-			child_frame.stack_args = sp;
-			if (child_frame.runtime_method->hasthis) {
+			if (child_frame.runtime_method->hasthis)
 				--sp;
-				child_frame.obj = sp->data.p;
-			} else {
-				child_frame.obj = NULL;
-			}
-			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && mono_object_is_transparent_proxy (child_frame.obj)) {
+			child_frame.stack_args = sp;
+			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && mono_object_is_transparent_proxy (sp->data.p)) {
 				child_frame.runtime_method = mono_interp_get_runtime_method (context->domain, mono_marshal_get_remoting_invoke (child_frame.runtime_method->method), &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
@@ -1924,15 +1916,11 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 			/* decrement by the actual number of args */
 			sp -= child_frame.runtime_method->param_count;
-			child_frame.stack_args = sp;
-			if (child_frame.runtime_method->hasthis) {
+			if (child_frame.runtime_method->hasthis)
 				--sp;
-				child_frame.obj = sp->data.p;
-			} else {
-				child_frame.obj = NULL;
-			}
+			child_frame.stack_args = sp;
 
-			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && mono_object_is_transparent_proxy (child_frame.obj)) {
+			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && mono_object_is_transparent_proxy (sp->data.p)) {
 				child_frame.runtime_method = mono_interp_get_runtime_method (context->domain, mono_marshal_get_remoting_invoke (child_frame.runtime_method->method), &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
@@ -1964,16 +1952,15 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame.runtime_method->param_count;
+			sp -= child_frame.runtime_method->param_count + 1;
 			child_frame.stack_args = sp;
-			--sp;
-			child_frame.obj = this_arg = sp->data.p;
+			this_arg = sp->data.p;
 			if (!this_arg)
 				THROW_EX (mono_get_exception_null_reference(), ip - 2);
 			child_frame.runtime_method = get_virtual_method (context->domain, child_frame.runtime_method, this_arg);
 
 			if (this_arg->vtable->klass->valuetype && child_frame.runtime_method->valuetype) {
-				child_frame.obj = (char *)this_arg + sizeof(MonoObject);
+				sp->data.p = (char *) this_arg + sizeof (MonoObject);
 			}
 
 			ves_exec_method_with_context (&child_frame, context);
@@ -2010,16 +1997,15 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame.runtime_method->param_count;
+			sp -= child_frame.runtime_method->param_count + 1;
 			child_frame.stack_args = sp;
-			--sp;
-			child_frame.obj = this_arg = sp->data.p;
+			this_arg = sp->data.p;
 			if (!this_arg)
 				THROW_EX (mono_get_exception_null_reference(), ip - 2);
 			child_frame.runtime_method = get_virtual_method (context->domain, child_frame.runtime_method, this_arg);
 
 			if (this_arg->vtable->klass->valuetype && child_frame.runtime_method->valuetype) {
-				child_frame.obj = (char *)this_arg + sizeof(MonoObject);
+				sp->data.p = (char *) this_arg + sizeof (MonoObject);
 			}
 
 			ves_exec_method_with_context (&child_frame, context);
@@ -2758,23 +2744,30 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 				g_hash_table_insert (profiling_classes, newobj_class, GUINT_TO_POINTER (count));
 			}*/
 				
-
 			if (newobj_class->parent == mono_defaults.array_class) {
 				sp -= csig->param_count;
 				o = ves_array_create (context->domain, newobj_class, csig, sp);
 				goto array_constructed;
 			}
 
+			g_assert (csig->hasthis);
+			if (csig->param_count) {
+				sp -= csig->param_count;
+				memmove (sp + 1, sp, csig->param_count * sizeof (stackval));
+			}
+			child_frame.stack_args = sp;
+
 			/*
 			 * First arg is the object.
 			 */
 			if (newobj_class->valuetype) {
-				if (!newobj_class->enumtype && (newobj_class->byval_arg.type == MONO_TYPE_VALUETYPE)) {
-					child_frame.obj = vt_sp;
+				MonoType *t = &newobj_class->byval_arg;
+				if (!newobj_class->enumtype && (t->type == MONO_TYPE_VALUETYPE || (t->type == MONO_TYPE_GENERICINST && mono_type_generic_inst_is_valuetype (t)))) {
+					sp->data.p = vt_sp;
 					valuetype_this.data.p = vt_sp;
 				} else {
 					memset (&valuetype_this, 0, sizeof (stackval));
-					child_frame.obj = &valuetype_this;
+					sp->data.p = &valuetype_this;
 				}
 			} else {
 				if (newobj_class != mono_defaults.string_class) {
@@ -2782,19 +2775,12 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 					o = mono_object_new_checked (context->domain, newobj_class, &error);
 					mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 					context->managed_code = 1;
-					if (*abort_requested)
+					if (*mono_thread_interruption_request_flag ())
 						mono_thread_interruption_checkpoint ();
-					child_frame.obj = o;
+					sp->data.p = o;
 				} else {
 					child_frame.retval = &retval;
 				}
-			}
-
-			if (csig->param_count) {
-				sp -= csig->param_count;
-				child_frame.stack_args = sp;
-			} else {
-				child_frame.stack_args = NULL;
 			}
 
 			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
@@ -2868,10 +2854,11 @@ array_constructed:
 				THROW_EX (mono_get_exception_invalid_cast (), ip);
 
 			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype) {
-				g_error ("unbox: implement vt");
-			} else {
-				stackval_from_data (&c->byval_arg, &sp [-1], mono_object_unbox (o), FALSE);
+				int size = mono_class_native_size (c, NULL);
+				sp [-1].data.p = vt_sp;
+				vt_sp += (size + 7) & ~7;
 			}
+			stackval_from_data (&c->byval_arg, &sp [-1], mono_object_unbox (o), FALSE);
 			ip += 2;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_THROW)
@@ -3805,18 +3792,9 @@ array_constructed:
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_LDTHIS)
-			sp->data.p = frame->obj;
-			++ip;
-			++sp; 
-			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STTHIS)
-			--sp; 
-			frame->obj = sp->data.p;
-			++ip;
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDTHISA)
-			sp->data.p = &frame->obj;
+			g_error ("should not happen");
+			// sp->data.p = &frame->obj;
 			++ip;
 			++sp; 
 			MINT_IN_BREAK;
@@ -4307,75 +4285,6 @@ usage (void)
 	exit (1);
 }
 
-static void
-add_signal_handler (int signo, void (*handler)(int))
-{
-#ifdef HOST_WIN32
-	signal (signo, handler);
-#else
-	struct sigaction sa;
-
-	sa.sa_handler = handler;
-	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	g_assert (sigaction (signo, &sa, NULL) != -1);
-#endif
-}
-
-static void
-segv_handler (int signum)
-{
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
-	MonoException *segv_exception;
-
-	if (context == NULL)
-		return;
-	segv_exception = mono_get_exception_null_reference ();
-	segv_exception->message = mono_string_new (mono_domain_get (), "Null Reference (SIGSEGV)");
-	mono_raise_exception (segv_exception);
-}
-
-
-static void
-quit_handler (int signum)
-{
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
-	MonoException *quit_exception;
-
-	if (context == NULL)
-		return;
-	quit_exception = mono_get_exception_execution_engine ("Interrupted (SIGQUIT).");
-	mono_raise_exception (quit_exception);
-}
-
-static void
-abrt_handler (int signum)
-{
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
-	MonoException *abrt_exception;
-
-	if (context == NULL)
-		return;
-	abrt_exception = mono_get_exception_execution_engine ("Abort (SIGABRT).");
-	mono_raise_exception (abrt_exception);
-}
-
-#if 0
-static void
-thread_abort_handler (int signum)
-{
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
-	MonoException *exc;
-
-	if (context == NULL)
-		return;
-
-	exc = mono_thread_request_interruption (context->managed_code); 
-	if (exc) mono_raise_exception (exc);
-}
-#endif
-
 static MonoBoolean
 interp_ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info, 
 			  MonoReflectionMethod **method, 
@@ -4487,164 +4396,15 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	return delegate;
 }
 
-
-typedef struct
-{
-	MonoDomain *domain;
-	int enable_debugging;
-	char *file;
-	int argc;
-	char **argv;
-} MainThreadArgs;
-
-static void main_thread_handler (gpointer user_data)
-{
-	MainThreadArgs *main_args=(MainThreadArgs *)user_data;
-	MonoAssembly *assembly;
-
-	if (main_args->enable_debugging) {
-		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
-	}
-
-	assembly = mono_domain_assembly_open (main_args->domain, main_args->file);
-
-	if (!assembly){
-		fprintf (stderr, "Can not open image %s\n", main_args->file);
-		exit (1);
-	}
-
-	ves_exec (main_args->domain, assembly, main_args->argc, main_args->argv);
-}
-
-static void
-interp_mono_runtime_install_handlers (void)
-{
-	add_signal_handler (SIGSEGV, segv_handler);
-	add_signal_handler (SIGINT, quit_handler);
-	add_signal_handler (SIGABRT, abrt_handler);
-#if 0
-	add_signal_handler (mono_thread_get_abort_signal (), thread_abort_handler);
-#endif
-}
-
-static void
-quit_function (MonoDomain *domain, gpointer user_data)
-{
-	mono_profiler_shutdown ();
-	
-	mono_runtime_cleanup (domain);
-	mono_domain_free (domain, TRUE);
-
-}
-
 void
-mono_interp_cleanup(MonoDomain *domain)
+mono_interp_init ()
 {
-	quit_function (domain, NULL);
-}
-
-int
-mono_interp_exec(MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
-{
-	return ves_exec (domain, assembly, argc, argv);
-}
-
-static gpointer
-interp_get_imt_trampoline (MonoVTable *vtable, int imt_slot_index)
-{
-	// FIXME: implement me
-	return NULL;
-}
-
-static gpointer
-interp_create_ftnptr (MonoDomain *domain, gpointer addr)
-{
-	// FIXME: true on all arch?
-	return addr;
-}
-
-// FIXME
-static gboolean
-mono_current_thread_has_handle_block_guard (void)
-{
-	return FALSE;
-}
-
-// FIXME
-static gboolean
-mono_above_abort_threshold (void)
-{
-	return FALSE;
-}
-
-MonoDomain *
-mono_interp_init(const char *file)
-{
-	MonoDomain *domain;
-	MonoRuntimeCallbacks callbacks;
-	MonoRuntimeExceptionHandlingCallbacks ecallbacks;
-	MonoError error;
-
-	g_log_set_always_fatal (G_LOG_LEVEL_ERROR);
-	g_log_set_fatal_mask (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR);
-
 	mono_native_tls_alloc (&thread_context_id, NULL);
     mono_native_tls_set_value (thread_context_id, NULL);
 	mono_os_mutex_init_recursive (&runtime_method_lookup_section);
 	mono_os_mutex_init_recursive (&create_method_pointer_mutex);
 
-	mono_tls_init_runtime_keys ();
-
-	// TODO: use callbacks?
-	interp_mono_runtime_install_handlers ();
 	mono_interp_transform_init ();
-
-	memset (&callbacks, 0, sizeof (callbacks));
-	// TODO: replace with `mono_install_callbacks`
-	callbacks.compile_method = mono_create_method_pointer;
-	callbacks.runtime_invoke = interp_mono_runtime_invoke;
-	callbacks.get_imt_trampoline = interp_get_imt_trampoline;
-	callbacks.create_ftnptr = interp_create_ftnptr;
-#ifndef DISABLE_REMOTING
-	callbacks.create_remoting_trampoline = interp_create_remoting_trampoline;
-#endif
-	callbacks.create_jit_trampoline = interp_create_trampoline;
-	mono_install_callbacks (&callbacks);
-
-
-	memset (&ecallbacks, 0, sizeof (ecallbacks));
-	ecallbacks.mono_raise_exception = interp_ex_handler;
-	ecallbacks.mono_current_thread_has_handle_block_guard = mono_current_thread_has_handle_block_guard;
-	ecallbacks.mono_above_abort_threshold = mono_above_abort_threshold;
-#if 0
-	// FIXME: ...
-	mono_install_stack_walk (interp_walk_stack);
-#endif
-	mono_install_eh_callbacks (&ecallbacks);
-
-	mono_install_runtime_cleanup (quit_function);
-
-	abort_requested = mono_thread_interruption_request_flag ();
-
-	domain = mono_init_from_assembly (file, file);
-#ifdef __hpux /* generates very big stack frames */
-	mono_threads_set_default_stacksize(32*1024*1024);
-#endif
-	mono_icall_init ();
-	/* TODO: this should use ves_icall_get_frame from mini-exceptions.c? */
-	mono_add_internal_call ("System.Diagnostics.StackFrame::get_frame_info", interp_ves_icall_get_frame_info);
-	/* TODO: this should use ves_icall_get_trace from mini-exceptions.c? */
-	mono_add_internal_call ("System.Diagnostics.StackTrace::get_trace", interp_ves_icall_get_trace);
-	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers", interp_mono_runtime_install_handlers);
-	mono_add_internal_call ("System.Delegate::CreateDelegate_internal", ves_icall_System_Delegate_CreateDelegate_internal);
-
-	mono_register_jit_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", mono_create_icall_signature ("object"), FALSE);
-
-	mono_runtime_init_checked (domain, NULL, NULL, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-
-	mono_thread_attach (domain);
-	return domain;
 }
 
 typedef int (*TestMethod) (void);
