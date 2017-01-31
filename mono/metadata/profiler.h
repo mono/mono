@@ -229,6 +229,8 @@ MONO_API void mono_profiler_install_iomap (MonoProfileIomapFunc callback);
 
 MONO_API void mono_profiler_load             (const char *desc);
 
+MONO_API void mono_profiler_set_name (MonoProfiler *prof, const char *name);
+
 typedef enum {
 	/* Elapsed time is tracked by user+kernel time of the process - this is the default*/
 	MONO_PROFILER_STAT_MODE_PROCESS = 0,

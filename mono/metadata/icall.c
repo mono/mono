@@ -7755,6 +7755,18 @@ ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 	return display_name;
 }
 
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_DisableProfiler (MonoStringHandle profiler_name)
+{
+	char *name;
+	MonoError error;
+
+	name = mono_string_handle_to_utf8 (profiler_name, &error);
+	mono_error_assert_ok (&error);
+
+	mono_profiler_disable (name);
+}
+
 #ifndef HOST_WIN32
 static inline gint32
 mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)

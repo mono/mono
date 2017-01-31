@@ -89,5 +89,7 @@ void mono_profiler_runtime_initialized (void);
 int64_t mono_profiler_get_sampling_rate (void);
 MonoProfileSamplingMode mono_profiler_get_sampling_mode (void);
 
+void mono_profiler_disable (const char *name);
+
 #endif /* __MONO_PROFILER_PRIVATE_H__ */
 

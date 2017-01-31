@@ -111,6 +111,8 @@ struct _ProfilerDesc {
 	MonoProfilerCodeChunkNew code_chunk_new;
 	MonoProfilerCodeChunkDestroy code_chunk_destroy;
 	MonoProfilerCodeBufferNew code_buffer_new;
+
+	const char *name;
 };
 
 static ProfilerDesc *prof_list = NULL;
@@ -325,6 +327,31 @@ MonoProfileSamplingMode
 mono_profiler_get_sampling_mode (void)
 {
 	return sampling_mode;
+}
+
+void
+mono_profiler_set_name (MonoProfiler *profiler, const char *name)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if (prof->profiler == profiler)
+			prof->name = name;
+	}
+}
+
+/*
+ * mono_profiler_disable:
+ *
+ *   Disable data collection for the profiler named NAME.
+ */
+void
+mono_profiler_disable (const char *name)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if (prof->name && !strcmp (prof->name, name))
+			prof->events = 0;
+	}
 }
 
 void 

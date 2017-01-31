@@ -79,5 +79,9 @@ namespace Mono {
 			// No longer used
 			return true;
 		}
+
+		// Disable further data collection for the profiler @profiler_name
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern void DisableProfiler (string profiler_name);
 	}
 }
