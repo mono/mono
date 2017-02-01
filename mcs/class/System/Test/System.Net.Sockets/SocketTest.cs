@@ -3720,8 +3720,11 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("NotOnMac")]
-                public void ConnectedProperty ()
-                {
+#if FULL_AOT_DESKTOP
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=52157")]
+#endif
+		public void ConnectedProperty ()
+		{
 			TcpListener listener = new TcpListener (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			listener.Start();
 
