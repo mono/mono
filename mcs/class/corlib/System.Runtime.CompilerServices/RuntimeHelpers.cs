@@ -100,6 +100,11 @@ namespace System.Runtime.CompilerServices
 			throw new InsufficientExecutionStackException ();
 		}
 
+		public static bool TryEnsureSufficientExecutionStack ()
+		{
+			return SufficientExecutionStack ();
+		}
+
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
 		{

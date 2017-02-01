@@ -52,10 +52,14 @@ namespace MonoTests.System.ServiceProcess
 			public string[] DependedOn = new string[] {};
 		}
 
+		// NOTE: information about these services is current as of Windows 10 / Server 2016,
+		// it may be different and cause test failures on other Windows versions
+
 		static ServiceInfo DISK_DRIVER_SERVICE = new ServiceInfo { ServiceName = "disk", DisplayName = "Disk Driver", ServiceType = ServiceType.KernelDriver };
 		static ServiceInfo ROUTING_AND_REMOTE_ACCESS_SERVICE = new ServiceInfo { ServiceName = "RemoteAccess", DisplayName = "Routing and Remote Access", DependedOn = new [] { "bfe", "http", "rasman", "rpcss" } };
 		static ServiceInfo SECONDARY_LOGON_SERVICE = new ServiceInfo { ServiceName = "seclogon", DisplayName = "Secondary Logon", Dependents = new [] { "te.service" } };
 		static ServiceInfo SECURITY_ACCOUNTS_MANAGER_SERVICE = new ServiceInfo { ServiceName = "SamSs", DisplayName = "Security Accounts Manager", Dependents = new [] { "browser", "ktmrm", "lanmanserver", "msdtc" }, DependedOn = new [] { "rpcss" } };
+		static ServiceInfo COMPLUS_EVENTSYSTEM_SERVICE = new ServiceInfo { ServiceName = "EventSystem", DisplayName = "COM+ Event System", ServiceType = ServiceType.Win32ShareProcess, Dependents = new [] { "comsysapp", "sens" }, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_IMAGE_ACQUISITION_SERVICE = new ServiceInfo { ServiceName = "stisvc", DisplayName = "Windows Image Acquisition (WIA)", ServiceType = ServiceType.Win32OwnProcess, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_SEARCH_SERVICE = new ServiceInfo { ServiceName = "WSearch", DisplayName = "Windows Search", ServiceType = ServiceType.Win32OwnProcess, Dependents = new [] { "wmpnetworksvc", "workfolderssvc" }, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_TIME_SERVICE = new ServiceInfo { ServiceName = "W32Time", DisplayName = "Windows Time" };
@@ -74,7 +78,7 @@ namespace MonoTests.System.ServiceProcess
 		static ServiceInfo SHARE_PROCESS_SERVICE = WORKSTATION_SERVICE;
 
 		static ServiceInfo SERVICE_1_WITH_DEPENDENTS_AND_DEPENDED_ON = SECURITY_ACCOUNTS_MANAGER_SERVICE;
-		static ServiceInfo SERVICE_2_WITH_DEPENDENTS_AND_DEPENDED_ON = WINDOWS_SEARCH_SERVICE;
+		static ServiceInfo SERVICE_2_WITH_DEPENDENTS_AND_DEPENDED_ON = COMPLUS_EVENTSYSTEM_SERVICE;
 		static ServiceInfo SERVICE_3_WITH_DEPENDENTS_AND_DEPENDED_ON = WORKSTATION_SERVICE;
 
 		static ServiceInfo SERVICE_WITH_MANY_DEPENDENTS = WORKSTATION_SERVICE;

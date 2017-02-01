@@ -440,6 +440,10 @@
           <c>M:Mono.DocTest.Widget.Dynamic0(System.Object,System.Object)</c>
         </remarks>
         <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Dynamic.Utils.ContractUtils.RequiresNotNull(System.Object,System.String)" />,
+          <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
+        <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Dynamic.Utils.ContractUtils.RequiresNotNull(System.Object,System.String)" />,
           <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
       </Docs>
     </Member>

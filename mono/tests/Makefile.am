@@ -51,7 +51,7 @@ if FULL_AOT_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY,FULL_AOT_DESKTOP 
 endif
 
-if INSTALL_TESTING_AOT_HYBRID
+if HYBRID_AOT_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY 
 endif
 
@@ -833,6 +833,12 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	thread6.exe
 
+# can't AOT the TestingReferenceAssembly.dll which is a dependency
+# of reference-loader.exe because it contains the [ReferenceAssemblyAttribute]
+# and the runtime errors out with "File does not contain a valid CIL image."
+PROFILE_DISABLED_TESTS += \
+	reference-loader.exe
+
 # constraints-load.il: 
 # Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to 
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
@@ -841,7 +847,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-515884.exe
 endif
 
-if INSTALL_TESTING_AOT_HYBRID
+if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
@@ -900,7 +906,7 @@ DISABLED_TESTS=			\
 PREREQ_IL_SRC=event-il.il module-cctor.il
 PREREQ_CS_SRC=
 PREREQ_IL_DLL_SRC=
-PREREQ_CS_DLL_SRC=TestingReferenceAssembly.cs TestingReferenceReferenceAssembly.cs
+PREREQ_CS_DLL_SRC=
 
 PREREQSI_IL=$(PREREQ_IL_SRC:.il=.exe) \
 	$(PREREQ_IL_DLL_SRC:.il=.dll)
@@ -923,7 +929,7 @@ EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 	$(ILASM) -out:$@ $<
 
 if !FULL_AOT_TESTS
-if !INSTALL_TESTING_AOT_HYBRID
+if !HYBRID_AOT_TESTS
 TEST_DRIVER_HARD_KILL_FEATURE=-r:Mono.Posix.dll
 endif
 endif
@@ -939,6 +945,12 @@ endif
 
 %.dll: %.cs
 	$(MCS) -r:System.dll -target:library -out:$@ $<
+
+reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
+	$(MCS) -r:System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ reference-loader.cs
+
+TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
+	$(MCS) -target:library -out:$@ $<
 
 TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs TestingReferenceAssembly.dll
 	$(MCS) -r:TestingReferenceAssembly.dll -target:library -out:$@ $<
@@ -977,9 +989,7 @@ bug-324535-il.dll$(PLATFORM_AOT_SUFFIX)	\
 bug-36848-a.dll$(PLATFORM_AOT_SUFFIX)	\
 bug-81691-b.dll$(PLATFORM_AOT_SUFFIX)	\
 bug-327438.2.exe$(PLATFORM_AOT_SUFFIX)	\
-bug-81466-lib.dll$(PLATFORM_AOT_SUFFIX)	\
-TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)	\
-TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
+bug-81466-lib.dll$(PLATFORM_AOT_SUFFIX)
 
 if FULL_AOT_TESTS
 prereqs: $(PREREQSI_IL_AOT) $(PREREQSI_CS_AOT) $(AOT_EXTRA_LIBS)
