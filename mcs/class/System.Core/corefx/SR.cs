@@ -87,6 +87,7 @@ partial class SR
 	public const string PropertyDoesNotHaveSetter = "The property '{0}' has no 'set' accessor";
 	public const string PropertyDoesNotHaveAccessor = "The property '{0}' has no 'get' or 'set' accessors";
 	public const string NotAMemberOfType = "'{0}' is not a member of type '{1}'";
+	public const string NotAMemberOfAnyType = "'{0}' is not a member of any type";
 	public const string ExpressionNotSupportedForType = "The expression '{0}' is not supported for type '{1}'";
 	public const string UnsupportedExpressionType = "The expression type '{0}' is not supported";
 	public const string ParameterExpressionNotValidAsDelegate = "ParameterExpression of type '{0}' cannot be used for delegate parameter of type '{1}'";

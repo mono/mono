@@ -4,10 +4,12 @@
 AssemblyInfo.cs
 TypeForwarders.cs
 
+corefx/Crc32Helper.cs
 corefx/ZipArchiveEntry.Mono.cs
 corefx/SR.cs
 
-../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/Crc32Helper.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
+
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/PositionPreservingWriteOnlyStreamWrapper.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/ZipArchive.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/ZipArchiveEntry.cs
