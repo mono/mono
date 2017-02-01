@@ -420,7 +420,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 44;
+		internal const int MINOR_VERSION = 45;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -532,7 +532,8 @@ namespace Mono.Debugger.Soft
 			GET_MANIFEST_MODULE = 3,
 			GET_OBJECT = 4,
 			GET_TYPE = 5,
-			GET_NAME = 6
+			GET_NAME = 6,
+			GET_DOMAIN = 7
 		}
 
 		enum CmdModule {
@@ -2112,6 +2113,10 @@ namespace Mono.Debugger.Soft
 
 		internal string Assembly_GetName (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
+		}
+
+		internal long Assembly_GetIdDomain (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_DOMAIN, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
 		/*

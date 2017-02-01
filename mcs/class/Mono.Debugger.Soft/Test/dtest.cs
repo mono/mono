@@ -3299,6 +3299,7 @@ public class DebuggerTests
 		// d_method is from another domain
 		MethodMirror d_method = (e as BreakpointEvent).Method;
 		Assert.IsTrue (m != d_method);
+		Assert.AreEqual (domain, d_method.DeclaringType.Assembly.Domain);
 
 		var frames = e.Thread.GetFrames ();
 		Assert.AreEqual ("invoke_in_domain", frames [0].Method.Name);
