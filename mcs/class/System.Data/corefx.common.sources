@@ -230,6 +230,8 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlBoundElement.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataImplementation.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XPathNodePointer.cs
+../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataDocument.cs
+
 ../referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
 ../referencesource/System.Data/Misc/ExternDll.cs
 ../referencesource/System.Data/Misc/HResults.cs
@@ -287,7 +289,4 @@
 ../referencesource/System.Data/System/Data/SqlClient/SqlUtil.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsEnums.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsParserStaticMethods.cs
-
-#XmlDataDocument in corefx is not public anymore
-#../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataDocument.cs
-corefx/XmlDataDocument.cs
+../referencesource/System.Data/System/Data/DataSet.cs

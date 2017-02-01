@@ -7,6 +7,7 @@ LIBRARY = System.Data.dll
 LIB_REFS = System System.Xml System.Core System.Numerics
 LIB_MCS_FLAGS = \
 	-nowarn:219,414,649 \
+	-d:COREFX	\
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
