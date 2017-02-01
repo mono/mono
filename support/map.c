@@ -4716,36 +4716,52 @@ int Mono_Posix_ToPosixMadviseAdvice (int x, int *r)
 int Mono_Posix_FromSeekFlags (short x, short *r)
 {
 	*r = 0;
-#ifdef L_INCR
 	if (x == Mono_Posix_SeekFlags_L_INCR)
+#ifdef L_INCR
 		{*r = L_INCR; return 0;}
-#endif /* def L_INCR */
-#ifdef L_SET
+#else /* def L_INCR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef L_INCR */
 	if (x == Mono_Posix_SeekFlags_L_SET)
+#ifdef L_SET
 		{*r = L_SET; return 0;}
-#endif /* def L_SET */
-#ifdef L_XTND
+#else /* def L_SET */
+		{errno = EINVAL; return -1;}
+#endif /* ndef L_SET */
 	if (x == Mono_Posix_SeekFlags_L_XTND)
+#ifdef L_XTND
 		{*r = L_XTND; return 0;}
-#endif /* def L_XTND */
-#ifdef SEEK_CUR
+#else /* def L_XTND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef L_XTND */
 	if (x == Mono_Posix_SeekFlags_SEEK_CUR)
+#ifdef SEEK_CUR
 		{*r = SEEK_CUR; return 0;}
-#endif /* def SEEK_CUR */
-#ifdef SEEK_END
+#else /* def SEEK_CUR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef SEEK_CUR */
 	if (x == Mono_Posix_SeekFlags_SEEK_END)
+#ifdef SEEK_END
 		{*r = SEEK_END; return 0;}
-#endif /* def SEEK_END */
-#ifdef SEEK_SET
+#else /* def SEEK_END */
+		{errno = EINVAL; return -1;}
+#endif /* ndef SEEK_END */
 	if (x == Mono_Posix_SeekFlags_SEEK_SET)
+#ifdef SEEK_SET
 		{*r = SEEK_SET; return 0;}
-#endif /* def SEEK_SET */
+#else /* def SEEK_SET */
+		{errno = EINVAL; return -1;}
+#endif /* ndef SEEK_SET */
+	if (x == 0)
+		return 0;
 	errno = EINVAL; return -1;
 }
 
 int Mono_Posix_ToSeekFlags (short x, short *r)
 {
 	*r = 0;
+	if (x == 0)
+		return 0;
 #ifdef L_INCR
 	if (x == L_INCR)
 		{*r = Mono_Posix_SeekFlags_L_INCR; return 0;}
