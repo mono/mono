@@ -156,9 +156,20 @@ namespace Mono.Btls
 
 		static Exception GetException (MonoBtlsSslError status)
 		{
-			var error = MonoBtlsError.GetError ();
+			string file;
+			int line;
+			var error = MonoBtlsError.GetError (out file, out line);
+			if (error == null)
+				return new MonoBtlsException (status);
+
 			var text = MonoBtlsError.GetErrorString (error);
-			return new MonoBtlsException ("{0} {1}", status, text);
+
+			string message;
+			if (file != null)
+				message = string.Format ("{0} {1}\n  at {2}:{3}", status, text, file, line);
+			else
+				message = string.Format ("{0} {1}", status, text);
+			return new MonoBtlsException (message);
 		}
 
 		public override bool ProcessHandshake ()
