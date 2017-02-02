@@ -386,11 +386,13 @@ namespace Mono.Btls
 
 		void Import (byte[] data)
 		{
-			// Does it look like PEM?
-			if ((data.Length > 0) && (data [0] != 0x30))
-				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
-			else
-				x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
+			if (data != null) {
+				// Does it look like PEM?
+				if ((data.Length > 0) && (data [0] != 0x30))
+					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.PEM);
+				else
+					x509 = MonoBtlsX509.LoadFromData (data, MonoBtlsX509Format.DER);
+			}
 		}
 
 		void ImportPkcs12 (byte[] data, string password)
