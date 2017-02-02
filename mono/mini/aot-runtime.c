@@ -3203,17 +3203,20 @@ static gboolean
 amodule_contains_code_addr (MonoAotModule *amodule, guint8 *code)
 {
 	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
+
 	gpointer (*get_module) (int) = (gpointer (*)(int))amodule->info.llvm_get_module;
 
-	int good = 0;
+	MonoAotModule **mod = (MonoAotModule **) get_module (method_index);
 
-	for (int i = 0; i < amodule->info.nmethods + 1; ++i) {
-		MonoAotModule **addr = (MonoAotModule **)get_module (i);
-		if (addr && *addr == amodule)
-			return TRUE;
-	}
+	if (!mod)
+		return FALSE;
 
-	return good;
+	// Important for the method_index = 0 case
+	gpointer addr = (*mod)->methods [method_index];
+	if (addr != code)
+		return FALSE;
+
+	return *mod == amodule;
 }
 
 /*
@@ -3918,6 +3921,8 @@ register_jump_target_got_slot (MonoDomain *domain, MonoMethod *method, gpointer 
 static void
 resolve_amodule (MonoAotModule *amodule, guint8 *code, MonoAotModule **target_amodule, guint32 *target_method_index)
 {
+	int idx = -1;
+	*target_method_index = 0;
 	if (mono_llvm_only && target_amodule) {
 		/*
 		 * In llvmonly + static mode, method code can be outside the code range of amodule due to
@@ -3926,9 +3931,8 @@ resolve_amodule (MonoAotModule *amodule, guint8 *code, MonoAotModule **target_am
 		if (!amodule_contains_code_addr (amodule, code)) {
 			amodule = find_aot_module (code);
 			if (!amodule)
-				return;
+				g_assert_not_reached ();
 			g_assert (amodule->methods);
-			int idx = -1;
 			// FIXME: Add a hash ?
 			for (int i = 0; i < amodule->info.nmethods; ++i) {
 				if (amodule->methods [i] == code) {
@@ -3936,11 +3940,14 @@ resolve_amodule (MonoAotModule *amodule, guint8 *code, MonoAotModule **target_am
 					break;
 				}
 			}
-			if (idx != -1) {
-				*target_amodule = amodule;
-				*target_method_index = idx;
-			}
 		}
+		g_assert (amodule_contains_code_addr (amodule, code));
+		g_assert (amodule->got_initializing);
+	}
+	if (idx != -1) {
+		*target_amodule = amodule;
+		g_assert (amodule->methods [idx] == code);
+		*target_method_index = idx;
 	}
 }
 
@@ -3960,11 +3967,6 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	gboolean res;
 
 	error_init (error);
-
-	if (target_amodule) {
-		*target_amodule = amodule;
-		*target_method_index = method_index;
-	}
 
 	init_amodule_got (amodule);
 
@@ -4012,7 +4014,20 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	}
 	g_assert (code);
 
-	resolve_amodule (amodule, code, target_amodule, target_method_index);
+	if (target_method_index) {
+		resolve_amodule (amodule, code, target_amodule, target_method_index);
+
+		if (*target_method_index) {
+			amodule = *target_amodule;
+			method_index = *target_method_index;
+		} else {
+			*target_amodule = amodule;
+			*target_method_index = method_index;
+		}
+	}
+	if (!amodule->got_initializing)
+		init_amodule_got (amodule);
+	g_assert (amodule->methods [method_index] == code);
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
 
@@ -4708,6 +4723,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 	code = (guint8 *)load_method (domain, amodule, klass->image, method, method->token, method_index, &target_amodule, &target_method_index, error);
 	if (!is_ok (error))
 		return NULL;
+	g_assert (target_amodule->got_initializing);
 	if (code && cache_result) {
 		amodule_lock (amodule);
 		g_hash_table_insert (amodule->method_to_code, orig_method, code);
@@ -4718,6 +4734,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		/* Needed by mono_aot_init_gshared_method_this () */
 		/* orig_method is a random instance but it is enough to make init_method () work */
 		amodule_lock (target_amodule);
+		g_assert (amodule_contains_code_addr (target_amodule, code));
 		g_hash_table_insert (target_amodule->extra_methods, GUINT_TO_POINTER (target_method_index), orig_method);
 		amodule_unlock (target_amodule);
 	}
