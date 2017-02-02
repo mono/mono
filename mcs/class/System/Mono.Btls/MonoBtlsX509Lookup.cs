@@ -82,16 +82,9 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_x509_lookup_peek_lookup (IntPtr handle);
 
+		MonoBtlsX509Store store;
 		MonoBtlsX509LookupType type;
 		List<MonoBtlsX509LookupMono> monoLookups;
-
-#if FIXME
-		// Do we need this?
-		internal MonoBtlsX509Lookup (BoringX509LookupHandle handle)
-			: base (handle)
-		{
-		}
-#endif
 
 		static BoringX509LookupHandle Create_internal (MonoBtlsX509Store store, MonoBtlsX509LookupType type)
 		{
@@ -105,6 +98,7 @@ namespace Mono.Btls
 		internal MonoBtlsX509Lookup (MonoBtlsX509Store store, MonoBtlsX509LookupType type)
 			: base (Create_internal (store, type))
 		{
+			this.store = store;
 			this.type = type;
 		}
 
@@ -151,6 +145,7 @@ namespace Mono.Btls
 			var ret = mono_btls_x509_lookup_add_mono (
 				Handle.DangerousGetHandle (), monoLookup.Handle.DangerousGetHandle ());
 			CheckError (ret);
+			monoLookup.Install (this);
 
 			if (monoLookups == null)
 				monoLookups = new List<MonoBtlsX509LookupMono> ();
@@ -194,6 +189,11 @@ namespace Mono.Btls
 				if (bytes != IntPtr.Zero)
 					Marshal.FreeHGlobal (bytes);
 			}
+		}
+
+		internal void AddCertificate (MonoBtlsX509 certificate)
+		{
+			store.AddCertificate (certificate);
 		}
 
 		protected override void Close ()

@@ -72,12 +72,16 @@ namespace Mono.Btls
 			Initialize ();
 
 			var hash = name.GetHash ();
+			MonoBtlsX509 found = null;
+
 			for (int i = 0; i < certificates.Length; i++) {
-				if (hashes [i] == hash)
-					return certificates [i];
+				if (hashes [i] != hash)
+					continue;
+				found = certificates [i];
+				AddCertificate (found);
 			}
 
-			return null;
+			return found;
 		}
 
 		protected override void Close ()
