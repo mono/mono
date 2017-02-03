@@ -42,7 +42,7 @@ namespace Mono.Net.Security
 		{
 #if MONOTOUCH
 			is_macosx = true;
-#elif MONODROID
+#elif MONODROID || ORBIS
 			is_macosx = false;
 #else
 			is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
@@ -156,6 +156,7 @@ namespace Mono.Net.Security
 			}
 #else
 			if (is_macosx) {
+#if !ORBIS
 				// Attempt to use OSX certificates
 				// Ideally we should return the SecTrustResult
 				OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;
@@ -180,6 +181,9 @@ namespace Mono.Net.Security
 					status11 = (int)trustResult;
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				}
+#else
+				throw new NotSupportedException("Unreachable on Orbis");
+#endif
 			} else {
 				result = BuildX509Chain (certs, chain, ref errors, ref status11);
 			}

@@ -484,6 +484,8 @@ namespace System.IO.Compression
 		const string LIBNAME = "MonoPosixHelper";
 #endif
 
+// FIXME: Is this desirable or does Orbis have MonoPosixHelper?
+#if !ORBIS
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
 
@@ -498,6 +500,33 @@ namespace System.IO.Compression
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
+#else
+		static IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
+		{
+			throw new NotSupportedException("Not supported on Orbis");
+		}
+
+		static int CloseZStream (IntPtr stream)
+		{
+			throw new NotSupportedException("Not supported on Orbis");
+		}
+
+		static int Flush (IntPtr stream)
+		{
+			throw new NotSupportedException("Not supported on Orbis");
+		}
+
+		static int ReadZStream (IntPtr stream, IntPtr buffer, int length)
+		{
+			throw new NotSupportedException("Not supported on Orbis");
+		}
+
+		static int WriteZStream (IntPtr stream, IntPtr buffer, int length)
+		{
+			throw new NotSupportedException("Not supported on Orbis");
+		}
+#endif
+
 	}
 }
 
