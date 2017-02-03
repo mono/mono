@@ -1069,7 +1069,6 @@ gboolean
 mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, MonoError *error)
 {
 	mono_error_init (error);
-	return TRUE;
 }
 
 gboolean
