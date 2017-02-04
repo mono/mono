@@ -74,6 +74,7 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "net_4_x"),  // Version451
 					Path.Combine (lib_mono_dir, "net_4_x"),  // Version46
 					Path.Combine (lib_mono_dir, "net_4_x"),  // Version461
+					Path.Combine (lib_mono_dir, "net_4_x"),  // Version462
 				};	
 			} else if (runningOnDotNet) {
 				mono_dir = new string [] {
@@ -86,6 +87,7 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "v4.0.30319"),  // Version451
 					Path.Combine (lib_mono_dir, "v4.0.30319"),  // Version46
 					Path.Combine (lib_mono_dir, "v4.0.30319"),  // Version461
+					Path.Combine (lib_mono_dir, "v4.0.30319"),  // Version462
 				};
 			} else {
 				mono_dir = new string [] {
@@ -99,6 +101,7 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "4.5"),  // Version451
 					Path.Combine (lib_mono_dir, "4.5"),  // Version46
 					Path.Combine (lib_mono_dir, "4.5"),  // Version461
+					Path.Combine (lib_mono_dir, "4.5"),  // Version462
 				};
 			}
 
