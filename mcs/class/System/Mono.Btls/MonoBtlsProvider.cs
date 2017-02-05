@@ -204,8 +204,8 @@ namespace Mono.Btls
 		internal static void SetupCertificateStore (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
 		{
 #if MONODROID
-				SetupCertificateStore (store);
-				return;
+			SetupCertificateStore (store);
+			return;
 #else
 
 			if (settings == null || settings.CertificateSearchPaths == null) {

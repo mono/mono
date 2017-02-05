@@ -75,7 +75,7 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
-		public string[] CertificateSearchPaths {
+		internal string[] CertificateSearchPaths {
 			get; set;
 		}
 
