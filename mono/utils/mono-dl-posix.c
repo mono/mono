@@ -38,6 +38,7 @@ mono_dl_get_so_suffixes (void)
 {
 	static const char *suffixes[] = {
 		".so",
+		".so.6",
 		"",
 	};
 	return suffixes;
