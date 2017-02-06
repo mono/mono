@@ -208,7 +208,7 @@ namespace Mono.Btls
 			return;
 #else
 
-			if (settings == null || settings.CertificateSearchPaths == null) {
+			if (settings?.CertificateSearchPaths == null) {
 				SetupCertificateStore (store);
 				return;
 			}
@@ -268,7 +268,7 @@ namespace Mono.Btls
 
 		static void AddTrustedRoots (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
 		{
-			if (settings == null || settings.TrustAnchors == null)
+			if (settings?.TrustAnchors == null)
 				return;
 			var trust = server ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
 			store.AddCollection (settings.TrustAnchors, trust);
