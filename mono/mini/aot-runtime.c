@@ -4029,6 +4029,15 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		init_amodule_got (amodule);
 	g_assert (amodule->methods [method_index] == code);
 
+	if (mono_llvm_only) {
+		/* Needed by mono_aot_init_gshared_method_this () */
+		/* orig_method is a random instance but it is enough to make init_method () work */
+		amodule_lock (amodule);
+		g_assert (amodule_contains_code_addr (amodule, code));
+		g_hash_table_insert (amodule->extra_methods, GUINT_TO_POINTER (method_index), method);
+		amodule_unlock (amodule);
+	}
+
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
 
 	if (!amodule->methods_loaded) {
@@ -4737,7 +4746,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		amodule_unlock (amodule);
 	}
 
-	if (mono_llvm_only) {
+	if (mono_llvm_only && method != orig_method) {
 		/* Needed by mono_aot_init_gshared_method_this () */
 		/* orig_method is a random instance but it is enough to make init_method () work */
 		amodule_lock (target_amodule);
