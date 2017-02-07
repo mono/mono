@@ -63,25 +63,30 @@ public class DebuggerTests
 		Start (false, args);
 	}
 
+	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
+		var pi = new Diag.ProcessStartInfo ();
+
+		if (runtime != null) {
+			pi.FileName = runtime;
+		} else if (Path.DirectorySeparatorChar == '\\') {
+			string processExe = Diag.Process.GetCurrentProcess ().MainModule.FileName;
+			if (processExe != null) {
+				string fileName = Path.GetFileName (processExe);
+				if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
+					pi.FileName = processExe;
+			}
+		}
+		if (string.IsNullOrEmpty (pi.FileName))
+			pi.FileName = "mono";
+		pi.Arguments = String.Join (" ", args);
+		return pi;
+	}
+
 	void Start (bool forceExit, params string[] args) {
 		this.forceExit = forceExit;
 
 		if (!listening) {
-			var pi = new Diag.ProcessStartInfo ();
-
-			if (runtime != null) {
-				pi.FileName = runtime;
-			} else if (Path.DirectorySeparatorChar == '\\') {
-				string processExe = Diag.Process.GetCurrentProcess ().MainModule.FileName;
-				if (processExe != null) {
-					string fileName = Path.GetFileName (processExe);
-					if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
-						pi.FileName = processExe;
-				}
-			}
-			if (string.IsNullOrEmpty (pi.FileName))
-				pi.FileName = "mono";
-			pi.Arguments = String.Join (" ", args);
+			var pi = CreateStartInfo (args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
 		} else {
 			var ep = new IPEndPoint (IPAddress.Any, 10000);
@@ -4251,7 +4256,7 @@ public class DebuggerTests
 		vm.SetBreakpoint (cctor, 0);
 
 		vm.Resume ();
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.IsTrue (e is BreakpointEvent);
 
 		var req = create_step (e);
@@ -4276,6 +4281,69 @@ public class DebuggerTests
 		e = step_out (); // leave threadpool_bp
 		e = step_out (); // leave threadpool_io
 	}
+
+	[Test]
+	// Uses a fixed port
+	[Category("NotWorking")]
+	public void Attach () {
+		vm.Exit (0);
+
+		// Launch the app using server=y,suspend=n
+		var pi = CreateStartInfo (new string[] { "--debugger-agent=transport=dt_socket,address=127.0.0.1:10000,server=y,suspend=n", "dtest-app.exe", "attach" });
+		var process = Diag.Process.Start (pi);
+
+		// Wait for the app to reach the Sleep () in attach ().
+		Thread.Sleep (1000);
+		var ep = new IPEndPoint (IPAddress.Loopback, 10000);
+		vm = VirtualMachineManager.Connect (ep);
+
+		var load_req = vm.CreateAssemblyLoadRequest ();
+		load_req.Enable ();
+		vm.EnableEvents (EventType.TypeLoad);
+
+		Event vmstart = GetNextEvent ();
+		Assert.AreEqual (EventType.VMStart, vmstart.EventType);
+
+		// Get collected events
+		bool assembly_load_found = false;
+		bool type_load_found = false;
+		while (true) {
+			Event e = GetNextEvent ();
+
+			// AssemblyLoad
+			if (e is AssemblyLoadEvent) {
+				var assemblyload = e as AssemblyLoadEvent;
+
+				var amirror = assemblyload.Assembly;
+
+				if (amirror.GetName ().Name == "System.Transactions") {
+					assembly_load_found = true;
+					Assert.AreEqual ("domain", amirror.Domain.FriendlyName);
+				}
+
+				if (amirror.GetName ().Name == "dtest-app")
+					// Set a bp so we can break the event loop
+					vm.SetBreakpoint (amirror.EntryPoint.DeclaringType.GetMethod ("attach_break"), 0);
+			}
+			if (e is TypeLoadEvent) {
+				var typeload = e as TypeLoadEvent;
+
+				if (typeload.Type.Name == "GCSettings") {
+					type_load_found = true;
+					Assert.AreEqual ("domain", typeload.Type.Assembly.Domain.FriendlyName);
+				}
+			}
+
+			if (e is BreakpointEvent)
+				break;
+		}
+		Assert.IsTrue (assembly_load_found);
+		Assert.IsTrue (type_load_found);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
 }
 
 }
