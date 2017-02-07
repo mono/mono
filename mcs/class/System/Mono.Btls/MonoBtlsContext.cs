@@ -218,16 +218,6 @@ namespace Mono.Btls
 			isAuthenticated = true;
 		}
 
-		void SetupCertificateStore ()
-		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
-
-			if (Settings != null && Settings.TrustAnchors != null) {
-				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
-				ctx.CertificateStore.AddCollection (Settings.TrustAnchors, trust);
-			}
-		}
-
 		void InitializeConnection ()
 		{
 			ctx = new MonoBtlsSslCtx ();
@@ -237,7 +227,7 @@ namespace Mono.Btls
 			ctx.SetDebugBio (errbio);
 #endif
 
-			SetupCertificateStore ();
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (!IsServer || AskForClientCertificate)
 				ctx.SetVerifyCallback (VerifyCallback, false);

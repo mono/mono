@@ -203,11 +203,13 @@ namespace Mono.Btls
 
 		internal static void SetupCertificateStore (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
 		{
+			if (settings?.CertificateSearchPaths == null)
+				AddTrustedRoots (store, settings, server);
+
 #if MONODROID
 			SetupCertificateStore (store);
 			return;
 #else
-
 			if (settings?.CertificateSearchPaths == null) {
 				SetupCertificateStore (store);
 				return;
@@ -265,6 +267,7 @@ namespace Mono.Btls
 			if (Directory.Exists (machinePath))
 				store.AddDirectoryLookup (machinePath, MonoBtlsX509FileType.PEM);
 		}
+#endif
 
 		static void AddTrustedRoots (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
 		{
@@ -273,7 +276,6 @@ namespace Mono.Btls
 			var trust = server ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
 			store.AddCollection (settings.TrustAnchors, trust);
 		}
-#endif
 
 		public static string GetSystemStoreLocation ()
 		{
