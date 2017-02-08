@@ -1113,5 +1113,12 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 #endif // MONO_FEATURE_PROCESS_START
+
+		[Test]
+		public void GetProcessesByName()
+		{
+			// This should return Process[0] or a Process[] with all the "foo" programs running
+			Process.GetProcessesByName ("foo");
+		}
 	}
 }
