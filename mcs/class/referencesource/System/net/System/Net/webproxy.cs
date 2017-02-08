@@ -513,6 +513,8 @@ namespace System.Net {
             var data = AndroidPlatform.GetDefaultProxy ();
             if (data != null)
                 return data;
+#elif ORBIS
+            // Do nothing
 #else
             if (Platform.IsMacOS) {
                 var data = Mono.Net.CFNetwork.GetDefaultProxy ();

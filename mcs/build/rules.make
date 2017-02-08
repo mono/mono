@@ -196,7 +196,12 @@ AOT_PROFILE_ASSEMBLIES = $(shell $(AOT_PROFILE_ASSEMBLIES_CMD_SAFE))
 
 # This can run in parallel
 .PHONY: aot-all-profile
+ifdef AOT_BUILD_FLAGS
 aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+else
+aot-all-profile:
+	echo AOT_BUILD_FLAGS not set, skipping AOT.
+endif
 
 $(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PROFILE)/%
 	@ mkdir -p $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
