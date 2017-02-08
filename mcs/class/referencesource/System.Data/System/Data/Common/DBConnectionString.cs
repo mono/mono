@@ -86,7 +86,7 @@ namespace System.Data.Common {
             _encryptedUsersConnectionString = connectionOptions.UsersConnectionString(false);
             _hasPassword = connectionOptions.HasPasswordKeyword;
             _parsetable = connectionOptions.Parsetable;
-            _keychain = connectionOptions.KeyChain;
+            _keychain = connectionOptions._keyChain;
 
             // we do not want to serialize out user password unless directed so by "persist security info=true"
             // otherwise all instances of user's password will be replaced with "*"
