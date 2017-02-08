@@ -239,12 +239,19 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataDocument.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataImplementation.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XPathNodePointer.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbReferenceCollection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlError.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
 ../../../external/corefx/src/System.Private.Xml/src/Misc/HResults.cs
 
 ../referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
 ../referencesource/System.Data/Misc/ExternDll.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
-../referencesource/System.Data/System/Data/Common/ActivityCorrelator.cs
 ../referencesource/System.Data/System/Data/Common/AdapterUtil.cs
 ../referencesource/System.Data/System/Data/Common/DbConnectionOptions.cs
 ../referencesource/System.Data/System/Data/Common/DBConnectionString.cs
@@ -262,10 +269,7 @@
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContext.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContextKey.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolOptions.cs
-../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbMetaDataFactory.cs
-../referencesource/System.Data/System/Data/ProviderBase/DbReferenceCollection.cs
-../referencesource/System.Data/System/Data/ProviderBase/TimeoutTimer.cs
 ../referencesource/System.Data/System/Data/ProviderBase/WrappedIUnknown.cs
 ../referencesource/System.Data/System/Data/Sql/IBinarySerialize.cs
 ../referencesource/System.Data/System/Data/Sql/invalidudtexception.cs
@@ -280,15 +284,11 @@
 ../referencesource/System.Data/System/Data/Sql/SqlUserDefinedAggregateAttribute.cs
 ../referencesource/System.Data/System/Data/Sql/SqlUserDefinedTypeAttribute.cs
 ../referencesource/System.Data/System/Data/Sql/TriggerAction.cs
-../referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
 ../referencesource/System.Data/System/Data/SqlClient/LocalDBAPI.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlClientEncryptionType.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlConnectionString.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlConnectionStringBuilder.cs
-../referencesource/System.Data/System/Data/SqlClient/SqlError.cs
-../referencesource/System.Data/System/Data/SqlClient/SqlErrorCollection.cs
-../referencesource/System.Data/System/Data/SqlClient/SqlInfoMessageEvent.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlUtil.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsEnums.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsParserStaticMethods.cs
