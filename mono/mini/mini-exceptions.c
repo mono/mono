@@ -3096,6 +3096,13 @@ mono_llvm_throw_corlib_exception (guint32 ex_token_index)
 	mono_llvm_throw_exception ((MonoObject*)ex);
 }
 
+void
+mono_llvm_throw_ee_exception (void)
+{
+	MonoException *ex = mono_get_exception_execution_engine ("LLVM Compilation Failed");
+	mono_llvm_throw_exception ((MonoObject*)ex);
+}
+
 /*
  * mono_llvm_resume_exception:
  *

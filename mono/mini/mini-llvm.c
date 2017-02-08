@@ -289,7 +289,7 @@ static inline void
 set_failure (EmitContext *ctx, const char *message)
 {
 	TRACE_FAILURE (reason);
-	ctx->cfg->exception_message = g_strdup (message);
+	ctx->cfg->exception_message = g_strdup_printf ("\n\tMethod: %s\n\tCause: %s", ctx->method_name, message);
 	ctx->cfg->disable_llvm = TRUE;
 }
 
@@ -6976,20 +6976,43 @@ mono_llvm_emit_method (MonoCompile *cfg)
 
 	if (!ctx_ok (ctx)) {
 		if (ctx->lmethod) {
-			/* Need to add unused phi nodes as they can be referenced by other values */
-			LLVMBasicBlockRef phi_bb = LLVMAppendBasicBlock (ctx->lmethod, "PHI_BB");
 			LLVMBuilderRef builder;
 
-			builder = create_builder (ctx);
-			LLVMPositionBuilderAtEnd (builder, phi_bb);
+			// Put a stub before the entry, remove other basic blocks
+			ctx->builder = builder = create_builder (ctx);
+			LLVMBasicBlockRef curr = LLVMGetFirstBasicBlock (ctx->lmethod);
 
-			for (i = 0; i < ctx->phi_values->len; ++i) {
-				LLVMValueRef v = (LLVMValueRef)g_ptr_array_index (ctx->phi_values, i);
-				if (LLVMGetInstructionParent (v) == NULL)
-					LLVMInsertIntoBuilder (builder, v);
+			/*fprintf (stderr, "Scooping %s\n", ctx->cfg->llvm_method_name);*/
+			/*mono_llvm_dump_value (ctx->lmethod);*/
+
+			while (curr) {
+				LLVMDeleteBasicBlock(curr);
+				curr = LLVMGetFirstBasicBlock (ctx->lmethod);
 			}
-		
-			LLVMDeleteFunction (ctx->lmethod);
+			g_assert (LLVMGetFirstBasicBlock (ctx->lmethod) == NULL);
+			curr = LLVMAppendBasicBlock(ctx->lmethod, "STUB");
+			LLVMPositionBuilderAtEnd (builder, curr);
+			g_assert (LLVMGetFirstBasicBlock (ctx->lmethod) == curr);
+
+			/* Need to add unused phi nodes as they can be referenced by other values */
+			/*LLVMBasicBlockRef phi_bb = LLVMAppendBasicBlock (ctx->lmethod, "PHI_BB");*/
+
+			/*builder = create_builder (ctx);*/
+			/*LLVMPositionBuilderAtEnd (builder, phi_bb);*/
+
+			/*for (i = 0; i < ctx->phi_values->len; ++i) {*/
+				/*LLVMValueRef v = (LLVMValueRef)g_ptr_array_index (ctx->phi_values, i);*/
+				/*if (LLVMGetInstructionParent (v) == NULL)*/
+					/*LLVMInsertIntoBuilder (builder, v);*/
+			/*}*/
+			/*LLVMBuildUnreachable (builder);*/
+
+			LLVMTypeRef sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
+			LLVMValueRef callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_llvm_throw_ee_exception");
+			LLVMBuildCall (builder, callee, NULL, 0, "");
+			LLVMBuildUnreachable (builder);
+			/*fprintf (stderr, "Scooped %s\n", ctx->cfg->llvm_method_name);*/
+			/*mono_llvm_dump_value (ctx->lmethod);*/
 		}
 	}
 

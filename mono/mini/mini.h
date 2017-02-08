@@ -2872,6 +2872,7 @@ int  mono_jinfo_get_epilog_size                 (MonoJitInfo *ji);
 void     mono_llvm_rethrow_exception            (MonoObject *ex);
 void     mono_llvm_throw_exception              (MonoObject *ex);
 void     mono_llvm_throw_corlib_exception       (guint32 ex_token_index);
+void     mono_llvm_throw_ee_exception       (void);
 void     mono_llvm_resume_exception             (void);
 void     mono_llvm_clear_exception              (void);
 MonoObject *mono_llvm_load_exception            (void);

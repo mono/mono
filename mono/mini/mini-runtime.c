@@ -3822,6 +3822,7 @@ register_icalls (void)
 	register_icall (mono_llvm_clear_exception, "mono_llvm_clear_exception", NULL, TRUE);
 	register_icall (mono_llvm_load_exception, "mono_llvm_load_exception", "object", TRUE);
 	register_icall (mono_llvm_throw_corlib_exception, "mono_llvm_throw_corlib_exception", "void int", TRUE);
+	register_icall (mono_llvm_throw_ee_exception, "mono_llvm_throw_ee_exception", "void", TRUE);
 #if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED)
 	register_icall (mono_llvm_set_unhandled_exception_handler, "mono_llvm_set_unhandled_exception_handler", NULL, TRUE);
 
