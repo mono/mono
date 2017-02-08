@@ -331,9 +331,9 @@ namespace System.Diagnostics
 
 						process_name = ProcessName_internal (handle);
 
-						/* If process_name is _still_ null, assume the process has exited */
+						/* If process_name is _still_ null, assume the process has exited or is inaccessible */
 						if (process_name == null)
-							throw new InvalidOperationException ("Process has exited, so the requested information is not available.");
+							throw new InvalidOperationException ("Process has exited or is inaccessible, so the requested information is not available.");
 
 						/* Strip the suffix (if it exists) simplistically instead of removing
 						 * any trailing \.???, so we dont get stupid results on sane systems */
