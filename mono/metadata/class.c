@@ -2296,7 +2296,7 @@ mono_class_setup_methods (MonoClass *klass)
 		if (klass->interface_count) {
 			count_generic = generic_array_methods (klass);
 			first_generic = count;
-			count += klass->interface_count * count_generic;
+			count += count_generic;
 		}
 
 		methods = (MonoMethod **)mono_class_alloc0 (klass, sizeof (MonoMethod*) * count);
@@ -2363,8 +2363,11 @@ mono_class_setup_methods (MonoClass *klass)
 		amethod = create_array_method (klass, "Set", sig);
 		methods [method_num++] = amethod;
 
-		for (i = 0; i < klass->interface_count; i++)
-			setup_generic_array_ifaces (klass, klass->interfaces [i], methods, first_generic + i * count_generic);
+		if (klass->interface_count) {
+			g_assert (klass->interface_count == 2);
+			/* The two interfaces have the same context, so they can share the wrapper methods */
+			setup_generic_array_ifaces (klass, klass->interfaces [0], methods, first_generic);
+		}
 	} else if (mono_class_has_static_metadata (klass)) {
 		MonoError error;
 		int first_idx = mono_class_get_first_method_idx (klass);
@@ -4958,7 +4961,7 @@ mono_class_init (MonoClass *klass)
 
 		if (klass->interface_count) {
 			int count_generic = generic_array_methods (klass);
-			array_method_count += klass->interface_count * count_generic;
+			array_method_count += count_generic;
 		}
 	}
 
