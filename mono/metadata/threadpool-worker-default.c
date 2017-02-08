@@ -124,18 +124,14 @@ typedef union {
 	gint64 as_gint64;
 } ThreadPoolWorkerCounter;
 
-typedef MonoInternalThread ThreadPoolWorkerThread;
-
 typedef struct {
 	MonoRefCount ref;
 
 	ThreadPoolWorkerCounter counters;
 
-	GPtrArray *threads; // ThreadPoolWorkerThread* []
-	MonoCoopMutex threads_lock; /* protect access to working_threads and parked_threads */
+	MonoCoopMutex parked_threads_lock;
 	gint32 parked_threads_count;
 	MonoCoopCond parked_threads_cond;
-	MonoCoopCond threads_exit_cond;
 
 	ThreadPoolWorkItem *work_items; // ThreadPoolWorkItem []
 	gint32 work_items_count;
@@ -221,8 +217,7 @@ rand_next (gpointer *handle, guint32 min, guint32 max)
 static void
 destroy (gpointer data)
 {
-#if 0
-	mono_coop_mutex_destroy (&worker.threads_lock);
+	mono_coop_mutex_destroy (&worker.parked_threads_lock);
 	mono_coop_cond_destroy (&worker.parked_threads_cond);
 
 	mono_coop_mutex_destroy (&worker.work_items_lock);
@@ -232,7 +227,6 @@ destroy (gpointer data)
 	mono_coop_mutex_destroy (&worker.heuristic_lock);
 
 	g_free (worker.cpu_usage_state);
-#endif
 }
 
 void
@@ -245,11 +239,9 @@ mono_threadpool_worker_init (void)
 
 	mono_refcount_init (&worker, destroy);
 
-	worker.threads = g_ptr_array_new ();
-	mono_coop_mutex_init (&worker.threads_lock);
+	mono_coop_mutex_init (&worker.parked_threads_lock);
 	worker.parked_threads_count = 0;
 	mono_coop_cond_init (&worker.parked_threads_cond);
-	mono_coop_cond_init (&worker.threads_exit_cond);
 
 	/* worker.work_items_size is inited to 0 */
 	mono_coop_mutex_init (&worker.work_items_lock);
@@ -316,43 +308,6 @@ mono_threadpool_worker_init (void)
 void
 mono_threadpool_worker_cleanup (void)
 {
-	MonoInternalThread *current;
-
-	/* we make the assumption along the code that we are
-	 * cleaning up only if the runtime is shutting down */
-	g_assert (mono_runtime_is_shutting_down ());
-
-	current = mono_thread_internal_current ();
-
-	while (worker.monitor_status != MONITOR_STATUS_NOT_RUNNING)
-		mono_thread_info_sleep (1, NULL);
-
-	mono_coop_mutex_lock (&worker.threads_lock);
-
-	/* unpark all worker.parked_threads */
-	mono_coop_cond_broadcast (&worker.parked_threads_cond);
-
-#if 0
-	for (;;) {
-		ThreadPoolWorkerCounter counter;
-
-		counter = COUNTER_READ ();
-		if (counter._.starting + counter._.working + counter._.parked == 0)
-			break;
-
-		if (counter._.starting + counter._.working + counter._.parked == 1) {
-			if (worker.threads->len == 1 && g_ptr_array_index (worker.threads, 0) == current) {
-				/* We are waiting on ourselves */
-				break;
-			}
-		}
-
-		mono_coop_cond_wait (&worker.threads_exit_cond, &worker.threads_lock);
-	}
-#endif
-
-	mono_coop_mutex_unlock (&worker.threads_lock);
-
 	mono_refcount_dec (&worker);
 }
 
@@ -441,17 +396,25 @@ static void worker_request (void);
 void
 mono_threadpool_worker_enqueue (MonoThreadPoolWorkerCallback callback, gpointer data)
 {
+	if (!mono_refcount_tryinc (&worker))
+		return;
+
 	work_item_push (callback, data);
 
 	worker_request ();
+
+	mono_refcount_dec (&worker);
 }
 
 static void
 worker_wait_interrupt (gpointer unused)
 {
-	mono_coop_mutex_lock (&worker.threads_lock);
+	if (!mono_refcount_tryinc (&worker))
+		return;
+
+	mono_coop_mutex_lock (&worker.parked_threads_lock);
 	mono_coop_cond_signal (&worker.parked_threads_cond);
-	mono_coop_mutex_unlock (&worker.threads_lock);
+	mono_coop_mutex_unlock (&worker.parked_threads_lock);
 
 	mono_refcount_dec (&worker);
 }
@@ -464,7 +427,7 @@ worker_park (void)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking", mono_native_thread_id_get ());
 
-	mono_coop_mutex_lock (&worker.threads_lock);
+	mono_coop_mutex_lock (&worker.parked_threads_lock);
 
 	if (!mono_runtime_is_shutting_down ()) {
 		static gpointer rand_handle = NULL;
@@ -486,19 +449,14 @@ worker_park (void)
 
 		worker.parked_threads_count += 1;
 
-		mono_refcount_inc (&worker);
 		mono_thread_info_install_interrupt (worker_wait_interrupt, NULL, &interrupted);
-		if (interrupted) {
-			mono_refcount_dec (&worker);
+		if (interrupted)
 			goto done;
-		}
 
-		if (mono_coop_cond_timedwait (&worker.parked_threads_cond, &worker.threads_lock, rand_next (&rand_handle, 5 * 1000, 60 * 1000)) != 0)
+		if (mono_coop_cond_timedwait (&worker.parked_threads_cond, &worker.parked_threads_lock, rand_next (&rand_handle, 5 * 1000, 60 * 1000)) != 0)
 			timeout = TRUE;
 
 		mono_thread_info_uninstall_interrupt (&interrupted);
-		if (!interrupted)
-			mono_refcount_dec (&worker);
 
 done:
 		worker.parked_threads_count -= 1;
@@ -509,7 +467,7 @@ done:
 		});
 	}
 
-	mono_coop_mutex_unlock (&worker.threads_lock);
+	mono_coop_mutex_unlock (&worker.parked_threads_lock);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker unparking, timeout? %s", mono_native_thread_id_get (), timeout ? "yes" : "no");
 
@@ -523,12 +481,12 @@ worker_try_unpark (void)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker", mono_native_thread_id_get ());
 
-	mono_coop_mutex_lock (&worker.threads_lock);
+	mono_coop_mutex_lock (&worker.parked_threads_lock);
 	if (worker.parked_threads_count > 0) {
 		mono_coop_cond_signal (&worker.parked_threads_cond);
 		res = TRUE;
 	}
-	mono_coop_mutex_unlock (&worker.threads_lock);
+	mono_coop_mutex_unlock (&worker.parked_threads_lock);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker, success? %s", mono_native_thread_id_get (), res ? "yes" : "no");
 
@@ -543,6 +501,9 @@ worker_thread (gpointer unused)
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] worker starting", mono_native_thread_id_get ());
 
+	if (!mono_refcount_tryinc (&worker))
+		return 0;
+
 	COUNTER_ATOMIC (counter, {
 		counter._.starting --;
 		counter._.working ++;
@@ -550,10 +511,6 @@ worker_thread (gpointer unused)
 
 	thread = mono_thread_internal_current ();
 	g_assert (thread);
-
-	mono_coop_mutex_lock (&worker.threads_lock);
-	g_ptr_array_add (worker.threads, thread);
-	mono_coop_mutex_unlock (&worker.threads_lock);
 
 	while (!mono_runtime_is_shutting_down ()) {
 		ThreadPoolWorkItem work_item;
@@ -577,17 +534,9 @@ worker_thread (gpointer unused)
 		work_item.callback (work_item.data);
 	}
 
-	mono_coop_mutex_lock (&worker.threads_lock);
-
 	COUNTER_ATOMIC (counter, {
 		counter._.working --;
 	});
-
-	g_ptr_array_remove (worker.threads, thread);
-
-	mono_coop_cond_signal (&worker.threads_exit_cond);
-
-	mono_coop_mutex_unlock (&worker.threads_lock);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] worker finishing", mono_native_thread_id_get ());
 
@@ -641,7 +590,6 @@ worker_try_create (void)
 		counter._.starting ++;
 	});
 
-	mono_refcount_inc (&worker);
 	thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, TRUE, 0, &error);
 	if (!thread) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread due to %s", mono_native_thread_id_get (), mono_error_get_message (&error));
@@ -652,8 +600,6 @@ worker_try_create (void)
 		});
 
 		mono_coop_mutex_unlock (&worker.worker_creation_lock);
-
-		mono_refcount_dec (&worker);
 
 		return FALSE;
 	}
@@ -752,6 +698,9 @@ monitor_thread (gpointer unused)
 	MonoInternalThread *internal;
 	guint i;
 
+	if (!mono_refcount_tryinc (&worker))
+		return 0;
+
 	internal = mono_thread_internal_current ();
 	g_assert (internal);
 
@@ -838,6 +787,7 @@ monitor_thread (gpointer unused)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] monitor thread, finished", mono_native_thread_id_get ());
 
+	mono_refcount_dec (&worker);
 	return 0;
 }
 
@@ -864,6 +814,7 @@ monitor_ensure_running (void)
 					// printf ("monitor_thread: creating failed\n");
 					worker.monitor_status = MONITOR_STATUS_NOT_RUNNING;
 					mono_error_cleanup (&error);
+					mono_refcount_dec (&worker);
 				}
 				return;
 			}
@@ -1204,7 +1155,15 @@ mono_threadpool_worker_notify_completed (void)
 gint32
 mono_threadpool_worker_get_min (void)
 {
-	return worker.limit_worker_min;
+	gint32 ret;
+
+	if (!mono_refcount_tryinc (&worker))
+		return 0;
+
+	ret = worker.limit_worker_min;
+
+	mono_refcount_dec (&worker);
+	return ret;
 }
 
 gboolean
@@ -1213,14 +1172,27 @@ mono_threadpool_worker_set_min (gint32 value)
 	if (value <= 0 || value > worker.limit_worker_max)
 		return FALSE;
 
+	if (!mono_refcount_tryinc (&worker))
+		return FALSE;
+
 	worker.limit_worker_min = value;
+
+	mono_refcount_dec (&worker);
 	return TRUE;
 }
 
 gint32
 mono_threadpool_worker_get_max (void)
 {
-	return worker.limit_worker_max;
+	gint32 ret;
+
+	if (!mono_refcount_tryinc (&worker))
+		return 0;
+
+	ret = worker.limit_worker_max;
+
+	mono_refcount_dec (&worker);
+	return ret;
 }
 
 gboolean
@@ -1232,17 +1204,24 @@ mono_threadpool_worker_set_max (gint32 value)
 	if (value < worker.limit_worker_min || value < cpu_count)
 		return FALSE;
 
-	if (value < worker.limit_worker_min || value < cpu_count)
+	if (!mono_refcount_tryinc (&worker))
 		return FALSE;
 
 	worker.limit_worker_max = value;
+
+	mono_refcount_dec (&worker);
 	return TRUE;
 }
 
 void
 mono_threadpool_worker_set_suspended (gboolean suspended)
 {
+	if (!mono_refcount_tryinc (&worker))
+		return;
+
 	worker.suspended = suspended;
 	if (!suspended)
 		worker_request ();
+
+	mono_refcount_dec (&worker);
 }
