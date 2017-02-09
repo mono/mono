@@ -163,7 +163,7 @@ namespace Mono.Security.X509 {
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
 
 			// Right now this seems to be the best way to know if we should use LM store.. ;)
-			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath) || _storePath.StartsWith(X509StoreManager.NewLocalMachinePath))
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 
 			ImportPrivateKey (certificate, cspParams);
@@ -338,7 +338,7 @@ namespace Mono.Security.X509 {
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
-			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath) || _storePath.StartsWith(X509StoreManager.NewLocalMachinePath))
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
 
