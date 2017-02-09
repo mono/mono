@@ -485,6 +485,34 @@ namespace System.Diagnostics
 			return (new Process (new SafeProcessHandle (proc, false), processId));
 		}
 
+		public static Process[] GetProcessesByName(string processName, string machineName)
+		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
+			Process[] processes = GetProcesses ();
+			if (processes.Length == 0)
+				return processes;
+
+			int size = 0;
+
+			for (int i = 0; i < processes.Length; i++) {
+				try {
+					if (String.Compare (processName, processes[i].ProcessName, true) == 0)
+						processes [size++] = processes[i];
+				} catch (SystemException) {
+					/* The process might exit between GetProcesses_internal and GetProcessById */
+				}
+			}
+
+			Array.Resize<Process> (ref processes, size);
+
+			return processes;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
