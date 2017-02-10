@@ -146,7 +146,7 @@
         <size>99</size>
       </method>
       <method name="Void AssertArgument(System.Runtime.CompilerServices.CallSiteBinder, Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo[], System.String)" attrs="145">
-        <size>172</size>
+        <size>206</size>
       </method>
       <method name="Void BinaryAdd_1(System.Object, DynamicObjectMock)" attrs="129">
         <size>124</size>
@@ -1643,7 +1643,7 @@
         <size>235</size>
       </method>
       <method name="Boolean UsingTest()" attrs="129">
-        <size>619</size>
+        <size>222</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>99</size>
@@ -2327,7 +2327,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>3609</size>
+        <size>3273</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>39</size>
