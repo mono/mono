@@ -379,7 +379,8 @@ mono_threads_platform_set_priority (MonoThreadInfo *info, MonoThreadPriority pri
 			param.sched_priority = 0;
 			break;
 		default:
-			g_error ("%s: unknown policy %d", __func__, policy);
+			g_warning ("%s: unknown policy %d", __func__, policy);
+			return;
 		}
 	}
 
