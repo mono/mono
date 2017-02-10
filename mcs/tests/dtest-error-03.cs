@@ -19,7 +19,7 @@ public class Test
 		try {
 			getter.Target (getter, new C ());
 		} catch (RuntimeBinderException e) {
-			if (e.Message == "`C' does not contain a definition for `n'")
+			if (e.Message == "'C' does not contain a definition for 'n'")
 				return 0;
 
 			return 2;
