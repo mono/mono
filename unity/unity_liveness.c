@@ -440,8 +440,8 @@ void mono_unity_liveness_add_object_callback(gpointer* objs, gint count, void* a
  *
  * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
- *
-gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_handle)
+ */
+gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_handle, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback)
 {
 	int i = 0;
 	MonoArray *res = NULL;
@@ -456,7 +456,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	objects = g_ptr_array_sized_new(1000);
 	objects->len = 0;
 
-	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects);
+	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects, onWorldStartCallback, onWorldStopCallback);
 
 	mono_unity_liveness_calculation_from_statics (liveness_state);
 
@@ -473,7 +473,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 
 }
-*/
+
 /**
  * mono_unity_liveness_calculation_from_root:
  *
