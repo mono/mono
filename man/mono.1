@@ -1732,10 +1732,13 @@ values.
 This option allows using single-steps and breakpoints in hardware
 where we cannot do it with signals.
 .TP
-\fBsuspend-on-sigsegv\fR
-This option will suspend the program when a native SIGSEGV is received.
+\fBsuspend-on-native-crash\fR
+This option will suspend the program when a native crash occurs (SIGSEGV, SIGILL, ...).
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
+.TP
+\fBsuspend-on-sigsegv\fR
+Same as \fBsuspend-on-native-crash\fR.
 .TP
 \fBsuspend-on-exception\fR
 This option will suspend the program when an exception occurs.
