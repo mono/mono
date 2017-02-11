@@ -147,7 +147,7 @@ namespace System.Net.Sockets
 
 			AsyncCallback callback = AsyncCallback;
 			if (callback != null) {
-				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
+				callback (this);
 			}
 
 			switch (operation) {
