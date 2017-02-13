@@ -1594,8 +1594,9 @@ static guint32 file_getfilesize(gpointer handle, guint32 *highsize)
 #ifdef BLKGETSIZE64
 	if (S_ISBLK(statbuf.st_mode)) {
 		guint64 bigsize;
+		gint res;
 		MONO_ENTER_GC_SAFE;
-		gint res = ioctl (fd, BLKGETSIZE64, &bigsize);
+		res = ioctl (fd, BLKGETSIZE64, &bigsize);
 		MONO_EXIT_GC_SAFE;
 		if (res < 0) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p ioctl BLKGETSIZE64 failed: %s",
