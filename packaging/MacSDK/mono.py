@@ -46,11 +46,16 @@ class MonoMasterPackage(Package):
         self.configure = './autogen.sh --prefix="%{package_prefix}"'
 
         self.extra_stage_files = ['etc/mono/config']
+        self.custom_version_str = None
 
     def build(self):
         self.make = '%s EXTERNAL_MCS=%s EXTERNAL_RUNTIME=%s' % (
             self.make, self.profile.env.system_mcs, self.profile.env.system_mono)
-        Package.build(self)
+        Package.configure(self)
+
+        if self.custom_version_str is not None:
+            replace_in_file(os.path.join (self.workspace, 'config.h'), {self.version : self.custom_version_str})
+        Package.make(self)
 
     def prep(self):
         Package.prep(self)
