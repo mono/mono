@@ -111,7 +111,7 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Common/ArrayBuilderExtensions.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Common/ConstantCheck.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
-../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.netstandard1.7.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.netstandard.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/HoistedLocals.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/TypeInfoExtensions.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/CallSite.cs
@@ -278,7 +278,9 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.Linq.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/SparseArrayBuilder.cs
 
 ../../../external/corefx/src/Common/src/System/Dynamic/Utils/CacheDict.cs
 ../../../external/corefx/src/Common/src/System/Dynamic/Utils/ContractUtils.cs

@@ -156,9 +156,20 @@ namespace Mono.Btls
 
 		static Exception GetException (MonoBtlsSslError status)
 		{
-			var error = MonoBtlsError.GetError ();
+			string file;
+			int line;
+			var error = MonoBtlsError.GetError (out file, out line);
+			if (error == 0)
+				return new MonoBtlsException (status);
+
 			var text = MonoBtlsError.GetErrorString (error);
-			return new MonoBtlsException ("{0} {1}", status, text);
+
+			string message;
+			if (file != null)
+				message = string.Format ("{0} {1}\n  at {2}:{3}", status, text, file, line);
+			else
+				message = string.Format ("{0} {1}", status, text);
+			return new MonoBtlsException (message);
 		}
 
 		public override bool ProcessHandshake ()
@@ -207,16 +218,6 @@ namespace Mono.Btls
 			isAuthenticated = true;
 		}
 
-		void SetupCertificateStore ()
-		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
-
-			if (Settings != null && Settings.TrustAnchors != null) {
-				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
-				ctx.CertificateStore.AddCollection (Settings.TrustAnchors, trust);
-			}
-		}
-
 		void InitializeConnection ()
 		{
 			ctx = new MonoBtlsSslCtx ();
@@ -226,7 +227,7 @@ namespace Mono.Btls
 			ctx.SetDebugBio (errbio);
 #endif
 
-			SetupCertificateStore ();
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (!IsServer || AskForClientCertificate)
 				ctx.SetVerifyCallback (VerifyCallback, false);

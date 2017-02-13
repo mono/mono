@@ -7,6 +7,7 @@ LIBRARY = System.Data.dll
 LIB_REFS = System System.Xml System.Core System.Numerics
 LIB_MCS_FLAGS = \
 	-nowarn:219,414,649 \
+	-d:COREFX	\
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
@@ -33,6 +34,9 @@ BUILT_SOURCES = \
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
+
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx
 
 TEST_LIB_REFS = System.Core Mono.Data.Sqlite
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168

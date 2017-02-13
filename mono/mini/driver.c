@@ -121,11 +121,6 @@ opt_names [] = {
 
 #endif
 
-static const OptFunc
-opt_funcs [sizeof (int) * 8] = {
-	NULL
-};
-
 #ifdef __native_client__
 extern char *nacl_mono_path;
 #endif
@@ -155,7 +150,8 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 {
 	guint32 exclude = 0;
 	const char *n;
-	int i, invert, len;
+	int i, invert;
+	char **parts, **ptr;
 
 	/* Initialize the hwcap module if necessary. */
 	mono_hwcap_init ();
@@ -168,7 +164,11 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 	if (!p)
 		return opt;
 
-	while (*p) {
+	parts = g_strsplit (p, ",", -1);
+	for (ptr = parts; ptr && *ptr; ptr ++) {
+		char *arg = *ptr;
+		char *p = arg;
+
 		if (*p == '-') {
 			p++;
 			invert = TRUE;
@@ -177,24 +177,11 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 		}
 		for (i = 0; i < G_N_ELEMENTS (opt_names) && optflag_get_name (i); ++i) {
 			n = optflag_get_name (i);
-			len = strlen (n);
-			if (strncmp (p, n, len) == 0) {
+			if (!strcmp (p, n)) {
 				if (invert)
 					opt &= ~ (1 << i);
 				else
 					opt |= 1 << i;
-				p += len;
-				if (*p == ',') {
-					p++;
-					break;
-				} else if (*p == '=') {
-					p++;
-					if (opt_funcs [i])
-						opt_funcs [i] (p);
-					while (*p && *p++ != ',');
-					break;
-				}
-				/* error out */
 				break;
 			}
 		}
@@ -204,15 +191,16 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 					opt = 0;
 				else
 					opt = ~(EXCLUDED_FROM_ALL | exclude);
-				p += 3;
-				if (*p == ',')
-					p++;
 			} else {
 				fprintf (stderr, "Invalid optimization name `%s'\n", p);
 				exit (1);
 			}
 		}
+
+		g_free (arg);
 	}
+	g_free (parts);
+
 	return opt;
 }
 
@@ -1215,7 +1203,6 @@ mini_usage_jitdeveloper (void)
 		 "    --single-method=OPTS   Runs regressions with only one method optimized with OPTS at any time\n"
 		 "    --statfile FILE        Sets the stat file to FILE\n"
 		 "    --stats                Print statistics about the JIT operations\n"
-		 "    --wapi=hps|semdel|seminfo IO-layer maintenance\n"
 		 "    --inject-async-exc METHOD OFFSET Inject an asynchronous exception at METHOD\n"
 		 "    --verify-all           Run the verifier on all assemblies and methods\n"
 		 "    --full-aot             Avoid JITting any code\n"

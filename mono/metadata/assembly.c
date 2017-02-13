@@ -217,7 +217,7 @@ static mono_mutex_t assembly_binding_mutex;
 static GSList *loaded_assembly_bindings = NULL;
 
 /* Class lazy loading functions */
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (internals_visible, System.Runtime.CompilerServices, InternalsVisibleToAttribute)
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (internals_visible, "System.Runtime.CompilerServices", "InternalsVisibleToAttribute")
 static MonoAssembly*
 mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly, gboolean postload);
 static MonoAssembly*
@@ -2826,7 +2826,7 @@ mono_assembly_load_publisher_policy (MonoAssemblyName *aname)
 	if (strstr (aname->name, ".dll")) {
 		len = strlen (aname->name) - 4;
 		name = (gchar *)g_malloc (len + 1);
-		strncpy (name, aname->name, len);
+		memcpy (name, aname->name, len);
 		name[len] = 0;
 	} else
 		name = g_strdup (aname->name);
@@ -3143,7 +3143,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 	if (strstr (aname->name, ".dll")) {
 		len = strlen (filename) - 4;
 		name = (gchar *)g_malloc (len + 1);
-		strncpy (name, aname->name, len);
+		memcpy (name, aname->name, len);
 		name[len] = 0;
 	} else {
 		name = g_strdup (aname->name);

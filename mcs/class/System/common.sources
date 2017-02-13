@@ -375,7 +375,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/collections/specialized/bitvector32.cs
 ../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
 ../referencesource/System/compmod/system/collections/specialized/collectionsutil.cs
-../referencesource/System/compmod/system/collections/specialized/fixedstringlookup.cs
 ../referencesource/System/compmod/system/collections/specialized/hybriddictionary.cs
 ../referencesource/System/compmod/system/collections/specialized/inotifycollectionchanged.cs
 ../referencesource/System/compmod/system/collections/specialized/iordereddictionary.cs
@@ -922,9 +921,10 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/misc/WeakHashtable.cs
 
 ../referencesource/System/compmod/system/codedom/compiler/GeneratedCodeAttribute.cs
-../referencesource/System/compmod/system/codedom/compiler/IndentTextWriter.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
+
+../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
 
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs

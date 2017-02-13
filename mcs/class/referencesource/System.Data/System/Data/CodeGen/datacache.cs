@@ -682,7 +682,7 @@ namespace System.Data {
                     //\\ this.Prefix = "<Prefix>";
                     tableInitClass.Statements.Add(Assign(Property(This(), "Prefix"), Str(table.Prefix)));
                 }
-                if (table.tableNamespace != null) {
+                if (table._tableNamespace != null) {
                     //\\ this.Namespace = <Namespace>;
                     tableInitClass.Statements.Add(Assign(Property(This(), "Namespace"), Str(table.Namespace)));
                 }
@@ -691,7 +691,7 @@ namespace System.Data {
                     //\\ this.MinimumCapacity = <MinimumCapacity>;
                     tableInitClass.Statements.Add(Assign(Property(This(), "MinimumCapacity"), Primitive(table.MinimumCapacity)));
                 }
-                if (table.displayExpression != null) {
+                if (table._displayExpression != null) {
                     //\\ this.DisplayExpression = "<DisplayExpression>";
                     tableInitClass.Statements.Add(Assign(Property(This(), "DisplayExpression"), Str(table.DisplayExpressionInternal)));
                 }

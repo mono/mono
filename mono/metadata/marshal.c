@@ -36,7 +36,6 @@
 #include "mono/metadata/threads-types.h"
 #include "mono/metadata/string-icalls.h"
 #include "mono/metadata/attrdefs.h"
-#include "mono/metadata/gc-internals.h"
 #include "mono/metadata/cominterop.h"
 #include "mono/metadata/remoting.h"
 #include "mono/metadata/reflection-internals.h"
@@ -216,11 +215,11 @@ static void
 mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error);
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (string_builder, System.Text, StringBuilder);
-static GENERATE_GET_CLASS_WITH_CACHE (date_time, System, DateTime);
-static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, System.Runtime.CompilerServices, FixedBufferAttribute);
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_function_pointer_attribute, System.Runtime.InteropServices, UnmanagedFunctionPointerAttribute);
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, System.Runtime.InteropServices, ICustomMarshaler);
+static GENERATE_GET_CLASS_WITH_CACHE (string_builder, "System.Text", "StringBuilder");
+static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
+static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_function_pointer_attribute, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, "System.Runtime.InteropServices", "ICustomMarshaler");
 
 /* MonoMethod pointers to SafeHandle::DangerousAddRef and ::DangerousRelease */
 static MonoMethod *sh_dangerous_add_ref;
@@ -11773,8 +11772,14 @@ mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_e
 	}
 }
 
+/*
+ * mono_marshal_get_generic_array_helper:
+ *
+ *   Return a wrapper which is used to implement the implicit interfaces on arrays.
+ * The wrapper routes calls to METHOD, which is one of the InternalArray_ methods in Array.
+ */
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *klass, MonoClass *iface, gchar *name, MonoMethod *method)
+mono_marshal_get_generic_array_helper (MonoClass *klass, gchar *name, MonoMethod *method)
 {
 	MonoMethodSignature *sig, *csig;
 	MonoMethodBuilder *mb;

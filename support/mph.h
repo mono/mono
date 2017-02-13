@@ -54,11 +54,9 @@
 #  endif
 #endif /* !defined(EOVERFLOW) */
 
-#if !defined (HOST_WIN32)
-
 /* 
- * Solaris doesn't define these BSD values, and if they're not present then
- * map.c:Mono_Posix_FromSeekFlags() breaks badly; see:
+ * Solaris/Windows don't define these BSD values, and if they're not present
+ * then map.c:Mono_Posix_FromSeekFlags() breaks badly; see:
  * http://bugzilla.gnome.org/show_bug.cgi?id=370081
  */
 
@@ -73,6 +71,8 @@
 #ifndef L_XTND
 #define L_XTND SEEK_END
 #endif /* ndef L_XTND */
+
+#if !defined (HOST_WIN32)
 
 /*
  * OS X doesn't define MAP_ANONYMOUS, but it does define MAP_ANON.

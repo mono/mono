@@ -91,13 +91,3 @@ namespace System.Data.Common {
         }
     }
 }
-
-namespace System.Data { // MDAC 83087
-
-[Serializable] 
-    
-    public enum KeyRestrictionBehavior { // V1.0.5000
-        AllowOnly    = 0,
-        PreventUsage = 1,
-    }
-}

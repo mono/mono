@@ -426,14 +426,20 @@ namespace Mono.Unix.Native {
 
 		public static Errno GetLastError ()
 		{
+			// Always call Marshal.GetLastWin32Error() before the OS check,
+			// even on Windows where we don't use the return value. If we do
+			// the OS check first Environment.OSVersion (if it happens to be
+			// the first ever access) will clobber Marshal.GetLastWin32Error()
+			// and we won't get the desired errno value on non-Windows platforms.
+			int errno = Marshal.GetLastWin32Error ();
 			if (Environment.OSVersion.Platform != PlatformID.Unix) {
 				// On Windows Marshal.GetLastWin32Error() doesn't take errno
 				// into account so we need to call Mono_Posix_Stdlib_GetLastError()
 				// which returns the value of errno in the C runtime
 				// libMonoPosixHelper.dll was linked against.
-				return (Errno) _GetLastError ();
+				errno = _GetLastError ();
 			}
-			return NativeConvert.ToErrno (Marshal.GetLastWin32Error ());
+			return NativeConvert.ToErrno (errno);
 		}
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,

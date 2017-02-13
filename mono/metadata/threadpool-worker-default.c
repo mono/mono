@@ -333,6 +333,7 @@ mono_threadpool_worker_cleanup (MonoThreadPoolWorker *worker)
 	/* unpark all worker->parked_threads */
 	mono_coop_cond_broadcast (&worker->parked_threads_cond);
 
+#if 0
 	for (;;) {
 		ThreadPoolWorkerCounter counter;
 
@@ -349,6 +350,7 @@ mono_threadpool_worker_cleanup (MonoThreadPoolWorker *worker)
 
 		mono_coop_cond_wait (&worker->threads_exit_cond, &worker->threads_lock);
 	}
+#endif
 
 	mono_coop_mutex_unlock (&worker->threads_lock);
 
@@ -544,7 +546,6 @@ static gsize WINAPI
 worker_thread (gpointer data)
 {
 	MonoThreadPoolWorker *worker;
-	MonoError error;
 	MonoInternalThread *thread;
 	ThreadPoolWorkerCounter counter;
 
@@ -564,9 +565,6 @@ worker_thread (gpointer data)
 	mono_coop_mutex_lock (&worker->threads_lock);
 	g_ptr_array_add (worker->threads, thread);
 	mono_coop_mutex_unlock (&worker->threads_lock);
-
-	mono_thread_set_name_internal (thread, mono_string_new (mono_get_root_domain (), "Threadpool worker"), FALSE, &error);
-	mono_error_assert_ok (&error);
 
 	while (!mono_runtime_is_shutting_down ()) {
 		ThreadPoolWorkItem work_item;

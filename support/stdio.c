@@ -16,23 +16,25 @@
 
 G_BEGIN_DECLS
 
-#ifndef HOST_WIN32
 gint32
 Mono_Posix_Syscall_L_ctermid (void)
 {
+#ifndef HOST_WIN32
 	return L_ctermid;
+#else
+	return -1;
+#endif
 }
 
 gint32
 Mono_Posix_Syscall_L_cuserid (void)
 {
-#if defined(__APPLE__) || defined (__OpenBSD__)
+#if defined(__APPLE__) || defined (__OpenBSD__) || defined (HOST_WIN32)
 	return -1;
 #else
 	return L_cuserid;
 #endif
 }
-#endif /* ndef HOST_WIN32 */
 
 mph_size_t
 Mono_Posix_Stdlib_fread (unsigned char *ptr, mph_size_t size, mph_size_t nmemb, void *stream)

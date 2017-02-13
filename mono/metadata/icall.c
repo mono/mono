@@ -111,12 +111,12 @@ extern MonoString* ves_icall_System_Environment_GetOSVersionString (void);
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (system_version, System, Version)
-static GENERATE_GET_CLASS_WITH_CACHE (assembly_name, System.Reflection, AssemblyName)
-static GENERATE_GET_CLASS_WITH_CACHE (constructor_info, System.Reflection, ConstructorInfo)
-static GENERATE_GET_CLASS_WITH_CACHE (property_info, System.Reflection, PropertyInfo)
-static GENERATE_GET_CLASS_WITH_CACHE (event_info, System.Reflection, EventInfo)
-static GENERATE_GET_CLASS_WITH_CACHE (module, System.Reflection, Module)
+static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
+static GENERATE_GET_CLASS_WITH_CACHE (assembly_name, "System.Reflection", "AssemblyName")
+static GENERATE_GET_CLASS_WITH_CACHE (constructor_info, "System.Reflection", "ConstructorInfo")
+static GENERATE_GET_CLASS_WITH_CACHE (property_info, "System.Reflection", "PropertyInfo")
+static GENERATE_GET_CLASS_WITH_CACHE (event_info, "System.Reflection", "EventInfo")
+static GENERATE_GET_CLASS_WITH_CACHE (module, "System.Reflection", "Module")
 
 static MonoArrayHandle
 type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoError *error);
@@ -6239,7 +6239,10 @@ ves_icall_System_Delegate_GetVirtualMethod_internal (MonoDelegate *delegate)
 {
 	MonoReflectionMethod *ret = NULL;
 	MonoError error;
-	ret = mono_method_get_object_checked (mono_domain_get (), mono_object_get_virtual_method (delegate->target, delegate->method), mono_object_class (delegate->target), &error);
+	MonoMethod *m;
+
+	m = mono_object_get_virtual_method (delegate->target, delegate->method);
+	ret = mono_method_get_object_checked (mono_domain_get (), m, m->klass, &error);
 	mono_error_set_pending_exception (&error);
 	return ret;
 }
@@ -6645,10 +6648,6 @@ ves_icall_System_Environment_Exit (int result)
 
 	/* Suspend all managed threads since the runtime is going away */
 	mono_thread_suspend_all_other_threads ();
-
-	//FIXME shutdown is, weirdly enough, abortible in gc.c so we add this hack for now, see https://bugzilla.xamarin.com/show_bug.cgi?id=51653
-	mono_threads_begin_abort_protected_block ();
-	mono_thread_info_clear_self_interrupt ();
 
 	mono_runtime_quit ();
 #endif

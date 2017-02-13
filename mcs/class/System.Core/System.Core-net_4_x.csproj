@@ -51,8 +51,10 @@
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.Linq.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\SparseArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Dynamic\Utils\CacheDict.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Dynamic\Utils\ContractUtils.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Dynamic\Utils\ContractUtils.RequiresArrayRange.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\DelegateHelpers.Generated.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\DelegateHelpers.netstandard1.7.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\DelegateHelpers.netstandard.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\HoistedLocals.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedQueue.cs" />

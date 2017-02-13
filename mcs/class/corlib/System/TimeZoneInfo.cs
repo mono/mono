@@ -91,7 +91,7 @@ namespace System
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
 		[StructLayout(LayoutKind.Sequential)]
-		private struct SYSTEMTIME {
+		private struct _SYSTEMTIME {
 			short wYear;
 			short wMonth;
 			short wDayOfWeek;
@@ -103,20 +103,20 @@ namespace System
 		}
 
 		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		private struct TIME_ZONE_INFORMATION {
+		private struct _TIME_ZONE_INFORMATION {
 			internal int Bias;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
 			internal string StandardName;
-			internal SYSTEMTIME StandardDate;
+			internal _SYSTEMTIME StandardDate;
 			internal int StandardBias;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
 			internal string DaylightName;
-			internal SYSTEMTIME DaylightDate;
+			internal _SYSTEMTIME DaylightDate;
 			internal int DaylightBias;
 		}
 
 		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall)]
-		private extern static uint GetTimeZoneInformation(out TIME_ZONE_INFORMATION tzi);
+		private extern static uint GetTimeZoneInformation(out _TIME_ZONE_INFORMATION tzi);
 
 		private static bool readlinkNotFound;
 
@@ -190,9 +190,11 @@ namespace System
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				name = TrimSpecial (name);
 				if (name != null) */
-				TIME_ZONE_INFORMATION tzi;
+				_TIME_ZONE_INFORMATION tzi;
 				if (GetTimeZoneInformation(out tzi) <= 2)
 					return TimeZoneInfo.FindSystemTimeZoneById (tzi.StandardName);
+			} else if (IsWindows) {
+				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
 #endif
 
@@ -245,6 +247,9 @@ namespace System
 					} catch {}
 				}
 
+				return;
+			} else if (IsWindows) {
+				systemTimeZones.AddRange (GetSystemTimeZonesWinRTFallback ());
 				return;
 			}
 #endif
@@ -343,9 +348,13 @@ namespace System
 				if (!IsWindows)
 					return null;
 				
-				return timeZoneKey = Registry.LocalMachine.OpenSubKey (
-					"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
-					false);
+				try {
+					return timeZoneKey = Registry.LocalMachine.OpenSubKey (
+						"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
+						false);
+				} catch {
+					return null;
+				}
 			}
 		}
 		
@@ -358,8 +367,12 @@ namespace System
 				if (!IsWindows)
 					return null;
 				
-				return localZoneKey = Registry.LocalMachine.OpenSubKey (
-					"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
+				try {
+					return localZoneKey = Registry.LocalMachine.OpenSubKey (
+						"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
+				} catch {
+					return null;
+				}
 			}
 		}
 #endif
@@ -580,6 +593,8 @@ namespace System
 				if (key == null)
 					throw new TimeZoneNotFoundException ();
 				return FromRegistryKey(id, key);
+			} else if (IsWindows) {
+				return FindSystemTimeZoneByIdWinRTFallback (id);
 			}
 #endif
 			// Local requires special logic that already exists in the Local property (bug #326)

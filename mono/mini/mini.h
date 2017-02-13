@@ -43,14 +43,10 @@
 #include "jit.h"
 #include "cfgdump.h"
 
-#include "mono/metadata/class-internals.h"
-#include "mono/metadata/domain-internals.h"
-#include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/marshal.h"
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/exception.h"
-#include "mono/utils/mono-compiler.h"
 
 #ifdef __native_client_codegen__
 #include <nacl/nacl_dyncode.h>
@@ -589,6 +585,8 @@ extern const gint8 ins_sreg_counts [];
 #define MONO_BB_FOR_EACH_INS(bb, ins) for ((ins) = (bb)->code; (ins); (ins) = (ins)->next)
 
 #define MONO_BB_FOR_EACH_INS_SAFE(bb, n, ins) for ((ins) = (bb)->code, n = (ins) ? (ins)->next : NULL; (ins); (ins) = (n), (n) = (ins) ? (ins)->next : NULL)
+
+#define MONO_BB_FOR_EACH_INS_REVERSE(bb, ins) for ((ins) = (bb)->last_ins; (ins); (ins) = (ins)->prev)
 
 #define MONO_BB_FOR_EACH_INS_REVERSE_SAFE(bb, p, ins) for ((ins) = (bb)->last_ins, p = (ins) ? (ins)->prev : NULL; (ins); (ins) = (p), (p) = (ins) ? (ins)->prev : NULL)
 
@@ -2134,7 +2132,7 @@ typedef struct {
 	gboolean better_cast_details;
 	gboolean mdb_optimizations;
 	gboolean no_gdb_backtrace;
-	gboolean suspend_on_sigsegv;
+	gboolean suspend_on_native_crash;
 	gboolean suspend_on_exception;
 	gboolean suspend_on_unhandled;
 	gboolean dyn_runtime_invoke;

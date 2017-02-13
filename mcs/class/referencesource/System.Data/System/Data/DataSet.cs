@@ -31,6 +31,7 @@ namespace System.Data {
     using System.Runtime.Versioning;
     using System.Runtime.CompilerServices;
 
+#if !COREFX
     /// <devdoc>
     ///    <para>
     ///       Represents an in-memory cache of data.
@@ -3485,6 +3486,7 @@ namespace System.Data {
         }
 
     }
+#endif
 
 #if !NO_CODEDOM
  public class DataSetSchemaImporterExtension : SchemaImporterExtension {

@@ -44,7 +44,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/marshal-internals.h>
@@ -131,9 +130,9 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error);
 static MonoLoadFunc load_function = NULL;
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (assembly, System.Reflection, Assembly);
+static GENERATE_GET_CLASS_WITH_CACHE (assembly, "System.Reflection", "Assembly");
 
-static GENERATE_GET_CLASS_WITH_CACHE (appdomain, System, AppDomain);
+static GENERATE_GET_CLASS_WITH_CACHE (appdomain, "System", "AppDomain");
 
 static MonoDomain *
 mono_domain_from_appdomain_handle (MonoAppDomainHandle appdomain);
@@ -2487,7 +2486,7 @@ unload_thread_main (void *arg)
 	/* Force it to be attached to avoid racing during shutdown. */
 	thread = mono_thread_attach_full (mono_get_root_domain (), TRUE);
 
-	mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "Domain unloader"), TRUE, &error);
+	mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "Domain unloader"), TRUE, FALSE, &error);
 	if (!is_ok (&error)) {
 		data->failure_reason = g_strdup (mono_error_get_message (&error));
 		mono_error_cleanup (&error);

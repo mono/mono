@@ -31,14 +31,12 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/marshal.h>
 #include "mono/metadata/debug-helpers.h"
-#include "mono/metadata/marshal.h"
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/environment.h>
 #include "mono/metadata/profiler-private.h"
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/mono-debug-debugger.h"
-#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/w32event.h>
@@ -71,11 +69,11 @@ static MonoMethod*
 class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is_proxy, MonoError *error);
 
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (pointer, System.Reflection, Pointer)
-static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, System.Runtime.Remoting, RemotingServices)
-static GENERATE_GET_CLASS_WITH_CACHE (unhandled_exception_event_args, System, UnhandledExceptionEventArgs)
-static GENERATE_GET_CLASS_WITH_CACHE (sta_thread_attribute, System, STAThreadAttribute)
-static GENERATE_GET_CLASS_WITH_CACHE (activation_services, System.Runtime.Remoting.Activation, ActivationServices)
+static GENERATE_GET_CLASS_WITH_CACHE (pointer, "System.Reflection", "Pointer")
+static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, "System.Runtime.Remoting", "RemotingServices")
+static GENERATE_GET_CLASS_WITH_CACHE (unhandled_exception_event_args, "System", "UnhandledExceptionEventArgs")
+static GENERATE_GET_CLASS_WITH_CACHE (sta_thread_attribute, "System", "STAThreadAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (activation_services, "System.Runtime.Remoting.Activation", "ActivationServices")
 
 
 #define ldstr_lock() mono_os_mutex_lock (&ldstr_section)
@@ -432,9 +430,6 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		lock->initializing_tid = tid;
 		lock->waiting_count = 1;
 		lock->done = FALSE;
-		/* grab the vtable lock while this thread still owns type_initialization_section */
-		/* This is why type_initialization_lock needs to enter blocking mode */
-		mono_type_init_lock (lock);
 		g_hash_table_insert (type_initialization_hash, vtable, lock);
 		do_initialization = 1;
 	} else {
@@ -515,10 +510,11 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 
 		if (last_domain)
 			mono_domain_set (last_domain, TRUE);
+
 		/* Signal to the other threads that we are done */
+		mono_type_init_lock (lock);
 		lock->done = TRUE;
 		mono_coop_cond_broadcast (&lock->cond);
-
 		mono_type_init_unlock (lock);
 
 		//This can happen if the cctor self-aborts
@@ -574,6 +570,7 @@ gboolean release_type_locks (gpointer key, gpointer value, gpointer user)
 		 * mono_runtime_class_init (). In this case, the exception object is not stored,
 		 * and get_type_init_exception_for_class () needs to be aware of this.
 		 */
+		mono_type_init_lock (lock);
 		vtable->init_failed = 1;
 		mono_coop_cond_broadcast (&lock->cond);
 		mono_type_init_unlock (lock);
@@ -786,18 +783,11 @@ compute_class_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int
 
 			type = mono_type_get_underlying_type (field->type);
 			switch (type->type) {
+			case MONO_TYPE_U:
 			case MONO_TYPE_I:
 			case MONO_TYPE_PTR:
 			case MONO_TYPE_FNPTR:
 				break;
-			/* only UIntPtr is allowed to be GC-tracked and only in mscorlib */
-			case MONO_TYPE_U:
-#ifdef HAVE_SGEN_GC
-				break;
-#else
-				if (klass->image != mono_defaults.corlib)
-					break;
-#endif
 			case MONO_TYPE_STRING:
 			case MONO_TYPE_SZARRAY:
 			case MONO_TYPE_CLASS:

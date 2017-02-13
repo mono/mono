@@ -1301,7 +1301,7 @@ mini_jit_info_table_find (MonoDomain *domain, char *addr, MonoDomain **out_domai
 }
 
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (runtime_compat_attr, System.Runtime.CompilerServices, RuntimeCompatibilityAttribute)
+static GENERATE_GET_CLASS_WITH_CACHE (runtime_compat_attr, "System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute")
 
 /*
  * wrap_non_exception_throws:
@@ -2482,7 +2482,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	if (handling_sigsegv && is_sigsegv)
 		return;
 
-	if (mini_get_debug_options ()->suspend_on_sigsegv && is_sigsegv) {
+	if (mini_get_debug_options ()->suspend_on_native_crash) {
 		mono_runtime_printf_err ("Received %s, suspending...", signal);
 #ifdef HOST_WIN32
 		while (1)
@@ -2871,7 +2871,6 @@ mono_thread_state_init_from_sigctx (MonoThreadUnwindState *ctx, void *sigctx)
 	MonoThreadInfo *thread = mono_thread_info_current_unchecked ();
 	if (!thread) {
 		ctx->valid = FALSE;
-		g_error ("Invoked mono_thread_state_init_from_sigctx from non-Mono thread");
 		return FALSE;
 	}
 

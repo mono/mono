@@ -2790,7 +2790,7 @@ namespace System.Windows.Forms {
 			//else if (format == "PenData" ) return 10;
 			//else if (format == "RiffAudio" ) return 11;
 			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UTF16_STRING.ToInt32();
+			else if (format == "UnicodeText" ) return UTF8_STRING.ToInt32();
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;
