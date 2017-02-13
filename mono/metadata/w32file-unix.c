@@ -3988,8 +3988,10 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 
 		mono_w32error_set_last (ERROR_TOO_MANY_OPEN_FILES);
 		
+		MONO_ENTER_GC_SAFE;
 		close (filedes[0]);
 		close (filedes[1]);
+		MONO_EXIT_GC_SAFE;
 		
 		return(FALSE);
 	}
@@ -4004,8 +4006,6 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 		g_warning ("%s: error creating pipe read handle", __func__);
 		MONO_ENTER_GC_SAFE;
 		close (filedes[0]);
-		MONO_EXIT_GC_SAFE;
-		MONO_ENTER_GC_SAFE;
 		close (filedes[1]);
 		MONO_EXIT_GC_SAFE;
 		mono_w32error_set_last (ERROR_GEN_FAILURE);
@@ -4023,8 +4023,6 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 		
 		MONO_ENTER_GC_SAFE;
 		close (filedes[0]);
-		MONO_EXIT_GC_SAFE;
-		MONO_ENTER_GC_SAFE;
 		close (filedes[1]);
 		MONO_EXIT_GC_SAFE;
 		mono_w32error_set_last (ERROR_GEN_FAILURE);
