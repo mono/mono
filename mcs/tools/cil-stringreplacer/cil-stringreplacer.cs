@@ -100,16 +100,11 @@ public class Program
 
 	static void RewriteAssembly (string assemblyLocation, Dictionary<string, string> resourcesStrings, CmdOptions options)
 	{
-		var debugSymbols = Path.ChangeExtension (assemblyLocation, "pdb");
-		var useDebugSymbols = File.Exists (debugSymbols);
-
 		var readerParameters = new ReaderParameters {
+			ReadSymbols = true,
 			ReadWrite = true,
+			SymbolReaderProvider = new DefaultSymbolReaderProvider (false)
 		};
-
-		if (useDebugSymbols) {
-			readerParameters.SymbolReaderProvider = new PortablePdbReaderProvider ();
-		}
 
 		using (var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters)) {
 			foreach (var module in assembly.Modules) {
@@ -135,11 +130,9 @@ public class Program
 				}
 			}
 
-			var writerParameters = new WriterParameters ();
-
-			if (useDebugSymbols) {
-				writerParameters.SymbolWriterProvider = new PortablePdbWriterProvider ();
-			}
+			var writerParameters = new WriterParameters () {
+				WriteSymbols = assembly.MainModule.HasSymbols
+			};
 
 			assembly.Write (writerParameters);
 		}
