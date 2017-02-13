@@ -334,10 +334,12 @@ mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
 	gboolean result;
 
 	MONO_ENTER_GC_SAFE;
+
 	result = MoveFile (path, dest);
-	MONO_EXIT_GC_SAFE;
 	if (!result)
 		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -348,11 +350,12 @@ mono_w32file_replace (gunichar2 *destinationFileName, gunichar2 *sourceFileName,
 	gboolean result;
 
 	MONO_ENTER_GC_SAFE;
-	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
-	MONO_EXIT_GC_SAFE;
 
+	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
 	if (!result)
 		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -363,11 +366,12 @@ mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 
 	gboolean result;
 
 	MONO_ENTER_GC_SAFE;
-	result = CopyFile (path, dest, !overwrite);
-	MONO_EXIT_GC_SAFE;
 
+	result = CopyFile (path, dest, !overwrite);
 	if (!result)
 		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -378,11 +382,12 @@ mono_w32file_lock (gpointer handle, gint64 position, gint64 length, gint32 *erro
 	gboolean result;
 
 	MONO_ENTER_GC_SAFE;
-	result = LockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
-	MONO_EXIT_GC_SAFE;
 
+	result = LockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
 	if (!result)
 		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -393,11 +398,12 @@ mono_w32file_unlock (gpointer handle, gint64 position, gint64 length, gint32 *er
 	gboolean result;
 
 	MONO_ENTER_GC_SAFE;
-	result = UnlockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
-	MONO_EXIT_GC_SAFE;
 
+	result = UnlockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
 	if (!result)
 		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
@@ -439,12 +445,13 @@ mono_w32file_get_file_size (gpointer handle, gint32 *error)
 	guint32 length_hi;
 
 	MONO_ENTER_GC_SAFE;
-	length = GetFileSize (handle, &length_hi);
-	MONO_EXIT_GC_SAFE;
 
+	length = GetFileSize (handle, &length_hi);
 	if(length==INVALID_FILE_SIZE) {
 		*error=GetLastError ();
 	}
+
+	MONO_EXIT_GC_SAFE;
 
 	return length | ((gint64)length_hi << 32);
 }
