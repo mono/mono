@@ -1099,6 +1099,7 @@ static void _wapi_set_last_path_error_from_errno (const gchar *dir,
  */
 static void file_close (gpointer handle, gpointer data)
 {
+	MONO_REQ_GC_SAFE_MODE; /* FIXME: after mono_w32handle_close is coop-aware, change this to UNSAFE_MODE and switch to SAFE around close() below */
 	MonoW32HandleFile *file_handle = (MonoW32HandleFile *)data;
 	gint fd = file_handle->fd;
 	
@@ -1833,6 +1834,7 @@ static gboolean file_setfiletime(gpointer handle,
 
 static void console_close (gpointer handle, gpointer data)
 {
+	MONO_REQ_GC_SAFE_MODE; /* FIXME: after mono_w32handle_close is coop-aware, change this to UNSAFE_MODE and switch to SAFE around close() below */
 	MonoW32HandleFile *console_handle = (MonoW32HandleFile *)data;
 	gint fd = console_handle->fd;
 	
@@ -1843,9 +1845,7 @@ static void console_close (gpointer handle, gpointer data)
 	if (fd > 2) {
 		if (console_handle->share_info)
 			file_share_release (console_handle->share_info);
-		MONO_ENTER_GC_SAFE;
 		close (fd);
-		MONO_EXIT_GC_SAFE;
 	}
 }
 
@@ -1989,6 +1989,7 @@ static gsize find_typesize (void)
 
 static void pipe_close (gpointer handle, gpointer data)
 {
+	MONO_REQ_GC_SAFE_MODE; /* FIXME: after mono_w32handle_close is coop-aware, change this to UNSAFE_MODE and switch to SAFE around close() below */
 	MonoW32HandleFile *pipe_handle = (MonoW32HandleFile*)data;
 	gint fd = pipe_handle->fd;
 
@@ -1999,9 +2000,7 @@ static void pipe_close (gpointer handle, gpointer data)
 	if (pipe_handle->share_info)
 		file_share_release (pipe_handle->share_info);
 
-	MONO_ENTER_GC_SAFE;
 	close (fd);
-	MONO_EXIT_GC_SAFE;
 }
 
 static void pipe_details (gpointer data)
@@ -2488,7 +2487,14 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 gboolean
 mono_w32file_close (gpointer handle)
 {
-	return mono_w32handle_close (handle);
+	gboolean res;
+	MONO_ENTER_GC_SAFE;
+	/* FIXME: we transition here and not in file_close, pipe_close,
+	 * console_close because w32handle_close is not coop aware yet, but it
+	 * calls back into w32file. */
+	res = mono_w32handle_close (handle);
+	MONO_EXIT_GC_SAFE;
+	return res;
 }
 
 gboolean mono_w32file_delete(const gunichar2 *name)
