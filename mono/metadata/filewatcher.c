@@ -22,6 +22,11 @@
 #include <sys/time.h>
 #endif
 
+// For PATH_MAX
+#ifdef TIZEN
+#include <linux/limits.h>
+#endif
+
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/filewatcher.h>

@@ -52,6 +52,11 @@
 
 #include "w32file-unix-glob.h"
 
+// For PATH_MAX
+#ifdef TIZEN
+#include <linux/limits.h>
+#endif
+
 #define	EOS		'\0'
 #define	NOT		'!'
 #define	QUESTION	'?'

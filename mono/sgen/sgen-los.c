@@ -20,6 +20,12 @@
 
 #include "config.h"
 
+// For SSIZE_MAX
+#ifdef TIZEN
+#include <limits.h>
+#include <bits/posix1_lim.h>
+#endif
+
 #ifdef HAVE_SGEN_GC
 
 #include <string.h>
