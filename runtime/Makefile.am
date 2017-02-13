@@ -48,8 +48,8 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
-if INSTALL_MOBILE_STATIC
-build_profiles += mobile_static
+if INSTALL_AOT_FULL
+build_profiles += aot_full
 endif
 
 if INSTALL_XAMMAC
@@ -109,20 +109,20 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-if INSTALL_MOBILE_STATIC
+if INSTALL_AOT_FULL
 #  ILASM.exe has features which a mobile_static runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
 #  We skip it here because otherwise it will fail to verify.
-MOBILE_STATIC_FILTER=grep -v ilasm
+AOT_FULL_FILTER=grep -v ilasm
 else
-MOBILE_STATIC_FILTER=echo
+AOT_FULL_FILTER=echo
 endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip binary_reference_assemblies because they contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
-	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(MOBILE_STATIC_FILTER)` ; \
+	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(AOT_FULL_FILTER)` ; \
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
 	  if [ "binary_reference_assemblies" = "$$profile" ]; then \

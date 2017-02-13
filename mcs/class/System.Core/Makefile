@@ -19,7 +19,7 @@ endif
 
 system_core_plain_libdir = $(the_libdir_base)plaincore
 
-ifdef MOBILE_STATIC
+ifdef AOT_FULL
 extra_test_flags := -exclude:NotWorkingInterpreter
 system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(system_core_plain_libdir)/System.Core.dll
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR

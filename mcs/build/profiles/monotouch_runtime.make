@@ -37,7 +37,7 @@ FRAMEWORK_VERSION = 2.1
 
 # This is utility build only
 NO_INSTALL = yes
-MOBILE_STATIC = yes
+AOT_FULL = yes
 MOBILE_PROFILE = yes
 
 PROFILE_DISABLE_BTLS=1

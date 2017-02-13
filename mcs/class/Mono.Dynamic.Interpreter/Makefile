@@ -10,7 +10,7 @@ LIB_MCS_FLAGS = \
 	-d:MONO_INTERPRETER \
 	-delaysign -keyfile:../mono.pub
 
-ifdef MOBILE_STATIC
+ifdef AOT_FULL
 mono_dynamic_interpreter_deps = $(the_libdir_base)plaincore/System.Core.dll
 LIB_REFS += plaincore/System.Core
 else
