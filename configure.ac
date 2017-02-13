@@ -2285,6 +2285,8 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(system)
 	AC_CHECK_FUNCS(fork execv execve)
 	AC_CHECK_FUNCS(accept4)
+	AC_CHECK_FUNCS(getpid)
+	AC_CHECK_FUNCS(localtime_r)
 	AC_CHECK_SIZEOF(size_t)
 	AC_CHECK_TYPES([blksize_t], [AC_DEFINE(HAVE_BLKSIZE_T)], , 
 		[#include <sys/types.h>

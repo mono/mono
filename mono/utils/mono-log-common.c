@@ -109,19 +109,24 @@ mono_log_write_logfile (const char *log_domain, GLogLevelFlags level, mono_bool 
 		pid_t pid;
 		char logTime [80];
 
-#ifndef HOST_WIN32
+#ifdef HAVE_LOCALTIME_R
 		struct tm tod;
 		time(&t);
 		localtime_r(&t, &tod);
-		pid = getpid();
 		strftime(logTime, sizeof(logTime), "%Y-%m-%d %H:%M:%S", &tod);
 #else
 		struct tm *tod;
 		time(&t);
 		tod = localtime(&t);
-		pid = _getpid();
 		strftime(logTime, sizeof(logTime), "%F %T", tod);
 #endif
+
+#ifndef HOST_WIN32
+		pid = getpid();
+#else
+		pid = _getpid();
+#endif
+
 		fprintf (logFile, "%s level[%c] mono[%d]: %s\n", logTime, mapLogFileLevel (level), pid, message);
 	} else {
 		fprintf (logFile, "%s%s%s\n",
