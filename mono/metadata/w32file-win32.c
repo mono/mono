@@ -106,7 +106,7 @@ mono_w32file_flush (gpointer handle)
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
 	res = FlushFileBuffers (handle);
-	MONO_EXIT_GS_SAFE;
+	MONO_EXIT_GC_SAFE;
 	return res;
 }
 
@@ -254,9 +254,9 @@ gboolean
 mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 {
 	gboolean res;
-	MONO_GC_ENTER_SAFE;
+	MONO_ENTER_GC_SAFE;
 	res = SetFileAttributes (name, attrs);
-	MONO_GC_EXIT_SAFE;
+	MONO_EXIT_GC_SAFE;
 	return res;
 }
 
@@ -273,8 +273,9 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 gboolean
 mono_w32file_set_cwd (const gunichar2 *path)
 {
+	gboolean res;
 	MONO_ENTER_GC_SAFE;
-	gboolean res = SetCurrentDirectory (path);
+	res = SetCurrentDirectory (path);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
