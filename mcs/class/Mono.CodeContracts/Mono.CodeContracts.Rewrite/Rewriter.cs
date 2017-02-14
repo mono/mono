@@ -64,7 +64,7 @@ namespace Mono.CodeContracts.Rewrite {
 
 			var readerParameters = new ReaderParameters ();
 
-			if (options.Debug)
+			if (options.Debug && options.WritePdbFile)
 				readerParameters.ReadSymbols = true;
 
 			var assembly = this.options.Assembly.IsFilename ?
