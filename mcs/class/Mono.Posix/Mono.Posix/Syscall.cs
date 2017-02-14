@@ -433,6 +433,12 @@ namespace Mono.Posix {
 		}
 		
 
+#if ORBIS
+		public static bool isatty (int desc)
+		{
+			return false;
+		}
+#else
 		[DllImport ("libc", EntryPoint="isatty")]
 		static extern int syscall_isatty (int desc);
 		
@@ -444,7 +450,7 @@ namespace Mono.Posix {
 			else
 				return false;
 		}
-		
+#endif
 
 		[DllImport ("MonoPosixHelper")]
 		internal extern static int helper_Mono_Posix_Stat (string filename, bool dereference,
