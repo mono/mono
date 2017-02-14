@@ -1,3 +1,4 @@
+#!/bin/sh
 SUBMODULE_ERROR='Could not recursively update all git submodules. You may experience compilation problems if some submodules are out of date'
 SUBMODULE_OK='Git submodules updated successfully'
 if test -d .git; then \

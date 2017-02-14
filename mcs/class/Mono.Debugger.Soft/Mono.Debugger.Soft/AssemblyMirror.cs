@@ -14,6 +14,7 @@ namespace Mono.Debugger.Soft
 		ModuleMirror main_module;
 		AssemblyName aname;
 		AssemblyDefinition meta;
+		AppDomainMirror domain;
 		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
 		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
 
@@ -47,6 +48,17 @@ namespace Mono.Debugger.Soft
 					main_module = vm.GetModule (vm.conn.Assembly_GetManifestModule (id));
 				}
 				return main_module;
+			}
+		}
+
+		// Since Protocol version 2.45
+		public AppDomainMirror Domain {
+			get {
+				if (domain == null) {
+					vm.CheckProtocolVersion (2, 45);
+					domain = vm.GetDomain (vm.conn.Assembly_GetIdDomain (id));
+				}
+				return domain;
 			}
 		}
 
