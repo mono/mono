@@ -37,6 +37,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDueTime ()
 		{
 			Bucket bucket = new Bucket();
@@ -55,6 +56,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestChange ()
 		{
 			Bucket bucket = new Bucket();
@@ -71,6 +73,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestZeroDueTime ()
 		{
 			Bucket bucket = new Bucket();
@@ -85,6 +88,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDispose ()
 		{	
 			Bucket bucket = new Bucket();
