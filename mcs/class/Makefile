@@ -67,6 +67,10 @@ mobile_static_dirs := \
 	Mono.Dynamic.Interpreter	\
 	$(pcl_facade_dirs)
 
+mobile_static_exclude_dirs := \
+	Mono.Data.Sqlite \
+	SMDiagnostics
+
 mobile_dynamic_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
@@ -310,7 +314,7 @@ monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
 monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
-mobile_static_SUBDIRS := $(mobile_static_dirs)
+mobile_static_SUBDIRS := $(filter-out $(mobile_static_exclude_dirs),$(mobile_static_dirs))
 mobile_SUBDIRS := $(mobile_dynamic_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
 xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
