@@ -826,7 +826,7 @@ namespace System
 					return tz.BaseUtcOffset;
 			}
 
-			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime)) {
+			if (tzRule != null && tz.IsInDST (tzRule, dateTime)) {
 				// Replicate what .NET does when given a time which falls into the hour which is lost when
 				// DST starts. isDST should always be true but the offset should be BaseUtcOffset without the
 				// DST delta while in that hour.
@@ -883,7 +883,7 @@ namespace System
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 			if (rule != null) {
 				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
-				if (dateTime > tpoint - rule.DaylightDelta  && dateTime <= tpoint)
+				if (dateTime > tpoint - rule.DaylightDelta && dateTime <= tpoint)
 					return true;
 			}
 				
@@ -913,7 +913,6 @@ namespace System
 				DST_start -= BaseUtcOffset;
 				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
 			}
-
 			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 		
@@ -1199,31 +1198,16 @@ namespace System
 					return false;
 			}
 
-			var inDelta = false;
-			for (var i =  transitions.Count - 1; i >= 0; i--) {
-				var pair = transitions [i];
-				DateTime ttime = pair.Key;
-				TimeType ttype = pair.Value;
-
-				var delta =  new TimeSpan (0, 0, ttype.Offset) - BaseUtcOffset;
-
-				if ((ttime + delta) > date) {
-					inDelta = ttime <= date;
-					continue;
+			AdjustmentRule current = GetApplicableRule(date);
+			if (current != null) {
+				DateTime tStart = TransitionPoint(current.DaylightTransitionStart, date.Year);
+				DateTime tEnd = TransitionPoint(current.DaylightTransitionEnd, date.Year);
+				if ((date >= tStart) && (date <= tEnd)) {
+					offset = baseUtcOffset + current.DaylightDelta; 
+					isDst = true;
+					return true;
 				}
-
-				offset =  new TimeSpan (0, 0, ttype.Offset);
-				if (inDelta) {
-					// Replicate what .NET does when given a time which falls into the hour which is lost when
-					// DST starts. isDST should be true but the offset should be the non-DST offset.
-					isDst = transitions [i - 1].Value.IsDst;
-				} else {
-					isDst = ttype.IsDst;
-				}
-
-				return true;
 			}
-
 			return false;
 		}
 
@@ -1513,7 +1497,7 @@ namespace System
 
 			if (zone.IsAmbiguousTime (time)) {
 				isAmbiguousLocalDst = true;
-				return baseOffset;
+//				return baseOffset;
 			}
 
 			return zone.GetUtcOffset (time, out isDaylightSavings);

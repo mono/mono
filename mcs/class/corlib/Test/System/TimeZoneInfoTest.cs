@@ -300,7 +300,7 @@ namespace MonoTests.System
 			}
 		
 			[Test]
-			public void DSTTransisions ()
+			public void DSTTransitions ()
 			{
 				DateTime beforeDST = new DateTime (2007, 03, 25, 0, 59, 59, DateTimeKind.Unspecified);
 				DateTime startDST = new DateTime (2007, 03, 25, 2, 0, 0, DateTimeKind.Unspecified);
@@ -308,12 +308,12 @@ namespace MonoTests.System
 				DateTime afterDST = new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Unspecified);
 				Assert.IsFalse (london.IsDaylightSavingTime (beforeDST), "Just before DST");
 				Assert.IsTrue (london.IsDaylightSavingTime (startDST), "the first seconds of DST");
-				Assert.IsFalse (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
+				Assert.IsTrue (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
 				Assert.IsFalse (london.IsDaylightSavingTime (afterDST), "Just after DST");
 			}
 		
 			[Test]
-			public void DSTTransisionsUTC ()
+			public void DSTTransitionsUTC ()
 			{
 				DateTime beforeDST = new DateTime (2007, 03, 25, 0, 59, 59, DateTimeKind.Utc);
 				DateTime startDST = new DateTime (2007, 03, 25, 1, 0, 0, DateTimeKind.Utc);
@@ -1179,8 +1179,8 @@ namespace MonoTests.System
 
 				d = dst1End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d));
-				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0, 1))));
+				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
+				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 
 				d = dst2Start.Add (dstOffset);
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
@@ -1189,8 +1189,8 @@ namespace MonoTests.System
 
 				d = dst2End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d));
-				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0, 1))));
+				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
+				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 			}
 
 		  [Test]
