@@ -88,8 +88,7 @@ Mono_Posix_Syscall_msync (void *start, mph_size_t len, int flags)
 int
 Mono_Posix_Syscall_mlock (void *start, mph_size_t len)
 {
-/* FIXME: Haiku lacks support for m(un)lock and mincore */
-#if defined(__HAIKU__)
+#if !defined(HAVE_MINCORE)
 	return ENOSYS;
 #else
 	mph_return_if_size_t_overflow (len);
