@@ -66,6 +66,8 @@ mobile_static_dirs := \
 	$(pcl_facade_dirs)
 
 mobile_static_exclude_dirs := \
+	Microsoft.CSharp \
+	Mono.CSharp \
 	Mono.Data.Sqlite \
 	SMDiagnostics
 
