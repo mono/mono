@@ -51,7 +51,7 @@ namespace MonoTests.System.Threading {
 			Bucket bucket = new Bucket();
 
 			using (Timer t = new Timer (o => Callback2 (o), bucket, 200, Timeout.Infinite)) {
-				bucket.mre.Wait (5000);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 				Assert.AreEqual (1, bucket.count, "#1");
 			}
 		}
@@ -62,7 +62,7 @@ namespace MonoTests.System.Threading {
 			Bucket bucket = new Bucket();
 
 			using (Timer t = new Timer (o => Callback2 (o), bucket, 10, 10)) {
-				bucket.mre.Wait (5000);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 			}
 			//If the callback is called after dispose, it will NRE and be reported
 			bucket.mre = null;
@@ -76,7 +76,7 @@ namespace MonoTests.System.Threading {
 			Bucket bucket = new Bucket();
 
 			using (Timer t = new Timer (o => Callback2 (o), bucket, 10, 10)) {
-				bucket.mre.Wait (5000);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 				int c = bucket.count;
 				Assert.IsTrue (c > 0, "#1 " + c);
 				t.Change (100000, 1000000);
@@ -92,11 +92,11 @@ namespace MonoTests.System.Threading {
 			Bucket bucket = new Bucket();
 
 			using (Timer t = new Timer (o => Callback2 (o), bucket, 0, Timeout.Infinite)) {
-				bucket.mre.Wait (5000);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 				bucket.mre.Reset ();
 				Assert.AreEqual (1, bucket.count, "#1");
 				t.Change (0, Timeout.Infinite);
-				bucket.mre.Wait (5000);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#1.5");
 				Assert.AreEqual (2, bucket.count, "#2");
 			}
 		}
