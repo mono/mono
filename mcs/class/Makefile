@@ -2,6 +2,12 @@ thisdir = class
 
 pcl_facade_dirs := Facades
 
+-include ../build/config.make
+
+ifdef MCS_MODE
+MCS_MODE_dirs := Mono.Cecil.Mdb
+endif
+
 # The minimal set of csc dependencies
 basic_SUBDIRS := \
 	corlib \
@@ -14,6 +20,7 @@ basic_SUBDIRS := \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
+	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer
 
 # resgen is corlib specific so we need to wait until corlib is build
@@ -33,11 +40,10 @@ build_SUBDIRS :=  \
 	System.Runtime.InteropServices.RuntimeInformation \
 	System.IO.Compression \
 	Mono.Cecil \
+	$(MCS_MODE_dirs) \
 	Mono.CompilerServices.SymbolWriter	\
 	PEAPI \
 	../tools/cil-stringreplacer
-
--include ../build/config.make
 
 ifdef MCS_MODE
 basic_PARALLEL_SUBDIRS := ../mcs
