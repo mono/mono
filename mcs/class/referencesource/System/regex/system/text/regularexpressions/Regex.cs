@@ -472,7 +472,6 @@ namespace System.Text.RegularExpressions {
             }
         }
 
-#if NETSTANDARD
         [CLSCompliant (false)]
         protected IDictionary Caps
         {
@@ -527,7 +526,6 @@ namespace System.Text.RegularExpressions {
                 }
             }
         }
-#endif
 
         /// <devdoc>
         ///    <para>
