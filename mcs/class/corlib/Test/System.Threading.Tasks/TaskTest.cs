@@ -308,7 +308,7 @@ namespace MonoTests.System.Threading.Tasks
 				}
 				AddToCleanup (tasks);
 
-				Assert.IsTrue (Task.WaitAll (tasks, 5000));
+				Assert.IsTrue (Task.WaitAll (tasks, 20000));
 			}
 		}
 
