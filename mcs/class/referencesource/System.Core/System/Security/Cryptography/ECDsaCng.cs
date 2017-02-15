@@ -31,11 +31,9 @@ namespace System.Security.Cryptography {
             throw new NotImplementedException ();
         }
 
-#if NETSTANDARD
         public ECDsaCng(ECCurve curve) {
             throw new NotImplementedException ();
         }
-#endif
 
         public CngKey Key {
             get {

@@ -394,7 +394,6 @@ namespace System.Net.Http
 			return CreateResponseMessage (wresponse, request, cancellationToken);
 		}
 
-#if NETSTANDARD
 		public bool CheckCertificateRevocationList {
 			get {
 				throw new NotImplementedException ();
@@ -460,7 +459,5 @@ namespace System.Net.Http
 				throw new NotImplementedException ();
 			}
 		}
-
-#endif
 	}
 }
