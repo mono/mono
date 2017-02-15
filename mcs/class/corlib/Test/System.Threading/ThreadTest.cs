@@ -912,20 +912,18 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void SetNameInThreadPoolThread ()
 		{
-			for (int i = 0; i < 10; ++i) {
-				Task t = Task.Run (delegate () {
-					Thread.CurrentThread.Name = "x/" + i;
-					Assert.AreEqual (Thread.CurrentThread.Name, "x/" + i, "#1");
+			Task t = Task.Run (delegate () {
+				Thread.CurrentThread.Name = "ThreadName1";
+				Assert.AreEqual (Thread.CurrentThread.Name, "ThreadName1", "#1");
 
-					try {
-						Thread.CurrentThread.Name = "y/" + i;
-						Assert.Fail ("#2");
-					} catch (InvalidOperationException) {
-					}
-				});
+				try {
+					Thread.CurrentThread.Name = "ThreadName2";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException) {
+				}
+			});
 
-				t.Wait ();
-			}
+			t.Wait ();
 		}
 
 		void CheckIsRunning (string s, Thread t)
