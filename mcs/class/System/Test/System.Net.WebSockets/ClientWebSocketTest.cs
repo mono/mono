@@ -183,7 +183,7 @@ namespace MonoTests.System.Net.WebSockets
 		}
 
 		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void ReceiveAsyncArgTest_NotConnected ()
 		{
