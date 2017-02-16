@@ -55,16 +55,8 @@ namespace Mono.XBuild.CommandLine {
 		// this does nothing but adds strong reference to Microsoft.Build.Tasks*.dll that we need to load consistently.
 		Microsoft.Build.Tasks.Copy dummy;
 #pragma warning restore
-
 		public static void Main (string[] args)
 		{
-			Console.ForegroundColor = ConsoleColor.DarkRed;
-			Console.WriteLine ();
-			Console.WriteLine (">>>> xbuild tool is deprecated and will be removed in future updates, use msbuild instead <<<<");
-			Console.WriteLine ();
-			Console.ResetColor ();
-
-
 			MainClass mc = new MainClass ();
 			mc.args = args;
 			mc.Execute ();
@@ -83,7 +75,14 @@ namespace Mono.XBuild.CommandLine {
 			bool show_stacktrace = false;
 			
 			try {
-				parameters.ParseArguments (args);
+				try {
+					parameters.ParseArguments (args);
+				} catch {
+					ShowDeprecationNotice ();
+					throw;
+				}
+
+				ShowDeprecationNotice ();
 				show_stacktrace = (parameters.LoggerVerbosity == LoggerVerbosity.Detailed ||
 					parameters.LoggerVerbosity == LoggerVerbosity.Diagnostic);
 				
@@ -172,6 +171,17 @@ namespace Mono.XBuild.CommandLine {
 				Environment.Exit (result ? 0 : 1);
 			}
 
+		}
+
+		void ShowDeprecationNotice ()
+		{
+			if (parameters.LoggerVerbosity != LoggerVerbosity.Minimal && parameters.LoggerVerbosity != LoggerVerbosity.Quiet) {
+				Console.ForegroundColor = ConsoleColor.DarkRed;
+				Console.WriteLine ();
+				Console.WriteLine (">>>> xbuild tool is deprecated and will be removed in future updates, use msbuild instead <<<<");
+				Console.WriteLine ();
+				Console.ResetColor ();
+			}
 		}
 	}
 
