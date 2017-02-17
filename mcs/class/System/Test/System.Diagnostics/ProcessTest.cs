@@ -1145,6 +1145,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#3");
 
 				process.Exited += (s, e) => Assert.Fail ("#4");
+				process.EnableRaisingEvents = true;
 
 				Assert.IsFalse (process.WaitForExit (10), "#5");
 				Assert.IsFalse (process.HasExited, "#6");
