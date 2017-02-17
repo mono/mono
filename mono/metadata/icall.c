@@ -6239,6 +6239,10 @@ ves_icall_System_Delegate_AllocDelegateLike_internal (MonoDelegate *delegate)
 	if (mono_error_set_pending_exception (&error))
 		return NULL;
 
+#ifdef IL2CPP_ON_MONO
+	ret->delegate.method = delegate->method;
+	ret->delegate.method_ptr = delegate->method_ptr;
+#endif
 	ret->delegate.invoke_impl = mono_runtime_create_delegate_trampoline (mono_object_class (delegate));
 
 	return ret;
