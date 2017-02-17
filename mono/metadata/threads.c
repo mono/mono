@@ -3264,83 +3264,84 @@ mono_threads_set_shutting_down (void)
 
 void mono_thread_manage (void)
 {
-	struct wait_data wait_data;
-	struct wait_data *wait = &wait_data;
+	struct wait_data wait;
 
-	memset (wait, 0, sizeof (struct wait_data));
 	/* join each thread that's still running */
 	THREAD_DEBUG (g_message ("%s: Joining each running thread...", __func__));
-	
+
 	mono_threads_lock ();
-	if(threads==NULL) {
+
+	if (!threads) {
 		THREAD_DEBUG (g_message("%s: No threads", __func__));
 		mono_threads_unlock ();
 		return;
 	}
-	mono_threads_unlock ();
-	
-	do {
-		mono_threads_lock ();
+
+	/* Wait for all the foreground threads */
+
+	for (;;) {
 		if (shutting_down) {
 			/* somebody else is shutting down */
-			mono_threads_unlock ();
 			break;
 		}
-		THREAD_DEBUG (g_message ("%s: There are %d threads to join", __func__, mono_g_hash_table_size (threads));
-			mono_g_hash_table_foreach (threads, print_tids, NULL));
-	
+
+		THREAD_DEBUG (g_message ("%s: There are %d threads to join", __func__, mono_g_hash_table_size (threads)));
+		THREAD_DEBUG (mono_g_hash_table_foreach (threads, print_tids, NULL));
+
 		mono_os_event_reset (&background_change_event);
-		wait->num=0;
+
 		/* We must zero all InternalThread pointers to avoid making the GC unhappy. */
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
+		memset (&wait, 0, sizeof(wait));
+		mono_g_hash_table_foreach (threads, build_wait_tids, &wait);
+
+		if (wait.num == 0)
+			break;
+
 		mono_threads_unlock ();
-		if (wait->num > 0)
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, TRUE);
-		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait->num));
-	} while(wait->num>0);
+
+		THREAD_DEBUG (g_message ("%s: %d threads to wait to exit", __func__, wait.num));
+		wait_for_tids (&wait, MONO_INFINITE_WAIT, TRUE);
+
+		mono_threads_lock ();
+	}
+
+	mono_threads_unlock ();
 
 	/* Mono is shutting down, so just wait for the end */
 	if (!mono_runtime_try_shutdown ()) {
-		/*FIXME mono_thread_suspend probably should call mono_thread_execute_interruption when self interrupting. */
 		mono_thread_suspend (mono_thread_internal_current ());
 		mono_thread_execute_interruption ();
+		g_assert_not_reached ();
 	}
 
-	/* 
-	 * Remove everything but the finalizer thread and self.
-	 * Also abort all the background threads
-	 * */
-	do {
+	/* Abort all the threads but the finalizer thread and self. */
+
+	mono_threads_lock ();
+
+	for (;;) {
 		gint i;
-		mono_threads_lock ();
 
-		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach (threads, build_abort_threads, wait);
+		memset (&wait, 0, sizeof (wait));
+		mono_g_hash_table_foreach (threads, build_abort_threads, &wait);
 
-		for (i = 0; i < wait->num; ++i) {
-			THREAD_DEBUG (g_print ("%s: Aborting id: %p\n", __func__, (gpointer)wait->threads [i]->tid));
-			mono_thread_internal_abort (wait->threads [i]);
+		if (wait.num == 0)
+			break;
+
+		for (i = 0; i < wait.num; ++i) {
+			THREAD_DEBUG (g_print ("%s: Aborting id: %p\n", __func__, (gpointer)thread_get_tid (wait.threads [i])));
+			mono_thread_internal_abort (wait.threads [i]);
 		}
 
 		mono_threads_unlock ();
 
-		THREAD_DEBUG (g_message ("%s: wait->num is now %d", __func__, wait->num));
-		if (wait->num > 0) {
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, FALSE);
-		}
-	} while (wait->num > 0);
-	
-	/* 
-	 * give the subthreads a chance to really quit (this is mainly needed
-	 * to get correct user and system times from getrusage/wait/time(1)).
-	 * This could be removed if we avoid pthread_detach() and use pthread_join().
-	 */
-	mono_thread_info_yield ();
+		THREAD_DEBUG (g_message ("%s: %d threads to wait to abort", __func__, wait.num));
+		wait_for_tids (&wait, MONO_INFINITE_WAIT, FALSE);
+
+		mono_threads_lock ();
+	}
+
+	mono_threads_unlock ();
 }
 
 static void
