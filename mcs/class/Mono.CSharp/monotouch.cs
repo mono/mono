@@ -28,797 +28,83 @@
 
 namespace System.Reflection.Emit
 {
-	public class TypeBuilder : Type
+	static class AssemblyBuilderExtensions
 	{
-		#region implemented abstract members of MemberInfo
-
-		public override bool IsDefined (Type attributeType, bool inherit)
+		public static void AddResourceFile (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override object[] GetCustomAttributes (bool inherit)
+		public static ModuleBuilder DefineDynamicModule (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		public static void DefineVersionInfoResource (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		#region implemented abstract members of Type
-
-		public override Type GetInterface (string name, bool ignoreCase)
+		public static void DefineUnmanagedResource (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override Type[] GetInterfaces ()
+		public static void Save (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override Type GetElementType ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type GetNestedType (string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override TypeAttributes GetAttributeFlagsImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool HasElementTypeImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool IsArrayImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool IsByRefImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool IsCOMObjectImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool IsPointerImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool IsPrimitiveImpl ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Assembly Assembly {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string AssemblyQualifiedName {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type BaseType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string FullName {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Guid GUID {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Module Module {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string Namespace {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type UnderlyingSystemType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		public void AddInterfaceImplementation (Type interfaceType)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void AddDeclarativeSecurity (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}	
-
-		public void SetParent (object arg)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public Type CreateType()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ConstructorBuilder DefineConstructor (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public MethodBuilder DefineMethod (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public TypeBuilder DefineNestedType (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public PropertyBuilder DefineProperty (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public EventBuilder DefineEvent (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public FieldBuilder DefineField (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public GenericTypeParameterBuilder[] DefineGenericParameters (params string[] names)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public MethodBuilder DefineMethodOverride (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public static ConstructorInfo GetConstructor (Type type, ConstructorInfo constructor)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public static FieldInfo GetField (Type type, FieldInfo field)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public static MethodInfo GetMethod (Type type, MethodInfo method)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
+		public static void SetEntryPoint (this AssemblyBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 	}
 
-	public class MethodBuilder : MethodBase
+	static class ConstructorBuilderExtensions
 	{
-		#region implemented abstract members of MemberInfo
-
-		public override bool IsDefined (Type attributeType, bool inherit)
+		public static void AddDeclarativeSecurity (this ConstructorBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override MemberTypes MemberType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		#region implemented abstract members of MethodBase
-
-		public override MethodImplAttributes GetMethodImplementationFlags ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override ParameterInfo[] GetParameters ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, System.Globalization.CultureInfo culture)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override RuntimeMethodHandle MethodHandle {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override MethodAttributes Attributes {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		public void AddDeclarativeSecurity (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ParameterBuilder DefineParameter (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public GenericTypeParameterBuilder[] DefineGenericParameters (params string[] names)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public MethodToken GetToken()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ILGenerator GetILGenerator ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetImplementationFlags (MethodImplAttributes attributes)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetParameters (params Type[] parameterTypes)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetReturnType (object arg)
+		public static MethodToken GetToken (this ConstructorBuilder builder)
 		{
 			throw new NotSupportedException ();
 		}
 	}
 
-	public class AssemblyBuilder : Assembly
+	static class MethodBuilderExtensions
 	{
-		public void AddResourceFile (params object[] args)
+		public static void AddDeclarativeSecurity (this MethodBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public void DefineVersionInfoResource (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ModuleBuilder DefineDynamicModule (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void DefineUnmanagedResource (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void Save (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetEntryPoint (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
+		public static MethodToken GetToken (this MethodBuilder builder)
 		{
 			throw new NotSupportedException ();
 		}
 	}
 
-	public class ConstructorBuilder : MethodBase
+	static class ModuleBuilderExtensions
 	{
-		#region implemented abstract members of MemberInfo
-
-		public override bool IsDefined (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override MemberTypes MemberType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		#region implemented abstract members of MethodBase
-
-		public override MethodImplAttributes GetMethodImplementationFlags ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override ParameterInfo[] GetParameters ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, System.Globalization.CultureInfo culture)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override RuntimeMethodHandle MethodHandle {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override MethodAttributes Attributes {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		public void AddDeclarativeSecurity (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ParameterBuilder DefineParameter (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}		
-
-		public MethodToken GetToken()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public ILGenerator GetILGenerator ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetImplementationFlags (MethodImplAttributes attributes)
-		{
-			throw new NotSupportedException ();
-		}	
-	}
-
-	public class ModuleBuilder : Module
-	{
-		public void DefineManifestResource (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public TypeBuilder DefineType (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public MethodToken GetToken()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public MethodInfo GetArrayMethod (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
+		public static void DefineManifestResource (this ModuleBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 	}
 
-	public class PropertyBuilder : PropertyInfo
+	static class TypeBuilderExtensions
 	{
-		#region implemented abstract members of MemberInfo
-
-		public override bool IsDefined (Type attributeType, bool inherit)
+		public static void AddDeclarativeSecurity (this TypeBuilder builder, params object[] args)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		#region implemented abstract members of PropertyInfo
-
-		public override MethodInfo[] GetAccessors (bool nonPublic)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MethodInfo GetGetMethod (bool nonPublic)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override ParameterInfo[] GetIndexParameters ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MethodInfo GetSetMethod (bool nonPublic)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, System.Globalization.CultureInfo culture)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, System.Globalization.CultureInfo culture)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override PropertyAttributes Attributes {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override bool CanRead {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override bool CanWrite {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type PropertyType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		public MethodToken GetToken()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetGetMethod (object arg)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetSetMethod (object arg)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
+		public static Type CreateType (this TypeBuilder builder)
 		{
 			throw new NotSupportedException ();
 		}
 	}
-
-	public class FieldBuilder : FieldInfo
-	{
-		#region implemented abstract members of MemberInfo
-
-		public override bool IsDefined (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type DeclaringType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override string Name {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		#region implemented abstract members of FieldInfo
-
-		public override object GetValue (object obj)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, System.Globalization.CultureInfo culture)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override FieldAttributes Attributes {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override RuntimeFieldHandle FieldHandle {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		public override Type FieldType {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-		#endregion
-
-		public void SetConstant (object arg)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-	}
-
-	public class EventBuilder
-	{
-		public void SetAddOnMethod (MethodBuilder mdBuilder)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetRemoveOnMethod (MethodBuilder mdBuilder)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void SetCustomAttribute (params object[] args)
-		{
-			throw new NotSupportedException ();
-		}
-	}
-
 }
