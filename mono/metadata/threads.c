@@ -3210,9 +3210,6 @@ build_abort_threads (gpointer key, gpointer value, gpointer user)
 		wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
 		wait->threads[wait->num] = thread;
 		wait->num++;
-
-		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
-		mono_thread_internal_abort (thread);
 	}
 }
 
@@ -3316,12 +3313,18 @@ void mono_thread_manage (void)
 	 * Also abort all the background threads
 	 * */
 	do {
+		gint i;
 		mono_threads_lock ();
 
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
 		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
 		mono_g_hash_table_foreach (threads, build_abort_threads, wait);
+
+		for (i = 0; i < wait->num; ++i) {
+			THREAD_DEBUG (g_print ("%s: Aborting id: %p\n", __func__, (gpointer)wait->threads [i]->tid));
+			mono_thread_internal_abort (wait->threads [i]);
+		}
 
 		mono_threads_unlock ();
 
