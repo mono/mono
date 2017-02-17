@@ -409,11 +409,19 @@ mono_threadpool_worker_enqueue (MonoThreadPoolWorkerCallback callback, gpointer 
 static void
 worker_wait_interrupt (gpointer unused)
 {
+	/* If the runtime is not shutting down, we are not using this mechanism to wake up a unparked thread, and if the
+	 * runtime is shutting down, then we need to wake up ALL the threads.
+	 * It might be a bit wasteful, but I witnessed shutdown hang where the main thread would abort and then wait for all
+	 * background threads to exit (see mono_thread_manage). This would go wrong because not all threadpool threads would
+	 * be unparked. It would end up getting unstucked because of the timeout, but that would delay shutdown by 5-60s. */
+	if (!mono_runtime_is_shutting_down ())
+		return;
+
 	if (!mono_refcount_tryinc (&worker))
 		return;
 
 	mono_coop_mutex_lock (&worker.parked_threads_lock);
-	mono_coop_cond_signal (&worker.parked_threads_cond);
+	mono_coop_cond_broadcast (&worker.parked_threads_cond);
 	mono_coop_mutex_unlock (&worker.parked_threads_lock);
 
 	mono_refcount_dec (&worker);
@@ -424,15 +432,15 @@ static gboolean
 worker_park (void)
 {
 	gboolean timeout = FALSE;
+	gboolean interrupted = FALSE;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking", mono_native_thread_id_get ());
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] worker parking", mono_native_thread_id_get ());
 
 	mono_coop_mutex_lock (&worker.parked_threads_lock);
 
 	if (!mono_runtime_is_shutting_down ()) {
 		static gpointer rand_handle = NULL;
 		MonoInternalThread *thread;
-		gboolean interrupted = FALSE;
 		ThreadPoolWorkerCounter counter;
 
 		if (!rand_handle)
@@ -469,7 +477,8 @@ done:
 
 	mono_coop_mutex_unlock (&worker.parked_threads_lock);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker unparking, timeout? %s", mono_native_thread_id_get (), timeout ? "yes" : "no");
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] worker unparking, timeout? %s interrupted? %s",
+		mono_native_thread_id_get (), timeout ? "yes" : "no", interrupted ? "yes" : "no");
 
 	return timeout;
 }
@@ -831,7 +840,7 @@ hill_climbing_change_thread_count (gint16 new_thread_count, ThreadPoolHeuristicS
 
 	hc = &worker.heuristic_hill_climbing;
 
-	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_THREADPOOL, "[%p] hill climbing, change max number of threads %d", mono_native_thread_id_get (), new_thread_count);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] hill climbing, change max number of threads %d", mono_native_thread_id_get (), new_thread_count);
 
 	hc->last_thread_count = new_thread_count;
 	hc->current_sample_interval = rand_next (&hc->random_interval_generator, hc->sample_interval_low, hc->sample_interval_high);
