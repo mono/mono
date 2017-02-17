@@ -82,12 +82,13 @@ namespace Mono.XBuild.CommandLine {
 					throw;
 				}
 
-				ShowDeprecationNotice ();
 				show_stacktrace = (parameters.LoggerVerbosity == LoggerVerbosity.Detailed ||
 					parameters.LoggerVerbosity == LoggerVerbosity.Diagnostic);
 				
-				if (!parameters.NoLogo)
+				if (!parameters.NoLogo) {
+					ShowDeprecationNotice ();
 					ErrorUtilities.ShowVersion (false);
+				}
 				
 				engine  = Engine.GlobalEngine;
 				if (!String.IsNullOrEmpty (parameters.ToolsVersion)) {
@@ -175,13 +176,11 @@ namespace Mono.XBuild.CommandLine {
 
 		void ShowDeprecationNotice ()
 		{
-			if (parameters.LoggerVerbosity != LoggerVerbosity.Minimal && parameters.LoggerVerbosity != LoggerVerbosity.Quiet) {
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.WriteLine ();
-				Console.WriteLine (">>>> xbuild tool is deprecated and will be removed in future updates, use msbuild instead <<<<");
-				Console.WriteLine ();
-				Console.ResetColor ();
-			}
+			Console.ForegroundColor = ConsoleColor.DarkRed;
+			Console.WriteLine ();
+			Console.WriteLine (">>>> xbuild tool is deprecated and will be removed in future updates, use msbuild instead <<<<");
+			Console.WriteLine ();
+			Console.ResetColor ();
 		}
 	}
 
