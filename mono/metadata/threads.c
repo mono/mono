@@ -1112,6 +1112,7 @@ void
 mono_thread_detach_internal (MonoInternalThread *thread)
 {
 	gboolean removed;
+	gpointer thread_in_threads;
 
 	g_assert (thread != NULL);
 
@@ -1170,20 +1171,24 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	mono_threads_lock ();
 
-	if (!threads) {
-		removed = FALSE;
-	} else if (mono_g_hash_table_lookup (threads, (gpointer)thread->tid) != thread) {
+	g_assert (threads);
+	if (!mono_g_hash_table_lookup_extended (threads, (gpointer)thread->tid, NULL, &thread_in_threads)) {
+		g_error ("%s: threads does not contain any thread for tid %p",
+			__func__, (gpointer)thread->tid);
+	}
+	if (thread_in_threads != thread) {
 		/* We have to check whether the thread object for the
 		 * tid is still the same in the table because the
 		 * thread might have been destroyed and the tid reused
 		 * in the meantime, in which case the tid would be in
 		 * the table, but with another thread object.
 		 */
-		removed = FALSE;
-	} else {
-		mono_g_hash_table_remove (threads, (gpointer)thread->tid);
-		removed = TRUE;
+		g_error ("%s: threads should contain %p for tid %p, but contains %p",
+			__func__, thread, (gpointer)thread->tid, thread_in_threads);
 	}
+
+	removed = mono_g_hash_table_remove (threads, (gpointer)thread->tid);
+	g_assert (removed);
 
 	mono_threads_unlock ();
 
@@ -1200,17 +1205,6 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	 * thread calling Join() still has a reference to the first
 	 * thread's object.
 	 */
-
-	/* if the thread is not in the hash it has been removed already */
-	if (!removed) {
-		mono_domain_unset ();
-		mono_memory_barrier ();
-
-		if (mono_thread_cleanup_fn)
-			mono_thread_cleanup_fn (thread_get_tid (thread));
-
-		goto done;
-	}
 
 	mono_release_type_locks (thread);
 
@@ -1252,7 +1246,6 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		thread->thread_pinning_ref = NULL;
 	}
 
-done:
 	SET_CURRENT_OBJECT (NULL);
 	mono_domain_unset ();
 
@@ -3198,20 +3191,20 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 	}
 }
 
-static gboolean
-remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
+static void
+build_abort_threads (gpointer key, gpointer value, gpointer user)
 {
 	struct wait_data *wait=(struct wait_data *)user;
 	MonoNativeThreadId self = mono_native_thread_id_get ();
 	MonoInternalThread *thread = (MonoInternalThread *)value;
 
 	if (wait->num >= MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
-		return FALSE;
+		return;
 
 	if (mono_native_thread_id_equals (thread_get_tid (thread), self))
-		return FALSE;
+		return;
 	if (mono_gc_is_finalizer_internal_thread (thread))
-		return FALSE;
+		return;
 
 	if ((thread->state & ThreadState_Background) && !(thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)) {
 		wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
@@ -3221,8 +3214,6 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
 		mono_thread_internal_abort (thread);
 	}
-
-	return TRUE;
 }
 
 /** 
@@ -3330,7 +3321,7 @@ void mono_thread_manage (void)
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
 		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, wait);
+		mono_g_hash_table_foreach (threads, build_abort_threads, wait);
 
 		mono_threads_unlock ();
 

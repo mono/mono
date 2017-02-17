@@ -257,8 +257,10 @@ mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpoi
 	
 	for (s = hash->table [hashcode]; s != NULL; s = s->next){
 		if ((*equal)(s->key, key)){
-			*orig_key = s->key;
-			*value = s->value;
+			if (orig_key)
+				*orig_key = s->key;
+			if (value)
+				*value = s->value;
 			return TRUE;
 		}
 	}
