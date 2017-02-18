@@ -1,5 +1,5 @@
 //
-// monotouch.cs: iOS System.Reflection.Emit API needed to simplify mcs compilation
+// aot.cs: AOT System.Reflection.Emit extensions to simplify mcs compilation
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if FULL_AOT_RUNTIME
 
 namespace System.Reflection.Emit
 {
@@ -68,10 +70,6 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
-		public static MethodToken GetToken (this ConstructorBuilder builder)
-		{
-			throw new NotSupportedException ();
-		}
 	}
 
 	static class MethodBuilderExtensions
@@ -81,10 +79,6 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
-		public static MethodToken GetToken (this MethodBuilder builder)
-		{
-			throw new NotSupportedException ();
-		}
 	}
 
 	static class ModuleBuilderExtensions
@@ -108,3 +102,4 @@ namespace System.Reflection.Emit
 		}
 	}
 }
+#endif
