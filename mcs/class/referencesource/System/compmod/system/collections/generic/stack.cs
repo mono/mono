@@ -227,6 +227,22 @@ namespace System.Collections.Generic {
             _array[_size] = default(T);     // Free memory quicker.
             return item;
         }
+
+#if MONO
+        public bool TryPop(out T result)
+        {
+            if (_size == 0)
+            {
+                result = default(T);
+                return false;
+            }
+
+            _version++;
+            result = _array[--_size];
+            _array[_size] = default(T);     // Free memory quicker.
+            return true;
+        }
+#endif
     
         // Pushes an item to the top of the stack.
         // 

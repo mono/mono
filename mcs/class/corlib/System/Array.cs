@@ -3130,6 +3130,30 @@ namespace System
 			return new ReadOnlyCollection<T> (array);
 		}
 
+		public static void Fill<T> (T[] array, T value)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			for (int i = 0; i < array.Length; i++)
+				array [i] = value;
+		}
+
+		public static void Fill<T> (T[] array, T value, int startIndex, int count)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			if (startIndex < 0 || startIndex > array.Length)
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
+
+			if (count < 0 || startIndex > array.Length - count)
+				throw new ArgumentOutOfRangeException (nameof (count));
+
+			for (int i = startIndex; i < startIndex + count; i++)
+				array [i] = value;
+		}
+
 		public static T Find<T> (T [] array, Predicate<T> match)
 		{
 			if (array == null)
