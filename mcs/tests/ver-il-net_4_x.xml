@@ -56725,6 +56725,45 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-178.cs">
+    <type name="BaseClass`1[T]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="DerivedClass">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CA">
+      <method name="Void Foo[T,U](U)" attrs="454">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CB">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;Foo&gt;__BaseCallProxy0[T,U](U)" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>41</size>
+      </method>
+    </type>
+    <type name="CB+&lt;CB&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0(Int32)" attrs="131">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-18.cs">
     <type name="A">
       <method name="Void Invoke()" attrs="454">

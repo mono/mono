@@ -444,6 +444,10 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
+#if DEBUG
+		int counter = 100000;
+#endif
+
 		public MethodSpec MakeGenericMethod (IMemberContext context, params TypeSpec[] targs)
 		{
 			if (targs == null)
@@ -465,6 +469,10 @@ namespace Mono.CSharp {
 			inflated.constraints = TypeParameterSpec.InflateConstraints (inflator, constraints ?? GenericDefinition.TypeParameters);
 			inflated.state |= StateFlags.PendingMakeMethod;
 
+#if DEBUG
+			inflated.ID += counter;
+			counter += 100000;
+#endif
 			//			if (inflated.parent == null)
 			//				inflated.parent = parent;
 
