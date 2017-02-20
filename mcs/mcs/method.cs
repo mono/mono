@@ -1875,6 +1875,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = ConstructorBuilder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -1883,6 +1884,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 
 		#region IMethodData Members
@@ -2205,6 +2207,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = builder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -2213,6 +2216,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 	}
 
