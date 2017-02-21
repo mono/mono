@@ -8365,10 +8365,13 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method)
 {
-	if (method->wrapper_type) {
+	if (method->wrapper_type)
 		return append_mangled_wrapper (s, method);
-	} else if (method->is_inflated) {
-		g_string_append_printf (s, "aot_inflated_");
+
+	g_string_append_printf (s, "aot_%s_", mono_stringify_assembly_name (&method->klass->image->assembly->aname));
+
+	if (method->is_inflated) {
+		g_string_append_printf (s, "inflated_");
 		MonoMethodInflated *imethod = (MonoMethodInflated*) method;
 		append_mangled_method (s, imethod->declaring);
 
@@ -8377,7 +8380,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 			g_string_append_printf (s, mono_context_get_desc (&imethod->context));
 		}
 	} else if (method->is_generic) {
-		g_string_append_printf (s, "aot_generic_");
+		g_string_append_printf (s, "generic_");
 		append_mangled_klass (s, method->klass);
 
 		MonoGenericContainer *container = mono_method_get_generic_container (method);
@@ -8385,7 +8388,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 
 		return append_mangled_signature (s, method->signature);
 	} else {
-		g_string_append_printf (s, "aot_");
+		g_string_append_printf (s, "_");
 		append_mangled_klass (s, method->klass);
 		g_string_append_printf (s, "_%s", method->name);
 		if (!append_mangled_signature (s, method->signature)) {
