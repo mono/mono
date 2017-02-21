@@ -1,5 +1,22 @@
 #!/usr/bin/perl
 
+use warnings;
+use strict;
+
+my $sourcedir = '';
+my $dir = '';
+my $html = 0;
+my $css = '';
+my @files = ();
+my $filecount = 0;
+my @files_content = ();
+my @apis = ();
+my %deprecated = ();
+my %prototype = ();
+my %arguments = ();
+my %returns = ();
+my %bodies = ();
+
 if ($ARGV[0] eq "-h") {
     $sourcedir = $ARGV[1];
     $dir = $sourcedir;
@@ -19,14 +36,15 @@ if ($ARGV[0] eq "-t") {
 
 if ($html) {
     opendir (D, "$sourcedir/sources/") || die "Can not open $dir";
-    while ($n = readdir (D)) {
+    while (my $n = readdir (D)) {
         if ($n =~ /mono-api-.*\.html$/) {
             open (IN, "$sourcedir/sources/$n") || die "Can not open $n";
             $files[$filecount] = $n;
+            $files_content[$filecount] = '';
             while (<IN>) {
-                @files_content[$filecount] .= $_;
+                $files_content[$filecount] .= $_;
                 if (/name="api:(.*?)"/) {
-                    $_ =~ s/.*name="api:(\w+?)".*/\1/;
+                    $_ =~ s/.*name="api:(\w+?)".*/$1/;
                     $apis[$filecount] .= "$_";
                 }
             }
@@ -45,8 +63,9 @@ while (<ARGV>) {
 }
 
 if ($html) {
-    for ($f = 0; $f < $filecount; $f++) {
-        $name = $files[$f];
+    my $last = '';
+    for (my $f = 0; $f < $filecount; $f++) {
+        my $name = $files[$f];
         open (OUT, "> $dir/html/$name") || die "Can not create $dir/html/$name";
         print "Merging: $name\n";
         print OUT <<EOF;
@@ -61,14 +80,13 @@ $css
 <body>
 <div class="mapi-docs">
 EOF
-        @a = split (/\n/, $files_content[$f]);
-        $strikeextra = "";
-        $api_shown = 0;
-        for ($ai = 0; $ai < $#a; $ai++) {
-            $line = $a[$ai];
-
-            ($api, $caption) = $line =~ /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/;
-            if ($api ne "") {
+        my @a = split (/\n/, $files_content[$f]);
+        my $strike = '';
+        my $strikeextra = '';
+        my $api_shown = 0;
+        for (my $ai = 0; $ai < $#a; $ai++) {
+            my $line = $a[$ai];
+            if (my ($api, $caption) = ($line =~ /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/)) {
                 if ($api_shown == 1) {
                     print OUT "</div> <!-- class=mapi -->\n\n";
                     if ($deprecated{$api}) {
@@ -80,10 +98,7 @@ EOF
                     }
                 }
                 $api_shown = 1;
-                $proto = $prototype{$api};
-                if ($proto eq "") {
-                    $proto = "$api";
-                }
+                my $proto = $prototype{$api} // $api;
 
                 print OUT <<EOF;
 <a name="api:$api"></a>
@@ -98,18 +113,20 @@ EOF
             <div class="mapi-prototype">$proto</div>
             <p>
 EOF
-                $ppars = $arguments{$api};
-                if ($ppars ne "" && (!($ppars =~ /^[ \t]+$/))) {
-                    print OUT "            <div class=\"mapi-section\">Parameters</div>\n";
-                    print OUT "            <table class=\"mapi-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
+                if (exists ($arguments{$api})) {
+                    my $ppars = $arguments{$api};
+                    if ($ppars !~ /^[ \t]+$/) {
+                        print OUT "            <div class=\"mapi-section\">Parameters</div>\n";
+                        print OUT "            <table class=\"mapi-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
+                    }
                 }
 
                 &opt_print ("Return value", $returns{$api}, 0);
                 &opt_print ("Description", $bodies{$api}, 0);
                 print OUT "        </div><!--mapi-description-->\n    </div><!--height container-->\n";
             } else {
-                if ($line =~ /@API_IDX@/) {
-                    $apis_toc = &create_toc ($apis[$f]);
+                if ($line =~ /\@API_IDX\@/) {
+                    my $apis_toc = &create_toc ($apis[$f]);
                     $line =~ s/\@API_IDX\@/$apis_toc/;
                 }
                 if ($line =~ /^<h4/) {
@@ -134,8 +151,8 @@ EOF
         open HACK, "$dir/html/x-$name" || die "Could not open $dir/html/x-$name";
         open HACKOUT, ">$dir/deploy/$name" || die "Could not open output";
 
-        $line = 0;
-        $doprint = 0;
+        my $line = 0;
+        my $doprint = 0;
         while (<HACK>) {
             print HACKOUT $last if ($doprint);
             $line++;
@@ -166,42 +183,41 @@ EOF
 }
 
 sub process_doc {
-    $doc = "";
-    $func = <>;
+    my $doc = "";
+    my $func = <>;
     chop $func;
     $func =~ s/^ \* //;
     $func =~ s/:$//;
     print "Function: $func\n" if (!$html);
-    $args = "";
-    $inbody = 0;
-    $returns = "";
-    $body = "";
-    $functions[$fn++] = $func;
-    $deprecated = 0;
+    my $args = "";
+    my $inbody = 0;
+    my $returns = "";
+    my $body = "";
+    my $deprecated = 0;
     # Process arguments
     while (<>) {
         s/NULL/<code>NULL<\/code>/g;
         s/TRUE/<code>TRUE<\/code>/g;
         s/FALSE/<code>FALSE<\/code>/g;
         if (/^ \*\*?\//) {
-            $body =~ s/@(\w+)/<i>\1<\/i>/g;
-            $returns =~ s/@(\w+)/<i>\1<\/i>/g;
-            $args =~ s/@(\w+)/<i>\1<\/i>/g;
+            $body =~ s/\@(\w+)/<i>$1<\/i>/g;
+            $returns =~ s/\@(\w+)/<i>$1<\/i>/g;
+            $args =~ s/\@(\w+)/<i>$1<\/i>/g;
 
-            $body =~ s/#(\w+)/<code>\1<\/code>/g;
-            $returns =~ s/#(\w+)/<code>\1<\/code>/g;
-            $args =~ s/#(\w+)/<code>\1<\/code>/g;
+            $body =~ s/#(\w+)/<code>$1<\/code>/g;
+            $returns =~ s/#(\w+)/<code>$1<\/code>/g;
+            $args =~ s/#(\w+)/<code>$1<\/code>/g;
 
-            $returns =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
-            $args =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
-            $body =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
+            $returns =~ s/\`([:.\w\*]+)\`/<code>$1<\/code>/g;
+            $args =~ s/\`([:.\w\*]+)\`/<code>$1<\/code>/g;
+            $body =~ s/\`([:.\w\*]+)\`/<code>$1<\/code>/g;
 
             $body =~ s/\n/ /;
             $bodies{$func} = $body;
             $arguments{$func} = $args;
             $deprecated{$func} = $deprecated;
             $returns{$func} = $returns;
-            $proto = "";
+            my $proto = "";
             while (<>) {
                 $proto .= $_;
                 last if (/\{/);
@@ -210,7 +226,7 @@ sub process_doc {
             # clean it up a little, remove newlines, empty space at end
             $proto =~ s/ +$//;
             # Turn "Type * xxx" into "Type* xxx"
-            $proto =~ s/^(\w+)\W+\*/\1\*/;
+            $proto =~ s/^(\w+)\W+\*/$1\*/;
             $prototype{$func} = $proto;
             return;
         }
@@ -251,36 +267,38 @@ sub create_toc {
     my ($apis_listed) = @_;
     my $type_size = 0;
     my $name_size = 0;
-    my $ret, $xname, $args, $line;
-    $apis_toc = "";
+    my ($ret, $xname, $args);
+    my $apis_toc = "";
 
 
     # Try to align things, so compute type size, method size, and arguments
-    foreach $line (split /\n/, $apis_listed) {
-        $p = $prototype{$line};
-        ($ret, $xname, $args) = $p =~ /(.*)\n(\w+)[ \t](.*)/;
-        $tl = length ($ret);
-        $pl = length ($xname);
-
-        $type_size = $tl if ($tl > $type_size);
-        $name_size = $pl if ($pl > $name_size);
+    foreach my $line (split /\n/, $apis_listed) {
+        if (exists ($prototype{$line})) {
+            my $p = $prototype{$line};
+            if (my ($ret, $xname, $args) = ($p =~ /(.*)\n(\w+)[ \t](.*)/)) {
+                my $tl = length ($ret);
+                my $pl = length ($xname);
+                $type_size = $tl if ($tl > $type_size);
+                $name_size = $pl if ($pl > $name_size);
+            }
+        }
     }
 
     $type_size++;
     $name_size++;
 
-    foreach $line (split /\n/, $apis_listed) {
-        chop;
-        $p = $prototype{$line};
-        ($ret, $xname, $args) = $p =~ /(.*)\n(\w+)[ \t](.*)/;
-        if ($xname eq "") {
-            $xname = $line;
+    foreach my $line (split /\n/, $apis_listed) {
+        chomp($line);
+        if (exists($prototype{$line})) {
+            my $p = $prototype{$line};
+            if (my ($ret, $xname, $args) = ($p =~ /(.*)\n(\w+)[ \t](.*)/)) {
+                $xname = $line if $xname eq "";
+                my $rspace = " " x ($type_size - length ($ret));
+                my $nspace = " " x ($name_size - length ($xname));
+                $args = &format ($args, length ($ret . $rspace . $xname . $nspace), 60);
+                $apis_toc .= "$ret$rspace<a href=\"\#api:$line\">$xname</a>$nspace$args\n";
+            }
         }
-
-        $rspace = " " x ($type_size - length ($ret));
-        $nspace = " " x ($name_size - length ($xname));
-        $args = &format ($args, length ($ret . $rspace . $xname . $nspace), 60);
-        $apis_toc .= "$ret$rspace<a href=\"\#api:$line\">$xname</a>$nspace$args\n";
     }
     return $apis_toc;
 }
@@ -294,10 +312,10 @@ sub format {
 
     # return $args if ((length (args) + size) < $limit);
     
-    $remain = $limit - $size;
-    @sa = split /,/, $args;
-    $linelen = $size;
-    foreach $arg (@sa) {
+    my $remain = $limit - $size;
+    my @sa = split /,/, $args;
+    my $linelen = $size;
+    foreach my $arg (@sa) {
         if ($sret eq "") {
             $sret = $arg . ", ";
             $linelen += length ($sret);
@@ -305,8 +323,8 @@ sub format {
             if ($linelen + length ($arg) < $limit) {
                 $sret .= "FITS" . $arg . ", ";
             } else {
-                $newline = " " x ($size) . $arg . ", ";
-                $linelen = length ($newline);
+                my $newline = " " x ($size) . $arg . ", ";
+                my $linelen = length ($newline);
                 $sret .= "\n" . $newline;
             }
         }
@@ -318,7 +336,7 @@ sub format {
 sub opt_print {
     my ($caption, $opttext, $quote) = @_;
 
-    if ($opttext ne "" && (!($opttext =~ /^[ \t]+$/))) {
+    if (defined($opttext) && $opttext !~ /^[ \t]+$/) {
         print OUT "             <div class=\"mapi-section\">$caption</div>\n";
         print OUT "             <div>$opttext</div>\n";
     }
