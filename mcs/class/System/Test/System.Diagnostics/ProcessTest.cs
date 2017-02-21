@@ -1139,13 +1139,15 @@ namespace MonoTests.System.Diagnostics
 				Assert.Ignore ("accessing parent pid, only available on unix");
 
 			using (Process process = Process.GetProcessById (getppid ()))
+			using (ManualResetEvent mre = new ManualResetEvent (false))
 			{
 				Assert.IsFalse (process.WaitForExit (10), "#1");
 				Assert.IsFalse (process.HasExited, "#2");
 				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#3");
 
-				process.Exited += (s, e) => Assert.Fail ("#4");
+				process.Exited += (s, e) => mre.Set ();
 				process.EnableRaisingEvents = true;
+				Assert.IsFalse (mre.WaitOne (100), "#4");
 
 				Assert.IsFalse (process.WaitForExit (10), "#5");
 				Assert.IsFalse (process.HasExited, "#6");
