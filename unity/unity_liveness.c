@@ -125,7 +125,7 @@ void array_safe_grow(LivenessState* state, custom_growable_array* array)
 	mono_unity_liveness_start_gc_world(state);
 
 	array_grow(array);
-	GC_stop_world_external ();
+	mono_unity_liveness_stop_gc_world(state);
 	for (i = 0; i < state->all_objects->len; i++)
 	{
 		MonoObject* object = array_at_index(state->all_objects,i);
