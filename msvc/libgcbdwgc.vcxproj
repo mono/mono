@@ -19,10 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EB56000B-C80B-4E8B-908D-D84D31B517D3}</ProjectGuid>
-    <RootNamespace>libgc</RootNamespace>
+    <ProjectGuid>{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}</ProjectGuid>
+    <RootNamespace>libgcbdwgc</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>libgcbdwgc</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -76,11 +77,15 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(MONO_BUILD_DIR_PREFIX)$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_LIBBOEHMSGEN_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;__i386__;TARGET_X86;i386;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;HOST_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;__STDC__;PACKAGE_NAME="libgc-mono";PACKAGE_TARNAME="libgc-mono";PACKAGE_VERSION="6.6";PACKAGE_STRING="libgc-mono 6.6";PACKAGE_BUGREPORT="Hans_Boehm%40hp.com";GC_WIN32_THREADS=1;NO_GETENV=1;GC_INSIDE_DLL=1;GC_NOT_DLL=1;STDC_HEADERS=1;HAVE_SYS_TYPES_H=1;HAVE_SYS_STAT_H=1;HAVE_STDLIB_H=1;HAVE_STRING_H=1;HAVE_MEMORY_H=1;HAVE_STRINGS_H=1;HAVE_INTTYPES_H=1;HAVE_STDINT_H=1;HAVE_UNISTD_H=1;SILENT=1;NO_SIGNALS=1;NO_EXECUTE_PERMISSION=1;JAVA_FINALIZATION=1;GC_GCJ_SUPPORT=1;ATOMIC_UNCOLLECTABLE=1;_IN_LIBGC=1;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;WIN32_THREADS;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MONO_LIBBDWGC_INCLUDE_DIR);$(MONO_LIBATOMICS_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- IL2CPP Compiles With GC_NO_THREADS_DISCOVERY=1 Which Mono Needs, We also must define GC_INSIDE_DLL, which is not defined in IL2cpp-->
+      <PreprocessorDefinitions>ALL_INTERIOR_POINTERS=1;GC_GCJ_SUPPORT=1;JAVA_FINALIZATION=1;NO_EXECUTE_PERMISSION=1;IGNORE_DYNAMIC_LOADING=1;GC_DONT_REGISTER_MAIN_STATIC_DATA=1;GC_VERSION_MAJOR=7;GC_VERSION_MINOR=4;GC_VERSION_MICRO=0;GC_THREADS=1;USE_MMAP=1;USE_MUNMAP=1;GC_INSIDE_DLL=1</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PrecompiledHeader>
@@ -90,6 +95,8 @@
       <DisableSpecificWarnings>4311;4312;4996;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <WarningLevel>Level1</WarningLevel>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -98,13 +105,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_LIBBOEHMSGEN_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;__i386__;TARGET_X86;i386;i386;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;HOST_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;__STDC__;PACKAGE_NAME="libgc-mono";PACKAGE_TARNAME="libgc-mono";PACKAGE_VERSION="6.6";PACKAGE_STRING="libgc-mono 6.6";PACKAGE_BUGREPORT="Hans_Boehm%40hp.com";GC_WIN32_THREADS=1;NO_GETENV=1;GC_INSIDE_DLL=1;GC_NOT_DLL=1;STDC_HEADERS=1;HAVE_SYS_TYPES_H=1;HAVE_SYS_STAT_H=1;HAVE_STDLIB_H=1;HAVE_STRING_H=1;HAVE_MEMORY_H=1;HAVE_STRINGS_H=1;HAVE_INTTYPES_H=1;HAVE_STDINT_H=1;HAVE_UNISTD_H=1;SILENT=1;NO_SIGNALS=1;NO_EXECUTE_PERMISSION=1;JAVA_FINALIZATION=1;GC_GCJ_SUPPORT=1;ATOMIC_UNCOLLECTABLE=1;_IN_LIBGC=1;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;WIN32_THREADS;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MONO_LIBBDWGC_INCLUDE_DIR);$(MONO_LIBATOMICS_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ALL_INTERIOR_POINTERS=1;GC_GCJ_SUPPORT=1;JAVA_FINALIZATION=1;NO_EXECUTE_PERMISSION=1;GC_NO_THREADS_DISCOVERY=1;IGNORE_DYNAMIC_LOADING=1;GC_DONT_REGISTER_MAIN_STATIC_DATA=1;GC_VERSION_MAJOR=7;GC_VERSION_MINOR=4;GC_VERSION_MICRO=0;GC_THREADS=1;USE_MMAP=1;USE_MUNMAP=1</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -116,8 +125,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_LIBBOEHMSGEN_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;HOST_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;__STDC__;PACKAGE_NAME="libgc-mono";PACKAGE_TARNAME="libgc-mono";PACKAGE_VERSION="6.6";PACKAGE_STRING="libgc-mono 6.6";PACKAGE_BUGREPORT="Hans_Boehm%40hp.com";GC_WIN32_THREADS=1;NO_GETENV=1;GC_INSIDE_DLL=1;GC_NOT_DLL=1;STDC_HEADERS=1;HAVE_SYS_TYPES_H=1;HAVE_SYS_STAT_H=1;HAVE_STDLIB_H=1;HAVE_STRING_H=1;HAVE_MEMORY_H=1;HAVE_STRINGS_H=1;HAVE_INTTYPES_H=1;HAVE_STDINT_H=1;HAVE_UNISTD_H=1;SILENT=1;NO_SIGNALS=1;NO_EXECUTE_PERMISSION=1;JAVA_FINALIZATION=1;GC_GCJ_SUPPORT=1;ATOMIC_UNCOLLECTABLE=1;_IN_LIBGC=1;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;WIN32_THREADS;FD_SETSIZE=1024</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MONO_LIBBDWGC_INCLUDE_DIR);$(MONO_LIBATOMICS_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ALL_INTERIOR_POINTERS=1;GC_GCJ_SUPPORT=1;JAVA_FINALIZATION=1;NO_EXECUTE_PERMISSION=1;GC_NO_THREADS_DISCOVERY=1;IGNORE_DYNAMIC_LOADING=1;GC_DONT_REGISTER_MAIN_STATIC_DATA=1;GC_VERSION_MAJOR=7;GC_VERSION_MINOR=4;GC_VERSION_MICRO=0;GC_THREADS=1;USE_MMAP=1;USE_MUNMAP=1</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PrecompiledHeader>
@@ -126,6 +135,8 @@
       <CompileAs>CompileAsC</CompileAs>
       <DisableSpecificWarnings>4311;4312;4996;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -137,50 +148,22 @@
     </Midl>
     <ClCompile>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_LIBBOEHMSGEN_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;HOST_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;__STDC__;PACKAGE_NAME="libgc-mono";PACKAGE_TARNAME="libgc-mono";PACKAGE_VERSION="6.6";PACKAGE_STRING="libgc-mono 6.6";PACKAGE_BUGREPORT="Hans_Boehm%40hp.com";GC_WIN32_THREADS=1;NO_GETENV=1;GC_INSIDE_DLL=1;GC_NOT_DLL=1;STDC_HEADERS=1;HAVE_SYS_TYPES_H=1;HAVE_SYS_STAT_H=1;HAVE_STDLIB_H=1;HAVE_STRING_H=1;HAVE_MEMORY_H=1;HAVE_STRINGS_H=1;HAVE_INTTYPES_H=1;HAVE_STDINT_H=1;HAVE_UNISTD_H=1;SILENT=1;NO_SIGNALS=1;NO_EXECUTE_PERMISSION=1;JAVA_FINALIZATION=1;GC_GCJ_SUPPORT=1;ATOMIC_UNCOLLECTABLE=1;_IN_LIBGC=1;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;WIN32_THREADS;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MONO_LIBBDWGC_INCLUDE_DIR);$(MONO_LIBATOMICS_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ALL_INTERIOR_POINTERS=1;GC_GCJ_SUPPORT=1;JAVA_FINALIZATION=1;NO_EXECUTE_PERMISSION=1;GC_NO_THREADS_DISCOVERY=1;IGNORE_DYNAMIC_LOADING=1;GC_DONT_REGISTER_MAIN_STATIC_DATA=1;GC_VERSION_MAJOR=7;GC_VERSION_MINOR=4;GC_VERSION_MICRO=0;GC_THREADS=1;USE_MMAP=1;USE_MUNMAP=1</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libgc\allchblk.c" />
-    <ClCompile Include="..\libgc\alloc.c" />
-    <ClCompile Include="..\libgc\blacklst.c" />
-    <ClCompile Include="..\libgc\dbg_mlc.c" />
-    <ClCompile Include="..\libgc\dyn_load.c" />
-    <ClCompile Include="..\libgc\finalize.c" />
-    <ClCompile Include="..\libgc\gcj_mlc.c" />
-    <ClCompile Include="..\libgc\headers.c" />
-    <ClCompile Include="..\libgc\mach_dep.c" />
-    <ClCompile Include="..\libgc\malloc.c" />
-    <ClCompile Include="..\libgc\mallocx.c" />
-    <ClCompile Include="..\libgc\mark.c" />
-    <ClCompile Include="..\libgc\mark_rts.c" />
-    <ClCompile Include="..\libgc\misc.c" />
-    <ClCompile Include="..\libgc\new_hblk.c" />
-    <ClCompile Include="..\libgc\obj_map.c" />
-    <ClCompile Include="..\libgc\os_dep.c" />
-    <ClCompile Include="..\libgc\ptr_chck.c" />
-    <ClCompile Include="..\libgc\reclaim.c" />
-    <ClCompile Include="..\libgc\stubborn.c" />
-    <ClCompile Include="..\libgc\typd_mlc.c" />
-    <ClCompile Include="..\libgc\win32_threads.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\libgc\include\gc.h" />
-    <ClInclude Include="..\libgc\include\private\gc_hdrs.h" />
-    <ClInclude Include="..\libgc\include\private\gc_locks.h" />
-    <ClInclude Include="..\libgc\include\gc_mark.h" />
-    <ClInclude Include="..\libgc\include\private\gc_pmark.h" />
-    <ClInclude Include="..\libgc\include\private\gc_priv.h" />
-    <ClInclude Include="..\libgc\include\private\gcconfig.h" />
+    <ClCompile Include="..\external\bdwgc\extra\gc.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

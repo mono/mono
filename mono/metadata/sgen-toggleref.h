@@ -25,8 +25,10 @@ typedef enum {
 	MONO_TOGGLE_REF_WEAK
 } MonoToggleRefStatus;
 
+#if !HAVE_BDWGC_GC
 MONO_API void mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (MonoObject *obj));
 MONO_API void mono_gc_toggleref_add (MonoObject *object, mono_bool strong_ref);
+#endif
 
 MONO_END_DECLS
 

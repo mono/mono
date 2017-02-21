@@ -337,8 +337,6 @@ mono_gc_reference_queue_free
 mono_gc_reference_queue_new
 mono_gc_register_finalizer_callbacks
 mono_gc_register_root
-mono_gc_toggleref_add
-mono_gc_toggleref_register_callback
 mono_gc_walk_heap
 mono_gc_wbarrier_arrayref_copy
 mono_gc_wbarrier_generic_nostore
