@@ -18,7 +18,7 @@
 #include "utils/mono-sigcontext.h"
 #include "mach-support.h"
 
-//For reg numbers
+// For reg numbers
 #include <mono/arch/amd64/amd64-codegen.h>
 
 /* Known offsets used for TLS storage*/

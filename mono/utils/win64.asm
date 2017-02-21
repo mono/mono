@@ -30,7 +30,22 @@ mono_context_get_current PROC
 	mov [rcx + 68h], r13
 	mov [rcx + 70h], r14
 	mov [rcx + 78h], r15
-
+    movups [rcx + 090h], xmm0
+    movups [rcx + 0a0h], xmm1
+    movups [rcx + 0b0h], xmm2
+    movups [rcx + 0c0h], xmm3
+    movups [rcx + 0d0h], xmm4
+    movups [rcx + 0e0h], xmm5
+    movups [rcx + 0f0h], xmm6
+    movups [rcx + 100h], xmm7
+    movups [rcx + 110h], xmm8
+    movups [rcx + 120h], xmm9
+    movups [rcx + 130h], xmm10
+    movups [rcx + 140h], xmm11
+    movups [rcx + 150h], xmm12
+    movups [rcx + 160h], xmm13
+    movups [rcx + 170h], xmm14
+    movups [rcx + 180h], xmm15
 	lea rax, __mono_current_ip
 __mono_current_ip:
 	mov [rcx + 80h], rax

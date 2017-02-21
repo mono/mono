@@ -45,6 +45,15 @@
 	#define UCONTEXT_REG_ESI(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__esi)
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__edi)
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__eip)
+	#define UCONTEXT_REG_XMM
+	#define UCONTEXT_REG_XMM0(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm0)
+	#define UCONTEXT_REG_XMM1(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm1)
+	#define UCONTEXT_REG_XMM2(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm2)
+	#define UCONTEXT_REG_XMM3(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm3)
+	#define UCONTEXT_REG_XMM4(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm4)
+	#define UCONTEXT_REG_XMM5(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm5)
+	#define UCONTEXT_REG_XMM6(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm6)
+	#define UCONTEXT_REG_XMM7(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm7)
 #  else
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->ss.eax)
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->ss.ebx)
@@ -247,6 +256,23 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->sc_r15)
 #elif !defined(HOST_WIN32)
 	#define UCONTEXT_GREGS(ctx)	((guint64*)&(((ucontext_t*)(ctx))->uc_mcontext.gregs))
+	#define UCONTEXT_REG_XMM
+	#define UCONTEXT_REG_XMM0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [0])
+	#define UCONTEXT_REG_XMM1(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [1])
+	#define UCONTEXT_REG_XMM2(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [2])
+	#define UCONTEXT_REG_XMM3(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [3])
+	#define UCONTEXT_REG_XMM4(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [4])
+	#define UCONTEXT_REG_XMM5(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [5])
+	#define UCONTEXT_REG_XMM6(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [6])
+	#define UCONTEXT_REG_XMM7(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [7])
+	#define UCONTEXT_REG_XMM8(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [8])
+	#define UCONTEXT_REG_XMM9(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm [9])
+	#define UCONTEXT_REG_XMM10(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[10])
+	#define UCONTEXT_REG_XMM11(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[11])
+	#define UCONTEXT_REG_XMM12(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[12])
+	#define UCONTEXT_REG_XMM13(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[13])
+	#define UCONTEXT_REG_XMM14(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[14])
+	#define UCONTEXT_REG_XMM15(ctx) (((ucontext_t*)(ctx))->uc_mcontext.fpregs->_xmm	[15])
 #endif
 
 #ifdef UCONTEXT_GREGS

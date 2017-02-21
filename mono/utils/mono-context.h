@@ -18,11 +18,19 @@
 #include <signal.h>
 #endif
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#endif
+
 #define MONO_CONTEXT_OFFSET(field, index, field_type) \
     "i" (offsetof (MonoContext, field) + (index) * sizeof (field_type))
 
 #if defined(__APPLE__)
 typedef struct __darwin_xmm_reg MonoContextSimdReg;
+#elif defined(__linux__) && defined(__x86_64__)
+typedef struct _libc_xmmreg MonoContextSimdReg;
+#elif defined(HOST_WIN32)
+typedef M128A MonoContextSimdReg;
 #endif
 
 /*
@@ -106,8 +114,8 @@ typedef struct {
 	mgreg_t esi;
 	mgreg_t edi;
 	mgreg_t eip;
-#ifdef __APPLE__
-    MonoContextSimdReg fregs [X86_XMM_NREG];
+#if defined(__APPLE__) || defined(HOST_WIN32)
+	MonoContextSimdReg fregs [X86_XMM_NREG];
 #endif
 } MonoContext;
 
@@ -121,6 +129,7 @@ typedef struct {
 
 /*We set EAX to zero since we are clobering it anyway*/
 #ifdef _MSC_VER
+
 #define MONO_CONTEXT_GET_CURRENT(ctx) do { \
 	void *_ptr = &(ctx);												\
 	__asm {																\
@@ -138,21 +147,24 @@ typedef struct {
 	 __asm pop dword ptr [eax+0x20]										\
 		 }																\
 	} while (0)
+
 #else
-#define MONO_CONTEXT_GET_CURRENT(ctx) \
-	__asm__ __volatile__(   \
-	"movl $0x0, %c[eax](%0)\n" \
-	"mov %%ebx, %c[ebx](%0)\n" \
-	"mov %%ecx, %c[ecx](%0)\n" \
-	"mov %%edx, %c[edx](%0)\n" \
-	"mov %%ebp, %c[ebp](%0)\n" \
-	"mov %%esp, %c[esp](%0)\n" \
-	"mov %%esi, %c[esi](%0)\n" \
-	"mov %%edi, %c[edi](%0)\n" \
-	"call 1f\n"     \
-	"1: pop 0x20(%0)\n"     \
-	:	\
-	: "a" (&(ctx)),	\
+
+#define MONO_CONTEXT_GET_CURRENT_GREGS(ctx) \
+	do { \
+		__asm__ __volatile__(   \
+		"movl $0x0, %c[eax](%0)\n" \
+		"mov %%ebx, %c[ebx](%0)\n" \
+		"mov %%ecx, %c[ecx](%0)\n" \
+		"mov %%edx, %c[edx](%0)\n" \
+		"mov %%ebp, %c[ebp](%0)\n" \
+		"mov %%esp, %c[esp](%0)\n" \
+		"mov %%esi, %c[esi](%0)\n" \
+		"mov %%edi, %c[edi](%0)\n" \
+		"call 1f\n"     \
+		"1: pop %c[eip](%0)\n"     \
+		:	\
+		: "a" (&(ctx)),	\
 		[eax] MONO_CONTEXT_OFFSET (eax, 0, mgreg_t), \
 		[ebx] MONO_CONTEXT_OFFSET (ebx, 0, mgreg_t), \
 		[ecx] MONO_CONTEXT_OFFSET (ecx, 0, mgreg_t), \
@@ -160,8 +172,45 @@ typedef struct {
 		[ebp] MONO_CONTEXT_OFFSET (ebp, 0, mgreg_t), \
 		[esp] MONO_CONTEXT_OFFSET (esp, 0, mgreg_t), \
 		[esi] MONO_CONTEXT_OFFSET (esi, 0, mgreg_t), \
-		[edi] MONO_CONTEXT_OFFSET (edi, 0, mgreg_t) \
-	: "memory")
+		[edi] MONO_CONTEXT_OFFSET (edi, 0, mgreg_t), \
+		[eip] MONO_CONTEXT_OFFSET (eip, 0, mgreg_t) \
+		: "memory"); \
+	} while (0)
+
+#ifdef UCONTEXT_REG_XMM
+#define MONO_CONTEXT_GET_CURRENT_FREGS(ctx) \
+	do { \
+		__asm__ __volatile__(   \
+			"movups %%xmm0, %c[xmm0](%0)\n"	\
+			"movups %%xmm1, %c[xmm1](%0)\n"	\
+			"movups %%xmm2, %c[xmm2](%0)\n"	\
+			"movups %%xmm3, %c[xmm3](%0)\n"	\
+			"movups %%xmm4, %c[xmm4](%0)\n"	\
+			"movups %%xmm5, %c[xmm5](%0)\n"	\
+			"movups %%xmm6, %c[xmm6](%0)\n"	\
+			"movups %%xmm7, %c[xmm7](%0)\n"	\
+			:	\
+			: "a" (&(ctx)),	\
+			[xmm0] MONO_CONTEXT_OFFSET (fregs, X86_XMM0, MonoContextSimdReg), \
+			[xmm1] MONO_CONTEXT_OFFSET (fregs, X86_XMM1, MonoContextSimdReg), \
+			[xmm2] MONO_CONTEXT_OFFSET (fregs, X86_XMM2, MonoContextSimdReg), \
+			[xmm3] MONO_CONTEXT_OFFSET (fregs, X86_XMM3, MonoContextSimdReg), \
+			[xmm4] MONO_CONTEXT_OFFSET (fregs, X86_XMM4, MonoContextSimdReg), \
+			[xmm5] MONO_CONTEXT_OFFSET (fregs, X86_XMM5, MonoContextSimdReg), \
+			[xmm6] MONO_CONTEXT_OFFSET (fregs, X86_XMM6, MonoContextSimdReg), \
+			[xmm7] MONO_CONTEXT_OFFSET (fregs, X86_XMM7, MonoContextSimdReg) \
+			: "memory"); \
+	} while (0)
+#else
+#define MONO_CONTEXT_GET_CURRENT_FREGS(ctx)
+#endif
+
+#define MONO_CONTEXT_GET_CURRENT(ctx) \
+	do { \
+		MONO_CONTEXT_GET_CURRENT_GREGS (ctx); \
+		MONO_CONTEXT_GET_CURRENT_FREGS (ctx); \
+	} while (0)
+
 #endif
 
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
@@ -180,11 +229,7 @@ typedef struct {
 
 typedef struct {
 	mgreg_t gregs [AMD64_NREG];
-#ifdef __APPLE__
 	MonoContextSimdReg fregs [AMD64_XMM_NREG];
-#else
-	double fregs [AMD64_XMM_NREG];
-#endif
 } MonoContext;
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->gregs [AMD64_RIP] = (mgreg_t)(ip); } while (0);
