@@ -98,17 +98,16 @@ namespace System.Threading
 
 		private void DoCallBack (object timedOut)
 		{
-			if (_callback != null) {
-				try {
-					_callback (_state, (bool)timedOut); 
-				} catch {}
-			}
-
-			lock (this) 
-			{
-				_callsInProcess--;
-				if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
-					NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
+			try {
+				if (_callback != null)
+					_callback (_state, (bool)timedOut);
+			} finally {
+				lock (this)
+				{
+					_callsInProcess--;
+					if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
+						NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
+				}
 			}
 		}
 
