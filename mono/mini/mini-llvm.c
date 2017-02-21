@@ -6599,6 +6599,16 @@ mono_llvm_check_method_supported (MonoCompile *cfg)
 	if (cfg->llvm_only)
 		return;
 
+	if (!strcmp (cfg->method->klass->name, "SimpleCollator")) {
+		cfg->exception_message = g_strdup ("Skipping SimpleCollator");
+		cfg->disable_llvm = TRUE;
+	}
+
+	if (!strcmp (cfg->method->klass->name, "Number") && !strcmp(cfg->method->name, "ParseNumber")) {
+		cfg->exception_message = g_strdup ("Skipping ParseNumber");
+		cfg->disable_llvm = TRUE;
+	}
+
 	if (cfg->method->save_lmf) {
 		cfg->exception_message = g_strdup ("lmf");
 		cfg->disable_llvm = TRUE;
