@@ -11,6 +11,7 @@ TestResult-*.log
 TestResult-*.xml
 TestResult*.xml
 .dep_dirs-*
+apidiff/*
 errors/*.log
 errors/dummy.xml
 class/Mono.Data.Sqlite/test.db

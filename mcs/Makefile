@@ -159,3 +159,29 @@ monocharge-lite:
 	$(MAKE) -C class/Mono.CSharp.Debugger install DESTDIR="$$DESTDIR" || exit 1; \
 	tar cvjf "$$chargedir".tar.bz2 "$$chargedir" ; \
 	rm -rf "$$chargedir"
+
+# Targets for creating API diffs of the framework
+
+MONO_API_SNAPSHOT_PATH := $(topdir)../external/api-snapshot/
+GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/GenAPI.exe
+MONO_API_SNAPSHOT_PROFILE_PATH := $(MONO_API_SNAPSHOT_PATH)profiles/$(PROFILE)/
+MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, SystemWebTestShim.dll standalone-runner-support.dll nunit.core.dll nunit.core.extensions.dll nunit.core.interfaces.dll nunit.framework.dll nunit.framework.extensions.dll nunit.mocks.dll nunit.util.dll nunit-console-runner.dll nunitlite.dll)
+MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)
+MONO_API_ASSEMBLIES_CS := $(MONO_API_ASSEMBLIES:$(topdir)class/lib/$(PROFILE)/%.dll=$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs)
+
+$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs: $(topdir)class/lib/$(PROFILE)/%.dll $(GENAPI) $(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt
+	@mkdir -p $(dir $@)
+	$(Q) MONO_PATH=$(topdir)class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(GENAPI) -libPath:$(topdir)class/lib/$(PROFILE),$(topdir)class/lib/$(PROFILE)/Facades -out:$(dir $@) -headerFile:$(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$< || echo "Couldn't process assembly." > $@
+
+mono-api-current: $(MONO_API_ASSEMBLIES_CS)
+
+mono-api-diff:
+	@echo "Regenerating API snapshot..."
+	$(Q) rm -rf "$(MONO_API_SNAPSHOT_PROFILE_PATH)"
+	$(Q) $(MAKE) mono-api-current
+	@echo "Checking public API differences..."
+	$(Q) cd $(MONO_API_SNAPSHOT_PATH); git add -A .
+	$(Q) cd $(MONO_API_SNAPSHOT_PATH); git diff --no-renames HEAD > $(abspath $(topdir))/temp.patch
+	@mkdir -p apidiff
+	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Public API Diff/g" -e "s/@description@/If the changes are intentional, run <code>make -C mcs mono-api-diff<\/code> locally and commit changes in external\/api-snapshot./g" diff.html.in > apidiff/index.html
+	$(Q) if [ -s temp.patch ]; then echo "Error: Found public API differences, see mcs/apidiff/index.html. If the changes are intentional, please go to external/api-snapshot and commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi

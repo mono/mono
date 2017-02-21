@@ -58,3 +58,6 @@
 [submodule "external/api-doc-tools"]
 	path = external/api-doc-tools
 	url = git://github.com/mono/api-doc-tools.git
+[submodule "external/api-snapshot"]
+	path = external/api-snapshot
+	url = git://github.com/mono/api-snapshot.git
