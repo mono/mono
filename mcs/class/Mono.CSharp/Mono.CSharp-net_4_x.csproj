@@ -106,6 +106,7 @@
     <Compile Include="..\..\mcs\typespec.cs" />
     <Compile Include="..\..\mcs\visit.cs" />
     <Compile Include="..\..\tools\monop\outline.cs" />
+    <Compile Include="aot.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
