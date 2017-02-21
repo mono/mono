@@ -8215,6 +8215,52 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	g_string_append_printf (s, "%s_", label);
 }
 
+static char *
+sanitize_mangled_string (const char *input)
+{
+	GString *s = g_string_new ("");
+
+	for (int i=0; input [i] != '\0'; i++) {
+		char c = input [i];
+		switch (c) {
+		case ' ':
+			g_string_append (s, "_");
+			break;
+		case '`':
+			g_string_append (s, "_bt_");
+			break;
+		case '<':
+			g_string_append (s, "_le_");
+			break;
+		case '>':
+			g_string_append (s, "_gt_");
+			break;
+		case '/':
+			g_string_append (s, "_sl_");
+			break;
+		case '[':
+			g_string_append (s, "_lbrack_");
+			break;
+		case ']':
+			g_string_append (s, "_rbrack_");
+			break;
+		case '(':
+			g_string_append (s, "_lparen_");
+			break;
+		case ')':
+			g_string_append (s, "_rparen_");
+			break;
+		case ',':
+			g_string_append (s, "_comma_");
+			break;
+		default:
+			g_string_append_c (s, c);
+		}
+	}
+
+	return g_string_free (s, FALSE);
+}
+
 static gboolean
 append_mangled_klass (GString *s, MonoClass *klass)
 {
@@ -8234,7 +8280,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 {
 	gboolean success = TRUE;
 	WrapperInfo *info = mono_marshal_get_wrapper_info (method);
-	g_string_append_printf (s, "aot_wrapper_");
+	g_string_append_printf (s, "wrapper_");
 
 	append_mangled_wrapper_type (s, method->wrapper_type);
 
@@ -8362,35 +8408,58 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	return success;
 }
 
+static void
+append_mangled_context (GString *str, MonoGenericContext *context)
+{
+	GString *res = g_string_new ("");
+
+	g_string_append_printf (res, "gens_");
+	g_string_append (res, "00");
+
+	gboolean good = context->class_inst && context->class_inst->type_argc > 0;
+	good = good || (context->method_inst && context->method_inst->type_argc > 0);
+	g_assert (good);
+
+	if (context->class_inst)
+		mono_ginst_get_desc (res, context->class_inst);
+	if (context->method_inst) {
+		if (context->class_inst)
+			g_string_append (res, "11");
+		mono_ginst_get_desc (res, context->method_inst);
+	}
+	g_string_append_printf (str, "gens_%s", res->str);
+}	
+
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method)
 {
 	if (method->wrapper_type)
 		return append_mangled_wrapper (s, method);
 
-	g_string_append_printf (s, "aot_%s_", mono_stringify_assembly_name (&method->klass->image->assembly->aname));
+	g_string_append_printf (s, "%s_", method->klass->image->assembly->aname.name);
 
 	if (method->is_inflated) {
 		g_string_append_printf (s, "inflated_");
 		MonoMethodInflated *imethod = (MonoMethodInflated*) method;
-		append_mangled_method (s, imethod->declaring);
+		g_assert (imethod->context.class_inst != NULL || imethod->context.method_inst != NULL);
 
-		if (imethod->context.class_inst != NULL || imethod->context.method_inst != NULL) {
-			g_string_append_printf (s, "_gens_");
-			g_string_append_printf (s, mono_context_get_desc (&imethod->context));
-		}
+		append_mangled_context (s, &imethod->context);
+		g_string_append_printf (s, "_declared_by_");
+		append_mangled_method (s, imethod->declaring);
 	} else if (method->is_generic) {
 		g_string_append_printf (s, "generic_");
 		append_mangled_klass (s, method->klass);
+		g_string_append_printf (s, "_%s_", method->name);
 
 		MonoGenericContainer *container = mono_method_get_generic_container (method);
-		g_string_append_printf (s, "_%s_gens_%s", method->name, mono_context_get_desc (&container->context));
+		g_string_append_printf (s, "_%s");
+		append_mangled_context (s, &container->context);
 
 		return append_mangled_signature (s, method->signature);
 	} else {
 		g_string_append_printf (s, "_");
 		append_mangled_klass (s, method->klass);
-		g_string_append_printf (s, "_%s", method->name);
+		g_string_append_printf (s, "_%s_", method->name);
 		if (!append_mangled_signature (s, method->signature)) {
 			g_string_free (s, TRUE);
 			return FALSE;
@@ -8408,12 +8477,16 @@ append_mangled_method (GString *s, MonoMethod *method)
 char*
 mono_aot_get_mangled_method_name (MonoMethod *method)
 {
-	GString *s = g_string_new ("");
+	GString *s = g_string_new ("aot_");
 	if (!append_mangled_method (s, method)) {
 		g_string_free (s, TRUE);
 		return NULL;
 	} else {
-		return g_string_free (s, FALSE);
+		char *out = g_string_free (s, FALSE);
+		// Scrub method and class names
+		char *cleaned = sanitize_mangled_string (out);
+		g_free (out);
+		return cleaned;
 	}
 }
 
