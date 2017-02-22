@@ -536,7 +536,7 @@ get_throw_trampoline (gboolean rethrow, guint32 *code_size, MonoJumpInfo **ji, g
 	guint8* start;
 	guint8 *code;
 
-	start = code = mono_global_codeman_reserve (128);
+	start = code = mono_global_codeman_reserve (64);
 
 	code = start;
 
@@ -589,7 +589,7 @@ get_throw_trampoline (gboolean rethrow, guint32 *code_size, MonoJumpInfo **ji, g
 
 	mono_arch_flush_icache (start, code - start);
 
-	g_assert ((code - start) < 128);
+	g_assert ((code - start) < 64);
 
 	*code_size = code - start;
 
