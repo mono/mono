@@ -1290,6 +1290,34 @@ namespace System
 			}
 		}
 
+		public static void Reverse<T>(T[] array)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			Reverse (array, 0, array.Length);
+		}
+
+		public static void Reverse<T>(T[] array, int index, int length)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+			if (index < 0 || length < 0)
+				throw new ArgumentOutOfRangeException ((index < 0 ? nameof (index) : nameof (length)));
+			if (array.Length - index < length)
+				throw new ArgumentException ();
+
+			int i = index;
+			int j = index + length - 1;
+			while (i < j) {
+				T temp = array [i];
+				array [i] = array [j];
+				array [j] = temp;
+				i++;
+				j--;
+			}
+		}
+
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array array)
 		{
