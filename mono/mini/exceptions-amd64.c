@@ -993,22 +993,22 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = UCONTEXT_REG_R13 (ctx);
 	mctx->r14 = UCONTEXT_REG_R14 (ctx);
 	mctx->r15 = UCONTEXT_REG_R15 (ctx);
-	mctx->xmm0_low = UCONTEXT_REG_FPR0_LOW(ctx);
-	mctx->xmm1_low = UCONTEXT_REG_FPR1_LOW(ctx);
-	mctx->xmm2_low = UCONTEXT_REG_FPR2_LOW(ctx);
-	mctx->xmm3_low = UCONTEXT_REG_FPR3_LOW(ctx);
-	mctx->xmm4_low = UCONTEXT_REG_FPR4_LOW(ctx);
-	mctx->xmm5_low = UCONTEXT_REG_FPR5_LOW(ctx);
-	mctx->xmm6_low = UCONTEXT_REG_FPR6_LOW(ctx);
-	mctx->xmm7_low = UCONTEXT_REG_FPR7_LOW(ctx);
-	mctx->xmm8_low = UCONTEXT_REG_FPR8_LOW(ctx);
-	mctx->xmm9_low = UCONTEXT_REG_FPR9_LOW(ctx);
-	mctx->xmm10_low = UCONTEXT_REG_FPR10_LOW(ctx);
-	mctx->xmm11_low = UCONTEXT_REG_FPR11_LOW(ctx);
-	mctx->xmm12_low = UCONTEXT_REG_FPR12_LOW(ctx);
-	mctx->xmm13_low = UCONTEXT_REG_FPR13_LOW(ctx);
-	mctx->xmm14_low = UCONTEXT_REG_FPR14_LOW(ctx);
-	mctx->xmm15_low = UCONTEXT_REG_FPR15_LOW(ctx);
+	mctx->fregs[AMD64_XMM0].lo = UCONTEXT_REG_FPR0_LOW(ctx);
+	mctx->fregs[AMD64_XMM1].lo = UCONTEXT_REG_FPR1_LOW(ctx);
+	mctx->fregs[AMD64_XMM2].lo = UCONTEXT_REG_FPR2_LOW(ctx);
+	mctx->fregs[AMD64_XMM3].lo = UCONTEXT_REG_FPR3_LOW(ctx);
+	mctx->fregs[AMD64_XMM4].lo = UCONTEXT_REG_FPR4_LOW(ctx);
+	mctx->fregs[AMD64_XMM5].lo = UCONTEXT_REG_FPR5_LOW(ctx);
+	mctx->fregs[AMD64_XMM6].lo = UCONTEXT_REG_FPR6_LOW(ctx);
+	mctx->fregs[AMD64_XMM7].lo = UCONTEXT_REG_FPR7_LOW(ctx);
+	mctx->fregs[AMD64_XMM8].lo = UCONTEXT_REG_FPR8_LOW(ctx);
+	mctx->fregs[AMD64_XMM9].lo = UCONTEXT_REG_FPR9_LOW(ctx);
+	mctx->fregs[AMD64_XMM10].lo = UCONTEXT_REG_FPR10_LOW(ctx);
+	mctx->fregs[AMD64_XMM11].lo = UCONTEXT_REG_FPR11_LOW(ctx);
+	mctx->fregs[AMD64_XMM12].lo = UCONTEXT_REG_FPR12_LOW(ctx);
+	mctx->fregs[AMD64_XMM13].lo = UCONTEXT_REG_FPR13_LOW(ctx);
+	mctx->fregs[AMD64_XMM14].lo = UCONTEXT_REG_FPR14_LOW(ctx);
+	mctx->fregs[AMD64_XMM15].lo = UCONTEXT_REG_FPR15_LOW(ctx);
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
@@ -1075,22 +1075,22 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_R14 (ctx) = mctx->r14;
 	UCONTEXT_REG_R15 (ctx) = mctx->r15;
 
-	UCONTEXT_REG_FPR0_LOW(ctx) = mctx->xmm0_low;
-	UCONTEXT_REG_FPR1_LOW(ctx) = mctx->xmm1_low;
-	UCONTEXT_REG_FPR2_LOW(ctx) = mctx->xmm2_low;
-	UCONTEXT_REG_FPR3_LOW(ctx) = mctx->xmm3_low;
-	UCONTEXT_REG_FPR4_LOW(ctx) = mctx->xmm4_low;
-	UCONTEXT_REG_FPR5_LOW(ctx) = mctx->xmm5_low;
-	UCONTEXT_REG_FPR6_LOW(ctx) = mctx->xmm6_low;
-	UCONTEXT_REG_FPR7_LOW(ctx) = mctx->xmm7_low;
-	UCONTEXT_REG_FPR8_LOW(ctx) = mctx->xmm8_low;
-	UCONTEXT_REG_FPR9_LOW(ctx) = mctx->xmm9_low;
-	UCONTEXT_REG_FPR10_LOW(ctx) = mctx->xmm10_low;
-	UCONTEXT_REG_FPR11_LOW(ctx) = mctx->xmm11_low;
-	UCONTEXT_REG_FPR12_LOW(ctx) = mctx->xmm12_low;
-	UCONTEXT_REG_FPR13_LOW(ctx) = mctx->xmm13_low;
-	UCONTEXT_REG_FPR14_LOW(ctx) = mctx->xmm14_low;
-	UCONTEXT_REG_FPR15_LOW(ctx) = mctx->xmm15_low;
+	UCONTEXT_REG_FPR0_LOW(ctx) = mctx->fregs[AMD64_XMM0].lo;
+	UCONTEXT_REG_FPR1_LOW(ctx) = mctx->fregs[AMD64_XMM1].lo;
+	UCONTEXT_REG_FPR2_LOW(ctx) = mctx->fregs[AMD64_XMM2].lo;
+	UCONTEXT_REG_FPR3_LOW(ctx) = mctx->fregs[AMD64_XMM3].lo;
+	UCONTEXT_REG_FPR4_LOW(ctx) = mctx->fregs[AMD64_XMM4].lo;
+	UCONTEXT_REG_FPR5_LOW(ctx) = mctx->fregs[AMD64_XMM5].lo;
+	UCONTEXT_REG_FPR6_LOW(ctx) = mctx->fregs[AMD64_XMM6].lo;
+	UCONTEXT_REG_FPR7_LOW(ctx) = mctx->fregs[AMD64_XMM7].lo;
+	UCONTEXT_REG_FPR8_LOW(ctx) = mctx->fregs[AMD64_XMM8].lo;
+	UCONTEXT_REG_FPR9_LOW(ctx) = mctx->fregs[AMD64_XMM9].lo;
+	UCONTEXT_REG_FPR10_LOW(ctx) = mctx->fregs[AMD64_XMM10].lo;
+	UCONTEXT_REG_FPR11_LOW(ctx) = mctx->fregs[AMD64_XMM11].lo;
+	UCONTEXT_REG_FPR12_LOW(ctx) = mctx->fregs[AMD64_XMM12].lo;
+	UCONTEXT_REG_FPR13_LOW(ctx) = mctx->fregs[AMD64_XMM13].lo;
+	UCONTEXT_REG_FPR14_LOW(ctx) = mctx->fregs[AMD64_XMM14].lo;
+	UCONTEXT_REG_FPR15_LOW(ctx) = mctx->fregs[AMD64_XMM15].lo;
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
