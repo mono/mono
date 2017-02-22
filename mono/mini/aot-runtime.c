@@ -3204,19 +3204,24 @@ amodule_contains_code_addr (MonoAotModule *amodule, guint8 *code)
 {
 	guint32 method_index = (guint32) g_hash_table_lookup (amodule->code_to_idx, (gconstpointer) code);
 
-	gpointer (*get_module) (int) = (gpointer (*)(int))amodule->info.llvm_get_module;
+	if (mono_llvm_only) {
+		gpointer (*get_module) (int) = (gpointer (*)(int))amodule->info.llvm_get_module;
 
-	MonoAotModule **mod = (MonoAotModule **) get_module (method_index);
+		MonoAotModule **mod = (MonoAotModule **) get_module (method_index);
 
-	if (!mod)
-		return FALSE;
+		if (!mod)
+			return FALSE;
 
-	// Important for the method_index = 0 case
-	gpointer addr = (*mod)->methods [method_index];
-	if (addr != code)
-		return FALSE;
+		// Important for the method_index = 0 case
+		gpointer addr = (*mod)->methods [method_index];
+		if (addr != code)
+			return FALSE;
 
-	return *mod == amodule;
+		return *mod == amodule;
+	}
+
+	return (code >= amodule->jit_code_start && code <= amodule->jit_code_end) ||
+	(code >= amodule->llvm_code_start && code <= amodule->llvm_code_end);
 }
 
 /*
