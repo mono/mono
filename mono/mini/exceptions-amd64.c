@@ -1029,7 +1029,7 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = ctx->r13;
 	mctx->r14 = ctx->r14;
 	mctx->r15 = ctx->r15;
-	memset (&mctx->fregs[0], &ctx->fregs[0], sizeof (MonoContextSimdReg) * AMD64_XMM_NREG);
+	memcpy (&mctx->fregs[0], &ctx->fregs[0], sizeof (MonoContextSimdReg) * AMD64_XMM_NREG);
 #endif
 }
 
@@ -1111,7 +1111,7 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	ctx->r13 = mctx->r13;
 	ctx->r14 = mctx->r14;
 	ctx->r15 = mctx->r15;
-	memset (&ctx->fregs[0], &mctx->fregs[0], sizeof (MonoContextSimdReg) * AMD64_XMM_NREG);
+	memcpy (&ctx->fregs[0], &mctx->fregs[0], sizeof (MonoContextSimdReg) * AMD64_XMM_NREG);
 #endif
 }
 
