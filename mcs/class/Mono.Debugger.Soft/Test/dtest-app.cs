@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using MonoTests.Helpers;
 
 public class TestsBase
@@ -317,6 +316,10 @@ public class Tests : TestsBase, ITest2
 		}
 		if (args.Length >0 && args [0] == "threadpool-io") {
 			threadpool_io ();
+			return 0;
+		}
+		if (args.Length > 0 && args [0] == "attach") {
+			new Tests ().attach ();
 			return 0;
 		}
 		assembly_load ();
@@ -1688,6 +1691,26 @@ public class Tests : TestsBase, ITest2
 		streamOut.Close ();
 		var bsIn = t.Result;
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach_break () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach () {
+		AppDomain domain = AppDomain.CreateDomain ("domain");
+
+		CrossDomain o = (CrossDomain)domain.CreateInstanceAndUnwrap (
+				   typeof (CrossDomain).Assembly.FullName, "CrossDomain");
+		o.assembly_load ();
+		o.type_load ();
+
+		// Wait for the client to attach
+		while (true) {
+			Thread.Sleep (200);
+			attach_break ();
+		}
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {
@@ -1711,6 +1734,11 @@ public class CrossDomain : MarshalByRefObject
 
 	public void assembly_load () {
 		Tests.assembly_load_in_domain ();
+	}
+
+	public void type_load () {
+		//Activator.CreateInstance (typeof (int).Assembly.GetType ("Microsoft.Win32.RegistryOptions"));
+		var is_server = System.Runtime.GCSettings.IsServerGC;
 	}
 }	
 

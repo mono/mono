@@ -331,9 +331,9 @@ namespace System.Diagnostics
 
 						process_name = ProcessName_internal (handle);
 
-						/* If process_name is _still_ null, assume the process has exited */
+						/* If process_name is _still_ null, assume the process has exited or is inaccessible */
 						if (process_name == null)
-							throw new InvalidOperationException ("Process has exited, so the requested information is not available.");
+							throw new InvalidOperationException ("Process has exited or is inaccessible, so the requested information is not available.");
 
 						/* Strip the suffix (if it exists) simplistically instead of removing
 						 * any trailing \.???, so we dont get stupid results on sane systems */
@@ -483,6 +483,34 @@ namespace System.Diagnostics
 				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
 
 			return (new Process (new SafeProcessHandle (proc, false), processId));
+		}
+
+		public static Process[] GetProcessesByName(string processName, string machineName)
+		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
+			Process[] processes = GetProcesses ();
+			if (processes.Length == 0)
+				return processes;
+
+			int size = 0;
+
+			for (int i = 0; i < processes.Length; i++) {
+				try {
+					if (String.Compare (processName, processes[i].ProcessName, true) == 0)
+						processes [size++] = processes[i];
+				} catch (SystemException) {
+					/* The process might exit between GetProcesses_internal and GetProcessById */
+				}
+			}
+
+			Array.Resize<Process> (ref processes, size);
+
+			return processes;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

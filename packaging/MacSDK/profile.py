@@ -119,6 +119,8 @@ class MonoReleaseProfile(DarwinProfile):
             error('Prefix %s exists, and may interfere with the staged build. Please remove and try again.' % self.prefix)
 
         self.calculate_updateid()
+
+        self.mono_package.custom_version_str = self.FULL_VERSION
         trace(self.package_info('MDK'))
 
         self.dont_optimize = ['pixman']
@@ -281,6 +283,10 @@ class MonoReleaseProfile(DarwinProfile):
             working_dir, "PKGROOT", self.prefix[1:], "updateinfo")
         with open(updateinfo, "w") as updateinfo:
             updateinfo.write(guid + ' ' + self.updateid + "\n")
+        version_file = os.path.join(
+            working_dir, "PKGROOT", self.prefix[1:], "VERSION")
+        with open(version_file, "w") as version_file:
+            version_file.write(self.FULL_VERSION + "\n")
 
     def package_info(self, pkg_type):
         arch = self.bockbuild.cmd_options.arch

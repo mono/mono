@@ -150,7 +150,7 @@ namespace Mono.Btls
 			using (var nativeChain = MonoBtlsProvider.GetNativeChain (certificates))
 			using (var param = GetVerifyParam (targetHost, serverMode))
 			using (var storeCtx = new MonoBtlsX509StoreCtx ()) {
-				SetupCertificateStore (store);
+				SetupCertificateStore (store, validator.Settings, serverMode);
 
 				storeCtx.Initialize (store, nativeChain);
 
@@ -201,19 +201,80 @@ namespace Mono.Btls
 			}
 		}
 
+		internal static void SetupCertificateStore (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
+		{
+			if (settings?.CertificateSearchPaths == null)
+				AddTrustedRoots (store, settings, server);
+
+#if MONODROID
+			SetupCertificateStore (store);
+			return;
+#else
+			if (settings?.CertificateSearchPaths == null) {
+				SetupCertificateStore (store);
+				return;
+			}
+
+			foreach (var path in settings.CertificateSearchPaths) {
+				if (string.Equals (path, "@default", StringComparison.Ordinal)) {
+					AddTrustedRoots (store, settings, server);
+					AddUserStore (store);
+					AddMachineStore (store);
+				} else if (string.Equals (path, "@user", StringComparison.Ordinal))
+					AddUserStore (store);
+				else if (string.Equals (path, "@machine", StringComparison.Ordinal))
+					AddMachineStore (store);
+				else if (string.Equals (path, "@trusted", StringComparison.Ordinal))
+					AddTrustedRoots (store, settings, server);
+				else if (path.StartsWith ("@pem:", StringComparison.Ordinal)) {
+					var realPath = path.Substring (5);
+					if (Directory.Exists (realPath))
+						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.PEM);
+				} else if (path.StartsWith ("@der:", StringComparison.Ordinal)) {
+					var realPath = path.Substring (5);
+					if (Directory.Exists (realPath))
+						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.ASN1);
+				} else {
+					if (Directory.Exists (path))
+						store.AddDirectoryLookup (path, MonoBtlsX509FileType.PEM);
+				}
+			}
+#endif
+		}
+
 		internal static void SetupCertificateStore (MonoBtlsX509Store store)
 		{
 #if MONODROID
 			store.SetDefaultPaths ();
 			store.AddAndroidLookup ();
 #else
+			AddUserStore (store);
+			AddMachineStore (store);
+#endif
+		}
+
+#if !MONODROID
+		static void AddUserStore (MonoBtlsX509Store store)
+		{
 			var userPath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.UserTrustedRoots);
 			if (Directory.Exists (userPath))
 				store.AddDirectoryLookup (userPath, MonoBtlsX509FileType.PEM);
+		}
+
+		static void AddMachineStore (MonoBtlsX509Store store)
+		{
 			var machinePath = MonoBtlsX509StoreManager.GetStorePath (MonoBtlsX509StoreType.MachineTrustedRoots);
 			if (Directory.Exists (machinePath))
 				store.AddDirectoryLookup (machinePath, MonoBtlsX509FileType.PEM);
+		}
 #endif
+
+		static void AddTrustedRoots (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
+		{
+			if (settings?.TrustAnchors == null)
+				return;
+			var trust = server ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
+			store.AddCollection (settings.TrustAnchors, trust);
 		}
 
 		public static string GetSystemStoreLocation ()

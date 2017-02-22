@@ -145,12 +145,6 @@ mono_emit_unwind_op (MonoCompile *cfg, int when, int tag, int reg, int val)
 	}
 }
 
-#define MONO_INIT_VARINFO(vi,id) do { \
-	(vi)->range.first_use.pos.bid = 0xffff; \
-	(vi)->reg = -1; \
-        (vi)->idx = (id); \
-} while (0)
-
 /**
  * mono_unlink_bblock:
  *
@@ -680,8 +674,10 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	
 	cfg->varinfo [num] = inst;
 
-	MONO_INIT_VARINFO (&cfg->vars [num], num);
-	MONO_VARINFO (cfg, num)->vreg = vreg;
+	cfg->vars [num].idx = num;
+	cfg->vars [num].vreg = vreg;
+	cfg->vars [num].range.first_use.pos.bid = 0xffff;
+	cfg->vars [num].reg = -1;
 
 	if (vreg != -1)
 		set_vreg_to_inst (cfg, vreg, inst);
@@ -3607,6 +3603,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->opt &= ~ (MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP);
 		cfg->disable_ssa = TRUE;
 	}
+
+	if (cfg->num_varinfo > 10000 && !cfg->llvm_only)
+		/* Disable llvm for overly complex methods */
+		cfg->disable_ssa = TRUE;
 
 	if (cfg->opt & MONO_OPT_LOOP) {
 		MONO_TIME_TRACK (mono_jit_stats.jit_compile_dominator_info, mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM));

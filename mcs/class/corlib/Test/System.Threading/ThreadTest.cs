@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using System.Security.Principal;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Reflection;
 using System.Collections.Generic;
 using SD = System.Diagnostics;
@@ -907,6 +908,23 @@ namespace MonoTests.System.Threading
 			AppDomain.Unload (ad);
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
+
+		[Test]
+		public void SetNameInThreadPoolThread ()
+		{
+			Task t = Task.Run (delegate () {
+				Thread.CurrentThread.Name = "ThreadName1";
+				Assert.AreEqual (Thread.CurrentThread.Name, "ThreadName1", "#1");
+
+				try {
+					Thread.CurrentThread.Name = "ThreadName2";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException) {
+				}
+			});
+
+			t.Wait ();
+		}
 
 		void CheckIsRunning (string s, Thread t)
 		{

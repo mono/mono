@@ -428,13 +428,13 @@ namespace Mono.CSharp {
 		public TypeParameter (TypeParameterSpec spec, TypeSpec parentSpec, MemberName name, Attributes attrs)
 			: base (null, name, attrs)
 		{
-			this.spec = new TypeParameterSpec (parentSpec, spec.DeclaredPosition, spec.MemberDefinition, spec.SpecialConstraint, spec.Variance, null) {
+			this.spec = new TypeParameterSpec (parentSpec, spec.DeclaredPosition, this, spec.SpecialConstraint, spec.Variance, null) {
 				BaseType = spec.BaseType,
 				InterfacesDefined = spec.InterfacesDefined,
 				TypeArguments = spec.TypeArguments
 			};
 		}
-		
+
 		#region Properties
 
 		public override AttributeTargets AttributeTargets {
@@ -2162,6 +2162,10 @@ namespace Mono.CSharp {
 				return this;
 
 			var mutated = (InflatedTypeSpec) MemberwiseClone ();
+#if DEBUG
+			mutated.ID += 1000000;
+#endif
+
 			if (decl != DeclaringType) {
 				// Gets back MethodInfo in case of metaInfo was inflated
 				//mutated.info = MemberCache.GetMember<TypeSpec> (DeclaringType.GetDefinition (), this).info;

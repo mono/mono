@@ -142,14 +142,7 @@
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbWriter.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\*.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\*.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\ISymUnmanagedDocumentWriter.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\ISymUnmanagedWriter2.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\ModuleMetadata.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\PdbHelper.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\PdbReader.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\PdbWriter.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\SymDocumentWriter.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\SymWriter.cs" />
+    <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\*.cs" />
     <Compile Include="..\..\..\external\cecil\System.Security.Cryptography\*.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="LocationProvider.cs" />

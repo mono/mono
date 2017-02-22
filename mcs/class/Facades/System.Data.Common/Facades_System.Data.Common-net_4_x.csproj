@@ -55,9 +55,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbColumn.cs" />
     <Compile Include="..\..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataReaderExtensions.Facade.cs" />
-    <Compile Include="..\..\..\..\external\corefx\src\System.Data.Common\src\System\Data\IColumnMappingCollection.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

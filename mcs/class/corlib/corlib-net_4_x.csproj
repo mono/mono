@@ -1653,6 +1653,7 @@
     <Compile Include="System\TimeZoneInfo.cs" />
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+    <Compile Include="System\TimeZoneInfo.WinRT.cs" />
     <Compile Include="System\TypeCode.cs" />
     <Compile Include="System\TypeIdentifier.cs" />
     <Compile Include="System\TypeSpec.cs" />

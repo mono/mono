@@ -1094,6 +1094,110 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void Post_TransferEncodingChunked ()
+		{
+			bool? failed = null;
+			var listener = CreateListener (l => {
+				try {
+					var request = l.Request;
+
+					Assert.IsNull (request.AcceptTypes, "#1");
+					Assert.AreEqual (-1, request.ContentLength64, "#2");
+					Assert.IsNull (request.ContentType, "#3");
+					Assert.AreEqual (0, request.Cookies.Count, "#4");
+					Assert.IsTrue (request.HasEntityBody, "#5");
+					Assert.AreEqual (TestHost, request.Headers ["Host"], "#6b");
+					Assert.AreEqual ("POST", request.HttpMethod, "#7");
+					Assert.IsFalse (request.IsAuthenticated, "#8");
+					Assert.IsTrue (request.IsLocal, "#9");
+					Assert.IsFalse (request.IsSecureConnection, "#10");
+					Assert.IsFalse (request.IsWebSocketRequest, "#11");
+					Assert.IsTrue (request.KeepAlive, "#12");
+					Assert.AreEqual (HttpVersion.Version11, request.ProtocolVersion, "#13");
+					Assert.IsNull (request.ServiceName, "#14");
+					Assert.IsNull (request.UrlReferrer, "#15");
+					Assert.IsNull (request.UserAgent, "#16");
+					Assert.IsNull (request.UserLanguages, "#17");
+					Assert.AreEqual ("chunked", request.Headers ["Transfer-Encoding"], "#18");
+					Assert.IsNull (request.Headers ["Content-Length"], "#19");
+					failed = false;
+				} catch (Exception e) {
+					failed = true;
+					Console.WriteLine (e);
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				client.DefaultRequestHeaders.TransferEncodingChunked = true;
+
+				var imageContent = new StreamContent (new MemoryStream ());
+
+				var response = client.PostAsync (LocalServer, imageContent).Result;
+
+				Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual(false, failed, "#102");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void Post_StreamCaching ()
+		{
+			bool? failed = null;
+			var listener = CreateListener (l => {
+				try {
+					var request = l.Request;
+
+					Assert.IsNull (request.AcceptTypes, "#1");
+					Assert.AreEqual (0, request.ContentLength64, "#2");
+					Assert.IsNull (request.ContentType, "#3");
+					Assert.AreEqual (0, request.Cookies.Count, "#4");
+					Assert.IsFalse (request.HasEntityBody, "#5");
+					Assert.AreEqual (TestHost, request.Headers ["Host"], "#6b");
+					Assert.AreEqual ("POST", request.HttpMethod, "#7");
+					Assert.IsFalse (request.IsAuthenticated, "#8");
+					Assert.IsTrue (request.IsLocal, "#9");
+					Assert.IsFalse (request.IsSecureConnection, "#10");
+					Assert.IsFalse (request.IsWebSocketRequest, "#11");
+					Assert.IsTrue (request.KeepAlive, "#12");
+					Assert.AreEqual (HttpVersion.Version11, request.ProtocolVersion, "#13");
+					Assert.IsNull (request.ServiceName, "#14");
+					Assert.IsNull (request.UrlReferrer, "#15");
+					Assert.IsNull (request.UserAgent, "#16");
+					Assert.IsNull (request.UserLanguages, "#17");
+					Assert.IsNull (request.Headers ["Transfer-Encoding"], "#18");
+					Assert.AreEqual ("0", request.Headers ["Content-Length"], "#19");
+					failed = false;
+				} catch (Exception e) {
+					failed = true;
+					Console.WriteLine (e);
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				var imageContent = new StreamContent (new MemoryStream ());
+
+				var response = client.PostAsync (LocalServer, imageContent).Result;
+
+				Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual(false, failed, "#102");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		[Category ("MobileNotWorking")] // Missing encoding
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]

@@ -23,7 +23,7 @@ class Tester
 			() => {
 				dynamic d = 1;
 				d ();
-			}, "Cannot invoke a non-delegate type `int'");
+			}, "Cannot invoke a non-delegate type");
 	}
 	
 	void Using_1 ()
@@ -31,7 +31,7 @@ class Tester
 		AssertError (
 			() => {
 				using (dynamic d = 1) { }
-			}, "Cannot implicitly convert type `int' to `System.IDisposable'");
+			}, "Cannot implicitly convert type 'int' to 'System.IDisposable'");
 	}
 	
 	void Unsafe_1 ()
@@ -39,7 +39,7 @@ class Tester
 		dynamic d = 1;
 		AssertError (
 			() => Helper.Foo (d),
-			"Pointers and fixed size buffers cannot be used in a dynamic context");
+			"Dynamic calls cannot be used in conjunction with pointers");
 	}
 	
 	void NullableConversion ()
@@ -50,7 +50,7 @@ class Tester
 				dynamic b = false;
 				byte? b2 = null;
 				b &= b2;
-			}, "Operator `&=' cannot be applied to operands of type `bool' and `byte?'");
+			}, "Operator '&=' cannot be applied to operands of type 'bool' and 'byte?'");
 	}
 	
 #pragma warning restore 169

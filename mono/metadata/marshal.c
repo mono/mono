@@ -426,7 +426,9 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 		target_handle = mono_gchandle_new_weakref (delegate->target, FALSE);
 	}
 
-	wrapper = mono_marshal_get_managed_wrapper (method, klass, target_handle);
+	wrapper = mono_marshal_get_managed_wrapper (method, klass, target_handle, &error);
+	if (!is_ok (&error))
+		goto fail;
 
 	delegate->delegate_trampoline = mono_compile_method_checked (wrapper, &error);
 	if (!is_ok (&error))
@@ -8659,9 +8661,8 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
  * If target_handle==0, the wrapper info will be a WrapperInfo structure.
  */
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle)
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle, MonoError *error)
 {
-	MonoError error;
 	MonoMethodSignature *sig, *csig, *invoke_sig;
 	MonoMethodBuilder *mb;
 	MonoMethod *res, *invoke;
@@ -8672,7 +8673,12 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	EmitMarshalContext m;
 
 	g_assert (method != NULL);
-	g_assert (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL));
+	mono_error_init (error);
+
+	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
+		mono_error_set_invalid_program (error, "Failed because method (%s) marked PInvokeCallback (managed method) and extern (unmanaged) simultaneously.", mono_method_full_name (method, TRUE));
+		return NULL;
+	}
 
 	/* 
 	 * FIXME: Should cache the method+delegate type pair, since the same method
@@ -8726,8 +8732,8 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 		 * contents of the attribute without constructing it, as that might not be
 		 * possible when running in cross-compiling mode.
 		 */
-		cinfo = mono_custom_attrs_from_class_checked (delegate_klass, &error);
-		mono_error_assert_ok (&error);
+		cinfo = mono_custom_attrs_from_class_checked (delegate_klass, error);
+		mono_error_assert_ok (error);
 		attr = NULL;
 		if (cinfo) {
 			for (i = 0; i < cinfo->num_attrs; ++i) {
@@ -11754,8 +11760,14 @@ mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_e
 	}
 }
 
+/*
+ * mono_marshal_get_generic_array_helper:
+ *
+ *   Return a wrapper which is used to implement the implicit interfaces on arrays.
+ * The wrapper routes calls to METHOD, which is one of the InternalArray_ methods in Array.
+ */
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *klass, MonoClass *iface, gchar *name, MonoMethod *method)
+mono_marshal_get_generic_array_helper (MonoClass *klass, gchar *name, MonoMethod *method)
 {
 	MonoMethodSignature *sig, *csig;
 	MonoMethodBuilder *mb;

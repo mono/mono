@@ -478,7 +478,8 @@ BASE_TEST_CS_SRC=		\
 	namedmutex-destroy-race.cs	\
 	thread6.cs	\
 	appdomain-threadpool-unload.cs	\
-	process-unref-race.cs
+	process-unref-race.cs	\
+	bug-46661.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
@@ -947,7 +948,7 @@ endif
 	$(MCS) -r:System.dll -target:library -out:$@ $<
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
-	$(MCS) -r:System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ reference-loader.cs
+	$(MCS) -r:System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 	$(MCS) -target:library -out:$@ $<
@@ -1762,7 +1763,8 @@ UNHANDLED_EXCEPTION_255_TESTS =	\
 	unhandled-exception-4.exe	\
 	unhandled-exception-5.exe	\
 	unhandled-exception-6.exe	\
-	unhandled-exception-7.exe
+	unhandled-exception-7.exe	\
+	unhandled-exception-8.exe
 
 test-unhandled-exception-2: $(UNHANDLED_EXCEPTION_1_TESTS) $(UNHANDLED_EXCEPTION_255_TESTS)
 	$(MAKE) test-unhandled-exception-2-1-with-managed-handler

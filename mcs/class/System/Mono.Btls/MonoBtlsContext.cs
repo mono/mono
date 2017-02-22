@@ -159,7 +159,7 @@ namespace Mono.Btls
 			string file;
 			int line;
 			var error = MonoBtlsError.GetError (out file, out line);
-			if (error == null)
+			if (error == 0)
 				return new MonoBtlsException (status);
 
 			var text = MonoBtlsError.GetErrorString (error);
@@ -218,16 +218,6 @@ namespace Mono.Btls
 			isAuthenticated = true;
 		}
 
-		void SetupCertificateStore ()
-		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
-
-			if (Settings != null && Settings.TrustAnchors != null) {
-				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
-				ctx.CertificateStore.AddCollection (Settings.TrustAnchors, trust);
-			}
-		}
-
 		void InitializeConnection ()
 		{
 			ctx = new MonoBtlsSslCtx ();
@@ -237,7 +227,7 @@ namespace Mono.Btls
 			ctx.SetDebugBio (errbio);
 #endif
 
-			SetupCertificateStore ();
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (!IsServer || AskForClientCertificate)
 				ctx.SetVerifyCallback (VerifyCallback, false);

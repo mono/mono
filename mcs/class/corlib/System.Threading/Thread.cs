@@ -62,10 +62,6 @@ namespace System.Threading {
 		private int abort_state_handle;
 		/* thread_id is only accessed from unmanaged code */
 		internal Int64 thread_id;
-		
-		/* start_notify is used by the runtime to signal that Start()
-		 * is ok to return
-		 */
 		private IntPtr stack_ptr;
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr runtime_thread_info;

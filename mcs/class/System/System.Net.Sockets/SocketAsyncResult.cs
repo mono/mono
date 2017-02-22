@@ -145,22 +145,33 @@ namespace System.Net.Sockets
 
 			IsCompleted = true;
 
+			/* It is possible that this.socket is modified by this.Init which has been called by the callback. This
+			 * would lead to inconsistency, as we would for example not release the correct socket.ReadSem or
+			 * socket.WriteSem.
+			 * For example, this can happen with AcceptAsync followed by a ReceiveAsync on the same
+			 * SocketAsyncEventArgs */
+			Socket completedSocket = socket;
+			SocketOperation completedOperation = operation;
+
 			AsyncCallback callback = AsyncCallback;
 			if (callback != null) {
 				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
 			}
 
-			switch (operation) {
+			/* Warning: any field on the current SocketAsyncResult might have changed, as the callback might have
+			 * called this.Init */
+
+			switch (completedOperation) {
 			case SocketOperation.Receive:
 			case SocketOperation.ReceiveFrom:
 			case SocketOperation.ReceiveGeneric:
 			case SocketOperation.Accept:
-				socket.ReadSem.Release ();
+				completedSocket.ReadSem.Release ();
 				break;
 			case SocketOperation.Send:
 			case SocketOperation.SendTo:
 			case SocketOperation.SendGeneric:
-				socket.WriteSem.Release ();
+				completedSocket.WriteSem.Release ();
 				break;
 			}
 

@@ -1453,6 +1453,26 @@ namespace MonoTests.System
 			Delegate.CreateDelegate(typeof(Action), this, m);
 		}
 
+		[Test]
+		public void ReflectedTypeInheritedVirtualMethod ()
+		{
+			var a = new DerivedClass ();
+
+			Action m = a.MyMethod;
+			Assert.AreEqual (typeof (BaseClass), m.Method.ReflectedType);
+		}
+
+		class BaseClass
+		{
+			public virtual void MyMethod() {
+				Console.WriteLine ("Base method");
+			}
+		}
+
+		class DerivedClass : BaseClass
+		{
+		}
+
 		public void AnyGenericMethod<T>()
 		{
 		}
