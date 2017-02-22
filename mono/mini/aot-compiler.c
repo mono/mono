@@ -8223,6 +8223,9 @@ sanitize_mangled_string (const char *input)
 	for (int i=0; input [i] != '\0'; i++) {
 		char c = input [i];
 		switch (c) {
+		case '.':
+			g_string_append (s, "_dot_");
+			break;
 		case ' ':
 			g_string_append (s, "_");
 			break;
@@ -8246,6 +8249,9 @@ sanitize_mangled_string (const char *input)
 			break;
 		case '(':
 			g_string_append (s, "_lparen_");
+			break;
+		case '-':
+			g_string_append (s, "_dash_");
 			break;
 		case ')':
 			g_string_append (s, "_rparen_");
@@ -8305,6 +8311,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		/* The GC name is saved once in MonoAotFileInfo */
 		g_assert (info->d.alloc.alloc_type != -1);
 		g_string_append_printf (s, "%d_", info->d.alloc.alloc_type);
+		// SlowAlloc, etc
+		g_string_append_printf (s, "%s_", method->name);
 		break;
 	}
 	case MONO_WRAPPER_WRITE_BARRIER: {
@@ -8385,14 +8393,12 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			g_string_append_printf (s, "i_");
 			success = success && append_mangled_klass (s, method->klass);
 		} else {
-			MonoMethodSignature *sig = mono_method_signature (method);
 			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 			g_string_append_printf (s, "u_");
 			if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 				append_mangled_wrapper_subtype (s, info->subtype);
 			g_string_append_printf (s, "u_sigstart");
-			success = success && append_mangled_signature (s, sig);
 		}
 		break;
 	}
@@ -8405,7 +8411,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	default:
 		g_assert_not_reached ();
 	}
-	return success;
+	return success && append_mangled_signature (s, mono_method_signature (method));
 }
 
 static void
@@ -8455,12 +8461,12 @@ append_mangled_method (GString *s, MonoMethod *method)
 		g_string_append_printf (s, "_%s");
 		append_mangled_context (s, &container->context);
 
-		return append_mangled_signature (s, method->signature);
+		return append_mangled_signature (s, mono_method_signature (method));
 	} else {
 		g_string_append_printf (s, "_");
 		append_mangled_klass (s, method->klass);
 		g_string_append_printf (s, "_%s_", method->name);
-		if (!append_mangled_signature (s, method->signature)) {
+		if (!append_mangled_signature (s, mono_method_signature (method))) {
 			g_string_free (s, TRUE);
 			return FALSE;
 		}
