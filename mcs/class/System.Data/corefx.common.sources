@@ -37,6 +37,8 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbMetaDataColumnNames.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbParameter.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbParameterCollection.cs
+../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderFactory.CreatePermission.cs
+../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderFactory.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderSpecificTypePropertyAttribute.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBSchemaRow.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBSchemaTable.cs
@@ -240,6 +242,7 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlDataImplementation.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XPathNodePointer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/OperationAbortedException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbReferenceCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
@@ -248,7 +251,6 @@
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
 ../../../external/corefx/src/System.Private.Xml/src/Misc/HResults.cs
-
 ../referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
 ../referencesource/System.Data/Misc/ExternDll.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
@@ -258,14 +260,12 @@
 ../referencesource/System.Data/System/Data/Common/DbConnectionStringCommon.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermission.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
-../referencesource/System.Data/System/Data/Common/DbProviderFactory.cs
 ../referencesource/System.Data/System/Data/Common/GreenMethods.cs
 ../referencesource/System.Data/System/Data/Common/NameValuePermission.cs
 ../referencesource/System.Data/System/Data/Common/SQLTypes/SqlXmlStorage.cs
 ../referencesource/System.Data/System/Data/DataSet.cs
 ../referencesource/System.Data/System/Data/OleDb/OleDbType.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
-../referencesource/System.Data/System/Data/OperationAbortedException.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContext.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContextKey.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolOptions.cs
