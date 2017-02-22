@@ -969,7 +969,6 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-#endif /* !DISABLE_JIT */
 
 /*
  * mono_arch_get_enter_icall_trampoline:
@@ -1068,6 +1067,7 @@ mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
 	return NULL;
 #endif /* ENABLE_INTERPRETER */
 }
+#endif /* !DISABLE_JIT */
 
 #ifdef DISABLE_JIT
 gpointer
