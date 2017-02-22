@@ -4677,9 +4677,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // Covers https://bugzilla.xamarin.com/show_bug.cgi?id=52549
-#if FEATURE_NO_BSD_SOCKETS
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
 		public void SocketMismatchProtocol ()
 		{
 			try {
