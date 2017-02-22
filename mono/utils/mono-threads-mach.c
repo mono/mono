@@ -116,8 +116,8 @@ mono_threads_core_begin_async_resume (MonoThreadInfo *info)
 
 	if (info->async_target) {
 		MonoContext tmp = info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx;
-		mach_msg_type_number_t num_state;
-		thread_state_t state;
+		mach_msg_type_number_t num_state, num_fpstate;
+		thread_state_t state, fpstate;
 		ucontext_t uctx;
 		mcontext_t mctx;
 
@@ -126,13 +126,17 @@ mono_threads_core_begin_async_resume (MonoThreadInfo *info)
 		info->async_target = (void (*)(void *)) info->user_data;
 
 		state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
+		fpstate = (thread_state_t) alloca (mono_mach_arch_get_thread_fpstate_size ());
 		mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
-		ret = mono_mach_arch_get_thread_state (info->native_handle, state, &num_state);
+		do {
+			ret = mono_mach_arch_get_thread_states (info->native_handle, state, &num_state, fpstate, &num_fpstate);
+		} while (ret == KERN_ABORTED);
+
 		if (ret != KERN_SUCCESS)
 			return FALSE;
 
-		mono_mach_arch_thread_state_to_mcontext (state, mctx);
+		mono_mach_arch_thread_states_to_mcontext (state, fpstate, mctx);
 #ifdef TARGET_ARM64
 		g_assert_not_reached ();
 #else
@@ -140,9 +144,12 @@ mono_threads_core_begin_async_resume (MonoThreadInfo *info)
 #endif
 		mono_monoctx_to_sigctx (&tmp, &uctx);
 
-		mono_mach_arch_mcontext_to_thread_state (mctx, state);
+		mono_mach_arch_mcontext_to_thread_states (mctx, state, fpstate);
 
-		ret = mono_mach_arch_set_thread_state (info->native_handle, state, num_state);
+		do {
+			ret = mono_mach_arch_set_thread_states (info->native_handle, state, num_state, fpstate, num_fpstate);
+		} while (ret == KERN_ABORTED);
+
 		if (ret != KERN_SUCCESS)
 			return FALSE;
 	}

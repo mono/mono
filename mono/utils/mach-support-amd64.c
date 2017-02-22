@@ -56,21 +56,23 @@ mono_mach_arch_get_mcontext_size ()
 }
 
 void
-mono_mach_arch_thread_state_to_mcontext (thread_state_t state, void *context)
+mono_mach_arch_thread_states_to_mcontext (thread_state_t state, thread_state_t fpstate, void *context)
 {
 	x86_thread_state64_t *arch_state = (x86_thread_state64_t *) state;
+	x86_float_state64_t *arch_fpstate = (x86_float_state64_t *) fpstate;
 	struct __darwin_mcontext64 *ctx = (struct __darwin_mcontext64 *) context;
-
 	ctx->__ss = *arch_state;
+	ctx->__fs = *arch_fpstate;
 }
 
 void
-mono_mach_arch_mcontext_to_thread_state (void *context, thread_state_t state)
+mono_mach_arch_mcontext_to_thread_states (void *context, thread_state_t state, thread_state_t fpstate)
 {
 	x86_thread_state64_t *arch_state = (x86_thread_state64_t *) state;
+	x86_float_state64_t *arch_fpstate = (x86_float_state64_t *) fpstate;
 	struct __darwin_mcontext64 *ctx = (struct __darwin_mcontext64 *) context;
-
 	*arch_state = ctx->__ss;
+	*arch_fpstate = ctx->__fs;
 }
 
 int
@@ -79,23 +81,39 @@ mono_mach_arch_get_thread_state_size ()
 	return sizeof (x86_thread_state64_t);
 }
 
-kern_return_t
-mono_mach_arch_get_thread_state (thread_port_t thread, thread_state_t state, mach_msg_type_number_t *count)
+int
+mono_mach_arch_get_thread_fpstate_size ()
 {
-	x86_thread_state64_t *arch_state = (x86_thread_state64_t *) state;
+	return sizeof (x86_float_state64_t);
+}
+
+kern_return_t
+mono_mach_arch_get_thread_states (thread_port_t thread, thread_state_t state, mach_msg_type_number_t *count, thread_state_t fpstate, mach_msg_type_number_t *fpcount)
+{
+	x86_thread_state64_t *arch_state = (x86_thread_state64_t *)state;
+	x86_float_state64_t *arch_fpstate = (x86_float_state64_t *)fpstate;
 	kern_return_t ret;
 
 	*count = x86_THREAD_STATE64_COUNT;
+	*fpcount = x86_FLOAT_STATE64_COUNT;
 
-	ret = thread_get_state (thread, x86_THREAD_STATE64, (thread_state_t) arch_state, count);
+	ret = thread_get_state (thread, x86_THREAD_STATE64, (thread_state_t)arch_state, count);
+	if (ret != KERN_SUCCESS)
+		return ret;
 
+	ret = thread_get_state (thread, x86_FLOAT_STATE64, (thread_state_t)arch_fpstate, fpcount);
 	return ret;
 }
 
 kern_return_t
-mono_mach_arch_set_thread_state (thread_port_t thread, thread_state_t state, mach_msg_type_number_t count)
+mono_mach_arch_set_thread_states (thread_port_t thread, thread_state_t state, mach_msg_type_number_t count, thread_state_t fpstate, mach_msg_type_number_t fpcount)
 {
-	return thread_set_state (thread, x86_THREAD_STATE64, state, count);
+	kern_return_t ret;
+	ret = thread_set_state (thread, x86_THREAD_STATE64, state, count);
+	if (ret != KERN_SUCCESS)
+		return ret;
+	ret = thread_set_state (thread, x86_FLOAT_STATE64, fpstate, fpcount);
+	return ret;
 }
 
 void *
