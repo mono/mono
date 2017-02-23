@@ -37,10 +37,13 @@ namespace System.IO {
     // from an unsigned byte array, or you can create an empty one.  Empty 
     // memory streams are resizable, while ones created with a byte array provide
     // a stream "view" of the data.
+#if !MONO
     [Serializable]
     [ComVisible(true)]
-    public class MemoryStream : Stream
+#endif
+    public partial class MemoryStream : Stream
     {
+#if !MONO
         private byte[] _buffer;    // Either allocated internally or externally.
         private int _origin;       // For user-provided arrays, start at this origin
         private int _position;     // read/write head.
@@ -233,6 +236,7 @@ namespace System.IO {
         internal byte[] InternalGetBuffer() {
             return _buffer;
         }
+#endif // !MONO
 
         // PERF: Get origin and length - used in ResourceWriter.
         [FriendAccessAllowed]
@@ -243,6 +247,7 @@ namespace System.IO {
             length = _length;
         }
 
+#if !MONO
         // PERF: True cursor position, we don't need _origin for direct access
         internal int InternalGetPosition() {
             if (!_isOpen) __Error.StreamIsClosed();
@@ -548,11 +553,6 @@ namespace System.IO {
         }
         
         public virtual byte[] ToArray() {
-#if MONO
-            // Bug fix for BCL bug when _buffer is null
-            if (_length - _origin == 0)
-                return EmptyArray<byte>.Value;
-#endif
             BCLDebug.Perf(_exposable, "MemoryStream::GetBuffer will let you avoid a copy.");
             byte[] copy = new byte[_length - _origin];
             Buffer.InternalBlockCopy(_buffer, _origin, copy, 0, _length - _origin);
@@ -665,6 +665,7 @@ namespace System.IO {
             if (!_isOpen) __Error.StreamIsClosed();
             stream.Write(_buffer, _origin, _length - _origin);
         }
+#endif // !MONO
 
 #if CONTRACTS_FULL
         [ContractInvariantMethod]
