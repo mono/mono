@@ -13,6 +13,7 @@ namespace System.Data {
     using System.Data;
     using System.Runtime.Serialization;
 
+#if !COREFX
     /// <devdoc>
     ///    <para>DEV: The exception that is throwing from strong typed DataSet when user access to DBNull value.</para>
     /// </devdoc>
@@ -39,7 +40,7 @@ namespace System.Data {
             HResult = HResults.StrongTyping;
         }
     }
-
+#endif
 
     /// <devdoc>
     ///    <para>DEV: The exception that is throwing in generating strong typed DataSet when name conflict happens.</para>

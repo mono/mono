@@ -160,7 +160,7 @@ System.Data.Common/DbConnectionStringBuilderHelper.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolCounters.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPool.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolGroup.cs
-../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolGroupProviderInfo.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolGroupProviderInfo.cs
 ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolIdentity.cs
 # ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
 # ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
