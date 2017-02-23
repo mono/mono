@@ -373,8 +373,13 @@ namespace Mono.CSharp {
 					var entry_pm = entry as IParametersMember;
 					if (entry_pm != null) {
 						entry_param = entry_pm.Parameters;
-						if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
-							continue;
+						if (entry.DeclaringType != member.DeclaringType) {
+							if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
+								continue;
+						} else {
+							if (!TypeSpecComparer.Equals (entry_param, member_param))
+								continue;
+						}
 					}
 				}
 
