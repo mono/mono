@@ -1,0 +1,3 @@
+check-coverage	crlf=input
+check-exports	crlf=input
+produce-lists	crlf=input
