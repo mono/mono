@@ -254,7 +254,6 @@ namespace Microsoft.Build.BuildEngine {
 					      IDictionary targetOutputs,
 					      BuildSettings buildFlags, string toolsVersion)
 		{
-
 			if ((buildFlags & BuildSettings.DoNotResetPreviouslyBuiltTargets) != BuildSettings.DoNotResetPreviouslyBuiltTargets)
 				builtTargetsOutputByName.Clear ();
 
@@ -264,6 +263,14 @@ namespace Microsoft.Build.BuildEngine {
 			if (!projects.TryGetValue (projectFile, out project)) {
 				project = CreateNewProject ();
 				newProject = true;
+			} else {
+				// If the project is already loaded, maybe this target was already invoked and the results cached
+				var cachedResults = project.GetCachedBuildResults (targetNames, globalProperties, buildFlags, toolsVersion);
+				if (cachedResults != null) {
+					foreach (DictionaryEntry e in cachedResults)
+						targetOutputs.Add (e.Key, e.Value);
+					return true;
+				}
 			}
 
 			BuildPropertyGroup engine_old_grp = null;
@@ -296,7 +303,18 @@ namespace Microsoft.Build.BuildEngine {
 					project.ToolsVersion = toolsVersion;
 
 				try {
-					return project.Build (targetNames, targetOutputs, buildFlags);
+					// Create a new hashtable where to store the results. We need a new table because we may
+					// need to cache the results
+					Hashtable t = new Hashtable ();
+					var result = project.Build (targetNames, t, buildFlags);
+
+					foreach (DictionaryEntry e in t)
+						targetOutputs [e.Key] = e.Value;
+
+					// If the target execution was successful, cache the results
+					if (result)
+						project.CacheBuildResults (targetNames, globalProperties, buildFlags, toolsVersion, t);
+					return result;
 				} finally {
 					project.ToolsVersion = oldProjectToolsVersion;
 				}
