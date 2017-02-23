@@ -12087,7 +12087,7 @@ mono_icall_start (HandleStackMark *stackmark, MonoError *error)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	mono_stack_mark_init (info, stackmark);
-	mono_error_init (error);
+	error_init (error);
 	return info;
 }
 
@@ -12095,5 +12095,6 @@ static void
 mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error)
 {
 	mono_stack_mark_pop (info, stackmark);
-	mono_error_set_pending_exception (error);
+	if (G_UNLIKELY (!is_ok (error)))
+		mono_error_set_pending_exception (error);
 }
