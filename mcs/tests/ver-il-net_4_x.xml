@@ -65761,7 +65761,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithReturn&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>377</size>
+        <size>382</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65769,7 +65769,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithReturnNoValue&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>347</size>
+        <size>352</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65777,7 +65777,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithGoto&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>370</size>
+        <size>375</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65785,7 +65785,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithGotoAndReturn&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>407</size>
+        <size>417</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65820,7 +65820,7 @@
     </type>
     <type name="Test+&lt;TestNestedReturn&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>845</size>
+        <size>855</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65828,7 +65828,7 @@
     </type>
     <type name="Test+&lt;TestNestedGoto&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>848</size>
+        <size>858</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65884,7 +65884,7 @@
     </type>
     <type name="Test+&lt;BreakTest&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>898</size>
+        <size>903</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65892,7 +65892,7 @@
     </type>
     <type name="Test+&lt;ContinueTest&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>898</size>
+        <size>903</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -66269,7 +66269,7 @@
     </type>
     <type name="X+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>269</size>
+        <size>274</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -66606,6 +66606,35 @@
     <type name="X+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>290</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-91.cs">
+    <type name="C">
+      <method name="Void Dispose()" attrs="486">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass">
+      <method name="System.Threading.Tasks.Task Test()" attrs="150">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>48</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>309</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
