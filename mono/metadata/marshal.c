@@ -8673,7 +8673,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	EmitMarshalContext m;
 
 	g_assert (method != NULL);
-	mono_error_init (error);
+	error_init (error);
 
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		mono_error_set_invalid_program (error, "Failed because method (%s) marked PInvokeCallback (managed method) and extern (unmanaged) simultaneously.", mono_method_full_name (method, TRUE));
@@ -10556,7 +10556,7 @@ mono_marshal_alloc (gulong size, MonoError *error)
 {
 	gpointer res;
 
-	mono_error_init (error);
+	error_init (error);
 
 	res = mono_marshal_alloc_co_task_mem (size);
 	if (!res)
@@ -10739,7 +10739,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr,
 {
 	MonoError error;
 	MonoString *result = NULL;
-	mono_error_init (&error);
+	error_init (&error);
 	if (ptr == NULL)
 		mono_error_set_argument_null (&error, "ptr", "");
 	else
@@ -10778,7 +10778,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (guint16 *pt
 	MonoString *res = NULL;
 	MonoDomain *domain = mono_domain_get (); 
 
-	mono_error_init (&error);
+	error_init (&error);
 
 	if (ptr == NULL) {
 		res = NULL;
@@ -10859,7 +10859,7 @@ ptr_to_structure (gpointer src, MonoObject *dst, MonoError *error)
 	MonoMethod *method;
 	gpointer pa [2];
 
-	mono_error_init (error);
+	error_init (error);
 
 	method = mono_marshal_get_ptr_to_struct (dst->vtable->klass);
 
@@ -12087,7 +12087,7 @@ mono_icall_start (HandleStackMark *stackmark, MonoError *error)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	mono_stack_mark_init (info, stackmark);
-	mono_error_init (error);
+	error_init (error);
 	return info;
 }
 
