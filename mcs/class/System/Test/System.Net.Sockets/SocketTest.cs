@@ -4541,10 +4541,8 @@ namespace MonoTests.System.Net.Sockets
 					mSent.Set ();
 				}, clientSocket);
 
-				if (!mSent.WaitOne (1500))
-					throw new TimeoutException ();
-				if (!mReceived.WaitOne (1500))
-					throw new TimeoutException ();
+				Assert.IsTrue (mSent.WaitOne (5000), "#1");
+				Assert.IsTrue (mReceived.WaitOne (5000), "#2");
 			} finally {
 				if (File.Exists (temp))
 					File.Delete (temp);
