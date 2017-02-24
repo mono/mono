@@ -28,8 +28,6 @@ LIB_MCS_FLAGS = $(SIGN_FLAGS)
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
-# don't install for now until we know more about when it ships in .NET
-NO_INSTALL = yes
 
 include $(MCS_BUILD_DIR)/library.make
 

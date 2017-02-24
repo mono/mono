@@ -41,7 +41,7 @@ monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
 testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS) netstandard
+net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
 
 basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
