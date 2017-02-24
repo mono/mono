@@ -12083,5 +12083,6 @@ static void
 mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error)
 {
 	mono_stack_mark_pop (info, stackmark);
-	mono_error_set_pending_exception (error);
+	if (G_UNLIKELY (!is_ok (error)))
+		mono_error_set_pending_exception (error);
 }
