@@ -189,6 +189,14 @@ typedef struct MonoCompileArch {
 } MonoCompileArch;
 
 typedef struct {
+	double lo;
+	/* technically we should save/resume all 128 bits but nothing is 
+	 * setup to handle this currently
+	 * double hi;
+	 */
+} MonoContextSimdReg;
+
+typedef struct {
 	guint64 rax;
 	guint64 rbx;
 	guint64 rcx;
@@ -206,22 +214,8 @@ typedef struct {
 	guint64 r13;
 	guint64 r14;
 	guint64 r15;
-	guint64 xmm0_low;
-	guint64 xmm1_low;
-	guint64 xmm2_low;
-	guint64 xmm3_low;
-	guint64 xmm4_low;
-	guint64 xmm5_low;
-	guint64 xmm6_low;
-	guint64 xmm7_low;
-	guint64 xmm8_low;
-	guint64 xmm9_low;
-	guint64 xmm10_low;
-	guint64 xmm11_low;
-	guint64 xmm12_low;
-	guint64 xmm13_low;
-	guint64 xmm14_low;
-	guint64 xmm15_low;
+	MonoContextSimdReg fregs[AMD64_XMM_NREG];
+	gboolean has_fregs;
 } MonoContext;
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->rip = (guint64)(ip); } while (0); 
