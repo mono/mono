@@ -377,7 +377,7 @@ namespace Mono.CSharp {
 							if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
 								continue;
 						} else {
-							if (!TypeSpecComparer.Equals (entry_param, member_param))
+							if (!TypeSpecComparer.Equals (entry_param.Types, member_param.Types))
 								continue;
 						}
 					}
