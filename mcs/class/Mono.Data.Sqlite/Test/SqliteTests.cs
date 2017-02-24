@@ -64,6 +64,38 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 
 		[Test]
+		public void DateTimeConvert_UTC ()
+		{
+			using (var connection = new SqliteConnection ($"Data Source={_databasePath};DateTimeKind=Utc")) {
+				connection.Open ();
+
+				using (var cmd = connection.CreateCommand ()) {
+					cmd.CommandText = "CREATE TABLE OnlyDates (Date1 DATETIME)";
+					cmd.CommandType = CommandType.Text;
+					cmd.ExecuteNonQuery();
+				}
+
+				var datetest = DateTime.UtcNow;
+
+				var sqlInsert = "INSERT INTO TestTable (ID, Modified) VALUES (@id, @mod)";
+				using (var cmd = connection.CreateCommand ()) {
+					cmd.CommandText = $"INSERT INTO OnlyDates (Date1) VALUES (@param1);";
+					cmd.CommandType = CommandType.Text;
+					cmd.Parameters.AddWithValue ("@param1", datetest);
+					cmd.ExecuteNonQuery();
+				}
+
+				using (var cmd = connection.CreateCommand ()) {
+					cmd.CommandText = $"SELECT Date1 FROM OnlyDates;";
+					cmd.CommandType = CommandType.Text;
+					object objRetrieved = cmd.ExecuteScalar ();
+					var dateRetrieved = Convert.ToDateTime (objRetrieved);
+					Assert.AreEqual (DateTimeKind.Unspecified, dateRetrieved.Kind);
+				}
+			}
+		}
+
+		[Test]
 		public void DateTimeConvert ()
 		{
 			var dateTime = new DateTime (2016, 9, 15, 12, 1, 53);
