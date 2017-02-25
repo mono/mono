@@ -353,6 +353,7 @@ section_name (int section)
 	case MONO_COUNTER_SECURITY: return "Mono Security";
 	case MONO_COUNTER_RUNTIME: return "Mono Runtime";
 	case MONO_COUNTER_SYSTEM: return "Mono System";
+	case MONO_COUNTER_PROFILER: return "Mono Profiler";
 	default: return "<unknown>";
 	}
 }
@@ -2255,8 +2256,6 @@ decode_buffer (ProfContext *ctx)
 			time_from += startup_time;
 			time_to += startup_time;
 		}
-		if (!thread->name)
-			thread->name = pstrdup ("Main");
 	}
 	for (i = 0; i < thread->stack_id; ++i)
 		thread->stack [i]->recurse_count++;
@@ -3151,7 +3150,9 @@ dump_threads (ProfContext *ctx)
 	ThreadContext *thread;
 	fprintf (outfile, "\nThread summary\n");
 	for (thread = ctx->threads; thread; thread = thread->next) {
-		fprintf (outfile, "\tThread: %p, name: \"%s\"\n", (void*)thread->thread_id, thread->name? thread->name: "");
+		if (thread->thread_id) {
+			fprintf (outfile, "\tThread: %p, name: \"%s\"\n", (void*)thread->thread_id, thread->name? thread->name: "");
+		}
 	}
 }
 

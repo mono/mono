@@ -1031,8 +1031,6 @@ mono_thread_attach_cb (intptr_t tid, gpointer stack_start)
 	thread = mono_thread_info_current_unchecked ();
 	if (thread)
 		thread->jit_data = jit_tls;
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
-		mono_runtime_setup_stat_profiler ();
 
 	mono_arch_cpu_init ();
 }
@@ -3671,6 +3669,9 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_thread_attach (domain);
 #endif
 
+	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+		mono_runtime_setup_stat_profiler ();
+
 	mono_profiler_runtime_initialized ();
 
 	MONO_VES_INIT_END ();
@@ -4013,11 +4014,11 @@ mini_cleanup (MonoDomain *domain)
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
 
-	mono_profiler_shutdown ();
-
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
 #endif
+
+	mono_profiler_shutdown ();
 
 	free_jit_tls_data ((MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id));
 

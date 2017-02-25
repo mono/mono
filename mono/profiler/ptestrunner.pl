@@ -6,7 +6,8 @@ use strict;
 
 my $builddir = shift || die "Usage: ptestrunner.pl mono_build_dir\n";
 my @errors = ();
-my $total_errors = 0;
+my $total_errors = 0; # this is reset before each test
+my $global_errors = 0;
 my $report;
 
 my $profbuilddir = $builddir . "/mono/profiler";
@@ -14,8 +15,6 @@ my $minibuilddir = $builddir . "/mono/mini";
 
 # Setup the execution environment
 # for the profiler module
-append_path ("LD_LIBRARY_PATH", $profbuilddir . "/.libs");
-append_path ("DYLD_LIBRARY_PATH", $profbuilddir . "/.libs");
 append_path ("DYLD_LIBRARY_PATH", $minibuilddir . "/.libs");
 # for mprof-report
 append_path ("PATH", $profbuilddir);
@@ -106,7 +105,7 @@ report_errors ();
 
 emit_nunit_report();
 
-exit ($total_errors? 1: 0);
+exit ($global_errors ? 1 : 0);
 
 # utility functions
 sub append_path {
@@ -156,6 +155,7 @@ sub report_errors
 	foreach my $e (@errors) {
 		print "Error: $e\n";
 		$total_errors++;
+		$global_errors++;
 	}
 	print "Total errors: $total_errors\n" if $total_errors;
 	#print $report;
@@ -168,7 +168,7 @@ sub emit_nunit_report
 	use Net::Domain qw(hostname hostfqdn);
 	use locale;
 
-	my $failed = $total_errors ? 1 : 0;
+	my $failed = $global_errors ? 1 : 0;
 	my $successbool;
 	my $total = 1;
 	my $mylocale = setlocale (LC_CTYPE);

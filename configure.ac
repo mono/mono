@@ -1081,6 +1081,7 @@ if test x$host_win32 = xno; then
 
 	dnl hires monotonic clock support
 	AC_SEARCH_LIBS(clock_gettime, rt)
+	AC_CHECK_FUNCS(clock_nanosleep)
 
 	dnl dynamic loader support
 	AC_CHECK_FUNC(dlopen, DL_LIB="",

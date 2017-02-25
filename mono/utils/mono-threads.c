@@ -424,7 +424,10 @@ unregister_thread (void *arg)
 	g_byte_array_free (info->stackdata, /*free_segment=*/TRUE);
 
 	/*now it's safe to free the thread info.*/
-	mono_thread_hazardous_free_or_queue (info, free_thread_info, HAZARD_FREE_MAY_LOCK, HAZARD_FREE_SAFE_CTX);
+	mono_thread_hazardous_try_free (info, free_thread_info);
+	/* Pump the HP queue */
+	mono_thread_hazardous_try_free_some ();
+
 	mono_thread_small_id_free (small_id);
 }
 
@@ -1301,12 +1304,6 @@ mono_threads_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 	return mono_threads_core_open_thread_handle (handle, tid);
 }
 
-void
-mono_thread_info_set_name (MonoNativeThreadId tid, const char *name)
-{
-	mono_threads_core_set_name (tid, name);
-}
-
 #define INTERRUPT_STATE ((MonoThreadInfoInterruptToken*) (size_t) -1)
 
 struct _MonoThreadInfoInterruptToken {
@@ -1505,28 +1502,4 @@ mono_thread_info_describe_interrupt_token (MonoThreadInfo *info, GString *text)
 		g_string_append_printf (text, "interrupted state");
 	else
 		g_string_append_printf (text, "waiting");
-}
-
-/* info must be self or be held in a hazard pointer. */
-gboolean
-mono_threads_add_async_job (MonoThreadInfo *info, MonoAsyncJob job)
-{
-	MonoAsyncJob old_job;
-	do {
-		old_job = (MonoAsyncJob) info->service_requests;
-		if (old_job & job)
-			return FALSE;
-	} while (InterlockedCompareExchange (&info->service_requests, old_job | job, old_job) != old_job);
-	return TRUE;
-}
-
-MonoAsyncJob
-mono_threads_consume_async_jobs (void)
-{
-	MonoThreadInfo *info = (MonoThreadInfo*)mono_native_tls_get_value (thread_info_key);
-
-	if (!info)
-		return (MonoAsyncJob) 0;
-
-	return (MonoAsyncJob) InterlockedExchange (&info->service_requests, 0);
 }

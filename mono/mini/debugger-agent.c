@@ -9597,8 +9597,10 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	mono_jit_thread_attach (mono_get_root_domain ());
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	mono_thread_set_name_internal (thread, mono_string_new (mono_get_root_domain (), "Debugger agent"), TRUE);
 
-	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
 	mono_set_is_debugger_attached (TRUE);
 	
