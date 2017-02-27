@@ -336,10 +336,20 @@ namespace MonoTests.System.Net
 			DownloadFile (new ServerDownload (true));
 		}
 
-		void DownloadFile (ServerDownload sp)
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void DownloadFileNonLatinChars ()
+		{
+			string filename = "\u0411\u0430\u0448\u043DRowan-\u041F\u0435\u0441\u043D\u043F\u0440\u043E\u043C\u043E\u043D\u0430\u0445\u0430\u0422\u0435\u043E\u0434\u043E\u0440\u0443\u0441\u0430\u0438\u0437\u0413\u0430\u043C\u043C\u0435\u043B\u044C\u043D\u0430.mp3";
+			DownloadFile (new ServerDownload (null, null, filename, false), "ftp://{0}:{1}/" + filename);
+		}
+
+		void DownloadFile (ServerDownload sp, string uriTemplate = "ftp://{0}:{1}/file.txt")
 		{
 			sp.Start ();
-			string uri = String.Format ("ftp://{0}:{1}/file.txt", EncloseIPv6 (sp.IPAddress), sp.Port);
+			string uri = String.Format (uriTemplate, EncloseIPv6 (sp.IPAddress), sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
 				ftp.KeepAlive = false;
@@ -370,7 +380,7 @@ namespace MonoTests.System.Net
 		{
 			// Some embedded FTP servers in Industrial Automation Hardware report
 			// the PWD using backslashes, but allow forward slashes for CWD.
-			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", false));
+			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", null, false));
 		}
 
 		[Test]
@@ -381,7 +391,7 @@ namespace MonoTests.System.Net
 		{
 			// Some embedded FTP servers in Industrial Automation Hardware report
 			// the PWD using backslashes, but allow forward slashes for CWD.
-			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", true));
+			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", null, true));
 		}
 
 		[Test]
@@ -580,18 +590,19 @@ namespace MonoTests.System.Net
 
 		class ServerDownload : FtpServer {
 
-			string Pwd, Cwd;
+			string Pwd, Cwd, Filename;
 
 			public ServerDownload (bool ipv6)
-				: this (null, null, ipv6)
+				: this (null, null, null, ipv6)
 			{
 			}
 
-			public ServerDownload (string pwd, string cwd, bool ipv6)
+			public ServerDownload (string pwd, string cwd, string filename, bool ipv6)
 				: base (ipv6)
 			{
 				Pwd = pwd ?? "/home/someuser";
 				Cwd = cwd ?? "/home/someuser/";
+				Filename = filename ?? "file.txt";
 			}
 
 			protected override void Run ()
@@ -620,8 +631,8 @@ namespace MonoTests.System.Net
 				writer.Flush ();
 
 				str = reader.ReadLine ();
-				if (str != "RETR file.txt") {
-					Where = "RETR - " + str;
+				if (str != $"RETR {Filename}") {
+					Where = $"RETR - got: {str}, expected: RETR {Filename}";
 					client.Close ();
 					return;
 				}
