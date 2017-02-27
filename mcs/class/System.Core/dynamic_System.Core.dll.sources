@@ -13,7 +13,7 @@
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/CompilerScope.Storage.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/CompilerScope.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/ILGen.cs
-../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/KeyedQueue.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/KeyedStack.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/LabelInfo.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/LambdaCompiler.Address.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/LambdaCompiler.Binary.cs

@@ -90,7 +90,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\DelegateHelpers.netstandard.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\HoistedLocals.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedQueue.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />

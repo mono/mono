@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -1130,5 +1131,60 @@ namespace MonoTests.System.Diagnostics
 
 			string v = Process.GetProcessById (1).ProcessName;
 		}
+
+		[Test]
+		public void NonChildProcessWaitForExit ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			using (Process process = Process.GetProcessById (getppid ()))
+			using (ManualResetEvent mre = new ManualResetEvent (false))
+			{
+				Assert.IsFalse (process.WaitForExit (10), "#1");
+				Assert.IsFalse (process.HasExited, "#2");
+				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#3");
+
+				process.Exited += (s, e) => mre.Set ();
+				process.EnableRaisingEvents = true;
+				Assert.IsFalse (mre.WaitOne (100), "#4");
+
+				Assert.IsFalse (process.WaitForExit (10), "#5");
+				Assert.IsFalse (process.HasExited, "#6");
+				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#7");
+			}
+		}
+
+		[Test]
+		public void NonChildProcessName ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			using (Process process = Process.GetProcessById (getppid ()))
+			{
+				string pname = process.ProcessName;
+				Assert.IsNotNull (pname, "#1");
+				AssertHelper.IsNotEmpty (pname, "#2");
+			}
+		}
+
+		[Test]
+		public void NonChildProcessId ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			int ppid;
+			using (Process process = Process.GetProcessById (ppid = getppid ()))
+			{
+				int pid = process.Id;
+				Assert.AreEqual (ppid, pid, "#1");
+				AssertHelper.Greater (pid, 0, "#2");
+			}
+		}
+
+		[DllImport ("libc")]
+		static extern int getppid();
 	}
 }

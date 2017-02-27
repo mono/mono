@@ -134,7 +134,7 @@ testing.
 					code ();
 				}
 
-		* Avoid using unecessary open/close braces, vertical space
+		* Avoid using unnecessary open/close braces, vertical space
 		  is usually limited:
 
 			good:

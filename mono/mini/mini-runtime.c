@@ -66,6 +66,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/w32handle.h>
+#include <mono/metadata/threadpool.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -87,6 +88,10 @@
 #include "mini-llvm-cpp.h"
 #include "llvm-jit.h"
 #endif
+#endif
+
+#ifdef ENABLE_INTERPRETER
+#include "interpreter/interp.h"
 #endif
 
 static guint32 default_opt = 0;
@@ -1284,7 +1289,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	unsigned char *ip = patch_info->ip.i + code;
 	gconstpointer target = NULL;
 
-	mono_error_init (error);
+	error_init (error);
 
 	switch (patch_info->type) {
 	case MONO_PATCH_INFO_BB:
@@ -1765,11 +1770,11 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoError *er
 	MonoJitICallInfo *callinfo = NULL;
 	WrapperInfo *winfo = NULL;
 
-	mono_error_init (error);
+	error_init (error);
 
 #ifdef ENABLE_INTERPRETER
 	if (mono_use_interpreter)
-		return interp_create_method_pointer (method, error);
+		return mono_interp_create_method_pointer (method, error);
 #endif
 
 	if (mono_llvm_only)
@@ -2273,7 +2278,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
 	gpointer *param_refs;
 	int i, pindex;
 
-	mono_error_init (error);
+	error_init (error);
 
 	g_assert (info->gsharedvt_invoke);
 
@@ -2359,10 +2364,10 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 
 #ifdef ENABLE_INTERPRETER
 	if (mono_use_interpreter)
-		return interp_mono_runtime_invoke (method, obj, params, exc, error);
+		return mono_interp_runtime_invoke (method, obj, params, exc, error);
 #endif
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (obj == NULL && !(method->flags & METHOD_ATTRIBUTE_STATIC) && !method->string_ctor && (method->wrapper_type == 0)) {
 		g_warning ("Ignoring invocation of an instance method on a NULL instance.\n");
@@ -2903,7 +2908,7 @@ mono_jit_create_remoting_trampoline (MonoDomain *domain, MonoMethod *method, Mon
 	MonoMethod *nm;
 	guint8 *addr = NULL;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) && mono_method_signature (method)->generic_param_count) {
 		return mono_create_specific_trampoline (method, MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING,
@@ -4105,6 +4110,8 @@ mini_cleanup (MonoDomain *domain)
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
 #endif
+
+	mono_threadpool_cleanup ();
 
 	mono_profiler_shutdown ();
 

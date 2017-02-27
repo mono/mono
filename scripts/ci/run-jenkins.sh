@@ -50,7 +50,7 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"
 	#force build arch = dpkg arch, sometimes misdetected
 	mkdir -p ~/.config/.mono/
-	wget -qO- http://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
 ${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS

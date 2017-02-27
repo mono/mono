@@ -2071,7 +2071,7 @@ mono_main (int argc, char* argv[])
 	case DO_REGRESSION:
 #ifdef ENABLE_INTERPRETER
 		if (mono_use_interpreter) {
-			if (interp_regression_list (2, argc -i, argv + i)) {
+			if (mono_interp_regression_list (2, argc -i, argv + i)) {
 				g_print ("Regression ERRORS!\n");
 				// mini_cleanup (domain);
 				return 1;
@@ -2112,10 +2112,6 @@ mono_main (int argc, char* argv[])
 		aname = argv [i];
 		break;
 	default:
-#ifdef ENABLE_INTERPRETER
-		if (mono_use_interpreter)
-			g_error ("not yet");
-#endif
 		if (argc - i < 1) {
 			mini_usage ();
 			mini_cleanup (domain);

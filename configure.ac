@@ -884,10 +884,6 @@ elif test x$with_runtime_preset = xhybridaot; then
    with_testing_aot_hybrid_default=yes
    TEST_PROFILE=testing_aot_hybrid 
 
-   mono_feature_disable_com='yes'
-   mono_feature_disable_remoting='yes'
-   mono_feature_disable_appdomains='yes'
-
    AOT_BUILD_FLAGS="--aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--hybrid-aot"
 elif test x$with_runtime_preset = xaot; then
@@ -4108,6 +4104,8 @@ if test "x$enable_btls" = "xyes"; then
 		BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=$BTLS_ROOT/util/android-cmake/android.toolchain.cmake"
 		if test "x$with_btls_android_ndk" != "x"; then
 			BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DANDROID_NDK=\"$with_btls_android_ndk\""
+		else
+			AC_MSG_ERROR([Need to pass the --with-btls-android-ndk argument when building with BTLS support on Android.])
 		fi
 	fi
 

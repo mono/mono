@@ -58,10 +58,12 @@
 #include <mono/metadata/mono-debug.h>
 
 #include "interp.h"
+#include "interp-internals.h"
 #include "mintops.h"
 #include "hacks.h"
 
 #include <mono/mini/mini.h>
+#include <mono/mini/jit-icalls.h>
 
 
 /* Mingw 2.1 doesnt need this any more, but leave it in for now for older versions */
@@ -105,7 +107,7 @@ static char* dump_args (MonoInvocation *inv);
 #if DEBUG_INTERP
 int mono_interp_traceopt = 2;
 /* If true, then we output the opcodes as we interpret them */
-static int global_tracing = 1;
+static int global_tracing = 2;
 
 static int debug_indent_level = 0;
 
@@ -257,7 +259,7 @@ RuntimeMethod*
 mono_interp_get_runtime_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 {
 	RuntimeMethod *rtm;
-	mono_error_init (error);
+	error_init (error);
 
 	mono_os_mutex_lock (&runtime_method_lookup_section);
 	if ((rtm = mono_internal_hash_table_lookup (&domain->jit_code_hash, method))) {
@@ -303,6 +305,8 @@ get_virtual_method (MonoDomain *domain, RuntimeMethod *runtime_method, MonoObjec
 		}
 		return ret;
 	}
+
+	mono_class_setup_vtable (obj->vtable->klass);
 
 	int slot = mono_method_get_vtable_slot (m);
 	if (mono_class_is_interface (m->klass)) {
@@ -384,15 +388,11 @@ stackval_from_data (MonoType *type, stackval *result, char *data, gboolean pinvo
 		if (type->data.klass->enumtype) {
 			stackval_from_data (mono_class_enum_basetype (type->data.klass), result, data, pinvoke);
 			return;
-		} else {
-			int size;
-			
-			if (pinvoke)
-				size = mono_class_native_size (type->data.klass, NULL);
-			else
-				size = mono_class_value_size (type->data.klass, NULL);
-			memcpy (result->data.vt, data, size);
-		}
+		} else
+			mono_value_copy (result->data.vt, data, type->data.klass);
+		return;
+	case MONO_TYPE_GENERICINST:
+		stackval_from_data (&type->data.generic_class->container_class->byval_arg, result, data, pinvoke);
 		return;
 	default:
 		g_warning ("got type 0x%02x", type->type);
@@ -479,16 +479,8 @@ stackval_to_data (MonoType *type, stackval *val, char *data, gboolean pinvoke)
 		if (type->data.klass->enumtype) {
 			stackval_to_data (mono_class_enum_basetype (type->data.klass), val, data, pinvoke);
 			return;
-		} else {
-			int size;
-
-			if (pinvoke)
-				size = mono_class_native_size (type->data.klass, NULL);
-			else
-				size = mono_class_value_size (type->data.klass, NULL);
-
-			memcpy (data, val->data.p, size);
-		}
+		} else
+			mono_value_copy (data, val->data.vt, type->data.klass);
 		return;
 	case MONO_TYPE_GENERICINST:
 		stackval_to_data (&type->data.generic_class->container_class->byval_arg, val, data, pinvoke);
@@ -756,6 +748,7 @@ static MethodArguments* build_args_from_sig (MonoMethodSignature *sig, MonoInvoc
 		case MONO_TYPE_OBJECT:
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_I8:
+		case MONO_TYPE_VALUETYPE:
 			margs->ilen++;
 			break;
 		default:
@@ -766,8 +759,8 @@ static MethodArguments* build_args_from_sig (MonoMethodSignature *sig, MonoInvoc
 	if (margs->ilen > 0)
 		margs->iargs = g_malloc0 (sizeof (gpointer) * margs->ilen);
 
-	if (margs->ilen > 3)
-		g_error ("build_args_from_sig: TODO, more than two iregs: %d\n", margs->ilen);
+	if (margs->ilen > 6)
+		g_error ("build_args_from_sig: TODO, more than 6 iregs: %d\n", margs->ilen);
 
 	if (margs->flen > 0)
 		g_error ("build_args_from_sig: TODO, allocate floats: %d\n", margs->flen);
@@ -799,6 +792,7 @@ static MethodArguments* build_args_from_sig (MonoMethodSignature *sig, MonoInvoc
 		case MONO_TYPE_OBJECT:
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_I8:
+		case MONO_TYPE_VALUETYPE:
 			margs->iargs [int_i] = frame->stack_args [i].data.p;
 #if DEBUG_INTERP
 			g_print ("build_args_from_sig: margs->iargs[%d]: %p (frame @ %d)\n", int_i, margs->iargs[int_i], i);
@@ -1221,7 +1215,7 @@ get_trace_ips (MonoDomain *domain, MonoInvocation *top)
 #endif
 
 MonoObject*
-interp_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
+mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
 {
 	MonoInvocation frame;
 	ThreadContext * volatile context = mono_native_tls_get_value (thread_context_id);
@@ -1236,7 +1230,7 @@ interp_mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 	MonoInvocation *old_frame = NULL;
 	jmp_buf env;
 
-	mono_error_init (error);
+	error_init (error);
 
 	frame.ex = NULL;
 
@@ -1472,8 +1466,32 @@ static mono_mutex_t create_method_pointer_mutex;
 
 static GHashTable *method_pointer_hash = NULL;
 
+static MonoMethod *method_pointers [2] = {0};
+
+static MonoObject *
+mp_tramp_0 (MonoObject *this_obj, void **params, MonoObject **exc, void *compiled_method) {
+	MonoError error;
+	void *params_real[] = {this_obj, &params, &exc, &compiled_method};
+	MonoObject *ret = mono_interp_runtime_invoke (method_pointers [0], NULL, params_real, NULL, &error);
+	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	return ret;
+}
+
+static MonoObject *
+mp_tramp_1 (MonoObject *this_obj, void **params, MonoObject **exc, void *compiled_method) {
+	MonoError error;
+	void *params_real[] = {this_obj, &params, &exc, &compiled_method};
+	MonoObject *ret = mono_interp_runtime_invoke (method_pointers [1], NULL, params_real, NULL, &error);
+	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	return ret;
+}
+
+gpointer *mp_tramps[] = {(gpointer) mp_tramp_0, (gpointer) mp_tramp_1};
+
+static int tramps_used = 0;
+
 gpointer
-interp_create_method_pointer (MonoMethod *method, MonoError *error)
+mono_interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
 	gpointer addr;
 	MonoJitInfo *ji;
@@ -1503,10 +1521,13 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 		mono_jit_info_table_add (mono_get_root_domain (), ji);
 	}		
 	else {
-		g_error ("FIXME: not available? figure out new API");
-#if 0
-		addr = mono_arch_create_method_pointer (method);
-#endif
+		g_assert (method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE);
+		g_assert (tramps_used < 2);
+
+		/* FIXME: needs locking */
+		method_pointers [tramps_used] = method;
+		addr = mp_tramps [tramps_used];
+		tramps_used++;
 	}
 
 	g_hash_table_insert (method_pointer_hash, method, addr);
@@ -1800,7 +1821,9 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			if (csignature->hasthis)
 				--sp;
 			child_frame.stack_args = sp;
-			if (csignature->hasthis && mono_object_is_transparent_proxy (sp->data.p)) {
+
+			/* `this' can be NULL for string:.ctor */
+			if (csignature->hasthis && sp->data.p && mono_object_is_transparent_proxy (sp->data.p)) {
 				child_frame.runtime_method = mono_interp_get_runtime_method (context->domain, mono_marshal_get_remoting_invoke (child_frame.runtime_method->method), &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			} else if (child_frame.runtime_method->method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
@@ -1885,7 +1908,9 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			if (child_frame.runtime_method->hasthis)
 				--sp;
 			child_frame.stack_args = sp;
-			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && mono_object_is_transparent_proxy (sp->data.p)) {
+
+			/* `this' can be NULL for string:.ctor */
+			if (child_frame.runtime_method->hasthis && !child_frame.runtime_method->valuetype && sp->data.p && mono_object_is_transparent_proxy (sp->data.p)) {
 				child_frame.runtime_method = mono_interp_get_runtime_method (context->domain, mono_marshal_get_remoting_invoke (child_frame.runtime_method->method), &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
@@ -1960,7 +1985,9 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.runtime_method = get_virtual_method (context->domain, child_frame.runtime_method, this_arg);
 
 			if (this_arg->vtable->klass->valuetype && child_frame.runtime_method->valuetype) {
-				sp->data.p = (char *) this_arg + sizeof (MonoObject);
+				/* unbox */
+				gpointer *unboxed = mono_object_unbox (this_arg);
+				stackval_from_data (&this_arg->vtable->klass->byval_arg, sp, (char *) unboxed, FALSE);
 			}
 
 			ves_exec_method_with_context (&child_frame, context);
@@ -2005,7 +2032,8 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			child_frame.runtime_method = get_virtual_method (context->domain, child_frame.runtime_method, this_arg);
 
 			if (this_arg->vtable->klass->valuetype && child_frame.runtime_method->valuetype) {
-				sp->data.p = (char *) this_arg + sizeof (MonoObject);
+				gpointer *unboxed = mono_object_unbox (this_arg);
+				stackval_from_data (&this_arg->vtable->klass->byval_arg, sp, (char *) unboxed, FALSE);
 			}
 
 			ves_exec_method_with_context (&child_frame, context);
@@ -2362,10 +2390,12 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 			++ip;
 			sp[-1].data.l = *(gint64*)sp[-1].data.p;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDIND_I)
-			++ip;
-			sp[-1].data.p = *(gpointer*)sp[-1].data.p;
+		MINT_IN_CASE(MINT_LDIND_I) {
+			guint16 offset = * (guint16 *)(ip + 1);
+			sp[-1 - offset].data.p = *(gpointer*)sp[-1 - offset].data.p;
+			ip += 2;
 			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDIND_R4)
 			++ip;
 			sp[-1].data.f = *(gfloat*)sp[-1].data.p;
@@ -2779,6 +2809,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 						mono_thread_interruption_checkpoint ();
 					sp->data.p = o;
 				} else {
+					sp->data.p = NULL;
 					child_frame.retval = &retval;
 				}
 			}
@@ -3033,94 +3064,24 @@ array_constructed:
 		}
 		MINT_IN_CASE(MINT_LDSFLDA) {
 			MonoClassField *field = rtm->data_items[*(guint16 *)(ip + 1)];
-			MonoVTable *vt = mono_class_vtable (context->domain, field->parent);
-			gpointer addr;
-
-			if (!vt->initialized) {
-				frame->ip = ip;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
+			sp->data.p = mono_class_static_field_address (context->domain, field);
 			ip += 2;
-
-			if (context->domain->special_static_fields && (addr = g_hash_table_lookup (context->domain->special_static_fields, field)))
-				sp->data.p = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
-			else
-				sp->data.p = (char*)(vt->vtable) + field->offset;
 			++sp;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSFLD) {
-			MonoVTable *vt;
-			MonoClassField *field;
-			gpointer addr;
-
-			field = rtm->data_items[*(guint16 *)(ip + 1)];
-			vt = rtm->data_items [*(guint16 *)(ip + 2)];
-			if (!vt->initialized) {
-				frame->ip = ip;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			ip += 3;
-			if (context->domain->special_static_fields && (addr = g_hash_table_lookup (context->domain->special_static_fields, field)))
-				addr = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
-			else
-				addr = (char*)(vt->vtable) + field->offset;
-
+			MonoClassField *field = rtm->data_items [* (guint16 *)(ip + 1)];
+			gpointer addr = mono_class_static_field_address (context->domain, field);
 			stackval_from_data (field->type, sp, addr, FALSE);
-			++sp;
-			MINT_IN_BREAK;
-		}
-		MINT_IN_CASE(MINT_LDSFLD_I4) {
-			MonoClassField *field = rtm->data_items[*(guint16 *)(ip + 1)];
-			MonoVTable *vt = rtm->data_items [*(guint16 *)(ip + 2)];
-			if (!vt->initialized) {
-				frame->ip = ip;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			ip += 3;
-			sp->data.i = * (gint32 *)((char*)(vt->vtable) + field->offset);
-			++sp;
-			MINT_IN_BREAK;
-		}
-		MINT_IN_CASE(MINT_LDSFLD_O) {
-			MonoClassField *field = rtm->data_items[*(guint16 *)(ip + 1)];
-			MonoVTable *vt = rtm->data_items [*(guint16 *)(ip + 2)];
-			if (!vt->initialized) {
-				frame->ip = ip;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			ip += 3;
-			sp->data.p = * (gpointer *)((char*)(vt->vtable) + field->offset);
+			ip += 2;
 			++sp;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSFLD_VT) {
-			MonoVTable *vt;
-			MonoClassField *field;
-			guint32 token;
-			gpointer addr;
-			int size;
-
-			token = * (guint16 *)(ip + 1);
-			size = READ32(ip + 2);
-			field = rtm->data_items[token];
+			MonoClassField *field = rtm->data_items [* (guint16 *)(ip + 1)];
+			gpointer addr = mono_class_static_field_address (context->domain, field);
+			int size = READ32 (ip + 2);
 			ip += 4;
-						
-			vt = mono_class_vtable (context->domain, field->parent);
-			if (!vt->initialized) {
-				frame->ip = ip - 2;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			
-			if (context->domain->special_static_fields && (addr = g_hash_table_lookup (context->domain->special_static_fields, field)))
-				addr = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
-			else
-				addr = (char*)(vt->vtable) + field->offset;
 
 			sp->data.p = vt_sp;
 			vt_sp += (size + 7) & ~7;
@@ -3129,54 +3090,19 @@ array_constructed:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_STSFLD) {
-			MonoVTable *vt;
-			MonoClassField *field;
-			guint32 token;
-			gpointer addr;
-
-			token = * (guint16 *)(ip + 1);
-			field = rtm->data_items[token];
+			MonoClassField *field = rtm->data_items [* (guint16 *)(ip + 1)];
+			gpointer addr = mono_class_static_field_address (context->domain, field);
 			ip += 2;
 			--sp;
-
-			vt = mono_class_vtable (context->domain, field->parent);
-			if (!vt->initialized) {
-				frame->ip = ip - 2;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			
-			if (context->domain->special_static_fields && (addr = g_hash_table_lookup (context->domain->special_static_fields, field)))
-				addr = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
-			else
-				addr = (char*)(vt->vtable) + field->offset;
-
 			stackval_to_data (field->type, sp, addr, FALSE);
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_STSFLD_VT) {
-			MonoVTable *vt;
-			MonoClassField *field;
-			guint32 token;
-			gpointer addr;
-			int size;
-
-			token = * (guint16 *)(ip + 1);
-			size = READ32(ip + 2);
-			field = rtm->data_items[token];
+			MonoClassField *field = rtm->data_items [* (guint16 *)(ip + 1)];
+			gpointer addr = mono_class_static_field_address (context->domain, field);
+			int size = READ32 (ip + 2);
 			ip += 4;
-						
-			vt = mono_class_vtable (context->domain, field->parent);
-			if (!vt->initialized) {
-				frame->ip = ip - 2;
-				mono_runtime_class_init_full (vt, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			}
-			
-			if (context->domain->special_static_fields && (addr = g_hash_table_lookup (context->domain->special_static_fields, field)))
-				addr = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
-			else
-				addr = (char*)(vt->vtable) + field->offset;
+
 			--sp;
 			stackval_to_data (field->type, sp, addr, FALSE);
 			vt_sp -= (size + 7) & ~7;
@@ -3232,23 +3158,24 @@ array_constructed:
 			sp [-1].data.i = (mono_u)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_BOX)
+		MINT_IN_CASE(MINT_BOX) {
 			c = rtm->data_items [* (guint16 *)(ip + 1)];
+			guint16 offset = * (guint16 *)(ip + 2);
 
 			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype) {
 				int size = mono_class_value_size (c, NULL);
-				sp [-1].data.p = mono_value_box_checked (context->domain, c, sp [-1].data.p, &error);
+				sp [-1 - offset].data.p = mono_value_box_checked (context->domain, c, sp [-1 - offset].data.p, &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 				size = (size + 7) & ~7;
 				vt_sp -= size;
-			}				
-			else {
-				stackval_to_data (&c->byval_arg, &sp [-1], (char*)&sp [-1], FALSE);
-				sp [-1].data.p = mono_value_box_checked (context->domain, c, &sp [-1], &error);
+			} else {
+				stackval_to_data (&c->byval_arg, &sp [-1 - offset], (char *) &sp [-1 - offset], FALSE);
+				sp [-1 - offset].data.p = mono_value_box_checked (context->domain, c, &sp [-1 - offset], &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
-			ip += 2;
+			ip += 3;
 			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWARR)
 			sp [-1].data.p = (MonoObject*) mono_array_new_checked (context->domain, rtm->data_items[*(guint16 *)(ip + 1)], sp [-1].data.i, &error);
 			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
@@ -3322,7 +3249,8 @@ array_constructed:
 		MINT_IN_CASE(MINT_LDELEM_I)  /* fall through */
 		MINT_IN_CASE(MINT_LDELEM_R4) /* fall through */
 		MINT_IN_CASE(MINT_LDELEM_R8) /* fall through */
-		MINT_IN_CASE(MINT_LDELEM_REF) {
+		MINT_IN_CASE(MINT_LDELEM_REF) /* fall through */
+		MINT_IN_CASE(MINT_LDELEM_VT) {
 			MonoArray *o;
 			mono_u aindex;
 
@@ -3373,6 +3301,16 @@ array_constructed:
 			case MINT_LDELEM_REF:
 				sp [0].data.p = mono_array_get (o, gpointer, aindex);
 				break;
+			case MINT_LDELEM_VT: {
+				MonoClass *klass_vt = rtm->data_items [*(guint16 *) (ip + 1)];
+				i32 = READ32 (ip + 2);
+				char *src_addr = mono_array_addr_with_size ((MonoArray *) o, i32, aindex);
+				sp [0].data.vt = vt_sp;
+				stackval_from_data (&klass_vt->byval_arg, sp, src_addr, FALSE);
+				vt_sp += (i32 + 7) & ~7;
+				ip += 3;
+				break;
+			}
 			default:
 				ves_abort();
 			}
@@ -3388,7 +3326,8 @@ array_constructed:
 		MINT_IN_CASE(MINT_STELEM_I8) /* fall through */
 		MINT_IN_CASE(MINT_STELEM_R4) /* fall through */
 		MINT_IN_CASE(MINT_STELEM_R8) /* fall through */
-		MINT_IN_CASE(MINT_STELEM_REF) {
+		MINT_IN_CASE(MINT_STELEM_REF) /* fall through */
+		MINT_IN_CASE(MINT_STELEM_VT) {
 			mono_u aindex;
 
 			sp -= 3;
@@ -3429,7 +3368,18 @@ array_constructed:
 				if (sp [2].data.p && !isinst_obj)
 					THROW_EX (mono_get_exception_array_type_mismatch (), ip);
 				mono_array_set ((MonoArray *)o, gpointer, aindex, sp [2].data.p);
-			} break;
+				break;
+			}
+			case MINT_STELEM_VT: {
+				MonoClass *klass_vt = rtm->data_items [*(guint16 *) (ip + 1)];
+				i32 = READ32 (ip + 2);
+				char *dst_addr = mono_array_addr_with_size ((MonoArray *) o, i32, aindex);
+
+				stackval_to_data (&klass_vt->byval_arg, &sp [2], dst_addr, FALSE);
+				vt_sp -= (i32 + 7) & ~7;
+				ip += 3;
+				break;
+			}
 			default:
 				ves_abort();
 			}
@@ -4435,6 +4385,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 
 	g_timer_start (timer);
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
+		MonoObject *exc = NULL;
 		MonoError error;
 		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
 		if (!method) {
@@ -4457,14 +4408,43 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 			} else {
 				filter = strcmp (method->name, name) == 0;
 			}
-		} else { // no filter
+		} else { /* no filter, check for `Category' attribute on method */
 			filter = TRUE;
+			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, &error);
+			mono_error_cleanup (&error);
+
+			if (ainfo) {
+				int j;
+				for (j = 0; j < ainfo->num_attrs && filter; ++j) {
+					MonoCustomAttrEntry *centry = &ainfo->attrs [j];
+					if (centry->ctor == NULL)
+						continue;
+
+					MonoClass *klass = centry->ctor->klass;
+					if (strcmp (klass->name, "CategoryAttribute"))
+						continue;
+
+					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, &error);
+					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
+					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, &error); */
+					mono_error_cleanup (&error);
+					MonoMethod *getter = mono_class_get_method_from_name (klass, "get_Category", -1);
+					MonoObject *str = mono_interp_runtime_invoke (getter, obj, NULL, &exc, &error);
+					mono_error_cleanup (&error);
+					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, &error);
+					mono_error_cleanup (&error);
+					if (!strcmp (utf8_str, "!INTERPRETER")) {
+						g_print ("skip %s...\n", method->name);
+						filter = FALSE;
+					}
+				}
+			}
 		}
 		if (strncmp (method->name, "test_", 5) == 0 && filter) {
 			MonoError interp_error;
 			MonoObject *exc = NULL;
 
-			result_obj = interp_mono_runtime_invoke (method, NULL, NULL, &exc, &interp_error);
+			result_obj = mono_interp_runtime_invoke (method, NULL, NULL, &exc, &interp_error);
 			if (!mono_error_ok (&interp_error)) {
 				cfailed++;
 				g_print ("Test '%s' execution failed.\n", method->name);
@@ -4528,7 +4508,7 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 }
 
 int
-interp_regression_list (int verbose, int count, char *images [])
+mono_interp_regression_list (int verbose, int count, char *images [])
 {
 	int i, total, total_run, run;
 	

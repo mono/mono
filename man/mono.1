@@ -7,7 +7,7 @@
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
-.TH Mono "Mono 4.7.0"
+.TH Mono "mono"
 .SH NAME
 mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
@@ -609,7 +609,7 @@ Finally, namespaces can be specified using the N: prefix:
 Don't align stack frames on the x86 architecture.  By default, Mono
 aligns stack frames to 16 bytes on x86, so that local floating point
 and SIMD variables can be properly aligned.  This option turns off the
-alignment, which usually saves one intruction per call, but might
+alignment, which usually saves one instruction per call, but might
 result in significantly lower floating point and SIMD performance.
 .TP
 \fB--jitmap\fR
