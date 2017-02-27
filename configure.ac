@@ -1276,6 +1276,7 @@ AC_COMPILE_IFELSE([
 dnl
 dnl BDWGC GC configuration
 dnl
+
 AC_ARG_ENABLE(bdwgc, [  --disable-bdwgc            Disable the Bdwgc GC.], upport_bdwgc=$enableval,support_bdwgc=${support_bdwgc:-yes})
 AM_CONDITIONAL(SUPPORT_BDWGC, test x$support_bdwgc = xyes)
 bdwgc_dir=external/bdwgc
