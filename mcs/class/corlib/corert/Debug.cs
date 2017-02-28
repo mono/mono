@@ -9,5 +9,9 @@ namespace System.Diagnostics.Private
 		public static void Assert (bool condition, string message)
 		{
 		}
+
+		public static void Fail (string message)
+		{
+		}
 	}
 }
