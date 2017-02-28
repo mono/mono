@@ -482,9 +482,9 @@ Global
 		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90} = {21DF4C80-0EC9-4BFE-8552-2D47FCEF419A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		AMDCaPersistentConfig = Debug|Win32
-		AMDCaPersistentStartup = mono
 		AMDCaProjectFile = C:\Users\Owner\Development\monogit\mono\msvc\CodeAnalyst\mono.caw
+		AMDCaPersistentStartup = mono
+		AMDCaPersistentConfig = Debug|Win32
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
