@@ -70,6 +70,7 @@
     <MONO_LIBGC_INCLUDE_DIR>$(MONO_LIBBDWGC_INCLUDE_DIR);$(MONO_LIBATOMICS_INCLUDE_DIR)</MONO_LIBGC_INCLUDE_DIR>
     <MONO_LIBGC_SOURCE_DIR>$(MONO_LIBBDWGC_SOURCE_DIR)</MONO_LIBGC_SOURCE_DIR>
     <LIBGC_CPPFLAGS_INCLUDE>$(MONO_LIBGC_INCLUDE_DIR)</LIBGC_CPPFLAGS_INCLUDE>
+    <MONO_GC_HAVE_CONFIG_H></MONO_GC_HAVE_CONFIG_H>
   </PropertyGroup>
   <PropertyGroup Label="Static-Mono-Libraries">
     <MONO_RUNTIME_LIBS>libmonoutils.lib;libmonoruntime$(MONO_TARGET_SUFFIX).lib;$(GC_LIB)</MONO_RUNTIME_LIBS>
@@ -112,8 +113,7 @@
     <ClCompile>
       <DllExportPreprocessorDefinitions>MONO_DLL_EXPORT</DllExportPreprocessorDefinitions>
       <DllImportPreprocessorDefinitions>MONO_DLL_IMPORT</DllImportPreprocessorDefinitions>
-      <PreprocessorDefinitions>__default_codegen__;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;GC_NOT_DLL;WIN32_THREADS;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;_UNICODE;UNICODE;FD_SETSIZE=1024;%(PreprocessorDefinitions);</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="$(MONO_TARGET_GC)!='bdwgc'">$(PreprocessorDefinitions);HAVE_CONFIG_H</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__default_codegen__;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;$(MONO_GC_HAVE_CONFIG_H);GC_NOT_DLL;WIN32_THREADS;WINVER=0x0600;_WIN32_WINNT=0x0600;_WIN32_IE=0x0501;_UNICODE;UNICODE;FD_SETSIZE=1024;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <DisableSpecificWarnings>4273;4005</DisableSpecificWarnings>
       <RuntimeLibrary>$(MONO_C_RUNTIME)</RuntimeLibrary>
     </ClCompile>
