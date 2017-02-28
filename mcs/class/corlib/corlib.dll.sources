@@ -1107,14 +1107,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
 ../referencesource/mscorlib/system/collections/generic/list.cs
 
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentQueue.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentStack.cs
-../referencesource/mscorlib/system/collections/Concurrent/IProducerConsumerCollection.cs
-../referencesource/mscorlib/system/collections/Concurrent/OrderablePartitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/Partitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/PartitionerStatic.cs
-
 ../referencesource/mscorlib/system/diagnostics/assert.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilter.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilters.cs
@@ -1646,7 +1638,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 corert/Debug.cs
-corert/SR.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
@@ -1660,3 +1651,13 @@ corert/SR.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
 
+corefx/SR.cs
+
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentQueue.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentStack.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/IProducerConsumerCollection.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs

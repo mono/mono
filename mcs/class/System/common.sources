@@ -354,9 +354,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/regex/system/text/regularexpressions/compiledregexrunner.cs
 ../referencesource/System/regex/system/text/regularexpressions/compiledregexrunnerfactory.cs
 
-../referencesource/System/sys/system/collections/concurrent/BlockingCollection.cs
-../referencesource/System/sys/system/collections/concurrent/ConcurrentBag.cs
-
 ../referencesource/System/compmod/system/collections/generic/bithelper.cs
 ../referencesource/System/compmod/system/collections/generic/debugview.cs
 ../referencesource/System/compmod/system/collections/generic/iset.cs
@@ -924,7 +921,12 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
 
+corefx/SR.cs
+
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
+
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/BlockingCollection.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs
 
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
