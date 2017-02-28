@@ -42,6 +42,7 @@ System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierType.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UI.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
+System.Security.Cryptography.Xml/corefx/SR.cs
 System.Security.Cryptography.Xml/CipherData.cs
 System.Security.Cryptography.Xml/CipherReference.cs
 System.Security.Cryptography.Xml/DataObject.cs
