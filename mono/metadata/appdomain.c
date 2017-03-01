@@ -1970,7 +1970,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoString *fname, MonoBoolean re
 	if (!is_ok (&error))
 		goto leave;
 	
-	ass = mono_assembly_open_full (filename, &status, refOnly);
+	ass = mono_assembly_open_a_lot (filename, &status, refOnly, TRUE);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
