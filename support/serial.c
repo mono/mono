@@ -175,6 +175,11 @@ discard_buffer (int fd, gboolean input)
 gint32
 get_bytes_in_buffer (int fd, gboolean input)
 {
+#if defined(__HAIKU__)
+	/* FIXME: Haiku doesn't support TIOCOUTQ nor FIONREAD on fds */
+	return -1;
+#define TIOCOUTQ 0
+#endif
 	gint32 retval;
 
 	if (ioctl (fd, input ? FIONREAD : TIOCOUTQ, &retval) == -1) {
