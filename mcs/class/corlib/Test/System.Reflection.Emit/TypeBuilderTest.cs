@@ -11077,7 +11077,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")]
 		// It's not possible to save the assembly in the current directory on Android and AssemblyBuilder.DefineDynamicModule will not
 		// allow a full path to the assembly to be passed to it. Trying to change the current directory before saving will not work either as
 		// FileStream will then prepend / to the file name (perhaps it's another bug) and write access to the filesystem root is, obviously, denied
@@ -11093,9 +11092,8 @@ namespace MonoTests.System.Reflection.Emit
 
 			var assemblyBuilderAccess = AssemblyBuilderAccess.Save;
 			var assemblyName = new AssemblyName(AssemblyName);
-			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, assemblyBuilderAccess);
+			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, assemblyBuilderAccess, Path.GetTempPath ());
 			var moduleBuilder = assemblyBuilder.DefineDynamicModule(AssemblyName, AssemblyFileName);
-
 
 			var builder = moduleBuilder.DefineType("Wrapped",
                 TypeAttributes.Class | TypeAttributes.Sealed | TypeAttributes.Public,
@@ -11124,7 +11122,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			assemblyBuilder.Save (AssemblyFileName);
 
-			var fromDisk = Assembly.Load (AssemblyName);
+			var fromDisk = Assembly.LoadFrom (Path.Combine (Path.GetTempPath (), AssemblyFileName));
 			Console.WriteLine (fromDisk);
 			var t = fromDisk.GetType ("Wrapped");
 			Activator.CreateInstance (t, new object[] { "string"});
