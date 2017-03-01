@@ -90,6 +90,10 @@ class DoParse : MarshalByRefObject {
 		var str = FileToEnum (name);
 
 		string ver_str = version + " " + FileToMoniker (fullname);	
+
+		if (name == "System.IO.Compression.dll" && version == "4.3.0")
+			Console.Write ($"//System.IO.Compression.dll net46 4.3.0 has a fully managed impl. not ignoring\n//");
+
 		Console.WriteLine ($"IGNORED_ASSEMBLY (0x{hash_code}, {str}, \"{id}\", \"{ver_str}\"),");
 	}
 }
