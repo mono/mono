@@ -181,24 +181,29 @@ sub process_function {
         $_ = '<p>' if /^\s*$/;
 
         if ($section == $PARAMETER_SECTION) {
-            if (/\s*\\param +(\w+)\s+(.*)/) {
+            if (/\s*\\param +(\w+)(.*)/) {
+                # print "$file_path:$.: warning: Got parameter $1\n";
                 push @parameters, { name => $1, description => $2 };
-            } elsif (/\s*\\deprecated +(.*)/) {
+            } elsif (/\s*\\deprecated(.*)/) {
+                # print "$file_path:$.: warning: Got deprecated annotation\n";
                 $deprecated = $1;
             } elsif (/\s*(\w+):(.*)/) {
-                warn "$file_path:$.: Old-style monodoc notation \@param used\n"
-                    if $WARNINGS;
                 if ($1 eq 'deprecated') {
+                    warn "$file_path:$.: Old-style monodoc notation 'deprecated:' used\n"
+                        if $WARNINGS;
                     $deprecated = $2;
                 } else {
+                    warn "$file_path:$.: Old-style monodoc notation 'param:' used\n"
+                        if $WARNINGS;
                     push @parameters, { name => $1, description => $2 };
                 }
             } else {
-                $body = "\t$_\n";
+                # $body = "\t$_\n";
                 $section = $BODY_SECTION;
+                redo;
             }
         } elsif ($section == $BODY_SECTION) {
-            if (s/(Returns?:|\\returns? )//) {
+            if (s/(Returns?:\s*|\\returns?\s*)//) {
                 $returns = "\t$_\n";
                 $section = $RETURN_SECTION;
             } else {
@@ -225,15 +230,15 @@ sub process_formatting {
     s{FALSE}{<code>FALSE</code>}g;
 
     # Parameters
-    warn "$file_path:$current_line: Old-style monodoc notation \@param used\n"
+    warn "$file_path:$current_line: Old-style monodoc notation '\@param' used\n"
         if s{@(\w+)}{<i>$1</i>}g && $WARNINGS;
     s{\\p +(\w+)}{<i>$1</i>}g;
 
     # Code
-    warn "$file_path:$current_line: Old-style monodoc notation #code used\n"
+    warn "$file_path:$current_line: Old-style monodoc notation '#code' used\n"
         if s{#(\w+)}{<code>$1</code>}g && $WARNINGS;
-    warn "$file_path:$current_line: Old-style monodoc notation `code` used\n"
-        if s{\`([:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
+    warn "$file_path:$current_line: Old-style monodoc notation '`code`' used\n"
+        if s{\`((?!api:)[:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
     s{\\c +([\w\.]+)}{<code>$1</code>}g;
 
     $$content = $_;
