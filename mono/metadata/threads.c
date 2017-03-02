@@ -47,6 +47,7 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/w32mutex.h>
+#include <mono/utils/refcount.h>
 
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/abi-details.h>
@@ -728,7 +729,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 }
 
 typedef struct {
-	gint32 ref;
+	MonoRefCount refcount;
 	MonoThread *thread;
 	MonoObject *start_delegate;
 	MonoObject *start_delegate_arg;
@@ -737,6 +738,18 @@ typedef struct {
 	gboolean failed;
 	MonoCoopSem registered;
 } StartInfo;
+
+static void
+start_info_destroy (gpointer data)
+{
+	StartInfo *start_info;
+
+	start_info = (StartInfo*) data;
+	g_assert (start_info);
+
+	mono_coop_sem_destroy (&start_info->registered);
+	g_free (start_info);
+}
 
 static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
 {
@@ -765,11 +778,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 		mono_coop_sem_post (&start_info->registered);
 
-		if (InterlockedDecrement (&start_info->ref) == 0) {
-			mono_coop_sem_destroy (&start_info->registered);
-			g_free (start_info);
-		}
-
+		mono_refcount_dec (start_info);
 		return 0;
 	}
 
@@ -800,10 +809,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	/* Let the thread that called Start() know we're ready */
 	mono_coop_sem_post (&start_info->registered);
 
-	if (InterlockedDecrement (&start_info->ref) == 0) {
-		mono_coop_sem_destroy (&start_info->registered);
-		g_free (start_info);
-	}
+	mono_refcount_dec (start_info);
 
 	/* start_info is not valid anymore */
 	start_info = NULL;
@@ -925,7 +931,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 		mono_thread_set_state (internal, ThreadState_Background);
 
 	start_info = g_new0 (StartInfo, 1);
-	start_info->ref = 2;
+	mono_refcount_init (start_info, start_info_destroy);
 	start_info->thread = thread;
 	start_info->start_delegate = start_delegate;
 	start_info->start_delegate_arg = thread->start_obj;
@@ -939,7 +945,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	else
 		stack_set_size = 0;
 
-	thread_handle = mono_threads_create_thread (start_wrapper, start_info, &stack_set_size, &tid);
+	thread_handle = mono_threads_create_thread (start_wrapper, mono_refcount_inc (start_info), &stack_set_size, &tid);
 
 	if (thread_handle == NULL) {
 		/* The thread couldn't be created, so set an exception */
@@ -947,8 +953,8 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 		mono_g_hash_table_remove (threads_starting_up, thread);
 		mono_threads_unlock ();
 		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", mono_w32error_get_last());
-		/* ref is not going to be decremented in start_wrapper_internal */
-		InterlockedDecrement (&start_info->ref);
+		/* refcount is not going to be decremented in start_wrapper_internal */
+		mono_refcount_dec (start_info);
 		ret = FALSE;
 		goto done;
 	}
@@ -973,11 +979,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	ret = !start_info->failed;
 
 done:
-	if (InterlockedDecrement (&start_info->ref) == 0) {
-		mono_coop_sem_destroy (&start_info->registered);
-		g_free (start_info);
-	}
-
+	mono_refcount_dec (start_info);
 	return ret;
 }
 

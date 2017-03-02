@@ -42,13 +42,14 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/refcount.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
 #endif
 
 typedef struct DomainFinalizationReq {
-	gint32 ref;
+	MonoRefCount refcount;
 	MonoDomain *domain;
 	MonoCoopSem done;
 } DomainFinalizationReq;
@@ -396,6 +397,18 @@ mono_object_register_finalizer (MonoObject *obj)
 	object_register_finalizer (obj, mono_gc_run_finalize);
 }
 
+static void
+domain_finalization_request_destroy (gpointer data)
+{
+	DomainFinalizationReq *req;
+
+	req = data;
+	g_assert (req);
+
+	mono_coop_sem_destroy (&req->done);
+	g_free (req);
+}
+
 /**
  * mono_domain_finalize:
  * @domain: the domain to finalize
@@ -439,7 +452,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	mono_gc_collect (mono_gc_max_generation ());
 
 	req = g_new0 (DomainFinalizationReq, 1);
-	req->ref = 2;
+	mono_refcount_init (req, domain_finalization_request_destroy);
 	req->domain = domain;
 	mono_coop_sem_init (&req->done, 0);
 
@@ -448,7 +461,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	
 	mono_finalizer_lock ();
 
-	domains_to_finalize = g_slist_append (domains_to_finalize, req);
+	domains_to_finalize = g_slist_append (domains_to_finalize, mono_refcount_inc (req));
 
 	mono_finalizer_unlock ();
 
@@ -510,19 +523,14 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		if (found) {
 			/* We have to decrement it wherever we
 			 * remove it from domains_to_finalize */
-			if (InterlockedDecrement (&req->ref) != 1)
-				g_error ("%s: req->ref should be 1, as we are the first one to decrement it", __func__);
+			mono_refcount_dec (req);
 		}
 
 		goto done;
 	}
 
 done:
-	if (InterlockedDecrement (&req->ref) == 0) {
-		mono_coop_sem_destroy (&req->done);
-		g_free (req);
-	}
-
+	mono_refcount_dec (req);
 	return ret;
 }
 
@@ -831,12 +839,7 @@ finalize_domain_objects (void)
 	/* printf ("DONE.\n"); */
 	mono_coop_sem_post (&req->done);
 
-	if (InterlockedDecrement (&req->ref) == 0) {
-		/* mono_domain_finalize already returned, and
-		 * doesn't hold a reference to req anymore. */
-		mono_coop_sem_destroy (&req->done);
-		g_free (req);
-	}
+	mono_refcount_dec (req);
 }
 
 static gsize WINAPI

@@ -21,10 +21,10 @@ typedef struct {
 	void (*destructor) (gpointer data);
 } MonoRefCount;
 
-#define mono_refcount_init(v,destructor) do { mono_refcount_initialize (&(v)->ref, (destructor)); } while (0)
-#define mono_refcount_inc(v) (mono_refcount_increment (&(v)->ref),(v))
-#define mono_refcount_tryinc(v) (mono_refcount_tryincrement (&(v)->ref))
-#define mono_refcount_dec(v) do { mono_refcount_decrement (&(v)->ref); } while (0)
+#define mono_refcount_init(v,destructor) do { mono_refcount_initialize (&(v)->refcount, (destructor)); } while (0)
+#define mono_refcount_inc(v) (mono_refcount_increment (&(v)->refcount),(v))
+#define mono_refcount_tryinc(v) (mono_refcount_tryincrement (&(v)->refcount))
+#define mono_refcount_dec(v) do { mono_refcount_decrement (&(v)->refcount); } while (0)
 
 static inline void
 mono_refcount_initialize (MonoRefCount *refcount, void (*destructor) (gpointer data))

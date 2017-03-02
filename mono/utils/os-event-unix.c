@@ -13,6 +13,7 @@
 #include "mono-lazy-init.h"
 #include "mono-threads.h"
 #include "mono-time.h"
+#include "refcount.h"
 
 static mono_lazy_init_t status = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
 
@@ -94,9 +95,21 @@ mono_os_event_wait_one (MonoOSEvent *event, guint32 timeout, gboolean alertable)
 }
 
 typedef struct {
-	guint32 ref;
+	MonoRefCount refcount;
 	MonoOSEvent event;
 } OSEventWaitData;
+
+static void
+wait_data_destroy (gpointer user_data)
+{
+	OSEventWaitData *data;
+
+	data = (OSEventWaitData*) user_data;
+	g_assert (data);
+
+	mono_os_event_destroy (&data->event);
+	g_free (data);
+}
 
 static void
 signal_and_unref (gpointer user_data)
@@ -104,12 +117,11 @@ signal_and_unref (gpointer user_data)
 	OSEventWaitData *data;
 
 	data = (OSEventWaitData*) user_data;
+	g_assert (data);
 
 	mono_os_event_set (&data->event);
-	if (InterlockedDecrement ((gint32*) &data->ref) == 0) {
-		mono_os_event_destroy (&data->event);
-		g_free (data);
-	}
+
+	mono_refcount_dec (data);
 }
 
 MonoOSEventWaitRet
@@ -133,14 +145,14 @@ mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waita
 
 	if (alertable) {
 		data = g_new0 (OSEventWaitData, 1);
-		data->ref = 2;
+		mono_refcount_init (data, wait_data_destroy);
 		mono_os_event_init (&data->event, FALSE);
 
 		alerted = FALSE;
 		mono_thread_info_install_interrupt (signal_and_unref, data, &alerted);
 		if (alerted) {
-			mono_os_event_destroy (&data->event);
-			g_free (data);
+			/* signal_and_unref is not going to call mono_refcount_dec */
+			mono_refcount_dec (data);
 			return MONO_OS_EVENT_WAIT_RET_ALERTED;
 		}
 	}
@@ -182,7 +194,7 @@ mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waita
 
 		if (signalled) {
 			ret = MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + lowest;
-			goto done;
+			break;
 		}
 
 		if (timeout == MONO_INFINITE_WAIT) {
@@ -194,18 +206,17 @@ mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waita
 			elapsed = mono_msec_ticks () - start;
 			if (elapsed >= timeout) {
 				ret = MONO_OS_EVENT_WAIT_RET_TIMEOUT;
-				goto done;
+				break;
 			}
 
 			res = mono_os_cond_timedwait (&signal_cond, &signal_mutex, timeout - elapsed);
 			if (res != 0) {
 				ret = MONO_OS_EVENT_WAIT_RET_TIMEOUT;
-				goto done;
+				break;
 			}
 		}
 	}
 
-done:
 	for (i = 0; i < nevents; ++i)
 		g_ptr_array_remove (events [i]->conds, &signal_cond);
 
@@ -218,16 +229,11 @@ done:
 
 	if (alertable) {
 		mono_thread_info_uninstall_interrupt (&alerted);
-		if (alerted) {
-			if (InterlockedDecrement ((gint32*) &data->ref) == 0) {
-				mono_os_event_destroy (&data->event);
-				g_free (data);
-			}
+		if (alerted)
 			return MONO_OS_EVENT_WAIT_RET_ALERTED;
-		}
 
-		mono_os_event_destroy (&data->event);
-		g_free (data);
+		/* signal_and_unref is not going to call mono_refcount_dec */
+		mono_refcount_dec (data);
 	}
 
 	return ret;
