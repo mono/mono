@@ -16,7 +16,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/threads-types.h>
 
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <mono/utils/valgrind.h>
 
@@ -152,7 +152,7 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 		for (i = 0; i < header->code_size; ++i) {
 			MonoDebugSourceLocation *location;
 
-			location = mono_debug_symfile_lookup_location (minfo, i);
+			location = mono_debug_method_lookup_location (minfo, i);
 			if (!location)
 				continue;
 

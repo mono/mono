@@ -9,7 +9,7 @@
 #include "config.h"
 
 #include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/debug-mono-symfile.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/object-internals.h>
@@ -9020,7 +9020,7 @@ emit_dbg_subprogram (EmitContext *ctx, MonoCompile *cfg, LLVMValueRef method, co
 	if (!minfo)
 		return NULL;
 
-	mono_debug_symfile_get_seq_points (minfo, &source_file, NULL, NULL, &sym_seq_points, &n_seq_points);
+	mono_debug_get_seq_points (minfo, &source_file, NULL, NULL, &sym_seq_points, &n_seq_points);
 	if (!source_file)
 		source_file = g_strdup ("<unknown>");
 	dir = g_path_get_dirname (source_file);
@@ -9116,7 +9116,7 @@ emit_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder, const unsigned char *cil
 		MonoDebugSourceLocation *loc;
 		LLVMValueRef loc_md;
 
-		loc = mono_debug_symfile_lookup_location (ctx->minfo, cil_code - cfg->header->code);
+		loc = mono_debug_method_lookup_location (ctx->minfo, cil_code - cfg->header->code);
 
 		if (loc) {
 #if LLVM_API_VERSION > 100
@@ -9134,7 +9134,7 @@ emit_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder, const unsigned char *cil
 			loc_md = LLVMMDNode (md_args, nmd_args);
 			LLVMSetCurrentDebugLocation (builder, loc_md);
 #endif
-			mono_debug_symfile_free_location (loc);
+			mono_debug_free_source_location (loc);
 		}
 	}
 }

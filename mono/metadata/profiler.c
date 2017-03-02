@@ -16,7 +16,7 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/mono-debug.h"
-#include "mono/metadata/debug-mono-symfile.h"
+#include "mono/metadata/debug-internals.h"
 #include "mono/metadata/metadata-internals.h"
 #include "mono/metadata/class-internals.h"
 #include "mono/metadata/domain-internals.h"
@@ -1147,7 +1147,7 @@ mono_profiler_coverage_get (MonoProfiler *prof, MonoMethod *method, MonoProfileC
 			if (debug_minfo) {
 				MonoDebugSourceLocation *location;
 
-				location = mono_debug_symfile_lookup_location (debug_minfo, offset);
+				location = mono_debug_method_lookup_location (debug_minfo, offset);
 				if (location) {
 					entry.line = location->row;
 					entry.col = location->column;

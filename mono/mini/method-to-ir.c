@@ -13,6 +13,7 @@
 
 #include <config.h>
 #include <mono/utils/mono-compiler.h>
+#include "mini.h"
 
 #ifndef DISABLE_JIT
 
@@ -35,7 +36,6 @@
 #endif
 
 #include <mono/utils/memcheck.h>
-#include "mini.h"
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/attrdefs.h>
@@ -50,8 +50,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
@@ -59,7 +58,6 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/monitor.h>
-#include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/mono-basic-block.h>
@@ -143,8 +141,6 @@ static int stind_to_store_membase (int opcode);
 
 int mono_op_to_op_imm (int opcode);
 int mono_op_to_op_imm_noemul (int opcode);
-
-MONO_API MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
 
 static int inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp,
 						  guchar *ip, guint real_offset, gboolean inline_always);
@@ -14549,6 +14545,9 @@ NOTES
 
 #else /* !DISABLE_JIT */
 
-MONO_EMPTY_SOURCE_FILE (method_to_ir);
+void
+mono_set_break_policy (MonoBreakPolicyFunc policy_callback)
+{
+}
 
 #endif /* !DISABLE_JIT */

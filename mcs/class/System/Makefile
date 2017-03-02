@@ -14,6 +14,9 @@ RESOURCE_FILES = \
 	resources/Question.wav
 endif
 
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
+
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
 	Test/System/test-uri-props-manual.txt \

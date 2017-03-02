@@ -18,7 +18,6 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/amd64/amd64-codegen.h>
@@ -969,7 +968,6 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-#endif /* !DISABLE_JIT */
 
 /*
  * mono_arch_get_enter_icall_trampoline:
@@ -1132,6 +1130,7 @@ mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
 	return NULL;
 #endif /* ENABLE_INTERPRETER */
 }
+#endif /* !DISABLE_JIT */
 
 #ifdef DISABLE_JIT
 gpointer

@@ -176,7 +176,6 @@ MonoInternalThread *mono_thread_internal_current (void);
 
 void mono_thread_internal_check_for_interruption_critical (MonoInternalThread *thread);
 
-void mono_thread_internal_stop (MonoInternalThread *thread);
 void mono_thread_internal_abort (MonoInternalThread *thread);
 void mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread);
 
@@ -211,8 +210,6 @@ gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 void mono_thread_push_appdomain_ref (MonoDomain *domain);
 void mono_thread_pop_appdomain_ref (void);
 gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
-
-void mono_threads_clear_cached_culture (MonoDomain *domain);
 
 MonoException* mono_thread_request_interruption (mono_bool running_managed);
 gboolean mono_thread_interruption_requested (void);
