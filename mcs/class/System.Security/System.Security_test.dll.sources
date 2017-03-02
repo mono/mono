@@ -1,3 +1,4 @@
+../corefx/SR.cs
 System.Security.Cryptography/CryptographicAttributeObjectCollectionTest.cs
 System.Security.Cryptography/CryptographicAttributeObjectEnumeratorTest.cs
 System.Security.Cryptography/CryptographicAttributeTest.cs
@@ -22,7 +23,6 @@ System.Security.Cryptography.Pkcs/SignedCmsTest.cs
 System.Security.Cryptography.Pkcs/SignerInfoCollectionTest.cs
 System.Security.Cryptography.Pkcs/SignerInfoTest.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierTest.cs
-../System.Security.Cryptography.Xml/corefx/SR.cs
 System.Security.Cryptography.Xml/AssertCrypto.cs
 System.Security.Cryptography.Xml/DataObjectTest.cs
 System.Security.Cryptography.Xml/DSAKeyValueTest.cs

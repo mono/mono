@@ -144,9 +144,7 @@
     <Compile Include="System.Security.Permissions\DataProtectionPermission.cs" />
     <Compile Include="System.Security.Permissions\DataProtectionPermissionAttribute.cs" />
     <Compile Include="System.Security.Permissions\DataProtectionPermissionFlags.cs" />
-    <Compile Include="System.Security.Permissions\PermissionHelper.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\corefx\SR.cs" />
-  </ItemGroup>
+    <Compile Include="System.Security.Permissions\PermissionHelper.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -188,7 +186,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="System.Security.Cryptography.Xml\corefx\" />
   </ItemGroup>
 </Project>
 
