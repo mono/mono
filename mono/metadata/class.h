@@ -131,6 +131,9 @@ MONO_API mono_bool
 mono_class_is_valuetype      (MonoClass *klass);
 
 MONO_API mono_bool
+mono_class_is_blittable      (MonoClass *klass);
+
+MONO_API mono_bool
 mono_class_is_enum          (MonoClass *klass);
 
 MONO_API MonoType*

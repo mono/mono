@@ -8769,6 +8769,20 @@ mono_class_is_valuetype (MonoClass *klass)
 }
 
 /**
+* mono_class_is_blittable:
+* @klass: the MonoClass to act on
+*
+* Use this function to determine if the provided `MonoClass*` represents a blittable type.
+*
+* Returns: true if the MonoClass represents a blittable type.
+*/
+gboolean
+mono_class_is_blittable(MonoClass *klass)
+{
+	return klass->blittable;
+}
+
+/**
  * mono_class_is_enum:
  * @klass: the MonoClass to act on
  *

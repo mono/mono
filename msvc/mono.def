@@ -125,6 +125,7 @@ mono_class_is_enum
 mono_class_is_subclass_of
 mono_class_is_valid_enum
 mono_class_is_valuetype
+mono_class_is_blittable
 mono_class_min_align
 mono_class_name_from_token
 mono_class_num_events
