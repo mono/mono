@@ -311,7 +311,14 @@ MONO_API gboolean
 mono_class_is_generic(MonoClass *klass)
 {
 	g_assert(klass);
-	return (klass->is_generic);
+	return klass->is_generic;
+}
+
+MONO_API gboolean
+mono_class_is_blittable(MonoClass *klass)
+{
+	g_assert(klass);
+	return klass->blittable;
 }
 
 //method
