@@ -123,7 +123,17 @@ mono_os_cond_init (mono_cond_t *cond)
 {
 	int res;
 
+#if defined(CLOCK_MONOTONIC) && !defined(__APPLE__)
+	pthread_condattr_t attr;
+
+	/* Any pthread_cond_timedwait() should use CLOCK_MONOTONIC */
+	pthread_condattr_init(&attr);
+	pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+	res = pthread_cond_init (cond, &attr);
+	pthread_condattr_destroy(&attr);
+#else
 	res = pthread_cond_init (cond, NULL);
+#endif
 	if (G_UNLIKELY (res != 0))
 		g_error ("%s: pthread_cond_init failed with \"%s\" (%d)", __func__, g_strerror (res), res);
 }
@@ -153,7 +163,7 @@ mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_
 {
 	struct timeval tv;
 	struct timespec ts;
-	gint64 usecs;
+	gint64 nsecs;
 	int res;
 
 	if (timeout_ms == MONO_INFINITE_WAIT) {
@@ -163,18 +173,31 @@ mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_
 
 	/* ms = 10^-3, us = 10^-6, ns = 10^-9 */
 
-	res = gettimeofday (&tv, NULL);
-	if (G_UNLIKELY (res != 0))
-		g_error ("%s: gettimeofday failed with \"%s\" (%d)", __func__, g_strerror (errno), errno);
-
-	tv.tv_sec += timeout_ms / 1000;
-	usecs = tv.tv_usec + ((timeout_ms % 1000) * 1000);
-	if (usecs >= 1000000) {
-		usecs -= 1000000;
-		tv.tv_sec ++;
+#if defined(CLOCK_MONOTONIC) && !defined(__APPLE__)
+	/* If clock_gettime() fails, it should only be in the case that
+	 * CLOCK_MONOTONIC is not supported.  If this happens, then the
+	 * pthread_condattr_setclock() in mono_os_cond_init() should also fail
+	 * with EINVAL, which will then revert to a CLOCK_REALTIME wait.
+	 */
+	if (clock_gettime (CLOCK_MONOTONIC, &ts) == 0) {
+		/* Got a valid struct timespec ts using CLOCK_MONOTONIC. */
+	} else
+#endif
+	{
+		/* Get ts from CLOCK_REALTIME using gettimeofday() with conversion. */
+		res = gettimeofday (&tv, NULL);
+		if (G_UNLIKELY (res != 0))
+			g_error ("%s: gettimeofday failed with \"%s\" (%d)", __func__, g_strerror (errno), errno);
+		ts.tv_sec = tv.tv_sec;
+		ts.tv_nsec = tv.tv_usec * 1000;
 	}
-	ts.tv_sec = tv.tv_sec;
-	ts.tv_nsec = usecs * 1000;
+	ts.tv_sec += timeout_ms / 1000;
+	nsecs = ts.tv_nsec + ((timeout_ms % 1000) * 1000000);
+	if (nsecs >= 1000000000) {
+		nsecs -= 1000000000;
+		ts.tv_sec ++;
+	}
+	ts.tv_nsec = nsecs;
 
 	res = pthread_cond_timedwait (cond, mutex, &ts);
 	if (G_UNLIKELY (res != 0 && res != ETIMEDOUT))
