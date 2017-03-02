@@ -26,7 +26,6 @@
 #define USE_MMAP 1
 #define USE_MUNMAP 1
 #define GC_INSIDE_DLL 1
-#define WIN32_THREADS 1
 
 
 #define GC_EventType GCEventType

@@ -106,7 +106,7 @@ else
 noinst_LTLIBRARIES = libmonoruntime-config.la $(boehm_libraries) $(bdwgc_libraries) $(sgen_libraries)
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(IL2CPP_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(IL2CPP_CFLAGS)
 
 #
 # Make sure any prefix changes are updated in the binaries too.
@@ -320,11 +320,11 @@ sgen_sources = \
 	sgen-client-mono.h
 
 libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
-libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
+libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) $(LIBGC_CPPFLAGS)
 libmonoruntime_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntimebdwgc_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
-libmonoruntimebdwgc_la_CFLAGS = $(BDWGC_DEFINES)
+libmonoruntimebdwgc_la_CFLAGS = $(BDWGC_DEFINES) $(LIBGCBDWGC_CPPFLAGS)
 libmonoruntimebdwgc_la_LIBADD = libmonoruntime-config.la $(btls_libs)
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources)
@@ -333,12 +333,12 @@ libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntime_static_la_SOURCES = $(libmonoruntime_la_SOURCES)
 libmonoruntime_static_la_LDFLAGS = -static
-libmonoruntime_static_la_CFLAGS = $(BOEHM_DEFINES)
+libmonoruntime_static_la_CFLAGS = $(BOEHM_DEFINES) $(LIBGC_CPPFLAGS)
 libmonoruntime_static_la_LIBADD = $(bundle_obj) libmonoruntime-config.la
 
 libmonoruntimebdwgc_static_la_SOURCES = $(libmonoruntimebdwgc_la_SOURCES)
 libmonoruntimebdwgc_static_la_LDFLAGS = -static
-libmonoruntimebdwgc_static_la_CFLAGS = $(BDWGC_DEFINES)
+libmonoruntimebdwgc_static_la_CFLAGS = $(BDWGC_DEFINES) $(LIBGCBDWGC_CPPFLAGS)
 libmonoruntimebdwgc_static_la_LIBADD = $(bundle_obj) libmonoruntime-config.la $(btls_static_libs)
 
 libmonoruntimesgen_static_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)

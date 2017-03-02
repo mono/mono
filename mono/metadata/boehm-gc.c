@@ -424,6 +424,9 @@ boehm_thread_unregister (MonoThreadInfo *p)
 
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
+#if HAVE_BDWGC_GC
+	GC_unregister_my_thread ();
+#endif
 }
 
 static void
