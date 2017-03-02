@@ -166,6 +166,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\FieldDirection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\CodeDom\MemberAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\System\Collections\Specialized\FixedStringLookup.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\BlockingCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentBag.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
@@ -737,8 +739,6 @@
     <Compile Include="..\referencesource\System\services\timers\system\timers\ElapsedEventHandler.cs" />
     <Compile Include="..\referencesource\System\services\timers\system\timers\Timer.cs" />
     <Compile Include="..\referencesource\System\services\timers\system\timers\TimersDescriptionAttribute.cs" />
-    <Compile Include="..\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
-    <Compile Include="..\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
     <Compile Include="..\referencesource\System\sys\system\Diagnostics\CodeAnalysis\ExcludeFromCodeCoverageAttribute.cs" />
     <Compile Include="..\referencesource\System\sys\system\IO\ports\InternalResources.cs" />
     <Compile Include="..\referencesource\System\sys\system\runtime\interopservices\DefaultParameterValueAttribute.cs" />
@@ -748,6 +748,7 @@
     <Compile Include="..\referencesource\System\sys\system\threading\semaphore.cs" />
     <Compile Include="..\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />

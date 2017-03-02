@@ -49,6 +49,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentDictionary.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentQueue.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentStack.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\IProducerConsumerCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\OrderablePartitioner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\Partitioner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\PartitionerStatic.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
@@ -152,13 +160,6 @@
     <Compile Include="..\referencesource\mscorlib\system\collections\collectionbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\comparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\compatiblecomparer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\ConcurrentDictionary.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\ConcurrentQueue.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\ConcurrentStack.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\IProducerConsumerCollection.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\OrderablePartitioner.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\Partitioner.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\collections\Concurrent\PartitionerStatic.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\dictionarybase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\dictionaryentry.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\emptyreadonlydictionaryinternal.cs" />
@@ -811,8 +812,8 @@
     <Compile Include="..\referencesource\mscorlib\system\unsafecharbuffer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\version.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="corefx\SR.cs" />
     <Compile Include="corert\Debug.cs" />
-    <Compile Include="corert\SR.cs" />
     <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
     <Compile Include="Microsoft.Win32\Registry.cs" />
     <Compile Include="Microsoft.Win32\RegistryHive.cs" />
