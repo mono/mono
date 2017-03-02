@@ -441,6 +441,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			return TRUE;
 		}
 		/* see if the thread doing the initialization is already blocked on this thread */
+		gboolean is_blocked = TRUE;
 		blocked = GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (lock->initializing_tid));
 		while ((pending_lock = (TypeInitializationLock*) g_hash_table_lookup (blocked_thread_hash, blocked))) {
 			if (mono_native_thread_id_equals (pending_lock->initializing_tid, tid)) {
@@ -451,6 +452,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 					/* the thread doing the initialization is blocked on this thread,
 					   but on a lock that has already been freed. It just hasn't got
 					   time to awake */
+					is_blocked = FALSE;
 					break;
 				}
 			}
@@ -458,7 +460,8 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		}
 		++lock->waiting_count;
 		/* record the fact that we are waiting on the initializing thread */
-		g_hash_table_insert (blocked_thread_hash, GUINT_TO_POINTER (tid), lock);
+		if (is_blocked)
+			g_hash_table_insert (blocked_thread_hash, GUINT_TO_POINTER (tid), lock);
 	}
 	mono_type_initialization_unlock ();
 
