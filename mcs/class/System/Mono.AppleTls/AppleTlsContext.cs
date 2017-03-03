@@ -100,7 +100,7 @@ namespace Mono.AppleTls
 			get { return !disposed && context != IntPtr.Zero; }
 		}
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("APPLE_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
 			Console.Error.WriteLine ("MobileTlsStream({0}): {1}", Parent.ID, string.Format (message, args));
@@ -317,7 +317,7 @@ namespace Mono.AppleTls
 			else
 				MaxProtocol = SslProtocol.Tls_1_0;
 
-#if MARTIN_DEBUG
+#if APPLE_TLS_DEBUG
 			foreach (var c in GetSupportedCiphers ())
 				Debug ("  {0} SslCipherSuite.{1} {2:x} {3}", IsServer ? "Server" : "Client", c, (int)c, (CipherSuiteCode)c);
 #endif

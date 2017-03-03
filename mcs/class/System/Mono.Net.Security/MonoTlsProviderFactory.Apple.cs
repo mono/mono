@@ -30,6 +30,7 @@
 #endif
 
 #if SECURITY_DEP
+
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MSI = MonoSecurity::Mono.Security.Interface;
@@ -39,15 +40,14 @@ using MSI = Mono.Security.Interface;
 using MX = Mono.Security.X509;
 #endif
 using System.Security.Cryptography.X509Certificates;
+using Mono.AppleTls;
+
 #endif
 
 using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-#if SECURITY_DEP
-using Mono.AppleTls;
-#endif
 
 namespace Mono.Net.Security
 {
@@ -70,7 +70,7 @@ namespace Mono.Net.Security
 		internal static IMonoTlsProvider GetProviderInternal ()
 		{
 #if SECURITY_DEP
-			return (IMonoTlsProvider)GetTlsProvider ();
+			return GetTlsProvider ();
 #else
 			throw new NotSupportedException ("TLS Support not available.");
 #endif
@@ -78,9 +78,8 @@ namespace Mono.Net.Security
 		
 		#endregion
 
-		static object locker = new object ();
-
 #if SECURITY_DEP
+		static object locker = new object ();
 		static IMonoTlsProvider provider;
 		static IMonoTlsProvider GetTlsProvider ()
 		{

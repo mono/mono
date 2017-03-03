@@ -435,7 +435,7 @@ namespace Mono.Net
 	{
 		public CFData (IntPtr handle, bool own) : base (handle, own) { }
 	
-		[DllImport ("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+		[DllImport (CoreFoundationLibrary)]
 		extern static /* CFDataRef */ IntPtr CFDataCreate (/* CFAllocatorRef */ IntPtr allocator, /* UInt8* */ IntPtr bytes, /* CFIndex */ IntPtr length);
 		public unsafe static CFData FromData (byte [] buffer)
 		{
@@ -454,10 +454,10 @@ namespace Mono.Net
 			get { return CFDataGetLength (Handle); }
 		}
 
-		[DllImport ("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+		[DllImport (CoreFoundationLibrary)]
 		extern static /* CFIndex */ IntPtr CFDataGetLength (/* CFDataRef */ IntPtr theData);
 
-		[DllImport ("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+		[DllImport (CoreFoundationLibrary)]
 		extern static /* UInt8* */ IntPtr CFDataGetBytePtr (/* CFDataRef */ IntPtr theData);
 
 		/*
@@ -1318,11 +1318,7 @@ namespace Mono.Net
 			GC.SuppressFinalize (this);
 		}
 
-#if XAMCORE_2_0
 		protected virtual void Dispose (bool disposing)
-#else
-		public virtual void Dispose (bool disposing)
-#endif
 		{
 			if (handle != IntPtr.Zero){
 				CFObject.CFRelease (handle);

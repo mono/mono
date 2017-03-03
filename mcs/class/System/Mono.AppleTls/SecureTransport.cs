@@ -1,9 +1,6 @@
 #if MONO_FEATURE_APPLETLS
 // Copyright 2014 Xamarin Inc. All rights reserved.
 
-using System;
-using ObjCRuntime;
-
 namespace Mono.AppleTls {
 
 	// Security.framework/Headers/SecureTransport.h

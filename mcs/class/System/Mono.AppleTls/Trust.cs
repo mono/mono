@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_APPLETLS
 // 
 // Trust.cs: Implements the managed SecTrust wrapper.
 //

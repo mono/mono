@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_APPLETLS
 // 
 // Items.cs: Implements the KeyChain query access APIs
 //
