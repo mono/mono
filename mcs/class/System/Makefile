@@ -35,7 +35,12 @@ endif
 
 ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:CODEDOM
-TEST_LIB_REFS = System.Drawing $(MONO_SECURITY) System.Data System.Xml System.Core System.Configuration
+TEST_LIB_REFS = $(MONO_SECURITY) System.Data System.Xml System.Core System.Configuration
+
+ifndef NO_SYSTEM_DRAWING_DEPENDENCY
+TEST_LIB_REFS += System.Drawing
+endif
+
 else
 LIB_MCS_FLAGS += -nowarn:618
 TEST_LIB_REFS = $(MONO_SECURITY) System.Data System.Xml System.Core
