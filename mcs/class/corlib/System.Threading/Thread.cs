@@ -81,7 +81,7 @@ namespace System.Threading {
 		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private IntPtr interrupt_on_stop;
+		private IntPtr unused4;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
