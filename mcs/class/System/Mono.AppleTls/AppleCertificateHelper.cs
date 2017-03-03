@@ -1,4 +1,4 @@
-﻿#if XAMARIN_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 //
 // AppleCertificateHelper.cs
 //
@@ -7,21 +7,25 @@
 //
 // Copyright (c) 2015 Xamarin, Inc.
 //
+
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
 using System;
-using System.Linq;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Interface;
 using MX = Mono.Security.X509;
 
-using XamCore.Foundation;
-using XamCore.CoreFoundation;
-using XamCore.ObjCRuntime;
-using XamCore.Security;
+#if MONO_SECURITY_ALIAS
+using MonoSecurity::Mono.Security.Interface;
+#else
+using Mono.Security.Interface;
+#endif
 
-namespace XamCore.Security.Tls
+namespace Mono.AppleTls
 {
 	static class AppleCertificateHelper
 	{

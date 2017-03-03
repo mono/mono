@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS
 // 
 // Policy.cs: Implements the managed SecPolicy wrapper.
 //
@@ -29,21 +30,14 @@
 //
 using System;
 using System.Runtime.InteropServices;
-using XamCore.ObjCRuntime;
-using XamCore.CoreFoundation;
-using XamCore.Foundation;
+using ObjCRuntime;
+using Mono.Net;
 
-namespace XamCore.Security {
-	public partial class SecPolicy : INativeObject, IDisposable {
+namespace Mono.AppleTls {
+	partial class SecPolicy : INativeObject, IDisposable {
 		IntPtr handle;
 
-		public SecPolicy (IntPtr handle) 
-			: this (handle, false)
-		{
-		}
-
-		[Preserve (Conditional=true)]
-		internal SecPolicy (IntPtr handle, bool owns)
+		internal SecPolicy (IntPtr handle, bool owns = false)
 		{
 			if (handle == IntPtr.Zero)
 				throw new Exception ("Invalid handle");
@@ -53,25 +47,17 @@ namespace XamCore.Security {
 				CFObject.CFRetain (handle);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static IntPtr /* SecPolicyRef */ SecPolicyCreateSSL (bool server, IntPtr /* CFStringRef */ hostname);
 
 		static public SecPolicy CreateSslPolicy (bool server, string hostName)
 		{
-			NSString host = hostName == null ? null : new NSString (hostName);
+			CFString host = hostName == null ? null : CFString.Create (hostName);
 			IntPtr handle = host == null ? IntPtr.Zero : host.Handle; 
 			SecPolicy policy = new SecPolicy (SecPolicyCreateSSL (server, handle), true);
 			if (host != null)
 				host.Dispose ();
 			return policy;
-		}
-
-		[DllImport (Constants.SecurityLibrary)]
-		extern static IntPtr /* SecPolicyRef */ SecPolicyCreateBasicX509 ();
-
-		static public SecPolicy CreateBasicX509Policy ()
-		{
-			return new SecPolicy (SecPolicyCreateBasicX509 (), true);
 		}
 
 		~SecPolicy ()
@@ -96,38 +82,6 @@ namespace XamCore.Security {
 				handle = IntPtr.Zero;
 			}
 		}
-
-		[DllImport (Constants.SecurityLibrary, EntryPoint="SecPolicyGetTypeID")]
-		public extern static nint GetTypeID ();
-
-		public static bool operator == (SecPolicy a, SecPolicy b)
-		{
-			if (((object)a) == null)
-				return ((object)b) == null;
-			else if ((object)b == null)
-				return false;
-
-			return a.Handle == b.Handle;
-		}
-
-		public static bool operator != (SecPolicy a, SecPolicy b)
-		{
-			if (((object)a) == null)
-				return ((object)b) != null;
-			else if (((object)b) == null)
-				return true;
-			return a.Handle != b.Handle;
-		}
-
-		public override bool Equals (object other)
-		{
-			var o = other as SecPolicy;
-			return this == o;
-		}
-
-		public override int GetHashCode ()
-		{
-			return (int) Handle;
-		}
 	}
 }
+#endif

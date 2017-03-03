@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS
 // 
 // ImportExport.cs
 //
@@ -28,34 +29,34 @@
 
 using System;
 using System.Runtime.InteropServices;
-using XamCore.ObjCRuntime;
-using XamCore.CoreFoundation;
-using XamCore.Foundation;
+using ObjCRuntime;
+using Mono.Net;
 
-namespace XamCore.Security {
+namespace Mono.AppleTls {
 
-	public partial class SecImportExport {
+	internal partial class SecImportExport {
 		
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static SecStatusCode SecPKCS12Import (IntPtr pkcs12_data, IntPtr options, out IntPtr items);
 		
-		static public SecStatusCode ImportPkcs12 (byte[] buffer, NSDictionary options, out NSDictionary[] array)
+		static public SecStatusCode ImportPkcs12 (byte[] buffer, CFDictionary options, out CFDictionary[] array)
 		{
-			using (NSData data = NSData.FromArray (buffer)) {
+			using (CFData data = CFData.FromData (buffer)) {
 				return ImportPkcs12 (data, options, out array);
 			}
 		}
 
-		static public SecStatusCode ImportPkcs12 (NSData data, NSDictionary options, out NSDictionary[] array)
+		static public SecStatusCode ImportPkcs12 (CFData data, CFDictionary options, out CFDictionary [] array)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
 			
 			IntPtr handle;
 			SecStatusCode code = SecPKCS12Import (data.Handle, options.Handle, out handle);
-			array = NSArray.ArrayFromHandle <NSDictionary> (handle);
-			NSObject.DangerousRelease (handle);
+			array = CFArray.ArrayFromHandle <CFDictionary> (handle, h => new CFDictionary (h, false));
+			CFObject.CFRelease (handle);
 			return code;
 		}
 	}
 }
+#endif

@@ -49,7 +49,7 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONO_FEATURE_APPLETLS
 		// typedef struct _CERT_CONTEXT {
 		//	DWORD                   dwCertEncodingType;
 		//	BYTE                    *pbCertEncoded;
@@ -79,7 +79,7 @@ namespace System.Security.Cryptography.X509Certificates
 			var x509 = new MX.X509Certificate (data);
 			return new X509CertificateImplMono (x509);
 		}
-#elif !MONOTOUCH && !XAMMAC
+#elif !MONO_FEATURE_APPLETLS
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
 			throw new NotSupportedException ();
@@ -175,7 +175,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return data;
 		}
 
-#if !MONOTOUCH && !XAMMAC
+#if !MONO_FEATURE_APPLETLS
 		static X509CertificateImpl Import (byte[] rawData)
 		{
 			MX.X509Certificate x509;

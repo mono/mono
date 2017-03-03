@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS
 using System;
 using System.Runtime.InteropServices;
 using MX = Mono.Security.X509;
@@ -35,3 +36,4 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
+#endif

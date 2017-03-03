@@ -72,7 +72,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			File.Delete("temp.b64");
 		}
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 		public IntPtr GetHandleEx (byte[] certificate) 
 		{
 			CertificateContext cc = new CertificateContext ();
@@ -104,7 +104,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-#if MOBILE
+#if MOBILE || MONOMAC
 		[Ignore ("This constructor always throw a NotSupportedException under MOBILE and is useless without CryptoAPI (i.e. outside Windows)")]
 #endif
 		public void ConstructorIntPtr ()

@@ -1,33 +1,30 @@
+#if MONO_FEATURE_APPLETLS
 // Copyright 2014 Xamarin Inc. All rights reserved.
 
 using System;
-using XamCore.ObjCRuntime;
+using ObjCRuntime;
 
-namespace XamCore.Security {
+namespace Mono.AppleTls {
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslProtocol {
+	enum SslProtocol {
 		Unknown = 0,
-		Ssl_3_0 = 2,
-#if !XAMCORE_2_0
-		[Obsolete ("Use Ssl_3_0")]
-		Ssl3_0 = Ssl_3_0,
-#endif
+		// Ssl_3_0 = 2,
 		Tls_1_0 = 4,
 		Tls_1_1 = 7, 
 		Tls_1_2 = 8, 
-		Dtls_1_0 = 9,
+		// Dtls_1_0 = 9,
 		
 		/* Obsolete on iOS */
-		Ssl_2_0 = 1,          
-		Ssl_3_0_only = 3,         
-		Tls_1_0_only = 5,         
-		All = 6,                
+		// Ssl_2_0 = 1,          
+		// Ssl_3_0_only = 3,         
+		// Tls_1_0_only = 5,         
+		// All = 6,                
 	}
 
 	// subset of OSStatus (int)
-	public enum SslStatus {
+	enum SslStatus {
 		Success					= 0,		// errSecSuccess in SecBase.h
 		Protocol				= -9800,
 		Negotiation				= -9801,
@@ -85,74 +82,60 @@ namespace XamCore.Security {
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslSessionOption {
+	enum SslSessionOption {
 		BreakOnServerAuth,
 		BreakOnCertRequested,
-		[Mac (10,8)]
 		BreakOnClientAuth,
 
-		[iOS (7,0)][Mac (10,9)]
-		FalseStart,
+		// FalseStart,
 
-		SendOneByteRecord,
+		// SendOneByteRecord,
 
-		[iOS (9,0)][Mac (10,11)]
-		AllowServerIdentityChange = 5,
+		// AllowServerIdentityChange = 5,
 		
-		[iOS (8,1)][Mac (10,10)]
-		Fallback = 6,
+		// Fallback = 6,
 
-		[iOS (9,0)][Mac (10,11)]
-		BreakOnClientHello = 7,
+		// BreakOnClientHello = 7,
 
-		[iOS (10,0)][Mac (10,12)]
-		AllowRenegotiation = 8,
+		// AllowRenegotiation = 8,
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslAuthenticate {
-		Never,
-		Always,
-		Try
+	enum SslAuthenticate {
+		// Never,
+		// Always,
+		Try = 2,
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslProtocolSide {
+	enum SslProtocolSide {
 		Server,
 		Client,
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslConnectionType {
+	enum SslConnectionType {
 		Stream,
-		Datagram
+		// Datagram
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslSessionState {
+	enum SslSessionState {
 		Invalid = -1,
-		Idle,
-		Handshake,
-		Connected,
-		Closed,
-		Aborted
+		// Idle,
+		// Handshake,
+		// Connected,
+		// Closed,
+		// Aborted
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
-	public enum SslSessionStrengthPolicy {
-		Default,
-		ATSv1,
-		ATSv1NoPFS
-	}
-
-	// Security.framework/Headers/SecureTransport.h
-	// untyped enum
-	public enum SslClientCertificateState {
+	enum SslClientCertificateState {
 		None,
 		Requested,
 		Sent,
@@ -161,10 +144,10 @@ namespace XamCore.Security {
 
 	// Security.framework/Headers/CipherSuite.h
 	// 32 bits (uint32_t) on OSX, 16 bits (uint16_t) on iOS
-#if MONOMAC
-	public enum SslCipherSuite : uint {
+#if XAMMAC || XAMMAC_4_5
+	enum SslCipherSuite : uint {
 #else
-	public enum SslCipherSuite : ushort {
+	enum SslCipherSuite : ushort {
 #endif
 		// DO NOT RENAME VALUES - they don't look good but we need them to keep compatibility with our System.dll code
 		// it's how it's defined across most SSL/TLS implementation (from RFC)
@@ -268,3 +251,4 @@ namespace XamCore.Security {
 		TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384		= 0xC032,	// iOS 9+
 	}
 }
+#endif

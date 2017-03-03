@@ -1,4 +1,4 @@
-﻿#if XAMARIN_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 //
 // AppleTlsProvider.cs
 //
@@ -7,6 +7,11 @@
 //
 // Copyright (c) 2015 Xamarin, Inc.
 //
+
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
 using System;
 using System.IO;
 using System.Threading;
@@ -14,10 +19,14 @@ using System.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Interface;
 using MNS = Mono.Net.Security;
+#if MONO_SECURITY_ALIAS
+using MonoSecurity::Mono.Security.Interface;
+#else
+using Mono.Security.Interface;
+#endif
 
-namespace XamCore.Security.Tls
+namespace Mono.AppleTls
 {
 	class AppleTlsProvider : MonoTlsProvider
 	{

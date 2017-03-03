@@ -1,4 +1,4 @@
-#if XAMARIN_APPLETLS
+#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 //
 // AppleTlsContext.cs
 //
@@ -7,10 +7,14 @@
 //
 // Copyright (c) 2015 Xamarin, Inc.
 //
+
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
 using System;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
 using System.Globalization;
 using System.Collections;
@@ -23,15 +27,22 @@ using System.Security.Cryptography.X509Certificates;
 
 using SD = System.Diagnostics;
 using MX = Mono.Security.X509;
+
+#if MONO_SECURITY_ALIAS
+using MonoSecurity::Mono.Security.Interface;
+#else
 using Mono.Security.Interface;
+#endif
+
+using Mono.Net;
 using Mono.Net.Security;
+using Mono.Util;
 
-using XamCore.Security;
-using XamCore.Foundation;
-using XamCore.CoreFoundation;
-using XamCore.ObjCRuntime;
+using ObjCRuntime;
 
-namespace XamCore.Security.Tls
+using nint = System.IntPtr;
+
+namespace Mono.AppleTls
 {
 	class AppleTlsContext : MobileTlsContext
 	{
@@ -101,7 +112,7 @@ namespace XamCore.Security.Tls
 			if (last != null)
 				throw last;
 
-			if (status == SslStatus.Success || acceptable.Contains (status))
+			if (status == SslStatus.Success || Array.IndexOf (acceptable, status) > -1)
 				return;
 
 			switch (status) {
@@ -264,7 +275,7 @@ namespace XamCore.Security.Tls
 
 				certificates = new X509CertificateCollection ();
 				for (int i = 0; i < trust.Count; i++)
-					certificates.Add (trust [i].ToX509Certificate ());
+					certificates.Add (trust [(IntPtr)i].ToX509Certificate ());
 
 				remoteCertificate = certificates [0];
 				Debug ("Got peer trust: {0}", remoteCertificate);
@@ -306,11 +317,15 @@ namespace XamCore.Security.Tls
 			else
 				MaxProtocol = SslProtocol.Tls_1_0;
 
+#if MARTIN_DEBUG
 			foreach (var c in GetSupportedCiphers ())
 				Debug ("  {0} SslCipherSuite.{1} {2:x} {3}", IsServer ? "Server" : "Client", c, (int)c, (CipherSuiteCode)c);
+#endif
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
-				var ciphers = Settings.EnabledCiphers.Select (c => (SslCipherSuite)c).ToArray ();
+				SslCipherSuite [] ciphers = new SslCipherSuite [Settings.EnabledCiphers.Length];
+				for (int i = 0 ; i < Settings.EnabledCiphers.Length; ++i)
+					ciphers [i] = (SslCipherSuite)Settings.EnabledCiphers[i];
 				SetEnabledCiphers (ciphers);
 			}
 
@@ -378,12 +393,10 @@ namespace XamCore.Security.Tls
 
 		#region General P/Invokes
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLGetProtocolVersionMax (/* SSLContextRef */ IntPtr context, out SslProtocol maxVersion);
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetProtocolVersionMax (/* SSLContextRef */ IntPtr context, SslProtocol maxVersion);
 
 		public SslProtocol MaxProtocol {
@@ -399,12 +412,10 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLGetProtocolVersionMin (/* SSLContextRef */ IntPtr context, out SslProtocol minVersion);
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetProtocolVersionMin (/* SSLContextRef */ IntPtr context, SslProtocol minVersion);
 
 		public SslProtocol MinProtocol {
@@ -420,7 +431,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLGetNegotiatedProtocolVersion (/* SSLContextRef */ IntPtr context, out SslProtocol protocol);
 
 		public SslProtocol GetNegotiatedProtocolVersion ()
@@ -431,7 +442,7 @@ namespace XamCore.Security.Tls
 			return value;
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLGetSessionOption (/* SSLContextRef */ IntPtr context, SslSessionOption option, out bool value);
 
 		public bool GetSessionOption (SslSessionOption option)
@@ -442,7 +453,7 @@ namespace XamCore.Security.Tls
 			return value;
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetSessionOption (/* SSLContextRef */ IntPtr context, SslSessionOption option, bool value);
 
 		public void SetSessionOption (SslSessionOption option, bool value)
@@ -451,7 +462,7 @@ namespace XamCore.Security.Tls
 			CheckStatusAndThrow (result);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetClientSideAuthenticate (/* SSLContextRef */ IntPtr context, SslAuthenticate auth);
 
 		public void SetClientSideAuthenticate (SslAuthenticate auth)
@@ -460,10 +471,10 @@ namespace XamCore.Security.Tls
 			CheckStatusAndThrow (result);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLHandshake (/* SSLContextRef */ IntPtr context);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLGetSessionState (/* SSLContextRef */ IntPtr context, ref SslSessionState state);
 
 		public SslSessionState SessionState {
@@ -475,10 +486,10 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerID (/* SSLContextRef */ IntPtr context, /* const void** */ out IntPtr peerID, /* size_t* */ out nint peerIDLen);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerID (/* SSLContextRef */ IntPtr context, /* const void* */ byte* peerID, /* size_t */ nint peerIDLen);
 
 		public unsafe byte[] PeerId {
@@ -487,15 +498,15 @@ namespace XamCore.Security.Tls
 				IntPtr id;
 				var result = SSLGetPeerID (Handle, out id, out length);
 				CheckStatusAndThrow (result);
-				if ((result != SslStatus.Success) || (length == 0))
+				if ((result != SslStatus.Success) || ((int)length == 0))
 					return null;
-				var data = new byte [length];
+				var data = new byte [(int)length];
 				Marshal.Copy (id, data, 0, (int) length);
 				return data;
 			}
 			set {
 				SslStatus result;
-				nint length = (value == null) ? 0 : value.Length;
+				nint length = (value == null) ? (IntPtr)0 : (IntPtr)value.Length;
 				fixed (byte *p = value) {
 					result = SSLSetPeerID (Handle, p, length);
 				}
@@ -503,7 +514,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetBufferedReadSize (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint bufSize);
 
 		public nint BufferedReadSize {
@@ -515,10 +526,10 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberSupportedCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint numCiphers);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetSupportedCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref nint numCiphers);
 
 		public unsafe IList<SslCipherSuite> GetSupportedCiphers ()
@@ -526,10 +537,10 @@ namespace XamCore.Security.Tls
 			nint n;
 			var result = SSLGetNumberSupportedCiphers (Handle, out n);
 			CheckStatusAndThrow (result);
-			if ((result != SslStatus.Success) || (n <= 0))
+			if ((result != SslStatus.Success) || ((int)n <= 0))
 				return null;
 
-			var ciphers = new SslCipherSuite [n];
+			var ciphers = new SslCipherSuite [(int)n];
 			fixed (SslCipherSuite *p = ciphers) {
 				result = SSLGetSupportedCiphers (Handle, p, ref n);
 			}
@@ -537,10 +548,10 @@ namespace XamCore.Security.Tls
 			return new List<SslCipherSuite> (ciphers);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberEnabledCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint numCiphers);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref nint numCiphers);
 
 		public unsafe IList<SslCipherSuite> GetEnabledCiphers ()
@@ -548,10 +559,10 @@ namespace XamCore.Security.Tls
 			nint n;
 			var result = SSLGetNumberEnabledCiphers (Handle, out n);
 			CheckStatusAndThrow (result);
-			if ((result != SslStatus.Success) || (n <= 0))
+			if ((result != SslStatus.Success) || ((int)n <= 0))
 				return null;
 
-			var ciphers = new SslCipherSuite [n];
+			var ciphers = new SslCipherSuite [(int)n];
 			fixed (SslCipherSuite *p = ciphers) {
 				result = SSLGetEnabledCiphers (Handle, p, ref n);
 			}
@@ -559,22 +570,22 @@ namespace XamCore.Security.Tls
 			return new List<SslCipherSuite> (ciphers);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLSetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t */ nint numCiphers);
 
-		public unsafe void SetEnabledCiphers (IEnumerable<SslCipherSuite> ciphers)
+		public unsafe void SetEnabledCiphers (SslCipherSuite [] ciphers)
 		{
 			if (ciphers == null)
 				throw new ArgumentNullException ("ciphers");
 
 			SslStatus result;
-			var array = ciphers.ToArray ();
-			fixed (SslCipherSuite *p = array)
-				result = SSLSetEnabledCiphers (Handle, p, ciphers.Count ());
+
+			fixed (SslCipherSuite *p = ciphers)
+				result = SSLSetEnabledCiphers (Handle, p, (IntPtr)ciphers.Length);
 			CheckStatusAndThrow (result);
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetNegotiatedCipher (/* SSLContextRef */ IntPtr context, /* SslCipherSuite* */ out SslCipherSuite cipherSuite);
 
 		public SslCipherSuite NegotiatedCipher {
@@ -586,13 +597,13 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainNameLength (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint peerNameLen);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ ref nint peerNameLen);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ nint peerNameLen);
 
 		public string PeerDomainName {
@@ -600,43 +611,51 @@ namespace XamCore.Security.Tls
 				nint length;
 				var result = SSLGetPeerDomainNameLength (Handle, out length);
 				CheckStatusAndThrow (result);
-				if (result != SslStatus.Success || length == 0)
+				if (result != SslStatus.Success || (int)length == 0)
 					return String.Empty;
-				var bytes = new byte [length];
+				var bytes = new byte [(int)length];
 				result = SSLGetPeerDomainName (Handle, bytes, ref length);
 				CheckStatusAndThrow (result);
 				if (result != SslStatus.Success)
 					return string.Empty;
-				if (length > 0 && bytes [length-1] == 0)
-					length--;
+				if ((int)length > 0 && bytes [(int)length-1] == 0)
+					length = (IntPtr)((int)length - 1);
 				return Encoding.UTF8.GetString (bytes, 0, (int)length);
 			}
 			set {
 				SslStatus result;
 				if (value == null) {
-					result = SSLSetPeerDomainName (Handle, null, 0);
+					result = SSLSetPeerDomainName (Handle, null, (IntPtr)0);
 				} else {
 					var bytes = Encoding.UTF8.GetBytes (value);
-					result = SSLSetPeerDomainName (Handle, bytes, bytes.Length);
+					result = SSLSetPeerDomainName (Handle, bytes, (IntPtr)bytes.Length);
 				}
 				CheckStatusAndThrow (result);
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLSetCertificate (/* SSLContextRef */ IntPtr context, /* CFArrayRef */ IntPtr certRefs);
 
-		NSArray Bundle (SecIdentity identity, IEnumerable<SecCertificate> certificates)
+		CFArray Bundle (SecIdentity identity, IEnumerable<SecCertificate> certificates)
 		{
 			if (identity == null)
 				throw new ArgumentNullException ("identity");
 			int i = 0;
-			int n = certificates == null ? 0 : certificates.Count ();
+
+			int n = 0;
+			if (certificates != null)
+			{
+				using (var enumerator = certificates.GetEnumerator())
+    					while (enumerator.MoveNext())
+        					n++;
+			}
+
 			var ptrs = new IntPtr [n + 1];
 			ptrs [0] = identity.Handle;
 			foreach (var certificate in certificates)
 				ptrs [++i] = certificate.Handle;
-			return NSArray.FromIntPtrs (ptrs);
+			return CFArray.CreateArray (ptrs);
 		}
 
 		public void SetCertificate (SecIdentity identify, IEnumerable<SecCertificate> certificates)
@@ -647,7 +666,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLGetClientCertificateState (/* SSLContextRef */ IntPtr context, out SslClientCertificateState clientState);
 
 		public SslClientCertificateState ClientCertificateState {
@@ -659,7 +678,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLCopyPeerTrust (/* SSLContextRef */ IntPtr context, /* SecTrustRef */ out IntPtr trust);
 
 		public SecTrust GetPeerTrust (bool requireTrust)
@@ -674,32 +693,21 @@ namespace XamCore.Security.Tls
 			return (value == IntPtr.Zero) ? null : new SecTrust (value);
 		}
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
-		extern unsafe static /* CFType */ IntPtr SSLContextGetTypeID ();
-
-		[Mac (10,8)]
-		public static IntPtr GetTypeId ()
-		{
-			return SSLContextGetTypeID ();
-		}
-
 		#endregion
 
 		#region IO Functions
 
-		[Mac (10,8)]
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* SSLContextRef */ IntPtr SSLCreateContext (/* CFAllocatorRef */ IntPtr alloc, SslProtocolSide protocolSide, SslConnectionType connectionType);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetConnection (/* SSLContextRef */ IntPtr context, /* SSLConnectionRef */ IntPtr connection);
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLSetIOFuncs (/* SSLContextRef */ IntPtr context, /* SSLReadFunc */ SslReadFunc readFunc, /* SSLWriteFunc */ SslWriteFunc writeFunc);
 
 		[MonoPInvokeCallback (typeof (SslReadFunc))]
-		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref nint dataLength)
+		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref /*HACK*/ IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
 			if (!handle.IsAllocated)
@@ -719,7 +727,7 @@ namespace XamCore.Security.Tls
 		}
 
 		[MonoPInvokeCallback (typeof (SslWriteFunc))]
-		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref nint dataLength)
+		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref /*HACK*/ IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
 			if (!handle.IsAllocated)
@@ -738,7 +746,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		SslStatus NativeReadCallback (IntPtr data, ref nint dataLength)
+		SslStatus NativeReadCallback (IntPtr data, ref /*HACK*/ IntPtr dataLength)
 		{
 			if (closed || disposed || Parent == null)
 				return SslStatus.ClosedAbort;
@@ -750,7 +758,7 @@ namespace XamCore.Security.Tls
 
 			bool wantMore;
 			var ret = Parent.InternalRead (readBuffer, 0, len, out wantMore);
-			dataLength = ret;
+			dataLength = (IntPtr)ret; // HACK
 
 			Debug ("NativeReadCallback #1: {0} - {1} {2}", len, ret, wantMore);
 
@@ -771,7 +779,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		SslStatus NativeWriteCallback (IntPtr data, ref nint dataLength)
+		SslStatus NativeWriteCallback (IntPtr data, ref /*HACK*/ IntPtr dataLength)
 		{
 			if (closed || disposed || Parent == null)
 				return SslStatus.ClosedAbort;
@@ -790,7 +798,7 @@ namespace XamCore.Security.Tls
 			return ok ? SslStatus.Success : SslStatus.ClosedAbort;
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLRead (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ nint dataLength, /* size_t* */ out nint processed);
 
 		public override unsafe int Read (byte[] buffer, int offset, int count, out bool wantMore)
@@ -807,7 +815,7 @@ namespace XamCore.Security.Tls
 				SslStatus status;
 
 				fixed (byte *d = &buffer [offset])
-					status = SSLRead (Handle, d, count, out processed);
+					status = SSLRead (Handle, d, (IntPtr)count, out processed);
 
 				Debug ("Read done: {0} {1} {2}", status, count, processed);
 
@@ -832,7 +840,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern unsafe static /* OSStatus */ SslStatus SSLWrite (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ nint dataLength, /* size_t* */ out nint processed);
 
 		public override unsafe int Write (byte[] buffer, int offset, int count, out bool wantMore)
@@ -846,10 +854,10 @@ namespace XamCore.Security.Tls
 
 			try {
 				SslStatus status = SslStatus.ClosedAbort;
-				nint processed =  -1;
+				nint processed =  (IntPtr)(-1);
 
 				fixed (byte *d = &buffer [offset])
-					status = SSLWrite (Handle, d, count, out processed);
+					status = SSLWrite (Handle, d, (IntPtr)count, out processed);
 
 				Debug ("Write done: {0} {1}", status, processed);
 
@@ -862,7 +870,7 @@ namespace XamCore.Security.Tls
 			}
 		}
 
-		[DllImport (Constants.SecurityLibrary)]
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern static /* OSStatus */ SslStatus SSLClose (/* SSLContextRef */ IntPtr context);
 
 		public override void Close ()
