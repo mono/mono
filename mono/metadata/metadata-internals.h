@@ -210,6 +210,9 @@ struct _MonoImage {
 	/* Whenever this image contains metadata only without PE data */
 	guint8 metadata_only : 1;
 
+	/*  Whether this image belongs to load-from context */
+	guint8 load_from_context: 1;
+
 	guint8 checked_module_cctor : 1;
 	guint8 has_module_cctor : 1;
 
@@ -912,6 +915,9 @@ mono_find_image_set_owner (void *ptr);
 
 void
 mono_loader_register_module (const char *name, MonoDl *module);
+
+MonoAssembly *
+mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 
