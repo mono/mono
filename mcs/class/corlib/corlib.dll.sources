@@ -1639,6 +1639,8 @@ ReferenceSources/Type.cs
 
 corert/Debug.cs
 
+../../../external/corert/src/Common/src/System/Diagnostics/Debug.cs
+
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
