@@ -1637,21 +1637,48 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
+corert/AddrofIntrinsics.cs
 corert/Debug.cs
+corert/Interop.cs
+corert/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Errors.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.FormatMessage.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
 
 ../../../external/corert/src/Common/src/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Win32Marshal.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/DeferredDisposableLifetime.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
 
 corefx/SR.cs
 
