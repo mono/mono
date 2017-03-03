@@ -1,17 +1,21 @@
+
 namespace System.Diagnostics.Private
 {
-	static class Debug
+	static partial class Debug
 	{
-		public static void Assert (bool condition)
-		{
-		}
+		internal static IDebugLogger s_logger = new MonoDebugLogger();
 
-		public static void Assert (bool condition, string message)
+		internal sealed class MonoDebugLogger : IDebugLogger
 		{
-		}
+			public void ShowAssertDialog(string stackTrace, string message, string detailMessage)
+			{
+				// FIXME should we g_error in this case?
+			}
 
-		public static void Fail (string message)
-		{
+			public void WriteCore(string message)
+			{
+				// FIXME should we g_debug in this case?
+			}
 		}
 	}
 }
