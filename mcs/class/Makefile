@@ -105,6 +105,8 @@ monodroid_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
+	System.Runtime.Serialization.Formatters.Soap	\
+	System.Runtime.Remoting	\
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
