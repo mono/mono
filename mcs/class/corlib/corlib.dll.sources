@@ -1644,6 +1644,10 @@ corert/Debug.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/MemoryStream.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/StreamHelpers.CopyValidation.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs

@@ -40,23 +40,26 @@ namespace System.IO {
     [ContractClass(typeof(StreamContract))]
 #endif
 #if FEATURE_REMOTING || MONO
-    public abstract class Stream : MarshalByRefObject, IDisposable {
+    public abstract partial class Stream : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class Stream : IDisposable {
 #endif // FEATURE_REMOTING
 
+#if !MONO
         public static readonly Stream Null = new NullStream();
 
         //We pick a value that is the largest multiple of 4096 that is still smaller than the large object heap threshold (85K).
         // The CopyTo/CopyToAsync buffer is short-lived and is likely to be collected at Gen0, and it offers a significant
         // improvement in Copy performance.
         private const int _DefaultCopyBufferSize = 81920;
+#endif // !MONO
 
 #if NEW_EXPERIMENTAL_ASYNC_IO
         // To implement Async IO operations on streams that don't support async IO
 
         [NonSerialized]
         private ReadWriteTask _activeReadWriteTask;
+#if !MONO
         [NonSerialized]
         private SemaphoreSlim _asyncActiveSemaphore;
 
@@ -66,8 +69,10 @@ namespace System.IO {
             // WaitHandle, we don't need to worry about Disposing it.
             return LazyInitializer.EnsureInitialized(ref _asyncActiveSemaphore, () => new SemaphoreSlim(1, 1));
         }
+#endif // !MONO
 #endif
 
+#if !MONO
         public abstract bool CanRead {
             [Pure]
             get;
@@ -286,6 +291,7 @@ namespace System.IO {
                 cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 #endif // FEATURE_ASYNC_IO
+#endif // !MONO
 
         [Obsolete("CreateWaitHandle will be removed eventually.  Please use \"new ManualResetEvent(false)\" instead.")]
         protected virtual WaitHandle CreateWaitHandle()
@@ -294,12 +300,14 @@ namespace System.IO {
             return new ManualResetEvent(false);
         }
 
+#if !MONO
         [HostProtection(ExternalThreading=true)]
         public virtual IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, Object state)
         {
             Contract.Ensures(Contract.Result<IAsyncResult>() != null);
             return BeginReadInternal(buffer, offset, count, callback, state, serializeAsynchronously: false);
         }
+#endif // !MONO
 
         [HostProtection(ExternalThreading = true)]
         internal IAsyncResult BeginReadInternal(byte[] buffer, int offset, int count, AsyncCallback callback, Object state, bool serializeAsynchronously)
@@ -360,6 +368,7 @@ namespace System.IO {
 #endif
         }
 
+#if !MONO
         public virtual int EndRead(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
@@ -447,6 +456,7 @@ namespace System.IO {
             Contract.Ensures(Contract.Result<IAsyncResult>() != null);
             return BeginWriteInternal(buffer, offset, count, callback, state, serializeAsynchronously: false);
         }
+#endif // !MONO
 
         [HostProtection(ExternalThreading = true)]
         internal IAsyncResult BeginWriteInternal(byte[] buffer, int offset, int count, AsyncCallback callback, Object state, bool serializeAsynchronously)
@@ -547,6 +557,7 @@ namespace System.IO {
         }
 #endif
 
+#if !MONO
         public virtual void EndWrite(IAsyncResult asyncResult)
         {
             if (asyncResult==null)
@@ -591,6 +602,7 @@ namespace System.IO {
             }
 #endif
         }
+#endif // !MONO
 
 #if NEW_EXPERIMENTAL_ASYNC_IO
         // Task used by BeginRead / BeginWrite to do Read / Write asynchronously.
@@ -699,6 +711,7 @@ namespace System.IO {
         }
 #endif
 
+#if !MONO
 #if FEATURE_ASYNC_IO
         [HostProtection(ExternalThreading = true)]
         [ComVisible(false)]
@@ -769,6 +782,7 @@ namespace System.IO {
             oneByteArray[0] = value;
             Write(oneByteArray, 0, 1);
         }
+#endif // !MONO
 
         [HostProtection(Synchronization=true)]
         public static Stream Synchronized(Stream stream) 
@@ -783,8 +797,9 @@ namespace System.IO {
             return new SyncStream(stream);
         }
 
-#if !FEATURE_PAL || MONO // This method shouldn't have been exposed in Dev10 (we revised object invariants after locking down).
-        [Obsolete("Do not call or override this method.")]
+#if !FEATURE_PAL || MONO
+        // This method shouldn't have been exposed in Dev10 (we revised object invariants after locking down).
+        [Obsolete("Do not call or override this method")]
         protected virtual void ObjectInvariant() 
         {
         }
@@ -854,6 +869,7 @@ namespace System.IO {
             SynchronousAsyncResult.EndWrite(asyncResult);
         }
 
+#if !MONO
         [Serializable]
         private sealed class NullStream : Stream
         {
@@ -985,6 +1001,7 @@ namespace System.IO {
             {
             }
         }
+#endif // !MONO
 
         
         /// <summary>Used as the IAsyncResult object when using asynchronous IO methods on the base Stream class.</summary>
