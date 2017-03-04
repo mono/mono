@@ -67,6 +67,10 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Linq\Expressions\Compiler\DelegateHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Linq\Expressions\Compiler\DelegateHelpers.Generated.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\BitHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\HashSet.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\HashSetEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\ICollectionDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\*.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\CachedReflectionInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\CollectionExtensions.cs" />
@@ -277,10 +281,6 @@
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Extension.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Function.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\StrongBox.cs" />
-    <Compile Include="..\referencesource\System.Core\System\Collections\Generic\BitHelper.cs" />
-    <Compile Include="..\referencesource\System.Core\System\Collections\Generic\HashSet.cs" />
-    <Compile Include="..\referencesource\System.Core\System\Collections\Generic\HashSetDebugView.cs" />
-    <Compile Include="..\referencesource\System.Core\System\Collections\Generic\HashSetEqualityComparer.cs" />
     <Compile Include="..\referencesource\System.Core\System\FuncAndAction.cs" />
     <Compile Include="..\referencesource\System.Core\System\InvalidTimeZoneException.cs" />
     <Compile Include="..\referencesource\System.Core\System\IO\Enums.cs" />
