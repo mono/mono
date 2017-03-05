@@ -911,7 +911,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		public void GdipLoadImageFromFile_FileNotFound ()
 		{
 			string filename = "filenotfound";
@@ -921,11 +920,10 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (IntPtr.Zero, image, "image handle");
 
 			// this doesn't throw a OutOfMemoryException
-			Image.FromFile (filename);
+			Assert.Throws<FileNotFoundException>(() => Image.FromFile (filename));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GdipCreateBitmapFromFile_FileNotFound ()
 		{
 			string filename = "filenotfound";
@@ -934,7 +932,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateBitmapFromFile (filename, out bitmap), "GdipCreateBitmapFromFile");
 			Assert.AreEqual (IntPtr.Zero, bitmap, "bitmap handle");
 
-			new Bitmap (filename);
+			Assert.Throws<ArgumentException>(() => new Bitmap (filename));
 		}
 
 		[Test]
