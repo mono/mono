@@ -174,11 +174,10 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Null ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (null);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (null));
 			}
 		}
 
@@ -196,92 +195,82 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Default_Any ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, ColorAdjustType.Any);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, ColorAdjustType.Any));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_Default_Count ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, ColorAdjustType.Count);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, ColorAdjustType.Count));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Any ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Any);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Any));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Bitmap ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Bitmap);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Bitmap));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Brush ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Brush);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Brush));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Count ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Count);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Count));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Default ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Default);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Default));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Pen ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Pen);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Pen));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_AltGrays_Text ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Text);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.AltGrays, ColorAdjustType.Text));
 			}
 		}
 
@@ -299,47 +288,42 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_SkipGrays_Any ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Any);
+				Assert.Throws<ArgumentException<(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Any));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_SkipGrays_Count ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Count);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Count));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_InvalidFlag ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, (ColorMatrixFlag) Int32.MinValue);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, (ColorMatrixFlag) Int32.MinValue));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrix_InvalidType()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, (ColorAdjustType)Int32.MinValue);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.Default, (ColorAdjustType)Int32.MinValue));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_Null_ColorMatrix ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrices (null, global_color_matrix);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrices (null, global_color_matrix));
 			}
 		}
 
@@ -354,11 +338,10 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_ColorMatrix_Null_AltGrays ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrices (global_color_matrix, null, ColorMatrixFlag.AltGrays);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrices (global_color_matrix, null, ColorMatrixFlag.AltGrays));
 			}
 		}
 
@@ -400,20 +383,18 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_InvalidFlags ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrices (global_color_matrix, global_color_matrix, (ColorMatrixFlag) Int32.MinValue);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrices (global_color_matrix, global_color_matrix, (ColorMatrixFlag) Int32.MinValue));
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void SetColorMatrices_InvalidType ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				ia.SetColorMatrices (global_color_matrix, global_color_matrix, ColorMatrixFlag.Default, (ColorAdjustType) Int32.MinValue);
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrices (global_color_matrix, global_color_matrix, ColorMatrixFlag.Default, (ColorAdjustType) Int32.MinValue));
 			}
 		}
 
