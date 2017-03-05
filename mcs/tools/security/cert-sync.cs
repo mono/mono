@@ -119,15 +119,19 @@ namespace Mono.Tools
 			if (userStore) {
 				WriteLine ("Importing into legacy user store:");
 				ImportToStore (roots, X509StoreManager.CurrentUser.TrustedRoot);
-				WriteLine ("");
-				WriteLine ("Importing into BTLS user store:");
-				ImportToStore (roots, X509StoreManager.NewCurrentUser.TrustedRoot);
+				if (Mono.Security.Interface.MonoTlsProviderFactory.IsProviderSupported ("btls")) {
+					WriteLine ("");
+					WriteLine ("Importing into BTLS user store:");
+					ImportToStore (roots, X509StoreManager.NewCurrentUser.TrustedRoot);
+				}
 			} else {
 				WriteLine ("Importing into legacy system store:");
 				ImportToStore (roots, X509StoreManager.LocalMachine.TrustedRoot);
-				WriteLine ("");
-				WriteLine ("Importing into BTLS system store:");
-				ImportToStore (roots, X509StoreManager.NewLocalMachine.TrustedRoot);
+				if (Mono.Security.Interface.MonoTlsProviderFactory.IsProviderSupported ("btls")) {
+					WriteLine ("");
+					WriteLine ("Importing into BTLS system store:");
+					ImportToStore (roots, X509StoreManager.NewLocalMachine.TrustedRoot);
+				}
 			}
 
 			return 0;
