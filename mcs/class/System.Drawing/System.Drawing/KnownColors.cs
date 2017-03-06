@@ -269,6 +269,7 @@ namespace System.Drawing {
 
 		public static Color FromKnownColor (KnownColor kc)
 		{
+#if !NETCOREAPP2_0
 			Color c;
 			short n = (short)kc;
 			if ((n <= 0) || (n >= ArgbValues.Length)) {
@@ -284,6 +285,9 @@ namespace System.Drawing {
 			}
 			c.knownColor = n;
 			return c;
+#else
+			return Color.FromKnownColor (kc);
+#endif
 		}
 
 		public static string GetName (short kc)

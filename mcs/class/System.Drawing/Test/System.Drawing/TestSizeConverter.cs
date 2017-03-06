@@ -225,7 +225,7 @@ namespace MonoTests.System.Drawing
 			try {
 				// culture == null
 				szconv.ConvertTo (null, null, sz, typeof (string));
-			} catch (NullReferenceException e) {
+			} catch (NullReferenceException) {
 				Assert.Fail ("CT#8: must not throw NullReferenceException");
 			}
 		}

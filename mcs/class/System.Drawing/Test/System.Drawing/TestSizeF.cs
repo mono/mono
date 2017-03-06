@@ -132,7 +132,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestEqualityOp () 
 		{
+#pragma warning disable 1718 // Comparison made to same variable
 			Assert.IsTrue (sz11_99 == sz11_99, "EOP#1");
+#pragma warning restore 1718
 			Assert.IsTrue (sz11_99 == new SizeF (1.1F, 9.9F), "EOP#2");
 			Assert.IsFalse (sz11_99 == sz11_0, "EOP#3");
 			Assert.IsFalse (sz11_99 == sz0_11, "EOP#4");
@@ -142,7 +144,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestInequalityOp () 
 		{
+#pragma warning disable 1718 // Comparison made to same variable
 			Assert.IsFalse (sz11_99 != sz11_99, "IOP#1");
+#pragma warning restore 1718
 			Assert.IsFalse (sz11_99 != new SizeF (1.1F, 9.9F), "IOP#2");
 			Assert.IsTrue (sz11_99 != sz11_0, "IOP#3");
 			Assert.IsTrue (sz11_99 != sz0_11, "IOP#4");

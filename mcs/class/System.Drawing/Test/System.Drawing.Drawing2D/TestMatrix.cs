@@ -40,8 +40,8 @@ namespace MonoTests.System.Drawing.Drawing2D
 	public class MatrixTest {
 
 		private Matrix default_matrix;
-		private Rectangle rect;
-		private RectangleF rectf;
+		private Rectangle rect = default (Rectangle);
+		private RectangleF rectf = default (RectangleF);
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
