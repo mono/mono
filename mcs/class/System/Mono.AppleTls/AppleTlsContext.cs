@@ -590,7 +590,7 @@ namespace Mono.AppleTls
 				result = SSLGetPeerDomainName (Handle, bytes, ref length);
 				CheckStatusAndThrow (result);
 
-				int peerDomainLength = (int)lenght;
+				int peerDomainLength = (int)length;
 
 				if (result != SslStatus.Success)
 					return string.Empty;
