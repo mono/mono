@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -488,11 +489,11 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
-		[Test] //ToDo: System.ComponentModel.Win32Exception
+		[Test]
 		public void Only256InFile ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
-				Assert.Throws<Exception> (() => new Icon (fs, 0, 0));
+				Assert.Throws<Win32Exception> (() => new Icon (fs, 0, 0));
 			}
 		}
 

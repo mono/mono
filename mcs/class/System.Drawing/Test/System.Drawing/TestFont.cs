@@ -180,7 +180,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font ("Arial", 10);
 			int i = 1;
-			Assert.Throws<AccessViolationException> (() => f.ToLogFont (i));
+			f.ToLogFont (i);
 			Assert.AreEqual (1, i);
 		}
 

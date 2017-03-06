@@ -637,8 +637,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void AddLines_Point_0 ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddLines (new Point[0]);
-			Assert.Throws<ArgumentException> (() => CheckLine (gp));
+			Assert.Throws<ArgumentException> (() => gp.AddLines (new Point[0]));
 		}
 
 		[Test]
@@ -669,8 +668,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void AddLines_PointF_0 ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddLines (new PointF[0]);
-			Assert.Throws<ArgumentException> (() => CheckLine (gp));
+			Assert.Throws<ArgumentException> (() => gp.AddLines (new PointF[0]));
 		}
 
 		[Test]
@@ -1069,8 +1067,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void AddRectangles_Int_Empty ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddRectangles (new Rectangle[0]);
-			Assert.Throws< ArgumentException> (() => CheckRectangle(gp, 4));
+			Assert.Throws<ArgumentException> (() => gp.AddRectangles (new Rectangle[0]));
 		}
 
 		[Test]
@@ -1092,8 +1089,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void AddRectangles_Float_Empty ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddRectangles ( new RectangleF[0]);
-			Assert.Throws<ArgumentException> (() => CheckRectangle (gp, 4));
+			Assert.Throws<ArgumentException> (() => gp.AddRectangles ( new RectangleF[0]));
 		}
 
 		[Test]
