@@ -39,16 +39,6 @@ namespace MonoTests.System.Drawing.Drawing2D
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class MatrixTest {
 
-		private Matrix default_matrix;
-		private Rectangle rect = default (Rectangle);
-		private RectangleF rectf = default (RectangleF);
-
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			default_matrix = new Matrix ();
-		}
-
 		[Test]
 		public void Constructor_Default ()
 		{
@@ -85,19 +75,19 @@ namespace MonoTests.System.Drawing.Drawing2D
 		[Test]
 		public void Constructor_Int_Null ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new Matrix (rect, null));
+			Assert.Throws<ArgumentNullException> (() => new Matrix (default (Rectangle), null));
 		}
 
 		[Test]
 		public void Constructor_Int_Empty ()
 		{
-			Assert.Throws<ArgumentException> (() => new Matrix (rect, new Point[0]));
+			Assert.Throws<ArgumentException> (() => new Matrix (default (Rectangle), new Point[0]));
 		}
 
 		[Test]
 		public void Constructor_Int_4Point ()
 		{
-			Assert.Throws<ArgumentException> (() => new Matrix (rect, new Point[4]));
+			Assert.Throws<ArgumentException> (() => new Matrix (default (Rectangle), new Point[4]));
 		}
 
 		[Test]
@@ -117,19 +107,19 @@ namespace MonoTests.System.Drawing.Drawing2D
 		[Test]
 		public void Constructor_Float_Null ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new Matrix (rectf, null));
+			Assert.Throws<ArgumentNullException> (() => new Matrix (default (RectangleF), null));
 		}
 
 		[Test]
 		public void Constructor_Float_Empty ()
 		{
-			Assert.Throws<ArgumentException> (() => new Matrix (rectf, new PointF[0]));
+			Assert.Throws<ArgumentException> (() => new Matrix (default (RectangleF), new PointF[0]));
 		}
 
 		[Test]
 		public void Constructor_Float_2PointF ()
 		{
-			Assert.Throws<ArgumentException> (() => new Matrix (rectf, new PointF[2]));
+			Assert.Throws<ArgumentException> (() => new Matrix (default (RectangleF), new PointF[2]));
 		}
 
 		[Test]
