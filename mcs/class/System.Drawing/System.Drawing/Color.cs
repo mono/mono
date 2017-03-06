@@ -42,7 +42,9 @@ namespace System.Drawing
 	[TypeConverter(typeof(ColorConverter))]
 	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
+#if !CORECLR
 	[Serializable]
+#endif
 	public struct Color {
 
 		// Private transparency (A) and R,G,B fields.

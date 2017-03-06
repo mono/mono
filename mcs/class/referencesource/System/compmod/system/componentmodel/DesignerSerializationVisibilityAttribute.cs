@@ -99,11 +99,13 @@ namespace System.ComponentModel {
             return base.GetHashCode();
         }
 
+#if !CORECLR
         /// <devdoc>
         /// </devdoc>
         /// <internalonly/>
         public override bool IsDefaultAttribute() {
             return (this.Equals(Default));
         }
+#endif
     }
 }

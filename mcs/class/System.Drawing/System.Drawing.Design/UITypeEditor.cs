@@ -30,13 +30,17 @@
 //
 
 using System.ComponentModel;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.Collections;
 
 namespace System.Drawing.Design
 {
+#if !CORECLR
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#endif
 	public class UITypeEditor {
 
 		static UITypeEditor ()
@@ -48,7 +52,7 @@ namespace System.Drawing.Design
 			editors [typeof (IList)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (ICollection)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (string[])] = "System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design;
-#if !MOBILE
+#if !MOBILE && !CORECLR
 			TypeDescriptor.AddEditorTable (typeof (UITypeEditor), editors);
 #endif
 		}

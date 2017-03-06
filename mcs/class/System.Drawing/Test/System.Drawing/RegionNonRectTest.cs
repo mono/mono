@@ -39,7 +39,6 @@ namespace MonoTests.System.Drawing {
 	/*       Here we exclusively tests non-rectangular (GraphicsPath based) regions. */
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class RegionNonRectTest {
 
 		private Bitmap bitmap;

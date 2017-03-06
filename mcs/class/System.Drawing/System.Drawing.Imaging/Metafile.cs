@@ -37,7 +37,9 @@ using System.Runtime.InteropServices;
 namespace System.Drawing.Imaging {
 
 	[MonoTODO ("Metafiles, both WMF and EMF formats, are only partially supported.")]
+#if !CORECLR
 	[Serializable]
+#endif
 	[Editor ("System.Drawing.Design.MetafileEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Metafile : Image {
 

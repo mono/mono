@@ -1,4 +1,4 @@
-//
+﻿//
 // PNG Codec class testing unit
 //
 // Authors:
@@ -38,7 +38,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PngCodecTest {
 
 		/* Get suffix to add to the filename */

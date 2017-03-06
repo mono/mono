@@ -31,18 +31,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !CORECLR
 using System.Runtime.Serialization;
+#endif
 using System.Runtime.InteropServices;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.ComponentModel;
 
 namespace System.Drawing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.FontEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[TypeConverter (typeof (FontConverter))]
-	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
+	public sealed class Font : 
+#if !CORECLR
+		MarshalByRefObject, 
+		ISerializable, 
+#endif
+		ICloneable, 
+		IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
 		private string  systemFontName;
@@ -75,6 +87,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
+#if !CORECLR
        		private Font (SerializationInfo info, StreamingContext context)
 		{
 			string		name;
@@ -89,7 +102,9 @@ namespace System.Drawing
  
 			CreateFont(name, size, style, unit, DefaultCharSet, false);
 		}
+#endif
 
+#if !CORECLR
 		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue("Name", Name);
@@ -97,6 +112,7 @@ namespace System.Drawing
 			si.AddValue ("Style", Style);
 			si.AddValue ("Unit", Unit);
 		}
+#endif
 
 		~Font()
 		{
@@ -431,7 +447,7 @@ namespace System.Drawing
 				if (systemFontName == null)
 					return false;
 
-				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
+				return StringComparer.Ordinal.Compare (systemFontName, string.Empty) != 0;
 			}
 		}
 
@@ -591,7 +607,9 @@ namespace System.Drawing
 			}
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ToLogFont (object logFont)
 		{
 			if (GDIPlus.RunningOnUnix ()) {
@@ -616,7 +634,9 @@ namespace System.Drawing
 			}
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
 			if (graphics == null)
@@ -627,8 +647,11 @@ namespace System.Drawing
 			}
 
 			Type st = logFont.GetType ();
+
+#if !CORECLR
 			if (!st.IsLayoutSequential)
 				throw new ArgumentException ("logFont", Locale.GetText ("Layout must be sequential."));
+#endif
 
 			// note: there is no exception if 'logFont' isn't big enough
 			Type lf = typeof (LOGFONT);

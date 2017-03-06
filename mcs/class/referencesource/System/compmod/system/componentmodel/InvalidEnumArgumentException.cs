@@ -9,14 +9,18 @@ namespace System.ComponentModel {
     using System;
     using System.Diagnostics;
     using System.Globalization;
+#if !CORECLR
     using System.Runtime.Serialization;
     using System.Security.Permissions;
-    
+#endif
+
     /// <devdoc>
     ///    <para>The exception that is thrown when using invalid arguments that are enumerators.</para>
     /// </devdoc>
+#if !CORECLR
     [HostProtection(SharedState = true)]
     [Serializable]
+#endif
     public class InvalidEnumArgumentException : ArgumentException {
 
         /// <devdoc>
@@ -54,11 +58,13 @@ namespace System.ComponentModel {
                                 enumClass.Name), argumentName) {
         }
 
+#if !CORECLR
         /// <devdoc>
         ///     Need this constructor since Exception implements ISerializable. We don't have any fields,
         ///     so just forward this to base.
         /// </devdoc>
         protected InvalidEnumArgumentException(SerializationInfo info, StreamingContext context) : base(info, context) {
         }
+#endif
     }
 }

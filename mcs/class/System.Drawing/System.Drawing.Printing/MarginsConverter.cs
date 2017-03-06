@@ -110,6 +110,7 @@ namespace System.Drawing.Printing {
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		
+#if !CORECLR
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
 		{
 			return true;
@@ -132,6 +133,7 @@ namespace System.Drawing.Printing {
 				return null;
 			}
 		}
+#endif
 		#endregion
 	}
 }

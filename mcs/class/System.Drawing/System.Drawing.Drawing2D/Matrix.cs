@@ -34,7 +34,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
-        public sealed class Matrix : MarshalByRefObject, IDisposable
+        public sealed class Matrix :
+#if !CORECLR
+            MarshalByRefObject,
+#endif
+            IDisposable
         {
                 internal IntPtr nativeMatrix;
                 

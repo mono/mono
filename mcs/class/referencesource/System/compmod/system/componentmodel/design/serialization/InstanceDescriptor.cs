@@ -10,15 +10,19 @@ namespace System.ComponentModel.Design.Serialization {
     using System.Collections;
     using System.Diagnostics;
     using System.Reflection;
+#if !CORECLR
     using System.Security.Permissions;
+#endif
 
     /// <devdoc>
     ///     EventArgs for the ResolveNameEventHandler.  This event is used
     ///     by the serialization process to match a name to an object
     ///     instance.
     /// </devdoc>
+#if !CORECLR
     [HostProtection(SharedState = true)]
     [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name = "FullTrust")]
+#endif
     public sealed class InstanceDescriptor {
         private MemberInfo  member;
         private ICollection arguments;
@@ -147,7 +151,9 @@ namespace System.ComponentModel.Design.Serialization {
                 return ((FieldInfo)member).GetValue(null);
             }
             else {
+#if !CORECLR
                 Debug.Fail("Unrecognized reflection type in instance descriptor: " + member.GetType().Name);
+#endif
             }
             
             return null;

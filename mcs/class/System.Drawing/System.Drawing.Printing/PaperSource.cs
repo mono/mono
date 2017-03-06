@@ -37,7 +37,9 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSource.
 	/// </summary>
+#if !CORECLR
 	[Serializable]
+#endif
 	public class PaperSource
 	{
 		private PaperSourceKind kind;

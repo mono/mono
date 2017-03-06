@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -34,7 +34,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class ImageFormatTest {
 
 		private static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("b96b3cab-0728-11d3-9d7b-0000f81ef32e"));

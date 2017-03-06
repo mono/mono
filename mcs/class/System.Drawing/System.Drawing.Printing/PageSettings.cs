@@ -37,7 +37,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Printing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public class PageSettings : ICloneable
 	{
 		internal bool color;

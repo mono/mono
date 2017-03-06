@@ -30,7 +30,9 @@
 using System;
 namespace System.Drawing.Printing 
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum PrinterResolutionKind {
 		Custom = 0,
 		Draft = -1,

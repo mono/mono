@@ -35,7 +35,9 @@ using System.Security.Permissions;
 
 namespace System.Drawing.Printing {
 
+#if !CORECLR
 	[Serializable]
+#endif
 	public sealed class PrintingPermission : CodeAccessPermission, IUnrestrictedPermission {
 
 		private const int version = 1;

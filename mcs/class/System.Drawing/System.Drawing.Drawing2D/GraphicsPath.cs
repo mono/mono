@@ -36,7 +36,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
-	public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
+	public sealed class GraphicsPath :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		ICloneable, 
+		IDisposable
 	{
 		// 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
 		private const float FlatnessDefault = 1.0f / 4.0f;

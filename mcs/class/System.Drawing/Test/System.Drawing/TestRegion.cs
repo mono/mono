@@ -38,7 +38,6 @@ namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestRegion
 	{
 		/* For debugging */

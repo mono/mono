@@ -59,7 +59,6 @@ namespace MonoTests.System.Drawing{
 
 		// Test basic Font clone, properties and contructor
 		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		public void TestClone()
 		{		
 			Font f = new Font("Arial",12);	
@@ -121,7 +120,6 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		[Category ("CAS")]
 		[ExpectedException (typeof (SecurityException))]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		public void ToLogFont_DenyUnmanagedCode ()
 		{
 			Font f;
@@ -134,7 +132,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public void ToLogFont_AssertUnmanagedCode ()
 		{
 			Font f = new Font("Arial", 10);
@@ -166,7 +163,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToLogFont_TooSmall ()
 		{
@@ -177,7 +173,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public void ToLogFont_Int ()
 		{
 			Font f = new Font ("Arial", 10);
@@ -187,7 +182,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		[ExpectedException (typeof (AccessViolationException))]
 		public void ToLogFont_Null ()
 		{

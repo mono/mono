@@ -36,7 +36,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Drawing2D {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PathGradientBrushTest {
 
 		private Point[] pts_2i;

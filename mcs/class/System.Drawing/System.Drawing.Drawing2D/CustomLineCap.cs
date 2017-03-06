@@ -31,7 +31,12 @@
 
 namespace System.Drawing.Drawing2D {
 
-	public class CustomLineCap : MarshalByRefObject, ICloneable, IDisposable
+	public class CustomLineCap :
+#if !CORECLR
+		MarshalByRefObject,
+#endif
+		ICloneable, 
+		IDisposable
 	{
 		private bool disposed;
 		internal IntPtr nativeObject;

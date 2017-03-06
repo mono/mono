@@ -30,7 +30,9 @@
 //
 
 using System.IO;
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Text {
@@ -62,7 +64,9 @@ namespace System.Drawing.Text {
 			GDIPlus.CheckStatus (status);			
 		}
 
+#if !CORECLR
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public void AddMemoryFont (IntPtr memory, int length) 
 		{
 			// note: MS throw FileNotFoundException if something is bad with the data (except for a null pointer)

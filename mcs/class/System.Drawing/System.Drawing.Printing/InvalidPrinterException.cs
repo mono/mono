@@ -30,12 +30,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !CORECLR
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing.Printing {
 
+#if !CORECLR
 	[Serializable]
+#endif
 	public class InvalidPrinterException : SystemException {
 
 //		private PrinterSettings settings;
@@ -45,6 +49,7 @@ namespace System.Drawing.Printing {
 //			this.settings = settings;
 		}
 
+#if !CORECLR
 		protected InvalidPrinterException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -58,6 +63,7 @@ namespace System.Drawing.Printing {
 
 			base.GetObjectData (info, context);
 		}
+#endif
 		
 		private static string GetMessage(PrinterSettings settings)
 		{

@@ -36,7 +36,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing
 {
-	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable
+	public sealed class Pen : 
+#if !CORECLR
+		MarshalByRefObject, 
+#endif
+		ICloneable, 
+		IDisposable
 	{
 		internal IntPtr nativeObject;
 		internal bool isModifiable = true;

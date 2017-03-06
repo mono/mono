@@ -99,25 +99,25 @@ namespace System.Drawing
 					return ImageFormat.Wmf;
 			} else {
 				// case #3, this is probably a short format
-				if (String.Compare (strFormat, "Bmp", true, CultureInfo.InvariantCulture) == 0)
+				if (StringComparer.OrdinalIgnoreCase.Compare (strFormat, "Bmp") == 0)
 					return ImageFormat.Bmp;
-				else if (String.Compare (strFormat, "Emf", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Emf") == 0)
 					return ImageFormat.Emf;
-				else if (String.Compare (strFormat, "Exif", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Exif") == 0)
 					return ImageFormat.Exif;
-				else if (String.Compare (strFormat, "Gif", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Gif") == 0)
 					return ImageFormat.Gif;
-				else if (String.Compare (strFormat, "Icon", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Icon") == 0)
 					return ImageFormat.Icon;
-				else if (String.Compare (strFormat, "Jpeg", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Jpeg") == 0)
 					return ImageFormat.Jpeg;
-				else if (String.Compare (strFormat, "MemoryBmp", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "MemoryBmp") == 0)
 					return ImageFormat.MemoryBmp;
-				else if (String.Compare (strFormat, "Png", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Png") == 0)
 					return ImageFormat.Png;
-				else if (String.Compare (strFormat, "Tiff", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Tiff") == 0)
 					return ImageFormat.Tiff;
-				else if (String.Compare (strFormat, "Wmf", true, CultureInfo.InvariantCulture) == 0)
+				else if (StringComparer.OrdinalIgnoreCase.Compare(strFormat, "Wmf") == 0)
 					return ImageFormat.Wmf;
 			}
 			// last case, this is an unknown string
@@ -165,6 +165,7 @@ namespace System.Drawing
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
+#if !CORECLR
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
 			ImageFormat[] list = new ImageFormat [10];
@@ -185,5 +186,6 @@ namespace System.Drawing
 		{
 			return true;
 		}
+#endif
 	}
 }

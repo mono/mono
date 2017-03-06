@@ -28,8 +28,9 @@
 //
 
 namespace System.Drawing.Printing {
-
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum PrintingPermissionLevel {
 		AllPrinting = 3,
 		DefaultPrinting = 2,

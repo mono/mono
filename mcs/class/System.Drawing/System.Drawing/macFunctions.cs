@@ -34,7 +34,9 @@ using System.Security;
 
 namespace System.Drawing {
 
+#if !CORECLR
 	[SuppressUnmanagedCodeSecurity]
+#endif
 	internal static class MacSupport {
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();
@@ -49,6 +51,9 @@ namespace System.Drawing {
 #endif
 
 		static MacSupport () {
+			// There is no equivalent for AppDomain.CurrentDomain.GetAssemblies on .NET Core
+			// https://github.com/dotnet/corefx/issues/1784
+#if !CORECLR
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
 					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
@@ -57,6 +62,7 @@ namespace System.Drawing {
 					}
 				}
 			}
+#endif
 		}
 
 		internal static CocoaContext GetCGContextForNSView (IntPtr handle) {

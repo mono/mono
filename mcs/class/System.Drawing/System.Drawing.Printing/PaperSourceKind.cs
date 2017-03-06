@@ -30,7 +30,9 @@
 using System;
 namespace System.Drawing.Printing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	public enum PaperSourceKind {
 		AutomaticFeed = 7,
 		Cassette = 14,

@@ -33,7 +33,9 @@ using System.ComponentModel;
 
 namespace System.Drawing.Printing
 {
+#if !CORECLR
 	[Serializable]
+#endif
 	[TypeConverter (typeof (MarginsConverter))]
 	public class Margins : ICloneable {
 		int left;

@@ -10,8 +10,10 @@ namespace System.ComponentModel {
     
     using System.Diagnostics;
     using System.Globalization;
+#if !CORECLR
     using System.Security.Permissions;
-                                
+#endif
+
     /// <devdoc>
     ///    <para>Specifies the editor to use to change a property. This class cannot be inherited.</para>
     /// </devdoc>
@@ -37,7 +39,9 @@ namespace System.ComponentModel {
         /// </devdoc>
         public EditorAttribute(string typeName, string baseTypeName) {
             string temp = typeName.ToUpper(CultureInfo.InvariantCulture);
+#if !CORECLR
             Debug.Assert(temp.IndexOf(".DLL") == -1, "Came across: " + typeName + " . Please remove the .dll extension");
+#endif
             this.typeName = typeName;
             this.baseTypeName = baseTypeName;
         }
@@ -47,7 +51,9 @@ namespace System.ComponentModel {
         /// </devdoc>
         public EditorAttribute(string typeName, Type baseType) {
             string temp = typeName.ToUpper(CultureInfo.InvariantCulture);
+#if !CORECLR
             Debug.Assert(temp.IndexOf(".DLL") == -1, "Came across: " + typeName + " . Please remove the .dll extension");
+#endif
             this.typeName = typeName;
             this.baseTypeName = baseType.AssemblyQualifiedName;
         }
@@ -78,7 +84,8 @@ namespace System.ComponentModel {
                 return typeName;
             }
         }
-    
+
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>
@@ -102,6 +109,7 @@ namespace System.ComponentModel {
                 return typeId;
             }
         }
+#endif
 
         public override bool Equals(object obj) {
             if (obj == this) {

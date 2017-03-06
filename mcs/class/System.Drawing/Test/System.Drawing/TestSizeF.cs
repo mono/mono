@@ -39,7 +39,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing 
 {
 	[TestFixture]	
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class SizeFTest
 	{
 		SizeF sz11_99;

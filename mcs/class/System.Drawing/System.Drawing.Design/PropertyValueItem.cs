@@ -32,12 +32,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !CORECLR
 using System.Security.Permissions;
+#endif
 
 namespace System.Drawing.Design
 {
+#if !CORECLR
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#endif
 	public class PropertyValueUIItem
 	{
 

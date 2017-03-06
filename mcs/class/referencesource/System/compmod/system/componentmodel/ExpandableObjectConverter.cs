@@ -9,14 +9,18 @@ namespace System.ComponentModel {
     using System.Collections;
     using System.ComponentModel.Design;
     using System.Diagnostics;
+#if !CORECLR
     using System.Security.Permissions;
+#endif
 
     /// <devdoc>
     ///    <para>Provides
     ///       a type converter to convert expandable objects to and from various
     ///       other representations.</para>
     /// </devdoc>
+#if !CORECLR
     [HostProtection(SharedState = true)]
+#endif
     public class ExpandableObjectConverter : TypeConverter {
     
         /// <devdoc>
@@ -27,7 +31,7 @@ namespace System.ComponentModel {
         public ExpandableObjectConverter() {
         }
 
-
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>Gets a collection of properties for the type of object
@@ -37,7 +41,9 @@ namespace System.ComponentModel {
         public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) {
             return TypeDescriptor.GetProperties(value, attributes);
         }
-        
+#endif
+
+#if !CORECLR
         /// <internalonly/>
         /// <devdoc>
         ///    <para>Gets a value indicating
@@ -47,6 +53,7 @@ namespace System.ComponentModel {
         public override bool GetPropertiesSupported(ITypeDescriptorContext context) {
             return true;
         }
+#endif
     }
 }
 
