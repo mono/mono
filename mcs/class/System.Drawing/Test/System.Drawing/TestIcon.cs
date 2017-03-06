@@ -492,7 +492,7 @@ namespace MonoTests.System.Drawing {
 		public void Only256InFile ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
-				Assert.Throws(() => new Icon (fs, 0, 0));
+				Assert.Throws<Exception>(() => new Icon (fs, 0, 0));
 			}
 		}
 

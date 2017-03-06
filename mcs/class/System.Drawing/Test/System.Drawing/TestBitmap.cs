@@ -133,6 +133,7 @@ namespace MonoTests.System.Drawing {
 		public void LockBits_NonIndexedWrite_ToIndexed ()
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+ 				BitmapData bd = new BitmapData ();
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
 				Assert.Throws<ArgumentException>(() => bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed, bd));
 

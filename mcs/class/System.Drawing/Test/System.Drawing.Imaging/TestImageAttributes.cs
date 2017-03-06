@@ -291,7 +291,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		public void SetColorMatrix_SkipGrays_Any ()
 		{
 			using (ImageAttributes ia = new ImageAttributes ()) {
-				Assert.Throws<ArgumentException<(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Any));
+				Assert.Throws<ArgumentException>(() => ia.SetColorMatrix (global_color_matrix, ColorMatrixFlag.SkipGrays, ColorAdjustType.Any));
 			}
 		}
 
