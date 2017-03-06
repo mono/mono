@@ -354,18 +354,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/regex/system/text/regularexpressions/compiledregexrunner.cs
 ../referencesource/System/regex/system/text/regularexpressions/compiledregexrunnerfactory.cs
 
-../referencesource/System/compmod/system/collections/generic/bithelper.cs
-../referencesource/System/compmod/system/collections/generic/debugview.cs
-../referencesource/System/compmod/system/collections/generic/iset.cs
-../referencesource/System/compmod/system/collections/generic/linkedlist.cs
-../referencesource/System/compmod/system/collections/generic/queue.cs
-../referencesource/System/compmod/system/collections/generic/sorteddictionary.cs
-../referencesource/System/compmod/system/collections/generic/sortedlist.cs
-../referencesource/System/compmod/system/collections/generic/sortedset.cs
-../referencesource/System/compmod/system/collections/generic/sortedsetdebugview.cs
-../referencesource/System/compmod/system/collections/generic/stack.cs
-../referencesource/System/compmod/system/collections/generic/throwhelper.cs
-
 ../referencesource/System/compmod/system/collections/objectmodel/observablecollection.cs
 ../referencesource/System/compmod/system/collections/objectmodel/readonlyobservablecollection.cs
 
@@ -923,11 +911,32 @@ ReferenceSources/Win32Exception.cs
 
 corefx/SR.cs
 
-../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
+
+../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
+
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/LinkedList.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedDictionary.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedList.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.TreeSubSet.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSetEqualityComparer.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/BlockingCollection.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
+
+../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs

@@ -184,5 +184,11 @@ namespace System.Runtime.CompilerServices
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void RunModuleConstructor (IntPtr module);
+
+		[MonoTODO]
+		public static bool IsReferenceOrContainsReferences<T>()
+		{
+			return true;
+		}
 	}
 }
