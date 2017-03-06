@@ -25,9 +25,6 @@ using System.Runtime.InteropServices;
 using SSA = System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-using SD = System.Diagnostics;
-using MX = Mono.Security.X509;
-
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
 #else
@@ -39,8 +36,6 @@ using Mono.Net.Security;
 using Mono.Util;
 
 using ObjCRuntime;
-
-using nint = System.IntPtr;
 
 namespace Mono.AppleTls
 {
@@ -100,8 +95,8 @@ namespace Mono.AppleTls
 			get { return !disposed && context != IntPtr.Zero; }
 		}
 
-		[SD.Conditional ("APPLE_TLS_DEBUG")]
-		protected void Debug (string message, params object[] args)
+		[System.Diagnostics.Conditional ("APPLE_TLS_DEBUG")]
+		protected new void Debug (string message, params object[] args)
 		{
 			Console.Error.WriteLine ("MobileTlsStream({0}): {1}", Parent.ID, string.Format (message, args));
 		}
@@ -136,28 +131,6 @@ namespace Mono.AppleTls
 
 			default:
 				throw new TlsException (AlertDescription.InternalError, "Unknown Secure Transport error `{0}'.", status);
-			}
-		}
-
-		void SetException (string message, Exception exception)
-		{
-			var ioex = exception as IOException;
-			if (ioex == null)
-				ioex = new IOException (message, exception);
-			exception = ioex;
-
-			if (lastException == null) {
-				lastException = exception;
-				return;
-			}
-
-			var aggregate = lastException as AggregateException;
-			if (aggregate != null) {
-				var list = new List<Exception> (aggregate.InnerExceptions);
-				list.Add (exception);
-				lastException = new AggregateException (aggregate.Message, list);
-			} else {
-				lastException = new AggregateException (message, lastException, exception);
 			}
 		}
 
@@ -487,14 +460,14 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerID (/* SSLContextRef */ IntPtr context, /* const void** */ out IntPtr peerID, /* size_t* */ out nint peerIDLen);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerID (/* SSLContextRef */ IntPtr context, /* const void** */ out IntPtr peerID, /* size_t* */ out IntPtr peerIDLen);
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerID (/* SSLContextRef */ IntPtr context, /* const void* */ byte* peerID, /* size_t */ nint peerIDLen);
+		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerID (/* SSLContextRef */ IntPtr context, /* const void* */ byte* peerID, /* size_t */ IntPtr peerIDLen);
 
 		public unsafe byte[] PeerId {
 			get {
-				nint length;
+				IntPtr length;
 				IntPtr id;
 				var result = SSLGetPeerID (Handle, out id, out length);
 				CheckStatusAndThrow (result);
@@ -506,7 +479,7 @@ namespace Mono.AppleTls
 			}
 			set {
 				SslStatus result;
-				nint length = (value == null) ? (IntPtr)0 : (IntPtr)value.Length;
+				IntPtr length = (value == null) ? IntPtr.Zero : (IntPtr)value.Length;
 				fixed (byte *p = value) {
 					result = SSLSetPeerID (Handle, p, length);
 				}
@@ -515,11 +488,11 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetBufferedReadSize (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint bufSize);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetBufferedReadSize (/* SSLContextRef */ IntPtr context, /* size_t* */ out IntPtr bufSize);
 
-		public nint BufferedReadSize {
+		public IntPtr BufferedReadSize {
 			get {
-				nint value;
+				IntPtr value;
 				var result = SSLGetBufferedReadSize (Handle, out value);
 				CheckStatusAndThrow (result);
 				return value;
@@ -527,14 +500,14 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberSupportedCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint numCiphers);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberSupportedCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out IntPtr numCiphers);
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetSupportedCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref nint numCiphers);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetSupportedCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref IntPtr numCiphers);
 
 		public unsafe IList<SslCipherSuite> GetSupportedCiphers ()
 		{
-			nint n;
+			IntPtr n;
 			var result = SSLGetNumberSupportedCiphers (Handle, out n);
 			CheckStatusAndThrow (result);
 			if ((result != SslStatus.Success) || ((int)n <= 0))
@@ -545,18 +518,18 @@ namespace Mono.AppleTls
 				result = SSLGetSupportedCiphers (Handle, p, ref n);
 			}
 			CheckStatusAndThrow (result);
-			return new List<SslCipherSuite> (ciphers);
+			return ciphers;
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberEnabledCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint numCiphers);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetNumberEnabledCiphers (/* SSLContextRef */ IntPtr context, /* size_t* */ out IntPtr numCiphers);
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref nint numCiphers);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t* */ ref IntPtr numCiphers);
 
 		public unsafe IList<SslCipherSuite> GetEnabledCiphers ()
 		{
-			nint n;
+			IntPtr n;
 			var result = SSLGetNumberEnabledCiphers (Handle, out n);
 			CheckStatusAndThrow (result);
 			if ((result != SslStatus.Success) || ((int)n <= 0))
@@ -567,11 +540,11 @@ namespace Mono.AppleTls
 				result = SSLGetEnabledCiphers (Handle, p, ref n);
 			}
 			CheckStatusAndThrow (result);
-			return new List<SslCipherSuite> (ciphers);
+			return ciphers;
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLSetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t */ nint numCiphers);
+		extern unsafe static /* OSStatus */ SslStatus SSLSetEnabledCiphers (/* SSLContextRef */ IntPtr context, SslCipherSuite *ciphers, /* size_t */ IntPtr numCiphers);
 
 		public unsafe void SetEnabledCiphers (SslCipherSuite [] ciphers)
 		{
@@ -598,17 +571,17 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainNameLength (/* SSLContextRef */ IntPtr context, /* size_t* */ out nint peerNameLen);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainNameLength (/* SSLContextRef */ IntPtr context, /* size_t* */ out IntPtr peerNameLen);
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ ref nint peerNameLen);
+		extern unsafe static /* OSStatus */ SslStatus SSLGetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ ref IntPtr peerNameLen);
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ nint peerNameLen);
+		extern unsafe static /* OSStatus */ SslStatus SSLSetPeerDomainName (/* SSLContextRef */ IntPtr context, /* char* */ byte[] peerName, /* size_t */ IntPtr peerNameLen);
 
 		public string PeerDomainName {
 			get {
-				nint length;
+				IntPtr length;
 				var result = SSLGetPeerDomainNameLength (Handle, out length);
 				CheckStatusAndThrow (result);
 				if (result != SslStatus.Success || (int)length == 0)
@@ -616,11 +589,14 @@ namespace Mono.AppleTls
 				var bytes = new byte [(int)length];
 				result = SSLGetPeerDomainName (Handle, bytes, ref length);
 				CheckStatusAndThrow (result);
+
+				int peerDomainLength = (int)lenght;
+
 				if (result != SslStatus.Success)
 					return string.Empty;
-				if ((int)length > 0 && bytes [(int)length-1] == 0)
-					length = (IntPtr)((int)length - 1);
-				return Encoding.UTF8.GetString (bytes, 0, (int)length);
+				if (peerDomainLength > 0 && bytes [peerDomainLength-1] == 0)
+					peerDomainLength = peerDomainLength - 1;
+				return Encoding.UTF8.GetString (bytes, 0, peerDomainLength);
 			}
 			set {
 				SslStatus result;
@@ -644,11 +620,9 @@ namespace Mono.AppleTls
 			int i = 0;
 
 			int n = 0;
-			if (certificates != null)
-			{
-				using (var enumerator = certificates.GetEnumerator())
-    					while (enumerator.MoveNext())
-        					n++;
+			if (certificates != null) {
+				foreach (var obj in certificates)
+					n++;
 			}
 
 			var ptrs = new IntPtr [n + 1];
@@ -707,7 +681,7 @@ namespace Mono.AppleTls
 		extern static /* OSStatus */ SslStatus SSLSetIOFuncs (/* SSLContextRef */ IntPtr context, /* SSLReadFunc */ SslReadFunc readFunc, /* SSLWriteFunc */ SslWriteFunc writeFunc);
 
 		[MonoPInvokeCallback (typeof (SslReadFunc))]
-		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref /*HACK*/ IntPtr dataLength)
+		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
 			if (!handle.IsAllocated)
@@ -727,7 +701,7 @@ namespace Mono.AppleTls
 		}
 
 		[MonoPInvokeCallback (typeof (SslWriteFunc))]
-		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref /*HACK*/ IntPtr dataLength)
+		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
 			if (!handle.IsAllocated)
@@ -746,7 +720,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		SslStatus NativeReadCallback (IntPtr data, ref /*HACK*/ IntPtr dataLength)
+		SslStatus NativeReadCallback (IntPtr data, ref IntPtr dataLength)
 		{
 			if (closed || disposed || Parent == null)
 				return SslStatus.ClosedAbort;
@@ -758,7 +732,7 @@ namespace Mono.AppleTls
 
 			bool wantMore;
 			var ret = Parent.InternalRead (readBuffer, 0, len, out wantMore);
-			dataLength = (IntPtr)ret; // HACK
+			dataLength = (IntPtr)ret;
 
 			Debug ("NativeReadCallback #1: {0} - {1} {2}", len, ret, wantMore);
 
@@ -779,7 +753,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		SslStatus NativeWriteCallback (IntPtr data, ref /*HACK*/ IntPtr dataLength)
+		SslStatus NativeWriteCallback (IntPtr data, ref IntPtr dataLength)
 		{
 			if (closed || disposed || Parent == null)
 				return SslStatus.ClosedAbort;
@@ -799,7 +773,7 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLRead (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ nint dataLength, /* size_t* */ out nint processed);
+		extern unsafe static /* OSStatus */ SslStatus SSLRead (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
 		public override unsafe int Read (byte[] buffer, int offset, int count, out bool wantMore)
 		{
@@ -811,7 +785,7 @@ namespace Mono.AppleTls
 			lastException = null;
 
 			try {
-				nint processed;
+				IntPtr processed;
 				SslStatus status;
 
 				fixed (byte *d = &buffer [offset])
@@ -841,7 +815,7 @@ namespace Mono.AppleTls
 		}
 
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
-		extern unsafe static /* OSStatus */ SslStatus SSLWrite (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ nint dataLength, /* size_t* */ out nint processed);
+		extern unsafe static /* OSStatus */ SslStatus SSLWrite (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
 		public override unsafe int Write (byte[] buffer, int offset, int count, out bool wantMore)
 		{
@@ -854,7 +828,7 @@ namespace Mono.AppleTls
 
 			try {
 				SslStatus status = SslStatus.ClosedAbort;
-				nint processed =  (IntPtr)(-1);
+				IntPtr processed = (IntPtr)(-1);
 
 				fixed (byte *d = &buffer [offset])
 					status = SSLWrite (Handle, d, (IntPtr)count, out processed);

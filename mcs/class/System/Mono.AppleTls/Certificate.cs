@@ -63,13 +63,6 @@ namespace Mono.AppleTls {
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 
-			/*
-			 * This requires a recent Mono runtime which has the lazily-initialized
-			 * certifciates in mscorlib.dll, so we can't use it on XM classic.
-			 *
-			 * Using 'XAMARIN_APPLETLS' as a conditional because 'XAMCORE_2_0' is
-			 * defined for tvos and watch, which have a recent-enough runtime.
-			 */
 			handle = certificate.Impl.GetNativeAppleCertificate ();
 			if (handle != IntPtr.Zero) {
 				CFObject.CFRetain (handle);
@@ -109,7 +102,12 @@ namespace Mono.AppleTls {
 				if (handle == IntPtr.Zero)
 					throw new ObjectDisposedException ("SecCertificate");
 				
-				return CFString.FetchString (SecCertificateCopySubjectSummary (handle), releaseHandle: true);
+				try {
+					return CFString.AsString (SecCertificateCopySubjectSummary (handle));
+				}
+				finally {
+					CFObject.CFRelease (handle);
+				}
 			}
 		}
 
@@ -238,7 +236,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
- 		public static SecIdentity Import (byte[] data, string password)
+		public static SecIdentity Import (byte[] data, string password)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
