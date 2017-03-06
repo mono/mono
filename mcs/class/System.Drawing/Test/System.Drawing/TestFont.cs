@@ -129,7 +129,7 @@ namespace MonoTests.System.Drawing{
 			lf = new LOGFONT();
 			f = new Font("Arial", 10);
 
-			Assert.Throws<SecurityException>(() => f.ToLogFont(lf));
+			Assert.Throws<SecurityException> (() => f.ToLogFont(lf));
 		}
 
 		[Test]
@@ -170,7 +170,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font ("Arial", 10);
 			object o = new object ();
-			Assert.Throws<ArgumentException>(() => f.ToLogFont (o));
+			Assert.Throws<ArgumentException> (() => f.ToLogFont (o));
 			// no PInvoke conversion exists !?!?
 		}
 
@@ -180,7 +180,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font ("Arial", 10);
 			int i = 1;
-			Assert.Throws<AccessViolationException>(() => f.ToLogFont (i));
+			Assert.Throws<AccessViolationException> (() => f.ToLogFont (i));
 			Assert.AreEqual (1, i);
 		}
 
@@ -189,7 +189,7 @@ namespace MonoTests.System.Drawing{
 		public void ToLogFont_Null ()
 		{
 			Font f = new Font ("Arial", 10);
-			Assert.Throws<AccessViolationException>(() => f.ToLogFont (null));
+			Assert.Throws<AccessViolationException> (() => f.ToLogFont (null));
 		}
 		[Test]
 		public void Font_StringNull_Float ()
@@ -259,7 +259,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void Font_String_Float_FontStyle_GraphicsUnit_Display ()
 		{
-			Assert.Throws<ArgumentException>(() => new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Display));
+			Assert.Throws<ArgumentException> (() => new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Display));
 		}
 
 		[Test]
@@ -302,14 +302,14 @@ namespace MonoTests.System.Drawing{
 		public void Font_FontFamilyNull_Float ()
 		{
 			FontFamily ff = null;
-			Assert.Throws<ArgumentNullException>(() => new Font (ff, 12.5f));
+			Assert.Throws<ArgumentNullException> (() => new Font (ff, 12.5f));
 		}
 
 		[Test]
 		public void Font_FontNull_FontStyle ()
 		{
 			Font f = null;
-			Assert.Throws<NullReferenceException>(() => new Font (f, FontStyle.Bold));
+			Assert.Throws<NullReferenceException> (() => new Font (f, FontStyle.Bold));
 		}
 
 		[Test]
@@ -369,7 +369,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Display ()
 		{
-			Assert.Throws<ArgumentException>(() => new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Display));
+			Assert.Throws<ArgumentException> (() => new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Display));
 		}
 
 		[Test]
@@ -432,7 +432,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
-			Assert.Throws<ArgumentException>(() => Assert.AreEqual (0, f.Height, "Name"));
+			Assert.Throws<ArgumentException> (() => Assert.AreEqual (0, f.Height, "Name"));
 		}
 
 		[Test]
@@ -441,7 +441,7 @@ namespace MonoTests.System.Drawing{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			LOGFONT	lf = new LOGFONT();
-			Assert.Throws<ArgumentException>(() => f.ToLogFont (lf));
+			Assert.Throws<ArgumentException> (() => f.ToLogFont (lf));
 		}
 
 		[Test]
@@ -498,7 +498,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
-			Assert.Throws<ArgumentException>(() => f.ToHfont ());
+			Assert.Throws<ArgumentException> (() => f.ToHfont ());
 		}
 		
 		[Test]
@@ -507,7 +507,7 @@ namespace MonoTests.System.Drawing{
 		{
 			// Marked NotWorking because it is dependent on what fonts/styles are available
 			// on the OS.  This test is written for Windows.
-			Assert.Throws<ArgumentException>(() => new Font ("Monotype Corsiva", 8, FontStyle.Regular));
+			Assert.Throws<ArgumentException> (() => new Font ("Monotype Corsiva", 8, FontStyle.Regular));
 		}
 
 		[Test]
@@ -539,7 +539,7 @@ namespace MonoTests.System.Drawing{
 		public void GetHeight_Graphics_Null ()
 		{
 			using (Font f = new Font (name, 12.5f)) {
-				Assert.Throws<ArgumentNullException>(() => Assert.AreEqual (0, f.GetHeight (null), "0"));
+				Assert.Throws<ArgumentNullException> (() => Assert.AreEqual (0, f.GetHeight (null), "0"));
 			}
 		}
 
@@ -554,36 +554,36 @@ namespace MonoTests.System.Drawing{
 			Assert.IsFalse (f1.GetHashCode () == f3.GetHashCode (), "2) Fonts with different styles should have different HashCodes");
 		}
 
-        [Test]
-        public void GetHashCode_UnitDiffers_HashesNotEqual()
-        {
-            Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
-            Font f2 = new Font("Arial", 8.25F, GraphicsUnit.Pixel);
+		[Test]
+		public void GetHashCode_UnitDiffers_HashesNotEqual()
+		{
+			Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
+			Font f2 = new Font("Arial", 8.25F, GraphicsUnit.Pixel);
 
-            Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
-                "Hashcodes should differ if _unit member differs");
-        }
+			Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
+				"Hashcodes should differ if _unit member differs");
+		}
 
-        [Test]
-        public void GetHashCode_NameDiffers_HashesNotEqual()
-        {
-            Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
-            Font f2 = new Font("Courier New", 8.25F, GraphicsUnit.Point);
+		[Test]
+		public void GetHashCode_NameDiffers_HashesNotEqual()
+		{
+			Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
+			Font f2 = new Font("Courier New", 8.25F, GraphicsUnit.Point);
 
 			if (f1.Name != f2.Name) {
 				Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
 							   "Hashcodes should differ if _name member differs");
 			}
-        }
+		}
 
-        [Test]
-        public void GetHashCode_StyleEqualsGdiCharSet_HashesNotEqual()
-        {
-            Font f1 = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-            Font f2 = new Font("Arial", 8.25F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(1)));
+		[Test]
+		public void GetHashCode_StyleEqualsGdiCharSet_HashesNotEqual()
+		{
+			Font f1 = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+			Font f2 = new Font("Arial", 8.25F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(1)));
 
-            Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
-                "Hashcodes should differ if _style member differs");
-        }
+			Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
+				"Hashcodes should differ if _style member differs");
+		}
 	}
 }

@@ -135,7 +135,7 @@ namespace MonoTests.System.Drawing {
 			Font f1 = SystemFonts.CaptionFont;
 			float height = f1.GetHeight (72f);
 			f1.Dispose ();
-			Assert.Throws<ArgumentException>(() => f1.GetHeight (72f));
+			Assert.Throws<ArgumentException> (() => f1.GetHeight (72f));
 		}
 
 		[Test]

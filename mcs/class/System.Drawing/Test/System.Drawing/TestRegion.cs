@@ -1051,28 +1051,28 @@ namespace MonoTests.System.Drawing
 		public void Constructor_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-			Assert.Throws<ArgumentNullException>(() => new Region (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region (gp));
 		}
 
 		[Test]
 		public void Constructor_RegionData_Null ()
 		{
 			RegionData rd = null;
-            Assert.Throws<ArgumentNullException>(() => new Region (rd));
+			Assert.Throws<ArgumentNullException> (() => new Region (rd));
 		}
 
 		[Test]
 		public void Union_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Union (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Union (gp));
 		}
 
 		[Test]
 		public void Union_Region_Null ()
 		{
 			Region r = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Union (r));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Union (r));
 		}
 
 		[Test]
@@ -1090,62 +1090,62 @@ namespace MonoTests.System.Drawing
 		public void Intersect_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Intersect (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Intersect (gp));
 		}
 
 		[Test]
 		public void Intersect_Region_Null ()
 		{
 			Region r = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Intersect (r));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Intersect (r));
 		}
 
 		[Test]
 		public void Complement_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Complement (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Complement (gp));
 		}
 
 		[Test]
 		public void Complement_Region_Null ()
 		{
 			Region r = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Complement (r));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Complement (r));
 		}
 
 		[Test]
 		public void Exclude_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Exclude (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Exclude (gp));
 		}
 
 		[Test]
 		public void Exclude_Region_Null ()
 		{
 			Region r = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Exclude (r));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Exclude (r));
 		}
 
 		[Test]
 		public void Xor_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Xor (gp));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Xor (gp));
 		}
 
 		[Test]
 		public void Xor_Region_Null ()
 		{
 			Region r = null;
-            Assert.Throws<ArgumentNullException>(() => new Region ().Xor (r));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Xor (r));
 		}
 
 		[Test]
 		public void GetBounds_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().GetBounds (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().GetBounds (null));
 		}
 
 		[Test]
@@ -1203,44 +1203,44 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void IsEmpty_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().IsEmpty (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().IsEmpty (null));
 		}
 
 		[Test]
 		public void IsInfinite_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().IsInfinite (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().IsInfinite (null));
 		}
 
 		[Test]
 		public void Equals_NullGraphics ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().Equals (null, Graphics.FromImage (new Bitmap (10, 10))));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Equals (null, Graphics.FromImage (new Bitmap (10, 10))));
 		}
 
 		[Test]
 		public void Equals_RegionNull ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().Equals (new Region (), null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Equals (new Region (), null));
 		}
 
 		[Test]
 		[Category ("NotWorking")] // caused regression in SWF
 		public void GetHrgn_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().GetHrgn (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().GetHrgn (null));
 		}
 
 		[Test]
 		public void GetRegionScans_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().GetRegionScans (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().GetRegionScans (null));
 		}
 
 		[Test]
 		public void Transform_Null ()
 		{
-            Assert.Throws<ArgumentNullException>(() => new Region ().Transform (null));
+			Assert.Throws<ArgumentNullException> (() => new Region ().Transform (null));
 		}
 
 		// an "empty ctor" Region is infinite
@@ -1557,13 +1557,13 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void FromHrgn_Zero ()
 		{
-            Assert.Throws<ArgumentException>(() => Region.FromHrgn (IntPtr.Zero));
+			Assert.Throws<ArgumentException> (() => Region.FromHrgn (IntPtr.Zero));
 		}
 		[Test]
 		public void ReleaseHrng_Zero ()
 		{
 			Region r = new Region (new GraphicsPath ());
-            Assert.Throws<ArgumentNullException>(() => r.ReleaseHrgn (IntPtr.Zero));
+			Assert.Throws<ArgumentNullException> (() => r.ReleaseHrgn (IntPtr.Zero));
 		}
 
 		[Test]

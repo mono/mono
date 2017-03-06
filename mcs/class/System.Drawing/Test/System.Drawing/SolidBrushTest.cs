@@ -62,7 +62,7 @@ namespace MonoTests.System.Drawing {
 		{
 			SolidBrush sb = new SolidBrush (Color.Transparent);
 			sb.Dispose ();
-			Assert.Throws<ArgumentException>(() => sb.Clone ());
+			Assert.Throws<ArgumentException> (() => sb.Clone ());
 		}
 
 		[Test]

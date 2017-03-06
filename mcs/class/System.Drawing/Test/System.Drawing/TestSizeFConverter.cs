@@ -255,7 +255,7 @@ namespace MonoTests.System.Drawing
 			Hashtable ht = new Hashtable ();
 			ht.Add ("Width", 10);
 			ht.Add ("Height", 20);
-			Assert.Throws<InvalidCastException>(() => szconv.CreateInstance (null, ht));
+			Assert.Throws<InvalidCastException> (() => szconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -264,7 +264,7 @@ namespace MonoTests.System.Drawing
 			Hashtable ht = new Hashtable ();
 			ht.Add ("width", 20);
 			ht.Add ("Height", 30);
-			Assert.Throws<NullReferenceException>(() => szconv.CreateInstance (null, ht));
+			Assert.Throws<NullReferenceException> (() => szconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -314,7 +314,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void ConvertFromInvariantString_string_exc_1 ()
 		{
-			Assert.Throws<ArgumentException>(() => szconv.ConvertFromInvariantString ("1, 2, 3"));
+			Assert.Throws<ArgumentException> (() => szconv.ConvertFromInvariantString ("1, 2, 3"));
 		}
 
 		[Test]
@@ -350,7 +350,7 @@ namespace MonoTests.System.Drawing
 		public void ConvertFromString_string_exc_1 ()
 		{
 			CultureInfo culture = CultureInfo.CurrentCulture;
-			Assert.Throws<ArgumentException>(() => szconv.ConvertFromString (string.Format(culture,
+			Assert.Throws<ArgumentException> (() => szconv.ConvertFromString (string.Format(culture,
 				"1{0} 2{0} 3{0} 4{0} 5", culture.TextInfo.ListSeparator)));
 		}
 

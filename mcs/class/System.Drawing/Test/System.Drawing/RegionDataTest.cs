@@ -63,7 +63,7 @@ namespace MonoTests.System.Drawing {
 			RegionData data = new Region ().GetRegionData ();
 			data.Data = null;
 			Assert.IsNull (data.Data, "Data");
-			Assert.Throws<NullReferenceException>(() => new Region (data));
+			Assert.Throws<NullReferenceException> (() => new Region (data));
 		}
 
 		[Test]

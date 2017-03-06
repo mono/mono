@@ -51,14 +51,14 @@ namespace MonoTests.System.Drawing.Text {
 		[Test]
 		public void AddFontFile_Null ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new PrivateFontCollection ().AddFontFile (null));
+			Assert.Throws<ArgumentNullException> (() => new PrivateFontCollection ().AddFontFile (null));
 		}
 
 		[Test]
 		public void AddFontFile_Empty ()
 		{
 			// badly formetted filename
-			Assert.Throws<ArgumentException>(() => new PrivateFontCollection ().AddFontFile (String.Empty));
+			Assert.Throws<ArgumentException> (() => new PrivateFontCollection ().AddFontFile (String.Empty));
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace MonoTests.System.Drawing.Text {
 			string file = Path.GetTempFileName ();
 			Assert.IsTrue (File.Exists (file), "Exists");
 			// even if the file exists....
-			Assert.Throws<FileNotFoundException>(() => new PrivateFontCollection ().AddFontFile (file));
+			Assert.Throws<FileNotFoundException> (() => new PrivateFontCollection ().AddFontFile (file));
 		}
 
 		// tests for AddMemoryFont are available in the CAS unit tests
@@ -78,7 +78,7 @@ namespace MonoTests.System.Drawing.Text {
 		{
 			PrivateFontCollection pfc = new PrivateFontCollection ();
 			pfc.Dispose ();
-			Assert.Throws<ArgumentException>(() => Assert.IsNotNull (pfc.Families));
+			Assert.Throws<ArgumentException> (() => Assert.IsNotNull (pfc.Families));
 			// no it's not a ObjectDisposedException
 		}
 	}

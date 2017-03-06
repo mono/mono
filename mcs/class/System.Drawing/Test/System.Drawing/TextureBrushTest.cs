@@ -69,7 +69,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImage_Null ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null));
 		}
 
 		[Test]
@@ -82,7 +82,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImage_Null_WrapMode ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null, WrapMode.Clamp));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null, WrapMode.Clamp));
 		}
 
 		[Test]
@@ -97,19 +97,19 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImageWrapMode_Invalid ()
 		{
-			Assert.Throws<InvalidEnumArgumentException>(() => new TextureBrush (image, (WrapMode) Int32.MinValue));
+			Assert.Throws<InvalidEnumArgumentException> (() => new TextureBrush (image, (WrapMode) Int32.MinValue));
 		}
 
 		[Test]
 		public void CtorImage_Null_Rectangle ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null, rect));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null, rect));
 		}
 
 		[Test]
 		public void CtorImageRectangle_Empty ()
 		{
-			Assert.Throws<OutOfMemoryException>(() => new TextureBrush (image, new Rectangle ()));
+			Assert.Throws<OutOfMemoryException> (() => new TextureBrush (image, new Rectangle ()));
 		}
 
 		[Test]
@@ -122,13 +122,13 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImage_Null_RectangleF ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null, rectf));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null, rectf));
 		}
 
 		[Test]
 		public void CtorImageRectangleF_Empty ()
 		{
-			Assert.Throws<OutOfMemoryException>(() => new TextureBrush (image, new RectangleF ()));
+			Assert.Throws<OutOfMemoryException> (() => new TextureBrush (image, new RectangleF ()));
 		}
 
 		[Test]
@@ -141,13 +141,13 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImage_Null_RectangleAttributes ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null, rect, attr));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null, rect, attr));
 		}
 
 		[Test]
 		public void CtorImageRectangle_Empty_Attributes ()
 		{
-			Assert.Throws<OutOfMemoryException>(() => new TextureBrush (image, new Rectangle (), attr));
+			Assert.Throws<OutOfMemoryException> (() => new TextureBrush (image, new Rectangle (), attr));
 		}
 
 		[Test]
@@ -167,13 +167,13 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImage_Null_RectangleFAttributes ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (null, rectf, attr));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (null, rectf, attr));
 		}
 
 		[Test]
 		public void CtorImageRectangleF_Empty_Attributes ()
 		{
-			Assert.Throws<OutOfMemoryException>(() => new TextureBrush (image, new RectangleF ()));
+			Assert.Throws<OutOfMemoryException> (() => new TextureBrush (image, new RectangleF ()));
 		}
 
 		[Test]
@@ -202,7 +202,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImageWrapMode_Invalid_Rectangle ()
 		{
-			Assert.Throws<InvalidEnumArgumentException>(() => new TextureBrush (image, (WrapMode) Int32.MinValue, rect));
+			Assert.Throws<InvalidEnumArgumentException> (() => new TextureBrush (image, (WrapMode) Int32.MinValue, rect));
 		}
 
 		[Test]
@@ -217,7 +217,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CtorImageWrapMode_Invalid_RectangleF ()
 		{
-			Assert.Throws<InvalidEnumArgumentException>(() => new TextureBrush (image, (WrapMode) Int32.MinValue, rectf));
+			Assert.Throws<InvalidEnumArgumentException> (() => new TextureBrush (image, (WrapMode) Int32.MinValue, rectf));
 		}
 
 		[Test]
@@ -241,13 +241,13 @@ namespace MonoTests.System.Drawing {
 			Rectangle r = new Rectangle (50, 50, 50, 50);
 			Assert.IsFalse (r.Y + r.Height <= bmp.Height, "Height");
 			Assert.IsFalse (r.X + r.Width <= bmp.Width, "Width");
-			Assert.Throws<OutOfMemoryException>(() => new TextureBrush (bmp, r));
+			Assert.Throws<OutOfMemoryException> (() => new TextureBrush (bmp, r));
 		}
 
 		[Test]
 		public void Transform_Null ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (image).Transform = null);
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (image).Transform = null);
 		}
 
 		[Test]
@@ -272,7 +272,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void WrapMode_Invalid ()
 		{
-			Assert.Throws<InvalidEnumArgumentException>(() => new TextureBrush (image).WrapMode = (WrapMode)Int32.MinValue);
+			Assert.Throws<InvalidEnumArgumentException> (() => new TextureBrush (image).WrapMode = (WrapMode)Int32.MinValue);
 		}
 
 		[Test]
@@ -288,7 +288,7 @@ namespace MonoTests.System.Drawing {
 		{
 			TextureBrush t = new TextureBrush (image);
 			t.Dispose ();
-			Assert.Throws<ArgumentException>(() => t.Clone ());
+			Assert.Throws<ArgumentException> (() => t.Clone ());
 		}
 
 		[Test]
@@ -305,19 +305,19 @@ namespace MonoTests.System.Drawing {
 		{
 			TextureBrush t = new TextureBrush (image);
 			t.Dispose ();
-			Assert.Throws<ArgumentException>(() => Assert.IsNotNull (t.Image, "Image"));
+			Assert.Throws<ArgumentException> (() => Assert.IsNotNull (t.Image, "Image"));
 		}
 
 		[Test]
 		public void MultiplyTransform_Null ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (image).MultiplyTransform (null));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (image).MultiplyTransform (null));
 		}
 
 		[Test]
 		public void MultiplyTransform_Null_Order ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new TextureBrush (image).MultiplyTransform (null, MatrixOrder.Append));
+			Assert.Throws<ArgumentNullException> (() => new TextureBrush (image).MultiplyTransform (null, MatrixOrder.Append));
 		}
 
 		[Test]
@@ -332,7 +332,7 @@ namespace MonoTests.System.Drawing {
 		{
 			TextureBrush t = new TextureBrush (image);
 			Matrix noninvertible = new Matrix (123, 24, 82, 16, 47, 30);
-			Assert.Throws<ArgumentException>(() => t.MultiplyTransform (noninvertible));
+			Assert.Throws<ArgumentException> (() => t.MultiplyTransform (noninvertible));
 		}
 
 		[Test]
@@ -366,7 +366,7 @@ namespace MonoTests.System.Drawing {
 		public void RotateTransform_InvalidOrder ()
 		{
 			TextureBrush t = new TextureBrush (image);
-			Assert.Throws<ArgumentException>(() => t.RotateTransform (720, (MatrixOrder) Int32.MinValue));
+			Assert.Throws<ArgumentException> (() => t.RotateTransform (720, (MatrixOrder) Int32.MinValue));
 		}
 
 		[Test]
@@ -404,7 +404,7 @@ namespace MonoTests.System.Drawing {
 		public void ScaleTransform_InvalidOrder ()
 		{
 			TextureBrush t = new TextureBrush (image);
-			Assert.Throws<ArgumentException>(() => t.ScaleTransform (1, 1, (MatrixOrder) Int32.MinValue));
+			Assert.Throws<ArgumentException> (() => t.ScaleTransform (1, 1, (MatrixOrder) Int32.MinValue));
 		}
 
 		[Test]
@@ -434,7 +434,7 @@ namespace MonoTests.System.Drawing {
 		public void TranslateTransform_InvalidOrder ()
 		{
 			TextureBrush t = new TextureBrush (image);
-			Assert.Throws<ArgumentException>(() => t.TranslateTransform (1, 1, (MatrixOrder) Int32.MinValue));
+			Assert.Throws<ArgumentException> (() => t.TranslateTransform (1, 1, (MatrixOrder) Int32.MinValue));
 		}
 
 		private void Alpha_81828 (WrapMode mode, bool equals)

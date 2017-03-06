@@ -95,7 +95,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_IconNull_Int_Int ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon ((Icon)null, 32, 32));
+			Assert.Throws<ArgumentException> (() => new Icon ((Icon)null, 32, 32));
 		}
 
 		[Test]
@@ -109,7 +109,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_IconNull_Size ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon ((Icon) null, new Size (32, 32)));
+			Assert.Throws<ArgumentException> (() => new Icon ((Icon) null, new Size (32, 32)));
 		}
 
 		[Test]
@@ -173,48 +173,48 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Constructor_StreamNull ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon ((Stream) null));
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null));
 		}
 
 		[Test]
 		public void Constructor_StreamNull_Int_Int ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon ((Stream) null, 32, 32));
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null, 32, 32));
 		}
 
 		[Test]
 		public void Constructor_StringNull ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new Icon ((string) null));
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null));
 		}
 
 		[Test]
 		public void Constructor_TypeNull_String ()
 		{
-			Assert.Throws<NullReferenceException>(() => new Icon ((Type) null, "mono.ico"));
+			Assert.Throws<NullReferenceException> (() => new Icon ((Type) null, "mono.ico"));
 		}
 
 		[Test]
 		public void Constructor_Type_StringNull ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon (typeof (Icon), null));
+			Assert.Throws<ArgumentException> (() => new Icon (typeof (Icon), null));
 		}
 		[Test]
 		public void Constructor_StreamNull_Size ()
 		{
-			Assert.Throws<ArgumentException>(() => new Icon ((Stream) null, new Size (32, 32)));
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null, new Size (32, 32)));
 		}
 
 		[Test]
 		public void Constructor_StringNull_Size ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new Icon ((string) null, new Size (32, 32)));
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null, new Size (32, 32)));
 		}
 
 		[Test]
 		public void Constructor_StringNull_Int_Int ()
 		{
-			Assert.Throws<ArgumentNullException>(() => new Icon ((string) null, 32, 32));
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null, 32, 32));
 		}
 
 		[Test]
@@ -372,7 +372,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Save_Null ()
 		{
-			Assert.Throws<NullReferenceException>(() => icon.Save (null));
+			Assert.Throws<NullReferenceException> (() => icon.Save (null));
 		}
 
 		[Test]
@@ -492,7 +492,7 @@ namespace MonoTests.System.Drawing {
 		public void Only256InFile ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
-				Assert.Throws<Exception>(() => new Icon (fs, 0, 0));
+				Assert.Throws<Exception> (() => new Icon (fs, 0, 0));
 			}
 		}
 
@@ -500,19 +500,19 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void ExtractAssociatedIcon_Null ()
 		{
-			Assert.Throws<ArgumentException>(() => Icon.ExtractAssociatedIcon (null));
+			Assert.Throws<ArgumentException> (() => Icon.ExtractAssociatedIcon (null));
 		}
 
 		[Test]
 		public void ExtractAssociatedIcon_Empty ()
 		{
-			Assert.Throws<ArgumentException>(() => Icon.ExtractAssociatedIcon (String.Empty));
+			Assert.Throws<ArgumentException> (() => Icon.ExtractAssociatedIcon (String.Empty));
 		}
 
 		[Test]
 		public void ExtractAssociatedIcon_DoesNotExists ()
 		{
-			Assert.Throws<FileNotFoundException>(() => Icon.ExtractAssociatedIcon ("does-not-exists.png"));
+			Assert.Throws<FileNotFoundException> (() => Icon.ExtractAssociatedIcon ("does-not-exists.png"));
 		}
 
 		private static bool RunningOnUnix {

@@ -55,14 +55,14 @@ namespace MonoCasTests.System.Drawing.Text {
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		public void AddMemoryFont_Deny_UnmanagedCode () 
 		{
-			Assert.Throws<SecurityException>(() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
+			Assert.Throws<SecurityException> (() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
 		}
 
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
 		public void AddMemoryFont_PermitOnly_UnmanagedCode ()
 		{
-			Assert.Throws<ArgumentException>(() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
+			Assert.Throws<ArgumentException> (() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
 		}
 
 		// yes, that fails with FileNotFoundException ;-)
@@ -73,7 +73,7 @@ namespace MonoCasTests.System.Drawing.Text {
 		{
 			IntPtr ptr = Marshal.AllocHGlobal (1024);
 			try {
-				Assert.Throws<FileNotFoundException>(() => new PrivateFontCollection ().AddMemoryFont (ptr, -1024));
+				Assert.Throws<FileNotFoundException> (() => new PrivateFontCollection ().AddMemoryFont (ptr, -1024));
 			}
 			finally {
 				Marshal.FreeHGlobal (ptr);
@@ -86,7 +86,7 @@ namespace MonoCasTests.System.Drawing.Text {
 		{
 			IntPtr ptr = Marshal.AllocHGlobal (1024);
 			try {
-				Assert.Throws<FileNotFoundException>(() => new PrivateFontCollection ().AddMemoryFont (ptr, 1024));
+				Assert.Throws<FileNotFoundException> (() => new PrivateFontCollection ().AddMemoryFont (ptr, 1024));
 			}
 			finally {
 				Marshal.FreeHGlobal (ptr);

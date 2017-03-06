@@ -52,14 +52,14 @@ namespace MonoTests.System.Drawing{
 		public void ExTestConvertFrom ()
 		{
 			FontConverter.FontNameConverter f = new FontConverter.FontNameConverter ();
-			Assert.Throws<NotSupportedException>(() => f.ConvertFrom (null));
+			Assert.Throws<NotSupportedException> (() => f.ConvertFrom (null));
 		}
 
 		[Test]
 		public void ExTestConvertFrom2 ()
 		{
 			FontConverter.FontNameConverter f = new FontConverter.FontNameConverter ();
-			Assert.Throws<NotSupportedException>(() => f.ConvertFrom (1));
+			Assert.Throws<NotSupportedException> (() => f.ConvertFrom (1));
 		}
 	}
 }

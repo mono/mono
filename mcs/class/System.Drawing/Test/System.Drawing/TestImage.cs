@@ -71,7 +71,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void FileDoesNotExists ()
 		{
-			Assert.Throws<FileNotFoundException>(() => Image.FromFile ("FileDoesNotExists.jpg"));
+			Assert.Throws<FileNotFoundException> (() => Image.FromFile ("FileDoesNotExists.jpg"));
 		}
 
 		private bool CallbackTrue ()
@@ -103,7 +103,7 @@ namespace MonoTests.System.Drawing{
 		public void GetThumbnailImage_Height_Zero ()
 		{
 			using (Bitmap bmp = new Bitmap (10, 10)) {
-				Assert.Throws<OutOfMemoryException>(() => bmp.GetThumbnailImage (5, 0, new Image.GetThumbnailImageAbort (CallbackFalse), IntPtr.Zero));
+				Assert.Throws<OutOfMemoryException> (() => bmp.GetThumbnailImage (5, 0, new Image.GetThumbnailImageAbort (CallbackFalse), IntPtr.Zero));
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace MonoTests.System.Drawing{
 		public void GetThumbnailImage_Width_Negative ()
 		{
 			using (Bitmap bmp = new Bitmap (10, 10)) {
-				Assert.Throws<OutOfMemoryException>(() => bmp.GetThumbnailImage (-5, 5, new Image.GetThumbnailImageAbort (CallbackFalse), IntPtr.Zero));
+				Assert.Throws<OutOfMemoryException> (() => bmp.GetThumbnailImage (-5, 5, new Image.GetThumbnailImageAbort (CallbackFalse), IntPtr.Zero));
 			}
 		}
 
@@ -247,7 +247,7 @@ namespace MonoTests.System.Drawing{
 			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				fs.Position = fs.Length / 2;
-				Assert.Throws<ArgumentException>(() => Image.FromStream (fs));
+				Assert.Throws<ArgumentException> (() => Image.FromStream (fs));
 			}
 		}
 
@@ -288,7 +288,7 @@ namespace MonoTests.System.Drawing{
 			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				fs.Position = fs.Length / 2;
-				Assert.Throws<ArgumentException>(() => Image.FromStream (fs));
+				Assert.Throws<ArgumentException> (() => Image.FromStream (fs));
 			}
 		}
 
@@ -296,7 +296,7 @@ namespace MonoTests.System.Drawing{
 		public void FromFile_Invalid ()
 		{
 			string filename = Assembly.GetExecutingAssembly ().Location;
-			Assert.Throws<OutOfMemoryException>(() => Image.FromFile (filename));
+			Assert.Throws<OutOfMemoryException> (() => Image.FromFile (filename));
 		}
 
 		[Test]
@@ -304,7 +304,7 @@ namespace MonoTests.System.Drawing{
 		{
 			string filename = Assembly.GetExecutingAssembly ().Location;
 			using (FileStream fs = File.OpenRead (filename)) {
-				Assert.Throws<ArgumentException>(() => Image.FromStream (fs));
+				Assert.Throws<ArgumentException> (() => Image.FromStream (fs));
 			}
 		}
 
@@ -355,7 +355,7 @@ namespace MonoTests.System.Drawing{
 					bmp.Save (ms, ImageFormat.Bmp);
 					Assert.IsTrue (ms.Position > 2, "Position-2");
 					// exception here
-					Assert.Throws<ArgumentException>(() => Image.FromStream (ms));
+					Assert.Throws<ArgumentException> (() => Image.FromStream (ms));
 				}
 			}
 		}

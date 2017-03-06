@@ -258,7 +258,7 @@ namespace MonoTests.System.Drawing
 			Hashtable ht = new Hashtable ();
 			ht.Add ("x", 2);
 			ht.Add ("Y", 3);
-			Assert.Throws<ArgumentException>(() => ptconv.CreateInstance (null, ht));
+			Assert.Throws<ArgumentException> (() => ptconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -306,7 +306,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void ConvertFromInvariantString_string_exc_1 ()
 		{
-			Assert.Throws<ArgumentException>(() => ptconv.ConvertFromInvariantString ("1"));
+			Assert.Throws<ArgumentException> (() => ptconv.ConvertFromInvariantString ("1"));
 		}
 
 		[Test]
@@ -341,7 +341,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void ConvertFromString_string_exc_1 ()
 		{
-			Assert.Throws<ArgumentException>(() => ptconv.ConvertFromString ("1"));
+			Assert.Throws<ArgumentException> (() => ptconv.ConvertFromString ("1"));
 		}
 
 		[Test]
