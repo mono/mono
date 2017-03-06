@@ -201,7 +201,7 @@ namespace MonoTests.System.Drawing {
 		{
 			FontFamily ff = FontFamily.GenericMonospace;
 			ff.Dispose ();
-			Assert.Throws<ArgumentException> (() => Assert.AreEqual (name, ff.Name, "Name"));
+			Assert.Throws<ArgumentException> (() => { var x = ff.Name; });
 		}
 	}
 }

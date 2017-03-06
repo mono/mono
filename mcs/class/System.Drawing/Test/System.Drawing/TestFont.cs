@@ -432,7 +432,7 @@ namespace MonoTests.System.Drawing{
 		{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
-			Assert.Throws<ArgumentException> (() => Assert.AreEqual (0, f.Height, "Name"));
+			Assert.Throws<ArgumentException> (() => { var x = f.Height; });
 		}
 
 		[Test]
@@ -539,7 +539,7 @@ namespace MonoTests.System.Drawing{
 		public void GetHeight_Graphics_Null ()
 		{
 			using (Font f = new Font (name, 12.5f)) {
-				Assert.Throws<ArgumentNullException> (() => Assert.AreEqual (0, f.GetHeight (null), "0"));
+				Assert.Throws<ArgumentNullException> (() => f.GetHeight (null));
 			}
 		}
 

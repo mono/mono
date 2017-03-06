@@ -328,14 +328,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void InterpolationColors_Colors_InvalidBlend ()
 		{
 			// default Blend doesn't allow getting this property
-			Assert.Throws<ArgumentException> (() => Assert.IsNotNull (default_brush.InterpolationColors.Colors));
+			Assert.Throws<ArgumentException> (() => { var x = default_brush.InterpolationColors.Colors; });
 		}
 
 		[Test]
 		public void InterpolationColors_Positions_InvalidBlend ()
 		{
 			// default Blend doesn't allow getting this property
-			Assert.Throws<ArgumentException> (() => Assert.IsNotNull (default_brush.InterpolationColors.Positions));
+			Assert.Throws<ArgumentException> (() => { var x = default_brush.InterpolationColors.Positions; });
 		}
 
 		[Test]

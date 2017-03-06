@@ -68,7 +68,7 @@ namespace MonoTests.System.Drawing {
 			Icon app = SystemIcons.Application;
 			Icon clone = (Icon) app.Clone ();
 			clone.Dispose ();
-			Assert.Throws<ObjectDisposedException> (() => Assert.IsNotNull (clone.ToBitmap ()));
+			Assert.Throws<ObjectDisposedException> (() => clone.ToBitmap ());
 		}
 	}
 }

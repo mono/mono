@@ -78,7 +78,7 @@ namespace MonoTests.System.Drawing.Text {
 		{
 			PrivateFontCollection pfc = new PrivateFontCollection ();
 			pfc.Dispose ();
-			Assert.Throws<ArgumentException> (() => Assert.IsNotNull (pfc.Families));
+			Assert.Throws<ArgumentException> (() => { var x = pfc.Families; });
 			// no it's not a ObjectDisposedException
 		}
 	}

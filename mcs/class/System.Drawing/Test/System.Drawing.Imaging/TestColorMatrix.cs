@@ -122,7 +122,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				new float[] { 4.0f, 4.1f, 4.2f, 4.3f, 4.4f, 4.5f },
 				new float[] { 5.0f, 5.1f, 5.2f, 5.3f, 5.4f, 5.5f }
 			});
-			Assert.Throws<IndexOutOfRangeException> (() => Assert.AreEqual (5.5f, cm[5,5], "out"));
+			Assert.Throws<IndexOutOfRangeException> (() => { var x = cm[5, 5]; });
 		}
 
 		[Test]
