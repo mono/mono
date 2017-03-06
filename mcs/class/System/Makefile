@@ -15,7 +15,8 @@ RESOURCE_FILES = \
 endif
 
 RESX_RESOURCE_STRING = \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
