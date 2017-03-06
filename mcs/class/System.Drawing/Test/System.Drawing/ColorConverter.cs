@@ -169,7 +169,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void ConvertFrom_x1 ()
 		{
-				Assert.Throws<ArgumentException> (() => colconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10, 20"));
+			Assert.Throws<ArgumentException> (() => colconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10, 20"));
 		}
 
 		[Test]

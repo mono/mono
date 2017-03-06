@@ -694,9 +694,9 @@ namespace MonoTests.System.Drawing {
 				Assert.Ignore("This does not work with Microsoft's GDIPLUS.DLL due to off-by-1 errors in their GdipBitmapRotateFlip function.");
 
 			string[] files = {
-							   getInFile ("bitmaps/1bit.png"),
-							   getInFile ("bitmaps/4bit.png")
-							 };
+			                   getInFile ("bitmaps/1bit.png"),
+			                   getInFile ("bitmaps/4bit.png")
+			                 };
 
 			StringBuilder md5s = new StringBuilder();
 

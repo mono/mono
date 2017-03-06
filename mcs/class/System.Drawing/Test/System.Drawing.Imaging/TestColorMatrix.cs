@@ -164,10 +164,10 @@ namespace MonoTests.System.Drawing.Imaging {
 		{
 			ColorMatrix cm = new ColorMatrix (new float[][] {
 				new float[] {0.393f, 0.349f, 0.272f, 0, 0},
-					new float[] {0.769f, 0.686f, 0.534f, 0, 0},
-					new float[] {0.189f, 0.168f, 0.131f, 0, 0},
-					new float[] {	 0,	  0,	  0, 1, 0},
-					new float[] {	 0,	  0,	  0, 0, 1}
+				new float[] {0.769f, 0.686f, 0.534f, 0, 0},
+				new float[] {0.189f, 0.168f, 0.131f, 0, 0},
+				new float[] {     0,      0,      0, 1, 0},
+				new float[] {     0,      0,      0, 0, 1}
 			});
 
 			Assert.AreEqual (0.393f, cm.Matrix00, "00");
