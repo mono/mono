@@ -911,7 +911,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		public void GdipLoadImageFromFile_FileNotFound ()
 		{
 			string filename = "filenotfound";
@@ -921,11 +920,10 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (IntPtr.Zero, image, "image handle");
 
 			// this doesn't throw a OutOfMemoryException
-			Image.FromFile (filename);
+			Assert.Throws<FileNotFoundException> (() => Image.FromFile (filename));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GdipCreateBitmapFromFile_FileNotFound ()
 		{
 			string filename = "filenotfound";
@@ -934,7 +932,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateBitmapFromFile (filename, out bitmap), "GdipCreateBitmapFromFile");
 			Assert.AreEqual (IntPtr.Zero, bitmap, "bitmap handle");
 
-			new Bitmap (filename);
+			Assert.Throws<ArgumentException> (() => new Bitmap (filename));
 		}
 
 		[Test]
@@ -1182,8 +1180,8 @@ namespace MonoTests.System.Drawing {
 					 "DrawCurve with 1 pt");
 			Assert.AreEqual (Status.Ok,
 					 GDIPlus.GdipDrawCurveI (graphics, pen,
-								 new Point [] { new Point (1, 1),
-										new Point (2, 2) }, 2),
+					                         new Point [] { new Point (1, 1),
+					                                        new Point (2, 2) }, 2),
 					 "DrawCurve with 2 pts");
 
 			// DrawClosedCurve
@@ -1193,12 +1191,12 @@ namespace MonoTests.System.Drawing {
 					 "DrawClosedCurve with no pts");
 			Assert.AreEqual (Status.InvalidParameter,
 					 GDIPlus.GdipDrawClosedCurveI (graphics, pen,
-								       new Point [] { new Point (1, 1) }, 1),
+					                               new Point [] { new Point (1, 1) }, 1),
 					 "DrawClosedCurve with 1 pt");
 			Assert.AreEqual (Status.InvalidParameter,
 					 GDIPlus.GdipDrawClosedCurveI (graphics, pen,
-								       new Point [] { new Point (1, 1),
-										      new Point (2, 2) }, 2),
+					                               new Point [] { new Point (1, 1),
+					                                              new Point (2, 2) }, 2),
 					 "DrawClosedCurve with 2 pt2");
 
 			// DrawPolygon
@@ -1208,7 +1206,7 @@ namespace MonoTests.System.Drawing {
 					 "DrawPolygon with no pts");
 			Assert.AreEqual (Status.InvalidParameter,
 					 GDIPlus.GdipDrawPolygonI (graphics, pen,
-								   new Point [] { new Point (1, 1) }, 1),
+					                           new Point [] { new Point (1, 1) }, 1),
 					 "DrawPolygon with only one pt");
 
 			GDIPlus.GdipDeletePen (pen);			
@@ -1224,12 +1222,12 @@ namespace MonoTests.System.Drawing {
 					 "FillClosedCurve with no pts");
 			Assert.AreEqual (Status.Ok,
 					 GDIPlus.GdipFillClosedCurveI (graphics, brush, 
-								       new Point [] { new Point (1, 1) }, 1),
+												new Point [] { new Point (1, 1) }, 1),
 					 "FillClosedCurve with 1 pt");
 			Assert.AreEqual (Status.Ok,
 					 GDIPlus.GdipFillClosedCurveI (graphics, brush,
-								       new Point [] { new Point (1, 1),
-										      new Point (2, 2) }, 2),
+					                               new Point [] { new Point (1, 1),
+					                                              new Point (2, 2) }, 2),
 					 "FillClosedCurve with 2 pts");
 			
 			GDIPlus.GdipDeleteBrush (brush);
