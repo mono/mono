@@ -36,7 +36,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#if !NETCOREAPP2_0
 using System.Runtime.Serialization.Formatters.Soap;
+#endif
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
@@ -1094,6 +1096,7 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
+#if !NETCOREAPP2_0
 		private Stream SoapSerialize (object o)
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -1160,6 +1163,7 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
+#endif
 
 		[Test]
 		[Category ("NotWorking")]	// http://bugzilla.ximian.com/show_bug.cgi?id=80558
