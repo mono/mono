@@ -152,7 +152,7 @@ namespace System.Drawing
 		public static Color FromKnownColor (KnownColor color)
 		{
 			Color c;
-			short n = (short)kc;
+			short n = (short)color;
 			if ((n <= 0) || (n >= KnownColors.ArgbValues.Length)) {
 				// This is what it returns!
 				c = FromArgb (0, 0, 0, 0);
@@ -162,7 +162,7 @@ namespace System.Drawing
 				c.state = (short) (ColorType.ARGB | ColorType.Known | ColorType.Named);
 				if ((n < 27) || (n > 169))
 					c.state |= (short) ColorType.System;
-				c.Value = ArgbValues [n];
+				c.Value = KnownColors.ArgbValues [n];
 			}
 			c.knownColor = n;
 			return c;
