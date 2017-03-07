@@ -136,11 +136,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Null ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType ((string) null);
 				Assert.Fail ("#1");
@@ -153,11 +152,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Empty ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType (string.Empty);
 				Assert.Fail ("#1");
@@ -171,11 +169,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_NullChar ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType ("\0test");
 				Assert.Fail ("#1");
@@ -191,11 +188,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			try {
 				mb.DefineType ("ITest1", TypeAttributes.Interface);
@@ -228,13 +224,12 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;
 
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			tb = mb.DefineType ("Foo", TypeAttributes.Class,
 				typeof (ICollection));
@@ -246,11 +241,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_TypeSize ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
 				typeof (ValueType), 1);
@@ -258,11 +252,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			var itb = module.DefineType ("TBase", TypeAttributes.Public);
 
@@ -274,7 +267,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
+		[Category ("MobileNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();
