@@ -343,7 +343,6 @@ public class ModuleTest
 	}
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 	[Test]
-	[Category ("AndroidNotWorking")] // Mono.CompilerServices.SymbolWriter not available for Xamarin.Android
 	public void GetTypes ()
 	{
 		AssemblyName newName = new AssemblyName ();
@@ -351,7 +350,7 @@ public class ModuleTest
 
 		AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
 
-		ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule" + ".dll", true);
+		ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule" + ".dll", false);
 
 		TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public);
 		tb.CreateType ();
