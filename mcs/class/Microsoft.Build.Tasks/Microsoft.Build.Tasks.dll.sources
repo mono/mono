@@ -112,6 +112,7 @@ Microsoft.Build.Tasks/VCBuild.cs
 Microsoft.Build.Tasks/Warning.cs
 Microsoft.Build.Tasks/WriteCodeFragment.cs
 Microsoft.Build.Tasks/WriteLinesToFile.cs
+Microsoft.Build.Tasks/XmlPeek.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceWriter.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceReader.cs
