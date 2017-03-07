@@ -239,11 +239,19 @@ else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
+if HAVE_ZLIB
+Z_LIBS= -lz
+else
+Z_LIBS=
+endif
+
 mono_boehm_LDADD = \
 	libmain_a-main.$(OBJEXT) \
 	$(MONO_LIB)		\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
+	$(LIBICONV)		\
+	$(Z_LIBS)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
@@ -255,6 +263,8 @@ mono_sgen_LDADD = \
 	$(MONO_SGEN_LIB)	\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
+	$(LIBICONV)		\
+	$(Z_LIBS)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
