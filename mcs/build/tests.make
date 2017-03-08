@@ -157,6 +157,9 @@ $(test_makefrag): $(test_response)
 
 -include $(test_makefrag)
 
+build-test-lib: $(test_lib)
+	@echo Building testing lib
+
 endif
 
 .PHONY: patch-nunitlite-appconfig
