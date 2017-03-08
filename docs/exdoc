@@ -153,6 +153,9 @@ sub process_function {
             }
             process_formatting(\$returns, $file_path, $.);
             process_formatting(\$body, $file_path, $.);
+            if (defined($deprecated)) {
+                process_formatting(\$deprecated, $file_path, $.);
+            }
             $body =~ s/\n/ /g;
 
             if (exists($docs->{body}->{$name})) {
