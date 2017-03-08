@@ -107,6 +107,7 @@ monodroid_dirs := \
 	Mono.Btls.Interface	\
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting	\
+	Mono.Posix	\
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
