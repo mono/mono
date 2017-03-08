@@ -24,7 +24,10 @@ else ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.
 fi
 if [[ ${label} == osx-* ]] || [[ ${label} == w* ]]
 then ${TESTCMD} --label=Windows.Forms --skip;
-else ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
+else
+    if make -C mcs/class/System.Windows.Forms test-simple;
+    then ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
+    else echo "The simple test failed (maybe because of missing X server), skipping test suite." && ${TESTCMD} --label=Windows.Forms --skip; fi
 fi
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 if [[ ${label} == w* ]]; then ${TESTCMD} --label=Mono.Data.Sqlite --skip; else ${TESTCMD} --label=Mono.Data.Sqlite --timeout=5m make -w -C mcs/class/Mono.Data.Sqlite run-test; fi
