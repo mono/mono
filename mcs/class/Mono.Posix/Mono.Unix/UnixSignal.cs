@@ -188,6 +188,8 @@ namespace Mono.Unix {
 			AssertValid ();
 			if (exitContext)
 				throw new InvalidOperationException ("exitContext is not supported");
+			if (millisecondsTimeout == 0)
+				return IsSet;		
 			return WaitAny (new UnixSignal[]{this}, millisecondsTimeout) == 0;
 		}
 		#endregion
