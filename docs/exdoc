@@ -239,7 +239,7 @@ sub process_formatting {
         if s{#(\w+)}{<code>$1</code>}g && $WARNINGS;
     warn "$file_path:$current_line: Old-style monodoc notation '`code`' used\n"
         if s{\`((?!api:)[:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
-    s{\\c +([\w\.]+)}{<code>$1</code>}g;
+    s{\\c +(\S+(?<![.,:;]))}{<code>$1</code>}g;
 
     $$content = $_;
 }
