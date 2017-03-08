@@ -50,7 +50,7 @@ namespace Mono.AppleTls {
 
 		static SecKeyChain ()
 		{
-			var handle = CFObject.dlopen ("/System/Library/Frameworks/Security.framework/Security", 0);
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
@@ -153,7 +153,7 @@ namespace Mono.AppleTls {
 		static readonly IntPtr SecClassKey;
 		static SecRecord ()
 		{
-			var handle = CFObject.dlopen ("/System/Library/Frameworks/Security.framework/Security", 0);
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
@@ -212,7 +212,7 @@ namespace Mono.AppleTls {
 		
 		static SecItem ()
 		{
-			var handle = CFObject.dlopen ("/System/Library/Frameworks/Security.framework/Security", 0);
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
@@ -223,7 +223,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		internal extern static SecStatusCode SecItemCopyMatching (/* CFDictionaryRef */ IntPtr query, /* CFTypeRef* */ out IntPtr result);
 	}
 
@@ -233,7 +233,7 @@ namespace Mono.AppleTls {
 		
 		static SecClass ()
 		{
-			var handle = CFObject.dlopen ("/System/Library/Frameworks/Security.framework/Security", 0);
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 

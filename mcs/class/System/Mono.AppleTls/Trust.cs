@@ -49,7 +49,7 @@ namespace Mono.AppleTls {
 				CFObject.CFRetain (handle);
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode SecTrustCreateWithCertificates (
 			/* CFTypeRef */            IntPtr certOrCertArray,
 			/* CFTypeRef __nullable */ IntPtr policies,
@@ -82,7 +82,7 @@ namespace Mono.AppleTls {
 				throw new ArgumentException (result.ToString ());
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode /* OSStatus */ SecTrustEvaluate (IntPtr /* SecTrustRef */ trust, out /* SecTrustResultType */ SecTrustResult result);
 
 		public SecTrustResult Evaluate ()
@@ -97,7 +97,7 @@ namespace Mono.AppleTls {
 			return trust;
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr /* CFIndex */ SecTrustGetCertificateCount (IntPtr /* SecTrustRef */ trust);
 
 		public int Count {
@@ -108,7 +108,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr /* SecCertificateRef */ SecTrustGetCertificateAtIndex (IntPtr /* SecTrustRef */ trust, IntPtr /* CFIndex */ ix);
 
 		public SecCertificate this [IntPtr index] {
@@ -122,7 +122,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode /* OSStatus */ SecTrustSetAnchorCertificates (IntPtr /* SecTrustRef */ trust, IntPtr /* CFArrayRef */ anchorCertificates);
 
 		public SecStatusCode SetAnchorCertificates (X509CertificateCollection certificates)
@@ -148,7 +148,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode /* OSStatus */ SecTrustSetAnchorCertificatesOnly (IntPtr /* SecTrustRef */ trust, bool anchorCertificatesOnly);
 
 		public SecStatusCode SetAnchorCertificatesOnly (bool anchorCertificatesOnly)

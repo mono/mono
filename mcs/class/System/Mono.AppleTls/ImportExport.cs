@@ -36,7 +36,7 @@ namespace Mono.AppleTls {
 
 	internal partial class SecImportExport {
 		
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode SecPKCS12Import (IntPtr pkcs12_data, IntPtr options, out IntPtr items);
 		
 		static public SecStatusCode ImportPkcs12 (byte[] buffer, CFDictionary options, out CFDictionary[] array)

@@ -52,10 +52,10 @@ namespace Mono.AppleTls {
 				CFObject.CFRetain (handle);
 		}
 		
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security", EntryPoint="SecCertificateGetTypeID")]
+		[DllImport (AppleTlsContext.SecurityLibrary, EntryPoint="SecCertificateGetTypeID")]
 		public extern static IntPtr GetTypeID ();
 			
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr SecCertificateCreateWithData (IntPtr allocator, IntPtr cfData);
 
 		public SecCertificate (X509Certificate certificate)
@@ -94,7 +94,7 @@ namespace Mono.AppleTls {
 				throw new ArgumentException ("Not a valid DER-encoded X.509 certificate");
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr SecCertificateCopySubjectSummary (IntPtr cert);
 
 		public string SubjectSummary {
@@ -111,7 +111,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static /* CFDataRef */ IntPtr SecCertificateCopyData (/* SecCertificateRef */ IntPtr cert);
 
 		public CFData DerData {
@@ -197,7 +197,7 @@ namespace Mono.AppleTls {
 		
 		static SecIdentity ()
 		{
-			var handle = CFObject.dlopen ("/System/Library/Frameworks/Security.framework/Security", 0);
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
@@ -218,10 +218,10 @@ namespace Mono.AppleTls {
 				CFObject.CFRetain (handle);
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security", EntryPoint="SecIdentityGetTypeID")]
+		[DllImport (AppleTlsContext.SecurityLibrary, EntryPoint="SecIdentityGetTypeID")]
 		public extern static IntPtr GetTypeID ();
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static /* OSStatus */ SecStatusCode SecIdentityCopyCertificate (/* SecIdentityRef */ IntPtr identityRef,  /* SecCertificateRef* */ out IntPtr certificateRef);
 
 		public SecCertificate Certificate {
@@ -305,7 +305,7 @@ namespace Mono.AppleTls {
 				CFObject.CFRetain (handle);
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security", EntryPoint="SecKeyGetTypeID")]
+		[DllImport (AppleTlsContext.SecurityLibrary, EntryPoint="SecKeyGetTypeID")]
 		public extern static IntPtr GetTypeID ();
 		
 		~SecKey ()

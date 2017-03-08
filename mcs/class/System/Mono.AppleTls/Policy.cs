@@ -47,7 +47,7 @@ namespace Mono.AppleTls {
 				CFObject.CFRetain (handle);
 		}
 
-		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr /* SecPolicyRef */ SecPolicyCreateSSL (bool server, IntPtr /* CFStringRef */ hostname);
 
 		static public SecPolicy CreateSslPolicy (bool server, string hostName)
