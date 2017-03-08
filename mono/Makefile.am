@@ -6,11 +6,15 @@ if BTLS
 btls_dirs = btls
 endif
 
+if COREFX_PAL_SUPPORTED
+pal_dirs = pal
+endif
+
 if CROSS_COMPILING
-SUBDIRS = $(btls_dirs) arch utils cil metadata $(sgen_dirs) mini dis profiler
+SUBDIRS = $(btls_dirs) $(pal_dirs) arch utils cil metadata $(sgen_dirs) mini dis profiler
 else
 if INSTALL_MONOTOUCH
-SUBDIRS = $(btls_dirs) arch utils metadata $(sgen_dirs) mini profiler
+SUBDIRS = $(btls_dirs) $(pal_dirs) arch utils metadata $(sgen_dirs) mini profiler
 
 monotouch-do-build:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \
@@ -34,7 +38,7 @@ monotouch-do-clean:
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
     done;
 else
-SUBDIRS = $(btls_dirs) arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+SUBDIRS = $(btls_dirs) $(pal_dirs) arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
 endif
 endif
-DIST_SUBDIRS = btls arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+DIST_SUBDIRS = btls pal arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
