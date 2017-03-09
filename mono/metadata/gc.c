@@ -216,7 +216,11 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	runtime_invoke = domain->finalize_runtime_invoke;
 
-	mono_runtime_class_init (o->vtable);
+	exc = mono_runtime_class_init_full (o->vtable, FALSE);
+	if (exc) {
+		mono_unhandled_exception(exc);
+		exc = NULL;
+	}
 
 	runtime_invoke (o, NULL, &exc, NULL);
 
