@@ -298,12 +298,29 @@ endif
 
 $(the_lib): $(the_libdir)/.stamp
 
+
+ifdef IL_LIBRARY
+
+the_source_list := $(shell cat ${response})
+
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
+	$(ILCOMPILE) $(LIBRARY_FLAGS) /dll -out:$@ $(BUILT_SOURCES_cmdline) $(the_source_list)
+ifdef RESOURCE_STRINGS_FILES
+	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
+endif
+	#$(Q) $(SN) -R $@ $(LIBRARY_SNK)
+
+else
+
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
+
+endif
+
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)

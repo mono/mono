@@ -24,6 +24,7 @@ Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
 Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_ILASM=$(if $(V),,@echo "ILASM     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
@@ -48,6 +49,11 @@ INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
 
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
 INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
+
+USE_ILASM_FLAGS=
+# FIXME I gave up figuring out how to define $(ILASM)
+ILCOMPILE = $(Q_ILASM) $(INTERNAL_ILASM) $(USE_ILASM_FLAGS)
+
 
 RESGEN_EXE = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)resgen.exe
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE)
