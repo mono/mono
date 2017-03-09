@@ -9,4 +9,6 @@ EXTRA_DISTFILES =
 LIBRARY_COMPILE = echo
 IL_LIBRARY = YES
 
+TEST_MCS_FLAGS += -debug -unsafe
+
 include ../../build/library.make
