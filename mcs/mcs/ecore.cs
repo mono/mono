@@ -7005,7 +7005,7 @@ namespace Mono.CSharp {
 		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			if (backing_field != null) {
-				backing_field.EmitAssign (ec, source, false, false);
+				backing_field.EmitAssign (ec, source, leave_copy, false);
 				return;
 			}
 
