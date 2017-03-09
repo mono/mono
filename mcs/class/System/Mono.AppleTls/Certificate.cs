@@ -102,11 +102,15 @@ namespace Mono.AppleTls {
 				if (handle == IntPtr.Zero)
 					throw new ObjectDisposedException ("SecCertificate");
 				
+				IntPtr subjectSummaryHandle = IntPtr.Zero;
 				try {
-					return CFString.AsString (SecCertificateCopySubjectSummary (handle));
+					subjectSummaryHandle = SecCertificateCopySubjectSummary (handle);
+					CFString subjectSummary = CFString.AsString (subjectSummaryHandle);
+					return subjectSummary;
 				}
 				finally {
-					CFObject.CFRelease (handle);
+					if (subjectSummaryHandle != IntPtr.Zero)
+						CFObject.CFRelease (subjectSummaryHandle);
 				}
 			}
 		}
