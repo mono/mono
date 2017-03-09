@@ -1114,6 +1114,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
+	static readonly string resourcePathSeparator = (Path.DirectorySeparatorChar == '\\') ? $"\\{Path.DirectorySeparatorChar}" : $"{Path.DirectorySeparatorChar}";
 
 	public static string GetAssemblyName (string path)
 	{
@@ -1126,7 +1127,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			string dir = Path.GetDirectoryName (path);
 			int idx = dir.LastIndexOf (Path.DirectorySeparatorChar);
 			if (idx >= 0) {
-				name = dir.Substring (idx + 1) + Path.DirectorySeparatorChar + name;
+				name = dir.Substring (idx + 1) + resourcePathSeparator + name;
 				Console.WriteLine ($"Storing satellite assembly '{path}' with name '{name}'");
 			} else if (!quiet)
 				Console.WriteLine ($"Warning: satellite assembly {path} doesn't have locale path prefix, name conflicts possible");
