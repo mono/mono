@@ -80,7 +80,7 @@ recursively_make_pred_seq_points (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 	} 
 
-	g_free (predecessors);
+	g_array_free (predecessors, TRUE);
 }
 
 static void
@@ -168,7 +168,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				if (l) {
 					endfinally_seq_point = (MonoInst *)l->data;
 
-					for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+					for (bb2 = bb->next_bb; bb2; bb2 = bb2->next_bb) {
 						GSList *l = g_slist_last (bb2->seq_points);
 
 						if (l) {
@@ -222,6 +222,8 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				g_slist_free (next [i]);
 		}
 	}
+
+	g_free (seq_points);
 
 	if (has_debug_data)
 		g_free (next);

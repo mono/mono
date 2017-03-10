@@ -4,7 +4,7 @@ include ../../build/rules.make
 LIBRARY = WindowsBase.dll
 
 LIB_REFS = System System.Xml
-LIB_MCS_FLAGS = -unsafe
+LIB_MCS_FLAGS = -unsafe -nowarn:67,618
 TEST_MCS_FLAGS = -unsafe
 TEST_LIB_REFS = WindowsBase System System.Xml System.Core System.IO.Compression
 

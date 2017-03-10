@@ -18,6 +18,11 @@
 #include <mono/utils/mono-threads-coop.h>
 
 #include "mini.h"
+#include "lldb.h"
+
+#ifdef ENABLE_INTERPRETER
+#include "interp/interp.h"
+#endif
 
 /*
  * Address of the trampoline code.  This is used by the debugger to check
@@ -166,7 +171,7 @@ mini_resolve_imt_method (MonoVTable *vt, gpointer *vtable_slot, MonoMethod *imt_
 
 	g_assert (imt_slot < MONO_IMT_SIZE);
 
-	mono_error_init (error);
+	error_init (error);
 	/* This has to be variance aware since imt_method can be from an interface that vt->klass doesn't directly implement */
 	interface_offset = mono_class_interface_offset_with_variance (vt->klass, imt_method->klass, &variance_used);
 	if (interface_offset < 0)
@@ -522,7 +527,7 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTable *
 	gpointer *orig_vtable_slot, *vtable_slot_to_patch = NULL;
 	MonoJitInfo *ji = NULL;
 
-	mono_error_init (error);
+	error_init (error);
 
 	virtual_ = vt && (gpointer)vtable_slot > (gpointer)vt;
 	imt_call = vt && (gpointer)vtable_slot < (gpointer)vt;
@@ -1120,7 +1125,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		 * delegate->method).
 		 */
 #ifndef DISABLE_REMOTING
-		if (delegate->target && delegate->target->vtable->klass == mono_defaults.transparent_proxy_class) {
+		if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
 			is_remote = TRUE;
 #ifndef DISABLE_COM
 			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
@@ -1132,7 +1137,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		if (!is_remote) {
 			sig = tramp_info->sig;
 			if (!(sig && method == tramp_info->method)) {
-				mono_error_init (&err);
+				error_init (&err);
 				sig = mono_method_signature_checked (method, &err);
 				if (!sig) {
 					mono_error_set_pending_exception (&err);
@@ -1166,7 +1171,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	if (method) {
 		sig = tramp_info->sig;
 		if (!(sig && method == tramp_info->method)) {
-			mono_error_init (&err);
+			error_init (&err);
 			sig = mono_method_signature_checked (method, &err);
 			if (!sig) {
 				mono_error_set_pending_exception (&err);
@@ -1275,7 +1280,7 @@ mono_handler_block_guard_trampoline (mgreg_t *regs, guint8 *code, gpointer *tram
 
 	MonoContext ctx;
 	MonoException *exc;
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	gpointer resume_ip = jit_tls->handler_block_return_address;
 
 	memcpy (&ctx, &jit_tls->handler_block_context, sizeof (MonoContext));
@@ -1436,10 +1441,17 @@ mono_get_trampoline_code (MonoTrampolineType tramp_type)
 gpointer
 mono_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
 {
+	gpointer code;
+	guint32 len;
+
 	if (mono_aot_only)
-		return mono_aot_create_specific_trampoline (mono_defaults.corlib, arg1, tramp_type, domain, code_len);
+		code = mono_aot_create_specific_trampoline (mono_defaults.corlib, arg1, tramp_type, domain, &len);
 	else
-		return mono_arch_create_specific_trampoline (arg1, tramp_type, domain, code_len);
+		code = mono_arch_create_specific_trampoline (arg1, tramp_type, domain, &len);
+	mono_lldb_save_specific_trampoline_info (arg1, tramp_type, domain, code, len);
+	if (code_len)
+		*code_len = len;
+	return code;
 }
 
 gpointer
@@ -1449,7 +1461,16 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 	gpointer code;
 	guint32 code_size = 0;
 
-	mono_error_init (error);
+	error_init (error);
+
+#ifdef ENABLE_INTERPRETER
+	if (mono_use_interpreter) {
+		gpointer ret = mono_interp_create_trampoline (domain, method, error);
+		if (!mono_error_ok (error))
+			return NULL;
+		return ret;
+	}
+#endif
 
 	code = mono_jit_find_compiled_method_with_jit_info (domain, method, &ji);
 	/*
@@ -1507,7 +1528,7 @@ mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *e
 {
 	gpointer tramp;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (mono_aot_only) {
 		if (mono_llvm_only && method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
@@ -1601,7 +1622,7 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	tramp_info->impl_nothis = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), FALSE);
 	tramp_info->method = method;
 	if (method) {
-		mono_error_init (&error);
+		error_init (&error);
 		tramp_info->sig = mono_method_signature_checked (method, &error);
 		tramp_info->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
 	}
@@ -1628,7 +1649,7 @@ no_delegate_trampoline (void)
 gpointer
 mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 {
-	if (mono_llvm_only)
+	if (mono_llvm_only || mono_use_interpreter)
 		return no_delegate_trampoline;
 
 	return mono_create_delegate_trampoline_info (domain, klass, NULL)->invoke_impl;

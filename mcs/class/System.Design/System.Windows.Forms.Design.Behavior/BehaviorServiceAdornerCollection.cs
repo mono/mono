@@ -106,7 +106,7 @@ namespace System.Windows.Forms.Design.Behavior
 			return InnerList.IndexOf (value);
 		}
 
-		public BehaviorServiceAdornerCollectionEnumerator GetEnumerator ()
+		public new BehaviorServiceAdornerCollectionEnumerator GetEnumerator ()
 		{
 			return new BehaviorServiceAdornerCollectionEnumerator (this);
 		}

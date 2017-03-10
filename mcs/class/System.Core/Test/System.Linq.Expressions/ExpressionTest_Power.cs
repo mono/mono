@@ -73,7 +73,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (ExpressionType.Power, p.NodeType, "Power#01");
 			Assert.AreEqual (typeof (double), p.Type, "Add#02");
-			Assert.AreEqual ("(1 ^ 2)", p.ToString ());
+			Assert.AreEqual ("(1 ** 2)", p.ToString ());
 		}
 
 		[Test]
@@ -90,7 +90,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void NullablePower ()
 		{
 			var a = Expression.Parameter (typeof (double?), "a");

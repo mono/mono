@@ -1646,6 +1646,7 @@ namespace System.Diagnostics {
             return GetProcessesByName(processName, ".");
         }
 
+#if !MONO
         /// <devdoc>
         ///    <para>
         ///       Creates an array of <see cref='System.Diagnostics.Process'/> components that are associated with process resources on a
@@ -1671,6 +1672,7 @@ namespace System.Diagnostics {
             list.CopyTo(temp, 0);
             return temp;
         }
+#endif
 
         /// <devdoc>
         ///    <para>

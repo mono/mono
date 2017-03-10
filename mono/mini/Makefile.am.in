@@ -15,7 +15,6 @@ libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_libs)
@@ -23,13 +22,11 @@ boehm_libs=	\
 sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV)
 
 boehm_static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_static_libs)
@@ -37,20 +34,29 @@ boehm_static_libs=	\
 sgen_static_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen-static.la	\
 	$(monodir)/mono/sgen/libmonosgen-static.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV)
+
+if FULL_AOT_TESTS
+# if the tests are going to run with framework assemblies compiled with
+# -d:MOBILE, tell the runtime to remap framework assemblies using the mobile
+# runtime info
+MOBILE_RUNTIME_ARG=--runtime=mobile
+else
+MOBILE_RUNTIME_ARG=
+endif
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
 RUNTIME_EXECUTABLE = $(if $(BOEHM),$(top_builddir)/mono/mini/mono-boehm,$(top_builddir)/runtime/mono-wrapper)
 
-MINI_RUNTIME = MONO_PATH=$(CLASS) $(RUNTIME_EXECUTABLE)
+MINI_RUNTIME = MONO_PATH=$(CLASS) $(RUNTIME_EXECUTABLE) $(MOBILE_RUNTIME_ARG)
+TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper
+INTERP_RUNTIME = $(MINI_RUNTIME) --interpreter
 RUNTIME_AOTCHECK = MONO_PATH="$(CLASS)$(PLATFORM_PATH_SEPARATOR)." $(RUNTIME_EXECUTABLE)
 
-CSC = $(mcs_topdir)/class/lib/build/mcs.exe
-MCS = CSC_SDK_PATH_DISABLED= $(MINI_RUNTIME) $(CSC) -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
-ILASM = $(MINI_RUNTIME) $(CLASS)/ilasm.exe
+MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
+ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 AM_CFLAGS = \
 	-I$(top_srcdir) 	\
@@ -326,9 +332,7 @@ ppc_sources = \
 
 arm_sources = \
 	mini-arm.c		\
-	mini-arm-tls.S		\
 	mini-arm.h		\
-	mini-arm-tls.h		\
 	exceptions-arm.c	\
 	tramp-arm.c	\
 	mini-arm-gsharedvt.c	\
@@ -392,6 +396,18 @@ llvm_sources = \
 endif
 endif
 
+if ENABLE_INTERPRETER
+interp_sources =	\
+	interp/hacks.h		\
+	interp/interp.h	\
+	interp/interp-internals.h	\
+	interp/interp.c	\
+	interp/mintops.h	\
+	interp/mintops.def	\
+	interp/mintops.c	\
+	interp/transform.c
+endif
+
 if ENABLE_LLVM
 llvm_runtime_sources = \
 	llvm-runtime.cpp
@@ -440,7 +456,6 @@ common_sources = \
 	graph.c			\
 	mini-codegen.c		\
 	mini-exceptions.c	\
-	mini-exceptions-native-unwinder.c	\
 	mini-trampolines.c  	\
 	branch-opts.c		\
 	mini-generic-sharing.c	\
@@ -466,7 +481,10 @@ common_sources = \
 	alias-analysis.c	\
 	mini-cross-helpers.c \
 	arch-stubs.c		\
-	llvm-runtime.h
+	llvm-runtime.h	\
+	type-checking.c \
+	lldb.h			\
+	lldb.c
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -484,27 +502,41 @@ test_sources = 			\
 	generics.cs		\
 	generics-variant-types.il\
 	basic-simd.cs \
+	basic-vectors.cs \
 	aot-tests.cs \
 	gc-test.cs \
 	gshared.cs
 
-
-regtests_UNIVERSAL=basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe iltests.exe devirtualization.exe generics.exe basic-simd.exe
-
-if INSTALL_MOBILE_STATIC
-regtests= \
-	$(regtests_UNIVERSAL)
-
 if NACL_CODEGEN
 test_sources += nacl.cs
-regtests += nacl.exe
 endif
 
-else
-regtests= \
-	$(regtests_UNIVERSAL) \
-	$(regtests_MOBILE_STATIC_BLACKLIST)
+regtests_UNIVERSAL = \
+	basic.exe \
+	basic-float.exe \
+	basic-long.exe \
+	basic-calls.exe \
+	objects.exe \
+	arrays.exe \
+	basic-math.exe \
+	exceptions.exe \
+	iltests.exe \
+	devirtualization.exe \
+	generics.exe \
+	basic-simd.exe \
+	basic-vectors.exe
+
+if NACL_CODEGEN
+regtests_UNIVERSAL += nacl.exe
 endif
+
+regtests_DISABLED = 
+
+if FULL_AOT_TESTS
+regtests_DISABLED += 
+endif
+
+regtests = $(filter-out $(regtests_DISABLED),$(regtests_UNIVERSAL))
 
 if X86
 arch_sources = $(x86_sources)
@@ -591,7 +623,7 @@ os_sources = $(darwin_sources) $(posix_sources)
 monobin_platform_ldflags=-framework CoreFoundation -framework Foundation
 endif
 
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(interp_sources) $(arch_sources) $(os_sources)
 libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
@@ -621,6 +653,9 @@ CSFLAGS = -unsafe -nowarn:0219,0169,0414,0649
 
 basic-simd.exe: basic-simd.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:$(CLASS)/Mono.Simd.dll
+
+basic-vectors.exe: basic-vectors.cs TestDriver.dll
+	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:$(CLASS)/System.Numerics.dll -r:$(CLASS)/System.Numerics.Vectors.dll
 
 nacl.exe: nacl.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:$(CLASS)/Mono.Simd.dll
@@ -712,6 +747,9 @@ rcheck-nunit: mono $(regtests)
 rcheck: mono $(regtests)
 	$(MINI_RUNTIME) --regression $(regtests)
 
+richeck: mono $(regtests)
+	$(INTERP_RUNTIME) --regression $(regtests)
+
 if ARM
 check-seq-points:
 else
@@ -742,13 +780,6 @@ gsharedvtcheck:
 
 fullaot_regtests = $(regtests) aot-tests.exe $(if $(GSHAREDVT),gshared.exe)
 
-# Skip aoting the tests that aren't compiled 
-# on the mobile_static profile because they're skipped
-# on mobile profiles
-FULLAOT_LIBS_MOBILE_STATIC_BLACKLIST = \
-	Mono.Posix.dll \
-	System.Configuration.dll
-
 FULLAOT_LIBS_UNIVERSAL = \
 	mscorlib.dll \
 	System.Core.dll \
@@ -756,17 +787,24 @@ FULLAOT_LIBS_UNIVERSAL = \
 	System.Xml.dll \
 	System.Security.dll \
 	Mono.Simd.dll \
-	Mono.Security.dll
+	Mono.Security.dll \
+	System.Numerics.dll \
+	System.Numerics.Vectors.dll \
+	Mono.Posix.dll \
+	System.Configuration.dll
 
-if INSTALL_MOBILE_STATIC
-FULLAOT_LIBS= \
-	Mono.Dynamic.Interpreter.dll \
-	$(FULLAOT_LIBS_UNIVERSAL)
-else
-FULLAOT_LIBS= \
-	$(FULLAOT_LIBS_UNIVERSAL) \
-	$(FULLAOT_LIBS_MOBILE_STATIC_BLACKLIST)
+FULLAOT_LIBS_DISABLED =
+
+if FULL_AOT_TESTS
+# Skip aoting the tests that aren't compiled 
+# on the full aot profiles because they're skipped
+# on mobile profiles
+FULLAOT_LIBS_DISABLED += \
+	Mono.Posix.dll \
+	System.Configuration.dll
 endif
+
+FULLAOT_LIBS = $(filter-out $(FULLAOT_LIBS_DISABLED),$(FULLAOT_LIBS_UNIVERSAL))
 
 FULLAOT_TMP_DIR=$(top_builddir)/mono/mini/fullaot-tmp
 
@@ -776,9 +814,9 @@ fullaotcheck: $(mono) $(fullaot_regtests)
 	mkdir $(FULLAOT_TMP_DIR)
 	$(MAKE) fullaot-libs AOT_FLAGS="full,$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" GSHAREDVT=$(GSHAREDVT)
 	cp $(regtests) $(fullaot_regtests) generics-variant-types.dll TestDriver.dll $(FULLAOT_TMP_DIR)/
-	MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot="full,$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" $(FULLAOT_TMP_DIR)/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
+	MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot="full,$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" $(FULLAOT_TMP_DIR)/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
 	ln -s $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$$PWD/mono) $(FULLAOT_TMP_DIR)/
-	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper --full-aot $(FULLAOT_TMP_DIR)/$$i --exclude '!FULLAOT' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
+	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) --full-aot $(FULLAOT_TMP_DIR)/$$i --exclude '!FULLAOT' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
 
 # This can run in parallel
 fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
@@ -786,7 +824,7 @@ fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
 fullaot-tmp/%.dylib: $(CLASS)/%
 	cp $(CLASS)/$* fullaot-tmp/
 	mkdir fullaot-tmp/$*-tmp
-	MONO_PATH="fullaot-tmp/$(PLATFORM_PATH_SEPARATOR)$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(if $(GSHAREDVT),-O=gsharedvt) --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
+	MONO_PATH="fullaot-tmp/$(PLATFORM_PATH_SEPARATOR)$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(if $(GSHAREDVT),-O=gsharedvt) --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
 	rm -rf fullaot-tmp/$*-tmp
 
 llvmfullaotcheck:
@@ -799,9 +837,9 @@ llvmonlycheck: mono $(llvmonly_regtests)
 	mkdir fullaot-tmp
 	$(MAKE) fullaot-libs AOT_FLAGS="llvmonly,$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)"
 	cp $(llvmonly_regtests) generics-variant-types.dll TestDriver.dll fullaot-tmp/
-	MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper  --aot=llvmonly fullaot-tmp/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
+	MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper  $(MOBILE_RUNTIME_ARG) --aot=llvmonly fullaot-tmp/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
 	ln -s $$PWD/mono fullaot-tmp/
-	for i in $(llvmonly_regtests); do echo $$i; MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper --llvmonly fullaot-tmp/$$i --exclude '!BITCODE' || exit 1; done
+	for i in $(llvmonly_regtests); do echo $$i; MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) --llvmonly fullaot-tmp/$$i --exclude '!BITCODE' || exit 1; done
 
 gccheck: gc-test.exe
 	MONO_GC_PARAMS=stack-mark=precise MONO_GC_DEBUG=clear-at-gc ./mono-sgen gc-test.exe	

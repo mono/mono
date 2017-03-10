@@ -185,7 +185,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	const char *ptr;
 	guint32 idx = mono_metadata_token_index (token);
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_metadata_decode_row (&tables [MONO_TABLE_MEMBERREF], idx-1, cols, MONO_MEMBERREF_SIZE);
 	nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
@@ -274,7 +274,7 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 	guint32 type;
 	MonoClassField *field;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (image_is_dynamic (image)) {
 		MonoClassField *result;
@@ -360,7 +360,7 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
  	int i;
 
 	/* Search directly in the metadata to avoid calling setup_methods () */
-	mono_error_init (error);
+	error_init (error);
 
 	/* FIXME: !mono_class_is_ginst (from_class) condition causes test failures. */
 	if (klass->type_token && !image_is_dynamic (klass->image) && !klass->methods && !klass->rank && klass == from_class && !mono_class_is_ginst (from_class)) {
@@ -448,7 +448,7 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 	MonoMethod *result = NULL;
 	MonoClass *initial_class = in_class;
 
-	mono_error_init (error);
+	error_init (error);
 	is_interface = MONO_CLASS_IS_INTERFACE (in_class);
 
 	if (ic) {
@@ -530,7 +530,7 @@ inflate_generic_signature_checked (MonoImage *image, MonoMethodSignature *sig, M
 	gboolean is_open;
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 	if (!context)
 		return sig;
 
@@ -608,7 +608,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, M
 
 	res->is_transient = TRUE;
 
-	mono_error_init (error);
+	error_init (error);
 
 	for (int i = 0; i < header->num_locals; ++i) {
 		res->locals [i] = mono_class_inflate_generic_type_checked (header->locals [i], context, error);
@@ -655,7 +655,7 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 	MonoMethodSignature *sig;
 	const char *ptr;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* !table is for wrappers: we should really assign their own token to them */
 	if (!table || table == MONO_TABLE_METHOD)
@@ -776,7 +776,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	MonoMethodSignature *sig;
 	const char *ptr;
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_metadata_decode_row (&tables [MONO_TABLE_MEMBERREF], idx-1, cols, 3);
 	nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
@@ -905,7 +905,7 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	guint32 cols [MONO_METHODSPEC_SIZE];
 	guint32 token, nindex, param_count;
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_metadata_decode_row (&tables [MONO_TABLE_METHODSPEC], idx - 1, cols, MONO_METHODSPEC_SIZE);
 	token = cols [MONO_METHODSPEC_METHOD];
@@ -1166,6 +1166,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	int i,j;
 	MonoDl *module = NULL;
 	gboolean cached = FALSE;
+	gpointer addr = NULL;
 
 	g_assert (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL);
 
@@ -1474,7 +1475,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 				"Searching for '%s'.", import);
 
 	if (piinfo->piflags & PINVOKE_ATTRIBUTE_NO_MANGLE) {
-		error_msg = mono_dl_symbol (module, import, &piinfo->addr); 
+		error_msg = mono_dl_symbol (module, import, &addr); 
 	} else {
 		char *mangled_name = NULL, *mangled_name2 = NULL;
 		int mangle_charset;
@@ -1496,7 +1497,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 #endif
 				for (mangle_param_count = 0; mangle_param_count <= (need_param_count ? 256 : 0); mangle_param_count += 4) {
 
-					if (piinfo->addr)
+					if (addr)
 						continue;
 
 					mangled_name = (char*)import;
@@ -1547,9 +1548,9 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 					mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
 								"Probing '%s'.", mangled_name2);
 
-					error_msg = mono_dl_symbol (module, mangled_name2, &piinfo->addr);
+					error_msg = mono_dl_symbol (module, mangled_name2, &addr);
 
-					if (piinfo->addr)
+					if (addr)
 						mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
 									"Found as '%s'.", mangled_name2);
 					else
@@ -1568,7 +1569,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 		}
 	}
 
-	if (!piinfo->addr) {
+	if (!addr) {
 		g_free (error_msg);
 		if (exc_class) {
 			*exc_class = "EntryPointNotFoundException";
@@ -1576,7 +1577,8 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 		}
 		return NULL;
 	}
-	return piinfo->addr;
+	piinfo->addr = addr;
+	return addr;
 }
 
 /*
@@ -1594,7 +1596,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	const char *sig = NULL;
 	guint32 cols [MONO_TYPEDEF_SIZE];
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (image_is_dynamic (image)) {
 		MonoClass *handle_class;
@@ -1735,7 +1737,7 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 
 	/* We do everything inside the lock to prevent creation races */
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_image_lock (image);
 
@@ -1791,7 +1793,7 @@ get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constra
 	MonoGenericContext *method_context = NULL;
 	MonoMethodSignature *sig, *original_sig;
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_class_init (constrained_class);
 	original_sig = sig = mono_method_signature_checked (method, error);
@@ -1873,7 +1875,7 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 MonoMethod *
 mono_get_method_constrained_checked (MonoImage *image, guint32 token, MonoClass *constrained_class, MonoGenericContext *context, MonoMethod **cil_method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 
 	*cil_method = mono_get_method_from_token (image, token, NULL, context, NULL, error);
 	if (!*cil_method)
@@ -2345,7 +2347,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 
 	/* We need memory barriers below because of the double-checked locking pattern */ 
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (m->signature)
 		return m->signature;
@@ -2434,9 +2436,16 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 		mono_error_set_method_load (error, m->klass, m->name, "generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name);
 		return NULL;
 	}
-	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)
+	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 		signature->pinvoke = 1;
-	else if (m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
+#ifdef TARGET_WIN32
+		/*
+		 * On Windows the default pinvoke calling convention is STDCALL but
+		 * we need CDECL since this is actually an icall.
+		 */
+		signature->call_convention = MONO_CALL_C;
+#endif
+	} else if (m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		MonoCallConvention conv = (MonoCallConvention)0;
 		MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)m;
 		signature->pinvoke = 1;
@@ -2527,7 +2536,7 @@ mono_method_get_header_checked (MonoMethod *method, MonoError *error)
 	gpointer loc;
 	MonoGenericContainer *container;
 
-	mono_error_init (error);
+	error_init (error);
 	img = method->klass->image;
 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {

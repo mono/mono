@@ -2,7 +2,6 @@
 /al
 /al1
 /al2
-/btls-cert-sync
 /caspol
 /cert-sync
 /cert2spc
@@ -86,7 +85,7 @@
 /sgen
 /sgen1
 /signcode
-/smcs
+/csc
 /sn
 /soapsuds
 /sqlmetal

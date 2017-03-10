@@ -7,9 +7,6 @@
 [submodule "external/cecil"]
 	path = external/cecil
 	url = git://github.com/mono/cecil.git
-[submodule "external/debian-snapshot"]
-	path = external/debian-snapshot
-	url = git://github.com/directhex/mono-snapshot.git
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
@@ -52,3 +49,9 @@
 [submodule "external/linker"]
 	path = external/linker
 	url = git://github.com/mono/linker.git
+[submodule "external/roslyn-binaries"]
+	path = external/roslyn-binaries
+	url = git://github.com/mono/roslyn-binaries.git
+[submodule "external/corert"]
+	path = external/corert
+	url = git://github.com/mono/corert.git

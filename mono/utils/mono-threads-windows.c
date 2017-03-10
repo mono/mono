@@ -95,12 +95,6 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 }
 
 gboolean
-mono_threads_suspend_needs_abort_syscall (void)
-{
-	return TRUE;
-}
-
-gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
 	DWORD id = mono_thread_info_get_tid (info);
@@ -189,22 +183,22 @@ mono_threads_suspend_get_abort_signal (void)
 
 #if defined (HOST_WIN32)
 
-int
-mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid)
+gboolean
+mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
 {
 	HANDLE result;
 	DWORD thread_id;
 
 	result = CreateThread (NULL, stack_size ? *stack_size : 0, (LPTHREAD_START_ROUTINE) thread_fn, thread_data, 0, &thread_id);
 	if (!result)
-		return -1;
+		return FALSE;
 
 	/* A new handle is open when attaching
 	 * the thread, so we don't need this one */
 	CloseHandle (result);
 
-	if (out_tid)
-		*out_tid = thread_id;
+	if (tid)
+		*tid = thread_id;
 
 	if (stack_size) {
 		// TOOD: Use VirtualQuery to get correct value 
@@ -212,7 +206,7 @@ mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_
 		*stack_size = 2 * 1024 * 1024;
 	}
 
-	return 0;
+	return TRUE;
 }
 
 
@@ -287,6 +281,56 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	*staddr = stackBottom;
 	*stsize = stackTop - stackBottom;
 
+}
+
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+static gboolean is_wow64 = FALSE;
+#endif
+
+/* We do this at init time to avoid potential races with module opening */
+void
+mono_threads_platform_init (void)
+{
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+	LPFN_ISWOW64PROCESS is_wow64_func = (LPFN_ISWOW64PROCESS) GetProcAddress (GetModuleHandle (TEXT ("kernel32")), "IsWow64Process");
+	if (is_wow64_func)
+		is_wow64_func (GetCurrentProcess (), &is_wow64);
+#endif
+}
+
+/*
+ * When running x86 process under x64 system syscalls are done through WoW64. This
+ * needs to do a transition from x86 mode to x64 so it can syscall into the x64 system.
+ * Apparently this transition invalidates the ESP that we would get from calling
+ * GetThreadContext, so we would fail to scan parts of the thread stack. We attempt
+ * to query whether the thread is in such a transition so we try to restart it later.
+ * We check CONTEXT_EXCEPTION_ACTIVE for this, which is highly undocumented.
+ */
+gboolean
+mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
+{
+	gboolean ret = FALSE;
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+/* FIXME On cygwin these are not defined */
+#if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
+	if (is_wow64) {
+		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, FALSE, tid);
+		if (handle) {
+			CONTEXT context;
+			ZeroMemory (&context, sizeof (CONTEXT));
+			context.ContextFlags = CONTEXT_EXCEPTION_REQUEST;
+			if (GetThreadContext (handle, &context)) {
+				if ((context.ContextFlags & CONTEXT_EXCEPTION_REPORTING) &&
+						(context.ContextFlags & CONTEXT_EXCEPTION_ACTIVE))
+					ret = TRUE;
+			}
+			CloseHandle (handle);
+		}
+	}
+#endif
+#endif
+	return ret;
 }
 
 gboolean

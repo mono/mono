@@ -2060,9 +2060,9 @@ namespace MonoTests.System
 			if (isWin32)
 				Assert.Ignore ();
 
-			string value = "/Library/Frameworks/System.Runtim…ee";
 			Uri uri;
-			Assert.IsTrue (Uri.TryCreate (value, UriKind.Absolute, out uri));
+			Assert.IsTrue (Uri.TryCreate ("/Library/Frameworks/System.Runtim…ee", UriKind.Absolute, out uri), "#1");
+			Assert.IsTrue (Uri.TryCreate (" /A/…", UriKind.Absolute, out uri), "#2");
 		}
 
 		[Test]

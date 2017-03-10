@@ -26,4 +26,10 @@ class X
 			
 		return 0;
 	}
+
+	const Action cf = null;
+	void Foo (Action f)
+	{
+		var x = f ?? cf;
+	}
 }

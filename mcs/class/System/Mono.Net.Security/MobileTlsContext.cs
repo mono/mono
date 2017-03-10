@@ -35,6 +35,7 @@ namespace Mono.Net.Security
 		MobileAuthenticatedStream parent;
 		bool serverMode;
 		string targetHost;
+		string serverName;
 		SslProtocols enabledProtocols;
 		X509Certificate serverCertificate;
 		X509CertificateCollection clientCertificates;
@@ -53,6 +54,13 @@ namespace Mono.Net.Security
 			this.serverCertificate = serverCertificate;
 			this.clientCertificates = clientCertificates;
 			this.askForClientCert = askForClientCert;
+
+			serverName = targetHost;
+			if (!string.IsNullOrEmpty (serverName)) {
+				var pos = serverName.IndexOf (':');
+				if (pos > 0)
+					serverName = serverName.Substring (0, pos);
+			}
 
 			certificateValidator = CertificateValidationHelper.GetInternalValidator (
 				parent.Settings, parent.Provider);
@@ -90,6 +98,10 @@ namespace Mono.Net.Security
 
 		protected string TargetHost {
 			get { return targetHost; }
+		}
+
+		protected string ServerName {
+			get { return serverName; }
 		}
 
 		protected bool AskForClientCertificate {

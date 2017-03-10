@@ -374,10 +374,8 @@ namespace Microsoft.Build.BuildEngine {
 				return false;
 
 			ITaskItem[] outputs;
-			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
-				if (targetOutputs != null)
-					targetOutputs.Add (target_name, outputs);
-			}
+			if (targetOutputs != null && ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs))
+				targetOutputs [target_name] = outputs;
 			return true;
 		}
 

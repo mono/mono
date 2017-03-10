@@ -7,7 +7,7 @@
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
-.TH Mono "Mono 4.7.0"
+.TH Mono "mono"
 .SH NAME
 mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
@@ -256,6 +256,9 @@ Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
+.TP
+\fB--aot-path=PATH\fR
+List of additional directories to search for AOT images.
 .TP
 \fB--debugger-agent=[options]\fR 
 This instructs the Mono runtime to
@@ -606,7 +609,7 @@ Finally, namespaces can be specified using the N: prefix:
 Don't align stack frames on the x86 architecture.  By default, Mono
 aligns stack frames to 16 bytes on x86, so that local floating point
 and SIMD variables can be properly aligned.  This option turns off the
-alignment, which usually saves one intruction per call, but might
+alignment, which usually saves one instruction per call, but might
 result in significantly lower floating point and SIMD performance.
 .TP
 \fB--jitmap\fR
@@ -850,6 +853,26 @@ The offsets displayed are IL offsets.
 .PP
 A more powerful coverage tool is available in the module `monocov'.
 See the monocov(1) man page for details.
+.SH AOT PROFILING
+You can improve startup performance by using the AOT profiler.
+.PP
+Typically the AOT compiler (\fBmono --aot\fR) will not generate code
+for generic instantiations.   To solve this, you can run Mono with the
+AOT profiler to find out all the generic instantiations that are used,
+and then instructing the AOT compiler to produce code for these.
+.PP
+This command will run the specified app.exe and produce the
+\fBout.aotprof\fR file with the data describing the generic
+instantiations that are needed:
+.nf
+	$ mono --profile=aot:output=out.aotprof app.exe
+.fi
+.PP
+Once you have this data, you can pass this to Mono's AOT compiler to
+instruct it to generate code for it:
+.nf
+	$ mono --aot=profile=out.aotprof
+.fi
 .SH DEBUGGING AIDS
 To debug managed applications, you can use the 
 .B mdb
@@ -1709,10 +1732,13 @@ values.
 This option allows using single-steps and breakpoints in hardware
 where we cannot do it with signals.
 .TP
-\fBsuspend-on-sigsegv\fR
-This option will suspend the program when a native SIGSEGV is received.
+\fBsuspend-on-native-crash\fR
+This option will suspend the program when a native crash occurs (SIGSEGV, SIGILL, ...).
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
+.TP
+\fBsuspend-on-sigsegv\fR
+Same as \fBsuspend-on-native-crash\fR.
 .TP
 \fBsuspend-on-exception\fR
 This option will suspend the program when an exception occurs.

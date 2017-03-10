@@ -255,7 +255,7 @@ namespace System
 #else
 namespace System
 {
-	// this is a shim class so we can AOT during mobile_static build without --enable-minimal=com
+	// this is a shim class so we can AOT during full AOT builds without --enable-minimal=com
 	internal class __ComObject
 	{
 		__ComObject ()

@@ -3857,12 +3857,13 @@ namespace Mono.Unix.Native {
 		//
 		// <sys/poll.h> -- COMPLETE
 		//
-
+#pragma warning disable 649
 		private struct _pollfd {
 			public int fd;
 			public short events;
 			public short revents;
 		}
+#pragma warning restore 649
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="poll")]
 		private static extern int sys_poll (_pollfd[] ufds, uint nfds, int timeout);

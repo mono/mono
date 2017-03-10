@@ -114,13 +114,13 @@ namespace System.Drawing.Printing
 		}
 
 		internal class Printer {
-			public readonly string Name;
+			//public readonly string Name;
 			public readonly string Comment;
 			public readonly string Port;
 			public readonly string Type;
 			public readonly string Status;
 			public PrinterSettings Settings;
-			public bool IsDefault;
+			//public bool IsDefault;
 			
 			public Printer (string port, string type, string status, string comment) {
 				Port = port;

@@ -804,6 +804,15 @@ scan_roots_for_specific_ref (GCObject *key, int root_type)
 			}
 			break;
 		}
+		case ROOT_DESC_VECTOR: {
+			void **p;
+
+			for (p = start_root; p < (void**)root->end_root; p++) {
+				if (*p)
+					check_root_obj_specific_ref (root, key, (GCObject *)*p);
+			}
+			break;
+		}
 		case ROOT_DESC_USER: {
 			SgenUserRootMarkFunc marker = sgen_get_user_descriptor_func (desc);
 			marker (start_root, check_root_obj_specific_ref_from_marker, NULL);
@@ -908,6 +917,15 @@ sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type)
 			}
 			break;
 		}
+		case ROOT_DESC_VECTOR: {
+			void **p;
+
+			for (p = start_root; p < (void**)root->end_root; p++) {
+				if (*p)
+					check_obj_not_in_domain ((MonoObject **)*p);
+			}
+			break;
+		}
 		case ROOT_DESC_USER: {
 			SgenUserRootMarkFunc marker = sgen_get_user_descriptor_func (desc);
 			marker (start_root, check_obj_not_in_domain_callback, NULL);
@@ -940,12 +958,6 @@ is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 			offset == G_STRUCT_OFFSET (MonoRealProxy, unwrapped_server))
 		return TRUE;
 #endif
-	/* Thread.cached_culture_info */
-	if (!strcmp (ref->vtable->klass->name_space, "System.Globalization") &&
-			!strcmp (ref->vtable->klass->name, "CultureInfo") &&
-			!strcmp(o->vtable->klass->name_space, "System") &&
-			!strcmp(o->vtable->klass->name, "Object[]"))
-		return TRUE;
 	/*
 	 *  at System.IO.MemoryStream.InternalConstructor (byte[],int,int,bool,bool) [0x0004d] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:121
 	 * at System.IO.MemoryStream..ctor (byte[]) [0x00017] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:81

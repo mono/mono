@@ -444,6 +444,10 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
+#if DEBUG
+		int counter = 100000;
+#endif
+
 		public MethodSpec MakeGenericMethod (IMemberContext context, params TypeSpec[] targs)
 		{
 			if (targs == null)
@@ -465,6 +469,10 @@ namespace Mono.CSharp {
 			inflated.constraints = TypeParameterSpec.InflateConstraints (inflator, constraints ?? GenericDefinition.TypeParameters);
 			inflated.state |= StateFlags.PendingMakeMethod;
 
+#if DEBUG
+			inflated.ID += counter;
+			counter += 100000;
+#endif
 			//			if (inflated.parent == null)
 			//				inflated.parent = parent;
 
@@ -723,7 +731,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (type_expr != null)
+			//
+			// Optimization but it also covers cases where we cannot check
+			// constraints because method is captured into generated class
+			// and type parameters context is now different
+			//
+			if (type_expr != null && !IsCompilerGenerated)
 				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
@@ -1862,6 +1875,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = ConstructorBuilder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -1870,6 +1884,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 
 		#region IMethodData Members
@@ -2192,6 +2207,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = builder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -2200,6 +2216,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 	}
 

@@ -4,12 +4,14 @@
 #include "w32process.h"
 #include "w32process-internals.h"
 #include "w32process-win32-internals.h"
+#include "w32file.h"
 #include "object.h"
 #include "object-internals.h"
 #include "class.h"
 #include "class-internals.h"
 #include "image.h"
 #include "utils/mono-proclib.h"
+#include "utils/w32api.h"
 
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
@@ -44,6 +46,30 @@ static gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size)
 {
 	return GetModuleInformation (process, module, modinfo, size);
+}
+
+static guint32
+mono_w32process_get_fileversion_info_size (gunichar2 *filename, guint32 *handle)
+{
+	return GetFileVersionInfoSize (filename, handle);
+}
+
+static gboolean
+mono_w32process_get_fileversion_info (gunichar2 *filename, guint32 handle, guint32 len, gpointer data)
+{
+	return GetFileVersionInfo (filename, handle, len, data);
+}
+
+static gboolean
+mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subblock, gpointer *buffer, guint32 *len)
+{
+	return VerQueryValue (datablock, subblock, buffer, len);
+}
+
+static guint32
+mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len)
+{
+	return VerLanguageName (lang, lang_out, lang_len);
 }
 
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32) */
@@ -117,7 +143,7 @@ process_set_field_string (MonoObject *obj, const gchar *fieldname, const gunicha
 	MonoClassField *field;
 	MonoString *string;
 
-	mono_error_init (error);
+	error_init (error);
 
 	LOGDEBUG (g_message ("%s: Setting field %s to [%s]", __func__, fieldname, g_utf16_to_utf8 (val, len, NULL, NULL, NULL)));
 
@@ -255,7 +281,7 @@ process_module_string_read (MonoObject *filever, gpointer data, const gchar *fie
 	gunichar2 *lang_key, *buffer;
 	UINT chars;
 
-	mono_error_init (error);
+	error_init (error);
 
 	lang_key_utf8 = g_strdup_printf (key, lang_lo, lang_hi, 0x04, 0xb0);
 
@@ -263,7 +289,7 @@ process_module_string_read (MonoObject *filever, gpointer data, const gchar *fie
 
 	lang_key = g_utf8_to_utf16 (lang_key_utf8, -1, NULL, NULL, NULL);
 
-	if (VerQueryValue (data, lang_key, (gpointer *)&buffer, &chars) && chars > 0) {
+	if (mono_w32process_ver_query_value (data, lang_key, (gpointer *)&buffer, &chars) && chars > 0) {
 		LOGDEBUG (g_message ("%s: found %d chars of [%s]", __func__, chars, g_utf16_to_utf8 (buffer, chars, NULL, NULL, NULL)));
 		/* chars includes trailing null */
 		process_set_field_string (filever, fieldname, buffer, chars - 1, error);
@@ -299,12 +325,12 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 	gunichar2 lang_buf[128];
 	guint32 lang, lang_count;
 
-	mono_error_init (error);
+	error_init (error);
 
-	datalen = GetFileVersionInfoSize (filename, &verinfohandle);
+	datalen = mono_w32process_get_fileversion_info_size (filename, &verinfohandle);
 	if (datalen) {
 		data = g_malloc0 (datalen);
-		ok = GetFileVersionInfo (filename, verinfohandle, datalen, data);
+		ok = mono_w32process_get_fileversion_info (filename, verinfohandle, datalen, data);
 		if (ok) {
 			query = g_utf8_to_utf16 ("\\", -1, NULL, NULL, NULL);
 			if (query == NULL) {
@@ -312,8 +338,13 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 				return;
 			}
 
-			if (VerQueryValue (data, query, (gpointer *)&ffi, &ffi_size)) {
-				LOGDEBUG (g_message ("%s: recording assembly: FileName [%s] FileVersionInfo [%d.%d.%d.%d]", __func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), HIWORD (ffi->dwFileVersionMS), LOWORD (ffi->dwFileVersionMS), HIWORD (ffi->dwFileVersionLS), LOWORD (ffi->dwFileVersionLS)));
+			if (mono_w32process_ver_query_value (data, query, (gpointer *)&ffi, &ffi_size)) {
+				#define LOWORD(i32) ((guint16)((i32) & 0xFFFF))
+				#define HIWORD(i32) ((guint16)(((guint32)(i32) >> 16) & 0xFFFF))
+
+				LOGDEBUG (g_message ("%s: recording assembly: FileName [%s] FileVersionInfo [%d.%d.%d.%d]",
+					__func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), HIWORD (ffi->dwFileVersionMS),
+						LOWORD (ffi->dwFileVersionMS), HIWORD (ffi->dwFileVersionLS), LOWORD (ffi->dwFileVersionLS)));
 
 				process_set_field_int (filever, "filemajorpart", HIWORD (ffi->dwFileVersionMS));
 				process_set_field_int (filever, "fileminorpart", LOWORD (ffi->dwFileVersionMS));
@@ -330,6 +361,9 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 				process_set_field_bool (filever, "ispatched", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PATCHED) != 0);
 				process_set_field_bool (filever, "isprivatebuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PRIVATEBUILD) != 0);
 				process_set_field_bool (filever, "isspecialbuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_SPECIALBUILD) != 0);
+
+				#undef LOWORD
+				#undef HIWORD
 			}
 			g_free (query);
 
@@ -339,13 +373,13 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 				return;
 			}
 
-			if (VerQueryValue (data, query, (gpointer *)&trans_data, &trans_size)) {
+			if (mono_w32process_ver_query_value (data, query, (gpointer *)&trans_data, &trans_size)) {
 				/* use the first language ID we see */
 				if (trans_size >= 4) {
 		 			LOGDEBUG (g_message("%s: %s has 0x%0x 0x%0x 0x%0x 0x%0x", __func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), trans_data[0], trans_data[1], trans_data[2], trans_data[3]));
 					lang = (trans_data[0]) | (trans_data[1] << 8) | (trans_data[2] << 16) | (trans_data[3] << 24);
-					/* Only give the lower 16 bits to VerLanguageName, as Windows gets confused otherwise  */
-					lang_count = VerLanguageName (lang & 0xFFFF, lang_buf, 128);
+					/* Only give the lower 16 bits to mono_w32process_ver_language_name, as Windows gets confused otherwise  */
+					lang_count = mono_w32process_ver_language_name (lang & 0xFFFF, lang_buf, 128);
 					if (lang_count) {
 						process_set_field_string (filever, "language", lang_buf, lang_count, error);
 						return_if_nok (error);
@@ -363,7 +397,7 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 				}
 
 				/* And language seems to be set to en_US according to bug 374600 */
-				lang_count = VerLanguageName (0x0409, lang_buf, 128);
+				lang_count = mono_w32process_ver_language_name (0x0409, lang_buf, 128);
 				if (lang_count) {
 					process_set_field_string (filever, "language", lang_buf, lang_count, error);
 					return_if_nok (error);
@@ -430,7 +464,7 @@ process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 
 	MODULEINFO modinfo;
 	BOOL ok;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* Build a System.Diagnostics.ProcessModule with the data. */
 	item = mono_object_new_checked (domain, proc_class, error);
@@ -479,7 +513,7 @@ process_get_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 	gchar *filename;
 	const gchar *modulename;
 
-	mono_error_init (error);
+	error_init (error);
 
 	domain = mono_domain_get ();
 

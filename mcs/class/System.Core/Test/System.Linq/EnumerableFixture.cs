@@ -2166,14 +2166,14 @@ namespace MonoTests.System.Linq
 			// then check that the source enumerator will be disposed
 			// by the time the test is torn.
 			//
-
+/*
 			var disposed = false;
 			var enumerated = false;
 			reader.Disposed += delegate { disposed = true; };
 			reader.Enumerated += delegate { enumerated = true; };
 			AssertionHandler assertion = () => Assert.That (!enumerated || disposed, Is.True, "Enumerator not disposed.");
 			tearDownAssertions = (AssertionHandler) Delegate.Combine (tearDownAssertions, assertion);
-
+*/
 			return reader;
 		}
 	}

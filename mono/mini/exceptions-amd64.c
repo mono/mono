@@ -58,7 +58,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_sigsegv (SIGSEGV, NULL, NULL);
+	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -72,7 +72,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
 	LONG res;
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 
 	/* If the thread is not managed by the runtime return early */
 	if (!jit_tls)
@@ -659,7 +659,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -706,7 +706,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
@@ -747,7 +747,7 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 restore_soft_guard_pages (void)
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
 }
@@ -774,6 +774,10 @@ static void
 altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_ovf)
 {
 	MonoContext mctx;
+	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
+
+	if (!ji)
+		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
 
 	mctx = *ctx;
 
@@ -788,15 +792,12 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
-	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (char *)UCONTEXT_REG_RIP (sigctx), NULL);
 	gpointer *sp;
 	int frame_size;
 	MonoContext *copied_ctx;
 
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
-	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
 
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
@@ -1089,6 +1090,8 @@ MONO_GET_RUNTIME_FUNCTION_CALLBACK ( DWORD64 ControlPc, IN PVOID Context )
 	
 	targetinfo = (PMonoUnwindInfo)ALIGN_TO (pos, 8);
 
+	targetinfo->runtimeFunction.BeginAddress = ((DWORD64)ji->code_start) - ((DWORD64)Context);
+	targetinfo->runtimeFunction.EndAddress = pos - ((DWORD64)Context);
 	targetinfo->runtimeFunction.UnwindData = ((DWORD64)&targetinfo->unwindInfo) - ((DWORD64)Context);
 
 	return &targetinfo->runtimeFunction;
@@ -1120,8 +1123,19 @@ mono_arch_unwindinfo_install_unwind_info (gpointer* monoui, gpointer code, guint
 
 	g_free (unwindinfo);
 	*monoui = 0;
+}
 
-	RtlInstallFunctionTableCallback (((DWORD64)code) | 0x3, (DWORD64)code, code_size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, code, NULL);
+void
+mono_arch_code_chunk_new (void *chunk, int size)
+{
+	BOOLEAN success = RtlInstallFunctionTableCallback (((DWORD64)chunk) | 0x3, (DWORD64)chunk, size, MONO_GET_RUNTIME_FUNCTION_CALLBACK, chunk, NULL);
+	g_assert (success);
+}
+
+void mono_arch_code_chunk_destroy (void *chunk)
+{
+	BOOLEAN success = RtlDeleteFunctionTable ((PRUNTIME_FUNCTION)((DWORD64)chunk | 0x03));
+	g_assert (success);
 }
 
 #endif /* defined(TARGET_WIN32) !defined(DISABLE_JIT) */

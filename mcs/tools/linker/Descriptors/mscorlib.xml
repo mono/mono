@@ -153,6 +153,10 @@
 
 		<type fullname="System.Collections.Generic.ICollection`1" />
 		<type fullname="System.Collections.Generic.IEnumerable`1" />
+		<type fullname="System.Collections.Generic.IEnumerator`1" />
+		<type fullname="System.Collections.Generic.IReadOnlyList`1" />
+		<type fullname="System.Collections.Generic.IReadOnlyCollection`1" />
+
 		<type fullname="System.Collections.Generic.IList`1" />
 		<type fullname="System.Collections.Generic.GenericEqualityComparer`1">
 			<method name=".ctor" />

@@ -7,7 +7,7 @@ LIBRARY = Mono.CSharp.dll
 LIB_REFS = System.Core System.Xml System
 LIB_MCS_FLAGS =
 
-ifdef MOBILE_STATIC
+ifdef AOT_FRIENDLY_PROFILE
 LIB_MCS_FLAGS += -d:IOS_REFLECTION
 endif
 

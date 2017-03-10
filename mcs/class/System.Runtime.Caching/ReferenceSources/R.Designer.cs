@@ -1,5 +1,5 @@
 // This is a copy of external/referencesource/System.Runtime.Caching/Resources/R.Designer.cs
-// This verison does not use ResourceManager, instead it uses hard coded strings.
+// This version does not use ResourceManager, instead it uses hard coded strings.
 // This should be removed once Mono has access to .NET resources.
 
 namespace System.Runtime.Caching.Resources {

@@ -15,7 +15,6 @@
 #include "mono-mmap.h"
 #include "mono-counters.h"
 #include "dlmalloc.h"
-#include <mono/io-layer/io-layer.h>
 #include <mono/metadata/profiler-private.h>
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
@@ -28,6 +27,7 @@ static uintptr_t code_memory_used = 0;
 static size_t dynamic_code_alloc_count;
 static size_t dynamic_code_bytes_count;
 static size_t dynamic_code_frees_count;
+static MonoCodeManagerCallbacks code_manager_callbacks;
 
 /*
  * AMD64 processors maintain icache coherency only for pages which are 
@@ -174,6 +174,12 @@ mono_code_manager_cleanup (void)
 	codechunk_cleanup ();
 }
 
+void
+mono_code_manager_install_callbacks (MonoCodeManagerCallbacks* callbacks)
+{
+	code_manager_callbacks = *callbacks;
+}
+
 /**
  * mono_code_manager_new:
  *
@@ -226,6 +232,8 @@ free_chunklist (CodeChunk *chunk)
 	for (; chunk; ) {
 		dead = chunk;
 		mono_profiler_code_chunk_destroy ((gpointer) dead->data);
+		if (code_manager_callbacks.chunk_destroy)
+			code_manager_callbacks.chunk_destroy ((gpointer)dead->data);
 		chunk = chunk->next;
 		if (dead->flags == CODE_FLAG_MMAP) {
 			codechunk_vfree (dead->data, dead->size);
@@ -413,6 +421,8 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 	chunk->flags = flags;
 	chunk->pos = bsize;
 	chunk->bsize = bsize;
+	if (code_manager_callbacks.chunk_new)
+		code_manager_callbacks.chunk_new ((gpointer)chunk->data, chunk->size);
 	mono_profiler_code_chunk_new((gpointer) chunk->data, chunk->size);
 
 	code_memory_used += chunk_size;

@@ -238,7 +238,7 @@ namespace System.Net {
         /// </devdoc>
         public IWebProxy Proxy {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 if (!m_ProxySet) {
@@ -248,7 +248,7 @@ namespace System.Net {
                 }
             }
             set {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 m_Proxy = value;
@@ -1806,12 +1806,19 @@ namespace System.Net {
         }
         private void OpenReadAsyncCallback(IAsyncResult result) {
 #if MONO
-            var lazyAsyncResult = (WebAsyncResult) result;
+            // It can be removed when we are full referencesource
+            AsyncOperation asyncOp = (AsyncOperation) result.AsyncState;
+            WebRequest request;
+            if (result is WebAsyncResult) {
+                request = (WebRequest) ((WebAsyncResult) result).AsyncObject;
+            } else {
+                request = (WebRequest) ((LazyAsyncResult) result).AsyncObject;
+            }
 #else
             LazyAsyncResult lazyAsyncResult = (LazyAsyncResult) result;
-#endif
             AsyncOperation asyncOp = (AsyncOperation) lazyAsyncResult.AsyncState;
             WebRequest request = (WebRequest) lazyAsyncResult.AsyncObject;
+#endif
             Stream stream = null;
             Exception exception = null;
             try {

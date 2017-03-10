@@ -50,10 +50,11 @@ namespace Microsoft.Build.Utilities
 #if XBUILD_14
 		Version46,
 		Version461,
+		Version462,
 #endif
 
 #if XBUILD_14
-		VersionLatest = Version461
+		VersionLatest = Version462
 #elif XBUILD_12
 		VersionLatest = Version451
 #else

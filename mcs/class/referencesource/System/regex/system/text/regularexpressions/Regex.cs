@@ -405,7 +405,7 @@ namespace System.Text.RegularExpressions {
         * This method is internal virtual so the jit does not inline it.
         */
         [
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             HostProtection(MayLeakOnAbort=true),
 #endif
             MethodImplAttribute(MethodImplOptions.NoInlining)
@@ -472,7 +472,6 @@ namespace System.Text.RegularExpressions {
             }
         }
 
-#if NETSTANDARD
         [CLSCompliant (false)]
         protected IDictionary Caps
         {
@@ -527,7 +526,6 @@ namespace System.Text.RegularExpressions {
                 }
             }
         }
-#endif
 
         /// <devdoc>
         ///    <para>
@@ -1252,7 +1250,7 @@ namespace System.Text.RegularExpressions {
 #if !(SILVERLIGHT || FULL_AOT_RUNTIME)
         /// <devdoc>
         /// </devdoc>
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [HostProtection(MayLeakOnAbort=true)]
 #endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
@@ -1265,7 +1263,7 @@ namespace System.Text.RegularExpressions {
 
         /// <devdoc>
         /// </devdoc>
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [HostProtection(MayLeakOnAbort=true)]
 #endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
@@ -1275,7 +1273,7 @@ namespace System.Text.RegularExpressions {
             CompileToAssemblyInternal(regexinfos, assemblyname, attributes, null);
         }
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [HostProtection(MayLeakOnAbort=true)]
 #endif
         [ResourceExposure(ResourceScope.Machine)]

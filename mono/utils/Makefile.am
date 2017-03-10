@@ -134,6 +134,7 @@ monoutils_sources = \
 	mono-threads-netbsd.c	\
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
+	mono-threads-haiku.c	\
 	mono-threads.h	\
 	mono-threads-debug.h	\
 	mono-threads-api.h	\
@@ -153,8 +154,6 @@ monoutils_sources = \
 	mono-signal-handler.h	\
 	mono-conc-hashtable.h	\
 	mono-conc-hashtable.c	\
-	sha1.h		\
-	sha1.c	\
 	json.h	\
 	json.c	\
 	networking.c	\
@@ -173,7 +172,9 @@ monoutils_sources = \
 	parse.h	\
 	checked-build.c \
 	checked-build.h \
-	os-event.h
+	os-event.h \
+	refcount.h	\
+	w32api.h
 
 arch_sources = 
 

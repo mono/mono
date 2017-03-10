@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h>
-#include <errno.h>
 
 #if 0
 #define CFG_DEBUG
@@ -438,15 +437,15 @@ constant_pool_hash (ConstantPoolEntry *entry)
 			return instruction_hash ((MonoInst *) entry->data);
 		case PT_SIGNATURE: {
 			MonoMethodSignature *sig = (MonoMethodSignature *) entry->data;
-			guint ret = (guint) sig->ret;
+			guint ret = GPOINTER_TO_UINT (sig->ret);
 			for (int i = 0; i < sig->param_count; i++) {
-				ret ^= (guint) sig->params [i] << (i + 1);
+				ret ^= GPOINTER_TO_UINT (sig->params [i]) << (i + 1);
 			}
 			return ret;
 		}
 		case PT_INPUTTYPE: // TODO: singleton.
 		case PT_ENUMKLASS:
-			return (guint) entry->data;
+			return GPOINTER_TO_UINT (entry->data);
 	}
 	g_assert (FALSE);
 	return FALSE;

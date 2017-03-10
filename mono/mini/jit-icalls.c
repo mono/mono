@@ -1215,7 +1215,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	MonoClass *oklass;
 
 	if (mini_get_debug_options ()->better_cast_details) {
-		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+		jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
 
@@ -1249,7 +1249,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	gpointer cached_vtable, obj_vtable;
 
 	if (mini_get_debug_options ()->better_cast_details) {
-		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+		jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
 
@@ -1332,7 +1332,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 	MonoMethod *m;
 	int vt_slot, iface_offset;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (mono_class_is_interface (klass)) {
 		MonoObject *this_obj;
@@ -1504,7 +1504,7 @@ resolve_iface_call (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, 
 	gpointer addr, compiled_method, aot_addr;
 	gboolean need_rgctx_tramp = FALSE, need_unbox_tramp = FALSE;
 
-	mono_error_init (error);
+	error_init (error);
 	if (!this_obj)
 		/* The caller will handle it */
 		return NULL;
@@ -1588,7 +1588,7 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 	gpointer addr, compiled_method;
 	gboolean need_unbox_tramp = FALSE;
 
-	mono_error_init (error);
+	error_init (error);
 	/* Same as in common_call_trampoline () */
 
 	/* Avoid loading metadata or creating a generic vtable if possible */
@@ -1866,12 +1866,9 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 MonoObject*
 mono_get_assembly_object (MonoImage *image)
 {
-	MonoError error;
-	MonoObject *result;
-	result = (MonoObject*)mono_assembly_get_object_checked (mono_domain_get (), image->assembly, &error);
-	if (!result)
-		mono_error_set_pending_exception (&error);
-	return result;
+	ICALL_ENTRY();
+	MonoObjectHandle result = MONO_HANDLE_CAST (MonoObject, mono_assembly_get_object_handle (mono_domain_get (), image->assembly, &error));
+	ICALL_RETURN_OBJ (result);
 }
 
 MonoObject*
@@ -1912,14 +1909,14 @@ mono_interruption_checkpoint_from_trampoline (void)
 }
 
 void
-mono_throw_method_access (MonoMethod *callee, MonoMethod *caller)
+mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 {
-	char *callee_name = mono_method_full_name (callee, 1);
 	char *caller_name = mono_method_full_name (caller, 1);
+	char *callee_name = mono_method_full_name (callee, 1);
 	MonoError error;
 
-	mono_error_init (&error);
-	mono_error_set_generic_error (&error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'\n", callee_name, caller_name);
+	error_init (&error);
+	mono_error_set_generic_error (&error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'", callee_name, caller_name);
 	mono_error_set_pending_exception (&error);
 	g_free (callee_name);
 	g_free (caller_name);

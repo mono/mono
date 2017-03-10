@@ -302,7 +302,7 @@ namespace System.Net {
             get {
                 //This check will not allow to use local user credentials at will.
                 //Hence the username will not be exposed to the network
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, "USERNAME").Demand();
 #endif
                 return SystemNetworkCredential.defaultCredential;
@@ -313,7 +313,7 @@ namespace System.Net {
             get {
                 //This check will not allow to use local user credentials at will.
                 //Hence the username will not be exposed to the network
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, "USERNAME").Demand();
 #endif
                 return SystemNetworkCredential.defaultCredential;

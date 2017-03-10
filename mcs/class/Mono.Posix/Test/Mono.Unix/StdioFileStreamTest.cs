@@ -21,23 +21,41 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class StdioFileStreamTest {
 
-		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.Mono.Unix.Tests");
+		static string BaseTempFolder = Path.Combine (Path.GetTempPath (),
+			"MonoTests.Mono.Unix.Tests");
+		static string TempFolder;
 		static readonly char DSC = Path.DirectorySeparatorChar;
 
-		[TearDown]
-		public void TearDown()
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
 		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
+			try {
+				// Try to cleanup from any previous NUnit run.
+				Directory.Delete (BaseTempFolder, true);
+			} catch (Exception) {
+			}
 		}
 
 		[SetUp]
 		public void SetUp ()
 		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-
+			int i = 0;
+			do {
+				TempFolder = Path.Combine (BaseTempFolder, (++i).ToString());
+			} while (Directory.Exists (TempFolder));
 			Directory.CreateDirectory (TempFolder);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			try {
+				// This might throw an exception on Windows
+				// since the directory may contain open files.
+				Directory.Delete (TempFolder, true);
+			} catch (Exception e) {
+				Console.WriteLine (e);
+			}
 		}
 
 		public void TestCtr ()
@@ -226,7 +244,7 @@ namespace MonoTests.System.IO
 		{
 			StdioFileStream fs = null;
 			StdioFileStream fs2 = null;
-			string tempPath = Path.Combine (Path.GetTempPath (), "temp");
+			string tempPath = Path.Combine (TempFolder, "temp");
 			try {
 				if (!File.Exists (tempPath)) {
 					TextWriter tw = File.CreateText (tempPath);
@@ -240,8 +258,6 @@ namespace MonoTests.System.IO
 					fs.Close ();
 				if (fs2 != null)
 					fs2.Close ();
-				if (File.Exists (tempPath))
-					File.Delete (tempPath);
 			}
 		}
 
@@ -273,8 +289,9 @@ namespace MonoTests.System.IO
 			stream.Write (outbytes, 7, 7);
 			stream.Write (outbytes, 14, 1);
 
-			stream.Read (bytes, 0, 15);
 			stream.Seek (15, SeekOrigin.Begin);
+			Array.Clear (bytes, 0, bytes.Length);
+			stream.Read (bytes, 0, 15);
 			for (int i = 0; i < 15; ++i)
 				Assert.AreEqual (i + 1, bytes [i]);
 			stream.Close ();

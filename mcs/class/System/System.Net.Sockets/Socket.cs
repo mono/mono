@@ -458,7 +458,7 @@ namespace System.Net.Sockets
 			if (list != null) {
 				foreach (Socket sock in list) {
 					if (sock == null) // MS throws a NullRef
-						throw new ArgumentNullException ("name", "Contains a null element");
+						throw new ArgumentNullException (name, "Contains a null element");
 					sockets.Add (sock);
 				}
 			}
@@ -2295,10 +2295,15 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				(is_blocking       ? 0 : SocketInformationOptions.NonBlocking) |
 				(useOverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
-			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)Handle);
-			m_Handle = null;
+			MonoIOError error;
+			IntPtr duplicateHandle;
+			if (!MonoIO.DuplicateHandle (System.Diagnostics.Process.GetCurrentProcess ().Handle, Handle, new IntPtr (targetProcessId), out duplicateHandle, 0, 0, 0x00000002 /* DUPLICATE_SAME_ACCESS */, out error))
+				throw MonoIO.GetException (error);
 
-			return si;
+			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)duplicateHandle);
+ 			m_Handle = null;
+ 
+ 			return si;
 		}
 
 #endregion

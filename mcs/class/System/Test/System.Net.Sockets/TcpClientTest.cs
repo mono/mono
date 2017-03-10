@@ -199,5 +199,16 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("ConnectMultiRefused #3");
 			}
 		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void ExclusiveAddressUse ()
+		{
+			using (TcpClient client = new TcpClient ()) {
+				client.ExclusiveAddressUse = false;
+			}
+		}
 	}
 }

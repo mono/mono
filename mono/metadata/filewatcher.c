@@ -28,6 +28,8 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/metadata/w32error.h>
+
 #ifdef HOST_WIN32
 
 /*

@@ -1443,7 +1443,11 @@ namespace Mono.CSharp
 					targs.Arguments = new TypeSpec[hoisted_tparams.Length];
 					for (int i = 0; i < hoisted_tparams.Length; ++i) {
 						var tp = hoisted_tparams[i];
-						var local_tp = new TypeParameter (tp, null, new MemberName (tp.Name, Location), null);
+						var tp_name = tp.Name;
+#if DEBUG
+						tp_name += "_Proxy";
+#endif
+						var local_tp = new TypeParameter (tp, null, new MemberName (tp_name, Location), null);
 						tparams.Add (local_tp);
 
 						targs.Add (new SimpleName (tp.Name, Location));
@@ -1459,6 +1463,12 @@ namespace Mono.CSharp
 					var mutator = new TypeParameterMutator (hoisted_tparams, tparams);
 					return_type = mutator.Mutate (return_type);
 					local_param_types = mutator.Mutate (local_param_types);
+
+					var inflator = new TypeParameterInflator (this, null, hoisted_tparams, targs.Arguments);
+					for (int i = 0; i < hoisted_tparams.Length; ++i) {
+						var tp_spec = (TypeParameterSpec) targs.Arguments [i];
+						tp_spec.InflateConstraints (inflator, tp_spec);
+					}
 				} else {
 					member_name = new MemberName (name);
 				}
@@ -1471,7 +1481,7 @@ namespace Mono.CSharp
 					base_parameters[i].Resolve (this, i);
 				}
 
-				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
+				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, local_param_types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
 					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();

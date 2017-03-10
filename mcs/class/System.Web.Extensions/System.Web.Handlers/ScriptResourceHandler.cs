@@ -133,7 +133,6 @@ namespace System.Web.Handlers
 			if (entries.Count == 0)
 				throw new HttpException (404, "Resource not found");
 
-			long atime;
 			DateTime modifiedSince;
 			bool hasIfModifiedSince = HasIfModifiedSince (context.Request, out modifiedSince);
 			

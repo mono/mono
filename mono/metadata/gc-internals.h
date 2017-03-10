@@ -16,7 +16,6 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
-#include <mono/utils/gc_wrapper.h>
 
 #define mono_domain_finalizers_lock(domain) mono_os_mutex_lock (&(domain)->finalizable_objects_hash_lock);
 #define mono_domain_finalizers_unlock(domain) mono_os_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
@@ -25,16 +24,6 @@
 #define MONO_GC_REGISTER_ROOT_PINNING(x,src,msg) mono_gc_register_root ((char*)&(x), sizeof(x), MONO_GC_DESCRIPTOR_NULL, (src), (msg))
 
 #define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root ((char*)&(x))
-
-/*
- * Register a memory location as a root pointing to memory allocated using
- * mono_gc_alloc_fixed (). This includes MonoGHashTable.
- */
-/* The result of alloc_fixed () is not GC tracked memory */
-#define MONO_GC_REGISTER_ROOT_FIXED(x,src,msg) do { \
-	if (!mono_gc_is_moving ())				\
-		MONO_GC_REGISTER_ROOT_PINNING ((x),(src),(msg)); \
-	} while (0)
 
 /*
  * Return a GC descriptor for an array containing N pointers to memory allocated
@@ -131,8 +120,6 @@ gboolean mono_gc_user_markers_supported (void);
  * The memory is non-moving and it will be explicitly deallocated.
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
- * NOTE: Under Boehm, this returns memory allocated using GC_malloc, so the result should
- * be stored into a location registered using MONO_GC_REGISTER_ROOT_FIXED ().
  */
 void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
@@ -180,8 +167,6 @@ void mono_gc_wbarrier_set_root (gpointer ptr, MonoObject *value);
 #define MONO_ROOT_SETREF(s,fieldname,value) do {	\
 	mono_gc_wbarrier_set_root (&((s)->fieldname), (MonoObject*)value); \
 } while (0)
-
-void  mono_gc_finalize_threadpool_threads (void);
 
 /* fast allocation support */
 

@@ -124,6 +124,9 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_ssl_set_server_name (IntPtr handle, IntPtr name);
 
+		[DllImport (BTLS_DYLIB)]
+		extern static IntPtr mono_btls_ssl_get_server_name (IntPtr handle);
+
 		static BoringSslHandle Create_internal (MonoBtlsSslCtx ctx)
 		{
 			var handle = mono_btls_ssl_new (ctx.Handle.DangerousGetHandle ());
@@ -407,6 +410,16 @@ namespace Mono.Btls
 				if (namePtr != IntPtr.Zero)
 					Marshal.FreeHGlobal (namePtr);
 			}
+		}
+
+		public string GetServerName ()
+		{
+			CheckThrow ();
+			var namePtr = mono_btls_ssl_get_server_name (
+				Handle.DangerousGetHandle ());
+			if (namePtr == IntPtr.Zero)
+				return null;
+			return Marshal.PtrToStringAnsi (namePtr);
 		}
 
 		protected override void Close ()

@@ -597,6 +597,12 @@ mono_arch_cleanup (void)
 {
 }
 
+gboolean
+mono_arch_have_fast_tls (void)
+{
+	return FALSE;
+}
+
 /*
  * This function returns the optimizations supported on this cpu.
  */
@@ -2923,11 +2929,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
-		case OP_TLS_GET:
-			ia64_adds_imm (code, ins->dreg, ins->inst_offset, IA64_TP);
-			ia64_ld8 (code, ins->dreg, ins->dreg);
-			break;
-
 			/* Synchronization */
 		case OP_MEMORY_BARRIER:
 			ia64_mf (code);
@@ -3781,7 +3782,7 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 {
 	MonoJumpInfo *patch_info;
 
-	mono_error_init (error);
+	error_init (error);
 
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
 		unsigned char *ip = patch_info->ip.i + code;

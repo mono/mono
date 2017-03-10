@@ -28,8 +28,9 @@ test-local: compile-resources
 
 compile-resources: Test/resources/TestTasks-$(PROFILE).dll
 	cp Test/resources/TestTasks-$(PROFILE).dll Test/resources/TestTasks.dll
-	cp Test/resources/TestTasks-$(PROFILE).dll.mdb Test/resources/TestTasks.dll.mdb
-#	cp Test/resources/TestTasks-$(PROFILE).pdb Test/resources/TestTasks.pdb
+ifndef MCS_MODE
+	cp Test/resources/TestTasks-$(PROFILE).pdb Test/resources/TestTasks.pdb
+endif
 
 include $(XBUILD_DIR)/xbuild_test.make
 include ../../build/library.make

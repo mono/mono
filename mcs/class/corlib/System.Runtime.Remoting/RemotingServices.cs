@@ -808,45 +808,15 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeExceptionData (Exception ex)
 		{
+			byte[] result = null;
 			try {
-				int retry = 4;
-				
-				do {
-					try {
-						MemoryStream ms = new MemoryStream ();
-						_serializationFormatter.Serialize (ms, ex);
-						return ms.ToArray ();
-					}
-					catch (Exception e) {
-						if (e is ThreadAbortException) {
-#if MONO_FEATURE_THREAD_ABORT
-							Thread.ResetAbort ();
-#endif
-							retry = 5;
-							ex = e;
-						}
-						else if (retry == 2) {
-							ex = new Exception ();
-							ex.SetMessage (e.Message);
-							ex.SetStackTrace (e.StackTrace);
-						}
-						else
-							ex = e;
-					}
-					retry--;
-				}
-				while (retry > 0);
-				
-				return null;
+				/* empty - we're only interested in the protected block */
+			} finally {
+				MemoryStream ms = new MemoryStream ();
+				_serializationFormatter.Serialize (ms, ex);
+				result = ms.ToArray ();
 			}
-			catch (Exception tex)
-			{
-				byte[] data = SerializeExceptionData (tex);
-#if MONO_FEATURE_THREAD_ABORT
-				Thread.ResetAbort ();
-#endif
-				return data;
-			}
+			return result;
 		}
 		
 		internal static object GetDomainProxy(AppDomain domain) 

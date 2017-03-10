@@ -123,7 +123,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	labels [0] = code;
 	arm_cbzx (code, ARMREG_IP0, 0);
 	for (i = 0; i < num_fregs; ++i)
-		arm_ldrfpx (code, ARMREG_D8 + i, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, fregs) + (i * 8));
+		arm_ldrfpx (code, ARMREG_D8 + i, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, fregs) + ((i + 8) * 8));
 	mono_arm_patch (labels [0], code, MONO_R_ARM64_CBZ);
 	/* Load fp */
 	arm_ldrx (code, ARMREG_FP, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_FP * 8));
@@ -531,7 +531,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -556,7 +556,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	/*
 	 * Resume into the normal stack and handle the exception there.
 	 */
-	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	jit_tls = mono_tls_get_jit_tls ();
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);

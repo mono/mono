@@ -47,6 +47,13 @@ typedef struct __darwin_xmm_reg MonoContextSimdReg;
 #undef MONO_SIGNAL_USE_UCONTEXT_T
 #endif
 
+#ifdef __HAIKU__
+/* sigcontext surrogate */
+struct sigcontext {
+	vregs regs;
+};
+#endif
+
 #ifdef HOST_WIN32
 /* sigcontext surrogate */
 struct sigcontext {
@@ -74,14 +81,14 @@ struct sigcontext {
 # define SC_ESI sc_esi
 #elif defined(__HAIKU__)
 # define SC_EAX regs.eax
-# define SC_EBX regs._reserved_2[2]
+# define SC_EBX regs.ebx
 # define SC_ECX regs.ecx
 # define SC_EDX regs.edx
 # define SC_EBP regs.ebp
 # define SC_EIP regs.eip
 # define SC_ESP regs.esp
-# define SC_EDI regs._reserved_2[0]
-# define SC_ESI regs._reserved_2[1]
+# define SC_EDI regs.edi
+# define SC_ESI regs.esi
 #else
 # define SC_EAX eax
 # define SC_EBX ebx
@@ -139,7 +146,8 @@ typedef struct {
 		 }																\
 	} while (0)
 #else
-#define MONO_CONTEXT_GET_CURRENT(ctx) \
+
+#define MONO_CONTEXT_GET_CURRENT_GREGS(ctx) \
 	__asm__ __volatile__(   \
 	"movl $0x0, %c[eax](%0)\n" \
 	"mov %%ebx, %c[ebx](%0)\n" \
@@ -162,6 +170,40 @@ typedef struct {
 		[esi] MONO_CONTEXT_OFFSET (esi, 0, mgreg_t), \
 		[edi] MONO_CONTEXT_OFFSET (edi, 0, mgreg_t) \
 	: "memory")
+
+#ifdef UCONTEXT_REG_XMM
+#define MONO_CONTEXT_GET_CURRENT_FREGS(ctx) \
+	do { \
+		__asm__ __volatile__ ( \
+			"movups %%xmm0, %c[xmm0](%0)\n"	\
+			"movups %%xmm1, %c[xmm1](%0)\n"	\
+			"movups %%xmm2, %c[xmm2](%0)\n"	\
+			"movups %%xmm3, %c[xmm3](%0)\n"	\
+			"movups %%xmm4, %c[xmm4](%0)\n"	\
+			"movups %%xmm5, %c[xmm5](%0)\n"	\
+			"movups %%xmm6, %c[xmm6](%0)\n"	\
+			"movups %%xmm7, %c[xmm7](%0)\n"	\
+			: \
+			: "a" (&(ctx)),	\
+				[xmm0] MONO_CONTEXT_OFFSET (fregs, X86_XMM0, MonoContextSimdReg), \
+				[xmm1] MONO_CONTEXT_OFFSET (fregs, X86_XMM1, MonoContextSimdReg), \
+				[xmm2] MONO_CONTEXT_OFFSET (fregs, X86_XMM2, MonoContextSimdReg), \
+				[xmm3] MONO_CONTEXT_OFFSET (fregs, X86_XMM3, MonoContextSimdReg), \
+				[xmm4] MONO_CONTEXT_OFFSET (fregs, X86_XMM4, MonoContextSimdReg), \
+				[xmm5] MONO_CONTEXT_OFFSET (fregs, X86_XMM5, MonoContextSimdReg), \
+				[xmm6] MONO_CONTEXT_OFFSET (fregs, X86_XMM6, MonoContextSimdReg), \
+				[xmm7] MONO_CONTEXT_OFFSET (fregs, X86_XMM7, MonoContextSimdReg), \
+	} while (0)
+#else
+#define MONO_CONTEXT_GET_CURRENT_FREGS(ctx)
+#endif
+
+#define MONO_CONTEXT_GET_CURRENT(ctx) \
+    do {	\
+		MONO_CONTEXT_GET_CURRENT_GREGS(ctx);	\
+		MONO_CONTEXT_GET_CURRENT_FREGS(ctx);	\
+	} while (0)
+
 #endif
 
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
@@ -434,12 +476,28 @@ typedef struct {
 		"stp x24, x25, [x16], #16\n"	\
 		"stp x26, x27, [x16], #16\n"	\
 		"stp x28, x29, [x16], #16\n"	\
-		"stp x30, xzr, [x16]\n"	\
+		"stp x30, xzr, [x16], #8\n"	\
 		"mov x30, sp\n"				\
-		"str x30, [x16, #8]\n"		\
+		"str x30, [x16], #8\n"		\
+		"stp d0, d1, [x16], #16\n"	\
+		"stp d2, d3, [x16], #16\n"	\
+		"stp d4, d5, [x16], #16\n"	\
+		"stp d6, d7, [x16], #16\n"	\
+		"stp d8, d9, [x16], #16\n"	\
+		"stp d10, d11, [x16], #16\n"	\
+		"stp d12, d13, [x16], #16\n"	\
+		"stp d14, d15, [x16], #16\n"	\
+		"stp d16, d17, [x16], #16\n"	\
+		"stp d18, d19, [x16], #16\n"	\
+		"stp d20, d21, [x16], #16\n"	\
+		"stp d22, d23, [x16], #16\n"	\
+		"stp d24, d25, [x16], #16\n"	\
+		"stp d26, d27, [x16], #16\n"	\
+		"stp d28, d29, [x16], #16\n"	\
+		"stp d30, d31, [x16], #16\n"	\
 		:							\
 		: "r" (&ctx.regs)			\
-		: "x30", "memory"			\
+		: "x16", "x30", "memory"		\
 	);								\
 	__asm__ __volatile__( \
 		"adr %0, L0%=\n" \
@@ -477,7 +535,7 @@ typedef struct {
 #define MONO_CONTEXT_SET_SP(ctx,sp) do { (ctx)->sc_sp = (gulong)sp; } while (0);
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->sc_ir))
-#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ppc_r31-13]))
+#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ppc_r31]))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->sc_sp))
 
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
@@ -568,7 +626,7 @@ typedef struct {
 #define MONO_CONTEXT_SET_SP(ctx,sp) do { (ctx)->sc_sp = (mgreg_t)sp; } while (0);
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->sc_ir))
-#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ppc_r31-13]))
+#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ppc_r31]))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->sc_sp))
 
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\

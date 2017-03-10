@@ -870,7 +870,7 @@ class_get_rgctx_template_oti (MonoClass *klass, int type_argc, guint32 slot, gbo
 static gpointer
 class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_type, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 
 	switch (info_type) {
 	case MONO_RGCTX_INFO_STATIC_DATA: {
@@ -1538,7 +1538,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	gpointer data;
 	gboolean temporary;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!oti->data)
 		return NULL;
@@ -2320,7 +2320,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	int rgctx_index;
 	gboolean do_free;
 
-	mono_error_init (error);
+	error_init (error);
 
 	g_assert (rgctx);
 
@@ -2365,6 +2365,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 										method_inst ? method_inst->type_argc : 0, slot, TRUE, TRUE, &do_free);
 	/* This might take the loader lock */
 	info = instantiate_info (domain, &oti, &context, klass, error);
+	return_val_if_nok (error, NULL);
 	g_assert (info);
 
 	/*
@@ -2407,7 +2408,7 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 	MonoRuntimeGenericContext *rgctx;
 	gpointer info;
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_domain_lock (domain);
 
@@ -2672,7 +2673,7 @@ mini_method_is_open (MonoMethod *method)
 }
 
 /* Lazy class loading functions */
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (iasync_state_machine, System.Runtime.CompilerServices, IAsyncStateMachine)
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (iasync_state_machine, "System.Runtime.CompilerServices", "IAsyncStateMachine")
 
 static G_GNUC_UNUSED gboolean
 is_async_state_machine_class (MonoClass *klass)
@@ -3576,7 +3577,9 @@ static gboolean gsharedvt_supported;
 void
 mono_set_generic_sharing_vt_supported (gboolean supported)
 {
-	gsharedvt_supported = supported;
+	/* ensure we do not disable gsharedvt once it's been enabled */
+	if (!gsharedvt_supported  && supported)
+		gsharedvt_supported = TRUE;
 }
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED

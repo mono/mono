@@ -24,6 +24,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/handle.h>
 #include <mono/metadata/sgen-toggleref.h>
+#include <mono/metadata/w32handle.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-memory-model.h>
@@ -257,9 +258,6 @@ mono_gc_base_init (void)
 
 	GC_set_on_collection_event (on_gc_notification);
 	GC_on_heap_resize = on_gc_heap_resize;
-
-	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
-	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
 
 	gc_initialized = TRUE;
 }
@@ -537,6 +535,12 @@ mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource s
 	return TRUE;
 }
 
+int
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+{
+	return mono_gc_register_root (start, size, descr, source, msg);
+}
+
 void
 mono_gc_deregister_root (char* addr)
 {
@@ -614,6 +618,12 @@ mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 }
 
 void*
+mono_gc_make_vector_descr (void)
+{
+	return NULL;
+}
+
+void*
 mono_gc_make_root_descr_all_refs (int numbits)
 {
 	return NULL;
@@ -622,25 +632,13 @@ mono_gc_make_root_descr_all_refs (int numbits)
 void*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
-	/* To help track down typed allocation bugs */
-	/*
-	static int count;
-	count ++;
-	if (count == atoi (g_getenv ("COUNT2")))
-		printf ("HIT!\n");
-	if (count > atoi (g_getenv ("COUNT2")))
-		return GC_MALLOC (size);
-	*/
-
-	if (descr)
-		return GC_MALLOC_EXPLICITLY_TYPED (size, (GC_descr)descr);
-	else
-		return GC_MALLOC (size);
+	return GC_MALLOC_UNCOLLECTABLE (size);
 }
 
 void
 mono_gc_free_fixed (void* addr)
 {
+	GC_FREE (addr);
 }
 
 void *
@@ -867,7 +865,7 @@ mono_gc_get_restart_signal (void)
 }
 
 #if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
-extern __thread MONO_TLS_FAST void* GC_thread_tls;
+extern __thread void* GC_thread_tls;
 #include "metadata-internals.h"
 
 static int
@@ -899,6 +897,8 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 	MonoMethodSignature *csig;
 	const char *name = NULL;
 	WrapperInfo *info;
+
+	g_assert_not_reached ();
 
 	if (atype == ATYPE_FREEPTR) {
 		name = slowpath ? "SlowAllocPtrfree" : "AllocPtrfree";
@@ -1141,13 +1141,14 @@ mono_gc_is_critical_method (MonoMethod *method)
 MonoMethod*
 mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {
-	int offset = -1;
 	int atype;
-	MONO_THREAD_VAR_OFFSET (GC_thread_tls, offset);
 
-	/*g_print ("thread tls: %d\n", offset);*/
-	if (offset == -1)
-		return NULL;
+	/*
+	 * Tls implementation changed, we jump to tls native getters/setters.
+	 * Is boehm managed allocator ok with this ? Do we even care ?
+	 */
+	return NULL;
+
 	if (!SMALL_ENOUGH (klass->instance_size))
 		return NULL;
 	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass))
@@ -1195,19 +1196,17 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
 MonoMethod*
 mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant variant)
 {
-	int offset = -1;
 	MonoMethod *res;
 	gboolean slowpath = variant != MANAGED_ALLOCATOR_REGULAR;
 	MonoMethod **cache = slowpath ? slowpath_alloc_method_cache : alloc_method_cache;
-	MONO_THREAD_VAR_OFFSET (GC_thread_tls, offset);
 
-	mono_tls_key_set_offset (TLS_KEY_BOEHM_GC_THREAD, offset);
+	return NULL;
 
 	res = cache [atype];
 	if (res)
 		return res;
 
-	res = create_allocator (atype, TLS_KEY_BOEHM_GC_THREAD, slowpath);
+	res = create_allocator (atype, -1, slowpath);
 	mono_os_mutex_lock (&mono_gc_lock);
 	if (cache [atype]) {
 		mono_free_method (res);

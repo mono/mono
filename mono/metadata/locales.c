@@ -56,7 +56,7 @@ static const CultureInfoEntry* culture_info_entry_from_lcid (int lcid);
 static const RegionInfoEntry* region_info_entry_from_lcid (int lcid);
 
 /* Lazy class loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (culture_info, System.Globalization, CultureInfo)
+static GENERATE_GET_CLASS_WITH_CACHE (culture_info, "System.Globalization", "CultureInfo")
 
 static int
 culture_lcid_locator (const void *a, const void *b)
@@ -97,7 +97,7 @@ create_group_sizes_array (const gint *gs, gint ml, MonoError *error)
 	MonoArray *ret;
 	int i, len = 0;
 
-	mono_error_init (error);
+	error_init (error);
 
 	for (i = 0; i < ml; i++) {
 		if (gs [i] == -1)
@@ -122,7 +122,7 @@ create_names_array_idx (const guint16 *names, int ml, MonoError *error)
 	MonoDomain *domain;
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (names == NULL)
 		return NULL;
@@ -133,7 +133,7 @@ create_names_array_idx (const guint16 *names, int ml, MonoError *error)
 	return_val_if_nok (error, NULL);
 
 	for(i = 0; i < ml; i++)
-		mono_array_setref (ret, i, mono_string_new (domain, idx2string (names [i])));
+		mono_array_setref (ret, i, mono_string_new (domain, dtidx2string (names [i])));
 
 	return ret;
 }
@@ -145,7 +145,7 @@ create_names_array_idx_dynamic (const guint16 *names, int ml, MonoError *error)
 	MonoDomain *domain;
 	int i, len = 0;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (names == NULL)
 		return NULL;
@@ -162,7 +162,7 @@ create_names_array_idx_dynamic (const guint16 *names, int ml, MonoError *error)
 	return_val_if_nok (error, NULL);
 
 	for(i = 0; i < len; i++)
-		mono_array_setref (ret, i, mono_string_new (domain, idx2string (names [i])));
+		mono_array_setref (ret, i, mono_string_new (domain, pattern2string (names [i])));
 
 	return ret;
 }
@@ -207,7 +207,7 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 	return_val_and_set_pending_if_nok (&error, FALSE);
 	MONO_OBJECT_SETREF (this_obj, LongDatePatterns, long_date_patterns);
 
-	MONO_OBJECT_SETREF (this_obj, MonthDayPattern, mono_string_new (domain, idx2string (dfe->month_day_pattern)));
+	MONO_OBJECT_SETREF (this_obj, MonthDayPattern, mono_string_new (domain, pattern2string (dfe->month_day_pattern)));
 
 	MonoArray *day_names = create_names_array_idx (dfe->day_names, NUM_DAYS, &error);
 	return_val_and_set_pending_if_nok (&error, FALSE);
@@ -329,7 +329,7 @@ construct_culture (MonoCultureInfo *this_obj, const CultureInfoEntry *ci, MonoEr
 {
 	MonoDomain *domain = mono_domain_get ();
 
-	mono_error_init (error);
+	error_init (error);
 
 	this_obj->lcid = ci->lcid;
 	MONO_OBJECT_SETREF (this_obj, name, mono_string_new (domain, idx2string (ci->name)));

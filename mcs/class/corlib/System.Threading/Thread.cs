@@ -51,9 +51,7 @@ namespace System.Threading {
 		// stores a thread handle
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
-
-		/* Note this is an opaque object (an array), not a CultureInfo */
-		private object cached_culture_info;
+		IntPtr unused3;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
 		private int name_len; 
@@ -62,11 +60,7 @@ namespace System.Threading {
 		private int abort_state_handle;
 		/* thread_id is only accessed from unmanaged code */
 		internal Int64 thread_id;
-		
-		/* start_notify is used by the runtime to signal that Start()
-		 * is ok to return
-		 */
-		private IntPtr stack_ptr;
+		private IntPtr debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr runtime_thread_info;
 		/* current System.Runtime.Remoting.Contexts.Context instance
@@ -87,7 +81,7 @@ namespace System.Threading {
 		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private IntPtr interrupt_on_stop;
+		private IntPtr unused4;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
 		private IntPtr abort_protected_block_count;
@@ -288,17 +282,17 @@ namespace System.Threading {
 			}
 		}
 
-		// Looks up the object associated with the current thread
-		// this is called by the JIT directly, too
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static InternalThread CurrentInternalThread_internal();
+		private extern static Thread GetCurrentThread ();
 
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
-				if (current_thread == null)
-					current_thread = new Thread (CurrentInternalThread_internal ());
-				return current_thread;
+				Thread current = current_thread;
+				if (current != null)
+					return current;
+				// This will set the current_thread tls variable
+				return GetCurrentThread ();
 			}
 		}
 

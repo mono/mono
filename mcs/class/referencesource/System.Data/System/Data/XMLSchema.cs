@@ -22,7 +22,7 @@ namespace System.Data {
     internal class XMLSchema {
 
         internal static TypeConverter GetConverter(Type type) { 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             HostProtectionAttribute protAttrib = new HostProtectionAttribute();
             protAttrib.SharedState = true;
             CodeAccessPermission permission = (CodeAccessPermission)protAttrib.CreatePermission();
@@ -32,7 +32,7 @@ namespace System.Data {
                 return TypeDescriptor.GetConverter(type);
             }
             finally {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 CodeAccessPermission.RevertAssert(); 
 #endif
             }

@@ -30,8 +30,68 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 
+	/// <summary>
+	/// This class is for testing purposes only. It allows to reproduce an error
+	/// that happens when an unsupported signing key is being used
+	/// while computing a signature.
+	/// </summary>
+	internal sealed class CustomAsymmetricAlgorithm : AsymmetricAlgorithm {
+	}
+
+	/// <summary>
+	/// This class is for testing purposes only. It allows to reproduce an error
+	/// that happens when the hash algorithm cannot be created.
+	/// </summary>
+	public sealed class BadHashAlgorithmSignatureDescription : SignatureDescription {
+		public BadHashAlgorithmSignatureDescription ()
+		{
+			KeyAlgorithm = RSA.Create ().GetType ().FullName;
+			DigestAlgorithm = SHA1.Create ().GetType ().FullName;
+			FormatterAlgorithm = typeof (RSAPKCS1SignatureFormatter).FullName;
+			DeformatterAlgorithm = typeof (RSAPKCS1SignatureDeformatter).FullName;
+		}
+
+		public override HashAlgorithm CreateDigest ()
+		{
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// This class is for testing purposes only.
+	/// It represents a correctly defined custom signature description.
+	/// </summary>
+	public sealed class RsaPkcs1Sha512SignatureDescription : SignatureDescription {
+		private const string Sha512HashAlgorithm = "SHA512";
+
+		public RsaPkcs1Sha512SignatureDescription ()
+		{
+			KeyAlgorithm = RSA.Create ().GetType ().FullName;
+			DigestAlgorithm = SHA512.Create ().GetType ().FullName;
+			FormatterAlgorithm = typeof (RSAPKCS1SignatureFormatter).FullName;
+			DeformatterAlgorithm = typeof (RSAPKCS1SignatureDeformatter).FullName;
+		}
+
+		public override AsymmetricSignatureFormatter CreateFormatter (AsymmetricAlgorithm key)
+		{
+			var formatter = new RSAPKCS1SignatureFormatter (key);
+			formatter.SetHashAlgorithm (Sha512HashAlgorithm);
+
+			return formatter;
+		}
+
+		public override AsymmetricSignatureDeformatter CreateDeformatter (AsymmetricAlgorithm key)
+		{
+			var deformatter = new RSAPKCS1SignatureDeformatter (key);
+			deformatter.SetHashAlgorithm (Sha512HashAlgorithm);
+
+			return deformatter;
+		}
+	}
+
 	[TestFixture]
 	public class SignedXmlTest {
+		private const string XmlDsigNamespacePrefix = "ds";
 
 		private const string signature = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>CTnnhjxUQHJmD+t1MjVXrOW+MCA=</DigestValue></Reference></SignedInfo><SignatureValue>dbFt6Zw3vR+Xh7LbM/vuifyFA7gPh/NlDM2Glz/SJBsveISieuTBpZlk/zavAeuXR/Nu0Ztt4OP4tCOg09a2RNlrTP0dhkeEfL1jTzpnVaLHuQbCiwOWCgbRif7Xt7N12FuiHYb3BltP/YyXS4E12NxlGlqnDiFA1v/mkK5+C1o=</SignatureValue><KeyInfo><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RSAKeyValue><Modulus>hEfTJNa2idz2u+fSYDDG4Lx/xuk4aBbvOPVNqgc1l9Y8t7Pt+ZyF+kkF3uUl8Y0700BFGAsprnhwrWENK+PGdtvM5796ZKxCCa0ooKkofiT4355HqK26hpV8dvj38vq/rkJe1jHZgkTKa+c/0vjcYZOI/RT/IZv9JfXxVWLuLxk=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue></KeyValue></KeyInfo><Object Id=\"MyObjectId\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><ObjectListTag xmlns=\"\" /></Object></Signature>";
 
@@ -1547,6 +1607,165 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 ";
 			SignedXml sign = GetSignedXml (xml);
 			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")));
+		}
+
+		[Test]
+		public void ComputeSignature_WhenSigningKeyIsNotSpecified_ThrowsCryptographicException ()
+		{
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.AddReference (reference);
+
+			var ex = Assert.Throws<CryptographicException> (() => signedXml.ComputeSignature(), "Exception");
+			Assert.That (ex.Message, Is.EqualTo (SR.Cryptography_Xml_LoadKeyFailed), "Message");
+		}
+
+		[Test]
+		public void ComputeSignature_WhenSignatureMethodIsNotSpecifiedAndRsaSigningKeyIsUsed_UsesRsaSha1Algorithm ()
+		{
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = RSA.Create ();
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+
+			var signature = signedXml.GetXml ();
+
+			var namespaceManager = new XmlNamespaceManager (signature.OwnerDocument.NameTable);
+			namespaceManager.AddNamespace ("ds", SignedXml.XmlDsigNamespaceUrl);
+
+			var signatureMethodElement = signature.SelectSingleNode (
+				string.Format ("/{0}:SignedInfo/{0}:SignatureMethod", XmlDsigNamespacePrefix),
+				namespaceManager);
+
+			Assert.That (signatureMethodElement.Attributes["Algorithm"].Value, Is.EqualTo (SignedXml.XmlDsigRSASHA1Url));
+		}
+
+		[Test]
+		public void ComputeSignature_WhenSignatureMethodIsNotSpecifiedAndDsaSigningKeyIsUsed_UsesDsaSha1Algorithm ()
+		{
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = DSA.Create ();
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+
+			var signature = signedXml.GetXml ();
+
+			var namespaceManager = new XmlNamespaceManager (signature.OwnerDocument.NameTable);
+			namespaceManager.AddNamespace ("ds", SignedXml.XmlDsigNamespaceUrl);
+
+			var signatureMethodElement = signature.SelectSingleNode (
+				string.Format ("/{0}:SignedInfo/{0}:SignatureMethod", XmlDsigNamespacePrefix),
+				namespaceManager);
+
+			Assert.That (signatureMethodElement.Attributes["Algorithm"].Value, Is.EqualTo (SignedXml.XmlDsigDSAUrl));
+		}
+
+		[Test]
+		public void ComputeSignature_WhenSignatureMethodIsNotSpecifiedAndNotSupportedSigningKeyIsUsed_ThrowsCryptographicException ()
+		{
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = new CustomAsymmetricAlgorithm ();
+			signedXml.AddReference (reference);
+
+			var ex = Assert.Throws<CryptographicException> (() => signedXml.ComputeSignature (), "Exception");
+			Assert.That (ex.Message, Is.EqualTo (SR.Cryptography_Xml_CreatedKeyFailed), "Message");
+		}
+
+		[Test]
+		public void ComputeSignature_WhenNotSupportedSignatureMethodIsSpecified_ThrowsCryptographicException ()
+		{
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = RSA.Create ();
+			signedXml.SignedInfo.SignatureMethod = "not supported signature method";
+			signedXml.AddReference (reference);
+
+			var ex = Assert.Throws<CryptographicException> (() => signedXml.ComputeSignature(), "Exception");
+			Assert.That (ex.Message, Is.EqualTo (SR.Cryptography_Xml_SignatureDescriptionNotCreated), "Message");
+		}
+
+		[Test]
+		public void ComputeSignature_WhenNotSupportedSignatureHashAlgorithmIsSpecified_ThrowsCryptographicException ()
+		{
+			const string algorithmName = "not supported signature hash algorithm";
+
+			CryptoConfig.AddAlgorithm (typeof (BadHashAlgorithmSignatureDescription), algorithmName);
+
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = RSA.Create ();
+			signedXml.SignedInfo.SignatureMethod = algorithmName;
+			signedXml.AddReference (reference);
+
+			var ex = Assert.Throws<CryptographicException> (() => signedXml.ComputeSignature (), "Exception");
+			Assert.That (ex.Message, Is.EqualTo (SR.Cryptography_Xml_CreateHashAlgorithmFailed), "Message");
+		}
+
+		[Test]
+		public void ComputeSignature_WhenCustomSignatureMethodIsSpecified_UsesCustomAlgorithm ()
+		{
+			const string algorithmName = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+
+			CryptoConfig.AddAlgorithm (typeof (RsaPkcs1Sha512SignatureDescription), algorithmName);
+
+			var unsignedXml = new XmlDocument ();
+			unsignedXml.LoadXml ("<test />");
+
+			var reference = new Reference { Uri = "" };
+			reference.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+
+			var signedXml = new SignedXml (unsignedXml);
+			signedXml.SigningKey = RSA.Create ();
+			signedXml.SignedInfo.SignatureMethod = algorithmName;
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+
+			var signature = signedXml.GetXml ();
+
+			var namespaceManager = new XmlNamespaceManager (signature.OwnerDocument.NameTable);
+			namespaceManager.AddNamespace ("ds", SignedXml.XmlDsigNamespaceUrl);
+
+			var signatureMethodElement = signature.SelectSingleNode (
+				string.Format ("/{0}:SignedInfo/{0}:SignatureMethod", XmlDsigNamespacePrefix),
+				namespaceManager);
+
+			Assert.That (signatureMethodElement.Attributes["Algorithm"].Value, Is.EqualTo (algorithmName));
 		}
 	}
 }

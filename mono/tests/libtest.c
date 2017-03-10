@@ -34,7 +34,7 @@ typedef int (STDCALL *SimpleDelegate) (int a);
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
 #elif defined(__GNUC__)
-#define LIBTEST_API  __attribute__ ((visibility ("default")))
+#define LIBTEST_API  __attribute__ ((__visibility__ ("default")))
 #else
 #define LIBTEST_API
 #endif
@@ -1132,7 +1132,7 @@ mono_test_marshal_stringbuilder (char *s, int n)
 
 	if (strcmp (s, "ABCD") != 0)
 		return 1;
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -1158,7 +1158,7 @@ mono_test_marshal_stringbuilder_default (char *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
 
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -3577,7 +3577,7 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
  */
 
 #if defined(__GNUC__) && ((defined(__i386__) && (defined(__linux__) || defined (__APPLE__)) || defined (__FreeBSD__) || defined(__OpenBSD__)) || (defined(__ppc__) && defined(__APPLE__)))
-#define ALIGN(size) __attribute__ ((aligned(size)))
+#define ALIGN(size) __attribute__ ((__aligned__(size)))
 #else
 #define ALIGN(size)
 #endif
@@ -7230,6 +7230,38 @@ mono_test_marshal_fixed_array (FixedArrayStruct s)
 	return s.array [0] + s.array [1] + s.array [2];
 }
 
+typedef struct {
+	char array [16];
+	char c;
+} FixedBufferChar;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_char (FixedBufferChar *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
+typedef struct {
+	short array [16];
+	short c;
+} FixedBufferUnicode;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_unicode (FixedBufferUnicode *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
 const int NSTRINGS = 6;
 //test strings
 const char  *utf8Strings[] = {  
@@ -7250,9 +7282,9 @@ build_return_string(const char* pReturn)
 		return ret;
 
 	size_t strLength = strlen(pReturn);
-	ret = (char *)(malloc(sizeof(char)* (strLength + 1)));
-	memset(ret, '\0', strLength + 1);
-	strncpy(ret, pReturn, strLength);
+	ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+	memcpy(ret, pReturn, strLength);
+	ret [strLength] = '\0';
 	return ret;
 }
 
@@ -7268,7 +7300,7 @@ StringParameterRefOut(/*out*/ char **s, int index)
 {
 	char *pszTextutf8 = (char*)utf8Strings[index];
 	size_t strLength = strlen(pszTextutf8);
-	*s = (char *)(malloc(sizeof(char)* (strLength + 1)));
+	*s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
 	memcpy(*s, pszTextutf8, strLength);
 	(*s)[strLength] = '\0';
 }
@@ -7291,10 +7323,10 @@ StringParameterRef(/*ref*/ char **s, int index)
 
     if (*s)
     {
-       free(*s);
+       marshal_free (*s);
     }
     // overwrite the orginal 
-    *s = (char *)(malloc(sizeof(char)* (strLength + 1)));
+    *s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
     memcpy(*s, pszTextutf8, strLength);
     (*s)[strLength] = '\0';
 }
@@ -7401,7 +7433,7 @@ StringBuilderParameterReturn(int index)
 {
     char *pszTextutf8 = (char*)utf8Strings[index];
     size_t strLength = strlen(pszTextutf8);
-    char * ret = (char *)(malloc(sizeof(char)* (strLength + 1)));
+    char * ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
     memcpy(ret, pszTextutf8, strLength);
     ret[strLength] = '\0';
 

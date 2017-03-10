@@ -7,6 +7,7 @@
  */
 
 #include "config.h"
+#include <glib.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -31,7 +32,6 @@
 #include "mono/metadata/threads-types.h"
 #include "mono/metadata/string-icalls.h"
 #include "mono/metadata/attrdefs.h"
-#include "mono/metadata/gc-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/strenc.h"
 #include "mono/utils/atomic.h"
@@ -39,9 +39,11 @@
 #include "mono/utils/mono-error-internals.h"
 #include <string.h>
 #include <errno.h>
+#include <mono/utils/w32api.h>
 
 #if defined(HOST_WIN32)
 #include <oleauto.h>
+#include "mono/metadata/cominterop-win32-internals.h"
 #endif
 
 /*
@@ -101,15 +103,15 @@ static mono_mutex_t cominterop_mutex;
 #define STDCALL
 #endif
 
-GENERATE_GET_CLASS_WITH_CACHE (interop_proxy, Mono.Interop, ComInteropProxy)
-GENERATE_GET_CLASS_WITH_CACHE (idispatch,     Mono.Interop, IDispatch)
-GENERATE_GET_CLASS_WITH_CACHE (iunknown,      Mono.Interop, IUnknown)
+GENERATE_GET_CLASS_WITH_CACHE (interop_proxy, "Mono.Interop", "ComInteropProxy")
+GENERATE_GET_CLASS_WITH_CACHE (idispatch,     "Mono.Interop", "IDispatch")
+GENERATE_GET_CLASS_WITH_CACHE (iunknown,      "Mono.Interop", "IUnknown")
 
-GENERATE_GET_CLASS_WITH_CACHE (com_object, System, __ComObject)
-GENERATE_GET_CLASS_WITH_CACHE (variant,    System, Variant)
+GENERATE_GET_CLASS_WITH_CACHE (com_object, "System", "__ComObject")
+GENERATE_GET_CLASS_WITH_CACHE (variant,    "System", "Variant")
 
-static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, System.Runtime.InteropServices, InterfaceTypeAttribute)
-static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, System.Runtime.InteropServices, GuidAttribute)
+static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.InteropServices", "InterfaceTypeAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, "System.Runtime.InteropServices", "GuidAttribute")
 
 /* Upon creation of a CCW, only allocate a weak handle and set the
  * reference count to 0. If the unmanaged client code decides to addref and
@@ -515,7 +517,7 @@ cominterop_get_interface_checked (MonoComObject* obj, MonoClass* ic, MonoError *
 	g_assert (ic);
 	g_assert (MONO_CLASS_IS_INTERFACE (ic));
 
-	mono_error_init (error);
+	error_init (error);
 
 	mono_cominterop_lock ();
 	if (obj->itf_hash)
@@ -1520,7 +1522,7 @@ static gboolean cominterop_can_support_dispatch (MonoClass* klass)
 static void*
 cominterop_get_idispatch_for_object (MonoObject* object, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	if (!object)
 		return NULL;
 
@@ -1940,7 +1942,7 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 	GList *ccw_list, *ccw_list_item;
 	MonoCustomAttrInfo *cinfo = NULL;
 
-	mono_error_init (error);
+	error_init (error);
 	
 	if (!object)
 		return NULL;
@@ -2444,7 +2446,7 @@ static const IID MONO_IID_IMarshal = {0x3, 0x0, 0x0, {0xC0, 0x0, 0x0, 0x0, 0x0, 
 static int
 cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObject* object, gpointer* ppv, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 #ifdef HOST_WIN32
 	if (!ccw->free_marshaler) {
 		int ret = 0;
@@ -2815,7 +2817,7 @@ mono_string_from_bstr_checked (gpointer bstr, MonoError *error)
 {
 	MonoString * res = NULL;
 	
-	mono_error_init (error);
+	error_init (error);
 
 	if (!bstr)
 		return NULL;
@@ -3108,53 +3110,95 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 	return conv_arg;
 }
 
-static 
-guint32 mono_marshal_safearray_get_dim (gpointer safearray)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline guint32
+mono_marshal_win_safearray_get_dim (gpointer safearray)
+{
+	return SafeArrayGetDim (safearray);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static guint32
+mono_marshal_safearray_get_dim (gpointer safearray)
+{
+	return mono_marshal_win_safearray_get_dim (safearray);
+}
+
+#else /* HOST_WIN32 */
+
+static guint32
+mono_marshal_safearray_get_dim (gpointer safearray)
 {
 	guint32 result=0;
-#ifdef HOST_WIN32
-	result = SafeArrayGetDim (safearray);
-#else
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		result = safe_array_get_dim_ms (safearray);
 	} else {
 		g_assert_not_reached ();
 	}
-#endif
 	return result;
 }
+#endif /* HOST_WIN32 */
 
-static 
-int mono_marshal_safe_array_get_lbound (gpointer psa, guint nDim, glong* plLbound)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline int
+mono_marshal_win_safe_array_get_lbound (gpointer psa, guint nDim, glong* plLbound)
+{
+	return SafeArrayGetLBound (psa, nDim, plLbound);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static int
+mono_marshal_safe_array_get_lbound (gpointer psa, guint nDim, glong* plLbound)
+{
+	return mono_marshal_win_safe_array_get_lbound (psa, nDim, plLbound);
+}
+
+#else /* HOST_WIN32 */
+
+static int
+mono_marshal_safe_array_get_lbound (gpointer psa, guint nDim, glong* plLbound)
 {
 	int result=MONO_S_OK;
-#ifdef HOST_WIN32
-	result = SafeArrayGetLBound (psa, nDim, plLbound);
-#else
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		result = safe_array_get_lbound_ms (psa, nDim, plLbound);
 	} else {
 		g_assert_not_reached ();
 	}
-#endif
 	return result;
 }
+#endif /* HOST_WIN32 */
 
-static 
-int mono_marshal_safe_array_get_ubound (gpointer psa, guint nDim, glong* plUbound)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+inline static int
+mono_marshal_win_safe_array_get_ubound (gpointer psa, guint nDim, glong* plUbound)
+{
+	return SafeArrayGetUBound (psa, nDim, plUbound);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static int
+mono_marshal_safe_array_get_ubound (gpointer psa, guint nDim, glong* plUbound)
+{
+	return mono_marshal_win_safe_array_get_ubound (psa, nDim, plUbound);
+}
+
+#else /* HOST_WIN32 */
+
+static int
+mono_marshal_safe_array_get_ubound (gpointer psa, guint nDim, glong* plUbound)
 {
 	int result=MONO_S_OK;
-#ifdef HOST_WIN32
-	result = SafeArrayGetUBound (psa, nDim, plUbound);
-#else
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		result = safe_array_get_ubound_ms (psa, nDim, plUbound);
 	} else {
 		g_assert_not_reached ();
 	}
-#endif
 	return result;
 }
+#endif /* HOST_WIN32 */
 
 /* This is an icall */
 static gboolean
@@ -3235,19 +3279,39 @@ mono_marshal_safearray_begin (gpointer safearray, MonoArray **result, gpointer *
 }
 
 /* This is an icall */
-static 
-gpointer mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline int
+mono_marshal_win_safearray_get_value (gpointer safearray, gpointer indices, gpointer *result)
+{
+	return SafeArrayPtrOfIndex (safearray, indices, result);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static gpointer
+mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
 {
 	MonoError error;
 	gpointer result;
-#ifdef HOST_WIN32
-	int hr = SafeArrayPtrOfIndex (safearray, indices, &result);
+
+	int hr = mono_marshal_win_safearray_get_value (safearray, indices, &result);
 	if (hr < 0) {
 			cominterop_set_hr_error (&error, hr);
 			mono_error_set_pending_exception (&error);
-			return NULL;
+			result = NULL;
 	}
-#else
+
+	return result;
+}
+
+#else /* HOST_WIN32 */
+
+static gpointer
+mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
+{
+	MonoError error;
+	gpointer result;
+
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		int hr = safe_array_ptr_of_index_ms (safearray, (glong *)indices, &result);
 		if (hr < 0) {
@@ -3258,9 +3322,9 @@ gpointer mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
 	} else {
 		g_assert_not_reached ();
 	}
-#endif
 	return result;
 }
+#endif /* HOST_WIN32 */
 
 /* This is an icall */
 static 
@@ -3303,20 +3367,62 @@ gboolean mono_marshal_safearray_next (gpointer safearray, gpointer indices)
 	return ret;
 }
 
-static 
-void mono_marshal_safearray_end (gpointer safearray, gpointer indices)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline void
+mono_marshal_win_safearray_end (gpointer safearray, gpointer indices)
 {
 	g_free(indices);
-#ifdef HOST_WIN32
 	SafeArrayDestroy (safearray);
-#else
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static void
+mono_marshal_safearray_end (gpointer safearray, gpointer indices)
+{
+	mono_marshal_win_safearray_end (safearray, indices);
+}
+
+#else /* HOST_WIN32 */
+
+static void
+mono_marshal_safearray_end (gpointer safearray, gpointer indices)
+{
+	g_free(indices);
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		safe_array_destroy_ms (safearray);
 	} else {
 		g_assert_not_reached ();
 	}
-#endif
 }
+#endif /* HOST_WIN32 */
+
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline gboolean
+mono_marshal_win_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+{
+	*newsafearray = SafeArrayCreate (VT_VARIANT, cDims, rgsabound);
+	return TRUE;
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static gboolean
+mono_marshal_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+{
+	return mono_marshal_win_safearray_create_internal (cDims, rgsabound, newsafearray);
+}
+
+#else /* HOST_WIN32 */
+
+static inline gboolean
+mono_marshal_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+{
+	*newsafearray = safe_array_create_ms (VT_VARIANT, cDims, rgsabound);
+	return TRUE;
+}
+
+#endif /* HOST_WIN32 */
 
 static gboolean
 mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointer *indices, gpointer empty)
@@ -3355,28 +3461,37 @@ mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointe
 		bounds [0].lLbound = 0;
 	}
 
-#ifdef HOST_WIN32
-	*newsafearray = SafeArrayCreate (VT_VARIANT, dim, bounds);
-#else
-	*newsafearray = safe_array_create_ms (VT_VARIANT, dim, bounds);
-#endif
-
-	return TRUE;
+	return mono_marshal_safearray_create_internal (dim, bounds, newsafearray);
 }
 
 /* This is an icall */
-static 
-void mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
+#ifdef HOST_WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
+static inline int
+mono_marshal_win_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
+{
+	return SafeArrayPutElement (safearray, indices, value);
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+
+static void
+mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
 {
 	MonoError error;
-#ifdef HOST_WIN32
-	int hr = SafeArrayPutElement (safearray, indices, value);
+	int hr = mono_marshal_win_safearray_set_value (safearray, indices, value);
 	if (hr < 0) {
 		cominterop_set_hr_error (&error, hr);
 		mono_error_set_pending_exception (&error);
 		return;
 	}
-#else
+}
+
+#else /* HOST_WIN32 */
+
+static void
+mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
+{
+	MonoError error;
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		int hr = safe_array_put_element_ms (safearray, (glong *)indices, (void **)value);
 		if (hr < 0) {
@@ -3386,8 +3501,8 @@ void mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpo
 		}
 	} else
 		g_assert_not_reached ();
-#endif
 }
+#endif /* HOST_WIN32 */
 
 static 
 void mono_marshal_safearray_free_indices (gpointer indices)
@@ -3471,7 +3586,7 @@ MonoString *
 mono_string_from_bstr_checked (gpointer bstr, MonoError *error)
 {
 	MonoString *res = NULL;
-	mono_error_init (error);
+	error_init (error);
 	if (!bstr)
 		return NULL;
 #ifdef HOST_WIN32

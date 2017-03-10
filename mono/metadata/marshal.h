@@ -330,7 +330,7 @@ MonoMethodSignature*
 mono_marshal_get_string_ctor_signature (MonoMethod *method);
 
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t this_loc);
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t this_loc, MonoError *exernal_error);
 
 gpointer
 mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type);
@@ -369,12 +369,6 @@ MonoMethod *
 mono_marshal_get_isinst_with_cache (void);
 
 MonoMethod *
-mono_marshal_get_isinst (MonoClass *klass);
-
-MonoMethod *
-mono_marshal_get_castclass (MonoClass *klass);
-
-MonoMethod *
 mono_marshal_get_stelemref (void);
 
 MonoMethod*
@@ -390,8 +384,7 @@ MonoMethod *
 mono_marshal_get_array_accessor_wrapper (MonoMethod *method);
 
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *klass, MonoClass *iface,
-				       gchar *name, MonoMethod *method);
+mono_marshal_get_generic_array_helper (MonoClass *klass, gchar *name, MonoMethod *method);
 
 MonoMethod *
 mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method);

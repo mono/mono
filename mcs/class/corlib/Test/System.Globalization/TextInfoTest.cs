@@ -149,13 +149,17 @@ public class TextInfoTest {
 			case 0x63:	// ps
 			case 90:	// syr
 			case 101:	// div
+			case 128:	// ur
 			case 1025:	// ar-SA
 			case 1037:	// he-IL
 			case 1056:	// ur-PK
 			case 1065:	// ra-IR
 			case 1114:	// syr-SY
 			case 1125:	// div-MV
+			case 1152:	// ug-CN
 			case 2049:	// ar-IQ
+			case 2080:	// ur-IN
+			case 2118:	// pa-Arab-PK
 			case 3073:	// ar-EG
 			case 4097:	// ar-LY
 			case 5121:	// ar-DZ
@@ -170,6 +174,7 @@ public class TextInfoTest {
 			case 14337:	// ar-AE
 			case 15361:	// ar-BH
 			case 16385:	// ar-QA
+			case 31814:	// pa-Arab
 			case 0x463: // ps-AF
 				Assert.IsTrue (ci.TextInfo.IsRightToLeft, ci.Name);
 				break;

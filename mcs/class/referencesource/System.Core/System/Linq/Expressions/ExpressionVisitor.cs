@@ -80,9 +80,13 @@ namespace System.Linq.Expressions {
                 case ExpressionType.ListInit:
                     return this.VisitListInit((ListInitExpression)exp);
                 default:
-                    throw Error.UnhandledExpressionType(exp.NodeType);
+                    throw UnhandledExpressionType(exp.NodeType);
             }
         }
+
+        static Exception UnhandledExpressionType(object p0) {
+            return new ArgumentException(string.Format ("Unhandled Expression Type: {0}", p0));
+        }        
 
         internal virtual MemberBinding VisitBinding(MemberBinding binding) {
             switch (binding.BindingType) {
@@ -93,9 +97,13 @@ namespace System.Linq.Expressions {
                 case MemberBindingType.ListBinding:
                     return this.VisitMemberListBinding((MemberListBinding)binding);
                 default:
-                    throw Error.UnhandledBindingType(binding.BindingType);
+                    throw UnhandledBindingType(binding.BindingType);
             }
         }
+
+        static Exception UnhandledBindingType(object p0) {
+            return new ArgumentException(string.Format ("Unhandled Binding Type: {0}", p0));
+        }        
         
         internal virtual ElementInit VisitElementInitializer(ElementInit initializer) {
             ReadOnlyCollection<Expression> arguments = this.VisitExpressionList(initializer.Arguments);

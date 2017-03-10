@@ -29,6 +29,7 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 | Windows      | amd64              | [![windows-amd64][15]][16]   |
 | Windows      | i386               | [![windows-amd64][17]][18]   |
 | CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
+| Debian 8     | ppc64el (cs)       | [![debian-8-ppc64el][21]][22]|
 
 _(cs) = community supported architecture_
 
@@ -50,8 +51,10 @@ _(cs) = community supported architecture_
 [16]: https://jenkins.mono-project.com/job/z/label=w64/
 [17]: https://jenkins.mono-project.com/job/z/label=w32/badge/icon
 [18]: https://jenkins.mono-project.com/job/z/label=w32/
-[19]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
-[20]: https://jenkins.mono-project.com/job/z/label=centos-s390x
+[19]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x/badge/icon
+[20]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x
+[21]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-8-ppc64el/badge/icon
+[22]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-8-ppc64el
 
 Compilation and Installation
 ============================
@@ -462,6 +465,19 @@ disable it.
   * There are a number of runtime options to control this
 also, see the man page.
 
+* `--with-csc=roslyn,mcs,default`
+
+  * Use this option to configure which C# compiler to use.  By default
+    the configure script will pick Roslyn, except on platforms where
+    Roslyn does not work (Big Endian systems) where it will pick mcs.
+
+    If you specify "mcs", then Mono's C# compiler will be used.  This
+    also allows for a complete bootstrap of Mono's core compiler and
+    core libraries from source.
+
+    If you specify "roslyn", then Roslyn's C# compiler will be used.
+    This currently uses Roslyn binaries.
+  
 * `--enable-nacl`
 
   * This configures the Mono compiler to generate code

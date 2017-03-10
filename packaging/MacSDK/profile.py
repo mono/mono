@@ -106,7 +106,9 @@ class MonoReleaseProfile(DarwinProfile):
 
     def setup_release(self):
         self.mono_package = self.release_packages['mono']
-        self.mono_package.fetch()
+        dest = os.path.join(self.bockbuild.build_root, self.mono_package.source_dir_name)
+        self.mono_package.fetch(dest)
+
 
         verbose('Mono version: %s' % self.mono_package.version)
         self.RELEASE_VERSION = self.mono_package.version
@@ -117,6 +119,8 @@ class MonoReleaseProfile(DarwinProfile):
             error('Prefix %s exists, and may interfere with the staged build. Please remove and try again.' % self.prefix)
 
         self.calculate_updateid()
+
+        self.mono_package.custom_version_str = self.FULL_VERSION
         trace(self.package_info('MDK'))
 
         self.dont_optimize = ['pixman']
@@ -201,7 +205,7 @@ class MonoReleaseProfile(DarwinProfile):
         print "Setting up temporary package directory:", tmpdir
 
         # setup metadata
-        self.packaging_dir = os.path.join(self.resource_path, "packaging")
+        self.packaging_dir = os.path.join(self.directory, "packaging")
         run_shell('rsync -aPq %s/* %s' % (self.packaging_dir, tmpdir), False)
 
         packages_list = string.join(
@@ -240,7 +244,7 @@ class MonoReleaseProfile(DarwinProfile):
     def run_pkgbuild(self, working_dir, package_type):
         print 'Running pkgbuild & productbuild...',
         info = self.package_info(package_type)
-        output = os.path.join(self.resource_path, info["filename"])
+        output = os.path.join(self.directory, info["filename"])
         identifier = "com.xamarin.mono-" + info["type"] + ".pkg"
         resources_dir = os.path.join(working_dir, "resources")
         distribution_xml = os.path.join(resources_dir, "distribution.xml")
@@ -279,6 +283,10 @@ class MonoReleaseProfile(DarwinProfile):
             working_dir, "PKGROOT", self.prefix[1:], "updateinfo")
         with open(updateinfo, "w") as updateinfo:
             updateinfo.write(guid + ' ' + self.updateid + "\n")
+        version_file = os.path.join(
+            working_dir, "PKGROOT", self.prefix[1:], "VERSION")
+        with open(version_file, "w") as version_file:
+            version_file.write(self.FULL_VERSION + "\n")
 
     def package_info(self, pkg_type):
         arch = self.bockbuild.cmd_options.arch

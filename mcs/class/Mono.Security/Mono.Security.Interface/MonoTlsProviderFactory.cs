@@ -165,13 +165,13 @@ namespace Mono.Security.Interface
 
 		#region Obsolete APIs
 
-		[Obsolete]
+		[Obsolete ("Use GetProvider() instead.")]
 		public static MonoTlsProvider GetDefaultProvider ()
 		{
 			return GetProvider ();
 		}
 
-		[Obsolete]
+		[Obsolete ("Use Initialize(string provider) instead.")]
 		public static void SetDefaultProvider (string name)
 		{
 			Initialize (name);

@@ -189,6 +189,26 @@ namespace System.Transactions
 			return true;
 		}
 
+		public void SetDistributedTransactionIdentifier (IPromotableSinglePhaseNotification promotableNotification, Guid distributedTransactionIdentifier)
+		{
+			throw new NotImplementedException ();
+		}
+
+ 		public bool EnlistPromotableSinglePhase (IPromotableSinglePhaseNotification promotableSinglePhaseNotification, Guid promoterType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public byte[] GetPromotedToken ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Guid PromoterType
+		{
+			get { throw new NotImplementedException (); }
+		}
+
 		[MonoTODO ("EnlistmentOptions being ignored")]
 		public Enlistment EnlistVolatile (
 			IEnlistmentNotification notification,
@@ -216,6 +236,17 @@ namespace System.Transactions
 
 			/* FIXME: Enlistment.. ? */
 			return new Enlistment ();
+		}
+
+		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction.")]
+		[PermissionSetAttribute (SecurityAction.LinkDemand)]
+		public Enlistment PromoteAndEnlistDurable (
+			Guid manager,
+			IPromotableSinglePhaseNotification promotableNotification,
+			ISinglePhaseNotification notification,
+			EnlistmentOptions options)
+		{
+			throw new NotImplementedException ("DTC unsupported, multiple durable resource managers aren't supported.");
 		}
 
 		public override bool Equals (object obj)

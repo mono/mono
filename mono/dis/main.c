@@ -31,6 +31,7 @@
 #include <mono/metadata/loader.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/w32handle.h>
 #include <mono/utils/bsearch.h>
 #include <mono/utils/mono-counters.h>
 
@@ -2026,6 +2027,7 @@ main (int argc, char *argv [])
 
 	CHECKED_MONO_INIT ();
 	mono_counters_init ();
+	mono_tls_init_runtime_keys ();
 	memset (&ticallbacks, 0, sizeof (ticallbacks));
 	ticallbacks.thread_state_init = thread_state_init;
 #ifndef HOST_WIN32

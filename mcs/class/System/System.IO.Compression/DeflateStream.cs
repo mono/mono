@@ -35,10 +35,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
-#if MONOTOUCH || MOBILE_STATIC
-using MonoTouch;
-#endif
-
 namespace System.IO.Compression
 {
 	public class DeflateStream : Stream
@@ -59,6 +55,11 @@ namespace System.IO.Compression
 
 		public DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen) :
 			this (stream, mode, leaveOpen, false)
+		{
+		}
+
+		internal DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen, int windowsBits) :
+			this (stream, mode, leaveOpen, true)
 		{
 		}
 
@@ -87,6 +88,11 @@ namespace System.IO.Compression
 		
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
 			: this (stream, compressionLevel, leaveOpen, false)
+		{
+		}
+
+		internal DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen, int windowsBits)
+			: this (stream, compressionLevel, leaveOpen, true)
 		{
 		}
 
@@ -383,9 +389,7 @@ namespace System.IO.Compression
 			CheckResult (res, "WriteInternal");
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
 		{
 			GCHandle s = GCHandle.FromIntPtr (data);
@@ -408,9 +412,7 @@ namespace System.IO.Compression
 			return n;
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
 		{
 			GCHandle s = GCHandle.FromIntPtr (data);

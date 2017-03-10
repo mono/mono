@@ -9,7 +9,7 @@ LIB_REFS = System System.Xml System.Core System.ServiceModel.Internals
 LIB_MCS_FLAGS = \
 		-unsafe \
 		-d:NO_DYNAMIC_CODEGEN \
-		/nowarn:168,169,219,414 \
+		/nowarn:168,169,219,414,618,1634 \
 		$(RESOURCE_FILES:%=/resource:%)
 TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 

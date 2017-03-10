@@ -143,7 +143,7 @@ namespace System.Net {
 
         private static void DemandCallback(object state)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ((CodeAccessPermission) state).Demand();
 #endif
         }
@@ -309,7 +309,9 @@ namespace System.Net {
         private static IPHostEntry GetLocalHost()
         {
 #if MONO
+#pragma warning disable 618
             return Dns.GetHostByName (Dns.GetHostName ());
+#pragma warning restore
 #else
             //
             // IPv6 Changes: If IPv6 is enabled, we can't simply use the
@@ -966,7 +968,7 @@ namespace System.Net {
 
     internal static class ExceptionHelper
     {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         internal static readonly KeyContainerPermission KeyContainerPermissionOpen = new KeyContainerPermission(KeyContainerPermissionFlags.Open);
         internal static readonly WebPermission WebPermissionUnrestricted = new WebPermission(NetworkAccess.Connect);
         internal static readonly SecurityPermission UnmanagedPermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);

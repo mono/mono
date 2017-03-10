@@ -24,10 +24,13 @@
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/tokentype.h"
+#include "mono/metadata/w32file.h"
+#include "mono/metadata/w32error.h"
 
 #include "mono/utils/checked-build.h"
 #include "mono/utils/mono-digest.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/w32api.h"
 
 #define TEXT_OFFSET 512
 #define CLI_H_SIZE 136
@@ -173,6 +176,17 @@ add_mono_string_to_blob_cached (MonoDynamicImage *assembly, MonoString *str)
 	return idx;
 }
 
+static guint32
+image_create_token_raw  (MonoDynamicImage *assembly, MonoObject* obj_raw, gboolean create_methodspec, gboolean register_token, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER (); /* FIXME callers of image_create_token_raw should use handles */
+	error_init (error);
+	MONO_HANDLE_DCL (MonoObject, obj);
+	guint32 result = mono_image_create_token (assembly, obj, create_methodspec, register_token, error);
+	HANDLE_FUNCTION_RETURN_VAL (result);
+}
+
+
 /*
  * idx is the table index of the object
  * type is one of MONO_CUSTOM_ATTR_*
@@ -189,7 +203,7 @@ mono_image_add_cattrs (MonoDynamicImage *assembly, guint32 idx, guint32 type, Mo
 	char blob_size [6];
 	char *p = blob_size;
 	
-	mono_error_init (error);
+	error_init (error);
 
 	/* it is legal to pass a NULL cattrs: we avoid to use the if in a lot of places */
 	if (!cattrs)
@@ -204,7 +218,7 @@ mono_image_add_cattrs (MonoDynamicImage *assembly, guint32 idx, guint32 type, Mo
 	for (i = 0; i < count; ++i) {
 		cattr = (MonoReflectionCustomAttr*)mono_array_get (cattrs, gpointer, i);
 		values [MONO_CUSTOM_ATTR_PARENT] = idx;
-		token = mono_image_create_token (assembly, (MonoObject*)cattr->ctor, FALSE, FALSE, error);
+		token = image_create_token_raw (assembly, (MonoObject*)cattr->ctor, FALSE, FALSE, error); /* FIXME use handles */
 		if (!mono_error_ok (error)) goto fail;
 		type = mono_metadata_token_index (token);
 		type <<= MONO_CUSTOM_ATTR_TYPE_BITS;
@@ -315,7 +329,7 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb, Mon
 	guint32 header_size = 12;
 	MonoArray *code;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if ((mb->attrs & (METHOD_ATTRIBUTE_PINVOKE_IMPL | METHOD_ATTRIBUTE_ABSTRACT)) ||
 			(mb->iattrs & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME)))
@@ -477,7 +491,7 @@ mono_image_basic_method (ReflectionMethodBuilder *mb, MonoDynamicImage *assembly
 	guint32 *values;
 	guint i, count;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* room in this table is already allocated */
 	table = &assembly->tables [MONO_TABLE_METHOD];
@@ -565,7 +579,7 @@ mono_image_add_methodimpl (MonoDynamicImage *assembly, MonoReflectionMethodBuild
 	MonoReflectionMethod *m;
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mb->override_methods)
 		return TRUE;
@@ -580,7 +594,7 @@ mono_image_add_methodimpl (MonoDynamicImage *assembly, MonoReflectionMethodBuild
 		values [MONO_METHODIMPL_CLASS] = tb->table_idx;
 		values [MONO_METHODIMPL_BODY] = MONO_METHODDEFORREF_METHODDEF | (mb->table_idx << MONO_METHODDEFORREF_BITS);
 
-		tok = mono_image_create_token (assembly, (MonoObject*)m, FALSE, FALSE, error);
+		tok = image_create_token_raw (assembly, (MonoObject*)m, FALSE, FALSE, error); /* FIXME use handles */
 		return_val_if_nok (error, FALSE);
 
 		switch (mono_metadata_token_table (tok)) {
@@ -610,7 +624,7 @@ mono_image_get_method_info (MonoReflectionMethodBuilder *mb, MonoDynamicImage *a
 	ReflectionMethodBuilder rmb;
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mono_reflection_methodbuilder_from_method_builder (&rmb, mb, error) ||
 	    !mono_image_basic_method (&rmb, assembly, error))
@@ -687,7 +701,7 @@ mono_image_get_field_info (MonoReflectionFieldBuilder *fb, MonoDynamicImage *ass
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	mono_error_init (error);
+	error_init (error);
 
 	MonoDynamicTable *table;
 	guint32 *values;
@@ -758,7 +772,7 @@ mono_image_get_property_info (MonoReflectionPropertyBuilder *pb, MonoDynamicImag
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	mono_error_init (error);
+	error_init (error);
 
 	MonoDynamicTable *table;
 	guint32 *values;
@@ -884,7 +898,7 @@ encode_constraints (MonoReflectionGenericParam *gparam, guint32 owner, MonoDynam
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	mono_error_init (error);
+	error_init (error);
 
 	MonoDynamicTable *table;
 	guint32 num_constraints, i;
@@ -957,7 +971,7 @@ write_generic_param_entry (MonoDynamicImage *assembly, GenericParamTableEntry *e
 	guint32 *values;
 	guint32 table_idx;
 
-	mono_error_init (error);
+	error_init (error);
 
 	table = &assembly->tables [MONO_TABLE_GENERICPARAM];
 	table_idx = table->next_idx ++;
@@ -1014,7 +1028,7 @@ static gboolean
 params_add_cattrs (MonoDynamicImage *assembly, MonoArray *pinfo, MonoError *error) {
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 	if (!pinfo)
 		return TRUE;
 	for (i = 0; i < mono_array_length (pinfo); ++i) {
@@ -1033,7 +1047,7 @@ static gboolean
 type_add_cattrs (MonoDynamicImage *assembly, MonoReflectionTypeBuilder *tb, MonoError *error) {
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 	
 	if (!mono_image_add_cattrs (assembly, tb->table_idx, MONO_CUSTOM_ATTR_TYPEDEF, tb->cattrs, error))
 		return FALSE;
@@ -1096,7 +1110,7 @@ module_add_cattrs (MonoDynamicImage *assembly, MonoReflectionModuleBuilder *modu
 {
 	int i;
 	
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mono_image_add_cattrs (assembly, moduleb->table_idx, MONO_CUSTOM_ATTR_MODULE, moduleb->cattrs, error))
 		return FALSE;
@@ -1138,7 +1152,7 @@ mono_image_fill_file_table (MonoDomain *domain, MonoReflectionModule *module, Mo
 	char *b = blob_size;
 	char *dir, *path;
 
-	mono_error_init (error);
+	error_init (error);
 
 	table = &assembly->tables [MONO_TABLE_FILE];
 	table->rows++;
@@ -1171,7 +1185,7 @@ mono_image_fill_module_table (MonoDomain *domain, MonoReflectionModuleBuilder *m
 	MonoDynamicTable *table;
 	int i;
 
-	mono_error_init (error);
+	error_init (error);
 
 	table = &assembly->tables [MONO_TABLE_MODULE];
 	mb->table_idx = table->next_idx ++;
@@ -1217,12 +1231,10 @@ mono_image_fill_export_table_from_class (MonoDomain *domain, MonoClass *klass,
 	table->next_idx ++;
 
 	/* Emit nested types */
-	if (klass->ext && klass->ext->nested_classes) {
-		GList *tmp;
-
-		for (tmp = klass->ext->nested_classes; tmp; tmp = tmp->next)
-			mono_image_fill_export_table_from_class (domain, (MonoClass *)tmp->data, module_index, table->next_idx - 1, assembly);
-	}
+	GList *nested_classes = mono_class_get_nested_classes_property (klass);
+	GList *tmp;
+	for (tmp = nested_classes; tmp; tmp = tmp->next)
+		mono_image_fill_export_table_from_class (domain, (MonoClass *)tmp->data, module_index, table->next_idx - 1, assembly);
 
 	return res;
 }
@@ -1235,7 +1247,7 @@ mono_image_fill_export_table (MonoDomain *domain, MonoReflectionTypeBuilder *tb,
 	MonoClass *klass;
 	guint32 idx, i;
 
-	mono_error_init (error);
+	error_init (error);
 
 	MonoType *t = mono_reflection_type_get_handle ((MonoReflectionType*)tb, error);
 	return_if_nok (error);
@@ -1467,7 +1479,7 @@ build_compressed_metadata (MonoDynamicImage *assembly, MonoError *error)
 	unsigned char *p;
 	struct StreamDesc stream_desc [5];
 
-	mono_error_init (error);
+	error_init (error);
 
 	qsort (assembly->gen_params->pdata, assembly->gen_params->len, sizeof (gpointer), compare_genericparam);
 	for (i = 0; i < assembly->gen_params->len; i++) {
@@ -1727,9 +1739,9 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 				g_assert_not_reached ();
 			} else if (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType")) {
 				MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
-				MonoObject *obj = mono_class_get_ref_info (k);
+				MonoObject *obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
 				g_assert (obj);
-				g_assert (!strcmp (obj->vtable->klass->name, "TypeBuilder"));
+				g_assert (!strcmp (mono_object_class (obj)->name, "TypeBuilder"));
 				tb = (MonoReflectionTypeBuilder*)obj;
 				idx = tb->table_idx;
 			} else {
@@ -1843,7 +1855,7 @@ assembly_add_resource_manifest (MonoReflectionModuleBuilder *mb, MonoDynamicImag
 	MonoDynamicTable *table;
 	guint32 *values;
 
-	mono_error_init (error);
+	error_init (error);
 
 	table = &assembly->tables [MONO_TABLE_MANIFESTRESOURCE];
 	table->rows++;
@@ -1869,7 +1881,7 @@ assembly_add_resource (MonoReflectionModuleBuilder *mb, MonoDynamicImage *assemb
 	char *name, *sname;
 	guint32 idx, offset;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (rsrc->filename) {
 		name = mono_string_to_utf8_checked (rsrc->filename, error);
@@ -1929,7 +1941,7 @@ set_version_from_string (MonoString *version, guint32 *values, MonoError *error)
 	gchar *ver, *p, *str;
 	guint32 i;
 	
-	mono_error_init (error);
+	error_init (error);
 
 	values [MONO_ASSEMBLY_MAJOR_VERSION] = 0;
 	values [MONO_ASSEMBLY_MINOR_VERSION] = 0;
@@ -2003,7 +2015,7 @@ mono_image_emit_manifest (MonoReflectionModuleBuilder *moduleb, MonoError *error
 	int i;
 	guint32 module_index;
 
-	mono_error_init (error);
+	error_init (error);
 
 	assemblyb = moduleb->assemblyb;
 	assembly = moduleb->dynamic_image;
@@ -2095,7 +2107,7 @@ mono_image_get_type_info (MonoDomain *domain, MonoReflectionTypeBuilder *tb, Mon
 	int i, is_object = 0, is_system = 0;
 	char *n;
 
-	mono_error_init (error);
+	error_init (error);
 
 	table = &assembly->tables [MONO_TABLE_TYPEDEF];
 	values = table->values + tb->table_idx * MONO_TYPEDEF_SIZE;
@@ -2286,7 +2298,7 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb, MonoError *erro
 	guint32 *values;
 	int i, j;
 
-	mono_error_init (error);
+	error_init (error);
 
 	assemblyb = moduleb->assemblyb;
 	assembly = moduleb->dynamic_image;
@@ -2726,8 +2738,8 @@ static void
 checked_write_file (HANDLE f, gconstpointer buffer, guint32 numbytes)
 {
 	guint32 dummy;
-	if (!WriteFile (f, buffer, numbytes, &dummy, NULL))
-		g_error ("WriteFile returned %d\n", GetLastError ());
+	if (!mono_w32file_write (f, buffer, numbytes, &dummy))
+		g_error ("mono_w32file_write returned %d\n", mono_w32error_get_last ());
 }
 
 /*
@@ -2764,7 +2776,7 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 		0x6d, 0x6f, 0x64, 0x65, 0x2e, 0x0d, 0x0d, 0x0a,  0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
 
-	mono_error_init (error);
+	error_init (error);
 
 	assemblyb = mb->assemblyb;
 
@@ -3021,8 +3033,8 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 		if (!assembly->sections [i].size)
 			continue;
 		
-		if (SetFilePointer (file, assembly->sections [i].offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
-			g_error ("SetFilePointer returned %d\n", GetLastError ());
+		if (mono_w32file_seek (file, assembly->sections [i].offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+			g_error ("mono_w32file_seek returned %d\n", mono_w32error_get_last ());
 		
 		switch (i) {
 		case MONO_SECTION_TEXT:
@@ -3081,10 +3093,10 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 	}
 	
 	/* check that the file is properly padded */
-	if (SetFilePointer (file, file_offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
-		g_error ("SetFilePointer returned %d\n", GetLastError ());
-	if (! SetEndOfFile (file))
-		g_error ("SetEndOfFile returned %d\n", GetLastError ());
+	if (mono_w32file_seek (file, file_offset, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+		g_error ("mono_w32file_seek returned %d\n", mono_w32error_get_last ());
+	if (! mono_w32file_truncate (file))
+		g_error ("mono_w32file_truncate returned %d\n", mono_w32error_get_last ());
 	
 	mono_dynamic_stream_reset (&assembly->code);
 	mono_dynamic_stream_reset (&assembly->us);

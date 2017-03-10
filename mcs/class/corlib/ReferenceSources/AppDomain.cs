@@ -6,11 +6,6 @@ namespace System {
 
 	public partial class AppDomain
 	{
-		internal String GetTargetFrameworkName()
-		{
-			return ".NETFramework,Version=v4.5";
-		}
-
 		internal static bool IsAppXModel ()
 		{
 			return false;

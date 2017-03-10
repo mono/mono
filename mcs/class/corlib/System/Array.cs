@@ -1290,6 +1290,34 @@ namespace System
 			}
 		}
 
+		public static void Reverse<T>(T[] array)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			Reverse (array, 0, array.Length);
+		}
+
+		public static void Reverse<T>(T[] array, int index, int length)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+			if (index < 0 || length < 0)
+				throw new ArgumentOutOfRangeException ((index < 0 ? nameof (index) : nameof (length)));
+			if (array.Length - index < length)
+				throw new ArgumentException ();
+
+			int i = index;
+			int j = index + length - 1;
+			while (i < j) {
+				T temp = array [i];
+				array [i] = array [j];
+				array [j] = temp;
+				i++;
+				j--;
+			}
+		}
+
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array array)
 		{
@@ -3128,6 +3156,30 @@ namespace System
 				throw new ArgumentNullException ("array");
 
 			return new ReadOnlyCollection<T> (array);
+		}
+
+		public static void Fill<T> (T[] array, T value)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			for (int i = 0; i < array.Length; i++)
+				array [i] = value;
+		}
+
+		public static void Fill<T> (T[] array, T value, int startIndex, int count)
+		{
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+
+			if (startIndex < 0 || startIndex > array.Length)
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
+
+			if (count < 0 || startIndex > array.Length - count)
+				throw new ArgumentOutOfRangeException (nameof (count));
+
+			for (int i = startIndex; i < startIndex + count; i++)
+				array [i] = value;
 		}
 
 		public static T Find<T> (T [] array, Predicate<T> match)

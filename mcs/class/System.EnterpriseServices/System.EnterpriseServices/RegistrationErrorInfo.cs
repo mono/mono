@@ -35,12 +35,13 @@ namespace System.EnterpriseServices {
 	public sealed class RegistrationErrorInfo {
 
 		#region Fields
-
+#pragma warning disable 649
 		int errorCode;
 		string errorString;
 		string majorRef;
 		string minorRef;
 		string name;
+#pragma warning restore 649
 
 		#endregion // Fields
 

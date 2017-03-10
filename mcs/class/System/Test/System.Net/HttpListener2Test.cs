@@ -874,8 +874,14 @@ namespace MonoTests.System.Net {
 			
 			int port = NetworkHelpers.FindFreePort ();;
 			var h = new HttpListener ();
-			h.Prefixes.Add ("http://" + machineAddress [0] + ":" + port + "/");
-			h.Start ();
+			// Listen on the first IPV4 interface
+			foreach (IPAddress a in machineAddress) {
+				if (a.AddressFamily == AddressFamily.InterNetwork) {
+					h.Prefixes.Add ("http://" + a + ":" + port + "/");
+					h.Start ();
+					break;
+				}
+			}
 
 			try {
 				var c = new TcpClient ("localhost", port);

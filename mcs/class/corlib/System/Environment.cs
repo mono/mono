@@ -57,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 163;
+		private const int mono_corlib_version = 164;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -488,7 +488,7 @@ namespace System {
 		/// </summary>
 		public static string GetEnvironmentVariable (string variable)
 		{
-#if !MOBILE
+#if MONO_FEATURE_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
@@ -573,7 +573,7 @@ namespace System {
 			else
 				dir = UnixGetFolderPath (folder, option);
 
-#if !MOBILE
+#if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
 			}

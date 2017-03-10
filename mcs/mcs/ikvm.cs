@@ -583,7 +583,7 @@ namespace Mono.CSharp
 
 			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesImporting);
 
-			if (corlib == null) {
+			if (corlib == null || corlib.__IsMissing) {
 				// System.Object was not found in any referenced assembly, use compiled assembly as corlib
 				corlib = module.DeclaringAssembly.Builder;
 			} else {

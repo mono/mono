@@ -39,7 +39,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/io-layer/io-layer.h>
 #include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
@@ -119,20 +118,6 @@ void
 mono_runtime_cleanup_handlers (void)
 {
 }
-
-#if !defined(PLATFORM_MACOSX)
-pid_t
-mono_runtime_syscall_fork (void)
-{
-	g_assert_not_reached();
-	return 0;
-}
-
-void
-mono_gdb_render_native_backtraces (pid_t crashed_pid)
-{
-}
-#endif
 
 #else
 
@@ -220,7 +205,7 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	if (!ji) {
         if (mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_sigsegv (SIGABRT, ctx, info);
+		mono_handle_native_crash ("SIGABRT", ctx, info);
 	}
 }
 
@@ -254,7 +239,7 @@ per_thread_profiler_hit (void *ctx)
 	if (call_chain_depth == 0) {
 		mono_profiler_stat_hit ((guchar *)mono_arch_ip_from_context (ctx), ctx);
 	} else {
-		MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 		int current_frame_index = 1;
 		MonoContext mono_context;
 		guchar *ips [call_chain_depth + 1];
@@ -343,7 +328,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 	if (mono_thread_info_get_small_id () == -1)
 		return; //an non-attached thread got the signal
 
-	if (!mono_domain_get () || !mono_native_tls_get_value (mono_jit_tls_id))
+	if (!mono_domain_get () || !mono_tls_get_jit_tls ())
 		return; //thread in the process of dettaching
 
 	InterlockedIncrement (&profiler_signals_accepted);
@@ -842,77 +827,113 @@ mono_runtime_setup_stat_profiler (void)
 
 #endif
 
-#if !defined(PLATFORM_MACOSX)
-pid_t
-mono_runtime_syscall_fork ()
+#endif /* defined(__native_client__) || defined(HOST_WATCHOS) */
+
+#if defined(__native_client__)
+
+void
+mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
-#if defined(PLATFORM_ANDROID)
-	/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
-	g_assert_not_reached ();
-	return 0;
-#elif defined(SYS_fork)
-	return (pid_t) syscall (SYS_fork);
+}
+
 #else
-	g_assert_not_reached ();
-	return 0;
-#endif
+
+static gboolean
+native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)
+{
+	gchar *gdb;
+
+	gdb = g_find_program_in_path ("gdb");
+	if (!gdb)
+		return FALSE;
+
+	argv [0] = gdb;
+	argv [1] = "-batch";
+	argv [2] = "-x";
+	argv [3] = commands_filename;
+	argv [4] = "-nx";
+
+	fprintf (commands, "attach %ld\n", (long) crashed_pid);
+	fprintf (commands, "info threads\n");
+	fprintf (commands, "thread apply all bt\n");
+
+	return TRUE;
+}
+
+
+static gboolean
+native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)
+{
+	gchar *lldb;
+
+	lldb = g_find_program_in_path ("lldb");
+	if (!lldb)
+		return FALSE;
+
+	argv [0] = lldb;
+	argv [1] = "--batch";
+	argv [2] = "--source";
+	argv [3] = commands_filename;
+	argv [4] = "--no-lldbinit";
+
+	fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
+	fprintf (commands, "thread list\n");
+	fprintf (commands, "thread backtrace all\n");
+	fprintf (commands, "detach\n");
+	fprintf (commands, "quit\n");
+
+	return TRUE;
 }
 
 void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
-	const char *argv [9];
-	char template_ [] = "/tmp/mono-lldb-commands.XXXXXX";
-	char buf1 [128];
+#ifdef HAVE_EXECV
+	const char *argv [10];
 	FILE *commands;
-	gboolean using_lldb = FALSE;
+	char commands_filename [] = "/tmp/mono-gdb-commands.XXXXXX";
 
-	argv [0] = g_find_program_in_path ("gdb");
-	if (argv [0] == NULL) {
-		argv [0] = g_find_program_in_path ("lldb");
-		using_lldb = TRUE;
-	}
-
-	if (argv [0] == NULL)
+	if (mkstemp (commands_filename) == -1)
 		return;
 
-	if (using_lldb) {
-		if (mkstemp (template_) == -1)
-			return;
-
-		commands = fopen (template_, "w");
-
-		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
-		fprintf (commands, "thread list\n");
-		fprintf (commands, "thread backtrace all\n");
-		fprintf (commands, "detach\n");
-		fprintf (commands, "quit\n");
-
-		fflush (commands);
-		fclose (commands);
-
-		argv [1] = "--source";
-		argv [2] = template_;
-		argv [3] = 0;
-	} else {
-		argv [1] = "-ex";
-		sprintf (buf1, "attach %ld", (long) crashed_pid);
-		argv [2] = buf1;
-		argv [3] = "--ex";
-		argv [4] = "info threads";
-		argv [5] = "--ex";
-		argv [6] = "thread apply all bt";
-		argv [7] = "--batch";
-		argv [8] = 0;
+	commands = fopen (commands_filename, "w");
+	if (!commands) {
+		unlink (commands_filename);
+		return;
 	}
 
+	memset (argv, 0, sizeof (char*) * 10);
+
+#if defined(PLATFORM_MACOSX)
+	if (native_stack_with_lldb (crashed_pid, argv, commands, commands_filename))
+		goto exec;
+#endif
+
+	if (native_stack_with_gdb (crashed_pid, argv, commands, commands_filename))
+		goto exec;
+
+#if !defined(PLATFORM_MACOSX)
+	if (native_stack_with_lldb (crashed_pid, argv, commands, commands_filename))
+		goto exec;
+#endif
+
+	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
+
+	fclose (commands);
+	unlink (commands_filename);
+	return;
+
+exec:
+	fclose (commands);
 	execv (argv [0], (char**)argv);
 
-	if (using_lldb)
-		unlink (template_);
+	_exit (-1);
+#else
+	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
+#endif // HAVE_EXECV
 }
-#endif
-#endif /* __native_client__ */
+
+#endif /* defined(__native_client__) */
 
 #if !defined (__MACH__)
 

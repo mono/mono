@@ -66,11 +66,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-
-// Only do the poll when building with mono for now
-#if __MonoCS__
 using Mono.Unix.Native;
-#endif
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -107,11 +103,9 @@ namespace System.Windows.Forms {
 		// Message Loop
 		static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
 		static ArrayList	unattached_timer_list; // holds timers that are enabled but not attached to a window.
-		#if __MonoCS__						//
 		static Pollfd[]		pollfds;		// For watching the X11 socket
 		static bool wake_waiting;
 		static object wake_waiting_lock = new object ();
-		#endif							//
 		static X11Keyboard	Keyboard;		//
 		static X11Dnd		Dnd;
 		static Socket		listen;			//
@@ -507,7 +501,6 @@ namespace System.Windows.Forms {
 
 				wake_receive = listen.Accept();
 
-				#if __MonoCS__
 				pollfds = new Pollfd [2];
 				pollfds [0] = new Pollfd ();
 				pollfds [0].fd = XConnectionNumber (DisplayHandle);
@@ -516,7 +509,6 @@ namespace System.Windows.Forms {
 				pollfds [1] = new Pollfd ();
 				pollfds [1].fd = wake_receive.Handle.ToInt32 ();
 				pollfds [1].events = PollEvents.POLLIN;
-				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
 				Dnd = new X11Dnd (DisplayHandle, Keyboard);
@@ -1732,7 +1724,6 @@ namespace System.Windows.Forms {
 				}
 
 				if (timeout > 0) {
-					#if __MonoCS__
 					int length = pollfds.Length - 1;
 					lock (wake_waiting_lock) {
 						if (wake_waiting == false) {
@@ -1750,7 +1741,6 @@ namespace System.Windows.Forms {
 							wake_waiting = false;
 						}
 					}
-					#endif
 					lock (XlibLock) {
 						pending = XPending (DisplayHandle);
 					}
@@ -2800,7 +2790,7 @@ namespace System.Windows.Forms {
 			//else if (format == "PenData" ) return 10;
 			//else if (format == "RiffAudio" ) return 11;
 			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UTF16_STRING.ToInt32();
+			else if (format == "UnicodeText" ) return UTF8_STRING.ToInt32();
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;

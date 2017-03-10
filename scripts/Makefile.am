@@ -36,6 +36,7 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify		\
 	mcs			\
+	csc					\
 	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
@@ -73,7 +74,6 @@ scripts_4_0 = \
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
-	btls-cert-sync$(SCRIPT_SUFFIX)		\
 	cert-sync$(SCRIPT_SUFFIX)		\
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
@@ -155,14 +155,14 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	xbuild.in			\
-	update_submodules		\
+	update_submodules.sh	\
 	mcs.in				\
+	csc.in				\
 	dmcs.in				\
 	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in	\
 	submodules/versions.mk	\
 	submodules/versions.py
@@ -201,6 +201,10 @@ peverify: peverify.in Makefile
 
 mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+csc: csc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile

@@ -1,0 +1,26 @@
+.\" 
+.\" mdb2ppdb manual page.
+.\" Copyright 2017 Microsoft 
+.\"
+.TH Mono "mdb2ppdb"
+.SH NAME
+mdb2ppdb \- Convert Mono's debug file format (MDB) to Portable Program
+Database (PPDB) file formatn
+.SH SYNOPSIS
+.PP
+.B mdb2ppdb input.mdb output.ppdb
+.SH DESCRIPTION
+\fImdb2ppdb\fP is a tool that can be used to convert debug information
+stored in the Mono debug file format (files with the extension .mdb)
+which both Mono's compiler and tools that used Mono's
+System.Reflection.Emit debug file format on Unix used into the new
+debug format Portable Program Database (files with the
+extension .ppdb).
+.SH MAILING LISTS
+Mailing lists are listed at the
+http://www.mono-project.com/community/help/mailing-lists/
+.SH WEB SITE
+http://www.mono-project.com
+.SH SEE ALSO
+.PP
+mcs(1), pdb2mdb(1)

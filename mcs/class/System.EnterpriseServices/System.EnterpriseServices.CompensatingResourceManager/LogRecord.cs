@@ -77,6 +77,7 @@ namespace System.EnterpriseServices.CompensatingResourceManager {
 		#endregion // Properties
 	}
 
+#pragma warning disable 649
 	internal struct _LogRecord {
 		
 		#region Fields
@@ -87,4 +88,5 @@ namespace System.EnterpriseServices.CompensatingResourceManager {
 
 		#endregion // Fields
 	}
+#pragma warning restore 649
 }

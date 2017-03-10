@@ -201,7 +201,7 @@ namespace System.Text.RegularExpressions {
         /// </devdoc>
 
 #if !SILVERLIGHT
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [HostProtection(Synchronization=true)]
 #endif
         static public Match Synchronized(Match inner) {

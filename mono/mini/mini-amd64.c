@@ -339,39 +339,6 @@ merge_argument_class_from_type (MonoType *type, ArgumentClass class1)
 	return class1;
 }
 
-static int
-count_fields_nested (MonoClass *klass, gboolean pinvoke)
-{
-	MonoMarshalType *info;
-	int i, count;
-
-	count = 0;
-	if (pinvoke) {
-		info = mono_marshal_load_type_info (klass);
-		g_assert(info);
-		for (i = 0; i < info->num_fields; ++i) {
-			if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type))
-				count += count_fields_nested (mono_class_from_mono_type (info->fields [i].field->type), pinvoke);
-			else
-				count ++;
-		}
-	} else {
-		gpointer iter;
-		MonoClassField *field;
-
-		iter = NULL;
-		while ((field = mono_class_get_fields (klass, &iter))) {
-			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
-				continue;
-			if (MONO_TYPE_ISSTRUCT (field->type))
-				count += count_fields_nested (mono_class_from_mono_type (field->type), pinvoke);
-			else
-				count ++;
-		}
-	}
-	return count;
-}
-
 typedef struct {
 	MonoType *type;
 	int size, offset;
@@ -382,8 +349,8 @@ typedef struct {
  *
  *   Collect field info from KLASS recursively into FIELDS.
  */
-static int
-collect_field_info_nested (MonoClass *klass, StructFieldInfo *fields, int index, int offset, gboolean pinvoke, gboolean unicode)
+static void
+collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, gboolean pinvoke, gboolean unicode)
 {
 	MonoMarshalType *info;
 	int i;
@@ -393,20 +360,32 @@ collect_field_info_nested (MonoClass *klass, StructFieldInfo *fields, int index,
 		g_assert(info);
 		for (i = 0; i < info->num_fields; ++i) {
 			if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type)) {
-				index = collect_field_info_nested (mono_class_from_mono_type (info->fields [i].field->type), fields, index, info->fields [i].offset, pinvoke, unicode);
+				collect_field_info_nested (mono_class_from_mono_type (info->fields [i].field->type), fields_array, info->fields [i].offset, pinvoke, unicode);
 			} else {
 				guint32 align;
+				StructFieldInfo f;
 
-				fields [index].type = info->fields [i].field->type;
-				fields [index].size = mono_marshal_type_size (info->fields [i].field->type,
+				f.type = info->fields [i].field->type;
+				f.size = mono_marshal_type_size (info->fields [i].field->type,
 															   info->fields [i].mspec,
 															   &align, TRUE, unicode);
-				fields [index].offset = offset + info->fields [i].offset;
-				if (i == info->num_fields - 1 && fields [index].size + fields [index].offset < info->native_size) {
+				f.offset = offset + info->fields [i].offset;
+				if (i == info->num_fields - 1 && f.size + f.offset < info->native_size) {
 					/* This can happen with .pack directives eg. 'fixed' arrays */
-					fields [index].size = info->native_size - fields [index].offset;
+					if (MONO_TYPE_IS_PRIMITIVE (f.type)) {
+						/* Replicate the last field to fill out the remaining place, since the code in add_valuetype () needs type information */
+						g_array_append_val (fields_array, f);
+						while (f.size + f.offset < info->native_size) {
+							f.offset += f.size;
+							g_array_append_val (fields_array, f);
+						}
+					} else {
+						f.size = info->native_size - f.offset;
+						g_array_append_val (fields_array, f);
+					}
+				} else {
+					g_array_append_val (fields_array, f);
 				}
-				index ++;
 			}
 		}
 	} else {
@@ -418,18 +397,19 @@ collect_field_info_nested (MonoClass *klass, StructFieldInfo *fields, int index,
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (MONO_TYPE_ISSTRUCT (field->type)) {
-				index = collect_field_info_nested (mono_class_from_mono_type (field->type), fields, index, field->offset - sizeof (MonoObject), pinvoke, unicode);
+				collect_field_info_nested (mono_class_from_mono_type (field->type), fields_array, field->offset - sizeof (MonoObject), pinvoke, unicode);
 			} else {
 				int align;
+				StructFieldInfo f;
 
-				fields [index].type = field->type;
-				fields [index].size = mono_type_size (field->type, &align);
-				fields [index].offset = field->offset - sizeof (MonoObject) + offset;
-				index ++;
+				f.type = field->type;
+				f.size = mono_type_size (field->type, &align);
+				f.offset = field->offset - sizeof (MonoObject) + offset;
+
+				g_array_append_val (fields_array, f);
 			}
 		}
 	}
-	return index;
 }
 
 #ifdef TARGET_WIN32
@@ -650,6 +630,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	guint32 quadsize [2] = {8, 8};
 	ArgumentClass args [2];
 	StructFieldInfo *fields = NULL;
+	GArray *fields_array;
 	MonoClass *klass;
 	gboolean pass_on_stack = FALSE;
 	int struct_size;
@@ -676,9 +657,10 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	 * Collect field information recursively to be able to
 	 * handle nested structures.
 	 */
-	nfields = count_fields_nested (klass, sig->pinvoke);
-	fields = g_new0 (StructFieldInfo, nfields);
-	collect_field_info_nested (klass, fields, 0, 0, sig->pinvoke, klass->unicode);
+	fields_array = g_array_new (FALSE, TRUE, sizeof (StructFieldInfo));
+	collect_field_info_nested (klass, fields_array, 0, sig->pinvoke, klass->unicode);
+	fields = (StructFieldInfo*)fields_array->data;
+	nfields = fields_array->len;
 
 	for (i = 0; i < nfields; ++i) {
 		if ((fields [i].offset < 8) && (fields [i].offset + fields [i].size) > 8) {
@@ -701,7 +683,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		if (!is_return)
 			ainfo->arg_size = ALIGN_TO (size, 8);
 
-		g_free (fields);
+		g_array_free (fields_array, TRUE);
 		return;
 	}
 
@@ -743,7 +725,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 			if (!is_return)
 				ainfo->arg_size = ALIGN_TO (struct_size, 8);
 
-			g_free (fields);
+			g_array_free (fields_array, TRUE);
 			return;
 		}
 
@@ -781,7 +763,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		}
 	}
 
-	g_free (fields);
+	g_array_free (fields_array, TRUE);
 
 	/* Post merger cleanup */
 	if ((args [0] == ARG_CLASS_MEMORY) || (args [1] == ARG_CLASS_MEMORY))
@@ -1842,7 +1824,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cfg->method->save_lmf) {
 		cfg->lmf_ir = TRUE;
 #if !defined(TARGET_WIN32)
-		if (mono_get_lmf_tls_offset () != -1 && !optimize_for_xen)
+		if (!optimize_for_xen)
 			cfg->lmf_ir_mono_lmf = TRUE;
 #endif
 	}
@@ -3432,22 +3414,25 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 
 #endif /* DISABLE_JIT */
 
-#ifdef __APPLE__
+#ifdef TARGET_MACH
 static int tls_gs_offset;
 #endif
 
 gboolean
-mono_amd64_have_tls_get (void)
+mono_arch_have_fast_tls (void)
 {
 #ifdef TARGET_MACH
-	static gboolean have_tls_get = FALSE;
+	static gboolean have_fast_tls = FALSE;
 	static gboolean inited = FALSE;
+	guint8 *ins;
+
+	if (mini_get_debug_options ()->use_fallback_tls)
+		return FALSE;
 
 	if (inited)
-		return have_tls_get;
+		return have_fast_tls;
 
-#if MONO_HAVE_FAST_TLS
-	guint8 *ins = (guint8*)pthread_getspecific;
+	ins = (guint8*)pthread_getspecific;
 
 	/*
 	 * We're looking for these two instructions:
@@ -3455,7 +3440,7 @@ mono_amd64_have_tls_get (void)
 	 * mov    %gs:[offset](,%rdi,8),%rax
 	 * retq
 	 */
-	have_tls_get = ins [0] == 0x65 &&
+	have_fast_tls = ins [0] == 0x65 &&
 		       ins [1] == 0x48 &&
 		       ins [2] == 0x8b &&
 		       ins [3] == 0x04 &&
@@ -3477,8 +3462,8 @@ mono_amd64_have_tls_get (void)
 	 * popq   %rbp
 	 * retq
 	 */
-	if (!have_tls_get) {
-		have_tls_get = ins [0] == 0x55 &&
+	if (!have_fast_tls) {
+		have_fast_tls = ins [0] == 0x55 &&
 			       ins [1] == 0x48 &&
 			       ins [2] == 0x89 &&
 			       ins [3] == 0xe5 &&
@@ -3495,14 +3480,14 @@ mono_amd64_have_tls_get (void)
 
 		tls_gs_offset = ins[9];
 	}
-#endif
-
 	inited = TRUE;
 
-	return have_tls_get;
+	return have_fast_tls;
 #elif defined(TARGET_ANDROID)
 	return FALSE;
 #else
+	if (mini_get_debug_options ()->use_fallback_tls)
+		return FALSE;
 	return TRUE;
 #endif
 }
@@ -3530,7 +3515,7 @@ mono_amd64_get_tls_gs_offset (void)
  *
  * Returns: a pointer to the end of the stored code
  */
-guint8*
+static guint8*
 mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 {
 #ifdef TARGET_WIN32
@@ -3550,7 +3535,7 @@ mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 		amd64_mov_reg_membase (code, dreg, dreg, (tls_offset * 8) - 0x200, 8);
 		amd64_patch (buf [0], code);
 	}
-#elif defined(__APPLE__)
+#elif defined(TARGET_MACH)
 	x86_prefix (code, X86_GS_PREFIX);
 	amd64_mov_reg_mem (code, dreg, tls_gs_offset + (tls_offset * 8), 8);
 #else
@@ -3566,111 +3551,12 @@ mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset)
 	return code;
 }
 
-#ifdef TARGET_WIN32
-
-#define MAX_TEB_TLS_SLOTS 64
-#define TEB_TLS_SLOTS_OFFSET 0x1480
-#define TEB_TLS_EXPANSION_SLOTS_OFFSET 0x1780
-
 static guint8*
-emit_tls_get_reg_windows (guint8* code, int dreg, int offset_reg)
-{
-	int tmp_reg = -1;
-	guint8 * more_than_64_slots = NULL;
-	guint8 * empty_slot = NULL;
-	guint8 * tls_get_reg_done = NULL;
-	
-	//Use temporary register for offset calculation?
-	if (dreg == offset_reg) {
-		tmp_reg = dreg == AMD64_RAX ? AMD64_RCX : AMD64_RAX;
-		amd64_push_reg (code, tmp_reg);
-		amd64_mov_reg_reg (code, tmp_reg, offset_reg, sizeof (gpointer));
-		offset_reg = tmp_reg;
-	}
-
-	//TEB TLS slot array only contains MAX_TEB_TLS_SLOTS items, if more is used the expansion slots must be addressed.
-	amd64_alu_reg_imm (code, X86_CMP, offset_reg, MAX_TEB_TLS_SLOTS);
-	more_than_64_slots = code;
-	amd64_branch8 (code, X86_CC_GE, 0, TRUE);
-
-	//TLS slot array, _TEB.TlsSlots, is at offset TEB_TLS_SLOTS_OFFSET and index is offset * 8 in Windows 64-bit _TEB structure.
-	amd64_shift_reg_imm (code, X86_SHL, offset_reg, 3);
-	amd64_alu_reg_imm (code, X86_ADD, offset_reg, TEB_TLS_SLOTS_OFFSET);
-
-	//TEB pointer is stored in GS segment register on Windows x64. TLS slot is located at calculated offset from that pointer.
-	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_membase (code, dreg, offset_reg, 0, sizeof (gpointer));
-		
-	tls_get_reg_done = code;
-	amd64_jump8 (code, 0);
-
-	amd64_patch (more_than_64_slots, code);
-
-	//TLS expansion slots, _TEB.TlsExpansionSlots, is at offset TEB_TLS_EXPANSION_SLOTS_OFFSET in Windows 64-bit _TEB structure.
-	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_mem (code, dreg, TEB_TLS_EXPANSION_SLOTS_OFFSET, sizeof (gpointer));
-	
-	//Check for NULL in _TEB.TlsExpansionSlots.
-	amd64_test_reg_reg (code, dreg, dreg);
-	empty_slot = code;
-	amd64_branch8 (code, X86_CC_EQ, 0, TRUE);
-	
-	//TLS expansion slots are at index offset into the expansion array.
-	//Calculate for the MAX_TEB_TLS_SLOTS offsets, since the interessting offset is offset_reg - MAX_TEB_TLS_SLOTS.
-	amd64_alu_reg_imm (code, X86_SUB, offset_reg, MAX_TEB_TLS_SLOTS);
-	amd64_shift_reg_imm (code, X86_SHL, offset_reg, 3);
-	
-	amd64_mov_reg_memindex (code, dreg, dreg, 0, offset_reg, 0, sizeof (gpointer));
-	
-	amd64_patch (empty_slot, code);
-	amd64_patch (tls_get_reg_done, code);
-
-	if (tmp_reg != -1)
-		amd64_pop_reg (code, tmp_reg);
-
-	return code;
-}
-
-#endif
-
-static guint8*
-emit_tls_get_reg (guint8* code, int dreg, int offset_reg)
-{
-	/* offset_reg contains a value translated by mono_arch_translate_tls_offset () */
-#ifdef TARGET_OSX
-	if (dreg != offset_reg)
-		amd64_mov_reg_reg (code, dreg, offset_reg, sizeof (mgreg_t));
-	amd64_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_membase (code, dreg, dreg, 0, sizeof (mgreg_t));
-#elif defined(__linux__)
-	int tmpreg = -1;
-
-	if (dreg == offset_reg) {
-		/* Use a temporary reg by saving it to the redzone */
-		tmpreg = dreg == AMD64_RAX ? AMD64_RCX : AMD64_RAX;
-		amd64_mov_membase_reg (code, AMD64_RSP, -8, tmpreg, 8);
-		amd64_mov_reg_reg (code, tmpreg, offset_reg, sizeof (gpointer));
-		offset_reg = tmpreg;
-	}
-	x86_prefix (code, X86_FS_PREFIX);
-	amd64_mov_reg_mem (code, dreg, 0, 8);
-	amd64_mov_reg_memindex (code, dreg, dreg, 0, offset_reg, 0, 8);
-	if (tmpreg != -1)
-		amd64_mov_reg_membase (code, tmpreg, AMD64_RSP, -8, 8);
-#elif defined(TARGET_WIN32)
-	code = emit_tls_get_reg_windows (code, dreg, offset_reg);
-#else
-	g_assert_not_reached ();
-#endif
-	return code;
-}
-
-static guint8*
-amd64_emit_tls_set (guint8 *code, int sreg, int tls_offset)
+mono_amd64_emit_tls_set (guint8 *code, int sreg, int tls_offset)
 {
 #ifdef TARGET_WIN32
 	g_assert_not_reached ();
-#elif defined(__APPLE__)
+#elif defined(TARGET_MACH)
 	x86_prefix (code, X86_GS_PREFIX);
 	amd64_mov_mem_reg (code, tls_gs_offset + (tls_offset * 8), sreg, 8);
 #else
@@ -3679,37 +3565,6 @@ amd64_emit_tls_set (guint8 *code, int sreg, int tls_offset)
 	amd64_mov_mem_reg (code, tls_offset, sreg, 8);
 #endif
 	return code;
-}
-
-static guint8*
-amd64_emit_tls_set_reg (guint8 *code, int sreg, int offset_reg)
-{
-	/* offset_reg contains a value translated by mono_arch_translate_tls_offset () */
-#ifdef TARGET_WIN32
-	g_assert_not_reached ();
-#elif defined(__APPLE__)
-	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_membase_reg (code, offset_reg, 0, sreg, 8);
-#else
-	x86_prefix (code, X86_FS_PREFIX);
-	amd64_mov_membase_reg (code, offset_reg, 0, sreg, 8);
-#endif
-	return code;
-}
- 
- /*
- * mono_arch_translate_tls_offset:
- *
- *   Translate the TLS offset OFFSET computed by MONO_THREAD_VAR_OFFSET () into a format usable by OP_TLS_GET_REG/OP_TLS_SET_REG.
- */
-int
-mono_arch_translate_tls_offset (int offset)
-{
-#ifdef __APPLE__
-	return tls_gs_offset + (offset * 8);
-#else
-	return offset;
-#endif
 }
 
 /*
@@ -4901,16 +4756,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_GENERIC_CLASS_INIT: {
-			static int byte_offset = -1;
-			static guint8 bitmask;
 			guint8 *jump;
 
 			g_assert (ins->sreg1 == MONO_AMD64_ARG_REG1);
 
-			if (byte_offset < 0)
-				mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
-
-			amd64_test_membase_imm_size (code, ins->sreg1, byte_offset, bitmask, 1);
+			amd64_test_membase_imm_size (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoVTable, initialized), 1, 1);
 			jump = code;
 			amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
@@ -5719,15 +5569,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_amd64_emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;
 		}
-		case OP_TLS_GET_REG:
-			code = emit_tls_get_reg (code, ins->dreg, ins->sreg1);
-			break;
 		case OP_TLS_SET: {
-			code = amd64_emit_tls_set (code, ins->sreg1, ins->inst_offset);
-			break;
-		}
-		case OP_TLS_SET_REG: {
-			code = amd64_emit_tls_set_reg (code, ins->sreg1, ins->sreg2);
+			code = mono_amd64_emit_tls_set (code, ins->sreg1, ins->inst_offset);
 			break;
 		}
 		case OP_MEMORY_BARRIER: {
@@ -6517,8 +6360,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_XZERO:
 			amd64_sse_pxor_reg_reg (code, ins->dreg, ins->dreg);
 			break;
+		case OP_XONES:
+			amd64_sse_pcmpeqb_reg_reg (code, ins->dreg, ins->dreg);
+			break;
 		case OP_ICONV_TO_R4_RAW:
 			amd64_movd_xreg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			if (!cfg->r4fp)
+			  amd64_sse_cvtss2sd_reg_reg (code, ins->dreg, ins->dreg);
 			break;
 
 		case OP_FCONV_TO_R8_X:
@@ -7221,9 +7069,9 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	
 	if (method->save_lmf) {
 		/* check if we need to restore protection of the stack after a stack overflow */
-		if (!cfg->compile_aot && mono_get_jit_tls_offset () != -1) {
+		if (!cfg->compile_aot && mono_arch_have_fast_tls () && mono_tls_get_tls_offset (TLS_KEY_JIT_TLS) != -1) {
 			guint8 *patch;
-			code = mono_amd64_emit_tls_get (code, AMD64_RCX, mono_get_jit_tls_offset ());
+			code = mono_amd64_emit_tls_get (code, AMD64_RCX, mono_tls_get_tls_offset (TLS_KEY_JIT_TLS));
 			/* we load the value in a separate instruction: this mechanism may be
 			 * used later as a safer way to do thread interruption
 			 */

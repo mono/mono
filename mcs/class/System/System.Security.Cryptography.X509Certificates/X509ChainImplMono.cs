@@ -699,7 +699,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (pubkey == null)
 				return false;
 			// Sadly X509Certificate2 doesn't expose the signature nor the tbs (to be signed) structure
-			MX.X509Certificate mx = signed.MonoCertificate;
+			var mx = signed.MonoCertificate;
 			return (mx.VerifySignature (pubkey));
 		}
 
@@ -725,7 +725,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (ext == null)
 				return String.Empty;
-			MX.Extensions.AuthorityKeyIdentifierExtension aki = new MX.Extensions.AuthorityKeyIdentifierExtension (ext);
+			var aki = new MX.Extensions.AuthorityKeyIdentifierExtension (ext);
 			byte[] id = aki.Identifier;
 			if (id == null)	
 				return String.Empty;

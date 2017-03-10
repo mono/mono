@@ -33,10 +33,8 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/marshal.h>
-#include <mono/metadata/socket-io.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/io-layer/io-layer.h>
 #include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
@@ -58,6 +56,7 @@
 #include "mini.h"
 #include "jit.h"
 #include "aot-compiler.h"
+#include "interp/interp.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -121,11 +120,6 @@ opt_names [] = {
 
 #endif
 
-static const OptFunc
-opt_funcs [sizeof (int) * 8] = {
-	NULL
-};
-
 #ifdef __native_client__
 extern char *nacl_mono_path;
 #endif
@@ -155,7 +149,8 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 {
 	guint32 exclude = 0;
 	const char *n;
-	int i, invert, len;
+	int i, invert;
+	char **parts, **ptr;
 
 	/* Initialize the hwcap module if necessary. */
 	mono_hwcap_init ();
@@ -168,7 +163,11 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 	if (!p)
 		return opt;
 
-	while (*p) {
+	parts = g_strsplit (p, ",", -1);
+	for (ptr = parts; ptr && *ptr; ptr ++) {
+		char *arg = *ptr;
+		char *p = arg;
+
 		if (*p == '-') {
 			p++;
 			invert = TRUE;
@@ -177,24 +176,11 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 		}
 		for (i = 0; i < G_N_ELEMENTS (opt_names) && optflag_get_name (i); ++i) {
 			n = optflag_get_name (i);
-			len = strlen (n);
-			if (strncmp (p, n, len) == 0) {
+			if (!strcmp (p, n)) {
 				if (invert)
 					opt &= ~ (1 << i);
 				else
 					opt |= 1 << i;
-				p += len;
-				if (*p == ',') {
-					p++;
-					break;
-				} else if (*p == '=') {
-					p++;
-					if (opt_funcs [i])
-						opt_funcs [i] (p);
-					while (*p && *p++ != ',');
-					break;
-				}
-				/* error out */
 				break;
 			}
 		}
@@ -204,15 +190,16 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 					opt = 0;
 				else
 					opt = ~(EXCLUDED_FROM_ALL | exclude);
-				p += 3;
-				if (*p == ',')
-					p++;
 			} else {
 				fprintf (stderr, "Invalid optimization name `%s'\n", p);
 				exit (1);
 			}
 		}
+
+		g_free (arg);
 	}
+	g_free (parts);
+
 	return opt;
 }
 
@@ -955,7 +942,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 			g_print ("Compiling %d %s\n", count, desc);
 			g_free (desc);
 		}
-		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)0, 0, -1);
+		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)JIT_FLAG_DISCARD_RESULTS, 0, -1);
 		if (cfg->exception_type != MONO_EXCEPTION_NONE) {
 			printf ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), cfg->exception_message);
 			fail_count ++;
@@ -1211,7 +1198,6 @@ mini_usage_jitdeveloper (void)
 		 "    --single-method=OPTS   Runs regressions with only one method optimized with OPTS at any time\n"
 		 "    --statfile FILE        Sets the stat file to FILE\n"
 		 "    --stats                Print statistics about the JIT operations\n"
-		 "    --wapi=hps|semdel|seminfo IO-layer maintenance\n"
 		 "    --inject-async-exc METHOD OFFSET Inject an asynchronous exception at METHOD\n"
 		 "    --verify-all           Run the verifier on all assemblies and methods\n"
 		 "    --full-aot             Avoid JITting any code\n"
@@ -1276,6 +1262,7 @@ mini_usage (void)
 	        "    --mixed-mode           Enable mixed-mode image support.\n"
 #endif
 		"    --handlers             Install custom handlers, use --help-handlers for details.\n"
+		"    --aot-path=PATH        List of additional directories to search for AOT images.\n"
 	  );
 }
 
@@ -1779,6 +1766,16 @@ mono_main (int argc, char* argv[])
 			mono_compile_aot = TRUE;
 			aot_options = &argv [i][6];
 #endif
+		} else if (strncmp (argv [i], "--aot-path=", 11) == 0) {
+			char **splitted;
+
+			splitted = g_strsplit (argv [i] + 11, G_SEARCHPATH_SEPARATOR_S, 1000);
+			while (*splitted) {
+				char *tmp = *splitted;
+				mono_aot_paths = g_list_append (mono_aot_paths, g_strdup (tmp));
+				g_free (tmp);
+				splitted++;
+			}
 		} else if (strncmp (argv [i], "--compile-all=", 14) == 0) {
 			action = DO_COMPILE;
 			recompilation_times = atoi (argv [i] + 14);
@@ -1908,6 +1905,11 @@ mono_main (int argc, char* argv[])
 #endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
+#ifdef ENABLE_INTERPRETER
+		} else if (strcmp (argv [i], "--interpreter") == 0) {
+			mono_use_interpreter = TRUE;
+#endif
+
 #ifdef __native_client__
 		} else if (strcmp (argv [i], "--nacl-mono-path") == 0){
 			nacl_mono_path = g_strdup(argv[++i]);
@@ -1996,8 +1998,7 @@ mono_main (int argc, char* argv[])
 	mono_set_rootdir ();
 
 	if (enable_profile) {
-		mono_profiler_load (profile_options);
-		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
+		mini_profiler_enable_with_options (profile_options);
 	}
 
 	mono_attach_parse_options (attach_options);
@@ -2037,6 +2038,9 @@ mono_main (int argc, char* argv[])
 	}
 
 	mono_set_defaults (mini_verbose, opt);
+#ifdef ENABLE_INTERPRETER
+	mono_interp_init ();
+#endif
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2060,6 +2064,17 @@ mono_main (int argc, char* argv[])
 	case DO_SINGLE_METHOD_REGRESSION:
 		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
+#ifdef ENABLE_INTERPRETER
+		if (mono_use_interpreter) {
+			if (mono_interp_regression_list (2, argc -i, argv + i)) {
+				g_print ("Regression ERRORS!\n");
+				// mini_cleanup (domain);
+				return 1;
+			}
+			// mini_cleanup (domain);
+			return 0;
+		}
+#endif
 		if (mini_regression_list (mini_verbose, argc -i, argv + i)) {
 			g_print ("Regression ERRORS!\n");
 			mini_cleanup (domain);

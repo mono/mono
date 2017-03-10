@@ -124,8 +124,8 @@ mono_security_core_clr_is_platform_image (MonoImage *image)
 #ifndef DISABLE_SECURITY
 
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (security_critical, System.Security, SecurityCriticalAttribute)
-static GENERATE_GET_CLASS_WITH_CACHE (security_safe_critical, System.Security, SecuritySafeCriticalAttribute)
+static GENERATE_GET_CLASS_WITH_CACHE (security_critical, "System.Security", "SecurityCriticalAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (security_safe_critical, "System.Security", "SecuritySafeCriticalAttribute")
 
 static MonoClass*
 security_critical_attribute (void)
@@ -631,7 +631,7 @@ get_method_access_exception (const char *format, MonoMethod *caller, MonoMethod 
 gboolean
 mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	MonoMethod *caller = get_reflection_caller ();
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
@@ -672,7 +672,7 @@ mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, Mo
 gboolean
 mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	MonoMethod *caller = get_reflection_caller ();
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
@@ -748,7 +748,7 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, MonoError *
 {
 	MonoMethod *caller;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* note: mscorlib creates delegates to avoid reflection (optimization), we ignore those cases */
 	if (can_avoid_corlib_reflection_delegate_optimization (method))
@@ -1061,21 +1061,21 @@ mono_security_core_clr_require_elevated_permissions (void)
 gboolean
 mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
 mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
 mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 

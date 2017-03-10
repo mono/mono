@@ -13,10 +13,13 @@
 #include <mono/utils/mono-error.h>
 
 gboolean
-mono_reflection_is_usertype (MonoReflectionType *ref);
+mono_reflection_is_usertype (MonoReflectionTypeHandle ref);
 
 MonoReflectionType*
 mono_reflection_type_resolve_user_types (MonoReflectionType *type, MonoError *error);
+
+MonoType *
+mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref_type, MonoError *error);
 
 MonoType*
 mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, mono_bool ignorecase, mono_bool *type_resolve, MonoError *error);
@@ -25,8 +28,7 @@ MonoType*
 mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError *error);
 
 guint32
-mono_reflection_get_token_checked (MonoObject *obj, MonoError *error);
-
+mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error);
 
 MonoObject*
 mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass, MonoError *error);
@@ -64,32 +66,44 @@ mono_identifier_unescape_type_name_chars (char* identifier);
 MonoImage *
 mono_find_dynamic_image_owner (void *ptr);
 
-MonoReflectionAssembly*
-mono_assembly_get_object_checked (MonoDomain *domain, MonoAssembly *assembly, MonoError *error);
+MonoReflectionAssemblyHandle
+mono_assembly_get_object_handle (MonoDomain *domain, MonoAssembly *assembly, MonoError *error);
 
 MonoReflectionType*
 mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *error);
 
+MonoReflectionTypeHandle
+mono_type_get_object_handle (MonoDomain *domain, MonoType *type, MonoError *error);
+
 MonoReflectionField*
 mono_field_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoClassField *field, MonoError *error);
+
+MonoReflectionFieldHandle
+mono_field_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoClassField *field, MonoError *error);
 
 MonoReflectionMethod*
 mono_method_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
 
+MonoReflectionMethodHandle
+mono_method_get_object_handle (MonoDomain *domain, MonoMethod *method, MonoClass *refclass, MonoError *error);
+
 MonoReflectionProperty*
 mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error);
 
-MonoReflectionEvent*
-mono_event_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error);
+MonoReflectionPropertyHandle
+mono_property_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error);
 
-MonoReflectionModule*
-mono_module_get_object_checked (MonoDomain *domain, MonoImage *image, MonoError *error);
+MonoReflectionEventHandle
+mono_event_get_object_handle (MonoDomain *domain, MonoClass *klass, MonoEvent *event, MonoError *error);
 
-MonoReflectionModule*
-mono_module_file_get_object_checked (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
+MonoReflectionModuleHandle
+mono_module_get_object_handle (MonoDomain *domain, MonoImage *image, MonoError *error);
 
-MonoReflectionMethodBody*
-mono_method_body_get_object_checked (MonoDomain *domain, MonoMethod *method, MonoError *error);
+MonoReflectionModuleHandle
+mono_module_file_get_object_handle (MonoDomain *domain, MonoImage *image, int table_index, MonoError *error);
+
+MonoReflectionMethodBodyHandle
+mono_method_body_get_object_handle (MonoDomain *domain, MonoMethod *method, MonoError *error);
 
 MonoClass *
 mono_class_from_mono_type_handle (MonoReflectionTypeHandle h);

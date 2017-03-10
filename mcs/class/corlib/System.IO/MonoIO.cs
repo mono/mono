@@ -237,7 +237,16 @@ namespace System.IO
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int FindClose (IntPtr handle);
-		
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static IntPtr FindFirstFile (string path_with_pattern, out string fileName, out int fileAttr, out int error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool FindNextFile (IntPtr hnd, out string fileName, out int fileAttr, out int error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool FindCloseFile (IntPtr hnd);
+
 		public static bool Exists (string path, out MonoIOError error)
 		{
 			FileAttributes attrs = GetFileAttributes (path,

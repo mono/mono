@@ -71,6 +71,7 @@ namespace System.Net.NetworkInformation {
 #endif
 		};
 		static readonly string PingBinPath;
+		static bool canSendPrivileged;
 #endif
 		const int default_timeout = 4000; // 4 sec.
 		ushort identifier;
@@ -80,7 +81,6 @@ namespace System.Net.NetworkInformation {
 		const UInt32 linux_cap_version = 0x20071026;
 		
 		static readonly byte [] default_buffer = new byte [0];
-		static bool canSendPrivileged;
 		
 
 		BackgroundWorker worker;
@@ -207,11 +207,11 @@ namespace System.Net.NetworkInformation {
 			return Send (addresses [0], timeout, buffer, options);
 		}
 
-		static IPAddress GetNonLoopbackIP ()
+		static IPAddress GetNonLoopbackIPV4 ()
 		{
 #pragma warning disable 618
 			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
-				if (!IPAddress.IsLoopback (addr))
+				if (!IPAddress.IsLoopback (addr) && addr.AddressFamily == AddressFamily.InterNetwork)
 					return addr;
 #pragma warning restore 618
 

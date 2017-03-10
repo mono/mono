@@ -1,5 +1,4 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-IDbColumnSchemaGenerator.cs
-DbColumn.cs
-DbDataReaderExtensions.Facade.cs
+
+../../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataReaderExtensions.Facade.cs

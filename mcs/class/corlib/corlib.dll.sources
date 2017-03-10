@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/AssemblyRef.cs
+../../build/common/SR.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/RegistryKeyPermissionCheck.cs
@@ -141,6 +142,7 @@ System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
 System/TimeZoneInfo.Serialization.cs
+System/TimeZoneInfo.WinRT.cs
 ../../build/common/MonoTODOAttribute.cs
 System/TypeIdentifier.cs
 System/TypeSpec.cs
@@ -421,7 +423,6 @@ System.Runtime.InteropServices/UCOMITypeLib.cs
 System.Runtime.InteropServices/VARDESC.cs
 System.Runtime.InteropServices/VARFLAGS.cs
 System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
-System.Runtime.InteropServices/ComAwareEventInfo.cs
 System.Runtime.InteropServices/ComEventsHelper.cs
 
 System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.cs
@@ -705,7 +706,6 @@ System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
 System.Security.Cryptography/DSACryptoServiceProvider.cs
 System.Security.Cryptography/ICspAsymmetricAlgorithm.cs
-System.Security.Cryptography/IncrementalHash.cs
 System.Security.Cryptography/KeyNumber.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/RC2CryptoServiceProvider.cs
@@ -1037,7 +1037,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/throwhelper.cs
 ../referencesource/mscorlib/system/timezoneinfo.cs
 ../referencesource/mscorlib/system/timezonenotfoundexception.cs
-../referencesource/mscorlib/system/tuple.cs
 ../referencesource/mscorlib/system/type.cs
 ../referencesource/mscorlib/system/typeaccessexception.cs
 ../referencesource/mscorlib/system/typeinitializationexception.cs
@@ -1108,14 +1107,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
 ../referencesource/mscorlib/system/collections/generic/list.cs
 
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentQueue.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentStack.cs
-../referencesource/mscorlib/system/collections/Concurrent/IProducerConsumerCollection.cs
-../referencesource/mscorlib/system/collections/Concurrent/OrderablePartitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/Partitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/PartitionerStatic.cs
-
 ../referencesource/mscorlib/system/diagnostics/assert.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilter.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilters.cs
@@ -1185,6 +1176,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
 ../referencesource/mscorlib/system/io/bufferedstream.cs
+../referencesource/mscorlib/system/io/directory.cs
 ../referencesource/mscorlib/system/io/directorynotfoundexception.cs
 ../referencesource/mscorlib/system/io/drivenotfoundexception.cs
 ../referencesource/mscorlib/system/io/endofstreamexception.cs
@@ -1193,6 +1185,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/io/fileloadexception.cs
 ../referencesource/mscorlib/system/io/filenotfoundexception.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
+../referencesource/mscorlib/system/io/filesystemenumerable.cs
 ../referencesource/mscorlib/system/io/memorystream.cs
 ../referencesource/mscorlib/system/io/pathtoolongexception.cs
 ../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
@@ -1639,14 +1632,61 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
 
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
+../referencesource/mscorlib/microsoft/win32/safehandles/safefindhandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
+corert/AddrofIntrinsics.cs
+corert/Debug.cs
+corert/Interop.cs
+corert/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Errors.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.FormatMessage.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
+
+../../../external/corert/src/Common/src/System/Diagnostics/Debug.cs
+
+../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+
+../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Win32Marshal.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/DeferredDisposableLifetime.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
+
 corefx/SR.cs
 
-../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
-
-../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs
-../../../external/corefx/src/System.ValueTuple/src/System/ValueTuple/TupleExtensions.cs
-../../../external/corefx/src/System.ValueTuple/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentQueue.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentStack.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/IProducerConsumerCollection.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs

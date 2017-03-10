@@ -37,7 +37,7 @@ namespace System.Windows.Forms
     /// </devdoc>
     internal static class SecurityUtils {
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         private static volatile ReflectionPermission memberAccessPermission = null;
         private static volatile ReflectionPermission restrictedMemberAccessPermission = null;
 
@@ -62,7 +62,7 @@ namespace System.Windows.Forms
 #endif
 
         private static void DemandReflectionAccess(Type type) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             try {
                 MemberAccessPermission.Demand();
             }
@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 
         [SecuritySafeCritical]
         private static void DemandGrantSet(Assembly assembly) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             PermissionSet targetGrantSet = assembly.PermissionSet;
             targetGrantSet.AddPermission(RestrictedMemberAccessPermission);
             targetGrantSet.Demand();
@@ -82,7 +82,7 @@ namespace System.Windows.Forms
         }
 
         private static bool HasReflectionPermission(Type type) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             try {
                 DemandReflectionAccess(type);
                 return true;

@@ -51,14 +51,14 @@ namespace MonoTests.System.Xml
 		public void CreateEvidenceForUrl_Basic ()
 		{
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl (null);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 			Assert.AreEqual (0, e.Count, "null");
 #else
 			Assert.IsNull (e);
 #endif
 
 			e = XmlSecureResolver.CreateEvidenceForUrl (String.Empty);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 			Assert.AreEqual (0, e.Count, "String.Empty");
 #else
 			Assert.IsNull (e);
@@ -136,7 +136,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("file", resolved.Scheme);
 			var task = sr.GetEntityAsync (resolved, null, typeof (Stream));
 			Assert.That (task.Wait (3000));
-			Assert.IsInstanceOfType (typeof (FileStream), task.Result);
+			Assert.IsTrue (task.Result is FileStream, "Unexpected type: " + task.Result.GetType());
 		}
 
 	}

@@ -3720,8 +3720,11 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("NotOnMac")]
-                public void ConnectedProperty ()
-                {
+#if FULL_AOT_DESKTOP
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=52157")]
+#endif
+		public void ConnectedProperty ()
+		{
 			TcpListener listener = new TcpListener (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			listener.Start();
 
@@ -4538,10 +4541,8 @@ namespace MonoTests.System.Net.Sockets
 					mSent.Set ();
 				}, clientSocket);
 
-				if (!mSent.WaitOne (1500))
-					throw new TimeoutException ();
-				if (!mReceived.WaitOne (1500))
-					throw new TimeoutException ();
+				Assert.IsTrue (mSent.WaitOne (5000), "#1");
+				Assert.IsTrue (mReceived.WaitOne (5000), "#2");
 			} finally {
 				if (File.Exists (temp))
 					File.Delete (temp);
@@ -4671,6 +4672,26 @@ namespace MonoTests.System.Net.Sockets
 			socket.ConnectAsync (socketArgs);
 
 			Assert.IsTrue (mre.WaitOne (1000), "ConnectedAsync timeout");
+		}
+
+		[Test] // Covers https://bugzilla.xamarin.com/show_bug.cgi?id=52549
+		public void SocketMismatchProtocol ()
+		{
+			try {
+				using (Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Tcp));
+				Assert.Fail ("#1");
+			} catch (SocketException e) {
+				// Only work on OSX
+				// Assert.AreEqual(SocketError.ProtocolType, e.SocketErrorCode, "#2");
+			}
+
+			try {
+				using (Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp));
+				Assert.Fail ("#3");
+			} catch (SocketException e) {
+				// Only work on OSX
+				// Assert.AreEqual(SocketError.ProtocolType, e.SocketErrorCode, "#4");
+			}
 		}
  	}
 }

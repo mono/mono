@@ -1,6 +1,3 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 Assembly/TypeForwarders.cs
 System.ServiceModel.Activation/WebScriptServiceHostFactory.cs

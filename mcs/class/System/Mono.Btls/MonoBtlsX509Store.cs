@@ -159,8 +159,7 @@ namespace Mono.Btls
 
 		internal void AddTrustedRoots ()
 		{
-			var systemRoot = MonoBtlsProvider.GetSystemStoreLocation ();
-			LoadLocations (null, systemRoot);
+			MonoBtlsProvider.SetupCertificateStore (this);
 		}
 
 		public MonoBtlsX509Lookup AddLookup (MonoBtlsX509LookupType type)

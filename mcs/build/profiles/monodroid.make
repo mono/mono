@@ -2,8 +2,8 @@
 
 BOOTSTRAP_PROFILE = build
 
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
-MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_CSC)
+MCS = $(BOOTSTRAP_MCS)
 
 # Use system resgen as we don't want local System.Windows.Forms dependency
 RESGEN = resgen2
@@ -25,7 +25,6 @@ PROFILE_MCS_FLAGS = \
 	-d:MOBILE_DYNAMIC \
 	-d:MONODROID \
 	-d:ANDROID \
-	-d:NETSTANDARD \
 	-nowarn:1699 \
 	-nostdlib \
 	$(DEFAULT_REFERENCES) \
@@ -38,3 +37,4 @@ NO_TEST = yes
 NO_INSTALL = yes
 MOBILE_DYNAMIC = yes
 MOBILE_PROFILE = yes
+NO_CONSOLE = yes

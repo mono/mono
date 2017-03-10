@@ -32,7 +32,7 @@ namespace Mono.ILASM {
                 private string pinvoke_meth;
                 private PEAPI.PInvokeAttr pinvoke_attr;
                 private ILTokenizer tokenizer;
-		static int yacc_verbose_flag;
+		const int yacc_verbose_flag = 0;
 		KeyValuePair<string, TypeAttr> current_extern;
 
                 class NameValuePair {
@@ -59,13 +59,14 @@ namespace Mono.ILASM {
 
                 public bool CheckSecurityActionValidity (System.Security.Permissions.SecurityAction action, bool for_assembly)
                 {
+#pragma warning disable 618
                         if ((action == System.Security.Permissions.SecurityAction.RequestMinimum || 
                                 action == System.Security.Permissions.SecurityAction.RequestOptional || 
                                 action == System.Security.Permissions.SecurityAction.RequestRefuse) && !for_assembly) {
                                 Report.Warning (String.Format ("System.Security.Permissions.SecurityAction '{0}' is not valid for this declaration", action));
                                 return false;
                         }
-
+#pragma warning restore 618
                         return true;
                 }
 
@@ -359,6 +360,7 @@ namespace Mono.ILASM {
 %token K_INTERNALCALL
 %token K_SYNCHRONIZED
 %token K_NOINLINING
+%token K_NOOPTIMIZATION
 %token K_CUSTOM
 %token K_FIXED
 %token K_SYSSTRING
@@ -1716,18 +1718,19 @@ data_decl		: data_head data_body
                           }
 			;
 
-data_head		: D_DATA tls id ASSIGN
+data_head		: D_DATA data_attr id ASSIGN
                           {
-                                $$ = new DataDef ((string) $3, (bool) $2);    
+                                $$ = new DataDef ((string) $3, (DataSegment) $2);
                           } 
-			| D_DATA tls
+			| D_DATA data_attr
                           {
-                                $$ = new DataDef (String.Empty, (bool) $2);
+                                $$ = new DataDef (String.Empty, (DataSegment) $2);
                           }
 			;
 
-tls			: /* EMPTY */   { $$ = false; }
-			| K_TLS         { $$ = true; }
+data_attr		: /* EMPTY */                   { $$ = DataSegment.Data; }
+			| K_TLS                         { $$ = DataSegment.TLS; }
+			| K_CIL                         { $$ = DataSegment.CIL; }
 			;
 
 data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
@@ -2012,6 +2015,7 @@ impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
 			| impl_attr K_INTERNALCALL      { $$ = (ImplAttr) $1 | ImplAttr.InternalCall; }
 			| impl_attr K_SYNCHRONIZED      { $$ = (ImplAttr) $1 | ImplAttr.Synchronised; }
 			| impl_attr K_NOINLINING        { $$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
+			| impl_attr K_NOOPTIMIZATION    { $$ = (ImplAttr) $1 | ImplAttr.NoOptimization; }
 			;
 
 sig_args		: /* EMPTY */

@@ -17,11 +17,14 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mempool.h>
+#include <mono/metadata/debug-mono-symfile.h>
 #include <mono/metadata/debug-mono-ppdb.h>
+#include <mono/metadata/exception-internals.h>
+#include <mono/metadata/runtime.h>
 #include <string.h>
 
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
@@ -846,6 +849,52 @@ mono_debug_free_locals (MonoDebugLocalsInfo *info)
 	g_free (info);
 }
 
+/*
+* mono_debug_lookup_method_async_debug_info:
+*
+*   Return information about the async stepping information of method.
+* The result should be freed using mono_debug_free_async_debug_info ().
+*/
+MonoDebugMethodAsyncInfo*
+mono_debug_lookup_method_async_debug_info (MonoMethod *method)
+{
+	MonoDebugMethodInfo *minfo;
+	MonoDebugMethodAsyncInfo *res = NULL;
+
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return NULL;
+
+	mono_debugger_lock ();
+	minfo = mono_debug_lookup_method_internal (method);
+	if (!minfo || !minfo->handle) {
+		mono_debugger_unlock ();
+		return NULL;
+	}
+
+	if (minfo->handle->ppdb)
+		res = mono_ppdb_lookup_method_async_debug_info (minfo);
+
+	mono_debugger_unlock ();
+
+	return res;
+}
+
+/*
+ * mono_debug_free_method_async_debug_info:
+ *
+ *   Free all the data allocated by mono_debug_lookup_method_async_debug_info ().
+ */
+void
+mono_debug_free_method_async_debug_info (MonoDebugMethodAsyncInfo *info)
+{
+	if (info->num_awaits) {
+		g_free (info->yield_offsets);
+		g_free (info->resume_offsets);
+		g_free (info->move_next_method_token);
+	}
+	g_free (info);
+}
+
 /**
  * mono_debug_free_source_location:
  * @location: A `MonoDebugSourceLocation'.
@@ -859,6 +908,14 @@ mono_debug_free_source_location (MonoDebugSourceLocation *location)
 		g_free (location->source_file);
 		g_free (location);
 	}
+}
+
+static int (*get_seq_point) (MonoDomain *domain, MonoMethod *method, gint32 native_offset);
+
+void
+mono_install_get_seq_point (MonoGetSeqPointFunc func)
+{
+	get_seq_point = func;
 }
 
 /**
@@ -891,10 +948,22 @@ mono_debug_print_stack_frame (MonoMethod *method, guint32 native_offset, MonoDom
 			offset = -1;
 		}
 
+		if (offset < 0 && get_seq_point)
+			offset = get_seq_point (domain, method, native_offset);
+
 		if (offset < 0)
 			res = g_strdup_printf ("at %s <0x%05x>", fname, native_offset);
-		else
-			res = g_strdup_printf ("at %s <IL 0x%05x, 0x%05x>", fname, offset, native_offset);
+		else {
+			char *mvid = mono_guid_to_string_minimal ((uint8_t*)method->klass->image->heap_guid.data);
+			char *aotid = mono_runtime_get_aotid ();
+			if (aotid)
+				res = g_strdup_printf ("at %s [0x%05x] in <%s#%s>:0" , fname, offset, mvid, aotid);
+			else
+				res = g_strdup_printf ("at %s [0x%05x] in <%s>:0" , fname, offset, mvid);
+
+			g_free (aotid);
+			g_free (mvid);
+		}
 		g_free (fname);
 		return res;
 	}

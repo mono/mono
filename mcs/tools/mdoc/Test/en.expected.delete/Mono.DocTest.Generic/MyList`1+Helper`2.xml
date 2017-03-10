@@ -5,7 +5,13 @@
     <AssemblyName>DocTest</AssemblyName>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Type Parameter!")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </TypeParameter>
     <TypeParameter Name="U" />
     <TypeParameter Name="V" />
   </TypeParameters>

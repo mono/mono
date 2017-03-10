@@ -36,7 +36,7 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool IsInFullTrust()
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (!SecurityManager.CurrentThreadRequiresSecurityContextCapture())
             {
                 return true;
@@ -114,7 +114,7 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool CheckAppDomainPermissions(PermissionSet permissions)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             return AppDomain.CurrentDomain.IsHomogenous &&
                    permissions.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet);
 #else
@@ -126,7 +126,7 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool HasEtwPermissions()
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             //Currently unrestricted permissions are required to create Etw provider. 
             PermissionSet permissions = new PermissionSet(PermissionState.Unrestricted);
             return CheckAppDomainPermissions(permissions);
@@ -142,7 +142,7 @@ namespace System.Runtime
             [SecuritySafeCritical]
             get
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 if (!checkedForFullTrust)
                 {
                     inFullTrust = AppDomain.CurrentDomain.IsFullyTrusted;

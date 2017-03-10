@@ -135,7 +135,7 @@ namespace Mono.Btls
 			if (IsServer) {
 				SetPrivateCertificate (nativeServerCertificate);
 			} else {
-				ssl.SetServerName (TargetHost);
+				ssl.SetServerName (ServerName);
 			}
 		}
 
@@ -156,9 +156,20 @@ namespace Mono.Btls
 
 		static Exception GetException (MonoBtlsSslError status)
 		{
-			var error = MonoBtlsError.GetError ();
+			string file;
+			int line;
+			var error = MonoBtlsError.GetError (out file, out line);
+			if (error == 0)
+				return new MonoBtlsException (status);
+
 			var text = MonoBtlsError.GetErrorString (error);
-			return new MonoBtlsException ("{0} {1}", status, text);
+
+			string message;
+			if (file != null)
+				message = string.Format ("{0} {1}\n  at {2}:{3}", status, text, file, line);
+			else
+				message = string.Format ("{0} {1}", status, text);
+			return new MonoBtlsException (message);
 		}
 
 		public override bool ProcessHandshake ()
@@ -207,16 +218,6 @@ namespace Mono.Btls
 			isAuthenticated = true;
 		}
 
-		void SetupCertificateStore ()
-		{
-			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore);
-
-			if (Settings != null && Settings.TrustAnchors != null) {
-				var trust = IsServer ? MonoBtlsX509TrustKind.TRUST_CLIENT : MonoBtlsX509TrustKind.TRUST_SERVER;
-				ctx.CertificateStore.AddCollection (Settings.TrustAnchors, trust);
-			}
-		}
-
 		void InitializeConnection ()
 		{
 			ctx = new MonoBtlsSslCtx ();
@@ -226,21 +227,14 @@ namespace Mono.Btls
 			ctx.SetDebugBio (errbio);
 #endif
 
-			SetupCertificateStore ();
+			MonoBtlsProvider.SetupCertificateStore (ctx.CertificateStore, Settings, IsServer);
 
 			if (!IsServer || AskForClientCertificate)
 				ctx.SetVerifyCallback (VerifyCallback, false);
 			if (!IsServer)
 				ctx.SetSelectCallback (SelectCallback);
 
-			var host = TargetHost;
-			if (!string.IsNullOrEmpty (host)) {
-				var pos = TargetHost.IndexOf (':');
-				if (pos > 0)
-					host = host.Substring (0, pos);
-			}
-
-			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (host, IsServer));
+			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (ServerName, IsServer));
 
 			TlsProtocolCode minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
@@ -277,11 +271,13 @@ namespace Mono.Btls
 
 			var cipher = (CipherSuiteCode)ssl.GetCipher ();
 			var protocol = (TlsProtocolCode)ssl.GetVersion ();
+			var serverName = ssl.GetServerName ();
 			Debug ("GET CONNECTION INFO: {0:x}:{0} {1:x}:{1} {2}", cipher, protocol, (TlsProtocolCode)protocol);
 
 			connectionInfo = new MonoTlsConnectionInfo {
 				CipherSuiteCode = cipher,
-				ProtocolVersion = GetProtocol (protocol)
+				ProtocolVersion = GetProtocol (protocol),
+				PeerDomainName = serverName
 			};
 		}
 
@@ -365,7 +361,23 @@ namespace Mono.Btls
 		public override void Close ()
 		{
 			Debug ("Close!");
-			ssl.Dispose ();
+
+			if (ssl != null) {
+				ssl.Dispose ();
+				ssl = null;
+			}
+			if (ctx != null) {
+				ctx.Dispose ();
+				ctx = null;
+			}
+			if (bio != null) {
+				bio.Dispose ();
+				bio = null;
+			}
+			if (errbio != null) {
+				errbio.Dispose ();
+				errbio = null;
+			}
 		}
 
 		void Dispose<T> (ref T disposable)

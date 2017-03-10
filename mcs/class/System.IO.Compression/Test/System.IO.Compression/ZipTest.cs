@@ -305,13 +305,13 @@ namespace MonoTests.System.IO.Compression
 					Assert.AreEqual(425, stream.Length);
 				}
 
-				// .NET does not support these in Read mode but we do.
 				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
 				using (var stream = entry2.Open())
 				{
-					Assert.AreEqual(857, stream.Length);
+					// .NET does not support these in Read mode
 					if (mode == ZipArchiveMode.Update)
 					{
+						Assert.AreEqual(857, stream.Length);
 						Assert.AreEqual(0, stream.Position);
 					}
 				}
@@ -507,6 +507,11 @@ namespace MonoTests.System.IO.Compression
 			/// Simulate "CanSeek" is false, which is the case when you are retreiving data from web.
 			/// </summary>
 			public override bool CanSeek => false;
+
+			public override long Position {
+				get {throw new NotSupportedException();}
+				set {throw new NotSupportedException();}
+			}
 		}
 
 		[Test]
@@ -515,6 +520,17 @@ namespace MonoTests.System.IO.Compression
 			var stream = new MyFakeStream("test.nupkg", FileMode.Open);
 			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
 			{
+			}
+		}
+
+		[Test]
+		public void ZipWriteNonSeekableStream() {
+			var stream = new MyFakeStream( "test.nupkg", FileMode.Open );
+			using ( var archive = new ZipArchive( stream, ZipArchiveMode.Create ) ) {
+				var entry = archive.CreateEntry( "foo" );
+				using ( var es = entry.Open() ) {
+					es.Write( new byte[] { 4, 2 }, 0, 2 );
+				}
 			}
 		}
 	}

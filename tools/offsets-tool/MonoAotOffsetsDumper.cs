@@ -24,10 +24,10 @@ namespace CppSharp
         static List<string> Abis = new List<string> ();
         static string OutputDir;
 
-        static bool XamarinAndroid;
         static string MonodroidDir = @"";
         static string AndroidNdkPath = @"";
         static string MaccoreDir = @"";
+        static string TargetDir = @"";
 
         public enum TargetPlatform
         {
@@ -89,28 +89,24 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "i686-none-linux-android",
-                Build = XamarinAndroid ? "x86" : "mono-x86",
                 Defines = { "TARGET_X86" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "x86_64-none-linux-android",
-                Build = XamarinAndroid ? "x86_64" : "mono-x86_64",
                 Defines = { "TARGET_AMD64" }
             });            
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv5-none-linux-androideabi",
-                Build = XamarinAndroid ? "armeabi" : "mono-armv6",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv7-none-linux-androideabi",
-                Build = XamarinAndroid ? "armeabi-v7a" : "mono-armv7",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6",
                     "HAVE_ARMV7"
                 }
@@ -119,14 +115,12 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "aarch64-v8a-linux-android",
-                Build = XamarinAndroid ? "arm64-v8a" : "mono-aarch64",
                 Defines = { "TARGET_ARM64" }
             });            
 
             /*Targets.Add(new Target {
                     Platform = TargetPlatform.Android,
                     Triple = "mipsel-none-linux-android",
-                    Build = "mono-mips",
                     Defines = { "TARGET_MIPS", "__mips__" }
                 });*/
 
@@ -279,7 +273,7 @@ namespace CppSharp
                 { "maccore=", "include directory", v => MaccoreDir = v },
                 { "monodroid=", "top monodroid directory", v => MonodroidDir = v },
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
-                { "xamarin-android", "Generate for Xamarin.Android instead of monodroid", v => XamarinAndroid = true },
+                { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
@@ -295,9 +289,9 @@ namespace CppSharp
             if (showHelp)
             {
                 // Print usage and exit.
-                Console.WriteLine("{0} [--abi=triple] [--out=dir] "
-                    + "[--monodroid/maccore=dir] [--mono=dir]",
+                Console.WriteLine("{0} <options>",
                     AppDomain.CurrentDomain.FriendlyName);
+                options.WriteOptionDescriptions (Console.Out);
                 Environment.Exit(0);
             }
         }
@@ -325,24 +319,34 @@ namespace CppSharp
 
         static void SetupMono(Driver driver, Target target)
         {
-            string targetPath;
+            string targetBuild;
             switch (target.Platform) {
             case TargetPlatform.Android:
-                targetPath = Path.Combine (MonodroidDir, XamarinAndroid ? "build-tools/mono-runtimes/obj/Debug" : "builds");
+                if (TargetDir == "") {
+                    Console.Error.WriteLine ("The --targetdir= option is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                if (MonoDir == "") {
+                    Console.Error.WriteLine ("The --mono= option is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                if (Abis.Count != 1) {
+                    Console.Error.WriteLine ("Exactly one --abi= argument is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                targetBuild = TargetDir;
                 break;
             case TargetPlatform.WatchOS:
-            case TargetPlatform.iOS:
-                targetPath = Path.Combine (MaccoreDir, "builds");
+            case TargetPlatform.iOS: {
+                string targetPath = Path.Combine (MaccoreDir, "builds");
+                if (!Directory.Exists (MonoDir))
+                    MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
+                targetBuild = Path.Combine(targetPath, target.Build);
                 break;
+            }
             default:
                 throw new ArgumentOutOfRangeException ();
             }
-
-            if (!Directory.Exists (MonoDir)) {
-                MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
-            }
-
-            var targetBuild = Path.Combine(targetPath, target.Build);
 
             if (!Directory.Exists(targetBuild))
                 throw new Exception(string.Format("Could not find the target build directory: {0}", targetBuild));

@@ -49,7 +49,7 @@ namespace System.Net {
 		public IPrincipal User {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
-
+#if SECURITY_DEP
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
@@ -69,5 +69,6 @@ namespace System.Net {
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
+#endif
 	}
 }

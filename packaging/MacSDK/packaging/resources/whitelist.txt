@@ -11,6 +11,7 @@ ccrewrite
 cccheck
 cert2spc
 certmgr
+cert-sync
 chktrust
 ClassInitGenerator
 csharp
@@ -102,6 +103,7 @@ nuget
 nunit-console
 nunit-console2
 nunit-console4
+opt
 pdb2mdb
 pedump
 permview

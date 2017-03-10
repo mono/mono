@@ -468,7 +468,12 @@ namespace System.Reflection.Emit
 
 		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
 		{
-			throw new NotImplementedException ();
+			var ab = DefineDynamicAssembly (name, access);
+			foreach (var attr in  assemblyAttributes) {
+				ab.SetCustomAttribute (attr);
+			}
+
+			return ab;
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name)

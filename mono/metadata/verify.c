@@ -28,7 +28,6 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/attrdefs.h>
-#include <mono/metadata/class-internals.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/monobitset.h>
 #include <string.h>
@@ -2080,10 +2079,10 @@ init_stack_with_value_at_exception_boundary (VerifyContext *ctx, ILCodeDesc *cod
 		code->stack->stype |= BOXED_MASK;
 }
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (ienumerable, System.Collections.Generic, IEnumerable`1)
-static GENERATE_GET_CLASS_WITH_CACHE (icollection, System.Collections.Generic, ICollection`1)
-static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_list, System.Collections.Generic, IReadOnlyList`1)
-static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_collection, System.Collections.Generic, IReadOnlyCollection`1)
+static GENERATE_GET_CLASS_WITH_CACHE (ienumerable, "System.Collections.Generic", "IEnumerable`1")
+static GENERATE_GET_CLASS_WITH_CACHE (icollection, "System.Collections.Generic", "ICollection`1")
+static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_list, "System.Collections.Generic", "IReadOnlyList`1")
+static GENERATE_GET_CLASS_WITH_CACHE (ireadonly_collection, "System.Collections.Generic", "IReadOnlyCollection`1")
 
 
 static MonoClass*
@@ -5946,7 +5945,7 @@ mono_method_verify (MonoMethod *method, int level)
 	for (i = 0; i < ctx.code_size && i < ip_offset; ++i) {
 		if (ctx.code [i].flags & IL_CODE_FLAG_WAS_TARGET) {
 			if (!(ctx.code [i].flags & IL_CODE_FLAG_SEEN))
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Branch or exception block target middle of intruction at 0x%04x", i));
+				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Branch or exception block target middle of instruction at 0x%04x", i));
 
 			if (ctx.code [i].flags & IL_CODE_DELEGATE_SEQUENCE)
 				CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Branch to delegate code sequence at 0x%04x", i));

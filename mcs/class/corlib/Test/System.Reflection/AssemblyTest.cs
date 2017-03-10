@@ -37,7 +37,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -213,7 +213,7 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
 		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
@@ -265,7 +265,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || MOBILE_STATIC || __WATCHOS__
+#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE
@@ -474,8 +474,8 @@ namespace MonoTests.System.Reflection
 // with the semantics of aot'ed assembly loading, as
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
-#if MOBILE_STATIC
-			string [] names = { "mobile_static_corlib_test" };
+#if FULL_AOT_DESKTOP
+			string [] names = { "testing_aot_full_corlib_test", "winaot_corlib_test" };
 #else
 			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
 #endif
@@ -523,7 +523,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -1146,7 +1146,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
 #endif
 			Assert.IsFalse (module.IsResource (), "#4");

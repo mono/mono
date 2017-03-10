@@ -11190,5 +11190,76 @@ namespace MonoTests.System.Reflection.Emit
 
 		interface IFoo {
 		}
+
+		[Test]
+		public void GenericFieldInCreatedType () {
+			/*
+			 * Regression test for #47867.
+			 * We construct the following, but only call CreateType on R.
+			 *
+			 * public class S<T> {
+			 *   public T t;
+			 * }
+			 * public class R {
+			 *   public static S<R> sr;
+			 * }
+			 */
+			var aname = new AssemblyName ("example1");
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+			var mb = ab.DefineDynamicModule (aname.Name);
+			var tbS = mb.DefineType ("S", TypeAttributes.Public);
+			tbS.DefineGenericParameters (new String [] { "T" });
+			var tbR = mb.DefineType ("R", TypeAttributes.Public);
+			tbR.DefineField ("sr", tbS.MakeGenericType(new Type[] { tbR }), FieldAttributes.Public | FieldAttributes.Static);
+
+			Type r = tbR.CreateType ();
+
+			Assert.IsNotNull  (r);
+		}
+
+		[Test]
+		public void GenericFieldInCreatedTypeIncompleteTypeTLE () {
+			/*
+			 * Regression test for #47867.
+			 * We construct the following, but only call CreateType on R.
+			 * Then we try to use R.sr which is expected throw a
+			 * TLE because S hasn't been created yet.
+			 *
+			 * public class S<T> {
+			 *   public T t;
+			 * }
+			 * public class R {
+			 *   public static S<R> sr;
+			 * }
+			 */
+			var aname = new AssemblyName ("example1");
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+			var mb = ab.DefineDynamicModule (aname.Name);
+			var tbS = mb.DefineType ("S", TypeAttributes.Public);
+			tbS.DefineGenericParameters (new String [] { "T" });
+			var tbR = mb.DefineType ("R", TypeAttributes.Public);
+			tbR.DefineField ("sr", tbS.MakeGenericType(new Type[] { tbR }), FieldAttributes.Public | FieldAttributes.Static);
+
+			Type r = tbR.CreateType ();
+
+			Assert.IsNotNull  (r);
+
+			// N.B.  tbS has not had CreateType called yet, so expect this to fail.
+			Assert.Throws<TypeLoadException> (delegate { var ft = r.GetField("sr").FieldType; });
+		}
+		
+		[Test]
+		public void GetGenericTypeDefinitionAfterCreateReturnsBuilder () {
+			var aname = new AssemblyName ("genericDefnAfterCreate");
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+			var mb = ab.DefineDynamicModule (aname.Name);
+			var buildX = mb.DefineType ("X", TypeAttributes.Public);
+			buildX.DefineGenericParameters ("T", "U");
+			var x = buildX.CreateType ();
+			var inst = x.MakeGenericType (typeof (string), typeof (int));
+			var defX = inst.GetGenericTypeDefinition ();
+
+			Assert.AreSame (buildX, defX);
+		}
 	}
 }

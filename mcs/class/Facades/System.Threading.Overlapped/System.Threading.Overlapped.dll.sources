@@ -1,9 +1,10 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
-ClrThreadPoolBoundHandle.cs
-ClrThreadPoolBoundHandleOverlapped.cs
-ClrThreadPoolPreAllocatedOverlapped.cs
-DeferredDisposableLifetime.cs
-SR.cs
-HResults.cs
+corefx/SR.cs
+
+../../../../external/corefx/src/Common/src/System/HResults.cs
+../../../../external/corefx/src/System.Threading.Overlapped/src/System/Threading/ClrThreadPoolBoundHandle.cs
+../../../../external/corefx/src/System.Threading.Overlapped/src/System/Threading/ClrThreadPoolBoundHandleOverlapped.cs
+../../../../external/corefx/src/System.Threading.Overlapped/src/System/Threading/ClrThreadPoolPreAllocatedOverlapped.cs
+../../../../external/corefx/src/System.Threading.Overlapped/src/System/Threading/DeferredDisposableLifetime.cs
