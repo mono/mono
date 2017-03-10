@@ -5069,7 +5069,6 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 		if (mono_class_is_nullable (method->klass)) {
 			/* Need to create a boxed vtype instead */
-			g_assert (!obj);
 
 			if (!params)
 				return NULL;
