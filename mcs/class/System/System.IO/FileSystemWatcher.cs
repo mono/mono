@@ -1,544 +1,687 @@
-// 
-// System.IO.FileSystemWatcher.cs
-//
-// Authors:
-// 	Tim Coleman (tim@timcoleman.com)
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// Copyright (C) Tim Coleman, 2002 
-// (c) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
-//
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-
-namespace System.IO {
-	[DefaultEvent("Changed")]
-	[IODescription ("")]
-	public class FileSystemWatcher : Component, ISupportInitialize {
-
-		#region Fields
-
-		bool enableRaisingEvents;
-		string filter;
-		bool includeSubdirectories;
-		int internalBufferSize;
-		NotifyFilters notifyFilter;
-		string path;
-		string fullpath;
-		ISynchronizeInvoke synchronizingObject;
-		WaitForChangedResult lastData;
-		bool waiting;
-		SearchPattern2 pattern;
-		bool disposed;
-		string mangledFilter;
-		static IFileWatcher watcher;
-		static object lockobj = new object ();
-
-		#endregion // Fields
-
-		#region Constructors
-
-		public FileSystemWatcher ()
-		{
-			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			this.enableRaisingEvents = false;
-			this.filter = "*.*";
-			this.includeSubdirectories = false;
-			this.internalBufferSize = 8192;
-			this.path = "";
-			InitWatcher ();
-		}
-
-		public FileSystemWatcher (string path)
-			: this (path, "*.*")
-		{
-		}
-
-		public FileSystemWatcher (string path, string filter)
-		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-
-			if (filter == null)
-				throw new ArgumentNullException ("filter");
-
-			if (path == String.Empty)
-				throw new ArgumentException ("Empty path", "path");
-
-			if (!Directory.Exists (path))
-				throw new ArgumentException ("Directory does not exist", "path");
-
-			this.enableRaisingEvents = false;
-			this.filter = filter;
-			this.includeSubdirectories = false;
-			this.internalBufferSize = 8192;
-			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			this.path = path;
-			this.synchronizingObject = null;
-			InitWatcher ();
-		}
-
-		[EnvironmentPermission (SecurityAction.Assert, Read="MONO_MANAGED_WATCHER")]
-		void InitWatcher ()
-		{
-			lock (lockobj) {
-				if (watcher != null)
-					return;
-
-				string managed = Environment.GetEnvironmentVariable ("MONO_MANAGED_WATCHER");
-				int mode = 0;
-				if (managed == null)
-					mode = InternalSupportsFSW ();
-				
-				bool ok = false;
-				switch (mode) {
-				case 1: // windows
-					ok = DefaultWatcher.GetInstance (out watcher);
-					//ok = WindowsWatcher.GetInstance (out watcher);
-					break;
-				case 2: // libfam
-					ok = FAMWatcher.GetInstance (out watcher, false);
-					break;
-				case 3: // kevent
-					ok = KeventWatcher.GetInstance (out watcher);
-					break;
-				case 4: // libgamin
-					ok = FAMWatcher.GetInstance (out watcher, true);
-					break;
-				case 5: // inotify
-					ok = InotifyWatcher.GetInstance (out watcher, true);
-					break;
-				}
-
-				if (mode == 0 || !ok) {
-					if (String.Compare (managed, "disabled", true) == 0)
-						NullFileWatcher.GetInstance (out watcher);
-					else
-						DefaultWatcher.GetInstance (out watcher);
-				}
-
-				ShowWatcherInfo ();
-			}
-		}
-
-		[Conditional ("DEBUG"), Conditional ("TRACE")]
-		void ShowWatcherInfo ()
-		{
-			Console.WriteLine ("Watcher implementation: {0}", watcher != null ? watcher.GetType ().ToString () : "<none>");
-		}
-		
-		#endregion // Constructors
-
-		#region Properties
-
-		/* If this is enabled, we Pulse this instance */
-		internal bool Waiting {
-			get { return waiting; }
-			set { waiting = value; }
-		}
-
-		internal string MangledFilter {
-			get {
-				if (filter != "*.*")
-					return filter;
-
-				if (mangledFilter != null)
-					return mangledFilter;
-
-				string filterLocal = "*.*";
-				if (!(watcher.GetType () == typeof (WindowsWatcher)))
-					filterLocal = "*";
-
-				return filterLocal;
-			}
-		}
-
-		internal SearchPattern2 Pattern {
-			get {
-				if (pattern == null) {
-					if (watcher.GetType () == typeof (KeventWatcher))
-						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
-					else
-						pattern = new SearchPattern2 (MangledFilter);
-				}
-				return pattern;
-			}
-		}
-
-		internal string FullPath {
-			get {
-				if (fullpath == null) {
-					if (path == null || path == "")
-						fullpath = Environment.CurrentDirectory;
-					else
-						fullpath = System.IO.Path.GetFullPath (path);
-				}
-
-				return fullpath;
-			}
-		}
-
-		[DefaultValue(false)]
-		[IODescription("Flag to indicate if this instance is active")]
-		public bool EnableRaisingEvents {
-			get { return enableRaisingEvents; }
-			set {
-				if (value == enableRaisingEvents)
-					return; // Do nothing
-
-				enableRaisingEvents = value;
-				if (value) {
-					Start ();
-				} else {
-					Stop ();
-				}
-			}
-		}
-
-		[DefaultValue("*.*")]
-		[IODescription("File name filter pattern")]
-		[SettingsBindable(true)]
-		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
-		public string Filter {
-			get { return filter; }
-			set {
-				if (value == null || value == "")
-					value = "*.*";
-
-				if (filter != value) {
-					filter = value;
-					pattern = null;
-					mangledFilter = null;
-				}
-			}
-		}
-
-		[DefaultValue(false)]
-		[IODescription("Flag to indicate we want to watch subdirectories")]
-		public bool IncludeSubdirectories {
-			get { return includeSubdirectories; }
-			set {
-				if (includeSubdirectories == value)
-					return;
-
-				includeSubdirectories = value;
-				if (value && enableRaisingEvents) {
-					Stop ();
-					Start ();
-				}
-			}
-		}
-
-		[Browsable(false)]
-		[DefaultValue(8192)]
-		public int InternalBufferSize {
-			get { return internalBufferSize; }
-			set {
-				if (internalBufferSize == value)
-					return;
-
-				if (value < 4196)
-					value = 4196;
-
-				internalBufferSize = value;
-				if (enableRaisingEvents) {
-					Stop ();
-					Start ();
-				}
-			}
-		}
-
-		[DefaultValue(NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite)]
-		[IODescription("Flag to indicate which change event we want to monitor")]
-		public NotifyFilters NotifyFilter {
-			get { return notifyFilter; }
-			set {
-				if (notifyFilter == value)
-					return;
-					
-				notifyFilter = value;
-				if (enableRaisingEvents) {
-					Stop ();
-					Start ();
-				}
-			}
-		}
-
-		[DefaultValue("")]
-		[IODescription("The directory to monitor")]
-		[SettingsBindable(true)]
-		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
-		[Editor ("System.Diagnostics.Design.FSWPathEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string Path {
-			get { return path; }
-			set {
-				if (path == value)
-					return;
-
-				bool exists = false;
-				Exception exc = null;
-
-				try {
-					exists = Directory.Exists (value);
-				} catch (Exception e) {
-					exc = e;
-				}
-
-				if (exc != null)
-					throw new ArgumentException ("Invalid directory name", "value", exc);
-
-				if (!exists)
-					throw new ArgumentException ("Directory does not exist", "value");
-
-				path = value;
-				fullpath = null;
-				if (enableRaisingEvents) {
-					Stop ();
-					Start ();
-				}
-			}
-		}
-
-		[Browsable(false)]
-		public override ISite Site {
-			get { return base.Site; }
-			set { base.Site = value; }
-		}
-
-		[DefaultValue(null)]
-		[IODescription("The object used to marshal the event handler calls resulting from a directory change")]
-		[Browsable (false)]
-		public ISynchronizeInvoke SynchronizingObject {
-			get { return synchronizingObject; }
-			set { synchronizingObject = value; }
-		}
-
-		#endregion // Properties
-
-		#region Methods
-	
-		public void BeginInit ()
-		{
-			// Not necessary in Mono
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				disposed = true;
-				Stop ();
-			}
-
-			base.Dispose (disposing);
-		}
-
-		~FileSystemWatcher ()
-		{
-			disposed = true;
-			Stop ();
-		}
-		
-		public void EndInit ()
-		{
-			// Not necessary in Mono
-		}
-
-		enum EventType {
-			FileSystemEvent,
-			ErrorEvent,
-			RenameEvent
-		}
-		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
-		{
-			if (ev == null)
-				return;
-
-			if (synchronizingObject == null) {
-				foreach (var target in ev.GetInvocationList()) {
-					switch (evtype) {
-					case EventType.RenameEvent:
-						((RenamedEventHandler)target).BeginInvoke (this, (RenamedEventArgs)arg, null, null);
-						break;
-					case EventType.ErrorEvent:
-						((ErrorEventHandler)target).BeginInvoke (this, (ErrorEventArgs)arg, null, null);
-						break;
-					case EventType.FileSystemEvent:
-						((FileSystemEventHandler)target).BeginInvoke (this, (FileSystemEventArgs)arg, null, null);
-						break;
-					}
-				}
-				return;
-			}
-			
-			synchronizingObject.BeginInvoke (ev, new object [] {this, arg});
-		}
-
-		protected void OnChanged (FileSystemEventArgs e)
-		{
-			RaiseEvent (Changed, e, EventType.FileSystemEvent);
-		}
-
-		protected void OnCreated (FileSystemEventArgs e)
-		{
-			RaiseEvent (Created, e, EventType.FileSystemEvent);
-		}
-
-		protected void OnDeleted (FileSystemEventArgs e)
-		{
-			RaiseEvent (Deleted, e, EventType.FileSystemEvent);
-		}
-
-		protected void OnError (ErrorEventArgs e)
-		{
-			RaiseEvent (Error, e, EventType.ErrorEvent);
-		}
-
-		protected void OnRenamed (RenamedEventArgs e)
-		{
-			RaiseEvent (Renamed, e, EventType.RenameEvent);
-		}
-
-		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType)
-		{
-			return WaitForChanged (changeType, Timeout.Infinite);
-		}
-
-		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout)
-		{
-			WaitForChangedResult result = new WaitForChangedResult ();
-			bool prevEnabled = EnableRaisingEvents;
-			if (!prevEnabled)
-				EnableRaisingEvents = true;
-
-			bool gotData;
-			lock (this) {
-				waiting = true;
-				gotData = Monitor.Wait (this, timeout);
-				if (gotData)
-					result = this.lastData;
-			}
-
-			EnableRaisingEvents = prevEnabled;
-			if (!gotData)
-				result.TimedOut = true;
-
-			return result;
-		}
-
-		internal void DispatchErrorEvents (ErrorEventArgs args)
-		{
-			OnError (args);
-		}
-
-		internal void DispatchEvents (FileAction act, string filename, ref RenamedEventArgs renamed)
-		{
-			if (waiting) {
-				lastData = new WaitForChangedResult ();
-			}
-
-			switch (act) {
-			case FileAction.Added:
-				lastData.Name = filename;
-				lastData.ChangeType = WatcherChangeTypes.Created;
-				OnCreated (new FileSystemEventArgs (WatcherChangeTypes.Created, path, filename));
-				break;
-			case FileAction.Removed:
-				lastData.Name = filename;
-				lastData.ChangeType = WatcherChangeTypes.Deleted;
-				OnDeleted (new FileSystemEventArgs (WatcherChangeTypes.Deleted, path, filename));
-				break;
-			case FileAction.Modified:
-				lastData.Name = filename;
-				lastData.ChangeType = WatcherChangeTypes.Changed;
-				OnChanged (new FileSystemEventArgs (WatcherChangeTypes.Changed, path, filename));
-				break;
-			case FileAction.RenamedOldName:
-				if (renamed != null) {
-					OnRenamed (renamed);
-				}
-				lastData.OldName = filename;
-				lastData.ChangeType = WatcherChangeTypes.Renamed;
-				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, filename, "");
-				break;
-			case FileAction.RenamedNewName:
-				lastData.Name = filename;
-				lastData.ChangeType = WatcherChangeTypes.Renamed;
-				if (renamed == null) {
-					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, "", filename);
-				}
-				OnRenamed (renamed);
-				renamed = null;
-				break;
-			default:
-				break;
-			}
-		}
-
-		void Start ()
-		{
-			watcher.StartDispatching (this);
-		}
-
-		void Stop ()
-		{
-			watcher.StopDispatching (this);
-		}
-		#endregion // Methods
-
-		#region Events and Delegates
-
-		[IODescription("Occurs when a file/directory change matches the filter")]
-		public event FileSystemEventHandler Changed;
-
-		[IODescription("Occurs when a file/directory creation matches the filter")]
-		public event FileSystemEventHandler Created;
-
-		[IODescription("Occurs when a file/directory deletion matches the filter")]
-		public event FileSystemEventHandler Deleted;
-
-		[Browsable(false)]
-		public event ErrorEventHandler Error;
-
-		[IODescription("Occurs when a file/directory rename matches the filter")]
-		public event RenamedEventHandler Renamed;
-
-		#endregion // Events and Delegates
-
-		/* 0 -> not supported	*/
-		/* 1 -> windows		*/
-		/* 2 -> FAM		*/
-		/* 3 -> Kevent		*/
-		/* 4 -> gamin		*/
-		/* 5 -> inotify		*/
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern int InternalSupportsFSW ();
-	}
+using System.Threading.Tasks;
+
+namespace System.IO
+{
+    /// <devdoc>
+    ///    Listens to the system directory change notifications and
+    ///    raises events when a directory or file within a directory changes.
+    /// </devdoc>
+
+    public partial class FileSystemWatcher : Component, ISupportInitialize
+    {
+        /// <devdoc>
+        ///     Private instance variables
+        /// </devdoc>
+        // Directory being monitored
+        private string _directory;
+
+        // Filter for name matching
+        private string _filter;
+
+        // The watch filter for the API call.
+        private const NotifyFilters c_defaultNotifyFilters = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+        private NotifyFilters _notifyFilters = c_defaultNotifyFilters;
+
+        // Flag to watch subtree of this directory
+        private bool _includeSubdirectories = false;
+
+        // Flag to note whether we are attached to the thread pool and responding to changes
+        private bool _enabled = false;
+
+        // Are we in init?
+        private bool _initializing = false;
+
+        // Buffer size
+        private int _internalBufferSize = 8192;
+
+        // Used for synchronization
+        private bool _disposed;
+        private ISynchronizeInvoke _synchronizingObject;
+
+        // Event handlers
+        private FileSystemEventHandler _onChangedHandler = null;
+        private FileSystemEventHandler _onCreatedHandler = null;
+        private FileSystemEventHandler _onDeletedHandler = null;
+        private RenamedEventHandler _onRenamedHandler = null;
+        private ErrorEventHandler _onErrorHandler = null;
+
+        // To validate the input for "path"
+        private static readonly char[] s_wildcards = new char[] { '?', '*' };
+
+        private const int c_notifyFiltersValidMask = (int)(NotifyFilters.Attributes |
+                                                           NotifyFilters.CreationTime |
+                                                           NotifyFilters.DirectoryName |
+                                                           NotifyFilters.FileName |
+                                                           NotifyFilters.LastAccess |
+                                                           NotifyFilters.LastWrite |
+                                                           NotifyFilters.Security |
+                                                           NotifyFilters.Size);
+
+#if DEBUG
+        static FileSystemWatcher()
+        {
+            int s_notifyFiltersValidMask = 0;
+            foreach (int enumValue in Enum.GetValues(typeof(NotifyFilters)))
+                s_notifyFiltersValidMask |= enumValue;
+            Debug.Assert(c_notifyFiltersValidMask == s_notifyFiltersValidMask, "The NotifyFilters enum has changed. The c_notifyFiltersValidMask must be updated to reflect the values of the NotifyFilters enum.");
+        }
+#endif
+
+        /// <devdoc>
+        ///    Initializes a new instance of the <see cref='System.IO.FileSystemWatcher'/> class.
+        /// </devdoc>
+        public FileSystemWatcher()
+        {
+            _directory = string.Empty;
+            _filter = "*.*";
+        }
+
+        /// <devdoc>
+        ///    Initializes a new instance of the <see cref='System.IO.FileSystemWatcher'/> class,
+        ///    given the specified directory to monitor.
+        /// </devdoc>
+        public FileSystemWatcher(string path) : this(path, "*.*")
+        {
+        }
+
+        /// <devdoc>
+        ///    Initializes a new instance of the <see cref='System.IO.FileSystemWatcher'/> class,
+        ///    given the specified directory and type of files to monitor.
+        /// </devdoc>
+        public FileSystemWatcher(string path, string filter)
+        {
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (filter == null)
+                throw new ArgumentNullException(nameof(filter));
+
+            // Early check for directory parameter so that an exception can be thrown as early as possible.
+            if (path.Length == 0 || !Directory.Exists(path))
+                throw new ArgumentException(SR.Format(SR.InvalidDirName, path), nameof(path));
+
+            _directory = path;
+            _filter = filter;
+        }
+
+        /// <devdoc>
+        ///    Gets or sets the type of changes to watch for.
+        /// </devdoc>
+        public NotifyFilters NotifyFilter
+        {
+            get
+            {
+                return _notifyFilters;
+            }
+            set
+            {
+                if (((int)value & ~c_notifyFiltersValidMask) != 0)
+                    throw new ArgumentException(SR.Format(SR.InvalidEnumArgument, nameof(value), (int)value, nameof(NotifyFilters)));
+
+                if (_notifyFilters != value)
+                {
+                    _notifyFilters = value;
+
+                    Restart();
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    Gets or sets a value indicating whether the component is enabled.
+        /// </devdoc>
+        public bool EnableRaisingEvents
+        {
+            get
+            {
+                return _enabled;
+            }
+            set
+            {
+                if (_enabled == value)
+                {
+                    return;
+                }
+
+                if (IsSuspended())
+                {
+                    _enabled = value; // Alert the Component to start watching for events when EndInit is called.
+                }
+                else
+                {
+                    if (value)
+                    {
+                        StartRaisingEventsIfNotDisposed(); // will set _enabled to true once successfully started
+                    }
+                    else
+                    {
+                        StopRaisingEvents(); // will set _enabled to false
+                    }
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    Gets or sets the filter string, used to determine what files are monitored in a directory.
+        /// </devdoc>
+        public string Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    // Skip the string compare for "*.*" since it has no case-insensitive representation that differs from
+                    // the case-sensitive representation.
+                    _filter = "*.*";
+                }
+                else if (!string.Equals(_filter, value, PathInternal.StringComparison))
+                {
+                    _filter = value;
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    Gets or sets a value indicating whether subdirectories within the specified path should be monitored.
+        /// </devdoc>
+        public bool IncludeSubdirectories
+        {
+            get
+            {
+                return _includeSubdirectories;
+            }
+            set
+            {
+                if (_includeSubdirectories != value)
+                {
+                    _includeSubdirectories = value;
+
+                    Restart();
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    Gets or sets the size of the internal buffer.
+        /// </devdoc>
+        public int InternalBufferSize
+        {
+            get
+            {
+                return _internalBufferSize;
+            }
+            set
+            {
+                if (_internalBufferSize != value)
+                {
+                    if (value < 4096)
+                    {
+                        _internalBufferSize = 4096;
+                    }
+                    else
+                    {
+                        _internalBufferSize = value;
+                    }
+
+                    Restart();
+                }
+            }
+        }
+
+        /// <summary>Allocates a buffer of the requested internal buffer size.</summary>
+        /// <returns>The allocated buffer.</returns>
+        private byte[] AllocateBuffer()
+        {
+            try
+            {
+                return new byte[_internalBufferSize];
+            }
+            catch (OutOfMemoryException)
+            {
+                throw new OutOfMemoryException(SR.Format(SR.BufferSizeTooLarge, _internalBufferSize));
+            }
+        }
+
+        /// <devdoc>
+        ///    Gets or sets the path of the directory to watch.
+        /// </devdoc>
+        public string Path
+        {
+            get
+            {
+                return _directory;
+            }
+            set
+            {
+                value = (value == null) ? string.Empty : value;
+                if (!string.Equals(_directory, value, PathInternal.StringComparison))
+                {
+                    if (!Directory.Exists(value))
+                    {
+                        throw new ArgumentException(SR.Format(SR.InvalidDirName, value));
+                    }
+
+                    _directory = value;
+                    Restart();
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    Occurs when a file or directory in the specified <see cref='System.IO.FileSystemWatcher.Path'/> is changed.
+        /// </devdoc>
+        public event FileSystemEventHandler Changed
+        {
+            add
+            {
+                _onChangedHandler += value;
+            }
+            remove
+            {
+                _onChangedHandler -= value;
+            }
+        }
+
+        /// <devdoc>
+        ///    Occurs when a file or directory in the specified <see cref='System.IO.FileSystemWatcher.Path'/> is created.
+        /// </devdoc>
+        public event FileSystemEventHandler Created
+        {
+            add
+            {
+                _onCreatedHandler += value;
+            }
+            remove
+            {
+                _onCreatedHandler -= value;
+            }
+        }
+
+        /// <devdoc>
+        ///    Occurs when a file or directory in the specified <see cref='System.IO.FileSystemWatcher.Path'/> is deleted.
+        /// </devdoc>
+        public event FileSystemEventHandler Deleted
+        {
+            add
+            {
+                _onDeletedHandler += value;
+            }
+            remove
+            {
+                _onDeletedHandler -= value;
+            }
+        }
+
+        /// <devdoc>
+        ///    Occurs when the internal buffer overflows.
+        /// </devdoc>
+        public event ErrorEventHandler Error
+        {
+            add
+            {
+                _onErrorHandler += value;
+            }
+            remove
+            {
+                _onErrorHandler -= value;
+            }
+        }
+
+        /// <devdoc>
+        ///    Occurs when a file or directory in the specified <see cref='System.IO.FileSystemWatcher.Path'/>
+        ///    is renamed.
+        /// </devdoc>
+        public event RenamedEventHandler Renamed
+        {
+            add
+            {
+                _onRenamedHandler += value;
+            }
+            remove
+            {
+                _onRenamedHandler -= value;
+            }
+        }
+
+        /// <devdoc>
+        /// </devdoc>
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    //Stop raising events cleans up managed and
+                    //unmanaged resources.
+                    StopRaisingEvents();
+
+                    // Clean up managed resources
+                    _onChangedHandler = null;
+                    _onCreatedHandler = null;
+                    _onDeletedHandler = null;
+                    _onRenamedHandler = null;
+                    _onErrorHandler = null;
+                }
+                else
+                {
+                    FinalizeDispose();
+                }
+            }
+            finally
+            {
+                _disposed = true;
+                base.Dispose(disposing);
+            }
+        }
+
+        /// <devdoc>
+        ///     Sees if the name given matches the name filter we have.
+        /// </devdoc>
+        /// <internalonly/>
+        private bool MatchPattern(string relativePath)
+        {
+            string name = System.IO.Path.GetFileName(relativePath);
+            return name != null ?
+                PatternMatcher.StrictMatchPattern(_filter, name) :
+                false;
+        }
+
+        /// <devdoc>
+        ///     Raises the event to each handler in the list.
+        /// </devdoc>
+        /// <internalonly/>
+        private void NotifyInternalBufferOverflowEvent()
+        {
+            _onErrorHandler?.Invoke(this, new ErrorEventArgs(
+                    new InternalBufferOverflowException(SR.Format(SR.FSW_BufferOverflow, _directory))));
+        }
+
+        /// <devdoc>
+        ///     Raises the event to each handler in the list.
+        /// </devdoc>
+        /// <internalonly/>
+        private void NotifyRenameEventArgs(WatcherChangeTypes action, string name, string oldName)
+        {
+            // filter if there's no handler or neither new name or old name match a specified pattern
+            RenamedEventHandler handler = _onRenamedHandler;
+            if (handler != null &&
+                (MatchPattern(name) || MatchPattern(oldName)))
+            {
+                handler(this, new RenamedEventArgs(action, _directory, name, oldName));
+            }
+        }
+
+        /// <devdoc>
+        ///     Raises the event to each handler in the list.
+        /// </devdoc>
+        /// <internalonly/>
+        private void NotifyFileSystemEventArgs(WatcherChangeTypes changeType, string name)
+        {
+            FileSystemEventHandler handler = null;
+            switch (changeType)
+            {
+                case WatcherChangeTypes.Created:
+                    handler = _onCreatedHandler;
+                    break;
+                case WatcherChangeTypes.Deleted:
+                    handler = _onDeletedHandler;
+                    break;
+                case WatcherChangeTypes.Changed:
+                    handler = _onChangedHandler;
+                    break;
+                default:
+                    Debug.Fail("Unknown FileSystemEvent change type!  Value: " + changeType);
+                    break;
+            }
+
+            if (handler != null && MatchPattern(string.IsNullOrEmpty(name) ? _directory : name))
+            {
+                handler(this, new FileSystemEventArgs(changeType, _directory, name));
+            }
+        }
+
+        /// <devdoc>
+        ///    Raises the <see cref='System.IO.FileSystemWatcher.Changed'/> event.
+        /// </devdoc>
+        [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#", Justification = "Changing from protected to private would be a breaking change")]
+        protected void OnChanged(FileSystemEventArgs e)
+        {
+            InvokeOn(e, _onChangedHandler);
+        }
+
+        /// <devdoc>
+        ///    Raises the <see cref='System.IO.FileSystemWatcher.Created'/> event.
+        /// </devdoc>
+        [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#", Justification = "Changing from protected to private would be a breaking change")]
+        protected void OnCreated(FileSystemEventArgs e)
+        {
+            InvokeOn(e, _onCreatedHandler);
+        }
+
+        /// <devdoc>
+        ///    Raises the <see cref='System.IO.FileSystemWatcher.Deleted'/> event.
+        /// </devdoc>
+        [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#", Justification = "Changing from protected to private would be a breaking change")]
+        protected void OnDeleted(FileSystemEventArgs e)
+        {
+            InvokeOn(e, _onDeletedHandler);
+        }
+
+        private void InvokeOn(FileSystemEventArgs e, FileSystemEventHandler handler)
+        {
+            if (handler != null)
+            {
+                ISynchronizeInvoke syncObj = SynchronizingObject;
+                if (syncObj != null && syncObj.InvokeRequired)
+                    syncObj.BeginInvoke(handler, new object[] { this, e });
+                else
+                    handler(this, e);
+            }
+        }
+
+        /// <devdoc>
+        ///    Raises the <see cref='System.IO.FileSystemWatcher.Error'/> event.
+        /// </devdoc>
+        [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#", Justification = "Changing from protected to private would be a breaking change")]
+        protected void OnError(ErrorEventArgs e)
+        {
+            ErrorEventHandler handler = _onErrorHandler;
+            if (handler != null)
+            {
+                ISynchronizeInvoke syncObj = SynchronizingObject;
+                if (syncObj != null && syncObj.InvokeRequired)
+                    syncObj.BeginInvoke(handler, new object[] { this, e });
+                else
+                    handler(this, e);
+            }
+        }
+
+        /// <devdoc>
+        ///    Raises the <see cref='System.IO.FileSystemWatcher.Renamed'/> event.
+        /// </devdoc>
+        [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#", Justification = "Changing from protected to private would be a breaking change")]
+        protected void OnRenamed(RenamedEventArgs e)
+        {
+            RenamedEventHandler handler = _onRenamedHandler;
+            if (handler != null)
+            {
+                ISynchronizeInvoke syncObj = SynchronizingObject;
+                if (syncObj != null && syncObj.InvokeRequired)
+                    syncObj.BeginInvoke(handler, new object[] { this, e });
+                else
+                    handler(this, e);
+            }
+        }
+
+        public WaitForChangedResult WaitForChanged(WatcherChangeTypes changeType) =>
+            WaitForChanged(changeType, Timeout.Infinite);
+
+        public WaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, int timeout)
+        {
+            // The full framework implementation doesn't do any argument validation, so
+            // none is done here, either.
+
+            var tcs = new TaskCompletionSource<WaitForChangedResult>();
+            FileSystemEventHandler fseh = null;
+            RenamedEventHandler reh = null;
+
+            // Register the event handlers based on what events are desired.  The full framework
+            // doesn't register for the Error event, so this doesn't either.
+            if ((changeType & (WatcherChangeTypes.Created | WatcherChangeTypes.Deleted | WatcherChangeTypes.Changed)) != 0)
+            {
+                fseh = (s, e) =>
+                {
+                    if ((e.ChangeType & changeType) != 0)
+                    {
+                        tcs.TrySetResult(new WaitForChangedResult(changeType: e.ChangeType, name: e.Name, oldName: null, timedOut: false));
+                    }
+                };
+                if ((changeType & WatcherChangeTypes.Created) != 0) Created += fseh;
+                if ((changeType & WatcherChangeTypes.Deleted) != 0) Deleted += fseh;
+                if ((changeType & WatcherChangeTypes.Changed) != 0) Changed += fseh;
+            }
+            if ((changeType & WatcherChangeTypes.Renamed) != 0)
+            {
+                reh = (s, e) =>
+                {
+                    if ((e.ChangeType & changeType) != 0)
+                    {
+                        tcs.TrySetResult(new WaitForChangedResult(changeType: e.ChangeType, name: e.Name, oldName: e.OldName, timedOut: false));
+                    }
+                };
+                Renamed += reh;
+            }
+            try
+            {
+                // Enable the FSW if it wasn't already.
+                bool wasEnabled = EnableRaisingEvents;
+                if (!wasEnabled)
+                {
+                    EnableRaisingEvents = true;
+                }
+
+                // Block until an appropriate event arrives or until we timeout.
+                Debug.Assert(EnableRaisingEvents, "Expected EnableRaisingEvents to be true");
+                tcs.Task.Wait(timeout);
+
+                // Reset the enabled state to what it was.
+                EnableRaisingEvents = wasEnabled;
+            }
+            finally
+            {
+                // Unregister the event handlers.
+                if (reh != null)
+                {
+                    Renamed -= reh;
+                }
+                if (fseh != null)
+                {
+                    if ((changeType & WatcherChangeTypes.Changed) != 0) Changed -= fseh;
+                    if ((changeType & WatcherChangeTypes.Deleted) != 0) Deleted -= fseh;
+                    if ((changeType & WatcherChangeTypes.Created) != 0) Created -= fseh;
+                }
+            }
+
+            // Return the results.
+            return tcs.Task.Status == TaskStatus.RanToCompletion ?
+                tcs.Task.Result :
+                WaitForChangedResult.TimedOutResult;
+        }
+
+        /// <devdoc>
+        ///     Stops and starts this object.
+        /// </devdoc>
+        /// <internalonly/>
+        private void Restart()
+        {
+            if ((!IsSuspended()) && _enabled)
+            {
+                StopRaisingEvents();
+                StartRaisingEventsIfNotDisposed();
+            }
+        }
+
+        private void StartRaisingEventsIfNotDisposed()
+        {
+            //Cannot allocate the directoryHandle and the readBuffer if the object has been disposed; finalization has been suppressed.
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().Name);
+            StartRaisingEvents();
+        }
+
+        public override ISite Site
+        {
+            get
+            {
+                return base.Site;
+            }
+            set
+            {
+                base.Site = value;
+
+                // set EnableRaisingEvents to true at design time so the user
+                // doesn't have to manually.
+                if (Site != null && Site.DesignMode)
+                    EnableRaisingEvents = true;
+            }
+        }
+
+        public ISynchronizeInvoke SynchronizingObject
+        {
+            get
+            {
+                if (_synchronizingObject == null && DesignMode)
+                {
+                    IDesignerHost host = (IDesignerHost)GetService(typeof(IDesignerHost));
+                    if (host != null)
+                    {
+                        object baseComponent = host.RootComponent;
+                        if (baseComponent != null && baseComponent is ISynchronizeInvoke)
+                            _synchronizingObject = (ISynchronizeInvoke)baseComponent;
+                    }
+                }
+
+                return _synchronizingObject;
+            }
+
+            set
+            {
+                _synchronizingObject = value;
+            }
+        }
+
+        public void BeginInit()
+        {
+            bool oldEnabled = _enabled;
+            StopRaisingEvents();
+            _enabled = oldEnabled;
+            _initializing = true;
+        }
+
+        public void EndInit()
+        {
+            _initializing = false;
+            // Start listening to events if _enabled was set to true at some point.
+            if (_directory.Length != 0 && _enabled)
+                StartRaisingEvents();
+        }
+
+        private bool IsSuspended()
+        {
+            return _initializing || DesignMode;
+        }
+    }
 }
-
