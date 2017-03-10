@@ -29,6 +29,8 @@ mono_threads_suspend_search_alternative_signal (void)
 	/* we try to avoid SIGRTMIN and any one that might have been set already, see bug #75387 */
 	for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
 		struct sigaction sinfo;
+		if (i == DEFAULT_SUSPEND_SIGNAL || i == DEFAULT_RESTART_SIGNAL)
+			continue;
 		sigaction (i, NULL, &sinfo);
 		if (sinfo.sa_handler == SIG_DFL && (void*)sinfo.sa_sigaction == (void*)SIG_DFL) {
 			return i;
