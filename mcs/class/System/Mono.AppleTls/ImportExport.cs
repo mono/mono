@@ -1,4 +1,4 @@
-#if MONO_FEATURE_APPLETLS
+#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // ImportExport.cs
 //
