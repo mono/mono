@@ -1,4 +1,4 @@
-SUBDIRS = assemblyresolve gc-descriptors
+SUBDIRS = assemblyresolve gc-descriptors . testing_gac
 
 if FULL_AOT_TESTS
 FEATUREFUL_RUNTIME_TEST =  
@@ -7,7 +7,7 @@ FEATUREFUL_RUNTIME_TEST = test-appdomain-unload
 endif
 
 check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-multi-netmodule test-cattr-type-load test-reflection-load-with-context test_platform	\
-		 test-console-output test-env-options test-unhandled-exception-2 $(FEATUREFUL_RUNTIME_TEST) test-process-stress test-pedump rm-empty-logs
+		 test-console-output test-env-options test-unhandled-exception-2 $(FEATUREFUL_RUNTIME_TEST) test-process-stress rm-empty-logs runtest-gac-loading
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
 
@@ -1031,7 +1031,7 @@ test-sgen : sgen-tests
 
 # Precompile the test assemblies in parallel
 compile-tests:
-	$(MAKE) -j4 $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
+	$(MAKE) -j4 $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS) compile-gac-loading
 if FULL_AOT_TESTS
 	$(MAKE) $(PREREQSI_IL_AOT) $(PREREQSI_CS_AOT) $(AOT_EXTRA_LIBS)
 endif
@@ -1797,6 +1797,14 @@ test-console-output: console-output.exe
 	@$(RUNTIME) console-output.exe 2>console-output.exe.stderr
 	@diff -w console-output.exe.stdout $(srcdir)/console-output.exe.stdout.expected \
 		&& diff -w console-output.exe.stderr $(srcdir)/console-output.exe.stderr.expected
+
+.PHONY: test-gac-loading
+
+runtest-gac-loading: test-runner.exe
+	$(MAKE) -C testing_gac runtest
+
+compile-gac-loading:
+	$(MAKE) -C testing_gac compile-tests
 
 PROCESS_STRESS_TESTS=	\
 		process-stress-1.exe	\
