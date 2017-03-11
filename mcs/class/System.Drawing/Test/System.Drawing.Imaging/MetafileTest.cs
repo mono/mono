@@ -38,7 +38,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class MetafileTest {
 
 		public const string Bitmap = "bitmaps/non-inverted.bmp";
