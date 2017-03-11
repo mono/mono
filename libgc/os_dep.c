@@ -609,7 +609,7 @@ void GC_enable_signals(void)
       && !defined(MACOS) && !defined(DJGPP) && !defined(DOS4GW) \
       && !defined(NOSYS) && !defined(ECOS) && !defined(SN_TARGET_PS3)
 
-#   if defined(sigmask) && !defined(UTS4) && !defined(HURD)
+#   if defined(sigmask) && !defined(UTS4) && !defined(HURD) && !defined(HAIKU)
 	/* Use the traditional BSD interface */
 #	define SIGSET_T int
 #	define SIG_DEL(set, signal) (set) &= ~(sigmask(signal))
@@ -764,14 +764,14 @@ ptr_t GC_get_stack_base()
 
 # endif /* MS Windows */
 
-# ifdef BEOS
+# ifdef HAIKU
 # include <kernel/OS.h>
 ptr_t GC_get_stack_base(){
 	thread_info th;
 	get_thread_info(find_thread(NULL),&th);
 	return th.stack_end;
 }
-# endif /* BEOS */
+# endif /* HAIKU */
 
 
 # ifdef OS2
@@ -1122,7 +1122,7 @@ void *GC_set_stackbottom = NULL;
 
 #endif /* FREEBSD_STACKBOTTOM */
 
-#if !defined(BEOS) && !defined(AMIGA) && !defined(MSWIN32) \
+#if !defined(HAIKU) && !defined(AMIGA) && !defined(MSWIN32) \
     && !defined(MSWINCE) && !defined(OS2) && !defined(NOSYS) && !defined(ECOS) \
     && !defined(GC_OPENBSD_THREADS)
 
@@ -1182,7 +1182,7 @@ ptr_t GC_get_stack_base()
 #   endif /* STACKBOTTOM */
 }
 
-# endif /* ! AMIGA, !OS 2, ! MS Windows, !BEOS, !NOSYS, !ECOS */
+# endif /* ! AMIGA, !OS 2, ! MS Windows, !HAIKU, !NOSYS, !ECOS */
 
 #if defined(GC_OPENBSD_THREADS)
 
@@ -1957,6 +1957,19 @@ word bytes;
 }
 # endif
 
+#if defined(HAIKU)
+#include <stdlib.h>
+
+ptr_t GC_haiku_get_mem(word bytes)
+{
+    void* mem;
+    if (posix_memalign(&mem, GC_page_size, bytes) == 0)
+        return mem;
+    else
+        return NULL;
+}
+#endif
+
 #ifdef USE_MUNMAP
 
 /* For now, this only works on Win32/WinCE and some Unix-like	*/
@@ -2393,7 +2406,9 @@ GC_bool is_ptrfree;
 
 #   include <sys/mman.h>
 #   include <signal.h>
-#   include <sys/syscall.h>
+#   if !defined(HAIKU)
+#     include <sys/syscall.h>
+#   endif
 
 #   define PROTECT(addr, len) \
     	  if (mprotect((caddr_t)(addr), (size_t)(len), \
@@ -2450,13 +2465,13 @@ GC_bool is_ptrfree;
 #endif /* SUNOS4 || (FREEBSD && !SUNOS5SIGS) */
 
 #if defined(SUNOS5SIGS) || defined(OSF1) || defined(LINUX) \
-    || defined(HURD)
+    || defined(HURD) || defined(HAIKU)
 # ifdef __STDC__
     typedef void (* SIG_PF)(int);
 # else
     typedef void (* SIG_PF)();
 # endif
-#endif /* SUNOS5SIGS || OSF1 || LINUX || HURD */
+#endif /* SUNOS5SIGS || OSF1 || LINUX || HURD || HAIKU */
 
 #if defined(MSWIN32)
     typedef LPTOP_LEVEL_EXCEPTION_FILTER SIG_PF;
@@ -2634,6 +2649,13 @@ SIG_PF GC_old_segv_handler;	/* Also old MSWIN32 ACCESS_VIOLATION filter */
 	/* architectures.						*/
 # endif /* LINUX */
 
+# if defined(HAIKU)
+#   include <errno.h>
+#   define CODE_OK TRUE
+#   define SIG_OK (sig == SIGSEGV)
+    void GC_write_failt_handler(int sig, siginfo_t *scp, void * context)
+#endif /* HAIKU */
+
 # if defined(SUNOS5SIGS)
 #  ifdef __STDC__
     void GC_write_fault_handler(int sig, SIGINFO_T *scp, void * context)
@@ -2679,7 +2701,7 @@ SIG_PF GC_old_segv_handler;	/* Also old MSWIN32 ACCESS_VIOLATION filter */
 #   if defined(OSF1) && defined(ALPHA)
 	char * addr = (char *) (scp -> sc_traparg_a0);
 #   endif
-#   ifdef SUNOS5SIGS
+#   if defined(SUNOS5SIGS) || defined(HAIKU)
 	char * addr = (char *) (scp -> si_addr);
 #   endif
 #   ifdef LINUX
