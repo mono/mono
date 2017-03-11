@@ -266,7 +266,7 @@ endif
 # make dist will collect files in .sources files from all profiles
 dist-local: dist-default
 	subs=' ' ; \
-	for f in `$(topdir)/tools/removecomments.sh $(filter-out $(wildcard *_test.dll.sources) $(wildcard *exclude.sources),$(wildcard *.sources))` $(TEST_FILES) ; do \
+	for f in `$(topdir)/tools/removecomments.sh $(filter-out $(wildcard *_test.dll.sources) $(wildcard *_xtest.dll.sources) $(wildcard *exclude.sources),$(wildcard *.sources))` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
 	  *.g.cs) : ;; \
