@@ -241,7 +241,7 @@ namespace MonoTests.System.Resources
 			string filePath = Path.Combine (_tempDirectory, fileName);
 			File.WriteAllText (filePath, fileContents);
 
-			filePath = _tempDirectory + "\\.\\" + filename;
+			filePath = _tempDirectory + "\\.\\" + fileName;
 
 			string fileRef = filePath + ";" + typeof (string).AssemblyQualifiedName;
 			string result = _converter.ConvertFrom (fileRef) as string;
