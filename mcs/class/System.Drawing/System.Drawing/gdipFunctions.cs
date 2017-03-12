@@ -55,11 +55,7 @@ namespace System.Drawing
 		public static bool UseCarbonDrawable = false;
 		public static bool UseCocoaDrawable = false;
 
-#if NETCOREAPP2_0
 		private const string GdiPlus = "gdiplus";
-#else
-		private const string GdiPlus = "gdiplus.dll";
-#endif
 
 		#region gdiplus.dll functions
 
@@ -951,7 +947,7 @@ namespace System.Drawing
 
 		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipMeasureCharacterRanges (IntPtr graphics, string str, int length, IntPtr font,
-			ref RectangleF layoutRect, IntPtr stringFormat, int regcount, out IntPtr regions)
+			ref RectangleF layoutRect, IntPtr stringFormat, int regcount, out IntPtr regions);
 
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipSetStringFormatMeasurableCharacterRanges (IntPtr native,
