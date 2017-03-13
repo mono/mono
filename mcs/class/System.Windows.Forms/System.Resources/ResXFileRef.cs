@@ -68,6 +68,10 @@ namespace System.Resources {
 				if (parts.Length == 1)
 					throw new ArgumentException ("value");
 
+				string filename = parts [0];
+				if (Path.DirectorySeparatorChar == '/')
+					filename = filename.Replace ("\\", "/");
+
 				Type type = Type.GetType (parts [1]);
 				if (type == typeof(string)) {
 					Encoding encoding;
@@ -77,14 +81,10 @@ namespace System.Resources {
 						encoding = Encoding.Default;
 					}
 
-					using (TextReader reader = new StreamReader(parts [0], encoding)) {
+					using (TextReader reader = new StreamReader(filename, encoding)) {
 						return reader.ReadToEnd();
 					}
 				}
-
-				string filename = parts [0];
-				if (Path.DirectorySeparatorChar == '/')
-					filename = filename.Replace ("\\", "/");
 
 				using (FileStream file = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 					buffer = new byte [file.Length];
