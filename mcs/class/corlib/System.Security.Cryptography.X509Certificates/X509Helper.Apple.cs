@@ -8,7 +8,7 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	static partial class X509Helper
 	{
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		public static X509CertificateImpl InitFromHandleApple (IntPtr handle)
 		{
 			return new X509CertificateImplApple (handle, false);
 		}

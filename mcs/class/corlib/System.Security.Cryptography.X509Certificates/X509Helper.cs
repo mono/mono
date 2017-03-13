@@ -49,7 +49,24 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
-#if !MOBILE && !MONO_FEATURE_APPLETLS
+#if !MOBILE
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
+		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		{
+#if MONO_FEATURE_APPLETLS
+			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
+			bool useAppleTls = string.IsNullOrEmpty (variable) || variable == "default" || variable == "apple"; // On Platform.IsMacOS default is AppleTlsProvider
+			if (System.Environment.IsMacOS && useAppleTls)
+				return InitFromHandleApple (handle);
+#endif
+#if !MOBILE
+			InitFromHandleCore (handle);
+#endif
+			throw new NotSupportedException ();
+		}
+
+#if !MOBILE
 		// typedef struct _CERT_CONTEXT {
 		//	DWORD                   dwCertEncodingType;
 		//	BYTE                    *pbCertEncoded;
@@ -70,7 +87,7 @@ namespace System.Security.Cryptography.X509Certificates
 		// so we don't create any dependencies on Windows DLL in corlib
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		public static X509CertificateImpl InitFromHandleCore (IntPtr handle)
 		{
 			// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
 			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
@@ -78,11 +95,6 @@ namespace System.Security.Cryptography.X509Certificates
 			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
 			var x509 = new MX.X509Certificate (data);
 			return new X509CertificateImplMono (x509);
-		}
-#elif !MONO_FEATURE_APPLETLS
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
-		{
-			throw new NotSupportedException ();
 		}
 #endif
 
