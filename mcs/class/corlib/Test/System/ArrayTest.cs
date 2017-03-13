@@ -780,6 +780,14 @@ public class ArrayTest
 	}
 
 	[Test]
+	public void CreateInstanceVoid ()
+	{
+		Assert.Throws<NotSupportedException> (delegate () {
+				Array.CreateInstance (typeof (void), 1);
+			});
+	}
+
+	[Test]
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator ();
