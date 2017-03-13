@@ -133,6 +133,11 @@ namespace System.Net.Sockets
 			}
 		}
 
+		static WaitCallback WorkItemCallback = new WaitCallback((object state) => {
+			SocketAsyncResult ar = (SocketAsyncResult) state;
+			ar.AsyncCallback(ar);
+		});
+
 		internal override void CompleteDisposed ()
 		{
 			Complete ();
@@ -153,9 +158,8 @@ namespace System.Net.Sockets
 			Socket completedSocket = socket;
 			SocketOperation completedOperation = operation;
 
-			AsyncCallback callback = AsyncCallback;
-			if (callback != null) {
-				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
+			if (this.AsyncCallback != null) {
+				ThreadPool.UnsafeQueueUserWorkItem (WorkItemCallback, this);
 			}
 
 			/* Warning: any field on the current SocketAsyncResult might have changed, as the callback might have
