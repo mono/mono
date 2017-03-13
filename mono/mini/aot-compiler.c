@@ -7945,7 +7945,7 @@ mono_aot_get_method_name (MonoCompile *cfg)
 gboolean
 mono_aot_is_linkonce_method (MonoMethod *method)
 {
-	return FALSE;
+	return TRUE;
 }
 
 static gboolean
