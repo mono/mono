@@ -65,6 +65,7 @@ typedef struct {
 	GHashTable *plt_entries;
 	GHashTable *plt_entries_ji;
 	GHashTable *method_to_lmethod;
+	GHashTable *name_to_lmethod;
 	GHashTable *direct_callables;
 	char **bb_names;
 	int bb_names_len;
@@ -1499,6 +1500,20 @@ sig_to_llvm_sig (EmitContext *ctx, MonoMethodSignature *sig)
 	return sig_to_llvm_sig_full (ctx, sig, NULL);
 }
 
+static LLVMTypeRef
+mono_method_llvm_sig (EmitContext *ctx, MonoMethod *method) 
+{
+	if (method->is_inflated || method->string_ctor)
+		return NULL;
+
+	MonoMethodSignature *sig = mono_method_signature (method);
+
+	LLVMCallInfo *linfo = mono_arch_get_llvm_call_info (ctx->cfg, sig);
+	for (int i = 0; i < sig->param_count; ++i)
+		linfo->args [i + sig->hasthis].type = sig->params [i];
+	return sig_to_llvm_sig_full (ctx, sig, linfo);
+}
+
 /*
  * LLVMFunctionType1:
  *
@@ -1696,7 +1711,7 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 			if (!callee) {
 				callee = LLVMAddFunction (ctx->lmodule, callee_name, llvm_sig);
 
-				LLVMSetVisibility (callee, LLVMHiddenVisibility);
+				LLVMSetVisibility (callee, LLVMDefaultVisibility);
 
 				g_hash_table_insert (ctx->module->direct_callables, (char*)callee_name, callee);
 			} else {
@@ -1707,6 +1722,31 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 				g_free (callee_name);
 			}
 			return callee;
+		}
+
+		if (type == MONO_PATCH_INFO_METHOD) {
+			MonoMethod *method = (MonoMethod *)data;
+			if (method->wrapper_type == MONO_WRAPPER_NONE && ctx->module->assembly != method->klass->image->assembly && mono_method_llvm_sig (ctx, method) == llvm_sig && !(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)) {
+
+				callee_name = mono_aot_get_mangled_method_name (method);
+				callee = (LLVMValueRef)g_hash_table_lookup (ctx->module->name_to_lmethod, callee_name);
+				/*callee = (LLVMValueRef)g_hash_table_lookup (ctx->module->method_to_lmethod, method);*/
+				if (!callee) {
+					// External direct call
+					g_assert (ctx->module->assembly != method->klass->image->assembly);
+					callee = (LLVMValueRef)g_hash_table_lookup (ctx->module->method_to_lmethod, method);
+					g_assert (!callee);
+
+					callee = LLVMAddFunction (ctx->lmodule, callee_name, llvm_sig);
+					g_hash_table_insert (ctx->module->name_to_lmethod, callee_name, callee);
+
+					LLVMSetLinkage (callee, LLVMExternalLinkage);
+					LLVMAddFunctionAttr (callee, LLVMNoUnwindAttribute);
+				}
+				LLVMSetVisibility (callee, LLVMDefaultVisibility);
+				g_assert (LLVMGetElementType (LLVMTypeOf (callee)) == llvm_sig);
+				/*return callee;*/
+			}
 		}
 
 		/*
@@ -1729,7 +1769,7 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 		if (!callee) {
 			callee = LLVMAddFunction (ctx->lmodule, callee_name, llvm_sig);
 
-			LLVMSetVisibility (callee, LLVMHiddenVisibility);
+			LLVMSetVisibility (callee, LLVMDefaultVisibility);
 
 			g_hash_table_insert (ctx->module->plt_entries, (char*)callee_name, callee);
 		}
@@ -2469,7 +2509,7 @@ emit_get_amodule (MonoLLVMModule *module)
 	LLVMTypeRef sig = LLVMFunctionType2 (rtype, LLVMInt32Type (), LLVMInt32Type (), FALSE);
 	func = LLVMAddFunction (lmodule, module->get_amodule_symbol, sig);
 	LLVMSetLinkage (func, LLVMExternalLinkage);
-	LLVMSetVisibility (func, LLVMHiddenVisibility);
+	LLVMSetVisibility (func, LLVMDefaultVisibility);
 	LLVMAddFunctionAttr (func, LLVMNoUnwindAttribute);
 	module->get_amodule = func;
 
@@ -2543,7 +2583,7 @@ emit_get_method (MonoLLVMModule *module)
 	rtype = LLVMPointerType (LLVMInt8Type (), 0);
 	func = LLVMAddFunction (lmodule, module->get_method_symbol, LLVMFunctionType1 (rtype, LLVMInt32Type (), FALSE));
 	LLVMSetLinkage (func, LLVMExternalLinkage);
-	LLVMSetVisibility (func, LLVMHiddenVisibility);
+	LLVMSetVisibility (func, LLVMDefaultVisibility);
 	LLVMAddFunctionAttr (func, LLVMNoUnwindAttribute);
 	module->get_method = func;
 
@@ -3309,7 +3349,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 					set_failure (ctx, "can't encode patch");
 					return;
 				}
-				if (cfg->llvm_only && call->method->klass->image->assembly == ctx->module->assembly) {
+				if (cfg->llvm_only && call->method->wrapper_type == MONO_WRAPPER_NONE) {
 					/*
 					 * Collect instructions representing the callee into a hash so they can be replaced
 					 * by the llvm method for the callee if the callee turns out to be direct
@@ -7080,12 +7120,15 @@ emit_method_inner (EmitContext *ctx)
 	if (!ctx_ok (ctx))
 		return;
 
+	method = (LLVMValueRef)g_hash_table_lookup (ctx->module->name_to_lmethod, ctx->method_name);
+	g_assert (!method);
+
 	method = LLVMAddFunction (lmodule, ctx->method_name, method_type);
 	ctx->lmethod = method;
 
 	if (!cfg->llvm_only)
 		LLVMSetFunctionCallConv (method, LLVMMono1CallConv);
-	LLVMSetLinkage (method, LLVMPrivateLinkage);
+	LLVMSetLinkage (method, LLVMExternalLinkage);
 
 	LLVMAddFunctionAttr (method, LLVMUWTable);
 
@@ -7093,7 +7136,7 @@ emit_method_inner (EmitContext *ctx)
 		LLVMSetLinkage (method, LLVMInternalLinkage);
 		if (ctx->module->external_symbols) {
 			LLVMSetLinkage (method, LLVMExternalLinkage);
-			LLVMSetVisibility (method, LLVMHiddenVisibility);
+			LLVMSetVisibility (method, LLVMDefaultVisibility);
 		}
 		if (ctx->is_linkonce) {
 			mono_llvm_set_comdat (method, lmodule);
@@ -8679,6 +8722,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->plt_entries = g_hash_table_new (g_str_hash, g_str_equal);
 	module->plt_entries_ji = g_hash_table_new (NULL, NULL);
 	module->direct_callables = g_hash_table_new (g_str_hash, g_str_equal);
+	module->name_to_lmethod = g_hash_table_new (g_str_hash, g_str_equal);
 	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->idx_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->idx_to_amod = g_hash_table_new (NULL, NULL);
@@ -8962,7 +9006,7 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 	LLVMSetInitializer (real_got, LLVMConstNull (got_type));
 	if (module->external_symbols) {
 		LLVMSetLinkage (real_got, LLVMExternalLinkage);
-		LLVMSetVisibility (real_got, LLVMHiddenVisibility);
+		LLVMSetVisibility (real_got, LLVMDefaultVisibility);
 	} else {
 		LLVMSetLinkage (real_got, LLVMInternalLinkage);
 	}
@@ -9007,6 +9051,8 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 		MonoMethod *method;
 		GSList *callers, *l;
 
+		size_t num_external = 0, num_internal = 0, num_failed = 0;
+
 		g_hash_table_iter_init (&iter, module->method_to_callers);
 		while (g_hash_table_iter_next (&iter, (void**)&method, (void**)&callers)) {
 			LLVMValueRef lmethod;
@@ -9014,15 +9060,41 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 			if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 				continue;
 
-			lmethod = (LLVMValueRef)g_hash_table_lookup (module->method_to_lmethod, method);
+			gboolean external = FALSE;
+			if (method->klass->image->assembly == module->assembly) {
+				lmethod = (LLVMValueRef)g_hash_table_lookup (module->method_to_lmethod, method);
+				if (lmethod)
+				g_assert (!g_hash_table_lookup (module->name_to_lmethod, mono_aot_get_mangled_method_name (method)));
+			} else {
+				lmethod = (LLVMValueRef)g_hash_table_lookup (module->name_to_lmethod, mono_aot_get_mangled_method_name (method));
+				external = TRUE;
+				if (lmethod)
+					g_assert (!method->is_inflated && !method->string_ctor);
+			}
+
+
+
+			if (lmethod && external)
+				num_external++;
+			else if (lmethod && !external)
+				num_internal++;
+			else if (external)
+				num_failed++;
+
 			if (lmethod) {
 				for (l = callers; l; l = l->next) {
 					LLVMValueRef caller = (LLVMValueRef)l->data;
 
 					mono_llvm_replace_uses_of (caller, lmethod);
 				}
+				// FIXME: Remove GOT slot
+				// Doing a pass before or after is necessary because when functions are defined
+				// while their invocations are being created, we end up with undefined references.
 			}
 		}
+		fprintf (stderr, "Num External GOT redirects: %zu\n", num_external);
+		fprintf (stderr, "Num Internal GOT redirects: %zu\n", num_internal);
+		fprintf (stderr, "Num Failed External GOT redirects: %zu\n", num_failed);
 	}
 
 	/* Replace PLT entries for directly callable methods with the methods themselves */
