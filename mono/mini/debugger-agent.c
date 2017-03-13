@@ -53,8 +53,7 @@
 #endif
 
 #include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
-#include <mono/metadata/debug-mono-symfile.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/threads-types.h>
@@ -819,7 +818,13 @@ register_socket_transport (void);
 static inline gboolean
 is_debugger_thread (void)
 {
-	return mono_native_thread_id_equals (mono_native_thread_id_get (), debugger_thread_id);
+	MonoInternalThread *internal;
+
+	internal = mono_thread_internal_current ();
+	if (!internal)
+		return FALSE;
+
+	return internal->debugger_thread;
 }
 
 static int
@@ -998,7 +1003,7 @@ mono_debugger_agent_init (void)
 	/* Needed by the hash_table_new_type () call below */
 	mono_gc_base_init ();
 
-	thread_to_tls = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, "thread-to-tls table");
+	thread_to_tls = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, "thread-to-tls table");
 
 	tid_to_thread = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, "tid-to-thread table");
 
@@ -1635,7 +1640,13 @@ stop_debugger_thread (void)
 static void
 start_debugger_thread (void)
 {
-	debugger_thread_handle = mono_threads_create_thread (debugger_thread, NULL, NULL, NULL);
+	MonoError error;
+	MonoInternalThread *thread;
+
+	thread = mono_thread_create_internal (mono_get_root_domain (), debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, &error);
+	mono_error_assert_ok (&error);
+
+	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
 	g_assert (debugger_thread_handle);
 }
 
@@ -1939,7 +1950,7 @@ objrefs_init (void)
 {
 	objrefs = g_hash_table_new_full (NULL, NULL, NULL, free_objref);
 	obj_to_objref = g_hash_table_new (NULL, NULL);
-	suspended_objs = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, "suspended objects table");
+	suspended_objs = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, "suspended objects table");
 }
 
 static void
@@ -2683,7 +2694,7 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 	DebuggerTlsData *tls = (DebuggerTlsData *)value;
 	MonoNativeThreadId tid = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 
-	if (mono_native_thread_id_equals (mono_native_thread_id_get (), tid) || tls->terminated)
+	if (mono_thread_internal_is_current (thread) || tls->terminated)
 		return;
 
 	DEBUG_PRINTF (1, "[%p] Interrupting %p...\n", (gpointer) (gsize) mono_native_thread_id_get (), (gpointer)tid);
@@ -2955,7 +2966,7 @@ count_thread (gpointer key, gpointer value, gpointer user_data)
 {
 	DebuggerTlsData *tls = (DebuggerTlsData *)value;
 
-	if (!tls->suspended && !tls->terminated)
+	if (!tls->suspended && !tls->terminated && !mono_thread_internal_is_current (tls->thread))
 		*(int*)user_data = *(int*)user_data + 1;
 }
 
@@ -3249,8 +3260,8 @@ emit_appdomain_load (gpointer key, gpointer value, gpointer user_data)
 static void
 emit_thread_start (gpointer key, gpointer value, gpointer user_data)
 {
-	if (!mono_native_thread_id_equals (MONO_UINT_TO_NATIVE_THREAD_ID (GPOINTER_TO_UINT (key)), debugger_thread_id))
-		process_profiler_event (EVENT_KIND_THREAD_START, value);
+	g_assert (!mono_native_thread_id_equals (MONO_UINT_TO_NATIVE_THREAD_ID (GPOINTER_TO_UINT (key)), debugger_thread_id));
+	process_profiler_event (EVENT_KIND_THREAD_START, value);
 }
 
 /*
@@ -3811,7 +3822,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	MonoInternalThread *old_thread;
 	DebuggerTlsData *tls;
 
-	if (mono_native_thread_id_equals (MONO_UINT_TO_NATIVE_THREAD_ID (tid), debugger_thread_id))
+	if (is_debugger_thread ())
 		return;
 
 	g_assert (mono_native_thread_id_equals (MONO_UINT_TO_NATIVE_THREAD_ID (tid), MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid)));
@@ -3890,8 +3901,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 	if (thread) {
 		DEBUG_PRINTF (1, "[%p] Thread terminated, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls);
 
-		if (mono_native_thread_id_equals (mono_native_thread_id_get (), MONO_UINT_TO_NATIVE_THREAD_ID (tid))
-		     && !mono_native_tls_get_value (debugger_tls_id)
+		if (mono_thread_internal_is_current (thread) && !mono_native_tls_get_value (debugger_tls_id)
 		) {
 			/*
 			 * This can happen on darwin since we deregister threads using pthread dtors.
@@ -10132,12 +10142,12 @@ debugger_thread (void *arg)
 
 	debugger_thread_id = mono_native_thread_id_get ();
 
-	MonoThread *thread = mono_thread_attach (mono_get_root_domain ());
-	mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "Debugger agent"), TRUE, FALSE, &error);
+	MonoInternalThread *internal = mono_thread_internal_current ();
+	mono_thread_set_name_internal (internal, mono_string_new (mono_domain_get (), "Debugger agent"), TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
-	thread->internal_thread->state |= ThreadState_Background;
-	thread->internal_thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+	internal->state |= ThreadState_Background;
+	internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
 	if (agent_config.defer) {
 		if (!wait_for_attach ()) {

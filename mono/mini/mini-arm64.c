@@ -233,6 +233,7 @@ mono_arch_init (void)
 {
 	mono_aot_register_jit_icall ("mono_arm_throw_exception", mono_arm_throw_exception);
 	mono_aot_register_jit_icall ("mono_arm_resume_unwind", mono_arm_resume_unwind);
+	mono_aot_register_jit_icall ("mono_arm_handler_block_trampoline_helper", mono_arm_handler_block_trampoline_helper);
 
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
@@ -1348,6 +1349,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 			/* Pass the argument address in the next register */
 			if (cinfo->gr >= PARAM_REGS) {
 				ainfo->storage = ArgVtypeByRefOnStack;
+				cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, 8);
 				ainfo->offset = cinfo->stack_usage;
 				cinfo->stack_usage += 8;
 			} else {
@@ -1902,7 +1904,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cfg->method->save_lmf) {
 		cfg->create_lmf_var = TRUE;
 		cfg->lmf_ir = TRUE;
-#ifndef TARGET_MACH
+#ifdef HAVE_GET_TLS_ADDR
 		cfg->lmf_ir_mono_lmf = TRUE;
 #endif
 	}

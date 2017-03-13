@@ -72,24 +72,122 @@ const MonoObjectHandle mono_null_value_handle = NULL;
 
 #define THIS_IS_AN_OK_NUMBER_OF_HANDLES 100
 
-static MonoObject**
-chunk_element_objslot (HandleChunk *chunk, int idx)
+enum {
+	HANDLE_CHUNK_PTR_OBJ = 0x0, /* chunk element points to beginning of a managed object */
+	HANDLE_CHUNK_PTR_INTERIOR = 0x1, /* chunk element points into the middle of a managed object */
+	HANDLE_CHUNK_PTR_MASK = 0x1
+};
+
+/* number of bits in each word of the interior pointer bitmap */
+#define INTERIOR_HANDLE_BITMAP_BITS_PER_WORD (sizeof(guint32) << 3)
+
+static gboolean
+bitset_bits_test (guint32 *bitmaps, int idx)
 {
-	return &chunk->objects[idx].o;
+	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	guint32 bitmap = bitmaps [w];
+	guint32 mask = 1u << b;
+	return ((bitmap & mask) != 0);
+}
+
+static void
+bitset_bits_set (guint32 *bitmaps, int idx)
+{
+	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	guint32 *bitmap = &bitmaps [w];
+	guint32 mask = 1u << b;
+	*bitmap |= mask;
+}
+static void
+bitset_bits_clear (guint32 *bitmaps, int idx)
+{
+	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+	guint32 *bitmap = &bitmaps [w];
+	guint32 mask = ~(1u << b);
+	*bitmap &= mask;
+}
+
+static gpointer*
+chunk_element_objslot_init (HandleChunk *chunk, int idx, gboolean interior)
+{
+	if (interior)
+		bitset_bits_set (chunk->interior_bitmap, idx);
+	else
+		bitset_bits_clear (chunk->interior_bitmap, idx);
+	return &chunk->elems [idx].o;
+}
+
+static HandleChunkElem*
+chunk_element (HandleChunk *chunk, int idx)
+{
+	return &chunk->elems[idx];
+}
+
+static guint
+chunk_element_kind (HandleChunk *chunk, int idx)
+{
+	return bitset_bits_test (chunk->interior_bitmap, idx) ? HANDLE_CHUNK_PTR_INTERIOR : HANDLE_CHUNK_PTR_OBJ;
+}
+
+static HandleChunkElem*
+handle_to_chunk_element (MonoObjectHandle o)
+{
+	return (HandleChunkElem*)o;
+}
+
+/* Given a HandleChunkElem* search through the current handle stack to find its chunk and offset. */
+static HandleChunk*
+chunk_element_to_chunk_idx (HandleStack *stack, HandleChunkElem *elem, int *out_idx)
+{
+	HandleChunk *top = stack->top;
+	HandleChunk *cur = stack->bottom;
+
+	*out_idx = 0;
+
+	while (cur != NULL) {
+		HandleChunkElem *front = &cur->elems [0];
+		HandleChunkElem *back = &cur->elems [cur->size];
+
+		if (front <= elem && elem < back) {
+			*out_idx = (int)(elem - front);
+			return cur;
+		}
+
+		if (cur == top)
+			break; /* didn't find it. */
+		cur = cur->next;
+	}
+	return NULL;
 }
 
 #ifdef MONO_HANDLE_TRACK_OWNER
-#define SET_OWNER(chunk,idx) do { (chunk)->objects[(idx)].owner = owner; } while (0)
+#define SET_OWNER(chunk,idx) do { (chunk)->elems[(idx)].owner = owner; } while (0)
 #else
 #define SET_OWNER(chunk,idx) do { } while (0)
 #endif
 
-/* Actual handles implementation */
 MonoRawHandle
 #ifndef MONO_HANDLE_TRACK_OWNER
 mono_handle_new (MonoObject *object)
 #else
-mono_handle_new (MonoObject *object, const char *owner)
+mono_handle_new (MonoObject *object const char *owner)
+#endif
+{
+#ifndef MONO_HANDLE_TRACK_OWNER
+	return mono_handle_new_full (object, FALSE);
+#else
+	return mono_handle_new_full (object, FALSE, owner);
+#endif
+}
+/* Actual handles implementation */
+MonoRawHandle
+#ifndef MONO_HANDLE_TRACK_OWNER
+mono_handle_new_full (gpointer rawptr, gboolean interior)
+#else
+mono_handle_new_full (gpointer rawptr, gboolean interior, const char *owner)
 #endif
 {
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -99,7 +197,7 @@ mono_handle_new (MonoObject *object, const char *owner)
 retry:
 	if (G_LIKELY (top->size < OBJECTS_PER_HANDLES_CHUNK)) {
 		int idx = top->size;
-		MonoObject** objslot = chunk_element_objslot (top, idx);
+		gpointer* objslot = chunk_element_objslot_init (top, idx, interior);
 		/* can be interrupted anywhere here, so:
 		 * 1. make sure the new slot is null
 		 * 2. make the new slot scannable (increment size)
@@ -112,7 +210,7 @@ retry:
 		mono_memory_write_barrier ();
 		top->size++;
 		mono_memory_write_barrier ();
-		*objslot = object;
+		*objslot = rawptr;
 		SET_OWNER (top,idx);
 		return objslot;
 	}
@@ -126,6 +224,7 @@ retry:
 	}
 	HandleChunk *new_chunk = g_new (HandleChunk, 1);
 	new_chunk->size = 0;
+	memset (new_chunk->interior_bitmap, 0, INTERIOR_HANDLE_BITMAP_WORDS);
 	new_chunk->prev = top;
 	new_chunk->next = NULL;
 	/* make sure size == 0 before new chunk is visible */
@@ -144,6 +243,7 @@ mono_handle_stack_alloc (void)
 	HandleChunk *chunk = g_new (HandleChunk, 1);
 
 	chunk->size = 0;
+	memset (chunk->interior_bitmap, 0, INTERIOR_HANDLE_BITMAP_WORDS);
 	chunk->prev = chunk->next = NULL;
 	mono_memory_write_barrier ();
 	stack->top = stack->bottom = chunk;
@@ -168,10 +268,16 @@ mono_handle_stack_free (HandleStack *stack)
 }
 
 void
-mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data)
+mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise)
 {
-	/* if we're running, we know the world is stopped.
-	 */
+	/*
+	  We're called twice - on the imprecise pass we call func to pin the
+	  objects where the handle points to its interior.  On the precise
+	  pass, we scan all the objects where the handles point to the start of
+	  the object.
+
+	  Note that if we're running, we know the world is stopped.
+	*/
 	HandleChunk *cur = stack->bottom;
 	HandleChunk *last = stack->top;
 
@@ -179,11 +285,35 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data)
 		return;
 
 	while (cur) {
-		int i;
-		for (i = 0; i < cur->size; ++i) {
-			MonoObject **obj_slot = chunk_element_objslot (cur, i);
-			if (*obj_slot != NULL)
-				func ((gpointer*)obj_slot, gc_data);
+		/* assume that object pointers will be much more common than interior pointers.
+		 * scan the object pointers by iterating over the chunk elements.
+		 * scan the interior pointers by iterating over the bitmap bits.
+		 */
+		if (precise) {
+			for (int i = 0; i < cur->size; ++i) {
+				HandleChunkElem* elem = chunk_element (cur, i);
+				int kind = chunk_element_kind (cur, i);
+				gpointer* obj_slot = &elem->o;
+				if (kind == HANDLE_CHUNK_PTR_OBJ && *obj_slot != NULL)
+					func (obj_slot, gc_data);
+			}
+		} else {
+			int elem_idx = 0;
+			for (int i = 0; i < INTERIOR_HANDLE_BITMAP_WORDS; ++i) {
+				elem_idx = i * INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
+				if (elem_idx >= cur->size)
+					break;
+				/* no interior pointers in the range */ 
+				if (cur->interior_bitmap [i] == 0)
+					continue;
+				for (int j = 0; j < INTERIOR_HANDLE_BITMAP_BITS_PER_WORD && elem_idx < cur->size; ++j,++elem_idx) {
+					HandleChunkElem *elem = chunk_element (cur, elem_idx);
+					int kind = chunk_element_kind (cur, elem_idx);
+					gpointer *ptr_slot = &elem->o;
+					if (kind == HANDLE_CHUNK_PTR_INTERIOR && *ptr_slot != NULL)
+						func (ptr_slot, gc_data);
+				}
+			}	     
 		}
 		if (cur == last)
 			break;
@@ -265,7 +395,17 @@ mono_array_handle_length (MonoArrayHandle arr)
 uint32_t
 mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned)
 {
-	return mono_gchandle_new (MONO_HANDLE_RAW(handle), pinned);
+	/* FIXME: chunk_element_to_chunk_idx does a linear search through the
+	 * chunks and we only need it for the assert */
+	MonoThreadInfo *info = mono_thread_info_current ();
+	HandleStack *stack = (HandleStack*) info->handle_stack;
+	HandleChunkElem* elem = handle_to_chunk_element (handle);
+	int elem_idx = 0;
+	HandleChunk *chunk = chunk_element_to_chunk_idx (stack, elem, &elem_idx);
+	/* gchandles cannot deal with interior pointers */
+	g_assert (chunk != NULL);
+	g_assert (chunk_element_kind (chunk, elem_idx) != HANDLE_CHUNK_PTR_INTERIOR);
+	return mono_gchandle_new (MONO_HANDLE_RAW (handle), pinned);
 }
 
 MonoObjectHandle

@@ -336,9 +336,13 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_THREAD_SAFE"
 		libmono_cflags="-D_REENTRANT -D_THREAD_SAFE"
 		libdl=
-		LIBS="$LIBS -lnetwork"
+		LIBS="$LIBS -lnetwork -ltextencoding"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
+		dnl Haiku does not support static TLS with __thread
+		with_tls=pthread
+		dnl Boehm is too much work to backport Haiku support for
+		support_boehm=no
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
@@ -860,9 +864,9 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="-O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
 
-   AOT_RUN_FLAGS="--full-aot"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -877,15 +881,15 @@ elif test x$with_runtime_preset = xbitcode; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="--aot=llvmonly,$INVARIANT_AOT_OPTIONS"
-   AOT_RUN_FLAGS="--llvmonly"
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
 elif test x$with_runtime_preset = xhybridaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_hybrid_default=yes
    TEST_PROFILE=testing_aot_hybrid 
 
-   AOT_BUILD_FLAGS="--aot=hybrid,$INVARIANT_AOT_OPTIONS"
-   AOT_RUN_FLAGS="--hybrid-aot"
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=hybrid,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
 elif test x$with_runtime_preset = xaot; then
    with_profile4_x_default=yes
 
@@ -904,8 +908,8 @@ elif test x$with_runtime_preset = xwinaot; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
-   AOT_RUN_FLAGS="--full-aot"
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -917,8 +921,8 @@ elif test x$with_runtime_preset = xorbis; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
-   AOT_RUN_FLAGS="--full-aot"
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 else
    with_profile4_x_default=yes
 fi
@@ -1430,8 +1434,6 @@ if test x$host_win32 = xno; then
 
 	AC_CHECK_FUNCS(getgrgid_r)
 	AC_CHECK_FUNCS(getgrnam_r)
-	AC_CHECK_FUNCS(getpwnam_r)
-	AC_CHECK_FUNCS(getpwuid_r)
 	AC_CHECK_FUNCS(getresuid)
 	AC_CHECK_FUNCS(setresuid)
 	AC_CHECK_FUNCS(kqueue)
@@ -1451,6 +1453,11 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(sched_getaffinity)
 	AC_CHECK_FUNCS(sched_setaffinity)
 	AC_CHECK_FUNCS(sched_getcpu)
+
+	if test x$platform_android != xyes; then
+		AC_CHECK_FUNCS(getpwnam_r)
+		AC_CHECK_FUNCS(getpwuid_r)
+	fi
 
 	dnl ****************************************************************
 	dnl *** Check for sched_setaffinity from glibc versions before   ***
@@ -1912,6 +1919,10 @@ if test x$host_win32 = xno; then
 # and libpthread does not exist
 #
 	case "${host}" in
+		*-*-*haiku*)
+			dnl Haiku has pthread in libroot (libc equiv)
+			AC_CHECK_LIB(pthread, main, LIBS="$LIBS")
+		;;
 		*-*-*freebsd*)
 			AC_CHECK_LIB(pthread, main, LIBS="$LIBS -pthread")
 		;;
@@ -2321,6 +2332,10 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 			
+	dnl **********************************
+	dnl *** Checks for proclib         ***
+	dnl **********************************
+	AC_CHECK_HEADER(sys/errno.h, [AC_DEFINE(HAVE_SYS_ERRNO_H, 1, Define to 1 if you have the <sys/errno.h> header file.)])
 	dnl **********************************
 	dnl *** Checks for MonoPosixHelper ***
 	dnl **********************************
@@ -3312,7 +3327,6 @@ if test "x$host" != "x$target"; then
 		TARGET=ARM;
 		arch_target=arm;
 		AC_DEFINE(TARGET_ARM, 1, [...])
-		AC_DEFINE(TARGET_ANDROID, 1, [...])
 		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		# Can't use tls, since it depends on the runtime detection of tls offsets
@@ -3325,6 +3339,11 @@ if test "x$host" != "x$target"; then
 			CPPFLAGS="$CPPFLAGS"
 			;;
    		armv5-*-linux-androideabi*)
+			AC_DEFINE(TARGET_ANDROID, 1, [...])
+			CPPFLAGS="$CPPFLAGS"
+			;;
+   		*-linux-androideabi*)
+			AC_DEFINE(TARGET_ANDROID, 1, [...])
 			CPPFLAGS="$CPPFLAGS"
 			;;
 		esac
@@ -3344,23 +3363,33 @@ if test "x$host" != "x$target"; then
 		TARGET=X86;
 		arch_target=x86;
 		AC_DEFINE(TARGET_X86, 1, [...])
-		AC_DEFINE(TARGET_ANDROID, 1, [...])
 		CPPFLAGS="$CPPFLAGS"
 		# Can't use tls, since it depends on the runtime detection of tls offsets
 		# in mono-compiler.h		
 		with_tls=pthread
 		target_mach=no
+
+		case "$target" in
+		*-linux-android*)
+			AC_DEFINE(TARGET_ANDROID, 1, [...])
+			;;
+		esac
 		;;
    x86_64*-linux-*)
 		TARGET=AMD64;
 		arch_target=amd64;
 		AC_DEFINE(TARGET_AMD64, 1, [...])
-		AC_DEFINE(TARGET_ANDROID, 1, [...])
 		CPPFLAGS="$CPPFLAGS"
 		# Can't use tls, since it depends on the runtime detection of tls offsets
 		# in mono-compiler.h
 		with_tls=pthread
 		target_mach=no
+
+		case "$target" in
+		*-linux-android*)
+			AC_DEFINE(TARGET_ANDROID, 1, [...])
+			;;
+		esac
 		;;
    x86_64-ps4-freebsd)
 		TARGET=AMD64;
@@ -3379,12 +3408,16 @@ if test "x$host" != "x$target"; then
 		TARGET=ARM64;
 		arch_target=arm64;
 		AC_DEFINE(TARGET_ARM64, 1, [...])
-		AC_DEFINE(TARGET_ANDROID, 1, [...])
 		CPPFLAGS="$CPPFLAGS"
 		# Can't use tls, since it depends on the runtime detection of tls offsets
 		# in mono-compiler.h
 		with_tls=pthread
 		target_mach=no
+		case "$target" in
+		*-linux-android*)
+			AC_DEFINE(TARGET_ANDROID, 1, [...])
+			;;
+		esac
 		;;
 	aarch64-*)
 		TARGET=ARM64

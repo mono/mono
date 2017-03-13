@@ -91,7 +91,7 @@
 #endif
 
 #ifdef ENABLE_INTERPRETER
-#include "interpreter/interp.h"
+#include "interp/interp.h"
 #endif
 
 static guint32 default_opt = 0;
@@ -504,6 +504,10 @@ mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain)
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
+
+#ifdef MONO_ARCH_HAVE_UNWIND_TABLE
+	mono_arch_unwindinfo_install_tramp_unwind_info (info->unwind_ops, info->code, info->code_size);
+#endif
 
 	/* Only register trampolines that have unwind infos */
 	if (mono_get_root_domain () && copy->uw_info)
@@ -3048,6 +3052,10 @@ mini_init_delegate (MonoDelegate *del)
 {
 	if (mono_llvm_only)
 		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
+#ifdef ENABLE_INTERPRETER
+	if (mono_use_interpreter)
+		mono_interp_init_delegate (del);
+#endif
 }
 
 char*

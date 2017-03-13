@@ -31,11 +31,11 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/runtime.h>
@@ -93,13 +93,17 @@ typedef struct {
 
 static const MonoRuntimeInfo *current_runtime = NULL;
 
+#define NOT_AVAIL {0xffffU,0xffffU,0xffffU,0xffffU}
+
 /* This is the list of runtime versions supported by this JIT.
  */
 static const MonoRuntimeInfo supported_runtimes[] = {
-	{"v4.0.30319","4.5", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
-	{"mobile",    "2.1", { {2,0,5,0}, {10,0,0,0}, {2,0,5,0}, {2,0,5,0} } },
-	{"moonlight", "2.1", { {2,0,5,0}, { 9,0,0,0}, {3,5,0,0}, {3,0,0,0} } },
+	{"v4.0.30319","4.5", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+	{"mobile",    "2.1", { {2,0,5,0}, {10,0,0,0}, {2,0,5,0}, {2,0,5,0}, {4,0,0,0} } },
+	{"moonlight", "2.1", { {2,0,5,0}, { 9,0,0,0}, {3,5,0,0}, {3,0,0,0}, NOT_AVAIL } },
 };
+
+#undef NOT_AVAIL
 
 
 /* The stable runtime version */
@@ -493,6 +497,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_counters_register ("Max native code in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_size);
 	mono_counters_register ("Max code space allocated in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_alloc);
 	mono_counters_register ("Total code space allocated", MONO_COUNTER_INT|MONO_COUNTER_JIT, &total_domain_code_alloc);
+
+	mono_counters_register ("Max HashTable Chain Length", MONO_COUNTER_INT|MONO_COUNTER_METADATA, &mono_g_hash_table_max_chain_length);
 
 	mono_gc_base_init ();
 	mono_thread_info_attach (&dummy);

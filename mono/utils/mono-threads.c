@@ -903,7 +903,7 @@ suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel)
 		}
 		break;
 	case AsyncSuspendBlocking:
-		if (interrupt_kernel && mono_threads_suspend_needs_abort_syscall ())
+		if (interrupt_kernel)
 			mono_threads_suspend_abort_syscall (info);
 
 		break;
@@ -1067,7 +1067,7 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 	MonoThreadHazardPointers *hp;
 	MonoThreadInfo *info;
 
-	if (tid == mono_native_thread_id_get () || !mono_threads_suspend_needs_abort_syscall ())
+	if (tid == mono_native_thread_id_get ())
 		return;
 
 	hp = mono_hazard_pointer_get ();
@@ -1116,100 +1116,6 @@ mono_thread_info_is_async_context (void)
 		return info->is_async_context;
 	else
 		return FALSE;
-}
-
-typedef struct {
-	MonoRefCount ref;
-	MonoThreadStart start_routine;
-	gpointer start_routine_arg;
-	MonoCoopSem registered;
-	MonoThreadHandle *handle;
-} CreateThreadData;
-
-static void
-create_thread_data_destroy (gpointer data)
-{
-	CreateThreadData *thread_data;
-
-	thread_data = (CreateThreadData*) data;
-
-	mono_coop_sem_destroy (&thread_data->registered);
-	g_free (thread_data);
-}
-
-static gsize WINAPI
-inner_start_thread (gpointer data)
-{
-	CreateThreadData *thread_data;
-	MonoThreadInfo *info;
-	MonoThreadStart start_routine;
-	gpointer start_routine_arg;
-	gsize start_routine_res;
-	gsize dummy;
-
-	thread_data = (CreateThreadData*) data;
-	g_assert (thread_data);
-
-	start_routine = thread_data->start_routine;
-	start_routine_arg = thread_data->start_routine_arg;
-
-	info = mono_thread_info_attach (&dummy);
-	info->runtime_thread = TRUE;
-
-	thread_data->handle = mono_threads_open_thread_handle (info->handle);
-
-	mono_coop_sem_post (&thread_data->registered);
-
-	mono_refcount_dec (thread_data);
-
-	/* thread_data is not valid anymore */
-	thread_data = NULL;
-
-	/* Run the actual main function of the thread */
-	start_routine_res = start_routine (start_routine_arg);
-
-	mono_thread_info_exit (start_routine_res);
-
-	g_assert_not_reached ();
-}
-
-/*
- * mono_threads_create_thread:
- *
- *   Create a new thread executing START with argument ARG. Store its id into OUT_TID.
- * Returns: a windows or io-layer handle for the thread.
- */
-MonoThreadHandle*
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize * const stack_size, MonoNativeThreadId *out_tid)
-{
-	CreateThreadData *thread_data;
-	gint res;
-	MonoThreadHandle *ret;
-
-	thread_data = g_new0 (CreateThreadData, 1);
-	mono_refcount_init (thread_data, create_thread_data_destroy);
-	thread_data->start_routine = start;
-	thread_data->start_routine_arg = arg;
-	mono_coop_sem_init (&thread_data->registered, 0);
-
-	res = mono_threads_platform_create_thread (inner_start_thread, (gpointer) mono_refcount_inc (thread_data), stack_size, out_tid);
-	if (res != 0) {
-		/* ref is not going to be decremented in inner_start_thread */
-		mono_refcount_dec (thread_data);
-		ret = NULL;
-		goto done;
-	}
-
-	res = mono_coop_sem_wait (&thread_data->registered, MONO_SEM_FLAGS_NONE);
-	g_assert (res == 0);
-
-	ret = thread_data->handle;
-	g_assert (ret);
-
-done:
-	mono_refcount_dec (thread_data);
-
-	return ret;
 }
 
 /*

@@ -62,6 +62,10 @@ typedef gsize mono_thread_start_return_t;
 
 typedef gsize (*MonoThreadStart)(gpointer);
 
+#if !defined(__HAIKU__)
+#define MONO_THREADS_PLATFORM_HAS_ATTR_SETSCHED
+#endif /* !defined(__HAIKU__) */
+
 #endif /* #ifdef HOST_WIN32 */
 
 #ifndef MONO_INFINITE_WAIT
@@ -404,9 +408,6 @@ mono_thread_info_describe_interrupt_token (THREAD_INFO_TYPE *info, GString *text
 gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
-MonoThreadHandle*
-mono_threads_create_thread (MonoThreadStart start, gpointer arg, gsize * const stack_size, MonoNativeThreadId *out_tid);
-
 int
 mono_threads_get_max_stack_size (void);
 
@@ -472,13 +473,15 @@ gboolean mono_threads_suspend_begin_async_resume (THREAD_INFO_TYPE *info);
 void mono_threads_suspend_register (THREAD_INFO_TYPE *info); //ok
 void mono_threads_suspend_free (THREAD_INFO_TYPE *info);
 void mono_threads_suspend_abort_syscall (THREAD_INFO_TYPE *info);
-gboolean mono_threads_suspend_needs_abort_syscall (void);
 gint mono_threads_suspend_search_alternative_signal (void);
 gint mono_threads_suspend_get_suspend_signal (void);
 gint mono_threads_suspend_get_restart_signal (void);
 gint mono_threads_suspend_get_abort_signal (void);
 
-int mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *out_tid);
+gboolean
+mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data,
+	gsize* const stack_size, MonoNativeThreadId *tid);
+
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
 void mono_threads_platform_init (void);
 gboolean mono_threads_platform_in_critical_region (MonoNativeThreadId tid);

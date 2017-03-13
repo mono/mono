@@ -13,7 +13,7 @@ OPDEF(MINT_BREAK, "break", 1, MintOpNoArgs)
 OPDEF(MINT_LDNULL, "ldnull", 1, MintOpNoArgs)
 OPDEF(MINT_DUP, "dup", 1, MintOpNoArgs)
 OPDEF(MINT_DUP_VT, "dup.vt", 3, MintOpInt)
-OPDEF(MINT_POP, "pop", 1, MintOpNoArgs)
+OPDEF(MINT_POP, "pop", 2, MintOpShortInt)
 
 OPDEF(MINT_RET, "ret", 1, MintOpNoArgs)
 OPDEF(MINT_RET_VOID, "ret.void", 1, MintOpNoArgs)
@@ -76,7 +76,6 @@ OPDEF(MINT_STINARG_P, "stinarg.p", 2, MintOpUShortInt)
 OPDEF(MINT_STINARG_VT, "stinarg.vt", 4, MintOpShortAndInt)
 
 OPDEF(MINT_LDARGA, "ldarga", 2, MintOpUShortInt)
-OPDEF(MINT_LDTHISA, "ldthisa", 1, MintOpNoArgs)
 
 OPDEF(MINT_LDFLD_I1, "ldfld.i1", 2, MintOpUShortInt)
 OPDEF(MINT_LDFLD_U1, "ldfld.u1", 2, MintOpUShortInt)
@@ -94,6 +93,7 @@ OPDEF(MINT_LDRMFLD, "ldrmfld", 2, MintOpFieldToken)
 OPDEF(MINT_LDRMFLD_VT, "ldrmfld.vt", 4, MintOpShortAndInt)
 
 OPDEF(MINT_LDFLDA, "ldflda", 2, MintOpUShortInt)
+OPDEF(MINT_LDFLDA_UNSAFE, "ldflda.unsafe", 2, MintOpUShortInt)
 
 OPDEF(MINT_STFLD_I1, "stfld.i1", 2, MintOpUShortInt)
 OPDEF(MINT_STFLD_U1, "stfld.u1", 2, MintOpUShortInt)
@@ -276,6 +276,7 @@ OPDEF(MINT_UNBOX, "unbox", 2, MintOpClassToken)
 OPDEF(MINT_LDTOKEN, "ldtoken", 2, MintOpClassToken) /* not really */
 OPDEF(MINT_LDFTN, "ldftn", 2, MintOpMethodToken) 
 OPDEF(MINT_LDVIRTFTN, "ldvirtftn", 2, MintOpMethodToken) 
+OPDEF(MINT_CPOBJ, "cpobj", 2, MintOpClassToken)
 OPDEF(MINT_LDOBJ, "ldobj", 2, MintOpClassToken) 
 OPDEF(MINT_STOBJ, "stobj", 2, MintOpClassToken) 
 OPDEF(MINT_STOBJ_VT, "stobj.vt", 2, MintOpClassToken) 
@@ -297,10 +298,12 @@ OPDEF(MINT_LDELEM_R8, "ldelem.r8", 1, MintOpNoArgs)
 OPDEF(MINT_LDELEM_REF, "ldelem.ref", 1, MintOpNoArgs)
 OPDEF(MINT_LDELEM_VT, "ldelem.vt", 4, MintOpShortAndInt)
 
-OPDEF(MINT_LDELEMA, "ldelema", 2, MintOpClassToken)
+OPDEF(MINT_LDELEMA, "ldelema", 3, MintOpTwoShorts)
+OPDEF(MINT_LDELEMA_TC, "ldelema.tc", 3, MintOpTwoShorts)
 
 OPDEF(MINT_STELEM_I, "stelem.i", 1, MintOpNoArgs)
 OPDEF(MINT_STELEM_I1, "stelem.i1", 1, MintOpNoArgs)
+OPDEF(MINT_STELEM_U1, "stelem.u1", 1, MintOpNoArgs)
 OPDEF(MINT_STELEM_I2, "stelem.i2", 1, MintOpNoArgs)
 OPDEF(MINT_STELEM_I4, "stelem.i4", 1, MintOpNoArgs)
 OPDEF(MINT_STELEM_I8, "stelem.i8", 1, MintOpNoArgs)
@@ -442,6 +445,7 @@ OPDEF(MINT_CONV_OVF_U2_R8, "conv.ovf.u2.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_I4_U4, "conv.ovf.i4.u4", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_I4_I8, "conv.ovf.i4.i8", 1, MintOpNoArgs)
+OPDEF(MINT_CONV_OVF_I4_U8, "conv.ovf.i4.u8", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_I4_R8, "conv.ovf.i4.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_I4_UN_I8, "conv.ovf.i4.un.i8", 1, MintOpNoArgs)
@@ -451,11 +455,13 @@ OPDEF(MINT_CONV_OVF_U4_I4, "conv.ovf.u4.i4", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_U4_I8, "conv.ovf.u4.i8", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_U4_R8, "conv.ovf.u4.r8", 1, MintOpNoArgs)
 
+OPDEF(MINT_CONV_OVF_I8_U8, "conv.ovf.i8.u8", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_I8_R8, "conv.ovf.i8.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_I8_UN_R8, "conv.ovf.i8.un.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CONV_OVF_U8_I4, "conv.ovf.u8.i4", 1, MintOpNoArgs)
+OPDEF(MINT_CONV_OVF_U8_I8, "conv.ovf.u8.i8", 1, MintOpNoArgs)
 OPDEF(MINT_CONV_OVF_U8_R8, "conv.ovf.u8.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CEQ_I4, "ceq.i4", 1, MintOpNoArgs)

@@ -53,6 +53,7 @@
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="corefx\SR.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
     <Compile Include="Mono.Xml\XmlCanonicalizer.cs" />

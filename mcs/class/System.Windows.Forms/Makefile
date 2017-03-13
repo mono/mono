@@ -89,6 +89,7 @@ TEST_DISTFILES = \
 	Test/System.Resources/compat_1_1.resx \
 	Test/System.Resources/compat_2_0.resx \
 	Test/System.Windows.Forms/bitmaps/a.png \
+	Test/simple/Program.cs \
 	Test/DummyAssembly/AnotherSerializable.cs \
 	Test/DummyAssembly/Convertable.cs \
 	Test/DummyAssembly/Properties/AssemblyInfo.cs \
@@ -127,3 +128,9 @@ $(PREBUILT): %.prebuilt: %
 	cp $* $@
 
 dist-default: $(PREBUILT)
+
+simple-test.exe: Test/simple/Program.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll
+	$(CSCOMPILE) -out:$@ Test/simple/Program.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll
+
+test-simple: simple-test.exe
+	$(TEST_RUNTIME) simple-test.exe

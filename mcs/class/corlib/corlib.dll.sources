@@ -1107,14 +1107,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
 ../referencesource/mscorlib/system/collections/generic/list.cs
 
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentQueue.cs
-../referencesource/mscorlib/system/collections/Concurrent/ConcurrentStack.cs
-../referencesource/mscorlib/system/collections/Concurrent/IProducerConsumerCollection.cs
-../referencesource/mscorlib/system/collections/Concurrent/OrderablePartitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/Partitioner.cs
-../referencesource/mscorlib/system/collections/Concurrent/PartitionerStatic.cs
-
 ../referencesource/mscorlib/system/diagnostics/assert.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilter.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilters.cs
@@ -1645,18 +1637,56 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
+corert/AddrofIntrinsics.cs
 corert/Debug.cs
-corert/SR.cs
+corert/Interop.cs
+corert/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
+
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Errors.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.FormatMessage.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
+
+../../../external/corert/src/Common/src/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Win32Marshal.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/DeferredDisposableLifetime.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
+
+corefx/SR.cs
+
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentQueue.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentStack.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/IProducerConsumerCollection.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
+../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs

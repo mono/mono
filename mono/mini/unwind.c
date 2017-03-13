@@ -382,14 +382,14 @@ mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enab
 
 		/* Emit an advance_loc if neccesary */
 		while (op->when > loc) {
-			if (op->when - loc > 65536) {
+			if (op->when - loc >= 65536) {
 				*p ++ = DW_CFA_advance_loc4;
 				guint32 v = (guint32)(op->when - loc);
 				memcpy (p, &v, 4);
 				g_assert (read32 (p) == (guint32)(op->when - loc));
 				p += 4;
 				loc = op->when;
-			} else if (op->when - loc > 256) {
+			} else if (op->when - loc >= 256) {
 				*p ++ = DW_CFA_advance_loc2;
 				guint16 v = (guint16)(op->when - loc);
 				memcpy (p, &v, 2);
@@ -449,6 +449,13 @@ mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enab
 			g_assert (op->val == 0);
 			*p ++ = op->op;
 			break;
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+		case DW_CFA_mono_sp_alloc_info_win64:
+		case DW_CFA_mono_fp_alloc_info_win64:
+			// Drop Windows specific unwind op's. These op's are currently
+			// only used when registering unwind info with Windows OS unwinder.
+			break;
+#endif
 		default:
 			g_assert_not_reached ();
 			break;

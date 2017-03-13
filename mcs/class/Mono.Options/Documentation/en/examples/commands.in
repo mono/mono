@@ -1,0 +1,25 @@
+mono Documentation/en/examples/commands.exe
+
+mono Documentation/en/examples/commands.exe --help
+
+mono Documentation/en/examples/commands.exe help
+
+mono Documentation/en/examples/commands.exe help --help
+
+mono Documentation/en/examples/commands.exe help echo
+
+mono Documentation/en/examples/commands.exe echo --help
+
+mono Documentation/en/examples/commands.exe echo hello, world
+
+mono Documentation/en/examples/commands.exe requires-args
+
+mono Documentation/en/examples/commands.exe help requires-args
+
+mono Documentation/en/examples/commands.exe requires-args --help
+
+mono Documentation/en/examples/commands.exe requires-args -n World
+
+mono Documentation/en/examples/commands.exe invalid-command
+
+mono Documentation/en/examples/commands.exe help invalid-command

@@ -101,14 +101,28 @@ public class Program
 
 			str.WriteLine ("partial class SR");
 			str.WriteLine ("{");
+
+			var dict = new Dictionary<string, string> ();
+
 			foreach (var entry in txtStrings) {
-				str.Write ($"\tpublic const string {entry.Item1} = \"{ToCSharpString (entry.Item2)}\";");
+
+				var value = ToCSharpString (entry.Item2);
+				string found;
+				if (dict.TryGetValue (entry.Item1, out found)) {
+					if (found == value)
+						continue;
+
+					str.WriteLine ($"\t// Constant value mismatch");
+				} else {
+					dict.Add (entry.Item1, value);
+				}
+
+				str.Write ($"\tpublic const string {entry.Item1} = \"{value}\";");
 
 				if (!string.IsNullOrEmpty (entry.Item3))
 					str.Write (" // {entry.Item3}");
 
 				str.WriteLine ();
-
 			}
 			str.WriteLine ("}");
 		}

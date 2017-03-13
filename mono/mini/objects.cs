@@ -473,7 +473,6 @@ class Tests {
 		return o.GetHashCode ();
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_0_unbox_trampoline2 () {
 		int i = 12;
 		object o = i;
@@ -623,7 +622,6 @@ class Tests {
 		return 0;
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_0_multi_array_cast () {
 		Duper[,] d = new Duper [1, 1];
 		object[,] o = d;
@@ -876,6 +874,23 @@ class Tests {
 		return 2;
 	}
 
+	class InstanceDelegateTest {
+		public int a;
+
+		public int return_field () {
+			return a;
+		}
+	}
+
+	public static int test_2_instance_delegate_with_field () {
+		InstanceDelegateTest t = new InstanceDelegateTest () { a = 1337 };
+		GetIntDel del = new GetIntDel (t.return_field);
+		int v = del ();
+		if (v != 1337)
+			return 0;
+		return 2;
+	}
+
 	interface IFaceVirtualDel {
 		int return_field ();
 	}
@@ -890,21 +905,18 @@ class Tests {
 		}
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_42_vtype_delegate () {
 		var s = new VtypeVirtualDelStruct () { f = 42 };
 		Func<int> f = s.return_field_nonvirt;
 		return f ();
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_42_vtype_virtual_delegate () {
 		IFaceVirtualDel s = new VtypeVirtualDelStruct () { f = 42 };
 		Func<int> f = s.return_field;
 		return f ();
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_1_store_decimal () {
 		decimal[,] a = {{1}};
 
@@ -1423,7 +1435,6 @@ ncells ) {
 		return 0;
 	}
 
-	[Category ("!INTERPRETER")]
 	static int test_0_array_get_set_soft_float () {
 		float[,] arr = new float [2, 2];
 		arr [0, 0] = 256f;
@@ -1584,7 +1595,6 @@ ncells ) {
 		return mInstance;
 	}
 
-	[Category ("!INTERPRETER")]
 	static int test_0_synchronized () {
 		getInstance ();
 		return 0;
@@ -1753,7 +1763,6 @@ ncells ) {
 		}
 	}
 
-	[Category ("!INTERPRETER")]
 	public static int test_0_delegate_to_virtual_generic_on_ifaces () {
 		IComparer2 c = new AClass ();
 
@@ -1776,7 +1785,6 @@ ncells ) {
 
 	enum Mine { One, Two }
 
-	[Category ("!INTERPRETER")]
 	public static int test_0_enum_gethashcode_opt () {
 		int sum = 0;
         for (int i = 0; i < 1000000; ++i)

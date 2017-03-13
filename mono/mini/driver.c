@@ -57,7 +57,7 @@
 #include "mini.h"
 #include "jit.h"
 #include "aot-compiler.h"
-#include "interpreter/interp.h"
+#include "interp/interp.h"
 
 #include <string.h>
 #include <ctype.h>

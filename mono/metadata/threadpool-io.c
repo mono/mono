@@ -325,7 +325,7 @@ selector_thread (gpointer data)
 		return 0;
 	}
 
-	states = mono_g_hash_table_new_type (g_direct_hash, g_direct_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, "i/o thread pool states table");
+	states = mono_g_hash_table_new_type (g_direct_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, "i/o thread pool states table");
 
 	while (!mono_runtime_is_shutting_down ()) {
 		gint i, j;
@@ -556,7 +556,7 @@ initialize (void)
 		g_error ("initialize: backend->init () failed");
 
 	MonoError error;
-	if (!mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, TRUE, SMALL_STACK, &error))
+	if (!mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK, &error))
 		g_error ("initialize: mono_thread_create_internal () failed due to %s", mono_error_get_message (&error));
 }
 

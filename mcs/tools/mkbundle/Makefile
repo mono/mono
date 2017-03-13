@@ -24,10 +24,11 @@ test-simple: simple.exe
 	mono --debug $(the_lib) --cross default simple.exe -o foo && ./foo
 	mono --debug $(the_lib) --sdk `dirname \`which mono\``/.. simple.exe -o foo && ./foo
 	-rm DEMO.zip
-	mono-package-runtime `dirname \`which mono\``/.. DEMO
+	$(topdir)/../scripts/mono-package-runtime `dirname \`which mono\``/.. DEMO
 	mkdir -p ~/.mono/targets/DEMO
 	unzip -d ~/.mono/targets/DEMO DEMO.zip
-	mono --debug $(the_lib) --cross DEMO simple.exe -o foo && ./foo
+	mono --debug $(the_lib) --cross DEMO simple.exe -o foo | grep "Assembly.*mscorlib.dll"
+	./foo
 
 simple.exe: Makefile
 	echo 'class X { static void Main () { System.Console.WriteLine ("OK");}}' > simple.cs && mcs simple.cs

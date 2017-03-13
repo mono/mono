@@ -1082,14 +1082,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static void LoadLocalizedAssemblies (List<string> assemblies)
 	{
 		var other = i18n.Select (x => "I18N." + x + (x.Length > 0 ? "." : "") + "dll");
-		bool error = false;
+		string error = null;
 
 		foreach (string name in other) {
 			try {
 				Assembly a = LoadAssembly (name);
 
 				if (a == null) {
-					error = true;
+					error = "Failed to load " + name;
 					continue;
 				}
 
@@ -1105,8 +1105,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 		}
 
-		if (error) {
-			Error ("Couldn't load one or more of the i18n assemblies.");
+		if (error != null) {
+			Error ("Couldn't load one or more of the i18n assemblies: " + error);
 			Environment.Exit (1);
 		}
 	}
@@ -1114,6 +1114,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
+	static readonly string resourcePathSeparator = (Path.DirectorySeparatorChar == '\\') ? $"\\{Path.DirectorySeparatorChar}" : $"{Path.DirectorySeparatorChar}";
 
 	public static string GetAssemblyName (string path)
 	{
@@ -1126,7 +1127,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			string dir = Path.GetDirectoryName (path);
 			int idx = dir.LastIndexOf (Path.DirectorySeparatorChar);
 			if (idx >= 0) {
-				name = dir.Substring (idx + 1) + Path.DirectorySeparatorChar + name;
+				name = dir.Substring (idx + 1) + resourcePathSeparator + name;
 				Console.WriteLine ($"Storing satellite assembly '{path}' with name '{name}'");
 			} else if (!quiet)
 				Console.WriteLine ($"Warning: satellite assembly {path} doesn't have locale path prefix, name conflicts possible");
@@ -1158,7 +1159,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Assembly a = universe.LoadFile (path);
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-				LoadAssembly (an.FullName);
+				a = universe.Load (an.FullName);
 				if (!QueueAssembly (files, a.CodeBase))
 					return false;
 			}
@@ -1220,7 +1221,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static void Error (string msg, params object [] args)
 	{
 		Console.Error.WriteLine ("ERROR: {0}", string.Format (msg, args));
-		throw new Exception ();
 		Environment.Exit (1);
 	}
 

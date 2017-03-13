@@ -1,4 +1,3 @@
-../../test-helpers/NunitHelpers.cs
 Mono.Unix/ReadlinkTest.cs
 Mono.Unix/StdioFileStreamTest.cs
 Mono.Unix/UnixEncodingTest.cs

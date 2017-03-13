@@ -1573,67 +1573,6 @@ sgen_has_managed_allocator (void)
 	return FALSE;
 }
 
-/*
- * Cardtable scanning
- */
-
-#define MWORD_MASK (sizeof (mword) - 1)
-
-static inline int
-find_card_offset (mword card)
-{
-/*XXX Use assembly as this generates some pretty bad code */
-#if defined(__i386__) && defined(__GNUC__)
-	return  (__builtin_ffs (card) - 1) / 8;
-#elif defined(__x86_64__) && defined(__GNUC__)
-	return (__builtin_ffsll (card) - 1) / 8;
-#elif defined(__s390x__)
-	return (__builtin_ffsll (GUINT64_TO_LE(card)) - 1) / 8;
-#else
-	int i;
-	guint8 *ptr = (guint8 *) &card;
-	for (i = 0; i < sizeof (mword); ++i) {
-		if (ptr[i])
-			return i;
-	}
-	return 0;
-#endif
-}
-
-static guint8*
-find_next_card (guint8 *card_data, guint8 *end)
-{
-	mword *cards, *cards_end;
-	mword card;
-
-	while ((((mword)card_data) & MWORD_MASK) && card_data < end) {
-		if (*card_data)
-			return card_data;
-		++card_data;
-	}
-
-	if (card_data == end)
-		return end;
-
-	cards = (mword*)card_data;
-	cards_end = (mword*)((mword)end & ~MWORD_MASK);
-	while (cards < cards_end) {
-		card = *cards;
-		if (card)
-			return (guint8*)cards + find_card_offset (card);
-		++cards;
-	}
-
-	card_data = (guint8*)cards_end;
-	while (card_data < end) {
-		if (*card_data)
-			return card_data;
-		++card_data;
-	}
-
-	return end;
-}
-
 #define ARRAY_OBJ_INDEX(ptr,array,elem_size) (((char*)(ptr) - ((char*)(array) + G_STRUCT_OFFSET (MonoArray, vector))) / (elem_size))
 
 gboolean
@@ -1690,8 +1629,8 @@ sgen_client_cardtable_scan_object (GCObject *obj, guint8 *cards, ScanCopyContext
 LOOP_HEAD:
 #endif
 
-		card_data = find_next_card (card_data, card_data_end);
-		for (; card_data < card_data_end; card_data = find_next_card (card_data + 1, card_data_end)) {
+		card_data = sgen_find_next_card (card_data, card_data_end);
+		for (; card_data < card_data_end; card_data = sgen_find_next_card (card_data + 1, card_data_end)) {
 			size_t index;
 			size_t idx = (card_data - card_base) + extra_idx;
 			char *start = (char*)(obj_start + idx * CARD_SIZE_IN_BYTES);
@@ -2004,6 +1943,15 @@ precisely_report_roots_from (GCRootReport *report, void** start_root, void** end
 				++objptr;
 			}
 			start_run += GC_BITS_PER_WORD;
+		}
+		break;
+	}
+	case ROOT_DESC_VECTOR: {
+		void **p;
+
+		for (p = start_root; p < end_root; p++) {
+			if (*p)
+				add_profile_gc_root (report, *p, MONO_PROFILE_GC_ROOT_OTHER, 0);
 		}
 		break;
 	}
@@ -2383,6 +2331,22 @@ mono_gc_scan_object (void *obj, void *gc_data)
 	return obj;
 }
 
+typedef struct {
+	void **start_nursery;
+	void **end_nursery;
+} PinHandleStackInteriorPtrData;
+
+/* Called when we're scanning the handle stack imprecisely and we encounter a pointer into the
+   middle of an object.
+ */
+static void
+pin_handle_stack_interior_ptrs (void **ptr_slot, void *user_data)
+{
+	PinHandleStackInteriorPtrData *ud = (PinHandleStackInteriorPtrData *)user_data;
+	sgen_conservatively_pin_objects_from (ptr_slot, ptr_slot+1, ud->start_nursery, ud->end_nursery, PIN_TYPE_STACK);
+}
+
+
 /*
  * Mark from thread stacks and registers.
  */
@@ -2472,8 +2436,21 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				}
 			}
 		}
-		if (precise && info->client_info.info.handle_stack) {
-			mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue);
+		if (info->client_info.info.handle_stack) {
+			/*
+			  Make two passes over the handle stack.  On the imprecise pass, pin all
+			  objects where the handle points into the interior of the object. On the
+			  precise pass, copy or mark all the objects that have handles to the
+			  beginning of the object.
+			*/
+			if (precise)
+				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise);
+			else {
+				PinHandleStackInteriorPtrData ud = { .start_nursery = start_nursery,
+								     .end_nursery = end_nursery,
+				};
+				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise);
+			}
 		}
 	} FOREACH_THREAD_END
 }

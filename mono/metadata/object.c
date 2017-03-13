@@ -36,7 +36,6 @@
 #include <mono/metadata/environment.h>
 #include "mono/metadata/profiler-private.h"
 #include "mono/metadata/security-manager.h"
-#include "mono/metadata/mono-debug-debugger.h"
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/w32event.h>
@@ -441,6 +440,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			return TRUE;
 		}
 		/* see if the thread doing the initialization is already blocked on this thread */
+		gboolean is_blocked = TRUE;
 		blocked = GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (lock->initializing_tid));
 		while ((pending_lock = (TypeInitializationLock*) g_hash_table_lookup (blocked_thread_hash, blocked))) {
 			if (mono_native_thread_id_equals (pending_lock->initializing_tid, tid)) {
@@ -451,6 +451,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 					/* the thread doing the initialization is blocked on this thread,
 					   but on a lock that has already been freed. It just hasn't got
 					   time to awake */
+					is_blocked = FALSE;
 					break;
 				}
 			}
@@ -458,7 +459,8 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		}
 		++lock->waiting_count;
 		/* record the fact that we are waiting on the initializing thread */
-		g_hash_table_insert (blocked_thread_hash, GUINT_TO_POINTER (tid), lock);
+		if (is_blocked)
+			g_hash_table_insert (blocked_thread_hash, GUINT_TO_POINTER (tid), lock);
 	}
 	mono_type_initialization_unlock ();
 
@@ -7965,6 +7967,9 @@ mono_delegate_ctor_with_method (MonoObject *this_obj, MonoObject *target, gpoint
 	if (target && mono_object_is_transparent_proxy (target)) {
 		g_assert (method);
 		method = mono_marshal_get_remoting_invoke (method);
+#ifdef ENABLE_INTERPRETER
+		g_error ("need RuntimeMethod in method_ptr when using interpreter");
+#endif
 		delegate->method_ptr = mono_compile_method_checked (method, error);
 		return_val_if_nok (error, FALSE);
 		MONO_OBJECT_SETREF (delegate, target, target);

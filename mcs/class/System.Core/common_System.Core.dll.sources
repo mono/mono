@@ -49,11 +49,6 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/TimeZoneInfo.cs
 ../referencesource/System.Core/System/TimeZoneNotFoundException.cs
 
-../referencesource/System.Core/System/Collections/Generic/BitHelper.cs
-../referencesource/System.Core/System/Collections/Generic/HashSet.cs
-../referencesource/System.Core/System/Collections/Generic/HashSetDebugView.cs
-../referencesource/System.Core/System/Collections/Generic/HashSetEqualityComparer.cs
-
 ../referencesource/System.Core/System/IO/Enums.cs
 
 ../referencesource/System.Core/System/IO/MemoryMappedFiles/Enums.cs
@@ -93,6 +88,10 @@ System.Security.Cryptography/SHA256CryptoServiceProvider.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/HashSet.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/HashSetEqualityComparer.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
 
 ../../../external/corefx/src/System.Linq/src/System/Linq/*.cs
 

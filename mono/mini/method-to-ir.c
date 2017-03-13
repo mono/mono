@@ -13,6 +13,7 @@
 
 #include <config.h>
 #include <mono/utils/mono-compiler.h>
+#include "mini.h"
 
 #ifndef DISABLE_JIT
 
@@ -35,7 +36,6 @@
 #endif
 
 #include <mono/utils/memcheck.h>
-#include "mini.h"
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/attrdefs.h>
@@ -50,8 +50,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
@@ -59,7 +58,6 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/monitor.h>
-#include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/mono-basic-block.h>
@@ -143,8 +141,6 @@ static int stind_to_store_membase (int opcode);
 
 int mono_op_to_op_imm (int opcode);
 int mono_op_to_op_imm_noemul (int opcode);
-
-MONO_API MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
 
 static int inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp,
 						  guchar *ip, guint real_offset, gboolean inline_always);
@@ -348,14 +344,19 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 {
 	int i;
 	MonoInst *tree;
+	GString *str = g_string_new ("");
 
-	printf ("\n%s %d: [IN: ", msg, bb->block_num);
+	g_string_append_printf (str, "%s %d: [IN: ", msg, bb->block_num);
 	for (i = 0; i < bb->in_count; ++i)
-		printf (" BB%d(%d)", bb->in_bb [i]->block_num, bb->in_bb [i]->dfn);
-	printf (", OUT: ");
+		g_string_append_printf (str, " BB%d(%d)", bb->in_bb [i]->block_num, bb->in_bb [i]->dfn);
+	g_string_append_printf (str, ", OUT: ");
 	for (i = 0; i < bb->out_count; ++i)
-		printf (" BB%d(%d)", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
-	printf (" ]\n");
+		g_string_append_printf (str, " BB%d(%d)", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
+	g_string_append_printf (str, " ]\n");
+
+	g_print ("%s", str->str);
+	g_string_free (str, TRUE);
+
 	for (tree = bb->code; tree; tree = tree->next)
 		mono_print_ins_index (-1, tree);
 }
@@ -2960,12 +2961,12 @@ mono_emit_widen_call_res (MonoCompile *cfg, MonoInst *ins, MonoMethodSignature *
 
 
 static void
-emit_method_access_failure (MonoCompile *cfg, MonoMethod *method, MonoMethod *cil_method)
+emit_method_access_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee)
 {
 	MonoInst *args [16];
 
-	args [0] = emit_get_rgctx_method (cfg, mono_method_check_context_used (method), method, MONO_RGCTX_INFO_METHOD);
-	args [1] = emit_get_rgctx_method (cfg, mono_method_check_context_used (cil_method), cil_method, MONO_RGCTX_INFO_METHOD);
+	args [0] = emit_get_rgctx_method (cfg, mono_method_check_context_used (caller), caller, MONO_RGCTX_INFO_METHOD);
+	args [1] = emit_get_rgctx_method (cfg, mono_method_check_context_used (callee), callee, MONO_RGCTX_INFO_METHOD);
 
 	mono_emit_jit_icall (cfg, mono_throw_method_access, args);
 }
@@ -5253,8 +5254,7 @@ static MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	MonoInst *ins = NULL;
-
-	 MonoClass *runtime_helpers_class = mono_class_get_runtime_helpers_class ();
+	MonoClass *runtime_helpers_class = mono_class_get_runtime_helpers_class ();
 
 	if (cmethod->klass == mono_defaults.string_class) {
 		if (strcmp (cmethod->name, "get_Chars") == 0 && fsig->param_count + fsig->hasthis == 2) {
@@ -5400,6 +5400,37 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	} else if (cmethod->klass == runtime_helpers_class) {
 		if (strcmp (cmethod->name, "get_OffsetToStringData") == 0 && fsig->param_count == 0) {
 			EMIT_NEW_ICONST (cfg, ins, MONO_STRUCT_OFFSET (MonoString, chars));
+			return ins;
+		} else if (strcmp (cmethod->name, "IsReferenceOrContainsReferences") == 0 && fsig->param_count == 0) {
+			MonoGenericContext *ctx = mono_method_get_context (cmethod);
+			g_assert (ctx);
+			g_assert (ctx->method_inst);
+			g_assert (ctx->method_inst->type_argc == 1);
+			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
+			MonoClass *klass = mono_class_from_mono_type (t);
+
+			ins = NULL;
+
+			mono_class_init (klass);
+			if (MONO_TYPE_IS_REFERENCE (t))
+				EMIT_NEW_ICONST (cfg, ins, 1);
+			else if (MONO_TYPE_IS_PRIMITIVE (t))
+				EMIT_NEW_ICONST (cfg, ins, 0);
+			else if (cfg->gshared && (t->type == MONO_TYPE_VAR || t->type == MONO_TYPE_MVAR) && !mini_type_var_is_vt (t))
+				EMIT_NEW_ICONST (cfg, ins, 1);
+			else if (!cfg->gshared || !mini_class_check_context_used (cfg, klass))
+				EMIT_NEW_ICONST (cfg, ins, klass->has_references ? 1 : 0);
+			else {
+				g_assert (cfg->gshared);
+
+				int context_used = mini_class_check_context_used (cfg, klass);
+
+				/* This returns 1 or 2 */
+				MonoInst *info = mini_emit_get_rgctx_klass (cfg, context_used, klass, 	MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS);
+				int dreg = alloc_ireg (cfg);
+				EMIT_NEW_BIALU_IMM (cfg, ins, OP_ISUB_IMM, dreg, info->dreg, 1);
+			}
+
 			return ins;
 		} else
 			return NULL;
@@ -14574,6 +14605,9 @@ NOTES
 
 #else /* !DISABLE_JIT */
 
-MONO_EMPTY_SOURCE_FILE (method_to_ir);
+void
+mono_set_break_policy (MonoBreakPolicyFunc policy_callback)
+{
+}
 
 #endif /* !DISABLE_JIT */

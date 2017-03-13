@@ -23,7 +23,6 @@
 /* This is a copy of System.Threading.ThreadState */
 typedef enum {
 	ThreadState_Running = 0x00000000,
-	ThreadState_StopRequested = 0x00000001,
 	ThreadState_SuspendRequested = 0x00000002,
 	ThreadState_Background = 0x00000004,
 	ThreadState_Unstarted = 0x00000008,
@@ -59,7 +58,16 @@ typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
-MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size, MonoError *error);
+typedef enum {
+	MONO_THREAD_CREATE_FLAGS_NONE         = 0x0,
+	MONO_THREAD_CREATE_FLAGS_THREADPOOL   = 0x1,
+	MONO_THREAD_CREATE_FLAGS_DEBUGGER     = 0x2,
+	MONO_THREAD_CREATE_FLAGS_FORCE_CREATE = 0x4,
+	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
+} MonoThreadCreateFlags;
+
+MonoInternalThread*
+mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
@@ -174,9 +182,6 @@ void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppC
 
 MonoInternalThread *mono_thread_internal_current (void);
 
-void mono_thread_internal_check_for_interruption_critical (MonoInternalThread *thread);
-
-void mono_thread_internal_stop (MonoInternalThread *thread);
 void mono_thread_internal_abort (MonoInternalThread *thread);
 void mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread);
 
@@ -211,8 +216,6 @@ gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 void mono_thread_push_appdomain_ref (MonoDomain *domain);
 void mono_thread_pop_appdomain_ref (void);
 gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
-
-void mono_threads_clear_cached_culture (MonoDomain *domain);
 
 MonoException* mono_thread_request_interruption (mono_bool running_managed);
 gboolean mono_thread_interruption_requested (void);

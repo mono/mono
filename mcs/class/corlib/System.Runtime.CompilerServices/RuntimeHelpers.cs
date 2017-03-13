@@ -184,5 +184,11 @@ namespace System.Runtime.CompilerServices
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void RunModuleConstructor (IntPtr module);
+
+		// This is implemented as a JIT intrinsic
+		public static bool IsReferenceOrContainsReferences<T>()
+		{
+			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
+		}
 	}
 }

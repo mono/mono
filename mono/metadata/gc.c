@@ -478,7 +478,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		if (res == MONO_SEM_TIMEDWAIT_RET_SUCCESS) {
 			break;
 		} else if (res == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
-			if ((thread->state & (ThreadState_StopRequested | ThreadState_SuspendRequested)) != 0) {
+			if ((thread->state & (ThreadState_AbortRequested | ThreadState_SuspendRequested)) != 0) {
 				ret = FALSE;
 				break;
 			}
@@ -921,7 +921,7 @@ void
 mono_gc_init_finalizer_thread (void)
 {
 	MonoError error;
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0, &error);
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
 	mono_error_assert_ok (&error);
 }
 

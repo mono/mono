@@ -90,6 +90,7 @@ class DoParse : MarshalByRefObject {
 		var str = FileToEnum (name);
 
 		string ver_str = version + " " + FileToMoniker (fullname);	
+
 		Console.WriteLine ($"IGNORED_ASSEMBLY (0x{hash_code}, {str}, \"{id}\", \"{ver_str}\"),");
 	}
 }

@@ -56,6 +56,7 @@ public class TestRunner
 		string runtime = "mono";
 		string config = null;
 		string mono_path = null;
+		string runtime_args = null;
 		var opt_sets = new List<string> ();
 
 		string aot_run_flags = null;
@@ -96,6 +97,13 @@ public class TestRunner
 					}
 					runtime = args [i + 1];
 					i += 2;
+				} else if (args [i] == "--runtime-args") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --runtime-args command line option.");
+						return 1;
+					}
+					runtime_args = args [i + 1];
+					i += 2;
 				} else if (args [i] == "--config") {
 					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --config command line option.");
@@ -131,13 +139,6 @@ public class TestRunner
 						return 1;
 					}
 					inputFile = args [i + 1];
-					i += 2;
-				} else if (args [i] == "--runtime") {
-					if (i + 1 >= args.Length) {
-						Console.WriteLine ("Missing argument to --runtime command line option.");
-						return 1;
-					}
-					runtime = args [i + 1];
 					i += 2;
 				} else if (args [i] == "--mono-path") {
 					if (i + 1 >= args.Length) {
@@ -315,11 +316,11 @@ public class TestRunner
 						test_invoke = test;
 
 					/* Spawn a new process */
-					string process_args;
-					if (opt_set == null)
-						process_args = test_invoke;
-					else
-						process_args = "-O=" + opt_set + " " + test_invoke;
+					string process_args = test_invoke;
+					if (opt_set != null)
+						process_args = "-O=" + opt_set + " " + process_args;
+					if (runtime_args != null)
+						process_args = runtime_args + " " + process_args;
 
 					ProcessStartInfo info = new ProcessStartInfo (runtime, process_args);
 					info.UseShellExecute = false;

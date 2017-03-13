@@ -23,9 +23,9 @@ class IronLanguagesPackage(GitHubTarballPackage):
         self.ironpython = os.path.join(
             self.workspace, 'ironpython', 'bin') + os.sep
         self.sh(
-            'xbuild /p:Configuration=Release /p:OutDir="%{ironruby}" Solutions/Ruby.sln')
+            'msbuild /p:DelaySign=true /p:Configuration=Release /p:OutDir="%{ironruby}" Solutions/Ruby.sln')
         self.sh(
-            'xbuild /p:Configuration=Release /p:OutDir="%{ironpython}" Solutions/IronPython.Mono.sln')
+            'msbuild /p:DelaySign=true /p:Configuration=Release /p:OutDir="%{ironpython}" Solutions/IronPython.Mono.sln')
 
     def install_ruby_scripts(self, path, installdir):
         for cmd, ext in map(os.path.splitext, os.listdir(path)):

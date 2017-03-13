@@ -42,7 +42,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class RectangleConverterTest
 	{
 		Rectangle rect;
@@ -305,7 +304,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TestCreateInstance_CaseSensitive ()
 		{
 			Hashtable ht = new Hashtable ();
@@ -313,7 +311,7 @@ namespace MonoTests.System.Drawing
 			ht.Add ("Y", -10);
 			ht.Add ("Width", 20);
 			ht.Add ("Height", 30);
-			rconv.CreateInstance (null, ht);
+			Assert.Throws<ArgumentException> (() => rconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -374,10 +372,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromInvariantString_string_exc_1 ()
 		{
-			rconv.ConvertFromInvariantString ("1, 2, 3");
+			Assert.Throws<ArgumentException> (() => rconv.ConvertFromInvariantString ("1, 2, 3"));
 		}
 
 		[Test]
@@ -410,12 +407,11 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_1 ()
 		{
 			CultureInfo culture = CultureInfo.CurrentCulture;
-			rconv.ConvertFromString (string.Format(culture,
-				"1{0} 2{0} 3{0} 4{0} 5", culture.TextInfo.ListSeparator));
+			Assert.Throws<ArgumentException> (() => rconv.ConvertFromString (string.Format(culture,
+				"1{0} 2{0} 3{0} 4{0} 5", culture.TextInfo.ListSeparator)));
 		}
 
 		[Test]

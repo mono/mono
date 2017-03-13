@@ -1,0 +1,74 @@
+$ mono commands.exe
+Use `commands help` for usage.
+
+$ mono commands.exe --help
+usage: commands COMMAND [OPTIONS]
+
+Mono.Options.CommandSet sample app.
+
+Global options:
+  -v[=VALUE]                 Output verbosity.
+
+Available commands:
+        echo                 Echo arguments to the screen
+        requires-args        Class-based Command subclass
+
+$ mono commands.exe help
+usage: commands COMMAND [OPTIONS]
+
+Mono.Options.CommandSet sample app.
+
+Global options:
+  -v[=VALUE]                 Output verbosity.
+
+Available commands:
+        echo                 Echo arguments to the screen
+        requires-args        Class-based Command subclass
+
+$ mono commands.exe help --help
+Usage: commands COMMAND [OPTIONS]
+Use `commands help COMMAND` for help on a specific command.
+
+Available commands:
+
+        echo                 Echo arguments to the screen
+        requires-args        Class-based Command subclass
+        help                 Show this message and exit
+
+$ mono commands.exe help echo
+--help
+
+$ mono commands.exe echo --help
+--help
+
+$ mono commands.exe echo hello, world
+hello, world
+
+$ mono commands.exe requires-args
+commands: Missing required argument `--name=NAME`.
+commands: Use `commands help requires-args` for details.
+
+$ mono commands.exe help requires-args
+usage: commands requires-args [OPTIONS]
+
+Class-based Command subclass example.
+      --name, -n=name        name of person to greet.
+      --help, -h, -?         Show this message and exit.
+
+$ mono commands.exe requires-args --help
+usage: commands requires-args [OPTIONS]
+
+Class-based Command subclass example.
+      --name, -n=name        name of person to greet.
+      --help, -h, -?         Show this message and exit.
+
+$ mono commands.exe requires-args -n World
+Hello, World!
+
+$ mono commands.exe invalid-command
+commands: Unknown command: invalid-command
+commands: Use `commands help` for usage.
+
+$ mono commands.exe help invalid-command
+commands: Unknown command: invalid-command
+commands: Use `commands help` for usage.

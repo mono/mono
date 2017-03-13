@@ -8,14 +8,14 @@ fi
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4 tests
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
-if [[ ${label} == 'debian-8-ppc64el' ]]; then ${TESTCMD} --label=corlib --skip; else ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test; fi
+${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
 ${TESTCMD} --label=compiler-errors --timeout=30m make -w -C mcs/errors run-test
 ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"
 if [[ ${label} == osx-* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
-if [[ ${label} == 'debian-8-ppc64el' ]]; then ${TESTCMD} --label=System.XML --skip; else ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test; fi
+${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 if [[ ${label} == w* ]]
@@ -24,7 +24,10 @@ else ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.
 fi
 if [[ ${label} == osx-* ]] || [[ ${label} == w* ]]
 then ${TESTCMD} --label=Windows.Forms --skip;
-else ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
+else
+    if make -C mcs/class/System.Windows.Forms test-simple;
+    then ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
+    else echo "The simple test failed (maybe because of missing X server), skipping test suite." && ${TESTCMD} --label=Windows.Forms --skip; fi
 fi
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 if [[ ${label} == w* ]]; then ${TESTCMD} --label=Mono.Data.Sqlite --skip; else ${TESTCMD} --label=Mono.Data.Sqlite --timeout=5m make -w -C mcs/class/Mono.Data.Sqlite run-test; fi
@@ -52,7 +55,7 @@ ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
 ${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/System.Web.Extensions run-test
 ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test
-if [[ ${label} == w* || ${label} == 'debian-8-ppc64el' ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
+if [[ ${label} == w* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=System.Xml.Linq --timeout=5m make -w -C mcs/class/System.Xml.Linq run-test
 ${TESTCMD} --label=System.Data.DSE --timeout=5m make -w -C mcs/class/System.Data.DataSetExtensions run-test
 ${TESTCMD} --label=System.Web.Abstractions --timeout=5m make -w -C mcs/class/System.Web.Abstractions run-test
@@ -76,7 +79,7 @@ ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
-if [[ ${label} == 'debian-8-ppc64el' ]]; then ${TESTCMD} --label=Mono.Debugger.Soft --skip; else ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test; fi
+${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test
 ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test
 ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12
