@@ -230,6 +230,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ConvertFrom_Type_String_FilePathWithBackslashes ()
 		{
 			if (Path.DirectorySeparatorChar == '\\')
