@@ -133,11 +133,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-		static WaitCallback WorkItemCallback = new WaitCallback((object state) => {
-			SocketAsyncResult ar = (SocketAsyncResult) state;
-			ar.AsyncCallback(ar);
-		});
-
 		internal override void CompleteDisposed ()
 		{
 			Complete ();
