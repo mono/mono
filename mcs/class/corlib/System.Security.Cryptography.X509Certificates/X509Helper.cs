@@ -68,7 +68,7 @@ namespace System.Security.Cryptography.X509Certificates
 				return ImportApple (rawData);
 #endif
 #if !ONLY_APPLETLS && !MOBILE
-			ImportCore (rawData);
+			return ImportCore (rawData);
 #endif
 			throw new NotSupportedException ();
 
