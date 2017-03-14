@@ -51,27 +51,33 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
-#if MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
+			return InitFromHandleApple (handle);
+#else
+
+#if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
 			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
 				return InitFromHandleApple (handle);
 #endif
-#if !ONLY_APPLETLS && !MOBILE
-			InitFromHandleCore (handle);
-#endif
+#if !MOBILE
+			return InitFromHandleCore (handle);
+#elif !MONOTOUCH && !XAMMAC
 			throw new NotSupportedException ();
+#endif
+#endif
 		}
-		
+
 		static X509CertificateImpl Import (byte[] rawData)
 		{
+#if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
+			return ImportApple (rawData);
+#else
 #if MONO_FEATURE_APPLETLS
 			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
 				return ImportApple (rawData);
 #endif
-#if !ONLY_APPLETLS && !MOBILE
 			return ImportCore (rawData);
 #endif
-			throw new NotSupportedException ();
-
 		}
 
 #if !MOBILE
