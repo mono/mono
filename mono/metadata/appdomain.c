@@ -87,8 +87,16 @@
  *
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
+ *
+ * IMPORTANT: when updating the version, use the following format:
+ *    1<major><minor><build><corlibversion> (every group is exactly two digits)
+ *
+ *    e.g. for Mono 4.9.1 and corlib version 32 it'd be: 104090132
+ *
+ *    Whenever Mono's version number is bumped in configure.ac this needs
+ *    to be bumped too. The corlib version can be reset to 00 in that case.
  */
-#define MONO_CORLIB_VERSION 164
+#define MONO_CORLIB_VERSION 104090300
 
 typedef struct
 {
