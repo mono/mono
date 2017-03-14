@@ -130,6 +130,12 @@ get_heap_size (void)
 	return major_collector.get_num_major_sections () * major_collector.section_size + los_memory_usage;
 }
 
+static inline gboolean
+major_collector_have_swept (void)
+{
+	return major_collector.have_swept ();
+}
+
 gboolean
 sgen_need_major_collection (mword space_needed)
 {
@@ -153,7 +159,7 @@ sgen_need_major_collection (mword space_needed)
 	}
 
 	/* FIXME: This is a cop-out.  We should have some way of figuring this out. */
-	if (!major_collector.have_swept ())
+	if (!major_collector_have_swept ())
 		return FALSE;
 
 	if (space_needed > sgen_memgov_available_free_space ())
@@ -181,6 +187,12 @@ sgen_add_log_entry (SgenLogEntry *log_entry)
 	mono_coop_mutex_unlock (&log_entries_mutex);
 }
 
+static inline int
+major_collector_get_num_major_sections (void)
+{
+	return major_collector.get_num_major_sections ();
+}
+
 void
 sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
 {
@@ -194,7 +206,7 @@ sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
 		log_entry->is_overflow = is_overflow;
 		log_entry->time = SGEN_TV_ELAPSED (last_minor_start, current_time);
 		log_entry->promoted_size = total_promoted_size - total_promoted_size_start;
-		log_entry->major_size = major_collector.get_num_major_sections () * major_collector.section_size;
+		log_entry->major_size = major_collector_get_num_major_sections () * major_collector.section_size;
 		log_entry->major_size_in_use = last_used_slots_size + total_allocated_major - total_allocated_major_end;
 		log_entry->los_size = los_memory_usage_total;
 		log_entry->los_size_in_use = los_memory_usage;
@@ -249,6 +261,12 @@ sgen_memgov_major_collection_start (gboolean concurrent, const char *reason)
 	SGEN_TV_GETTIME (last_major_start);
 }
 
+static inline void
+major_collector_finish_sweeping (void)
+{
+	sgen_get_major_collector ()->finish_sweeping ();
+}
+
 void
 sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const char *reason, gboolean is_overflow)
 {
@@ -274,7 +292,7 @@ sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const ch
 	last_collection_los_memory_usage = los_memory_usage;
 	total_allocated_major_end = total_allocated_major;
 	if (forced) {
-		sgen_get_major_collector ()->finish_sweeping ();
+		major_collector_finish_sweeping ();
 		sgen_memgov_calculate_minor_collection_allowance ();
 	}
 }

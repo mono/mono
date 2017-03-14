@@ -730,7 +730,7 @@ get_frame_pointer (MonoContext *ctx, int frame_reg)
  *
  *   Mark a thread stack conservatively and collect information needed by the precise pass.
  */
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 {
 	MonoJitInfo *ji;
@@ -1242,7 +1242,7 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end, void *gc_dat
  * call, and TRUE at the second. USER_DATA points to a TlsData
  * structure filled up by thread_suspend_func. 
  */
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 thread_mark_func (gpointer user_data, guint8 *stack_start, guint8 *stack_end, gboolean precise, void *gc_data)
 {
 	TlsData *tls = user_data;

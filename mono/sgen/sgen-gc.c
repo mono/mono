@@ -839,7 +839,7 @@ pin_from_roots (void *start_nursery, void *end_nursery, ScanCopyContext ctx)
 	sgen_client_scan_thread_data (start_nursery, end_nursery, FALSE, ctx);
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 single_arg_user_copy_or_mark (GCObject **obj, void *gc_data)
 {
 	ScanCopyContext *ctx = (ScanCopyContext *)gc_data;
@@ -939,6 +939,12 @@ sgen_update_heap_boundaries (mword low, mword high)
 	} while (SGEN_CAS_PTR ((gpointer*)&highest_heap_address, (gpointer)high, (gpointer)old) != (gpointer)old);
 }
 
+static inline void *
+major_collector_alloc_heap (mword nursery_size, mword nursery_align, int nursery_bits)
+{
+	return major_collector.alloc_heap (nursery_size, nursery_align, nursery_bits);
+}
+
 /*
  * Allocate and setup the data structures needed to be able to allocate objects
  * in the nursery. The nursery is stored in nursery_section.
@@ -966,7 +972,7 @@ alloc_nursery (void)
 	/* If there isn't enough space even for the nursery we should simply abort. */
 	g_assert (sgen_memgov_try_alloc_space (alloc_size, SPACE_NURSERY));
 
-	data = (char *)major_collector.alloc_heap (alloc_size, alloc_size, DEFAULT_NURSERY_BITS);
+	data = (char *)major_collector_alloc_heap (alloc_size, alloc_size, DEFAULT_NURSERY_BITS);
 	sgen_update_heap_boundaries ((mword)data, (mword)(data + sgen_nursery_size));
 	SGEN_LOG (4, "Expanding nursery size (%p-%p): %lu, total: %lu", data, data + alloc_size, (unsigned long)sgen_nursery_size, (unsigned long)sgen_gc_get_total_heap_allocation ());
 	section->data = section->next_data = data;
@@ -1037,7 +1043,7 @@ sgen_generation_name (int generation)
 	return generation_name (generation);
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 finish_gray_stack (int generation, ScanCopyContext ctx)
 {
 	TV_DECLARE (atv);
@@ -1531,7 +1537,7 @@ enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_st
  *
  * Return whether any objects were late-pinned due to being out of memory.
  */
-static gboolean
+static gboolean MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped))
 collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_queue)
 {
 	gboolean needs_major;
@@ -1735,7 +1741,25 @@ typedef enum {
 	COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT
 } CopyOrMarkFromRootsMode;
 
-static void
+static inline void
+major_collector_init_to_space (void)
+{
+	major_collector.init_to_space ();
+}
+
+static inline MONO_PERMIT (need (sgen_gc_locked)) void
+major_collector_pin_objects (SgenGrayQueue *queue)
+{
+	major_collector.pin_objects (queue);
+}
+
+static inline void
+remset_clear_cards ()
+{
+	remset.clear_cards ();
+}
+
+static MONO_PERMIT (need (sgen_gc_locked)) void
 major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_next_pin_slot, CopyOrMarkFromRootsMode mode, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par)
 {
 	LOSObject *bigobj;
@@ -1785,7 +1809,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 
 	if (mode != COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT) {
 		/* Remsets are not useful for a major collection */
-		remset.clear_cards ();
+		remset_clear_cards ();
 	}
 
 	sgen_process_fin_stage_entries ();
@@ -1853,7 +1877,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
 		sgen_check_nursery_objects_pinned (mode != COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT);
 
-	major_collector.pin_objects (gc_thread_gray_queue);
+	major_collector_pin_objects (gc_thread_gray_queue);
 	if (old_next_pin_slot)
 		*old_next_pin_slot = sgen_get_pinned_count ();
 
@@ -1862,7 +1886,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	SGEN_LOG (2, "Finding pinned pointers: %zd in %lld usecs", sgen_get_pinned_count (), (long long)TV_ELAPSED (atv, btv));
 	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 
-	major_collector.init_to_space ();
+	major_collector_init_to_space ();
 
 	SGEN_ASSERT (0, sgen_workers_all_done (), "Why are the workers not done when we start or finish a major collection?");
 	if (mode == COPY_OR_MARK_FROM_ROOTS_FINISH_CONCURRENT) {
@@ -1955,7 +1979,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	}
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean concurrent, size_t *old_next_pin_slot)
 {
 	SgenObjectOperations *object_ops_nopar, *object_ops_par = NULL;
@@ -2000,7 +2024,8 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 	major_copy_or_mark_from_roots (gc_thread_gray_queue, old_next_pin_slot, concurrent ? COPY_OR_MARK_FROM_ROOTS_START_CONCURRENT : COPY_OR_MARK_FROM_ROOTS_SERIAL, object_ops_nopar, object_ops_par);
 }
 
-static void
+/* WARD: Doesn't need(sgen_world_stopped) because this may be a concurrent collection. */
+static MONO_PERMIT (need (sgen_gc_locked)) void
 major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason, gboolean is_overflow, size_t old_next_pin_slot, gboolean forced)
 {
 	ScannedObjectCounts counts;
@@ -2134,7 +2159,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	binary_protocol_collection_end (gc_stats.major_gc_count - 1, GENERATION_OLD, counts.num_scanned_objects, counts.num_unique_scanned_objects);
 }
 
-static gboolean
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) gboolean
 major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 {
 	TV_DECLARE (time_start);
@@ -2168,7 +2193,7 @@ major_do_collection (const char *reason, gboolean is_overflow, gboolean forced)
 	return bytes_pinned_from_failed_allocation > 0;
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 major_start_concurrent_collection (const char *reason)
 {
 	TV_DECLARE (time_start);
@@ -2209,6 +2234,12 @@ major_should_finish_concurrent_collection (void)
 	return sgen_workers_all_done ();
 }
 
+static inline void
+major_collector_update_cardtable_mod_union (void)
+{
+	major_collector.update_cardtable_mod_union ();
+}
+
 static void
 major_update_concurrent_collection (void)
 {
@@ -2219,14 +2250,14 @@ major_update_concurrent_collection (void)
 
 	binary_protocol_concurrent_update ();
 
-	major_collector.update_cardtable_mod_union ();
+	major_collector_update_cardtable_mod_union ();
 	sgen_los_update_cardtable_mod_union ();
 
 	TV_GETTIME (total_end);
 	gc_stats.major_gc_time += TV_ELAPSED (total_start, total_end);
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 major_finish_concurrent_collection (gboolean forced)
 {
 	SgenGrayQueue gc_thread_gray_queue;
@@ -2247,7 +2278,7 @@ major_finish_concurrent_collection (gboolean forced)
 	SGEN_TV_GETTIME (time_major_conc_collection_end);
 	gc_stats.major_gc_time_concurrent += SGEN_TV_ELAPSED (time_major_conc_collection_start, time_major_conc_collection_end);
 
-	major_collector.update_cardtable_mod_union ();
+	major_collector_update_cardtable_mod_union ();
 	sgen_los_update_cardtable_mod_union ();
 
 	if (mod_union_consistency_check)
@@ -2305,14 +2336,28 @@ sgen_ensure_free_space (size_t size, int generation)
 
 	if (generation_to_collect == -1)
 		return;
-	sgen_perform_collection (size, generation_to_collect, reason, FALSE, TRUE);
+	sgen_perform_collection_stw (size, generation_to_collect, reason, FALSE);
 }
 
 /*
  * LOCKING: Assumes the GC lock is held.
  */
-void
-sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+int
+sgen_perform_collection_stw (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish)
+{
+	int oldest_generation_collected;
+	sgen_stop_world (generation_to_collect);
+	oldest_generation_collected = sgen_perform_collection (requested_size, generation_to_collect, reason, wait_to_finish);
+	sgen_restart_world (oldest_generation_collected);
+	return oldest_generation_collected;
+}
+
+/*
+ * Returns the oldest generation collected.
+ * LOCKING: Assumes the GC lock is held.
+ */
+int
+sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish)
 {
 	TV_DECLARE (gc_total_start);
 	TV_DECLARE (gc_total_end);
@@ -2325,11 +2370,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 
 	SGEN_ASSERT (0, generation_to_collect == GENERATION_NURSERY || generation_to_collect == GENERATION_OLD, "What generation is this?");
 
-	if (stw)
-		sgen_stop_world (generation_to_collect);
-	else
-		SGEN_ASSERT (0, sgen_is_world_stopped (), "We can only collect if the world is stopped");
-		
+	SGEN_ASSERT (0, sgen_is_world_stopped (), "We can only collect if the world is stopped");
 
 	TV_GETTIME (gc_total_start);
 
@@ -2387,8 +2428,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	TV_GETTIME (gc_total_end);
 	time_max = MAX (time_max, TV_ELAPSED (gc_total_start, gc_total_end));
 
-	if (stw)
-		sgen_restart_world (oldest_generation_collected);
+	return oldest_generation_collected;
 }
 
 /*
@@ -2579,8 +2619,7 @@ sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_typ
 			root->root_desc = descr;
 			roots_size += size;
 			roots_size -= old_size;
-			UNLOCK_GC;
-			return TRUE;
+			goto end;
 		}
 	}
 
@@ -2594,6 +2633,7 @@ sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_typ
 
 	SGEN_LOG (3, "Added root for range: %p-%p, descr: %llx  (%d/%d bytes)", start, new_root.end_root, (long long)descr, (int)size, (int)roots_size);
 
+end:
 	UNLOCK_GC;
 	return TRUE;
 }
@@ -2766,6 +2806,12 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 	remset.wbarrier_arrayref_copy (dest_ptr, src_ptr, count);
 }
 
+static inline void
+remset_wbarrier_generic_nostore (gpointer ptr)
+{
+	remset.wbarrier_generic_nostore (ptr);
+}
+
 void
 mono_gc_wbarrier_generic_nostore (gpointer ptr)
 {
@@ -2790,7 +2836,7 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr)
 
 	SGEN_LOG (8, "Adding remset at %p", ptr);
 
-	remset.wbarrier_generic_nostore (ptr);
+	remset_wbarrier_generic_nostore (ptr);
 }
 
 void
@@ -2851,7 +2897,7 @@ sgen_gc_collect (int generation)
 	LOCK_GC;
 	if (generation > 1)
 		generation = 1;
-	sgen_perform_collection (0, generation, "user request", TRUE, TRUE);
+	sgen_perform_collection_stw (0, generation, "user request", TRUE);
 	UNLOCK_GC;
 }
 
@@ -3391,10 +3437,16 @@ sgen_get_remset (void)
 	return &remset;
 }
 
+static inline void
+major_collector_count_cards (long long *major_total, long long *major_marked)
+{
+	sgen_get_major_collector ()->count_cards (major_total, major_marked);
+}
+
 static void
 count_cards (long long *major_total, long long *major_marked, long long *los_total, long long *los_marked)
 {
-	sgen_get_major_collector ()->count_cards (major_total, major_marked);
+	major_collector_count_cards (major_total, major_marked);
 	sgen_los_count_cards (los_total, los_marked);
 }
 

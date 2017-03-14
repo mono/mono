@@ -58,7 +58,7 @@
  * can be linked into both mono and mono-sgen.
  */
 #if defined(HAVE_BOEHM_GC) || defined(HAVE_SGEN_GC)
-#error "The code in mini/ should not depend on these defines."
+#warning "The code in mini/ should not depend on these defines."
 #endif
 
 #ifndef __GNUC__

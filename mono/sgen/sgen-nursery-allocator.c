@@ -649,11 +649,17 @@ sgen_clear_range (char *start, char *end)
 	}
 }
 
+static inline void
+minor_collector_clear_fragments (void)
+{
+	sgen_minor_collector.clear_fragments ();
+}
+
 void
 sgen_nursery_allocator_prepare_for_pinning (void)
 {
 	sgen_clear_allocator_fragments (&mutator_allocator);
-	sgen_minor_collector.clear_fragments ();
+	minor_collector_clear_fragments ();
 }
 
 static mword fragment_total = 0;
@@ -895,6 +901,12 @@ sgen_nursery_alloc_prepare_for_major (void)
 	sgen_minor_collector.prepare_to_space (sgen_space_bitmap, sgen_space_bitmap_size);
 }
 
+static inline void
+minor_collector_init_nursery (SgenFragmentAllocator *allocator, char *start, char *end)
+{
+	sgen_minor_collector.init_nursery (allocator, start, end);
+}
+
 void
 sgen_nursery_allocator_set_nursery_bounds (char *start, char *end)
 {
@@ -910,7 +922,7 @@ sgen_nursery_allocator_set_nursery_bounds (char *start, char *end)
 	sgen_space_bitmap = (char *)g_malloc0 (sgen_space_bitmap_size);
 
 	/* Setup the single first large fragment */
-	sgen_minor_collector.init_nursery (&mutator_allocator, start, end);
+	minor_collector_init_nursery (&mutator_allocator, start, end);
 }
 
 #endif

@@ -51,7 +51,7 @@ static guint64 stat_scanned_count_per_descriptor [DESC_TYPE_MAX];
 static guint64 stat_copied_count_per_descriptor [DESC_TYPE_MAX];
 #endif
 
-static int
+static MONO_PERMIT (need (sgen_lock_gc)) int
 alloc_complex_descriptor (gsize *bitmap, int numbits)
 {
 	int nwords, res, i;
@@ -82,8 +82,8 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 				}
 			}
 			if (found) {
-				sgen_gc_unlock ();
-				return __index;
+				res = __index;
+				goto end;
 			}
 		}
 		/* Skip the bitmap words */
@@ -100,6 +100,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 		descriptor [1 + i] = bitmap [i];
 		SGEN_LOG (6, "\tvalue: %p", (void*)descriptor [1 + i]);
 	}
+end:
 	sgen_gc_unlock ();
 	return res;
 }
