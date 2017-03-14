@@ -1907,9 +1907,11 @@ mono_main (int argc, char* argv[])
 #endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
-#ifdef ENABLE_INTERPRETER
 		} else if (strcmp (argv [i], "--interpreter") == 0) {
+#ifdef ENABLE_INTERPRETER
 			mono_use_interpreter = TRUE;
+#else
+			fprintf (stderr, "Mono Warning: --interpreter not enabled in this runtime.\n");
 #endif
 
 #ifdef __native_client__
