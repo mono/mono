@@ -20,8 +20,8 @@ else
 install-local: install-extras
 endif
 
-PORTABLE_TARGETS_SRC=../../../external/buildtools/src/Portable/Targets
-PCL5_FX_SRC=../../../external/buildtools/src/Portable/Frameworks/v5.0
+PORTABLE_TARGETS_SRC:=data/Portable/Targets
+PCL5_FX_SRC:=data/Portable/Frameworks/v5.0
 
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
 PCL5_FX_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETPortable/v5.0
@@ -154,6 +154,8 @@ EXTRA_DISTFILES = \
 	data/Microsoft.VisualBasic.targets \
 	data/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	data/MSBuild/Microsoft.Build.Core.xsd \
+	data/Portable/Targets/* \
+	data/Portable/Frameworks/v5.0/* \
 	frameworks/net_2.0.xml \
 	frameworks/net_3.0.xml \
 	frameworks/net_3.5.xml \
