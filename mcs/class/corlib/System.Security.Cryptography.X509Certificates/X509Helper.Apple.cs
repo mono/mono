@@ -13,7 +13,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return new X509CertificateImplApple (handle, false);
 		}
 
-		static X509CertificateImpl Import (byte[] rawData)
+		static X509CertificateImpl ImportApple (byte[] rawData)
 		{
 			var handle = CFHelpers.CreateCertificateFromData (rawData);
 			if (handle != IntPtr.Zero)

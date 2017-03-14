@@ -49,21 +49,29 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
-#if !MOBILE
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-#endif
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
 #if MONO_FEATURE_APPLETLS
-			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
-			bool useAppleTls = string.IsNullOrEmpty (variable) || variable == "default" || variable == "apple"; // On Platform.IsMacOS default is AppleTlsProvider
-			if (System.Environment.IsMacOS && useAppleTls)
+			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
 				return InitFromHandleApple (handle);
 #endif
-#if !MOBILE
+#if !ONLY_APPLETLS && !MOBILE
 			InitFromHandleCore (handle);
 #endif
 			throw new NotSupportedException ();
+		}
+		
+		static X509CertificateImpl Import (byte[] rawData)
+		{
+#if MONO_FEATURE_APPLETLS
+			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
+				return ImportApple (rawData);
+#endif
+#if !ONLY_APPLETLS && !MOBILE
+			ImportCore (rawData);
+#endif
+			throw new NotSupportedException ();
+
 		}
 
 #if !MOBILE
@@ -187,8 +195,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return data;
 		}
 
-#if !MONO_FEATURE_APPLETLS
-		static X509CertificateImpl Import (byte[] rawData)
+		static X509CertificateImpl ImportCore (byte[] rawData)
 		{
 			MX.X509Certificate x509;
 			try {
@@ -205,7 +212,6 @@ namespace System.Security.Cryptography.X509Certificates
 
 			return new X509CertificateImplMono (x509);
 		}
-#endif
 
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
