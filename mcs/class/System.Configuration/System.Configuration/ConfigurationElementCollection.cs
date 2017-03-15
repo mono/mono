@@ -555,7 +555,7 @@ namespace System.Configuration
 			return false;
 		}
 		
-		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode updateMode)
+		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 			ConfigurationElementCollection source = (ConfigurationElementCollection) sourceElement;
 			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
@@ -565,9 +565,9 @@ namespace System.Configuration
 				object key = source.GetElementKey (sitem);
 				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
 				ConfigurationElement nitem = CreateNewElementInternal (null);
-				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
-					nitem.Unmerge (sitem, pitem, updateMode);
-					if (nitem.HasValues (pitem, updateMode))
+				if (pitem != null && saveMode != ConfigurationSaveMode.Full) {
+					nitem.Unmerge (sitem, pitem, saveMode);
+					if (nitem.HasValues (pitem, saveMode))
 						BaseAdd (nitem);
 				} else {
 					nitem.Unmerge (sitem, null, ConfigurationSaveMode.Full);
@@ -575,7 +575,7 @@ namespace System.Configuration
 				}
 			}
 			
-			if (updateMode == ConfigurationSaveMode.Full)
+			if (saveMode == ConfigurationSaveMode.Full)
 				EmitClear = true;
 			else if (parent != null) {
 				for (int n=0; n<parent.Count; n++) {
