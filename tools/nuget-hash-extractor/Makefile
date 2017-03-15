@@ -10,4 +10,11 @@ download:
 
 run: nuget-hash-extractor.exe
 	mono nuget-hash-extractor.exe nugets
+
+run-asm: nuget-hash-extractor.exe
+	mono nuget-hash-extractor.exe nugets asm
+
+run-ver: nuget-hash-extractor.exe
+	mono nuget-hash-extractor.exe nugets ver
+
 .PHONY: download run
