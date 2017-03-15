@@ -32,14 +32,21 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
+
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
 	public class OdbcCommandBuilderTest
 	{
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			ConnectionManager.RequireProvider(ProviderType.Odbc);
+		}
+
 		[Test]
 		public void GetInsertCommandTest ()
 		{

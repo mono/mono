@@ -34,7 +34,8 @@ using System.Data.Common;
 using System.Data.Odbc;
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected
+
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -46,6 +47,7 @@ namespace MonoTests.System.Data.Connected
 		[SetUp]
 		public void SetUp ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.Odbc);
 			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			cmd = conn.CreateCommand ();

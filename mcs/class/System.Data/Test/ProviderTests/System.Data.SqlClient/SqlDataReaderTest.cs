@@ -100,6 +100,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[TestFixtureSetUp]
 		public void init ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
 			cmd = conn.CreateCommand ();
 			
@@ -120,6 +121,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void Setup ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn.Open ();
 			engine = ConnectionManager.Singleton.Engine;
 		}
@@ -3082,6 +3084,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void SetUp ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			cmd = conn.CreateCommand ();

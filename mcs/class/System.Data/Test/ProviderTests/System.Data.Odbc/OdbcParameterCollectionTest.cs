@@ -41,6 +41,12 @@ namespace MonoTests.System.Data.Connected.Odbc
 	[Category ("odbc")]
 	public class OdbcParameterCollectionTest
 	{
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			ConnectionManager.RequireProvider(ProviderType.Odbc);
+		}
+
 		/// <remarks>
 		/// This tests whether the value is trimmed to the
 		/// given length while passing parameters

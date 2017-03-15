@@ -34,9 +34,10 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
@@ -48,6 +49,7 @@ namespace MonoTests.System.Data.Connected
 		[TestFixtureSetUp]
 		public void init ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
 			engine = ConnectionManager.Singleton.Engine;
 		}

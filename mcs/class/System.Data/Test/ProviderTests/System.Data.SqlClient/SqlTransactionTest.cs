@@ -49,6 +49,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void SetUp ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			connectionString = ConnectionManager.Singleton.ConnectionString;
 			engine = ConnectionManager.Singleton.Engine;
 		}

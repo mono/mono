@@ -53,6 +53,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void SetUp ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			engine = ConnectionManager.Singleton.Engine;
 		}
 
@@ -1092,6 +1093,12 @@ namespace MonoTests.System.Data.Connected.SqlClient
 	public class SqlDataAdapterInheritTest : DbDataAdapter
 	{
 		SqlConnection conn = null;
+
+		[SetUp]
+		public void SetUp()
+		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
+		}
 
 		[Test]
 		public void FillDataAdapterTest () {

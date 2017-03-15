@@ -33,7 +33,6 @@
 using System;
 using System.Text;
 using System.Collections;
-
 using System.Data;
 using System.Data.SqlClient;
 
@@ -41,7 +40,7 @@ using NUnit.Framework;
 
 #endregion
 
-namespace MonoTests.System.Data.Connected.Common
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 
 	[TestFixture]
@@ -49,7 +48,13 @@ namespace MonoTests.System.Data.Connected.Common
 	public class SqlConnectionStringBuilderTest
 	{
 		private SqlConnectionStringBuilder builder = null;
-		
+
+		[SetUp]
+		public void SetUp()
+		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
+		}
+
 		[Test]
 		public void DefaultValuestTest ()
 		{

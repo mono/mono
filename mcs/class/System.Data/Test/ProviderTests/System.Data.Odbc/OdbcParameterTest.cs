@@ -37,7 +37,8 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected
+
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -50,6 +51,12 @@ namespace MonoTests.System.Data.Connected
 		{
 			_originalCulture = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+		}
+
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			ConnectionManager.RequireProvider(ProviderType.Odbc);
 		}
 
 		[TearDown]

@@ -32,77 +32,77 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Data.Odbc;
+using System.Data.SqlClient;
+using NUnit.Framework;
 
 
 namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
 	{
-		private static ConnectionManager Instance;
-		private DbConnection _connection;
-		private string _connectionString;
-		private EngineConfig _engine;
-
 		static ConnectionManager () 
 		{
-			Instance = new ConnectionManager ();
+			Singleton = new ConnectionManager ();
 		}
 
 		private ConnectionManager ()
 		{
-			string connection_name = Environment.GetEnvironmentVariable ("PROVIDER_TESTS_CONNECTION");
-			if (connection_name == null || connection_name.Length == 0)
-				throw new ArgumentException ("PROVIDER_TESTS_CONNECTION environment variable is not set.");
+			string connection_name = "sqlserver-tds";//"mysql-odbc";//Environment.GetEnvironmentVariable ("PROVIDER_TESTS_CONNECTION");
+			if (string.IsNullOrEmpty(connection_name))
+				Assert.Ignore($"PROVIDER_TESTS_CONNECTION environment variable is not set.");
 
-			ConnectionConfig [] connections = (ConnectionConfig [])
-				ConfigurationManager.GetSection ("providerTests");
+			var connections = (ConnectionConfig []) ConfigurationManager.GetSection ("providerTests");
 			foreach (ConnectionConfig connConfig in connections) {
 				if (connConfig.Name != connection_name)
 					continue;
 
-				_connectionString = connConfig.ConnectionString;
+				ConnectionString = connConfig.ConnectionString;
 				DbProviderFactory factory = DbProviderFactories.GetFactory (
 					connConfig.Factory);
-				_connection = factory.CreateConnection ();
-				_connection.ConnectionString = _connectionString;
-				_connectionString = _connection.ConnectionString;
-				_engine = connConfig.Engine;
+				Connection = factory.CreateConnection ();
+				Connection.ConnectionString = ConnectionString;
+				ConnectionString = Connection.ConnectionString;
+				Engine = connConfig.Engine;
 				return;
 			}
 
 			throw new ArgumentException ("Connection '" + connection_name + "' not found.");
 		}
 
-		public static ConnectionManager Singleton {
-			get {return Instance;}
-		}
+		public static ConnectionManager Singleton { get; }
 
-		public
-		DbConnection
-		Connection {
-			get {return _connection;}
-		}
+		public DbConnection Connection { get; }
 
-		public string ConnectionString {
-			get {return _connectionString;}
-		}
+		public string ConnectionString { get; }
 
-		internal EngineConfig Engine {
-			get { return _engine; }
-		}
+		internal EngineConfig Engine { get; }
 
 		public void OpenConnection ()
 		{
-			if (!(_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken))
-				_connection.Close ();
-			_connection.ConnectionString = _connectionString;
-			_connection.Open ();
+			if (!(Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken))
+				Connection.Close ();
+			Connection.ConnectionString = ConnectionString;
+			Connection.Open ();
 		}
 
 		public void CloseConnection ()
 		{
-			if (_connection != null && _connection.State != ConnectionState.Closed)
-				_connection.Close ();
+			if (Connection != null && Connection.State != ConnectionState.Closed)
+				Connection.Close ();
+		}
+
+		public static void RequireProvider(ProviderType provder)
+		{
+			if (provder == ProviderType.SqlClient && 
+				Singleton.Connection is SqlConnection)
+				return;
+
+			if (provder == ProviderType.Odbc && 
+				Singleton.Connection is OdbcConnection)
+				return;
+
+			Assert.Ignore($"Connection string is not provided for {provder}");
 		}
 	}
 }

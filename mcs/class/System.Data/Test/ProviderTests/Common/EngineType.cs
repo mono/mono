@@ -34,4 +34,11 @@ namespace MonoTests.System.Data.Connected
 		MySQL = 2,
 		PostgreSQL = 3
 	}
+
+	public enum ProviderType
+	{
+		SqlClient,
+		Odbc,
+		Oledb
+	}
 }

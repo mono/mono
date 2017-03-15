@@ -36,7 +36,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
@@ -50,6 +50,7 @@ namespace MonoTests.System.Data.Connected
 		[SetUp]
 		public void SetUp ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			events = new ArrayList ();
 			connectionString = ConnectionManager.Singleton.ConnectionString;
 			engine = ConnectionManager.Singleton.Engine;
@@ -814,10 +815,17 @@ namespace MonoTests.System.Data.Connected
 		String connectionString = ConnectionManager.Singleton.ConnectionString;
 
 		[SetUp]
-		public void Setup()
+		public void SetUp()
 		{
 			conn = new SqlConnection(connectionString);
 			conn.Open();
+		}
+
+		[TestFixtureSetUp]
+		public void Init()
+		{
+			//Not sure why it won't work if I put CheckConnectionString to [SetUp] instead of [TestFixtureSetUp] for this particular class
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 		}
 
 		[TearDown]

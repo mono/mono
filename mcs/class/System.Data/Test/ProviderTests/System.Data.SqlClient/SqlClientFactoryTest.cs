@@ -35,9 +35,10 @@ using System.Net;
 using NUnit.Framework;
 using System.Collections;
 using System.Security.Permissions;
+
 using System.Security;
 
-namespace MonoTests.System.Data.Connected
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
@@ -46,6 +47,7 @@ namespace MonoTests.System.Data.Connected
 		[Test]
 		public void CreatePermissionTest ()
 		{
+			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			SqlClientFactory factory = SqlClientFactory.Instance;
 			CodeAccessPermission permission, perm;
 			permission = factory.CreatePermission (PermissionState.None);
