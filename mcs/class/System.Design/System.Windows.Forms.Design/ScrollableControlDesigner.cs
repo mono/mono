@@ -51,9 +51,9 @@ namespace System.Windows.Forms.Design
 		private const int HTHSCROLL = 6;
 		private const int HTVSCROLL = 7;
 
-		protected override bool GetHitTest (Point point)
+		protected override bool GetHitTest (Point pt)
 		{
-			if (base.GetHitTest (point)) {
+			if (base.GetHitTest (pt)) {
 				return true;
 			}
 
@@ -65,7 +65,7 @@ namespace System.Windows.Forms.Design
 				int hitTestResult = (int) Native.SendMessage (this.Control.Handle,
 																	 Native.Msg.WM_NCHITTEST,
 																	 IntPtr.Zero,
-																	(IntPtr) Native.LParam (point.X, point.Y));
+																	(IntPtr) Native.LParam (pt.X, pt.Y));
 				if (hitTestResult == HTHSCROLL || hitTestResult == HTVSCROLL)
 					return true;
 			}
