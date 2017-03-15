@@ -2681,12 +2681,24 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 
 		void QueueIOSelectorJob (SemaphoreSlim sem, IntPtr handle, IOSelectorJob job)
 		{
-			sem.Wait();
-			if (CleanedUp) {
-				job.MarkDisposed ();
-				return;
+			var task = sem.WaitAsync();
+			// fast path without Task<Action> allocation.
+			if (task.IsCompleted) {
+				if (CleanedUp) {
+					job.MarkDisposed ();
+					return;
+				}
+				IOSelector.Add (handle, job);
 			}
-			IOSelector.Add (handle, job);
+			else
+			{
+				task.ContinueWith( t => {
+					if (CleanedUp) {
+						job.MarkDisposed ();
+						return;
+					}
+				});
+			}
 		}
 
 		void InitSocketAsyncEventArgs (SocketAsyncEventArgs e, AsyncCallback callback, object state, SocketOperation operation)
