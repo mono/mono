@@ -3074,12 +3074,6 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, MonoOSEvent *state_chang
 	ret = mono_thread_info_wait_multiple_handle (wait->handles, wait->num, state_change, state_change ? FALSE : TRUE, timeout, TRUE);
 	MONO_EXIT_GC_SAFE;
 
-	if (ret == MONO_THREAD_INFO_WAIT_RET_FAILED) {
-		/* See the comment in build_wait_tids() */
-		THREAD_DEBUG (g_message ("%s: Wait failed", __func__));
-		return;
-	}
-	
 	for( i = 0; i < wait->num; i++)
 		mono_threads_close_thread_handle (wait->handles [i]);
 
