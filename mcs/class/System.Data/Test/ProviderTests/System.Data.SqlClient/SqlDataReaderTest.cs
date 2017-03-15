@@ -3080,10 +3080,12 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		SqlCommand cmd;
 		EngineConfig engine;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
+
 		[SetUp]
 		public void SetUp ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			cmd = conn.CreateCommand ();
