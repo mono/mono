@@ -119,9 +119,9 @@ namespace System.ServiceModel.Syndication
 			return extension.GetObject<TContent> ();
 		}
 
-		public TContent ReadContent<TContent> (XmlObjectSerializer serializer)
+		public TContent ReadContent<TContent> (XmlObjectSerializer dataContractSerializer)
 		{
-			return extension.GetObject<TContent> (serializer);
+			return extension.GetObject<TContent> (dataContractSerializer);
 		}
 
 		public TContent ReadContent<TContent> (XmlSerializer serializer)
