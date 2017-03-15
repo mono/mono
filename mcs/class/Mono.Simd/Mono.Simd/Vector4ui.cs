@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
+	[Obsolete ("Use the types in the System.Numerics.Vectors namespace")]
 	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
 	public struct Vector4ui
