@@ -39,6 +39,7 @@ namespace MonoTests.System.Data.Connected
 	{
 		SqlClient,
 		Odbc,
-		Oledb
+		Oledb,
+		Any
 	}
 }

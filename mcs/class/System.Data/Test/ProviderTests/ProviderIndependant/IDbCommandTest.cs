@@ -42,6 +42,9 @@ namespace MonoTests.System.Data.Connected
 		IDbConnection conn;
 		IDbCommand cmd;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Any);
+
 		[SetUp]
 		public void SetUp ()
 		{

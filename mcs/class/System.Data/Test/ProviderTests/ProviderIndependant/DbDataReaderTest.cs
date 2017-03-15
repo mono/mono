@@ -47,6 +47,9 @@ namespace MonoTests.System.Data.Connected
 		DbCommand cmd;
 		DbDataReader rdr;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Any);
+
 		[SetUp]
 		public void SetUp ()
 		{
