@@ -709,11 +709,11 @@ namespace System.Net.Sockets
 			sockares.Complete (acc_socket, total);
 		});
 
-		public Socket EndAccept (IAsyncResult result)
+		public Socket EndAccept (IAsyncResult asyncResult)
 		{
 			int bytes;
 			byte[] buffer;
-			return EndAccept (out buffer, out bytes, result);
+			return EndAccept (out buffer, out bytes, asyncResult);
 		}
 
 		public Socket EndAccept (out byte[] buffer, out int bytesTransferred, IAsyncResult asyncResult)
@@ -948,7 +948,7 @@ namespace System.Net.Sockets
 			}
 		});
 
-		public IAsyncResult BeginConnect (string host, int port, AsyncCallback callback, object state)
+		public IAsyncResult BeginConnect (string host, int port, AsyncCallback requestCallback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 
@@ -961,31 +961,31 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			return BeginConnect (Dns.GetHostAddresses (host), port, callback, state);
+			return BeginConnect (Dns.GetHostAddresses (host), port, requestCallback, state);
 		}
 
-		public IAsyncResult BeginConnect (EndPoint end_point, AsyncCallback callback, object state)
+		public IAsyncResult BeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			if (end_point == null)
-				throw new ArgumentNullException ("end_point");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 			if (is_listening)
 				throw new InvalidOperationException ();
 
 			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
-				EndPoint = end_point,
+				EndPoint = remoteEP,
 			};
 
 			// Bug #75154: Connect() should not succeed for .Any addresses.
-			if (end_point is IPEndPoint) {
-				IPEndPoint ep = (IPEndPoint) end_point;
+			if (remoteEP is IPEndPoint) {
+				IPEndPoint ep = (IPEndPoint) remoteEP;
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
 					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
 					return sockares;
 				}
 				
-				end_point = RemapIPEndPoint (ep);
+				remoteEP = RemapIPEndPoint (ep);
 			}
 
 			int error = 0;
@@ -1004,7 +1004,7 @@ namespace System.Net.Sockets
 			bool blk = is_blocking;
 			if (blk)
 				Blocking = false;
-			Connect_internal (m_Handle, end_point.Serialize (), out error, false);
+			Connect_internal (m_Handle, remoteEP.Serialize (), out error, false);
 			if (blk)
 				Blocking = true;
 
@@ -1034,7 +1034,7 @@ namespace System.Net.Sockets
 			return sockares;
 		}
 
-		public IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback callback, object state)
+		public IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback requestCallback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 
@@ -1049,7 +1049,7 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, requestCallback, state, SocketOperation.Connect) {
 				Addresses = addresses,
 				Port = port,
 			};
@@ -1142,11 +1142,11 @@ namespace System.Net.Sockets
 			}
 		});
 
-		public void EndConnect (IAsyncResult result)
+		public void EndConnect (IAsyncResult asyncResult)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndConnect", "result");
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndConnect", "asyncResult");
 
 			if (!sockares.IsCompleted)
 				sockares.AsyncWaitHandle.WaitOne();
@@ -1629,21 +1629,21 @@ namespace System.Net.Sockets
 			}
 		});
 
-		public IAsyncResult BeginReceiveFrom (byte[] buffer, int offset, int size, SocketFlags socket_flags, ref EndPoint remote_end, AsyncCallback callback, object state)
+		public IAsyncResult BeginReceiveFrom (byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
 			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.ReceiveFrom) {
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
-				SockFlags = socket_flags,
-				EndPoint = remote_end,
+				SockFlags = socketFlags,
+				EndPoint = remoteEP,
 			};
 
 			QueueIOSelectorJob (ReadSem, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, sockares));
@@ -1671,21 +1671,21 @@ namespace System.Net.Sockets
 			sockares.Complete (total);
 		});
 
-		public int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
+		public int EndReceiveFrom(IAsyncResult asyncResult, ref EndPoint endPoint)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			if (end_point == null)
-				throw new ArgumentNullException ("remote_end");
+			if (endPoint == null)
+				throw new ArgumentNullException ("endPoint");
 
-			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndReceiveFrom", "result");
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndReceiveFrom", "asyncResult");
 
 			if (!sockares.IsCompleted)
 				sockares.AsyncWaitHandle.WaitOne();
 
 			sockares.CheckIfThrowDelayedException();
 
-			end_point = sockares.EndPoint;
+			endPoint = sockares.EndPoint;
 
 			return sockares.Total;
 		}
@@ -2095,7 +2095,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			}
 		});
 
-		public IAsyncResult BeginSendTo(byte[] buffer, int offset, int size, SocketFlags socket_flags, EndPoint remote_end, AsyncCallback callback, object state)
+		public IAsyncResult BeginSendTo(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP, AsyncCallback callback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
@@ -2105,8 +2105,8 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
-				SockFlags = socket_flags,
-				EndPoint = remote_end,
+				SockFlags = socketFlags,
+				EndPoint = remoteEP,
 			};
 
 			QueueIOSelectorJob (WriteSem, sockares.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), sockares));
@@ -2140,11 +2140,11 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			sockares.Complete ();
 		}
 
-		public int EndSendTo (IAsyncResult result)
+		public int EndSendTo (IAsyncResult asyncResult)
 		{
 			ThrowIfDisposedAndClosed ();
 
-			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndSendTo", "result");
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndSendTo", "result");
 
 			if (!sockares.IsCompleted)
 				sockares.AsyncWaitHandle.WaitOne();

@@ -46,10 +46,10 @@ namespace System.Security.Permissions {
 				_flags = StorePermissionFlags.NoFlags;
 		}
 
-		public StorePermission (StorePermissionFlags flags) 
+		public StorePermission (StorePermissionFlags flag) 
 		{
 			// reuse validation by the Flags property
-			Flags = flags;
+			Flags = flag;
 		}
 
 
@@ -129,14 +129,14 @@ namespace System.Security.Permissions {
 			return ((_flags & ~dp._flags) == 0);
 		}
 
-		public override void FromXml (SecurityElement e) 
+		public override void FromXml (SecurityElement securityElement) 
 		{
 			// General validation in CodeAccessPermission
-			PermissionHelper.CheckSecurityElement (e, "e", version, version);
+			PermissionHelper.CheckSecurityElement (securityElement, "securityElement", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			string s = e.Attribute ("Flags");
+			string s = securityElement.Attribute ("Flags");
 			if (s == null)
 				_flags = StorePermissionFlags.NoFlags;
 			else

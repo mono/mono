@@ -849,13 +849,13 @@ namespace System.Diagnostics
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
-		public static Process Start(string fileName, string username, SecureString password, string domain)
+		public static Process Start(string fileName, string userName, SecureString password, string domain)
 		{
 			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
-		public static Process Start(string fileName, string arguments, string username, SecureString password, string domain)
+		public static Process Start(string fileName, string arguments, string userName, SecureString password, string domain)
 		{
 			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
