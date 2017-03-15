@@ -215,7 +215,6 @@ namespace MonoTests.System.Reflection
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
-		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
@@ -223,7 +222,7 @@ namespace MonoTests.System.Reflection
 
 			AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
 
-			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", false);
 
 			ab.Save ("test_assembly.dll");
 
