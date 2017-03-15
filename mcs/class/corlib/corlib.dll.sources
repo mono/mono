@@ -1690,3 +1690,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
+
+System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
+System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
+CoreFoundation/CFHelpers.cs
