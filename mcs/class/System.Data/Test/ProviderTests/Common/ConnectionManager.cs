@@ -41,36 +41,40 @@ namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
 	{
-		static ConnectionManager () 
-		{
-			Singleton = new ConnectionManager ();
-		}
+		private static ConnectionManager instance;
 
 		private ConnectionManager ()
 		{
-			string connection_name = "sqlserver-tds";//"mysql-odbc";//Environment.GetEnvironmentVariable ("PROVIDER_TESTS_CONNECTION");
-			if (string.IsNullOrEmpty(connection_name))
-				Assert.Ignore($"PROVIDER_TESTS_CONNECTION environment variable is not set.");
+			//string envVariable = @"sqlserver-tds|server=EGORBO\SQLEXPRESS;database=monotest;user id=sa;password=qwerty123";
+			//string envVariable = @"mysql-odbc|Driver={MySQL ODBC 5.2 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;database=monotest;";
+			string envVariable = Environment.GetEnvironmentVariable ("SYSTEM_DATA_CONNECTIONSTRING") ?? string.Empty;
+
+			var envParts = envVariable.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+			if (envParts.Length == 0 || string.IsNullOrEmpty(envParts[0]))
+				Assert.Ignore($"SYSTEM_DATA_CONNECTIONSTRING environment variable is not set.");
+
+			string connectionName = envParts[0];
+			string connectionString = envParts[1];
 
 			var connections = (ConnectionConfig []) ConfigurationManager.GetSection ("providerTests");
 			foreach (ConnectionConfig connConfig in connections) {
-				if (connConfig.Name != connection_name)
+				if (connConfig.Name != connectionName)
 					continue;
 
 				ConnectionString = connConfig.ConnectionString;
 				DbProviderFactory factory = DbProviderFactories.GetFactory (
 					connConfig.Factory);
 				Connection = factory.CreateConnection ();
-				Connection.ConnectionString = ConnectionString;
+				Connection.ConnectionString = connectionString;
 				ConnectionString = Connection.ConnectionString;
 				Engine = connConfig.Engine;
 				return;
 			}
 
-			throw new ArgumentException ("Connection '" + connection_name + "' not found.");
+			throw new ArgumentException ("Connection '" + connectionName + "' not found.");
 		}
 
-		public static ConnectionManager Singleton { get; }
+		public static ConnectionManager Singleton => instance ?? (instance = new ConnectionManager());
 
 		public DbConnection Connection { get; }
 
