@@ -67,15 +67,15 @@ namespace System.Transactions
 		}
 
 		[MonoTODO ("Not implemented")]
-		public static void RecoveryComplete (Guid manager)
+		public static void RecoveryComplete (Guid resourceManagerIdentifier)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("Not implemented")]
-		public static Enlistment Reenlist (Guid manager,
-			byte[] recoveryInfo,
-			IEnlistmentNotification notification)
+		public static Enlistment Reenlist (Guid resourceManagerIdentifier,
+			byte[] recoveryInformation,
+			IEnlistmentNotification enlistmentNotification)
 		{
 			throw new NotImplementedException ();
 		}
