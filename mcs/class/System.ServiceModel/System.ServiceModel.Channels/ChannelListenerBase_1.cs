@@ -197,16 +197,16 @@ namespace System.ServiceModel.Channels
 		}
 
 		public IAsyncResult BeginAcceptChannel (
-			AsyncCallback callback, object asyncState)
+			AsyncCallback callback, object state)
 		{
 			return BeginAcceptChannel (
-				timeouts.ReceiveTimeout, callback, asyncState);
+				timeouts.ReceiveTimeout, callback, state);
 		}
 
 		public IAsyncResult BeginAcceptChannel (TimeSpan timeout,
-			AsyncCallback callback, object asyncState)
+			AsyncCallback callback, object state)
 		{
-			return OnBeginAcceptChannel (timeout, callback, asyncState);
+			return OnBeginAcceptChannel (timeout, callback, state);
 		}
 
 		public TChannel EndAcceptChannel (IAsyncResult result)
@@ -217,7 +217,7 @@ namespace System.ServiceModel.Channels
 		protected abstract TChannel OnAcceptChannel (TimeSpan timeout);
 
 		protected abstract IAsyncResult OnBeginAcceptChannel (TimeSpan timeout,
-			AsyncCallback callback, object asyncState);
+			AsyncCallback callback, object state);
 
 		protected abstract TChannel OnEndAcceptChannel (IAsyncResult result);
 	}

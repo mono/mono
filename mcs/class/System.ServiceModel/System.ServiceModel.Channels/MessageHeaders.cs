@@ -50,10 +50,10 @@ namespace System.ServiceModel.Channels
 			new Dictionary<Type, XmlObjectSerializer> ();
 		MessageVersion version;
 
-		public MessageHeaders (MessageHeaders headers)
-			: this (headers.MessageVersion)
+		public MessageHeaders (MessageHeaders collection)
+			: this (collection.MessageVersion)
 		{
-			CopyHeadersFrom (headers);
+			CopyHeadersFrom (collection);
 		}
 
 		public MessageHeaders (MessageVersion version)
@@ -61,10 +61,10 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public MessageHeaders (MessageVersion version, int capacity)
+		public MessageHeaders (MessageVersion version, int initialSize)
 		{
 			this.version = version;
-			l = new List<MessageHeaderInfo> (capacity);
+			l = new List<MessageHeaderInfo> (initialSize);
 		}
 		
 		public void Add (MessageHeader header)

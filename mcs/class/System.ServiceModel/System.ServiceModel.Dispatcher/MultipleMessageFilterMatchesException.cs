@@ -38,19 +38,19 @@ namespace System.ServiceModel.Dispatcher
 		Collection<MessageFilter> filters;
 
 		public MultipleFilterMatchesException () : base () {}
-		public MultipleFilterMatchesException (string msg) : base (msg) {}
-		public MultipleFilterMatchesException (string msg, Exception inner) : base (msg, inner) {}		
+		public MultipleFilterMatchesException (string message) : base (message) {}
+		public MultipleFilterMatchesException (string message, Exception innerException) : base (message, innerException) {}		
 		protected MultipleFilterMatchesException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}
 
-		public MultipleFilterMatchesException (string msg, Collection<MessageFilter> filters)
-			: base (msg)
+		public MultipleFilterMatchesException (string message, Collection<MessageFilter> filters)
+			: base (message)
 		{
 			this.filters = filters;
 		}
 
-		public MultipleFilterMatchesException (string msg, Exception inner, Collection<MessageFilter> filters)
-			: base (msg, inner)
+		public MultipleFilterMatchesException (string message, Exception innerException, Collection<MessageFilter> filters)
+			: base (message, innerException)
 		{
 			this.filters = filters;
 		}

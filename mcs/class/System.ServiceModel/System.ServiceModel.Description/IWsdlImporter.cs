@@ -41,9 +41,9 @@ namespace System.ServiceModel.Description
 			XmlSchemaSet xmlSchemas, ICollection<XmlElement> policy);
 
 		void ImportContract (WsdlImporter importer,
-			WsdlContractConversionContext contractContext);
+			WsdlContractConversionContext context);
 
 		void ImportEndpoint (WsdlImporter importer,
-			WsdlEndpointConversionContext endpointContext);
+			WsdlEndpointConversionContext context);
 	}
 }

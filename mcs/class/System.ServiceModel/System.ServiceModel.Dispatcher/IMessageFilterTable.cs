@@ -40,16 +40,16 @@ namespace System.ServiceModel.Dispatcher
 		  IEnumerable<KeyValuePair<MessageFilter,TFilterData>>,
 		  IEnumerable
 	{
-		bool GetMatchingFilter (Message message, out MessageFilter result);
-		bool GetMatchingFilter (MessageBuffer buffer, out MessageFilter result);
+		bool GetMatchingFilter (Message message, out MessageFilter filter);
+		bool GetMatchingFilter (MessageBuffer messageBuffer, out MessageFilter filter);
 
 		bool GetMatchingFilters (Message message, ICollection<MessageFilter> results);
-		bool GetMatchingFilters (MessageBuffer buffer, ICollection<MessageFilter> results);
+		bool GetMatchingFilters (MessageBuffer messageBuffer, ICollection<MessageFilter> results);
 
-		bool GetMatchingValue (Message message, out TFilterData data);
-		bool GetMatchingValue (MessageBuffer buffer, out TFilterData data);
+		bool GetMatchingValue (Message message, out TFilterData value);
+		bool GetMatchingValue (MessageBuffer messageBuffer, out TFilterData value);
 
 		bool GetMatchingValues (Message message, ICollection<TFilterData> results);
-		bool GetMatchingValues (MessageBuffer buffer, ICollection<TFilterData> results);
+		bool GetMatchingValues (MessageBuffer messageBuffer, ICollection<TFilterData> results);
 	}
 }
