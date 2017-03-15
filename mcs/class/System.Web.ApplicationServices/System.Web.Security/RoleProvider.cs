@@ -39,16 +39,16 @@ namespace System.Web.Security
 		{
 		}
 		
-		public abstract void AddUsersToRoles (string [] usernames, string [] rolenames);
-		public abstract void CreateRole (string rolename);
-		public abstract bool DeleteRole (string rolename, bool throwOnPopulatedRole);
+		public abstract void AddUsersToRoles (string [] usernames, string [] roleNames);
+		public abstract void CreateRole (string roleName);
+		public abstract bool DeleteRole (string roleName, bool throwOnPopulatedRole);
 		public abstract string [] FindUsersInRole (string roleName, string usernameToMatch);
 		public abstract string [] GetAllRoles ();
 		public abstract string [] GetRolesForUser (string username);
-		public abstract string [] GetUsersInRole (string rolename);
-		public abstract bool IsUserInRole (string username, string rolename);
-		public abstract void RemoveUsersFromRoles (string [] usernames, string [] rolenames);
-		public abstract bool RoleExists (string rolename);
+		public abstract string [] GetUsersInRole (string roleName);
+		public abstract bool IsUserInRole (string username, string roleName);
+		public abstract void RemoveUsersFromRoles (string [] usernames, string [] roleNames);
+		public abstract bool RoleExists (string roleName);
 		public abstract string ApplicationName { get; set; }
 	}
 }
