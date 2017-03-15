@@ -64,7 +64,7 @@ namespace System.Net {
 		}
 
 		public int Port {
-			get { return (int)port; }
+			get { return (int) port; }
 		}
 
 		public string Path {
@@ -136,7 +136,6 @@ namespace System.Net {
 			if (start_host >= length)
 				throw new ArgumentException ("No host specified.");
 
-
 			int startPort = uri.IndexOf (':', start_host, length - start_host);
 			if (uri [start_host] == '[')
 				startPort = uri.IndexOf ("]:") + 1;
@@ -152,9 +151,7 @@ namespace System.Net {
 					int p = Int32.Parse (uri.Substring (startPort + 1, root - startPort - 1));
 					if (p <= 0 || p >= 65536)
 						throw new Exception ();
-				}
-				catch
-				{
+				} catch {
 					throw new ArgumentException ("Invalid port.");
 				}
 			}
