@@ -198,21 +198,21 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		public EncoderParameter (Encoder encoder, int numberOfValues, int type, int value)
+		public EncoderParameter (Encoder encoder, int NumberOfValues, int Type, int Value)
 		{
 			this.encoder = encoder;
-			this.valuePtr = (IntPtr) value;
-			this.valuesCount = numberOfValues;
-			this.type = (EncoderParameterValueType) type;
+			this.valuePtr = (IntPtr) Value;
+			this.valuesCount = NumberOfValues;
+			this.type = (EncoderParameterValueType) Type;
 		}
 
-		public EncoderParameter (Encoder encoder, int numerator1, int denominator1, int numerator2, int denominator2)
+		public EncoderParameter (Encoder encoder, int numerator1, int demoninator1, int numerator2, int demoninator2)
 		{
 			this.encoder = encoder;
 			this.valuesCount = 1;
 			this.type = EncoderParameterValueType.ValueTypeRationalRange;
 			this.valuePtr = Marshal.AllocHGlobal (4 * 4);
-			int [] valuearray = { numerator1, denominator1, numerator2, denominator2 };
+			int [] valuearray = { numerator1, demoninator1, numerator2, demoninator2 };
 			Marshal.Copy (valuearray, 0, this.valuePtr, 4);
 		}
 
