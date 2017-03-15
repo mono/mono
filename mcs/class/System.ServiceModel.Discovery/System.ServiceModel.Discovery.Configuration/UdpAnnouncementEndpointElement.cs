@@ -142,10 +142,10 @@ namespace System.ServiceModel.Discovery.Configuration
 			base.OnInitializeAndValidate (channelEndpointElement);
 		}
 
-		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
+		protected override void OnInitializeAndValidate (ServiceEndpointElement serviceEndpointElement)
 		{
 			// It seems to do nothing.
-			base.OnInitializeAndValidate (channelEndpointElement);
+			base.OnInitializeAndValidate (serviceEndpointElement);
 		}
 	}
 }
