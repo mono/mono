@@ -55,11 +55,11 @@ namespace System.Security.Cryptography.Xml {
 			TransformChain = new TransformChain ();
 		}
 	
-		protected EncryptedReference (string uri, TransformChain tc)
+		protected EncryptedReference (string uri, TransformChain transformChain)
 			: this ()
 		{
 			Uri = uri;
-			TransformChain = tc;
+			TransformChain = transformChain;
 		}
 	
 		#endregion // Constructors
