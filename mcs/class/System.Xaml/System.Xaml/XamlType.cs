@@ -252,9 +252,9 @@ namespace System.Xaml
 			return stn != null ? stn.Name : Name;
 		}
 
-		public static bool operator == (XamlType left, XamlType right)
+		public static bool operator == (XamlType xamlType1, XamlType xamlType2)
 		{
-			return IsNull (left) ? IsNull (right) : left.Equals (right);
+			return IsNull (xamlType1) ? IsNull (xamlType2) : xamlType1.Equals (xamlType2);
 		}
 
 		static bool IsNull (XamlType a)
@@ -262,9 +262,9 @@ namespace System.Xaml
 			return Object.ReferenceEquals (a, null);
 		}
 
-		public static bool operator != (XamlType left, XamlType right)
+		public static bool operator != (XamlType xamlType1, XamlType xamlType2)
 		{
-			return !(left == right);
+			return !(xamlType1 == xamlType2);
 		}
 		
 		public bool Equals (XamlType other)
