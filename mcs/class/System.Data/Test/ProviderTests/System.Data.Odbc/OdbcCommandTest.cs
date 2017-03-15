@@ -44,10 +44,12 @@ namespace MonoTests.System.Data.Connected.Odbc
 		OdbcConnection conn;
 		OdbcCommand cmd;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
+
 		[SetUp]
 		public void SetUp ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.Odbc);
 			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			cmd = conn.CreateCommand ();

@@ -42,10 +42,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 	public class OdbcCommandBuilderTest
 	{
 		[TestFixtureSetUp]
-		public void Init()
-		{
-			ConnectionManager.RequireProvider(ProviderType.Odbc);
-		}
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
 
 		[Test]
 		public void GetInsertCommandTest ()

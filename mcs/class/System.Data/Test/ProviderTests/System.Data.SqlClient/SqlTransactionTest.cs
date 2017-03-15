@@ -46,10 +46,12 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		String connectionString;
 		EngineConfig engine;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
+
 		[SetUp]
 		public void SetUp ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			connectionString = ConnectionManager.Singleton.ConnectionString;
 			engine = ConnectionManager.Singleton.Engine;
 		}

@@ -44,10 +44,12 @@ namespace MonoTests.System.Data.Connected.SqlClient
 	[Category ("sqlserver")]
 	public class SqlClientFactoryTest
 	{
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
+
 		[Test]
 		public void CreatePermissionTest ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			SqlClientFactory factory = SqlClientFactory.Instance;
 			CodeAccessPermission permission, perm;
 			permission = factory.CreatePermission (PermissionState.None);

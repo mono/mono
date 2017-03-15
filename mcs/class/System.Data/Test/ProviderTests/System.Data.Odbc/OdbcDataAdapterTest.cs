@@ -38,11 +38,9 @@ namespace MonoTests.System.Data.Connected.Odbc
 	[Category ("odbc")]
 	public class OdbcDataAdapterTest
 	{
+
 		[TestFixtureSetUp]
-		public void Init()
-		{
-			ConnectionManager.RequireProvider(ProviderType.Odbc);
-		}
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
 
 		[Test]
 		public void FillTest ()

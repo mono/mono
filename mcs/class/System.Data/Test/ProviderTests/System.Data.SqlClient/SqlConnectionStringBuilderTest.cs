@@ -49,11 +49,8 @@ namespace MonoTests.System.Data.Connected.SqlClient
 	{
 		private SqlConnectionStringBuilder builder = null;
 
-		[SetUp]
-		public void SetUp()
-		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
-		}
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
 
 		[Test]
 		public void DefaultValuestTest ()

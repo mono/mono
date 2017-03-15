@@ -121,7 +121,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void Setup ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn.Open ();
 			engine = ConnectionManager.Singleton.Engine;
 		}

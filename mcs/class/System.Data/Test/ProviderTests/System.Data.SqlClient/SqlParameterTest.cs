@@ -49,11 +49,13 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[SetUp]
 		public void SetUp ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			engine = ConnectionManager.Singleton.Engine;
 		}
+
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
 
 		[TearDown]
 		public void TearDown ()

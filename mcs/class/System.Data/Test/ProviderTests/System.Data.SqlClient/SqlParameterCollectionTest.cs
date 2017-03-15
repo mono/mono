@@ -42,10 +42,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 	public class SqlParameterCollectionTest
 	{
 		[TestFixtureSetUp]
-		public void Init()
-		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
-		}
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
 
 		[Test]
 		public void CopyToTest ()

@@ -53,10 +53,12 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		static readonly decimal SMALLMONEY_MAX = 214748.3647m;
 		static readonly decimal SMALLMONEY_MIN = -214748.3648m;
 
+		[TestFixtureSetUp]
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
+
 		[SetUp]
 		public void SetUp ()
 		{
-			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 			engine = ConnectionManager.Singleton.Engine;
 		}
 

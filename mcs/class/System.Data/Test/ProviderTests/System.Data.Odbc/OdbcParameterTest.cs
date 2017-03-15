@@ -54,10 +54,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		}
 
 		[TestFixtureSetUp]
-		public void Init()
-		{
-			ConnectionManager.RequireProvider(ProviderType.Odbc);
-		}
+		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
 
 		[TearDown]
 		public void TearDown ()

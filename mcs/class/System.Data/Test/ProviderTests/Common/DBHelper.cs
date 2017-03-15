@@ -29,9 +29,7 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Text;
-using NUnit.Framework;
 
 namespace MonoTests.System.Data.Connected
 {
