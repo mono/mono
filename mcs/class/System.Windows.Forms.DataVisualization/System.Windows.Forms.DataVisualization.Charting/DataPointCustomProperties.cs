@@ -1,4 +1,4 @@
-﻿//
+//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
@@ -59,7 +59,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 			}
 		}
 		[MonoTODO]
-		public string this[string propName] {
+		public string this[string name] {
 			get { 
 				throw new NotImplementedException ();
 			}
