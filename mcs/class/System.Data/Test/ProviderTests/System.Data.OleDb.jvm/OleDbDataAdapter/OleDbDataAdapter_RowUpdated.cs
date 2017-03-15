@@ -31,7 +31,7 @@ using MonoTests.System.Data.Utils;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.OleDb
+namespace MonoTests.System.Data.Connected.OleDb
 {
 	[TestFixture]
 	public class OleDbDataAdapter_RowUpdated : ADONetTesterClass

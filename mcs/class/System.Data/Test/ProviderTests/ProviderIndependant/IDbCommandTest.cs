@@ -31,12 +31,9 @@
 using System;
 using System.Data;
 using System.Data.Common;
-
-using Mono.Data;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
 	[Category ("odbc"), Category ("sqlserver")]

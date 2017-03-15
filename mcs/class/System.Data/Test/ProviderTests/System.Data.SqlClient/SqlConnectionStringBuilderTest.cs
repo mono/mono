@@ -41,7 +41,7 @@ using NUnit.Framework;
 
 #endregion
 
-namespace MonoTests.System.Data.Common
+namespace MonoTests.System.Data.Connected.Common
 {
 
 	[TestFixture]

@@ -25,7 +25,7 @@ using System;
 using System.Data;
 using System.Data.OleDb;
 
-namespace MonoTests.System.Data.Utils.Data
+namespace MonoTests.System.Data.Connected.Utils.Data
 {
 	/// <summary>
 	/// Represents a parameter type for use in tests of System.Data.

@@ -35,12 +35,9 @@ using System.Data.Odbc;
 using System.Globalization;
 using System.Text;
 using System.Threading;
-
-using Mono.Data;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
 	[Category ("odbc")]

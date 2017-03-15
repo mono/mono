@@ -30,7 +30,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public class DataProvider
 	{

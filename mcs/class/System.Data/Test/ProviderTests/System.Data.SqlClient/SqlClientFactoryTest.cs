@@ -37,7 +37,7 @@ using System.Collections;
 using System.Security.Permissions;
 using System.Security;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
 	[Category ("sqlserver")]

@@ -34,7 +34,7 @@ using System.Collections;
 using MonoTests.System.Data.Utils.Data;
 using Sys = System;
 
-namespace MonoTests.System.Data.Utils {
+namespace MonoTests.System.Data.Connected.Utils {
 	public class ADONetTesterClass : GHTBase {
 		#region " Base Constructors "
 		protected ADONetTesterClass(Sys.IO.TextWriter Logger, bool LogOnSuccess) : base(Logger,LogOnSuccess){}

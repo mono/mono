@@ -7,7 +7,7 @@ using MonoTests.System.Data.Utils;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.SqlClient
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	public class SqlParameter_Direction : GHTBase

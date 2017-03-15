@@ -36,7 +36,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
 	[Category ("sqlserver")]

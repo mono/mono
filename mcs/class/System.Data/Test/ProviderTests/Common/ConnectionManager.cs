@@ -34,7 +34,7 @@ using System.Data;
 using System.Data.Common;
 
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
 	{

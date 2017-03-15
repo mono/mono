@@ -31,7 +31,7 @@ using MonoTests.System.Data.Utils.Data;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.OleDb
+namespace MonoTests.System.Data.Connected.OleDb
 {
 	[TestFixture]
 	public class OleDbDataReader_GetTimeSpan_I : ADONetTesterClass

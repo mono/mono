@@ -31,12 +31,9 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Text;
-
-using Mono.Data;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public sealed class DBHelper
 	{

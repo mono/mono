@@ -35,7 +35,7 @@ using System.Data.SqlClient;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.SqlClient
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]

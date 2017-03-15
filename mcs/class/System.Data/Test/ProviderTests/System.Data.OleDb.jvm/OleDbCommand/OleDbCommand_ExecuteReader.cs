@@ -34,7 +34,7 @@ using NUnit.Framework;
 using Microsoft.ApplicationBlocks;
 #endif
 
-namespace MonoTests.System.Data.OleDb
+namespace MonoTests.System.Data.Connected.OleDb
 {
 	[TestFixture]
 	public class OleDbCommand_ExecuteReader : ADONetTesterClass

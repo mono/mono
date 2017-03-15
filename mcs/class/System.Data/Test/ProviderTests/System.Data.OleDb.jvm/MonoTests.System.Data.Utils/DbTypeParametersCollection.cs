@@ -29,7 +29,7 @@ using System.Data.SqlClient;
 using CollectionBase = System.Collections.CollectionBase;
 using Sys = System;
 
-namespace MonoTests.System.Data.Utils.Data
+namespace MonoTests.System.Data.Connected.Utils.Data
 {
 	/// <summary>
 	/// A collection of DbTypeParameters that matches the column of specific a database table

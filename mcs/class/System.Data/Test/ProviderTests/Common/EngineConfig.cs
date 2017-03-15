@@ -32,7 +32,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Xml;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	internal sealed class EngineConfig
 	{
