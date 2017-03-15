@@ -3060,7 +3060,7 @@ struct wait_data
 };
 
 static void
-wait_for_tids (struct wait_data *wait, guint32 timeout, gboolean check_state_change)
+wait_for_tids (struct wait_data *wait, guint32 timeout, MonoOSEvent *state_change)
 {
 	guint32 i;
 	MonoThreadInfoWaitRet ret;
@@ -3071,10 +3071,7 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, gboolean check_state_cha
 	 * up if a thread changes to background mode. */
 
 	MONO_ENTER_GC_SAFE;
-	if (check_state_change)
-		ret = mono_thread_info_wait_multiple_handle (wait->handles, wait->num, &background_change_event, FALSE, timeout, TRUE);
-	else
-		ret = mono_thread_info_wait_multiple_handle (wait->handles, wait->num, NULL, TRUE, timeout, TRUE);
+	ret = mono_thread_info_wait_multiple_handle (wait->handles, wait->num, state_change, state_change ? FALSE : TRUE, timeout, TRUE);
 	MONO_EXIT_GC_SAFE;
 
 	if (ret == MONO_THREAD_INFO_WAIT_RET_FAILED) {
@@ -3262,7 +3259,7 @@ void mono_thread_manage (void)
 		mono_threads_unlock ();
 		if (wait->num > 0)
 			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, TRUE);
+			wait_for_tids (wait, MONO_INFINITE_WAIT, &background_change_event);
 		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait->num));
 	} while(wait->num>0);
 
@@ -3290,7 +3287,7 @@ void mono_thread_manage (void)
 		THREAD_DEBUG (g_message ("%s: wait->num is now %d", __func__, wait->num));
 		if (wait->num > 0) {
 			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, FALSE);
+			wait_for_tids (wait, MONO_INFINITE_WAIT, NULL);
 		}
 	} while (wait->num > 0);
 	
@@ -3893,7 +3890,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 			 * We should wait for the threads either to abort, or to leave the
 			 * domain. We can't do the latter, so we wait with a timeout.
 			 */
-			wait_for_tids (&user_data.wait, 100, FALSE);
+			wait_for_tids (&user_data.wait, 100, NULL);
 		}
 
 		/* Update remaining time */

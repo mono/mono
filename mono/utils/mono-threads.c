@@ -1577,21 +1577,21 @@ mono_thread_info_wait_one_handle (MonoThreadHandle *thread_handle, guint32 timeo
 }
 
 MonoThreadInfoWaitRet
-mono_thread_info_wait_multiple_handle (MonoThreadHandle **thread_handles, gsize nhandles, MonoOSEvent *background_change_event, gboolean waitall, guint32 timeout, gboolean alertable)
+mono_thread_info_wait_multiple_handle (MonoThreadHandle **thread_handles, gsize nhandles, MonoOSEvent *state_change, gboolean waitall, guint32 timeout, gboolean alertable)
 {
 	MonoOSEventWaitRet res;
 	MonoOSEvent *thread_events [MONO_OS_EVENT_WAIT_MAXIMUM_OBJECTS];
 	gint i;
 
 	g_assert (nhandles <= MONO_OS_EVENT_WAIT_MAXIMUM_OBJECTS);
-	if (background_change_event)
+	if (state_change)
 		g_assert (nhandles <= MONO_OS_EVENT_WAIT_MAXIMUM_OBJECTS - 1);
 
 	for (i = 0; i < nhandles; ++i)
 		thread_events [i] = &thread_handles [i]->event;
 
-	if (background_change_event)
-		thread_events [nhandles ++] = background_change_event;
+	if (state_change)
+		thread_events [nhandles ++] = state_change;
 
 	res = mono_os_event_wait_multiple (thread_events, nhandles, waitall, timeout, alertable);
 	if (res >= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 && res <= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + nhandles - 1)
