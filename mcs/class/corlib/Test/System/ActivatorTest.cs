@@ -412,6 +412,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_UrlNull ()
 		{
