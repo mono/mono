@@ -1182,7 +1182,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails with System.MethodAccessException : Method `t17:.ctor ()' is inaccessible from method `t18:.ctor ()'
 		public void DefineDefaultConstructor_Parent_DefaultCtorInaccessible ()
 		{
 			TypeBuilder tb;
@@ -1198,6 +1197,16 @@ namespace MonoTests.System.Reflection.Emit
 			try {
 				Activator.CreateInstance (emitted_type);
 				Assert.Fail ("#1");
+
+				/* MOBILE special case MethodAccessException on reflection invokes and don't wrap them. */
+#if MOBILE
+			} catch (MethodAccessException mae) {
+				Assert.IsNull (mae.InnerException, "#2");
+				Assert.IsNotNull (mae.Message, "#3");
+				Assert.IsTrue (mae.Message.IndexOf (parent_type.FullName) != -1, "#4:" + mae.Message);
+				Assert.IsTrue (mae.Message.IndexOf (".ctor") != -1, "#4:" + mae.Message);
+			}
+#else
 			} catch (TargetInvocationException ex) {
 				Assert.AreEqual (typeof (TargetInvocationException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -1211,6 +1220,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsTrue (mae.Message.IndexOf (parent_type.FullName) != -1, "#9:" + mae.Message);
 				Assert.IsTrue (mae.Message.IndexOf (".ctor") != -1, "#10:" + mae.Message);
 			}
+#endif
 		}
 
 		[Test]

@@ -74,11 +74,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 		{
 			string dirname = RuntimeEnvironment.GetRuntimeDirectory ();
 			Assert.IsNotNull (dirname, "GetRuntimeDirectory");
-#if MONODROID
-			Assert.IsTrue (dirname.Length == 0, "directory name empty");
-#else
-			Assert.IsTrue (Directory.Exists (dirname), "Exists");
-#endif
+			Assert.IsTrue (dirname.Length == 0 || Directory.Exists (dirname), "Exists");
 		}
 
 		[Test]

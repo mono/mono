@@ -473,11 +473,7 @@ namespace MonoTests.System.Reflection
 // with the semantics of aot'ed assembly loading, as
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
-#if FULL_AOT_DESKTOP
-			string [] names = { "testing_aot_full_corlib_test", "winaot_corlib_test" };
-#else
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
-#endif
+			var names = new string[] { Assembly.GetCallingAssembly ().GetName ().Name };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -729,12 +725,12 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be directly as files
+		[Category ("AndroidNotWorking")] // Xamarin.Android assemblies are bundled so they don't exist in the file system.
 		public void ReflectionOnlyLoadFrom ()
 		{
 			string loc = typeof (AssemblyTest).Assembly.Location;
 			string filename = Path.GetFileName (loc);
-			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (filename);
+			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (loc);
 
 			Assert.IsNotNull (assembly);
 			Assert.IsTrue (assembly.ReflectionOnly);
