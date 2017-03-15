@@ -215,9 +215,9 @@ namespace System.DirectoryServices
 		/// <param name="filter">relative distinguised name of the child
 		/// </param>
 		/// <returns>Child entry with the specified name </returns>
-		public DirectoryEntry Find(string filter)
+		public DirectoryEntry Find(string name)
 		{
-			DirectoryEntry child=CheckEntry(filter);
+			DirectoryEntry child=CheckEntry(name);
 			return child;
 		}
 
@@ -229,12 +229,12 @@ namespace System.DirectoryServices
 		/// <param name="otype"> Type of the child i.e strutcuralObjectClass
 		/// name of the child </param>
 		/// <returns>Child entry with the specified name and type</returns>
-		public DirectoryEntry Find(string filter, string otype)
+		public DirectoryEntry Find(string name, string schemaClassName)
 		{
-			DirectoryEntry child=CheckEntry(filter);
+			DirectoryEntry child=CheckEntry(name);
 
 			if( child != null)			{
-				if(child.Properties["objectclass"].ContainsCaselessStringValue(otype))
+				if(child.Properties["objectclass"].ContainsCaselessStringValue(schemaClassName))
 					return child;
 				else
 					throw new SystemException("An unknown directory object was requested");

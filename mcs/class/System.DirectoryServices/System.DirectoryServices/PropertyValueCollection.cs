@@ -85,15 +85,15 @@ namespace System.DirectoryServices
 
 		}
 
-		public void AddRange(object[] values)
+		public void AddRange(object[] value)
 		{
-			foreach (object val in values)
+			foreach (object val in value)
 				Add (val);
 		}
 
-		public void AddRange (PropertyValueCollection coll)
+		public void AddRange (PropertyValueCollection value)
 		{
-			foreach (object val in coll)
+			foreach (object val in value)
 				Add (val);
 		}
 
@@ -132,10 +132,10 @@ namespace System.DirectoryServices
 			return false;
 		}
 
-		public void CopyTo (object[] copy_to, int index)
+		public void CopyTo (object[] array, int index)
 		{
 			foreach (object o in List)
-				copy_to[index++] = o;
+				array[index++] = o;
 		}
 
 		[MonoTODO]
