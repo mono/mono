@@ -33,7 +33,16 @@ class Driver {
 			LoadAndDump (et, version);
 		}
 	}
+
+	static bool dump_asm, dump_ver;
 	static void Main (string[] args) {
+
+		if (args.Length > 1) {
+			dump_asm = args [1].Equals ("asm");
+			dump_ver = args [1].Equals ("ver");
+		} else {
+			dump_asm = true;
+		}
 		foreach (var f in Directory.GetFiles (args [0], "*.nupkg")) {
 			DumpNuget (f);
 		}
@@ -52,12 +61,13 @@ class Driver {
 		var data = StreamToArray (entry.Open ());
 		AppDomain ad = AppDomain.CreateDomain ("parse_" + ++domain_id);
 		DoParse p = (DoParse)ad.CreateInstanceAndUnwrap (typeof (DoParse).Assembly.FullName, typeof (DoParse).FullName);
-		p.ParseAssembly (data, version, entry.Name, entry.FullName);
+		p.ParseAssembly (data, version, entry.Name, entry.FullName, dump_asm, dump_ver);
 		AppDomain.Unload (ad);
 	}
 }
 
 class DoParse : MarshalByRefObject {
+
 	static int Hash (string str) {
 		int h = 5381;
         for (int i = 0;  i < str.Length; ++i)
@@ -82,7 +92,7 @@ class DoParse : MarshalByRefObject {
 		return parts[parts.Length - 2];
 	}
 
-	public void ParseAssembly (byte[] data, string version, string name, string fullname) {
+	public void ParseAssembly (byte[] data, string version, string name, string fullname, bool dump_asm, bool dump_ver) {
 		var a = Assembly.ReflectionOnlyLoad (data);
 		var m = a.GetModules ()[0];
 		var id = m.ModuleVersionId.ToString ().ToUpper ();
@@ -90,6 +100,14 @@ class DoParse : MarshalByRefObject {
 		var str = FileToEnum (name);
 
 		string ver_str = version + " " + FileToMoniker (fullname);	
-		Console.WriteLine ($"IGNORED_ASSEMBLY (0x{hash_code}, {str}, \"{id}\", \"{ver_str}\"),");
+
+		if (dump_asm)
+			Console.WriteLine ($"IGNORED_ASSEMBLY (0x{hash_code}, {str}, \"{id}\", \"{ver_str}\"),");
+
+		//IGNORED_ASM_VER (SYS_IO_COMPRESSION, 4, 1, 2, 0),
+		var ver = a.GetName ().Version;
+		if (dump_ver)
+			Console.WriteLine ($"IGNORED_ASM_VER ({str}, {ver.Major}, {ver.Minor}, {ver.Build}, {ver.Revision}),");
+		
 	}
 }
