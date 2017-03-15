@@ -1302,10 +1302,10 @@ namespace System.Web.UI.WebControls
 		protected internal override void LoadControlState (object ob)
 		{
 			if (ob == null) return;
-			object[] state = (object[]) ob;
-			base.LoadControlState (state[0]);
-			activeStepIndex = (int) state[1];
-			history = (ArrayList) state[2];
+			object[] controlState = (object[]) ob;
+			base.LoadControlState (controlState[0]);
+			activeStepIndex = (int) controlState[1];
+			history = (ArrayList) controlState[2];
 		}
 		
 		protected internal override object SaveControlState ()

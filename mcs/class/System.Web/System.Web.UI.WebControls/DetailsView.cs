@@ -1111,22 +1111,22 @@ namespace System.Web.UI.WebControls
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
-			PagedDataSource dataSource = new PagedDataSource ();
-			dataSource.DataSource = CurrentMode != DetailsViewMode.Insert ? data : null;
-			dataSource.AllowPaging = AllowPaging;
-			dataSource.PageSize = 1;
-			dataSource.CurrentPageIndex = PageIndex;
+			PagedDataSource pagedDataSource = new PagedDataSource ();
+			pagedDataSource.DataSource = CurrentMode != DetailsViewMode.Insert ? data : null;
+			pagedDataSource.AllowPaging = AllowPaging;
+			pagedDataSource.PageSize = 1;
+			pagedDataSource.CurrentPageIndex = PageIndex;
 
 			if (dataBinding && CurrentMode != DetailsViewMode.Insert) {
 				DataSourceView view = GetData ();
 				if (view != null && view.CanPage) {
-					dataSource.AllowServerPaging = true;
+					pagedDataSource.AllowServerPaging = true;
 					if (SelectArguments.RetrieveTotalRowCount)
-						dataSource.VirtualCount = SelectArguments.TotalRowCount;
+						pagedDataSource.VirtualCount = SelectArguments.TotalRowCount;
 				}
 			}
 
-			bool showPager = AllowPaging && (dataSource.PageCount > 1);
+			bool showPager = AllowPaging && (pagedDataSource.PageCount > 1);
 
 			Controls.Clear ();
 			table = CreateTable ();
@@ -1140,19 +1140,19 @@ namespace System.Web.UI.WebControls
 			// Gets the current data item
 
 			if (AllowPaging) {
-				PageCount = dataSource.DataSourceCount;
+				PageCount = pagedDataSource.DataSourceCount;
 				if (PageIndex >= PageCount && PageCount > 0)
-					pageIndex = dataSource.CurrentPageIndex = PageCount - 1;
-				if (dataSource.DataSource != null) {
-					IEnumerator e = dataSource.GetEnumerator ();
+					pageIndex = pagedDataSource.CurrentPageIndex = PageCount - 1;
+				if (pagedDataSource.DataSource != null) {
+					IEnumerator e = pagedDataSource.GetEnumerator ();
 					if (e.MoveNext ())
 						dataItem = e.Current;
 				}
 			} else {
 				int page = 0;
 				object lastItem = null;
-				if (dataSource.DataSource != null) {
-					IEnumerator e = dataSource.GetEnumerator ();
+				if (pagedDataSource.DataSource != null) {
+					IEnumerator e = pagedDataSource.GetEnumerator ();
 					for (; e.MoveNext (); page++) {
 						lastItem = e.Current;
 						if (page == PageIndex)
@@ -1202,7 +1202,7 @@ namespace System.Web.UI.WebControls
 				if (showPager && PagerSettings.Position == PagerPosition.Top ||
 						PagerSettings.Position == PagerPosition.TopAndBottom) {
 					topPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
-					InitializePager (topPagerRow, dataSource);
+					InitializePager (topPagerRow, pagedDataSource);
 					table.Rows.Add (topPagerRow);
 				}
 
@@ -1229,7 +1229,7 @@ namespace System.Web.UI.WebControls
 				if (showPager && PagerSettings.Position == PagerPosition.Bottom ||
 						PagerSettings.Position == PagerPosition.TopAndBottom) {
 					bottomPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
-					InitializePager (bottomPagerRow, dataSource);
+					InitializePager (bottomPagerRow, pagedDataSource);
 					table.Rows.Add (bottomPagerRow);
 				}
 			}
