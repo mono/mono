@@ -142,10 +142,13 @@ ProviderTests/System.Data.Odbc/OdbcParameterCollectionTest.cs
 ProviderTests/ProviderIndependant/DataReaderTest.cs
 ProviderTests/ProviderIndependant/DbDataReaderTest.cs
 ProviderTests/ProviderIndependant/IDbCommandTest.cs
+ProviderTests/System.Data.SqlClient/SqlClientFactoryTest.cs
 ProviderTests/System.Data.SqlClient/SqlCommandBuilderTest.cs
 ProviderTests/System.Data.SqlClient/SqlCommandTest.cs
 ProviderTests/System.Data.SqlClient/SqlDataReaderTest.cs
 ProviderTests/System.Data.SqlClient/SqlDataAdapterTest.cs
 ProviderTests/System.Data.SqlClient/SqlTransactionTest.cs
+ProviderTests/System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
 ProviderTests/System.Data.SqlClient/SqlConnectionTest.cs
 ProviderTests/System.Data.SqlClient/SqlParameterTest.cs
+ProviderTests/System.Data.SqlClient/SqlParameterCollectionTest.cs
