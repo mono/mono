@@ -55,8 +55,8 @@ namespace System.EnterpriseServices {
 		{
 		}
 
-		public RegistrationException (string msg, Exception innerException)
-			: base (msg, innerException)
+		public RegistrationException (string msg, Exception inner)
+			: base (msg, inner)
 		{
 		}
 

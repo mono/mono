@@ -159,7 +159,7 @@ namespace System.EnterpriseServices {
 		}
 
 		[MonoTODO]
-		public static void SetNamedProperty (string name, object property)
+		public static void SetNamedProperty (string name, object value)
 		{
 			throw new NotImplementedException ();
 		}
