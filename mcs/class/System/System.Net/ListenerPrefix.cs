@@ -146,8 +146,7 @@ namespace System.Net {
 				throw new ArgumentException ("No path specified.");
 
 			if (startPort > 0) {
-				try
-				{
+				try {
 					int p = Int32.Parse (uri.Substring (startPort + 1, root - startPort - 1));
 					if (p <= 0 || p >= 65536)
 						throw new Exception ();
