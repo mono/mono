@@ -126,10 +126,10 @@ namespace System.Data.SqlClient
 			ConnectionString = connectionString;
 		}
 
-		public SqlConnection (string connectionString, SqlCredential cred)
+		public SqlConnection (string connectionString, SqlCredential credential)
 		{
 			ConnectionString = connectionString;
-			Credentials = cred;
+			Credentials = credential;
 		}
 
 		#endregion // Constructors
