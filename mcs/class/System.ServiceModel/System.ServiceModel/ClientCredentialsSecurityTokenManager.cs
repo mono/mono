@@ -1,4 +1,4 @@
-﻿//
+//
 // ClientCredentialsSecurityTokenManager.cs
 //
 // Author:
@@ -45,11 +45,11 @@ namespace System.ServiceModel
 	{
 		ClientCredentials credentials;
 
-		public ClientCredentialsSecurityTokenManager (ClientCredentials credentials)
+		public ClientCredentialsSecurityTokenManager (ClientCredentials clientCredentials)
 		{
-			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
-			this.credentials = credentials;
+			if (clientCredentials == null)
+				throw new ArgumentNullException ("clientCredentials");
+			this.credentials = clientCredentials;
 		}
 
 		public ClientCredentials ClientCredentials {
@@ -58,25 +58,25 @@ namespace System.ServiceModel
 
 		[MonoTODO]
 		public override SecurityTokenAuthenticator CreateSecurityTokenAuthenticator (
-			SecurityTokenRequirement requirement,
+			SecurityTokenRequirement tokenRequirement,
 			out SecurityTokenResolver outOfBandTokenResolver)
 		{
 			outOfBandTokenResolver = null;
-			if (requirement == null)
-				throw new ArgumentNullException ("requirement");
-			if (requirement.TokenType == SecurityTokenTypes.UserName) {
+			if (tokenRequirement == null)
+				throw new ArgumentNullException ("tokenRequirement");
+			if (tokenRequirement.TokenType == SecurityTokenTypes.UserName) {
 				// unsupported
 			}
-			else if (requirement.TokenType == SecurityTokenTypes.Rsa)
+			else if (tokenRequirement.TokenType == SecurityTokenTypes.Rsa)
 				return new RsaSecurityTokenAuthenticator ();
-			else if (requirement.TokenType == SecurityTokenTypes.X509Certificate)
-				return CreateX509Authenticator (requirement);
-			else if (requirement.TokenType == ServiceModelSecurityTokenTypes.Spnego)
-				return new SspiClientSecurityTokenAuthenticator (this, requirement);
+			else if (tokenRequirement.TokenType == SecurityTokenTypes.X509Certificate)
+				return CreateX509Authenticator (tokenRequirement);
+			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.Spnego)
+				return new SspiClientSecurityTokenAuthenticator (this, tokenRequirement);
 			else
-				throw new NotImplementedException ("Security token type " + requirement.TokenType);
+				throw new NotImplementedException ("Security token type " + tokenRequirement.TokenType);
 
-			throw new NotSupportedException (String.Format ("Security token requirement '{0}' is not supported to create SecurityTokenAuthenticator.", requirement));
+			throw new NotSupportedException (String.Format ("Security token requirement '{0}' is not supported to create SecurityTokenAuthenticator.", tokenRequirement));
 		}
 
 
@@ -102,40 +102,40 @@ namespace System.ServiceModel
 		#region CreateSecurityTokenProvider()
 
 		[MonoTODO]
-		public override SecurityTokenProvider CreateSecurityTokenProvider (SecurityTokenRequirement requirement)
+		public override SecurityTokenProvider CreateSecurityTokenProvider (SecurityTokenRequirement tokenRequirement)
 		{
-			if (IsIssuedSecurityTokenRequirement (requirement))
-				return CreateIssuedTokenProvider (requirement);
+			if (IsIssuedSecurityTokenRequirement (tokenRequirement))
+				return CreateIssuedTokenProvider (tokenRequirement);
 
 			bool isInitiator;
 
 			// huh, they are not constants but properties.
-			if (requirement.TokenType == SecurityTokenTypes.X509Certificate)
-				return CreateX509SecurityTokenProvider (requirement);
-			else if (requirement.TokenType == ServiceModelSecurityTokenTypes.SecureConversation)
-				return CreateSecureConversationProvider (requirement);
-			else if (requirement.TokenType == ServiceModelSecurityTokenTypes.AnonymousSslnego) {
-				if (requirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
-					return CreateSslnegoProvider (requirement);
-			} else if (requirement.TokenType == ServiceModelSecurityTokenTypes.MutualSslnego) {
-				if (requirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
-					return CreateSslnegoProvider (requirement);
-			} else if (requirement.TokenType == ServiceModelSecurityTokenTypes.SecurityContext) {
+			if (tokenRequirement.TokenType == SecurityTokenTypes.X509Certificate)
+				return CreateX509SecurityTokenProvider (tokenRequirement);
+			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SecureConversation)
+				return CreateSecureConversationProvider (tokenRequirement);
+			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.AnonymousSslnego) {
+				if (tokenRequirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
+					return CreateSslnegoProvider (tokenRequirement);
+			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.MutualSslnego) {
+				if (tokenRequirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
+					return CreateSslnegoProvider (tokenRequirement);
+			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SecurityContext) {
 				// FIXME: implement
-			} else if (requirement.TokenType == ServiceModelSecurityTokenTypes.Spnego) {
-				return CreateSpnegoProvider (requirement);
-			} else if (requirement.TokenType == ServiceModelSecurityTokenTypes.SspiCredential) {
+			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.Spnego) {
+				return CreateSpnegoProvider (tokenRequirement);
+			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SspiCredential) {
 				// FIXME: implement
-			} else if (requirement.TokenType == SecurityTokenTypes.Rsa) {
+			} else if (tokenRequirement.TokenType == SecurityTokenTypes.Rsa) {
 				// FIXME: implement
-			} else if (requirement.TokenType == SecurityTokenTypes.Saml) {
+			} else if (tokenRequirement.TokenType == SecurityTokenTypes.Saml) {
 				// FIXME: implement
-			} else if (requirement.TokenType == SecurityTokenTypes.UserName)
-				return CreateUserNameProvider (requirement);
-			else if (requirement.TokenType == SecurityTokenTypes.Kerberos) {
-				return CreateKerberosProvider (requirement);
+			} else if (tokenRequirement.TokenType == SecurityTokenTypes.UserName)
+				return CreateUserNameProvider (tokenRequirement);
+			else if (tokenRequirement.TokenType == SecurityTokenTypes.Kerberos) {
+				return CreateKerberosProvider (tokenRequirement);
 			}
-			throw new NotSupportedException (String.Format ("Token type '{0}' is not supported", requirement.TokenType));
+			throw new NotSupportedException (String.Format ("Token type '{0}' is not supported", tokenRequirement.TokenType));
 		}
 
 		UserNameSecurityTokenProvider CreateUserNameProvider (

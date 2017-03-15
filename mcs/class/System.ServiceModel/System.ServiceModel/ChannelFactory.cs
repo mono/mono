@@ -299,11 +299,11 @@ namespace System.ServiceModel
 
 		protected void InitializeEndpoint (
 			string configurationName,
-			EndpointAddress remoteAddress)
+			EndpointAddress address)
 		{
 			InitializeEndpoint (CreateDescription ());
-			if (remoteAddress != null)
-				service_endpoint.Address = remoteAddress;
+			if (address != null)
+				service_endpoint.Address = address;
 			ApplyConfiguration (configurationName);
 		}
 

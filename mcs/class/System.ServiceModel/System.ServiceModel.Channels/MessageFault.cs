@@ -220,26 +220,26 @@ namespace System.ServiceModel.Channels
 
 		public static MessageFault CreateFault (FaultCode code,
 			FaultReason reason, object detail,
-			XmlObjectSerializer formatter)
+			XmlObjectSerializer serializer)
 		{
 			return new SimpleMessageFault (code, reason, true,
-				detail, formatter, String.Empty, String.Empty);
+				detail, serializer, String.Empty, String.Empty);
 		}
 
 		public static MessageFault CreateFault (FaultCode code,
 			FaultReason reason, object detail,
-			XmlObjectSerializer formatter, string actor)
+			XmlObjectSerializer serializer, string actor)
 		{
 			return new SimpleMessageFault (code, reason,
-				true, detail, formatter, actor, String.Empty);
+				true, detail, serializer, actor, String.Empty);
 		}
 
 		public static MessageFault CreateFault (FaultCode code,
 			FaultReason reason, object detail,
-			XmlObjectSerializer formatter, string actor, string node)
+			XmlObjectSerializer serializer, string actor, string node)
 		{
 			return new SimpleMessageFault (code, reason,
-				true, detail, formatter, actor, node);
+				true, detail, serializer, actor, node);
 		}
 
 		// pretty simple implementation class

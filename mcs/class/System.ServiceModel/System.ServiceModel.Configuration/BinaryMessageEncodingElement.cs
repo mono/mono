@@ -111,9 +111,9 @@ namespace System.ServiceModel.Configuration
 			return new BinaryMessageEncodingBindingElement ();
 		}
 
-		public override void ApplyConfiguration (BindingElement element)
+		public override void ApplyConfiguration (BindingElement bindingElement)
 		{
-			var b = (BinaryMessageEncodingBindingElement) element;
+			var b = (BinaryMessageEncodingBindingElement) bindingElement;
 			b.MaxReadPoolSize = MaxReadPoolSize;
 			b.MaxSessionSize = MaxSessionSize;
 			b.MaxWritePoolSize = MaxWritePoolSize;
@@ -121,9 +121,9 @@ namespace System.ServiceModel.Configuration
 			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
 		}
 
-		public override void CopyFrom (ServiceModelExtensionElement element)
+		public override void CopyFrom (ServiceModelExtensionElement from)
 		{
-			var b = (BinaryMessageEncodingElement) element;
+			var b = (BinaryMessageEncodingElement) from;
 			MaxReadPoolSize = b.MaxReadPoolSize;
 			MaxSessionSize = b.MaxSessionSize;
 			MaxWritePoolSize = b.MaxWritePoolSize;
@@ -131,9 +131,9 @@ namespace System.ServiceModel.Configuration
 			ReaderQuotas.CopyFrom (b.ReaderQuotas);
 		}
 
-		protected internal override void InitializeFrom (BindingElement element)
+		protected internal override void InitializeFrom (BindingElement bindingElement)
 		{
-			var b = (BinaryMessageEncodingBindingElement) element;
+			var b = (BinaryMessageEncodingBindingElement) bindingElement;
 			MaxReadPoolSize = b.MaxReadPoolSize;
 			MaxSessionSize = b.MaxSessionSize;
 			MaxWritePoolSize = b.MaxWritePoolSize;
