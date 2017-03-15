@@ -54,16 +54,15 @@ namespace MonoTests.System.Data.Connected
 				Assert.Ignore($"SYSTEM_DATA_CONNECTIONSTRING environment variable is not set.");
 
 			string connectionName = envParts[0];
-			string connectionString = envParts[1];
+			string connectionString = envVariable.Remove(0, envParts[0].Length + 1);
 
 			var connections = (ConnectionConfig []) ConfigurationManager.GetSection ("providerTests");
-			foreach (ConnectionConfig connConfig in connections) {
+			foreach (ConnectionConfig connConfig in connections)
+			{
 				if (connConfig.Name != connectionName)
 					continue;
 
-				ConnectionString = connConfig.ConnectionString;
-				DbProviderFactory factory = DbProviderFactories.GetFactory (
-					connConfig.Factory);
+				DbProviderFactory factory = DbProviderFactories.GetFactory (connConfig.Factory);
 				Connection = factory.CreateConnection ();
 				Connection.ConnectionString = connectionString;
 				ConnectionString = Connection.ConnectionString;

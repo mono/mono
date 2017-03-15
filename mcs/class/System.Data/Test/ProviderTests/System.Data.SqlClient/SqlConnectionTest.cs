@@ -824,7 +824,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[TestFixtureSetUp]
 		public void Init()
 		{
-			//Not sure why it won't work if I put CheckConnectionString to [SetUp] instead of [TestFixtureSetUp] for this particular class
 			ConnectionManager.RequireProvider(ProviderType.SqlClient);
 		}
 
