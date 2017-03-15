@@ -2697,7 +2697,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 						job.MarkDisposed ();
 						return;
 					}
-					IOSelect.Add(handle, job);
+					IOSelector.Add(handle, job);
 				});
 			}
 		}
