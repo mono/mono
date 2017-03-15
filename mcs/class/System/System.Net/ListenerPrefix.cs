@@ -95,8 +95,7 @@ namespace System.Net
 		void Parse(string uri)
 		{
 			ushort default_port = 80;
-			if (uri.StartsWith("https://"))
-			{
+			if (uri.StartsWith("https://")) {
 				default_port = 443;
 				secure = true;
 			}
@@ -107,8 +106,7 @@ namespace System.Net
 				throw new ArgumentException("No host specified.");
 
 			int startPort = uri.IndexOf(':', start_host, length - start_host);
-			if (uri[start_host] == '[')
-			{
+			if (uri[start_host] == '[') {
 				startPort = uri.IndexOf("]:") + 1;
 			}
 			if (start_host == startPort)
@@ -118,13 +116,10 @@ namespace System.Net
 			if (root == -1)
 				throw new ArgumentException("No path specified.");
 
-			if (startPort > 0)
-			{
+			if (startPort > 0) {
 				host = uri.Substring(start_host, startPort - start_host).Trim('[', ']');
 				port = UInt16.Parse(uri.Substring(startPort + 1, root - startPort - 1));
-			}
-			else
-			{
+			} else {
 				host = uri.Substring(start_host, root - start_host).Trim('[', ']');
 				port = default_port;
 			}
@@ -179,4 +174,3 @@ namespace System.Net
 	}
 }
 #endif
-
