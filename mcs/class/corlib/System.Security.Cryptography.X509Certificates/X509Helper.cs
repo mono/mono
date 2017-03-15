@@ -53,6 +53,8 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 #if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
 			return InitFromHandleApple (handle);
+#elif MONOTOUCH_WATCH
+			throw new PlatformNotSupportedException ();
 #else
 
 #if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
@@ -71,6 +73,8 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 #if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
 			return ImportApple (rawData);
+#elif MONOTOUCH_WATCH
+			throw new PlatformNotSupportedException ();
 #else
 #if MONO_FEATURE_APPLETLS
 			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
