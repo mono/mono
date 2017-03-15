@@ -3062,7 +3062,6 @@ struct wait_data
 static void
 wait_for_tids (struct wait_data *wait, guint32 timeout, MonoOSEvent *state_change)
 {
-	guint32 i;
 	MonoThreadInfoWaitRet ret;
 	
 	THREAD_DEBUG (g_message("%s: %d threads to wait for in this batch", __func__, wait->num));
@@ -3074,12 +3073,13 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, MonoOSEvent *state_chang
 	ret = mono_thread_info_wait_multiple_handle (wait->handles, wait->num, state_change, state_change ? FALSE : TRUE, timeout, TRUE);
 	MONO_EXIT_GC_SAFE;
 
-	for( i = 0; i < wait->num; i++)
-		mono_threads_close_thread_handle (wait->handles [i]);
-
 	if (ret == MONO_THREAD_INFO_WAIT_RET_TIMEOUT)
 		return;
-	
+	if (ret == MONO_THREAD_INFO_WAIT_RET_ALERTED)
+		return;
+
+	g_assert (ret >= MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
+
 	if (ret < wait->num) {
 		MonoInternalThread *internal;
 
@@ -3220,6 +3220,7 @@ mono_threads_set_shutting_down (void)
 
 void mono_thread_manage (void)
 {
+	gint i;
 	struct wait_data wait_data;
 	struct wait_data *wait = &wait_data;
 
@@ -3235,7 +3236,7 @@ void mono_thread_manage (void)
 	}
 	mono_threads_unlock ();
 	
-	do {
+	for (;;) {
 		mono_threads_lock ();
 		if (shutting_down) {
 			/* somebody else is shutting down */
@@ -3251,11 +3252,17 @@ void mono_thread_manage (void)
 		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
 		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
 		mono_threads_unlock ();
-		if (wait->num > 0)
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, &background_change_event);
+
 		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait->num));
-	} while(wait->num>0);
+		if (wait->num == 0)
+			break;
+
+		/* Something to wait for */
+		wait_for_tids (wait, MONO_INFINITE_WAIT, &background_change_event);
+
+		for (i = 0; i < wait->num; i++)
+			mono_threads_close_thread_handle (wait->handles [i]);
+	}
 
 	/* Mono is shutting down, so just wait for the end */
 	if (!mono_runtime_try_shutdown ()) {
@@ -3268,7 +3275,7 @@ void mono_thread_manage (void)
 	 * Remove everything but the finalizer thread and self.
 	 * Also abort all the background threads
 	 * */
-	do {
+	for (;;) {
 		mono_threads_lock ();
 
 		wait->num = 0;
@@ -3279,11 +3286,15 @@ void mono_thread_manage (void)
 		mono_threads_unlock ();
 
 		THREAD_DEBUG (g_message ("%s: wait->num is now %d", __func__, wait->num));
-		if (wait->num > 0) {
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, NULL);
-		}
-	} while (wait->num > 0);
+		if (wait->num == 0)
+			break;
+
+		/* Something to wait for */
+		wait_for_tids (wait, MONO_INFINITE_WAIT, NULL);
+
+		for (i = 0; i < wait->num; i++)
+			mono_threads_close_thread_handle (wait->handles [i]);
+	}
 	
 	/* 
 	 * give the subthreads a chance to really quit (this is mainly needed
@@ -3866,7 +3877,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 	THREAD_DEBUG (g_message ("%s: starting abort", __func__));
 
 	start_time = mono_msec_ticks ();
-	do {
+	for (;;) {
 		mono_threads_lock ();
 
 		user_data.domain = domain;
@@ -3875,17 +3886,21 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 		mono_g_hash_table_foreach (threads, collect_appdomain_thread, &user_data);
 		mono_threads_unlock ();
 
-		if (user_data.wait.num > 0) {
-			/* Abort the threads outside the threads lock */
-			for (i = 0; i < user_data.wait.num; ++i)
-				mono_thread_internal_abort (user_data.wait.threads [i]);
+		if (user_data.wait.num == 0)
+			break;
 
-			/*
-			 * We should wait for the threads either to abort, or to leave the
-			 * domain. We can't do the latter, so we wait with a timeout.
-			 */
-			wait_for_tids (&user_data.wait, 100, NULL);
-		}
+		/* Abort the threads outside the threads lock */
+		for (i = 0; i < user_data.wait.num; ++i)
+			mono_thread_internal_abort (user_data.wait.threads [i]);
+
+		/*
+		 * We should wait for the threads either to abort, or to leave the
+		 * domain. We can't do the latter, so we wait with a timeout.
+		 */
+		wait_for_tids (&user_data.wait, 100, NULL);
+
+		for (i = 0; i < user_data.wait.num; i++)
+			mono_threads_close_thread_handle (user_data.wait.handles [i]);
 
 		/* Update remaining time */
 		timeout -= mono_msec_ticks () - start_time;
@@ -3894,7 +3909,6 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 		if (orig_timeout != -1 && timeout < 0)
 			return FALSE;
 	}
-	while (user_data.wait.num > 0);
 
 	THREAD_DEBUG (g_message ("%s: abort done", __func__));
 
