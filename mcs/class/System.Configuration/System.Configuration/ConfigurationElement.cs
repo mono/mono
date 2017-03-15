@@ -579,17 +579,17 @@ namespace System.Configuration
 					continue;
 				}
 
-				var sourceElement = (ConfigurationElement) sourceValue;
-				if (isMinimalOrModified && !sourceElement.IsModified ())
+				var sourceElementValue = (ConfigurationElement) sourceValue;
+				if (isMinimalOrModified && !sourceElementValue.IsModified ())
 					continue;
 				if (parentValue == null) {
 					unmergedProp.Value = sourceValue;
 					continue;
 				}
 
-				var parentElement = (ConfigurationElement) parentValue;
+				var parentElementValue = (ConfigurationElement) parentValue;
 				ConfigurationElement copy = (ConfigurationElement) unmergedProp.Value;
-				copy.Unmerge (sourceElement, parentElement, updateMode);
+				copy.Unmerge (sourceElementValue, parentElementValue, updateMode);
 			}
 		}
 		

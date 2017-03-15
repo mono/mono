@@ -62,9 +62,9 @@ namespace System.Web.UI.WebControls
 				ht = ChooseAd ();
 			}
 
-		 	AdCreatedEventArgs e = new AdCreatedEventArgs (ht);
-			OnAdCreated (e);
-			createdargs = e;
+		 	AdCreatedEventArgs ev = new AdCreatedEventArgs (ht);
+			OnAdCreated (ev);
+			createdargs = ev;
 			
 		}
 

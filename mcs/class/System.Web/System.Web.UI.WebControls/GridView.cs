@@ -1385,34 +1385,34 @@ namespace System.Web.UI.WebControls
 			if (data == null)
 				return 0;
 
-			PagedDataSource dataSource;
+			PagedDataSource pagedDataSource;
 
 			if (dataBinding) {
 				DataSourceView view = GetData ();
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
+				pagedDataSource = new PagedDataSource ();
+				pagedDataSource.DataSource = data;
 				
 				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = PageSize;
+					pagedDataSource.AllowPaging = true;
+					pagedDataSource.PageSize = PageSize;
 					if (view.CanPage) {
-						dataSource.AllowServerPaging = true;
+						pagedDataSource.AllowServerPaging = true;
 						if (SelectArguments.RetrieveTotalRowCount)
-							dataSource.VirtualCount = SelectArguments.TotalRowCount;
+							pagedDataSource.VirtualCount = SelectArguments.TotalRowCount;
 					}
-					if (PageIndex >= dataSource.PageCount)
-						pageIndex = dataSource.PageCount - 1;
-					dataSource.CurrentPageIndex = PageIndex;
+					if (PageIndex >= pagedDataSource.PageCount)
+						pageIndex = pagedDataSource.PageCount - 1;
+					pagedDataSource.CurrentPageIndex = PageIndex;
 				}
 				
-				PageCount = dataSource.PageCount;
+				PageCount = pagedDataSource.PageCount;
 			} else {
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
+				pagedDataSource = new PagedDataSource ();
+				pagedDataSource.DataSource = data;
 				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = PageSize;
-					dataSource.CurrentPageIndex = PageIndex;
+					pagedDataSource.AllowPaging = true;
+					pagedDataSource.PageSize = PageSize;
+					pagedDataSource.CurrentPageIndex = PageIndex;
 				}
 			}
 
@@ -1423,7 +1423,7 @@ namespace System.Web.UI.WebControls
 			// Creates the set of fields to show
 
 			_dataEnumerator = null;
-			ICollection fieldCollection = CreateColumns (dataSource, dataBinding);
+			ICollection fieldCollection = CreateColumns (pagedDataSource, dataBinding);
 			int fieldCount = fieldCollection.Count;
 			DataControlField dcf;
 			DataControlField[] fields = new DataControlField [fieldCount];
@@ -1443,7 +1443,7 @@ namespace System.Web.UI.WebControls
 				enumerator = _dataEnumerator;
 				skip_first = true;
 			} else
-				enumerator = dataSource.GetEnumerator ();
+				enumerator = pagedDataSource.GetEnumerator ();
 
 			// Main table creation
 			Table mainTable = ContainedTable;
@@ -1469,7 +1469,7 @@ namespace System.Web.UI.WebControls
 				
 				if (list.Count == 0) {
 					if (createPager && (PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom)) {
-						topPagerRow = CreatePagerRow (fieldCount, dataSource);
+						topPagerRow = CreatePagerRow (fieldCount, pagedDataSource);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 						mainTable.Rows.Add (topPagerRow);
 						if (dataBinding) {
@@ -1527,7 +1527,7 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (createPager && (PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom)) {
-					bottomPagerRow = CreatePagerRow (fieldCount, dataSource);
+					bottomPagerRow = CreatePagerRow (fieldCount, pagedDataSource);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 					mainTable.Rows.Add (bottomPagerRow);
 					if (dataBinding) {
@@ -1545,7 +1545,7 @@ namespace System.Web.UI.WebControls
 				return -1;
 
 			if (AllowPaging)
-				return dataSource.DataSourceCount;
+				return pagedDataSource.DataSourceCount;
 			else
 				return list.Count;
 		}

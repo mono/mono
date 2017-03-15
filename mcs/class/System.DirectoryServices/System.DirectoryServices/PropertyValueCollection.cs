@@ -87,14 +87,14 @@ namespace System.DirectoryServices
 
 		public void AddRange(object[] values)
 		{
-			foreach (object value in values)
-				Add (value);
+			foreach (object val in values)
+				Add (val);
 		}
 
 		public void AddRange (PropertyValueCollection coll)
 		{
-			foreach (object value in coll)
-				Add (value);
+			foreach (object val in coll)
+				Add (val);
 		}
 
 		public int IndexOf( object value )  
