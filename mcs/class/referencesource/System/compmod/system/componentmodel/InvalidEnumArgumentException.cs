@@ -10,7 +10,6 @@ namespace System.ComponentModel {
     using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.Serialization;
-    using System.Security.Permissions;
     
     /// <devdoc>
     ///    <para>The exception that is thrown when using invalid arguments that are enumerators.</para>
