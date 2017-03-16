@@ -92,9 +92,9 @@ namespace System.Web.UI.Adapters
 			}
 		}
 
-		protected internal virtual void BeginRender (HtmlTextWriter w)
+		protected internal virtual void BeginRender (HtmlTextWriter writer)
 		{
-			w.BeginRender();
+			writer.BeginRender();
 		}
 
 		protected internal virtual void CreateChildControls ()
@@ -104,9 +104,9 @@ namespace System.Web.UI.Adapters
 				control.CreateChildControls ();
 		}
 
-		protected internal virtual void EndRender (HtmlTextWriter w)
+		protected internal virtual void EndRender (HtmlTextWriter writer)
 		{
-			w.EndRender ();
+			writer.EndRender ();
 		}
 
 		protected internal virtual void LoadAdapterControlState (object state)
@@ -149,20 +149,20 @@ namespace System.Web.UI.Adapters
 				control.OnUnload(e);
 		}
 
-		protected internal virtual void Render (HtmlTextWriter w)
+		protected internal virtual void Render (HtmlTextWriter writer)
 		{
 			Control control = Control;
 
 			if (control != null)
-				control.Render (w);
+				control.Render (writer);
 		}
 
-		protected internal virtual void RenderChildren (HtmlTextWriter w)
+		protected internal virtual void RenderChildren (HtmlTextWriter writer)
 		{
 			Control control = Control;
 
 			if (control != null)
-				control.RenderChildren (w);
+				control.RenderChildren (writer);
 		}
 
 		protected internal virtual object SaveAdapterControlState ()

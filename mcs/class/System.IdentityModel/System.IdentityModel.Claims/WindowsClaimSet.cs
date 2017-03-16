@@ -41,25 +41,25 @@ namespace System.IdentityModel.Claims
 		// Constructors
 
 		[MonoTODO]
-		public WindowsClaimSet (WindowsIdentity identity)
+		public WindowsClaimSet (WindowsIdentity windowsIdentity)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public WindowsClaimSet (WindowsIdentity identity, bool includeWindowsGroups)
+		public WindowsClaimSet (WindowsIdentity windowsIdentity, bool includeWindowsGroups)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public WindowsClaimSet (WindowsIdentity identity, DateTime expirationTime)
+		public WindowsClaimSet (WindowsIdentity windowsIdentity, DateTime expirationTime)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public WindowsClaimSet (WindowsIdentity identity, bool includeWindowsGroups, DateTime expirationTime)
+		public WindowsClaimSet (WindowsIdentity windowsIdentity, bool includeWindowsGroups, DateTime expirationTime)
 		{
 			throw new NotImplementedException ();
 		}

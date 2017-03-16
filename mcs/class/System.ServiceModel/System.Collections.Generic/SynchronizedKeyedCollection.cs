@@ -57,10 +57,10 @@ namespace System.Collections.Generic
 		}
 
 		protected SynchronizedKeyedCollection (object syncRoot,
-			IEqualityComparer<K> comparer, int capacity)
+			IEqualityComparer<K> comparer, int dictionaryCreationThreshold)
 			: base (syncRoot)
 		{
-			dict = new Dictionary<K, T> (capacity, comparer);
+			dict = new Dictionary<K, T> (dictionaryCreationThreshold, comparer);
 		}
 
 		// see bug #76417

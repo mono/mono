@@ -38,7 +38,7 @@ namespace System.Web.UI.Design.WebControls {
 			throw new NotImplementedException ();
 		}
 
-		public override void DataBindControl (IDesignerHost designer_host, Control control)
+		public override void DataBindControl (IDesignerHost designerHost, Control control)
 		{
 			throw new NotImplementedException ();
 		}

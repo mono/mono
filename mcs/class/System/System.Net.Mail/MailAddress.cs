@@ -143,12 +143,12 @@ namespace System.Net.Mail {
 
 #region Methods
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object value)
 		{
-			if (obj == null)
+			if (value == null)
 				return false;
 
-			return (0 == String.Compare (ToString (), obj.ToString (), StringComparison.OrdinalIgnoreCase));
+			return (0 == String.Compare (ToString (), value.ToString (), StringComparison.OrdinalIgnoreCase));
 		}
 
 		public override int GetHashCode ()

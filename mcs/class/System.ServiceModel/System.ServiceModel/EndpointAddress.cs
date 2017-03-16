@@ -406,19 +406,19 @@ namespace System.ServiceModel
 		public void WriteTo (
 			AddressingVersion addressingVersion,
 			XmlDictionaryWriter writer,
-			XmlDictionaryString localname,
+			XmlDictionaryString localName,
 			XmlDictionaryString ns)
 		{
-			writer.WriteStartElement (localname, ns);
+			writer.WriteStartElement (localName, ns);
 			WriteContentsTo (addressingVersion, writer);
 			writer.WriteEndElement ();
 		}
 
 		public void WriteTo (
 			AddressingVersion addressingVersion,
-			XmlWriter writer, string localname, string ns)
+			XmlWriter writer, string localName, string ns)
 		{
-			writer.WriteStartElement (localname, ns);
+			writer.WriteStartElement (localName, ns);
 			WriteContentsTo (addressingVersion, writer);
 			writer.WriteEndElement ();
 		}

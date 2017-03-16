@@ -99,10 +99,10 @@ namespace System.IdentityModel.Tokens
 			get { return serial; }
 		}
 
-		public override bool Matches (SecurityKeyIdentifierClause clause)
+		public override bool Matches (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			X509IssuerSerialKeyIdentifierClause other =
-				clause as X509IssuerSerialKeyIdentifierClause;
+				keyIdentifierClause as X509IssuerSerialKeyIdentifierClause;
 			return other != null && Matches (other.name, other.serial);
 		}
 

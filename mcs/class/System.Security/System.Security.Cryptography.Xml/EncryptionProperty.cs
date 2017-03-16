@@ -47,9 +47,9 @@ namespace System.Security.Cryptography.Xml {
 		{
 		}
 
-		public EncryptionProperty (XmlElement elemProp)
+		public EncryptionProperty (XmlElement elementProperty)
 		{
-			LoadXml (elemProp);
+			LoadXml (elementProperty);
 		}
 
 		#endregion // Constructors

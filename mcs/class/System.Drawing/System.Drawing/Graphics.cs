@@ -56,7 +56,7 @@ namespace System.Drawing
 							    IntPtr data,
 							    PlayRecordCallback callbackData);
 		
-		public delegate bool DrawImageAbort (IntPtr callbackData);
+		public delegate bool DrawImageAbort (IntPtr callbackdata);
 
 		internal Graphics (IntPtr nativeGraphics)
 		{

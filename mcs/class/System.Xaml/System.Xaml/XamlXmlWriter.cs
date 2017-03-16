@@ -139,9 +139,9 @@ namespace System.Xaml
 			intl.WriteNamespace (namespaceDeclaration);
 		}
 
-		public override void WriteStartObject (XamlType xamlType)
+		public override void WriteStartObject (XamlType type)
 		{
-			intl.WriteStartObject (xamlType);
+			intl.WriteStartObject (type);
 		}
 		
 		public override void WriteValue (object value)

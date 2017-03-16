@@ -46,8 +46,8 @@ namespace System.Security.Cryptography.Xml {
 		{
 		}
 	
-		public CipherReference (string uri, TransformChain tc)
-			: base (uri, tc)
+		public CipherReference (string uri, TransformChain transformChain)
+			: base (uri, transformChain)
 		{
 		}
 	

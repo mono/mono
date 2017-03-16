@@ -125,34 +125,34 @@ namespace System.Diagnostics {
 			return CounterSampleCalculator.ComputeCounterValue (counterSample, nextCounterSample);
 		}
 
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is CounterSample))
+			if (!(o is CounterSample))
 				return false;
-			return Equals ((CounterSample) obj);
+			return Equals ((CounterSample) o);
 		}
 
-		public bool Equals (CounterSample other)
+		public bool Equals (CounterSample sample)
 		{
 			return
-				rawValue == other.rawValue &&
-				baseValue == other.counterFrequency &&
-				counterFrequency == other.counterFrequency &&
-				systemFrequency == other.systemFrequency &&
-				timeStamp == other.timeStamp &&
-				timeStamp100nSec == other.timeStamp100nSec &&
-				counterTimeStamp == other.counterTimeStamp &&
-				counterType == other.counterType;
+				rawValue == sample.rawValue &&
+				baseValue == sample.counterFrequency &&
+				counterFrequency == sample.counterFrequency &&
+				systemFrequency == sample.systemFrequency &&
+				timeStamp == sample.timeStamp &&
+				timeStamp100nSec == sample.timeStamp100nSec &&
+				counterTimeStamp == sample.counterTimeStamp &&
+				counterType == sample.counterType;
 		}
 
-		public static bool operator == (CounterSample obj1, CounterSample obj2)
+		public static bool operator == (CounterSample a, CounterSample b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 
-		public static bool operator != (CounterSample obj1, CounterSample obj2)
+		public static bool operator != (CounterSample a, CounterSample b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 
 		public override int GetHashCode ()

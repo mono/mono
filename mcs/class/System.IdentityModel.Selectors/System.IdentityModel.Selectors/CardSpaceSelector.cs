@@ -62,19 +62,19 @@ namespace System.IdentityModel.Selectors
 		[MonoTODO]
 		public static GenericXmlSecurityToken GetToken (
 			CardSpacePolicyElement [] policyChain,
-			SecurityTokenSerializer serializer)
+			SecurityTokenSerializer tokenSerializer)
 		{
-			return (GenericXmlSecurityToken) get_token.Invoke (impl, new object [] {policyChain, serializer});
+			return (GenericXmlSecurityToken) get_token.Invoke (impl, new object [] {policyChain, tokenSerializer});
 		}
 
 		public static GenericXmlSecurityToken GetToken (
 			XmlElement endpoint,
 			IEnumerable<XmlElement> policy,
 			XmlElement requiredRemoteTokenIssuer,
-			SecurityTokenSerializer serializer)
+			SecurityTokenSerializer tokenSerializer)
 		{
 			CardSpacePolicyElement pe = new CardSpacePolicyElement (endpoint, requiredRemoteTokenIssuer, new Collection<XmlElement> (new List<XmlElement> (policy)), null, 0, requiredRemoteTokenIssuer != null);
-			return GetToken (new CardSpacePolicyElement [] {pe}, serializer);
+			return GetToken (new CardSpacePolicyElement [] {pe}, tokenSerializer);
 		}
 
 		[MonoTODO]

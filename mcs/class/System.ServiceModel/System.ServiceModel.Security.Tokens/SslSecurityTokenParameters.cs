@@ -52,11 +52,11 @@ namespace System.ServiceModel.Security.Tokens
 			this.cancel = requireCancellation;
 		}
 
-		protected SslSecurityTokenParameters (SslSecurityTokenParameters source)
-			: base (source)
+		protected SslSecurityTokenParameters (SslSecurityTokenParameters other)
+			: base (other)
 		{
-			cert = source.cert;
-			cancel = source.cancel;
+			cert = other.cert;
+			cancel = other.cancel;
 		}
 
 		bool cert, cancel;

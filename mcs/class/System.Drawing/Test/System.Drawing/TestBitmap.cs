@@ -608,7 +608,7 @@ namespace MonoTests.System.Drawing {
 				}				
 			}
 		
-			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);
+			hash = MD5.Create ().ComputeHash (pixels);
 			return ByteArrayToString (hash);
 		}
 		public string RotateIndexedBmp (Bitmap src, RotateFlipType type)
@@ -658,7 +658,7 @@ namespace MonoTests.System.Drawing {
 			if (pixel_data == null)
 				return "--ERROR--";
 
-			byte[] hash = new MD5CryptoServiceProvider().ComputeHash (pixel_data);
+			byte[] hash = MD5.Create ().ComputeHash (pixel_data);
 			return ByteArrayToString (hash);
 		}
 		
