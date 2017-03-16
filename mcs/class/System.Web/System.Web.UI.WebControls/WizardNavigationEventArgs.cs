@@ -37,10 +37,10 @@ namespace System.Web.UI.WebControls
 		int nxtStepIndex;
 		bool cancel;
 		
-		public WizardNavigationEventArgs (int currentIndex, int nextIndex)
+		public WizardNavigationEventArgs (int currentStepIndex, int nextStepIndex)
 		{
-			this.curStepIndex = currentIndex;
-			this.nxtStepIndex = nextIndex;
+			this.curStepIndex = currentStepIndex;
+			this.nxtStepIndex = nextStepIndex;
 			cancel = false;
 		}
 		

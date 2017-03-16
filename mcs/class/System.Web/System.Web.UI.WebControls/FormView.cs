@@ -882,12 +882,12 @@ namespace System.Web.UI.WebControls
 			return arg;
 		}
 		
-		protected virtual FormViewRow CreateRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
+		protected virtual FormViewRow CreateRow (int itemIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
 			if (rowType == DataControlRowType.Pager)
-				return new FormViewPagerRow (rowIndex, rowType, rowState);
+				return new FormViewPagerRow (itemIndex, rowType, rowState);
 			else
-				return new FormViewRow (rowIndex, rowType, rowState);
+				return new FormViewRow (itemIndex, rowType, rowState);
 		}
 		
 		void RequireBinding ()
@@ -922,10 +922,10 @@ namespace System.Web.UI.WebControls
 			return style;
 		}
 		
-		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
+		protected override int CreateChildControls (IEnumerable dataSource, bool dataBinding)
 		{
 			PagedDataSource pagedDataSource = new PagedDataSource ();
-			pagedDataSource.DataSource = CurrentMode != FormViewMode.Insert ? data : null;
+			pagedDataSource.DataSource = CurrentMode != FormViewMode.Insert ? dataSource : null;
 			pagedDataSource.AllowPaging = AllowPaging;
 			pagedDataSource.PageSize = 1;
 			pagedDataSource.CurrentPageIndex = PageIndex;
@@ -1046,7 +1046,7 @@ namespace System.Web.UI.WebControls
 			return rstate;
 		}
 		
-		protected virtual void InitializePager (FormViewRow row, PagedDataSource dataSource)
+		protected virtual void InitializePager (FormViewRow row, PagedDataSource pagedDataSource)
 		{
 			TableCell cell = new TableCell ();
 			cell.ColumnSpan = 2;
@@ -1054,7 +1054,7 @@ namespace System.Web.UI.WebControls
 			if (pagerTemplate != null)
 				pagerTemplate.InstantiateIn (cell);
 			else
-				cell.Controls.Add (PagerSettings.CreatePagerControl (dataSource.CurrentPageIndex, dataSource.PageCount));
+				cell.Controls.Add (PagerSettings.CreatePagerControl (pagedDataSource.CurrentPageIndex, pagedDataSource.PageCount));
 			
 			row.Cells.Add (cell);
 		}
@@ -1497,10 +1497,10 @@ namespace System.Web.UI.WebControls
 			RequireBinding ();
 		}
 
-		protected internal override void LoadControlState (object ob)
+		protected internal override void LoadControlState (object savedState)
 		{
-			if (ob == null) return;
-			object[] state = (object[]) ob;
+			if (savedState == null) return;
+			object[] state = (object[]) savedState;
 			base.LoadControlState (state[0]);
 			pageIndex = (int) state[1];
 			pageCount = (int) state[2];

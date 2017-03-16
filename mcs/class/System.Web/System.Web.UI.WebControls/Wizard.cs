@@ -1299,10 +1299,10 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 		
-		protected internal override void LoadControlState (object ob)
+		protected internal override void LoadControlState (object state)
 		{
-			if (ob == null) return;
-			object[] controlState = (object[]) ob;
+			if (state == null) return;
+			object[] controlState = (object[]) state;
 			base.LoadControlState (controlState[0]);
 			activeStepIndex = (int) controlState[1];
 			history = (ArrayList) controlState[2];

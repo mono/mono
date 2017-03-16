@@ -74,8 +74,8 @@ namespace System.Web.Configuration {
 			set {  if (BaseGet(index) != null)  BaseRemoveAt(index);  BaseAdd(index, value); }
 		}
 
-		public new BufferModeSettings this [string name] {
-			get { return (BufferModeSettings) BaseGet (name); }
+		public new BufferModeSettings this [string key] {
+			get { return (BufferModeSettings) BaseGet (key); }
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {

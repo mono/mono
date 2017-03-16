@@ -220,15 +220,15 @@ namespace System.Web.UI.WebControls {
 			return source.GetEnumerator ();
 		}
 
-		public PropertyDescriptorCollection GetItemProperties (PropertyDescriptor [] list_accessors)
+		public PropertyDescriptorCollection GetItemProperties (PropertyDescriptor [] listAccessors)
 		{
 			ITypedList typed = source as ITypedList;
 			if (typed == null)
 				return null;
-			return typed.GetItemProperties (list_accessors);
+			return typed.GetItemProperties (listAccessors);
 		}
 
-		public string GetListName (PropertyDescriptor [] list_accessors)
+		public string GetListName (PropertyDescriptor [] listAccessors)
 		{
 			return String.Empty; // as documented
 		}
