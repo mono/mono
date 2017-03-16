@@ -42,26 +42,26 @@ namespace System.IdentityModel.Tokens
 
 		public EncryptedKeyIdentifierClause (
 			byte [] encryptedKey, string encryptionMethod, 
-			SecurityKeyIdentifier identifier)
-			: this (encryptedKey, encryptionMethod, identifier, null)
+			SecurityKeyIdentifier encryptingKeyIdentifier)
+			: this (encryptedKey, encryptionMethod, encryptingKeyIdentifier, null)
 		{
 		}
 
 		public EncryptedKeyIdentifierClause (
 			byte [] encryptedKey, string encryptionMethod,
-			SecurityKeyIdentifier identifier, string carriedKeyName)
-			: this (encryptedKey, encryptionMethod, identifier, carriedKeyName, null, 0)
+			SecurityKeyIdentifier encryptingKeyIdentifier, string carriedKeyName)
+			: this (encryptedKey, encryptionMethod, encryptingKeyIdentifier, carriedKeyName, null, 0)
 		{
 		}
 
 		public EncryptedKeyIdentifierClause (
 			byte [] encryptedKey, string encryptionMethod,
-			SecurityKeyIdentifier identifier, string carriedKeyName,
+			SecurityKeyIdentifier encryptingKeyIdentifier, string carriedKeyName,
 			byte [] derivationNonce, int derivationLength)
 			: base (encryptionMethod, encryptedKey, true, derivationNonce, derivationLength)
 		{
 			this.carried_key_name = carriedKeyName;
-			this.identifier = identifier;
+			this.identifier = encryptingKeyIdentifier;
 			this.enc_method = encryptionMethod;
 		}
 
@@ -100,10 +100,10 @@ namespace System.IdentityModel.Tokens
 			return true;
 		}
 
-		public override bool Matches (SecurityKeyIdentifierClause clause)
+		public override bool Matches (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			EncryptedKeyIdentifierClause e =
-				clause as EncryptedKeyIdentifierClause;
+				keyIdentifierClause as EncryptedKeyIdentifierClause;
 			return e != null && Matches (e.GetRawBuffer (), e.EncryptionMethod, e.CarriedKeyName);
 		}
 

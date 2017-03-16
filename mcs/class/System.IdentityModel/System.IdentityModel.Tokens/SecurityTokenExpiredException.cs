@@ -1,4 +1,4 @@
-﻿//
+//
 // SecurityTokenExpiredException.cs
 //
 // Author:
@@ -41,8 +41,8 @@ namespace System.IdentityModel.Tokens
 			: base(message)
 		{ }
 
-		public SecurityTokenExpiredException(string message, Exception innerException)
-			: base(message, innerException)
+		public SecurityTokenExpiredException(string message, Exception inner)
+			: base(message, inner)
 		{ }
 
 		public SecurityTokenExpiredException(SerializationInfo info, StreamingContext context)

@@ -1,4 +1,4 @@
-﻿//
+//
 // SignatureVerificationFailedException.cs
 //
 // Author:
@@ -41,8 +41,8 @@ namespace System.IdentityModel
 			: base(message)
 		{ }
 
-		public SignatureVerificationFailedException(string message, Exception innerException)
-			: base(message, innerException)
+		public SignatureVerificationFailedException(string message, Exception inner)
+			: base(message, inner)
 		{ }
 
 		public SignatureVerificationFailedException(SerializationInfo info, StreamingContext context)
