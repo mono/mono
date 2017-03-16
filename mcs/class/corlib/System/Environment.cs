@@ -48,16 +48,11 @@ namespace System {
 	public static partial class Environment {
 
 		/*
-		 * This is the version number of the corlib-runtime interface. When
-		 * making changes to this interface (by changing the layout
-		 * of classes the runtime knows about, changing icall signature or
-		 * semantics etc), increment this variable. Also increment the
-		 * pair of this variable in the runtime in metadata/appdomain.c.
-		 * Changes which are already detected at runtime, like the addition
-		 * of icalls, do not require an increment.
+		 * This is the version number of the corlib-runtime interface.
+		 * It is defined in configure.ac.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 164;
+		private const int mono_corlib_version = Consts.MonoCorlibVersion;
 #pragma warning restore 169
 
 		[ComVisible (true)]
