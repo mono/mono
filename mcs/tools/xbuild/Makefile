@@ -154,8 +154,24 @@ EXTRA_DISTFILES = \
 	data/Microsoft.VisualBasic.targets \
 	data/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	data/MSBuild/Microsoft.Build.Core.xsd \
-	data/Portable/Targets/* \
-	data/Portable/Frameworks/v5.0/* \
+	data/Portable/Targets/Microsoft.Portable.Core.props \
+	data/Portable/Targets/Microsoft.Portable.Core.targets \
+	data/Portable/Targets/v4.0/Microsoft.Portable.Common.targets \
+	data/Portable/Targets/v4.0/Microsoft.Portable.CSharp.targets \
+	data/Portable/Targets/v4.0/Microsoft.Portable.VisualBasic.targets \
+	data/Portable/Targets/v4.5/Microsoft.Portable.Common.targets \
+	data/Portable/Targets/v4.5/Microsoft.Portable.CSharp.targets \
+	data/Portable/Targets/v4.5/Microsoft.Portable.VisualBasic.targets \
+	data/Portable/Targets/v4.6/Microsoft.Portable.Common.targets \
+	data/Portable/Targets/v4.6/Microsoft.Portable.CSharp.targets \
+	data/Portable/Targets/v4.6/Microsoft.Portable.VisualBasic.targets \
+	data/Portable/Targets/v5.0/Microsoft.Portable.Common.targets \
+	data/Portable/Targets/v5.0/Microsoft.Portable.CSharp.targets \
+	data/Portable/Targets/v5.0/Microsoft.Portable.VisualBasic.targets \
+	"data/Portable/Frameworks/v5.0/.NET Framework 4.6.xml" \
+	"data/Portable/Frameworks/v5.0/ASP.NET Core 1.0.xml" \
+	"data/Portable/Frameworks/v5.0/FrameworkList.xml" \
+	"data/Portable/Frameworks/v5.0/Windows Universal 10.0.xml" \
 	frameworks/net_2.0.xml \
 	frameworks/net_3.0.xml \
 	frameworks/net_3.5.xml \
