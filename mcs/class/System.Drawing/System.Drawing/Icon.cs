@@ -38,7 +38,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -338,7 +337,6 @@ namespace System.Drawing
 		}
 		
 #if !MONOTOUCH
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)
