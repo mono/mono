@@ -78,7 +78,7 @@ namespace System.IdentityModel.Claims
 		}
 
 		[MonoTODO]
-		public static Claim CreateDenyOnlyWindowsSidClaim (SecurityIdentifier identifier)
+		public static Claim CreateDenyOnlyWindowsSidClaim (SecurityIdentifier sid)
 		{
 			throw new NotImplementedException ();
 		}

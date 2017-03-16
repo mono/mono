@@ -49,7 +49,7 @@ namespace System.IdentityModel.Tokens
 		}
 
 		[MonoTODO]
-		public override bool Matches (SecurityKeyIdentifierClause clause)
+		public override bool Matches (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			throw new NotImplementedException ();
 		}

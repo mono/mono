@@ -1,4 +1,4 @@
-﻿//
+//
 // SecurityTokenReplayDetectedException.cs
 //
 // Author:
@@ -41,8 +41,8 @@ namespace System.IdentityModel.Tokens
 			: base(message)
 		{ }
 
-		public SecurityTokenReplayDetectedException(string message, Exception innerException)
-			: base(message, innerException)
+		public SecurityTokenReplayDetectedException(string message, Exception inner)
+			: base(message, inner)
 		{ }
 
 		public SecurityTokenReplayDetectedException(SerializationInfo info, StreamingContext context)

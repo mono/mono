@@ -89,7 +89,7 @@ namespace System.IdentityModel.Tokens
 
 		public virtual void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			if (reader == null)
@@ -105,7 +105,7 @@ namespace System.IdentityModel.Tokens
 				switch (reader.LocalName) {
 				case "Assertion":
 					SamlAssertion a = new SamlAssertion ();
-					a.ReadXml (reader, samlSerializer, keyInfoTokenSerializer, outOfBandTokenResolver);
+					a.ReadXml (reader, samlSerializer, keyInfoSerializer, outOfBandTokenResolver);
 					assertions.Add (a);
 					break;
 				case "AssertionIDReference":
@@ -120,7 +120,7 @@ namespace System.IdentityModel.Tokens
 
 		public virtual void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer)
+			SecurityTokenSerializer keyInfoSerializer)
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
@@ -130,7 +130,7 @@ namespace System.IdentityModel.Tokens
 			foreach (string idref in AssertionIdReferences)
 				writer.WriteElementString ("saml", "AssertionIDReference", SamlConstants.Namespace, idref);
 			foreach (SamlAssertion assertion in Assertions)
-				assertion.WriteXml (writer, samlSerializer, keyInfoTokenSerializer);
+				assertion.WriteXml (writer, samlSerializer, keyInfoSerializer);
 			writer.WriteEndElement ();
 		}
 	}
