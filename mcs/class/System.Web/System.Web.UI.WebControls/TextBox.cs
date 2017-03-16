@@ -84,7 +84,7 @@ namespace System.Web.UI.WebControls {
 			"search"
 		};
 
-		protected override void AddAttributesToRender (HtmlTextWriter w)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			Page page = Page;
 			if (page != null)
@@ -93,17 +93,17 @@ namespace System.Web.UI.WebControls {
 			switch (TextMode) {
 			case TextBoxMode.MultiLine:
 				if (Columns != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString (), false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString (), false);
 				else
-					w.AddAttribute (HtmlTextWriterAttribute.Cols, "20", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Cols, "20", false);
 				
 				if (Rows != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString (), false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString (), false);
 				else
-					w.AddAttribute (HtmlTextWriterAttribute.Rows, "2", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Rows, "2", false);
 
 				if (!Wrap)
-					w.AddAttribute (HtmlTextWriterAttribute.Wrap, "off", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Wrap, "off", false);
 				
 				break;
 				
@@ -111,45 +111,45 @@ namespace System.Web.UI.WebControls {
 			case TextBoxMode.Password:
 				
 				if (TextMode == TextBoxMode.Password)
-					w.AddAttribute (HtmlTextWriterAttribute.Type, "password", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Type, "password", false);
 				else {
-					w.AddAttribute (HtmlTextWriterAttribute.Type, "text", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Type, "text", false);
 					if (Text.Length > 0)
-						w.AddAttribute (HtmlTextWriterAttribute.Value, Text);
+						writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 				}
 				
 				if (Columns != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Size, Columns.ToString (), false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Size, Columns.ToString (), false);
 		
 				if (MaxLength != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString (), false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString (), false);
 
 				if (AutoCompleteType != AutoCompleteType.None && TextMode == TextBoxMode.SingleLine)
 					if (AutoCompleteType != AutoCompleteType.Disabled)
-						w.AddAttribute (HtmlTextWriterAttribute.VCardName, VCardValues [(int) AutoCompleteType]);
+						writer.AddAttribute (HtmlTextWriterAttribute.VCardName, VCardValues [(int) AutoCompleteType]);
 					else
-						w.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off", false);
+						writer.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off", false);
 				break;	
 			}
 
 			if (AutoPostBack) {
-				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
+				writer.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
 
 				if (page != null) {
 					string onchange = page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
 					onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
-					w.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
+					writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 				}
 			} else if (page != null)
 				page.ClientScript.RegisterForEventValidation (UniqueID, String.Empty);
 				
 
 			if (ReadOnly)
-				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly", false);
+				writer.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly", false);
 
-			w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			
-			base.AddAttributesToRender (w);
+			base.AddAttributesToRender (writer);
 		}
 
 		protected override void AddParsedSubObject (object obj)
@@ -174,16 +174,16 @@ namespace System.Web.UI.WebControls {
 		}
 
 		protected internal
-		override void Render (HtmlTextWriter w)
+		override void Render (HtmlTextWriter writer)
 		{
 			// Why didn't msft just override RenderContents!?
-			RenderBeginTag (w);
+			RenderBeginTag (writer);
 			if (TextMode == TextBoxMode.MultiLine) {
-				w.WriteLine ();
-				HttpUtility.HtmlEncode (Text, w);
+				writer.WriteLine ();
+				HttpUtility.HtmlEncode (Text, writer);
 			}
 			
-			RenderEndTag (w);
+			RenderEndTag (writer);
 		}
 		
 		protected virtual

@@ -107,14 +107,14 @@ namespace System.Web.UI.WebControls
 			return base.Initialize (sortingEnabled, control);
 		}
 		
-		protected virtual string FormatDataTextValue (object value)
+		protected virtual string FormatDataTextValue (object dataTextValue)
 		{
 			if (DataTextFormatString.Length > 0)
-				return String.Format (DataTextFormatString, value);
-			else if (value == null)
+				return String.Format (DataTextFormatString, dataTextValue);
+			else if (dataTextValue == null)
 				return String.Empty;
 			else
-				return value.ToString ();
+				return dataTextValue.ToString ();
 		}
 		
 		public override void InitializeCell (DataControlFieldCell cell, DataControlCellType cellType, DataControlRowState rowState, int rowIndex)

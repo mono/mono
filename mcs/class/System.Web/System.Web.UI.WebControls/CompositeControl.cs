@@ -53,12 +53,12 @@ namespace System.Web.UI.WebControls
 			base.DataBind();
 		}
 
-		protected internal override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			/* make sure all the child controls have been created */
 			EnsureChildControls ();
 			/* and then... */
-			base.Render (w);
+			base.Render (writer);
 		}
 
 		void ICompositeControlDesignerAccessor.RecreateChildControls ()

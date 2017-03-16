@@ -1375,14 +1375,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
+		protected override int CreateChildControls (IEnumerable dataSource, bool dataBinding)
 		{
 			// clear GridView
 			Controls.Clear ();
 			table = null;
 			rows = null;
 
-			if (data == null)
+			if (dataSource == null)
 				return 0;
 
 			PagedDataSource pagedDataSource;
@@ -1390,7 +1390,7 @@ namespace System.Web.UI.WebControls
 			if (dataBinding) {
 				DataSourceView view = GetData ();
 				pagedDataSource = new PagedDataSource ();
-				pagedDataSource.DataSource = data;
+				pagedDataSource.DataSource = dataSource;
 				
 				if (AllowPaging) {
 					pagedDataSource.AllowPaging = true;
@@ -1408,7 +1408,7 @@ namespace System.Web.UI.WebControls
 				PageCount = pagedDataSource.PageCount;
 			} else {
 				pagedDataSource = new PagedDataSource ();
-				pagedDataSource.DataSource = data;
+				pagedDataSource.DataSource = dataSource;
 				if (AllowPaging) {
 					pagedDataSource.AllowPaging = true;
 					pagedDataSource.PageSize = PageSize;
@@ -1586,7 +1586,7 @@ namespace System.Web.UI.WebControls
 			return row;
 		}
 		
-		protected virtual void InitializePager (GridViewRow row, int columnSpan, PagedDataSource dataSource)
+		protected virtual void InitializePager (GridViewRow row, int columnSpan, PagedDataSource pagedDataSource)
 		{
 			TableCell cell = new TableCell ();
 			if (columnSpan > 1)
@@ -1595,7 +1595,7 @@ namespace System.Web.UI.WebControls
 			if (pagerTemplate != null)
 				pagerTemplate.InstantiateIn (cell);
 			else
-				cell.Controls.Add (PagerSettings.CreatePagerControl (dataSource.CurrentPageIndex, dataSource.PageCount));
+				cell.Controls.Add (PagerSettings.CreatePagerControl (pagedDataSource.CurrentPageIndex, pagedDataSource.PageCount));
 			
 			row.Cells.Add (cell);
 		}
@@ -1983,9 +1983,9 @@ namespace System.Web.UI.WebControls
 			Sort (newSortExpression, newDirection);
 		}
 		
-		public virtual void Sort (string newSortExpression, SortDirection newSortDirection)
+		public virtual void Sort (string sortExpression, SortDirection sortDirection)
 		{
-			GridViewSortEventArgs args = new GridViewSortEventArgs (newSortExpression, newSortDirection);
+			GridViewSortEventArgs args = new GridViewSortEventArgs (sortExpression, sortDirection);
 			OnSorting (args);
 			if (args.Cancel)
 				return;
@@ -2000,9 +2000,9 @@ namespace System.Web.UI.WebControls
 			OnSorted (EventArgs.Empty);
 		}
 		public
-		void SelectRow (int index)
+		void SelectRow (int rowIndex)
 		{
-			GridViewSelectEventArgs args = new GridViewSelectEventArgs (index);
+			GridViewSelectEventArgs args = new GridViewSelectEventArgs (rowIndex);
 			OnSelectedIndexChanging (args);
 			if (!args.Cancel) {
 				RequireBinding ();
@@ -2011,9 +2011,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		public
-		void SetPageIndex (int newIndex)
+		void SetPageIndex (int rowIndex)
 		{
-			GridViewPageEventArgs args = new GridViewPageEventArgs (newIndex);
+			GridViewPageEventArgs args = new GridViewPageEventArgs (rowIndex);
 			OnPageIndexChanging (args);
 			
 			if (args.Cancel || !IsBoundUsingDataSourceID)
@@ -2024,9 +2024,9 @@ namespace System.Web.UI.WebControls
 			OnPageIndexChanged (EventArgs.Empty);
 		}
 		public
-		void SetEditRow (int index)
+		void SetEditRow (int rowIndex)
 		{
-			GridViewEditEventArgs args = new GridViewEditEventArgs (index);
+			GridViewEditEventArgs args = new GridViewEditEventArgs (rowIndex);
 			OnRowEditing (args);
 			
 			if (args.Cancel || !IsBoundUsingDataSourceID)
@@ -2134,11 +2134,11 @@ namespace System.Web.UI.WebControls
 			currentEditNewValues = null;
 		}
 
-		protected internal override void LoadControlState (object ob)
+		protected internal override void LoadControlState (object savedState)
 		{
-			if (ob == null)
+			if (savedState == null)
 				return;
-			object[] state = (object[]) ob;
+			object[] state = (object[]) savedState;
 			base.LoadControlState (state[0]);
 			pageIndex = (int) state[1];
 			selectedIndex = (int) state[2];
@@ -2351,14 +2351,14 @@ namespace System.Web.UI.WebControls
 				((IStateManager)sortedDescendingHeaderStyle).LoadViewState (states [15]);
 		}
 		
-		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
+		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgument)
 		{
-			RaiseCallbackEvent (eventArgs);
+			RaiseCallbackEvent (eventArgument);
 		}
 		
-		protected virtual void RaiseCallbackEvent (string eventArgs)
+		protected virtual void RaiseCallbackEvent (string eventArgument)
 		{
-			string[] clientData = eventArgs.Split ('|');
+			string[] clientData = eventArgument.Split ('|');
 			PageIndex = int.Parse (clientData[0]);
 			SortExpression = HttpUtility.UrlDecode (clientData [1]);
 			SortDirection = (SortDirection) int.Parse (clientData [2]);
@@ -2384,18 +2384,18 @@ namespace System.Web.UI.WebControls
 			return sw.ToString ();
 		}
 
-		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
+		string ICallbackContainer.GetCallbackScript (IButtonControl buttonControl, string argument)
 		{
-			return GetCallbackScript (control, argument);
+			return GetCallbackScript (buttonControl, argument);
 		}
 		
-		protected virtual string GetCallbackScript (IButtonControl control, string argument)
+		protected virtual string GetCallbackScript (IButtonControl buttonControl, string argument)
 		{
 			if (EnableSortingAndPagingCallbacks) {
 				Page page = Page;
 				if (page != null)
 					page.ClientScript.RegisterForEventValidation (UniqueID, argument);
-				return "javascript:GridView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
+				return "javascript:GridView_ClientEvent (\"" + ClientID + "\",\"" + buttonControl.CommandName + "$" + buttonControl.CommandArgument + "\"); return false;";
 			} else
 				return null;
 		}
