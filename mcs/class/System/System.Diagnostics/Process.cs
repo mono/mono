@@ -1281,11 +1281,11 @@ namespace System.Diagnostics {
 				return false;
 
 #if MONO_FEATURE_PROCESS_START
-			if (async_output != null && !async_output.IsCompleted)
-				async_output.AsyncWaitHandle.WaitOne ();
+			if (async_output != null)
+				async_output.WaitUtilEOF ();
 
-			if (async_error != null && !async_error.IsCompleted)
-				async_error.AsyncWaitHandle.WaitOne ();
+			if (async_error != null)
+				async_error.WaitUtilEOF ();
 #endif // MONO_FEATURE_PROCESS_START
 
 			OnExited ();
@@ -1326,20 +1326,6 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Raised when it receives error data")]
 		public event DataReceivedEventHandler ErrorDataReceived;
 
-		void OnOutputDataReceived (string str)
-		{
-			DataReceivedEventHandler cb = OutputDataReceived;
-			if (cb != null)
-				cb (this, new DataReceivedEventArgs (str));
-		}
-
-		void OnErrorDataReceived (string str)
-		{
-			DataReceivedEventHandler cb = ErrorDataReceived;
-			if (cb != null)
-				cb (this, new DataReceivedEventArgs (str));
-		}
-
 #if MONO_FEATURE_PROCESS_START
 		[Flags]
 		enum AsyncModes {
@@ -1350,121 +1336,9 @@ namespace System.Diagnostics {
 			AsyncError = 1 << 3
 		}
 
-		[StructLayout (LayoutKind.Sequential)]
-		sealed class ProcessAsyncReader : IOAsyncResult
-		{
-			Process process;
-			IntPtr handle;
-			Stream stream;
-			bool err_out;
-
-			StringBuilder sb = new StringBuilder ();
-			byte[] buffer = new byte [4096];
-
-			const int ERROR_INVALID_HANDLE = 6;
-
-			public ProcessAsyncReader (Process process, FileStream stream, bool err_out)
-				: base (null, null)
-			{
-				this.process = process;
-				this.handle = stream.SafeFileHandle.DangerousGetHandle ();
-				this.stream = stream;
-				this.err_out = err_out;
-			}
-
-			public void BeginReadLine ()
-			{
-				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => Read (), null));
-			}
-
-			void Read ()
-			{
-				int nread = 0;
-
-				try {
-					nread = stream.Read (buffer, 0, buffer.Length);
-				} catch (ObjectDisposedException) {
-				} catch (IOException ex) {
-					if (ex.HResult != (unchecked((int) 0x80070000) | (int) ERROR_INVALID_HANDLE))
-						throw;
-				} catch (NotSupportedException) {
-					if (stream.CanRead)
-						throw;
-				}
-
-				if (nread == 0) {
-					Flush (true);
-
-					if (err_out)
-						process.OnOutputDataReceived (null);
-					else
-						process.OnErrorDataReceived (null);
-
-					IsCompleted = true;
-
-					return;
-				}
-
-				try {
-					sb.Append (Encoding.Default.GetString (buffer, 0, nread));
-				} catch {
-					// Just in case the encoding fails...
-					for (int i = 0; i < nread; i++) {
-						sb.Append ((char) buffer [i]);
-					}
-				}
-
-				Flush (false);
-
-				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => Read (), null));
-			}
-
-			void Flush (bool last)
-			{
-				if (sb.Length == 0 || (err_out && process.output_canceled) || (!err_out && process.error_canceled))
-					return;
-
-				string[] strs = sb.ToString ().Split ('\n');
-
-				sb.Length = 0;
-
-				if (strs.Length == 0)
-					return;
-
-				for (int i = 0; i < strs.Length - 1; i++) {
-					if (err_out)
-						process.OnOutputDataReceived (strs [i]);
-					else
-						process.OnErrorDataReceived (strs [i]);
-				}
-
-				string end = strs [strs.Length - 1];
-				if (last || (strs.Length == 1 && end == "")) {
-					if (err_out)
-						process.OnOutputDataReceived (end);
-					else
-						process.OnErrorDataReceived (end);
-				} else {
-					sb.Append (end);
-				}
-			}
-
-			public void Close ()
-			{
-				IOSelector.Remove (handle);
-			}
-
-			internal override void CompleteDisposed ()
-			{
-				throw new NotSupportedException ();
-			}
-		}
-
 		AsyncModes async_mode;
-		bool output_canceled;
-		bool error_canceled;
-		ProcessAsyncReader async_output;
-		ProcessAsyncReader async_error;
+		AsyncStreamReader async_output;
+		AsyncStreamReader async_error;
 
 		[ComVisibleAttribute(false)] 
 		public void BeginOutputReadLine ()
@@ -1476,10 +1350,22 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 			async_mode |= AsyncModes.AsyncOutput;
-			output_canceled = false;
-			if (async_output == null) {
-				async_output = new ProcessAsyncReader (this, (FileStream) output_stream.BaseStream, true);
-				async_output.BeginReadLine ();
+
+			if (async_output == null)
+				async_output = new AsyncStreamReader (this, output_stream.BaseStream, new UserCallBack(this.OutputReadNotifyUser), output_stream.CurrentEncoding);
+
+			async_output.BeginReadLine ();
+		}
+
+		void OutputReadNotifyUser (String data)
+		{
+			// To avoid ---- between remove handler and raising the event
+			DataReceivedEventHandler outputDataReceived = OutputDataReceived;
+			if (outputDataReceived != null) {
+				if (SynchronizingObject != null && SynchronizingObject.InvokeRequired)
+					SynchronizingObject.Invoke (outputDataReceived, new object[] { this, new DataReceivedEventArgs (data) });
+				else
+					outputDataReceived (this, new DataReceivedEventArgs (data)); // Call back to user informing data is available.
 			}
 		}
 
@@ -1495,7 +1381,9 @@ namespace System.Diagnostics {
 			if (async_output == null)
 				throw new InvalidOperationException ("No async operation in progress.");
 
-			output_canceled = true;
+			async_output.CancelOperation ();
+
+			async_mode &= ~AsyncModes.AsyncOutput;
 		}
 
 		[ComVisibleAttribute(false)] 
@@ -1508,10 +1396,22 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 			async_mode |= AsyncModes.AsyncError;
-			error_canceled = false;
-			if (async_error == null) {
-				async_error = new ProcessAsyncReader (this, (FileStream) error_stream.BaseStream, false);
-				async_error.BeginReadLine ();
+
+			if (async_error == null)
+				async_error = new AsyncStreamReader (this, error_stream.BaseStream, new UserCallBack(this.ErrorReadNotifyUser), error_stream.CurrentEncoding);
+
+			async_error.BeginReadLine ();
+		}
+
+		void ErrorReadNotifyUser (String data)
+		{
+			// To avoid ---- between remove handler and raising the event
+			DataReceivedEventHandler errorDataReceived = ErrorDataReceived;
+			if (errorDataReceived != null) {
+				if (SynchronizingObject != null && SynchronizingObject.InvokeRequired)
+					SynchronizingObject.Invoke (errorDataReceived, new object[] { this, new DataReceivedEventArgs (data) });
+				else
+					errorDataReceived (this, new DataReceivedEventArgs (data)); // Call back to user informing data is available.
 			}
 		}
 
@@ -1527,7 +1427,9 @@ namespace System.Diagnostics {
 			if (async_error == null)
 				throw new InvalidOperationException ("No async operation in progress.");
 
-			error_canceled = true;
+			async_error.CancelOperation ();
+
+			async_mode &= ~AsyncModes.AsyncError;
 		}
 #else
 		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
