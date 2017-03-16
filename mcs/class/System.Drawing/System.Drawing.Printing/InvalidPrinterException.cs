@@ -31,7 +31,6 @@
 //
 
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Drawing.Printing {
 
@@ -50,7 +49,6 @@ namespace System.Drawing.Printing {
 		{
 		}
 
-		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

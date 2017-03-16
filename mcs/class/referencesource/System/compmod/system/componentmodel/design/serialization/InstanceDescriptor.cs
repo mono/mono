@@ -10,15 +10,12 @@ namespace System.ComponentModel.Design.Serialization {
     using System.Collections;
     using System.Diagnostics;
     using System.Reflection;
-    using System.Security.Permissions;
 
     /// <devdoc>
     ///     EventArgs for the ResolveNameEventHandler.  This event is used
     ///     by the serialization process to match a name to an object
     ///     instance.
     /// </devdoc>
-    [HostProtection(SharedState = true)]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name = "FullTrust")]
     public sealed class InstanceDescriptor {
         private MemberInfo  member;
         private ICollection arguments;

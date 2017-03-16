@@ -9,7 +9,6 @@ namespace System.ComponentModel {
     using System.Collections;
     using System.ComponentModel.Design;
     using System.Diagnostics;
-    using System.Security.Permissions;
 
     /// <devdoc>
     ///    <para>Provides
