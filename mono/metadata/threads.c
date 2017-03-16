@@ -91,6 +91,11 @@ extern int tkill (pid_t tid, int signal);
 #define LOCK_THREAD(thread) lock_thread((thread))
 #define UNLOCK_THREAD(thread) unlock_thread((thread))
 
+#define THREAD_ATTACH_INTERNAL 0
+#define THREAD_ATTACH_EXTERNAL 1
+#define THREAD_ATTACH_EXTERNAL_REF_MASK (~((gsize) 1))
+#define THREAD_ATTACH_EXTERNAL_REF_1 2
+
 typedef union {
 	gint32 ival;
 	gfloat fval;
@@ -1070,7 +1075,7 @@ mono_thread_attach (MonoDomain *domain)
 }
 
 MonoThread *
-mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
+mono_thread_attach_full (MonoDomain *domain, gboolean external)
 {
 	MonoInternalThread *internal;
 	MonoThread *thread;
@@ -1078,7 +1083,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	MonoNativeThreadId tid;
 	gsize stack_ptr;
 
-	if (mono_thread_internal_current_is_attached ()) {
+	if ((internal = mono_thread_internal_current ())) {
 		if (domain != mono_domain_get ())
 			mono_domain_set (domain, TRUE);
 		/* Already attached */
@@ -1091,10 +1096,11 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	tid=mono_native_thread_id_get ();
 
 	internal = create_internal_thread_object ();
+	internal->attach = external ? THREAD_ATTACH_EXTERNAL : THREAD_ATTACH_INTERNAL;
 
 	thread = create_thread_object (domain, internal);
 
-	if (!mono_thread_attach_internal (thread, force_attach, TRUE)) {
+	if (!mono_thread_attach_internal (thread, FALSE, TRUE)) {
 		/* Mono is shutting down, so just wait for the end */
 		for (;;)
 			mono_thread_info_sleep (10000, NULL);
@@ -3160,14 +3166,19 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 	if (mono_gc_is_finalizer_internal_thread (thread))
 		return FALSE;
 
-	if (!(thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)) {
-		wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
-		wait->threads[wait->num] = thread;
-		wait->num++;
-
-		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
-		mono_thread_internal_abort (thread);
+	if ((thread->attach & ~THREAD_ATTACH_EXTERNAL_REF_MASK) == THREAD_ATTACH_EXTERNAL
+		 && (thread->attach & THREAD_ATTACH_EXTERNAL_REF_MASK) == 0) {
+		return TRUE;
 	}
+	if (thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)
+		return TRUE;
+
+	wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
+	wait->threads[wait->num] = thread;
+	wait->num++;
+
+	THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
+	mono_thread_internal_abort (thread);
 
 	return TRUE;
 }
@@ -5089,7 +5100,8 @@ gpointer
 mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 {
 	MonoDomain *orig;
-	gboolean fresh_thread = FALSE;
+	MonoInternalThread *internal;
+	gboolean fresh_thread;
 
 	if (!domain) {
 		/* Happens when called from AOTed code which is only used in the root domain. */
@@ -5102,16 +5114,33 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 	 * If we try to reattach we do a BLOCKING->RUNNING transition.  If the thread
 	 * is fresh, mono_thread_attach() will do a STARTING->RUNNING transition so
 	 * we're only responsible for making the cookie. */
-	if (mono_threads_is_coop_enabled ()) {
-		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
-		fresh_thread = !info || !mono_thread_info_is_live (info);
-	}
 
-	if (!mono_thread_internal_current ()) {
-		mono_thread_attach_full (domain, FALSE);
+	if (!(internal = mono_thread_internal_current ())) {
+		fresh_thread = TRUE;
+
+		mono_thread_attach_full (domain, TRUE);
 
 		// #678164
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
+	} else {
+		fresh_thread = FALSE;
+
+		if (internal->attach != THREAD_ATTACH_INTERNAL) {
+			mono_threads_lock ();
+
+			if (shutting_down) {
+				mono_threads_unlock ();
+
+				/* Mono is shutting down, so just wait for the end */
+				for (;;) {
+					mono_thread_info_sleep (10000, NULL);
+				}
+			}
+
+			internal->attach += THREAD_ATTACH_EXTERNAL_REF_1;
+
+			mono_threads_unlock ();
+		}
 	}
 
 	orig = mono_domain_get ();
@@ -5148,6 +5177,17 @@ void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 {
 	MonoDomain *domain, *orig;
+	MonoInternalThread *internal;
+
+	internal = mono_thread_internal_current ();
+
+	if (internal->attach != THREAD_ATTACH_INTERNAL) {
+		mono_threads_lock ();
+		internal->attach -= THREAD_ATTACH_EXTERNAL_REF_1;
+		g_assert ((internal->attach & THREAD_ATTACH_EXTERNAL_REF_MASK) >= 0);
+		// FIXME notify attach_change_event, an equivalent to background_change_event but for attach/detach
+		mono_threads_unlock ();
+	}
 
 	if (!mono_threads_is_coop_enabled ()) {
 		orig = (MonoDomain*) cookie;
