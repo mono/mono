@@ -1259,33 +1259,13 @@ namespace System.Diagnostics {
 			if (process_handle == IntPtr.Zero)
 				throw new InvalidOperationException ("No process is associated with this object.");
 
-
-			DateTime start = DateTime.UtcNow;
-			if (async_output != null && !async_output.IsCompleted) {
-				if (false == async_output.WaitHandle.WaitOne (ms, false))
-					return false; // Timed out
-
-				if (ms >= 0) {
-					DateTime now = DateTime.UtcNow;
-					ms -= (int) (now - start).TotalMilliseconds;
-					if (ms <= 0)
-						return false;
-					start = now;
-				}
-			}
-
-			if (async_error != null && !async_error.IsCompleted) {
-				if (false == async_error.WaitHandle.WaitOne (ms, false))
-					return false; // Timed out
-
-				if (ms >= 0) {
-					ms -= (int) (DateTime.UtcNow - start).TotalMilliseconds;
-					if (ms <= 0)
-						return false;
-				}
-			}
-
 			bool exited = WaitForExit_internal (process_handle, ms);
+
+			if (async_output != null && ms == -1)
+				async_output.WaitUtilEOF ();
+
+			if (async_error != null && ms == -1)
+				async_error.WaitUtilEOF ();
 
 			if (exited)
 				OnExited ();
@@ -1347,169 +1327,9 @@ namespace System.Diagnostics {
 			AsyncError = 1 << 3
 		}
 
-		[StructLayout (LayoutKind.Sequential)]
-		sealed class ProcessAsyncReader : IThreadPoolWorkItem
-		{
-			/*
-			   The following fields match those of SocketAsyncResult.
-			   This is so that changes needed in the runtime to handle
-			   asynchronous reads are trivial
-			   Keep this in sync with SocketAsyncResult in 
-			   ./System.Net.Sockets/Socket.cs and MonoSocketAsyncResult
-			   in metadata/socket-io.h.
-			*/
-			/* DON'T shuffle fields around. DON'T remove fields */
-			public object Sock;
-			public IntPtr handle;
-			public object state;
-			public AsyncCallback callback;
-			public ManualResetEvent wait_handle;
-
-			public Exception delayedException;
-
-			public object EndPoint;
-			byte [] buffer = new byte [4196];
-			public int Offset;
-			public int Size;
-			public int SockFlags;
-
-			public object AcceptSocket;
-			public object[] Addresses;
-			public int port;
-			public object Buffers;          // Reserve this slot in older profiles
-			public bool ReuseSocket;        // Disconnect
-			public object acc_socket;
-			public int total;
-			public bool completed_sync;
-			bool completed;
-			bool err_out; // true -> stdout, false -> stderr
-			internal int error;
-			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
-			public AsyncResult async_result;
-			public int EndCalled;
-
-			// These fields are not in SocketAsyncResult
-			Process process;
-			Stream stream;
-			StringBuilder sb = new StringBuilder ();
-			public AsyncReadHandler ReadHandler;
-
-			public ProcessAsyncReader (Process process, IntPtr handle, bool err_out)
-			{
-				this.process = process;
-				this.handle = handle;
-				stream = new FileStream (handle, FileAccess.Read, false);
-				this.ReadHandler = new AsyncReadHandler (AddInput);
-				this.err_out = err_out;
-			}
-
-			public void AddInput ()
-			{
-				lock (this) {
-					int nread = stream.Read (buffer, 0, buffer.Length);
-					if (nread == 0) {
-						completed = true;
-						if (wait_handle != null)
-							wait_handle.Set ();
-						FlushLast ();
-						return;
-					}
-
-					try {
-						sb.Append (Encoding.Default.GetString (buffer, 0, nread));
-					} catch {
-						// Just in case the encoding fails...
-						for (int i = 0; i < nread; i++) {
-							sb.Append ((char) buffer [i]);
-						}
-					}
-
-					Flush (false);
-					ReadHandler.BeginInvoke (null, this);
-				}
-			}
-
-			void FlushLast ()
-			{
-				Flush (true);
-				if (err_out) {
-					process.OnOutputDataReceived (null);
-				} else {
-					process.OnErrorDataReceived (null);
-				}
-			}
-			
-			void Flush (bool last)
-			{
-				if (sb.Length == 0 ||
-				    (err_out && process.output_canceled) ||
-				    (!err_out && process.error_canceled))
-					return;
-
-				string total = sb.ToString ();
-				sb.Length = 0;
-				string [] strs = total.Split ('\n');
-				int len = strs.Length;
-				if (len == 0)
-					return;
-
-				for (int i = 0; i < len - 1; i++) {
-					if (err_out)
-						process.OnOutputDataReceived (strs [i]);
-					else
-						process.OnErrorDataReceived (strs [i]);
-				}
-
-				string end = strs [len - 1];
-				if (last || (len == 1 && end == "")) {
-					if (err_out) {
-						process.OnOutputDataReceived (end);
-					} else {
-						process.OnErrorDataReceived (end);
-					}
-				} else {
-					sb.Append (end);
-				}
-			}
-
-			public bool IsCompleted {
-				get { return completed; }
-			}
-
-			public WaitHandle WaitHandle {
-				get {
-					lock (this) {
-						if (wait_handle == null)
-							wait_handle = new ManualResetEvent (completed);
-						return wait_handle;
-					}
-				}
-			}
-
-			public void Close () {
-				RemoveFromIOThreadPool (handle);
-				stream.Close ();
-			}
-
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			extern static void RemoveFromIOThreadPool (IntPtr handle);
-
-			void IThreadPoolWorkItem.ExecuteWorkItem()
-			{
-				async_result.Invoke ();
-			}
-
-			void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
-			{
-			}
-		}
-
 		AsyncModes async_mode;
-		bool output_canceled;
-		bool error_canceled;
-		ProcessAsyncReader async_output;
-		ProcessAsyncReader async_error;
-		delegate void AsyncReadHandler ();
+		AsyncStreamReader async_output;
+		AsyncStreamReader async_error;
 
 		[ComVisibleAttribute(false)] 
 		public void BeginOutputReadLine ()
@@ -1521,10 +1341,22 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 			async_mode |= AsyncModes.AsyncOutput;
-			output_canceled = false;
-			if (async_output == null) {
-				async_output = new ProcessAsyncReader (this, stdout_rd, true);
-				async_output.ReadHandler.BeginInvoke (null, async_output);
+
+			if (async_output == null)
+				async_output = new AsyncStreamReader (this, output_stream.BaseStream, new UserCallBack(this.OutputReadNotifyUser), output_stream.CurrentEncoding);
+
+			async_output.BeginReadLine ();
+		}
+
+		void OutputReadNotifyUser (String data)
+		{
+			// To avoid ---- between remove handler and raising the event
+			DataReceivedEventHandler outputDataReceived = OutputDataReceived;
+			if (outputDataReceived != null) {
+				if (SynchronizingObject != null && SynchronizingObject.InvokeRequired)
+					SynchronizingObject.Invoke (outputDataReceived, new object[] { this, new DataReceivedEventArgs (data) });
+				else
+					outputDataReceived (this, new DataReceivedEventArgs (data)); // Call back to user informing data is available.
 			}
 		}
 
@@ -1540,7 +1372,9 @@ namespace System.Diagnostics {
 			if (async_output == null)
 				throw new InvalidOperationException ("No async operation in progress.");
 
-			output_canceled = true;
+			async_output.CancelOperation ();
+
+			async_mode &= ~AsyncModes.AsyncOutput;
 		}
 
 		[ComVisibleAttribute(false)] 
@@ -1553,10 +1387,22 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 			async_mode |= AsyncModes.AsyncError;
-			error_canceled = false;
-			if (async_error == null) {
-				async_error = new ProcessAsyncReader (this, stderr_rd, false);
-				async_error.ReadHandler.BeginInvoke (null, async_error);
+
+			if (async_error == null)
+				async_error = new AsyncStreamReader (this, error_stream.BaseStream, new UserCallBack(this.ErrorReadNotifyUser), error_stream.CurrentEncoding);
+
+			async_error.BeginReadLine ();
+		}
+
+		void ErrorReadNotifyUser (String data)
+		{
+			// To avoid ---- between remove handler and raising the event
+			DataReceivedEventHandler errorDataReceived = ErrorDataReceived;
+			if (errorDataReceived != null) {
+				if (SynchronizingObject != null && SynchronizingObject.InvokeRequired)
+					SynchronizingObject.Invoke (errorDataReceived, new object[] { this, new DataReceivedEventArgs (data) });
+				else
+					errorDataReceived (this, new DataReceivedEventArgs (data)); // Call back to user informing data is available.
 			}
 		}
 
@@ -1572,7 +1418,9 @@ namespace System.Diagnostics {
 			if (async_error == null)
 				throw new InvalidOperationException ("No async operation in progress.");
 
-			error_canceled = true;
+			async_error.CancelOperation ();
+
+			async_mode &= ~AsyncModes.AsyncError;
 		}
 
 		[Category ("Behavior")]
