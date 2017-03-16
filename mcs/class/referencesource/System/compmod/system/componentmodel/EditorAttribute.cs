@@ -10,8 +10,7 @@ namespace System.ComponentModel {
     
     using System.Diagnostics;
     using System.Globalization;
-    using System.Security.Permissions;
-                                
+
     /// <devdoc>
     ///    <para>Specifies the editor to use to change a property. This class cannot be inherited.</para>
     /// </devdoc>

@@ -10,15 +10,19 @@ namespace System.ComponentModel.Design.Serialization {
     using System.Collections;
     using System.Diagnostics;
     using System.Reflection;
+#if MONO_FEATURE_CAS 
     using System.Security.Permissions;
+#endif
 
     /// <devdoc>
     ///     EventArgs for the ResolveNameEventHandler.  This event is used
     ///     by the serialization process to match a name to an object
     ///     instance.
     /// </devdoc>
-    [HostProtection(SharedState = true)]
+#if MONO_FEATURE_CAS 
+    [HostProtection(SharedState = true)]		
     [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name = "FullTrust")]
+#endif
     public sealed class InstanceDescriptor {
         private MemberInfo  member;
         private ICollection arguments;

@@ -30,12 +30,9 @@
 //
 
 using System.ComponentModel;
-using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
-	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class PaintValueEventArgs : EventArgs
 	{
 		private ITypeDescriptorContext context;

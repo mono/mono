@@ -46,7 +46,6 @@ namespace System.Drawing
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
-	[SuppressUnmanagedCodeSecurity]
 	internal static class GDIPlus {
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;

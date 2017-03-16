@@ -40,7 +40,6 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -228,14 +227,12 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHbitmap ()
 		{
 			return GetHbitmap(Color.Gray);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHbitmap (Color background)
 		{
 			IntPtr HandleBmp;
@@ -247,7 +244,6 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHicon ()
 		{
 			IntPtr HandleIcon;
