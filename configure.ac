@@ -29,18 +29,6 @@ AC_PROG_LN_S
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-# sanity check so we don't forget updating corlib version in appdomain.c when Mono version is bumped now that they're related
-MONO_CORLIB_VER=`sed -n "s/\#define MONO_CORLIB_VERSION //p" $srcdir/mono/metadata/appdomain.c`
-MONO_CORLIB_VER_MAJOR=`echo $MONO_CORLIB_VER | cut -c 2,3 | sed 's/^0//'`
-MONO_CORLIB_VER_MINOR=`echo $MONO_CORLIB_VER | cut -c 4,5 | sed 's/^0//'`
-MONO_CORLIB_VER_BUILD=`echo $MONO_CORLIB_VER | cut -c 6,7 | sed 's/^0//'`
-MONO_CORLIB_VER_STRING=$MONO_CORLIB_VER_MAJOR.$MONO_CORLIB_VER_MINOR.$MONO_CORLIB_VER_BUILD
-
-if test "$VERSION" != "$MONO_CORLIB_VER_STRING"; then
-	echo "Error: corlib version in appdomain.c doesn't match Mono version specified in configure.ac ($MONO_CORLIB_VER_STRING vs. $VERSION). Please update corlib version in appdomain.c"
-	exit 1
-fi
-
 case $host_os in
 *cygwin* )
 		 echo "Run configure using ./configure --host=i686-pc-mingw32"
