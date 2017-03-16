@@ -425,6 +425,11 @@ $(build_files:%=lib/build/%):
 
 dist-monolite: $(monolite_files) lib/$(monolite_dir)/mcs.exe
 
+package-monolite-latest:
+	MONOLITE=monolite-$(MONO_CORLIB_VERSION)-latest; \
+	$(MAKE) dist-monolite monolite_dir=$$MONOLITE; \
+	tar zcvpf $$MONOLITE.tar.gz --directory=lib $$MONOLITE/
+
 dist-default: dist-monolite
 
 dist-local: dist-default
