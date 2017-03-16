@@ -37,6 +37,7 @@
 
 using System.IO;
 using System.Drawing.Imaging;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -133,7 +134,7 @@ namespace System.Drawing
 			if (resource == null)
 				throw new ArgumentException ("resource");
 
-			Stream s = type.Assembly.GetManifestResourceStream (type, resource);
+			Stream s = type.GetTypeInfo ().Assembly.GetManifestResourceStream (type, resource);
 			if (s == null) {
 				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 				throw new FileNotFoundException (msg);

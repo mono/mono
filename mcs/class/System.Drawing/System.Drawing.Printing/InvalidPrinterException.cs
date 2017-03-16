@@ -58,7 +58,7 @@ namespace System.Drawing.Printing {
 
 			base.GetObjectData (info, context);
 		}
-		
+
 		private static string GetMessage(PrinterSettings settings)
 		{
 			if (settings.PrinterName == null || settings.PrinterName == String.Empty)
