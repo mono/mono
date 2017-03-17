@@ -311,88 +311,47 @@ namespace MonoTests.System {
 		}
 	
 		[Test]
-		public void Check_InvalidOperationException() {
+		public void Check_NoInvalidOperationException ()
+		{
+			Array arr = new object[] {new SomeComparable (), new SomeIncomparable (), new SomeComparable ()};
+	
+			Array.Sort (arr);
+			
+			Array.Sort (arr, (Array)null);
+			
+			Array.Sort (arr, (IComparer)null);
+			
+			Array.Sort (arr, 0, 3);
+			
+			Array.Sort (arr, null, null);
+			
+			Array.Sort (arr, null, 0, 3);
+			
+			Array.Sort (arr, 0, 3, null);
+			
+			Array.Sort (arr, null, 0, 3, null);
+		}
+
+		[Test]
+		public void Check_NoInvalidOperationException_Generic ()
+		{
 			object[] arr = new object[] {new SomeComparable (), new SomeIncomparable (), new SomeComparable ()};
-	
-			try {
-				Array.Sort (arr);
-				Assert.Fail ("#1");
-			} catch (InvalidOperationException) {}
+
+			Array.Sort<object> (arr);
 			
-			try {
-				Array.Sort (arr, (Array)null);
-				Assert.Fail ("#2");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object, object> (arr, null);
 			
-			try {
-				Array.Sort (arr, (IComparer)null);
-				Assert.Fail ("#3");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object> (arr, (IComparer<object>)null);
 			
-			try {
-				Array.Sort (arr, 0, 3);
-				Assert.Fail ("#4");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object, object> (arr, null, null);
 			
-			try {
-				Array.Sort (arr, null, null);
-				Assert.Fail ("#5");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object> (arr, 0, 3);
 			
-			try {
-				Array.Sort (arr, null, 0, 3);
-				Assert.Fail ("#6");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object, object> (arr, null, 0, 3);
 			
-			try {
-				Array.Sort (arr, 0, 3, null);
-				Assert.Fail ("#7");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object> (arr, 0, 3, null);
 			
-			try {
-				Array.Sort (arr, null, 0, 3, null);
-				Assert.Fail ("#8");
-			} catch (InvalidOperationException) {}
-	
-			try {
-				Array.Sort<object> (arr);
-				Assert.Fail ("#9");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object, object> (arr, null);
-				Assert.Fail ("#10");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object> (arr, (IComparer<object>)null);
-				Assert.Fail ("#11");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object, object> (arr, null, null);
-				Assert.Fail ("#12");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object> (arr, 0, 3);
-				Assert.Fail ("#13");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object, object> (arr, null, 0, 3);
-				Assert.Fail ("#14");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object> (arr, 0, 3, null);
-				Assert.Fail ("#15");
-			} catch (InvalidOperationException) {}
-			
-			try {
-				Array.Sort<object, object> (arr, null, 0, 3, null);
-				Assert.Fail ("#16");
-			} catch (InvalidOperationException) {}
+			Array.Sort<object, object> (arr, null, 0, 3, null);
 		}
 	}		
 }
