@@ -1637,7 +1637,10 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
+coreclr/SorterArray.cs
+
 corert/AddrofIntrinsics.cs
+corert/Array.Portable.cs
 corert/Debug.cs
 corert/Interop.cs
 corert/Interop.MemAllocFree.cs
@@ -1667,6 +1670,8 @@ corert/Interop.MemAllocFree.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Win32Marshal.cs
 

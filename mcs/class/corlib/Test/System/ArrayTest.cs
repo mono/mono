@@ -1003,7 +1003,6 @@ public class ArrayTest
 		int[] myBoundArray = new int[1] { Int32.MinValue };
 		Array myExtremeArray=Array.CreateInstance ( typeof(String), myLengthArray, myBoundArray );
 		Assert.AreEqual (Int32.MaxValue, ((IList)myExtremeArray).IndexOf (42), "AD04");
-
 	}
 
 	[Test]
