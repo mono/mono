@@ -231,6 +231,10 @@ namespace System.Drawing
 			if (resource == null)
 				throw new ArgumentException ("resource");
 
+			// For compatibility with the .NET Framework
+			if (type == null)
+				throw new NullReferenceException();
+
 			using (Stream s = type.GetTypeInfo ().Assembly.GetManifestResourceStream (type, resource)) {
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
