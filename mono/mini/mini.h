@@ -1138,7 +1138,6 @@ typedef struct {
 typedef struct {
 	gpointer          end_of_stack;
 	guint32           stack_size;
-	/* !defined(HAVE_KW_THREAD) || !defined(MONO_ARCH_ENABLE_MONO_LMF_VAR) */
 	MonoLMF          *lmf;
 	MonoLMF          *first_lmf;
 	gpointer         restore_stack_prot;
@@ -1711,7 +1710,6 @@ typedef struct {
 	 * Whenever to use the mono_lmf TLS variable instead of indirection through the
 	 * mono_lmf_addr TLS variable.
 	 */
-	guint            lmf_ir_mono_lmf : 1;
 	guint            gen_write_barriers : 1;
 	guint            init_ref_vars : 1;
 	guint            extend_live_ranges : 1;
@@ -2632,6 +2630,7 @@ void              mono_emit_unwind_op (MonoCompile *cfg, int when,
 									   int val);
 MonoTrampInfo*    mono_tramp_info_create (const char *name, guint8 *code, guint32 code_size, MonoJumpInfo *ji, GSList *unwind_ops);
 void              mono_tramp_info_free (MonoTrampInfo *info);
+void              mono_aot_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain);
 void              mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain);
 int               mini_exception_id_by_name (const char *name);
 gboolean          mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize) MONO_LLVM_INTERNAL;

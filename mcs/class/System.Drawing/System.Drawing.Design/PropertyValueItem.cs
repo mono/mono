@@ -32,12 +32,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security.Permissions;
-
 namespace System.Drawing.Design
 {
-	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class PropertyValueUIItem
 	{
 

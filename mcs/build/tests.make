@@ -20,8 +20,18 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ifndef NO_TEST
 
 test_nunit_lib = nunitlite.dll
+xunit_core := xunit.core xunit.abstractions xunit.assert
+xunit_deps := System.Runtime
+xunit_class_deps := Xunit.NetCore.Extensions
+
+xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
+xunit_libs_ref += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/Facades/%.dll,$(xunit_deps))
+
+xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%.dll)
+xunit_libs_ref += $(xunit_libs_dep:%=-r:%)
 
 TEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(TEST_LIB_REFS))
+XTEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(XTEST_LIB_REFS))
 
 test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
@@ -34,6 +44,7 @@ test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
 endif
 
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
+
 test_sourcefile_excludes = $(test_lib).exclude.sources
 
 test_pdb = $(test_lib:.dll=.pdb)
@@ -42,11 +53,25 @@ test_makefrag = $(depsdir)/$(test_lib).makefrag
 test_flags = -r:$(the_assembly) $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
 tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.pdb) $(test_response) $(test_makefrag)
 
+xtest_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+
+ifeq ($(wildcard $(xtest_sourcefile)),)
+xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+endif
+
+xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
+
+xtest_response = $(depsdir)/$(xtest_lib).response
+xtest_makefrag = $(depsdir)/$(xtest_lib).makefrag
+xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS)
+
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif
 
 HAVE_SOURCE_EXCLUDES := $(wildcard $(test_sourcefile_excludes))
+
+HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile))
 
 endif # !NO_TEST
 
@@ -61,6 +86,10 @@ endif
 	echo "stamp" >$@
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
+
+$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)Xunit.NetCore.Extensions.dll:
+	$(MAKE) -C $(topdir)/class/Xunit.NetCore.Extensions
+
 endif
 
 test_assemblies :=
@@ -158,5 +187,53 @@ $(test_makefrag): $(test_response)
 -include $(test_makefrag)
 
 endif
+
+
+ifdef HAVE_CS_XTESTS
+
+XTEST_HARNESS_PATH = $(topdir)/../external/xunit-binaries
+XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
+XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
+XTEST_TRAIT := -notrait category=failing -notrait category=nonnetcoreapptests -notrait Benchmark=true -notrait category=outerloop
+
+ifdef FIXTURE
+XTEST_HARNESS_FLAGS += -class $(FIXTURE)
+endif
+
+ifdef TESTNAME
+XTEST_HARNESS_FLAGS += -method $(TESTNAME)
+endif
+
+check: run-xunit-test-local
+run-xunit-test: run-xunit-test-local
+xunit-test-local: $(xunit_test_lib)
+run-xunit-test-local: run-xunit-test-lib
+
+# ln -s is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
+run-xunit-test-lib: xunit-test-local
+	@ln -fs $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
+	ok=:; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
+	$$ok
+	@rm -f xunit.execution.desktop.dll
+
+$(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response)
+
+xtest_response_preprocessed = $(xtest_response)_preprocessed
+
+# This handles .excludes/.sources pairs, as well as resolving the
+# includes that occur in .sources files
+$(xtest_response): $(xtest_sourcefile)
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(xtest_sourcefile)' '$(xtest_sourcefile_excludes)'
+
+$(xtest_makefrag): $(xtest_response)
+	@echo Creating $@ ...
+	@sed 's,^,$(xunit_test_lib): ,' $< >$@
+
+-include $(xtest_makefrag)
+
+endif
+
 
 .PHONY: patch-nunitlite-appconfig

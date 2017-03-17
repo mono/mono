@@ -9,14 +9,18 @@ namespace System.ComponentModel {
     using System.Collections;
     using System.ComponentModel.Design;
     using System.Diagnostics;
+#if MONO_FEATURE_CAS
     using System.Security.Permissions;
+#endif
 
     /// <devdoc>
     ///    <para>Provides
     ///       a type converter to convert expandable objects to and from various
     ///       other representations.</para>
     /// </devdoc>
+#if MONO_FEATURE_CAS
     [HostProtection(SharedState = true)]
+#endif
     public class ExpandableObjectConverter : TypeConverter {
     
         /// <devdoc>

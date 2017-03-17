@@ -1180,9 +1180,6 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cfg->method->save_lmf) {
 		cfg->create_lmf_var = TRUE;
 		cfg->lmf_ir = TRUE;
-#ifndef HOST_WIN32
-		cfg->lmf_ir_mono_lmf = TRUE;
-#endif
 	}
 
 	cfg->arch_eh_jit_info = 1;
@@ -5262,24 +5259,18 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		/* check if we need to restore protection of the stack after a stack overflow */
 		if (!cfg->compile_aot && mono_arch_have_fast_tls () && mono_tls_get_tls_offset (TLS_KEY_JIT_TLS) != -1) {
 			code = mono_x86_emit_tls_get (code, X86_ECX, mono_tls_get_tls_offset (TLS_KEY_JIT_TLS));
-		} else {
-			gpointer func = mono_tls_get_tls_getter (TLS_KEY_JIT_TLS, TRUE);
-			/* FIXME use tls only from IR level */
-			x86_xchg_reg_reg (code, X86_EAX, X86_ECX, 4);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, func);
-			x86_xchg_reg_reg (code, X86_EAX, X86_ECX, 4);
-		}
 
-		/* we load the value in a separate instruction: this mechanism may be
-		 * used later as a safer way to do thread interruption
-		 */
-		x86_mov_reg_membase (code, X86_ECX, X86_ECX, MONO_STRUCT_OFFSET (MonoJitTlsData, restore_stack_prot), 4);
-		x86_alu_reg_imm (code, X86_CMP, X86_ECX, 0);
-		patch = code;
-		x86_branch8 (code, X86_CC_Z, 0, FALSE);
-		/* note that the call trampoline will preserve eax/edx */
-		x86_call_reg (code, X86_ECX);
-		x86_patch (patch, code);
+			/* we load the value in a separate instruction: this mechanism may be
+			 * used later as a safer way to do thread interruption
+			 */
+			x86_mov_reg_membase (code, X86_ECX, X86_ECX, MONO_STRUCT_OFFSET (MonoJitTlsData, restore_stack_prot), 4);
+			x86_alu_reg_imm (code, X86_CMP, X86_ECX, 0);
+			patch = code;
+			x86_branch8 (code, X86_CC_Z, 0, FALSE);
+			/* note that the call trampoline will preserve eax/edx */
+			x86_call_reg (code, X86_ECX);
+			x86_patch (patch, code);
+		}
 
 		/* restore caller saved regs */
 		if (cfg->used_int_regs & (1 << X86_EBX)) {

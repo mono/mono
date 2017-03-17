@@ -33,7 +33,6 @@
 
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.ComponentModel;
 
 namespace System.Drawing
@@ -591,7 +590,6 @@ namespace System.Drawing
 			}
 		}
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont)
 		{
 			if (GDIPlus.RunningOnUnix ()) {
@@ -616,7 +614,6 @@ namespace System.Drawing
 			}
 		}
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
 			if (graphics == null)
