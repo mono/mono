@@ -325,7 +325,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#A:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#A:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#A:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#A:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#A:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#A:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#A:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#A:BaseColumnName_IsNull");
@@ -413,7 +413,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#C:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#C:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#C:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#C:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#C:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#C:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#C:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#C:BaseColumnName_IsNull");
@@ -504,7 +504,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#E:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#E:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#E:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#E:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#E:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#E:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#E:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#E:BaseColumnName_IsNull");
@@ -592,7 +592,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#G:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#G:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#G:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#G:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#G:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#G:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#G:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#G:BaseColumnName_IsNull");
@@ -685,7 +685,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#I:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#I:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#I:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#I:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#I:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#I:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#I:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#I:BaseColumnName_IsNull");
@@ -773,7 +773,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#K:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#K:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#K:BaseCatalogName_IsNull");
-				Assert.AreEqual ("monotest", pkRow ["BaseCatalogName"], "#K:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#K:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#K:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#K:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#K:BaseColumnName_IsNull");
@@ -1053,37 +1053,36 @@ namespace MonoTests.System.Data.Connected.Odbc
 		[Test]
 		public void Bug419224Test () 
 		{
-			cmd = new OdbcCommand ("DROP TABLE IF EXISTS bug419224test");
+			cmd = new OdbcCommand ("DROP TABLE IF EXISTS odbc_test");
 			cmd.Connection = conn;
 			cmd.ExecuteNonQuery ();
 
-			cmd = new OdbcCommand ("CREATE TABLE bug419224test (id_test INTEGER NOT NULL, payload TINYBLOB NOT NULL)");
+			cmd = new OdbcCommand ("CREATE TABLE odbc_test (id_test INTEGER NOT NULL, payload TINYBLOB NOT NULL)");
 			cmd.Connection = conn;
 			cmd.ExecuteNonQuery ();
 
-			cmd = new OdbcCommand ("INSERT INTO odbc_test (id_test, payload) VALUES (1, 'test for bug419224)");
+			cmd = new OdbcCommand ("INSERT INTO odbc_test (id_test, payload) VALUES (1, 'test for bug419224')");
 			cmd.Connection = conn;
 			cmd.ExecuteNonQuery ();
 
-			OdbcDataAdapter Adaptador = new OdbcDataAdapter ();
+			OdbcDataAdapter adaptador = new OdbcDataAdapter ();
+			DataSet lector = new DataSet ();
 
-			DataSet Lector = new DataSet ();
+			adaptador.SelectCommand = new OdbcCommand ("SELECT * FROM odbc_test WHERE id_test=1", (OdbcConnection) conn);
+			adaptador.Fill (lector);
+			var payload = (byte[])lector.Tables[0].Rows[0]["payload"];
+			Assert.AreEqual ("test for bug419224", Encoding.UTF8.GetString(payload));
 
-			Adaptador.SelectCommand = new OdbcCommand ("SELECT * FROM odbc_test WHERE id_test=1", (OdbcConnection) conn);
-			Adaptador.Fill (Lector);
-			Assert.AreEqual (Lector.Tables[0].Rows[0]["payload"], 1.2346);
+			OdbcDataReader newRdr = cmd.ExecuteReader();
 
+			// tinyblob column index:
+			int TinyblobIdx = 1;
 
-  			OdbcDataReader NewRdr = cmd.ExecuteReader();
+			bool read = newRdr.Read();
 
-  			// tinyblob column index:
-  			int TinyblobIdx = 1;
-
-  			bool read = NewRdr.Read();
-
-  			if (read)
-  			{
-    				bool ret = NewRdr.IsDBNull(TinyblobIdx); 
+			if (read)
+			{
+					bool ret = newRdr.IsDBNull(TinyblobIdx); 
 				Assert.AreEqual (ret, false);
 			}
 		}

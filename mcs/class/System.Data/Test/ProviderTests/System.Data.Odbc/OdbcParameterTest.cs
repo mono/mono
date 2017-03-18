@@ -1131,11 +1131,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#B2");
 				Assert.AreEqual (2, dr.GetValue (0), "#B2");
 				Assert.AreEqual (typeof (bool), dr.GetFieldType (1), "#B3");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					// MySQL does not support true BIT type
-					Assert.AreEqual (true, dr.GetValue (1), "#B4");
-				else
-					Assert.AreEqual (false, dr.GetValue (1), "#B4");
+				Assert.AreEqual (false, dr.GetValue (1), "#B4");
 				Assert.IsFalse (dr.Read (), "#B5");
 				dr.Close ();
 				cmd.Dispose ();
@@ -1197,11 +1193,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#E2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#E3");
 				Assert.AreEqual (typeof (bool), dr.GetFieldType (1), "#E4");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					// MySQL does not support true BIT type
-					Assert.AreEqual (true, dr.GetValue (1), "#E5");
-				else
-					Assert.AreEqual (false, dr.GetValue (1), "#E5");
+				Assert.AreEqual (false, dr.GetValue (1), "#E5");
 				Assert.IsFalse (dr.Read (), "#E6");
 				dr.Close ();
 				cmd.Dispose ();
@@ -1678,16 +1670,11 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#M2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#M3");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (1), "#M4");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					Assert.AreEqual (0m, dr.GetValue (1), "#M5");
-				else
-					Assert.AreEqual (DBNull.Value, dr.GetValue (1), "#M5");
+				Assert.AreEqual (DBNull.Value, dr.GetValue (1), "#M5");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (2), "#M6");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					Assert.AreEqual (0m, dr.GetValue (1), "#M7");
-				else
-					Assert.AreEqual (DBNull.Value, dr.GetValue (2), "#M7");
-				Assert.IsFalse (dr.Read (), "#M8");
+				Assert.AreEqual (DBNull.Value, dr.GetValue(1), "#M7");
+				Assert.AreEqual (DBNull.Value, dr.GetValue (2), "#M8");
+				Assert.IsFalse (dr.Read (), "#M9");
 				dr.Close ();
 				cmd.Dispose ();
 			} finally {
@@ -2676,8 +2663,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string insert_data = "insert into numeric_family (id, type_numeric1, type_numeric2) values (6000, ?, ?)";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			IDbConnection conn = ConnectionManager.Singleton.OpenConnection();
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2908,15 +2894,10 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#M2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#M3");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (1), "#M4");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					Assert.AreEqual (0m, dr.GetValue (1), "#M5");
-				else
-					Assert.AreEqual (DBNull.Value, dr.GetValue (1), "#M5");
+				Assert.AreEqual (DBNull.Value, dr.GetValue (1), "#M5");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (2), "#M6");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
-					Assert.AreEqual (0m, dr.GetValue (1), "#M7");
-				else
-					Assert.AreEqual (DBNull.Value, dr.GetValue (2), "#M7");
+				Assert.AreEqual (DBNull.Value, dr.GetValue(1), "#M7");
+				Assert.AreEqual (DBNull.Value, dr.GetValue (2), "#M7");
 				Assert.IsFalse (dr.Read (), "#M8");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3532,8 +3513,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_float from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			IDbConnection conn = ConnectionManager.Singleton.OpenConnection();
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3550,7 +3530,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#D2");
 				Assert.AreEqual (1, dr.GetValue (0), "#D3");
 				Assert.AreEqual (typeof (float), dr.GetFieldType (1), "#D4");
-				Assert.AreEqual (3.40E+38, dr.GetValue (1), "#D5");
+				Assert.AreEqual (3.39999995E+38f, dr.GetValue (1), "#D5");
 				Assert.IsFalse (dr.Read (), "#D6");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3567,7 +3547,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#A2");
 				Assert.AreEqual (1, dr.GetValue (0), "#A2");
 				Assert.AreEqual (typeof (float), dr.GetFieldType (1), "#A3");
-				Assert.AreEqual (3.40E+38, dr.GetValue (1), "#A4");
+				Assert.AreEqual (3.40E+38f, (float)dr.GetValue (1), 0.0000001f, "#A4");
 				Assert.IsFalse (dr.Read (), "#A5");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3583,7 +3563,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#B2");
 				Assert.AreEqual (2, dr.GetValue (0), "#B2");
 				Assert.AreEqual (typeof (float), dr.GetFieldType (1), "#B3");
-				Assert.AreEqual (-3.40E+38, dr.GetValue (1), "#B4");
+				Assert.AreEqual(-3.40E+38f, (float)dr.GetValue(1), 0.0000001f, "#B4");
 				Assert.IsFalse (dr.Read (), "#B5");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3634,7 +3614,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#E2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#E3");
 				Assert.AreEqual (typeof (float), dr.GetFieldType (1), "#E4");
-				Assert.AreEqual (3.40E+38, dr.GetValue (1), "#E5");
+				Assert.AreEqual(3.40E+38f, (float)dr.GetValue(1), 0.0000001f, "#E4");
 				Assert.IsFalse (dr.Read (), "#E6");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3657,7 +3637,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#F2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#F3");
 				Assert.AreEqual (typeof (float), dr.GetFieldType (1), "#F4");
-				Assert.AreEqual (-3.40E+38, dr.GetValue (1), "#F5");
+				Assert.AreEqual (-3.40E+38f, (float)dr.GetValue(1), 0.0000001f, "#F4");
 				Assert.IsFalse (dr.Read (), "#F6");
 				dr.Close ();
 				cmd.Dispose ();
@@ -3835,16 +3815,15 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_datetime from datetime_family where id = ?";
 			string delete_data = "delete from datetime_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			var conn = ConnectionManager.Singleton.OpenConnection<OdbcConnection>();
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
 			OdbcParameter param;
 
 			try {
-				DateTime date = DateTime.ParseExact ("9999-12-31 23:59:59.997",
-					"yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+				DateTime date = DateTime.ParseExact ("9999-12-31 23:59:59",
+					"yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
 				cmd = conn.CreateCommand ();
 				cmd.CommandText = select_data;
@@ -3879,7 +3858,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr.Close ();
 				cmd.Dispose ();
 
-				date = new DateTime (1973, 8, 13, 17, 54, 33, 953);
+				date = new DateTime (1973, 8, 13, 17, 54, 34);
 
 				cmd = conn.CreateCommand ();
 				cmd.CommandText = insert_data;
@@ -3899,10 +3878,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#C2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#C3");
 				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (1), "#C4");
-				if (ConnectionManager.Singleton.Engine.SupportsMicroseconds)
-					Assert.AreEqual (date, dr.GetValue (1), "#C5");
-				else
-					Assert.AreEqual (new DateTime (1973, 8, 13, 17, 54, 33), dr.GetValue (1), "#C5");
+				Assert.AreEqual (new DateTime (1973, 8, 13, 17, 54, 34), dr.GetValue (1), "#C5");
 				Assert.IsFalse (dr.Read (), "#C6");
 				dr.Close ();
 				cmd.Dispose ();

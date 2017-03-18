@@ -84,12 +84,18 @@ namespace MonoTests.System.Data.Connected
 
 		internal EngineConfig Engine { get; }
 
-		public void OpenConnection ()
+		public DbConnection OpenConnection ()
 		{
 			if (!(Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken))
 				Connection.Close ();
 			Connection.ConnectionString = ConnectionString;
 			Connection.Open ();
+			return Connection;
+		}
+
+		public TDbConnection OpenConnection<TDbConnection>() where TDbConnection : DbConnection
+		{
+			return (TDbConnection) OpenConnection();
 		}
 
 		public void CloseConnection ()
