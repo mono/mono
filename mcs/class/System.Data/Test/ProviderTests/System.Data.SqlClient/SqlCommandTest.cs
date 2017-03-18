@@ -1120,53 +1120,33 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Transaction = trans;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#A1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare();
 
 			// Text, with parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Transaction = trans;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#B1");
-			} catch (NullReferenceException) {
-			}
+			Assert.Throws<InvalidOperationException>(() => cmd.Prepare());
 
 			// Text, parameters cleared
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters.Clear ();
 			cmd.Transaction = trans;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#C1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare();
 
 			// StoredProcedure, without parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Transaction = trans;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#D1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare();
 
 			// StoredProcedure, with parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Transaction = trans;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#E1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare();
 		}
 
 		[Test] // bug #412576
@@ -2492,7 +2472,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		{
 			cmd = new SqlCommand ();
 			string connectionString1 = null;
-			connectionString1 = ConnectionManager.Singleton.ConnectionString + "Asynchronous Processing=true";
+			connectionString1 = ConnectionManager.Singleton.ConnectionString + ";Asynchronous Processing=true";
 			try {
 				SqlConnection conn1 = new SqlConnection (connectionString1);
 				conn1.Open ();
@@ -2511,6 +2491,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test]
+		[Ignore("MS .NET doesn't throw IOE here. TODO: check corefx")]
 		public void BeginExecuteXmlReaderExceptionTest ()
 		{
 			cmd = new SqlCommand ();
@@ -2688,7 +2669,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				cmd.CommandText = create_sp;
 				cmd.ExecuteNonQuery ();
 				
-				cmd.CommandText = "monotest.dbo.sp_bug584833";
+				cmd.CommandText = "dbo.sp_bug584833";
 				cmd.CommandType = CommandType.StoredProcedure;
 				
 				SqlCommandBuilder.DeriveParameters (cmd);

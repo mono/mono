@@ -185,8 +185,8 @@ namespace MonoTests.System.Data.Connected.SqlClient
 
 			rdr = selectCmd.ExecuteReader ();
 			Assert.IsTrue (rdr.Read (), "#C1");
-			Assert.AreEqual (20, rdr.GetValue (0), "#C2");
-			Assert.AreEqual (longstring.Substring (0, 20), rdr.GetValue (1), "#C3");
+			Assert.AreEqual (14, rdr.GetValue (0), "#C2");
+			Assert.AreEqual (longstring.Substring (0, 14), rdr.GetValue (1), "#C3");
 			rdr.Close ();
 		}
 

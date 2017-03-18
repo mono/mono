@@ -132,7 +132,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual (false, builder.TrustServerCertificate, "#1 The default value should be false");
 			builder.TrustServerCertificate = true;
 			Assert.AreEqual (true, builder.TrustServerCertificate, "#2 The value returned should be true after setting the value of TrustServerCertificate to true");
-			Assert.AreEqual ("Trust Server Certificate=True", builder.ConnectionString, "#3 The value of the key TrustServerCertificate should be added to the connection string");
+			Assert.AreEqual ("TrustServerCertificate=True", builder.ConnectionString, "#3 The value of the key TrustServerCertificate should be added to the connection string");
 		}
 		
 		[Test]
@@ -142,7 +142,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("Latest", builder.TypeSystemVersion, "#1 The default value for the property should be Latest");
 			builder.TypeSystemVersion = "SQL Server 2005";
 			Assert.AreEqual ("SQL Server 2005", builder.TypeSystemVersion, "#2 The value for the property should be SQL Server 2005 after setting this value");
-			Assert.AreEqual ("Type System Version=SQL Server 2005", builder.ConnectionString, "#3 The value of the key Type System Version should be added to the connection string");
+			Assert.AreEqual ("Type System Version=\"SQL Server 2005\"", builder.ConnectionString, "#3 The value of the key Type System Version should be added to the connection string");
 		}
 
 		[Test]

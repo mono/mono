@@ -1013,10 +1013,10 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Ignore("TODO: Set SSPI Connection String")]
 		public void CreateViewSSPITest ()
 		{
-			SqlConnection conn = new SqlConnection (ConfigurationSettings.AppSettings ["SSPIConnString"]);
-			conn.Open ();
+			SqlConnection conn = ConnectionManager.Singleton.OpenConnection<SqlConnection>();
 
 			string sql = "create view MONO_TEST_VIEW as select * from Numeric_family";
 

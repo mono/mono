@@ -1179,11 +1179,11 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			len  = (int)reader.GetChars (0,0,null,0,0);
 			arr = new char [10];
 			for (int i = 0; i < len; ++i) {
-				Assert.AreEqual (len - i, reader.GetChars (0, i, null, 0, 0), "#9_" + i);
+				Assert.AreEqual (len, reader.GetChars (0, i, null, 0, 0), "#9_" + i);
 				Assert.AreEqual (1, reader.GetChars (0, i, arr, 0, 1), "#10_" + i);
 				Assert.AreEqual (charstring [i], arr [0], "#11_" + i);
 			}
-			Assert.AreEqual (0, reader.GetChars (0, len + 10, null, 0, 0));
+			Assert.AreEqual (10, reader.GetChars (0, len + 10, null, 0, 0));
 
 			reader.Close ();
 		}
@@ -1609,9 +1609,9 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.IsTrue (rdr.Read (), "#D2");
 				Assert.IsTrue (rdr.HasRows, "#D3");
 				Assert.IsFalse (rdr.NextResult (), "#D4");
-				Assert.IsFalse (rdr.HasRows, "#D5");
+				Assert.IsTrue (rdr.HasRows, "#D5");
 				Assert.IsFalse (rdr.Read (), "#D6");
-				Assert.IsFalse (rdr.HasRows, "#D7");
+				Assert.IsTrue(rdr.HasRows, "#D7");
 			}
 
 			cmd.CommandText = "SELECT id FROM employee WHERE id = 666; SELECT 3";
@@ -1620,9 +1620,9 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.IsFalse (rdr.Read (), "#E2");
 				Assert.IsFalse (rdr.HasRows, "#E3");
 				Assert.IsFalse (rdr.NextResult (), "#E4");
-				Assert.IsFalse (rdr.HasRows, "#E5");
+				Assert.IsTrue (rdr.HasRows, "#E5");
 				Assert.IsFalse (rdr.Read (), "#E6");
-				Assert.IsFalse (rdr.HasRows, "#E7");
+				Assert.IsTrue (rdr.HasRows, "#E7");
 			}
 
 			cmd.CommandText = "SELECT id FROM employee WHERE id = 1; SELECT 3";

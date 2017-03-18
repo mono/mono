@@ -261,9 +261,8 @@ namespace MonoTests.System.Data.Connected
 				try {
 					rdr.GetChars (-1, 0, (char []) null, 0, 0);
 					Assert.Fail ("#A1");
-				} catch (InvalidOperationException ex) {
+				} catch (IndexOutOfRangeException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
 					Assert.IsNull (ex.InnerException, "#A3");
 					Assert.IsNotNull (ex.Message, "#A4");
 				}
@@ -273,9 +272,8 @@ namespace MonoTests.System.Data.Connected
 				try {
 					rdr.GetChars (-1, 0, (char []) null, 0, 0);
 					Assert.Fail ("#C1");
-				} catch (InvalidOperationException ex) {
+				} catch (IndexOutOfRangeException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
 					Assert.IsNull (ex.InnerException, "#C3");
 					Assert.IsNotNull (ex.Message, "#C4");
 				}
@@ -2598,9 +2596,8 @@ namespace MonoTests.System.Data.Connected
 				try {
 					rdr.GetValues ((object []) null);
 					Assert.Fail ("#1");
-				} catch (InvalidOperationException ex) {
+				} catch (ArgumentNullException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
 				}
@@ -2617,9 +2614,8 @@ namespace MonoTests.System.Data.Connected
 				try {
 					rdr.GetValues ((object []) null);
 					Assert.Fail ("#A1");
-				} catch (InvalidOperationException ex) {
+				} catch (ArgumentNullException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
 					Assert.IsNull (ex.InnerException, "#A3");
 					Assert.IsNotNull (ex.Message, "#A4");
 				}
@@ -2629,9 +2625,8 @@ namespace MonoTests.System.Data.Connected
 				try {
 					rdr.GetValues ((object []) null);
 					Assert.Fail ("#C1");
-				} catch (InvalidOperationException ex) {
+				} catch (ArgumentNullException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
 					Assert.IsNull (ex.InnerException, "#C3");
 					Assert.IsNotNull (ex.Message, "#C4");
 				}

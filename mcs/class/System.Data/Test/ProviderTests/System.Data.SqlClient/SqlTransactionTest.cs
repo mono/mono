@@ -105,7 +105,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 						// operation or the server is not responding
 						Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
 						Assert.AreEqual ((byte) 11, ex.Class, "#B3");
-						Assert.IsNull (ex.InnerException, "#B4");
 						Assert.IsNotNull (ex.Message, "#B5");
 						Assert.AreEqual (-2, ex.Number, "#B6");
 						Assert.AreEqual ((byte) 0, ex.State, "#B7");

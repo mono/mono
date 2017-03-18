@@ -146,7 +146,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.AreEqual ((byte) 14, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'invalidLogin'") != -1, "#6");
 				Assert.AreEqual (18456, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
@@ -165,11 +164,10 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				// Cannot open database "invalidDB" requested
 				// by the login. The login failed
 				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
-				Assert.AreEqual ((byte) 11, ex.Class, "#3");
+				Assert.AreEqual ((byte) 14, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("invalidDB") != -1, "#6: " + ex.Message);
-				Assert.AreEqual (4060, ex.Number, "#7");
+				Assert.AreEqual (18456, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
 				conn.Close ();
@@ -225,8 +223,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[Test] // bug #383061
 		public void Open_MaxPoolSize_Reached ()
 		{
-			connectionString += "Pooling=true;Connection Lifetime=6;"
-				+ "Connect Timeout=3;Max Pool Size=2";
+			connectionString += ";Pooling=true;Connection Lifetime=6;Connect Timeout=3;Max Pool Size=2";
 
 			SqlConnection conn1 = new SqlConnection (connectionString);
 			conn1.Open ();
