@@ -855,10 +855,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.IsFalse (param.IsNullable, "#D:IsNullable");
 				Assert.AreEqual ("@param1", param.ParameterName, "#D:ParameterName");
 				Assert.AreEqual (5, param.Precision, "#D:Precision");
-				if (ClientVersion == 7)
-					Assert.AreEqual (2, param.Scale, "#D:Scale");
-				else
-					Assert.AreEqual (3, param.Scale, "#D:Scale");
+				Assert.AreEqual (2, param.Scale, "#D:Scale");
 				//Assert.AreEqual (0, param.Size, "#D:Size");
 				Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#D:SqlDbType");
 				Assert.IsNull (param.Value, "#D:Value");
@@ -1110,11 +1107,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
 
-			if (ClientVersion > 7)
-			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
-			else
-				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
-
+			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
@@ -1215,10 +1208,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
 
-			if (ClientVersion > 7)
-			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
-			else
-				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
@@ -1296,10 +1286,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
 
-			if (ClientVersion > 7)
-				Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
-			else
-				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
@@ -1370,10 +1357,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			else
 				Assert.AreEqual ("@p4", param.ParameterName, prefix + "ParameterName (3)");
 
-			if (ClientVersion > 7)
-				Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
-			else
-				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (3)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (3)");
