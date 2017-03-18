@@ -720,9 +720,9 @@ System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509Certificate20.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImpl.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplMono.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509Helper.cs
-System.Security.Cryptography.X509Certificates/X509ContentType.cs
-System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs

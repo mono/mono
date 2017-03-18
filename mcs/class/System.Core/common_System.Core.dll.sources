@@ -88,6 +88,8 @@ System.Security.Cryptography/SHA256CryptoServiceProvider.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
+../referencesource/System.Core/System/Security/Cryptography/X509Certificates/TrustStatus.cs
+
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/HashSet.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/HashSetEqualityComparer.cs
