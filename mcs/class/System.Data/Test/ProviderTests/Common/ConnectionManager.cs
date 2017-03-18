@@ -42,11 +42,12 @@ namespace MonoTests.System.Data.Connected
 	public class ConnectionManager
 	{
 		private static ConnectionManager instance;
+		private string databaseName;
 
 		private ConnectionManager ()
 		{
-			//string envVariable = @"sqlserver-tds|server=EGORBO\SQLEXPRESS;database=monotest;user id=sa;password=qwerty123";
-			//string envVariable = @"mysql-odbc|Driver={MySQL ODBC 5.2 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;database=monotest;";
+			//string envVariable = @"sqlserver-tds|server=EGORBO\SQLEXPRESS;database=master;user id=sa;password=qwerty123";
+			//string envVariable = @"mysql-odbc|Driver={MySQL ODBC 5.2 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;";
 			string envVariable = Environment.GetEnvironmentVariable ("SYSTEM_DATA_CONNECTIONSTRING") ?? string.Empty;
 
 			var envParts = envVariable.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
@@ -75,9 +76,11 @@ namespace MonoTests.System.Data.Connected
 
 		public static ConnectionManager Singleton => instance ?? (instance = new ConnectionManager());
 
-		public DbConnection Connection { get; }
+		public string DatabaseName { get; set; }
 
-		public string ConnectionString { get; }
+		public string ConnectionString { get; set; }
+
+		public DbConnection Connection { get; }
 
 		internal EngineConfig Engine { get; }
 
@@ -103,6 +106,9 @@ namespace MonoTests.System.Data.Connected
 
 			if (provder == ProviderType.Odbc && 
 				Singleton.Connection is OdbcConnection)
+				return;
+
+			if (provder == ProviderType.Any && Singleton.Connection != null)
 				return;
 
 			Assert.Ignore($"Connection string is not provided for {provder}");
