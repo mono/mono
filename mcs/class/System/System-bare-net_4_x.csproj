@@ -857,6 +857,7 @@
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
     <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
+    <Compile Include="MonoTouch\Dummy.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
