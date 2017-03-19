@@ -112,6 +112,7 @@ public class Tests
 	}
 
 	public static int test_0_unload () {
+		Console.WriteLine ("running test_0_unload");
 		for (int i = 0; i < 10; ++i) {
 			AppDomain appDomain = AppDomain.CreateDomain("Test-unload" + i);
 
@@ -125,6 +126,7 @@ public class Tests
 	}
 
 	public static int test_0_unload_default () {
+		Console.WriteLine ("running test_0_unload_default");
 		try {
 			AppDomain.Unload (Thread.GetDomain ());
 		}
@@ -135,6 +137,7 @@ public class Tests
 	}
 
 	public static int test_0_unload_after_unload () {
+		Console.WriteLine ("running test_0_unload_after_unload");
 		AppDomain domain = AppDomain.CreateDomain ("Test2");
 		AppDomain.Unload (domain);
 
@@ -149,6 +152,7 @@ public class Tests
 	}
 
 	public static int test_0_is_finalizing () {
+		Console.WriteLine ("running test_0_is_finalizing");
 		AppDomain domain = AppDomain.CreateDomain ("Test-is-finalizing");
 		object o = domain.CreateInstanceFromAndUnwrap (typeof (Tests).Assembly.Location, "Foo");
 
@@ -161,6 +165,7 @@ public class Tests
 	}
 
 	public static int test_0_unload_with_active_threads () {
+		Console.WriteLine ("running test_0_unload_with_active_threads");
 		AppDomain domain = AppDomain.CreateDomain ("Test3");
 		object o = domain.CreateInstanceFromAndUnwrap (typeof (Tests).Assembly.Location, "AThread");
 		Thread.Sleep (100);
@@ -201,6 +206,7 @@ public class Tests
 	}
 
 	public static int test_0_unload_with_threadpool () {
+		Console.WriteLine ("running test_0_unload_with_threadpool");
 		AppDomain domain = AppDomain.CreateDomain ("test_0_unload_with_threadpool");
 
 		domain.DoCallBack (new CrossAppDomainDelegate (invoke_workers));
@@ -239,6 +245,7 @@ public class Tests
 	}		
 
 	public static int test_0_unload_inside_appdomain_sync () {
+		Console.WriteLine ("running test_0_unload_inside_appdomain_sync");
 		AppDomain domain = AppDomain.CreateDomain ("Test3");
 
 		try {
@@ -253,6 +260,7 @@ public class Tests
 	}
 
 	public static int test_0_invoke_after_unload () {
+		Console.WriteLine ("running test_0_invoke_after_unload");
 		AppDomain domain = AppDomain.CreateDomain ("DeadInvokeTest");
 		Bar bar = (Bar)domain.CreateInstanceAndUnwrap (typeof (Tests).Assembly.FullName, "Bar");
 		int x;
