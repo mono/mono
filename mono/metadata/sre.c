@@ -78,6 +78,9 @@ static MonoType* mono_type_array_get_and_resolve_raw (MonoArray* array, int idx,
 
 static gboolean mono_image_module_basic_init (MonoReflectionModuleBuilderHandle module, MonoError *error);
 
+static gboolean
+add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, MonoFieldDefaultValue *def_values, MonoError *error);
+
 void
 mono_reflection_emit_init (void)
 {
@@ -3304,14 +3307,11 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 {
-	MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)mono_class_get_ref_info_raw (klass); /* FIXME use handles */
-	MonoReflectionFieldBuilder *fb;
-	MonoClassField *field;
-	MonoFieldDefaultValue *def_values;
+	HANDLE_FUNCTION_ENTER ();
+	error_init (error);
+	MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_NEW (MonoReflectionTypeBuilder, mono_class_get_ref_info_raw (klass));
 	MonoImage *image = klass->image;
-	const char *p, *p2;
-	int i, instance_size, packing_size = 0;
-	guint32 len, idx;
+	int instance_size, packing_size = 0;
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
@@ -3321,18 +3321,19 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		instance_size = sizeof (MonoObject);
 	}
 
-	int fcount = tb->num_fields;
+	gint32 fcount = MONO_HANDLE_GETVAL (tb, num_fields);
 	mono_class_set_field_count (klass, fcount);
 
-	error_init (error);
+	MonoReflectionModuleBuilderHandle mb = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, tb, module);
 
-	if (tb->class_size) {
-		packing_size = tb->packing_size;
-		instance_size += tb->class_size;
+	gint32 class_size = MONO_HANDLE_GETVAL (tb, class_size);
+	if (class_size) {
+		packing_size = MONO_HANDLE_GETVAL (tb, packing_size);
+		instance_size += class_size;
 	}
 	
 	klass->fields = image_g_new0 (image, MonoClassField, fcount);
-	def_values = image_g_new0 (image, MonoFieldDefaultValue, fcount);
+	MonoFieldDefaultValue *def_values = image_g_new0 (image, MonoFieldDefaultValue, fcount);
 	mono_class_set_field_def_values (klass, def_values);
 	/*
 	This is, guess what, a hack.
@@ -3343,50 +3344,78 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	*/
 	klass->size_inited = 1;
 
-	for (i = 0; i < fcount; ++i) {
-		MonoArray *rva_data;
-		fb = (MonoReflectionFieldBuilder *)mono_array_get (tb->fields, gpointer, i);
-		field = &klass->fields [i];
-		field->parent = klass;
-		field->name = string_to_utf8_image_raw (image, fb->name, error); /* FIXME use handles */
-		if (!mono_error_ok (error))
-			return;
-		if (fb->attrs) {
-			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
-			return_if_nok (error);
-			field->type = mono_metadata_type_dup (klass->image, type);
-			field->type->attrs = fb->attrs;
-		} else {
-			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
-			return_if_nok (error);
-		}
-
-		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
-			char *base = mono_array_addr (rva_data, char, 0);
-			size_t size = mono_array_length (rva_data);
-			char *data = (char *)mono_image_alloc (klass->image, size);
-			memcpy (data, base, size);
-			def_values [i].data = data;
-		}
-		if (fb->offset != -1)
-			field->offset = fb->offset;
-		fb->handle = field;
-		mono_save_custom_attrs (klass->image, field, fb->cattrs);
-
-		if (fb->def_value) {
-			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
-			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
-			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &def_values [i].def_type);
-			/* Copy the data from the blob since it might get realloc-ed */
-			p = assembly->blob.data + idx;
-			len = mono_metadata_decode_blob_size (p, &p2);
-			len += p2 - p;
-			def_values [i].data = (const char *)mono_image_alloc (image, len);
-			memcpy ((gpointer)def_values [i].data, p, len);
-		}
+	MonoArrayHandle tb_fields = MONO_HANDLE_NEW_GET (MonoArray, tb, fields);
+	for (int i = 0; i < fcount; ++i) {
+		if (!add_field_from_fieldbuilder_array (image, mb, tb_fields, i, klass, def_values, error))
+			goto leave;
 	}
 
 	mono_class_layout_fields (klass, instance_size, packing_size, TRUE);
+leave:
+	HANDLE_FUNCTION_RETURN  ();
+}
+
+static gboolean
+add_field_from_fieldbuilder_array (MonoImage *image, MonoReflectionModuleBuilderHandle mb, MonoArrayHandle tb_fields, int i, MonoClass *klass, MonoFieldDefaultValue *def_values, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	error_init (error);
+	MonoReflectionFieldBuilderHandle fb = MONO_HANDLE_NEW (MonoReflectionFieldBuilder, NULL);
+	MONO_HANDLE_ARRAY_GETREF (fb, tb_fields, i);
+	MonoClassField *field = &klass->fields [i];
+	field->parent = klass;
+	MonoStringHandle fb_name = MONO_HANDLE_NEW_GET (MonoString, fb, name);
+	field->name = string_to_utf8_image_raw (image, MONO_HANDLE_RAW (fb_name), error); /* FIXME use handles */
+	if (!is_ok (error))
+		goto leave;
+	guint32 fb_attrs = MONO_HANDLE_GETVAL (fb, attrs);
+	if (fb_attrs) {
+		MonoReflectionTypeHandle ref_type = MONO_HANDLE_NEW_GET (MonoReflectionType, fb, type);
+		MonoType *type = mono_reflection_type_handle_mono_type (ref_type, error);
+		if (!is_ok (error))
+			goto leave;
+		field->type = mono_metadata_type_dup (klass->image, type);
+		field->type->attrs = fb_attrs;
+	} else {
+		MonoReflectionTypeHandle ref_type = MONO_HANDLE_NEW_GET (MonoReflectionType, fb, type);
+		field->type = mono_reflection_type_handle_mono_type (ref_type, error);
+		if (!is_ok (error))
+			goto leave;
+	}
+
+	MonoArrayHandle rva_data = MONO_HANDLE_NEW_GET (MonoArray, fb, rva_data);
+	if ((fb_attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && !MONO_HANDLE_IS_NULL (rva_data)) {
+		uint32_t gchandle;
+		char *base = MONO_ARRAY_HANDLE_PIN (rva_data, char, 0, &gchandle);
+		size_t size = mono_array_handle_length (rva_data);
+		char *data = (char *)mono_image_alloc (klass->image, size);
+		memcpy (data, base, size);
+		mono_gchandle_free (gchandle);
+		def_values [i].data = data;
+	}
+	gint32 fb_offset = MONO_HANDLE_GETVAL (fb, offset);
+	if (fb_offset != -1)
+		field->offset = fb_offset;
+	MONO_HANDLE_SETVAL (fb, handle, MonoClassField*, field);
+	MonoArrayHandle fb_cattrs = MONO_HANDLE_NEW_GET (MonoArray, fb, cattrs); 
+	mono_save_custom_attrs (klass->image, field, MONO_HANDLE_RAW (fb_cattrs)); /* FIXME use handles*/
+
+	MonoObjectHandle fb_def_value = MONO_HANDLE_NEW_GET (MonoObject, fb, def_value);
+	if (!MONO_HANDLE_IS_NULL (fb_def_value)) {
+		MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
+		field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
+		guint32 idx = mono_dynimage_encode_constant (assembly, MONO_HANDLE_RAW (fb_def_value), &def_values [i].def_type); /* FIXME use handles */
+		/* Copy the data from the blob since it might get realloc-ed */
+		const char *p = assembly->blob.data + idx;
+		const char *p2;
+		guint32 len = mono_metadata_decode_blob_size (p, &p2);
+		len += p2 - p;
+		def_values [i].data = (const char *)mono_image_alloc (image, len);
+		memcpy ((gpointer)def_values [i].data, p, len);
+	}
+
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
 static void
