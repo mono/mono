@@ -37,7 +37,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.IsTrue (entry.HostName == "google-public-dns-a.google.com");
+			Assert.AreEqual ("google-public-dns-a.google.com", entry.HostName, "#1");
 		}
 
 		[Test]
