@@ -456,6 +456,9 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetTempPath(out string path);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool RemapPath (string path, out string newPath);
 	}
 }
 

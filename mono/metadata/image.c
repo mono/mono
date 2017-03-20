@@ -948,6 +948,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	MonoImage *image;
 	MonoFileMap *filed;
 
+	gboolean remapped = mono_file_remap_path(&fname);
+
 	if ((filed = mono_file_map_open (fname)) == NULL){
 		if (IS_PORTABILITY_SET) {
 			gchar *ffname = mono_portability_find_file (fname, TRUE);
@@ -960,6 +962,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		if (filed == NULL) {
 			if (status)
 				*status = MONO_IMAGE_ERROR_ERRNO;
+			if (remapped)
+				g_free((void*)fname);
 			return NULL;
 		}
 	}
@@ -973,6 +977,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		g_free (image);
 		if (status)
 			*status = MONO_IMAGE_IMAGE_INVALID;
+		if (remapped)
+			g_free((void*)fname);
 		return NULL;
 	}
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
@@ -982,6 +988,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->ref_count = 1;
 	
 	mono_file_map_close (filed);
+	if (remapped)
+		g_free((void*)fname);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 

@@ -239,6 +239,11 @@ ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *
 					MonoString *destinationBackupFileName, MonoBoolean ignoreMetadataErrors,
 					gint32 *error) MONO_INTERNAL;
 
+extern MonoBoolean
+ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path) MONO_INTERNAL;
+
+gboolean mono_file_remap_path(const char** path) MONO_INTERNAL;
+
 G_END_DECLS
 
 #endif /* _MONO_METADATA_FILEIO_H_ */
