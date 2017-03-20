@@ -696,8 +696,6 @@ interp_walk_stack_with_ctx (MonoInternalStackWalk func, MonoContext *ctx, MonoUn
 			return;
 		frame = frame->parent;
 	}
-
-	g_assert (0);
 }
 
 static MonoPIFunc mono_interp_enter_icall_trampoline = NULL;
@@ -939,6 +937,15 @@ ves_runtime_method (MonoInvocation *frame, ThreadContext *context)
 	MonoError error;
 
 	mono_class_init (method->klass);
+
+	if (method->klass == mono_defaults.array_class) {
+		if (!strcmp (method->name, "UnsafeMov")) {
+			/* TODO: layout checks */
+			MonoType *mt = mono_method_signature (method)->ret;
+			stackval_from_data (mt, frame->retval, (char *) frame->stack_args, FALSE);
+			return;
+		}
+	}
 
 	isinst_obj = mono_object_isinst_checked (obj, mono_defaults.array_class, &error);
 	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
@@ -1274,13 +1281,32 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 		break;
 	case MONO_TYPE_VALUETYPE:
 		retval = mono_object_new_checked (context->domain, klass, error);
-		ret = ((char*)retval) + sizeof (MonoObject);
+		ret = mono_object_unbox (retval);
 		if (!sig->ret->data.klass->enumtype)
 			result.data.vt = ret;
+		else
+			result.data.vt = alloca (mono_class_instance_size (klass));
+		break;
+	case MONO_TYPE_GENERICINST:
+		if (!MONO_TYPE_IS_REFERENCE (sig->ret)) {
+			retval = mono_object_new_checked (context->domain, klass, error);
+			ret = mono_object_unbox (retval);
+			if (!sig->ret->data.klass->enumtype)
+				result.data.vt = ret;
+			else
+				result.data.vt = alloca (mono_class_instance_size (klass));
+		} else {
+			isobject = 1;
+		}
+		break;
+
+	case MONO_TYPE_PTR:
+		retval = mono_object_new_checked (context->domain, mono_defaults.int_class, error);
+		ret = mono_object_unbox (retval);
 		break;
 	default:
 		retval = mono_object_new_checked (context->domain, klass, error);
-		ret = ((char*)retval) + sizeof (MonoObject);
+		ret = mono_object_unbox (retval);
 		break;
 	}
 
@@ -1331,6 +1357,7 @@ handle_enum:
 			}
 			break;
 		case MONO_TYPE_STRING:
+		case MONO_TYPE_PTR:
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_ARRAY:
 		case MONO_TYPE_SZARRAY:
@@ -1595,23 +1622,13 @@ static int opcode_counts[512];
 #define MINT_IN_DEFAULT default:
 #endif
 
-/* 
- * Defining this causes register allocation errors in some versions of gcc:
- * error: unable to find a register to spill in class `SIREG'
- */
-/* #define MINT_USE_DEDICATED_IP_REG */
-
 static void 
 ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context)
 {
 	MonoInvocation child_frame;
 	GSList *finally_ips = NULL;
 	const unsigned short *endfinally_ip = NULL;
-#if defined(__GNUC__) && defined (i386) && defined (MINT_USE_DEDICATED_IP_REG)
-	register const unsigned short *ip asm ("%esi");
-#else
-	register const unsigned short *ip;
-#endif
+	const unsigned short *ip = NULL;
 	register stackval *sp;
 	RuntimeMethod *rtm;
 #if DEBUG_INTERP
@@ -4079,8 +4096,9 @@ array_constructed:
 		}
 die_on_ex:
 		ex_obj = (MonoObject*)frame->ex;
-		mono_unhandled_exception (ex_obj);
-		exit (1);
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+		jit_tls->abort_func (ex_obj);
+		g_assert_not_reached ();
 	}
 	handle_finally:
 	{

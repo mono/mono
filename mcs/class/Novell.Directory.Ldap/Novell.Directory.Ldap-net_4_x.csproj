@@ -49,7 +49,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs.in" />
+    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Novell.Directory.Ldap.Asn1\Asn1Boolean.cs" />
     <Compile Include="Novell.Directory.Ldap.Asn1\Asn1Choice.cs" />
     <Compile Include="Novell.Directory.Ldap.Asn1\Asn1Decoder.cs" />

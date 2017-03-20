@@ -973,7 +973,6 @@ INTERP_DISABLED_TESTS = \
 	delegate-delegate-exit.exe \
 	delegate-exit.exe \
 	delegate-with-null-target.exe \
-	delegate.exe \
 	delegate1.exe \
 	delegate3.exe \
 	delegate5.exe \
@@ -984,7 +983,6 @@ INTERP_DISABLED_TESTS = \
 	dynamic-method-finalize.2.exe \
 	dynamic-method-resurrection.exe \
 	dynamic-method-stack-traces.exe \
-	enum.exe \
 	even-odd.exe \
 	exception18.exe \
 	field-access.exe \
@@ -1003,11 +1001,9 @@ INTERP_DISABLED_TESTS = \
 	invalid-token.exe \
 	invalid_generic_instantiation.exe \
 	invoke-string-ctors.exe \
-	invoke.exe \
 	ldfld_missing_class.exe \
 	ldfld_missing_field.exe \
 	ldftn-access.exe \
-	loader.exe \
 	marshal-valuetypes.exe \
 	marshal.exe \
 	marshal2.exe \
@@ -1043,11 +1039,9 @@ INTERP_DISABLED_TESTS = \
 	remoting3.exe \
 	remoting4.exe \
 	remoting5.exe \
-	runtime-invoke.exe \
 	runtime-invoke.gen.exe \
 	safehandle.2.exe \
 	shared-generic-synchronized.2.exe \
-	sleep.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
 	test-inline-call-stack.exe \
