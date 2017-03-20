@@ -23,6 +23,13 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class ProcessTest
 	{
+		static bool RunningOnUnix {
+			get {
+				int p = (int)Environment.OSVersion.Platform;
+				return ((p == 128) || (p == 4) || (p == 6));
+			}
+		}
+
 		[Test]
 		public void GetProcessById_MachineName_Null ()
 		{
