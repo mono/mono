@@ -82,6 +82,7 @@ namespace System.Net.NetworkInformation {
 	{
 		internal abstract class UnixNetworkInterfaceAPI : NetworkInterfaceFactory
 		{
+#if !ORBIS
 			[DllImport("libc")]
 			public static extern int if_nametoindex(string ifname);
 
@@ -90,6 +91,22 @@ namespace System.Net.NetworkInformation {
 
 			[DllImport ("libc")]
 			protected static extern void freeifaddrs (IntPtr ifap);
+#else
+			public static int if_nametoindex(string ifname)
+			{
+				throw new PlatformNotSupportedException ();
+			}
+
+			protected static int getifaddrs (out IntPtr ifap)
+			{
+				throw new PlatformNotSupportedException ();
+			}
+
+			protected static void freeifaddrs (IntPtr ifap)
+			{
+				throw new PlatformNotSupportedException ();
+			}
+#endif
 		}
 
 		class MacOsNetworkInterfaceAPI : UnixNetworkInterfaceAPI

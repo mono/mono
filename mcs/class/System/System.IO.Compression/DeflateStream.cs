@@ -486,6 +486,7 @@ namespace System.IO.Compression
 		const string LIBNAME = "MonoPosixHelper";
 #endif
 
+#if !ORBIS
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
 
@@ -500,6 +501,33 @@ namespace System.IO.Compression
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
+#else
+		static IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		static int CloseZStream (IntPtr stream)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		static int Flush (IntPtr stream)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		static int ReadZStream (IntPtr stream, IntPtr buffer, int length)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		static int WriteZStream (IntPtr stream, IntPtr buffer, int length)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+#endif
+
 	}
 }
 
