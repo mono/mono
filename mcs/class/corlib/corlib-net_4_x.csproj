@@ -57,6 +57,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\OrderablePartitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\Partitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\PartitionerStatic.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
@@ -1426,9 +1428,7 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate20.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImpl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplMono.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509ContentType.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Helper.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="System.Security.Cryptography\CryptoAPITransform.cs" />
     <Compile Include="System.Security.Cryptography\CryptoConfig.common.cs" />
     <Compile Include="System.Security.Cryptography\CryptoConfig.cs" />
