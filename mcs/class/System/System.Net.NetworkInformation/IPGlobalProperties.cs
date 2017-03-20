@@ -42,8 +42,15 @@ namespace System.Net.NetworkInformation {
 		[DllImport ("libc")]
 		static extern int gethostname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
 
+#if !ORBIS
 		[DllImport ("libc")]
 		static extern int getdomainname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
+#else
+		static int getdomainname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+#endif
 
 		public override string DhcpScopeName {
 			get { return String.Empty; }
