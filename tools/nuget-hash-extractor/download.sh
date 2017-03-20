@@ -34,3 +34,5 @@ wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.0.0 
 wget https://www.nuget.org/api/v2/package/System.ValueTuple/4.3.0 -O nugets/system.valuetuple.4.3.0.nupkg
 
 #System.Security.Cryptography.OpenSsl when .net 4.6.2 + 1 is out
+
+touch .download_stamp_file
