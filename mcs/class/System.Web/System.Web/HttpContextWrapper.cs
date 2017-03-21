@@ -166,14 +166,14 @@ namespace System.Web
 			return HttpContext.GetGlobalResourceObject (classKey, resourceKey, culture);
 		}
 
-		public override object GetLocalResourceObject (string overridePath, string resourceKey)
+		public override object GetLocalResourceObject (string virtualPath, string resourceKey)
 		{
-			return HttpContext.GetLocalResourceObject (overridePath, resourceKey);
+			return HttpContext.GetLocalResourceObject (virtualPath, resourceKey);
 		}
 
-		public override object GetLocalResourceObject (string overridePath, string resourceKey, CultureInfo culture)
+		public override object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
 		{
-			return HttpContext.GetLocalResourceObject (overridePath, resourceKey, culture);
+			return HttpContext.GetLocalResourceObject (virtualPath, resourceKey, culture);
 		}
 
 		public override object GetSection (string sectionName)

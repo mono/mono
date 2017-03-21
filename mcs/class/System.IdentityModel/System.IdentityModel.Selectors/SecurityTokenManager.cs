@@ -41,11 +41,11 @@ namespace System.IdentityModel.Selectors
 
 		public abstract SecurityTokenAuthenticator 
 			CreateSecurityTokenAuthenticator (
-			SecurityTokenRequirement requirement,
-			out SecurityTokenResolver resolver);
+			SecurityTokenRequirement tokenRequirement,
+			out SecurityTokenResolver outOfBandTokenResolver);
 
 		public abstract SecurityTokenProvider 
-			CreateSecurityTokenProvider(SecurityTokenRequirement requirement);
+			CreateSecurityTokenProvider(SecurityTokenRequirement tokenRequirement);
 
 		public abstract SecurityTokenSerializer 
 			CreateSecurityTokenSerializer (SecurityTokenVersion version);

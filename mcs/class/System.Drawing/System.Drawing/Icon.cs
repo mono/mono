@@ -36,9 +36,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -230,7 +230,11 @@ namespace System.Drawing
 			if (resource == null)
 				throw new ArgumentException ("resource");
 
-			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
+			// For compatibility with the .NET Framework
+			if (type == null)
+				throw new NullReferenceException();
+
+			using (Stream s = type.GetTypeInfo ().Assembly.GetManifestResourceStream (type, resource)) {
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 					throw new FileNotFoundException (msg);
@@ -262,7 +266,7 @@ namespace System.Drawing
 
 		internal Icon (string resourceName, bool undisposable)
 		{
-			using (Stream s = typeof (Icon).Assembly.GetManifestResourceStream (resourceName)) {
+			using (Stream s = typeof (Icon).GetTypeInfo ().Assembly.GetManifestResourceStream (resourceName)) {
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resourceName);
 					throw new FileNotFoundException (msg);
@@ -338,7 +342,6 @@ namespace System.Drawing
 		}
 		
 #if !MONOTOUCH
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)
@@ -861,10 +864,10 @@ Console.WriteLine ("\tbih.biClrImportant: {0}", bih.biClrImportant);
 				}
 				
 				imageData [j] = iidata;
-				bihReader.Close();
+				bihReader.Dispose ();
 			}			
 
-			reader.Close();
+			reader.Dispose ();
 		}
 	}
 }

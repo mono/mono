@@ -308,6 +308,7 @@
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECKeyXmlFormat.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\NCryptNative.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\RsaCng.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\X509Certificates\TrustStatus.cs" />
     <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
     <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\ReaderWriterLockSlim.cs" />
     <Compile Include="..\referencesource\System.Core\System\threading\Tasks\TaskExtensions.cs" />

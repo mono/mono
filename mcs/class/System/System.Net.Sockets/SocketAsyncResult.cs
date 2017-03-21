@@ -153,9 +153,8 @@ namespace System.Net.Sockets
 			Socket completedSocket = socket;
 			SocketOperation completedOperation = operation;
 
-			AsyncCallback callback = AsyncCallback;
-			if (callback != null) {
-				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
+			if (this.AsyncCallback != null) {
+				ThreadPool.UnsafeQueueUserWorkItem(state => ((SocketAsyncResult)state).AsyncCallback((SocketAsyncResult)state), this);
 			}
 
 			/* Warning: any field on the current SocketAsyncResult might have changed, as the callback might have

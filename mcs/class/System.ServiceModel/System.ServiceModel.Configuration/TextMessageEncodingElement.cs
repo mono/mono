@@ -124,9 +124,9 @@ namespace System.ServiceModel.Configuration
 		}
 
 
-		public override void ApplyConfiguration (BindingElement element)
+		public override void ApplyConfiguration (BindingElement bindingElement)
 		{
-			var b = (TextMessageEncodingBindingElement) element;
+			var b = (TextMessageEncodingBindingElement) bindingElement;
 			b.MaxReadPoolSize = MaxReadPoolSize;
 			b.MaxWritePoolSize = MaxWritePoolSize;
 			b.MessageVersion = MessageVersion;
@@ -135,9 +135,9 @@ namespace System.ServiceModel.Configuration
 			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
 		}
 
-		public override void CopyFrom (ServiceModelExtensionElement element)
+		public override void CopyFrom (ServiceModelExtensionElement from)
 		{
-			var b = (TextMessageEncodingElement) element;
+			var b = (TextMessageEncodingElement) from;
 			MaxReadPoolSize = b.MaxReadPoolSize;
 			MaxWritePoolSize = b.MaxWritePoolSize;
 			MessageVersion = b.MessageVersion;
@@ -146,9 +146,9 @@ namespace System.ServiceModel.Configuration
 			ReaderQuotas.CopyFrom (b.ReaderQuotas);
 		}
 
-		protected internal override void InitializeFrom (BindingElement element)
+		protected internal override void InitializeFrom (BindingElement bindingElement)
 		{
-			var b = (TextMessageEncodingBindingElement) element;
+			var b = (TextMessageEncodingBindingElement) bindingElement;
 			MaxReadPoolSize = b.MaxReadPoolSize;
 			MaxWritePoolSize = b.MaxWritePoolSize;
 			MessageVersion = b.MessageVersion;

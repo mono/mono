@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-../../build/common/Consts.cs.in
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 System.DirectoryServices/ActiveDirectoryAccessRule.cs
 System.DirectoryServices/ActiveDirectoryAuditRule.cs

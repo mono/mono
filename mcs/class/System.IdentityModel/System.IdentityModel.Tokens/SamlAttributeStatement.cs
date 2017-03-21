@@ -66,7 +66,7 @@ namespace System.IdentityModel.Tokens
 		[MonoTODO]
 		public override void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			throw new NotImplementedException ();
@@ -74,14 +74,14 @@ namespace System.IdentityModel.Tokens
 
 		public override void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer)
+			SecurityTokenSerializer keyInfoSerializer)
 		{
 			if (SamlSubject == null)
 				throw new SecurityTokenException ("Subject is null in the AttributeStatement");
 			writer.WriteStartElement ("saml", "AttributeStatement", SamlConstants.Namespace);
-			SamlSubject.WriteXml (writer, samlSerializer, keyInfoTokenSerializer);
+			SamlSubject.WriteXml (writer, samlSerializer, keyInfoSerializer);
 			foreach (SamlAttribute a in Attributes)
-				a.WriteXml (writer, samlSerializer, keyInfoTokenSerializer);
+				a.WriteXml (writer, samlSerializer, keyInfoSerializer);
 			writer.WriteEndElement ();
 		}
 

@@ -1,4 +1,4 @@
-﻿//
+//
 // InstanceContextIdleCallback.cs
 //
 // Author: Atsushi Enomoto (atsushi@ximian.com)
@@ -28,5 +28,5 @@ using System;
 
 namespace System.ServiceModel.Dispatcher
 {
-	public delegate void InstanceContextIdleCallback (InstanceContext context);
+	public delegate void InstanceContextIdleCallback (InstanceContext instanceContext);
 }

@@ -56,13 +56,13 @@ namespace System.ServiceModel.Web
 		}
 #endif
 
-		public WebChannelFactory(Type serviceType)
-			: base (serviceType)
+		public WebChannelFactory(Type channelType)
+			: base (channelType)
 		{
 		}
 
-		public WebChannelFactory (string configurationName)
-			: base (configurationName)
+		public WebChannelFactory (string endpointConfigurationName)
+			: base (endpointConfigurationName)
 		{
 		}
 

@@ -40,10 +40,10 @@ namespace System.Web.UI
 		Type containerType;
 		BindingDirection direction;
 		
-		public TemplateContainerAttribute (Type containerType, BindingDirection direction)
+		public TemplateContainerAttribute (Type containerType, BindingDirection bindingDirection)
 		{
 			this.containerType = containerType;
-			this.direction = direction;
+			this.direction = bindingDirection;
 		}
 		
 		public BindingDirection BindingDirection {

@@ -31,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.ComponentModel;
 
 namespace System.Drawing
@@ -428,10 +428,7 @@ namespace System.Drawing
 		[Browsable(false)]
 		public bool IsSystemFont {
 			get {
-				if (systemFontName == null)
-					return false;
-
-				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
+				return !string.IsNullOrEmpty (systemFontName);
 			}
 		}
 
@@ -591,7 +588,6 @@ namespace System.Drawing
 			}
 		}
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont)
 		{
 			if (GDIPlus.RunningOnUnix ()) {
@@ -616,7 +612,6 @@ namespace System.Drawing
 			}
 		}
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
 			if (graphics == null)
@@ -627,7 +622,7 @@ namespace System.Drawing
 			}
 
 			Type st = logFont.GetType ();
-			if (!st.IsLayoutSequential)
+			if (!st.GetTypeInfo ().IsLayoutSequential)
 				throw new ArgumentException ("logFont", Locale.GetText ("Layout must be sequential."));
 
 			// note: there is no exception if 'logFont' isn't big enough

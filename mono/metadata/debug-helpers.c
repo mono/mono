@@ -280,8 +280,8 @@ mono_signature_full_name (MonoMethodSignature *sig)
 	return result;
 }
 
-static void
-ginst_get_desc (GString *str, MonoGenericInst *ginst)
+void
+mono_ginst_get_desc (GString *str, MonoGenericInst *ginst)
 {
 	int i;
 
@@ -302,11 +302,11 @@ mono_context_get_desc (MonoGenericContext *context)
 	g_string_append (str, "<");
 
 	if (context->class_inst)
-		ginst_get_desc (str, context->class_inst);
+		mono_ginst_get_desc (str, context->class_inst);
 	if (context->method_inst) {
 		if (context->class_inst)
 			g_string_append (str, "; ");
-		ginst_get_desc (str, context->method_inst);
+		mono_ginst_get_desc (str, context->method_inst);
 	}
 
 	g_string_append (str, ">");
@@ -814,6 +814,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	char wrapper [64];
 	char *klass_desc;
 	char *inst_desc = NULL;
+	MonoError error;
 
 	if (format == MONO_TYPE_NAME_FORMAT_IL)
 		klass_desc = mono_type_full_name (&method->klass->byval_arg);
@@ -826,7 +827,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 			g_string_append (str, "<");
 		else
 			g_string_append (str, "[");
-		ginst_get_desc (str, ((MonoMethodInflated*)method)->context.method_inst);
+		mono_ginst_get_desc (str, ((MonoMethodInflated*)method)->context.method_inst);
 		if (format == MONO_TYPE_NAME_FORMAT_IL)
 			g_string_append_c (str, '>');
 		else
@@ -842,7 +843,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 			g_string_append (str, "<");
 		else
 			g_string_append (str, "[");
-		ginst_get_desc (str, container->context.method_inst);
+		mono_ginst_get_desc (str, container->context.method_inst);
 		if (format == MONO_TYPE_NAME_FORMAT_IL)
 			g_string_append_c (str, '>');
 		else
@@ -858,14 +859,22 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 		strcpy (wrapper, "");
 
 	if (signature) {
-		char *tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
+		MonoMethodSignature *sig = mono_method_signature_checked (method, &error);
+		char *tmpsig;
+
+		if (!is_ok (&error)) {
+			tmpsig = g_strdup_printf ("<unable to load signature>");
+			mono_error_cleanup (&error);
+		} else {
+			tmpsig = mono_signature_get_desc (sig, TRUE);
+		}
 
 		if (method->wrapper_type != MONO_WRAPPER_NONE)
 			sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
 		else
 			strcpy (wrapper, "");
-		if (ret) {
-			char *ret_str = mono_type_full_name (mono_method_signature (method)->ret);
+		if (ret && sig) {
+			char *ret_str = mono_type_full_name (sig->ret);
 			res = g_strdup_printf ("%s%s %s:%s%s (%s)", wrapper, ret_str, klass_desc,
 								   method->name, inst_desc ? inst_desc : "", tmpsig);
 			g_free (ret_str);

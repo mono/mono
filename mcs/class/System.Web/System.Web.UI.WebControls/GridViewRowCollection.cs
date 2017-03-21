@@ -42,8 +42,8 @@ namespace System.Web.UI.WebControls
 			this.rows = rows;
 		}
 		
-		public GridViewRow this [int i] {
-			get { return (GridViewRow) rows [i]; }
+		public GridViewRow this [int index] {
+			get { return (GridViewRow) rows [index]; }
 		}
 		
 		public void CopyTo (GridViewRow[] array, int index)

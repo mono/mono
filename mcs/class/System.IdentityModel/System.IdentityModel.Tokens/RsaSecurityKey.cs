@@ -46,7 +46,7 @@ namespace System.IdentityModel.Tokens
 
 		[MonoTODO]
 		public override AsymmetricAlgorithm GetAsymmetricAlgorithm (
-			string algorithm, bool privateKey)
+			string algorithm, bool requiresPrivateKey)
 		{
 			throw new NotImplementedException ();
 		}

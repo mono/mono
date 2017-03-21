@@ -43,8 +43,8 @@ namespace System.ServiceModel.Channels
 		ISecurityCapabilities security;
 		string scheme = "";
 
-		public CustomBinding (string name)
-			: this (name, default_ns)
+		public CustomBinding (string configurationName)
+			: this (configurationName, default_ns)
 		{
 		}
 

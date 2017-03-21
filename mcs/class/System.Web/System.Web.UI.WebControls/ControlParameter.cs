@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls
 			return new ControlParameter (this);
 		}
 		protected internal
-		override object Evaluate (HttpContext ctx, Control control)
+		override object Evaluate (HttpContext context, Control control)
 		{
 			if (control == null)
 				return null;

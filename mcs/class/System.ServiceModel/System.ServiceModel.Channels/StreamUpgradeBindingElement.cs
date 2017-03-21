@@ -37,7 +37,7 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		protected StreamUpgradeBindingElement (StreamUpgradeBindingElement other)
+		protected StreamUpgradeBindingElement (StreamUpgradeBindingElement elementToBeCloned)
 		{
 		}
 

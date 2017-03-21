@@ -63,9 +63,9 @@ namespace System.Configuration
 			return new ConfigXmlCDataSection (this, data);
 		}
 
-		public override XmlComment CreateComment (string comment)
+		public override XmlComment CreateComment (string data)
 		{
-			return new ConfigXmlComment (this, comment);
+			return new ConfigXmlComment (this, data);
 		}
 
 		public override XmlElement CreateElement (string prefix, string localName, string namespaceUri)
