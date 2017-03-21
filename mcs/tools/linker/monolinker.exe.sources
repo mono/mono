@@ -10,6 +10,8 @@
 ../../../external/linker/linker/Mono.Linker/MethodAction.cs
 ../../../external/linker/linker/Mono.Linker/XApiReader.cs
 ../../../external/linker/linker/Mono.Linker/IXApiVisitor.cs
+../../../external/linker/linker/Mono.Linker/LoadException.cs
+../../../external/linker/linker/Mono.Linker/MarkException.cs
 ../../../external/linker/linker/Mono.Linker.Steps/BaseStep.cs
 ../../../external/linker/linker/Mono.Linker.Steps/LoadReferencesStep.cs
 ../../../external/linker/linker/Mono.Linker.Steps/LoadI18nAssemblies.cs
