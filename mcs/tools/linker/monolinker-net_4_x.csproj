@@ -72,6 +72,8 @@
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\I18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\IXApiVisitor.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LinkContext.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LoadException.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\MarkException.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\MethodAction.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\TypePreserve.cs" />
