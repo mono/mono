@@ -49,6 +49,20 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
+#if MONO_FEATURE_APPLETLS
+		static bool ShouldUseAppleTls
+		{
+			get
+			{
+				if (!System.Environment.IsMacOS)
+					return false;
+				// MONO_TLS_PROVIDER values default or apple (not legacy or btls) and must be on MacOS
+				var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
+				return string.IsNullOrEmpty (variable) || variable == "default" || variable == "apple"; // On Platform.IsMacOS default is AppleTlsProvider
+			}
+		}
+#endif
+
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
 #if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
@@ -58,7 +72,7 @@ namespace System.Security.Cryptography.X509Certificates
 #else
 
 #if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
-			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
+			if (ShouldUseAppleTls)
 				return InitFromHandleApple (handle);
 #endif
 #if !MOBILE
@@ -77,7 +91,7 @@ namespace System.Security.Cryptography.X509Certificates
 			throw new PlatformNotSupportedException ();
 #else
 #if MONO_FEATURE_APPLETLS
-			if (System.Environment.IsMacOS && Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER") != "legacy")
+			if (ShouldUseAppleTls)
 				return ImportApple (rawData);
 #endif
 			return ImportCore (rawData);
