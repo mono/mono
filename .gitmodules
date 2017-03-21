@@ -7,6 +7,7 @@
 [submodule "external/cecil"]
 	path = external/cecil
 	url = git://github.com/mono/cecil.git
+	branch = mono-2017-02
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
