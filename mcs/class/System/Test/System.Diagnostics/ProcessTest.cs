@@ -1174,13 +1174,6 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
-		static bool RunningOnUnix {
-			get {
-				int p = (int)Environment.OSVersion.Platform;
-				return ((p == 128) || (p == 4) || (p == 6));
-			}
-		}
-
 		[DllImport ("libc")]
 		static extern int getppid();
 	}
