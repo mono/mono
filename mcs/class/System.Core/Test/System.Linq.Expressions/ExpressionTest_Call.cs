@@ -511,6 +511,11 @@ namespace MonoTests.System.Linq.Expressions {
 		[Test]
 		public void CallNullableGetValueOrDefault () // #568989
 		{
+#if MOBILE
+			// ensure that int?.GetValueOrDefault won't be removed by the linker
+			Assert.AreEqual (0, ((int?)0).GetValueOrDefault (3));
+#endif
+
 			var value = Expression.Parameter (typeof (int?), "value");
 			var default_parameter = Expression.Parameter (typeof (int), "default");
 
