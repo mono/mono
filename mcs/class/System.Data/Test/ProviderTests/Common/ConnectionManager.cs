@@ -42,7 +42,7 @@ namespace MonoTests.System.Data.Connected
 	public class ConnectionManager
 	{
 		private static ConnectionManager instance;
-		private string databaseName;
+		private SetupDb setup;
 
 		private ConnectionManager ()
 		{
@@ -68,10 +68,12 @@ namespace MonoTests.System.Data.Connected
 				Connection.ConnectionString = connectionString;
 				ConnectionString = Connection.ConnectionString;
 				Engine = connConfig.Engine;
+				setup = new SetupDb();
+				setup.CreateDatabase(this);
 				return;
 			}
 
-			throw new ArgumentException ("Connection '" + connectionName + "' not found.");
+			throw new ArgumentException ($"Connection '{connectionName}' not found.");
 		}
 
 		public static ConnectionManager Singleton => instance ?? (instance = new ConnectionManager());

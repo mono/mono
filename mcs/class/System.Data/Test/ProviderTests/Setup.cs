@@ -1,22 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
 
 namespace MonoTests.System.Data.Connected
 {
-	[SetUpFixture]
 	public class SetupDb
 	{
-		[SetUp]
-		public void CreateDatabase()
+		public bool Inited { get; private set; }
+
+		public void CreateDatabase(ConnectionManager manager)
 		{
 			// generate a random db name
 			string dbName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
-			var manager = ConnectionManager.Singleton;
 			manager.OpenConnection();
 			manager.DatabaseName = dbName;
 
@@ -31,12 +28,11 @@ namespace MonoTests.System.Data.Connected
 				default:
 					throw new NotImplementedException();
 			}
+			Inited = true;
 		}
 
-		[TearDown]
-		public void DropDatabase()
+		public void DropDatabase(ConnectionManager manager)
 		{
-			var manager = ConnectionManager.Singleton;
 			manager.OpenConnection();
 
 			switch (manager.Engine.Type)
