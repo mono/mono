@@ -312,11 +312,8 @@ selector_thread (gpointer data)
 	MonoError error;
 	MonoGHashTable *states;
 
-	io_selector_running = TRUE;
-
 	if (mono_runtime_is_shutting_down ()) {
-		io_selector_running = FALSE;
-		return 0;
+		goto shutdown;
 	}
 
 	states = mono_g_hash_table_new_type (g_direct_hash, g_direct_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREAD_POOL, "i/o thread pool states table");
@@ -430,7 +427,13 @@ selector_thread (gpointer data)
 
 	mono_g_hash_table_destroy (states);
 
+shutdown:
+	mono_coop_mutex_lock (&threadpool_io->updates_lock);
+
 	io_selector_running = FALSE;
+	mono_coop_cond_broadcast (&threadpool_io->updates_cond);
+
+	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 
 	return 0;
 }
@@ -540,9 +543,15 @@ initialize (void)
 	if (!threadpool_io->backend.init (threadpool_io->wakeup_pipes [0]))
 		g_error ("initialize: backend->init () failed");
 
+	mono_coop_mutex_lock (&threadpool_io->updates_lock);
+
+	io_selector_running = TRUE;
+
 	MonoError error;
 	if (!mono_thread_create_internal (mono_get_root_domain (), selector_thread, NULL, TRUE, SMALL_STACK, &error))
 		g_error ("initialize: mono_thread_create_internal () failed due to %s", mono_error_get_message (&error));
+
+	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
 
 static void
@@ -582,6 +591,11 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	mono_coop_mutex_lock (&threadpool_io->updates_lock);
 
+	if (!io_selector_running) {
+		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
+		return;
+	}
+
 	update = update_get_new ();
 	update->type = UPDATE_ADD;
 	update->data.add.fd = GPOINTER_TO_INT (handle);
@@ -609,6 +623,11 @@ mono_threadpool_io_remove_socket (int fd)
 
 	mono_coop_mutex_lock (&threadpool_io->updates_lock);
 
+	if (!io_selector_running) {
+		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
+		return;
+	}
+
 	update = update_get_new ();
 	update->type = UPDATE_REMOVE_SOCKET;
 	update->data.add.fd = fd;
@@ -630,6 +649,11 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 		return;
 
 	mono_coop_mutex_lock (&threadpool_io->updates_lock);
+
+	if (!io_selector_running) {
+		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
+		return;
+	}
 
 	update = update_get_new ();
 	update->type = UPDATE_REMOVE_DOMAIN;
