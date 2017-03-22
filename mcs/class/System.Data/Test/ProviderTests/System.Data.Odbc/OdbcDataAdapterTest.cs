@@ -32,7 +32,7 @@ using System.Data.Odbc;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Odbc
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -41,9 +41,9 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void FillTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
+			try
+			{
 				// For this Test, you must create sample table
 				// called person-age, with a non-zero number of rows
 				// and non-zero number of columns
@@ -70,16 +70,17 @@ namespace MonoTests.System.Data.Odbc
 								 "#4 column values must not be of size 0");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
+		[Ignore]
 		public void InsertUtf8Test ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
+			try
+			{
 				DoExecuteNonQuery ((OdbcConnection) conn,
 						   "CREATE TABLE odbc_ins_utf8_test(ival int not null, sval varchar(20))");
 				Assert.AreEqual (DoExecuteNonQuery ((OdbcConnection) conn,
@@ -97,7 +98,7 @@ namespace MonoTests.System.Data.Odbc
 						 3);
 			} finally {
 				DoExecuteNonQuery ((OdbcConnection) conn, "DROP TABLE odbc_ins_utf8_test");
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 

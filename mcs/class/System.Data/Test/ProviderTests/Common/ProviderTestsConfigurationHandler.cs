@@ -34,7 +34,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	class ProviderTestsConfigurationHandler : IConfigurationSectionHandler
 	{
