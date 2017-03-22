@@ -247,7 +247,7 @@ namespace MonoTests.System.Data.Connected
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetChars_Reader_NoData ()
 		{
 			//Console.WriteLine ("GetChars_Reader_NoData - first_executereader");
@@ -2399,7 +2399,7 @@ namespace MonoTests.System.Data.Connected
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetBytes_DataIndex_Overflow ()
 		{
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 2";
@@ -2581,7 +2581,7 @@ namespace MonoTests.System.Data.Connected
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetValues_Reader_Closed ()
 		{
 			//Console.WriteLine ("GetValues_Reader_Closed - first_executereader");
@@ -2603,7 +2603,7 @@ namespace MonoTests.System.Data.Connected
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetValues_Reader_NoData ()
 		{
 			//Console.WriteLine ("GetValues_Reader_NoData - first_executereader");			

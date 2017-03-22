@@ -158,7 +158,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void ExecuteScalar ()
 		{
 			conn = new SqlConnection (connectionString);
@@ -447,7 +447,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void ExecuteNonQuery ()
 		{
 			conn = new SqlConnection (connectionString);
@@ -1106,7 +1106,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Prepare_Transaction_Only ()
 		{
 			SqlTransaction trans = null;
@@ -1455,7 +1455,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // bug #319598
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void LongStoredProcTest ()
 		{
 			if (ClientVersion == 7)
@@ -1618,7 +1618,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void StoredProc_ParameterTest ()
 		{
 			string create_query = CREATE_TMP_SP_PARAM_TEST;

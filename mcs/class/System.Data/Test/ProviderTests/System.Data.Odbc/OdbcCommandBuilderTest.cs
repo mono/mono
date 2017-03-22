@@ -218,7 +218,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetInsertCommandTest_option_true ()
 		{
 			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
@@ -263,7 +263,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetUpdateCommandTest_option_true ()
 		{
 			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
@@ -308,7 +308,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetDeleteCommandTest_option_true ()
 		{
 			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;

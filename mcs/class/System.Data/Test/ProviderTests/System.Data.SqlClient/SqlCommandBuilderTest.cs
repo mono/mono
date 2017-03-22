@@ -72,7 +72,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetInsertCommand1 ()
 		{
 			SqlCommand cmd = null;
@@ -122,7 +122,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetInsertCommand1_Expression ()
 		{
 			SqlCommand cmd = null;
@@ -150,7 +150,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // GetInsertCommand (Boolean)
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetInsertCommand2 ()
 		{
 			SqlCommand cmd = null;
@@ -201,7 +201,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // GetUpdateCommand ()
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetUpdateCommand1 ()
 		{
 			SqlCommand cmd = null;
@@ -315,7 +315,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // GetUpdateCommand (Boolean)
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetUpdateCommand2 ()
 		{
 			SqlCommand cmd = null;
@@ -479,7 +479,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
 			string selectQuery = "select id, fname from employee where id = 1";
@@ -510,7 +510,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetDeleteCommandDBConcurrencyExceptionTest ()
 		{
 			string selectQuery = "select id, fname from employee where id = 1";
@@ -541,7 +541,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // GetDeleteCommand ()
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetDeleteCommand1 ()
 		{
 			SqlCommand cmd = null;
@@ -649,7 +649,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // GetDeleteCommand ()
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void GetDeleteCommand2 ()
 		{
 			SqlCommand cmd = null;
@@ -768,7 +768,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void DefaultProperties ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();

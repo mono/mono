@@ -123,7 +123,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // bug #382635
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void ParameterSize_compatibility_Test ()
 		{
 			string longstring = "abcdefghijklmnopqrstuvwxyz";

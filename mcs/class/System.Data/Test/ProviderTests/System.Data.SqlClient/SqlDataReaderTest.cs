@@ -45,7 +45,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
-	[Ignore("Doesn't work on mono. TODO:Fix")]
+	[Category("NotWorking")]
 	public class SqlDataReaderTest
 	{
 		static byte [] long_bytes = new byte [] {
@@ -3068,7 +3068,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 
 	[TestFixture]
 	[Category ("sqlserver")]
-	[Ignore("Doesn't work on mono. TODO:Fix")]
+	[Category("NotWorking")]
 	public class SqlDataReaderSchemaTest
 	{
 		SqlConnection conn;

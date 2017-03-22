@@ -218,7 +218,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			}
 
 		[Test] // bug #383061
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Open_MaxPoolSize_Reached ()
 		{
 			connectionString += ";Pooling=true;Connection Lifetime=6;Connect Timeout=3;Max Pool Size=2";
@@ -408,7 +408,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // bug #443131
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void ClearPool ()
 		{
 			SqlConnection conn1 = new SqlConnection (connectionString);
@@ -775,7 +775,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void ChangePasswordTest ()
 		{
 			string tmpPassword = "modifiedbymonosqlclient";

@@ -76,7 +76,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Update_DeleteRow ()
 		{
 			conn = new SqlConnection (ConnectionManager.Instance.Sql.ConnectionString);
@@ -123,7 +123,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Update_InsertRow ()
 		{
 			conn = new SqlConnection (ConnectionManager.Instance.Sql.ConnectionString);
@@ -173,7 +173,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Update_UpdateRow ()
 		{
 			conn = new SqlConnection (ConnectionManager.Instance.Sql.ConnectionString);
@@ -423,7 +423,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void Fill_Test_Data ()
 		{
 			//Check if a table is created for each resultset 
@@ -788,7 +788,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void MissingSchemaActionTest ()
 		{
 			adapter = new SqlDataAdapter (
@@ -847,7 +847,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test]
-		[Ignore("Doesn't work on mono. TODO:Fix")]
+		[Category("NotWorking")]
 		public void MissingMappingActionTest ()
 		{
 			adapter = new SqlDataAdapter ("select id,type_bit from numeric_family where id=1",
