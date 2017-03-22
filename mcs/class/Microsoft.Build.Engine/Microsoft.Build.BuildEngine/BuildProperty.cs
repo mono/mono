@@ -80,7 +80,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.propertyType = PropertyType.Normal;
 			this.parentProject = parentProject;
 			this.name = propertyElement.Name;
-			this.value = MSBuildUtils.UnescapeFromXml (propertyElement.InnerXml);
+			this.value = propertyElement.InnerText;
 			this.isImported = false;
 		}
 

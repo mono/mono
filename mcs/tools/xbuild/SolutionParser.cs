@@ -381,10 +381,20 @@ namespace Mono.XBuild.CommandLine {
 			string solutionFilePath = Path.GetFullPath (solutionFile);
 			BuildPropertyGroup solutionPropertyGroup = p.AddNewPropertyGroup (true);
 			solutionPropertyGroup.AddNewProperty ("SolutionDir", Path.GetDirectoryName (solutionFilePath) + Path.DirectorySeparatorChar);
+			p.ParentEngine.GlobalProperties.SetProperty ("SolutionDir", Path.GetDirectoryName (solutionFilePath) + Path.DirectorySeparatorChar);
+
 			solutionPropertyGroup.AddNewProperty ("SolutionExt", Path.GetExtension (solutionFile));
+			p.ParentEngine.GlobalProperties.SetProperty ("SolutionExt", Path.GetExtension (solutionFile));
+
 			solutionPropertyGroup.AddNewProperty ("SolutionFileName", Path.GetFileName (solutionFile));
+			p.ParentEngine.GlobalProperties.SetProperty ("SolutionFileName", Path.GetFileName (solutionFile));
+
 			solutionPropertyGroup.AddNewProperty ("SolutionName", Path.GetFileNameWithoutExtension (solutionFile));
+			p.ParentEngine.GlobalProperties.SetProperty ("SolutionName", Path.GetFileNameWithoutExtension (solutionFile));
+
 			solutionPropertyGroup.AddNewProperty ("SolutionPath", solutionFilePath);
+			p.ParentEngine.GlobalProperties.SetProperty ("SolutionPath", solutionFilePath);
+
 		}
 
 		void ParseSolutionConfigurationPlatforms (string section, List<TargetInfo> solutionTargets)
