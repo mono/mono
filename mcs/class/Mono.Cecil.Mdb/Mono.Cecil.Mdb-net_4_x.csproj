@@ -87,11 +87,10 @@
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../class/lib/net_4_x/Mono.Cecil.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_x/Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../Mono.Cecil/Mono.Cecil-net_4_x.csproj">
+      <Project>{2C0D558F-0B38-4691-967E-A910A1B995C1}</Project>
+      <Name>Mono.Cecil-net_4_x</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
