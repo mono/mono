@@ -384,6 +384,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ClearAllPools ()
 		{
 			SqlConnection conn1 = new SqlConnection (connectionString + ";Pooling=false");

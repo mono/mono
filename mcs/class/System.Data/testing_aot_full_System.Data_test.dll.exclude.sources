@@ -16,3 +16,5 @@ System.Data.OleDb/OleDbMetaDataCollectionNamesTest.cs
 System.Data.OleDb/OleDbParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
+
+#include provider_tests.sources
