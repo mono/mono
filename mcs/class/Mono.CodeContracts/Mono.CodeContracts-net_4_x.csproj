@@ -460,11 +460,10 @@
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../class/lib/net_4_x/Mono.Cecil.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_x/Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../Mono.Cecil/Mono.Cecil-net_4_x.csproj">
+      <Project>{2C0D558F-0B38-4691-967E-A910A1B995C1}</Project>
+      <Name>Mono.Cecil-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../Mono.Cecil.Mdb/Mono.Cecil.Mdb-net_4_x.csproj">
       <Project>{CF14D34A-F69B-47FB-A99C-D25C77198F30}</Project>
       <Name>Mono.Cecil.Mdb-net_4_x</Name>
