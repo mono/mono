@@ -32,9 +32,9 @@ using System.Configuration;
 using System.Globalization;
 using System.Xml;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
-	internal sealed class EngineConfig
+	public sealed class EngineConfig
 	{
 		private string name;
 		private string quoteCharacter;

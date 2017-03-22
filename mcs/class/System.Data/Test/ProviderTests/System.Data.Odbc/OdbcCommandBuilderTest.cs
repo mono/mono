@@ -32,11 +32,10 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
-using Mono.Data;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -45,7 +44,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetInsertCommandTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			OdbcCommand cmd = null;
 
 			try {
@@ -94,17 +93,17 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetInsertCommandTestWithExpression ()
 		{
-			if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
+			if (ConnectionManager.Instance.Odbc.EngineConfig.Type == EngineType.MySQL)
 				Assert.Ignore ("Schema info from MySQL is incomplete");
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			OdbcCommand cmd = null;
 
 			try {
@@ -123,14 +122,14 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetUpdateCommandTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			OdbcCommand cmd = null;
 
 			try {
@@ -177,7 +176,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -185,7 +184,7 @@ namespace MonoTests.System.Data
 		[Ignore ("FIXME: Auto SQL generation during Update requires a valid SelectCommand")]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -214,14 +213,15 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (1, ex.RowCount, "#6");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void GetInsertCommandTest_option_true ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -236,14 +236,14 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertInsertParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetInsertCommandTest_option_false ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -258,14 +258,15 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertInsertParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void GetUpdateCommandTest_option_true ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -280,14 +281,14 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertUpdateParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetUpdateCommandTest_option_false ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -302,14 +303,15 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertUpdateParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void GetDeleteCommandTest_option_true ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -324,14 +326,14 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertDeleteParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetDeleteCommandTest_option_false ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
 				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
 				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
@@ -346,14 +348,14 @@ namespace MonoTests.System.Data
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertDeleteParameters (cmd, "#3:");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetDeleteCommandTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			OdbcCommand cmd = null;
 
 			try {
@@ -401,7 +403,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -409,7 +411,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuotePrefix_DeleteCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -439,7 +441,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -447,7 +449,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuotePrefix_InsertCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -477,7 +479,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -485,7 +487,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuotePrefix_UpdateCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -515,7 +517,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -523,7 +525,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuoteSuffix_DeleteCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -553,7 +555,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -561,7 +563,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuoteSuffix_InsertCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -591,7 +593,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -599,7 +601,7 @@ namespace MonoTests.System.Data
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 		public void QuoteSuffix_UpdateCommand_Generated ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			OdbcCommand cmd = null;
 
@@ -629,7 +631,7 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -637,10 +639,9 @@ namespace MonoTests.System.Data
 		public void QuoteIdentifier2 ()
 		{
 			OdbcCommandBuilder cb;
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
-			string quote_char = ConnectionManager.Singleton.Engine.QuoteCharacter;
+			string quote_char = ConnectionManager.Instance.Odbc.EngineConfig.QuoteCharacter;
 
 			try {
 				cb = new OdbcCommandBuilder ();
@@ -708,7 +709,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (" ", cb.QuoteIdentifier (" ", conn), "#E11");
 				Assert.AreEqual ("\r", cb.QuoteIdentifier ("\r", conn), "#E12");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -719,7 +720,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
 			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
 			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
-			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
+			Assert.AreEqual (DbType.String, cmd.Parameters [1].DbType, prefix + "DbType (1)");
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
 			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
@@ -732,7 +733,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
 			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
 			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
-			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
+			Assert.AreEqual (DbType.String, cmd.Parameters [1].DbType, prefix + "DbType (1)");
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
 			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
@@ -744,7 +745,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("p4", cmd.Parameters [3].ParameterName, prefix + "ParameterName (3)");
 			Assert.AreEqual ("lname", cmd.Parameters [3].SourceColumn, prefix + "SourceColumn (3)");
 			Assert.AreEqual (1, cmd.Parameters [3].Value, prefix + "Value (3)");
-			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [4].DbType, prefix + "DbType (4)");
+			Assert.AreEqual (DbType.String, cmd.Parameters [4].DbType, prefix + "DbType (4)");
 			Assert.AreEqual ("p5", cmd.Parameters [4].ParameterName, prefix + "ParameterName (4)");
 			Assert.AreEqual ("lname", cmd.Parameters [4].SourceColumn, prefix + "SourceColumn (4)");
 			Assert.IsNull (cmd.Parameters [4].Value, prefix + "Value (4)");
@@ -761,7 +762,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
 			Assert.AreEqual (1, cmd.Parameters [1].Value, prefix + "Value (1)");
-			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [2].DbType, prefix + "DbType (2)");
+			Assert.AreEqual (DbType.String, cmd.Parameters [2].DbType, prefix + "DbType (2)");
 			Assert.AreEqual ("p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
 			Assert.AreEqual ("lname", cmd.Parameters [2].SourceColumn, prefix + "SourceColumn (2)");
 			Assert.IsNull (cmd.Parameters [2].Value, prefix + "Value (2)");
