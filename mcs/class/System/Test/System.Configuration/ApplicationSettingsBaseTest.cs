@@ -287,7 +287,11 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void TestSettings2_Properties ()
 		{
+#if XAMMAC_4_5
+			string expected = "MonoTests.System.Configuration.ProviderPoker, xammac_net_4_5_System_test, Version=0.0.0.0";
+#else
 			string expected = "MonoTests.System.Configuration.ProviderPoker, net_4_x_System_test, Version=0.0.0.0";
+#endif
 			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();
 

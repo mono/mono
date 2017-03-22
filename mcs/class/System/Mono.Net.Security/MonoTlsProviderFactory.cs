@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if !ONLY_APPLETLS // ONLY_APPLETLS uses MonoTlsProviderFactory.Apple.cs instead 
+
 #if SECURITY_DEP
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
@@ -160,9 +162,17 @@ namespace Mono.Net.Security
 					return;
 				providerRegistration = new Dictionary<string,string> ();
 				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
-				providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
+			
+				if (Platform.IsMacOS)
+					providerRegistration.Add ("default", "Mono.AppleTls.AppleTlsProvider");
+				else
+					providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
+
 				if (IsBtlsSupported ())
 					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
+			
+				providerRegistration.Add ("apple", "Mono.AppleTls.AppleTlsProvider");
+				
 				X509Helper2.Initialize ();
 			}
 		}
@@ -261,4 +271,4 @@ namespace Mono.Net.Security
 
 	}
 }
-
+#endif
