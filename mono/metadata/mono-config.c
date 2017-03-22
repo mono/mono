@@ -674,9 +674,11 @@ void
 mono_set_config_dir (const char *dir)
 {
 	/* If this variable is set, overrides the directory computed */
-	mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
-	if (mono_cfg_dir == NULL)
-		mono_cfg_dir = mono_cfg_dir_allocated = g_strdup (dir);
+	const char *env_mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
+	if (env_mono_cfg_dir == NULL)
+		env_mono_cfg_dir = dir;
+
+	mono_cfg_dir = mono_cfg_dir_allocated = g_strdup (env_mono_cfg_dir);
 }
 
 const char* 
