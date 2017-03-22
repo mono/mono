@@ -29,7 +29,7 @@ using MonoTests.System.Data.Utils;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected.OleDb
+namespace MonoTests.System.Data.OleDb
 {
 [TestFixture]
 public class OleDbConnection_ConnectionTimeout : GHTBase

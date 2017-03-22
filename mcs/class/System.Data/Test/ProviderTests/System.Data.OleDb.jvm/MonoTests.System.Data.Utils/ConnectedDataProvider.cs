@@ -35,7 +35,7 @@ using Sys = System;
 using MonoTests.System.Data.Utils.Data;
 
 // Provide All Data required by the diffderent tests e.g.DataTable, DataRow ...
-namespace MonoTests.System.Data.Connected.Utils {
+namespace MonoTests.System.Data.Utils {
 	/// <summary>
 	/// Types of Database Servers that tests can be run on.
 	/// </summary>

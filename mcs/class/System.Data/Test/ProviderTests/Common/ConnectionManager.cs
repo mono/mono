@@ -29,97 +29,192 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
-
 
 namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
 	{
 		private static ConnectionManager instance;
-		private SetupDb setup;
+		private ConnectionHolder<OdbcConnection> odbc;
+		private ConnectionHolder<SqlConnection> sql;
+
+		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC";
+		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL";
 
 		private ConnectionManager ()
 		{
-			//string envVariable = @"sqlserver-tds|server=EGORBO\SQLEXPRESS;database=master;user id=sa;password=qwerty123";
-			//string envVariable = @"mysql-odbc|Driver={MySQL ODBC 5.2 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;";
-			string envVariable = Environment.GetEnvironmentVariable ("SYSTEM_DATA_CONNECTIONSTRING") ?? string.Empty;
+			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"mysql-odbc|Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;");
+			//Environment.SetEnvironmentVariable(SqlEnvVar, @"sqlserver-tds|server=127.0.0.1;database=master;user id=sa;password=qwerty123");
 
-			var envParts = envVariable.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+			// Generate a random db name
+			DatabaseName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
+
+			sql = ConnectionHolder<SqlConnection>.FromEnvVar(SqlEnvVar);
+			if (sql != null)
+				CreateMssqlDatabase();
+			
+			odbc = ConnectionHolder<OdbcConnection>.FromEnvVar(OdbcEnvVar);
+			if (odbc != null)
+				CreateMysqlDatabase();
+		}
+
+		private void CreateMssqlDatabase()
+		{
+			DBHelper.ExecuteNonQuery(sql.Connection, $"CREATE DATABASE [{DatabaseName}]");
+			sql.Connection.ChangeDatabase(DatabaseName);
+
+			string query = File.ReadAllText(@"Test/ProviderTests/sql/sqlserver.sql");
+
+			var queries = SplitSqlStatements(query);
+			foreach (var subQuery in queries)
+			{
+				DBHelper.ExecuteNonQuery(sql.Connection, subQuery);
+			}
+		}
+
+		private void CreateMysqlDatabase()
+		{
+			DBHelper.ExecuteNonQuery(odbc.Connection, $"CREATE DATABASE {DatabaseName}");
+			odbc.Connection.ChangeDatabase(DatabaseName);
+			odbc.ConnectionString += $"database={DatabaseName}";
+
+			string query = File.ReadAllText("Test/ProviderTests/sql/MySQL_5.sql");
+
+			var groups = query.Replace("delimiter ", "")
+				.Split(new[] { "//\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+			foreach (var subQuery in groups[0].Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Concat(groups.Skip(1)))
+			{
+				DBHelper.ExecuteNonQuery(odbc.Connection, subQuery);
+			}
+		}
+
+		private void DropMssqlDatabase()
+		{
+			sql.Connection.ChangeDatabase("master");
+			string query = $"ALTER DATABASE [{DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;\nDROP DATABASE [{DatabaseName}]";
+			DBHelper.ExecuteNonQuery(sql.Connection, query);
+		}
+
+		private void DropMysqlDatabase()
+		{
+			string query = $"DROP DATABASE [{DatabaseName}]";
+			DBHelper.ExecuteNonQuery(odbc.Connection, query);
+		}
+
+		// Split SQL script by "GO" statements
+		private static IEnumerable<string> SplitSqlStatements(string sqlScript)
+		{
+			var statements = Regex.Split(sqlScript,
+					$@"^[\t ]*GO[\t ]*\d*[\t ]*(?:--.*)?$",
+					RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
+			return statements.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim(' ', '\r', '\n'));
+		}
+
+		public static ConnectionManager Instance => instance ?? (instance = new ConnectionManager());
+
+		public string DatabaseName { get; }
+
+		public ConnectionHolder<OdbcConnection> Odbc
+		{
+			get
+			{
+				if (odbc == null)
+					Assert.Ignore($"{OdbcEnvVar} environment variable is not set");
+				return odbc;
+			}
+		}
+
+		public ConnectionHolder<SqlConnection> Sql
+		{
+			get
+			{
+				if (sql == null)
+					Assert.Ignore($"{SqlEnvVar} environment variable is not set");
+				return sql;
+			}
+		}
+
+		public void Close()
+		{
+			sql?.CloseConnection();
+			odbc?.CloseConnection();
+		}
+	}
+
+	public class ConnectionHolder<TConnection> where TConnection : DbConnection
+	{
+		private TConnection connection;
+
+		public EngineConfig EngineConfig { get; }
+
+		public TConnection Connection
+		{
+			get
+			{
+				if (!(connection.State == ConnectionState.Closed || 
+					connection.State == ConnectionState.Broken))
+					connection.Close();
+				connection.ConnectionString = ConnectionString;
+				connection.Open();
+				return connection;
+			}
+		}
+
+		public void CloseConnection()
+		{
+			if (connection != null && connection.State != ConnectionState.Closed)
+				connection.Close();
+		}
+
+		public string ConnectionString { get; set; }
+
+		public ConnectionHolder(EngineConfig engineConfig, DbProviderFactory dbProviderFactory, string connectionString)
+		{
+			EngineConfig = engineConfig;
+			connection = (TConnection)dbProviderFactory.CreateConnection();
+			ConnectionString = connectionString;
+		}
+
+		public static ConnectionHolder<TConnection> FromEnvVar(string envVarName)
+		{
+			string variable = Environment.GetEnvironmentVariable(envVarName) ?? string.Empty;
+			var envParts = variable.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
 			if (envParts.Length == 0 || string.IsNullOrEmpty(envParts[0]))
-				Assert.Ignore($"SYSTEM_DATA_CONNECTIONSTRING environment variable is not set.");
+				return null;
 
 			string connectionName = envParts[0];
-			string connectionString = envVariable.Remove(0, envParts[0].Length + 1);
+			string connectionString = variable.Remove(0, envParts[0].Length + 1);
 
-			var connections = (ConnectionConfig []) ConfigurationManager.GetSection ("providerTests");
+			ConnectionConfig[] connections = null;
+			try
+			{
+				connections = (ConnectionConfig[]) ConfigurationManager.GetSection("providerTests");
+			}
+			catch
+			{
+				return null;
+			}
+
 			foreach (ConnectionConfig connConfig in connections)
 			{
 				if (connConfig.Name != connectionName)
 					continue;
 
-				DbProviderFactory factory = DbProviderFactories.GetFactory (connConfig.Factory);
-				Connection = factory.CreateConnection ();
-				Connection.ConnectionString = connectionString;
-				ConnectionString = Connection.ConnectionString;
-				Engine = connConfig.Engine;
-				setup = new SetupDb();
-				setup.CreateDatabase(this);
-				return;
+				DbProviderFactory factory = DbProviderFactories.GetFactory(connConfig.Factory);
+				return new ConnectionHolder<TConnection>(connConfig.Engine, factory, connectionString);
 			}
-
-			throw new ArgumentException ($"Connection '{connectionName}' not found.");
-		}
-
-		public static ConnectionManager Singleton => instance ?? (instance = new ConnectionManager());
-
-		public string DatabaseName { get; set; }
-
-		public string ConnectionString { get; set; }
-
-		public DbConnection Connection { get; }
-
-		internal EngineConfig Engine { get; }
-
-		public DbConnection OpenConnection ()
-		{
-			if (!(Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken))
-				Connection.Close ();
-			Connection.ConnectionString = ConnectionString;
-			Connection.Open ();
-			return Connection;
-		}
-
-		public TDbConnection OpenConnection<TDbConnection>() where TDbConnection : DbConnection
-		{
-			return (TDbConnection) OpenConnection();
-		}
-
-		public void CloseConnection ()
-		{
-			if (Connection != null && Connection.State != ConnectionState.Closed)
-				Connection.Close ();
-		}
-
-		public static void RequireProvider(ProviderType provder)
-		{
-			if (provder == ProviderType.SqlClient && 
-				Singleton.Connection is SqlConnection)
-				return;
-
-			if (provder == ProviderType.Odbc && 
-				Singleton.Connection is OdbcConnection)
-				return;
-
-			if (provder == ProviderType.Any && Singleton.Connection != null)
-				return;
-
-			Assert.Ignore($"Connection string is not provided for {provder}");
+			throw new InvalidOperationException($"Connection {connectionName} not found");
 		}
 	}
 }

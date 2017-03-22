@@ -33,7 +33,7 @@ using NUnit.Framework;
 using Microsoft.ApplicationBlocks.Data;
 #endif
 
-namespace MonoTests.System.Data.Connected.OleDb
+namespace MonoTests.System.Data.OleDb
 {
 	[TestFixture]
 	public class OleDbCommand_CommandType : ADONetTesterClass

@@ -126,7 +126,6 @@ System.Data.SqlClient/SqlBulkCopyTest.cs
 Mono.Data.SqlExpressions/DataColumnExpressionTest.cs
 Mono.Data.SqlExpressions/DateComparisonTest.cs
 
-ProviderTests/Setup.cs
 ProviderTests/Common/ConnectionConfig.cs
 ProviderTests/Common/ConnectionManager.cs
 ProviderTests/Common/DBHelper.cs

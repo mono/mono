@@ -42,14 +42,10 @@ namespace MonoTests.System.Data.Connected
 		IDbConnection conn;
 		IDbCommand cmd;
 
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.Any);
-
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Sql.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
@@ -58,7 +54,7 @@ namespace MonoTests.System.Data.Connected
 		{
 			if (cmd != null)
 				cmd.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]
@@ -167,9 +163,8 @@ namespace MonoTests.System.Data.Connected
 				Assert.AreEqual (new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 }, val, "#A3");
 			}
 
-			ConnectionManager.Singleton.CloseConnection ();
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			ConnectionManager.Instance.Sql.CloseConnection ();
+			conn = ConnectionManager.Instance.Sql.Connection;
 
 			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
 				Assert.IsTrue (reader.Read (), "#B1");
@@ -185,9 +180,9 @@ namespace MonoTests.System.Data.Connected
 				Assert.IsTrue (reader.Read (), "#C");
 			}
 
-			ConnectionManager.Singleton.CloseConnection ();
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			ConnectionManager.Instance.Sql.CloseConnection ();
+			conn = ConnectionManager.Instance.Sql.Connection;
+
 
 			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
 				Assert.IsTrue (reader.Read (), "#D");

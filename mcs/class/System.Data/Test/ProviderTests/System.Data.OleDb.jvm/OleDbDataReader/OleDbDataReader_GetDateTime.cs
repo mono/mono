@@ -32,7 +32,7 @@ using MonoTests.System.Data.Utils.Data;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected.OleDb
+namespace MonoTests.System.Data.OleDb
 {
 	[TestFixture]
 	public class OleDbDataReader_GetDateTime : ADONetTesterClass

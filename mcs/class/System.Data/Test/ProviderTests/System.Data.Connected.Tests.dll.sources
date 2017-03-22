@@ -1,4 +1,3 @@
-Setup.cs
 Common/ConnectionConfig.cs
 Common/ConnectionManager.cs
 Common/DBHelper.cs

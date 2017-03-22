@@ -47,7 +47,7 @@ namespace MonoTests.System.Data.Connected
 			query += "Select * from datetime_family order by id ASC;";
 
 			SqlDataAdapter adapter = new SqlDataAdapter (query,
-				ConnectionManager.Singleton.ConnectionString);
+				ConnectionManager.Instance.Sql.ConnectionString);
 			adapter.TableMappings.Add ("Table", "numeric_family");
 			adapter.TableMappings.Add ("Table1", "string_family");
 			adapter.TableMappings.Add ("Table2", "binary_family");

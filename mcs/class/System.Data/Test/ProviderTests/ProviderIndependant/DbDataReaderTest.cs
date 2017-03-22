@@ -47,25 +47,19 @@ namespace MonoTests.System.Data.Connected
 		DbCommand cmd;
 		DbDataReader rdr;
 
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.Any);
-
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Sql.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (cmd != null)
-				cmd.Dispose ();
-			if (rdr != null)
-				rdr.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			cmd?.Dispose ();
+			rdr?.Dispose ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]

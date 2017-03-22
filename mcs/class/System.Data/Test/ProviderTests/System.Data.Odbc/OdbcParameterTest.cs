@@ -53,9 +53,6 @@ namespace MonoTests.System.Data.Connected.Odbc
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
 		}
 
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
-
 		[TearDown]
 		public void TearDown ()
 		{
@@ -70,8 +67,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_int from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -249,8 +245,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_bigint from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -434,8 +429,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_binary from binary_family where id = ?";
 			string delete_data = "delete from binary_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -652,8 +646,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_smallint from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -834,15 +827,14 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_timestamp from binary_family where id = ?";
 			string delete_data = "delete from binary_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
 			OdbcParameter param;
 
 			try {
-				if (!ConnectionManager.Singleton.Engine.SupportsTimestamp)
+				if (!ConnectionManager.Instance.Odbc.EngineConfig.SupportsTimestamp)
 					Assert.Ignore ("Timestamp test does not apply to the current driver (" + conn.Driver + ").");
 
 				cmd = conn.CreateCommand ();
@@ -896,8 +888,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_tinyint from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -1071,9 +1062,8 @@ namespace MonoTests.System.Data.Connected.Odbc
 		public void StringParamTest ()
 		{
 			string query = "select id, fname from employee where fname = ?";
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
 				OdbcCommand cmd = (OdbcCommand) conn.CreateCommand ();
 				cmd.CommandText = query;
 
@@ -1083,7 +1073,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (dr.Read (), "#1 no data to test");
 				Assert.AreEqual (1, (int) dr [0], "#2 value not matching");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -1096,8 +1086,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_bit from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -1240,8 +1229,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_char from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -1259,7 +1247,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#A2");
 				Assert.AreEqual (1, dr.GetValue (0), "#A3");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (1), "#A4");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("char", dr.GetValue (1), "#A5");
 				else
 					Assert.AreEqual ("char      ", dr.GetValue (1), "#A5");
@@ -1294,7 +1282,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#C2");
 				Assert.AreEqual (3, dr.GetValue (0), "#C3");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (1), "#C4");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual (string.Empty, dr.GetValue (1), "#C5");
 				else
 					Assert.AreEqual ("          ", dr.GetValue (1), "#C5");
@@ -1334,7 +1322,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#E2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#E3");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (1), "#E4");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("ABC", dr.GetValue (1), "#E5");
 				else
 					Assert.AreEqual ("ABC       ", dr.GetValue (1), "#E5");
@@ -1387,7 +1375,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#G2");
 				Assert.AreEqual (6000, dr.GetValue (0), "#G3");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (1), "#G4");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual (string.Empty, dr.GetValue (1), "#G5");
 				else
 					Assert.AreEqual ("          ", dr.GetValue (1), "#G5");
@@ -1438,8 +1426,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string insert_data = "insert into numeric_family (id, type_decimal1, type_decimal2) values (6000, ?, ?)";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -1642,7 +1629,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (1), "#L4");
 				Assert.AreEqual (56789m, dr.GetValue (1), "#L5");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (2), "#L6");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.Type == EngineType.MySQL)
 					Assert.AreEqual (9876556.780m, dr.GetValue (2), "#L7");
 				else
 					Assert.AreEqual (98765.570m, dr.GetValue (2), "#L7");
@@ -1697,8 +1684,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_double from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -1881,8 +1867,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_data = "select type_blob from binary_family where id = ?";
 			string delete_data = "delete from binary_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2112,9 +2097,8 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_data = "select type_nchar from string_family where type_nchar = ? and id = ?";
 			string select_by_id = "select type_nchar from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
-			
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2130,7 +2114,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#A1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#A2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("nch\u092d\u093er", dr.GetValue (0), "#A3");
 				else
 					Assert.AreEqual ("nch\u092d\u093er    ", dr.GetValue (0), "#A3");
@@ -2161,7 +2145,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#C1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#C2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual (string.Empty, dr.GetValue (0), "#C3");
 				else
 					Assert.AreEqual ("          ", dr.GetValue (0), "#C3");
@@ -2197,7 +2181,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#E1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#E2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("nchar", dr.GetValue (0), "#E3");
 				else
 					Assert.AreEqual ("nchar     ", dr.GetValue (0), "#E3");
@@ -2223,7 +2207,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#F1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#F2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("nch\u0488", dr.GetValue (0), "#F3");
 				else
 					Assert.AreEqual ("nch\u0488      ", dr.GetValue (0), "#F3");
@@ -2249,7 +2233,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#G1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#G2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual ("ch\u0488r", dr.GetValue (0), "#G3");
 				else
 					Assert.AreEqual ("ch\u0488r      ", dr.GetValue (0), "#G3");
@@ -2298,7 +2282,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				dr = cmd.ExecuteReader ();
 				Assert.IsTrue (dr.Read (), "#I1");
 				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#I2");
-				if (ConnectionManager.Singleton.Engine.RemovesTrailingSpaces)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.RemovesTrailingSpaces)
 					Assert.AreEqual (string.Empty, dr.GetValue (0), "#I3");
 				else
 					Assert.AreEqual ("          ", dr.GetValue (0), "#I3");
@@ -2345,8 +2329,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_ntext from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2501,8 +2484,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_text from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2662,8 +2644,8 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_numeric1, type_numeric2 from numeric_family where id = ?";
 			string insert_data = "insert into numeric_family (id, type_numeric1, type_numeric2) values (6000, ?, ?)";
 			string delete_data = "delete from numeric_family where id = 6000";
-
-			IDbConnection conn = ConnectionManager.Singleton.OpenConnection();
+			
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -2866,7 +2848,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (1), "#L4");
 				Assert.AreEqual (56789m, dr.GetValue (1), "#L5");
 				Assert.AreEqual (typeof (decimal), dr.GetFieldType (2), "#L6");
-				if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.Type == EngineType.MySQL)
 					Assert.AreEqual (9876556.780m, dr.GetValue (2), "#L7");
 				else
 					Assert.AreEqual (98765.570m, dr.GetValue (2), "#L7");
@@ -2921,8 +2903,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_nvarchar from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3113,8 +3094,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_varbinary from binary_family where id = ?";
 			string delete_data = "delete from binary_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3344,8 +3324,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_varchar from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3513,7 +3492,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_float from numeric_family where id = ?";
 			string delete_data = "delete from numeric_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.OpenConnection();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3707,8 +3686,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_smalldatetime from datetime_family where id = ?";
 			string delete_data = "delete from datetime_family where id = 6000";
 
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3815,7 +3793,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_datetime from datetime_family where id = ?";
 			string delete_data = "delete from datetime_family where id = 6000";
 
-			var conn = ConnectionManager.Singleton.OpenConnection<OdbcConnection>();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
@@ -3836,7 +3814,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (typeof (int), dr.GetFieldType (0), "#A2");
 				Assert.AreEqual (1, dr [0], "#A3");
 				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (1), "#A4");
-				if (ConnectionManager.Singleton.Engine.SupportsMicroseconds)
+				if (ConnectionManager.Instance.Odbc.EngineConfig.SupportsMicroseconds)
 					Assert.AreEqual (date, dr [1], "#A5");
 				else
 					Assert.AreEqual (new DateTime (9999, 12, 31, 23, 59, 59), dr [1], "#A5");
@@ -3925,15 +3903,14 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_date from datetime_family where id = ?";
 			string delete_data = "delete from datetime_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
 			OdbcParameter param;
 
 			try {
-				if (!ConnectionManager.Singleton.Engine.SupportsDate)
+				if (!ConnectionManager.Instance.Odbc.EngineConfig.SupportsDate)
 					Assert.Ignore ("Date test does not apply to the current driver (" + conn.Driver + ").");
 
 				DateTime date = new DateTime (9999, 12, 31);
@@ -4025,18 +4002,17 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select type_time from datetime_family where id = ?";
 			string delete_data = "delete from datetime_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
 			OdbcParameter param;
 
 			try {
-				if (!ConnectionManager.Singleton.Engine.SupportsTime)
+				if (!ConnectionManager.Instance.Odbc.EngineConfig.SupportsTime)
 					Assert.Ignore ("Time test does not apply to the current driver (" + conn.Driver + ").");
 
-				TimeSpan time = ConnectionManager.Singleton.Engine.SupportsMicroseconds ?
+				TimeSpan time = ConnectionManager.Instance.Odbc.EngineConfig.SupportsMicroseconds ?
 					new TimeSpan (23, 58, 59, 953) : new TimeSpan (23, 58, 59);
 
 				cmd = conn.CreateCommand ();
@@ -4126,15 +4102,14 @@ namespace MonoTests.System.Data.Connected.Odbc
 			string select_by_id = "select id, type_guid from string_family where id = ?";
 			string delete_data = "delete from string_family where id = 6000";
 
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			conn.Open ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			IDataReader dr = null;
 			OdbcCommand cmd = null;
 			OdbcParameter param;
 
 			try {
-				if (!ConnectionManager.Singleton.Engine.SupportsUniqueIdentifier)
+				if (!ConnectionManager.Instance.Odbc.EngineConfig.SupportsUniqueIdentifier)
 					Assert.Ignore ("UniqueIdentifier test does not apply to the current driver (" + conn.Driver + ").");
 
 				cmd = conn.CreateCommand ();
@@ -4220,9 +4195,9 @@ namespace MonoTests.System.Data.Connected.Odbc
 		[Test]
 		public void DBNullParameterTest()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
+			try
+			{
 				OdbcDataAdapter Adaptador = new OdbcDataAdapter ();
 				DataSet Lector = new DataSet ();
 
@@ -4231,7 +4206,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Adaptador.Fill (Lector);
 				Assert.AreEqual (Lector.Tables[0].Rows[0][0], DBNull.Value, "#1 DBNull parameter not passed correctly");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 

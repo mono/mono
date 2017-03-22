@@ -27,7 +27,7 @@ using System.Collections;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Connected.Utils
+namespace MonoTests.System.Data.Utils
 {
 	public class GHTBase
 	{

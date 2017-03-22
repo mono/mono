@@ -79,15 +79,10 @@ namespace MonoTests.System.Data.Connected.Odbc
 		OdbcConnection conn;
 		OdbcCommand cmd;
 
-
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
-
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Odbc.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
@@ -96,7 +91,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		{
 			if (cmd != null)
 				cmd.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]
@@ -200,7 +195,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.AreEqual (totalsize, ret, "#C1");
 			}
 
-			ConnectionManager.Singleton.CloseConnection ();
+			ConnectionManager.Instance.Odbc.CloseConnection ();
 		}
 
 		[Test]
@@ -325,7 +320,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#A:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#A:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#A:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#A:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#A:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#A:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#A:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#A:BaseColumnName_IsNull");
@@ -413,7 +408,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#C:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#C:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#C:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#C:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#C:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#C:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#C:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#C:BaseColumnName_IsNull");
@@ -504,7 +499,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#E:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#E:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#E:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#E:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#E:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#E:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#E:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#E:BaseColumnName_IsNull");
@@ -592,7 +587,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#G:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#G:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#G:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#G:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#G:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#G:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#G:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#G:BaseColumnName_IsNull");
@@ -685,7 +680,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#I:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#I:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#I:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#I:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#I:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#I:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#I:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#I:BaseColumnName_IsNull");
@@ -773,7 +768,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 				Assert.IsTrue (pkRow.IsNull ("BaseSchemaName"), "#K:BaseSchemaName_IsNull");
 				Assert.AreEqual (DBNull.Value, pkRow ["BaseSchemaName"], "#K:BaseSchemaName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseCatalogName"), "#K:BaseCatalogName_IsNull");
-				Assert.AreEqual (ConnectionManager.Singleton.DatabaseName, pkRow ["BaseCatalogName"], "#K:BaseCatalogName_Value");
+				Assert.AreEqual (ConnectionManager.Instance.DatabaseName, pkRow ["BaseCatalogName"], "#K:BaseCatalogName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseTableName"), "#K:BaseTableName_IsNull");
 				Assert.AreEqual ("employee", pkRow ["BaseTableName"], "#K:BaseTableName_Value");
 				Assert.IsFalse (pkRow.IsNull ("BaseColumnName"), "#K:BaseColumnName_IsNull");
@@ -834,7 +829,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			// MySQL currently does not support output parameters
 			// in its ODBC connector:
 			// http://www.paragon-cs.com/mag/issue3.pdf
-			if (ConnectionManager.Singleton.Engine.Type != EngineType.SQLServer)
+			if (ConnectionManager.Instance.Odbc.EngineConfig.Type != EngineType.SQLServer)
 				Assert.Ignore ("MySQL does not (yet) support output parameters using ODBC.");
 
 			IDataReader reader = null;
@@ -925,7 +920,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		[Test]
 		public void FindZeroInToStringTest ()
 		{
-			if (ConnectionManager.Singleton.Engine.Type != EngineType.MySQL)
+			if (ConnectionManager.Instance.Odbc.EngineConfig.Type != EngineType.MySQL)
 				Assert.Ignore ("Only applies to MySQL.");
 
 			IDataReader reader = null;
@@ -1001,7 +996,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		[Test]
 		public void Bug332404Test ()
 		{
-			if (ConnectionManager.Singleton.Engine.Type != EngineType.MySQL)
+			if (ConnectionManager.Instance.Odbc.EngineConfig.Type != EngineType.MySQL)
 				Assert.Ignore ("Only applies to MySQL.");
 
 			cmd = new OdbcCommand ("DROP TABLE IF EXISTS odbc_test");
@@ -1028,7 +1023,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		[Test]
 		public void Bug332400Test ()
 		{
-			if (ConnectionManager.Singleton.Engine.Type != EngineType.MySQL)
+			if (ConnectionManager.Instance.Odbc.EngineConfig.Type != EngineType.MySQL)
 				Assert.Ignore ("Only applies to MySQL.");
 
 			cmd = new OdbcCommand ("DROP TABLE IF EXISTS blob_test");

@@ -53,6 +53,7 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	Test/test-config-file			\
 	Test/System.Data/binserialize/*.bin	\
+	Test/ProviderTests/sql/*.sql	\
 	SqliteTest.db	\
 	corefx.common.sources
 

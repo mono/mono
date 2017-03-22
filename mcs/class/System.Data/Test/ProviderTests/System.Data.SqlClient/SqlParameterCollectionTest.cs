@@ -41,9 +41,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 
 	public class SqlParameterCollectionTest
 	{
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.SqlClient);
-
 		[Test]
 		public void CopyToTest ()
 		{
@@ -62,6 +59,5 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual (p1Lname, destinationArray[2], "#5 The parameter at index 2 must be p1Lname");
 			Assert.AreEqual (null, destinationArray[3], "#6 The parameter at index 3 must not change");
 		}
-		
 	}
 }

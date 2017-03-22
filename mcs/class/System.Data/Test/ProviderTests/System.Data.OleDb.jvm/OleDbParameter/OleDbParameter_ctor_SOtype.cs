@@ -33,7 +33,7 @@ using NUnit.Framework;
 #if DAAB
 using Microsoft.ApplicationBlocks;
 #endif
-namespace MonoTests.System.Data.Connected.OleDb
+namespace MonoTests.System.Data.OleDb
 {
 [TestFixture]
 public class OleDbParameter_ctor_SOtype : ADONetTesterClass

@@ -44,14 +44,10 @@ namespace MonoTests.System.Data.Connected.Odbc
 		OdbcConnection conn;
 		OdbcCommand cmd;
 
-		[TestFixtureSetUp]
-		public void Init() => ConnectionManager.RequireProvider(ProviderType.Odbc);
-
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Odbc.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
@@ -60,7 +56,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		{
 			if (cmd != null)
 				cmd.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]
@@ -152,7 +148,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			cmd.CommandText = "select count(*) from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#1");
 				break;
@@ -169,7 +165,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			cmd.CommandText = "select * from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#2");
 				break;
@@ -185,7 +181,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = "select * from employee where id <= 3;";
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#3");
 				break;

@@ -34,7 +34,7 @@ using System.Xml;
 
 namespace MonoTests.System.Data.Connected
 {
-	internal sealed class EngineConfig
+	public sealed class EngineConfig
 	{
 		private string name;
 		private string quoteCharacter;

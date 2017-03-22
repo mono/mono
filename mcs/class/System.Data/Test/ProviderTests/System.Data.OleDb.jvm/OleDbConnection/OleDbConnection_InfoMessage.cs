@@ -29,7 +29,7 @@ using MonoTests.System.Data.Utils;
 
 using System.Data.OleDb;
 
-namespace MonoTests.System.Data.Connected.OleDb
+namespace MonoTests.System.Data.OleDb
 {
 	[TestFixture]
 	public class OleDbConnection_InfoMessage : GHTBase
