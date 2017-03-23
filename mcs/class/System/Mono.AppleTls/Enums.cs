@@ -16,7 +16,15 @@ namespace Mono.AppleTls {
 	// typedef uint32_t SecTrustResultType;
 	// values are defined in Security.framework/Headers/SecTrust.h 
 	enum SecTrustResult {
+		Invalid,
+		Proceed,
+
+		Confirm,
+		Deny,
 		Unspecified,
+		RecoverableTrustFailure,
+		FatalTrustFailure,
+		ResultOtherError,
 	}
 }
 #endif
