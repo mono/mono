@@ -10,7 +10,7 @@ BUILDSCRIPTSDIR=external/buildscripts
 perl ${BUILDSCRIPTSDIR}/SDKDownloader.pm --repo_name=tizen-sdk --artifacts_folder=artifacts && source artifacts/SDKDownloader/tizen-sdk/env.sh
 
 CXXFLAGS="-Os -DHAVE_ARMV6=1 -DARM_FPU_VFP=1 -D__ARM_EABI__ -march=armv7-a -mfloat-abi=softfp -mfpu=neon -mtune=cortex-a9 \
--ffunction-sections -fdata-sections -fno-strict-aliasing -fPIC"
+-ffunction-sections -fdata-sections -fno-strict-aliasing -fPIC -fvisibility=hidden"
 CFLAGS="$CXXFLAGS"
 
 TIZEN_PREFIX=${TIZEN_SDK}/tools/arm-linux-gnueabi-gcc-4.9/bin/arm-linux-gnueabi-
