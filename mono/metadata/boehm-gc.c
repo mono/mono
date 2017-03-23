@@ -1447,7 +1447,9 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
+#if !HAVE_BDWGC_GC
 	return GC_DllMain (module_handle, reason, reserved);
+#endif
 }
 #endif
 
