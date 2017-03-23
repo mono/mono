@@ -1891,6 +1891,10 @@ namespace System {
         // private convenience data
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
+#if MONO
+        public virtual bool IsSZArray { get { throw new NotImplementedException (); } }
+#endif
 }
 
 #if CONTRACTS_FULL
