@@ -65,10 +65,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
-#if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
+#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
 			return InitFromHandleApple (handle);
-#elif MONOTOUCH_WATCH
-			throw new PlatformNotSupportedException ();
 #else
 
 #if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
@@ -85,10 +83,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		static X509CertificateImpl Import (byte[] rawData)
 		{
-#if MONO_FEATURE_APPLETLS && ONLY_APPLETLS // ONLY_APPLETLS should not support any other option
+#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
 			return ImportApple (rawData);
-#elif MONOTOUCH_WATCH
-			throw new PlatformNotSupportedException ();
 #else
 #if MONO_FEATURE_APPLETLS
 			if (ShouldUseAppleTls)
