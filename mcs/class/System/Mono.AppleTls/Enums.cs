@@ -1,4 +1,4 @@
-﻿#if MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_APPLETLS
 // Copyright 2011-2015 Xamarin Inc. All rights reserved.
 
 using ObjCRuntime;
