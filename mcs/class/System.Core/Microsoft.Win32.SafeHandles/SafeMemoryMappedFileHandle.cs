@@ -31,6 +31,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
+using System.IO.MemoryMappedFiles;
 
 namespace Microsoft.Win32.SafeHandles
 {
@@ -42,10 +43,11 @@ namespace Microsoft.Win32.SafeHandles
 			handle = preexistingHandle;
 		}
 
-		[MonoTODO]
 		protected override bool ReleaseHandle ()
 		{
-			throw new NotImplementedException ();
+			MemoryMapImpl.CloseMapping (handle);
+			handle = IntPtr.Zero;
+			return true;
 		}
 	}
 }
