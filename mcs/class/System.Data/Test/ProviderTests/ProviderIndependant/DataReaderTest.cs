@@ -32,7 +32,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Globalization;
@@ -42,7 +41,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
-	[Category ("odbc")]
 	[Category ("sqlserver")]
 	public class DataReaderTest
 	{
@@ -634,7 +632,7 @@ namespace MonoTests.System.Data.Connected
 		[Test]
 		public void GetSchemaTable_Command_Disposed ()
 		{
-			if (RunningOnMono && (conn is OdbcConnection))
+			if (RunningOnMono)
 				Assert.Ignore ("Our statement handle is closed when we dispose the (Odbc)Command");
 
 			IDataReader reader = null;

@@ -28,7 +28,6 @@
 //
 
 using System;
-using System.Configuration;
 using System.Globalization;
 using System.Xml;
 
@@ -183,14 +182,14 @@ namespace MonoTests.System.Data.Connected
 			string msg = string.Format (CultureInfo.InvariantCulture,
 					"Invalid value '{0}' for attribute {1}.",
 					value, name);
-			throw new ConfigurationErrorsException (msg, cause, node);
+			throw new ArgumentOutOfRangeException (msg, cause);
 		}
 
 		static Exception CreateAttributeMissingException (string name, XmlNode node)
 		{
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"Missing '{0}' attribute.", name);
-			throw new ConfigurationErrorsException (msg, node);
+			throw new ArgumentException (msg);
 		}
 	}
 }

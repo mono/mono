@@ -30,7 +30,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Globalization;
@@ -39,7 +38,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
-	[Category ("odbc")]
 	[Category ("sqlserver")]
 	public class DbDataReaderTest
 	{
