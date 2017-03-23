@@ -141,14 +141,12 @@ Stacktrace:
 
 System.ArgumentNullException: Value cannot be null.
 Parameter name: key
-  at System.ThrowHelper.ThrowArgumentNullException (System.ExceptionArgument argument) in mcs/class/referencesource/mscorlib/system/throwhelper.cs:80 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in mcs/class/referencesource/mscorlib/system/collections/generic/dictionary.cs:299 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in mcs/class/referencesource/mscorlib/system/collections/generic/dictionary.cs:228 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs:359 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs:275 
   at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at System.ThrowHelper.ThrowArgumentNullException (System.ExceptionArgument argument) in mcs/class/referencesource/mscorlib/system/throwhelper.cs:80 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in mcs/class/referencesource/mscorlib/system/collections/generic/dictionary.cs:299 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in mcs/class/referencesource/mscorlib/system/collections/generic/dictionary.cs:228 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs:359 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs:275 
   at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
