@@ -286,7 +286,7 @@ namespace MonoTests.System.Net
 				WebHeaderCollection headers = resp.Headers;
 				Assert.AreEqual (6, headers.Count, "#1");
 				Assert.AreEqual ("9", headers ["Content-Length"], "#2");
-				Assert.AreEqual ("utf-8", headers ["Content-Encoding"], "#3");
+				Assert.AreEqual ("identity", headers ["Content-Encoding"], "#3");
 				Assert.AreEqual ("text/xml; charset=UTF-8", headers ["Content-Type"], "#4");
 				Assert.AreEqual ("Wed, 08 Jan 2003 23:11:55 GMT", headers ["Last-Modified"], "#5");
 				Assert.AreEqual ("UserID=Miguel,StoreProfile=true", headers ["Set-Cookie"], "#6");
@@ -510,7 +510,7 @@ namespace MonoTests.System.Net
 			sw.WriteLine ("HTTP/1.0 200 OK");
 			sw.WriteLine ("Server: Mono/Test");
 			sw.WriteLine ("Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT");
-			sw.WriteLine ("Content-Encoding: " + Encoding.UTF8.WebName);
+			sw.WriteLine ("Content-Encoding: identity");
 			sw.WriteLine ("Content-Type: text/xml; charset=UTF-8");
 			sw.WriteLine ("Content-Length: 9");
 			sw.WriteLine ("Set-Cookie: UserID=Miguel");
@@ -520,6 +520,30 @@ namespace MonoTests.System.Net
 			sw.Flush ();
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		internal static byte [] GzipResponseHandler (Socket socket)
+		{
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\r\n";
+			sw.WriteLine ("HTTP/1.0 200 OK");
+			sw.WriteLine ("Server: Mono/Test");
+			sw.WriteLine ("Content-Encoding: gzip");
+			sw.WriteLine ("Content-Type: text/xml; charset=UTF-8");
+			sw.WriteLine ();
+			sw.Flush ();
+
+			var gzipDummyXml = new byte[] {
+				0x1f, 0x8b, 0x08, 0x08, 0xb6, 0xb1, 0xd3, 0x58, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x67, 0x7a,
+				0x00, 0xb3, 0x49, 0x29, 0xcd, 0xcd, 0xad, 0x54, 0xd0, 0xb7, 0x03, 0x00, 0xed, 0x55, 0x32, 0xec,
+				0x09, 0x00, 0x00, 0x00 };
+			var header = Encoding.UTF8.GetBytes (sw.ToString ());
+			
+			var response = new byte[gzipDummyXml.Length + header.Length];
+			header.CopyTo(response, 0);
+			gzipDummyXml.CopyTo(response, header.Length);
+
+			return response;
 		}
 	}
 
@@ -1186,6 +1210,39 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (2000, rs.WriteTimeout, "#1");
 						rs.Close ();
 						Assert.AreEqual (2000, rs.WriteTimeout, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void AutomaticDecompression ()
+		{
+			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint();
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, s => HttpWebResponseTest.GzipResponseHandler (s))) {
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				req.AutomaticDecompression = DecompressionMethods.GZip;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [24];
+					try {
+						// read full response
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+						Assert.IsNull (resp.Headers[HttpRequestHeader.ContentEncoding]);
 					} finally {
 						rs.Close ();
 						req.Abort ();
