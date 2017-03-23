@@ -40,6 +40,8 @@
 
 #undef DEBUG
 
+static MonoString* get_remapped_path (MonoString *path);
+
 /* conversion functions */
 
 static guint32 convert_mode(MonoFileMode mono_mode)
@@ -258,6 +260,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CreateDirectory (MonoString *path, gint32 *error)
 {
 	gboolean ret;
+	path = get_remapped_path(path);
 	MONO_ENTER_GC_SAFE;
 	
 	*error=ERROR_SUCCESS;
@@ -275,6 +278,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_RemoveDirectory (MonoString *path, gint32 *error)
 {
 	gboolean ret;
+	path = get_remapped_path(path);
 	MONO_ENTER_GC_SAFE;
 	
 	*error=ERROR_SUCCESS;
@@ -390,6 +394,8 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
 	int i;
 	GPtrArray *names;
 	
+	path = get_remapped_path(path);
+	path_with_pattern = get_remapped_path(path_with_pattern);
 	*ioerror = ERROR_SUCCESS;
 
 	MONO_ENTER_GC_SAFE;
@@ -514,6 +520,8 @@ ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
 	IncrementalFind *ifh;
 	MonoString *result;
 	
+	path = get_remapped_path(path);
+	path_with_pattern = get_remapped_path(path_with_pattern);
 	*ioerror = ERROR_SUCCESS;
 	
 	find_handle = mono_w32file_find_first (mono_string_chars (path_with_pattern), &data);
@@ -639,6 +647,8 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (MonoString *path,
 {
 	gboolean ret;
 	
+	path = get_remapped_path(path);
+
 	*error=ERROR_SUCCESS;
 	
 	ret=mono_w32file_set_cwd (mono_string_chars (path));
@@ -652,6 +662,12 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (MonoString *path,
 MonoBoolean
 ves_icall_System_IO_MonoIO_MoveFile (MonoString *path, MonoString *dest, gint32 *error)
 {
+	// TODO_UNITY
+	gboolean ret;
+	
+	path = get_remapped_path(path);
+	dest = get_remapped_path(dest);
+
 	*error=ERROR_SUCCESS;
 	return mono_w32file_move (mono_string_chars (path), mono_string_chars (dest), error);
 }
@@ -663,6 +679,10 @@ ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *
 {
 	gunichar2 *utf16_sourceFileName = NULL, *utf16_destinationFileName = NULL, *utf16_destinationBackupFileName = NULL;
 	guint32 replaceFlags = REPLACEFILE_WRITE_THROUGH;
+
+	sourceFileName = get_remapped_path(sourceFileName);
+	destinationFileName = get_remapped_path(destinationFileName);
+	destinationBackupFileName = get_remapped_path(destinationBackupFileName);
 
 	if (sourceFileName)
 		utf16_sourceFileName = mono_string_chars (sourceFileName);
@@ -684,6 +704,12 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CopyFile (MonoString *path, MonoString *dest,
 				     MonoBoolean overwrite, gint32 *error)
 {
+	// TODO_UNITY
+	gboolean ret;
+	
+	path = get_remapped_path(path);
+	dest = get_remapped_path(dest);
+
 	*error=ERROR_SUCCESS;
 	return mono_w32file_copy (mono_string_chars (path), mono_string_chars (dest), overwrite, error);
 }
@@ -694,6 +720,8 @@ ves_icall_System_IO_MonoIO_DeleteFile (MonoString *path, gint32 *error)
 	gboolean ret;
 	MONO_ENTER_GC_SAFE;
 	
+	path = get_remapped_path(path);
+
 	*error=ERROR_SUCCESS;
 	
 	ret=mono_w32file_delete (mono_string_chars (path));
@@ -709,6 +737,7 @@ gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (MonoString *path, gint32 *error)
 {
 	gint32 ret;
+	path = get_remapped_path(path);
 	MONO_ENTER_GC_SAFE;
 
 	*error=ERROR_SUCCESS;
@@ -735,6 +764,7 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (MonoString *path, gint32 attrs,
 					      gint32 *error)
 {
 	gboolean ret;
+	path = get_remapped_path(path);
 	MONO_ENTER_GC_SAFE;
 	
 	*error=ERROR_SUCCESS;
@@ -772,7 +802,9 @@ ves_icall_System_IO_MonoIO_GetFileType (HANDLE handle, gint32 *error)
 MonoBoolean
 ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat, gint32 *error)
 {
+	// UNITY_TODO
 	gboolean result;
+	path = get_remapped_path(path);
 	MONO_ENTER_GC_SAFE;
 
 	*error=ERROR_SUCCESS;
@@ -796,6 +828,7 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 	HANDLE ret;
 	int attributes, attrs;
 	gunichar2 *chars;
+	filename = get_remapped_path(filename);
 	MONO_ENTER_GC_SAFE;
 
 	chars = mono_string_chars (filename);	
@@ -1246,4 +1279,115 @@ void ves_icall_System_IO_MonoIO_DumpHandles (void)
 {
 	mono_w32handle_dump ();
 }
+
 #endif /* !HOST_WIN32 */
+
+/*
+size_t RemapPathFunction (const char* path, char* buffer, size_t buffer_len)
+
+	path         = original path
+	buffer       = provided buffer to fill out
+	buffer_len   = byte size of buffer (above)
+	return value = buffer size needed, incl. terminating 0
+
+	* may be called with buffer = null / buffer_len = 0, or a shorter-than-necessary-buffer.
+	* return value is always the size _needed_; not the size written.
+	* terminating zero should always be written.
+	* if buffer_len is less than needed, buffer content is undefined
+	* if return value is 0 no remapping is needed / available
+*/
+typedef size_t (*RemapPathFunction)(const char* path, char* buffer, size_t buffer_len);
+static RemapPathFunction g_RemapPathFunc = NULL;
+
+/* calls remapper function if registered; allocates memory if remapping is available */
+static inline size_t
+call_remapper(const char* path, char** buf)
+{
+	size_t len;
+
+	if (!g_RemapPathFunc)
+		return FALSE;
+
+	*buf = NULL;
+	len = g_RemapPathFunc(path, *buf, 0);
+
+	if (len == 0)
+		return 0;
+
+	*buf = g_new (char, len);
+	g_RemapPathFunc(path, *buf, len);
+
+	return len;
+}
+
+/* sets 'new_path', and returns TRUE, if remapping is available */
+static gboolean
+remap_path (MonoString *path, MonoString** new_path)
+{
+	MonoError error;
+	MonoString * str;
+	char * utf8_path;
+	char * buf;
+	char * path_end;
+	size_t len;
+
+	*new_path = NULL;
+
+	if (!g_RemapPathFunc)
+		return FALSE;
+
+	utf8_path = mono_string_to_utf8_ignore(path);
+	len = call_remapper(utf8_path, &buf);
+	if (len == 0)
+	{
+		g_free(utf8_path);
+		return FALSE;
+	}
+
+	path_end = memchr(buf, '\0', len);
+	len = path_end ? (size_t) (path_end - buf) : len;
+	str = mono_string_new_len_checked (mono_domain_get (), buf, (guint)len, &error);
+
+	g_free(utf8_path);
+	g_free (buf);
+
+	mono_gc_wbarrier_generic_store(new_path, (MonoObject*)str);
+	mono_error_set_pending_exception (&error);
+
+	return *new_path ? TRUE : FALSE;
+}
+
+/* returns remapped path, if remapping is available. otherwise returns original path */
+static MonoString*
+get_remapped_path (MonoString *path)
+{
+	MonoString * new_path;
+	return remap_path(path, &new_path) ? new_path : path;
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path)
+{
+	return remap_path(path, new_path);
+}
+
+/* updates 'path' if remapping is available; returns TRUE if updated (path must be free()'d) */
+gboolean 
+mono_file_remap_path(const char** path)
+{
+	size_t len;
+	char * buf;
+
+	len = call_remapper(*path, &buf);
+	if (len == 0)
+		return FALSE;
+
+	*path = buf;
+	return TRUE;
+}
+
+void
+mono_unity_register_path_remapper(RemapPathFunction func)
+{
+	g_RemapPathFunc = func;
+}

@@ -384,6 +384,7 @@ ICALL(MONOIO_15, "MoveFile(string,string,System.IO.MonoIOError&)", ves_icall_Sys
 #endif /* !PLATFORM_RO_FS */
 ICALL(MONOIO_16, "Open(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Open)
 ICALL(MONOIO_17, "Read(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Read)
+ICALL(MONOIO_39, "RemapPath(string,string&)", ves_icall_System_IO_MonoIO_RemapPath)
 #ifndef PLATFORM_RO_FS
 ICALL(MONOIO_18, "RemoveDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_RemoveDirectory)
 ICALL(MONOIO_18M, "ReplaceFile(string,string,string,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_ReplaceFile)
