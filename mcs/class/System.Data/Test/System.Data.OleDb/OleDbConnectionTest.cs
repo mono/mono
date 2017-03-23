@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_OLEDB
 using System;
 using System.Data;
 using System.Data.OleDb;
@@ -229,3 +230,5 @@ namespace MonoTests.System.Data.OleDb
 		}
 	}
 }
+
+#endif

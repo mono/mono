@@ -33,7 +33,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
+#if !NO_ODBC
 using System.Data.Odbc;
+#endif
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -45,7 +47,6 @@ namespace MonoTests.System.Data.Connected
 	public class ConnectionManager
 	{
 		private static ConnectionManager instance;
-		private ConnectionHolder<OdbcConnection> odbc;
 		private ConnectionHolder<SqlConnection> sql;
 
 		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC";
@@ -63,9 +64,11 @@ namespace MonoTests.System.Data.Connected
 			if (sql != null)
 				CreateMssqlDatabase();
 			
+#if !NO_ODBC
 			odbc = ConnectionHolder<OdbcConnection>.FromEnvVar(OdbcEnvVar);
 			if (odbc != null)
 				CreateMysqlDatabase();
+#endif
 		}
 
 		private void CreateMssqlDatabase()
@@ -82,6 +85,7 @@ namespace MonoTests.System.Data.Connected
 			}
 		}
 
+#if !NO_ODBC
 		private void CreateMysqlDatabase()
 		{
 			DBHelper.ExecuteNonQuery(odbc.Connection, $"CREATE DATABASE {DatabaseName}");
@@ -98,6 +102,7 @@ namespace MonoTests.System.Data.Connected
 				DBHelper.ExecuteNonQuery(odbc.Connection, subQuery);
 			}
 		}
+#endif
 
 		private void DropMssqlDatabase()
 		{
@@ -106,11 +111,13 @@ namespace MonoTests.System.Data.Connected
 			DBHelper.ExecuteNonQuery(sql.Connection, query);
 		}
 
+#if !NO_ODBC
 		private void DropMysqlDatabase()
 		{
 			string query = $"DROP DATABASE [{DatabaseName}]";
 			DBHelper.ExecuteNonQuery(odbc.Connection, query);
 		}
+#endif
 
 		// Split SQL script by "GO" statements
 		private static IEnumerable<string> SplitSqlStatements(string sqlScript)
@@ -125,6 +132,10 @@ namespace MonoTests.System.Data.Connected
 
 		public string DatabaseName { get; }
 
+#if !NO_ODBC
+
+		private ConnectionHolder<OdbcConnection> odbc;
+
 		public ConnectionHolder<OdbcConnection> Odbc
 		{
 			get
@@ -134,6 +145,7 @@ namespace MonoTests.System.Data.Connected
 				return odbc;
 			}
 		}
+#endif
 
 		public ConnectionHolder<SqlConnection> Sql
 		{
@@ -148,7 +160,9 @@ namespace MonoTests.System.Data.Connected
 		public void Close()
 		{
 			sql?.CloseConnection();
+#if !NO_ODBC			
 			odbc?.CloseConnection();
+#endif
 		}
 	}
 
@@ -188,6 +202,9 @@ namespace MonoTests.System.Data.Connected
 
 		public static ConnectionHolder<TConnection> FromEnvVar(string envVarName)
 		{
+#if NO_CONFIGURATION
+			throw new NotImplementedException ();
+#else
 			string variable = Environment.GetEnvironmentVariable(envVarName) ?? string.Empty;
 			var envParts = variable.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
 			if (envParts.Length == 0 || string.IsNullOrEmpty(envParts[0]))
@@ -215,6 +232,7 @@ namespace MonoTests.System.Data.Connected
 				return new ConnectionHolder<TConnection>(connConfig.Engine, factory, connectionString);
 			}
 			throw new InvalidOperationException($"Connection {connectionName} not found");
+#endif
 		}
 	}
 }

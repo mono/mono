@@ -287,12 +287,28 @@ namespace MonoTests.System.Reflection
 		class GBD_D : GBD_C { public new virtual void f () {} }
 		class GBD_E : GBD_D { public override    void f () {} }
 
+		class GBD_E2 : GBD_D { }
+		class GBD_F : GBD_E { }
+
+
 		[Test]
 		public void GetBaseDefinition ()
 		{
 			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#1r");
+
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#2r");
+
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#3r");
+
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E2).GetMethod ("f").GetBaseDefinition ().DeclaringType, "#4");
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E2).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#4r");
+
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_F).GetMethod ("f").GetBaseDefinition ().DeclaringType, "#5");
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_F).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#5r");
+
 		}
 
 		class GenericBase<T,H> {

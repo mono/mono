@@ -26,6 +26,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#if !NO_ODBC
+
 using System;
 using System.Data;
 using System.Data.Common;
@@ -406,3 +408,5 @@ namespace MonoTests.System.Data.Odbc
 		}
 	}
 }
+
+#endif

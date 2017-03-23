@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/xbuild/14.0/bin/xbuild.exe "$@"
+MONO_GC_PARAMS="nursery-size=64m,$MONO_GC_PARAMS" exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/xbuild/14.0/bin/xbuild.exe "$@"
