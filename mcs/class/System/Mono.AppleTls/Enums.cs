@@ -1,4 +1,4 @@
-#if MONO_FEATURE_APPLETLS
+﻿#if MONO_FEATURE_APPLETLS
 // Copyright 2011-2015 Xamarin Inc. All rights reserved.
 
 using ObjCRuntime;
@@ -19,7 +19,6 @@ namespace Mono.AppleTls {
 		Invalid,
 		Proceed,
 
-		[Availability (Deprecated = Platform.iOS_7_0 | Platform.Mac_10_9)]
 		Confirm,
 		Deny,
 		Unspecified,
