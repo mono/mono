@@ -2583,6 +2583,26 @@ public class ArrayTest
 	}
 
 	[Test]
+	public void TestSortComparableMixed()
+	{
+		var m = new TestSortComparableMixed_Comparer ();
+		var arr = new object [] { 1, 2, m, 4, 5, 6, 7, 8, 9, 10 };
+
+		Array.Sort (arr);
+
+		var expected = new object [] { m, 1, 2, 4, 5, 6, 7, 8, 9, 10 };
+		Assert.AreEqual (expected, arr);
+	}
+
+	class TestSortComparableMixed_Comparer : IComparable
+	{
+		public int CompareTo (object other)
+		{
+			return -1;
+		}
+	}
+
+	[Test]
 	public void TestInitializeEmpty()
 	{
 		bool catched=false;
