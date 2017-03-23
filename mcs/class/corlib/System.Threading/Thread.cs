@@ -626,12 +626,18 @@ namespace System.Threading {
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginCriticalRegion ()
 		{
+			if (CurrentThread.Internal.critical_region_level > int.MaxValue - 100)
+				throw new Exception ("critical_region_level too big, probable leak");
+
 			CurrentThread.Internal.critical_region_level++;
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EndCriticalRegion ()
 		{
+			if (CurrentThread.Internal.critical_region_level < 0)
+				throw new Exception ("critical_region_level negative, probable leak");
+
 			CurrentThread.Internal.critical_region_level--;
 		}
 

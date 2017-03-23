@@ -59,8 +59,13 @@ namespace System.Net.Sockets {
 								StringBuilder sb = new StringBuilder ();
 								sb.AppendLine ("Could not abort registered blocking threads before closing socket.");
 								foreach (var thread in blocking_threads) {
+									var hc = thread.GetHashCode();
 									sb.AppendLine ("Thread StackTrace:");
-									sb.AppendLine (threads_stacktraces[thread].ToString ());
+									try {
+										sb.AppendLine (threads_stacktraces[thread].ToString ());
+									} catch {
+										sb.AppendFormat("Hashcodes: {0} {1}\n", hc, thread.GetHashCode ());
+									}
 								}
 								sb.AppendLine ();
 
