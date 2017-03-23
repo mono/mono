@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
-using System.Threading.Tasks;
 
 namespace Mono.Debugger.Soft
 {
@@ -12,7 +10,7 @@ namespace Mono.Debugger.Soft
 	 * It might be better to make this a subclass of Type, but that could be
 	 * difficult as some of our methods like GetMethods () return Mirror objects.
 	 */
-	public class TypeMirror : Mirror
+	public class TypeMirror : Mirror, IInvocableMethodOwnerMirror
 	{
 		MethodMirror[] methods;
 		AssemblyMirror ass;
@@ -783,46 +781,6 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);
-		}
-
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
-			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
-		}
-
-		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
-		}
-
-		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
-		}
-
-		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
-		}
-
-		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-		}
-
-		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
-		}
-
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
 			return NewInstance (thread, method, arguments, InvokeOptions.None);
 		}			
@@ -834,7 +792,7 @@ namespace Mono.Debugger.Soft
 			if (!method.IsConstructor)
 				throw new ArgumentException ("The method must be a constructor.", "method");
 
-			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
+			return this.InvokeMethod (thread, method, arguments, options);
 		}
 
 		// Since protocol version 2.31
@@ -903,5 +861,13 @@ namespace Mono.Debugger.Soft
 				return inited;
 			}
 		}
-    }
+
+		Value IInvocableMethodOwnerMirror.GetThisObject () {
+			return null;
+		}
+
+		void IInvocableMethodOwnerMirror.ProcessResult (IInvokeResult result)
+		{
+		}
+	}
 }
