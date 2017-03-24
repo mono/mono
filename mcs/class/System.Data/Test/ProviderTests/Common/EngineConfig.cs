@@ -47,7 +47,7 @@ namespace MonoTests.System.Data.Connected
 		private EngineType type;
 		private int clientVersion;
 
-		private EngineConfig ()
+		public EngineConfig ()
 		{
 		}
 
@@ -60,42 +60,52 @@ namespace MonoTests.System.Data.Connected
 		/// </summary>
 		public string QuoteCharacter {
 			get { return quoteCharacter; }
+			set { quoteCharacter = value; }
 		}
 
 		public EngineType Type {
 			get { return type; }
+			set { type = value; }
 		}
 
 		public bool RemovesTrailingSpaces {
 			get { return removesTrailingSpaces; }
+			set { removesTrailingSpaces = value; }
 		}
 
 		public bool EmptyBinaryAsNull {
 			get { return emptyBinaryAsNull; }
+			set { emptyBinaryAsNull = value; }
 		}
 
 		public bool SupportsMicroseconds {
 			get { return supportsMicroseconds; }
+			set { supportsMicroseconds = value; }
 		}
 
 		public bool SupportsUniqueIdentifier {
 			get { return supportsUniqueIdentifier; }
+			set { supportsUniqueIdentifier = value; }
 		}
 
 		public bool SupportsDate {
 			get { return supportsDate; }
+			set { supportsDate = value; }
 		}
 
 		public bool SupportsTime {
 			get { return supportsTime; }
+			set { supportsTime = value; }
 		}
 
 		public bool SupportsTimestamp {
 			get { return supportsTimestamp; }
+			set { supportsTimestamp = value; }
 		}
 
 		public int ClientVersion {
 		       get { return clientVersion; }
+		       set { clientVersion = value; }
 		}
 
 		public static EngineConfig FromXml (XmlNode config)
