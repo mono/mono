@@ -203,13 +203,19 @@ sgen_check_remset_consistency (void)
 		g_assert (!missing_remsets);
 }
 
+static inline gboolean
+major_collector_is_object_live (GCObject *obj)
+{
+	return sgen_get_major_collector ()->is_object_live (obj);
+}
+
 static gboolean
 is_major_or_los_object_marked (GCObject *obj)
 {
 	if (sgen_safe_object_get_size ((GCObject*)obj) > SGEN_MAX_SMALL_OBJ_SIZE) {
 		return sgen_los_object_is_pinned (obj);
 	} else {
-		return sgen_get_major_collector ()->is_object_live (obj);
+		return major_collector_is_object_live (obj);
 	}
 }
 
@@ -829,6 +835,12 @@ scan_roots_for_specific_ref (GCObject *key, int root_type)
 	check_root = NULL;
 }
 
+static inline MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
+major_collector_iterate_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data)
+{
+	major_collector.iterate_objects (flags, callback, data);
+}
+
 void
 mono_gc_scan_for_specific_ref (GCObject *key, gboolean precise)
 {
@@ -840,7 +852,7 @@ mono_gc_scan_for_specific_ref (GCObject *key, gboolean precise)
 	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
 			(IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key, TRUE, FALSE);
 
-	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key);
+	major_collector_iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key);
 
 	sgen_los_iterate_objects ((IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key);
 
@@ -977,7 +989,7 @@ is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 	return FALSE;
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 check_reference_for_xdomain (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 {
 	MonoObject *ref = *ptr;
@@ -1024,7 +1036,7 @@ check_reference_for_xdomain (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	check_reference_for_xdomain ((ptr), (obj), domain)
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 scan_object_for_xdomain_refs (GCObject *obj, mword size, void *data)
 {
 	char *start = (char*)obj;
@@ -1043,7 +1055,7 @@ sgen_check_for_xdomain_refs (void)
 	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
 			(IterateObjectCallbackFunc)scan_object_for_xdomain_refs, NULL, FALSE, TRUE);
 
-	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)scan_object_for_xdomain_refs, NULL);
+	major_collector_iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)scan_object_for_xdomain_refs, NULL);
 
 	for (bigobj = los_object_list; bigobj; bigobj = bigobj->next)
 		scan_object_for_xdomain_refs ((GCObject*)bigobj->data, sgen_los_object_size (bigobj), NULL);

@@ -750,7 +750,7 @@ get_block:
  * This is just called from the domain clearing code, which runs in a
  * single thread and has the GC lock, so we don't need an extra lock.
  */
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 free_object (GCObject *obj, size_t size, gboolean pinned)
 {
 	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
@@ -779,14 +779,14 @@ free_object (GCObject *obj, size_t size, gboolean pinned)
 	}
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 major_free_non_pinned_object (GCObject *obj, size_t size)
 {
 	free_object (obj, size, FALSE);
 }
 
 /* size is a multiple of SGEN_ALLOC_ALIGN */
-static GCObject*
+static MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world)) GCObject*
 major_alloc_small_pinned_obj (GCVTable vtable, size_t size, gboolean has_references)
 {
 	void *res;
@@ -796,13 +796,13 @@ major_alloc_small_pinned_obj (GCVTable vtable, size_t size, gboolean has_referen
 	  *as pinned alloc is requested by the runtime.
 	  */
 	 if (!res) {
-		sgen_perform_collection (0, GENERATION_OLD, "pinned alloc failure", TRUE, TRUE);
+		sgen_perform_collection_stw (0, GENERATION_OLD, "pinned alloc failure", TRUE);
 		res = alloc_obj (vtable, size, TRUE, has_references);
 	 }
 	 return (GCObject *)res;
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped)) void
 free_pinned_object (GCObject *obj, size_t size)
 {
 	free_object (obj, size, TRUE);
@@ -2247,7 +2247,7 @@ major_free_swept_blocks (size_t section_reserve)
 	}
 }
 
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 major_pin_objects (SgenGrayQueue *queue)
 {
 	MSBlockInfo *block;

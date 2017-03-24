@@ -89,7 +89,7 @@ try_occupy_slot (volatile gpointer *slot, gpointer obj, int data)
 	return try_set_slot (slot, (GCObject *)obj, NULL, (GCHandleType)data) != NULL;
 }
 
-static void
+static void MONO_PERMIT (need (sgen_lock_gc))
 bucket_alloc_callback (gpointer *bucket, guint32 new_bucket_size, gboolean alloc)
 {
 	if (alloc)
