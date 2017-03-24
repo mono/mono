@@ -19,14 +19,6 @@ mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 \fImono\fP is a runtime implementation of the ECMA Common Language
 Infrastructure.  This can be used to run ECMA and .NET applications.
 .PP
-The runtime contains a native code generator that transforms the
-Common Intermediate Language into native code.
-.PP
-The code generator can operate in two modes: just in time compilation
-(JIT) or ahead of time compilation (AOT).  Since code can be
-dynamically loaded, the runtime environment and the JIT are always
-present, even if code is compiled ahead of time.
-.PP
 The runtime loads the specified
 .I file
 and optionally passes
@@ -36,12 +28,26 @@ to it.  The
 .I file
 is an ECMA assembly.  They typically have a .exe or .dll extension.
 .PP
+These executables can reference additionaly functionality in the form
+of assembly references.  By default those assembly references are
+resolved as follows: the \fBmscorlib.dll\fR is resolved from the
+system profile that is configured by Mono, and other assemblies are
+loaded from the Global Assembly Cache (GAC).   
+.PP
+The runtime contains a native code generator that transforms the
+Common Intermediate Language into native code.
+.PP
+The code generator can operate in two modes: just in time compilation
+(JIT) or ahead of time compilation (AOT).  Since code can be
+dynamically loaded, the runtime environment and the JIT are always
+present, even if code is compiled ahead of time.
+.PP
 The runtime provides a number of configuration options for running
 applications, for developing and debugging, and for testing and
 debugging the runtime itself.
 .PP
-The \fImono\fP command uses the Boehm conservative garbage collector
-while the \fImono-sgen\fP command uses a moving and generational
+The \fImono\fP command uses the moving and generational SGen garbage collector
+while the \fImono-boehm\fP command uses the conservative Boehm
 garbage collector.
 .SH PORTABILITY
 On Unix-based systems, Mono provides a mechanism to emulate the 
@@ -87,7 +93,7 @@ information which is not available on the generated file.  When
 precompiling code, you might want to compile with all optimizations
 (-O=all).  Pre-compiled code is position independent code.
 .Sp
-Pre compilation is just a mechanism to reduce startup time, increase
+Precompilation is just a mechanism to reduce startup time, increase
 code sharing across multiple mono processes and avoid just-in-time
 compilation program startup costs.  The original assembly must still
 be present, as the metadata is contained there.
@@ -264,8 +270,8 @@ List of additional directories to search for AOT images.
 This instructs the Mono runtime to
 start a debugging agent inside the Mono runtime and connect it to a
 client user interface will control the Mono process.
-This option is typically used by IDEs, like the MonoDevelop IDE.
-.PP
+This option is typically used by IDEs, like the MonoDevelop or Visual Studio IDEs.
+.RS
 The configuration is specified using one of more of the following options:
 .RS
 .ne 8
@@ -292,10 +298,10 @@ actively waits for the debugger front end to connect to the Mono process.
 Mono will print out to stdout the IP address and port where it is listening.
 .TP
 .I setpgid=[y/n]
-If set to yes, Mono will call \fBsetpgid(0, 0)\fB on startup, if that function
+If set to yes, Mono will call \fBsetpgid(0, 0)\fR on startup, if that function
 is available on the system. This is useful for ensuring that signals delivered
 to a process that is executing the debuggee are not propagated to the debuggee,
-e.g. when Ctrl-C sends \fBSIGINT\fB to the \fBsdb\fB tool.
+e.g. when Ctrl-C sends \fBSIGINT\fR to the \fBsdb\fR tool.
 .TP
 .I suspend=[y/n]
 Defaults to yes, with the default option Mono will suspend the vm on startup 
@@ -528,7 +534,7 @@ platforms, and only when using gdb 7.0 or later.
 Turns on profiling.  For more information about profiling applications
 and code coverage see the sections "PROFILING" and "CODE COVERAGE"
 below. 
-.TP
+.Sp
 This option can be used multiple times, each time will load an
 additional profiler.   This allows developers to use modules that
 extend the JIT through the Mono profiling interface.
@@ -1692,7 +1698,7 @@ Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
 .TP
-\fBinit-stacks\FR 
+\fBinit-stacks\fR
 Instructs the runtime to initialize the stack with
 some known values (0x2a on x86-64) at the start of a method to assist
 in debuggin the JIT engine.
@@ -1942,8 +1948,8 @@ http://www.mono-project.com/community/help/mailing-lists/
 http://www.mono-project.com
 .SH SEE ALSO
 .PP
-certmgr(1), csharp(1), mcs(1), mdb(1), monocov(1), monodis(1),
-mono-config(5), mozroots(1), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
+certmgr(1), cert-sync(1), csharp(1), gacutil(1), mcs(1), mdb(1), monocov(1), monodis(1),
+mono-config(5), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
 .PP
 For more information on AOT:
 http://www.mono-project.com/docs/advanced/aot/

@@ -30,7 +30,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.Common;
 #if !NO_ODBC
@@ -54,22 +53,71 @@ namespace MonoTests.System.Data.Connected
 
 		private ConnectionManager ()
 		{
-			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"mysql-odbc|Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;");
-			//Environment.SetEnvironmentVariable(SqlEnvVar, @"sqlserver-tds|server=127.0.0.1;database=master;user id=sa;password=qwerty123");
+			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;";
+			//Environment.SetEnvironmentVariable(SqlEnvVar, @"server=127.0.0.1;database=master;user id=sa;password=qwerty123";
 
 			// Generate a random db name
 			DatabaseName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
 
-			sql = ConnectionHolder<SqlConnection>.FromEnvVar(SqlEnvVar);
+			sql = CreateSqlConfig (SqlEnvVar);
 			if (sql != null)
 				CreateMssqlDatabase();
 			
 #if !NO_ODBC
-			odbc = ConnectionHolder<OdbcConnection>.FromEnvVar(OdbcEnvVar);
+			odbc = CreateOdbcConfig (OdbcEnvVar);
 			if (odbc != null)
 				CreateMysqlDatabase();
 #endif
 		}
+
+		static ConnectionHolder<SqlConnection> CreateSqlConfig (string envVarName)
+		{
+			string connectionString = Environment.GetEnvironmentVariable (envVarName);
+			if (string.IsNullOrEmpty (connectionString))
+				return null;
+
+			SqlConnection connection;
+#if MOBILE
+			connection = new SqlConnection ();
+#else
+			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.SqlClient");
+			connection = (SqlConnection)factory.CreateConnection ();
+#endif
+
+			var engine = new EngineConfig {
+				Type = EngineType.SQLServer,
+				ClientVersion = 9,
+				QuoteCharacter = "&quot;",
+				SupportsMicroseconds = true,
+				SupportsUniqueIdentifier = true,
+				SupportsTimestamp = true,
+			};
+
+			return new ConnectionHolder<SqlConnection> (engine, connection, connectionString);
+		}
+
+#if !NO_ODBC
+		static ConnectionHolder<OdbcConnection> CreateOdbcConfig (string envVarName)
+		{
+			string connectionString = Environment.GetEnvironmentVariable (envVarName);
+			if (string.IsNullOrEmpty (connectionString))
+				return null;
+
+			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.Odbc");
+			var connection = (OdbcConnection)factory.CreateConnection ();
+
+			var engine = new EngineConfig {
+				Type = EngineType.MySQL,
+				QuoteCharacter = "`",
+				RemovesTrailingSpaces = true,
+				EmptyBinaryAsNull = true,
+				SupportsDate = true,
+				SupportsTime = true
+			};
+
+			return new ConnectionHolder<OdbcConnection> (engine, connection, connectionString);
+		}
+#endif
 
 		private void CreateMssqlDatabase()
 		{
@@ -193,46 +241,11 @@ namespace MonoTests.System.Data.Connected
 
 		public string ConnectionString { get; set; }
 
-		public ConnectionHolder(EngineConfig engineConfig, DbProviderFactory dbProviderFactory, string connectionString)
+		public ConnectionHolder(EngineConfig engineConfig, TConnection connection, string connectionString)
 		{
 			EngineConfig = engineConfig;
-			connection = (TConnection)dbProviderFactory.CreateConnection();
+			this.connection = connection;
 			ConnectionString = connectionString;
-		}
-
-		public static ConnectionHolder<TConnection> FromEnvVar(string envVarName)
-		{
-#if NO_CONFIGURATION
-			throw new NotImplementedException ();
-#else
-			string variable = Environment.GetEnvironmentVariable(envVarName) ?? string.Empty;
-			var envParts = variable.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-			if (envParts.Length == 0 || string.IsNullOrEmpty(envParts[0]))
-				return null;
-
-			string connectionName = envParts[0];
-			string connectionString = variable.Remove(0, envParts[0].Length + 1);
-
-			ConnectionConfig[] connections = null;
-			try
-			{
-				connections = (ConnectionConfig[]) ConfigurationManager.GetSection("providerTests");
-			}
-			catch
-			{
-				return null;
-			}
-
-			foreach (ConnectionConfig connConfig in connections)
-			{
-				if (connConfig.Name != connectionName)
-					continue;
-
-				DbProviderFactory factory = DbProviderFactories.GetFactory(connConfig.Factory);
-				return new ConnectionHolder<TConnection>(connConfig.Engine, factory, connectionString);
-			}
-			throw new InvalidOperationException($"Connection {connectionName} not found");
-#endif
 		}
 	}
 }

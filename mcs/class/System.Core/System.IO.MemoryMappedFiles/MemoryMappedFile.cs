@@ -33,7 +33,6 @@ using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-
 namespace System.IO.MemoryMappedFiles
 {
 	internal static class MemoryMapImpl {
@@ -113,7 +112,6 @@ namespace System.IO.MemoryMappedFiles
 		}
 	}
 
-
 	public class MemoryMappedFile : IDisposable {
 		// MemoryMappedFileAccess fileAccess;
 		// string name;
@@ -127,7 +125,7 @@ namespace System.IO.MemoryMappedFiles
 		//
 		FileStream stream;
 		bool keepOpen;
-		IntPtr handle;
+		SafeMemoryMappedFileHandle handle;
 
 		public static MemoryMappedFile CreateFromFile (string path)
 		{
@@ -147,7 +145,7 @@ namespace System.IO.MemoryMappedFiles
 			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, null, out capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.None);
 
 			return new MemoryMappedFile () {
-				handle = handle,
+				handle = new SafeMemoryMappedFileHandle (handle, true),
 				// fileAccess = MemoryMappedFileAccess.ReadWrite,
 				// fileCapacity = capacity
 			};
@@ -179,7 +177,7 @@ namespace System.IO.MemoryMappedFiles
 			IntPtr handle = MemoryMapImpl.OpenFile (path, mode, mapName, out capacity, access, MemoryMappedFileOptions.None);
 			
 			return new MemoryMappedFile () {
-				handle = handle,
+				handle = new SafeMemoryMappedFileHandle (handle, true),
 				// fileAccess = access,
 				// name = mapName,
 				// fileCapacity = capacity
@@ -202,7 +200,7 @@ namespace System.IO.MemoryMappedFiles
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
 			return new MemoryMappedFile () {
-				handle = handle,
+				handle = new SafeMemoryMappedFileHandle (handle, true),
 				// fileAccess = access,
 				// name = mapName,
 				// fileCapacity = capacity,
@@ -229,7 +227,7 @@ namespace System.IO.MemoryMappedFiles
 			MemoryMapImpl.ConfigureHandleInheritability (handle, inheritability);
 				
 			return new MemoryMappedFile () {
-				handle = handle,
+				handle = new SafeMemoryMappedFileHandle (handle, true),
 				// fileAccess = access,
 				// name = mapName,
 				// fileCapacity = capacity,
@@ -252,7 +250,7 @@ namespace System.IO.MemoryMappedFiles
 			IntPtr handle = MemoryMapImpl.OpenFile (null, mode, mapName, out capacity, access, options);
 			
 			return new MemoryMappedFile () {
-				handle = handle,
+				handle = new SafeMemoryMappedFileHandle (handle, true),
 				// fileAccess = access,
 				// name = mapName,
 				// fileCapacity = capacity
@@ -339,7 +337,7 @@ namespace System.IO.MemoryMappedFiles
 
 		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access)
 		{
-			var view = MemoryMappedView.Create (handle, offset, size, access);
+			var view = MemoryMappedView.Create (handle.DangerousGetHandle (), offset, size, access);
 			return new MemoryMappedViewStream (view);
 		}
 
@@ -355,7 +353,7 @@ namespace System.IO.MemoryMappedFiles
 
 		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access)
 		{
-			var view = MemoryMappedView.Create (handle, offset, size, access);
+			var view = MemoryMappedView.Create (handle.DangerousGetHandle (), offset, size, access);
 			return new MemoryMappedViewAccessor (view);
 		}
 
@@ -370,16 +368,16 @@ namespace System.IO.MemoryMappedFiles
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing){
-				if (stream != null){
+			if (disposing) {
+				if (stream != null) {
 					if (keepOpen == false)
 						stream.Close ();
 					stream = null;
 				}
-				if (handle != IntPtr.Zero) {
-					MemoryMapImpl.CloseMapping (handle);
-					handle = IntPtr.Zero;
-				}
+			}
+			if (handle != null) {
+				handle.Dispose ();
+				handle = null;
 			}
 		}
 
