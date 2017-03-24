@@ -1805,8 +1805,10 @@ namespace Mono.CSharp
 			this.spec = spec;
 			current_type = null;
 			if (class_partial_parts != null) {
-				foreach (var part in class_partial_parts)
+				foreach (var part in class_partial_parts) {
 					part.spec = spec;
+					part.current_type = null;
+				}
 			}
 		}
 
