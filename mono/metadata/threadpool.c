@@ -124,6 +124,7 @@ domains_unlock (void)
 static void
 destroy (gpointer unused)
 {
+#if 0
 	g_ptr_array_free (threadpool->domains, TRUE);
 	mono_coop_mutex_destroy (&threadpool->domains_lock);
 
@@ -138,6 +139,7 @@ destroy (gpointer unused)
 	 * not free the threadpool, as we won't be able to access
 	 * the threadpool anyway because the ref count will be 0 */
 	// g_free (threadpool);
+#endif
 }
 
 static void
