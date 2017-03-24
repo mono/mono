@@ -55,6 +55,7 @@ EXTRA_DISTFILES = \
 	Test/System.Data/binserialize/*.bin	\
 	Test/ProviderTests/sql/*.sql	\
 	SqliteTest.db	\
+	provider_tests.sources	\
 	corefx.common.sources
 
 gen_OdbcConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
