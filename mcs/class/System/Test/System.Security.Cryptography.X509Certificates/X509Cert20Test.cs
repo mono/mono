@@ -587,6 +587,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		[ExpectedException (typeof (CryptographicException))]
 		public void Pkcs12_1_WithoutPassword ()
 		{
@@ -601,6 +602,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		public void Pkcs12_2_Properties ()
 		{
 			CheckPkcs12 (new X509Certificate (farscape_nopwd_pfx));
@@ -732,6 +734,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
+		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		public void Pkcs7_Ctor ()
 		{
 			new X509Certificate (farscape_pkcs7);
@@ -739,6 +742,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
+		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 		public void Pkcs7_Import ()
 		{
 			X509Certificate x = new X509Certificate ();
