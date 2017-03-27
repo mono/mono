@@ -155,11 +155,11 @@ runtime.
 .TP
 .I full
 .Sp
-This creates binaries which can be used with the --full-aot option. This feature is experimental.
+This creates binaries which can be used with the --full-aot option.
 .TP
 .I hybrid
 .Sp
-This creates binaries which can be used with the --hybrid-aot option. This feature is experimental.
+This creates binaries which can be used with the --hybrid-aot option.
 .TP
 .I llvm
 AOT will be performed with the LLVM backend instead of the Mono backend where possible. This will be slower to compile but most likely result in a performance improvement.
@@ -382,7 +382,7 @@ the heap as much as possible at the expense of slowing down garbage
 collection a bit.
 .TP
 \fB--full-aot\fR
-This is an experimental flag that instructs the Mono runtime to not
+This flag instructs the Mono runtime to not
 generate any code at runtime and depend exclusively on the code
 generated from using mono --aot=full previously.  This is useful for
 platforms that do not permit dynamic code generation, or if you need
@@ -418,7 +418,7 @@ will switch to '/bin/mono64' iff '/bin/mono' is a 32-bit build).
 Displays usage instructions.
 .TP
 \fB--hybrid-aot\fR
-This is an experimental flag that allows the Mono runtime to run assemblies
+This flag allows the Mono runtime to run assemblies
 that have been stripped of IL, for example using mono-cil-strip. For this to
 work, the assembly must have been AOT compiled with --aot=hybrid.
 
