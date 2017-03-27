@@ -110,11 +110,6 @@ than one can be specified:
 .RS
 .ne 8
 .TP
-.I autoreg
-The AOT compiler will emit a (ELF only) library initializer to automatically
-register the aot compiled module with the runtime.  This is only useful in static
-mode
-.TP
 .I asmonly
 Instructs the AOT compiler to output assembly code instead of an
 object file.
@@ -124,11 +119,6 @@ object file.
 If specified, forces the generated AOT files to be bound to the
 runtime version of the compiling Mono.   This will prevent the AOT
 files from being consumed by a different Mono runtime.
-.I full
-.Sp
-This is currently an experimental feature as it is not complete.
-This instructs Mono to precompile code that has historically not been
-precompiled with AOT.   
 .TP
 .I data-outfile=FILE.dll.aotdata
 .Sp
@@ -140,10 +130,59 @@ on demand by using the
 .I mono_install_load_aot_data_hook
 method.
 .TP
+.I direct-icalls
+.Sp
+When this option is specified, icalls (internal calls made from the
+standard library into the mono runtime code) are invoked directly
+instead of going through the operating system symbol lookup operation.
+This requires use of the
+.I static
+option.
+.TP
 .I direct-pinvoke
 .Sp
 When this option is specified, P/Invoke methods are invoked directly
 instead of going through the operating system symbol lookup operation.
+This requires use of the
+.I static
+option.
+.TP
+.I dwarfdebug
+Instructs the AOT compiler to emit DWARF debugging information. When
+used together with the nodebug option, only DWARF debugging
+information is emitted, but not the information that can be used at
+runtime.
+.TP
+.I full
+.Sp
+This creates binaries which can be used with the --full-aot option. This feature is experimental.
+.TP
+.I hybrid
+.Sp
+This creates binaries which can be used with the --hybrid-aot option. This feature is experimental.
+.TP
+.I llvm
+AOT will be performed with the LLVM backend instead of the Mono backend where possible. This will be slower to compile but most likely result in a performance improvement.
+.TP
+.I llvmonly
+AOT will be performed with the LLVM backend exclusively and the Mono backend will not be used. The only output in this mode will be the bitcode file normally specified with the
+.I llvm-outfile
+option. Use of
+.I llvmonly
+automatically enables the
+.I full
+and
+.I llvm
+options. This feature is experimental.
+.TP
+.I llvm-outfile=[filename]
+Gives the path for the temporary LLVM bitcode file created during AOT.
+.TP
+.I info
+Print the architecture the AOT in this copy of Mono targets and quit.
+.TP
+.I ld-flags
+Additional flags to pass to the C linker (if the current AOT mode calls for invoking it).
 .TP
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
@@ -162,7 +201,12 @@ llc compiler.
 .I nimt-trampolines=[number]
 When compiling in full aot mode, the IMT trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 128.
+Defaults to 512.
+.TP
+.I ngsharedvt-trampolines=[number]
+When compiling in full aot mode, the value type generic sharing trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 512.
 .TP
 .I nodebug
 Instructs the AOT compiler to not output any debugging information.
@@ -172,23 +216,22 @@ This prevents the AOT compiler from generating a direct calls to a
 method.   The AOT compiler usually generates direct calls for certain
 methods that do not require going through the PLT (for example,
 methods that are known to not require a hook like a static
-constructor) or call into simple internal calls. 
-.TP
-.I dwarfdebug
-Instructs the AOT compiler to emit DWARF debugging information. When
-used together with the nodebug option, only DWARF debugging
-information is emitted, but not the information that can be used at
-runtime.
+constructor) or call into simple internal calls.
 .TP
 .I nrgctx-trampolines=[number]
 When compiling in full aot mode, the generic sharing trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
+Defaults to 4096.
+.TP
+.I nrgctx-fetch-trampolines=[number]
+When compiling in full aot mode, the generic sharing fetch trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 128.
 .TP
 .I ntrampolines=[number]
 When compiling in full aot mode, the method trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
+Defaults to 4096.
 .TP
 .I outfile=[filename]
 Instructs the AOT compiler to save the output to the specified file.
@@ -196,6 +239,16 @@ Instructs the AOT compiler to save the output to the specified file.
 .I print-skipped-methods
 If the AOT compiler cannot compile a method for any reason, enabling this flag
 will output the skipped methods to the console.
+.TP
+.I profile=[file]
+Specify a file to use for profile-guided optimization. See the "AOT PROFILING" section. To specify multiple files, include the
+.I profile
+option multiple times.
+.TP
+.I profile-only
+AOT *only* the methods described in the files specified with the
+.I profile
+option. See the "AOT PROFILING" section.
 .TP
 .I readonly-value=namespace.typename.fieldname=type/value
 Override the value of a static readonly field. Usually, during JIT
@@ -209,7 +262,6 @@ Note that signed/unsigned numbers do not matter here, just the storage size.
 This option can be specified multiple times and it doesn't prevent the static
 constructor for the type defining the field to execute with the usual rules
 at runtime (hence possibly computing a different value for the field).
-
 .TP
 .I save-temps,keep-temps
 Instructs the AOT compiler to keep temporary files.
@@ -238,6 +290,9 @@ mono_aot_register_module (mono_aot_module_hello_info);
 .I stats
 Print various stats collected during AOT compilation.
 .TP
+.I temp_path=[path]
+Explicitly specify path to store temporary files created during AOT compilation.
+.TP
 .I threads=[number]
 This is an experimental option for the AOT compiler to use multiple threads
 when compiling the methods.
@@ -247,8 +302,11 @@ Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. 
 example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
 'arm-linux-gnueabi-as' instead of 'as'.
 .TP
-.I write-symbols
-Instructs the AOT compiler to emit debug symbol information.
+.I verbose
+Prints additional information about type loading failures.
+.TP
+.I write-symbols,no-write-symbols
+Instructs the AOT compiler to emit (or not emit) debug symbol information.
 .PP
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
@@ -326,8 +384,10 @@ collection a bit.
 \fB--full-aot\fR
 This is an experimental flag that instructs the Mono runtime to not
 generate any code at runtime and depend exclusively on the code
-generated from using mono --aot=full previously.   This is useful for
-platforms that do not permit dynamic code generation.
+generated from using mono --aot=full previously.  This is useful for
+platforms that do not permit dynamic code generation, or if you need
+to run assemblies that have been stripped of IL (for example using
+mono-cil-strip).
 .Sp
 Notice that this feature will abort execution at runtime if a codepath
 in your program, or Mono's class libraries attempts to generate code
@@ -356,6 +416,14 @@ will switch to '/bin/mono64' iff '/bin/mono' is a 32-bit build).
 .TP
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
+.TP
+\fB--hybrid-aot\fR
+This is an experimental flag that allows the Mono runtime to run assemblies
+that have been stripped of IL, for example using mono-cil-strip. For this to
+work, the assembly must have been AOT compiled with --aot=hybrid.
+
+This flag is similar to --full-aot, but it does not disable the JIT. This means
+you can use dynamic features such as System.Reflection.Emit.
 .TP
 \fB--llvm\fR
 If the Mono runtime has been compiled with LLVM support (not available
