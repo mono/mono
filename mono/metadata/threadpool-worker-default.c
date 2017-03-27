@@ -221,6 +221,7 @@ rand_next (gpointer *handle, guint32 min, guint32 max)
 static void
 destroy (gpointer data)
 {
+#if 0
 	MonoThreadPoolWorker *worker;
 
 	worker = (MonoThreadPoolWorker*) data;
@@ -229,6 +230,7 @@ destroy (gpointer data)
 	// FIXME destroy everything
 
 	g_free (worker);
+#endif
 }
 
 void
