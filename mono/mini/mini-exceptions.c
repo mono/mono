@@ -1,5 +1,6 @@
-/*
- * mini-exceptions.c: generic exception support
+/**
+ * \file
+ * generic exception support
  *
  * Authors:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -760,10 +761,9 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 
 /**
  * mono_exception_walk_native_trace:
- * @ex: The exception object whose frames should be walked
- * @func: callback to call for each stack frame
- * @user_data: data passed to the callback
- *
+ * \param ex The exception object whose frames should be walked
+ * \param func callback to call for each stack frame
+ * \param user_data data passed to the callback
  * This function walks the stacktrace of an exception. For
  * each frame the callback function is called with the relevant info.
  * The walk ends when no more stack frames are found or when the callback
@@ -916,10 +916,8 @@ mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx,
 }
 /**
  * mono_walk_stack_with_ctx:
- *
- * Unwind the current thread starting at @start_ctx.
- * 
- * If @start_ctx is null, we capture the current context.
+ * Unwind the current thread starting at \p start_ctx.
+ * If \p start_ctx is null, we capture the current context.
  */
 void
 mono_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data)
@@ -947,14 +945,13 @@ mono_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnw
 
 /**
  * mono_walk_stack_with_state:
- *
- * Unwind a thread described by @state.
+ * Unwind a thread described by \p state.
  *
  * State must be valid (state->valid == TRUE).
  *
  * If you are using this function to unwind another thread, make sure it is suspended.
  * 
- * If @state is null, we capture the current context.
+ * If \p state is null, we capture the current context.
  */
 void
 mono_walk_stack_with_state (MonoJitStackWalk func, MonoThreadUnwindState *state, MonoUnwindOptions unwind_options, void *user_data)
@@ -992,16 +989,15 @@ mono_walk_stack (MonoJitStackWalk func, MonoUnwindOptions options, void *user_da
 
 /**
  * mono_walk_stack_full:
- * @func: callback to call for each stack frame
- * @domain: starting appdomain, can be NULL to use the current domain
- * @unwind_options: what extra information the unwinder should gather
- * @start_ctx: starting state of the stack walk, can be NULL.
- * @thread: the thread whose stack to walk, can be NULL to use the current thread
- * @lmf: the LMF of @thread, can be NULL to use the LMF of the current thread
- * @user_data: data passed to the callback
- *
+ * \param func callback to call for each stack frame
+ * \param domain starting appdomain, can be NULL to use the current domain
+ * \param unwind_options what extra information the unwinder should gather
+ * \param start_ctx starting state of the stack walk, can be NULL.
+ * \param thread the thread whose stack to walk, can be NULL to use the current thread
+ * \param lmf the LMF of \p thread, can be NULL to use the LMF of the current thread
+ * \param user_data data passed to the callback
  * This function walks the stack of a thread, starting from the state
- * represented by start_ctx. For each frame the callback
+ * represented by \p start_ctx. For each frame the callback
  * function is called with the relevant info. The walk ends when no more
  * managed stack frames are found or when the callback returns a TRUE value.
  */
@@ -1669,9 +1665,9 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 
 /**
  * mono_handle_exception_internal:
- * @ctx: saved processor state
- * @obj: the exception object
- * @resume: whenever to resume unwinding based on the state in MonoJitTlsData.
+ * \param ctx saved processor state
+ * \param obj the exception object
+ * \param resume whenever to resume unwinding based on the state in \c MonoJitTlsData.
  */
 static gboolean
 mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resume, MonoJitInfo **out_ji)
@@ -2067,13 +2063,11 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 /**
  * mono_debugger_run_finally:
- * @start_ctx: saved processor state
- *
- * This method is called by the Mono Debugger to call all `finally' clauses of the
- * current stack frame.  It's used when the user issues a `return' command to make
+ * \param start_ctx saved processor state
+ * This method is called by the Mono Debugger to call all \c finally clauses of the
+ * current stack frame.  It's used when the user issues a \c return command to make
  * the current stack frame return.  After returning from this method, the debugger
  * unwinds the stack one frame and gives control back to the user.
- *
  * NOTE: This method is only used when running inside the Mono Debugger.
  */
 void
@@ -2108,8 +2102,8 @@ mono_debugger_run_finally (MonoContext *start_ctx)
 
 /**
  * mono_handle_exception:
- * @ctx: saved processor state
- * @obj: the exception object
+ * \param ctx saved processor state
+ * \param obj the exception object
  */
 gboolean
 mono_handle_exception (MonoContext *ctx, MonoObject *obj)
@@ -2677,11 +2671,11 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	mono_runtime_stdout_fflush ();
 }
 
-/*
+/**
  * mono_print_thread_dump:
  *
- *   Print information about the current thread to stdout.
- * SIGCTX can be NULL, allowing this to be called from gdb.
+ * Print information about the current thread to stdout.
+ * \p sigctx can be NULL, allowing this to be called from gdb.
  */
 void
 mono_print_thread_dump (void *sigctx)

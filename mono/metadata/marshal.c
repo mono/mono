@@ -1,5 +1,6 @@
-/*
- * marshal.c: Routines for marshaling complex types in P/Invoke methods.
+/**
+ * \file
+ * Routines for marshaling complex types in P/Invoke methods.
  * 
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -985,11 +986,11 @@ mono_string_utf16_to_builder (MonoStringBuilder *sb, gunichar2 *text)
 
 /**
  * mono_string_builder_to_utf8:
- * @sb: the string builder
+ * \param sb the string builder
  *
- * Converts to utf8 the contents of the MonoStringBuilder.
+ * Converts to utf8 the contents of the \c MonoStringBuilder .
  *
- * Returns: a utf8 string with the contents of the StringBuilder.
+ * \returns a utf8 string with the contents of the \c StringBuilder .
  *
  * The return value must be released with mono_marshal_free.
  *
@@ -1036,11 +1037,11 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 
 /**
  * mono_string_builder_to_utf16:
- * @sb: the string builder
+ * \param sb the string builder
  *
- * Converts to utf16 the contents of the MonoStringBuilder.
+ * Converts to utf16 the contents of the \c MonoStringBuilder .
  *
- * Returns: a utf16 string with the contents of the StringBuilder.
+ * Returns: a utf16 string with the contents of the \c StringBuilder .
  *
  * The return value must be released with mono_marshal_free.
  *
@@ -1113,12 +1114,12 @@ mono_string_to_ansibstr (MonoString *string_obj)
 
 /**
  * mono_string_to_byvalstr:
- * @dst: Where to store the null-terminated utf8 decoded string.
- * @src: the MonoString to copy.
- * @size: the maximum number of bytes to copy.
+ * \param dst Where to store the null-terminated utf8 decoded string.
+ * \param src the \c MonoString to copy.
+ * \param size the maximum number of bytes to copy.
  *
- * Copies the MonoString pointed to by @src as a utf8 string
- * into @dst, it copies at most @size bytes into the destination.
+ * Copies the \c MonoString pointed to by \p src as a utf8 string
+ * into \p dst, it copies at most \p size bytes into the destination.
  */
 void
 mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
@@ -1146,12 +1147,12 @@ mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
 
 /**
  * mono_string_to_byvalwstr:
- * @dst: Where to store the null-terminated utf16 decoded string.
- * @src: the MonoString to copy.
- * @size: the maximum number of wide characters to copy (each consumes 2 bytes)
+ * \param dst Where to store the null-terminated utf16 decoded string.
+ * \param src the \c MonoString to copy.
+ * \param size the maximum number of wide characters to copy (each consumes 2 bytes)
  *
- * Copies the MonoString pointed to by @src as a utf16 string into
- * @dst, it copies at most @size bytes into the destination (including
+ * Copies the \c MonoString pointed to by \p src as a utf16 string into
+ * \p dst, it copies at most \p size bytes into the destination (including
  * a terminating 16-bit zero terminator).
  */
 void
@@ -2809,6 +2810,9 @@ mono_mb_create_and_cache (GHashTable *cache, gpointer key,
 	return mono_mb_create_and_cache_full (cache, key, mb, sig, max_stack, NULL, NULL);
 }
 
+/**
+ * mono_marshal_method_from_wrapper:
+ */
 MonoMethod *
 mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 {
@@ -3089,6 +3093,9 @@ cache_generic_delegate_wrapper (GHashTable *cache, MonoMethod *orig_method, Mono
 	return res;
 }
 
+/**
+ * mono_marshal_get_delegate_begin_invoke:
+ */
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 {
@@ -3325,6 +3332,9 @@ mono_mb_emit_restore_result (MonoMethodBuilder *mb, MonoType *return_type)
 
 #endif /* DISABLE_JIT */
 
+/**
+ * mono_marshal_get_delegate_end_invoke:
+ */
 MonoMethod *
 mono_marshal_get_delegate_end_invoke (MonoMethod *method)
 {
@@ -3772,8 +3782,9 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	return res;	
 }
 
-/*
- * the returned method invokes all methods in a multicast delegate.
+/**
+ * mono_marshal_get_delegate_invoke:
+ * The returned method invokes all methods in a multicast delegate.
  */
 MonoMethod *
 mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
@@ -4223,15 +4234,17 @@ emit_runtime_invoke_body (MonoMethodBuilder *mb, MonoImage *image, MonoMethod *m
 }
 #endif
 
-/*
- * generates IL code for the runtime invoke function 
- * MonoObject *runtime_invoke (MonoObject *this_obj, void **params, MonoObject **exc, void* method)
+/**
+ * mono_marshal_get_runtime_invoke:
+ * Generates IL code for the runtime invoke function:
  *
- * we also catch exceptions if exc != null
- * If VIRTUAL is TRUE, then METHOD is invoked virtually on THIS. This is useful since
- * it means that the compiled code for METHOD does not have to be looked up 
+ * <code>MonoObject *runtime_invoke (MonoObject *this_obj, void **params, MonoObject **exc, void* method)</code>
+ *
+ * We also catch exceptions if \p exc is not NULL.
+ * If \p virtual is TRUE, then \p method is invoked virtually on \p this. This is useful since
+ * it means that the compiled code for \p method does not have to be looked up 
  * before calling the runtime invoke wrapper. In this case, the wrapper ignores
- * its METHOD argument.
+ * its \p method argument.
  */
 MonoMethod *
 mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual_)
@@ -4645,9 +4658,10 @@ mono_mb_emit_auto_layout_exception (MonoMethodBuilder *mb, MonoClass *klass)
 }
 #endif
 
-/*
- * generates IL code for the icall wrapper (the generated method
- * calls the unmanaged code in func)
+/**
+ * mono_marshal_get_icall_wrapper:
+ * Generates IL code for the icall wrapper. The generated method
+ * calls the unmanaged code in \p func.
  */
 MonoMethod *
 mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func, gboolean check_exceptions)
@@ -7544,16 +7558,16 @@ signature_param_uses_handles (MonoMethodSignature *sig, int param)
 #ifndef DISABLE_JIT
 /**
  * mono_marshal_emit_native_wrapper:
- * @image: the image to use for looking up custom marshallers
- * @sig: The signature of the native function
- * @piinfo: Marshalling information
- * @mspecs: Marshalling information
- * @aot: whenever the created method will be compiled by the AOT compiler
- * @method: if non-NULL, the pinvoke method to call
- * @check_exceptions: Whenever to check for pending exceptions after the native call
- * @func_param: the function to call is passed as a boxed IntPtr as the first parameter
+ * \param image the image to use for looking up custom marshallers
+ * \param sig The signature of the native function
+ * \param piinfo Marshalling information
+ * \param mspecs Marshalling information
+ * \param aot whenever the created method will be compiled by the AOT compiler
+ * \param method if non-NULL, the pinvoke method to call
+ * \param check_exceptions Whenever to check for pending exceptions after the native call
+ * \param func_param the function to call is passed as a boxed IntPtr as the first parameter
  *
- * generates IL code for the pinvoke wrapper, the generated code calls @func.
+ * generates IL code for the pinvoke wrapper, the generated code calls \p func .
  */
 void
 mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions, gboolean func_param)
@@ -7829,11 +7843,11 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 
 /**
  * mono_marshal_get_native_wrapper:
- * @method: The MonoMethod to wrap.
- * @check_exceptions: Whenever to check for pending exceptions
+ * \param method The \c MonoMethod to wrap.
+ * \param check_exceptions Whenever to check for pending exceptions
  *
- * generates IL code for the pinvoke wrapper (the generated method
- * calls the unmanaged code in piinfo->addr)
+ * Generates IL code for the pinvoke wrapper. The generated method
+ * calls the unmanaged code in \c piinfo->addr.
  */
 MonoMethod *
 mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, gboolean aot)
@@ -8240,11 +8254,11 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 
 /**
  * mono_marshal_get_native_func_wrapper:
- * @image: The image to use for memory allocation and for looking up custom marshallers.
- * @sig: The signature of the function
- * @func: The native function to wrap
+ * \param image The image to use for memory allocation and for looking up custom marshallers.
+ * \param sig The signature of the function
+ * \param func The native function to wrap
  *
- *   Returns a wrapper method around native functions, similar to the pinvoke
+ * \returns a wrapper method around native functions, similar to the pinvoke
  * wrapper.
  */
 MonoMethod *
@@ -8759,9 +8773,10 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
 	}
 }
 
-/*
- * generates IL code to call managed methods from unmanaged code 
- * If target_handle==0, the wrapper info will be a WrapperInfo structure.
+/**
+ * mono_marshal_get_managed_wrapper:
+ * Generates IL code to call managed methods from unmanaged code 
+ * If \p target_handle is \c 0, the wrapper info will be a \c WrapperInfo structure.
  */
 MonoMethod *
 mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t target_handle, MonoError *error)
@@ -9080,8 +9095,9 @@ generate_check_cache (int obj_arg_position, int class_arg_position, int cache_ar
 
 #endif /* DISABLE_JIT */
 
-/*
- * This does the equivalent of mono_object_castclass_with_cache.
+/**
+ * mono_marshal_get_castclass_with_cache:
+ * This does the equivalent of \c mono_object_castclass_with_cache.
  */
 MonoMethod *
 mono_marshal_get_castclass_with_cache (void)
@@ -9163,8 +9179,9 @@ mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *ca
 	return isinst;
 }
 
-/*
- * This does the equivalent of mono_object_isinst_with_cache.
+/**
+ * mono_marshal_get_isinst_with_cache:
+ * This does the equivalent of \c mono_object_isinst_with_cache.
  */
 MonoMethod *
 mono_marshal_get_isinst_with_cache (void)
@@ -9227,9 +9244,9 @@ mono_marshal_get_isinst_with_cache (void)
 
 /**
  * mono_marshal_get_struct_to_ptr:
- * @klass:
+ * \param klass \c MonoClass
  *
- * generates IL code for StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld)
+ * Generates IL code for <code>StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld)</code>
  */
 MonoMethod *
 mono_marshal_get_struct_to_ptr (MonoClass *klass)
@@ -9301,9 +9318,8 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 
 /**
  * mono_marshal_get_ptr_to_struct:
- * @klass:
- *
- * generates IL code for PtrToStructure (IntPtr src, object structure)
+ * \param klass \c MonoClass
+ * Generates IL code for <code>PtrToStructure (IntPtr src, object structure)</code>
  */
 MonoMethod *
 mono_marshal_get_ptr_to_struct (MonoClass *klass)
@@ -9422,9 +9438,10 @@ mono_marshal_get_synchronized_inner_wrapper (MonoMethod *method)
 	return res;
 }
 
-/*
- * generates IL code for the synchronized wrapper: the generated method
- * calls METHOD while locking 'this' or the parent type.
+/**
+ * mono_marshal_get_synchronized_wrapper:
+ * Generates IL code for the synchronized wrapper: the generated method
+ * calls \p method while locking \c this or the parent type.
  */
 MonoMethod *
 mono_marshal_get_synchronized_wrapper (MonoMethod *method)
@@ -9615,8 +9632,9 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 }
 
 
-/*
- * the returned method calls 'method' unboxing the this argument
+/**
+ * mono_marshal_get_unbox_wrapper:
+ * The returned method calls \p method unboxing the \c this argument.
  */
 MonoMethod *
 mono_marshal_get_unbox_wrapper (MonoMethod *method)
@@ -10177,6 +10195,9 @@ mono_marshal_get_virtual_stelemref_wrappers (int *nwrappers)
 	return res;
 }
 
+/**
+ * mono_marshal_get_stelemref:
+ */
 MonoMethod*
 mono_marshal_get_stelemref (void)
 {
@@ -10404,13 +10425,13 @@ static int elem_addr_cache_next = 0;
 
 /**
  * mono_marshal_get_array_address:
- * @rank: rank of the array type
- * @elem_size: size in bytes of an element of an array.
+ * \param rank rank of the array type
+ * \param elem_size size in bytes of an element of an array.
  *
  * Returns a MonoMethod that implements the code to get the address
- * of an element in a multi-dimenasional array of @rank dimensions.
+ * of an element in a multi-dimenasional array of \p rank dimensions.
  * The returned method takes an array as the first argument and then
- * @rank indexes for the @rank dimensions.
+ * \p rank indexes for the \p rank dimensions.
  * If ELEM_SIZE is 0, read the array size from the array object.
  */
 MonoMethod*
@@ -10671,6 +10692,9 @@ mono_marshal_alloc_co_task_mem (size_t size)
 }
 #endif
 
+/**
+ * mono_marshal_alloc:
+ */
 void*
 mono_marshal_alloc (gulong size, MonoError *error)
 {
@@ -10708,12 +10732,18 @@ mono_marshal_free_co_task_mem (void *ptr)
 }
 #endif
 
+/**
+ * mono_marshal_free:
+ */
 void
 mono_marshal_free (gpointer ptr)
 {
 	mono_marshal_free_co_task_mem (ptr);
 }
 
+/**
+ * mono_marshal_free_array:
+ */
 void
 mono_marshal_free_array (gpointer *ptr, int size) 
 {
@@ -10756,7 +10786,7 @@ mono_marshal_string_to_utf16_copy (MonoString *s)
  * mono_marshal_set_last_error:
  *
  * This function is invoked to set the last error value from a P/Invoke call
- * which has SetLastError set.
+ * which has \c SetLastError set.
  */
 void
 mono_marshal_set_last_error (void)
@@ -11367,9 +11397,9 @@ mono_marshal_is_loading_type_info (MonoClass *klass)
 /**
  * mono_marshal_load_type_info:
  *
- *  Initialize klass::marshal_info using information from metadata. This function can
+ * Initialize \c klass::marshal_info using information from metadata. This function can
  * recursively call itself, and the caller is responsible to avoid that by calling 
- * mono_marshal_is_loading_type_info () beforehand.
+ * \c mono_marshal_is_loading_type_info beforehand.
  *
  * LOCKING: Acquires the loader lock.
  */
@@ -11532,9 +11562,8 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 /**
  * mono_class_native_size:
- * @klass: a class 
- * 
- * Returns: the native size of an object instance (when marshaled 
+ * \param klass a class 
+ * \returns the native size of an object instance (when marshaled 
  * to unmanaged code) 
  */
 gint32
@@ -11642,6 +11671,9 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 	return 0;
 }
 
+/**
+ * mono_marshal_type_size:
+ */
 gint32
 mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			gboolean as_field, gboolean unicode)
@@ -11737,7 +11769,10 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 	return 0;
 }
 
-/* This is a JIT icall, it sets the pending exception and return NULL on error */
+/**
+ * mono_marshal_asany:
+ * This is a JIT icall, it sets the pending exception and returns NULL on error.
+ */
 gpointer
 mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_attrs)
 {
@@ -11822,7 +11857,10 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_
 	return NULL;
 }
 
-/* This is a JIT icall, it sets the pending exception */
+/**
+ * mono_marshal_free_asany:
+ * This is a JIT icall, it sets the pending exception
+ */
 void
 mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_encoding, int param_attrs)
 {

@@ -87,7 +87,7 @@ mono-file-formats.zip: mono-file-formats.tree
 mono-file-formats.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/deploy/.stamp
 	$(TOOL_MAKE) $@
 
-deploy/.stamp: convert.exe Makefile.am 
+deploy/.stamp: convert.exe Makefile.am exdoc
 	$(mkdir_p) html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
 	MONO_PATH=$(CLASS) perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c

@@ -1,5 +1,6 @@
-/*
- * abcremoval.c: Array bounds check removal
+/**
+ * \file
+ * Array bounds check removal
  *
  * Author:
  *   Massimiliano Mantione (massi@ximian.com)
@@ -1242,7 +1243,7 @@ type_to_value_kind (MonoType *type)
 
 /**
  * mono_perform_abc_removal:
- * @cfg: Control Flow Graph
+ * \param cfg Control Flow Graph
  *
  * Performs the ABC removal from a cfg in SSA form.
  * It does the following:

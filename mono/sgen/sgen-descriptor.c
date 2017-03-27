@@ -1,5 +1,6 @@
-/*
- * sgen-descriptor.c: GC descriptors describe object layout.
+/**
+ * \file
+ * GC descriptors describe object layout.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
@@ -262,6 +263,9 @@ mono_gc_get_bitmap_for_descr (SgenDescriptor descr, int *numbits)
 	}
 }
 
+/**
+ * mono_gc_make_descr_from_bitmap:
+ */
 SgenDescriptor
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {

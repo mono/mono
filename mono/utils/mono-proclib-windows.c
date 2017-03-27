@@ -1,5 +1,6 @@
-/*
- * mono-proclib-windows.c: Windows proclib support for Mono.
+/**
+ * \file
+ * Windows proclib support for Mono.
  *
  * Copyright 2016 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -20,8 +21,7 @@ mono_process_current_pid ()
 
 /**
  * mono_cpu_count:
- *
- * Return the number of processors on the system.
+ * \returns the number of processors on the system.
  */
 int
 mono_cpu_count (void)

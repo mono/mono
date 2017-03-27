@@ -1,5 +1,6 @@
-/*
- * ghashtable.c: Hashtable implementation
+/**
+ * \file
+ * Hashtable implementation
  *
  * Author:
  *   Miguel de Icaza (miguel@novell.com)
@@ -256,6 +257,9 @@ rehash (MonoGHashTable *hash)
 	mg_free (old_values);
 }
 
+/**
+ * mono_g_hash_table_size:
+ */
 guint
 mono_g_hash_table_size (MonoGHashTable *hash)
 {
@@ -264,6 +268,9 @@ mono_g_hash_table_size (MonoGHashTable *hash)
 	return hash->in_use;
 }
 
+/**
+ * mono_g_hash_table_lookup:
+ */
 gpointer
 mono_g_hash_table_lookup (MonoGHashTable *hash, gconstpointer key)
 {
@@ -275,6 +282,9 @@ mono_g_hash_table_lookup (MonoGHashTable *hash, gconstpointer key)
 		return NULL;
 }
 
+/**
+ * mono_g_hash_table_lookup_extended:
+ */
 gboolean
 mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value)
 {
@@ -293,6 +303,9 @@ mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpoi
 	return FALSE;
 }
 
+/**
+ * mono_g_hash_table_foreach:
+ */
 void
 mono_g_hash_table_foreach (MonoGHashTable *hash, GHFunc func, gpointer user_data)
 {
@@ -322,6 +335,9 @@ mono_g_hash_table_find (MonoGHashTable *hash, GHRFunc predicate, gpointer user_d
 	return NULL;
 }
 
+/**
+ * mono_g_hash_table_remove:
+ */
 gboolean
 mono_g_hash_table_remove (MonoGHashTable *hash, gconstpointer key)
 {
@@ -374,6 +390,9 @@ mono_g_hash_table_remove (MonoGHashTable *hash, gconstpointer key)
 	return TRUE;
 }
 
+/**
+ * mono_g_hash_table_foreach_remove:
+ */
 guint
 mono_g_hash_table_foreach_remove (MonoGHashTable *hash, GHRFunc func, gpointer user_data)
 {
@@ -396,6 +415,9 @@ mono_g_hash_table_foreach_remove (MonoGHashTable *hash, GHRFunc func, gpointer u
 	return count;
 }
 
+/**
+ * mono_g_hash_table_destroy:
+ */
 void
 mono_g_hash_table_destroy (MonoGHashTable *hash)
 {
@@ -454,12 +476,18 @@ mono_g_hash_table_insert_replace (MonoGHashTable *hash, gpointer key, gpointer v
 	}
 }
 
+/**
+ * mono_g_hash_table_insert:
+ */
 void
 mono_g_hash_table_insert (MonoGHashTable *h, gpointer k, gpointer v)
 {
 	mono_g_hash_table_insert_replace (h, k, v, FALSE);
 }
 
+/**
+ * mono_g_hash_table_replace:
+ */
 void
 mono_g_hash_table_replace(MonoGHashTable *h, gpointer k, gpointer v)
 {

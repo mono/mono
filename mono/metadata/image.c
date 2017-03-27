@@ -1,5 +1,6 @@
-/*
- * image.c: Routines for manipulating an image stored in an
+/**
+ * \file
+ * Routines for manipulating an image stored in an
  * extended PE/COFF file.
  * 
  * Authors:
@@ -199,14 +200,14 @@ mono_cli_rva_image_map (MonoImage *image, guint32 addr)
 }
 
 /**
- * mono_images_rva_map:
- * @image: a MonoImage
- * @addr: relative virtual address (RVA)
+ * mono_image_rva_map:
+ * \param image a \c MonoImage
+ * \param addr relative virtual address (RVA)
  *
  * This is a low-level routine used by the runtime to map relative
  * virtual address (RVA) into their location in memory. 
  *
- * Returns: the address in memory for the given RVA, or NULL if the
+ * \returns the address in memory for the given RVA, or NULL if the
  * RVA is not valid for this image. 
  */
 char *
@@ -290,13 +291,13 @@ mono_images_cleanup (void)
 
 /**
  * mono_image_ensure_section_idx:
- * @image: The image we are operating on
- * @section: section number that we will load/map into memory
+ * \param image The image we are operating on
+ * \param section section number that we will load/map into memory
  *
  * This routine makes sure that we have an in-memory copy of
- * an image section (.text, .rsrc, .data).
+ * an image section (<code>.text</code>, <code>.rsrc</code>, <code>.data</code>).
  *
- * Returns: TRUE on success
+ * \returns TRUE on success
  */
 int
 mono_image_ensure_section_idx (MonoImage *image, int section)
@@ -325,13 +326,13 @@ mono_image_ensure_section_idx (MonoImage *image, int section)
 
 /**
  * mono_image_ensure_section:
- * @image: The image we are operating on
- * @section: section name that we will load/map into memory
+ * \param image The image we are operating on
+ * \param section section name that we will load/map into memory
  *
  * This routine makes sure that we have an in-memory copy of
  * an image section (.text, .rsrc, .data).
  *
- * Returns: TRUE on success
+ * \returns TRUE on success
  */
 int
 mono_image_ensure_section (MonoImage *image, const char *section)
@@ -758,6 +759,9 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	return image->modules [idx - 1];
 }
 
+/**
+ * mono_image_load_module:
+ */
 MonoImage*
 mono_image_load_module (MonoImage *image, int idx)
 {
@@ -783,6 +787,9 @@ class_next_value (gpointer value)
 	return (gpointer*)&klass->next_class_cache;
 }
 
+/**
+ * mono_image_init:
+ */
 void
 mono_image_init (MonoImage *image)
 {
@@ -1395,14 +1402,14 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 }
 
 /**
- * mono_image_loaded:
- * @name: path or assembly name of the image to load
- * @refonly: Check with respect to reflection-only loads?
+ * mono_image_loaded_full:
+ * \param name path or assembly name of the image to load
+ * \param refonly Check with respect to reflection-only loads?
  *
  * This routine verifies that the given image is loaded.
  * It checks either reflection-only loads only, or normal loads only, as specified by parameter.
  *
- * Returns: the loaded MonoImage, or NULL on failure.
+ * \returns the loaded \c MonoImage, or NULL on failure.
  */
 MonoImage *
 mono_image_loaded_full (const char *name, gboolean refonly)
@@ -1420,11 +1427,9 @@ mono_image_loaded_full (const char *name, gboolean refonly)
 
 /**
  * mono_image_loaded:
- * @name: path or assembly name of the image to load
- *
+ * \param name path or assembly name of the image to load
  * This routine verifies that the given image is loaded. Reflection-only loads do not count.
- *
- * Returns: the loaded MonoImage, or NULL on failure.
+ * \returns the loaded \c MonoImage, or NULL on failure.
  */
 MonoImage *
 mono_image_loaded (const char *name)
@@ -1450,6 +1455,9 @@ find_by_guid (gpointer key, gpointer val, gpointer user_data)
 		data->res = image;
 }
 
+/**
+ * mono_image_loaded_by_guid_full:
+ */
 MonoImage *
 mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
 {
@@ -1464,6 +1472,9 @@ mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
 	return data.res;
 }
 
+/**
+ * mono_image_loaded_by_guid:
+ */
 MonoImage *
 mono_image_loaded_by_guid (const char *guid)
 {
@@ -1537,18 +1548,27 @@ mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_
 	return register_image (image);
 }
 
+/**
+ * mono_image_open_from_data_with_name:
+ */
 MonoImage *
 mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, const char *name)
 {
 	return mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
 }
 
+/**
+ * mono_image_open_from_data_full:
+ */
 MonoImage *
 mono_image_open_from_data_full (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly)
 {
   return mono_image_open_from_data_with_name (data, data_len, need_copy, status, refonly, NULL);
 }
 
+/**
+ * mono_image_open_from_data:
+ */
 MonoImage *
 mono_image_open_from_data (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status)
 {
@@ -1580,6 +1600,9 @@ mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean
 }
 #endif
 
+/**
+ * mono_image_open_full:
+ */
 MonoImage *
 mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean refonly)
 {
@@ -1703,13 +1726,12 @@ fallback:
 
 /**
  * mono_image_open:
- * @fname: filename that points to the module we want to open
- * @status: An error condition is returned in this field
- *
- * Returns: An open image of type %MonoImage or NULL on error. 
+ * \param fname filename that points to the module we want to open
+ * \param status An error condition is returned in this field
+ * \returns An open image of type \c MonoImage or NULL on error. 
  * The caller holds a temporary reference to the returned image which should be cleared 
- * when no longer needed by calling mono_image_close ().
- * if NULL, then check the value of @status for details on the error
+ * when no longer needed by calling \c mono_image_close.
+ * if NULL, then check the value of \p status for details on the error
  */
 MonoImage *
 mono_image_open (const char *fname, MonoImageOpenStatus *status)
@@ -1719,13 +1741,12 @@ mono_image_open (const char *fname, MonoImageOpenStatus *status)
 
 /**
  * mono_pe_file_open:
- * @fname: filename that points to the module we want to open
- * @status: An error condition is returned in this field
- *
- * Returns: An open image of type %MonoImage or NULL on error.  if
- * NULL, then check the value of @status for details on the error.
- * This variant for mono_image_open DOES NOT SET UP CLI METADATA.
- * It's just a PE file loader, used for FileVersionInfo.  It also does
+ * \param fname filename that points to the module we want to open
+ * \param status An error condition is returned in this field
+ * \returns An open image of type \c MonoImage or NULL on error.  if
+ * NULL, then check the value of \p status for details on the error.
+ * This variant for \c mono_image_open DOES NOT SET UP CLI METADATA.
+ * It's just a PE file loader, used for \c FileVersionInfo.  It also does
  * not use the image cache.
  */
 MonoImage *
@@ -1738,11 +1759,9 @@ mono_pe_file_open (const char *fname, MonoImageOpenStatus *status)
 
 /**
  * mono_image_open_raw
- * @fname: filename that points to the module we want to open
- * @status: An error condition is returned in this field
- * 
- * Returns an image without loading neither pe or cli data.
- * 
+ * \param fname filename that points to the module we want to open
+ * \param status An error condition is returned in this field
+ * \returns an image without loading neither pe or cli data.
  * Use mono_image_load_pe_data and mono_image_load_cli_data to load them.  
  */
 MonoImage *
@@ -1764,6 +1783,9 @@ mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status)
 	return do_mono_image_open (fname, status, TRUE, TRUE, FALSE, TRUE, FALSE);
 }
 
+/**
+ * mono_image_fixup_vtable:
+ */
 void
 mono_image_fixup_vtable (MonoImage *image)
 {
@@ -1839,9 +1861,8 @@ free_array_cache_entry (gpointer key, gpointer val, gpointer user_data)
 
 /**
  * mono_image_addref:
- * @image: The image file we wish to add a reference to
- *
- *  Increases the reference count of an image.
+ * \param image The image file we wish to add a reference to
+ * Increases the reference count of an image.
  */
 void
 mono_image_addref (MonoImage *image)
@@ -2177,8 +2198,7 @@ mono_image_close_finish (MonoImage *image)
 
 /**
  * mono_image_close:
- * @image: The image file we wish to close
- *
+ * \param image The image file we wish to close
  * Closes an image file, deallocates all memory consumed and
  * unmaps all possible sections of the file
  */
@@ -2191,9 +2211,8 @@ mono_image_close (MonoImage *image)
 
 /** 
  * mono_image_strerror:
- * @status: an code indicating the result from a recent operation
- *
- * Returns: a string describing the error
+ * \param status an code indicating the result from a recent operation
+ * \returns a string describing the error
  */
 const char *
 mono_image_strerror (MonoImageOpenStatus status)
@@ -2293,13 +2312,12 @@ mono_image_walk_resource_tree (MonoCLIImageInfo *info, guint32 res_id,
 
 /**
  * mono_image_lookup_resource:
- * @image: the image to look up the resource in
- * @res_id: A MONO_PE_RESOURCE_ID_ that represents the resource ID to lookup.
- * @lang_id: The language id.
- * @name: the resource name to lookup.
- *
- * Returns: NULL if not found, otherwise a pointer to the in-memory representation
- * of the given resource. The caller should free it using g_free () when no longer
+ * \param image the image to look up the resource in
+ * \param res_id A \c MONO_PE_RESOURCE_ID_ that represents the resource ID to lookup.
+ * \param lang_id The language id.
+ * \param name the resource name to lookup.
+ * \returns NULL if not found, otherwise a pointer to the in-memory representation
+ * of the given resource. The caller should free it using \c g_free when no longer
  * needed.
  */
 gpointer
@@ -2364,12 +2382,10 @@ mono_image_lookup_resource (MonoImage *image, guint32 res_id, guint32 lang_id, g
 
 /** 
  * mono_image_get_entry_point:
- * @image: the image where the entry point will be looked up.
- *
+ * \param image the image where the entry point will be looked up.
  * Use this routine to determine the metadata token for method that
  * has been flagged as the entry point.
- *
- * Returns: the token for the entry point method in the image
+ * \returns the token for the entry point method in the image
  */
 guint32
 mono_image_get_entry_point (MonoImage *image)
@@ -2379,15 +2395,15 @@ mono_image_get_entry_point (MonoImage *image)
 
 /**
  * mono_image_get_resource:
- * @image: the image where the resource will be looked up.
- * @offset: The offset to add to the resource
- * @size: a pointer to an int where the size of the resource will be stored
+ * \param image the image where the resource will be looked up.
+ * \param offset The offset to add to the resource
+ * \param size a pointer to an int where the size of the resource will be stored
  *
  * This is a low-level routine that fetches a resource from the
- * metadata that starts at a given @offset.  The @size parameter is
+ * metadata that starts at a given \p offset.  The \p size parameter is
  * filled with the data field as encoded in the metadata.
  *
- * Returns: the pointer to the resource whose offset is @offset.
+ * \returns the pointer to the resource whose offset is \p offset.
  */
 const char*
 mono_image_get_resource (MonoImage *image, guint32 offset, guint32 *size)
@@ -2478,6 +2494,9 @@ done:
 	return res;
 }
 
+/**
+ * mono_image_load_file_for_image:
+ */
 MonoImage*
 mono_image_load_file_for_image (MonoImage *image, int fileidx)
 {
@@ -2489,13 +2508,13 @@ mono_image_load_file_for_image (MonoImage *image, int fileidx)
 
 /**
  * mono_image_get_strong_name:
- * @image: a MonoImage
- * @size: a guint32 pointer, or NULL.
+ * \param image a MonoImage
+ * \param size a \c guint32 pointer, or NULL.
  *
- * If the image has a strong name, and @size is not NULL, the value
+ * If the image has a strong name, and \p size is not NULL, the value
  * pointed to by size will have the size of the strong name.
  *
- * Returns: NULL if the image does not have a strong name, or a
+ * \returns NULL if the image does not have a strong name, or a
  * pointer to the public key.
  */
 const char*
@@ -2517,13 +2536,13 @@ mono_image_get_strong_name (MonoImage *image, guint32 *size)
 
 /**
  * mono_image_strong_name_position:
- * @image: a MonoImage
- * @size: a guint32 pointer, or NULL.
+ * \param image a \c MonoImage
+ * \param size a \c guint32 pointer, or NULL.
  *
- * If the image has a strong name, and @size is not NULL, the value
+ * If the image has a strong name, and \p size is not NULL, the value
  * pointed to by size will have the size of the strong name.
  *
- * Returns: the position within the image file where the strong name
+ * \returns the position within the image file where the strong name
  * is stored.
  */
 guint32
@@ -2543,15 +2562,15 @@ mono_image_strong_name_position (MonoImage *image, guint32 *size)
 
 /**
  * mono_image_get_public_key:
- * @image: a MonoImage
- * @size: a guint32 pointer, or NULL.
+ * \param image a \c MonoImage
+ * \param size a \c guint32 pointer, or NULL.
  *
- * This is used to obtain the public key in the @image.
+ * This is used to obtain the public key in the \p image.
  * 
- * If the image has a public key, and @size is not NULL, the value
+ * If the image has a public key, and \p size is not NULL, the value
  * pointed to by size will have the size of the public key.
  * 
- * Returns: NULL if the image does not have a public key, or a pointer
+ * \returns NULL if the image does not have a public key, or a pointer
  * to the public key.
  */
 const char*
@@ -2579,9 +2598,8 @@ mono_image_get_public_key (MonoImage *image, guint32 *size)
 
 /**
  * mono_image_get_name:
- * @name: a MonoImage
- *
- * Returns: the name of the assembly.
+ * \param name a \c MonoImage
+ * \returns the name of the assembly.
  */
 const char*
 mono_image_get_name (MonoImage *image)
@@ -2591,11 +2609,9 @@ mono_image_get_name (MonoImage *image)
 
 /**
  * mono_image_get_filename:
- * @image: a MonoImage
- *
- * Used to get the filename that hold the actual MonoImage
- *
- * Returns: the filename.
+ * \param image a \c MonoImage
+ * Used to get the filename that hold the actual \c MonoImage
+ * \returns the filename.
  */
 const char*
 mono_image_get_filename (MonoImage *image)
@@ -2603,12 +2619,18 @@ mono_image_get_filename (MonoImage *image)
 	return image->name;
 }
 
+/**
+ * mono_image_get_guid:
+ */
 const char*
 mono_image_get_guid (MonoImage *image)
 {
 	return image->guid;
 }
 
+/**
+ * mono_image_get_table_info:
+ */
 const MonoTableInfo*
 mono_image_get_table_info (MonoImage *image, int table_id)
 {
@@ -2617,6 +2639,9 @@ mono_image_get_table_info (MonoImage *image, int table_id)
 	return &image->tables [table_id];
 }
 
+/**
+ * mono_image_get_table_rows:
+ */
 int
 mono_image_get_table_rows (MonoImage *image, int table_id)
 {
@@ -2625,6 +2650,9 @@ mono_image_get_table_rows (MonoImage *image, int table_id)
 	return image->tables [table_id].rows;
 }
 
+/**
+ * mono_table_info_get_rows:
+ */
 int
 mono_table_info_get_rows (const MonoTableInfo *table)
 {
@@ -2633,11 +2661,9 @@ mono_table_info_get_rows (const MonoTableInfo *table)
 
 /**
  * mono_image_get_assembly:
- * @image: the MonoImage.
- *
+ * \param image the \c MonoImage .
  * Use this routine to get the assembly that owns this image.
- *
- * Returns: the assembly that holds this image.
+ * \returns the assembly that holds this image.
  */
 MonoAssembly* 
 mono_image_get_assembly (MonoImage *image)
@@ -2647,12 +2673,11 @@ mono_image_get_assembly (MonoImage *image)
 
 /**
  * mono_image_is_dynamic:
- * @image: the MonoImage
+ * \param image the \c MonoImage
  *
  * Determines if the given image was created dynamically through the
- * System.Reflection.Emit API
- *
- * Returns: TRUE if the image was created dynamically, FALSE if not.
+ * \c System.Reflection.Emit API
+ * \returns TRUE if the image was created dynamically, FALSE if not.
  */
 gboolean
 mono_image_is_dynamic (MonoImage *image)
@@ -2662,12 +2687,10 @@ mono_image_is_dynamic (MonoImage *image)
 
 /**
  * mono_image_has_authenticode_entry:
- * @image: the MonoImage
- *
+ * \param image the \c MonoImage
  * Use this routine to determine if the image has a Authenticode
  * Certificate Table.
- *
- * Returns: TRUE if the image contains an authenticode entry in the PE
+ * \returns TRUE if the image contains an authenticode entry in the PE
  * directory.
  */
 gboolean
@@ -2797,8 +2820,7 @@ mono_image_unlock (MonoImage *image)
 
 /**
  * mono_image_property_lookup:
- *
- * Lookup a property on @image. Used to store very rare fields of MonoClass and MonoMethod.
+ * Lookup a property on \p image . Used to store very rare fields of \c MonoClass and \c MonoMethod .
  *
  * LOCKING: Takes the image lock
  */
@@ -2816,8 +2838,8 @@ mono_image_property_lookup (MonoImage *image, gpointer subject, guint32 property
 
 /**
  * mono_image_property_insert:
- *
- * Insert a new property @property with value @value on @subject in @image. Used to store very rare fields of MonoClass and MonoMethod.
+ * Insert a new property \p property with value \p value on \p subject in \p
+ * image. Used to store very rare fields of \c MonoClass and \c MonoMethod.
  *
  * LOCKING: Takes the image lock
  */
@@ -2832,8 +2854,7 @@ mono_image_property_insert (MonoImage *image, gpointer subject, guint32 property
 
 /**
  * mono_image_property_remove:
- *
- * Remove all properties associated with @subject in @image. Used to store very rare fields of MonoClass and MonoMethod.
+ * Remove all properties associated with \p subject in \p image. Used to store very rare fields of \c MonoClass and \c MonoMethod .
  *
  * LOCKING: Takes the image lock
  */

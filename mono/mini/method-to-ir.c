@@ -1,5 +1,6 @@
-/*
- * method-to-ir.c: Convert CIL to the JIT internal representation
+/**
+ * \file
+ * Convert CIL to the JIT internal representation
  *
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -4892,18 +4893,18 @@ static MonoBreakPolicyFunc break_policy_func = always_insert_breakpoint;
 
 /**
  * mono_set_break_policy:
- * policy_callback: the new callback function
+ * \param policy_callback the new callback function
  *
  * Allow embedders to decide wherther to actually obey breakpoint instructions
- * (both break IL instructions and Debugger.Break () method calls), for example
+ * (both break IL instructions and \c Debugger.Break method calls), for example
  * to not allow an app to be aborted by a perfectly valid IL opcode when executing
  * untrusted or semi-trusted code.
  *
- * @policy_callback will be called every time a break point instruction needs to
- * be inserted with the method argument being the method that calls Debugger.Break()
- * or has the IL break instruction. The callback should return #MONO_BREAK_POLICY_NEVER
+ * \p policy_callback will be called every time a break point instruction needs to
+ * be inserted with the method argument being the method that calls \c Debugger.Break
+ * or has the IL \c break instruction. The callback should return \c MONO_BREAK_POLICY_NEVER
  * if it wants the breakpoint to not be effective in the given method.
- * #MONO_BREAK_POLICY_ALWAYS is the default.
+ * \c MONO_BREAK_POLICY_ALWAYS is the default.
  */
 void
 mono_set_break_policy (MonoBreakPolicyFunc policy_callback)

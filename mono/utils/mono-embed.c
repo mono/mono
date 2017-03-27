@@ -1,5 +1,6 @@
-/*
- * mono-embed.c: Example code APIs to register a libraries using
+/**
+ * \file
+ * Example code APIs to register a libraries using
  * mono_dl_fallback_register.  Real implementations should instead
  * use a binary search for implementing the dl_mapping_open and
  * dl_mapping_symbol methods here.
@@ -56,15 +57,15 @@ dl_mapping_symbol (void *handle, const char *symbol, char **err, void *user_data
 
 /**
  * mono_dl_register_library:
-u * @name: Library name, this is the name used by the DllImport as the external library name
- * @mappings: the mappings to register for P/Invoke.
+ * \param name Library name, this is the name used by the DllImport as the external library name
+ * \param mappings the mappings to register for P/Invoke.
  *
  * The mappings registered using this function are used as fallbacks if the dynamic linker 
  * fails, or if the platform doesn't have a dynamic linker.
  *
- * Mappings is a pointer to the first element of an array of
- * MonoDlMapping values.  The list must be terminated with both 
- * the name and addr fields set to NULL.
+ * \p mappings is a pointer to the first element of an array of
+ * \c MonoDlMapping values.  The list must be terminated with both 
+ * the \c name and \c addr fields set to NULL.
  *
  * This is typically used like this:
  * MonoDlMapping sample_library_mappings [] = {

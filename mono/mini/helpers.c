@@ -1,5 +1,6 @@
-/*
- * helpers.c: Assorted routines
+/**
+ * \file
+ * Assorted routines
  *
  * (C) 2003 Ximian, Inc.
  */
@@ -125,10 +126,9 @@ mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint 
 }
 
 /**
- * mono_disassemble_code:
- * @cfg: compilation context
- * @code: a pointer to the code
- * @size: the code size in bytes
+ * \param cfg compilation context
+ * \param code a pointer to the code
+ * \param size the code size in bytes
  *
  * Disassemble to code to stdout.
  */

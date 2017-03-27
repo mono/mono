@@ -1,5 +1,6 @@
-/*
- * appdomain.c: AppDomain functions
+/**
+ * \file
+ * AppDomain functions
  *
  * Authors:
  *	Dietmar Maurer (dietmar@ximian.com)
@@ -229,14 +230,14 @@ create_domain_objects (MonoDomain *domain)
 
 /**
  * mono_runtime_init:
- * @domain: domain returned by mono_init ()
+ * \param domain domain returned by \c mono_init
  *
  * Initialize the core AppDomain: this function will run also some
  * IL initialization code, so it needs the execution engine to be fully 
  * operational.
  *
- * AppDomain.SetupInformation is set up in mono_runtime_exec_main, where
- * we know the entry_assembly.
+ * \c AppDomain.SetupInformation is set up in \c mono_runtime_exec_main, where
+ * we know the \c entry_assembly.
  *
  */
 void
@@ -336,11 +337,9 @@ mono_get_corlib_version (void)
 }
 
 /**
- * mono_check_corlib_version
- *
+ * mono_check_corlib_version:
  * Checks that the corlib that is loaded matches the version of this runtime.
- *
- * Returns: NULL if the runtime will work with the corlib, or a g_malloc
+ * \returns NULL if the runtime will work with the corlib, or a \c g_malloc
  * allocated string with the error otherwise.
  */
 const char*
@@ -361,9 +360,8 @@ mono_check_corlib_version (void)
 
 /**
  * mono_context_init:
- * @domain: The domain where the System.Runtime.Remoting.Context.Context is initialized
- *
- * Initializes the @domain's default System.Runtime.Remoting's Context.
+ * \param domain The domain where the \c System.Runtime.Remoting.Context.Context is initialized
+ * Initializes the \p domain's default \c System.Runtime.Remoting 's Context.
  */
 void
 mono_context_init (MonoDomain *domain)
@@ -393,7 +391,7 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 
 /**
  * mono_runtime_cleanup:
- * @domain: unused.
+ * \param domain unused.
  *
  * Internal routine.
  *
@@ -422,12 +420,18 @@ mono_runtime_cleanup (MonoDomain *domain)
 
 static MonoDomainFunc quit_function = NULL;
 
+/**
+ * mono_install_runtime_cleanup:
+ */
 void
 mono_install_runtime_cleanup (MonoDomainFunc func)
 {
 	quit_function = func;
 }
 
+/**
+ * mono_runtime_quit:
+ */
 void
 mono_runtime_quit ()
 {
@@ -437,10 +441,9 @@ mono_runtime_quit ()
 
 /**
  * mono_domain_create_appdomain:
- * @friendly_name: The friendly name of the appdomain to create
- * @configuration_file: The configuration file to initialize the appdomain with
- * 
- * Returns a MonoDomain initialized with the appdomain
+ * \param friendly_name The friendly name of the appdomain to create
+ * \param configuration_file The configuration file to initialize the appdomain with
+ * \returns a \c MonoDomain initialized with the appdomain
  */
 MonoDomain *
 mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
@@ -454,11 +457,11 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 
 /**
  * mono_domain_create_appdomain_checked:
- * @friendly_name: The friendly name of the appdomain to create
- * @configuration_file: The configuration file to initialize the appdomain with
- * @error: Set on error.
+ * \param friendly_name The friendly name of the appdomain to create
+ * \param configuration_file The configuration file to initialize the appdomain with
+ * \param error Set on error.
  * 
- * Returns a MonoDomain initialized with the appdomain.  On failure sets @error and returns NULL.
+ * \returns a MonoDomain initialized with the appdomain.  On failure sets \p error and returns NULL.
  */
 MonoDomain *
 mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_file, MonoError *error)
@@ -492,9 +495,9 @@ leave:
 
 /**
  * mono_domain_set_config:
- * @domain: MonoDomain initialized with the appdomain we want to change
- * @base_dir: new base directory for the appdomain
- * @config_file_name: path to the new configuration for the app domain
+ * \param domain \c MonoDomain initialized with the appdomain we want to change
+ * \param base_dir new base directory for the appdomain
+ * \param config_file_name path to the new configuration for the app domain
  *
  * Used to set the system configuration for an appdomain
  *
@@ -649,10 +652,9 @@ leave:
 
 /**
  * mono_domain_has_type_resolve:
- * @domain: application domains being looked up
+ * \param domain application domain being looked up
  *
- * Returns: TRUE if the AppDomain.TypeResolve field has been
- * set.
+ * \returns TRUE if the \c AppDomain.TypeResolve field has been set.
  */
 gboolean
 mono_domain_has_type_resolve (MonoDomain *domain)
@@ -675,16 +677,16 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 
 /**
  * mono_domain_try_type_resolve:
- * @domain: application domainwhere the name where the type is going to be resolved
- * @name: the name of the type to resolve or NULL.
- * @tb: A System.Reflection.Emit.TypeBuilder, used if name is NULL.
+ * \param domain application domainwhere the name where the type is going to be resolved
+ * \param name the name of the type to resolve or NULL.
+ * \param tb A \c System.Reflection.Emit.TypeBuilder, used if name is NULL.
  *
- * This routine invokes the internal System.AppDomain.DoTypeResolve and returns
+ * This routine invokes the internal \c System.AppDomain.DoTypeResolve and returns
  * the assembly that matches name.
  *
- * If @name is null, the value of ((TypeBuilder)tb).FullName is used instead
+ * If \p name is null, the value of \c ((TypeBuilder)tb).FullName is used instead
  *
- * Returns: A MonoReflectionAssembly or NULL if not found
+ * \returns A \c MonoReflectionAssembly or NULL if not found
  */
 MonoReflectionAssembly *
 mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
@@ -728,8 +730,7 @@ mono_domain_try_type_resolve_checked (MonoDomain *domain, char *name, MonoObject
 
 /**
  * mono_domain_owns_vtable_slot:
- *
- *  Returns whenever VTABLE_SLOT is inside a vtable which belongs to DOMAIN.
+ * \returns Whether \p vtable_slot is inside a vtable which belongs to \p domain.
  */
 gboolean
 mono_domain_owns_vtable_slot (MonoDomain *domain, gpointer vtable_slot)
@@ -744,15 +745,13 @@ mono_domain_owns_vtable_slot (MonoDomain *domain, gpointer vtable_slot)
 
 /**
  * mono_domain_set:
- * @domain: domain
- * @force: force setting.
+ * \param domain domain
+ * \param force force setting.
  *
- * Set the current appdomain to @domain. If @force is set, set it even
+ * Set the current appdomain to \p domain. If \p force is set, set it even
  * if it is being unloaded.
  *
- * Returns:
- *   TRUE on success;
- *   FALSE if the domain is unloaded
+ * \returns TRUE on success; FALSE if the domain is unloaded
  */
 gboolean
 mono_domain_set (MonoDomain *domain, gboolean force)
@@ -1857,6 +1856,9 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 }
 #endif /* DISABLE_SHADOW_COPY */
 
+/**
+ * mono_domain_from_appdomain:
+ */
 MonoDomain *
 mono_domain_from_appdomain (MonoAppDomain *appdomain_raw)
 {
@@ -2371,6 +2373,9 @@ ves_icall_System_AppDomain_InternalGetProcessGuid (MonoStringHandle newguid, Mon
 	return newguid;
 }
 
+/**
+ * mono_domain_is_unloading:
+ */
 gboolean
 mono_domain_is_unloading (MonoDomain *domain)
 {
@@ -2560,12 +2565,12 @@ failure:
 	return 1;
 }
 
-/*
+/**
  * mono_domain_unload:
- * @domain: The domain to unload
+ * \param domain The domain to unload
  *
- *  Unloads an appdomain. Follows the process outlined in the comment
- *  for mono_domain_try_unload.
+ * Unloads an appdomain. Follows the process outlined in the comment
+ * for \c mono_domain_try_unload.
  */
 void
 mono_domain_unload (MonoDomain *domain)
@@ -2586,10 +2591,10 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
 	return result;
 }
 
-/*
+/**
  * mono_domain_unload:
- * @domain: The domain to unload
- * @exc: Exception information
+ * \param domain The domain to unload
+ * \param exc Exception information
  *
  *  Unloads an appdomain. Follows the process outlined in:
  *  http://blogs.gotdotnet.com/cbrumme

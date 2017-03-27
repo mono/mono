@@ -1,5 +1,6 @@
-/*
- * mini-mips.c: MIPS backend for the Mono code generator
+/**
+ * \file
+ * MIPS backend for the Mono code generator
  *
  * Authors:
  *   Mark Mason (mason@broadcom.com)
@@ -1323,8 +1324,7 @@ debug_omit_fp (void)
 
 /**
  * mono_arch_compute_omit_fp:
- *
- *   Determine whenever the frame pointer can be eliminated.
+ * Determine whether the frame pointer can be eliminated.
  */
 static void
 mono_arch_compute_omit_fp (MonoCompile *cfg)

@@ -1,5 +1,6 @@
-/*
- * custom-attrs.c: Custom attributes.
+/**
+ * \file
+ * Custom attributes.
  * 
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -1055,6 +1056,9 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 	return result;
 }
 
+/**
+ * mono_custom_attrs_construct:
+ */
 MonoArray*
 mono_custom_attrs_construct (MonoCustomAttrInfo *cinfo)
 {
@@ -1098,8 +1102,7 @@ mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 }
 /**
  * mono_custom_attrs_from_index_checked:
- *
- * Returns: NULL if no attributes are found.  On error returns NULL and sets @error.
+ * \returns NULL if no attributes are found.  On error returns NULL and sets \p error.
  */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, gboolean ignore_missing, MonoError *error)
@@ -1176,6 +1179,9 @@ mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, gboolean ig
 	return ainfo;
 }
 
+/**
+ * mono_custom_attrs_from_method:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_method (MonoMethod *method)
 {
@@ -1214,6 +1220,9 @@ mono_custom_attrs_from_method_checked (MonoMethod *method, MonoError *error)
 	return mono_custom_attrs_from_index_checked (method->klass->image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_from_class:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_class (MonoClass *klass)
 {
@@ -1248,6 +1257,9 @@ mono_custom_attrs_from_class_checked (MonoClass *klass, MonoError *error)
 	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_from_assembly:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_assembly (MonoAssembly *assembly)
 {
@@ -1285,6 +1297,9 @@ mono_custom_attrs_from_module (MonoImage *image, MonoError *error)
 	return mono_custom_attrs_from_index_checked (image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_from_property:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_property (MonoClass *klass, MonoProperty *property)
 {
@@ -1309,6 +1324,9 @@ mono_custom_attrs_from_property_checked (MonoClass *klass, MonoProperty *propert
 	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_from_event:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_event (MonoClass *klass, MonoEvent *event)
 {
@@ -1333,6 +1351,9 @@ mono_custom_attrs_from_event_checked (MonoClass *klass, MonoEvent *event, MonoEr
 	return mono_custom_attrs_from_index_checked (klass->image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_from_field:
+ */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_field (MonoClass *klass, MonoClassField *field)
 {
@@ -1360,12 +1381,12 @@ mono_custom_attrs_from_field_checked (MonoClass *klass, MonoClassField *field, M
 
 /**
  * mono_custom_attrs_from_param:
- * @method: handle to the method that we want to retrieve custom parameter information from
- * @param: parameter number, where zero represent the return value, and one is the first parameter in the method
+ * \param method handle to the method that we want to retrieve custom parameter information from
+ * \param param parameter number, where zero represent the return value, and one is the first parameter in the method
  *
  * The result must be released with mono_custom_attrs_free().
  *
- * Returns: the custom attribute object for the specified parameter, or NULL if there are none.
+ * \returns the custom attribute object for the specified parameter, or NULL if there are none.
  */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_param (MonoMethod *method, guint32 param)
@@ -1378,13 +1399,13 @@ mono_custom_attrs_from_param (MonoMethod *method, guint32 param)
 
 /**
  * mono_custom_attrs_from_param_checked:
- * @method: handle to the method that we want to retrieve custom parameter information from
- * @param: parameter number, where zero represent the return value, and one is the first parameter in the method
- * @error: set on error
+ * \param method handle to the method that we want to retrieve custom parameter information from
+ * \param param parameter number, where zero represent the return value, and one is the first parameter in the method
+ * \param error set on error
  *
  * The result must be released with mono_custom_attrs_free().
  *
- * Returns: the custom attribute object for the specified parameter, or NULL if there are none.  On failure returns NULL and sets @error.
+ * \returns the custom attribute object for the specified parameter, or NULL if there are none.  On failure returns NULL and sets \p error.
  */
 MonoCustomAttrInfo*
 mono_custom_attrs_from_param_checked (MonoMethod *method, guint32 param, MonoError *error)
@@ -1454,6 +1475,9 @@ mono_custom_attrs_from_param_checked (MonoMethod *method, guint32 param, MonoErr
 	return mono_custom_attrs_from_index_checked (image, idx, FALSE, error);
 }
 
+/**
+ * mono_custom_attrs_has_attr:
+ */
 gboolean
 mono_custom_attrs_has_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
 {
@@ -1469,6 +1493,9 @@ mono_custom_attrs_has_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
 	return FALSE;
 }
 
+/**
+ * mono_custom_attrs_get_attr:
+ */
 MonoObject*
 mono_custom_attrs_get_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
 {
@@ -1502,12 +1529,12 @@ mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_k
 	return create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error);
 }
 
-/*
+/**
  * mono_reflection_get_custom_attrs_info:
- * @obj: a reflection object handle
+ * \param obj a reflection object handle
  *
- * Return the custom attribute info for attributes defined for the
- * reflection handle @obj. The objects.
+ * \returns the custom attribute info for attributes defined for the
+ * reflection handle \p obj. The objects.
  *
  * FIXME this function leaks like a sieve for SRE objects.
  */
@@ -1522,13 +1549,11 @@ mono_reflection_get_custom_attrs_info (MonoObject *obj)
 
 /**
  * mono_reflection_get_custom_attrs_info_checked:
- * @obj: a reflection object handle
- * @error: set on error
+ * \param obj a reflection object handle
+ * \param error set on error
  *
- * Return the custom attribute info for attributes defined for the
- * reflection handle @obj. The objects.
- *
- * On failure returns NULL and sets @error.
+ * \returns the custom attribute info for attributes defined for the
+ * reflection handle \p obj. The objects. On failure returns NULL and sets \p error.
  *
  * FIXME this function leaks like a sieve for SRE objects.
  */
@@ -1635,12 +1660,11 @@ mono_reflection_get_custom_attrs_info_checked (MonoObject *obj, MonoError *error
 	return cinfo;
 }
 
-/*
+/**
  * mono_reflection_get_custom_attrs_by_type:
- * @obj: a reflection object handle
- *
- * Return an array with all the custom attributes defined of the
- * reflection handle @obj. If @attr_klass is non-NULL, only custom attributes 
+ * \param obj a reflection object handle
+ * \returns an array with all the custom attributes defined of the
+ * reflection handle \p obj. If \p attr_klass is non-NULL, only custom attributes 
  * of that type are returned. The objects are fully build. Return NULL if a loading error
  * occurs.
  */
@@ -1667,12 +1691,11 @@ mono_reflection_get_custom_attrs_by_type (MonoObject *obj, MonoClass *attr_klass
 	return result;
 }
 
-/*
+/**
  * mono_reflection_get_custom_attrs:
- * @obj: a reflection object handle
- *
- * Return an array with all the custom attributes defined of the
- * reflection handle @obj. The objects are fully build. Return NULL if a loading error
+ * \param obj a reflection object handle
+ * \return an array with all the custom attributes defined of the
+ * reflection handle \p obj. The objects are fully build. Return NULL if a loading error
  * occurs.
  */
 MonoArray*
@@ -1683,11 +1706,10 @@ mono_reflection_get_custom_attrs (MonoObject *obj)
 	return mono_reflection_get_custom_attrs_by_type (obj, NULL, &error);
 }
 
-/*
+/**
  * mono_reflection_get_custom_attrs_data:
- * @obj: a reflection obj handle
- *
- * Returns an array of System.Reflection.CustomAttributeData,
+ * \param obj a reflection obj handle
+ * \returns an array of \c System.Reflection.CustomAttributeData,
  * which include information about attributes reflected on
  * types loaded using the Reflection Only methods
  */
@@ -1838,13 +1860,11 @@ custom_attr_class_name_from_method_token (MonoImage *image, guint32 method_token
 
 /**
  * mono_assembly_metadata_foreach_custom_attr:
- * @assembly: the assembly to iterate over
- * @func: the function to call for each custom attribute
- * @user_data: passed to @func
- *
- * Calls @func for each custom attribute type on the given assembly until @func returns TRUE.
+ * \param assembly the assembly to iterate over
+ * \param func the function to call for each custom attribute
+ * \param user_data passed to \p func
+ * Calls \p func for each custom attribute type on the given assembly until \p func returns TRUE.
  * Everything is done using low-level metadata APIs, so it is safe to use during assembly loading.
- *
  */
 void
 mono_assembly_metadata_foreach_custom_attr (MonoAssembly *assembly, MonoAssemblyMetadataCustomAttrIterFunc func, gpointer user_data)

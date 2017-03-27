@@ -1,5 +1,6 @@
-/*
- * sgen-mono.c: SGen features specific to Mono.
+/**
+ * \file
+ * SGen features specific to Mono.
  *
  * Copyright (C) 2014 Xamarin Inc
  *
@@ -127,7 +128,7 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 /**
  * mono_gc_wbarrier_object_copy:
  *
- * Write barrier to call when obj is the result of a clone or copy of an object.
+ * Write barrier to call when \p obj is the result of a clone or copy of an object.
  */
 void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
@@ -152,6 +153,9 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 	sgen_get_remset ()->wbarrier_object_copy (obj, src);
 }
 
+/**
+ * mono_gc_wbarrier_set_arrayref:
+ */
 void
 mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
 {
@@ -167,6 +171,9 @@ mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* va
 	sgen_get_remset ()->wbarrier_set_field ((GCObject*)arr, slot_ptr, value);
 }
 
+/**
+ * mono_gc_wbarrier_set_field:
+ */
 void
 mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* value)
 {
@@ -519,12 +526,18 @@ sgen_client_run_finalize (MonoObject *obj)
 	mono_gc_run_finalize (obj, NULL);
 }
 
+/**
+ * mono_gc_invoke_finalizers:
+ */
 int
 mono_gc_invoke_finalizers (void)
 {
 	return sgen_gc_invoke_finalizers ();
 }
 
+/**
+ * mono_gc_pending_finalizers:
+ */
 MonoBoolean
 mono_gc_pending_finalizers (void)
 {
@@ -556,12 +569,11 @@ object_in_domain_predicate (MonoObject *obj, void *user_data)
 
 /**
  * mono_gc_finalizers_for_domain:
- * @domain: the unloading appdomain
- * @out_array: output array
- * @out_size: size of output array
- *
- * Enqueue for finalization all objects that belong to the unloading appdomain @domain
- * @suspend is used for early termination of the enqueuing process.
+ * \param domain the unloading appdomain
+ * \param out_array output array
+ * \param out_size size of output array
+ * Enqueue for finalization all objects that belong to the unloading appdomain \p domain.
+ * \p suspend is used for early termination of the enqueuing process.
  */
 void
 mono_gc_finalize_domain (MonoDomain *domain)
@@ -978,6 +990,9 @@ mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
+/**
+ * mono_gc_alloc_fixed:
+ */
 void*
 mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
 {
@@ -992,6 +1007,9 @@ mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource sourc
 	return res;
 }
 
+/**
+ * mono_gc_free_fixed:
+ */
 void
 mono_gc_free_fixed (void* addr)
 {
@@ -2131,22 +2149,20 @@ walk_references (GCObject *start, size_t size, void *data)
 
 /**
  * mono_gc_walk_heap:
- * @flags: flags for future use
- * @callback: a function pointer called for each object in the heap
- * @data: a user data pointer that is passed to callback
- *
- * This function can be used to iterate over all the live objects in the heap:
- * for each object, @callback is invoked, providing info about the object's
+ * \param flags flags for future use
+ * \param callback a function pointer called for each object in the heap
+ * \param data a user data pointer that is passed to callback
+ * This function can be used to iterate over all the live objects in the heap;
+ * for each object, \p callback is invoked, providing info about the object's
  * location in memory, its class, its size and the objects it references.
- * For each referenced object it's offset from the object address is
+ * For each referenced object its offset from the object address is
  * reported in the offsets array.
  * The object references may be buffered, so the callback may be invoked
  * multiple times for the same object: in all but the first call, the size
  * argument will be zero.
- * Note that this function can be only called in the #MONO_GC_EVENT_PRE_START_WORLD
+ * Note that this function can be only called in the \c MONO_GC_EVENT_PRE_START_WORLD
  * profiler event handler.
- *
- * Returns: a non-zero value if the GC doesn't support heap walking
+ * \returns a non-zero value if the GC doesn't support heap walking
  */
 int
 mono_gc_walk_heap (int flags, MonoGCReferences callback, void *data)
@@ -2291,12 +2307,18 @@ sgen_thread_detach (SgenThreadInfo *p)
 		mono_thread_detach_internal (mono_thread_internal_current ());
 }
 
+/**
+ * mono_gc_register_thread:
+ */
 gboolean
 mono_gc_register_thread (void *baseptr)
 {
 	return mono_thread_info_attach (baseptr) != NULL;
 }
 
+/**
+ * mono_gc_is_gc_thread:
+ */
 gboolean
 mono_gc_is_gc_thread (void)
 {
@@ -2661,10 +2683,9 @@ sgen_client_metadata_for_object (GCObject *obj)
 
 /**
  * mono_gchandle_is_in_domain:
- * @gchandle: a GCHandle's handle.
- * @domain: An application domain.
- *
- * Returns: TRUE if the object wrapped by the @gchandle belongs to the specific @domain.
+ * \param gchandle a GCHandle's handle.
+ * \param domain An application domain.
+ * \returns TRUE if the object wrapped by the \p gchandle belongs to the specific \p domain.
  */
 gboolean
 mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
@@ -2675,7 +2696,7 @@ mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
 
 /**
  * mono_gchandle_free_domain:
- * @unloading: domain that is unloading
+ * \param unloading domain that is unloading
  *
  * Function used internally to cleanup any GC handle for objects belonging
  * to the specified domain during appdomain unload.
@@ -2969,6 +2990,9 @@ sgen_client_describe_invalid_pointer (GCObject *ptr)
 
 static gboolean gc_inited;
 
+/**
+ * mono_gc_base_init:
+ */
 void
 mono_gc_base_init (void)
 {
