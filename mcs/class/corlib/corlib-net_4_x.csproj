@@ -70,6 +70,7 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\IO\Win32Marshal.cs" />
@@ -831,9 +832,11 @@
     <Compile Include="..\referencesource\mscorlib\system\unsafecharbuffer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\version.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="CoreFoundation\CFHelpers.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
+    <Compile Include="corert\Array.Portable.cs" />
     <Compile Include="corert\Debug.cs" />
     <Compile Include="corert\Interop.cs" />
     <Compile Include="corert\Interop.MemAllocFree.cs" />
