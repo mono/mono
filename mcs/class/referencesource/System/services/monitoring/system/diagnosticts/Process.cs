@@ -2569,11 +2569,6 @@ namespace System.Diagnostics {
                         signaled = false;
                     }
                 }
-            }
-            finally {
-                if( processWaitHandle != null) {
-                    processWaitHandle.Close();
-                }
 
                 // If we have a hard timeout, we cannot wait for the streams
                 if( output != null && milliseconds == -1) {
@@ -2582,6 +2577,11 @@ namespace System.Diagnostics {
 
                 if( error != null && milliseconds == -1) {
                     error.WaitUtilEOF();
+                }
+            }
+            finally {
+                if( processWaitHandle != null) {
+                    processWaitHandle.Close();
                 }
 
                 ReleaseProcessHandle(handle);
