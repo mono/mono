@@ -638,30 +638,31 @@ namespace System.Drawing
 					if (status != Status.Ok) {
 						// reset to original values
 						Marshal.PtrToStructure (copy, logFont);
+					} else {
+						Marshal.StructureToPtr (logFont, copy, false);
 					}
-				}
-				finally {
-					Marshal.FreeHGlobal (copy);
-				}
 
-				if (CharSetOffset == -1) {
-					// not sure why this methods returns an IntPtr since it's an offset
-					// anyway there's no issue in downcasting the result into an int32
-					CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
-				}
+					if (CharSetOffset == -1) {
+						// not sure why this methods returns an IntPtr since it's an offset
+						// anyway there's no issue in downcasting the result into an int32
+						CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
+					}
 
-				// note: Marshal.WriteByte(object,*) methods are unimplemented on Mono
-				GCHandle gch = GCHandle.Alloc (logFont, GCHandleType.Pinned);
-				try {
-					IntPtr ptr = gch.AddrOfPinnedObject ();
 					// if GDI+ lfCharSet is 0, then we return (S.D.) 1, otherwise the value is unchanged
-					if (Marshal.ReadByte (ptr, CharSetOffset) == 0) {
+					if (Marshal.ReadByte (copy, CharSetOffset) == 0) {
 						// set lfCharSet to 1 
-						Marshal.WriteByte (ptr, CharSetOffset, 1);
+						Marshal.WriteByte (copy, CharSetOffset, 1);
+
+						GCHandle gch = default (GCHandle);
+						try {
+							gch = GCHandle.FromIntPtr (copy);
+							logFont = (LOGFONT) gch.Target;
+						} finally {
+							gch.Free();
+						}
 					}
-				}
-				finally {
-					gch.Free ();
+				} finally {
+					Marshal.FreeHGlobal (copy);
 				}
 
 				// now we can throw, if required
