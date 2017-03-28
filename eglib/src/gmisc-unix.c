@@ -39,23 +39,93 @@
 #include <unistd.h>
 #endif
 
+extern char **environ;
 
+static GHashTable *env;
+
+static pthread_mutex_t env_lock = PTHREAD_MUTEX_INITIALIZER;
+
+static void
+g_getenv_init (void)
+{
+	pthread_mutex_lock (&env_lock);
+
+	// Raced
+	if (env) {
+		pthread_mutex_unlock (&env_lock);
+		return;
+	}
+
+	env = g_hash_table_new (g_str_hash, g_str_equal);
+
+	char **head = (char **) environ;
+	for (int i = 0; head [i] != NULL; i++) {
+		char *line = g_strdup (head [i]);
+		int p = 0;
+		while (line [p] != '\0' && line [p] != '=')
+			p++;
+		if (line [p] != '=')
+			continue;
+		line [p] = '\0';
+		// Now line is a buffer of memory where the prefix
+		// is the key, and the value is after a NULL
+		char *key = line;
+
+		// Can make this strdup if we want to free, not leak
+		char *value = &line [p + 1];
+
+		g_hash_table_insert (env, key, value);
+	}
+
+	pthread_mutex_unlock (&env_lock);
+}
+
+// FIXME: add refcounting to this, so the
+// memory isn't leaked on overwrite
 const gchar *
 g_getenv(const gchar *variable)
 {
-	return getenv(variable);
+	if (!env)
+		g_getenv_init ();
+
+	pthread_mutex_lock (&env_lock);
+	gchar *res = g_hash_table_lookup (env, (gpointer) variable);
+	pthread_mutex_unlock (&env_lock);
+	return res;
 }
 
 gboolean
 g_setenv(const gchar *variable, const gchar *value, gboolean overwrite)
 {
-	return setenv(variable, value, overwrite) == 0;
+	if (!env)
+		g_getenv_init ();
+
+	pthread_mutex_lock (&env_lock);
+
+	gchar *curr = g_hash_table_lookup (env, (gpointer) variable);
+	if (!overwrite && curr != NULL) {
+		pthread_mutex_unlock (&env_lock);
+		return FALSE;
+	}
+
+	int result = setenv(variable, value, overwrite) == 0;
+	if (result)
+		g_hash_table_insert (env, (gpointer) variable, (gpointer) value);
+	pthread_mutex_unlock (&env_lock);
+
+	return result;
 }
 
 void
 g_unsetenv(const gchar *variable)
 {
+	if (!env)
+		g_getenv_init ();
+
+	pthread_mutex_lock (&env_lock);
 	unsetenv(variable);
+	g_hash_table_remove (env, (gpointer) variable);
+	pthread_mutex_unlock (&env_lock);
 }
 
 gchar*
