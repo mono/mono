@@ -67,6 +67,7 @@ typedef struct {
 	guint64 minor_gc_time;
 	guint64 major_gc_time;
 	guint64 major_gc_time_concurrent;
+	guint64 new_object_count;
 } GCStats;
 
 extern GCStats gc_stats;
