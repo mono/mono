@@ -39,7 +39,7 @@ namespace Monodoc
 				if (cacheConfig == null) return;
 				var cacheValues = cacheConfig.Split (',');
 				if (cacheValues.Length == 2 && cacheValues[0].Equals ("file", StringComparison.Ordinal))
-					cacheBaseDirectory = cacheValues[1].Replace ("~", Environment.GetFolderPath (Environment.SpecialFolder.Personal));
+					cacheBaseDirectory = cacheValues[1].Replace ("~", Environment.GetFolderPath (Environment.SpecialFolder.UserProfile));
 			} catch {}
 		}
 

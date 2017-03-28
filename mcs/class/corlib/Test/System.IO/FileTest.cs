@@ -47,7 +47,7 @@ namespace MonoTests.System.IO
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+			path = Environment.GetFolderPath (Environment.SpecialFolder.UserProfile);
 			testfile = Path.Combine (path, "FileStreamTest.dat");
 			File.WriteAllText (testfile, "1");
 		}
