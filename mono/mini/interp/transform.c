@@ -2759,6 +2759,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			++td.ip;
 			break;
 		case CEE_ENDFINALLY:
+			td.sp = td.stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			generating_code = 0;
 			break;
@@ -3122,6 +3123,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				CHECK_STACK(&td, 3);
 				ADD_CODE(&td, MINT_INITBLK);
 				td.sp -= 3;
+				td.ip += 1;
 				break;
 #if 0
 			case CEE_NO_:

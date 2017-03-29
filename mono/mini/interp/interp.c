@@ -3668,6 +3668,9 @@ array_constructed:
 			BINOP_CAST(l, -, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY)
+			while (sp > frame->stack) {
+				--sp;
+			}
 			if (finally_ips) {
 				ip = finally_ips->data;
 				finally_ips = g_slist_remove (finally_ips, ip);
