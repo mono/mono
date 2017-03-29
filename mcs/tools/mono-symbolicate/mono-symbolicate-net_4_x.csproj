@@ -143,7 +143,6 @@
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\*.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Microsoft.Cci.Pdb\*.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\pdb\Mono.Cecil.Pdb\*.cs" />
-    <Compile Include="..\..\..\external\cecil\System.Security.Cryptography\*.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="LocationProvider.cs" />
     <Compile Include="Logger.cs" />

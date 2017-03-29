@@ -145,7 +145,6 @@
     <Compile Include="..\..\..\external\cecil\Mono.Security.Cryptography\*.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\*.cs" />
     <Compile Include="..\..\..\external\cecil\ProjectInfo.cs" />
-    <Compile Include="..\..\..\external\cecil\System.Security.Cryptography\*.cs" />
     <Compile Include="Consts.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
