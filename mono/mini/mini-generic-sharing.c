@@ -1408,6 +1408,116 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	return res;
 }
 
+/*
+ * mini_get_interp_in_wrapper:
+ *
+ *   Return a wrapper which can be used to transition from compiled code to the interpreter.
+ * The wrapper has the same signature as SIG. It is very similar to a gsharedvt_in wrapper,
+ * except the 'extra_arg' is passed in the rgctx reg, so this wrapper needs to be
+ * called through a static rgctx trampoline.
+ * FIXME: Move this elsewhere.
+ */
+MonoMethod*
+mini_get_interp_in_wrapper (MonoMethodSignature *sig)
+{
+	MonoMethodBuilder *mb;
+	MonoMethod *res, *cached;
+	WrapperInfo *info;
+	MonoMethodSignature *csig, *gsharedvt_sig;
+	int i, pindex, retval_var = 0;
+	static GHashTable *cache;
+
+	sig = mini_get_underlying_signature (sig);
+
+	if (!cache)
+		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
+	gshared_lock ();
+	res = g_hash_table_lookup (cache, sig);
+	gshared_unlock ();
+	if (res) {
+		g_free (sig);
+		return res;
+	}
+
+	/* Create the signature for the wrapper */
+	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (sig->param_count * sizeof (MonoType*)));
+	memcpy (csig, sig, mono_metadata_signature_size (sig));
+
+	/* Create the signature for the gsharedvt callconv */
+	/*
+	 * The called function has the following signature:
+	 * void entry(<optional this ptr>, <optional return ptr>, <arguments>, <extra arg>)
+	 */
+	gsharedvt_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+	memcpy (gsharedvt_sig, sig, mono_metadata_signature_size (sig));
+	pindex = 0;
+	/* The return value is returned using an explicit vret argument */
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		gsharedvt_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
+		gsharedvt_sig->ret = &mono_defaults.void_class->byval_arg;
+	}
+	for (i = 0; i < sig->param_count; i++) {
+		gsharedvt_sig->params [pindex] = sig->params [i];
+		if (!sig->params [i]->byref) {
+			gsharedvt_sig->params [pindex] = mono_metadata_type_dup (NULL, gsharedvt_sig->params [pindex]);
+			gsharedvt_sig->params [pindex]->byref = 1;
+		}
+		pindex ++;
+	}
+	/* Extra arg */
+	gsharedvt_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
+	gsharedvt_sig->param_count = pindex;
+
+	mb = mono_mb_new (mono_defaults.object_class, sig->hasthis ? "interp_in" : "interp_in_static", MONO_WRAPPER_UNKNOWN);
+
+	// FIXME: save lmf
+
+#ifndef DISABLE_JIT
+	if (sig->ret->type != MONO_TYPE_VOID)
+		retval_var = mono_mb_add_local (mb, sig->ret);
+
+	/* Make the call */
+	if (sig->hasthis)
+		mono_mb_emit_ldarg (mb, 0);
+	if (sig->ret->type != MONO_TYPE_VOID)
+		mono_mb_emit_ldloc_addr (mb, retval_var);
+	for (i = 0; i < sig->param_count; i++) {
+		if (sig->params [i]->byref)
+			mono_mb_emit_ldarg (mb, i + (sig->hasthis == TRUE));
+		else
+			mono_mb_emit_ldarg_addr (mb, i + (sig->hasthis == TRUE));
+	}
+	/* Extra arg */
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
+	mono_mb_emit_icon (mb, sizeof (gpointer));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	/* Method to call */
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_calli (mb, gsharedvt_sig);
+	if (sig->ret->type != MONO_TYPE_VOID)
+		mono_mb_emit_ldloc (mb, retval_var);
+	mono_mb_emit_byte (mb, CEE_RET);
+#endif
+
+	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_INTERP_IN);
+	info->d.interp_in.sig = sig;
+
+	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
+
+	gshared_lock ();
+	cached = g_hash_table_lookup (cache, sig);
+	if (cached)
+		res = cached;
+	else
+		g_hash_table_insert (cache, sig, res);
+	gshared_unlock ();
+	return res;
+}
+
 MonoMethodSignature*
 mini_get_gsharedvt_out_sig_wrapper_signature (gboolean has_this, gboolean has_ret, int param_count)
 {

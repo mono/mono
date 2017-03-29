@@ -85,6 +85,7 @@ typedef struct _RuntimeMethod
 	gpointer jit_wrapper;
 	gpointer jit_addr;
 	MonoMethodSignature *jit_sig;
+	gpointer jit_entry;
 	MonoType *rtype;
 	MonoType **param_types;
 } RuntimeMethod;

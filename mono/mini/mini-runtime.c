@@ -1763,8 +1763,11 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 	error_init (error);
 
 #ifdef ENABLE_INTERPRETER
-	if (mono_use_interpreter && !jit_only && method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)
-		return mono_interp_create_method_pointer (method, error);
+	if (mono_use_interpreter && !jit_only) {
+		code = mono_interp_create_method_pointer (method, error);
+		if (code)
+			return code;
+	}
 #endif
 
 	if (mono_llvm_only)
