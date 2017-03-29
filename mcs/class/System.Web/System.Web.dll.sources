@@ -290,6 +290,7 @@ System.Web.Hosting/AppManagerAppDomainFactory.cs
 System.Web.Hosting/ApplicationInfo.cs
 System.Web.Hosting/ApplicationHost.cs
 System.Web.Hosting/ApplicationManager.cs
+../referencesource/System.Web/Hosting/BackgroundWorkScheduler.cs
 System.Web.Hosting/BareApplicationHost.cs
 System.Web.Hosting/DefaultVirtualDirectory.cs
 System.Web.Hosting/DefaultVirtualFile.cs
@@ -1199,6 +1200,7 @@ System.Web.UI/XhtmlMobileDocType.cs
 System.Web.UI/XhtmlTextWriter.cs
 System.Web.UI/XPathBinder.cs
 System.Web.Util/AltSerialization.cs
+../referencesource/System.Web/Util/CancellationTokenHelper.cs
 System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
 System.Web.Util/FileUtils.cs
