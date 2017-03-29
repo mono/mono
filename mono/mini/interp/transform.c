@@ -636,6 +636,25 @@ get_data_item_index (TransformData *td, void *ptr)
 	return index;
 }
 
+static gboolean
+jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
+{
+	if (sig->param_count > 6)
+		return FALSE;
+	if (sig->pinvoke)
+		return FALSE;
+	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		return FALSE;
+	if (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)
+		return FALSE;
+	if (method->is_inflated)
+		return FALSE;
+	if (method->string_ctor)
+		return FALSE;
+	//return TRUE;
+	return FALSE;
+}
+
 static void
 interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, int body_start_offset, MonoClass *constrained_class, gboolean readonly)
 {
@@ -858,6 +877,10 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			ADD_CODE (td, get_data_item_index (td, target_method->klass));
 			ADD_CODE (td, 1 + target_method->klass->rank);
 		}
+	} else if (!calli && !virtual && jit_call_supported (target_method, csignature)) {
+		ADD_CODE(td, MINT_JIT_CALL);
+		ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_runtime_method (domain, target_method, &error)));
+		mono_error_assert_ok (&error);
 	} else {
 		if (calli)
 			ADD_CODE(td, native ? MINT_CALLI_NAT : MINT_CALLI);
@@ -865,7 +888,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			ADD_CODE(td, is_void ? MINT_VCALLVIRT : MINT_CALLVIRT);
 		else
 			ADD_CODE(td, is_void ? MINT_VCALL : MINT_CALL);
-		
+
 		if (calli) {
 			ADD_CODE(td, get_data_item_index (td, (void *)csignature));
 		} else {
