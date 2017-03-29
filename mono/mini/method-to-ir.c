@@ -7921,7 +7921,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		MONO_EMIT_NEW_CHECK_THIS (cfg, arg_ins->dreg);
 	}
 
-	skip_dead_blocks = FALSE; //!dont_verify;
+	skip_dead_blocks = !dont_verify;
 	if (skip_dead_blocks) {
 		original_bb = bb = mono_basic_block_split (method, &cfg->error, header);
 		CHECK_CFG_ERROR;
