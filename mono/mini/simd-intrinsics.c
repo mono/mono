@@ -1891,11 +1891,13 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 {
 	const char *class_name;
 
+#if FALSE
 	if (is_sys_numerics_assembly (cmethod->klass->image->assembly))
 		return emit_sys_numerics_intrinsics (cfg, cmethod, fsig, args);
 
 	if (is_sys_numerics_vectors_assembly (cmethod->klass->image->assembly))
 		return emit_sys_numerics_vectors_intrinsics (cfg, cmethod, fsig, args);
+#endif
 
 	if (strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
 	    strcmp ("Mono.Simd", cmethod->klass->name_space))
@@ -2329,6 +2331,7 @@ emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 MonoInst*
 mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr)
 {
+#if FALSE
 	if (is_sys_numerics_assembly (field->parent->image->assembly)) {
 		int index = -1;
 
@@ -2352,6 +2355,7 @@ mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *ad
 			return simd_intrinsic_emit_getter_op (cfg, index, field->parent, mono_field_get_type (field), addr);
 		}
 	}
+#endif
 	return NULL;
 }
 
