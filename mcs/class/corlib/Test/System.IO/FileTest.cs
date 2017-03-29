@@ -2491,6 +2491,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("LargeFileSupport")]
 		public void Position_Large ()
 		{
 			// fails if HAVE_LARGE_FILE_SUPPORT is not enabled in device builds
@@ -2513,6 +2514,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("LargeFileSupport")]
 		public void Seek_Large ()
 		{
 			// fails if HAVE_LARGE_FILE_SUPPORT is not enabled in device builds
@@ -2537,7 +2539,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // locks with offsets bigger than Int32.Max don't work on Android
+		[Category ("LargeFileSupport")]
 		public void Lock_Large ()
 		{
 			// note: already worked without HAVE_LARGE_FILE_SUPPORT

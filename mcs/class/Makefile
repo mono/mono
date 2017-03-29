@@ -111,6 +111,7 @@ monodroid_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
+	Mono.Posix	\
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
