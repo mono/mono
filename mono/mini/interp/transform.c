@@ -639,6 +639,8 @@ get_data_item_index (TransformData *td, void *ptr)
 static gboolean
 jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 {
+	GSList *l;
+
 	if (sig->param_count > 6)
 		return FALSE;
 	if (sig->pinvoke)
@@ -651,6 +653,14 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 		return FALSE;
 	if (method->string_ctor)
 		return FALSE;
+
+	for (l = jit_classes; l; l = l->next) {
+		char *class_name = l->data;
+		// FIXME: Namespaces
+		if (!strcmp (method->klass->name, class_name))
+			return TRUE;
+	}
+
 	//return TRUE;
 	return FALSE;
 }

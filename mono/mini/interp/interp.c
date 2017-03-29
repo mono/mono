@@ -89,6 +89,12 @@
 		(frame)->invoke_trap = 0;	\
 	} while (0)
 
+/*
+ * List of classes whose methods will be executed by transitioning to JITted code.
+ * Used for testing.
+ */
+GSList *jit_classes;
+
 void ves_exec_method (MonoInvocation *frame);
 
 static char* dump_stack (stackval *stack, stackval *sp);
@@ -4651,6 +4657,20 @@ interp_ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_fi
 	}
 
 	return res;
+}
+
+void
+mono_interp_parse_options (const char *options)
+{
+	char **args, **ptr;
+
+	args = g_strsplit (options, ",", -1);
+	for (ptr = args; ptr && *ptr; ptr ++) {
+		char *arg = *ptr;
+
+		if (strncmp (arg, "jit=", 4) == 0)
+			jit_classes = g_slist_prepend (jit_classes, arg + 4);
+	}
 }
 
 void
