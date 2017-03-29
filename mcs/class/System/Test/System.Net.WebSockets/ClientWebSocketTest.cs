@@ -57,7 +57,7 @@ namespace MonoTests.System.Net.WebSockets
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void ServerHandshakeReturnCrapStatusCodeTest ()
 		{
 			// On purpose, 
@@ -149,7 +149,7 @@ namespace MonoTests.System.Net.WebSockets
 			Assert.AreEqual (WebSocketState.CloseSent, socket.State);
 
 			var resp = socket.ReceiveAsync (new ArraySegment<byte> (new byte[0]), CancellationToken.None).Result;
-			Assert.AreEqual (WebSocketState.Closed, socket.State);
+			Assert.AreEqual (WebSocketState.CloseReceived, socket.State);
 			Assert.AreEqual (WebSocketMessageType.Close, resp.MessageType);
 			Assert.AreEqual (WebSocketCloseStatus.NormalClosure, resp.CloseStatus);
 			Assert.AreEqual (string.Empty, resp.CloseStatusDescription);
@@ -211,7 +211,7 @@ namespace MonoTests.System.Net.WebSockets
 				Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 				Assert.IsTrue (socket.ReceiveAsync (new ArraySegment<byte> (new byte[0]), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
-				AssertWebSocketException (e, WebSocketError.Success);
+				AssertWebSocketException (e, WebSocketError.InvalidState);
 				return;
 			}
 			Assert.Fail ("Should have thrown");
@@ -226,7 +226,7 @@ namespace MonoTests.System.Net.WebSockets
 				Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 				Assert.IsTrue (socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
-				AssertWebSocketException (e, WebSocketError.Success);
+				AssertWebSocketException (e, WebSocketError.InvalidState);
 				return;
 			}
 			Assert.Fail ("Should have thrown");
@@ -241,7 +241,7 @@ namespace MonoTests.System.Net.WebSockets
 				Assert.IsTrue (socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 				Assert.IsTrue (socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
-				AssertWebSocketException (e, WebSocketError.Success);
+				AssertWebSocketException (e, WebSocketError.InvalidState);
 				return;
 			}
 			Assert.Fail ("Should have thrown");
@@ -296,7 +296,6 @@ namespace MonoTests.System.Net.WebSockets
 		void AssertWebSocketException (AggregateException e, WebSocketError error, Type inner = null)
 		{
 			var wsEx = e.InnerException as WebSocketException;
-			Console.WriteLine (e.InnerException.ToString ());
 			Assert.IsNotNull (wsEx, "Not a websocketexception");
 			Assert.AreEqual (error, wsEx.WebSocketErrorCode);
 			if (inner != null) {

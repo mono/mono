@@ -155,18 +155,6 @@ System.Net.Sockets/SocketReceiveFromResult.cs
 System.Net.Sockets/SocketReceiveMessageFromResult.cs
 System.Net.Sockets/SocketTaskExtensions.cs
 
-System.Net.WebSockets/ClientWebSocket.cs
-System.Net.WebSockets/ClientWebSocketOptions.cs
-System.Net.WebSockets/HttpListenerWebSocketContext.cs
-System.Net.WebSockets/WebSocket.cs
-System.Net.WebSockets/WebSocketCloseStatus.cs
-System.Net.WebSockets/WebSocketContext.cs
-System.Net.WebSockets/WebSocketError.cs
-System.Net.WebSockets/WebSocketException.cs
-System.Net.WebSockets/WebSocketMessageType.cs
-System.Net.WebSockets/WebSocketReceiveResult.cs
-System.Net.WebSockets/WebSocketState.cs
-
 System.Runtime.InteropServices.ComTypes/ADVF.cs
 System.Runtime.InteropServices.ComTypes/DATADIR.cs
 System.Runtime.InteropServices.ComTypes/DVASPECT.cs
@@ -927,11 +915,27 @@ ReferenceSources/Win32Exception.cs
 
 corefx/SR.cs
 
+../../../external/corefx/src/Common/src/System/StringExtensions.cs
+
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
+../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
+../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
+
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+
+../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
+../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
+
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
+
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
@@ -954,5 +958,20 @@ corefx/SR.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
+
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocket.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketCloseStatus.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketContext.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketError.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketException.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketMessageType.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketReceiveResult.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketState.cs
+
+../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocket.cs
+../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocketOptions.cs
+../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
+
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
