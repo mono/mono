@@ -1200,9 +1200,9 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	sig = mini_get_underlying_signature (sig);
 
 	// FIXME: Normal cache
+	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	gshared_lock ();
 	res = g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
@@ -1304,9 +1304,9 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	sig = mini_get_underlying_signature (sig);
 
 	// FIXME: Normal cache
+	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	gshared_lock ();
 	res = g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
@@ -1429,9 +1429,9 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 
 	sig = mini_get_underlying_signature (sig);
 
+	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	gshared_lock ();
 	res = g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
