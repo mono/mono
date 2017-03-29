@@ -19,6 +19,26 @@ namespace System
 {
     public abstract partial class Array : ICollection, IEnumerable, IList, IStructuralComparable, IStructuralEquatable, ICloneable
     {
+        public static Array CreateInstance(Type elementType, params long[] lengths)
+        {
+            if (lengths == null)
+                throw new ArgumentNullException(nameof(lengths));
+            if (lengths.Length == 0)
+                throw new ArgumentException(SR.Arg_NeedAtLeast1Rank);
+
+            int[] intLengths = new int[lengths.Length];
+
+            for (int i = 0; i < lengths.Length; ++i)
+            {
+                long len = lengths[i];
+                if (len > int.MaxValue || len < int.MinValue)
+                    throw new ArgumentOutOfRangeException("len", SR.ArgumentOutOfRange_HugeArrayNotSupported);
+                intLengths[i] = (int)len;
+            }
+
+            return Array.CreateInstance(elementType, intLengths);
+        }
+
         public static ReadOnlyCollection<T> AsReadOnly<T>(T[] array)
         {
             if (array == null)
@@ -83,7 +103,12 @@ namespace System
 
         void IList.Clear()
         {
-            Array.Clear(this, 0, this.Length);
+            Array.Clear(this, GetLowerBound(0), this.Length);
+        }
+
+        int IList.IndexOf(Object value)
+        {
+            return Array.IndexOf(this, value);
         }
 
         void IList.Insert(int index, Object value)
@@ -114,7 +139,7 @@ namespace System
             if (array != null && array.Rank != 1)
                 throw new ArgumentException(SR.Arg_RankMultiDimNotSupported);
 
-            Array.Copy(this, 0, array, index, Length);
+            Array.Copy(this, GetLowerBound(0), array, index, Length);
         }
 
         // Make a new array which is a deep copy of the original array.
@@ -226,7 +251,7 @@ namespace System
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
-            return BinarySearch(array, 0, array.Length, value, null);
+            return BinarySearch(array, array.GetLowerBound(0), array.Length, value, null);
         }
 
         public static TOutput[] ConvertAll<TInput, TOutput>(TInput[] array, Converter<TInput, TOutput> converter)
@@ -380,6 +405,8 @@ namespace System
 
         public bool IsFixedSize { get { return true; } }
 
+        public bool IsReadOnly { get { return false; } }
+
         // Is this Array synchronized (i.e., thread-safe)?  If you want a synchronized
         // collection, you can use SyncRoot as an object to synchronize your 
         // collection with.  You could also call GetSynchronized() 
@@ -426,7 +453,7 @@ namespace System
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
-            return BinarySearch(array, 0, array.Length, value, comparer);
+            return BinarySearch(array, array.GetLowerBound(0), array.Length, value, comparer);
         }
 
         // Searches a section of an array for a given element using a binary search
@@ -565,7 +592,7 @@ namespace System
                 throw new ArgumentNullException(nameof(array));
             }
 
-            return IndexOf(array, value, 0, array.Length);
+            return IndexOf(array, value, array.GetLowerBound(0), array.Length);
         }
 
         // Returns the index of the first occurrence of a given value in a range of
@@ -581,7 +608,8 @@ namespace System
                 throw new ArgumentNullException(nameof(array));
             }
 
-            return IndexOf(array, value, startIndex, array.Length - startIndex);
+            int lb = array.GetLowerBound(0);
+            return IndexOf(array, value, startIndex, array.Length - startIndex + lb);
         }
 
         // Returns the index of the first occurrence of a given value in a range of
@@ -596,9 +624,10 @@ namespace System
                 throw new ArgumentNullException(nameof(array));
             if (array.Rank != 1)
                 throw new RankException(SR.Rank_MultiDimNotSupported);
-            if (startIndex < 0 || startIndex > array.Length)
+            int lb = array.GetLowerBound(0);
+            if (startIndex < lb || startIndex > array.Length + lb)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_Index);
-            if (count < 0 || count > array.Length - startIndex)
+            if (count < 0 || count > array.Length - startIndex + lb)
                 throw new ArgumentOutOfRangeException(nameof(count), SR.ArgumentOutOfRange_Count);
 
             Object[] objArray = array as Object[];
@@ -636,7 +665,7 @@ namespace System
                     }
                 }
             }
-            return -1;
+            return lb - 1;
         }
 
         /// <summary>
@@ -903,7 +932,7 @@ namespace System
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
 
-            Reverse(array, 0, array.Length);
+            Reverse(array, array.GetLowerBound(0), array.Length);
         }
 
         // Reverses the elements in a range of an array. Following a call to this
@@ -980,6 +1009,56 @@ namespace System
             }
         }
 
+        public void SetValue(object value, long index)
+        {
+            if (index > int.MaxValue || index < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+
+            SetValue(value, (int)index);
+        }
+
+        public void SetValue(object value, long index1, long index2)
+        {
+            if (index1 > int.MaxValue || index1 < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index1), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+            if (index2 > int.MaxValue || index2 < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index2), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+
+            SetValue(value, (int)index1, (int)index2);
+        }
+
+        public void SetValue(object value, long index1, long index2, long index3)
+        {
+            if (index1 > int.MaxValue || index1 < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index1), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+            if (index2 > int.MaxValue || index2 < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index2), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+            if (index3 > int.MaxValue || index3 < int.MinValue)
+                throw new ArgumentOutOfRangeException(nameof(index3), SR.ArgumentOutOfRange_HugeArrayNotSupported);
+
+            SetValue(value, (int)index1, (int)index2, (int)index3);
+        }
+
+        public void SetValue(object value, params long[] indices)
+        {
+            if (indices == null)
+                throw new ArgumentNullException(nameof(indices));
+            if (Rank != indices.Length)
+                throw new ArgumentException(SR.Arg_RankIndices);
+
+            int[] intIndices = new int[indices.Length];
+
+            for (int i = 0; i < indices.Length; ++i)
+            {
+                long index = indices[i];
+                if (index > int.MaxValue || index < int.MinValue)
+                    throw new ArgumentOutOfRangeException("index", SR.ArgumentOutOfRange_HugeArrayNotSupported);
+                intIndices[i] = (int)index;
+            }
+
+            SetValue(value, intIndices);
+        }
+
         // Sorts the elements of an array. The sort compares the elements to each
         // other using the IComparable interface, which must be implemented
         // by all elements of the array.
@@ -989,7 +1068,7 @@ namespace System
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
 
-            Sort(array, null, 0, array.Length, null);
+            Sort(array, null, array.GetLowerBound(0), array.Length, null);
         }
 
         // Sorts the elements in a section of an array. The sort compares the
@@ -1012,7 +1091,7 @@ namespace System
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
 
-            Sort(array, null, 0, array.Length, comparer);
+            Sort(array, null, array.GetLowerBound(0), array.Length, comparer);
         }
 
         // Sorts the elements in a section of an array. The sort compares the
