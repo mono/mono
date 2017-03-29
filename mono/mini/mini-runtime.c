@@ -3354,6 +3354,7 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	info->seq_points = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, mono_seq_point_info_free);
 	info->arch_seq_points = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->jump_target_hash = g_hash_table_new (NULL, NULL);
+	mono_jit_code_hash_init (&info->interp_code_hash);
 
 	domain->runtime_info = info;
 }

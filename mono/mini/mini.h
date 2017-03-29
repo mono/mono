@@ -366,6 +366,8 @@ typedef struct
 	gpointer llvm_module;
 	/* Maps MonoMethod -> GSlist of addresses */
 	GHashTable *llvm_jit_callees;
+	/* Maps MonoMethod -> RuntimeMethod */
+	MonoInternalHashTable interp_code_hash;
 } MonoJitDomainInfo;
 
 typedef struct {
