@@ -64,6 +64,11 @@ class InterpClass
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int entry_9_int_args (int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9) {
+		return i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8 + i9;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static IntPtr entry_intptr_intptr (IntPtr i) {
 		return i;
 	}
@@ -106,10 +111,13 @@ class JitClass
 		res = InterpClass.entry_8_int_args (1, 2, 3, 4, 5, 6, 7, 8);
 		if (res != 36)
 			return 8;
+		res = InterpClass.entry_9_int_args (1, 2, 3, 4, 5, 6, 7, 8, 9);
+		if (res != 45)
+			return 9;
 		var ptr = new IntPtr (32);
 		var ptr2 = InterpClass.entry_intptr_intptr (ptr);
 		if (ptr != ptr2)
-			return 9;
+			return 10;
 		return 0;
 	}
 

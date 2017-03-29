@@ -1447,6 +1447,7 @@ typedef struct {
 	gpointer this_arg;
 	gpointer res;
 	gpointer args [16];
+	gpointer *many_args;
 } InterpEntryData;
 
 /* Main function for entering the interpreter from compiled code */
@@ -1488,7 +1489,11 @@ interp_entry (InterpEntryData *data)
 	if (sig->hasthis)
 		args [0].data.p = data->this_arg;
 
-	gpointer *params = data->args;
+	gpointer *params;
+	if (data->many_args)
+		params = data->many_args;
+	else
+		params = data->args;
 	for (i = 0; i < sig->param_count; ++i) {
 		int a_index = i + (sig->hasthis ? 1 : 0);
 		if (sig->params [i]->byref) {
@@ -1745,7 +1750,8 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 	InterpEntryData data; \
 	(data).rmethod = (_method); \
 	(data).res = (_res); \
-	(data).this_arg = (_this_arg);
+	(data).this_arg = (_this_arg); \
+	(data).many_args = NULL;
 
 #define INTERP_ENTRY0(_this_arg, _res, _method) {	\
 	INTERP_ENTRY_BASE (_method, _this_arg, _res); \
@@ -1874,6 +1880,15 @@ gpointer entry_funcs_static_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUN
 gpointer entry_funcs_instance [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance) };
 gpointer entry_funcs_instance_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance_ret) };
 
+/* General version for methods with more than MAX_INTERP_ENTRY_ARGS arguments */
+static void
+interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer rmethod)
+{
+	INTERP_ENTRY_BASE (rmethod, this_arg, res);
+	data.many_args = args;
+	interp_entry (&data);
+}
+
 /*
  * mono_interp_create_method_pointer:
  *
@@ -1891,9 +1906,6 @@ mono_interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	if (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE)
 		return NULL;
 
-	if (sig->param_count > MAX_INTERP_ENTRY_ARGS)
-		return NULL;
-
 	rmethod = mono_interp_get_runtime_method (mono_domain_get (), method, error);
 	if (rmethod->jit_entry)
 		return rmethod->jit_entry;
@@ -1904,7 +1916,9 @@ mono_interp_create_method_pointer (MonoMethod *method, MonoError *error)
 
 	//printf ("%s %s\n", mono_method_full_name (method, 1), mono_method_full_name (wrapper, 1));
 	gpointer entry_func;
-	if (sig->hasthis) {
+	if (sig->param_count > MAX_INTERP_ENTRY_ARGS) {
+		entry_func = interp_entry_general;
+	} else if (sig->hasthis) {
 		if (sig->ret->type == MONO_TYPE_VOID)
 			entry_func = entry_funcs_instance [sig->param_count];
 		else

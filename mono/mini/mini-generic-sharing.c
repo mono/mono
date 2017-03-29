@@ -1423,9 +1423,11 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	MonoMethodBuilder *mb;
 	MonoMethod *res, *cached;
 	WrapperInfo *info;
-	MonoMethodSignature *csig, *gsharedvt_sig;
+	MonoMethodSignature *csig, *entry_sig;
 	int i, pindex, retval_var = 0;
 	static GHashTable *cache;
+	const char *name;
+	gboolean generic = FALSE;
 
 	sig = mini_get_underlying_signature (sig);
 
@@ -1439,36 +1441,57 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		return res;
 	}
 
+	if (sig->param_count > 8)
+		/* Call the generic interpreter entry point, the specialized ones only handle a limited number of arguments */
+		generic = TRUE;
+
 	/* Create the signature for the wrapper */
 	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (sig->param_count * sizeof (MonoType*)));
 	memcpy (csig, sig, mono_metadata_signature_size (sig));
 
-	/* Create the signature for the gsharedvt callconv */
-	/*
-	 * The called function has the following signature:
-	 * void entry(<optional this ptr>, <optional return ptr>, <arguments>, <extra arg>)
-	 */
-	gsharedvt_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
-	memcpy (gsharedvt_sig, sig, mono_metadata_signature_size (sig));
-	pindex = 0;
-	/* The return value is returned using an explicit vret argument */
-	if (sig->ret->type != MONO_TYPE_VOID) {
-		gsharedvt_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
-		gsharedvt_sig->ret = &mono_defaults.void_class->byval_arg;
-	}
-	for (i = 0; i < sig->param_count; i++) {
-		gsharedvt_sig->params [pindex] = sig->params [i];
-		if (!sig->params [i]->byref) {
-			gsharedvt_sig->params [pindex] = mono_metadata_type_dup (NULL, gsharedvt_sig->params [pindex]);
-			gsharedvt_sig->params [pindex]->byref = 1;
+	/* Create the signature for the callee callconv */
+	if (generic) {
+		/*
+		 * The called function has the following signature:
+		 * interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer rmethod)
+		 */
+		entry_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (4 * sizeof (MonoType*)));
+		entry_sig->ret = &mono_defaults.void_class->byval_arg;
+		entry_sig->param_count = 4;
+		entry_sig->params [0] = &mono_defaults.int_class->byval_arg;
+		entry_sig->params [1] = &mono_defaults.int_class->byval_arg;
+		entry_sig->params [2] = &mono_defaults.int_class->byval_arg;
+		entry_sig->params [3] = &mono_defaults.int_class->byval_arg;
+		name = "interp_in_generic";
+		generic = TRUE;
+	} else  {
+		/*
+		 * The called function has the following signature:
+		 * void entry(<optional this ptr>, <optional return ptr>, <arguments>, <extra arg>)
+		 */
+		entry_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		memcpy (entry_sig, sig, mono_metadata_signature_size (sig));
+		pindex = 0;
+		/* The return value is returned using an explicit vret argument */
+		if (sig->ret->type != MONO_TYPE_VOID) {
+			entry_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
+			entry_sig->ret = &mono_defaults.void_class->byval_arg;
 		}
-		pindex ++;
+		for (i = 0; i < sig->param_count; i++) {
+			entry_sig->params [pindex] = sig->params [i];
+			if (!sig->params [i]->byref) {
+				entry_sig->params [pindex] = mono_metadata_type_dup (NULL, entry_sig->params [pindex]);
+				entry_sig->params [pindex]->byref = 1;
+			}
+			pindex ++;
+		}
+		/* Extra arg */
+		entry_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
+		entry_sig->param_count = pindex;
+		name = sig->hasthis ? "interp_in" : "interp_in_static";
 	}
-	/* Extra arg */
-	gsharedvt_sig->params [pindex ++] = &mono_defaults.int_class->byval_arg;
-	gsharedvt_sig->param_count = pindex;
 
-	mb = mono_mb_new (mono_defaults.object_class, sig->hasthis ? "interp_in" : "interp_in_static", MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_UNKNOWN);
 
 	// FIXME: save lmf
 
@@ -1477,15 +1500,46 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		retval_var = mono_mb_add_local (mb, sig->ret);
 
 	/* Make the call */
-	if (sig->hasthis)
-		mono_mb_emit_ldarg (mb, 0);
-	if (sig->ret->type != MONO_TYPE_VOID)
-		mono_mb_emit_ldloc_addr (mb, retval_var);
-	for (i = 0; i < sig->param_count; i++) {
-		if (sig->params [i]->byref)
-			mono_mb_emit_ldarg (mb, i + (sig->hasthis == TRUE));
+	if (generic) {
+		/* Collect arguments */
+		int args_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+
+		mono_mb_emit_icon (mb, sizeof (gpointer) * sig->param_count);
+		mono_mb_emit_byte (mb, CEE_PREFIX1);
+		mono_mb_emit_byte (mb, CEE_LOCALLOC);
+		mono_mb_emit_stloc (mb, args_var);
+
+		for (i = 0; i < sig->param_count; i++) {
+			mono_mb_emit_ldloc (mb, args_var);
+			mono_mb_emit_icon (mb, sizeof (gpointer) * i);
+			mono_mb_emit_byte (mb, CEE_ADD);
+			if (sig->params [i]->byref)
+				mono_mb_emit_ldarg (mb, i + (sig->hasthis == TRUE));
+			else
+				mono_mb_emit_ldarg_addr (mb, i + (sig->hasthis == TRUE));
+			mono_mb_emit_byte (mb, CEE_STIND_I);
+		}
+
+		if (sig->hasthis)
+			mono_mb_emit_ldarg (mb, 0);
 		else
-			mono_mb_emit_ldarg_addr (mb, i + (sig->hasthis == TRUE));
+			mono_mb_emit_byte (mb, CEE_LDNULL);
+		if (sig->ret->type != MONO_TYPE_VOID)
+			mono_mb_emit_ldloc_addr (mb, retval_var);
+		else
+			mono_mb_emit_byte (mb, CEE_LDNULL);
+		mono_mb_emit_ldloc (mb, args_var);
+	} else {
+		if (sig->hasthis)
+			mono_mb_emit_ldarg (mb, 0);
+		if (sig->ret->type != MONO_TYPE_VOID)
+			mono_mb_emit_ldloc_addr (mb, retval_var);
+		for (i = 0; i < sig->param_count; i++) {
+			if (sig->params [i]->byref)
+				mono_mb_emit_ldarg (mb, i + (sig->hasthis == TRUE));
+			else
+				mono_mb_emit_ldarg_addr (mb, i + (sig->hasthis == TRUE));
+		}
 	}
 	/* Extra arg */
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
@@ -1497,7 +1551,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);
-	mono_mb_emit_calli (mb, gsharedvt_sig);
+	mono_mb_emit_calli (mb, entry_sig);
 	if (sig->ret->type != MONO_TYPE_VOID)
 		mono_mb_emit_ldloc (mb, retval_var);
 	mono_mb_emit_byte (mb, CEE_RET);
