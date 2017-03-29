@@ -79,4 +79,5 @@ partial class SR
 	public const string Serialization_MismatchedCount = "The serialized Count information doesn't match the number of items.";
 	public const string Serialization_MissingKeys = "The keys for this dictionary are missing.";
 	public const string Serialization_MissingValues = "The values for this dictionary are missing.";
+	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
 }
