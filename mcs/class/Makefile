@@ -23,10 +23,6 @@ basic_SUBDIRS := \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer
 
-# resgen is corlib specific so we need to wait until corlib is build
-# and build it just a step before first dll needs it
-resgen_dir = ../tools/resgen
-
 build_SUBDIRS :=  \
 	corlib \
 	Mono.Security \
@@ -39,6 +35,7 @@ build_SUBDIRS :=  \
 	System.Xml.Linq \
 	System.Runtime.InteropServices.RuntimeInformation \
 	System.IO.Compression \
+	System.Drawing			\
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	Mono.CompilerServices.SymbolWriter	\
@@ -197,10 +194,9 @@ net_4_x_dirs := \
 	System.Core			\
 	System.Security			\
 	System.Configuration	\
-	$(resgen_dir)			\
+	System.Drawing			\
 	System.IO.Compression 		\
 	System.IO.Compression.FileSystem \
-	System.Drawing			\
 	System.Transactions		\
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
