@@ -287,12 +287,22 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[Test]
 		public void ChangeDatabase ()
 		{
-			if (ConnectionManager.Instance.Sql.IsAzure)
-				Assert.Ignore("SQL Azure doesn't support 'ChangeDatabase'");
+			conn = new SqlConnection(connectionString);
+			conn.Open();
 
-			conn = new SqlConnection (connectionString);
-			conn.Open ();
-			conn.ChangeDatabase ("master");
+			bool isAzure = ConnectionManager.Instance.Sql.IsAzure;
+
+			try
+			{
+				conn.ChangeDatabase("master");
+			}
+			catch (SqlException exc) when (isAzure)
+			{
+				Assert.AreEqual(40508, exc.Number); //USE statement is not supported to switch between databases (Azure).
+				return;
+			}
+
+			Assert.IsFalse(isAzure);
 			Assert.AreEqual ("master", conn.Database);
 		}
 
