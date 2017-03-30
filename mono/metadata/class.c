@@ -4319,6 +4319,13 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 						TRACE_INTERFACE_VTABLE ((cm != NULL) && printf ("\n"));
 					}
 				}
+
+				if (vtable [im_slot] == NULL) {
+					if (!(im->flags & METHOD_ATTRIBUTE_ABSTRACT)) {
+						TRACE_INTERFACE_VTABLE (printf ("    Using default iface method %s.\n", mono_method_full_name (im, 1)));
+						vtable [im_slot] = im;
+					}
+				}
 			} else {
 				g_assert (vtable [im_slot] == override_im);
 			}
