@@ -16,6 +16,8 @@
 
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/w32file.h>
+#include <mono/utils/w32api.h>
 
 void
 mono_console_init (void)
