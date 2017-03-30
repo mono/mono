@@ -89,7 +89,7 @@ void mono_unity_method_set_invoke_pointer(MonoMethod* method, void *p);
 #endif
 
 const char* mono_unity_method_get_name(const MonoMethod *method);
-guint64 mono_unity_method_get_hash(MonoMethod *method);
+guint64 mono_unity_method_get_hash(MonoMethod *method, gboolean inflate);
 MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method);
 MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, void *value);
 gboolean unity_mono_method_is_inflated(MonoMethod* method);
@@ -111,6 +111,7 @@ MonoGenericClass* mono_unity_type_get_generic_class(MonoType *type);
 gboolean mono_unity_type_is_enum_type(MonoType *type);
 gboolean mono_unity_type_is_boolean(MonoType *type);
 MonoClass* mono_unity_type_get_element_class(MonoType *type); //only safe to call when the type has a defined klass data element
+guint64 mono_unity_type_get_hash(MonoType *type, gboolean inflate);
 
 //generic class
 MonoGenericContext mono_unity_generic_class_get_context(MonoGenericClass *klass);

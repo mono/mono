@@ -435,20 +435,20 @@ static guint32 get_array_structure_hash(MonoArrayType *atype)
 
 /* Begin: Hash computation helper functions */
 
-static void get_type_hashes(MonoType *type, GList *hashes);
-static void get_type_hashes_generic_inst(MonoGenericInst *inst, GList *hashes);
+static void get_type_hashes(MonoType *type, GList *hashes, gboolean inflate);
+static void get_type_hashes_generic_inst(MonoGenericInst *inst, GList *hashes, gboolean inflate);
 
 
-static void get_type_hashes_generic_inst(MonoGenericInst *inst, GList *hashes)
+static void get_type_hashes_generic_inst(MonoGenericInst *inst, GList *hashes, gboolean inflate)
 {
 	for (int i = 0; i < inst->type_argc; ++i)
 	{
 		MonoType *type = inst->type_argv[i];
-		get_type_hashes(type, hashes);
+		get_type_hashes(type, hashes, inflate);
 	}
 }
 
-static void get_type_hashes(MonoType *type, GList *hashes)
+static void get_type_hashes(MonoType *type, GList *hashes, gboolean inflate)
 {
 	if (type->type != MONO_TYPE_GENERICINST)
 	{
@@ -461,7 +461,7 @@ static void get_type_hashes(MonoType *type, GList *hashes)
 			MonoArrayType *atype = type->data.array;
 			g_list_append(hashes, MONO_TOKEN_TYPE_SPEC);
 			g_list_append(hashes, get_array_structure_hash(atype));
-			get_type_hashes(&(atype->eklass->this_arg), hashes);
+			get_type_hashes(&(atype->eklass->this_arg), hashes, inflate);
 			break;
 		}
 		case MONO_TYPE_CLASS:
@@ -530,29 +530,31 @@ static void get_type_hashes(MonoType *type, GList *hashes)
 	{
 		g_list_append(hashes, type->data.generic_class->container_class->type_token);
 		g_list_append(hashes, hash_string_djb2(type->data.generic_class->container_class->image->module_name));
-		get_type_hashes_generic_inst(type->data.generic_class->context.class_inst, hashes);
+
+        if (inflate)
+		    get_type_hashes_generic_inst(type->data.generic_class->context.class_inst, hashes, inflate);
 	}
 
 }
 
-static GList* get_type_hashes_method(MonoMethod *method)
+static GList* get_type_hashes_method(MonoMethod *method, gboolean inflate)
 {
 	GList *hashes = monoeg_g_list_alloc();
 
 	hashes->data = method->token;
 	g_list_append(hashes, hash_string_djb2(method->klass->image->module_name));
 
-	if (method->klass->is_inflated)
+	if (inflate && method->klass->is_inflated)
 	{
 		g_list_append(hashes, method->klass->type_token);
-		get_type_hashes_generic_inst(method->klass->generic_class->context.class_inst, hashes);
+		get_type_hashes_generic_inst(method->klass->generic_class->context.class_inst, hashes, inflate);
 	}
 
-	if (method->is_inflated)
+	if (inflate && method->is_inflated)
 	{
 		MonoGenericContext* methodGenericContext = mono_method_get_context(method);
 		if (methodGenericContext->method_inst != NULL)
-			get_type_hashes_generic_inst(methodGenericContext->method_inst, hashes);
+			get_type_hashes_generic_inst(methodGenericContext->method_inst, hashes, inflate);
 	}
 
 	return hashes;
@@ -576,9 +578,9 @@ static void combine_all_hashes(gpointer data, gpointer user_data)
 
 /* End: Hash computation helper functions */
 
-guint64 mono_unity_method_get_hash(MonoMethod *method)
+guint64 mono_unity_method_get_hash(MonoMethod *method, gboolean inflate)
 {
-	GList *hashes = get_type_hashes_method(method);
+	GList *hashes = get_type_hashes_method(method, inflate);
 
 	guint64 hash = 0;
 
@@ -588,6 +590,22 @@ guint64 mono_unity_method_get_hash(MonoMethod *method)
 
 	return hash;
 }
+
+guint64 mono_unity_type_get_hash(MonoType *type, gboolean inflate)
+{
+    GList *hashes = monoeg_g_list_alloc();
+
+    get_type_hashes(type, hashes, inflate);
+    
+    guint64 hash = 0;
+
+    g_list_first(hashes);
+    g_list_foreach(hashes, combine_all_hashes, &hash);
+    g_list_free(hashes);
+
+    return hash;
+}
+
 
 MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method)
 {
