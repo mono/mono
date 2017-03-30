@@ -4046,12 +4046,13 @@ apply_override (MonoClass *klass, MonoMethod **vtable, MonoMethod *decl, MonoMet
 
 	dslot += mono_class_interface_offset (klass, decl->klass);
 	vtable [dslot] = override;
-	if (!MONO_CLASS_IS_INTERFACE (override->klass))
+	if (!MONO_CLASS_IS_INTERFACE (override->klass)) {
 		/*
 		 * If override from an interface, then it is an override of a default interface method,
 		 * don't override its slot.
 		 */
 		vtable [dslot]->slot = dslot;
+	}
 
 	if (mono_security_core_clr_enabled ())
 		mono_security_core_clr_check_override (klass, vtable [dslot], decl);
