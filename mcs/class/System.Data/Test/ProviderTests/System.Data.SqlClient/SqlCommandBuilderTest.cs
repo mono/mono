@@ -788,6 +788,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		// FIXME: Add test for ContinueUpdateOnError property
 		
 		[Test]
+		[Category("NotWorking")]
 		public void CheckParameters_BuiltCommand ()
 		{
 			SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", conn);
@@ -813,6 +814,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void DeriveParameters ()
 		{
 			SqlCommand cmd = null;
