@@ -290,20 +290,16 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			conn = new SqlConnection(connectionString);
 			conn.Open();
 
-			bool isAzure = ConnectionManager.Instance.Sql.IsAzure;
-
-			try
+			if (ConnectionManager.Instance.Sql.IsAzure)
+			{
+				var exc = Assert.Throws<SqlException>(() => conn.ChangeDatabase("master"));
+				Assert.Equals(40508, exc.Number); //USE statement is not supported to switch between databases (Azure).
+			}
+			else
 			{
 				conn.ChangeDatabase("master");
+				Assert.AreEqual("master", conn.Database);
 			}
-			catch (SqlException exc) when (isAzure)
-			{
-				Assert.AreEqual(40508, exc.Number); //USE statement is not supported to switch between databases (Azure).
-				return;
-			}
-
-			Assert.IsFalse(isAzure);
-			Assert.AreEqual ("master", conn.Database);
 		}
 
 		[Test]
