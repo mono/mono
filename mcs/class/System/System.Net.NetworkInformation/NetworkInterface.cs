@@ -82,16 +82,7 @@ namespace System.Net.NetworkInformation {
 	{
 		internal abstract class UnixNetworkInterfaceAPI : NetworkInterfaceFactory
 		{
-#if !ORBIS
-			[DllImport("libc")]
-			public static extern int if_nametoindex(string ifname);
-
-			[DllImport ("libc")]
-			protected static extern int getifaddrs (out IntPtr ifap);
-
-			[DllImport ("libc")]
-			protected static extern void freeifaddrs (IntPtr ifap);
-#else
+#if ORBIS
 			public static int if_nametoindex(string ifname)
 			{
 				throw new PlatformNotSupportedException ();
@@ -106,6 +97,15 @@ namespace System.Net.NetworkInformation {
 			{
 				throw new PlatformNotSupportedException ();
 			}
+#else
+			[DllImport("libc")]
+			public static extern int if_nametoindex(string ifname);
+
+			[DllImport ("libc")]
+			protected static extern int getifaddrs (out IntPtr ifap);
+
+			[DllImport ("libc")]
+			protected static extern void freeifaddrs (IntPtr ifap);
 #endif
 		}
 
