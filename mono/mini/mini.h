@@ -1918,6 +1918,9 @@ typedef struct {
 	int stat_code_reallocs;
 
 	MonoProfilerCallInstrumentationFlags prof_flags;
+
+	/* For deduplication */
+	gboolean skip;
 } MonoCompile;
 
 #define MONO_CFG_PROFILE_CALL_CONTEXT(cfg) \
