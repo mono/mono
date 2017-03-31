@@ -118,6 +118,7 @@
     <Compile Include="..\referencesource\System.Web\Configuration\WebLevel.cs" />
     <Compile Include="..\referencesource\System.Web\Configuration\XhtmlConformanceMode.cs" />
     <Compile Include="..\referencesource\System.Web\Hosting\AppDomainProtocolHandler.cs" />
+    <Compile Include="..\referencesource\System.Web\Hosting\BackgroundWorkScheduler.cs" />
     <Compile Include="..\referencesource\System.Web\Hosting\HostingEnvironmentException.cs" />
     <Compile Include="..\referencesource\System.Web\Hosting\HTTP_COOKED_URL.cs" />
     <Compile Include="..\referencesource\System.Web\Hosting\IApplicationHost.cs" />
@@ -492,6 +493,7 @@
     <Compile Include="..\referencesource\System.Web\Util\AppVerifierException.cs" />
     <Compile Include="..\referencesource\System.Web\Util\AssemblyUtil.cs" />
     <Compile Include="..\referencesource\System.Web\Util\BinaryCompatibility.cs" />
+    <Compile Include="..\referencesource\System.Web\Util\CancellationTokenHelper.cs" />
     <Compile Include="..\referencesource\System.Web\Util\DateTimeUtil.cs" />
     <Compile Include="..\referencesource\System.Web\Util\Debug.cs" />
     <Compile Include="..\referencesource\System.Web\Util\DisposableAction.cs" />
